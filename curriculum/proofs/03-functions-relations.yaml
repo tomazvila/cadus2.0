@@ -280,12 +280,34 @@ topics:
         name: "Nonlinear examples"
         key_prerequisites: [direct-proof]
         exemplars:
-          - problem: 'Prove $f : \mathbb{R} \to \mathbb{R}$, $f(x) = x^3 + 2$, is injective.'
-            answer: '$a^3 + 2 = b^3 + 2 \Rightarrow a^3 = b^3 \Rightarrow a = b$.'
-            solution_sketch: 'Suppose $f(a) = f(b)$: $a^3 = b^3$. Real cube roots are unique, so $a = b$. $\square$'
-          - problem: 'Prove $f : \mathbb{R} \setminus \{0\} \to \mathbb{R}$, $f(x) = 1/x$, is injective.'
-            answer: '$1/a = 1/b \Rightarrow a = b$ by cross-multiplying.'
-            solution_sketch: 'Suppose $1/a = 1/b$ with $a, b \ne 0$. Multiplying both sides by $ab$ gives $b = a$. $\square$'
+          - problem: "To prove that $f(x) = x^3 + x$ is injective, suppose $a^3 + a = b^3 + b$. The proof rewrites the difference $a^3 - b^3 + a - b$ as $(a - b)\\,q$, where $q$ is a polynomial in $a$ and $b$. Give $q$."
+            answer: "a^2+ab+b^2+1"
+            answer_contract: {"kind": "function", "vars": ["a", "b"]}
+            solution_sketch: "For $f(x) = x^3 + x$: direct proof hypothesis $a^3 + a = b^3 + b$. Move all terms to one side: $a^3 - b^3 + a - b$. Apply the difference-of-cubes factorization $a^3 - b^3 = (a-b)(a^2+ab+b^2)$ and factor $a - b$ out of the remaining terms: $(a - b)(a^2 + ab + b^2 + 1)$. The required factor is a^2+ab+b^2+1."
+          - problem: "To prove that $f(x) = \\frac{1}{x+4}$ is injective on its domain $\\mathbb{R} \\setminus \\{-4\\}$, suppose $\\frac{1}{a+4} = \\frac{1}{b+4}$ with $a = 3$. The proof cross-multiplies and obtains $b + 4 = a + 4$. Give the value of $b$."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "For $f(x) = 1/(x+4)$: direct proof hypothesis $1/(a+4) = 1/(b+4)$. Cross-multiplication rule: multiply both sides by $(a+4)(b+4)$, giving $b + 4 = a + 4$. Substitution step: with $a = 3$ this reads $b + 4 = 7$, so $b = 7 - 4$. The value of $b$ is 3."
+          - problem: "For $f(x) = x^3 + 4x$, the injectivity proof factors $a^3 - b^3 + 4(a - b) = (a - b)(a^2 + ab + b^2 + 4)$. The case $a = b$ is settled, so the proof must show the second factor never vanishes. Give the smallest value of $a^2 + ab + b^2$ for real $a$ and $b$."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "For $f(x) = x^3 + 4x$, the difference factors as $(a - b)(a^2 + ab + b^2 + 4)$. Completing squares: $a^2 + ab + b^2 = \\frac{1}{2}(a^2 + b^2 + (a+b)^2)$, a sum of squares, so it is at least $0$ and equals $0$ only at $a = b = 0$. Hence the second factor is at least $4$ and never zero, so $a = b$. The smallest value of $a^2 + ab + b^2$ is 0."
+          - problem: "To prove that $f(x) = \\frac{x}{x-2}$, defined for $x \\ne 2$, is injective, suppose $\\frac{a}{a-2} = \\frac{b}{b-2}$ with $a = 4$. Cross-multiplication gives $a(b-2) = b(a-2)$, and the $ab$ terms cancel. Give the value of $b$."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "For $f(x) = x/(x-2)$ with $x \\ne 2$: hypothesis $a/(a-2) = b/(b-2)$ with $a = 4$. Cross-multiplication rule: $a(b-2) = b(a-2)$. Expansion and cancellation of $ab$: $-2a = -2b$, so $b = a$. With $a = 4$, the value of $b$ is 4."
+          - problem: "In the injectivity proof for $f(x) = x^3 - 5$, the hypothesis reads $a^3 - 5 = b^3 - 5$ and the next line of the proof is missing. Select the line that is true and that completes the proof."
+            answer: "a^3 = b^3"
+            answer_contract: {"kind": "label", "options": [["a^3 = b^3"], ["a^3 = -b^3"], ["a - b = 5"], ["(a + b)^3 = 0"]]}
+            solution_sketch: "For $f(x) = x^3 - 5$: hypothesis $a^3 - 5 = b^3 - 5$. Adding $5$ to both sides gives $a^3 = b^3$, and unique real cube roots give $a = b$. Option a^3 = -b^3 is a sign error when moving terms. Option a - b = 5 subtracts $5$ from a factored difference instead of adding it to each side. Option (a + b)^3 = 0 uses the wrong grouping and is not implied by the hypothesis. The missing line is a^3 = b^3."
+          - problem: "A student claims that $f(x) = \\frac{1}{x^2}$, defined for $x \\ne 0$, is injective. Step 1: suppose $\\frac{1}{a^2} = \\frac{1}{b^2}$ with $a, b \\ne 0$. Step 2: cross-multiplying gives $b^2 = a^2$. Step 3: taking square roots gives $b = a$. Step 4: therefore $a = b$, so $f$ is injective. Which step is the first step that is not valid?"
+            answer: "Step 3"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "For $f(x) = 1/x^2$ on $\\mathbb{R} \\setminus \\{0\\}$: Step 1 correctly states the direct-proof hypothesis. Step 2 is valid cross-multiplication: $b^2 = a^2$. Step 3 is the first invalid step: taking square roots of $b^2 = a^2$ gives $b = a$ or $b = -a$, and dropping the case $b = -a$ is the error; indeed $f(1) = f(-1) = 1$ with $1 \\ne -1$. Step 4 is valid reasoning but inherits the false Step 3. The first invalid step is Step 3."
+          - problem: "Write the full proof: $f : \\mathbb{R} \\setminus \\{1\\} \\to \\mathbb{R}$, $f(x) = \\frac{x+1}{x-1}$, is injective. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Statement: $f : \\mathbb{R} \\setminus \\{1\\} \\to \\mathbb{R}$, $f(x) = (x+1)/(x-1)$, is injective. Step 1 (direct proof, hypothesis): suppose $f(a) = f(b)$ with $a, b \\ne 1$, that is $(a+1)/(a-1) = (b+1)/(b-1)$. Step 2 (cross-multiplication): $(a+1)(b-1) = (b+1)(a-1)$. Step 3 (expansion): $ab - a + b - 1 = ab - b + a - 1$. Step 4 (cancellation): the common terms $ab$ and $-1$ cancel, leaving $-a + b = a - b$, so $2b = 2a$. Step 5 (conclusion): dividing by $2$ gives $a = b$, hence $f$ is injective."
         constraints: "one algebraic step beyond affine: cubes, reciprocals, or a ratio"
       - id: kp3
         name: "The domain matters"
@@ -650,13 +672,29 @@ topics:
         name: "Computing preimages"
         key_prerequisites: [functions-formal-definition]
         exemplars:
-          - problem: 'For $f : \mathbb{Z} \to \mathbb{Z}$, $f(n) = n^2$, compute $f^{-1}(\{1, 4\})$ and $f^{-1}(\{3\})$.'
-            answer_contract: {kind: none}
-            answer: '$\{-2, -1, 1, 2\}$ and $\varnothing$.'
-            solution_sketch: 'Solve $n^2 \in \{1, 4\}$: $n = \pm 1, \pm 2$. No integer squares to $3$, so that preimage is empty.'
           - problem: 'For $f : \mathbb{R} \to \mathbb{R}$, $f(x) = 2x + 1$, compute $f^{-1}(\{1, 3, 5\})$.'
             answer: '$\{0, 1, 2\}$'
             solution_sketch: 'Solve $2x + 1 = 1, 3, 5$ in turn: $x = 0, 1, 2$.'
+          - problem: "Let $f : \\mathbb{Z} \\to \\mathbb{Z}$ with $f(n) = n^2$. Give the preimage $f^{-1}(\\{16, 25\\})$ as a set."
+            answer: "{-5, -4, 4, 5}"
+            answer_contract: {"kind": "set"}
+            solution_sketch: "Step 1: by the definition of the preimage, solve $n^2 = 16$ and $n^2 = 25$ over the integers. Step 2: $n^2 = 16$ gives $n = 4$ or $n = -4$; $n^2 = 25$ gives $n = 5$ or $n = -5$. Step 3: the four integers are distinct, so the answer is {-5, -4, 4, 5}."
+          - problem: "Let $f : \\mathbb{R} \\to \\mathbb{R}$ with $f(x) = 3x - 2$. Give the preimage $f^{-1}(\\{4, 7, 10\\})$ as a set."
+            answer: "{2, 3, 4}"
+            answer_contract: {"kind": "set"}
+            solution_sketch: "Step 1: by the definition of the preimage, solve $3x - 2 = 4$, $3x - 2 = 7$ and $3x - 2 = 10$ in turn. Step 2: the solutions are $x = 2$, $x = 3$ and $x = 4$. Step 3: the linear function is injective, so the preimage is {2, 3, 4}."
+          - problem: "Let $f : \\mathbb{R} \\to \\mathbb{R}$ with $f(x) = 2x + 4$. The preimage of the interval $[2, 10]$ solves $f(x) \\in [2, 10]$. Give the preimage $f^{-1}([2, 10])$ as an inequality in x."
+            answer: "-1 <= x <= 3"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "Step 1: membership in the interval gives the double inequality $2 \\le 2x + 4 \\le 10$. Step 2: subtract 4 throughout to get $-2 \\le 2x \\le 6$. Step 3: divide by 2 to get the answer -1 <= x <= 3."
+          - problem: "Let $f : \\mathbb{Z} \\to \\mathbb{Z}$ with $f(n) = n^2 + 3$. Determine how many elements the preimage $f^{-1}(\\{2\\})$ has."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: the preimage of {2} contains the integers $n$ with $n^2 + 3 = 2$. Step 2: that equation is $n^2 = -1$, which has no integer solution, so the preimage is the empty set. Step 3: the empty set has 0 elements, so the answer is 0."
+          - problem: "Let $f : \\mathbb{Z} \\to \\mathbb{Z}$ with $f(n) = n^2 - n$. Call the two preimages $A = f^{-1}(\\{2, 12\\})$ and $B = f^{-1}(\\{6, 20\\})$. Compute $A$ and $B$, giving both as sets."
+            answer: "A = {-3, -1, 2, 4}; B = {-4, -2, 3, 5}"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "set"}, "name": "A"}, {"contract": {"kind": "set"}, "name": "B"}]}
+            solution_sketch: "Step 1: solve $n^2 - n = 2$ and $n^2 - n = 12$; factoring $n(n-1) = 2$ gives $n = 2$ or $n = -1$, and $n(n-1) = 12$ gives $n = 4$ or $n = -3$, so $A = \\{-3, -1, 2, 4\\}$. Step 2: solve $n^2 - n = 6$ and $n^2 - n = 20$; $n(n-1) = 6$ gives $n = 3$ or $n = -2$, and $n(n-1) = 20$ gives $n = 5$ or $n = -4$, so $B = \\{-4, -2, 3, 5\\}$. The full result is A = {-3, -1, 2, 4}; B = {-4, -2, 3, 5}."
         constraints: "solve $f(x) \\in T$; include an empty preimage"
       - id: kp3
         name: "Real functions on intervals"
@@ -779,14 +817,30 @@ topics:
         name: "Digraphs of relations"
         key_prerequisites: [cartesian-products]
         exemplars:
-          - problem: 'Describe the digraph of $R = \{(1,2), (2,3), (3,1)\}$ on $\{1, 2, 3\}$. Which vertices have loops?'
-            answer_contract: {kind: none}
-            answer: 'A directed $3$-cycle $1 \to 2 \to 3 \to 1$; no loops.'
-            solution_sketch: 'Each pair $(a, b)$ is an arrow $a \to b$; loops are the pairs $(a, a)$, of which there are none.'
-          - problem: 'For the divisibility relation on $\{1, 2, 3, 4\}$, which vertices of its digraph carry loops, and why?'
-            answer_contract: {kind: none}
-            answer: 'All of them — $a \mid a$ for every $a$.'
-            solution_sketch: 'A loop at $a$ means $(a, a) \in R$; divisibility is reflexive, so every vertex has one.'
+          - problem: "Let $R = \\{(1,2), (2,3), (3,1)\\}$ on the vertex set $\\{1, 2, 3\\}$; each pair $(a, b)$ gives an arrow $a \\to b$. How many vertices of the digraph of $R$ carry loops?"
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (arrow rule): the pairs of $R$ give the arrows $1 \\to 2$, $2 \\to 3$ and $3 \\to 1$, and no pair has equal coordinates. Step 2 (loop test): a loop at a vertex $a$ needs the pair $(a, a)$ in $R$, and $(1,2)$, $(2,3)$, $(3,1)$ contains no such pair. Step 3: no vertex carries a loop, so the number of loops is 0."
+          - problem: "For the divisibility relation on $\\{1, 2, 3, 4\\}$, the pair $(a, b)$ is in $R$ exactly when $a$ divides $b$. Give the set of vertices of the digraph that carry loops."
+            answer: "{1, 2, 3, 4}"
+            answer_contract: {"kind": "set"}
+            solution_sketch: "Step 1 (loop test): vertex $a$ carries a loop exactly when $(a, a)$ is in $R$. Step 2 (divisibility): $a$ divides $a$ for every $a$, so $(a, a)$ is in $R$ for $a = 1, 2, 3, 4$. Step 3: the set of looped vertices is {1, 2, 3, 4}."
+          - problem: "The digraph of a relation on $A = \\{1, 2, 3, 4\\}$ has the arrows $1 \\to 3$, $2 \\to 3$, $3 \\to 4$ and a loop at 3. Find the in-degree of vertex 3."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (arrow rule read as pairs): the arrow list comes from the pairs $(1,3)$, $(2,3)$, $(3,4)$ and the loop pair $(3,3)$. Step 2 (in-degree rule): the in-degree of a vertex counts the arrows that enter it, here $1 \\to 3$, $2 \\to 3$ and the loop $3 \\to 3$. Step 3: three arrows enter vertex 3, so the in-degree of vertex 3 is 3."
+          - problem: "On $A = \\{2, 3, 4\\}$ let $R$ be the set of pairs $(a, b)$ with $a \\le b$. Find the out-degree of vertex 3 in the digraph of $R$."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (pair rule): $R$ contains the pairs with $a \\le b$, namely $(2,2)$, $(2,3)$, $(2,4)$, $(3,3)$, $(3,4)$, $(4,4)$. Step 2 (out-degree rule): the out-degree of 3 counts the pairs with first coordinate 3, namely $(3,3)$ and $(3,4)$, which give the arrows $3 \\to 3$ and $3 \\to 4$. Step 3: the out-degree of vertex 3 is 2."
+          - problem: "On $A = \\{2, 3, 4, 6\\}$ let $R$ be the set of pairs $(a, b)$ such that $a$ divides $b$; each pair gives one arrow $a \\to b$. How many arrows does the digraph of $R$ have?"
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (pair rule): list the pairs with $a$ dividing $b$: $(2,2)$, $(2,4)$, $(2,6)$, $(3,3)$, $(3,6)$, $(4,4)$, $(6,6)$. Step 2 (arrow rule): each pair gives exactly one arrow, so the arrow count equals the pair count. Step 3: there are 7 pairs, so the digraph has 7 arrows."
+          - problem: "On $A = \\{1, 2, 3, 4\\}$ let $R$ be the set of pairs $(a, b)$ with $a \\le b$. Give the number of loops and the number of arrows of the digraph of $R$."
+            answer: "loops = 4; arrows = 10"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "loops"}, {"contract": {"kind": "exact"}, "name": "arrows"}]}
+            solution_sketch: "The full count for the digraph of $R$ is loops = 4; arrows = 10. Step 1 (loop test): the loop pairs are $(a, a)$ with $a$ in $A$, and $a \\le a$ holds for $a = 1, 2, 3, 4$, giving 4 loops. Step 2 (arrow rule): count the pairs with $a \\le b$ by first coordinate: 4 with first coordinate 1, 3 with first coordinate 2, 2 with first coordinate 3, and 1 with first coordinate 4, for 10 arrows in all. The digraph of $R$ has loops = 4; arrows = 10."
         constraints: "translate between pair sets and arrows/loops on a small vertex set"
       - id: kp3
         name: "Zero-one matrices and counting relations"
@@ -1042,14 +1096,30 @@ topics:
         name: "Classes on finite sets"
         key_prerequisites: [relations-equivalence]
         exemplars:
-          - problem: 'On $\{1, 2, 3, 4, 5\}$ with $a \sim b \iff a, b$ have the same parity, list the equivalence classes.'
-            answer_contract: {kind: none}
-            answer: '$\{1, 3, 5\}$ and $\{2, 4\}$.'
-            solution_sketch: 'The odds form one class and the evens another; each element lies in exactly one.'
-          - problem: 'On $\{1, 2, \dots, 9\}$ with $a \sim b \iff a \equiv b \pmod 3$, list the equivalence classes.'
-            answer_contract: {kind: none}
-            answer: '$\{3, 6, 9\}$, $\{1, 4, 7\}$, $\{2, 5, 8\}$.'
-            solution_sketch: 'Group by remainder mod $3$: remainders $0$, $1$, $2$ respectively.'
+          - problem: "On the set {1, 2, 3, 4, 5}, let a ~ b exactly when a and b have the same parity. Give the class of 1 and the class of 2 as sets."
+            answer: "class1 = {1, 3, 5}; class2 = {2, 4}"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "set"}, "name": "class1"}, {"contract": {"kind": "set"}, "name": "class2"}]}
+            solution_sketch: "Step 1: the relation same parity is reflexive, symmetric and transitive, so its classes partition the set. Step 2: by symmetry 1 relates to 3 and 5, so the class of 1 is class1 = {1, 3, 5}. Step 3: 2 relates to 4, so the class of 2 is class2 = {2, 4}. The full partition is class1 = {1, 3, 5}; class2 = {2, 4}."
+          - problem: "On {1, 2, ..., 9}, let a ~ b exactly when a and b leave the same remainder on division by 3. Give the class of 7, the class of 2 and the class of 3 as sets."
+            answer: "c7 = {1, 4, 7}; c2 = {2, 5, 8}; c3 = {3, 6, 9}"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "set"}, "name": "c7"}, {"contract": {"kind": "set"}, "name": "c2"}, {"contract": {"kind": "set"}, "name": "c3"}]}
+            solution_sketch: "Step 1: compute the remainder of each element mod 3: 1, 4, 7 give 1; 2, 5, 8 give 2; 3, 6, 9 give 0. Step 2: elements with the same remainder are related, so each remainder group is exactly one class. The full partition is c7 = {1, 4, 7}; c2 = {2, 5, 8}; c3 = {3, 6, 9}."
+          - problem: "On {1, 2, 3, 4, 5, 6}, define a ~ b when a = b or a + b = 7. How many equivalence classes does this relation have?"
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: reflexivity puts every element in its own class; symmetry joins a and b exactly when a + b = 7. Step 2: so 1 joins 6, 2 joins 5 and 3 joins 4, giving classes {1, 6}, {2, 5}, {3, 4}. Step 3: transitivity adds nothing new since no chain joins two of these pairs. The relation has 3 equivalence classes."
+          - problem: "On {1, 2, ..., 8}, let a ~ b exactly when a and b leave the same remainder on division by 4. Find the size of the equivalence class of 5."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: division by 4 leaves remainder 1 for 1 and for 5, and these are the only elements of the set with remainder 1. Step 2: so the class of 5 is {1, 5}; the other elements 2, 6, 3, 7, 4, 8 have remainders 2, 2, 3, 3, 0, 0 and do not join it. The class of 5 has size 2."
+          - problem: "The set {3, 6, 9, 12, 15, 18} carries the relation a ~ b exactly when a and b leave the same remainder on division by 5. How many equivalence classes are there?"
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: compute the remainders mod 5 of 3, 6, 9, 12, 15, 18: they are 3, 1, 4, 2, 0, 3 respectively. Step 2: grouping equal remainders gives the classes {3, 18}, {6}, {9}, {12}, {15}. The relation has 5 equivalence classes."
+          - problem: "On {1, 2, 3, 4, 5, 6, 7, 8, 9}, let a ~ b exactly when a = b or a + b = 10. Give the equivalence class of 5 as a set."
+            answer: "{5}"
+            answer_contract: {"kind": "set"}
+            solution_sketch: "Step 1: the condition a = b or a + b = 10 is reflexive by the first clause and symmetric, so it can define classes. Step 2: the element 5 pairs with itself since 5 + 5 = 10, and no other element x of the set satisfies 5 + x = 10. Step 3: so no element is joined to 5 except 5 itself. The equivalence class of 5 is the singleton set {5}."
         constraints: "list all classes of a concrete relation on a set of size at most 9"
       - id: kp3
         name: "Classes for rule-defined relations"
@@ -1235,10 +1305,26 @@ topics:
           - problem: 'Find the reflexive closure of $R = \{(1,2), (2,3)\}$ on $\{1, 2, 3\}$.'
             answer: '$\{(1,1), (2,2), (3,3), (1,2), (2,3)\}$'
             solution_sketch: 'Add every loop $(a, a)$: the reflexive closure is $R \cup \Delta$ where $\Delta = \{(a,a) : a \in A\}$.'
-          - problem: 'How many pairs must be added to $R = \{(1,1), (1,2)\}$ on $\{1, 2, 3\}$ to make it reflexive?'
-            answer_contract: {kind: none}
-            answer: '$2$ — the loops $(2,2)$ and $(3,3)$.'
-            solution_sketch: '$(1,1)$ is already present; the closure adds only the missing diagonal pairs.'
+          - problem: "Let $R = \\{(1,2), (2,3), (4,1)\\}$ be a relation on the set $\\{1, 2, 3, 4\\}$. How many pairs must be added to $R$ to obtain its reflexive closure?"
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "A relation is reflexive when every element of the set has a loop $(a,a)$. Check the diagonal of $R = \\{(1,2),(2,3),(4,1)\\}$ on $\\{1,2,3,4\\}$: no pair $(a,a)$ appears at all. The reflexive closure $R \\cup \\Delta$ adds one missing loop for each of the 4 elements, so 4 pairs are added. The number of pairs added is 4."
+          - problem: "Let $R = \\{(1,2), (3,1), (3,3)\\}$ be a relation on the set $\\{1, 2, 3\\}$. Give the elements of the set that have no loop $(a,a)$ in $R$, in increasing order, as a comma-separated list."
+            answer: "1, 2"
+            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
+            solution_sketch: "Scan the diagonal of $R = \\{(1,2),(3,1),(3,3)\\}$: the loop $(3,3)$ is present, while $(1,1)$ and $(2,2)$ are absent. The reflexive closure adds a loop for exactly each element that has none, so the elements needing a loop are 1 and 2. In increasing order the list is 1, 2."
+          - problem: "A relation $R$ on the set $\\{1, 2, 3\\}$ consists of the pairs $(1,3)$ and $(2,1)$. Find the number of pairs in the reflexive closure of $R$."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The reflexive closure is $R \\cup \\Delta$ where $\\Delta = \\{(a,a) : a \\in \\{1,2,3\\}\\}$, so $\\Delta$ has 3 loop pairs. The relation $R = \\{(1,3),(2,1)\\}$ contains no loop, so it shares no pair with $\\Delta$. The closure therefore has $2 + 3 = 5$ pairs. The reflexive closure of $R$ has 5 pairs."
+          - problem: "Let $R = \\{(2,2), (1,3)\\}$ be a relation on the set $\\{1, 2, 3\\}$. Give the number of pairs that the reflexive closure adds to $R$, and the total number of pairs in the reflexive closure. Give both numbers."
+            answer: "added = 2; total = 4"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "added"}, {"contract": {"kind": "exact"}, "name": "total"}]}
+            solution_sketch: "Check the diagonal of $R = \\{(2,2),(1,3)\\}$ on $\\{1,2,3\\}$: the loop $(2,2)$ is present, so the loops $(1,1)$ and $(3,3)$ are missing. The reflexive closure adds exactly those 2 missing diagonal pairs. The closure is $\\{(1,1),(2,2),(3,3),(1,3)\\}$, which has 4 pairs in total. So added = 2 and total = 4."
+          - problem: "The reflexive closure of a relation $R$ on the set $\\{1, 2, 3, 4\\}$ contains 8 pairs, while $R$ itself contains 6 pairs. How many loops $(a,a)$ does $R$ already contain?"
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The reflexive closure is $R \\cup \\Delta$ where $\\Delta = \\{(a,a) : a \\in \\{1,2,3,4\\}\\}$, so the closure contributes exactly 4 loop pairs. Every non-loop pair of the closure must come from $R$, so $R$ contains $8 - 4 = 4$ non-loop pairs. Since $R$ has 6 pairs in total, the number of loops in $R$ is $6 - 4 = 2$. The relation $R$ already contains 2 loops."
         constraints: "add the missing diagonal pairs on a set of size at most 4"
       - id: kp2
         name: "Symmetric closure"

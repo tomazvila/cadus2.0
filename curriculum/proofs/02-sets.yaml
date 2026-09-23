@@ -998,23 +998,67 @@ topics:
         name: "Set equality by double inclusion"
         key_prerequisites: [set-operations]
         exemplars:
-          - problem: 'Prove: $A \subseteq B$ if and only if $A \cap B = A$.'
-            answer: 'Both directions by inclusion / element chasing.'
-            solution_sketch: '($\Rightarrow$) If $A \subseteq B$: $A \cap B \subseteq A$ always, and $x \in A$ gives $x \in B$, so $x \in A \cap B$; thus $A = A \cap B$. ($\Leftarrow$) If $A \cap B = A$ and $x \in A$, then $x \in A \cap B \subseteq B$, so $A \subseteq B$. $\square$'
-          - problem: 'Prove: $A \subseteq B$ if and only if $A \cup B = B$.'
-            answer: 'Both directions by inclusion.'
-            solution_sketch: '($\Rightarrow$) If $A \subseteq B$: $B \subseteq A \cup B$ always, and $x \in A \cup B$ gives $x \in A \subseteq B$ or $x \in B$, so $A \cup B \subseteq B$; equality. ($\Leftarrow$) If $A \cup B = B$ and $x \in A$, then $x \in A \cup B = B$, so $A \subseteq B$. $\square$'
+          - problem: "The identity $A \\cap B = A$ is proved by double inclusion, and it holds exactly when $A \\subseteq B$. Let $A = \\{1, 2, 3\\}$ and $B = \\{2, 3, 4, 5, 6\\}$. Here $A$ is not a subset of $B$, so the identity fails. Give the element of $A \\setminus B$."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The identity $A \\cap B = A$ splits into two inclusions: $A \\cap B \\subseteq A$ always holds, and $A \\subseteq A \\cap B$ holds exactly when $A \\subseteq B$. With $A = \\{1, 2, 3\\}$ and $B = \\{2, 3, 4, 5, 6\\}$, the element $1$ lies in $A$ but not in $B$. By the definition of set difference, $A \\setminus B = \\{1\\}$. The answer is 1."
+          - problem: "The identity $A \\cup B = B$ holds exactly when $A \\subseteq B$. Let $A = \\{2, 5\\}$ and $B = \\{1, 2, 3, 4\\}$. Here $A$ is not a subset of $B$, so the identity fails. Give the number of elements of $A \\setminus B$."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "By double inclusion, $A \\cup B = B$ holds exactly when every element of $A$ already lies in $B$. With $A = \\{2, 5\\}$ and $B = \\{1, 2, 3, 4\\}$, the element $5$ lies in $A$ but not in $B$, so $A \\cup B = \\{1, 2, 3, 4, 5\\}$ differs from $B$. By the definition of set difference, $A \\setminus B = \\{5\\}$, which has one element. The answer is 1."
+          - problem: "A student claims: if $A$ and $B$ are nonempty sets and $A \\cup B = A$, then $A = B$. Give the smallest possible number of elements of a universe in which the claim fails."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Search for the smallest counterexample. In a universe with one element, the only nonempty set is the singleton, so $A \\cup B = A$ with both sets nonempty forces $A = B$, and the claim holds there by the definition of union. In a universe with two elements, take $A = \\{a, b\\}$ and $B = \\{a\\}$: then $A \\cup B = \\{a, b\\} = A$ while $A \\neq B$, so the claim fails. The smallest universe has 2 elements."
+          - problem: "Claim: for subsets $A$ and $B$ of a universe $U$, $A \\subseteq B$ holds if and only if $B^c \\subseteq A^c$. A proposed proof: Step 1: assume $A \\subseteq B$. Step 2: let $x$ be an element of $B^c$, so $x$ is not in $B$. Step 3: since $A \\subseteq B$, every element outside $A$ is outside $B$. Step 4: thus $x$ is not in $A$, so $x$ lies in $A^c$, and $B^c \\subseteq A^c$. Which step is the first step that is not valid?"
+            answer: "Step 3"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 states the hypothesis and is valid. Step 2 is the definition of the complement and is valid. Step 3 is the first invalid step: $A \\subseteq B$ says that elements of $A$ lie in $B$, which gives elements outside $B$ are outside $A$; the claimed statement that every element outside $A$ is outside $B$ is exactly $B^c \\subseteq A^c$, the goal, and it does not follow from $A \\subseteq B$. Step 4 fails only because it builds on Step 3. The answer is Step 3."
+          - problem: "Claim: if $A \\cap B = A$, then $A \\subseteq B$. A proposed proof: line 1: assume $A \\cap B = A$. line 2: let $x$ be an element of $A$. line 3: then $x$ lies in $A \\cap B$. line 4: (missing). line 5: therefore $x$ lies in $B$, and since $x$ was arbitrary, $A \\subseteq B$. Select the line that completes the proof."
+            answer: "x lies in B because x lies in A intersect B"
+            answer_contract: {"kind": "label", "options": [["x lies in B because A lies inside B"], ["x lies in B because x lies in A intersect B"], ["x does not lie in B because A and B share no elements"], ["x lies in A union B, so x lies in B"]]}
+            solution_sketch: "Line 3 gives $x \\in A \\cap B$; the missing line applies the definition of intersection, whose members lie in both sets, so $x$ lies in $B$. The option claiming $A$ lies inside $B$ assumes the goal $A \\subseteq B$ and is circular. The option about sharing no elements misreads the equality $A \\cap B = A$ as disjointness. The union option fails because a member of $A \\cup B$ need not lie in $B$. The correct line is: x lies in B because x lies in A intersect B."
+          - problem: "For subsets $A$ and $B$ of a universe $U$, $A \\subseteq B$ holds if and only if $B^c \\subseteq A^c$. Let $U = \\{1, 2, 3, 4, 5, 6, 7, 8\\}$, $A = \\{1, 2, 3\\}$ and $B = \\{4, 5, 6\\}$. Here $A$ is not a subset of $B$, so $B^c$ is not a subset of $A^c$. How many elements of $B^c$ do not lie in $A^c$?"
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Compute the complements in $U$ by the definition of complement: $B^c = \\{1, 2, 3, 7, 8\\}$ and $A^c = \\{4, 5, 6, 7, 8\\}$. The claim fails as predicted: the element $1$ lies in $A$ but not in $B$, and $B^c$ is not contained in $A^c$. The elements of $B^c$ outside $A^c$ are $1$, $2$ and $3$, counted by the definition of set difference. The answer is 3."
+          - problem: "Write the full proof: for all sets $A$ and $B$, $A \\cap B = A$ if and only if $A \\subseteq B$. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1 (forward, first inclusion): let $x$ lie in $A \\cap B$; by the definition of intersection, $x$ lies in $A$, so $A \\cap B \\subseteq A$; this uses no assumption and holds for all sets. Step 2 (forward, second inclusion): assume $A \\subseteq B$ and let $x$ lie in $A$; by the hypothesis $x$ also lies in $B$, so $x$ lies in $A \\cap B$; hence $A \\subseteq A \\cap B$. Step 3 (forward conclusion): the two inclusions of Steps 1 and 2 give $A \\cap B = A$ by double inclusion. Step 4 (reverse): assume $A \\cap B = A$ and let $x$ lie in $A$; then $x$ lies in $A \\cap B$, so by the definition of intersection $x$ lies in $B$; since $x$ was arbitrary, $A \\subseteq B$. Step 5 (conclusion): both directions are proved, so $A \\cap B = A$ if and only if $A \\subseteq B$."
         constraints: "prove an iff about sets; use double inclusion where needed"
       - id: kp3
         name: "Reasoning about power sets"
         key_prerequisites: [power-set-enumeration]
         exemplars:
-          - problem: 'Prove: for all sets $A, B$, $A \subseteq B$ if and only if $\mathcal{P}(A) \subseteq \mathcal{P}(B)$.'
-            answer: 'Unwind $S \in \mathcal{P}(A) \iff S \subseteq A$ in both directions.'
-            solution_sketch: '($\Rightarrow$) If $S \in \mathcal{P}(A)$ then $S \subseteq A \subseteq B$, so $S \in \mathcal{P}(B)$. ($\Leftarrow$) $A \in \mathcal{P}(A) \subseteq \mathcal{P}(B)$, so $A \subseteq B$. $\square$'
-          - problem: 'Prove: for every set $A$, $\varnothing \in \mathcal{P}(A)$ and $A \in \mathcal{P}(A)$.'
-            answer: '$\varnothing \subseteq A$ vacuously and $A \subseteq A$ trivially.'
-            solution_sketch: 'Membership in $\mathcal{P}(A)$ means being a subset of $A$. $\varnothing \subseteq A$ holds vacuously, and $A \subseteq A$ since every $x \in A$ is in $A$. $\square$'
+          - problem: "Let A = {1, 2} and B = {1, 2, 3}, so A ⊆ B. To prove P(A) ⊆ P(B), take any S ∈ P(A) and unwind it: S ⊆ A. How many sets S satisfy S ∈ P(A) and S ∉ P(B)?"
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Unwind the membership: S ∈ P(A) means S ⊆ A. Since A ⊆ B, transitivity gives S ⊆ B for every such S, and unwinding back gives S ∈ P(B). Enumerate to confirm: P(A) = {∅, {1}, {2}, {1,2}}, and each of these four sets is a subset of B. No set is an exception, so the answer is 0."
+          - problem: "Let A = {7}. Unwind the definition of membership in the power set: S ∈ P(A) holds exactly when S ⊆ A. How many sets S satisfy S ∈ P(A)?"
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Unwind the defining equivalence: S ∈ P(A) if and only if S ⊆ A. For A = {7} the candidate subsets are ∅ and {7}. The empty set is a subset of A vacuously, since it has no element outside A, so ∅ ∈ P(A). Also A ⊆ A holds trivially, so {7} ∈ P(A). No other set is a subset of a one-element set, so the answer is 2."
+          - problem: "Let A = {1, 2, 3, 4} and B = {3, 4, 5}. Unwind S ∈ P(A) ∩ P(B): it means S ⊆ A and S ⊆ B, which is the same as S ⊆ A ∩ B. How many sets S satisfy S ∈ P(A) ∩ P(B)?"
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Unwind both memberships: S ∈ P(A) gives S ⊆ A and S ∈ P(B) gives S ⊆ B, so S ⊆ A ∩ B. Here A ∩ B = {3, 4}. A two-element set has 2^2 = 4 subsets, namely ∅, {3}, {4} and {3,4}, and each is a subset of both A and B. The answer is 4."
+          - problem: "Let A = {1, 2} and B = {2, 3}. A set S ∈ P(A ∪ B) need not lie in P(A) ∪ P(B). Unwind both sides and count. How many sets S satisfy S ∈ P(A ∪ B) but S ∉ P(A) ∪ P(B)?"
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Unwind the left side: S ∈ P(A ∪ B) means S ⊆ {1,2,3}, giving 8 subsets. Unwind the right side: S ∈ P(A) ∪ P(B) means S ⊆ {1,2} or S ⊆ {2,3}; together these give ∅, {1}, {2}, {3}, {1,2}, {2,3}, that is 6 distinct sets. The subsets of {1,2,3} missing from this union are {1,3} and {1,2,3}. The answer is 2."
+          - problem: "Claim: for all sets A and B, P(A ∪ B) ⊆ P(A) ∪ P(B). A student argues: Step 1: let S ∈ P(A ∪ B); unwinding gives S ⊆ A ∪ B. Step 2: every element of S lies in A or in B. Step 3: therefore S ⊆ A or S ⊆ B. Step 4: hence S ∈ P(A) ∪ P(B), which proves the claim. Which step is the first step that is not valid?"
+            answer: "Step 3"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 is a correct unwinding of membership in P(A ∪ B). Step 2 only restates S ⊆ A ∪ B elementwise. Step 3 is the first invalid step: from each element lying in A or in B it does not follow that all elements lie in the same one of the two sets; for A = {1}, B = {2} and S = {1,2} the step fails. Step 4 would be valid if Step 3 held. The answer is Step 3."
+          - problem: "Claim: if P(A) ⊆ P(B), then A ⊆ B. A proof begins: assume P(A) ⊆ P(B). To apply the hypothesis, one line is missing before concluding A ∈ P(B) and unwinding it to A ⊆ B. Select the missing line that is true and lets the hypothesis apply."
+            answer: "A in P(A)"
+            answer_contract: {"kind": "label", "options": [["A in P(A)"], ["A subset of P(A)"], ["B in P(B)"], ["A union B in P(A)"]]}
+            solution_sketch: "The hypothesis P(A) ⊆ P(B) speaks about elements of P(A), so the missing line must put A into P(A). A in P(A) holds because A ⊆ A; then the hypothesis gives A ∈ P(B), and unwinding gives A ⊆ B. The option A subset of P(A) confuses membership with the subset relation and is generally false. The option B in P(B) is true but concerns B, so the hypothesis cannot apply to it. The option A union B in P(A) is generally false, since A ∪ B need not be a subset of A. The answer is A in P(A)."
+          - problem: "Write the full proof: for all sets A and B, A ⊆ B if and only if P(A) ⊆ P(B). Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1 (forward): assume A ⊆ B and let S be any element of P(A). Step 2 (unwind): S ∈ P(A) means S ⊆ A. Step 3 (transitivity): since S ⊆ A and A ⊆ B, every element of S is an element of B, so S ⊆ B. Step 4 (rewind): S ⊆ B means S ∈ P(B); because S was an arbitrary element of P(A), this shows P(A) ⊆ P(B). Step 5 (backward): conversely, assume P(A) ⊆ P(B). Step 6 (key instance): A ⊆ A holds trivially, so A ∈ P(A). Step 7 (hypothesis): applying P(A) ⊆ P(B) to this element gives A ∈ P(B). Step 8 (unwind): A ∈ P(B) means A ⊆ B. Conclusion: both implications hold, hence A ⊆ B if and only if P(A) ⊆ P(B)."
         constraints: "prove power-set statements by unwinding $S \\in \\mathcal{P}(A) \\iff S \\subseteq A$"
     diagnostic_exemplar:
       problem: 'Prove: for all sets $A$ and $B$, $\mathcal{P}(A) \cap \mathcal{P}(B) = \mathcal{P}(A \cap B)$.'
@@ -1078,14 +1122,30 @@ topics:
         name: "Partitions of infinite sets"
         key_prerequisites: [complement-universal-set]
         exemplars:
-          - problem: 'Show that the even integers and the odd integers form a partition of $\mathbb{Z}$.'
-            answer_contract: {kind: none}
-            answer: 'Both nonempty, disjoint, and their union is $\mathbb{Z}$.'
-            solution_sketch: 'Every integer is even or odd (covering), no integer is both (disjointness), and both classes are nonempty.'
-          - problem: 'Do the three sets $\{3k\}$, $\{3k + 1\}$, $\{3k + 2\}$ (over $k \in \mathbb{Z}$) partition $\mathbb{Z}$?'
-            answer_contract: {kind: none}
-            answer: 'Yes — every integer has exactly one remainder mod $3$.'
-            solution_sketch: 'Division by $3$ gives each integer a unique remainder $0$, $1$, or $2$, so the classes are nonempty, disjoint, and cover $\mathbb{Z}$.'
+          - problem: "The parity partition of $\\mathbb{Z}$ has two classes: $E$, the even integers, and $O$, the odd integers. For the list $-7, 4, 0, 9, 12$, find how many of the integers lie in $E$ and how many lie in $O$."
+            answer: "even = 3; odd = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "even"}, {"contract": {"kind": "exact"}, "name": "odd"}]}
+            solution_sketch: "The full list is $-7, 4, 0, 9, 12$. Step 1 (parity test): $-7$ and $9$ are odd, so they lie in $O$; $4$, $0$, and $12$ are even, so they lie in $E$. Step 2 (counting): class $E$ contains $3$ of the listed integers and class $O$ contains $2$. The counts are even = 3; odd = 2."
+          - problem: "The remainder partition of $\\mathbb{Z}$ has classes $C_0, C_1, C_2$, where $C_r = \\{3k + r : k \\in \\mathbb{Z}\\}$. Give the class of $20$ and the class of $-14$, each written as $0$, $1$, or $2$."
+            answer: "c1 = 2; c2 = 1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "c1"}, {"contract": {"kind": "exact"}, "name": "c2"}]}
+            solution_sketch: "Step 1 (division algorithm): $20 = 3 \\cdot 6 + 2$, so $20$ lies in $C_2$. Step 2 (division algorithm with negative dividend): $-14 = 3 \\cdot (-5) + 1$, so $-14$ lies in $C_1$. The classes are c1 = 2; c2 = 1."
+          - problem: "The partition of $\\mathbb{Z}$ by remainder on division by $7$ has classes $C_0, C_1, \\dots, C_6$, where $C_r = \\{7k + r : k \\in \\mathbb{Z}\\}$. Find the smallest nonnegative integer in the class that contains $-23$."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (division algorithm): write $-23 = 7 \\cdot (-4) + 5$, so $-23$ lies in class $C_5$. Step 2 (read off the representative): the elements of $C_5$ are $\\dots, -9, -2, 5, 12, \\dots$, and the smallest nonnegative one is $5$. The answer is 5."
+          - problem: "In the partition of $\\mathbb{Z}$ by remainder on division by $5$, how many of the integers $-7, 3, 12, 8, -2$ belong to the class $C_2 = \\{5k + 2 : k \\in \\mathbb{Z}\\}$?"
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (reduce each element mod 5): $-7 = 5(-2)+3$, $3 = 5(0)+3$, $12 = 5(2)+2$, $8 = 5(1)+3$, $-2 = 5(-1)+3$. Step 2 (count matches): only $12$ has remainder $2$, so exactly one listed integer lies in $C_2$. The count is 1."
+          - problem: "A family of subsets of $\\mathbb{Z}$ is $A = \\{3k : k \\in \\mathbb{Z}\\}$, $B = \\{3k + 1 : k \\in \\mathbb{Z}\\}$, $C = \\{3k + 2 : k \\in \\mathbb{Z}\\}$, $D = \\{3k + 3 : k \\in \\mathbb{Z}\\}$. Which word best describes this family as a partition of $\\mathbb{Z}$?"
+            answer: "overlap"
+            answer_contract: {"kind": "label", "options": [["overlap"], ["gap"], ["vacant"], ["proper"]]}
+            solution_sketch: "Step 1 (disjointness check): $D = \\{3k+3\\} = \\{3(k+1)\\} = A$, so $A$ and $D$ are the same set and share every element; this is the overlap error. Step 2 (covering check): $A$, $B$, $C$ already cover $\\mathbb{Z}$ by remainders $0, 1, 2$, so no integer is missed and no described class is vacant. Hence the family fails disjointness, and the correct option is overlap. The option gap would fit if a residue class were missing, vacant if some described class had no elements, and proper if the family were a valid partition."
+          - problem: "A family of subsets of $\\mathbb{Z}$ is $A = \\{4k : k \\in \\mathbb{Z}\\}$, $B = \\{4k + 1 : k \\in \\mathbb{Z}\\}$, $C = \\{4k + 2 : k \\in \\mathbb{Z}\\}$, $D = \\{$odd integers$\\}$. Determine whether the family is a partition of $\\mathbb{Z}$, and give how many of the integers $0$ through $11$ belong to more than one class."
+            answer: "verdict = broken; shared = 3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["partition"], ["broken"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "shared"}]}
+            solution_sketch: "Step 1 (disjointness check): $B = \\{4k+1\\}$ is contained in $D$, the odd integers, so elements of $B$ lie in two classes and the family is not a partition. Step 2 (count the overlaps among $0, \\dots, 11$): $B$ contributes $1, 5, 9$, and each of these is odd, so exactly $3$ integers belong to more than one class. The result is verdict = broken; shared = 3."
         constraints: "described sets partitioning $\\mathbb{Z}$ by parity or remainder"
     diagnostic_exemplar:
       problem: 'Which of these are partitions: (i) $\{\{1,2\},\{3,4\}\}$ of $\{1,2,3,4\}$; (ii) the even integers together with the odd integers, of $\mathbb{Z}$; (iii) $\{\{1,2,3\},\{3,4\}\}$ of $\{1,2,3,4\}$?'
@@ -1182,6 +1242,22 @@ topics:
           - problem: 'With $A = \{1, 2, 3\}$, list the pairs in $\{(a, b) \in A \times A : a + b = 4\}$.'
             answer: '$\{(1, 3), (2, 2), (3, 1)\}$'
             solution_sketch: 'From $A \times A$, keep the ordered pairs whose entries sum to $4$.'
+          - problem: "Let $A = \\{1, 2, 3, 4\\}$. Consider the subset $\\{(a, b) \\in A \\times A : b = 2a\\}$ of the product $A \\times A$. Give the pairs of this subset as a set."
+            answer: "{(1,2),(2,4)}"
+            answer_contract: {"kind": "set"}
+            solution_sketch: "Step 1 (form the product): $A \\times A$ has 16 ordered pairs. Step 2 (filter by the condition $b = 2a$): a pair passes when its second entry is twice its first; $(1,2)$ and $(2,4)$ pass, and the other 14 pairs fail. Step 3 (collect): the carved subset is {(1,2),(2,4)}."
+          - problem: "Let $A = \\{1, 2, 3, 4\\}$. Consider the subset $\\{(a, b) \\in A \\times A : a + b \\le 5\\}$ of the product $A \\times A$. How many ordered pairs does this subset contain?"
+            answer: "10"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (form the product): $A \\times A$ has 16 ordered pairs. Step 2 (filter by $a + b \\le 5$): $a = 1$ admits $b = 1,2,3,4$; $a = 2$ admits $b = 1,2,3$; $a = 3$ admits $b = 1,2$; $a = 4$ admits $b = 1$. Step 3 (count): $4 + 3 + 2 + 1 = 10$, so the subset contains 10 ordered pairs."
+          - problem: "Let $A = \\{2, 3, 5\\}$ and $B = \\{1, 4\\}$. Determine the pairs of $A \\times B$ whose first entry is larger than the second, and give the answer as a set."
+            answer: "{(2,1),(3,1),(5,1),(5,4)}"
+            answer_contract: {"kind": "set"}
+            solution_sketch: "Step 1 (form the product): $A \\times B$ has the 6 pairs $(2,1),(2,4),(3,1),(3,4),(5,1),(5,4)$. Step 2 (filter by $a > b$): $(2,1),(3,1),(5,1),(5,4)$ pass; $(2,4)$ and $(3,4)$ fail since their first entry is smaller. Step 3 (collect): the carved subset is {(2,1),(3,1),(5,1),(5,4)}."
+          - problem: "Let $A = \\{1, 2, 3, 6\\}$. Consider the subset $\\{(a, b) \\in A \\times A : a \\text{ divides } b\\}$ of the product $A \\times A$. Compute the number of ordered pairs in this subset."
+            answer: "9"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (form the product): $A \\times A$ has 16 ordered pairs with entries in $\\{1,2,3,6\\}$. Step 2 (filter by divisibility): $a = 1$ divides $1,2,3,6$ (4 pairs); $a = 2$ divides $2,6$ (2 pairs); $a = 3$ divides $3,6$ (2 pairs); $a = 6$ divides only $6$ (1 pair). Step 3 (count): $4 + 2 + 2 + 1 = 9$, so the subset has 9 ordered pairs."
         constraints: "carve a subset of a product by a condition on coordinates"
     diagnostic_exemplar:
       problem: 'With $A = \{1, 2, 3\}$, give $|A \times A|$ and list the pairs in $\{(a,b) \in A \times A : a + b \le 4\}$.'
@@ -1286,12 +1362,34 @@ topics:
         name: "Bounding an indexed family"
         key_prerequisites: [indexed-unions-intersections]
         exemplars:
-          - problem: 'Prove: for any family $\{A_i\}_{i \in I}$ and any $j \in I$, $\bigcap_{i \in I} A_i \subseteq A_j \subseteq \bigcup_{i \in I} A_i$.'
-            answer: 'Unwind the quantifier meaning of $\bigcap$ and $\bigcup$.'
-            solution_sketch: 'If $x \in \bigcap_i A_i$ then $x \in A_i$ for every $i$, in particular $x \in A_j$. If $x \in A_j$, then $x \in A_i$ for some $i$ (namely $j$), so $x \in \bigcup_i A_i$. $\square$'
-          - problem: 'Prove: if $A_i \subseteq B$ for every $i \in I$, then $\bigcup_{i \in I} A_i \subseteq B$.'
-            answer: 'An element of the union lies in some $A_j \subseteq B$.'
-            solution_sketch: 'Let $x \in \bigcup_i A_i$; then $x \in A_j$ for some $j \in I$. Since $A_j \subseteq B$, $x \in B$. As $x$ was arbitrary, $\bigcup_i A_i \subseteq B$. $\square$'
+          - problem: "Let $A_1 = \\{1, 2, 4\\}$, $A_2 = \\{1, 3, 4\\}$, and $A_3 = \\{1, 4, 6\\}$. Checking the bound $\\bigcap_{i=1}^{3} A_i \\subseteq A_2$ starts from the quantifier meaning of the intersection. How many elements does $\\bigcap_{i=1}^{3} A_i$ contain?"
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "By the quantifier meaning, an element lies in the intersection exactly when it lies in $A_1$, $A_2$ and $A_3$. The elements $1$ and $4$ lie in all three sets; $2$ lies only in $A_1$, $3$ only in $A_2$, and $6$ only in $A_3$. The intersection has exactly 2 elements."
+          - problem: "Let $A_1 = \\{1, 2\\}$, $A_2 = \\{2, 5\\}$, $A_3 = \\{5, 9\\}$, and $B = \\{0, 1, 2, 5, 9\\}$. To prove $\\bigcup_{i=1}^{3} A_i \\subseteq B$, take $x \\in \\bigcup_{i=1}^{3} A_i$; then $x \\in A_j$ for some $j$, and $A_j \\subseteq B$ finishes the argument. Give the index $j$ that witnesses $x = 9$ in the union."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Unwind the union: an element is in $\\bigcup_{i=1}^{3} A_i$ exactly when it lies in $A_j$ for some $j$ in the index set. The element $9$ appears only in $A_3$, so the witness index is 3. Since $A_3$ is contained in $B$, the element $9$ lies in $B$, confirming the bound; the answer is $j = 3$."
+          - problem: "A student claims: for every two-set family $A_1, A_2$ and every element $x$, if $x \\in A_2$ then $x \\in A_1 \\cap A_2$. Test the claim with $A_1 = \\{1, 2\\}$ and $A_2 = \\{2, 3, 5\\}$. Give the smallest $x \\ge 1$ that refutes the claim."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The claim confuses the true bound $A_2 \\subseteq A_1 \\cup A_2$ with the false reverse inclusion into the intersection. Check elements in order: $1$ lies in $A_1$ only, $2$ lies in both sets, $3$ lies in $A_2$ but not in $A_1$. The element $x = 3$ refutes the claim, and it is the smallest refuting element."
+          - problem: "Claim: for any family $\\{A_i\\}_{i \\in I}$ and any $j \\in I$, $A_j \\subseteq \\bigcap_{i \\in I} A_i$. Step 1: Let $x \\in A_j$. Step 2: Since $j \\in I$, the element $x$ lies in some member of the family. Step 3: Hence $x \\in A_i$ for every $i \\in I$. Step 4: Therefore $x \\in \\bigcap_{i \\in I} A_i$, so $A_j \\subseteq \\bigcap_{i \\in I} A_i$. Which step is the first step that is not valid?"
+            answer: "Step 3"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 is the correct setup for an inclusion proof. Step 2 is true: $j$ is a member of the index set, so $x$ lies in some member. Step 3 is the first invalid step: it swaps 'for some' into 'for every', the classic quantifier error. Step 4 would follow if Step 3 held. The answer is Step 3."
+          - problem: "Claim: if $B \\subseteq A_i$ for every $i \\in I$, then $B \\subseteq \\bigcap_{i \\in I} A_i$. A proof of this bound starts with one missing line; the rest is written. Select the line that begins the proof correctly."
+            answer: "Take any element of B."
+            answer_contract: {"kind": "label", "options": [["Take any element of B."], ["Take any element of the intersection."], ["Take an element of one member of the family."], ["Take an element outside of B."]]}
+            solution_sketch: "The correct start takes an arbitrary element of $B$ and shows it lies in every $A_i$. The option 'Take any element of the intersection.' reverses the direction of the inclusion. The option 'Take an element of one member of the family.' starts from a membership in only one set, which is not given. The option 'Take an element outside of B.' says nothing about the elements that must be controlled. The answer is Take any element of B."
+          - problem: "Let $A_1 = \\{1, 2, 3, 4\\}$, $A_2 = \\{2, 3, 4, 5\\}$, and $A_3 = \\{3, 4, 5, 6\\}$. The bound $\\bigcap_{i=1}^{3} A_i \\subseteq A_1$ always holds, but the reverse inclusion can fail. Give the smallest element of $A_1$ that is not in $\\bigcap_{i=1}^{3} A_i$."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "By the quantifier meaning, an element of the intersection must lie in $A_1$, $A_2$ and $A_3$ at once. The element $1$ lies in $A_1$ but not in $A_2$, so it is not in the intersection; the elements $3$ and $4$ lie in all three sets. The smallest element of $A_1$ missing from the intersection is 1."
+          - problem: "Write the full proof: if $B \\subseteq A_i$ for every $i \\in I$, then $B \\subseteq \\bigcap_{i \\in I} A_i$; and if $A_i \\subseteq B$ for every $i \\in I$, then $\\bigcup_{i \\in I} A_i \\subseteq B$. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1 (first inclusion): let $x$ be an arbitrary element of $B$. Step 2: by hypothesis $B \\subseteq A_i$ for every $i \\in I$, so $x \\in A_i$ for every $i \\in I$. Step 3: by the quantifier meaning of the intersection, $x \\in \\bigcap_{i \\in I} A_i$; since $x$ was arbitrary, $B \\subseteq \\bigcap_{i \\in I} A_i$. Step 4 (second inclusion): let $y$ be an arbitrary element of $\\bigcup_{i \\in I} A_i$. Step 5: by the quantifier meaning of the union, $y \\in A_j$ for some $j \\in I$. Step 6: by hypothesis $A_j \\subseteq B$, so $y \\in B$; since $y$ was arbitrary, $\\bigcup_{i \\in I} A_i \\subseteq B$. Both bounds hold, and the proof is complete."
         constraints: "short inclusion proofs straight from the quantifier meaning of $\\bigcup, \\bigcap$"
       - id: kp2
         name: "Membership proofs with families"
