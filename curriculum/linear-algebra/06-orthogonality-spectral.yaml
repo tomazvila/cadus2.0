@@ -187,17 +187,29 @@ topics:
         name: The matrix of a quadratic form
         key_prerequisites: [transpose-symmetric-matrices]
         exemplars:
-          - problem: 'Write $q(x, y) = 2x^2 + 6xy + 5y^2$ as $\mathbf{x}^TA\mathbf{x}$ with $A$ symmetric.'
-            answer: '$A = \begin{pmatrix}2&3\\3&5\end{pmatrix}$'
-            answer_contract: {kind: none}
-            solution_sketch: 'Diagonal entries are the coefficients of $x^2$ and $y^2$; the $xy$ coefficient is split in half across the two off-diagonal entries.'
           - problem: 'Evaluate the quadratic form of $A = \begin{pmatrix}1&2\\2&3\end{pmatrix}$ at $\mathbf{x} = (1, 1)$.'
             answer: "8"
             solution_sketch: '$q(1, 1) = 1 + 2(2) + 3 = 8$ (the form is $x^2 + 4xy + 3y^2$).'
-          - problem: 'What quadratic form corresponds to $A = \begin{pmatrix}3&0\\0&-2\end{pmatrix}$?'
-            answer: "q(x, y) = 3x^2 - 2y^2"
-            answer_contract: {kind: none}
-            solution_sketch: 'A diagonal matrix gives a form with no cross term.'
+          - problem: "Let q(x, y) = 4x^2 + 10xy + 7y^2. Find the symmetric matrix A with q(x, y) = x^T A x. Give A as [a,b;c,d]."
+            answer: "[4,5;5,7]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "Step 1: The full object is q(x, y) = 4x^2 + 10xy + 7y^2 and its symmetric matrix A. Step 2: The diagonal entries equal the x^2 and y^2 coefficients, so A_11 = 4 and A_22 = 7. Step 3: The xy coefficient is 2A_12, so A_12 = 10/2 = 5 and symmetry gives A_21 = 5. The symmetric matrix is [4,5;5,7]."
+          - problem: "For the symmetric matrix A = [5,2;2,-1], find the quadratic form q(x, y) = x^T A x. Give it as an expression in x and y."
+            answer: "5x^2+4xy-y^2"
+            answer_contract: {"kind": "function", "vars": ["x", "y"]}
+            solution_sketch: "Step 1: The full object is A = [5,2;2,-1] and its quadratic form q(x, y) = x^T A x. Step 2: For a symmetric 2 by 2 matrix, q(x, y) = A_11 x^2 + 2A_12 xy + A_22 y^2. Step 3: Substitute A_11 = 5, A_12 = 2, and A_22 = -1 to get q(x, y) = 5x^2 + 4xy - y^2. The quadratic form is 5x^2+4xy-y^2."
+          - problem: "Let q(x, y) = x^2 + 12xy + 3y^2. Find the (1,2)-entry of the symmetric matrix A with q(x, y) = x^T A x."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: The full object is q(x, y) = x^2 + 12xy + 3y^2 and its symmetric matrix A. Step 2: The xy coefficient is 2A_12, so A_12 = 12/2 = 6. That places 6 in the (1,2) position. The (1,2)-entry is 6."
+          - problem: "Let q(x, y) = 3x^2 - 4xy + 2y^2. Determine the symmetric matrix A such that q(x, y) = x^T A x. Give A as [a,b;c,d]."
+            answer: "[3,-2;-2,2]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "Step 1: The full object is q(x, y) = 3x^2 - 4xy + 2y^2 and its symmetric matrix A. Step 2: The diagonal entries are the coefficients of x^2 and y^2, so A_11 = 3 and A_22 = 2. Step 3: The xy coefficient is 2A_12, so A_12 = -4/2 = -2 and A_21 = -2. The symmetric matrix is [3,-2;-2,2]."
+          - problem: "Let A = [0,5;5,0]. Find the coefficient of xy in the quadratic form q(x, y) = x^T A x."
+            answer: "10"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: The full object is A = [0,5;5,0] and q(x, y) = x^T A x. Step 2: The xy coefficient is 2A_12. Step 3: With A_12 = 5, the coefficient is 2(5) = 10. The coefficient of xy is 10."
         constraints: "2 variables; integer coefficients with the xy coefficient even so A has integer entries"
       - id: kp2
         name: Classifying definiteness by eigenvalues
