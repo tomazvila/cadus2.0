@@ -68,12 +68,34 @@ topics:
         name: "Equality of functions"
         key_prerequisites: [quantifiers]
         exemplars:
-          - problem: 'Let $f, g : \mathbb{R} \to \mathbb{R}$ with $f(x) = (x + 1)^2$ and $g(x) = x^2 + 2x + 1$. Prove $f = g$.'
-            answer: 'Same domain and codomain, and $f(x) = g(x)$ for all $x$.'
-            solution_sketch: 'They share domain and codomain $\mathbb{R}$. For every $x$, $(x + 1)^2 = x^2 + 2x + 1 = g(x)$. Since they agree on every input, $f = g$. $\square$'
-          - problem: 'Do $f(x) = x$ on $\mathbb{R}$ and $g(x) = x$ on $\mathbb{Z}$ define the same function?'
-            answer: 'No; they have different domains.'
-            solution_sketch: 'Function equality requires the same domain. Here the domains $\mathbb{R}$ and $\mathbb{Z}$ differ, so $f \ne g$ even though the rule matches. $\square$'
+          - problem: "Let $f, g : \\mathbb{R} \\to \\mathbb{R}$ with $f(x) = (x + 2)^2$ and $g(x) = x^2 + 4x + 4$. To verify pointwise agreement, a proof expands $f(x)$ into the standard polynomial form. Give $f(x)$ in standard polynomial form."
+            answer: "x^2+4x+4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Expand the binomial: $f(x) = (x+2)^2 = x^2 + 4x + 4$ by the binomial pattern. Compare term by term with $g(x) = x^2 + 4x + 4$: the polynomials match, so $f(x) = g(x)$ for every $x$ in $\\mathbb{R}$. The standard polynomial form of $f(x)$ is x^2+4x+4."
+          - problem: "Let $f$ be the function from the reals to the reals with rule $f(x) = 2x$, and let $g$ be the function from the integers to the integers with rule $g(x) = 2x$. The two do not have the same domain, so they are not equal. Of the numbers $4$, $6/5$, and $1/2$, give the smallest one that belongs to the domain of $f$ but not to the domain of $g$."
+            answer: "1/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The domain of $f$ is the set of all reals; the domain of $g$ is the set of integers. So a number belongs to the domain of $f$ but not of $g$ exactly when it is a real number that is not an integer. Check the list: $4$ is an integer, so it lies in both domains, while $6/5$ and $1/2$ are reals that are not integers. Order the two candidates: $1/2 < 6/5$. The smallest number of the list that belongs to the domain of $f$ but not to the domain of $g$ is 1/2."
+          - problem: "Let $f, g : \\mathbb{R} \\to \\mathbb{R}$ with $f(x) = (x - 1)^3$ and $g(x) = x^3 - 3x^2 + 3x - 1$. To prove $f = g$, a student forms $h(x) = f(x) - g(x)$ and expands it. Give $h(x)$ in standard form."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Expand the cube by the binomial pattern: $f(x) = (x-1)^3 = x^3 - 3x^2 + 3x - 1$. Subtract: $h(x) = (x^3 - 3x^2 + 3x - 1) - (x^3 - 3x^2 + 3x - 1) = 0$. The pointwise difference vanishes for every $x$, which is exactly pointwise agreement. The expanded difference is h(x) = 0."
+          - problem: "A student claims that $f = g$ for $f, g : \\mathbb{R} \\to \\mathbb{R}$ with $f(x) = x^2 + x$ and $g(x) = 2x$, and checks only $x = 0$ and $x = 1$. Give the smallest positive integer $x$ for which $f(x) \\ne g(x)$."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Compute the outputs pointwise: $f(0) = 0 = g(0)$ and $f(1) = 2 = g(1)$, so the finite check passes. At $x = 2$: $f(2) = 6$ while $g(2) = 4$, and these differ. No smaller positive integer fails since $x = 1$ agrees. Agreement at two points is not a proof; the smallest positive integer with $f(x) \\ne g(x)$ is 2."
+          - problem: "A student argues that $f$, the function from the reals to the reals with rule $f(x) = abs(x)$, and $g$, the function from the reals to the nonnegative reals with rule $g(x) = abs(x)$, are equal. Step 1: both functions take every real number as input. Step 2: at every input $x$, both rules produce the same output. Step 3: matching outputs at every input is all that function equality requires. Step 4: hence $f = g$. Which step is the first step that is not valid?"
+            answer: "Step 3"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 is valid: both functions are declared on the reals, so the domains do match. Step 2 is valid: for every real $x$ the two rules give the same value $abs(x)$, so the outputs agree pointwise. Step 3 is not valid: equality of functions also requires the same codomain, and the reals are not the same set as the nonnegative reals, so matching outputs alone is not enough. Step 4 therefore does not follow from the earlier steps. The answer is Step 3."
+          - problem: "To prove that $f = g$ with $f(x) = 2x$ and $g(x) = x + x$, both declared from $\\mathbb{R}$ to $\\mathbb{R}$, a proof begins with the line: both functions have domain $\\mathbb{R}$ and codomain $\\mathbb{R}$. The next line of the proof is missing. Select the line that completes the proof."
+            answer: "For all x, 2x = x + x, so f(x) = g(x)"
+            answer_contract: {"kind": "label", "options": [["For all x, 2x = x + x, so f(x) = g(x)"], ["For some x in R, 2x = x + x"], ["2x = x + x for all x in the domain of f only"], ["Since 2x = x + x at x = 1 and x = 2, f = g"]]}
+            solution_sketch: "After the domain and codomain line, the missing line must quantify over every input: for all x, 2x = x + x, so f(x) = g(x). The option with 'some x' proves agreement at one input only, not pointwise agreement. The option restricted to the domain of f alone never compares with g and is not the needed statement. The option checking only x = 1 and x = 2 commits the finite-check error, as two agreeing inputs prove nothing. The answer is For all x, 2x = x + x, so f(x) = g(x)."
+          - problem: "Write the full proof: let $f, g : \\mathbb{R} \\to \\mathbb{R}$ be given by $f(x) = (2x)^2$ and $g(x) = 4x^2$. Prove that $f = g$. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Definition step: two functions are equal exactly when they have the same domain, the same codomain, and equal outputs at every input, that is, $f(x) = g(x)$ for every $x$ in the domain. Domain and codomain step: both $f$ and $g$ are declared from $\\mathbb{R}$ to $\\mathbb{R}$, so the domains coincide and the codomains coincide. Pointwise step: for every real $x$, the power of a product gives $(2x)^2 = 2^2 x^2 = 4x^2 = g(x)$, so the outputs agree at every input. Conclusion step: all three conditions of the definition of function equality hold, namely same domain, same codomain, and pointwise agreement on all of $\\mathbb{R}$; hence $f = g$. $\\square$"
         constraints: "compare domain, codomain, and outputs pointwise"
     diagnostic_exemplar:
       problem: 'Is $\{(x, y) \in \mathbb{R}^2 : y^2 = x\}$ a function $\mathbb{R} \to \mathbb{R}$? And do $f(x) = x^2$ on $\mathbb{R}$ and $g(x) = x^2$ on $[0, \infty)$ define the same function? Justify both answers.'
