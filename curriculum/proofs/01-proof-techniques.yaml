@@ -653,12 +653,34 @@ topics:
         name: "Exhaustion over a finite set"
         key_prerequisites: [proof-by-cases]
         exemplars:
-          - problem: 'Prove: no perfect square has last digit $2$, $3$, $7$, or $8$.'
-            answer: 'Check $n \equiv 0, \dots, 9 \pmod{10}$: squares end only in $0, 1, 4, 5, 6, 9$.'
-            solution_sketch: 'The last digit of $n^2$ depends only on the last digit of $n$. Squaring $0$ through $9$ gives last digits $0, 1, 4, 9, 6, 5, 6, 9, 4, 1$ — the set $\{0, 1, 4, 5, 6, 9\}$, which excludes $2, 3, 7, 8$. $\square$'
-          - problem: 'Prove by exhaustion: for every $n \in \{1, 2, 3, 4\}$, $2^n \ge n + 1$.'
-            answer: 'Check: $2 \ge 2$, $4 \ge 3$, $8 \ge 4$, $16 \ge 5$.'
-            solution_sketch: 'The domain is finite, so verifying each element is a complete proof: $2^1 = 2 \ge 2$, $2^2 = 4 \ge 3$, $2^3 = 8 \ge 4$, $2^4 = 16 \ge 5$. $\square$'
+          - problem: "A perfect square ends in one of several digits. Check n = 0, 1, ..., 9 modulo 10 and square each case. How many different last digits can a perfect square have?"
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: square each residue from 0 to 9 modulo 10, giving 0, 1, 4, 9, 6, 5, 6, 9, 4, 1. Step 2: collect the distinct last digits 0, 1, 4, 5, 6, and 9. The answer is 6."
+          - problem: "For every n in {1,2,3,4}, the inequality 2^n >= n + 1 holds. Check each case explicitly. Find the smallest value of 2^n - n - 1 over n = 1, 2, 3, 4."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: evaluate the finite list: n = 1 gives 0, n = 2 gives 1, n = 3 gives 4, and n = 4 gives 11. Step 2: compare the four values and select the smallest. The answer is 0."
+          - problem: "To prove a claim by exhaustion, check the residues n = 0, 1, ..., 9 modulo 10. Find the smallest n in this list for which n^2 has last digit 1."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: square each residue from 0 to 9 modulo 10, giving 0, 1, 4, 9, 6, 5, 6, 9, 4, 1. Step 2: the residues with last digit 1 are n = 1 and n = 9. The smallest is 1. The answer is 1."
+          - problem: "Again check n = 0, 1, ..., 9 modulo 10. Find the largest n in this list for which n^2 has last digit 9."
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: square each residue from 0 to 9 modulo 10, giving 0, 1, 4, 9, 6, 5, 6, 9, 4, 1. Step 2: the residues with last digit 9 are n = 3 and n = 7. The largest is 7. The answer is 7."
+          - problem: "A student claims that n^2 + n + 1 is prime for every n in {1, 2, 3, 4, 5} and wants to settle it by exhaustion. Check all five cases one by one. Find the smallest n in this set for which the claim fails."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: exhaust the finite set by evaluating n^2 + n + 1 for n = 1 to 5, which gives 3, 7, 13, 21, 31. Step 2: test each value for primality by the definition of prime: 3, 7, 13, and 31 are prime, but 21 = 3 times 7 is composite. Step 3: the earliest failing case is n = 4. The answer is 4."
+          - problem: "Check n = 0, 1, ..., 9 modulo 10. How many of these n have n^2 ending in 6?"
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: square each residue from 0 to 9 modulo 10, giving 0, 1, 4, 9, 6, 5, 6, 9, 4, 1. Step 2: count the entries equal to 6, which occur for n = 4 and n = 6. The answer is 2."
+          - problem: "Write the full proof: for every n in {0,1,...,9}, n^2 mod 10 is never 2, 3, 7, or 8. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1: state the finite domain. The last digit of n^2 depends only on n modulo 10, so it is enough to check n = 0, 1, ..., 9. Step 2: square each case. The squares are 0, 1, 4, 9, 16, 25, 36, 49, 64, 81, whose last digits are 0, 1, 4, 9, 6, 5, 6, 9, 4, 1. Step 3: collect the possible last digits. The set is 0, 1, 4, 5, 6, 9. Step 4: compare with the forbidden digits. None of 2, 3, 7, or 8 appears. Step 5: conclude. Since every residue class modulo 10 was checked explicitly, no perfect square ends in 2, 3, 7, or 8. This completes the proof by exhaustion."
         constraints: "finite (or finitely-reducible) domain; every case checked explicitly"
       - id: kp2
         name: "Without loss of generality"
@@ -1319,12 +1341,34 @@ topics:
         name: "Nonconstructive existence"
         key_prerequisites: [proof-by-contradiction]
         exemplars:
-          - problem: 'Prove: there exist irrational numbers $a, b$ such that $a^b$ is rational.'
-            answer: 'Consider $\sqrt{2}^{\sqrt{2}}$: if rational, take $a = b = \sqrt 2$; if irrational, take $a = \sqrt{2}^{\sqrt{2}}$, $b = \sqrt 2$, giving $a^b = 2$.'
-            solution_sketch: 'Case 1: $\sqrt 2^{\sqrt 2}$ rational — done with $a = b = \sqrt 2$ (irrational). Case 2: it is irrational — then $a = \sqrt 2^{\sqrt 2}$, $b = \sqrt 2$ gives $a^b = \sqrt 2^{2} = 2$, rational. Either way suitable $a, b$ exist, though we have not determined which. $\square$'
-          - problem: 'Prove: among any three integers there exist two whose sum is even.'
-            answer: 'Two of the three share a parity; their sum is even.'
-            solution_sketch: 'Each integer is even or odd; with three integers and two parity classes, some two share a class (cases: at least two even, or at least two odd). Same-parity integers sum to an even number. The proof names no specific pair. $\square$'
+          - problem: "In the case-split proof that some irrational numbers a and b have a rational value of a^b, let t = sqrt(2)^sqrt(2) and suppose t is irrational. The proof then takes a = t and b = sqrt(2), so a^b = (sqrt(2)^sqrt(2))^sqrt(2). Find the value of a^b."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Case check: the hypothesis of the second case says t = sqrt(2)^sqrt(2) is irrational, so a = t and b = sqrt(2) are both irrational. Power rule for exponents, (x^m)^n = x^(mn): the full object a^b = (sqrt(2)^sqrt(2))^sqrt(2) = sqrt(2)^(sqrt(2) * sqrt(2)). Exponent product: sqrt(2) * sqrt(2) = 2, so a^b = sqrt(2)^2. The value of a^b is 2."
+          - problem: "To prove that among any three integers there are two whose sum is even, the argument places each integer into one of two parity classes. Give the smallest number of integers that guarantees two of them share a class."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: the two parity classes, even and odd, hold the integers (sorting step). Pigeonhole principle: k objects in 2 classes force a shared class exactly when k is larger than the number of classes. Two integers can be one even and one odd, so two do not force a pair; a third must land in an occupied class. The smallest number of integers is 3."
+          - problem: "In the proof that among any 25 integers there are two whose difference is divisible by 8, the integers are placed into the 8 remainder classes modulo 8. The counting step writes 25 = 8*3 + 1 and concludes that some class holds at least 3 + 1 integers. Find the value of 3 + 1."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: the 25 integers are distributed over the 8 remainder classes modulo 8. Counting step: 25 = 8*3 + 1, so if every class held at most 3 integers the total would be at most 24, one short of 25, a contradiction. Hence some class holds at least 3 + 1 integers, and two integers of that class differ by a multiple of 8. The value of 3 + 1, and so the guaranteed class size, is 4."
+          - problem: "In a case split for irrational numbers a and b with a^b rational, set a = sqrt(2)^sqrt(2) and b = sqrt(18) = 3sqrt(2), both irrational. The check that a^b is rational needs the exponent product sqrt(2)*sqrt(18). Find the value of sqrt(2)*sqrt(18)."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Case check: a = sqrt(2)^sqrt(2) is the assumed irrational base and b = sqrt(18) = 3sqrt(2) is irrational, so the pair is admissible. Product rule for radicals: sqrt(2)*sqrt(18) = sqrt(36). Value: sqrt(36) = 6, and then a^b = sqrt(2)^6 = 8 by the power rule, which is rational. The value of sqrt(2)*sqrt(18) is 6."
+          - problem: "Claim: there exist irrational numbers a and b such that a^b is rational. Step 1: let t = sqrt(2)^sqrt(2). Step 2: if t is rational, take a = sqrt(2) and b = sqrt(2), and then a^b = t is rational. Step 3: if t is irrational, take a = t and b = 2, and both a and b are irrational. Step 4: in the second case a^b = t^2, which is rational, so the claim holds. Which step is the first step that is not valid?"
+            answer: "Step 3"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 only defines t = sqrt(2)^sqrt(2) and is valid. Step 2 is a valid case: sqrt(2) is irrational and a^b = t is rational by the case assumption. Step 3 is the first invalid step: it asserts that b = 2 is irrational, but 2 is rational, so the pair fails the requirement that both numbers be irrational; a correct choice is b = sqrt(2). Step 4 inherits the error of Step 3 and additionally asserts the rationality of t^2 without proof, so it is not the first invalid step. The first step that is not valid is Step 3."
+          - problem: "In the proof that for some n, any collection of n integers includes two whose difference is divisible by 9, the integers are placed into the nine remainder classes modulo 9. Give the smallest value of n that guarantees two integers share a class."
+            answer: "10"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: the nine remainder classes modulo 9 hold the integers (sorting step). Pigeonhole principle: n objects in 9 classes force a shared class exactly when n is larger than 9. Nine integers can carry the nine different remainders, so 9 does not force a pair, and 8 is even smaller; 11 is larger than the guarantee needs. The smallest value of n is 10."
+          - problem: "Write the full proof: for any 7 integers, there are two whose difference is divisible by 6. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Claim: among any 7 integers there are two whose difference is divisible by 6. Step 1 (explicit counting): place each of the 7 integers into one of the six remainder classes modulo 6, according to its remainder on division by 6. Step 2 (counting): if every class contained at most one integer, the total number of integers would be at most 6, contradicting the 7 integers given. Step 3 (pigeonhole conclusion): therefore some one class contains at least two of the integers; call them x and y. Step 4 (divisibility): since x and y lie in the same class, x = 6q + r and y = 6s + r for the same remainder r, so x - y = 6(q - s), which is divisible by 6. Step 5 (nonconstructive character): the argument proves that such a pair exists among any 7 integers without identifying which two integers form the pair, exactly the case-split and counting existence the KP requires. The proof is complete."
         constraints: "the argument may not identify the witness; make the case split or counting explicit"
     diagnostic_exemplar:
       problem: 'Prove: among any five integers, there are two whose difference is divisible by $4$.'

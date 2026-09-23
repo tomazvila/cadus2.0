@@ -302,12 +302,34 @@ topics:
         name: "Verifying associativity"
         key_prerequisites: [binary-operations]
         exemplars:
-          - problem: 'Prove that $a * b = \max(a, b)$ on $\mathbb{Z}$ is associative.'
-            answer: 'Both $(a*b)*c$ and $a*(b*c)$ equal $\max(a, b, c)$.'
-            solution_sketch: '$\max(\max(a,b), c)$ and $\max(a, \max(b,c))$ each pick the largest of the three values, so they agree. $\square$'
-          - problem: 'Prove that $a * b = a + b + ab$ on $\mathbb{R}$ is associative.'
-            answer: 'Both sides expand to $a + b + c + ab + ac + bc + abc$.'
-            solution_sketch: '$(a*b)*c = (a+b+ab) + c + (a+b+ab)c = a+b+c+ab+ac+bc+abc$; the same expansion works for $a*(b*c)$. $\square$'
+          - problem: "To verify that a*b = max(a,b) is associative, a proof evaluates (14*9)*3 and 14*(9*3). Give the common value that both evaluations produce."
+            answer: "14"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 evaluates the left grouping with the definition: (14*9)*3 = max(max(14,9),3) = max(14,3) = 14. Step 2 evaluates the right grouping the same way: 14*(9*3) = max(14,max(9,3)) = max(14,9) = 14. Both steps produce the same number, as associativity predicts. The answer is 14."
+          - problem: "Let a*b = a+b+ab on the real numbers. In the associativity check, the left side expands to a polynomial in a, b and c. Give that expansion of (a*b)*c."
+            answer: "a+b+c+ab+ac+bc+abc"
+            answer_contract: {"kind": "function", "vars": ["a", "b", "c"]}
+            solution_sketch: "Step 1 applies the definition to the outer operation: (a*b)*c = (a+b+ab)*c = (a+b+ab) + c + (a+b+ab)c. Step 2 distributes c over the pair result: (a+b+ab)c = ac + bc + abc. Step 3 collects all terms: a + b + c + ab + ac + bc + abc. The answer is a+b+c+ab+ac+bc+abc."
+          - problem: "In the associativity check for a*b = a+b+ab, the left-side step evaluates (2*3)*4. Give the value that this step produces."
+            answer: "59"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 computes the inner pair with the definition: 2*3 = 2+3+6 = 11. Step 2 applies the definition again to the outer pair: 11*4 = 11+4+44 = 59. This value is what the left side of the associativity equality gives. The answer is 59."
+          - problem: "In the associativity check for a*b = a+b+2ab, the right-side step evaluates 2*(4*5). Give the value that this step produces."
+            answer: "247"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 computes the inner pair with the definition: 4*5 = 4+5+40 = 49. Step 2 applies the definition to the outer pair: 2*49 = 2+49+196 = 247. This value is what the right side of the associativity equality gives. The answer is 247."
+          - problem: "Claim: a*b = a+b+ab is associative. Step 1: (a*b)*c = (a+b+ab)*c. Step 2: = a+b+ab+c+(a+b+ab)c. Step 3: = a+b+c+ab+ac+bc. Step 4: a*(b*c) = a+(b+c+bc)+a(b+c+bc) = a+b+c+ab+ac+bc+abc. Which step is the first step that is not valid?"
+            answer: "Step 3"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 applies the definition to the outer operation and is correct. Step 2 is just a rewrite and is correct. Step 3 is false: the term (a+b+ab)c expands to ac+bc+abc, so the line drops the abc term. Step 4 expands the right side correctly and keeps abc. The answer is Step 3."
+          - problem: "In the associativity check for a*b = a+b+ab, the expansion of the left side is a+b+ab+c+? . Select the missing last term."
+            answer: "(a+b+ab)c"
+            answer_contract: {"kind": "label", "options": [["(a+b+ab)c"], ["(a+b+ab)+c"], ["(a+b)c"], ["(a+b+ab)"]]}
+            solution_sketch: "The definition gives the left-side expansion: (a*b)*c = (a+b+ab) + c + (a+b+ab)c, so the missing term is (a+b+ab)c. Option (a+b+ab)+c adds the pair result again instead of multiplying it by c. Option (a+b)c drops the ab term inside the product. Option (a+b+ab) forgets the factor c entirely. The answer is (a+b+ab)c."
+          - problem: "Write the full proof: the operation a*b = max(a,b) on the real numbers is associative. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1: compute the left side. (a*b)*c = max(max(a,b),c). Step 2: interpret it. The inner maximum picks the larger of a and b, and the outer maximum compares that value with c, so max(max(a,b),c) is the largest of the three numbers a, b and c. Step 3: compute the right side. a*(b*c) = max(a,max(b,c)). Step 4: interpret it. The inner maximum picks the larger of b and c, and the outer maximum compares that value with a, so the result is again the largest of a, b and c. Step 5: conclude. Both sides equal max(a,b,c) for all real a, b and c, hence (a*b)*c = a*(b*c), and the operation is associative."
         constraints: "expand both sides symbolically or argue from the meaning of the operation"
       - id: kp2
         name: "Refuting associativity"
@@ -1222,12 +1244,34 @@ topics:
         name: "Pairing an infinite set with a proper subset"
         key_prerequisites: [finite-cardinality-bijections]
         exemplars:
-          - problem: 'Exhibit a bijection between $\mathbb{N} = \{0, 1, 2, \dots\}$ and its proper subset $\mathbb{Z}^{+} = \{1, 2, 3, \dots\}$.'
-            answer: '$n \mapsto n + 1$.'
-            solution_sketch: 'Injective: $a + 1 = b + 1 \Rightarrow a = b$. Surjective: $m \ge 1$ is the image of $m - 1 \ge 0$. A whole element is absorbed — impossible for finite sets. $\square$'
-          - problem: 'Exhibit a bijection between $(0, 1)$ and its proper subset $(0, \tfrac{1}{2})$.'
-            answer: '$x \mapsto x/2$.'
-            solution_sketch: 'Halving is injective, and every $y \in (0, \tfrac12)$ is $x/2$ for $x = 2y \in (0, 1)$. $\square$'
+          - problem: "For the set N = {0,1,2,...}, consider its proper subset S = {4,5,6,...}. Give a formula for a bijection from N to S."
+            answer: "n+4"
+            answer_contract: {"kind": "function", "vars": ["n"]}
+            solution_sketch: "Define f(n)=n+4 for every n in N. Injective: if a+4=b+4, then a=b. Surjective: for y in S, y-4 is in N and f(y-4)=y. Therefore f is a bijection, and the formula is n+4."
+          - problem: "For the open interval (0,1), consider its proper subset (0,1/5). Give a formula for a bijection from (0,1) to (0,1/5)."
+            answer: "x/5"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Define f(x)=x/5 for x in (0,1). Injective: if x1/5=x2/5, then x1=x2. Surjective: for y in (0,1/5), x=5y lies in (0,1) and f(x)=y. Therefore f is a bijection, and the formula is x/5."
+          - problem: "To show the map f(x)=x/4 from (0,1) onto (0,1/4) is surjective, take y in (0,1/4) and solve y=x/4 for x. Give x as a formula in y."
+            answer: "4y"
+            answer_contract: {"kind": "function", "vars": ["y"]}
+            solution_sketch: "Start with y in (0,1/4) and the equation y=x/4. Multiply both sides by 4 to get x=4y. Since y is positive, 4y lies in (0,1), so this x is a valid preimage. The formula is 4y."
+          - problem: "Claim: f(n)=2n+2 is a bijection from N = {0,1,2,...} to E = {2,4,6,...}. Step 1: define f(n)=2n+2. Step 2: if f(a)=f(b), then 2a+2=2b+2, so a=b; thus f is injective. Step 3: every m in E has preimage (m+2)/2 in N, so f is surjective. Step 4: therefore f is a bijection. Which step is the first step that is not valid?"
+            answer: "Step 3"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 defines f correctly. Step 2 correctly proves injectivity by cancellation. Step 3 is the first step that is not valid: a preimage n of m must satisfy 2n+2=m, so n=(m-2)/2, not (m+2)/2; with (m+2)/2 the image is m+4. Step 4 would follow only after Step 3 is repaired. The answer is Step 3."
+          - problem: "In the surjectivity proof for f(n)=n+2 from N = {0,1,2,...} to {2,3,4,...}, a preimage of m is missing. Select the line that gives a valid preimage of m."
+            answer: "(m-2) in N"
+            answer_contract: {"kind": "label", "options": [["(m-2) in N"], ["(m+2) in N"], ["(m/2) in N"], ["(2m) in N"]]}
+            solution_sketch: "For m in the codomain, a preimage n must satisfy n+2=m. Solving gives n=m-2, which is in N because m is at least 2. Option (m+2) in N adds instead of subtracting. Option (m/2) in N divides instead of subtracting. Option (2m) in N doubles instead of subtracting. The answer is (m-2) in N."
+          - problem: "The map f(n)=2n+1 sends N = {0,1,2,...} onto the positive odd integers. Find the preimage of 15."
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the formula f(n)=2n+1 and set f(n)=15. Then 2n+1=15, so 2n=14 and n=7. The preimage is 7."
+          - problem: "Write the full proof: the map f(n)=n+6 is a bijection from N = {0,1,2,...} to its proper subset S = {6,7,8,...}. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Claim: f(n)=n+6 is a bijection from N = {0,1,2,...} to S = {6,7,8,...}. Step 1, definition: for each n in N, set f(n)=n+6. Step 2, injectivity: suppose f(a)=f(b). Then a+6=b+6, so a=b. Step 3, surjectivity: let y be in S. Then y is at least 6, so y-6 is in N. Also f(y-6)=(y-6)+6=y. Step 4, conclusion: f is both injective and surjective, hence a bijection. Since S is a proper subset of N, this pairs N with a proper subset."
         constraints: "explicit bijection with a proper subset; verify both directions"
     diagnostic_exemplar:
       problem: 'Prove that the set $E = \{2k : k \in \mathbb{Z}\}$ of even integers is infinite, and exhibit a bijection from $E$ onto its proper subset $\{4k : k \in \mathbb{Z}\}$.'

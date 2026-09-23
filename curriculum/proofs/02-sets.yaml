@@ -1414,6 +1414,22 @@ topics:
           - problem: 'For $n \ge 1$ let $B_n = \left[0,\, 1 + \tfrac{1}{n}\right)$. Compute $\bigcap_{n \ge 1} B_n$.'
             answer: '$[0, 1]$'
             solution_sketch: '$x$ lies in every $B_n$ iff $0 \le x$ and $x < 1 + \tfrac{1}{n}$ for all $n$, i.e. $x \le 1$.'
+          - problem: "For $n \\ge 1$ let $A_n = \\left[\\tfrac{2}{n},\\ 3\\right]$. Compute $\\bigcup_{n \\ge 1} A_n$. Give the answer as an inequality in $x$."
+            answer: "0 < x <= 3"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "Step 1 (indexed union rule): write the family $A_n = [2/n, 3]$ in full; the left endpoint $2/n$ falls toward $0$ as $n$ grows while the right endpoint stays at $3$, so the family grows. Step 2 (membership test): a real $x$ lies in some $A_n$ exactly when $0 < x \\le 3$, because $2/n \\le x$ holds once $n \\ge 2/x$, while $0$ itself lies in no $A_n$ since $2/n > 0$ for every $n$. Step 3 (conclusion): the union is 0 < x <= 3."
+          - problem: "For $n \\ge 1$ let $B_n = \\left(-\\tfrac{1}{n},\\ 4\\right]$. Determine $\\bigcap_{n \\ge 1} B_n$. Give the answer as an inequality in $x$."
+            answer: "0 <= x <= 4"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "Step 1 (indexed intersection rule): membership in the intersection means $-1/n < x \\le 4$ holds for every $n \\ge 1$. Step 2 (right endpoint): the bound $4$ is the same in every $B_n$, so the condition $x \\le 4$ survives unchanged. Step 3 (left endpoint): $-1/n$ rises toward $0$, so any $x < 0$ fails once $-1/n > x$, while $x = 0$ satisfies $-1/n < 0$ for all $n$; the left condition becomes $0 \\le x$. Step 4 (conclusion): the intersection is 0 <= x <= 4."
+          - problem: "For $n \\ge 1$ let $C_n = \\left[0,\\ 3 - \\tfrac{3}{n}\\right]$. Evaluate $\\bigcup_{n \\ge 1} C_n$. Give the answer as an inequality in $x$."
+            answer: "0 <= x < 3"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "Step 1 (indexed union rule): write the family $C_n = [0, 3 - 3/n]$; the right endpoint $3 - 3/n$ rises toward $3$ as $n$ grows, so the family grows with a fixed left end $0$. Step 2 (membership test): $x$ lies in some $C_n$ exactly when $0 \\le x < 3$, because any $x < 3$ satisfies $3 - 3/n \\ge x$ for $n \\ge 3/(3 - x)$, while $3$ lies in no $C_n$ since $3 - 3/n < 3$ always. Step 3 (conclusion): the union is 0 <= x < 3."
+          - problem: "For $n \\ge 1$ let $D_n = \\left[1,\\ 6 + \\tfrac{1}{n}\\right]$. Find $\\bigcap_{n \\ge 1} D_n$. Give the answer as an inequality in $x$."
+            answer: "1 <= x <= 6"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "Step 1 (indexed intersection rule): membership in the intersection means $1 \\le x \\le 6 + 1/n$ for every $n \\ge 1$, since the family $D_n = [1, 6 + 1/n]$ shrinks as its right endpoint falls. Step 2 (left endpoint): the bound $1$ is fixed in every $D_n$, so the condition $1 \\le x$ survives unchanged. Step 3 (right endpoint): the values $6 + 1/n$ fall toward $6$ but never reach it, so any $x > 6$ fails for large enough $n$, while $x = 6$ satisfies $6 \\le 6 + 1/n$ for every $n$; the right condition becomes $x \\le 6$. Step 4 (conclusion): the intersection is 1 <= x <= 6."
         constraints: "families of intervals shrinking or growing with $n$; answer as an interval"
       - id: kp3
         name: "Membership via quantifiers"

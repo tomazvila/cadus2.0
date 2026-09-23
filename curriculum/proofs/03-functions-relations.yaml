@@ -469,12 +469,34 @@ topics:
         name: "Nonlinear examples"
         key_prerequisites: [functions-formal-definition]
         exemplars:
-          - problem: 'Prove $f : \mathbb{R} \to \mathbb{R}$, $f(x) = x^3 + 2$, is surjective.'
-            answer: 'Given $y$, take $x = \sqrt[3]{y - 2}$.'
-            solution_sketch: 'Let $y \in \mathbb{R}$ and set $x = \sqrt[3]{y - 2} \in \mathbb{R}$. Then $f(x) = (y - 2) + 2 = y$. $\square$'
-          - problem: 'Prove $f : \mathbb{R} \setminus \{0\} \to \mathbb{R} \setminus \{0\}$, $f(x) = 1/x$, is surjective.'
-            answer: 'Given $y \ne 0$, take $x = 1/y$.'
-            solution_sketch: 'Let $y \ne 0$; then $x = 1/y$ is defined, nonzero, and $f(x) = 1/(1/y) = y$. $\square$'
+          - problem: "To prove that $f : \\mathbb{R} \\to \\mathbb{R}$ with $f(x) = x^3 + 7$ is surjective, the proof takes, for $y = 34$, the real number $x$ with $f(x) = 34$. Compute this $x$."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full map is $f : \\mathbb{R} \\to \\mathbb{R}$, $f(x) = x^3 + 7$. Step 1 (invert the nonlinear step): solve $x^3 + 7 = 34$, so $x^3 = 27$. Step 2 (take the real cube root): $x = \\sqrt[3]{27} = 3$. Step 3 (check the domain): $3$ is a real number, so it lands in the domain. The answer is $3$."
+          - problem: "To prove that $f : \\mathbb{R}\\setminus\\{0\\} \\to \\mathbb{R}\\setminus\\{0\\}$ with $f(x) = 3/x$ is surjective, the proof takes, for $y = -2$, the number $x$ with $f(x) = -2$. Compute the $x$ that the proof uses."
+            answer: "-3/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full map is $f : \\mathbb{R}\\setminus\\{0\\} \\to \\mathbb{R}\\setminus\\{0\\}$, $f(x) = 3/x$. Step 1 (invert): solve $3/x = -2$, which gives $x = -3/2$. Step 2 (check the preimage lands in the domain): $-3/2 \\ne 0$, so $x$ lies in $\\mathbb{R}\\setminus\\{0\\}$ and the construction is valid. The answer is $-3/2$."
+          - problem: "A student claims that $f : \\mathbb{R} \\to \\mathbb{R}$, $f(x) = x^2 + 3$, is surjective, taking $x = \\sqrt{y - 3}$ for each $y$. The student checks $y = 3$, $y = 4$ and $y = 7$ and stops. Give the smallest positive integer $y$ for which the chosen preimage is not a real number."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is the claimed map $f : \\mathbb{R} \\to \\mathbb{R}$, $f(x) = x^2 + 3$. Step 1 (invert the nonlinear step): the proposed preimage is $x = \\sqrt{y - 3}$. Step 2 (check the preimage lands in the domain): $\\sqrt{y-3}$ is real only when $y \\ge 3$. Step 3 (smallest counterexample): for $y = 1$ the value $\\sqrt{-2}$ is not real, so no $x$ exists. The answer is $1$."
+          - problem: "To prove that $f : [0,\\infty) \\to [2,\\infty)$ with $f(x) = x^2 + 2$ is surjective, the proof takes, for $y = 27$, the nonnegative $x$ with $f(x) = 27$. Compute this $x$."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full map is $f : [0,\\infty) \\to [2,\\infty)$, $f(x) = x^2 + 2$. Step 1 (invert the nonlinear step): $x^2 + 2 = 27$ gives $x^2 = 25$, so $x = 5$ or $x = -5$. Step 2 (check the preimage lands in the domain): $-5$ is not in $[0,\\infty)$, so the branch $x = 5$ is the only valid preimage. The answer is $5$."
+          - problem: "Claim: $f : \\mathbb{R} \\to \\mathbb{R}$, $f(x) = x^2$, is surjective. Step 1: let $y$ be an arbitrary real number. Step 2: set $x = \\sqrt{y}$; then $x$ is a real number. Step 3: $f(x) = (\\sqrt{y})^2 = y$. Step 4: since $y$ was arbitrary, $f$ is surjective. Which step is the first step that is not valid?"
+            answer: "Step 2"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 is valid: letting $y$ be an arbitrary codomain element is the correct setup of a surjectivity proof. Step 2 is the first invalid step, because $\\sqrt{y}$ is not a real number when $y < 0$, so the preimage does not land in the domain for such $y$. Step 3 repeats the flaw only implicitly; its algebra is correct whenever the preimage is real. Step 4 would follow from Step 3 if Step 2 held. The answer is Step 2."
+          - problem: "Claim: $f : (0,\\infty) \\to (0,\\infty)$, $f(x) = 1/x^2$, is surjective. In the proof, after the line let $y > 0$, the line giving the preimage $x$ is missing. Select the line that is true and that keeps $x$ in the domain $(0,\\infty)$."
+            answer: "$x = 1/\\sqrt{y}$"
+            answer_contract: {"kind": "label", "options": [["$x = 1/\\sqrt{y}$"], ["$x = -1/\\sqrt{y}$"], ["$x = 1/y^2$"], ["$x = \\sqrt{y}$"]]}
+            solution_sketch: "The full object is $f : (0,\\infty) \\to (0,\\infty)$, $f(x) = 1/x^2$. The correct line is $x = 1/\\sqrt{y}$: it is positive, hence in $(0,\\infty)$, and $f(x) = 1/(1/y) = y$. The option $x = -1/\\sqrt{y}$ makes a sign error, giving a preimage outside $(0,\\infty)$. The option $x = 1/y^2$ inverts in the wrong direction, since $f(1/y^2) = y^4$. The option $x = \\sqrt{y}$ forgets the reciprocal, since $f(\\sqrt{y}) = 1/y$. The answer is $x = 1/\\sqrt{y}$."
+          - problem: "Write the full proof: $f : \\mathbb{R}\\setminus\\{0\\} \\to \\mathbb{R}\\setminus\\{0\\}$, $f(x) = 4/x^3$, is surjective. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1 (arbitrary target): let $y \\in \\mathbb{R}\\setminus\\{0\\}$ be arbitrary, so $y \\ne 0$. Step 2 (invert the nonlinear step): solve $4/x^3 = y$ for $x$; then $x^3 = 4/y$ and $x = \\sqrt[3]{4/y}$, which is a well-defined real number. Step 3 (preimage lands in the domain): since $y \\ne 0$ we have $4/y \\ne 0$, so $x = \\sqrt[3]{4/y} \\ne 0$ and $x$ lies in the domain $\\mathbb{R}\\setminus\\{0\\}$. Step 4 (verify): $f(x) = 4/x^3 = 4/(4/y) = y$. Step 5 (conclude): $y$ was an arbitrary element of the codomain and we produced an $x$ in the domain with $f(x) = y$, so every codomain element has a preimage and $f$ is surjective. $\\square$"
         constraints: "invert one nonlinear step; check the preimage lands in the domain"
       - id: kp3
         name: "The codomain matters"
@@ -1354,14 +1376,30 @@ topics:
         name: "Rule-defined relations with a failing property"
         key_prerequisites: [relations-properties]
         exemplars:
-          - problem: 'On $\mathbb{Z}$, define $a \sim b \iff |a - b| \le 1$. Which of the three properties hold?'
-            answer_contract: {kind: none}
-            answer: 'Reflexive and symmetric, but not transitive.'
-            solution_sketch: '$|a - a| = 0 \le 1$; $|a-b| = |b-a|$; but $0 \sim 1$ and $1 \sim 2$ while $|0 - 2| = 2 > 1$.'
-          - problem: 'On $\mathbb{Z}$, define $a \sim b \iff ab \ge 0$. Show $\sim$ is not transitive.'
-            answer_contract: {kind: none}
-            answer: '$1 \sim 0$ and $0 \sim -1$, but $1 \cdot (-1) < 0$.'
-            solution_sketch: '$1 \cdot 0 = 0 \ge 0$ and $0 \cdot (-1) = 0 \ge 0$, yet $1 \not\sim -1$; zero bridges the two signs.'
+          - problem: "On the integers define a ~ b exactly when |a - b| <= 1. Number the properties 1 = reflexive, 2 = symmetric, 3 = transitive. The relation fails exactly one of the three properties. Give the number p of the failing property and a counterexample triple (a, b, c) with 0 <= a < b < c <= 2, written as p = ...; a = ...; b = ...; c = ...."
+            answer: "p = 3; a = 0; b = 1; c = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "p"}, {"contract": {"kind": "exact"}, "name": "a"}, {"contract": {"kind": "exact"}, "name": "b"}, {"contract": {"kind": "exact"}, "name": "c"}]}
+            solution_sketch: "Reflexivity step: |x - x| = 0 <= 1 for every integer, so property 1 holds. Symmetry step: |a - b| = |b - a|, so property 2 holds. Transitivity step: 0 ~ 1 and 1 ~ 2 since each gap is 1, but |0 - 2| = 2 > 1, so 0 is not related to 2 and property 3 fails. Within 0 <= a < b < c <= 2 the only counterexample triple is (0, 1, 2). The answer is p = 3; a = 0; b = 1; c = 2."
+          - problem: "On the integers define a ~ b exactly when ab >= 0. Number the properties 1 = reflexive, 2 = symmetric, 3 = transitive. The relation fails exactly one of the three properties. Give the number p of the failing property and a counterexample triple (a, b, c) with -1 <= a <= b <= c <= 1, written as p = ...; a = ...; b = ...; c = ...."
+            answer: "p = 3; a = -1; b = 0; c = 1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "p"}, {"contract": {"kind": "exact"}, "name": "a"}, {"contract": {"kind": "exact"}, "name": "b"}, {"contract": {"kind": "exact"}, "name": "c"}]}
+            solution_sketch: "Reflexivity step: a * a = a^2 >= 0 for every integer, so property 1 holds. Symmetry step: ab = ba, so property 2 holds. Transitivity step: -1 ~ 0 and 0 ~ 1 because both products are 0, but (-1) * 1 = -1 < 0, so -1 is not related to 1 and property 3 fails. Among triples with -1 <= a <= b <= c <= 1 the only transitivity counterexample is (-1, 0, 1). The answer is p = 3; a = -1; b = 0; c = 1."
+          - problem: "On the integers define a ~ b exactly when a <= b. Number the properties 1 = reflexive, 2 = symmetric, 3 = transitive. The relation fails exactly one of the three properties. Give the number p of the failing property and a counterexample triple (a, b, a) with 0 <= a < b <= 1, written as p = ...; a = ...; b = ...; c = ...."
+            answer: "p = 2; a = 0; b = 1; c = 0"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "p"}, {"contract": {"kind": "exact"}, "name": "a"}, {"contract": {"kind": "exact"}, "name": "b"}, {"contract": {"kind": "exact"}, "name": "c"}]}
+            solution_sketch: "Reflexivity step: a <= a holds, so property 1 holds. Transitivity step: a <= b and b <= c give a <= c, so property 3 holds. Symmetry step: with a = 0 and b = 1 we have 0 ~ 1 since 0 <= 1, but 1 ~ 0 is false since 1 <= 0 fails, so property 2 fails. With 0 <= a < b <= 1 the only symmetry counterexample is (0, 1, 0). The answer is p = 2; a = 0; b = 1; c = 0."
+          - problem: "On the positive integers define a ~ b exactly when a divides b. Number the properties 1 = reflexive, 2 = symmetric, 3 = transitive. The relation fails exactly one of the three properties. Give the number p of the failing property and a counterexample triple (a, b, a) with 2 <= a < b <= 4, written as p = ...; a = ...; b = ...; c = ...."
+            answer: "p = 2; a = 2; b = 4; c = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "p"}, {"contract": {"kind": "exact"}, "name": "a"}, {"contract": {"kind": "exact"}, "name": "b"}, {"contract": {"kind": "exact"}, "name": "c"}]}
+            solution_sketch: "Reflexivity step: every positive integer divides itself, so property 1 holds. Transitivity step: if a divides b and b divides c, then a divides c, so property 3 holds. Symmetry step: 2 divides 4 but 4 does not divide 2, so 2 ~ 4 while 4 ~ 2 is false and property 2 fails. In the range 2 <= a < b <= 4 the pairs (2, 3) and (3, 4) are not related pairs, so (2, 4, 2) is the only counterexample. The answer is p = 2; a = 2; b = 4; c = 2."
+          - problem: "On the integers define a ~ b exactly when |a| <= |b|. Number the properties 1 = reflexive, 2 = symmetric, 3 = transitive. The relation fails exactly one of the three properties. Give the number p of the failing property and a counterexample triple (a, b, a) with 1 <= a < b <= 2, written as p = ...; a = ...; b = ...; c = ...."
+            answer: "p = 2; a = 1; b = 2; c = 1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "p"}, {"contract": {"kind": "exact"}, "name": "a"}, {"contract": {"kind": "exact"}, "name": "b"}, {"contract": {"kind": "exact"}, "name": "c"}]}
+            solution_sketch: "Reflexivity step: |a| <= |a| holds, so property 1 holds. Transitivity step: |a| <= |b| and |b| <= |c| give |a| <= |c|, so property 3 holds. Symmetry step: |1| <= |2| holds but |2| <= |1| is false, so 1 ~ 2 while 2 ~ 1 is false and property 2 fails. In the range 1 <= a < b <= 2 the only pair is (1, 2), giving the counterexample (1, 2, 1). The answer is p = 2; a = 1; b = 2; c = 1."
+          - problem: "On the integers define a ~ b exactly when ab > 0. Number the properties 1 = reflexive, 2 = symmetric, 3 = transitive. The relation fails exactly one of the three properties. Give the number p of the failing property and a counterexample triple (a, b, c) with a = b = c and 0 <= a <= 1, written as p = ...; a = ...; b = ...; c = ...."
+            answer: "p = 1; a = 0; b = 0; c = 0"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "p"}, {"contract": {"kind": "exact"}, "name": "a"}, {"contract": {"kind": "exact"}, "name": "b"}, {"contract": {"kind": "exact"}, "name": "c"}]}
+            solution_sketch: "Symmetry step: if ab > 0 then ba > 0, so property 2 holds. Transitivity step: ab > 0 and bc > 0 force b to be nonzero and a, c to share the sign of b, so ac > 0 and property 3 holds. Reflexivity step: with a = 0 the product 0 * 0 = 0 is not > 0, so 0 ~ 0 is false and property 1 fails. With a = b = c and 0 <= a <= 1 the value a = 1 is related to itself, so the only counterexample is (0, 0, 0). The answer is p = 1; a = 0; b = 0; c = 0."
         constraints: "identify the failing property and give a concrete counterexample triple"
       - id: kp3
         name: "Full verdicts"
@@ -1658,12 +1696,34 @@ topics:
         name: "The quotient set"
         key_prerequisites: [computing-equivalence-classes]
         exemplars:
-          - problem: 'Prove that the classes $[0], [1], [2], [3]$ of congruence mod $4$ are pairwise distinct, so the quotient set $\mathbb{Z}/\!\equiv_4$ has exactly $4$ elements.'
-            answer: 'If $[i] = [j]$ with $0 \le i, j \le 3$ then $4 \mid (i - j)$, forcing $i = j$.'
-            solution_sketch: 'If $[i] = [j]$ then $i \equiv j \pmod 4$, so $4 \mid (i - j)$. But $|i - j| \le 3$, so $i - j = 0$. Every integer is congruent to its remainder, so these four classes are all of them. $\square$'
-          - problem: 'On $\mathbb{R}$ with $x \sim y \iff x - y \in \mathbb{Z}$, prove every equivalence class contains exactly one element of $[0, 1)$.'
-            answer: 'Existence: $x - \lfloor x \rfloor \in [0,1)$. Uniqueness: two such representatives differ by an integer in $(-1, 1)$, hence $0$.'
-            solution_sketch: 'For $x$, the number $x - \lfloor x \rfloor$ lies in $[0,1)$ and is $\sim x$. If $r, s \in [0,1)$ are both in the class, $r - s \in \mathbb{Z}$ and $-1 < r - s < 1$, so $r = s$. $\square$'
+          - problem: "To prove that the classes $[0], [1], [2], [3], [4], [5]$ of congruence mod 6 are pairwise distinct, suppose $[i] = [j]$ with $0 \\le i, j \\le 5$. Then 6 divides $i - j$, and $|i - j| \\le B$ for a number $B$. Give $B$."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Bound step: for $0 \\le i, j \\le 5$ the difference satisfies $-5 \\le i - j \\le 5$, so $|i - j| \\le 5$. Divisibility step: $[i] = [j]$ gives $6 \\mid (i - j)$. Conclusion step: the only multiple of 6 with absolute value at most 5 is 0, hence $i = j$, and the six classes are pairwise distinct. The bound is $B = 5$."
+          - problem: "On $\\mathbb{R}$, let $x \\sim y$ mean that $x - y$ is an integer. To prove that each class has at most one representative in $[0, 1)$, take $r, s \\in [0, 1)$ with $r \\sim s$. Then $r - s$ is an integer with $-1 < r - s < 1$. How many integers can $r - s$ be?"
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Hypothesis step: $r \\sim s$ means $r - s$ is an integer. Bound step: since $0 \\le r < 1$ and $0 \\le s < 1$, we get $-1 < r - s < 1$. Counting step: the only integer strictly between $-1$ and 1 is 0, so $r - s = 0$ and $r = s$; this gives uniqueness of the representative in the class. The number of possible integers is 1."
+          - problem: "On $\\mathbb{Z}$, let $x \\sim y$ mean that 7 divides $x - y$. Every integer is congruent to exactly one of $0, 1, \\ldots, 6$, and the classes $[0], [1], \\ldots, [6]$ are pairwise distinct. How many elements does the quotient set have?"
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "List step: every integer $n$ can be written $n = 7q + r$ with $0 \\le r \\le 6$, so $[n] = [r]$ and the listed classes cover everything. Distinctness step: if $[i] = [j]$ with $0 \\le i, j \\le 6$, then 7 divides $i - j$ and $|i - j| \\le 6$, forcing $i = j$. Counting step: the quotient set is $\\{[0], [1], \\ldots, [6]\\}$. The quotient set has 7 elements."
+          - problem: "On the set $\\{0, 1, \\ldots, 20\\}$, let $x \\sim y$ mean that 7 divides $x - y$. This is an equivalence relation, and its classes form a partition of that set. Give the unique element of the class $[16]$ that lies in the set $\\{0, 1, \\ldots, 6\\}$."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Division step: write $16 = 7 \\cdot 2 + 2$, so $16 - 2 = 14$, a multiple of 7; hence 2 lies in the class of 16. Uniqueness step: if $r$ and $s$ from $\\{0, \\ldots, 6\\}$ lie in the same class, then 7 divides $r - s$ while $|r - s| \\le 6$, which forces $r = s$. Conclusion step: the class $[16]$ meets the set $\\{0, 1, \\ldots, 6\\}$ in exactly one number, namely 2. The element is 2."
+          - problem: "Claim: the classes $[0], [1], [2], [3]$ of congruence mod 4 are pairwise distinct. Step 1: suppose $[i] = [j]$ with $0 \\le i, j \\le 3$. Step 2: then $i \\equiv j \\pmod 4$, so 4 divides $i - j$. Step 3: since $i$ and $j$ lie between 0 and 3, the difference $i - j$ can be as large as 4. Step 4: so possibly $i - j = 4$ with $i \\ne j$, and the classes need not be distinct. Which step is the first step that is not valid?"
+            answer: "Step 3"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 only sets up the assumption $[i] = [j]$ among the four listed classes. Step 2 applies the definition of equality of congruence classes, giving $4 \\mid (i - j)$. Step 3 is false: with $0 \\le i, j \\le 3$ the difference satisfies $|i - j| \\le 3$, so the value 4 is unreachable; the bound is off by one. Step 4 builds on this wrong bound, so the first invalid step is Step 3."
+          - problem: "In the proof that the classes $[0], [1], [2], [3], [4]$ of congruence mod 5 are pairwise distinct, the line after 'Suppose $[i] = [j]$ with $0 \\le i, j \\le 4$' is missing. Select the line that is true and that leads to $i = j$."
+            answer: "5 divides i - j"
+            answer_contract: {"kind": "label", "options": [["5 divides i - j"], ["5 divides i + j"], ["i - j divides 5"], ["5 divides i and 5 divides j"]]}
+            solution_sketch: "Equality of classes means congruence: $[i] = [j]$ in mod 5 holds exactly when 5 divides $i - j$; then $|i - j| \\le 4$ forces $i - j = 0$. The option with $i + j$ confuses the difference of the representatives with their sum. The option 'i - j divides 5' reverses the direction of the divisibility. The option '5 divides i and 5 divides j' holds only for the zero class and is not what equality of two arbitrary classes says. The correct missing line is 5 divides i - j."
+          - problem: "Write the full proof: on the real numbers with $x \\sim y$ iff $x - y$ is an integer, every equivalence class contains exactly one element of $[0, 1)$. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Existence step: for a real number $x$, write $r = x - \\lfloor x \\rfloor$; then $0 \\le r < 1$ and $x - r = \\lfloor x \\rfloor$ is an integer, so $r \\sim x$ and the class of $x$ contains the element $r$ of $[0, 1)$. Uniqueness step: suppose $r, s \\in [0, 1)$ lie in the same class, so $r - s$ is an integer. Bound step: since $0 \\le r < 1$ and $0 \\le s < 1$, we have $-1 < r - s < 1$, and the only integer in this open interval is 0. Conclusion step: $r - s = 0$, hence $r = s$; therefore every class contains exactly one element of $[0, 1)$, and the quotient set is in one-to-one correspondence with $[0, 1)$."
         constraints: "prove distinctness/uniqueness statements about the set of classes"
       - id: kp2
         name: "a ~ b iff [a] = [b]"
