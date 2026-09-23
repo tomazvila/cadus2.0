@@ -200,44 +200,44 @@ topics:
         name: "Increasing, decreasing, constant"
         key_prerequisites: [coordinate-plane]
         exemplars:
-          - problem: 'A distance-time graph is horizontal from $t=2$ to $t=5$. Is the walker standing still, moving at a constant nonzero speed, or speeding up?'
-            answer: "standing still (distance is not changing)"
-            answer_contract: {"kind":"label","options":[["standing still","standing still (distance is not changing)"],["moving at constant nonzero speed","traveling at a constant speed"],["speeding up"]]}
-            solution_sketch: 'A flat segment has zero slope, so the distance is not changing over that interval.'
-          - problem: 'A temperature graph goes downward from left to right. Is the temperature increasing, decreasing, or constant?'
-            answer: "decreasing"
-            answer_contract: {"kind":"label","options":[["increasing"],["decreasing"],["constant"]]}
-            solution_sketch: 'The graph falls left to right, so the temperature is decreasing.'
-          - problem: 'A savings-account graph rises steadily from left to right. Is the amount saved increasing, decreasing, or constant?'
-            answer: "increasing"
-            answer_contract: {"kind":"label","options":[["increasing"],["decreasing"],["constant"]]}
-            solution_sketch: 'The graph rises left to right, so the amount saved is increasing.'
-          - problem: 'A car speed-time graph is flat at $60$ km/h from $t = 1$ to $t = 3$. Is the car stopped, traveling at a constant speed, or speeding up?'
-            answer: "traveling at a constant speed (60 km/h, not changing)"
-            answer_contract: {"kind":"label","options":[["stopped","standing still"],["traveling at a constant speed","traveling at a constant speed (60 km/h, not changing)"],["speeding up"]]}
-            solution_sketch: 'A flat segment at $60$ means a constant nonzero speed.'
+          - problem: "A distance-time graph is horizontal from t=2 to t=5. Give the behavior of the distance and the duration of this segment."
+            answer: "behavior = constant; duration = 3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["increasing"], ["decreasing"], ["constant"]]}, "name": "behavior"}, {"contract": {"kind": "exact"}, "name": "duration"}]}
+            solution_sketch: "Step 1: Read the shape of the segment. A horizontal segment has no rise or fall, so the distance is constant. Step 2: Read the endpoints. The segment runs from t=2 to t=5, so the duration is 5 - 2 = 3. The option increasing is wrong because a horizontal segment does not rise. The option decreasing is wrong because a horizontal segment does not fall. The answer is behavior = constant; duration = 3."
+          - problem: "A temperature-time graph falls steadily from t=1 to t=5. Give the behavior of the temperature and the duration of this segment."
+            answer: "behavior = decreasing; duration = 4"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["increasing"], ["decreasing"], ["constant"]]}, "name": "behavior"}, {"contract": {"kind": "exact"}, "name": "duration"}]}
+            solution_sketch: "Step 1: Read the direction. The graph falls from left to right, so the temperature is decreasing. Step 2: Read the endpoints. The segment runs from t=1 to t=5, so the duration is 5 - 1 = 4. The option increasing is wrong because the graph does not rise. The option constant is wrong because the graph is not horizontal. The answer is behavior = decreasing; duration = 4."
+          - problem: "A savings-account graph rises steadily from t=0 to t=6. Give the behavior of the amount saved and the duration of this segment."
+            answer: "behavior = increasing; duration = 6"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["increasing"], ["decreasing"], ["constant"]]}, "name": "behavior"}, {"contract": {"kind": "exact"}, "name": "duration"}]}
+            solution_sketch: "Step 1: Read the direction. The graph rises from left to right, so the amount saved is increasing. Step 2: Read the endpoints. The segment runs from t=0 to t=6, so the duration is 6 - 0 = 6. The option decreasing is wrong because the graph does not fall. The option constant is wrong because the graph is not horizontal. The answer is behavior = increasing; duration = 6."
+          - problem: "A car's speed-time graph is flat at 60 km/h from t=1 to t=3. Give the behavior of the speed and the duration of this segment."
+            answer: "behavior = constant; duration = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["increasing"], ["decreasing"], ["constant"]]}, "name": "behavior"}, {"contract": {"kind": "exact"}, "name": "duration"}]}
+            solution_sketch: "Step 1: Read the shape. A flat segment means the speed does not change, so the behavior is constant. Step 2: Read the endpoints. The segment runs from t=1 to t=3, so the duration is 3 - 1 = 2. The option increasing is wrong because a flat segment does not rise. The option decreasing is wrong because a flat segment does not fall. The answer is behavior = constant; duration = 2."
         constraints: "single-variable-vs-time stories; segments are clearly rising, flat, or falling"
       - id: kp2
         visuals: [{"kind":"coordinate","x_min":"-8","x_max":"8","y_min":"-8","y_max":"8","x_tick":"1","y_tick":"1","points":[{"x":"-2","y":"-2","label":"A"},{"x":"2","y":"4","label":"B"}],"segments":[{"from":{"x":"-2","y":"-2","label":null},"to":{"x":"2","y":"4","label":null}}],"caption":"Reference example: The reference line has equation y = (3/2)x + 1 The drawn segment joins the two reference points."},{"kind":"coordinate","x_min":"-8","x_max":"8","y_min":"-8","y_max":"8","x_tick":"1","y_tick":"1","points":[{"x":"-4","y":"2","label":"A"},{"x":"4","y":"2","label":"B"}],"segments":[{"from":{"x":"-4","y":"2","label":null},"to":{"x":"4","y":"2","label":null}}],"caption":"Reference example: The reference horizontal line has equation y = 2 The drawn segment joins the two reference points."},{"kind":"coordinate","x_min":"-8","x_max":"8","y_min":"-8","y_max":"8","x_tick":"1","y_tick":"1","points":[{"x":"-2","y":"5","label":"A"},{"x":"2","y":"-1","label":"B"}],"segments":[{"from":{"x":"-2","y":"5","label":null},"to":{"x":"2","y":"-1","label":null}}],"caption":"Reference example: The reference line has equation y = -(3/2)x + 2 The drawn segment joins the two reference points."}]
         name: "Read meaning from a point on a graph"
         key_prerequisites: [coordinate-plane]
         exemplars:
-          - problem: 'On a cost-versus-items graph, $(4,10)$ is shown. Does it mean 4 items cost €10, 10 items cost €4, or each item costs €4?'
-            answer: "4 items cost €10 in total"
-            answer_contract: {"kind":"label","options":[["4 items cost \u20ac10","4 items cost \u20ac10 in total"],["10 items cost \u20ac4"],["each item costs \u20ac4"]]}
-            solution_sketch: 'The point $(4, 10)$ pairs input $4$ with output $10$: $4$ items cost €$10$.'
-          - problem: 'On a height-versus-time graph of a thrown ball, does the highest point show maximum height, starting height, or landing time?'
-            answer: "the maximum height the ball reaches"
-            answer_contract: {"kind":"label","options":[["maximum height","the maximum height the ball reaches"],["starting height"],["landing time"]]}
-            solution_sketch: 'The highest point of a height graph marks the maximum height.'
-          - problem: 'On a distance-versus-time graph, $(3, 12)$ is shown. Does it mean after 3 hours the hiker has walked 12 km, after 12 hours the hiker has walked 3 km, or the hiker walks 4 km per hour?'
-            answer: "after 3 hours, the hiker has walked 12 km"
-            answer_contract: {"kind":"label","options":[["after 3 hours, the hiker has walked 12 km"],["after 12 hours, the hiker has walked 3 km"],["the hiker walks 4 km per hour"]]}
-            solution_sketch: 'The ordered pair gives time $3$ and distance $12$.'
-          - problem: 'A profit graph crosses the horizontal axis. Does that crossing mark break-even, maximum profit, or starting cost?'
-            answer: "the break-even point (zero profit)"
-            answer_contract: {"kind":"label","options":[["break-even point","the break-even point (zero profit)"],["maximum profit"],["starting cost"]]}
-            solution_sketch: 'On the horizontal axis the profit coordinate is zero.'
+          - problem: "A store prints a cost-versus-items graph with the number of items on the horizontal axis and the total cost in euros on the vertical axis. The point (7, 21) is labeled. What is the total cost in euros of 7 items?"
+            answer: "21"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Read the axes first: items lie along the horizontal axis and total cost along the vertical axis. The labeled point (7, 21) pairs 7 items with a total cost of 21 euros, so the cost is the second coordinate of the point. The answer is 21."
+          - problem: "A height-versus-time graph of a thrown ball has time in seconds on the horizontal axis and height in meters on the vertical axis. The highest point of the graph is (3, 45). At how many seconds does the ball reach its maximum height?"
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The graph plots height on the vertical axis against time on the horizontal axis. The highest point (3, 45) carries two pieces of information: the time 3 seconds and the maximum height 45 meters, and the question asks for the time coordinate. The answer is 3."
+          - problem: "A distance-versus-time graph of a hiker has time in hours on the horizontal axis and distance in kilometers on the vertical axis. The point (6, 24) is labeled. After how many hours has the hiker walked 24 kilometers?"
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Name the axes: time in hours is horizontal and distance in kilometers is vertical. The labeled point (6, 24) means that after 6 hours the hiker has walked 24 kilometers, so the requested time is the first coordinate of the point. The answer is 6."
+          - problem: "A volume-versus-time graph of a water tank has time in minutes on the horizontal axis and water volume in liters on the vertical axis. One part of the graph is a horizontal segment. What does that horizontal segment tell you about the water?"
+            answer: "no flow in or out"
+            answer_contract: {"kind": "label", "options": [["no flow in or out"], ["water flows in fast"], ["water drains fast"], ["tank is full"]]}
+            solution_sketch: "Identify the feature: a horizontal segment keeps the vertical value, the volume, unchanged while time passes. That constant volume means water neither enters nor leaves, which is the option no flow in or out. The option water flows in fast is wrong because inflow makes the graph rise. The option water drains fast is wrong because draining makes the graph fall. The option tank is full is wrong because a full tank is one possible state, not what the flat segment itself shows. The answer is no flow in or out."
         constraints: "interpret one labeled point or feature; axes always named in the problem"
       - id: kp3
         visuals: [{"kind":"coordinate","x_min":"-8","x_max":"8","y_min":"-8","y_max":"8","x_tick":"1","y_tick":"1","points":[{"x":"-2","y":"-2","label":"A"},{"x":"2","y":"4","label":"B"}],"segments":[{"from":{"x":"-2","y":"-2","label":null},"to":{"x":"2","y":"4","label":null}}],"caption":"Reference example: The reference line has equation y = (3/2)x + 1 The drawn segment joins the two reference points."},{"kind":"coordinate","x_min":"-8","x_max":"8","y_min":"-8","y_max":"8","x_tick":"1","y_tick":"1","points":[{"x":"-4","y":"2","label":"A"},{"x":"4","y":"2","label":"B"}],"segments":[{"from":{"x":"-4","y":"2","label":null},"to":{"x":"4","y":"2","label":null}}],"caption":"Reference example: The reference horizontal line has equation y = 2 The drawn segment joins the two reference points."},{"kind":"coordinate","x_min":"-8","x_max":"8","y_min":"-8","y_max":"8","x_tick":"1","y_tick":"1","points":[{"x":"-2","y":"5","label":"A"},{"x":"2","y":"-1","label":"B"}],"segments":[{"from":{"x":"-2","y":"5","label":null},"to":{"x":"2","y":"-1","label":null}}],"caption":"Reference example: The reference line has equation y = -(3/2)x + 2 The drawn segment joins the two reference points."}]
@@ -1757,20 +1757,20 @@ topics:
         name: "Parallel: equal slopes"
         key_prerequisites: [reading-slope-intercept-equations]
         exemplars:
-          - problem: 'Are the lines $y = 2x + 1$ and $y = 2x - 5$ parallel, perpendicular, or neither?'
-            answer: "parallel"
-            answer_contract: {"kind":"label","options":[["parallel"],["perpendicular"],["neither"]]}
-            solution_sketch: 'Equal slopes (both $2$).'
           - problem: 'What is the slope of any line parallel to $y = -3x + 4$?'
             answer: "-3"
             solution_sketch: 'Parallel lines share the same slope.'
-          - problem: 'Are the lines $y = 5x - 2$ and $y = 5x + 7$ parallel, perpendicular, or neither?'
-            answer: "parallel"
-            answer_contract: {"kind":"label","options":[["parallel"],["perpendicular"],["neither"]]}
-            solution_sketch: 'Equal slopes (both $5$).'
           - problem: 'What is the slope of any line parallel to $y = 4x - 1$?'
             answer: "4"
             solution_sketch: 'Parallel lines share the same slope.'
+          - problem: "The lines $y = 2x + 1$ and $y = kx - 5$ are parallel and not the same line. Find $k$."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Parallel lines have equal slopes and different intercepts. The slope of $y = 2x + 1$ is $2$; the slope of $y = kx - 5$ is $k$. The intercepts $1$ and $-5$ already differ, so equal slopes give $k = 2$. Therefore $k = 2$."
+          - problem: "A line crosses the $y$-axis at $5$ and is parallel to the line through $(0, 1)$ and $(4, 7)$. Find the slope of this parallel line as a fraction."
+            answer: "3/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Slope formula on the given points: $(7 - 1)/(4 - 0) = 6/4 = 3/2$. A parallel line has the same slope, and its intercept $5$ differs from $1$, so the two lines are distinct and parallel. The slope of the parallel line is $\\frac{3}{2}$."
         constraints: "parallel: equal slopes, different intercepts"
       - id: kp2
         visuals: [{"kind":"coordinate","x_min":"-8","x_max":"8","y_min":"-8","y_max":"8","x_tick":"1","y_tick":"1","points":[],"segments":[{"from":{"x":"-2","y":"-2","label":null},"to":{"x":"2","y":"4","label":null}},{"from":{"x":"-3","y":"3","label":null},"to":{"x":"3","y":"-1","label":null}}],"caption":"Reference example: Reference lines y = (3/2)x + 1 and y = -(2/3)x + 1 have slope product -1 and intersect at (0,1). Only the displayed segments are drawn."}]

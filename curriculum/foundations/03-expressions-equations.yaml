@@ -684,22 +684,22 @@ topics:
         name: "Decide equivalence by simplifying"
         key_prerequisites: [distributive-property, combining-like-terms]
         exemplars:
-          - problem: "Are $2(x + 3)$ and $2x + 6$ equivalent? Answer yes or no."
-            answer: "yes"
-            answer_contract: {"kind": "label", "options": [["yes"], ["no"]]}
-            solution_sketch: "Expanding $2(x + 3)$ gives exactly $2x + 6$."
-          - problem: "Are $3x + 4x$ and $7x^2$ equivalent? Answer yes or no."
-            answer: "no"
-            answer_contract: {"kind": "label", "options": [["yes"], ["no"]]}
-            solution_sketch: "$3x + 4x = 7x$, not $7x^2$."
-          - problem: "Is $5x-2(x-3)$ equivalent to $3x+6$? Answer yes or no."
-            answer: "yes"
-            answer_contract: {"kind": "label", "options": [["yes"], ["no"]]}
-            solution_sketch: "$5x-2x+6=3x+6$, so the expressions have identical coefficients."
-          - problem: "A square has perimeter $4x$. A learner proposes $x^2$ as an equivalent expression for every $x$. Is the claim valid? Answer yes or no."
-            answer: "no"
-            answer_contract: {"kind": "label", "options": [["yes"], ["no"]]}
-            solution_sketch: "At $x=2$, the perimeter is $4(2)=8$ while the proposed expression is $2^2=4$. One counterexample disproves equivalence."
+          - problem: "Decide whether $4(x + 3)$ and $4x + 3$ are equivalent by simplifying the first expression. Give the verdict and the coefficient of $x$ in the simplified form."
+            answer: "verdict = different; c = 4"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["equivalent"], ["different"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "c"}]}
+            solution_sketch: "Step 1 (distributive property): expand the full expression $4(x + 3)$ to get $4x + 12$. Step 2 (combining like terms): nothing to combine, the simplified form is $4x + 12$. Step 3 (coefficient comparison): the coefficient of $x$ is $4$ in both, but the constant terms $12$ and $3$ differ, so the expressions are not equivalent. Answer: verdict = different; c = 4."
+          - problem: "Decide whether $2(3x - 5) - 4x$ and $2x - 10$ are equivalent by simplifying the first expression. Give the verdict and the constant term of the simplified form."
+            answer: "verdict = equivalent; b = -10"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["equivalent"], ["different"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "b"}]}
+            solution_sketch: "Step 1 (distributive property): expand the full expression $2(3x - 5) - 4x$ to get $6x - 10 - 4x$. Step 2 (combining like terms): $6x - 4x = 2x$, so the simplified form is $2x - 10$ with constant term $-10$. Step 3 (comparison): the simplified form matches $2x - 10$ exactly, so the expressions are equivalent. Answer: verdict = equivalent; b = -10."
+          - problem: "Simplify $5x - 2(x - 4)$ by distributing and combining like terms. Which expression is it equivalent to?"
+            answer: "3x + 8"
+            answer_contract: {"kind": "label", "options": [["3x + 8"], ["3x - 8"], ["7x + 8"], ["7x - 8"]]}
+            solution_sketch: "Step 1 (distributive property): $-2(x - 4) = -2x + 8$, so the full expression is $5x - 2x + 8$. Step 2 (combining like terms): $5x - 2x = 3x$, giving $3x + 8$. The option $3x - 8$ comes from the sign error of writing $-2$ times $-4$ as $-8$. The option $7x + 8$ comes from adding $2x$ instead of subtracting it. The option $7x - 8$ makes both errors at once. The equivalent expression is 3x + 8."
+          - problem: "For which number $k$ is $k(x + 5) - 2x$ equivalent to $5x + 35$ for every value of $x$? Find $k$."
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (distributive property): expand the full expression $k(x + 5) - 2x$ to get $kx + 5k - 2x$. Step 2 (combining like terms): $(k - 2)x + 5k$. Step 3 (coefficient matching): equivalence for every $x$ requires $k - 2 = 5$, so $k = 7$; the check $5k = 35$ confirms it. The value of k is 7."
         constraints: "one expression simplifies (or fails to) into the other; single variable"
       - id: kp2
         name: "Simplify to a standard equivalent form"
@@ -752,22 +752,22 @@ topics:
         name: "Verify a value by substitution"
         key_prerequisites: [substituting-values]
         exemplars:
-          - problem: 'Is $x = 4$ a solution of $3x - 5 = 7$? Answer yes or no.'
-            answer: "yes"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: '$3(4) - 5 = 7$; both sides equal $7$.'
-          - problem: 'Is $x = 3$ a solution of $x + 8 = 12$? Answer yes or no.'
-            answer: "no"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: '$3 + 8 = 11 \ne 12$.'
-          - problem: 'Is $m = -2$ a solution of $2m + 9 = 5$? Answer yes or no.'
-            answer: "yes"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: '$2(-2) + 9 = 5$.'
-          - problem: 'Is $t = -3$ a solution of $5t + 2 = -13$? Answer yes or no.'
-            answer: "yes"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: '$5(-3) + 2 = -13$.'
+          - problem: "For the equation 3x + 4 = -5 and candidate x = -3, check by substitution. State whether the candidate is a solution, and give the value of the left side minus the right side."
+            answer: "verdict = holds; D = 0"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["holds"], ["fails"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "D"}]}
+            solution_sketch: "Step 1 (substitution): for 3x + 4 = -5 with x = -3, compute 3(-3) + 4 = -9 + 4 = -5. Step 2 (comparison): the left side minus the right side is -5 - (-5) = 0, so the equation holds. The option fails is wrong because the difference is 0, meaning the two sides are equal. The answer is verdict = holds; D = 0."
+          - problem: "For the equation 4x - 1 = 11 and candidate x = 2, check by substitution. State whether the candidate is a solution, and give the value of the left side minus the right side."
+            answer: "verdict = fails; D = -4"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["fails"], ["holds"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "D"}]}
+            solution_sketch: "Step 1 (substitution): for 4x - 1 = 11 with x = 2, compute 4(2) - 1 = 8 - 1 = 7. Step 2 (comparison): the left side minus the right side is 7 - 11 = -4, so the equation fails. The option holds is wrong because the difference -4 is not 0. The answer is verdict = fails; D = -4."
+          - problem: "For the equation -3x + 9 = 3 and candidate x = 4, check by substitution. State whether the candidate is a solution, and give the value of the left side minus the right side."
+            answer: "verdict = invalid; D = -6"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["invalid"], ["valid"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "D"}]}
+            solution_sketch: "Step 1 (substitution): for -3x + 9 = 3 with x = 4, compute -3(4) + 9 = -12 + 9 = -3. Step 2 (comparison): the left side minus the right side is -3 - 3 = -6, so the equation fails and the candidate is invalid. The option valid is wrong because the difference -6 is not 0. The answer is verdict = invalid; D = -6."
+          - problem: "For the equation 6x + 2 = -15 and candidate x = -2, check by substitution. State whether the candidate is a solution, and give the value of the left side minus the right side."
+            answer: "verdict = contradicts; D = 5"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["contradicts"], ["satisfies"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "D"}]}
+            solution_sketch: "Step 1 (substitution): for 6x + 2 = -15 with x = -2, compute 6(-2) + 2 = -12 + 2 = -10. Step 2 (comparison): the left side minus the right side is -10 - (-15) = 5, so the equation fails and the candidate contradicts the equation. The option satisfies is wrong because the difference 5 is not 0. The answer is verdict = contradicts; D = 5."
         constraints: "one- or two-step equations; integer candidates in -9..9"
       - id: kp2
         name: "Pick the solution from candidates"
@@ -1308,22 +1308,22 @@ topics:
         name: "Classify: one solution, none, or infinitely many"
         key_prerequisites: [multi-step-equations, variables-both-sides]
         exemplars:
-          - problem: "Classify $3(x-1)=3x-3$: one solution, no solution, or all real numbers."
-            answer: "all real numbers"
-            answer_contract: {"kind": "label", "options": [["one solution"], ["no solution"], ["all real numbers"]]}
-            solution_sketch: "Distribution makes the left side $3x-3$, identical to the right for every real input."
-          - problem: "Classify $2x+3=x+3$: one solution, no solution, or all real numbers."
-            answer: "one solution"
-            answer_contract: {"kind": "label", "options": [["one solution"], ["no solution"], ["all real numbers"]]}
-            solution_sketch: "Subtracting $x$ and $3$ leaves $x=0$. Exactly one real value works."
-          - problem: "Classify $2(x+1)=2x+5$: one solution, no solution, or all real numbers."
-            answer: "no solution"
-            answer_contract: {"kind": "label", "options": [["one solution"], ["no solution"], ["all real numbers"]]}
-            solution_sketch: "Expanding and removing $2x$ would require $2=5$, a false comparison."
-          - problem: "A learner calls $x/2+1=3$ impossible because the answer is positive. Classify it: one solution, no solution, or all real numbers."
-            answer: "one solution"
-            answer_contract: {"kind": "label", "options": [["one solution"], ["no solution"], ["all real numbers"]]}
-            solution_sketch: "Subtract $1$ and multiply by $2$: $x=4$. The nonzero coefficient gives a unique value."
+          - problem: "Rewrite $9(x + 2) = 9x + 18$ by collecting every x-term on the left and every constant on the right, so it takes the form $ax = b$. Give the verdict and the value of $a$."
+            answer: "verdict = infinitely; a = 0"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["one"], ["none"], ["infinitely"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "a"}]}
+            solution_sketch: "Start from the full object $9(x + 2) = 9x + 18$. Apply the distributive property: the left side becomes $9x + 18$. Collect x-terms on the left and constants on the right by the addition property of equality: $0x = 0$, so $a = 0$. The x-terms cancel and the constants already agree, so every real value of x works. The wrong verdict 'one' mistakes an identity for a single root, and 'none' misreads the matching constants as a contradiction. The answer is verdict = infinitely; a = 0."
+          - problem: "A student claims that $7x + 6 = 4x + 6$ has no answer because the constant $6$ appears on both sides. Give the verdict and the value of $x$."
+            answer: "verdict = one; x = 0"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["one"], ["none"], ["infinitely"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "x"}]}
+            solution_sketch: "Start from the full object $7x + 6 = 4x + 6$. Subtract $6$ from both sides by the addition property of equality: $7x = 4x$. Subtract $4x$: $3x = 0$. Divide by the nonzero coefficient $3$: $x = 0$, and a value of $0$ is still a valid solution. The verdict 'none' repeats the student's error of confusing $x = 0$ with a contradiction, and 'infinitely' wrongly treats the surviving $3x$ as canceled. The answer is verdict = one; x = 0."
+          - problem: "Expand and collect terms in $4(2x + 3) = 8x + 15$ until the equation reads $ax = b$. Give the verdict and the value of $b$."
+            answer: "verdict = none; b = 3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["one"], ["none"], ["infinitely"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "b"}]}
+            solution_sketch: "Start from the full object $4(2x + 3) = 8x + 15$. Apply the distributive property: $8x + 12 = 8x + 15$. Subtract $8x$ from both sides by the addition property of equality: $0x = 3$, so $b = 3$. No value of x can make $0x$ equal $3$, so the statement is a contradiction. The verdict 'one' ignores the false constant statement, and 'infinitely' mistakes any canceling x-term for an identity. The answer is verdict = none; b = 3."
+          - problem: "Phone plan A charges a 12 dollar start fee plus 4 dollars per gigabyte. Plan B charges a 3 dollar start fee plus 7 dollars per gigabyte. The equation $12 + 4g = 3 + 7g$ gives the gigabyte counts where the two plans cost the same. Give the verdict and the value of $g$."
+            answer: "verdict = unique; g = 3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["unique"], ["none"], ["infinite"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "g"}]}
+            solution_sketch: "Start from the full object $12 + 4g = 3 + 7g$. Collect the g-terms on the left by subtracting $4g$ from both sides: $12 = 3 + 3g$. Subtract $3$: $9 = 3g$. Divide by the nonzero coefficient $3$: $g = 3$. Because a nonzero multiple of g equals a constant, exactly one meeting point exists. The verdict 'none' wrongly assumes the plans never match, and 'infinite' wrongly assumes every gigabyte count matches since both sides mention g. The answer is verdict = unique; g = 3."
         constraints: "mix all three outcomes; do not confuse x = 0 with no solution"
     diagnostic_exemplar:
       problem: 'Solve $3(2x - 1) = 6x + 5$.'
