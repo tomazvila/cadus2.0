@@ -1959,22 +1959,22 @@ topics:
         name: "Meaning of the y-intercept in context"
         key_prerequisites: [slope-intercept-form]
         exemplars:
-          - problem: 'For tank volume $y=-5x+50$, does $50$ mean starting amount, drain rate, or amount after 50 minutes?'
-            answer: "the starting amount of water (50 L)"
-            answer_contract: {"kind":"label","options":[["starting amount","the starting amount of water (50 L)"],["drain rate"],["amount after 50 minutes"]]}
-            solution_sketch: 'The intercept is the value at $x = 0$: the tank starts with $50$ L.'
-          - problem: 'For repair cost $C=12h+40$, does $40$ mean fixed fee, hourly rate, or cost after 40 hours?'
-            answer: "the fixed fee charged regardless of hours (€40)"
-            answer_contract: {"kind":"label","options":[["fixed fee","the fixed fee charged regardless of hours (\u20ac40)"],["hourly rate"],["cost after 40 hours"]]}
-            solution_sketch: 'The intercept is the cost at $h = 0$: a fixed €$40$ charged no matter what.'
-          - problem: 'For $y = 0.08m + 15$, does $15$ mean fixed monthly fee, cost per minute, or cost after 15 minutes?'
-            answer: "the fixed monthly fee regardless of minutes used (€15)"
-            answer_contract: {"kind":"label","options":[["the fixed monthly fee","the fixed monthly fee regardless of minutes used (\u20ac15)"],["the cost per minute"],["the cost after 15 minutes"]]}
-            solution_sketch: 'The intercept is the cost at $m=0$.'
-          - problem: 'For candle height $y = -0.5t + 20$, does $20$ mean starting height, burn rate, or height after 20 minutes?'
-            answer: "the candle's starting height (20 cm)"
-            answer_contract: {"kind":"label","options":[["starting height","the candle's starting height (20 cm)"],["burn rate"],["height after 20 minutes"]]}
-            solution_sketch: 'The intercept is the height at $t=0$.'
+          - problem: "Water drains from a tank, and the volume of water after x minutes is y = -4x + 60 liters. Which statement describes the 60 in this model?"
+            answer: "the volume in the tank before any draining"
+            answer_contract: {"kind": "label", "options": [["the volume in the tank before any draining"], ["the volume drained each minute"], ["the volume left after 60 minutes"], ["the number of minutes until the tank is empty"]]}
+            solution_sketch: "The model y = -4x + 60 is in slope-intercept form, whose constant term is the y-value at x = 0. At 0 minutes the tank has not lost any water, so the intercept 60 is the starting volume; the drain amount per minute is the slope 4, not the intercept. Wrong options: 'the volume drained each minute' confuses the intercept with the slope, 'the volume left after 60 minutes' uses 60 as an input time, and 'the number of minutes until the tank is empty' treats the intercept as a duration. The 60 is the volume in the tank before any draining."
+          - problem: "A repair shop models the cost of a job by C = 18h + 75, where h is the number of hours of work and C is in euros. Determine whether the 75 is a one-time charge or a per-hour charge, and give the cost in euros of a job with zero hours of work."
+            answer: "verdict = fixed; fee = 75"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["fixed"], ["hourly"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "fee"}]}
+            solution_sketch: "The model C = 18h + 75 is in slope-intercept form, whose constant term is the value at h = 0. A job with zero hours of work costs C = 75 euros, so the 75 is charged before any work and is a one-time charge; the per-hour part is the slope 18. The option hourly is the error of reading the slope as the intercept. verdict = fixed; fee = 75"
+          - problem: "A mobile plan costs y = 0.12m + 19 euros for m call minutes in a month. Determine whether the 19 is charged even when no calls are made or charged for each call minute, and give the cost in euros of a month with zero calls."
+            answer: "verdict = flat; cost = 19"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["flat"], ["metered"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "cost"}]}
+            solution_sketch: "The model y = 0.12m + 19 is in slope-intercept form, whose constant term is the value at m = 0. A month with zero calls costs 0.12 · 0 + 19 = 19 euros, so the 19 is charged regardless of usage; the per-call part is the slope 0.12. The option metered is the error of reading the slope as the intercept. verdict = flat; cost = 19"
+          - problem: "Taxi app A charges y = 2.5x + 4 euros for a ride of x km, and app B charges y = 1.8x + 9 euros; each model is a starting fee plus a per-km charge. Find how many euros larger the starting fee of app B is than the starting fee of app A."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The models y = 2.5x + 4 and y = 1.8x + 9 are in slope-intercept form, where the constant term b is the value at x = 0. The starting fee of app A is 4 euros and that of app B is 9 euros. Difference: 9 - 4 = 5 by subtraction of the two intercepts. The starting fee of app B is 5 euros larger."
         constraints: "intercept = starting or fixed value"
       - id: kp3
         visuals: [{"kind":"coordinate","x_min":"-8","x_max":"8","y_min":"-8","y_max":"8","x_tick":"1","y_tick":"1","points":[{"x":"-2","y":"-2","label":"A"},{"x":"2","y":"4","label":"B"}],"segments":[{"from":{"x":"-2","y":"-2","label":null},"to":{"x":"2","y":"4","label":null}}],"caption":"Reference example: The reference line has equation y = (3/2)x + 1 The drawn segment joins the two reference points."}]

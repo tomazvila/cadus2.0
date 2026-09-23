@@ -22,43 +22,43 @@ topics:
         name: "Inequality statements true or false"
         key_prerequisites: [number-line-integers]
         exemplars:
-          - problem: 'Is the statement $-3 < -5$ true or false?'
-            answer: "false"
-            answer_contract: {"kind":"label","options":[["true"],["false"]]}
-            solution_sketch: '$-3$ is to the right of $-5$ on the number line.'
-          - problem: 'True or false: $4 \ge 4$?'
-            answer: "true"
-            answer_contract: {"kind":"label","options":[["true"],["false"]]}
-            solution_sketch: '$4 \ge 4$ holds with equality.'
-          - problem: 'Is the statement $-7 < -2$ true or false?'
-            answer: "true"
-            answer_contract: {"kind":"label","options":[["true"],["false"]]}
-            solution_sketch: '$-7$ is to the left of $-2$ on the number line.'
-          - problem: 'True or false: $6 \ge 9$?'
-            answer: "false"
-            answer_contract: {"kind":"label","options":[["true"],["false"]]}
-            solution_sketch: '$6$ is less than $9$.'
+          - problem: "State whether the statement -4 < -9 is correct, and give the value of -4 - (-9)."
+            answer: "verdict = fails; d = 5"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["holds"], ["fails"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "d"}]}
+            solution_sketch: "Step 1 (number line order): -4 lies to the right of -9, so the statement -4 < -9 is not correct. Step 2 (integer subtraction): -4 - (-9) = -4 + 9 = 5. The option holds is the error; it would mean -4 lies to the left of -9. The answer is verdict = fails; d = 5."
+          - problem: "At dawn the temperature was -8 degrees and at noon it was -2 degrees. State whether the statement that the dawn reading is lower than the noon reading is correct, and give the value of -8 - (-2)."
+            answer: "verdict = right; d = -6"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["right"], ["wrong"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "d"}]}
+            solution_sketch: "Step 1 (number line order): -8 lies to the left of -2, so the dawn reading is lower and the statement is correct. Step 2 (integer subtraction): -8 - (-2) = -8 + 2 = -6. The option wrong is the error; it would mean -8 lies to the right of -2. The answer is verdict = right; d = -6."
+          - problem: "State whether the statement -11 > -6 is correct, and give the value of -11 - (-6)."
+            answer: "verdict = invalid; d = -5"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["valid"], ["invalid"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "d"}]}
+            solution_sketch: "Step 1 (number line order): -11 lies to the left of -6, so the statement -11 > -6 is not correct. Step 2 (integer subtraction): -11 - (-6) = -11 + 6 = -5. The option valid is the error; it would mean -11 lies to the right of -6. The answer is verdict = invalid; d = -5."
+          - problem: "A diver is at -12 m and a submarine is at -20 m. State whether the statement that the diver is deeper than the submarine is correct, and give the value of -12 - (-20)."
+            answer: "verdict = inaccurate; d = 8"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["accurate"], ["inaccurate"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "d"}]}
+            solution_sketch: "Step 1 (number line order): -12 lies to the right of -20, so the diver is not the deeper one and the statement is not correct. Step 2 (integer subtraction): -12 - (-20) = -12 + 20 = 8. The option accurate is the error; it would mean -12 lies to the left of -20. The answer is verdict = inaccurate; d = 8."
         constraints: "integer comparisons; include negatives"
       - id: kp2
         name: "Test a value in an inequality"
         key_prerequisites: [evaluating-expressions]
         exemplars:
-          - problem: "Is $x=3$ a solution of $2x+4\\le 11$?"
-            answer: "yes"
-            answer_contract: {"kind": "label", "options": [["yes"], ["no"]]}
-            solution_sketch: "Substitute the candidate in the original inequality: $10 \\le  11$ is true. Every comparison must hold for an intersection."
-          - problem: "Does $x=-2$ satisfy $7-x<8$?"
-            answer: "no"
-            answer_contract: {"kind": "label", "options": [["yes"], ["no"]]}
-            solution_sketch: "Substitute the candidate in the original inequality: $9 < 8$ is false. Every comparison must hold for an intersection."
-          - problem: "Test $x=4$ in $x/2\\ge 2$. Is it a solution?"
-            answer: "yes"
-            answer_contract: {"kind": "label", "options": [["yes"], ["no"]]}
-            solution_sketch: "Substitute the candidate in the original inequality: $2 \\ge  2$ is true. Every comparison must hold for an intersection."
-          - problem: "Is $x=5$ a solution of $3x-2>14$?"
-            answer: "no"
-            answer_contract: {"kind": "label", "options": [["yes"], ["no"]]}
-            solution_sketch: "Substitute the candidate in the original inequality: $13 > 14$ is false. Every comparison must hold for an intersection."
+          - problem: "Test the candidate $x = 3$ in the inequality $2x + 4 \\le 11$. Give the value of the left side and state whether the candidate is a solution."
+            answer: "verdict = yes; value = 10"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "value"}]}
+            solution_sketch: "Substitute first: the full object is $2(3) + 4 = 10$, so the left side has value 10 by substitution and evaluation. Compare the two sides: $10 \\le 11$ is a true comparison, so $x = 3$ is a solution and the verdict is yes. The option no would come from reversing the comparison, which is the error of reading the inequality sign backwards. The answer is verdict = yes; value = 10."
+          - problem: "For the inequality $7 - x < 8$, check the candidate $x = -2$. Find the value of the left side and state whether the inequality holds."
+            answer: "verdict = no; value = 9"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "value"}]}
+            solution_sketch: "After substituting, the full object is $7 - (-2) = 9$, so the left side has value 9 by adding the opposite. Compare the two sides: $9 < 8$ is a false comparison, so $x = -2$ is not a solution and the verdict is no. The option yes would come from computing $7 - (-2)$ as $5$, which is the error of subtracting the size of the negative number instead of adding its opposite. The answer is verdict = no; value = 9."
+          - problem: "Test the candidate $x = 12$ in the inequality $x/4 \\ge 2$. Compute the value of the left side and state whether the candidate is a solution."
+            answer: "verdict = yes; value = 3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "value"}]}
+            solution_sketch: "After substituting, the full object is $12/4 = 3$, so the left side has value 3 by division. Compare the two sides: $3 \\ge 2$ is a true comparison, so $x = 12$ is a solution and the verdict is yes. The option no would come from computing $4/12$ instead of $12/4$, which is the error of inverting the quotient. The answer is verdict = yes; value = 3."
+          - problem: "Test the candidate $x = 5$ in the inequality $3x - 2 > 14$. Determine the value of the left side and state whether the candidate is a solution."
+            answer: "verdict = no; value = 13"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "value"}]}
+            solution_sketch: "After substituting, the full object is $3(5) - 2 = 13$, so the left side has value 13 by substitution and evaluation. Compare the two sides: $13 > 14$ is a false comparison, so $x = 5$ is not a solution and the verdict is no. The option yes would come from treating $13$ and $14$ as equal, which is the error of ignoring the direction of the comparison. The answer is verdict = no; value = 13."
         constraints: "substitute and compare; yes/no answers"
       - id: kp3
         name: "Boundary values and strictness"
@@ -110,22 +110,22 @@ topics:
         name: "Open vs closed circle"
         key_prerequisites: [solutions-of-inequalities]
         exemplars:
-          - problem: 'To graph $x \ge 3$, is the circle at $3$ open or closed?'
-            answer: "closed"
-            answer_contract: {"kind":"label","options":[["closed"],["open"]]}
-            solution_sketch: '$\ge$ is inclusive, so the circle is closed.'
-          - problem: 'To graph $x < -1$, is the circle at $-1$ open or closed?'
-            answer: "open"
-            answer_contract: {"kind":"label","options":[["closed"],["open"]]}
-            solution_sketch: '$<$ is strict, so the circle is open.'
-          - problem: 'To graph $x \le 5$, is the circle at $5$ open or closed?'
-            answer: "closed"
-            answer_contract: {"kind":"label","options":[["closed"],["open"]]}
-            solution_sketch: '$\le$ is inclusive, so the circle is closed.'
-          - problem: 'To graph $x > -4$, is the circle at $-4$ open or closed?'
-            answer: "open"
-            answer_contract: {"kind":"label","options":[["closed"],["open"]]}
-            solution_sketch: '$>$ is strict, so the circle is open.'
+          - problem: "For the inequality x >= 3, find the boundary value and the circle type on a number line."
+            answer: "boundary = 3; circle = closed"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "boundary"}, {"contract": {"kind": "label", "options": [["closed"], ["open"]]}, "name": "circle"}]}
+            solution_sketch: "Rule: the boundary value is the number in the inequality, so for x >= 3 the boundary is 3. Rule: a closed circle is used for >= or <=, so the circle is closed; the wrong option open would be used only for a strict inequality. boundary = 3; circle = closed."
+          - problem: "For the inequality x < -1, find the boundary value and the circle type on a number line."
+            answer: "boundary = -1; circle = open"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "boundary"}, {"contract": {"kind": "label", "options": [["open"], ["closed"]]}, "name": "circle"}]}
+            solution_sketch: "Rule: the boundary value is the number in the inequality, so for x < -1 the boundary is -1. Rule: an open circle is used for < or >, so the circle is open; the wrong option closed would be used only for a non-strict inequality. boundary = -1; circle = open."
+          - problem: "For the inequality x <= 5, find the boundary value and the circle type on a number line."
+            answer: "boundary = 5; circle = solid"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "boundary"}, {"contract": {"kind": "label", "options": [["solid"], ["hollow"]]}, "name": "circle"}]}
+            solution_sketch: "Rule: the boundary value is the number in the inequality, so for x <= 5 the boundary is 5. Rule: a closed circle, also called solid, is used for >= or <=, so the circle is solid; the wrong option hollow would be used only for a strict inequality. boundary = 5; circle = solid."
+          - problem: "For the inequality x > -4, find the boundary value and the circle type on a number line."
+            answer: "boundary = -4; circle = hollow"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "boundary"}, {"contract": {"kind": "label", "options": [["hollow"], ["solid"]]}, "name": "circle"}]}
+            solution_sketch: "Rule: the boundary value is the number in the inequality, so for x > -4 the boundary is -4. Rule: an open circle, also called hollow, is used for < or >, so the circle is hollow; the wrong option solid would be used only for a non-strict inequality. boundary = -4; circle = hollow."
         constraints: "closed for <= or >=; open for < or >"
       - id: kp2
         visuals: [{"kind":"number_line","min":"-10","max":"10","tick":"1","points":[],"intervals":[],"rays":[{"from":"-2","direction":"left","filled":false,"label":"x < -2"}],"caption":"Reference example: an open point at -2 with the ray extending left shows x < -2."}]
@@ -1119,44 +1119,44 @@ topics:
         name: "Test a point to choose the shaded side"
         key_prerequisites: [linear-inequalities]
         exemplars:
-          - problem: 'Is $(0, 0)$ a solution of $y < x + 2$?'
-            answer: "yes"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: '$0 < 0 + 2$ is true.'
-          - problem: 'Is $(1, 4)$ a solution of $y \ge 2x + 1$?'
-            answer: "yes"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: '$4 \ge 2(1) + 1 = 3$ is true.'
-          - problem: 'Is $(1, 1)$ a solution of $y < 2x + 3$?'
-            answer: "yes"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: '$1 < 2 + 3 = 5$ is true.'
-          - problem: 'Is $(0, -1)$ a solution of $y \ge x - 4$?'
-            answer: "yes"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: '$-1 \ge -4$ is true.'
+          - problem: "For y < x + 2, substitute the test point (2, 1). State whether the shaded side is the side with (2, 1), and give y - (x + 2) at (2, 1)."
+            answer: "side = same; diff = -3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["same"], ["other"]]}, "name": "side"}, {"contract": {"kind": "exact"}, "name": "diff"}]}
+            solution_sketch: "The inequality is y < x + 2 with test point (2, 1). Substitute the point: left side is 1, right side is 2 + 2 = 4, so y - (x + 2) = 1 - 4 = -3. Since -3 < 0, the inequality y < x + 2 is true at (2, 1), so the shaded side is the side with (2, 1). The answer is side = same; diff = -3."
+          - problem: "For y >= 3x - 1, substitute the test point (2, 4). State whether the shaded side is the side with (2, 4), and give y - (3x - 1) at (2, 4)."
+            answer: "side = other; diff = -1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["same"], ["other"]]}, "name": "side"}, {"contract": {"kind": "exact"}, "name": "diff"}]}
+            solution_sketch: "The inequality is y >= 3x - 1 with test point (2, 4). Substitute the point: left side is 4, right side is 3(2) - 1 = 5, so y - (3x - 1) = 4 - 5 = -1. Since -1 < 0, the inequality y >= 3x - 1 is false at (2, 4), so the shaded side is the side not with (2, 4). The answer is side = other; diff = -1."
+          - problem: "For y < 3x + 1, substitute the test point (2, 1). State whether the shaded side is the side with (2, 1), and give y - (3x + 1) at (2, 1)."
+            answer: "side = same; diff = -6"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["same"], ["other"]]}, "name": "side"}, {"contract": {"kind": "exact"}, "name": "diff"}]}
+            solution_sketch: "The inequality is y < 3x + 1 with test point (2, 1). Substitute the point: left side is 1, right side is 3(2) + 1 = 7, so y - (3x + 1) = 1 - 7 = -6. Since -6 < 0, the inequality y < 3x + 1 is true at (2, 1), so the shaded side is the side with (2, 1). The answer is side = same; diff = -6."
+          - problem: "For y >= 2x + 3, substitute the test point (1, 2). State whether the shaded side is the side with (1, 2), and give y - (2x + 3) at (1, 2)."
+            answer: "side = other; diff = -3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["same"], ["other"]]}, "name": "side"}, {"contract": {"kind": "exact"}, "name": "diff"}]}
+            solution_sketch: "The inequality is y >= 2x + 3 with test point (1, 2). Substitute the point: left side is 2, right side is 2(1) + 3 = 5, so y - (2x + 3) = 2 - 5 = -3. Since -3 < 0, the inequality y >= 2x + 3 is false at (1, 2), so the shaded side is the side not with (1, 2). The answer is side = other; diff = -3."
         constraints: "substitute a test point; true -> shade that side"
       - id: kp3
         visuals: [{"kind":"coordinate","x_min":"-6","x_max":"6","y_min":"-6","y_max":"6","x_tick":"1","y_tick":"1","points":[],"segments":[],"shaded_half_planes":[{"through_a":{"x":"1","y":"0"},"through_b":{"x":"2","y":"1"},"solid":true,"shade_toward":{"x":"0","y":"-2"},"label":"y ≤ x - 1"}],"caption":"Reference example: the origin fails y ≤ x - 1. Shade the side containing (0,-2), which satisfies the inequality."}]
         name: "Shade using the origin test"
         key_prerequisites: [linear-inequalities]
         exemplars:
-          - problem: "For $2x+3y\\le 18$, does the shaded region include the origin?"
-            answer: "yes"
-            answer_contract: {"kind": "label", "options": [["yes"], ["no"]]}
-            solution_sketch: "Substitute both coordinates of the origin as zero: $0 \\le  18$ is true. Shade the side containing the test point precisely when the comparison is true."
-          - problem: "For $y>2x+4$, does the shaded region include the origin?"
-            answer: "no"
-            answer_contract: {"kind": "label", "options": [["yes"], ["no"]]}
-            solution_sketch: "Substitute both coordinates of the origin as zero: $0 > 4$ is false. Shade the side containing the test point precisely when the comparison is true."
-          - problem: "For $5x-y\\ge -7$, does the shaded region include the origin?"
-            answer: "yes"
-            answer_contract: {"kind": "label", "options": [["yes"], ["no"]]}
-            solution_sketch: "Substitute both coordinates of the origin as zero: $0 \\ge  -7$ is true. Shade the side containing the test point precisely when the comparison is true."
-          - problem: "For $3y+2x<-6$, does the shaded region include the origin?"
-            answer: "no"
-            answer_contract: {"kind": "label", "options": [["yes"], ["no"]]}
-            solution_sketch: "Substitute both coordinates of the origin as zero: $0 < -6$ is false. Shade the side containing the test point precisely when the comparison is true."
+          - problem: "For the inequality 2x + 3y + 5 <= 23, use the origin as the test point. State whether the origin is in the shaded region, and give the value of the left side at (0, 0)."
+            answer: "verdict = inside; value = 5"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["inside"], ["outside"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "value"}]}
+            solution_sketch: "Origin test for the inequality 2x + 3y + 5 <= 23: substitute (0, 0) to get 2(0) + 3(0) + 5 = 5. Comparison step: 5 <= 23 is true, so the origin is a solution and the shaded region contains the origin. The wrong option outside would come from reversing the true comparison. Answer: verdict = inside; value = 5."
+          - problem: "For the inequality y - 2x - 4 > 0, use the origin as the test point. State whether the origin is in the shaded region, and give the value of the left side at (0, 0)."
+            answer: "verdict = outside; value = -4"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["inside"], ["outside"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "value"}]}
+            solution_sketch: "Origin test for the inequality y - 2x - 4 > 0: substitute (0, 0) to get 0 - 2(0) - 4 = -4. Comparison step: -4 > 0 is false, so the origin is not a solution and the shaded region does not contain the origin. The wrong option inside would come from treating -4 > 0 as true. Answer: verdict = outside; value = -4."
+          - problem: "For the inequality 5x - y + 7 >= 0, use the origin as the test point. State whether the origin is in the shaded region, and give the value of the left side at (0, 0)."
+            answer: "verdict = inside; value = 7"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["inside"], ["outside"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "value"}]}
+            solution_sketch: "Origin test for the inequality 5x - y + 7 >= 0: substitute (0, 0) to get 5(0) - 0 + 7 = 7. Comparison step: 7 >= 0 is true, so the origin is a solution and the shaded region contains the origin. The wrong option outside would come from reversing the true comparison. Answer: verdict = inside; value = 7."
+          - problem: "For the inequality 3y + 2x + 6 < 0, use the origin as the test point. State whether the origin is in the shaded region, and give the value of the left side at (0, 0)."
+            answer: "verdict = outside; value = 6"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["inside"], ["outside"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "value"}]}
+            solution_sketch: "Origin test for the inequality 3y + 2x + 6 < 0: substitute (0, 0) to get 3(0) + 2(0) + 6 = 6. Comparison step: 6 < 0 is false, so the origin is not a solution and the shaded region does not contain the origin. The wrong option inside would come from treating 6 < 0 as true. Answer: verdict = outside; value = 6."
         constraints: "the origin is the easiest test point unless it is on the line"
     diagnostic_exemplar:
       problem: 'For $y > x - 1$, state whether the boundary is dashed or solid and whether $(0, 0)$ is a solution.'
