@@ -949,14 +949,30 @@ topics:
         name: Similarity invariants
         key_prerequisites: [eigenvalues-eigenvectors, determinant-properties-cramers-rule]
         exemplars:
-          - problem: '$B$ is similar to $A$, with $\det A = 6$ and $\mathrm{tr}\,A = 5$. Find $\det B$ and $\mathrm{tr}\,B$.'
-            answer: "det B = 6, tr B = 5"
-            answer_contract: {kind: none}
-            solution_sketch: 'Similar matrices share determinant, trace, characteristic polynomial, and eigenvalues.'
-          - problem: '$B$ is similar to $A$, and $2$ is an eigenvalue of $A$. Is $2$ an eigenvalue of $B$?'
-            answer: "Yes"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: 'If $A\mathbf{v} = 2\mathbf{v}$ and $B = P^{-1}AP$, then $B(P^{-1}\mathbf{v}) = 2(P^{-1}\mathbf{v})$.'
+          - problem: "Suppose $B$ is similar to $A$, with $\\det A = 12$ and $\\operatorname{tr} A = 1$. Give $\\det B$ and $\\operatorname{tr} B$."
+            answer: "detB = 12; trB = 1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "detB"}, {"contract": {"kind": "exact"}, "name": "trB"}]}
+            solution_sketch: "Step 1 (similarity invariants): if $B = P^{-1}AP$ then $\\det B = \\det(P^{-1})\\det(A)\\det(P) = \\det A$, and trace satisfies $\\operatorname{tr}(P^{-1}AP) = \\operatorname{tr}(A P P^{-1}) = \\operatorname{tr} A$. Step 2 (read off): $\\det B = 12$ and $\\operatorname{tr} B = 1$. The answer is detB = 12; trB = 1."
+          - problem: "Let $B$ be similar to $A$, and the eigenvalues of $A$ are $2$ and $7$. State whether $2$ must be an eigenvalue of $B$, and give $\\det B$."
+            answer: "verdict = yes; detB = 14"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "detB"}]}
+            solution_sketch: "Step 1 (eigenvalue invariance): similar matrices have the same eigenvalues, since $Av = \\lambda v$ gives $B(P^{-1}v) = \\lambda(P^{-1}v)$; so 2 is an eigenvalue of $B$, and the option no would be the error of forgetting the eigenvalues transfer. Step 2 (determinant invariance): $\\det B = \\det A = 2 \\cdot 7 = 14$. The answer is verdict = yes; detB = 14."
+          - problem: "Let $A = \\begin{pmatrix}4&1\\\\0&3\\end{pmatrix}$ and $P = \\begin{pmatrix}1&2\\\\0&1\\end{pmatrix}$, and set $B = P^{-1}AP$. Compute $B$ and give the matrix as [a,b;c,d]."
+            answer: "[4,3;0,3]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "Step 1 (matrix inverse): $\\det P = 1$, so $P^{-1} = \\begin{pmatrix}1&-2\\\\0&1\\end{pmatrix}$. Step 2 (matrix multiplication): $AP = \\begin{pmatrix}4&9\\\\0&3\\end{pmatrix}$, then $P^{-1}AP = \\begin{pmatrix}4&3\\\\0&3\\end{pmatrix}$. The answer is [4,3;0,3]."
+          - problem: "Matrices $A$ and $B$ are similar, with $\\operatorname{tr} A = 5$ and $\\det A = 6$. Find the larger eigenvalue of $B$."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (invariance of eigenvalues): $B$ has the same eigenvalues as $A$, so work with $A$. Step 2 (characteristic polynomial): $t^2 - 5t + 6 = (t-2)(t-3)$, so the eigenvalues are 2 and 3. The larger eigenvalue of $B$ is 3."
+          - problem: "A square matrix $B$ is similar to a square matrix $A$, so $B = P^{-1}AP$ for some invertible matrix $P$. Some features of $A$ carry over to $B$ exactly, while others can change. Select the feature that is guaranteed to carry over unchanged."
+            answer: "eigenvalues"
+            answer_contract: {"kind": "label", "options": [["eigenvalues"], ["eigenvectors"], ["diagonal entries"], ["row space"]]}
+            solution_sketch: "Step 1 (similarity invariants): under the full relation $B = P^{-1}AP$, the eigenvalues are preserved, because an equation $Av = cv$ for $A$ gives $B(P^{-1}v) = c(P^{-1}v)$ for $B$. Step 2 (what changes): the option eigenvectors names the error of forgetting that the eigenvector becomes $P^{-1}v$, usually a different vector; the option diagonal entries names the error of assuming conjugation keeps the main diagonal fixed, which changes of basis disprove; the option row space names the error of confusing the preserved rank with the row space itself, which can rotate under a change of basis. The feature guaranteed to carry over unchanged is eigenvalues."
+          - problem: "Let $A = \\begin{pmatrix}5&2\\\\0&3\\end{pmatrix}$ and let $B$ be similar to $A$. Find the characteristic polynomial of $B$ in the variable $t$."
+            answer: "t^2-8t+15"
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: "Step 1 (invariance of the characteristic polynomial): similar matrices have equal characteristic polynomials, so compute it for $A$. Step 2 (determinant of $tI - A$): $\\det\\begin{pmatrix}t-5&-2\\\\0&t-3\\end{pmatrix} = (t-5)(t-3) = t^2 - 8t + 15$. The characteristic polynomial of $B$ is t^2-8t+15."
         constraints: "given data are small integers; ask which quantities transfer"
       - id: kp3
         name: Ruling out similarity
@@ -1076,14 +1092,30 @@ topics:
         name: Building P and D
         key_prerequisites: [finding-eigenvectors, matrix-inverses]
         exemplars:
-          - problem: 'Diagonalize $A = \begin{pmatrix}1&2\\2&1\end{pmatrix}$: give $P$ and $D$ with $A = PDP^{-1}$.'
-            answer: '$P = \begin{pmatrix}1&1\\1&-1\end{pmatrix}$, $D = \begin{pmatrix}3&0\\0&-1\end{pmatrix}$ (columns of $P$ may be scaled; their order must match $D$)'
-            answer_contract: {kind: none}
-            solution_sketch: 'Eigenpairs: $\lambda = 3$ with $(1,1)$ and $\lambda = -1$ with $(1,-1)$; columns of $P$ are the eigenvectors, in the same order as the diagonal of $D$.'
-          - problem: 'Diagonalize $A = \begin{pmatrix}1&1\\0&2\end{pmatrix}$.'
-            answer: '$P = \begin{pmatrix}1&1\\0&1\end{pmatrix}$, $D = \begin{pmatrix}1&0\\0&2\end{pmatrix}$ (columns of $P$ may be scaled; their order must match $D$)'
-            answer_contract: {kind: none}
-            solution_sketch: '$\lambda = 1$: solve $(A - I)\mathbf{v} = 0$, giving $(1, 0)$; $\lambda = 2$: $(1, 1)$.'
+          - problem: "Diagonalize the matrix A = [3,1;1,3]: find its two eigenvalues and give the diagonal matrix D whose diagonal lists them in decreasing order. Give the matrix as [a,b;c,d]."
+            answer: "[4,0;0,2]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "Characteristic polynomial rule: det(A - λI) = (3-λ)^2 - 1 = λ^2 - 6λ + 8 = (λ-4)(λ-2), so the eigenvalues are 4 and 2. The diagonal of D carries the eigenvalues in the stated order. In decreasing order the diagonal is 4 then 2, so D = [4,0;0,2]."
+          - problem: "Diagonalize the matrix A = [2,0;1,3]: give the matrix P whose first column is an eigenvector for the smaller eigenvalue and whose second column is an eigenvector for the larger eigenvalue, scaling each column so its first nonzero entry is positive. Give the matrix as [a,b;c,d]."
+            answer: "[1,0;-1,1]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "The matrix is triangular, so the eigenvalues are the diagonal entries 2 and 3 (eigenvalue rule). For λ = 2, solve (A - 2I)v = 0: the equation x + y = 0 gives v = (1,-1). For λ = 3, solve (A - 3I)v = 0: the equation -x = 0 gives v = (0,1). Both columns already have positive first nonzero entry, so P = [1,0;-1,1]."
+          - problem: "Diagonalize the matrix A = [4,1;2,3]: give the matrix P whose columns are the eigenvectors for the eigenvalues in decreasing order, scaling each column so its first nonzero entry is positive. Give the matrix as [a,b;c,d]."
+            answer: "[1,1;1,-2]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "Characteristic polynomial rule: det(A - λI) = λ^2 - 7λ + 10 = (λ-5)(λ-2), so the eigenvalues are 5 and 2. For λ = 5, (A - 5I)v = 0 gives -x + y = 0, so v = (1,1). For λ = 2, (A - 2I)v = 0 gives 2x + y = 0, so v = (1,-2). Columns in decreasing eigenvalue order give P = [1,1;1,-2]."
+          - problem: "Diagonalize the matrix A = [5,3;3,5] and give the two diagonal entries of D in decreasing order as (d1, d2)."
+            answer: "(8,2)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Characteristic polynomial rule: det(A - λI) = (5-λ)^2 - 9 = λ^2 - 10λ + 22... recompute as (5-λ)^2 - 9 = λ^2 - 10λ + 16 = (λ-8)(λ-2), so the eigenvalues are 8 and 2. Decreasing order puts 8 first, then 2. The diagonal entries of D in decreasing order are (8,2)."
+          - problem: "Diagonalize the matrix A = [-1,2;2,-1]: find its two eigenvalues and give the diagonal matrix D whose diagonal lists them in increasing order. Give the matrix as [a,b;c,d]."
+            answer: "[-3,0;0,1]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "Characteristic polynomial rule: det(A - λI) = (-1-λ)^2 - 4 = λ^2 + 2λ - 3 = (λ+3)(λ-1), so the eigenvalues are -3 and 1. Increasing order lists -3 first, then 1. The diagonal matrix with these entries is D = [-3,0;0,1]."
+          - problem: "Diagonalize the matrix A = [0,4;1,0]. If the columns of P are ordered by increasing eigenvalue, give the eigenvector that forms the second column of P, scaled so its first nonzero entry is positive, as (x, y)."
+            answer: "(2,1)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Characteristic polynomial rule: det(A - λI) = λ^2 - 4 = 0, so the eigenvalues are -2 and 2. Increasing order is -2 then 2, so the second column of P is the eigenvector for λ = 2. Solving (A - 2I)v = 0 gives -2x + 4y = 0, so x = 2y and a positive-scaling eigenvector is (2,1). The second column of P is (2,1)."
         constraints: "2x2 with two distinct integer eigenvalues; eigenvector entries in -2..2"
       - id: kp2
         name: Verifying by reassembly

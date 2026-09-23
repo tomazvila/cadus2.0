@@ -163,35 +163,59 @@ topics:
         name: The subspace test in abstract spaces
         key_prerequisites: [vector-space-axioms]
         exemplars:
-          - problem: 'Is $\{p \in P_2 : p(1) = 0\}$ a subspace of $P_2$?'
-            answer: "Yes"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: 'The zero polynomial vanishes at $1$; if $p(1) = q(1) = 0$ then $(p + q)(1) = 0$ and $(cp)(1) = c \cdot 0 = 0$.'
-          - problem: 'Is the set of polynomials of degree exactly $2$ a subspace of $P_2$?'
-            answer: "No"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: 'It misses the zero polynomial, and closure fails: $x^2 + (-x^2 + x) = x$ has degree $1$.'
-          - problem: 'Is the set of symmetric matrices a subspace of $M_{2 \times 2}$?'
-            answer: "Yes"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: 'The zero matrix is symmetric, and $(A + B)^T = A^T + B^T = A + B$, $(cA)^T = cA$ for symmetric $A, B$.'
+          - problem: "Let $W = \\{p \\in P_2 : p(1) = 0\\}$. The polynomials $p(x) = x^2 - x$ and $q(x) = 3x - 3$ both lie in $W$. Determine whether $W$ is a subspace of $P_2$, and give the value of $(p + q)(1)$."
+            answer: "verdict = yes; value = 0"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "value"}]}
+            solution_sketch: "Subspace test on $W = \\{p \\in P_2 : p(1) = 0\\}$: the zero polynomial has value $0$ at $1$, so $0 \\in W$. Closure under addition: $(p+q)(1) = p(1) + q(1) = 0 + 0 = 0$; closure under scalar multiplication: $(cp)(1) = c \\cdot 0 = 0$. The option no would require a concrete counterexample, but the condition $p(1) = 0$ is preserved by both operations. Hence verdict = yes and value = 0."
+          - problem: "Let $W$ be the set of polynomials in $P_2$ whose degree is exactly $2$. Take $p(x) = x^2 + 3$ and $q(x) = -x^2 + 2x$. Determine whether $W$ is a subspace of $P_2$, and give the degree of $p + q$."
+            answer: "verdict = no; value = 1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "value"}]}
+            solution_sketch: "Subspace test on the set of degree-exactly-$2$ polynomials: the zero polynomial has no degree, so the zero vector is missing. Concrete counterexample to addition: $p = x^2 + 3$ and $q = -x^2 + 2x$ both have degree $2$, but $p + q = 2x + 3$ has degree $1$, so closure fails. The option yes ignores this closure failure. Therefore verdict = no and value = 1, the degree of $p + q$."
+          - problem: "Let $W$ be the set of symmetric $2 \\times 2$ matrices, and let $A = [1,2;2,3]$ and $B = [0,4;4,-1]$. Determine whether $W$ is a subspace of $M_{2 \\times 2}$, and give the entry in row 2, column 1 of $A + B$."
+            answer: "verdict = yes; value = 6"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "value"}]}
+            solution_sketch: "Subspace test on the symmetric matrices: the zero matrix is symmetric, and $(A+B)^T = A^T + B^T = A + B$ and $(cA)^T = cA^T = cA$, so both closure laws hold. Entry check: row 2, column 1 of $A + B$ is $2 + 4 = 6$, equal to the row 1, column 2 entry as symmetry forces. The option no overlooks the transpose identities. Hence verdict = yes and value = 6."
+          - problem: "Let $W = \\{p \\in P_2 : p(0) = 5\\}$. The polynomials $p(x) = 2x + 5$ and $q(x) = x^2 + 5$ both lie in $W$. Compute $(p + q)(0)$."
+            answer: "10"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The set $W = \\{p \\in P_2 : p(0) = 5\\}$ fails the zero-vector part of the subspace test, since the zero polynomial has value $0$ at $0$, not $5$. Concrete counterexample to addition: $p = 2x + 5$ and $q = x^2 + 5$ lie in $W$, and $(p+q)(0) = 5 + 5 = 10$, which is not $5$, so $p + q \\notin W$. The value of $(p + q)(0)$ is 10."
+          - problem: "Let $W$ be the set of $2 \\times 2$ matrices with determinant $0$, and let $A = [1,0;0,0]$ and $B = [0,0;0,2]$. Determine whether $W$ is a subspace of $M_{2 \\times 2}$, and give $\\det(A + B)$."
+            answer: "verdict = no; value = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "value"}]}
+            solution_sketch: "Subspace test on the determinant-zero matrices: $A = [1,0;0,0]$ and $B = [0,0;0,2]$ each have determinant $0$, so both lie in $W$. But $A + B = [1,0;0,2]$ has determinant $2$, so addition is not closed. The option yes would wrongly assume that determinants add. Therefore verdict = no and value = 2."
+          - problem: "Let $W = \\{p \\in P_2 : p(0) = 2\\}$. The polynomials $p(x) = x^2 + 2$ and $q(x) = 4x + 2$ both lie in $W$. Give $(p + q)(0)$ and $(3p)(0)$."
+            answer: "add = 4; scale = 6"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "add"}, {"contract": {"kind": "exact"}, "name": "scale"}]}
+            solution_sketch: "Subspace test on $W = \\{p \\in P_2 : p(0) = 2\\}$: the zero polynomial has value $0$ at $0$, so the zero vector is not in $W$. Concrete counterexample to addition: $(p+q)(0) = 2 + 2 = 4 \\ne 2$. Concrete counterexample to scalar multiplication: $(3p)(0) = 3 \\cdot 2 = 6 \\ne 2$. Hence add = 4 and scale = 6."
         constraints: "conditions on P_2 or 2x2 matrices; failures exhibited by one concrete counterexample"
       - id: kp3
         name: Linear combinations and span in abstract spaces
         key_prerequisites: [polynomial-addition-subtraction, vector-space-axioms]
         exemplars:
-          - problem: 'Write $x^2 + 2x + 3$ as a linear combination of $p_1 = x^2 + 1$ and $p_2 = x + 1$.'
-            answer: "p1 + 2 p2"
-            answer_contract: {kind: none}
-            solution_sketch: 'Match the $x^2$ coefficient: $c_1 = 1$; then the $x$ coefficient forces $c_2 = 2$; the constant checks out: $1 + 2 = 3$.'
-          - problem: 'Is $\begin{pmatrix}1&2\\2&1\end{pmatrix}$ in the span of $I = \begin{pmatrix}1&0\\0&1\end{pmatrix}$ and $S = \begin{pmatrix}0&1\\1&0\end{pmatrix}$?'
-            answer: "Yes: it equals I + 2S"
-            answer_contract: {kind: none}
-            solution_sketch: 'Diagonal entries force the coefficient of $I$ to be $1$; off-diagonal entries force the coefficient of $S$ to be $2$.'
-          - problem: 'Do $1, x, x^2$ span $P_2$?'
-            answer: "Yes"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: 'Every $ax^2 + bx + c$ is literally the combination $a \cdot x^2 + b \cdot x + c \cdot 1$.'
+          - problem: "In $P_2$, let $p_1 = x^2 + x$ and $p_2 = x - 2$. Write $w = -x^2 + 2x - 6$ as $c_1 p_1 + c_2 p_2$, matching one coefficient at a time. Find the coefficients $c_1$ and $c_2$."
+            answer: "c1 = -1; c2 = 3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "c1"}, {"contract": {"kind": "exact"}, "name": "c2"}]}
+            solution_sketch: "Write the full combination $c_1(x^2 + x) + c_2(x - 2)$ and expand it to $c_1 x^2 + (c_1 + c_2)x - 2c_2$. By one-at-a-time coefficient matching, the $x^2$ term gives $c_1 = -1$. The $x$ term then gives $-1 + c_2 = 2$, so $c_2 = 3$. The constant checks: $-2 \\cdot 3 = -6$. The answer is c1 = -1; c2 = 3."
+          - problem: "Let $A = \\begin{pmatrix}1&0\\\\0&2\\end{pmatrix}$ and $B = \\begin{pmatrix}0&1\\\\1&0\\end{pmatrix}$, and let $M = \\begin{pmatrix}2&-3\\\\-3&4\\end{pmatrix}$. Find the coefficients $c_1$ and $c_2$ with $M = c_1 A + c_2 B$."
+            answer: "c1 = 2; c2 = -3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "c1"}, {"contract": {"kind": "exact"}, "name": "c2"}]}
+            solution_sketch: "Write the full combination $c_1 A + c_2 B = \\begin{pmatrix} c_1 & c_2 \\\\ c_2 & 2c_1 \\end{pmatrix}$ and match entries one at a time. The $(1,1)$ entry gives $c_1 = 2$. The $(1,2)$ entry gives $c_2 = -3$. The $(2,2)$ entry checks: $2 \\cdot 2 = 4$. The answer is c1 = 2; c2 = -3."
+          - problem: "In the function space with objects $f_1 = e^{2x} + e^{x}$ and $f_2 = e^{x}$, write $w = 3e^{2x} + e^{x}$ as $c_1 f_1 + c_2 f_2$, matching the coefficient of $e^{2x}$ first. Find $c_1$ and $c_2$."
+            answer: "c1 = 3; c2 = -2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "c1"}, {"contract": {"kind": "exact"}, "name": "c2"}]}
+            solution_sketch: "Write the full combination $c_1(e^{2x} + e^{x}) + c_2 e^{x}$, which collects to $c_1 e^{2x} + (c_1 + c_2)e^{x}$. Coefficient matching on $e^{2x}$ gives $c_1 = 3$. Coefficient matching on $e^{x}$ gives $3 + c_2 = 1$, so $c_2 = -2$. The answer is c1 = 3; c2 = -2."
+          - problem: "Inside $P_2$, take $p_1 = x + 1$ and $p_2 = x - 1$. Determine whether their span equals all of $P_2$, and give the largest degree that a polynomial in their span can have."
+            answer: "verdict = no; degree = 1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "degree"}]}
+            solution_sketch: "Expand any combination: $c_1(x + 1) + c_2(x - 1) = (c_1 + c_2)x + (c_1 - c_2)$, a polynomial of degree at most 1. No combination can produce $x^2$, so the span is a proper subspace of $P_2$; the option yes ignores this missing $x^2$ direction. The largest degree that appears in the span is 1, reached for example by $(x+1) + (x-1) = 2x$. The answer is verdict = no; degree = 1."
+          - problem: "In $P_2$, let $p_1 = x^2$ and $p_2 = x + 2$. The polynomial $w = x^2 + kx + 4$ lies in the span of $p_1$ and $p_2$ for exactly one integer $k$. Find $k$."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Set the full combination $c_1 x^2 + c_2(x + 2)$ equal to $x^2 + kx + 4$ and match coefficients one at a time. The $x^2$ coefficient gives $c_1 = 1$. The constant term gives $2c_2 = 4$, so $c_2 = 2$. The $x$ coefficient then gives $k = c_2 = 2$. The value of $k$ is 2."
+          - problem: "In $P_2$, let $p_1 = x^2 - x$ and $p_2 = x + 2$. Form the linear combination $-2p_1 + 3p_2$ and simplify it fully. Give the result as a polynomial $ax^2 + bx + c$."
+            answer: "-2x^2+5x+6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Start from the full combination $-2(x^2 - x) + 3(x + 2)$ and distribute the scalars to get $-2x^2 + 2x + 3x + 6$. Combine like terms by polynomial addition: $-2x^2 + 5x + 6$. The answer is -2x^2+5x+6."
         constraints: "2 spanning objects; coefficients found by matching one coefficient/entry at a time, all integers in -3..3"
     diagnostic_exemplar:
       problem: 'Show that $W = \{p \in P_2 : p(1) = 0\}$ is a subspace of $P_2$, and write $x^2 + x - 2$ as a linear combination of $p_1 = x - 1$ and $p_2 = x^2 - 1$, both of which lie in $W$.'
@@ -405,13 +429,25 @@ topics:
           - problem: 'What is $\dim (\mathbb{R}^3)^*$?'
             answer: "3"
             solution_sketch: 'The dual basis of any basis of $V$ is a basis of $V^*$, so $\dim V^* = \dim V$.'
-          - problem: 'Write $f(x, y) = 3x + 5y$ as a combination of the standard dual basis vectors $e_1^*, e_2^*$.'
-            answer: "f = 3 e_1^* + 5 e_2^*"
-            answer_contract: {kind: none}
-            solution_sketch: 'The coefficients are $f(e_1) = 3$ and $f(e_2) = 5$.'
           - problem: 'What is the dimension of $P_2^*$, the dual space of $P_2$?'
             answer: "3"
             solution_sketch: '$\dim P_2^* = \dim P_2 = 3$.'
+          - problem: "Let $f(x, y) = 4x - 3y$ be a functional on $\\mathbb{R}^2$, and let $e_1^*, e_2^*$ be the dual basis of the standard basis. Give the coordinates of $f$ in the dual basis as (a, b)."
+            answer: "(4, -3)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Coordinates of $f$ in the dual basis are its values on the basis vectors: $f = f(e_1) e_1^* + f(e_2) e_2^*$. Evaluate: $f(1, 0) = 4$ and $f(0, 1) = -3$. The coordinates of $f$ are (4, -3)."
+          - problem: "Let $f(x, y) = 2x + y$ on $\\mathbb{R}^2$ and let $B = \\{(1, 2), (3, 1)\\}$ with dual basis $b_1^*, b_2^*$. Give the coordinates of $f$ in the dual basis $B^*$ as (a, b)."
+            answer: "(4, 7)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "The dual-basis coordinates of $f$ are the values $f(b_1)$ and $f(b_2)$, since $f = f(b_1) b_1^* + f(b_2) b_2^*$. Compute $f(1, 2) = 2 \\cdot 1 + 2 = 4$ and $f(3, 1) = 2 \\cdot 3 + 1 = 7$. The coordinate pair is (4, 7)."
+          - problem: "Let $V = P_2$ with basis $B = \\{1, x, x^2\\}$, and define $f(p) = p(1) + p'(1)$ for every $p$ in $P_2$. Give the coordinates of $f$ in the dual basis $B^*$ as (a, b, c)."
+            answer: "(1, 2, 3)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "The coordinates of $f$ in $B^*$ are its values on the basis vectors: $f(1)$, $f(x)$, $f(x^2)$. Compute $f(1) = 1 + 0 = 1$, $f(x) = 1 + 1 = 2$, and $f(x^2) = 1 + 2 = 3$. The coordinates of $f$ are (1, 2, 3)."
+          - problem: "A functional $f$ on $\\mathbb{R}^2$ has coordinates $(5, -1)$ in the dual basis of $B = \\{(1, 1), (2, 0)\\}$. Find $f(3, 2)$."
+            answer: "19/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write $f = 5 b_1^* - 1 b_2^*$, so $f(v) = 5c_1 - c_2$ where $(c_1, c_2)$ are the $B$-coordinates of $v$. Solve $c_1(1, 1) + c_2(2, 0) = (3, 2)$: from the second component $c_1 = 2$, then $2 + 2c_2 = 3$ gives $c_2 = 1/2$. Evaluate $f(3, 2) = 5 \\cdot 2 - 1/2 = 19/2$."
         constraints: "dimensions <= 4; functional coordinates read off as values on the basis vectors"
     diagnostic_exemplar:
       problem: 'Find the dual basis $\{f_1, f_2\}$ of $B = \{(1, 2), (1, 1)\}$ in $\mathbb{R}^2$, and write $f(x, y) = 3x + 5y$ in terms of it.'
@@ -593,14 +629,26 @@ topics:
           - problem: 'With $\langle f, g \rangle = \int_0^1 f(x)g(x)\,dx$, compute $\|x\|$.'
             answer: '$1/\sqrt{3}$'
             solution_sketch: '$\|f\| = \sqrt{\langle f, f \rangle}$; $\int_0^1 x^2\,dx = \frac{1}{3}$, so $\|x\| = \frac{1}{\sqrt{3}}$.'
-          - problem: 'Are $f = 1$ and $g = x$ orthogonal under $\langle f, g \rangle = \int_{-1}^1 f(x)g(x)\,dx$?'
-            answer: "Yes: the integral of x over [-1, 1] is 0"
-            answer_contract: {kind: none}
-            solution_sketch: 'Orthogonal means $\langle f, g \rangle = 0$: $\int_{-1}^1 x\,dx = \frac{1}{2} - \frac{1}{2} = 0$.'
-          - problem: 'Verify the Cauchy-Schwarz inequality $|\langle f, g \rangle| \leq \|f\|\,\|g\|$ for $f = 1$, $g = x$ with $\langle f, g \rangle = \int_0^1 f(x)g(x)\,dx$.'
-            answer: "|<f, g>| = 1/2 and ||f|| ||g|| = 1/sqrt(3) which is about 0.577, so the inequality holds"
-            answer_contract: {kind: none}
-            solution_sketch: '$\langle 1, x \rangle = \frac{1}{2}$, $\|1\| = 1$, $\|x\| = \frac{1}{\sqrt{3}}$; Cauchy-Schwarz holds in every inner-product space, with the same proof as for the dot product.'
+          - problem: "Let $\\langle f, g \\rangle = \\int_{-1}^{1} f(x)g(x)\\,dx$ on the polynomials of degree at most 2. For $f = 1$ and $g = x$, decide whether $\\langle f, g \\rangle = 0$, which is the test for orthogonality. Give the verdict and the value of the integral."
+            answer: "verdict = orthogonal; inner = 0"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["orthogonal"], ["collinear"], ["oblique"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "inner"}]}
+            solution_sketch: "Orthogonality test: the pair is orthogonal exactly when its inner product is the zero integral. Compute the full object: $\\langle 1, x \\rangle = \\int_{-1}^{1} x\\,dx = \\frac{1}{2} - \\frac{1}{2} = 0$. The option collinear is wrong because $x$ is not a constant multiple of $1$; the option oblique is wrong because it would need a nonzero integral. So verdict = orthogonal; inner = 0."
+          - problem: "Let $\\langle f, g \\rangle = \\int_0^1 f(x)g(x)\\,dx$ on the polynomials of degree at most 2. For $f = 1$ and $g = x^2$, decide whether the Cauchy-Schwarz inequality $|\\langle f, g \\rangle| \\leq \\|f\\|\\,\\|g\\|$ is satisfied. Give the verdict and the product of the norms as a single square root."
+            answer: "verdict = holds; prod = sqrt(1/5)"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["holds"], ["fails"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "prod"}]}
+            solution_sketch: "Cauchy-Schwarz compares the absolute inner product with the product of the norms. Compute the full pair: $|\\langle 1, x^2 \\rangle| = \\int_0^1 x^2\\,dx = \\frac{1}{3}$. Norms: $\\|1\\| = 1$ and $\\|x^2\\| = \\sqrt{\\int_0^1 x^4\\,dx} = \\sqrt{1/5}$, so the product is $\\sqrt{1/5}$. Since $\\frac{1}{3} < \\sqrt{1/5}$, the inequality is satisfied; the verdict fails only if a learner forgets to square $g$ and computes its norm from $\\int_0^1 x^2\\,dx$. So verdict = holds; prod = sqrt(1/5)."
+          - problem: "On the polynomial space with inner product $\\langle f, g \\rangle = \\int_{-1}^{1} f(x)g(x)\\,dx$, compute the norm $\\|x^2\\|$. Give the answer as a single square root."
+            answer: "sqrt(2/5)"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Norm definition in an inner-product space: $\\|f\\| = \\sqrt{\\langle f, f \\rangle}$. Compute the full inner product: $\\langle x^2, x^2 \\rangle = \\int_{-1}^{1} x^4\\,dx = \\left[\\frac{x^5}{5}\\right]_{-1}^{1} = \\frac{1}{5} + \\frac{1}{5} = \\frac{2}{5}$. Taking the single square root of this small fraction gives the norm. The answer is sqrt(2/5)."
+          - problem: "With $\\langle f, g \\rangle = \\int_0^1 f(x)g(x)\\,dx$ on the polynomials of degree at most 2, the polynomial $f = x + c$ should be orthogonal to $g = 1$. Find the constant $c$ that achieves this."
+            answer: "-1/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Orthogonality condition: $\\langle x + c, 1 \\rangle = 0$. Compute the full integral: $\\int_0^1 (x + c)\\,dx = \\frac{1}{2} + c$. Set $\\frac{1}{2} + c = 0$ and solve the linear equation for the unknown constant. The solution is c = -1/2."
+          - problem: "Let $\\langle f, g \\rangle = \\int_{-1}^{1} f(x)g(x)\\,dx$. Take $f = x$ and $g = 2x$. Determine whether the Cauchy-Schwarz bound $\\|f\\|\\,\\|g\\|$ is attained for this pair. Give the verdict and the value of $\\langle f, g \\rangle$ as a fraction."
+            answer: "verdict = equality; inner = 4/3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["equality"], ["strict"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "inner"}]}
+            solution_sketch: "Cauchy-Schwarz is attained with equality exactly when the two vectors are linearly dependent; here $g = 2x$ is twice $f$. Check by the full computation: $\\langle x, 2x \\rangle = 2\\int_{-1}^{1} x^2\\,dx = \\frac{4}{3}$ and $\\|x\\|\\,\\|2x\\| = \\sqrt{2/3} \\cdot 2\\sqrt{2/3} = \\frac{4}{3}$. Both sides coincide, so the verdict strict would be the error of assuming two distinct-looking polynomials always give a strict bound. So verdict = equality; inner = 4/3."
         constraints: "polynomials of degree <= 2 over [0,1] or [-1,1]; norms are single square roots of small fractions; orthogonality decided by one integral"
       - id: kp3
         name: Gram-Schmidt with a general inner product
