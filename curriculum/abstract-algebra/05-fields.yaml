@@ -543,14 +543,30 @@ topics:
         name: "Splitting fields over Q"
         key_prerequisites: [field-extensions-degree, complex-numbers]
         exemplars:
-          - problem: 'Find the splitting field of $x^4 - 1$ over $\mathbb{Q}$ and its degree over $\mathbb{Q}$.'
-            answer: '$\mathbb{Q}(i)$, of degree $2$.'
-            answer_contract: {kind: none}
-            solution_sketch: 'The roots are $\pm 1, \pm i$; adjoining $i$ captures all four, and $[\mathbb{Q}(i) : \mathbb{Q}] = 2$ via the minimal polynomial $x^2 + 1$.'
-          - problem: 'Explain why $\mathbb{Q}(\sqrt[3]{2})$ is NOT the splitting field of $x^3 - 2$ over $\mathbb{Q}$, then give the splitting field and its degree.'
-            answer: '$\mathbb{Q}(\sqrt[3]2) \subseteq \mathbb{R}$ contains only the real root; the roots $\sqrt[3]2\,\omega$ and $\sqrt[3]2\,\omega^2$ ($\omega$ a primitive cube root of unity) are non-real. The splitting field is $\mathbb{Q}(\sqrt[3]2, \omega)$, of degree $3 \cdot 2 = 6$.'
-            answer_contract: {kind: none}
-            solution_sketch: 'A splitting field must contain ALL roots. Tower: degree $3$ for $\sqrt[3]2$, then degree $2$ for $\omega$ (root of $x^2 + x + 1$, which stays irreducible over the real field $\mathbb{Q}(\sqrt[3]2)$).'
+          - problem: "The polynomial p(x) = x^4 - 1 has roots 1, -1, i, -i. Find the degree over Q of the splitting field of p(x)."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full root list is 1, -1, i, -i. The rational roots 1 and -1 already lie in Q, and adjoining i also gives -i, so the splitting field is Q(i). By the degree formula, [Q(i):Q] = 2 because x^2 + 1 is irreducible over Q. The degree is 2."
+          - problem: "The polynomial p(x) = x^3 - 2 has roots 2^(1/3), 2^(1/3)*omega, and 2^(1/3)*omega^2, where omega is a primitive cube root of unity. Find the degree over Q of the splitting field of p(x)."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full root list is 2^(1/3), 2^(1/3)*omega, 2^(1/3)*omega^2. Adjoining 2^(1/3) gives a degree 3 extension. The primitive cube root omega is a root of x^2 + x + 1, which stays irreducible over the real field Q(2^(1/3)), so adjoining omega adds degree 2. By the tower law, the splitting field Q(2^(1/3), omega) has degree 3*2 = 6. The degree is 6."
+          - problem: "The polynomial p(x) = x^4 - 5x^2 + 6 has roots sqrt(2), -sqrt(2), sqrt(3), and -sqrt(3). Find the degree over Q of the splitting field of p(x)."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full root list is sqrt(2), -sqrt(2), sqrt(3), -sqrt(3). The splitting field is Q(sqrt(2), sqrt(3)). Adjoining sqrt(2) gives degree 2 over Q. Since sqrt(3) is not in Q(sqrt(2)), its minimal polynomial x^2 - 3 is irreducible there, so adjoining it adds degree 2. By the tower law the degree is 2*2 = 4. The degree is 4."
+          - problem: "The polynomial p(x) = x^4 - 2 has roots 2^(1/4), -2^(1/4), i*2^(1/4), and -i*2^(1/4). Find the degree over Q of the splitting field of p(x)."
+            answer: "8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full root list is 2^(1/4), -2^(1/4), i*2^(1/4), -i*2^(1/4). The splitting field is Q(2^(1/4), i). Adjoining 2^(1/4) gives degree 4 over Q by x^4 - 2. The field Q(2^(1/4)) is real, so i is not in it and x^2 + 1 is irreducible there, adding degree 2. By the tower law the degree is 4*2 = 8. The degree is 8."
+          - problem: "Consider p(x) = x^3 - 3. Its roots are 3^(1/3), 3^(1/3)*omega, and 3^(1/3)*omega^2, where omega is a primitive cube root of unity. Find the degree over Q of the splitting field of p(x)."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full root list is 3^(1/3), 3^(1/3)*omega, 3^(1/3)*omega^2. The splitting field is Q(3^(1/3), omega). Adjoining 3^(1/3) gives degree 3 over Q by x^3 - 3. The primitive cube root omega satisfies x^2 + x + 1, which is irreducible over the real field Q(3^(1/3)), so adjoining omega adds degree 2. By the tower law the degree is 3*2 = 6. The degree is 6."
+          - problem: "The polynomial p(x) = x^4 - 5x^2 + 4 has roots 1, -1, 2, and -2. Find the degree over Q of the splitting field of p(x)."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full root list is 1, -1, 2, -2. Every root already lies in Q, so the splitting field is Q itself. By the definition of degree, [Q:Q] = 1. The degree is 1."
         constraints: "polynomials of degree <= 4 over Q with radical or root-of-unity roots; every problem exhibits the full root list"
       - id: kp3
         name: "Degrees of splitting fields"
@@ -559,10 +575,26 @@ topics:
           - problem: 'Find the degree over $\mathbb{Q}$ of the splitting field of $(x^2 - 2)(x^2 - 3)$.'
             answer: "4"
             solution_sketch: 'The splitting field is $\mathbb{Q}(\sqrt2, \sqrt3)$. Tower: $[\mathbb{Q}(\sqrt2) : \mathbb{Q}] = 2$, and $\sqrt3 \notin \mathbb{Q}(\sqrt2)$ keeps $x^2 - 3$ irreducible there, so another factor of $2$: total $4$.'
-          - problem: 'What is the largest possible degree of the splitting field of a cubic over $\mathbb{Q}$, and give a cubic achieving it.'
-            answer: '$3! = 6$; e.g. $x^3 - 2$.'
-            answer_contract: {kind: none}
-            solution_sketch: 'In general the splitting field of a degree-$n$ polynomial has degree dividing $n!$ (may be quoted); $x^3 - 2$ attains $6$.'
+          - problem: "Let E be the splitting field over Q of a cubic polynomial. By the n! bound, what is the largest possible value of [E : Q]?"
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "For a cubic, E is a splitting field over Q and [E : Q] divides 3! = 6. The bound is attained by x^3 - 2, so the largest possible value is 6."
+          - problem: "Let E be the splitting field of x^4 - 2 over Q. Find [E : Q]."
+            answer: "8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The splitting field is E = Q(2^(1/4), i). Eisenstein at 2 shows x^4 - 2 is irreducible, so [Q(2^(1/4)) : Q] = 4. Since i is not in the real field Q(2^(1/4)), [E : Q(2^(1/4))] = 2. The tower law gives [E : Q] = 4 * 2 = 8."
+          - problem: "Find the degree over Q of the splitting field of x^4 + x^2 + 1."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The splitting field of x^4 + x^2 + 1 is Q(sqrt(-3)). Factor x^4 + x^2 + 1 = (x^2 + x + 1)(x^2 - x + 1). The roots of both quadratics lie in Q(sqrt(-3)). Since [Q(sqrt(-3)) : Q] = 2, the splitting field has degree 2."
+          - problem: "Let E be the splitting field over Q of (x^3 - 2)(x^2 - 2). Given that sqrt(2) is not in Q(2^(1/3), omega), where omega is a primitive cube root of unity, find [E : Q]."
+            answer: "12"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The splitting field is E = Q(2^(1/3), omega, sqrt(2)). The splitting field of x^3 - 2 is Q(2^(1/3), omega), of degree 6 over Q. The given non-membership makes x^2 - 2 irreducible over that field, adding degree 2. By the tower law, [E : Q] = 6 * 2 = 12."
+          - problem: "For a quartic polynomial over Q, the n! bound limits the degree of its splitting field. Find the largest possible degree over Q of such a splitting field."
+            answer: "24"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "A quartic has n = 4, so its splitting field degree is bounded by 4! = 24. The bound is sharp, so the largest possible degree is 24."
         constraints: "tower-law computations of height <= 2; the n! bound may be quoted; non-membership facts like sqrt(3) not in Q(sqrt(2)) may be given"
     diagnostic_exemplar:
       problem: 'Find the degree over $\mathbb{Q}$ of the splitting field of $x^3 - 5$.'

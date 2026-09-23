@@ -497,39 +497,91 @@ topics:
         name: "Statement; listing the abelian groups of a given order"
         key_prerequisites: [direct-products, abelian-groups]
         exemplars:
-          - problem: 'List all abelian groups of order $8$ up to isomorphism.'
-            answer: '$\mathbb{Z}_8$, $\ \mathbb{Z}_4 \times \mathbb{Z}_2$, $\ \mathbb{Z}_2 \times \mathbb{Z}_2 \times \mathbb{Z}_2$'
-            answer_contract: {kind: none}
-            solution_sketch: 'Every finite abelian group is a direct product of cyclic groups of prime-power order; for $8 = 2^3$ the choices are the partitions of $3$: $(3), (2,1), (1,1,1)$.'
+          - problem: "How many abelian groups of order 8 exist, up to isomorphism?"
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Factor 8 = 2^3, so the only prime exponent is 3. By the fundamental theorem of finite abelian groups, the count equals the partition number p(3). The partitions of 3 are (3), (2,1) and (1,1,1), so the count is 3."
           - problem: 'How many abelian groups of order $36$ are there up to isomorphism?'
             answer: "4"
             solution_sketch: '$36 = 2^2 \cdot 3^2$; independent partition choices for each prime give $p(2) \cdot p(2) = 2 \cdot 2 = 4$.'
+          - problem: "Determine the number of abelian groups of order 16, up to isomorphism."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Factor 16 = 2^4, so the only prime exponent is 4. The count equals p(4), the number of partitions of 4: (4), (3,1), (2,2), (2,1,1), (1,1,1,1). Hence the number of abelian groups of order 16 is 5."
+          - problem: "An abelian group has order 30. How many isomorphism classes of abelian groups of this order are there?"
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Factor 30 = 2 x 3 x 5; every prime exponent is 1. The count is p(1) x p(1) x p(1) = 1, and the only group is the cyclic group Z30. The number of isomorphism classes is 1."
+          - problem: "A student must classify the abelian groups of order 24 up to isomorphism. How many groups are on the student's list?"
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Factor 24 = 2^3 x 3. The count is p(3) x p(1) = 3 x 1 = 3, matching the groups Z24, Z12 x Z2 and Z6 x Z2 x Z2. The answer is 3."
+          - problem: "Give the number of abelian groups of order 48, counted up to isomorphism."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Factor 48 = 2^4 x 3. By the fundamental theorem the count is p(4) x p(1) = 5 x 1, since the partitions of 4 are five in number. The number of abelian groups of order 48 up to isomorphism is 5."
+          - problem: "For each positive integer n, let a(n) be the number of abelian groups of order n, counted up to isomorphism. Find the smallest n greater than 1 with a(n) = 5."
+            answer: "16"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Compute a(n) for n from 2 to 15 using the partition number of each prime exponent: orders 4, 9 and 12 give 2, order 8 gives 3, and all other orders give 1. At n = 16 = 2^4 the count is p(4) = 5, so the smallest such n is 16."
         constraints: "orders with prime exponents <= 4; the count is the product of partition numbers of the exponents"
       - id: kp2
         name: "Elementary divisors and invariant factors"
         key_prerequisites: [direct-products]
         exemplars:
-          - problem: 'Write $\mathbb{Z}_6 \times \mathbb{Z}_4$ in invariant-factor form $\mathbb{Z}_{d_1} \times \mathbb{Z}_{d_2}$ with $d_2 \mid d_1$.'
-            answer: '$\mathbb{Z}_{12} \times \mathbb{Z}_2$'
-            answer_contract: {kind: none}
-            solution_sketch: 'Elementary divisors: $2, 3$ (from $6$) and $4$. Largest invariant factor takes the top power of each prime: $4 \cdot 3 = 12$; the remaining $2$ is next. Check $2 \mid 12$.'
-          - problem: 'Decide: is $\mathbb{Z}_{10} \times \mathbb{Z}_{15} \cong \mathbb{Z}_{150}$?'
-            answer: 'No: its invariant-factor form is $\mathbb{Z}_{30} \times \mathbb{Z}_5$, so the maximal element order is $30$, not $150$.'
-            answer_contract: {kind: none}
-            solution_sketch: 'Elementary divisors $2, 5, 3, 5$; invariant factors $2 \cdot 3 \cdot 5 = 30$ and $5$. A cyclic group of order $150$ would need an element of order $150$.'
+          - problem: "Convert the group $\\mathbb{Z}_{6} \\times \\mathbb{Z}_{4}$ to invariant-factor form $\\mathbb{Z}_{d_1} \\times \\mathbb{Z}_{d_2}$. Give $d_1$ and $d_2$ with $d_1$ dividing $d_2$."
+            answer: "d1 = 2; d2 = 12"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "d1"}, {"contract": {"kind": "exact"}, "name": "d2"}]}
+            solution_sketch: "The full group is Z_6 x Z_4. Step 1 (prime-power decomposition): Z_6 gives 2 and 3, and Z_4 gives 4. Step 2 (arrange by prime): the 2-column holds 4 and 2, and the 3-column holds 3. Step 3 (multiply down each column): 4*3 = 12 and 2, and 2 divides 12. The invariant factors are d1 = 2; d2 = 12."
+          - problem: "Write $\\mathbb{Z}_{10} \\times \\mathbb{Z}_{15}$ in invariant-factor form. Give the invariant factors $d_1$ and $d_2$, ordered so that $d_1$ divides $d_2$."
+            answer: "d1 = 5; d2 = 30"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "d1"}, {"contract": {"kind": "exact"}, "name": "d2"}]}
+            solution_sketch: "The full group is Z_10 x Z_15. Step 1 (prime-power decomposition): Z_10 gives 2 and 5, and Z_15 gives 3 and 5. Step 2 (arrange by prime): the 2-column has 2, the 3-column has 3, and the 5-column has 5 and 5. Step 3 (multiply down each column): 2*3*5 = 30 and 5, and 5 divides 30. The invariant factors are d1 = 5; d2 = 30."
+          - problem: "An abelian group has invariant-factor form $\\mathbb{Z}_{12} \\times \\mathbb{Z}_{2}$. Give the elementary divisors in increasing order."
+            answer: "2, 3, 4"
+            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
+            solution_sketch: "The full group is Z_12 x Z_2. Step 1 (prime-power factorization of each invariant factor): 12 = 4*3 and 2 = 2. Step 2 (collect the prime powers): the multiset is 2, 3, and 4. Step 3 (sort in increasing order). The elementary divisors are 2, 3, 4."
+          - problem: "The group $\\mathbb{Z}_{20} \\times \\mathbb{Z}_{2}$ is given in invariant-factor form. Find its elementary divisors and list them in increasing order."
+            answer: "2, 4, 5"
+            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
+            solution_sketch: "The full group is Z_20 x Z_2. Step 1 (prime-power factorization of each invariant factor): 20 = 4*5 and 2 = 2. Step 2 (collect the prime powers): the multiset is 2, 4, and 5. Step 3 (sort in increasing order). The elementary divisors are 2, 4, 5."
+          - problem: "Find the invariant factors of $\\mathbb{Z}_{9} \\times \\mathbb{Z}_{3} \\times \\mathbb{Z}_{2}$. Give $d_1$ and $d_2$ with $d_1$ dividing $d_2$."
+            answer: "d1 = 3; d2 = 18"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "d1"}, {"contract": {"kind": "exact"}, "name": "d2"}]}
+            solution_sketch: "The full group is Z_9 x Z_3 x Z_2. Step 1 (prime-power decomposition): the 3-power list is 9 and 3, and the 2-power list is 2. Step 2 (multiply down each column): 9*2 = 18 and 3. Step 3 (divisibility check): 3 divides 18. The invariant factors are d1 = 3; d2 = 18."
+          - problem: "The group $\\mathbb{Z}_{4} \\times \\mathbb{Z}_{3} \\times \\mathbb{Z}_{3}$ needs its invariant-factor form. Give the factors $d_1$ and $d_2$ with $d_1$ dividing $d_2$."
+            answer: "d1 = 3; d2 = 12"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "d1"}, {"contract": {"kind": "exact"}, "name": "d2"}]}
+            solution_sketch: "The full group is Z_4 x Z_3 x Z_3. Step 1 (prime-power decomposition): the 2-power list is 4, and the 3-power list is 3 and 3. Step 2 (multiply down each column): 4*3 = 12 and 3. Step 3 (divisibility check): 3 divides 12. The invariant factors are d1 = 3; d2 = 12."
         constraints: "two or three cyclic factors with moduli <= 20; convert in both directions between elementary-divisor and invariant-factor form"
       - id: kp3
         name: "Identifying an abelian group by its element orders"
         key_prerequisites: [direct-products, isomorphism-invariants]
         exemplars:
-          - problem: 'Which abelian group of order $8$ has exactly $3$ elements of order $2$?'
-            answer: '$\mathbb{Z}_4 \times \mathbb{Z}_2$'
-            answer_contract: {kind: none}
-            solution_sketch: '$\mathbb{Z}_8$ has one element of order $2$; $\mathbb{Z}_2^3$ has seven; $\mathbb{Z}_4 \times \mathbb{Z}_2$ has $(2,0), (0,1), (2,1)$ — exactly three.'
-          - problem: 'An abelian group of order $16$ has every non-identity element of order $2$. Identify it up to isomorphism.'
-            answer: '$\mathbb{Z}_2 \times \mathbb{Z}_2 \times \mathbb{Z}_2 \times \mathbb{Z}_2$'
-            answer_contract: {kind: none}
-            solution_sketch: 'Any factor $\mathbb{Z}_{2^k}$ with $k \ge 2$ would contribute an element of order $4$; so all factors are $\mathbb{Z}_2$.'
+          - problem: "An abelian group G of order 16 has exactly 3 elements of order 2 and 4 elements of order 4. Determine G up to isomorphism."
+            answer: "Z8xZ2"
+            answer_contract: {"kind": "label", "options": [["Z8xZ2"], ["Z4xZ4"], ["Z4xZ2xZ2"], ["Z2xZ2xZ2xZ2"]]}
+            solution_sketch: "List the four abelian groups of order 16 as candidates. Z4xZ4 has 3 elements of order 2 but 12 elements of order 4, so it fails the order-4 count. Z4xZ2xZ2 has 7 elements of order 2, so it fails the order-2 count. Z2xZ2xZ2xZ2 has 15 elements of order 2, so it fails the order-2 count. The matching group is Z8xZ2."
+          - problem: "An abelian group G of order 16 has exactly 7 elements of order 2 and 8 elements of order 4. Determine G up to isomorphism."
+            answer: "Z4xZ2xZ2"
+            answer_contract: {"kind": "label", "options": [["Z4xZ2xZ2"], ["Z8xZ2"], ["Z4xZ4"], ["Z2xZ2xZ2xZ2"]]}
+            solution_sketch: "List the four abelian groups of order 16 as candidates. Z8xZ2 has 3 elements of order 2 and 4 elements of order 4, so it fails the order-2 count. Z4xZ4 has 3 elements of order 2 and 12 elements of order 4, so it fails the order-2 count. Z2xZ2xZ2xZ2 has 15 elements of order 2, so it fails the order-2 count. The matching group is Z4xZ2xZ2."
+          - problem: "An abelian group G of order 16 has exactly 3 elements of order 2 and 4 elements of order 4. Find the number of elements of order 8 and the number of elements of order 16 in G."
+            answer: "a8 = 8; a16 = 0"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "a8"}, {"contract": {"kind": "exact"}, "name": "a16"}]}
+            solution_sketch: "Use the given counts to identify the group. The counts 3 elements of order 2 and 4 elements of order 4 match Z8xZ2. In Z8xZ2, an element has order 8 when its first coordinate has order 8 and the second is arbitrary, giving 4 times 2 = 8 elements of order 8. No element has order 16. Thus a8 = 8; a16 = 0."
+          - problem: "An abelian group G of order 16 has exactly 7 elements of order 2. Determine the number of elements of order 4 and the number of elements of order 8 in G."
+            answer: "a4 = 8; a8 = 0"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "a4"}, {"contract": {"kind": "exact"}, "name": "a8"}]}
+            solution_sketch: "Use the classification by element orders. Among order-16 abelian groups, only Z4xZ2xZ2 has exactly 7 elements of order 2. In that group an element has order 4 when the Z4 coordinate has order 4, giving 2 times 2 times 2 = 8 elements of order 4. There are no elements of order 8. Thus a4 = 8; a8 = 0."
+          - problem: "An abelian group G of order 16 has exactly 1 element of order 2 and 2 elements of order 4. Find the number of elements of order 8 and the number of elements of order 16 in G."
+            answer: "a8 = 4; a16 = 8"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "a8"}, {"contract": {"kind": "exact"}, "name": "a16"}]}
+            solution_sketch: "Use the given counts to identify the group. The counts 1 element of order 2 and 2 elements of order 4 match the cyclic group Z16. In Z16 the elements of order 8 are 2, 6, 10, 14, giving 4. The elements of order 16 are the 8 generators. Thus a8 = 4; a16 = 8."
+          - problem: "An abelian group G of order 12 has exactly 1 element of order 2. Determine the number of elements of order 3 and the number of elements of order 6 in G."
+            answer: "a3 = 2; a6 = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "a3"}, {"contract": {"kind": "exact"}, "name": "a6"}]}
+            solution_sketch: "Use the given count to identify the group. Among abelian groups of order 12, only Z12 has exactly 1 element of order 2. In Z12 the elements of order 3 are 4 and 8, giving 2. The elements of order 6 are 2 and 10, giving 2. Thus a3 = 2; a6 = 2."
         constraints: "orders <= 16; distinguish candidate decompositions by counts of elements of a given order"
     diagnostic_exemplar:
       problem: 'An abelian group $G$ of order $36$ has exactly one element of order $2$ and exactly two elements of order $3$. Identify $G$ up to isomorphism and give its invariant-factor form.'
