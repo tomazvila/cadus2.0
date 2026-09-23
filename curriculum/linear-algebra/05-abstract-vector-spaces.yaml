@@ -54,17 +54,29 @@ topics:
         name: Verifying and refuting the axioms in unfamiliar sets
         key_prerequisites: [subspace-test]
         exemplars:
-          - problem: 'Let $V = \mathbb{R}^2$ with the usual addition but scalar multiplication $c \odot (x, y) = (cx, 0)$. Which vector-space axiom fails?'
-            answer: "The identity axiom 1v = v: 1 (x, y) = (x, 0), which differs from (x, y) whenever y is nonzero"
-            answer_contract: {kind: none}
-            solution_sketch: 'Test the axioms one by one; $1 \odot (x, y) = (x, 0) \neq (x, y)$ for $y \neq 0$.'
-          - problem: 'In $V = \mathbb{R}^{>0}$ (the positive reals) with $x \oplus y = xy$ and $c \odot x = x^c$, verify the axiom $c \odot (x \oplus y) = (c \odot x) \oplus (c \odot y)$.'
-            answer: "Both sides equal (xy)^c: left is (xy)^c, right is x^c y^c, and (xy)^c = x^c y^c"
-            answer_contract: {kind: none}
-            solution_sketch: 'Left: $c \odot (xy) = (xy)^c$. Right: $x^c \oplus y^c = x^c y^c$. They agree by the exponent product rule.'
+          - problem: "Let $V = \\mathbb{R}^2$ with the usual addition and the usual zero vector $(0, 0)$, but scalar multiplication $c \\odot (x, y) = (cx, 0)$. Check the axioms with concrete vectors. Which axiom fails?"
+            answer: "the axiom 1v = v"
+            answer_contract: {"kind": "label", "options": [["the axiom 1v = v"], ["the axiom c(u + w) = cu + cw"], ["the axiom u + w = w + u"], ["the axiom (u + w) + t = u + (w + t)"]]}
+            solution_sketch: "Step 1 (test the scalar distributive axiom): the option 'the axiom c(u + w) = cu + cw' holds, since c odot ((x, y) + (u, v)) = (c(x + u), 0) = (cx, 0) + (cu, 0); picking it is the error of testing only vectors with second coordinate 0. Step 2 (test the addition axioms): the options 'the axiom u + w = w + u' and 'the axiom (u + w) + t = u + (w + t)' both hold because the addition is the usual one; picking either is the error of confusing the modified scalar multiplication with the addition. Step 3 (identity axiom, concrete counterexample): 1 odot (2, 3) = (2, 0) which differs from (2, 3). The failing axiom is the axiom 1v = v."
+          - problem: "In $V = \\mathbb{R}^{>0}$ with $x \\oplus y = xy$ and $c \\odot x = x^c$, consider the axiom $c \\odot (x \\oplus y) = (c \\odot x) \\oplus (c \\odot y)$. Compute the left side and the right side with $c = 3$, $x = 2$, $y = 5$. Give the answer as left = value; right = value."
+            answer: "left = 1000; right = 1000"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "left"}, {"contract": {"kind": "exact"}, "name": "right"}]}
+            solution_sketch: "Full result: the left side and the right side both equal 1000, so the axiom holds for these values. Step 1 (definition of the operations on the left side): x plus y is 2 * 5 = 10, so c odot (x plus y) = 3 odot 10 = 10^3 = 1000. Step 2 (right side, exponent product rule): (c odot x) plus (c odot y) = 2^3 plus 5^3 = 8 plus 125 = 8 * 125 = 1000, since (xy)^c = x^c y^c. The two sides agree. The answer is left = 1000; right = 1000."
           - problem: 'In the same space $V = \mathbb{R}^{>0}$ with $x \oplus y = xy$, which element plays the role of the zero vector?'
             answer: "1"
             solution_sketch: 'Need $x \oplus \mathbf{0} = x$ for all $x$: $x \cdot 1 = x$, so the number $1$ is the zero vector of $V$.'
+          - problem: "In $V = \\mathbb{R}^{>0}$ with $x \\oplus y = xy$ and $c \\odot x = x^c$, the additive inverse of $x$ is the element $y$ with $x \\oplus y$ equal to the zero vector. Find the additive inverse of $x$ as a function of $x$."
+            answer: "1/x"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Step 1 (zero-vector axiom): the zero vector z satisfies x plus z = x, that is xz = x for every positive x, so z = 1. Step 2 (inverse axiom): the additive inverse y satisfies x plus y = 1, that is xy = 1, so y = 1/x. Step 3 (check): x * (1/x) = 1 for every positive x, as the inverse axiom requires. The additive inverse of x is 1/x."
+          - problem: "Let $V = \\mathbb{R}^2$ with the modified addition $(x, y) \\oplus (u, v) = (x + u, y + v + 1)$. The zero vector is the element $z$ with $(x, y) \\oplus z = (x, y)$ for every $(x, y)$. Find the zero vector of $V$ as (x, y)."
+            answer: "(0, -1)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Step 1 (zero-vector axiom): write z = (a, b); the axiom v plus z = v gives (x + a, y + b + 1) = (x, y) for every (x, y). Step 2 (compare coordinates): x + a = x forces a = 0, and y + b + 1 = y forces b = -1. Step 3 (check): (x, y) plus (0, -1) = (x + 0, y - 1 + 1) = (x, y), as required. The zero vector of V is (0, -1)."
+          - problem: "Let $V = \\mathbb{R}^2$ with the modified addition $(x, y) \\oplus (u, v) = (x + u - 3, y + v + 2)$. Find the additive inverse of $(1, 1)$ in $V$ as (x, y)."
+            answer: "(5, -5)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Step 1 (zero-vector axiom): z = (a, b) with (x + a - 3, y + b + 2) = (x, y) for all (x, y) gives a = 3 and b = -2, so the zero vector is (3, -2). Step 2 (inverse axiom): the inverse (p, q) of (1, 1) satisfies (1, 1) plus (p, q) = (3, -2), that is (p - 2, q + 3) = (3, -2). Step 3 (solve): p = 5 and q = -5. The additive inverse of (1, 1) is (5, -5)."
         constraints: "modified operations on R^2 or R^>0 only; each failure pinned to one named axiom with a concrete counterexample"
       - id: kp3
         name: First consequences of the axioms
@@ -573,6 +585,18 @@ topics:
           - problem: 'The shift map $T(p)(x) = p(x + 1)$ on $P_1$ has matrix $\begin{pmatrix}1&1\\0&1\end{pmatrix}$ in the basis $\{1, x\}$. Use the matrix to compute $T(3 + 2x)$.'
             answer: "5 + 2x"
             solution_sketch: 'Coordinates $(3, 2)$ map to $\begin{pmatrix}1&1\\0&1\end{pmatrix}(3, 2) = (5, 2)$, i.e. $5 + 2x$. Check directly: $3 + 2(x + 1) = 5 + 2x$. The coordinate isomorphism $P_1 \cong \mathbb{R}^2$ turns the map into matrix arithmetic.'
+          - problem: "Let $T: P_1 \\to P_1$ be the shift $T(p)(x) = p(x - 1)$. Find the matrix of $T$ relative to the basis $\\{1, x\\}$. Give the matrix as [a,b;c,d]."
+            answer: "[1,-1;0,1]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "Apply the shift rule to each basis vector: $T(1) = 1$ has coordinates $(1, 0)$, and $T(x) = x - 1$ has coordinates $(-1, 1)$. Placing these coordinate vectors as the columns gives the matrix [1,-1;0,1]."
+          - problem: "Let $T: P_1 \\to P_1$ be the scaling $T(p)(x) = p(3x)$. Find the matrix of $T$ relative to the basis $\\{1, x\\}$. Give the matrix as [a,b;c,d]."
+            answer: "[1,0;0,3]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "Apply the scaling rule to each basis vector: $T(1) = 1$ has coordinates $(1, 0)$, and $T(x) = 3x$ has coordinates $(0, 3)$. Placing these coordinate vectors as the columns gives the matrix [1,0;0,3]."
+          - problem: "Let $T: P_1 \\to P_1$ be given on coefficients by $T(a_0 + a_1 x) = (a_0 + a_1) + (a_1 - a_0)x$. Find the matrix of $T$ relative to the basis $\\{1, x\\}$. Give the matrix as [a,b;c,d]."
+            answer: "[1,1;-1,1]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "Apply the coefficient formula to each basis vector: $T(1) = 1 - x$ has coordinates $(1, -1)$, and $T(x) = 1 + x$ has coordinates $(1, 1)$. Placing these coordinate vectors as the columns gives the matrix [1,1;-1,1]."
         constraints: "maps on P_1 or P_2 built from shifts p(x+c), scalings p(cx), or coefficient formulas with c in -2..2; no calculus; images expressed in the monomial basis"
     diagnostic_exemplar:
       problem: 'Let $T : P_1 \to P_1$ be the shift $T(p)(x) = p(x + 2)$. Find the matrix of $T$ relative to the basis $\{1, x\}$, and use the matrix to compute $T(3 + 2x)$.'

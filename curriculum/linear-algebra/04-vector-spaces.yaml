@@ -625,10 +625,26 @@ topics:
           - problem: 'For $B = \{(1, 0), (1, 2)\}$, use $[\mathbf{x}]_B = P_B^{-1}\mathbf{x}$ to find the coordinates of $\mathbf{x} = (5, 4)$.'
             answer: "(3, 2)"
             solution_sketch: '$P_B = \begin{pmatrix}1&1\\0&2\end{pmatrix}$, $P_B^{-1} = \begin{pmatrix}1&-1/2\\0&1/2\end{pmatrix}$; $P_B^{-1}(5, 4) = (5 - 2, 2) = (3, 2)$.'
-          - problem: 'Why is $P_B$ always invertible?'
-            answer: "Its columns are a basis, hence linearly independent"
-            answer_contract: {kind: none}
-            solution_sketch: 'A square matrix with independent columns is invertible.'
+          - problem: "For $B = \\{(1, 1), (1, -1)\\}$, use $[\\mathbf{x}]_B = P_B^{-1}\\mathbf{x}$ to find the coordinates of $\\mathbf{x} = (7, 3)$ relative to B as (a, b)."
+            answer: "(5, 2)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Form P_B with the basis vectors as columns: P_B = [[1,1],[1,-1]]. Its determinant is 1 times -1 minus 1 times 1 = -2, so by the 2x2 inverse formula P_B inverse = (-1/2)[[-1,-1],[-1,1]] = [[1/2,1/2],[1/2,-1/2]]. Multiply: P_B inverse (7,3) = ((7+3)/2, (7-3)/2) = (5,2). The coordinate vector is (5, 2)."
+          - problem: "A vector $\\mathbf{x} = (11, 19)$ is expressed in the basis $B = \\{(1, 2), (3, 5)\\}$. Compute its B-coordinates $[\\mathbf{x}]_B$ via $P_B^{-1}$, and give them as (a, b)."
+            answer: "(2, 3)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "The columns of P_B are the basis vectors, so P_B = [[1,3],[2,5]] with determinant 1 times 5 minus 3 times 2 = -1. The 2x2 inverse formula gives P_B inverse = [[-5,3],[2,-1]]. Multiply: P_B inverse (11,19) = (-55 + 57, 22 - 19) = (2,3). The B-coordinates are (2, 3)."
+          - problem: "Let $B = \\{(1, 2), (2, 5)\\}$ and $\\mathbf{x} = (11, 26)$, so $[\\mathbf{x}]_B = (a, b)$. Using $P_B^{-1}$, find the second coordinate $b$ only."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "P_B = [[1,2],[2,5]] has determinant 1 times 5 minus 2 times 2 = 1. By the 2x2 inverse formula, P_B inverse = [[5,-2],[-2,1]]. Multiply: P_B inverse (11,26) = (55 - 52, -22 + 26) = (3,4). The second coordinate b is 4."
+          - problem: "The columns of $P_B$ are the basis vectors $B = \\{(1, 3), (2, 4)\\}$, and $P_B^{-1}$ converts standard coordinates to B-coordinates. Give the matrix $P_B^{-1}$ as [a,b;c,d]."
+            answer: "[-2,1;3/2,-1/2]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "The basis vectors (1,3) and (2,4) form P_B = [[1,2],[3,4]], with determinant 1 times 4 minus 2 times 3 = -2. The 2x2 inverse formula gives P_B inverse = (1/-2)[[4,-2],[-3,1]] = [[-2,1],[3/2,-1/2]]. This is the matrix that maps standard coordinates to B-coordinates. P_B inverse = [-2,1;3/2,-1/2]."
+          - problem: "For $B = \\{(2, 1), (1, 1)\\}$ and $\\mathbf{x} = (9, 5)$, a student claims $[\\mathbf{x}]_B = (3, 2)$. Check the claim with $P_B^{-1}$. State whether the claim is correct, and give the correct coordinates as (a, b)."
+            answer: "verdict = incorrect; coords = (4, 1)"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["correct"], ["incorrect"]]}, "name": "verdict"}, {"contract": {"arity": 2, "kind": "coordinates"}, "name": "coords"}]}
+            solution_sketch: "Test the claim directly: 3 times (2,1) plus 2 times (1,1) equals (8,5), which is not x = (9,5), so the verdict is incorrect. To correct it, form P_B = [[2,1],[1,1]] with determinant 1, so P_B inverse = [[1,-1],[-1,2]] by the 2x2 inverse formula. Multiply: P_B inverse (9,5) = (9 - 5, -9 + 9 + 5) = wait, compute row-wise: (9 - 5, -9 + 5) is wrong; correctly (1*9 + (-1)*5, (-1)*9 + 1*5) = (4, -4)? Recheck: P_B = [[2,1],[1,1]] means columns (2,1) and (1,1), so the rows of P_B are (2,1) and (1,1), and P_B inverse = [[1,-1],[-1,2]]. Then P_B inverse (9,5) = (9 - 5, -9 + 10) = (4,1). Verdict = incorrect; coords = (4, 1)."
         constraints: "2x2 bases with determinant +-1 or +-2 so the inverse is clean"
       - id: kp3
         name: Converting between two bases
@@ -1202,17 +1218,29 @@ topics:
         name: Checking orthogonality and normalizing
         key_prerequisites: [dot-product]
         exemplars:
-          - problem: 'Is $\{(1, 1), (1, -1)\}$ an orthogonal set? Is it orthonormal?'
-            answer: "Orthogonal yes (dot product 0); orthonormal no (each has norm sqrt(2))"
-            answer_contract: {kind: none}
-            solution_sketch: '$(1,1) \cdot (1,-1) = 0$, so the set is orthogonal; each vector has norm $\sqrt{2} \neq 1$, so it is not orthonormal.'
           - problem: 'Normalize the orthogonal set $\{(3, 4), (-4, 3)\}$ into an orthonormal set.'
             answer: "{(3/5, 4/5), (-4/5, 3/5)}"
             solution_sketch: 'Both vectors have norm $5$; divide each by $5$.'
-          - problem: 'Is $\{(1, 2), (2, 1)\}$ orthogonal?'
-            answer: "No"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: '$(1, 2) \cdot (2, 1) = 2 + 2 = 4 \neq 0$.'
+          - problem: "The set S = {(4, 3), (-3, 4)} is proposed as a basis for the plane. Is S orthogonal, and what is the norm of each vector in S? Give verdict = yes or no, and norm."
+            answer: "verdict = yes; norm = 5"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "norm"}]}
+            solution_sketch: "Step 1 (orthogonality check by the dot product): the dot product of (4, 3) and (-3, 4) is 4*(-3) + 3*4 = -12 + 12 = 0, so S is an orthogonal set. Step 2 (norm check for orthonormality): the norm of (4, 3) is sqrt(4^2 + 3^2) = sqrt(25) = 5, and (-3, 4) has the same norm, so the vectors are not unit and S is not orthonormal. The answer is verdict = yes; norm = 5."
+          - problem: "Consider the pair of vectors (2, 3) and (3, 2). Are they orthogonal, and what is their dot product? Give verdict = yes or no, and dot."
+            answer: "verdict = no; dot = 12"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "dot"}]}
+            solution_sketch: "Step 1 (dot product rule): (2, 3) . (3, 2) = 2*3 + 3*2 = 6 + 6 = 12. Step 2 (orthogonality condition): a pair is orthogonal only when its dot product is 0, and 12 is not 0, so the pair fails the test. The wrong verdict yes comes from forgetting the sign rule or adding wrong. The answer is verdict = no; dot = 12."
+          - problem: "A vector v = (-3, 4) belongs to an orthogonal set that must become orthonormal. Find the unit vector in the direction of v. Give the answer as (x, y)."
+            answer: "(-3/5, 4/5)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Step 1 (norm from the dot product): the norm of (-3, 4) is sqrt((-3)^2 + 4^2) = sqrt(9 + 16) = sqrt(25) = 5. Step 2 (normalize by dividing by the norm): (-3, 4)/5 = (-3/5, 4/5), whose norm is sqrt(9/25 + 16/25) = 1. The answer is (-3/5, 4/5)."
+          - problem: "The vectors (k, 4) and (3, -6) form an orthogonal set. Find the value of k."
+            answer: "8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (orthogonality condition): the dot product (k, 4) . (3, -6) = 3k - 24 must equal 0. Step 2 (solve the linear equation): 3k = 24, so k = 24/3 = 8. The answer is 8."
+          - problem: "The set {(1, 1), (-1, 1)} is orthogonal but not orthonormal. Normalize it into an orthonormal set. Give u1 = the normalized form of (1, 1) and u2 = the normalized form of (-1, 1), each as (x, y)."
+            answer: "u1 = (1/sqrt(2), 1/sqrt(2)); u2 = (-1/sqrt(2), 1/sqrt(2))"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"arity": 2, "kind": "coordinates"}, "name": "u1"}, {"contract": {"arity": 2, "kind": "coordinates"}, "name": "u2"}]}
+            solution_sketch: "Step 1 (norm of each vector): (1, 1) and (-1, 1) both have norm sqrt(1^2 + 1^2) = sqrt(2), so the common divisor is sqrt(2). Step 2 (normalize by dividing each vector by its norm): (1, 1)/sqrt(2) = (1/sqrt(2), 1/sqrt(2)) and (-1, 1)/sqrt(2) = (-1/sqrt(2), 1/sqrt(2)); their dot product is still 0 and each norm is 1. The answer is u1 = (1/sqrt(2), 1/sqrt(2)); u2 = (-1/sqrt(2), 1/sqrt(2))."
         constraints: "pairs with dot product 0 for yes-cases; norms 5, sqrt(2), or 3 for clean normalization"
       - id: kp2
         name: Orthogonal sets in R^3 and independence
