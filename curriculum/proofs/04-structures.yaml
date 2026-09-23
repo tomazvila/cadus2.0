@@ -489,12 +489,34 @@ topics:
         name: "Invertibility in number monoids"
         key_prerequisites: [monoids]
         exemplars:
-          - problem: 'Which elements of the monoid $(\mathbb{Z}, \cdot, 1)$ are invertible?'
-            answer: 'Only $1$ and $-1$.'
-            solution_sketch: '$ax = 1$ with $a, x \in \mathbb{Z}$ forces $|a| = |x| = 1$; e.g. $2$ has no integer inverse since $2x = 1$ has no integer solution. $\square$'
-          - problem: 'Which elements are invertible in $(\mathbb{Q}, \cdot, 1)$? In $(\mathbb{Z}, +, 0)$?'
-            answer: 'All nonzero rationals; every integer.'
-            solution_sketch: '$p/q \ne 0$ has inverse $q/p$; and $n$ has additive inverse $-n$. Only $0$ fails in the multiplicative case ($0 \cdot x = 0 \ne 1$). $\square$'
+          - problem: "In the monoid (Z, *, 1) of integers under multiplication, which set is exactly the invertible elements? Select the set."
+            answer: "1 and -1"
+            answer_contract: {"kind": "label", "options": [["1 and -1"], ["all integers"], ["nonzero integers"], ["0 and 1"]]}
+            solution_sketch: "Step 1 (definition): a is invertible in (Z, *, 1) if a*b = 1 for some integer b. Step 2 (positive case): if a = 1, b = 1 works; if a = -1, b = -1 works. Step 3 (necessity): if a*b = 1, then |a|*|b| = 1, so |a| = 1 and a = 1 or a = -1. Option all integers is wrong because 2 has no integer inverse. Option nonzero integers is wrong because 2 is nonzero but not invertible. Option 0 and 1 is wrong because 0*x = 0, never 1. The answer is 1 and -1."
+          - problem: "The monoid (Q, *, 1) is rational numbers under multiplication. The monoid (Z, +, 0) is integers under addition. Find qinv, the inverse of -4/5 in (Q, *, 1), and zinv, the inverse of 9 in (Z, +, 0). Give both answers."
+            answer: "qinv = -5/4; zinv = -9"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "qinv"}, {"contract": {"kind": "exact"}, "name": "zinv"}]}
+            solution_sketch: "Step 1 (identity): in (Q, *, 1) the identity is 1. Solve x*(-4/5) = 1, so x = -5/4. Step 2 (identity): in (Z, +, 0) the identity is 0. Solve 9 + y = 0, so y = -9. The answer is qinv = -5/4; zinv = -9."
+          - problem: "The monoid is (Z, +, 0) of integers under addition. Give the inverse of 13."
+            answer: "-13"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (identity): in (Z, +, 0) the identity is 0. Step 2 (inverse equation): the inverse of 13 is x with 13 + x = 0. Subtract 13 from both sides: x = -13. The inverse is -13."
+          - problem: "The monoid is (Q, *, 1) of rational numbers under multiplication. Give the inverse of 6/11 as a fraction."
+            answer: "11/6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (identity): in (Q, *, 1) the identity is 1. Step 2 (inverse equation): solve x*(6/11) = 1. Multiply both sides by 11/6: x = 11/6. The inverse is 11/6."
+          - problem: "The monoid is (Z, *, 1) of integers under multiplication. Give the smallest integer greater than 1 that has no inverse in this monoid."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (definition): n is invertible in (Z, *, 1) if n*m = 1 for some integer m. Step 2 (smallest failure): for n = 2, the equation 2m = 1 has no integer solution, so 2 is not invertible. Any integer greater than 1 has the same obstruction. The smallest integer greater than 1 with no inverse is 2."
+          - problem: "The monoid is (Q, *, 1) of rational numbers under multiplication. Give the only rational number that fails to have an inverse."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (identity): in (Q, *, 1) the identity is 1. Step 2 (zero fails): for every rational x, x*0 = 0, which is not 1. Step 3 (nonzero works): if q is a nonzero rational, then 1/q is rational and q*(1/q) = 1. The only rational number that fails to have an inverse is 0."
+          - problem: "Write the full proof: In the monoid (Z, *, 1), the invertible elements are exactly 1 and -1. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Claim: in the monoid (Z, *, 1), an integer a is invertible exactly when a = 1 or a = -1. Step 1 (definition): a is invertible if there is an integer b with a*b = 1. Step 2 (existence): if a = 1, take b = 1; if a = -1, take b = -1, so both are invertible. Step 3 (necessity): suppose a*b = 1 for integers a and b. Taking absolute values gives |a|*|b| = 1. Since |a| and |b| are nonnegative integers, both must equal 1. Thus |a| = 1, so a = 1 or a = -1. Step 4 (failure of the rest): if a is any other integer, then |a| is at least 2, and a*b = 1 would force |a|*|b| = 1, impossible. Therefore no other integer is invertible. The invertible elements are exactly 1 and -1."
         constraints: "classify the invertible elements and justify why the rest fail"
       - id: kp2
         name: "Invertibility in the function monoid"

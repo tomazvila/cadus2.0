@@ -1292,12 +1292,34 @@ topics:
         name: "The two-solutions template"
         key_prerequisites: [direct-proof]
         exemplars:
-          - problem: 'Prove: the equation $5x + 3 = 18$ has a unique real solution.'
-            answer: 'Existence: $x = 3$ works. Uniqueness: any solution satisfies $5x = 15$, forcing $x = 3$.'
-            solution_sketch: 'Existence: $5(3) + 3 = 18$. Uniqueness: if $5y + 3 = 18$ then $5y = 15$, so $y = 3$; any two solutions both equal $3$. $\square$'
-          - problem: 'Prove: there is a unique positive real number whose square is $9$.'
-            answer: 'Existence: $3^2 = 9$. Uniqueness: $x^2 = y^2$ with $x, y > 0$ gives $(x-y)(x+y) = 0$ and $x + y > 0$, so $x = y$.'
-            solution_sketch: 'Existence: $3$ works. Uniqueness: if $x, y > 0$ both square to $9$, then $x^2 - y^2 = 0$, so $(x - y)(x + y) = 0$; since $x + y > 0$, $x = y$. $\square$'
+          - problem: "A uniqueness proof for the equation 6x + 5 = 29 begins by finding one solution. Assume y is a second solution of 6y + 5 = 29. Give y."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Existence step: x = 4 solves 6x + 5 = 29 because 6(4) + 5 = 29. Uniqueness step: if 6y + 5 = 29, subtract 5 to get 6y = 24, then divide by 6 to get y = 4. Any two solutions are equal. The answer is 4."
+          - problem: "To prove that a positive real number with square 25 is unique, suppose x > 0 and y > 0 both satisfy x^2 = 25 and y^2 = 25. Subtracting gives x^2 - y^2 = 0. Give the factored form of x^2 - y^2 as a function of x and y."
+            answer: "(x-y)(x+y)"
+            answer_contract: {"kind": "function", "vars": ["x", "y"]}
+            solution_sketch: "Difference of squares step: x^2 - y^2 factors as (x - y)(x + y). Uniqueness step: since x and y are positive, x + y > 0, so the factor x - y must be 0, giving x = y. The answer is (x-y)(x+y)."
+          - problem: "For a uniqueness proof that the positive solution of x^2 = 36 is unique, suppose x and y are positive solutions. Then x^2 = y^2, so (x - y)(x + y) = 0. Give the value of x - y."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The factored equation is (x - y)(x + y) = 0. Since x and y are positive, x + y is positive and cannot be zero, so the product is zero only when x - y = 0. The answer is 0."
+          - problem: "In a uniqueness proof for the intersection of y = 4x - 1 and y = -2x + 11, subtracting the equations gives 6x - 12 = 0. Give the value of x that this equation forces."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Intersection step: set 4x - 1 = -2x + 11. Add 2x and 1 to both sides to get 6x = 12. Uniqueness step: divide by 6 to get x = 2, and this value is forced. The answer is 2."
+          - problem: "Claim: the equation x^2 = 4 has exactly one real solution. Step 1: x = 2 is a solution since 2^2 = 4. Step 2: suppose y is another real solution, so y^2 = 4. Step 3: then y^2 - 4 = 0, so (y - 2)(y + 2) = 0. Step 4: therefore y - 2 = 0, so y = 2 and the solution is unique. Which step is the first step that is not valid?"
+            answer: "Step 4"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 is not the first invalid step; it correctly checks 2^2 = 4. Step 2 is not invalid; it correctly assumes a second solution. Step 3 is not invalid; it correctly factors y^2 - 4. Step 4 is the first invalid step because the zero product rule also allows y + 2 = 0, so y = -2 is another solution. The answer is Step 4."
+          - problem: "In a uniqueness proof for 3x + 7 = 22, existence gives x = 5. Assume y also solves 3y + 7 = 22. The next line is 3y = ? Select the number that completes the line."
+            answer: "15"
+            answer_contract: {"kind": "label", "options": [["15"], ["22"], ["7"], ["29"]]}
+            solution_sketch: "Option 22 is wrong because it repeats the right side without subtracting 7. Option 7 is wrong because it subtracts 7 but leaves 3y undivided. Option 29 is wrong because it adds 7 instead of subtracting. The correct line is 3y = 15. The answer is 15."
+          - problem: "Write the full proof: the equation 8x - 3 = 21 has a unique real solution. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Existence step: take x = 3. Then 8x - 3 = 8(3) - 3 = 24 - 3 = 21, so 3 is a solution. Uniqueness step: suppose y is any real number with 8y - 3 = 21. Add 3 to both sides to get 8y = 24. Divide both sides by 8 to get y = 3. Thus every solution equals 3. Since 3 is a solution, the equation has exactly one real solution. This completes the proof."
         constraints: "prove existence, then assume two solutions and show they are equal"
       - id: kp2
         name: "Uniqueness in the division algorithm"
@@ -1575,12 +1597,34 @@ topics:
         name: "Polynomial divisibility"
         key_prerequisites: [induction-template]
         exemplars:
-          - problem: 'Prove: for all $n \ge 0$, $3 \mid (n^3 + 2n)$.'
-            answer: 'Base $n = 0$: $0$. Step: $(n+1)^3 + 2(n+1) = (n^3 + 2n) + 3(n^2 + n + 1)$.'
-            solution_sketch: 'Base: $n = 0$, and $0$ is divisible by $3$. Step: assume $3 \mid (n^3 + 2n)$. Then $(n+1)^3 + 2(n+1) = n^3 + 2n + 3n^2 + 3n + 3 = (n^3 + 2n) + 3(n^2 + n + 1)$; both terms are divisible by $3$, so the sum is. $\square$'
-          - problem: 'Prove: for all $n \ge 1$, $2 \mid (n^2 + n)$.'
-            answer: 'Base $n = 1$: $2$. Step: $(n+1)^2 + (n+1) = (n^2 + n) + 2(n + 1)$.'
-            solution_sketch: 'Base: $n = 1$, $n^2 + n = 2$, divisible by $2$. Step: assume $2 \mid (n^2 + n)$. Then $(n+1)^2 + (n+1) = n^2 + n + 2n + 2 = (n^2 + n) + 2(n + 1)$; both terms even, so the sum is. $\square$'
+          - problem: "To prove $3 \\mid (n^3 + 2n)$ by induction, write $(n+1)^3 + 2(n+1) = (n^3 + 2n) + 3 q(n)$. Give $q(n)$."
+            answer: "n^2+n+1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Expand the left side: $(n+1)^3 + 2(n+1) = n^3 + 3n^2 + 3n + 1 + 2n + 2$. Isolate the previous case: $(n^3 + 2n) + (3n^2 + 3n + 3)$. Factor $3$ from the remainder. The quotient is q(n) = n^2+n+1."
+          - problem: "To prove $2 \\mid (n^2 + n)$ by induction, write $(n+1)^2 + (n+1) = (n^2 + n) + 2 q(n)$. Give $q(n)$."
+            answer: "n+1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Expand: $(n+1)^2 + (n+1) = n^2 + 2n + 1 + n + 1$. Isolate the previous case: $(n^2 + n) + (2n + 2)$. Factor $2$ from the remainder. The quotient is q(n) = n+1."
+          - problem: "To prove $5 \\mid (n^5 - n)$ by induction, write $(n+1)^5 - (n+1) = (n^5 - n) + 5 q(n)$. Give $q(n)$."
+            answer: "n^4+2n^3+2n^2+n"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Expand: $(n+1)^5 = n^5 + 5n^4 + 10n^3 + 10n^2 + 5n + 1$. Subtract $n+1$: $n^5 + 5n^4 + 10n^3 + 10n^2 + 4n$. Isolate $(n^5 - n)$: remainder $5n^4 + 10n^3 + 10n^2 + 5n$. Factor $5$. The quotient is q(n) = n^4+2n^3+2n^2+n."
+          - problem: "To prove $4 \\mid (2n^2 + 2n)$ by induction, write $2(n+1)^2 + 2(n+1) = (2n^2 + 2n) + c(n+1)$. Give the constant $c$."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Expand: $2(n+1)^2 + 2(n+1) = 2n^2 + 6n + 4$. Subtract the previous case $2n^2 + 2n$: difference $4n + 4$. Factor as $4(n+1)$. The constant is c = 4."
+          - problem: "Claim: $6 \\mid (n^2 + 5n)$ for $n \\ge 0$. Step 1: for $n = 0$, $0$ is divisible by $6$. Step 2: assume $6 \\mid (k^2 + 5k)$. Step 3: $(k+1)^2 + 5(k+1) = (k^2 + 5k) + 6(k+1)$. Step 4: the two terms are multiples of $6$, so $6 \\mid ((k+1)^2 + 5(k+1))$. Which step is the first step that is not valid?"
+            answer: "Step 3"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 is a correct base case because $0$ is divisible by $6$. Step 2 states the induction hypothesis. Step 3 is false: the expansion gives $(k^2 + 5k) + (2k + 6)$, not $6(k+1)$. Step 4 would follow only from a correct remainder. The first invalid step is Step 3."
+          - problem: "In the inductive step for $3 \\mid (n^3 - n)$, the line $(k+1)^3 - (k+1) = \\;?$ is missing. Select the line that is true and that shows the hypothesis."
+            answer: "(k^3 - k) + 3(k^2 + k)"
+            answer_contract: {"kind": "label", "options": [["(k^3 - k) + 3(k^2 + k)"], ["(k^3 - k) + 3(k^2 + k) + 1"], ["(k^3 - k) + 3k^2 + 2k"], ["(k^3 - k) + 2(k^2 + k)"]]}
+            solution_sketch: "Expand the left side: $(k+1)^3 - (k+1) = k^3 + 3k^2 + 2k$. Isolate the previous case: $(k^3 - k) + 3k^2 + 3k = (k^3 - k) + 3(k^2 + k)$. The option (k^3 - k) + 3(k^2 + k) + 1 adds an extra 1. The option (k^3 - k) + 3k^2 + 2k drops a k from the remainder. The option (k^3 - k) + 2(k^2 + k) uses the wrong factor 2. The correct line is (k^3 - k) + 3(k^2 + k)."
+          - problem: "Write the full proof: for all $n \\ge 0$, $7 \\mid (n^7 - n)$. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Base case: $n = 0$ gives $0^7 - 0 = 0$, a multiple of $7$. Hypothesis: assume $7 \\mid (k^7 - k)$ for some $k \\ge 0$. Step: $(k+1)^7 - (k+1) = (k^7 - k) + 7(k^6 + 3k^5 + 5k^4 + 5k^3 + 3k^2 + k)$. The first term is a multiple of $7$ by the hypothesis, and the second is a multiple of $7$ by its factor $7$. Conclusion: the sum is a multiple of $7$, so the claim holds for $k+1$, and by induction for all $n \\ge 0$."
         constraints: "isolate the previous case plus a visibly-divisible remainder"
       - id: kp2
         name: "Exponential divisibility"
