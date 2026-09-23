@@ -532,14 +532,30 @@ topics:
         name: Setting up det(A - lambda I)
         key_prerequisites: [determinants-2x2, polynomial-multiplication]
         exemplars:
-          - problem: 'Find the characteristic polynomial of $A = \begin{pmatrix}3&2\\1&4\end{pmatrix}$.'
-            answer: '$\lambda^2 - 7\lambda + 10$'
-            answer_contract: {kind: none}
-            solution_sketch: '$\det(A - \lambda I) = (3-\lambda)(4-\lambda) - 2 = \lambda^2 - 7\lambda + 10$.'
-          - problem: 'Find the characteristic polynomial of $A = \begin{pmatrix}1&3\\2&2\end{pmatrix}$.'
-            answer: '$\lambda^2 - 3\lambda - 4$'
-            answer_contract: {kind: none}
-            solution_sketch: '$(1-\lambda)(2-\lambda) - 6 = \lambda^2 - 3\lambda - 4$.'
+          - problem: "Let A = [[2,5],[1,3]]. Find the characteristic polynomial det(A - xI) as a polynomial in x."
+            answer: "x^2 - 5x + 1"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Step 1: form A - xI = [[2-x,5],[1,3-x]]. Step 2: expand the 2x2 determinant: (2-x)(3-x) - 5. Step 3: multiply polynomials: 6 - 5x + x^2 - 5 = x^2 - 5x + 1. The characteristic polynomial is x^2 - 5x + 1."
+          - problem: "Let A = [[4,1],[3,2]]. Find the characteristic polynomial det(A - xI) as a polynomial in x."
+            answer: "x^2 - 6x + 5"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Step 1: form A - xI = [[4-x,1],[3,2-x]]. Step 2: expand the determinant: (4-x)(2-x) - 3. Step 3: multiply: 8 - 6x + x^2 - 3 = x^2 - 6x + 5. The characteristic polynomial is x^2 - 6x + 5."
+          - problem: "Let A = [[-1,2],[4,3]]. Find the characteristic polynomial det(A - tI) as a polynomial in t."
+            answer: "t^2 - 2t - 11"
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: "Step 1: form A - tI = [[-1-t,2],[4,3-t]]. Step 2: expand the determinant: (-1-t)(3-t) - 8. Step 3: multiply: -3 - 2t + t^2 - 8 = t^2 - 2t - 11. The characteristic polynomial is t^2 - 2t - 11."
+          - problem: "For the matrix B = [[0,3],[2,1]], compute the characteristic polynomial det(B - xI) as a polynomial in x."
+            answer: "x^2 - x - 6"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Step 1: form B - xI = [[-x,3],[2,1-x]]. Step 2: expand the determinant: (-x)(1-x) - 6. Step 3: multiply: -x + x^2 - 6 = x^2 - x - 6. The characteristic polynomial is x^2 - x - 6."
+          - problem: "A 2x2 matrix A = [[a,1],[1,2]] has characteristic polynomial det(A - xI) = x^2 - 5x + 5. Find the value of a."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: form det(A - xI) = (a-x)(2-x) - 1. Step 2: expand by polynomial multiplication: x^2 - (a+2)x + (2a - 1). Step 3: match the constant and x terms to x^2 - 5x + 5: a+2=5 and 2a-1=5. Both equations give a=3. The value is 3."
+          - problem: "A 2x2 matrix A = [[4,b],[2,1]] has characteristic polynomial det(A - xI) = x^2 - 5x + 6. Find the value of b."
+            answer: "-1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: form det(A - xI) = (4-x)(1-x) - 2b. Step 2: expand: x^2 - 5x + (4 - 2b). Step 3: match the constant term to x^2 - 5x + 6: 4 - 2b = 6. Solve: -2b = 2, so b = -1. The value is -1."
         constraints: "2x2 integer matrices; polynomial coefficients in -12..12"
       - id: kp2
         name: Eigenvalues as roots
@@ -1066,27 +1082,59 @@ topics:
         name: The distinct-eigenvalue guarantee
         key_prerequisites: [eigenvalues-eigenvectors]
         exemplars:
-          - problem: 'A $2 \times 2$ matrix has eigenvalues $2$ and $5$. Is it diagonalizable?'
-            answer: "Yes"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: 'Eigenvectors for distinct eigenvalues are independent, so $n$ distinct eigenvalues guarantee diagonalizability.'
-          - problem: 'Is $A = \begin{pmatrix}1&4\\0&3\end{pmatrix}$ diagonalizable?'
-            answer: "Yes"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: 'Triangular with distinct diagonal entries $1$ and $3$: two distinct eigenvalues.'
+          - problem: "A $2 \\times 2$ matrix has eigenvalues $-2$ and $7$. The distinct-eigenvalue guarantee says that $n$ distinct eigenvalues give $n$ independent eigenvectors. State the verdict on diagonalizability and the number of independent eigenvectors that the guarantee provides."
+            answer: "verdict = yes; eigenvectors = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "eigenvectors"}]}
+            solution_sketch: "Step 1 (spectrum check): the full spectrum is {-2, 7}, which gives 2 distinct eigenvalues for a matrix of size 2. Step 2 (distinct-eigenvalue guarantee): 2 distinct eigenvalues give 2 independent eigenvectors, so the verdict is yes; the option no ignores the guarantee for distinct eigenvalues. Step 3 (count): the guarantee provides 2 independent eigenvectors. The answer is verdict = yes; eigenvectors = 2."
+          - problem: "Let $A = \\begin{pmatrix}1&4\\\\0&3\\end{pmatrix}$. A triangular matrix has its diagonal entries as eigenvalues. Give the verdict on diagonalizability together with the smaller and the larger eigenvalue of $A$."
+            answer: "verdict = yes; low = 1; high = 3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "low"}, {"contract": {"kind": "exact"}, "name": "high"}]}
+            solution_sketch: "Step 1 (triangular spectrum): A = [[1,4],[0,3]] is upper triangular, so its eigenvalues are the diagonal entries 1 and 3. Step 2 (distinct-eigenvalue guarantee): 1 and 3 are distinct, so A is diagonalizable; the option no would forget that distinct diagonal entries are distinct eigenvalues. Step 3 (order): the smaller eigenvalue is 1 and the larger is 3. The answer is verdict = yes; low = 1; high = 3."
+          - problem: "Let $B = \\begin{pmatrix}2&1&5\\\\0&-3&4\\\\0&0&6\\end{pmatrix}$. The eigenvalues of a triangular matrix are its diagonal entries. How many independent eigenvectors does the distinct-eigenvalue guarantee provide for $B$?"
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (triangular spectrum): B = [[2,1,5],[0,-3,4],[0,0,6]] is upper triangular, so its eigenvalues are the diagonal entries 2, -3 and 6. Step 2 (distinct count): all three eigenvalues are distinct. Step 3 (distinct-eigenvalue guarantee): a 3x3 matrix with 3 distinct eigenvalues has 3 independent eigenvectors. The answer is 3."
+          - problem: "A $2 \\times 2$ matrix has eigenvalues $5$ and $k$, and its trace is $3$. The distinct-eigenvalue guarantee applies to this matrix. Find $k$."
+            answer: "-2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (trace property): the trace equals the sum of the eigenvalues, so 5 + k = 3. Step 2 (solve): k = -2. Step 3 (guarantee check): the eigenvalues 5 and -2 are distinct, which is consistent with the guarantee applying. The answer is -2."
+          - problem: "A matrix of size $n$ with $n$ distinct eigenvalues has $n$ independent eigenvectors, which is exactly what diagonalizability needs. Give the smallest number of distinct eigenvalues that guarantees a $3 \\times 3$ matrix is diagonalizable."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (guarantee form): n distinct eigenvalues give n independent eigenvectors, and n independent eigenvectors in a space of dimension n span it. Step 2 (apply to n = 3): 3 distinct eigenvalues give 3 independent eigenvectors, so the matrix is diagonalizable, while 2 distinct eigenvalues do not reach 3. The answer is 3."
+          - problem: "A $4 \\times 4$ matrix has eigenvalues $-4$, $0$, $6$ and $11$. How many independent eigenvectors does the distinct-eigenvalue guarantee provide?"
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (spectrum check): the full spectrum is {-4, 0, 6, 11}, so the matrix of size 4 has 4 distinct eigenvalues. Step 2 (distinct-eigenvalue guarantee): 4 distinct eigenvalues give 4 independent eigenvectors, one for each eigenvalue. The answer is 4."
         constraints: "distinct integer spectra read off from triangular matrices or given directly"
       - id: kp2
         name: Repeated eigenvalues need enough eigenvectors
         key_prerequisites: [eigenspaces-multiplicities]
         exemplars:
-          - problem: 'Is $A = \begin{pmatrix}5&2\\0&5\end{pmatrix}$ diagonalizable?'
-            answer: "No"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: '$\lambda = 5$ has algebraic multiplicity $2$, but $A - 5I = \begin{pmatrix}0&2\\0&0\end{pmatrix}$ has a $1$-dimensional null space, spanned by $(1, 0)$: one independent eigenvector, not two.'
-          - problem: 'Is $A = \begin{pmatrix}3&0\\0&3\end{pmatrix}$ diagonalizable?'
-            answer: "Yes (it is already diagonal)"
-            answer_contract: {kind: none}
-            solution_sketch: 'The eigenspace of $\lambda = 3$ is all of $\mathbb{R}^2$: geometric multiplicity equals algebraic multiplicity.'
+          - problem: "Let $A = \\begin{pmatrix}2&1\\\\0&2\\end{pmatrix}$. Determine whether $A$ is diagonalizable, and give the number of its independent eigenvectors."
+            answer: "verdict = no; eigcount = 1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "eigcount"}]}
+            solution_sketch: "Step 1 (characteristic polynomial of a triangular matrix): for $A = \\begin{pmatrix}2&1\\\\0&2\\end{pmatrix}$ the only eigenvalue is $\\lambda = 2$, with algebraic multiplicity $2$. Step 2 (nullity of $A - 2I$): $A - 2I = \\begin{pmatrix}0&1\\\\0&0\\end{pmatrix}$ has rank $1$, so its null space has dimension $1$, spanned by $(1, 0)$. Step 3 (compare multiplicities): geometric multiplicity $1$ is less than algebraic multiplicity $2$, so $A$ is not diagonalizable; the verdict yes would need two independent eigenvectors, and there is only one. verdict = no; eigcount = 1."
+          - problem: "Let $A = \\begin{pmatrix}6&0\\\\0&6\\end{pmatrix}$. Determine whether $A$ is diagonalizable, and give the number of its independent eigenvectors."
+            answer: "verdict = yes; eigcount = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "eigcount"}]}
+            solution_sketch: "Step 1 (eigenvalues of a scalar matrix): for $A = \\begin{pmatrix}6&0\\\\0&6\\end{pmatrix}$ the only eigenvalue is $\\lambda = 6$, with algebraic multiplicity $2$. Step 2 (nullity of $A - 6I$): $A - 6I$ is the zero matrix, so its null space is all of $\\mathbb{R}^2$ and the geometric multiplicity is $2$. Step 3 (compare multiplicities): geometric multiplicity $2$ equals algebraic multiplicity $2$, so $A$ is diagonalizable; the verdict no would come from forgetting that a scalar matrix has a full two-dimensional eigenspace. verdict = yes; eigcount = 2."
+          - problem: "Let $A = \\begin{pmatrix}1&-1\\\\1&3\\end{pmatrix}$. Determine whether $A$ is diagonalizable, and give the number of its independent eigenvectors."
+            answer: "verdict = no; eigcount = 1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "eigcount"}]}
+            solution_sketch: "Step 1 (characteristic polynomial): for $A = \\begin{pmatrix}1&-1\\\\1&3\\end{pmatrix}$, $\\det(A - \\lambda I) = \\lambda^2 - 4\\lambda + 4 = (\\lambda - 2)^2$, so $\\lambda = 2$ has algebraic multiplicity $2$. Step 2 (nullity of $A - 2I$): $A - 2I = \\begin{pmatrix}-1&-1\\\\1&1\\end{pmatrix}$ has rank $1$, so the eigenspace has dimension $1$. Step 3 (compare multiplicities): geometric multiplicity $1$ is less than algebraic multiplicity $2$, so $A$ is not diagonalizable; the verdict yes would need nullity $2$, which fails here. verdict = no; eigcount = 1."
+          - problem: "Let $A = \\begin{pmatrix}4&1\\\\c&4\\end{pmatrix}$, where $c$ is a real number. For every value of $c$ except one, $A$ is diagonalizable. Find the value of $c$ for which $A$ is not diagonalizable."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (distinct eigenvalues case): for $c \\neq 0$ the characteristic polynomial $\\lambda^2 - 8\\lambda + (16 - c)$ has discriminant $4c$, so $A$ has two distinct eigenvalues and is diagonalizable. Step 2 (repeated case): for $c = 0$ the only eigenvalue is $\\lambda = 4$ with algebraic multiplicity $2$. Step 3 (compare multiplicities): $A - 4I = \\begin{pmatrix}0&1\\\\0&0\\end{pmatrix}$ has rank $1$, so the geometric multiplicity is $1$, less than the algebraic multiplicity $2$, and $A$ fails to be diagonalizable only at this value. So $c = 0$."
+          - problem: "Let $A = \\begin{pmatrix}7&0\\\\-2&7\\end{pmatrix}$. Determine whether $A$ is diagonalizable, and give the number of its independent eigenvectors."
+            answer: "verdict = no; eigcount = 1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "eigcount"}]}
+            solution_sketch: "Step 1 (eigenvalues of a triangular matrix): $A = \\begin{pmatrix}7&0\\\\-2&7\\end{pmatrix}$ is lower triangular, so its only eigenvalue is $\\lambda = 7$ with algebraic multiplicity $2$. Step 2 (nullity of $A - 7I$): $A - 7I = \\begin{pmatrix}0&0\\\\-2&0\\end{pmatrix}$ has rank $1$, so the eigenspace is one-dimensional, spanned by $(0, 1)$. Step 3 (compare multiplicities): geometric multiplicity $1$ is less than algebraic multiplicity $2$, so $A$ is not diagonalizable; the verdict yes would need two independent eigenvectors, and there is only one. verdict = no; eigcount = 1."
+          - problem: "Let $A = \\begin{pmatrix}-1&3\\\\0&-1\\end{pmatrix}$. The matrix has one repeated eigenvalue. Find the geometric multiplicity of this eigenvalue."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (eigenvalues of a triangular matrix): $A = \\begin{pmatrix}-1&3\\\\0&-1\\end{pmatrix}$ has the single eigenvalue $\\lambda = -1$ with algebraic multiplicity $2$. Step 2 (nullity of $A - \\lambda I$): $A - (-1)I = A + I = \\begin{pmatrix}0&3\\\\0&0\\end{pmatrix}$ has rank $1$, so its null space has dimension $1$. Step 3 (geometric multiplicity): the geometric multiplicity is the nullity of $A - \\lambda I$. The geometric multiplicity is 1."
         constraints: "repeated-eigenvalue 2x2 cases; decide by comparing geometric and algebraic multiplicity"
       - id: kp3
         name: Counting eigenvectors in 3x3 matrices

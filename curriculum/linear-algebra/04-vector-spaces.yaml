@@ -708,27 +708,59 @@ topics:
         name: Reading rank and nullity from pivots
         key_prerequisites: [null-column-space-rank]
         exemplars:
-          - problem: '$A$ is $3 \times 4$ and its echelon form has $2$ pivots. Find the rank and nullity of $A$.'
-            answer: "Rank 2, nullity 2"
-            answer_contract: {kind: none}
-            solution_sketch: 'Rank = pivot count; nullity $= 4 - 2$.'
-          - problem: '$A$ is $5 \times 3$ with linearly independent columns. Find its rank and nullity.'
-            answer: "Rank 3, nullity 0"
-            answer_contract: {kind: none}
-            solution_sketch: 'Independent columns mean a pivot in every column.'
+          - problem: "A is a 3 x 4 matrix and its echelon form has 2 pivots. Find the nullity of A."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The matrix has 3 rows and 4 columns, so the number of columns is 4. The rank equals the number of pivots, so rank A = 2. Rank-nullity gives nullity = 4 - 2 = 2, so the nullity is 2."
+          - problem: "A is a 5 x 3 matrix and its echelon form has a pivot in every column. Find the rank of A."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The matrix has 5 rows and 3 columns, so every column having a pivot means 3 pivots. The rank equals the number of pivots, so rank A = 3. Therefore the rank is 3."
+          - problem: "A is a 4 x 5 matrix with rank 3. Find the nullity of A."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The matrix has 4 rows and 5 columns, so the number of columns is 5. Rank-nullity states nullity = columns - rank, and the rank is given as 3. Thus nullity = 5 - 3 = 2, so the nullity is 2."
+          - problem: "A is a 5 x 5 matrix whose null space has dimension 4. Find the rank of A."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The matrix is 5 x 5, so the number of columns is 5. The null space has dimension 4, so the nullity is 4. Rank-nullity gives rank = 5 - 4 = 1, so the rank is 1."
+          - problem: "A is a 4 x 4 matrix and its echelon form has 3 pivots. Find the rank of A."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The matrix is 4 x 4, so the number of columns is 4. The echelon form has 3 pivots, and the rank equals the pivot count. Thus rank A = 3, so the rank is 3."
+          - problem: "A is a 5 x 2 matrix and its echelon form has a pivot in every column. Find the nullity of A."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The matrix has 5 rows and 2 columns, so every column having a pivot means 2 pivots. The rank equals the number of pivots, so rank A = 2. Rank-nullity gives nullity = 2 - 2 = 0, so the nullity is 0."
         constraints: "sizes up to 5x5; one of rank/nullity/pivot count given"
       - id: kp2
         name: What the shape forces
         key_prerequisites: [null-column-space-rank]
         exemplars:
-          - problem: '$A$ is $2 \times 4$. Can $A\mathbf{x} = \mathbf{0}$ have only the trivial solution?'
-            answer: "No"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: 'Rank $\leq 2 < 4$ columns, so the nullity is at least $2$: free variables always exist.'
-          - problem: '$A$ is $4 \times 3$. Can the columns of $A$ span $\mathbb{R}^4$?'
-            answer: "No"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: 'The column space has dimension $\leq 3 < 4$.'
+          - problem: "A is a $2 \\times 4$ matrix, so it has more columns than rows. Find the minimum possible nullity of $A$."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The rank of $A$ is at most $2$ by the rank bound $\\operatorname{rank}(A) \\leq \\min(m,n) = \\min(2,4)$. By the rank-nullity identity, $\\operatorname{nullity}(A) = 4 - \\operatorname{rank}(A) \\geq 4 - 2$. Free variables are therefore unavoidable for this wide shape. The minimum possible nullity of $A$ is 2."
+          - problem: "A is a $4 \\times 3$ matrix with real entries, so it has fewer columns than rows. Give the largest possible dimension of the column space of $A$."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The column space is spanned by the $3$ columns, so by the rank bound $\\operatorname{rank}(A) \\leq \\min(4,3) = 3$. A matrix with three pivot columns attains this bound, so the columns can never span all of $\\mathbb{R}^4$. The largest possible dimension of the column space of $A$ is 3."
+          - problem: "A is a $3 \\times 7$ matrix with $\\operatorname{rank}(A) = 3$. Find the nullity of $A$."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "By the rank-nullity identity, $\\operatorname{rank}(A) + \\operatorname{nullity}(A)$ equals the number of columns, which is $7$. Substituting $\\operatorname{rank}(A) = 3$ gives $\\operatorname{nullity}(A) = 7 - 3$. The nullity of $A$ is 4."
+          - problem: "A is a $6 \\times 2$ matrix and its two columns are linearly independent. Find the nullity of $A$."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Linearly independent columns give $\\operatorname{rank}(A) = 2$. By the rank-nullity identity, $\\operatorname{nullity}(A) = 2 - \\operatorname{rank}(A) = 2 - 2$, so $A\\mathbf{x} = \\mathbf{0}$ has only the trivial solution; a tall matrix can avoid free variables. The nullity of $A$ is 0."
+          - problem: "A is a $3 \\times 3$ matrix whose columns are linearly dependent. Give all possible values of the nullity of $A$ as a set."
+            answer: "{1, 2, 3}"
+            answer_contract: {"kind": "set"}
+            solution_sketch: "Dependent columns force $\\operatorname{rank}(A) \\leq 2$ by the dependence bound, and always $\\operatorname{rank}(A) \\geq 0$. The rank-nullity identity gives $\\operatorname{nullity}(A) = 3 - \\operatorname{rank}(A)$, so the nullity is $3$, $2$, or $1$, and each value occurs for a suitable $A$. The set of possible nullities is {1, 2, 3}."
+          - problem: "A is a $4 \\times 4$ matrix with $\\operatorname{nullity}(A) = 1$. Find the rank of $A$."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "By the rank-nullity identity, $\\operatorname{rank}(A) + \\operatorname{nullity}(A) = 4$ for a square $4 \\times 4$ matrix. Substituting $\\operatorname{nullity}(A) = 1$ gives $\\operatorname{rank}(A) = 4 - 1$. The rank of $A$ is 3."
         constraints: "wide vs tall matrices; conclusions forced by rank <= min(m, n)"
       - id: kp3
         name: Rank and invertibility
@@ -1014,14 +1046,30 @@ topics:
         name: Orthogonal sets in R^3 and independence
         key_prerequisites: [dot-product, basis-dimension]
         exemplars:
-          - problem: 'Verify that $\{(1, 0, 1), (1, 0, -1), (0, 1, 0)\}$ is an orthogonal set.'
-            answer: "All three pairwise dot products are 0"
-            answer_contract: {kind: none}
-            solution_sketch: '$(1,0,1)\cdot(1,0,-1) = 1 - 1 = 0$; the third vector meets both in the zero middle components.'
-          - problem: 'An orthogonal set of $3$ nonzero vectors in $\mathbb{R}^3$ — is it a basis?'
-            answer: "Yes"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: 'Orthogonal nonzero vectors are linearly independent, and $3$ independent vectors in $\mathbb{R}^3$ form a basis.'
+          - problem: "Let $u = (1, 2, 2)$, $v = (2, 1, -2)$, and $w = (2, -2, 1)$ be vectors in $\\mathbb{R}^3$. How many of the three pairwise dot products $u \\cdot v$, $u \\cdot w$, and $v \\cdot w$ equal 0?"
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Compute each pair with the dot product rule: $u \\cdot v = 2 + 2 - 4 = 0$, $u \\cdot w = 2 - 4 + 2 = 0$, and $v \\cdot w = 4 - 2 - 2 = 0$. All three pairwise dot products vanish, so $\\{u, v, w\\}$ is an orthogonal set. The number of pairwise dot products equal to 0 is 3."
+          - problem: "Let $S = \\{(2, 1, 2), (1, 0, -2), (0, 5, 0)\\}$ be a set of three nonzero vectors in $\\mathbb{R}^3$. Is $S$ a basis of $\\mathbb{R}^3$? Give verdict = yes or no, and give $d$, the dimension of the span of $S$."
+            answer: "verdict = yes; d = 3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "d"}]}
+            solution_sketch: "Check the set $S = \\{(2, 1, 2), (1, 0, -2), (0, 5, 0)\\}$ pairwise by the dot product rule: $u \\cdot v = 2 + 0 - 4 = 0$, $u \\cdot w = 0$, and $v \\cdot w = 0$, so $S$ is orthogonal. By the orthogonal-set rule, nonzero orthogonal vectors are linearly independent, and three independent vectors in $\\mathbb{R}^3$ form a basis, so the span has dimension 3. The wrong option no would forget that an orthogonal set of nonzero vectors must be independent. So verdict = yes; d = 3."
+          - problem: "The vectors $a = (1, 3, 2)$, $b = (3, -1, 0)$, and $c = (1, 3, t)$ lie in $\\mathbb{R}^3$, and $b$ is orthogonal to both $a$ and $c$ for every value of $t$. Find the value of $t$ that makes the set $\\{a, b, c\\}$ orthogonal."
+            answer: "-5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "First $a \\cdot b = 3 - 3 + 0 = 0$ by the dot product rule, and this holds for every $t$. Next $a \\cdot c = 1 + 9 + 2t = 10 + 2t$ by the dot product rule. The orthogonality condition gives $10 + 2t = 0$, so $t = -5$. The required value is $t = -5$."
+          - problem: "Consider the set $S = \\{(1, 0, 2), (0, 3, 0), (0, 0, 0)\\}$ in $\\mathbb{R}^3$. Compute the three pairwise dot products of $S$, and give $k$, the number of them that equal 0, and $d$, the dimension of the span of $S$."
+            answer: "k = 3; d = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "k"}, {"contract": {"kind": "exact"}, "name": "d"}]}
+            solution_sketch: "The pairwise dot products of $S = \\{(1, 0, 2), (0, 3, 0), (0, 0, 0)\\}$ each have a zero factor, so all three equal 0 by the dot product rule and $k = 3$. The zero vector makes the set linearly dependent, and the two nonzero orthogonal vectors span only a plane, so basis-dimension reasoning gives $d = 2$. So k = 3; d = 2."
+          - problem: "Three nonzero vectors $u$, $v$, and $w$ in $\\mathbb{R}^3$ are pairwise orthogonal, and their lengths are 3, 4, and 12. Find the length of $u + v + w$."
+            answer: "13"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Expand the squared length by dot product algebra: $\\|u + v + w\\|^2 = \\|u\\|^2 + \\|v\\|^2 + \\|w\\|^2 + 2(u \\cdot v + u \\cdot w + v \\cdot w)$. Pairwise orthogonality makes every cross term 0, leaving $9 + 16 + 144 = 169$. The length is $\\sqrt{169} = 13$. The length of $u + v + w$ is 13."
+          - problem: "Let $u$, $v$, and $z$ be nonzero pairwise orthogonal vectors in $\\mathbb{R}^3$ with $\\|u\\|^2 = 4$, $\\|v\\|^2 = 9$, and $\\|z\\|^2 = 16$, and let $w = 3u - 2v + z$. Give $a = w \\cdot u$, $b = w \\cdot v$, and $c = w \\cdot z$."
+            answer: "a = 12; b = -18; c = 16"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "a"}, {"contract": {"kind": "exact"}, "name": "b"}, {"contract": {"kind": "exact"}, "name": "c"}]}
+            solution_sketch: "Distribute the dot product over $w = 3u - 2v + z$: $w \\cdot u = 3(u \\cdot u) - 2(v \\cdot u) + z \\cdot u$. Orthogonality gives $v \\cdot u = 0$ and $z \\cdot u = 0$, so $a = 3 \\cdot 4 = 12$. Similarly $b = w \\cdot v = 0 - 2 \\cdot 9 + 0 = -18$ and $c = w \\cdot z = 0 - 0 + 16 = 16$. So a = 12; b = -18; c = 16."
         constraints: "3 vectors in R^3 with all pairwise dot products checkable mentally"
       - id: kp3
         name: Coordinates in an orthogonal basis
