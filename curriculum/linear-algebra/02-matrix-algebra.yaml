@@ -1304,12 +1304,24 @@ topics:
             answer: "[1,0;2,1]"
             answer_contract: {"cols":2,"kind":"matrix","rows":2}
             solution_sketch: 'Undo $R_2 \to R_2 - 2R_1$ by adding $2R_1$ back.'
-          - problem: 'If $A$ and $B$ are invertible, express $(AB)^{-1}$ in terms of $A^{-1}$ and $B^{-1}$.'
-            answer: '$(AB)^{-1} = B^{-1}A^{-1}$'
-            answer_contract: {kind: none}
-            solution_sketch: '$(AB)(B^{-1}A^{-1}) = A(BB^{-1})A^{-1} = I$; note the reversed order.'
           - problem: 'Simplify $(A^{-1})^{-1}$ for an invertible matrix $A$.'
             answer: "A"
+          - problem: "The elementary matrix $E = \\begin{pmatrix}1&0\\\\0&5\\end{pmatrix}$ scales a row by $5$. Find $E^{-1}$. Give the matrix as [a,b;c,d]."
+            answer: "[1,0;0,1/5]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "The elementary matrix $E$ performs the row operation scale row 2 by $5$. Its inverse must undo that operation, so it scales row 2 by $1/5$, giving diagonal entries $1$ and $1/5$. Check: multiplying $E$ by the candidate gives the identity matrix. The inverse is [1,0;0,1/5]."
+          - problem: "Give the inverse of the elementary matrix $E = \\begin{pmatrix}1&-4\\\\0&1\\end{pmatrix}$. Give the matrix as [a,b;c,d]."
+            answer: "[1,4;0,1]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "The matrix $E$ performs $R_1 \\to R_1 - 4R_2$. The inverse must undo this with $R_1 \\to R_1 + 4R_2$, whose matrix changes the sign of the off-diagonal entry. Check: the product of the two matrices is the identity. The inverse is [1,4;0,1]."
+          - problem: "Let $A = \\begin{pmatrix}1&1\\\\2&1\\end{pmatrix}$ and $B = \\begin{pmatrix}2&1\\\\1&1\\end{pmatrix}$, both invertible. Compute $(AB)^{-1}$ using the inverses of $A$ and $B$, without first forming $AB$. Give the matrix as [a,b;c,d]."
+            answer: "[-3,2;5,-3]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "Compute each inverse: $\\det A = 1 - 2 = -1$, so $A^{-1} = [-1,1;2,-1]$; $\\det B = 2 - 1 = 1$, so $B^{-1} = [1,-1;-1,2]$. The product rule gives $(AB)^{-1} = B^{-1}A^{-1}$, with the factors in reversed order. Multiplying $[1,-1;-1,2]$ by $[-1,1;2,-1]$ gives $[-3,2;5,-3]$; note $A^{-1}B^{-1} = [-2,3;3,-4]$ is different, so the order matters. The answer is (AB)^{-1} = [-3,2;5,-3]."
+          - problem: "The inverse of an elementary matrix $E$ is $E^{-1} = \\begin{pmatrix}1&0\\\\-6&1\\end{pmatrix}$. Find $E$. Give the matrix as [a,b;c,d]."
+            answer: "[1,0;6,1]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "The matrix $E^{-1} = [1,0;-6,1]$ performs $R_2 \\to R_2 - 6R_1$. Therefore $E$ performs the undoing operation $R_2 \\to R_2 + 6R_1$, whose matrix has entry $6$ in the lower left. Check: $[1,0;6,1][1,0;-6,1] = [1,0;0,1]$. The answer is E = [1,0;6,1]."
         constraints: "symbolic identities plus 2x2 numeric checks"
     diagnostic_exemplar:
       problem: 'Write the $2 \times 2$ elementary matrix $E$ for $R_2 \to R_2 - 4R_1$ and its inverse, then use $E$ to decide for which $h$ the matrix $A = \begin{pmatrix}1&3\\4&h\end{pmatrix}$ fails to be invertible.'
