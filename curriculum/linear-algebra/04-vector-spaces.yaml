@@ -262,18 +262,30 @@ topics:
         name: Geometry of spans
         key_prerequisites: [span-linear-combinations]
         exemplars:
-          - problem: 'Describe $\mathrm{span}\{(2, 3)\}$ geometrically.'
-            answer: "The line through the origin with direction (2, 3)"
-            answer_contract: {kind: none}
-            solution_sketch: 'The span is all scalar multiples of $(2,3)$, the line through the origin with direction $(2,3)$.'
-          - problem: 'Describe $\mathrm{span}\{(1, 0, 0), (0, 1, 0)\}$ geometrically.'
-            answer: "The xy-plane in R^3 (all vectors with third component 0)"
-            answer_contract: {kind: none}
-            solution_sketch: 'The span is all vectors $(a, b, 0)$, the $xy$-plane in $\mathbb{R}^3$.'
-          - problem: 'Do $(1, 2)$ and $(2, 1)$ span all of $\mathbb{R}^2$?'
-            answer: "Yes"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: 'They are not multiples of each other, so their span is $2$-dimensional: all of $\mathbb{R}^2$.'
+          - problem: "The span of the single vector (2, 1) in R^2 is a flat set that contains the zero vector. Every point (x, y) on it satisfies y = mx for one number m. Find m as a fraction."
+            answer: "1/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Span rule: the span of a single vector v is the set of all multiples t v. Full object: t(2, 1) = (2t, t), so every point has x = 2t and y = t. Slope rule: m = y/x = t/(2t) = 1/2, the slope of the flat curve y = (1/2)x. The value of m is 1/2."
+          - problem: "The span of the vectors (1, 3) and (3, 1) in R^2 either fills the entire set R^2 or is a smaller flat set that contains the zero vector. Determine which form it has, and give the dimension of the span."
+            answer: "form = whole; dim = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["whole"], ["part"]]}, "name": "form"}, {"contract": {"kind": "exact"}, "name": "dim"}]}
+            solution_sketch: "Independence rule: two vectors in R^2 span all of R^2 exactly when the determinant ad - bc is not 0. Determinant: (1)(1) - (3)(3) = -8, not 0, so the vectors are independent and every point of R^2 is a combination of them. Dimension rule: the span of two independent vectors has dimension 2. The wrong choice part is the error of treating the two vectors as multiples of each other. The answer is form = whole; dim = 2."
+          - problem: "The span of the single vector (1, -2, 4) in R^3 is a flat set that contains the zero vector. Every point (x, y, z) on it satisfies two equations of the type y = kx and z = lx. Give y and z as formulas in x."
+            answer: "y = -2x; z = 4x"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["x"]}, "name": "y"}, {"contract": {"kind": "function", "vars": ["x"]}, "name": "z"}]}
+            solution_sketch: "Span rule: the span of a single vector v is the set of all multiples t v. Full object: t(1, -2, 4) = (t, -2t, 4t), so x = t. Substitute t = x into the other coordinates: y = -2t = -2x and z = 4t = 4x. The formulas are y = -2x; z = 4x."
+          - problem: "The span of the vectors (1, 0, 3) and (0, 2, 1) in R^3 is a flat set that contains the zero vector. Every point (x, y, z) on it satisfies z = ax + by for two numbers a and b. Find the right side of this equation as a formula in x and y."
+            answer: "3x + y/2"
+            answer_contract: {"kind": "function", "vars": ["x", "y"]}
+            solution_sketch: "Combination rule: a point of the span has the form s(1, 0, 3) + t(0, 2, 1). Full object: (s, 2t, 3s + t), so x = s and y = 2t, giving s = x and t = y/2. Substitute into the third coordinate: z = 3s + t = 3x + y/2. The right side of the equation is 3x + y/2."
+          - problem: "The span of the vectors (1, 2, 1) and (2, 4, 2) in R^3 has one of two forms: every point is a multiple of a single vector, or every point is a combination of two independent vectors. Determine which form it has, and give the dimension of the span."
+            answer: "form = line; dim = 1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["line"], ["plane"]]}, "name": "form"}, {"contract": {"kind": "exact"}, "name": "dim"}]}
+            solution_sketch: "Multiple check: (2, 4, 2) = 2(1, 2, 1), so the two vectors are dependent and the span is the set of all multiples of (1, 2, 1). Dimension rule: dependent vectors contribute only one independent direction, so the span has dimension 1. The wrong choice plane is the error of counting the two given vectors as independent. The answer is form = line; dim = 1."
+          - problem: "State the geometric form of the span of the vectors (2, -1, 0) and (4, 5, 0) in R^3."
+            answer: "a plane through the origin"
+            answer_contract: {"kind": "label", "options": [["a line through the origin"], ["a plane through the origin"], ["all of R^3"], ["the origin alone"]]}
+            solution_sketch: "Multiple check: (4, 5, 0) is not a multiple of (2, -1, 0), so the two vectors are independent. Dimension rule: two independent vectors in R^3 span a 2-dimensional flat set, and every combination s(2, -1, 0) + t(4, 5, 0) has third coordinate 0. Wrong options: a line through the origin is the error of counting the vectors as dependent; all of R^3 is the error of expecting two vectors to span a 3-dimensional set; the origin alone is the error of confusing the span with the set containing only the zero vector. The span is a plane through the origin."
         constraints: "spans of 1-2 vectors in R^2 or R^3; answers are geometric descriptions"
     diagnostic_exemplar:
       problem: 'Is $(1, 3, 1)$ in $\mathrm{span}\{(1, 1, 0), (0, 1, 1)\}$? Describe that span geometrically.'
