@@ -769,14 +769,30 @@ topics:
         name: "Verifying the condition"
         key_prerequisites: [groups-intro]
         exemplars:
-          - problem: 'Is $\varphi : (\mathbb{Z}, +) \to (\mathbb{Z}, +)$, $\varphi(n) = 3n$, a homomorphism?'
-            answer_contract: {kind: none}
-            answer: 'Yes: $3(m + n) = 3m + 3n$.'
-            solution_sketch: '$\varphi(m + n) = 3(m+n)$ and $\varphi(m) + \varphi(n) = 3m + 3n$ — equal for all $m, n$.'
-          - problem: 'Is $\varphi : (\mathbb{R}, +) \to (\mathbb{R}^{>0}, \cdot)$, $\varphi(x) = 2^{x}$, a homomorphism?'
-            answer_contract: {kind: none}
-            answer: 'Yes: $2^{x+y} = 2^{x} \cdot 2^{y}$.'
-            solution_sketch: 'The operation on the left is addition, on the right multiplication; the exponent law matches them exactly.'
+          - problem: "Define $\\varphi : (\\mathbb{Z}, +) \\to (\\mathbb{Z}, +)$ by $\\varphi(n) = 5n$. Compute $\\varphi(m + n)$ and $\\varphi(m) + \\varphi(n)$. Find their common value as a function of $m$ and $n$."
+            answer: "5m+5n"
+            answer_contract: {"kind": "function", "vars": ["m", "n"]}
+            solution_sketch: "Full condition: $\\varphi(m + n) = \\varphi(m) + \\varphi(n)$. Step 1: apply the definition, $\\varphi(m + n) = 5(m + n)$. Step 2: expand by the distributive law, $5m + 5n$. Step 3: apply the definition on the right, $\\varphi(m) + \\varphi(n) = 5m + 5n$. The two sides match for all integers $m$ and $n$, so the common value is 5m+5n."
+          - problem: "Define $\\varphi : (\\mathbb{R}, +) \\to (\\mathbb{R}^{>0}, \\cdot)$ by $\\varphi(x) = e^{3x}$. Check $\\varphi(x + y) = \\varphi(x) \\varphi(y)$. State whether $\\varphi$ is a homomorphism and give the common value of both sides as a function of $x$ and $y$."
+            answer: "verdict = yes; value = e^(3x+3y)"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"kind": "function", "vars": ["x", "y"]}, "name": "value"}]}
+            solution_sketch: "Full condition: $\\varphi(x + y) = \\varphi(x) \\varphi(y)$ with addition on the left and multiplication on the right. Step 1: apply the map, $\\varphi(x + y) = e^{3(x + y)}$. Step 2: simplify the exponent to $e^{3x + 3y}$. Step 3: apply the map on the right, $\\varphi(x) \\varphi(y) = e^{3x} e^{3y}$. Step 4: use the exponent law $e^a e^b = e^{a+b}$ to get $e^{3x + 3y}$. Both sides are equal for all real $x$ and $y$, so $\\varphi$ is a homomorphism. The answer is verdict = yes; value = e^(3x+3y)."
+          - problem: "Define $\\varphi : (\\mathbb{R}, +) \\to (\\mathbb{R}, +)$ by $\\varphi(x) = x/5$. Compute $\\varphi(x + y)$ and $\\varphi(x) + \\varphi(y)$. Find their common value as a function of $x$ and $y$."
+            answer: "(x+y)/5"
+            answer_contract: {"kind": "function", "vars": ["x", "y"]}
+            solution_sketch: "Full condition: $\\varphi(x + y) = \\varphi(x) + \\varphi(y)$. Step 1: apply the map, $\\varphi(x + y) = (x + y)/5$. Step 2: split the fraction, $x/5 + y/5$. Step 3: apply the map on the right, $\\varphi(x) + \\varphi(y) = x/5 + y/5$. Both sides match for all real $x$ and $y$, so the common value is (x+y)/5."
+          - problem: "Define $\\varphi : (\\mathbb{Z}, +) \\to (\\mathbb{Z}, +)$ by $\\varphi(n) = -4n$. Compute $\\varphi(m + n)$ and $\\varphi(m) + \\varphi(n)$. Find their common value as a function of $m$ and $n$."
+            answer: "-4m-4n"
+            answer_contract: {"kind": "function", "vars": ["m", "n"]}
+            solution_sketch: "Full condition: $\\varphi(m + n) = \\varphi(m) + \\varphi(n)$. Step 1: apply the map, $\\varphi(m + n) = -4(m + n)$. Step 2: expand by the distributive law, $-4m - 4n$. Step 3: apply the map on the right, $\\varphi(m) + \\varphi(n) = -4m - 4n$. The two sides match for all integers $m$ and $n$, so the common value is -4m-4n."
+          - problem: "Define $\\varphi : (\\mathbb{R}, +) \\to (\\mathbb{R}, +)$ by $\\varphi(x) = -x/2$. Compute $\\varphi(x + y)$ and $\\varphi(x) + \\varphi(y)$. Find their common value as a function of $x$ and $y$."
+            answer: "-(x+y)/2"
+            answer_contract: {"kind": "function", "vars": ["x", "y"]}
+            solution_sketch: "Full condition: $\\varphi(x + y) = \\varphi(x) + \\varphi(y)$. Step 1: apply the map, $\\varphi(x + y) = -(x + y)/2$. Step 2: rewrite as $-x/2 - y/2$. Step 3: apply the map on the right, $\\varphi(x) + \\varphi(y) = -x/2 - y/2$. Both sides match for all real $x$ and $y$, so the common value is -(x+y)/2."
+          - problem: "Define $\\varphi : (\\mathbb{R}, +) \\to (\\mathbb{R}^{>0}, \\cdot)$ by $\\varphi(x) = e^{-5x}$. Check $\\varphi(x + y) = \\varphi(x) \\varphi(y)$. State whether $\\varphi$ is a homomorphism and give the common value of both sides as a function of $x$ and $y$."
+            answer: "verdict = yes; value = e^(-5x-5y)"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"kind": "function", "vars": ["x", "y"]}, "name": "value"}]}
+            solution_sketch: "Full condition: $\\varphi(x + y) = \\varphi(x) \\varphi(y)$ with addition on the left and multiplication on the right. Step 1: apply the map, $\\varphi(x + y) = e^{-5(x + y)}$. Step 2: simplify the exponent to $e^{-5x - 5y}$. Step 3: apply the map on the right, $\\varphi(x) \\varphi(y) = e^{-5x} e^{-5y}$. Step 4: use the exponent law $e^a e^b = e^{a+b}$ to get $e^{-5x - 5y}$. Both sides are equal for all real $x$ and $y$, so $\\varphi$ is a homomorphism. The answer is verdict = yes; value = e^(-5x-5y)."
         constraints: "check $\\varphi(x * y) = \\varphi(x) \\cdot \\varphi(y)$ symbolically; note which operation lives on each side"
       - id: kp2
         name: "Refuting with a counterexample"

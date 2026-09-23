@@ -681,6 +681,22 @@ topics:
           - problem: 'If $|A| = 4$ and $|B| = 3$, how many functions $A \to B$ are there?'
             answer: '$81$'
             solution_sketch: 'Fix the images of the $4$ inputs one at a time. Each choice is free and has $3$ options, and each earlier choice leaves a separate family to be split $3$ ways again, so the counts multiply: $3 \cdot 3 \cdot 3 \cdot 3 = 3^4 = 81$, i.e. $|B|^{|A|}$.'
+          - problem: "Let A = {1, 2, 3, 4} and B = {p, q}. Find the number of functions from A to B."
+            answer: "16"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The set A has 4 elements and the set B has 2 elements. A function is fixed by choosing the image of 1, then the image of 2, then the image of 3, then the image of 4; by the multiplication principle each input has 2 choices and the choices multiply. The count is 2*2*2*2 = 16. The number of functions is 16."
+          - problem: "Suppose A has 5 elements and B has 3 elements. Find the number of functions from A to B."
+            answer: "243"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The domain A has 5 elements and the codomain B has 3 elements. By the multiplication principle, each of the 5 inputs has 3 independent choices in B, so the choices multiply. The count is 3^5 = 243, which is |B|^|A|. The number of functions is 243."
+          - problem: "The number of functions from a finite set A to a set B with 2 elements is 32. Find the number of elements in A."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The rule for all functions is that the count equals |B|^|A|. Here |B| = 2 and the count is 32, so solve 2^|A| = 32. Since 2^5 = 32, the domain has size 5. The number of elements in A is 5."
+          - problem: "A vending machine code assigns to each of 5 buttons one of 4 letters. How many distinct codes are possible?"
+            answer: "1024"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Each code assigns to each of the 5 buttons one of the 4 letters, so a code is a function from a 5-element set to a 4-element set. By the multiplication principle, each button gives 4 independent choices and the 5 choices multiply. The count is 4^5 = 1024. The number of possible codes is 1024."
         constraints: "apply $|B|^{|A|}$, justifying it by the multiplication principle — splitting the count one input at a time; sets of size at most 5"
       - id: kp2
         name: "Counting injections"

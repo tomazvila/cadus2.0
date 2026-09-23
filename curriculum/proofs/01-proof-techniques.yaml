@@ -1641,12 +1641,34 @@ topics:
         name: "Mixed exponential-linear divisibility"
         key_prerequisites: [induction-template]
         exemplars:
-          - problem: 'Prove: for all $n \ge 0$, $3 \mid (4^n + 5)$.'
-            answer: 'Base $n = 0$: $6$. Step: $4^{n+1} + 5 = 4(4^n + 5) - 15$.'
-            solution_sketch: 'Base: $4^0 + 5 = 6 = 3 \cdot 2$. Step: assume $3 \mid (4^n + 5)$. Then $4^{n+1} + 5 = 4(4^n + 5) - 15$; both $4(4^n + 5)$ and $15$ are divisible by $3$. $\square$'
-          - problem: 'Prove: for all $n \ge 0$, $9 \mid (4^n + 6n - 1)$.'
-            answer: 'Base $n = 0$: $0$. Step: $4^{n+1} + 6(n+1) - 1 = 4(4^n + 6n - 1) - 9(2n - 1)$.'
-            solution_sketch: 'Base: $4^0 + 0 - 1 = 0$. Step: $4(4^n + 6n - 1) = 4^{n+1} + 24n - 4$, so $4^{n+1} + 6(n+1) - 1 = 4(4^n + 6n - 1) - 18n + 9 = 4(4^n + 6n - 1) - 9(2n - 1)$; both terms divisible by $9$. $\square$'
+          - problem: "To prove 3 | (4^n + 5) by induction, write 4^(n+1) + 5 = 4(4^n + 5) + r for a constant r. Give r."
+            answer: "-15"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The induction step starts from the target 4^(n+1) + 5. Expand the multiple of the hypothesis: 4(4^n + 5) = 4^(n+1) + 20. The difference between the target and this expression is 5 - 20 = -15, so the remainder is constant. Since -15 is a multiple of 3, the induction step closes. The answer is -15."
+          - problem: "To prove 9 | (4^n + 6n - 1) by induction, write 4^(n+1) + 6(n+1) - 1 = 4(4^n + 6n - 1) + 9 q(n). Give q(n)."
+            answer: "1-2n"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The target is 4^(n+1) + 6n + 5. The multiple of the hypothesis is 4(4^n + 6n - 1) = 4^(n+1) + 24n - 4. Subtract: (6n + 5) - (24n - 4) = -18n + 9 = 9(1 - 2n). Thus q(n) = 1 - 2n, and the remainder is a visible multiple of 9. The answer is 1-2n."
+          - problem: "To prove 12 | (7^n + 6n + 11) by induction, write 7^(n+1) + 6(n+1) + 11 = 7(7^n + 6n + 11) + 12 q(n). Give q(n)."
+            answer: "-3n-5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The target expands to 7^(n+1) + 6n + 17. The multiple of the hypothesis is 7(7^n + 6n + 11) = 7^(n+1) + 42n + 77. Subtract: (6n + 17) - (42n + 77) = -36n - 60 = 12(-3n - 5). Thus q(n) = -3n - 5, a visible multiple of 12. The answer is -3n-5."
+          - problem: "A student claims that 5 | (3^n + 2n + 4) for every n >= 0. Test n = 0 and n = 1. Give the smallest n >= 0 for which the claim is false."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Test the base case n = 0: 3^0 + 0 + 4 = 5, a multiple of 5. Test the next case n = 1: 3 + 2 + 4 = 9, not a multiple of 5. Therefore the first failure occurs at n = 1, and the induction hypothesis cannot be reached past this point. The answer is 1."
+          - problem: "Claim: 8 | (5^n + 4n + 7) for n >= 0. Step 1: for n = 0, 5^0 + 0 + 7 = 8. Step 2: assume 8 | (5^k + 4k + 7). Step 3: 5^(k+1) + 4(k+1) + 7 = 5(5^k + 4k + 7) + 8(2k + 3). Step 4: both terms are multiples of 8, so 8 | (5^(k+1) + 4(k+1) + 7). Which step is the first step that is not valid?"
+            answer: "Step 3"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 is the correct base case because 8 is a multiple of 8. Step 2 is the induction hypothesis. Step 3 is invalid: the correct subtraction is 5(5^k + 4k + 7) - 8(2k + 3), since 5(5^k + 4k + 7) = 5^(k+1) + 20k + 35 and the target is 5^(k+1) + 4k + 11. Step 4 would follow only with the corrected sign. The answer is Step 3."
+          - problem: "In the inductive step for 9 | (7^n + 3n + 8), the line 7^(k+1) + 3(k+1) + 8 = ? is missing. Select the line that is true and that shows the hypothesis."
+            answer: "$7(7^k + 3k + 8) - 9(2k + 5)$"
+            answer_contract: {"kind": "label", "options": [["$7(7^k + 3k + 8) - 9(2k + 5)$"], ["$7(7^k + 3k + 8) + 9(2k + 5)$"], ["$7(7^k + 3k + 8) - 9(2k - 5)$"], ["$7(7^k + 3k + 8) - 3(2k + 5)$"]]}
+            solution_sketch: "Start from the target on the left: 7^(k+1) + 3k + 11. The multiple of the hypothesis is 7(7^k + 3k + 8) = 7^(k+1) + 21k + 56. The needed subtraction is (21k + 56) - (3k + 11) = 18k + 45 = 9(2k + 5), so the correct line subtracts 9(2k + 5). The option with +9 has a sign error. The option with -9(2k - 5) changes the constant. The option with -3(2k + 5) uses the wrong divisor factor. The answer is $7(7^k + 3k + 8) - 9(2k + 5)$."
+          - problem: "Write the full proof: for all n >= 0, 9 | (7^n + 3n + 8). Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Base case: at n = 0, 7^0 + 0 + 8 = 9, and 9 is a multiple of 9. Induction hypothesis: assume 9 | (7^k + 3k + 8) for some k >= 0, so 7^k + 3k + 8 = 9m for an integer m. Induction step: compute 7^(k+1) + 3(k+1) + 8 = 7(7^k + 3k + 8) - 9(2k + 5). The first term is 7 times a multiple of 9, hence a multiple of 9; the second term is visibly 9 times an integer. Therefore their difference is a multiple of 9, so 9 | (7^(k+1) + 3(k+1) + 8). Conclusion: by induction the statement holds for every n >= 0. The full proof is complete."
         constraints: "express the next case as (multiple of the hypothesis) plus a visible multiple of the divisor"
     diagnostic_exemplar:
       problem: 'Prove by induction: for all $n \ge 0$, $9 \mid (10^{n} - 9n - 1)$.'
