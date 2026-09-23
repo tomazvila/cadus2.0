@@ -616,12 +616,34 @@ topics:
         key_prerequisites: [category-definition]
         constraints: "Categories of structured sets only ($\\mathbf{Mon}$, $\\mathbf{Grp}$, $\\mathbf{Poset}$, $\\mathbf{Top}$); verification means checking identity maps qualify and composites preserve the structure; no size/foundational issues raised."
         exemplars:
-          - problem: "Describe the objects and morphisms of $\\mathbf{Mon}$ (monoids) and check identities and composites are legal."
-            answer: "Objects are monoids, morphisms are monoid homomorphisms; identity maps and composites of homomorphisms are homomorphisms."
-            solution_sketch: "Objects are monoids $(M,\\cdot,e)$; a morphism $M\\to N$ is a function $f$ with $f(xy)=f(x)f(y)$ and $f(e_M)=e_N$. The identity function is a homomorphism, and if $f,g$ are homomorphisms so is $g\\circ f$: $g(f(xy))=g(f(x)f(y))=g(f(x))g(f(y))$ and $g(f(e))=e$. Associativity and units are inherited from $\\mathbf{Set}$, so $\\mathbf{Mon}$ is a category."
-          - problem: "State what the objects and morphisms are in $\\mathbf{Grp}$ and in $\\mathbf{Poset}$."
-            answer: "$\\mathbf{Grp}$: groups and group homomorphisms; $\\mathbf{Poset}$: posets and monotone (order-preserving) maps."
-            solution_sketch: "In each case identity maps qualify and composites of structure-preserving maps preserve the structure, so the category axioms hold as in $\\mathbf{Set}$."
+          - problem: "In Mon, a morphism is a monoid homomorphism. Let M be Z/6 under addition and N be Z/3 under addition. Define f: M -> N by f(k) = k mod 3, and let g: N -> N be the identity. Set h = g composed with f. For x = 4 and y = 5, give h(x+y)."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: Add in M: 4 + 5 = 9, which is 3 modulo 6. Step 2: Apply f: f(3) = 3 mod 3 = 0. Step 3: Apply the identity g: h(3) = g(0) = 0. The value is 0."
+          - problem: "In Grp, a morphism is a group homomorphism. Let G be Z/8 under addition and H be Z/4 under addition. Define f: G -> H by f(k) = k mod 4, and let g: H -> H be the identity. Set h = g composed with f. For x = 6 and y = 7, give h(x+y)."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: Add in G: 6 + 7 = 13, which is 5 modulo 8. Step 2: Apply f: f(5) = 5 mod 4 = 1. Step 3: Apply the identity g: h(5) = g(1) = 1. The value is 1."
+          - problem: "In Poset, a morphism is a monotone map. Let P be {0,1,2,3} with the usual order and Q be {0,1,2} with the usual order. Define f: P -> Q by f(k) = k for k <= 2 and f(3) = 2. Let g: Q -> Q be the identity. Set h = g composed with f. For x = 2 and y = 3, give h(y)."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: Locate y = 3 in P. Step 2: Apply f: f(3) = 2 by the definition of f. Step 3: Apply the identity g: h(3) = g(2) = 2. The value is 2."
+          - problem: "In Mon, a morphism is a monoid homomorphism. Let M be Z/12 under addition and N be Z/4 under addition. Define f: M -> N by f(k) = k mod 4, and let g: N -> N be the identity. Set h = g composed with f. For x = 7 and y = 8, give h(x+y)."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: Add in M: 7 + 8 = 15, which is 3 modulo 12. Step 2: Apply f: f(3) = 3 mod 4 = 3. Step 3: Apply the identity g: h(3) = g(3) = 3. The value is 3."
+          - problem: "Claim: composites of group homomorphisms are homomorphisms. Let f: G -> H and g: H -> K be group homomorphisms, written additively. Step 1: (g composed with f)(x+y) = g(f(x+y)). Step 2: = g(f(x)+f(y)). Step 3: = g(f(x)) g(f(y)). Step 4: = (g composed with f)(x) (g composed with f)(y). Which step is the first step that is not valid?"
+            answer: "Step 3"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 is correct: it writes the composite. Step 2 is correct: f is a homomorphism. Step 3 is the first invalid step: in additive notation the right side must be g(f(x)) + g(f(y)), not a product. Step 4 repeats the error. The answer is Step 3."
+          - problem: "In Poset, let f: P -> Q and g: Q -> R be monotone maps, and let x <= y in P. To prove that the composite is monotone, one first derives f(x) <= f(y). A second inequality is then needed to finish. Select the justification for that second inequality."
+            answer: "monotonicity of g"
+            answer_contract: {"kind": "label", "options": [["monotonicity of f"], ["monotonicity of g"], ["P is a poset"], ["R is a poset"]]}
+            solution_sketch: "The first inequality f(x) <= f(y) comes from the map into Q. The second inequality applies the same property of g to that pair. The option monotonicity of f is the error of reusing the first map. The option P is a poset is the error of citing the domain object. The option R is a poset is the error of citing the codomain object. The missing reason is monotonicity of g."
+          - problem: "Write the full proof: In the category Mon, the identity map on any monoid is a monoid homomorphism, and the composite of two monoid homomorphisms is a monoid homomorphism. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1: Let M be a monoid with identity e. Define id_M: M -> M by id_M(x)=x. Step 2: For x,y in M, id_M(xy)=xy=id_M(x)id_M(y). Also id_M(e)=e. Thus id_M is a monoid homomorphism. Step 3: Let f: M -> N and g: N -> P be monoid homomorphisms. Step 4: For x,y in M, (g composed with f)(xy)=g(f(xy))=g(f(x)f(y))=g(f(x))g(f(y))=(g composed with f)(x)(g composed with f)(y). Step 5: Also (g composed with f)(e_M)=g(f(e_M))=g(e_N)=e_P. Step 6: Therefore g composed with f is a monoid homomorphism. This verifies identities and composites for Mon. See the solution."
       - id: kp2
         name: Small categories from data (monoids, groups, posets)
         key_prerequisites: [groups-intro]
