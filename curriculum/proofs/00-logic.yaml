@@ -1722,14 +1722,30 @@ topics:
         name: "Modus ponens and modus tollens"
         key_prerequisites: [conditional-statements]
         exemplars:
-          - problem: 'From $P \to Q$ and $P$, what can you conclude?'
-            answer_contract: {kind: none}
-            answer: '$Q$ (modus ponens).'
-            solution_sketch: 'Modus ponens: $P \to Q,\ P \vdash Q$.'
-          - problem: 'From $P \to Q$ and $\neg Q$, what follows?'
-            answer_contract: {kind: none}
-            answer: '$\neg P$ (modus tollens).'
-            solution_sketch: 'Modus tollens: $P \to Q,\ \neg Q \vdash \neg P$ (contrapositive reasoning).'
+          - problem: "A coach reasons: if the team wins, the fans cheer. The team wins. State which rule of inference the coach uses, and give the truth value of the statement the fans cheer (1 for true, 0 for false)."
+            answer: "rule = ponens; value = 1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["ponens"], ["tollens"]]}, "name": "rule"}, {"contract": {"kind": "exact"}, "name": "value"}]}
+            solution_sketch: "The coach asserts the conditional 'if the team wins, the fans cheer' and then affirms its antecedent, 'the team wins'. Rule check: affirming the antecedent of a conditional is modus ponens; the tollens option is wrong because modus tollens needs the denial of the consequent, which is not given. Modus ponens concludes the consequent, so 'the fans cheer' is true, which has truth value 1. The answer is rule = ponens; value = 1."
+          - problem: "From P -> Q and not Q, what does modus tollens conclude? Select the correct statement."
+            answer: "not P"
+            answer_contract: {"kind": "label", "options": [["P and Q"], ["not P"], ["P or Q"], ["P if Q"]]}
+            solution_sketch: "Modus tollens has the form: from P -> Q and not Q, infer not P. Step 1: the premises give the conditional P -> Q and the negation of its consequent, so modus tollens applies and negates the antecedent. The option P and Q is wrong because it affirms the consequent and also contradicts not Q. The option P or Q is wrong because no inference rule here produces a disjunction. The option P if Q is wrong because it only states the converse of the given conditional. The answer is not P."
+          - problem: "Given A -> B and A, what is the truth value of B? Give 1 for true and 0 for false. Give the answer as a whole number."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Modus ponens has the form A -> B and A, so it concludes B. Since the premises hold, B is true. The truth value is 1."
+          - problem: "Given A -> B and not B, what is the truth value of A? Give 1 for true and 0 for false. Give the answer as a whole number."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Modus tollens has the form A -> B and not B, so it concludes not A. Since not A holds, A is false. The truth value is 0."
+          - problem: "Given C -> D and C, what is the truth value of D? Give 1 for true and 0 for false. Give the answer as a whole number."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Modus ponens has the form C -> D and C, so it concludes D. Since the premises hold, D is true. The truth value is 1."
+          - problem: "Given C -> D and not D, what is the truth value of C? Give 1 for true and 0 for false. Give the answer as a whole number."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Modus tollens has the form C -> D and not D, so it concludes not C. Since not C holds, C is false. The truth value is 0."
         constraints: "apply modus ponens and modus tollens"
       - id: kp2
         name: "Valid vs. invalid argument forms"

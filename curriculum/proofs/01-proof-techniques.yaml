@@ -1882,12 +1882,34 @@ topics:
         name: "Existence of prime factorizations"
         key_prerequisites: [mathematical-induction]
         exemplars:
-          - problem: 'Prove: every integer $n \ge 2$ is a product of one or more primes.'
-            answer: 'If $n$ is prime, done; else $n = ab$ with $2 \le a, b < n$, apply the hypothesis to $a, b$.'
-            solution_sketch: 'Base: $2$ is prime. Step: assume every integer in $[2, n)$ is a product of primes. If $n$ is prime, done. Otherwise $n = ab$ with $2 \le a, b < n$; by the strong hypothesis $a$ and $b$ are products of primes, so $n = ab$ is too. $\square$'
-          - problem: 'Prove: every integer $n \ge 2$ has a prime divisor.'
-            answer: 'If $n$ is prime, itself; else a proper factor $a < n$ has a prime divisor by the hypothesis.'
-            solution_sketch: 'Base: $2$ is prime and divides itself. Step: assume every integer in $[2, n)$ has a prime divisor. If $n$ is prime, done. Otherwise $n = ab$ with $2 \le a < n$; by hypothesis $a$ has a prime divisor $p$, and $p \mid a \mid n$. $\square$'
+          - problem: "In the strong induction proof that every integer n >= 2 is a product of primes, the case n = 35 is composite. Write 35 = a b with 2 <= a <= b < 35 and a as small as possible. Give a."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The number 35 factors as 5 times 7. The smaller factor a is 5, and the larger factor 7 is less than 35. The strong hypothesis applies to both 5 and 7. The answer is 5."
+          - problem: "In the strong induction proof that every integer n >= 2 has a prime divisor, the case n = 91 is composite. Write 91 = a b with 2 <= a <= b < 91 and a as small as possible. Give a."
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The number 91 factors as 7 times 13. The smaller factor a is 7, and the larger factor 13 is less than 91. The hypothesis then gives a prime divisor of 7, namely 7 itself. The answer is 7."
+          - problem: "In the strong induction proof of prime factorization, the base case is the first integer in the range n >= 2. Give the value of that base case."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The claim starts at n = 2 because 0 and 1 are not products of one or more primes. The base case is n = 2, which is prime. The answer is 2."
+          - problem: "In the strong induction step for n = 77, write 77 = a b with 2 <= a <= b < 77 and a as small as possible. Give b."
+            answer: "11"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The number 77 factors as 7 times 11. The smaller factor a is 7, so the larger factor b is 11. Both factors are less than 77, so the strong hypothesis applies to each. The answer is 11."
+          - problem: "Claim: every integer n >= 2 is a product of primes. Step 1: 2 is prime. Step 2: assume k >= 2 is a product of primes. Step 3: let n = k + 1; if n is prime, stop. Step 4: otherwise n = a b with 2 <= a, b < n. Step 5: by Step 2, a and b are products of primes. Which step is the first invalid step?"
+            answer: "Step 5"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"], ["Step 5"]]}
+            solution_sketch: "Step 1 is the correct base case. Step 2 states the weak hypothesis for one value k. Step 3 handles the prime case. Step 4 is the composite split. Step 5 is invalid because Step 2 applies only to k, not to a or b; strong induction needs all smaller values. The answer is Step 5."
+          - problem: "In the strong induction step for prime factorization, one line states what may be assumed about smaller integers. Which line is the correct hypothesis?"
+            answer: "all m from 2 to n-1 are prime products"
+            answer_contract: {"kind": "label", "options": [["all m from 2 to n-1 are prime products"], ["all m from 2 to n are prime products"], ["some m from 2 to n-1 are prime products"], ["n itself is a prime product"]]}
+            solution_sketch: "The correct hypothesis is all m from 2 to n-1 are prime products. The option all m from 2 to n are prime products wrongly includes n itself. The option some m from 2 to n-1 are prime products is too weak. The option n itself is a prime product is circular. The answer is all m from 2 to n-1 are prime products."
+          - problem: "Write the full proof: every integer n >= 2 is a product of one or more primes. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Base case: n = 2 is prime, so it is a product of one prime. Strong hypothesis: assume every integer m with 2 <= m < n is a product of one or more primes. If n is prime, then n itself is a product of one prime. If n is composite, then n = a b for integers a and b with 2 <= a < n and 2 <= b < n. By the strong hypothesis, a is a product of primes and b is a product of primes. Their product n = a b is therefore a product of the primes from a followed by the primes from b. This proves the claim for n, and by strong induction every integer n >= 2 is a product of one or more primes."
         constraints: "split the number and apply the hypothesis to both smaller factors"
       - id: kp3
         name: "Bounding recursive sequences"

@@ -1381,12 +1381,34 @@ topics:
         # target for a learner who fails this KP twice.
         key_prerequisites: [uncountability-diagonalization, cardinality-countability]
         exemplars:
-          - problem: 'Prove $|\{0, 1\}^{\mathbb{N}}| = |(0, 1)|$ (infinite binary sequences vs. the open unit interval).'
-            answer: 'Code bits as decimal digits $4/5$ one way; take a chosen binary expansion the other; Schröder–Bernstein finishes.'
-            solution_sketch: 'Injection $\{0,1\}^{\mathbb{N}} \to (0, 1)$: send $(b_1, b_2, \dots)$ to the decimal $0.d_1 d_2 \dots$ with $d_n = 4$ if $b_n = 0$ and $d_n = 5$ if $b_n = 1$; using only digits $4, 5$ avoids the dual-representation problem ($0.4999\dots = 0.5$ never arises), so distinct sequences give distinct reals. Injection $(0, 1) \to \{0,1\}^{\mathbb{N}}$: send $x$ to its binary expansion, always choosing the non-terminating one when there are two. Both maps are injective, so Schröder–Bernstein gives a bijection. $\square$'
-          - problem: 'Prove $|\mathcal{P}(\mathbb{N})| = |\mathbb{R}|$, citing previously established equalities.'
-            answer: 'Chain $\mathcal{P}(\mathbb{N}) \leftrightarrow \{0,1\}^{\mathbb{N}} \leftrightarrow (0, 1) \leftrightarrow \mathbb{R}$ and compose.'
-            solution_sketch: 'Indicator functions give a bijection $\mathcal{P}(\mathbb{N}) \to \{0,1\}^{\mathbb{N}}$ ($S \mapsto$ its characteristic sequence). By the previous exemplar $|\{0,1\}^{\mathbb{N}}| = |(0, 1)|$, and $|(0, 1)| = |\mathbb{R}|$ via the tangent bijection. Compositions of bijections are bijections, so $|\mathcal{P}(\mathbb{N})| = |\mathbb{R}|$. $\square$'
+          - problem: "Under the injection that codes bit 0 as decimal digit 4 and bit 1 as decimal digit 5, the bit sequence 0, 1, 0, 1 gives a decimal in (0, 1). Give that decimal to 4 decimals."
+            answer: "0.4545"
+            answer_contract: {"decimals": 4, "kind": "approx"}
+            solution_sketch: "Step 1: read the bit sequence 0, 1, 0, 1 from left to right. Step 2: apply the digit coding, replacing 0 by 4 and 1 by 5. Step 3: place the resulting digits 4, 5, 4, 5 after the decimal point. The answer is 0.4545."
+          - problem: "In the indicator-function bijection from P(N) to {0,1}^N, the set S = {0, 2, 4} maps to a binary sequence. Give the first five bits of that sequence as a comma-separated list, starting with the bit for index 0."
+            answer: "1, 0, 1, 0, 1"
+            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
+            solution_sketch: "Step 1: use the indicator-function bijection. Step 2: index 0 is in S, so the first bit is 1. Step 3: index 1 is not in S, so the second bit is 0. Step 4: index 2 is in S, so the third bit is 1. Step 5: index 3 is not in S, so the fourth bit is 0. Step 6: index 4 is in S, so the fifth bit is 1. The answer is 1, 0, 1, 0, 1."
+          - problem: "For the rule that always chooses the non-terminating binary expansion when a real has two, the real 1/2 has a chosen expansion. Give the first four bits after the binary point as a comma-separated list."
+            answer: "0, 1, 1, 1"
+            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
+            solution_sketch: "Step 1: 1/2 has the binary expansion 0.1. Step 2: it also has the non-terminating expansion 0.01111... . Step 3: the rule chooses the non-terminating one, so read the first four bits after the point. The answer is 0, 1, 1, 1."
+          - problem: "Claim: |P(N)| = |R|. Step 1: Indicator functions give a bijection P(N) -> {0,1}^N. Step 2: Code each bit as a decimal digit, 0 -> 4 and 1 -> 5, to map binary sequences into (0, 1). Step 3: This map is surjective onto (0, 1) because every real has a decimal expansion using only the digits 4 and 5. Step 4: With injections both ways, Schroder-Bernstein gives a bijection. Which step is the first step that is not valid?"
+            answer: "Step 3"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 is correct: indicator functions are a bijection. Step 2 is correct: the digit coding is injective. Step 3 is false: not every real in (0, 1) has a decimal expansion using only the digits 4 and 5, so the map is not surjective. Step 4 would follow only if Step 3 were true. The answer is Step 3."
+          - problem: "In the chain P(N) -> {0,1}^N -> (0, 1) -> R, the link from (0, 1) to R is missing. Select the missing bijection."
+            answer: "tan(pi(x-1/2))"
+            answer_contract: {"kind": "label", "options": [["tan(pi(x-1/2))"], ["tan(pi x)"], ["sin(pi x)"], ["ln(x)"]]}
+            solution_sketch: "The missing link is the tangent map. Step 1: as x approaches 0, pi(x - 1/2) approaches -pi/2, so the tangent function goes to -infinity. Step 2: as x approaches 1, pi(x - 1/2) approaches pi/2, so the tangent function goes to infinity. Step 3: this map is a bijection from (0, 1) to R. Option tan(pi x) misses negative values; option sin(pi x) is not injective; option ln(x) is not defined on all of (0, 1). The answer is tan(pi(x-1/2))."
+          - problem: "In the proof that the map from (0, 1) to {0,1}^N is injective, a real with two binary expansions is assigned the non-terminating one. How many binary expansions does the real 1/2 have?"
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: 1/2 = 0.1 in binary. Step 2: 1/2 = 0.01111... in binary. Step 3: these are the only two binary expansions, so the count is 2. The answer is 2."
+          - problem: "Write the full proof: |{0,1}^N| = |(0, 1)|. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1: define an injection from {0,1}^N to (0, 1) by coding bit 0 as decimal digit 4 and bit 1 as decimal digit 5, then reading the result as a decimal. This map is injective because different bit sequences give different decimal digit strings, and the digits 4 and 5 avoid the dual decimal representation problem. Step 2: define an injection from (0, 1) to {0,1}^N by sending each real to its binary expansion, always choosing the non-terminating expansion when the real has two. This choice makes the map well-defined and injective, since distinct reals have distinct chosen binary expansions. Step 3: apply the Schroder-Bernstein theorem to the two injections to obtain a bijection between {0,1}^N and (0, 1). Therefore the cardinalities are equal."
         constraints: "digit-coding injections must address dual decimal/binary representations explicitly; chains cite each link"
     diagnostic_exemplar:
       problem: 'Using injections in both directions and the Schröder–Bernstein theorem, prove $|(0, 1)| = |[0, 1]|$.'

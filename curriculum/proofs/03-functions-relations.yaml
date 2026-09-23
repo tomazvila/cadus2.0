@@ -141,14 +141,30 @@ topics:
         name: "Solving with floors and ceilings"
         key_prerequisites: [functions-formal-definition]
         exemplars:
-          - problem: 'Describe all real $x$ with $\lfloor x \rfloor = 4$.'
-            answer_contract: {kind: none}
-            answer: '$4 \le x < 5$, i.e. $x \in [4, 5)$.'
-            solution_sketch: 'Floor equals $4$ exactly when $x$ lies in the half-open interval from $4$ up to but not including $5$.'
-          - problem: 'Describe all real $x$ with $\lceil x \rceil = -1$.'
-            answer_contract: {kind: none}
-            answer: '$-2 < x \le -1$, i.e. $x \in (-2, -1]$.'
-            solution_sketch: 'Ceiling equals $-1$ exactly when $x$ is at most $-1$ but greater than $-2$.'
+          - problem: "Describe all real x whose floor equals 7. Give the answer as an inequality in x."
+            answer: "7 <= x < 8"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "Definition of floor: the floor of x is the greatest integer at most x. For the floor of x equal to 7, x must be at least 7 and less than 8. Thus the solution is 7 <= x < 8."
+          - problem: "Describe all real x whose ceiling equals -2. Give the answer as an inequality in x."
+            answer: "-3 < x <= -2"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "Definition of ceiling: the ceiling of x is the least integer at least x. The equation with the ceiling of x equal to n holds exactly when n - 1 < x <= n. With n = -2 this becomes -3 < x <= -2, and every x in that interval has ceiling -2, while x = -3 has ceiling -3 and x = -2 has ceiling -2. Thus the solution set is -3 < x <= -2."
+          - problem: "Describe all real x whose ceiling equals 6. Give the answer as an inequality in x."
+            answer: "5 < x <= 6"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "Definition of ceiling: the ceiling of x equal to n means n - 1 < x <= n. With n = 6 this becomes 5 < x <= 6. Thus the solution is 5 < x <= 6."
+          - problem: "Describe all real x whose floor equals -5. Give the answer as an inequality in x."
+            answer: "-5 <= x < -4"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "Definition of floor: the floor of x equal to m means m <= x < m + 1. With m = -5 this becomes -5 <= x < -4. Thus the solution is -5 <= x < -4."
+          - problem: "The solution set of the equation with the floor of x equal to n contains 8.7. Find the integer n."
+            answer: "8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Definition of floor: the equation with the floor of x equal to n has solution set n <= x < n + 1. Since the set contains 8.7, n <= 8.7 < n + 1. The only integer n that works is 8. Thus n = 8."
+          - problem: "Describe all real x whose floor equals 5 or whose ceiling equals 5. Give the answer as an inequality in x."
+            answer: "4 < x < 6"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "Definition of floor: floor of x equal to 5 gives 5 <= x < 6. Definition of ceiling: ceiling of x equal to 5 gives 4 < x <= 5. The union of these two intervals is 4 < x < 6. Thus the solution is 4 < x < 6."
         constraints: "solution sets of $\\lfloor x \\rfloor = n$ or $\\lceil x \\rceil = n$ as intervals"
     diagnostic_exemplar:
       problem: 'Compute $\lfloor -2.4 \rfloor + \lceil 1.2 \rceil$, and describe all real $x$ with $\lceil x \rceil = 3$.'
@@ -426,12 +442,34 @@ topics:
         name: "The codomain matters"
         key_prerequisites: [quantifiers]
         exemplars:
-          - problem: 'Prove $f : \mathbb{R} \to [0, \infty)$, $f(x) = x^2$, is surjective.'
-            answer: 'Given $y \ge 0$, take $x = \sqrt{y}$.'
-            solution_sketch: 'Let $y \ge 0$; then $x = \sqrt{y} \in \mathbb{R}$ and $f(x) = y$. (Onto $\mathbb{R}$ it would fail: $-1$ has no preimage.) $\square$'
-          - problem: 'Prove $f : \mathbb{R} \to (0, \infty)$, $f(x) = e^{x}$, is surjective.'
-            answer: 'Given $y > 0$, take $x = \ln y$.'
-            solution_sketch: 'Let $y > 0$; then $x = \ln y$ is a real number and $f(x) = e^{\ln y} = y$. $\square$'
+          - problem: "To prove that f : R -> [5, ∞) with f(x) = x^2 + 5 is surjective, the proof produces a preimage for each y >= 5. Give the nonnegative preimage x of y = 30."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Surjectivity method: given y in the codomain, solve y = x^2 + 5 for x. For y = 30, x^2 = 25, so the solutions are 5 and -5, and the nonnegative one is 5. Check: f(5) = 25 + 5 = 30, so 5 does map to 30. The preimage is 5."
+          - problem: "To prove that f : R -> (7, ∞) with f(x) = e^x + 7 is surjective, the proof produces a preimage for each y > 7. Give the preimage x of y = 7 + e^3."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Surjectivity method: given y > 7, solve y = e^x + 7 for x. For y = 7 + e^3, subtract 7 to get e^x = e^3, and taking the natural logarithm gives x = 3. Check: f(3) = e^3 + 7, which is the given y. The preimage is 3."
+          - problem: "Consider f : R -> R with f(x) = e^x. Give the largest integer that has no preimage under f."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The range of f(x) = e^x on R is (0, ∞), so every y <= 0 lies outside the image. The integers with no preimage are 0, -1, -2, and so on. The largest of these is 0. The largest integer with no preimage is 0."
+          - problem: "Let f : R -> [a, ∞) be given by f(x) = x^2 + 6. Give the smallest real number a for which f is surjective."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The rule f(x) = x^2 + 6 attains exactly the values x^2 + 6 >= 6, so its image is [6, ∞). For the map to be onto [a, ∞) the number a must be the least image value, so a = 6. Check: every y >= 6 has x = sqrt(y - 6) with f(x) = y, and no y < 6 is attained. The smallest such a is 6."
+          - problem: "Claim: f : R -> [1, ∞) with f(x) = x^2 + 1 is surjective. Step 1: let y be an arbitrary real number with y >= 1. Step 2: set x = sqrt(y - 1), which is a real number. Step 3: f(x) = (sqrt(y - 1))^2 + 1 = y. Step 4: since x^2 = y - 1 has two real solutions when y > 1, the preimage is unique. Step 5: every y >= 1 has a preimage, so f is onto [1, ∞). Which step is the first step that is not valid?"
+            answer: "Step 4"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"], ["Step 5"]]}
+            solution_sketch: "Step 1 correctly takes an arbitrary y in the codomain [1, ∞). Step 2 is valid because y - 1 >= 0 keeps the square root real. Step 3 is a correct check that f(x) = y. Step 4 is the first invalid step: x^2 = y - 1 has the two solutions sqrt(y - 1) and -sqrt(y - 1) when y > 1, so the preimage is not unique, and surjectivity needs existence only. Step 5 is correct. The answer is Step 4."
+          - problem: "In the proof that f : R -> [-1, ∞) with f(x) = x^2 - 1 is surjective, the line that produces the preimage of a given y >= -1 is missing. Select the line that is correct."
+            answer: "take x = sqrt(y + 1)"
+            answer_contract: {"kind": "label", "options": [["take x = sqrt(y + 1)"], ["take x = sqrt(y - 1)"], ["take x = sqrt(1 - y)"], ["take x = y + 1"]]}
+            solution_sketch: "Solve y = x^2 - 1 for x: add 1 to get x^2 = y + 1, and y >= -1 makes y + 1 nonnegative, so x = sqrt(y + 1) is real. The option sqrt(y - 1) subtracts instead of adds and fails when y lies between -1 and 1. The option sqrt(1 - y) reverses the sign of y. The option y + 1 forgets the square root, so f of it is not y. The correct line is take x = sqrt(y + 1)."
+          - problem: "Write the full proof: f : R -> [3, ∞) with f(x) = x^2 + 3 is surjective onto [3, ∞) but not onto R. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1: let y be an arbitrary element of the codomain [3, ∞), so y is a real number with y >= 3. Step 2: set x = sqrt(y - 3); since y - 3 >= 0, x is a real number, so x lies in the domain R. Step 3: compute f(x) = (sqrt(y - 3))^2 + 3 = y - 3 + 3 = y. Step 4: every y in [3, ∞) has a preimage, so f is surjective onto [3, ∞). Step 5: the same rule as a map R -> R is not surjective, because y = 0 lies in R while x^2 + 3 = 0 has no real solution; surjectivity depends on the stated codomain."
         constraints: "maps surjective onto a stated codomain but not onto all of $\\mathbb{R}$"
     diagnostic_exemplar:
       problem: 'Prove that $f : \mathbb{R} \to [1, \infty)$, $f(x) = x^2 + 1$, is surjective, and explain why the same rule as a map $\mathbb{R} \to \mathbb{R}$ is not.'
@@ -506,12 +544,34 @@ topics:
         name: "Disproving with counterexamples"
         key_prerequisites: [negating-statements]
         exemplars:
-          - problem: 'Show $f : \mathbb{R} \to \mathbb{R}$, $f(x) = x^2$, is neither injective nor surjective.'
-            answer: '$f(-1) = f(1)$ (not injective); no $x$ with $f(x) = -1$ (not surjective).'
-            solution_sketch: 'Injectivity fails since $f(1) = f(-1) = 1$ but $1 \ne -1$. Surjectivity fails since $-1 < 0$ has no real preimage ($x^2 \ge 0$). $\square$'
-          - problem: 'Show $f : \mathbb{Z} \to \mathbb{Z}$, $f(n) = n^2$, is not injective.'
-            answer: '$f(2) = f(-2) = 4$ but $2 \ne -2$.'
-            solution_sketch: 'Injectivity requires $f(a) = f(b) \Rightarrow a = b$; but $f(2) = f(-2) = 4$ with $2 \ne -2$, a counterexample. $\square$'
+          - problem: "Let $f : \\mathbb{R} \\to \\mathbb{R}$ be given by $f(x) = x^2 + 1$. To disprove injectivity and surjectivity by explicit counterexamples, use that the equation $f(x) = v$ can have two different real solutions for a positive integer $v$, and that some integers are not values of $f$. Let $v$ be the smallest positive integer for which $f(x) = v$ has two different real solutions, and let miss be the largest integer that is not a value of $f$. Give $v$ and miss."
+            answer: "v = 2; miss = 0"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "v"}, {"contract": {"kind": "exact"}, "name": "miss"}]}
+            solution_sketch: "Full object: $f(x) = x^2 + 1$ on $\\mathbb{R}$. Since $f(t) = f(-t)$, a value $v$ has two different real solutions exactly when $v > 1$; the value $v = 1$ has the single solution $x = 0$, while $x^2 + 1 = 2$ gives $x = 1$ and $x = -1$, the explicit counterexample to injectivity. Every value of $f$ is at least $1$, so the integers that are not values are exactly those at most $0$, the counterexample to surjectivity, and the largest of them is $0$. The answer is v = 2; miss = 0."
+          - problem: "Let $f : \\mathbb{Z} \\to \\mathbb{Z}$ be given by $f(n) = n^2$. A counterexample to injectivity is a value with two different preimages. Give the smallest nonnegative integer $y$ for which the equation $n^2 = y$ has two different integer solutions."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: $f(n) = n^2$ on $\\mathbb{Z}$. A value $y$ has two different integer preimages exactly when both $\\sqrt{y}$ and $-\\sqrt{y}$ are integers, that is, when $y$ is a positive perfect square. Check $y = 0$: only $n = 0$ works, one preimage. Check $y = 1$: $n = 1$ and $n = -1$ both satisfy $n^2 = 1$ and $1 \\ne -1$, the explicit counterexample. The answer is 1."
+          - problem: "A student claims that $f : \\mathbb{Z} \\to \\mathbb{Z}$ with $f(n) = n^2 + n$ is injective and checks only $n = 0$, $1$ and $2$. Give the smallest positive integer $n$ for which $f(n) = f(m)$ for some integer $m$ different from $n$."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: $f(n) = n^2 + n = n(n+1)$ on $\\mathbb{Z}$. If $m = -n - 1$, then $f(m) = (-n-1)(-n) = n(n+1) = f(n)$, so every $n$ has a partner $m \\ne n$. For the smallest positive candidate $n = 1$: $f(1) = 2$ and $f(-2) = 4 - 2 = 2$, so $f(1) = f(-2)$ with $1 \\ne -2$, an explicit counterexample to the claim. The answer is 1."
+          - problem: "Let $f : \\mathbb{R} \\to \\mathbb{R}$ be given by $f(x) = x^2 + 4x + 5$. A counterexample to surjectivity is a real number that is not a value of $f$. Give the largest integer that is not a value of $f$."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: $f(x) = x^2 + 4x + 5$ on $\\mathbb{R}$. Complete the square: $f(x) = (x+2)^2 + 1$, so every value of $f$ is at least $1$. Hence every integer $y \\le 0$ is not a value, and each such $y$ is an explicit counterexample to surjectivity, while each integer $y \\ge 1$ is a value since $(x+2)^2 = y - 1$ has a real solution. The answer is 0."
+          - problem: "Claim: $f : \\mathbb{Z} \\to \\mathbb{Z}$ with $f(n) = n^2$ is surjective. Step 1: surjectivity means every integer $y$ is a value of $f$. Step 2: for any integer $y$, take $n = \\sqrt{y}$. Step 3: then $f(n) = (\\sqrt{y})^2 = y$. Step 4: so $f$ is surjective. Which step is the first step that is not valid?"
+            answer: "Step 2"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 is a correct statement of what surjectivity of $f(n) = n^2$ on $\\mathbb{Z}$ requires. Step 2 is the first invalid step: $\\sqrt{y}$ is an integer only for perfect squares, and for a counterexample such as $y = 2$ or any negative $y$ no integer $n$ has $n^2 = y$. Step 3 is valid only when $y$ is a perfect square, so it does not repair Step 2. Step 4 inherits the gap of Step 2. The answer is Step 2."
+          - problem: "A proof that $f : \\mathbb{Z} \\to \\mathbb{Z}$ with $f(n) = 2n + 1$ is not surjective must exhibit one integer $y$ that is not a value of $f$ and must verify that no integer $n$ satisfies $f(n) = y$. One line of this argument is missing. Select the line that is true and that completes the disproof."
+            answer: "$y = 0$: $2n + 1 = 0$ gives $n = -1/2$, not an integer"
+            answer_contract: {"kind": "label", "options": [["$y = 0$: $2n + 1 = 0$ gives $n = -1/2$, not an integer"], ["$y = 0$: $2n + 1 = 0$ gives $n = 0$, so $y = 0$ is a value"], ["$y = 1$: $2n + 1 = 1$ gives $n = 0$, which is not an integer"], ["$y = -1$: $2n + 1 = -1$ gives $n = -1$, which is not an integer"]]}
+            solution_sketch: "The disproof must exhibit one witness $y$ and check the equation $f(n) = y$ for all integers $n$. The correct line uses $y = 0$: solving $2n + 1 = 0$ gives $n = -1/2$, not an integer, so $0$ is not a value. The option claiming $n = 0$ makes an algebra error, since $2 \\cdot 0 + 1 = 1$, not $0$. The option with $y = 1$ is false because $n = 0$ is an integer and $f(0) = 1$. The option with $y = -1$ is false because $n = -1$ is an integer and $f(-1) = -1$, a parity error. The answer is $y = 0$: $2n + 1 = 0$ gives $n = -1/2$, not an integer."
+          - problem: "Write the full proof: the function $f$ from $\\mathbb{R}$ to $\\mathbb{R}$ with $f(x) = x^4 + 1$ is neither injective nor surjective. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Full object: $f : \\mathbb{R} \\to \\mathbb{R}$ with $f(x) = x^4 + 1$. Step 1 (not injective, by an explicit counterexample): take $a = 1$ and $b = -1$; then $a \\ne b$, but $f(1) = 1^4 + 1 = 2$ and $f(-1) = (-1)^4 + 1 = 2$, so $f(a) = f(b)$ with $a \\ne b$, which is exactly the negation of injectivity. Step 2 (not surjective, by an explicit counterexample): every real $x$ satisfies $x^4 \\ge 0$, hence $f(x) = x^4 + 1 \\ge 1$; take $y = 0$, and the equation $x^4 + 1 = 0$ would force $x^4 = -1$, which has no real solution, so $y = 0$ has no preimage, the negation of surjectivity. Step 3 (conclusion): since injectivity fails by the explicit counterexample $a = 1$, $b = -1$, and surjectivity fails by the explicit counterexample $y = 0$, the function $f$ is neither injective nor surjective. This proves the claim."
         constraints: "disprove by exhibiting an explicit counterexample"
       - id: kp3
         name: "Classifying: one property without the other"
@@ -584,12 +644,34 @@ topics:
         name: "Composition preserves injectivity"
         key_prerequisites: [functions-injective-surjective]
         exemplars:
-          - problem: 'Prove: if $f : A \to B$ and $g : B \to C$ are both injective, then $g \circ f$ is injective.'
-            answer: '$g(f(a_1)) = g(f(a_2)) \Rightarrow f(a_1) = f(a_2) \Rightarrow a_1 = a_2$.'
-            solution_sketch: 'Assume $(g \circ f)(a_1) = (g \circ f)(a_2)$, i.e. $g(f(a_1)) = g(f(a_2))$. Injectivity of $g$ gives $f(a_1) = f(a_2)$; injectivity of $f$ gives $a_1 = a_2$. So $g \circ f$ is injective. $\square$'
-          - problem: 'Prove: if $g \circ f$ is injective, then $f$ is injective.'
-            answer: '$f(a_1) = f(a_2) \Rightarrow g(f(a_1)) = g(f(a_2)) \Rightarrow a_1 = a_2$.'
-            solution_sketch: 'Suppose $f(a_1) = f(a_2)$. Applying $g$ gives $(g \circ f)(a_1) = (g \circ f)(a_2)$, and injectivity of $g \circ f$ forces $a_1 = a_2$. (Note $g$ itself need not be injective.) $\square$'
+          - problem: "Let f(x) = 2x - 5 and g(x) = 3x + 1, both injective. Suppose g(f(m)) = g(9). Peel off g first, then f, using injectivity at each step. Find m."
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write the hypothesis as g(f(m)) = g(9). Peel off g: by the definition of injectivity applied to g, equal values of g give equal arguments, so f(m) = 9. Peel off f next: by injectivity of f, f(m) = f(7), so m = 7; alternatively solve 2m - 5 = 9 to get 2m = 14 and m = 7. The answer is 7."
+          - problem: "Let f(x) = x^2 + 1 for x >= 0, and let g be any function. Suppose g(f(x)) = g(17) and g o f is injective. Peel off the composition to find x."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "First rewrite the right side inside the composition: f(4) = 4^2 + 1 = 17, so the equation reads g(f(x)) = g(f(4)), that is (g o f)(x) = (g o f)(4). Peel off the composition: by the definition of injectivity applied to g o f, equal values force equal arguments, so x = 4. Note that g itself was never assumed injective. The answer is 4."
+          - problem: "A student claims: if g o f is injective, then g is injective. This claim is false. Let A = {1, 2} with f(1) = 1, f(2) = 2, so g o f is the identity on A. Choose B as small as possible so that some g : B -> C is not injective while g o f stays injective. Give the size of B."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Test size 2 first: since g o f is injective, f is injective (the theorem in the forward direction), so f maps two elements onto all of B; then g o f injective would force g injective, which contradicts the requirement. So size 2 fails. Take size 3 and define g(1) = 1, g(2) = 2, g(3) = 2: g is not injective since g(2) = g(3), yet g o f is the identity on A and hence injective. The smallest size is 3. The answer is 3."
+          - problem: "Claim: if g o f is injective, then g is injective. A proposed proof: Step 1: assume g o f is injective. Step 2: take b1, b2 in B with g(b1) = g(b2). Step 3: choose a1, a2 in A with f(a1) = b1 and f(a2) = b2. Step 4: then (g o f)(a1) = (g o f)(a2), so a1 = a2. Step 5: therefore b1 = b2, so g is injective. Which step is the first invalid step?"
+            answer: "Step 3"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"], ["Step 5"]]}
+            solution_sketch: "Step 1 states the hypothesis correctly. Step 2 is the valid setup for proving injectivity of g. Step 3 is the first invalid step: it assumes f is surjective onto B, which was not given; an element b of B may have no preimage under f, so a1 and a2 need not exist. Step 4 is valid logic given Step 3, and Step 5 follows from Step 4, so the error is at Step 3. The answer is Step 3."
+          - problem: "Claim: if g o f is injective, then f is injective. A proof begins: Step 1: let x, y in A with f(x) = f(y). Step 2: [missing line]. Step 3: by injectivity of g o f, x = y. Select the line that fills Step 2 and makes the proof correct."
+            answer: "$g(f(x)) = g(f(y))$"
+            answer_contract: {"kind": "label", "options": [["$g(f(x)) = g(f(y))$"], ["$g(x) = g(y)$"], ["$f(g(x)) = f(g(y))$"], ["$x = y$"]]}
+            solution_sketch: "The missing line must feed the assumption f(x) = f(y) into the map whose injectivity is known. The line $g(f(x)) = g(f(y))$ applies g to both sides and is correct, giving (g o f)(x) = (g o f)(y). The line $g(x) = g(y)$ is the error of composing in the wrong order. The line $f(g(x)) = f(g(y))$ reverses the composition and is in general meaningless here. The line $x = y$ jumps to the conclusion without using any hypothesis. The answer is $g(f(x)) = g(f(y))$."
+          - problem: "Claim: if g o f is injective, then f is injective. In the proof, one assumes f(x) = f(y), applies g to both sides, and obtains (g o f)(x) = (g o f)(y); the final inference concludes x = y. Which hypothesis does that final inference use?"
+            answer: "injectivity of g o f"
+            answer_contract: {"kind": "label", "options": [["injectivity of g o f"], ["injectivity of g"], ["injectivity of f"], ["surjectivity of g"]]}
+            solution_sketch: "The final inference deduces x = y from (g o f)(x) = (g o f)(y), which is exactly the definition of injectivity of g o f. The option injectivity of g is the error of reading the wrong hypothesis: injectivity of g is not assumed in this direction of the theorem. The option injectivity of f is wrong because injectivity of f is the goal of the proof and cannot serve as a hypothesis. The option surjectivity of g is wrong because surjectivity is never used and gives no equality of arguments. The answer is injectivity of g o f."
+          - problem: "Write the full proof: if f : A -> B and g : B -> C are both injective, then g o f is injective. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1 (setup): let a1, a2 in A and assume (g o f)(a1) = (g o f)(a2). Step 2 (unfold the composition): by the definition of composition, this says g(f(a1)) = g(f(a2)). Step 3 (peel off g): f(a1) and f(a2) are elements of B on which g takes equal values; since g is injective, f(a1) = f(a2). Step 4 (peel off f): a1 and a2 are elements of A on which f takes equal values; since f is injective, a1 = a2. Step 5 (conclusion): a1, a2 were arbitrary, so g o f is injective by the definition of injectivity. Each peel uses exactly one hypothesis, first g then f, and no surjectivity is needed. This completes the proof."
         constraints: "peel off $g$ then $f$ using each map''s injectivity"
       - id: kp2
         name: "Inverses and bijections"
@@ -888,12 +970,34 @@ topics:
         name: "Images and unions"
         key_prerequisites: [set-operations]
         exemplars:
-          - problem: 'Prove: $f(S \cup T) = f(S) \cup f(T)$ for any function $f$ and subsets $S, T$ of the domain.'
-            answer: 'Double inclusion via the definition of image.'
-            solution_sketch: '$y \in f(S \cup T)$ iff $y = f(x)$ for some $x \in S \cup T$ iff $y = f(x)$ with $x \in S$ or $x \in T$ iff $y \in f(S)$ or $y \in f(T)$ iff $y \in f(S) \cup f(T)$. $\square$'
-          - problem: 'Give a function and sets for which $f(S \cap T) \ne f(S) \cap f(T)$.'
-            answer: 'e.g. $f(x) = x^2$, $S = \{1\}$, $T = \{-1\}$: $\varnothing \ne \{1\}$.'
-            solution_sketch: 'With $f(x) = x^2$, $S = \{1\}$, $T = \{-1\}$: $S \cap T = \varnothing$ so $f(S \cap T) = \varnothing$, but $f(S) = f(T) = \{1\}$, so $f(S) \cap f(T) = \{1\}$. The inclusion $f(S \cap T) \subseteq f(S) \cap f(T)$ is strict here. $\square$'
+          - problem: "Let $f$ be the function with $f(1) = 10$, $f(2) = 10$, $f(3) = 20$, and let $S = \\{1, 2\\}$ and $T = \\{2, 3\\}$ be subsets of its domain. Compute the number of elements of $f(S \\cup T)$."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "First form the union: $S \\cup T = \\{1, 2, 3\\}$ by the definition of union. Apply the definition of image elementwise: $f(1) = 10$, $f(2) = 10$, $f(3) = 20$, so $f(S \\cup T) = \\{10, 20\\}$. The two values are distinct, so the image has two elements. The answer is 2."
+          - problem: "Let $f(x) = x^2$ on the integers, with $S = \\{-2, 3\\}$ and $T = \\{-3, 5\\}$. In the element chase proving $f(S \\cup T) \\subseteq f(S) \\cup f(T)$, take $y = 4$, which lies in $f(S \\cup T)$. Give the element $x$ of $S \\cup T$ that satisfies $f(x) = y$."
+            answer: "-2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "By the definition of image, $y \\in f(S \\cup T)$ means $y = f(x)$ for some $x \\in S \\cup T$; this is the element chase. Evaluate the full function on $S \\cup T$: $f(-2) = 4$, $f(3) = 9$, $f(-3) = 9$, $f(5) = 25$. Only $-2$ maps to $4$, and $-2 \\in S$, so $y \\in f(S)$. The witness is -2."
+          - problem: "Let $f(x) = x^2$ with $S = \\{2\\}$ and $T = \\{-2\\}$. A student claims $f(S \\cap T) = f(S) \\cap f(T)$; here $S \\cap T$ is empty, so $f(S \\cap T)$ has no elements. Compute the number of elements of $f(S) \\cap f(T)$."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Compute both sides: $S \\cap T = \\varnothing$, so $f(S \\cap T) = \\varnothing$ has no elements. But $f(S) = \\{4\\}$ and $f(T) = \\{4\\}$, so $f(S) \\cap f(T) = \\{4\\}$, which has one element. The two sides differ, showing images need not preserve intersections; the collapse $f(2) = f(-2)$ is the cause. The answer is 1."
+          - problem: "A student argues that $f(S \\cap T) = f(S) \\cap f(T)$ always holds. Step 1: let $y$ lie in $f(S) \\cap f(T)$. Step 2: then $y$ lies in $f(S)$ and $y$ lies in $f(T)$. Step 3: so $y = f(s)$ for some $s$ in $S$, and $y = f(t)$ for some $t$ in $T$. Step 4: hence $s = t$, so $s$ lies in $S \\cap T$. Step 5: therefore $y$ lies in $f(S \\cap T)$, proving equality. Which step is the first step that is not valid?"
+            answer: "Step 4"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"], ["Step 5"]]}
+            solution_sketch: "The full argument runs from $y \\in f(S) \\cap f(T)$ to $y \\in f(S \\cap T)$. Step 1 correctly picks $y$ in the intersection by its definition, and Step 2 is a valid restatement of intersection membership. Step 3 is valid: membership in an image supplies a preimage element. Step 4 is the first invalid step: $f(s) = f(t)$ forces $s = t$ only when $f$ is injective, and for $f(x) = x^2$ with $S = \\{3\\}$, $T = \\{-3\\}$ the values $s = 3$ and $t = -3$ differ while $f(s) = f(t)$. Step 5 would follow if Step 4 held, since then $s \\in S \\cap T$ and $y = f(s)$. The answer is Step 4."
+          - problem: "To prove $f(S \\cup T) \\subseteq f(S) \\cup f(T)$, the argument starts: let $y$ lie in $f(S \\cup T)$. The next line of the element chase is missing. Select the line that is true and that lets the proof continue."
+            answer: "y = f(x) for some x with x in S or x in T"
+            answer_contract: {"kind": "label", "options": [["y = f(x) for some x with x in S or x in T"], ["y = f(x) for every x with x in S or x in T"], ["y = f(x) for some x with x in S and x in T"], ["f(y) = x for some x with x in S or x in T"]]}
+            solution_sketch: "The full chase starts from $y \\in f(S \\cup T)$. By the definition of image, the missing line must exhibit one element $x$ of $S \\cup T$ with $y = f(x)$, and $x \\in S \\cup T$ unfolds to $x \\in S$ or $x \\in T$. The option 'y = f(x) for every x with x in S or x in T' confuses existence with universality. The option 'y = f(x) for some x with x in S and x in T' uses the wrong set, since the witness need not lie in both sets. The option 'f(y) = x for some x with x in S or x in T' reverses input and output. The answer is y = f(x) for some x with x in S or x in T."
+          - problem: "In the second inclusion of the proof that $f(S \\cup T) = f(S) \\cup f(T)$, one argues: if $y$ lies in $f(S)$ or $y$ lies in $f(T)$, then $y$ lies in $f(S \\cup T)$. Which fact justifies this step?"
+            answer: "the definition of union"
+            answer_contract: {"kind": "label", "options": [["the definition of union"], ["injectivity of f"], ["disjointness of S and T"], ["the definition of preimage"]]}
+            solution_sketch: "The full implication to justify is: from $y \\in f(S)$ or $y \\in f(T)$, conclude $y \\in f(S \\cup T)$. Step 1: if $y \\in f(S)$, the definition of image gives $y = f(x)$ for some $x \\in S$. Step 2: since $x \\in S$ gives $x \\in S \\cup T$ by the definition of union, the definition of image gives $y \\in f(S \\cup T)$, and the case $y \\in f(T)$ is the same. The option 'injectivity of f' is wrong because the proof never splits a value back into a unique preimage, so no injectivity is used. The option 'disjointness of S and T' is wrong because a union contains both sets whether or not they overlap. The option 'the definition of preimage' is wrong because preimages concern $f^{-1}$ of a subset of the codomain, while this step moves forward from points of $S$ and $T$. The answer is the definition of union."
+          - problem: "Write the full proof: $f(S \\cup T) = f(S) \\cup f(T)$ for any function $f$ and subsets $S, T$ of its domain. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1 (inclusion into the union): let $y \\in f(S \\cup T)$. By the definition of image, $y = f(x)$ for some $x \\in S \\cup T$. By the definition of union, $x \\in S$ or $x \\in T$. If $x \\in S$, then $y \\in f(S)$; if $x \\in T$, then $y \\in f(T)$. In either case $y \\in f(S) \\cup f(T)$, so $f(S \\cup T) \\subseteq f(S) \\cup f(T)$. Step 2 (inclusion out of the union): let $y \\in f(S) \\cup f(T)$; then $y \\in f(S)$ or $y \\in f(T)$, so $y = f(x)$ for some $x \\in S$ or some $x \\in T$. In both cases $x \\in S \\cup T$, hence $y \\in f(S \\cup T)$, giving $f(S) \\cup f(T) \\subseteq f(S \\cup T)$. Step 3 (conclusion): the two inclusions give equality. Caution: the analogous claim for $\\cap$ fails, since $f(s) = f(t)$ need not give $s = t$; take $f(x) = x^2$, $S = \\{2\\}$, $T = \\{-2\\}$."
         constraints: "chase an element through the image of a union; note images need not preserve $\\cap$"
       - id: kp3
         name: "Preimages preserve unions and intersections"

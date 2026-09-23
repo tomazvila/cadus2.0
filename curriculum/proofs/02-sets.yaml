@@ -1118,27 +1118,59 @@ topics:
         name: "Disjoint and pairwise disjoint sets"
         key_prerequisites: [union-intersection-difference]
         exemplars:
-          - problem: 'Are $\{1, 2\}$ and $\{3, 4\}$ disjoint? Are $\{1, 2\}$ and $\{2, 3\}$?'
-            answer_contract: {kind: none}
-            answer: 'Yes; no ($2$ is common).'
-            solution_sketch: 'Disjoint means empty intersection: $\{1,2\} \cap \{3,4\} = \varnothing$, but $\{1,2\} \cap \{2,3\} = \{2\}$.'
-          - problem: 'Is the family $\{1, 2\}, \{3\}, \{2, 4\}$ pairwise disjoint?'
-            answer_contract: {kind: none}
-            answer: 'No; $\{1, 2\} \cap \{2, 4\} = \{2\}$.'
-            solution_sketch: 'Pairwise disjoint requires every pair to have empty intersection; one overlapping pair breaks it.'
+          - problem: "Let A = {1, 2, 3, 4} and B = {4, 5, 6}. The two sets have an empty intersection exactly when they share no element. Give verdict and common, the number of elements in A ∩ B."
+            answer: "verdict = overlapping; common = 1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["disjoint"], ["overlapping"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "common"}]}
+            solution_sketch: "Full pair: A = {1, 2, 3, 4} and B = {4, 5, 6}. Rule (definition of disjoint sets): compute the intersection A ∩ B. The element 4 lies in both sets, so A ∩ B = {4}, which is not empty. The wrong verdict 'disjoint' overlooks the shared element 4. The key is verdict = overlapping; common = 1."
+          - problem: "Let A = {1, 2, 3}, B = {2, 3, 4} and C = {5, 6}. A family of sets is pairwise disjoint when every pair of sets in it has empty intersection. How many of the pairs (A, B), (A, C) and (B, C) have a nonempty intersection?"
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full family: A = {1, 2, 3}, B = {2, 3, 4}, C = {5, 6}. Rule (pairwise check): test each of the three pairs separately. A ∩ B = {2, 3} is nonempty, while A ∩ C is empty and B ∩ C is empty. So exactly one pair has a nonempty intersection, and the family is not pairwise disjoint. The answer is 1."
+          - problem: "Let A = {1, 2}, B = {2, 3} and C = {3, 4}. A family of three sets is pairwise disjoint when none of its three pairs has a common element. Which description fits the family A, B, C?"
+            answer: "exactly two pairs share an element"
+            answer_contract: {"kind": "label", "options": [["no pair shares an element"], ["exactly one pair shares an element"], ["exactly two pairs share an element"], ["exactly three pairs share an element"]]}
+            solution_sketch: "Full family: A = {1, 2}, B = {2, 3}, C = {3, 4}. Rule (pairwise check): compute A ∩ B, A ∩ C and B ∩ C. A ∩ B = {2} and B ∩ C = {3} are nonempty, while A ∩ C is empty. The option 'no pair shares an element' ignores the elements 2 and 3; 'exactly one pair shares an element' misses the second overlapping pair; 'exactly three pairs share an element' wrongly counts the empty pair A ∩ C. The key is: exactly two pairs share an element."
+          - problem: "Let A = [0, 4) and B = [4, 9) be intervals of real numbers. Two intervals share a real number exactly when their intersection is not empty. Give verdict and common, the number of real numbers in A ∩ B."
+            answer: "verdict = disjoint; common = 0"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["disjoint"], ["overlapping"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "common"}]}
+            solution_sketch: "Full intervals: A = [0, 4) and B = [4, 9). Rule (intersection of intervals): a real number lies in both intervals only if it belongs to A and to B. The only candidate endpoint is 4, but 4 is excluded from A, so A ∩ B is empty. The wrong verdict 'overlapping' treats 4 as belonging to A. The key is verdict = disjoint; common = 0."
+          - problem: "For finite sets, |A ∪ B| = |A| + |B| − |A ∩ B|. Sets A and B satisfy |A| = 8, |B| = 5 and |A ∪ B| = 11. Find |A ∩ B|, the number that decides whether A and B have empty intersection."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full data: |A| = 8, |B| = 5, |A ∪ B| = 11. Rule (inclusion-exclusion): |A ∩ B| = |A| + |B| − |A ∪ B| = 8 + 5 − 11 = 2. Because 2 is not 0, the intersection is not empty and the sets are not disjoint. The answer is 2."
+          - problem: "Sets A, B and C are pairwise disjoint, with |A| = 3, |B| = 5 and |C| = 2. When sets are pairwise disjoint, no element lies in two of them, so nothing is counted twice in the union. Find |A ∪ B ∪ C|."
+            answer: "10"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full family: pairwise disjoint sets A, B, C with |A| = 3, |B| = 5 and |C| = 2. Rule (union of pairwise disjoint sets): every intersection is empty, so no element is counted twice and the sizes add. |A ∪ B ∪ C| = 3 + 5 + 2 = 10. The answer is 10."
         constraints: "check emptiness of intersections, including a pairwise check over 3 sets"
       - id: kp2
         name: "Recognizing partitions"
         key_prerequisites: [subset-relation-basics]
         exemplars:
-          - problem: 'Is $\{\{1, 2\}, \{3\}, \{4, 5\}\}$ a partition of $\{1, 2, 3, 4, 5\}$?'
-            answer_contract: {kind: none}
-            answer: 'Yes.'
-            solution_sketch: 'The blocks are nonempty, pairwise disjoint, and their union is the whole set.'
-          - problem: 'Is $\{\{1, 2\}, \{2, 3\}\}$ a partition of $\{1, 2, 3\}$? Is $\{\{1\}, \{3\}\}$?'
-            answer_contract: {kind: none}
-            answer: 'No (blocks overlap at $2$); no ($2$ is not covered).'
-            solution_sketch: 'A partition must cover every element exactly once: the first fails disjointness, the second fails covering.'
+          - problem: "A family of subsets of $S$ is a partition of $S$ when it passes three conditions: (1) every block is nonempty, (2) no two blocks share an element, (3) the union of the blocks is $S$. Consider the family $\\{\\{1, 3\\}, \\{2\\}, \\{4, 5\\}\\}$ with $S = \\{1, 2, 3, 4, 5\\}$. State whether the family is a partition of $S$, and give the number of the first condition that fails, using 0 if none fails."
+            answer: "verdict = yes; failed = 0"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "failed"}]}
+            solution_sketch: "Test the family $\\{\\{1, 3\\}, \\{2\\}, \\{4, 5\\}\\}$ against $S = \\{1, 2, 3, 4, 5\\}$ with the three partition conditions. Condition 1 holds: every block is nonempty. Condition 2 holds: no element appears in two blocks. Condition 3 holds: the blocks together contain exactly 1, 2, 3, 4 and 5. The option no would be the error of demanding an overlap or a gap that is not present. So the answer is verdict = yes; failed = 0."
+          - problem: "Three conditions decide whether a family of subsets of $S$ is a partition: (1) all blocks are nonempty, (2) distinct blocks are disjoint, (3) the blocks together cover $S$. Take the family $\\{\\{3, 4\\}, \\{4, 5\\}\\}$ with $S = \\{3, 4, 5\\}$. Determine whether the family partitions $S$, and give the number of the first condition that fails, using 0 if none fails."
+            answer: "verdict = no; failed = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "failed"}]}
+            solution_sketch: "Test the family $\\{\\{3, 4\\}, \\{4, 5\\}\\}$ against $S = \\{3, 4, 5\\}$ in order. Condition 1 holds: both blocks are nonempty. Condition 2 fails first: the element 4 lies in both blocks, so the blocks are not pairwise disjoint. The verdict no comes from this overlap; the option yes would overlook the shared element 4. Since the disjointness condition is the first to fail, the answer is verdict = no; failed = 2."
+          - problem: "A partition of $S$ needs every element to lie in exactly one block. Let $S = \\{1, 2, 3, 4, 5, 6\\}$ and consider the blocks $\\{1, 2, 3\\}$ and $\\{4, 5\\}$. How many elements of $S$ belong to exactly one of the two blocks?"
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The family is the blocks $\\{1, 2, 3\\}$ and $\\{4, 5\\}$ inside $S = \\{1, 2, 3, 4, 5, 6\\}$. Form the union: $\\{1, 2, 3\\} \\cup \\{4, 5\\} = \\{1, 2, 3, 4, 5\\}$. The blocks are disjoint, so the intersection is empty. The elements in exactly one block are 1, 2, 3, 4 and 5. Their number is 5. So the answer is 5."
+          - problem: "Let $S = \\{1, 2, 3, 4, 5\\}$ and consider the blocks $\\{1, 2, 4\\}$, $\\{2, 5\\}$ and $\\{3, 4\\}$. A partition needs pairwise disjoint blocks, so an element that sits in two blocks breaks the family. How many elements of $S$ belong to more than one block?"
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Compare each pair of the blocks $\\{1, 2, 4\\}$, $\\{2, 5\\}$ and $\\{3, 4\\}$ for shared elements. The first and second blocks share the element 2. The first and third blocks share the element 4. The second and third blocks share nothing. The elements 2 and 4 each belong to more than one block, so the answer is 2."
+          - problem: "A family of subsets of $S$ passes the partition conditions (1) no empty block, (2) pairwise disjoint blocks, (3) union equal to $S$. Test the family $\\{\\{1\\}, \\{\\}, \\{2, 3\\}\\}$ with $S = \\{1, 2, 3\\}$. State whether the family is a partition of $S$, and give the number of the first condition that fails, using 0 if none fails."
+            answer: "verdict = no; failed = 1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "failed"}]}
+            solution_sketch: "Test the family $\\{\\{1\\}, \\{\\}, \\{2, 3\\}\\}$ against $S = \\{1, 2, 3\\}$ in order. Condition 1 fails at once: the second block is empty, and a partition may contain no empty block. The verdict no follows from this empty block; the option yes would ignore the failure of condition 1. Since the very first condition is violated, the answer is verdict = no; failed = 1."
+          - problem: "The even and the odd elements of $S = \\{0, 1, 2, 3, 4, 5\\}$ are gathered into two blocks, $\\{0, 2, 4\\}$ and $\\{1, 3, 5\\}$. The partition conditions are (1) nonempty blocks, (2) pairwise disjoint blocks, (3) union equal to $S$. State whether these two blocks form a partition of $S$, and give the number of blocks."
+            answer: "verdict = yes; blocks = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "blocks"}]}
+            solution_sketch: "Test the blocks $\\{0, 2, 4\\}$ and $\\{1, 3, 5\\}$ against $S = \\{0, 1, 2, 3, 4, 5\\}$. Condition 1 holds: both blocks are nonempty. Condition 2 holds: no element is both even and odd, so the blocks are disjoint. Condition 3 holds: every element of $S$ is even or odd, so the union is $S$. The option no would claim a failure of one of the three conditions that does not occur. The family has exactly two blocks, so the answer is verdict = yes; blocks = 2."
         constraints: "test the three partition conditions: nonempty blocks, pairwise disjoint, union is everything"
       - id: kp3
         name: "Partitions of infinite sets"
@@ -1492,12 +1524,34 @@ topics:
         name: "Distributive laws for sets"
         key_prerequisites: [set-operations]
         exemplars:
-          - problem: 'Prove: $A \cap (B \cup C) = (A \cap B) \cup (A \cap C)$.'
-            answer: 'Element chase using distributivity of $\land$ over $\lor$.'
-            solution_sketch: '$x \in A \cap (B \cup C)$ iff $x \in A$ and ($x \in B$ or $x \in C$) iff ($x \in A$ and $x \in B$) or ($x \in A$ and $x \in C$) iff $x \in (A \cap B) \cup (A \cap C)$. $\square$'
-          - problem: 'Prove: $A \cup (B \cap C) = (A \cup B) \cap (A \cup C)$.'
-            answer: 'Element chase using distributivity of $\lor$ over $\land$.'
-            solution_sketch: '$x \in A \cup (B \cap C)$ iff $x \in A$ or ($x \in B$ and $x \in C$) iff ($x \in A$ or $x \in B$) and ($x \in A$ or $x \in C$) iff $x \in (A \cup B) \cap (A \cup C)$. $\square$'
+          - problem: "To prove $A \\cap (B \\cup C) = (A \\cap B) \\cup (A \\cap C)$ by element chasing, write $p$ for $x \\in A$, $q$ for $x \\in B$, $r$ for $x \\in C$. The chase rests on the logical distributive law: $p$ and ($q$ or $r$) is equivalent to ($p$ and $q$) or ($p$ and $r$). Give the number of the 8 assignments of truth values to $p$, $q$, $r$ that make $p$ and ($q$ or $r$) true."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Translate the membership statement: $x \\in A \\cap (B \\cup C)$ becomes $p$ and ($q$ or $r$), the exact formula the chase cites. Count rows by the logical distributive law: $p$ and ($q$ or $r$) holds when $p$ is true and at least one of $q$, $r$ is true, giving rows ($1,1,0$), ($1,0,1$), ($1,1,1$). The same 3 rows satisfy ($p$ and $q$) or ($p$ and $r$). The answer is 3."
+          - problem: "To prove $A \\cup (B \\cap C) = (A \\cup B) \\cap (A \\cup C)$ by element chasing, the chase rests on the logical distributive law: $p$ or ($q$ and $r$) is equivalent to ($p$ or $q$) and ($p$ or $r$). Give the number of the 8 assignments of truth values to $p$, $q$, $r$ that make $p$ or ($q$ and $r$) true."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The membership statement $x \\in A \\cup (B \\cap C)$ translates to $p$ or ($q$ and $r$), the formula cited in the chase. Count rows: all four rows with $p$ true work, plus the single row ($0,1,1$) where $q$ and $r$ are both true. That is 4 + 1 = 5 rows, and ($p$ or $q$) and ($p$ or $r$) holds on exactly the same 5. The answer is 5."
+          - problem: "Let $U = \\{1,2,3,4,5\\}$, $A = \\{1,2,3\\}$, $B = \\{2,3,4\\}$, $C = \\{3,4,5\\}$. Before the element chase for $A \\cap (B \\cup C) = (A \\cap B) \\cup (A \\cap C)$, check the identity on these data. Give the membership count of $A \\cap (B \\cup C)$, that is, the number of elements of $U$ lying in $A \\cap (B \\cup C)$."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "First form the union $B \\cup C = \\{2,3,4,5\\}$. Intersect with $A = \\{1,2,3\\}$: $A \\cap (B \\cup C) = \\{2,3\\}$. The other side agrees: $(A \\cap B) \\cup (A \\cap C) = \\{2,3\\} \\cup \\{3\\} = \\{2,3\\}$. The membership count is 2. The answer is 2."
+          - problem: "A student claims that $A \\cap (B \\cup C) = (A \\cap B) \\cup C$ for all sets $A$, $B$, $C$. Take $U = \\{1,2,3,4\\}$, $A = \\{1,2\\}$, $B = \\{2,3\\}$, $C = \\{4\\}$ and compute both sides for these sets. State the verdict and give gap, the number of elements of $U$ that belong to exactly one of the two sides."
+            answer: "verdict = invalid; gap = 1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["valid"], ["invalid"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "gap"}]}
+            solution_sketch: "Compute the left side: $B \\cup C = \\{2,3,4\\}$, so $A \\cap (B \\cup C) = \\{2\\}$. Compute the right side: $A \\cap B = \\{2\\}$, so $(A \\cap B) \\cup C = \\{2,4\\}$. The sides differ, so the claimed identity is not an identity; the element 4 lies in exactly one side, hence gap = 1. The answer is verdict = invalid; gap = 1."
+          - problem: "Here is an attempted proof that $A \\cup (B \\cap C) = (A \\cup B) \\cap (A \\cup C)$ for all sets $A$, $B$, $C$. Step 1: choose any $x$ in $A \\cup (B \\cap C)$. Step 2: so $x \\in A$, or both $x \\in B$ and $x \\in C$. Step 3: the logical distributive law turns this into ($x \\in A$ or $x \\in B$) and $x \\in C$. Step 4: hence $x \\in (A \\cup B) \\cap (A \\cup C)$, so the two sides are equal. Which step is the first one that is not correct?"
+            answer: "Step 3"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 unpacks the left side, and Step 2 is right. Step 3 is the first wrong step: the logical distributive law yields ($x \\in A$ or $x \\in B$) and ($x \\in A$ or $x \\in C$), while Step 3 has $x \\in C$ in place of ($x \\in A$ or $x \\in C$). Step 4 relies on the wrong Step 3. The answer is Step 3."
+          - problem: "In the element chase for $A \\cap (B \\cup C) = (A \\cap B) \\cup (A \\cap C)$, the line after 'x in A and (x in B or x in C)' is missing. Select the line that is true and that applies the logical distributive law for and over or."
+            answer: "(x in A and x in B) or (x in A and x in C)"
+            answer_contract: {"kind": "label", "options": [["(x in A and x in B) or (x in A and x in C)"], ["x in A and (x in B and x in C)"], ["(x in A or x in B) and (x in A or x in C)"], ["(x in A and x in B) or (x in B and x in C)"]]}
+            solution_sketch: "The logical distributive law turns $x in A$ and ($x in B$ or $x in C$) into ($x in A$ and $x in B$) or ($x in A$ and $x in C$), which is the missing line on the way to $A \\cap B$ union $A \\cap C$. Option 'x in A and (x in B and x in C)' makes the error of replacing the outer or with an and. Option '(x in A or x in B) and (x in A or x in C)' applies the wrong distributive law, or over and. Option '(x in A and x in B) or (x in B and x in C)' wrongly writes B in place of A in the second factor. The answer is (x in A and x in B) or (x in A and x in C)."
+          - problem: "Write the full proof: for all sets $A$, $B$ and $C$, $A \\cap (B \\cup C) = (A \\cap B) \\cup (A \\cap C)$. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1 (left-to-right inclusion): let $x$ be an arbitrary element of $A \\cap (B \\cup C)$. Step 2: by definition of intersection and union, $x \\in A$ and ($x \\in B$ or $x \\in C$). Step 3: by the logical distributive law for and over or, this is equivalent to ($x \\in A$ and $x \\in B$) or ($x \\in A$ and $x \\in C$). Step 4: hence $x \\in A \\cap B$ or $x \\in A \\cap C$, that is, $x \\in (A \\cap B) \\cup (A \\cap C)$. Step 5 (right-to-left inclusion): let $x \\in (A \\cap B) \\cup (A \\cap C)$; then $x \\in A$ and $x \\in B$, or $x \\in A$ and $x \\in C$. Step 6: in either case $x \\in A$ and ($x \\in B$ or $x \\in C$), so $x \\in A \\cap (B \\cup C)$. Step 7: both inclusions hold, so the sets are equal, using only the definitions and the logical distributive law."
         constraints: "prove via element chasing, citing the logical distributive law"
       - id: kp2
         name: "De Morgan laws for sets"
