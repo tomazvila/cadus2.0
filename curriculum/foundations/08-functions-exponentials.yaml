@@ -734,64 +734,64 @@ topics:
         key_prerequisites: [identifying-functions-vertical-line-test]
         constraints: "3-4 pairs; at most one repeated output"
         exemplars:
-          - problem: "Is the function $\\{(1,2), (2,4), (3,6)\\}$ one-to-one?"
-            answer: "yes"
-            answer_contract: {"kind": "label", "options": [["yes"], ["no"]]}
-            solution_sketch: "All three outputs $2, 4, 6$ are different."
-          - problem: "Is the function $\\{(1,5), (2,5), (3,7)\\}$ one-to-one?"
-            answer: "no"
-            answer_contract: {"kind": "label", "options": [["yes"], ["no"]]}
-            solution_sketch: "Two inputs share the output $5$."
-          - problem: "A function table has input row $1,2,3$ and output row $3,6,3$. Is the function one-to-one?"
-            answer: "no"
-            answer_contract: {"kind": "label", "options": [["yes"], ["no"]]}
-            solution_sketch: "Output $3$ belongs to both inputs $1$ and $3$. An output therefore does not identify a unique input."
-          - problem: "A locker-assignment function records (locker, owner) pairs $(1,2),(2,3),(3,4),(4,5)$. Is the assignment one-to-one?"
-            answer: "yes"
-            answer_contract: {"kind": "label", "options": [["yes"], ["no"]]}
-            solution_sketch: "The owners $2,3,4,5$ are all distinct. Each listed owner identifies exactly one locker."
+          - problem: "A function is one-to-one when no two inputs have the same output. The function is the set of pairs {(2,5), (3,7), (4,9)}. Find how many outputs of this function come from more than one input."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: List the outputs of the full function {(2,5), (3,7), (4,9)}: the outputs are 5, 7, and 9. Step 2: One-to-one check: scan the outputs for a value that two inputs share; 5, 7, and 9 are all different, so every output comes from exactly one input. Step 3: No output is shared, so the number of outputs that come from more than one input is 0. The answer is 0."
+          - problem: "A function is one-to-one when no two inputs have the same output. The function is the set of pairs {(1,8), (2,8), (3,5)}. Find how many outputs of this function come from more than one input."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: List the outputs of the full function {(1,8), (2,8), (3,5)}: the outputs are 8, 8, and 5. Step 2: One-to-one check: the output 8 comes from both input 1 and input 2, so it comes from more than one input; the output 5 comes only from input 3. Step 3: Exactly one output, the value 8, comes from more than one input, so the function is not one-to-one and the count is 1. The answer is 1."
+          - problem: "A function is one-to-one when all of its outputs are different. A table gives input row 2, 3, 4, 5 and output row 6, 9, 6, 7. Determine the number of different outputs of this table."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: Read the full table with input row 2, 3, 4, 5 and output row 6, 9, 6, 7, and list the outputs: 6, 9, 6, 7. Step 2: One-to-one check: collect the different outputs, which are 6, 9, and 7; the output 6 appears twice, from inputs 2 and 4. Step 3: The table has 3 different outputs, one fewer than its 4 inputs, so it is not one-to-one. The answer is 3."
+          - problem: "A locker-assignment function records the pairs (1,7), (2,9), (3,4), (4,6), listing each locker and the student who owns it. The assignment is one-to-one when no student owns more than one locker. Find the number of different students in the assignment."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: List the owners from the full assignment (1,7), (2,9), (3,4), (4,6): the owners are 7, 9, 4, and 6. Step 2: One-to-one check: compare the owners pairwise; 7, 9, 4, and 6 are all different, so no student owns two lockers. Step 3: The number of different students is 4, equal to the number of lockers, so the assignment is one-to-one. The answer is 4."
       - id: kp2
         name: The horizontal line test
         key_prerequisites: [reading-function-graphs]
         constraints: "named parent graphs (line, parabola, cubic) given by their equations; the answer is yes or no"
         exemplars:
-          - problem: "Does the graph of $y = x^2$ pass the horizontal line test?"
-            answer: "no"
-            answer_contract: {"kind": "label", "options": [["yes"], ["no"]]}
-            solution_sketch: "The line $y = 4$ crosses at $x = 2$ and $x = -2$."
-          - problem: "Does the graph of $y = 2x + 1$ pass the horizontal line test?"
-            answer: "yes"
-            answer_contract: {"kind": "label", "options": [["yes"], ["no"]]}
-            solution_sketch: "A non-constant line meets any horizontal line at most once."
-          - problem: "Does the graph of $y = x^3$ pass the horizontal line test?"
-            answer: "yes"
-            answer_contract: {"kind": "label", "options": [["yes"], ["no"]]}
-            solution_sketch: "A cubic is strictly increasing, so each horizontal line meets it once."
-          - problem: "The graph of $y = -3$ is a horizontal line. Does it pass the horizontal line test?"
-            answer: "no"
-            answer_contract: {"kind": "label", "options": [["yes"], ["no"]]}
-            solution_sketch: "Every point on this graph has output $-3$; the line $y = -3$ meets it everywhere."
+          - problem: "The graph of y = x^2 is given. State whether it passes the horizontal line test, and give the number of points where the horizontal line y = 4 meets the graph."
+            answer: "verdict = no; n = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "n"}]}
+            solution_sketch: "Step 1: The object is the graph of y = x^2. Step 2: Apply the horizontal line test by solving x^2 = 4, which gives x = 2 and x = -2, so the line y = 4 meets the graph at 2 points. Step 3: A horizontal line that meets the graph twice makes the test fail, so the verdict is no. Step 4: The count of meeting points for y = 4 is 2. Choosing yes would be the error of assuming a parabola is one-to-one. The answer is verdict = no; n = 2."
+          - problem: "The graph of y = 2x + 1 is given. State whether it passes the horizontal line test, and find the x-coordinate of the point where the horizontal line y = 7 meets the graph."
+            answer: "verdict = yes; x = 3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "x"}]}
+            solution_sketch: "Step 1: The object is the graph of y = 2x + 1. Step 2: Apply the horizontal line test by solving 2x + 1 = 7, so 2x = 6 and x = 3; the line y = 7 meets the graph at exactly 1 point. Step 3: This non-horizontal line meets each horizontal line at most once, so the verdict is yes. Step 4: The meeting point has x-coordinate 3. Choosing no would be the error of expecting a straight line to double back. The answer is verdict = yes; x = 3."
+          - problem: "The graph of y = x^3 is given. State whether it passes the horizontal line test, and find the x-coordinate of the point where the horizontal line y = 8 meets the graph."
+            answer: "verdict = yes; x = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "x"}]}
+            solution_sketch: "Step 1: The object is the graph of y = x^3. Step 2: Apply the horizontal line test by solving x^3 = 8, so x = 2; the line y = 8 meets the graph at exactly 1 point. Step 3: This cubic is strictly increasing, so every horizontal line meets it at most once and the verdict is yes. Step 4: The meeting point has x-coordinate 2. Choosing no would be the error of expecting a cubic to meet a horizontal line twice. The answer is verdict = yes; x = 2."
+          - problem: "The graph of y = -2x + 13 is given. State whether it passes the horizontal line test, and find the x-coordinate of the point where the horizontal line y = 5 meets the graph."
+            answer: "verdict = yes; x = 4"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "x"}]}
+            solution_sketch: "Step 1: The object is the graph of y = -2x + 13, a decreasing line. Step 2: Apply the horizontal line test by solving -2x + 13 = 5, so -2x = -8 and x = 4; the line y = 5 meets the graph at exactly 1 point. Step 3: A non-horizontal line meets each horizontal line at most once, so the graph passes the test and the verdict is yes. Step 4: The meeting point has x-coordinate 4. Choosing no would be the error of expecting a decreasing line to double back on itself. The answer is verdict = yes; x = 4."
       - id: kp3
         name: One-to-one functions have inverses
         key_prerequisites: [function-notation]
         constraints: "all real inputs, no restricted domains; the answer is yes exactly when the function is one-to-one"
         exemplars:
-          - problem: "Does $f(x) = x^2$ (all real inputs) have an inverse function?"
-            answer: "no"
-            answer_contract: {"kind": "label", "options": [["yes"], ["no"]]}
-            solution_sketch: "It is not one-to-one: $f(2) = f(-2)$."
-          - problem: "Does $f(x) = 2x + 1$ have an inverse function?"
-            answer: "yes"
-            answer_contract: {"kind": "label", "options": [["yes"], ["no"]]}
-            solution_sketch: "It is one-to-one: a nonzero-slope line is strictly monotonic."
-          - problem: "Does $f(x) = |x|$ (all real inputs) have an inverse function?"
-            answer: "no"
-            answer_contract: {"kind": "label", "options": [["yes"], ["no"]]}
-            solution_sketch: "It is not one-to-one: $f(2) = f(-2) = 2$."
-          - problem: "Does $f(x) = x^3$ (all real inputs) have an inverse function?"
-            answer: "yes"
-            answer_contract: {"kind": "label", "options": [["yes"], ["no"]]}
-            solution_sketch: "$x^3$ is strictly increasing, so it is one-to-one."
+          - problem: "The function f(x) = x^2 is defined for all real inputs. State whether f has an inverse function and, if it does not, give the other input b, with b not equal to 6, such that f(b) = f(6)."
+            answer: "verdict = no; b = -6"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "b"}]}
+            solution_sketch: "Apply the one-to-one condition to f(x) = x^2 on all real inputs: f(6) = 36 and f(-6) = 36, so two different inputs give the same output and f is not one-to-one. A function with a repeated output has no inverse function, so the verdict is no. The input other than 6 with image 36 is b = -6. The answer is verdict = no; b = -6."
+          - problem: "The function f(x) = 4x + 7 is defined for all real inputs. State whether f has an inverse function and, if it does, give the value of f^{-1}(1) as a fraction."
+            answer: "verdict = yes; value = -3/2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "value"}]}
+            solution_sketch: "A line with slope 4 meets the one-to-one condition, so f(x) = 4x + 7 has an inverse function. Solve y = 4x + 7 for x to get x = (y - 7)/4, hence f^{-1}(1) = (1 - 7)/4 = -3/2. The answer is verdict = yes; value = -3/2."
+          - problem: "The function f(x) = |x + 1| is defined for all real inputs. State whether f has an inverse function and, if it does not, give the other input b, with b not equal to 2, such that f(b) = f(2)."
+            answer: "verdict = no; b = -4"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "b"}]}
+            solution_sketch: "Apply the one-to-one condition to f(x) = |x + 1|: f(2) = 3 and f(-4) = 3, so two different inputs share the output 3 and f is not one-to-one. A repeated output means no inverse function exists, so the verdict is no. The input other than 2 with image 3 is b = -4. The answer is verdict = no; b = -4."
+          - problem: "The function f(x) = x^3 - 2 is defined for all real inputs. State whether f has an inverse function and, if it does, give the value of f^{-1}(6)."
+            answer: "verdict = yes; value = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "value"}]}
+            solution_sketch: "The function f(x) = x^3 - 2 is strictly increasing, so it meets the one-to-one condition and has an inverse function. To find f^{-1}(6), solve 6 = x^3 - 2, so x^3 = 8 and x = 2. The answer is verdict = yes; value = 2."
     diagnostic_exemplar:
       problem: 'Does $f(x) = x^2 - 4$, defined for all real inputs, have an inverse function?'
       answer_contract: {kind: label, options: [[yes], [no]]}
@@ -988,22 +988,22 @@ topics:
         key_prerequisites: [evaluating-exponential-functions]
         constraints: "bases given as decimals or simple fractions, never 1"
         exemplars:
-          - problem: "Does $f(x) = 3 \\cdot (1.2)^x$ model growth or decay?"
-            answer: "growth"
-            answer_contract: {"kind": "label", "options": [["growth"], ["decay"]]}
-            solution_sketch: "Base $1.2 > 1$."
-          - problem: "Does $f(x) = 5 \\cdot (0.7)^x$ model growth or decay?"
-            answer: "decay"
-            answer_contract: {"kind": "label", "options": [["growth"], ["decay"]]}
-            solution_sketch: "The coefficient is positive and $0<0.7<1$. Each increase of one in the input multiplies the output by $0.7$, making it smaller: decay."
-          - problem: "Does $f(x) = \\left(\\frac{4}{5}\\right)^x$ model growth or decay?"
-            answer: "decay"
-            answer_contract: {"kind": "label", "options": [["growth"], ["decay"]]}
-            solution_sketch: "The base $4/5$ is positive and below unity. Each unit step retains only four fifths of the positive output, so this is decay."
-          - problem: "Does $f(x) = 10 \\cdot \\left(\\frac{5}{4}\\right)^x$ model growth or decay?"
-            answer: "growth"
-            answer_contract: {"kind": "label", "options": [["growth"], ["decay"]]}
-            solution_sketch: "Base $\\frac{5}{4} = 1.25 > 1$."
+          - problem: "Let $f(x) = 7 \\cdot (1.3)^x$. State whether $f$ models growth or decay, and give the percent change of the output for each increase of $1$ in $x$, as a number only (use a negative number for a decrease)."
+            answer: "verdict = growth; r = 30"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["growth"], ["decay"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "r"}]}
+            solution_sketch: "Step 1 (read the base): the full object is $f(x) = 7 \\cdot (1.3)^x$, whose base is $b = 1.3$. Step 2 (compare the base to 1): $1.3 > 1$ with a positive coefficient, so each unit step multiplies the output by $1.3$, which is growth; the wrong option decay would come from misreading $1.3$ as a number below $1$. Step 3 (percent change per unit step): $r = 100(b - 1) = 100 \\cdot 0.3 = 30$. The key is verdict = growth; r = 30."
+          - problem: "Let $f(x) = 6 \\cdot (0.6)^x$. Determine whether $f$ models growth or decay, and give the percent by which the output changes for each unit increase of $x$, as a number only (use a negative number for a decrease)."
+            answer: "verdict = decay; r = -40"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["growth"], ["decay"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "r"}]}
+            solution_sketch: "Step 1 (read the base): the full object is $f(x) = 6 \\cdot (0.6)^x$, whose base is $b = 0.6$. Step 2 (compare the base to 1): $0 < 0.6 < 1$, so each unit step keeps only six tenths of the output, which is decay; the wrong option growth would come from looking only at the positive coefficient $6$ and ignoring the base. Step 3 (percent change per unit step): $r = 100(0.6 - 1) = -40$, a decrease of forty percent. The key is verdict = decay; r = -40."
+          - problem: "A town models its population with $P(t) = 4200 \\cdot (1.08)^t$, where $t$ is measured in years. State whether the population grows or decays, and give the percent change in population per year, as a number only (use a negative number for a decrease)."
+            answer: "verdict = growth; r = 8"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["growth"], ["decay"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "r"}]}
+            solution_sketch: "Step 1 (read the base): the full object is $P(t) = 4200 \\cdot (1.08)^t$, whose base is $b = 1.08$. Step 2 (compare the base to 1): $1.08 > 1$, so each year the population is multiplied by $1.08$, which is growth; the wrong option decay would come from overlooking the leading $1$ in $1.08$ and treating the base as $0.08$. Step 3 (percent change per year): $r = 100(1.08 - 1) = 8$. The key is verdict = growth; r = 8."
+          - problem: "The mass, in grams, of a substance after $t$ hours is $m(t) = 50 \\cdot (7/10)^t$. State whether the mass grows or decays, and give the percent change in mass per hour, as a number only (use a negative number for a decrease)."
+            answer: "verdict = decay; r = -30"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["growth"], ["decay"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "r"}]}
+            solution_sketch: "Step 1 (read the base): the full object is $m(t) = 50 \\cdot (7/10)^t$, whose base is $7/10 = 0.7$. Step 2 (compare the base to 1): $0.7 < 1$, so each hour the mass keeps seven tenths of its value, which is decay; the wrong option growth would come from comparing the large coefficient $50$ instead of the base. Step 3 (percent change per hour): $r = 100(0.7 - 1) = -30$. The key is verdict = decay; r = -30."
       - id: kp2
         name: Initial value and growth factor
         key_prerequisites: [evaluating-exponential-functions, function-notation]
@@ -1110,22 +1110,22 @@ topics:
         key_prerequisites: [exponential-functions, reading-function-graphs]
         constraints: "bases as decimals or simple fractions, never 1; b > 1 increasing, 0 < b < 1 decreasing; the answer is one word"
         exemplars:
-          - problem: "Is the graph of $y = (1/3)^x$ increasing or decreasing?"
-            answer: "decreasing"
-            answer_contract: {"kind": "label", "options": [["increasing"], ["decreasing"]]}
-            solution_sketch: "Each unit increase of input multiplies the positive output by $1/3$, so the graph is decreasing."
-          - problem: "Is the graph of $y = 5 \\cdot (1.5)^x$ increasing or decreasing?"
-            answer: "increasing"
-            answer_contract: {"kind": "label", "options": [["increasing"], ["decreasing"]]}
-            solution_sketch: "Increasing the input by a unit multiplies the positive output by $1.5>1$, so the graph is increasing."
-          - problem: "Is the graph of $y = 4 \\cdot (2/5)^x$ increasing or decreasing?"
-            answer: "decreasing"
-            answer_contract: {"kind": "label", "options": [["increasing"], ["decreasing"]]}
-            solution_sketch: "Base $\\frac{2}{5} < 1$."
-          - problem: "Is the graph of $y = (1.3)^x$ increasing or decreasing?"
-            answer: "increasing"
-            answer_contract: {"kind": "label", "options": [["increasing"], ["decreasing"]]}
-            solution_sketch: "Base $1.3 > 1$."
+          - problem: "Consider the function y = 6(1/4)^x. State whether its graph rises or falls as x grows, and give the y value where the graph crosses the y-axis."
+            answer: "verdict = decreasing; intercept = 6"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["increasing"], ["decreasing"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "intercept"}]}
+            solution_sketch: "Full object: the curve y = 6(1/4)^x, an exponential function with coefficient 6 and base 1/4. Step 1 (base test, the rule of this KP): the base 1/4 lies between 0 and 1, so each unit growth of x multiplies the positive output by 1/4 and the graph is decreasing; the wrong word increasing would come from the error of treating a base below 1 as a base above 1. Step 2 (intercept rule, from exponential functions): at x = 0 the power is 0, so y = 6(1/4)^0 = 6 because (1/4)^0 = 1, and 6 is the y value where the curve crosses the y-axis. The answer is verdict = decreasing; intercept = 6."
+          - problem: "Take the function y = 10(6/5)^x. State whether the graph goes up or goes down as x grows, and evaluate the function at x = 1."
+            answer: "verdict = increasing; value = 12"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["increasing"], ["decreasing"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "value"}]}
+            solution_sketch: "Full object: the curve y = 10(6/5)^x, an exponential function with coefficient 10 and base 6/5. Step 1 (base test, the rule of this KP): the base 6/5 is greater than 1, so each unit growth of x multiplies the positive output by 6/5 and the graph is increasing; the wrong word decreasing would come from the error of reading 6/5 as a number below 1. Step 2 (evaluation rule, from exponential functions): at x = 1 the output is y = 10(6/5)^1 = 60/5 = 12. The answer is verdict = increasing; value = 12."
+          - problem: "Consider the function y = 12(0.5)^x. State whether its graph rises or falls as x grows, and give the value of y at x = 2."
+            answer: "verdict = decreasing; value = 3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["increasing"], ["decreasing"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "value"}]}
+            solution_sketch: "Full object: the curve y = 12(0.5)^x, an exponential function with coefficient 12 and base 0.5. Step 1 (base test, the rule of this KP): the base 0.5 lies between 0 and 1, so each unit growth of x multiplies the positive output by 0.5 and the graph is decreasing; the wrong word increasing would come from the error of treating 0.5 as greater than 1. Step 2 (evaluation rule, from exponential functions): at x = 2 the output is y = 12(0.5)^2 = 12(0.25) = 3. The answer is verdict = decreasing; value = 3."
+          - problem: "A curve of the form y = a times b^x passes through (0, 15) and (1, 20). State whether its graph rises or falls as x grows, and find the base b."
+            answer: "verdict = increasing; b = 4/3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["increasing"], ["decreasing"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "b"}]}
+            solution_sketch: "Full object: the curve y = a times b^x through the points (0, 15) and (1, 20). Step 1 (point rules, from exponential functions): at x = 0 the power is 0, so a = 15; at x = 1 the output is a times b, so 15b = 20 and b = 20/15 = 4/3. Step 2 (base test, the rule of this KP): the base 4/3 is greater than 1, so each unit growth of x multiplies the positive output by 4/3 and the graph is increasing; the wrong word decreasing would come from the error of inverting the fraction and reading the base as 3/4. The answer is verdict = increasing; b = 4/3."
     diagnostic_exemplar:
       problem: 'Find the $y$-intercept of $y = 7 \cdot 3^x$.'
       answer: "(0, 7)"
