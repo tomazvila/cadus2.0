@@ -1075,29 +1075,30 @@ topics:
         name: "Describing scatterplots"
         key_prerequisites: [plotting-points]
         exemplars:
-          - problem: 'In a scatterplot, $y$ decreases roughly linearly as $x$ increases. Describe the direction and form of the relationship.'
-            answer: 'Negative direction, linear form.'
-            answer_contract: {kind: none}
-            solution_sketch: 'The direction is negative (one variable falls as the other rises) and the form is linear.'
-          - problem: 'Two scatterplots show the same downward trend; in one the points hug a line, in the other they form a loose cloud. Which shows the stronger relationship?'
-            answer: 'the one hugging a line'
-            answer_contract: {kind: label, options: [[the one hugging a line], [the loose cloud]]}
-          - problem: 'In a scatterplot, $y$ increases roughly along a straight line as $x$ increases. What is the direction of the relationship?'
-            answer: 'positive'
-            answer_contract: {kind: label, options: [[positive], [negative]]}
-            solution_sketch: 'Both variables rise together, so the direction is positive.'
-          - problem: 'Points in a scatterplot trace a curved U-shape. What is the form of the relationship?'
-            answer: 'curved'
-            answer_contract: {kind: label, options: [[linear], [curved]]}
-            solution_sketch: 'A U-shape is not well described by a straight line, so the form is curved.'
-          - problem: 'Two scatterplots show the same upward trend; in one the points hug a line, in the other they form a loose cloud. Which shows the stronger relationship?'
-            answer: 'the one hugging a line'
-            answer_contract: {kind: label, options: [[the one hugging a line], [the loose cloud]]}
-            solution_sketch: 'Tighter clustering around a line means a stronger relationship.'
-          - problem: 'Hours of TV watched and test scores fall together roughly along a line that slopes down. What is the direction of the relationship?'
-            answer: 'negative'
-            answer_contract: {kind: label, options: [[positive], [negative]]}
-            solution_sketch: 'One variable rises while the other falls, so the direction is negative.'
+          - problem: "A study records hours of study x and quiz score y for eight students, giving the points (1, 58), (2, 62), (3, 60), (4, 64), (5, 66), (6, 65), (7, 69), (8, 72). State the direction of the relationship, and find the change in the mean score from the four smallest x-values to the four largest x-values."
+            answer: "verdict = positive; change = 7"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["positive"], ["negative"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "change"}]}
+            solution_sketch: "Direction rule: compare the typical y at the low end of x with the typical y at the high end. Low half mean: (58 + 62 + 60 + 64)/4 = 244/4 = 61. High half mean: (66 + 65 + 69 + 72)/4 = 272/4 = 68. Change rule: high mean minus low mean, 68 - 61 = 7, so the scores rise as study time rises, and the option negative is wrong because y does not fall as x increases. The answer is verdict = positive; change = 7."
+          - problem: "A gardener plots fertilizer amount x, in scoops, against tomato plant height y, in centimeters, and draws the trend line y = 30 + 2x on the scatterplot. The recorded points are (1, 33), (2, 37), (3, 38), (4, 42), (5, 47). To describe how tightly the heights follow the line, find how many of the five points lie within 2 units of the line."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Distance rule: for each point take the absolute difference between its y-value and the line value 30 + 2x. Line values: 30 + 2 = 32, 34, 36, 38, 40. Gaps: abs(33 - 32) = 1, abs(37 - 34) = 3, abs(38 - 36) = 2, abs(42 - 38) = 4, abs(47 - 40) = 7. Count rule: only the gaps of 1 and 2 stay within 2 units, which are the first and third points, so most points stray from the line and the clustering is loose. The answer is 2."
+          - problem: "A dealer plots the age x of a used car in years against its resale value y in thousands of dollars, with points (1, 45), (3, 41), (5, 43), (7, 30), (9, 27), (11, 33). State the direction of the relationship, and find the change in the mean value from the three newest cars to the three oldest cars."
+            answer: "verdict = negative; change = -13"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["negative"], ["positive"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "change"}]}
+            solution_sketch: "Direction rule: compare the typical y among the smallest x-values with the typical y among the largest x-values. Newest three mean: (45 + 41 + 43)/3 = 129/3 = 43. Oldest three mean: (30 + 27 + 33)/3 = 90/3 = 30. Change rule: old mean minus new mean, 30 - 43 = -13, so the value falls as age rises, and the option positive is wrong because y does not rise with x. The answer is verdict = negative; change = -13."
+          - problem: "The depth of water y in a tank, in centimeters, is recorded at times x = 1, 2, 3, 4, 5 minutes, giving the points (1, 40), (2, 31), (3, 26), (4, 31), (5, 40). State the form of the relationship, and find the difference obtained as the middle y-value minus the average of the first and last y-values."
+            answer: "verdict = curved; dip = -14"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["curved"], ["linear"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "dip"}]}
+            solution_sketch: "Form rule: with a straight-line form the middle point sits near the average of the two end values, and a large gap from that average signals a curve. End average: (40 + 40)/2 = 40. Difference rule: middle y minus end average, 26 - 40 = -14. The middle depth sits 14 units below the level of the two ends, so the points trace a U shape, and the option linear is wrong because the middle point is far from a straight path joining the ends. The answer is verdict = curved; dip = -14."
+          - problem: "A runner logs practice distance x in kilometers and finishing time y in minutes, and the trend line y = 60 - 2x is drawn on the scatterplot. The points are (5, 50), (10, 39), (15, 31), (20, 21), (25, 11). To describe how tightly the points follow the line, find the largest vertical distance from a point to the line."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Distance rule: for each point take the absolute difference between its y-value and the line value 60 - 2x. Line values: 50, 40, 30, 20, 10. Gaps: abs(50 - 50) = 0, abs(39 - 40) = 1, abs(31 - 30) = 1, abs(21 - 20) = 1, abs(11 - 10) = 1. Largest gap rule: the maximum of these gaps is 1, so the points hug the line and the relationship is tight. The answer is 1."
+          - problem: "Students report weekly TV hours x and last test score y, giving the points (4, 89), (7, 84), (10, 85), (13, 79), (16, 77), (19, 75). Find the change in the mean score from the three lightest viewers to the three heaviest viewers."
+            answer: "-9"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Trend rule: split the plot into the low-x group and the high-x group and compare the typical y in each. Light viewers mean: (89 + 84 + 85)/3 = 258/3 = 86. Heavy viewers mean: (79 + 77 + 75)/3 = 231/3 = 77. Change rule: heavy mean minus light mean, 77 - 86 = -9, so the scores fall as TV hours rise and the scatterplot shows a falling trend. The answer is -9."
         constraints: "verbal descriptions covering direction, form, and strength"
       - id: kp2
         name: "Interpreting the correlation coefficient"
