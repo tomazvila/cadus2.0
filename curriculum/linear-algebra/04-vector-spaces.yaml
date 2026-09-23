@@ -423,14 +423,30 @@ topics:
         name: Verifying a basis
         key_prerequisites: [linear-independence, subspaces-span]
         exemplars:
-          - problem: 'Is $\{(1, 1), (1, -1)\}$ a basis of $\mathbb{R}^2$?'
-            answer: "Yes"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: 'Two independent vectors (not multiples) in a $2$-dimensional space span it, so they form a basis.'
-          - problem: 'Is $\{(1, 2), (2, 4)\}$ a basis of $\mathbb{R}^2$?'
-            answer: "No"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: 'The vectors are dependent, so they span only a line.'
+          - problem: "The vectors $(1, 2)$ and $(2, 1)$ are proposed as a basis of $\\mathbb{R}^2$. State whether this pair is a basis of $\\mathbb{R}^2$, and give the dimension of its span."
+            answer: "verdict = valid; d = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["valid"], ["invalid"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "d"}]}
+            solution_sketch: "Independence test: $(1, 2)$ is not a scalar multiple of $(2, 1)$, so by the definition of linear independence the pair is independent. Basis criterion: two independent vectors in $\\mathbb{R}^2$ span the whole plane, so the pair is a basis and its span is all of $\\mathbb{R}^2$, which has dimension 2. The option invalid would come from wrongly reading the two vectors as multiples of each other. The answer is verdict = valid; d = 2."
+          - problem: "A student offers the set $\\{(2, 3), (4, 6)\\}$ as a basis of $\\mathbb{R}^2$. Determine whether this set is a basis, and give the dimension of the subspace it spans."
+            answer: "verdict = invalid; d = 1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["valid"], ["invalid"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "d"}]}
+            solution_sketch: "Dependence check: $(4, 6) = 2 \\cdot (2, 3)$, so by the definition of linear dependence the pair is dependent. A dependent pair spans only the line through $(2, 3)$, a subspace of dimension 1, so the set cannot be a basis of $\\mathbb{R}^2$. The option valid would require two vectors that are not multiples and that together span the plane. The answer is verdict = invalid; d = 1."
+          - problem: "The set $\\{(2, 5), (t, 15)\\}$ is a candidate basis of $\\mathbb{R}^2$. For exactly one value of $t$ the second vector is a scalar multiple of the first, so the set fails to be a basis. Find that value of $t$."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "A pair fails to be a basis of $\\mathbb{R}^2$ exactly when the two vectors are dependent, meaning one is a scalar multiple of the other. Write $(t, 15) = c(2, 5)$: matching second coordinates gives $5c = 15$, so $c = 3$ by solving the equation. Then the first coordinates give $t = 2c = 6$, and indeed $(6, 15) = 3(2, 5)$, so the set spans only a line. The answer is 6."
+          - problem: "Consider the four sets of vectors $\\{(1, 2), (2, 1)\\}$, $\\{(1, 4), (2, 8)\\}$, $\\{(0, 1), (1, 0)\\}$, and $\\{(2, 5), (5, 2)\\}$ in $\\mathbb{R}^2$. How many of these four sets are bases of $\\mathbb{R}^2$?"
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Rule: a pair of vectors is a basis of $\\mathbb{R}^2$ exactly when neither vector is a scalar multiple of the other, since two independent vectors span the plane. Check each set: $\\{(1, 2), (2, 1)\\}$ not multiples, basis; $\\{(1, 4), (2, 8)\\}$ dependent because $(2, 8) = 2(1, 4)$, not a basis; $\\{(0, 1), (1, 0)\\}$ not multiples, basis; $\\{(2, 5), (5, 2)\\}$ not multiples, basis. Counting the sets that pass the test gives three. The answer is 3."
+          - problem: "The set $\\{(1, 0, 2), (0, 1, 1), (3, k, 10)\\}$ is a candidate basis of $\\mathbb{R}^3$. For exactly one value of $k$ the third vector is a linear combination of the first two, so the three vectors do not form a basis. Find that value of $k$."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The set fails to be a basis of $\\mathbb{R}^3$ exactly when the third vector lies in the span of the first two, that is when $(3, k, 10) = a(1, 0, 2) + b(0, 1, 1)$ for some scalars $a$ and $b$. Match coordinates by the definition of a linear combination: $a = 3$, $b = k$, and $2a + b = 10$. Substitute $a = 3$: $6 + k = 10$, so $k = 4$, and indeed $(3, 4, 10) = 3(1, 0, 2) + 4(0, 1, 1)$, a dependence that kills the basis. The answer is 4."
+          - problem: "The set $S = \\{(1, 2, 3), (2, 4, 6), (-1, -2, -3)\\}$ is offered as a basis of $\\mathbb{R}^3$. Give the dimension of the subspace spanned by this set."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Compare each vector with $(1, 2, 3)$: $(2, 4, 6) = 2(1, 2, 3)$ and $(-1, -2, -3) = -1 \\cdot (1, 2, 3)$, so by the definition of dependence all three vectors are multiples of one single vector. The span is therefore the line through $(1, 2, 3)$, a subspace of dimension 1, far short of spanning $\\mathbb{R}^3$. Since the dimension is 1 and not 3, the set is not a basis. The answer is 1."
         constraints: "2 candidate vectors for R^2, 3 for R^3; small integer entries"
       - id: kp2
         name: Coordinates relative to a basis
