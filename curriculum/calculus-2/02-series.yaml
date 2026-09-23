@@ -961,18 +961,30 @@ topics:
         name: Limit comparison
         key_prerequisites: [direct-comparison-test, sequences-convergence]
         exemplars:
-          - problem: 'Use limit comparison to decide whether $\sum_{n=1}^{\infty} \frac{1}{2n + 1}$ converges.'
-            answer: 'diverges (limit comparison with $\sum \frac{1}{n}$: $L = \frac{1}{2}$)'
-            answer_contract: {kind: none}
-            solution_sketch: '$\lim \frac{1/(2n+1)}{1/n} = \frac{1}{2} \in (0, \infty)$, so both series share the harmonic series'' fate.'
-          - problem: 'Use limit comparison to decide whether $\sum_{n=1}^{\infty} \frac{3n^2 + n}{n^4 + 2}$ converges.'
-            answer: 'converges (limit comparison with $\sum \frac{1}{n^2}$: $L = 3$)'
-            answer_contract: {kind: none}
-            solution_sketch: 'Dominant behavior is $\frac{3n^2}{n^4} = \frac{3}{n^2}$; the limit of the ratio is $3$.'
-          - problem: 'Use limit comparison to decide whether $\sum_{n=1}^{\infty} \sin\left(\frac{1}{n}\right)$ converges.'
-            answer: 'diverges (limit comparison with $\sum \frac{1}{n}$: $L = 1$)'
-            answer_contract: {kind: none}
-            solution_sketch: '$\frac{\sin(1/n)}{1/n} \to 1$, so the series behaves like the harmonic series.'
+          - problem: "Use limit comparison with the harmonic series $\\sum_{n=1}^{\\infty} \\frac{1}{n}$ to study the series $\\sum_{n=1}^{\\infty} \\frac{3n+2}{n^2+n}$. Give the verdict and L in the form verdict = word; L = value."
+            answer: "verdict = diverges; L = 3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["converges"], ["diverges"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "L"}]}
+            solution_sketch: "Full series: $\\sum_{n=1}^{\\infty} \\frac{3n+2}{n^2+n}$ with comparator $\\sum \\frac{1}{n}$. Step 1: form the ratio $a_n/b_n = n(3n+2)/(n^2+n)$. Step 2: compute the limit $L = \\lim (3n^2+2n)/(n^2+n) = 3$, which lies in $(0, \\infty)$. Step 3: the harmonic comparator diverges, so by limit comparison the original series diverges. The answer is verdict = diverges; L = 3."
+          - problem: "Use limit comparison with the p-series $\\sum_{n=1}^{\\infty} \\frac{1}{n^2}$ to study the series $\\sum_{n=1}^{\\infty} \\frac{2n^2+1}{n^4+5}$. Give the verdict and L in the form verdict = word; L = value."
+            answer: "verdict = converges; L = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["converges"], ["diverges"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "L"}]}
+            solution_sketch: "Full series: $\\sum_{n=1}^{\\infty} \\frac{2n^2+1}{n^4+5}$ with comparator $\\sum \\frac{1}{n^2}$. Step 1: form the ratio $a_n/b_n = n^2(2n^2+1)/(n^4+5)$. Step 2: compute the limit $L = \\lim (2n^4+n^2)/(n^4+5) = 2$, which lies in $(0, \\infty)$. Step 3: the p-series comparator converges because $p=2>1$, so the original series converges. The answer is verdict = converges; L = 2."
+          - problem: "Use limit comparison with the p-series $\\sum_{n=1}^{\\infty} \\frac{1}{n^2}$ to study the series $\\sum_{n=1}^{\\infty} \\sin\\left(\\frac{1}{n^2}\\right)$. Give the verdict and L in the form verdict = word; L = value."
+            answer: "verdict = converges; L = 1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["converges"], ["diverges"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "L"}]}
+            solution_sketch: "Full series: $\\sum_{n=1}^{\\infty} \\sin(1/n^2)$ with comparator $\\sum \\frac{1}{n^2}$. Step 1: form the ratio $a_n/b_n = \\sin(1/n^2)/(1/n^2)$. Step 2: let $t=1/n^2$; as $n\\to\\infty$, $t\\to 0$, so the limit is $L = \\lim \\sin(t)/t = 1$, which lies in $(0, \\infty)$. Step 3: the p-series comparator converges because $p=2>1$, so the original series converges. The answer is verdict = converges; L = 1."
+          - problem: "Use limit comparison with the p-series $\\sum_{n=1}^{\\infty} \\frac{1}{\\sqrt{n}}$ to study the series $\\sum_{n=1}^{\\infty} \\frac{6}{\\sqrt{n+1}}$. Give the verdict and L in the form verdict = word; L = value."
+            answer: "verdict = diverges; L = 6"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["converges"], ["diverges"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "L"}]}
+            solution_sketch: "Full series: $\\sum_{n=1}^{\\infty} \\frac{6}{\\sqrt{n+1}}$ with comparator $\\sum \\frac{1}{\\sqrt{n}}$. Step 1: form the ratio $a_n/b_n = 6\\sqrt{n}/\\sqrt{n+1}$. Step 2: compute the limit $L = 6\\lim \\sqrt{n/(n+1)} = 6$, which lies in $(0, \\infty)$. Step 3: the comparator is a p-series with $p = 1/2 \\le 1$, so it diverges, and by limit comparison the original series diverges. The answer is verdict = diverges; L = 6."
+          - problem: "Use limit comparison with the harmonic series $\\sum_{n=1}^{\\infty} \\frac{1}{n}$ to study the series $\\sum_{n=1}^{\\infty} \\frac{n^2+3}{n^3+7}$. Find the limit L."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full series: $\\sum_{n=1}^{\\infty} \\frac{n^2+3}{n^3+7}$ with comparator $\\sum \\frac{1}{n}$. Step 1: form the ratio $a_n/b_n = n(n^2+3)/(n^3+7)$. Step 2: compute the limit $L = \\lim (n^3+3n)/(n^3+7) = 1$, which lies in $(0, \\infty)$. The answer is 1."
+          - problem: "Use limit comparison with the p-series $\\sum_{n=1}^{\\infty} \\frac{1}{n^2}$ to study the series $\\sum_{n=1}^{\\infty} \\frac{4n^3+1}{n^5+2}$. Find the limit L."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full series: $\\sum_{n=1}^{\\infty} \\frac{4n^3+1}{n^5+2}$ with comparator $\\sum \\frac{1}{n^2}$. Step 1: form the ratio $a_n/b_n = n^2(4n^3+1)/(n^5+2)$. Step 2: compute the limit $L = \\lim (4n^5+n^2)/(n^5+2) = 4$, which lies in $(0, \\infty)$. The answer is 4."
         constraints: "L must land in (0, infinity); state L explicitly in the verdict"
       - id: kp2
         name: Choosing a comparator by dominant terms
