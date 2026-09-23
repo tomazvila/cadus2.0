@@ -972,12 +972,34 @@ topics:
         key_prerequisites: [functors]
         constraints: "Post-composition action $f_*=f\\circ(-)$; the law checks reduce to associativity and unit laws; concrete readings only in $\\mathbf{Set}$ with $A$ a singleton."
         exemplars:
-          - problem: "Fix $A$ in a locally small category $\\mathcal C$. Show $\\mathrm{Hom}(A,-)\\colon\\mathcal C\\to\\mathbf{Set}$ is a functor."
-            answer: "Post-composition $f_*=f\\circ(-)$; it preserves identities and composition."
-            solution_sketch: "$\\mathrm{Hom}(A,-)$ sends $X$ to the set $\\mathrm{Hom}(A,X)$ and $f\\colon X\\to Y$ to $f_*\\colon\\mathrm{Hom}(A,X)\\to\\mathrm{Hom}(A,Y)$, $h\\mapsto f\\circ h$. Then $(1_X)_*(h)=h$ and $(g\\circ f)_*(h)=(g\\circ f)\\circ h=g\\circ(f\\circ h)=g_*(f_*(h))$ by associativity, so it is a covariant functor."
-          - problem: "In $\\mathbf{Set}$, identify the covariant hom-functor $\\mathrm{Hom}(\\{*\\},-)$ and show it acts as the identity on functions under $\\mathrm{Hom}(\\{*\\},X)\\cong X$."
-            answer: "$\\mathrm{Hom}(\\{*\\},X)\\cong X$ and $f_*$ corresponds to $f$."
-            solution_sketch: "A function $\\{*\\}\\to X$ is determined by the image of $*$, giving a bijection $\\mathrm{Hom}(\\{*\\},X)\\cong X$, $h\\mapsto h(*)$. For $f\\colon X\\to Y$, $f_*(h)=f\\circ h$ satisfies $(f\\circ h)(*)=f(h(*))$, so under the bijection $f_*$ becomes $f$ itself. Thus post-composition makes $\\mathrm{Hom}(\\{*\\},-)$ behave as the identity functor on $\\mathbf{Set}$, confirming it is a covariant functor."
+          - problem: "Work in Set with A = {9}. Let X = {2, 5} and Y = {3, 7, 11}. Take h: A -> X with h(9) = 5, and take f: X -> Y with f(2) = 7 and f(5) = 3. The covariant hom-functor Hom(A,-) sends f to the post-composition map f_*: Hom(A,X) -> Hom(A,Y). Find the value of f_*(h) at 9."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Post-composition action: by definition of the covariant hom-functor, f_* acts by f_*(h) = f o h. Compute the composite: (f o h)(9) = f(h(9)) = f(5) = 3. So the value of f_*(h) at 9 is 3."
+          - problem: "Work in Set. Let A = {0} and let X = {4, 8, 15, 16, 23, 42}. The covariant hom-functor Hom(A,-) sends the object X to the set Hom(A,X) of all functions from A to X. How many elements does this set Hom(A,X) have?"
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "A function from the singleton A = {0} to X is completely determined by the image of 0, which gives a bijection Hom(A,X) with X itself. Count the elements: X = {4, 8, 15, 16, 23, 42} has six elements, so Hom(A,X) has six elements. The answer is 6."
+          - problem: "View divisibility on the set {1, 2, 3, 4, 6, 12} as a category: there is exactly one arrow a -> b when a divides b, and no arrow otherwise. Fix A = 2 and apply the covariant hom-functor Hom(A,-). How many objects X of this category give a nonempty set Hom(A,X)?"
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "In this poset category, Hom(A,X) is nonempty exactly when the arrow A -> X exists, that is, when 2 divides X. Test each object with A = 2: 2 divides 2, 4, 6 and 12, but it does not divide 1 or 3. So four objects give a nonempty hom-set, and the answer is 4."
+          - problem: "In the poset category on {1, 2, 4, 8} ordered by divisibility, let h be the unique arrow 1 -> 4 and let f be the unique arrow 4 -> 8. The hom-functor Hom(1,-) sends f to the post-composition map f_* on hom-sets. Give the codomain object of the arrow f_*(h)."
+            answer: "8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Post-composition action: the functor Hom(1,-) sends f to f_* with f_*(h) = f o h. Here h is the arrow 1 -> 4 and f is the arrow 4 -> 8, so f o h is the arrow 1 -> 8, which exists because 1 divides 8. The codomain object of the arrow f_*(h) is 8."
+          - problem: "Claim: for a fixed object A of a locally small category, Hom(A,-) is a covariant functor to Set. Step 1: on objects, Hom(A,-) sends each object X to the set Hom(A,X). Step 2: on arrows, it sends f: X -> Y to the post-composition map f_* given by f_*(h) = f o h. Step 3: identity law, (1_X)_*(h) = 1_X o h = h for every h in Hom(A,X). Step 4: composition law, (g o f)_*(h) = f_*(g_*(h)). Which step is the first step that is not valid?"
+            answer: "Step 4"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 states the correct object part of the functor. Step 2 states the correct post-composition arrow part. Step 3 is valid: it uses the unit law 1_X o h = h of the category. Step 4 is not valid: associativity gives (g o f)_*(h) = (g o f) o h = g o (f o h) = g_*(f_*(h)), so the written order f_*(g_*(h)) reverses the composite. The answer is Step 4."
+          - problem: "Work in Set with A = {0}. Let X = {1, 2}, Y = {3, 4} and Z = {5, 6, 7}. Take h: A -> X with h(0) = 1, f: X -> Y with f(1) = 4 and f(2) = 3, and g: Y -> Z with g(3) = 7 and g(4) = 5. Using the composition law of the covariant hom-functor, find the value of g_*(f_*(h)) at 0."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The composition law of the covariant hom-functor says g_* o f_* = (g o f)_*, which follows from associativity of composition. First apply the post-composition action for f: f_*(h)(0) = f(h(0)) = f(1) = 4. Then apply the action for g: g_*(f_*(h))(0) = g(4) = 5. The value of g_*(f_*(h)) at 0 is 5."
+          - problem: "Write the full proof: fix an object A of a locally small category C and show that Hom(A,-) : C -> Set, with arrow action given by post-composition f_*(h) = f o h, is a covariant functor. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Definition: for each object X set Hom(A,-)(X) = Hom(A,X), a set since C is locally small; for each arrow f: X -> Y define f_*: Hom(A,X) -> Hom(A,Y) by f_*(h) = f o h, the post-composition action. Identity law: for every h in Hom(A,X), (1_X)_*(h) = 1_X o h = h by the unit law of C, so Hom(A,-)(1_X) = 1_{Hom(A,X)}. Composition law: for f: X -> Y and g: Y -> Z, (g o f)_*(h) = (g o f) o h = g o (f o h) = g_*(f_*(h)) by associativity in C, so Hom(A,-)(g o f) = g_* o f_*. Conclusion: both functor laws hold, the object part lands in Set, so Hom(A,-) is a covariant functor from C to Set."
       - id: kp2
         name: The contravariant hom-functor
         key_prerequisites: [covariant-contravariant-functors]
