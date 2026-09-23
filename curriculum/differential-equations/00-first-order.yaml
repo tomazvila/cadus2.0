@@ -2106,30 +2106,58 @@ topics:
         name: Linear models across domains
         key_prerequisites: [mixing-tank-models]
         exemplars:
-          - problem: "A falling object obeys $v' = 10 - 2v$ with $v(0) = 0$ (drag proportional to speed). Find $v(t)$ and the terminal velocity."
-            answer: "$v = 5(1 - e^{-2t})$; terminal velocity $5$ m/s."
-            answer_contract: {kind: none}
-            solution_sketch: "Equilibrium $v = 5$; $v = 5 + Ce^{-2t}$ with $C = -5$."
-          - problem: "A drug is infused at $20$ mg/h and eliminated at relative rate $1/4$ per hour: $A' = 20 - \\dfrac{A}{4}$, $A(0) = 0$. Find $A(t)$ and the long-run amount."
-            answer: "$A = 80(1 - e^{-t/4})$; long-run $80$ mg."
-            answer_contract: {kind: none}
-            solution_sketch: "$A = 80(1 - e^{-t/4})$; long-run $80$ mg."
           - problem: "A capacitor charges by $V' = \\dfrac{12 - V}{2}$ with $V(0) = 0$. Find $V(t)$."
             answer: "$V = 12(1 - e^{-t/2})$"
             solution_sketch: "Same structure as a mixing tank: approach the source voltage $12$ exponentially."
+          - problem: "A falling object obeys $v' = 12 - 3v$ with $v(0) = 0$ (drag proportional to speed). Find $v(t)$ as a function of $t$."
+            answer: "4 - 4e^(-3t)"
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: "Write the model $v' = 12 - 3v$, so $a = 12$ and $b = 3$; the equilibrium is $a/b = 4$. The general solution is $v = 4 + Ce^{-3t}$. The initial condition $v(0) = 0$ gives $0 = 4 + C$, so $C = -4$. The answer is 4 - 4e^(-3t)."
+          - problem: "A drug is infused at $30$ mg/h and eliminated at relative rate $2$ per hour: $A' = 30 - 2A$, with initial amount $A(0) = 4$. Find $A(t)$ as a function of $t$."
+            answer: "15 - 11e^(-2t)"
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: "The model $A' = 30 - 2A$ has $a = 30$ and $b = 2$, so the clean equilibrium is $a/b = 15$. The general solution is $A = 15 + Ce^{-2t}$. The initial condition $A(0) = 4$ gives $4 = 15 + C$, so $C = -11$. The answer is 15 - 11e^(-2t)."
+          - problem: "A mixing tank initially holds $5$ kg of salt, and the inflow makes the salt amount obey $A' = 6 - 2A$. Find $A(t)$ as a function of $t$."
+            answer: "3 + 2e^(-2t)"
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: "The mixing model $A' = 6 - 2A$ has $a = 6$ and $b = 2$, so the equilibrium is $a/b = 3$. The general solution is $A = 3 + Ce^{-2t}$. The initial amount $A(0) = 5$ gives $5 = 3 + C$, so $C = 2$. The answer is 3 + 2e^(-2t)."
+          - problem: "A hot object cools in a room held at the model $T' = 60 - 3T$, with initial temperature $T(0) = 90$. Find $T(t)$ as a function of $t$."
+            answer: "20 + 70e^(-3t)"
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: "The cooling model $T' = 60 - 3T$ has $a = 60$ and $b = 3$, so the room-temperature equilibrium is $a/b = 20$. The general solution is $T = 20 + Ce^{-3t}$. The initial temperature $T(0) = 90$ gives $90 = 20 + C$, so $C = 70$. The answer is 20 + 70e^(-3t)."
+          - problem: "A drug is infused at $9$ mg/h and eliminated at relative rate $3$ per hour: $A' = 9 - 3A$, $A(0) = 0$. Find $A(1)$, the amount after $1$ hour. Give the answer to 2 decimals."
+            answer: "2.85"
+            answer_contract: {"decimals": 2, "kind": "approx"}
+            solution_sketch: "The model $A' = 9 - 3A$ has $a = 9$ and $b = 3$, so the equilibrium is $a/b = 3$. The general solution is $A = 3 + Ce^{-3t}$, and $A(0) = 0$ gives $C = -3$, so $A = 3 - 3e^{-3t}$. Evaluating at $t = 1$ gives $A(1) = 3 - 3e^{-3} = 2.8506\\ldots$, and the answer is 2.85."
         constraints: "all models are y' = a - by with clean equilibrium a/b; emphasize the shared structure across contexts"
       - id: kp3
         name: Two-stage prediction problems
         key_prerequisites: [newtons-law-of-cooling, natural-growth-decay-models]
         exemplars:
-          - problem: "Coffee at $90^{\\circ}$C in a $20^{\\circ}$C room cools to $70^{\\circ}$C in $5$ minutes. How long after the start does it reach $50^{\\circ}$C? Give an exact answer."
-            answer: '$t = \dfrac{5\ln(7/3)}{\ln(7/5)}$ minutes ($\approx 12.6$)'
-            answer_contract: {kind: none}
-            solution_sketch: "$T = 20 + 70e^{-kt}$; $T(5) = 70$ gives $e^{-5k} = \\tfrac{5}{7}$. Then $70e^{-kt} = 30$ gives $t = \\dfrac{\\ln(7/3)}{k}$ with $k = \\tfrac{1}{5}\\ln\\tfrac{7}{5}$."
-          - problem: "A population doubles in $5$ hours. Exactly how long until it is $10$ times its initial size?"
-            answer: '$t = \dfrac{5\ln 10}{\ln 2}$ hours'
-            answer_contract: {kind: none}
-            solution_sketch: "$k = \\tfrac{\\ln 2}{5}$; solve $e^{kt} = 10$."
+          - problem: "Coffee at 90 degrees C sits in a 20 degrees C room. It cools to 70 degrees C in t minutes, where t is a positive number. Assume Newton's law of cooling. How long after the start, when the coffee was at 90 degrees C, does it take to reach 50 degrees C? Give the answer as a function of t."
+            answer: "t ln(7/3)/ln(7/5)"
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: "Newton's law of cooling gives the full model T(s) = 20 + 70 e^(-k s) for elapsed time s, since T(0) = 90 and the room is at 20. Stage 1 uses the measurement T(t) = 70: 70 e^(-k t) = 50, so e^(-k t) = 5/7 and k = ln(7/5)/t. Stage 2 inverts for a time from the start: set T(s) = 50, so 70 e^(-k s) = 30 and e^(-k s) = 3/7; taking logarithms gives s = ln(7/3)/k. The time from the start is t ln(7/3)/ln(7/5) minutes."
+          - problem: "A bacterial population doubles in t hours. Assume exponential growth. Give the time until it is 10 times its initial size as a function of t."
+            answer: "t ln(10)/ln(2)"
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: "Exponential growth gives the full model P(s) = P0 e^(k s). Stage 1 uses the doubling time t, so e^(k t) = 2 and k = ln(2)/t. Stage 2 sets P(s) = 10 P0 and solves e^(k s) = 10, giving s = ln(10)/k. The time is t ln(10)/ln(2) hours."
+          - problem: "Tea at 80 degrees C sits in a 20 degrees C room. It cools to 60 degrees C in t minutes, where t is a positive number. Assume Newton's law of cooling. How long after the start, when the tea was at 80 degrees C, does it take to reach 40 degrees C? Give the answer as a function of t."
+            answer: "t ln(3)/ln(3/2)"
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: "Newton's law of cooling gives the full model T(s) = 20 + 60 e^(-k s) for elapsed time s, since T(0) = 80 and the room is at 20. Stage 1 uses the measurement T(t) = 60: 60 e^(-k t) = 40, so e^(-k t) = 2/3 and k = ln(3/2)/t. Stage 2 inverts for a time from the start: set T(s) = 40, so 60 e^(-k s) = 20 and e^(-k s) = 1/3; taking logarithms gives s = ln(3)/k. The time from the start is t ln(3)/ln(3/2) minutes."
+          - problem: "A radioactive isotope has a half-life of t years. Give the time for a sample to decay to 80 percent of its initial amount as a function of t."
+            answer: "t ln(5/4)/ln(2)"
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: "Radioactive decay gives the full model A(s) = A0 e^(-k s). Stage 1 uses the half-life t, so e^(-k t) = 1/2 and k = ln(2)/t. Stage 2 sets A(s) = 0.8 A0 and solves e^(-k s) = 4/5, giving s = ln(5/4)/k. The time is t ln(5/4)/ln(2) years."
+          - problem: "A yeast culture triples in t hours. Assume exponential growth. Give the time until it is 5 times its initial size as a function of t."
+            answer: "t ln(5)/ln(3)"
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: "Exponential growth gives the full model P(s) = P0 e^(k s). Stage 1 uses the tripling time t, so e^(k t) = 3 and k = ln(3)/t. Stage 2 sets P(s) = 5 P0 and solves e^(k s) = 5, giving s = ln(5)/k. The time is t ln(5)/ln(3) hours."
+          - problem: "A metal bar at 100 degrees C sits in a 25 degrees C room. It cools to 70 degrees C in t minutes, where t is a positive number. Assume Newton's law of cooling. How long after the start, when the bar was at 100 degrees C, does it take to reach 50 degrees C? Give the answer as a function of t."
+            answer: "t ln(3)/ln(5/3)"
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: "Newton's law of cooling gives the full model T(s) = 25 + 75 e^(-k s) for elapsed time s, since T(0) = 100 and the room is at 25. Stage 1 uses the measurement T(t) = 70: 75 e^(-k t) = 45, so e^(-k t) = 3/5 and k = ln(5/3)/t. Stage 2 inverts for a time from the start: set T(s) = 50, so 75 e^(-k s) = 25 and e^(-k s) = 1/3; taking logarithms gives s = ln(3)/k. The time from the start is t ln(3)/ln(5/3) minutes."
         constraints: "first stage determines k from one measurement; second stage inverts for a time; answers exact in logarithms"
     diagnostic_exemplar:
       problem: 'A fish population grows at relative rate $0.4$ per year but is harvested at a constant $200$ fish per year: $P'' = 0.4P - 200$. With $P(0) = 400$, when does the population die out? Give an exact answer.'

@@ -769,18 +769,30 @@ topics:
         name: Computing convolutions
         key_prerequisites: [definite-integrals-ftc]
         exemplars:
-          - problem: 'Compute the convolution $(1 * t)(t) = \int_0^t 1\cdot(t - \tau)\,d\tau$.'
-            answer: '$\dfrac{t^2}{2}$'
-            answer_contract: {kind: none}
-            solution_sketch: 'Using $\int_0^t f(\tau)g(t-\tau)\,d\tau$ with $f = 1$, $g(t) = t$: $\int_0^t (t - \tau)\,d\tau = t^2 - \frac{t^2}{2} = \frac{t^2}{2}$.'
-          - problem: 'Compute $(t * t)(t) = \int_0^t \tau(t - \tau)\,d\tau$.'
-            answer: '$\dfrac{t^3}{6}$'
-            answer_contract: {kind: none}
-            solution_sketch: '$t\cdot\frac{t^2}{2} - \frac{t^3}{3} = \frac{t^3}{6}$.'
-          - problem: 'Compute $(1 * e^{2t})(t) = \int_0^t e^{2\tau}\,d\tau$.'
-            answer: '$\dfrac{e^{2t} - 1}{2}$'
-            answer_contract: {kind: none}
-            solution_sketch: '$\dfrac{e^{2t} - 1}{2}$'
+          - problem: "Compute the convolution (1 * t)(t) and give the result as a function of t."
+            answer: "t^2/2"
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: "Step 1 (convolution definition): (1 * t)(t) is the integral from 0 to t of 1 times (t - tau) d tau. Step 2 (integrate): the antiderivative of (t - tau) in tau is t*tau - tau^2/2, evaluated from 0 to t giving t^2 - t^2/2. The convolution is t^2/2."
+          - problem: "Compute (t * t)(t) and give the result as a function of t."
+            answer: "t^3/6"
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: "Step 1 (convolution definition): (t * t)(t) is the integral from 0 to t of tau times (t - tau) d tau. Step 2 (expand and integrate): the integrand is t*tau - tau^2, so the integral is t*(t^2/2) - t^3/3 = t^3/2 - t^3/3. The convolution is t^3/6."
+          - problem: "Find the convolution of f(t) = 1 and g(t) = e^(2t), and give the result as a function of t."
+            answer: "(e^(2t)-1)/2"
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: "Step 1 (convolution definition): the convolution of f(t) = 1 and g(t) = e^(2t) is the integral from 0 to t of e^(2 tau) d tau, since the constant 1 drops out. Step 2 (exponential rule): the antiderivative of e^(2 tau) with respect to tau is e^(2 tau)/2, so evaluate at tau = t and at tau = 0, giving e^(2t)/2 minus 1/2. The convolution is (e^(2t)-1)/2."
+          - problem: "Compute (e^t * e^(3t))(t) and give the result as a function of t."
+            answer: "(e^(3t)-e^t)/2"
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: "Step 1 (convolution definition): the integral runs from 0 to t over e^tau times e^(3*(t - tau)) d tau. Step 2 (combine exponents and integrate): this is e^(3t) times the integral of e^(-2*tau), which gives e^(3t)*(1 - e^(-2t))/2. The convolution is (e^(3t)-e^t)/2."
+          - problem: "Find the convolution of f(t) = t and g(t) = sin(t), and give the result as a function of t."
+            answer: "t - sin(t)"
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: "Step 1 (convolution definition): the convolution of f(t) = t and g(t) = sin(t) is the integral from 0 to t of tau sin(t - tau) d tau. Step 2 (substitution u = t - tau): the integral becomes the integral from 0 to t of (t - u) sin(u) du. Step 3 (split and integrate by parts): t times the integral of sin(u) du is t*(1 - cos(t)), and the integral of u sin(u) du is -t cos(t) + sin(t), so the difference is t - t cos(t) - (-t cos(t) + sin(t)). The convolution is t - sin(t)."
+          - problem: "Compute (sin(t) * sin(3t))(t) and give the result as a function of t."
+            answer: "(3sin(t)-sin(3t))/8"
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: "Step 1 (convolution definition): the integral runs from 0 to t over sin(tau) times sin(3*(t - tau)) d tau. Step 2 (product-to-sum identity): expand sin(tau) sin(3t - 3*tau) and integrate the two resulting sine terms from 0 to t. The convolution is (3sin(t)-sin(3t))/8."
         constraints: "f, g among 1, t, e^{at}, sin bt; the integral must be elementary"
       - id: kp2
         name: The convolution theorem

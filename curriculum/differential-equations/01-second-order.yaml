@@ -497,14 +497,30 @@ topics:
         name: Polynomial forcing
         key_prerequisites: [homogeneous-constant-coefficients]
         exemplars:
-          - problem: "Find the general solution of $y'' - y' - 2y = 4x$."
-            answer: "$y = c_1 e^{2x} + c_2 e^{-x} - 2x + 1$"
-            answer_contract: {kind: none}
-            solution_sketch: "Try $y_p = Ax + B$: $-A - 2(Ax + B) = 4x$ gives $A = -2$, then $-A - 2B = 0$ gives $B = 1$. Homogeneous roots: $2, -1$."
-          - problem: "Find a particular solution of $y'' + 4y = 8x^2$."
-            answer: "$y_p = 2x^2 - 1$"
-            answer_contract: {kind: none}
-            solution_sketch: "Try $y_p = Ax^2 + Bx + C$: $2A + 4Ax^2 + 4Bx + 4C = 8x^2$ gives $A = 2$, $B = 0$, $C = -1$."
+          - problem: "The forcing of y'' - y' - 2y = 4x is a polynomial of degree 1, so the trial is y_p = Ax + B. Find the particular solution y_p and give it as a function of x."
+            answer: "-2x + 1"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "The trial object is y_p = Ax + B, so y_p' = A and y_p'' = 0. Substitution into the left side gives 0 - A - 2(Ax + B) = -2Ax - A - 2B, and the method of undetermined coefficients matches coefficients with 4x: -2A = 4 gives A = -2, and -A - 2B = 0 gives B = 1. The particular solution is -2x + 1."
+          - problem: "For the equation y'' + 4y = 8x^2, the full trial polynomial of the same degree is y_p = Ax^2 + Bx + C. Find the particular solution y_p as a function of x."
+            answer: "2x^2 - 1"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "The trial object is y_p = Ax^2 + Bx + C, so y_p' = 2Ax + B and y_p'' = 2A. Substitution gives 2A + 4(Ax^2 + Bx + C) = 4Ax^2 + 4Bx + (2A + 4C), and matching with 8x^2 gives 4A = 8, 4B = 0, 2A + 4C = 0. Hence A = 2, B = 0 and C = -1. The particular solution is 2x^2 - 1."
+          - problem: "The equation y'' - 3y' + 2y = 2x^2 + 2x has quadratic forcing, so use the trial y_p = Ax^2 + Bx + C. Find the particular solution y_p as a function of x."
+            answer: "x^2 + 4x + 5"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "The trial object is y_p = Ax^2 + Bx + C, so y_p' = 2Ax + B and y_p'' = 2A. Substitution into y'' - 3y' + 2y gives 2Ax^2 + (-6A + 2B)x + (2A - 3B + 2C). Matching with 2x^2 + 2x gives 2A = 2, -6A + 2B = 2, and 2A - 3B + 2C = 0, so A = 1, B = 4 and C = 5. The particular solution is x^2 + 4x + 5."
+          - problem: "For y'' - 3y' + 2y = 6x + 1, use the linear trial y_p = Ax + B. Find the particular solution y_p as a function of x."
+            answer: "3x + 5"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "The trial object is y_p = Ax + B, so y_p' = A and y_p'' = 0. Substitution into y'' - 3y' + 2y gives 2Ax + (-3A + 2B). Matching with 6x + 1 gives 2A = 6 and -3A + 2B = 1, so A = 3 and -9 + 2B = 1 gives B = 5. The particular solution is 3x + 5."
+          - problem: "The forcing of y'' + y' - 6y = 18 is the constant 18, so the trial is the constant y_p = C. Find the value of C."
+            answer: "-3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The trial object is the constant y_p = C, so y_p' = 0 and y_p'' = 0. Substituting into y'' + y' - 6y = 18 gives -6C = 18 by the method of undetermined coefficients. Dividing by -6 gives C = -3, so the answer is -3."
+          - problem: "Solve the initial value problem y'' - y' - 2y = 6x + 3 with y(0) = 3 and y'(0) = -3. Give the solution y as a function of x."
+            answer: "e^(2x) + 2e^(-x) - 3x"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "The homogeneous equation y'' - y' - 2y = 0 has characteristic equation r^2 - r - 2 = 0 with roots 2 and -1, so y_h = c1 e^(2x) + c2 e^(-x). For the polynomial forcing 6x + 3, the trial y_p = Ax + B gives -2Ax - A - 2B = 6x + 3, so A = -3 and B = 0, and y_p = -3x. The initial conditions give c1 + c2 = 3 and 2c1 - c2 = 0, so c1 = 1 and c2 = 2. The solution is e^(2x) + 2e^(-x) - 3x."
         constraints: "forcing is a polynomial of degree <= 2; match the full trial polynomial of the same degree; integer coefficients"
       - id: kp3
         name: Exponential forcing
@@ -720,18 +736,30 @@ topics:
         name: Trigonometric forcing
         key_prerequisites: [linear-independence-wronskian, trigonometric-integrals]
         exemplars:
-          - problem: 'Solve $y'''' + y = \sec x$ on $(-\pi/2, \pi/2)$.'
-            answer: '$y = c_1 \cos x + c_2 \sin x + \cos x \ln|\cos x| + x\sin x$'
-            answer_contract: {kind: none}
-            solution_sketch: '$u_1 = \int -\tan x\,dx = \ln|\cos x|$ and $u_2 = \int 1\,dx = x$, so $y_p = y_1 u_1 + y_2 u_2$.'
-          - problem: 'Solve $y'''' + y = \csc x$ on $(0, \pi)$.'
-            answer: '$y = c_1 \cos x + c_2 \sin x - x\cos x + \sin x \ln|\sin x|$'
-            answer_contract: {kind: none}
-            solution_sketch: '$u_1'' = -\sin x \csc x = -1$ gives $u_1 = -x$; $u_2'' = \cos x \csc x = \cot x$ gives $u_2 = \ln|\sin x|$.'
-          - problem: 'Solve $y'''' + y = \tan x$ on $(-\pi/2, \pi/2)$.'
-            answer: '$y = c_1 \cos x + c_2 \sin x - \cos x \ln|\sec x + \tan x|$'
-            answer_contract: {kind: none}
-            solution_sketch: '$u_1'' = -\sin x\tan x = \cos x - \sec x$ gives $u_1 = \sin x - \ln|\sec x + \tan x|$; $u_2'' = \sin x$ gives $u_2 = -\cos x$; the $\sin x\cos x$ terms cancel.'
+          - problem: "Use variation of parameters to solve the initial value problem y'' + y = sec x on the interval (-pi/2, pi/2), with y(0) = 1 and y'(0) = 2. Evaluate the solution at x = pi/4. Give the answer to 4 decimals."
+            answer: "2.4316"
+            answer_contract: {"decimals": 4, "kind": "approx"}
+            solution_sketch: "Homogeneous rule: cos x and sin x solve y'' + y = 0, and the Wronskian rule gives W = 1. Variation of parameters: u1' = -sin(x) sec(x) = -tan(x), so u1 = ln(cos(x)) by the tan integral; u2' = cos(x) sec(x) = 1, so u2 = x. The particular solution is y_p = cos(x) ln(cos(x)) + x sin(x), with y_p(0) = 0 and y_p'(0) = 0, so the initial conditions give y = cos(x) + 2 sin(x) + y_p. Evaluate at pi/4: 0.70711 + 1.41421 - 0.24506 + 0.55536 = 2.43162. The value of the solution at x = pi/4 is 2.4316."
+          - problem: "On the interval (0, pi) the equation y'' + y = csc x has a solution with y(pi/2) = 2 and y'(pi/2) = 1. Use variation of parameters to find that solution and evaluate it at x = pi/6. Give the answer to 4 decimals."
+            answer: "0.6943"
+            answer_contract: {"decimals": 4, "kind": "approx"}
+            solution_sketch: "Homogeneous rule: cos x and sin x solve y'' + y = 0, with Wronskian W = 1. Variation of parameters: u1' = -sin(x) csc(x) = -1, so u1 = -x; u2' = cos(x) csc(x) = cot(x), so u2 = ln(sin(x)) by the cot integral. The particular solution is y_p = -x cos(x) + sin(x) ln(sin(x)), with y_p(pi/2) = 0 and y_p'(pi/2) = pi/2. The initial conditions give y = (pi/2 - 1) cos(x) + 2 sin(x) + y_p. Evaluate at pi/6: 0.49432 + 1 - 0.45345 - 0.34657 = 0.69430. The value of the solution at x = pi/6 is 0.6943."
+          - problem: "Solve the initial value problem y'' + y = tan x on (-pi/2, pi/2) with y(0) = 0 and y'(0) = 1, using variation of parameters. Compute the value of the solution at x = pi/4. Give the answer to 4 decimals."
+            answer: "0.7910"
+            answer_contract: {"decimals": 4, "kind": "approx"}
+            solution_sketch: "Homogeneous rule: cos x and sin x solve y'' + y = 0, with Wronskian W = 1. Variation of parameters: u1' = -sin(x) tan(x) = cos(x) - sec(x), so u1 = sin(x) - ln(sec(x) + tan(x)) by the sec integral; u2' = cos(x) tan(x) = sin(x), so u2 = -cos(x). The products sin(x) cos(x) cancel, so the particular solution is y_p = -cos(x) ln(sec(x) + tan(x)), with y_p(0) = 0 and y_p'(0) = -1. The initial conditions give y = 2 sin(x) + y_p. Evaluate at pi/4: 1.41421 - 0.62323 = 0.79098. The value of the solution at x = pi/4 is 0.7910."
+          - problem: "Use variation of parameters for the equation y'' + 4y = sec(2x) on (-pi/4, pi/4) with y(0) = 3 and y'(0) = 0. Determine the value of the solution at x = pi/8. Give the answer to 4 decimals."
+            answer: "2.1989"
+            answer_contract: {"decimals": 4, "kind": "approx"}
+            solution_sketch: "Homogeneous rule: cos(2x) and sin(2x) solve y'' + 4y = 0, and the Wronskian rule gives W = 2. Variation of parameters: u1' = -sin(2x) sec(2x)/2 = -tan(2x)/2, so u1 = ln(cos(2x))/4 by the tan integral; u2' = cos(2x) sec(2x)/2 = 1/2, so u2 = x/2. The particular solution is y_p = cos(2x) ln(cos(2x))/4 + x sin(2x)/2, with y_p(0) = 0 and y_p'(0) = 0, so the initial conditions give y = 3 cos(2x) + y_p. Evaluate at pi/8: 2.12132 - 0.06127 + 0.13884 = 2.19889. The value of the solution at x = pi/8 is 2.1989."
+          - problem: "The equation y'' + 4y = csc(2x) on (0, pi/2) has a solution with y(pi/4) = 1 and y'(pi/4) = 2. Use variation of parameters to find y' for this solution and evaluate y' at x = pi/8. Give the answer to 4 decimals."
+            answer: "2.4282"
+            answer_contract: {"decimals": 4, "kind": "approx"}
+            solution_sketch: "Homogeneous rule: cos(2x) and sin(2x) solve y'' + 4y = 0, and the Wronskian rule gives W = 2. Variation of parameters: u1' = -sin(2x) csc(2x)/2 = -1/2, so u1 = -x/2; u2' = cos(2x) csc(2x)/2 = cot(2x)/2, so u2 = ln(sin(2x))/4 by the cot integral. The particular solution is y_p = -x cos(2x)/2 + sin(2x) ln(sin(2x))/4, and its derivative is y_p' = x sin(2x) + cos(2x) ln(sin(2x))/2. The initial conditions give y = (pi/8 - 1) cos(2x) + sin(2x) + y_p. Differentiate and evaluate at pi/8: 0.85885 + 1.41421 + 0.15515 = 2.42821. The value of y' at x = pi/8 is 2.4282."
+          - problem: "For the equation y'' + 9y = tan(3x) on (-pi/6, pi/6) with y(0) = 1 and y'(0) = 2, use variation of parameters to solve the initial value problem. Evaluate the solution at x = pi/12. Give the answer to 4 decimals."
+            answer: "1.1878"
+            answer_contract: {"decimals": 4, "kind": "approx"}
+            solution_sketch: "Homogeneous rule: cos(3x) and sin(3x) solve y'' + 9y = 0, and the Wronskian rule gives W = 3. Variation of parameters: u1' = -sin(3x) tan(3x)/3 = cos(3x)/3 - sec(3x)/3, so u1 = sin(3x)/9 - ln(sec(3x) + tan(3x))/9 by the sec integral; u2' = cos(3x) tan(3x)/3 = sin(3x)/3, so u2 = -cos(3x)/9. The products sin(3x) cos(3x)/9 cancel, so the particular solution is y_p = -cos(3x) ln(sec(3x) + tan(3x))/9, with y_p(0) = 0 and y_p'(0) = -1/3. The initial conditions give y = cos(3x) + 7 sin(3x)/9 + y_p. Evaluate at pi/12: 0.70711 + 0.54997 - 0.06925 = 1.18783. The value of the solution at x = pi/12 is 1.1878."
         constraints: "forcing sec x, csc x, tan x on intervals where they are continuous; integrals reduce to ln and power forms"
       - id: kp3
         name: Rational and exponential forcing
