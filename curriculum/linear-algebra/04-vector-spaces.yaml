@@ -85,14 +85,30 @@ topics:
         name: The zero-vector check
         key_prerequisites: [vectors-in-rn]
         exemplars:
-          - problem: 'Is $\{(x, y) : x + y = 1\}$ a subspace of $\mathbb{R}^2$?'
-            answer: "No"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: 'It does not contain the zero vector: $0 + 0 \neq 1$.'
-          - problem: 'Does the set $\{(x, y) : y = 3x\}$ pass the zero-vector check?'
-            answer: "Yes, since 0 = 3(0)"
-            answer_contract: {kind: none}
-            solution_sketch: 'The origin $(0,0)$ satisfies $0 = 3 \cdot 0$, so the set contains the zero vector.'
+          - problem: "Let $W = \\{(x, y) : 2x + 3y = 6\\}$ be a subset of $\\mathbb{R}^2$. Give the value of the left side $2x + 3y$ at the zero vector, and give the verdict of the zero-vector check for $W$."
+            answer: "value = 0; verdict = fails"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "value"}, {"contract": {"kind": "label", "options": [["passes"], ["fails"]]}, "name": "verdict"}]}
+            solution_sketch: "The zero vector of $\\mathbb{R}^2$ is $(0, 0)$. Step 1 (substitute the zero vector): $2(0) + 3(0) = 0$, so the left side takes the value 0. Step 2 (compare with the constant): the condition $2x + 3y = 6$ requires 6, and 0 is not 6, so the zero vector is not in $W$; a failed zero check settles that $W$ is not a subspace. The wrong verdict passes would wrongly treat 0 as equal to 6. The key is value = 0; verdict = fails."
+          - problem: "Let $W = \\{(x, y) : y = 5x\\}$ be a subset of $\\mathbb{R}^2$. Give the value of the left side $y - 5x$ at the zero vector, and give the verdict of the zero-vector check for $W$."
+            answer: "value = 0; verdict = passes"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "value"}, {"contract": {"kind": "label", "options": [["passes"], ["fails"]]}, "name": "verdict"}]}
+            solution_sketch: "The zero vector of $\\mathbb{R}^2$ is $(0, 0)$. Step 1 (substitute the zero vector): $y - 5x = 0 - 5(0) = 0$, so the left side takes the value 0. Step 2 (compare with the constant): the condition $y = 5x$ rewritten as $y - 5x = 0$ requires 0, and 0 = 0 holds, so the zero vector is in $W$; a passed zero check only begins the subspace argument. The wrong verdict fails would need 0 and 0 to differ, which is impossible. The key is value = 0; verdict = passes."
+          - problem: "Let $W = \\{(x, y) : 5x - y = c\\}$ be a subset of $\\mathbb{R}^2$, where $c$ is a constant. Find the value of $c$ for which $W$ contains the zero vector."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The zero vector of $\\mathbb{R}^2$ is $(0, 0)$. Step 1 (substitute the zero vector): the left side gives $5(0) - 0 = 0$. Step 2 (solve for the constant): the zero vector lies in $W$ exactly when $0 = c$, so $c = 0$. The key is 0."
+          - problem: "Let $W = \\{(x, y) : x = 4y + 2\\}$ be a subset of $\\mathbb{R}^2$. The zero-vector check compares the two sides of the condition at the zero vector. Find the value that the right side $4y + 2$ takes at the zero vector."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The zero vector of $\\mathbb{R}^2$ is $(0, 0)$. Step 1 (substitute the zero vector into the right side): $4(0) + 2 = 2$. Step 2 (compare the sides): the left side $x$ gives 0, and $0 = 2$ is false, so the zero vector is not in $W$ and the zero check fails. The key is 2."
+          - problem: "Let $W = \\{(x, y, z) : z = 2x - y + 5\\}$ be a subset of $\\mathbb{R}^3$. At the zero vector the two sides of the condition take values 0 and the value of $2x - y + 5$. Find the positive gap between the two sides at the zero vector."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The zero vector of $\\mathbb{R}^3$ is $(0, 0, 0)$. Step 1 (substitute the zero vector into the right side): $2(0) - 0 + 5 = 5$, while the left side $z$ gives 0. Step 2 (take the gap): the sides differ by $|5 - 0| = 5$, so the zero vector is not in $W$ and the zero check fails. The key is 5."
+          - problem: "Let $W = \\{(x, y, z) : x + y + z = 4\\}$ be a subset of $\\mathbb{R}^3$. Give the zero vector of $\\mathbb{R}^3$ as (a, b, c), and give the verdict of the zero-vector check for $W$."
+            answer: "zero = (0,0,0); verdict = fails"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"arity": 3, "kind": "coordinates"}, "name": "zero"}, {"contract": {"kind": "label", "options": [["passes"], ["fails"]]}, "name": "verdict"}]}
+            solution_sketch: "Step 1 (identify the zero vector): in $\\mathbb{R}^3$ every coordinate is 0, so the zero vector is $(0, 0, 0)$. Step 2 (check membership): $x + y + z = 0 + 0 + 0 = 0$, and the condition $x + y + z = 4$ requires 4, so $W$ does not contain the zero vector and the zero check fails, settling that $W$ is not a subspace. The wrong verdict passes would wrongly treat 0 as equal to 4. The key is zero = (0,0,0); verdict = fails."
         constraints: "sets defined by one linear condition; the zero check settles or begins the argument"
       - id: kp2
         name: Closure checks and counterexamples
@@ -173,14 +189,30 @@ topics:
         name: Membership in a span
         key_prerequisites: [matrix-vector-equations, solution-sets-free-variables]
         exemplars:
-          - problem: 'Is $(3, 5)$ in $\mathrm{span}\{(1, 1), (1, 2)\}$?'
-            answer: "Yes: (3,5) = 1(1,1) + 2(1,2)"
-            answer_contract: {kind: none}
-            solution_sketch: 'Solve $c_1 + c_2 = 3$, $c_1 + 2c_2 = 5$: $c_2 = 2$, $c_1 = 1$.'
-          - problem: 'Is $(1, 3, 1)$ in $\mathrm{span}\{(1, 1, 0), (0, 1, 1)\}$?'
-            answer: "No"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: 'The first and third components force $c_1 = 1$ and $c_2 = 1$, but then the middle component is $c_1 + c_2 = 2 \neq 3$.'
+          - problem: "Is $(2, 7, 9)$ in $\\mathrm{span}\\{(1, 2, 0), (0, 1, 3)\\}$? Write $(2, 7, 9) = c_1(1, 2, 0) + c_2(0, 1, 3)$, solve for $c_1$ and $c_2$ using the first two components, and check the third component. Give the verdict together with the values of $c_1$ and $c_2$."
+            answer: "verdict = yes; c1 = 2; c2 = 3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "c1"}, {"contract": {"kind": "exact"}, "name": "c2"}]}
+            solution_sketch: "Set up the full vector equation (2, 7, 9) = c1(1, 2, 0) + c2(0, 1, 3) and read off the component equations (span membership). The first two components give the 2x2 system c1 = 2 and 2c1 + c2 = 7, so c1 = 2 and c2 = 3 (matrix-vector equation). Check the third component: 0*2 + 3*3 = 9, which matches the target (consistency check). The answer is verdict = yes; c1 = 2; c2 = 3."
+          - problem: "Is $(4, 3, 5)$ in $\\mathrm{span}\\{(1, 2, 0), (0, 1, 2)\\}$? Write $(4, 3, 5) = c_1(1, 2, 0) + c_2(0, 1, 2)$, solve for $c_1$ and $c_2$ using the first two components, and check the third component. Give the verdict together with the values of $c_1$ and $c_2$."
+            answer: "verdict = no; c1 = 4; c2 = -5"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "c1"}, {"contract": {"kind": "exact"}, "name": "c2"}]}
+            solution_sketch: "Set up the full vector equation (4, 3, 5) = c1(1, 2, 0) + c2(0, 1, 2) and read off the component equations (span membership). The first two components give c1 = 4 and 2c1 + c2 = 3, so c2 = 3 - 8 = -5 (matrix-vector equation). Check the third component: 0*4 + 2*(-5) = -10, but the target has 5, so the check fails (consistency check). The answer is verdict = no; c1 = 4; c2 = -5."
+          - problem: "Is $(4, 7, 4)$ in $\\mathrm{span}\\{(2, 4, 2), (1, 1, 1)\\}$? Write $(4, 7, 4) = c_1(2, 4, 2) + c_2(1, 1, 1)$ and solve the equations coming from the first two components. Give the verdict and the value of $c_1$."
+            answer: "verdict = yes; c1 = 3/2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "c1"}]}
+            solution_sketch: "Write (4, 7, 4) = c1(2, 4, 2) + c2(1, 1, 1); the first two components give 2c1 + c2 = 4 and 4c1 + c2 = 7 (span membership, matrix-vector equation). Subtracting the equations gives 2c1 = 3, so c1 = 3/2 and c2 = 4 - 3 = 1. Check the third component: 2*(3/2) + 1 = 4, which matches (consistency check). The answer is verdict = yes; c1 = 3/2."
+          - problem: "The vector $(5, k, 4)$ lies in $\\mathrm{span}\\{(1, 0, 2), (0, 3, 1)\\}$: write $(5, k, 4) = c_1(1, 0, 2) + c_2(0, 3, 1)$. Find the value of $k$."
+            answer: "-18"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Set up (5, k, 4) = c1(1, 0, 2) + c2(0, 3, 1) and read the component equations (span membership). The first component gives c1 = 5, and the third gives 2c1 + c2 = 4, so c2 = 4 - 10 = -6 (matrix-vector equation). The second component then forces k = 3c2 = 3*(-6). The answer is -18."
+          - problem: "The vector $(3, 6, t)$ is in $\\mathrm{span}\\{(2, 1, 0), (1, 0, 3)\\}$: write $(3, 6, t) = c_1(2, 1, 0) + c_2(1, 0, 3)$. Find the value of $t$."
+            answer: "-27"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write (3, 6, t) = c1(2, 1, 0) + c2(1, 0, 3); the second component gives c1 = 6 and the first gives 2*6 + c2 = 3, so c2 = -9 (span membership, matrix-vector equation). The third component of the combination is 0*6 + 3*(-9), and this must equal t. The answer is -27."
+          - problem: "Is $(3, 6, 2)$ in $\\mathrm{span}\\{(1, 2, 0), (2, 4, 1)\\}$? The second component equation is twice the first, so use the third component to find one coefficient and then check the second equation. Give the verdict and the values of $c_1$ and $c_2$."
+            answer: "verdict = yes; c1 = -1; c2 = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "c1"}, {"contract": {"kind": "exact"}, "name": "c2"}]}
+            solution_sketch: "Write (3, 6, 2) = c1(1, 2, 0) + c2(2, 4, 1); the second spanning vector is twice the first in the first two coordinates, so the 2x2 part is dependent (span membership, solution sets and free variables). The third component gives c2 = 2, and the first component gives c1 + 4 = 3, so c1 = -1. Check the second component: 2*(-1) + 4*2 = 6, which matches, so the system is consistent (consistency check). The answer is verdict = yes; c1 = -1; c2 = 2."
         constraints: "2 spanning vectors; membership decided by a 2x2 solve plus one check"
       - id: kp3
         name: Geometry of spans
@@ -246,14 +278,30 @@ topics:
         name: Independence via row reduction
         key_prerequisites: [row-reduction-echelon-forms, solution-sets-free-variables]
         exemplars:
-          - problem: 'Is $\{(1, 2, 3), (2, 1, 0), (3, 3, 3)\}$ linearly independent?'
-            answer: "No"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: '$(1,2,3) + (2,1,0) = (3,3,3)$, a nontrivial relation; row reduction leaves only two pivots.'
-          - problem: 'Is $\{(1, 0, 1), (0, 1, 1), (1, 1, 0)\}$ linearly independent?'
-            answer: "Yes"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: 'Row reducing the matrix with these columns yields three pivots (its determinant is $-2 \neq 0$).'
+          - problem: "Consider the vectors v1 = (2, 1, 1), v2 = (1, 2, 3), and v3 = (3, 3, 4). Decide the linear independence status of these vectors and give the number of pivot positions in the matrix with these vectors as columns. State the verdict and the pivot count."
+            answer: "verdict = dependent; p = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["independent"], ["dependent"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "p"}]}
+            solution_sketch: "Form the matrix A with columns v1, v2, v3: [[2,1,3],[1,2,3],[1,3,4]]. Row reduce A to echelon form. The third column is the sum of the first two, so the echelon form has pivots only in the first two columns. Thus the vectors are dependent and the pivot count is 2. The verdict independent is wrong because a nontrivial relation v1 + v2 - v3 = 0 exists. The final answer is verdict = dependent; p = 2."
+          - problem: "Consider the vectors u = (1, 0, 2), v = (0, 1, 3), and w = (1, 1, 0). Decide the linear independence status of these vectors and give the number of pivot positions in the matrix with these vectors as columns. State the verdict and the pivot count."
+            answer: "verdict = independent; p = 3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["independent"], ["dependent"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "p"}]}
+            solution_sketch: "Form the matrix A with columns u, v, w: [[1,0,1],[0,1,1],[2,3,0]]. Row reduce A to echelon form. The echelon form has a pivot in every column, so the only solution of Ax = 0 is x = 0. Therefore the vectors are independent and p = 3. The verdict dependent is wrong because no nontrivial relation exists. The final answer is verdict = independent; p = 3."
+          - problem: "Find the rank of the matrix whose columns are the vectors (1, 2, 3), (2, 4, 6), and (3, 6, 9)."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write the matrix A with the three given vectors as columns: [[1,2,3],[2,4,6],[3,6,9]]. Row reduce A to echelon form. The second and third columns are multiples of the first, so only one pivot remains. The rank is the number of pivots, which is 1. The final answer is 1."
+          - problem: "How many pivot positions does the matrix with columns (2, 1, 0), (1, 3, 1), and (1, 0, 2) have?"
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write the matrix A with columns (2,1,0), (1,3,1), (1,0,2): [[2,1,1],[1,3,0],[0,1,2]]. Row reduce A to echelon form. The determinant is nonzero, so the echelon form has a pivot in each of the three columns. The number of pivot positions is 3. The final answer is 3."
+          - problem: "How many nonzero rows does the row echelon form of the matrix with columns (1, 0, 2), (0, 1, 1), and (1, 1, 3) have?"
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write the matrix A with columns (1,0,2), (0,1,1), (1,1,3): [[1,0,1],[0,1,1],[2,1,3]]. Row reduce A to echelon form. The third column is the sum of the first two, so one row becomes zero and only two nonzero rows remain. The number of nonzero rows is 2. The final answer is 2."
+          - problem: "Consider the vectors a = (1, 1, 2), b = (2, 2, 4), and c = (3, 3, 6). Decide the linear independence status of these vectors and give the number of pivot positions in the matrix with these vectors as columns. State the verdict and the pivot count."
+            answer: "verdict = dependent; p = 1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["independent"], ["dependent"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "p"}]}
+            solution_sketch: "Form the matrix A with columns a, b, c: [[1,2,3],[1,2,3],[2,4,6]]. Row reduce A to echelon form. All columns are multiples of the first column, so only one pivot remains. Thus the vectors are dependent and p = 1. The verdict independent is wrong because b = 2a and c = 3a give nontrivial relations. The final answer is verdict = dependent; p = 1."
         constraints: "3 vectors in R^3; dependent cases have an easily spotted relation like v3 = v1 + v2"
       - id: kp3
         name: Dependence relations and parameters
@@ -318,18 +366,50 @@ topics:
           - problem: 'Find the coordinates of $\mathbf{x} = (5, 4)$ in the basis $B = \{(1, 0), (1, 2)\}$.'
             answer: "(3, 2)"
             solution_sketch: 'Second component forces $c_2 = 2$; then $c_1 = 5 - 2 = 3$.'
+          - problem: "Let B = {(1,1), (2,-1)}. For x = (7,-2), find c1 and c2 with x = c1(1,1) + c2(2,-1). Give the answer as (c1, c2)."
+            answer: "(1, 3)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Full object: B = {(1,1), (2,-1)} and x = (7,-2), with x = c1(1,1) + c2(2,-1). The vector equation gives the linear system c1 + 2c2 = 7 and c1 - c2 = -2. Subtract the second equation from the first to get 3c2 = 9, so c2 = 3, and then c1 = 1. The coordinates are (1, 3)."
+          - problem: "A basis of R^2 is B = {(2,1), (1,2)}. The vector x = (0,3) is written x = a(2,1) + b(1,2). Determine a and b. Give the answer as (a, b)."
+            answer: "(-1, 2)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Full object: B = {(2,1), (1,2)} and x = (0,3), with x = a(2,1) + b(1,2). The vector equation gives 2a + b = 0 and a + 2b = 3. From b = -2a, substitute into the second equation to get a - 4a = 3, so a = -1 and b = 2. The coordinates are (-1, 2)."
+          - problem: "Use the ordered basis B = {(1,2), (3,1)} for R^2. The coordinate vector of x is (2,-1). Find the standard coordinates of x. Give the answer as (x1, x2)."
+            answer: "(-1, 3)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Full object: basis B = {(1,2), (3,1)} and coordinate vector (2,-1), so x = 2(1,2) + (-1)(3,1). Compute 2(1,2) = (2,4) and (-1)(3,1) = (-3,-1). Add the two vectors: (2 - 3, 4 - 1) = (-1, 3). The standard coordinates are (-1, 3)."
+          - problem: "The polynomials 1+x and 1-x form a basis of the degree-at-most-1 polynomials. Find the coordinates of 1+3x in this basis. Give the answer as (c1, c2)."
+            answer: "(2, -1)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Full object: basis {1+x, 1-x} and polynomial 1+3x, with 1+3x = c1(1+x) + c2(1-x). Equating constants and x-coefficients gives c1 + c2 = 1 and c1 - c2 = 3. Add the equations to get 2c1 = 4, so c1 = 2 and c2 = -1. The coordinates are (2, -1)."
         constraints: "2x2 solves with integer coordinates in -4..4"
       - id: kp3
         name: Dimension of subspaces
         key_prerequisites: [linear-independence, subspaces-span]
         exemplars:
-          - problem: 'Find a basis for, and the dimension of, the solution set of $x + y + z = 0$ in $\mathbb{R}^3$.'
-            answer: "Basis {(-1, 1, 0), (-1, 0, 1)} (any valid basis); dimension 2"
-            answer_contract: {kind: none}
-            solution_sketch: 'Free variables $y = s$, $z = t$ give $(x, y, z) = s(-1, 1, 0) + t(-1, 0, 1)$.'
           - problem: 'What is $\dim\ \mathrm{span}\{(1, 0, 1), (2, 0, 2), (0, 1, 0)\}$?'
             answer: "2"
             solution_sketch: 'The second vector is twice the first; the remaining two are independent.'
+          - problem: "Consider the subspace $W = \\mathrm{span}\\{(2, 1, 3), (4, 2, 6), (0, 1, 1)\\}$ of $\\mathbb{R}^3$. Determine $\\dim W$."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The vector (4, 2, 6) equals 2 times (2, 1, 3), so it is redundant and can be removed from the spanning set. The remaining vectors (2, 1, 3) and (0, 1, 1) are not scalar multiples of each other, so they are independent and form a basis of W. The dimension of W is 2."
+          - problem: "Let $W$ be the span of the two vectors $(3, 6)$ and $(1, 2)$ in $\\mathbb{R}^2$. Find the dimension of $W$."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The vector (3, 6) equals 3 times (1, 2), so the two vectors are dependent and span the same line through the origin. A line through the origin has exactly one independent direction vector. The dimension of W is 1."
+          - problem: "What is the dimension of $\\mathrm{span}\\{(1, 1, 0), (0, 1, 1), (1, 0, 1)\\}$ in $\\mathbb{R}^3$?"
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Suppose a(1, 1, 0) + b(0, 1, 1) + c(1, 0, 1) = (0, 0, 0). The equations a + c = 0, a + b = 0, b + c = 0 have only the solution a = b = c = 0, so the three vectors are independent. Three independent vectors in R^3 span all of R^3, so the dimension is 3."
+          - problem: "The set $W$ of all $(x, y, z)$ in $\\mathbb{R}^3$ with $x + y + z = 0$ and $y - z = 0$ is a subspace. Give the dimension of $W$."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "From y - z = 0 we get y = z; substituting into x + y + z = 0 gives x = -2z. Every solution has the form (-2t, t, t) with one free parameter t, so a basis is {(-2, 1, 1)}. The dimension of W is 1."
+          - problem: "Let $da = \\dim\\ \\mathrm{span}\\{(1, 2, 0), (3, 6, 0), (0, 0, 1)\\}$ and $db = \\dim\\ \\mathrm{span}\\{(1, 0, 1), (0, 1, 0), (0, 0, 1)\\}$. Find $da$ and $db$."
+            answer: "da = 2; db = 3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "da"}, {"contract": {"kind": "exact"}, "name": "db"}]}
+            solution_sketch: "In the first span, (3, 6, 0) = 3(1, 2, 0) is redundant, and the remaining vectors (1, 2, 0) and (0, 0, 1) are independent, so da = 2. In the second span, the three vectors are not scalar multiples of one another, so they are independent and db = 3. The answers are da = 2; db = 3."
         constraints: "dimensions 1-3; redundant vectors are obvious multiples or sums"
     diagnostic_exemplar:
       problem: 'Find a basis for the subspace $W = \{(x, y, z) : x + 2y - z = 0\}$ of $\mathbb{R}^3$, give $\dim W$, and give the coordinates of $(0, 1, 2)$ relative to your basis.'
@@ -379,6 +459,22 @@ topics:
           - problem: 'Find $[\mathbf{x}]_B$ for $\mathbf{x} = (7, 4)$ and $B = \{(2, 1), (1, 1)\}$.'
             answer: "(3, 1)"
             solution_sketch: '$2c_1 + c_2 = 7$, $c_1 + c_2 = 4$: subtract to get $c_1 = 3$, then $c_2 = 1$.'
+          - problem: "The basis B = {(2, 0), (0, 3)} and the vector x = (4, -9) are given. Find [x]_B and give the answer as (c1, c2)."
+            answer: "(2, -3)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "The vector is x = (4, -9) and the basis is B = {(2, 0), (0, 3)}. Step 1 (coordinate equation): write c1(2, 0) + c2(0, 3) = (4, -9). Step 2 (solve components): 2c1 = 4 gives c1 = 2, and 3c2 = -9 gives c2 = -3. Thus [x]_B = (2, -3)."
+          - problem: "For x = (5, 0) in the basis B = {(1, 2), (3, 1)}, compute the coordinate vector [x]_B. Give the answer as (c1, c2)."
+            answer: "(-1, 2)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "The vector is x = (5, 0) and the basis is B = {(1, 2), (3, 1)}. Step 1 (coordinate equation): set c1(1, 2) + c2(3, 1) = (5, 0). Step 2 (solve system): c1 + 3c2 = 5 and 2c1 + c2 = 0; substituting c2 = -2c1 gives c1 = -1 and c2 = 2. Thus [x]_B = (-1, 2)."
+          - problem: "The basis B = {(1, 1), (2, -1)} and the coordinate vector [x]_B = (2, -2) are given. Find x and give the answer as (x1, x2)."
+            answer: "(-2, 4)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "The basis is B = {(1, 1), (2, -1)} and the coordinate vector is [x]_B = (2, -2). Step 1 (reconstruction formula): x = c1 b1 + c2 b2. Step 2 (substitute coordinates): x = 2(1, 1) + (-2)(2, -1) = (2, 2) + (-4, 2) = (-2, 4). Thus x = (-2, 4)."
+          - problem: "The vector x = (-15, 10) is in the span of B = {(-1, 2), (3, -1)}. Find [x]_B and give the answer as (c1, c2)."
+            answer: "(3, -4)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "The vector is x = (-15, 10) and the basis is B = {(-1, 2), (3, -1)}. Step 1 (coordinate equation): write c1(-1, 2) + c2(3, -1) = (-15, 10). Step 2 (solve system): -c1 + 3c2 = -15 and 2c1 - c2 = 10; solving gives c1 = 3 and c2 = -4. Thus [x]_B = (3, -4)."
         constraints: "2x2 solves; coordinates are integers in -4..4, including negative coordinates"
       - id: kp3
         name: Coordinates in R^3 bases
@@ -422,13 +518,29 @@ topics:
         name: The basis-to-standard matrix
         key_prerequisites: [coordinates-relative-basis]
         exemplars:
-          - problem: 'For $B = \{(1, 1), (1, -1)\}$, write the matrix $P_B$ with $\mathbf{x} = P_B[\mathbf{x}]_B$, and use it for $[\mathbf{x}]_B = (2, 1)$.'
-            answer: '$P_B = \begin{pmatrix}1&1\\1&-1\end{pmatrix}$; $\mathbf{x} = (3, 1)$'
-            answer_contract: {kind: none}
-            solution_sketch: '$P_B$ has the basis vectors as columns; $P_B(2, 1) = (2 + 1, 2 - 1)$.'
           - problem: 'For $B = \{(2, 1), (1, 1)\}$, find $\mathbf{x}$ when $[\mathbf{x}]_B = (1, 1)$.'
             answer: "(3, 2)"
             solution_sketch: '$\begin{pmatrix}2&1\\1&1\end{pmatrix}\begin{pmatrix}1\\1\end{pmatrix} = (3, 2)$.'
+          - problem: "For the basis $B = \\{(3, 1), (2, -1)\\}$ of $\\mathbb{R}^2$, form the matrix $P_B$ that satisfies $\\mathbf{x} = P_B[\\mathbf{x}]_B$, with the basis vectors as its columns. Give the matrix as [a,b;c,d]."
+            answer: "[3,2;1,-1]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "Step 1 (definition of the basis-to-standard matrix): the columns of $P_B$ are the basis vectors in order, so column 1 is $(3, 1)$ and column 2 is $(2, -1)$. Step 2 (read the columns row by row): row 1 collects the first entries $(3, 2)$ and row 2 the second entries $(1, -1)$. The matrix is [3,2;1,-1]."
+          - problem: "For the basis $B = \\{(4, 1), (1, 2)\\}$, find $\\mathbf{x}$ when $[\\mathbf{x}]_B = (2, 1)$. Give the answer as (x, y)."
+            answer: "(9, 4)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Step 1 (build $P_B$): the columns are the basis vectors, so $P_B$ has columns $(4, 1)$ and $(1, 2)$. Step 2 (one matrix-vector product by the column rule): $P_B(2, 1) = 2 \\cdot (4, 1) + 1 \\cdot (1, 2)$. Step 3 (combine): $(8 + 1,\\ 2 + 2) = (9, 4)$. The answer is (9, 4)."
+          - problem: "For the basis $B = \\{(1, 0, 1), (0, 1, 1), (1, 1, 0)\\}$ of $\\mathbb{R}^3$, find $\\mathbf{x}$ when $[\\mathbf{x}]_B = (1, 2, 3)$. Give the answer as (x, y, z)."
+            answer: "(4, 5, 3)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "Step 1 (build $P_B$): the columns are the basis vectors $(1, 0, 1)$, $(0, 1, 1)$ and $(1, 1, 0)$. Step 2 (one matrix-vector product by the column rule): $\\mathbf{x} = 1 \\cdot (1, 0, 1) + 2 \\cdot (0, 1, 1) + 3 \\cdot (1, 1, 0)$. Step 3 (combine componentwise): $(1 + 0 + 3,\\ 0 + 2 + 3,\\ 1 + 2 + 0) = (4, 5, 3)$. The answer is (4, 5, 3)."
+          - problem: "With respect to the basis $B = \\{(2, 0), (c, 1)\\}$, a vector satisfies $\\mathbf{x} = (8, 3)$ and $[\\mathbf{x}]_B = (1, 3)$. Find the value of $c$."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (set up the basis-to-standard product): $\\mathbf{x} = P_B[\\mathbf{x}]_B$, so $(8, 3) = 1 \\cdot (2, 0) + 3 \\cdot (c, 1)$. Step 2 (use the first component): $2 + 3c = 8$, so $3c = 6$. Step 3 (solve and check): $c = 2$, and the second component gives $0 + 3 = 3$, which matches. The answer is 2."
+          - problem: "For the basis $B = \\{(1, 1, 0), (0, 1, 1), (1, 0, 1)\\}$ of $\\mathbb{R}^3$, form the matrix $P_B$ whose columns are the basis vectors, so that $\\mathbf{x} = P_B[\\mathbf{x}]_B$. Give the matrix in the [a,b;c,d] style extended to three columns, as [a,b,c;d,e,f;g,h,i]."
+            answer: "[1,0,1;1,1,0;0,1,1]"
+            answer_contract: {"cols": 3, "kind": "matrix", "rows": 3}
+            solution_sketch: "Step 1 (definition of the basis-to-standard matrix): the columns of $P_B$ are the basis vectors in the given order: $(1, 1, 0)$, $(0, 1, 1)$, $(1, 0, 1)$. Step 2 (read the columns row by row): row 1 collects the first entries $(1, 0, 1)$, row 2 the second entries $(1, 1, 0)$, row 3 the third entries $(0, 1, 1)$. The matrix is [1,0,1;1,1,0;0,1,1]."
         constraints: "columns of P_B are the basis vectors; one matrix-vector product"
       - id: kp2
         name: Standard-to-basis via the inverse
@@ -449,10 +561,26 @@ topics:
           - problem: '$B = \{(1, 1), (1, -1)\}$ and $C = \{(1, 0), (1, 1)\}$. If $[\mathbf{x}]_B = (1, 2)$, find $[\mathbf{x}]_C$.'
             answer: "(4, -1)"
             solution_sketch: 'First $\mathbf{x} = 1(1,1) + 2(1,-1) = (3, -1)$; then in $C$: $c_2 = -1$ (second component) and $c_1 = 3 - (-1) = 4$. Check: $4(1,0) - (1,1) = (3, -1)$.'
-          - problem: 'In general, the matrix converting $[\mathbf{x}]_B$ to $[\mathbf{x}]_C$ is...'
-            answer: '$P_C^{-1}P_B$'
-            answer_contract: {kind: none}
-            solution_sketch: 'Go through standard coordinates: $\mathbf{x} = P_B[\mathbf{x}]_B$, then $[\mathbf{x}]_C = P_C^{-1}\mathbf{x}$.'
+          - problem: "Let B = {(1, 1), (1, -1)} and C = {(1, 2), (1, 3)}. If [x]_B = (2, 1), find [x]_C. Give the answer as (x, y)."
+            answer: "(8, -5)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Step 1: route through standard coordinates. Compute x = P_B [x]_B = 2(1, 1) + 1(1, -1) = (3, 1). Step 2: solve in basis C. Write x = a(1, 2) + b(1, 3), so a + b = 3 and 2a + 3b = 1. Step 3: subtract twice the first equation from the second to get b = -5, then a = 8. The answer is (8, -5)."
+          - problem: "Let B = {(1, 1), (1, -1)} and C = {(1, 2), (1, 3)}. If [x]_C = (2, 1), find [x]_B. Give the answer as (x, y)."
+            answer: "(5, -2)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Step 1: route through standard coordinates. Compute x = 2(1, 2) + 1(1, 3) = (3, 7). Step 2: solve in basis B. Write x = a(1, 1) + b(1, -1), so a + b = 3 and a - b = 7. Step 3: add the equations to get 2a = 10, so a = 5, and then b = -2. The answer is (5, -2)."
+          - problem: "Let B = {(1, 1), (1, -1)} and C = {(1, 2), (1, 3)}. Give the matrix P that converts [x]_B to [x]_C as [a,b;c,d]."
+            answer: "[2,4;-1,-3]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "Step 1: the change-of-basis matrix is P = P_C^{-1} P_B. Step 2: P_B has columns (1, 1) and (1, -1), so P_B = [1,1;1,-1]. P_C has columns (1, 2) and (1, 3), so P_C = [1,1;2,3] and P_C^{-1} = [3,-1;-2,1]. Step 3: multiply P_C^{-1} P_B = [3,-1;-2,1] [1,1;1,-1] = [2,4;-1,-3]. The answer is [2,4;-1,-3]."
+          - problem: "Let B = {(1, 1, 0), (0, 1, 1), (1, 0, 0)} and C = {(1, 0, 0), (1, 1, 0), (1, 1, 1)}. If [x]_B = (1, 2, 3), find [x]_C. Give the answer as (x, y, z)."
+            answer: "(1, 1, 2)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "Step 1: route through standard coordinates. Compute x = P_B [x]_B = 1(1, 1, 0) + 2(0, 1, 1) + 3(1, 0, 0) = (4, 3, 2). Step 2: solve in basis C. Write x = a(1, 0, 0) + b(1, 1, 0) + c(1, 1, 1) = (a+b+c, b+c, c). Step 3: match components: c = 2, b + c = 3 so b = 1, and a + b + c = 4 so a = 1. The answer is (1, 1, 2)."
+          - problem: "Let B = {(1, 0), (2, 1)} and C = {(1, 1), (1, 2)}. If [x]_B = (2, 1), find [x]_C. Give the answer as (x, y)."
+            answer: "(7, -3)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Step 1: route through standard coordinates. Compute x = P_B [x]_B = 2(1, 0) + 1(2, 1) = (4, 1). Step 2: solve in basis C. Write x = a(1, 1) + b(1, 2), so a + b = 4 and a + 2b = 1. Step 3: subtract the first equation from the second to get b = -3, then a = 7. The answer is (7, -3)."
         constraints: "route through standard coordinates; all coordinates small integers"
     diagnostic_exemplar:
       problem: '$B = \{(1, 1), (1, -1)\}$ and $C = \{(1, 0), (1, 1)\}$. If $[\mathbf{x}]_B = (3, 1)$, find $[\mathbf{x}]_C$.'
@@ -505,6 +633,22 @@ topics:
           - problem: 'What is the rank of $A = \begin{pmatrix}1&2\\2&4\end{pmatrix}$?'
             answer: "1"
             solution_sketch: 'One pivot after row reduction; rank = dimension of the column space.'
+          - problem: "Compute the rank of A = [[2,4,6],[1,2,5]]."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: Row-reduce A = [[2,4,6],[1,2,5]] by dividing row 1 by 2 to get [1,2,3] and replacing row 2 with row 2 minus row 1, giving [0,0,2]. Step 2: The pivots lie in columns 1 and 3, so there are two pivot columns. The rank is the number of pivot columns. The rank is 2."
+          - problem: "Find the pivot columns of A = [[1,3,2],[2,6,5]] as a comma-separated list of column numbers."
+            answer: "1, 3"
+            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
+            solution_sketch: "Step 1: Row-reduce A = [[1,3,2],[2,6,5]] by replacing row 2 with row 2 minus twice row 1, obtaining [0,0,1]. Step 2: The pivot positions are in column 1 of the first row and column 3 of the second row. The pivot columns are 1, 3."
+          - problem: "Find a basis for the column space of A = [[1,2,4],[2,5,7]] using the original pivot columns, and give the answer as [a,b;c,d]."
+            answer: "[1,2;2,5]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "Step 1: Row-reduce A = [[1,2,4],[2,5,7]] by replacing row 2 with row 2 minus twice row 1, obtaining [0,1,-1]. Step 2: The pivot columns are 1 and 2, so the original columns (1,2) and (2,5) form a basis. Step 3: Put these original columns side by side as the matrix [1,2;2,5]. The matrix is [1,2;2,5]."
+          - problem: "Let A = [[1,2,3],[2,4,7]] and b = (5,9). Decide whether b is in the column space of A, and give the rank of A."
+            answer: "verdict = in; rank = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["in"], ["out"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "rank"}]}
+            solution_sketch: "Step 1: For A = [[1,2,3],[2,4,7]] and b = (5,9), the columns (1,2) and (3,7) are independent and form a basis for the column space. Step 2: Write b as 8(1,2) - 1(3,7), so b is in the column space. Step 3: The rank is the number of the two basis columns, so rank = 2. The wrong option out would mean b is not in the column space, but the explicit combination shows it is. The answer is verdict = in; rank = 2."
         constraints: "use original columns (not reduced ones) for the basis; rank at most 2"
       - id: kp3
         name: The rank-nullity theorem
@@ -516,6 +660,22 @@ topics:
           - problem: '$A$ is $4 \times 4$ and $A\mathbf{x} = \mathbf{0}$ has only the trivial solution. What is the rank of $A$?'
             answer: "4"
             solution_sketch: 'Nullity $0$, so rank $= 4 - 0 = 4$.'
+          - problem: "$A$ is a $2 \\times 5$ matrix with nullity $4$. Find $\\operatorname{rank}(A)$."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The rank-nullity theorem states that $\\operatorname{rank}(A) + \\operatorname{nullity}(A)$ equals the number of columns of $A$, which is $5$ here. Substituting the given nullity gives $\\operatorname{rank}(A) + 4 = 5$. Therefore the rank of A is 1."
+          - problem: "A linear transformation $T: \\mathbb{R}^5 \\to \\mathbb{R}^3$ has a kernel of dimension $3$. Find the rank of $T$."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "For the matrix of $T$, the domain is $\\mathbb{R}^5$, so the rank-nullity theorem gives rank plus nullity equal to $5$. The kernel has dimension $3$, so $\\operatorname{rank}(T) = 5 - 3 = 2$. The rank of T is 2."
+          - problem: "A homogeneous system of linear equations in $5$ unknowns has a coefficient matrix of rank $3$. How many free variables are in the general solution?"
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "By the rank-nullity theorem, the nullity equals the number of unknowns minus the rank: $5 - 3 = 2$. The nullity of the coefficient matrix counts the free variables in the general solution. The general solution has 2 free variables."
+          - problem: "The null space of a $5 \\times 5$ matrix $A$ is a line through the origin. Find $\\operatorname{rank}(A)$."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "A line through the origin is a one-dimensional subspace, so the nullity of $A$ is $1$. The rank-nullity theorem gives $\\operatorname{rank}(A) + 1 = 5$, since $A$ has $5$ columns. Therefore rank(A) = 4."
         constraints: "sizes up to 5 columns; ask for rank or nullity, given the other"
     diagnostic_exemplar:
       problem: 'For $A = \begin{pmatrix}1&2&3\\2&4&8\end{pmatrix}$, find the rank, a basis for the null space, and check the rank-nullity theorem.'
@@ -642,6 +802,18 @@ topics:
           - problem: 'Find the standard matrix of the reflection of $\mathbb{R}^2$ across the $x$-axis.'
             answer: "[1,0;0,-1]"
             answer_contract: {"cols":2,"kind":"matrix","rows":2}
+          - problem: "Find the standard matrix of the rotation of $\\mathbb{R}^2$ by $180^\\circ$ counterclockwise. Give the matrix as [a,b;c,d]."
+            answer: "[-1,0;0,-1]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "A rotation by $180^\\circ$ sends $\\mathbf{e}_1 = (1,0)$ to $(-1,0)$ and $\\mathbf{e}_2 = (0,1)$ to $(0,-1)$, so these images are the columns. The first column is $(-1,0)$ and the second is $(0,-1)$. The standard matrix is [-1,0;0,-1]."
+          - problem: "Find the standard matrix of the reflection of $\\mathbb{R}^2$ across the $y$-axis. Give the matrix as [a,b;c,d]."
+            answer: "[-1,0;0,1]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "Reflecting across the $y$-axis flips the sign of the $x$-coordinate and keeps the $y$-coordinate. So $\\mathbf{e}_1 = (1,0)$ maps to $(-1,0)$ and $\\mathbf{e}_2 = (0,1)$ maps to $(0,1)$; these are the columns. The standard matrix is [-1,0;0,1]."
+          - problem: "$T: \\mathbb{R}^2 \\to \\mathbb{R}^3$ is linear with $T(\\mathbf{e}_1) = (1, 2, 3)$ and $T(\\mathbf{e}_2) = (-2, 0, 5)$. Find the standard matrix of $T$. Give the matrix as [a,b;c,d]."
+            answer: "[1,-2;2,0;3,5]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 3}
+            solution_sketch: "The standard matrix has the images of the standard basis vectors as its columns. Column 1 is $T(\\mathbf{e}_1) = (1, 2, 3)$ and column 2 is $T(\\mathbf{e}_2) = (-2, 0, 5)$, giving a 3 by 2 matrix. The standard matrix is [1,-2;2,0;3,5]."
         constraints: "images of e1, e2 given, or standard geometric maps (rotations by multiples of 90 degrees, axis reflections, scalings)"
       - id: kp3
         name: Composition as matrix multiplication

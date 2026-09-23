@@ -664,14 +664,30 @@ topics:
         name: Eigenpairs one eigenvalue at a time
         key_prerequisites: [characteristic-polynomial, solution-sets-free-variables]
         exemplars:
-          - problem: '$A = \begin{pmatrix}5&-2\\1&2\end{pmatrix}$ has eigenvalues $3$ and $4$. Find an eigenvector for each.'
-            answer: "lambda = 3: (1, 1); lambda = 4: (2, 1) (each any nonzero multiple)"
-            answer_contract: {kind: none}
-            solution_sketch: '$A - 3I$ gives $2x - 2y = 0$, so $(1,1)$; $A - 4I$ gives $x - 2y = 0$, so $(2,1)$. Check: $A(1,1) = (3,3)$, $A(2,1) = (8,4)$.'
-          - problem: '$\lambda = 3$ is an eigenvalue of $A = \begin{pmatrix}2&1\\1&2\end{pmatrix}$. Find an eigenvector, and verify with $A\mathbf{v} = 3\mathbf{v}$.'
-            answer: "(1, 1) (any nonzero multiple); Av = (3, 3) = 3v"
-            answer_contract: {kind: none}
-            solution_sketch: '$A - 3I = \begin{pmatrix}-1&1\\1&-1\end{pmatrix}$; solve $x = y$.'
+          - problem: "Let $A = \\begin{pmatrix}2&2\\\\1&3\\end{pmatrix}$ have eigenvalue $\\lambda = 1$. Find an eigenvector whose second entry is 1, and give the answer as (a, b)."
+            answer: "(-2, 1)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Step 1: form the shifted matrix A - 1I = [1,2;1,2] and set (A - I)v = 0. Step 2: solve the homogeneous system by a free variable: both rows say x + 2y = 0, so x = -2y with y free. Step 3: fix the scale by the second entry y = 1, giving x = -2. Check with A(-2, 1) = (-4+2, -2+3) = (-2, 1) = 1 * (-2, 1), so the eigenvector is (-2, 1)."
+          - problem: "$\\lambda = 2$ is an eigenvalue of $A = \\begin{pmatrix}4&1\\\\2&3\\end{pmatrix}$. Find an eigenvector whose first entry is 1, and give the answer as (a, b)."
+            answer: "(1, -2)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Step 1: form A - 2I = [2,1;2,1] and set (A - 2I)v = 0. Step 2: solve the homogeneous system: both rows give 2x + y = 0, so y = -2x with x free. Step 3: fix the scale by the first entry x = 1, so y = -2. Verify with A(1, -2) = (4-2, 2-6) = (2, -4) = 2(1, -2), so the eigenvector is (1, -2)."
+          - problem: "$A = \\begin{pmatrix}2&0&0\\\\0&3&1\\\\0&1&3\\end{pmatrix}$ has eigenvalues $2$ and $4$. Find an eigenvector for $\\lambda = 4$ whose second entry is 1, and give the answer as (a, b, c)."
+            answer: "(0, 1, 1)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "Step 1: form A - 4I = [-2,0,0;0,-1,1;0,1,-1] and set (A - 4I)v = 0. Step 2: solve the homogeneous system: the first row gives x = 0, and the second row gives y = z, so z is the free variable. Step 3: fix the scale by the second entry y = 1, giving z = 1. Verify: A(0, 1, 1) = (0, 3+1, 1+3) = (0, 4, 4) = 4(0, 1, 1), so the eigenvector is (0, 1, 1)."
+          - problem: "$A = \\begin{pmatrix}3&1\\\\0&2\\end{pmatrix}$ is upper triangular, so its eigenvalues are the diagonal entries $3$ and $2$. Find an eigenvector for $\\lambda = 3$ whose first entry is 1, and give the answer as (a, b)."
+            answer: "(1, 0)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Step 1: read the eigenvalues from the diagonal of the triangular matrix, 3 and 2, and take lambda = 3. Step 2: form A - 3I = [0,1;0,-1] and solve (A - 3I)v = 0: both rows give y = 0, so x is the free variable. Step 3: fix the scale by the first entry x = 1, giving y = 0. Check A(1, 0) = (3, 0) = 3(1, 0), so the eigenvector is (1, 0)."
+          - problem: "A Markov matrix $A = \\begin{pmatrix}1/2&1/4\\\\1/2&3/4\\end{pmatrix}$ has eigenvalue $1$, and its eigenvector is the steady state of the chain. Find the steady-state eigenvector whose first entry is 1, and give the answer as (a, b)."
+            answer: "(1, 2)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Step 1: use the eigenvalue 1 of the Markov matrix and form A - I = [-1/2,1/4;1/2,-1/4]. Step 2: solve the homogeneous system: each row gives -2x + y = 0, so y = 2x with x free. Step 3: fix the scale by the first entry x = 1, giving y = 2. Verify: A(1, 2) = (1/2 + 1/2, 1/2 + 3/2) = (1, 2) = 1(1, 2), so the steady-state eigenvector is (1, 2)."
+          - problem: "$\\lambda = 4$ is an eigenvalue of the symmetric matrix $A = \\begin{pmatrix}3&-1\\\\-1&3\\end{pmatrix}$. Find an eigenvector whose second entry is 1, and give the answer as (a, b)."
+            answer: "(-1, 1)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Step 1: form A - 4I = [-1,-1;-1,-1] and set (A - 4I)v = 0. Step 2: solve the homogeneous system: the row gives x + y = 0, so x = -y with y free. Step 3: fix the scale by the second entry y = 1, giving x = -1. Check A(-1, 1) = (-3-1, 1+3) = (-4, 4) = 4(-1, 1), so the eigenvector is (-1, 1)."
         constraints: "eigenvalues given or trivially found; eigenvector entries in -3..3"
     diagnostic_exemplar:
       problem: '$A = \begin{pmatrix}4&2\\1&3\end{pmatrix}$ has eigenvalues $2$ and $5$. Find an eigenvector for each, and verify one of them with $A\mathbf{v} = \lambda\mathbf{v}$.'
@@ -883,10 +899,26 @@ topics:
           - problem: 'The rotation-scaling matrix $A = \begin{pmatrix}1&-1\\1&1\end{pmatrix}$ has eigenvalues $1 \pm i$. By what factor does $A$ scale lengths?'
             answer: '$\sqrt{2}$'
             solution_sketch: '$A$ has the form $\begin{pmatrix}a&-b\\b&a\end{pmatrix}$, so it is exactly a rotation by $45^\circ$ followed by scaling by $|\lambda| = \sqrt{1^2 + 1^2} = \sqrt{2}$.'
-          - problem: 'A real $2 \times 2$ matrix has eigenvalue $3 + 4i$. What is the other eigenvalue, and what is $|\lambda|$?'
-            answer: '$3 - 4i$; $|\lambda| = 5$'
-            answer_contract: {kind: none}
-            solution_sketch: 'Complex eigenvalues of real matrices come in conjugate pairs; $|3 + 4i| = \sqrt{9 + 16} = 5$.'
+          - problem: "A real $2 \\times 2$ matrix has eigenvalue $3 + 4i$, and the eigenvalues of a real matrix form a conjugate pair. Find the other eigenvalue and the modulus of the eigenvalues."
+            answer: "conjugate = 3-4i; modulus = 5"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "conjugate"}, {"contract": {"kind": "exact"}, "name": "modulus"}]}
+            solution_sketch: "Step 1 (conjugate-pair rule): complex eigenvalues of a real matrix come in conjugate pairs, so the partner of $3 + 4i$ is $3 - 4i$. Step 2 (modulus formula): $|3 + 4i| = \\sqrt{3^2 + 4^2} = \\sqrt{25} = 5$. Step 3 (conclusion): conjugate = 3-4i; modulus = 5."
+          - problem: "The matrix $A = \\begin{pmatrix}0 & -2\\\\ 2 & 0\\end{pmatrix}$ has the rotation-scaling form $\\begin{pmatrix}a & -b\\\\ b & a\\end{pmatrix}$, so its eigenvalues are the conjugate pair $a \\pm bi$. By what factor does $A$ scale lengths?"
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (rotation-scaling form): $a = 0$ and $b = 2$, so the eigenvalues are the conjugate pair $\\pm 2i$. Step 2 (modulus formula): $|\\lambda| = \\sqrt{0^2 + 2^2} = 2$. Step 3 (scaling interpretation): since $A$ is literally of the form $\\begin{pmatrix}a & -b\\\\ b & a\\end{pmatrix}$, it scales lengths by $|\\lambda|$. The factor is 2."
+          - problem: "A real $2 \\times 2$ matrix has characteristic polynomial $\\lambda^2 + 6\\lambda + 25$, and its eigenvalues are a conjugate pair. Find the eigenvalue with negative imaginary part and the modulus of the eigenvalues."
+            answer: "eig = -3-4i; modulus = 5"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "eig"}, {"contract": {"kind": "exact"}, "name": "modulus"}]}
+            solution_sketch: "Step 1 (quadratic formula): solve $\\lambda^2 + 6\\lambda + 25 = 0$, so $\\lambda = (-6 \\pm \\sqrt{36 - 100})/2 = -3 \\pm 4i$. Step 2 (conjugate-pair rule): the eigenvalues are the conjugate pair $-3 + 4i$ and $-3 - 4i$; the one with negative imaginary part is $-3 - 4i$. Step 3 (modulus formula): $|-3 - 4i| = \\sqrt{9 + 16} = 5$. So eig = -3-4i; modulus = 5."
+          - problem: "The matrix $A = \\begin{pmatrix}4 & -b\\\\ b & 4\\end{pmatrix}$ has the rotation-scaling form, so its eigenvalues are a conjugate pair and $A$ scales every length by the factor $5$. Find $|b|$."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (rotation-scaling form): with $a = 4$, the length scaling factor is $|\\lambda| = \\sqrt{4^2 + b^2}$. Step 2 (equation): set $\\sqrt{16 + b^2} = 5$ and square both sides: $16 + b^2 = 25$. Step 3 (solve): $b^2 = 9$, so $|b| = 3$. The value of $|b|$ is 3."
+          - problem: "The matrix $A = \\begin{pmatrix}1 & -2\\\\ 2 & 1\\end{pmatrix}$ has the rotation-scaling form and its eigenvalues are the conjugate pair $1 \\pm 2i$, so each length is scaled by $|\\lambda| = \\sqrt{5}$. By what factor does $A$ scale areas?"
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (length scaling): since $A$ is literally of the rotation-scaling form, it scales every length by $|\\lambda| = \\sqrt{1^2 + 2^2} = \\sqrt{5}$. Step 2 (area rule): a region of area $S$ is sent to a region of area $|\\lambda|^2 S$, because area scales by the square of the length factor. Step 3 (compute): $(\\sqrt{5})^2 = 5$. The area factor is 5."
         constraints: "scaling-factor questions ONLY for matrices literally of the form [[a,-b],[b,a]] (a general real matrix with eigenvalues a +- bi is merely SIMILAR to that map, so it need not scale lengths by |lambda|); moduli are clean: sqrt(2), 2, 5, sqrt(5); always note the conjugate pair"
       - id: kp3
         name: Complex eigenvectors
@@ -978,14 +1010,30 @@ topics:
         name: Ruling out similarity
         key_prerequisites: [eigenvalues-eigenvectors, determinant-properties-cramers-rule]
         exemplars:
-          - problem: 'Can $\begin{pmatrix}2&0\\0&3\end{pmatrix}$ be similar to $\begin{pmatrix}1&0\\0&6\end{pmatrix}$?'
-            answer: "No"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: 'Both have determinant $6$, but the traces differ ($5$ vs $7$), and trace is a similarity invariant.'
-          - problem: 'Two matrices have the same trace $4$ but determinants $3$ and $4$. Can they be similar?'
-            answer: "No"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: 'Similar matrices must agree on the determinant.'
+          - problem: "Let A = [2,0;0,3] and B = [1,0;0,6]. A nonzero gap in any similarity invariant rules out similarity. Answer yes or no: state whether the matrices can be similar, and give the absolute difference of their traces."
+            answer: "verdict = no; tracegap = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "tracegap"}]}
+            solution_sketch: "Step 1: the trace of A = [2,0;0,3] is 2 + 3 = 5. Step 2: the trace of B = [1,0;0,6] is 1 + 6 = 7. Step 3: the trace is unchanged under similarity, so the gap 7 - 5 = 2 rules out similarity; the option yes is wrong because it ignores the trace mismatch. The answer is verdict = no; tracegap = 2."
+          - problem: "Two 2x2 matrices have the same trace 4, but their determinants are 3 and 4. The trace alone cannot decide here. Answer yes or no: state whether the matrices can be similar, and give the absolute difference of their determinants."
+            answer: "verdict = no; detgap = 1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "detgap"}]}
+            solution_sketch: "Step 1: the traces agree, both equal to 4, so the trace gives no verdict. Step 2: the determinants are 3 and 4. Step 3: the determinant is a similarity invariant, so the gap 4 - 3 = 1 rules out similarity; the option yes is wrong because it checks only the matching trace. The answer is verdict = no; detgap = 1."
+          - problem: "Let A = [2,1;1,3] and B = [2,0;0,4]. Similar matrices must share every similarity invariant. Answer yes or no: state whether the matrices can be similar, and give the absolute difference of their determinants."
+            answer: "verdict = no; detgap = 3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "detgap"}]}
+            solution_sketch: "Step 1: det(A) = 2*3 - 1*1 = 5. Step 2: det(B) = 2*4 - 0*0 = 8. Step 3: the determinant is unchanged under similarity, so the gap 8 - 5 = 3 rules out similarity; the option yes is wrong because it ignores the determinant mismatch. The answer is verdict = no; detgap = 3."
+          - problem: "Let A = [4,1;2,3] and B = [6,0;0,k]. If A and B were similar, their traces would agree. Find the value of k that the traces require, answer yes or no whether the matrices can then be similar, and give the absolute difference of their determinants."
+            answer: "k = 1; verdict = no; detgap = 4"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "k"}, {"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "detgap"}]}
+            solution_sketch: "Step 1: trace(A) = 4 + 3 = 7, and the trace condition on B = [6,0;0,k] gives 6 + k = 7, so k = 1. Step 2: with k = 1, det(B) = 6, while det(A) = 4*3 - 1*2 = 10. Step 3: the determinant is a similarity invariant, so the gap 10 - 6 = 4 rules out similarity; the option yes is wrong because a matching trace alone does not force similarity. The answer is k = 1; verdict = no; detgap = 4."
+          - problem: "Let A = [2,1;0,6] and B = [3,1;0,4]; the eigenvalues of each upper triangular matrix are its diagonal entries. A mismatch between eigenvalue sets rules out similarity. Find the absolute difference of the larger eigenvalues of A and B."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: A is upper triangular, so its eigenvalues are 2 and 6, and its larger eigenvalue is 6. Step 2: B is upper triangular, so its eigenvalues are 3 and 4, and its larger eigenvalue is 4. Step 3: eigenvalues are similarity invariants, and the gap 6 - 4 = 2 rules out similarity. The answer is 2."
+          - problem: "Matrix A has eigenvalues 2 and 5, and matrix B has eigenvalues 1 and 9. The determinant of a matrix equals the product of its eigenvalues and is a similarity invariant. Find the absolute difference of the determinants of A and B."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: the determinant of A is the product of its eigenvalues, 2 * 5 = 10. Step 2: the determinant of B is the product of its eigenvalues, 1 * 9 = 9. Step 3: the determinant is a similarity invariant, and the gap 10 - 9 = 1 rules out similarity. The answer is 1."
         constraints: "decide via a mismatched invariant (trace, determinant, or eigenvalues)"
     diagnostic_exemplar:
       problem: 'With $P = \begin{pmatrix}1&1\\0&1\end{pmatrix}$ and $A = \begin{pmatrix}3&1\\0&5\end{pmatrix}$, compute $B = P^{-1}AP$. Can $B$ be similar to $\begin{pmatrix}2&0\\0&6\end{pmatrix}$?'
@@ -1125,10 +1173,26 @@ topics:
             answer: "[2,1;1,2]"
             answer_contract: {"cols":2,"kind":"matrix","rows":2}
             solution_sketch: '$P^{-1} = \frac{1}{2}\begin{pmatrix}1&1\\1&-1\end{pmatrix}$; $PD = \begin{pmatrix}3&1\\3&-1\end{pmatrix}$, and $PDP^{-1} = \begin{pmatrix}2&1\\1&2\end{pmatrix}$.'
-          - problem: 'A cheaper check of $A = PDP^{-1}$ avoids computing $P^{-1}$. Which identity do you verify instead, and what else must you confirm?'
-            answer: "AP = PD, and P is invertible"
-            answer_contract: {kind: none}
-            solution_sketch: 'Multiply on the right by $P$: column by column this says $A\mathbf{v}_i = \lambda_i\mathbf{v}_i$. On its own $AP = PD$ is not enough — $P = 0$ satisfies it — so you also need $P$ invertible (independent eigenvector columns).'
+          - problem: "Check the diagonalization P = [2,1;1,1], D = [4,0;0,1] by computing P D P^{-1}. Give the matrix as [a,b;c,d]."
+            answer: "[7,-6;3,-2]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "Compute the inverse of P first: det(P) = 1, so P^{-1} = [1,-1;-1,2]. Multiply P by D to get [8,1;4,1]. Then multiply by P^{-1}: [8,1;4,1] [1,-1;-1,2] = [7,-6;3,-2]. The reassembled matrix is [7,-6;3,-2]."
+          - problem: "Check the diagonalization P = [1,2;0,1], D = [5,0;0,2] by computing P D P^{-1}. Give the matrix as [a,b;c,d]."
+            answer: "[5,-6;0,2]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "Since P is triangular, det(P) = 1 and P^{-1} = [1,-2;0,1]. Multiply P by D to get [5,4;0,2]. Then multiply by P^{-1}: [5,4;0,2] [1,-2;0,1] = [5,-6;0,2]. The reassembled matrix is [5,-6;0,2]."
+          - problem: "A diagonalization A = P D P^{-1} can be checked without computing P^{-1}. Which condition is equivalent to A = P D P^{-1} and also rules out P = 0? Select the correct condition."
+            answer: "AP = PD and P invertible"
+            answer_contract: {"kind": "label", "options": [["AP = PD and P invertible"], ["AP = PD and P has a zero column"], ["PA = DP and P is invertible"], ["PDP = A and P has no inverse"]]}
+            solution_sketch: "Multiply A = P D P^{-1} on the right by P to get A P = P D. This is the reassembly check. The option AP = PD and P has a zero column is wrong because a zero column would make P singular, and the condition needed is that P is invertible. The option PA = DP and P is invertible reverses the order of the factors and is false in general. The option PDP = A and P has no inverse places the factors on the wrong sides and concedes that P is not invertible. The correct condition is AP = PD and P invertible."
+          - problem: "Reassemble the matrix from P = [3,1;1,1] and D = [4,0;0,2] by computing P D P^{-1}. Give the matrix as [a,b;c,d]."
+            answer: "[5,-3;1,1]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "Compute P^{-1}: det(P) = 2, so P^{-1} = [1/2,-1/2;-1/2,3/2]. Multiply P by D to get [12,2;4,2]. Then multiply by P^{-1}: [12,2;4,2] [1/2,-1/2;-1/2,3/2] = [5,-3;1,1]. The reassembled matrix is [5,-3;1,1]."
+          - problem: "Let P = [1,1;2,1] and D = [6,0;0,3]. Find the entry in row 1, column 2 of P D P^{-1}."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Compute the inverse of P: det(P) = -1, so P^{-1} = [-1,1;2,-1]. Multiply P by D to get [6,3;12,3]. Then multiply by P^{-1}: [6,3;12,3] [-1,1;2,-1] = [0,3;-6,9]. The entry in row 1, column 2 is 3."
         constraints: "2x2 with det P = +-2 or +-1 so P^{-1} is quick; always land back on A exactly"
       - id: kp3
         name: Powers via diagonalization
