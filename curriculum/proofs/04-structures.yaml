@@ -20,14 +20,30 @@ topics:
         name: "Closure in number systems"
         key_prerequisites: [functions-formal-definition]
         exemplars:
-          - problem: 'Is $\mathbb{N} = \{0, 1, 2, \dots\}$ closed under subtraction? Is $\mathbb{Z}$?'
-            answer_contract: {kind: none}
-            answer: 'No ($1 - 2 = -1 \notin \mathbb{N}$); yes.'
-            solution_sketch: 'Closure asks whether every output stays in the set: one escaping example refutes it, and differences of integers are always integers.'
-          - problem: 'Is $\mathbb{R}$ closed under division? Is $\mathbb{R} \setminus \{0\}$?'
-            answer_contract: {kind: none}
-            answer: 'Division is not even defined at $0$ on $\mathbb{R}$; on $\mathbb{R} \setminus \{0\}$, yes.'
-            solution_sketch: '$x / 0$ is undefined, so division is not an operation on all of $\mathbb{R}$. A quotient of nonzero reals is a nonzero real, so the punctured set works.'
+          - problem: "For the sets N = {0, 1, 2, ...} and Z = {..., -2, -1, 0, 1, 2, ...}, consider subtraction. How many of these two sets are closed under subtraction? Give the number only."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (definition of closure): a set is closed under an operation when every result of the operation on elements of the set is again in the set. Step 2 (test N): 1 - 2 = -1, and -1 is not in N, so N fails. Step 3 (test Z): the difference of any two integers is an integer, so Z is closed. Exactly one of the two sets is closed, so the answer is 1."
+          - problem: "For the set R of all real numbers and the set R without 0, consider division. How many of these two sets are closed under division? Give the number only."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (definition of closure): a set is closed under division when every quotient of two elements of the set is defined and remains in the set. Step 2 (test R): division by 0 is not defined, so R fails as an operation on the whole set. Step 3 (test R without 0): the quotient of two nonzero reals is a nonzero real, so that set is closed. Exactly one of the two sets is closed, so the answer is 1."
+          - problem: "For N = {0, 1, 2, ...}, Z = {..., -2, -1, 0, 1, 2, ...}, Q = rational numbers, and R = real numbers, consider subtraction. How many of these four sets are closed under subtraction? Give the number only."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (definition of closure): a set is closed under subtraction when every difference of two elements is again in the set. Step 2 (test N): 1 - 2 = -1 is not in N, so N fails. Step 3 (test Z, Q, and R): the difference of two integers is an integer, the difference of two rationals is rational, and the difference of two reals is real, so each of these three sets passes. Three sets are closed, so the answer is 3."
+          - problem: "For the set E of even integers and the set O of odd integers, consider addition. How many of these two sets are closed under addition? Give the number only."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (definition of closure): a set is closed under addition when the sum of any two elements of the set is again in the set. Step 2 (test E): the sum of two even integers is even, since 2a + 2b = 2(a + b), for example 4 + 6 = 10, so E passes. Step 3 (test O): 1 + 1 = 2, and 2 is even, not odd, so O fails. Exactly one of the two sets is closed under addition, so the answer is 1."
+          - problem: "For N = {0, 1, 2, ...}, Z = {..., -2, -1, 0, 1, 2, ...}, Q = rational numbers, and R = real numbers, consider addition. How many of these four sets are closed under addition? Give the number only."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (definition of closure): a set is closed under addition when the sum of any two elements is again in the set. Step 2 (test N): the sum of two natural numbers is natural. Step 3 (test Z, Q, and R): the sum of two integers is an integer, the sum of two rationals is rational, and the sum of two reals is real, so all four sets pass. Four sets are closed, so the answer is 4."
+          - problem: "For the set P = {1, 2, 3, ...} of positive integers, consider addition, subtraction, multiplication, and division. How many of these four operations are closed on P? Give the number only."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (definition of closure): an operation is closed on P when every result on elements of P is again in P. Step 2 (test addition and multiplication): the sum of two positive integers is a positive integer, and the product of two positive integers is a positive integer, so both pass. Step 3 (test subtraction and division): 1 - 2 = -1 is not in P, and 1/2 is not in P, so both fail. Two operations pass, so the answer is 2."
         constraints: "test whether a familiar operation keeps its outputs inside a number system"
       - id: kp2
         name: "Closure of finite sets"
@@ -392,12 +408,34 @@ topics:
         name: "Recognizing monoids and non-examples"
         key_prerequisites: [binary-operations]
         exemplars:
-          - problem: 'Is $(\mathbb{Z}, -, 0)$ (integers under subtraction) a monoid? Justify.'
-            answer: 'No; subtraction is not associative.'
-            solution_sketch: '$(a - b) - c = a - b - c$ but $a - (b - c) = a - b + c$; e.g. $(1 - 1) - 1 = -1 \ne 1 = 1 - (1 - 1)$. Associativity fails, so it is not a monoid. $\square$'
-          - problem: 'Is the set of $2 \times 2$ real matrices under multiplication, with the identity matrix, a monoid?'
-            answer: 'Yes.'
-            solution_sketch: 'Multiplication of $2 \times 2$ real matrices is closed and associative, and the identity matrix $I$ satisfies $AI = IA = A$. So it is a monoid (noncommutative). $\square$'
+          - problem: "The integers with the operation a*b = a - b and the element 0 are proposed as a monoid. Take a = 7, b = 4 and c = 2. Give the verdict on the bracketing axiom and the value of a*(b*c) - (a*b)*c."
+            answer: "verdict = fails; diff = 4"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["holds"], ["fails"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "diff"}]}
+            solution_sketch: "Test the bracketing axiom on the triple a = 7, b = 4, c = 2. The first bracketing is (a*b)*c = (7 - 4) - 2 = 3 - 2 = 1, by the definition of the operation. The second bracketing is a*(b*c) = 7 - (4 - 2) = 7 - 2 = 5, by the definition again. The difference is 5 - 1 = 4, and one triple with different bracketings means the axiom fails, so the structure is not a monoid. The answer is verdict = fails; diff = 4."
+          - problem: "The two by two real matrices with the usual multiplication and the identity matrix I are proposed as a monoid. Take A = [[3,1],[2,5]]. Give the verdict on the neutral element axiom and the entry in row 1 column 1 of A*I."
+            answer: "verdict = holds; entry = 3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["holds"], ["fails"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "entry"}]}
+            solution_sketch: "The neutral element axiom asks for I*A = A*I = A for every two by two real matrix A. Compute I*A for A = [[3,1],[2,5]]: multiplying by the identity leaves the matrix unchanged, so I*A = [[3,1],[2,5]]. Its entry in row 1 column 1 is 3. The axiom holds because I fixes every matrix, and matrix multiplication is closed and associative on this set. The answer is verdict = holds; entry = 3."
+          - problem: "On the integers define a*b = a + b + 1. Give the integer k such that a*k = k*a = a for every integer a."
+            answer: "-1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The neutral element k must satisfy a*k = a for every integer a. Substitute the operation: a*k = a + k + 1, so a + k + 1 = a forces k = -1. Check the other side: k*a = -1 + a + 1 = a, so the same value works on both sides. The operation is associative because (a*b)*c = a + b + c + 2 = a*(b*c), so the integers with this operation and k = -1 form a monoid. The answer is -1."
+          - problem: "The integers modulo 7 under multiplication form a monoid with neutral element 1. Give the smallest positive exponent n such that 2^n is congruent to 1 modulo 7."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Compute the powers of 2 modulo 7 in order: 2^1 = 2, 2^2 = 4, and 2^3 = 8, which is 1 modulo 7. The smallest positive exponent that reaches the neutral element 1 is 3, and that exponent is the order of 2 in this monoid. The answer is 3."
+          - problem: "The set {0, 1, 2, 3} with multiplication modulo 6 is proposed as a monoid with neutral element 1. Give the smallest product of two elements of the set, reduced modulo 6, that is not an element of the set."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Check closure by looking at the products of pairs from {0, 1, 2, 3}. Any product with 0 or 1 stays in the set, and 3*3 = 9 reduces to 3 modulo 6, which also stays in the set. The product 2*2 = 4 is not in the set, and no smaller product leaves the set, so 4 is the smallest witness of a closure failure. The answer is 4."
+          - problem: "On the set of positive rational numbers define a*b as the usual product of a and b, divided by 2. The structure with this operation is proposed as a monoid. Give the rational number k such that a*k = k*a = a for every positive rational a."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1, the neutral element axiom: k must satisfy a*k = k*a = a for every element of the set. Step 2, substitution into the definition: a*k is the usual product of a and k divided by 2, and setting this equal to a forces k = 2. Step 3, the other side: k*a is the usual product of 2 and a divided by 2, which is a, so k = 2 works on both sides. Step 4, associativity: (a*b)*c is the product abc divided by 4, which equals a*(b*c), so all axioms hold and the structure with k = 2 is a monoid. The answer is 2."
+          - problem: "Write the full proof: for every set S, the power set of S under union with the empty set as neutral element is a monoid. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Let S be a set and let P(S) be its power set, with the operation of union and the empty set as the candidate neutral element. Closure: if A and B are subsets of S, then every element of A union B lies in S, so A union B is a subset of S and hence lies in P(S). Associativity: an element belongs to (A union B) union C exactly when it belongs to A or to B or to C, and the same description holds for A union (B union C), so the two sets are equal. Neutral element: the empty set is a subset of S, and A union empty = empty union A = A for every subset A of S. All three axioms hold, so the power set of S with union and the empty set is a monoid."
         constraints: "check the axioms; a single failure rules out a monoid"
     diagnostic_exemplar:
       problem: 'Show that the set of functions $X \to X$ under composition, with $\mathrm{id}_X$, is a monoid, and prove that the identity element of any monoid is unique.'

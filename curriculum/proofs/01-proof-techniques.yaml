@@ -564,12 +564,34 @@ topics:
         name: "Cases from sign or absolute value"
         key_prerequisites: [direct-proof]
         exemplars:
-          - problem: 'Prove: for all real $x$, $|x| \ge x$.'
-            answer: 'Case $x \ge 0$: $|x| = x$; case $x < 0$: $|x| = -x > x$.'
-            solution_sketch: 'If $x \ge 0$, then $|x| = x \ge x$. If $x < 0$, then $|x| = -x > 0 > x$. In both cases $|x| \ge x$. $\square$'
-          - problem: 'Prove: for all real $x$, $x \le |x|$.'
-            answer: 'Case $x \ge 0$: $x = |x|$; case $x < 0$: $x < 0 \le |x|$.'
-            solution_sketch: 'If $x \ge 0$, then $|x| = x$, so $x \le |x|$. If $x < 0$, then $x < 0 \le |x|$. In both cases $x \le |x|$. $\square$'
+          - problem: "To prove by cases on the sign that for all real $x$, $|x| \\ge x$, in the case $x < 0$ write $|x|$ as an expression in $x$. Give the expression."
+            answer: "-x"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Split on the sign of x. In the case x < 0, the definition of absolute value gives |x| = -x. This expression is a polynomial in x. The answer is -x."
+          - problem: "To prove by cases on the sign that for all real $x$, $x \\le |x|$, in the case $x < 0$ write $|x| - x$ as a single expression in $x$. Give the expression."
+            answer: "-2x"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Split on the sign of x. In the case x < 0, |x| = -x, so |x| - x = -x - x. Combining like terms gives -2x, which is positive in this case. The answer is -2x."
+          - problem: "The claim 'for every integer $n$, $|n| = n$' is false. Find the smallest integer $n$ for which it fails."
+            answer: "-1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Test integers from 0 downward. n = 0 gives |0| = 0, so the claim holds there. n = -1 gives |-1| = 1, which is not -1, so the claim fails. The answer is -1."
+          - problem: "To prove by cases on the sign that for all real $x$, $|x| - x$ is never negative, in the case $x \\ge 0$ write $|x| - x$ as a single simplified expression in $x$. Give the expression."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Split on the sign of x. In the case x >= 0, the definition of absolute value gives |x| = x. Substitute: |x| - x = x - x. Combine like terms to get the constant 0, which is never negative, so the claim holds in this case. The answer is 0."
+          - problem: "In the proof by cases of $|x| \\ge x$ for the nonnegative case, the line after $x \\ge 0$ is missing. Select the missing line."
+            answer: "|x| = x"
+            answer_contract: {"kind": "label", "options": [["|x| = x"], ["|x| = -x"], ["|x| > x"], ["|x| < x"]]}
+            solution_sketch: "In the nonnegative case, the definition of absolute value gives |x| = x, so the claim holds with equality. Option |x| = -x belongs to the negative case. Option |x| > x adds a strict inequality that fails at zero. Option |x| < x contradicts the claim. The answer is |x| = x."
+          - problem: "In the proof by cases that $|x| + x$ is never negative, the negative case uses $|x| = -x$. Which case assumption does the step $|x| + x = -x + x$ use?"
+            answer: "x < 0"
+            answer_contract: {"kind": "label", "options": [["x < 0"], ["x >= 0"], ["x = 0"], ["x > 0"]]}
+            solution_sketch: "The step replaces |x| by -x, which is the definition of absolute value only when x < 0. Option x >= 0 and option x > 0 give |x| = x, not -x. Option x = 0 also gives |x| = x, so the step is not justified there either. The answer is x < 0."
+          - problem: "Write the full proof: for all real $x$, $|x| + x \\ge 0$. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1: split on the sign of x. Step 2: if x >= 0, then |x| = x, so |x| + x = 2x, and 2x >= 0. Step 3: if x < 0, then |x| = -x, so |x| + x = -x + x = 0, and 0 >= 0. Step 4: the two cases cover every real x, so in every case |x| + x >= 0. This completes the proof."
         constraints: "split on the sign; cover $x \\ge 0$ and $x < 0$"
       - id: kp3
         name: "Cases modulo n"
@@ -1767,12 +1789,34 @@ topics:
         name: "Bernoulli and harmonic bounds"
         key_prerequisites: [induction-template]
         exemplars:
-          - problem: 'Prove Bernoulli''s inequality: for every real $x \ge -1$ and every integer $n \ge 1$, $(1 + x)^n \ge 1 + nx$.'
-            answer: 'Base $n = 1$: equality. Step: $(1+x)^{n+1} \ge (1 + nx)(1 + x) = 1 + (n+1)x + nx^2 \ge 1 + (n+1)x$.'
-            solution_sketch: 'Base: $(1+x)^1 = 1 + x$. Step: multiply the hypothesis by $1 + x \ge 0$: $(1+x)^{n+1} \ge (1 + nx)(1 + x) = 1 + (n+1)x + nx^2$, and $nx^2 \ge 0$. $\square$'
-          - problem: 'Prove: for all $n \ge 0$, $\displaystyle\sum_{i=1}^{2^n} \frac{1}{i} \ge 1 + \frac{n}{2}$.'
-            answer: 'Base $n = 0$: $1 \ge 1$. Step: the $2^n$ new terms are each at least $\frac{1}{2^{n+1}}$, contributing at least $\frac{1}{2}$.'
-            solution_sketch: 'Base: $n = 0$ gives $1 \ge 1$. Step: from $2^n + 1$ to $2^{n+1}$ there are $2^n$ terms, each $\ge \frac{1}{2^{n+1}}$, so the sum grows by at least $2^n \cdot \frac{1}{2^{n+1}} = \frac{1}{2}$, giving $1 + \frac{n}{2} + \frac{1}{2} = 1 + \frac{n+1}{2}$. $\square$'
+          - problem: "In the inductive step for Bernoulli's inequality, expand the product (1 + kx)(1 + x). For k = 4 and x = 2, find the value of the extra term kx^2 that appears."
+            answer: "16"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The product is (1 + kx)(1 + x) = 1 + (k+1)x + kx^2. Substitute k = 4 and x = 2: kx^2 = 4 * 2^2 = 16. The nonnegative extra term is 16."
+          - problem: "In the harmonic block proof, the new terms from 2^k + 1 to 2^{k+1} are each at least 1/2^{k+1}. Give the least amount by which the sum increases."
+            answer: "1/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The block from 2^k + 1 to 2^{k+1} has 2^k new terms. Each new term is at least 1/2^{k+1}, so the total added amount is at least 2^k * 1/2^{k+1} = 1/2. The least increase is 1/2."
+          - problem: "In Bernoulli's inequality proof, after using the hypothesis, the next line multiplies both sides by a factor. For x = 1/4, give the value of this factor as a fraction."
+            answer: "5/4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The factor is 1 + x. For x = 1/4, the factor is 1 + 1/4 = 5/4. A nonnegative factor keeps the inequality direction. The value is 5/4."
+          - problem: "A student claims that (1 + x)^n >= 1 + nx holds for every real x and every integer n >= 1, and tests the claim with x = -3. Give the smallest n >= 1 for which the claim is false."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Test each case by direct computation: for x = -3 the left side is (-2)^n and the right side is 1 - 3n. Check n = 1: -2 >= -2 holds; n = 2: 4 >= -5 holds; n = 3: -8 >= -8 holds; n = 4: 16 >= -11 holds. Check n = 5: -32 >= -14 fails, so the claim breaks at n = 5. The step of the proof needs the factor 1 + x >= 0, and 1 + (-3) = -2 is negative, so the induction fails for this x. The smallest n for which the claim is false is 5."
+          - problem: "Claim: for all n >= 0, sum_{i=1}^{2^n} 1/i >= 1 + n/2. Step 1: for n = 0, the sum is 1 and the bound is 1. Step 2: assume the claim holds for n. Step 3: the step from 2^n + 1 to 2^{n+1} adds 2^n terms, and each new term is at least 1/2^n. Step 4: the added amount is at least 2^n * 1/2^n = 1, so the bound holds for n + 1. Which step is the first invalid step?"
+            answer: "Step 3"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 is a valid base case, so it is not the first invalid step. Step 2 is the valid induction hypothesis, so it is not the answer. Step 3 is false: each new term is at least 1/2^{n+1}, not 1/2^n. Step 4 uses that false lower bound. The answer is Step 3."
+          - problem: "In the inductive step for Bernoulli's inequality, the product (1 + kx)(1 + x) expands to which line? Select the missing line."
+            answer: "1+(k+1)x+kx^2"
+            answer_contract: {"kind": "label", "options": [["1+(k+1)x+kx^2"], ["1+(k+1)x-kx^2"], ["1+(k+1)x"], ["1+(k+1)x+x^2"]]}
+            solution_sketch: "The product is (1 + kx)(1 + x) = 1 + (k+1)x + kx^2. The option 1+(k+1)x omits the nonnegative term kx^2. The option 1+(k+1)x-kx^2 has the wrong sign on that term. The option 1+(k+1)x+x^2 forgets the factor k. The answer is 1+(k+1)x+kx^2."
+          - problem: "Write the full proof: for all n >= 1, sum_{i=1}^{2^n} 1/i >= 1 + n/2. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Base case: n = 1 gives sum from i=1 to 2 of 1/i = 1 + 1/2 = 3/2, and 1 + 1/2 = 3/2, so the inequality holds. Induction hypothesis: assume sum from i=1 to 2^k of 1/i >= 1 + k/2 for some k >= 1. Step: the sum to 2^{k+1} adds the terms from i = 2^k + 1 to 2^{k+1}. There are 2^k new terms, and each is at least 1/2^{k+1}. Therefore the added amount is at least 2^k * 1/2^{k+1} = 1/2. By the induction hypothesis, the new sum is at least 1 + k/2 + 1/2 = 1 + (k+1)/2. This is the desired bound for k+1. Conclusion: by induction, the inequality holds for all n >= 1."
         constraints: "multiplying inequalities requires a nonnegative factor; block-bounding for harmonic sums"
     diagnostic_exemplar:
       problem: 'Prove by induction: for all $n \ge 1$, $\displaystyle\sum_{i=1}^{n} \frac{1}{i^2} \le 2 - \frac{1}{n}$.'

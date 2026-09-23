@@ -1445,12 +1445,34 @@ topics:
         name: "Proving a relation is an equivalence relation"
         key_prerequisites: [relations-properties]
         exemplars:
-          - problem: 'Prove $a \sim b \iff a - b \in \mathbb{Z}$ is an equivalence relation on $\mathbb{R}$.'
-            answer: 'Reflexive ($0 \in \mathbb{Z}$), symmetric (negation), transitive (sum).'
-            solution_sketch: 'Reflexive: $a - a = 0 \in \mathbb{Z}$. Symmetric: $a - b \in \mathbb{Z} \Rightarrow b - a = -(a - b) \in \mathbb{Z}$. Transitive: $a - b, b - c \in \mathbb{Z} \Rightarrow a - c \in \mathbb{Z}$. $\square$'
-          - problem: 'Prove "$x \sim y \iff x - y \in 2\mathbb{Z}$" (same parity) on $\mathbb{Z}$ is an equivalence relation.'
-            answer: 'Reflexive, symmetric, transitive via even differences.'
-            solution_sketch: 'Reflexive: $x - x = 0 \in 2\mathbb{Z}$. Symmetric: $x - y \in 2\mathbb{Z} \Rightarrow y - x = -(x - y) \in 2\mathbb{Z}$. Transitive: $x - y, y - z \in 2\mathbb{Z} \Rightarrow x - z \in 2\mathbb{Z}$. $\square$'
+          - problem: "On R, define $a \\sim b$ exactly when $a - b$ is an integer. To prove reflexivity, you must show that $a \\sim a$ for every real $a$, that is, that $a - a$ is an integer. Give the value of $a - a$."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Reflexivity asks whether $a \\sim a$ holds for every real $a$. Compute the defining difference: $a - a = 0$. Since $0$ is an integer, $(a,a)$ lies in the relation and reflexivity holds. The answer is 0."
+          - problem: "On R, define $a \\sim b$ exactly when $a - b$ is an integer. To prove symmetry, assume $a \\sim b$, so $a - b = -7$, and show that $b - a$ is also an integer. Give the value of $b - a$."
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Symmetry requires that $a \\sim b$ implies $b \\sim a$. Assume $a - b = -7$. Negate both sides: $b - a = -(a - b) = 7$, and $7$ is an integer. The answer is 7."
+          - problem: "On Z, define $x \\sim y$ exactly when $x - y$ is even. For the transitivity step, assume $x \\sim y$ and $y \\sim z$, say $x - y = 4$ and $y - z = 6$. Give the value of $x - z$, the number that must be even."
+            answer: "10"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Transitivity requires: $x \\sim y$ and $y \\sim z$ imply $x \\sim z$. Assume $x - y = 4$ and $y - z = 6$. Add the two equations: $(x - y) + (y - z) = x - z = 10$, which is even. The answer is 10."
+          - problem: "On Z, define $a \\sim b$ exactly when $a \\cdot b$ is even. A student claims that $\\sim$ is reflexive, so that $a \\sim a$ for every integer $a$. Give the smallest positive integer $a$ for which $a \\sim a$ fails."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Reflexivity would need $a \\cdot a$ to be even for every integer $a$. Test $a = 1$: $1 \\cdot 1 = 1$, which is odd, so $a \\sim a$ already fails at $a = 1$. The answer is 1."
+          - problem: "On Z, define $x \\sim y$ exactly when $x - y$ is even. In the transitivity step, assume $x - y = 2m$ and $y - z = 2k$ with $m = 3$ and $k = 5$. Give the integer $w$ for which $x - z = 2w$."
+            answer: "8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Transitivity requires the difference $x - z$, so add the two assumed equations: $(x - y) + (y - z) = 2m + 2k$, and the middle terms cancel. Factor $2$: $x - z = 2(m + k)$, whose witness is $w = m + k$. Insert $m = 3$ and $k = 5$: $w = 8$. The answer is 8."
+          - problem: "In the proof that the relation $x \\sim y$ on Z, defined by $x - y$ even, is symmetric, one line is missing: assume $x \\sim y$, so $x - y = 2m$ for an integer $m$; then $y - x = \\;?$. Select the line that is true and completes the symmetry argument."
+            answer: "-2m"
+            answer_contract: {"kind": "label", "options": [["-2m"], ["2m"], ["-m"], ["-2k"]]}
+            solution_sketch: "The relation is $x \\sim y$ exactly when $x - y$ is even, and the symmetry step must show $y \\sim x$. From the hypothesis $x - y = 2m$, apply negation: $y - x = -(x - y) = -2m$, which is even because $m$ is an integer, so $y \\sim x$. The option $2m$ is the error of forgetting the negation; the option $-m$ drops the factor $2$; the option $-2k$ names a variable that this step never defines. The answer is -2m."
+          - problem: "Write the full proof: on Z, define $x \\sim y$ exactly when $x + y$ is even. Prove that $\\sim$ is an equivalence relation. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Reflexivity: for any integer $x$, $x + x = 2x$ is even, so $x \\sim x$. Symmetry: assume $x \\sim y$, so $x + y$ is even; then $y + x = x + y$ is even by commutativity, so $y \\sim x$. Transitivity: assume $x \\sim y$ and $y \\sim z$, so $x + y = 2m$ and $y + z = 2k$ for integers $m$ and $k$. Then $x + z = (x + y) + (y + z) - 2y = 2m + 2k - 2y = 2(m + k - y)$, which is even since $m + k - y$ is an integer, so $x \\sim z$. Reflexivity, symmetry and transitivity all hold, so $\\sim$ is an equivalence relation on Z."
         constraints: "prove reflexivity, symmetry, transitivity in turn"
       - id: kp3
         name: "Congruence modulo n"
@@ -2100,14 +2122,30 @@ topics:
         name: "Upper and lower bounds"
         key_prerequisites: [partial-orders]
         exemplars:
-          - problem: 'In $\mathcal{P}(\{a, b, c\})$ under $\subseteq$, find all upper bounds of $\{\{a\}, \{b\}\}$ and the least upper bound.'
-            answer_contract: {kind: none}
-            answer: 'Upper bounds $\{a, b\}$ and $\{a, b, c\}$; least upper bound $\{a, b\}$.'
-            solution_sketch: 'An upper bound must contain both singletons, hence both $a$ and $b$; the smallest such set is $\{a, b\}$ (the union).'
-          - problem: 'In the divisors of $12$ under divisibility, find all lower bounds of $\{4, 6\}$ and the greatest lower bound.'
-            answer_contract: {kind: none}
-            answer: 'Lower bounds $1$ and $2$; greatest lower bound $2$.'
-            solution_sketch: 'A lower bound divides both $4$ and $6$: the common divisors $1, 2$. The greatest is $\gcd(4, 6) = 2$.'
+          - problem: "In P({a, b, c, d}) under the subset ordering, consider the two-element subset {{a}, {c}}. Find how many upper bounds it has, and how many elements its least upper bound has."
+            answer: "count = 4; size = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "count"}, {"contract": {"kind": "exact"}, "name": "size"}]}
+            solution_sketch: "The poset is P({a, b, c, d}) under subset, and the subset is {{a}, {c}}. Step 1 uses the definition of upper bound: an upper bound must contain both {a} and {c}, so it is a superset of {a, c}; these are {a, c}, {a, b, c}, {a, c, d}, and {a, b, c, d}, giving 4 upper bounds. Step 2 uses the definition of least upper bound: the least upper bound is the union {a, c}, the intersection of all upper bounds, which has 2 elements. The answer is count = 4; size = 2."
+          - problem: "In the poset of divisors of 12 ordered by divisibility, consider the two-element subset {4, 6}. Find its greatest lower bound."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The poset is the divisors of 12 under divisibility, and the subset is {4, 6}. Step 1 uses the definition of lower bound: a lower bound must divide both 4 and 6. The common divisors are 1 and 2. Step 2 uses the definition of greatest lower bound: among 1 and 2, the greatest is 2. The greatest lower bound is 2."
+          - problem: "Order the divisors of 18 by divisibility. For the two-element subset {6, 9}, determine its least upper bound."
+            answer: "18"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The poset is the divisors of 18 under divisibility, and the subset is {6, 9}. Step 1 uses the definition of upper bound: an upper bound must be a multiple of both 6 and 9 and must divide 18. The least common multiple is 18, and 18 divides 18. Step 2 uses the definition of least upper bound: the only upper bound is 18. The least upper bound is 18."
+          - problem: "Consider the divisibility poset on the divisors of 24. What is the greatest lower bound of the two-element subset {8, 12}?"
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The poset is the divisors of 24 under divisibility, and the subset is {8, 12}. Step 1 uses the definition of lower bound: a lower bound must divide both 8 and 12. The common divisors are 1, 2, and 4. Step 2 uses the definition of greatest lower bound: the greatest common divisor is 4. The greatest lower bound is 4."
+          - problem: "Let D be the divisors of 20 under divisibility. Find the least upper bound of the two-element subset {4, 10}."
+            answer: "20"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The poset is the divisors of 20 under divisibility, and the subset is {4, 10}. Step 1 uses the definition of upper bound: an upper bound must be a multiple of both 4 and 10 and must divide 20. The least common multiple is 20, and 20 divides 20. Step 2 uses the definition of least upper bound: the only upper bound is 20. The least upper bound is 20."
+          - problem: "In the divisibility poset on the divisors of 36, Find the greatest lower bound of the two-element subset {12, 18}."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The poset is the divisors of 36 under divisibility, and the subset is {12, 18}. Step 1 uses the definition of lower bound: a lower bound must divide both 12 and 18. The common divisors are 1, 2, 3, and 6. Step 2 uses the definition of greatest lower bound: the greatest common divisor is 6. The greatest lower bound is 6."
         constraints: "bounds of two-element subsets; lub/glb are union/intersection or lcm/gcd"
       - id: kp3
         name: "Uniqueness of extremes"
