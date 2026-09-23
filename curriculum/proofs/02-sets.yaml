@@ -709,6 +709,22 @@ topics:
           - problem: 'In a universe of $40$ items, $|A| = 22$, $|B| = 18$, $|A \cap B| = 9$. How many items are in neither set?'
             answer: '$9$'
             solution_sketch: '$|A \cup B| = 22 + 18 - 9 = 31$, so $40 - 31 = 9$ items lie outside both.'
+          - problem: "Suppose $|A \\cup B| = 30$, $|A| = 25$, and $|A \\cap B| = 7$. Find $|B|$."
+            answer: "12"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Inclusion-exclusion states $|A \\cup B| = |A| + |B| - |A \\cap B|$, so $30 = 25 + |B| - 7$. Solving for the missing quantity gives $|B| = 30 - 25 + 7 = 12$. The answer is $12$."
+          - problem: "In a group of 50 people, 28 like tea, 23 like coffee, and 12 like both drinks. How many people like neither drink?"
+            answer: "11"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "By inclusion-exclusion the union is $|T \\cup C| = 28 + 23 - 12 = 39$ people who like at least one drink. The complement gives the rest: $50 - 39 = 11$ people like neither. The answer is $11$."
+          - problem: "In a universe of 35 items, 10 items lie in neither $A$ nor $B$, and $|B| = 16$, $|A \\cap B| = 5$. Find $|A|$."
+            answer: "14"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The complement first: 10 items outside means $|A \\cup B| = 35 - 10 = 25$. Inclusion-exclusion then gives $25 = |A| + 16 - 5$, so $|A| = 25 - 16 + 5 = 14$. The answer is $14$."
+          - problem: "In a class of 40 students, 26 take Spanish, 19 take French, and 8 take both languages. How many students take exactly one of the two languages?"
+            answer: "29"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Inclusion-exclusion gives the union: $|S \\cup F| = 26 + 19 - 8 = 37$ students take at least one language. Exactly one means union minus the overlap: $37 - 8 = 29$. The answer is $29$."
         constraints: "solve $|A \\cup B| = |A| + |B| - |A \\cap B|$ for a missing quantity; may involve the complement"
       - id: kp3
         name: "Three sets"
@@ -720,6 +736,22 @@ topics:
           - problem: 'Among $50$ students: $25$ take $A$, $20$ take $B$, $15$ take $C$, $8$ take $A$ and $B$, $6$ take $A$ and $C$, $5$ take $B$ and $C$, $2$ take all three. How many take none?'
             answer: '$7$'
             solution_sketch: '$|A \cup B \cup C| = 25 + 20 + 15 - 8 - 6 - 5 + 2 = 43$, so $50 - 43 = 7$ take none.'
+          - problem: "Given $|A| = 12$, $|B| = 15$, $|C| = 11$, $|A \\cap B| = 5$, $|A \\cap C| = 7$, $|B \\cap C| = 6$, $|A \\cap B \\cap C| = 2$, find $|A \\cup B \\cup C|$."
+            answer: "22"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: the union of the three sets $A$, $B$, $C$. Step 1: apply the three-set inclusion-exclusion rule, which adds the single-set sizes, subtracts the three pairwise intersections, and adds back the triple intersection. Step 2: compute $12 + 15 + 11 - 5 - 7 - 6 + 2 = 22$. The answer is 22."
+          - problem: "In a class of $40$ students, $18$ join the chess club, $16$ the drama club, and $14$ the debate club; $6$ join chess and drama, $5$ join chess and debate, $4$ join drama and debate, and $3$ join all three. How many students are in at least one club?"
+            answer: "36"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: the union of the three club sets, which is exactly the students in at least one club. Step 1: apply three-set inclusion-exclusion, $|A \\cup B \\cup C| = |A| + |B| + |C| - |A \\cap B| - |A \\cap C| - |B \\cap C| + |A \\cap B \\cap C|$. Step 2: compute $18 + 16 + 14 - 6 - 5 - 4 + 3 = 36$. The answer is 36."
+          - problem: "Given $|A \\cup B \\cup C| = 30$, $|A| = 14$, $|B| = 13$, $|C| = 12$, $|A \\cap B| = 6$, $|A \\cap C| = 5$, $|B \\cap C| = 4$, find $|A \\cap B \\cap C|$."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: the inclusion-exclusion identity with the triple intersection as the unknown $t$. Step 1: write $30 = 14 + 13 + 12 - 6 - 5 - 4 + t$. Step 2: simplify the right side to $24 + t$, so $t = 30 - 24 = 6$. The answer is 6."
+          - problem: "Given $|A \\cup B \\cup C| = 25$, $|A| = 9$, $|C| = 8$, $|A \\cap B| = 3$, $|A \\cap C| = 2$, $|B \\cap C| = 4$, $|A \\cap B \\cap C| = 1$, find $|B|$."
+            answer: "16"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: the inclusion-exclusion identity with $|B|$ as the unknown $b$. Step 1: write $25 = 9 + b + 8 - 3 - 2 - 4 + 1$. Step 2: simplify the right side to $b + 9$, so $b = 25 - 9 = 16$. The answer is 16."
         constraints: "three-set inclusion-exclusion with all pairwise and triple intersections given"
     diagnostic_exemplar:
       problem: 'Among $60$ students, $30$ study French, $25$ German and $20$ Spanish; $12$ study French and German, $9$ French and Spanish, $7$ German and Spanish, and $4$ study all three. How many study none of the three languages?'
@@ -751,14 +783,30 @@ topics:
         name: "Deciding subset relations"
         key_prerequisites: [set-notation]
         exemplars:
-          - problem: 'True or false: $\{1, 3\} \subseteq \{1, 2, 3\}$ and $\{1, 4\} \subseteq \{1, 2, 3\}$.'
-            answer_contract: {kind: none}
-            answer: 'True, False.'
-            solution_sketch: 'Both $1$ and $3$ lie in $\{1,2,3\}$; but $4$ does not, so the second fails.'
-          - problem: 'True or false: $\{a, b\} \subseteq \{a, b\}$.'
-            answer_contract: {kind: none}
-            answer: 'True.'
-            solution_sketch: 'Every element of the set lies in the set; every set is a subset of itself.'
+          - problem: "Let $A = \\{1, 2, 3, 4\\}$. Consider the claim that $\\{1, 5\\}$ is a subset of $A$ and the claim that $\\{2, 4\\}$ is a subset of $A$. Determine which of the two claims hold."
+            answer: "only the second claim"
+            answer_contract: {"kind": "label", "options": [["both claims"], ["only the first claim"], ["only the second claim"], ["neither claim"]]}
+            solution_sketch: "Full object: $A = \\{1,2,3,4\\}$, first claim $\\{1,5\\} \\subseteq A$, second claim $\\{2,4\\} \\subseteq A$. Step 1 (element check): test 1 and 5 against $A$; 1 lies in $A$ but 5 does not, so the first claim fails. Step 2 (element check): test 2 and 4 against $A$; both lie in $A$, so the second claim holds. Step 3 (option errors): 'both claims' ignores the missing element 5; 'only the first claim' reverses the verdicts, since the first claim is the one that fails; 'neither claim' overlooks that every element of $\\{2,4\\}$ lies in $A$. The case that holds is: only the second claim."
+          - problem: "Let $S = \\{p, q\\}$ and $T = \\{p, q\\}$. Give verdict = subset if every element of $S$ lies in $T$ and verdict = not otherwise, and give missing = the number of elements of $S$ that are not in $T$."
+            answer: "verdict = subset; missing = 0"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["subset"], ["not"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "missing"}]}
+            solution_sketch: "Full object: $S = \\{p,q\\}$ and $T = \\{p,q\\}$. Step 1 (reflexivity rule): every set is a subset of itself, but the method still checks each element of $S$ against $T$. Step 2 (element check): $p$ lies in $T$ and $q$ lies in $T$, so no element fails. Step 3 (count): the number of elements of $S$ absent from $T$ is $0$. The answer is verdict = subset; missing = 0."
+          - problem: "Let $S = \\{2, 5, 8\\}$ and $T = \\{1, 2, 3, 4, 5\\}$. Check the elements of $S$ one at a time. Give verdict = subset if $S$ passes the check and verdict = not if $S$ fails it, and give missing = the number of elements of $S$ that are absent from $T$."
+            answer: "verdict = not; missing = 1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["subset"], ["not"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "missing"}]}
+            solution_sketch: "Full object: $S = \\{2,5,8\\}$ and $T = \\{1,2,3,4,5\\}$. Step 1 (element check): 2 lies in $T$. Step 2 (element check): 5 lies in $T$. Step 3 (element check): 8 does not lie in $T$, so exactly one element of $S$ is absent from $T$ and $S$ is not a subset of $T$. The answer is verdict = not; missing = 1."
+          - problem: "Let $P = \\{3, 6, 9, 12\\}$ and $Q = \\{3, 6\\}$. Find the number of elements of $P$ that are not in $Q$."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: $P = \\{3,6,9,12\\}$ and $Q = \\{3,6\\}$. Step 1 (element check): 3 lies in $Q$ and 6 lies in $Q$. Step 2 (element check): 9 is absent from $Q$ and 12 is absent from $Q$. Step 3 (count and decision): two elements fail the check, so $P$ is not a subset of $Q$. The number of elements of $P$ that are not in $Q$ is 2."
+          - problem: "Let $E$ be the empty set and let $B = \\{4, 7\\}$. Find the number of elements of $E$ that are not in $B$."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: $E$ is the empty set and $B = \\{4,7\\}$. Step 1 (empty scan): $E$ lists no elements, so there is nothing to test against $B$. Step 2 (count): the number of elements of $E$ that are absent from $B$ is $0$. Step 3 (empty set fact): a candidate with no missing elements is a subset, so the empty set is a subset of every set. The answer is 0."
+          - problem: "Let $M = \\{x, y, z\\}$ and $N = \\{x, z\\}$. Compute the number of elements of $M$ that fail to lie in $N$."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: $M = \\{x,y,z\\}$ and $N = \\{x,z\\}$. Step 1 (element check): $x$ lies in $N$. Step 2 (element check): $y$ does not lie in $N$. Step 3 (element check): $z$ lies in $N$, so exactly one element of $M$ fails the check and $M$ is not a subset of $N$. The number of elements of $M$ that fail to lie in $N$ is 1."
         constraints: "membership checks element by element on small listed sets"
       - id: kp2
         name: "Element versus subset"
@@ -777,14 +825,30 @@ topics:
         name: "Proper subsets and set equality"
         key_prerequisites: [quantifiers]
         exemplars:
-          - problem: 'Are $\{1, 2\}$ and $\{2, 1, 1\}$ equal as sets?'
-            answer_contract: {kind: none}
-            answer: 'Yes.'
-            solution_sketch: 'Sets ignore order and repetition; both have exactly the elements $1$ and $2$.'
-          - problem: 'List all proper subsets of $\{1, 2\}$.'
-            answer_contract: {kind: none}
-            answer: '$\varnothing$, $\{1\}$, $\{2\}$.'
-            solution_sketch: 'A proper subset is a subset other than the set itself; drop $\{1, 2\}$ from the four subsets.'
+          - problem: "Let $A = \\{2, 2, 5, 7\\}$ and $B = \\{7, 5, 2\\}$. Check whether every element of $A$ lies in $B$ and whether every element of $B$ lies in $A$, and decide whether the two sets are equal; give also $n$, the number of elements of $A$. Give verdict and n."
+            answer: "verdict = equal; n = 3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["equal"], ["unequal"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "n"}]}
+            solution_sketch: "Apply the mutual containment test to the full object $A = \\{2, 2, 5, 7\\}$ and $B = \\{7, 5, 2\\}$. Every element of $A$, namely 2, 5 and 7, lies in $B$, and every element of $B$ lies in $A$, so both inclusions hold and the sets are equal. By the repetition rule of sets, $A$ has the three distinct elements 2, 5 and 7. Therefore verdict = equal; n = 3."
+          - problem: "Let $S = \\{4, 9\\}$. How many proper subsets does $S$ have?"
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the subset-counting rule: a set with 2 elements has $2^2 = 4$ subsets. List the full object: the empty set, $\\{4\\}$, $\\{9\\}$ and $\\{4, 9\\}$. Drop the one improper subset $S$ itself, leaving the empty set, $\\{4\\}$ and $\\{9\\}$. The number of proper subsets is 3."
+          - problem: "Let $A = \\{5, 6, 8\\}$. Give total, the number of subsets of $A$, and proper, the number of proper subsets of $A$."
+            answer: "total = 8; proper = 7"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "total"}, {"contract": {"kind": "exact"}, "name": "proper"}]}
+            solution_sketch: "Apply the doubling rule to the full object $A = \\{5, 6, 8\\}$: a set with 3 elements has $2^3 = 8$ subsets. Classify the subsets by the proper subset rule: exactly one subset, $A$ itself, is improper. Subtract: $8 - 1 = 7$ proper subsets. Therefore total = 8; proper = 7."
+          - problem: "A finite set has exactly $64$ subsets in total. How many of its subsets are proper?"
+            answer: "63"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the subset-counting rule in reverse: a set with $n$ elements has $2^n$ subsets, so $2^n = 64$ gives $n = 6$ elements. Apply the proper subset rule: the only improper subset is the set itself, so subtract 1 from the total. The number of proper subsets is $64 - 1 = 63$."
+          - problem: "Let $A$ be the set of even prime numbers and let $B = \\{2\\}$. Check whether $B$ is contained in $A$ and whether $A$ is contained in $B$. Which of the statements describes $B$ relative to $A$?"
+            answer: "an improper subset of A"
+            answer_contract: {"kind": "label", "options": [["an improper subset of A"], ["a proper subset of A"], ["not a subset of A"], ["an element of A but not a subset of A"]]}
+            solution_sketch: "Identify the full object: the only even prime is 2, so $A = \\{2\\}$ and $B = \\{2\\}$. Run the mutual containment test: $B$ is contained in $A$ and $A$ is contained in $B$. The option 'a proper subset of A' is the proper-versus-equal confusion, since a proper subset requires the sets to be different. The option 'not a subset of A' forgets that 2 lies in A. The option 'an element of A but not a subset of A' confuses membership with containment, since 2 lies in A and therefore $\\{2\\}$ is contained in A. Since $B$ equals $A$, it is a subset that is not proper, so the answer is an improper subset of A."
+          - problem: "Let $A = \\{-1, 0, 1\\}$ and $B = \\{-1, 1\\}$. Check whether $B$ is contained in $A$ and whether $A$ is contained in $B$, and give missing, the number of elements of $A$ that are not in $B$. Give verdict and missing."
+            answer: "verdict = proper; missing = 1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["proper"], ["improper"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "missing"}]}
+            solution_sketch: "Test the first inclusion on the full object $A = \\{-1, 0, 1\\}$ and $B = \\{-1, 1\\}$: both $-1$ and $1$ lie in $A$, so $B$ is contained in $A$. Test the second inclusion: $0$ does not lie in $B$, so $A$ is not contained in $B$ and the sets are not equal. By the proper subset rule, $B$ is a proper subset of $A$, and exactly one element of $A$, namely 0, is missing from $B$. Therefore verdict = proper; missing = 1."
         constraints: "set equality via mutual containment; proper vs improper subsets"
     diagnostic_exemplar:
       problem: 'Let $A = \{1, \{2\}, 3\}$. Decide each of (a) $\{2\} \in A$, (b) $\{2\} \subseteq A$, (c) $\{1,3\} \subseteq A$, (d) $\varnothing \subseteq A$; and state how many proper subsets $A$ has.'
