@@ -1020,14 +1020,30 @@ topics:
         name: Complex eigenvectors
         key_prerequisites: [characteristic-polynomial, complex-numbers]
         exemplars:
-          - problem: 'Find an eigenvector of $A = \begin{pmatrix}0&-1\\1&0\end{pmatrix}$ for $\lambda = i$.'
-            answer: '$(1, -i)$ (any nonzero multiple)'
-            answer_contract: {kind: none}
-            solution_sketch: '$(A - iI)\mathbf{v} = 0$ gives $-ix - y = 0$, so $y = -ix$: take $(1, -i)$. Check: $A(1, -i) = (i, 1) = i(1, -i)$.'
-          - problem: 'If $\mathbf{v} = (1, -i)$ is an eigenvector of a real matrix $A$ for $\lambda = i$, give an eigenvector for $\lambda = -i$.'
-            answer: '$(1, i)$ (any nonzero multiple)'
-            answer_contract: {kind: none}
-            solution_sketch: 'Conjugating $A\mathbf{v} = \lambda\mathbf{v}$ shows $\bar{\mathbf{v}}$ is an eigenvector for $\bar{\lambda}$.'
+          - problem: "Let $A = \\begin{pmatrix}0&1\\\\-1&0\\end{pmatrix}$ and $\\lambda = i$. Find an eigenvector of $A$ for $\\lambda = i$ whose first coordinate is 1, and give its second coordinate in the form a + bi."
+            answer: "i"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "For $A = [0,1;-1,0]$ and $\\lambda = i$, solve $(A - iI)\\mathbf{v} = \\mathbf{0}$. The first row gives $-ix + y = 0$, so $y = ix$; with first coordinate $x = 1$, $y = i$. Verify by multiplying out: $A(1, i) = (i, -1) = i(1, i)$. The second coordinate is i."
+          - problem: "A real $2\\times 2$ matrix $A$ has eigenvector $(1, 1+i)$ for the eigenvalue $\\lambda = 2+i$. Find an eigenvector of $A$ for the eigenvalue $2-i$ whose first coordinate is 1, and give its second coordinate in the form a + bi."
+            answer: "1-i"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Conjugation rule: since $A$ is real, conjugating $A\\mathbf{v} = \\lambda\\mathbf{v}$ gives $A\\overline{\\mathbf{v}} = \\overline{\\lambda}\\,\\overline{\\mathbf{v}}$. So the eigenvector for $\\lambda = 2-i$ is the conjugate of $(1, 1+i)$, which is $(1, 1-i)$, already with first coordinate 1. Verify: $A(1, 1-i)$ must equal $(2-i)(1, 1-i)$. The second coordinate is 1-i."
+          - problem: "Let $A = \\begin{pmatrix}2&3\\\\-3&2\\end{pmatrix}$ and $\\lambda = 2+3i$. Find an eigenvector of $A$ for $\\lambda = 2+3i$ whose second coordinate is 1, and give its first coordinate in the form a + bi."
+            answer: "-i"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "For $A = [2,3;-3,2]$ and $\\lambda = 2+3i$, write $(A - (2+3i)I)\\mathbf{v} = \\mathbf{0}$. The first row gives $-3ix + 3y = 0$, so $x = y/i$; with second coordinate $y = 1$, $x = -i$. Verify by multiplying out: $A(-i, 1) = (3-2i, 2+3i) = (2+3i)(-i, 1)$. The first coordinate is -i."
+          - problem: "Let $A = \\begin{pmatrix}1&2\\\\-2&1\\end{pmatrix}$ and $\\lambda = 1-2i$. Find an eigenvector of $A$ for $\\lambda = 1-2i$ whose first coordinate is 1, and give its second coordinate in the form a + bi."
+            answer: "-i"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "For $A = [1,2;-2,1]$ and $\\lambda = 1-2i$, solve $(A - (1-2i)I)\\mathbf{v} = \\mathbf{0}$. The first row gives $2ix + 2y = 0$, so $y = -ix$; with first coordinate $x = 1$, $y = -i$. Verify by multiplying out: $A(1, -i) = (1-2i, -2-i) = (1-2i)(1, -i)$. The second coordinate is -i."
+          - problem: "Let $A = \\begin{pmatrix}0&1\\\\-2&2\\end{pmatrix}$ and $\\lambda = 1+i$. Find an eigenvector of $A$ for $\\lambda = 1+i$ whose first coordinate is 1, and give its second coordinate in the form a + bi."
+            answer: "1+i"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "For $A = [0,1;-2,2]$ and $\\lambda = 1+i$, the first row of $(A - (1+i)I)\\mathbf{v} = \\mathbf{0}$ gives $-(1+i)x + y = 0$, so $y = (1+i)x$; with $x = 1$, $y = 1+i$. Verify by multiplying out: $A(1, 1+i) = (1+i, 2i) = (1+i)(1, 1+i)$. The second coordinate is 1+i."
+          - problem: "Let $A = \\begin{pmatrix}0&4\\\\-2&4\\end{pmatrix}$ and $\\lambda = 2+2i$. Find an eigenvector of $A$ for $\\lambda = 2+2i$ whose second coordinate is 1, and give its first coordinate in the form a + bi."
+            answer: "1-i"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "For $A = [0,4;-2,4]$ and $\\lambda = 2+2i$, the first row of $(A - (2+2i)I)\\mathbf{v} = \\mathbf{0}$ gives $-(2+2i)x + 4y = 0$, so $x = 4y/(2+2i)$; with $y = 1$, $x = 2/(1+i) = 1-i$. Verify by multiplying out: $A(1-i, 1) = (4, 2+2i) = (2+2i)(1-i, 1)$. The first coordinate is 1-i."
         constraints: "entries among 1, i, -i, 1 +- i; verify by multiplying out"
     diagnostic_exemplar:
       problem: 'Find the eigenvalues of $A = \begin{pmatrix}2&-1\\1&2\end{pmatrix}$, an eigenvector for the eigenvalue with positive imaginary part, and the factor by which $A$ scales lengths.'
