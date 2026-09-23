@@ -892,26 +892,62 @@ topics:
         name: "Counting subsets"
         key_prerequisites: [subset-relation-basics]
         exemplars:
-          - problem: 'How many subsets does a $5$-element set have? How many of them are proper?'
-            answer_contract: {kind: none}
-            answer: '$32$ subsets; $31$ proper.'
-            solution_sketch: 'Each element is in or out: $2^5 = 32$; excluding the set itself leaves $31$.'
           - problem: 'How many subsets of $\{1, 2, 3, 4\}$ contain the element $1$?'
             answer: '$8$'
             solution_sketch: 'Fix $1$ in; the other three elements are free: $2^3 = 8$.'
+          - problem: "A set has 7 elements. How many subsets does it have, and how many of those are proper subsets of it? Give total and proper."
+            answer: "total = 128; proper = 127"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "total"}, {"contract": {"kind": "exact"}, "name": "proper"}]}
+            solution_sketch: "Each of the 7 elements is either in or out of a subset, so the multiplication rule gives 2^7 = 128 subsets in total. A proper subset is any subset except the set itself, so subtract 1 from the total. The answer is total = 128; proper = 127."
+          - problem: "How many subsets of the set {1, 2, 3, 4, 5} contain the element 2?"
+            answer: "16"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Fix the element 2 inside every counted subset, so it is no longer a free choice. The other 4 elements each go in or out, and the multiplication rule gives 2^4 choices. The answer is 16."
+          - problem: "A set has exactly 256 subsets. How many elements does the set have?"
+            answer: "8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "By the power-set size rule, a set with n elements has 2^n subsets. Solve 2^n = 256, and since 2^8 = 256 the set has n = 8 elements. The answer is 8."
+          - problem: "How many proper nonempty subsets does a 4-element set have?"
+            answer: "14"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The multiplication rule gives 2^4 = 16 subsets in total. The empty set and the set itself must be excluded, since they are not proper nonempty subsets, so subtract 2. The answer is 14."
+          - problem: "A set S has 6 elements and contains the element a. How many subsets of S contain a and are proper subsets of S?"
+            answer: "31"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Subsets that contain a correspond to free choices on the other 5 elements, so the multiplication rule gives 2^5 = 32. Exactly one of these, S itself, is not a proper subset, so subtract 1. The answer is 31."
+          - problem: "Let S = {1, 2, 3, 4, 5, 6, 7, 8}. How many subsets of S contain at least one of the elements 1 and 2?"
+            answer: "192"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Count the complement: subsets avoiding both 1 and 2 choose freely from the other 6 elements, so the multiplication rule gives 2^6 = 64 of them. The total number of subsets is 2^8 = 256, so 256 - 64 = 192 contain at least one of 1 and 2. The answer is 192."
         constraints: "powers of two; optionally one fixed-element or proper-subset twist"
       - id: kp3
         name: "Membership in a power set"
         key_prerequisites: [subset-relation-basics]
         exemplars:
-          - problem: 'True or false: $\{1, 2\} \in \mathcal{P}(\{1, 2, 3\})$ and $\{0\} \in \mathcal{P}(\{1, 2, 3\})$.'
-            answer_contract: {kind: none}
-            answer: 'True, False.'
-            solution_sketch: 'Membership in $\mathcal{P}(A)$ means being a subset of $A$: $\{1,2\} \subseteq \{1,2,3\}$ but $\{0\} \not\subseteq \{1,2,3\}$.'
-          - problem: 'List $\mathcal{P}(\varnothing)$ and $\mathcal{P}(\{\varnothing\})$.'
-            answer_contract: {kind: none}
-            answer: '$\mathcal{P}(\varnothing) = \{\varnothing\}$ and $\mathcal{P}(\{\varnothing\}) = \{\varnothing, \{\varnothing\}\}$.'
-            solution_sketch: 'The empty set has exactly one subset (itself); a one-element set has $2^1 = 2$ subsets.'
+          - problem: "Let $A = \\{1, 2, 3\\}$ and $S = \\{1, 3\\}$. Decide whether $S \\in \\mathcal{P}(A)$, and give how many elements of $S$ are not in $A$."
+            answer: "verdict = member; missing = 0"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["member"], ["notmember"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "missing"}]}
+            solution_sketch: "Membership in the power set unwinds to the subset test: $S \\in \\mathcal{P}(A)$ holds exactly when every element of $S$ lies in $A$. For the full object $S = \\{1, 3\\}$ with $A = \\{1, 2, 3\\}$, both 1 and 3 lie in $A$, so no element of $S$ is missing from $A$ and $S \\subseteq A$. Therefore the verdict is member and missing = 0."
+          - problem: "Let $A = \\{\\varnothing\\}$ and consider the sets $S_1 = \\varnothing$, $S_2 = \\{\\varnothing\\}$, and $S_3 = \\{\\{\\varnothing\\}\\}$. How many of the sets $S_1, S_2, S_3$ are elements of $\\mathcal{P}(A)$?"
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the criterion $S \\in \\mathcal{P}(A)$ if and only if $S \\subseteq A$ with $A = \\{\\varnothing\\}$. The empty set $S_1 = \\varnothing$ is a subset of every set, so $S_1 \\in \\mathcal{P}(A)$. The set $S_2 = \\{\\varnothing\\}$ has its single element $\\varnothing$ in $A$, so $S_2 \\in \\mathcal{P}(A)$. The set $S_3 = \\{\\{\\varnothing\\}\\}$ contains $\\{\\varnothing\\}$, which is not an element of $A$, so $S_3$ fails the subset test. Exactly 2 of the three sets are elements of $\\mathcal{P}(A)$."
+          - problem: "The set $S = \\{2, 4, k\\}$ is an element of $\\mathcal{P}(\\{1, 2, 3, 4, 5\\})$, and $k$ is different from 2 and from 4. Find the largest possible value of $k$."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Unwind the membership: $S = \\{2, 4, k\\}$ is an element of $\\mathcal{P}(A)$ exactly when $S \\subseteq A$ with $A = \\{1, 2, 3, 4, 5\\}$. The elements 2 and 4 already lie in $A$, so $k$ must also be an element of $A$, and the conditions $k \\neq 2$ and $k \\neq 4$ leave the candidates 1, 3, and 5. The largest of these candidates is 5."
+          - problem: "Let $A = \\{1, 2\\}$ and consider $S_1 = \\{1, 2\\}$, $S_2 = \\{1, 1, 2\\}$, and $S_3 = \\{2, 1\\}$. How many of $S_1, S_2, S_3$ are elements of $\\mathcal{P}(A)$?"
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Unwind the membership with the rule $S_i \\in \\mathcal{P}(A)$ exactly when $S_i \\subseteq A = \\{1, 2\\}$. Repeated elements collapse, so $\\{1, 1, 2\\} = \\{1, 2\\}$, and order does not matter, so $\\{2, 1\\} = \\{1, 2\\}$. All three written forms denote the single set $\\{1, 2\\}$, which is a subset of $A$. Hence all three are elements of $\\mathcal{P}(A)$, and the count is 3."
+          - problem: "Let $B = \\mathcal{P}(\\{1, 2\\})$. Decide whether $\\{1, 2\\} \\in \\mathcal{P}(B)$, and give how many elements of $\\{1, 2\\}$ are elements of $B$."
+            answer: "verdict = notmember; inside = 0"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["member"], ["notmember"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "inside"}]}
+            solution_sketch: "First form the full object $B = \\mathcal{P}(\\{1, 2\\}) = \\{\\varnothing, \\{1\\}, \\{2\\}, \\{1, 2\\}\\}$. Membership in $\\mathcal{P}(B)$ unwinds to being a subset of $B$. The elements 1 and 2 of $\\{1, 2\\}$ are numbers, while every element of $B$ is a set, so 1 and 2 are not elements of $B$ and inside = 0. Since $\\{1, 2\\}$ is not a subset of $B$, the verdict is notmember and inside = 0."
+          - problem: "Let $A = \\{\\{1\\}, \\{2\\}, 3\\}$ and $S = \\{\\{1\\}, 2\\}$. Decide whether $S \\in \\mathcal{P}(A)$, and give how many elements of $S$ are not in $A$."
+            answer: "verdict = notmember; missing = 1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["member"], ["notmember"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "missing"}]}
+            solution_sketch: "Test the full object $S = \\{\\{1\\}, 2\\}$ element by element, since $S \\in \\mathcal{P}(A)$ holds exactly when $S \\subseteq A$. The element $\\{1\\}$ of $S$ is an element of $A$, but the number 2 is not an element of $A$, because $A$ contains the set $\\{2\\}$, not the number 2. So one element of $S$ is missing from $A$, giving verdict = notmember and missing = 1."
         constraints: "unwind $S \\in \\mathcal{P}(A) \\iff S \\subseteq A$ on concrete sets"
     diagnostic_exemplar:
       problem: 'List $\mathcal{P}(\{a, b\})$ and $\mathcal{P}(\varnothing)$, and state how many elements $\mathcal{P}(S)$ has when $|S| = 6$.'
