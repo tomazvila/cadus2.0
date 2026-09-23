@@ -644,10 +644,30 @@ topics:
         name: "Decision with a t critical value"
         key_prerequisites: [t-distribution, one-sample-z-test]
         exemplars:
-          - problem: 'A two-sided t-test at $\alpha = 0.05$ has $t = 2.0$ with df $= 15$; the table gives $t^* = 2.131$. State the decision, and contrast it with what the z-value $z^* = 2$ would have said.'
-            answer: 'Fail to reject $H_0$: $|2.0| < 2.131$. A z-test would (wrongly) have rejected — the wider t critical value is the price of estimating $\sigma$ from $16$ observations.'
-          - problem: 'Same table value $t^* = 2.131$ (df $15$), but the data give $t = -2.5$. Decision?'
-            answer: 'Reject $H_0$: $|-2.5| > 2.131$.'
+          - problem: "A two-sided t-test at alpha = 0.05 has t = 2.05 with df = 15; the table gives t* = 2.131. A friend proposes deciding with the z* = 2 cutoff instead. Find the decision and the amount by which |t| falls short of t*, to three decimals."
+            answer: "decision = retain; gap = 0.081"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["reject"], ["retain"]]}, "name": "decision"}, {"contract": {"decimals": 3, "kind": "approx"}, "name": "gap"}]}
+            solution_sketch: "Step 1: two-sided decision rule: the null is rejected only when |t| > t*. Step 2: comparison: |t| = 2.05 while t* = 2.131, and 2.05 < 2.131, so the null is retained. Step 3: subtraction: the shortfall is 2.131 - 2.05 = 0.081. The reject option is the friend's error: the z* = 2 cutoff ignores that the t critical value is wider because sigma is estimated from only 16 observations. The answer is decision = retain; gap = 0.081."
+          - problem: "A two-sided t-test at alpha = 0.05 has t = -2.4 with df = 15; the table gives t* = 2.131. Find the decision and the amount by which |t| exceeds t*, to three decimals."
+            answer: "decision = reject; excess = 0.269"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["reject"], ["retain"]]}, "name": "decision"}, {"contract": {"decimals": 3, "kind": "approx"}, "name": "excess"}]}
+            solution_sketch: "Step 1: two-sided decision rule: the null is rejected when |t| > t*. Step 2: absolute value: |t| = |-2.4| = 2.4, and 2.4 > 2.131, so the null is rejected. Step 3: subtraction: the excess is 2.4 - 2.131 = 0.269. The retain option is the error of treating the negative statistic as weak evidence instead of comparing its absolute value with the critical value. The answer is decision = reject; excess = 0.269."
+          - problem: "A two-sided t-test at alpha = 0.05 has df = 19 and t* = 2.093. A sample of n = 20 has s = 10, and the null mean is mu0 = 60. Give the lower boundary sample mean of the rejection region, to three decimals."
+            answer: "55.320"
+            answer_contract: {"decimals": 3, "kind": "approx"}
+            solution_sketch: "Step 1: standard error rule: s/sqrt(n) = 10/sqrt(20) = 2.236068. Step 2: rejection rule: the two-sided test rejects when xbar lies farther from mu0 than t* times the standard error, so the lower boundary is mu0 - t* times the standard error. Step 3: margin: 2.093 * 2.236068 = 4.680090, and 60 - 4.680090 = 55.319910, which rounds to 55.320. The answer is 55.320."
+          - problem: "A one-sided upper-tail t-test at alpha = 0.05 has df = 8 and t* = 1.860. A sample of n = 9 has s = 2, and the null mean is mu0 = 40. Give the boundary sample mean between retaining and rejecting on the upper side, to three decimals."
+            answer: "41.240"
+            answer_contract: {"decimals": 3, "kind": "approx"}
+            solution_sketch: "Step 1: standard error rule: s/sqrt(n) = 2/sqrt(9) = 0.666667. Step 2: rejection rule: the upper-tail test rejects when t > t*, that is when xbar exceeds mu0 + t* times the standard error. Step 3: margin: 1.860 * 0.666667 = 1.240, and 40 + 1.240 = 41.240. The answer is 41.240."
+          - problem: "A one-sided lower-tail t-test at alpha = 0.05 has df = 11 and t* = -1.796. A sample of n = 12 has s = 3, and the null mean is mu0 = 50. Give the boundary sample mean between retaining and rejecting on the lower side, to three decimals."
+            answer: "48.445"
+            answer_contract: {"decimals": 3, "kind": "approx"}
+            solution_sketch: "Step 1: standard error rule: s/sqrt(n) = 3/sqrt(12) = 0.866025. Step 2: rejection rule: the lower-tail test rejects when t < t*, and with t* = -1.796 this means xbar is below mu0 - 1.796 times the standard error. Step 3: margin: 1.796 * 0.866025 = 1.555382, and 50 - 1.555382 = 48.444618, which rounds to 48.445. The answer is 48.445."
+          - problem: "A two-sided t-test at alpha = 0.05 has df = 24 and t* = 2.064. A sample of n = 25 has xbar = 508, and the null mean is mu0 = 500. Find the boundary sample standard deviation s at which the decision changes from rejecting to retaining, to three decimals."
+            answer: "19.380"
+            answer_contract: {"decimals": 3, "kind": "approx"}
+            solution_sketch: "Step 1: rejection rule: the two-sided test rejects when |xbar - mu0|/(s/sqrt(n)) > t*. Step 2: boundary equation: at the change point the ratio equals t*, which gives s = |xbar - mu0| * sqrt(n)/t*. Step 3: substitution: s = 8 * 5/2.064 = 19.379845, which rounds to 19.380. The answer is 19.380."
         constraints: "t* always supplied together with its df; include one case whose decision differs from the naive z* = 2 rule"
       - id: kp3
         name: "The full t-test in context"
