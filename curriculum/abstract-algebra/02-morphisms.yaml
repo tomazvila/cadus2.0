@@ -563,6 +563,22 @@ topics:
           - problem: 'How many homomorphisms are there from $\mathbb{Z}_8$ to $\mathbb{Z}_6$?'
             answer: "2"
             solution_sketch: '$\gcd(8, 6) = 2$: send $1 \mapsto 0$ or $1 \mapsto 3$.'
+          - problem: "Determine the number of group homomorphisms from $\\mathbb{Z}_{20}$ to $\\mathbb{Z}_{30}$."
+            answer: "10"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "A homomorphism from Z_20 to Z_30 is fixed by the image a of 1, and the gcd count rule says the legal images are the elements with 20a congruent to 0 mod 30. Run the Euclidean algorithm: 30 = 1*20 + 10 and 20 = 2*10 + 0, so gcd(20, 30) = 10. The number of homomorphisms is 10."
+          - problem: "Find the size of the set of all homomorphisms from $\\mathbb{Z}_{16}$ to $\\mathbb{Z}_{12}$."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The gcd count rule gives that the number of homomorphisms from Z_16 to Z_12 is gcd(16, 12). The Euclidean algorithm gives 16 = 1*12 + 4 and 12 = 3*4 + 0, hence gcd(16, 12) = 4. The set of homomorphisms has size 4."
+          - problem: "For a homomorphism $f$ from $\\mathbb{Z}_{21}$ to $\\mathbb{Z}_{14}$, how many elements of $\\mathbb{Z}_{14}$ can equal $f(1)$?"
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "An element a of Z_14 can be f(1) exactly when 21a is congruent to 0 mod 14, and by the gcd count rule the number of such elements is gcd(21, 14). The Euclidean algorithm gives 21 = 1*14 + 7 and 14 = 2*7 + 0, so gcd(21, 14) = 7. There are 7 possible values of f(1)."
+          - problem: "Suppose $1 \\le m \\le 30$ and the number of homomorphisms from $\\mathbb{Z}_m$ to $\\mathbb{Z}_{16}$ is $8$. Find the largest such $m$."
+            answer: "24"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "By the gcd count rule the number of homomorphisms from Z_m to Z_16 equals gcd(m, 16), so the condition is gcd(m, 16) = 8. Then m must be a multiple of 8 but not of 16, so m = 8k with k odd, and m at most 30 allows m = 8 or m = 24. The largest such m is 24."
         constraints: "m, n <= 30; the count is gcd(m, n)"
       - id: kp3
         name: "Surjective and injective homomorphism counts"
@@ -651,14 +667,30 @@ topics:
         name: "Recognizing a given group in the catalog"
         key_prerequisites: [isomorphism-invariants]
         exemplars:
-          - problem: 'Identify $U(12)$ up to isomorphism.'
-            answer: '$\mathbb{Z}_2 \times \mathbb{Z}_2$ (Klein): $U(12) = \{1,5,7,11\}$ and $5^2 = 7^2 = 11^2 = 1$.'
-            answer_contract: {kind: none}
-            solution_sketch: 'Order $4$ with no element of order $4$ is Klein.'
-          - problem: 'Identify $U(10)$ up to isomorphism.'
-            answer: '$\mathbb{Z}_4$: $3$ has order $4$.'
-            answer_contract: {kind: none}
-            solution_sketch: 'Order $4$ with an element of order $4$ is cyclic.'
+          - problem: "The unit group U(12) = {1, 5, 7, 11} under multiplication mod 12 has four elements. Which group from the catalog of small groups is U(12) isomorphic to?"
+            answer: "Klein Z2 x Z2"
+            answer_contract: {"kind": "label", "options": [["cyclic Z4"], ["Klein Z2 x Z2"], ["symmetric S3"], ["dihedral D4"], ["dihedral D5"]]}
+            solution_sketch: "Step 1 (order by Lagrange): U(12) has order phi(12) = 4, so only the catalog groups of order 4, cyclic Z4 and Klein Z2 x Z2, are candidates; symmetric S3, dihedral D4 and dihedral D5 have orders 6, 8 and 10. Step 2 (element orders): 5^2 = 25 = 1, 7^2 = 49 = 1 and 11^2 = 121 = 1 mod 12, so no nonidentity element has order 4. Step 3 (invariant decision): a group of order 4 with no element of order 4 is the Klein group, while cyclic Z4 has an element of order 4 and S3, D4, D5 fail by order. The catalog group is Klein Z2 x Z2."
+          - problem: "The unit group U(10) = {1, 3, 7, 9} under multiplication mod 10 has order 4. To which catalog group of small order is U(10) isomorphic?"
+            answer: "cyclic Z4"
+            answer_contract: {"kind": "label", "options": [["cyclic Z4"], ["Klein Z2 x Z2"], ["symmetric S3"], ["dihedral D4"]]}
+            solution_sketch: "Step 1 (order by Lagrange): U(10) has order phi(10) = 4, so only cyclic Z4 and Klein Z2 x Z2 are candidates; symmetric S3 and dihedral D4 have orders 6 and 8. Step 2 (element orders): 3^2 = 9 and 3^4 = 81 = 1 mod 10, so the element 3 has order 4. Step 3 (invariant decision): a group of order 4 with an element of order 4 is cyclic, so U(10) is cyclic Z4; Klein Z2 x Z2 fails since it has no element of order 4, and S3 and D4 fail by order. The answer is cyclic Z4."
+          - problem: "The unit group U(8) = {1, 3, 5, 7} under multiplication mod 8 has order 4, so it is cyclic Z4 or the Klein four-group according to whether it has an element of order 4. How many elements of order 4 does U(8) have?"
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (element orders): in U(8) = {1, 3, 5, 7} mod 8 we have 3^2 = 9 = 1, 5^2 = 25 = 1 and 7^2 = 49 = 1, so every nonidentity element has order 2. Step 2 (catalog decision): U(8) has no element of order 4, so it matches the Klein four-group and not cyclic Z4. Step 3 (count): the elements of order 4 in U(8) number 0. The answer is 0."
+          - problem: "The unit group U(14) = {1, 3, 5, 9, 11, 13} has order 6, and the two catalog groups of order 6, cyclic Z6 and symmetric S3, differ in their largest element order. Find the order of the element 3 in U(14)."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (catalog match): U(14) has order 6; cyclic Z6 has an element of order 6 and symmetric S3 does not, so the largest element order decides the isomorphism type. Step 2 (compute the order of 3): the powers of 3 mod 14 are 3, 9, 13, 11, 5, 1, so 3 has order 6. Step 3: an element of order 6 in a group of order 6 makes the group cyclic, so U(14) is cyclic Z6. The order of 3 in U(14) is 6."
+          - problem: "In the dihedral group D4 of order 8, the center is {1, r^2} and the quotient D4/Z(D4) has order 4, so it is cyclic Z4 or the Klein four-group depending on its number of elements of order 2. How many elements of order 2 does D4/Z(D4) have?"
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (quotient construction): the cosets of Z(D4) = {1, r^2} are {1, r^2}, {r, r^3}, {s, r^2 s} and {rs, r^3 s}, four cosets each of size 2. Step 2 (element orders in the quotient): each nontrivial coset squared is the coset {1, r^2}, so all three nontrivial elements of the quotient have order 2. Step 3 (catalog decision): a group of order 4 with three elements of order 2 is the Klein four-group, not cyclic Z4. The number of elements of order 2 in D4/Z(D4) is 3."
+          - problem: "The direct product Z3 x Z4 has order 12, and it is isomorphic to the catalog group Z12 exactly when it contains an element of order 12. Find the order of the element (1, 1) in Z3 x Z4."
+            answer: "12"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (order formula for products): the order of a pair (a, b) in a direct product is the least common multiple of the orders of a and b. Step 2 (compute): in Z3 x Z4 the element 1 has order 3 in the first factor and order 4 in the second, so (1, 1) has order lcm(3, 4) = 12. Step 3 (catalog decision): an element of order 12 in a group of order 12 makes the group cyclic, so Z3 x Z4 matches Z12 in the catalog. The order of (1, 1) is 12."
         constraints: "U(n) for n <= 16, small quotients and products; match against Z_n, Klein, S_3, D_4, D_5"
     diagnostic_exemplar:
       problem: 'The group $U(18)$ has order $6$. Decide which of the two groups of order $6$ it is, and name the invariant that settles it.'
@@ -714,13 +746,29 @@ topics:
         name: "The universal property: generators map freely"
         key_prerequisites: [group-isomorphisms]
         exemplars:
-          - problem: 'Explain why homomorphisms $F(\{a\}) \to G$ correspond exactly to elements of $G$.'
-            answer: 'Freeness: any choice $\varphi(a) = g$ extends uniquely by $\varphi(a^n) = g^n$, and there are no relations to respect — so $\varphi \leftrightarrow \varphi(a)$ is a bijection with $G$.'
-            answer_contract: {kind: none}
-            solution_sketch: 'A homomorphism out of a free group is determined by, and free to choose, the images of the generators.'
           - problem: 'How many homomorphisms are there from $F(\{a, b\})$ to $\mathbb{Z}_5$?'
             answer: "25"
             solution_sketch: 'Each of $a, b$ may map to any of the $5$ elements independently: $5^2 = 25$.'
+          - problem: "How many homomorphisms are there from the free group $F(\\{a\\})$ to the group $\\mathbb{Z}_2 \\times \\mathbb{Z}_4$?"
+            answer: "8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (universal property): a homomorphism out of the free group on one generator a is fixed freely by the image of a, and no relation restricts that image. Step 2 (count): the group Z_2 x Z_4 has 8 elements, so a has 8 possible images, and each choice extends to exactly one homomorphism. The number of homomorphisms is 8."
+          - problem: "How many homomorphisms are there from the free group $F(\\{a, b, c\\})$ to $\\mathbb{Z}_3$?"
+            answer: "27"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (universal property): each of the three generators a, b, c maps freely to any element of Z_3, since a free group imposes no relation on the images. Step 2 (count): that gives 3 choices for each generator, so 3 times 3 times 3 = 27 homomorphisms. The answer is 27."
+          - problem: "Let $F$ be the free group on $\\{a, b\\}$. Determine the number of homomorphisms from $F$ to $\\mathbb{Z}_8$."
+            answer: "64"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (universal property): the images of the generators a and b may be chosen independently among the 8 elements of Z_8, because the free group has no relations to respect. Step 2 (count): 8 choices for a times 8 choices for b gives 8 times 8 = 64 homomorphisms. The number of homomorphisms is 64."
+          - problem: "Unlike a free group, the cyclic group $\\mathbb{Z}_6$ has the relation $6 \\cdot 1 = 0$, which its generator's image must respect. How many group homomorphisms are there from $\\mathbb{Z}_6$ to $\\mathbb{Z}_4$?"
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (constrained image): a homomorphism sends the generator 1 of Z_6 to an element x of Z_4 that must satisfy 6x = 0 in Z_4, that is 2x = 0 mod 4. Step 2 (solve): the solutions are x = 0 and x = 2, so only 2 of the 4 elements of Z_4 are legal images, in contrast with the free case where all 4 work. The number of homomorphisms is 2."
+          - problem: "Determine the number of homomorphisms from $\\mathbb{Z}_5$ to $\\mathbb{Z}_8$."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (constrained image): a homomorphism from Z_5 to Z_8 sends the generator 1 to an element x of Z_8 with 5x = 0 mod 8. Step 2 (solve): since gcd(5, 8) = 1, the only solution is x = 0, so only the trivial map exists; this contrasts sharply with the 8 free choices a homomorphism out of the free group on one generator would have into a group of order 8. The number of homomorphisms is 1."
         constraints: "hom counts |G|^(number of generators) with |G| <= 8; contrast with the constrained counts for Z_m -> Z_n"
       - id: kp3
         name: "Presentations by generators and relations"

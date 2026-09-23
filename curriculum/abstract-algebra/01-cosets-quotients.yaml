@@ -398,12 +398,34 @@ topics:
         name: "Index 2 forces normality"
         key_prerequisites: [cosets]
         exemplars:
-          - problem: 'Prove: if $[G : H] = 2$ then $H \trianglelefteq G$.'
-            answer: 'For $g \notin H$, both the left and right coset of $g$ equal $G \setminus H$, so $gH = Hg$ always.'
-            solution_sketch: 'With only two cosets, the non-trivial left coset and right coset are each the complement of $H$.'
-          - problem: 'Deduce that the rotation subgroup $\langle r \rangle$ is normal in $D_n$.'
-            answer: '$|\langle r \rangle| = n$ and $|D_n| = 2n$, so the index is $2$; normal by the previous result.'
-            solution_sketch: 'Index $[D_n : \langle r \rangle] = 2$.'
+          - problem: "Let H have index 2 in a group G and let g be an element outside H. The left cosets of H are H and gH. If H has 7 elements, how many elements are in gH?"
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "A coset gH has the same size as H, since x -> gx is a bijection. Here H has 7 elements, so gH has 7 elements. The number of elements is 7."
+          - problem: "In the dihedral group D_6, the rotation subgroup is R = <r>. Compute the index [D_6 : R]."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The dihedral group D_6 has order 12. The rotation subgroup R = <r> has order 6. By Lagrange, the index is 12/6 = 2. The index is 2."
+          - problem: "In the symmetric group S_5, the alternating group A_5 consists of the even permutations. Compute the index [S_5 : A_5]."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The symmetric group S_5 has 5! = 120 elements. The alternating group A_5 has 60 elements. By Lagrange, the index is 120/60 = 2. The index is 2."
+          - problem: "Claim: if a subgroup H has index 2 in a group G, then H is normal in G. Step 1: The left cosets of H are H and gH, where g is any element outside H. Step 2: The right cosets of H are H and Hg. Step 3: Since gH and Hg have the same number of elements, the sets gH and Hg are equal. Step 4: Thus gH = Hg for every g in G, so H is normal. Which step is the first step that is not valid?"
+            answer: "Step 3"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 is valid: with two left cosets, the coset of any g outside H is the other one. Step 2 is valid: the right cosets are likewise H and Hg. Step 3 is invalid: two sets with the same number of elements need not be equal; indeed H and gH also have the same size but are different sets. The correct reason is that both gH and Hg equal the complement of H. Step 4 is only a conclusion resting on Step 3. Choosing Step 1 or Step 2 mistakes a valid step for the flaw; choosing Step 4 mistakes the conclusion for the flaw. The first invalid step is Step 3."
+          - problem: "A subgroup H has index 2 in a group G. In the proof that H is normal, let g be an element outside H. The left coset gH and the right coset Hg both equal the same set. Select the set that completes the line gH = ?"
+            answer: "G minus H"
+            answer_contract: {"kind": "label", "options": [["G minus H"], ["H alone"], ["g alone"], ["G itself"]]}
+            solution_sketch: "With index 2 the left cosets of H are exactly H and gH, and left cosets partition G, so gH is everything outside H. The right cosets are H and Hg, so Hg is everything outside H as well. The option 'H alone' is the coset of the identity, not the coset of g. The option 'g alone' forgets the products gh with h in H. The option 'G itself' is wrong because gH and H are disjoint, so gH is a proper part of G. The completing set is G minus H."
+          - problem: "A subgroup H has index 2 in a finite group G that has 26 elements. How many elements of G lie outside H?"
+            answer: "13"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "By Lagrange, the order of H is 26/2 = 13, so H has 13 elements. Every coset of H has the same size as H, so the other coset also has 13 elements, and it is exactly the set of elements outside H. The number of elements outside H is 13."
+          - problem: "Write the full proof: if H is a subgroup of index 2 in a group G, then H is normal in G. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1: If g lies in H, then gH = H and Hg = H, because H is closed under products and inverses. Step 2: Now take g outside H. Because gH contains g, it is not H, so with index 2 the left cosets are exactly H and gH. Step 3: Left cosets partition G, so gH is the complement of H in G. Step 4: The same argument on the right shows the right cosets are H and Hg, so Hg is also the complement of H in G. Step 5: Therefore gH equals Hg for every g in G, whether g lies in H or not. By the definition of normality, H is normal in G."
         constraints: "the index-2 lemma and immediate applications"
     diagnostic_exemplar:
       problem: 'Determine whether $N = \{e, (1\,2\,3), (1\,3\,2)\}$ is normal in $S_3$, and whether $K = \{e, (1\,3)\}$ is.'
