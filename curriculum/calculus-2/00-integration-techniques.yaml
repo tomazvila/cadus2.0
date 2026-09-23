@@ -1385,13 +1385,29 @@ topics:
         name: Recognizing the right technique
         key_prerequisites: [integration-by-parts, partial-fractions-integration, trigonometric-substitution]
         exemplars:
-          - problem: 'Name the best technique for each: (a) $\int x e^{x^2}\,dx$, (b) $\int x \ln x\,dx$, (c) $\int \frac{dx}{x^2 - 9}$, (d) $\int \sqrt{4 - x^2}\,dx$.'
-            answer: '(a) u-substitution ($u = x^2$), (b) integration by parts, (c) partial fractions, (d) trigonometric substitution'
-            answer_contract: {kind: none}
-            solution_sketch: '(a) the derivative of $x^2$ is present up to a constant; (b) algebraic times log; (c) $x^2 - 9 = (x-3)(x+3)$; (d) the $a^2 - x^2$ radical pattern.'
           - problem: 'Evaluate $\int x e^{x^2} \, dx$.'
             answer: '$\frac{e^{x^2}}{2} + C$'
             solution_sketch: 'Substitution beats parts here: $u = x^2$, $du = 2x\,dx$.'
+          - problem: "Each integral below is best solved by exactly one of these techniques, coded as: 1 = u-substitution, 2 = integration by parts, 3 = partial fractions, 4 = trigonometric integrals, 5 = trigonometric substitution. (a) $\\int x\\sin(x^2)\\,dx$  (b) $\\int x^2\\ln x\\,dx$  (c) $\\int \\frac{dx}{x^2+3x+2}$  (d) $\\int \\sqrt{16-x^2}\\,dx$  (e) $\\int \\sin^2 x\\,dx$. Give the code of the best technique for each of (a) through (e)."
+            answer: "a = 1; b = 2; c = 3; d = 5; e = 4"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "a"}, {"contract": {"kind": "exact"}, "name": "b"}, {"contract": {"kind": "exact"}, "name": "c"}, {"contract": {"kind": "exact"}, "name": "d"}, {"contract": {"kind": "exact"}, "name": "e"}]}
+            solution_sketch: "The full result is a = 1; b = 2; c = 3; d = 5; e = 4. Step 1 (structure scan): in (a) the factor x is a multiple of the derivative of the inner exponent x^2, so a substitution consumes the integrand and the code is 1. Step 2: in (b) the integrand is an algebraic factor times a logarithm and no substitution fits, so integration by parts is the direct route and the code is 2. Step 3: in (c) the denominator x^2 + 3x + 2 factors as (x+1)(x+2), so the code is 3, partial fractions. Step 4: in (d) the radical has the a^2 minus x^2 pattern with a = 4, so the code is 5, trigonometric substitution. Step 5: in (e) the square of sine needs the power-reduction identity, so the code is 4, trigonometric integrals. The answer is a = 1; b = 2; c = 3; d = 5; e = 4."
+          - problem: "Consider the integral $\\int \\frac{(\\ln x)^2}{x}\\,dx$. Which technique solves this integral most directly?"
+            answer: "u-substitution"
+            answer_contract: {"kind": "label", "options": [["u-substitution"], ["integration by parts"], ["partial fractions"], ["trigonometric substitution"], ["trigonometric integrals"]]}
+            solution_sketch: "Step 1: take u = ln(x), so du = dx/x, and the integral becomes the single power integral of u^2 du. Step 2: the derivative of the inner function ln(x) is present as the factor 1/x, so a substitution handles the whole integrand in one step. Step 3: the choice integration by parts treats the integrand as a product, but it is far longer here and misses the present derivative of ln(x). Step 4: the choice partial fractions needs a rational function with a factorable denominator, which this integrand is not. Step 5: the choice trigonometric substitution needs a radical of the form a^2 plus or minus x^2, and the choice trigonometric integrals needs powers of trig functions; neither structure appears. The answer is u-substitution."
+          - problem: "Four integrals are numbered: 1: $\\int \\frac{dx}{x^2-16}$, 2: $\\int \\sqrt{4+x^2}\\,dx$, 3: $\\int \\cos^3 x\\,dx$, 4: $\\int \\frac{\\ln x}{x}\\,dx$. Give the number of the integral for which trigonometric substitution is the best technique."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: trigonometric substitution applies to radicals with the patterns a^2 minus x^2, a^2 plus x^2, or x^2 minus a^2. Step 2: integral 2 contains the radical sqrt(4 + x^2), the a^2 plus x^2 pattern with a = 2, handled by x = 2 tan(theta). Step 3: integral 1 is a rational function whose denominator factors as (x-4)(x+4), so partial fractions fits it, and integral 4 has the derivative of ln(x) present as 1/x, so substitution fits it. Step 4: integral 3 is a power of cosine, handled by trigonometric integrals, not by a radical substitution. The answer is 2."
+          - problem: "Consider (a) $\\int x\\cos(4x)\\,dx$, (b) $\\int \\frac{x}{x^2+4}\\,dx$, (c) $\\int x^2 e^{x^3}\\,dx$, (d) $\\int \\frac{dx}{x^2-1}$. How many of the four integrals are best solved by integration by parts?"
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: integral (a) is a product of a polynomial factor and a trig function with no substitution available, so it needs integration by parts. Step 2: integral (b) has the derivative of x^2 + 4 present as the factor x, so substitution solves it and parts is not the best route. Step 3: integral (c) has the derivative of x^3 present as the factor x^2, so substitution solves it. Step 4: integral (d) has the denominator (x-1)(x+1), so partial fractions solves it. Step 5: only integral (a) is genuinely best by parts, so the count is 1. The answer is 1."
+          - problem: "A student reaches for integration by parts on $\\int \\frac{x}{x^2+9}\\,dx$. Determine whether substitution or parts is the better technique, and give the constant $k$ such that the better technique turns this integral into $k\\int \\frac{du}{u}$."
+            answer: "verdict = substitution; k = 1/2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["substitution"], ["parts"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "k"}]}
+            solution_sketch: "Step 1: the factor x is a constant multiple of the derivative of x^2 + 9, so a substitution consumes the whole integrand and parts is unnecessary. Step 2 (substitution rule): take u = x^2 + 9, so du = 2x dx and x dx = du/2. Step 3: the integral becomes (1/2) times the integral of du/u, so the constant is k = 1/2. The answer is verdict = substitution; k = 1/2."
         constraints: "classification lists mix substitution, parts, partial fractions, trig integrals, and trig substitution; every listed integral must be genuinely best solved by the named technique"
       - id: kp2
         name: Substitution before another technique
