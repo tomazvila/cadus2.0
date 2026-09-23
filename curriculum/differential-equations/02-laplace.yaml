@@ -721,18 +721,30 @@ topics:
         name: Inverting exponentials
         key_prerequisites: [inverse-laplace-table]
         exemplars:
-          - problem: 'Compute $\mathcal{L}^{-1}\left\{\dfrac{e^{-2s}}{s}\right\}$.'
-            answer: '$u_2(t)$'
-            answer_contract: {kind: none}
-            solution_sketch: '$u_2(t)$'
-          - problem: 'Compute $\mathcal{L}^{-1}\left\{\dfrac{e^{-s}}{s + 3}\right\}$.'
-            answer: '$u_1(t)\,e^{-3(t-1)}$'
-            answer_contract: {kind: none}
-            solution_sketch: '$F(s) = \frac{1}{s+3}$ inverts to $e^{-3t}$; the factor $e^{-s}$ delays it: $u_1(t)e^{-3(t-1)}$.'
-          - problem: 'Compute $\mathcal{L}^{-1}\left\{\dfrac{e^{-4s}}{s^2}\right\}$.'
-            answer: '$(t - 4)u_4(t)$'
-            answer_contract: {kind: none}
-            solution_sketch: '$(t - 4)u_4(t)$'
+          - problem: "Let $g(t)$ be the inverse Laplace transform of $\\dfrac{e^{-3s}}{s}$. Find $g(2)$ and $g(5)$."
+            answer: "g2 = 0; g5 = 1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "g2"}, {"contract": {"kind": "exact"}, "name": "g5"}]}
+            solution_sketch: "Apply the second shifting theorem, $\\mathcal{L}^{-1}\\{e^{-cs}F(s)\\} = u_c(t)f(t-c)$ with $f = \\mathcal{L}^{-1}\\{F\\}$. The table gives $\\mathcal{L}^{-1}\\{1/s\\} = 1$, and here $c = 3$, so the full inverse is $g(t) = u_3(t)$. Evaluate: $g(2) = u_3(2) = 0$ since $2 < 3$, and $g(5) = u_3(5) = 1$ since $5 \\ge 3$. So g2 = 0; g5 = 1."
+          - problem: "A voltage in an RC circuit has Laplace transform $\\dfrac{e^{-4s}}{s+1}$, and $g(t)$ denotes its inverse Laplace transform. Evaluate $g(5)$ and $g(6)$ to 4 decimals."
+            answer: "g5 = 0.3679; g6 = 0.1353"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"decimals": 4, "kind": "approx"}, "name": "g5"}, {"contract": {"decimals": 4, "kind": "approx"}, "name": "g6"}]}
+            solution_sketch: "By the second shifting theorem, $\\mathcal{L}^{-1}\\{e^{-cs}F(s)\\} = u_c(t)f(t-c)$. The table entry $1/(s+1)$ inverts to $f(t) = e^{-t}$, and $c = 4$, so the full inverse is $g(t) = u_4(t)e^{-(t-4)}$. Evaluate: $g(5) = e^{-(5-4)} = e^{-1}$ and $g(6) = e^{-(6-4)} = e^{-2}$. To 4 decimals these are $0.3679$ and $0.1353$, so g5 = 0.3679; g6 = 0.1353."
+          - problem: "Take $g(t) = \\mathcal{L}^{-1}\\left\\{\\dfrac{e^{-5s}}{s^2}\\right\\}$. Find $g(6)$ and $g(8)$."
+            answer: "g6 = 1; g8 = 3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "g6"}, {"contract": {"kind": "exact"}, "name": "g8"}]}
+            solution_sketch: "The table gives $\\mathcal{L}^{-1}\\{1/s^2\\} = t$. By the second shifting theorem with $c = 5$, the full inverse is $g(t) = (t-5)u_5(t)$. Evaluate: $g(6) = (6-5)u_5(6) = 1$ and $g(8) = (8-5)u_5(8) = 3$. So g6 = 1; g8 = 3."
+          - problem: "Let $g(t) = \\mathcal{L}^{-1}\\left\\{\\dfrac{2e^{-3s}}{s^3}\\right\\}$. Compute $g(4)$ and $g(6)$."
+            answer: "g4 = 1; g6 = 9"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "g4"}, {"contract": {"kind": "exact"}, "name": "g6"}]}
+            solution_sketch: "The table gives $\\mathcal{L}^{-1}\\{2/s^3\\} = t^2$. By the second shifting theorem with $c = 3$, the full inverse is $g(t) = (t-3)^2u_3(t)$. Evaluate: $g(4) = (4-3)^2u_3(4) = 1$ and $g(6) = (6-3)^2u_3(6) = 9$. So g4 = 1; g6 = 9."
+          - problem: "A forcing function has Laplace transform $\\dfrac{3e^{-2s}}{s^2+9}$, and $g(t)$ is its inverse transform. Evaluate $g(3)$ and $g(4)$ to 4 decimals."
+            answer: "g3 = 0.1411; g4 = -0.2794"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"decimals": 4, "kind": "approx"}, "name": "g3"}, {"contract": {"decimals": 4, "kind": "approx"}, "name": "g4"}]}
+            solution_sketch: "The table gives $\\mathcal{L}^{-1}\\{3/(s^2+9)\\} = \\sin(3t)$. By the second shifting theorem with $c = 2$, the full inverse is $g(t) = u_2(t)\\sin(3(t-2))$. Evaluate: $g(3) = \\sin(3(3-2)) = \\sin(3)$ and $g(4) = \\sin(3(4-2)) = \\sin(6)$. To 4 decimals, $\\sin(3) \\approx 0.1411$ and $\\sin(6) \\approx -0.2794$, so g3 = 0.1411; g4 = -0.2794."
+          - problem: "Let $g(t) = \\mathcal{L}^{-1}\\left\\{\\dfrac{s e^{-6s}}{s^2+1}\\right\\}$. Evaluate $g(7)$ and $g(9)$ to 4 decimals."
+            answer: "g7 = 0.5403; g9 = -0.9900"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"decimals": 4, "kind": "approx"}, "name": "g7"}, {"contract": {"decimals": 4, "kind": "approx"}, "name": "g9"}]}
+            solution_sketch: "The table gives $\\mathcal{L}^{-1}\\{s/(s^2+1)\\} = \\cos(t)$. By the second shifting theorem with $c = 6$, the full inverse is $g(t) = u_6(t)\\cos(t-6)$. Evaluate: $g(7) = \\cos(7-6) = \\cos(1)$ and $g(9) = \\cos(9-6) = \\cos(3)$. To 4 decimals, $\\cos(1) \\approx 0.5403$ and $\\cos(3) \\approx -0.9900$, so g7 = 0.5403; g9 = -0.9900."
         constraints: "e^{-cs} times a single table entry; write the answer with u_c(t) and argument t - c"
     diagnostic_exemplar:
       problem: 'Let $f(t) = 0$ for $t < 2$ and $f(t) = t$ for $t \ge 2$. Write $f$ using a unit step and compute $\mathcal{L}\{f\}$.'

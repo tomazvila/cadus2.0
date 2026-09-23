@@ -50,18 +50,30 @@ topics:
         name: Linear or nonlinear
         key_prerequisites: []
         exemplars:
-          - problem: 'State whether $y'''' + xy = \sin x$ is linear.'
-            answer: "Linear."
-            answer_contract: {kind: none}
-            solution_sketch: "The unknown $y$ and its derivatives appear to the first power with coefficients depending only on $x$."
-          - problem: "State whether $y' + y^2 = x$ is linear."
-            answer: "Nonlinear: the $y^2$ term."
-            answer_contract: {kind: none}
-            solution_sketch: "Nonlinear: the $y^2$ term."
-          - problem: 'State whether $y'''' + \sin y = 0$ is linear.'
-            answer: 'Nonlinear: $\sin y$ is a nonlinear function of the unknown.'
-            answer_contract: {kind: none}
-            solution_sketch: 'Compare with $y'''' + (\sin x)\,y = 0$, which IS linear: what matters is how $y$ enters, not $x$.'
+          - problem: "The class of a differential equation is decided by how the unknown y and its derivatives appear in its terms. Classify the equation y'' + x y = sin(x). Select the correct category."
+            answer: "linear"
+            answer_contract: {"kind": "label", "options": [["linear"], ["power"], ["product"], ["function"]]}
+            solution_sketch: "Linearity rule: the equation is in the standard class when y and every derivative appear to the first power and each coefficient depends only on x. The full equation is y'' + x y = sin(x). Here y'' and y are first powers, the coefficient x depends only on x, and sin(x) is a right-side term in x, so nothing breaks the standard form. The wrong option power fails because no y^2 or y^3 occurs. The wrong option product fails because y is never multiplied by a derivative. The wrong option function fails because no nonlinear term in y such as sin(y) occurs. The correct category is linear."
+          - problem: "The unknown y can enter a differential equation to the first degree or in some other way. Classify the equation y' + y^2 = x. Select the correct category."
+            answer: "power"
+            answer_contract: {"kind": "label", "options": [["linear"], ["power"], ["product"], ["function"]]}
+            solution_sketch: "Linearity rule: a power of the unknown y, such as y^2, breaks the standard first-degree form. The full equation is y' + y^2 = x. The term y^2 raises y to the second power, so the equation is not in the standard class. The wrong option linear fails because y does not appear to the first degree. The wrong option product fails because y and y' are not multiplied together. The wrong option function fails because no nonlinear term in y such as sin(y) occurs. The correct category is power."
+          - problem: "For this classification only the role of the unknown y matters; terms in x alone never break the class. Consider the equations (1) y'' + sin(y) = 0, (2) y' + sin(x) y = 0, (3) y'' + y = cos(x). How many of these three equations are linear?"
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Linearity rule: y and its derivatives must appear to the first degree, and only the role of y matters; terms in x alone never break the class. The full list is (1) y'' + sin(y) = 0, (2) y' + sin(x) y = 0, (3) y'' + y = cos(x). Equation (1) fails the rule because sin(y) is a nonlinear term in the unknown. Equation (2) passes because sin(x) is only a coefficient in x and y, y' are first degree. Equation (3) passes because y'' and y are first degree and cos(x) is a right-side term in x. Two equations pass, so the answer is 2."
+          - problem: "A product y y', a power of y, or a nonlinear term in y breaks the standard class, while a coefficient in x alone never does. Consider the equations (1) y y' = x, (2) y'' + y^2 = 0, (3) y'' + x y = sin(x), (4) y' + sin(y) = 1. How many of these four equations are linear?"
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Linearity rule: first degrees of y and its derivatives with coefficients in x only; a product y y', a power of y, or a nonlinear term in y breaks the class. The full list is (1) y y' = x, (2) y'' + y^2 = 0, (3) y'' + x y = sin(x), (4) y' + sin(y) = 1. Equation (1) fails because y y' multiplies the unknown by its derivative. Equation (2) fails because y^2 is a power of y. Equation (3) passes because x is a coefficient in x and y, y'' appear to the first degree. Equation (4) fails because sin(y) is nonlinear in y. Exactly one equation passes, so the answer is 1."
+          - problem: "Consider the equations (1) y'' + tan(y) = x, (2) y''' + x^2 y' = 0, (3) y' + 1/y = 0, (4) y'' + x y = cos(x). How many of these four equations are nonlinear?"
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Linearity rule: the class requires first degrees of y and its derivatives with coefficients in x only; a nonlinear term in y or a negative degree of y breaks it. The full list is (1) y'' + tan(y) = x, (2) y''' + x^2 y' = 0, (3) y' + 1/y = 0, (4) y'' + x y = cos(x). Equation (1) fails the rule because tan(y) is a nonlinear term in the unknown. Equation (2) passes because y''' and y' are first degrees and x^2 is a coefficient in x. Equation (3) fails because 1/y is y to the degree -1. Equation (4) passes because x is a coefficient in x and cos(x) is a right-side term. Two equations fail, so the answer is 2."
+          - problem: "Consider the equations (1) y'' + x^3 y = sin(x), (2) y' + cos(x) y = 0, (3) y'' + y y' = 1, (4) y' + y = x^2. Exactly one of them is not linear. Give the number of that equation."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Linearity rule: the class is broken by a product of the unknown with a derivative, by powers of y, or by nonlinear terms in y; coefficients in x never break it. The full list is (1) y'' + x^3 y = sin(x), (2) y' + cos(x) y = 0, (3) y'' + y y' = 1, (4) y' + y = x^2. Equation (1) passes the rule because x^3 is only a coefficient in x. Equation (2) passes because cos(x) is a coefficient in x. Equation (3) fails because y y' is a product of the unknown and its derivative. Equation (4) passes because the coefficients are constants and x^2 is a right-side term. The equation that is not linear is number 3."
         constraints: "nonlinearity caused by powers of y or y', products y y', or functions like sin y, e^y; include a linear equation with variable coefficients as a foil"
       - id: kp3
         name: Translating rate statements into ODEs
