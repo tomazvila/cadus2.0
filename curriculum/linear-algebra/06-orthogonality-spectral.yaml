@@ -25,48 +25,88 @@ topics:
         name: Recognizing orthogonal matrices
         key_prerequisites: [orthogonal-orthonormal-sets, transpose-symmetric-matrices]
         exemplars:
-          - problem: 'Is $Q = \frac{1}{5}\begin{pmatrix}3&-4\\4&3\end{pmatrix}$ an orthogonal matrix?'
-            answer: "Yes: its columns (3/5, 4/5) and (-4/5, 3/5) are orthonormal, so Q^T Q = I"
-            answer_contract: {kind: none}
-            solution_sketch: 'Each column has norm $\frac{1}{5}\sqrt{9 + 16} = 1$ and their dot product is $\frac{1}{25}(-12 + 12) = 0$.'
-          - problem: 'Is $A = \begin{pmatrix}1&1\\0&1\end{pmatrix}$ orthogonal?'
-            answer: "No"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: 'The columns are not orthonormal: $(1, 0) \cdot (1, 1) = 1 \neq 0$ (and the second column has norm $\sqrt{2}$).'
-          - problem: 'Is the rotation matrix $\begin{pmatrix}0&-1\\1&0\end{pmatrix}$ orthogonal?'
-            answer: "Yes"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: 'Columns $(0, 1)$ and $(-1, 0)$ are unit vectors with dot product $0$; equivalently $Q^TQ = I$.'
+          - problem: "Let $Q = \\frac{1}{5}\\begin{pmatrix}3&-4\\\\4&3\\end{pmatrix}$. Compute $Q^TQ$ and give the matrix as [a,b;c,d]."
+            answer: "[1,0;0,1]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "The matrix is $Q = \\frac{1}{5}\\begin{pmatrix}3&-4\\\\4&3\\end{pmatrix}$. Step 1 (definition of $Q^TQ$): the $(i,j)$ entry of $Q^TQ$ is the dot product of column $i$ with column $j$. Step 2 (dot products of the columns): the columns are $(3/5, 4/5)$ and $(-4/5, 3/5)$; the diagonal entries are the squared norms $(3/5)^2 + (4/5)^2 = 9/25 + 16/25 = 1$, and the off-diagonal dot product is $(3/5)(-4/5) + (4/5)(3/5) = -12/25 + 12/25 = 0$. Step 3 (assemble): $Q^TQ = \\begin{pmatrix}1&0\\\\0&1\\end{pmatrix}$, so $Q$ is orthogonal. The answer is [1,0;0,1]."
+          - problem: "Let $A = \\begin{pmatrix}1&1\\\\0&1\\end{pmatrix}$. Compute $A^TA$ and give the matrix as [a,b;c,d]."
+            answer: "[1,1;1,2]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "The matrix is $A = \\begin{pmatrix}1&1\\\\0&1\\end{pmatrix}$. Step 1 (transpose rule): $A^T = \\begin{pmatrix}1&0\\\\1&1\\end{pmatrix}$. Step 2 (matrix multiplication): the $(1,1)$ entry is $1\\cdot1 + 0\\cdot0 = 1$, the $(1,2)$ entry is $1\\cdot1 + 0\\cdot1 = 1$, the $(2,1)$ entry is $1\\cdot1 + 1\\cdot0 = 1$, and the $(2,2)$ entry is $1\\cdot1 + 1\\cdot1 = 2$. The off-diagonal entry $1$ shows the columns are not perpendicular, so $A$ is not orthogonal. The answer is [1,1;1,2]."
+          - problem: "Let $Q = \\begin{pmatrix}0&-1\\\\1&0\\end{pmatrix}$, a rotation by 90 degrees. Give the dot product of the two columns of $Q$."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The matrix is $Q = \\begin{pmatrix}0&-1\\\\1&0\\end{pmatrix}$. Step 1 (read the columns): the columns are $(0, 1)$ and $(-1, 0)$. Step 2 (dot product definition): $(0)(-1) + (1)(0) = 0 + 0 = 0$. A dot product of 0 confirms the columns are perpendicular, one of the two conditions for $Q$ to be orthogonal (both columns also have norm 1). The answer is 0."
+          - problem: "The matrix $Q = \\frac{1}{5}\\begin{pmatrix}4&a\\\\3&-4\\end{pmatrix}$ is orthogonal. Find the value of $a$."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The matrix is $Q = \\frac{1}{5}\\begin{pmatrix}4&a\\\\3&-4\\end{pmatrix}$ with columns $(4/5, 3/5)$ and $(a/5, -4/5)$. Step 1 (orthogonality criterion): the dot product of the two columns must be 0, so $(4/5)(a/5) + (3/5)(-4/5) = 0$. Step 2 (solve the linear equation): $(4a - 12)/25 = 0$ gives $4a = 12$, so $a = 3$; the norm condition $(a^2+16)/25 = 1$ then holds as well. The answer is 3."
+          - problem: "Let $Q = \\frac{1}{5}\\begin{pmatrix}3&4\\\\4&3\\end{pmatrix}$. Give the dot product of the two columns of $Q$ as a fraction."
+            answer: "24/25"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The matrix is $Q = \\frac{1}{5}\\begin{pmatrix}3&4\\\\4&3\\end{pmatrix}$. Step 1 (read the columns): the columns are $(3/5, 4/5)$ and $(4/5, 3/5)$. Step 2 (dot product definition): $(3/5)(4/5) + (4/5)(3/5) = 12/25 + 12/25 = 24/25$. Since $24/25 \\neq 0$, the columns are not perpendicular and $Q$ is not orthogonal, even though each column has norm 1. The answer is 24/25."
+          - problem: "Let $Q = \\frac{1}{\\sqrt{2}}\\begin{pmatrix}1&1\\\\1&-1\\end{pmatrix}$. Give the norm of the second column of $Q$."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The matrix is $Q = \\frac{1}{\\sqrt{2}}\\begin{pmatrix}1&1\\\\1&-1\\end{pmatrix}$. Step 1 (read the second column): it is $(1/\\sqrt{2}, -1/\\sqrt{2})$. Step 2 (norm definition): the norm is $\\sqrt{(1/\\sqrt{2})^2 + (-1/\\sqrt{2})^2} = \\sqrt{1/2 + 1/2} = \\sqrt{1} = 1$. The norm 1 confirms the second column is a unit vector, one of the two conditions for $Q$ to be orthogonal. The answer is 1."
         constraints: "2x2 candidates; orthogonal cases built from 3-4-5 columns, rotations by multiples of 90 degrees, or 1/sqrt(2) entries"
       - id: kp2
         name: The inverse is the transpose
         key_prerequisites: [transpose-symmetric-matrices, matrix-inverses]
         exemplars:
-          - problem: '$Q = \frac{1}{5}\begin{pmatrix}3&-4\\4&3\end{pmatrix}$ is orthogonal. Find $Q^{-1}$ without row reduction.'
-            answer: '$Q^{-1} = Q^T = \frac{1}{5}\begin{pmatrix}3&4\\-4&3\end{pmatrix}$'
-            answer_contract: {kind: none}
-            solution_sketch: 'For orthogonal matrices $Q^TQ = I$, so the inverse is simply the transpose.'
-          - problem: 'Solve $Q\mathbf{x} = \mathbf{b}$ for $Q = \frac{1}{5}\begin{pmatrix}3&-4\\4&3\end{pmatrix}$ and $\mathbf{b} = (3, 4)$, using the transpose.'
-            answer: "x = Q^T b = (5, 0)"
-            answer_contract: {kind: none}
-            solution_sketch: '$\mathbf{x} = Q^T\mathbf{b} = \frac{1}{5}(9 + 16, -12 + 12) = (5, 0)$. Check: $Q(5, 0) = (3, 4)$.'
+          - problem: "Let Q = 1/5[[3,-4],[4,3]]. Q is orthogonal. Find Q^{-1}. Give the answer as [a,b;c,d]."
+            answer: "[3/5,4/5;-4/5,3/5]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "The matrix is Q = 1/5[[3,-4],[4,3]]. The rule for an orthogonal matrix is Q^{-1} = Q^T. Transpose Q by swapping rows and columns and keep the factor 1/5: Q^T = [3/5,4/5;-4/5,3/5]. The answer is [3/5,4/5;-4/5,3/5]."
+          - problem: "Let Q = 1/5[[4,-3],[3,4]]. Q is orthogonal. Solve Qx = (1, 2) for x. Give the answer as (x, y)."
+            answer: "(2, 1)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "The matrix is Q = 1/5[[4,-3],[3,4]]. For an orthogonal matrix, x = Q^T b. Q^T = 1/5[[4,3],[-3,4]] and b = (1, 2), so x = 1/5(4*1 + 3*2, -3*1 + 4*2) = 1/5(10, 5) = (2, 1). The answer is (2, 1)."
+          - problem: "The matrix Q = [[0,-1],[1,0]] is a 90-degree rotation, so it is orthogonal. Find Q^{-1}. Give the answer as [a,b;c,d]."
+            answer: "[0,1;-1,0]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "The matrix is Q = [[0,-1],[1,0]]. For an orthogonal matrix, Q^{-1} = Q^T. Swap rows and columns: Q^T = [0,1;-1,0]. The answer is [0,1;-1,0]."
+          - problem: "Let Q = [[0,1],[-1,0]]. Solve Qx = (5, -2) for x. Give the answer as (x, y)."
+            answer: "(2, 5)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "The matrix is Q = [[0,1],[-1,0]]. For an orthogonal matrix, x = Q^T b. Q^T = [[0,-1],[1,0]] and b = (5, -2), so x = (0*5 + -1*-2, 1*5 + 0*-2) = (2, 5). The answer is (2, 5)."
+          - problem: "Let Q = 1/5[[-3,4],[4,3]]. Q is orthogonal. Find Q^{-1}. Give the answer as [a,b;c,d]."
+            answer: "[-3/5,4/5;4/5,3/5]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "The matrix is Q = 1/5[[-3,4],[4,3]]. For an orthogonal matrix, Q^{-1} = Q^T. Transpose Q by swapping rows and columns and keep the factor 1/5: Q^T = [-3/5,4/5;4/5,3/5]. The answer is [-3/5,4/5;4/5,3/5]."
+          - problem: "Let Q = 1/5[[3,4],[-4,3]]. Solve Qx = (3, 1) for x. Give the answer as (x, y)."
+            answer: "(1, 3)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "The matrix is Q = 1/5[[3,4],[-4,3]]. For an orthogonal matrix, x = Q^T b. Q^T = 1/5[[3,-4],[4,3]] and b = (3, 1), so x = 1/5(3*3 + -4*1, 4*3 + 3*1) = 1/5(5, 15) = (1, 3). The answer is (1, 3)."
         constraints: "orthogonal Q with 3-4-5 or 90-degree-rotation columns; right-hand sides chosen so Q^T b has integer entries"
       - id: kp3
         name: Orthogonal matrices preserve geometry
         key_prerequisites: [orthogonal-orthonormal-sets, linear-transformations]
         exemplars:
-          - problem: '$Q$ is orthogonal. How does $\|Q\mathbf{x}\|$ compare to $\|\mathbf{x}\|$?'
-            answer: "They are equal: orthogonal matrices preserve norms"
-            answer_contract: {kind: none}
-            solution_sketch: '$\|Q\mathbf{x}\|^2 = (Q\mathbf{x}) \cdot (Q\mathbf{x}) = \mathbf{x}^TQ^TQ\mathbf{x} = \mathbf{x} \cdot \mathbf{x}$.'
-          - problem: 'Verify that $Q = \begin{pmatrix}0&-1\\1&0\end{pmatrix}$ preserves dot products for $\mathbf{x} = (1, 2)$ and $\mathbf{y} = (3, 1)$.'
-            answer: "Qx = (-2, 1), Qy = (-1, 3); both dot products equal 5"
-            answer_contract: {kind: none}
-            solution_sketch: '$\mathbf{x} \cdot \mathbf{y} = 3 + 2 = 5$ and $Q\mathbf{x} \cdot Q\mathbf{y} = 2 + 3 = 5$.'
-          - problem: 'What values can $\det Q$ take when $Q$ is orthogonal?'
-            answer: "Only 1 or -1"
-            answer_contract: {kind: none}
-            solution_sketch: '$Q^TQ = I$ gives $(\det Q)^2 = 1$; rotations have $\det = 1$, reflections $\det = -1$.'
+          - problem: "Let Q = [0,-1;1,0] be a rotation and let x = (2,3). What is ||Qx||^2?"
+            answer: "13"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "First compute Qx by matrix-vector multiplication: Qx = (0*2 + (-1)*3, 1*2 + 0*3) = (-3, 2). Then apply the squared norm formula: ||Qx||^2 = (-3)^2 + 2^2 = 13. Because Q is orthogonal, it preserves squared norms, so this also equals ||x||^2 = 2^2 + 3^2 = 13. The squared norm is 13."
+          - problem: "Let Q = [1,0;0,-1] be a reflection, x = (2,1) and y = (-3,2). What is the dot product (Qx) dot (Qy)?"
+            answer: "-4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "First compute the images by matrix-vector multiplication: Qx = (2, -1) and Qy = (-3, -2). Then apply the dot product formula: (Qx) dot (Qy) = 2*(-3) + (-1)*(-2) = -4. Because Q is orthogonal, dot products are preserved, so x dot y = 2*(-3) + 1*2 = -4. The dot product is -4."
+          - problem: "Let Q = [0,-1;-1,0] be a reflection. What is det Q?"
+            answer: "-1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The given matrix is Q = [0,-1;-1,0]. Compute the determinant by the 2 by 2 formula: det Q = 0*0 - (-1)*(-1) = -1. For any orthogonal matrix the determinant is 1 or -1, and this reflection has -1. The determinant is -1."
+          - problem: "Let Q = [0,-1;1,0] and v = (3,-2). Compute Qv and give the result as (x, y)."
+            answer: "(2, 3)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "First multiply Q by v: Qv = (0*3 + (-1)*(-2), 1*3 + 0*(-2)) = (2, 3). The first coordinate is 2 and the second coordinate is 3. The image is (2, 3)."
+          - problem: "Let Q = [0,1;1,0] be a reflection and let v = (-1,3). What is ||Qv||^2?"
+            answer: "10"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "First compute Qv by matrix-vector multiplication: Qv = (0*(-1) + 1*3, 1*(-1) + 0*3) = (3, -1). Then apply the squared norm formula: ||Qv||^2 = 3^2 + (-1)^2 = 10. Because Q is orthogonal, it preserves squared norms, so this equals ||v||^2 = (-1)^2 + 3^2 = 10. The squared norm is 10."
+          - problem: "Let Q = [-1,0;0,-1] be a rotation, x = (3,1) and y = (-2,3). What is the dot product (Qx) dot (Qy)?"
+            answer: "-3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "First compute the images by matrix-vector multiplication: Qx = (-3, -1) and Qy = (2, -3). Then apply the dot product formula: (Qx) dot (Qy) = (-3)*2 + (-1)*(-3) = -3. Because Q is orthogonal, dot products are preserved, so x dot y = 3*(-2) + 1*3 = -3. The dot product is -3."
         constraints: "verifications on 2x2 rotations/reflections with integer test vectors in -3..3"
     diagnostic_exemplar:
       problem: 'For $Q = \frac{1}{\sqrt{2}}\begin{pmatrix}1&-1\\1&1\end{pmatrix}$, verify that $Q$ is orthogonal, give $Q^{-1}$, and compute $\|Q\mathbf{x}\|$ for $\mathbf{x} = (3, 4)$.'
