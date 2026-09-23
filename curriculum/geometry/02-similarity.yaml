@@ -415,29 +415,29 @@ topics:
         name: Decide the criterion or rule out similarity
         key_prerequisites: [similar-polygons, triangle-angle-sum]
         exemplars:
-          - problem: 'Triangle 1 has sides $3$, $4$, $5$; Triangle 2 has sides $6$, $8$, $9$. Are they similar?'
-            answer: 'no'
-            answer_contract: {kind: label, options: [[yes], [no]]}
-            solution_sketch: '$\frac{6}{3} = \frac{8}{4} = 2$ but $\frac{9}{5} \ne 2$, so SSS fails: no.'
-          - problem: 'Triangle 1 has angles $50^\circ$ and $60^\circ$; Triangle 2 has angles $60^\circ$ and $70^\circ$. Are they similar?'
-            answer: 'yes'
-            answer_contract: {kind: label, options: [[yes], [no]]}
-            solution_sketch: 'Third angles are $70^\circ$ and $50^\circ$ respectively, so the angle sets match: yes by AA.'
-          - problem: 'Triangle 1 has sides $5$, $6$, $7$; Triangle 2 has sides $10$, $12$, $15$. Are they similar? Answer yes or no.'
-            answer: 'no'
-            answer_contract: {kind: label, options: [[yes], [no]]}
-            solution_sketch: '$10/5 = 2$ and $12/6 = 2$, but $15/7 \neq 2$: one ratio fails, so no.'
-          - problem: 'Triangle 1 has sides $4$, $6$, $9$; Triangle 2 has sides $8$, $12$, $18$. Are they similar? Answer yes or no.'
-            answer: 'yes'
-            answer_contract: {kind: label, options: [[yes], [no]]}
-            solution_sketch: '$8/4 = 12/6 = 18/9 = 2$: all three ratios match, so yes by SSS.'
-          - problem: 'Triangle 1 has angles $55^\circ$ and $75^\circ$; Triangle 2 has angles $55^\circ$ and $50^\circ$. Are the triangles similar? Answer yes or no.'
-            answer: 'yes'
-            answer_contract: {kind: label, options: [[yes], [no]]}
-            solution_sketch: 'Third angles: $180 - 55 - 75 = 50$ and $180 - 55 - 50 = 75$ — the same angle set, so yes by AA.'
+          - problem: "Triangle 1 has sides 4, 6, 9; Triangle 2 has sides 8, 12, 18. Find the scale factor if the triangles are similar, or the failing ratio if they are not, as a fraction."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Check SSS: compute the three ratios of corresponding sides, shortest to shortest and so on: 8/4 = 2, 12/6 = 2, and 18/9 = 2. All three ratios match, so the triangles are similar by SSS and the common ratio is the scale factor. The scale factor is 2."
+          - problem: "Triangle 1 has sides 3, 4, 5; Triangle 2 has sides 6, 8, 9. Find the scale factor if the triangles are similar, or the failing ratio if they are not, as a fraction."
+            answer: "9/5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Check SSS: the ratios of corresponding sides are 6/3 = 2, 8/4 = 2, and 9/5 = 9/5. Two ratios match but the third differs, so the triangles are not similar and the mismatch sits in exactly one ratio. The failing ratio is 9/5."
           - problem: 'Triangle 1 has sides $8$, $10$, $12$ and is similar to Triangle 2, whose corresponding shortest side is $4$. Find the scale factor from Triangle 1 to Triangle 2, as a fraction.'
             answer: "1/2"
             solution_sketch: 'Corresponding shortest sides: $4/8 = 1/2$.'
+          - problem: "Triangle 1 has angles 45 and 65 degrees; Triangle 2 has angles 65 and 70 degrees. Which criterion proves the triangles similar, or does no criterion apply?"
+            answer: "AA"
+            answer_contract: {"kind": "label", "options": [["SSS"], ["SAS"], ["AA"], ["none"]]}
+            solution_sketch: "Apply the triangle angle sum to get the third angles: 180 - 45 - 65 = 70 and 180 - 65 - 70 = 45. The angle sets 45, 65, 70 agree, so the triangles are similar by AA. SSS is wrong because no side lengths are given, SAS is wrong because no side is given, and none is wrong because the third angles resolve to the same set. The criterion is AA."
+          - problem: "One triangle has angles 40 and 65 degrees; a second triangle has angles 40 and 40 degrees. Give the criterion that applies, if any, and the third angle of the second triangle."
+            answer: "verdict = none; third = 100"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["SSS"], ["SAS"], ["AA"], ["none"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "third"}]}
+            solution_sketch: "Use the triangle angle sum: the third angles are 180 - 40 - 65 = 75 and 180 - 40 - 40 = 100. Since 75 and 100 differ, the angle sets differ, so no similarity criterion applies. SSS and SAS are wrong because no side lengths are given, and AA is wrong because the third angles differ. The answer is verdict = none; third = 100."
+          - problem: "Triangle P has sides of lengths 9 and 12 with an included angle of 30 degrees; Triangle Q has sides of lengths 6 and 8 with an included angle of 30 degrees. Give the criterion and the scale factor from Triangle P to Triangle Q."
+            answer: "criterion = SAS; factor = 2/3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["SSS"], ["SAS"], ["AA"]]}, "name": "criterion"}, {"contract": {"kind": "exact"}, "name": "factor"}]}
+            solution_sketch: "Match the shorter side to the shorter side and compare ratios: 9/6 = 3/2 and 12/8 = 3/2, and the included angles are both 30 degrees. Two pairs of corresponding sides are proportional with equal included angles, so the triangles are similar by SAS. SSS is wrong because only two side pairs are known, and AA is wrong because only one angle is known. The scale factor from P to Q is 6/9 = 2/3, so the answer is criterion = SAS; factor = 2/3."
         constraints: "mismatches live in exactly one ratio or resolve via the third angle"
     diagnostic_exemplar:
       problem: 'Triangle 1 has sides $6$, $9$, $12$; Triangle 2 has sides $10$, $15$, $20$. Are they similar? If so, state the criterion.'
