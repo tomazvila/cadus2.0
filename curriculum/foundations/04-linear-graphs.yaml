@@ -1937,22 +1937,22 @@ topics:
         name: "Meaning of the slope in context"
         key_prerequisites: [slope-as-rate-of-change]
         exemplars:
-          - problem: 'For repair cost $C=12h+40$, does $12$ mean cost per hour, fixed fee, or total cost after 12 hours?'
-            answer: "the cost per hour of work (€12 per hour)"
-            answer_contract: {"kind":"label","options":[["cost per hour","the cost per hour of work (\u20ac12 per hour)"],["fixed fee"],["total cost after 12 hours"]]}
-            solution_sketch: 'In $y = mx + b$, $m$ is the slope: the cost added per one more hour.'
-          - problem: 'For tank volume $y=-5x+50$, does $-5$ mean drains 5 L per minute, starts with 5 L, or fills 5 L per minute?'
-            answer: "the tank drains 5 L per minute"
-            answer_contract: {"kind":"label","options":[["drains 5 L per minute","the tank drains 5 L per minute"],["starts with 5 L"],["fills 5 L per minute"]]}
-            solution_sketch: 'The slope $-5$ is the rate of change: the tank loses $5$ L each minute.'
-          - problem: 'For $y = 0.08m + 15$, does $0.08$ mean cost per minute, fixed monthly fee, or total cost after one minute?'
-            answer: "the cost per minute of use (€0.08 per minute)"
-            answer_contract: {"kind":"label","options":[["the cost per minute","the cost per minute of use (\u20ac0.08 per minute)"],["the fixed monthly fee"],["the total cost after one minute"]]}
-            solution_sketch: 'The coefficient of $m$ is the rate per minute.'
-          - problem: 'For candle height $y = -0.5t + 20$, does $-0.5$ mean height decreases 0.5 cm per minute, starting height 0.5 cm, or height increases 0.5 cm per minute?'
-            answer: "the candle burns down 0.5 cm per minute"
-            answer_contract: {"kind":"label","options":[["height decreases 0.5 cm per minute","the candle burns down 0.5 cm per minute"],["starting height is 0.5 cm"],["height increases 0.5 cm per minute"]]}
-            solution_sketch: 'The negative slope is a decrease of $0.5$ cm per minute.'
+          - problem: "A bike repair shop charges C = 18h + 25 euros for a repair job of h hours. Find how many euros the total charge increases for each extra hour of work, and give the number only."
+            answer: "18"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The model is C = 18h + 25, in slope-intercept form, and the slope 18 is the coefficient of h. By the rule that the slope is the rate of change, each extra hour of work adds 18 euros to the total charge. The answer is 18."
+          - problem: "A tank holds V = 300 - 15t liters of water after t minutes of draining. Find the rate of change of the volume in liters per minute, and give the number only, with its sign."
+            answer: "-15"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The model is V = 300 - 15t, in slope-intercept form, and the slope is -15, the coefficient of t. By the rule that the slope is the rate of change, the volume drops by 15 liters each minute, so the rate of change is -15 liters per minute. The answer is -15."
+          - problem: "A phone plan costs y = 0.12m + 9 euros in a month for m minutes of calls. Find the rate in euros per minute at which the monthly cost grows, and give the number only as a decimal to 2 places."
+            answer: "0.12"
+            answer_contract: {"decimals": 2, "kind": "approx"}
+            solution_sketch: "The model is y = 0.12m + 9, in slope-intercept form, and the slope is 0.12, the coefficient of m. By the rule that the slope is the rate of change, each extra minute of calls adds 0.12 euros to the monthly cost. The answer is 0.12."
+          - problem: "A candle's height is y = 22 - 0.4t centimeters after t minutes of burning. State whether the height goes up or goes down as t grows, and give the rate of change in centimeters per minute as a signed decimal to 1 place."
+            answer: "verdict = decreases; rate = -0.4"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["increases"], ["decreases"]]}, "name": "verdict"}, {"contract": {"decimals": 1, "kind": "approx"}, "name": "rate"}]}
+            solution_sketch: "The model is y = 22 - 0.4t, in slope-intercept form, and the slope is -0.4, the coefficient of t. By the rule that a negative slope is a decreasing rate, the height goes down at 0.4 centimeters per minute, so the rate of change is -0.4 centimeters per minute. The option increases is wrong because a negative slope means the quantity falls, not rises. The answer is verdict = decreases; rate = -0.4."
         constraints: "slope = rate with units"
       - id: kp2
         visuals: [{"kind":"coordinate","x_min":"-8","x_max":"8","y_min":"-8","y_max":"8","x_tick":"1","y_tick":"1","points":[{"x":"-2","y":"-2","label":"A"},{"x":"2","y":"4","label":"B"}],"segments":[{"from":{"x":"-2","y":"-2","label":null},"to":{"x":"2","y":"4","label":null}}],"caption":"Reference example: The reference line has equation y = (3/2)x + 1 The drawn segment joins the two reference points."}]
