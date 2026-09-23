@@ -308,12 +308,34 @@ topics:
         name: "Semigroups without an identity"
         key_prerequisites: [binary-operations]
         exemplars:
-          - problem: 'Show that the even integers under multiplication form a semigroup but not a monoid.'
-            answer: 'Closed and associative, but the only candidate identity $1$ is odd.'
-            solution_sketch: 'Products of evens are even (closure) and multiplication is associative. An identity $e$ would need $e \cdot 2 = 2$, so $e = 1 \notin 2\mathbb{Z}$. $\square$'
-          - problem: 'Show that $((0, 1), \cdot)$ is a semigroup but not a monoid.'
-            answer: 'Products stay in $(0,1)$; an identity would have to be $1 \notin (0, 1)$.'
-            solution_sketch: 'For $0 < a, b < 1$, $0 < ab < 1$ (closure); associativity is inherited from $\mathbb{R}$. $e \cdot a = a$ forces $e = 1$, which is excluded. $\square$'
+          - problem: "An identity e for multiplication on the even integers must satisfy e * 2 = 2. Give e."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the identity condition: e * 2 = 2. Divide both sides by 2: e = 1. Since 1 is not even, the forced identity lies outside the even integers. The value is 1."
+          - problem: "For the interval (0,1) under multiplication, compute the product of 1/2 and 1/3. Give the answer as a fraction."
+            answer: "1/6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Multiply the two fractions: (1/2) * (1/3) = 1/6. Both factors lie in (0,1), and the product 1/6 also lies in (0,1), so closure holds for this pair. The product is 1/6."
+          - problem: "The positive integers under addition form a semigroup. An identity e would satisfy e + 7 = 7. Find e."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the identity condition: e + 7 = 7. Subtract 7 from both sides: e = 0. Since 0 is not a positive integer, the forced identity lies outside the set. The forced identity is 0."
+          - problem: "For the operation a * b = a + b + ab on the positive integers, compute (1 * 2) * 3 and 1 * (2 * 3). Give the common value."
+            answer: "23"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "First compute the left side: 1 * 2 = 1 + 2 + 2 = 5, then 5 * 3 = 5 + 3 + 15 = 23. Next compute the right side: 2 * 3 = 2 + 3 + 6 = 11, then 1 * 11 = 1 + 11 + 11 = 23. Both orders give the same value, so this triple supports associativity. The common value is 23."
+          - problem: "Claim: the positive integers under addition form a monoid. Step 1: the sum of two positive integers is positive. Step 2: addition of integers is associative. Step 3: an identity e must satisfy e + 3 = 3, so e = 0. Step 4: 0 is a positive integer, so the identity is in the set. Which step is the first step that is not valid?"
+            answer: "Step 4"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 is valid: the sum of two positive integers is positive, so closure holds. Step 2 is valid: addition is associative. Step 3 is valid: solving e + 3 = 3 gives e = 0. Step 4 is invalid: 0 is not a positive integer, so it cannot be the identity in the set. The first invalid step is Step 4."
+          - problem: "For the operation a * b = a + b + ab on the positive integers, an identity e must satisfy e * a = a. Which line is the correct factorization that isolates e?"
+            answer: "e(1+a)=0"
+            answer_contract: {"kind": "label", "options": [["e + ea = 0"], ["e(1+a)=0"], ["e = a"], ["e = 1+a"]]}
+            solution_sketch: "Start from the identity condition e * a = a. Expand the operation: e + a + ea = a. Subtract a from both sides: e + ea = 0. Factor the left side: e(1+a) = 0. Since a is positive, 1+a is not zero, so e = 0. The option e + ea = 0 is only the step before factoring; e = a drops the factor 1+a; e = 1+a is a sign and factor error. The correct line is e(1+a)=0."
+          - problem: "Write the full proof: the positive integers under addition form a semigroup but not a monoid. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Claim: the positive integers under addition form a semigroup but not a monoid. Step 1 (closure): if a and b are positive integers, then a + b is a positive integer, so the operation is closed. Step 2 (associativity): for positive integers a, b, c, (a + b) + c = a + (b + c), inherited from integer addition. Step 3 (identity candidate): if e is an identity, then e + 1 = 1. Step 4 (solve): subtract 1 from both sides to get e = 0. Step 5 (outside): 0 is not a positive integer, so no identity lies in the set. Therefore the positive integers under addition form a semigroup but not a monoid."
         constraints: "verify closure and associativity, then show the forced identity lies outside the set"
     diagnostic_exemplar:
       problem: 'Is $a * b = \min(a, b)$ on $\mathbb{Z}$ associative? Commutative? Does it have an identity?'
@@ -489,12 +511,34 @@ topics:
         name: "Solving equations with inverses"
         key_prerequisites: [monoids]
         exemplars:
-          - problem: 'Prove: if $a$ is invertible in a monoid, the equation $a * x = b$ has the unique solution $x = a^{-1} * b$.'
-            answer: 'Substitute for existence; left-multiply by $a^{-1}$ for uniqueness.'
-            solution_sketch: 'Existence: $a * (a^{-1} * b) = (a * a^{-1}) * b = e * b = b$. Uniqueness: from $a * x = b$, left-multiplying by $a^{-1}$ gives $x = a^{-1} * b$. $\square$'
-          - problem: 'In multiplication mod $7$, solve $3x \equiv 5 \pmod 7$ using an inverse.'
-            answer: '$x \equiv 4 \pmod 7$.'
-            solution_sketch: '$3 \cdot 5 = 15 \equiv 1$, so $3^{-1} = 5$. Then $x \equiv 5 \cdot 5 = 25 \equiv 4$; check $3 \cdot 4 = 12 \equiv 5$. $\square$'
+          - problem: "In a monoid, an element a is invertible and a * x = b. To verify that the candidate solution works, one simplifies the product of a with that candidate. Which line is the correct simplification?"
+            answer: "$(a * a^(-1)) * b = e * b = b$"
+            answer_contract: {"kind": "label", "options": [["$(a * a^(-1)) * b = e * b = b$"], ["$(a^(-1) * a) * b = a^(-1) * b$"], ["$a * (a^(-1) * b) = e$"], ["$a * (a^(-1) * b) = a * b$"]]}
+            solution_sketch: "Associativity regroups the product as $(a * a^(-1)) * b$. The inverse rule gives $a * a^(-1) = e$, and the identity rule gives $e * b = b$. The option $(a^(-1) * a) * b = a^(-1) * b$ misplaces the inverse and does not cancel a. The option $a * (a^(-1) * b) = e$ drops b and claims the product is the identity. The option $a * (a^(-1) * b) = a * b$ fails to cancel a. The answer is $(a * a^(-1)) * b = e * b = b$."
+          - problem: "In the multiplicative monoid modulo 11, the inverse of 5 is 9. Solve 5x = 3 (mod 11). Give the least nonnegative integer x."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: use the given inverse of 5, which is 9. Step 2: multiply both sides by 9; x = 9 * 3 = 27, and 27 leaves remainder 5 mod 11. Check: 5 * 5 = 25 leaves remainder 3 mod 11. The answer is 5."
+          - problem: "Solve the congruence 4x = 7 (mod 9) by multiplying both sides by the inverse of 4. Give x as an integer from 0 to 8."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: find the inverse of 4 modulo 9; 4 * 7 = 28, and 28 leaves remainder 1 mod 9, so the inverse is 7. Step 2: multiply both sides by 7; x = 7 * 7 = 49, and 49 leaves remainder 4 mod 9. Check: 4 * 4 = 16 leaves remainder 7 mod 9. The answer is 4."
+          - problem: "The number 7 has inverse 2 modulo 13. Use this inverse to solve 7x = 5 (mod 13). Give the least nonnegative integer x."
+            answer: "10"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: use the given inverse of 7 modulo 13, which is 2. Step 2: multiply both sides by 2; x = 2 * 5 = 10. Check: 7 * 10 = 70, and 70 leaves remainder 5 mod 13. The answer is 10."
+          - problem: "Use the inverse of 3 modulo 10. Find the least nonnegative solution x of 3x = 7 (mod 10)."
+            answer: "9"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: find the inverse of 3 modulo 10; 3 * 7 = 21, and 21 leaves remainder 1 mod 10, so the inverse is 7. Step 2: multiply both sides by 7; x = 7 * 7 = 49, and 49 leaves remainder 9 mod 10. Check: 3 * 9 = 27 leaves remainder 7 mod 10. The answer is 9."
+          - problem: "Claim: in a monoid, if a is invertible then a * x = b has the unique solution x = a^(-1) * b. Step 1: check that the candidate gives a * (a^(-1) * b) = (a * a^(-1)) * b = e * b = b. Step 2: suppose that a * x = b. Step 3: multiply only the left side by a^(-1) to get a^(-1) * a * x = b. Step 4: use a^(-1) * a = e to conclude x = b. Which step is the first step that is not valid?"
+            answer: "Step 3"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 is correct: associativity and the inverse and identity rules verify the candidate. Step 2 is the supposition. Step 3 is invalid because an equation must be multiplied on both sides by the same element; changing only one side does not preserve equality. Step 4 follows from the invalid line, so it is not a proof. The answer is Step 3."
+          - problem: "Write the full proof: if a is invertible in a monoid (M, *, e), then the equation a * x = b has the unique solution x = a^(-1) * b. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1: state the claim. In a monoid, let a be invertible and let x = a^(-1) * b. Step 2: prove existence. Use associativity and the inverse: a * (a^(-1) * b) = (a * a^(-1)) * b = e * b = b, so the candidate is a solution. Step 3: prove uniqueness. Suppose a * y = b for some y. Left-multiply both sides by a^(-1): a^(-1) * (a * y) = a^(-1) * b. By associativity, (a^(-1) * a) * y = a^(-1) * b, and by the inverse rule e * y = a^(-1) * b, so y = a^(-1) * b. Step 4: conclude. The solution exists and any solution equals a^(-1) * b, so the solution is unique. The full proof is complete."
         constraints: "use associativity and the inverse; one abstract proof, one concrete solve"
     diagnostic_exemplar:
       problem: 'Prove that if $a$ is invertible in a monoid $(M, *, e)$ then $a * x = b$ has the unique solution $x = a^{-1} * b$, and use this to solve $3x \equiv 5 \pmod 7$.'

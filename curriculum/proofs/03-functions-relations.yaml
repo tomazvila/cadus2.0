@@ -1091,14 +1091,30 @@ topics:
         name: "Checks on listed relations"
         key_prerequisites: [relations-properties]
         exemplars:
-          - problem: 'On $\{1, 2, 3\}$, is $R = \{(1,1),(2,2),(3,3),(1,3),(3,1)\}$ reflexive, symmetric, and transitive?'
-            answer_contract: {kind: none}
-            answer: 'Yes to all three — it is an equivalence relation.'
-            solution_sketch: 'All loops present; $(1,3)$ pairs with $(3,1)$; chains like $(1,3),(3,1)$ land on $(1,1) \in R$ and $(3,1),(1,3)$ on $(3,3) \in R$.'
-          - problem: 'On $\{1, 2, 3\}$, which properties fail for $R = \{(1,1),(2,2),(1,2),(2,1),(2,3)\}$?'
-            answer_contract: {kind: none}
-            answer: 'Reflexivity ($(3,3)$ missing) and symmetry ($(2,3)$ without $(3,2)$); transitivity also fails ($(1,2),(2,3)$ but $(1,3) \notin R$).'
-            solution_sketch: 'Check each property against the list; a single missing pair witnesses each failure.'
+          - problem: "On {1, 2, 3}, let R = {(1,1),(2,2),(3,3),(1,3),(3,1)}. How many of the three properties reflexive, symmetric, and transitive does R have? Give the number."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The relation is R = {(1,1),(2,2),(3,3),(1,3),(3,1)}. Reflexive check: all three loops (1,1), (2,2), (3,3) are present, so reflexivity holds. Symmetric check: the non-loop pairs (1,3) and (3,1) each have their reverse in R, so symmetry holds. Transitive check: the chains (1,3),(3,1) give (1,1), and (3,1),(1,3) give (3,3), both present, so transitivity holds. The answer is 3."
+          - problem: "On {1, 2, 3}, let R = {(1,1),(2,2),(1,2),(2,1),(2,3)}. Find how many of the three properties reflexive, symmetric, and transitive R has. Give the number."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The relation is R = {(1,1),(2,2),(1,2),(2,1),(2,3)}. Reflexive check: (3,3) is missing, so reflexivity fails. Symmetric check: (2,3) is in R but (3,2) is not, so symmetry fails. Transitive check: (1,2) and (2,3) are in R but (1,3) is not, so transitivity fails. The answer is 0."
+          - problem: "On {1, 2, 3}, let R = {(1,1),(2,2),(3,3),(1,2),(2,1),(2,3),(3,2)}. Determine how many of the three properties hold for R. Give the number."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The relation is R = {(1,1),(2,2),(3,3),(1,2),(2,1),(2,3),(3,2)}. Reflexive check: all three loops are present, so reflexivity holds. Symmetric check: every non-loop pair (1,2), (2,1), (2,3), (3,2) has its reverse in R, so symmetry holds. Transitive check: (1,2) and (2,3) are in R but (1,3) is missing, so transitivity fails. The answer is 2."
+          - problem: "On {1, 2, 3}, let R = {(1,2),(2,1)}. Evaluate how many of the three properties reflexive, symmetric, and transitive R satisfies. Give the number."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The relation is R = {(1,2),(2,1)}. Reflexive check: none of the loops (1,1), (2,2), (3,3) are in R, so reflexivity fails. Symmetric check: the pairs (1,2) and (2,1) each have their reverse in R, so symmetry holds. Transitive check: (1,2) and (2,1) are in R but (1,1) is missing, so transitivity fails. The answer is 1."
+          - problem: "On {1, 2, 3}, let R = {(1,1),(2,2),(3,3),(1,2),(2,1),(1,3),(3,1),(2,3),(3,2)}. Determine the number of properties among reflexive, symmetric, and transitive that R has. Give the number."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The relation is R = {(1,1),(2,2),(3,3),(1,2),(2,1),(1,3),(3,1),(2,3),(3,2)}. Reflexive check: all three loops are present, so reflexivity holds. Symmetric check: every ordered pair in R has its reverse in R, so symmetry holds. Transitive check: every chain of two pairs in R produces a pair that is also in R, so transitivity holds. The answer is 3."
+          - problem: "On {1, 2, 3}, let R = {(1,1),(2,2),(3,3),(1,2)}. Find the number of properties among reflexive, symmetric, and transitive that R satisfies. Give the number."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The relation is R = {(1,1),(2,2),(3,3),(1,2)}. Reflexive check: all three loops are present, so reflexivity holds. Symmetric check: (1,2) is in R but (2,1) is not, so symmetry fails. Transitive check: the only non-loop pair (1,2) combines with loops to give (1,2), which is present, so transitivity holds. The answer is 2."
         constraints: "systematic three-property checks on relations listed over a 3-element set"
       - id: kp2
         name: "Rule-defined relations with a failing property"
