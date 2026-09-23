@@ -803,14 +803,30 @@ topics:
         name: Transpose of products
         key_prerequisites: [transpose-of-a-matrix, matrix-multiplication]
         exemplars:
-          - problem: 'Express $(AB)^T$ in terms of $A^T$ and $B^T$.'
-            answer: '$(AB)^T = B^T A^T$'
-            answer_contract: {kind: none}
-            solution_sketch: 'The order reverses, unlike $(A + B)^T = A^T + B^T$.'
           - problem: 'For $A = \begin{pmatrix}1&2\\0&1\end{pmatrix}$, $B = \begin{pmatrix}1&0\\3&1\end{pmatrix}$, compute $(AB)^T$.'
             answer: "[7,3;2,1]"
             answer_contract: {"cols":2,"kind":"matrix","rows":2}
             solution_sketch: '$AB = \begin{pmatrix}7&2\\3&1\end{pmatrix}$; transpose it. (Check: $B^T A^T$ gives the same.)'
+          - problem: "Let $A = \\begin{pmatrix}2&3\\\\1&4\\end{pmatrix}$ and $B = \\begin{pmatrix}1&2\\\\0&5\\end{pmatrix}$. Compute $(AB)^T$. Give the matrix as [a,b;c,d]."
+            answer: "[2,1;19,22]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "First form the full product: $AB = \\begin{pmatrix}2&19\\\\1&22\\end{pmatrix}$ (matrix multiplication rule). Then transpose by swapping rows and columns (transpose rule). Reversal check: $B^T A^T$ gives the same matrix. The answer is [2,1;19,22]."
+          - problem: "For $A = \\begin{pmatrix}3&1\\\\2&2\\end{pmatrix}$ and $B = \\begin{pmatrix}1&4\\\\0&1\\end{pmatrix}$, compute $(AB)^T$ and confirm that $B^T A^T$ matches. Give the matrix as [a,b;c,d]."
+            answer: "[3,2;13,10]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "Multiply: $AB = \\begin{pmatrix}3&13\\\\2&10\\end{pmatrix}$ (matrix multiplication rule). Transposing swaps entries (transpose rule): $\\begin{pmatrix}3&2\\\\13&10\\end{pmatrix}$. Reversal check: $B^T A^T$ gives the same matrix, [3,2;13,10]."
+          - problem: "Let $A = \\begin{pmatrix}1&5\\\\2&3\\end{pmatrix}$ and $B = \\begin{pmatrix}2&0\\\\1&4\\end{pmatrix}$. Compute $B^T A^T$ without forming $AB$ first, using the reversal rule $(AB)^T = B^T A^T$. Give the matrix as [a,b;c,d]."
+            answer: "[7,7;20,12]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "Transpose each factor first: $B^T = \\begin{pmatrix}2&1\\\\0&4\\end{pmatrix}$ and $A^T = \\begin{pmatrix}1&2\\\\5&3\\end{pmatrix}$ (transpose rule). Multiply in reversed order (matrix multiplication rule): $\\begin{pmatrix}7&7\\\\20&12\\end{pmatrix}$. Direct check: $AB = \\begin{pmatrix}7&20\\\\7&12\\end{pmatrix}$, whose transpose is [7,7;20,12]."
+          - problem: "For the matrix $A = \\begin{pmatrix}2&1\\\\4&3\\end{pmatrix}$, compute the product $A^T A$. Give the matrix as [a,b;c,d]."
+            answer: "[20,14;14,10]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "Transpose $A$: $A^T = \\begin{pmatrix}2&4\\\\1&3\\end{pmatrix}$ (transpose rule). Multiply $A^T A$ (matrix multiplication rule): row 1 is $[4+16,\\ 2+12]$, row 2 is $[2+12,\\ 1+9]$. The result is symmetric, as the reversal rule with $B = A$ predicts, namely [20,14;14,10]."
+          - problem: "Let $A = \\begin{pmatrix}1&0\\\\2&1\\end{pmatrix}$, $B = \\begin{pmatrix}1&1\\\\0&1\\end{pmatrix}$ and $C = \\begin{pmatrix}2&0\\\\1&3\\end{pmatrix}$. Compute $C^T B^T A^T$ and verify it equals $(ABC)^T$. Give the matrix as [a,b;c,d]."
+            answer: "[3,7;3,9]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "The reversal rule extends to three factors: $(ABC)^T = C^T B^T A^T$. Compute $C^T B^T = \\begin{pmatrix}3&1\\\\3&3\\end{pmatrix}$, then multiply by $A^T = \\begin{pmatrix}1&2\\\\0&1\\end{pmatrix}$ (matrix multiplication rule), giving $\\begin{pmatrix}3&7\\\\3&9\\end{pmatrix}$. Direct check: $ABC = \\begin{pmatrix}3&3\\\\7&9\\end{pmatrix}$, whose transpose is [3,7;3,9]."
         constraints: "verify the reversal rule numerically on 2x2 matrices"
       - id: kp2
         name: Symmetric matrices
@@ -819,10 +835,26 @@ topics:
           - problem: 'Find $k$ so that $\begin{pmatrix}1&k\\3&2\end{pmatrix}$ is symmetric.'
             answer: "k = 3"
             solution_sketch: 'Symmetric means $A = A^T$, i.e. the $(1,2)$ and $(2,1)$ entries agree.'
-          - problem: 'For any matrix $A$, is $A^T A$ symmetric?'
-            answer: "Yes"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: '$(A^T A)^T = A^T (A^T)^T = A^T A$.'
+          - problem: "Let A = [0, k; -7, 3]. Find k so that A is symmetric."
+            answer: "-7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "A matrix is symmetric when it equals its transpose, so each entry a_ij must equal a_ji. In A = [0, k; -7, 3] the entry (1,2) is k and the entry (2,1) is -7, so the symmetry condition forces k = -7. The required value is -7."
+          - problem: "Let A = [4, 0, 3; 0, -2, 5; k, 5, 1]. Determine k so that A is symmetric."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Symmetry means A equals A^T, so every pair of mirror entries must agree. Check each pair in [4, 0, 3; 0, -2, 5; k, 5, 1]: entries (1,2) and (2,1) give 0 = 0, entries (2,3) and (3,2) give 5 = 5. The remaining pair (1,3) and (3,1) forces k to equal 3. The required value is 3."
+          - problem: "Let A = [3, 1; 2, 4]. Compute the product A^T A. Give verdict (yes or no) for whether A^T A is symmetric, and give m12, its (1,2) entry."
+            answer: "verdict = yes; m12 = 11"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "m12"}]}
+            solution_sketch: "Transpose A = [3, 1; 2, 4] by swapping rows and columns: A^T = [3, 2; 1, 4]. Multiply A^T A entry by entry: (1,1) is 9 + 4 = 13, (1,2) is 3 + 8 = 11, (2,1) is 3 + 8 = 11, (2,2) is 1 + 16 = 17. The mirror entries (1,2) and (2,1) both equal 11, which agrees with the rule (A^T A)^T = A^T (A^T)^T = A^T A, so the product is symmetric. The answer is verdict = yes; m12 = 11."
+          - problem: "Let B = [1, 2, 0; 0, 1, 3; 4, 0, 1]. Compute the product B^T B. Give the matrix as [a,b;c,d]."
+            answer: "[17,2,4;2,5,3;4,3,10]"
+            answer_contract: {"cols": 3, "kind": "matrix", "rows": 3}
+            solution_sketch: "Write B = [1, 2, 0; 0, 1, 3; 4, 0, 1] and transpose it by swapping rows and columns: B^T = [1, 0, 4; 2, 1, 0; 0, 3, 1]. Multiply rows of B^T by columns of B using the row-by-column rule: row 1 gives 17, 2, 4; row 2 gives 2, 5, 3; row 3 gives 4, 3, 10. The mirror entries agree, as expected since (B^T B)^T = B^T B. The answer is [17,2,4;2,5,3;4,3,10]."
+          - problem: "Four matrices are offered as choices, and three of them are not symmetric. Select the symmetric matrix."
+            answer: "[3,5;5,-1]"
+            answer_contract: {"kind": "label", "options": [["[3,5;5,-1]"], ["[3,5;1,5]"], ["[2,4;-4,2]"], ["[6,1,2;1,0,3;2,4,5]"]]}
+            solution_sketch: "A matrix is symmetric when it equals its transpose, so every mirror pair of entries must agree. The option [3,5;1,5] fails because entries (1,2) and (2,1) are 5 and 1. The option [2,4;-4,2] fails because entries (1,2) and (2,1) are 4 and -4, differing in sign. The option [6,1,2;1,0,3;2,4,5] fails because entries (2,3) and (3,2) are 3 and 4. In [3,5;5,-1] the mirror entries (1,2) and (2,1) are both 5, so the answer is [3,5;5,-1]."
         constraints: "2x2 and 3x3; one unknown entry for solve-for-k problems"
       - id: kp3
         name: Building symmetric matrices
@@ -835,6 +867,22 @@ topics:
             answer: "[2,5;5,8]"
             answer_contract: {"cols":2,"kind":"matrix","rows":2}
             solution_sketch: '$A^T = \begin{pmatrix}1&3\\2&4\end{pmatrix}$; add entrywise. $A + A^T$ is always symmetric.'
+          - problem: "Compute $A + A^T$ for $A = \\begin{pmatrix}5&2\\\\0&3\\end{pmatrix}$. Give the matrix as [a,b;c,d]."
+            answer: "[10,2;2,6]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "First write the full transpose: $A^T = \\begin{pmatrix}5&0\\\\2&3\\end{pmatrix}$. Add entrywise: $5+5=10$, $2+0=2$, $0+2=2$, $3+3=6$. The result $\\begin{pmatrix}10&2\\\\2&6\\end{pmatrix}$ equals its own transpose, so it is symmetric. The answer is [10,2;2,6]."
+          - problem: "Compute $A^T A$ for $A = \\begin{pmatrix}2&0\\\\1&3\\end{pmatrix}$. Give the matrix as [a,b;c,d]."
+            answer: "[5,3;3,9]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "Write the full transpose: $A^T = \\begin{pmatrix}2&1\\\\0&3\\end{pmatrix}$. Multiply $A^T$ by $A$: entry (1,1) is $4+1=5$, entry (1,2) is $0+3=3$, entry (2,1) is $0+3=3$, entry (2,2) is $0+9=9$. The off-diagonal entries 3 and 3 match, so the product is symmetric. The answer is [5,3;3,9]."
+          - problem: "Compute $A A^T$ for $A = \\begin{pmatrix}1&-1\\\\2&3\\end{pmatrix}$. Give the matrix as [a,b;c,d]."
+            answer: "[2,-1;-1,13]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "Write the full transpose: $A^T = \\begin{pmatrix}1&2\\\\-1&3\\end{pmatrix}$. Multiply $A$ by $A^T$: entry (1,1) is $1+1=2$, entry (1,2) is $2-3=-1$, entry (2,1) is $2-3=-1$, entry (2,2) is $4+9=13$. The product $\\begin{pmatrix}2&-1\\\\-1&13\\end{pmatrix}$ equals its transpose. The answer is [2,-1;-1,13]."
+          - problem: "The matrix $\\begin{pmatrix}4&k\\\\2k-1&7\\end{pmatrix}$ should be symmetric. Determine the value of $k$."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "A matrix is symmetric when the (1,2) entry equals the (2,1) entry. Set $k = 2k - 1$ and solve: subtract $k$ to get $0 = k - 1$, so $k = 1$. Check: the matrix becomes $\\begin{pmatrix}4&1\\\\1&7\\end{pmatrix}$, which visibly satisfies $A = A^T$. The answer is 1."
         constraints: "2x2 integer matrices; the result must visibly satisfy A = A^T"
     diagnostic_exemplar:
       problem: 'Compute $A^TA$ for $A = \begin{pmatrix}1&3\\0&2\end{pmatrix}$, and explain why the result had to be symmetric.'
@@ -878,6 +926,22 @@ topics:
             answer: "[2,-1;-1,1]"
             answer_contract: {"cols":2,"kind":"matrix","rows":2}
             solution_sketch: '$ad - bc = 2 - 1 = 1$.'
+          - problem: "Find $A^{-1}$ for $A = \\begin{pmatrix}3&1\\\\2&1\\end{pmatrix}$. Give the matrix as [a,b;c,d]."
+            answer: "[1,-1;-2,3]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "For $A = \\begin{pmatrix}3&1\\\\2&1\\end{pmatrix}$, the determinant is $ad - bc = 3 - 2 = 1$. Swap the diagonal entries $3$ and $1$, and change the sign of $1$ and $2$. Divide each entry by $1$, which changes nothing. The inverse is [1,-1;-2,3]; check: $3\\cdot1 + 1\\cdot(-2) = 1$ and $3\\cdot(-1)+1\\cdot3 = 0$."
+          - problem: "Find the inverse of $B = \\begin{pmatrix}1&2\\\\2&3\\end{pmatrix}$. Give the matrix as [a,b;c,d]."
+            answer: "[-3,2;2,-1]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "For $B = \\begin{pmatrix}1&2\\\\2&3\\end{pmatrix}$, the determinant is $ad - bc = 3 - 4 = -1$. The swapped matrix with changed signs is $\\begin{pmatrix}3&-2\\\\-2&1\\end{pmatrix}$. Dividing each entry by $-1$ flips every sign: $3$ to $-3$, $-2$ to $2$, $-2$ to $2$, $1$ to $-1$. The inverse is [-3,2;2,-1]; check: $1\\cdot(-3) + 2\\cdot2 = 1$."
+          - problem: "Find $A^{-1}$ for $A = \\begin{pmatrix}4&3\\\\2&1\\end{pmatrix}$. Give the matrix as [a,b;c,d] with fractions in lowest terms."
+            answer: "[-1/2,3/2;1,-2]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "For $A = \\begin{pmatrix}4&3\\\\2&1\\end{pmatrix}$, the determinant is $ad - bc = 4 - 6 = -2$. The swapped matrix with changed signs is $\\begin{pmatrix}1&-3\\\\-2&4\\end{pmatrix}$. Dividing each entry by $-2$ gives $-1/2$, $3/2$, $1$, $-2$. The inverse is [-1/2,3/2;1,-2]; check: $4\\cdot(-1/2) + 3\\cdot1 = 1$."
+          - problem: "The inverse of a matrix $A$ is $A^{-1} = \\begin{pmatrix}5&-2\\\\-2&1\\end{pmatrix}$. Find $A$. Give the matrix as [a,b;c,d]."
+            answer: "[1,2;2,5]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "Since $(A^{-1})^{-1} = A$, apply the same formula to $A^{-1} = \\begin{pmatrix}5&-2\\\\-2&1\\end{pmatrix}$. Its determinant is $5 - 4 = 1$. Swap the diagonal entries $5$ and $1$, and change the sign of $-2$ and $-2$. The matrix $A$ is [1,2;2,5]; check: $A A^{-1}$ has row 1 column 1 equal to $5 - 4 = 1$."
         constraints: "prefer ad - bc = +-1 for integer inverses"
       - id: kp2
         name: Fractional and diagonal inverses
