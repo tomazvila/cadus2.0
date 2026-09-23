@@ -192,12 +192,34 @@ topics:
         name: "Socks-shoes and power rules"
         key_prerequisites: [groups-intro, direct-proof]
         exemplars:
-          - problem: 'Prove that $(ab)^{-1} = b^{-1}a^{-1}$ in any group.'
-            answer: '$(ab)(b^{-1}a^{-1}) = a(bb^{-1})a^{-1} = aa^{-1} = e$, and inverses are unique.'
-            solution_sketch: 'Check that $b^{-1}a^{-1}$ multiplied against $ab$ on either side gives $e$; uniqueness of inverses finishes it.'
-          - problem: 'In a group where $g^2 = e$ for every element $g$, prove $G$ is abelian.'
-            answer: 'For $a,b$: $ab = (ab)^{-1} = b^{-1}a^{-1} = ba$.'
-            solution_sketch: 'Every element is its own inverse, so $ab = (ab)^{-1} = b^{-1}a^{-1} = ba$.'
+          - problem: "In any group, the inverse of the product ab is itself a product built from a and b. Which of the four products is it?"
+            answer: "b^(-1)a^(-1)"
+            answer_contract: {"kind": "label", "options": [["b^(-1)a^(-1)"], ["a^(-1)b^(-1)"], ["b a^(-1)"], ["b^(-1)a"]]}
+            solution_sketch: "Socks-shoes rule: the inverse of a product reverses the order and inverts each factor, so (ab)^(-1) = b^(-1)a^(-1). The wrong option a^(-1)b^(-1) forgets to reverse the order. The wrong option b a^(-1) drops the inverse on b. The wrong option b^(-1)a drops the inverse on a. The answer is b^(-1)a^(-1)."
+          - problem: "In a group where g^2 = e for every element g, the product ab is its own inverse. Use socks-shoes together with the self-inverse property to write ab as a product of two single-letter elements. Give the product."
+            answer: "ba"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The square-e condition makes every element its own inverse, so a^(-1)=a and b^(-1)=b. Socks-shoes gives (ab)^(-1)=b^(-1)a^(-1). But ab is also its own inverse, so (ab)^(-1)=ab. Substitute the inverses: ab = b a. The answer is ba."
+          - problem: "In any group, simplify the element (a^(-1))^(-1). Give the element."
+            answer: "a"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "By definition, a^(-1) is the inverse of a. The inverse-of-inverse rule says (a^(-1))^(-1)=a. Check: a^(-1) a = e and a a^(-1)=e, so a is an inverse of a^(-1). Uniqueness of inverses gives the result. The answer is a."
+          - problem: "In any group, if c = (ab)^(-1), simplify c^(-1). Give the element."
+            answer: "ab"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Let c = (ab)^(-1). Socks-shoes says c = b^(-1)a^(-1). The inverse-of-inverse rule says c^(-1) = (b^(-1)a^(-1))^(-1). Apply socks-shoes again: (b^(-1)a^(-1))^(-1) = (a^(-1))^(-1)(b^(-1))^(-1) = a b. The answer is ab."
+          - problem: "In a group, an element a has order 6. Give the order of a^4."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "In a group, the order of a^m is order(a)/gcd(order(a), m). Here order(a)=6 and m=4. The gcd of 6 and 4 is 2, so order(a^4)=6/2=3. The answer is 3."
+          - problem: "In a group, an element a has order 10. Give the order of a^5."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the power order rule: order(a^m)=order(a)/gcd(order(a),m). Here order(a)=10 and m=5. The gcd of 10 and 5 is 5, so order(a^5)=10/5=2. The answer is 2."
+          - problem: "Write the full proof: for every group G and all a, b in G, (ab)^(-1) = b^(-1)a^(-1) and (a^(-1))^(-1) = a. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Proof of two group identities. First, show (a^(-1))^(-1)=a. Since a^(-1)a=e and a a^(-1)=e, the element a is an inverse of a^(-1). The inverse of an element is unique, so (a^(-1))^(-1)=a. Second, show (ab)^(-1)=b^(-1)a^(-1). Compute (ab)(b^(-1)a^(-1)) = a(bb^(-1))a^(-1)=a e a^(-1)=a a^(-1)=e, using associativity. Also (b^(-1)a^(-1))(ab)=b^(-1)(a^(-1)a)b=b^(-1)e b=e. Thus b^(-1)a^(-1) is an inverse of ab. By uniqueness of inverses, (ab)^(-1)=b^(-1)a^(-1). These are the socks-shoes rule and the inverse-of-inverse rule."
         constraints: "socks-shoes, (a^{-1})^{-1} = a, and short structural consequences"
     diagnostic_exemplar:
       problem: 'Let $G$ be a group in which $(ab)^2 = a^2 b^2$ for all $a, b \in G$. Prove that $G$ is abelian.'

@@ -286,14 +286,30 @@ topics:
         name: "Kernels are normal; injectivity criterion"
         key_prerequisites: [homomorphisms-intro, normal-subgroups]
         exemplars:
-          - problem: 'Prove that $\ker \varphi$ is a normal subgroup of $G$.'
-            answer: 'It is a subgroup (contains $e$, closed under products/inverses since $\varphi$ respects them), and $\varphi(gkg^{-1}) = \varphi(g)e\varphi(g)^{-1} = e$, so it is closed under conjugation.'
-            answer_contract: {kind: none}
-            solution_sketch: 'Subgroup checks follow from the homomorphism law; conjugation stays in the kernel because the image conjugates the identity.'
-          - problem: 'Prove: $\varphi$ is injective iff $\ker \varphi = \{e\}$.'
-            answer: 'If injective, only $e$ maps to $e$. Conversely $\varphi(a) = \varphi(b) \implies \varphi(ab^{-1}) = e \implies ab^{-1} = e \implies a = b$.'
-            answer_contract: {kind: none}
-            solution_sketch: 'The trivial-kernel condition converts equal images into a kernel element.'
+          - problem: "Let $\\varphi: S_3 \\to \\mathbb{Z}_2$ be the sign homomorphism, sending even permutations to $0$ and odd permutations to $1$. Take $k = (1\\,2\\,3)$ and $g = (1\\,3)$. Compute $\\varphi(g k g^{-1})$."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: The homomorphism law gives $\\varphi(g k g^{-1}) = \\varphi(g) \\varphi(k) \\varphi(g)^{-1}$. Since $k$ is a 3-cycle, it is even, so $\\varphi(k) = 0$. Thus the product is $\\varphi(g) \\cdot 0 \\cdot \\varphi(g)^{-1} = 0$. Step 2: Direct check: $g k g^{-1} = (1\\,3)(1\\,2\\,3)(1\\,3) = (1\\,3\\,2)$, an even permutation, so its sign is $0$. The computed value is $0$."
+          - problem: "Let $\\varphi: \\mathbb{Z}_{10} \\to \\mathbb{Z}_{10}$ be defined by $\\varphi(x) = 3x \\bmod 10$. Apply the injectivity criterion to decide whether $\\varphi$ is injective, and find the size of $\\ker \\varphi$. State the verdict and the kernel size."
+            answer: "verdict = injective; ksize = 1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["injective"], ["noninjective"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "ksize"}]}
+            solution_sketch: "Step 1: State the injectivity criterion: $\\varphi$ is injective if and only if $\\ker \\varphi = \\{0\\}$. Step 2: Compute the kernel: solve $3x \\equiv 0 \\pmod{10}$. Since $\\gcd(3,10)=1$, multiply by the inverse $7$ to get $x \\equiv 0 \\pmod{10}$. Thus $\\ker \\varphi = \\{0\\}$, which has size $1$. Step 3: Because the kernel is trivial, $\\varphi$ is injective. Answer: verdict = injective; ksize = 1."
+          - problem: "Let $\\varphi: \\mathbb{Z}_8 \\to \\mathbb{Z}_8$ be defined by $\\varphi(x) = 2x \\bmod 8$. Determine whether $\\varphi$ is injective from the kernel, and give the number of elements in $\\ker \\varphi$. State the verdict and the kernel size."
+            answer: "verdict = noninjective; ksize = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["injective"], ["noninjective"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "ksize"}]}
+            solution_sketch: "Step 1: Compute the kernel: $2x \\equiv 0 \\pmod{8}$ means $8$ divides $2x$, so $4$ divides $x$. The solutions in $\\mathbb{Z}_8$ are $x = 0$ and $x = 4$, so $\\ker \\varphi = \\{0,4\\}$. Step 2: Apply the injectivity criterion: since the kernel is not $\\{0\\}$, $\\varphi$ is not injective. The kernel has $2$ elements. Answer: verdict = noninjective; ksize = 2."
+          - problem: "Let $\\varphi: \\mathbb{Z}_{15} \\to \\mathbb{Z}_{15}$ be defined by $\\varphi(x) = 5x \\bmod 15$. Find the number of elements in $\\ker \\varphi$."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: The kernel condition is $5x \\equiv 0 \\pmod{15}$, so $15$ divides $5x$. Dividing by $5$ gives $3$ divides $x$. Step 2: In $\\mathbb{Z}_{15}$, the multiples of $3$ are $0, 3, 6, 9, 12$. There are $5$ such elements. The number of elements in the kernel is $5$."
+          - problem: "For a group homomorphism $\\varphi: G \\to H$, which condition on the kernel is equivalent to $\\varphi$ being injective? Select the correct condition."
+            answer: "kernel is trivial"
+            answer_contract: {"kind": "label", "options": [["kernel is trivial"], ["kernel is whole G"], ["kernel is normal"], ["kernel has size 2"]]}
+            solution_sketch: "Step 1: The injectivity criterion states that $\\varphi$ is injective if and only if its kernel contains only the identity element, which is the trivial condition. Step 2: The option 'kernel is whole G' would mean every element maps to the identity, so $\\varphi$ is constant and not injective unless $G$ is trivial. Step 3: The option 'kernel is normal' is true for every homomorphism, so it does not characterize injectivity. Step 4: The option 'kernel has size 2' describes a nontrivial kernel, which makes $\\varphi$ noninjective. The correct condition is kernel is trivial."
+          - problem: "Let $\\varphi: \\mathbb{Z}_{12} \\to \\mathbb{Z}_{12}$ be defined by $\\varphi(x) = 8x \\bmod 12$. Find the number of elements in $\\ker \\varphi$."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: The kernel condition is $8x \\equiv 0 \\pmod{12}$, so $12$ divides $8x$. Dividing by $4$ gives $3$ divides $2x$, so $3$ divides $x$. Step 2: In $\\mathbb{Z}_{12}$, the multiples of $3$ are $0, 3, 6, 9$. There are $4$ elements. The number of elements in the kernel is $4$."
         constraints: "the two standard lemmas, proved from the definitions"
       - id: kp3
         name: "Counting with |G| = |ker||im|"
