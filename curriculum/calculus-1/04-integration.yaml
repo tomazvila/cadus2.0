@@ -166,6 +166,18 @@ topics:
           - problem: 'Find $\int (2\sin x - 3e^x) \, dx$.'
             answer: "-2cos x - 3e^x + C"
             answer_contract: {"kind": "function", "vars": ["x"], "up_to_constant": true}
+          - problem: "Find the antiderivative of (x^4 + 3x^2)/x with respect to x."
+            answer: "x^4/4 + 3x^2/2 + C"
+            answer_contract: {"kind": "function", "up_to_constant": true, "vars": ["x"]}
+            solution_sketch: "Rewrite the integrand by dividing each term by x: (x^4 + 3x^2)/x = x^3 + 3x. Apply the reverse power rule term by term: the antiderivative of x^3 is x^4/4 and of 3x is 3x^2/2. Add the constant of integration. The antiderivative is x^4/4 + 3x^2/2 + C."
+          - problem: "Find the antiderivative of x^2(x - 2) with respect to x."
+            answer: "x^4/4 - 2x^3/3 + C"
+            answer_contract: {"kind": "function", "up_to_constant": true, "vars": ["x"]}
+            solution_sketch: "Expand the product before integrating: x^2(x - 2) = x^3 - 2x^2. Apply the reverse power rule to each term: x^3 gives x^4/4 and -2x^2 gives -2x^3/3. Include the constant of integration. The antiderivative is x^4/4 - 2x^3/3 + C."
+          - problem: "Find the antiderivative of (x^3 + x cos(x))/x with respect to x."
+            answer: "x^3/3 + sin(x) + C"
+            answer_contract: {"kind": "function", "up_to_constant": true, "vars": ["x"]}
+            solution_sketch: "Rewrite the integrand by dividing each term by x: (x^3 + x cos(x))/x = x^2 + cos(x). Apply the reverse power rule to x^2 and the trigonometric table entry to cos(x). The term x^2 gives x^3/3 and cos(x) gives sin(x). Add the constant of integration. The antiderivative is x^3/3 + sin(x) + C."
         constraints: "algebraic rewriting (divide, expand) before integrating; mixed table entries"
       - id: kp3
         name: Determine C from an initial condition
@@ -179,6 +191,18 @@ topics:
           - problem: 'Find $f(x)$ given $f''(x) = \cos x$ and $f(0) = 2$.'
             answer: "sin x + 2"
             answer_contract: {"kind": "function", "vars": ["x"]}
+          - problem: "Let f'(x) = 6x^2 + 4x and f(1) = 8. Find f(x)."
+            answer: "2x^3 + 2x^2 + 4"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "The antiderivative of 6x^2 is 2x^3 by the reverse power rule, and the antiderivative of 4x is 2x^2. So f(x) = 2x^3 + 2x^2 + C. The initial condition gives f(1) = 2 + 2 + C = 4 + C = 8. Solve to get C = 4. The function is 2x^3 + 2x^2 + 4."
+          - problem: "Let f'(x) = sin(x) and f(pi) = 4. Find f(x)."
+            answer: "-cos(x) + 3"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "By the trigonometric antiderivative rule, the antiderivative of sin(x) is -cos(x). So f(x) = -cos(x) + C. The initial condition gives f(pi) = -cos(pi) + C = 1 + C = 4. Solve to get C = 3. The function is -cos(x) + 3."
+          - problem: "Let f'(x) = e^x + 2x and f(0) = 5. Find f(x)."
+            answer: "e^x + x^2 + 4"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "By the exponential antiderivative rule, the antiderivative of e^x is e^x, and by the reverse power rule the antiderivative of 2x is x^2. So f(x) = e^x + x^2 + C. The initial condition gives f(0) = 1 + 0 + C = 1 + C = 5. Solve to get C = 4. The function is e^x + x^2 + 4."
         constraints: "one initial condition; C is a small integer"
     diagnostic_exemplar:
       problem: 'Find $f(x)$ given $f''(x) = 4x + \cos x$ and $f(0) = 3$.'
@@ -1364,6 +1388,18 @@ topics:
             answer: "(1/2)ln(x^2 + 4) + C"
             answer_contract: {"kind": "function", "vars": ["x"], "up_to_constant": true}
             solution_sketch: '$u = x^2 + 4$: $\frac{1}{2}\int \frac{du}{u} = \frac{1}{2}\ln|u| + C$ ($u > 0$ here).'
+          - problem: "Find $\\int x \\cos(2x^2) \\, dx$."
+            answer: "sin(2x^2)/4 + C"
+            answer_contract: {"kind": "function", "up_to_constant": true, "vars": ["x"]}
+            solution_sketch: "Let u = 2x^2, so du = 4x dx and x dx = du/4. Substitute: the integral becomes (1/4) times the integral of cos(u) du, which is (1/4) sin(u) + C by the sine antiderivative rule. Back-substitute u = 2x^2 to get sin(2x^2)/4 + C."
+          - problem: "Find $\\int x e^{3x^2} \\, dx$."
+            answer: "e^(3x^2)/6 + C"
+            answer_contract: {"kind": "function", "up_to_constant": true, "vars": ["x"]}
+            solution_sketch: "Let u = 3x^2, so du = 6x dx and x dx = du/6. Substitute: the integral becomes (1/6) times the integral of e^u du, which is e^u/6 + C by the exponential antiderivative rule. Back-substitute u = 3x^2 to get e^(3x^2)/6 + C."
+          - problem: "Find $\\int x/(4x^2 + 9) \\, dx$."
+            answer: "(1/8)ln(4x^2+9) + C"
+            answer_contract: {"kind": "function", "up_to_constant": true, "vars": ["x"]}
+            solution_sketch: "Let u = 4x^2 + 9, so du = 8x dx and x dx = du/8. Substitute: the integral becomes (1/8) times the integral of 1/u du, which is (1/8) ln(u) + C by the logarithmic antiderivative rule. Back-substitute u = 4x^2 + 9 to get (1/8)ln(4x^2+9) + C."
         constraints: "missing constant multiplier only — never a missing variable factor"
       - id: kp3
         name: Linear inside functions
