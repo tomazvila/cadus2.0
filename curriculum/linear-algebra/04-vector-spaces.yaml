@@ -25,6 +25,22 @@ topics:
             solution_sketch: '$(2 + 6, 6 - 3)$.'
           - problem: 'Compute $-(2, 0, 1) + 2(1, 1, 1)$.'
             answer: "(0, 2, 1)"
+          - problem: "Compute $3(1, -2) + 2(2, 3)$. Give the answer as (x, y)."
+            answer: "(7, 0)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Scale each vector by its coefficient: $3(1, -2) = (3, -6)$ and $2(2, 3) = (4, 6)$. Add the two results component by component: $(3 + 4, -6 + 6)$. The answer is (7, 0)."
+          - problem: "Compute $-2(1, 0, 3) + 3(2, -1, 1)$. Give the answer as (x, y, z)."
+            answer: "(4, -3, -3)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "Scale each vector first: $-2(1, 0, 3) = (-2, 0, -6)$ and $3(2, -1, 1) = (6, -3, 3)$. Then add component by component: $(-2 + 6, 0 - 3, -6 + 3)$. The answer is (4, -3, -3)."
+          - problem: "Suppose $a(1, 2) + 4(1, -1) = (7, 2)$. Find the value of $a$."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Scale the known vector: $4(1, -1) = (4, -4)$. Subtract it from the target on the right: $(7, 2) - (4, -4) = (3, 6)$. So $a(1, 2) = (3, 6)$, and both components force $a = 3$."
+          - problem: "Find scalars $a$ and $b$ with $a(1, 2) + b(3, 1) = (5, 5)$. Give $a$ and $b$."
+            answer: "a = 2; b = 1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "a"}, {"contract": {"kind": "exact"}, "name": "b"}]}
+            solution_sketch: "The combination $a(1, 2) + b(3, 1)$ equals $(a + 3b, 2a + b)$, so matching the target gives the two equations $a + 3b = 5$ and $2a + b = 5$. From the first equation $a = 5 - 3b$; substituting into the second gives $10 - 5b = 5$, so $b = 1$ and then $a = 5 - 3 = 2$. The answer is a = 2; b = 1."
         constraints: "2-3 vectors in R^2 or R^3; coefficients in -3..3"
       - id: kp2
         name: Membership in simple spans
@@ -464,6 +480,22 @@ topics:
           - problem: '$[\mathbf{x}]_B = (1, -2)$ in the basis $B = \{(2, 0), (1, 3)\}$. Find $\mathbf{x}$.'
             answer: "(0, -6)"
             solution_sketch: '$(2, 0) - 2(1, 3) = (0, -6)$.'
+          - problem: "$[\\mathbf{x}]_B = (2, -3)$ in the basis $B = \\{(1, 2), (2, 1)\\}$. Find $\\mathbf{x}$ as (x, y)."
+            answer: "(-4, 1)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Use the coordinate definition: $\\mathbf{x} = c_1 b_1 + c_2 b_2$, the linear-combination rule. The full combination is $2(1, 2) + (-3)(2, 1) = (2 - 6, 4 - 3)$. The vector is (-4, 1)."
+          - problem: "$[\\mathbf{x}]_B = (-1, 3)$ in the basis $B = \\{(2, -1), (0, 1)\\}$. Find $\\mathbf{x}$ as (x, y)."
+            answer: "(-2, 4)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "The coordinate rule gives $\\mathbf{x} = (-1)(2, -1) + 3(0, 1)$. The full combination is $(-2, 1) + (0, 3)$. The vector is (-2, 4)."
+          - problem: "A robot's velocity is recorded in coordinates $[\\mathbf{v}]_B = (3, -2)$ relative to the basis $B = \\{(1, 0), (1, 1)\\}$. Find $\\mathbf{v}$ as (v_x, v_y)."
+            answer: "(1, -2)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Convert coordinates to the vector by the linear-combination rule: $\\mathbf{v} = 3(1, 0) + (-2)(1, 1)$. The full combination is $(3, 0) + (-2, -2)$. The velocity is (1, -2)."
+          - problem: "$[\\mathbf{x}]_B = (1, 2, -1)$ in the basis $B = \\{(1, 0, 1), (0, 1, 1), (1, 1, 0)\\}$. Find $\\mathbf{x}$ as (x, y, z)."
+            answer: "(0, 1, 3)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "The coordinate rule in R^3 gives $\\mathbf{x} = 1(1, 0, 1) + 2(0, 1, 1) + (-1)(1, 1, 0)$. The full combination is $(1, 0, 1) + (0, 2, 2) + (-1, -1, 0)$. The vector is (0, 1, 3)."
         constraints: "direct evaluation of the combination; entries in -6..6"
       - id: kp2
         name: Coordinates in R^2 bases
@@ -995,6 +1027,22 @@ topics:
           - problem: '$T: \mathbb{R}^4 \to \mathbb{R}^4$ has image all of $\mathbb{R}^4$. Find $\ker T$.'
             answer: "{0}"
             solution_sketch: '$\dim \ker = 4 - 4 = 0$.'
+          - problem: "$T: \\mathbb{R}^5 \\to \\mathbb{R}^2$ is a linear map with $\\dim \\ker T = 4$. Find $\\dim \\mathrm{im}\\, T$."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Rank-nullity for maps: dim ker T + dim im T equals the domain dimension 5. Substitute dim ker T = 4 to get 4 + dim im T = 5. Solve: dim im T = 1. The answer is 1."
+          - problem: "$T: \\mathbb{R}^2 \\to \\mathbb{R}^4$ is a linear map with $\\dim \\mathrm{im}\\, T = 2$. Find $\\dim \\ker T$."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Rank-nullity for maps: dim ker T + dim im T equals the domain dimension 2. Substitute dim im T = 2 to get dim ker T + 2 = 2. Solve: dim ker T = 0. The kernel has dimension 0."
+          - problem: "Let $T(\\mathbf{x}) = A\\mathbf{x}$ where $A$ is a $3 \\times 5$ matrix with rank $2$. Find the dimension of the null space of $A$."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "For T(x) = Ax the rank-nullity theorem gives rank(A) + dim null(A) = number of columns = 5. Substitute rank(A) = 2 to get 2 + dim null(A) = 5. Solve: dim null(A) = 3. The dimension of the null space is 3."
+          - problem: "Let $T(\\mathbf{x}) = A\\mathbf{x}$ where $A$ is a $4 \\times 3$ matrix and the null space of $A$ has dimension $1$. Find the rank of $A$."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "By rank-nullity, rank(A) + dim null(A) equals the number of columns of A, which is 3. Substitute dim null(A) = 1 to get rank(A) + 1 = 3. Solve: rank(A) = 2. The rank of A is 2."
         constraints: "domain dimension up to 5; ask for kernel or image dimension, given the other"
     diagnostic_exemplar:
       problem: 'For $T(\mathbf{x}) = A\mathbf{x}$ with $A = \begin{pmatrix}1&3\\2&6\end{pmatrix}$, find $\ker T$, describe $\mathrm{im}\,T$, and check that the two dimensions add to $2$.'
@@ -1230,13 +1278,29 @@ topics:
         name: Complements of planes and dimensions
         key_prerequisites: [orthogonal-orthonormal-sets, null-column-space-rank]
         exemplars:
-          - problem: 'Find the orthogonal complement of the plane $x + y + z = 0$ in $\mathbb{R}^3$.'
-            answer: "span{(1, 1, 1)}"
-            answer_contract: {kind: none}
-            solution_sketch: 'The plane is exactly the vectors orthogonal to $(1, 1, 1)$, so its complement is the normal line.'
           - problem: '$W$ is a $2$-dimensional subspace of $\mathbb{R}^3$. What is $\dim W^\perp$?'
             answer: "1"
             solution_sketch: '$\dim W + \dim W^\perp = 3$.'
+          - problem: "The plane x + y + 2z = 0 in R^3 has an orthogonal complement that is a line. Give a direction vector for the complement as (a, b, c)."
+            answer: "(1, 1, 2)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "Full result: the orthogonal complement is the line spanned by (1, 1, 2). Step 1 (normal vector): the coefficients of x, y, and z in x + y + 2z = 0 give the normal vector (1, 1, 2). Step 2 (complement of a plane in R^3): the orthogonal complement of the plane is its normal line. The direction is (1, 1, 2)."
+          - problem: "In R^7, W has dimension 3. Use dim W + dim W^perp = n. Find dim W^perp."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full result: dim W^perp = 4. Step 1 (dimension relation): in R^7, dim W + dim W^perp = 7. Step 2 (solve): 3 + dim W^perp = 7, so dim W^perp = 4."
+          - problem: "The plane 3x - y + 2z = 0 in R^3 has an orthogonal complement that is a line. Give a direction vector for the complement as (a, b, c)."
+            answer: "(3, -1, 2)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "Full result: the orthogonal complement is the line spanned by (3, -1, 2). Step 1 (normal vector): the coefficients in 3x - y + 2z = 0 give the normal vector (3, -1, 2). Step 2 (complement of a plane in R^3): the complement is the normal line. The direction is (3, -1, 2)."
+          - problem: "A plane through the origin in R^4 is a 2-dimensional subspace W. Find dim W^perp."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full result: dim W^perp = 2. Step 1 (dimension relation): a plane through the origin in R^4 is 2-dimensional, so dim W = 2 and dim W + dim W^perp = 4. Step 2 (solve): 2 + dim W^perp = 4, so dim W^perp = 2."
+          - problem: "A plane through the origin in R^5 is a 2-dimensional subspace W. Find dim W^perp."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full result: dim W^perp = 3. Step 1 (dimension relation): a plane through the origin in R^5 is 2-dimensional, so dim W = 2 and dim W + dim W^perp = 5. Step 2 (solve): 2 + dim W^perp = 5, so dim W^perp = 3."
         constraints: "planes given by one equation; dimension questions via dim W + dim W-perp = n"
       - id: kp3
         name: Null space and row space are perpendicular
@@ -1404,14 +1468,30 @@ topics:
         name: The Gram-Schmidt step
         key_prerequisites: [vector-projections, orthogonal-orthonormal-sets]
         exemplars:
-          - problem: 'Apply Gram-Schmidt to $\mathbf{x}_1 = (1, 1)$, $\mathbf{x}_2 = (0, 2)$.'
-            answer: "v1 = (1, 1), v2 = (-1, 1)"
-            answer_contract: {kind: none}
-            solution_sketch: '$\mathbf{v}_2 = \mathbf{x}_2 - \frac{\mathbf{x}_2 \cdot \mathbf{v}_1}{\mathbf{v}_1 \cdot \mathbf{v}_1}\mathbf{v}_1 = (0,2) - \frac{2}{2}(1,1) = (-1, 1)$; check $\mathbf{v}_1 \cdot \mathbf{v}_2 = 0$.'
-          - problem: 'Apply Gram-Schmidt to $\mathbf{x}_1 = (1, 0, 1)$, $\mathbf{x}_2 = (1, 1, 0)$.'
-            answer: "v1 = (1, 0, 1), v2 = (1/2, 1, -1/2)"
-            answer_contract: {kind: none}
-            solution_sketch: '$\mathbf{v}_2 = (1,1,0) - \frac{1}{2}(1,0,1) = (\frac{1}{2}, 1, -\frac{1}{2})$; verify $\mathbf{v}_1 \cdot \mathbf{v}_2 = \frac{1}{2} - \frac{1}{2} = 0$.'
+          - problem: "Run the Gram-Schmidt step on the two input vectors x1 = (2, 1) and x2 = (1, 3), with v1 = x1. Form v2 by subtracting from x2 its projection onto v1. Give v2 as (a, b)."
+            answer: "(-1, 2)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Full object: v2 = (-1, 2). Step 1 (projection coefficient formula of Gram-Schmidt): x2 dot v1 = 2 + 3 = 5 and v1 dot v1 = 4 + 1 = 5, so the coefficient is 5/5 = 1, an allowed integer. Step 2 (Gram-Schmidt subtraction): v2 = (1, 3) - 1(2, 1) = (-1, 2). Step 3 (orthogonality verification by dot product): v1 dot v2 = -2 + 2 = 0, so v2 is orthogonal to v1. The answer is (-1, 2)."
+          - problem: "Run the Gram-Schmidt step on x1 = (1, 1, 2) and x2 = (3, 1, 1), taking v1 = x1 and forming v2 by the projection subtraction. Give v2 as (a, b, c)."
+            answer: "(2, 0, -1)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "Full object: v2 = (2, 0, -1). Step 1 (projection coefficient formula): x2 dot v1 = 3 + 1 + 2 = 6 and v1 dot v1 = 1 + 1 + 4 = 6, so the coefficient is 6/6 = 1, an allowed integer. Step 2 (Gram-Schmidt subtraction): v2 = (3, 1, 1) - (1, 1, 2) = (2, 0, -1). Step 3 (orthogonality verification by dot product): v1 dot v2 = 2 + 0 - 2 = 0, so the pair is orthogonal. The answer is (2, 0, -1)."
+          - problem: "Apply the Gram-Schmidt step to x1 = (1, 2) and x2 = (4, 3), with v1 = x1. Subtract the projection of x2 onto v1 to get v2. Give v2 as (a, b)."
+            answer: "(2, -1)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Full object: v2 = (2, -1). Step 1 (projection coefficient formula): x2 dot v1 = 4 + 6 = 10 and v1 dot v1 = 1 + 4 = 5, so the coefficient is 10/5 = 2. Step 2 (Gram-Schmidt subtraction): v2 = (4, 3) - 2(1, 2) = (2, -1). Step 3 (orthogonality verification by dot product): v1 dot v2 = 2 - 2 = 0, so v2 is orthogonal to v1. The answer is (2, -1)."
+          - problem: "Apply the Gram-Schmidt step to x1 = (4, 2) and x2 = (0, 5), with v1 = x1 and v2 formed by subtracting the projection of x2 onto v1. Give v2 as (a, b)."
+            answer: "(-2, 4)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Full object: v2 = (-2, 4). Step 1 (projection coefficient formula): x2 dot v1 = 0 + 10 = 10 and v1 dot v1 = 16 + 4 = 20, so the coefficient is 10/20 = 1/2, the allowed half value. Step 2 (Gram-Schmidt subtraction): v2 = (0, 5) - (1/2)(4, 2) = (-2, 4). Step 3 (orthogonality verification by dot product): v1 dot v2 = -8 + 8 = 0, so the pair is orthogonal. The answer is (-2, 4)."
+          - problem: "A Gram-Schmidt step starts with x1 = (2, 3) and an unknown input x2, with v1 = x1. The step returns v2 = (3, -2), and the projection coefficient (x2 dot v1)/(v1 dot v1) equals 2. Find the input x2 as (a, b)."
+            answer: "(7, 4)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Full object: x2 = (7, 4). Step 1 (rearranged Gram-Schmidt subtraction formula): x2 = v2 + 2 v1, since the projection term was the only part removed. Step 2 (scalar multiplication and vector addition): 2(2, 3) = (4, 6), so x2 = (3, -2) + (4, 6) = (7, 4). Step 3 (orthogonality and coefficient verification): v1 dot v2 = 6 - 6 = 0 and x2 dot v1 = 14 + 12 = 26 = 2(13), so the coefficient is 26/13 = 2. The answer is (7, 4)."
+          - problem: "Apply the Gram-Schmidt step to x1 = (4, 2, 2) and x2 = (1, 2, 2), with v1 = x1 and v2 = x2 minus the projection of x2 onto v1. Give v2 as (a, b, c)."
+            answer: "(-1, 1, 1)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "Full object: v2 = (-1, 1, 1). Step 1 (projection coefficient formula): x2 dot v1 = 4 + 4 + 4 = 12 and v1 dot v1 = 16 + 4 + 4 = 24, so the coefficient is 12/24 = 1/2, the allowed half value. Step 2 (Gram-Schmidt subtraction): v2 = (1, 2, 2) - (1/2)(4, 2, 2) = (-1, 1, 1). Step 3 (orthogonality verification by dot product): v1 dot v2 = -4 + 2 + 2 = 0, so v1 and v2 are orthogonal. The answer is (-1, 1, 1)."
         constraints: "two input vectors; rig x2 . v1 / v1 . v1 to be an integer or 1/2; always verify orthogonality"
       - id: kp2
         name: Gram-Schmidt with three vectors
