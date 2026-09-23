@@ -350,12 +350,28 @@ topics:
         key_prerequisites: [absolute-value, function-transformations-shifts]
         constraints: "|x - a| with integer a; piecewise rewrites state both branches with the breakpoint; vertex questions on y = |x - a| + b with integer a, b"
         exemplars:
-          - problem: 'Write $|x - 3|$ as a piecewise rule.'
-            answer: "x - 3 for x ≥ 3; 3 - x for x < 3"
-            answer_contract: {kind: none}
-            solution_sketch: 'For $x \ge 3$, $x - 3 \ge 0$ so $|x - 3| = x - 3$; for $x < 3$, $|x - 3| = 3 - x$.'
           - problem: 'State the vertex of $y = |x - 2| - 5$.'
             answer: "(2, -5)"
+          - problem: "Write |x - 4| as a piecewise rule. Give the left branch expression for x < 4 and the right branch expression for x >= 4 as left = ...; right = ..."
+            answer: "left = 4 - x; right = x - 4"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["x"]}, "name": "left"}, {"contract": {"kind": "function", "vars": ["x"]}, "name": "right"}]}
+            solution_sketch: "Full piecewise rule: |x - 4| equals 4 - x for x < 4, and equals x - 4 for x >= 4. Step 1: set the inside x - 4 equal to 0 to find the breakpoint x = 4. Step 2: for x < 4 the inside is negative, so the absolute value negates it, giving 4 - x. Step 3: for x >= 4 the inside is nonnegative, so the absolute value keeps it, giving x - 4. The answer is left = 4 - x; right = x - 4."
+          - problem: "Write |x + 7| as a piecewise rule. Give the left branch expression for x < -7 and the right branch expression for x >= -7 as left = ...; right = ..."
+            answer: "left = -x - 7; right = x + 7"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["x"]}, "name": "left"}, {"contract": {"kind": "function", "vars": ["x"]}, "name": "right"}]}
+            solution_sketch: "Full piecewise rule: |x + 7| equals -x - 7 for x < -7, and equals x + 7 for x >= -7. Step 1: set the inside x + 7 equal to 0 to find the breakpoint x = -7. Step 2: for x < -7 the inside is negative, so the absolute value negates it, giving -x - 7. Step 3: for x >= -7 the inside is nonnegative, so the absolute value keeps it, giving x + 7. The answer is left = -x - 7; right = x + 7."
+          - problem: "The graph of y = |x - 8| + b has its vertex at (8, k) and passes through the point (12, 9). Find k."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full function: y = |x - 8| + b, with vertex (8, k) where k = b. Step 1: substitute the point (12, 9) into the equation: 9 = |12 - 8| + b. Step 2: compute the absolute value, |12 - 8| = 4, so 9 = 4 + b. Step 3: solve for b to get b = 5, so k = 5. The answer is 5."
+          - problem: "Use the piecewise rule for y = |x - 8| to solve y = 5 on each branch. Give the larger solution for x."
+            answer: "13"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full rule: y = |x - 8| equals x - 8 for x >= 8 and 8 - x for x < 8. Step 1: on the branch x >= 8, solve x - 8 = 5 to get x = 13, and 13 >= 8 so it is valid. Step 2: on the branch x < 8, solve 8 - x = 5 to get x = 3, and 3 < 8 so it is valid. Step 3: compare the two solutions, 13 and 3; the larger one is 13. The answer is 13."
+          - problem: "The graph of y = |x - 3| has two points whose y-coordinate is 5. Give the point with the smaller x-coordinate as (x, y)."
+            answer: "(-2, 5)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Full rule: y = |x - 3| equals x - 3 for x >= 3 and 3 - x for x < 3. Step 1: on the branch x >= 3, solve x - 3 = 5 to get x = 8, giving the point (8, 5). Step 2: on the branch x < 3, solve 3 - x = 5 to get x = -2, giving the point (-2, 5). Step 3: compare the two x-values; -2 is smaller than 8, so the point with the smaller x-coordinate is (-2, 5). The answer is (-2, 5)."
       - id: kp3
         name: Where the pieces meet
         key_prerequisites: [graphing-linear-equations]
