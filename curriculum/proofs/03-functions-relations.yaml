@@ -2444,12 +2444,34 @@ topics:
         name: "The principle via functions"
         key_prerequisites: [functions-injective-surjective]
         exemplars:
-          - problem: 'Prove: if $f : A \to B$ with $|A| > |B|$ (finite sets), then $f$ is not injective.'
-            answer: 'An injection would force $|A| \le |B|$.'
-            solution_sketch: 'If $f$ were injective it would biject $A$ onto $f(A) \subseteq B$, giving $|A| = |f(A)| \le |B|$, contradicting $|A| > |B|$. So two elements of $A$ share an image. $\square$'
-          - problem: 'Prove: if $f : A \to B$ is injective with $A, B$ finite, then $|A| \le |B|$.'
-            answer: 'An injection bijects $A$ onto $f(A) \subseteq B$.'
-            solution_sketch: 'An injective $f$ gives a bijection $A \to f(A)$, so $|A| = |f(A)|$; and $f(A) \subseteq B$ gives $|f(A)| \le |B|$. Hence $|A| \le |B|$. $\square$'
+          - problem: "A set A has 11 elements and a set B has 7 elements, and f is a function from A to B. The proof that f is not injective starts by assuming the opposite, that f is injective. Under that assumption, f is a bijection from A onto its image f(A). Give the size of f(A) that injectivity forces."
+            answer: "11"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Assume f is injective. Rule of injections: an injective function is a bijection onto its image, so f(A) has the same size as A, which is 11. Counting inequality: f(A) is contained in B, so 11 at most 7 would have to hold, and it does not. The contradiction shows two distinct elements of A share one value. The answer is 11."
+          - problem: "Let f be an injective function from a finite set A with 10 elements into a finite set B. The image f(A) is contained in B, and injectivity links the two sizes through the counting inequality. Give the smallest possible size of B."
+            answer: "10"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Injectivity rule: f maps A bijectively onto its image, so the image has size 10. Containment rule: the image sits inside B, and B is finite, so the counting inequality gives size of B at least 10. Attainment: when B has exactly 10 elements the same map is also surjective, so the bound is reached. The answer is 10."
+          - problem: "Let B be a fixed set with 5 elements. Find the smallest whole number N such that every function from a set with N elements to B fails to be injective."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Counting inequality for injections: an injective function from A to B would force the size of A to be at most 5. Threshold: once the domain has more than 5 elements, no injection can exist, so every such function fails injectivity, and the first such value is 6. Check below: with 5 elements a bijection onto B exists, so any smaller value fails. The answer is 6."
+          - problem: "A student claims that for every positive whole number n there is an injective function from a set with n elements into a fixed set with 3 elements. Give the smallest n for which the claim is false."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Counting inequality: an injective function would force n to be at most 3. Check small cases: n equal to 1, 2 and 3 all admit injective functions, so the claim holds there. Failure: at n equal to 4 the required inequality reads 4 at most 3, which is false, so no injection exists. The answer is 4."
+          - problem: "A student proves the claim: if A and B are finite sets with the size of A greater than the size of B, then no function f from A to B is injective. Step 1: assume, toward a contradiction, that f is injective. Step 2: an injective f is a bijection from A onto B. Step 3: a bijection preserves size, so A and B have equal size. Step 4: this contradicts the hypothesis, so f is not injective. Which step is the first step that is not valid?"
+            answer: "Step 2"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 is a legal setup for a proof by contradiction. Step 2 is the first invalid step: an injective f is a bijection from A onto its image f(A), not onto all of B, because f need not be surjective. Step 3 is a true statement about bijections but it rests on the false Step 2. Step 4 is a valid conclusion once a genuine contradiction is reached. The answer is Step 2."
+          - problem: "Let A be a set with 7 elements and B be a set with 6 elements. Consider all functions f from A to B; each has an image f(A) contained in B. Give your answer as verdict = yes or no for whether an injective function from A to B exists, and max = the largest possible size of f(A)."
+            answer: "verdict = no; max = 6"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "max"}]}
+            solution_sketch: "Counting inequality: an injective f would force the size of A to be at most the size of B, that is 7 at most 6, which is false, so the verdict is no. Image bound: f(A) is contained in B, so its size is at most 6. Attainment: a surjective function from A onto B exists, so the image can contain all 6 elements. The answer is verdict = no; max = 6."
+          - problem: "Write the full proof: for finite sets A and B with the size of A greater than the size of B, every function f from A to B fails to be injective. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Statement: for finite sets A and B with the size of A greater than the size of B, no function f from A to B is injective. Step 1: assume, toward a contradiction, that f is injective. Step 2: an injective function sends distinct elements of A to distinct elements of B, so f restricts to a bijection from A onto its image f(A), which gives size of A equal to size of f(A). Step 3: every value f(a) lies in B, so f(A) is contained in B, and since B is finite this gives size of f(A) at most size of B. Step 4: combining Steps 2 and 3 yields the counting inequality size of A at most size of B, which contradicts the hypothesis that A is larger than B. Step 5: the assumption fails, so f is not injective, and two distinct elements of A must share the same value in B. This is exactly the pigeonhole principle stated in the language of functions."
         constraints: "connect (non-)injectivity to the counting inequality"
       - id: kp2
         name: "Basic applications"
