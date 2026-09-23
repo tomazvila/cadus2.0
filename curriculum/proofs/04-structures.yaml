@@ -386,23 +386,67 @@ topics:
         name: "Semigroups and monoids"
         key_prerequisites: [binary-operations]
         exemplars:
-          - problem: 'Show $(\mathbb{N}, +, 0)$ is a monoid.'
-            answer: 'Closed, associative, identity $0$.'
-            solution_sketch: 'Addition on $\mathbb{N}$ is closed and associative, and $n + 0 = 0 + n = n$, so $0$ is an identity. Hence $(\mathbb{N}, +, 0)$ is a monoid. $\square$'
-          - problem: 'Show $(\mathbb{Z}, \cdot, 1)$ is a monoid.'
-            answer: 'Closed, associative, identity $1$.'
-            solution_sketch: 'Integer multiplication is closed and associative, and $n \cdot 1 = 1 \cdot n = n$, so $1$ is an identity. Hence $(\mathbb{Z}, \cdot, 1)$ is a monoid. $\square$'
+          - problem: "Consider the monoid formed by the natural numbers under addition with its usual two-sided identity. Give that identity element."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "A monoid has a two-sided identity e with n + e = e + n = n for every natural number n. In ordinary addition, e = 0 satisfies n + 0 = 0 + n = n. The answer is 0."
+          - problem: "Consider the monoid formed by the integers under multiplication with its usual two-sided identity. Give that identity element."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "A monoid has a two-sided identity e with n * e = e * n = n for every integer n. In ordinary multiplication, e = 1 satisfies n * 1 = 1 * n = n. The answer is 1."
+          - problem: "For the operation table of the numbers modulo 5 under addition, compute the entry for row 4 and column 3."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The table entry for row 4 and column 3 is the sum 4 + 3 reduced modulo 5. Since 4 + 3 = 7 and 7 - 5 = 2, the entry is 2. The answer is 2."
+          - problem: "For the operation table of the numbers modulo 5 under addition, compute (2 * 4) * 3, where * is the table operation."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "First compute 2 * 4 using addition modulo 5: 2 + 4 = 6, and 6 - 5 = 1. Then compute 1 * 3: 1 + 3 = 4, which is already less than 5. The answer is 4."
+          - problem: "For the operation table of the numbers modulo 5 under addition, find the two-sided identity element. Give the identity element."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "An identity element e must satisfy x * e = e * x = x for every x. In addition modulo 5, the element 0 works because x + 0 = 0 + x = x. The answer is 0."
+          - problem: "Claim: the natural numbers under multiplication with 0 form a monoid. Step 1: for natural numbers a and b, the product ab is a natural number, so the operation is closed. Step 2: multiplication of natural numbers is associative. Step 3: since a times 0 equals 0 for every natural number a, the element 0 is a two-sided identity. Step 4: therefore the natural numbers under multiplication with 0 form a monoid. Which step is the first step that is not valid?"
+            answer: "Step 3"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 is valid because the product of two natural numbers is a natural number. Step 2 is valid because multiplication of natural numbers is associative. Step 3 is false because a times 0 equals 0, not a; a two-sided identity must leave every element unchanged, and for multiplication the identity is 1. Step 4 is wrong because it depends on the false Step 3. The answer is Step 3."
+          - problem: "Write the full proof: the set of even integers under addition, with 0, is a monoid. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1 Closure: let a and b be even integers. Then a = 2m and b = 2n for integers m and n, so a + b = 2(m + n), which is even. Step 2 Associativity: addition of even integers is inherited from addition of integers, and integer addition is associative. Step 3 Identity: the integer 0 is even, and for every even integer a, a + 0 = 0 + a = a, so 0 is a two-sided identity. Step 4 Conclusion: the set of even integers is closed under addition, addition is associative on this set, and 0 is a two-sided identity. Therefore the set of even integers under addition with 0 is a monoid. This completes the proof."
         constraints: "verify closure, associativity, and a two-sided identity"
       - id: kp2
         name: "Uniqueness of the identity"
         key_prerequisites: [binary-operations]
         exemplars:
-          - problem: 'Prove: a monoid has a unique identity element.'
-            answer: 'If $e_1, e_2$ are both identities, $e_1 = e_1 * e_2 = e_2$.'
-            solution_sketch: 'Suppose $e_1$ and $e_2$ are both identities. Then $e_1 = e_1 * e_2$ (since $e_2$ is an identity) and $e_1 * e_2 = e_2$ (since $e_1$ is an identity). Hence $e_1 = e_2$. $\square$'
-          - problem: 'Is the set of positive integers under addition a monoid?'
-            answer: 'No; there is no identity element ($0$ is excluded).'
-            solution_sketch: 'Addition on $\mathbb{Z}^{+}$ is closed and associative, but an identity $e$ would need $n + e = n$, i.e. $e = 0 \notin \mathbb{Z}^{+}$. With no identity it is a semigroup but not a monoid. $\square$'
+          - problem: "Suppose a monoid has two identity elements a and b. The identity law for a says that for every x, a*x = x. Apply this law to x = b. Give the resulting expression for a*b."
+            answer: "b"
+            answer_contract: {"kind": "function", "vars": ["a", "b"]}
+            solution_sketch: "Let a and b be identity elements. Step 1: the identity law for a gives a*x = x for every x. Step 2: put x = b, so a*b = b. The simplified product is b."
+          - problem: "Suppose a monoid has two identity elements a and b. The identity law for b says that for every x, x*b = x. Apply this law to x = a. Give the resulting expression for a*b."
+            answer: "a"
+            answer_contract: {"kind": "function", "vars": ["a", "b"]}
+            solution_sketch: "Let a and b be identity elements. Step 1: the identity law for b gives x*b = x for every x. Step 2: put x = a, so a*b = a. The simplified product is a."
+          - problem: "The operation table of a monoid on elements 0,1,2 is: row 0 gives 0,1,2; row 1 gives 1,1,1; row 2 gives 2,2,2. Row 0 and column 0 show that 0 is the identity. A student claims that 1 is also an identity. If 1 were an identity, then 1*0 would have to equal 0. Use the table to compute 1*0. Give the value."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Read the table: row 0 and column 0 make 0 the identity. Step 1: if 1 were also an identity, then 1*0 would equal 0. Step 2: the table gives 1*0 = 1. Since 1 is not 0, the claim fails. The computed value is 1."
+          - problem: "In the monoid of integers modulo 6 under addition, let a and b be identity elements. The identity law for b gives a + b = a, and the identity law for a gives a + b = b. Subtract the first equation from the second to compute a - b modulo 6. Give the value."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Let a and b be identity elements in the integers modulo 6 under addition. Step 1: the identity law for b gives a + b = a. Step 2: the identity law for a gives a + b = b. Step 3: subtract the first equation from the second, so a - b = 0 modulo 6. The value of a - b modulo 6 is 0."
+          - problem: "Proposed argument that a monoid has at most one identity element: Step 1: let a and b be identity elements of the monoid. Step 2: the identity law for b gives a*b = a. Step 3: the identity law for a gives b*a = a. Step 4: the two displayed products force a = b. Which step is the first step that is not valid?"
+            answer: "Step 3"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 sets up two candidate identity elements and is valid. Step 2 is valid: the identity law for b says x*b = x for every x, and with x = a it gives a*b = a. Step 3 is the first invalid step: the identity law for a says b*a = b, not b*a = a, so the step misapplies the law on the wrong product. Step 4 is also not valid, but it fails only after Step 3, because the corrected pair a*b = a and a*b = b would indeed force a = b. The answer is Step 3."
+          - problem: "In the uniqueness proof, let a and b be identity elements. The line between 'a is an identity' and 'therefore a = b' is missing. Select the missing line that plays the two identities against each other."
+            answer: "$a = a*b = b$"
+            answer_contract: {"kind": "label", "options": [["$a = a*b = b$"], ["$a = b*a = b$"], ["$a*b = a = b$"], ["$a = a*b = a$"]]}
+            solution_sketch: "Correct line: a is an identity, so a*b = b; b is an identity, so a*b = a; hence a = a*b = b. The option a = b*a = b reverses the product and does not use the identity law for a. The option a*b = a = b has the equalities in the wrong places. The option a = a*b = a drops the second identity and cannot give b. The answer is $a = a*b = b$."
+          - problem: "Write the full proof: in any monoid, the identity element is unique. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Proof. Let (M, *) be a monoid and suppose a and b are both identity elements. Step 1: because b is an identity, a*b = a. Step 2: because a is an identity, a*b = b. Step 3: the left sides are the same, so a = b. Therefore any two identity elements of M are equal, and the identity element is unique. This proves the statement."
         constraints: "play the two identities against each other"
       - id: kp3
         name: "Recognizing monoids and non-examples"
@@ -468,12 +512,34 @@ topics:
         name: "Defining and computing powers"
         key_prerequisites: [monoids]
         exemplars:
-          - problem: 'In the monoid of functions $\mathbb{R} \to \mathbb{R}$ under composition, let $f(x) = x + 2$. Compute $f^{3}$.'
-            answer: '$f^{3}(x) = x + 6$'
-            solution_sketch: 'Each application adds $2$; three applications add $6$.'
-          - problem: 'In the multiplication-mod-$10$ monoid on $\{0, 1, \dots, 9\}$, compute $3^{4}$ and $7^{2}$.'
-            answer: '$1$ and $9$.'
-            solution_sketch: '$3^4 = 81 \equiv 1$ and $7^2 = 49 \equiv 9 \pmod{10}$.'
+          - problem: "In the monoid of all functions from $\\mathbb{R}$ to $\\mathbb{R}$ under composition, the identity $e$ is the identity function, and powers follow $a^{0} = e$ and $a^{n+1} = a^{n} a$. Let $f(x) = x + 5$. Give $f^{4}$ as a function of $x$."
+            answer: "x+20"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "The full object is $f^{4} = f \\circ f \\circ f \\circ f$, four copies of $f$ under composition. Step 1 (recursive definition $a^{n+1} = a^{n} a$): $f^{1}(x) = f^{0}(f(x)) = f(x) = x + 5$. Step 2 (iterate the same rule): $f^{2}(x) = f^{1}(f(x)) = x + 10$, then $f^{3}(x) = x + 15$, then $f^{4}(x) = x + 20$. Each application of $f$ adds 5, so four applications add 20. The answer is x+20."
+          - problem: "In the monoid on the set $\\{0, 1, \\ldots, 9\\}$ with operation multiplication modulo 10, the identity is 1 and powers follow $a^{0} = 1$ and $a^{n+1} = a^{n} a$. Compute $3^{3}$ as p3 and $9^{2}$ as q2."
+            answer: "p3 = 7; q2 = 1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "p3"}, {"contract": {"kind": "exact"}, "name": "q2"}]}
+            solution_sketch: "The full objects are $3^{3} = 3 \\cdot 3 \\cdot 3$ and $9^{2} = 9 \\cdot 9$, each reduced modulo 10. Step 1 (recursive definition $a^{n+1} = a^{n} a$): $3^{1} = 3$, $3^{2} = 9$, $3^{3} = 27$, and 27 mod 10 is 7. Step 2 (the same rule for the element 9): $9^{1} = 9$, $9^{2} = 81$, and 81 mod 10 is 1. The answer is p3 = 7; q2 = 1."
+          - problem: "In the monoid on the set $\\{1, 2, 3, 4, 5, 6\\}$ with operation multiplication modulo 7, the identity is 1 and powers follow $a^{0} = 1$ and $a^{n+1} = a^{n} a$. The order of an element $a$ is the smallest $n \\geq 1$ with $a^{n} = 1$. Find the order of $2$."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full iteration is $2^{1} = 2$, $2^{2} = 4$, $2^{3} = 8$, $2^{4} = 16$, all under multiplication modulo 7. Step 1 (recursive definition $a^{n+1} = a^{n} a$): $2^{2} = 2 \\cdot 2 = 4$, which is not the identity. Step 2 (the same rule): $2^{3} = 4 \\cdot 2 = 8$, and 8 mod 7 is 1, the identity. No smaller positive exponent works, since $2^{1} = 2$ and $2^{2} = 4$. The answer is 3."
+          - problem: "In the monoid of nonnegative integers under addition, the identity is 0, and powers follow $a^{0} = 0$ and $a^{n+1} = a^{n} + a$, because the operation is addition. Compute $5^{3}$ in this monoid."
+            answer: "15"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is $5^{3} = 5 + 5 + 5$, repeated addition, because the monoid operation is addition. Step 1 (recursive definition $a^{0} = e = 0$): $5^{0} = 0$. Step 2 (the rule $a^{n+1} = a^{n} + a$): $5^{1} = 0 + 5 = 5$, then $5^{2} = 5 + 5 = 10$, then $5^{3} = 10 + 5 = 15$. Reading the power as a product, $5 \\cdot 5 \\cdot 5 = 125$, applies the wrong operation. The answer is 15."
+          - problem: "In the monoid of real functions under composition, powers follow $h^{0} = e$, where $e$ is the identity function, and $h^{n+1} = h^{n} h$. A student claims that for $h(x) = 2x$ the power $h^{3}$ satisfies $h^{3}(x) = 6x$, arguing: Step 1: $h^{0}$ is the identity function. Step 2: $h^{1} = h^{0} h$, so $h^{1}(x) = 2x$. Step 3: $h^{2}(x) = h^{1}(h(x)) = 4x$. Step 4: $h^{3}(x) = h^{2}(x) + h(x) = 4x + 2x = 6x$. Which step is the first invalid step?"
+            answer: "Step 4"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "The full claim is $h^{3}(x) = 6x$ for $h(x) = 2x$, argued in four numbered steps. Step 1 is valid: $h^{0}$ is the identity by the definition $a^{0} = e$. Step 2 is valid: the recursion $h^{n+1} = h^{n} h$ gives $h^{1} = h$. Step 3 is valid: $h^{2}(x) = h^{1}(h(x)) = 2(2x) = 4x$. Step 4 is invalid: it adds the two functions, but the monoid operation is composition; the recursion gives $h^{3}(x) = h^{2}(h(x)) = 4(2x) = 8x$. Choosing Step 1, Step 2 or Step 3 mistakes a valid line for an invalid one. The answer is Step 4."
+          - problem: "In the monoid of all words over the letters a and b, with operation concatenation and identity the empty word, take $w = ab$. Powers follow $w^{0} = e$, where $e$ is the empty word, and $w^{n+1} = w^{n} w$. A computation lists $w^{1} = ab$ and $w^{2} = w^{1} w$, and the line for $w^{3}$ is missing. Select the word that equals $w^{3}$."
+            answer: "ababab"
+            answer_contract: {"kind": "label", "options": [["ababab"], ["abababab"], ["ababa"], ["ababba"]]}
+            solution_sketch: "The full object is $w^{3} = w^{2} w$, three copies of $w$ joined by the recursion. Step 1 (recursive definition $w^{n+1} = w^{n} w$): $w^{1} = ab$. Step 2 (the same rule): $w^{2} = (ab)(ab) = abab$. Step 3 (the same rule again): $w^{3} = (abab)(ab) = ababab$. The option abababab is the error of writing $w^{2} w^{2}$, four copies of $w$. The option ababa is the error of appending only the first letter of $w$. The option ababba is the error of appending the reversed word $ba$. The answer is ababab."
+          - problem: "Write the full proof: in the monoid of all functions from $\\mathbb{R}$ to $\\mathbb{R}$ under composition, with $f(x) = x + 3$, prove by induction on $n$ that $f^{n}(x) = x + 3n$ for every $n \\geq 0$. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Base case, $n = 0$: by the definition $a^{0} = e$, the power $f^{0}$ is the identity function, so $f^{0}(x) = x = x + 3 \\cdot 0$, and the claim holds. Inductive hypothesis: assume $f^{k}(x) = x + 3k$ for one $k \\geq 0$ and every input $x$. Inductive step: by the recursive definition $f^{k+1} = f^{k} f$, so $f^{k+1}(x) = f^{k}(f(x)) = f^{k}(x + 3)$. The hypothesis at the input $x + 3$ gives $(x + 3) + 3k = x + 3(k + 1)$, which is the claim for $k + 1$. Conclusion: by induction, $f^{n}(x) = x + 3n$ for every $n \\geq 0$."
         constraints: "iterate a concrete monoid element; recursive definition $a^{n+1} = a^{n} a$, $a^{0} = e$"
       - id: kp2
         name: "The law $a^{m} a^{n} = a^{m+n}$"
@@ -1112,12 +1178,34 @@ topics:
         name: "Finite vs infinite; subsets and supersets"
         key_prerequisites: [finite-cardinality-bijections]
         exemplars:
-          - problem: 'Using the fact that subsets of finite sets are finite, prove: if $A$ is infinite and $A \subseteq B$, then $B$ is infinite.'
-            answer: 'Contrapositive: $B$ finite would make its subset $A$ finite.'
-            solution_sketch: 'Suppose $B$ were finite. Then its subset $A$ would be finite, contradicting the hypothesis. So $B$ is infinite. $\square$'
-          - problem: 'Prove that $\mathbb{Z}$ and $\mathbb{Q}$ are infinite, given that $\mathbb{N}$ is.'
-            answer: '$\mathbb{N} \subseteq \mathbb{Z} \subseteq \mathbb{Q}$; supersets of infinite sets are infinite.'
-            solution_sketch: 'Each contains $\mathbb{N}$, so each is infinite by the superset principle. $\square$'
+          - problem: "In the contrapositive proof that a set containing an infinite set must itself be infinite, suppose the larger set B is finite, with a bijection pairing the elements of B with the numbers 1 to 14, and A is a subset of B. The subset-of-finite fact then caps how many elements A can have. Give the largest possible number of elements of A."
+            answer: "14"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Set up the contrapositive: to prove that a set containing an infinite set is infinite, suppose the larger set B is finite with exactly 14 elements. Apply the subset-of-finite fact: every subset of a finite set is finite, so the subset A is finite with at most 14 elements. Reach the contradiction: an infinite set cannot have 14 or fewer elements, so B cannot be finite. The largest possible number of elements of A is 14."
+          - problem: "It is given that the set of natural numbers is infinite. A student claims that the set of all integers is finite with exactly 7 elements. Since every natural number is an integer, this cannot be. Give the smallest number of natural numbers that cannot all be distinct elements of a set with exactly 7 elements."
+            answer: "8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Superset fact: the set of all integers contains every natural number. Contrapositive: if the integers were finite with exactly 7 elements, the naturals would form a subset of a 7-element set. Subset-of-finite fact: such a subset has at most 7 elements, so at most 7 natural numbers could be distinct members. Contradiction: the naturals are given to be infinite, so the student's claim fails. The smallest number of natural numbers that cannot fit is 8."
+          - problem: "A student claims: if A is a subset of B and A is finite, then B must also be finite. The claim fails for a suitable choice of A and B. Give the smallest number of elements that the finite set A can have while B is infinite."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Identify the direction error: the claim treats every superset of a finite set as finite, but only subsets of finite sets must be finite. Build a counterexample: take A to be the empty set, which has 0 elements and is finite, and take B to be the set of natural numbers, which is infinite. Verify: the empty set is a subset of every set, so A is a subset of B. No set has fewer than 0 elements, so the smallest number of elements of A is 0."
+          - problem: "Claim: every subset of an infinite set is infinite. Step 1: Let B be an infinite set and let A be a subset of B. Step 2: Suppose, toward a contradiction, that A is finite. Step 3: Since A is finite and A is a subset of B, the subset-of-finite fact forces B to be finite. Step 4: This contradicts that B is infinite, so A is infinite. Which step is the first step that is not valid?"
+            answer: "Step 3"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 is valid: it names an infinite set B and a subset A of B. Step 2 is valid: it sets up a proof by contradiction. Step 3 is the first invalid step: the subset-of-finite fact says that a subset of a finite set is finite; it says nothing about a set that contains a finite set, so it cannot force B to be finite. Step 4 would be a valid deduction, but only if Step 3 were true. The answer is Step 3."
+          - problem: "A student proves: if the infinite set S is contained in T, then T is infinite. Line 1: Take the contrapositive. Line 2: Suppose there is a bijection f from T onto 1, 2, ..., m. Line 3: (the line is missing). Line 4: This contradicts the fact that S is infinite. Line 5: Hence T is infinite. Select the line that is true and that fits as Line 3."
+            answer: "Restricting f to S maps S into 1, 2, ..., m, which makes S finite."
+            answer_contract: {"kind": "label", "options": [["Restricting f to T maps T into 1, 2, ..., m, which makes T finite."], ["Restricting f to S maps S into 2, 3, ..., m, which makes S finite."], ["Restricting f to S maps S into 1, 2, ..., m, which makes S finite."], ["Restricting f to S maps S onto 1, 2, ..., m, which makes S finite."]]}
+            solution_sketch: "The missing line must use the hypothesis that S is contained in T: the restriction of f to S sends each element of S to a number from 1 to m, and distinct elements go to distinct numbers, so S is finite, which clashes with Line 4. The option that restricts f to T is f itself and never mentions S, so it cannot produce the clash. The option with the range 2, 3, ..., m drops the number 1, which is a possible value of f. The option with 'onto' claims too much, since the restriction need not hit every number. The answer is Restricting f to S maps S into 1, 2, ..., m, which makes S finite."
+          - problem: "It is given that no bijection pairs the set P = {3, 9, 27, 81, ...} of all powers of 3 with the numbers 1 to m, for any whole number m. Let Q be the set P together with the number 2. Select the verdict about Q from the two choices, and give the smallest member of Q that is not a power of 3."
+            answer: "verdict = infinite; smallest = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["finite"], ["infinite"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "smallest"}]}
+            solution_sketch: "Superset step: Q contains every element of P. Contrapositive: if some whole number m could count Q, then P, as a subset of Q, would also be counted by m by the subset-of-finite fact, contradicting what is given about P. So the verdict on Q is infinite. Membership check: Q adds only the number 2, which is not a power of 3, while every power of 3 is at least 3. The answer is verdict = infinite; smallest = 2."
+          - problem: "Write the full proof: suppose A is an infinite set, A is contained in B, and B is contained in C. Prove that B and C are both infinite. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1 (contrapositive for B): to show B is infinite, suppose instead that B is finite. Step 2 (subset-of-finite fact): A is a subset of the finite set B, so A is finite. Step 3 (contradiction): this contradicts the hypothesis that A is infinite, so B is infinite. Step 4 (contrapositive for C): to show C is infinite, suppose instead that C is finite. Step 5 (subset-of-finite fact): B is a subset of the finite set C, so B is finite. Step 6 (contradiction): this contradicts Step 3, which established that B is infinite, so C is infinite. Conclusion: both B and C are infinite, and the proof is complete."
         constraints: "superset/contrapositive arguments; the subset-of-finite fact may be cited"
       - id: kp2
         name: "N is infinite"

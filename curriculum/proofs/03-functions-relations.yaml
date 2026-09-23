@@ -1874,6 +1874,22 @@ topics:
           - problem: 'Compute the inverse relation $R^{-1}$ for $R = \{(1,1), (1,3), (2,3)\}$.'
             answer: '$\{(1,1), (3,1), (3,2)\}$'
             solution_sketch: 'Reverse each pair; $(1,1)$ is its own reverse.'
+          - problem: "Let $R = \\{(1,2), (3,4), (4,1)\\}$ on the set $\\{1, 2, 3, 4\\}$. Form the inverse relation $R^{-1}$ and then the symmetric closure $R \\cup R^{-1}$. How many ordered pairs does the symmetric closure contain?"
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Reverse each pair of R to form the inverse relation: (1,2) gives (2,1), (3,4) gives (4,3), and (4,1) gives (1,4). None of these reverses is already in R, so the union R union R-inverse has 3 + 3 pairs. The symmetric closure contains 6 ordered pairs."
+          - problem: "On the set $\\{1, 2, 3\\}$ let $R = \\{(1,2), (2,3), (3,1)\\}$. Form the inverse relation $R^{-1}$ and then the symmetric closure $R \\cup R^{-1}$. Find the number of pairs in the symmetric closure and the number of pairs it adds to R, and give them as size = a; added = b."
+            answer: "size = 6; added = 3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "size"}, {"contract": {"kind": "exact"}, "name": "added"}]}
+            solution_sketch: "Reverse each pair by the inverse-relation rule: R-inverse is {(2,1), (3,2), (1,3)}. No reverse pair already lies in R, so the union R union R-inverse has 3 + 3 = 6 pairs and the closure adds 3 pairs to R. The answer is size = 6; added = 3."
+          - problem: "On the set $\\{a, b, c\\}$ let $R = \\{(a,a), (a,b), (c,b)\\}$. Form the inverse relation $R^{-1}$ and then the symmetric closure $R \\cup R^{-1}$. How many pairs does the closure add to $R$?"
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Reverse each pair by the inverse-relation rule to get R-inverse = {(a,a), (b,a), (b,c)}. The pair (a,a) is its own reverse and already lies in R, while (b,a) and (b,c) are new. The symmetric closure adds 2 pairs to R."
+          - problem: "On the set $\\{1, 2, 3\\}$ let $R = \\{(1,2), (2,3)\\}$. Form the inverse relation $R^{-1}$ and then the symmetric closure $R \\cup R^{-1}$. State whether the pair $(3,1)$ lies in the closure, and give the number of pairs in the closure."
+            answer: "verdict = absent; count = 4"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["member"], ["absent"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "count"}]}
+            solution_sketch: "Reverse each pair by the inverse-relation rule: R-inverse is {(2,1), (3,2)}, so the closure R union R-inverse is {(1,2), (2,1), (2,3), (3,2)}, which has 4 pairs. The pair (3,1) is not in this set, so the wrong option member comes from reversing a pair (1,3) that is not in R. The answer is verdict = absent; count = 4."
         constraints: "form $R^{-1}$ and $R \\cup R^{-1}$ on small listed relations"
       - id: kp3
         name: "Transitive closure"
@@ -1957,12 +1973,34 @@ topics:
         name: "Total vs. partial; comparability"
         key_prerequisites: [quantifiers]
         exemplars:
-          - problem: 'Is divisibility on $\mathbb{Z}^{+}$ a total order? Justify.'
-            answer: 'No: $2$ and $3$ are incomparable.'
-            solution_sketch: 'A total order requires any two elements to be comparable. But $2 \nmid 3$ and $3 \nmid 2$, so $2$ and $3$ are incomparable; $\mid$ is partial, not total. $\square$'
-          - problem: 'Is the product order on $\mathbb{Z} \times \mathbb{Z}$ total? Justify.'
-            answer: 'No: $(1, 0)$ and $(0, 1)$ are incomparable.'
-            solution_sketch: 'Neither $(1,0) \preceq (0,1)$ (as $1 \not\le 0$) nor $(0,1) \preceq (1,0)$ (as $1 \not\le 0$), so the two are incomparable; the order is partial, not total. $\square$'
+          - problem: "On the set {2, 3, 6, 12, 18}, say that one element precedes another when it divides it. Test comparability in both directions for every unordered pair of distinct elements. How many of the ten pairs are incomparable?"
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: the set {2, 3, 6, 12, 18} with divisibility, which has ten unordered pairs of distinct elements. Step 1, direct test of each pair in both directions: 2 divides 6, 12 and 18, 3 divides 6, 12 and 18, and 6 divides 12 and 18, so eight pairs are comparable. Step 2, the pair 2 with 3 and the pair 12 with 18 fail the test in both directions. The answer is 2."
+          - problem: "On the grid {0, 1, 2} x {0, 1}, say that a pair (a, b) precedes (c, d) when a is at most c and b is at most d. Test comparability in both directions for every unordered pair of distinct elements. How many of the fifteen pairs are incomparable?"
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: the grid {0, 1, 2} x {0, 1} with the product order, six elements and fifteen unordered pairs of distinct elements. Step 1, direct test: the pairs (0,1) with (1,0), (0,1) with (2,0), and (1,1) with (2,0) would need the second coordinate to decrease, so neither direction holds. Step 2, every other pair has both coordinates running the same way and is comparable. The answer is 3."
+          - problem: "On the power set of {1, 2, 3}, order subsets by containment. The power set has eight subsets and twenty-eight unordered pairs of distinct subsets. Test containment in both directions for each pair. How many of the pairs are incomparable?"
+            answer: "9"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: the power set of {1, 2, 3}, eight subsets and twenty-eight unordered pairs of distinct subsets, ordered by containment. Step 1, the empty set and the full set are comparable with every subset, so only the six middle subsets can fail. Step 2, count the failing pairs: three pairs of one-element subsets, three pairs of two-element subsets, and three mixed pairs such as {1} with {2, 3}. The answer is 9."
+          - problem: "A student claims that for every positive integer n, the number n and the number n plus 4 are comparable under divisibility. Test the claim at the first few values of n, checking divisibility in both directions. Give the smallest n for which the claim fails."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: the claim that n and n plus 4 are comparable under divisibility, tested for each positive integer n. Step 1, direct test at n = 1: 1 divides 5, so the pair is comparable. Step 2, direct test at n = 2: 2 divides 6, so the pair is comparable again. Step 3, direct test at n = 3: 3 does not divide 7 and 7 does not divide 3, so the claim fails. The answer is 3."
+          - problem: "Take the positive divisors of 24, namely 1, 2, 3, 4, 6, 8, 12 and 24, with the divisibility relation. Test each unordered pair of distinct divisors in both directions. How many of the twenty-eight pairs are incomparable?"
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: the set of divisors of 24, eight elements with divisibility and twenty-eight unordered pairs of distinct elements. Step 1, direct test of the pairs where one member divides the other, including every pair that contains 1 and every pair that contains 24: twenty-two pairs are comparable. Step 2, the six remaining pairs, for example 2 with 3 and 8 with 12, fail the test in both directions. The answer is 6."
+          - problem: "On the set {1, 2, 4, 8, 16}, say that one element precedes another when it divides it. Test comparability in both directions for every unordered pair of distinct elements. How many of the ten pairs are incomparable?"
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: the set {1, 2, 4, 8, 16} with divisibility and ten unordered pairs of distinct elements. Step 1, direct test of each pair: every element is a power of 2 that divides each larger element, so the relation lines the five elements up in one chain. Step 2, all ten pairs are comparable, so this order is total. The answer is 0."
+          - problem: "Write the full proof: divisibility on the positive integers is not a total order. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Definition: a total order needs every two elements x and y to satisfy x precedes y or y precedes x, which is comparability of all pairs. Strategy: one incomparable pair is enough to refute totality. Step 1: take the positive integers 2 and 3. Step 2: 2 does not divide 3, so 2 does not precede 3. Step 3: 3 does not divide 2, so 3 does not precede 2. Step 4: neither direction holds, so 2 and 3 are incomparable. Conclusion: one incomparable pair breaks the requirement that all pairs be comparable, so divisibility on the positive integers is a partial order and not a total order."
         constraints: "test comparability of all pairs to decide totality"
     diagnostic_exemplar:
       problem: 'Prove that $\subseteq$ is a partial order on $\mathcal{P}(\{1,2,3\})$, and decide whether it is a total order.'

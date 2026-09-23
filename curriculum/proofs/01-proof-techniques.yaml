@@ -1498,14 +1498,30 @@ topics:
         name: "Illegal algebraic steps"
         key_prerequisites: [direct-proof]
         exemplars:
-          - problem: 'Find the error: "$a = b \Rightarrow a^2 = ab \Rightarrow a^2 - b^2 = ab - b^2 \Rightarrow (a+b)(a-b) = b(a-b) \Rightarrow a + b = b \Rightarrow 2 = 1$ (at $a = b = 1$)."'
-            answer_contract: {kind: none}
-            answer: 'The cancellation of $(a - b)$ divides by zero, since $a = b$.'
-            solution_sketch: 'Every step is valid except cancelling $a - b$, which is $0$ by hypothesis; division by zero manufactures the absurdity.'
-          - problem: 'Find the error: "$(-3)^2 = 3^2$, so taking square roots, $-3 = 3$."'
-            answer_contract: {kind: none}
-            answer: '$\sqrt{x^2} = |x|$, not $x$; the correct conclusion is $|-3| = |3|$.'
-            solution_sketch: 'Square-rooting both sides of an equation yields absolute values; dropping them silently is invalid for negative quantities.'
+          - problem: "Consider this argument with c = 7 and d = 7. Step 1: c = d. Step 2: multiply both sides by c to get c^2 = cd. Step 3: subtract d^2 from both sides to get c^2 - d^2 = cd - d^2. Step 4: factor both sides. Step 5: cancel the common factor to get c + d = d. Step 6: conclude 14 = 7. Exactly one step performs an illegal algebraic move. Find the common factor that this step cancels, as a formula in c and d."
+            answer: "c - d"
+            answer_contract: {"kind": "function", "vars": ["c", "d"]}
+            solution_sketch: "The full argument is: c = d, then multiply both sides by c to get c^2 = cd, then subtract d^2 from both sides to get c^2 - d^2 = cd - d^2, then factor both sides, then cancel the common factor to get c + d = d, then conclude 14 = 7. Check each step: multiplying and subtracting the same quantity on both sides is legal by the laws of equality, and after step 4 the difference-of-squares rule and the distributive law give (c + d)(c - d) = d(c - d). The illegal step is the cancellation, which divides by the common factor c - d; because c = d = 7, that factor equals 0, and the zero-divisor rule forbids dividing by 0. The common factor cancelled by the illegal step is c - d."
+          - problem: "Consider this argument with z = -6. Step 1: z^2 = 6^2. Step 2: take the square root of both sides to get sqrt(z^2) = sqrt(6^2). Step 3: replace the left side by z to get z = 6, that is, -6 = 6. Step 3 performs the illegal root extraction, because the square root of z^2 is not always z. Find the expression that step 3 must write on the left side in place of z, as a formula in z."
+            answer: "abs(z)"
+            answer_contract: {"kind": "function", "vars": ["z"]}
+            solution_sketch: "The full argument is: z^2 = 6^2, then take the square root of both sides to get sqrt(z^2) = sqrt(6^2), then replace the left side by z to get z = 6, that is, -6 = 6. Step 2 is legal by the definition of the square root, since z = -6 gives sqrt(z^2) = sqrt(36) = 6 and sqrt(6^2) = 6. Step 3 is the illegal root extraction: the identity sqrt(z^2) = z holds only for nonnegative z, and here z = -6. The identity that holds for every real z is sqrt(z^2) = abs(z), the absolute-value form. The expression that step 3 must write in place of z is abs(z)."
+          - problem: "Consider this argument that solves (x - 8)(x + 3) = 0. Step 1: state the equation (x - 8)(x + 3) = 0. Step 2: divide both sides by the factor x - 8 to get x + 3 = 0. Step 3: conclude that x = -3 is the only solution. Exactly one step performs an illegal algebraic move, because it divides by a quantity that equals zero for one solution. Find the solution of the equation that this step loses."
+            answer: "8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full argument is: state (x - 8)(x + 3) = 0, divide both sides by the factor x - 8 to get x + 3 = 0, and conclude that x = -3 is the only solution. The zero-product rule says a product is 0 exactly when at least one factor is 0, so the equation has the two solutions x = 8 and x = -3. The illegal step is the division by x - 8: when x = 8 that divisor is 0, so the step is a hidden division by zero and it loses the solution x = 8. The solution lost by the illegal step is 8."
+          - problem: "Consider this argument that solves (t - 2)^2 = 9. Step 1: state the equation (t - 2)^2 = 9. Step 2: take the square root of both sides and keep only the positive branch, t - 2 = 3. Step 3: conclude that t = 5 is the only solution. Step 2 performs the illegal root extraction by keeping only one branch. Find the other solution of the equation that step 2 drops."
+            answer: "-1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full argument is: state (t - 2)^2 = 9, take the square root of both sides and keep only the positive branch t - 2 = 3, and conclude that t = 5 is the only solution. The square-root rule for equations gives two branches, t - 2 = sqrt(9) = 3 and t - 2 = -sqrt(9) = -3, so the solutions are t = 5 and t = -1. Step 2 keeps only the positive branch, which is the illegal root extraction, and the other solution is dropped. The solution dropped by the illegal step is -1."
+          - problem: "Consider this argument that solves the inequality x^2 < 49. Step 1: state the inequality x^2 < 49. Step 2: take the square root of both sides and write x < 7. Step 3: conclude that every x < 7 solves the inequality. Step 2 performs the illegal root extraction by dropping the negative branch. Find the correct solution of the inequality, and give it as an inequality in x."
+            answer: "-7 < x < 7"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "The full argument is: state the inequality x^2 < 49, take the square root of both sides and write x < 7, and conclude that every x < 7 solves it. The square-root rule for inequalities gives abs(x) < 7, because the square root of x^2 is the absolute value of x, and abs(x) < 7 splits into the two branches x < 7 and x > -7. Step 2 keeps only one branch, which is the illegal root extraction, so its conclusion is incomplete. The correct solution of the inequality is -7 < x < 7."
+          - problem: "Consider this argument that solves (y - 2)(y + 5) = 9(y - 2). Step 1: state the equation (y - 2)(y + 5) = 9(y - 2). Step 2: divide both sides by y - 2 to get y + 5 = 9. Step 3: conclude that y = 4 is the only solution. Step 2 performs the illegal move of dividing by a factor that can equal zero. Find the value of y for which this division is a division by zero."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full argument is: state (y - 2)(y + 5) = 9(y - 2), divide both sides by y - 2 to get y + 5 = 9, and conclude that y = 4 is the only solution. The division rule permits dividing by y - 2 only when y - 2 is not 0. Set the divisor to zero: y - 2 = 0 gives y = 2, and at y = 2 the original equation also holds, since both sides equal 0. The value of y for which the illegal step divides by zero is 2."
         constraints: "hidden division by zero or invalid root extraction; the learner names the exact illegal step"
     diagnostic_exemplar:
       problem: 'Identify the error in each argument: (a) "The sum of two even integers is even — indeed $4 + 6 = 10$." (b) "If $a = b$ then $a^2 = ab$, so $a^2 - b^2 = ab - b^2$, so $(a+b)(a-b) = b(a-b)$, hence $a + b = b$; taking $a = b = 1$ gives $2 = 1$."'
@@ -1555,12 +1571,34 @@ topics:
         name: "Choosing and checking the base case"
         key_prerequisites: [direct-proof]
         exemplars:
-          - problem: 'For the claim "$2^n > 6n$", find the smallest positive integer base case at which an induction could start.'
-            answer: '$n = 5$: $32 > 30$, while $n = 4$ fails ($16 < 24$).'
-            solution_sketch: 'Test values: $n = 4$ gives $16 < 24$ (false), $n = 5$ gives $32 > 30$ (true); the induction can start at $n = 5$, the first positive integer from which the claim holds and the step stays valid.'
-          - problem: 'Verify the base case $n = 1$ for the claim "$n! \ge 2^{n-1}$".'
-            answer: '$1! = 1 \ge 2^0 = 1$. Base case holds.'
-            solution_sketch: 'Substitute $n = 1$: $1! = 1$ and $2^{1-1} = 2^0 = 1$, and $1 \ge 1$. $\square$'
+          - problem: "For the claim 2^n > 6n, find the smallest positive integer n for which the claim holds. Give n."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Test n = 4: 2^4 = 16 and 6*4 = 24, so 16 > 24 is false. Test n = 5: 2^5 = 32 and 6*5 = 30, so 32 > 30 is true. Thus the first integer that works is 5."
+          - problem: "For the claim n! >= 2^(n-1), verify the base case n = 1 by giving the common value of both sides. Give the value."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Substitute n = 1: 1! = 1. The right side is 2^(1-1) = 2^0 = 1. The two sides are equal, so the base case holds. The common value is 1."
+          - problem: "For the claim n! > 2^n, determine the smallest positive integer n at which the claim holds. Give n."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Test n = 3: 3! = 6 and 2^3 = 8, so 6 > 8 is false. Test n = 4: 4! = 24 and 2^4 = 16, so 24 > 16 is true. For every later n the factorial keeps growing faster than the power, so the claim holds from this index onward. Thus the first integer that works is 4."
+          - problem: "For the claim n! > 3^n, find the smallest positive integer n for which the claim holds. Give n."
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Test n = 6: 6! = 720 and 3^6 = 729, so 720 > 729 is false. Test n = 7: 7! = 5040 and 3^7 = 2187, so 5040 > 2187 is true. Thus the first integer that works is 7."
+          - problem: "In an induction proof of 1 + 3 + ... + (2n - 1) = n^2, the step from k to k + 1 adds one term. Give that added term as an expression in k."
+            answer: "2k+1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The sum to k ends at the k-th odd positive integer, 2k - 1. The sum to k + 1 adds the next odd integer, 2(k + 1) - 1. Simplify: 2k + 2 - 1 = 2k + 1. The added term is 2k+1."
+          - problem: "Claim: for all n >= 1, 1 + 2 + ... + n = n(n+1)/2. Step 1: for n = 1, the left side is 1 and the right side is 1. Step 2: assume 1 + 2 + ... + k = k(k+1)/2. Step 3: then 1 + 2 + ... + (k+1) = k(k+1)/2 + (k+1) = (k+1)(k+1)/2. Step 4: this is the formula for n = k+1, so the claim holds for all n. Which step is the first step that is not valid?"
+            answer: "Step 3"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 checks n = 1 correctly: 1 = 1. Step 2 states the hypothesis correctly. Step 3 is false: k(k+1)/2 + (k+1) simplifies to (k+1)(k+2)/2, not (k+1)(k+1)/2. Step 4 uses the false Step 3. The answer is Step 3."
+          - problem: "Write the full proof: for all n >= 5, 2^n > n^2. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Base case: choose n = 5. Compute 2^5 = 32 and 5^2 = 25, so 32 > 25, and the base case holds. Inductive step: assume 2^k > k^2 for some k >= 5. Multiply by 2: 2^(k+1) = 2*2^k > 2k^2. For k >= 5, 2k^2 - (k+1)^2 = k^2 - 2k - 1 = (k-1)^2 - 2 > 0, so 2k^2 > (k+1)^2. Combine: 2^(k+1) > (k+1)^2. Conclusion: by induction, 2^n > n^2 for all n >= 5."
         constraints: "numeric base-case verification; find the first index where the claim holds"
       - id: kp3
         name: "A complete first induction"
@@ -1767,12 +1805,34 @@ topics:
         name: "Linear vs. exponential growth"
         key_prerequisites: [induction-template]
         exemplars:
-          - problem: 'Prove: for all $n \ge 1$, $n < 2^n$.'
-            answer: 'Base $n = 1$: $1 < 2$. Step: $n + 1 \le 2n < 2 \cdot 2^n = 2^{n+1}$.'
-            solution_sketch: 'Base: $n = 1$, $1 < 2$. Step: assume $n < 2^n$. Since $n \ge 1$, $n + 1 \le n + n = 2n < 2 \cdot 2^n = 2^{n+1}$. Hence $n + 1 < 2^{n+1}$. $\square$'
-          - problem: 'Prove: for all $n \ge 3$, $2n + 1 \le 2^n$.'
-            answer: 'Base $n = 3$: $7 \le 8$. Step: $2(n+1) + 1 = (2n + 1) + 2 \le 2^n + 2 \le 2^n + 2^n = 2^{n+1}$.'
-            solution_sketch: 'Base: $n = 3$ gives $7 \le 8$. Step: add $2$ to the hypothesis and use $2 \le 2^n$ (true for $n \ge 1$) to absorb it: $2^n + 2 \le 2 \cdot 2^n$. $\square$'
+          - problem: "To prove the claim n < 2^n for all n >= 1 by induction, the inductive step must bound the new left side n + 1 by a multiple of n, using n >= 1. Give that bound as an expression in n."
+            answer: "2n"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The hypothesis gives n < 2^n. Since n >= 1, we have 1 <= n, so adding n to both sides gives n + 1 <= n + n. The bound on the new left side is therefore 2n, which is then compared with 2 * 2^n = 2^(n+1). The answer is 2n."
+          - problem: "To prove 2n + 1 <= 2^n for all n >= 3 by induction, write the new left side as 2(n+1) + 1 = (2n + 1) + c with a constant c. Give the constant c."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Expand the left side at n + 1: 2(n+1) + 1 = 2n + 3. Isolate the previous case: 2n + 3 = (2n + 1) + 2, so the added amount is c = 2. In the full step this amount is absorbed because 2 <= 2^n. The answer is 2."
+          - problem: "The claim 3n + 1 <= 2^n holds for all n >= 4, and the base case is n = 4. The proof checks the gap 2^4 - (3*4 + 1). Give the value of that gap."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Evaluate the base case at n = 4: the left side is 3*4 + 1 = 13 and the right side is 2^4 = 16. Compute the gap: 16 - 13 = 3. A positive gap confirms the base case before the inductive step begins. The answer is 3."
+          - problem: "A student wants to prove 5n + 1 <= 2^n by induction and must take the base case to be the smallest n >= 1 for which the claim is true. Give that smallest n."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Test the claim from n = 1 upward: at n = 4 the left side is 21 and 2^4 = 16, so the claim fails; at n = 5 the left side is 26 and 2^5 = 32, so it holds. The base case is the smallest such n. The answer is 5."
+          - problem: "Claim: n + 1 <= 2^n for all n >= 1. Step 1: for n = 1 the claim reads 2 <= 2. Step 2: assume k + 1 <= 2^k for some k >= 1. Step 3: adding 2 to both sides gives k + 2 <= 2^k + 2. Step 4: since 2 <= 2^k, we get 2^k + 2 <= 2^k + 2^k = 2^(k+1). Step 5: therefore k + 2 <= 2^(k+1), completing the step. Which step is the first step that is not valid?"
+            answer: "Step 3"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"], ["Step 5"]]}
+            solution_sketch: "Step 1 is a correct base case. Step 2 states the induction hypothesis. Step 3 is the error: the claim gains 1 on the left side, so one must add 1, not 2; adding 2 does not follow from the hypothesis. Step 4 is a valid estimate of 2^k + 2 but rests on the wrong line. Step 5 is a valid conclusion from the earlier steps. The first invalid step is Step 3."
+          - problem: "In the inductive step for the claim 3n + 1 <= 2^n, the proof reaches (3n + 1) + 3 and needs the next line (3n + 1) + 3 <= ?. Select the line that follows from the hypothesis by adding 3 to both sides."
+            answer: "$2^n + 3$"
+            answer_contract: {"kind": "label", "options": [["$2^n + 3$"], ["$2^n + 1$"], ["$2^n - 3$"], ["$2^(n+1)$"]]}
+            solution_sketch: "From the hypothesis 3n + 1 <= 2^n, add 3 to both sides: 3n + 4 <= 2^n + 3, and the left side is 3(n+1) + 1. The option 2^n + 1 adds only 1 instead of the added amount 3. The option 2^n - 3 has a sign error. The option 2^(n+1) uses the next power without the needed justification that 3 <= 2^n. The answer is $2^n + 3$."
+          - problem: "Write the full proof: for all n >= 2, n + 1 < 2^n. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Base case: at n = 2 the left side is 3 and the right side is 4, so 3 < 4. Inductive hypothesis: assume k + 1 < 2^k for some k >= 2. Inductive step: add 1 to both sides to get k + 2 < 2^k + 1. Since k >= 2 we have 1 < 2^k, so 2^k + 1 < 2^k + 2^k = 2^(k+1). Chaining the two inequalities gives k + 2 < 2^(k+1), which is the claim for n = k + 1. Conclusion: by the induction template, n + 1 < 2^n holds for every n >= 2."
         constraints: "bound the added amount by a copy of the exponential term"
       - id: kp2
         name: "Polynomial vs. exponential and factorial"
@@ -1875,12 +1935,34 @@ topics:
         name: "Pitfalls and thresholds"
         key_prerequisites: [induction-inequality-proofs]
         exemplars:
-          - problem: 'Find the flaw in the classic "all horses are the same color" induction.'
-            answer: 'The step "overlap the two $n$-horse groups" fails at $n = 1$: two horses split into singleton groups with empty overlap.'
-            solution_sketch: 'The inductive step assumes the two size-$n$ subsets of a size-$(n+1)$ set overlap, which is true only for $n \ge 2$. Since the step from $P(1)$ to $P(2)$ fails, the chain never starts, and the "theorem" is false. $\square$'
-          - problem: 'Find the least $n_0$ with $n! > 3^n$ for all $n \ge n_0$, and prove it by induction.'
-            answer: '$n_0 = 7$: $5040 > 2187$ ($n = 6$ fails: $720 < 729$). Step: $(n+1)! = (n+1) \cdot n! > 3 \cdot 3^n$ since $n + 1 \ge 8 > 3$.'
-            solution_sketch: 'Check $n = 6$: $720 < 729$ fails; $n = 7$: $5040 > 2187$ holds. Step for $n \ge 7$: $(n+1)! = (n+1)n! > (n+1)3^n \ge 3 \cdot 3^n = 3^{n+1}$. $\square$'
+          - problem: "In the usual induction that every group of horses has one color, the step from a group of size n to a group of size n+1 splits the larger group into two groups of size n. Give the least n for which those two groups can have an empty overlap."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is the horses induction step. Step 1 (overlap test): with n = 1, the two groups of size 1 are singleton horses, so their overlap is empty. Step 2 (comparison): with n = 2, two pairs from three horses share the middle horse, so the overlap is nonempty. Therefore the first failure of the step is at n = 1. The least n is 1."
+          - problem: "The inequality n! > 3^n is false for small n but true from some point on. Find the least integer n0 such that the inequality holds for every n >= n0."
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is the threshold for n! > 3^n. Step 1 (base check): n = 6 gives 720 < 729, so the inequality fails. Step 2 (base check): n = 7 gives 5040 > 2187, so it holds. Step 3 (inductive step): for n >= 7, (n+1)! = (n+1)n! > 3*3^n = 3^(n+1) because n+1 > 3. The least threshold is 7."
+          - problem: "A student claims that 3^n > n^3 for all n >= 1. Give the smallest n >= 1 for which the claim is false."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is the claim 3^n > n^3 for all n >= 1. Step 1 (test): n = 1 gives 3 > 1 and n = 2 gives 9 > 8. Step 2 (test): n = 3 gives 27 > 27, which is false. The first failure is at n = 3. The smallest counterexample is 3."
+          - problem: "In the inductive step for proving 4 divides 5^n - 1, write 5^(n+1) - 1 = 5(5^n - 1) + r. Give the constant r."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is the identity 5^(n+1) - 1 = 5(5^n - 1) + r. Step 1 (expand): 5(5^n - 1) = 5^(n+1) - 5. Step 2 (solve for r): compare 5^(n+1) - 5 + r with 5^(n+1) - 1, so r = 4. The constant is 4."
+          - problem: "Claim: 3 divides n^2 + n + 1 for all n >= 1. Step 1: base n = 1 gives 3. Step 2: assume 3 divides k^2 + k + 1. Step 3: (k+1)^2 + (k+1) + 1 = (k^2 + k + 1) + (2k + 2). Step 4: since 3 divides both terms, 3 divides the sum. Which step is the first step that is not valid?"
+            answer: "Step 4"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "The full object is the claimed induction for 3 divides n^2 + n + 1. Step 1 (base case): n = 1 gives 3, so Step 1 is correct. Step 2 (hypothesis): Step 2 states the assumption and is correct. Step 3 (algebra): the expansion to (k^2+k+1) + (2k+2) is correct. Step 4 (divisibility): Step 4 claims 3 divides 2k+2 for every k, which fails at k = 1 because 2k+2 = 4. The answer is Step 4."
+          - problem: "For the induction that n! > 2^n for all n >= 4, evaluate n! - 2^n at the base n = 4. Give the value."
+            answer: "8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is the base case value 4! - 2^4. Step 1 (factorial): 4! = 24. Step 2 (power): 2^4 = 16. Step 3 (subtract): 24 - 16 = 8. The value is 8."
+          - problem: "Write the full proof: for all integers n >= 5, 2^n > n^2. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "The full object is the statement: for all integers n >= 5, 2^n > n^2. Step 1 (base case): n = 5 gives 2^5 = 32 and 5^2 = 25, so 32 > 25. Step 2 (hypothesis): assume 2^k > k^2 for some k >= 5. Step 3 (inductive step): multiply the hypothesis by 2 to get 2^(k+1) > 2k^2. Since k >= 5, we have k^2 > 2k + 1, so 2k^2 > k^2 + 2k + 1 = (k+1)^2. Therefore 2^(k+1) > (k+1)^2. Step 4 (conclusion): by induction, 2^n > n^2 for every n >= 5."
         constraints: "diagnose a broken step or find the correct starting threshold before proving"
     diagnostic_exemplar:
       problem: 'Find the least integer $n_0$ such that $2^{n} > n^{3}$ holds for all $n \ge n_0$, and prove it by induction.'
