@@ -1525,14 +1525,30 @@ topics:
         name: Terms needed for a target accuracy
         key_prerequisites: [alternating-series-test, alternating-series]
         exemplars:
-          - problem: 'How many terms of $\sum_{n=1}^{\infty} \frac{(-1)^{n+1}}{n^2}$ guarantee an error of at most $\frac{1}{100}$?'
-            answer: '$9$ terms ($b_{10} = \frac{1}{100}$)'
-            answer_contract: {kind: none}
-            solution_sketch: '$|R_n| \le b_{n+1} = \frac{1}{(n+1)^2} \le \frac{1}{100}$ requires $n + 1 \ge 10$, i.e. $n \ge 9$.'
-          - problem: 'How many terms of $\sum_{n=1}^{\infty} \frac{(-1)^{n+1}}{n^3}$ guarantee an error of at most $\frac{1}{1000}$?'
-            answer: '$9$ terms ($b_{10} = \frac{1}{1000}$)'
-            answer_contract: {kind: none}
-            solution_sketch: '$\frac{1}{(n+1)^3} \le 10^{-3}$ requires $n + 1 \ge 10$.'
+          - problem: "How many terms of the alternating series $\\sum_{n=1}^{\\infty} \\frac{(-1)^{n+1}}{n^2}$ guarantee an error of at most $\\frac{1}{10000}$?"
+            answer: "99"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "For this alternating series, let $b_n = 1/n^2$. The alternating series error bound gives $|R_n| \\le b_{n+1} = 1/(n+1)^2$. Solve $1/(n+1)^2 \\le 1/10000$, so $(n+1)^2 \\ge 10000$ and $n+1 \\ge 100$. Thus $n \\ge 99$, so the count of terms is 99."
+          - problem: "Consider the alternating series $\\sum_{n=1}^{\\infty} \\frac{(-1)^{n+1}}{n^3}$. How many terms guarantee an error of at most $\\frac{1}{1000}$?"
+            answer: "9"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "For this alternating series, let $b_n = 1/n^3$. The alternating series error bound gives $|R_n| \\le b_{n+1} = 1/(n+1)^3$. Solve $1/(n+1)^3 \\le 1/1000$, so $(n+1)^3 \\ge 1000$ and $n+1 \\ge 10$. Thus $n \\ge 9$, and the term $b_{10} = 1/1000$ meets the bound exactly. The required number of terms is 9."
+          - problem: "How many terms of the alternating series $\\sum_{n=1}^{\\infty} \\frac{(-1)^{n+1}}{2n-1}$ guarantee an error of at most $\\frac{1}{100}$?"
+            answer: "50"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "For this alternating series, let $b_n = 1/(2n-1)$. The alternating series error bound gives $|R_n| \\le b_{n+1} = 1/(2n+1)$. Solve $1/(2n+1) \\le 1/100$, so $2n+1 \\ge 100$ and $n \\ge 49.5$. The first integer that works is $n = 50$, so the required number of terms is 50."
+          - problem: "How many terms of the alternating series $\\sum_{n=1}^{\\infty} \\frac{(-1)^{n+1}}{n^2+1}$ guarantee an error of at most $\\frac{1}{1000}$?"
+            answer: "31"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "For this alternating series, let $b_n = 1/(n^2+1)$. The alternating series error bound gives $|R_n| \\le b_{n+1} = 1/((n+1)^2+1)$. Solve $1/((n+1)^2+1) \\le 1/1000$, so $(n+1)^2+1 \\ge 1000$ and $(n+1)^2 \\ge 999$. Since $31^2 = 961 < 999$ and $32^2 = 1024 \\ge 999$, $n+1 \\ge 32$. Thus $n \\ge 31$, so the required number of terms is 31."
+          - problem: "How many terms of the alternating series $\\sum_{n=1}^{\\infty} \\frac{(-1)^{n+1}}{n!}$ guarantee an error of at most $\\frac{1}{10000}$?"
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "For this alternating series, let $b_n = 1/n!$. The alternating series error bound gives $|R_n| \\le b_{n+1} = 1/(n+1)!$. Solve $1/(n+1)! \\le 1/10000$, so $(n+1)! \\ge 10000$. Since $7! = 5040 < 10000$ and $8! = 40320 \\ge 10000$, $n+1 \\ge 8$. Thus $n \\ge 7$, so the required number of terms is 7."
+          - problem: "How many terms of the alternating series $\\sum_{n=1}^{\\infty} \\frac{(-1)^{n+1}}{2^n}$ guarantee an error of at most $\\frac{1}{10000}$?"
+            answer: "13"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "For this alternating series, let $b_n = 1/2^n$. The alternating series error bound gives $|R_n| \\le b_{n+1} = 1/2^{n+1}$. Solve $1/2^{n+1} \\le 1/10000$, so $2^{n+1} \\ge 10000$. Since $2^{13} = 8192 < 10000$ and $2^{14} = 16384 \\ge 10000$, $n+1 \\ge 14$. Thus $n \\ge 13$, so the required number of terms is 13."
         constraints: "thresholds are powers of 10; answer with the count of terms, showing the b_(n+1) inequality"
       - id: kp3
         name: Estimating alternating sums
