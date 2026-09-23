@@ -498,6 +498,22 @@ topics:
           - problem: 'How many homomorphisms $\mathbb{Z} \to \mathbb{Z}_5$ are there?'
             answer: "5"
             solution_sketch: '$\mathbb{Z}$ is free on one generator: any choice of $\varphi(1) \in \mathbb{Z}_5$ works.'
+          - problem: "A homomorphism $\\varphi : \\mathbb{Z}_{12} \\to \\mathbb{Z}_8$ is determined by the single value $\\varphi(1)$, and it is well defined exactly when $12\\,\\varphi(1) = 0$ in $\\mathbb{Z}_8$. How many choices of $\\varphi(1)$ give a valid homomorphism?"
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (determination by the generator): every element of $\\mathbb{Z}_{12}$ is a multiple of $1$, so $\\varphi(k) = k\\,\\varphi(1)$ and only $h = \\varphi(1)$ must be chosen. Step 2 (well-definedness relation): the relation $12 \\cdot 1 = 0$ must map to $0$, so we need $12h \\equiv 0 \\pmod 8$. Step 3 (solve the congruence): $12h \\equiv 4h \\pmod 8$, so we need $8 \\mid 4h$, i.e. $h$ even: $h = 0, 2, 4, 6$ work. The number of valid choices of $\\varphi(1)$ is 4."
+          - problem: "A homomorphism $\\varphi : \\mathbb{Z}_{9} \\to \\mathbb{Z}_6$ is determined by $\\varphi(1)$, which must satisfy $9\\,\\varphi(1) = 0$ in $\\mathbb{Z}_6$. How many homomorphisms $\\mathbb{Z}_9 \\to \\mathbb{Z}_6$ are there?"
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (determination): since $1$ generates $\\mathbb{Z}_9$, any homomorphism sends $k$ to $k\\,\\varphi(1)$, so the count equals the number of valid $h = \\varphi(1)$. Step 2 (well-definedness relation): we need $9h \\equiv 0 \\pmod 6$, that is $6 \\mid 9h$. Step 3 (solve): $6 \\mid 9h$ reduces to $2 \\mid 3h$, i.e. $h$ even, giving $h = 0, 2, 4$ in $\\mathbb{Z}_6$. There are 3 homomorphisms $\\mathbb{Z}_9 \\to \\mathbb{Z}_6$."
+          - problem: "Consider homomorphisms $\\varphi : \\mathbb{Z}_{8} \\to \\mathbb{Z}_{12}$. A value $h = \\varphi(1)$ is admissible exactly when $8h \\equiv 0 \\pmod{12}$. Determine the set of all admissible values of $\\varphi(1)$ in $\\mathbb{Z}_{12}$; give the answer as a set."
+            answer: "{0, 3, 6, 9}"
+            answer_contract: {"kind": "set"}
+            solution_sketch: "Step 1 (well-definedness relation): admissible $h$ satisfy $8h \\equiv 0 \\pmod{12}$, i.e. $12 \\mid 8h$. Step 2 (reduce): dividing by the gcd $4$, this becomes $3 \\mid 2h$, hence $3 \\mid h$ since $\\gcd(2,3)=1$. Step 3 (enumerate): the multiples of $3$ in $\\mathbb{Z}_{12}$ are $0, 3, 6, 9$, and each satisfies $8h \\equiv 0$. The set of admissible values is {0, 3, 6, 9}."
+          - problem: "Now take the target to be the infinite cyclic group $\\mathbb{Z}$ under addition, and let $\\varphi : \\mathbb{Z}_{7} \\to \\mathbb{Z}$ be a homomorphism. The element $\\varphi(1)$ must satisfy $7\\,\\varphi(1) = 0$ in $\\mathbb{Z}$. How many homomorphisms $\\mathbb{Z}_{7} \\to \\mathbb{Z}$ exist?"
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (well-definedness relation): since $7 \\cdot 1 = 0$ in $\\mathbb{Z}_7$, the image $\\varphi(1)$ must satisfy $7\\,\\varphi(1) = 0$ in $\\mathbb{Z}$. Step 2 (solve in the integers): the only integer $a$ with $7a = 0$ is $a = 0$, because $\\mathbb{Z}$ has no nonzero torsion elements. Step 3 (conclude): $\\varphi(1) = 0$ forces the trivial homomorphism, which is the only one. The number of homomorphisms $\\mathbb{Z}_7 \\to \\mathbb{Z}$ is 1."
         constraints: "determination-by-generator arguments; targets of order <= 12"
       - id: kp2
         name: "The gcd count for Z_m -> Z_n"
