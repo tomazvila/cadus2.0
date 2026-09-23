@@ -358,29 +358,29 @@ topics:
         name: AA similarity
         key_prerequisites: [triangle-angle-sum]
         exemplars:
-          - problem: 'Triangle 1 has angles $42^\circ$ and $67^\circ$; Triangle 2 has angles $42^\circ$ and $71^\circ$. Are the triangles similar?'
-            answer: 'yes'
-            answer_contract: {kind: label, options: [[yes], [no]]}
-            solution_sketch: 'Third angles: $180 - 42 - 67 = 71$ and $180 - 42 - 71 = 67$ — the same set, so yes by AA.'
-          - problem: 'Two right triangles each have an acute angle of $35^\circ$. Are they similar, and by what criterion?'
-            answer: 'yes'
-            answer_contract: {kind: label, options: [[yes], [no]]}
-            solution_sketch: 'Both triangles have a right angle and a $35^\circ$ angle, so yes by AA.'
-          - problem: 'Triangle 1 has angles $48^\circ$ and $62^\circ$; Triangle 2 has angles $48^\circ$ and $70^\circ$. Are the triangles similar? Answer yes or no.'
-            answer: 'yes'
-            answer_contract: {kind: label, options: [[yes], [no]]}
-            solution_sketch: 'Third angles: $180 - 48 - 62 = 70$ and $180 - 48 - 70 = 62$ — the same angle set, so yes by AA.'
-          - problem: 'Triangle 1 has angles $30^\circ$ and $80^\circ$; Triangle 2 has angles $30^\circ$ and $75^\circ$. Are the triangles similar? Answer yes or no.'
-            answer: 'no'
-            answer_contract: {kind: label, options: [[yes], [no]]}
-            solution_sketch: 'Third angles: $180 - 30 - 80 = 70$ and $180 - 30 - 75 = 75$; the angle sets $\{30, 70, 80\}$ and $\{30, 75, 75\}$ differ, so no.'
-          - problem: 'Two right triangles each have an acute angle of $28^\circ$. Are the triangles similar? Answer yes or no.'
-            answer: 'yes'
-            answer_contract: {kind: label, options: [[yes], [no]]}
-            solution_sketch: 'Both triangles have a $90^\circ$ angle and a $28^\circ$ angle, so yes by AA.'
+          - problem: "Triangle 1 has angles 42 degrees and 67 degrees. Triangle 2 has angles 42 degrees and 71 degrees. State whether the triangles are similar and give the third angle of Triangle 1, in degrees."
+            answer: "verdict = yes; angle = 71"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "angle"}]}
+            solution_sketch: "Triangle 1 has angles 42, 67, and an unknown third angle. By the triangle angle sum, the third angle of Triangle 1 is 180 - 42 - 67 = 71 degrees. Triangle 2 has angles 42, 71, and its third angle is 180 - 42 - 71 = 67 degrees. The angle sets {42, 67, 71} are the same, so by AA similarity the triangles are similar. The option no is wrong because the angle sets match. The answer is verdict = yes; angle = 71."
+          - problem: "Triangle 1 is a right triangle with an acute angle of 35 degrees. Triangle 2 is a right triangle with an acute angle of 35 degrees. State whether the triangles are similar and give the third angle of Triangle 1, in degrees."
+            answer: "verdict = yes; angle = 55"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "angle"}]}
+            solution_sketch: "Triangle 1 is a right triangle with angles 90, 35, and an unknown third angle. By the triangle angle sum, the third angle is 180 - 90 - 35 = 55 degrees. Triangle 2 also has angles 90, 35, and 55. Both triangles have the same angle set, so by AA similarity they are similar. The option no is wrong because both angle sets match. The answer is verdict = yes; angle = 55."
+          - problem: "In triangle ABC, angle A is 48 degrees and angle B is 62 degrees. In triangle DEF, angle D is 48 degrees and angle E is 70 degrees. State whether the triangles are similar and give the third angle of triangle ABC, in degrees."
+            answer: "verdict = yes; angle = 70"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "angle"}]}
+            solution_sketch: "Triangle ABC has angles 48, 62, and an unknown third angle. By the triangle angle sum, the third angle of ABC is 180 - 48 - 62 = 70 degrees. Triangle DEF has angles 48, 70, and its third angle is 180 - 48 - 70 = 62 degrees. The angle sets {48, 62, 70} match, so by AA similarity the triangles are similar. The option no is wrong because the angle sets match. The answer is verdict = yes; angle = 70."
           - problem: 'Triangle 1 has angles $36^\circ$ and $71^\circ$; Triangle 2 has angles $36^\circ$ and $x^\circ$ and is similar to Triangle 1. Find $x$, in degrees.'
             answer: "73"
             solution_sketch: 'The third angle of Triangle 1 is $180 - 36 - 71 = 73$; similar triangles have matching angle sets, so $x = 73$.'
+          - problem: "Triangle 1 has two angles measuring 47 degrees and 74 degrees. Triangle 2 has two angles measuring 47 degrees and 69 degrees. State whether the triangles are similar, and give the measure of the unknown third angle of Triangle 1, in degrees."
+            answer: "verdict = no; angle = 59"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "angle"}]}
+            solution_sketch: "Triangle 1 has angles 47, 74, and one unknown angle. By the triangle angle sum, the unknown angle of Triangle 1 is 180 - 47 - 74 = 59 degrees. Triangle 2 has angles 47, 69, and its third angle is 180 - 47 - 69 = 64 degrees. The angle sets {47, 59, 74} and {47, 64, 69} are different, so the triangles are not similar by AA. The option yes is wrong because the two angle sets do not match. The answer is verdict = no; angle = 59."
+          - problem: "Triangle 1 has two angles measuring 34 degrees and 63 degrees. Triangle 2 is similar to Triangle 1 and has one angle measuring 63 degrees. Compute the measure of the largest angle of Triangle 2, in degrees."
+            answer: "83"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Triangle 1 has angles 34, 63, and one unknown angle. By the triangle angle sum, the third angle of Triangle 1 is 180 - 34 - 63 = 83 degrees. Because Triangle 2 is similar to Triangle 1, its angles form the same set {34, 63, 83}; the single given angle of 63 degrees alone would not determine the others, so the similarity is needed. The largest angle of Triangle 2 is therefore 83 degrees. The answer is 83."
         constraints: "always resolvable via the third angle; whole-degree angles"
       - id: kp2
         name: SAS and SSS similarity

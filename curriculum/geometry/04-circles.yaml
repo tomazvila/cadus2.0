@@ -1147,25 +1147,25 @@ topics:
         name: Read off the center and radius; test points
         key_prerequisites: [distance-midpoint-formulas]
         exemplars:
-          - problem: 'State the center and radius of $(x + 1)^2 + (y - 5)^2 = 36$.'
-            answer: 'center $(-1, 5)$, radius $6$'
-            answer_contract: {kind: none}
-            solution_sketch: '$h = -1$, $k = 5$, $r = \sqrt{36} = 6$.'
-          - problem: 'Does the point $(3, 2)$ lie on the circle $x^2 + y^2 = 13$? Answer yes or no.'
-            answer: 'yes'
-            answer_contract: {kind: label, options: [[yes], [no]]}
-            solution_sketch: '$3^2 + 2^2 = 13$.'
+          - problem: "A circle has equation (x - 2)^2 + (y + 3)^2 = 49. State its center as (h, k) and its radius as a number."
+            answer: "center = (2, -3); radius = 7"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"arity": 2, "kind": "coordinates"}, "name": "center"}, {"contract": {"kind": "exact"}, "name": "radius"}]}
+            solution_sketch: "Compare the equation with the standard form (x - h)^2 + (y - k)^2 = r^2. The sign flip gives h = 2 from x - 2 and k = -3 from y + 3. Take the square root of the right side: sqrt(49) = 7. So center = (2, -3); radius = 7."
+          - problem: "For the circle (x - 1)^2 + (y - 2)^2 = 25 and the point (5, 2), compute the value of (x - 1)^2 + (y - 2)^2 at the point, then state whether the point is inside the circle or outside it; give the value first and the verdict second."
+            answer: "value = 16; verdict = in"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "value"}, {"contract": {"kind": "label", "options": [["in"], ["out"]]}, "name": "verdict"}]}
+            solution_sketch: "Substitute the point into the left side of the circle equation. Compute (5 - 1)^2 + (2 - 2)^2 = 16 + 0 = 16. Compare 16 with the right side 25; since 16 is less than 25, the point lies inside the circle. So value = 16; verdict = in."
           - problem: 'What is the radius of the circle $(x - 3)^2 + (y + 4)^2 = 81$?'
             answer: "9"
             solution_sketch: '$r = \sqrt{81} = 9$.'
-          - problem: 'Does the point $(-2, 5)$ lie on the circle $(x + 2)^2 + (y - 5)^2 = 16$? Answer yes or no.'
-            answer: 'no'
-            answer_contract: {kind: label, options: [[yes], [no]]}
-            solution_sketch: '$(x + 2)^2 + (y - 5)^2 = 0 + 0 = 0 \ne 16$, so no.'
-          - problem: 'Does the point $(1, 4)$ lie on the circle $(x - 1)^2 + (y + 3)^2 = 49$? Answer yes or no.'
-            answer: 'yes'
-            answer_contract: {kind: label, options: [[yes], [no]]}
-            solution_sketch: '$(1 - 1)^2 + (4 + 3)^2 = 0 + 49 = 49$, so yes.'
+          - problem: "For the circle (x + 2)^2 + (y - 5)^2 = 16 and the point (2, 7), compute the value of (x + 2)^2 + (y - 5)^2 at the point, and give the answer as a number."
+            answer: "20"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Substitute the point coordinates into the left side of the equation. Compute (2 + 2)^2 + (7 - 5)^2 = 16 + 4 = 20. The value of the left side at the point is 20."
+          - problem: "Which of the listed points lies on the circle (x - 3)^2 + (y + 2)^2 = 25?"
+            answer: "(6, 2)"
+            answer_contract: {"kind": "label", "options": [["(6, 2)"], ["(1, 1)"], ["(7, -2)"], ["(3, 0)"]]}
+            solution_sketch: "Substitute each listed point into the left side (x - 3)^2 + (y + 2)^2 and compare with 25. For (1, 1) the value is 4 + 9 = 13, not 25, the error being wrong signs on the x difference; for (7, -2) the value is 16 + 0 = 16, not 25, the error being a skipped y difference; for (3, 0) the value is 0 + 4 = 4, not 25, the error being a misread y term in y + 2. For (6, 2) the value is 9 + 16 = 25, which matches the right side. So the point is (6, 2)."
         constraints: "perfect-square r^2 when a numeric radius is requested; watch the sign flips"
       - id: kp3
         name: General form and completing the square
