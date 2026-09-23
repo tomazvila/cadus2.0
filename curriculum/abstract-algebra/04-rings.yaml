@@ -382,14 +382,30 @@ topics:
         name: "The construction R/I"
         key_prerequisites: [ring-homomorphisms-ideals, quotient-groups]
         exemplars:
-          - problem: 'Describe the elements and operations of $\mathbb{Z}/6\mathbb{Z}$ and identify the ring.'
-            answer: 'Cosets $k + 6\mathbb{Z}$ for $k = 0,\dots,5$, added and multiplied via representatives; it is $\mathbb{Z}_6$.'
-            answer_contract: {kind: none}
-            solution_sketch: 'The ideal $6\mathbb{Z}$ collapses multiples of $6$ to zero; coset arithmetic is mod-$6$ arithmetic.'
-          - problem: 'Why must $I$ be an ideal (not just a subring) for multiplication on $R/I$ to be well defined?'
-            answer: 'Changing representatives $a \to a + i$ changes $ab$ by $ib$, which must lie in $I$ — that is absorption.'
-            answer_contract: {kind: none}
-            solution_sketch: '$(a+i)(b+j) = ab + (ib + aj + ij)$; the bracket lies in $I$ exactly when $I$ absorbs products.'
+          - problem: "In the quotient ring Z/6Z, the elements are cosets k+6Z for k = 0,1,2,3,4,5. Add the cosets 4+6Z and 5+6Z. Give the least nonnegative representative k of the sum coset k+6Z."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is the sum of the two cosets (4+6Z) + (5+6Z). Step 1 (coset addition) adds representatives: 4+5 = 9. Step 2 (reduction modulo 6) writes 9 = 6+3, so the sum coset is 3+6Z. The least nonnegative representative is 3."
+          - problem: "In the quotient ring R/I, multiplication of cosets must be independent of the chosen representatives. Which property of the ideal I makes this independence true?"
+            answer: "absorbing"
+            answer_contract: {"kind": "label", "options": [["absorbing"], ["closed"], ["identity"], ["commuting"]]}
+            solution_sketch: "The full condition is that I is absorbing: for every i in I and every r in R, the products r i and i r lie in I. Step 1 (absorption check): this makes (a+i)(b+j) = ab + (i b + a j + i j), and the extra terms stay in I. Step 2 (error analysis): the option closed only keeps sums in I, the option identity would force 1 in I and collapse R/I to the zero ring, and the option commuting says elements of I commute but does not absorb outside products. The required property is absorbing."
+          - problem: "In the quotient ring Z/12Z, an element k+12Z is a zero divisor when some nonzero coset m+12Z satisfies (k+12Z)(m+12Z) = 0+12Z. Find the least positive integer k for which k+12Z is a zero divisor."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is the coset k+12Z in Z/12Z. Step 1 (unit test): k=1 is a unit because 1*1 = 1, so it is not a zero divisor. Step 2 (zero divisor test): k=2 gives (2+12Z)(6+12Z) = 12+12Z = 0+12Z, and both 2+12Z and 6+12Z are nonzero. The least positive integer is 2."
+          - problem: "In the quotient ring Z/10Z, find the least positive representative k of the multiplicative inverse of the coset 7+10Z."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is the coset 7+10Z in Z/10Z. Step 1 (inverse equation): seek k with (7+10Z)(k+10Z) = 1+10Z, so 7k = 1 mod 10. Step 2 (solve congruence): k=3 gives 7*3 = 21 = 1 mod 10, and no smaller positive k works. The least positive representative is 3."
+          - problem: "In the quotient ring Z/14Z, the elements are cosets k+14Z. Find how many of these cosets are units."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is the set of cosets k+14Z in Z/14Z. Step 1 (unit criterion): k+14Z is a unit exactly when k and 14 are coprime. Step 2 (count residues): the residues coprime to 14 among 0,...,13 are 1,3,5,9,11,13, so there are 6. The number of unit cosets is 6."
+          - problem: "In the quotient ring Z/15Z, find the additive order of the coset 5+15Z."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is the coset 5+15Z in Z/15Z. Step 1 (additive order): find the least positive n with n(5+15Z) = 0+15Z. Step 2 (test multiples): n=1 gives 5, n=2 gives 10, and n=3 gives 15 = 0 mod 15. The additive order is 3."
         constraints: "construction-level reasoning; Z/nZ examples"
       - id: kp2
         name: "Computing in Z_p[x]/(f): small quotient rings"
