@@ -856,14 +856,30 @@ topics:
         name: Eigenspaces as null spaces
         key_prerequisites: [eigenvalues-eigenvectors, basis-dimension, null-column-space-rank]
         exemplars:
-          - problem: 'Find a basis for the eigenspace of $A = \begin{pmatrix}4&1\\2&3\end{pmatrix}$ for $\lambda = 2$.'
-            answer: "{(1, -2)} (any valid basis)"
-            answer_contract: {kind: none}
-            solution_sketch: 'The eigenspace is $\mathrm{Nul}(A - 2I)$: solving $2x + y = 0$ gives the line spanned by $(1, -2)$. Check: $A(1,-2) = (2, -4) = 2(1,-2)$.'
-          - problem: 'Find the eigenspace of $A = \begin{pmatrix}3&0\\0&3\end{pmatrix}$ for $\lambda = 3$.'
-            answer: "All of R^2 (basis {(1,0), (0,1)}, or any valid basis)"
-            answer_contract: {kind: none}
-            solution_sketch: '$A - 3I = 0$, so every nonzero vector is an eigenvector.'
+          - problem: "For the matrix $A = \\begin{pmatrix}5&1\\\\2&4\\end{pmatrix}$, one eigenvalue is $\\lambda = 3$. The eigenspace of $\\lambda = 3$ is the null space of $A - 3I$. Find a basis vector of this eigenspace as (x, y) with integer entries and positive first entry."
+            answer: "(1, -2)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Step 1 (eigenspace as null space): form $A - 3I = \\begin{pmatrix}2&1\\\\2&1\\end{pmatrix}$. Step 2 (solve the homogeneous system): $2x + y = 0$ gives $y = -2x$, so a null vector is $(1, -2)$. Step 3 (check): $A(1,-2) = (3,-6) = 3(1,-2)$. The basis vector is (1, -2)."
+          - problem: "For the matrix $A = \\begin{pmatrix}2&0\\\\0&2\\end{pmatrix}$ with eigenvalue $\\lambda = 2$, the eigenspace is all of $\\mathbb{R}^2$. Find a basis of this eigenspace. Give the two basis vectors v1 and v2 as (x, y)."
+            answer: "v1 = (1, 0); v2 = (0, 1)"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"arity": 2, "kind": "coordinates"}, "name": "v1"}, {"contract": {"arity": 2, "kind": "coordinates"}, "name": "v2"}]}
+            solution_sketch: "Step 1 (eigenspace as null space): $A - 2I = \\begin{pmatrix}0&0\\\\0&0\\end{pmatrix}$, the zero matrix. Step 2 (dimension): every nonzero vector of $\\mathbb{R}^2$ lies in the null space, so the eigenspace has dimension 2. Step 3 (basis): the standard basis vectors $(1,0)$ and $(0,1)$ span it. A basis is v1 = (1, 0) and v2 = (0, 1)."
+          - problem: "The matrix $A = \\begin{pmatrix}3&1\\\\-1&1\\end{pmatrix}$ has the single eigenvalue $\\lambda = 2$ of algebraic multiplicity 2. Find a basis vector of the eigenspace for $\\lambda = 2$ as (x, y) with integer entries and positive first entry."
+            answer: "(1, -1)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Step 1 (eigenspace as null space): $A - 2I = \\begin{pmatrix}1&1\\\\-1&-1\\end{pmatrix}$. Step 2 (solve): both rows give $x + y = 0$, so the null space is one-dimensional with null vector $(1, -1)$. Step 3 (check): $A(1,-1) = (2,-2) = 2(1,-1)$. The basis vector is (1, -1)."
+          - problem: "For $A = \\begin{pmatrix}5&0\\\\0&3\\end{pmatrix}$, the eigenvalues are $5$ and $3$. Find a basis vector of the eigenspace for $\\lambda = 3$ as (x, y) with integer entries."
+            answer: "(0, 1)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Step 1 (eigenspace as null space): $A - 3I = \\begin{pmatrix}2&0\\\\0&0\\end{pmatrix}$. Step 2 (solve the homogeneous system): $2x = 0$ forces $x = 0$ and $y$ is free, so a null vector is $(0, 1)$. Step 3 (check): $A(0,1) = (0,3) = 3(0,1)$. The basis vector is (0, 1)."
+          - problem: "The matrix $A = \\begin{pmatrix}1&2\\\\2&4\\end{pmatrix}$ has eigenvalues $0$ and $5$. The eigenspace of $\\lambda = 0$ is the null space of $A$. Find a basis vector of this eigenspace as (x, y) with integer entries and positive first entry."
+            answer: "(2, -1)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Step 1 (eigenspace as null space): for $\\lambda = 0$ we need $Nul(A)$, so solve $x + 2y = 0$ and $2x + 4y = 0$. Step 2 (solve): both rows give $x = -2y$, so a null vector is $(2, -1)$. Step 3 (check): $A(2,-1) = (0,0)$, confirming $\\lambda = 0$. The basis vector is (2, -1)."
+          - problem: "The matrix $A = \\begin{pmatrix}5&2\\\\2&5\\end{pmatrix}$ has eigenvalue $\\lambda = 7$. Its eigenspace for $\\lambda = 7$ is the null space of $A - 7I$. Find a basis vector of this eigenspace as (x, y) with integer entries and first entry 1."
+            answer: "(1, 1)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Step 1 (eigenspace as null space): form $A - 7I = \\begin{pmatrix}-2&2\\\\2&-2\\end{pmatrix}$. Step 2 (solve the homogeneous system): $-2x + 2y = 0$ gives $x = y$, so the null vector with first entry 1 is $(1, 1)$. Step 3 (check): $A(1, 1) = (7, 7) = 7(1, 1)$, so the basis vector is (1, 1)."
         constraints: "2x2 matrices; eigenspaces of dimension 1 or 2 with integer basis vectors"
       - id: kp2
         name: Algebraic vs geometric multiplicity

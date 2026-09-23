@@ -130,18 +130,30 @@ topics:
         name: Closure checks and counterexamples
         key_prerequisites: [vectors-in-rn]
         exemplars:
-          - problem: 'Is $\{(x, y) : x + y = 0\}$ a subspace of $\mathbb{R}^2$?'
-            answer: "Yes"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: 'Contains $(0,0)$; if $u_1 + u_2 = 0$ and $v_1 + v_2 = 0$ then $(u+v)$ and $cu$ also satisfy the equation.'
-          - problem: 'Is $\{(x, y) : xy \geq 0\}$ a subspace of $\mathbb{R}^2$?'
-            answer: "No"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: 'Not closed under addition: $(1, 0)$ and $(0, -1)$ are both in the set, but their sum $(1, -1)$ has $xy = -1 < 0$.'
-          - problem: 'Is $\{(x, y) : x \geq 0\}$ a subspace of $\mathbb{R}^2$?'
-            answer: "No"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: 'Not closed under scalar multiplication: $(1, 0)$ is in the set but $-1 \cdot (1, 0) = (-1, 0)$ is not.'
+          - problem: "Let $W = \\{(x, y) : x = 2y\\}$ be a subset of $\\mathbb{R}^2$. Test closure under addition with $u = (4, 2)$ and $v = (6, 3)$. State whether $W$ is a subspace of $\\mathbb{R}^2$, and give the sum $u + v$ as $(x, y)$."
+            answer: "verdict = yes; sum = (10, 5)"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"arity": 2, "kind": "coordinates"}, "name": "sum"}]}
+            solution_sketch: "Zero-vector check: $(0,0)$ satisfies $x = 2y$, so $(0,0)$ lies in $W$. Addition closure: $u = (4,2)$ and $v = (6,3)$ satisfy the condition, and $u + v = (10,5)$ satisfies $10 = 2 \\cdot 5$. Scalar closure holds since $c \\cdot 2y = 2(cy)$. All three checks pass, so the answer is verdict = yes; sum = (10, 5)."
+          - problem: "Let $W = \\{(x, y) : xy \\leq 0\\}$ be a subset of $\\mathbb{R}^2$. Test closure under addition with $u = (2, 0)$ and $v = (0, 3)$. State whether $W$ is a subspace of $\\mathbb{R}^2$, and give the sum $u + v$ as $(x, y)$."
+            answer: "verdict = no; sum = (2, 3)"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"arity": 2, "kind": "coordinates"}, "name": "sum"}]}
+            solution_sketch: "Zero-vector check: $(0,0)$ has $xy = 0 \\leq 0$, so it lies in $W$. Addition closure: $u = (2,0)$ and $v = (0,3)$ lie in $W$, but $u + v = (2,3)$ has $xy = 6 > 0$, so addition fails and $(2,3)$ is the explicit counterexample. Hence $W$ is not a subspace, and the answer is verdict = no; sum = (2, 3)."
+          - problem: "Let $W = \\{(x, y) : x^2 + y^2 \\leq 1\\}$ be a subset of $\\mathbb{R}^2$. Test closure under addition with $u = (1, 0)$ and $v = (0, 1)$. State whether $W$ is a subspace of $\\mathbb{R}^2$, and give the value of $x^2 + y^2$ at $u + v$."
+            answer: "verdict = no; val = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "val"}]}
+            solution_sketch: "Zero-vector check: $(0,0)$ gives $x^2 + y^2 = 0 \\leq 1$, so it lies in $W$. Addition closure: $u = (1,0)$ and $v = (0,1)$ lie in $W$, but $u + v = (1,1)$ gives $1 + 1 = 2 > 1$, a counterexample to closure. Hence the answer is verdict = no; val = 2."
+          - problem: "Let $W = \\{(x, y) : y \\leq 0\\}$ be a subset of $\\mathbb{R}^2$. Test closure under scalar multiplication with $u = (1, -5)$ and $c = -2$. State whether $W$ is a subspace of $\\mathbb{R}^2$, and give $cu$ as $(x, y)$."
+            answer: "verdict = no; p = (-2, 10)"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"arity": 2, "kind": "coordinates"}, "name": "p"}]}
+            solution_sketch: "Zero-vector check: $(0,0)$ has $y = 0 \\leq 0$, so it lies in $W$. Scalar closure: $u = (1,-5)$ lies in $W$, but $cu = -2 \\cdot (1,-5) = (-2,10)$ has $y = 10 > 0$, so scalar multiplication fails and $(-2,10)$ is the counterexample. Hence the answer is verdict = no; p = (-2, 10)."
+          - problem: "Let $W = \\{(x, y) : x + y \\geq 2\\}$ be a subset of $\\mathbb{R}^2$. Check the three subspace conditions: containing the zero vector, closure under addition, and closure under scalar multiplication. Determine how many of the three conditions $W$ satisfies."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Zero-vector check: $(0,0)$ gives $x + y = 0 < 2$, so the zero-vector condition fails. Addition closure: if $u$ and $v$ each have coordinate sum at least 2, then $u + v$ has sum at least 4, so addition is closed and this condition holds. Scalar closure: $u = (2,1)$ lies in $W$ but $0.5u = (1, 0.5)$ has sum $1.5 < 2$, so it fails and only one condition holds. Therefore the answer is 1."
+          - problem: "Let $W = \\{(x, y) : y = 2x + b\\}$, where $b$ is a real constant. Apply the subspace test, starting with the zero-vector condition. Determine the value of $b$ that makes $W$ a subspace of $\\mathbb{R}^2$."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Zero-vector condition: $(0,0)$ lies in $W$ only if $0 = 2 \\cdot 0 + b$, which forces $b = 0$. With $b = 0$ the set is the line $y = 2x$ through the origin, and sums and scalar multiples of solutions again satisfy $y = 2x$. The required value is $b = 0$, so the answer is 0."
         constraints: "one linear or mildly nonlinear condition; failures shown by an explicit counterexample"
       - id: kp3
         name: Lines and planes through the origin
@@ -534,6 +546,22 @@ topics:
           - problem: 'Find $[\mathbf{x}]_B$ for $\mathbf{x} = (2, 3, 6)$ and $B = \{(1, 0, 1), (0, 1, 0), (0, 0, 2)\}$.'
             answer: "(2, 3, 2)"
             solution_sketch: '$c_1 = 2$ and $c_2 = 3$ are forced; the third component gives $c_1 + 2c_3 = 6$, so $c_3 = 2$.'
+          - problem: "The set $B = \\{(1, 0, 0), (2, 1, 0), (0, 0, 3)\\}$ is a basis of $\\mathbb{R}^3$. For $\\mathbf{x} = (7, 3, 9)$, find the coordinate vector of $\\mathbf{x}$ relative to $B$ and give it as (c1, c2, c3)."
+            answer: "(1, 3, 3)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "Set $c_1(1,0,0) + c_2(2,1,0) + c_3(0,0,3) = (7,3,9)$. Back-substitution: the third component gives $3c_3 = 9$, so $c_3 = 3$; the second component gives $c_2 = 3$; the first gives $c_1 + 2c_2 = 7$, so $c_1 = 1$. The coordinate vector is (1, 3, 3)."
+          - problem: "Let $B = \\{(1, 0, 0), (0, 1, 0), (2, 3, 1)\\}$ and $\\mathbf{x} = (5, 7, 4)$. Determine the coordinates of $\\mathbf{x}$ relative to $B$ and give the answer as (c1, c2, c3)."
+            answer: "(-3, -5, 4)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "Solve $c_1(1,0,0) + c_2(0,1,0) + c_3(2,3,1) = (5,7,4)$ by back-substitution. The third component gives $c_3 = 4$; the second gives $c_2 + 3c_3 = 7$, so $c_2 = -5$; the first gives $c_1 + 2c_3 = 5$, so $c_1 = -3$. The coordinate vector is (-3, -5, 4)."
+          - problem: "The coordinate vector of $\\mathbf{x}$ relative to $B = \\{(2, 0, 0), (1, 3, 0), (0, 1, 1)\\}$ is $[\\mathbf{x}]_B = (2, -1, 3)$. Find $\\mathbf{x}$ and give it as (x1, x2, x3)."
+            answer: "(3, 0, 3)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "Reconstruct $\\mathbf{x}$ from its coordinates: $\\mathbf{x} = 2(2,0,0) - (1,3,0) + 3(0,1,1)$. Add the scaled basis vectors: the first component is $4 - 1 + 0 = 3$, the second is $-3 + 3 = 0$, and the third is $3$. Thus $\\mathbf{x} = (3, 0, 3)$."
+          - problem: "A basis of $\\mathbb{R}^3$ is $B = \\{(2, 0, 0), (1, 3, 0), (0, 4, 5)\\}$ and $\\mathbf{x} = (8, 10, 5)$. Compute the coordinates of $\\mathbf{x}$ relative to $B$ and give them as (c1, c2, c3)."
+            answer: "(3, 2, 1)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "Solve $c_1(2,0,0) + c_2(1,3,0) + c_3(0,4,5) = (8,10,5)$ by back-substitution. The third component gives $5c_3 = 5$, so $c_3 = 1$; the second gives $3c_2 + 4c_3 = 10$, so $c_2 = 2$; the first gives $2c_1 + c_2 = 8$, so $c_1 = 3$. The coordinates are (3, 2, 1)."
         constraints: "triangular-friendly bases so back-substitution works; integer coordinates"
     diagnostic_exemplar:
       problem: 'Find $[\mathbf{x}]_B$ for $\mathbf{x} = (4, 3, 5)$ and $B = \{(1, 0, 0), (1, 1, 0), (1, 1, 1)\}$.'
@@ -666,10 +694,26 @@ topics:
           - problem: 'Find a basis for the null space of $A = \begin{pmatrix}1&2\\2&4\end{pmatrix}$.'
             answer: "{(-2, 1)}"
             solution_sketch: 'Row reduce to $x + 2y = 0$; with $y = t$, solutions are $t(-2, 1)$.'
-          - problem: 'Is $(1, 1)$ in the null space of $A = \begin{pmatrix}1&-1\\2&-2\end{pmatrix}$?'
-            answer: "Yes"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: '$A(1,1) = (1 - 1, 2 - 2) = (0, 0)$.'
+          - problem: "Find a basis for the null space of $A = \\begin{pmatrix}3&-6\\\\-1&2\\end{pmatrix}$, given as (x, y)."
+            answer: "(2, 1)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Row reduce $A$: the second row $(-1, 2)$ is $-1/3$ times the first row $(3, -6)$, so row reduction leaves one equation $3x - 6y = 0$. Set $y = t$ as the free variable: then $x = 2t$, so every solution is $t(2, 1)$ by the free-variable parametrization. The null space is one-dimensional, and a basis for the null space is (2, 1)."
+          - problem: "Find a basis for the null space of $A = \\begin{pmatrix}1&4&3\\\\3&12&7\\end{pmatrix}$. Give the answer as (x, y, z)."
+            answer: "(-4, 1, 0)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "Start with the full matrix $A = [1, 4, 3; 3, 12, 7]$ and row reduce: replacing row 2 by row 2 minus 3 times row 1 gives the row $(0, 0, -2)$, so $z = 0$ and the pivot columns are columns 1 and 3. The remaining pivot equation is $x + 4y = 0$, so choosing the free variable $y = 1$ gives $x = -4$ by the free-variable parametrization. Every null vector is a multiple of $(-4, 1, 0)$, so a basis for the null space is (-4, 1, 0)."
+          - problem: "Let $A = \\begin{pmatrix}1&-1\\\\2&-2\\end{pmatrix}$ and $v = (2, 3)$. State whether $v$ is in the null space of $A$, and give the first entry of $Av$."
+            answer: "verdict = outside; entry = -1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["inside"], ["outside"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "entry"}]}
+            solution_sketch: "Test membership by the definition of the null space: compute the product $Av$ by the row-column rule. The first entry is $1 \\cdot 2 + (-1) \\cdot 3 = -1$ and the second entry is $2 \\cdot 2 + (-2) \\cdot 3 = -2$, so $Av = (-1, -2)$, not the zero vector. The wrong option inside would come from checking only that the columns are proportional instead of computing the product $Av$. Since $Av$ is not zero, the verdict is outside and the first entry of $Av$ is -1."
+          - problem: "Let $A = \\begin{pmatrix}1&4&2\\\\3&12&5\\end{pmatrix}$. Find the dimension of the null space of $A$."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Row reduce $A = [1,4,2; 3,12,5]$: replacing row 2 by row 2 minus 3 times row 1 gives the row $(0, 0, -1)$, so columns 1 and 3 hold pivots. There are 3 columns and 2 pivots, hence 1 free variable in the system $Ax = 0$ by the free-variable rule. Each free variable contributes one basis vector to the null space, so the dimension of the null space is 1."
+          - problem: "Let $A = \\begin{pmatrix}1&3&2\\\\2&6&5\\end{pmatrix}$. Find the value of $t$ such that the vector $(t, 1, 0)$ lies in the null space of $A$."
+            answer: "-3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "By the definition of the null space, $(t, 1, 0)$ qualifies exactly when $A(t, 1, 0) = (0, 0)$. Row 1 of the product gives $t + 3 + 0 = 0$, so $t = -3$; row 2 gives $2t + 6 + 0 = 0$, the same equation scaled by 2. Both rows agree, so the system is consistent and the value of $t$ is -3."
         constraints: "matrices 2x2 or 2x3 with 1-dimensional null spaces; integer basis vectors"
       - id: kp2
         name: Column space and pivot columns
@@ -879,13 +923,25 @@ topics:
           - problem: 'Let $T(\mathbf{x}) = A\mathbf{x}$ with $A = \begin{pmatrix}1&-1\\2&0\end{pmatrix}$. Compute $T(3, 1)$.'
             answer: "(2, 6)"
             solution_sketch: '$(3 - 1, 6 + 0)$.'
-          - problem: 'Is $T(x, y) = (x + 1, y)$ linear?'
-            answer: "No"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: '$T(0, 0) = (1, 0) \neq (0, 0)$; linear maps fix the origin.'
           - problem: 'If $T$ is linear with $T(\mathbf{u}) = (1, 2)$ and $T(\mathbf{v}) = (3, 0)$, compute $T(2\mathbf{u} + \mathbf{v})$.'
             answer: "(5, 4)"
             solution_sketch: '$2T(\mathbf{u}) + T(\mathbf{v}) = (2, 4) + (3, 0)$.'
+          - problem: "Let $T(x, y) = (x + 2, y - 1)$. State whether $T$ is linear, and give $T(0, 0)$ as (a, b)."
+            answer: "verdict = no; t0 = (2,-1)"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"arity": 2, "kind": "coordinates"}, "name": "t0"}]}
+            solution_sketch: "Step 1, origin test: every linear map sends the zero vector to the zero vector, so evaluate T at (0, 0). Step 2, evaluate the full map: T(0, 0) = (0 + 2, 0 - 1) = (2, -1), which is not the zero vector. Step 3, conclude: T fails the origin test, so it is not linear. The key is verdict = no; t0 = (2,-1)."
+          - problem: "Let $T$ be a linear map with $T(\\mathbf{u}) = (2, -1)$ and $T(\\mathbf{v}) = (4, 3)$. Compute $T(\\mathbf{u} + \\mathbf{v})$ as (a, b) and $T(\\mathbf{u} - 2\\mathbf{v})$ as (c, d)."
+            answer: "sum = (6,2); diff = (-6,-7)"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"arity": 2, "kind": "coordinates"}, "name": "sum"}, {"contract": {"arity": 2, "kind": "coordinates"}, "name": "diff"}]}
+            solution_sketch: "Step 1, linearity rule: a linear map satisfies T(u + v) = T(u) + T(v) and T(u - 2v) = T(u) - 2T(v). Step 2, compute the sum: (2, -1) + (4, 3) = (6, 2). Step 3, compute the difference: (2, -1) - 2(4, 3) = (2 - 8, -1 - 6) = (-6, -7). The key is sum = (6,2); diff = (-6,-7)."
+          - problem: "A map $T$ is linear and $T(2\\mathbf{u}) = (10, 4)$. Find $T(\\mathbf{u})$ as (a, b)."
+            answer: "(5,2)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Step 1, scalar rule: linearity gives T(2u) = 2T(u) for every scalar. Step 2, divide the full vector (10, 4) by the scalar 2, component by component: (10/2, 4/2). The key is (5,2)."
+          - problem: "Let $T$ be linear with $T(\\mathbf{u}) = (1, 2)$, $T(\\mathbf{v}) = (3, 0)$, and $T(\\mathbf{w}) = (-1, 4)$. Compute $T(\\mathbf{u} + 2\\mathbf{v} - \\mathbf{w})$ as (a, b)."
+            answer: "(8,-2)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Step 1, linearity rule: T(u + 2v - w) = T(u) + 2T(v) - T(w). Step 2, substitute the full values: (1, 2) + 2(3, 0) - (-1, 4) = (1 + 6 + 1, 2 + 0 - 4). Step 3, simplify each component. The key is (8,-2)."
         constraints: "2x2 matrices; linearity checks via T(0) or additivity"
       - id: kp2
         name: The standard matrix
@@ -1306,14 +1362,30 @@ topics:
         name: Null space and row space are perpendicular
         key_prerequisites: [null-column-space-rank, orthogonal-orthonormal-sets]
         exemplars:
-          - problem: 'For $A = \begin{pmatrix}1&2\end{pmatrix}$, verify that $\mathrm{Nul}(A)$ is orthogonal to the row of $A$.'
-            answer: "Nul(A) = span{(-2, 1)} and (-2, 1) . (1, 2) = 0"
-            answer_contract: {kind: none}
-            solution_sketch: '$A\mathbf{x} = 0$ says exactly that $\mathbf{x}$ is orthogonal to every row.'
-          - problem: 'State the relationship: $(\mathrm{Row}\, A)^\perp = $ ?'
-            answer: "Nul(A)"
-            answer_contract: {kind: none}
-            solution_sketch: 'The orthogonal complement of the row space is the null space: $(\mathrm{Row}\, A)^\perp = \mathrm{Nul}(A)$.'
+          - problem: "For the 1 by 2 matrix $A = \\begin{pmatrix}4&-7\\end{pmatrix}$, find the vector in Nul(A) whose first entry is 7. Give it as (x, y)."
+            answer: "(7, 4)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "The null space of a 1 by 2 matrix consists of vectors orthogonal to its single row, so 4x - 7y = 0. Fixing the first entry x = 7 gives 28 - 7y = 0, so y = 4. Verify with one dot product: (7, 4) · (4, -7) = 28 - 28 = 0. The vector is (7, 4)."
+          - problem: "For the 2 by 3 matrix $A = \\begin{pmatrix}1&2&0\\\\0&1&1\\end{pmatrix}$, solve $A\\mathbf{x} = \\mathbf{0}$ and give a nonzero solution vector as (x, y, z)."
+            answer: "(2, -1, 1)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "The row conditions are x + 2y = 0 and y + z = 0, so Nul(A) is one-dimensional. Set y = -1: then x = 2 and z = 1. Verify with two dot products: (2, -1, 1) · (1, 2, 0) = 0 and (2, -1, 1) · (0, 1, 1) = 0. A nonzero solution is (2, -1, 1)."
+          - problem: "Let $A = \\begin{pmatrix}2&4\\end{pmatrix}$ and $\\mathbf{v} = (3, -2)$. Compute the dot product of $\\mathbf{v}$ with the row of $A$, and give dot = that number and verdict = in if $\\mathbf{v}$ lies in Nul(A) or out if it does not."
+            answer: "dot = -2; verdict = out"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "dot"}, {"contract": {"kind": "label", "options": [["in"], ["out"]]}, "name": "verdict"}]}
+            solution_sketch: "A vector lies in Nul(A) exactly when its dot product with every row is 0, since Ax = 0 says x is orthogonal to each row. Compute (3)(2) + (-2)(4) = 6 - 8 = -2. Since -2 is not 0, v does not lie in Nul(A); the wrong verdict in comes from the sign error of reading the dot product 6 - 8 as 0. The result is dot = -2; verdict = out."
+          - problem: "Let $A = \\begin{pmatrix}2&3\\end{pmatrix}$ and $\\mathbf{v} = (3, y)$. Find $y$ so that $\\mathbf{v}$ lies in Nul(A)."
+            answer: "-2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Membership in Nul(A) means the dot product with the row is 0: (2)(3) + (3)(y) = 6 + 3y = 0. Solving gives 3y = -6, so y = -2. Verify with one dot product: (3, -2) · (2, 3) = 6 - 6 = 0. The value is y = -2."
+          - problem: "Let $A = \\begin{pmatrix}a&2&0\\\\1&1&1\\end{pmatrix}$ and $\\mathbf{v} = (1, -2, 1)$. Find $a$ so that $\\mathbf{v}$ lies in Nul(A)."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "v lies in Nul(A) when it is orthogonal to both rows of A. Check row 2 first: (1)(1) + (1)(-2) + (1)(1) = 0 already holds. For row 1: a(1) + 2(-2) + 0(1) = a - 4, so a = 4. Verify with two dot products: (1, -2, 1) · (4, 2, 0) = 0 and (1, -2, 1) · (1, 1, 1) = 0. The value is a = 4."
+          - problem: "A 2 by 3 matrix $A$ has rank 2, so its row space is a plane through the origin in $\\mathbb{R}^3$. What is the dimension of $(\\mathrm{Row}\\,A)^\\perp$?"
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The orthogonal complement of the row space is the null space: (Row A)^perp = Nul(A). By rank-nullity, dim Nul(A) = number of columns - rank(A) = 3 - 2 = 1. The dimension of (Row A)^perp is 1."
         constraints: "1x2 or 2x3 matrices; verification by one or two dot products"
     diagnostic_exemplar:
       problem: 'Find a basis for the orthogonal complement of the plane $x + 2y - z = 0$ in $\mathbb{R}^3$, give its dimension, and say how it is related to $A = \begin{pmatrix}1&2&-1\end{pmatrix}$.'
