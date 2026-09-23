@@ -1175,14 +1175,30 @@ topics:
         name: "Speed and arc length parametrization"
         key_prerequisites: [vector-valued-functions]
         exemplars:
-          - problem: 'For $\mathbf{r}(t) = \langle \cos t, \sin t, t \rangle$, find the arc length function $s(t)$ measured from $t = 0$.'
-            answer: '$s(t) = \sqrt{2}\, t$'
-            answer_contract: {kind: none}
-            solution_sketch: '$s(t) = \int_0^t |\mathbf{r}''(u)|\, du = \int_0^t \sqrt{2}\, du$.'
-          - problem: 'Reparametrize the helix $\mathbf{r}(t) = \langle \cos t, \sin t, t \rangle$ by arc length from $t = 0$.'
-            answer: '$\mathbf{r}(s) = \langle \cos(s/\sqrt{2}), \sin(s/\sqrt{2}), s/\sqrt{2} \rangle$'
-            answer_contract: {kind: none}
-            solution_sketch: 'From $s = \sqrt{2}\,t$, solve $t = s/\sqrt{2}$ and substitute.'
+          - problem: "For the curve r(t) = (5t, 12t, 0), find the arc length function s(t) measured from t = 0, and give s as a function of t."
+            answer: "13t"
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: "Differentiate each component: r'(t) = (5, 12, 0). The speed rule gives |r'(t)| = sqrt(25 + 144 + 0) = sqrt(169) = 13, which is constant. The arc length function rule gives s(t) = integral from 0 to t of 13 du = 13t. The answer is 13t."
+          - problem: "Reparametrize the helix r(t) = (3cos(t), 3sin(t), 4t) by arc length s measured from t = 0. Give x, y and z as functions of s."
+            answer: "x = 3cos(s/5); y = 3sin(s/5); z = 4s/5"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["s"]}, "name": "x"}, {"contract": {"kind": "function", "vars": ["s"]}, "name": "y"}, {"contract": {"kind": "function", "vars": ["s"]}, "name": "z"}]}
+            solution_sketch: "Differentiate the helix: r'(t) = (-3sin(t), 3cos(t), 4). The speed rule gives sqrt(9sin^2(t) + 9cos^2(t) + 16) = sqrt(9 + 16) = 5, using sin^2(t) + cos^2(t) = 1. The speed is constant, so the arc length function is s = 5t, and solving gives t = s/5. Substitute t = s/5 into r(t): x = 3cos(s/5), y = 3sin(s/5), z = 4s/5. The answer is x = 3cos(s/5); y = 3sin(s/5); z = 4s/5."
+          - problem: "A particle moves on the helix r(t) = (8cos(t), 8sin(t), 15t). Find its speed."
+            answer: "17"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Differentiate the position vector: r'(t) = (-8sin(t), 8cos(t), 15). The speed rule gives the magnitude sqrt(64sin^2(t) + 64cos^2(t) + 225) = sqrt(64 + 225) = sqrt(289) = 17, using sin^2(t) + cos^2(t) = 1. The speed is constant at 17. The answer is 17."
+          - problem: "For the constant-speed curve r(t) = (7t, 24t, 0), find the time t at which the arc length measured from t = 0 equals 75."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Differentiate: r'(t) = (7, 24, 0). The speed rule gives sqrt(49 + 576 + 0) = sqrt(625) = 25, a constant. The arc length function from t = 0 is s(t) = 25t. Set 25t = 75 and solve: t = 3. The answer is 3."
+          - problem: "Reparametrize the line r(t) = (2t + 1, -t + 3, 2t - 4) by arc length s measured from t = 0. Give x, y and z as functions of s."
+            answer: "x = 1+2s/3; y = 3-s/3; z = -4+2s/3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["s"]}, "name": "x"}, {"contract": {"kind": "function", "vars": ["s"]}, "name": "y"}, {"contract": {"kind": "function", "vars": ["s"]}, "name": "z"}]}
+            solution_sketch: "Differentiate the line: r'(t) = (2, -1, 2). The speed rule gives sqrt(4 + 1 + 4) = sqrt(9) = 3, a constant. Hence the arc length function is s = 3t, so t = s/3. Substitute into r(t): x = 1 + 2s/3, y = 3 - s/3, z = -4 + 2s/3. The answer is x = 1+2s/3; y = 3-s/3; z = -4+2s/3."
+          - problem: "Find the arc length of the helix r(t) = (20cos(t), 20sin(t), 21t) from t = 0 to t = 2."
+            answer: "58"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Differentiate the helix: r'(t) = (-20sin(t), 20cos(t), 21). The speed rule gives sqrt(400sin^2(t) + 400cos^2(t) + 441) = sqrt(400 + 441) = sqrt(841) = 29, using sin^2(t) + cos^2(t) = 1. The arc length function is s(t) = 29t, which is linear in t. The length is s(2) - s(0) = 58 - 0 = 58. The answer is 58."
         constraints: "constant-speed curves only, so s(t) is linear in t"
     diagnostic_exemplar:
       problem: 'Find the length of $\mathbf{r}(t) = \left\langle \tfrac{1}{3}t^3,\; t^2,\; 2t \right\rangle$ for $0 \le t \le 3$.'
