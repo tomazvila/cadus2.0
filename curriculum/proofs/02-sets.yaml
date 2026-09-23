@@ -487,14 +487,30 @@ topics:
         name: "Operations with complements"
         key_prerequisites: [complement-universal-set]
         exemplars:
-          - problem: 'With universe $U = \{1, \dots, 8\}$, $A = \{1,2,3,4\}$, $B = \{2,4,6,8\}$, find $A^{c} \cap B$ and $(A \cup B)^{c}$.'
-            answer_contract: {kind: none}
-            answer: '$A^{c} \cap B = \{6, 8\}$ and $(A \cup B)^{c} = \{5, 7\}$.'
-            solution_sketch: '$A^{c} = \{5,6,7,8\}$, so $A^{c} \cap B = \{6, 8\}$. $A \cup B = \{1,2,3,4,6,8\}$, so its complement in $U$ is $\{5, 7\}$.'
-          - problem: 'With universe $U = \{1, \dots, 6\}$, $A = \{1, 2\}$, $B = \{2, 3, 5\}$, compute $(A \cap B)^{c}$ and $A^{c} \cup B^{c}$, and compare.'
-            answer_contract: {kind: none}
-            answer: 'Both equal $\{1, 3, 4, 5, 6\}$.'
-            solution_sketch: '$A \cap B = \{2\}$, so $(A \cap B)^{c} = \{1,3,4,5,6\}$. $A^{c} = \{3,4,5,6\}$ and $B^{c} = \{1,4,6\}$; their union is $\{1,3,4,5,6\}$ — the same set (a De Morgan instance).'
+          - problem: "With universe $U = \\{1, \\dots, 9\\}$, $A = \\{1,4,5,8\\}$ and $B = \\{2,4,6,8,9\\}$, find $A^{c} \\cap B$ and $(A \\cup B)^{c}$."
+            answer: "cap = {2, 6, 9}; cupc = {3, 7}"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "set"}, "name": "cap"}, {"contract": {"kind": "set"}, "name": "cupc"}]}
+            solution_sketch: "The full result is cap = {2, 6, 9}; cupc = {3, 7}. First the complement rule gives $A^{c} = \\{2, 3, 6, 7, 9\\}$ relative to $U$. Then the intersection rule keeps the elements of $B$ that lie outside $A$, giving {2, 6, 9}. Next the union rule forms $A \\cup B = \\{1, 2, 4, 5, 6, 8, 9\\}$, and the complement rule removes these from $U$, leaving {3, 7}. So cap = {2, 6, 9}; cupc = {3, 7}."
+          - problem: "With universe $U = \\{1, \\dots, 10\\}$, $A = \\{2,4,7,9\\}$ and $B = \\{1,4,6,7\\}$, compute $(A \\cap B)^{c}$ and $A^{c} \\cup B^{c}$."
+            answer: "lhs = {1, 2, 3, 5, 6, 8, 9, 10}; rhs = {1, 2, 3, 5, 6, 8, 9, 10}"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "set"}, "name": "lhs"}, {"contract": {"kind": "set"}, "name": "rhs"}]}
+            solution_sketch: "The full result is lhs = {1, 2, 3, 5, 6, 8, 9, 10}; rhs = {1, 2, 3, 5, 6, 8, 9, 10}. The intersection rule gives $A \\cap B = \\{4, 7\\}$, and the complement rule turns this into $(A \\cap B)^{c} = \\{1, 2, 3, 5, 6, 8, 9, 10\\}$. The complement rule also gives $A^{c} = \\{1, 3, 5, 6, 8, 10\\}$ and $B^{c} = \\{2, 3, 5, 8, 9, 10\\}$, and the union rule merges them into the same set, a De Morgan instance. So lhs = {1, 2, 3, 5, 6, 8, 9, 10}; rhs = {1, 2, 3, 5, 6, 8, 9, 10}."
+          - problem: "With universe $U = \\{1, \\dots, 12\\}$, $A = \\{1,3,5,7,9,11\\}$, $B = \\{2,3,5,8,10,12\\}$ and $C = \\{1,2,6,7,8\\}$, compute $(A^{c} \\cup B) \\cap C$."
+            answer: "{2, 6, 8}"
+            answer_contract: {"kind": "set"}
+            solution_sketch: "The complement rule gives $A^{c} = \\{2, 4, 6, 8, 10, 12\\}$ in $U$. The union rule merges $A^{c}$ with $B$, giving {2, 3, 4, 5, 6, 8, 10, 12}. The intersection rule keeps the elements that also lie in $C$, namely {2, 6, 8}. So the answer is {2, 6, 8}."
+          - problem: "With universe $U = \\{1, \\dots, 10\\}$, $A = \\{1,2,3,4,5\\}$ and $B^{c} = \\{1,3,5,7,9\\}$, find $A \\cup B$."
+            answer: "{1, 2, 3, 4, 5, 6, 8, 10}"
+            answer_contract: {"kind": "set"}
+            solution_sketch: "The complement rule recovers $B$ as the elements of $U$ missing from $B^{c}$, so $B = \\{2, 4, 6, 8, 10\\}$. The union rule then merges $A$ with $B$, giving {1, 2, 3, 4, 5, 6, 8, 10}. So the answer is {1, 2, 3, 4, 5, 6, 8, 10}."
+          - problem: "With universe $U = \\{1, \\dots, 6\\}$, $A^{c} = \\{1,4,6\\}$ and $B^{c} = \\{2,4,6\\}$, find $A \\cap B$."
+            answer: "{3, 5}"
+            answer_contract: {"kind": "set"}
+            solution_sketch: "The complement rule gives $A = \\{2, 3, 5\\}$ and $B = \\{1, 3, 5\\}$ from the stated complements in $U$. The intersection rule keeps the shared elements 3 and 5. So the answer is {3, 5}."
+          - problem: "With universe $U = \\{1, \\dots, 10\\}$, $A = \\{1,2,3,4,5\\}$, $B = \\{1,3,5,7,9\\}$ and $C = \\{2,4,6,8,10\\}$, compute $(A \\cap B^{c}) \\cup C^{c}$."
+            answer: "{1, 2, 3, 4, 5, 7, 9}"
+            answer_contract: {"kind": "set"}
+            solution_sketch: "The complement rule gives $B^{c} = \\{2, 4, 6, 8, 10\\}$ and $C^{c} = \\{1, 3, 5, 7, 9\\}$ in $U$. The intersection rule gives $A \\cap B^{c} = \\{2, 4\\}$. The union rule merges {2, 4} with $C^{c}$, giving {1, 2, 3, 4, 5, 7, 9}. So the answer is {1, 2, 3, 4, 5, 7, 9}."
         constraints: "mix complement with union/intersection relative to a stated universe"
       - id: kp3
         name: "Multi-operation calculations"
