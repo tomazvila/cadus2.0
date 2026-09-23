@@ -828,14 +828,30 @@ topics:
         name: "Element versus subset"
         key_prerequisites: [set-notation]
         exemplars:
-          - problem: 'Let $A = \{1, \{2\}, 3\}$. True or false: $\{2\} \in A$, $\{2\} \subseteq A$, $2 \in A$.'
-            answer_contract: {kind: none}
-            answer: 'True, False, False.'
-            solution_sketch: 'The object $\{2\}$ is an element of $A$. But $\{2\} \subseteq A$ would need $2 \in A$, and the elements of $A$ are $1$, $\{2\}$, $3$ — not $2$.'
-          - problem: 'True or false: $\varnothing \in \{\varnothing\}$ and $\varnothing \subseteq \{\varnothing\}$.'
-            answer_contract: {kind: none}
-            answer: 'True, True.'
-            solution_sketch: '$\{\varnothing\}$ has one element, namely $\varnothing$, so membership holds; and $\varnothing$ is a subset of every set.'
+          - problem: "Let A = {4, {7}, 9}. Consider the three statements: (i) {7} is an element of A, (ii) {7} is a subset of A, (iii) 7 is an element of A. Find the number of true statements."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "List the elements of A by the definition of set notation: they are 4, {7}, and 9. By the definition of element, statement (i) is true because the object {7} appears in that list. By the definition of subset, statement (ii) is false because {7} contained in A would require 7 to be an element of A, and 7 is not in the list. Statement (iii) is false by the same membership check, since 7 is not one of the listed elements. Exactly one statement is true. The answer is 1."
+          - problem: "Let B = {empty set}, the set whose single element is the empty set. Consider the statements: (i) the empty set is an element of B, (ii) the empty set is a subset of B. Find the number of true statements."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "List the elements of B: it has exactly one element, namely the empty set. By the definition of element, statement (i) is true because the empty set is that listed element. By the definition of subset, statement (ii) is true because the empty set is a subset of every set, with no elements to check. Both statements are true. The answer is 2."
+          - problem: "Let C = {0, {5}, {6,8}, 4}. Consider the statements: (i) {5} is an element of C, (ii) {5} is a subset of C, (iii) {6,8} is an element of C, (iv) {6,8} is a subset of C. Find the number of true statements."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "List the elements of C: they are 0, {5}, {6,8}, and 4. By the definition of element, statement (i) is true because {5} is in the list. By the definition of subset, statement (ii) is false because it would need 5 to be an element of C, and 5 is not in the list. By the definition of element, statement (iii) is true because {6,8} is in the list. By the definition of subset, statement (iv) is false because it would need both 6 and 8 to be elements of C, and neither is. Exactly two statements are true. The answer is 2."
+          - problem: "Let D = {empty set, {empty set}, 2}. Consider the statements: (i) the empty set is an element of D, (ii) the empty set is a subset of D, (iii) {empty set} is an element of D, (iv) {empty set} is a subset of D. Find the number of false statements."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "List the elements of D: they are the empty set, {empty set}, and 2. By the definition of element, statement (i) is true because the empty set is in the list. By the definition of subset, statement (ii) is true because the empty set is a subset of every set. By the definition of element, statement (iii) is true because {empty set} is in the list. By the definition of subset, statement (iv) is true because the only element of {empty set} is the empty set, which is an element of D. No statement is false. The answer is 0."
+          - problem: "Let E = {3, {4}, {5,9}}. The object {5,9} is compared to the set E. Select the relation that holds."
+            answer: "in only"
+            answer_contract: {"kind": "label", "options": [["both"], ["in only"], ["subset only"], ["neither"]]}
+            solution_sketch: "List the elements of E: they are 3, {4}, and {5,9}. By the definition of element, {5,9} is an element of E holds because {5,9} appears in that list. By the definition of subset, {5,9} contained in E fails because 5 and 9 are not elements of E. So membership holds and the subset relation fails. The option both wrongly counts a failed subset test as true; the option subset only wrongly ignores the true membership; the option neither wrongly denies the true membership. The answer is in only."
+          - problem: "Let F = {empty set, {empty set}, 6}. The object {empty set} is compared to the set F. Select the relation that holds."
+            answer: "both"
+            answer_contract: {"kind": "label", "options": [["both"], ["in only"], ["subset only"], ["neither"]]}
+            solution_sketch: "List the elements of F: they are the empty set, {empty set}, and 6. By the definition of element, {empty set} is an element of F holds because {empty set} appears in that list. By the definition of subset, {empty set} contained in F also holds, because its only element is the empty set and the empty set is an element of F. So both relations hold at once. The option in only wrongly ignores the subset relation; the option subset only wrongly ignores the membership; the option neither wrongly denies both relations. The answer is both."
         constraints: "distinguish $\\in$ from $\\subseteq$, including sets whose elements are sets"
       - id: kp3
         name: "Proper subsets and set equality"
