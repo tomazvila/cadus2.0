@@ -1545,12 +1545,34 @@ topics:
         name: "N is infinite"
         key_prerequisites: [proof-by-contradiction]
         exemplars:
-          - problem: 'Prove that $\mathbb{N}$ is infinite: no bijection $\{1, \dots, n\} \to \mathbb{N}$ exists for any $n$.'
-            answer: 'The image of any such map misses $\max(f(1), \dots, f(n)) + 1$.'
-            solution_sketch: 'Suppose $f : \{1, \dots, n\} \to \mathbb{N}$ were a bijection. Let $M = \max(f(1), \dots, f(n))$. Then $M + 1 \in \mathbb{N}$ is not in the image, so $f$ is not surjective — contradiction. $\square$'
-          - problem: 'Prove that the set $\{2^k : k \in \mathbb{N}\}$ of powers of $2$ is infinite.'
-            answer: '$k \mapsto 2^k$ injects the infinite set $\mathbb{N}$ into it; or repeat the max-plus-one argument.'
-            solution_sketch: 'Any finite list of powers of $2$ has a largest element $2^M$; then $2^{M+1}$ is a power of $2$ not on the list. So no finite enumeration captures the set. $\square$'
+          - problem: "A student tries to enumerate the whole set of natural numbers by one finite list whose values are 2, 5, 9, 14 at positions 1 to 4. Use the maximum-plus-one escape element to show that this list is not onto. Give the escape element."
+            answer: "15"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: the listed values are 2, 5, 9, 14, so the maximum is 14. Step 2: the maximum-plus-one rule forms 14 + 1 = 15, which is natural and not in the list. The escape element is 15."
+          - problem: "A finite list of powers of two has exponents 1, 3, 5, 7. In the maximum-plus-one proof that the powers of two are infinite, add one to the largest exponent. Give the resulting exponent."
+            answer: "8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: the exponents are 1, 3, 5, 7, so the largest is 7. Step 2: the maximum-plus-one rule adds one to the largest exponent, giving 8, and the power with exponent 8 is not on the list. The resulting exponent is 8."
+          - problem: "A contradiction proof assumes that five values 12, 3, 7, 5, 9 are the complete image of a map from a finite set onto the natural numbers. Form the maximum of these values and then add one. Give the resulting number."
+            answer: "13"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: the complete image is 12, 3, 7, 5, 9, so the maximum is 12. Step 2: the maximum-plus-one rule forms 12 + 1 = 13, which cannot be in the image and gives the contradiction. The resulting number is 13."
+          - problem: "Suppose a finite list is claimed to contain every natural number. The listed values are 6, 2, 10, 4. Give the largest listed value plus one."
+            answer: "11"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: the listed values are 6, 2, 10, 4, so the largest is 10. Step 2: the maximum-plus-one rule forms 10 + 1 = 11, which is natural and absent from the list. The value is 11."
+          - problem: "Claim: N is infinite. Step 1: suppose there are n and a bijection f from {1,...,n} onto N. Step 2: let M be the maximum of f(1),...,f(n). Step 3: M is larger than every listed value, so M is not in the image. Step 4: M+1 is natural and not in the image, so f is not onto. Which step is the first step that is not valid?"
+            answer: "Step 3"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 is the supposition of the contradiction proof, so it is not the invalid step. Step 2 correctly defines M as the maximum of the listed values. Step 3 is invalid: M is itself one of the listed values, so M is in the image and cannot be used as an escape element. Step 4 correctly uses M + 1, which is natural and outside the image. The answer is Step 3."
+          - problem: "In the proof that N is infinite, suppose f maps {1,...,n} onto N. Let M be the maximum of f(1),...,f(n). A line is missing that gives a natural number outside the image. Select the missing line."
+            answer: "$M + 1$"
+            answer_contract: {"kind": "label", "options": [["$M + 1$"], ["$M$"], ["$M - 1$"], ["$2M$"]]}
+            solution_sketch: "The missing line must produce a natural number outside the image. The option $M + 1$ is correct because $M$ is the largest listed value, so $M + 1$ is natural and greater than every listed value. The option $M$ is wrong because $M$ is already one of the listed values. The option $M - 1$ is wrong because it can equal some listed value and so need not escape the image. The option $2M$ is wrong because twice the maximum can itself be a listed value and the escape must be one past the maximum. The answer is $M + 1$."
+          - problem: "Write the full proof: N is infinite. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Base setup: suppose, for contradiction, that N is finite. Then for some n there is a bijection f from {1,...,n} onto N. Let M be the maximum of f(1),...,f(n), which exists because the list is finite. Escape step: M + 1 is a natural number. Since M is at least each f(i), M + 1 is greater than each f(i), so M + 1 is not equal to any f(i). Thus M + 1 lies in N but not in the image of f. Contradiction: this contradicts that f is onto. Therefore no such bijection exists, and N is infinite."
         constraints: "contradiction via a maximum-plus-one escape element"
       - id: kp3
         name: "Pairing an infinite set with a proper subset"
