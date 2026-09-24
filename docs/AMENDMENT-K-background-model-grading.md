@@ -74,3 +74,50 @@ audited agreement of the background grader on that course is at or above the aud
 below it, the course regresses to "read the teach page" until the rubric improves.
 
 Research background: FLOW/05-local-model-caching-jev.md.
+
+---
+
+## STATUS: DECIDED BY THE OWNER (steer note 114, 24 Sep 2026). The design below is the owner's own.
+
+The note-113 five-point discussion is WITHDRAWN. The owner asked why his two suggestions
+(the cache and the additional free local-model check of a deterministic "wrong"/"cannot
+parse") were never implemented. Answer: the draft above was parked behind the content
+run. They are scheduled now.
+
+## The owner's design (note 114, verbatim intent)
+
+1. **The deterministic grader runs first, unchanged.** When it says "wrong" or "cannot
+   parse", the app asks the owner's LOCAL model (`qwen-general-8bit` at
+   `http://10.8.0.1:8081/v1`, free) ONE question with the problem text, the stored key,
+   the answer contract and the learner's text: "Is the learner's answer mathematically
+   equivalent to the key? Reply EQUIVALENT or NOT and one line why." A strict prompt,
+   temperature 0, one short reply.
+
+2. **Cache.** A table keyed by (item digest, normalized learner text) → verdict, reason,
+   model, time. A repeat costs nothing and answers at once. Normalization (the cache key
+   only; the model still sees the raw text): whitespace, case, unicode minus, `x^2`/`x²`,
+   decimal comma.
+
+3. **Latency budget.** If the local model answers within the request budget (measured on
+   staging; see `FLOW/05-local-model-caching-jev.md` §1 for the research numbers), the
+   verdict is applied in the SAME reply. If not, the reply says the answer is being
+   checked, the next task is served, and the verdict lands in the background (the
+   Amendment K flow above: a job row, a worker, a `verdict` event on the topic page).
+   The owner's words: "I don't want to wait 30 seconds after an answer."
+
+4. **An EQUIVALENT verdict counts as correct** — for the topic and for mastery (it IS the
+   same answer). A NOT verdict leaves the deterministic "wrong" and shows the model's
+   one-line reason next to the worked solution.
+
+5. **Logging, audit, cap, fallback.** Every model verdict is logged (`model_call_log`)
+   and sampled by the audit like a key (A4 of the draft). Per-learner daily cap:
+   **200** equivalence checks (the model is free; the cap bounds abuse). The OpenRouter
+   fallback stays OFF unless the owner says otherwise.
+
+6. **Proof items (P3)** keep the rubric flow as drafted above — same worker, same cache.
+
+Implementation: GLM1, on a branch off `main`, after the 84 b staging PASS. Unit tests
+with a fake model: the owner's case (the learner text "not a solution, 5" against the key
+`verdict = contradicts; D = 5`) returns EQUIVALENT through the fake model; a cache hit
+skips the model; the timeout path serves the next task and folds the verdict later.
+Staging proof with the real local model; then production per note 95.
