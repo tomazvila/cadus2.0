@@ -27,6 +27,7 @@ pub trait ReadinessGate: fmt::Debug {
     /// the plan then serves that point and the no-practice points complete with
     /// their teach page instead of locking the topic.
     fn topic_serves_lesson(&self, topic_id: &str) -> bool {
+        let _ = topic_id;
         false
     }
 }
