@@ -252,6 +252,38 @@ async fn serve_one(
     Ok(Json(payload))
 }
 
+/// The knowledge point a lesson at `current` serves next (notes 84 b and 101 b).
+///
+/// The search starts AT `current` and never retreats behind it: a lesson the pass
+/// rule already advanced to kp2 must serve kp2, or the serve re-serves kp1, the
+/// pass rule passes kp1 again every two answers, and the lesson cycles forever
+/// without reaching its last point (the staging probe of 2026-09-24, topic
+/// `characteristic-polynomial`: 4,000 correct kp1 answers, zero `lesson_result`).
+/// A point that AUTHORS (it has exemplars, verdict-capable or all-`none`) wins;
+/// a short practice pool (`PRACTICE_MINIMUM` unmet) is a practice-pool rule and
+/// never stops the lesson serve. When nothing at or after `current` authors, the
+/// first such point the readiness unblocks completes with its teach page.
+fn choose_serving_kp<'a, A, U>(
+    points: &'a [cadus_core::curriculum::KnowledgePoint],
+    current: &str,
+    authors: A,
+    unblocked: U,
+) -> Option<&'a cadus_core::curriculum::KnowledgePoint>
+where
+    A: Fn(&str) -> bool,
+    U: Fn(&str) -> bool,
+{
+    let start = points
+        .iter()
+        .position(|point| point.id.as_str() == current)
+        .unwrap_or(0);
+    let forward = &points[start..];
+    forward
+        .iter()
+        .find(|point| authors(point.id.as_str()))
+        .or_else(|| forward.iter().find(|point| unblocked(point.id.as_str())))
+}
+
 /// Draw the next problem of `task`, install it in the D-S6 row, and give back
 /// its client-safe payload.
 ///
@@ -305,21 +337,35 @@ pub(crate) async fn install_next(
     // point that can. The CHOICE persists: `current_kp` carries the serving point so the
     // KP sequence advances and the next serve continues where this one is (note 93 a —
     // the 91 finding: without the write the lesson served kp1 forever).
-    if !ReadinessGate::lesson_blockers(readiness, &target.serve, &target.kp).is_empty() {
+    // Note 101 b: the choice AUTHORS first — a point with verdict-capable exemplars or
+    // an all-`none` list (self-check rows) preempts a zero-exemplar one, whose teach
+    // page completes it and whose template pool (if any) never serves the lesson.
+    let current_authors = ReadinessGate::authors_practice(readiness, &target.serve, &target.kp);
+    if !ReadinessGate::lesson_blockers(readiness, &target.serve, &target.kp).is_empty()
+        || !current_authors
+    {
         if let Some(idx) = graph.idx_of(&target.serve) {
-            for point in graph.knowledge_points(idx) {
-                if ReadinessGate::lesson_blockers(readiness, &target.serve, point.id.as_str())
-                    .is_empty()
-                {
+            let points: &[cadus_core::curriculum::KnowledgePoint] = graph.knowledge_points(idx);
+            let authors = |point: &str| {
+                ReadinessGate::authors_practice(readiness, &target.serve, point)
+            };
+            let unblocked = |point: &str| {
+                ReadinessGate::lesson_blockers(readiness, &target.serve, point).is_empty()
+            };
+            let chosen = choose_serving_kp(points, &target.kp, &authors, &unblocked);
+            if let Some(point) = chosen {
+                if target.kp != point.id.as_str() {
                     target.kp = point.id.as_str().to_owned();
                     target.key = cadus_core::pool::kp_key(&target.serve, point.id.as_str());
                     progress_for(scratch, task, graph).current_kp = Some(target.kp.clone());
-                    break;
                 }
-                tracing::info!(
-                    kp = %point.id,
-                    "serve: the point serves no practice; it completes with its teach page (note 84 b)"
-                );
+            } else {
+                for point in points {
+                    tracing::info!(
+                        kp = %point.id,
+                        "serve: the point serves no practice; it completes with its teach page (note 84 b)"
+                    );
+                }
             }
         }
     }
@@ -472,6 +518,48 @@ async fn draw_fresh(
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    /// The topic-23 stall (probe 2, 2026-09-24): kp1 authors and is unblocked;
+    /// kp2 and kp3 author (3 and 2 decidable exemplars) but each holds one out,
+    /// so their practice pools sit below `PRACTICE_MINIMUM` and their readiness
+    /// carries the `Practicable` blocker. A lesson the pass rule advanced to kp2
+    /// must serve kp2 — the old pick retreated to kp1 and the lesson cycled on
+    /// kp1 forever (4,000 correct answers, zero `lesson_result`).
+    #[test]
+    fn the_serving_choice_never_retreats_behind_the_lessons_point() {
+        let root = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../curriculum");
+        let (graph, _findings) =
+            cadus_core::curriculum::load_curriculum(&root).expect("the tree loads");
+        let points = graph
+            .knowledge_points(graph.idx_of("characteristic-polynomial").expect("the topic loads"));
+        assert_eq!(points.len(), 3, "the topic-23 shape: three knowledge points");
+        let authors = |kp: &str| !kp.is_empty(); // every point of this topic authors
+        let unblocked = |kp: &str| kp == "kp1"; // kp2, kp3 carry the Practicable blocker
+        let chosen = choose_serving_kp(points, "kp2", authors, unblocked)
+            .expect("a lesson at kp2 with authoring points serves one");
+        assert_eq!(chosen.id.as_str(), "kp2", "the serve stays at the advanced point");
+        let start = choose_serving_kp(points, "kp1", authors, unblocked)
+            .expect("the start point authors");
+        assert_eq!(start.id.as_str(), "kp1", "the start pick is unchanged");
+    }
+
+    /// A lesson whose current point authors nothing falls FORWARD to the next
+    /// authoring point; behind it nothing is ever read again.
+    #[test]
+    fn a_point_that_authors_nothing_hands_the_serve_to_a_later_point() {
+        let root = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../curriculum");
+        let (graph, _findings) =
+            cadus_core::curriculum::load_curriculum(&root).expect("the tree loads");
+        let points = graph
+            .knowledge_points(graph.idx_of("characteristic-polynomial").expect("the topic loads"));
+        let authors = |kp: &str| kp == "kp1"; // kp2 is zero-exemplar, kp3 has none here either
+        let unblocked = |kp: &str| kp == "kp2"; // its teach page completes it
+        let chosen = choose_serving_kp(points, "kp2", authors, unblocked)
+            .expect("the teach-page pick exists");
+        assert_eq!(chosen.id.as_str(), "kp2", "the fallback never retreats to kp1");
+        let none = choose_serving_kp(points, "kp2", authors, |_kp| false);
+        assert!(none.is_none(), "nothing authors and nothing unblocks");
+    }
 
     #[test]
     fn fresh_practice_is_first_only_without_prior_exposure() {

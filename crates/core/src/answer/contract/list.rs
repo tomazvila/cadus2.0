@@ -48,7 +48,7 @@ fn values(text: &str) -> Result<Vec<&str>, Undecidable> {
 /// reads as one grouped number (`1,205`) the way the whole-answer rule of the V4
 /// table reads it. A following digit or a space makes it a separator again, so
 /// `1, 205` stays two members.
-fn values_grouped(text: &str) -> Result<Vec<&str>, Undecidable> {
+pub(super) fn values_grouped(text: &str) -> Result<Vec<&str>, Undecidable> {
     values_with(text, true)
 }
 

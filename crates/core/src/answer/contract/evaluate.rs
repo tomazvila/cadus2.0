@@ -18,6 +18,86 @@ pub fn check_contract(expected: &str, learner: &str, contract: AnswerContract) -
     }
 }
 
+/// Note 115 (owner defect): a comma-separated list key compares as a multiset
+/// unless `ordered: true`. The served row of the defect carried no contract, so
+/// the key reached the `Exact` path and the bare comma list graded as one
+/// ordered expression. The rule lives here: when the authored answer is a bare
+/// comma list (or the same list in braces, which carry no meaning), the learner
+/// side splits into members and the members match as a multiset. Spacing, a
+/// trailing period, braces and the word `and` as a separator carry no meaning;
+/// a parenthesized or bracketed learner side keeps the ordered tuple reading of
+/// the 1.0 spec, and every other pair falls through unchanged.
+fn bare_list_multiset(expected: &Canon, text: &str, learner: &str) -> Option<Outcome> {
+    // The Oxford comma of a spoken list ("1, 2, and 3") is the same separator.
+    let expected_text = unbraced(text).replace(", and ", " and ");
+    let expected_members = super::list::values_grouped(&expected_text).ok()?;
+    if expected_members.len() < 2 || !matches!(expected, Canon::Tuple(_) | Canon::Set(_)) {
+        return None;
+    }
+    let learner_side = learner.trim();
+    if learner_side.starts_with('(') || learner_side.starts_with('[') {
+        return None;
+    }
+    let learner_text = unbraced(learner_side).replace(", and ", " and ");
+    let learner_members = super::list::values_grouped(&learner_text)
+        .ok()?
+        .into_iter()
+        .map(|member| member.strip_suffix('.').unwrap_or(member))
+        .collect::<Vec<_>>();
+    let mut unused = vec![true; learner_members.len()];
+    let mut undecidable = None;
+    for expected_member in expected_members {
+        let expected_member = expected_member.strip_suffix('.').unwrap_or(expected_member);
+        let mut matched = false;
+        for (at, learner_member) in learner_members.iter().enumerate() {
+            if !unused[at] {
+                continue;
+            }
+            match check_contract(expected_member, learner_member, AnswerContract::Exact) {
+                Outcome::Decided(verdict) if verdict.correct => {
+                    unused[at] = false;
+                    matched = true;
+                    break;
+                }
+                Outcome::Undecidable(reason) => {
+                    undecidable.get_or_insert(reason);
+                }
+                Outcome::Decided(_) => {}
+            }
+        }
+        if !matched {
+            return Some(match undecidable {
+                Some(reason) => Outcome::Undecidable(reason),
+                None => decided(false),
+            });
+        }
+    }
+    // A multiset and not a sub-multiset: an extra learner member is wrong. A
+    // member that no exact value can grade at all keeps its refusal.
+    let mut extra = false;
+    for (at, learner_member) in learner_members.iter().enumerate() {
+        if unused[at] {
+            extra = true;
+            if let Outcome::Undecidable(reason) =
+                check_contract("0", learner_member, AnswerContract::Exact)
+            {
+                return Some(Outcome::Undecidable(reason));
+            }
+        }
+    }
+    Some(decided(!extra))
+}
+
+/// The spelling of one side without the outermost brace pair.
+fn unbraced(text: &str) -> &str {
+    let trimmed = text.trim();
+    trimmed
+        .strip_prefix('{')
+        .and_then(|inner| inner.strip_suffix('}'))
+        .unwrap_or(trimmed)
+        .trim()
+}
+
 fn grade(expected: &Canon, text: &str, learner: &str, contract: &AnswerContract) -> Outcome {
     if let Err(reason) = bounded(learner) {
         return Outcome::Undecidable(reason);
@@ -26,6 +106,11 @@ fn grade(expected: &Canon, text: &str, learner: &str, contract: &AnswerContract)
         return decided(false);
     }
     if let Some(outcome) = structured_contract(expected, text, learner, contract) {
+        return outcome;
+    }
+    if matches!(contract, AnswerContract::Exact)
+        && let Some(outcome) = bare_list_multiset(expected, text, learner)
+    {
         return outcome;
     }
     let required_form = !matches!(contract, AnswerContract::RequiredForm { form } if !super::form::accepts(*form, learner));
