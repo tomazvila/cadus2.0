@@ -2413,12 +2413,34 @@ topics:
         name: "Well-ordering and induction"
         key_prerequisites: [mathematical-induction]
         exemplars:
-          - problem: 'Prove that the well-ordering principle implies mathematical induction.'
-            answer: 'A least counterexample would contradict the base case or the inductive step.'
-            solution_sketch: 'Assume $P(1)$ and $P(n) \to P(n+1)$ but $P$ fails somewhere. Let $C = \{n \ge 1 : \neg P(n)\}$, nonempty, so it has a least element $m$ by well-ordering. Since $P(1)$ holds, $m > 1$, so $P(m - 1)$ holds by minimality; the step gives $P(m)$, a contradiction. Hence $P(n)$ holds for all $n$. $\square$'
-          - problem: 'Prove that mathematical induction implies the well-ordering principle: any nonempty $S \subseteq \mathbb{N}$ has a least element.'
-            answer: 'If $S$ had no least element, induction shows its complement is all of $\mathbb{N}$.'
-            solution_sketch: 'Suppose $S \subseteq \mathbb{N}$ has no least element. Let $P(n)$ be "no $k \le n$ lies in $S$". $P(0)$ holds (else $0$ is least in $S$). If $P(n)$ holds and $n + 1 \in S$, then $n+1$ would be least, contradiction; so $P(n+1)$ holds. By induction $P(n)$ for all $n$, so $S = \varnothing$. Contrapositively, a nonempty $S$ has a least element. $\square$'
+          - problem: "An induction proof starts at n = 4: P(4) is true, and P(n) implies P(n+1) for every n >= 4. Let C be the set of integers n >= 4 with P(n) false, and suppose C is nonempty. By the well-ordering principle C has a least element m. Find the smallest value m can take."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full setup: C = {n >= 4 : P(n) is false} is nonempty, so the well-ordering principle gives a least element m. Since P(4) is true, 4 is not in C, so m > 4 by minimality. The least integer greater than 4 is 5, so the smallest value m can take is 5."
+          - problem: "Let S = {7, 12, 30}. To prove that S has a least element by induction, let P(n) be the statement that no element of S is less than or equal to n. Find the least n for which P(n) is false."
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full statement: P(n) says that none of 7, 12, 30 is at most n. For every n from 0 up to 6, all elements of S are still greater than n, so P(n) holds. At n = 7 the element 7 of S is at most 7, so P(7) is false. The least n with P(n) false is 7."
+          - problem: "The set S = {n >= 1 : n^2 > 30} is a nonempty set of natural numbers, so the well-ordering principle guarantees it has a least element. Find that least element."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The set S is nonempty because 6^2 = 36 > 30, so well-ordering applies. Test values upward from 1: for n = 5, n^2 = 25, which is not greater than 30, so 5 is not in S. For n = 6, n^2 = 36 > 30. The least element of S is 6."
+          - problem: "A student claims that 3^n > n^3 for every n >= 1. A well-ordering refutation forms the set of counterexamples and takes its least element. Find the smallest n >= 1 for which the claim is false."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The set of counterexamples is the set of n >= 1 with 3^n not greater than n^3, and it is nonempty, so it has a least element by well-ordering. Check upward: n = 1 gives 3 > 1, true. n = 2 gives 9 > 8, true. n = 3 gives 27 > 27, which is false. The smallest counterexample is 3."
+          - problem: "The set T = {n >= 0 : 2n^2 + 3 > 100} is a nonempty set of natural numbers, so the well-ordering principle gives it a least element. Find that least element."
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: the full object is T = {n >= 0 : 2n^2 + 3 greater than 100}. Step 2: T is nonempty, since n = 7 gives 2 times 49 plus 3, which is 101, so the well-ordering principle guarantees that T has a least element. Step 3: test values upward: n = 5 gives 53 and n = 6 gives 75, both at most 100, so neither lies in T. The least element of T is 7."
+          - problem: "To show that a nonempty set of integers with an integer upper bound has a greatest element, one applies the well-ordering principle to the set of negated elements. For S = {-3, 2, 8, 15}, let T = {-s : s is in S}. Find the least element of T."
+            answer: "-15"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Form T by negating each element of S: T = {3, -2, -8, -15}. T is a nonempty set of integers, so by the well-ordering principle it has a least element. Compare the elements: 3 > -2 > -8 > -15. The least element of T is -15."
+          - problem: "Write the full proof: the well-ordering principle implies mathematical induction. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Setup: assume P(1) holds and that P(n) implies P(n+1) for all n >= 1, and suppose, for contradiction, that P fails somewhere. Step 1: form the set C = {n >= 1 : P(n) is false}; by the supposition C is a nonempty set of natural numbers. Step 2: by the well-ordering principle, C has a least element m, the least failure point. Step 3: P(1) holds by the base case, so 1 is not in C, hence m > 1 and m - 1 >= 1. Step 4: by minimality of m, the integer m - 1 is not in C, so P(m-1) holds. Step 5: apply the inductive step to m - 1: P(m-1) implies P(m), so m is not in C, contradicting the choice of m. Conclusion: C is empty, so P(n) holds for every n >= 1, which is mathematical induction."
         constraints: "connect the two principles via a least failure point"
     diagnostic_exemplar:
       problem: 'Use the well-ordering principle to prove that every nonempty set $S$ of integers that is bounded above has a greatest element.'
