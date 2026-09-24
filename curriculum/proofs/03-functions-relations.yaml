@@ -2499,12 +2499,34 @@ topics:
         name: "Basic applications"
         key_prerequisites: [functions-injective-surjective]
         exemplars:
-          - problem: 'Prove: among any $13$ people, two share a birth month.'
-            answer: '$13$ pigeons, $12$ holes.'
-            solution_sketch: 'Map each person to their birth month, $f : \{13 \text{ people}\} \to \{12 \text{ months}\}$. Since $13 > 12$, $f$ is not injective, so two people map to the same month. $\square$'
-          - problem: 'Prove: among any $8$ integers, two leave the same remainder on division by $7$.'
-            answer: '$8$ integers, $7$ remainders.'
-            solution_sketch: 'Map each integer to its remainder mod $7$, in $\{0, \dots, 6\}$ ($7$ holes). With $8$ integers and $7$ remainders, two share a remainder. $\square$'
+          - problem: "Each person in a group is mapped to the state of the United States in which they were born, one of 50 possible states. How many people must be in the group to force two of them to share a birth state?"
+            answer: "51"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: the map that sends each person to their birth state, into a set of 50 possible states. Step 1, identify the holes: the holes are the 50 states. Step 2, apply the pigeonhole principle: more pigeons than holes forces two pigeons in one hole, so the smallest forcing number is 50 + 1. The answer is 51."
+          - problem: "A set of integers is to be mapped, each integer to its remainder on division by 5. How many integers must the set contain to force two of them to leave the same remainder?"
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: the map that sends each integer to its remainder on division by 5. Step 1, identify the holes: the possible remainders are 0, 1, 2, 3 and 4, so there are 5 holes. Step 2, apply the pigeonhole principle: more pigeons than holes forces a repeated remainder, so the smallest number of integers is 5 + 1. The answer is 6."
+          - problem: "A proof is planned for this claim: among any 40 people, two have the same one of the 8 blood types. The proof maps each person to their blood type. Give the number of pigeons and the number of holes."
+            answer: "pigeons = 40; holes = 8"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "pigeons"}, {"contract": {"kind": "exact"}, "name": "holes"}]}
+            solution_sketch: "Full object: the map from the set of 40 people to the set of 8 blood types, each person sent to their own type. Step 1, identify the pigeons: the pigeons are the 40 people. Step 2, identify the holes: the holes are the 8 blood types. Since 40 is greater than 8, the pigeonhole principle gives two people with the same type. The answer is pigeons = 40; holes = 8."
+          - problem: "A proof maps each of 12 people to one of the 12 birth months and concludes that two people share a month. Determine whether the conclusion is correct for 12 people, and give the smallest number of extra people that makes it correct."
+            answer: "verdict = invalid; extra = 1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["valid"], ["invalid"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "extra"}]}
+            solution_sketch: "Full object: the map from the 12 people to the 12 birth months, each person sent to their own month. Step 1, count pigeons and holes: there are 12 pigeons and 12 holes, and the pigeonhole principle needs more pigeons than holes, so the option valid is the error of applying the principle at equality; the map can send one person to each month. Step 2, find the forcing count: 13 people against 12 holes forces two people into one month, so one extra person makes the conclusion correct. The answer is verdict = invalid; extra = 1."
+          - problem: "Exam scores are whole numbers from 0 to 100, and the proof maps each student to their score. How many students must take the exam to force two of them to have the same score?"
+            answer: "102"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: the map that sends each student to their score, a whole number from 0 to 100. Step 1, identify the holes: the scores 0 through 100 give 101 holes. Step 2, apply the pigeonhole principle: more pigeons than holes forces two students with the same score, so the smallest number of students is 101 + 1. The answer is 102."
+          - problem: "Numbers are chosen from the whole numbers 1 through 20, and the proof uses as holes the pairs of numbers that sum to 21. How many numbers must be chosen to force two of them to sum to 21?"
+            answer: "11"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: the 10 holes are the pairs (1,20), (2,19), (3,18) and so on down to (10,11), each summing to 21, and every number from 1 to 20 lies in exactly one pair. Step 1, identify the pigeons: the pigeons are the chosen numbers. Step 2, apply the pigeonhole principle: more pigeons than pairs forces two chosen numbers into the same pair, and those two sum to 21; with only 10 numbers one can take one from each pair and avoid it. The answer is 11."
+          - problem: "Write the full proof: in any group of 21 people, two were born on the same day of the week. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1, identify pigeons and holes: the pigeons are the 21 people and the holes are the 7 days of the week. Step 2, define the map: let f send each person to the day of the week on which they were born, a map from a set of 21 pigeons into a set of 7 holes. Step 3, apply the pigeonhole principle: if f were injective, the 21 people would need 21 distinct days, but only 7 days exist, so f is not injective. Step 4, conclude: two people are sent to the same day of the week, so in any group of 21 people two were born on the same day of the week."
         constraints: "identify pigeons and holes, then apply the principle"
       - id: kp3
         name: "Generalized pigeonhole"
