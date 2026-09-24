@@ -1969,14 +1969,30 @@ topics:
         name: "Transitivity via composition"
         key_prerequisites: [relations-properties]
         exemplars:
-          - problem: 'Using the criterion "$R$ is transitive iff $R \circ R \subseteq R$", decide whether $R = \{(1,2), (2,3), (1,3)\}$ on $\{1,2,3\}$ is transitive.'
-            answer_contract: {kind: none}
-            answer: 'Yes: $R \circ R = \{(1,3)\} \subseteq R$.'
-            solution_sketch: 'The only chain is $(1,2)$ then $(2,3)$, giving $(1,3)$, which is in $R$; so $R \circ R \subseteq R$.'
-          - problem: 'Using the same criterion, show $R = \{(1,2), (2,1)\}$ on $\{1, 2\}$ is not transitive.'
-            answer_contract: {kind: none}
-            answer: '$R \circ R = \{(1,1), (2,2)\} \not\subseteq R$.'
-            solution_sketch: '$(1,2)$ chains with $(2,1)$ to $(1,1) \notin R$; the criterion fails, matching the direct check.'
+          - problem: "Let R = {(1,2),(2,2),(2,3),(1,3)} be a relation on the set {1,2,3}. Use the criterion: R is transitive exactly when R∘R is a subset of R. Compute R∘R by chaining pairs, test the containment, and state which verdict fits R; also give the number of ordered pairs of R∘R that are not in R."
+            answer: "verdict = transitive; missing = 0"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["transitive"], ["nontransitive"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "missing"}]}
+            solution_sketch: "Composition rule: a pair (a,b) of R chained with a pair (b,c) of R produces (a,c). The full object: (1,2) with (2,2) and with (2,3) gives (1,2) and (1,3); (2,2) with (2,2) and with (2,3) gives (2,2) and (2,3). So R∘R = {(1,2),(1,3),(2,2),(2,3)}. Containment test: each of these four pairs already lies in R, so R∘R ⊆ R holds; the wrong verdict nontransitive would ignore that no composed pair is missing. Answer: verdict = transitive; missing = 0."
+          - problem: "On the set {1,2} let R = {(1,2),(2,1)} be the relation that swaps the two elements. Use the criterion: R is transitive exactly when R∘R is a subset of R. Compute R∘R, test the containment, and state which verdict fits R; also give the number of ordered pairs of R∘R that are absent from R."
+            answer: "verdict = nontransitive; missing = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["transitive"], ["nontransitive"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "missing"}]}
+            solution_sketch: "Composition rule: chain (1,2) with (2,1) to get (1,1), and chain (2,1) with (1,2) to get (2,2). So R∘R = {(1,1),(2,2)}. Containment test: neither (1,1) nor (2,2) belongs to R, so R∘R ⊆ R fails and the criterion flags R; the wrong verdict transitive would overlook both missing loops. Answer: verdict = nontransitive; missing = 2."
+          - problem: "Let R = {(1,2),(2,3),(3,1)} be a relation on the set {1,2,3}; it cycles 1 to 2 to 3 to 1. Use the criterion: R is transitive exactly when R∘R is a subset of R. Compute R∘R, test the containment, and state which verdict fits R; also give the number of ordered pairs of R∘R that are not in R."
+            answer: "verdict = nontransitive; missing = 3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["transitive"], ["nontransitive"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "missing"}]}
+            solution_sketch: "Composition rule: (1,2) chained with (2,3) gives (1,3); (2,3) with (3,1) gives (2,1); (3,1) with (1,2) gives (3,2). So R∘R = {(1,3),(2,1),(3,2)}. Containment test: none of these three pairs lies in R, so R∘R ⊆ R fails and the criterion flags R; the wrong verdict transitive would ignore that every composed pair is missing. Answer: verdict = nontransitive; missing = 3."
+          - problem: "Let R = {(1,2),(2,4),(1,4),(4,4)} be a relation on the set {1,2,4}. Use the criterion: R is transitive exactly when R∘R is a subset of R. Compute R∘R, test the containment, and state which verdict fits R; also give the number of ordered pairs that make up R∘R."
+            answer: "verdict = transitive; size = 3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["transitive"], ["nontransitive"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "size"}]}
+            solution_sketch: "Composition rule: (1,2) with (2,4) gives (1,4); (2,4) with (4,4) gives (2,4); (1,4) with (4,4) gives (1,4); (4,4) with (4,4) gives (4,4). So R∘R = {(1,4),(2,4),(4,4)}, which has three ordered pairs. Containment test: all three pairs lie in R, so R∘R ⊆ R holds and the criterion passes R; the wrong verdict nontransitive would miss that no pair is absent. Answer: verdict = transitive; size = 3."
+          - problem: "Let R = {(1,2),(2,3),(3,3)} be a relation on the set {1,2,3}. Use the criterion: R is transitive exactly when R∘R is a subset of R. Compute R∘R by chaining pairs and test whether every pair of R∘R belongs to R. Find the number of ordered pairs that belong to R∘R but not to R."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Composition rule: (1,2) with (2,3) gives (1,3); (2,3) with (3,3) gives (2,3); (3,3) with (3,3) gives (3,3). So R∘R = {(1,3),(2,3),(3,3)}. Containment test: (2,3) and (3,3) lie in R, but (1,3) does not, so the containment fails at exactly one pair. Answer: 1."
+          - problem: "On the set {1,2,3,4} let R be the strict less-than relation: aRb exactly when a is smaller than b. Use the criterion: R is transitive exactly when R∘R is a subset of R. Compute R∘R by chaining pairs of R, and test whether every pair of R∘R belongs to R. Find the number of ordered pairs that lie in R∘R but not in R."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "List R first: R = {(1,2),(1,3),(1,4),(2,3),(2,4),(3,4)}. Composition rule: (1,2) with (2,3) and with (2,4) gives (1,3) and (1,4); (1,3) with (3,4) gives (1,4); (2,3) with (3,4) gives (2,4). So R∘R = {(1,3),(1,4),(2,4)}. Containment test: all three composed pairs already lie in R, since a smaller than b and b smaller than c force a smaller than c, so nothing is missing. Answer: 0."
         constraints: "decide transitivity by computing $R \\circ R$ and testing containment"
     diagnostic_exemplar:
       problem: 'On $\{1, 2, 3\}$ let $R = \{(1,2), (2,2), (2,3)\}$. Compute $R \circ R$, and use the criterion "$R$ is transitive iff $R \circ R \subseteq R$" to decide whether $R$ is transitive.'
