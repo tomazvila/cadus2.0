@@ -386,14 +386,26 @@ topics:
         exemplars:
           - problem: 'Given $\lim_{x \to 3^-} f(x) = 4$ and $\lim_{x \to 3^+} f(x) = 4$, find $\lim_{x \to 3} f(x)$.'
             answer: "4"
-          - problem: 'Given $\lim_{x \to 1^-} g(x) = 2$ and $\lim_{x \to 1^+} g(x) = 6$, find $\lim_{x \to 1} g(x)$.'
+          - problem: "Suppose that $\\lim_{x \\to 1^-} g(x) = 2$ and $\\lim_{x \\to 1^+} g(x) = 6$. Determine $\\lim_{x \\to 1} g(x)$."
             answer: "DNE"
-            answer_contract: {kind: none}
-            solution_sketch: 'The one-sided limits differ ($2 \neq 6$), so the two-sided limit does not exist.'
-          - problem: 'Evaluate $\lim_{x \to 0} \frac{|x|}{x}$.'
-            answer: "DNE"
-            answer_contract: {kind: none}
-            solution_sketch: 'The left limit is $-1$ and the right limit is $1$; they disagree, so the two-sided limit does not exist.'
+            answer_contract: {"kind": "label", "options": [["DNE"], ["2"], ["6"], ["8"]]}
+            solution_sketch: "A two-sided limit exists exactly when its one-sided limits agree (existence criterion). Here the left-hand limit is 2 and the right-hand limit is 6. The option 2 reports only the left-hand limit, the option 6 reports only the right-hand limit, and the option 8 comes from wrongly adding the two one-sided limits. Since 2 and 6 disagree, the two-sided limit is DNE."
+          - problem: "Let $f(x) = \\frac{3|x-5|}{x-5}$. Find the left-hand limit and the right-hand limit of $f$ as $x$ approaches 5, and give them as left and right."
+            answer: "left = -3; right = 3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "left"}, {"contract": {"kind": "exact"}, "name": "right"}]}
+            solution_sketch: "Full object: $f(x) = \\frac{3|x-5|}{x-5}$ near $x = 5$. For $x > 5$ the inside of the absolute value is positive, so $|x-5| = x-5$ and $f(x) = 3$ (sign analysis on each side); the right-hand limit is 3. For $x < 5$ the inside is negative, so $|x-5| = -(x-5)$ and $f(x) = -3$; the left-hand limit is -3. Since -3 does not equal 3, the sides disagree and the two-sided limit does not exist. The one-sided limits are left = -3; right = 3."
+          - problem: "Let $f(x) = 3x + 1$ for $x < 2$ and $f(x) = x + 5$ for $x \\ge 2$. Find $\\lim_{x \\to 2} f(x)$."
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: $f(x) = 3x + 1$ on the left of 2 and $f(x) = x + 5$ on the right. Left-hand limit: $3(2) + 1 = 7$ (one-sided evaluation of a piecewise branch). Right-hand limit: $2 + 5 = 7$. The one-sided limits agree, so by the existence criterion the two-sided limit is 7."
+          - problem: "A table lists $f(x)$ near $x = 2$: from the left $f(1.9) = 4.7$, $f(1.99) = 4.97$, $f(1.999) = 4.997$, and from the right $f(2.1) = 4.8$, $f(2.01) = 4.98$, $f(2.001) = 4.998$. Based on the table, find $\\lim_{x \\to 2} f(x)$."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full table: left of 2 the outputs 4.7, 4.97, 4.997 climb toward 5, and right of 2 the outputs 4.8, 4.98, 4.998 also climb toward 5 (numerical limit reading). The left-hand limit and the right-hand limit both appear to equal 5. Since the one-sided limits agree, the two-sided limit is 5."
+          - problem: "Let $f(x) = 2x + k$ for $x < 1$ and $f(x) = 4x - 3$ for $x \\ge 1$. Find the value of $k$ for which $\\lim_{x \\to 1} f(x)$ exists."
+            answer: "-1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: $f(x) = 2x + k$ on the left of 1 and $f(x) = 4x - 3$ on the right. Right-hand limit: $4(1) - 3 = 1$. Left-hand limit: $2(1) + k = 2 + k$. The existence criterion says the two-sided limit exists only when the one-sided limits agree, so $2 + k = 1$ and $k = -1$. The value of $k$ is -1."
         constraints: "compare given or computed one-sided limits; answer a number, or DNE when the sides disagree"
     diagnostic_exemplar:
       problem: 'Evaluate $\lim_{x \to 7} \frac{|x - 7|}{x - 7}$, or answer DNE if it does not exist.'
