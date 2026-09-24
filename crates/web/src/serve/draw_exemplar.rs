@@ -40,12 +40,19 @@ pub(in crate::serve) fn exemplar_rows(graph: &Curriculum, target: &Target) -> Ve
             Vec::new()
         }
     };
-    // The teach-only exemplars join the batch as self-check rows, so a
-    // knowledge point whose whole list is teach-only serves its worked
-    // solutions instead of dying on `pool_unavailable` (tier 2).
-    rows.extend(kp.exemplars.iter().filter_map(|exemplar| {
-        self_check_contract(exemplar, kind).map(|contract| self_check_row(exemplar, contract))
-    }));
+    // The self-check rows join the batch ONLY for an ALL-`none` knowledge point
+    // (note 101 b): the learner views the worked solution and the completion
+    // counts. A knowledge point WITH verdict-capable exemplars keeps its graded
+    // drills — a teach-only exemplar of a mixed list serves nothing (the standing
+    // graded path covers the point; a self-check row beside a drill would never
+    // be a verdict item). A zero-exemplar knowledge point completes with its
+    // teach page (no draw), which the readiness gate carries.
+    let all_none = !kp.exemplars.is_empty() && rows.is_empty();
+    if all_none {
+        rows.extend(kp.exemplars.iter().filter_map(|exemplar| {
+            self_check_contract(exemplar, kind).map(|contract| self_check_row(exemplar, contract))
+        }));
+    }
     rows
 }
 
@@ -270,5 +277,61 @@ mod tests {
         row.source = Source::Template;
         assert_eq!(answer_of(&graph, &target, &row).answer_contract, None);
         assert_eq!(captured.answer_contract, Some(AnswerContract::Exact));
+    }
+
+    /// Note 101 (b), branch 2: the self-check rows join the batch ONLY for an
+    /// ALL-`none` knowledge point. A MIXED list (a decidable exemplar beside a
+    /// teach-only one) serves its graded drills; the teach-only member serves
+    /// nothing (never a self-check row beside a drill).
+    #[test]
+    fn a_mixed_knowledge_point_builds_no_self_check_row_and_an_all_none_one_does() {
+        // The mixed topic: kp1 carries one decidable and one `none` exemplar.
+        let mixed = serde_json::json!({
+            "id": "mixed101",
+            "name": "mixed101",
+            "difficulty": 0.3,
+            "answer_kind": "numeric",
+            "expected_time_secs": 30,
+            "knowledge_points": [{"id": "kp1", "name": "kp1", "exemplars": [
+                {"problem": "Give 7.", "answer": "7"},
+                {"problem": "Why does the sign flip?", "answer": "the worked solution",
+                 "answer_contract": {"kind": "none"}}
+            ]}]
+        });
+        let graph = arena(&[mixed]);
+        let rows = exemplar_rows(&graph, &target("mixed101", "kp1"));
+        assert!(!rows.is_empty(), "the decidable exemplar authors a graded row");
+        assert!(
+            rows.iter().all(|row| row
+                .expected_answer
+                .answer_contract
+                .as_ref()
+                .is_none_or(|contract| !matches!(contract, AnswerContract::None))),
+            "a mixed list serves no self-check row: {rows:?}"
+        );
+
+        // The all-none topic: every exemplar is teach-only, and each becomes a
+        // self-check row (the tier-2 completion).
+        let all_none = serde_json::json!({
+            "id": "prose101",
+            "name": "prose101",
+            "difficulty": 0.3,
+            "answer_kind": "numeric",
+            "expected_time_secs": 30,
+            "knowledge_points": [{"id": "kp1", "name": "kp1", "exemplars": [
+                {"problem": "Why the sign flips?", "answer": "the worked solution",
+                 "answer_contract": {"kind": "none"}},
+                {"problem": "Why the terms cancel?", "answer": "the worked solution",
+                 "answer_contract": {"kind": "none"}}
+            ]}]
+        });
+        let graph = arena(&[all_none]);
+        let rows = exemplar_rows(&graph, &target("prose101", "kp1"));
+        assert_eq!(rows.len(), 2, "each all-none exemplar is a self-check row");
+        assert!(rows.iter().all(|row| row
+            .expected_answer
+            .answer_contract
+            .as_ref()
+            .is_some_and(|contract| matches!(contract, AnswerContract::None))));
     }
 }

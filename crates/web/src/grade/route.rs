@@ -157,7 +157,7 @@ pub async fn answer(request: TaskWithBody) -> Result<Json<Value>, ApiError> {
 
     // Step 7. The lesson advance, its close event, and its remediation.
     let moved =
-        advance_and_fold(&state, content, &mut tx, user_id, &task, &recorded, &events).await?;
+        advance_and_fold(&state, content, &mut tx, user_id, &task, &recorded, &events, &readiness).await?;
 
     // Step 8 and step 10: move the task on, draw the next problem, write the row.
     if task.task_type == TaskType::Quiz && !recorded.feedback_practice {
@@ -257,6 +257,7 @@ async fn advance_and_fold(
     task: &Task,
     recorded: &Attempt,
     events: &[EventRow],
+    readiness: &ReadinessSet,
 ) -> Result<Advance, ApiError> {
     let now = recorded.ts;
     let history = store(state, load_session_view(tx, user_id)).await?;
@@ -274,6 +275,7 @@ async fn advance_and_fold(
             recorded,
             events,
             &history,
+            Some(readiness),
         )
     };
     for extra in moved.events() {

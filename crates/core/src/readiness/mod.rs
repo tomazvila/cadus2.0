@@ -249,12 +249,20 @@ pub struct Readiness {
 }
 
 impl Readiness {
-    /// Whether a LESSON serves this knowledge point (D-F5).
+    /// Whether a LESSON serves this knowledge point (D-F5, note 101 b).
     ///
-    /// A lesson teaches, practices, and then assesses, so it needs all three.
+    /// A lesson teaches, practices, and then assesses, so it needs all three —
+    /// EXCEPT that a short practice pool (`PRACTICE_MINIMUM` unmet) and a missing
+    /// held-out item are practice/assessment pool rules: a knowledge point with
+    /// decidable exemplars serves those exemplars in the lesson. The staging
+    /// probes of 2026-09-24 (note 103 b) locked every topic whose KPs each carry
+    /// exactly two exemplars — the plan dropped the topic and the walk stopped.
     #[must_use]
-    pub const fn serves_lesson(&self) -> bool {
-        self.teachable && self.practicable && self.assessable
+    pub fn serves_lesson(&self) -> bool {
+        let serves_from_exemplars = self.decidable_exemplars > 0;
+        self.teachable
+            && (self.practicable || serves_from_exemplars)
+            && (self.assessable || serves_from_exemplars)
     }
 
     /// Whether a REVIEW or a QUIZ serves this knowledge point (D-F5).
@@ -301,14 +309,77 @@ impl Readiness {
     /// costs the learner a hint, and it never withholds the lesson.
     #[must_use]
     pub fn lesson_blockers(&self) -> Vec<Blocker> {
+        let serves_from_exemplars = self.decidable_exemplars > 0;
         self.blockers()
             .into_iter()
-            .filter(|blocker| {
-                matches!(
-                    blocker,
-                    Blocker::Teachable | Blocker::Practicable | Blocker::Assessable
-                )
+            .filter(|blocker| match blocker {
+                // A short practice pool and a missing held-out item never stop a
+                // knowledge point that has decidable exemplars (note 101 b: the
+                // exemplars serve first; the plan gate and the serve skip read
+                // the same rule).
+                Blocker::Practicable | Blocker::Assessable if serves_from_exemplars => false,
+                blocker => {
+                    matches!(
+                        blocker,
+                        Blocker::Teachable | Blocker::Practicable | Blocker::Assessable
+                    )
+                }
             })
             .collect()
+    }
+}
+
+#[cfg(test)]
+mod lesson_gate_tests {
+    use super::{Blocker, Readiness};
+
+    fn row(teachable: bool, practicable: bool, assessable: bool, decidable: usize) -> Readiness {
+        Readiness {
+            kp_key: "test/kp1".to_owned(),
+            teachable,
+            practicable,
+            assessable,
+            hints: true,
+            solutions: true,
+            prerequisites_ok: true,
+            visual_needed: false,
+            visual_present: false,
+            broken_visuals: 0,
+            decidable_exemplars: decidable,
+            authored_exemplars: decidable,
+            approved_templates: 0,
+            practice_items: decidable,
+        }
+    }
+
+    /// A readiness row of the shape the staging probe of 2026-09-24 (note 103 b)
+    /// locked: two decidable exemplars, one fact short of `PRACTICE_MINIMUM`, no
+    /// held-out item. The lesson serves it; the plan keeps the topic.
+    fn two_exemplars() -> Readiness {
+        row(true, false, false, 2)
+    }
+
+    #[test]
+    fn two_decidable_exemplars_serve_the_lesson_despite_the_short_pool() {
+        let row = two_exemplars();
+        assert!(row.serves_lesson(), "exemplars first (note 101 b)");
+        assert!(row.lesson_blockers().is_empty());
+    }
+
+    #[test]
+    fn a_point_with_no_decidable_exemplar_keeps_the_pool_blockers() {
+        let row = row(true, false, false, 0);
+        assert!(!row.serves_lesson());
+        assert_eq!(
+            row.lesson_blockers(),
+            vec![Blocker::Practicable, Blocker::Assessable]
+        );
+    }
+
+    #[test]
+    fn an_unteachable_point_stays_blocked_whatever_its_pool() {
+        let row = row(false, true, true, 2);
+        assert!(!row.serves_lesson());
+        assert_eq!(row.lesson_blockers(), vec![Blocker::Teachable]);
     }
 }

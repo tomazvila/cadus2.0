@@ -71,9 +71,10 @@ pub(super) fn advance(
     attempt: &Attempt,
     prior: &[EventRow],
     history: &SessionView,
+    readiness: Option<&ReadinessSet>,
 ) -> Advance {
     if !decided_lesson_attempt(attempt) {
-        return Advance::carry_on();
+        return self_check_completion(graph, cfg, now, attempt, prior, readiness);
     }
     if failed_lesson_practice(attempt, prior) {
         return Advance {
@@ -134,6 +135,60 @@ pub(super) fn advance(
         };
     }
     lesson_passed(cfg, now, attempt, prior, kp_ids.len())
+}
+
+/// The note-84 (b) completion arm: the teach-only knowledge point.
+///
+/// An ALL-`none` knowledge point serves self-check rows whose every attempt
+/// grades UNGRADED, so the pass rule never sees evidence for it (the staging
+/// walk of 2026-09-24: topic `limits-graphical-numerical`, kp3 — 3,720
+/// ungraded attempts, zero `lesson_result`). When the learner answered the
+/// self-check row of the CURRENT point unassisted and the readiness set shows
+/// every point at or before it either passed or teach-only, the point
+/// completes with this attempt: a later point advances, the last one closes
+/// the lesson. Never runs for a decided attempt.
+fn self_check_completion(
+    graph: &Curriculum,
+    cfg: &Config,
+    now: Timestamp,
+    attempt: &Attempt,
+    prior: &[EventRow],
+    readiness: Option<&ReadinessSet>,
+) -> Advance {
+    let Some(readiness) = readiness else {
+        return Advance::carry_on();
+    };
+    if attempt.task_type != TaskType::Lesson || attempt.assisted || attempt.feedback_practice {
+        return Advance::carry_on();
+    }
+    let Some(idx) = graph.idx_of(attempt.topic.as_str()) else {
+        return Advance::carry_on();
+    };
+    let points = graph.knowledge_points(idx);
+    let Some(slug) = attempt.kp.as_ref() else {
+        return Advance::carry_on();
+    };
+    let Some(at) = points.iter().position(|point| point.id.as_str() == slug.as_str()) else {
+        return Advance::carry_on();
+    };
+    // The teach-only check: the CURRENT point serves no verdict item at all,
+    // and the points before it already passed (their evidence is in the log).
+    let teach_only = readiness
+        .topic(attempt.topic.as_str())
+        .iter()
+        .filter(|row| row.kp_key.ends_with(slug.as_str()))
+        .all(|row| row.decidable_exemplars == 0);
+    if !teach_only {
+        return Advance::carry_on();
+    }
+    if at + 1 < points.len() {
+        return Advance {
+            status: STATUS_KP_ADVANCE,
+            next_kp: points.get(at + 1).map(|point| point.id.as_str().to_owned()),
+            ..Advance::carry_on()
+        };
+    }
+    lesson_passed(cfg, now, attempt, prior, points.len())
 }
 
 /// A lesson advances on independent checker decisions.
@@ -355,6 +410,73 @@ mod tests {
         };
         assert!(task_moved_on(&mut row, TaskType::Lesson, &closed));
         assert!(row.done);
+    }
+
+    /// The topic-23 stall (probe 2, 2026-09-24): a `characteristic-polynomial`
+    /// kp1 lesson attempt that the deterministic checker graded correct, with a
+    /// graded same-task kp1 attempt before it, must pass the `2consec|3of4` rule
+    /// and advance the lesson to kp2. The staging probe recorded 4,000 correct
+    /// kp1 answers over 50 task restarts and never closed one lesson.
+    #[test]
+    fn the_topic23_lesson_passes_on_two_correct_kp1_answers() {
+        let root = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../curriculum");
+        let (graph, _findings) =
+            cadus_core::curriculum::load_curriculum(&root).expect("the tree loads");
+        let cfg = Config::default();
+        let raw = include_str!("../../tests/fixtures/tp23-attempt.json");
+        let attempt: Attempt = serde_json::from_str(raw).expect("the fixture decodes");
+        let mut prior_body = attempt.clone();
+        prior_body.attempt_id = "s_2026-09-24i-lesson-characteristic-polynomial-0".to_owned();
+        prior_body.ts = attempt.ts;
+        let prior = vec![
+            EventRow {
+                seq: 1,
+                event: Event::Attempt(prior_body),
+            },
+        ];
+        let moved = advance(&graph, &cfg, attempt.ts, &attempt, &prior, &SessionView::default(), Some(&ReadinessSet::default()));
+        assert_eq!(moved.status, STATUS_KP_ADVANCE, "two correct kp1 answers pass 2consec");
+        assert_eq!(moved.next_kp.as_deref(), Some("kp2"));
+    }
+
+    /// The topic-23/kp3 self-check stall (staging, 2026-09-24): a lesson whose
+    /// LAST knowledge point is all-`kind: none` serves self-check rows whose
+    /// every attempt grades UNGRADED; the pass rule never sees evidence. The
+    /// note-84 (b) completion arm must close the lesson on the ungraded
+    /// self-check answer of the last point.
+    #[test]
+    fn the_teach_only_last_point_completes_on_its_self_check_answer() {
+        let root = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../curriculum");
+        let (graph, _findings) =
+            cadus_core::curriculum::load_curriculum(&root).expect("the tree loads");
+        let cfg = Config::default();
+        // The shape of the staging learner: an ungraded self-check attempt on
+        // the last knowledge point, unassisted, no feedback practice.
+        let raw = include_str!("../../tests/fixtures/tp23-attempt.json");
+        let mut attempt: Attempt = serde_json::from_str(raw).expect("the fixture decodes");
+        attempt.topic = cadus_core::event::Slug::new("limits-graphical-numerical").expect("a slug");
+        attempt.kp = Some(cadus_core::event::Slug::new("kp3").expect("a slug"));
+        attempt.outcome = cadus_core::event::AttemptOutcome::Ungraded {
+            reason: "the item has no deterministic answer contract".to_owned(),
+        };
+        attempt.correct = false;
+        // The readiness of the real tree: kp3 is the all-`none` point.
+        let index = cadus_core::readiness::ReadinessIndex::build(&graph);
+        let ready = index.resolve(&cadus_core::readiness::EmptyContent);
+        let moved = advance(
+            &graph,
+            &cfg,
+            attempt.ts,
+            &attempt,
+            &[],
+            &SessionView::default(),
+            Some(&ready),
+        );
+        assert_eq!(
+            moved.status,
+            STATUS_TASK_PASSED,
+            "the teach-only last point completes the lesson on its self-check answer"
+        );
     }
 
     /// A repeat failure with no key prerequisite queues nothing; every other

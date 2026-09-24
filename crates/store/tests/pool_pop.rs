@@ -380,3 +380,24 @@ async fn an_empty_batch_inserts_nothing() {
     })
     .await;
 }
+
+/// Note 101 (the walker serve): the pool pop keeps the A6 order — the pair's
+/// unclaimed rows serve (the worker's template pre-fill included), the authored
+/// exemplars insert on a MISS, and the rotation re-serves an exemplar only when
+/// everything is claimed. The serve-side kp-skip (note 101 b) is what prefers
+/// an authoring point; the pool itself never filters by source.
+#[tokio::test(flavor = "multi_thread", worker_threads = 4)]
+async fn the_pool_pop_serves_the_pre_filled_rows_before_the_exemplar_refill() {
+    TestDb::with(|db| async move {
+        let user = db.seed_user("a6-order@example.test").await;
+        // The worker pre-filled the pair with template rows.
+        seed_pool_rows(&db.admin, user, KP, 2).await;
+        // The first pop claims a TEMPLATE row (the pre-fill serves first).
+        let claimed = claim_fresh(&db.app, user, KP).await;
+        assert_eq!(claimed.row.source, Source::Template);
+        // The second pop claims the other template row (nothing filters them).
+        let claimed = claim_fresh(&db.app, user, KP).await;
+        assert_eq!(claimed.row.source, Source::Template);
+    })
+    .await;
+}
