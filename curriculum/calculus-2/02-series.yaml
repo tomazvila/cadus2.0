@@ -1089,18 +1089,30 @@ topics:
         name: Ratio test with factorials and exponentials
         key_prerequisites: [geometric-series-convergence, factorial-notation]
         exemplars:
-          - problem: 'Use the ratio test on $\sum_{n=1}^{\infty} \frac{2^n}{n!}$.'
-            answer: 'converges ($L = \lim \frac{2}{n+1} = 0 < 1$)'
-            answer_contract: {kind: none}
-            solution_sketch: '$\frac{a_{n+1}}{a_n} = \frac{2^{n+1} n!}{(n+1)!\, 2^n} = \frac{2}{n+1} \to 0$.'
-          - problem: 'Use the ratio test on $\sum_{n=1}^{\infty} \frac{n!}{10^n}$.'
-            answer: 'diverges ($L = \lim \frac{n+1}{10} = \infty$)'
-            answer_contract: {kind: none}
-            solution_sketch: 'Factorials beat exponentials; the ratio $\frac{n+1}{10}$ grows without bound.'
-          - problem: 'Use the ratio test on $\sum_{n=1}^{\infty} \frac{n}{2^n}$.'
-            answer: 'converges ($L = \frac{1}{2} < 1$)'
-            answer_contract: {kind: none}
-            solution_sketch: '$\frac{a_{n+1}}{a_n} = \frac{n+1}{2n} \to \frac{1}{2}$.'
+          - problem: "A series has terms $a_n = \\frac{5^n}{n!}$ for $n \\geq 1$. The ratio test studies $L = \\lim_{n \\to \\infty} \\frac{a_{n+1}}{a_n}$ and compares $L$ with $1$. State the verdict and the limit $L$ in the form verdict = ...; L = ..."
+            answer: "verdict = converges; L = 0"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["converges"], ["diverges"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "L"}]}
+            solution_sketch: "Ratio test: form the full ratio $\\frac{a_{n+1}}{a_n} = \\frac{5^{n+1}}{(n+1)!} \\cdot \\frac{n!}{5^n}$. The factorial rule $(n+1)! = (n+1)\\,n!$ cancels $n!$, leaving $\\frac{5}{n+1}$. Take the limit: $L = 0$, and $0 < 1$, so the series converges by the ratio test. The answer is verdict = converges; L = 0."
+          - problem: "A series has terms $a_n = n \\cdot 2^n$ starting at $n = 1$. Let $L = \\lim_{n \\to \\infty} \\frac{a_{n+1}}{a_n}$ be the ratio-test limit, compared with $1$. Determine the verdict and $L$ in the form verdict = ...; L = ..."
+            answer: "verdict = diverges; L = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["converges"], ["diverges"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "L"}]}
+            solution_sketch: "Ratio test: form the full ratio $\\frac{a_{n+1}}{a_n} = \\frac{(n+1)\\,2^{n+1}}{n \\cdot 2^n}$. The exponent rule $2^{n+1} = 2 \\cdot 2^n$ leaves $\\frac{2(n+1)}{n}$. Limit of a rational expression: $L = \\lim \\frac{2(n+1)}{n} = 2$. Since $2 > 1$, the terms grow and the series diverges by the ratio test. The answer is verdict = diverges; L = 2."
+          - problem: "Consider the series $\\sum_{n=1}^{\\infty} \\frac{n^4}{3^n}$. The ratio test computes $L = \\lim_{n \\to \\infty} \\frac{a_{n+1}}{a_n}$ and checks $L$ against $1$. Find $L$ as a fraction."
+            answer: "1/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Ratio test: form $\\frac{a_{n+1}}{a_n} = \\frac{(n+1)^4}{3^{n+1}} \\cdot \\frac{3^n}{n^4}$. The exponent rule $3^{n+1} = 3 \\cdot 3^n$ gives $\\frac{1}{3}\\left(\\frac{n+1}{n}\\right)^4$. The limit of $\\left(\\frac{n+1}{n}\\right)^4$ is $1$, so $L = \\frac{1}{3}$, and $\\frac{1}{3} < 1$ so the series converges. The answer is 1/3."
+          - problem: "A series has terms $a_n = \\frac{n^2}{c^n}$. Its ratio-test limit is $L = \\lim_{n \\to \\infty} \\frac{a_{n+1}}{a_n}$, which the test compares with $1$; here $L = \\frac{1}{6}$. Find the base $c$."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Form the ratio: $\\frac{a_{n+1}}{a_n} = \\frac{(n+1)^2}{c^{n+1}} \\cdot \\frac{c^n}{n^2} = \\frac{1}{c}\\left(\\frac{n+1}{n}\\right)^2$ by the exponent rule $c^{n+1} = c \\cdot c^n$. Take the limit: $L = \\frac{1}{c} \\cdot 1 = \\frac{1}{c}$. Set $\\frac{1}{c} = \\frac{1}{6}$ and solve: $c = 6$. The answer is 6."
+          - problem: "Take the series with terms $a_n = \\frac{(2n)!}{3^n (n!)^2}$ for $n \\geq 1$. Form the ratio-test limit $L = \\lim_{n \\to \\infty} \\frac{a_{n+1}}{a_n}$ and compare it with $1$. Give the verdict and $L$ in the form verdict = ...; L = ..."
+            answer: "verdict = diverges; L = 4/3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["converges"], ["diverges"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "L"}]}
+            solution_sketch: "Ratio test: form $\\frac{a_{n+1}}{a_n} = \\frac{(2n+2)!}{3^{n+1}((n+1)!)^2} \\cdot \\frac{3^n (n!)^2}{(2n)!}$. Simplify the factorials with $(2n+2)! = (2n+2)(2n+1)(2n)!$ and $(n+1)! = (n+1)\\,n!$, giving $\\frac{(2n+2)(2n+1)}{3(n+1)^2}$. Since $2n+2 = 2(n+1)$, this is $\\frac{2(2n+1)}{3(n+1)} \\to \\frac{4}{3}$. Because $\\frac{4}{3} > 1$, the series diverges by the ratio test. The answer is verdict = diverges; L = 4/3."
+          - problem: "For the series $\\sum_{n=1}^{\\infty} \\frac{\\sqrt{n}}{2^n}$, the ratio test uses $L = \\lim_{n \\to \\infty} \\frac{a_{n+1}}{a_n}$ and compares $L$ with $1$. Find $L$ as a fraction."
+            answer: "1/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Ratio test: form $\\frac{a_{n+1}}{a_n} = \\frac{\\sqrt{n+1}}{2^{n+1}} \\cdot \\frac{2^n}{\\sqrt{n}} = \\frac{1}{2}\\sqrt{\\frac{n+1}{n}}$ using the exponent rule $2^{n+1} = 2 \\cdot 2^n$. The limit of $\\sqrt{\\frac{n+1}{n}}$ is $1$, so $L = \\frac{1}{2}$. Since $\\frac{1}{2} < 1$, the series converges by the ratio test. The answer is 1/2."
         constraints: "terms built from n!, c^n, and powers of n; always state L and compare to 1"
       - id: kp2
         name: Simplifying the ratio
