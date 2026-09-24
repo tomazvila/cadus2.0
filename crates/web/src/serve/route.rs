@@ -302,7 +302,9 @@ pub(crate) async fn install_next(
     // Note 84 (b): the plan's START point may lack practice while a LATER point of the
     // topic serves. The pool skips the points that serve nothing (one line each — they
     // complete with their teach page, never a 409 to the learner) and serves the first
-    // point that can.
+    // point that can. The CHOICE persists: `current_kp` carries the serving point so the
+    // KP sequence advances and the next serve continues where this one is (note 93 a —
+    // the 91 finding: without the write the lesson served kp1 forever).
     if !ReadinessGate::lesson_blockers(readiness, &target.serve, &target.kp).is_empty() {
         if let Some(idx) = graph.idx_of(&target.serve) {
             for point in graph.knowledge_points(idx) {
@@ -311,6 +313,7 @@ pub(crate) async fn install_next(
                 {
                     target.kp = point.id.as_str().to_owned();
                     target.key = cadus_core::pool::kp_key(&target.serve, point.id.as_str());
+                    progress_for(scratch, task, graph).current_kp = Some(target.kp.clone());
                     break;
                 }
                 tracing::info!(
