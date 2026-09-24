@@ -9,7 +9,7 @@ use cadus_core::learner::LearnerModel;
 use cadus_core::readiness::{Blocker, ReadinessSet};
 use cadus_core::selector::{
     BlockedTask, SeededSampler, SessionContext, SessionPlan, Task, compose_session,
-    is_course_complete,
+    gap_fill_chain_for_stack, is_course_complete, resolve_gap_fill_stack,
 };
 use cadus_store::state::SessionView;
 use serde_json::{Value, json};
@@ -99,6 +99,47 @@ pub async fn session_plan(req: Ready) -> Reply {
 /// arena, and it writes nothing. Trap W3 makes that load-bearing for the plan
 /// route. It reads NO event row: the six maps it needs are the cached
 /// [`SessionView`] of the same `through_seq` as `model` (F15, F18).
+/// The serving course and the cross-course gap fill of one composition
+/// (PEDAGOGY 8, `selector.py:186-395`).
+///
+/// The enrolled course stays the RETURN course (`gap_return_to`); the stack
+/// descends when the enrolled course's frontier cannot serve because
+/// lower-course prerequisite topics are unknown, and the plan then serves the
+/// chain's lessons until every blocker is known. Without this the wall of the
+/// 2026-09-24 staging walks: linear-algebra consumes prerequisite topics of
+/// precalculus, geometry, proofs and calculus-1 that the mastery floor never
+/// credits, the course-restricted frontier empties, and the plan goes empty
+/// with 38 topics still unpassed.
+fn gap_context(
+    content: &Content,
+    model: &LearnerModel,
+    enrolled: Option<&str>,
+) -> (Option<String>, Option<BTreeSet<String>>) {
+    let stack = resolve_gap_fill_stack(
+        &model.topics,
+        &content.curriculum,
+        &content.cfg,
+        0,
+        enrolled,
+    );
+    let (tip, parents) = match stack.split_last() {
+        Some(split) if !split.1.is_empty() => split,
+        _ => return (enrolled.map(str::to_owned), None),
+    };
+    let Some(chain) = gap_fill_chain_for_stack(&model.topics, &content.curriculum, &stack, None)
+    else {
+        return (enrolled.map(str::to_owned), None);
+    };
+    let mut names = BTreeSet::new();
+    for idx in chain.indices() {
+        names.insert(content.curriculum.id_of(idx).to_owned());
+    }
+    if names.is_empty() {
+        return (enrolled.map(str::to_owned), None);
+    }
+    (Some(tip.as_str().to_owned()), Some(names))
+}
+
 pub(crate) fn compose_plan(
     content: &Content,
     view: &SessionView,
@@ -107,13 +148,15 @@ pub(crate) fn compose_plan(
     now: Timestamp,
     readiness: &ReadinessSet,
 ) -> SessionPlan {
-    let course = view.enrollment_stack.last().map(String::as_str);
+    let enrolled = view.enrollment_stack.last().map(String::as_str);
+    let (serving_course, gap_chain) = gap_context(content, model, enrolled);
+    let course = serving_course.as_deref();
     let days = view.study_days();
     let closed = &view.closed_task_ids;
     let no_test_prep: BTreeSet<String> = BTreeSet::new();
     let mut sampler = SeededSampler::new(session_seed(session));
 
-    let ctx = SessionContext::default()
+    let mut ctx = SessionContext::default()
         .with_session_id(session)
         .with_course(course)
         .with_pending_remediation(&model.pending_remediation)
@@ -128,6 +171,10 @@ pub(crate) fn compose_plan(
         // f19-retention: the delayed probe of D-F11. The state is the fold's, so
         // the schedule reads the probes that already ran and never repeats one.
         .with_retention(Some(&model.retention));
+    if let Some(chain) = &gap_chain {
+        ctx.gap_fill_chain = Some(chain);
+        ctx.gap_return_to = enrolled;
+    }
     let mut plan = compose_session(
         &model.topics,
         &content.curriculum,
@@ -209,4 +256,136 @@ fn trim_task(task: &Task, graph: &Curriculum, scratch: &WebState) -> Value {
         "integrated_assessment": task.integrated_assessment_of.is_some(),
         "progress": {"answered": answered, "done": done},
     })
+}
+
+#[cfg(test)]
+mod gap_tests {
+    use super::*;
+    use std::collections::BTreeMap;
+    use cadus_core::config::Config;
+    use crate::state::Content;
+    use cadus_core::curriculum::{Curriculum, load_curriculum};
+    use cadus_core::event::{TaskType, Timestamp, TopicStatus};
+    use cadus_core::learner::TopicState;
+    use cadus_core::selector::{is_course_complete, known_set};
+    use cadus_store::state::SessionView;
+
+    /// The learner of the 2026-09-24 staging walk at its stop: 37 passed
+    /// linear-algebra topics, the mastery floor of foundations credited, every
+    /// other topic untouched. The enrolled course's frontier is empty and 38
+    /// topics stand unpassed — the plan composed empty (the walk's stop line).
+    fn walker_model(graph: &Curriculum) -> LearnerModel {
+        let passed = [
+            "augmented-matrix-representation",
+            "component-form-of-vectors",
+            "back-substitution-triangular-systems",
+            "vector-arithmetic",
+            "elementary-row-operations",
+            "computing-dot-products",
+            "echelon-form-recognition",
+            "linear-combinations-of-vectors",
+            "matrix-addition-scalar-multiplication",
+            "vector-norms-unit-vectors",
+            "computing-matrix-vector-products",
+            "transpose-of-a-matrix",
+            "row-reduction-echelon-forms",
+            "consistency-of-linear-systems",
+            "matrix-multiplication",
+            "matrix-vector-equations",
+            "polynomial-curve-fitting",
+            "identity-zero-matrices",
+            "solution-sets-free-variables",
+            "matrix-operations",
+            "homogeneous-systems",
+            "diagonal-triangular-matrices",
+            "linear-systems-applications",
+            "matrix-inverse-2x2-formula",
+            "determinants-2x2",
+            "transpose-symmetric-matrices",
+            "matrix-powers",
+            "determinants",
+            "matrix-inverses",
+            "characteristic-polynomial",
+            "finding-eigenvectors",
+            "elementary-matrices-invertibility",
+            "determinant-properties-cramers-rule",
+            "matrix-equations",
+            "determinants-area-volume",
+            "eigenvalues-eigenvectors",
+            "determinants-row-reduction",
+        ];
+        let mut topics: BTreeMap<String, TopicState> = BTreeMap::new();
+        for index in 0..graph.topic_count() {
+            let idx = cadus_core::curriculum::TopicIdx::from_u32(index as u32);
+            let id = graph.id_of(idx);
+            let status = match graph.course_of(idx) {
+                "linear-algebra" if passed.contains(&id) => TopicStatus::Learning,
+                "foundations" => TopicStatus::Floor,
+                _ => continue,
+            };
+            topics.insert(id.to_owned(), TopicState { status, ..TopicState::default() });
+        }
+        LearnerModel { topics, ..LearnerModel::default() }
+    }
+
+    fn content_of(graph: Curriculum) -> Content {
+        Content::new(graph)
+    }
+
+    #[test]
+    fn the_empty_frontier_descends_into_the_gap_course_and_serves_its_lessons() {
+        let root = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../curriculum");
+        let (curriculum, _findings) = load_curriculum(&root).expect("the tree loads");
+        let model = walker_model(&curriculum);
+        assert!(
+            !is_course_complete(&model.topics, &curriculum, &Config::default(),
+                Some("linear-algebra"), None),
+            "topics stand unpassed"
+        );
+        // The enrolled course's frontier is empty (the wall): no unpassed
+        // linear-algebra topic has every prerequisite known.
+        let frontier = cadus_core::selector::frontier(
+            &curriculum,
+            &known_set(&model.topics, &curriculum),
+        );
+        let in_course = frontier.indices().filter(|idx| {
+            curriculum.course_of(*idx) == "linear-algebra"
+        }).count();
+        assert_eq!(in_course, 0, "the frontier of the enrolled course is empty");
+        let (serving, chain) = gap_context(&content_of(curriculum.clone()), &model, Some("linear-algebra"));
+        let curriculum = &curriculum;
+        let tip = serving.expect("the stack descends into a lower course");
+        assert_ne!(tip.as_str(), "linear-algebra");
+        let chain = chain.expect("the chain names the blocking topics");
+        assert!(!chain.is_empty());
+        // The composed plan serves the gap course's lessons.
+        let view = SessionView {
+            enrollment_stack: vec!["linear-algebra".to_owned()],
+            ..SessionView::default()
+        };
+        let plan = compose_plan(
+            &content_of(curriculum.clone()),
+            &view,
+            &model,
+            "s_2026-09-24test",
+            Timestamp::from_micros(1_784_031_400_000_000),
+            &ReadinessSet::default(),
+        );
+        let outside: Vec<String> = plan
+            .tasks
+            .iter()
+            .filter(|task| task.task_type == TaskType::Lesson)
+            .filter_map(|task| task.topic.clone())
+            .filter(|topic| {
+                curriculum
+                    .idx_of(topic)
+                    .is_some_and(|idx| curriculum.course_of(idx) != "linear-algebra")
+            })
+            .collect();
+        assert!(
+            !outside.is_empty(),
+            "the gap fill serves lessons where the old compose served none"
+        );
+    }
+
 }
