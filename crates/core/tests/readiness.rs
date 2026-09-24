@@ -288,3 +288,77 @@ fn the_blocker_wire_values_round_trip() {
     assert_eq!(names, cadus_core::readiness::BLOCKERS);
     assert_eq!(Blocker::Teachable.to_string(), "teachable");
 }
+
+// ---- note 84 (b): the teach-only knowledge points do not lock a topic ----
+
+/// An exemplar with the explicit `kind: none` contract: no verdict by policy.
+fn none_exemplar(problem: &str, answer: &str) -> Exemplar {
+    Exemplar {
+        answer_contract: Some(cadus_core::answer::AnswerContract::None),
+        problem: problem.to_owned(),
+        answer: answer.to_owned(),
+        solution_sketch: Some(format!("the worked solution of {problem}")),
+    }
+}
+
+#[test]
+fn an_all_none_knowledge_point_serves_self_checks_and_completes() {
+    let mut prose = plain_topic("prose", &[]);
+    prose.knowledge_points = vec![kp_with(
+        "kp1",
+        vec![none_exemplar("why the sign flips", "the worked solution"),
+             none_exemplar("why the terms cancel", "the worked solution")],
+    )];
+    let index = ReadinessIndex::build(&graph(vec![prose]));
+    let mut content = stocked(0);
+    content.insert("prose/kp1", KIND_TEACH, 1);
+    content.insert("prose/kp1", KIND_HINT_LADDER, 1);
+    let set = index.resolve(&content);
+    let point = set.get("prose/kp1").expect("the fixture names it");
+    assert_eq!(point.decidable_exemplars, 0);
+    assert_eq!(point.authored_exemplars, 2);
+    assert!(point.practicable && point.assessable);
+    assert!(point.serves_lesson() && point.lesson_blockers().is_empty());
+}
+
+#[test]
+fn a_zero_exemplar_knowledge_point_completes_with_its_teach_page() {
+    let mut empty = plain_topic("empty", &[]);
+    empty.knowledge_points = vec![kp_with("kp1", Vec::new())];
+    let index = ReadinessIndex::build(&graph(vec![empty]));
+    let mut content = stocked(0);
+    content.insert("empty/kp1", KIND_TEACH, 1);
+    content.insert("empty/kp1", KIND_HINT_LADDER, 1);
+    let set = index.resolve(&content);
+    let point = set.get("empty/kp1").expect("the fixture names it");
+    assert_eq!(point.authored_exemplars, 0);
+    assert!(point.practicable && point.assessable);
+    assert!(point.serves_lesson() && point.lesson_blockers().is_empty());
+}
+
+#[test]
+fn the_topic_serves_lesson_when_any_point_serves() {
+    // A topic whose start point has two decidable items (too thin to serve) but a
+    // later all-none point: the plan serves the topic (note 84 b) because one point
+    // serves the lesson.
+    let mut mixed_topic = plain_topic("thin", &[]);
+    mixed_topic.knowledge_points = vec![
+        kp_with("kp1", vec![exemplar("5 + 5", "10", true), exemplar("6 + 6", "12", true)]),
+        kp_with("kp2", vec![
+            none_exemplar("why", "the worked solution"),
+            none_exemplar("why again", "the worked solution"),
+        ]),
+    ];
+    let index = ReadinessIndex::build(&graph(vec![mixed_topic]));
+    let mut content = stocked(0);
+    for key in ["thin/kp1", "thin/kp2"] {
+        content.insert(key, KIND_TEACH, 1);
+        content.insert(key, KIND_HINT_LADDER, 1);
+    }
+    let set = index.resolve(&content);
+    // `thin/kp1` is blocked; `thin/kp2` (all-none) serves under the 84 b rule.
+    // A topic the set does not name serves as it did before the rule.
+    assert!(!set.get("thin/kp1").unwrap().serves_lesson());
+    assert!(set.get("thin/kp2").unwrap().serves_lesson());
+    assert!(set.topic_serves_lesson("thin"));
+}

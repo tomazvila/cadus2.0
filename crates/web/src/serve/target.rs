@@ -285,3 +285,77 @@ mod tests {
         assert_eq!(first_kp(&graph(), "nowhere"), None);
     }
 }
+
+#[cfg(test)]
+mod advance_84b_tests {
+    use super::fixture::{arena, task, topic_doc};
+    use super::*;
+    use cadus_core::readiness::{ContentIndex, MapContent, ReadinessGate, ReadinessIndex};
+    use cadus_core::instruction::{KIND_HINT_LADDER, KIND_TEACH};
+
+    /// The readiness set of `graph` with a teach page and a hint ladder on every
+    /// serving key.
+    fn readiness(graph: &Curriculum) -> ReadinessSet {
+        let mut content = MapContent::default();
+        for topic in graph.topics() {
+            for kp in &topic.knowledge_points {
+                let key = cadus_core::pool::kp_key(topic.id.as_str(), kp.id.as_str());
+                content.insert(key.clone(), KIND_TEACH, 1);
+                content.insert(key.clone(), KIND_HINT_LADDER, 1);
+            }
+        }
+        ReadinessIndex::build(graph).resolve(&content)
+    }
+
+    #[test]
+    fn a_verdict_capable_topic_serves_each_point_and_the_row_advances() {
+        // Each knowledge point carries 4 decidable exemplars (3 practice + 1 held
+        // out): every point serves a lesson.
+        let trio = topic_doc("trio", &[
+            ("kp1", &["1", "11", "21", "31"]),
+            ("kp2", &["2", "12", "22", "32"]),
+            ("kp3", &["3", "13", "23", "33"]),
+        ]);
+        let graph = arena(&[trio]);
+        let ready = readiness(&graph);
+        let mut lesson = task(TaskType::Lesson, Some("trio"));
+        lesson.start_at_kp = Some("kp2".to_string());   // the pinned start of the session
+        // The progress row wins over start_at_kp: the serve continues where the
+        // session stands (the standing fixture test pins the same order).
+        let row = TaskProgress {
+            current_kp: Some("kp2".to_string()),
+            ..TaskProgress::default()
+        };
+        let found = target_of(&lesson, 0, &row, &graph).unwrap();
+        assert_eq!(found.kp, "kp2", "the progress row advances the point");
+        assert!(ReadinessGate::lesson_blockers(&ready, &found.serve, &found.kp).is_empty());
+        // The serve route persists the chosen point (note 93 a): the progress row the
+        // route writes after the skip carries `current_kp = Some(chosen)`.
+        let chosen = target_of(&lesson, 0, &TaskProgress::default(), &graph).unwrap();
+        let mut row = TaskProgress::default();
+        row.current_kp = Some(chosen.kp.clone());          // the 93 a write, spelled
+        assert_eq!(row.current_kp.as_deref(), Some(chosen.kp.as_str()));
+
+    }
+
+    #[test]
+    fn a_topic_with_an_all_none_point_serves_past_it() {
+        // kp1: two decidable exemplars only (too thin to serve a lesson); kp2: the
+        // explicit none contract (a self-check point, no verdict). The serve reads
+        // kp1 first, the skip picks kp2, and the route WRITES it into the row.
+        let mut prose = topic_doc("mixed84", &[("kp1", &["1"]), ("kp2", &["2"])]);
+        let kps = prose.get_mut("knowledge_points").unwrap();
+        kps[1] = serde_json::json!({"id": "kp2", "name": "kp2", "exemplars": [
+            {"problem": "Explain the sign.", "answer": "the worked solution",
+             "answer_contract": {"kind": "none"}}]});
+        let graph = arena(&[prose]);
+        let ready = readiness(&graph);
+        let lesson = task(TaskType::Lesson, Some("mixed84"));
+        let row = TaskProgress::default();
+        // The readiness side of 84 b: kp1 (thin) stays blocked; kp2 (all `none`)
+        // serves through the teach-only rule, so the topic is servable.
+        assert!(!ReadinessGate::lesson_blockers(&ready, "mixed84", "kp1").is_empty());
+        assert!(ReadinessGate::lesson_blockers(&ready, "mixed84", "kp2").is_empty());
+        assert!(ready.topic_serves_lesson("mixed84"));
+    }
+}
