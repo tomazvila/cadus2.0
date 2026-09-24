@@ -421,12 +421,34 @@ topics:
         name: "The domain matters"
         key_prerequisites: [functions-formal-definition]
         exemplars:
-          - problem: 'Prove $f : [0, \infty) \to \mathbb{R}$, $f(x) = x^2$, is injective.'
-            answer: '$a^2 = b^2$ with $a, b \ge 0$ forces $a = b$.'
-            solution_sketch: 'Suppose $a^2 = b^2$: then $(a-b)(a+b) = 0$. If $a + b = 0$ with $a, b \ge 0$ then $a = b = 0$; otherwise $a = b$. Either way $a = b$. $\square$'
-          - problem: 'Prove $f : (-1, \infty) \to \mathbb{R}$, $f(x) = \dfrac{x}{x+1}$, is injective.'
-            answer: 'Cross-multiply $a(b+1) = b(a+1)$ to get $a = b$.'
-            solution_sketch: 'Suppose $\tfrac{a}{a+1} = \tfrac{b}{b+1}$ (denominators nonzero on the domain). Cross-multiplying: $ab + a = ab + b$, so $a = b$. $\square$'
+          - problem: "To prove that $f : [3, \\infty) \\to \\mathbb{R}$, $f(x) = x^2 + 7$, is injective (the same rule on all of $\\mathbb{R}$ is not), suppose $f(a) = f(b)$ for $a, b$ in the domain and write $a^2 - b^2 = (a - b)\\,q(a, b)$. Give $q(a, b)$."
+            answer: "a+b"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Definition of injectivity: suppose $f(a) = f(b)$, that is $a^2 + 7 = b^2 + 7$. Subtract $7$ from both sides: $a^2 - b^2 = 0$. Difference of squares: $a^2 - b^2 = (a - b)(a + b)$. Comparing with $(a - b)\\,q(a, b)$ gives $q(a,b) = a+b$, and this factor cannot be $0$ for $a, b \\ge 3$, so $a = b$ follows. The answer is a+b."
+          - problem: "To prove that $f : [1, \\infty) \\to \\mathbb{R}$, $f(x) = x + 1/x$, is injective (the rule is not injective on its full natural domain), take $a, b \\ge 1$ and write $f(a) - f(b) = (a - b)\\,k(a, b)$. Give $k(a, b)$."
+            answer: "(ab-1)/(ab)"
+            answer_contract: {"kind": "function", "vars": ["a", "b"]}
+            solution_sketch: "Write the difference with a common denominator: $f(a) - f(b) = (a + 1/a) - (b + 1/b) = (a - b) + (b - a)/(ab)$. Combine over $ab$: $(a - b) - (a - b)/(ab) = (a - b)(ab - 1)/(ab)$. Reading off the factor of $(a - b)$ gives $k(a,b) = (ab-1)/(ab)$; for $a, b \\ge 1$ the case $ab = 1$ forces $a = b = 1$, and otherwise $a = b$ directly. The answer is (ab-1)/(ab)."
+          - problem: "The rule $g(x) = x^2 - 6x + 5$ is not injective on $\\mathbb{R}$, though it is injective on $[3, \\infty)$. Give the two real inputs $a < b$ with $g(a) = g(b) = 0$ as (a, b)."
+            answer: "(1, 5)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Solve $g(x) = 0$ by factoring the full quadratic: $x^2 - 6x + 5 = (x - 1)(x - 5)$, so the inputs are $x = 1$ and $x = 5$. The two distinct inputs $1$ and $5$ share the single output $0$, which is exactly the failure of injectivity on $\\mathbb{R}$; on $[3, \\infty)$ only $5$ remains. Ordered with the smaller first, the answer is (1, 5)."
+          - problem: "The rule $h(x) = x^2 - 8x$ is not injective on $\\mathbb{R}$, but it becomes injective on the half-line $[c, \\infty)$ for the right choice of $c$. Find the smallest number $c$ such that $h$ is injective on $[c, \\infty)$."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The parabola $h(x) = x^2 - 8x$ is symmetric about the line $x = 4$: the mirror inputs $t$ and $8 - t$ share one output. If $c < 4$, pick $t$ with $c \\le t < 4$; then $t$ and $8 - t$ are distinct points of $[c, \\infty)$ with equal outputs, so injectivity fails. On $[4, \\infty)$ the outputs strictly increase, so the smallest $c$ that works is 4."
+          - problem: "The rule $f(x) = 1/(x^2 + 1)$ is injective on $[0, \\infty)$ but not on all of $\\mathbb{R}$. How many real inputs $x$ satisfy $f(x) = 1/2$?"
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Set up the equation $1/(x^2 + 1) = 1/2$ and clear the denominators: $x^2 + 1 = 2$, so $x^2 = 1$. The real solutions are $x = 1$ and $x = -1$, two distinct inputs with the same output, which is exactly why the rule is not injective on $\\mathbb{R}$ while on $[0, \\infty)$ only one of them lies in the domain. The count is 2, so the answer is 2."
+          - problem: "Claim: $f : \\mathbb{R} \\to \\mathbb{R}$, $f(x) = x^2$, is injective. Step 1: suppose $f(a) = f(b)$, so $a^2 = b^2$. Step 2: factor, $(a - b)(a + b) = 0$. Step 3: a product is $0$ when a factor is $0$, so $a + b = 0$. Step 4: hence $a = -b$, and since $a$ and $b$ were arbitrary, $a = b$, so $f$ is injective. Which step is the first step that is not valid?"
+            answer: "Step 3"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 correctly sets up the definition of injectivity by supposing $f(a) = f(b)$. Step 2 is a correct factorization $a^2 - b^2 = (a - b)(a + b)$. Step 3 is the first invalid step: a product equal to $0$ only guarantees that at least one factor is $0$, not that $a + b = 0$; for instance $a = b = 1$ gives $a - b = 0$ while $a + b = 2$. Step 4 inherits this error, concluding $a = b$ from $a = -b$. The answer is Step 3."
+          - problem: "Write the full proof: $f : [2, \\infty) \\to \\mathbb{R}$, $f(x) = x^2 - 4x$, is injective, while the same rule on all of $\\mathbb{R}$ is not. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Part 1, injectivity on $[2, \\infty)$: suppose $f(a) = f(b)$ with $a, b \\ge 2$, so $a^2 - 4a = b^2 - 4b$. Rearranged: $a^2 - b^2 - 4(a - b) = 0$, and factored: $(a - b)(a + b - 4) = 0$. Since $a, b \\ge 2$, we get $a + b - 4 \\ge 0$, and $a + b - 4 = 0$ only when $a = b = 2$, which again gives $a = b$; in every case $a = b$, so $f$ is injective on $[2, \\infty)$. Part 2, failure on $\\mathbb{R}$: take $a = 0$ and $b = 4$; then $f(0) = 0 = f(4)$ while $0 \\ne 4$, so the same rule on all of $\\mathbb{R}$ is not injective. Conclusion: the domain, not the formula alone, decides injectivity."
         constraints: "restricted domains where injectivity holds though it fails on all of $\\mathbb{R}$"
     diagnostic_exemplar:
       problem: 'Prove that $f : [0, \infty) \to \mathbb{R}$, $f(x) = x^2 + 3$, is injective, and explain why the same rule on $\mathbb{R}$ is not.'
