@@ -1866,12 +1866,34 @@ topics:
         name: "Exponential divisibility"
         key_prerequisites: [induction-template]
         exemplars:
-          - problem: 'Prove: for all $n \ge 0$, $6 \mid (7^n - 1)$.'
-            answer: 'Base $n = 0$: $0$. Step: $7^{n+1} - 1 = 7(7^n - 1) + 6$.'
-            solution_sketch: 'Base: $7^0 - 1 = 0$, divisible by $6$. Step: assume $6 \mid (7^n - 1)$. Then $7^{n+1} - 1 = 7 \cdot 7^n - 1 = 7(7^n - 1) + 6$; both terms are divisible by $6$. $\square$'
-          - problem: 'Prove: for all $n \ge 0$, $4 \mid (5^n - 1)$.'
-            answer: 'Base $n = 0$: $0$. Step: $5^{n+1} - 1 = 5(5^n - 1) + 4$.'
-            solution_sketch: 'Base: $5^0 - 1 = 0$. Step: $5^{n+1} - 1 = 5(5^n - 1) + 4$; the first term is divisible by $4$ by hypothesis and so is $4$. $\square$'
+          - problem: "To prove 6 | (7^n - 1) by induction, write 7^(n+1) - 1 = 7(7^n - 1) + c. Give c."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full rewrite is 7^(n+1) - 1 = 7(7^n - 1) + c. Expand the right side: 7(7^n - 1) + c = 7^(n+1) - 7 + c. Compare with 7^(n+1) - 1, so -7 + c = -1. Solve: c = 6. The constant is 6."
+          - problem: "To prove 4 | (5^n - 1) by induction, write 5^(n+1) - 1 = 5(5^n - 1) + c. Give c."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full rewrite is 5^(n+1) - 1 = 5(5^n - 1) + c. Expand the right side: 5(5^n - 1) + c = 5^(n+1) - 5 + c. Compare with 5^(n+1) - 1, so -5 + c = -1. Solve: c = 4. The constant is 4."
+          - problem: "An induction proof shows that 11 | (12^n - 1) for every n >= 0. Give the value of the expression at n = 0."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Base case test: put n = 0 into 12^n - 1. This gives 12^0 - 1 = 1 - 1 = 0. Since 0 is a multiple of 11, the base case holds. The value is 0."
+          - problem: "Claim: 7 | (8^n - 1) for n >= 1. Step 1: for n = 1, 8 - 1 = 7. Step 2: assume 7 | (8^k - 1). Step 3: 8^(k+1) - 1 = 8(8^k - 1) + 8. Step 4: both terms are multiples of 7, so 7 | (8^(k+1) - 1). Which step is the first step that is not valid?"
+            answer: "Step 3"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "The full claim is 7 | (8^n - 1) for n >= 1. Step 1 is a correct base case: 8 - 1 = 7. Step 2 is the correct inductive hypothesis. Step 4 is not the first invalid step because it inherits the bad remainder from Step 3. Step 3 is false: 8^(k+1) - 1 = 8(8^k - 1) + 7, not + 8. The answer is Step 3."
+          - problem: "In the inductive step for 9 | (10^n - 1), the line 10^(k+1) - 1 = ? is missing. Select the line that is true and that shows the hypothesis."
+            answer: "10(10^k - 1) + 9"
+            answer_contract: {"kind": "label", "options": [["10(10^k - 1) + 9"], ["10(10^k - 1) + 10"], ["10(10^k - 1) - 9"], ["(10^k - 1) + 9"]]}
+            solution_sketch: "The full rewrite is 10^(k+1) - 1 = 10(10^k - 1) + 9. Multiply out: 10(10^k - 1) = 10^(k+1) - 10, so adding 9 gives 10^(k+1) - 1. The option + 10 forgets the -1. The option - 9 is a sign error. The option (10^k - 1) + 9 forgets the factor 10. The answer is 10(10^k - 1) + 9."
+          - problem: "A claim states that 3 | (2^n - 1) for all n >= 1. Test the first few values. Give the smallest n >= 1 for which the claim is false."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Test values: n = 1 gives 2^1 - 1 = 1, which is not a multiple of 3. n = 2 gives 2^2 - 1 = 3, a multiple of 3. So the first failure is n = 1. The smallest such n is 1."
+          - problem: "Write the full proof: for all n >= 0, 8 | (9^n - 1). Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Base case: for n = 0, 9^0 - 1 = 0, and 0 is divisible by 8. Inductive hypothesis: assume 8 | (9^k - 1) for some k >= 0. Inductive step: rewrite 9^(k+1) - 1 = 9(9^k - 1) + 8. The first term is divisible by 8 by the hypothesis; the second term is 8 itself, visibly divisible. Therefore the sum is divisible by 8. Conclusion: the statement holds for k + 1, so by induction 8 | (9^n - 1) for all n >= 0."
         constraints: "rewrite $a^{n+1} - 1$ as $a(a^n - 1) + (a - 1)$; both pieces visibly divisible"
       - id: kp3
         name: "Mixed exponential-linear divisibility"
