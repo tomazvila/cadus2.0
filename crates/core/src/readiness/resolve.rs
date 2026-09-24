@@ -30,15 +30,6 @@ pub trait ReadinessGate: fmt::Debug {
         let _ = topic_id;
         false
     }
-
-    /// Whether the knowledge point AUTHORS anything the serve draws (note 101 b):
-    /// verdict-capable exemplars, or an all-`none` list whose self-check rows
-    /// serve. A point that authors nothing completes with its teach page and
-    /// must not preempt a point that authors — its template pool (if any)
-    /// never serves the lesson.
-    fn authors_practice(&self, _topic_id: &str, _kp_id: &str) -> bool {
-        false
-    }
 }
 
 /// The readiness of every knowledge point of one curriculum, at one moment.
@@ -158,11 +149,6 @@ impl ReadinessGate for ReadinessSet {
                 .filter_map(|key| self.per_kp.get(key))
                 .any(Readiness::serves_lesson)
         })
-    }
-
-    fn authors_practice(&self, topic_id: &str, kp_id: &str) -> bool {
-        self.get(&kp_key(topic_id, kp_id))
-            .is_some_and(|readiness| readiness.authored_exemplars > 0)
     }
 }
 

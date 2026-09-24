@@ -305,41 +305,21 @@ pub(crate) async fn install_next(
     // point that can. The CHOICE persists: `current_kp` carries the serving point so the
     // KP sequence advances and the next serve continues where this one is (note 93 a —
     // the 91 finding: without the write the lesson served kp1 forever).
-    // Note 101 b: the choice AUTHORS first — a point with verdict-capable exemplars or
-    // an all-`none` list (self-check rows) preempts a zero-exemplar one, whose teach
-    // page completes it and whose template pool (if any) never serves the lesson.
-    let current_authors = ReadinessGate::authors_practice(readiness, &target.serve, &target.kp);
-    if !ReadinessGate::lesson_blockers(readiness, &target.serve, &target.kp).is_empty()
-        || !current_authors
-    {
+    if !ReadinessGate::lesson_blockers(readiness, &target.serve, &target.kp).is_empty() {
         if let Some(idx) = graph.idx_of(&target.serve) {
-            let points: &[cadus_core::curriculum::KnowledgePoint] = graph.knowledge_points(idx);
-            let serving = |point: &cadus_core::curriculum::KnowledgePoint| {
-                ReadinessGate::lesson_blockers(readiness, &target.serve, point.id.as_str())
+            for point in graph.knowledge_points(idx) {
+                if ReadinessGate::lesson_blockers(readiness, &target.serve, point.id.as_str())
                     .is_empty()
-                    && ReadinessGate::authors_practice(readiness, &target.serve, point.id.as_str())
-            };
-            let chosen = points.iter().find(|point| serving(point)).or_else(|| {
-                // No point authors anything: the standing note-84 b pick — the first
-                // point the readiness unblocks (its teach page completes it).
-                points.iter().find(|point| {
-                    ReadinessGate::lesson_blockers(readiness, &target.serve, point.id.as_str())
-                        .is_empty()
-                })
-            });
-            if let Some(point) = chosen {
-                if target.kp != point.id.as_str() {
+                {
                     target.kp = point.id.as_str().to_owned();
                     target.key = cadus_core::pool::kp_key(&target.serve, point.id.as_str());
                     progress_for(scratch, task, graph).current_kp = Some(target.kp.clone());
+                    break;
                 }
-            } else {
-                for point in points {
-                    tracing::info!(
-                        kp = %point.id,
-                        "serve: the point serves no practice; it completes with its teach page (note 84 b)"
-                    );
-                }
+                tracing::info!(
+                    kp = %point.id,
+                    "serve: the point serves no practice; it completes with its teach page (note 84 b)"
+                );
             }
         }
     }
