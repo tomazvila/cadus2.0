@@ -609,12 +609,34 @@ topics:
         key_prerequisites: [products-coproducts]
         constraints: "$\\mathbf{Set}$ is the positive case (exponential $=$ function set, currying $=$ the adjunction); a negative verdict must be settled by a left-adjoint preservation failure in an additive category such as $\\mathbf{Vect}_k$ or $\\mathbf{Ab}$, exhibiting $0\\times V\\cong V$ with $V$ nonzero."
         exemplars:
-          - problem: "Show $\\mathbf{Set}$ is cartesian closed and describe its exponential."
-            answer: "Terminal $\\{*\\}$, products $A\\times B$, exponential $B^A$ = function set; currying is the adjunction."
-            solution_sketch: "$\\mathbf{Set}$ has terminal object $\\{*\\}$, cartesian products, and exponentials $B^A=\\{$functions $A\\to B\\}$ with $\\mathrm{ev}(f,a)=f(a)$. Currying gives $\\mathrm{Hom}(X\\times A,B)\\cong\\mathrm{Hom}(X,B^A)$ naturally, so $-\\times A\\dashv(-)^A$ and $\\mathbf{Set}$ is a CCC. (Order-theoretic analogue: a bounded lattice is cartesian closed iff it is a Heyting algebra. A mere poset can be cartesian closed without being one — it need not have joins or a bottom.)"
-          - problem: "Give a category with finite products that is not cartesian closed, and justify it."
-            answer: "$\\mathbf{Vect}_k$: in a CCC $-\\times V$ preserves the initial object, but $0\\times V\\cong V\\neq 0$ for $V\\neq 0$."
-            solution_sketch: "In any CCC, $-\\times A$ has a right adjoint $(-)^A$, so it preserves all colimits, in particular the initial object: $0\\times A\\cong 0$. In $\\mathbf{Vect}_k$ finite products are direct sums and the initial object is the zero space $0$; but $0\\times V\\cong V$, which is not $\\cong 0$ when $V\\neq 0$. So $-\\times V$ fails to preserve the initial object, and $\\mathbf{Vect}_k$ is not cartesian closed (its closed structure is monoidal via $\\otimes$, not $\\times$)."
+          - problem: "In the category Set, the exponential B^A is the set of all functions from A to B. Take a set A with 2 elements and a set B with 7 elements. Find the number of elements of the exponential B^A."
+            answer: "49"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Exponential rule in Set: the exponential B^A is the full function set, so its size is the size of B raised to the size of A. Compute the power: 7^2 = 49. The answer is 49."
+          - problem: "In the category Vect_k of vector spaces over a field k, the zero space is the initial object and finite products are direct sums. In any cartesian closed category, the functor sending V to V × A must preserve the initial object, because it has a right adjoint. Take the space V = k^6. Give the dimension of the product 0 × V."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Product rule in Vect_k: the product 0 × V is the direct sum 0 ⊕ V, which is isomorphic to V = k^6, so its dimension is 6. Preservation test: a cartesian closed category would force 0 × V to be isomorphic to the initial object 0, of dimension 0; since 6 is not 0, the functor has no right adjoint and Vect_k is not cartesian closed. The answer is 6."
+          - problem: "Currying in Set gives a bijection between the functions from X × A to B and the functions from X to B^A, where B^A is the set of all functions from A to B. Let X have 2 elements, A have 3 elements, and B have 2 elements. Find the number of functions from X to B^A."
+            answer: "64"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Size of the exponential: B^A is the function set from A to B, so it has 2^3 = 8 elements. Hom-set count: the functions from X to B^A number 8^2 = 64. Currying check: the functions from X × A to B number 2^6 = 64 as well, matching the bijection Hom(X × A, B) with Hom(X, B^A). The answer is 64."
+          - problem: "Let X = {p, q}, A = {1, 2}, and B = {0, 1}. Define a function f from X × A to B by f(p, a) = 0 for every a in A, and f(q, a) = 1 for every a in A. Currying sends f to its transpose g, a function from X to the exponential B^A. Give the value g(q)(2)."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Currying rule: the transpose g of f is defined by g(x)(a) = f(x, a) for every x in X and every a in A. Evaluate at x = q and a = 2: g(q)(2) = f(q, 2), and f(q, 2) = 1 by the definition of f. The answer is 1."
+          - problem: "A student argues that Ab, the category of abelian groups, is cartesian closed. Step 1: Ab has a terminal object, namely the trivial group 0. Step 2: Ab has all finite products, given by the direct sum A ⊕ B. Step 3: a category with a terminal object and all finite products is cartesian closed. Step 4: therefore Ab is cartesian closed. Which step is the first step that is not valid?"
+            answer: "Step 3"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 is valid: every abelian group has exactly one homomorphism to the trivial group, so 0 is terminal in Ab. Step 2 is valid: direct sums are biproducts, so they give all finite products. Step 3 is not valid: cartesian closure further requires exponentials, a right adjoint to the functor G × A; in Ab the product 0 ⊕ Z is isomorphic to Z with Z nonzero, so this functor does not preserve the initial object and no right adjoint exists. Step 4 only follows from Step 3, so it is not the first invalid step. The answer is Step 3."
+          - problem: "In the proof that Set is cartesian closed, the currying bijection sends each function f from the product X × A to B to a function g from X to the exponential B^A, the set of all functions from A to B. Select the line that correctly defines g."
+            answer: "g(x)(a) = f(x,a)"
+            answer_contract: {"kind": "label", "options": [["g(x)(a) = f(x,a)"], ["g(a)(x) = f(x,a)"], ["g(x)(a) = f(a,x)"], ["g(x) = f(x,a)"]]}
+            solution_sketch: "Currying rule: g(x) must be a function from A to B, and evaluating it at a must return the value of f at the pair (x, a), so the full line is g(x)(a) = f(x,a). The option g(a)(x) = f(x,a) swaps the roles of the two variables and is ill typed. The option g(x)(a) = f(a,x) puts the arguments in the wrong order for the product X × A. The option g(x) = f(x,a) leaves a unbound and g(x) would be an element of B, not a function from A to B. The answer is g(x)(a) = f(x,a)."
+          - problem: "Write the full proof: the category Set is cartesian closed, with exponential B^A the set of all functions from A to B and currying as the adjunction. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1 (terminal object): a singleton set 1 is terminal, because every set admits exactly one function to it. Step 2 (products): cartesian products of sets, with their projection maps, give all finite products. Step 3 (exponential): for sets A and B, define B^A as the set of all functions from A to B, with the evaluation map ev from B^A × A to B sending a pair (h, a) to h(a). Step 4 (currying): given f from X × A to B, define its transpose g from X to B^A by g(x)(a) = f(x, a); conversely, given h from X to B^A, set the value at (x, a) to h(x)(a). These two constructions are mutually inverse, so Hom(X × A, B) is in bijection with Hom(X, B^A), naturally in X. Step 5 (adjunction): this natural bijection shows that the functor − × A is left adjoint to the exponential functor (−)^A. Step 6 (conclusion): Set has a terminal object, all finite products, and all exponentials, so Set is cartesian closed."
       - id: kp3
         name: The Curry-Howard-Lambek correspondence
         key_prerequisites: [adjunctions]
