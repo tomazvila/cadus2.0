@@ -22,6 +22,13 @@ pub trait ReadinessGate: fmt::Debug {
     /// Whether the topic has at least one practicable knowledge point. A review
     /// and a quiz need this and nothing more.
     fn topic_practicable(&self, topic_id: &str) -> bool;
+
+    /// Whether ANY knowledge point of the topic serves a LESSON (note 84 b):
+    /// the plan then serves that point and the no-practice points complete with
+    /// their teach page instead of locking the topic.
+    fn topic_serves_lesson(&self, topic_id: &str) -> bool {
+        false
+    }
 }
 
 /// The readiness of every knowledge point of one curriculum, at one moment.
@@ -132,6 +139,16 @@ impl ReadinessGate for ReadinessSet {
                 .any(Readiness::serves_review)
         })
     }
+
+    fn topic_serves_lesson(&self, topic_id: &str) -> bool {
+        let keys = self.topic_keys.get(topic_id);
+        // A topic the set does not name serves as it did before this rule.
+        keys.is_none_or(|keys| {
+            keys.iter()
+                .filter_map(|key| self.per_kp.get(key))
+                .any(Readiness::serves_lesson)
+        })
+    }
 }
 
 /// The readiness of one knowledge point, with `prerequisites_ok` left `true`
@@ -139,11 +156,21 @@ impl ReadinessGate for ReadinessSet {
 fn one_readiness<C: ContentIndex + ?Sized>(facts: &KpFacts, content: &C) -> Readiness {
     let approved_templates = content.approved_templates(&facts.kp_key);
     let practice_items = facts.practice_items(content);
+    // Note 84 (b): a TEACH-ONLY knowledge point (no decidable exemplar) is not a
+    // blocked one. An all-`kind: none` point serves self-check rows — the learner
+    // views the worked solution and the completion counts (never correct/wrong) —
+    // and a zero-exemplar knowledge point completes with its teach page (no draw,
+    // no 409). A knowledge point WITH decidable items keeps the standing rule: at
+    // least [`PRACTICE_MINIMUM`] decidable items practice and one stays held out.
+    let teach_only = facts.decidable.is_empty();
     Readiness {
         kp_key: facts.kp_key.clone(),
         teachable: content.has_approved(&facts.kp_key, KIND_TEACH),
-        practicable: practice_items >= PRACTICE_MINIMUM,
-        assessable: facts.held_out.is_some(),
+        // A teach-only point (all `kind: none`, or no exemplars at all) is not a
+        // blocked one: the self-check rows (or, for zero exemplars, the teach page
+        // itself) carry the completion — never a 409 to the learner (note 84 b).
+        practicable: teach_only || practice_items >= PRACTICE_MINIMUM,
+        assessable: facts.held_out.is_some() || teach_only,
         hints: content.has_approved(&facts.kp_key, KIND_HINT_LADDER),
         solutions: facts.solutions,
         prerequisites_ok: true,
@@ -154,6 +181,7 @@ fn one_readiness<C: ContentIndex + ?Sized>(facts: &KpFacts, content: &C) -> Read
         visual_present: facts.valid_visuals > 0,
         broken_visuals: facts.broken_visuals,
         decidable_exemplars: facts.decidable.len(),
+        authored_exemplars: facts.authored,
         approved_templates,
         practice_items,
     }

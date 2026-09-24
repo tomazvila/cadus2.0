@@ -66,6 +66,12 @@ pub(super) fn hold_lessons(
         if blockers.is_empty() {
             return true;
         }
+        // Note 84 (b): the START point may lack practice while a LATER point of
+        // the same topic serves. The plan then serves that one and the no-practice
+        // points complete with their teach page — the topic is not locked.
+        if gate.topic_serves_lesson(tid) {
+            return true;
+        }
         held.push(BlockedTask {
             task_type: TaskType::Lesson,
             topic: tid.clone(),

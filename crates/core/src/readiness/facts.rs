@@ -22,6 +22,11 @@ pub struct KpFacts {
     /// The author indexes of the exemplars the grammar decides, ascending, with
     /// a repeated problem statement counted once.
     pub decidable: Vec<usize>,
+    /// The authored exemplars of the knowledge point, deduplicated or not. The
+    /// teach-only ones (no verdict: `kind: none` and friends) serve as self-check
+    /// rows (D-M5-3), so an all-`none` knowledge point completes on the worked
+    /// solution's view (owner note 84 b).
+    pub authored: usize,
     /// The author index of the held-out exemplar: the LAST decidable one when
     /// the knowledge point holds [`HELD_OUT_MINIMUM`] of them or more.
     pub held_out: Option<usize>,
@@ -216,6 +221,7 @@ fn kp_facts(topic: &Topic, kp: &KnowledgePoint) -> KpFacts {
         topic_id: topic.id.as_str().to_owned(),
         kp_id: kp.id.as_str().to_owned(),
         decidable,
+        authored: kp.exemplars.len(),
         held_out,
         solutions,
         // A mixed topic can contain both visual and non-visual KPs, so its

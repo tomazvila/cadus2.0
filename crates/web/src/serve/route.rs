@@ -287,7 +287,7 @@ pub(crate) async fn install_next(
     let elapsed = quiz_elapsed(scratch, &task_id, task.task_type, started_at);
 
     let feedback = scratch.feedback_practice.get(&task_id).cloned();
-    let target = match feedback.as_ref() {
+    let mut target = match feedback.as_ref() {
         Some(pending) => Target::new(
             pending["record_topic"]
                 .as_str()
@@ -299,10 +299,28 @@ pub(crate) async fn install_next(
         ),
         None => target_of(task, index, &progress, graph)?,
     };
+    // Note 84 (b): the plan's START point may lack practice while a LATER point of the
+    // topic serves. The pool skips the points that serve nothing (one line each — they
+    // complete with their teach page, never a 409 to the learner) and serves the first
+    // point that can.
+    if !ReadinessGate::lesson_blockers(readiness, &target.serve, &target.kp).is_empty() {
+        if let Some(idx) = graph.idx_of(&target.serve) {
+            for point in graph.knowledge_points(idx) {
+                if ReadinessGate::lesson_blockers(readiness, &target.serve, point.id.as_str())
+                    .is_empty()
+                {
+                    target.kp = point.id.as_str().to_owned();
+                    target.key = cadus_core::pool::kp_key(&target.serve, point.id.as_str());
+                    break;
+                }
+                tracing::info!(
+                    kp = %point.id,
+                    "serve: the point serves no practice; it completes with its teach page (note 84 b)"
+                );
+            }
+        }
+    }
     // Audit finding (j), the server half. A lesson practices a knowledge point
-    // only when an approved teach page exists for it: without the page the
-    // learner practices a skill the service never taught. Every other task type
-    // revisits a skill the learner already met.
     //
     // The plan gate of D-F5 stops an unteachable lesson at the START knowledge
     // point. A lesson whose LATER point has no page cannot be stopped there:

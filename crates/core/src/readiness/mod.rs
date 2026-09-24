@@ -238,6 +238,9 @@ pub struct Readiness {
     pub broken_visuals: usize,
     /// The decidable exemplars of the knowledge point.
     pub decidable_exemplars: usize,
+    /// The authored exemplars of the knowledge point (84 b). The teach-only
+    /// difference (`authored - decidable_exemplars`) serves as self-check rows.
+    pub authored_exemplars: usize,
     /// The approved templates of the knowledge point.
     pub approved_templates: usize,
     /// The decidable items practice draws from: the decidable exemplars less
