@@ -921,12 +921,34 @@ topics:
         name: "Uniqueness of inverses"
         key_prerequisites: [monoids]
         exemplars:
-          - problem: 'Prove: in a group, each element has a unique inverse.'
-            answer: 'If $b, c$ both invert $a$, then $b = b(ac) = (ba)c = c$.'
-            solution_sketch: 'Let $b, c$ be inverses of $a$, so $ab = ba = e$ and $ac = ca = e$. Then $b = be = b(ac) = (ba)c = ec = c$. $\square$'
-          - problem: 'Prove: in a group, $(a^{-1})^{-1} = a$.'
-            answer: 'Since $a a^{-1} = a^{-1} a = e$, $a$ inverts $a^{-1}$.'
-            solution_sketch: 'We have $a^{-1} a = a a^{-1} = e$, which says $a$ is a two-sided inverse of $a^{-1}$. By uniqueness of inverses, $(a^{-1})^{-1} = a$. $\square$'
+          - problem: "In the group with operation x*y = x + y - 2, the identity is 2. Let b and c both be inverses of 5. Give b."
+            answer: "-1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The inverse b satisfies 5*b = 2. Substitute the operation: 5 + b - 2 = 2, so b = -1. The answer is -1."
+          - problem: "In the group with operation x*y = x + y - 2, let a = 7. Let b and c be inverses of a. Give the value of (b*a)*c."
+            answer: "-3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "First find the inverse of 7: 7*b = 2 gives b = -3. Then b*a = -3 + 7 - 2 = 2. Finally (b*a)*c = 2*(-3) = 2 - 3 - 2 = -3. The answer is -3."
+          - problem: "In the group with operation x*y = x + y - 1, give the inverse of 4."
+            answer: "-2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The identity is 1. The inverse b satisfies 4*b = 1. Substitute the operation: 4 + b - 1 = 1, so b = -2. The answer is -2."
+          - problem: "In the monoid with operation x*y = x + y - 2, a student claims that 3 has two inverses, 1 and 5. Compute 3*5 and give the result."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The identity is 2. Compute 3*5 = 3 + 5 - 2 = 6. Since 6 is not 2, 5 is not an inverse of 3. The answer is 6."
+          - problem: "Claim: in a group, if b and c are inverses of a, then b = c. Step 1: b = b*e. Step 2: b*e = b*(c*a). Step 3: b*(c*a) = (b*c)*a. Step 4: (b*c)*a = e*a = a, so b = a. Which step is the first step that is not valid?"
+            answer: "Step 4"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 uses the identity law. Step 2 uses c*a = e. Step 3 uses associativity. Step 4 assumes b*c = e, which is not given. The answer is Step 4."
+          - problem: "In the proof that b = c when b and c both invert a, the line b = b*e = b*(a*c) = ? is missing. Select the line that follows by associativity."
+            answer: "(b*a)*c"
+            answer_contract: {"kind": "label", "options": [["(b*a)*c"], ["b*(c*a)"], ["(b*c)*a"], ["a*(b*c)"]]}
+            solution_sketch: "Associativity regroups b*(a*c) as (b*a)*c. The option b*(c*a) swaps a and c. The option (b*c)*a moves c before a. The option a*(b*c) puts a first. The answer is (b*a)*c."
+          - problem: "Write the full proof: in a group, if b and c both invert a, then b = c. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Let e be the identity. Step 1: since b is an inverse of a, b*a = e. Step 2: since c is an inverse of a, a*c = e. Step 3: b = b*e by the identity law. Step 4: b*e = b*(a*c) by Step 2. Step 5: b*(a*c) = (b*a)*c by associativity. Step 6: (b*a)*c = e*c by Step 1. Step 7: e*c = c by the identity law. Therefore b = c, so the inverse of a is unique."
         constraints: "use associativity and the identity to collapse candidates"
       - id: kp3
         name: "Cancellation"
