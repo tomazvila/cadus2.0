@@ -357,6 +357,33 @@ mod tests {
         assert!(row.done);
     }
 
+    /// The topic-23 stall (probe 2, 2026-09-24): a `characteristic-polynomial`
+    /// kp1 lesson attempt that the deterministic checker graded correct, with a
+    /// graded same-task kp1 attempt before it, must pass the `2consec|3of4` rule
+    /// and advance the lesson to kp2. The staging probe recorded 4,000 correct
+    /// kp1 answers over 50 task restarts and never closed one lesson.
+    #[test]
+    fn the_topic23_lesson_passes_on_two_correct_kp1_answers() {
+        let root = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../curriculum");
+        let (graph, _findings) =
+            cadus_core::curriculum::load_curriculum(&root).expect("the tree loads");
+        let cfg = Config::default();
+        let raw = include_str!("../../tests/fixtures/tp23-attempt.json");
+        let attempt: Attempt = serde_json::from_str(raw).expect("the fixture decodes");
+        let mut prior_body = attempt.clone();
+        prior_body.attempt_id = "s_2026-09-24i-lesson-characteristic-polynomial-0".to_owned();
+        prior_body.ts = attempt.ts;
+        let prior = vec![
+            EventRow {
+                seq: 1,
+                event: Event::Attempt(prior_body),
+            },
+        ];
+        let moved = advance(&graph, &cfg, attempt.ts, &attempt, &prior, &SessionView::default());
+        assert_eq!(moved.status, STATUS_KP_ADVANCE, "two correct kp1 answers pass 2consec");
+        assert_eq!(moved.next_kp.as_deref(), Some("kp2"));
+    }
+
     /// A repeat failure with no key prerequisite queues nothing; every other
     /// close queues exactly one event of its kind.
     #[test]
