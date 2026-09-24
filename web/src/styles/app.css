@@ -812,21 +812,19 @@ p { margin: 0.4rem 0; }
 }
 
 /* ---- the engraved backdrop (the caduceus) ----
-   ONE static raster, /bg.png: the full emblem — caduceus with its serpents, astrolabe
-   ring, ray fan, guilloche bands, stipple, rose curves, Lissajous, tetractys — with the
-   shading pre-dithered to a 1-bit halftone like an engraved print. No inline SVG, no
-   animation, no blur: one image decode on one compositor layer and not a single
-   per-frame repaint anywhere. The reduced-motion rule below has nothing left to strip. */
+   ONE static raster, /eye-background.jpeg (owner request, note 116 b): the page background
+   is the eye image, `center / cover fixed`, under a dark overlay so the text keeps its
+   contrast on both themes (the overlay is `color-mix` of the theme's own `--bg`, not a
+   literal — TOKENS-hex stays true). No inline SVG, no animation, no blur: one image decode
+   on one compositor layer and not a single per-frame repaint anywhere. The reduced-motion
+   rule below has nothing left to strip. */
 .backdrop {
   position: fixed; inset: 0; z-index: -1;
   pointer-events: none;
-  background: url("/bg.png") center / cover no-repeat;
-  opacity: 0.55;
-}
-@media (prefers-color-scheme: light) {
-  /* The texture is white-on-transparent; inverted it prints black lines on the day
-     palette, quieter than at night because dark ink weighs more than light. */
-  .backdrop { filter: invert(1); opacity: 0.30; }
+  background:
+    linear-gradient(color-mix(in srgb, var(--bg) 86%, transparent),
+                    color-mix(in srgb, var(--bg) 86%, transparent)),
+    url("/eye-background.jpeg") center / cover fixed no-repeat;
 }
 
 /* ---- the reading scrim ----
