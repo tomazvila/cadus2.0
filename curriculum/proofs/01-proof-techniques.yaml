@@ -1840,12 +1840,34 @@ topics:
         name: "Geometric-type sums"
         key_prerequisites: [induction-template]
         exemplars:
-          - problem: 'Prove: for all $n \ge 0$, $1 + 2 + 4 + \cdots + 2^n = 2^{n+1} - 1$.'
-            answer: 'Base $n = 0$: $1 = 1$. Step: $(2^{n+1} - 1) + 2^{n+1} = 2^{n+2} - 1$.'
-            solution_sketch: 'Base: $n = 0$ gives $1 = 2 - 1$. Step: assume the sum to $2^n$ is $2^{n+1} - 1$; adding $2^{n+1}$ gives $2 \cdot 2^{n+1} - 1 = 2^{n+2} - 1$. $\square$'
-          - problem: 'Prove: for all $n \ge 0$, $1 + 3 + 9 + \cdots + 3^n = \dfrac{3^{n+1} - 1}{2}$.'
-            answer: 'Base $n = 0$: $1 = 1$. Step: $\frac{3^{n+1} - 1}{2} + 3^{n+1} = \frac{3 \cdot 3^{n+1} - 1}{2} = \frac{3^{n+2} - 1}{2}$.'
-            solution_sketch: 'Base: $n = 0$ gives $1 = \frac{3 - 1}{2}$. Step: add the next power $3^{n+1}$ to the hypothesis and combine over the common denominator. $\square$'
+          - problem: "To prove $1 + 5 + 25 + \\cdots + 5^n = \\frac{5^{n+1}-1}{4}$ by induction, combine the hypothesis and the next term over the denominator: $\\frac{5^{n+1}-1}{4} + 5^{n+1} = \\frac{A\\cdot 5^{n+1}-1}{4}$. Give $A$."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "First write the inductive step: add the next power $5^{n+1}$ to the hypothesis. Put both terms over the common denominator $4$: $\\frac{5^{n+1}-1}{4} + \\frac{4\\cdot 5^{n+1}}{4}$. Combine the numerators: $\\frac{5\\cdot 5^{n+1}-1}{4}$. The coefficient is 5."
+          - problem: "For the geometric sum $1 + 7 + 49 + \\cdots + 7^n$, the closed form is $\\frac{7^{n+1}-1}{D}$. Give $D$."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The ratio is $7$. The geometric sum formula uses denominator $r-1$, so $D = 7 - 1$. The denominator is 6."
+          - problem: "In the inductive step for $1 + 3 + 9 + \\cdots + 3^k = \\frac{3^{k+1}-1}{2}$, the next term added is $3^{k+1}$. Give its value when $k = 4$."
+            answer: "243"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The next term is the power $3^{k+1}$. Substitute $k = 4$: $3^{5}$. Compute $3^{5} = 243$. The value is 243."
+          - problem: "For the claim $1 + 6 + 36 + \\cdots + 6^n = \\frac{6^{n+1}-1}{5}$, evaluate the right side at $n = 1$."
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The right side is $(6^{n+1}-1)/5$. Substitute $n=1$: $(6^2-1)/5$. Compute $(36-1)/5 = 35/5 = 7$. The value is 7."
+          - problem: "In the inductive step of the proof that $1 + 7 + 49 + \\cdots + 7^k = \\frac{7^{k+1}-1}{6}$, take $k = 2$. The hypothesis gives $\\frac{7^{3}-1}{6}$ and the next term is $7^{3}$. Combining over the common denominator $6$ gives the numerator $7^{3} - 1 + 6\\cdot 7^{3}$. Give the value of this numerator."
+            answer: "2400"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "First write the inductive step: the sum to $k+1$ equals the hypothesis $(7^{k+1}-1)/6$ plus the next term $7^{k+1}$. With $k = 2$ the hypothesis is $(7^3-1)/6 = 342/6$ and the next term is $7^3 = 343$. Combine the two terms over the common denominator $6$; this is the step where this KP's method is used. The numerator is $7^3 - 1 + 6\\cdot 7^3 = 342 + 2058$, and indeed $2400/6 = 400 = 1 + 7 + 49 + 343$. The value of the numerator is 2400."
+          - problem: "In the inductive step for $1 + 5 + 25 + \\cdots + 5^k = \\frac{5^{k+1}-1}{4}$, the line for the sum to $k+1$ is missing. Select the line that is true and that shows the hypothesis."
+            answer: "(5^(k+1)-1)/4 + 5^(k+1)"
+            answer_contract: {"kind": "label", "options": [["(5^(k+1)-1)/4 + 5^(k+1)"], ["(5^(k+1)-1)/4 + 5^k"], ["(5^k-1)/4 + 5^(k+1)"], ["5*(5^(k+1)-1)/4"]]}
+            solution_sketch: "The induction hypothesis is the sum up to $5^k$, which is $(5^{k+1}-1)/4$. The next term is $5^{k+1}$. Option B is wrong because it adds $5^k$, not the next term. Option C is wrong because it uses the numerator for the previous exponent. Option D is wrong because it multiplies the whole sum by $5$ instead of adding the next term. Option A is the hypothesis plus the next term. The answer is (5^(k+1)-1)/4 + 5^(k+1)."
+          - problem: "Write the full proof: for all $n \\ge 0$, $1 + 6 + 36 + \\cdots + 6^n = \\frac{6^{n+1}-1}{5}$. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Base case: for $n=0$, the left side is $1$ and the right side is $(6^{1}-1)/5 = 5/5 = 1$. Induction hypothesis: assume for some $k \\ge 0$ that $1 + 6 + \\cdots + 6^k = (6^{k+1}-1)/5$. Inductive step: add the next term $6^{k+1}$ to both sides. The left side becomes the sum to $k+1$. The right side becomes $(6^{k+1}-1)/5 + 6^{k+1}$. Combine over the common denominator $5$: $(6^{k+1}-1 + 5\\cdot 6^{k+1})/5 = (6\\cdot 6^{k+1}-1)/5 = (6^{k+2}-1)/5$. This is the closed form for $n=k+1$. Conclusion: by induction the formula holds for all $n \\ge 0$."
         constraints: "geometric sums with integer ratio; combine over a common denominator in the step"
     diagnostic_exemplar:
       problem: 'Prove: for all $n \ge 1$, $\displaystyle\sum_{i=1}^{n} \frac{1}{i(i+1)} = \frac{n}{n+1}$.'

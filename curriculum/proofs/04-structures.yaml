@@ -1306,12 +1306,34 @@ topics:
         name: "Homomorphisms preserve identity"
         key_prerequisites: [groups-intro]
         exemplars:
-          - problem: 'Prove: a group homomorphism $\varphi : G \to H$ satisfies $\varphi(e_G) = e_H$.'
-            answer: '$\varphi(e_G) = \varphi(e_G)^2$; cancel.'
-            solution_sketch: '$\varphi(e_G) = \varphi(e_G e_G) = \varphi(e_G)\varphi(e_G)$. Multiplying by $\varphi(e_G)^{-1}$ in $H$ gives $e_H = \varphi(e_G)$. $\square$'
-          - problem: 'Prove: for a group homomorphism $\varphi$, $\varphi(e_G)$ is idempotent: $\varphi(e_G)\varphi(e_G) = \varphi(e_G)$.'
-            answer: '$\varphi(e_G e_G) = \varphi(e_G)$.'
-            solution_sketch: '$\varphi(e_G)\varphi(e_G) = \varphi(e_G e_G) = \varphi(e_G)$, using $e_G e_G = e_G$ and that $\varphi$ preserves products. (Cancelling then gives $\varphi(e_G) = e_H$.) $\square$'
+          - problem: "In the proof that a group homomorphism f from G to H sends the domain identity to the codomain identity, the element a = f(eG) satisfies a*a = a inside H. Take H to be the nonzero residues modulo 7 under multiplication, where the identity is the residue 1. Find the whole number a that solves a*a = a."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: the equation a*a = a in the group of nonzero residues modulo 7 under multiplication. Step 1: cancel a on the left, which the cancellation law of a group allows. Step 2: this leaves a equal to the identity of the group. Step 3: the identity of multiplication modulo 7 is the residue 1. The step where this KP's method is used is the cancellation in H: the identity law eG*eG = eG makes the image idempotent, and cancellation pins it to the identity. The answer is 1."
+          - problem: "The key lemma says that for a homomorphism f the element f(eG) of the codomain satisfies a*a = a, so that image is idempotent. Consider the residues modulo 6 under multiplication. How many residues a satisfy a*a = a?"
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: the six residues modulo 6 together with multiplication modulo 6. Step 1: square each residue by modular arithmetic, giving 0, 1, 4, 3, 4 and 1 for the residues 0 through 5. Step 2: keep the residues whose square equals the residue itself, namely 0, 1, 3 and 4. Step 3: count these idempotents, which gives 4. The step where this KP's method is used is the contrast with cancellation in H: in a group the equation a*a = a cancels down to the identity alone, while this structure is not a group and keeps four idempotents. The answer is 4."
+          - problem: "A student claims the map f(n) = n + 3 from the integers under addition to the integers under addition is a homomorphism. Test the additive condition. Find the smallest nonnegative integer n for which f(n + n) differs from f(n) + f(n)."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: the map f(n) = n + 3 on the integers under addition. Step 1: compute f(n + n) = 2n + 3 by the definition of f. Step 2: compute f(n) + f(n) = 2n + 6. Step 3: the two values differ by 3 for every integer n, so the additive condition fails everywhere and the first failure is at the smallest nonnegative integer. The step where this KP's method is used is the identity check: a homomorphism must send the domain identity 0 to the codomain identity, and this shift map sends 0 to 3 instead. The smallest such n is 0."
+          - problem: "Claim: a homomorphism f from G to H sends the domain identity to the codomain identity. Step 1: in G, eG*eG = eG. Step 2: applying f gives f(eG*eG) = f(eG). Step 3: since f preserves products, f(eG*eG) = f(eG)*f(eG). Step 4: therefore f(eG)*f(eG) = f(eG), and cancelling eG on both sides gives f(eG) = eH. Which step is the first step that is not valid?"
+            answer: "Step 4"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Full object: the four step argument for the identity statement. Step 1 states the true identity law eG*eG = eG in the group G, so it is valid. Step 2 is valid, because equal inputs have equal images under any function. Step 3 is valid, as the homomorphism property applied to the pair eG and eG. The step where this KP's method is used is the cancellation in H: Step 4 must cancel the image f(eG) inside the codomain group, not the element eG of the domain, so Step 4 is the first step that is not valid. The answer is Step 4."
+          - problem: "A student claims that in every structure the only solution of a*a = a is the identity element, because one can always cancel. The residues modulo 8 under multiplication form a monoid whose identity is 1 and in which most elements have no inverse. How many residues a satisfy a*a = a?"
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: the monoid of the eight residues 0 through 7 under multiplication modulo 8. Step 1: square each residue, giving 0, 1, 4, 1, 0, 1, 4, 1. Step 2: keep the residues whose square equals the residue itself, namely 0 and 1. Step 3: count these idempotents, which gives 2. The step where this KP's method is used is the cancellation in H: in a group the equation a*a = a cancels to the identity alone, so the image of eG must be eH, but this monoid has no inverses and the residue 0 survives as well. The answer is 2."
+          - problem: "Argument. Step 1: in G, eG*eG = eG. Step 2: f(eG*eG) = f(eG)*f(eG). Step 3: therefore f(eG)*f(eG) = f(eG). Step 4: cancel the common factor inside H to reach eH = f(eG). Which fact does Step 2 use?"
+            answer: "f preserves products"
+            answer_contract: {"kind": "label", "options": [["f preserves products"], ["f is injective"], ["f is surjective"], ["H is abelian"]]}
+            solution_sketch: "Full object: the four step argument proving that the image of the domain identity is the codomain identity. Step 1 uses the identity law in G. Step 2 uses the defining property of a homomorphism, that the image of a product is the product of the images. Step 3 substitutes equal quantities. Step 4 cancels the common factor inside the codomain group H. The step where this KP's method is used is Step 4 together with Step 2: the identity law feeds the homomorphism property, and cancellation in H turns the idempotent equation into eH = f(eG). The wrong option f is injective names a property that the argument never invokes. The wrong option f is surjective is not needed, because the homomorphism property holds for every homomorphism. The wrong option H is abelian is irrelevant, because cancellation in a group needs no commutativity. The fact used by Step 2 is that f preserves products."
+          - problem: "Write the full proof: for any group homomorphism f from G to H, the image of the identity of G is the identity of H. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Proof. The key input is the identity law eG*eG = eG in the group G. Step 1: apply f to both sides, so f(eG) = f(eG*eG). Step 2: use the homomorphism property to rewrite the right side as f(eG)*f(eG). Step 3: write the same value also as f(eG)*eH, where eH is the identity of H. Step 4: cancel f(eG) on the left, which the cancellation law of the group H allows. Step 5: the result is f(eG) = eH, so every group homomorphism sends the identity of the domain to the identity of the codomain, which completes the proof."
         constraints: "use $e_G e_G = e_G$ and cancellation in $H$"
       - id: kp3
         name: "Homomorphisms preserve inverses and powers"

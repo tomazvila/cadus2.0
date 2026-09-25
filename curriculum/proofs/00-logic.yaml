@@ -499,12 +499,30 @@ topics:
         name: "Evaluating at given truth values"
         key_prerequisites: [truth-tables-basic-connectives]
         exemplars:
-          - problem: 'Evaluate $\neg P \lor Q \land R$ at $P$ = T, $Q$ = F, $R$ = T.'
-            answer: 'F.'
-            solution_sketch: 'Group as $(\neg P) \lor (Q \land R)$. $\neg P$ = F and $Q \land R$ = F $\land$ T = F, so F $\lor$ F = F.'
-          - problem: 'Evaluate $\neg P \land Q$ at $P$ = F, $Q$ = T.'
-            answer: 'T.'
-            solution_sketch: '$\neg P$ = T, so $\neg P \land Q$ = T $\land$ T = T.'
+          - problem: "Evaluate $\\neg P \\lor Q \\land R$ at $P$ = F, $Q$ = T, $R$ = F. State the truth value (T or F) and the number of true disjuncts."
+            answer: "value = T; count = 1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["T"], ["F"]]}, "name": "value"}, {"contract": {"kind": "exact"}, "name": "count"}]}
+            solution_sketch: "The proposition is $\\neg P \\lor Q \\land R$, read as $(\\neg P) \\lor (Q \\land R)$. Negation rule: $\\neg P$ is T because $P$ is F. Conjunction rule: $Q \\land R$ is F because $R$ is F. Disjunction rule: T or F is T, so exactly one disjunct is true. The option F would be the error of taking the negation of F to be F. The answer is value = T; count = 1."
+          - problem: "Evaluate $\\neg P \\land Q$ at $P$ = T, $Q$ = F. State the truth value (T or F) and the number of true conjuncts."
+            answer: "value = F; count = 0"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["T"], ["F"]]}, "name": "value"}, {"contract": {"kind": "exact"}, "name": "count"}]}
+            solution_sketch: "The proposition is $\\neg P \\land Q$. Negation rule: $\\neg P$ is F because $P$ is T. Conjunction rule: F and F is F, so no conjunct is true. The option T would be the error of evaluating the negation of T as T. The answer is value = F; count = 0."
+          - problem: "Evaluate $P \\lor Q \\land R$ at $P$ = T, $Q$ = T, $R$ = T. State the truth value (T or F) and the number of true disjuncts."
+            answer: "value = T; count = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["T"], ["F"]]}, "name": "value"}, {"contract": {"kind": "exact"}, "name": "count"}]}
+            solution_sketch: "The proposition is $P \\lor Q \\land R$, read as $P \\lor (Q \\land R)$. Conjunction rule: $Q \\land R$ is T because both $Q$ and $R$ are T. Disjunction rule: T or T is T, so both disjuncts are true. The option F would be the error of reading the conjunction of two true parts as F. The answer is value = T; count = 2."
+          - problem: "Evaluate $\\neg(P \\land Q) \\land R$ at $P$ = T, $Q$ = F, $R$ = F. State the truth value (T or F) and the number of true conjuncts."
+            answer: "value = F; count = 1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["T"], ["F"]]}, "name": "value"}, {"contract": {"kind": "exact"}, "name": "count"}]}
+            solution_sketch: "The proposition is $\\neg(P \\land Q) \\land R$. Conjunction rule inside the negation: $P \\land Q$ is F because $Q$ is F. Negation rule: the negation of F is T. Conjunction rule: T and F is F, so exactly one conjunct is true. The option T would be the error of reading the second conjunct $R$ as T. The answer is value = F; count = 1."
+          - problem: "Evaluate $P \\land Q \\lor R$ at $P$ = F, $Q$ = F, $R$ = F. Give the truth value as 1 for true and 0 for false."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The proposition is $P \\land Q \\lor R$, read as $(P \\land Q) \\lor R$. Conjunction rule: F and F is F. Disjunction rule: F or F is F. Encoding the false value as 0 gives the key. The answer is 0."
+          - problem: "Evaluate $\\neg P \\lor \\neg Q$ at $P$ = F, $Q$ = F. How many of its two disjuncts are true?"
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The proposition is $\\neg P \\lor \\neg Q$. Negation rule: $\\neg P$ is T because $P$ is F. Negation rule: $\\neg Q$ is T because $Q$ is F. Disjunction rule: T or T is T, so both of the two disjuncts are true. The answer is 2."
         constraints: "connectives limited to $\\neg, \\land, \\lor$; up to 3 variables; single assignment of truth values"
       - id: kp3
         name: "Parentheses change the value"
