@@ -781,12 +781,34 @@ topics:
         name: "Inverses and bijections"
         key_prerequisites: [functions-injective-surjective]
         exemplars:
-          - problem: 'Prove: if $f : A \to B$ is bijective then it has a two-sided inverse $f^{-1} : B \to A$.'
-            answer: 'Define $f^{-1}(b)$ as the unique preimage; check both compositions are identities.'
-            solution_sketch: 'Surjectivity gives, for each $b$, some $a$ with $f(a) = b$; injectivity makes it unique, so $f^{-1}(b) = a$ is well-defined. Then $f(f^{-1}(b)) = b$ and $f^{-1}(f(a)) = a$, so $f^{-1}$ is a two-sided inverse. $\square$'
-          - problem: 'Find the inverse of $f : \mathbb{R} \to \mathbb{R}$, $f(x) = 2x + 3$, and verify it.'
-            answer: '$f^{-1}(y) = (y - 3)/2$.'
-            solution_sketch: 'Solve $y = 2x + 3$ for $x$: $x = (y - 3)/2$, so $f^{-1}(y) = (y-3)/2$. Check $f(f^{-1}(y)) = 2 \cdot \frac{y-3}{2} + 3 = y$ and $f^{-1}(f(x)) = x$. $\square$'
+          - problem: "Find f^(-1)(y) as a function of y for f: R to R with f(x)=3x-4."
+            answer: "(y+4)/3"
+            answer_contract: {"kind": "function", "vars": ["y"]}
+            solution_sketch: "Use the definition of inverse: solve y = 3x - 4 for x. Add 4 to get y + 4 = 3x, then divide by 3 to get x = (y + 4)/3. The inverse is (y+4)/3."
+          - problem: "Find f^(-1)(17) for f: R to R with f(x)=5x+2."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the definition of inverse: solve 17 = 5x + 2. Subtract 2 to get 15 = 5x, then divide by 5 to get x = 3. Injectivity makes this preimage unique. The value is 3."
+          - problem: "Find f^(-1)(10) for f: R to R with f(x)=x^3+2."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the definition of inverse: solve 10 = x^3 + 2. Subtract 2 to get 8 = x^3, then take real cube roots to get x = 2. The cube function is injective and surjective on R. The value is 2."
+          - problem: "Let f: R to R be f(x)=x^2. The following argument claims f has an inverse. Step 1: define f by f(x)=x^2. Step 2: set y=f(x), so y=x^2. Step 3: for every real y, take x=sqrt(y). Step 4: then f(x)=y, so f has an inverse. Which step is the first step that is not valid?"
+            answer: "Step 3"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 correctly defines the function. Step 2 correctly sets y = x^2. Step 3 is invalid because sqrt(y) is not real for negative y and x^2 is not injective. Step 4 would follow only from a valid Step 3. The answer is Step 3."
+          - problem: "To prove that f(x)=4x-1 is injective, assume f(a)=f(b). Then 4a-1=4b-1. Select the line that completes the proof."
+            answer: "a = b"
+            answer_contract: {"kind": "label", "options": [["a = b"], ["a = b + 1"], ["4a = b"], ["a = 4b"]]}
+            solution_sketch: "From 4a - 1 = 4b - 1, add 1 and divide by 4 to get a = b. The option a = b + 1 adds 1 after cancellation. The option 4a = b divides only the left side. The option a = 4b divides the right side incorrectly. The answer is a = b."
+          - problem: "State which property gives uniqueness and find f^(-1)(11) for f: R to R with f(x)=6x-7."
+            answer: "property = injective; value = 3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["injective"], ["surjective"]]}, "name": "property"}, {"contract": {"kind": "exact"}, "name": "value"}]}
+            solution_sketch: "The definition of injective says each output has at most one preimage, so it gives uniqueness. The definition of surjective says each output has at least one preimage, so it gives existence instead. Solve 11 = 6x - 7: add 7 to get 18 = 6x, then x = 3. The answer is property = injective; value = 3."
+          - problem: "Write the full proof: a function f: A to B has a two-sided inverse if and only if f is bijective. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1: assume first that f has a two-sided inverse g: B to A. Step 2: if f(a1)=f(a2), apply g to both sides to get g(f(a1))=g(f(a2)), so a1=a2; thus f is injective. Step 3: for any b in B, g(b) is in A and f(g(b))=b, so b has a preimage; thus f is surjective. Step 4: now assume f is bijective. Step 5: surjectivity gives for each b in B some a in A with f(a)=b, and injectivity makes that a unique. Step 6: define f^(-1)(b)=a for that unique a. Then f(f^(-1)(b))=b and f^(-1)(f(a))=a, so f^(-1) is a two-sided inverse. Step 7: therefore f has a two-sided inverse if and only if f is bijective."
         constraints: "use surjectivity for existence and injectivity for uniqueness of the inverse"
       - id: kp3
         name: "Inverse of a composition"
@@ -2172,12 +2194,34 @@ topics:
         name: "Proving a relation is a partial order"
         key_prerequisites: [relations-properties]
         exemplars:
-          - problem: 'Prove divisibility $\mid$ is a partial order on $\mathbb{Z}^{+}$.'
-            answer: 'Reflexive, antisymmetric on positives, transitive.'
-            solution_sketch: '$a \mid a$; if $a \mid b$ and $b \mid a$ with $a, b > 0$ then $a = b$; if $a \mid b$ and $b \mid c$ then $a \mid c$. So $\mid$ is a partial order on $\mathbb{Z}^{+}$. $\square$'
-          - problem: 'Prove the relation $(a, b) \preceq (c, d) \iff a \le c \text{ and } b \le d$ on $\mathbb{Z} \times \mathbb{Z}$ is a partial order.'
-            answer: 'Componentwise reflexive, antisymmetric, transitive.'
-            solution_sketch: 'Reflexive: $a \le a$, $b \le b$. Antisymmetric: $(a,b) \preceq (c,d)$ and $(c,d) \preceq (a,b)$ give $a = c$, $b = d$. Transitive: chain each coordinate. So it is a partial order (the product order). $\square$'
+          - problem: "To prove that divides is a partial order on the positive integers, the reflexive axiom needs a divides a for every positive integer a. Write a = a times q, where q is a positive integer. Give q."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Reflexive axiom: we need a witness q with a = a·q. Taking q = 1 gives a = a·1 for every positive integer a, so a divides itself. The equation a·q = a with a positive forces q = 1, so this witness works for all a at once. The answer is 1."
+          - problem: "On the set of ordered pairs of integers, say (a, b) R (c, d) means a is at most c and b is at most d. Suppose (3, 7) R (c, d) and (c, d) R (3, 7). Give the answer as (c, d)."
+            answer: "(3, 7)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Antisymmetry step: the two hypotheses give 3 at most c and c at most 3, and 7 at most d and d at most 7. Antisymmetry of the usual order on the integers forces c = 3 and d = 7. The recovered pair is (3, 7). The answer is (3, 7)."
+          - problem: "A student claims that divides is a partial order on the set of all integers. Reflexivity and transitivity do hold there. Give the negative integer b for which 1 divides b and b divides 1, although b is not equal to 1."
+            answer: "-1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Antisymmetry needs positivity of the numbers. Take b = -1: 1 divides -1 since -1 = 1·(-1), and -1 divides 1 since 1 = (-1)·(-1). Yet b is not 1, so antisymmetry fails on all of the integers, and the relation is not a partial order there. The answer is -1."
+          - problem: "In the transitivity step for divides on the positive integers, suppose 3 divides 12 and 12 divides 60. Then 12 = 3 times 4 and 60 = 12 times 5, so 60 = 3 times some positive integer q. Give q."
+            answer: "20"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Transitivity: from 12 = 3·4 and 60 = 12·5 substitute the first into the second to get 60 = 3·4·5. The witness is the product of the two multipliers, 4·5 = 20. Hence 3 divides 60, confirming the transitive step in this case. The answer is 20."
+          - problem: "Claim: divides is a partial order on the set of all integers. Step 1: reflexive, since a = a·1. Step 2: suppose a divides b and b divides a, so b = a·m and a = b·n with integers m and n. Step 3: then a = a·mn, and a is not 0, so mn = 1. Step 4: hence m = n = 1, so a = b, and antisymmetry holds. Which step is the first step that is not valid?"
+            answer: "Step 4"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 is correct: a = a·1. Step 2 is just the hypothesis, and m, n are plain integers because a and b may be negative. Step 3 is correct: canceling the nonzero a gives mn = 1. Step 4 is the first invalid step: over the integers, mn = 1 also allows m = n = -1, for example with a = 1 and b = -1, and then a is not b. The error is forgetting that the multipliers can be negative. The answer is Step 4."
+          - problem: "Claim: divides is a partial order on the positive integers. In the antisymmetry step one assumes a divides b and b divides a, writes b = a·m and a = b·n with positive integers m and n, and derives a = a·mn, hence mn = 1. The next line of the proof is missing. Select the line that completes the antisymmetry argument."
+            answer: "m and n are positive, so m = n = 1"
+            answer_contract: {"kind": "label", "options": [["m and n are positive, so m = n = 1"], ["m and n are integers, so m = n = 1"], ["mn = 1, so a divides b"], ["mn = 1, so b divides a"]]}
+            solution_sketch: "The option 'm and n are integers, so m = n = 1' is wrong: over all integers, mn = 1 also allows m = n = -1, so being integers is not enough; positivity of the multipliers is exactly what is needed. The option 'mn = 1, so a divides b' only restates the first hypothesis and yields no equality of a and b. The option 'mn = 1, so b divides a' restates the other hypothesis. With m and n positive, mn = 1 forces m = n = 1, hence a = b. The answer is: m and n are positive, so m = n = 1."
+          - problem: "Write the full proof: the componentwise order on pairs of nonnegative integers, defined by (a, b) precedes (c, d) exactly when a ≤ c and b ≤ d, is a partial order. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1 (reflexive): for any pair (a, b) we have a ≤ a and b ≤ b, so (a, b) precedes (a, b). Step 2 (antisymmetric): suppose (a, b) precedes (c, d) and (c, d) precedes (a, b). Then a ≤ c and c ≤ a, so a = c by antisymmetry of the usual order on the numbers; likewise b ≤ d and d ≤ b give b = d. Hence (a, b) = (c, d), which is the antisymmetry of the relation. Step 3 (transitive): suppose (a, b) precedes (c, d) and (c, d) precedes (e, f). Then a ≤ c and c ≤ e, so a ≤ e by transitivity of the usual order, and b ≤ d and d ≤ f give b ≤ f. Hence (a, b) precedes (e, f). Step 4 (conclusion): all three axioms hold, so the componentwise order is a partial order on the pairs of nonnegative integers. This completes the proof."
         constraints: "confirm all three axioms, noting positivity for antisymmetry"
       - id: kp3
         name: "Total vs. partial; comparability"
