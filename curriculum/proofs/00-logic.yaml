@@ -510,13 +510,30 @@ topics:
         name: "Parentheses change the value"
         key_prerequisites: [truth-tables-basic-connectives]
         exemplars:
-          - problem: 'At $P$ = F, $Q$ = T, evaluate both $\neg(P \lor Q)$ and $\neg P \lor Q$. Do they agree?'
-            answer_contract: {kind: none}
-            answer: '$\neg(P \lor Q)$ = F but $\neg P \lor Q$ = T; they differ.'
-            solution_sketch: '$P \lor Q$ = T so its negation is F; but $\neg P$ = T already makes $\neg P \lor Q$ true. Parentheses determine what the negation applies to.'
-          - problem: 'At $P$ = T, $Q$ = F, $R$ = F, evaluate $P \land (\neg Q \lor R)$.'
-            answer: 'T.'
-            solution_sketch: '$\neg Q$ = T, so $\neg Q \lor R$ = T; then T $\land$ T = T.'
+          - problem: "At P = F, Q = F, evaluate both ¬(P ∧ Q) and ¬P ∧ Q. In the order given, which expression is true? Give the value of the parenthesized expression as 1 for T and 0 for F."
+            answer: "which = first; value = 1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["first"], ["second"]]}, "name": "which"}, {"contract": {"kind": "exact"}, "name": "value"}]}
+            solution_sketch: "Step 1: Conjunction rule inside the parentheses: P ∧ Q = F ∧ F = F. Step 2: Negation rule: ¬(P ∧ Q) = ¬F = T, so the parenthesized expression has value 1. Step 3: Precedence and the connective rules give ¬P ∧ Q = (¬F) ∧ F = T ∧ F = F, so the unparenthesized expression is false. Choosing 'second' is the error of reading the negation as covering P alone instead of the whole conjunction. The answer is which = first; value = 1."
+          - problem: "At P = F, Q = T, R = T, evaluate both P ∧ (¬Q ∨ R) and P ∧ ¬Q ∨ R. In the order given, which expression is true? Give the value of the parenthesized expression as 1 for T and 0 for F."
+            answer: "which = second; value = 0"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["first"], ["second"]]}, "name": "which"}, {"contract": {"kind": "exact"}, "name": "value"}]}
+            solution_sketch: "Step 1: Negation rule: ¬Q = ¬T = F. Step 2: Disjunction rule inside the parentheses: ¬Q ∨ R = F ∨ T = T. Step 3: Conjunction rule: P ∧ (¬Q ∨ R) = F ∧ T = F, so the parenthesized expression has value 0. Step 4: Precedence groups the unparenthesized form as (P ∧ ¬Q) ∨ R = F ∨ T = T, so it is true. Choosing 'first' is the error of letting the conjunction with P bind before the disjunction with R. The answer is which = second; value = 0."
+          - problem: "At P = T, Q = F, R = F, evaluate both (P ∨ Q) ∧ R and P ∨ (Q ∧ R). Give the value of the parenthesized expression as 1 for T and 0 for F."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: Disjunction rule inside the parentheses: P ∨ Q = T ∨ F = T. Step 2: Conjunction rule: (P ∨ Q) ∧ R = T ∧ F = F, so the parenthesized expression has value 0. Step 3: Precedence groups the unparenthesized form as P ∨ (Q ∧ R) = T ∨ F = T, so the two versions differ at this assignment. The answer is 0."
+          - problem: "At P = F, Q = T, R = F, evaluate both ¬(P ∨ Q) ∧ R and ¬P ∨ Q ∧ R. In the order given, which expression is true? Give the value of the unparenthesized expression as 1 for T and 0 for F."
+            answer: "which = second; value = 1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["first"], ["second"]]}, "name": "which"}, {"contract": {"kind": "exact"}, "name": "value"}]}
+            solution_sketch: "Step 1: Disjunction rule inside the parentheses: P ∨ Q = F ∨ T = T. Step 2: Negation rule and conjunction rule: ¬(P ∨ Q) ∧ R = F ∧ F = F, so the parenthesized expression is false. Step 3: Precedence groups the unparenthesized form as ¬P ∨ (Q ∧ R) = T ∨ F = T, so its value is 1. Choosing 'first' is the error of treating the conjunction with R as part of the negated group. The answer is which = second; value = 1."
+          - problem: "At P = T, Q = F, evaluate both ¬(¬P ∧ Q) and ¬¬P ∧ Q. How many of the two expressions are true?"
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: Negation rule: ¬P = ¬T = F, so the inner group is ¬P ∧ Q = F ∧ F = F. Step 2: Negation rule again: ¬(¬P ∧ Q) = ¬F = T, so the parenthesized expression is true. Step 3: The double negation in the unparenthesized form cancels, and ¬¬P ∧ Q = T ∧ F = F, so it is false. Exactly one of the two expressions is true. The answer is 1."
+          - problem: "At P = F, Q = F, R = T, evaluate both P ∧ Q ∨ R and P ∧ (Q ∨ R). In the order given, which expression is true? Give the value of the parenthesized expression as 1 for T and 0 for F."
+            answer: "which = first; value = 0"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["first"], ["second"]]}, "name": "which"}, {"contract": {"kind": "exact"}, "name": "value"}]}
+            solution_sketch: "Step 1: Precedence groups the unparenthesized form as (P ∧ Q) ∨ R = (F ∧ F) ∨ T = F ∨ T = T. Step 2: Disjunction rule inside the parentheses: Q ∨ R = F ∨ T = T. Step 3: Conjunction rule: P ∧ (Q ∨ R) = F ∧ T = F, so the parenthesized expression has value 0. Choosing 'second' is the error of attaching the conjunction with P to the whole parenthesized group. The answer is which = first; value = 0."
         constraints: "contrast a parenthesized and unparenthesized version at a distinguishing assignment"
     diagnostic_exemplar:
       problem: 'Evaluate $P \land \neg Q \lor R$ and $P \land (\neg Q \lor R)$ at $P$ = F, $Q$ = T, $R$ = T, and state whether the parentheses change the value.'
@@ -1183,12 +1200,30 @@ topics:
         name: "Simplification chains with the laws"
         key_prerequisites: [de-morgan-double-negation]
         exemplars:
-          - problem: 'Simplify $(P \land Q) \lor (P \land \neg Q)$ using the distributive law.'
-            answer: '$P$'
-            solution_sketch: 'Distribute: $(P \land Q) \lor (P \land \neg Q) \equiv P \land (Q \lor \neg Q) \equiv P \land T \equiv P$.'
-          - problem: 'Simplify $(P \lor Q) \land (P \lor \neg Q)$.'
-            answer: '$P$'
-            solution_sketch: 'Distribute: $(P \lor Q) \land (P \lor \neg Q) \equiv P \lor (Q \land \neg Q) \equiv P \lor F \equiv P$.'
+          - problem: "Simplify (R and S) or (R and not S) using the distributive, negation, and identity laws, counting each single use of a law as one application. Give the answer as result = variable; laws = number."
+            answer: "result = R; laws = 3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["R"], ["S"], ["F"]]}, "name": "result"}, {"contract": {"kind": "exact"}, "name": "laws"}]}
+            solution_sketch: "Start with the full expression (R and S) or (R and not S). Step 1, distributive law: factor R, giving R and (S or not S). Step 2, negation law: S or not S is T. Step 3, identity law: R and T is R. Option S forgets the common factor R; option F confuses the negation law for or with the negation law for and. The final answer is result = R; laws = 3."
+          - problem: "Simplify (M or N) and (M or not N) using the distributive, negation, and identity laws, counting each single use of a law as one application. Give the answer as result = variable; laws = number."
+            answer: "result = M; laws = 3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["M"], ["N"], ["T"]]}, "name": "result"}, {"contract": {"kind": "exact"}, "name": "laws"}]}
+            solution_sketch: "Start with the full expression (M or N) and (M or not N). Step 1, distributive law: factor M, giving M or (N and not N). Step 2, negation law: N and not N is F. Step 3, identity law: M or F is M. Option N ignores the common factor M; option T treats the contradiction N and not N as a tautology. The final answer is result = M; laws = 3."
+          - problem: "Simplify ((S or R) and (S or not R)) or not S using the distributive, negation, and identity laws, counting each single use of a law as one application. Give the answer as result = value; laws = number."
+            answer: "result = T; laws = 4"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["T"], ["F"], ["S"]]}, "name": "result"}, {"contract": {"kind": "exact"}, "name": "laws"}]}
+            solution_sketch: "Start with the full expression ((S or R) and (S or not R)) or not S. Step 1, distributive law: the bracketed part becomes S or (R and not R). Step 2, negation law: R and not R is F, giving (S or F) or not S. Step 3, identity law: S or F is S, giving S or not S. Step 4, negation law: S or not S is T. Option S stops after step 3; option F applies the negation law in the wrong direction. The final answer is result = T; laws = 4."
+          - problem: "Simplify ((Q or P) and (Q or not P)) and not Q using the distributive, negation, and identity laws, counting each single use of a law as one application. Give the answer as result = value; laws = number."
+            answer: "result = F; laws = 4"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["F"], ["T"], ["Q"]]}, "name": "result"}, {"contract": {"kind": "exact"}, "name": "laws"}]}
+            solution_sketch: "Start with the full expression ((Q or P) and (Q or not P)) and not Q. Step 1, distributive law: the bracketed part becomes Q or (P and not P). Step 2, negation law: P and not P is F, giving (Q or F) and not Q. Step 3, identity law: Q or F is Q, giving Q and not Q. Step 4, negation law: Q and not Q is F. Option Q stops after step 3; option T applies the negation law in the wrong direction. The final answer is result = F; laws = 4."
+          - problem: "An expression is ((A and B) or (A and not B)) and (C or not C). Using the distributive, negation, and identity laws, simplify it to a single letter, counting each single use of a law as one application. How many law applications does the simplification need?"
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Start with the full expression ((A and B) or (A and not B)) and (C or not C). Step 1, distributive law: factor A, giving (A and (B or not B)) and (C or not C). Step 2, negation law: B or not B is T. Step 3, negation law: C or not C is T. Step 4, identity law: A and T is A. Step 5, identity law: the remaining A and T reduces to A. Five single uses of a law are needed. The final answer is 5."
+          - problem: "An expression is not((P or Q) and (P or not Q)). Using De Morgan's law and then the distributive, negation, and identity laws, simplify it to a formula in one variable, counting each single use of a law as one application. How many law applications does the simplification need?"
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Start with the full expression not((P or Q) and (P or not Q)). Step 1, De Morgan's law: it becomes not(P or Q) or not(P or not Q). Step 2, De Morgan's law: not(P or Q) is not P and not Q. Step 3, De Morgan's law: not(P or not Q) is not P and Q. Step 4, distributive law: factor not P, giving not P and (not Q or Q). Step 5, negation law: not Q or Q is T. Step 6, identity law: not P and T is not P. Six single uses of a law are needed. The final answer is 6."
         constraints: "multi-step law chains: distributive, negation, identity laws; cite each law used"
     diagnostic_exemplar:
       problem: 'Simplify $\neg(P \to Q) \lor (P \land Q)$ to a formula in a single variable, naming the law used at each step.'
