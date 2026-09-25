@@ -34,10 +34,10 @@ topics:
             answer: "1"
             answer_contract: {"kind": "exact"}
             solution_sketch: "Step 1: Apply the definition of an open sentence, a statement whose truth depends on the value of a variable. Entry (a), 5 is an odd number, is declarative and true, so it is a proposition. Entry (b), n is even, depends on the variable n, so it is an open sentence. Entry (c), Be quiet, tells someone to act, so it is a command. Entry (d), 7 > 2, is declarative and true, so it is a proposition. Step 2: Count the open sentences: only entry (b) qualifies, so the answer is 1."
-          - problem: "Four statements appear on a quiz: (a) Solve the equation. (b) Please sit down. (c) Turn off your phone. (d) 2 + 2 = 5. How many of these statements are commands?"
-            answer: "3"
+          - problem: "Four statements are shown: (a) Solve the equation. (b) Please sit down. (c) Turn off your phone. (d) 2 + 2 = 5. How many are propositions with a false truth value?"
+            answer: "1"
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1: Apply the definition of a command, a statement that tells someone to do something and has no truth value. Statement (a), Solve the equation, is an order, so it is a command. Statement (b), Please sit down, is an order, so it is a command. Statement (c), Turn off your phone, is an order, so it is a command. Statement (d), 2 + 2 = 5, is declarative and false, so it is a proposition. Step 2: Count the commands: statements (a), (b), and (c) qualify, so the answer is 3."
+            solution_sketch: "Commands do not assert a truth-valued claim. Only (d) is a proposition, and its truth value is false; the count is 1."
           - problem: "A teacher shows four statements: (a) This statement is false. (b) 9 + 5 = 14. (c) Sit down. (d) t is a prime number. How many of these statements are not propositions?"
             answer: "3"
             answer_contract: {"kind": "exact"}
@@ -188,30 +188,30 @@ topics:
         name: "Mathematical or is inclusive"
         key_prerequisites: [propositions-and-truth-values]
         exemplars:
-          - problem: "Let P be the statement '12 mod 5 = 2' and Q the statement '12 mod 4 = 0'. Determine the truth value of the disjunction P or Q, giving 1 for true and 0 for false."
-            answer: "1"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1, inclusive-or rule: the disjunction P or Q is true when at least one disjunct is true, and it is still true when both are true. Step 2, check P: 12 mod 5 = 2, so P is true. Step 3, check Q: 12 mod 4 = 0, so Q is true as well. Both disjuncts are true, and the inclusive reading keeps the disjunction true. The truth value is 1."
-          - problem: "For the statements P: 15 mod 2 = 0 and Q: 15 mod 5 = 0, give the truth value of the disjunction P or Q as 1 for true and 0 for false."
-            answer: "1"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1, inclusive-or rule: one true disjunct is enough to make P or Q true. Step 2, check P: 15 mod 2 = 1, so P is false. Step 3, check Q: 15 mod 5 = 0, so Q is true. Since at least one disjunct holds, the disjunction is true. The truth value is 1."
-          - problem: "Check the statements P: 7 mod 2 = 0 and Q: 7 mod 3 = 0. What is the truth value of the disjunction P or Q, written as 1 for true and 0 for false?"
-            answer: "0"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1, inclusive-or rule: the disjunction is false only when both disjuncts are false. Step 2, check P: 7 mod 2 = 1, so P is false. Step 3, check Q: 7 mod 3 = 1, so Q is false. Neither disjunct holds, so the disjunction is false. The truth value is 0."
-          - problem: "Consider the truth table of the disjunction P or Q over the four rows T-T, T-F, F-T and F-F, counting the row where both P and Q are true as well. How many rows of this truth table have the value 1?"
-            answer: "3"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1, inclusive-or rule: P or Q is true in every row with at least one true disjunct, including the row T-T where both hold. Step 2, mark the true rows: T-T gives 1, T-F gives 1, F-T gives 1, and only F-F gives 0. Step 3, count the rows of value 1: there are 3. The count of true rows is 3."
-          - problem: "Treat the or as inclusive, so a number satisfying both parts is counted once. How many of the integers from 1 to 10 make the statement 'n mod 2 = 0 or n mod 3 = 0' true?"
-            answer: "7"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1, split by disjunct: the even numbers are 2, 4, 6, 8, 10, which gives 5 values, and the multiples of 3 are 3, 6, 9, which gives 3 values. Step 2, inclusive-or rule: the overlap, the number 6 that satisfies both disjuncts, is counted only once. Step 3, combine: 5 + 3 - 1 = 7 integers satisfy the disjunction. The count is 7."
-          - problem: "Treat the or as inclusive when you decide which numbers fail. How many of the integers from 1 to 12 make the statement 'n mod 2 = 0 or n mod 3 = 0' false?"
-            answer: "4"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1, inclusive-or rule: the disjunction is false only when both disjuncts fail, that is, when n is odd and not a multiple of 3. Step 2, list the odd numbers from 1 to 12: 1, 3, 5, 7, 9, 11. Step 3, remove the multiples of 3 among them, namely 3 and 9, leaving 1, 5, 7, 11. Counting these failing values gives 4. The count is 4."
+          - problem: "For each displayed pair (P,Q), evaluate the mathematical statement P or Q: (T, T), (F, F), (T, F). Give the three output values in the displayed order, using 1 for true and 0 for false."
+            answer: "1, 0, 1"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Mathematical disjunction includes the case in which both propositions hold. Applying that meaning separately to each pair gives 1, 0, 1."
+          - problem: "For each displayed pair (P,Q), evaluate the mathematical statement P or Q: (F, F), (T, T), (F, T). Give the three output values in the displayed order, using 1 for true and 0 for false."
+            answer: "0, 1, 1"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Mathematical disjunction includes the case in which both propositions hold. Applying that meaning separately to each pair gives 0, 1, 1."
+          - problem: "For each displayed pair (P,Q), evaluate the mathematical statement P or Q: (T, T), (T, T), (F, F). Give the three output values in the displayed order, using 1 for true and 0 for false."
+            answer: "1, 1, 0"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Mathematical disjunction includes the case in which both propositions hold. Applying that meaning separately to each pair gives 1, 1, 0."
+          - problem: "For each displayed pair (P,Q), evaluate the mathematical statement P or Q: (F, F), (T, T), (F, F). Give the three output values in the displayed order, using 1 for true and 0 for false."
+            answer: "0, 1, 0"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Mathematical disjunction includes the case in which both propositions hold. Applying that meaning separately to each pair gives 0, 1, 0."
+          - problem: "For each displayed pair (P,Q), evaluate the mathematical statement P or Q: (T, T), (F, F), (F, F). Give the three output values in the displayed order, using 1 for true and 0 for false."
+            answer: "1, 0, 0"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Mathematical disjunction includes the case in which both propositions hold. Applying that meaning separately to each pair gives 1, 0, 0."
+          - problem: "For each displayed pair (P,Q), evaluate the mathematical statement P or Q: (T, T), (T, F), (F, T). Give the three output values in the displayed order, using 1 for true and 0 for false."
+            answer: "1, 1, 1"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Mathematical disjunction includes the case in which both propositions hold. Applying that meaning separately to each pair gives 1, 1, 1."
         constraints: "emphasize that both disjuncts true still makes the disjunction true"
     diagnostic_exemplar:
       problem: 'Let $P$: "$6$ is even", $Q$: "$6$ is divisible by $3$", $R$: "$6$ is prime". Give the truth values of $P \land Q$, $P \lor Q$ and $\neg R$, and say whether the truth of $P \lor Q$ depends on reading "or" inclusively.'
@@ -244,30 +244,30 @@ topics:
         name: "Conditional and biconditional"
         key_prerequisites: [logical-connectives]
         exemplars:
-          - problem: "Let P be the statement 'n is divisible by 4' and Q be the statement 'n is divisible by 6'. Consider the conditional P -> Q. State the role of P in this conditional, and give how many of the values n = 4, 6, 8, 12 make the conditional true."
-            answer: "role = hypothesis; count = 2"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["hypothesis"], ["conclusion"]]}, "name": "role"}, {"contract": {"kind": "exact"}, "name": "count"}]}
-            solution_sketch: "The full object is the conditional P -> Q with P: n is divisible by 4 and Q: n is divisible by 6. Step 1: by the definition of the conditional, the part linked to 'if' is the hypothesis, so P has the role hypothesis; the option conclusion is wrong because it names the part linked to 'then'. Step 2: evaluate P -> Q for each n by the conditional truth table: n = 4 gives true implies false, so false; n = 6 gives false implies true, so true; n = 8 gives true implies false, so false; n = 12 gives true implies true, so true. Step 3: two of the four values make the conditional true. The answer is role = hypothesis; count = 2."
-          - problem: "For the formula E <-> D, how many rows of its truth table have value true? Give the number."
-            answer: "2"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The full object is the biconditional E <-> D. Step 1: list the four truth assignments for E and D. Step 2: by the truth table for the biconditional, E <-> D is true when E and D have the same truth value. Step 3: the matching rows are TT and FF, so there are 2 true rows. The answer is 2."
-          - problem: "Let P be the statement 'n is a multiple of 3' and Q be the statement 'n is a multiple of 6'. Consider the conditional P -> Q. State the role of Q in this conditional, and give how many of the values n = 6, 9, 12, 5 make the conditional true."
-            answer: "role = conclusion; count = 3"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["hypothesis"], ["conclusion"]]}, "name": "role"}, {"contract": {"kind": "exact"}, "name": "count"}]}
-            solution_sketch: "The full object is the conditional P -> Q with P: n is a multiple of 3 and Q: n is a multiple of 6. Step 1: by the definition of the conditional, the part linked to 'then' is the conclusion, so Q has the role conclusion; the option hypothesis is wrong because it names the part linked to 'if'. Step 2: evaluate P -> Q for each n by the conditional truth table: n = 6 gives true implies true, so true; n = 9 gives true implies false, so false; n = 12 gives true implies true, so true; n = 5 gives false implies false, so true. Step 3: three of the four values make the conditional true. The answer is role = conclusion; count = 3."
-          - problem: "For the formula P -> Q, how many rows of its truth table have value true? Give the number."
-            answer: "3"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The full object is the conditional P -> Q. Step 1: list the four truth assignments for P and Q. Step 2: by the truth table for the conditional, P -> Q is false only on the row P true and Q false. Step 3: the other three rows are true. The answer is 3."
-          - problem: "For the formula (P -> Q) <-> R, how many rows of its truth table have value true? Give the number."
-            answer: "4"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The full object is (P -> Q) <-> R. Step 1: build the inner conditional P -> Q by its truth table. Step 2: combine that column with R by the biconditional truth table. Step 3: the true rows are PQR = 001, 011, 100, and 111, so the count is 4. The answer is 4."
-          - problem: "For the formula P -> (Q <-> R), how many rows of its truth table have value true? Give the number."
-            answer: "6"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The full object is P -> (Q <-> R). Step 1: build the inner biconditional Q <-> R by its truth table. Step 2: use the conditional truth table for the outer arrow. Step 3: the only false rows are PQR = 101 and 110, so the count is 6. The answer is 6."
+          - problem: "Analyze the statement (P implies Q). Bank: 1: P; 2: Q; 3: R. Give an ordered list starting with 1 if the whole statement is a conditional or 2 if it is a biconditional. Then give the bank numbers of the hypothesis and conclusion of each implication asserted by the whole statement; for a biconditional put the left-to-right implication first."
+            answer: "1, 1, 2"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Read the outer connective and keep each entire side as one proposition. Identify the asserted implication directions and their hypothesis/conclusion roles; the ordered codes are 1, 1, 2."
+          - problem: "Analyze the statement (Q iff R). Bank: 1: P; 2: R; 3: Q. Give an ordered list starting with 1 if the whole statement is a conditional or 2 if it is a biconditional. Then give the bank numbers of the hypothesis and conclusion of each implication asserted by the whole statement; for a biconditional put the left-to-right implication first."
+            answer: "2, 3, 2, 2, 3"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Read the outer connective and keep each entire side as one proposition. Identify the asserted implication directions and their hypothesis/conclusion roles; the ordered codes are 2, 3, 2, 2, 3."
+          - problem: "Analyze the statement ((P and Q) implies R). Bank: 1: (P and Q); 2: Q; 3: R; 4: P. Give an ordered list starting with 1 if the whole statement is a conditional or 2 if it is a biconditional. Then give the bank numbers of the hypothesis and conclusion of each implication asserted by the whole statement; for a biconditional put the left-to-right implication first."
+            answer: "1, 1, 3"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Read the outer connective and keep each entire side as one proposition. Identify the asserted implication directions and their hypothesis/conclusion roles; the ordered codes are 1, 1, 3."
+          - problem: "Analyze the statement (P iff (Q and R)). Bank: 1: R; 2: Q; 3: P; 4: (Q and R). Give an ordered list starting with 1 if the whole statement is a conditional or 2 if it is a biconditional. Then give the bank numbers of the hypothesis and conclusion of each implication asserted by the whole statement; for a biconditional put the left-to-right implication first."
+            answer: "2, 3, 4, 4, 3"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Read the outer connective and keep each entire side as one proposition. Identify the asserted implication directions and their hypothesis/conclusion roles; the ordered codes are 2, 3, 4, 4, 3."
+          - problem: "Analyze the statement (P implies (Q iff R)). Bank: 1: (Q iff R); 2: P; 3: Q; 4: R. Give an ordered list starting with 1 if the whole statement is a conditional or 2 if it is a biconditional. Then give the bank numbers of the hypothesis and conclusion of each implication asserted by the whole statement; for a biconditional put the left-to-right implication first."
+            answer: "1, 2, 1"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Read the outer connective and keep each entire side as one proposition. Identify the asserted implication directions and their hypothesis/conclusion roles; the ordered codes are 1, 2, 1."
+          - problem: "Analyze the statement ((P implies Q) iff R). Bank: 1: R; 2: Q; 3: (P implies Q); 4: P. Give an ordered list starting with 1 if the whole statement is a conditional or 2 if it is a biconditional. Then give the bank numbers of the hypothesis and conclusion of each implication asserted by the whole statement; for a biconditional put the left-to-right implication first."
+            answer: "2, 3, 1, 1, 3"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Read the outer connective and keep each entire side as one proposition. Identify the asserted implication directions and their hypothesis/conclusion roles; the ordered codes are 2, 3, 1, 1, 3."
         constraints: "identify hypothesis and conclusion; distinguish $\\to$ from $\\leftrightarrow$"
       - id: kp2
         name: "Translating compound sentences into symbols"
@@ -414,30 +414,30 @@ topics:
         name: "Reading off individual rows"
         key_prerequisites: [logical-connectives]
         exemplars:
-          - problem: "Work with truth values as numbers: true is 1 and false is 0. Define AND(a, b) = min(a, b) and OR(a, b) = max(a, b). For P = 0 and Q = 1, compute AND(P, Q) and OR(P, Q). Give the answer as a list of two numbers, 1 for true and 0 for false, in the order AND(P, Q), OR(P, Q)."
+          - problem: "For P = F, Q = T, read the truth-table row for (P and Q), (P or Q). Use 1 for true and 0 for false; give the values in the displayed order."
             answer: "0, 1"
-            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
-            solution_sketch: "Step 1 (conjunction rule): AND(P, Q) = min(P, Q); with P = 0 and Q = 1 this is min(0, 1) = 0. Step 2 (disjunction rule): OR(P, Q) = max(P, Q); with P = 0 and Q = 1 this is max(0, 1) = 1. Reading off the row gives the ordered list 0, 1."
-          - problem: "Work with truth values as numbers: true is 1 and false is 0, with AND(a, b) = min(a, b) and OR(a, b) = max(a, b). There are four assignments of values to P and Q. For how many of these assignments do AND(P, Q) and OR(P, Q) take the same value? Give the answer as a single number."
-            answer: "2"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1 (row enumeration): with AND(a, b) = min(a, b) and OR(a, b) = max(a, b), check each of the four assignments of values to P and Q. Step 2 (conjunction and disjunction rules): at (1, 1) both give 1, and at (0, 0) both give 0, so these two assignments agree. Step 3 (conjunction and disjunction rules): at (1, 0) the values are 0 and 1, and at (0, 1) the values are 0 and 1, so these two assignments differ. The number of assignments where AND(P, Q) and OR(P, Q) agree is 2."
-          - problem: "Work with truth values as numbers: true is 1 and false is 0, and define NOT(a) = 1 - a. For P = 0, compute NOT(P). Give the answer as a number, using 1 for true and 0 for false."
-            answer: "1"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1 (negation rule): NOT(a) = 1 - a flips the truth value of a. Step 2 (evaluation): with P = 0, NOT(P) = 1 - 0 = 1. The value of NOT(P) is 1."
-          - problem: "Work with truth values as numbers: true is 1 and false is 0, and define IMP(a, b) = max(1 - a, b). For P = 1 and Q = 0, compute IMP(P, Q). Give the answer as a number, using 1 for true and 0 for false."
-            answer: "0"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1 (implication rule): IMP(a, b) = max(1 - a, b), which is 0 exactly when a = 1 and b = 0. Step 2 (evaluation): with P = 1 and Q = 0, IMP(P, Q) = max(1 - 1, 0) = max(0, 0) = 0. The value of IMP(P, Q) is 0."
-          - problem: "Work with truth values as numbers: true is 1 and false is 0, and define BIC(a, b) = 1 - abs(a - b). For P = 1 and Q = 0, compute BIC(P, Q). Give the answer as a number, using 1 for true and 0 for false."
-            answer: "0"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1 (biconditional rule): BIC(a, b) = 1 - abs(a - b), which is 1 exactly when a and b have the same value. Step 2 (evaluation): with P = 1 and Q = 0, BIC(P, Q) = 1 - abs(1 - 0) = 1 - 1 = 0. The value of BIC(P, Q) is 0."
-          - problem: "Work with truth values as numbers: true is 1 and false is 0, with IMP(a, b) = max(1 - a, b). Which assignment of values to P and Q makes IMP(P, Q) equal to 0? Give the assignment as your choice."
-            answer: "P=1,Q=0"
-            answer_contract: {"kind": "label", "options": [["P=1,Q=1"], ["P=1,Q=0"], ["P=0,Q=1"], ["P=0,Q=0"]]}
-            solution_sketch: "Step 1 (implication rule): IMP(P, Q) = max(1 - P, Q) equals 0 only when 1 - P = 0 and Q = 0, that is P = 1 and Q = 0. Step 2 (checking wrong options): P=1,Q=1 gives max(0, 1) = 1, the error of thinking a true antecedent alone forces a false result; P=0,Q=1 gives max(1, 1) = 1, the error of ignoring that a false antecedent makes the implication true; P=0,Q=0 gives max(1, 0) = 1, the error of thinking both false forces a false result. The assignment that makes IMP(P, Q) equal to 0 is P=1,Q=0."
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Apply each connective to the stated assignment, preserving the direction of any conditional. The truth values in order are 0, 1."
+          - problem: "For P = T, Q = F, read the truth-table row for not P, (P and Q), (P or Q). Use 1 for true and 0 for false; give the values in the displayed order."
+            answer: "0, 0, 1"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Apply each connective to the stated assignment, preserving the direction of any conditional. The truth values in order are 0, 0, 1."
+          - problem: "For P = F, Q = F, read the truth-table row for not P, (P and Q). Use 1 for true and 0 for false; give the values in the displayed order."
+            answer: "1, 0"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Apply each connective to the stated assignment, preserving the direction of any conditional. The truth values in order are 1, 0."
+          - problem: "For P = T, Q = F, read the truth-table row for (P implies Q), (P iff Q), not Q. Use 1 for true and 0 for false; give the values in the displayed order."
+            answer: "0, 0, 1"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Apply each connective to the stated assignment, preserving the direction of any conditional. The truth values in order are 0, 0, 1."
+          - problem: "For P = F, Q = T, read the truth-table row for (P iff Q), (Q implies P). Use 1 for true and 0 for false; give the values in the displayed order."
+            answer: "0, 0"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Apply each connective to the stated assignment, preserving the direction of any conditional. The truth values in order are 0, 0."
+          - problem: "For P = F, Q = F, read the truth-table row for not P, (P or Q), (P implies Q). Use 1 for true and 0 for false; give the values in the displayed order."
+            answer: "1, 0, 1"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Apply each connective to the stated assignment, preserving the direction of any conditional. The truth values in order are 1, 0, 1."
         constraints: "evaluate specific rows without writing the whole table"
     diagnostic_exemplar:
       problem: 'For $P$ true and $Q$ false, give the values of $P \land Q$, $P \lor Q$, and $\neg P$.'
@@ -470,27 +470,27 @@ topics:
         name: "Operator precedence"
         key_prerequisites: [logical-connectives]
         exemplars:
-          - problem: "In the formula $\\neg P \\lor Q \\land R$, the standard precedence is $\\neg$, then $\\land$, then $\\lor$. Count the connectives from the left starting at 1. Give the position number of the main connective."
+          - problem: "In the formula $\\neg P \\lor Q \\land R$. Count the connectives from the left starting at 1. Give the position number of the main connective."
             answer: "2"
             answer_contract: {"kind": "exact"}
             solution_sketch: "The full formula is $\\neg P \\lor Q \\land R$. Step 1: by precedence, $\\neg$ applies only to $P$, so it is not main. Step 2: $\\land$ binds tighter than $\\lor$, so $Q \\land R$ groups before the disjunction. Step 3: the main connective is the $\\lor$ between $\\neg P$ and $Q \\land R$. Counting from the left, $\\neg$ is position 1 and $\\lor$ is position 2. The answer is 2."
-          - problem: "In the formula $\\neg P \\land Q \\lor R$, the standard precedence is $\\neg$, then $\\land$, then $\\lor$. Count the connectives from the left starting at 1. Give the position number of the main connective."
+          - problem: "In the formula $\\neg P \\land Q \\lor R$. Count the connectives from the left starting at 1. Give the position number of the main connective."
             answer: "3"
             answer_contract: {"kind": "exact"}
             solution_sketch: "The full formula is $\\neg P \\land Q \\lor R$. Step 1: by precedence, $\\neg$ applies first and is not main. Step 2: $\\land$ binds tighter than $\\lor$, so $\\neg P \\land Q$ groups before the disjunction. Step 3: the remaining main connective is the $\\lor$ after $Q$. Counting from the left, $\\neg$ is 1, $\\land$ is 2, and $\\lor$ is 3. The answer is 3."
-          - problem: "In the formula $P \\lor Q \\land \\neg R$, the standard precedence is $\\neg$, then $\\land$, then $\\lor$. Count the connectives from the left starting at 1. Give the position number of the main connective."
+          - problem: "In the formula $P \\lor Q \\land \\neg R$. Count the connectives from the left starting at 1. Give the position number of the main connective."
             answer: "1"
             answer_contract: {"kind": "exact"}
             solution_sketch: "The full formula is $P \\lor Q \\land \\neg R$. Step 1: by precedence, $\\neg$ applies first to $R$. Step 2: $\\land$ binds tighter than $\\lor$, so $Q \\land \\neg R$ groups. Step 3: the main connective is the $\\lor$ at the left. Counting from the left, $\\lor$ is position 1. The answer is 1."
-          - problem: "In the formula $\\neg P \\land \\neg Q \\lor R$, the standard precedence is $\\neg$, then $\\land$, then $\\lor$. Count the connectives from the left starting at 1. Give the position number of the main connective."
+          - problem: "In the formula $\\neg P \\land \\neg Q \\lor R$. Count the connectives from the left starting at 1. Give the position number of the main connective."
             answer: "4"
             answer_contract: {"kind": "exact"}
             solution_sketch: "The full formula is $\\neg P \\land \\neg Q \\lor R$. Step 1: both $\\neg$ connectives apply first. Step 2: $\\land$ binds tighter, so $\\neg P \\land \\neg Q$ groups. Step 3: the main connective is the $\\lor$ at the right. Counting from the left, the connectives are $\\neg$ at 1, $\\land$ at 2, $\\neg$ at 3, and $\\lor$ at 4. The answer is 4."
-          - problem: "In the formula $P \\land Q \\lor \\neg R$, with standard precedence $\\neg$, then $\\land$, then $\\lor$, which connective is the main connective?"
+          - problem: "In the formula $P \\land Q \\lor \\neg R$, which connective is the main connective?"
             answer: "disjunction"
             answer_contract: {"kind": "label", "options": [["negation"], ["conjunction"], ["disjunction"], ["conditional"]]}
             solution_sketch: "The full formula is $P \\land Q \\lor \\neg R$. By precedence, $\\neg$ applies first, then $\\land$ groups $P \\land Q$, and the last connective is $\\lor$. The main connective is therefore disjunction. The option negation is wrong because negation is unary and applies only to $R$. The option conjunction is wrong because $\\land$ binds tighter and forms the left part. The option conditional is wrong because $\\lor$ is a disjunction, not a conditional. The main connective is disjunction."
-          - problem: "In the formula $P \\land \\neg Q \\lor R \\land S$, with standard precedence $\\neg$, then $\\land$, then $\\lor$, which connective is applied first?"
+          - problem: "In the formula $P \\land \\neg Q \\lor R \\land S$, which connective is applied first?"
             answer: "negation"
             answer_contract: {"kind": "label", "options": [["negation"], ["conjunction"], ["disjunction"], ["conditional"]]}
             solution_sketch: "The full formula is $P \\land \\neg Q \\lor R \\land S$. By precedence, $\\neg$ binds tightest, so the negation of $Q$ is applied first. The option conjunction is wrong because $\\land$ applies after all negations. The option disjunction is wrong because $\\lor$ applies last. The option conditional is wrong because the symbols are not a conditional. The first connective applied is negation."
@@ -499,30 +499,30 @@ topics:
         name: "Evaluating at given truth values"
         key_prerequisites: [truth-tables-basic-connectives]
         exemplars:
-          - problem: "Evaluate $\\neg P \\lor Q \\land R$ at $P$ = F, $Q$ = T, $R$ = F. State the truth value (T or F) and the number of true disjuncts."
-            answer: "value = T; count = 1"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["T"], ["F"]]}, "name": "value"}, {"contract": {"kind": "exact"}, "name": "count"}]}
-            solution_sketch: "The proposition is $\\neg P \\lor Q \\land R$, read as $(\\neg P) \\lor (Q \\land R)$. Negation rule: $\\neg P$ is T because $P$ is F. Conjunction rule: $Q \\land R$ is F because $R$ is F. Disjunction rule: T or F is T, so exactly one disjunct is true. The option F would be the error of taking the negation of F to be F. The answer is value = T; count = 1."
-          - problem: "Evaluate $\\neg P \\land Q$ at $P$ = T, $Q$ = F. State the truth value (T or F) and the number of true conjuncts."
-            answer: "value = F; count = 0"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["T"], ["F"]]}, "name": "value"}, {"contract": {"kind": "exact"}, "name": "count"}]}
-            solution_sketch: "The proposition is $\\neg P \\land Q$. Negation rule: $\\neg P$ is F because $P$ is T. Conjunction rule: F and F is F, so no conjunct is true. The option T would be the error of evaluating the negation of T as T. The answer is value = F; count = 0."
-          - problem: "Evaluate $P \\lor Q \\land R$ at $P$ = T, $Q$ = T, $R$ = T. State the truth value (T or F) and the number of true disjuncts."
-            answer: "value = T; count = 2"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["T"], ["F"]]}, "name": "value"}, {"contract": {"kind": "exact"}, "name": "count"}]}
-            solution_sketch: "The proposition is $P \\lor Q \\land R$, read as $P \\lor (Q \\land R)$. Conjunction rule: $Q \\land R$ is T because both $Q$ and $R$ are T. Disjunction rule: T or T is T, so both disjuncts are true. The option F would be the error of reading the conjunction of two true parts as F. The answer is value = T; count = 2."
-          - problem: "Evaluate $\\neg(P \\land Q) \\land R$ at $P$ = T, $Q$ = F, $R$ = F. State the truth value (T or F) and the number of true conjuncts."
-            answer: "value = F; count = 1"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["T"], ["F"]]}, "name": "value"}, {"contract": {"kind": "exact"}, "name": "count"}]}
-            solution_sketch: "The proposition is $\\neg(P \\land Q) \\land R$. Conjunction rule inside the negation: $P \\land Q$ is F because $Q$ is F. Negation rule: the negation of F is T. Conjunction rule: T and F is F, so exactly one conjunct is true. The option T would be the error of reading the second conjunct $R$ as T. The answer is value = F; count = 1."
-          - problem: "Evaluate $P \\land Q \\lor R$ at $P$ = F, $Q$ = F, $R$ = F. Give the truth value as 1 for true and 0 for false."
-            answer: "0"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The proposition is $P \\land Q \\lor R$, read as $(P \\land Q) \\lor R$. Conjunction rule: F and F is F. Disjunction rule: F or F is F. Encoding the false value as 0 gives the key. The answer is 0."
-          - problem: "Evaluate $\\neg P \\lor \\neg Q$ at $P$ = F, $Q$ = F. How many of its two disjuncts are true?"
-            answer: "2"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The proposition is $\\neg P \\lor \\neg Q$. Negation rule: $\\neg P$ is T because $P$ is F. Negation rule: $\\neg Q$ is T because $Q$ is F. Disjunction rule: T or T is T, so both of the two disjuncts are true. The answer is 2."
+          - problem: "At P = F, Q = T, R = F, evaluate (a) (not P or (Q and R)); (b) (P and not Q); (c) (not R or Q). Use 1 for true and 0 for false; give the values in the displayed order."
+            answer: "1, 0, 1"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Evaluate the negations and each grouped connective at the single stated assignment, then combine their truth values. The truth values in order are 1, 0, 1."
+          - problem: "At P = T, Q = F, R = F, evaluate (a) (not P and Q); (b) (P or R); (c) not (Q or R). Use 1 for true and 0 for false; give the values in the displayed order."
+            answer: "0, 1, 1"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Evaluate the negations and each grouped connective at the single stated assignment, then combine their truth values. The truth values in order are 0, 1, 1."
+          - problem: "At P = T, Q = T, R = T, evaluate (a) (P or (Q and R)); (b) (P and not Q); (c) not (Q and R). Use 1 for true and 0 for false; give the values in the displayed order."
+            answer: "1, 0, 0"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Evaluate the negations and each grouped connective at the single stated assignment, then combine their truth values. The truth values in order are 1, 0, 0."
+          - problem: "At P = T, Q = F, R = F, evaluate (a) (not (P and Q) and R); (b) (not P or Q); (c) not (Q or R). Use 1 for true and 0 for false; give the values in the displayed order."
+            answer: "0, 0, 1"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Evaluate the negations and each grouped connective at the single stated assignment, then combine their truth values. The truth values in order are 0, 0, 1."
+          - problem: "At P = F, Q = F, R = F, evaluate (a) ((P and Q) or R); (b) (not P and not Q); (c) not (not P and R). Use 1 for true and 0 for false; give the values in the displayed order."
+            answer: "0, 1, 1"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Evaluate the negations and each grouped connective at the single stated assignment, then combine their truth values. The truth values in order are 0, 1, 1."
+          - problem: "At P = F, Q = T, R = T, evaluate (a) (not P or not Q); (b) ((P or Q) and R); (c) not (P or R). Use 1 for true and 0 for false; give the values in the displayed order."
+            answer: "1, 1, 0"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Evaluate the negations and each grouped connective at the single stated assignment, then combine their truth values. The truth values in order are 1, 1, 0."
         constraints: "connectives limited to $\\neg, \\land, \\lor$; up to 3 variables; single assignment of truth values"
       - id: kp3
         name: "Parentheses change the value"
@@ -536,10 +536,10 @@ topics:
             answer: "which = second; value = 0"
             answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["first"], ["second"]]}, "name": "which"}, {"contract": {"kind": "exact"}, "name": "value"}]}
             solution_sketch: "Step 1: Negation rule: ¬Q = ¬T = F. Step 2: Disjunction rule inside the parentheses: ¬Q ∨ R = F ∨ T = T. Step 3: Conjunction rule: P ∧ (¬Q ∨ R) = F ∧ T = F, so the parenthesized expression has value 0. Step 4: Precedence groups the unparenthesized form as (P ∧ ¬Q) ∨ R = F ∨ T = T, so it is true. Choosing 'first' is the error of letting the conjunction with P bind before the disjunction with R. The answer is which = second; value = 0."
-          - problem: "At P = T, Q = F, R = F, evaluate both (P ∨ Q) ∧ R and P ∨ (Q ∧ R). Give the value of the parenthesized expression as 1 for T and 0 for F."
-            answer: "0"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1: Disjunction rule inside the parentheses: P ∨ Q = T ∨ F = T. Step 2: Conjunction rule: (P ∨ Q) ∧ R = T ∧ F = F, so the parenthesized expression has value 0. Step 3: Precedence groups the unparenthesized form as P ∨ (Q ∧ R) = T ∨ F = T, so the two versions differ at this assignment. The answer is 0."
+          - problem: "At P = T, Q = F, R = F, compare (P or Q) and R with P or (Q and R). Evaluate both expressions. Use 1 for true and 0 for false; give the values in the displayed order."
+            answer: "0, 1"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Parentheses change the final operation from conjunction with R to disjunction with P. Evaluate both groupings to see their different values. The truth values in order are 0, 1."
           - problem: "At P = F, Q = T, R = F, evaluate both ¬(P ∨ Q) ∧ R and ¬P ∨ Q ∧ R. In the order given, which expression is true? Give the value of the unparenthesized expression as 1 for T and 0 for F."
             answer: "which = second; value = 1"
             answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["first"], ["second"]]}, "name": "which"}, {"contract": {"kind": "exact"}, "name": "value"}]}
@@ -641,14 +641,14 @@ topics:
         name: "Three-variable tables and tautology spotting"
         key_prerequisites: [evaluating-compound-propositions]
         exemplars:
-          - problem: "A formula uses exactly 3 distinct variables. How many rows are in its truth table? Give the number."
-            answer: "8"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1: count the variables: 3. Step 2: use the row rule 2^n, so 2^3 = 8. The truth table has 8 rows."
-          - problem: "For the formula (P or not P) or (Q and R), classify its final column and give how many of the 8 rows are T. State the classification and the count."
-            answer: "verdict = tautology; T = 8"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["tautology"], ["contingent"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "T"}]}
-            solution_sketch: "The formula is (P or not P) or (Q and R). Step 1: P or not P is true in every row, so the left disjunct is true in all 8 rows. Step 2: an OR with one true disjunct is true, so the final column is true in all 8 rows. The wrong option contingent would require at least one F row, but no row is F. The answer is verdict = tautology; T = 8."
+          - problem: "Construct the final truth-table column for ((P and Q) implies R). Use row order TTT, TTF, TFT, TFF, FTT, FTF, FFT, FFF. Give the eight values as 1 for true and 0 for false."
+            answer: "1, 0, 1, 1, 1, 1, 1, 1"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Evaluate the compound at every assignment of its three variables. In the specified order the column is 1, 0, 1, 1, 1, 1, 1, 1."
+          - problem: "Construct the final truth-table column for ((P or Q) iff R). Use row order TTT, TTF, TFT, TFF, FTT, FTF, FFT, FFF. Give the eight values as 1 for true and 0 for false."
+            answer: "1, 0, 1, 0, 1, 0, 0, 1"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Evaluate the compound at every assignment of its three variables. In the specified order the column is 1, 0, 1, 0, 1, 0, 0, 1."
           - problem: "For the formula P and (Q or R), how many rows make the formula true? Give the number."
             answer: "3"
             answer_contract: {"kind": "exact"}
@@ -717,39 +717,39 @@ topics:
             answer: "8"
             answer_contract: {"kind": "exact"}
             solution_sketch: "Truth-table rule: the antecedent P ∧ Q is true only when P and Q are both true, and in those rows P ∨ R is true because P alone makes the disjunction true. When the antecedent is false, the conditional is true. Classification rule: the formula is true in all 8 rows, the all-true case. Count rule: the number of true rows is 8. The answer is 8."
-          - problem: "Construct the full truth table of the formula (P ∨ Q) ∧ ¬(P ∧ Q). How many rows of the table make the formula true?"
-            answer: "2"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Truth-table rule: P ∨ Q is false only in the FF row, and ¬(P ∧ Q) is false only in the TT row, so the conjunction is true exactly when one of P, Q is true and the other false. Count rule: the true rows are TF and FT, so exactly 2 rows make the formula true, a mix of true and false rows. The answer is 2."
+          - problem: "Build the truth table of (P or Q) and not (P and Q). Give its classification followed by the number of true rows. Use classification code 1 for tautology, 2 for contradiction, and 0 for contingency; give the two numbers as an ordered list."
+            answer: "0, 2"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "The formula is true when exactly one variable is true, and false on the other two assignments. Its column is mixed, so the classification is 0 and the true-row count is 2."
         constraints: "classify via a full truth table; tautology = all T, contradiction = all F, contingency = mixed"
       - id: kp2
         name: "Famous implication tautologies"
         key_prerequisites: [truth-tables]
         exemplars:
-          - problem: "Use a truth table to verify that ((P -> Q) and P) -> Q is a tautology. Give the number of rows in which the hypothesis (P -> Q) and P is true."
-            answer: "1"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The full formula is ((P -> Q) and P) -> Q. Step 1: list the four rows for P and Q and evaluate P -> Q by the truth table rule for implication. Step 2: evaluate the hypothesis (P -> Q) and P by the truth table rule for conjunction; it is true only in the row P = T, Q = T. Step 3: the main implication is true in all four rows, so the formula is a tautology. The number of rows in which the hypothesis is true is 1."
-          - problem: "Use a truth table to verify that (P -> Q) or (Q -> P) is a tautology. Give the number of rows in which P -> Q is true."
-            answer: "3"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The full formula is (P -> Q) or (Q -> P). Step 1: list the four rows for P and Q. Step 2: evaluate P -> Q by the truth table rule for implication; it is false only in the row P = T, Q = F. Step 3: evaluate Q -> P by the same rule; it is true in that row, so the disjunction is true in all four rows. The number of rows in which P -> Q is true is 3."
-          - problem: "Use a truth table to verify that ((P -> Q) and (Q -> R)) -> (P -> R) is a tautology. Give the number of rows in which the hypothesis (P -> Q) and (Q -> R) is true."
-            answer: "4"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The full formula is ((P -> Q) and (Q -> R)) -> (P -> R). Step 1: list the eight rows for P, Q, R. Step 2: evaluate P -> Q and Q -> R by the truth table rule for implication. Step 3: evaluate their conjunction by the truth table rule for conjunction; it is true in exactly four rows. Step 4: the main implication is true in all eight rows, so the formula is a tautology. The number of rows in which the hypothesis is true is 4."
-          - problem: "Use a truth table to verify that (P -> Q) -> ((not Q) -> (not P)) is a tautology. Give the number of rows in which P -> Q is true."
-            answer: "3"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The full formula is (P -> Q) -> ((not Q) -> (not P)). Step 1: list the four rows for P and Q. Step 2: evaluate P -> Q by the truth table rule for implication; it is false only in the row P = T, Q = F. Step 3: evaluate (not Q) -> (not P) by the same rule; it is true in that row, so the main implication is true in all four rows. The number of rows in which P -> Q is true is 3."
-          - problem: "Use a truth table to verify that P -> (P or Q) is a tautology. Give the number of rows in which the hypothesis P is true."
-            answer: "2"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The full formula is P -> (P or Q). Step 1: list the four rows for P and Q. Step 2: evaluate the hypothesis P by the truth table rule for a propositional variable; it is true in two rows. Step 3: evaluate P or Q by the truth table rule for disjunction; it is true in every row where P is true. Step 4: the main implication is true in all four rows, so the formula is a tautology. The number of rows in which the hypothesis is true is 2."
-          - problem: "Use a truth table to verify that ((P -> Q) and (R -> S) and (P or R)) -> (Q or S) is a tautology. Give the number of rows in which the hypothesis (P -> Q) and (R -> S) and (P or R) is true."
-            answer: "5"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The full formula is ((P -> Q) and (R -> S) and (P or R)) -> (Q or S). Step 1: list the sixteen rows for P, Q, R, S. Step 2: evaluate P -> Q, R -> S, and P or R by the truth table rules for implication and disjunction. Step 3: evaluate their conjunction by the truth table rule for conjunction; it is true in exactly five rows. Step 4: the main implication is true in all sixteen rows, so the formula is a tautology. The number of rows in which the hypothesis is true is 5."
+          - problem: "Use complete truth-table columns to classify (a) (((P implies Q) and P) implies Q); (b) (Q implies P); (c) not (((P implies Q) and P) implies Q). Codes: 1 tautology, 2 contradiction, 0 contingency. Give the codes for (a), (b), (c), in order."
+            answer: "1, 0, 2"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "The implication must be evaluated as a whole on every assignment; a true antecedent alone does not establish tautologyhood. The three complete columns give classifications 1, 0, 2."
+          - problem: "Use complete truth-table columns to classify (a) (Q implies P); (b) ((P implies Q) or (Q implies P)); (c) not ((P implies Q) or (Q implies P)). Codes: 1 tautology, 2 contradiction, 0 contingency. Give the codes for (a), (b), (c), in order."
+            answer: "0, 1, 2"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "The implication must be evaluated as a whole on every assignment; a true antecedent alone does not establish tautologyhood. The three complete columns give classifications 0, 1, 2."
+          - problem: "Use complete truth-table columns to classify (a) not (((P implies Q) and (Q implies R)) implies (P implies R)); (b) (Q implies P); (c) (((P implies Q) and (Q implies R)) implies (P implies R)). Codes: 1 tautology, 2 contradiction, 0 contingency. Give the codes for (a), (b), (c), in order."
+            answer: "2, 0, 1"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "The implication must be evaluated as a whole on every assignment; a true antecedent alone does not establish tautologyhood. The three complete columns give classifications 2, 0, 1."
+          - problem: "Use complete truth-table columns to classify (a) ((P implies Q) implies (not Q implies not P)); (b) not ((P implies Q) implies (not Q implies not P)); (c) (Q implies P). Codes: 1 tautology, 2 contradiction, 0 contingency. Give the codes for (a), (b), (c), in order."
+            answer: "1, 2, 0"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "The implication must be evaluated as a whole on every assignment; a true antecedent alone does not establish tautologyhood. The three complete columns give classifications 1, 2, 0."
+          - problem: "Use complete truth-table columns to classify (a) (Q implies P); (b) not (P implies (P or Q)); (c) (P implies (P or Q)). Codes: 1 tautology, 2 contradiction, 0 contingency. Give the codes for (a), (b), (c), in order."
+            answer: "0, 2, 1"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "The implication must be evaluated as a whole on every assignment; a true antecedent alone does not establish tautologyhood. The three complete columns give classifications 0, 2, 1."
+          - problem: "Use complete truth-table columns to classify (a) not ((((P implies Q) and (R implies S)) and (P or R)) implies (Q or S)); (b) ((((P implies Q) and (R implies S)) and (P or R)) implies (Q or S)); (c) (Q implies P). Codes: 1 tautology, 2 contradiction, 0 contingency. Give the codes for (a), (b), (c), in order."
+            answer: "2, 1, 0"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "The implication must be evaluated as a whole on every assignment; a true antecedent alone does not establish tautologyhood. The three complete columns give classifications 2, 1, 0."
         constraints: "verify tautologyhood of classic conditional forms by table"
       - id: kp3
         name: "Contradictions and satisfiability"
@@ -844,14 +844,14 @@ topics:
             answer: "1"
             answer_contract: {"kind": "exact"}
             solution_sketch: "Step 1: build the truth table of P -> Q; its values are T, F, T, T in the rows (T,T), (T,F), (F,T), (F,F). Step 2: build the truth tables of the three listed forms; Q -> P gives T, T, F, T and ~P -> ~Q gives T, T, F, T, so each differs from P -> Q in one row, while ~Q -> ~P gives T, F, T, T and matches every row. Step 3: only the contrapositive ~Q -> ~P is equivalent, so the count of equivalent forms is 1."
-          - problem: "For real x, the statement 'if x = 2 then x^2 = 4' is true. Form its converse and check it over the three values x = -2, x = 0, and x = 2. In how many of these three cases is the converse true?"
-            answer: "2"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1: the converse of 'if x = 2 then x^2 = 4' is 'if x^2 = 4 then x = 2'. Step 2: evaluate the converse at each value as a truth-table row: at x = -2 the antecedent x^2 = 4 is true and the consequent x = 2 is false, so the converse is false; at x = 0 the antecedent is false, so the implication is vacuously true; at x = 2 both parts are true, so it is true. Step 3: count the true cases among the three values. The converse is true in 2 of the 3 cases."
-          - problem: "For propositions P and Q, build the truth table of the converse Q -> P of the conditional P -> Q. In how many of the four rows is Q -> P true?"
-            answer: "3"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1: build the truth table of Q -> P over the rows (T,T), (T,F), (F,T), (F,F). Step 2: an implication is false only when its antecedent is true and its consequent is false, so Q -> P is false only in the row (F,T) and true in the other three rows. Step 3: count the true rows. Q -> P is true in 3 of the 4 rows."
+          - problem: "Compare (P implies Q) with each formula (Q implies P), (not Q implies not P), (not P or Q). For each comparison give 1 if their complete truth-table columns agree, and 0 otherwise, in the displayed order."
+            answer: "0, 1, 1"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Compare all four assignments of P and Q, rather than one favorable row. The equivalence indicators are 0, 1, 1."
+          - problem: "Compare (not P implies not Q) with each formula (P implies Q), (Q implies P), (not Q implies not P). For each comparison give 1 if their complete truth-table columns agree, and 0 otherwise, in the displayed order."
+            answer: "0, 1, 0"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Compare all four assignments of P and Q, rather than one favorable row. The equivalence indicators are 0, 1, 0."
           - problem: "For propositions P and Q, build the truth tables of the conditional P -> Q and of its inverse ~P -> ~Q. Using the tables, decide whether the two forms are logically equivalent and give the number of rows where their truth values differ."
             answer: "verdict = no; rows = 2"
             answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "rows"}]}
@@ -869,10 +869,10 @@ topics:
         name: "Biconditionals as two conditionals"
         key_prerequisites: [propositional-logic]
         exemplars:
-          - problem: "A biconditional with parts P and Q can be split into a conditional and its converse. Which option gives the full equivalent form?"
-            answer: "P implies Q, and Q implies P"
-            answer_contract: {"kind": "label", "options": [["P implies Q, and Q implies P"], ["P implies Q, or Q implies P"], ["P implies Q, but never Q implies P"], ["P negated, and Q negated as well"]]}
-            solution_sketch: "Split rule: the biconditional with parts P and Q equals the conditional P implies Q joined with its converse Q implies P by the word and. The wrong option P implies Q, or Q implies P fails because or asks for only one true direction. The wrong option P implies Q, but never Q implies P fails because it drops the converse direction. The wrong option P negated, and Q negated as well fails because it uses negations instead of the two implications. The answer is P implies Q, and Q implies P."
+          - problem: "Over the integers consider the biconditional: n is divisible by 6 if and only if n is divisible by 3. Split it into its two directions, then determine which directions hold for every integer. Return the truth codes (1 holds, 0 fails) in the forward, reverse order."
+            answer: "1, 0"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Divisibility by 6 supplies a factorization that also proves divisibility by 3. The reverse implication fails at 3, giving the ordered codes 1, 0. The encoded answer is 1, 0."
           - problem: "For real numbers x, split the biconditional x = 5 iff x^2 = 25 into a conditional and its converse, then test both directions over the reals. Give the verdict, and give a counterexample value of x if some direction fails, otherwise give 0."
             answer: "verdict = fails; x = -5"
             answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["holds"], ["fails"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "x"}]}
@@ -1043,88 +1043,88 @@ topics:
         name: "Double negation"
         key_prerequisites: [truth-tables]
         exemplars:
-          - problem: "Cancel the paired negations in $\\neg\\neg(P \\lor Q)$. Give the simplified expression."
-            answer: "P or Q"
-            answer_contract: {"kind": "label", "options": [["P or Q"], ["not P or Q"], ["not P or not Q"], ["not (P or Q)"]]}
-            solution_sketch: "Step 1: the two negations in front of the bracket form a pair, so double negation removes both of them. Step 2: the inner expression P or Q is left unchanged, because no other negation touches it. The wrong option not P or Q keeps one of the two cancelled negations in front of the first part. The wrong option not P or not Q replaces the pair by one negation on each part. The wrong option not (P or Q) drops the pair and then adds a fresh negation to the whole expression. The simplified expression is P or Q."
-          - problem: "The expression $\\neg\\neg\\neg\\neg\\neg\\neg P$ has a run of six negation symbols in front of $P$. Cancel every pair of negations. How many negation symbols remain in front of $P$?"
-            answer: "0"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1: write the full expression, P with a run of six negation symbols in front of it. Step 2: use double negation to cancel pairs of negations; the six symbols make three pairs, so the first cancellation leaves four, the second leaves two, and the third leaves none. Step 3: the simplified expression is P with no negation symbols in front of it. The number of negation symbols that remain in front of P is 0."
-          - problem: "The formula $\\neg\\neg(\\neg P \\lor Q)$ has a truth table with four rows. After the paired negations cancel, how many of the four rows make the formula true?"
-            answer: "3"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1: write the full formula, the double negation of the bracket not P or Q. Step 2: double negation cancels the two leading negations, so the formula has the same truth value as not P or Q in every row of the table. Step 3: list the four rows; the simplified formula is false only in the single row where P is true and Q is false. The number of rows that make the formula true is 3."
-          - problem: "Cancel every pair of negations in $\\neg\\neg\\neg(P \\lor \\neg\\neg Q)$. How many negation symbols remain in the simplified formula?"
-            answer: "1"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1: write the full formula, with three negations in front of the bracket P or not-not-Q. Step 2: one pair of the three leading negations cancels by double negation, leaving a single negation in front of the bracket. Step 3: inside the bracket the pair on Q also cancels, so the expression becomes the negation of the bracket P or Q. The number of negation symbols that remain is 1."
-          - problem: "The expression $\\neg\\neg\\neg\\neg\\neg\\neg\\neg P$ has a run of seven negation symbols in front of $P$. Cancel pairs of negations until no pair remains. How many pairs are cancelled?"
-            answer: "3"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1: write the full expression, P with a run of seven negation symbols in front. Step 2: cancel one pair at a time by double negation; the first pair leaves five symbols, the second leaves three, and the third leaves one. Step 3: no pair remains after those cancellations, and one negation symbol stays in front of P. The number of pairs that are cancelled is 3."
-          - problem: "The formula $\\neg(\\neg G)$ wraps one pair of negations around the single variable $G$, and its truth table has one row for each truth value of $G$. Cancel the pair. For how many rows of the truth table does the formula have the same truth value as $G$?"
-            answer: "2"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1: write the full formula, the negation of the negation of G. Step 2: double negation cancels the pair, so the formula takes exactly the truth value of G in every row. Step 3: a single variable has two truth values, so the table has one row with G true and one row with G false, and the formula matches G in both rows. The number of rows where the formula has the same truth value as G is 2."
+          - problem: "Simplify double negations in (a) not not P; (b) not not (P or Q); (c) (not not P and Q). Match the resulting formulas for (a), (b), (c). Formula bank: 1: Q; 2: (P and not Q); 3: (not Q or R); 4: not P; 5: P; 6: (P and Q); 7: (P or Q). Give the selected formula numbers in the requested order."
+            answer: "5, 7, 6"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Remove each adjacent pair of negations while preserving the remaining connectives. The matching formula numbers are 5, 7, 6."
+          - problem: "Simplify double negations in (a) not not (P or Q); (b) not not not P; (c) not not (P and not Q). Match the resulting formulas for (a), (b), (c). Formula bank: 1: P; 2: (not Q or R); 3: (P and Q); 4: Q; 5: (P or Q); 6: (P and not Q); 7: not P. Give the selected formula numbers in the requested order."
+            answer: "5, 7, 6"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Remove each adjacent pair of negations while preserving the remaining connectives. The matching formula numbers are 5, 7, 6."
+          - problem: "Simplify double negations in (a) not not not P; (b) (not not P and Q); (c) (not not not Q or R). Match the resulting formulas for (a), (b), (c). Formula bank: 1: (P and Q); 2: P; 3: not P; 4: (P and not Q); 5: (P or Q); 6: Q; 7: (not Q or R). Give the selected formula numbers in the requested order."
+            answer: "3, 1, 7"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Remove each adjacent pair of negations while preserving the remaining connectives. The matching formula numbers are 3, 1, 7."
+          - problem: "Simplify double negations in (a) (not not P and Q); (b) not not (P and not Q); (c) not not P. Match the resulting formulas for (a), (b), (c). Formula bank: 1: Q; 2: not P; 3: (P and Q); 4: (P and not Q); 5: (P or Q); 6: P; 7: (not Q or R). Give the selected formula numbers in the requested order."
+            answer: "3, 4, 6"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Remove each adjacent pair of negations while preserving the remaining connectives. The matching formula numbers are 3, 4, 6."
+          - problem: "Simplify double negations in (a) not not (P and not Q); (b) (not not not Q or R); (c) not not (P or Q). Match the resulting formulas for (a), (b), (c). Formula bank: 1: (P and Q); 2: (P or Q); 3: (P and not Q); 4: not P; 5: Q; 6: P; 7: (not Q or R). Give the selected formula numbers in the requested order."
+            answer: "3, 7, 2"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Remove each adjacent pair of negations while preserving the remaining connectives. The matching formula numbers are 3, 7, 2."
+          - problem: "Simplify double negations in (a) (not not not Q or R); (b) not not P; (c) not not not P. Match the resulting formulas for (a), (b), (c). Formula bank: 1: P; 2: Q; 3: (P or Q); 4: (not Q or R); 5: not P; 6: (P and not Q); 7: (P and Q). Give the selected formula numbers in the requested order."
+            answer: "4, 1, 5"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Remove each adjacent pair of negations while preserving the remaining connectives. The matching formula numbers are 4, 1, 5."
         constraints: "cancel paired negations"
       - id: kp2
         name: "De Morgan's laws"
         key_prerequisites: [truth-tables]
         exemplars:
-          - problem: "Simplify not (P and Q) using De Morgan. Select the equivalent simplified expression."
-            answer: "not P or not Q"
-            answer_contract: {"kind": "label", "options": [["not P or not Q"], ["not P and not Q"], ["P or Q"], ["not P or Q"]]}
-            solution_sketch: "The expression is not (P and Q). De Morgan's law says the negation of a conjunction is the disjunction of the negations, so it becomes not P or not Q. The option not P and not Q is wrong because it keeps the conjunction instead of changing it to a disjunction. The option P or Q is wrong because it drops the negations. The option not P or Q is wrong because it negates only P and leaves Q unnegated. The simplified expression is not P or not Q."
-          - problem: "Simplify not (not P or Q) using De Morgan and double negation. Give the number of negation symbols in the simplified expression."
-            answer: "1"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The expression is not (not P or Q). Step 1: De Morgan's law gives not not P and not Q. Step 2: double negation gives P and not Q. The only negation symbol is on Q, so the count is 1."
-          - problem: "Simplify not (P or not Q) using De Morgan and double negation. Give the number of literals in the simplified expression."
-            answer: "2"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The expression is not (P or not Q). Step 1: De Morgan's law gives not P and not not Q. Step 2: double negation gives not P and Q. The literals are not P and Q, so there are 2."
-          - problem: "Simplify not (not P and not Q) using De Morgan and double negation. Give the number of negation symbols in the simplified expression."
-            answer: "0"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The expression is not (not P and not Q). Step 1: De Morgan's law gives not not P or not not Q. Step 2: double negation gives P or Q. There are no negation symbols, so the count is 0."
-          - problem: "Simplify not (P or Q) using De Morgan. Give the number of negation symbols in the simplified expression."
-            answer: "2"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The expression is not (P or Q). Step 1: De Morgan's law gives not P and not Q. Both variables are negated, so the number of negation symbols is 2."
-          - problem: "Simplify not (P and not Q) using De Morgan and double negation. Give the number of symbols in the simplified expression."
-            answer: "4"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The expression is not (P and not Q). Step 1: De Morgan's law gives not P or not not Q. Step 2: double negation gives not P or Q. The symbols are not, P, or, Q, so the count is 4."
+          - problem: "Push every negation onto an individual variable in (a) not (P and Q); (b) not (P or Q); (c) not (P or not Q). Match the resulting formulas for (a), (b), (c). Formula bank: 1: (not P or not Q); 2: (P or not Q); 3: (not P and not Q); 4: (not P and Q); 5: (P and Q); 6: P; 7: (P or Q). Give the selected formula numbers in the requested order."
+            answer: "1, 3, 4"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Negating a conjunction produces a disjunction of negations, and conversely. Repeat inside each compound and remove double negations. The matching formula numbers are 1, 3, 4."
+          - problem: "Push every negation onto an individual variable in (a) not (P or Q); (b) not (not P and Q); (c) not (not P and not Q). Match the resulting formulas for (a), (b), (c). Formula bank: 1: (not P or not Q); 2: (P or not Q); 3: (not P and Q); 4: (P or Q); 5: P; 6: (P and Q); 7: (not P and not Q). Give the selected formula numbers in the requested order."
+            answer: "7, 2, 4"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Negating a conjunction produces a disjunction of negations, and conversely. Repeat inside each compound and remove double negations. The matching formula numbers are 7, 2, 4."
+          - problem: "Push every negation onto an individual variable in (a) not (not P and Q); (b) not (P or not Q); (c) not (not P or not Q). Match the resulting formulas for (a), (b), (c). Formula bank: 1: (not P and Q); 2: (not P or not Q); 3: (P or Q); 4: (not P and not Q); 5: (P or not Q); 6: (P and Q); 7: P. Give the selected formula numbers in the requested order."
+            answer: "5, 1, 6"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Negating a conjunction produces a disjunction of negations, and conversely. Repeat inside each compound and remove double negations. The matching formula numbers are 5, 1, 6."
+          - problem: "Push every negation onto an individual variable in (a) not (P or not Q); (b) not (not P and not Q); (c) not (P and Q). Match the resulting formulas for (a), (b), (c). Formula bank: 1: (P or not Q); 2: (not P and not Q); 3: (not P and Q); 4: (P or Q); 5: (P and Q); 6: P; 7: (not P or not Q). Give the selected formula numbers in the requested order."
+            answer: "3, 4, 7"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Negating a conjunction produces a disjunction of negations, and conversely. Repeat inside each compound and remove double negations. The matching formula numbers are 3, 4, 7."
+          - problem: "Push every negation onto an individual variable in (a) not (not P and not Q); (b) not (not P or not Q); (c) not (P or Q). Match the resulting formulas for (a), (b), (c). Formula bank: 1: (P or not Q); 2: (P or Q); 3: (P and Q); 4: (not P and Q); 5: (not P and not Q); 6: P; 7: (not P or not Q). Give the selected formula numbers in the requested order."
+            answer: "2, 3, 5"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Negating a conjunction produces a disjunction of negations, and conversely. Repeat inside each compound and remove double negations. The matching formula numbers are 2, 3, 5."
+          - problem: "Push every negation onto an individual variable in (a) not (not P or not Q); (b) not (P and Q); (c) not (not P and Q). Match the resulting formulas for (a), (b), (c). Formula bank: 1: (P or not Q); 2: (not P and not Q); 3: (not P or not Q); 4: (not P and Q); 5: (P and Q); 6: (P or Q); 7: P. Give the selected formula numbers in the requested order."
+            answer: "5, 3, 1"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Negating a conjunction produces a disjunction of negations, and conversely. Repeat inside each compound and remove double negations. The matching formula numbers are 5, 3, 1."
         constraints: "apply De Morgan and double negation to simplify"
       - id: kp3
         name: "Nested applications"
         key_prerequisites: [truth-tables]
         exemplars:
-          - problem: "Push the negation inward: $\\neg(P \\land (Q \\lor R))$. Select the fully simplified equivalent."
-            answer: "~P | (~Q & ~R)"
-            answer_contract: {"kind": "label", "options": [["~P | (~Q & ~R)"], ["~P | ~(Q | R)"], ["~P & (~Q | ~R)"], ["P & (Q | R)"]]}
-            solution_sketch: "Start with the full formula: ~P | (~Q & ~R). Step 1: apply De Morgan to the outer conjunction to get ~P | ~(Q | R). Step 2: apply De Morgan to the inner disjunction to get ~Q & ~R. The option ~P | ~(Q | R) stops after one De Morgan step. The option ~P & (~Q | ~R) uses AND instead of OR at the outer connective. The option P & (Q | R) forgets to negate the variables. The correct answer is ~P | (~Q & ~R)."
-          - problem: "Push the negation inward: $\\neg((P \\lor Q) \\land \\neg R)$. Select the fully simplified equivalent."
-            answer: "(~P & ~Q) | R"
-            answer_contract: {"kind": "label", "options": [["(~P & ~Q) | R"], ["(~P | ~Q) & R"], ["~(P | Q) & R"], ["(P & Q) | ~R"]]}
-            solution_sketch: "Start with the full formula: (~P & ~Q) | R. Step 1: apply De Morgan to the outer conjunction to get ~(P | Q) | ~~R. Step 2: apply De Morgan to the inner disjunction and double negation to get (~P & ~Q) | R. The option (~P | ~Q) & R swaps AND and OR in the two connectives. The option ~(P | Q) & R stops after one De Morgan step and keeps a negation outside. The option (P & Q) | ~R drops the negations on P and Q and negates R instead. The correct answer is (~P & ~Q) | R."
-          - problem: "Simplify by pushing the negation inward: $\\neg((P \\land Q) \\lor (P \\land R))$. How many of the 8 truth assignments to $P, Q, R$ make the simplified statement true?"
-            answer: "5"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Start with the full simplified formula: (~P | ~Q) & (~P | ~R). Step 1: apply De Morgan to the outer disjunction to get ~(P & Q) & ~(P & R). Step 2: apply De Morgan to each inner conjunction to get (~P | ~Q) & (~P | ~R). Step 3: this formula is false when P is true and at least one of Q or R is true, which gives 3 assignments. Subtract from 8 to get 8 - 3 = 5. The answer is 5."
-          - problem: "Simplify by pushing the negation inward: $\\neg((P \\land Q) \\lor R)$. How many of the 8 truth assignments to $P, Q, R$ make the simplified statement true?"
-            answer: "3"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Start with the full simplified formula: (~P | ~Q) & ~R. Step 1: apply De Morgan to the outer disjunction to get ~(P & Q) & ~R. Step 2: apply De Morgan to the inner conjunction to get (~P | ~Q) & ~R. Step 3: the formula is true when R is false and not both P and Q are true. Among the 4 assignments with R false, only P true and Q true makes the second part false, so 3 assignments remain. The answer is 3."
-          - problem: "Simplify by pushing the negation inward: $\\neg(P \\land (Q \\land R))$. How many of the 8 truth assignments to $P, Q, R$ make the simplified statement true?"
-            answer: "7"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Start with the full simplified formula: ~P | ~Q | ~R. Step 1: apply De Morgan to the outer conjunction to get ~P | ~(Q & R). Step 2: apply De Morgan to the inner conjunction to get ~P | ~Q | ~R. Step 3: the formula is false only when P, Q, and R are all true, so 7 of the 8 assignments make it true. The answer is 7."
-          - problem: "Simplify by pushing the negation inward: $\\neg(P \\lor (Q \\lor R))$. How many of the 8 truth assignments to $P, Q, R$ make the simplified statement true?"
-            answer: "1"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Start with the full simplified formula: ~P & ~Q & ~R. Step 1: apply De Morgan to the outer disjunction to get ~P & ~(Q | R). Step 2: apply De Morgan to the inner disjunction to get ~P & ~Q & ~R. Step 3: the formula is true only when P, Q, and R are all false, so exactly 1 of the 8 assignments makes it true. The answer is 1."
+          - problem: "Push every negation onto an individual variable in (a) not (P and (Q or R)); (b) not (P or (Q and R)); (c) not ((P and Q) or (P and R)). Match the resulting formulas for (a), (b), (c). Formula bank: 1: (not P or (not Q or not R)); 2: (not P or (not Q and not R)); 3: ((not P and not Q) or R); 4: (not P and (not Q and not R)); 5: Q; 6: (not P and (not Q or not R)); 7: P. Give the selected formula numbers in the requested order."
+            answer: "2, 6, 2"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Negating a conjunction produces a disjunction of negations, and conversely. Repeat inside each compound and remove double negations. The matching formula numbers are 2, 6, 2."
+          - problem: "Push every negation onto an individual variable in (a) not (P or (Q and R)); (b) not ((P or Q) and not R); (c) not (P and (Q and R)). Match the resulting formulas for (a), (b), (c). Formula bank: 1: (not P and (not Q and not R)); 2: (not P and (not Q or not R)); 3: P; 4: (not P or (not Q and not R)); 5: (not P or (not Q or not R)); 6: ((not P and not Q) or R); 7: Q. Give the selected formula numbers in the requested order."
+            answer: "2, 6, 5"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Negating a conjunction produces a disjunction of negations, and conversely. Repeat inside each compound and remove double negations. The matching formula numbers are 2, 6, 5."
+          - problem: "Push every negation onto an individual variable in (a) not ((P or Q) and not R); (b) not ((P and Q) or (P and R)); (c) not (P or (Q or R)). Match the resulting formulas for (a), (b), (c). Formula bank: 1: (not P and (not Q or not R)); 2: ((not P and not Q) or R); 3: (not P or (not Q or not R)); 4: Q; 5: (not P and (not Q and not R)); 6: P; 7: ((not P or not Q) and (not P or not R)). Give the selected formula numbers in the requested order."
+            answer: "2, 7, 5"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Negating a conjunction produces a disjunction of negations, and conversely. Repeat inside each compound and remove double negations. The matching formula numbers are 2, 7, 5."
+          - problem: "Push every negation onto an individual variable in (a) not ((P and Q) or (P and R)); (b) not (P and (Q and R)); (c) not (P and (Q or R)). Match the resulting formulas for (a), (b), (c). Formula bank: 1: P; 2: Q; 3: ((not P and not Q) or R); 4: (not P and (not Q or not R)); 5: (not P and (not Q and not R)); 6: (not P or (not Q or not R)); 7: ((not P or not Q) and (not P or not R)). Give the selected formula numbers in the requested order."
+            answer: "7, 6, 7"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Negating a conjunction produces a disjunction of negations, and conversely. Repeat inside each compound and remove double negations. The matching formula numbers are 7, 6, 7."
+          - problem: "Push every negation onto an individual variable in (a) not (P and (Q and R)); (b) not (P or (Q or R)); (c) not (P or (Q and R)). Match the resulting formulas for (a), (b), (c). Formula bank: 1: ((not P and not Q) or R); 2: P; 3: (not P or (not Q and not R)); 4: (not P or (not Q or not R)); 5: (not P and (not Q and not R)); 6: (not P and (not Q or not R)); 7: Q. Give the selected formula numbers in the requested order."
+            answer: "4, 5, 6"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Negating a conjunction produces a disjunction of negations, and conversely. Repeat inside each compound and remove double negations. The matching formula numbers are 4, 5, 6."
+          - problem: "Push every negation onto an individual variable in (a) not (P or (Q or R)); (b) not (P and (Q or R)); (c) not ((P or Q) and not R). Match the resulting formulas for (a), (b), (c). Formula bank: 1: (not P or (not Q or not R)); 2: ((not P and not Q) or R); 3: P; 4: (not P or (not Q and not R)); 5: (not P and (not Q and not R)); 6: (not P and (not Q or not R)); 7: Q. Give the selected formula numbers in the requested order."
+            answer: "5, 4, 2"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Negating a conjunction produces a disjunction of negations, and conversely. Repeat inside each compound and remove double negations. The matching formula numbers are 5, 4, 2."
         constraints: "two nested De Morgan steps; all negations end on atomic variables"
     diagnostic_exemplar:
       problem: 'Push the negation all the way inward and simplify: $\neg(\neg P \land (Q \lor \neg R))$.'
@@ -1180,7 +1180,7 @@ topics:
             answer: "3"
             answer_contract: {"kind": "exact"}
             solution_sketch: "Step 1 (truth-table rows): List the four rows (T,T), (T,F), (F,T), (F,F). Step 2 (biconditional and disjunction evaluation): The column for P <-> Q is T, F, F, T; the column for P or Q is T, T, T, F. Step 3 (column comparison): The columns differ at (T,F), (F,T), and (F,F). Thus the number of rows where the columns differ is 3."
-          - problem: "Build full truth tables for $P$ and $\\neg P$. How many of the four rows have two columns that differ?"
+          - problem: "Use the four assignments TT, TF, FT, FF to (P,Q), although the formulas P and not P ignore Q. Build the two truth-table columns. How many of these four rows have differing values?"
             answer: "4"
             answer_contract: {"kind": "exact"}
             solution_sketch: "Step 1 (truth-table rows): List the four rows (T,T), (T,F), (F,T), (F,F). Step 2 (negation evaluation): The column for P is T, T, F, F; the column for not P is F, F, T, T. Step 3 (column comparison): Every row has opposite truth values. Thus the number of rows where the columns differ is 4."
@@ -1189,59 +1189,59 @@ topics:
         name: "Rewriting implications"
         key_prerequisites: [conditional-statements]
         exemplars:
-          - problem: "Rewrite the negation of $P \\to Q$ without a conditional. Then give the number of rows of its truth table that are true."
-            answer: "1"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Start with the implication equivalence: $P \\to Q \\equiv \\neg P \\lor Q$. Negating both sides gives $\\neg(P \\to Q) \\equiv \\neg(\\neg P \\lor Q)$. Apply De Morgan's law: $\\neg(\\neg P \\lor Q) \\equiv P \\land \\neg Q$. This conjunction is true only when $P$ is true and $Q$ is false. Therefore the number of true rows is 1."
-          - problem: "Rewrite $\\neg(P \\to Q)$ as a conjunction. How many rows of its truth table are false?"
-            answer: "3"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Use the implication equivalence: $P \\to Q \\equiv \\neg P \\lor Q$. Negating gives $\\neg(P \\to Q) \\equiv \\neg(\\neg P \\lor Q) \\equiv P \\land \\neg Q$. This conjunction is false in every row except when $P$ is true and $Q$ is false. Since there are 4 rows total, the number of false rows is 3."
-          - problem: "Which formula is logically equivalent to $\\neg(P \\to Q)$?"
-            answer: "P and not Q"
-            answer_contract: {"kind": "label", "options": [["P and not Q"], ["not P or Q"], ["not P and Q"], ["P or not Q"]]}
-            solution_sketch: "Use the implication equivalence: $P \\to Q \\equiv \\neg P \\lor Q$. Negating gives $\\neg(\\neg P \\lor Q) \\equiv P \\land \\neg Q$, which is P and not Q. The option 'not P or Q' is the original implication, not its negation. The option 'not P and Q' is true only when P is false and Q is true. The option 'P or not Q' is the negation of the converse. Therefore the correct option is P and not Q."
-          - problem: "Rewrite $P \\to Q$ as a disjunction. For the assignment $P = \\text{true}$ and $Q = \\text{false}$, give the truth value of the implication (1 for true, 0 for false)."
-            answer: "0"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The implication equivalence is $P \\to Q \\equiv \\neg P \\lor Q$. Substitute $P = \\text{true}$ and $Q = \\text{false}$: $\\neg \\text{true} \\lor \\text{false} = \\text{false} \\lor \\text{false} = \\text{false}$. The truth value is 0."
-          - problem: "After rewriting $\\neg(P \\to Q)$ without a conditional, evaluate the result for $P = \\text{true}$ and $Q = \\text{false}$. Give 1 for true and 0 for false."
-            answer: "1"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Rewrite: $\\neg(P \\to Q) \\equiv P \\land \\neg Q$. Substitute $P = \\text{true}$ and $Q = \\text{false}$: $\\text{true} \\land \\neg \\text{false} = \\text{true} \\land \\text{true} = \\text{true}$. The value is 1."
-          - problem: "Which formula is logically equivalent to $P \\to Q$?"
-            answer: "not P or Q"
-            answer_contract: {"kind": "label", "options": [["not P or Q"], ["P and not Q"], ["not P and Q"], ["P or not Q"]]}
-            solution_sketch: "The standard implication equivalence is $P \\to Q \\equiv \\neg P \\lor Q$, which reads not P or Q. The option 'P and not Q' is the negation of the implication. The option 'not P and Q' is false whenever P is true. The option 'P or not Q' is the converse. Therefore the correct option is not P or Q."
+          - problem: "Eliminate the conditional connective from (a) (P implies Q); (b) not (P implies Q); (c) (P implies not Q). Match the resulting formulas for (a), (b), (c). Formula bank: 1: (P and not Q); 2: (not P or Q); 3: (P or Q); 4: (not P and not Q); 5: (P and Q); 6: (not P or not Q). Give the selected formula numbers in the requested order."
+            answer: "2, 1, 6"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Rewrite each implication as a disjunction with a negated antecedent. If the implication is negated, apply De Morgan and double negation. The matching formula numbers are 2, 1, 6."
+          - problem: "Eliminate the conditional connective from (a) not (P implies Q); (b) (not P implies Q); (c) not (not P implies Q). Match the resulting formulas for (a), (b), (c). Formula bank: 1: (not P and not Q); 2: (P or Q); 3: (P and not Q); 4: (P and Q); 5: (not P or not Q); 6: (not P or Q). Give the selected formula numbers in the requested order."
+            answer: "3, 2, 1"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Rewrite each implication as a disjunction with a negated antecedent. If the implication is negated, apply De Morgan and double negation. The matching formula numbers are 3, 2, 1."
+          - problem: "Eliminate the conditional connective from (a) (not P implies Q); (b) (P implies not Q); (c) not (P implies not Q). Match the resulting formulas for (a), (b), (c). Formula bank: 1: (not P and not Q); 2: (P and Q); 3: (not P or Q); 4: (P and not Q); 5: (not P or not Q); 6: (P or Q). Give the selected formula numbers in the requested order."
+            answer: "6, 5, 2"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Rewrite each implication as a disjunction with a negated antecedent. If the implication is negated, apply De Morgan and double negation. The matching formula numbers are 6, 5, 2."
+          - problem: "Eliminate the conditional connective from (a) (P implies not Q); (b) not (not P implies Q); (c) (P implies Q). Match the resulting formulas for (a), (b), (c). Formula bank: 1: (P and not Q); 2: (P and Q); 3: (not P or Q); 4: (not P and not Q); 5: (not P or not Q); 6: (P or Q). Give the selected formula numbers in the requested order."
+            answer: "5, 4, 3"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Rewrite each implication as a disjunction with a negated antecedent. If the implication is negated, apply De Morgan and double negation. The matching formula numbers are 5, 4, 3."
+          - problem: "Eliminate the conditional connective from (a) not (not P implies Q); (b) not (P implies not Q); (c) not (P implies Q). Match the resulting formulas for (a), (b), (c). Formula bank: 1: (P and not Q); 2: (P and Q); 3: (not P or Q); 4: (P or Q); 5: (not P or not Q); 6: (not P and not Q). Give the selected formula numbers in the requested order."
+            answer: "6, 2, 1"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Rewrite each implication as a disjunction with a negated antecedent. If the implication is negated, apply De Morgan and double negation. The matching formula numbers are 6, 2, 1."
+          - problem: "Eliminate the conditional connective from (a) not (P implies not Q); (b) (P implies Q); (c) (not P implies Q). Match the resulting formulas for (a), (b), (c). Formula bank: 1: (not P or Q); 2: (not P and not Q); 3: (P and Q); 4: (not P or not Q); 5: (P or Q); 6: (P and not Q). Give the selected formula numbers in the requested order."
+            answer: "3, 1, 5"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Rewrite each implication as a disjunction with a negated antecedent. If the implication is negated, apply De Morgan and double negation. The matching formula numbers are 3, 1, 5."
         constraints: "use $P\\to Q \\equiv \\neg P \\lor Q$; negate implications"
       - id: kp3
         name: "Simplification chains with the laws"
         key_prerequisites: [de-morgan-double-negation]
         exemplars:
-          - problem: "Simplify (R and S) or (R and not S) using the distributive, negation, and identity laws, counting each single use of a law as one application. Give the answer as result = variable; laws = number."
-            answer: "result = R; laws = 3"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["R"], ["S"], ["F"]]}, "name": "result"}, {"contract": {"kind": "exact"}, "name": "laws"}]}
-            solution_sketch: "Start with the full expression (R and S) or (R and not S). Step 1, distributive law: factor R, giving R and (S or not S). Step 2, negation law: S or not S is T. Step 3, identity law: R and T is R. Option S forgets the common factor R; option F confuses the negation law for or with the negation law for and. The final answer is result = R; laws = 3."
-          - problem: "Simplify (M or N) and (M or not N) using the distributive, negation, and identity laws, counting each single use of a law as one application. Give the answer as result = variable; laws = number."
-            answer: "result = M; laws = 3"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["M"], ["N"], ["T"]]}, "name": "result"}, {"contract": {"kind": "exact"}, "name": "laws"}]}
-            solution_sketch: "Start with the full expression (M or N) and (M or not N). Step 1, distributive law: factor M, giving M or (N and not N). Step 2, negation law: N and not N is F. Step 3, identity law: M or F is M. Option N ignores the common factor M; option T treats the contradiction N and not N as a tautology. The final answer is result = M; laws = 3."
-          - problem: "Simplify ((S or R) and (S or not R)) or not S using the distributive, negation, and identity laws, counting each single use of a law as one application. Give the answer as result = value; laws = number."
-            answer: "result = T; laws = 4"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["T"], ["F"], ["S"]]}, "name": "result"}, {"contract": {"kind": "exact"}, "name": "laws"}]}
-            solution_sketch: "Start with the full expression ((S or R) and (S or not R)) or not S. Step 1, distributive law: the bracketed part becomes S or (R and not R). Step 2, negation law: R and not R is F, giving (S or F) or not S. Step 3, identity law: S or F is S, giving S or not S. Step 4, negation law: S or not S is T. Option S stops after step 3; option F applies the negation law in the wrong direction. The final answer is result = T; laws = 4."
-          - problem: "Simplify ((Q or P) and (Q or not P)) and not Q using the distributive, negation, and identity laws, counting each single use of a law as one application. Give the answer as result = value; laws = number."
-            answer: "result = F; laws = 4"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["F"], ["T"], ["Q"]]}, "name": "result"}, {"contract": {"kind": "exact"}, "name": "laws"}]}
-            solution_sketch: "Start with the full expression ((Q or P) and (Q or not P)) and not Q. Step 1, distributive law: the bracketed part becomes Q or (P and not P). Step 2, negation law: P and not P is F, giving (Q or F) and not Q. Step 3, identity law: Q or F is Q, giving Q and not Q. Step 4, negation law: Q and not Q is F. Option Q stops after step 3; option T applies the negation law in the wrong direction. The final answer is result = F; laws = 4."
-          - problem: "An expression is ((A and B) or (A and not B)) and (C or not C). Using the distributive, negation, and identity laws, simplify it to a single letter, counting each single use of a law as one application. How many law applications does the simplification need?"
-            answer: "5"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Start with the full expression ((A and B) or (A and not B)) and (C or not C). Step 1, distributive law: factor A, giving (A and (B or not B)) and (C or not C). Step 2, negation law: B or not B is T. Step 3, negation law: C or not C is T. Step 4, identity law: A and T is A. Step 5, identity law: the remaining A and T reduces to A. Five single uses of a law are needed. The final answer is 5."
-          - problem: "An expression is not((P or Q) and (P or not Q)). Using De Morgan's law and then the distributive, negation, and identity laws, simplify it to a formula in one variable, counting each single use of a law as one application. How many law applications does the simplification need?"
-            answer: "6"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Start with the full expression not((P or Q) and (P or not Q)). Step 1, De Morgan's law: it becomes not(P or Q) or not(P or not Q). Step 2, De Morgan's law: not(P or Q) is not P and not Q. Step 3, De Morgan's law: not(P or not Q) is not P and Q. Step 4, distributive law: factor not P, giving not P and (not Q or Q). Step 5, negation law: not Q or Q is T. Step 6, identity law: not P and T is not P. Six single uses of a law are needed. The final answer is 6."
+          - problem: "Audit this exact simplification chain: ((P and Q) or (P and not Q)) => (P and (Q or not Q)) => (P and T) => P. For each adjacent pair identify the single law applied, possibly inside a subformula. Codes: 1 distributive; 2 complement; 3 identity; 4 De Morgan; 5 double negation. Give the law codes in order."
+            answer: "1, 2, 3"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Check the structural replacement at each link, preserving every untouched subformula. The successive law codes are 1, 2, 3."
+          - problem: "Audit this exact simplification chain: ((P or Q) and (P or not Q)) => (P or (Q and not Q)) => (P or F) => P. For each adjacent pair identify the single law applied, possibly inside a subformula. Codes: 1 distributive; 2 complement; 3 identity; 4 De Morgan; 5 double negation. Give the law codes in order."
+            answer: "1, 2, 3"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Check the structural replacement at each link, preserving every untouched subformula. The successive law codes are 1, 2, 3."
+          - problem: "Audit this exact simplification chain: (((P and Q) or (P and not Q)) or not P) => ((P and (Q or not Q)) or not P) => ((P and T) or not P) => (P or not P) => T. For each adjacent pair identify the single law applied, possibly inside a subformula. Codes: 1 distributive; 2 complement; 3 identity; 4 De Morgan; 5 double negation. Give the law codes in order."
+            answer: "1, 2, 3, 2"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Check the structural replacement at each link, preserving every untouched subformula. The successive law codes are 1, 2, 3, 2."
+          - problem: "Audit this exact simplification chain: not not (P and T) => (P and T) => P. For each adjacent pair identify the single law applied, possibly inside a subformula. Codes: 1 distributive; 2 complement; 3 identity; 4 De Morgan; 5 double negation. Give the law codes in order."
+            answer: "5, 3"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Check the structural replacement at each link, preserving every untouched subformula. The successive law codes are 5, 3."
+          - problem: "Audit this exact simplification chain: not (not P or Q) => (not not P and not Q) => (P and not Q). For each adjacent pair identify the single law applied, possibly inside a subformula. Codes: 1 distributive; 2 complement; 3 identity; 4 De Morgan; 5 double negation. Give the law codes in order."
+            answer: "4, 5"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Check the structural replacement at each link, preserving every untouched subformula. The successive law codes are 4, 5."
+          - problem: "Audit this exact simplification chain: (not not P or not P) => (P or not P) => T. For each adjacent pair identify the single law applied, possibly inside a subformula. Codes: 1 distributive; 2 complement; 3 identity; 4 De Morgan; 5 double negation. Give the law codes in order."
+            answer: "5, 2"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Check the structural replacement at each link, preserving every untouched subformula. The successive law codes are 5, 2."
         constraints: "multi-step law chains: distributive, negation, identity laws; cite each law used"
     diagnostic_exemplar:
       problem: 'Simplify $\neg(P \to Q) \lor (P \land Q)$ to a formula in a single variable, naming the law used at each step.'
@@ -1306,12 +1306,14 @@ topics:
         name: "Truth sets"
         key_prerequisites: [propositional-logic]
         exemplars:
-          - problem: 'Find the truth set of $P(x)$: "$x^2 \le 9$" over the domain $\mathbb{Z}$.'
-            answer: '$\{-3, -2, -1, 0, 1, 2, 3\}$'
-            solution_sketch: '$x^2 \le 9$ holds exactly for integers with $|x| \le 3$.'
-          - problem: 'Find the truth set of $Q(n)$: "$n$ is odd and $n < 10$" over the positive integers.'
-            answer: '$\{1, 3, 5, 7, 9\}$'
-            solution_sketch: 'List the positive odd integers below $10$.'
+          - problem: "Find the truth set of $P(x)$: \"$x^2 \\le 9$\" over the domain $\\mathbb{Z}$."
+            answer: "$\\{-3, -2, -1, 0, 1, 2, 3\\}$"
+            answer_contract: {"kind": "set"}
+            solution_sketch: "$x^2 \\le 9$ holds exactly for integers with $|x| \\le 3$."
+          - problem: "Find the truth set of $Q(n)$: \"$n$ is odd and $n < 10$\" over the positive integers."
+            answer: "$\\{1, 3, 5, 7, 9\\}$"
+            answer_contract: {"kind": "set"}
+            solution_sketch: "List the positive odd integers below $10$."
           - problem: "Let D = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10} and let P(x) mean \"x is a prime number\" over D. Find the truth set of P over D. Give the answer as a set in braces, such as {1, 2}."
             answer: "{2, 3, 5, 7}"
             answer_contract: {"kind": "set"}
@@ -1533,30 +1535,30 @@ topics:
         name: "Translating mathematical statements"
         key_prerequisites: [conditional-statements]
         exemplars:
-          - problem: "Which formula translates 'every even integer greater than 2 is a sum of two primes' with a guarding conditional? Select the correct formula."
-            answer: "forall n ((n even and n > 2) -> exists p, q prime, n = p + q)"
-            answer_contract: {"kind": "label", "options": [["forall n ((n even and n > 2) -> exists p, q prime, n = p + q)"], ["exists n ((n even and n > 2) -> forall p, q prime, n = p + q)"], ["forall n ((n even and n > 2) and exists p, q prime, n = p + q)"], ["forall n ((n even and n > 2) -> forall p, q prime, n = p + q)"]]}
-            solution_sketch: "Full translation: forall n ((n even and n > 2) -> exists p, q prime, n = p + q). Step 1: The statement is universal over integers, so start with forall n. Step 2: The guard n even and n > 2 goes before an implication. Step 3: The claim is existential over primes p and q with n = p + q. The option exists n ... forall ... swaps the quantifiers. The option ... and exists ... uses conjunction instead of implication. The option ... forall p, q ... uses a universal inner quantifier. The answer is forall n ((n even and n > 2) -> exists p, q prime, n = p + q)."
-          - problem: "Which formula translates 'every nonzero real number has a multiplicative inverse' with a guarding conditional? Select the correct formula."
-            answer: "forall x in R (x != 0 -> exists y in R, x*y = 1)"
-            answer_contract: {"kind": "label", "options": [["forall x in R (x != 0 -> exists y in R, x*y = 1)"], ["exists x in R (x != 0 -> forall y in R, x*y = 1)"], ["forall x in R (x != 0 and exists y in R, x*y = 1)"], ["forall x in R (x = 0 -> exists y in R, x*y = 1)"]]}
-            solution_sketch: "Full translation: forall x in R (x != 0 -> exists y in R, x*y = 1). Step 1: The statement is universal over nonzero reals, so start with forall x in R. Step 2: The guard x != 0 goes before an implication. Step 3: The claim is existential over y with x*y = 1. The option exists x ... forall y ... swaps the quantifiers. The option ... and exists ... uses conjunction instead of implication. The option x = 0 ... uses the wrong guard. The answer is forall x in R (x != 0 -> exists y in R, x*y = 1)."
-          - problem: "Translate 'every integer greater than 1 has a prime divisor' into a quantifier formula. Find the number of quantifiers in the translation."
-            answer: "2"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Full translation: forall n (n > 1 -> exists p (p prime and p divides n)). Step 1: The universal over n is guarded by n > 1. Step 2: The existential over p states p is prime and p divides n. Step 3: Count the quantifiers: one forall and one exists. The answer is 2."
-          - problem: "Translate 'every continuous function on [0,1] attains a maximum' into a quantifier formula. Find the number of quantifiers in the translation."
-            answer: "3"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Full translation: forall f (f continuous on [0,1] -> exists x in [0,1] forall y in [0,1], f(y) <= f(x)). Step 1: The universal over f is guarded by continuity on [0,1]. Step 2: The existential over x in [0,1] gives a maximum. Step 3: The universal over y states every y in [0,1] satisfies f(y) <= f(x). Count the quantifiers: forall f, exists x, forall y. The answer is 3."
-          - problem: "Translate 'every positive real number has a positive real number greater than it, and every negative real number has a negative real number less than it' into a quantifier formula. Find the number of quantifiers in the translation."
-            answer: "4"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Full translation: forall x (x > 0 -> exists y (y > 0 and y > x)) and forall x (x < 0 -> exists y (y < 0 and y < x)). Step 1: The first universal over x is guarded by x > 0. Step 2: The first existential over y states y > 0 and y > x. Step 3: The second universal over x is guarded by x < 0, and the second existential over y states y < 0 and y < x. Count the quantifiers: forall x, exists y, forall x, exists y. The answer is 4."
-          - problem: "Translate 'every positive real number has a positive square root' into a quantifier formula. Find the number of quantifiers in the translation."
-            answer: "2"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Full translation: forall x (x > 0 -> exists y (y > 0 and y^2 = x)). Step 1: The universal over x is guarded by x > 0. Step 2: The existential over y states y > 0 and y^2 = x. Step 3: Count the quantifiers: one forall and one exists. The answer is 2."
+          - problem: "Both variables range over the real numbers. Let A(x) mean x is nonzero, and R(x,y) mean x has product 1 with y. Translate the complete statements: (a) Every nonzero x has product 1 with at least one y; (b) Some nonzero x has product 1 with every y; (c) Every nonzero x has product 1 with every y. Formula bank: 1: exists x (A(x) and exists y R(x,y)); 2: forall x (A(x) implies forall y R(x,y)); 3: exists x (A(x) and forall y R(x,y)); 4: exists y forall x (A(x) implies R(x,y)); 5: forall x (A(x) implies exists y R(x,y)); 6: forall x (A(x) and exists y R(x,y)). Give the matching bank numbers for (a), (b), (c), in order. Translate the statements regardless of their truth."
+            answer: "5, 3, 2"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Place each quantifier according to whether the witness may depend on x, and distinguish a guarded universal claim from an existential conjunction. The complete translations have bank numbers 5, 3, 2."
+          - problem: "Both variables range over the integers. Let A(x) mean x is greater than 1, and R(x,y) mean x is divisible by y. Translate the complete statements: (a) Some greater than 1 x is divisible by every y; (b) There is one y such that every greater than 1 x is divisible by that y; (c) Some greater than 1 x is divisible by at least one y. Formula bank: 1: exists y forall x (A(x) implies R(x,y)); 2: forall x (A(x) implies forall y R(x,y)); 3: forall x (A(x) implies exists y R(x,y)); 4: exists x (A(x) and forall y R(x,y)); 5: forall x (A(x) and exists y R(x,y)); 6: exists x (A(x) and exists y R(x,y)). Give the matching bank numbers for (a), (b), (c), in order. Translate the statements regardless of their truth."
+            answer: "4, 1, 6"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Place each quantifier according to whether the witness may depend on x, and distinguish a guarded universal claim from an existential conjunction. The complete translations have bank numbers 4, 1, 6."
+          - problem: "Both variables range over the real numbers. Let A(x) mean x is positive, and R(x,y) mean x is smaller than y. Translate the complete statements: (a) There is one y such that every positive x is smaller than that y; (b) Every positive x is smaller than every y; (c) Every x is positive and is smaller than at least one y. Formula bank: 1: exists y forall x (A(x) implies R(x,y)); 2: forall x (A(x) and exists y R(x,y)); 3: exists x (A(x) and forall y R(x,y)); 4: forall x (A(x) implies exists y R(x,y)); 5: exists x (A(x) and exists y R(x,y)); 6: forall x (A(x) implies forall y R(x,y)). Give the matching bank numbers for (a), (b), (c), in order. Translate the statements regardless of their truth."
+            answer: "1, 6, 2"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Place each quantifier according to whether the witness may depend on x, and distinguish a guarded universal claim from an existential conjunction. The complete translations have bank numbers 1, 6, 2."
+          - problem: "Both variables range over the integers. Let A(x) mean x is even, and R(x,y) mean x equals the square of y. Translate the complete statements: (a) Every even x equals the square of every y; (b) Some even x equals the square of at least one y; (c) Every even x equals the square of at least one y. Formula bank: 1: exists y forall x (A(x) implies R(x,y)); 2: forall x (A(x) and exists y R(x,y)); 3: forall x (A(x) implies forall y R(x,y)); 4: exists x (A(x) and forall y R(x,y)); 5: forall x (A(x) implies exists y R(x,y)); 6: exists x (A(x) and exists y R(x,y)). Give the matching bank numbers for (a), (b), (c), in order. Translate the statements regardless of their truth."
+            answer: "3, 6, 5"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Place each quantifier according to whether the witness may depend on x, and distinguish a guarded universal claim from an existential conjunction. The complete translations have bank numbers 3, 6, 5."
+          - problem: "Both variables range over the real numbers. Let A(x) mean x is negative, and R(x,y) mean x has sum 0 with y. Translate the complete statements: (a) Some negative x has sum 0 with at least one y; (b) Every x is negative and has sum 0 with at least one y; (c) Some negative x has sum 0 with every y. Formula bank: 1: exists x (A(x) and forall y R(x,y)); 2: exists x (A(x) and exists y R(x,y)); 3: forall x (A(x) implies forall y R(x,y)); 4: forall x (A(x) and exists y R(x,y)); 5: forall x (A(x) implies exists y R(x,y)); 6: exists y forall x (A(x) implies R(x,y)). Give the matching bank numbers for (a), (b), (c), in order. Translate the statements regardless of their truth."
+            answer: "2, 4, 1"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Place each quantifier according to whether the witness may depend on x, and distinguish a guarded universal claim from an existential conjunction. The complete translations have bank numbers 2, 4, 1."
+          - problem: "Both variables range over the integers. Let A(x) mean x is prime, and R(x,y) mean x is less than y. Translate the complete statements: (a) Every x is prime and is less than at least one y; (b) Every prime x is less than at least one y; (c) There is one y such that every prime x is less than that y. Formula bank: 1: forall x (A(x) and exists y R(x,y)); 2: exists x (A(x) and forall y R(x,y)); 3: forall x (A(x) implies exists y R(x,y)); 4: exists x (A(x) and exists y R(x,y)); 5: forall x (A(x) implies forall y R(x,y)); 6: exists y forall x (A(x) implies R(x,y)). Give the matching bank numbers for (a), (b), (c), in order. Translate the statements regardless of their truth."
+            answer: "1, 3, 6"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Place each quantifier according to whether the witness may depend on x, and distinguish a guarded universal claim from an existential conjunction. The complete translations have bank numbers 1, 3, 6."
         constraints: "combine quantifiers with a guarding conditional"
       - id: kp3
         name: "Evaluating nested statements over given domains"
@@ -1570,19 +1572,19 @@ topics:
             answer: "0"
             answer_contract: {"kind": "exact"}
             solution_sketch: "Step 1 (negate the universal): a counterexample is a real x for which no real y satisfies x*y = 1. Step 2 (test each candidate): for x not equal to 0, y = 1/x is a real witness, so only x = 0 can fail. Step 3 (verify x = 0): 0*y = 0 for every real y, never 1, so no witness exists. The answer is 0."
-          - problem: "Over the domain {1, 2, 3}, the statement ∀x ∃y, x + y = 4 is true. Find the value of y that works when x = 1."
-            answer: "3"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1 (inner existential): solve y = 4 - x for the given x. Step 2 (substitute x=1): y = 4 - 1 = 3, and 3 is in the domain {1,2,3}. The answer is 3."
-          - problem: "Over the integers, the statement ∀x ∃y, x = 2y is false. Give an integer x that is a counterexample."
+          - problem: "Let X = Y = {1,2,3}. A relation R is given by its truth table, with rows x and columns y in increasing order: [[1, 0, 0], [0, 1, 0], [0, 0, 1]]. Decide (a) forall x exists y R(x,y); (b) exists y forall x R(x,y). Give the two truth values in order, using 1 for true and 0 for false."
+            answer: "1, 0"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "In (a), the witness may depend on the row; in (b), one column must work in every row. The resulting truth values are 1, 0."
+          - problem: "Over the integers, the statement ∀x ∃y, x = 2y is false. Give the smallest positive integer x that is a counterexample."
             answer: "1"
             answer_contract: {"kind": "exact"}
             solution_sketch: "Step 1 (negate the universal): a counterexample is an integer x for which x = 2y has no integer solution y. Step 2 (test x=1): the equation 1 = 2y gives y = 1/2, not an integer. The answer is 1."
-          - problem: "Over the real numbers, the statement ∀x ∃y, x + y = 0 is true. Give the value of y that witnesses the inner statement when x = 7."
-            answer: "-7"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1 (inner existential): solve the equation x + y = 0 for y, giving y = -x. Step 2 (substitute x=7): y = -7, and -7 is a real number. The answer is -7."
-          - problem: "Over the domain {0, 1, 2, 3}, the statement ∀x ∃y, y^2 = x is false. Give a counterexample x in the domain."
+          - problem: "Let X = Y = {1,2,3}. A relation R is given by its truth table, with rows x and columns y in increasing order: [[0, 1, 1], [1, 1, 0], [0, 1, 0]]. Decide (a) forall x exists y R(x,y); (b) exists y forall x R(x,y). Give the two truth values in order, using 1 for true and 0 for false."
+            answer: "1, 1"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "In (a), the witness may depend on the row; in (b), one column must work in every row. The resulting truth values are 1, 1."
+          - problem: "Over the domain {0, 1, 2, 3}, the statement ∀x ∃y, y^2 = x is false. Give the smallest counterexample x in the domain."
             answer: "2"
             answer_contract: {"kind": "exact"}
             solution_sketch: "Step 1 (negate the universal): a counterexample is an x with no y in {0,1,2,3} whose square is x. Step 2 (test x=2): the squares 0^2=0, 1^2=1, 2^2=4, and 3^2=9 skip 2. The answer is 2."
@@ -1621,30 +1623,30 @@ topics:
         name: "Negating quantified statements"
         key_prerequisites: [quantifiers]
         exemplars:
-          - problem: "The statement begins with the universal quantifier over x in {1, 2, 3, 4}: x^2 < 10. Select the quantifier of its negation and give a value of x in the set for which the negated predicate holds."
-            answer: "quantifier = exists; witness = 4"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["exists"], ["forall"]]}, "name": "quantifier"}, {"contract": {"kind": "exact"}, "name": "witness"}]}
-            solution_sketch: "The full negation is exists x in {1, 2, 3, 4}, x^2 >= 10. Step 1 (negate predicate): x^2 < 10 becomes x^2 >= 10. Step 2 (change quantifier): universal becomes existential. Testing the domain, only x = 4 satisfies x^2 >= 10. Therefore quantifier = exists; witness = 4."
-          - problem: "The statement begins with the existential quantifier over n in {1, 2, 3, 4, 5}: n^2 = 4. Select the quantifier of its negation and give the value of n in the set for which the original predicate holds."
-            answer: "quantifier = forall; witness = 2"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["exists"], ["forall"]]}, "name": "quantifier"}, {"contract": {"kind": "exact"}, "name": "witness"}]}
-            solution_sketch: "The full negation is for all n in {1, 2, 3, 4, 5}, n^2 != 4. Step 1 (negate predicate): n^2 = 4 becomes n^2 != 4. Step 2 (change quantifier): existential becomes universal. Step 3 (witness check): n = 2 gives 2^2 = 4, so the original predicate holds there. Therefore quantifier = forall; witness = 2."
-          - problem: "The statement begins with the universal quantifier over x in {1, 2, 3, 4, 5}: x + 2 < 7. Select the quantifier of its negation and give a value of x in the set for which the negated predicate holds."
-            answer: "quantifier = exists; witness = 5"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["exists"], ["forall"]]}, "name": "quantifier"}, {"contract": {"kind": "exact"}, "name": "witness"}]}
-            solution_sketch: "The full negation is exists x in {1, 2, 3, 4, 5}, x + 2 >= 7. Step 1 (negate predicate): x + 2 < 7 becomes x + 2 >= 7. Step 2 (change quantifier): universal becomes existential. In the domain, x = 5 gives 5 + 2 = 7, so x = 5 satisfies the negated predicate. Therefore quantifier = exists; witness = 5."
-          - problem: "The statement begins with the existential quantifier over m in {2, 4, 6, 8}: m/2 = 3. Select the quantifier of its negation and give the value of m in the set for which the original predicate holds."
-            answer: "quantifier = forall; witness = 6"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["exists"], ["forall"]]}, "name": "quantifier"}, {"contract": {"kind": "exact"}, "name": "witness"}]}
-            solution_sketch: "The full negation is for all m in {2, 4, 6, 8}, m/2 != 3. Step 1 (negate predicate): m/2 = 3 becomes m/2 != 3. Step 2 (change quantifier): existential becomes universal. Step 3 (witness check): m = 6 gives 6/2 = 3, so the original predicate holds there. Therefore quantifier = forall; witness = 6."
-          - problem: "The statement begins with the universal quantifier over x in {1, 2, 3, 4, 5, 6}: x^2 > 20. Give all x in the domain for which the negated predicate holds, as a list in increasing order."
-            answer: "1, 2, 3, 4"
-            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
-            solution_sketch: "The full negation is exists x in {1, 2, 3, 4, 5, 6}, x^2 <= 20. Step 1 (negate predicate): x^2 > 20 becomes x^2 <= 20. Step 2 (collect truth set): check each domain value. The values 1, 2, 3, 4 satisfy x^2 <= 20; 5^2 = 25 and 6^2 = 36 do not. The list in increasing order is 1, 2, 3, 4."
-          - problem: "The statement begins with the existential quantifier over k in {1, 2, 3, 4, 5}: k^2 = 9. Give all k in the domain for which the negated predicate holds, as a list in increasing order."
-            answer: "1, 2, 4, 5"
-            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
-            solution_sketch: "The full negation is for all k in {1, 2, 3, 4, 5}, k^2 != 9. Step 1 (negate predicate): k^2 = 9 becomes k^2 != 9. Step 2 (collect truth set): check each domain value. The value k = 3 gives 3^2 = 9, so it is excluded; the others are 1, 2, 4, 5. The list in increasing order is 1, 2, 4, 5."
+          - problem: "All variables range independently over nonempty domains, and R is an arbitrary predicate. Negate each complete statement: (a) forall x, R(x); (b) exists x, R(x); (c) exists x, not R(x). Formula bank: 1: forall x, R(x); 2: exists x, not R(x); 3: forall x, not R(x); 4: exists x, R(x). Give the bank numbers for (a), (b), (c), in order."
+            answer: "2, 3, 1"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Negate the whole quantified statement by exchanging every universal and existential quantifier and negating the predicate. The complete resulting formulas have bank numbers 2, 3, 1."
+          - problem: "All variables range independently over nonempty domains, and R is an arbitrary predicate. Negate each complete statement: (a) forall x, not R(x); (b) exists x, not R(x); (c) forall x, R(x). Formula bank: 1: forall x, not R(x); 2: forall x, R(x); 3: exists x, R(x); 4: exists x, not R(x). Give the bank numbers for (a), (b), (c), in order."
+            answer: "3, 2, 4"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Negate the whole quantified statement by exchanging every universal and existential quantifier and negating the predicate. The complete resulting formulas have bank numbers 3, 2, 4."
+          - problem: "All variables range independently over nonempty domains, and R is an arbitrary predicate. Negate each complete statement: (a) exists x, R(x); (b) forall x, R(x); (c) forall x, not R(x). Formula bank: 1: forall x, R(x); 2: forall x, not R(x); 3: exists x, R(x); 4: exists x, not R(x). Give the bank numbers for (a), (b), (c), in order."
+            answer: "2, 4, 3"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Negate the whole quantified statement by exchanging every universal and existential quantifier and negating the predicate. The complete resulting formulas have bank numbers 2, 4, 3."
+          - problem: "All variables range independently over nonempty domains, and R is an arbitrary predicate. Negate each complete statement: (a) exists x, not R(x); (b) forall x, not R(x); (c) exists x, R(x). Formula bank: 1: exists x, not R(x); 2: exists x, R(x); 3: forall x, not R(x); 4: forall x, R(x). Give the bank numbers for (a), (b), (c), in order."
+            answer: "4, 2, 3"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Negate the whole quantified statement by exchanging every universal and existential quantifier and negating the predicate. The complete resulting formulas have bank numbers 4, 2, 3."
+          - problem: "All variables range independently over nonempty domains, and R is an arbitrary predicate. Negate each complete statement: (a) forall x, R(x); (b) exists x, R(x); (c) exists x, not R(x). Formula bank: 1: exists x, R(x); 2: exists x, not R(x); 3: forall x, R(x); 4: forall x, not R(x). Give the bank numbers for (a), (b), (c), in order."
+            answer: "2, 4, 3"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Negate the whole quantified statement by exchanging every universal and existential quantifier and negating the predicate. The complete resulting formulas have bank numbers 2, 4, 3."
+          - problem: "All variables range independently over nonempty domains, and R is an arbitrary predicate. Negate each complete statement: (a) forall x, not R(x); (b) exists x, not R(x); (c) forall x, R(x). Formula bank: 1: exists x, not R(x); 2: forall x, R(x); 3: exists x, R(x); 4: forall x, not R(x). Give the bank numbers for (a), (b), (c), in order."
+            answer: "3, 2, 1"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Negate the whole quantified statement by exchanging every universal and existential quantifier and negating the predicate. The complete resulting formulas have bank numbers 3, 2, 1."
         constraints: "push the negation inside a single quantifier and negate the predicate"
       - id: kp2
         name: "Negating conditionals and compounds"
@@ -1679,30 +1681,30 @@ topics:
         name: "Negating nested quantifier statements"
         key_prerequisites: [quantifiers]
         exemplars:
-          - problem: "Let S be the statement: for every epsilon > 0 there exists delta > 0 such that for all x, if |x - a| < delta then |f(x) - L| < epsilon. Here f is a function, a is a point and L is a value. Negate S by flipping every quantifier and negating the inner conditional. How many existential quantifiers does the negation of S contain?"
-            answer: "2"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The full statement is: for every epsilon > 0 there exists delta > 0 such that for all x, if |x - a| < delta then |f(x) - L| < epsilon. Step 1, quantifier negation rule: flip each quantifier, so every becomes exists, exists becomes for all, and for all becomes exists. Step 2, conditional negation rule: not (P implies Q) is P and not Q. The negation reads: there exists epsilon > 0 such that for every delta > 0 there is an x with |x - a| < delta and |f(x) - L| >= epsilon. It has exactly two existential quantifiers, over epsilon and over x, so the answer is 2."
-          - problem: "Let S be the statement: for every x in the set {1, 2, 3, 4} there exists n in the set {1, 2, 3, 4} with n > x. The statement S is false, so its negation is true. Negate S by flipping each quantifier and negating the inequality at the end. Find the value of x that witnesses the negation."
-            answer: "4"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The full statement is: for every x in {1, 2, 3, 4} there exists n in {1, 2, 3, 4} with n > x. Step 1, quantifier negation rule: flip each quantifier. Step 2, matrix negation rule: n > x becomes n <= x. The negation reads: there exists x in {1, 2, 3, 4} such that for every n in {1, 2, 3, 4}, n <= x. Checking the candidates, x = 1, 2, 3 fail since n = 4 is bigger than each, while x = 4 has every n at most 4, so the witness is 4."
-          - problem: "Let S be the statement: for every epsilon > 0 there exists n in the set {1, 2, 3, 4, 5} such that 1/n < epsilon. The statement S is false, so its negation is true. Negate S by flipping each quantifier and negating the inequality at the end. Find the largest value of epsilon > 0 that can serve as the witness in the negation of S."
-            answer: "1/5"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The full statement is: for every epsilon > 0 there exists n in {1, 2, 3, 4, 5} such that 1/n < epsilon. Step 1, quantifier negation rule: flip each quantifier. Step 2, matrix negation rule: 1/n < epsilon becomes 1/n >= epsilon. The negation reads: there exists epsilon > 0 such that for every n in {1, 2, 3, 4, 5}, 1/n >= epsilon. The smallest value of 1/n on the set is 1/5, so epsilon can be at most 1/5, and the largest witness is 1/5."
-          - problem: "A statement has the shape: for every epsilon > 0 there exists delta > 0 such that for all x, if P(x) then Q(x), where P(x) and Q(x) are inequalities that involve x. Negating it flips every quantifier and pushes the negation onto the inner part. What logical form does that inner part take?"
-            answer: "a conjunction"
-            answer_contract: {"kind": "label", "options": [["a conjunction"], ["a disjunction"], ["a conditional"], ["a biconditional"]]}
-            solution_sketch: "The full statement is: for every epsilon > 0 there exists delta > 0 such that for all x, if P(x) then Q(x). Step 1, quantifier negation rule: flip every quantifier, giving exists epsilon, then for all delta, then there is an x. Step 2, conditional negation rule: not (P implies Q) is equivalent to P and not Q. The option 'a conditional' is the error of keeping an if-then shape such as P implies not Q; 'a disjunction' is the De Morgan slip P or not Q; 'a biconditional' confuses this with negating an iff. The inner part becomes a conjunction."
-          - problem: "Let S be the statement: for every x in the set {1, 2, 3, 4, 5} there exists y in the set {1, 2, 3, 4, 5} such that x + y = 9. The statement S is false, so its negation is true. How many values of x in the set make the negation of S true?"
-            answer: "3"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The full statement is: for every x in {1, 2, 3, 4, 5} there exists y in {1, 2, 3, 4, 5} such that x + y = 9. Step 1, quantifier negation rule: flip each quantifier. Step 2, matrix negation rule: x + y = 9 becomes x + y is not 9. The negation reads: there exists x in the set such that for every y in the set, x + y is not 9. For x = 1, 2, 3 the sums run from x + 1 to x + 5 and never reach 9, while x = 4 pairs with y = 5 and x = 5 pairs with y = 4 to give 9. Exactly three values work, so the answer is 3."
-          - problem: "Let f be the function with f(x) = 0 for x < 3 and f(x) = 6 for x >= 3. Let S be the statement: for every epsilon > 0 there exists delta > 0 such that for all x, if |x - 3| < delta then |f(x) - 6| < epsilon. The statement S is false, so its negation is true. Find the largest value of epsilon > 0 that can serve as the witness in the negation of S."
-            answer: "6"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The full statement is: for every epsilon > 0 there exists delta > 0 such that for all x, if |x - 3| < delta then |f(x) - 6| < epsilon. Step 1, quantifier negation rule: flip each quantifier. Step 2, conditional negation rule: not (P implies Q) is P and not Q. The negation reads: there exists epsilon > 0 such that for every delta > 0 there is an x with |x - 3| < delta and |f(x) - 6| >= epsilon. For any delta, an x just below 3 lies within delta of 3 and has f(x) = 0, so |f(x) - 6| = 6, and no x gives a larger gap. The largest epsilon that works is 6."
+          - problem: "All variables range independently over nonempty domains, and R is an arbitrary predicate. Negate each complete statement: (a) forall x, forall y, forall z, R(x,y,z); (b) forall x, forall y, exists z, R(x,y,z); (c) forall x, forall y, exists z, not R(x,y,z). Formula bank: 1: exists x, exists y, forall z, R(x,y,z); 2: forall x, forall y, forall z, R(x,y,z); 3: forall x, forall y, exists z, R(x,y,z); 4: exists x, exists y, exists z, not R(x,y,z); 5: forall x, forall y, forall z, not R(x,y,z); 6: exists x, exists y, forall z, not R(x,y,z). Give the bank numbers for (a), (b), (c), in order."
+            answer: "4, 6, 1"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Negate the whole quantified statement by exchanging every universal and existential quantifier and negating the predicate. The complete resulting formulas have bank numbers 4, 6, 1."
+          - problem: "All variables range independently over nonempty domains, and R is an arbitrary predicate. Negate each complete statement: (a) forall x, forall y, forall z, not R(x,y,z); (b) forall x, forall y, exists z, not R(x,y,z); (c) forall x, exists y, forall z, R(x,y,z). Formula bank: 1: exists x, exists y, forall z, R(x,y,z); 2: forall x, forall y, exists z, R(x,y,z); 3: forall x, forall y, forall z, R(x,y,z); 4: exists x, forall y, exists z, not R(x,y,z); 5: forall x, forall y, forall z, not R(x,y,z); 6: exists x, exists y, exists z, R(x,y,z). Give the bank numbers for (a), (b), (c), in order."
+            answer: "6, 1, 4"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Negate the whole quantified statement by exchanging every universal and existential quantifier and negating the predicate. The complete resulting formulas have bank numbers 6, 1, 4."
+          - problem: "All variables range independently over nonempty domains, and R is an arbitrary predicate. Negate each complete statement: (a) forall x, forall y, exists z, R(x,y,z); (b) forall x, exists y, forall z, R(x,y,z); (c) forall x, exists y, forall z, not R(x,y,z). Formula bank: 1: forall x, forall y, forall z, R(x,y,z); 2: exists x, forall y, exists z, R(x,y,z); 3: forall x, forall y, forall z, not R(x,y,z); 4: exists x, exists y, forall z, not R(x,y,z); 5: forall x, forall y, exists z, R(x,y,z); 6: exists x, forall y, exists z, not R(x,y,z). Give the bank numbers for (a), (b), (c), in order."
+            answer: "4, 6, 2"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Negate the whole quantified statement by exchanging every universal and existential quantifier and negating the predicate. The complete resulting formulas have bank numbers 4, 6, 2."
+          - problem: "All variables range independently over nonempty domains, and R is an arbitrary predicate. Negate each complete statement: (a) forall x, forall y, exists z, not R(x,y,z); (b) forall x, exists y, forall z, not R(x,y,z); (c) forall x, exists y, exists z, R(x,y,z). Formula bank: 1: forall x, forall y, forall z, not R(x,y,z); 2: forall x, forall y, exists z, R(x,y,z); 3: exists x, exists y, forall z, R(x,y,z); 4: exists x, forall y, forall z, not R(x,y,z); 5: exists x, forall y, exists z, R(x,y,z); 6: forall x, forall y, forall z, R(x,y,z). Give the bank numbers for (a), (b), (c), in order."
+            answer: "3, 5, 4"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Negate the whole quantified statement by exchanging every universal and existential quantifier and negating the predicate. The complete resulting formulas have bank numbers 3, 5, 4."
+          - problem: "All variables range independently over nonempty domains, and R is an arbitrary predicate. Negate each complete statement: (a) forall x, exists y, forall z, R(x,y,z); (b) forall x, exists y, exists z, R(x,y,z); (c) forall x, exists y, exists z, not R(x,y,z). Formula bank: 1: forall x, forall y, forall z, R(x,y,z); 2: exists x, forall y, forall z, not R(x,y,z); 3: forall x, forall y, exists z, R(x,y,z); 4: exists x, forall y, forall z, R(x,y,z); 5: forall x, forall y, forall z, not R(x,y,z); 6: exists x, forall y, exists z, not R(x,y,z). Give the bank numbers for (a), (b), (c), in order."
+            answer: "6, 2, 4"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Negate the whole quantified statement by exchanging every universal and existential quantifier and negating the predicate. The complete resulting formulas have bank numbers 6, 2, 4."
+          - problem: "All variables range independently over nonempty domains, and R is an arbitrary predicate. Negate each complete statement: (a) forall x, exists y, forall z, not R(x,y,z); (b) forall x, exists y, exists z, not R(x,y,z); (c) exists x, forall y, forall z, R(x,y,z). Formula bank: 1: forall x, forall y, forall z, not R(x,y,z); 2: forall x, forall y, exists z, R(x,y,z); 3: forall x, exists y, exists z, not R(x,y,z); 4: forall x, forall y, forall z, R(x,y,z); 5: exists x, forall y, exists z, R(x,y,z); 6: exists x, forall y, forall z, R(x,y,z). Give the bank numbers for (a), (b), (c), in order."
+            answer: "5, 6, 3"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Negate the whole quantified statement by exchanging every universal and existential quantifier and negating the predicate. The complete resulting formulas have bank numbers 5, 6, 3."
         constraints: "epsilon-delta style; flip every quantifier and negate the matrix"
     diagnostic_exemplar:
       problem: 'Negate, pushing the negation all the way in: "$\forall \epsilon > 0\ \exists n \in \mathbb{N}$, if $n > 10$ then $1/n < \epsilon$".'
@@ -1802,7 +1804,7 @@ topics:
             answer: "For every n, n + 1 is not 0"
             answer_contract: {"kind": "label", "options": [["For every n, n + 1 is not 0"], ["There is an n with n + 1 not 0"], ["The value n = 1 fails"], ["The value n = 2 fails"]]}
             solution_sketch: "Negate the existential statement: the negation of there exists n with n + 1 = 0 is for every n, n + 1 is not 0. The correct obligation is to prove every natural number n fails the equation. The option There is an n with n + 1 not 0 is wrong because it is still an existential statement and does not cover every n. The option The value n = 1 fails is wrong because one failed value cannot disprove a claim that some value works. The option The value n = 2 fails is wrong for the same one-value reason. The answer is For every n, n + 1 is not 0."
-          - problem: "Find the smallest positive integer n for which n^2 + 1 is not prime."
+          - problem: "Disprove the claim that n^2 + 1 is prime for every positive integer n. Give the smallest positive counterexample n."
             answer: "3"
             answer_contract: {"kind": "exact"}
             solution_sketch: "The claim being disproved is that n^2 + 1 is prime for every positive integer n. Check n = 1: 1^2 + 1 = 2, prime. Check n = 2: 2^2 + 1 = 5, prime. Check n = 3: 3^2 + 1 = 10, not prime. The smallest positive integer is 3."
@@ -1810,7 +1812,7 @@ topics:
             answer: "2"
             answer_contract: {"kind": "exact"}
             solution_sketch: "The statement has the form for all positive integers n, if n is prime then n is odd. A counterexample needs a prime that is not odd. The integer 2 is prime and is even, so it is not odd. No smaller positive prime exists. The smallest counterexample is 2."
-          - problem: "To disprove the statement that for every real number x, x squared is greater than x, what suffices?"
+          - problem: "Which option is the exact logical negation of the statement: for every real number x, x squared is greater than x? Select one option."
             answer: "One x with x squared at most x"
             answer_contract: {"kind": "label", "options": [["One x with x squared at most x"], ["For all x, x squared at most x"], ["One x with x squared above x"], ["No x has x squared at most x"]]}
             solution_sketch: "To disprove a universal statement, it is enough to give one counterexample. The statement for every real x has x squared greater than x is false at x = 0, because 0 squared is at most 0. The correct obligation is to find one x with x squared at most x. The option For all x, x squared at most x is wrong because it proves a stronger universal claim than needed. The option One x with x squared above x is wrong because it confirms the original statement instead of refuting it. The option No x has x squared at most x is wrong because it is the opposite of the needed counterexample. The answer is One x with x squared at most x."
@@ -1901,10 +1903,10 @@ topics:
             answer: "1"
             answer_contract: {"kind": "exact"}
             solution_sketch: "The full form is: If P then Q, Q, therefore P. Rule: a counterexample is a row with both premises true and the conclusion false. Build the four rows for P and Q. Row (T,T) makes both premises true and the conclusion true. Row (T,F) makes Q false. Row (F,T) makes If P then Q true and Q true but P false, so it is a counterexample. Row (F,F) makes Q false. One row is a counterexample, so the answer is 1."
-          - problem: "For the argument form: If P then Q. Not Q. Therefore not P. How many of the four truth-table rows for P and Q make both premises true? Find that number."
-            answer: "1"
+          - problem: "For the argument P implies Q; not Q; therefore not P, count the truth-table rows that make both premises true and the conclusion false. Give the count."
+            answer: "0"
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The full form is: If P then Q, not Q, therefore not P. Rule: build the four rows for P and Q and count the rows where both premises are true. Row (T,T) has not Q false. Row (T,F) has If P then Q false. Row (F,T) has not Q false. Row (F,F) has If P then Q true and not Q true, so exactly one row has both premises true; there the conclusion not P is true as well, so the form has no counterexample. The answer is 1."
+            solution_sketch: "An invalid argument needs true premises and a false conclusion in the same row. Modus tollens has no such row, so the count is 0."
           - problem: "For the argument form: If P then Q. Not P. Therefore not Q. How many of the four truth-table rows for P and Q make both premises true and the conclusion false?"
             answer: "1"
             answer_contract: {"kind": "exact"}
@@ -1914,30 +1916,30 @@ topics:
         name: "Chaining inferences"
         key_prerequisites: [logical-equivalence]
         exemplars:
-          - problem: "Given the premises S -> T, T -> U, and not U, exactly one of the statements offered can be derived by chaining the rules of inference. Select the statement that follows from the premises."
-            answer: "not S"
-            answer_contract: {"kind": "label", "options": [["not S"], ["S or T"], ["T or U"], ["S and T"]]}
-            solution_sketch: "The premises are S -> T, T -> U, and not U. First, hypothetical syllogism on S -> T and T -> U gives S -> U. Second, modus tollens on S -> U with not U gives not S; two applications of modus tollens also reach not S. The wrong options are S or T, T or U, and S and T: S or T reads the conditional S -> T as a disjunction, T or U reads T -> U as a disjunction, and S and T treats a conditional as asserting both of its parts. The statement that follows is not S."
-          - problem: "Given the premises P or Q, not P, and Q -> R, derive R. Use these rule codes: 1 = modus ponens, 2 = modus tollens, 3 = hypothetical syllogism, 4 = disjunctive syllogism. Give the codes of the rules you apply, in order, as a list."
-            answer: "4, 1"
-            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
-            solution_sketch: "The premises are P or Q, not P, and Q -> R. Disjunctive syllogism on P or Q with not P gives Q, and modus ponens on Q -> R with Q gives R. Modus tollens never applies because not R is not available, and hypothetical syllogism needs two conditionals, so no other order works. The codes applied, in order, are 4, 1."
-          - problem: "Given the premises M or not N, not M, and K -> N, derive not K. Number the rules as follows: 1 = modus ponens, 2 = modus tollens, 3 = hypothetical syllogism, 4 = disjunctive syllogism. Give the codes of the rules you apply, in order, as a list."
-            answer: "4, 2"
-            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
-            solution_sketch: "The premises are M or not N, not M, and K -> N. Disjunctive syllogism on M or not N with not M gives not N, and modus tollens on K -> N with not N gives not K. Modus ponens does not apply because no antecedent M or K is given, and modus tollens on K -> N is impossible until not N is derived. The codes applied, in order, are 4, 2."
-          - problem: "Given the premises A or B, C -> not A, and C, derive B. Use the numbering 1 = modus ponens, 2 = modus tollens, 3 = hypothetical syllogism, 4 = disjunctive syllogism. Give the codes of the rules you apply, in order, as a list."
-            answer: "1, 4"
-            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
-            solution_sketch: "The premises are A or B, C -> not A, and C. Modus ponens on C -> not A with C gives not A, and disjunctive syllogism on A or B with not A gives B. Disjunctive syllogism cannot come first because not A is not yet available, and modus tollens on C -> not A would need the premise A. The codes applied, in order, are 1, 4."
-          - problem: "Given the premises P or Q, not P, Q -> not R, S -> R, and S, derive not S. The rules are coded 1 = modus ponens, 2 = modus tollens, 3 = hypothetical syllogism, 4 = disjunctive syllogism. Give the codes of the rules you apply, in order, as a list."
-            answer: "4, 1, 2"
-            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
-            solution_sketch: "The premises are P or Q, not P, Q -> not R, S -> R, and S. Disjunctive syllogism on P or Q with not P gives Q; modus ponens on Q -> not R with Q gives not R; modus tollens on S -> R with not R gives not S. Each later step needs the output of the previous one, so no reordering is possible, and hypothetical syllogism never applies because no conditional pair shares a matching endpoint. The codes applied, in order, are 4, 1, 2."
-          - problem: "Given the premises A -> B, B -> C, C -> D, and A, a derivation of D exists. Code the rules as mp = modus ponens, mt = modus tollens, hs = hypothetical syllogism, ds = disjunctive syllogism. Determine the code of the last rule applied in a shortest derivation of D, and give the number of rule applications in that derivation as lastrule and steps."
-            answer: "lastrule = mp; steps = 3"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["mp"], ["mt"], ["hs"], ["ds"]]}, "name": "lastrule"}, {"contract": {"kind": "exact"}, "name": "steps"}]}
-            solution_sketch: "The premises are A -> B, B -> C, C -> D, and A. One shortest derivation applies modus ponens three times: A gives B, B gives C, C gives D; another applies hypothetical syllogism twice to get A -> D and then modus ponens once. Every derivation of the atomic statement D must end with modus ponens, since hypothetical syllogism only produces conditionals, and reaching D from A needs exactly 3 applications. The answer is lastrule = mp; steps = 3."
+          - problem: "Premises: (P implies Q); (Q implies R); P. Which conclusion follows by chaining these premises? Conclusion bank: 1: R; 2: not R; 3: (R and not R); 4: not P. Give its number."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Carry the information through the implications or remove the excluded disjunct before applying the next implication. The only forced bank conclusion is 1."
+          - problem: "Premises: (P or Q); not P; (Q implies R). Which conclusion follows by chaining these premises? Conclusion bank: 1: not R; 2: R; 3: (R and not R); 4: not (Q implies R). Give its number."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Carry the information through the implications or remove the excluded disjunct before applying the next implication. The only forced bank conclusion is 2."
+          - problem: "Premises: (P implies Q); (Q implies R); not R. Which conclusion follows by chaining these premises? Conclusion bank: 1: not not P; 2: (not P and not not P); 3: not P; 4: not not R. Give its number."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Carry the information through the implications or remove the excluded disjunct before applying the next implication. The only forced bank conclusion is 3."
+          - problem: "Premises: (P or Q); (R implies not P); R. Which conclusion follows by chaining these premises? Conclusion bank: 1: not Q; 2: (Q and not Q); 3: not R; 4: Q. Give its number."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Carry the information through the implications or remove the excluded disjunct before applying the next implication. The only forced bank conclusion is 4."
+          - problem: "Premises: (P or Q); not P; (Q implies not R). Which conclusion follows by chaining these premises? Conclusion bank: 1: not R; 2: not not R; 3: (not R and not not R); 4: not (Q implies not R). Give its number."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Carry the information through the implications or remove the excluded disjunct before applying the next implication. The only forced bank conclusion is 1."
+          - problem: "Premises: (P implies Q); (Q implies R); (R implies S); P. Which conclusion follows by chaining these premises? Conclusion bank: 1: not S; 2: S; 3: (S and not S); 4: not P. Give its number."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Carry the information through the implications or remove the excluded disjunct before applying the next implication. The only forced bank conclusion is 2."
         constraints: "combine hypothetical/disjunctive syllogism with modus ponens/tollens"
     diagnostic_exemplar:
       problem: 'From $A \to B$, $B \to C$ and $\neg C$, what can you conclude about $A$? And from $A \to B$ together with $B$, may you conclude $A$?'
@@ -1974,88 +1976,88 @@ topics:
         name: "Universal instantiation and universal modus ponens"
         key_prerequisites: [rules-of-inference]
         exemplars:
-          - problem: "For all integers n, if n is a multiple of 4 then n is even. 12 is a multiple of 4. What is the remainder when 12 is divided by 2?"
-            answer: "0"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The universal premise is 'for all integers n, if n is a multiple of 4 then n is even'. Universal instantiation at n = 12 gives 'if 12 is a multiple of 4 then 12 is even'. Since 12 is a multiple of 4, modus ponens gives '12 is even'. An even number has remainder 0 when divided by 2. The answer is 0."
-          - problem: "For all humans x, if x is human then x has 2 legs. Socrates is human and Plato is human. How many legs do Socrates and Plato have together?"
-            answer: "4"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The universal premise is 'for all humans x, if x is human then x has 2 legs'. Universal instantiation at x = Socrates gives 'if Socrates is human then Socrates has 2 legs'. Since Socrates is human, modus ponens gives 'Socrates has 2 legs'. Universal instantiation at x = Plato gives 'if Plato is human then Plato has 2 legs'. Since Plato is human, modus ponens gives 'Plato has 2 legs'. Together they have 2 + 2 = 4 legs. The answer is 4."
-          - problem: "For all real x, if x > 0 then f(x) = 3x + 1. 3 > 0. Find f(3)."
-            answer: "10"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The universal premise is 'for all real x, if x > 0 then f(x) = 3x + 1'. Universal instantiation at x = 3 gives 'if 3 > 0 then f(3) = 3*3 + 1'. Since 3 > 0, modus ponens gives f(3) = 10. The answer is 10."
-          - problem: "For all integers n, if n is even then g(n) = n/2 + 3. 8 is even. Find g(8)."
-            answer: "7"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The universal premise is 'for all integers n, if n is even then g(n) = n/2 + 3'. Universal instantiation at n = 8 gives 'if 8 is even then g(8) = 8/2 + 3'. Since 8 is even, modus ponens gives g(8) = 4 + 3 = 7. The answer is 7."
-          - problem: "For all real x, if x < 0 then h(x) = x^2. -3 < 0. Find h(-3)."
-            answer: "9"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The universal premise is 'for all real x, if x < 0 then h(x) = x^2'. Universal instantiation at x = -3 gives 'if -3 < 0 then h(-3) = (-3)^2'. Since -3 < 0, modus ponens gives h(-3) = 9. The answer is 9."
-          - problem: "For all integers n, if n is a multiple of 5 then r(n) = n + 2. 15 is a multiple of 5. Find r(15)."
-            answer: "17"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The universal premise is 'for all integers n, if n is a multiple of 5 then r(n) = n + 2'. Universal instantiation at n = 15 gives 'if 15 is a multiple of 5 then r(15) = 15 + 2'. Since 15 is a multiple of 5, modus ponens gives r(15) = 17. The answer is 17."
+          - problem: "P, Q and R are arbitrary predicates on a nonempty domain, and a is a named element. Premises: forall x, (P(x) implies Q(x)); P(a). Which listed conclusions must follow? 1: Q(a); 2: not P(a); 3: not Q(a); 4: P(a). Give all forced conclusion numbers in increasing order."
+            answer: "1, 4"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Instantiate the universal implication at a and apply the given guard. Check every proposed conclusion against the resulting premises; the forced numbers are 1, 4."
+          - problem: "P, Q and R are arbitrary predicates on a nonempty domain, and a is a named element. Premises: forall x, (Q(x) implies R(x)); Q(a). Which listed conclusions must follow? 1: Q(a); 2: not R(a); 3: R(a); 4: not Q(a). Give all forced conclusion numbers in increasing order."
+            answer: "1, 3"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Instantiate the universal implication at a and apply the given guard. Check every proposed conclusion against the resulting premises; the forced numbers are 1, 3."
+          - problem: "P, Q and R are arbitrary predicates on a nonempty domain, and a is a named element. Premises: forall x, (not P(x) implies Q(x)); not P(a). Which listed conclusions must follow? 1: Q(a); 2: not Q(a); 3: not P(a); 4: P(a). Give all forced conclusion numbers in increasing order."
+            answer: "1, 3"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Instantiate the universal implication at a and apply the given guard. Check every proposed conclusion against the resulting premises; the forced numbers are 1, 3."
+          - problem: "P, Q and R are arbitrary predicates on a nonempty domain, and a is a named element. Premises: forall x, (P(x) implies not Q(x)); P(a). Which listed conclusions must follow? 1: not P(a); 2: P(a); 3: not Q(a); 4: Q(a). Give all forced conclusion numbers in increasing order."
+            answer: "2, 3"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Instantiate the universal implication at a and apply the given guard. Check every proposed conclusion against the resulting premises; the forced numbers are 2, 3."
+          - problem: "P, Q and R are arbitrary predicates on a nonempty domain, and a is a named element. Premises: forall x, ((P(x) and Q(x)) implies R(x)); (P(a) and Q(a)). Which listed conclusions must follow? 1: R(a); 2: P(a); 3: not Q(a); 4: Q(a); 5: not R(a); 6: not P(a). Give all forced conclusion numbers in increasing order."
+            answer: "1, 2, 4"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Instantiate the universal implication at a and apply the given guard. Check every proposed conclusion against the resulting premises; the forced numbers are 1, 2, 4."
+          - problem: "P, Q and R are arbitrary predicates on a nonempty domain, and a is a named element. Premises: forall x, ((P(x) or Q(x)) implies R(x)); (P(a) or Q(a)). Which listed conclusions must follow? 1: not P(a); 2: Q(a); 3: not R(a); 4: not Q(a); 5: P(a); 6: R(a). Give all forced conclusion numbers in increasing order."
+            answer: "6"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Instantiate the universal implication at a and apply the given guard. Check every proposed conclusion against the resulting premises; the forced numbers are 6."
         constraints: "instantiate a universal premise at a named element, then apply a propositional rule"
       - id: kp2
         name: "Generalization rules"
         key_prerequisites: [quantifiers]
         exemplars:
-          - problem: "The statement ∃n (n is even and n is composite) is to be proved by existential generalization. Give the smallest witness n."
+          - problem: "Only the premise P(a) is known about one named element a; no arbitrary-element proof is given. The domain is nonempty and P,Q are arbitrary predicates. Which quantified conclusions are justified? 1: exists x, not P(x); 2: forall x, P(x); 3: forall x, not P(x); 4: exists x, P(x). Give all justified conclusion numbers in increasing order."
             answer: "4"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The full statement is ∃n (n even and n composite). Step 1: Existential generalization needs a concrete witness. Step 2: The smallest even composite number is 4. The answer is 4."
-          - problem: "A proof of ∀x in R, (x+1)^2 = x^2+2x+1 has three steps: 1. Let x be an arbitrary real. 2. Expand (x+1)^2 to x^2+2x+1. 3. Conclude the identity holds for all real x. Give the number of the step that applies universal generalization."
-            answer: "3"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The proof has steps 1, 2, and 3. Step 1: Universal generalization starts with an arbitrary element. Step 2: The algebra is checked for that element. Step 3: The conclusion from arbitrary x to all x is universal generalization. The answer is 3."
-          - problem: "The statement ∃n (n is prime and n > 10) is to be proved by existential generalization. Give the smallest witness n."
-            answer: "11"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The full statement is ∃n (n prime and n > 10). Step 1: Existential generalization needs a witness. Step 2: The smallest prime greater than 10 is 11. The answer is 11."
-          - problem: "A proof of ∀x in R, x^2 - 1 = (x-1)(x+1) has four steps: 1. Let x be an arbitrary real. 2. Write x^2 - 1. 3. Factor it as (x-1)(x+1). 4. Conclude the identity holds for all real x. Give the number of the step that applies universal generalization."
-            answer: "4"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The proof has steps 1, 2, 3, and 4. Step 1: Universal generalization begins with an arbitrary x. Steps 2 and 3: The identity is shown for that x. Step 4: The conclusion for all x is universal generalization. The answer is 4."
-          - problem: "The statement ∃n (n^2 = n + 6) is to be proved by existential generalization. Give the positive witness n."
-            answer: "3"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The full statement is ∃n (n^2 = n + 6). Step 1: Existential generalization needs a witness. Step 2: The positive solution of n^2 = n + 6 is n = 3. The answer is 3."
-          - problem: "A proof of ∀x in R, x^2 + 1 > 0 has five steps: 1. Let x be an arbitrary real. 2. Note x^2 >= 0. 3. Add 1 to get x^2 + 1 >= 1. 4. Conclude x^2 + 1 > 0. 5. Conclude the inequality holds for all real x. Give the number of the step that applies universal generalization."
-            answer: "5"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The proof has steps 1 through 5. Step 1: Universal generalization starts with an arbitrary x. Steps 2 to 4: The inequality is derived for that x. Step 5: The conclusion for all x is universal generalization. The answer is 5."
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "A named witness licenses existence, whereas a proof for an arbitrary element licenses universal generalization. The nonempty-domain hypothesis also licenses existence from a universal result; the justified numbers are 4."
+          - problem: "A proof has established not P(a) for an arbitrary domain element a, with no assumption depending on a. The domain is nonempty and P,Q are arbitrary predicates. Which quantified conclusions are justified? 1: forall x, not P(x); 2: forall x, not not P(x); 3: exists x, not P(x); 4: exists x, not not P(x). Give all justified conclusion numbers in increasing order."
+            answer: "1, 3"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "A named witness licenses existence, whereas a proof for an arbitrary element licenses universal generalization. The nonempty-domain hypothesis also licenses existence from a universal result; the justified numbers are 1, 3."
+          - problem: "Only the premise P(a) and Q(a) is known about one named element a; no arbitrary-element proof is given. The domain is nonempty and P,Q are arbitrary predicates. Which quantified conclusions are justified? 1: forall x, not (P(x) and Q(x)); 2: exists x, (P(x) and Q(x)); 3: exists x, not (P(x) and Q(x)); 4: forall x, (P(x) and Q(x)). Give all justified conclusion numbers in increasing order."
+            answer: "2"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "A named witness licenses existence, whereas a proof for an arbitrary element licenses universal generalization. The nonempty-domain hypothesis also licenses existence from a universal result; the justified numbers are 2."
+          - problem: "A proof has established P(a) or Q(a) for an arbitrary domain element a, with no assumption depending on a. The domain is nonempty and P,Q are arbitrary predicates. Which quantified conclusions are justified? 1: forall x, not (P(x) or Q(x)); 2: exists x, (P(x) or Q(x)); 3: forall x, (P(x) or Q(x)); 4: exists x, not (P(x) or Q(x)). Give all justified conclusion numbers in increasing order."
+            answer: "2, 3"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "A named witness licenses existence, whereas a proof for an arbitrary element licenses universal generalization. The nonempty-domain hypothesis also licenses existence from a universal result; the justified numbers are 2, 3."
+          - problem: "Only the premise P(a) implies Q(a) is known about one named element a; no arbitrary-element proof is given. The domain is nonempty and P,Q are arbitrary predicates. Which quantified conclusions are justified? 1: forall x, (P(x) implies Q(x)); 2: exists x, (P(x) implies Q(x)); 3: forall x, not (P(x) implies Q(x)); 4: exists x, not (P(x) implies Q(x)). Give all justified conclusion numbers in increasing order."
+            answer: "2"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "A named witness licenses existence, whereas a proof for an arbitrary element licenses universal generalization. The nonempty-domain hypothesis also licenses existence from a universal result; the justified numbers are 2."
+          - problem: "A proof has established P(a) iff Q(a) for an arbitrary domain element a, with no assumption depending on a. The domain is nonempty and P,Q are arbitrary predicates. Which quantified conclusions are justified? 1: exists x, (P(x) iff Q(x)); 2: forall x, not (P(x) iff Q(x)); 3: forall x, (P(x) iff Q(x)); 4: exists x, not (P(x) iff Q(x)). Give all justified conclusion numbers in increasing order."
+            answer: "1, 3"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "A named witness licenses existence, whereas a proof for an arbitrary element licenses universal generalization. The nonempty-domain hypothesis also licenses existence from a universal result; the justified numbers are 1, 3."
         constraints: "existential generalization from a witness; universal generalization from an arbitrary element"
       - id: kp3
         name: "Valid and invalid quantified arguments"
         key_prerequisites: [rules-of-inference]
         exemplars:
-          - problem: "Premises: \"every square integer is nonnegative\" and \"5 is nonnegative\". The argument concludes \"5 is a square\". Which named error does this argument make? Select the rule."
-            answer: "affirming the consequent"
-            answer_contract: {"kind": "label", "options": [["affirming the consequent"], ["denying the antecedent"], ["universal modus ponens"], ["universal modus tollens"]]}
-            solution_sketch: "The full argument is: all squares are nonnegative; 5 is nonnegative; therefore 5 is a square. Step 1 instantiates the universal premise at 5 to get: if 5 is a square then 5 is nonnegative. Step 2 notes that the second premise affirms the consequent, not the hypothesis. This is the fallacy of affirming the consequent. The wrong options are: denying the antecedent, which would use not a square; universal modus ponens, which would need the premise that 5 is a square; and universal modus tollens, which would need the premise that 5 is not nonnegative. The answer is affirming the consequent."
-          - problem: "Premises: \"every integer divisible by 6 is divisible by 3\" and \"14 is not divisible by 3\". Which conclusion follows for 14? Select the conclusion."
-            answer: "14 is not divisible by 6"
-            answer_contract: {"kind": "label", "options": [["14 is not divisible by 6"], ["14 is divisible by 6"], ["14 is divisible by 3"], ["no conclusion follows"]]}
-            solution_sketch: "The full argument instantiates the universal premise at 14: if 14 is divisible by 6, then 14 is divisible by 3. Step 1 uses universal instantiation. Step 2 applies universal modus tollens: the conclusion of the instantiated conditional is false, so its hypothesis is false. Therefore 14 is not divisible by 6. The wrong options are: 14 is divisible by 6, which ignores the false conclusion; 14 is divisible by 3, which contradicts the second premise; and no conclusion follows, which denies the valid modus tollens. The answer is 14 is not divisible by 6."
-          - problem: "Consider four quantified arguments. (1) Every integer divisible by 6 is even; 18 is divisible by 6; therefore 18 is even. (2) Every square integer is nonnegative; 7 is nonnegative; therefore 7 is a square. (3) Every prime greater than 2 is odd; 9 is odd; therefore 9 is prime. (4) Every integer divisible by 10 is even; 14 is not divisible by 10; therefore 14 is not even. How many of these arguments are valid? Give the answer as a number."
-            answer: "1"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The full list has four arguments. Step 1 checks (1): it is universal modus ponens, so it is valid. Step 2 checks (2): it affirms the consequent, so it is invalid. Step 3 checks (3): it also affirms the consequent, so it is invalid. Step 4 checks (4): it denies the antecedent, so it is invalid. Only argument (1) is valid, so the count is 1. The answer is 1."
-          - problem: "Consider four quantified arguments. (1) Every integer divisible by 4 is even; 12 is divisible by 4; therefore 12 is even. (2) Every integer divisible by 6 is divisible by 3; 15 is not divisible by 3; therefore 15 is not divisible by 6. (3) Every multiple of 5 ends in 0 or 5; 35 ends in 5; therefore 35 is a multiple of 5. (4) Every integer divisible by 2 is even; 9 is not divisible by 2; therefore 9 is not even. How many of these arguments are valid? Give the answer as a number."
-            answer: "2"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The full list has four arguments. Step 1 checks (1): universal modus ponens, valid. Step 2 checks (2): universal modus tollens, valid. Step 3 checks (3): affirming the consequent, invalid. Step 4 checks (4): denying the antecedent, invalid. So exactly two arguments are valid. The answer is 2."
-          - problem: "Consider four quantified arguments. (1) Every integer divisible by 6 is even; 18 is divisible by 6; therefore 18 is even. (2) Every integer divisible by 6 is divisible by 3; 14 is not divisible by 3; therefore 14 is not divisible by 6. (3) Every multiple of 5 ends in 0 or 5; 40 is a multiple of 5; therefore 40 ends in 0 or 5. (4) Every square integer is nonnegative; 7 is nonnegative; therefore 7 is a square. How many of these arguments are valid? Give the answer as a number."
-            answer: "3"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The full list has four arguments. Step 1 checks (1): universal modus ponens, valid. Step 2 checks (2): universal modus tollens, valid. Step 3 checks (3): universal modus ponens, valid. Step 4 checks (4): affirming the consequent, invalid. So exactly three arguments are valid. The answer is 3."
-          - problem: "Consider four quantified arguments. (1) Every integer divisible by 6 is even; 12 is divisible by 6; therefore 12 is even. (2) Every integer divisible by 6 is divisible by 3; 10 is not divisible by 3; therefore 10 is not divisible by 6. (3) Every square integer is nonnegative; 5 is nonnegative; therefore 5 is a square. (4) Every multiple of 5 ends in 0 or 5; 23 is not a multiple of 5; therefore 23 does not end in 0 or 5. How many of these arguments are valid? Give the answer as a number."
-            answer: "2"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The full list has four arguments. Step 1 checks (1): universal modus ponens, valid. Step 2 checks (2): universal modus tollens, valid. Step 3 checks (3): affirming the consequent, invalid. Step 4 checks (4): denying the antecedent, invalid. So exactly two arguments are valid. The answer is 2."
+          - problem: "Treat P and Q as arbitrary predicates. Each argument assumes forall x (P(x) implies Q(x)). Determine whether the additional premise entails the conclusion: (a) P(a); therefore Q(a); (b) Q(a); therefore P(a); (c) not Q(a); therefore not P(a). Give 1 for a valid argument form and 0 for an invalid form, in order."
+            answer: "1, 0, 1"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Instantiate the universal premise at a and test the direction of each inference. True premises with a false conclusion refute a proposed form; the indicators are 1, 0, 1."
+          - problem: "Treat P and Q as arbitrary predicates. Each argument assumes forall x (P(x) implies Q(x)). Determine whether the additional premise entails the conclusion: (a) Q(a); therefore P(a); (b) not Q(a); therefore not P(a); (c) P(a); therefore Q(a). Give 1 for a valid argument form and 0 for an invalid form, in order."
+            answer: "0, 1, 1"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Instantiate the universal premise at a and test the direction of each inference. True premises with a false conclusion refute a proposed form; the indicators are 0, 1, 1."
+          - problem: "Treat P and Q as arbitrary predicates. Each argument assumes forall x (P(x) implies Q(x)). Determine whether the additional premise entails the conclusion: (a) Q(a); therefore P(a); (b) not P(a); therefore not Q(a); (c) not Q(a); therefore not P(a). Give 1 for a valid argument form and 0 for an invalid form, in order."
+            answer: "0, 0, 1"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Instantiate the universal premise at a and test the direction of each inference. True premises with a false conclusion refute a proposed form; the indicators are 0, 0, 1."
+          - problem: "Treat P and Q as arbitrary predicates. Each argument assumes forall x (P(x) implies Q(x)). Determine whether the additional premise entails the conclusion: (a) not Q(a); therefore not P(a); (b) not P(a); therefore not Q(a); (c) Q(a); therefore P(a). Give 1 for a valid argument form and 0 for an invalid form, in order."
+            answer: "1, 0, 0"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Instantiate the universal premise at a and test the direction of each inference. True premises with a false conclusion refute a proposed form; the indicators are 1, 0, 0."
+          - problem: "Treat P and Q as arbitrary predicates. Each argument assumes forall x (P(x) implies Q(x)). Determine whether the additional premise entails the conclusion: (a) not P(a); therefore not Q(a); (b) P(a); therefore Q(a); (c) Q(a); therefore P(a). Give 1 for a valid argument form and 0 for an invalid form, in order."
+            answer: "0, 1, 0"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Instantiate the universal premise at a and test the direction of each inference. True premises with a false conclusion refute a proposed form; the indicators are 0, 1, 0."
+          - problem: "Treat P and Q as arbitrary predicates. Each argument assumes forall x (P(x) implies Q(x)). Determine whether the additional premise entails the conclusion: (a) P(a); therefore Q(a); (b) not Q(a); therefore not P(a); (c) not P(a); therefore not Q(a). Give 1 for a valid argument form and 0 for an invalid form, in order."
+            answer: "1, 1, 0"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Instantiate the universal premise at a and test the direction of each inference. True premises with a false conclusion refute a proposed form; the indicators are 1, 1, 0."
         constraints: "mix valid universal modus ponens/tollens with quantified versions of the classic fallacies"
     diagnostic_exemplar:
       problem: 'Premises: "every integer divisible by $6$ is even" and "$15$ is not even". What follows about $15$? And do the premises "every integer divisible by $6$ is even" and "$10$ is even" let you conclude that $10$ is divisible by $6$?'
