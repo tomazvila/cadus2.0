@@ -273,60 +273,60 @@ topics:
         name: "Translating compound sentences into symbols"
         key_prerequisites: [logical-connectives]
         exemplars:
-          - problem: "With R: 'it rains', U: 'I have an umbrella', W: 'I get wet': the sentence 'if it rains and I have no umbrella, then I get wet' has exactly one correct symbolization among the options. Evaluate the correct symbolization in the case where it rains is true, I have an umbrella is false and I get wet is true. Give the truth value as 1 for true or 0 for false."
-            answer: "1"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The sentence is a conditional: its hypothesis is the conjunction of R with the negation of U, and its conclusion is W, so the full symbolization is (R and not U) implies W. The option (R implies not U) and W makes the error of putting the conditional inside a conjunction. The option (R and not U) or W makes the error of replacing the conditional by a disjunction. The option (R or not U) implies W makes the error of using or instead of and in the hypothesis. Step: in the given case R is true and U is false, so the hypothesis R and not U is true, and W is true, so the truth rule for a conditional gives true. The answer is 1."
-          - problem: "With E: 'the number n is even', O: 'the number n is odd': the sentence 'n is even or odd, but not both' has exactly one correct symbolization among the options. Its truth value for a specific n is decided by the truth rules. For the number n = 6, which is even and not odd, is the symbolized sentence true? Give 1 for true or 0 for false."
-            answer: "1"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The phrase 'even or odd' gives the disjunction E or O, and 'but not both' adds the negation of the conjunction, so the full symbolization is (E or O) and not (E and O). The option (E and O) and not (E or O) makes the error of swapping the two connectives. The option (E or O) or not (E and O) makes the error of replacing the outer and by or. The option not (E or O) and not (E and O) makes the error of negating the 'even or odd' clause as well. Step: for n = 6, E is true and O is false, so E or O is true and E and O is false, and the negation of a false conjunction is true, so the conjunction is true. The answer is 1."
-          - problem: "With P: 'the alarm rings', Q: 'I get up at once', R: 'I miss the train': in the case where the alarm rings is true, I get up at once is false and I miss the train is false, find the truth value of the sentence 'if the alarm rings and I do not get up at once, then I miss the train'. Give the value as 1 for true or 0 for false."
-            answer: "0"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Full object: the sentence is a conditional; its hypothesis is the conjunction of P with the negation of Q, and its conclusion is R. Step 1: P is true and Q is false, so the hypothesis P and not Q is true by the truth rule for and. Step 2: the hypothesis is true but R is false, so the truth rule for a conditional gives false. The answer is 0."
-          - problem: "With A: 'I take the ferry', B: 'the ferry runs', C: 'I walk to work': which formula correctly symbolizes the sentence 'I take the ferry and the ferry runs, or I walk to work'?"
-            answer: "(A and B) or C"
-            answer_contract: {"kind": "label", "options": [["(A and B) or C"], ["A and (B or C)"], ["(A or B) and C"], ["A and (B and C)"]]}
-            solution_sketch: "Full object: the sentence has two clauses joined by 'or': 'I take the ferry and the ferry runs' is the conjunction A and B, and 'I walk to work' is C, so the symbolization is (A and B) or C. The option A and (B or C) moves the grouping into the second conjunct. The option (A or B) and C changes the connectives of both clauses. The option A and (B and C) turns the disjunction into a conjunction. The answer is (A and B) or C."
-          - problem: "With S: 'the shop is open', H: 'it is a holiday': the sentence 'the shop is open or it is a holiday, but not both' symbolizes as (S or H) and not (S and H). In case 1 the shop is open is true and it is a holiday is true; in case 2 the shop is open is false and it is a holiday is true. Find the truth values of the symbolized sentence in case 1 and case 2 as (case 1, case 2), using 1 for true and 0 for false."
-            answer: "(0, 1)"
-            answer_contract: {"kind": "coordinates", "arity": 2}
-            solution_sketch: "Full object: the sentence is the exclusive-or (S or H) and not (S and H). Step 1: in case 1 both S and H are true, so S or H is true but S and H is also true, and its negation is false, so the truth rule for and gives false. Step 2: in case 2, S is false and H is true, so S or H is true and S and H is false, so its negation is true and the conjunction is true. The answer is (0, 1)."
-          - problem: "With P: 'I pass the course', E: 'I sit the exam', D: 'I do the project': which formula correctly symbolizes the sentence 'I pass the course if and only if I sit the exam and I do the project'?"
-            answer: "P if and only if (E and D)"
-            answer_contract: {"kind": "label", "options": [["P if and only if (E and D)"], ["(P if and only if E) and D"], ["P if and only if (E or D)"], ["(P and E) if and only if D"]]}
-            solution_sketch: "Full object: the biconditional joins P with the conjunction E and D, so the symbolization is P if and only if (E and D). The option (P if and only if E) and D splits the biconditional and leaves D outside it. The option P if and only if (E or D) changes the conjunction to a disjunction. The option (P and E) if and only if D regroups the two sides of the biconditional. The answer is P if and only if (E and D)."
-        constraints: "three atomic propositions max; mixed connectives with one level of grouping. Answer form: the graded verdict is the chosen formula — present the candidate translations as label options (the candidate formulas or sentences as the option texts), never a bare yes/no truth value or count."
+          - problem: "P, Q and R name independent propositions. Translate each sentence into one formula from the numbered bank. (a) P and Q together imply R. (b) P implies that Q or R holds. (c) P holds exactly when Q holds. Formula bank: 1: (P and not Q); 2: (not P or Q); 3: not (P and Q); 4: (P implies (Q or R)); 5: ((P and Q) implies R); 6: (P iff Q). Give the formula numbers for (a), (b), (c), in that order; a number may repeat."
+            answer: "5, 4, 6"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Translate the main connective first, then preserve the grouping and the scope of each negation. The three translations are ((P and Q) implies R), (P implies (Q or R)), (P iff Q). Their bank numbers, in order, are 5, 4, 6."
+          - problem: "P, Q and R name independent propositions. Translate each sentence into one formula from the numbered bank. (a) P holds exactly when Q holds. (b) It is false that P and Q both hold. (c) Either P fails or Q holds. Formula bank: 1: ((P and Q) implies R); 2: (P and not Q); 3: not (P and Q); 4: (P iff Q); 5: (P implies (Q or R)); 6: (not P or Q). Give the formula numbers for (a), (b), (c), in that order; a number may repeat."
+            answer: "4, 3, 6"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Translate the main connective first, then preserve the grouping and the scope of each negation. The three translations are (P iff Q), not (P and Q), (not P or Q). Their bank numbers, in order, are 4, 3, 6."
+          - problem: "P, Q and R name independent propositions. Translate each sentence into one formula from the numbered bank. (a) Either P fails or Q holds. (b) P holds and Q fails. (c) If P fails then Q holds. Formula bank: 1: (P and not Q); 2: (not P implies Q); 3: ((P and Q) implies R); 4: (P implies (Q or R)); 5: (P iff Q); 6: (not P or Q). Give the formula numbers for (a), (b), (c), in that order; a number may repeat."
+            answer: "6, 1, 2"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Translate the main connective first, then preserve the grouping and the scope of each negation. The three translations are (not P or Q), (P and not Q), (not P implies Q). Their bank numbers, in order, are 6, 1, 2."
+          - problem: "P, Q and R name independent propositions. Translate each sentence into one formula from the numbered bank. (a) If P fails then Q holds. (b) If Q holds then P fails. (c) P implies that Q and R both hold. Formula bank: 1: (not P implies Q); 2: (P iff Q); 3: (Q implies not P); 4: (P implies (Q or R)); 5: ((P and Q) implies R); 6: (P implies (Q and R)). Give the formula numbers for (a), (b), (c), in that order; a number may repeat."
+            answer: "1, 3, 6"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Translate the main connective first, then preserve the grouping and the scope of each negation. The three translations are (not P implies Q), (Q implies not P), (P implies (Q and R)). Their bank numbers, in order, are 1, 3, 6."
+          - problem: "P, Q and R name independent propositions. Translate each sentence into one formula from the numbered bank. (a) At least one of P and Q holds. (b) P implies that Q and R both hold. (c) Either P and Q both hold, or R holds. Formula bank: 1: (P implies (Q or R)); 2: ((P and Q) implies R); 3: (P implies (Q and R)); 4: ((P and Q) or R); 5: (P or Q); 6: (P iff Q). Give the formula numbers for (a), (b), (c), in that order; a number may repeat."
+            answer: "5, 3, 4"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Translate the main connective first, then preserve the grouping and the scope of each negation. The three translations are (P or Q), (P implies (Q and R)), ((P and Q) or R). Their bank numbers, in order, are 5, 3, 4."
+          - problem: "P, Q and R name independent propositions. Translate each sentence into one formula from the numbered bank. (a) Either P and Q both hold, or R holds. (b) P and either Q or R hold. (c) P and Q together imply R. Formula bank: 1: (P implies (Q or R)); 2: ((P and Q) or R); 3: (P and (Q or R)); 4: (P iff Q); 5: ((P and Q) implies R); 6: not (P and Q). Give the formula numbers for (a), (b), (c), in that order; a number may repeat."
+            answer: "2, 3, 5"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Translate the main connective first, then preserve the grouping and the scope of each negation. The three translations are ((P and Q) or R), (P and (Q or R)), ((P and Q) implies R). Their bank numbers, in order, are 2, 3, 5."
+        constraints: "Translate the complete statements, including direction, scope and negation. Grade the actual formula choices as an ordered matching list; a truth value or row count is insufficient. The learner must supply the method-specific step; do not state it in the stem."
       - id: kp3
         name: "Reading symbolic formulas back into English"
         key_prerequisites: [logical-connectives]
         exemplars:
-          - problem: "Let $P$ be 'the bakery is open' and $Q$ be 'it is a holiday'. Select the sentence that correctly translates $\\neg(P \\land Q)$."
-            answer: "It is not the case that the bakery is open and it is a holiday"
-            answer_contract: {"kind": "label", "options": [["It is not the case that the bakery is open and it is a holiday"], ["The bakery is not open and, at the same time, it is a holiday"], ["It is not the case that the bakery is open or it is a holiday"], ["The bakery is open and it is not the case that it is a holiday"]]}
-            solution_sketch: "Scope rule: in $\\neg(P \\land Q)$ the negation stands outside the parentheses, so it applies to the whole conjunction, not to one part alone. The option 'The bakery is not open and, at the same time, it is a holiday' applies the negation only to the first conjunct, giving $\\neg P \\land Q$. The option 'It is not the case that the bakery is open or it is a holiday' negates a disjunction instead, giving $\\neg(P \\lor Q)$. The option 'The bakery is open and it is not the case that it is a holiday' negates only the second conjunct, giving $P \\land \\neg Q$. The answer is It is not the case that the bakery is open and it is a holiday."
-          - problem: "Use the code 1 for a negation, 2 for a conjunction, 3 for a disjunction, 4 for a conditional, 5 for a biconditional. With $P$: 'n is prime', $Q$: 'n is odd', $R$: 'n > 2', give the code of the main connective of the formula $(P \\land R) \\to Q$."
-            answer: "4"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Grouping rule: the conditional is the main connective, so the whole conjunction $P \\land R$ is the hypothesis and $Q$ alone is the conclusion. Sentence (i) has exactly this grouping, so it is correct. The main connective is the connective applied last, found outside all parentheses; here the conditional is applied last, so the code is 4."
-          - problem: "Let $P$: 'the alarm is set' and $Q$: 'we wake up early'. Read the formula $\\neg(P \\land \\neg Q)$: give the number of negations in it and the number of connectives at the top level, as (negations, connectives)."
-            answer: "(2, 1)"
-            answer_contract: {"kind": "coordinates", "arity": 2}
-            solution_sketch: "Scope rule: the outer negation governs all of $P \\land \\neg Q$, and the inner negation governs only $Q$. Scope rule: the outer negation governs all of $P \\land \\neg Q$, and the inner negation governs only $Q$, so there are 2 negations; the conjunction is the only top-level connective, so (2, 1)."
-          - problem: "A negation applies to the entire formula exactly when it is the main connective, standing outside every parenthesis. Formula (i): $\\neg(P \\lor Q)$. Formula (ii): $\\neg P \\to Q$. Formula (iii): $P \\to \\neg(Q \\land R)$. Formula (iv): $\\neg(P \\to Q)$. Formula (v): $\\neg(P \\leftrightarrow Q)$. How many of the five formulas have a negation that applies to the entire formula?"
-            answer: "3"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Main-connective rule: read the formula from the outside in; the connective applied last is the main one. Formula (i) $\\neg(P \\lor Q)$, formula (iv) $\\neg(P \\to Q)$ and formula (v) $\\neg(P \\leftrightarrow Q)$ each have the negation outside all parentheses, so it applies to the entire formula. Formula (ii) $\\neg P \\to Q$ negates only $P$, and then the conditional is applied. Formula (iii) $P \\to \\neg(Q \\land R)$ negates only the consequent $Q \\land R$, not the whole conditional. Three of the five formulas qualify, so the answer is 3."
-          - problem: "Let $P$: 'the bridge is inspected', $Q$: 'the bridge is closed', $R$: 'traffic is diverted'. Read the formula $P \\to \\neg(Q \\lor R)$. Four candidate sentences are offered as options; exactly one matches the scope of the negation. Select the sentence that correctly translates the formula."
-            answer: "If the bridge is inspected, then not (closed or diverted)"
-            answer_contract: {"kind": "label", "options": [["If the bridge is inspected, then not (closed or diverted)"], ["If the bridge is inspected, then not closed or diverted"], ["If the bridge is not inspected, then closed or diverted"], ["If inspected and closed, then not diverted"]]}
-            solution_sketch: "Grouping rule: in $P \\to \\neg(Q \\lor R)$ the consequent is the negation of the whole disjunction $Q \\lor R$. Sentence (i) puts the negation over the whole closed-or-diverted clause, so it is correct. Sentence (ii) applies the negation only to 'closed', giving $P \\to (\\neg Q \\lor R)$. Sentence (iii) negates the hypothesis instead of the consequent, giving $\\neg P \\to (Q \\lor R)$. Sentence (iv) regroups the hypothesis into a conjunction and negates only $R$, giving $(P \\land Q) \\to \\neg R$. The chosen sentence is 'If the bridge is inspected, then not (closed or diverted)'."
-          - problem: "Use the code 1 for a negation, 2 for a conjunction, 3 for a disjunction, 4 for a conditional, 5 for a biconditional. Formula (i): $\\neg(P \\land Q) \\to R$. Formula (ii): $P \\land (Q \\to R)$. Formula (iii): $\\neg(P \\lor \\neg Q)$. Determine the main connective of each formula and give the three codes in order as a list."
-            answer: "4, 2, 1"
-            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
-            solution_sketch: "Main-connective rule: the main connective is the one applied last, found outside all parentheses. In formula (i) $\\neg(P \\land Q) \\to R$ the conditional is applied last, so its code is 4. In formula (ii) $P \\land (Q \\to R)$ the conjunction stands outside the conditional, so its code is 2. In formula (iii) $\\neg(P \\lor \\neg Q)$ the outer negation governs everything inside, so its code is 1. The list of codes in order is 4, 2, 1."
-        constraints: "respect grouping; the English rendering must show what the negation or conditional applies to. Answer form: the graded verdict is the chosen formula — present the candidate translations as label options (the candidate formulas or sentences as the option texts), never a bare yes/no truth value or count."
+          - problem: "P, Q and R name independent propositions. Match these formulas to their complete English readings: (a) ((P and Q) implies R); (b) (P implies (Q or R)); (c) (P iff Q). Sentence bank: 1: P holds and Q fails; 2: It is false that P and Q both hold; 3: P implies that Q or R holds; 4: P and Q together imply R; 5: Either P fails or Q holds; 6: P holds exactly when Q holds. Give the sentence numbers for (a), (b), (c), in order."
+            answer: "4, 3, 6"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Read the outer connective before its subformulas. The English must preserve the complete scope of each connective. The matching sentence numbers are 4, 3, 6."
+          - problem: "P, Q and R name independent propositions. Match these formulas to their complete English readings: (a) (P iff Q); (b) not (P and Q); (c) (not P or Q). Sentence bank: 1: P holds and Q fails; 2: Either P fails or Q holds; 3: P and Q together imply R; 4: It is false that P and Q both hold; 5: P implies that Q or R holds; 6: P holds exactly when Q holds. Give the sentence numbers for (a), (b), (c), in order."
+            answer: "6, 4, 2"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Read the outer connective before its subformulas. The English must preserve the complete scope of each connective. The matching sentence numbers are 6, 4, 2."
+          - problem: "P, Q and R name independent propositions. Match these formulas to their complete English readings: (a) (not P or Q); (b) (P and not Q); (c) (not P implies Q). Sentence bank: 1: P holds and Q fails; 2: P implies that Q or R holds; 3: P holds exactly when Q holds; 4: P and Q together imply R; 5: Either P fails or Q holds; 6: If P fails then Q holds. Give the sentence numbers for (a), (b), (c), in order."
+            answer: "5, 1, 6"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Read the outer connective before its subformulas. The English must preserve the complete scope of each connective. The matching sentence numbers are 5, 1, 6."
+          - problem: "P, Q and R name independent propositions. Match these formulas to their complete English readings: (a) (not P implies Q); (b) (Q implies not P); (c) (P implies (Q and R)). Sentence bank: 1: P implies that Q and R both hold; 2: P and Q together imply R; 3: If Q holds then P fails; 4: If P fails then Q holds; 5: P holds exactly when Q holds; 6: P implies that Q or R holds. Give the sentence numbers for (a), (b), (c), in order."
+            answer: "4, 3, 1"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Read the outer connective before its subformulas. The English must preserve the complete scope of each connective. The matching sentence numbers are 4, 3, 1."
+          - problem: "P, Q and R name independent propositions. Match these formulas to their complete English readings: (a) (P or Q); (b) (P implies (Q and R)); (c) ((P and Q) or R). Sentence bank: 1: Either P and Q both hold, or R holds; 2: At least one of P and Q holds; 3: P implies that Q and R both hold; 4: P holds exactly when Q holds; 5: P implies that Q or R holds; 6: P and Q together imply R. Give the sentence numbers for (a), (b), (c), in order."
+            answer: "2, 3, 1"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Read the outer connective before its subformulas. The English must preserve the complete scope of each connective. The matching sentence numbers are 2, 3, 1."
+          - problem: "P, Q and R name independent propositions. Match these formulas to their complete English readings: (a) ((P and Q) or R); (b) (P and (Q or R)); (c) ((P and Q) implies R). Sentence bank: 1: It is false that P and Q both hold; 2: P and either Q or R hold; 3: Either P and Q both hold, or R holds; 4: P holds exactly when Q holds; 5: P implies that Q or R holds; 6: P and Q together imply R. Give the sentence numbers for (a), (b), (c), in order."
+            answer: "3, 2, 6"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Read the outer connective before its subformulas. The English must preserve the complete scope of each connective. The matching sentence numbers are 3, 2, 6."
+        constraints: "Translate symbolic formulas back into complete English readings, preserving grouping. Use ordered matching, with full sentences in the bank. The learner must supply the method-specific step; do not state it in the stem."
     diagnostic_exemplar:
       problem: 'With $S$: "it snows", $C$: "the road is closed", $L$: "I am late": symbolise "if it snows and the road is closed, then I am late", and translate $L \leftrightarrow (S \lor C)$ back into English.'
       answer_contract: {kind: none}
@@ -926,89 +926,89 @@ topics:
         name: "Sufficient conditions"
         key_prerequisites: [conditional-statements]
         exemplars:
-          - problem: "The sentence to translate reads: divisibility of n by 12 is sufficient for divisibility of n by 4, for integers n. Select the conditional statement that this sentence expresses."
-            answer: "if n is divisible by 12 then n is divisible by 4"
-            answer_contract: {"kind": "label", "options": [["if n is divisible by 12 then n is divisible by 4"], ["if n is divisible by 4 then n is divisible by 12"], ["if n is divisible by 12 then n is divisible by 3"], ["if n is divisible by 8 then n is divisible by 4"]]}
-            solution_sketch: "The object is the sentence divisibility of n by 12 is sufficient for divisibility of n by 4. Step 1, the translation rule: A is sufficient for B means if A then B, so A is divisibility by 12 and B is divisibility by 4. Step 2, read off the conditional and compare the options: the option if n is divisible by 4 then n is divisible by 12 makes the converse error of swapping A and B, the option if n is divisible by 12 then n is divisible by 3 keeps the antecedent but swaps in a different consequent, and the option if n is divisible by 8 then n is divisible by 4 keeps the consequent but swaps in a different antecedent. The requested conditional is if n is divisible by 12 then n is divisible by 4."
-          - problem: "Consider the whole numbers x from 1 to 8. The claim is that x > 2 is a sufficient condition for x^2 > 16. Give the set of these values of x for which x > 2 holds but x^2 > 16 fails."
-            answer: "{3, 4}"
-            answer_contract: {"kind": "set"}
-            solution_sketch: "The object is the conditional: if x > 2 then x^2 > 16, for whole numbers x from 1 to 8. Step 1, the translation rule: x > 2 is sufficient for x^2 > 16 means exactly that conditional. Step 2, the counterexample test: x = 3 gives 9 and x = 4 gives 16, and neither value is greater than 16, so both fail the consequent, while x = 5 through x = 8 all pass. So the set of counterexamples is {3, 4}."
-          - problem: "Take the whole numbers n from 1 to 12. Decide whether divisibility of n by 4 is sufficient for divisibility of n by 6. Give the set of n in that range which are divisible by 4 but not divisible by 6."
-            answer: "{4, 8}"
-            answer_contract: {"kind": "set"}
-            solution_sketch: "Step 1, the translation rule: divisibility of n by 4 is sufficient for divisibility of n by 6 means if 4 divides n then 6 divides n. Step 2, check the multiples of 4 from 1 to 12, which are 4, 8 and 12; the values 4 and 8 are not divisible by 6, while 12 is divisible by 6. So the set of counterexamples is {4, 8}."
-          - problem: "Over the whole numbers n from 1 to 15, decide whether n being divisible by 3 is a sufficient condition for n being even. Give the number of n in this range that are divisible by 3 but odd."
-            answer: "3"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1, the translation rule: n being divisible by 3 is sufficient for n being even means if 3 divides n then n is even. Step 2, list the multiples of 3 from 1 to 15, which are 3, 6, 9, 12 and 15, and keep the odd ones, namely 3, 9 and 15. So the number of counterexamples is 3."
-          - problem: "For the whole numbers n from 1 to 12, decide whether n being even is sufficient for n being divisible by 4. Give the set of n in this range that are even but not divisible by 4."
-            answer: "{2, 6, 10}"
-            answer_contract: {"kind": "set"}
-            solution_sketch: "Step 1, the translation rule: n being even is sufficient for n being divisible by 4 means if n is even then 4 divides n. Step 2, check the even numbers from 1 to 12, which are 2, 4, 6, 8, 10 and 12; the values 4, 8 and 12 are divisible by 4, while 2, 6 and 10 are not divisible by 4. So the set of counterexamples is {2, 6, 10}."
-          - problem: "For the whole numbers n from 1 to 20, decide whether divisibility of n by 12 is sufficient for divisibility of n by 3. Give the number of n in this range that are divisible by 12 but not divisible by 3."
-            answer: "0"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1, the translation rule: divisibility of n by 12 is sufficient for divisibility of n by 3 means if 12 divides n then 3 divides n. Step 2, find the multiples of 12 from 1 to 20, and the only one is 12, which is divisible by 3, so no value in the range fails the consequent. The number of counterexamples is 0."
-        constraints: "translate sufficient-condition phrasing into $A \\to B$ and judge its truth. Answer form: the graded verdict is the chosen formula — present the candidate translations as label options (the candidate formulas or sentences as the option texts), never a bare yes/no truth value or count."
+          - problem: "P and Q are independent propositions. Interpret unless inclusively. Translate each sentence into one formula from the numbered bank. (a) P is sufficient for Q. (b) Q suffices for P. (c) not P is sufficient for Q. Formula bank: 1: (P and Q); 2: (P implies not Q); 3: (P iff Q); 4: (P implies Q); 5: (not P implies Q); 6: (Q implies P). Give the formula numbers for (a), (b), (c), in that order; a number may repeat."
+            answer: "4, 6, 5"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "The sufficient condition supplies the hypothesis of an implication. The three translations are (P implies Q), (Q implies P), (not P implies Q). Their bank numbers, in order, are 4, 6, 5."
+          - problem: "P and Q are independent propositions. Interpret unless inclusively. Translate each sentence into one formula from the numbered bank. (a) Q is sufficient for P. (b) P suffices for Q. (c) not Q is sufficient for P. Formula bank: 1: (not Q implies P); 2: (Q implies not P); 3: (Q implies P); 4: (Q and P); 5: (P implies Q); 6: (Q iff P). Give the formula numbers for (a), (b), (c), in that order; a number may repeat."
+            answer: "3, 5, 1"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "The sufficient condition supplies the hypothesis of an implication. The three translations are (Q implies P), (P implies Q), (not Q implies P). Their bank numbers, in order, are 3, 5, 1."
+          - problem: "P and Q are independent propositions. Interpret unless inclusively. Translate each sentence into one formula from the numbered bank. (a) not P is sufficient for Q. (b) Q suffices for not P. (c) not not P is sufficient for Q. Formula bank: 1: (not P implies Q); 2: (Q implies not P); 3: (not P iff Q); 4: (not P implies not Q); 5: (not not P implies Q); 6: (not P and Q). Give the formula numbers for (a), (b), (c), in that order; a number may repeat."
+            answer: "1, 2, 5"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "The sufficient condition supplies the hypothesis of an implication. The three translations are (not P implies Q), (Q implies not P), (not not P implies Q). Their bank numbers, in order, are 1, 2, 5."
+          - problem: "P and Q are independent propositions. Interpret unless inclusively. Translate each sentence into one formula from the numbered bank. (a) not Q is sufficient for P. (b) P suffices for not Q. (c) not not Q is sufficient for P. Formula bank: 1: (not Q and P); 2: (not Q iff P); 3: (not Q implies P); 4: (not not Q implies P); 5: (not Q implies not P); 6: (P implies not Q). Give the formula numbers for (a), (b), (c), in that order; a number may repeat."
+            answer: "3, 6, 4"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "The sufficient condition supplies the hypothesis of an implication. The three translations are (not Q implies P), (P implies not Q), (not not Q implies P). Their bank numbers, in order, are 3, 6, 4."
+          - problem: "P and Q are independent propositions. Interpret unless inclusively. Translate each sentence into one formula from the numbered bank. (a) P is sufficient for not Q. (b) not Q suffices for P. (c) not P is sufficient for not Q. Formula bank: 1: (not Q implies P); 2: (P and not Q); 3: (P iff not Q); 4: (P implies not Q); 5: (not P implies not Q); 6: (P implies not not Q). Give the formula numbers for (a), (b), (c), in that order; a number may repeat."
+            answer: "4, 1, 5"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "The sufficient condition supplies the hypothesis of an implication. The three translations are (P implies not Q), (not Q implies P), (not P implies not Q). Their bank numbers, in order, are 4, 1, 5."
+          - problem: "P and Q are independent propositions. Interpret unless inclusively. Translate each sentence into one formula from the numbered bank. (a) Q is sufficient for not P. (b) not P suffices for Q. (c) not Q is sufficient for not P. Formula bank: 1: (Q implies not not P); 2: (Q and not P); 3: (not P implies Q); 4: (Q implies not P); 5: (Q iff not P); 6: (not Q implies not P). Give the formula numbers for (a), (b), (c), in that order; a number may repeat."
+            answer: "4, 3, 6"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "The sufficient condition supplies the hypothesis of an implication. The three translations are (Q implies not P), (not P implies Q), (not Q implies not P). Their bank numbers, in order, are 4, 3, 6."
+        constraints: "Translate the complete statements, including direction, scope and negation. Grade the actual formula choices as an ordered matching list; a truth value or row count is insufficient. The learner must supply the method-specific step; do not state it in the stem."
       - id: kp2
         name: "Necessary conditions and only if"
         key_prerequisites: [conditional-statements]
         exemplars:
-          - problem: "The sentence 'being divisible by 3 is necessary for being divisible by 5' translates to a single conditional. Take the set S = {5, 10, 15, 20, 25, 30, 35, 40}. How many elements of S violate that conditional?"
-            answer: "6"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1 (necessary-condition rule): 'B is necessary for A' translates to the conditional 'if A then B', so the sentence becomes 'if a number is divisible by 5 then it is divisible by 3'. Step 2 (violation rule): a conditional fails exactly when its hypothesis holds and its conclusion fails, so we count elements of S divisible by 5 but not by 3. Step 3 (counting rule): among 5, 10, 15, 20, 25, 30, 35, 40, the elements 5, 10, 20, 25, 35, 40 fail, because 15 and 30 are divisible by 3. The answer is 6."
-          - problem: "The claim 'a number is a multiple of 4 only if it is a multiple of 8' translates to a single conditional. Take the set S = {4, 8, 12, 16, 20, 24, 28, 36}. How many elements of S make that conditional false?"
-            answer: "5"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1 (only-if rule): 'P only if Q' translates to 'if P then Q', with the guaranteed part as the conclusion, so the claim becomes 'if a number is a multiple of 4 then it is a multiple of 8'. Step 2 (violation rule): the conditional fails exactly when the hypothesis holds and the conclusion fails, so we count multiples of 4 in S that are not multiples of 8. Step 3 (counting rule): among 4, 8, 12, 16, 20, 24, 28, 36, the elements 4, 12, 20, 28, 36 fail, while 8, 16, 24 satisfy both parts. The answer is 5."
-          - problem: "A warehouse posts the rule 'passing the safety check is necessary for releasing a shipment'. Eight shipments are recorded as pairs (released, passed), with 1 for yes and 0 for no: (1,0), (1,1), (0,1), (1,0), (0,0), (1,1), (0,1), (1,0). How many records break the rule?"
-            answer: "3"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1 (necessary-condition rule): 'passing the safety check is necessary for releasing a shipment' translates to 'if a shipment is released then it passed the safety check', with the check as the guaranteed conclusion. Step 2 (violation rule): the conditional is broken exactly when a record shows released with 1 and passed with 0. Step 3 (counting rule): three of the eight records show the pattern (1,0), and every other record satisfies the rule. The answer is 3."
-          - problem: "The conditional 'if a number is divisible by 12 then it is divisible by 3' makes one of its two properties necessary for the other. Take the set S = {3, 6, 9, 12, 24, 36, 60, 15}. Find the sum of all elements of S that have the necessary property but not the other property."
-            answer: "33"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1 (conditional-to-necessary rule): in 'if a number is divisible by 12 then it is divisible by 3', the conclusion carries the necessary property, so divisibility by 3 is the necessary property. Step 2 (selection rule): an element has the necessary property but not the other one when it is divisible by 3 and not by 12. Step 3 (summing rule): among 3, 6, 9, 12, 24, 36, 60, 15, the elements 3, 6, 9, 15 qualify, and their sum is 33. The answer is 33."
-          - problem: "A club rule reads 'a member votes only if the member has paid dues'. Eight members are recorded as pairs (voted, paid), with 1 for yes and 0 for no: (1,0), (0,1), (1,1), (0,0), (1,1), (0,1), (0,0), (1,1). How many records are consistent with the rule?"
-            answer: "7"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1 (only-if rule): 'a member votes only if the member has paid dues' translates to 'if a member votes then the member has paid dues', with paying dues as the guaranteed conclusion. Step 2 (consistency rule): a record is consistent with the conditional unless it shows voted with 1 and paid with 0. Step 3 (counting rule): exactly one record shows the pattern (1,0), so the other seven records are consistent. The answer is 7."
-          - problem: "Test the claim 'a number is prime only if it is odd' on the set S = {2, 3, 4, 5, 6, 7, 9, 15}. How many elements of S are counterexamples to the claim?"
-            answer: "1"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1 (only-if rule): 'a number is prime only if it is odd' translates to 'if a number is prime then it is odd', with oddness as the guaranteed conclusion. Step 2 (counterexample rule): a counterexample makes the hypothesis true and the conclusion false, so we need elements of S that are prime and even. Step 3 (counting rule): among 2, 3, 4, 5, 6, 7, 9, 15, only 2 is both prime and even, while 9 and 15 are odd without being prime and do not count. The answer is 1."
-        constraints: "necessary and only-if phrasing both translate to $A \\to B$ with the guaranteed part as conclusion. Answer form: the graded verdict is the chosen formula — present the candidate translations as label options (the candidate formulas or sentences as the option texts), never a bare yes/no truth value or count."
+          - problem: "P and Q are independent propositions. Interpret unless inclusively. Translate each sentence into one formula from the numbered bank. (a) P is necessary for Q. (b) P only if Q. (c) not P is necessary for Q. Formula bank: 1: (P iff Q); 2: (not P implies Q); 3: (P implies Q); 4: (Q implies P); 5: (P and Q); 6: (Q implies not P). Give the formula numbers for (a), (b), (c), in that order; a number may repeat."
+            answer: "4, 3, 6"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "The necessary condition is the conclusion that the other condition guarantees; only if has the same direction. The three translations are (Q implies P), (P implies Q), (Q implies not P). Their bank numbers, in order, are 4, 3, 6."
+          - problem: "P and Q are independent propositions. Interpret unless inclusively. Translate each sentence into one formula from the numbered bank. (a) Q is necessary for P. (b) Q only if P. (c) not Q is necessary for P. Formula bank: 1: (P implies Q); 2: (Q and P); 3: (P implies not Q); 4: (Q implies P); 5: (not Q implies P); 6: (Q iff P). Give the formula numbers for (a), (b), (c), in that order; a number may repeat."
+            answer: "1, 4, 3"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "The necessary condition is the conclusion that the other condition guarantees; only if has the same direction. The three translations are (P implies Q), (Q implies P), (P implies not Q). Their bank numbers, in order, are 1, 4, 3."
+          - problem: "P and Q are independent propositions. Interpret unless inclusively. Translate each sentence into one formula from the numbered bank. (a) not P is necessary for Q. (b) not P only if Q. (c) not not P is necessary for Q. Formula bank: 1: (Q implies not P); 2: (not P iff Q); 3: (not not P implies Q); 4: (Q implies not not P); 5: (not P implies Q); 6: (not P and Q). Give the formula numbers for (a), (b), (c), in that order; a number may repeat."
+            answer: "1, 5, 4"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "The necessary condition is the conclusion that the other condition guarantees; only if has the same direction. The three translations are (Q implies not P), (not P implies Q), (Q implies not not P). Their bank numbers, in order, are 1, 5, 4."
+          - problem: "P and Q are independent propositions. Interpret unless inclusively. Translate each sentence into one formula from the numbered bank. (a) not Q is necessary for P. (b) not Q only if P. (c) not not Q is necessary for P. Formula bank: 1: (not Q iff P); 2: (P implies not Q); 3: (not Q and P); 4: (P implies not not Q); 5: (not Q implies P); 6: (not not Q implies P). Give the formula numbers for (a), (b), (c), in that order; a number may repeat."
+            answer: "2, 5, 4"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "The necessary condition is the conclusion that the other condition guarantees; only if has the same direction. The three translations are (P implies not Q), (not Q implies P), (P implies not not Q). Their bank numbers, in order, are 2, 5, 4."
+          - problem: "P and Q are independent propositions. Interpret unless inclusively. Translate each sentence into one formula from the numbered bank. (a) P is necessary for not Q. (b) P only if not Q. (c) not P is necessary for not Q. Formula bank: 1: (not Q implies P); 2: (P and not Q); 3: (P implies not Q); 4: (P iff not Q); 5: (not P implies not Q); 6: (not Q implies not P). Give the formula numbers for (a), (b), (c), in that order; a number may repeat."
+            answer: "1, 3, 6"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "The necessary condition is the conclusion that the other condition guarantees; only if has the same direction. The three translations are (not Q implies P), (P implies not Q), (not Q implies not P). Their bank numbers, in order, are 1, 3, 6."
+          - problem: "P and Q are independent propositions. Interpret unless inclusively. Translate each sentence into one formula from the numbered bank. (a) Q is necessary for not P. (b) Q only if not P. (c) not Q is necessary for not P. Formula bank: 1: (Q implies not P); 2: (not P implies not Q); 3: (not P implies Q); 4: (not Q implies not P); 5: (Q and not P); 6: (Q iff not P). Give the formula numbers for (a), (b), (c), in that order; a number may repeat."
+            answer: "3, 1, 2"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "The necessary condition is the conclusion that the other condition guarantees; only if has the same direction. The three translations are (not P implies Q), (Q implies not P), (not P implies not Q). Their bank numbers, in order, are 3, 1, 2."
+        constraints: "Translate the complete statements, including direction, scope and negation. Grade the actual formula choices as an ordered matching list; a truth value or row count is insufficient. The learner must supply the method-specific step; do not state it in the stem."
       - id: kp3
         name: "Unless, and necessary-and-sufficient"
         key_prerequisites: [conditional-statements]
         exemplars:
-          - problem: "Consider the statement: the picnic happens unless it rains. Which option gives the correct conditional translation? Select the correct translation."
-            answer: "If it does not rain then the picnic happens."
-            answer_contract: {"kind": "label", "options": [["If it does not rain then the picnic happens."], ["If it rains then the picnic happens."], ["If the picnic happens then it rains."], ["If it does not rain then the picnic does not happen."]]}
-            solution_sketch: "Translate 'P unless Q' by the unless rule: it means not Q implies P. Here P is 'the picnic happens' and Q is 'it rains', so the full conditional is: If it does not rain then the picnic happens. The option 'If it rains then the picnic happens' uses Q as the antecedent instead of not Q. The option 'If the picnic happens then it rains' is the converse, not the unless translation. The option 'If it does not rain then the picnic does not happen' negates P instead of keeping it. Therefore the correct option is If it does not rain then the picnic happens."
-          - problem: "Consider the statement: divisibility by 12 is necessary and sufficient for divisibility by both 3 and 4. Which option expresses it as a biconditional? Select the correct expression."
-            answer: "12 | n <-> (3 | n and 4 | n)"
-            answer_contract: {"kind": "label", "options": [["12 | n <-> (3 | n and 4 | n)"], ["12 | n -> (3 | n and 4 | n)"], ["(3 | n and 4 | n) -> 12 | n"], ["12 | n or (3 | n and 4 | n)"]]}
-            solution_sketch: "Necessary and sufficient together assert both directions, so the full statement is the biconditional 12 | n <-> (3 | n and 4 | n). The option '12 | n -> (3 | n and 4 | n)' gives only the necessary direction. The option '(3 | n and 4 | n) -> 12 | n' gives only the sufficient direction. The option '12 | n or (3 | n and 4 | n)' uses disjunction instead of a biconditional. Therefore the correct option is 12 | n <-> (3 | n and 4 | n)."
-          - problem: "For statements P and Q, the statement 'P unless Q' translates as not Q implies P. Encode true as 1 and false as 0. Find the truth values (P, Q) that make 'P unless Q' false. Give the answer as (x, y)."
-            answer: "(0, 0)"
-            answer_contract: {"arity": 2, "kind": "coordinates"}
-            solution_sketch: "By the unless rule, 'P unless Q' means not Q implies P. A conditional is false only when its antecedent is true and its consequent is false, so not Q is true and P is false. Thus Q is false and P is false, which is (0, 0) with 1 for true and 0 for false. The answer is (0, 0)."
-          - problem: "For statements P and Q, the statement 'P unless Q' translates as not Q implies P. How many of the four possible truth assignments make 'P unless Q' true? Give the answer as an integer."
-            answer: "3"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Translate 'P unless Q' as not Q implies P. The conditional not Q implies P is false only when Q is false and P is false. The other three assignments (P,Q) = (1,1), (1,0), (0,1) make it true. Therefore the number of true assignments is 3."
-          - problem: "For statements P and Q, 'P is necessary and sufficient for Q' is the biconditional P <-> Q. How many of the four possible truth assignments make this biconditional false? Give the answer as an integer."
-            answer: "2"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "A biconditional P <-> Q is true when P and Q have the same truth value. It is false when they differ: (P,Q) = (1,0) and (0,1). That is two assignments. Therefore the number of false assignments is 2."
-          - problem: "For statements P and Q, 'P is necessary for Q' translates as Q implies P. Encode true as 1 and false as 0. Find the truth values (P, Q) that make 'P is necessary for Q' false. Give the answer as (x, y)."
-            answer: "(0, 1)"
-            answer_contract: {"arity": 2, "kind": "coordinates"}
-            solution_sketch: "By the necessary condition rule, 'P is necessary for Q' means Q implies P. A conditional is false only when its antecedent is true and its consequent is false, so Q is true and P is false. Thus the false assignment is (P,Q) = (0,1). The answer is (0, 1)."
-        constraints: "translate unless as $\\neg Q \\to P$; necessary-and-sufficient as $\\leftrightarrow$. Answer form: the graded verdict is the chosen formula — present the candidate translations as label options (the candidate formulas or sentences as the option texts), never a bare yes/no truth value or count."
+          - problem: "P and Q are independent propositions. Interpret unless inclusively. Translate each sentence into one formula from the numbered bank. (a) P unless Q. (b) P is necessary and sufficient for Q. (c) not P unless Q. Formula bank: 1: (P implies not Q); 2: (P iff Q); 3: (not Q implies not P); 4: (P and Q); 5: (not Q implies P); 6: (Q implies P). Give the formula numbers for (a), (b), (c), in that order; a number may repeat."
+            answer: "5, 2, 3"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Unless excludes the case where both clauses fail; necessary and sufficient requires both implication directions. The three translations are (not Q implies P), (P iff Q), (not Q implies not P). Their bank numbers, in order, are 5, 2, 3."
+          - problem: "P and Q are independent propositions. Interpret unless inclusively. Translate each sentence into one formula from the numbered bank. (a) Q unless P. (b) Q is necessary and sufficient for P. (c) not Q unless P. Formula bank: 1: (not P implies not Q); 2: (not P implies Q); 3: (P implies Q); 4: (Q implies not P); 5: (Q and P); 6: (Q iff P). Give the formula numbers for (a), (b), (c), in that order; a number may repeat."
+            answer: "2, 6, 1"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Unless excludes the case where both clauses fail; necessary and sufficient requires both implication directions. The three translations are (not P implies Q), (Q iff P), (not P implies not Q). Their bank numbers, in order, are 2, 6, 1."
+          - problem: "P and Q are independent propositions. Interpret unless inclusively. Translate each sentence into one formula from the numbered bank. (a) not P unless Q. (b) not P is necessary and sufficient for Q. (c) not not P unless Q. Formula bank: 1: (Q implies not P); 2: (not Q implies not P); 3: (not P iff Q); 4: (not Q implies not not P); 5: (not P implies not Q); 6: (not P and Q). Give the formula numbers for (a), (b), (c), in that order; a number may repeat."
+            answer: "2, 3, 4"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Unless excludes the case where both clauses fail; necessary and sufficient requires both implication directions. The three translations are (not Q implies not P), (not P iff Q), (not Q implies not not P). Their bank numbers, in order, are 2, 3, 4."
+          - problem: "P and Q are independent propositions. Interpret unless inclusively. Translate each sentence into one formula from the numbered bank. (a) not Q unless P. (b) not Q is necessary and sufficient for P. (c) not not Q unless P. Formula bank: 1: (not Q and P); 2: (P implies not Q); 3: (not Q iff P); 4: (not P implies not Q); 5: (not P implies not not Q); 6: (not Q implies not P). Give the formula numbers for (a), (b), (c), in that order; a number may repeat."
+            answer: "4, 3, 5"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Unless excludes the case where both clauses fail; necessary and sufficient requires both implication directions. The three translations are (not P implies not Q), (not Q iff P), (not P implies not not Q). Their bank numbers, in order, are 4, 3, 5."
+          - problem: "P and Q are independent propositions. Interpret unless inclusively. Translate each sentence into one formula from the numbered bank. (a) P unless not Q. (b) P is necessary and sufficient for not Q. (c) not P unless not Q. Formula bank: 1: (not Q implies P); 2: (not not Q implies not P); 3: (P iff not Q); 4: (not not Q implies P); 5: (P implies not not Q); 6: (P and not Q). Give the formula numbers for (a), (b), (c), in that order; a number may repeat."
+            answer: "4, 3, 2"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Unless excludes the case where both clauses fail; necessary and sufficient requires both implication directions. The three translations are (not not Q implies P), (P iff not Q), (not not Q implies not P). Their bank numbers, in order, are 4, 3, 2."
+          - problem: "P and Q are independent propositions. Interpret unless inclusively. Translate each sentence into one formula from the numbered bank. (a) Q unless not P. (b) Q is necessary and sufficient for not P. (c) not Q unless not P. Formula bank: 1: (not P implies Q); 2: (not not P implies not Q); 3: (not not P implies Q); 4: (Q and not P); 5: (Q iff not P); 6: (Q implies not not P). Give the formula numbers for (a), (b), (c), in that order; a number may repeat."
+            answer: "3, 5, 2"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Unless excludes the case where both clauses fail; necessary and sufficient requires both implication directions. The three translations are (not not P implies Q), (Q iff not P), (not not P implies not Q). Their bank numbers, in order, are 3, 5, 2."
+        constraints: "Translate the complete statements, including direction, scope and negation. Grade the actual formula choices as an ordered matching list; a truth value or row count is insufficient. The learner must supply the method-specific step; do not state it in the stem."
     diagnostic_exemplar:
       problem: 'Express "divisibility by $10$ is necessary and sufficient for divisibility by both $2$ and $5$" as a symbolic biconditional, and rewrite "$n^2$ is odd unless $n$ is even" as a conditional.'
       answer_contract: {kind: none}
@@ -1446,31 +1446,31 @@ topics:
         name: "Translating single-quantifier English"
         key_prerequisites: [predicates-and-domains]
         exemplars:
-          - problem: "A student must translate the sentence 'every multiple of 4 is even', about integers, into a formula with one quantifier. Which connective guards the claim about evenness inside the correct translation?"
-            answer: "implication"
-            answer_contract: {"kind": "label", "options": [["implication"], ["conjunction"], ["disjunction"], ["negation"]]}
-            solution_sketch: "The full translation of a claim of the form 'every A is B' is: for all n, if n satisfies A, then n satisfies B. Here that reads: for all integers n, if 4 divides n, then 2 divides n, so the guard is the conditional. The option conjunction would wrongly force every integer to be a multiple of 4 and even; disjunction would only claim every integer is a multiple of 4 or even; negation would deny evenness altogether instead of guarding it. The answer is implication."
-          - problem: "The sentence 'some prime is even' is about integers and uses one existential quantifier. State the connective that joins the two conditions inside its translation, and give the smallest integer that makes the sentence true."
-            answer: "connective = and; witness = 2"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["and"], ["or"], ["not"], ["if"]]}, "name": "connective"}, {"contract": {"kind": "exact"}, "name": "witness"}]}
-            solution_sketch: "The full translation of 'some A is B' is: there exists p with (p is prime) and (p is even); an existential quantifier pairs with a conjunction of the two conditions. Checking small integers, 2 is prime and even, so it is the smallest witness. The option or would only say p is prime or even without needing both, not would deny one of the conditions, and if would turn the sentence into a conditional instead of a witness claim. The answer is connective = and; witness = 2."
-          - problem: "Over the set {2, 5, 8}, a universal statement reads: for every n in the set, the square of n is even. Decide whether the statement is true, and give the number of elements n of the set whose square is odd."
-            answer: "verdict = fails; count = 1"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["holds"], ["fails"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "count"}]}
-            solution_sketch: "The statement translates as: for all n, if n is one of 2, 5, 8, then the square of n is even; a universal claim pairs the quantifier with a conditional. Check each element: 2 squared is 4, 5 squared is 25, and 8 squared is 64; only 25 is odd. The conditional fails exactly at n = 5, so the opposite verdict holds would be wrong because 25 is not even. The answer is verdict = fails; count = 1."
-          - problem: "The sentence 'there is an integer n with 1 <= n <= 30 such that n is prime and n + 6 is also prime' pairs an existential quantifier with a conjunction. How many integers n in that range satisfy both conditions at once?"
-            answer: "6"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The sentence translates as: there exists n with (n is prime) and (n + 6 is prime); since the existential pairs with a conjunction, both parts must hold for the same n. Test the primes up to 30: 5 and 11, 7 and 13, 11 and 17, 13 and 19, 17 and 23, and 23 and 29 all work, while 2, 3, 19 and 29 have composite partners. Six integers witness the sentence. The answer is 6."
-          - problem: "The universal sentence 'every integer n with 1 <= n <= 20 makes n^2 + n + 11 prime' translates as: for all n, if 1 <= n <= 20, then n^2 + n + 11 is prime. Find the smallest n in that range for which the claim fails."
-            answer: "10"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "A universal claim over a bounded domain reads: for all n, if n lies in the range, then the predicate holds; it fails exactly where the hypothesis is true and the conclusion is false. Compute n^2 + n + 11 for n = 1 to 9: the values are 13, 17, 23, 31, 41, 53, 67, 83 and 101, all prime. At n = 10 the value is 121, which equals 11 times 11 and is not prime, so the conditional fails there first. The answer is 10."
-          - problem: "Consider four sentences about integers. (1) Some integer is even and greater than 10. (2) Every integer greater than 10 is even. (3) Some prime is greater than 10. (4) Some multiple of 5 is odd. How many of them translate with an existential quantifier whose conditions are joined by a conjunction?"
-            answer: "3"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "An 'every A is B' sentence takes a universal quantifier with a conditional, so sentence (2) does not have the existential shape. Each of (1), (3) and (4) says that one object has two properties at once, which is exactly an existential quantifier with a conjunction: (1) is even and greater than 10, (3) is prime and greater than 10, and (4) is a multiple of 5 and odd. Three sentences have the existential-with-conjunction shape. The answer is 3."
-        constraints: "universal claims use $\\to$; existential claims use $\\land$. Answer form: the graded verdict is the chosen formula — present the candidate translations as label options (the candidate formulas or sentences as the option texts), never a bare yes/no truth value or count."
+          - problem: "The domain is a nonempty collection of objects; A and B are predicates. Translate: (a) Every A is B; (b) Some A is B; (c) No A is B. Formula bank: 1: exists x, not (A(x) and B(x)); 2: forall x, A(x) or B(x); 3: forall x, A(x) implies B(x); 4: exists x, A(x) and B(x); 5: forall x, not (A(x) and B(x)); 6: exists x, A(x) implies B(x). Give the formula numbers for (a), (b), (c), in order."
+            answer: "3, 4, 5"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "A universal restricted claim uses an implication; an existential witness must satisfy both predicates. Keep the negation inside its stated quantifier. The matching formula numbers are 3, 4, 5."
+          - problem: "The domain is a nonempty collection of objects; A and B are predicates. Translate: (a) Some A is B; (b) No A is B; (c) Everything is A or B. Formula bank: 1: exists x, A(x) and B(x); 2: exists x, not (A(x) and B(x)); 3: forall x, not (A(x) and B(x)); 4: forall x, A(x) implies B(x); 5: exists x, A(x) implies B(x); 6: forall x, A(x) or B(x). Give the formula numbers for (a), (b), (c), in order."
+            answer: "1, 3, 6"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "A universal restricted claim uses an implication; an existential witness must satisfy both predicates. Keep the negation inside its stated quantifier. The matching formula numbers are 1, 3, 6."
+          - problem: "The domain is a nonempty collection of objects; A and B are predicates. Translate: (a) No A is B; (b) Everything is A or B; (c) There is an object for which A implies B. Formula bank: 1: forall x, not (A(x) and B(x)); 2: forall x, A(x) implies B(x); 3: exists x, A(x) implies B(x); 4: exists x, not (A(x) and B(x)); 5: forall x, A(x) or B(x); 6: exists x, A(x) and B(x). Give the formula numbers for (a), (b), (c), in order."
+            answer: "1, 5, 3"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "A universal restricted claim uses an implication; an existential witness must satisfy both predicates. Keep the negation inside its stated quantifier. The matching formula numbers are 1, 5, 3."
+          - problem: "The domain is a nonempty collection of objects; A and B are predicates. Translate: (a) Everything is A or B; (b) There is an object for which A implies B; (c) There is an object that is not both A and B. Formula bank: 1: forall x, A(x) implies B(x); 2: exists x, not (A(x) and B(x)); 3: exists x, A(x) and B(x); 4: forall x, A(x) or B(x); 5: forall x, not (A(x) and B(x)); 6: exists x, A(x) implies B(x). Give the formula numbers for (a), (b), (c), in order."
+            answer: "4, 6, 2"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "A universal restricted claim uses an implication; an existential witness must satisfy both predicates. Keep the negation inside its stated quantifier. The matching formula numbers are 4, 6, 2."
+          - problem: "The domain is a nonempty collection of objects; A and B are predicates. Translate: (a) There is an object for which A implies B; (b) There is an object that is not both A and B; (c) Every A is B. Formula bank: 1: exists x, A(x) implies B(x); 2: forall x, A(x) or B(x); 3: exists x, A(x) and B(x); 4: exists x, not (A(x) and B(x)); 5: forall x, not (A(x) and B(x)); 6: forall x, A(x) implies B(x). Give the formula numbers for (a), (b), (c), in order."
+            answer: "1, 4, 6"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "A universal restricted claim uses an implication; an existential witness must satisfy both predicates. Keep the negation inside its stated quantifier. The matching formula numbers are 1, 4, 6."
+          - problem: "The domain is a nonempty collection of objects; A and B are predicates. Translate: (a) There is an object that is not both A and B; (b) Every A is B; (c) Some A is B. Formula bank: 1: forall x, not (A(x) and B(x)); 2: forall x, A(x) implies B(x); 3: exists x, A(x) implies B(x); 4: forall x, A(x) or B(x); 5: exists x, not (A(x) and B(x)); 6: exists x, A(x) and B(x). Give the formula numbers for (a), (b), (c), in order."
+            answer: "5, 2, 6"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "A universal restricted claim uses an implication; an existential witness must satisfy both predicates. Keep the negation inside its stated quantifier. The matching formula numbers are 5, 2, 6."
+        constraints: "Translate complete single-quantifier sentences into predicates. Distinguish universal implication, existential conjunction and the scope of negation. Grade formula matching. The learner must supply the method-specific step; do not state it in the stem."
     diagnostic_exemplar:
       problem: 'Translate "some perfect square is odd" using quantifiers and give its truth value; then decide whether "for every $n \in \{2, 4, 6\}$, $n^2 + 1$ is prime" is true.'
       answer_contract: {kind: none}
@@ -1504,31 +1504,31 @@ topics:
         name: "Nested quantifiers and order"
         key_prerequisites: [universal-existential-statements]
         exemplars:
-          - problem: "Over the real numbers, let $A$ be the statement 'for every real $x$ there is a real $y$ with $y > x$', and let $B$ be the statement 'there is a real $y$ such that for every real $x$, $y > x$'. Find how many of $A$ and $B$ are true."
-            answer: "1"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1: read $A$, the for-all-then-exists order. Step 2: for any real $x$, the choice $y = x + 1$ gives $y > x$, so a witness exists for every $x$ and $A$ is true. Step 3: read $B$, the exists-then-for-all order. Step 4: a single real $y$ cannot be greater than every real $x$, so $B$ is false, and the swap of the quantifiers changes the truth value. Step 5: exactly one of the two orders is true, so the number of true statements is 1."
-          - problem: "Over the domain $D$ of the integers 1 through 6, the statement 'there is $y$ in $D$ such that for every $x$ in $D$, $y \\ge x$' is true. Find the value of $y$ in $D$ that makes the statement true."
-            answer: "6"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1: read the exists-then-for-all order: there is $y$ in $D$ such that for every $x$ in $D$, $y \\ge x$. Step 2: the inner condition must hold at the largest element of $D$, namely $x = 6$, so $y \\ge 6$. Step 3: the only element of $D$ that is at least 6 is 6 itself. Step 4: checking $y = 6$ gives $6 \\ge x$ for every $x$ in $D$, so this witness is valid and unique. The value of the witness $y$ is 6."
-          - problem: "Over the domain $D$ of the integers 1 through 6, consider the statement 'for every $x$ in $D$ there is $z$ in $D$ with $x + z = y$'. Find the only positive integer $y$ that makes this statement true."
-            answer: "7"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1: fix $y$ and read the for-all-then-exists statement: for every $x$ in $D$ there is $z$ in $D$ with $x + z = y$. Step 2: at $x = 1$ the condition forces $z = y - 1$ to lie in $D$, so $2 \\le y \\le 7$. Step 3: at $x = 6$ the condition forces $z = y - 6$ to lie in $D$, so $7 \\le y \\le 12$. Step 4: every $x$ in $D$ must work, so $y$ lies in both ranges and only the value 7 remains. The only positive integer $y$ that works is 7."
-          - problem: "Over the domain $D$ of the even integers 2 through 10, consider the statement 'for every $x$ in $D$ there is $y$ in $D$ with $x < y < x + 6$'. Find the largest $x$ in $D$ that has a witness $y$."
-            answer: "8"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1: check the for-all-then-exists statement for each element of $D$. Step 2: for $x = 2$ take $y = 4$; for $x = 4$ take $y = 6$; for $x = 6$ take $y = 8$; for $x = 8$ take $y = 10$. Step 3: for $x = 10$ the condition $10 < y < 16$ has no element of $D$, so $x = 10$ has no witness. Step 4: the largest element of $D$ that has a witness is 8."
-          - problem: "Over the domain $D$ of the integers 1 through 4, consider the statement 'for every $x$ in $D$ there is $y$ in $D$ with $y > x$'. Decide whether the statement is valid for all elements of $D$, and give the number of $x$ in $D$ that have no witness $y$."
-            answer: "verdict = fails; count = 1"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["holds"], ["fails"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "count"}]}
-            solution_sketch: "Step 1: read the for-all-then-exists statement over $D$. Step 2: $x = 1, 2, 3$ have the witnesses $y = 2, 3, 4$. Step 3: $x = 4$ has no element of $D$ greater than it, so the statement is not valid over all of $D$. Step 4: the option holds is wrong because it checks only the small values of $x$ and ignores $x = 4$. Step 5: exactly one element of $D$ has no witness. verdict = fails; count = 1."
-          - problem: "Over the domain $D$ of the integers 2 through 6, consider the statement 'for every $x$ in $D$ there is $y$ in $D$ with $x \\cdot y = 12$'. Find the number of $x$ in $D$ that have a witness $y$."
-            answer: "4"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1: read the for-all-then-exists statement for each $x$ in $D$ with partner $y$ in $D$ and product 12. Step 2: $x = 2$ gives $y = 6$, $x = 3$ gives $y = 4$, $x = 4$ gives $y = 3$, and $x = 6$ gives $y = 2$, and all of these partners lie in $D$. Step 3: $x = 5$ has no witness because 12/5 is not an integer. Step 4: four elements of $D$ have a witness, so the number of such $x$ is 4."
-        constraints: "two nested quantifiers; show that order changes meaning. Answer form: the graded verdict is the chosen formula — present the candidate translations as label options (the candidate formulas or sentences as the option texts), never a bare yes/no truth value or count."
+          - problem: "S is a nonempty set of students, M a nonempty set of mentors, and R(s,m) means m advises s. Translate these claims: (a) Each student has at least one mentor; (b) One mentor advises every student; (c) At least one student has at least one mentor. Formula bank: 1: exists s in S, exists m in M, R(s,m); 2: forall s in S, exists m in M, R(s,m); 3: exists m in M, forall s in S, R(s,m); 4: forall s in S, forall m in M, R(s,m). Give the formula numbers for (a), (b), (c), in order."
+            answer: "2, 3, 1"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "A mentor chosen after a student may depend on that student; a mentor chosen first must work for every student. Reading the dependencies gives 2, 3, 1."
+          - problem: "S is a nonempty set of students, M a nonempty set of mentors, and R(s,m) means m advises s. Translate these claims: (a) One mentor advises every student; (b) Every student has every mentor; (c) Each student has at least one mentor. Formula bank: 1: exists m in M, forall s in S, R(s,m); 2: forall s in S, forall m in M, R(s,m); 3: forall s in S, exists m in M, R(s,m); 4: exists s in S, exists m in M, R(s,m). Give the formula numbers for (a), (b), (c), in order."
+            answer: "1, 2, 3"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "A mentor chosen after a student may depend on that student; a mentor chosen first must work for every student. Reading the dependencies gives 1, 2, 3."
+          - problem: "S is a nonempty set of students, M a nonempty set of mentors, and R(s,m) means m advises s. Translate these claims: (a) Every student has every mentor; (b) At least one student has at least one mentor; (c) One mentor advises every student. Formula bank: 1: forall s in S, forall m in M, R(s,m); 2: exists m in M, forall s in S, R(s,m); 3: exists s in S, exists m in M, R(s,m); 4: forall s in S, exists m in M, R(s,m). Give the formula numbers for (a), (b), (c), in order."
+            answer: "1, 3, 2"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "A mentor chosen after a student may depend on that student; a mentor chosen first must work for every student. Reading the dependencies gives 1, 3, 2."
+          - problem: "S is a nonempty set of students, M a nonempty set of mentors, and R(s,m) means m advises s. Translate these claims: (a) At least one student has at least one mentor; (b) Each student has at least one mentor; (c) Every student has every mentor. Formula bank: 1: forall s in S, exists m in M, R(s,m); 2: exists s in S, exists m in M, R(s,m); 3: forall s in S, forall m in M, R(s,m); 4: exists m in M, forall s in S, R(s,m). Give the formula numbers for (a), (b), (c), in order."
+            answer: "2, 1, 3"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "A mentor chosen after a student may depend on that student; a mentor chosen first must work for every student. Reading the dependencies gives 2, 1, 3."
+          - problem: "S is a nonempty set of students, M a nonempty set of mentors, and R(s,m) means m advises s. Translate these claims: (a) Each student has at least one mentor; (b) One mentor advises every student; (c) At least one student has at least one mentor. Formula bank: 1: exists s in S, exists m in M, R(s,m); 2: forall s in S, exists m in M, R(s,m); 3: forall s in S, forall m in M, R(s,m); 4: exists m in M, forall s in S, R(s,m). Give the formula numbers for (a), (b), (c), in order."
+            answer: "2, 4, 1"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "A mentor chosen after a student may depend on that student; a mentor chosen first must work for every student. Reading the dependencies gives 2, 4, 1."
+          - problem: "S is a nonempty set of students, M a nonempty set of mentors, and R(s,m) means m advises s. Translate these claims: (a) One mentor advises every student; (b) Every student has every mentor; (c) Each student has at least one mentor. Formula bank: 1: exists s in S, exists m in M, R(s,m); 2: forall s in S, forall m in M, R(s,m); 3: exists m in M, forall s in S, R(s,m); 4: forall s in S, exists m in M, R(s,m). Give the formula numbers for (a), (b), (c), in order."
+            answer: "3, 2, 4"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "A mentor chosen after a student may depend on that student; a mentor chosen first must work for every student. Reading the dependencies gives 3, 2, 4."
+        constraints: "Translate nested quantifiers and distinguish a dependent witness from one uniform witness. Grade complete formula matching, never just a truth count. The learner must supply the method-specific step; do not state it in the stem."
       - id: kp2
         name: "Translating mathematical statements"
         key_prerequisites: [conditional-statements]
