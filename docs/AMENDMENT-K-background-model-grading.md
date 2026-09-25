@@ -1,6 +1,6 @@
-# AMENDMENT K — background model grading (DRAFT, not built)
+# AMENDMENT K — background model grading
 
-Status: draft for the owner (steer note 11 decision 3 a). Nothing here is implemented.
+Status: **decided by the owner, 24 Sep** (steer note 114); design below is the owner's.
 The only built part is the worked-solution reveal of decision 3 b (worktree amend-k).
 
 ## The requirement change
@@ -74,3 +74,12 @@ audited agreement of the background grader on that course is at or above the aud
 below it, the course regresses to "read the teach page" until the rubric improves.
 
 Research background: FLOW/05-local-model-caching-jev.md.
+
+## The owner's design (decided, 24 Sep — steer note 114)
+
+1. The deterministic grader runs first, unchanged. When it says "wrong" or "cannot parse", the app asks the owner's local model (`qwen-general-8bit` at `http://10.8.0.1:8081/v1`, free) one question with the problem text, the stored key, the answer contract and the learner's text: "Is the learner's answer mathematically equivalent to the key? Reply EQUIVALENT or NOT and one line why." A strict prompt, temperature 0, one short reply.
+2. Cache: a table keyed by (item digest, normalized learner text) → verdict, reason, model, time. A repeat costs nothing and answers at once. Normalization: whitespace, case, unicode minus, `x^2`/`x²`, decimal comma — the cache key only, the model still sees the raw text.
+3. Latency: if the local model answers within the request budget (measure it; the research doc `FLOW/05-local-model-caching-jev.md` has numbers), the verdict is applied in the same reply. If not, the reply says the answer is being checked, the next task is served, and the verdict lands in the background (the Amendment K flow: a job row, a worker, a `verdict` event the learner sees on the topic page). The owner's words: "I don't want to wait 30 seconds after an answer."
+4. An equivalence-accepted answer counts as correct for the topic and for mastery (it is the same answer). A NOT verdict leaves the deterministic "wrong" and shows the model's one-line reason next to the worked solution.
+5. Every model verdict is logged (`model_call_log` exists) and sampled by the audit like a key (A4 of the draft); a per-learner daily cap of 200 (the model is free; the cap bounds abuse); the OpenRouter fallback stays OFF unless the owner says otherwise.
+6. Proof items (P3, the unmarked "write the full proof" items): the Amendment K rubric flow as drafted, same worker, same cache.
