@@ -976,13 +976,30 @@ topics:
         name: "Double negation"
         key_prerequisites: [truth-tables]
         exemplars:
-          - problem: 'Simplify $\neg(\neg P)$.'
-            answer: '$P$'
-            solution_sketch: 'Negating twice returns the original truth value in both rows.'
-          - problem: 'Simplify $\neg\neg(P \lor Q)$.'
-            answer_contract: {kind: none}
-            answer: '$P \lor Q$'
-            solution_sketch: 'Double negation cancels, leaving the disjunction unchanged.'
+          - problem: "Cancel the paired negations in $\\neg\\neg(P \\lor Q)$. Give the simplified expression."
+            answer: "P or Q"
+            answer_contract: {"kind": "label", "options": [["P or Q"], ["not P or Q"], ["not P or not Q"], ["not (P or Q)"]]}
+            solution_sketch: "Step 1: the two negations in front of the bracket form a pair, so double negation removes both of them. Step 2: the inner expression P or Q is left unchanged, because no other negation touches it. The wrong option not P or Q keeps one of the two cancelled negations in front of the first part. The wrong option not P or not Q replaces the pair by one negation on each part. The wrong option not (P or Q) drops the pair and then adds a fresh negation to the whole expression. The simplified expression is P or Q."
+          - problem: "The expression $\\neg\\neg\\neg\\neg\\neg\\neg P$ has a run of six negation symbols in front of $P$. Cancel every pair of negations. How many negation symbols remain in front of $P$?"
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: write the full expression, P with a run of six negation symbols in front of it. Step 2: use double negation to cancel pairs of negations; the six symbols make three pairs, so the first cancellation leaves four, the second leaves two, and the third leaves none. Step 3: the simplified expression is P with no negation symbols in front of it. The number of negation symbols that remain in front of P is 0."
+          - problem: "The formula $\\neg\\neg(\\neg P \\lor Q)$ has a truth table with four rows. After the paired negations cancel, how many of the four rows make the formula true?"
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: write the full formula, the double negation of the bracket not P or Q. Step 2: double negation cancels the two leading negations, so the formula has the same truth value as not P or Q in every row of the table. Step 3: list the four rows; the simplified formula is false only in the single row where P is true and Q is false. The number of rows that make the formula true is 3."
+          - problem: "Cancel every pair of negations in $\\neg\\neg\\neg(P \\lor \\neg\\neg Q)$. How many negation symbols remain in the simplified formula?"
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: write the full formula, with three negations in front of the bracket P or not-not-Q. Step 2: one pair of the three leading negations cancels by double negation, leaving a single negation in front of the bracket. Step 3: inside the bracket the pair on Q also cancels, so the expression becomes the negation of the bracket P or Q. The number of negation symbols that remain is 1."
+          - problem: "The expression $\\neg\\neg\\neg\\neg\\neg\\neg\\neg P$ has a run of seven negation symbols in front of $P$. Cancel pairs of negations until no pair remains. How many pairs are cancelled?"
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: write the full expression, P with a run of seven negation symbols in front. Step 2: cancel one pair at a time by double negation; the first pair leaves five symbols, the second leaves three, and the third leaves one. Step 3: no pair remains after those cancellations, and one negation symbol stays in front of P. The number of pairs that are cancelled is 3."
+          - problem: "The formula $\\neg(\\neg G)$ wraps one pair of negations around the single variable $G$, and its truth table has one row for each truth value of $G$. Cancel the pair. For how many rows of the truth table does the formula have the same truth value as $G$?"
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: write the full formula, the negation of the negation of G. Step 2: double negation cancels the pair, so the formula takes exactly the truth value of G in every row. Step 3: a single variable has two truth values, so the table has one row with G true and one row with G false, and the formula matches G in both rows. The number of rows where the formula has the same truth value as G is 2."
         constraints: "cancel paired negations"
       - id: kp2
         name: "De Morgan's laws"

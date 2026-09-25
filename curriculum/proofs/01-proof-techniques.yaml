@@ -1297,12 +1297,34 @@ topics:
         name: "Constructive proofs by exhibiting a witness"
         key_prerequisites: [direct-proof]
         exemplars:
-          - problem: 'Prove: there exist integers $x, y$ with $3x + 5y = 1$.'
-            answer: 'Witness: $x = 2$, $y = -1$, since $6 - 5 = 1$.'
-            solution_sketch: 'An existence claim is proved by a single verified witness: $3(2) + 5(-1) = 1$. $\square$'
-          - problem: 'Prove: some perfect square is the sum of two other perfect squares.'
-            answer: 'Witness: $25 = 9 + 16$.'
-            solution_sketch: '$5^2 = 3^2 + 4^2$; exhibiting and checking the witness completes the proof. $\square$'
+          - problem: "The equation 3x + 5y = 1 has integer solutions. Give the solution with the smallest positive x as (x, y)."
+            answer: "(2, -1)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "The claim to witness is that integers x, y with 3x + 5y = 1 exist. Step 1, witness search: 3x = 1 - 5y, so try y = -1, giving 3x = 6 and x = 2. Step 2, verification: 3(2) + 5(-1) = 6 - 5 = 1, and x = 2 is the smallest positive value that works. The witness is (2, -1)."
+          - problem: "There are positive integers a, b, c with a^2 = b^2 + c^2 and a = 13. Give the triple with b < c as (a, b, c)."
+            answer: "(13, 5, 12)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "The claim to witness is that 13^2 is a sum of two squares. Step 1, witness choice: take b = 5 and c = 12, which satisfies b < c. Step 2, verification: 5^2 + 12^2 = 25 + 144 = 169 = 13^2. The witness triple is (13, 5, 12)."
+          - problem: "A proof that some integer n satisfies n^2 > 10n + 1 can exhibit the witness n = 11. Compute n^2 - 10n - 1 at n = 11 to verify the property."
+            answer: "10"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The property is n^2 - 10n - 1 > 0. Step 1, witness choice: use the proposed witness n = 11. Step 2, verification: 11^2 - 10(11) - 1 = 121 - 110 - 1 = 10, which is positive, so the witness works. The value is 10."
+          - problem: "Find the smallest positive integer n such that n^2 + n + 1 is divisible by 7."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The property is that 7 divides n^2 + n + 1. Step 1, witness search: n = 1 gives 3, which is not divisible by 7. Step 2, verification: n = 2 gives 4 + 2 + 1 = 7, and 7 divides 7, so the witness is confirmed. The smallest positive integer is 2."
+          - problem: "A witness is needed to prove that some positive rational number q satisfies q^2 = 25/16. Give that rational q as a fraction."
+            answer: "5/4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The property is q^2 = 25/16 for a positive rational q. Step 1, witness choice: take q = 5/4, since 5^2 = 25 and 4^2 = 16. Step 2, verification: (5/4)^2 = 25/16, so the witness satisfies the property. The positive rational witness is 5/4."
+          - problem: "Claim: there exists an integer n with n^2 + 2n - 3 = 0. Step 1: try n = 1. Step 2: compute 1^2 + 2(1) - 3 = 1. Step 3: because the value is not 0, n = 1 is not a witness. Step 4: try n = -3, then 9 - 6 - 3 = 0, so a witness exists. Which step is the first step that is not valid?"
+            answer: "Step 2"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 is valid because n = 1 is a legitimate candidate witness. Step 2 is wrong: the computation gives 1 + 2 - 3 = 0, not 1. Step 3 is also invalid, but it only follows from the false value in Step 2, so it is not the first invalid step. Step 4 is valid because n = -3 gives 9 - 6 - 3 = 0. The first invalid step is Step 2."
+          - problem: "Write the full proof: there exist integers x, y, z such that x^2 + y^2 + z^2 = 2024. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1, claim: we prove there exist integers x, y, z with x^2 + y^2 + z^2 = 2024. Step 2, witness choice: choose x = 40, y = 18, and z = 10. Step 3, computation: 40^2 = 1600, 18^2 = 324, and 10^2 = 100. Step 4, verification: 1600 + 324 + 100 = 2024, so the exhibited integers satisfy the equation. Step 5, conclusion: one checked witness proves an existence statement, therefore there exist integers x, y, z with x^2 + y^2 + z^2 = 2024."
         constraints: "name an explicit witness and verify it satisfies the property"
       - id: kp2
         name: "Constructive families"
@@ -1692,12 +1714,34 @@ topics:
         name: "A complete first induction"
         key_prerequisites: [direct-proof]
         exemplars:
-          - problem: 'Prove by induction: for all $n \ge 1$, $1 + 3 + 5 + \cdots + (2n - 1) = n^2$.'
-            answer: 'Base $n = 1$: $1 = 1$. Step: add $2n + 1$ to $n^2$ to get $(n + 1)^2$.'
-            solution_sketch: 'Base: $n = 1$, $1 = 1^2$. Step: assume the sum of the first $n$ odd numbers is $n^2$. Adding the next odd number $2(n+1) - 1 = 2n + 1$ gives $n^2 + 2n + 1 = (n + 1)^2$. $\square$'
-          - problem: 'Prove by induction: for all $n \ge 1$, $2 + 4 + 6 + \cdots + 2n = n(n + 1)$.'
-            answer: 'Base $n = 1$: $2 = 2$. Step: $n(n+1) + 2(n+1) = (n+1)(n+2)$.'
-            solution_sketch: 'Base: $n = 1$ gives $2 = 1 \cdot 2$. Step: assume the sum to $2n$ is $n(n+1)$; adding $2(n+1)$ gives $n(n+1) + 2(n+1) = (n+1)(n+2)$, the formula at $n + 1$. $\square$'
+          - problem: "The claim 1 + 3 + 5 + ... + (2n - 1) = n^2 is proved by induction. In the inductive step the next odd number is added to the hypothesis n^2. Give the simplified form of the result as an expression in n."
+            answer: "(n+1)^2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The induction hypothesis gives that the first n odd numbers sum to n^2. The next odd number, the (n + 1)-th term of the list, is 2(n + 1) - 1 = 2n + 1. Add it to the hypothesis: n^2 + 2n + 1. Factor the trinomial by the square formula. The simplified form of the result is (n+1)^2."
+          - problem: "The claim 2 + 4 + 6 + ... + 2n = n(n + 1) is proved by induction. In the inductive step the next even number is added to the hypothesis n(n + 1). Give the factored form of the result as an expression in n."
+            answer: "(n+1)(n+2)"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The induction hypothesis gives that the first n even numbers sum to n(n + 1). The next even number, the (n + 1)-th term, is 2(n + 1) = 2n + 2. Add it to the hypothesis: n(n + 1) + 2n + 2 = n^2 + 3n + 2. Factor the trinomial. The factored form of the result is (n+1)(n+2)."
+          - problem: "A proof by induction of the claim 4 + 7 + 10 + ... + (3n + 1) = n(3n + 5)/2 starts with the base case n = 1. Give the value of each side at n = 1."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The base case of the induction template substitutes n = 1 into both sides. The left side is the single first term 3(1) + 1 = 4. The right side is 1(3(1) + 5)/2 = 8/2 = 4. Both sides match, so the base case holds. The value of each side is 4."
+          - problem: "In the induction proof of the claim 5 + 9 + 13 + ... + (4n + 1) = n(2n + 3), the inductive step must finish with the formula at the next index. Give the formula's value at n + 1 as an expression in n."
+            answer: "(n+1)(2n+5)"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The template requires the step to end at the claim's formula with n replaced by n + 1. Substitute n + 1 for n in n(2n + 3). This gives (n + 1)(2(n + 1) + 3). Simplify the second factor: 2n + 5. The target expression is (n+1)(2n+5)."
+          - problem: "A student claims that 1 + 2 + 3 + ... + n = n^2 for all n >= 1 and checks only the case n = 1. Give the smallest n >= 1 for which the claim is false."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "One checked case never proves a claim about every n, so test further values. At n = 1 the claim reads 1 = 1, which holds. At n = 2 the left side is 1 + 2 = 3 while the right side is 2^2 = 4, so the claim is false. The smallest n >= 1 for which the claim is false is 2."
+          - problem: "A proof by induction of the claim 7 + 11 + 15 + ... + (4n + 3) = n(2n + 5) is missing one line: after the hypothesis for k, the line that gives the sum through k + 1. Select the line that is true and that uses the hypothesis."
+            answer: "k(2k+5) + 4k + 7"
+            answer_contract: {"kind": "label", "options": [["k(2k+5) + 4k + 7"], ["k(2k+5) + 4k + 3"], ["k(2k+3) + 4k + 7"], ["k(2k+5) + 4(k+1)"]]}
+            solution_sketch: "The induction hypothesis step of the template gives the sum through k as k(2k+5). The next term of the list is 4(k + 1) + 3 = 4k + 7, so the missing line adds it to the hypothesis: k(2k+5) + 4k + 7. The option k(2k+5) + 4k + 3 reuses the old last term 4k + 3 instead of the next term. The option k(2k+3) + 4k + 7 starts from a wrong hypothesis formula. The option k(2k+5) + 4(k+1) drops the constant 3 of the next term. The answer is k(2k+5) + 4k + 7."
+          - problem: "Write the full proof: for all n >= 1, 2 + 7 + 12 + ... + (5n - 3) = n(5n - 1)/2. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Base case: for n = 1 the left side is the single term 5(1) - 3 = 2, and the right side is 1(5 - 1)/2 = 2, so the claim holds. Hypothesis: assume for some k >= 1 that 2 + 7 + 12 + ... + (5k - 3) = k(5k - 1)/2. Inductive step: the next term is 5(k + 1) - 3 = 5k + 2. Add it to the hypothesis: k(5k - 1)/2 + 5k + 2 = (5k^2 - k + 10k + 4)/2 = (5k^2 + 9k + 4)/2. Factor: (k + 1)(5k + 4)/2, which is exactly the formula at k + 1, since (k + 1)(5(k + 1) - 1)/2 = (k + 1)(5k + 4)/2. Conclusion: the statement holds for k + 1 whenever it holds for k, so by induction it holds for all n >= 1."
         constraints: "single-step sums with linear terms; write base, hypothesis, and step explicitly"
     diagnostic_exemplar:
       problem: 'Prove by induction: for all $n \ge 1$, $3 + 7 + 11 + \cdots + (4n - 1) = n(2n + 1)$.'
