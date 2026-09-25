@@ -30,32 +30,32 @@ topics:
       - id: kp1
         name: Definition of representability
         key_prerequisites: [hom-functors]
-        constraints: "Definitions and one-line illustrations only; always name both the representing object and the natural isomorphism $\\mathrm{Hom}(A,-)\\cong F$, and say which variance is in play; the only concrete instance is the identity functor on $\\mathbf{Set}$, represented by a one-point set."
+        constraints: "Construct the representing object and natural isomorphism for Id_Set, and distinguish representable variance by composition. A component-count obstruction must test the representation itself."
         exemplars:
-          - problem: "The definition: a covariant functor F from C to Set is representable when some object A carries a natural isomorphism Hom(A, -) => F. The identity functor on Set, a covariant case, is represented by the one-point set {s} through a natural isomorphism a: Hom({s}, -) => Id. Let X have 5 elements and Y have 3 elements, with X and Y disjoint. How many elements does the set Hom({s}, X ∪ Y) have?"
-            answer: "8"
+          - problem: "A finite set R is proposed to represent the identity functor on Set covariantly. Use the requirement that Hom(R,X)->X be a bijection for every finite set X to determine |R|. Give its value; the representation is not supplied."
+            answer: "1"
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The full object is the hom-set Hom({s}, X ∪ Y). Rule of the covariant hom-functor: a function from the one-point set {s} to a set Z is determined by the image of s, so Hom({s}, Z) has exactly as many elements as Z, which is what the natural isomorphism a records. Since X and Y are disjoint, the union has 5 + 3 = 8 elements. Therefore the hom-set has 8 elements; the answer is 8."
-          - problem: "Use the covariant representation of the identity functor on Set by the one-point set {s}: the natural isomorphism a: Hom({s}, -) => Id has, at each set Z, the component that sends a function f to f(s). Let X = {1, 2, 3, 4, 5, 6}, let g from X to the integers be g(n) = 3n + 1, and let h from {s} to X send s to 5. Compute the element a_Y(g ∘ h)."
-            answer: "16"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The full object is the element a_Y(g ∘ h) of Y. Rule of the component: it evaluates a function at s, so a_Y(g ∘ h) = (g ∘ h)(s). Apply the data: (g ∘ h)(s) = g(h(s)) = g(5). Rule of the function g: g(5) = 3(5) + 1 = 16. The answer is 16."
-          - problem: "In the contravariant case of the definition, a functor F from C^op to Set is representable when some object A carries a natural isomorphism Hom(-, A) => F; the hom-functor Hom(-, A) sends a set X to the set of functions from X to A. Work in Set with A = {0, 1} and with X a set of 6 elements. How many elements does Hom(X, A) have?"
-            answer: "64"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The full object is the hom-set Hom(X, A), the value of the contravariant hom-functor Hom(-, A) at X. Rule of the hom-functor: its value at X is the set of all functions from X to A. Count them: each of the 6 elements of X independently chooses the image 0 or 1, so the number of functions is 2 to the sixth power, which is 64. The answer is 64."
+            solution_sketch: "The representing condition tests all components; already a two-point target forces exactly one point in R. Evaluation at that point supplies the natural bijection. The result is 1."
+          - problem: "Construct the natural representation of Id_Set by R={s}. At X={3,5,7}, enumerate Hom(R,X) as h1(s)=3,h2(s)=5,h3(s)=7. Recover the component of the representation compatible with every function from R to X. Give its values on h1,h2,h3."
+            answer: "3, 5, 7"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Evaluate the universal point at each arrow from R. This reconstructs the component rather than assuming an evaluation rule. The result is 3, 5, 7."
+          - problem: "Match the representable functors associated with an object A to their arrow actions along f:X->Y. Tasks: (a) Hom(A,-), (b) Hom(-,A). Bank: 1=postcompose Hom(A,X)->Hom(A,Y); 2=precompose Hom(Y,A)->Hom(X,A); 3=postcompose Hom(X,A)->Hom(Y,A). Give the two bank numbers."
+            answer: "1, 2"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Composition determines variance: Hom(A,-) postcomposes and Hom(-,A) precomposes. The result is 1, 2."
           - problem: "A student claims that the identity functor on Set, a covariant case, is represented by the two-point set {u, v}, through a natural isomorphism b: Hom({u, v}, -) => Id whose component at a set X is a bijection from Hom({u, v}, X) to X. Give the smallest number of elements of a set X for which that component cannot be a bijection."
             answer: "2"
             answer_contract: {"kind": "exact"}
             solution_sketch: "The full object is the component b_X from Hom({u, v}, X) to X. Rule of counting functions: a function from {u, v} to X chooses an image of u and an image of v, so the hom-set has as many elements as the size of X, squared. For the empty set and for a singleton the two sizes agree, so a bijection can exist, but for a set with 2 elements the hom-set has 4 elements against 2, so no bijection is possible. The smallest number of elements is 2; the answer is 2."
-          - problem: "Claim: the identity functor on Set, a covariant case, is represented by the empty set. Step 1: for every set X there is exactly one function from the empty set to X. Step 2: hence the component at X, from that one-element hom-set to X, is a bijection for every set X. Step 3: these components form a natural isomorphism from Hom of the empty set to the identity functor. Step 4: therefore the empty set is a representing object. Which step is the first step that is not valid?"
+          - problem: "A proposal says empty represents Id_Set. Step 1: Hom(empty,X) is a singleton for every X. Step 2: that singleton is bijective to X for every X. Step 3: the bijections can form a representation. Step 4: empty is a representing object. Which step is the first whose assertion or stated reason fails?"
             answer: "Step 2"
-            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
-            solution_sketch: "Step 1 is valid: from the empty set there is exactly one function to any set X. Step 2 is the first invalid step: the hom-set has a single element while X can have several, for example a two-element set X, so the component is not surjective and cannot be a bijection. Step 3 fails after it, because an isomorphism needs bijective components in the definition. Step 4 merely draws a conclusion from the broken steps. The answer is Step 2."
-          - problem: "A student records the covariant representation of the identity functor on Set: the representing object is the one-point set {s}, and the natural isomorphism a: Hom({s}, -) => Id has at each set X a component from Hom({s}, X) to X. The formula of that component is smudged. Select the line that defines the component and makes it a bijection for every set X."
-            answer: "a_X(f) = f(s)"
-            answer_contract: {"kind": "label", "options": [["a_X(f) = f(s)"], ["a_X(f) = s"], ["a_X(f) = f"], ["a_X(f) = X"]]}
-            solution_sketch: "The component takes a function f from {s} to X and must return an element of X, and it must be a bijection. Option a_X(f) = f(s) evaluates f at s; every element of X is hit exactly once, by the function that sends s to it, so this is a bijection. Option a_X(f) = s is constant and misses elements whenever X has more than one element. Option a_X(f) = f returns a function, not an element of X. Option a_X(f) = X returns a whole set, not an element. The answer is a_X(f) = f(s)."
+            answer_contract: {"kind": "label", "options": [["All valid"], ["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "The component at X=empty would map a singleton bijectively to an empty set, which is impossible. This is the first unsupported step."
+          - problem: "Construct the inverse component X->Hom({s},X) in the covariant representation of Id_Set. For X={2,4}, function bank 1=h(s)=4; 2=h(s)=2. Give the function numbers assigned to 2 and 4."
+            answer: "2, 1"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "The inverse representation assigns to each x the unique function from the singleton selecting x. The result is 2, 1."
           - problem: "Write the full proof: the identity functor Id: Set → Set is representable, covariantly, represented by the one-point set {s} with a natural isomorphism a: Hom({s}, -) => Id. Then compare with the solution."
             answer: "See the solution."
             answer_contract: {"kind": "none"}
@@ -96,32 +96,32 @@ topics:
       - id: kp3
         name: Uniqueness of the representing object
         key_prerequisites: [universal-properties]
-        constraints: "Identity-chasing computation from a natural isomorphism of representables: compute the comparison maps as $\\theta_A(1_A)$ and $\\theta^{-1}_B(1_B)$, evaluate $\\theta_X(h)=h\\circ g$ by the naturality equation on the given arrow, then evaluate at the two identities — the graded answers are the computed formulas; no elements of any concrete category."
+        constraints: "Recover comparison maps from identity components and derive their action by naturality. Prove inverse equations by evaluating the inverse natural transformations; use whole component tests to reject false uniqueness arguments."
         exemplars:
-          - problem: "Work in the category of finite sets with A = {1, 2} and B = {3, 4}, and let theta: Hom(A, -) -> Hom(B, -) be a natural isomorphism. The proof sets f = theta^{-1}_B(1_B): A -> B and g = theta_A(1_A): B -> A and shows that the two comparison maps are mutually inverse. Suppose f(1) = 4 and f(2) = 3. Compute g(3)."
+          - problem: "Let theta:Hom(A,-)=>Hom(B,-) be a natural isomorphism for A={1,2},B={3,4}. Its inverse at B sends 1_B to f with f(1)=4,f(2)=3. Recover g=theta_A(1_A) by the identity-chasing uniqueness proof. Give g(3)."
             answer: "2"
             answer_contract: {"kind": "exact"}
             solution_sketch: "Full object: f: A -> B with f(1) = 4, f(2) = 3, and the identities f o g = 1_B and g o f = 1_A that the proof obtains by evaluating the naturality formula at the two identities. Rule of the proof: the naturality formula theta_X(h) = h o g, chased at 1_B and 1_A, makes f and g mutually inverse. Hence g is the inverse function of f, sending 3 to 2 and 4 to 1. The answer is 2."
-          - problem: "Work in the category of finite sets with A = B = {1, 2, 3}, and let theta: Hom(-, A) -> Hom(-, B) be a natural isomorphism of contravariant representables. The proof sets f = theta_A(1_A): A -> B and g = theta^{-1}_B(1_B): B -> A and shows that the two comparison maps are mutually inverse. Suppose f(1) = 2, f(2) = 3, and f(3) = 1. Compute g(1)."
+          - problem: "Let theta:Hom(-,A)=>Hom(-,B) be a natural isomorphism with A=B={1,2,3}. The identity value theta_A(1_A) is f=[2,3,1]. Recover theta inverse_B(1_B) from naturality and the two inverse component equations. Give its value at 1."
             answer: "3"
             answer_contract: {"kind": "exact"}
             solution_sketch: "Full object: f: A -> B with f(1) = 2, f(2) = 3, f(3) = 1, and the identities f o g = 1_B and g o f = 1_A. Rule of the contravariant proof: the naturality formula theta_X(k) = f o k, chased at the two identities, makes the comparison maps mutually inverse. Hence g is the inverse function of f, and since f(3) = 1, the inverse sends 1 back to 3. The answer is 3."
-          - problem: "Let theta: Hom(A, -) -> Hom(B, -) be natural, and let g = theta_A(1_A): B -> A be the comparison map. Naturality at an arrow h: A -> X lets you compute theta_X(h) as the composite of h after g. Take A = B = {1, 2} and X = {1, 2, 3}, with g(1) = 2, g(2) = 1, h(1) = 1, and h(2) = 3. Compute the value of theta_X(h) at the element 2."
+          - problem: "Let theta:Hom(A,-)=>Hom(B,-) be natural. Take A=B={1,2},X={1,2,3}. The identity value theta_A(1_A) has list [2,1], and h:A->X has list [1,3]. Derive theta_X(h) using naturality at h. Give its value at 2."
             answer: "1"
             answer_contract: {"kind": "exact"}
             solution_sketch: "Full object: g: B -> A with g(1) = 2, g(2) = 1, and h: A -> X with h(1) = 1, h(2) = 3. Rule: naturality of theta at h, applied to 1_A, gives theta_X(h) = h o g. Compose in that order: the element 2 of B goes first to g(2) = 1, then to h(1) = 1. The answer is 1."
-          - problem: "Consider the category with two objects 0 and 1 whose only arrow besides the two identities is a: 0 -> 1. A student compares the arrow sets Hom(0, 1) and Hom(1, 1), finds exactly one arrow in each, and concludes that 0 and 1 are isomorphic. How many arrows are there from 1 to 0?"
-            answer: "0"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Full object: the category with arrows 1_0, 1_1, and a: 0 -> 1. Rule: an isomorphism between two objects needs arrows in both directions whose composites are the identities, so Hom(1, 0) must be nonempty. None of the three arrows goes from 1 to 0, so Hom(1, 0) is empty, no isomorphism exists, and comparing hom-sets at one single object cannot replace the naturality hypothesis of the theorem. The answer is 0."
-          - problem: "Claim: if theta: Hom(A, -) -> Hom(B, -) is a natural isomorphism, then A is isomorphic to B. Step 1: set g = theta_A(1_A), an arrow from B to A. Step 2: set f = theta^{-1}_B(1_B), an arrow from A to B. Step 3: since theta is a bijection, theta_B(f) = 1_B, and therefore f o g = 1_B. Step 4: the symmetric argument with theta^{-1} gives g o f = 1_A, so A is isomorphic to B. Which step is the first step that is not valid?"
+          - problem: "A proof of uniqueness of representing objects assumes only objectwise bijections Hom(A,X)~Hom(B,X). Test this assumption in the category with two objects A,B: endomorphisms are nonnegative integer costs (identity 0), cross-object arrows are positive integer costs, and composition adds costs. Every Hom set is countably infinite. Give (a) whether the objectwise bijections exist; (b) whether A,B are isomorphic; (c) whether these bijections can form a natural isomorphism. Use three bits."
+            answer: "1, 0, 0"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Objectwise cardinalities do not supply a natural representation. Identity-chasing would make the comparison arrows inverse, but any two cross arrows have positive composite cost, so no natural isomorphism exists. The result is 1, 0, 0."
+          - problem: "For theta:Hom(A,-)=>Hom(B,-) a natural isomorphism, Step 1: g=theta_A(1_A) has type B->A. Step 2: f=theta inverse_B(1_B) has type A->B. Step 3: naturality gives theta_B(f)=g after f. Step 4: use inverse components to conclude g after f=1_B. Which step is the first whose assertion or stated reason fails?"
             answer: "Step 3"
-            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
-            solution_sketch: "Step 1 correctly names the comparison map g = theta_A(1_A). Step 2 correctly names the inverse comparison map f = theta^{-1}_B(1_B). Step 3 is the first invalid step: bijectivity alone only gives theta_B(f) = 1_B, while the identity f o g = 1_B requires the naturality formula theta_X(h) = h o g evaluated at X = B with h = f. Step 4 would be valid once Step 3 is repaired by that formula. The answer is Step 3."
-          - problem: "In the proof that a natural isomorphism theta: Hom(A, -) -> Hom(B, -) forces A to be isomorphic to B, set g = theta_A(1_A): B -> A and f = theta^{-1}_B(1_B): A -> B. Naturality of theta at an arrow h: A -> X, applied to the identity 1_A, produces the key formula of the proof; here o denotes composition. Select the line that it produces."
-            answer: "theta_X(h) = h o g"
-            answer_contract: {"kind": "label", "options": [["theta_X(h) = h o g"], ["theta_X(h) = g o h"], ["theta_X(h) = h o f"], ["theta_X(h) = f o h"]]}
-            solution_sketch: "Naturality of theta at h: A -> X says theta_X(h o 1_A) = h o theta_A(1_A); since h o 1_A = h and theta_A(1_A) = g, this is the key formula. The line theta_X(h) = g o h composes in the wrong order, which does not even type-check since g lands in A. The line theta_X(h) = h o f uses f, the map belonging to the inverse transformation, not the comparison map g. The line theta_X(h) = f o h makes both errors at once. The answer is theta_X(h) = h o g."
+            answer_contract: {"kind": "label", "options": [["All valid"], ["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Naturality gives theta_B(f)=f after g, an endomorphism of B. The order is essential in recovering inverse comparisons. This is the first unsupported step."
+          - problem: "In the one-object category Z/5, theta:Hom(*,-)=>Hom(*,-) is a natural isomorphism whose identity component sends 0 to 2. Recover its complete component and the complete component of its inverse by the identity-naturality proof of uniqueness of representers. Give the two value lists in order. No composition formula for theta is supplied."
+            answer: "2, 3, 4, 0, 1, 3, 4, 0, 1, 2"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Naturality with each arrow acting on the identity forces every component value. The inverse transformation is then recovered and its two composites evaluated at identities to obtain inverse representing arrows. The result is 2, 3, 4, 0, 1, 3, 4, 0, 1, 2."
           - problem: "Write the full proof: if Hom(A, -) is naturally isomorphic to Hom(B, -), then A is isomorphic to B. Then compare with the solution."
             answer: "See the solution."
             answer_contract: {"kind": "none"}
@@ -158,32 +158,32 @@ topics:
       - id: kp1
         name: Universal elements and representations
         key_prerequisites: [representable-functors]
-        constraints: "State the pair $(A,u)$ with $u\\in FA$ and its exists-unique clause before anything else; concrete instances are forgetful functors (or small products of them) out of $\\mathbf{Vect}_k$, $\\mathbf{Mon}$ or $\\mathbf{Grp}$, whose universal element is a generator of a free object on at most two generators."
+        constraints: "Test and construct universal elements through existence and uniqueness of arrows transporting the distinguished element. Use free algebra generators or bases; defective generators must fail a specific clause."
         exemplars:
-          - problem: "A functor $F\\colon \\mathcal{C} \\to \\mathbf{Set}$ has a universal element: a pair $(A, u)$ with $u \\in FA$ that satisfies an exists-unique condition. Which statement is that condition?"
-            answer: "for every X and every x in FX there is a unique h: A -> X with Fh(u) = x"
-            answer_contract: {"kind": "label", "options": [["for every X and every x in FX there is a unique h: A -> X with Fh(u) = x"], ["for every X and every x in FX there is some h: A -> X with Fh(u) = x"], ["for every X and every x in FX there is a unique h: X -> A with Fh(x) = u"], ["for every X there is a unique h: A -> X with Fh(u) = x"]]}
-            solution_sketch: "Start from the definition: a universal element of $F$ is a pair $(A, u)$, $u \\in FA$, together with an exists-unique clause. The clause quantifies over every object $X$ and every element $x$ of $FX$, and asks for exactly one morphism from $A$ to $X$ carrying $u$ to $x$ by $F$. The wrong option with 'some $h$' drops the uniqueness half of the clause. The wrong option with $h\\colon X \\to A$ and $Fh(x) = u$ reverses the direction of the clause. The wrong option that skips the element $x$ of $FX$ forgets the element condition. The answer is for every X and every x in FX there is a unique h: A -> X with Fh(u) = x."
-          - problem: "The forgetful functor $U\\colon \\mathbf{Vect}_k \\to \\mathbf{Set}$ has a universal element: a pair made of a vector space $A$ and an element $u$ of the underlying set $UA$, satisfying the exists-unique condition. Select the pair that is a universal element of $U$."
-            answer: "(k, 1)"
-            answer_contract: {"kind": "label", "options": [["(k, 1)"], ["(k, 0)"], ["(0, 0)"], ["(k^2, (1, 0))"]]}
-            solution_sketch: "Test the pair $A = k$ with $u = 1$ against the clause: for every space $V$ and vector $v$, the map $h(\\lambda) = \\lambda v$ is the unique linear map with $Uh(u) = v$, so this pair satisfies exists-unique. The wrong option $(k, 0)$ fails existence: every linear $h$ sends $0$ to the zero vector, so nonzero $v$ is never hit. The wrong option $(0, 0)$ fails existence the same way, since the zero space has only the zero map. The wrong option $(k^2, (1, 0))$ fails uniqueness: a linear map out of $k^2$ may send the second basis vector anywhere, so many maps hit $v$. The answer is (k, 1)."
-          - problem: "The free monoid on one generator is $\\mathbb{N}$ with addition and identity $0$; the universal-element condition says that for every monoid $M$ and every $m \\in UM$ there is a unique homomorphism $h$ with $h(1) = m$. Let $h$ be the unique homomorphism from $\\mathbb{N}$ to $\\mathbb{Z}/6$, both under addition, with $h(1) = 4$. Find $h(5)$."
-            answer: "2"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The universal element is the pair $((\\mathbb{N}, +, 0), 1)$: for every monoid $M$ and every $m \\in UM$ there is a unique homomorphism $h$ with $h(1) = m$. Homomorphism rule: $h(n)$ is the $n$-fold sum of $h(1)$ in the target, since $n = 1 + \\cdots + 1$ and $h$ preserves addition. Compute: $h(5) = 4 + 4 + 4 + 4 + 4 = 20$, which is $2$ in $\\mathbb{Z}/6$. The answer is 2."
-          - problem: "The free group $F(a, b)$ satisfies the universal-element condition: for every group $G$ and every pair of elements $(g, g')$ there is a unique homomorphism $h\\colon F(a, b) \\to G$ with $h(a) = g$ and $h(b) = g'$. Let $h$ be the unique homomorphism from $F(a, b)$ to $\\mathbb{Z}/5$, written additively, with $h(a) = 2$ and $h(b) = 3$. Find $h(ab^2)$."
-            answer: "3"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The universal element is the pair $(F(a, b), (a, b))$: for every group $G$ and pair $(g, g')$ there is a unique homomorphism $h$ with $h(a) = g$ and $h(b) = g'$. Homomorphism rule: $h$ respects products, so $h(ab^2) = h(a) + h(b) + h(b)$ in the additive group $\\mathbb{Z}/5$. Compute: $2 + 3 + 3 = 8$, which is $3$ in $\\mathbb{Z}/5$. The answer is 3."
-          - problem: "The free vector space on two generators is $\\mathbb{R}^2$ with basis $e_1, e_2$; the universal-element condition says that for every space $V$ and every pair $(v, v')$ there is a unique linear map $h$ with $h(e_1) = v$ and $h(e_2) = v'$. Let $h\\colon \\mathbb{R}^2 \\to \\mathbb{R}^2$ be the unique linear map with $h(e_1) = (3, 1)$ and $h(e_2) = (0, 2)$. Find $h(2, 3)$ and give the answer as (x, y)."
-            answer: "(6,8)"
-            answer_contract: {"arity": 2, "kind": "coordinates"}
-            solution_sketch: "The universal element is the pair $(\\mathbb{R}^2, (e_1, e_2))$: for every space $V$ and pair $(v, v')$ there is a unique linear map $h$ with $h(e_1) = v$ and $h(e_2) = v'$. Linearity rule: $(2, 3) = 2e_1 + 3e_2$, so $h(2, 3) = 2h(e_1) + 3h(e_2)$. Compute: $2(3, 1) + 3(0, 2) = (6, 2) + (0, 6) = (6, 8)$. The answer is (6,8)."
-          - problem: "For the forgetful functor on $\\mathbf{Mon}$, the pair $((\\mathbb{N}, +, 0), 1)$ is a universal element: homomorphisms from the free monoid $\\mathbb{N}$ to a monoid $M$ correspond bijectively to elements of the underlying set $UM$. How many homomorphisms are there from $\\mathbb{N}$ to $\\mathbb{Z}/6$, both with addition?"
-            answer: "6"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The universal element is the pair $((\\mathbb{N}, +, 0), 1)$: for every monoid $M$ and every $m \\in UM$ there is a unique homomorphism $h$ with $h(1) = m$, so homomorphisms from $\\mathbb{N}$ to $M$ correspond one-to-one with elements of $UM$. Counting rule: each of the $6$ elements of $\\mathbb{Z}/6$ gives exactly one homomorphism, and every homomorphism arises this way. The answer is 6."
+          - problem: "For covariant F:C->Set, a candidate universal element is u in F(A). Construct the arrow type and equation that must have exactly one solution for every x in F(X). Arrow bank: 1=h:A->X; 2=h:X->A. Equation bank: 1=F(h)(x)=u; 2=F(h)(u)=x. Give the two numbers."
+            answer: "1, 2"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "The covariant functor transports the distinguished element forward along a map from A to X. Existence and uniqueness of that map are the universal condition. The result is 1, 2."
+          - problem: "For U:Vect_R->Set, test candidate universal elements (1) (R,2), (2) (R,0), (3) (R^2,(1,0)). For each candidate require a unique linear map to every V taking the distinguished vector to any chosen v. Give the set of candidate numbers satisfying this condition."
+            answer: "{1}"
+            answer_contract: {"kind": "set"}
+            solution_sketch: "A nonzero vector in a one-dimensional space is a basis and determines every extension uniquely. Zero prevents existence for nonzero v, and an extra basis direction prevents uniqueness. The result is {1}."
+          - problem: "For U:Mon->Set, test whether (N,2) is a universal element. Give first the existence and uniqueness bits for target (Z/6,4), then those for target (N,1), then a bit for universality across all monoids. Uniqueness means at most one extension; existence is a separate clause."
+            answer: "1, 0, 0, 1, 0"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "A universal element requires existence and uniqueness for every target element, not merely a solvable instance. Recover the free-generator or basis extension map, then test its surjectivity and injectivity separately; the displayed failures distinguish the two clauses. The result is 1, 0, 0, 1, 0."
+          - problem: "For F:Grp->Set given by F(G)=UG x UG, test the candidate universal pair (a,a) in the free group on a,b. In the target Z/5, separately test the requested pairs (2,3) and (2,2). For each pair give existence then uniqueness (at most one mediator), and finish with the universality bit."
+            answer: "0, 1, 1, 0, 0"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "A universal element requires existence and uniqueness for every target element, not merely a solvable instance. Recover the free-generator or basis extension map, then test its surjectivity and injectivity separately; the displayed failures distinguish the two clauses. The result is 0, 1, 1, 0, 0."
+          - problem: "For F:Vect_R->Set given by F(V)=UV x UV, test three candidate universal elements on R^2: (u,v)=((1,1),(1,-1)); ((1,0),(2,0)); ((0,0),(0,1)). For each, decide whether every requested target pair has a mediator, and whether a mediator is unique when it exists. Give the six bits in candidate order."
+            answer: "1, 1, 0, 0, 0, 0"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "A universal element requires existence and uniqueness for every target element, not merely a solvable instance. Recover the free-generator or basis extension map, then test its surjectivity and injectivity separately; the displayed failures distinguish the two clauses. The result is 1, 1, 0, 0, 0, 0."
+          - problem: "For U:Mon->Set, compare the candidate distinguished elements 0,1,2 of N. Determine which make (N,u) universal. Give the set of valid u values."
+            answer: "{1}"
+            answer_contract: {"kind": "set"}
+            solution_sketch: "Unique extension from 1 works for every monoid. At 0 existence fails for a nonidentity target, and at 2 it fails for 1 in the additive monoid N. The result is {1}."
           - problem: "Write the full proof: the pair $((\\mathbb{N}, +, 0), 1)$ is a universal element of the forgetful functor $U\\colon \\mathbf{Mon} \\to \\mathbf{Set}$, and therefore $U$ is representable. Then compare with the solution."
             answer: "See the solution."
             answer_contract: {"kind": "none"}
@@ -191,32 +191,32 @@ topics:
       - id: kp2
         name: Universal properties are universal elements
         key_prerequisites: [universal-properties]
-        constraints: "Products and coproducts only: name the functor $F$ of candidate structures, then give the universal element as the tuple of projections or of injections, and match the exists-unique clause against the (co)product's universal property."
+        constraints: "Recover the representing object and universal tuple of projections/injections for the candidate-structure functor. Match its variance and exists-unique equation to the product or coproduct universal property."
         exemplars:
-          - problem: "In the category of sets, fix two sets A and B: A has the elements 1 and 2, and B has the elements 3 and 4. Let F(X) = Hom(X,A) x Hom(X,B), the set of pairs of maps with domain X. The pair of projections (p1, p2) of the product A x B is the universal element of F. Take X to be the set with the single element 7, and let f: X -> A and g: X -> B be given by f(7) = 2 and g(7) = 4. The exists-unique clause gives exactly one map h: X -> A x B with F(h)(p1, p2) = (f, g). Find h(7) as (a, b)."
+          - problem: "In Set let A={1,2},B={3,4} and F(X)=Hom(X,A) x Hom(X,B). Recover a universal element of this contravariant functor and its representing object. For X={7}, f(7)=2,g(7)=4, construct the unique mediator and give h(7) as (a,b)."
             answer: "(2, 4)"
             answer_contract: {"arity": 2, "kind": "coordinates"}
             solution_sketch: "Step 1 (name the functor and its action): F(X) = Hom(X,A) x Hom(X,B) reverses arrows, so for h: X -> A x B the map F(h): F(A x B) -> F(X) sends the pair of projections to (p1 after h, p2 after h). Step 2 (match the exists-unique clause): the element (f, g) of F(X) is matched by a unique h with p1 after h = f and p2 after h = g, so h sends each point to the pair of its images. Step 3 (evaluate): h(7) = (f(7), g(7)) = (2, 4). The answer is (2, 4)."
-          - problem: "In the category of sets, fix two sets A and B: A has the single element 5, and B has the elements 6 and 7. Let F(X) = Hom(A,X) x Hom(B,X), the set of pairs of maps with target X. The coproduct A + B is the disjoint union of A and B, with injections i1: A -> A + B and i2: B -> A + B, and the pair (i1, i2) is the universal element of F. Take X to be the set with elements 0 and 8, and let f: A -> X and g: B -> X be given by f(5) = 0, g(6) = 8 and g(7) = 0. The exists-unique clause gives exactly one map h: A + B -> X with F(h)(i1, i2) = (f, g). Find h(i2(6))."
+          - problem: "In Set let A={5},B={6,7} and F(X)=Hom(A,X) x Hom(B,X). Recover a universal element and its object. For X={0,8}, f(5)=0,g(6)=8,g(7)=0, construct its unique mediator h and give h of the image of 6 under the B-injection."
             answer: "8"
             answer_contract: {"kind": "exact"}
             solution_sketch: "Step 1 (name the functor and its action): F(X) = Hom(A,X) x Hom(B,X) is covariant, so for h: A + B -> X the map F(h): F(A + B) -> F(X) sends the pair of injections to (h after i1, h after i2). Step 2 (match the exists-unique clause): the element (f, g) of F(X) is matched by a unique h with h after i1 = f and h after i2 = g. Step 3 (evaluate): h(i2(6)) = g(6) = 8. The answer is 8."
-          - problem: "View the divisors of 42 as a category: there is exactly one arrow from d to e when d divides e, and no arrow otherwise. Let F(X) = Hom(X,6) x Hom(X,14), so an element of F(X) is a pair of arrows and F(X) is nonempty exactly when X divides both 6 and 14. The universal element of F is the pair of projections lying in F(d), where the projections are the arrows from d to 6 and from d to 14. The exists-unique clause forces every X with nonempty F(X) to have exactly one arrow to d. Find d."
+          - problem: "In the divisibility category on positive divisors of 42, F(X)=Hom(X,6) x Hom(X,14) is contravariant. Construct the object d of a universal element of F by enforcing the exists-unique clause. Give d."
             answer: "2"
             answer_contract: {"kind": "exact"}
             solution_sketch: "Step 1 (name the functor): F(X) = Hom(X,6) x Hom(X,14) is nonempty exactly for the common divisors of 6 and 14, which are 1 and 2. Step 2 (locate the universal element): the pair of projections lies in F(d), so d divides both 6 and 14; the exists-unique clause says every common divisor X has an arrow to d, that is, every common divisor divides d. Step 3 (conclude): among 1 and 2, the one divisible by both is 2, the greatest common divisor. The answer is 2."
-          - problem: "View the divisors of 36 as a category: there is exactly one arrow from d to e when d divides e, and no arrow otherwise. Let F(X) = Hom(4,X) x Hom(6,X), so an element of F(X) is a pair of arrows and F(X) is nonempty exactly when X is a multiple of both 4 and 6. The universal element of F is the pair of injections lying in F(c), where the injections are the arrows from 4 to c and from 6 to c. The exists-unique clause forces every X with nonempty F(X) to have exactly one arrow from c. Find c."
+          - problem: "In the divisibility category on positive divisors of 36, F(X)=Hom(4,X) x Hom(6,X) is covariant. Construct the object c of a universal element of F by enforcing the exists-unique clause. Give c."
             answer: "12"
             answer_contract: {"kind": "exact"}
             solution_sketch: "Step 1 (name the functor): F(X) = Hom(4,X) x Hom(6,X) is nonempty exactly for the common multiples of 4 and 6 among the divisors of 36, which are 12 and 36. Step 2 (locate the universal element): the pair of injections lies in F(c), so 4 and 6 both divide c; the exists-unique clause says c has an arrow to every common multiple, that is, c divides every common multiple. Step 3 (conclude): among 12 and 36, the one that divides both is 12, the least common multiple. The answer is 12."
-          - problem: "A student verifies that the pair of projections (p1, p2) of A x B is a universal element of F(X) = Hom(X,A) x Hom(X,B) in the category of sets. Step 1: a map k: X -> Y acts from F(Y) to F(X) by F(k)(f, g) = (f after k, g after k). Step 2: for a pair (f, g) in F(X), define h: X -> A x B by h(x) = (f(x), g(x)). Step 3: then F(h)(p1, p2) = (h after p1, h after p2). Step 4: direct computation gives p1 after h = f and p2 after h = g. Step 5: hence F(h)(p1, p2) = (f, g) and h is unique with this property, so (p1, p2) is universal. Which step is the first step that is not valid?"
+          - problem: "For F(X)=Hom(X,A) x Hom(X,B), Step 1: F is contravariant. Step 2: the product has candidate universal element (p1,p2) at A x B. Step 3: for h:X->A x B, F(h)(p1,p2)=(h after p1,h after p2). Step 4: this is the pair of maps X->A,X->B. Which step is the first whose assertion or stated reason fails?"
             answer: "Step 3"
-            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"], ["Step 5"]]}
-            solution_sketch: "Step 1 is valid: F reverses arrows, and F(k) precomposes each map with k, which is exactly the pair (f after k, g after k); choosing Step 1 mistakes this correct contravariant action for an error. Step 2 is valid: it defines the pairing map h. Step 3 is the first invalid step: F(h) must send the pair (p1, p2) to (p1 after h, p2 after h), since F acts by precomposition, but the written pair (h after p1, h after p2) reverses the composition order and is not well typed. Step 4 is a valid direct computation. Step 5 is a valid conclusion once Step 3 is repaired. The answer is Step 3."
-          - problem: "In the category of sets, let F(X) = Hom(A,X) x Hom(B,X). The coproduct A + B has injections i1: A -> A + B and i2: B -> A + B, and the pair (i1, i2) is the universal element of F. To match the exists-unique clause for a pair (f, g) in F(X), with f: A -> X and g: B -> X, the check applies the functor to a map h: A + B -> X and to the universal element. The line F(h)(i1, i2) = ? is missing. Select the true line."
-            answer: "h after i1, h after i2"
-            answer_contract: {"kind": "label", "options": [["h after i1, h after i2"], ["i1 after h, i2 after h"], ["h after f, h after g"], ["f after i1, g after i2"]]}
-            solution_sketch: "Step 1 (functor action): F(X) = Hom(A,X) x Hom(B,X) is covariant, so the map h: A + B -> X acts by postcomposition, sending the pair (i1, i2) to (h after i1, h after i2). Step 2 (test each option): the option 'i1 after h, i2 after h' is the error of reversing the composition order, which is the action of a contravariant functor. The option 'h after f, h after g' is the error of postcomposing with the arbitrary pair instead of with the injections, and it is not well typed. The option 'f after i1, g after i2' is the error of composing the given pair with the injections in a direction that is not well typed. The answer is h after i1, h after i2."
+            answer_contract: {"kind": "label", "options": [["All valid"], ["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Contravariance acts by precomposition: the pair is (p1 after h,p2 after h). The claimed compositions are ill-typed. This is the first unsupported step."
+          - problem: "For covariant F(X)=Hom(A,X) x Hom(B,X), reconstruct the universal-element equation for h:A+B->X and coproduct injections i1,i2. Bank: 1=h after i1; 2=i1 after h; 3=i2 after h; 4=h after i2. Give the two component numbers of F(h)(i1,i2)."
+            answer: "1, 4"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Covariance applies h by postcomposition to both injection components. This is exactly the coproduct factorization equation. The result is 1, 4."
           - problem: "Write the full proof: in the category of sets, the pair of projections of A x B is a universal element of the functor F(X) = Hom(X,A) x Hom(X,B). Then compare with the solution."
             answer: "See the solution."
             answer_contract: {"kind": "none"}
@@ -257,7 +257,7 @@ topics:
       - id: kp1
         name: The statement in both variances
         key_prerequisites: [representable-functors]
-        constraints: "Always state the bijection map $\\alpha\\mapsto\\alpha_A(1_A)$ and its inverse; keep track of which functor is covariant."
+        constraints: "Recover Yoneda components in both variances from identity evaluation and naturality. Never supply the reconstruction formula before asking to use it; keep all arrow directions explicit."
         exemplars:
           - problem: "Let C be the poset category with two objects 0 and 1 and one non-identity arrow f: 0 -> 1. Let F: C -> Set be the covariant functor with F(0) = {1, 2}, F(1) = {3, 4} and F(f) sending 1 to 3 and 2 to 4. Take A = 0 and u = 1 in F(0). The Yoneda lemma attaches to u the natural transformation alpha from Hom(0, -) to F with alpha_0(1_0) = u. Compute alpha_1(f)."
             answer: "3"
@@ -275,10 +275,10 @@ topics:
             answer: "7"
             answer_contract: {"kind": "exact"}
             solution_sketch: "Rule used: the covariant Yoneda lemma, which makes the map sending alpha to alpha_0(1_0) a bijection, so one component fixes the whole transformation. Naturality along f gives the identity alpha_1(f) = (F f)(alpha_0(1_0)), so (F f)(u) = 9 where u = alpha_0(1_0). The map F(f) sends 6 to 10, 7 to 9 and 8 to 11, so the only preimage of 9 is 7. The answer is 7."
-          - problem: "Let C be a category, let G: C^op -> Set be a presheaf, let A be an object of C, and let u be an element of G(A). The contravariant Yoneda lemma attaches to u a natural transformation from Hom(-, A) to G. For an arrow h: X -> A of C, the component of this transformation at X sends h to an element of G(X). Which expression is that element?"
-            answer: "(G h)(u)"
-            answer_contract: {"kind": "label", "options": [["(G h)(u)"], ["(G u)(h)"], ["(u G)(h)"], ["G(u)(h)"]]}
-            solution_sketch: "Rule used: the contravariant Yoneda lemma: u in G(A) is sent to the transformation whose component at X maps h to (G h)(u), where G h: G(A) -> G(X) because G reverses arrows. Type check: h: X -> A, so (G h)(u) lands in G(X), exactly the codomain of the component. The option (G u)(h) swaps the roles of element and arrow. The option (u G)(h) writes the action in a meaningless order. The option G(u)(h) applies the presheaf to an element, which is undefined. The answer is (G h)(u)."
+          - problem: "For presheaf G:C opposite->Set, u in G(A) corresponds by Yoneda to alpha:Hom(-,A)=>G. For h:X->A, construct alpha_X(h). Operation bank: 1=G(h):G(A)->G(X); 2=G(h):G(X)->G(A); 3=G(1_X):G(X)->G(X). Give the operation number and the number of the input from input bank 1=u in G(A),2=h in Hom(X,A)."
+            answer: "1, 1"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Contravariance reverses the given arrow, sending the universal identity value u in G(A) into G(X). The result is 1, 1."
           - problem: "Claim: for every covariant functor F: C -> Set and every object A, the map sending a natural transformation alpha from Hom(A, -) to F to the element alpha_A(1_A) of F(A) is a bijection. Step 1: the value alpha_A(1_A) lies in F(A), so the map is well defined. Step 2: for an arrow h: A -> X, naturality of alpha along h gives alpha_X(1_X) = (F h)(alpha_A(1_A)). Step 3: hence the component of alpha at each object is determined by the value alpha_A(1_A), so the map is injective. Step 4: conversely, each element u of F(A) is the image of the transformation whose component at X sends h to (F h)(u), so the map is also surjective. Which step is the first step that is not valid?"
             answer: "Step 2"
             answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
@@ -290,29 +290,29 @@ topics:
       - id: kp2
         name: Counting natural transformations out of a representable
         key_prerequisites: [hom-functors]
-        constraints: "Either instantiate the lemma at a second representable and read off the resulting hom-set, or count with finite sets of size at most 4; in a counting problem name the set $FA$ being counted and give its cardinality as an explicit number."
+        constraints: "Count natural transformations by deriving the identity-evaluation parameter set and reconstruction, with no parameter set supplied in the stem. Distinguish covariant and contravariant representable directions."
         exemplars:
-          - problem: "In the category of sets, take A = {1,2,3,4} and F = Hom(B, -) with B = {1,2}. The Yoneda lemma counts the set F(A) = Hom(B, A), the set of functions from {1,2} to {1,2,3,4}. Find the number of natural transformations from Hom(A,-) to F."
+          - problem: "In Set take A={1,2,3,4},B={1,2}. Determine the number of natural transformations Hom(A,-)=>Hom(B,-). Derive which hom-set is identified by evaluating at an identity; the direction of that hom-set is part of the reasoning."
             answer: "16"
             answer_contract: {"kind": "exact"}
             solution_sketch: "Yoneda lemma rule: Nat(Hom(A,-), F) is in bijection with F(A), via alpha maps to alpha_A(1_A). Here the full set being counted is F(A) = Hom({1,2}, {1,2,3,4}), the functions from {1,2} to {1,2,3,4}. Counting rule: each of the 2 inputs independently picks one of 4 outputs, so there are 4^2 = 16 functions. The answer is 16."
-          - problem: "In the category of sets, take A = {1,2} and let P be the covariant power-set functor, so the Yoneda lemma counts the set P(A), the set of all subsets of {1,2}. Find the number of natural transformations from Hom(A,-) to P."
+          - problem: "Let P:Set->Set be covariant powerset, acting by direct image, and A={1,2}. Determine the number of natural transformations Hom(A,-)=>P using identity evaluation and reconstruction of every component."
             answer: "4"
             answer_contract: {"kind": "exact"}
             solution_sketch: "Yoneda lemma rule: Nat(Hom(A,-), P) is in bijection with P(A). The full set being counted is P(A), the collection of all subsets of {1,2}, namely the empty set, {1}, {2}, and {1,2}. Counting rule: a 2-element set has 2^2 = 4 subsets. The answer is 4."
-          - problem: "Let A = {1,2}. Let F be the functor on sets where F(X) is the set of pairs (x, i) with x in X and i in {0,1}, and F(h) sends (x, i) to (h(x), i). A natural transformation from Hom(A,-) to F is fixed by u = alpha_A(1_A), and here u = (2,1). Take the map h from A to {5,6,7} with h(1) = 5 and h(2) = 7. Compute the value F(h)(u), and give the answer as (x, i)."
-            answer: "(7,1)"
-            answer_contract: {"arity": 2, "kind": "coordinates"}
-            solution_sketch: "Yoneda lemma rule: the transformation alpha is fixed by u = alpha_A(1_A), and its component at X sends h to F(h)(u). Compute F(h) on u = (2,1): by definition F(h) sends (x, i) to (h(x), i), so F(h)(u) = (h(2), 1). With h(2) = 7, the full value is the pair (7,1). The answer is (7,1)."
-          - problem: "Let C be the category from the chain 1 <= 2 <= 3: an arrow from x to y exists exactly when x <= y, and hom-sets are empty otherwise. Take the representable Hom(2, -) and F = Hom(3, -), so the Yoneda lemma counts the set F(2) = Hom(3,2), the set of arrows from 3 to 2. Find the number of natural transformations from Hom(2,-) to F."
+          - problem: "Let F(X)=X x {0,1}, acting by F(h)(x,i)=(h(x),i). For A={0,1,2}, enumerate the identity values that classify natural transformations Hom(A,-)=>F. Encode (a,i) by 2a+i and give the set of all codes."
+            answer: "{0, 1, 2, 3, 4, 5}"
+            answer_contract: {"kind": "set"}
+            solution_sketch: "Identity evaluation lands in F(A); naturality forces its transported value at every arrow and thus distinguishes all these transformations. The result is {0, 1, 2, 3, 4, 5}."
+          - problem: "C is the chain 1<2<3 as a category. Determine the number of natural transformations Hom(2,-)=>Hom(3,-). Derive the relevant identity-evaluation hom-set before counting its arrows."
             answer: "0"
             answer_contract: {"kind": "exact"}
             solution_sketch: "Yoneda lemma rule: Nat(Hom(2,-), Hom(3,-)) is in bijection with Hom(3,2), the value of F = Hom(3,-) at the object 2. The full set Hom(3,2) is the set of arrows from 3 to 2 in the chain 1 <= 2 <= 3; such an arrow exists only when 3 <= 2, which is false, so this set is empty. Counting rule: an empty set has 0 elements, so there are no such transformations. The answer is 0."
-          - problem: "In the category of sets, take A = {a,b,c} and F = Hom({a,b}, -). A student counts the natural transformations from Hom(A,-) to F. Step 1: by the Yoneda lemma they are in bijection with F(A). Step 2: F(A) = Hom({a,b}, {a,b,c}), the set of functions from {a,b} to {a,b,c}. Step 3: there are 2^3 = 8 such functions. Step 4: so there are 8 natural transformations. Which step is the first step that is not valid?"
-            answer: "Step 3"
-            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
-            solution_sketch: "Step 1 correctly applies the Yoneda lemma, Nat(Hom(A,-), F) is in bijection with F(A). Step 2 correctly identifies F(A) as the set of functions from {a,b} to {a,b,c}. Step 3 counts in the wrong direction: a function from a 2-element set to a 3-element set makes 2 choices with 3 options each, giving 3^2 = 9, not 2^3 = 8. Step 4 only repeats the count inherited from Step 3, so it is wrong but not first. The answer is Step 3."
-          - problem: "Let F be the functor on sets where F(X) is the set of pairs (x, y) with both entries in X, and F(h) sends (x, y) to (h(x), h(y)). Take A = {1,2,3}, so the Yoneda lemma counts the set F(A), the set of pairs with both entries in {1,2,3}. Find the number of natural transformations from Hom(A,-) to F."
+          - problem: "For A={a,b,c} and B={a,b}, determine both Nat(Hom(A,-),Hom(B,-)) and Nat(Hom(-,A),Hom(-,B)) in Set. Give their cardinalities in that order, deriving the appropriate variance in each case."
+            answer: "9, 8"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "The first identity evaluation produces B->A, while the second produces A->B. Each arrow reconstructs one natural transformation. The result is 9, 8."
+          - problem: "Let F:Set->Set send X to X x X and act on both coordinates. For A={1,2,3}, determine the number of natural transformations Hom(A,-)=>F. Derive the parameter set from identity evaluation and explain why each parameter extends uniquely."
             answer: "9"
             answer_contract: {"kind": "exact"}
             solution_sketch: "Yoneda lemma rule: Nat(Hom(A,-), F) is in bijection with F(A), via alpha maps to alpha_A(1_A). The full set being counted is F(A), the set of pairs (x, y) with both entries in {1,2,3}. Counting rule: 3 choices for x and independently 3 choices for y give 3 times 3 = 9 pairs. The answer is 9."
@@ -323,12 +323,12 @@ topics:
       - id: kp3
         name: The one-object case — monoid and group actions
         key_prerequisites: [functor-categories]
-        constraints: "Identify the presheaf category as right actions before applying the lemma."
+        constraints: "Identify presheaves on a one-object category with right actions through precomposition. Recover equivariant maps from their identity value and distinguish regular-action transport from fixed-point conditions."
         exemplars:
-          - problem: "Regard the additive monoid $\\mathbb{Z}/4$ as a one-object category $B$; a presheaf on $B$ is exactly a set with a right action of $\\mathbb{Z}/4$. The representable presheaf $\\mathrm{Hom}(-,*)$ is the regular right action on the set of morphisms $\\mathbb{Z}/4$, where a morphism $m$ acts by precomposition: $h \\cdot m = h + m$. Compute the element $1 \\cdot 2$ of the representable presheaf."
-            answer: "3"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Identify the presheaf: on the one-object category, a presheaf $X$ gives the set $X(*)$ and each morphism $m$ acts by a function $X(m)$; for the representable presheaf the set is $\\mathrm{Hom}(*,*) = \\mathbb{Z}/4$ and $m$ acts by precomposition, $h \\cdot m = h + m$. Compute the action: $1 \\cdot 2 = 1 + 2 = 3$ in $\\mathbb{Z}/4$. The value is 3."
+          - problem: "Regard Z/4 as a one-object category, with composition addition. Construct its representable presheaf and hence the right-action maps for arrows 1 and 2. Give their value lists on 0,1,2,3, first for arrow 1 then arrow 2."
+            answer: "1, 2, 3, 0, 2, 3, 0, 1"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "The presheaf action is precomposition in the one-object category. Constructing these restrictions identifies its regular right action. The result is 1, 2, 3, 0, 2, 3, 0, 1."
           - problem: "Regard the group $\\mathbb{Z}/2 = \\{e, t\\}$ as a one-object category; presheaves on it are exactly the right $\\mathbb{Z}/2$-sets. Let $X = \\{1,2,3,4,5\\}$ be the right $\\mathbb{Z}/2$-set in which $t$ swaps $1$ and $2$ and fixes $3$, $4$, $5$. The representable presheaf is $\\mathbb{Z}/2$ with its regular right action. How many equivariant maps are there from the regular right $\\mathbb{Z}/2$-set to $X$?"
             answer: "5"
             answer_contract: {"kind": "exact"}
@@ -341,10 +341,10 @@ topics:
             answer: "6"
             answer_contract: {"kind": "exact"}
             solution_sketch: "Apply the Yoneda lemma with $X$ the representable presheaf itself: natural transformations $\\mathrm{Hom}(-,*) \\to \\mathrm{Hom}(-,*)$ correspond bijectively to elements of $\\mathrm{Hom}(*,*) = \\mathbb{Z}/6$, via $\\alpha \\mapsto \\alpha(0)$. Each element $k$ gives the equivariant translation $\\alpha(m) = k + m$, and these six maps are all of them. There are 6."
-          - problem: "Claim: for the right $\\mathbb{Z}/3$-set $X = \\{1,2,3\\}$, in which the generator $t$ acts as the cycle $1 \\to 2 \\to 3 \\to 1$, there are no equivariant maps from the regular right $\\mathbb{Z}/3$-set to $X$. Step 1: presheaves on the one-object category of $\\mathbb{Z}/3$ are right $\\mathbb{Z}/3$-sets, and the representable presheaf is $\\mathbb{Z}/3$ with its regular right action. Step 2: by the Yoneda lemma, equivariant maps from the regular action to $X$ correspond to elements of $X$, via $\\alpha \\mapsto \\alpha(0)$. Step 3: an element $x$ can be $\\alpha(0)$ only if $x$ is fixed by $t$, since $\\alpha(0) = \\alpha(0 \\cdot t) = \\alpha(0) \\cdot t$. Step 4: no element of $X$ is fixed by $t$, so there are no equivariant maps. Which step is the first step that is not valid?"
+          - problem: "For Z/3 acting on X={1,2,3} by the cycle t:1->2->3->1, Step 1: the representable is the regular right action. Step 2: an equivariant map is determined by its value at 0. Step 3: that value must be fixed by t, since 0 acted on by t is 0. Step 4: therefore no equivariant map exists. Which step is the first whose assertion or stated reason fails?"
             answer: "Step 3"
-            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
-            solution_sketch: "Step 1 correctly identifies presheaves on the one-object category as right actions and the representable presheaf as the regular action. Step 2 correctly states the Yoneda bijection with elements of $X$. Step 3 is not valid: equivariance gives $\\alpha(0) \\cdot t = \\alpha(0 + t)$, and since $0 \\cdot t = t \\neq 0$, it does not force $\\alpha(0)$ to be a fixed point; in fact every element works, with $\\alpha(m) = \\alpha(0) + m$. Step 4 only inherits the error of Step 3. The answer is Step 3."
+            answer_contract: {"kind": "label", "options": [["All valid"], ["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "The identity arrow moves under the regular action: 0 acted on by t is t. Equivariance transports the chosen value without requiring it to be fixed. This is the first unsupported step."
           - problem: "Regard the two-element monoid $M = \\{e, z\\}$, with identity $e$ and absorbing element $z$ (so $z \\cdot z = z$), as a one-object category; presheaves on it are the right $M$-sets. Let $X = \\{1, 2\\}$ be the right $M$-set with $x \\cdot e = x$ and $x \\cdot z = 2$ for every $x$ in $X$. How many equivariant maps are there from the regular right $M$-set to $X$?"
             answer: "2"
             answer_contract: {"kind": "exact"}
@@ -395,32 +395,32 @@ topics:
       - id: kp1
         name: Proof of the bijection
         key_prerequisites: [natural-transformations]
-        constraints: "Compute both maps explicitly, $\\Theta(u)_X(h)=(Fh)(u)$ and $\\Psi(\\alpha)=\\alpha_A(1_A)$, and check the round trips by evaluating $F(1_A)=1_{FA}$ and the naturality equation of $\\alpha$ at the named arrow — each check is an evaluated equality, not a citation; no elements of $\\mathcal C$."
+        constraints: "Verify both directions of the Yoneda bijection by identity evaluation and the naturality square applied to an identity. Construct missing components or proof paths instead of evaluating an explicitly supplied reconstruction formula."
         exemplars:
-          - problem: "Let C be the category with two objects 1 and 2 and one arrow s: 1 -> 2 besides the identities. Let F: C -> Set have F(1) = {0,1,2}, F(2) = {0,1,2,3,4,5,6} and F(s)(x) = 2x + 1. Take A = 1 and u = 2. The naturality check for Theta(u) at the arrow s compares F s o Theta(u)_1 and Theta(u)_2 o Hom(1,s), both evaluated at the arrow 1_1 of Hom(1,1). Compute the element of F(2) that both sides give."
+          - problem: "C has objects 1,2 and arrow s:1->2. A covariant F has F(1)={0,1,2},F(2)={0,...,6},F(s)(x)=2x+1. Construct the transformation Hom(1,-)=>F from identity value u=2. Derive its naturality square at s and give the element of F(2) obtained by its two routes on 1_1."
             answer: "5"
             answer_contract: {"kind": "exact"}
             solution_sketch: "Step 1 (left side): F s o Theta(u)_1 at 1_1 is F(s)((F 1_1)(u)), which is F(s)(u) = F(s)(2) = 5, using the identity law F(1_1) = 1_{F(1)}. Step 2 (right side): Hom(1,s)(1_1) = s o 1_1 = s, so Theta(u)_2 at that arrow is (F s)(u) = 5 by the definition Theta(u)_X(h) = (F h)(u). Step 3 (composition law of F): the two sides agree because F(s o 1_1) = F(s) o F(1_1), which is exactly the naturality of Theta(u). The answer is 5."
-          - problem: "Let C be the category with two objects 1 and 2 and one arrow s: 1 -> 2 besides the identities. Let F: C -> Set have F(1) = {0,1,2,3}, F(2) = {0,1,2,3,4,5,6,7,8,9} and F(s)(x) = 3x. Let alpha: Hom(1,-) => F be a transformation with Psi(alpha) = alpha_1(1_1) = 1. The round trip sends alpha to Theta(Psi(alpha)), whose component at 2 takes s to (F s)(alpha_1(1_1)). Compute Theta(Psi(alpha))_2(s)."
+          - problem: "C has objects 1,2 and arrow s:1->2. F(1)={0,1,2,3},F(2)={0,...,9},F(s)(x)=3x. A natural alpha:Hom(1,-)=>F has alpha_1(1_1)=1. Prove the reconstruction round trip at the arrow s using alpha naturality and give the forced value at s."
             answer: "3"
             answer_contract: {"kind": "exact"}
             solution_sketch: "Step 1 (the Psi map): Psi(alpha) = alpha_1(1_1) = 1. Step 2 (the Theta map on the round trip): Theta(Psi(alpha))_2(s) = (F s)(alpha_1(1_1)) = (F s)(1) = 3. Step 3 (citation): this value equals alpha_2(s) because naturality of alpha at s applied to 1_1 gives alpha_2(s) = (F s)(alpha_1(1_1)), which is the round trip Theta Psi = id. The answer is 3."
-          - problem: "Let C be the category of the poset a <= b: two objects a and b, one arrow t: a -> b besides the identities. Let G: C -> Set be the functor with G(a) = {0,1,2,3,4,5}, G(b) = {0,1} and G(t)(x) = the remainder of x on division by 2. A transformation alpha: Hom(a,-) => G is determined by the element alpha_a(1_a) of G(a), and each element u gives Theta(u)_X(h) = (G h)(u). How many transformations from Hom(a,-) to G are there?"
-            answer: "6"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1 (the two maps): Psi sends alpha to alpha_a(1_a) in G(a), and Theta sends u to the transformation with Theta(u)_X(h) = (G h)(u). Step 2 (round trips): Psi Theta = id because (G 1_a)(u) = u by the identity law G(1_a) = 1_{G(a)}, and Theta Psi = id by naturality of alpha. Step 3 (count): the bijection is with G(a) = {0,1,2,3,4,5}, which has 6 elements, so there are 6 transformations. The answer is 6."
-          - problem: "Let C be the category with one object * and four arrows r0, r1, r2, r3, where r0 is the identity arrow and composition adds subscripts mod 4. Let F: C -> Set be the functor with F(*) = {0,1,2,3} and F(rk)(x) = x + k mod 4. The map Theta(u) is defined by Theta(u)_X(h) = (F h)(u) for u in F(*). Given Theta(u)_*(r1) = 3, find u."
-            answer: "2"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1 (definition of Theta): Theta(u)_*(r1) = (F r1)(u) = u + 1 mod 4, since the arrow r1 acts by adding 1. Step 2 (solve the congruence): u + 1 = 3 mod 4 gives u = 2. Step 3 (check): u = 2 lies in F(*) = {0,1,2,3} and Theta(2)_*(r1) = 3 as required. The answer is 2."
-          - problem: "Claim: Psi composed with Theta is the identity. Step 1: let u be an element of F(A) and define Theta(u)_X(h) = (F h)(u). Step 2: then Psi(Theta(u)) = Theta(u)_A(1_A). Step 3: by the definition of Theta, Theta(u)_A(1_A) = (F 1_A)(u). Step 4: by the naturality of Theta(u), this equals u. Step 5: hence Psi(Theta(u)) = u for every u, so Psi Theta = id. Which step is the first step whose stated reason does not justify it?"
-            answer: "Step 4"
-            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"], ["Step 5"]]}
-            solution_sketch: "Step 1 restates the definition of Theta and is valid. Step 2 applies the definition of Psi and is valid. Step 3 unfolds the definition correctly: Theta(u)_A(1_A) = (F 1_A)(u). Step 4 is invalid: the equality (F 1_A)(u) = u needs the identity law of the functor, F(1_A) = 1_{F(A)}, and naturality of Theta(u) does not provide it, so the stated reason does not justify the step. Step 5 is a valid conclusion once Step 4 cites the identity law. The answer is Step 4."
-          - problem: "Let t: Hom(A,-) => F be a transformation and let h: A -> X be an arrow. The argument for Theta Psi = id reads: Line 1: t_X(h) = t_X(h o 1_A). Line 2: h o 1_A = Hom(A,h)(1_A). Line 3 is missing. Line 4: hence t_X(h) = (F h)(t_A(1_A)) = Theta(Psi(t))_X(h) for every h, so Theta Psi = id. Select the line that is true and that fills Line 3."
-            answer: "The naturality of t at h, applied to 1_A"
-            answer_contract: {"kind": "label", "options": [["The naturality of t at h, applied to 1_A"], ["The composition law of F: F(h o 1_A) = F h"], ["The definition of Psi at the object X"], ["The identity law of F at the object A"]]}
-            solution_sketch: "Line 1 and Line 2 rewrite h as Hom(A,h)(1_A). The fact that closes the gap is the naturality of t at h applied to 1_A: the square at h gives t_X(Hom(A,h)(1_A)) = (F h)(t_A(1_A)), which is exactly Line 4. The option citing the composition law of F confuses this round trip with the proof that Theta(u) is natural. The option citing the definition of Psi names t_A(1_A) but computes nothing at X. The option citing the identity law of F belongs to the other round trip, Psi Theta = id, not this one. The answer is The naturality of t at h, applied to 1_A."
+          - problem: "On C=(a->b), G(a)={0,1,2},G(b)={0,1}, with G(t)(x)=x mod 2. A candidate alpha:Hom(a,-)=>G assigns alpha_a(1_a)=2. Enumerate its possible values alpha_b(t) consistent with naturality, then verify reconstruction has no other choice. Give the set of values."
+            answer: "{0}"
+            answer_contract: {"kind": "set"}
+            solution_sketch: "Naturality on t applied to the identity forces the remaining component. The identity law makes evaluation of the reconstructed transformation recover u. The result is {0}."
+          - problem: "C has one object and arrows Z/4 under addition. Let F(r)(x)=x+r mod 4. A natural alpha:Hom(*,-)=>F satisfies alpha(1)=3. Recover its identity value and then every component value; give alpha(0),alpha(1),alpha(2),alpha(3)."
+            answer: "2, 3, 0, 1"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Naturality reconstructs every value from alpha(0); solving the given component recovers that identity value, which also checks the round trip. The result is 2, 3, 0, 1."
+          - problem: "C is the category a->b. A covariant F has F(a)={0,1,2},F(b)={0,1}, and F(a->b)=[0, 0, 1]. A natural alpha:Hom(a,-)=>F has components encoded by the pair (alpha_a(1_a),alpha_b(a->b)). Derive all possible pairs from naturality, then compare evaluation at the identity with evaluation at the nonidentity arrow. Give the fiber sizes over 0,1,2 for identity evaluation, then over 0,1 for nonidentity evaluation."
+            answer: "1, 1, 1, 2, 1"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Naturality at the arrow applied to the identity forces the second component from the first. Hence every identity value gives exactly one transformation, proving both inverse directions in this category; nonidentity evaluation can lose that information. The result is 1, 1, 1, 2, 1."
+          - problem: "C is the category a->b. A covariant F has F(a)={0,1,2},F(b)={0,1}, and F(a->b)=[1, 0, 1]. A natural alpha:Hom(a,-)=>F has components encoded by the pair (alpha_a(1_a),alpha_b(a->b)). Derive all possible pairs from naturality, then compare evaluation at the identity with evaluation at the nonidentity arrow. Give the fiber sizes over 0,1,2 for identity evaluation, then over 0,1 for nonidentity evaluation."
+            answer: "1, 1, 1, 1, 2"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Naturality at the arrow applied to the identity forces the second component from the first. Hence every identity value gives exactly one transformation, proving both inverse directions in this category; nonidentity evaluation can lose that information. The result is 1, 1, 1, 1, 2."
           - problem: "Write the full proof: for a functor F from C to Set and an object A of C, the maps Psi(alpha) = alpha_A(1_A) and Theta(u)_X(h) = (F h)(u) are mutually inverse and Theta(u) is natural, so the transformations from Hom(A,-) to F are in bijection with the elements of F(A). Then compare with the solution."
             answer: "See the solution."
             answer_contract: {"kind": "none"}
@@ -428,32 +428,32 @@ topics:
       - id: kp2
         name: Naturality of the Yoneda isomorphism
         key_prerequisites: [functor-categories]
-        constraints: "Name the two induced maps forming the square, then evaluate both routes on a transformation $\\alpha$."
+        constraints: "Construct the induced maps in both naturality squares of the Yoneda bijection, keeping variance explicit. Grade their typed paths or reconstructed expressions, not only an evaluation after the routes are supplied."
         exemplars:
-          - problem: "Let C be the poset with objects p and q and one non-identity arrow f : p → q, viewed as a category. Define functors to Set by F(p) = {1,2,3}, F(q) = {4,5,6}, with F(f) sending 1 to 4, 2 to 5, 3 to 6, and F'(p) = {10,20,30}, F'(q) = {40,50,60}, with F'(f) sending 10 to 40, 20 to 50, 30 to 60. Let φ : F ⇒ F' be the natural transformation with φ_p sending 1 to 10, 2 to 20, 3 to 30. Let α : Hom(p, −) ⇒ F be the natural transformation with α_p(1_p) = 3. The naturality square in F has one route that applies φ_p after Ψ, and one route that applies Ψ after post-composition with φ. Find the common value that both routes assign to α."
-            answer: "30"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The square in F has the two induced maps: post-composition α ↦ φ ∘ α on Nat(Hom(p, −), −), and the component φ_p on evaluation at p. Route one evaluates Ψ first by the Yoneda assignment: Ψ_F(α) = α_p(1_p) = 3, then applies φ_p to get φ_p(3) = 30. Route two post-composes first: Ψ_F'(φ ∘ α) = (φ ∘ α)_p(1_p) = φ_p(α_p(1_p)) = 30. Both routes agree, so the common value is 30."
-          - problem: "Let C be the poset with objects u and v and one non-identity arrow g : u → v, viewed as a category. Let F : C → Set have F(u) = {2,4,6}, F(v) = {3,5,7}, with F(g) sending 2 to 3, 4 to 5, 6 to 7. Let β : Hom(u, −) ⇒ F be the natural transformation with β_u(1_u) = 4. For the arrow g, the naturality square in A has one route that precomposes with g* and then applies Ψ at v, and one route that applies F(g) after Ψ at u. Find the common value that both routes assign to β."
-            answer: "5"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The square in A, for the arrow g : u → v, has the two induced maps: precomposition β ↦ β ∘ g* with (g*)_X(k) = k ∘ g, and F(g) on values. Route one: (β ∘ g*)_v(1_v) = β_v(1_v ∘ g) = β_v(g). Route two: F(g)(Ψ_u(β)) = F(g)(β_u(1_u)) = F(g)(4). Naturality of β at g gives β_v(g) = F(g)(β_u(1_u)), so both routes give the same number. The common value is 5."
-          - problem: "Let C be the category with one object x and only the identity arrow 1_x, so a functor from C to Set is just a set. Take F(x) = {1,2} and F'(x) = {10,20}, and let φ : F ⇒ F' have φ_x sending 1 to 10 and 2 to 20. The naturality square in F has one route that applies φ_x after Ψ, and one route that applies Ψ after post-composition with φ. For a natural transformation α : Hom(x, −) ⇒ F, both routes send α to 20. Find Ψ(α) = α_x(1_x)."
-            answer: "2"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The square in F has the two induced maps: post-composition α ↦ φ ∘ α and the component φ_x. Route one: φ_x(Ψ(α)) = φ_x(α_x(1_x)). Route two: Ψ(φ ∘ α) = (φ ∘ α)_x(1_x) = φ_x(α_x(1_x)). Both routes equal φ_x(α_x(1_x)), and this common value is given as 20. Since φ_x sends 1 to 10 and 2 to 20, and only the input 2 lands on 20, injectivity of φ_x gives α_x(1_x) = 2. The answer is 2."
-          - problem: "Let C be the poset with objects a and b and one non-identity arrow h : a → b, viewed as a category. Let F : C → Set have F(a) = {7,8,9}, F(b) = {70,80,90}, with F(h) sending 7 to 70, 8 to 80, 9 to 90. Let β : Hom(a, −) ⇒ F be a natural transformation for which both routes of the naturality square in A, taken at the arrow h, send β to 90. Route one precomposes with h* and then applies Ψ; route two applies F(h) after Ψ. Find β_a(1_a)."
-            answer: "9"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The square in A for the arrow h : a → b has the two induced maps: precomposition with h*, whose component at b sends 1_b to 1_b ∘ h = h, and F(h) on values. Route one sends β to (β ∘ h*)_b(1_b) = β_b(h). Route two sends β to F(h)(β_a(1_a)). The two routes agree, so F(h)(β_a(1_a)) = 90. Since F(h) sends 7 to 70, 8 to 80, 9 to 90, and no other input lands on 90, β_a(1_a) = 9. The answer is 9."
-          - problem: "Claim: the Yoneda bijection Ψ : Nat(Hom(A, −), F) → FA with Ψ(α) = α_A(1_A) is natural in F. Step 1: a natural transformation φ : F ⇒ F' induces the map α ↦ φ ∘ α from Nat(Hom(A, −), F) to Nat(Hom(A, −), F') and the component φ_A : FA → F'A. Step 2: route one evaluates Ψ first, giving Ψ_F(α) = α_A(1_A). Step 3: naturality of φ gives φ_A(α_A(1_A)) = α_A(φ_A(1_A)). Step 4: since (φ ∘ α)_A = φ_A ∘ α_A, route two gives Ψ_F'(φ ∘ α) = φ_A(α_A(1_A)), which equals route one. Which step is the first step that is not valid?"
+          - problem: "For covariant F,Fprime:C->Set and phi:F=>Fprime, construct the two sides of the Yoneda naturality square at A. Map bank: 1=postcompose alpha by phi; 2=precompose alpha by phi; 3=phi_A:F(A)->Fprime(A); 4=phi_X at an unrelated object X. Give the map on natural transformations, then the map on identity values."
+            answer: "1, 3"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Naturality in the functor variable uses postcomposition of transformations and the component at the representing object. The result is 1, 3."
+          - problem: "Let g:A->B and F:C->Set be covariant. Recover the arrow between representables that induces Nat(Hom(A,-),F)->Nat(Hom(B,-),F). Bank: 1=Hom(A,-)->Hom(B,-); 2=Hom(B,-)->Hom(A,-). Also select the map on Yoneda values: 1=F(g):F(A)->F(B); 2=F(g):F(B)->F(A). Give both numbers."
+            answer: "2, 1"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "The hom-functor map reverses g, and precomposing a natural transformation reverses it again. Yoneda therefore acts covariantly in A. The result is 2, 1."
+          - problem: "Let alpha:Hom(A,-)=>F, sigma:F=>H, and f:A->B. Write Psi_A(alpha)=alpha_A(1_A). To establish joint naturality of Yoneda, audit four proposed justifications, using 1 for sufficient and 0 for insufficient: (i) sigma_B(alpha_B(f))=H(f)(sigma_A(alpha_A(1_A))) follows from naturality of sigma alone, without using naturality of alpha; (ii) the same equation follows from naturality of alpha and sigma; (iii) Psi_A(sigma after alpha)=sigma_A(Psi_A(alpha)) follows from componentwise composition; (iv) sigma_B(F(f)(u))=H(f)(sigma_A(u)) for arbitrary u in F(A) follows from naturality of alpha alone, without naturality of sigma. Give the four bits. Derive the two induced maps and their routes before judging which laws justify them."
+            answer: "0, 1, 1, 0"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Object transport precomposes a transformation with Hom(f,-), giving alpha_B(f) at the identity. Naturality of alpha turns this into F(f)(alpha_A(1_A)); naturality of sigma supplies the remaining square. Functor-variable naturality alone is componentwise composition. The result is 0, 1, 1, 0."
+          - problem: "For g:A->B and alpha:Hom(A,-)=>F, reconstruct the identity value at B after transporting alpha to a transformation out of Hom(B,-). Bank of arguments to alpha_B: 1=1_A; 2=g; 3=1_B. Also choose its forced expression: 1=F(g)(alpha_A(1_A)); 2=F(g)(alpha_B(1_B)); 3=alpha_A(F(g)). Give the two bank numbers."
+            answer: "2, 1"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Precomposition carries 1_B to g. Naturality of alpha at g then identifies the transported identity value with F(g) applied to its original identity value. The result is 2, 1."
+          - problem: "Step 1: phi:F=>Fprime induces alpha->phi after alpha. Step 2: Psi(alpha)=alpha_A(1_A). Step 3: phi_A(alpha_A(1_A))=alpha_A(phi_A(1_A)). Step 4: this proves Yoneda naturality in F. Which step is the first whose assertion or stated reason fails?"
             answer: "Step 3"
-            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
-            solution_sketch: "Step 1 is valid: it correctly names the two induced maps of the square, post-composition with φ and the component φ_A. Step 2 is valid: it is the definition of the Yoneda assignment Ψ. Step 4 is valid: it uses (φ ∘ α)_A = φ_A ∘ α_A, which holds by definition of vertical composition. Step 3 is not valid: naturality of φ says φ_B(F(k)(x)) = F'(k)(φ_A(x)) for each k : A → B and x in FA, and the term φ_A(1_A) is meaningless because 1_A is a morphism, not an element of FA. The first invalid step is Step 3."
-          - problem: "Let C be the poset with objects r ≤ s ≤ t and arrows f : r → s, g : s → t, g ∘ f : r → t, viewed as a category. Let F : C → Set have F(r) = {1,2}, F(s) = {3,4}, F(t) = {5,6}, with F(f) sending 1 to 3 and 2 to 4, and F(g) sending 3 to 5 and 4 to 6. Let α : Hom(r, −) ⇒ F be the natural transformation with α_r(1_r) = 2. Evaluate α_t(g ∘ f), using naturality of α at the arrow g ∘ f."
-            answer: "6"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "By functoriality of F, F(g ∘ f) = F(g) ∘ F(f), so F(g ∘ f) sends 2 to F(g)(F(f)(2)) = F(g)(4) = 6. Naturality of α at the arrow g ∘ f gives F(g ∘ f)(α_r(1_r)) = α_t((g ∘ f) ∘ 1_r) = α_t(g ∘ f). Substitute α_r(1_r) = 2 to get α_t(g ∘ f) = F(g ∘ f)(2) = 6. The answer is 6."
+            answer_contract: {"kind": "label", "options": [["All valid"], ["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "phi_A accepts an element of F(A), while 1_A is an element of Hom(A,A). The right side is ill-typed; use componentwise composition instead. This is the first unsupported step."
+          - problem: "C is the one-object category S3, with composition of permutations. F is its regular left action. A natural alpha:Hom(*,-)=>F has identity value u=(1,0,2). Transport alpha in the representing-object variable along f=(0,2,1), then g=(1,0,2), using the induced maps of representables. Give the transported identity value as a permutation list, then the value from the reversed transport order. Derive the transport formula from naturality; it is not supplied."
+            answer: "2, 1, 0, 0, 2, 1"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "The representable map induced by a representing arrow acts by precomposition; precomposing alpha with that natural transformation yields its transported parameter. Noncommutativity makes the order of the two naturality transports essential. The result is 2, 1, 0, 0, 2, 1."
           - problem: "Write the full proof: the Yoneda bijection Ψ : Nat(Hom(A, −), F) → FA with Ψ(α) = α_A(1_A) is natural in F and in A. Then compare with the solution."
             answer: "See the solution."
             answer_contract: {"kind": "none"}
@@ -467,10 +467,10 @@ topics:
             answer: "4"
             answer_contract: {"kind": "exact"}
             solution_sketch: "Step 1, the lemma: the contravariant Yoneda lemma gives a bijection between Nat(Hom(-, x), G) and G(x) for every presheaf G and every object x. Step 2, substitution: take x = a and the representable presheaf G = Hom(-, b), so the set to read off is G(a) = Hom(-, b)(a) = Hom(a, b). Step 3, count: the morphisms from a to b are exactly f, g, h and k, so Hom(a, b) has 4 elements, and the bijection preserves the number of elements. The answer is 4."
-          - problem: "Let C be the category with a single object star and exactly three morphisms 1, s, s^2, where composition is monoid multiplication and s^3 = 1. Apply the contravariant Yoneda lemma with A = star and the representable presheaf G = Hom(-, star) substituted in the lemma, which gives a bijection from Nat(Hom(-, star), Hom(-, star)) to End(star). State whether this bijection is an isomorphism of monoids, and give the number of natural endomorphisms of the presheaf Hom(-, star)."
-            answer: "verdict = yes; count = 3"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "count"}]}
-            solution_sketch: "By the contravariant Yoneda lemma with A = star and G = Hom(-, star) substituted, Nat(Hom(-, star), Hom(-, star)) is in bijection with G(star) = Hom(star, star) = End(star). Read off the size: the morphisms of C are 1, s and s^2, so there are 3 natural endomorphisms. Check the monoid rule: the bijection sends alpha to alpha_star(1_star), and vertical composition gives (beta after alpha)_star(1_star) = beta_star(alpha_star(1_star)), which is composition in End(star), while the identity transformation maps to 1_star. So the bijection is an isomorphism of monoids. The answer is verdict = yes; count = 3."
+          - problem: "C is the one-object category Z/3 under addition. For the contravariant representable y(*), transformations alpha,beta have identity values 1 and 2. Reconstruct their components and give the identity value of beta after alpha, followed by its full value list on arrows 0,1,2."
+            answer: "0, 0, 1, 2"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Identity evaluation identifies a natural endomorphism with its inducing arrow. Composition of the reconstructed transformations agrees with monoid composition. The result is 0, 0, 1, 2."
           - problem: "Let C be the category of the poset with objects 1, 2, 3 ordered by 1 <= 2 <= 3. Define a presheaf G on C as follows: G(3) has the elements a, b, c, d; G(2) has the elements p, q, r, s, t; G(1) has the elements u, v; and every restriction map of G sends each element to the first element of its target set. Apply the contravariant Yoneda lemma to the representable presheaf Hom(-, 2) and this presheaf G. How many natural transformations are there from Hom(-, 2) to G?"
             answer: "5"
             answer_contract: {"kind": "exact"}
@@ -483,10 +483,10 @@ topics:
             answer: "9"
             answer_contract: {"kind": "exact"}
             solution_sketch: "By the contravariant Yoneda lemma, alpha is the natural transformation with alpha_v(1_v) = 10. Rule of the inverse map: for every morphism w from an object X to v, the component satisfies alpha_X(w) = G(w)(10), which is the naturality square of alpha at w. Apply the rule with X = u and w the unique morphism from u to v: G(w) is the restriction map of the presheaf, and it sends 10 to 9. The answer is 9."
-          - problem: "Consider the category with objects a and b, the identities on a and on b, and a single morphism m from a to b as the only other morphism. A student argues that there is exactly one natural transformation from Hom(-, b) to Hom(-, a). Step 1: the contravariant Yoneda lemma gives a bijection of Nat(Hom(-, X), G) with G(X) for every presheaf G and every object X. Step 2: take X = b and G = Hom(-, a), so Nat(Hom(-, b), Hom(-, a)) is in bijection with Hom(-, a)(b) = Hom(b, a). Step 3: the morphism m lies in Hom(b, a), so Hom(b, a) has exactly one element. Step 4: therefore there is exactly one natural transformation. Which step is the first step that is not valid?"
-            answer: "Step 3"
-            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
-            solution_sketch: "Step 1 states the contravariant Yoneda lemma correctly. Step 2 substitutes the object b and the presheaf G = Hom(-, a) and evaluates Hom(-, a) at b, giving Hom(b, a); this is a valid use of the lemma. Step 3 is the first invalid step: its error is reading the direction of m backwards, because m goes from a to b, so m lies in Hom(a, b) and Hom(b, a) is in fact empty. Step 4 only repeats the wrong conclusion of Step 3, so it is not the first failure; the true count is 0. The answer is Step 3."
+          - problem: "C has objects a,b, identities, and one arrow a->b. Derive the contravariant Yoneda classification for each ordered pair (A,B)=(a,a),(a,b),(b,a),(b,b), where the transformations are Hom(-,A)=>Hom(-,B). Give their four cardinalities. The identity-evaluation Hom direction is not supplied."
+            answer: "1, 1, 0, 1"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Evaluate a transformation at the identity of A and derive an arrow A->B. Naturality then forces every component by postcomposition; this recovers the direction and all four cases instead of presupposing the decisive Hom set. The result is 1, 1, 0, 1."
           - problem: "Write the full proof: for every presheaf G on a category C and every object A of C, the map sending a natural transformation alpha from Hom(-, A) to G to the element alpha_A(1_A) of G(A) is a bijection that is natural in G; and when G is the representable presheaf Hom(-, A), this bijection is an isomorphism of monoids from Nat(Hom(-, A), Hom(-, A)) onto the endomorphism monoid of A. Then compare with the solution."
             answer: "See the solution."
             answer_contract: {"kind": "none"}
@@ -528,32 +528,32 @@ topics:
       - id: kp1
         name: The embedding as a functor
         key_prerequisites: [yoneda-lemma]
-        constraints: "Define $\\mathbf y$ on objects and on morphisms and say which composition it uses (post-composition for the presheaf version, pre-composition for the covariant-hom version, which is contravariant on $\\mathcal C$); functoriality is a one-line check of each law."
+        constraints: "Construct both the representable presheaf action and the embedding action on arrows. Derive variance and check identity/composition laws explicitly; do not replace these constructions by hom-set cardinalities."
         exemplars:
-          - problem: "Work in the category of finite sets. The presheaf Yoneda embedding y sends a set A to the representable functor Hom(-, A), so y(A)(X) is the set Hom(X, A) of all functions from X to A. Take X = {1, 2} and A = {5, 6, 7}. How many elements does Hom(X, A) have?"
-            answer: "9"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The embedding is defined by y(A) = Hom(-, A), so its value at X is the hom-set Hom(X, A). By the definition of the category of sets, this is the set of all functions from X = {1, 2} to A = {5, 6, 7}. Count by the multiplication principle: each of the 2 elements of X has 3 possible images, giving 3^2 = 9. The answer is 9."
-          - problem: "The covariant-hom embedding sends a set A to the functor Hom(A, -) and a function f from A to B to pre-composition by f, so it is contravariant in A. Work in the category of finite sets with A = {4, 5, 6} and X = {7, 8}. How many functions does the set Hom(A, X) contain?"
-            answer: "8"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The covariant-hom embedding sends A to Hom(A, -), so its value at X is Hom(A, X), the set of functions from A to X. Count by the multiplication principle: each of the 3 elements of A = {4, 5, 6} has 2 choices of image in X = {7, 8}, giving 2^3 = 8. The answer is 8."
-          - problem: "Regard the numbers 0, 1, 2, 3, 4, 5 with addition modulo 6 as a category with one object *; the composite of a morphism m after a morphism n is m + n modulo 6. The Yoneda embedding sends a morphism m to post-composition with m on the hom-set Hom(*, *) = {0, 1, 2, 3, 4, 5}. Give the value of y(4) applied to the morphism 5."
+          - problem: "Construct the presheaf y(A) for A={0,1}. For X={p,q}, number its elements by lists [0,0],[0,1],[1,0],[1,1]. A map u:{*}->X picks q. Give the restriction map y(A)(u) on these four elements as a value list in A."
+            answer: "0, 1, 0, 1"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "The representable presheaf acts contravariantly by precomposition. Restrict each generalized point along u. The result is 0, 1, 0, 1."
+          - problem: "For the covariant-hom embedding A->Hom(A,-), let f:{a,b}->{c,d,e} send a to e,b to c. At X={0,1}, g:{c,d,e}->X has values [1,0,0]. Recover the component action induced by f and give the resulting map values at a,b."
+            answer: "0, 1"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "The covariant-hom embedding is contravariant in the representing object. Its component precomposes g with f. The result is 0, 1."
+          - problem: "C is the one-object category of Z/6 under addition. Construct the action of the presheaf Yoneda embedding on the arrow 4 from its definition on representable objects. Give the value of its component on arrow 5."
             answer: "3"
             answer_contract: {"kind": "exact"}
             solution_sketch: "In the one-object category the embedding sends m to the post-composition map h maps to m after h, which here is m + h modulo 6. Substitute m = 4 and h = 5: the composite is 4 + 5 = 9. Reduce modulo 6: 9 - 6 = 3. The answer is 3."
-          - problem: "In the category of sets, the covariant-hom embedding sends a function f from A to B to the natural transformation whose component at a set X maps each function g from B to X to the composite g after f. Let A = {1, 2} and B = {3, 4, 5} with f(1) = 3 and f(2) = 5; let X = {6, 7, 8} with g(3) = 8, g(4) = 6 and g(5) = 7. Give the answer as (g after f at 1, g after f at 2)."
+          - problem: "In Set let f:A->B have A={1,2},B={3,4,5}, f=[3,5]. For the covariant-hom embedding, derive the natural transformation induced by f. At X={6,7,8}, g:B->X has values [8,6,7]. Give the resulting function on A as (value at 1,value at 2)."
             answer: "(8, 7)"
             answer_contract: {"arity": 2, "kind": "coordinates"}
             solution_sketch: "The covariant-hom embedding sends f to pre-composition, so its component at X maps g to the function g after f on A. First evaluate the inner function: f(1) = 3 and f(2) = 5. Then apply g by its table: g(3) = 8 and g(5) = 7. The answer is (8, 7)."
-          - problem: "Claim: the presheaf Yoneda embedding, defined by y(A) = Hom(-, A) and y(f) = post-composition by f, is a functor into the presheaf category. Step 1: a composite g after f from A to C is sent to post-composition by g after f. Step 2: for each morphism h from X to A, the map y(g after f) sends h to the composite (g after f) after h. Step 3: by associativity, (g after f) after h equals f after (g after h). Step 4: therefore y(g after f) = y(f) then y(g), which is the functor law for composites. Which step is the first step that is not valid?"
+          - problem: "For y(A)=Hom(-,A), Step 1: y(f)_X sends h:X->A to f after h. Step 2: y(g after f)_X(h)=(g after f) after h. Step 3: associativity changes this to f after (g after h). Step 4: this proves the composition law. Which step is the first whose assertion or stated reason fails?"
             answer: "Step 3"
-            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
-            solution_sketch: "Step 1 correctly states the definition of y on morphisms, post-composition. Step 2 correctly applies that definition to h. Step 3 is not valid: associativity gives (g after f) after h = g after (f after h), so the order of the two morphisms was wrongly swapped. Step 4 only follows from the wrong Step 3; the correct law is y(g after f) = y(g) after y(f). The answer is Step 3."
-          - problem: "Let D be a small category. The assignment sends each object A of D to the covariant hom functor Hom(A, -) and each morphism f from A to B to pre-composition, which sends a map g from B to X to the composite g after f. Since pre-composition reverses the order of composites, this assignment is a functor into the functor category [D, Set] from a suitable domain. State the domain category of this functor."
-            answer: "the opposite of D"
-            answer_contract: {"kind": "label", "options": [["the opposite of D"], ["the category D itself"], ["the product of D with D"], ["the category of sets"]]}
-            solution_sketch: "Pre-composition reverses order: the image of a composite g after f sends a map k to k after g after f, which first pre-composes with f and then with g, so a composite in the domain must be read in reversed order; hence the domain is the opposite of D. The option the category D itself forgets this order reversal. The option the product of D with D invents a product category that no functor law requires. The option the category of sets confuses the target of the assignment with its domain. The answer is the opposite of D."
+            answer_contract: {"kind": "label", "options": [["All valid"], ["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Associativity changes parentheses while preserving arrow order: g after (f after h). The proposed order is ill-typed in general. This is the first unsupported step."
+          - problem: "Let C be the one-object category whose arrows are finite words in distinct letters a,b, with identity the empty word and composition v after u defined as concatenation vu. Starting from y(A)=Hom_C(-,A), reconstruct its action on arrows of C^op. Consider two proposed actions of the Yoneda embedding on an arrow f: L(f) sends a generalized point h to fh, whereas R(f) sends it to hf. For each proposal decide whether its components are natural with respect to the reconstructed presheaf action, whether it preserves the identity, and whether it preserves composition. Each property must hold for all words. Give the three bits for L followed by the three bits for R, using 1 for valid. Establish valid equations on arbitrary words and use noncommuting words to refute invalid equations."
+            answer: "1, 1, 1, 0, 1, 0"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Precomposition makes the presheaf restriction h map to hu. Left multiplication commutes with this right action and respects gf; right multiplication reverses the required multiplication order and fails naturality when the restriction word and f do not commute. The result is 1, 1, 1, 0, 1, 0."
           - problem: "Write the full proof: define the Yoneda embedding y from C to the presheaf category [C^op, Set] on objects and on morphisms, state which composition it uses, and prove that y is a functor. Then compare with the solution."
             answer: "See the solution."
             answer_contract: {"kind": "none"}
@@ -594,32 +594,32 @@ topics:
       - id: kp3
         name: Objects are determined by their points
         key_prerequisites: [full-faithful-functors]
-        constraints: "Consequences of full faithfulness — reflection of isomorphisms, objects determined by their points: decide each consequence by instantiating the full-faithfulness equations or the naturality of $\\mathbf y(f)$ at a specific object $X$ (typically $X=A$ or $X=B$) and evaluating — the graded answer is the computed equation or the holds/fails verdict."
+        constraints: "Detect object isomorphisms from generalized points. Construct inverse arrows by identity lifting and prove both inverse equations using full faithfulness; exhibit a specific failed component when detection fails."
         exemplars:
-          - problem: "Let P be the poset with a < b and a < c, where b and c are incomparable, viewed as a category. A student claims that b and c are isomorphic in P. To test the claim with points, compare the presheaves y(b) and y(c) at the specific object b. Give the number of elements of the set y(c) at b, that is, of Hom(b, c)."
-            answer: "0"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The full object is the set y(c)(b) = Hom(b, c). Rule: a poset is a category whose hom set Hom(x, y) has one element when x <= y and is empty otherwise. Instantiate at the specific object b: since b and c are incomparable, Hom(b, c) is empty, while Hom(b, b) has one element. So there is no bijection between Hom(b, b) and Hom(b, c), the presheaves y(b) and y(c) are not isomorphic, and since y is fully faithful it reflects isomorphisms, so b and c are not isomorphic. The answer is 0."
-          - problem: "In the category Set, let f : A -> B with A = {3, 4, 5}, B = {0, 1, 2} and f(x) = x - 3. The theorem of this section says that f is an isomorphism if and only if f_* : Hom(X, A) -> Hom(X, B) is a bijection for every set X. Instantiate that statement at a one-point set X, where a map h : X -> A picks out the point 5 of A and f_* sends h to the composite f o h. Give the point of B picked out by f_*(h)."
-            answer: "2"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The full object is the generalized element f_*(h), a point of B. Instantiate the hypothesis at the specific object X, a one-point set. Rule: a map from a one-point set into A is a generalized element, a point of A, and the component f_* sends it to its image under f, by the naturality of y(f). Compute: the point 5 of A maps to f(5) = 5 - 3 = 2, so f_*(h) picks out the point 2 of B. Here f is a bijection, so f_* is a bijection at this X, exactly as the theorem predicts for an isomorphism. The answer is 2."
-          - problem: "Let C be the category with one object * whose morphisms are the powers of an arrow p, composed by adding exponents, with the relation p^4 = id. The Yoneda embedding y is fully faithful. Give the number of natural transformations from y(*) to y(*)."
-            answer: "4"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The full object is the set of all natural transformations from y(*) to y(*). Rule (fullness of y): each such natural transformation equals y(u) for some morphism u of C. Rule (faithfulness of y): distinct morphisms u give distinct y(u), so the correspondence between natural transformations and morphisms is one-for-one. Count the morphisms: the powers p^0, p^1, p^2, p^3 are pairwise distinct and p^4 = id, so C has exactly 4 morphisms. The answer is 4."
-          - problem: "In Set, let f : A -> B be the inclusion of A = {1, 2} into B = {1, 2, 3}. A student claims that for every set X the map f_* : Hom(X, A) -> Hom(X, B) is a bijection. Instantiate this claim at the specific set X = A. Give the number of functions from X = A to B, that is, the size of Hom(A, B)."
-            answer: "9"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The full object is the set Hom(A, B) of all functions from A to B. Instantiate the claim at the specific object X = A. Rule: in Set, Hom(X, B) is the set of all functions from X to B, of size |B| to the power |X|. Compute: |B| to the power |A| is 3^2 = 9, while Hom(A, A) has 2^2 = 4 functions. Since 4 and 9 differ, f_* at X = A is not a bijection, the claim fails at this X, and since y is fully faithful and reflects isomorphisms, f is not an isomorphism. The answer is 9."
-          - problem: "Claim: if for every object X the map f_* : Hom(X, A) -> Hom(X, B) is a bijection, then f : A -> B is an isomorphism. Step 1: the maps f_* are the components of the natural transformation y(f) from y(A) to y(B), by the naturality of y(f). Step 2: since every component f_* is a bijection, y(f) is an isomorphism of presheaves. Step 3: since y is full, f is an isomorphism. Step 4: therefore isomorphisms are detected on generalized elements. Which step is the first step that is not valid?"
-            answer: "Step 3"
-            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
-            solution_sketch: "Step 1 is valid: the components of y(f) are exactly the maps f_* by the naturality of y(f). Step 2 is valid: a natural transformation between Set-valued functors is an isomorphism exactly when each component is a bijection. Step 3 is the first step that is not valid: it cites only fullness, but the conclusion needs that y is fully faithful, since fullness supplies g with y(g) equal to the inverse and faithfulness then gives g o f = id and f o g = id; a fully faithful functor reflects isomorphisms. Step 4 would follow once Step 3 is repaired with the full faithfulness of y. The answer is Step 3."
-          - problem: "Claim: an object is determined by its presheaf of points. Step 1: assume that the presheaves y(A) and y(B) are isomorphic. Step 2: pick a natural isomorphism from y(A) to y(B). Step 3: conclude that A is isomorphic to B. Which fact justifies Step 3?"
-            answer: "Fully faithful functors reflect isomorphisms"
-            answer_contract: {"kind": "label", "options": [["Fully faithful functors reflect isomorphisms"], ["Fully faithful functors preserve isomorphisms"], ["The Yoneda embedding is injective on objects"], ["Every functor between categories reflects isomorphisms"]]}
-            solution_sketch: "Step 3 needs the direction from an isomorphism of presheaves back to an isomorphism in C, which is exactly the statement that a fully faithful functor reflects isomorphisms: fullness supplies morphisms f and g with y(f) equal to the chosen isomorphism and y(g) equal to its inverse, and faithfulness applied to y(g o f) = y(id_A) and y(f o g) = y(id_B) gives g o f = id_A and f o g = id_B. The option 'Fully faithful functors preserve isomorphisms' is the wrong direction: preservation goes from A isomorphic to y(A) isomorphic and holds for any functor. The option 'The Yoneda embedding is injective on objects' claims a statement about equality of objects that is false in general and stronger than the conclusion, which is only up to isomorphism. The option 'Every functor between categories reflects isomorphisms' is false, since for example a constant functor does not reflect isomorphisms. The answer is Fully faithful functors reflect isomorphisms."
+          - problem: "P has a<b and a<c, with b,c incomparable. Test whether y(b) and y(c) can be isomorphic by examining all generalized-point components. Encode a,b,c as 0,1,2. Give the set of test-object codes where their component cardinalities differ."
+            answer: "{1, 2}"
+            answer_contract: {"kind": "set"}
+            solution_sketch: "An isomorphism of presheaves must be bijective at every test object. These differing generalized-point components obstruct an isomorphism of the original objects. The result is {1, 2}."
+          - problem: "In Set f:{0,1,2}->{0,1,2} has values [1, 2, 0]. To apply the generalized-point isomorphism criterion, test Hom(X,f) for X a singleton and for X={0,1}. For each X give injectivity then surjectivity, followed by the number of maps g with f after g=identity and the number also satisfying g after f=identity. Derive the induced Hom maps rather than taking f itself as the test."
+            answer: "1, 1, 1, 1, 1, 1"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "The criterion concerns postcomposition on every generalized-point set. Surjectivity at the codomain lifts its identity to a right inverse; injectivity at the domain then forces the other inverse equation. The explicit Hom maps test these two distinct steps. The result is 1, 1, 1, 1, 1, 1."
+          - problem: "In a category, f:A->B induces bijections Hom(X,A)->Hom(X,B) for every X. Surjectivity at X=B gives g:B->A with f after g=1_B. To derive g after f=1_A, match the two maps in Hom(A,A) whose images under Hom(A,f) agree. Bank: 1=g after f; 2=f after g; 3=1_A; 4=1_B. Give the two bank numbers in order, composite first."
+            answer: "1, 3"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Both gf and 1_A have image f by the right inverse equation. Injectivity of the A-component identifies them, completing the inverse proof. The result is 1, 3."
+          - problem: "In Set f:{0,1,2}->{0,1,2} has values [0, 0, 2]. To apply the generalized-point isomorphism criterion, test Hom(X,f) for X a singleton and for X={0,1}. For each X give injectivity then surjectivity, followed by the number of maps g with f after g=identity and the number also satisfying g after f=identity. Derive the induced Hom maps rather than taking f itself as the test."
+            answer: "0, 0, 0, 0, 0, 0"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "The criterion concerns postcomposition on every generalized-point set. Surjectivity at the codomain lifts its identity to a right inverse; injectivity at the domain then forces the other inverse equation. The explicit Hom maps test these two distinct steps. The result is 0, 0, 0, 0, 0, 0."
+          - problem: "Step 1: each component of y(f) is a bijection. Step 2: its inverse natural transformation lifts to g by fullness of y. Step 3: y(gf)=1_yA and y(fg)=1_yB. Step 4: fullness alone implies gf=1_A and fg=1_B. Which step is the first whose assertion or stated reason fails?"
+            answer: "Step 4"
+            answer_contract: {"kind": "label", "options": [["All valid"], ["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Lifting the inverse uses fullness; reflecting the two equality equations uses faithfulness. Fullness alone cannot justify Step 4. This is the first unsupported step."
+          - problem: "Suppose theta:y(A)=>y(B) is a natural isomorphism. Reconstruct the inducing inverse arrows by identity evaluation. Bank: 1=theta_A(1_A); 2=theta_B(1_B); 3=theta inverse_A(1_A); 4=theta inverse_B(1_B). Give first the arrow A->B and then B->A."
+            answer: "1, 4"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "The component domain must contain the identity being evaluated. These two identity values induce inverse arrows by full faithfulness. The result is 1, 4."
           - problem: "Write the full proof: for objects A and B of a category C, A is isomorphic to B if and only if the presheaves y(A) and y(B) are isomorphic in the presheaf category. Then compare with the solution."
             answer: "See the solution."
             answer_contract: {"kind": "none"}
@@ -685,10 +685,10 @@ topics:
             answer: "verdict = yes; count = 2"
             answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "count"}]}
             solution_sketch: "By the definition for a covariant functor, a morphism (A, 2) -> (B, 6) is an arrow from A to B whose action sends 2 to 6. The arrow f qualifies, since Ff sends 2 to 6, so the verdict is yes. The arrow g also qualifies, since Fg sends 2 to 6, and f and g are the only arrows from A to B. Thus there are 2 morphisms in total, and the answer is verdict = yes; count = 2."
-          - problem: "Let F be a covariant functor from a category C to Set. A student writes: Step 1: an object of the category of elements is a pair (C, x) with x an element of FC. Step 2: a morphism (C, x) -> (D, y) is a map f from C to D with Ff(y) = x. Step 3: the identity morphism on (C, x) is id_C, because F(id_C)(x) = x. Step 4: the composite of two morphisms is the composite of the underlying maps in C. Which step is the first step that is not valid?"
+          - problem: "For covariant F:C->Set, Step 1: objects are (C,x) with x in F(C). Step 2: an arrow (C,x)->(D,y) is f:C->D with F(f)(y)=x. Step 3: identities lift using the functor identity law. Step 4: composites lift using its composition law. Which step is the first whose assertion or stated reason fails?"
             answer: "Step 2"
-            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
-            solution_sketch: "Step 1 correctly states the objects as pairs (C, x) with x in FC. Step 3 is valid, since F(id_C)(x) = x holds for a covariant F, so id_C is indeed the identity morphism. Step 4 is valid, since identities and composition are inherited from C. Step 2 is the error: for a covariant F the condition must be Ff(x) = y, and the student reversed the variance, writing the presheaf condition instead. The answer is Step 2."
+            answer_contract: {"kind": "label", "options": [["All valid"], ["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "The covariant arrow action F(f) has domain F(C), so the element equation is F(f)(x)=y. This is the first unsupported step."
           - problem: "Write the full proof: for a covariant functor F from a category C to Set, the pairs (C, x) with x in FC, with morphisms (C, x) -> (D, y) given by maps f from C to D satisfying Ff(x) = y, form a category, and the projection sending (C, x) to C and each f to itself is a functor to C. Then compare with the solution."
             answer: "See the solution."
             answer_contract: {"kind": "none"}
@@ -714,10 +714,10 @@ topics:
             answer: "2"
             answer_contract: {"kind": "exact"}
             solution_sketch: "List the objects of the category of elements: (0, 5), (1, 2), (1, 3), (1, 4). Terminal-object test: a morphism from (C, x) to (1, 2) is an arrow f from C to 1 with (F f)(2) = x. From (0, 5) the arrow from 0 to 1 works, since it sends 2 to 5; from (1, 2) the identity works; from (1, 3) and (1, 4) nothing works, since the only arrow from 1 to 1 is the identity, which sends 2 to 2. Count: 2 objects admit no morphism to the candidate, so the exists clause fails and (1, 2) is not terminal. The answer is 2."
-          - problem: "Claim: a certain covariant functor F from the poset 0 < 1 to Set is representable, where F(0) = {7}, F(1) = {8, 9}, and the arrow from 0 to 1 acts by sending 7 to 8. Step 1: the only object of the category of elements over 0 is (0, 7), so the only candidate initial object is (0, 7). Step 2: the identity on 0 gives the unique morphism from (0, 7) to itself. Step 3: the arrow from 0 to 1 sends 7 to 8, so it gives a morphism from (0, 7) to every object over 1. Step 4: every object receives a unique morphism from (0, 7), so (0, 7) is initial and F is representable. Which step is the first step that is not valid?"
+          - problem: "F:(0<1)->Set has F(0)={7},F(1)={8,9},F(0->1)(7)=8. Step 1: the only possible initial element object is (0,7). Step 2: it has a unique identity arrow to itself. Step 3: it has an arrow to every element object over 1. Step 4: F is represented by that initial object. Which step is the first whose assertion or stated reason fails?"
             answer: "Step 3"
-            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
-            solution_sketch: "Step 1 is valid: (0, 7) is indeed the only object over 0. Step 2 is valid: the identity gives the unique morphism from (0, 7) to itself. Step 3 is the first invalid step: the arrow sends 7 to 8, so it yields a morphism to (1, 8), but none to (1, 9), and (1, 9) is an object over 1; the word 'every' is false. Step 4 inherits the error: the exists clause fails at (1, 9), so (0, 7) is not initial. The answer is Step 3."
+            answer_contract: {"kind": "label", "options": [["All valid"], ["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "There is no element-category morphism from (0,7) to (1,9). Thus the required exists clause fails. This is the first unsupported step."
           - problem: "Let B be the category with two objects a and b, the identity arrows, and exactly three further arrows f, g, h, each from a to b. Let F be the covariant functor from B to Set with F(a) = {1}, F(b) = {2, 3}, where each of f, g, h acts by sending 1 to 2. A student checks the exists clause for the candidate initial object (a, 1) and then examines the uniqueness clause for the object (b, 2). How many morphisms of the category of elements go from (a, 1) to (b, 2)?"
             answer: "3"
             answer_contract: {"kind": "exact"}
@@ -761,32 +761,32 @@ topics:
       - id: kp1
         name: Uniqueness of adjoints
         key_prerequisites: [yoneda-lemma]
-        constraints: "Chain hom-set bijections into a natural isomorphism of representables, then invoke full faithfulness of the Yoneda embedding; instances limited to free-forgetful adjunctions over $\\mathbf{Set}$, and 'canonically' must be cashed out as 'by a unique isomorphism compatible with the units, natural in the argument'."
+        constraints: "Chain adjunction bijections into a natural isomorphism of representables. Recover the unique unit-compatible comparison and inverse in free-forgetful examples, including differently presented generator insertions."
         exemplars:
-          - problem: "Let W be the monoid of all words over the alphabet X = {a, b, c}, a construction of the free monoid on the 3-element set X, left adjoint to the underlying set functor U from monoids to sets; the insertion maps send each letter of X to the one-letter word that it spells. Let M be a monoid with 2 elements. By the universal property, a monoid homomorphism from W to M is determined by its values on the letters of X, and every choice of values extends uniquely. How many homomorphisms from W to M are there? Give the number only."
-            answer: "8"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Full object: the hom-set of monoid homomorphisms from W to M. Step 1 (adjunction bijection): since W is the free monoid on X, the adjunction identifies monoid homomorphisms from W to M with functions from X to the underlying set of M. Step 2 (counting functions): each of the 3 letters has 2 possible images, giving 2^3 = 8 functions. Step 3 (Yoneda conclusion, the method of this KP): the bijection is natural in the target monoid, so any other construction of the free monoid on X gives a natural isomorphism of the representable functors, and full faithfulness of the Yoneda embedding yields a unique isomorphism compatible with the insertions. The answer is 8."
-          - problem: "Dually to the uniqueness of left adjoints, right adjoints are unique up to natural isomorphism. Let F send each set X to the monoid of all words over X, and let G be a right adjoint of F, so that monoid homomorphisms from F(X) to M correspond naturally to functions from X to the set G(M). Let X be a 2-element set, and suppose there are exactly 16 monoid homomorphisms from F(X) to M. How many elements does the set G(M) have? Give the number only."
-            answer: "4"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Full object: the set G(M), whose size is read off the adjunction bijection. Step 1 (adjunction bijection for the right adjoint): the correspondence identifies the 16 homomorphisms from F(X) to M with the functions from X to G(M). Step 2 (counting functions): the functions from a 2-element set to G(M) are as many as the square of the size of G(M), and this square is 16, so G(M) has 4 elements. Step 3 (dual Yoneda conclusion, the method of this KP): the representable functors Hom(-, G(M)) and Hom(-, U(M)) are naturally isomorphic, and full faithfulness of the contravariant Yoneda embedding gives a unique isomorphism, which is the dual uniqueness of right adjoints. The answer is 4."
-          - problem: "Let V be a construction of the free vector space over the field with 2 elements on the 4-element set X, left adjoint to the underlying set functor from vector spaces over that field to sets; the insertion maps send each element of X to a basis vector. Let K be the field with 2 elements, viewed as a vector space over itself. By the universal property, a linear map from V to K is determined by its values on the inserted basis vectors, and every choice of values extends uniquely. How many linear maps from V to K are there? Give the number only."
-            answer: "16"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Full object: the set of linear maps from V to K, identified by the free-forgetful adjunction with the functions from X to the underlying set of K. Step 1 (adjunction bijection): a linear map out of the free vector space is determined by the images of the 4 inserted basis vectors, and every choice extends uniquely, so linear maps from V to K correspond to functions from X to K. Step 2 (counting): each of the 4 elements of X has 2 possible images in K, giving 2^4 = 16. Step 3 (Yoneda conclusion, the method of this KP): the bijection is natural in the target, so any other construction of the free vector space gives a natural isomorphism of representables, and full faithfulness of the Yoneda embedding yields a unique isomorphism compatible with the insertions. The answer is 16."
+          - problem: "Two functors F and Fprime are left adjoint to G, with units eta and etaprime. At fixed C,D, Phi:Hom(FC,D)->Hom(C,GD) and Psi:Hom(Fprime C,D)->Hom(C,GD) have numbered-arrow lists [1, 2, 0] and [0, 2, 1]. Recover the natural isomorphism Hom(FC,D)->Hom(Fprime C,D) compatible with generator maps, and its inverse. Then evaluate this isomorphism at the identity when D=FC and that identity has number 0. Give forward list, inverse list, identity image. The comparison correspondence itself is not supplied."
+            answer: "2, 1, 0, 2, 1, 0, 2"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Chain the first adjunction bijection with the inverse of the second, so the same generator map is retained. Identity evaluation via Yoneda recovers the unique comparison between representing free objects, and the reverse chain proves it invertible. The result is 2, 1, 0, 2, 1, 0, 2."
+          - problem: "Two functors F and Fprime are left adjoint to G, with units eta and etaprime. At fixed C,D, Phi:Hom(FC,D)->Hom(C,GD) and Psi:Hom(Fprime C,D)->Hom(C,GD) have numbered-arrow lists [2, 0, 1] and [1, 0, 2]. Recover the natural isomorphism Hom(FC,D)->Hom(Fprime C,D) compatible with generator maps, and its inverse. Then evaluate this isomorphism at the identity when D=FC and that identity has number 1. Give forward list, inverse list, identity image. The comparison correspondence itself is not supplied."
+            answer: "2, 1, 0, 2, 1, 0, 1"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Chain the first adjunction bijection with the inverse of the second, so the same generator map is retained. Identity evaluation via Yoneda recovers the unique comparison between representing free objects, and the reverse chain proves it invertible. The result is 2, 1, 0, 2, 1, 0, 1."
+          - problem: "Let F,Fprime:Set->Mon both be left adjoint to U, with their specified adjunction bijections Phi and Psi. Audit the Yoneda proof of uniqueness. Step 1: Psi inverse after Phi defines a natural isomorphism theta:Hom(FX,-)=>Hom(Fprime X,-). Step 2: full faithfulness of covariant representables produces q:FX->Fprime X with theta_D(h)=h after q. Step 3: the inverse natural isomorphism represents the reverse comparison. Step 4: faithfulness applied to the two composite transformations proves the comparisons inverse, and naturality in X gives a natural isomorphism of adjoints. Which step is the first whose assertion or stated reason fails?"
+            answer: "Step 2"
+            answer_contract: {"kind": "label", "options": [["All valid"], ["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Identity evaluation sends theta to an arrow Fprime X->FX, because covariant representables reverse the representing arrow. The inverse chain gives FX->Fprime X; full faithfulness then supplies invertibility, uniqueness, and naturality. This is the first unsupported step."
           - problem: "Let W be the monoid of all words over the 2-letter alphabet X = {a, b}, and let L be the monoid of all finite lists of elements of X under concatenation; both are constructions of the free monoid on X, each left adjoint to the underlying set functor, with insertions sending the letter a to the one-letter word a and to the one-element list, and the letter b likewise. An isomorphism from W to L is compatible with the insertions when it sends each one-letter word to the matching one-element list. How many isomorphisms from W to L are compatible with both insertions? Give the number only."
             answer: "1"
             answer_contract: {"kind": "exact"}
             solution_sketch: "Full object: the set of isomorphisms from W to L that are compatible with the two insertions. Step 1 (all isomorphisms): a monoid isomorphism between the free monoids on 2 generators must send the two one-letter words onto the two one-element lists, in either order, so there are 2 isomorphisms in total. Step 2 (imposing compatibility): a compatible one must send the word a to the list containing a alone and the word b to the list containing b alone, which rules out the order-swapping isomorphism. Step 3 (Yoneda uniqueness, the method of this KP): the surviving isomorphism is exactly the one that full faithfulness of the Yoneda embedding produces from the natural isomorphism of the representables, the precise meaning of canonically as a unique isomorphism compatible with the insertions, natural in the argument. The answer is 1."
-          - problem: "A student argues that the words construction W and the lists construction L of the free monoid on a set X are uniquely isomorphic. Step 1: both W and L are left adjoint to the underlying set functor U, with insertions of the elements of X. Step 2: for every monoid M, each adjunction gives a bijection from homomorphisms out of the construction to functions from X to the underlying set of M, natural in M. Step 3: therefore the two representable functors Hom(W, -) and Hom(L, -) are naturally isomorphic. Step 4: because the Yoneda embedding is faithful, this natural isomorphism is induced by a unique isomorphism from W to L, and it is compatible with the two insertions. Which step is the first step that is not valid?"
-            answer: "Step 4"
-            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
-            solution_sketch: "Option Step 1 is a correct setup: both constructions are left adjoint to the same underlying set functor, so choosing it mistakes the shared hypothesis for a flaw. Option Step 2 is a correct use of the adjunction hom-set bijection, natural in the target monoid. Option Step 3 is correct: the two bijections compose into a natural isomorphism of the representable functors Hom(W, -) and Hom(L, -). Option Step 4 is the first invalid step: faithfulness only makes the Yoneda embedding injective on hom-sets, whereas the conclusion that the natural isomorphism is induced by a unique isomorphism requires the embedding to be full as well, that is, fully faithful, and compatibility with the insertions must be read off through the chain. The answer is Step 4."
-          - problem: "Consider the standard Yoneda proof that left adjoints are unique up to a unique isomorphism. Line 1: for every object X and every object D there is a bijection from Hom(F(X), D) to Hom(X, G(D)), natural in D. Line 2: for every object X and every object D there is a bijection from Hom(X, G(D)) to Hom(F'(X), D), natural in D. Line 3: hence the functors Hom(F(X), -) and Hom(F'(X), -) are naturally isomorphic. Which earlier lines does Line 3 rely on? Select one."
-            answer: "both bijections"
-            answer_contract: {"kind": "label", "options": [["the first bijection"], ["the second bijection"], ["both bijections"], ["neither bijection"]]}
-            solution_sketch: "Option 'the first bijection' is wrong because Line 3 needs both natural bijections to identify the two representables. Option 'the second bijection' is wrong for the same reason in the other direction. Option 'neither bijection' is wrong because the composite of the two bijections is exactly what makes the representables naturally isomorphic. The correct choice is 'both bijections': Line 3 composes the bijection of Line 1 with the bijection of Line 2, and the following line then applies full faithfulness of the Yoneda embedding, which is the step where this KP's method is used. The answer is both bijections."
+          - problem: "For free constructions W,L left adjoint to U, Step 1: both supply natural bijections from maps out to generator assignments. Step 2: chaining them gives Hom(W,-) naturally isomorphic to Hom(L,-). Step 3: Yoneda faithfulness alone supplies a morphism inducing that isomorphism. Step 4: it is the unique unit-compatible isomorphism. Which step is the first whose assertion or stated reason fails?"
+            answer: "Step 3"
+            answer_contract: {"kind": "label", "options": [["All valid"], ["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Existence of an inducing arrow requires fullness. Faithfulness then gives uniqueness and reflects the inverse equations. This is the first unsupported step."
+          - problem: "Let F,Fprime:Set->Mon both be left adjoint to U. For X={a,b}, FX consists of words in symbols p,q, with unit a->p,b->q; Fprime X consists of words in symbols r,s, with unit a->s,b->r. Their adjunction bijections send a homomorphism to its composite with the stated unit. Construct the natural isomorphism theta:Hom(FX,-)=>Hom(Fprime X,-) by chaining these bijections. Use identity evaluation in Yoneda to recover q:Fprime X->FX and the comparison r:FX->Fprime X represented by the inverse chain; establish from naturality that these are inverse and unit-compatible. Give q(rsr) and r(pqq), then the number of pairs of comparison homomorphisms with these requirements. Encode p=1,q=2 in the first output word and r=3,s=4 in the second; list all six letters followed by the number."
+            answer: "2, 1, 2, 4, 3, 3, 1"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "The chain is Psi inverse after Phi, so evaluating at the identity of FX gives the reversed representing arrow q. The inverse chain gives r; naturality identifies their composites with the identity transformations, and Yoneda faithfulness makes the arrows inverse. Each comparison must carry the given unit to the other, fixing every generator image and its extension uniquely. The result is 2, 1, 2, 4, 3, 3, 1."
           - problem: "Write the full proof: if the functors F and F' are both left adjoint to the same functor G, then for every object X there is a unique isomorphism from F(X) to F'(X) compatible with the two insertions, and these isomorphisms are natural in X. Then compare with the solution."
             answer: "See the solution."
             answer_contract: {"kind": "none"}
@@ -794,32 +794,32 @@ topics:
       - id: kp2
         name: Cayley's theorem as a shadow of Yoneda
         key_prerequisites: [yoneda-embedding]
-        constraints: "The one-object Yoneda embedding for a monoid or a group: give the map $m\\mapsto(x\\mapsto mx)$ explicitly, deduce injectivity by evaluating at the unit, and name the target ($\\mathrm{End}(M)$ for a monoid, $\\mathrm{Sym}(G)$ for a group)."
+        constraints: "Construct the regular representation from one-object Yoneda, verify multiplication through composition, and recover elements by unit evaluation. Distinguish the monoid endomorphism target from the group permutation target."
         exemplars:
-          - problem: "Let M be the two-element monoid with elements 1 and 0, where 1 is the unit and 0 times any element gives 0. The one-object Yoneda embedding sends m to the function L_m with L_m(x) = mx, a member of End(M). Give the list of values L_0(1), L_0(0), in that order."
+          - problem: "The monoid M={1,0} has identity 1 and absorbing element 0. Regard it as a one-object category and construct its Yoneda regular representation into functions M->M. Give the function assigned to 0 as its value list at 1,0."
             answer: "0, 0"
             answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
             solution_sketch: "The embedding sends m to the function L_m with L_m(x) = mx on M, so the full object is L_0, the function x maps to 0x. Apply the monoid rule that 0 times any element gives 0: L_0(1) = 0 and L_0(0) = 0. The list of values is 0, 0."
-          - problem: "Let G be the cyclic group with elements 0, 1, 2, 3, 4 under addition mod 5. The one-object Yoneda embedding sends g to the permutation L_g with L_g(x) = x + g, a member of Sym(G). Give the list of values L_2(0), L_2(1), L_2(2), L_2(3), L_2(4), in that order."
+          - problem: "Regard Z/5 under addition as a one-object category. Construct the regular permutation assigned to arrow 2 by its Yoneda embedding. Give its values on 0,1,2,3,4."
             answer: "2, 3, 4, 0, 1"
             answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
             solution_sketch: "The embedding sends g to the permutation L_g with L_g(x) = x + g, so the full object is L_2, the shift of the whole group by 2. Apply addition mod 5 to each input: L_2(0) = 2, L_2(1) = 3, L_2(2) = 4, L_2(3) = 0, L_2(4) = 1. The list of values is 2, 3, 4, 0, 1."
-          - problem: "In the cyclic group with elements 0, 1, 2, 3 under addition mod 4, the embedding sends g to L_g with L_g(x) = x + g, a permutation in Sym(G). Applying L_2 a total of k times sends x to x + 2k. Give the smallest positive k for which L_2 applied k times is the identity permutation."
-            answer: "2"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "L_2 sends x to x + 2 mod 4, and applied k times it sends x to x + 2k mod 4. The shift fixes every element exactly when 4 divides 2k, and the smallest positive such k is 2, which is the order of the element 2. The answer is 2."
-          - problem: "In the cyclic group with elements 0, 1, 2, 3, 4, 5 under addition mod 6, the embedding sends g to L_g with L_g(x) = x + g in Sym(G). The composite L_3(L_4(x)) equals L_g(x) for exactly one element g of the group. Give g."
-            answer: "1"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Compose the two shifts: L_3(L_4(x)) = (x + 4) + 3 = x + 7. Reduce mod 6: x + 7 = x + 1, so the composite is L_1. This is the homomorphism rule, the composite of L_a after L_b is L_{a+b}, which the embedding inherits from composition. The answer is 1."
-          - problem: "Claim: for a group G with identity e, the map sending g to L_g with L_g(x) = gx into Sym(G) is one-to-one. Step 1: assume L_g = L_h. Step 2: evaluate at e. Step 3: this gives L_g(e) = ge = g and L_h(e) = h, so g = h. Step 4: therefore the map is onto Sym(G). Which step is the first step that is not valid?"
+          - problem: "For the one-object category Z/4, construct the regular representation from composition and verify the order of the permutation assigned to 2. Give the permutation values at 0,1,2,3, followed by its least positive identity power."
+            answer: "2, 3, 0, 1, 2"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "Yoneda assigns composition by the chosen group arrow. The homomorphism property transports its powers to permutation powers. The result is 2, 3, 0, 1, 2."
+          - problem: "Let M={e,z} with z absorbing. Construct its regular representation into End(M), encoding e=0,z=1. Give the set of monoid elements whose represented functions are permutations."
+            answer: "{0}"
+            answer_contract: {"kind": "set"}
+            solution_sketch: "The Yoneda representation is faithful for every monoid, but invertible represented functions occur precisely for units in this finite example. The result is {0}."
+          - problem: "For the regular representation G->Sym(G), Step 1: assume L_g=L_h. Step 2: evaluate both functions at the identity. Step 3: conclude g=h. Step 4: therefore the representation is surjective for every group. Which step is the first whose assertion or stated reason fails?"
             answer: "Step 4"
-            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
-            solution_sketch: "Step 1 is valid: assuming the two images are equal is the correct setup for one-to-one. Step 2 is valid: evaluating at the unit e is exactly the Yoneda argument. Step 3 is valid: L_g(e) = ge = g and L_h(e) = h, so g = h follows. Step 4 is not valid: g = h shows the map is one-to-one, not that it is onto, and for a group with three elements Sym(G) has six members but only three maps L_g. The answer is Step 4."
-          - problem: "A monoid M has unit e. The Yoneda map sends each m to L_m, where L_m(x) = mx lies in End(M). To see it is one-to-one, suppose L_m and L_n are equal as functions. A line is missing before the conclusion that the elements agree. Select the missing line."
-            answer: "Evaluate at e: L_m(e) = me = m and L_n(e) = ne = n, so m = n"
-            answer_contract: {"kind": "label", "options": [["Evaluate at e: L_m(e) = me = m and L_n(e) = ne = n, so m = n"], ["Count how many members M has and compare sizes"], ["Check L_m maps M onto M without fail"], ["Compose L_m with L_n and test if e comes out"]]}
-            solution_sketch: "The Yoneda argument evaluates at the unit: L_m(e) = me = m and L_n(e) = ne = n, so if the two functions are equal, evaluation at e forces m = n. The option 'Count how many members M has and compare sizes' errs: sizes cannot decide whether two functions agree at every input. The option 'Check L_m maps M onto M without fail' errs: onto is not the issue, and left multiplication by a non-unit is not onto. The option 'Compose L_m with L_n and test if e comes out' errs: the composite is L_{nm} and tests nothing about equality of L_m and L_n. The answer is Evaluate at e: L_m(e) = me = m and L_n(e) = ne = n, so m = n."
+            answer_contract: {"kind": "label", "options": [["All valid"], ["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Identity evaluation proves injectivity. For a three-element group the regular image has three permutations while its full symmetric group has six, refuting surjectivity. This is the first unsupported step."
+          - problem: "A monoid representation rho:M->End(S) is injective if equality rho(m)=rho(n) can recover m=n. A proof asserts that evaluation at any chosen point works for the regular representation. Test M={e,z} with z absorbing at points e and z. Give the number of distinct values of m->rho(m)(e), then of m->rho(m)(z), then 1 if the assertion about any point is true,0 otherwise. Derive rho from one-object Yoneda."
+            answer: "2, 1, 0"
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: "The regular representation acts by left multiplication. Evaluation at the unit recovers each monoid element; an absorbing point can collapse every value, so the unit is essential to this faithfulness proof. The result is 2, 1, 0."
           - problem: "Write the full proof: for a monoid M with unit e, the map sending m to L_m with L_m(x) = mx is an injective monoid homomorphism from M to End(M), and it is the one-object Yoneda embedding. Then compare with the solution."
             answer: "See the solution."
             answer_contract: {"kind": "none"}
