@@ -1490,12 +1490,34 @@ topics:
         name: "Existence and uniqueness together"
         key_prerequisites: [existence-proofs]
         exemplars:
-          - problem: 'Prove: there is exactly one real number $x$ with $x^3 = 8$.'
-            answer: 'Existence: $x = 2$. Uniqueness: $x^3 = y^3$ gives $(x - y)(x^2 + xy + y^2) = 0$, and the quadratic factor is positive unless $x = y = 0$.'
-            solution_sketch: 'Existence: $2^3 = 8$. Uniqueness: if $x^3 = y^3 = 8$ then $x^3 - y^3 = (x - y)(x^2 + xy + y^2) = 0$. For $x, y$ not both $0$, $x^2 + xy + y^2 = (x + \tfrac{y}{2})^2 + \tfrac{3y^2}{4} > 0$, so $x = y$. $\square$'
-          - problem: 'Prove: there is a unique real number $x$ such that $x + a = a$ for every real $a$.'
-            answer: 'Existence: $x = 0$. Uniqueness: if $x$ and $x''$ both work, $x = x + x'' = x''$.'
-            solution_sketch: 'Existence: $0 + a = a$ always. Uniqueness: suppose $x$ and $x''$ both satisfy the property. Then $x'' = x'' + x$ (using the property of $x$ at $a = x''$) and $x = x + x'' = x''$ by commutativity and the property of $x''$ at $a = x$. Hence $x = x''$. $\square$'
+          - problem: "Claim: there is exactly one real number $x$ with $x^3 = 8$. For the uniqueness part, suppose $x$ and $y$ are real numbers with $x^3 = 8$ and $y^3 = 8$, so $x^3 - y^3 = 0$. Write $x^3 - y^3 = (x - y)\\,q(x, y)$ with a polynomial $q$, and give $q(x, y)$."
+            answer: "x^2+xy+y^2"
+            answer_contract: {"kind": "function", "vars": ["x", "y"]}
+            solution_sketch: "Full object: the two-candidate hypothesis of the uniqueness part, $x^3 = 8$ and $y^3 = 8$, giving $x^3 - y^3 = 0$. Rule: the difference of cubes factorization, which is the step where the uniqueness half of the existence-and-uniqueness method acts. Expanding, $(x - y)(x^2 + xy + y^2) = x^3 - y^3$, so the factor is $q(x, y) = x^2 + xy + y^2$. The answer is x^2+xy+y^2."
+          - problem: "Claim: there is exactly one real number $x$ such that $x + a = a$ for every real number $a$. In the uniqueness part, suppose $x$ and $y$ are two real numbers each having this property. Substituting $a = y$ into the property of $x$ gives one equation in $x$ and $y$. Solve that equation for $x$ and give the value of $x$."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: the property 'for every real $a$, $x + a = a$', held by both candidates $x$ and $y$ in the uniqueness part. Rule: the uniqueness half of the existence-and-uniqueness method substitutes each candidate's value into the other candidate's property. Substituting $a = y$ into $x + a = a$ gives $x + y = y$, and subtracting $y$ from both sides gives $x = 0$. The answer is 0."
+          - problem: "A student claims that for every real number $c$, the equation $x^2 = c$ has exactly one real solution. The existence part holds for $c > 0$, but the uniqueness part fails for some $c$. Give the smallest positive integer $c$ for which the claim fails."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: the claim that $x^2 = c$ has exactly one real solution for every real $c$. Rule: split the claim into existence and uniqueness and test each part; this checks the uniqueness half of the existence-and-uniqueness method. For $c = 1$ the equation has the two distinct solutions $x = 1$ and $x = -1$, so uniqueness fails, and no smaller positive integer exists. The answer is 1."
+          - problem: "Claim: there is exactly one real number $x$ with $4x + 8 = 0$. A student argues: Step 1: $x = -2$ satisfies the equation, so a solution exists. Step 2: suppose $4x + 8 = 0$ and $4y + 8 = 0$. Step 3: subtracting gives $4(x - y) = 8$, so $x - y = 2$ and the solution is not unique. Give a verdict on the student's uniqueness argument, and give the true value of $x - y$ under the two assumptions of Step 2."
+            answer: "verdict = invalid; gap = 0"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["valid"], ["invalid"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "gap"}]}
+            solution_sketch: "Full object: the student's three-step uniqueness argument for $4x + 8 = 0$. Rule: the uniqueness half of the existence-and-uniqueness method subtracts the two candidate equations. Subtracting $4y + 8 = 0$ from $4x + 8 = 0$ gives $4x - 4y = 0$, that is $4(x - y) = 0$, so the student's Step 3 is wrong and the verdict is invalid; the gap is $0$. The wrong option valid comes from accepting the flawed subtraction in Step 3. The answer is verdict = invalid; gap = 0."
+          - problem: "Claim: there is exactly one real number $x$ with $2x + 6 = 0$. A student writes: Step 1: $x = -3$ satisfies $2(-3) + 6 = 0$, so a solution exists. Step 2: suppose $x$ and $y$ both satisfy $2x + 6 = 0$. Step 3: subtracting gives $2(x - y) = 0$. Step 4: since a product is zero only when both factors are zero, $x = 0$ and $y = 0$. Which step is the first step that is not valid?"
+            answer: "Step 4"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Full object: the student's four-step uniqueness argument for $2x + 6 = 0$. Step 1 is a valid existence check, Step 2 is the correct two-candidate hypothesis of the uniqueness half of the existence-and-uniqueness method, and Step 3 is a correct subtraction. Step 4 is the first invalid step: the zero product property says a product is zero when at least one factor is zero, and $2 \\ne 0$, so $2(x - y) = 0$ forces $x - y = 0$, not $x = 0$ and $y = 0$. Step 3 is not the answer because its subtraction is correct. The answer is Step 4."
+          - problem: "Claim: there is exactly one real number $x$ with $3x - 9 = 0$. In the uniqueness part, suppose $3x - 9 = 0$ and $3y - 9 = 0$. One more line is needed before the conclusion $x = y$. Select the line that is true and that lets the proof conclude $x = y$."
+            answer: "3(x - y) = 0"
+            answer_contract: {"kind": "label", "options": [["3(x - y) = 0"], ["3(x - y) = 9"], ["x - y = 9"], ["3(x + y) = 0"]]}
+            solution_sketch: "Full object: the two-candidate hypothesis $3x - 9 = 0$ and $3y - 9 = 0$ of the uniqueness half of the existence-and-uniqueness method. Rule: subtract the second equation from the first to get $3x - 3y = 0$, that is $3(x - y) = 0$, then divide by $3$ to conclude $x = y$. The option $3(x - y) = 9$ is the error of forgetting that the constants $-9$ cancel. The option $x - y = 9$ drops the factor $3$ and keeps the constant. The option $3(x + y) = 0$ is the error of adding the equations instead of subtracting. The answer is 3(x - y) = 0."
+          - problem: "Write the full proof: for every real number $b$, there is exactly one real number $x$ with $5x + b = 0$. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1 (existence): let $x = -b/5$. Then $5x + b = 5(-b/5) + b = -b + b = 0$, so a solution exists for this $b$; this discharges the existence half of the existence-and-uniqueness claim. Step 2 (uniqueness setup): suppose $x$ and $y$ are two real numbers with $5x + b = 0$ and $5y + b = 0$; this two-candidate hypothesis is the uniqueness half of the method. Step 3 (subtract): subtracting the second equation from the first gives $5x - 5y = 0$, that is $5(x - y) = 0$. Step 4 (conclude): since $5 \\ne 0$, dividing gives $x - y = 0$, hence $x = y$. Therefore the solution is unique, and together with Step 1 there is exactly one real solution, $x = -b/5$, for every real number $b$."
         constraints: "state the $\\exists!$ claim as existence plus uniqueness and prove both parts"
     diagnostic_exemplar:
       problem: 'Prove that there is exactly one real number $x$ with $x^3 + x = 10$.'
