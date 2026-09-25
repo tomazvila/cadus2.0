@@ -22,6 +22,7 @@ import { createDemoDiagApi } from './diag';
 import type {
   ApiClient,
   DiagnosisJob,
+  EquivalencePoll,
   PlanTask,
   RetentionRow,
   ServedProblem,
@@ -397,6 +398,8 @@ export function createDemoApi(): ApiClient {
 
     getDiagnosis: async (diagnosisId): Promise<DiagnosisJob> =>
       refuse(404, 'unknown_diagnosis', `The demo wrote no job ${diagnosisId}.`),
+    getEquivalence: async (equivalenceId): Promise<EquivalencePoll> =>
+      refuse(404, 'unknown_diagnosis', `The demo wrote no check ${equivalenceId}.`),
     // The demo serves no stream. An `EventSource` on this path fails at once, and the
     // panel falls back to the poll, which refuses — the same path a dropped SSE takes.
     diagnosisStreamUrl: () => '/api/diagnosis/stream',

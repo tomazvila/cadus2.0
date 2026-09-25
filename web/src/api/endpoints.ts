@@ -13,6 +13,7 @@ import type {
   ApiClient,
   ApproveResponse,
   DiagnosisJob,
+  EquivalencePoll,
   EnrollResponse,
   GraphResponse,
   HealthResponse,
@@ -168,6 +169,9 @@ export const api: ApiClient = {
   // --- The async diagnosis (A4) -------------------------------------------
   getDiagnosis: (diagnosisId) =>
     request<DiagnosisJob>('GET', `/diagnosis/${seg(diagnosisId)}`),
+  // The poll of a background equivalence check (Amendment K, note 114).
+  getEquivalence: (equivalenceId) =>
+    request<EquivalencePoll>('GET', `/equivalence/${seg(equivalenceId)}`),
   // One subscription per session, not per problem. `EventSource` sends the cookie on a
   // same-origin URL, so this carries no credential either.
   diagnosisStreamUrl: () => '/api/diagnosis/stream',

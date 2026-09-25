@@ -138,6 +138,7 @@ mod submission;
 mod timing;
 mod verdict;
 
+use crate::equivalence;
 use advance::*;
 use reply::*;
 pub use route::answer;

@@ -108,6 +108,13 @@ export function Feedback({
         </div>
       ) : null}
 
+      {/* Amendment K (note 114): a refused answer is also checked in the
+          background; the model's one-line reason rides beside the solution. */}
+      {res.equivalence?.status === 'pending' ? (
+        <p className="feedback-reason muted" role="status">Your answer is being checked. The verdict on this page updates when the check lands.</p>
+      ) : null}
+      {res.equivalence_reason ? <p className="feedback-reason muted">Checked: {res.equivalence_reason}</p> : null}
+
       {res.re_solve ? <p className="re-solve muted">{res.re_solve}</p> : null}
 
       {res.remediation.length ? (

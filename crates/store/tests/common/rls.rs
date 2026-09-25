@@ -19,7 +19,7 @@ use uuid::Uuid;
 ///
 /// The order is the `C` collation order of `pg_class.relname`, because the
 /// catalog queries below order by that column.
-pub const RLS_TABLES: [&str; 18] = [
+pub const RLS_TABLES: [&str; 19] = [
     "anki_cards_created",
     "anki_queue",
     "auth_sessions",
@@ -27,6 +27,7 @@ pub const RLS_TABLES: [&str; 18] = [
     "diag_states",
     "diagnosis_jobs",
     "email_outbox",
+    "equivalence_jobs",
     "events",
     "exposure_history_progress",
     "learner_models",
@@ -46,7 +47,7 @@ pub const EXEMPT_TABLES: [&str; 1] = ["model_call_log"];
 /// The union of the two lists above: every `public` table with a `user_id`
 /// column. The literal union pins that no table sits outside both buckets
 /// (finding #23).
-pub const ALL_USER_ID_TABLES: [&str; 19] = [
+pub const ALL_USER_ID_TABLES: [&str; 20] = [
     "anki_cards_created",
     "anki_queue",
     "auth_sessions",
@@ -54,6 +55,7 @@ pub const ALL_USER_ID_TABLES: [&str; 19] = [
     "diag_states",
     "diagnosis_jobs",
     "email_outbox",
+    "equivalence_jobs",
     "events",
     "exposure_history_progress",
     "learner_models",
@@ -118,7 +120,7 @@ pub const APP_SEQUENCE_PRIVILEGES: [(&str, [bool; 3]); 1] = [
 /// writes five of its columns.
 /// `app_role_privilege_matrix_is_the_literal_table` asserts the column grants
 /// separately.
-pub const APP_TABLE_PRIVILEGES: [(&str, [bool; 5]); 27] = [
+pub const APP_TABLE_PRIVILEGES: [(&str, [bool; 5]); 29] = [
     // #8: the runtime role holds nothing on the migration ledger.
     ("_sqlx_migrations", [false, false, false, false, false]),
     ("anki_cards_created", [true, true, true, true, false]),
@@ -131,6 +133,12 @@ pub const APP_TABLE_PRIVILEGES: [(&str, [bool; 5]); 27] = [
     ("diag_states", [true, true, true, true, false]),
     ("diagnosis_jobs", [true, true, true, true, false]),
     ("email_outbox", [true, true, true, true, false]),
+    // Amendment K (note 114): the request tier reads the cache and writes
+    // only the three input columns of a job; the worker owns every other
+    // column. The cache is the shared (item, normalized answer) verdict
+    // table: read-only for the runtime role.
+    ("equivalence_cache", [true, false, false, false, false]),
+    ("equivalence_jobs", [true, false, false, false, false]),
     // C2: events is append-only for the runtime role.
     ("events", [true, true, false, false, false]),
     (
@@ -296,8 +304,12 @@ pub const PUBLIC_FUNCTIONS: [(&str, bool, &str, bool, bool, bool); 11] = [
 /// therefore rewrote the authoritative event document with every C2 test green.
 /// `aw` is INSERT plus UPDATE: the two column lists of `users` in
 /// `0006_grants_rls.sql`. Neither list holds `id` or `is_admin`.
-pub const COLUMN_ACL_GRANTS: [(&str, &str, &str); 15] = [
+pub const COLUMN_ACL_GRANTS: [(&str, &str, &str); 18] = [
     // migration 0020: the exposure backfill can write the legacy cursor.
+    // migration 0024: the input-column INSERT of an equivalence job.
+    ("equivalence_jobs", "attempt_id", "cadus_app=a"),
+    ("equivalence_jobs", "payload", "cadus_app=a"),
+    ("equivalence_jobs", "user_id", "cadus_app=a"),
     ("exposure_history_progress", "target_seq", "cadus_app=w"),
     ("exposure_history_progress", "through_seq", "cadus_app=w"),
     ("exposure_history_progress", "updated_at", "cadus_app=w"),
@@ -322,7 +334,7 @@ pub const COLUMN_ACL_GRANTS: [(&str, &str, &str); 15] = [
 /// `n` is SET NULL, and `a` is NO ACTION. `events` must stay `r`: C2 says the
 /// event log outlives the account, and a flip to CASCADE erases a learner's
 /// whole history on one `DELETE FROM users` with the store suite green.
-pub const FOREIGN_KEY_DELETE_ACTIONS: [(&str, &str, &str); 24] = [
+pub const FOREIGN_KEY_DELETE_ACTIONS: [(&str, &str, &str); 25] = [
     ("anki_cards_created", "anki_cards_created_user_id_fkey", "c"),
     ("anki_queue", "anki_queue_user_id_fkey", "c"),
     ("auth_sessions", "auth_sessions_user_id_fkey", "c"),
@@ -331,6 +343,7 @@ pub const FOREIGN_KEY_DELETE_ACTIONS: [(&str, &str, &str); 24] = [
     ("diag_states", "diag_states_user_id_fkey", "c"),
     ("diagnosis_jobs", "diagnosis_jobs_user_id_fkey", "c"),
     ("email_outbox", "email_outbox_user_id_fkey", "n"),
+    ("equivalence_jobs", "equivalence_jobs_user_id_fkey", "c"),
     // C2: the log outlives the account.
     ("events", "events_attempt_handoff_fk", "a"),
     ("events", "events_user_id_fkey", "r"),

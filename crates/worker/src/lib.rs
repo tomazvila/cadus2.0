@@ -17,6 +17,7 @@
 
 pub mod authoring;
 pub mod diagnosis;
+pub mod equivalence;
 pub mod model_log;
 pub mod readiness;
 pub mod refill;
@@ -38,7 +39,8 @@ pub use authoring::job::{
 };
 pub use authoring::prompt::{AuthoringSpec, KINDS, Kind as AuthoringKind};
 pub use diagnosis::{DiagnosisJob, Outcome as DiagnosisOutcome, Report as DiagnosisReport};
-pub use model_log::{CallRecord, PURPOSE_AUTHORING, PURPOSE_DIAGNOSIS};
+pub use equivalence::{DAILY_CAP as EQUIVALENCE_DAILY_CAP, EquivalenceJob, Outcome as EquivalenceOutcome, Report as EquivalenceReport};
+pub use model_log::{CallRecord, PURPOSE_AUTHORING, PURPOSE_DIAGNOSIS, PURPOSE_EQUIVALENCE};
 pub use readiness::{
     ContractCheck, ReadinessRun, render_json as render_readiness_json,
     render_markdown as render_readiness_markdown, render_prereq_markdown, run as readiness_run,
@@ -172,7 +174,7 @@ pub enum WorkerError {
 ///   with `SELECT ... FOR UPDATE SKIP LOCKED`, so two workers never claim the
 ///   same job and neither one blocks the other.
 pub async fn run(db: &Db, cfg: &WorkerConfig, shutdown: impl Future) -> Result<u64, WorkerError> {
-    run_with(db, cfg, None, None, shutdown).await
+    run_with(db, cfg, None, None, None, shutdown).await
 }
 
 /// The batch nonce of one refill pass: the UTC clock in microseconds.
@@ -233,6 +235,7 @@ pub async fn run_with(
     cfg: &WorkerConfig,
     refill: Option<&RefillJob<'_>>,
     diagnosis: Option<&mut DiagnosisJob>,
+    equivalence: Option<&EquivalenceJob>,
     shutdown: impl Future,
 ) -> Result<u64, WorkerError> {
     let mut diagnosis = diagnosis;
@@ -328,6 +331,23 @@ pub async fn run_with(
                 }
             }
         }
+
+        // Step 6: the Amendment K equivalence pass (note 114, the owner's
+        // design). One claim, one local-model call, one end state, and the
+        // fold of an accepted verdict. An unconfigured endpoint (no local
+        // model URL) skips the pass: the learner keeps the deterministic
+        // verdict, exactly as an absent model leaves the diagnosis queue
+        // standing.
+        if let Some(job) = equivalence {
+            tokio::select! {
+                biased;
+                _ = &mut shutdown => break,
+                result = equivalence::run_once(db, job) => match result {
+                    Ok(report) => log_equivalence(&report, ticks),
+                    Err(err) => tracing::warn!(error = %err, "equivalence: the pass did not run"),
+                }
+            }
+        }
     }
 
     tracing::info!("worker: loop stops after {ticks} ticks");
@@ -347,6 +367,18 @@ fn log_diagnosis(report: &diagnosis::Report, ticks: u64) {
         job = ?report.job_id,
         http_attempts,
         "diagnosis tick={ticks}"
+    );
+}
+
+/// Log one equivalence pass that did something. An idle queue says nothing.
+fn log_equivalence(report: &equivalence::Report, ticks: u64) {
+    if report.outcome == equivalence::Outcome::Idle {
+        return;
+    }
+    tracing::info!(
+        outcome = ?report.outcome,
+        job = ?report.job_id,
+        "equivalence tick={ticks}"
     );
 }
 

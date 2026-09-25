@@ -53,6 +53,7 @@ pub mod auth;
 pub mod cookie;
 pub mod diag;
 pub mod diagnosis;
+pub mod equivalence;
 pub mod error;
 pub mod grade;
 pub mod health;
@@ -265,6 +266,9 @@ pub fn create_app(state: AppState) -> Router {
         // M5 U9: the A4 client surface. Both are GET, and both sit before the
         // three layers, so the stream carries the section 3.1 headers too.
         .merge(diagnosis::router())
+        // Amendment K (note 114): the poll route of a background equivalence
+        // check. GET, before the three layers, like the diagnosis poll.
+        .merge(equivalence::router())
         // M5 U12: the A6 operator view. It reads its own credential, and it
         // refuses every account that is not an admin.
         .route("/api/operator/flags", get(operator::flags))

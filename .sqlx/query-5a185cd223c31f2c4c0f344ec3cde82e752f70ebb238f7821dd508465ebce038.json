@@ -1,0 +1,31 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        SELECT payload->>'task_id' AS \"task_id!\",\n               payload->>'topic'   AS \"topic!\"\n          FROM events\n         WHERE user_id = $1 AND attempt_id = $2 AND type = 'attempt'\n         ORDER BY seq\n         LIMIT 1\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "task_id!",
+        "type_info": "Text",
+        "origin": "Expression"
+      },
+      {
+        "ordinal": 1,
+        "name": "topic!",
+        "type_info": "Text",
+        "origin": "Expression"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Uuid",
+        "Text"
+      ]
+    },
+    "nullable": [
+      null,
+      null
+    ]
+  },
+  "hash": "5a185cd223c31f2c4c0f344ec3cde82e752f70ebb238f7821dd508465ebce038"
+}

@@ -35,7 +35,7 @@ use std::future::Future;
 use std::process::ExitCode;
 use std::time::Duration;
 
-use cadus_model_client::{API_KEY_VAR, Client, ModelConfig};
+use cadus_model_client::{API_KEY_VAR, Client, EquivalenceClient, ModelConfig};
 use cadus_store::shutdown::{Shutdown, close_within};
 use cadus_store::{Db, DbConfig, bounded};
 use cadus_worker::authoring::cli::{self, AuthorArgs, Command, ReadinessArgs};
@@ -349,11 +349,7 @@ async fn serve(mut shutdown: Shutdown) -> Result<u64, WorkerError> {
 
     // The curriculum load runs BEFORE the connect, so a deployment with no
     // curriculum tree fails at once and needs no database to say so.
-    let curriculum = load_arena()?;
-
-    // `Db::connect` opens the pool AND keeps the client-side bound of
-    // `DB_CLIENT_TIMEOUT_MS`. Every query below therefore runs inside that
-    // bound (L1).
+    let curriculum = std::sync::Arc::new(load_arena()?);
     let db = tokio::select! {
         biased;
         () = shutdown.wait() => {
@@ -408,8 +404,22 @@ async fn serve(mut shutdown: Shutdown) -> Result<u64, WorkerError> {
     // model costs prose and nothing else (spec section 6.5).
     let mut diagnosis = diagnosis_job()?;
 
-    let ticks =
-        cadus_worker::run_with(&db, &cfg, Some(&job), diagnosis.as_mut(), shutdown.wait()).await?;
+    // The Amendment K equivalence job (note 114, the owner's design). It asks
+    // the owner's LOCAL model, never OpenRouter: the endpoint comes from
+    // EQUIVALENCE_BASE_URL, and the job is built only when that variable names
+    // one. A deployment without the variable keeps the deterministic grader
+    // alone and answers nothing in the background.
+    let equivalence = equivalence_job(std::sync::Arc::clone(&curriculum))?;
+
+    let ticks = cadus_worker::run_with(
+        &db,
+        &cfg,
+        Some(&job),
+        diagnosis.as_mut(),
+        equivalence.as_ref(),
+        shutdown.wait(),
+    )
+    .await?;
     close_within(POOL_CLOSE_DEADLINE, db.pool().close()).await;
     Ok(ticks)
 }
@@ -445,6 +455,40 @@ fn diagnosis_job() -> Result<Option<DiagnosisJob>, WorkerError> {
         "cadus-worker: the diagnosis session cap is configured"
     );
     Ok(Some(DiagnosisJob::new(client, calls_per_session)))
+}
+
+/// The environment variable that names the local equivalence endpoint.
+const EQUIVALENCE_URL_VAR: &str = "EQUIVALENCE_BASE_URL";
+
+/// The environment variable that names the local equivalence model.
+const EQUIVALENCE_MODEL_VAR: &str = "EQUIVALENCE_MODEL";
+
+/// The model the equivalence job asks when the environment names none.
+const EQUIVALENCE_DEFAULT_MODEL: &str = "qwen-general-8bit";
+
+/// Build the Amendment K equivalence job from the environment, or `None`.
+///
+/// The OpenRouter variables are read NOWHERE on this path: the owner's design
+/// pins the check to the local endpoint, and the fallback stays OFF unless the
+/// owner says otherwise (note 114, point 5).
+fn equivalence_job(
+    curriculum: std::sync::Arc<cadus_core::curriculum::Curriculum>,
+) -> Result<Option<cadus_worker::EquivalenceJob>, WorkerError> {
+    let Some(base_url) = std::env::var(EQUIVALENCE_URL_VAR)
+        .ok()
+        .map(|url| url.trim().to_owned())
+        .filter(|url| !url.is_empty())
+    else {
+        tracing::info!(
+            "cadus-worker: {EQUIVALENCE_URL_VAR} is unset; the equivalence queue waits and no background grading runs"
+        );
+        return Ok(None);
+    };
+    let model = std::env::var(EQUIVALENCE_MODEL_VAR)
+        .unwrap_or_else(|_| EQUIVALENCE_DEFAULT_MODEL.to_owned());
+    let client = EquivalenceClient::new(&base_url, &model).map_err(config_error)?;
+    tracing::info!(model = %model, "cadus-worker: the equivalence job is configured");
+    Ok(Some(cadus_worker::EquivalenceJob::new(client, curriculum)))
 }
 
 /// Read the identity of the database role under the client-side bound.

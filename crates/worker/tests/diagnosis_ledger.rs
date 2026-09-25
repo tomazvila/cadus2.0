@@ -352,6 +352,7 @@ async fn a_none_refill_job_still_runs_the_diagnosis_pass() {
             &cfg,
             None,
             Some(&mut job),
+            None,
             after_the_row_is_done(&db.admin, id),
         )
         .await

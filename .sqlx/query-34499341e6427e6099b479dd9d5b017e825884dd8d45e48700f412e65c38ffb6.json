@@ -1,0 +1,17 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        UPDATE equivalence_jobs\n           SET status = $1, finished_at = now()\n         WHERE status = $2 AND attempts >= $3\n           AND claimed_at < now() - make_interval(secs => $4)\n        ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Text",
+        "Text",
+        "Int4",
+        "Float8"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "34499341e6427e6099b479dd9d5b017e825884dd8d45e48700f412e65c38ffb6"
+}

@@ -44,6 +44,11 @@ pub const PURPOSE_DIAGNOSIS: &str = "diagnosis";
 /// The `purpose` of an offline authoring call (T2). T2 names no third spender.
 pub const PURPOSE_AUTHORING: &str = "authoring";
 
+/// The `purpose` of one equivalence call (Amendment K, note 114). The call is
+/// free (the owner's local model), and the ledger records it anyway: every
+/// model verdict is logged and sampled by the audit (note 114, point 5).
+pub const PURPOSE_EQUIVALENCE: &str = "equivalence";
+
 /// The first value `cost_usd numeric(12,6)` cannot hold.
 ///
 /// The column keeps six digits before the point. A larger number raises
