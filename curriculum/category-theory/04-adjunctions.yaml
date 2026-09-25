@@ -195,7 +195,7 @@ topics:
       - id: kp2
         name: The universal-arrow formulation
         key_prerequisites: [universal-properties]
-        constraints: "State the factorization (existence + uniqueness) explicitly and identify how it recovers the hom-set bijection; the counit version is obtained by dualizing."
+        constraints: "Compute the factorization: from the transpose data, produce the mediating map (existence) and decide the equality of two candidate mediating maps (uniqueness); the graded answers are the computed factorization and the recovers-the-bijection verdict; the counit version is obtained by dualizing."
         exemplars:
           - problem: "View the chain $P = \\{1,2,3,4\\}$ and the chain $Q = \\{1,2,3,4,5,6\\}$ as categories: an arrow from $c$ to $d$ is the relation $c \\le d$. Let $G: Q \\to P$ be the monotone map with $G(1)=1$, $G(2)=1$, $G(3)=2$, $G(4)=3$, $G(5)=3$, $G(6)=4$. Its left adjoint $F$ comes with the universal arrow $\\eta_3 : 3 \\to G(F(3))$: every arrow $k : 3 \\to G(d)$ factors as $k = G(h) \\circ \\eta_3$ for a unique $h : F(3) \\to d$, so an arrow $3 \\to G(d)$ exists exactly when an arrow $F(3) \\to d$ exists. Find $F(3)$."
             answer: "4"
@@ -228,7 +228,7 @@ topics:
       - id: kp3
         name: Uniqueness and composition of adjoints
         key_prerequisites: [hom-set-adjunction-definition]
-        constraints: "Chain hom-set bijections and track naturality in the free variable at every step."
+        constraints: "Chain hom-set bijections and decide naturality in the free variable by evaluating both sides on a test morphism — the graded answer is the computed bijection value or verdict."
         exemplars:
           - problem: "Read the chain 0 < 1 < 2 < 3 as a category C and the chain 0 < 1 < 2 < 3 < 4 < 5 < 6 < 7 < 8 < 9 as a category D, with one arrow from x to y exactly when x <= y. Let G be the monotone map from D to C that sends d to floor(d/3), and suppose F is a left adjoint of G. Uniqueness of left adjoints forces every such F to send the object 2 of C to one and the same object of D. Determine that object."
             answer: "6"
@@ -328,7 +328,7 @@ topics:
       - id: kp2
         name: The currying adjunction
         key_prerequisites: [products-coproducts]
-        constraints: "The adjunction is $(-\\times A)\\dashv(-)^A$ with $A$ fixed; isomorphism-of-objects conclusions must pass through a natural bijection of hom-sets and cite Yoneda/representability."
+        constraints: "The adjunction is $(-\\times A)\\dashv(-)^A$ with $A$ fixed; decide isomorphism-of-objects conclusions by computing the natural bijection of hom-sets on the given objects (Yoneda/representability applied at a named representable) — the graded answer is the bijection value or the isomorphic/not verdict."
         exemplars:
           - problem: "Work in Set with A a fixed 3-element set. Let X be a 2-element set and B a 4-element set. The currying adjunction gives a bijection between the functions X×A → B and the functions X → B^A. Find the number of functions from X to B^A."
             answer: "4096"
@@ -456,7 +456,7 @@ topics:
       - id: kp2
         name: Recovering the bijection from unit and counit
         key_prerequisites: [natural-transformations]
-        constraints: "Derive $\\Phi(h)=Gh\\circ\\eta$ and $\\Phi^{-1}(k)=\\varepsilon\\circ Fk$ from naturality, citing the variable used; mutual-inverse checks cite one naturality square and one triangle identity per direction."
+        constraints: "Compute $\\Phi(h)=Gh\\circ\\eta$ and $\\Phi^{-1}(k)=\\varepsilon\\circ Fk$ on given arrows by evaluating at the named variable, and check mutual inversehood by composing once through one naturality square and one triangle identity per direction — the graded answers are the computed composites and the are-inverses verdict."
         exemplars:
           - problem: "The currying adjunction on sets has $F(C) = C \\times 2$, $G(D) = D^2$ (maps from $2 = \\{0,1\\}$ to $D$), unit $\\eta_C(c) = (j \\mapsto (c, j))$ and counit $\\varepsilon_D(g, j) = g(j)$. Its hom-set bijection is recovered from the unit by $\\Phi(h) = Gh \\circ \\eta_C$, a consequence of naturality of $\\Phi$ in the second variable. Take $C = \\{0, 1\\}$ and $D = \\{5, 6, 7, 8\\}$ with $h$ given by $h(0,0)=5$, $h(0,1)=6$, $h(1,0)=7$, $h(1,1)=8$. Give $\\Phi(h)(1)$ as (value at 0, value at 1)."
             answer: "(7, 8)"
@@ -1045,7 +1045,7 @@ topics:
       - id: kp2
         name: The proof via the adjunction isomorphism
         key_prerequisites: [adjunctions]
-        constraints: "The proof must run through the adjunction bijection $\\mathrm{Hom}(FC,-)\\cong\\mathrm{Hom}(C,G-)$ and then Yoneda, never through elements; applications limited to forgetful functors out of $\\mathbf{Grp}$, and any failure of colimit preservation must name the colimit involved."
+        constraints: "Decide preservation through the adjunction bijection $\\mathrm{Hom}(FC,-)\\cong\\mathrm{Hom}(C,G-)$ and then Yoneda, never through elements: compute the bijection on the given diagram and give the preserved/not-preserved verdict; applications limited to forgetful functors out of $\\mathbf{Grp}$, and any failure of colimit preservation must name the colimit involved."
         exemplars:
           - problem: "View the chains P: 1 < 2 < 3 and Q: 1 < 2 < 3 as categories, where a morphism from x to y exists exactly when x is at most y. Define F from P to Q by F(1) = 1, F(2) = 1, F(3) = 2, and G from Q to P by G(1) = 2, G(2) = 3, G(3) = 3. Then F is left adjoint to G, so the adjunction bijection says: a morphism from F(x) to y exists exactly when a morphism from x to G(y) exists. How many of the nine pairs (x, y) give a nonempty set of morphisms from F(x) to y?"
             answer: "8"
@@ -1078,7 +1078,7 @@ topics:
       - id: kp3
         name: Left adjoints preserve colimits
         key_prerequisites: [limits-colimits]
-        constraints: "Obtain the dual statement by applying RAPL in the opposite categories rather than reproving it; instantiations limited to the free-monoid and free-vector-space functors, always naming the preserved colimit (initial object or binary coproduct)."
+        constraints: "Obtain the dual statement by applying RAPL in the opposite categories rather than reproving it; instantiations limited to the free-monoid and free-vector-space functors, always naming the preserved colimit (initial object or binary coproduct). Exemplar rule: the stem does not state the fact that the KP teaches — the stem gives only the raw data (objects, arrows, maps), and producing the identification (which construction applies) is part of the graded answer."
         exemplars:
           - problem: "The free monoid functor M from Set to Mon sends a set S to the monoid of all words in the letters of S, and it is left adjoint to the forgetful functor, so it preserves binary coproducts. Let X be a set of 2 letters and Y a set of 3 letters; a binary coproduct of sets is a disjoint union. How many letters generate the coproduct of the monoids M(X) and M(Y) in Mon?"
             answer: "5"

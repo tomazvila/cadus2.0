@@ -56,7 +56,7 @@ topics:
       - id: kp2
         name: Associativity of composition
         key_prerequisites: [function-composition]
-        constraints: "Either prove associativity abstractly by evaluating both bracketings at an arbitrary point, or check it on linear integer functions with small coefficients; always compare both bracketings."
+        constraints: "Decide associativity by computing both bracketings of a triple composite on a chosen element and comparing the values — the graded verdict is the label equal/differ for the two bracketings; linear integer functions with small coefficients keep every evaluation hand-computable."
         exemplars:
           - problem: "In the pointwise proof that $(h \\circ g) \\circ f = h \\circ (g \\circ f)$, the line $((h \\circ g) \\circ f)(x) = ?$ is missing. Select the line that is true and that follows from the definition of composition."
             answer: "$h(g(f(x)))$"
@@ -89,7 +89,7 @@ topics:
       - id: kp3
         name: Identities as two-sided units
         key_prerequisites: [function-composition-inverse]
-        constraints: "State which unit law is applied at each step."
+        constraints: "Compute the composite in two orders (unit arrow applied before and after) and compare the results — the graded answer is the computed composite value or the verdict equal/differ, so the item tests the unit-law computation, not a written citation."
         exemplars:
           - problem: "Let $f(x)=x+1$ and $g(x)=x^2$ be functions on the real numbers, and let $1$ denote the identity function. The composite $1\\circ(g\\circ f)$ simplifies by the left unit law $1\\circ h=h$. Compute $(1\\circ(g\\circ f))(x)$ as a polynomial in $x$."
             answer: "x^2+2x+1"
@@ -166,7 +166,7 @@ topics:
       - id: kp1
         name: The data and axioms, read off in Set
         key_prerequisites: [composition-associativity-identity]
-        constraints: "Stay in $\\mathbf{Set}$: state the four pieces of data and the two axioms, then instantiate each piece concretely; no verification beyond citing associativity and unit laws of function composition."
+        constraints: "Stay in $\\mathbf{Set}$: decide whether a proposed four-piece structure (objects, morphisms, composition, identities) satisfies the two category axioms by testing them on named arrows and composites; the graded verdict is satisfies/fails per axiom, with every composite evaluated explicitly."
         exemplars:
           - problem: "In Set take objects A = {1, 2} and B = {3, 4, 5}. The hom-set Hom(A, B) is the set of all functions from A to B. How many morphisms are in Hom(A, B)?"
             answer: "9"
@@ -265,7 +265,7 @@ topics:
       - id: kp4
         name: A preorder as a thin category
         key_prerequisites: [partial-orders]
-        constraints: "Preorders/posets only; abstract proofs must invoke at-most-one-arrow hom-sets for automatic commutativity; concrete instances use divisibility or subset order on sets of at most 6 elements."
+        constraints: "Preorders/posets only: decide every question by an explicit count or membership test in a divisibility or subset order on sets of at most 6 elements; the at-most-one-arrow hom-sets make every diagram commute automatically, so commutativity never needs a separate argument. Exemplar rule: the stem does not state the fact that the KP teaches — the stem gives only the raw data (objects, arrows, maps), and producing the identification (which construction applies) is part of the graded answer."
         exemplars:
           - problem: "Regard the divisibility preorder on the objects 2, 4, 8, 16, 24 as a category: an arrow a -> b exists exactly when a divides b, that is when gcd(a, b) = a. How many morphisms does this category have in total?"
             answer: "14"
@@ -409,7 +409,7 @@ topics:
       - id: kp3
         name: The two dictionaries, read in both directions
         key_prerequisites: [category-definition]
-        constraints: "Both exemplars are abstract equivalence proofs: give both directions of the translation and match every category axiom against the corresponding monoid or order axiom; no numerical instances."
+        constraints: "Test the monoid/order-to-category dictionary by classification: for each of reflexivity, symmetry, transitivity, give the matching category axiom (identities, inverses, composition) as a label verdict; no numerical instances."
         exemplars:
           - problem: "Let M be a monoid, and let BM be the one-object category with one object * and Hom(*,*)=M. For elements m and n of M, the composite of the morphisms m and n in BM is an element of M. Give the formula for this composite in terms of m and n."
             answer: "mn"
@@ -752,7 +752,7 @@ topics:
       - id: kp1
         name: Definition of isomorphism via a two-sided inverse
         key_prerequisites: [category-definition]
-        constraints: "Proofs use only the two inverse equations plus associativity, citing each; $\\mathbf{Set}$ arguments must address both directions (bijection implies iso and iso implies bijection)."
+        constraints: "Decide isomorphism by computing with the two inverse equations plus associativity: compose the given maps, reduce each composite by substitution, and give the resulting arrow or the verdict iso/not iso; in $\\mathbf{Set}$ the bijection-implies-iso and iso-implies-bijection directions are tested as separate verdicts."
         exemplars:
           - problem: "Consider the one-object category whose morphisms are the numbers 0, 1, 2, 3, with composition given by addition mod 4 and with identity 0. Find the two-sided inverse of the morphism 1. Give the inverse as a number."
             answer: "3"
@@ -785,7 +785,7 @@ topics:
       - id: kp2
         name: Isomorphism is coarser than equality
         key_prerequisites: [relations-equivalence]
-        constraints: "Short equational proofs from two-sided inverses (equivalence-relation properties, inverse of a composite); concrete examples use sets of at most 3 elements."
+        constraints: "Compute the arrow delivered by the two-sided inverse equations (equivalence-relation properties, inverse of a composite) by substitution and give it as an exact expression; concrete examples use sets of at most 3 elements."
         exemplars:
           - problem: "In Set, let A = {0,1} and B = {a,b}. How many isomorphisms are there from A to B?"
             answer: "2"
@@ -912,7 +912,7 @@ topics:
       - id: kp2
         name: Pasting diagrams
         key_prerequisites: [function-composition]
-        constraints: "At most two cells pasted; every step of the derivation cites either associativity or one cell's commuting equation."
+        constraints: "At most two cells pasted; each cell is checked by computing the two composites around it and comparing the values — the graded verdict is commutes/fails per cell."
         exemplars:
           - problem: "Two squares share the edge s. The left square commutes: s∘f = t∘g. The right square commutes: v∘s = u∘p. The values are f(1) = 2, g(1) = 3, t(3) = 7, p(2) = 6, u(6) = 9. Find (v∘t∘g)(1)."
             answer: "9"
@@ -973,7 +973,7 @@ topics:
       - id: kp1
         name: Proving equalities by chasing composites
         key_prerequisites: [commutative-diagrams]
-        constraints: "Chases of at most three composable steps; each rewrite cites a hypothesis equation or mono/epi cancellation, and the typing of every composite must stay valid."
+        constraints: "Chases of at most three composable steps: each rewrite is executed by substituting the hypothesis equation or applying a mono/epi cancellation at a named element, and the graded answer is the final chased value or verdict; the typing of every composite must stay valid."
         exemplars:
           - problem: "Let A = {0}, B = {0,1}, D = {0,1,2}, E = {0,1,2}. Define f: A -> B by f(0) = 0 and p: A -> B by p(0) = 1. Define q: B -> D by q(0) = 2, q(1) = 0 and g: B -> D by g(0) = 1, g(1) = 2. Define r: D -> E by r(0) = 0, r(1) = 2, r(2) = 1 and h: D -> E by h(0) = 1, h(1) = 0, h(2) = 2. These functions satisfy q∘f = g∘p and r∘g = h∘q. Chase the diagram to find (r∘g∘f)(0)."
             answer: "2"
@@ -1068,7 +1068,7 @@ topics:
       - id: kp1
         name: Monomorphisms as left-cancellable maps
         key_prerequisites: [category-definition]
-        constraints: "State the left-cancellation definition, then either a $\\mathbf{Set}$ proof (monos = injections, both directions, using maps from a singleton) or a composite/cancellation argument of at most three lines."
+        constraints: "Decide mono/epi by the cancellation test on explicitly given maps: in $\\mathbf{Set}$ test injectivity via maps from a singleton (both directions of monos = injections are separate verdicts), or compute the composite cancellation in at most three lines; the graded verdict is mono/epi/neither."
         exemplars:
           - problem: "In Set, let m: {1,2,3} -> {a,b,c} be the map with m(1)=a, m(2)=b, m(3)=b. To show that m is not left-cancellable, find two distinct domain elements that m sends to the same value. Give the two elements as a list."
             answer: "2, 3"
@@ -1272,7 +1272,7 @@ topics:
       - id: kp3
         name: Thin groupoids are equivalence relations
         key_prerequisites: [relations-equivalence]
-        constraints: "Two shapes: (i) the dictionary proof relating each of reflexivity, symmetry, transitivity to a specific category axiom (identities, inverses, composition); (ii) partition arguments showing isomorphism classes (connected components) partition the objects of a groupoid."
+        constraints: "Two shapes: (i) classify each of reflexivity, symmetry, transitivity against the matching category axiom (identities, inverses, composition) with a label verdict; (ii) compute the isomorphism classes (connected components) of a small groupoid and count them."
         exemplars:
           - problem: "In a thin groupoid, an arrow x -> y and an arrow y -> z compose to an arrow x -> z. Which property of the induced relation on objects does this composition give? Select one."
             answer: "transitivity"
@@ -1369,7 +1369,7 @@ topics:
       - id: kp2
         name: When splitting plus cancellation gives an isomorphism
         key_prerequisites: [isomorphism-vs-equality]
-        constraints: "Purely equational proofs from $r\\circ m=1$ and/or $m\\circ s=1$ plus at most one mono/epi cancellation; each step cites the hypothesis or axiom used."
+        constraints: "Purely equational computation from $r\\circ m=1$ and/or $m\\circ s=1$ plus at most one mono/epi cancellation: every requested arrow is evaluated by substitution and given as an exact expression."
         exemplars:
           - problem: "In the category Set, let A={1,2} and B={1,2}. Let m: A->B be m(1)=2, m(2)=1. Suppose r: B->A satisfies r∘m=id_A and s: B->A satisfies m∘s=id_B. Compute r(1)."
             answer: "2"
@@ -1474,7 +1474,7 @@ topics:
       - id: kp2
         name: The diagonal fill-in
         key_prerequisites: [diagram-chasing]
-        constraints: "State which of 'epi' and 'mono' is used at each step; uniqueness must come from the mono."
+        constraints: "Classify each cancellation used as epi- or mono-cancellation by testing it on the given arrows; uniqueness of the factorization is decided by the mono test (two candidates compose equally with the mono, hence are equal), given as a label verdict."
         exemplars:
           - problem: "In Set, let e: A -> X be surjective and m: Y -> B be injective, and suppose v(e(a)) = m(u(a)) for all a. Take A = {1,2,3}, X = {1,2}, with e(1)=e(2)=1 and e(3)=2. Take Y = {10,20}, B = {10,20,30}, with m(10)=10 and m(20)=20. Take u(1)=u(2)=10 and u(3)=20, and v(1)=10, v(2)=20. A diagonal d satisfies d(e(a)) = u(a) and m(d(x)) = v(x). Give d(2)."
             answer: "20"
@@ -1773,7 +1773,7 @@ topics:
       - id: kp3
         name: Using duality to halve the work
         key_prerequisites: [initial-terminal-objects]
-        constraints: "The proof must consist of applying a known theorem in $\\mathcal{C}^{op}$ and translating back — no fresh diagram chase or cancellation argument allowed."
+        constraints: "Decide the statement by applying the known theorem in $\\mathcal{C}^{op}$ and translating the conclusion back — the graded answer is the translated verdict or value; no fresh diagram chase or cancellation computation is performed."
         exemplars:
           - problem: "Let P be the poset category with objects 1 < 2 < 3 < 4 < 5 and the usual order, so P has one morphism from a to b exactly when a is at most b. A terminal object of P is exactly an initial object of the opposite category P^op, and the known theorem that initial objects are unique up to a unique isomorphism holds in P^op. Give the initial object of P^op."
             answer: "5"

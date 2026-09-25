@@ -63,7 +63,7 @@ topics:
       - id: kp2
         name: The existence-and-uniqueness template
         key_prerequisites: [commutative-diagrams]
-        constraints: "Separate the EXISTS and UNIQUE clauses explicitly and say which clause each proof step uses; concrete instances use only the terminal object."
+        constraints: "Check the EXISTS and UNIQUE clauses separately: existence is verified by exhibiting the mediating arrow and evaluating the commuting equations, uniqueness by computing that two candidate arrows are equal — the graded answer is the clause-by-clause verdict; concrete instances use only the terminal object."
         exemplars:
           - problem: "A universal property of an object U is one statement about maps X -> U, built from two clauses. Select the statement that correctly gives the general form of such a property."
             answer: "for every X a morphism exists, unique among those making the diagram commute"
@@ -162,7 +162,7 @@ topics:
       - id: kp1
         name: The product universal property in Set
         key_prerequisites: [universal-properties]
-        constraints: "Verify the universal property in $\\mathbf{Set}$ elementwise, or identify products in a poset category as meets; the pairing map must be shown unique."
+        constraints: "Verify the universal property in $\\mathbf{Set}$ elementwise, or identify products in a poset category as meets; uniqueness of the pairing map is decided by computing both candidate factorizations and comparing them — the graded verdict is unique/not unique."
         exemplars:
           - problem: "Work in the category of sets. Let A = {1, 2} and B = {3, 4}; their product is the set of ordered pairs A x B with the projection maps pi1 and pi2 that read off the two entries. Let X = {5, 7} and define f from X to A and g from X to B by f(5) = 1, f(7) = 2, g(5) = 4, g(7) = 3. The pairing map <f, g> from X to A x B is the unique map with pi1 <f, g> = f and pi2 <f, g> = g. Give <f, g>(7) as (x, y)."
             answer: "(2, 3)"
@@ -228,7 +228,7 @@ topics:
       - id: kp3
         name: Uniqueness; coproducts need not be disjoint unions
         key_prerequisites: [universal-properties]
-        constraints: "Uniqueness proofs follow the cross-map pattern with both mediating maps named; the category-dependence of coproducts is illustrated only by $\\mathbf{Grp}$ (free product) versus $\\mathbf{Ab}$ (direct sum)."
+        constraints: "Decide uniqueness by the cross-map test: compute both mediating maps from the leg equations and check that they agree on generators; the category-dependence of coproducts is illustrated only by $\\mathbf{Grp}$ (free product) versus $\\mathbf{Ab}$ (direct sum)."
         exemplars:
           - problem: "In the category Set, let A = {1, 2} and B = {3, 4}. The set P = A × B with the usual projections p1, p2 is a product of A and B. The set P' = B × A with projections q1(b, a) = a and q2(b, a) = b is another product of A and B. The universal property gives two mediating maps: u: P → P' with q1∘u = p1 and q2∘u = p2, and v: P' → P with p1∘v = q1 and p2∘v = q2. Give u(2, 3) as (b, a)."
             answer: "(3, 2)"
@@ -329,7 +329,7 @@ topics:
       - id: kp2
         name: Equalizers are monomorphisms
         key_prerequisites: [commutative-diagrams]
-        constraints: "Abstract proofs from the universal property alone; each use of the existence or uniqueness clause must be flagged, and no elements may be used."
+        constraints: "Decide from the universal property alone by evaluating the two clauses: existence produces the mediating arrow, uniqueness decides the equality of two candidate arrows; no element chasing — the graded verdict is holds/fails per clause."
         exemplars:
           - problem: "In the category of sets, let A = {1,2,3,4,5} and B = {0,1}. The map f sends 1 and 2 to 0 and sends 3, 4, 5 to 1; the map g sends every element to 0. Let e be the inclusion of the equalizer set E into A, and let X = {7,8}. How many pairs of distinct maps u, v from X to E make the composite e after u equal the composite e after v?"
             answer: "0"
@@ -464,7 +464,7 @@ topics:
       - id: kp2
         name: Building pullbacks from products and equalizers
         key_prerequisites: [products-coproducts]
-        constraints: "Either the product-plus-equalizer construction (identify the two maps being equalized) or elementless stability proofs (mono stable under pullback) using only the universal property."
+        constraints: "Compute the pullback by the product-plus-equalizer construction (give the two maps being equalized and the resulting object), or decide stability questions (mono stable under pullback) from the universal property with a label verdict. Exemplar rule: the stem does not state the fact that the KP teaches — the stem gives only the raw data (objects, arrows, maps), and producing the identification (which construction applies) is part of the graded answer."
         exemplars:
           - problem: "In the category of sets, let f: A -> C and g: B -> C be given by A = {1,2,3,4}, B = {1,2,3}, C = {0,1,2}, with f(1) = 0, f(2) = 1, f(3) = 2, f(4) = 2 and g(1) = 2, g(2) = 1, g(3) = 0. The pullback of f and g is built from the product A x B by taking the equalizer of the two induced maps from A x B to C. How many elements does this pullback set have?"
             answer: "4"
@@ -497,7 +497,7 @@ topics:
       - id: kp3
         name: Pushouts by duality
         key_prerequisites: [duality-opposite-categories]
-        constraints: "Dualize the pullback; concrete descriptions in $\\mathbf{Set}$ (gluing along $C$) or $\\mathbf{Ab}$ (quotient of the direct sum), realized as coproduct followed by coequalizer."
+        constraints: "Dualize the pullback; concrete descriptions in $\\mathbf{Set}$ (gluing along $C$) or $\\mathbf{Ab}$ (quotient of the direct sum), realized as coproduct followed by coequalizer. Exemplar rule: the stem does not state the fact that the KP teaches — the stem gives only the raw data (objects, arrows, maps), and producing the identification (which construction applies) is part of the graded answer."
         exemplars:
           - problem: "In Set, the pushout of f: C -> A and g: C -> B is built from the coproduct, the disjoint union of A and B, by gluing: the quotient identifies f(c) with g(c) for each element c of C. Take A = {1,2,3}, B = {4,5,6}, C = {x,y}, with f(x) = 1, f(y) = 2, g(x) = 4, g(y) = 5. How many elements does the pushout have?"
             answer: "4"
@@ -659,7 +659,7 @@ topics:
       - id: kp1
         name: Computing a limit cone in Set
         key_prerequisites: [universal-properties]
-        constraints: "Finite sets of size at most 5; list the elements of the limit and state each leg explicitly."
+        constraints: "Finite sets of size at most 5; list the elements of the limit and state each leg explicitly. Exemplar rule: the stem does not state the fact that the KP teaches — the stem gives only the raw data (objects, arrows, maps), and producing the identification (which construction applies) is part of the graded answer."
         exemplars:
           - problem: "Let A be the set with elements 1, 2, 3, 4 and B the set with elements 5, 6. Take the two maps f and g from A to B given by f(1)=5, f(2)=6, f(3)=5, f(4)=6 and g(1)=5, g(2)=5, g(3)=5, g(4)=6. The limit L of the diagram with these two parallel maps is the equalizer, a subset of A, and the cone has the inclusion leg into A and the induced leg into B. Give the elements of L in increasing order and the image of the induced leg to B in increasing order."
             answer: "L = 1,3,4; legB = 5,6"
@@ -794,7 +794,7 @@ topics:
       - id: kp1
         name: The empty diagram
         key_prerequisites: [limits-as-cones]
-        constraints: "Say explicitly what data a cone over the empty diagram carries (none) before concluding."
+        constraints: "Say explicitly what data a cone over the empty diagram carries (none) before concluding. Exemplar rule: the stem does not state the fact that the KP teaches — the stem gives only the raw data (objects, arrows, maps), and producing the identification (which construction applies) is part of the graded answer."
         exemplars:
           - problem: "A category is built from a poset with four elements a, b, c, d and relations a <= b, a <= c, b <= d, c <= d: there is exactly one morphism from x to y when x <= y. A cone over the empty diagram carries no legs and no conditions, so a cone is just an apex object. Which element is the limit of the empty diagram?"
             answer: "d"
@@ -827,7 +827,7 @@ topics:
       - id: kp2
         name: Why finite completeness needs a terminal object
         key_prerequisites: [equalizers-coequalizers]
-        constraints: "Any counterexample must be checked on all three requirements: binary products, equalizers, terminal object."
+        constraints: "Any counterexample must be checked on all three requirements: binary products, equalizers, terminal object. Exemplar rule: the stem does not state the fact that the KP teaches — the stem gives only the raw data (objects, arrows, maps), and producing the identification (which construction applies) is part of the graded answer."
         exemplars:
           - problem: "Work in the category Set. Take the empty diagram: it has no objects and no arrows. The limit of the empty diagram is the product of an empty family of sets, and this limit is a terminal object. How many elements does this limit have?"
             answer: "1"
@@ -901,7 +901,7 @@ topics:
       - id: kp1
         name: The explicit construction of limits in Set
         key_prerequisites: [limits-as-cones]
-        constraints: "The compatible-families formula, proved universal or evaluated on diagrams of finite sets with at most 4 elements per set."
+        constraints: "Evaluate the compatible-families formula on diagrams of finite sets with at most 4 elements per set: the graded answers are the computed limit object or the verdict compatible/incompatible for a given family."
         exemplars:
           - problem: "In Set, let D be the cospan A -> C <- B, where A = {0, 1}, B = {2, 3} and C = {5}, with the only possible maps. Let (X, mu) be the cone over D with X = {7, 8}, mu_A(7) = 1, mu_A(8) = 0, mu_B(7) = 3, mu_B(8) = 2. The universal property of the limit gives a unique map u: X -> lim D whose composite with each leg equals the matching leg of the cone. Give u(8) as (a, b), listing the A-coordinate first."
             answer: "(0, 2)"
@@ -1067,7 +1067,7 @@ topics:
       - id: kp2
         name: The curry/uncurry bijection is natural
         key_prerequisites: [hom-functors]
-        constraints: "Derive the bijection and its naturality from the universal property alone; every identification of two maps must go through the uniqueness of currying."
+        constraints: "Decide from the universal property alone: compute the currying bijection on given maps and check naturality by evaluating both sides at a test argument; every equality of two maps is settled by the uniqueness clause of currying and given as a verdict."
         exemplars:
           - problem: "Work in the category of sets. Let A = {a1, a2} have two elements, let X = {u, v}, and let B = {1, 2, 3}. Define g: X x A -> B by g(u, a1) = 2, g(u, a2) = 3, g(v, a1) = 3, g(v, a2) = 2. An element of B^A is a map from A to B; identify such a map with the pair (t1, t2) of its values at a1 and a2. The curry of g is the unique map gh: X -> B^A with ev o (gh x 1A) = g, where ev(h, a) = h(a). Give the values of gh at u and at v, each as (t1, t2)."
             answer: "atu = (2, 3); atv = (3, 2)"
@@ -1171,7 +1171,7 @@ topics:
       - id: kp2
         name: Examples and non-examples
         key_prerequisites: [functors, free-groups-presentations]
-        constraints: "A failure of preservation must be shown with a concrete diagram and a proof that the two objects are non-isomorphic."
+        constraints: "Decide preservation/reflection by computing both sides on a concrete finite diagram and comparing the two objects — the graded verdict is preserved/not preserved, supported by a distinguishing count (element or component counts). Exemplar rule: the stem does not state the fact that the KP teaches — the stem gives only the raw data (objects, arrows, maps), and producing the identification (which construction applies) is part of the graded answer."
         exemplars:
           - problem: "Let $U\\colon\\mathbf{Grp}\\to\\mathbf{Set}$ be the forgetful functor and let $G=\\mathbb{Z}/4$ and $H=\\mathbb{Z}/6$. The group $G\\times H$ is the product of $G$ and $H$ in $\\mathbf{Grp}$, and $U$ sends it to the product of $UG$ and $UH$ in $\\mathbf{Set}$. How many elements does the underlying set of $G\\times H$ have?"
             answer: "24"
@@ -1204,7 +1204,7 @@ topics:
       - id: kp3
         name: Fully faithful functors reflect limits
         key_prerequisites: [full-faithful-functors]
-        constraints: "Use fullness to lift a mediating morphism and faithfulness to prove the equations and uniqueness."
+        constraints: "Use fullness to compute the lift of a mediating morphism (the preimage arrow) and faithfulness to decide the required equations on given arrows; the graded answers are the lifted arrow and the holds/fails verdict."
         exemplars:
           - problem: "Let P be the divisibility poset on {1, 2, 3, 6, 10, 15, 30} and Q the divisibility poset on {1, 2, 3, 5, 6, 10, 15, 30}. The inclusion F from P to Q is fully faithful, because no relation between elements of P changes in Q, so F reflects limits; a meet of two elements is the limit of the corresponding two-object diagram. Determine the meet of 6 and 10 in P."
             answer: "2"
@@ -1306,7 +1306,7 @@ topics:
       - id: kp2
         name: Completeness from products and equalizers
         key_prerequisites: [equalizers-coequalizers]
-        constraints: "The two-products-and-an-equalizer construction, with the two parallel maps written out componentwise; applications limited to $\\mathbf{Grp}$ or $\\mathbf{Set}$."
+        constraints: "The two-products-and-an-equalizer construction, with the two parallel maps written out componentwise; applications limited to $\\mathbf{Grp}$ or $\\mathbf{Set}$. Exemplar rule: the stem does not state the fact that the KP teaches — the stem gives only the raw data (objects, arrows, maps), and producing the identification (which construction applies) is part of the graded answer."
         exemplars:
           - problem: "A small diagram in Set has objects a, b, c and two arrows f from a to c and g from b to c. It sends a to {1,2,3}, b to {1,2,3}, and c to {0,1}; the arrow f is the map 1 to 0, 2 to 0, 3 to 1, and the arrow g is the map 1 to 1, 2 to 0, 3 to 1. The products-and-equalizers construction forms P = D(a) x D(b) x D(c) and Q = D(c) x D(c), with two parallel maps u and v from P to Q given componentwise by u(x, y, z) = (z, z) and v(x, y, z) = (f(x), g(y)). The limit is the equalizer of u and v. How many elements does the limit have?"
             answer: "4"
@@ -1339,7 +1339,7 @@ topics:
       - id: kp3
         name: Finite completeness from a terminal object and pullbacks
         key_prerequisites: [pullbacks-pushouts]
-        constraints: "Reduce each finite (co)limit to the given primitives, exhibiting binary (co)products and (co)equalizers as specific pullbacks/pushouts; the dual statement is obtained by working in $\\mathcal C^{op}$."
+        constraints: "Reduce each finite (co)limit to the given primitives, exhibiting binary (co)products and (co)equalizers as specific pullbacks/pushouts; the dual statement is obtained by working in $\\mathcal C^{op}$. Exemplar rule: the stem does not state the fact that the KP teaches — the stem gives only the raw data (objects, arrows, maps), and producing the identification (which construction applies) is part of the graded answer."
         exemplars:
           - problem: "In the category of sets, the terminal object is a one-element set, written 1. Let A be a set with 3 elements and B be a set with 2 elements. The binary product of A and B is realized as the pullback of the two maps from A into 1 and from B into 1. Give the number of elements of this pullback."
             answer: "6"

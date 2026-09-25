@@ -306,7 +306,7 @@ topics:
       - id: kp1
         name: Verifying a naturality square in algebra
         key_prerequisites: [natural-transformations, commutator-subgroup]
-        constraints: "Algebraic instances built from monoid or group homomorphisms, including quotient constructions such as abelianization: name the two functors and their common source and target, then chase a single element around the square, citing which homomorphism law (or well-definedness on cosets) makes each leg agree."
+        constraints: "Algebraic instances built from monoid or group homomorphisms, including quotient constructions such as abelianization: decide naturality by chasing a single element around the square and computing each leg's value with the homomorphism laws (or well-definedness on cosets); the graded answer is the two leg values or the verdict agree/disagree."
         exemplars:
           - problem: "Let U from Mon to Set be the forgetful functor on monoids, and for each monoid M let s_M from UM to UM send x to x times x, the squaring component of a candidate transformation from U to U. Take M = N = the additive monoid Z/5, so x times x means x + x mod 5, and let f from M to N be the homomorphism f(x) = 2x mod 5. Chase x = 2 around the naturality square for s at f and give the common value that both legs produce in Z/5."
             answer: "3"
@@ -339,7 +339,7 @@ topics:
       - id: kp2
         name: Naturality is closed under composition
         key_prerequisites: [diagram-chasing]
-        constraints: "Prove closure by pasting the two naturality squares, citing naturality of each factor once; concrete confirmations use the list functor."
+        constraints: "Decide closure of composites by computing both composites of the transformations on a test element using the naturality equations of each factor; concrete confirmations use the list functor; the graded verdict is natural/not natural."
         exemplars:
           - problem: "Let L be the list functor on sets. Let eta: Id => L be the transformation whose component at a set X sends an element x to the one-element list [x], and let delta: L => L be the transformation whose component at X sends a list to that list followed by a second copy of itself. Both eta and delta are natural, so their vertical composite is natural too. The composite has component delta_X after eta_X at X. Give the list produced by the composite at the element 5, as a comma-separated list."
             answer: "5, 5"
@@ -437,7 +437,7 @@ topics:
       - id: kp1
         name: Componentwise iso implies natural inverse
         key_prerequisites: [natural-transformations]
-        constraints: "Abstract proofs manipulating the naturality square with componentwise inverses; each pre-/post-composition step must be written out."
+        constraints: "Work in the naturality square with componentwise inverses: compute each candidate inverse component and check that the two round-trip composites equal the identity on a general object — the graded answers are the computed component formulas and the is-an-inverse verdict."
         exemplars:
           - problem: "Let $\\alpha: F \\Rightarrow G$ be a natural transformation between functors from a category with objects $A, B$ and one non-identity arrow $f: A \\to B$ into sets, with $F(A) = F(B) = G(A) = G(B) = \\{0,1,2\\}$. The maps are $Ff: 0 \\mapsto 1, 1 \\mapsto 2, 2 \\mapsto 0$; $Gf: 0 \\mapsto 2, 1 \\mapsto 1, 2 \\mapsto 0$; $\\alpha_A: 0 \\mapsto 2, 1 \\mapsto 0, 2 \\mapsto 1$; $\\alpha_B: 0 \\mapsto 1, 1 \\mapsto 0, 2 \\mapsto 2$. Let $\\beta_A = \\alpha_A^{-1}$ and $\\beta_B = \\alpha_B^{-1}$. Compute $\\beta_B(Gf(2))$."
             answer: "1"
@@ -931,7 +931,7 @@ topics:
       - id: kp1
         name: Definition via natural isomorphisms
         key_prerequisites: [natural-isomorphisms]
-        constraints: "State all four pieces $(F,G,\\eta,\\varepsilon)$ with the direction of each natural iso; symmetry/closure proofs may only invert or compose natural isomorphisms."
+        constraints: "Classify the data $(F,G,\\eta,\\varepsilon)$: label the direction of each natural iso and decide symmetry/closure questions by composing or inverting the given natural isomorphisms — every verdict is a label, never a written derivation."
         exemplars:
           - problem: "An equivalence of categories from C to D consists of four pieces: a functor F from C to D, a functor G from D to C, a natural isomorphism eta between two functors on C, and a natural isomorphism eps between two functors on D. Select the correct source and target of eta."
             answer: "idC to GF"
@@ -964,7 +964,7 @@ topics:
       - id: kp2
         name: The fully faithful + essentially surjective test
         key_prerequisites: [full-faithful-functors]
-        constraints: "Only the easy direction is proved in full ($\\varepsilon_D$ gives essential surjectivity; $f=\\eta_B^{-1}\\circ GFf\\circ\\eta_A$ gives faithfulness); the converse is stated with its choice-based construction sketched."
+        constraints: "Test the easy direction by computation: evaluate $\\varepsilon_D$ at a given object for essential surjectivity and evaluate $f=\\eta_B^{-1}\\circ GFf\\circ\\eta_A$ on a given morphism for faithfulness; the converse is quoted with its choice-based construction, not re-derived."
         exemplars:
           - problem: "A functor F from a category C to a category D is called essentially surjective when a single condition on the target category holds. Which option states that condition?"
             answer: "every object of D is isomorphic to FC for some object C of C"

@@ -362,7 +362,7 @@ topics:
       - id: kp3
         name: The writer monad over a monoid
         key_prerequisites: [monads]
-        constraints: "The writer monad $TA=M\\times A$ over an explicitly named monoid, with $(\\mathbb N,+,0)$ as the concrete case; answers are pairs $(m,a)$, and each monad law must be traced back to the corresponding monoid law."
+        constraints: "The writer monad $TA=M\\times A$ over an explicitly named monoid, with $(\\mathbb N,+,0)$ as the concrete case; answers are computed pairs $(m,a)$, and each monad-law check ends in the corresponding monoid law evaluated on the computed values."
         exemplars:
           - problem: "Work in the writer monad $TA = M \\times A$ over the monoid $(\\mathbb N, +, 0)$, so $\\eta_A(a) = (0, a)$ and $\\mu_A(m, (m', a)) = (m + m', a)$. This $\\mu_A$ flattens a pair of logs into one. Compute $\\mu_A(4, (0, 7))$. Give the answer as (m, a)."
             answer: "(4, 7)"
@@ -462,7 +462,7 @@ topics:
       - id: kp2
         name: The Kleisli laws come from the monad laws
         key_prerequisites: [monads]
-        constraints: "Purely equational chases from the definition of $\\circ_T$: every step must cite a monad law or a naturality square of $\\eta$ or $\\mu$ by name, and no elements may be used."
+        constraints: "Equational chases from the definition of $\\circ_T$: each rewrite is executed by substituting the definition of $\\circ_T$ and applying a monad law or a naturality square of $\\eta$ or $\\mu$ at the current expression, and the graded answer is the final computed equation; no elements may be used."
         exemplars:
           - problem: "Work with the maybe monad on sets: M X is the set X with one extra point 0 adjoined, the unit eta_X includes X into M X, M k sends 0 to 0 and every other element x to k(x), and the multiplication mu_X fixes each element of M X and sends the extra outer point to 0. Take A = {1, 2, 3} and B = {4, 5}, and let f: A to M B be given by f(1) = 4, f(2) = 5, f(3) = 0. Recall that the Kleisli composite g o_T f is mu_C o M g o f. Give the values of f o_T eta_A at 1, 2 and 3, in that order, as a list."
             answer: "4, 5, 0"
@@ -600,7 +600,7 @@ topics:
       - id: kp3
         name: The free-forgetful adjunction of the algebras
         key_prerequisites: [adjunctions]
-        constraints: "The free algebra is $(TC,\\mu_C)$: its two algebra laws must be identified with the two monad laws taken at $C$, never reproved from scratch, and the adjunction $F^T\\dashv U^T$ named together with its unit $\\eta$."
+        constraints: "The free algebra is $(TC,\\mu_C)$: match its two algebra laws to the two monad laws taken at $C$ by evaluating both sides at the given values, and identify the adjunction $F^T\\dashv U^T$ with its unit $\\eta$ as a label; never reprove the laws from scratch."
         exemplars:
           - problem: "Let T be the list monad on sets: T X is the set of finite lists with entries in X, eta_X sends an element x to the one-element list [x], and mu_X flattens a list of lists into one list. The free T-algebra on a set C is (TC, mu_C), the value of the left adjoint F^T in the adjunction whose right adjoint is U^T and whose unit is eta. Take C = {0, 1} and the element [[1,0],[0],[1,1]] of T(TC). Compute mu_C of this element, giving the resulting list."
             answer: "1, 0, 0, 1, 1"
@@ -673,7 +673,7 @@ topics:
       - id: kp1
         name: Every adjunction induces a monad
         key_prerequisites: [adjunctions]
-        constraints: "Build $T=GF$, $\\eta$, $\\mu=G\\varepsilon F$ from a given adjunction and derive every law from naturality plus the two triangle identities, naming which one is used; the concrete instances are free-forgetful adjunctions over $\\mathbf{Set}$ ($\\mathbf{Mon}$ giving the list monad, $\\mathbf{Grp}$ the free-group monad)."
+        constraints: "Compute $T=GF$, $\\eta$, $\\mu=G\\varepsilon F$ from a given adjunction and check every law by evaluating it through naturality and the two triangle identities on the given values — the graded answers are the computed components and the holds/fails verdict per law; the concrete instances are free-forgetful adjunctions over $\\mathbf{Set}$ ($\\mathbf{Mon}$ giving the list monad, $\\mathbf{Grp}$ the free-group monad)."
         exemplars:
           - problem: "Let P be the chain 0 < 1 < 2 < 3 < 4 and Q the chain 0 < 1 < 2. Define F from P to Q by F(0) = 0, F(1) = 0, F(2) = 1, F(3) = 1, F(4) = 2, and G from Q to P by G(0) = 1, G(1) = 3, G(2) = 4. These monotone maps form an adjunction F left adjoint to G, so T = G composed with F is the induced monad on P, a closure operator. Compute T(2)."
             answer: "3"
@@ -771,7 +771,7 @@ topics:
       - id: kp1
         name: The comparison functor
         key_prerequisites: [kleisli-categories]
-        constraints: "Every step must cite a monad law or a naturality square by name."
+        constraints: "Each rewrite is executed by substituting a definition and applying a monad law or a naturality square at the current equation; the graded answer is the final computed equation or the holds/fails verdict."
         exemplars:
           - problem: "Let $T$ be the writer monad for addition of residues mod $4$: $T(X) = X \\times \\{0,1,2,3\\}$, with unit $\\eta_A(x) = (x, 0)$ and multiplication $\\mu_A((x, m), n) = (x, m + n \\bmod 4)$. Take $A = B = \\{p\\}$ and the Kleisli arrow $f\\colon A \\to T B$ with $f(p) = (p, 1)$. The comparison functor sends $f$ to its underlying map $K(f) = \\mu_B \\circ T f$ from $T A$ to $T B$. Evaluate $K(f)$ at the element $(p, 2)$ of $T A$ and give the second component of the result."
             answer: "3"
@@ -904,7 +904,7 @@ topics:
       - id: kp1
         name: Definition
         key_prerequisites: [exponential-objects]
-        constraints: "State all three ingredients (terminal object, binary products, exponentials) and give the exponential either as the right adjoint of $-\\times A$ or by evaluation plus unique currying; the uniqueness of $\\lambda f$ must be part of the statement."
+        constraints: "State all three ingredients (terminal object, binary products, exponentials) and give the exponential either as the right adjoint of $-\\times A$ or by evaluation plus unique currying; the uniqueness of $\\lambda f$ must be part of the statement. Exemplar rule: the stem does not state the fact that the KP teaches — the stem gives only the raw data (objects, arrows, maps), and producing the identification (which construction applies) is part of the graded answer."
         exemplars:
           - problem: "A student must list everything that a cartesian closed category is required to have. Select the complete and correct list."
             answer: "Terminal object, binary products, exponentials"
@@ -937,7 +937,7 @@ topics:
       - id: kp2
         name: Set is cartesian closed
         key_prerequisites: [products-coproducts]
-        constraints: "$\\mathbf{Set}$ is the positive case (exponential $=$ function set, currying $=$ the adjunction); a negative verdict must be settled by a left-adjoint preservation failure in an additive category such as $\\mathbf{Vect}_k$ or $\\mathbf{Ab}$, exhibiting $0\\times V\\cong V$ with $V$ nonzero."
+        constraints: "$\\mathbf{Set}$ is the positive case (exponential $=$ function set, currying $=$ the adjunction); a negative verdict must be settled by a left-adjoint preservation failure in an additive category such as $\\mathbf{Vect}_k$ or $\\mathbf{Ab}$, exhibiting $0\\times V\\cong V$ with $V$ nonzero. Exemplar rule: the stem does not state the fact that the KP teaches — the stem gives only the raw data (objects, arrows, maps), and producing the identification (which construction applies) is part of the graded answer."
         exemplars:
           - problem: "In the category Set, the exponential B^A is the set of all functions from A to B. Take a set A with 2 elements and a set B with 7 elements. Find the number of elements of the exponential B^A."
             answer: "49"
@@ -1036,7 +1036,7 @@ topics:
       - id: kp1
         name: The presheaf category and representables
         key_prerequisites: [functor-categories]
-        constraints: "Presheaves are functors $\\mathcal C^{op}\\to\\mathbf{Set}$ with natural transformations as morphisms; representables are $\\mathrm{Hom}(-,A)$, and any full-faithfulness claim must be derived by instantiating the Yoneda lemma at a second representable, not asserted."
+        constraints: "Presheaves are functors $\\mathcal C^{op}\\to\\mathbf{Set}$ with natural transformations as morphisms; representables are $\\mathrm{Hom}(-,A)$, and any full-faithfulness claim is decided by instantiating the Yoneda lemma at a second representable and evaluating the resulting bijection — never asserted."
         exemplars:
           - problem: "Work in the presheaf category [C^op, Set], where C is the category built from the poset with elements a, b, c and order relations a <= c and b <= c, with no other strict relations. In this category there is exactly one arrow x -> y when x <= y, and none otherwise. The representable presheaf at a is y_a = Hom(-, a), which sends an object x to the set of arrows x -> a. Give the number of elements of y_a at a, at b, and at c, in this order."
             answer: "1, 0, 0"
@@ -1135,7 +1135,7 @@ topics:
       - id: kp1
         name: The definition of an elementary topos
         key_prerequisites: [cartesian-closed-categories]
-        constraints: "Name all three axioms (finite limits, cartesian closure, a subobject classifier) and give $\\mathrm{true}\\colon 1\\to\\Omega$ with its classifying-pullback property; the representability reading must name $\\mathrm{Sub}$ as the functor represented and $\\mathrm{true}$ as the universal element."
+        constraints: "Name all three axioms (finite limits, cartesian closure, a subobject classifier) and give $\\mathrm{true}\\colon 1\\to\\Omega$ with its classifying-pullback property; the representability reading must name $\\mathrm{Sub}$ as the functor represented and $\\mathrm{true}$ as the universal element. Exemplar rule: the stem does not state the fact that the KP teaches — the stem gives only the raw data (objects, arrows, maps), and producing the identification (which construction applies) is part of the graded answer."
         exemplars:
           - problem: "In Set the subobject classifier is Omega = {top, bottom} with the point map true: 1 -> Omega selecting top. Let X = {1, 2, 3, 4, 5} and let chi: X -> Omega send 2 and 5 to top and every other element of X to bottom. The subobject classified by chi is the pullback of true along chi. How many elements does this subobject have?"
             answer: "2"
