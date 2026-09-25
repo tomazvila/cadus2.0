@@ -79,7 +79,7 @@ pub async fn answer(request: TaskWithBody) -> Result<Json<Value>, ApiError> {
         expected_time(graph, &served),
     );
     let kind = served_kind(&served)?;
-    let grade = if verified_answer {
+    let mut grade = if verified_answer {
         Grade {
             correct: true,
             outcome: AttemptOutcome::Correct,
@@ -89,6 +89,32 @@ pub async fn answer(request: TaskWithBody) -> Result<Json<Value>, ApiError> {
     } else {
         grade_served_item(&served, &submitted.answer, kind)
     };
+    // Amendment K (note 114, the owner's design): a deterministic WRONG or an
+    // unparseable answer is checked against the owner's local model, through
+    // the (item digest, normalized text) cache. A cache hit answers at once —
+    // EQUIVALENT counts as correct for the topic and for mastery, a NOT keeps
+    // the wrong verdict and carries the model's one-line reason. A miss
+    // enqueues the background check below and the deterministic verdict
+    // stands until the worker lands. The web tier never calls a model (L6).
+    let mut equivalence_hit = None;
+    if !verified_answer && !grade.correct {
+        match equivalence::lookup(&state, &mut tx, &served, &submitted.answer).await {
+            Ok(Some(equivalence::Cached::Accepted(verdict))) => {
+                grade = Grade {
+                    correct: true,
+                    outcome: AttemptOutcome::Correct,
+                    work_quality: WorkQuality::NearlyPerfect,
+                    error_tags: Vec::new(),
+                };
+                equivalence_hit = Some(equivalence::Cached::Accepted(verdict));
+            }
+            Ok(hit @ Some(equivalence::Cached::Refused(_)))
+            | Ok(hit @ None) => equivalence_hit = hit,
+            // A failed cache read never stops the grade: the deterministic
+            // verdict stands, the answer simply goes unchecked.
+            Err(_) => tracing::warn!("equivalence: the cache lookup failed"),
+        }
+    }
     // T6, spec section 7: one count per grade DECISION, taken with no model call.
     state.metrics.count_grade(metrics::grade_result(&grade));
     let mut error_tags = grade.error_tags.clone();
@@ -174,6 +200,21 @@ pub async fn answer(request: TaskWithBody) -> Result<Json<Value>, ApiError> {
     // Step 9. The pre-authored lookup and, on a miss with none, the enqueue.
     // Both run inside THIS transaction (spec section 4.3, D-M5-1).
     let diagnosis = diagnosis::decide(&state, &mut tx, user_id, &mut scratch, &about).await?;
+    // Amendment K: on a wrong or unparseable answer with no cached verdict,
+    // the background check is enqueued in the same transaction. A miss that
+    // was flipped by the cache carries no job (the verdict is already here).
+    let equivalence_job = if grade.correct {
+        None
+    } else {
+        match equivalence_hit {
+            Some(equivalence::Cached::Refused(_)) | None => {
+                equivalence::enqueue(&state, &mut tx, user_id, &attempt_id, &served, &submitted.answer)
+                    .await?
+            }
+            Some(equivalence::Cached::Accepted(_)) => None,
+        }
+    };
+    let equivalence_field = equivalence::reply_field(equivalence_hit.as_ref(), equivalence_job);
     let pending_practice = scratch.feedback_practice.contains_key(&task_id);
     let progress = progress_for(&mut scratch, &task, graph);
     let closed = practice_progress(
@@ -197,7 +238,13 @@ pub async fn answer(request: TaskWithBody) -> Result<Json<Value>, ApiError> {
     .await;
     save_and_commit(&state, tx, user_id, &scratch).await?;
     Ok(Json(reply(
-        &recorded, &moved, &served, next, closed, diagnosis,
+        &recorded,
+        &moved,
+        &served,
+        next,
+        closed,
+        diagnosis,
+        equivalence_field,
     )))
 }
 
@@ -249,6 +296,10 @@ async fn already_recorded(
 ///
 /// The repeat-fail peel-back reads HISTORY, not the open session (V2), so the
 /// advance takes the whole-log session view beside the session window.
+#[expect(
+    clippy::too_many_arguments,
+    reason = "the advance reads the state, the content, the attempt and the whole-log view"
+)]
 async fn advance_and_fold(
     state: &AppState,
     content: &Content,

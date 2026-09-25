@@ -4,6 +4,7 @@
  * `types.ts` carries the conventions and the source-of-truth order. Every rule there holds
  * here.
  */
+import type { EquivalencePoll } from './types-study';
 import type { ProblemReportReceipt, ProblemReportSubmission } from './types-report';
 import type {
   EnrollResponse,
@@ -125,6 +126,8 @@ export interface ApiClient {
 
   // The async diagnosis (A4).
   getDiagnosis(diagnosisId: string): Promise<DiagnosisJob>;
+  /** The standing verdict of one background equivalence check (Amendment K, note 114). */
+  getEquivalence(equivalenceId: string): Promise<EquivalencePoll>;
   /** The URL an `EventSource` subscribes to. One connection per session, not per problem. */
   diagnosisStreamUrl(): string;
 
@@ -233,6 +236,8 @@ export const ROUTES: readonly RouteRow[] = [
 
   { method: 'GET', path: '/api/diagnosis/stream', auth: 'S', via: 'stream', client: 'diagnosisStreamUrl' },
   { method: 'GET', path: '/api/diagnosis/{id}', auth: 'S', via: 'method', client: 'getDiagnosis' },
+  // Amendment K (note 114): the poll of a background equivalence check.
+  { method: 'GET', path: '/api/equivalence/{id}', auth: 'S', via: 'method', client: 'getEquivalence' },
 
   { method: 'GET', path: '/api/operator/flags', auth: 'S', via: 'method', client: 'getOperatorFlags' },
 

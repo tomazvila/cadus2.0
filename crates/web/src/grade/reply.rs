@@ -52,6 +52,7 @@ pub(super) fn reply(
     next: Option<Value>,
     closed: bool,
     diagnosis: Value,
+    equivalence: Value,
 ) -> Value {
     // A bare `next: null` on an open task reads as "task over" (trap W5), so
     // an open task with no next problem says `next_unavailable` (trap W6).
@@ -71,8 +72,18 @@ pub(super) fn reply(
         ("remediation", json!(moved.remediation_view())),
         ("next", json!(next)),
         ("diagnosis", diagnosis),
+        // Amendment K (note 114): the background equivalence field. `null`
+        // when the answer was never a miss; a pending job id or a cache
+        // verdict otherwise.
+        ("equivalence", equivalence),
     ] {
         map.insert(key.to_string(), value);
+    }
+    // The model's one-line reason rides beside the wrong verdict (note 114,
+    // point 4) — in the reply and in the log, through the regraded fold of
+    // the background path.
+    if let Some(reason) = refused_reason(&map) {
+        map.insert("equivalence_reason".to_string(), json!(reason));
     }
     if feedback_practice {
         map.insert("feedback_practice".to_owned(), json!(true));
@@ -104,6 +115,16 @@ pub(super) fn reply(
         map.insert("xp".to_string(), json!(xp));
     }
     Value::Object(map)
+}
+
+/// The model's one-line why, when a refused cache verdict stands in the
+/// equivalence field.
+fn refused_reason(map: &Map<String, Value>) -> Option<String> {
+    let field = map.get("equivalence")?;
+    if field["status"] == "refused" {
+        return field["reason"].as_str().map(str::to_owned);
+    }
+    None
 }
 
 /// Put one answered quiz question into the buffer the batch reveal reads.

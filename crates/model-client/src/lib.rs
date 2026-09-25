@@ -48,9 +48,11 @@
 
 mod attempt;
 mod config;
-pub mod qwen;
+pub mod equivalence;
+mod qwen;
 mod reply;
 mod transport;
+pub use equivalence::{EquivalenceClient, Question};
 pub use qwen::{QwenClient, post_json};
 
 use std::time::{Duration, Instant};

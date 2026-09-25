@@ -329,12 +329,28 @@ export interface AnswerResponse {
   /** The stock re-solve instruction. Only on a miss, and never on a quiz. */
   re_solve?: string;
   /**
+   * Amendment K (note 114): the background equivalence field. `pending` = the
+   * answer is being checked and the verdict may flip to correct; `accepted` =
+   * a cached EQUIVALENT verdict already graded it correct; `refused` = the
+   * check kept the wrong verdict and `equivalence_reason` carries the why.
+   */
+  equivalence?: { id?: string; status: 'pending' | 'accepted' | 'refused' | 'failed'; reason?: string; model?: string };
+  /** The model's one-line why of a refused equivalence verdict. */
+  equivalence_reason?: string;
+  /**
    * The attempt IS recorded and the task is NOT finished — no next problem could be drawn.
    * A bare `next: null` on an open task reads as "task over" and silently skips the
    * problems the learner still owes, so the client re-serves the same task instead.
    */
   next_unavailable?: boolean;
   xp?: number;
+}
+
+/** The poll reply of one background equivalence check (Amendment K, note 114). */
+export interface EquivalencePoll {
+  id: string;
+  attempt_id: string;
+  verdict: { status: 'pending' | 'accepted' | 'refused' | 'failed'; reason?: string; model?: string };
 }
 
 /**
