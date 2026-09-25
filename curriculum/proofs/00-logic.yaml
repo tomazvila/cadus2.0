@@ -273,31 +273,31 @@ topics:
         name: "Translating compound sentences into symbols"
         key_prerequisites: [logical-connectives]
         exemplars:
-          - problem: "With R: 'it rains', U: 'I have an umbrella', W: 'I get wet': which formula correctly symbolizes the sentence 'if it rains and I have no umbrella, then I get wet'?"
-            answer: "(R and not U) implies W"
-            answer_contract: {"kind": "label", "options": [["(R and not U) implies W"], ["(R implies not U) and W"], ["(R and not U) or W"], ["(R or not U) implies W"]]}
-            solution_sketch: "The sentence is a conditional: its hypothesis is the conjunction of R with the negation of U, and its conclusion is W, so the full symbolization is (R and not U) implies W. The option (R implies not U) and W makes the error of putting the conditional inside a conjunction. The option (R and not U) or W makes the error of replacing the conditional by a disjunction. The option (R or not U) implies W makes the error of using or instead of and in the hypothesis. The answer is (R and not U) implies W."
-          - problem: "With E: 'the number n is even', O: 'the number n is odd': which formula correctly symbolizes the sentence 'n is even or odd, but not both'?"
-            answer: "(E or O) and not (E and O)"
-            answer_contract: {"kind": "label", "options": [["(E or O) and not (E and O)"], ["(E and O) and not (E or O)"], ["(E or O) or not (E and O)"], ["not (E or O) and not (E and O)"]]}
-            solution_sketch: "The phrase 'even or odd' gives the disjunction E or O, and 'but not both' adds the negation of the conjunction, so the full symbolization is (E or O) and not (E and O). The option (E and O) and not (E or O) makes the error of swapping the two connectives. The option (E or O) or not (E and O) makes the error of replacing the outer and by or. The option not (E or O) and not (E and O) makes the error of negating the 'even or odd' clause as well. The answer is (E or O) and not (E and O)."
-          - problem: "With P: 'the alarm rings', Q: 'I get up at once', R: 'I miss the train', the sentence is 'if the alarm rings and I do not get up at once, then I miss the train'. In case 1 the alarm rings is true, I get up at once is false, and I miss the train is true. In case 2 the alarm rings is true, I get up at once is false, and I miss the train is false. Find the truth values of the sentence in case 1 and case 2 as (case 1, case 2), using 1 for true and 0 for false."
-            answer: "(1, 0)"
-            answer_contract: {"arity": 2, "kind": "coordinates"}
-            solution_sketch: "Translate first: the sentence is (P and not Q) implies R. In case 1, P is true and Q is false, so the hypothesis P and not Q is true, and R is true, so the truth rule for a conditional gives true. In case 2, the hypothesis is true but R is false, so the truth rule for a conditional gives false. The answer is (1, 0)."
-          - problem: "With A: 'I take the ferry', B: 'the ferry runs', C: 'I walk to work', the sentence is 'I take the ferry and the ferry runs, or I walk to work'. In case 1 I take the ferry is true, the ferry runs is false, and I walk to work is false. In case 2 I take the ferry is true, the ferry runs is true, and I walk to work is false. Find the truth values of the sentence in case 1 and case 2 as (case 1, case 2), using 1 for true and 0 for false."
+          - problem: "With R: 'it rains', U: 'I have an umbrella', W: 'I get wet': the sentence 'if it rains and I have no umbrella, then I get wet' has exactly one correct symbolization among the options. Evaluate the correct symbolization in the case where it rains is true, I have an umbrella is false and I get wet is true. Give the truth value as 1 for true or 0 for false."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The sentence is a conditional: its hypothesis is the conjunction of R with the negation of U, and its conclusion is W, so the full symbolization is (R and not U) implies W. The option (R implies not U) and W makes the error of putting the conditional inside a conjunction. The option (R and not U) or W makes the error of replacing the conditional by a disjunction. The option (R or not U) implies W makes the error of using or instead of and in the hypothesis. Step: in the given case R is true and U is false, so the hypothesis R and not U is true, and W is true, so the truth rule for a conditional gives true. The answer is 1."
+          - problem: "With E: 'the number n is even', O: 'the number n is odd': the sentence 'n is even or odd, but not both' has exactly one correct symbolization among the options. Its truth value for a specific n is decided by the truth rules. For the number n = 6, which is even and not odd, is the symbolized sentence true? Give 1 for true or 0 for false."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The phrase 'even or odd' gives the disjunction E or O, and 'but not both' adds the negation of the conjunction, so the full symbolization is (E or O) and not (E and O). The option (E and O) and not (E or O) makes the error of swapping the two connectives. The option (E or O) or not (E and O) makes the error of replacing the outer and by or. The option not (E or O) and not (E and O) makes the error of negating the 'even or odd' clause as well. Step: for n = 6, E is true and O is false, so E or O is true and E and O is false, and the negation of a false conjunction is true, so the conjunction is true. The answer is 1."
+          - problem: "With P: 'the alarm rings', Q: 'I get up at once', R: 'I miss the train': in the case where the alarm rings is true, I get up at once is false and I miss the train is false, find the truth value of the sentence 'if the alarm rings and I do not get up at once, then I miss the train'. Give the value as 1 for true or 0 for false."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: the sentence is a conditional; its hypothesis is the conjunction of P with the negation of Q, and its conclusion is R. Step 1: P is true and Q is false, so the hypothesis P and not Q is true by the truth rule for and. Step 2: the hypothesis is true but R is false, so the truth rule for a conditional gives false. The answer is 0."
+          - problem: "With A: 'I take the ferry', B: 'the ferry runs', C: 'I walk to work': which formula correctly symbolizes the sentence 'I take the ferry and the ferry runs, or I walk to work'?"
+            answer: "(A and B) or C"
+            answer_contract: {"kind": "label", "options": [["(A and B) or C"], ["A and (B or C)"], ["(A or B) and C"], ["A and (B and C)"]]}
+            solution_sketch: "Full object: the sentence has two clauses joined by 'or': 'I take the ferry and the ferry runs' is the conjunction A and B, and 'I walk to work' is C, so the symbolization is (A and B) or C. The option A and (B or C) moves the grouping into the second conjunct. The option (A or B) and C changes the connectives of both clauses. The option A and (B and C) turns the disjunction into a conjunction. The answer is (A and B) or C."
+          - problem: "With S: 'the shop is open', H: 'it is a holiday': the sentence 'the shop is open or it is a holiday, but not both' symbolizes as (S or H) and not (S and H). In case 1 the shop is open is true and it is a holiday is true; in case 2 the shop is open is false and it is a holiday is true. Find the truth values of the symbolized sentence in case 1 and case 2 as (case 1, case 2), using 1 for true and 0 for false."
             answer: "(0, 1)"
-            answer_contract: {"arity": 2, "kind": "coordinates"}
-            solution_sketch: "Translate first: the sentence is (A and B) or C. In case 1, B is false, so the conjunction A and B is false by the truth rule for and, and C is false, so the disjunction is false. In case 2, A and B are both true, so the conjunction is true, and the truth rule for a disjunction with one true part gives true. The answer is (0, 1)."
-          - problem: "With S: 'the shop is open', H: 'it is a holiday', the sentence is 'the shop is open or it is a holiday, but not both'. In case 1 the shop is open is true and it is a holiday is true. In case 2 the shop is open is false and it is a holiday is true. Find the truth values of the sentence in case 1 and case 2 as (case 1, case 2), using 1 for true and 0 for false."
-            answer: "(0, 1)"
-            answer_contract: {"arity": 2, "kind": "coordinates"}
-            solution_sketch: "Translate first: 'or ... but not both' is the compound (S or H) and not (S and H). In case 1, both S and H are true, so S or H is true but S and H is also true, and its negation is false, so the truth rule for and gives false. In case 2, S is false and H is true, so S or H is true and S and H is false, so its negation is true and the conjunction is true. The answer is (0, 1)."
-          - problem: "With P: 'I pass the course', E: 'I sit the exam', D: 'I do the project', the sentence is 'I pass the course if and only if I sit the exam and I do the project'. In case 1 all three propositions are true. In case 2 all three propositions are false. Find the truth values of the sentence in case 1 and case 2 as (case 1, case 2), using 1 for true and 0 for false."
-            answer: "(1, 1)"
-            answer_contract: {"arity": 2, "kind": "coordinates"}
-            solution_sketch: "Translate first: the sentence is the biconditional P if and only if (E and D). In case 1, E and D is true by the truth rule for and, and P is true, so the truth rule for a biconditional with equal sides gives true. In case 2, E and D is false and P is false, so both sides are false and the biconditional is true. The answer is (1, 1)."
-        constraints: "three atomic propositions max; mixed connectives with one level of grouping"
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: "Full object: the sentence is the exclusive-or (S or H) and not (S and H). Step 1: in case 1 both S and H are true, so S or H is true but S and H is also true, and its negation is false, so the truth rule for and gives false. Step 2: in case 2, S is false and H is true, so S or H is true and S and H is false, so its negation is true and the conjunction is true. The answer is (0, 1)."
+          - problem: "With P: 'I pass the course', E: 'I sit the exam', D: 'I do the project': which formula correctly symbolizes the sentence 'I pass the course if and only if I sit the exam and I do the project'?"
+            answer: "P if and only if (E and D)"
+            answer_contract: {"kind": "label", "options": [["P if and only if (E and D)"], ["(P if and only if E) and D"], ["P if and only if (E or D)"], ["(P and E) if and only if D"]]}
+            solution_sketch: "Full object: the biconditional joins P with the conjunction E and D, so the symbolization is P if and only if (E and D). The option (P if and only if E) and D splits the biconditional and leaves D outside it. The option P if and only if (E or D) changes the conjunction to a disjunction. The option (P and E) if and only if D regroups the two sides of the biconditional. The answer is P if and only if (E and D)."
+        constraints: "three atomic propositions max; mixed connectives with one level of grouping. Answer form: the graded verdict is the chosen formula — present the candidate translations as label options (the candidate formulas or sentences as the option texts), never a bare yes/no truth value or count."
       - id: kp3
         name: "Reading symbolic formulas back into English"
         key_prerequisites: [logical-connectives]
@@ -306,27 +306,27 @@ topics:
             answer: "It is not the case that the bakery is open and it is a holiday"
             answer_contract: {"kind": "label", "options": [["It is not the case that the bakery is open and it is a holiday"], ["The bakery is not open and, at the same time, it is a holiday"], ["It is not the case that the bakery is open or it is a holiday"], ["The bakery is open and it is not the case that it is a holiday"]]}
             solution_sketch: "Scope rule: in $\\neg(P \\land Q)$ the negation stands outside the parentheses, so it applies to the whole conjunction, not to one part alone. The option 'The bakery is not open and, at the same time, it is a holiday' applies the negation only to the first conjunct, giving $\\neg P \\land Q$. The option 'It is not the case that the bakery is open or it is a holiday' negates a disjunction instead, giving $\\neg(P \\lor Q)$. The option 'The bakery is open and it is not the case that it is a holiday' negates only the second conjunct, giving $P \\land \\neg Q$. The answer is It is not the case that the bakery is open and it is a holiday."
-          - problem: "With $P$: 'n is prime', $Q$: 'n is odd', $R$: 'n > 2', read the formula $(P \\land R) \\to Q$. Sentence (i): 'If n is prime and n > 2, then n is odd.' Sentence (ii): 'n is prime, and if n > 2 then n is odd.' Sentence (iii): 'If n is prime or n > 2, then n is odd.' Sentence (iv): 'If n is prime, then n > 2 and n is odd.' How many of the four sentences correctly translate the formula?"
-            answer: "1"
+          - problem: "Use the code 1 for a negation, 2 for a conjunction, 3 for a disjunction, 4 for a conditional, 5 for a biconditional. With $P$: 'n is prime', $Q$: 'n is odd', $R$: 'n > 2', give the code of the main connective of the formula $(P \\land R) \\to Q$."
+            answer: "4"
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Grouping rule: the conditional is the main connective, so the whole conjunction $P \\land R$ is the hypothesis and $Q$ alone is the conclusion. Sentence (i) has exactly this grouping, so it is correct. Sentence (ii) makes the conjunction the main connective, giving $P \\land (R \\to Q)$. Sentence (iii) changes the hypothesis to a disjunction, giving $(P \\lor R) \\to Q$. Sentence (iv) moves the grouping into the conclusion, giving $P \\to (R \\land Q)$. Exactly one sentence is correct, so the answer is 1."
-          - problem: "Let $P$: 'the alarm is set' and $Q$: 'we wake up early'. Read the formula $\\neg(P \\land \\neg Q)$. Sentence (i): 'It is not the case that the alarm is set and we do not wake up early.' Sentence (ii): 'The alarm is not set and we do not wake up early.' Sentence (iii): 'It is false that the alarm is set and that we do not wake up early.' Sentence (iv): 'The alarm is set and it is not the case that we wake up early.' How many of the four sentences correctly translate the formula?"
-            answer: "2"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Scope rule: the outer negation governs all of $P \\land \\neg Q$, and the inner negation governs only $Q$. Sentence (i) places 'it is not the case that' over the whole conjunction with 'do not' on the second part, so it is correct. Sentence (iii) does the same with 'it is false that ... and that ...', so it is also correct. Sentence (ii) negates the first conjunct instead of the whole conjunction, giving $\\neg P \\land \\neg Q$. Sentence (iv) drops the outer negation entirely, giving $P \\land \\neg Q$. Two sentences are correct, so the answer is 2."
+            solution_sketch: "Grouping rule: the conditional is the main connective, so the whole conjunction $P \\land R$ is the hypothesis and $Q$ alone is the conclusion. Sentence (i) has exactly this grouping, so it is correct. The main connective is the connective applied last, found outside all parentheses; here the conditional is applied last, so the code is 4."
+          - problem: "Let $P$: 'the alarm is set' and $Q$: 'we wake up early'. Read the formula $\\neg(P \\land \\neg Q)$: give the number of negations in it and the number of connectives at the top level, as (negations, connectives)."
+            answer: "(2, 1)"
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: "Scope rule: the outer negation governs all of $P \\land \\neg Q$, and the inner negation governs only $Q$. Scope rule: the outer negation governs all of $P \\land \\neg Q$, and the inner negation governs only $Q$, so there are 2 negations; the conjunction is the only top-level connective, so (2, 1)."
           - problem: "A negation applies to the entire formula exactly when it is the main connective, standing outside every parenthesis. Formula (i): $\\neg(P \\lor Q)$. Formula (ii): $\\neg P \\to Q$. Formula (iii): $P \\to \\neg(Q \\land R)$. Formula (iv): $\\neg(P \\to Q)$. Formula (v): $\\neg(P \\leftrightarrow Q)$. How many of the five formulas have a negation that applies to the entire formula?"
             answer: "3"
             answer_contract: {"kind": "exact"}
             solution_sketch: "Main-connective rule: read the formula from the outside in; the connective applied last is the main one. Formula (i) $\\neg(P \\lor Q)$, formula (iv) $\\neg(P \\to Q)$ and formula (v) $\\neg(P \\leftrightarrow Q)$ each have the negation outside all parentheses, so it applies to the entire formula. Formula (ii) $\\neg P \\to Q$ negates only $P$, and then the conditional is applied. Formula (iii) $P \\to \\neg(Q \\land R)$ negates only the consequent $Q \\land R$, not the whole conditional. Three of the five formulas qualify, so the answer is 3."
-          - problem: "Let $P$: 'the bridge is inspected', $Q$: 'the bridge is closed', $R$: 'traffic is diverted'. Read the formula $P \\to \\neg(Q \\lor R)$. Sentence (i): 'If the bridge is inspected, then it is not the case that the bridge is closed or traffic is diverted.' Sentence (ii): 'If the bridge is inspected, then the bridge is not closed or traffic is diverted.' Sentence (iii): 'If the bridge is not inspected, then the bridge is closed or traffic is diverted.' Sentence (iv): 'If the bridge is inspected and the bridge is closed, then traffic is not diverted.' How many of the four sentences correctly translate the formula?"
-            answer: "1"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Grouping rule: in $P \\to \\neg(Q \\lor R)$ the consequent is the negation of the whole disjunction $Q \\lor R$. Sentence (i) puts 'it is not the case that' over the closed-or-diverted clause, so it is correct. Sentence (ii) applies the negation only to 'the bridge is closed', giving $P \\to (\\neg Q \\lor R)$. Sentence (iii) negates the hypothesis instead of the consequent, giving $\\neg P \\to (Q \\lor R)$. Sentence (iv) regroups the hypothesis into a conjunction and negates only $R$, giving $(P \\land Q) \\to \\neg R$. Exactly one sentence is correct, so the answer is 1."
+          - problem: "Let $P$: 'the bridge is inspected', $Q$: 'the bridge is closed', $R$: 'traffic is diverted'. Read the formula $P \\to \\neg(Q \\lor R)$. Four candidate sentences are offered as options; exactly one matches the scope of the negation. Select the sentence that correctly translates the formula."
+            answer: "If the bridge is inspected, then not (closed or diverted)"
+            answer_contract: {"kind": "label", "options": [["If the bridge is inspected, then not (closed or diverted)"], ["If the bridge is inspected, then not closed or diverted"], ["If the bridge is not inspected, then closed or diverted"], ["If inspected and closed, then not diverted"]]}
+            solution_sketch: "Grouping rule: in $P \\to \\neg(Q \\lor R)$ the consequent is the negation of the whole disjunction $Q \\lor R$. Sentence (i) puts the negation over the whole closed-or-diverted clause, so it is correct. Sentence (ii) applies the negation only to 'closed', giving $P \\to (\\neg Q \\lor R)$. Sentence (iii) negates the hypothesis instead of the consequent, giving $\\neg P \\to (Q \\lor R)$. Sentence (iv) regroups the hypothesis into a conjunction and negates only $R$, giving $(P \\land Q) \\to \\neg R$. The chosen sentence is 'If the bridge is inspected, then not (closed or diverted)'."
           - problem: "Use the code 1 for a negation, 2 for a conjunction, 3 for a disjunction, 4 for a conditional, 5 for a biconditional. Formula (i): $\\neg(P \\land Q) \\to R$. Formula (ii): $P \\land (Q \\to R)$. Formula (iii): $\\neg(P \\lor \\neg Q)$. Determine the main connective of each formula and give the three codes in order as a list."
             answer: "4, 2, 1"
             answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
             solution_sketch: "Main-connective rule: the main connective is the one applied last, found outside all parentheses. In formula (i) $\\neg(P \\land Q) \\to R$ the conditional is applied last, so its code is 4. In formula (ii) $P \\land (Q \\to R)$ the conjunction stands outside the conditional, so its code is 2. In formula (iii) $\\neg(P \\lor \\neg Q)$ the outer negation governs everything inside, so its code is 1. The list of codes in order is 4, 2, 1."
-        constraints: "respect grouping; the English rendering must show what the negation or conditional applies to"
+        constraints: "respect grouping; the English rendering must show what the negation or conditional applies to. Answer form: the graded verdict is the chosen formula — present the candidate translations as label options (the candidate formulas or sentences as the option texts), never a bare yes/no truth value or count."
     diagnostic_exemplar:
       problem: 'With $S$: "it snows", $C$: "the road is closed", $L$: "I am late": symbolise "if it snows and the road is closed, then I am late", and translate $L \leftrightarrow (S \lor C)$ back into English.'
       answer_contract: {kind: none}
@@ -950,7 +950,7 @@ topics:
             answer: "0"
             answer_contract: {"kind": "exact"}
             solution_sketch: "Step 1, the translation rule: divisibility of n by 12 is sufficient for divisibility of n by 3 means if 12 divides n then 3 divides n. Step 2, find the multiples of 12 from 1 to 20, and the only one is 12, which is divisible by 3, so no value in the range fails the consequent. The number of counterexamples is 0."
-        constraints: "translate sufficient-condition phrasing into $A \\to B$ and judge its truth"
+        constraints: "translate sufficient-condition phrasing into $A \\to B$ and judge its truth. Answer form: the graded verdict is the chosen formula — present the candidate translations as label options (the candidate formulas or sentences as the option texts), never a bare yes/no truth value or count."
       - id: kp2
         name: "Necessary conditions and only if"
         key_prerequisites: [conditional-statements]
@@ -979,7 +979,7 @@ topics:
             answer: "1"
             answer_contract: {"kind": "exact"}
             solution_sketch: "Step 1 (only-if rule): 'a number is prime only if it is odd' translates to 'if a number is prime then it is odd', with oddness as the guaranteed conclusion. Step 2 (counterexample rule): a counterexample makes the hypothesis true and the conclusion false, so we need elements of S that are prime and even. Step 3 (counting rule): among 2, 3, 4, 5, 6, 7, 9, 15, only 2 is both prime and even, while 9 and 15 are odd without being prime and do not count. The answer is 1."
-        constraints: "necessary and only-if phrasing both translate to $A \\to B$ with the guaranteed part as conclusion"
+        constraints: "necessary and only-if phrasing both translate to $A \\to B$ with the guaranteed part as conclusion. Answer form: the graded verdict is the chosen formula — present the candidate translations as label options (the candidate formulas or sentences as the option texts), never a bare yes/no truth value or count."
       - id: kp3
         name: "Unless, and necessary-and-sufficient"
         key_prerequisites: [conditional-statements]
@@ -1008,7 +1008,7 @@ topics:
             answer: "(0, 1)"
             answer_contract: {"arity": 2, "kind": "coordinates"}
             solution_sketch: "By the necessary condition rule, 'P is necessary for Q' means Q implies P. A conditional is false only when its antecedent is true and its consequent is false, so Q is true and P is false. Thus the false assignment is (P,Q) = (0,1). The answer is (0, 1)."
-        constraints: "translate unless as $\\neg Q \\to P$; necessary-and-sufficient as $\\leftrightarrow$"
+        constraints: "translate unless as $\\neg Q \\to P$; necessary-and-sufficient as $\\leftrightarrow$. Answer form: the graded verdict is the chosen formula — present the candidate translations as label options (the candidate formulas or sentences as the option texts), never a bare yes/no truth value or count."
     diagnostic_exemplar:
       problem: 'Express "divisibility by $10$ is necessary and sufficient for divisibility by both $2$ and $5$" as a symbolic biconditional, and rewrite "$n^2$ is odd unless $n$ is even" as a conditional.'
       answer_contract: {kind: none}
@@ -1470,7 +1470,7 @@ topics:
             answer: "3"
             answer_contract: {"kind": "exact"}
             solution_sketch: "An 'every A is B' sentence takes a universal quantifier with a conditional, so sentence (2) does not have the existential shape. Each of (1), (3) and (4) says that one object has two properties at once, which is exactly an existential quantifier with a conjunction: (1) is even and greater than 10, (3) is prime and greater than 10, and (4) is a multiple of 5 and odd. Three sentences have the existential-with-conjunction shape. The answer is 3."
-        constraints: "universal claims use $\\to$; existential claims use $\\land$"
+        constraints: "universal claims use $\\to$; existential claims use $\\land$. Answer form: the graded verdict is the chosen formula — present the candidate translations as label options (the candidate formulas or sentences as the option texts), never a bare yes/no truth value or count."
     diagnostic_exemplar:
       problem: 'Translate "some perfect square is odd" using quantifiers and give its truth value; then decide whether "for every $n \in \{2, 4, 6\}$, $n^2 + 1$ is prime" is true.'
       answer_contract: {kind: none}
@@ -1528,7 +1528,7 @@ topics:
             answer: "4"
             answer_contract: {"kind": "exact"}
             solution_sketch: "Step 1: read the for-all-then-exists statement for each $x$ in $D$ with partner $y$ in $D$ and product 12. Step 2: $x = 2$ gives $y = 6$, $x = 3$ gives $y = 4$, $x = 4$ gives $y = 3$, and $x = 6$ gives $y = 2$, and all of these partners lie in $D$. Step 3: $x = 5$ has no witness because 12/5 is not an integer. Step 4: four elements of $D$ have a witness, so the number of such $x$ is 4."
-        constraints: "two nested quantifiers; show that order changes meaning"
+        constraints: "two nested quantifiers; show that order changes meaning. Answer form: the graded verdict is the chosen formula — present the candidate translations as label options (the candidate formulas or sentences as the option texts), never a bare yes/no truth value or count."
       - id: kp2
         name: "Translating mathematical statements"
         key_prerequisites: [conditional-statements]
