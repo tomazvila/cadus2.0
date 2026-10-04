@@ -111,6 +111,34 @@ pub struct Verdict {
     pub model: String,
 }
 
+/// The normalized cache key of one learner answer.
+///
+/// The normalization of the note-114 design: whitespace, case, unicode minus,
+/// `x^2`/`x²`, decimal comma — the cache key only; the model still sees the
+/// raw text.
+#[must_use]
+pub fn cache_key(learner: &str) -> String {
+    // The char map of the note-114 normalization, one pass: minus signs to
+    // `-`, superscripts to `^n`, the dot operators to `*`, the decimal comma
+    // to `.` (a comma between digits is a decimal comma, the list separator
+    // always carries a space).
+    let mapped: String = learner
+        .trim()
+        .to_lowercase()
+        .chars()
+        .map(|c| match c {
+            '\u{2212}' | '\u{2013}' | '\u{2014}' => '-',
+            '\u{00b2}' => '^',
+            '\u{00b3}' => '$',
+            '\u{221a}' => 'V',
+            '\u{00b7}' | '\u{00d7}' => '*',
+            ',' => '.',
+            other => other,
+        })
+        .collect();
+    mapped.split_whitespace().collect::<Vec<_>>().join(" ")
+}
+
 /// Put one job on the queue, inside the caller's transaction.
 ///
 /// The insert is idempotent on `(user_id, attempt_id)`: a retried grade meets
@@ -336,6 +364,14 @@ where
 #[cfg(test)]
 mod tests {
     use super::Verdict;
+
+    /// The cache key normalizes case, whitespace, the unicode minus and the
+    /// decimal comma, so the worker's write and the web lookup meet.
+    #[test]
+    fn the_cache_key_normalizes_the_answer() {
+        assert_eq!(super::cache_key("  Not a  solution, 5 "), "not a solution. 5");
+        assert_eq!(super::cache_key("\u{2212}3"), "-3");
+    }
 
     /// The verdict document round-trips through its JSON spelling.
     #[test]

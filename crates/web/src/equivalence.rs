@@ -56,33 +56,9 @@ pub const ACCEPTED_NOTE: &str = "equivalence (cached background verdict)";
 /// The reason field of a refused verdict's reply line.
 pub const REFUSED_PREFIX: &str = "A background check of this answer read: ";
 
-/// The normalized cache key of one learner answer.
-///
-/// The normalization of the note-114 design: whitespace, case, unicode minus,
-/// `x^2`/`x²`, decimal comma — the cache key only; the model still sees the
-/// raw text.
-#[must_use]
-pub fn cache_key(learner: &str) -> String {
-    // The char map of the note-114 normalization, one pass: minus signs to
-    // `-`, superscripts to `^n`, the dot operators to `*`, the decimal comma
-    // to `.` (a comma between digits is a decimal comma, the list separator
-    // always carries a space).
-    let mapped: String = learner
-        .trim()
-        .to_lowercase()
-        .chars()
-        .map(|c| match c {
-            '\u{2212}' | '\u{2013}' | '\u{2014}' => '-',
-            '\u{00b2}' => '^',
-            '\u{00b3}' => '$',
-            '\u{221a}' => 'V',
-            '\u{00b7}' | '\u{00d7}' => '*',
-            ',' => '.',
-            other => other,
-        })
-        .collect();
-    mapped.split_whitespace().collect::<Vec<_>>().join(" ")
-}
+/// The normalized cache key of one learner answer (shared with the worker,
+/// so the write and the lookup use one key).
+pub use cadus_store::equivalence::cache_key;
 
 /// The item digest a served problem is keyed by in the cache.
 ///

@@ -26,8 +26,8 @@ use cadus_worker::equivalence::{EquivalenceJob, Outcome};
 use cadus_worker::run_with;
 use common::FakeModel;
 use serde_json::{Value, json};
-use sqlx::types::chrono::Utc;
 use sqlx::types::Uuid;
+use sqlx::types::chrono::Utc;
 
 /// A chat-completion body carrying `EQUIVALENT` and the one-line why.
 fn equivalent_reply() -> (u16, String) {
@@ -172,6 +172,18 @@ async fn an_equivalent_verdict_folds_the_attempt_correct() {
         .await
         .unwrap();
         assert!(cached);
+        // The worker writes the NORMALIZED key, the one the web lookup reads.
+        let key = sqlx::query_scalar::<_, String>(
+            "SELECT answer_key FROM equivalence_cache WHERE item_digest = 'abc123def456'",
+        )
+        .fetch_one(&db.admin)
+        .await
+        .unwrap();
+        assert_eq!(
+            key,
+            cadus_store::equivalence::cache_key("not a solution, 5")
+        );
+        assert_eq!(key, "not a solution. 5");
 
         // The ledger holds the call (note 114, point 5).
         let logged = sqlx::query_scalar::<_, i64>(
@@ -195,7 +207,7 @@ async fn a_cache_hit_skips_the_model() {
         seed_attempt(db, alice).await;
         sqlx::query!(
             "INSERT INTO equivalence_cache (item_digest, answer_key, equivalent, reason, model)
-             VALUES ('abc123def456', 'not a solution, 5', true, 'same value', 'qwen-general-8bit')"
+             VALUES ('abc123def456', 'not a solution. 5', true, 'same value', 'qwen-general-8bit')"
         )
         .execute(&db.admin)
         .await
@@ -206,7 +218,11 @@ async fn a_cache_hit_skips_the_model() {
             .await
             .unwrap();
         assert_eq!(report.outcome, Outcome::Accepted, "{report:?}");
-        assert_eq!(server.call_count(), 0, "the cache answered, the model never ran");
+        assert_eq!(
+            server.call_count(),
+            0,
+            "the cache answered, the model never ran"
+        );
         let (status, _) = row_of(db, id).await;
         assert_eq!(status, "done");
     })
@@ -263,7 +279,10 @@ async fn a_not_verdict_keeps_the_deterministic_wrong() {
         assert_eq!(status, "done");
         let result = result.expect("the refused verdict stands in the result");
         assert_eq!(result["equivalent"], json!(false));
-        assert_eq!(result["reason"], json!("The verdict part disagrees with the key"));
+        assert_eq!(
+            result["reason"],
+            json!("The verdict part disagrees with the key")
+        );
         let corrections = sqlx::query_scalar::<_, i64>(
             "SELECT count(*) FROM events WHERE user_id = $1 AND type = 'regraded'",
         )
@@ -352,14 +371,17 @@ async fn an_unreachable_local_model_falls_back_to_the_hosted_model() {
         seed_attempt(db, alice).await;
         let id = enqueue(db, alice).await;
         // Port 9 (discard) refuses the connection at once.
-        let local =
-            cadus_model_client::EquivalenceClient::new("http://127.0.0.1:9/v1", "qwen-general-8bit")
-                .unwrap();
+        let local = cadus_model_client::EquivalenceClient::new(
+            "http://127.0.0.1:9/v1",
+            "qwen-general-8bit",
+        )
+        .unwrap();
         let fallback =
             cadus_model_client::EquivalenceClient::new(&hosted.base_url, "deepseek/deepseek-chat")
                 .unwrap()
                 .with_key("test-key", vec!["deepinfra".to_owned()]);
-        let job = EquivalenceJob::new(local, Arc::new(common::pool::arena())).with_fallback(fallback);
+        let job =
+            EquivalenceJob::new(local, Arc::new(common::pool::arena())).with_fallback(fallback);
 
         let report = cadus_worker::equivalence::run_once(&common::handle(db), &job)
             .await

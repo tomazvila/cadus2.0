@@ -224,13 +224,10 @@ pub async fn run_once(db: &Db, job: &EquivalenceJob) -> Result<Report, WorkerErr
     // The cache first: a verdict another pass already settled answers here
     // with no model call (note 114, point 2). The fold still runs — the
     // attempt this job names may not be corrected yet.
-    let verdict = match equivalence::cache_hit(
-        db.pool(),
-        &payload.item_digest,
-        &payload.given_answer,
-    )
-    .await
-    {
+    // The cache key is the NORMALIZED learner text, the key the web lookup
+    // reads; the model still sees the raw text.
+    let answer_key = equivalence::cache_key(&payload.given_answer);
+    let verdict = match equivalence::cache_hit(db.pool(), &payload.item_digest, &answer_key).await {
         Ok(Some(verdict)) => {
             tracing::info!(job = %claimed.id, "equivalence: the cache answered; no model call");
             Some(verdict)
@@ -384,7 +381,7 @@ async fn land_inner(
     equivalence::cache_put(
         &mut **tx,
         &payload.item_digest,
-        &payload.given_answer,
+        &equivalence::cache_key(&payload.given_answer),
         verdict,
     )
     .await?;
