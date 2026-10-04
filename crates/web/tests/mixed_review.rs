@@ -22,7 +22,24 @@ const ADDITION: &str = "s_2026-01-01a-review-addition";
 const SUBTRACTION: &str = "s_2026-01-01a-review-subtraction";
 
 fn two_topic_curriculum() -> Curriculum {
-    one_unit_curriculum(vec![
+    one_unit_curriculum(review_topics())
+}
+
+/// The two review topics, and `multiplication` beside them.
+fn three_topic_curriculum() -> Curriculum {
+    let mut topics = review_topics();
+    topics.push(topic(
+        "multiplication",
+        vec![
+            kp("kp1", vec![exemplar("Compute 3 x 2.5.", "7.5")]),
+            kp("kp2", vec![exemplar("Compute 4 x 1.5.", "6")]),
+        ],
+    ));
+    one_unit_curriculum(topics)
+}
+
+fn review_topics() -> Vec<cadus_core::curriculum::Topic> {
+    vec![
         topic(
             "addition",
             vec![
@@ -37,7 +54,7 @@ fn two_topic_curriculum() -> Curriculum {
                 kp("kp2", vec![exemplar("Compute 50 - 2.5.", "47.5")]),
             ],
         ),
-    ])
+    ]
 }
 
 fn due() -> TopicState {
@@ -54,6 +71,11 @@ fn due() -> TopicState {
 
 /// A learner with an open session and the reviews of `topics` due.
 async fn learner(db: &TestDb, email: &str, topics: &[&str]) -> Uuid {
+    learner_in(db, email, topics, &two_topic_curriculum()).await
+}
+
+/// The same, over `curriculum`.
+async fn learner_in(db: &TestDb, email: &str, topics: &[&str], curriculum: &Curriculum) -> Uuid {
     let user = seed_learner(db, email).await;
     seed_open_session(db, user).await;
     let model = LearnerModel {
@@ -65,8 +87,7 @@ async fn learner(db: &TestDb, email: &str, topics: &[&str]) -> Uuid {
     };
     seed_cached_model(db, user, &model, 1).await;
     put_state(db, user, &WebState::for_session(SESSION)).await;
-    let curriculum = two_topic_curriculum();
-    let digest = review_context_digest(&curriculum).unwrap();
+    let digest = review_context_digest(curriculum).unwrap();
     for topic in topics {
         for kp in ["kp1", "kp2"] {
             for index in 0..10 {
@@ -348,6 +369,98 @@ async fn a_lone_review_keeps_its_payload() {
         assert!(served.get("task_id").is_none() && served.get("mixed_review").is_none());
         let reply = answer_live(&app, &db, user, REVIEW, true).await;
         assert!(reply["next"].get("task_id").is_none());
+    })
+    .await;
+}
+
+#[tokio::test]
+async fn every_review_of_a_block_records_exactly_one_task_served() {
+    TestDb::with(|db| async move {
+        let curriculum = three_topic_curriculum();
+        let app = app_with_content(&db, curriculum.clone());
+        let topics = ["addition", "multiplication", "subtraction"];
+        let user = learner_in(&db, "mixed-served@example.com", &topics, &curriculum).await;
+        let reviews: Vec<String> = plan_of(&app, user).await["tasks"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .filter(|task| task["task_type"] == "review")
+            .map(|task| task["task_id"].as_str().unwrap().to_owned())
+            .collect();
+        assert_eq!(reviews.len(), 3);
+
+        // Walk the block by hand-off alone: one serve, then only answers.
+        let mut current = serve_ok(&app, user, &reviews[0]).await["task_id"]
+            .as_str()
+            .unwrap()
+            .to_owned();
+        let mut order = Vec::new();
+        loop {
+            order.push(current.clone());
+            let reply = answer_live(&app, &db, user, &current, true).await;
+            if reply["next"].is_null() {
+                break;
+            }
+            current = reply["next"]["task_id"].as_str().unwrap().to_owned();
+        }
+        assert_eq!(order.len(), 12);
+        assert!(order.windows(2).all(|pair| pair[0] != pair[1]), "{order:?}");
+
+        let served = events_of_type(&db, user, "task_served").await;
+        for review in &reviews {
+            let count = served
+                .iter()
+                .filter(|event| event["task_id"] == review.as_str())
+                .count();
+            assert_eq!(count, 1, "{review}: {served:?}");
+            assert!(
+                served
+                    .iter()
+                    .any(|event| event["task_id"] == review.as_str()
+                        && event["task_type"] == "review"
+                        && event["session"] == SESSION),
+            );
+        }
+        assert_eq!(served.len(), 3, "{served:?}");
+        assert_eq!(events_of_type(&db, user, "review_result").await.len(), 3);
+        // The fold cursor stands at the head of the log after the hand-offs.
+        assert_eq!(fold_cursor(&db, user).await, log_head(&db, user).await);
+    })
+    .await;
+}
+
+#[tokio::test]
+async fn a_reload_serves_the_corrective_practice_a_sibling_review_owes() {
+    TestDb::with(|db| async move {
+        let app = app_with_content(&db, two_topic_curriculum());
+        let user = learner(
+            &db,
+            "mixed-practice@example.com",
+            &["addition", "subtraction"],
+        )
+        .await;
+        let first = serve_ok(&app, user, ADDITION).await;
+        let missed = first["task_id"].as_str().unwrap().to_owned();
+        let sibling = if missed == ADDITION {
+            SUBTRACTION
+        } else {
+            ADDITION
+        };
+
+        let reply = answer_live(&app, &db, user, &missed, false).await;
+        assert_eq!(reply["feedback_practice"], true, "{reply}");
+        // A reload that lost the live practice problem: the practice is still owed.
+        let mut state = stored_state(&db, user).await;
+        assert!(state.feedback_practice.contains_key(&missed));
+        state.served.clear();
+        put_state(&db, user, &state).await;
+
+        let served = serve_ok(&app, user, sibling).await;
+        assert_eq!(served["task_id"], missed.as_str(), "{served}");
+        assert_eq!(served["feedback_practice"], true, "{served}");
+        let state = stored_state(&db, user).await;
+        assert!(state.served.contains_key(&missed));
+        assert!(!state.served.contains_key(sibling));
     })
     .await;
 }

@@ -126,7 +126,7 @@ use draw::*;
 pub use hint::hint;
 pub(crate) use payload::progress_for;
 use payload::*;
-pub(crate) use route::install_next;
+pub(crate) use route::{install_next, record_first_serve};
 pub use route::serve;
 pub(crate) use session_tasks::restore_session_tasks;
 use target::*;

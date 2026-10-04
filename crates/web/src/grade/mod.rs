@@ -118,7 +118,9 @@ use crate::error::ApiError;
 use crate::metrics;
 use crate::path::TaskWithBody;
 use crate::route_prelude::task_request;
-use crate::serve::{Open, find, install_next, open, progress_for, unix_seconds};
+use crate::serve::{
+    Open, find, install_next, open, progress_for, record_first_serve, unix_seconds,
+};
 use crate::session::{content, projection_input, write_state};
 pub(crate) use crate::session::{db_failed, store};
 use crate::state::{

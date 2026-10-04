@@ -271,13 +271,13 @@ pub async fn answer(request: TaskWithBody) -> Result<Json<Value>, ApiError> {
                 content,
                 &mut tx,
                 user_id,
-                (&plan, &task, other),
+                (&plan, &task, other, &events),
                 &mut scratch,
                 &readiness,
                 now,
                 closed,
             )
-            .await
+            .await?
         }
         None => {
             next_problem(
@@ -322,8 +322,10 @@ pub async fn answer(request: TaskWithBody) -> Result<Json<Value>, ApiError> {
 /// Step 8 of a mixed review block: close or park the answered review, then
 /// draw the next question of the review `other` the interleaving rule picked.
 ///
-/// The payload carries `task_id`, which the caller's stamp keeps. A failed
-/// draw is reported, never raised, as in [`next_problem`].
+/// The hand-off is that review's serve, so the first one appends its
+/// `task_served` exactly as the serve route does (D-M5-8), and folds in the
+/// same transaction. The payload carries `task_id`, which the caller's stamp
+/// keeps. A failed draw is reported, never raised, as in [`next_problem`].
 #[expect(
     clippy::too_many_arguments,
     reason = "the draw reads the content, the tasks, the scratch and the transaction"
@@ -333,30 +335,39 @@ async fn mixed_hand_on(
     content: &Content,
     tx: &mut Transaction<'static, Postgres>,
     user_id: Uuid,
-    (plan, task, other): (&cadus_core::selector::SessionPlan, &Task, &str),
+    (plan, task, other, events): (&cadus_core::selector::SessionPlan, &Task, &str, &[EventRow]),
     scratch: &mut WebState,
     readiness: &ReadinessSet,
     now: Timestamp,
     closed: bool,
-) -> Option<Value> {
+) -> Result<Option<Value>, ApiError> {
     if closed {
         clear_task_scratch(scratch, &task.task_id);
     } else {
         scratch.served.remove(&task.task_id);
     }
-    let next_task = plan.tasks.iter().find(|item| item.task_id == other)?;
-    install_next(
+    let Some(next_task) = plan.tasks.iter().find(|item| item.task_id == other) else {
+        return Ok(None);
+    };
+    let drawn = install_next(
         state, content, tx, user_id, next_task, scratch, readiness, now,
     )
-    .await
-    .map(|mut payload| {
-        payload["task_id"] = json!(other);
-        payload
-    })
-    .map_err(|err| {
-        tracing::warn!(task_id = %other, code = %err.code, "answer: no next mixed review problem");
-    })
-    .ok()
+    .await;
+    let mut payload = match drawn {
+        Ok(payload) => payload,
+        Err(err) => {
+            tracing::warn!(task_id = %other, code = %err.code, "answer: no next mixed review problem");
+            return Ok(None);
+        }
+    };
+    let appended =
+        record_first_serve(state, tx, user_id, next_task, &plan.session, events, now).await?;
+    if appended {
+        let input = projection_input(content, now);
+        store(state, project_and_save(tx, user_id, &input, None)).await?;
+    }
+    payload["task_id"] = json!(other);
+    Ok(Some(payload))
 }
 
 /// The reply of a request whose attempt already stands (spec section 4.3

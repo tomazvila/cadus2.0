@@ -49,7 +49,7 @@ fn slug_of(id: &str) -> Option<Slug> {
 /// The answer is `true` when the append went in. The caller folds and saves on a
 /// `true`, so the log head and the fold cursor leave the transaction together
 /// (M5 review 2, findings V1 and V8).
-async fn record_first_serve(
+pub(crate) async fn record_first_serve(
     state: &AppState,
     tx: &mut Transaction<'_, Postgres>,
     user_id: Uuid,

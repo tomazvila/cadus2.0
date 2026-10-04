@@ -78,10 +78,12 @@ pub(crate) fn serve_target(
     if block.is_empty() {
         return None;
     }
-    if let Some(live) = block
-        .iter()
-        .find(|task| scratch.served.contains_key(&task.task_id))
-    {
+    // A live problem, or corrective practice a review still owes, keeps its
+    // review on screen: owed practice must follow its miss.
+    if let Some(live) = block.iter().find(|task| {
+        scratch.served.contains_key(&task.task_id)
+            || scratch.feedback_practice.contains_key(&task.task_id)
+    }) {
         return Some(live.task_id.clone());
     }
     let last = last_answered(events, &block);
