@@ -34,6 +34,7 @@ mod eligible;
 mod frontier;
 mod gap_fill;
 mod interleave;
+mod mixed_review;
 mod multistep;
 mod plan;
 mod quiz;
@@ -55,6 +56,9 @@ pub use gap_fill::{
     resolve_gap_fill_stack, serveable_gap_frontier,
 };
 pub use interleave::{SlotKind, arrange_lessons, assign_ids, interleave};
+pub use mixed_review::{
+    ReviewSlot, joins_mixed_review, mixed_review_block, mixed_review_order, next_mixed_review,
+};
 pub use multistep::{multistep_components, multistep_is_due, remediation_tasks};
 pub use plan::{BlockedTask, Constraints, SessionPlan};
 pub use quiz::{

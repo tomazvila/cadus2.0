@@ -66,6 +66,8 @@ export interface FeedbackProps {
   children?: React.ReactNode;
   /** The background grading of a written proof, when the reply carries one. */
   proof?: ProofState | null;
+  /** The topic a review question came from, named only once the answer is graded. */
+  revealTopic?: string | null;
 }
 
 export function Feedback({
@@ -77,6 +79,7 @@ export function Feedback({
   continueRef,
   children,
   proof,
+  revealTopic,
 }: FeedbackProps) {
   if (res.report_corrected) return <CorrectedFeedback res={res} onContinue={onRefresh ?? onContinue}
     onEnd={onEnd} continueRef={continueRef} />;
@@ -94,6 +97,7 @@ export function Feedback({
         {res.xp != null ? <Chip className="chip-xp">{`${signed(res.xp)} XP`}</Chip> : null}
       </div>
 
+      {revealTopic ? <p className="feedback-topic muted">{`Topic: ${revealTopic}`}</p> : null}
       <TaskStatusLines res={res} />
       {head.proof ? <ProofResult state={head.proof} /> : <Reason reason={res.reason} />}
 

@@ -228,6 +228,29 @@ where
     }))
 }
 
+/// The id of the job that grades `attempt_id`, under the caller's tenant
+/// binding. The row is unique per `(user_id, attempt_id)` and the
+/// `tenant_isolation` policy supplies the `user_id`.
+///
+/// # Errors
+///
+/// Returns [`StoreError::Db`] when the statement fails.
+pub async fn job_of_attempt<'e, E>(
+    executor: E,
+    attempt_id: &str,
+) -> Result<Option<Uuid>, StoreError>
+where
+    E: PgExecutor<'e>,
+{
+    let id = sqlx::query_scalar::<_, Uuid>(
+        "SELECT id FROM proof_grading_jobs WHERE attempt_id = $1 LIMIT 1",
+    )
+    .bind(attempt_id)
+    .fetch_optional(executor)
+    .await?;
+    Ok(id)
+}
+
 /// Take the oldest pending row (`FOR UPDATE SKIP LOCKED`, the D-O5 pattern).
 ///
 /// # Errors

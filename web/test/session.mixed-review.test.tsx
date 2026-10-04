@@ -1,0 +1,122 @@
+/**
+ * The study loop on reviews: no topic before the answer, and the mixed review block that
+ * serves the questions of several reviews interleaved.
+ *
+ * The fixtures live in `test/helpers/session.tsx`.
+ */
+import { describe, expect, it, vi } from 'vitest';
+import { screen, waitFor } from '@testing-library/react';
+import {
+  LESSON, REVIEW, TEACHING, P, clickNext, graded, mount, planOf, press, progressCount,
+  stubApi, submitAnswer,
+} from './helpers/session';
+import type { ApiClient, PlanTask, ProofGradingPoll } from '@/api/types';
+
+const DECIMALS: PlanTask = {
+  ...REVIEW,
+  task_id: 't-review-2',
+  topic: { id: 'decimals', name: 'Decimals', module: 'Arithmetic' },
+};
+
+const topicName = () => document.querySelector('.topic-name')!.textContent;
+
+describe('a review hides its topic until the answer is graded', () => {
+  it('names neither the topic nor the module on the problem, and names the topic in the feedback', async () => {
+    await mount();
+
+    expect(topicName()).toBe('Review');
+    expect(screen.queryByText('Fractions')).toBeNull();
+    expect(screen.queryByText('Arithmetic')).toBeNull();
+    expect(screen.queryByText(/Topic:/)).toBeNull();
+
+    await submitAnswer('3/4');
+
+    expect(screen.getByText('Correct')).toBeTruthy();
+    expect(screen.getByText('Topic: Fractions')).toBeTruthy();
+  });
+
+  it('a lesson still names its topic on the problem', async () => {
+    await mount({
+      plan: planOf(LESSON),
+      api: stubApi({ taskTeach: async () => TEACHING }),
+    });
+    expect(topicName()).toBe('Fractions');
+  });
+});
+
+describe('the mixed review block', () => {
+  it('answers each problem on the task it belongs to and serves nothing twice', async () => {
+    const taskServe = vi.fn<ApiClient['taskServe']>(async () =>
+      P(1, { task_id: 't-review-2', mixed_review: { position: 1, total: 6 } }));
+    const replies = [
+      graded({ next: P(2, { task_id: 't-review', mixed_review: { position: 2, total: 6 } }) }),
+      graded({ attempt_id: 'a-2', next: null }),
+    ];
+    const taskAnswer = vi.fn<ApiClient['taskAnswer']>(async () => replies.shift()!);
+    const taskTeach = vi.fn<ApiClient['taskTeach']>(async () => TEACHING);
+    await mount({
+      plan: planOf(REVIEW, DECIMALS, { ...LESSON, topic: { ...LESSON.topic!, name: 'Ratios' } }),
+      api: stubApi({ taskServe, taskAnswer, taskTeach }),
+    });
+
+    // The serve of the first review handed back the second review's problem.
+    expect(taskServe).toHaveBeenCalledTimes(1);
+    expect(taskServe.mock.calls[0]).toEqual(['t-review']);
+    expect(topicName()).toBe('Mixed review');
+    expect(progressCount()).toBe('1 / 6');
+    expect(screen.queryByText('Decimals')).toBeNull();
+
+    await submitAnswer('1');
+    expect(taskAnswer.mock.calls[0]![0]).toBe('t-review-2');
+    expect(screen.getByText('Topic: Decimals')).toBeTruthy();
+
+    // The grade handed on to the first review: shown at once, with no second serve.
+    expect(await clickNext()).toBe('2 / 6');
+    expect(taskServe).toHaveBeenCalledTimes(1);
+    expect(screen.queryByText(/Topic:/)).toBeNull();
+
+    await submitAnswer('2');
+    expect(taskAnswer.mock.calls[1]![0]).toBe('t-review');
+    expect(screen.getByText('Topic: Fractions')).toBeTruthy();
+
+    // The block handed back no next problem: both reviews are finished, and the loop
+    // moves to the lesson after them without serving either review again.
+    await press('Continue →');
+    await waitFor(() => expect(taskTeach).toHaveBeenCalledTimes(1));
+    expect(taskTeach.mock.calls[0]).toEqual(['t-lesson']);
+    expect(taskServe).toHaveBeenCalledTimes(1);
+  });
+
+  it('a lone review keeps its own count', async () => {
+    await mount();
+    expect(topicName()).toBe('Review');
+    expect(progressCount()).toBe('1 / 3');
+  });
+});
+
+describe('a reload restores the last proof grading', () => {
+  it('follows the job the plan names above the problem until the learner moves on', async () => {
+    const passed: ProofGradingPoll = {
+      id: 'job-9', attempt_id: 'a-0', status: 'pass', feedback: 'Sound proof.', checks: [],
+    };
+    const getProofGrading = vi.fn<ApiClient['getProofGrading']>(async () => passed);
+    await mount({
+      plan: { ...planOf(REVIEW), proof_grading: { id: 'job-9', status: 'pending', attempt_id: 'a-0' } },
+      api: stubApi({ getProofGrading }),
+    });
+
+    await waitFor(() => expect(screen.getByText('Proof accepted')).toBeTruthy());
+    expect(getProofGrading).toHaveBeenCalledWith('job-9');
+    expect(screen.getByText('Your last proof')).toBeTruthy();
+    expect(screen.getByText('Sound proof.')).toBeTruthy();
+
+    await submitAnswer('3/4');
+    await clickNext();
+    expect(screen.queryByText('Your last proof')).toBeNull();
+  });
+
+  it('shows nothing when the plan names no grading', async () => {
+    await mount();
+    expect(screen.queryByText('Your last proof')).toBeNull();
+  });
+});

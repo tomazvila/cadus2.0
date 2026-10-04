@@ -39,6 +39,13 @@ export interface SessionPlan {
    */
   markDone: () => void;
   /**
+   * Move the cursor to the review a mixed review block handed on to (the payload's
+   * `task_id`), without starting it: the problem is already on its way. Gives that task,
+   * or null when the cached plan does not hold it. Every review the block visited is
+   * treated as finished once the block hands back no further problem.
+   */
+  adopt: (taskId: string) => PlanTask | null;
+  /**
    * Install a fresh plan and drop what this mount already finished. False means nothing is
    * open, so the caller ends the session instead of stranding the view on a spinner.
    */
@@ -62,6 +69,10 @@ export function useSessionPlan(): SessionPlan {
   // synchronously and nothing renders from it.
   const doneIds = useRef(new Set<string>());
   const replanWanted = useRef(false);
+  // The reviews of the running mixed review block. The server closes each one on its own
+  // last answer; the block ends when a grade hands back no next problem, and then every
+  // review it visited is finished.
+  const mixed = useRef(new Set<string>());
 
   // The four moves that read refs and setters alone, built ONCE per mount.
   const [moves] = useState(() => {
@@ -98,9 +109,32 @@ export function useSessionPlan(): SessionPlan {
     plan,
     next: (): PlanTask | null => {
       doneIds.current.add(current!.task_id);
-      setIndex(index + 1);
-      return tasks[index + 1] ?? null;
+      for (const id of mixed.current) doneIds.current.add(id);
+      mixed.current.clear();
+      // The first open task after the cursor, then any open one before it: a mixed review
+      // block moves the cursor past tasks it never started. Without a block this is the
+      // task at `index + 1`, since every task before the cursor is finished.
+      const order = [...tasks.keys()].slice(index + 1).concat([...tasks.keys()].slice(0, index));
+      const at = order.find((i) => !doneIds.current.has(tasks[i]!.task_id));
+      if (at === undefined) {
+        setIndex(tasks.length);
+        return null;
+      }
+      setIndex(at);
+      return tasks[at]!;
     },
-    markDone: (): void => { doneIds.current.add(current!.task_id); },
+    adopt: (taskId: string): PlanTask | null => {
+      const at = tasks.findIndex((t) => t.task_id === taskId);
+      if (at < 0) return null;
+      if (current) mixed.current.add(current.task_id);
+      mixed.current.add(taskId);
+      setIndex(at);
+      return tasks[at]!;
+    },
+    markDone: (): void => {
+      doneIds.current.add(current!.task_id);
+      for (const id of mixed.current) doneIds.current.add(id);
+      mixed.current.clear();
+    },
   };
 }

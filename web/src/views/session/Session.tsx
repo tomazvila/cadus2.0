@@ -20,6 +20,7 @@ import type {
   ApiClient,
   IntegratedProblem,
   PlanTask,
+  ProofGradingField,
   ReworkResponse,
   ServedProblem,
   SessionEndResponse,
@@ -30,13 +31,14 @@ import { useSessionPlan } from './useSessionPlan';
 import { useGrade, type SessionPhase } from './useGrade';
 import { clockStart, isDrill, useSessionClock } from './useSessionClock';
 import {
-  EmptyPlan, NoInstruction, ProblemHeader, SessionSummary, emptyPlanMessage,
+  EmptyPlan, NoInstruction, ProblemHeader, SessionSummary, emptyPlanMessage, reviewTopic,
 } from './SessionScreens';
 import { Teach } from './Teach';
 import { Integrated } from './Integrated';
 import { serveIntegrated } from './serveIntegrated';
 import { loadPlannedTask } from './loadPlannedTask';
 import { ProofAwareFeedback, Rework } from './Feedback';
+import { RestoredProofGrading } from './ProofGrading';
 import { HintButton, HintPanel } from './Hints';
 import { Diagnosis } from './Diagnosis';
 import { useDiagnosisStream } from './useDiagnosis';
@@ -95,6 +97,9 @@ export function Session({
   });
   const [rework, setRework] = useState<ReworkResponse | null>(null);
   const [summary, setSummary] = useState<SessionEndResponse | null>(null);
+  // The proof grading the plan restores after a reload. It stands above the first problem
+  // until the learner moves on from it.
+  const [restoredProof, setRestoredProof] = useState<ProofGradingField>(null);
 
   // The display clock: display only, and the re-solve is untimed (trap T4, DD-3/P1).
   const { elapsed, setElapsed, countdown } = useSessionClock(
@@ -123,6 +128,10 @@ export function Session({
   // The knowledge point whose worked example is on screen. A new one inside a lesson has to
   // be taught before it is practised.
   const taughtKp = useRef<string | null>(null);
+
+  // The task a mixed review block handed on to. The cursor moves to it with its problem
+  // already in hand, so the start effect must not serve it a second time.
+  const adopting = useRef<string | null>(null);
 
   useEffect(() => { taskRef.current = session.task; }, [session.task]);
 
@@ -158,6 +167,30 @@ export function Session({
 
   // ---- serving -------------------------------------------------------------
 
+  /**
+   * Follow a problem of a mixed review block onto its own task. The block serves the
+   * questions of its reviews interleaved, so a serve or a grade may hand back another
+   * review's problem; it is answered on that task. False when the cached plan lacks the
+   * task: the caller re-plans and the serve finds the problem again.
+   */
+  const follow = (p: ServedProblem): boolean => {
+    if (!p.task_id || p.task_id === taskRef.current?.task_id) return true;
+    const task = session.adopt(p.task_id);
+    if (!task) return false;
+    taskRef.current = task;
+    adopting.current = task.task_id;
+    return true;
+  };
+
+  /** The cached plan lacks a task the block handed on to: fetch the plan and start over. */
+  const replanForBlock = (): void => {
+    setLive(null, 0);
+    void call(() => api.getPlan(), (fresh) => {
+      if (!life.alive()) return;
+      if (!session.replan(fresh)) endSession();
+    });
+  };
+
   /** Load only for the active task; recover stale plans before showing a question. */
   const loadTask = <T,>(
     request: () => Promise<T>,
@@ -189,6 +222,7 @@ export function Session({
     // A serve is asked for by a task on screen, so the ref names one.
     const task = taskRef.current!;
     loadTask(() => api.taskServe(task.task_id), (served) => {
+      if (!follow(served)) { replanForBlock(); return; }
       // Drop the worked example, or the teach branch keeps winning the render and the
       // lesson shows no answer field and no way on.
       setTeaching(null);
@@ -302,14 +336,24 @@ export function Session({
   useEffect(() => {
     if (startedOnce.current) return;
     startedOnce.current = true;
-    if (initialPlan) { session.start(initialPlan); return; }
-    void call(() => api.getPlan(), session.start);
+    const begin = (first: SessionPlanResponse): void => {
+      setRestoredProof(first.proof_grading ?? null);
+      session.start(first);
+    };
+    if (initialPlan) { begin(initialPlan); return; }
+    void call(() => api.getPlan(), begin);
     // eslint-disable-next-line react-hooks/exhaustive-deps -- once per mount, by design.
   }, []);
 
   // Whenever the current task changes, start it.
   const currentTaskId = session.task?.task_id ?? null;
   useEffect(() => {
+    if (currentTaskId && adopting.current === currentTaskId) {
+      // A mixed review block handed on to this task with its problem in hand.
+      adopting.current = null;
+      return;
+    }
+    adopting.current = null;
     if (currentTaskId) startTask();
     // eslint-disable-next-line react-hooks/exhaustive-deps -- the task id is the trigger.
   }, [currentTaskId]);
@@ -331,6 +375,7 @@ export function Session({
     // The verdict goes now, so no feedback panel stands over the next task's load.
     const restampAfterStudy = result?.feedback_practice;
     setResult(null);
+    setRestoredProof(null);
     if (restampAfterStudy) { serveThenShow(); return; }
 
     // The attempt IS recorded and the task is NOT finished: the service could not draw the
@@ -342,6 +387,8 @@ export function Session({
     if (!next && nextUnavailable) { serveThenShow(); return; }
 
     if (next) {
+      // A mixed review block may hand on to another review: follow it onto its task.
+      if (!follow(next)) { replanForBlock(); return; }
       // A new knowledge point inside a lesson is taught first — and then RE-SERVED, never
       // shown from this payload: that problem's clock started when the service drew it.
       // A verdict comes back to a task on screen, so the ref names one.
@@ -452,6 +499,7 @@ export function Session({
         onExit={onExit}
       />
 
+      <RestoredProof api={api} field={restoredProof} />
       <div className="card problem-card">
         <MathBlock>{problem.text}</MathBlock>
         {/* The figures of the knowledge point, each with its text equivalent (unit f9). */}
@@ -500,6 +548,7 @@ export function Session({
             onEnd={endSession}
             onRefresh={onExit}
             continueRef={continueRef}
+            revealTopic={reviewTopic(session.task)}
           >
             {/* Keyed by the attempt, so a second grade of the same problem — the DD-3/P1
                 re-solve — never shows the first attempt's explanation. */}
@@ -509,4 +558,9 @@ export function Session({
       </div>
     </section>
   );
+}
+
+/** The restored proof grading, when the plan named one. */
+function RestoredProof({ api, field }: { api: ApiClient; field: ProofGradingField }) {
+  return field ? <RestoredProofGrading api={api} field={field} /> : null;
 }

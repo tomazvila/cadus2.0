@@ -187,7 +187,7 @@ describe('the payload shapes', () => {
   it('names a task with no topic Practice, and counts a problem with no total alone', async () => {
     const bare: ServedProblem = P(1, { total: null });
     await mount({
-      plan: planOf({ ...REVIEW, topic: null }),
+      plan: planOf({ ...REVIEW, task_type: 'drill', topic: null }),
       api: stubApi({ taskServe: async () => bare }),
     });
     expect(document.querySelector('.topic-name')!.textContent).toBe('Practice');
@@ -198,7 +198,7 @@ describe('the payload shapes', () => {
 
   it('names a topic by its id when it carries no name, and no module without one', async () => {
     await mount({
-      plan: planOf({ ...REVIEW, topic: { id: 'fractions', name: null, module: '' } }),
+      plan: planOf({ ...REVIEW, task_type: 'drill', topic: { id: 'fractions', name: null, module: '' } }),
     });
     expect(document.querySelector('.topic-name')!.textContent).toBe('fractions');
     expect(document.querySelector('.topic-module')).toBeNull();

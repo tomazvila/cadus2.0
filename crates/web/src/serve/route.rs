@@ -146,13 +146,17 @@ async fn serve_one(
         events,
         readiness,
     } = opened;
-    let task = find(&plan, &task_id)?;
-    if task.integrated_assessment_of.is_some() {
+    if find(&plan, &task_id)?.integrated_assessment_of.is_some() {
         return Err(conflict(
             "integrated_task_required",
             "This assessment is one whole integrated scenario.",
         ));
     }
+    // The mixed review block: a review of a block serves the block's live
+    // problem, or the question the interleaving rule picks next. The payload
+    // names the task it belongs to.
+    let task_id = super::mixed::serve_target(&plan, &scratch, &events, &task_id).unwrap_or(task_id);
+    let task = find(&plan, &task_id)?;
 
     // F-grind-6: a QUIZ's position lives in the scratch state (`answered`),
     // while the attempts live in the session's event window. The two can
@@ -210,7 +214,7 @@ async fn serve_one(
     // A problem is already live for this task: a reload, or the problem the last
     // answer installed. Re-stamp the PER-PROBLEM clock and hand the SAME one
     // back (`_serve_live`, section 5.6).
-    let payload = match scratch.served.get_mut(&task_id) {
+    let mut payload = match scratch.served.get_mut(&task_id) {
         Some(live) => {
             live.timing_interrupted = true;
             live.started_at = started_at;
@@ -233,6 +237,7 @@ async fn serve_one(
             .await?
         }
     };
+    super::mixed::stamp(&mut payload, &plan, &scratch, &task_id);
     // The hand-off happened, so the task is served. The event goes in once per
     // task and per session, and it is what fills the drill cadence (D-M5-8).
     let appended =
@@ -346,9 +351,8 @@ pub(crate) async fn install_next(
     {
         if let Some(idx) = graph.idx_of(&target.serve) {
             let points: &[cadus_core::curriculum::KnowledgePoint] = graph.knowledge_points(idx);
-            let authors = |point: &str| {
-                ReadinessGate::authors_practice(readiness, &target.serve, point)
-            };
+            let authors =
+                |point: &str| ReadinessGate::authors_practice(readiness, &target.serve, point);
             let unblocked = |point: &str| {
                 ReadinessGate::lesson_blockers(readiness, &target.serve, point).is_empty()
             };
@@ -530,16 +534,27 @@ mod tests {
         let root = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../curriculum");
         let (graph, _findings) =
             cadus_core::curriculum::load_curriculum(&root).expect("the tree loads");
-        let points = graph
-            .knowledge_points(graph.idx_of("characteristic-polynomial").expect("the topic loads"));
-        assert_eq!(points.len(), 3, "the topic-23 shape: three knowledge points");
+        let points = graph.knowledge_points(
+            graph
+                .idx_of("characteristic-polynomial")
+                .expect("the topic loads"),
+        );
+        assert_eq!(
+            points.len(),
+            3,
+            "the topic-23 shape: three knowledge points"
+        );
         let authors = |kp: &str| !kp.is_empty(); // every point of this topic authors
         let unblocked = |kp: &str| kp == "kp1"; // kp2, kp3 carry the Practicable blocker
         let chosen = choose_serving_kp(points, "kp2", authors, unblocked)
             .expect("a lesson at kp2 with authoring points serves one");
-        assert_eq!(chosen.id.as_str(), "kp2", "the serve stays at the advanced point");
-        let start = choose_serving_kp(points, "kp1", authors, unblocked)
-            .expect("the start point authors");
+        assert_eq!(
+            chosen.id.as_str(),
+            "kp2",
+            "the serve stays at the advanced point"
+        );
+        let start =
+            choose_serving_kp(points, "kp1", authors, unblocked).expect("the start point authors");
         assert_eq!(start.id.as_str(), "kp1", "the start pick is unchanged");
     }
 
@@ -550,13 +565,20 @@ mod tests {
         let root = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../curriculum");
         let (graph, _findings) =
             cadus_core::curriculum::load_curriculum(&root).expect("the tree loads");
-        let points = graph
-            .knowledge_points(graph.idx_of("characteristic-polynomial").expect("the topic loads"));
+        let points = graph.knowledge_points(
+            graph
+                .idx_of("characteristic-polynomial")
+                .expect("the topic loads"),
+        );
         let authors = |kp: &str| kp == "kp1"; // kp2 is zero-exemplar, kp3 has none here either
         let unblocked = |kp: &str| kp == "kp2"; // its teach page completes it
         let chosen = choose_serving_kp(points, "kp2", authors, unblocked)
             .expect("the teach-page pick exists");
-        assert_eq!(chosen.id.as_str(), "kp2", "the fallback never retreats to kp1");
+        assert_eq!(
+            chosen.id.as_str(),
+            "kp2",
+            "the fallback never retreats to kp1"
+        );
         let none = choose_serving_kp(points, "kp2", authors, |_kp| false);
         assert!(none.is_none(), "nothing authors and nothing unblocks");
     }

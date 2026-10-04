@@ -66,8 +66,11 @@ pub async fn session_plan(req: Ready) -> Reply {
         })
         .collect();
     let complete = is_course_complete(&model.topics, graph, &req.content.cfg, course, None);
+    // A reload loses the grade reply that named a background proof grading;
+    // the plan names it again so the session can show its result.
+    let proof = crate::proof_grading::restore_field(&req.state, &mut tx, &events).await?;
 
-    let body = json!({
+    let mut body = json!({
         "session": plan.session,
         "tasks": tasks,
         "quiz_due": plan.quiz_due,
@@ -85,6 +88,9 @@ pub async fn session_plan(req: Ready) -> Reply {
             .and_then(|stamp| DateTime::<Utc>::from_timestamp_micros(stamp.micros()))
             .map(|stamp| stamp.to_rfc3339()),
     });
+    if let Some(proof) = proof {
+        body["proof_grading"] = proof;
+    }
     reply_read(tx, body).await
 }
 

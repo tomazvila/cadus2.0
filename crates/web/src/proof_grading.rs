@@ -144,6 +144,40 @@ pub fn reply_field(job: Option<Uuid>) -> Value {
     )
 }
 
+/// The proof grading a reloaded session view restores, or `None`.
+///
+/// It is the job of the LAST attempt of the open session (`events` is the
+/// session window), when that attempt is a written proof outside a quiz. The
+/// grade reply named the job once; a reload loses that reply, and this field
+/// names it again so the session can follow the grading to its result.
+pub(crate) async fn restore_field(
+    state: &AppState,
+    tx: &mut Tx,
+    events: &[cadus_store::state::EventRow],
+) -> Result<Option<Value>, ApiError> {
+    let last = events.iter().rev().find_map(|row| match &row.event {
+        cadus_core::event::Event::Attempt(attempt) => Some(attempt),
+        _ => None,
+    });
+    let Some(attempt) = last.filter(|attempt| {
+        attempt.task_type != cadus_core::event::TaskType::Quiz && attempt.outcome.is_ungraded()
+    }) else {
+        return Ok(None);
+    };
+    let id = store(
+        state,
+        proof_grading::job_of_attempt(&mut **tx, &attempt.attempt_id),
+    )
+    .await?;
+    Ok(id.map(|id| {
+        json!({
+            "id": id.to_string(),
+            "status": STATUS_PENDING,
+            "attempt_id": attempt.attempt_id,
+        })
+    }))
+}
+
 /// Read one job row into the poll reply.
 #[must_use]
 pub fn poll_view(row: &proof_grading::JobRow) -> Value {

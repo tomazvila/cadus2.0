@@ -147,3 +147,43 @@ async fn a_numeric_miss_enqueues_no_proof_job() {
     })
     .await;
 }
+
+/// A reload loses the grade reply; the plan names the job of the session's
+/// last answer again, and stops naming it once a later answer stands.
+#[tokio::test]
+async fn the_plan_restores_the_last_answers_proof_grading() {
+    TestDb::with(|db| async move {
+        let user = lesson_learner(&db, "proof-restore@example.test", proof_item()).await;
+        let app = lesson_app(&db);
+        let (status, before) = get(&app, "/api/session/plan", user).await;
+        assert_eq!(status, StatusCode::OK, "{before}");
+        assert!(before.get("proof_grading").is_none(), "{before}");
+
+        let reply = answer_task_ok(
+            &app,
+            user,
+            LESSON,
+            json!({"problem_id": PROBLEM_ID, "answer": PROOF}),
+        )
+        .await;
+        let job = reply["proof_grading"]["id"].clone();
+        let (status, plan) = get(&app, "/api/session/plan", user).await;
+        assert_eq!(status, StatusCode::OK, "{plan}");
+        assert_eq!(plan["proof_grading"]["id"], job);
+        assert_eq!(plan["proof_grading"]["status"], json!("pending"));
+        assert_eq!(plan["proof_grading"]["attempt_id"], reply["attempt_id"]);
+
+        // A later decided answer is the last one now: nothing is restored.
+        let live = common::stored_state(&db, user).await.served[LESSON].clone();
+        answer_task_ok(
+            &app,
+            user,
+            LESSON,
+            json!({"problem_id": live.problem_id, "answer": "0"}),
+        )
+        .await;
+        let (_, after) = get(&app, "/api/session/plan", user).await;
+        assert!(after.get("proof_grading").is_none(), "{after}");
+    })
+    .await;
+}

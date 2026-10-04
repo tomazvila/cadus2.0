@@ -189,3 +189,21 @@ export function QuizProofGrading({ api, field }: { api: ApiClient; field: ProofG
     </div>
   );
 }
+
+/**
+ * The grading of the proof answered just before a reload. The grade reply that named the
+ * job is gone with the reload; the plan names it again, and this panel follows it above
+ * the problem now on screen until the learner moves on.
+ */
+export function RestoredProofGrading({ api, field }: { api: ApiClient; field: ProofGradingField }) {
+  const life = useLifetime();
+  const state = useProofGrading(api, life, field);
+  if (!state) return null;
+  return (
+    <div className="card restored-proof-grading" aria-live="polite">
+      <div className="solution-label">Your last proof</div>
+      <p className="feedback-title">{PROOF_TITLE[state.status]}</p>
+      <ProofResult state={state} />
+    </div>
+  );
+}

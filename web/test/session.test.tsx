@@ -33,7 +33,10 @@ describe('the study loop', () => {
     await mount();
 
     expect(screen.getByText('review')).toBeTruthy();
-    expect(screen.getByText('Fractions')).toBeTruthy();
+    // A review names no topic before the answer: choosing the method is part of it.
+    expect(screen.queryByText('Fractions')).toBeNull();
+    expect(screen.queryByText('Arithmetic')).toBeNull();
+    expect(document.querySelector('.topic-name')!.textContent).toBe('Review');
     expect(screen.getByText('due for review')).toBeTruthy();
     expect(progressCount()).toBe('1 / 3');
     expect(timer().textContent).toBe('0:00');

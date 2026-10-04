@@ -104,6 +104,12 @@ export interface SessionPlanResponse {
   blocked: BlockedTask[];
   /** RFC 3339, or null when nothing blocks the frontier. */
   frontier_blocked_until: string | null;
+  /**
+   * The background grading of the open session's LAST answer, when that answer is a
+   * written proof. A reload loses the grade reply that named the job, so the plan names it
+   * again. Absent otherwise.
+   */
+  proof_grading?: { id: string; status: 'pending'; attempt_id: string };
 }
 
 /**
@@ -121,6 +127,14 @@ export interface SessionPlanResponse {
 export interface ServedProblem {
   /** A fresh practice item outside the original assessment count. */
   feedback_practice?: boolean;
+  /**
+   * The task this problem belongs to, on a problem of a mixed review block alone. The
+   * block serves the questions of its reviews interleaved, so a serve or a grade can
+   * hand back another review's problem; the view answers it on this task.
+   */
+  task_id?: string;
+  /** The block's progress, on a problem of a mixed review block alone. 1-based. */
+  mixed_review?: { position: number; total: number };
   problem_id: string;
   /** 1-based. */
   index: number;

@@ -123,22 +123,40 @@ export interface ProblemHeaderProps {
   onExit: () => void;
 }
 
-/** The task chip, the topic, the count, the clock and the way out. */
+/** The topic a graded review answer names in its feedback; null on every other task. */
+export function reviewTopic(task: PlanTask): string | null {
+  return task.task_type === 'review' ? task.topic?.name || task.topic?.id || null : null;
+}
+
+/** The progress line of a problem: corrective practice, the mixed block, or the task count. */
+function progressOf(problem: ServedProblem): string {
+  if (problem.feedback_practice) return 'Independent practice';
+  if (problem.mixed_review) {
+    return `${num(problem.mixed_review.position)} / ${num(problem.mixed_review.total)}`;
+  }
+  return problem.total != null ? `${num(problem.index)} / ${num(problem.total)}` : `${num(problem.index)}`;
+}
+
+/**
+ * The task chip, the topic, the count, the clock and the way out.
+ *
+ * A REVIEW names no topic and no module before the answer: recognising which method a
+ * problem needs is part of the review (interleaving, Math Academy Way ch. 19). The
+ * feedback names the topic once the answer is graded.
+ */
 export function ProblemHeader({ task, problem, elapsed, countdown, onExit }: ProblemHeaderProps) {
-  const topic = task.topic;
+  const topic = task.task_type === 'review' ? null : task.topic;
   return (
     <div className="task-header">
       <div className="task-meta">
         <Chip className={`chip-${task.task_type}`}>{task.task_type}</Chip>
-        <span className="topic-name">{topic?.name || topic?.id || 'Practice'}</span>
+        {task.task_type === 'review'
+          ? <span className="topic-name">{problem.mixed_review ? 'Mixed review' : 'Review'}</span>
+          : <span className="topic-name">{topic?.name || topic?.id || 'Practice'}</span>}
         {topic?.module ? <span className="topic-module">{topic.module}</span> : null}
       </div>
       <div className="task-right">
-        <span className="progress-count">
-          {problem.feedback_practice ? 'Independent practice' : problem.total != null
-            ? `${num(problem.index)} / ${num(problem.total)}`
-            : `${num(problem.index)}`}
-        </span>
+        <span className="progress-count">{progressOf(problem)}</span>
         <span className={`timer${countdown && elapsed <= 3 ? ' urgent' : ''}`}>
           {fmtClock(elapsed)}
         </span>

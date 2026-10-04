@@ -260,20 +260,48 @@ pub async fn answer(request: TaskWithBody) -> Result<Json<Value>, ApiError> {
         &recorded,
         pending_practice,
     );
-    let next = next_problem(
-        &state,
-        content,
-        &mut tx,
-        user_id,
-        &task,
-        &mut scratch,
-        &readiness,
-        now,
-        closed,
-    )
-    .await;
+    // The mixed review block: the next question may belong to ANOTHER review of
+    // the block. This review keeps its own attempts and its own result; only
+    // the order of the questions moves.
+    let handed_on = crate::serve::mixed::after_answer(&plan, &scratch, &task);
+    let next = match handed_on.as_deref() {
+        Some(other) => {
+            mixed_hand_on(
+                &state,
+                content,
+                &mut tx,
+                user_id,
+                (&plan, &task, other),
+                &mut scratch,
+                &readiness,
+                now,
+                closed,
+            )
+            .await
+        }
+        None => {
+            next_problem(
+                &state,
+                content,
+                &mut tx,
+                user_id,
+                &task,
+                &mut scratch,
+                &readiness,
+                now,
+                closed,
+            )
+            .await
+        }
+    };
+    let next = next.map(|mut payload| {
+        let shown = payload["task_id"].as_str().unwrap_or(&task_id).to_owned();
+        crate::serve::mixed::stamp(&mut payload, &plan, &scratch, &shown);
+        payload
+    });
+    let hand_on_failed = handed_on.is_some() && next.is_none();
     save_and_commit(&state, tx, user_id, &scratch).await?;
-    Ok(Json(reply(
+    let mut body = reply(
         &recorded,
         &moved,
         &served,
@@ -282,7 +310,53 @@ pub async fn answer(request: TaskWithBody) -> Result<Json<Value>, ApiError> {
         diagnosis,
         equivalence_field,
         proof_grading::reply_field(proof_job),
-    )))
+    );
+    // A failed hand-off leaves a question of the block owed, even when this
+    // review closed: the client re-serves, and the serve route finds it.
+    if hand_on_failed {
+        body["next_unavailable"] = json!(true);
+    }
+    Ok(Json(body))
+}
+
+/// Step 8 of a mixed review block: close or park the answered review, then
+/// draw the next question of the review `other` the interleaving rule picked.
+///
+/// The payload carries `task_id`, which the caller's stamp keeps. A failed
+/// draw is reported, never raised, as in [`next_problem`].
+#[expect(
+    clippy::too_many_arguments,
+    reason = "the draw reads the content, the tasks, the scratch and the transaction"
+)]
+async fn mixed_hand_on(
+    state: &AppState,
+    content: &Content,
+    tx: &mut Transaction<'static, Postgres>,
+    user_id: Uuid,
+    (plan, task, other): (&cadus_core::selector::SessionPlan, &Task, &str),
+    scratch: &mut WebState,
+    readiness: &ReadinessSet,
+    now: Timestamp,
+    closed: bool,
+) -> Option<Value> {
+    if closed {
+        clear_task_scratch(scratch, &task.task_id);
+    } else {
+        scratch.served.remove(&task.task_id);
+    }
+    let next_task = plan.tasks.iter().find(|item| item.task_id == other)?;
+    install_next(
+        state, content, tx, user_id, next_task, scratch, readiness, now,
+    )
+    .await
+    .map(|mut payload| {
+        payload["task_id"] = json!(other);
+        payload
+    })
+    .map_err(|err| {
+        tracing::warn!(task_id = %other, code = %err.code, "answer: no next mixed review problem");
+    })
+    .ok()
 }
 
 /// The reply of a request whose attempt already stands (spec section 4.3
