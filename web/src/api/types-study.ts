@@ -338,12 +338,45 @@ export interface AnswerResponse {
   /** The model's one-line why of a refused equivalence verdict. */
   equivalence_reason?: string;
   /**
+   * Amendment K point 6: the background grading of a written proof. Present (pending,
+   * with the job id to poll) only on an ungraded written proof; `null` otherwise.
+   */
+  proof_grading?: ProofGradingField;
+  /**
    * The attempt IS recorded and the task is NOT finished — no next problem could be drawn.
    * A bare `next: null` on an open task reads as "task over" and silently skips the
    * problems the learner still owes, so the client re-serves the same task instead.
    */
   next_unavailable?: boolean;
   xp?: number;
+}
+
+/** The reply field of a written proof whose background grading is pending. */
+export type ProofGradingField = { id: string; status: 'pending' } | null;
+
+/** Where one background proof grading stands. */
+export type ProofGradingStatus = 'pending' | 'pass' | 'needs_revision' | 'failed' | 'capped';
+
+/** One yes/no check of a graded proof, with the learner's own words as evidence. */
+export interface ProofCheck {
+  id: string;
+  text: string;
+  met: boolean;
+  minor: boolean;
+  /** A short quote from the learner's text, or "not found". */
+  evidence: string;
+}
+
+/** The poll reply of one background proof grading (Amendment K point 6). */
+export interface ProofGradingPoll {
+  id: string;
+  attempt_id: string;
+  status: ProofGradingStatus;
+  feedback?: string;
+  checks?: ProofCheck[];
+  /** The reference solution, revealed once the grading is in. */
+  solution?: string;
+  model?: string;
 }
 
 /** The poll reply of one background equivalence check (Amendment K, note 114). */

@@ -2,9 +2,9 @@
 
 Status: **decided by the owner, 24 Sep** (steer note 114); design below is the owner's.
 Folded into the numbered rules of REQUIREMENTS.md (C4, L2, L6, T1, T2, A3, A8, V2, §7),
-which are the authority. Built: the worked-solution reveal (decision 3 b) and the
-background equivalence check (design points 1–5). Not built: rubric grading of
-written proofs (design point 6).
+which are the authority. Built: the worked-solution reveal (decision 3 b), the
+background equivalence check (design points 1–5), and background grading of written
+proofs (design point 6, see below).
 
 ## The requirement change
 
@@ -86,3 +86,30 @@ Research background: FLOW/05-local-model-caching-jev.md.
 4. An equivalence-accepted answer counts as correct for the topic and for mastery (it is the same answer). A NOT verdict leaves the deterministic "wrong" and shows the model's one-line reason next to the worked solution.
 5. Every model verdict is logged (`model_call_log` exists) and sampled by the audit like a key (A4 of the draft); a per-learner daily cap of 200 (the model is free; the cap bounds abuse); the OpenRouter fallback stays OFF unless the owner says otherwise.
 6. Proof items (P3, the unmarked "write the full proof" items): the Amendment K rubric flow as drafted, same worker, same cache.
+
+## Design point 6 as built (proof grading)
+
+No item carries an authored rubric yet, so the grader derives the checks itself.
+
+- **Queue.** An UNGRADED attempt on an item with no checkable key (answer kind `proof`
+  with no contract, or the contract `none`) writes one `proof_grading_jobs` row in the
+  grade transaction (migration 0025). The reply carries `proof_grading: {id, status:
+  "pending"}`; `GET /api/proof-grading/{id}` polls it. A quiz answer never enqueues.
+- **Worker** (`crates/worker/src/proof_grading`). One forced-tool call to
+  `PROOF_GRADER_MODEL` (default `deepseek/deepseek-v4-pro`) on the `OPENAI_BASE_URL`
+  endpoint with `OPENROUTER_PROVIDER_ORDER`. Daily cap: 20 per learner; 3 claims per job;
+  every HTTP attempt is billed in `model_call_log` (purpose `proof_grading`).
+  `PROOF_GRADING=off` turns the job off.
+- **Prompt.** The problem, the reference solution, an authored rubric when the payload
+  carries one (`rubric`, empty today; it replaces the derived checks), and the learner
+  text. The model derives 5–8 problem-specific checks and answers them beside five fixed
+  general checks (claim stated; every step correct and justified; not circular; all cases;
+  conclusion reached), each with a quote from the learner text or "not found", plus 2–4
+  sentences of feedback naming the first failing step.
+- **Verdict (code).** Pass when every check is met, or when the one unmet check is minor;
+  the general checks G2–G5 are never minor. A pass appends a `regraded` event (outcome
+  correct) and refolds, so it counts for mastery like a correct short answer; a standing
+  human correction is never superseded. A needs-revision result keeps the attempt
+  ungraded. Either way the learner sees the checks, the feedback and the solution.
+- **Quality check.** `crates/worker/tests/proof_grading_live.rs` (ignored) runs the real
+  prompt and model over 18 fixture proofs (`tests/fixtures/proof_grading_quality.json`).

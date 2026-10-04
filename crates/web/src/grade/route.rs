@@ -96,8 +96,14 @@ pub async fn answer(request: TaskWithBody) -> Result<Json<Value>, ApiError> {
     // the wrong verdict and carries the model's one-line reason. A miss
     // enqueues the background check below and the deterministic verdict
     // stands until the worker lands. The web tier never calls a model (L6).
+    // Amendment K point 6: an ungraded written proof (no checkable key) goes
+    // to the background proof grader instead of the equivalence check: there
+    // is no key to be equivalent to.
+    let written_proof = !verified_answer
+        && grade.outcome.is_ungraded()
+        && proof_grading::is_written_proof(&served, kind);
     let mut equivalence_hit = None;
-    if !verified_answer && !grade.correct {
+    if !verified_answer && !grade.correct && !written_proof {
         match equivalence::lookup(&state, &mut tx, &served, &submitted.answer).await {
             Ok(Some(equivalence::Cached::Accepted(verdict))) => {
                 grade = Grade {
@@ -108,8 +114,9 @@ pub async fn answer(request: TaskWithBody) -> Result<Json<Value>, ApiError> {
                 };
                 equivalence_hit = Some(equivalence::Cached::Accepted(verdict));
             }
-            Ok(hit @ Some(equivalence::Cached::Refused(_)))
-            | Ok(hit @ None) => equivalence_hit = hit,
+            Ok(hit @ Some(equivalence::Cached::Refused(_))) | Ok(hit @ None) => {
+                equivalence_hit = hit
+            }
             // A failed cache read never stops the grade: the deterministic
             // verdict stands, the answer simply goes unchecked.
             Err(_) => tracing::warn!("equivalence: the cache lookup failed"),
@@ -182,8 +189,10 @@ pub async fn answer(request: TaskWithBody) -> Result<Json<Value>, ApiError> {
     }
 
     // Step 7. The lesson advance, its close event, and its remediation.
-    let moved =
-        advance_and_fold(&state, content, &mut tx, user_id, &task, &recorded, &events, &readiness).await?;
+    let moved = advance_and_fold(
+        &state, content, &mut tx, user_id, &task, &recorded, &events, &readiness,
+    )
+    .await?;
 
     // Step 8 and step 10: move the task on, draw the next problem, write the row.
     if task.task_type == TaskType::Quiz && !recorded.feedback_practice {
@@ -203,18 +212,40 @@ pub async fn answer(request: TaskWithBody) -> Result<Json<Value>, ApiError> {
     // Amendment K: on a wrong or unparseable answer with no cached verdict,
     // the background check is enqueued in the same transaction. A miss that
     // was flipped by the cache carries no job (the verdict is already here).
-    let equivalence_job = if grade.correct {
+    let equivalence_job = if grade.correct || written_proof {
         None
     } else {
         match equivalence_hit {
             Some(equivalence::Cached::Refused(_)) | None => {
-                equivalence::enqueue(&state, &mut tx, user_id, &attempt_id, &served, &submitted.answer)
-                    .await?
+                equivalence::enqueue(
+                    &state,
+                    &mut tx,
+                    user_id,
+                    &attempt_id,
+                    &served,
+                    &submitted.answer,
+                )
+                .await?
             }
             Some(equivalence::Cached::Accepted(_)) => None,
         }
     };
     let equivalence_field = equivalence::reply_field(equivalence_hit.as_ref(), equivalence_job);
+    // Amendment K point 6: the background proof grading, enqueued in the same
+    // transaction. No model call here (L6); the verdict lands later.
+    let proof_job = if written_proof {
+        proof_grading::enqueue(
+            &state,
+            &mut tx,
+            user_id,
+            &attempt_id,
+            &served,
+            &submitted.answer,
+        )
+        .await?
+    } else {
+        None
+    };
     let pending_practice = scratch.feedback_practice.contains_key(&task_id);
     let progress = progress_for(&mut scratch, &task, graph);
     let closed = practice_progress(
@@ -245,6 +276,7 @@ pub async fn answer(request: TaskWithBody) -> Result<Json<Value>, ApiError> {
         closed,
         diagnosis,
         equivalence_field,
+        proof_grading::reply_field(proof_job),
     )))
 }
 

@@ -45,6 +45,10 @@ pub(super) fn outcome_fields(recorded: &Attempt) -> Map<String, Value> {
 /// It names every field it emits. `solution` is revealed only after the attempt
 /// commits, and `expected` never reaches the client on this path at all. A quiz
 /// never reaches this reply (trap W7): its receipt is `quiz_receipt`.
+#[expect(
+    clippy::too_many_arguments,
+    reason = "the reply names the attempt, the advance, the problem and each background field"
+)]
 pub(super) fn reply(
     recorded: &Attempt,
     moved: &Advance,
@@ -53,6 +57,7 @@ pub(super) fn reply(
     closed: bool,
     diagnosis: Value,
     equivalence: Value,
+    proof_grading: Value,
 ) -> Value {
     // A bare `next: null` on an open task reads as "task over" (trap W5), so
     // an open task with no next problem says `next_unavailable` (trap W6).
@@ -76,6 +81,10 @@ pub(super) fn reply(
         // when the answer was never a miss; a pending job id or a cache
         // verdict otherwise.
         ("equivalence", equivalence),
+        // Amendment K point 6: the background proof grading of an ungraded
+        // written proof. `null` for every other attempt; a pending job id
+        // the client polls otherwise.
+        ("proof_grading", proof_grading),
     ] {
         map.insert(key.to_string(), value);
     }

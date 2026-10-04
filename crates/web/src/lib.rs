@@ -63,6 +63,7 @@ pub mod operator;
 pub mod origin;
 pub mod path;
 pub mod problem_reports;
+pub mod proof_grading;
 pub mod report;
 mod route_prelude;
 pub mod security;
@@ -269,6 +270,9 @@ pub fn create_app(state: AppState) -> Router {
         // Amendment K (note 114): the poll route of a background equivalence
         // check. GET, before the three layers, like the diagnosis poll.
         .merge(equivalence::router())
+        // Amendment K point 6: the poll route of a background proof grading.
+        // GET, before the three layers, like the equivalence poll.
+        .merge(proof_grading::router())
         // M5 U12: the A6 operator view. It reads its own credential, and it
         // refuses every account that is not an admin.
         .route("/api/operator/flags", get(operator::flags))

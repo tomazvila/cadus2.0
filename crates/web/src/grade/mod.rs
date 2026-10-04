@@ -139,6 +139,7 @@ mod timing;
 mod verdict;
 
 use crate::equivalence;
+use crate::proof_grading;
 use advance::*;
 use reply::*;
 pub use route::answer;

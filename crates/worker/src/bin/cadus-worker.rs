@@ -411,12 +411,18 @@ async fn serve(mut shutdown: Shutdown) -> Result<u64, WorkerError> {
     // alone and answers nothing in the background.
     let equivalence = equivalence_job(std::sync::Arc::clone(&curriculum))?;
 
-    let ticks = cadus_worker::run_with(
+    // The Amendment K proof-grading job (design point 6). It asks the hosted
+    // model of OPENAI_BASE_URL with PROOF_GRADER_MODEL; a deployment with no
+    // key, or with PROOF_GRADING=off, leaves written proofs ungraded.
+    let proofs = proof_grading_job(std::sync::Arc::clone(&curriculum))?;
+
+    let ticks = cadus_worker::run_with_proofs(
         &db,
         &cfg,
         Some(&job),
         diagnosis.as_mut(),
         equivalence.as_ref(),
+        proofs.as_ref(),
         shutdown.wait(),
     )
     .await?;
@@ -528,6 +534,57 @@ fn equivalence_fallback() -> Result<Option<EquivalenceClient>, WorkerError> {
         .with_key(&key, order);
     tracing::info!(model = %model, "cadus-worker: the equivalence fallback is configured");
     Ok(Some(client))
+}
+
+/// The environment variable that names the proof-grading model.
+const PROOF_GRADER_MODEL_VAR: &str = "PROOF_GRADER_MODEL";
+
+/// Build the Amendment K proof-grading job from the environment, or `None`.
+///
+/// The endpoint, the key and the provider order are the diagnosis job's
+/// (`OPENAI_BASE_URL`, `OPENAI_API_KEY`, `OPENROUTER_PROVIDER_ORDER`); the
+/// model is `PROOF_GRADER_MODEL` (default `deepseek/deepseek-v4-pro`), and
+/// the two token bounds are `PROOF_GRADER_OUTPUT_TOKENS` and
+/// `PROOF_GRADER_REASONING_MAX_TOKENS`. `PROOF_GRADING=off` turns it off.
+fn proof_grading_job(
+    curriculum: std::sync::Arc<cadus_core::curriculum::Curriculum>,
+) -> Result<Option<cadus_worker::ProofGradingJob>, WorkerError> {
+    use cadus_worker::proof_grading::{
+        CALL_TIMEOUT, DEFAULT_MODEL, DEFAULT_OUTPUT_TOKENS, DEFAULT_REASONING_MAX_TOKENS,
+    };
+    let env = |name: &str| {
+        std::env::var(name)
+            .ok()
+            .map(|value| value.trim().to_owned())
+            .filter(|value| !value.is_empty())
+    };
+    if env("PROOF_GRADING").is_some_and(|value| value.eq_ignore_ascii_case("off")) {
+        tracing::info!("cadus-worker: PROOF_GRADING=off; written proofs stay ungraded");
+        return Ok(None);
+    }
+    if env(API_KEY_VAR).is_none() {
+        tracing::info!(
+            "cadus-worker: {API_KEY_VAR} is empty; the proof-grading queue waits and no model is called"
+        );
+        return Ok(None);
+    }
+    let number = |name: &str, default: u32| -> Result<u32, WorkerError> {
+        env(name).map_or(Ok(default), |value| {
+            value
+                .parse::<u32>()
+                .map_err(|_| WorkerError::Config(format!("{name} is not a whole number")))
+        })
+    };
+    let mut model_cfg = ModelConfig::from_env().map_err(config_error)?;
+    model_cfg.model = env(PROOF_GRADER_MODEL_VAR).unwrap_or_else(|| DEFAULT_MODEL.to_owned());
+    model_cfg.output_tokens = number("PROOF_GRADER_OUTPUT_TOKENS", DEFAULT_OUTPUT_TOKENS)?;
+    model_cfg.reasoning_max_tokens = number(
+        "PROOF_GRADER_REASONING_MAX_TOKENS",
+        DEFAULT_REASONING_MAX_TOKENS,
+    )?;
+    model_cfg.timeout = CALL_TIMEOUT;
+    let client = client_for(model_cfg, "the proof-grading job is configured")?;
+    Ok(Some(cadus_worker::ProofGradingJob::new(client, curriculum)))
 }
 
 /// Read the identity of the database role under the client-side bound.

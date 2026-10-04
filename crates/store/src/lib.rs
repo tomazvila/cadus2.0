@@ -32,6 +32,7 @@ pub mod diagnosis;
 pub mod equivalence;
 pub mod integrated;
 pub mod pool;
+pub mod proof_grading;
 pub mod reports;
 pub mod shutdown;
 pub mod state;

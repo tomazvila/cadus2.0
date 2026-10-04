@@ -1,0 +1,64 @@
+{
+  "statements": [
+    {
+      "id": "odd-sum",
+      "problem": "Write the full proof: prove that the sum of any two odd integers is even.",
+      "reference": "Let a and b be odd. Then a = 2k + 1 and b = 2m + 1 for some integers k and m. So a + b = 2k + 2m + 2 = 2(k + m + 1). Since k + m + 1 is an integer, a + b is even.",
+      "proofs": [
+        {"id": "odd-sum/correct", "valid": true, "text": "Let a and b be odd integers. By definition there are integers k and m with a = 2k + 1 and b = 2m + 1. Then a + b = 2k + 1 + 2m + 1 = 2(k + m + 1). Because k + m + 1 is an integer, a + b is twice an integer, so a + b is even."},
+        {"id": "odd-sum/unusual", "valid": true, "text": "Work modulo 2. An integer is odd exactly when it is congruent to 1 mod 2. If a ≡ 1 and b ≡ 1 (mod 2), then a + b ≡ 1 + 1 = 2 ≡ 0 (mod 2), because congruences mod 2 can be added. So 2 divides a + b, which means a + b is even."},
+        {"id": "odd-sum/error", "valid": false, "text": "Let a and b be odd integers. Then a = 2k + 1 and b = 2k + 1 for some integer k. So a + b = 4k + 2 = 2(2k + 1), and since 2k + 1 is an integer, a + b is even."}
+      ]
+    },
+    {
+      "id": "sqrt2",
+      "problem": "Write the full proof: prove that the square root of 2 is irrational.",
+      "reference": "Suppose sqrt(2) = p/q with integers p, q, q > 0, and the fraction in lowest terms. Then p^2 = 2q^2, so p^2 is even and therefore p is even, p = 2r. Then 4r^2 = 2q^2, so q^2 = 2r^2 is even and q is even. Then 2 divides both p and q, contradicting lowest terms. So sqrt(2) is irrational.",
+      "proofs": [
+        {"id": "sqrt2/correct", "valid": true, "text": "Assume for contradiction that sqrt(2) is rational, so sqrt(2) = p/q where p and q are integers, q ≠ 0, and p/q is in lowest terms (gcd(p, q) = 1). Squaring gives p^2 = 2q^2, so p^2 is even. If p were odd, p^2 would be odd, so p is even: p = 2r. Substituting, 4r^2 = 2q^2, so q^2 = 2r^2 is even, and by the same argument q is even. Then 2 divides both p and q, contradicting gcd(p, q) = 1. Hence sqrt(2) is irrational."},
+        {"id": "sqrt2/unusual", "valid": true, "text": "If sqrt(2) = p/q with positive integers p, q, then p^2 = 2 q^2. By the fundamental theorem of arithmetic each side has a unique prime factorization. The prime 2 appears an even number of times in p^2 (twice its exponent in p) and an even number of times in q^2, so it appears an odd number of times in 2q^2. The same integer cannot have the exponent of 2 both even and odd, a contradiction. So no such p, q exist and sqrt(2) is irrational."},
+        {"id": "sqrt2/error", "valid": false, "text": "Suppose sqrt(2) = p/q for some integers p and q with q ≠ 0. Then p^2 = 2q^2, so p^2 is even and therefore p is even, say p = 2r. Then 4r^2 = 2q^2, so q^2 = 2r^2, which means q^2 is even and q is even too. So p and q are both even. This is a contradiction, so sqrt(2) is irrational."}
+      ]
+    },
+    {
+      "id": "primes",
+      "problem": "Write the full proof: prove that there are infinitely many prime numbers.",
+      "reference": "Suppose there are only finitely many primes p1, ..., pn. Let N = p1 p2 ... pn + 1. N > 1, so N has a prime factor p. Then p is one of the pi, so p divides p1...pn and p divides N, hence p divides N - p1...pn = 1, impossible. So there are infinitely many primes.",
+      "proofs": [
+        {"id": "primes/correct", "valid": true, "text": "Suppose there are only finitely many primes, p1, p2, ..., pn. Let N = p1 p2 ... pn + 1. Since N > 1, N has at least one prime divisor p. By assumption p equals some pi, so p divides the product p1 p2 ... pn. Then p divides N - p1 p2 ... pn = 1, which is impossible because p ≥ 2. So the assumption is false and there are infinitely many primes."},
+        {"id": "primes/unusual", "valid": true, "text": "I show that for every positive integer n there is a prime larger than n; this gives infinitely many primes. Take n ≥ 1 and let p be any prime factor of n! + 1 (it exists since n! + 1 ≥ 2). If p ≤ n, then p divides n!, and as p also divides n! + 1 it divides their difference 1, impossible. So p > n. Since every n is exceeded by some prime, the primes cannot be finite in number."},
+        {"id": "primes/error", "valid": false, "text": "Suppose there are only finitely many primes p1, ..., pn. Let N = p1 p2 ... pn + 1. N is always prime: for example 2 + 1 = 3, 2·3 + 1 = 7, 2·3·5 + 1 = 31 and 2·3·5·7 + 1 = 211 are all prime. Since N is larger than every pi, N is a prime that is not in our list, which is a contradiction. Hence there are infinitely many primes."}
+      ]
+    },
+    {
+      "id": "cubes",
+      "problem": "Write the full proof: prove that n^3 - n is divisible by 6 for every integer n.",
+      "reference": "n^3 - n = (n - 1) n (n + 1) is a product of three consecutive integers. Among them one is even and one is divisible by 3. Since 2 and 3 are coprime, 6 divides the product.",
+      "proofs": [
+        {"id": "cubes/correct", "valid": true, "text": "Factor: n^3 - n = n(n^2 - 1) = (n - 1) n (n + 1), a product of three consecutive integers. Among any two consecutive integers one is even, so 2 divides the product. Among any three consecutive integers exactly one is divisible by 3 (they have remainders 0, 1, 2 mod 3 in some order), so 3 divides the product. Since gcd(2, 3) = 1, 6 divides (n - 1) n (n + 1) = n^3 - n for every integer n."},
+        {"id": "cubes/unusual", "valid": true, "text": "Let f(n) = n^3 - n. First, f(0) = 0 is divisible by 6. Next, f(n + 1) - f(n) = (n+1)^3 - (n+1) - n^3 + n = 3n^2 + 3n = 3n(n + 1). Since n(n + 1) is a product of consecutive integers it is even, so 6 divides f(n + 1) - f(n). By induction, 6 divides f(n) for all n ≥ 0. Finally f(-n) = -n^3 + n = -f(n), so 6 also divides f(n) for every negative n. Hence 6 | n^3 - n for all integers n."},
+        {"id": "cubes/error", "valid": false, "text": "n^3 - n = n(n^2 - 1) = (n - 1) n (n + 1). One of n - 1 and n is even, so 2 divides the product. Also n^2 - 1 is divisible by 3 for every integer n, because n^2 ≡ 1 (mod 3) for every integer n. So 3 divides n^2 - 1, and hence the product. As 2 and 3 are coprime, 6 divides n^3 - n."}
+      ]
+    },
+    {
+      "id": "square-even",
+      "problem": "Write the full proof: let n be an integer. Prove that if n^2 is even, then n is even.",
+      "reference": "Contrapositive: if n is odd, n = 2k + 1, then n^2 = 4k^2 + 4k + 1 = 2(2k^2 + 2k) + 1 is odd. So if n^2 is even, n is even.",
+      "proofs": [
+        {"id": "square-even/correct", "valid": true, "text": "We prove the contrapositive: if n is odd, then n^2 is odd. Let n be odd, so n = 2k + 1 for some integer k. Then n^2 = 4k^2 + 4k + 1 = 2(2k^2 + 2k) + 1, which is odd because 2k^2 + 2k is an integer. Therefore, if n^2 is even, n cannot be odd, so n is even."},
+        {"id": "square-even/unusual", "valid": true, "text": "2 is a prime number. Euclid's lemma says that if a prime divides a product ab, it divides a or b. If n^2 is even then 2 | n · n, so by Euclid's lemma 2 | n or 2 | n; either way 2 divides n, i.e. n is even."},
+        {"id": "square-even/error", "valid": false, "text": "Let n be even, so n = 2k for some integer k. Then n^2 = 4k^2 = 2(2k^2), and since 2k^2 is an integer, n^2 is even. This shows that n^2 being even goes together with n being even, so if n^2 is even then n is even."}
+      ]
+    },
+    {
+      "id": "injections",
+      "problem": "Write the full proof: let f: A → B and g: B → C be injective functions. Prove that g ∘ f: A → C is injective.",
+      "reference": "Let x, y in A with (g∘f)(x) = (g∘f)(y), i.e. g(f(x)) = g(f(y)). Since g is injective, f(x) = f(y). Since f is injective, x = y. So g∘f is injective.",
+      "proofs": [
+        {"id": "injections/correct", "valid": true, "text": "Let x, y ∈ A and suppose (g ∘ f)(x) = (g ∘ f)(y), that is, g(f(x)) = g(f(y)). Since g is injective, this gives f(x) = f(y). Since f is injective, this gives x = y. So whenever g ∘ f takes the same value at x and y we have x = y, which means g ∘ f is injective."},
+        {"id": "injections/unusual", "valid": true, "text": "I use the contrapositive form of injectivity: a function h is injective iff x ≠ y implies h(x) ≠ h(y). Take x ≠ y in A. As f is injective, f(x) ≠ f(y); these are two different elements of B. As g is injective, g(f(x)) ≠ g(f(y)). Thus (g ∘ f)(x) ≠ (g ∘ f)(y) whenever x ≠ y, so g ∘ f is injective."},
+        {"id": "injections/error", "valid": false, "text": "Let x, y ∈ A with x = y. Since f is injective, f(x) = f(y). Since g is injective, g(f(x)) = g(f(y)), i.e. (g ∘ f)(x) = (g ∘ f)(y). Therefore g ∘ f is injective."}
+      ]
+    }
+  ]
+}

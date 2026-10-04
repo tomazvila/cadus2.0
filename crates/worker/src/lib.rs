@@ -19,6 +19,7 @@ pub mod authoring;
 pub mod diagnosis;
 pub mod equivalence;
 pub mod model_log;
+pub mod proof_grading;
 pub mod readiness;
 pub mod refill;
 pub mod reports;
@@ -40,7 +41,13 @@ pub use authoring::job::{
 pub use authoring::prompt::{AuthoringSpec, KINDS, Kind as AuthoringKind};
 pub use diagnosis::{DiagnosisJob, Outcome as DiagnosisOutcome, Report as DiagnosisReport};
 pub use equivalence::{DAILY_CAP as EQUIVALENCE_DAILY_CAP, EquivalenceJob, Outcome as EquivalenceOutcome, Report as EquivalenceReport};
-pub use model_log::{CallRecord, PURPOSE_AUTHORING, PURPOSE_DIAGNOSIS, PURPOSE_EQUIVALENCE};
+pub use model_log::{
+    CallRecord, PURPOSE_AUTHORING, PURPOSE_DIAGNOSIS, PURPOSE_EQUIVALENCE, PURPOSE_PROOF_GRADING,
+};
+pub use proof_grading::{
+    DAILY_CAP as PROOF_GRADING_DAILY_CAP, Outcome as ProofGradingOutcome, ProofGradingJob,
+    Report as ProofGradingReport,
+};
 pub use readiness::{
     ContractCheck, ReadinessRun, render_json as render_readiness_json,
     render_markdown as render_readiness_markdown, render_prereq_markdown, run as readiness_run,
@@ -238,6 +245,24 @@ pub async fn run_with(
     equivalence: Option<&EquivalenceJob>,
     shutdown: impl Future,
 ) -> Result<u64, WorkerError> {
+    run_with_proofs(db, cfg, refill, diagnosis, equivalence, None, shutdown).await
+}
+
+/// [`run_with`] with the Amendment K proof-grading pass as step 7 of each
+/// tick. A `None` proof job skips the pass.
+///
+/// # Errors
+///
+/// Returns the error of [`run`].
+pub async fn run_with_proofs(
+    db: &Db,
+    cfg: &WorkerConfig,
+    refill: Option<&RefillJob<'_>>,
+    diagnosis: Option<&mut DiagnosisJob>,
+    equivalence: Option<&EquivalenceJob>,
+    proofs: Option<&ProofGradingJob>,
+    shutdown: impl Future,
+) -> Result<u64, WorkerError> {
     let mut diagnosis = diagnosis;
     let mut state = RefillState::new();
     let mut ticks: u64 = 0;
@@ -348,6 +373,21 @@ pub async fn run_with(
                 }
             }
         }
+
+        // Step 7: the Amendment K proof-grading pass (design point 6). One
+        // claim, one hosted-model call, one end state, and the fold of a
+        // passed proof. No configured model skips the pass: the attempt
+        // stays ungraded and the row waits.
+        if let Some(job) = proofs {
+            tokio::select! {
+                biased;
+                _ = &mut shutdown => break,
+                result = proof_grading::run_once(db, job) => match result {
+                    Ok(report) => log_proof_grading(&report, ticks),
+                    Err(err) => tracing::warn!(error = %err, "proof grading: the pass did not run"),
+                }
+            }
+        }
     }
 
     tracing::info!("worker: loop stops after {ticks} ticks");
@@ -379,6 +419,19 @@ fn log_equivalence(report: &equivalence::Report, ticks: u64) {
         outcome = ?report.outcome,
         job = ?report.job_id,
         "equivalence tick={ticks}"
+    );
+}
+
+/// Log one proof-grading pass that did something. An idle queue says nothing.
+fn log_proof_grading(report: &proof_grading::Report, ticks: u64) {
+    if report.outcome == proof_grading::Outcome::Idle {
+        return;
+    }
+    tracing::info!(
+        outcome = ?report.outcome,
+        job = ?report.job_id,
+        http_attempts = report.attempts.len(),
+        "proof grading tick={ticks}"
     );
 }
 

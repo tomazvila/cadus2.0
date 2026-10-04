@@ -19,7 +19,7 @@ use uuid::Uuid;
 ///
 /// The order is the `C` collation order of `pg_class.relname`, because the
 /// catalog queries below order by that column.
-pub const RLS_TABLES: [&str; 19] = [
+pub const RLS_TABLES: [&str; 20] = [
     "anki_cards_created",
     "anki_queue",
     "auth_sessions",
@@ -35,6 +35,7 @@ pub const RLS_TABLES: [&str; 19] = [
     "problem_report_diagnostics",
     "problem_reports",
     "profiles",
+    "proof_grading_jobs",
     "serving_pool",
     "session_plans",
     "user_settings",
@@ -47,7 +48,7 @@ pub const EXEMPT_TABLES: [&str; 1] = ["model_call_log"];
 /// The union of the two lists above: every `public` table with a `user_id`
 /// column. The literal union pins that no table sits outside both buckets
 /// (finding #23).
-pub const ALL_USER_ID_TABLES: [&str; 20] = [
+pub const ALL_USER_ID_TABLES: [&str; 21] = [
     "anki_cards_created",
     "anki_queue",
     "auth_sessions",
@@ -64,6 +65,7 @@ pub const ALL_USER_ID_TABLES: [&str; 20] = [
     "problem_report_diagnostics",
     "problem_reports",
     "profiles",
+    "proof_grading_jobs",
     "serving_pool",
     "session_plans",
     "user_settings",
@@ -120,7 +122,7 @@ pub const APP_SEQUENCE_PRIVILEGES: [(&str, [bool; 3]); 1] = [
 /// writes five of its columns.
 /// `app_role_privilege_matrix_is_the_literal_table` asserts the column grants
 /// separately.
-pub const APP_TABLE_PRIVILEGES: [(&str, [bool; 5]); 29] = [
+pub const APP_TABLE_PRIVILEGES: [(&str, [bool; 5]); 30] = [
     // #8: the runtime role holds nothing on the migration ledger.
     ("_sqlx_migrations", [false, false, false, false, false]),
     ("anki_cards_created", [true, true, true, true, false]),
@@ -166,6 +168,9 @@ pub const APP_TABLE_PRIVILEGES: [(&str, [bool; 5]); 29] = [
     ("problem_report_steps", [false, false, false, false, false]),
     ("problem_reports", [true, false, false, false, false]),
     ("profiles", [true, true, true, true, false]),
+    // Amendment K point 6: the request tier writes only the three input
+    // columns of a proof-grading job; the worker owns every other column.
+    ("proof_grading_jobs", [true, false, false, false, false]),
     ("serving_pool", [true, true, true, true, false]),
     ("session_plans", [true, true, true, true, false]),
     ("user_settings", [true, true, true, true, false]),
@@ -304,7 +309,7 @@ pub const PUBLIC_FUNCTIONS: [(&str, bool, &str, bool, bool, bool); 11] = [
 /// therefore rewrote the authoritative event document with every C2 test green.
 /// `aw` is INSERT plus UPDATE: the two column lists of `users` in
 /// `0006_grants_rls.sql`. Neither list holds `id` or `is_admin`.
-pub const COLUMN_ACL_GRANTS: [(&str, &str, &str); 18] = [
+pub const COLUMN_ACL_GRANTS: [(&str, &str, &str); 21] = [
     // migration 0020: the exposure backfill can write the legacy cursor.
     // migration 0024: the input-column INSERT of an equivalence job.
     ("equivalence_jobs", "attempt_id", "cadus_app=a"),
@@ -320,6 +325,10 @@ pub const COLUMN_ACL_GRANTS: [(&str, &str, &str); 18] = [
     ("problem_reports", "source_hash", "cadus_app=a"),
     ("problem_reports", "task_id", "cadus_app=a"),
     ("problem_reports", "user_id", "cadus_app=a"),
+    // migration 0025: the input-column INSERT of a proof-grading job.
+    ("proof_grading_jobs", "attempt_id", "cadus_app=a"),
+    ("proof_grading_jobs", "payload", "cadus_app=a"),
+    ("proof_grading_jobs", "user_id", "cadus_app=a"),
     ("users", "created_at", "cadus_app=aw"),
     ("users", "disabled_at", "cadus_app=aw"),
     ("users", "email", "cadus_app=aw"),
@@ -334,7 +343,7 @@ pub const COLUMN_ACL_GRANTS: [(&str, &str, &str); 18] = [
 /// `n` is SET NULL, and `a` is NO ACTION. `events` must stay `r`: C2 says the
 /// event log outlives the account, and a flip to CASCADE erases a learner's
 /// whole history on one `DELETE FROM users` with the store suite green.
-pub const FOREIGN_KEY_DELETE_ACTIONS: [(&str, &str, &str); 25] = [
+pub const FOREIGN_KEY_DELETE_ACTIONS: [(&str, &str, &str); 26] = [
     ("anki_cards_created", "anki_cards_created_user_id_fkey", "c"),
     ("anki_queue", "anki_queue_user_id_fkey", "c"),
     ("auth_sessions", "auth_sessions_user_id_fkey", "c"),
@@ -372,6 +381,7 @@ pub const FOREIGN_KEY_DELETE_ACTIONS: [(&str, &str, &str); 25] = [
     ),
     ("problem_reports", "problem_reports_user_id_fkey", "c"),
     ("profiles", "profiles_user_id_fkey", "c"),
+    ("proof_grading_jobs", "proof_grading_jobs_user_id_fkey", "c"),
     ("serving_pool", "serving_pool_content_digest_fkey", "a"),
     ("serving_pool", "serving_pool_user_id_fkey", "c"),
     ("session_plans", "session_plans_user_id_fkey", "c"),

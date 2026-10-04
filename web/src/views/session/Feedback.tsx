@@ -14,12 +14,18 @@
  * says so and names the service's own reason. It carries no red, no "wrong" wording, no
  * solution, and no AI explanation, because none of those is true of an attempt nobody
  * graded. The learner reads the reason and takes the next problem.
+ *
+ * Amendment K point 6: an ungraded WRITTEN PROOF is graded in the background. Its panel
+ * reads "Checking your proof…" while the worker runs, then "Proof accepted" or "Needs
+ * revision" with the grader's feedback, its checks, and the solution (`ProofGrading.tsx`).
  */
 import { Chip, Cross, Question, Tick } from '@/components/primitives';
 import { MathBlock } from '@/components/MathBlock';
 import { signed } from '@/lib/format';
 import { isUngraded } from '@/api/types';
-import type { AnswerResponse, AttemptOutcome, ReworkResponse } from '@/api/types';
+import type { AnswerResponse, ApiClient, AttemptOutcome, ReworkResponse } from '@/api/types';
+import type { Lifetime } from '@/hooks/useLifetime';
+import { ProofResult, useProofGrading, type ProofState } from './ProofGrading';
 
 /** The panel mood of each outcome. `ungraded` is neutral: it is not a miss (D-F2). */
 const MOOD: Record<AttemptOutcome, string> = {
@@ -33,6 +39,16 @@ const TITLE: Record<AttemptOutcome, string> = {
   correct: 'Correct',
   incorrect: 'Not quite',
   ungraded: 'Not marked',
+};
+
+/** The heading of a written proof, by the state of its background grading. */
+const PROOF_TITLE: Record<ProofState['status'], string> = {
+  pending: 'Checking your proof…',
+  slow: 'Checking your proof…',
+  pass: 'Proof accepted',
+  needs_revision: 'Needs revision',
+  failed: 'Not marked',
+  capped: 'Not marked',
 };
 
 /** The glyph of each outcome. */
@@ -58,6 +74,8 @@ export interface FeedbackProps {
    * solution is the one thing the learner is reading at that moment.
    */
   children?: React.ReactNode;
+  /** The background grading of a written proof, when the reply carries one. */
+  proof?: ProofState | null;
 }
 
 export function Feedback({
@@ -68,15 +86,17 @@ export function Feedback({
   onRefresh,
   continueRef,
   children,
+  proof,
 }: FeedbackProps) {
   if (res.report_corrected) return <CorrectedFeedback res={res} onContinue={onRefresh ?? onContinue}
     onEnd={onEnd} continueRef={continueRef} />;
   const ungraded = isUngraded(res);
+  const head = headOf(res, ungraded ? proof ?? null : null);
   return (
-    <div className={`feedback feedback-${MOOD[res.outcome]}`}>
+    <div className={`feedback feedback-${head.mood}`}>
       <div className="feedback-head">
-        <span className="feedback-mark">{MARK[res.outcome]}</span>
-        <span className="feedback-title">{TITLE[res.outcome]}</span>
+        <span className="feedback-mark">{head.mark}</span>
+        <span className="feedback-title">{head.title}</span>
         {/* An ungraded attempt earned no tier and no XP, so neither chip appears. */}
         {ungraded ? null : (
           <Chip className="chip-quality">{String(res.work_quality).replace(/_/g, ' ')}</Chip>
@@ -84,15 +104,8 @@ export function Feedback({
         {res.xp != null ? <Chip className="chip-xp">{`${signed(res.xp)} XP`}</Chip> : null}
       </div>
 
-      {res.feedback_blocked ? <p role="status">Fresh practice is unavailable for this skill. Your answer is saved.</p> : null}
-      {res.task_status === 'task_failed' && res.correct ? <p>This practice answer is correct. The original assessment still needs more practice.</p> : null}
-      {res.task_status === 'task_passed' ? (
-        <p role="status">Task complete. The next task is up when you continue.</p>
-      ) : null}
-      {res.task_status === 'task_inconclusive' ? (
-        <p className="feedback-reason">This review needs confirmation. A fresh question will check each uncertain skill.</p>
-      ) : null}
-      {res.reason ? <p className="feedback-reason muted">{res.reason}</p> : null}
+      <TaskStatusLines res={res} />
+      {head.proof ? <ProofResult state={head.proof} /> : <Reason reason={res.reason} />}
 
       {/* Verbatim, never re-interpreted: the checker owns the vocabulary (trap T3). */}
       {res.error_tags.length ? (
@@ -141,6 +154,50 @@ export function Feedback({
       </div>
     </div>
   );
+}
+
+/**
+ * The mood, glyph and heading of one reply.
+ *
+ * A written proof under background grading speaks for itself: its state names the heading,
+ * and a pass takes the correct mood. Every other reply reads its outcome.
+ */
+function headOf(res: AnswerResponse, proof: ProofState | null) {
+  if (!proof) return { mood: MOOD[res.outcome], mark: MARK[res.outcome], title: TITLE[res.outcome], proof };
+  const passed = proof.status === 'pass';
+  return {
+    mood: passed ? MOOD.correct : MOOD[res.outcome],
+    mark: passed ? MARK.correct : MARK[res.outcome],
+    title: PROOF_TITLE[proof.status],
+    proof,
+  };
+}
+
+/** The lines that say where the task stands after this answer. */
+function TaskStatusLines({ res }: { res: AnswerResponse }) {
+  return (
+    <>
+      {res.feedback_blocked ? <p role="status">Fresh practice is unavailable for this skill. Your answer is saved.</p> : null}
+      {res.task_status === 'task_failed' && res.correct ? <p>This practice answer is correct. The original assessment still needs more practice.</p> : null}
+      {res.task_status === 'task_passed' ? (
+        <p role="status">Task complete. The next task is up when you continue.</p>
+      ) : null}
+      {res.task_status === 'task_inconclusive' ? (
+        <p className="feedback-reason">This review needs confirmation. A fresh question will check each uncertain skill.</p>
+      ) : null}
+    </>
+  );
+}
+
+/** The service's own reason for a reply with no verdict. */
+function Reason({ reason }: { reason: string | undefined }) {
+  return reason ? <p className="feedback-reason muted">{reason}</p> : null;
+}
+
+/** The feedback panel of one grade reply, following its proof grading when it has one. */
+export function ProofAwareFeedback({ api, life, ...props }: FeedbackProps & { api: ApiClient; life: Lifetime }) {
+  const proof = useProofGrading(api, life, props.res.proof_grading);
+  return <Feedback {...props} proof={proof} />;
 }
 
 /**

@@ -49,6 +49,10 @@ pub const PURPOSE_AUTHORING: &str = "authoring";
 /// model verdict is logged and sampled by the audit (note 114, point 5).
 pub const PURPOSE_EQUIVALENCE: &str = "equivalence";
 
+/// The `purpose` of one proof-grading call (Amendment K, design point 6): a
+/// hosted model grades a written proof against a checklist.
+pub const PURPOSE_PROOF_GRADING: &str = "proof_grading";
+
 /// The first value `cost_usd numeric(12,6)` cannot hold.
 ///
 /// The column keeps six digits before the point. A larger number raises

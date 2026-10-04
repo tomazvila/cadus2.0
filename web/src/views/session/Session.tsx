@@ -36,7 +36,7 @@ import { Teach } from './Teach';
 import { Integrated } from './Integrated';
 import { serveIntegrated } from './serveIntegrated';
 import { loadPlannedTask } from './loadPlannedTask';
-import { Feedback, Rework } from './Feedback';
+import { ProofAwareFeedback, Rework } from './Feedback';
 import { HintButton, HintPanel } from './Hints';
 import { Diagnosis } from './Diagnosis';
 import { useDiagnosisStream } from './useDiagnosis';
@@ -490,7 +490,10 @@ export function Session({
         {rework ? <Rework res={rework} /> : null}
 
         {result ? (
-          <Feedback
+          <ProofAwareFeedback
+            key={`feedback:${result.attempt_id}`}
+            api={api}
+            life={life}
             res={result}
             hasNext={!!result.next || !!result.next_unavailable}
             onContinue={() => advance(result.next, result.next_unavailable)}
@@ -501,7 +504,7 @@ export function Session({
             {/* Keyed by the attempt, so a second grade of the same problem — the DD-3/P1
                 re-solve — never shows the first attempt's explanation. */}
             <Diagnosis key={result.attempt_id} store={diagnosis} field={result.diagnosis} />
-          </Feedback>
+          </ProofAwareFeedback>
         ) : null}
       </div>
     </section>

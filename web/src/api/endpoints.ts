@@ -14,6 +14,7 @@ import type {
   ApproveResponse,
   DiagnosisJob,
   EquivalencePoll,
+  ProofGradingPoll,
   EnrollResponse,
   GraphResponse,
   HealthResponse,
@@ -172,6 +173,9 @@ export const api: ApiClient = {
   // The poll of a background equivalence check (Amendment K, note 114).
   getEquivalence: (equivalenceId) =>
     request<EquivalencePoll>('GET', `/equivalence/${seg(equivalenceId)}`),
+  // The poll of a background proof grading (Amendment K point 6).
+  getProofGrading: (jobId) =>
+    request<ProofGradingPoll>('GET', `/proof-grading/${seg(jobId)}`),
   // One subscription per session, not per problem. `EventSource` sends the cookie on a
   // same-origin URL, so this carries no credential either.
   diagnosisStreamUrl: () => '/api/diagnosis/stream',
