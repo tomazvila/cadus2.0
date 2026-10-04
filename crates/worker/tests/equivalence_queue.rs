@@ -341,3 +341,47 @@ async fn the_tick_loop_drains_the_equivalence_queue() {
     })
     .await;
 }
+/// (7) The local model is unreachable: the hosted fallback answers, the
+/// attempt folds correct, and the ledger bills both calls under their models.
+#[tokio::test]
+async fn an_unreachable_local_model_falls_back_to_the_hosted_model() {
+    TestDb::with(|db| async move {
+        let db: &TestDb = db.as_ref();
+        let hosted = FakeModel::start(vec![equivalent_reply()]).await;
+        let alice = db.seed_user("fallback@example.test").await;
+        seed_attempt(db, alice).await;
+        let id = enqueue(db, alice).await;
+        // Port 9 (discard) refuses the connection at once.
+        let local =
+            cadus_model_client::EquivalenceClient::new("http://127.0.0.1:9/v1", "qwen-general-8bit")
+                .unwrap();
+        let fallback =
+            cadus_model_client::EquivalenceClient::new(&hosted.base_url, "deepseek/deepseek-chat")
+                .unwrap()
+                .with_key("test-key", vec!["deepinfra".to_owned()]);
+        let job = EquivalenceJob::new(local, Arc::new(common::pool::arena())).with_fallback(fallback);
+
+        let report = cadus_worker::equivalence::run_once(&common::handle(db), &job)
+            .await
+            .unwrap();
+        assert_eq!(report.outcome, Outcome::Accepted, "{report:?}");
+        let (status, result) = row_of(db, id).await;
+        assert_eq!(status, "done");
+        assert_eq!(result.unwrap()["model"], json!("deepseek/deepseek-chat"));
+
+        // The hosted call carries the provider order and no local template switch.
+        let sent = hosted.calls();
+        assert_eq!(sent.len(), 1);
+        assert_eq!(sent[0]["provider"]["order"], json!(["deepinfra"]));
+        assert!(sent[0].get("chat_template_kwargs").is_none());
+
+        let models = sqlx::query_scalar::<_, String>(
+            "SELECT model_id FROM model_call_log WHERE purpose = 'equivalence' ORDER BY id",
+        )
+        .fetch_all(&db.admin)
+        .await
+        .unwrap();
+        assert_eq!(models, ["qwen-general-8bit", "deepseek/deepseek-chat"]);
+    })
+    .await;
+}

@@ -468,9 +468,10 @@ const EQUIVALENCE_DEFAULT_MODEL: &str = "qwen-general-8bit";
 
 /// Build the Amendment K equivalence job from the environment, or `None`.
 ///
-/// The OpenRouter variables are read NOWHERE on this path: the owner's design
-/// pins the check to the local endpoint, and the fallback stays OFF unless the
-/// owner says otherwise (note 114, point 5).
+/// The owner approved a hosted fallback on 4 Oct (superseding note 114 point 5):
+/// when `OPENAI_API_KEY` is set, a check the local model does not answer goes to
+/// `OPENAI_BASE_URL` with `EQUIVALENCE_FALLBACK_MODEL` (default `OPENAI_MODEL`).
+/// `EQUIVALENCE_FALLBACK=off` keeps the check local only.
 fn equivalence_job(
     curriculum: std::sync::Arc<cadus_core::curriculum::Curriculum>,
 ) -> Result<Option<cadus_worker::EquivalenceJob>, WorkerError> {
@@ -488,7 +489,45 @@ fn equivalence_job(
         .unwrap_or_else(|_| EQUIVALENCE_DEFAULT_MODEL.to_owned());
     let client = EquivalenceClient::new(&base_url, &model).map_err(config_error)?;
     tracing::info!(model = %model, "cadus-worker: the equivalence job is configured");
-    Ok(Some(cadus_worker::EquivalenceJob::new(client, curriculum)))
+    let job = cadus_worker::EquivalenceJob::new(client, curriculum);
+    Ok(Some(match equivalence_fallback()? {
+        Some(fallback) => job.with_fallback(fallback),
+        None => job,
+    }))
+}
+
+/// The hosted fallback of the equivalence check, or `None`.
+fn equivalence_fallback() -> Result<Option<EquivalenceClient>, WorkerError> {
+    let env = |name: &str| {
+        std::env::var(name)
+            .ok()
+            .map(|value| value.trim().to_owned())
+            .filter(|value| !value.is_empty())
+    };
+    if env("EQUIVALENCE_FALLBACK").is_some_and(|value| value.eq_ignore_ascii_case("off")) {
+        return Ok(None);
+    }
+    let (Some(key), Some(base_url)) = (env("OPENAI_API_KEY"), env("OPENAI_BASE_URL")) else {
+        return Ok(None);
+    };
+    let Some(model) = env("EQUIVALENCE_FALLBACK_MODEL").or_else(|| env("OPENAI_MODEL")) else {
+        return Ok(None);
+    };
+    let order = env("OPENROUTER_PROVIDER_ORDER")
+        .map(|order| {
+            order
+                .split(',')
+                .map(str::trim)
+                .filter(|name| !name.is_empty())
+                .map(str::to_owned)
+                .collect()
+        })
+        .unwrap_or_default();
+    let client = EquivalenceClient::new(&base_url, &model)
+        .map_err(config_error)?
+        .with_key(&key, order);
+    tracing::info!(model = %model, "cadus-worker: the equivalence fallback is configured");
+    Ok(Some(client))
 }
 
 /// Read the identity of the database role under the client-side bound.

@@ -35,9 +35,13 @@ pub fn filter_tags(tags: &Value) -> Vec<String> {
 #[must_use]
 pub fn system_prompt() -> String {
     format!(
-        "You are the grader for Cadus. The server already decided that the answer is WRONG. \
+        "You are the grader for Cadus. The server's checker marked the answer WRONG. \
 Name the misconception and write the diagnosis with the {TOOL_NAME} tool. Be honest and \
 structural.\n\n\
+THE CHECKER CAN BE WRONG. It compares the answer with a stored key and can reject a correct \
+answer written in another valid form, order, or wording. When the learner's answer is \
+mathematically correct, say so plainly in 'prose', give no error_tags, and do NOT invent a \
+rule (such as a required order or format) to justify the mark.\n\n\
 SHOWN WORK IS OPTIONAL, and its absence is NOT a defect. The interface labels the working \
 field 'optional'. Judge method only from work that IS shown. When no work is shown, judge on \
 the answer alone and do NOT tag 'incomplete' merely because the field is empty.\n\n\
@@ -64,7 +68,7 @@ Correct final answer (reference): {}\n\
 Answer kind: {}\n\
 Learner's answer: '{}'\n\
 Learner's shown work: {work}\n\
-The answer is WRONG; the server decided that. Do not restate the verdict.\n\
+The checker marked the answer wrong. If it is in fact correct, say so.\n\
 Name the misconception and write the diagnosis via the {TOOL_NAME} tool.",
         payload.problem, payload.expected, payload.answer_kind, payload.given_answer
     )

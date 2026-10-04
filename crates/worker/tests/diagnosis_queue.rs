@@ -313,7 +313,7 @@ async fn the_user_message_carries_the_attempt_and_not_the_verdict() {
             "Correct final answer (reference): 3",
             "Learner's answer: '2'",
             "Learner's shown work: (none provided)",
-            "The answer is WRONG; the server decided that.",
+            "The checker marked the answer wrong. If it is in fact correct, say so.",
         ] {
             assert!(user_text.contains(line), "{user_text}");
         }

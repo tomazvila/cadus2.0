@@ -88,6 +88,8 @@ pub struct EquivalenceClient {
     http: HttpClient,
     url: String,
     model: String,
+    api_key: String,
+    provider_order: Vec<String>,
 }
 
 impl EquivalenceClient {
@@ -106,7 +108,22 @@ impl EquivalenceClient {
         }
         let http = HttpClient::new(base_url).map_err(|err| ModelError::Config(err.0))?;
         let url = format!("{}/chat/completions", base_url.trim_end_matches('/'));
-        Ok(Self { http, url, model: model.to_owned() })
+        Ok(Self {
+            http,
+            url,
+            model: model.to_owned(),
+            api_key: String::new(),
+            provider_order: Vec::new(),
+        })
+    }
+
+    /// The same client against a hosted, keyed endpoint (the owner-approved
+    /// fallback when the local model does not answer).
+    #[must_use]
+    pub fn with_key(mut self, api_key: &str, provider_order: Vec<String>) -> Self {
+        api_key.clone_into(&mut self.api_key);
+        self.provider_order = provider_order;
+        self
     }
 
     /// The model id this client asks.
@@ -126,7 +143,7 @@ impl EquivalenceClient {
     /// past the budget, [`ModelError::Status`] for a refusal, and
     /// [`ModelError::Reply`] for a body this parser cannot read.
     pub async fn ask(&self, question: &Question<'_>, budget: Duration) -> Result<Call, ModelError> {
-        let body = json!({
+        let mut body = json!({
             "model": self.model,
             "messages": [
                 {"role": "system", "content": SYSTEM_PROMPT},
@@ -135,15 +152,21 @@ impl EquivalenceClient {
             "temperature": 0,
             "max_tokens": MAX_OUTPUT_TOKENS,
             "stream": false,
-            "chat_template_kwargs": {"enable_thinking": false},
         });
+        // The local server reads the template switch; a hosted router reads
+        // the provider order instead.
+        if self.api_key.is_empty() {
+            body["chat_template_kwargs"] = json!({"enable_thinking": false});
+        } else if !self.provider_order.is_empty() {
+            body["provider"] = json!({"order": self.provider_order, "allow_fallbacks": true});
+        }
         let config = crate::ModelConfig {
             base_url: self.url.clone(),
-            api_key: String::new(),
+            api_key: self.api_key.clone(),
             model: self.model.clone(),
             output_tokens: MAX_OUTPUT_TOKENS,
             reasoning_max_tokens: 0,
-            provider_order: Vec::new(),
+            provider_order: self.provider_order.clone(),
             timeout: budget,
         };
         let started = std::time::Instant::now();
@@ -162,14 +185,18 @@ impl EquivalenceClient {
             .map_err(|_| ModelError::Reply("the equivalence reply is not JSON".to_owned()))?;
         let content = parsed["choices"][0]["message"]["content"]
             .as_str()
-            .ok_or_else(|| ModelError::Reply("the equivalence reply holds no content".to_owned()))?;
+            .ok_or_else(|| {
+                ModelError::Reply("the equivalence reply holds no content".to_owned())
+            })?;
         let reply = parse_reply(content)?;
         Ok(Call {
             usage: crate::Usage {
                 input_cached: parsed["usage"]["prompt_tokens_details"]["cached_tokens"]
                     .as_u64()
                     .unwrap_or(0) as u32,
-                input_uncached: parsed["usage"]["prompt_tokens"].as_u64().unwrap_or(0)
+                input_uncached: parsed["usage"]["prompt_tokens"]
+                    .as_u64()
+                    .unwrap_or(0)
                     .saturating_sub(
                         parsed["usage"]["prompt_tokens_details"]["cached_tokens"]
                             .as_u64()
@@ -285,10 +312,12 @@ mod tests {
     #[test]
     fn the_strict_shape_parses() {
         let reply =
-            parse_reply("EQUIVALENT\nThe learner stated the same value in other words.")
-                .unwrap();
+            parse_reply("EQUIVALENT\nThe learner stated the same value in other words.").unwrap();
         assert!(reply.equivalent);
-        assert_eq!(reply.reason, "The learner stated the same value in other words");
+        assert_eq!(
+            reply.reason,
+            "The learner stated the same value in other words"
+        );
 
         let reply = parse_reply("NOT\nThe learner's D is 6, not 5.").unwrap();
         assert!(!reply.equivalent);

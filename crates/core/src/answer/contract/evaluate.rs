@@ -5,7 +5,7 @@ use num_rational::BigRational;
 use num_traits::Signed;
 
 use super::function::FunctionSpec;
-use super::structured::{label_value, named_parts, tolerance_value, validate_shape};
+use super::structured::{label_value, named_parts, ordered_parts, tolerance_value, validate_shape};
 use super::{AnswerContract, AnswerPart, Canon, Undecidable, bounded, canonical_form};
 use crate::answer::{Outcome, Rounding, Verdict, rounds_to, same_answer};
 
@@ -286,13 +286,20 @@ fn multipart(parts: &[AnswerPart], expected: &str, learner: &str) -> Outcome {
     let Some(expected) = named_parts(parts, expected) else {
         return refused_parts();
     };
-    let Some(learner) = named_parts(parts, learner) else {
-        return decided(false);
+    // Unnamed parts are read by position. A guessed position that puts a value
+    // the part cannot read is a wrong answer, as an unreadable text was before.
+    let (learner, by_position) = match named_parts(parts, learner) {
+        Some(named) => (named, false),
+        None => match ordered_parts(parts, learner) {
+            Some(ordered) => (ordered, true),
+            None => return decided(false),
+        },
     };
     let mut correct = true;
     for ((part, expected), learner) in parts.iter().zip(expected).zip(learner) {
         match check_contract(expected, learner, part.contract.clone()) {
             Outcome::Decided(verdict) => correct &= verdict.correct,
+            _ if by_position => return decided(false),
             undecidable => return undecidable,
         }
     }

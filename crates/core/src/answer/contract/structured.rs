@@ -252,6 +252,67 @@ pub(super) fn named_parts<'a>(parts: &[AnswerPart], text: &'a str) -> Option<Vec
         .collect()
 }
 
+/// The learner's parts read in the key's order when no part carries a name.
+///
+/// A learner writes "6, composite" or "6; composite" for a two-part question.
+/// The text splits on `;`, or else on commas outside brackets, and it reads
+/// only when the piece count equals the part count and no piece is an
+/// assignment. A comma that may group thousands ("1,000") makes the text
+/// unreadable. A misread order gives a wrong verdict, which the background
+/// equivalence check then reviews.
+pub(super) fn ordered_parts<'a>(parts: &[AnswerPart], text: &'a str) -> Option<Vec<&'a str>> {
+    let pieces: Vec<&str> = if text.contains(';') {
+        text.split(';').map(str::trim).collect()
+    } else if thousands_comma(text) {
+        return None;
+    } else {
+        top_level_commas(text)
+    };
+    if pieces.len() != parts.len()
+        || pieces
+            .iter()
+            .any(|piece| piece.is_empty() || piece.contains('='))
+    {
+        return None;
+    }
+    Some(pieces)
+}
+
+/// Whether a comma sits between a digit and exactly three digits, as in "1,000".
+fn thousands_comma(text: &str) -> bool {
+    let bytes = text.as_bytes();
+    bytes.iter().enumerate().any(|(index, &byte)| {
+        byte == b','
+            && index
+                .checked_sub(1)
+                .and_then(|before| bytes.get(before))
+                .is_some_and(u8::is_ascii_digit)
+            && bytes
+                .get(index + 1..index + 4)
+                .is_some_and(|run| run.iter().all(u8::is_ascii_digit))
+            && !bytes.get(index + 4).is_some_and(u8::is_ascii_digit)
+    })
+}
+
+/// Split on commas at bracket depth zero.
+fn top_level_commas(text: &str) -> Vec<&str> {
+    let mut pieces = Vec::new();
+    let (mut depth, mut start) = (0_i32, 0);
+    for (index, ch) in text.char_indices() {
+        match ch {
+            '(' | '[' | '{' => depth += 1,
+            ')' | ']' | '}' => depth -= 1,
+            ',' if depth == 0 => {
+                pieces.push(text[start..index].trim());
+                start = index + 1;
+            }
+            _ => {}
+        }
+    }
+    pieces.push(text[start..].trim());
+    pieces
+}
+
 pub(super) fn multipart_values(parts: &[AnswerPart], text: &str) -> Result<Canon, Undecidable> {
     let values = named_parts(parts, text)
         .ok_or_else(|| Undecidable::new("each named answer part must occur exactly once"))?;

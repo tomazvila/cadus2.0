@@ -38,12 +38,12 @@ use cadus_store::equivalence::{
 use cadus_store::state::{append_event, project_and_save};
 use cadus_store::{Db, bounded};
 use serde_json::json;
-use sqlx::types::chrono::Utc;
 use sqlx::types::Uuid;
+use sqlx::types::chrono::Utc;
 use sqlx::{Postgres, Transaction};
 
-use crate::model_log::{self, CallRecord, PURPOSE_EQUIVALENCE};
 use crate::WorkerError;
+use crate::model_log::{self, CallRecord, PURPOSE_EQUIVALENCE};
 
 /// The per-learner daily cap of the note-114 design: 200 model verdicts a day.
 ///
@@ -78,6 +78,7 @@ pub const FOLD_NOTE: &str = "equivalence (background model)";
 #[derive(Debug)]
 pub struct EquivalenceJob {
     client: EquivalenceClient,
+    fallback: Option<EquivalenceClient>,
     curriculum: Arc<Curriculum>,
 }
 
@@ -85,7 +86,19 @@ impl EquivalenceJob {
     /// Build the job over the deployment's curriculum.
     #[must_use]
     pub fn new(client: EquivalenceClient, curriculum: Arc<Curriculum>) -> Self {
-        Self { client, curriculum }
+        Self {
+            client,
+            fallback: None,
+            curriculum,
+        }
+    }
+
+    /// Ask `fallback` when the primary model does not answer (the owner
+    /// approved a hosted fallback on 4 Oct, superseding note 114 point 5).
+    #[must_use]
+    pub fn with_fallback(mut self, fallback: EquivalenceClient) -> Self {
+        self.fallback = Some(fallback);
+        self
     }
 
     /// The model id this job asks.
@@ -174,8 +187,7 @@ pub async fn run_once(db: &Db, job: &EquivalenceJob) -> Result<Report, WorkerErr
     if reset > 0 || dead > 0 {
         tracing::info!(reset, dead, "equivalence: the sweep ran");
     }
-    let Some(claimed) = equivalence::claim(db).await.map_err(WorkerError::from)?
-    else {
+    let Some(claimed) = equivalence::claim(db).await.map_err(WorkerError::from)? else {
         return Ok(Report {
             outcome: Outcome::Idle,
             job_id: None,
@@ -212,7 +224,13 @@ pub async fn run_once(db: &Db, job: &EquivalenceJob) -> Result<Report, WorkerErr
     // The cache first: a verdict another pass already settled answers here
     // with no model call (note 114, point 2). The fold still runs — the
     // attempt this job names may not be corrected yet.
-    let verdict = match equivalence::cache_hit(db.pool(), &payload.item_digest, &payload.given_answer).await {
+    let verdict = match equivalence::cache_hit(
+        db.pool(),
+        &payload.item_digest,
+        &payload.given_answer,
+    )
+    .await
+    {
         Ok(Some(verdict)) => {
             tracing::info!(job = %claimed.id, "equivalence: the cache answered; no model call");
             Some(verdict)
@@ -267,45 +285,54 @@ async fn ask(
         contract: payload.answer_contract.as_deref(),
         learner: &payload.given_answer,
     };
+    let mut attempts = Vec::new();
+    for (index, client) in std::iter::once(&job.client)
+        .chain(job.fallback.as_ref())
+        .enumerate()
+    {
+        let (attempt, verdict) = ask_one(db, client, claimed, &question, index).await;
+        attempts.push(attempt);
+        if verdict.is_some() {
+            return Ok((attempts, verdict));
+        }
+    }
+    Ok((attempts, None))
+}
+
+/// One call to one model, billed in the ledger BEFORE the row settles (T6).
+async fn ask_one(
+    db: &Db,
+    client: &EquivalenceClient,
+    claimed: &equivalence::Claimed,
+    question: &Question<'_>,
+    index: usize,
+) -> (Attempt, Option<Verdict>) {
     let started = std::time::Instant::now();
-    let answer = job.client.ask(&question, CALL_BUDGET).await;
+    let answer = client.ask(question, CALL_BUDGET).await;
     let latency_ms = u32::try_from(started.elapsed().as_millis()).unwrap_or(u32::MAX);
-    // T6: every model call reports one record, a failure included.
+    let attempt = |status, latency_ms, usage| Attempt {
+        index: u32::try_from(index).unwrap_or(u32::MAX),
+        max_tokens: cadus_model_client::equivalence::MAX_OUTPUT_TOKENS,
+        status,
+        latency_ms,
+        usage,
+        model_id: client.model().to_owned(),
+        provider: None,
+        request_id: None,
+        cost_usd: None,
+    };
     let (attempt, verdict) = match &answer {
         Ok(call) => (
-            Attempt {
-                index: 0,
-                max_tokens: cadus_model_client::equivalence::MAX_OUTPUT_TOKENS,
-                status: 200,
-                latency_ms: call.latency_ms,
-                usage: call.usage,
-                model_id: job.model().to_owned(),
-                provider: None,
-                request_id: None,
-                cost_usd: None,
-            },
+            attempt(200, call.latency_ms, call.usage),
             Some(Verdict {
                 equivalent: call.reply.equivalent,
                 reason: call.reply.reason.clone(),
-                model: job.model().to_owned(),
+                model: client.model().to_owned(),
             }),
         ),
         Err(err) => {
-            tracing::warn!(job = %claimed.id, error = %err, "equivalence: the model call failed");
-            (
-                Attempt {
-                    index: 0,
-                    max_tokens: cadus_model_client::equivalence::MAX_OUTPUT_TOKENS,
-                    status: 0,
-                    latency_ms,
-                    usage: Usage::default(),
-                    model_id: job.model().to_owned(),
-                    provider: None,
-                    request_id: None,
-                    cost_usd: None,
-                },
-                None,
-            )
+            tracing::warn!(job = %claimed.id, model = client.model(), error = %err, "equivalence: the model call failed");
+            (attempt(0, latency_ms, Usage::default()), None)
         }
     };
     let record = CallRecord {
@@ -316,7 +343,7 @@ async fn ask(
     if let Err(err) = model_log::write(db, &record, std::slice::from_ref(&attempt)).await {
         tracing::error!(job = %claimed.id, error = %err, "equivalence: the model-call ledger did not write");
     }
-    Ok((vec![attempt], verdict))
+    (attempt, verdict)
 }
 
 /// Land one verdict: the cache write, the fold, and the settle, all inside
@@ -354,7 +381,13 @@ async fn land_inner(
 ) -> Result<(), WorkerError> {
     // The cache write. An existing row stands: the first verdict wins, so a
     // re-check cannot flip a settled answer.
-    equivalence::cache_put(&mut **tx, &payload.item_digest, &payload.given_answer, verdict).await?;
+    equivalence::cache_put(
+        &mut **tx,
+        &payload.item_digest,
+        &payload.given_answer,
+        verdict,
+    )
+    .await?;
     let document = serde_json::to_value(verdict).unwrap_or_else(|_| json!({}));
     if !verdict.equivalent {
         equivalence::settle(&mut **tx, claimed.id, JOB_DONE, Some(&document)).await?;
