@@ -24,8 +24,11 @@ Requirement IDs are stable. Cite them in reviews and commits.
   app tier, one-server docker-compose deployment. The app refuses to start if its DB
   role bypasses RLS.
 - **C4 — Grade honesty.** `correct` reflects only mathematical correctness. Partial
-  credit lives in `work_quality`. A speed optimization that risks a wrong `correct`
-  verdict is rejected — correctness outranks every budget in this document.
+  credit lives in `work_quality`. Code decides wherever code can decide. Where the
+  deterministic checker says "wrong" or cannot parse an answer, a background model
+  verdict may mark it correct (A3, A8). Every model verdict is logged, cached, and
+  audited like an answer key, and it supersedes the first grade with a `regraded`
+  event (C2).
 - **C5 — Curriculum as data.** Topics, knowledge points, exemplars, and constraints
   live in reviewed, linted files under git. Content changes go through git review.
 - **C6 — Evidence-backed AI review for authored content.** LLM-authored content
@@ -40,23 +43,24 @@ Requirement IDs are stable. Cite them in reviews and commits.
 ### 2.1 Latency budget (NFR-L)
 
 Server-side, per request, measured at p95 under single-tenant interactive load.
-A change that breaks a budget does not merge.
+The owner's requirement behind these numbers: the learner never waits on a model
+after an answer. Budgets are targets; a regression is fixed or justified in review.
 
 | ID | Path | Budget | How |
 |---|---|---|---|
 | L1 | Serve a problem | < 150 ms | Local instantiation from an approved bank/template. No model call. |
-| L2 | Grade, verifiable answer (correct or wrong) | < 300 ms | Deterministic checker. No model call. |
+| L2 | Grade an answer | < 300 ms for the first verdict | Deterministic checker. When it says "wrong" or cannot parse, a cached model verdict applies at once; otherwise a background model check runs and its verdict lands later (A3). |
 | L3 | Grade, full feedback prose | verdict per L2; prose arrives asynchronously | The verdict never waits on the model. See A4. |
 | L4 | Teach (lesson instruction) | < 150 ms | Pre-authored, approved teach content. No model call. |
 | L5 | Hint | < 150 ms | Pre-authored hint ladder. No model call. |
-| L6 | Any model call that a learner waits on | none exist | Model calls run offline or asynchronously only. |
+| L6 | Any model call that a learner waits on | none exist | Model calls run in background workers. The learner continues; verdicts and explanations arrive when they land. |
 
 ### 2.2 Token and cost budget (NFR-T)
 
 | ID | Rule |
 |---|---|
-| T1 | The serve, teach, hint, and correct-answer grade paths spend **0 model tokens** at runtime. |
-| T2 | Model tokens are spent in exactly two places: (a) the offline authoring pipeline, (b) optional asynchronous miss diagnosis (A4). |
+| T1 | The serve, teach, hint, and grade request paths spend **0 model tokens** while the learner waits. |
+| T2 | Model tokens are spent only in background work: (a) the offline authoring pipeline, (b) asynchronous miss diagnosis (A4), (c) the equivalence check and written-proof grading (A3), (d) problem-report review (A8). |
 | T3 | Authoring cost is amortized: one knowledge point is paid for **once**, then serves forever. Track cost per KP; alert when a KP exceeds 3 authoring attempts. |
 | T4 | Async diagnosis is capped: a per-session call cap and a per-call output cap (configurable; defaults 10 calls/session, 600 output tokens/call). When the cap is hit, the learner still gets the deterministic verdict and a stock re-solve instruction. |
 | T5 | Every model request sets provider prompt caching when the provider supports it, sets a reasoning-token cap **by default**, and pins provider order **by default**. 1.0 shipped these unset; 2.0 does not repeat that. |
@@ -65,9 +69,9 @@ A change that breaks a budget does not merge.
 ## 3. Architecture — the inversion (A)
 
 The 1.0 defect: problems were generated live, per serve, so no two problems repeated
-and nothing was cacheable. 2.0 inverts this: **the LLM is an offline compiler, not a
-runtime dependency.** Content is authored in batch, verified by machine, approved by a
-human, and served from local storage.
+and nothing was cacheable. 2.0 inverts this: **the LLM is an offline compiler and a
+background grader, never on the request path.** Content is authored in batch, verified
+by machine, approved by evidence review (C6), and served from local storage.
 
 - **A1 — Parameterized problem templates are the unit of content.** A template holds:
   the statement with placeholders, per-parameter domains, **constraints between
@@ -81,10 +85,16 @@ human, and served from local storage.
   hand-worked samples), then queues it for AI evidence review (C6). Rejected templates get
   precise, actionable retry feedback — the 1.0 lesson: the biggest yield lever is the
   quality of the rejection message.
-- **A3 — Deterministic grading is the only synchronous grader.** Answer kinds are
-  restricted to a machine-decidable grammar (§5). The checker returns `correct`
-  instantly for right AND wrong answers — 1.0 already discarded the model's verdict
-  whenever the checker had one, so nothing is lost.
+- **A3 — Deterministic grading first, model grading in the background.** The
+  checker returns a verdict instantly for right AND wrong answers in the decidable
+  grammar (§5), and it is the only grader on the request path. When it says "wrong"
+  or cannot parse an answer, the local model is asked one question: is the learner's
+  answer mathematically equivalent to the key? Verdicts are cached by (item digest,
+  normalized learner text), so a repeat answers at once. An EQUIVALENT verdict counts
+  as correct for the topic and for mastery; a NOT verdict keeps "wrong" and shows the
+  model's one-line reason. Written proofs and free explanations are graded in the
+  background against a 5–8 item yes/no rubric authored with the problem. Per-learner
+  daily cap: 200 model verdicts.
 - **A4 — Miss diagnosis is asynchronous and optional.** On a wrong answer the learner
   immediately gets: the verdict, the worked solution, and the mandatory unaided
   re-solve instruction (all deterministic). A model call for error-specific diagnosis
@@ -116,6 +126,16 @@ human, and served from local storage.
     changes what the pool contains, never what a request waits on.
   - The pool schema records `source` per problem, so its pedagogical effect is
     measurable per source before it earns more budget.
+- **A8 — Problem reports answer the learner.** A learner can report any question or
+  grade. A background worker asks the model whether the learner's answer is correct
+  and complete, and whether the stored key is correct. Every report returns a plain
+  explanation of the grade, withheld while a quiz or placement test is open.
+  - The model's judgment alone regrades the reporter's own ordinary attempt, at the
+    trust level of the A3 equivalence check.
+  - A change to the stored answer key affects every learner, so it is published only
+    with checked evidence (formal verification and acceptance regressions).
+  - An unreachable model leaves the grade unchanged and says so; the report can be
+    retried.
 
 ## 4. Backend — Rust (R)
 
@@ -142,7 +162,8 @@ need one, because 2.0 controls both sides of the comparison.
   not by heuristic simplification.
 - **V2 — Authoring-time enforcement.** The pipeline (A2) rejects any template whose
   answer expression leaves the grammar. Undecidable kinds (`proof`, free-form
-  multi-step) are graded per A4's async path and never claim a deterministic verdict.
+  multi-step) are graded by the background model (A3) and never claim a deterministic
+  verdict. Their verdict is eventual: mastery math reads it when it lands.
 - **V3 — Oracle parity.** The Rust checker is fuzz-tested against 1.0's SymPy checker
   over the curriculum's answer corpus before it grades a real attempt (R5).
 - **V4 — Learner-notation tolerance carries over.** Whitespace, equivalent fraction
@@ -237,9 +258,9 @@ above, not only inherited from C3.
 ## 7. Non-goals
 
 - No chat tutor, no CLI (both removed in 1.0; not resurrected).
-- No model call on the request path, ever — including generation (A6/A7). Generation
-  itself is NOT a non-goal: A7 reserves the architecture for it as future work; only
-  the *synchronous* form of it is permanently out.
+- No model call that the learner waits on — including generation (A6/A7). Model
+  grading, report review, and generation run in the background. Generation itself is
+  NOT a non-goal: A7 reserves the architecture for it as future work.
 - No generator implementation in the 2.0 launch scope (A7 is the seam, not the feature).
 - No migration of 1.0's Python code; the port re-implements against the docs and the
   R5 oracle.

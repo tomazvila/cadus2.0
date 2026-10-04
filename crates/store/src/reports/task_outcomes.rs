@@ -25,6 +25,7 @@ pub(super) async fn complete_submission(
     user: Uuid,
     packet: &Value,
     report: Uuid,
+    evidence: &str,
 ) -> Result<(Option<Event>, Value), StoreError> {
     use cadus_core::event::{AttemptOutcome, RegradedAttempt, SchemaVersion, Slug, Timestamp};
     if packet["content_only"] == true {
@@ -47,9 +48,7 @@ pub(super) async fn complete_submission(
                     outcome: Some(AttemptOutcome::Correct),
                     work_quality: WorkQuality::NearlyPerfect,
                     error_tags: Vec::new(),
-                    grader_note: Some(format!(
-                        "Qwen report {report}; checked mathematical evidence"
-                    )),
+                    grader_note: Some(format!("Qwen report {report}; {evidence}")),
                 }],
             )
         }

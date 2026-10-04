@@ -324,6 +324,7 @@ pub async fn finish(
                         job.user_id,
                         &job.input,
                         job.id,
+                        "checked mathematical evidence",
                     )
                     .await?;
                     answer["task_recalculation"] = summary;
@@ -346,6 +347,55 @@ pub async fn finish(
         "UPDATE problem_reports SET status=$3,stage=$3,result=$4,lease=NULL,lease_until=NULL,updated_at=now()
          WHERE id=$1 AND lease=$2"
     ).bind(job.id).bind(job.lease).bind(status).bind(&answer).execute(&mut *tx).await?;
+    tx.commit().await?;
+    Ok(true)
+}
+
+/// Commit a model-judged regrade of the reporter's own ordinary attempt.
+///
+/// The model's judgment carries the same trust as the Amendment K equivalence
+/// check: it corrects this learner's history and publishes no content, so the
+/// stored answer key and every other learner stay unchanged. Diagnostic and
+/// integrated answers keep the evidence-gated [`finish`] path.
+pub async fn finish_regrade(db: &Db, job: &ReportJob, result: &Value) -> Result<bool, StoreError> {
+    let mut tx = begin_tenant(db.pool(), job.user_id).await?;
+    lock_web_state(&mut tx, job.user_id).await?;
+    let owns = sqlx::query_scalar::<_, bool>(
+        "SELECT true FROM problem_reports WHERE id=$1 AND lease=$2
+         AND status='running' AND lease_until>now() FOR UPDATE",
+    )
+    .bind(job.id)
+    .bind(job.lease)
+    .fetch_optional(&mut *tx)
+    .await?
+    .unwrap_or(false);
+    if !owns {
+        return Ok(false);
+    }
+    let mut answer = result.clone();
+    answer["grade_corrected"] = json!(false);
+    answer["corrected_outcome"] = Value::Null;
+    answer["content_published"] = json!(false);
+    if job.input["content_only"] != true && job.input["attempt"]["type"] == "attempt" {
+        let (corrected, summary) = task_outcomes::complete_submission(
+            &mut tx,
+            job.user_id,
+            &job.input,
+            job.id,
+            "model-judged correct",
+        )
+        .await?;
+        answer["task_recalculation"] = summary;
+        if let Some(corrected) = corrected {
+            append_event(&mut tx, job.user_id, &corrected, None).await?;
+            answer["grade_corrected"] = json!(true);
+            answer["corrected_outcome"] = json!("correct");
+        }
+    }
+    sqlx::query(
+        "UPDATE problem_reports SET status='completed',stage='completed',result=$3,lease=NULL,lease_until=NULL,updated_at=now()
+         WHERE id=$1 AND lease=$2"
+    ).bind(job.id).bind(job.lease).bind(&answer).execute(&mut *tx).await?;
     tx.commit().await?;
     Ok(true)
 }

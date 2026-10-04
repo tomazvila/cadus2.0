@@ -6,13 +6,8 @@ import { useProblemReport, type ProblemReportApi, type ProblemReportState, type 
 function ReportResult({ result }: { result: NonNullable<ProblemReportReceipt['result']> }) {
   return <div className="report-result">
     <p>{result.message}</p>
-    <dl>
-      <dt>Qwen assessment</dt><dd>{result.qwen_verdict}</dd>
-      <dt>Mathematical verification</dt><dd>{result.verification}</dd>
-      <dt>Resolution</dt><dd>{result.resolution.replace(/_/g, ' ')}</dd>
-      <dt>Grade correction applied</dt><dd>{result.grade_corrected ? 'Yes' : 'No'}</dd>
-      <dt>Verified content published</dt><dd>{result.content_published ? 'Yes' : 'No'}</dd>
-    </dl>
+    {result.explanation ? <MathBlock>{result.explanation}</MathBlock> : null}
+    {result.content_published ? <p className="muted">The stored answer was corrected for everyone.</p> : null}
     {result.corrected_answer ? <><p className="solution-label">Reviewed answer</p><MathBlock>{result.corrected_answer}</MathBlock></> : null}
     {result.solution ? <><p className="solution-label">Reviewed explanation</p><MathBlock>{result.solution}</MathBlock></> : null}
   </div>;
@@ -40,7 +35,7 @@ function ReportDetails({ report, submitted, hideResult, close }: {
     <h3>{submitted ? 'Report this question or its grading' : 'Report this question'}</h3>
     <MathBlock>{context.problem_text}</MathBlock>
     {submitted ? <p>Your submitted answer: <span>{context.answer || '(blank)'}</span></p> : <p>No answer submission is required to send a report.</p>}
-    <p className="muted">Qwen reviews the report. Mathematical verification and any applied changes are shown separately.</p>
+    <p className="muted">The review checks your answer, explains the grade, and corrects it when your answer is right.</p>
     <label className="auth-label" htmlFor={noteId}>What should we check? (optional)</label>
     {/* The shared work-field pattern, not a bare UA textarea: unstyled, the textarea
         flows inline with its label and the two overlap. */}

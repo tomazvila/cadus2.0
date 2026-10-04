@@ -1,5 +1,12 @@
 # Verified problem reports
-Learners can report a question or a submitted answer without leaving Cadus. A durable worker asks the self-hosted Qwen model to review the issue. Supported mathematical claims require independently checkable Lean evidence before Cadus publishes a correction.
+Learners can report a question or a submitted answer without leaving Cadus. A durable worker asks the self-hosted Qwen model to review the issue (REQUIREMENTS.md A8).
+## Judgment and learner regrade
+The first step asks Qwen, with the report packet and no formal rules, for `{"learner_correct","key_correct","explanation"}`. Every result carries the explanation, a plain reply to the learner's note.
+- `learner_correct: true` on an ordinary submitted attempt regrades that attempt through `reports::finish_regrade`. The result reads `resolution: regraded`, `verification: model_judged`. No content is published.
+- `learner_correct: false` completes the report with `no_issue_found`; the grade stands.
+- `learner_correct: null`, or a diagnostic or integrated answer judged correct, ends unresolved with no change.
+- `key_correct: false`, or a content-only report, also runs the evidence graph below. Only that graph publishes a changed key for every learner.
+- A model failure ends unresolved with a message that names it, and the worker logs the error.
 ## Coverage
 Reports support lesson, review, drill, quiz, diagnostic, and integrated-task fields. An integrated report names one step or the final field and includes the scenario and given quantities. A report made before submission reviews content only and creates no learner attempt.
 The server reconstructs the question and submitted answer from the learner's events or durable served state. Request bodies supply identifiers and an optional note; they cannot supply an authoritative question, answer key, grade, or user identity.

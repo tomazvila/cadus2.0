@@ -1,7 +1,10 @@
 # AMENDMENT K — background model grading
 
 Status: **decided by the owner, 24 Sep** (steer note 114); design below is the owner's.
-The only built part is the worked-solution reveal of decision 3 b (worktree amend-k).
+Folded into the numbered rules of REQUIREMENTS.md (C4, L2, L6, T1, T2, A3, A8, V2, §7),
+which are the authority. Built: the worked-solution reveal (decision 3 b) and the
+background equivalence check (design points 1–5). Not built: rubric grading of
+written proofs (design point 6).
 
 ## The requirement change
 

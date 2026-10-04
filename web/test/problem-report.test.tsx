@@ -9,8 +9,8 @@ const context: SubmittedProblemContext = { task_id: 'old-task', problem_id: 'old
   attempt_id: 'old-attempt', problem_text: 'List the factors.', answer: '24x1,12x2,8x3,6x4', work: '' };
 const completed: ProblemReportReceipt = { report_id: 'report-1', status: 'completed', stage: 'Finished',
   attempt: 1, max_attempts: 3, retryable: false, result: { resolution: 'confirmed_issue',
-    message: 'The representation is valid.', qwen_verdict: 'correct', verification: 'proved',
-    grade_corrected: false, content_published: false } };
+    message: 'The representation is valid.', explanation: 'Each pair multiplies to 24.',
+    qwen_verdict: 'correct', verification: 'proved', grade_corrected: false, content_published: false } };
 function Harness({ api }: { api: ApiClient }) {
   const report = useProblemReport(api);
   return <><button onClick={() => report.remember(context)}>Record submission</button><ProblemReport report={report} /></>;
@@ -27,7 +27,7 @@ describe('submitted question reports', () => {
     render(<Harness api={createDemoApi()} />);
     expect(screen.queryByRole('button', { name: 'Report submitted question' })).toBeNull();
   });
-  it('posts frozen attempt identity and distinguishes model, verification, and applied changes', async () => {
+  it('posts frozen attempt identity and shows the plain explanation without review internals', async () => {
     const api = createDemoApi();
     api.taskReport = vi.fn().mockResolvedValue(completed);
     openReport(api);
@@ -37,9 +37,9 @@ describe('submitted question reports', () => {
     expect(api.taskReport).toHaveBeenCalledWith('old-task', expect.objectContaining({
       problem_id: 'old-problem', attempt_id: 'old-attempt', note: 'Factor pairs are valid.', request_id: expect.any(String),
     }), expect.any(AbortSignal));
-    expect(screen.getByText('Qwen assessment')).toBeTruthy();
-    expect(screen.getByText('Mathematical verification')).toBeTruthy();
-    expect(screen.getAllByText('No')).toHaveLength(2);
+    expect(screen.getByText('Each pair multiplies to 24.')).toBeTruthy();
+    expect(screen.queryByText('Qwen assessment')).toBeNull();
+    expect(screen.queryByText('Mathematical verification')).toBeNull();
   });
   it('preserves the idempotency key when retrying a failed transport', async () => {
     const api = createDemoApi();

@@ -17,10 +17,11 @@ export interface ProblemReportReceipt {
   max_attempts: number;
   retryable: boolean;
   result?: {
-    resolution: 'confirmed_issue' | 'no_issue_found' | 'needs_review';
+    resolution: 'confirmed_issue' | 'regraded' | 'no_issue_found' | 'needs_review';
     message: string;
+    explanation?: string;
     qwen_verdict: 'correct' | 'incorrect' | 'ambiguous';
-    verification: 'proved' | 'disproved' | 'unresolved';
+    verification: 'proved' | 'disproved' | 'model_judged' | 'unresolved';
     corrected_answer?: string;
     solution?: string;
     grade_corrected: boolean;
