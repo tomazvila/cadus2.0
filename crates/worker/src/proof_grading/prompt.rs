@@ -80,9 +80,12 @@ must establish, phrased so that a different valid route can still meet it (ask w
 proof establishes X, never whether it uses method Y). Always add these five general checks \
 with exactly these ids and texts:\n\
 {general}\
-3. Answer every check against the LEARNER's text only. For a met check, give a short verbatim \
-quote (at most 25 words) from the learner text as evidence. For an unmet check, give \
-\"not found\" or a short quote of the faulty step.\n\
+3. Answer every check against the LEARNER's text only. For a met check, give as evidence a \
+short quote (at most 25 words) copied character for character from the learner text, never a \
+paraphrase or a description; for a met general check quote the sentence that shows it (G1 the \
+opening statement, G2 and G3 the key step, G4 the case handling, G5 the concluding sentence). \
+Use ... only to join two verbatim pieces. A met check whose quote is not in the learner text \
+counts as unmet. For an unmet check, give \"not found\" or a short quote of the faulty step.\n\
 4. Mark a check minor only when its failure is a small presentation gap that leaves the proof \
 valid (a hypothesis left implicit, a routine step not written out). A false step, a logical \
 gap, a missing case, circular reasoning or a missing conclusion is never minor. G2, G3, G4 \
@@ -176,6 +179,46 @@ pub fn request(payload: &JobPayload) -> ChatRequest {
     }
 }
 
+/// The text a quote is compared in: lowercase, no whitespace, no `$`, and one
+/// spelling for the dashes, the quote marks and the multiplication dots.
+fn comparable(text: &str) -> String {
+    text.to_lowercase()
+        .chars()
+        .filter(|c| !c.is_whitespace() && *c != '$')
+        .map(|c| match c {
+            '\u{2212}' | '\u{2013}' | '\u{2014}' => '-',
+            '\u{2018}' | '\u{2019}' => '\'',
+            '\u{201c}' | '\u{201d}' => '"',
+            '\u{00b7}' | '\u{00d7}' | '\u{22c5}' => '*',
+            other => other,
+        })
+        .collect()
+}
+
+/// Whether `evidence` quotes `learner`: every piece between `...` marks is
+/// in the learner text once whitespace, case and the trimmed quote marks and
+/// end punctuation are set aside. "not found" quotes nothing.
+#[must_use]
+pub fn quote_found(evidence: &str, learner: &str) -> bool {
+    if evidence.trim().eq_ignore_ascii_case("not found") {
+        return false;
+    }
+    let haystack = comparable(learner);
+    let pieces: Vec<String> = evidence
+        .replace('\u{2026}', "...")
+        .split("...")
+        .map(|piece| {
+            comparable(piece)
+                .trim_matches(|c: char| matches!(c, '"' | '\'' | '.' | ',' | ';' | ':'))
+                .to_owned()
+        })
+        .filter(|piece| !piece.is_empty())
+        .collect();
+    !pieces.is_empty()
+        && pieces.iter().any(|piece| piece.chars().count() >= 3)
+        && pieces.iter().all(|piece| haystack.contains(piece.as_str()))
+}
+
 /// Read the model's arguments into checks and feedback.
 ///
 /// # Errors
@@ -217,6 +260,7 @@ pub fn parse_arguments(arguments: &Value) -> Result<(Vec<Check>, String), String
             minor,
             met,
             evidence: clip(evidence, EVIDENCE_CHARS),
+            quote_verified: false,
         });
     }
     for (id, _) in GENERAL_CHECKS {
@@ -254,13 +298,26 @@ pub fn verdict_of(checks: &[Check]) -> &'static str {
     }
 }
 
-/// The whole result document of one reply.
+/// Check each quote against the learner text. A met check whose quote is not
+/// in the text is unmet: the model's word alone never satisfies a check.
+pub fn verify_quotes(checks: &mut [Check], learner: &str) {
+    for check in checks {
+        check.quote_verified = quote_found(&check.evidence, learner);
+        if check.met && !check.quote_verified {
+            check.met = false;
+        }
+    }
+}
+
+/// The whole result document of one reply: the checks with their quotes
+/// verified against `learner`, and the verdict of [`verdict_of`].
 ///
 /// # Errors
 ///
 /// Returns the reason of [`parse_arguments`].
-pub fn grading_of(arguments: &Value, model: &str) -> Result<Grading, String> {
-    let (checks, feedback) = parse_arguments(arguments)?;
+pub fn grading_of(arguments: &Value, model: &str, learner: &str) -> Result<Grading, String> {
+    let (mut checks, feedback) = parse_arguments(arguments)?;
+    verify_quotes(&mut checks, learner);
     Ok(Grading {
         v: RESULT_VERSION,
         verdict: verdict_of(&checks).to_owned(),
@@ -285,10 +342,14 @@ mod tests {
     #![allow(clippy::unwrap_used)]
 
     use super::{
-        GENERAL_CHECKS, grading_of, parse_arguments, system_prompt, user_message, verdict_of,
+        GENERAL_CHECKS, grading_of, parse_arguments, quote_found, system_prompt, user_message,
+        verdict_of,
     };
     use cadus_store::proof_grading::{Check, JobPayload};
     use serde_json::{Value, json};
+
+    /// The learner text the fixtures quote.
+    const LEARNER: &str = "Let a=2k+1, b=2m+1. Then a+b=2(k+m+1), even.";
 
     fn payload(rubric: Vec<String>) -> JobPayload {
         JobPayload {
@@ -300,7 +361,7 @@ mod tests {
             reference: Some("Write a = 2k+1 and b = 2m+1; then a+b = 2(k+m+1).".to_owned()),
             expected: None,
             rubric,
-            given_answer: "Let a=2k+1, b=2m+1. Then a+b=2(k+m+1), even.".to_owned(),
+            given_answer: LEARNER.to_owned(),
         }
     }
 
@@ -309,10 +370,10 @@ mod tests {
     fn arguments(specific: usize, unmet: &[(&str, bool)]) -> Value {
         let mut checks: Vec<Value> = GENERAL_CHECKS
             .iter()
-            .map(|(id, text)| json!({"id": id, "text": text, "minor": false, "met": true, "evidence": "q"}))
+            .map(|(id, text)| json!({"id": id, "text": text, "minor": false, "met": true, "evidence": "Let a=2k+1"}))
             .collect();
         for n in 1..=specific {
-            checks.push(json!({"id": format!("S{n}"), "text": format!("step {n}"), "minor": false, "met": true, "evidence": "q"}));
+            checks.push(json!({"id": format!("S{n}"), "text": format!("step {n}"), "minor": false, "met": true, "evidence": "Let a=2k+1"}));
         }
         for (id, minor) in unmet {
             let check = checks.iter_mut().find(|c| c["id"] == *id).unwrap();
@@ -330,6 +391,7 @@ mod tests {
             minor,
             met,
             evidence: "q".to_owned(),
+            quote_verified: true,
         }
     }
 
@@ -389,7 +451,7 @@ mod tests {
     /// A complete reply parses into a pass.
     #[test]
     fn a_complete_reply_passes() {
-        let grading = grading_of(&arguments(6, &[]), "m").unwrap();
+        let grading = grading_of(&arguments(6, &[]), "m", LEARNER).unwrap();
         assert_eq!(grading.verdict, "pass");
         assert_eq!(grading.checks.len(), 11);
         assert_eq!(grading.model, "m");
@@ -399,12 +461,12 @@ mod tests {
     /// when the reply calls it minor.
     #[test]
     fn a_general_logic_check_is_never_minor() {
-        let grading = grading_of(&arguments(5, &[("G3", true)]), "m").unwrap();
+        let grading = grading_of(&arguments(5, &[("G3", true)]), "m", LEARNER).unwrap();
         assert_eq!(grading.verdict, "needs_revision");
         let g3 = grading.checks.iter().find(|c| c.id == "G3").unwrap();
         assert!(!g3.minor);
         // G1 may be minor.
-        let grading = grading_of(&arguments(5, &[("G1", true)]), "m").unwrap();
+        let grading = grading_of(&arguments(5, &[("G1", true)]), "m", LEARNER).unwrap();
         assert_eq!(grading.verdict, "pass");
     }
 
@@ -433,5 +495,33 @@ mod tests {
         let (checks, _) = parse_arguments(&args).unwrap();
         assert_eq!(checks[5].evidence, "not found");
         assert_eq!(checks[5].id, "S1");
+    }
+
+    /// A quote is found across whitespace, case, `$` and quote marks, and
+    /// each piece around `...` must be in the text.
+    #[test]
+    fn a_quote_is_checked_against_the_learner_text() {
+        assert!(quote_found("let A = 2k+1", LEARNER));
+        assert!(quote_found("\"Then a+b=2(k+m+1)\"", LEARNER));
+        assert!(quote_found("Let a=2k+1 ... even.", LEARNER));
+        assert!(!quote_found("Let a=2k+1 ... odd", LEARNER));
+        assert!(!quote_found("The proof is not circular.", LEARNER));
+        assert!(!quote_found("not found", LEARNER));
+        assert!(!quote_found("a", LEARNER));
+    }
+
+    /// A met check whose quote is not in the text is unmet, and the verdict
+    /// follows the checks as verified.
+    #[test]
+    fn an_unverified_quote_cannot_satisfy_a_check() {
+        let mut args = arguments(5, &[]);
+        args["checks"][2]["evidence"] = json!("The argument builds step by step.");
+        let grading = grading_of(&args, "m", LEARNER).unwrap();
+        let g3 = grading.checks.iter().find(|c| c.id == "G3").unwrap();
+        assert!(!g3.met);
+        assert!(!g3.quote_verified);
+        assert_eq!(grading.verdict, "needs_revision");
+        let s1 = grading.checks.iter().find(|c| c.id == "S1").unwrap();
+        assert!(s1.met && s1.quote_verified);
     }
 }

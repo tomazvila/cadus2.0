@@ -94,11 +94,14 @@ No item carries an authored rubric yet, so the grader derives the checks itself.
 - **Queue.** An UNGRADED attempt on an item with no checkable key (answer kind `proof`
   with no contract, or the contract `none`) writes one `proof_grading_jobs` row in the
   grade transaction (migration 0025). The reply carries `proof_grading: {id, status:
-  "pending"}`; `GET /api/proof-grading/{id}` polls it. A quiz answer never enqueues.
-- **Worker** (`crates/worker/src/proof_grading`). One forced-tool call to
+  "pending"}`; `GET /api/proof-grading/{id}` polls it. A proof answered in a quiz waits
+  in the reveal buffer and is enqueued by the quiz-result reveal, never while the quiz is open.
+- **Worker** (`crates/worker/src/proof_grading`). Its own loop beside the tick loop, so a
+  slow grading never delays refill, diagnosis or equivalence. One forced-tool call to
   `PROOF_GRADER_MODEL` (default `deepseek/deepseek-v4-pro`) on the `OPENAI_BASE_URL`
   endpoint with `OPENROUTER_PROVIDER_ORDER`. Daily cap: 20 per learner; 3 claims per job;
-  every HTTP attempt is billed in `model_call_log` (purpose `proof_grading`).
+  every HTTP attempt is billed in `model_call_log` (purpose `proof_grading`). A reply with
+  no usable grading is asked once more inside the same claim.
   `PROOF_GRADING=off` turns the job off.
 - **Prompt.** The problem, the reference solution, an authored rubric when the payload
   carries one (`rubric`, empty today; it replaces the derived checks), and the learner
@@ -106,6 +109,8 @@ No item carries an authored rubric yet, so the grader derives the checks itself.
   general checks (claim stated; every step correct and justified; not circular; all cases;
   conclusion reached), each with a quote from the learner text or "not found", plus 2–4
   sentences of feedback naming the first failing step.
+- **Quotes.** Each quote is checked against the learner text (whitespace, case and quote
+  marks set aside); a met check whose quote is not in the text counts as unmet.
 - **Verdict (code).** Pass when every check is met, or when the one unmet check is minor;
   the general checks G2–G5 are never minor. A pass appends a `regraded` event (outcome
   correct) and refolds, so it counts for mastery like a correct short answer; a standing

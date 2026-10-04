@@ -16,13 +16,17 @@
 import { useEffect, useState } from 'react';
 import { MathBlock } from '@/components/MathBlock';
 import type { ApiClient, ProofCheck, ProofGradingField, ProofGradingPoll } from '@/api/types';
-import type { Lifetime } from '@/hooks/useLifetime';
+import { useLifetime, type Lifetime } from '@/hooks/useLifetime';
 
 /** The poll interval, in milliseconds. A grading takes tens of seconds to minutes. */
 export const PROOF_POLL_MS = 3000;
 
-/** Past this, the panel stops polling and says the check is slow. */
+/** Past this, the panel says the check is slow and polls at the slow interval. */
 export const PROOF_DEADLINE_MS = 10 * 60_000;
+
+/** The poll interval after the deadline. The panel never stops on its own: the job id
+ * stays in the reply (and in the quiz reveal), so the result shows whenever it lands. */
+export const PROOF_SLOW_POLL_MS = 30_000;
 
 /** What the panel paints for one written proof. */
 export type ProofState =
@@ -102,8 +106,15 @@ export function useProofGrading(
       const state = proofStateOf(job);
       if (state.status !== 'pending') finish(state);
     };
+    void poll();
     interval = life.setInterval(() => { void poll(); }, PROOF_POLL_MS);
-    deadline = life.setTimeout(() => { if (!done) finish({ status: 'slow' }); }, PROOF_DEADLINE_MS);
+    deadline = life.setTimeout(() => {
+      if (done) return;
+      // Slow, not over: say so, and keep reading the row at the slow interval.
+      setLanded({ id, state: { status: 'slow' } });
+      life.clearTimer(interval);
+      interval = life.setInterval(() => { void poll(); }, PROOF_SLOW_POLL_MS);
+    }, PROOF_DEADLINE_MS);
     return () => {
       done = true;
       life.clearTimer(interval);
@@ -114,6 +125,16 @@ export function useProofGrading(
   if (id === null) return null;
   return landed?.id === id ? landed.state : PENDING;
 }
+
+/** The heading of a written proof, by the state of its background grading. */
+export const PROOF_TITLE: Record<ProofState['status'], string> = {
+  pending: 'Checking your proof…',
+  slow: 'Checking your proof…',
+  pass: 'Proof accepted',
+  needs_revision: 'Needs revision',
+  failed: 'Not marked',
+  capped: 'Not marked',
+};
 
 /** The grader's verdict, feedback, checks and the reference solution. */
 export function ProofResult({ state }: { state: ProofState }) {
@@ -135,6 +156,8 @@ export function ProofResult({ state }: { state: ProofState }) {
                 {check.minor && !check.met ? <span className="muted"> (minor)</span> : null}
                 <div className="proof-check-evidence muted">
                   {check.evidence === 'not found' ? 'Not found in your proof.' : <q>{check.evidence}</q>}
+                  {check.evidence !== 'not found' && check.quote_verified === false
+                    ? <span className="proof-check-unquoted"> (this quote is not in your proof)</span> : null}
                 </div>
               </li>
             ))}
@@ -147,6 +170,22 @@ export function ProofResult({ state }: { state: ProofState }) {
           <MathBlock className="solution-text">{state.solution}</MathBlock>
         </div>
       ) : null}
+    </div>
+  );
+}
+
+/**
+ * The grading of one quiz proof, after the quiz reveal. The reveal names the job; this
+ * panel follows it like the feedback panel does.
+ */
+export function QuizProofGrading({ api, field }: { api: ApiClient; field: ProofGradingField }) {
+  const life = useLifetime();
+  const state = useProofGrading(api, life, field);
+  if (!state) return null;
+  return (
+    <div className="quiz-proof-grading" aria-live="polite">
+      <p className="feedback-title">{PROOF_TITLE[state.status]}</p>
+      <ProofResult state={state} />
     </div>
   );
 }

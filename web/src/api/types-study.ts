@@ -365,6 +365,8 @@ export interface ProofCheck {
   minor: boolean;
   /** A short quote from the learner's text, or "not found". */
   evidence: string;
+  /** Whether the quote was found in the learner's text. A met check needs one. */
+  quote_verified?: boolean;
 }
 
 /** The poll reply of one background proof grading (Amendment K point 6). */
@@ -438,5 +440,10 @@ export interface QuizResultResponse {
   xp: number;
   practice_pending: boolean;
   practice_available: boolean;
-  answers: { problem_id: string; text: string; given_answer: string; correct: boolean; outcome: string; reason?: string | null; solution_sketch?: string | null }[];
+  answers: {
+    problem_id: string; text: string; given_answer: string; correct: boolean; outcome: string;
+    reason?: string | null; solution_sketch?: string | null;
+    /** Amendment K point 6: a written proof's background grading, enqueued at the reveal. */
+    attempt_id?: string; proof_grading?: ProofGradingField;
+  }[];
 }

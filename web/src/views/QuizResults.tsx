@@ -8,6 +8,7 @@ import { usePhase } from '@/hooks/usePhase';
 import { ProblemReport, QuestionReport } from './session/ProblemReport';
 import { useProblemReport } from './session/useProblemReport';
 import { applyReportCorrection } from './session/applyReportCorrection';
+import { QuizProofGrading } from './session/ProofGrading';
 import { isQuizReceipt, isRework } from '@/api/types';
 import type { AnswerResponse, ApiClient, QuizResultResponse, ServedProblem } from '@/api/types';
 
@@ -34,7 +35,8 @@ export function QuizResults({ api, taskId, onUnauthorized, resumePractice = fals
     {result.answers.map((answer) => <article key={answer.problem_id} className="card">
       <MathBlock>{answer.text}</MathBlock>
       <p>Your answer: {answer.given_answer || '(blank)'}</p>
-      <p>{answer.outcome === 'ungraded' ? `Needs review: ${answer.reason ?? 'No verdict'}` : answer.correct ? 'Correct' : 'Incorrect'}</p>
+      {answer.proof_grading ? <QuizProofGrading api={api} field={answer.proof_grading} />
+        : <p>{answer.outcome === 'ungraded' ? `Needs review: ${answer.reason ?? 'No verdict'}` : answer.correct ? 'Correct' : 'Incorrect'}</p>}
       {answer.outcome !== 'ungraded' && answer.solution_sketch ? <MathBlock>{answer.solution_sketch}</MathBlock> : null}
       <QuestionReport api={api} onApplied={() => load(false)} context={{ task_id: taskId, problem_id: answer.problem_id,
         report_kind: 'attempt', problem_text: answer.text, answer: answer.given_answer, work: '' }} />

@@ -94,6 +94,10 @@ pub struct Check {
     pub met: bool,
     /// A short quote from the learner text, or "not found".
     pub evidence: String,
+    /// Whether the quote was found in the learner text (whitespace and case
+    /// set aside). A met check needs a verified quote.
+    #[serde(default)]
+    pub quote_verified: bool,
 }
 
 /// The result document of one graded proof (`proof_grading_jobs.result`).
@@ -325,6 +329,7 @@ mod tests {
                 minor: false,
                 met: true,
                 evidence: "Let n be odd".to_owned(),
+                quote_verified: true,
             }],
             feedback: "A complete proof.".to_owned(),
             model: "deepseek/deepseek-v4-pro".to_owned(),

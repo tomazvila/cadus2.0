@@ -87,6 +87,10 @@ pub fn payload(served: &ServedProblem, answer: &str) -> JobPayload {
     }
 }
 
+/// The key of a quiz-buffer answer that holds a written proof's grading
+/// payload until the quiz is revealed. The reveal reply never carries it.
+pub const BUFFER_PAYLOAD: &str = "proof_payload";
+
 /// Put one job on the queue, inside the grade transaction.
 ///
 /// A failed enqueue never stops the grade: the attempt stays ungraded, which
@@ -103,8 +107,24 @@ pub async fn enqueue(
     served: &ServedProblem,
     answer: &str,
 ) -> Result<Option<Uuid>, ApiError> {
-    let document = serde_json::to_value(payload(served, answer))
-        .map_err(|_| ApiError::internal("proof grading payload"))?;
+    enqueue_payload(state, tx, user_id, attempt_id, &payload(served, answer)).await
+}
+
+/// Put one job with a ready payload on the queue, inside the caller's
+/// transaction. The quiz reveal enqueues the payloads its buffer kept.
+///
+/// # Errors
+///
+/// Returns [`ApiError`] only when the payload does not serialize.
+pub async fn enqueue_payload(
+    state: &AppState,
+    tx: &mut Tx,
+    user_id: Uuid,
+    attempt_id: &str,
+    payload: &JobPayload,
+) -> Result<Option<Uuid>, ApiError> {
+    let document =
+        serde_json::to_value(payload).map_err(|_| ApiError::internal("proof grading payload"))?;
     let write = proof_grading::enqueue(tx, user_id, attempt_id, &document);
     match store(state, write).await {
         Ok(id) => Ok(Some(id)),
@@ -156,6 +176,7 @@ pub fn poll_view(row: &proof_grading::JobRow) -> Value {
                                 "met": check.met,
                                 "minor": check.minor,
                                 "evidence": check.evidence,
+                                "quote_verified": check.quote_verified,
                             }))
                             .collect::<Vec<_>>()
                     );

@@ -90,7 +90,41 @@ pub async fn result(request: TaskWithBody) -> Result<Json<Value>, ApiError> {
         .quizzes
         .get_mut(&task_id)
         .ok_or_else(|| broken_state("the quiz reveal buffer is unavailable"))?;
+    // Amendment K point 6: the quiz is revealed, so its written proofs go to
+    // the background grader now (the enqueue is idempotent per attempt).
+    for answer in &mut buffer.answers {
+        if answer
+            .get(proof_grading::FIELD)
+            .is_some_and(|field| !field.is_null())
+        {
+            continue;
+        }
+        let (Some(payload), Some(attempt_id)) = (
+            answer.get(proof_grading::BUFFER_PAYLOAD).cloned(),
+            answer["attempt_id"].as_str().map(str::to_owned),
+        ) else {
+            continue;
+        };
+        let Ok(payload) = serde_json::from_value::<cadus_store::proof_grading::JobPayload>(payload)
+        else {
+            continue;
+        };
+        let job =
+            proof_grading::enqueue_payload(&state, &mut tx, user_id, &attempt_id, &payload).await?;
+        answer[proof_grading::FIELD] = proof_grading::reply_field(job);
+    }
     let answers = buffer.answers.clone();
+    // The grading payload stays in the buffer; the reply shows the job only.
+    let shown: Vec<Value> = answers
+        .iter()
+        .cloned()
+        .map(|mut answer| {
+            if let Some(map) = answer.as_object_mut() {
+                map.remove(proof_grading::BUFFER_PAYLOAD);
+            }
+            answer
+        })
+        .collect();
     let requested = raw.as_ref().is_some_and(|body| body["practice"] == true);
     if requested && !buffer.practice_started {
         buffer.practice_started = true;
@@ -101,7 +135,7 @@ pub async fn result(request: TaskWithBody) -> Result<Json<Value>, ApiError> {
             }
         }
     }
-    let response = json!({"score": result.score, "xp": result.xp, "inconclusive": result.inconclusive, "answers": answers,
+    let response = json!({"score": result.score, "xp": result.xp, "inconclusive": result.inconclusive, "answers": shown,
         "practice_pending": scratch.feedback_practice.contains_key(&task_id),
         "practice_available": !scratch.quizzes[&task_id].practice_started && practice_queue(&answers).is_some(),
     });

@@ -25,7 +25,7 @@ import { signed } from '@/lib/format';
 import { isUngraded } from '@/api/types';
 import type { AnswerResponse, ApiClient, AttemptOutcome, ReworkResponse } from '@/api/types';
 import type { Lifetime } from '@/hooks/useLifetime';
-import { ProofResult, useProofGrading, type ProofState } from './ProofGrading';
+import { PROOF_TITLE, ProofResult, useProofGrading, type ProofState } from './ProofGrading';
 
 /** The panel mood of each outcome. `ungraded` is neutral: it is not a miss (D-F2). */
 const MOOD: Record<AttemptOutcome, string> = {
@@ -39,16 +39,6 @@ const TITLE: Record<AttemptOutcome, string> = {
   correct: 'Correct',
   incorrect: 'Not quite',
   ungraded: 'Not marked',
-};
-
-/** The heading of a written proof, by the state of its background grading. */
-const PROOF_TITLE: Record<ProofState['status'], string> = {
-  pending: 'Checking your proof…',
-  slow: 'Checking your proof…',
-  pass: 'Proof accepted',
-  needs_revision: 'Needs revision',
-  failed: 'Not marked',
-  capped: 'Not marked',
 };
 
 /** The glyph of each outcome. */

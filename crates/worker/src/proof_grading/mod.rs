@@ -29,7 +29,7 @@ use cadus_core::curriculum::Curriculum;
 use cadus_core::event::{
     AttemptOutcome, Event, Regraded, RegradedAttempt, SchemaVersion, Slug, Timestamp, WorkQuality,
 };
-use cadus_model_client::{Attempt, Client};
+use cadus_model_client::{Attempt, Client, ModelError};
 use cadus_store::proof_grading::{
     self, Claimed, Grading, JOB_CAPPED, JOB_DONE, JOB_FAILED, JOB_PENDING, JobPayload,
     PAYLOAD_VERSION,
@@ -50,6 +50,11 @@ pub const DAILY_CAP: i64 = 20;
 /// How many claims (including the failing one) a row may use before it
 /// dead-letters.
 pub const MAX_ATTEMPTS: i32 = 3;
+
+/// How many calls one claim makes when a reply holds no usable grading (a
+/// reply that does not parse, or one that misses a check). A transport
+/// failure is not re-asked here: the client already retried it.
+pub const GRADE_CALLS: usize = 2;
 
 /// The default model of the job (`PROOF_GRADER_MODEL`).
 pub const DEFAULT_MODEL: &str = "deepseek/deepseek-v4-pro";
@@ -134,13 +139,27 @@ pub async fn grade(
     client: &Client,
     payload: &JobPayload,
 ) -> (Vec<Attempt>, Result<Grading, String>) {
-    let call = client.call(&prompt::request(payload)).await;
+    let request = prompt::request(payload);
     let model = client.config().model.clone();
-    let result = match call.result {
-        Ok(arguments) => prompt::grading_of(&arguments, &model),
-        Err(err) => Err(err.to_string()),
-    };
-    (call.attempts, result)
+    let mut attempts = Vec::new();
+    let mut last = String::new();
+    for _ in 0..GRADE_CALLS {
+        let call = client.call(&request).await;
+        attempts.extend(call.attempts);
+        match call.result {
+            Ok(arguments) => match prompt::grading_of(&arguments, &model, &payload.given_answer) {
+                Ok(grading) => return (attempts, Ok(grading)),
+                // The reply parsed but holds no usable grading: ask once more.
+                Err(reason) => last = reason,
+            },
+            // The reply does not parse: ask once more.
+            Err(ModelError::Reply(reason)) => last = reason,
+            // A transport failure or a refusal: the client already retried it,
+            // so the row goes back to the queue.
+            Err(err) => return (attempts, Err(err.to_string())),
+        }
+    }
+    (attempts, Err(last))
 }
 
 /// A configured `Db` handle with the client-side bound of this module.

@@ -140,18 +140,17 @@ fn refused_reason(map: &Map<String, Value>) -> Option<String> {
 ///
 /// The buffer holds the hidden solution sketch of each question, so it is the
 /// one place a quiz keeps it; the reply carries none of it (trap W7).
+///
+/// An ungraded written proof also keeps its grading payload and its attempt id
+/// here (Amendment K point 6): the reveal enqueues the grading, never sooner.
 pub(super) fn buffer_quiz_answer(
     scratch: &mut WebState,
     task_id: &str,
     served: &ServedProblem,
     recorded: &Attempt,
+    proof: Option<cadus_store::proof_grading::JobPayload>,
 ) {
-    scratch
-        .quizzes
-        .entry(task_id.to_string())
-        .or_default()
-        .answers
-        .push(json!({
+    let mut answer = json!({
             "problem_id": served.problem_id,
             "topic": served.topic,
             "kp": served.kp,
@@ -162,5 +161,15 @@ pub(super) fn buffer_quiz_answer(
             "correct": recorded.correct,
             "secs": recorded.secs.get(),
             "solution_sketch": served.solution_sketch,
-        }));
+    });
+    if let Some(payload) = proof {
+        answer["attempt_id"] = json!(recorded.attempt_id);
+        answer[proof_grading::BUFFER_PAYLOAD] = json!(payload);
+    }
+    scratch
+        .quizzes
+        .entry(task_id.to_string())
+        .or_default()
+        .answers
+        .push(answer);
 }

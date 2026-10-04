@@ -9,7 +9,9 @@ import { act, render, screen } from '@testing-library/react';
 import { createDemoApi } from '@/api';
 import { createLifetime } from '@/hooks/useLifetime';
 import { Feedback, ProofAwareFeedback } from '@/views/session/Feedback';
-import { PROOF_POLL_MS, PROOF_TEXT, type ProofState } from '@/views/session/ProofGrading';
+import {
+  PROOF_DEADLINE_MS, PROOF_POLL_MS, PROOF_SLOW_POLL_MS, PROOF_TEXT, QuizProofGrading, type ProofState,
+} from '@/views/session/ProofGrading';
 import { ungraded } from './helpers/session';
 import type { ApiClient, ProofGradingPoll } from '@/api/types';
 
@@ -95,8 +97,9 @@ describe('the proof-grading poll', () => {
     const life = createLifetime();
     render(<ProofAwareFeedback api={api} life={life} res={proofReply()} hasNext onContinue={vi.fn()} onEnd={vi.fn()} />);
 
-    expect(title()).toBe('Checking your proof…');
-    await act(async () => { vi.advanceTimersByTime(PROOF_POLL_MS); });
+    // The first read runs at once (a return to the panel shows a landed result at once);
+    // it answers pending, and the interval reads again.
+    await act(async () => { await Promise.resolve(); });
     expect(title()).toBe('Checking your proof…');
     await act(async () => { vi.advanceTimersByTime(PROOF_POLL_MS); });
     expect(title()).toBe('Proof accepted');
@@ -104,6 +107,43 @@ describe('the proof-grading poll', () => {
     const calls = getProofGrading.mock.calls.length;
     await act(async () => { vi.advanceTimersByTime(PROOF_POLL_MS * 3); });
     expect(getProofGrading.mock.calls.length).toBe(calls);
+  });
+
+  it('says a slow check is slow and keeps polling at the slow interval until it lands', async () => {
+    vi.useFakeTimers();
+    const pending: ProofGradingPoll = { id: 'job-1', attempt_id: 'a-1', status: 'pending' };
+    let landed = false;
+    const getProofGrading = vi.fn<ApiClient['getProofGrading']>(async () => (landed
+      ? { id: 'job-1', attempt_id: 'a-1', status: 'needs_revision', feedback: 'Step 2 fails.', checks: CHECKS }
+      : pending));
+    const api: ApiClient = { ...createDemoApi(), getProofGrading };
+    render(<ProofAwareFeedback api={api} life={createLifetime()} res={proofReply()} hasNext onContinue={vi.fn()} onEnd={vi.fn()} />);
+    await act(async () => { vi.advanceTimersByTime(PROOF_DEADLINE_MS); });
+    expect(screen.getByRole('status').textContent).toBe(PROOF_TEXT.slow);
+    const calls = getProofGrading.mock.calls.length;
+    await act(async () => { vi.advanceTimersByTime(PROOF_POLL_MS * 2); });
+    expect(getProofGrading.mock.calls.length).toBe(calls);
+    landed = true;
+    await act(async () => { vi.advanceTimersByTime(PROOF_SLOW_POLL_MS); });
+    expect(title()).toBe('Needs revision');
+    expect(screen.getByText('Step 2 fails.')).toBeTruthy();
+  });
+
+  it('follows a quiz proof named by the reveal', async () => {
+    const getProofGrading = vi.fn<ApiClient['getProofGrading']>(async () => ({
+      id: 'job-9', attempt_id: 'q-1', status: 'pass', feedback: 'Complete.', checks: [{ ...CHECKS[0]! }],
+    }));
+    const api: ApiClient = { ...createDemoApi(), getProofGrading };
+    render(<QuizProofGrading api={api} field={{ id: 'job-9', status: 'pending' }} />);
+    expect(await screen.findByText('Proof accepted')).toBeTruthy();
+    expect(getProofGrading).toHaveBeenCalledWith('job-9');
+  });
+
+  it('marks a quote the grader could not find in the proof', () => {
+    panel({ status: 'needs_revision', feedback: 'x', checks: [
+      { id: 'G3', text: 'Not circular.', met: false, minor: false, evidence: 'The argument is fine.', quote_verified: false },
+    ] });
+    expect(document.querySelector('.proof-check-unquoted')!.textContent).toContain('not in your proof');
   });
 
   it('never polls for a reply that carries no grading', async () => {

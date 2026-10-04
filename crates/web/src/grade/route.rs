@@ -201,8 +201,13 @@ pub async fn answer(request: TaskWithBody) -> Result<Json<Value>, ApiError> {
             task.task_type,
             &moved,
         );
+        // A written proof inside a quiz is graded too, but only once the
+        // quiz is revealed: its payload waits in the reveal buffer, and the
+        // quiz-result route enqueues it (nothing is graded or shown while the
+        // quiz is open).
+        let proof = written_proof.then(|| proof_grading::payload(&served, &submitted.answer));
         return quiz_receipt(
-            &state, tx, user_id, scratch, &task, &served, &recorded, closed,
+            &state, tx, user_id, scratch, &task, &served, &recorded, closed, proof,
         )
         .await;
     }
@@ -393,8 +398,9 @@ async fn quiz_receipt(
     served: &ServedProblem,
     recorded: &Attempt,
     closed: bool,
+    proof: Option<cadus_store::proof_grading::JobPayload>,
 ) -> Result<Json<Value>, ApiError> {
-    buffer_quiz_answer(&mut scratch, &task.task_id, served, recorded);
+    buffer_quiz_answer(&mut scratch, &task.task_id, served, recorded, proof);
     scratch.served.remove(&task.task_id);
     let answered = scratch.plan_progress(&task.task_id).0;
     let receipt = json!({

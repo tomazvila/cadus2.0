@@ -332,3 +332,107 @@ async fn a_standing_correction_is_never_superseded() {
     })
     .await;
 }
+
+/// (6) A reply with no usable grading is asked again inside the same claim.
+#[tokio::test]
+async fn an_unusable_reply_is_asked_again_in_the_same_claim() {
+    TestDb::with(|db| async move {
+        let db: &TestDb = db.as_ref();
+        let broken = json!({"checks": [], "feedback": "fine"}).to_string();
+        let server = FakeModel::start(vec![
+            reply("grade_proof", &broken, None),
+            reply("grade_proof", &grading(&[]), None),
+        ])
+        .await;
+        let alice = db.seed_user("proof-reask@example.test").await;
+        seed_attempt(db, alice).await;
+        let id = enqueue(db, alice).await;
+
+        let report = run_once(&common::handle(db), &job_of(&server))
+            .await
+            .unwrap();
+        assert_eq!(report.outcome, Outcome::Passed, "{report:?}");
+        assert_eq!(server.call_count(), 2);
+        assert_eq!(report.attempts.len(), 2);
+        assert_eq!(row_of(db, id).await.0, "done");
+    })
+    .await;
+}
+
+/// (7) A hanging proof call never stalls the tick loop: the equivalence pass
+/// finishes its row while the proof call is still waiting, and the shutdown
+/// ends both loops at once.
+#[tokio::test]
+async fn a_hanging_proof_call_does_not_stall_the_other_passes() {
+    TestDb::with(|db| async move {
+        let db: &TestDb = db.as_ref();
+        let slow = FakeModel::start_with_delay(
+            vec![reply("grade_proof", &grading(&[]), None)],
+            std::time::Duration::from_secs(60),
+        )
+        .await;
+        let fast = FakeModel::start(vec![(
+            200,
+            json!({"choices": [{"finish_reason": "stop", "message": {"role": "assistant",
+                    "content": "EQUIVALENT\nThe same value."}}],
+                   "usage": {"prompt_tokens": 10, "completion_tokens": 2}})
+            .to_string(),
+        )])
+        .await;
+        let alice = db.seed_user("proof-concurrent@example.test").await;
+        seed_attempt(db, alice).await;
+        let proof_id = enqueue(db, alice).await;
+        let equivalence_id = sqlx::query_scalar::<_, Uuid>(
+            "INSERT INTO equivalence_jobs (user_id, attempt_id, payload) VALUES ($1, 'attempt-1', $2) RETURNING id",
+        )
+        .bind(alice)
+        .bind(json!({
+            "v": 1, "task_id": "task-1", "topic": "adding-two-digits",
+            "item_digest": "abc123def456", "problem": "Compute 8 + 5.",
+            "expected": "13", "given_answer": "thirteen"
+        }))
+        .fetch_one(&db.admin)
+        .await
+        .unwrap();
+
+        let proofs = ProofGradingJob::new(
+            {
+                let mut client = slow.client(4000, 2000).config().clone();
+                client.timeout = std::time::Duration::from_secs(120);
+                cadus_model_client::Client::new(client).unwrap()
+            },
+            Arc::new(common::pool::arena()),
+        );
+        let equivalence = cadus_worker::EquivalenceJob::new(
+            cadus_model_client::EquivalenceClient::new(&fast.base_url, "qwen-general-8bit").unwrap(),
+            Arc::new(common::pool::arena()),
+        );
+        let cfg = cadus_worker::WorkerConfig {
+            tick: std::time::Duration::from_millis(50),
+        };
+        let started = std::time::Instant::now();
+        cadus_worker::run_with_proofs(
+            &common::handle(db),
+            &cfg,
+            None,
+            None,
+            Some(&equivalence),
+            Some(&proofs),
+            tokio::time::sleep(std::time::Duration::from_millis(1500)),
+        )
+        .await
+        .unwrap();
+        assert!(started.elapsed() < std::time::Duration::from_secs(10), "the shutdown waited on the proof call");
+        assert_eq!(slow.call_count(), 1, "the proof call was in flight");
+        let equivalence_status = sqlx::query_scalar::<_, String>(
+            "SELECT status FROM equivalence_jobs WHERE id = $1",
+        )
+        .bind(equivalence_id)
+        .fetch_one(&db.admin)
+        .await
+        .unwrap();
+        assert_eq!(equivalence_status, "done", "the equivalence pass ran beside the hanging proof call");
+        assert_eq!(row_of(db, proof_id).await.0, "running", "the proof row waits for its lease");
+    })
+    .await;
+}

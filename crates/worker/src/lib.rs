@@ -245,11 +245,18 @@ pub async fn run_with(
     equivalence: Option<&EquivalenceJob>,
     shutdown: impl Future,
 ) -> Result<u64, WorkerError> {
-    run_with_proofs(db, cfg, refill, diagnosis, equivalence, None, shutdown).await
+    run_loop(db, cfg, refill, diagnosis, equivalence, shutdown).await
 }
 
-/// [`run_with`] with the Amendment K proof-grading pass as step 7 of each
-/// tick. A `None` proof job skips the pass.
+/// [`run_with`] with the Amendment K proof-grading loop running BESIDE the
+/// tick loop. A `None` proof job runs [`run_with`] alone.
+///
+/// A proof grading is one hosted-model call of tens of seconds to minutes, so
+/// it never runs inside the tick: its own loop runs concurrently with the
+/// tick loop (one `join`, two futures), and a hanging grading call delays no
+/// refill, diagnosis or equivalence pass. The tick loop owns the shutdown
+/// future; when it ends, for a signal or an error, it stops the proof loop,
+/// which drops a call in flight (the row's lease returns it to the queue).
 ///
 /// # Errors
 ///
@@ -261,6 +268,57 @@ pub async fn run_with_proofs(
     diagnosis: Option<&mut DiagnosisJob>,
     equivalence: Option<&EquivalenceJob>,
     proofs: Option<&ProofGradingJob>,
+    shutdown: impl Future,
+) -> Result<u64, WorkerError> {
+    let Some(job) = proofs else {
+        return run_loop(db, cfg, refill, diagnosis, equivalence, shutdown).await;
+    };
+    let (stop, stopped) = tokio::sync::watch::channel(false);
+    let ticks = async {
+        let ticks = run_loop(db, cfg, refill, diagnosis, equivalence, shutdown).await;
+        let _ = stop.send(true);
+        ticks
+    };
+    let (ticks, ()) = tokio::join!(ticks, proof_loop(db, cfg.tick, job, stopped));
+    ticks
+}
+
+/// The proof-grading loop: one pass per tick until `stopped` turns true.
+async fn proof_loop(
+    db: &Db,
+    tick: Duration,
+    job: &ProofGradingJob,
+    mut stopped: tokio::sync::watch::Receiver<bool>,
+) {
+    let mut interval = tokio::time::interval(tick);
+    interval.set_missed_tick_behavior(tokio::time::MissedTickBehavior::Delay);
+    let mut passes: u64 = 0;
+    loop {
+        tokio::select! {
+            biased;
+            _ = stopped.wait_for(|stop| *stop) => break,
+            _ = interval.tick() => {}
+        }
+        tokio::select! {
+            biased;
+            _ = stopped.wait_for(|stop| *stop) => break,
+            result = proof_grading::run_once(db, job) => match result {
+                Ok(report) => log_proof_grading(&report, passes),
+                Err(err) => tracing::warn!(error = %err, "proof grading: the pass did not run"),
+            }
+        }
+        passes += 1;
+    }
+    tracing::info!("proof grading: the loop stops after {passes} passes");
+}
+
+/// The tick loop of [`run_with`].
+async fn run_loop(
+    db: &Db,
+    cfg: &WorkerConfig,
+    refill: Option<&RefillJob<'_>>,
+    diagnosis: Option<&mut DiagnosisJob>,
+    equivalence: Option<&EquivalenceJob>,
     shutdown: impl Future,
 ) -> Result<u64, WorkerError> {
     let mut diagnosis = diagnosis;
@@ -373,21 +431,6 @@ pub async fn run_with_proofs(
                 }
             }
         }
-
-        // Step 7: the Amendment K proof-grading pass (design point 6). One
-        // claim, one hosted-model call, one end state, and the fold of a
-        // passed proof. No configured model skips the pass: the attempt
-        // stays ungraded and the row waits.
-        if let Some(job) = proofs {
-            tokio::select! {
-                biased;
-                _ = &mut shutdown => break,
-                result = proof_grading::run_once(db, job) => match result {
-                    Ok(report) => log_proof_grading(&report, ticks),
-                    Err(err) => tracing::warn!(error = %err, "proof grading: the pass did not run"),
-                }
-            }
-        }
     }
 
     tracing::info!("worker: loop stops after {ticks} ticks");
@@ -431,7 +474,7 @@ fn log_proof_grading(report: &proof_grading::Report, ticks: u64) {
         outcome = ?report.outcome,
         job = ?report.job_id,
         http_attempts = report.attempts.len(),
-        "proof grading tick={ticks}"
+        "proof grading pass={ticks}"
     );
 }
 
