@@ -6,8 +6,10 @@
  * "Checking your proof…" while the worker runs, then Pass or Needs revision with the
  * grader's feedback and its yes/no checks, each with the learner's own words as evidence.
  *
- * The poll never blocks the learner: Continue stays live the whole time, and the timers go
- * through the view `Lifetime`, so they die with the view. A failed poll is swallowed (the
+ * The poll never blocks the learner on a review: Continue stays live the whole time, and
+ * the timers go through the view `Lifetime`, so they die with the view. A written proof
+ * inside a LESSON blocks its knowledge point instead and has its own screen
+ * (`LessonProof.tsx`, D-PR1). A failed poll is swallowed (the
  * next one reads the row again), as in the diagnosis poll.
  *
  * A quiz answer never carries the field: the service enqueues no grading while a quiz is
@@ -45,7 +47,8 @@ export const PROOF_TEXT = {
   capped:
     "Today's limit of automatic proof checks is reached. This proof stays saved for a human review.",
   pass: 'This proof counts toward your progress.',
-  needs_revision: 'Revise the proof using the feedback below, then compare it with the solution.',
+  needs_revision:
+    'Revise the proof using the feedback below: open it from Your proofs on the dashboard. The solution opens once a revision passes.',
 } as const;
 
 const PENDING: ProofState = Object.freeze({ status: 'pending' });
@@ -126,6 +129,19 @@ export function useProofGrading(
   return landed?.id === id ? landed.state : PENDING;
 }
 
+/**
+ * Record that the learner saw a landed verdict (`seen_at`, D-PR1). A failed write is
+ * swallowed: the stamp feeds the "new verdict" marks, never the verdict itself.
+ */
+export function useSeen(api: ApiClient, field: ProofGradingField | undefined, state: ProofState | null): void {
+  const id = field?.id ?? null;
+  const landed = state !== null && state.status !== 'pending' && state.status !== 'slow';
+  useEffect(() => {
+    if (id === null || !landed) return;
+    api.proofSeen(id).catch(() => undefined);
+  }, [api, id, landed]);
+}
+
 /** The heading of a written proof, by the state of its background grading. */
 export const PROOF_TITLE: Record<ProofState['status'], string> = {
   pending: 'Checking your proof…',
@@ -181,27 +197,10 @@ export function ProofResult({ state }: { state: ProofState }) {
 export function QuizProofGrading({ api, field }: { api: ApiClient; field: ProofGradingField }) {
   const life = useLifetime();
   const state = useProofGrading(api, life, field);
+  useSeen(api, field, state);
   if (!state) return null;
   return (
     <div className="quiz-proof-grading" aria-live="polite">
-      <p className="feedback-title">{PROOF_TITLE[state.status]}</p>
-      <ProofResult state={state} />
-    </div>
-  );
-}
-
-/**
- * The grading of the proof answered just before a reload. The grade reply that named the
- * job is gone with the reload; the plan names it again, and this panel follows it above
- * the problem now on screen until the learner moves on.
- */
-export function RestoredProofGrading({ api, field }: { api: ApiClient; field: ProofGradingField }) {
-  const life = useLifetime();
-  const state = useProofGrading(api, life, field);
-  if (!state) return null;
-  return (
-    <div className="card restored-proof-grading" aria-live="polite">
-      <div className="solution-label">Your last proof</div>
       <p className="feedback-title">{PROOF_TITLE[state.status]}</p>
       <ProofResult state={state} />
     </div>

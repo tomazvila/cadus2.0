@@ -20,7 +20,6 @@ import type {
   ApiClient,
   IntegratedProblem,
   PlanTask,
-  ProofGradingField,
   ReworkResponse,
   ServedProblem,
   SessionEndResponse,
@@ -38,7 +37,7 @@ import { Integrated } from './Integrated';
 import { serveIntegrated } from './serveIntegrated';
 import { loadPlannedTask } from './loadPlannedTask';
 import { ProofAwareFeedback, Rework } from './Feedback';
-import { RestoredProofGrading } from './ProofGrading';
+import { LessonProof } from './LessonProof';
 import { HintButton, HintPanel } from './Hints';
 import { Diagnosis } from './Diagnosis';
 import { useDiagnosisStream } from './useDiagnosis';
@@ -102,9 +101,6 @@ export function Session({
   });
   const [rework, setRework] = useState<ReworkResponse | null>(null);
   const [summary, setSummary] = useState<SessionEndResponse | null>(null);
-  // The proof grading the plan restores after a reload. It stands above the first problem
-  // until the learner moves on from it.
-  const [restoredProof, setRestoredProof] = useState<ProofGradingField>(null);
 
   // The display clock: display only, and the re-solve is untimed (trap T4, DD-3/P1).
   const { elapsed, setElapsed, countdown } = useSessionClock(
@@ -352,10 +348,7 @@ export function Session({
   useEffect(() => {
     if (startedOnce.current) return;
     startedOnce.current = true;
-    const begin = (first: SessionPlanResponse): void => {
-      setRestoredProof(first.proof_grading ?? null);
-      session.start(first);
-    };
+    const begin = (first: SessionPlanResponse): void => { session.start(first); };
     if (initialPlan) { begin(initialPlan); return; }
     void call(() => api.getPlan(), begin);
     // eslint-disable-next-line react-hooks/exhaustive-deps -- once per mount, by design.
@@ -391,9 +384,15 @@ export function Session({
     // The verdict goes now, so no feedback panel stands over the next task's load.
     const restampAfterStudy = result?.feedback_practice;
     setResult(null);
-    setRestoredProof(null);
     if (restampAfterStudy) { serveThenShow(); return; }
+    moveOn(next, nextUnavailable);
+  };
 
+  /**
+   * After an answered problem: the next problem, the same task re-served, or the next task.
+   * The phase is `loading` on every path that leads here.
+   */
+  const moveOn = (next?: ServedProblem | null, nextUnavailable = false): void => {
     // The attempt IS recorded and the task is NOT finished: the service could not draw the
     // next problem. Re-serve the SAME task. Falling through to `advanceTask` would skip the
     // problems still owed, which is the silent loss the flag exists to prevent.
@@ -417,6 +416,18 @@ export function Session({
       gate.enter('ready');
       return;
     }
+    advanceTask();
+  };
+
+  /** D-PR1: a lesson proof closed its knowledge point. Continue the lesson as an answer does. */
+  const proofClosed = (next: ServedProblem | null, nextUnavailable: boolean): void => {
+    if (!gate.tryEnter('ready', 'loading')) return;
+    moveOn(next, nextUnavailable);
+  };
+
+  /** D-PR1: leave a proof under grading; the plan serves its revision first next time. */
+  const leaveProof = (): void => {
+    if (!gate.tryEnter('ready', 'loading')) return;
     advanceTask();
   };
 
@@ -505,6 +516,33 @@ export function Session({
     return <section className="view-session"><LoadingBlock label="Preparing your session…" /></section>;
   }
 
+  // D-PR1: a written proof inside a lesson runs its own revision loop. The knowledge point
+  // closes on a pass, so the screen waits for the verdict instead of moving on.
+  if (isLessonProof(problem, session.task)) {
+    return (
+      <section className="view-session" key={problem.problem_id} aria-busy={phase === 'loading'}>
+        <ProblemHeader
+          task={session.task}
+          problem={problem}
+          elapsed={elapsed}
+          countdown={countdown}
+          onExit={onExit}
+        />
+        <LessonProof
+          key={problem.problem_id}
+          api={api}
+          call={call}
+          life={life}
+          taskId={session.task.task_id}
+          problem={problem}
+          onClosed={proofClosed}
+          onLeave={leaveProof}
+        />
+        <ProblemReport report={report} />
+      </section>
+    );
+  }
+
   const locked = phase !== 'ready';
   // H-3: the serve names whether this knowledge point holds an approved hint
   // ladder. Only an explicit `false` hides the affordance; a payload with no
@@ -524,7 +562,6 @@ export function Session({
         onExit={onExit}
       />
 
-      <RestoredProof api={api} field={restoredProof} />
       <div className="card problem-card">
         <MathBlock>{problem.text}</MathBlock>
         {/* The figures of the knowledge point, each with its text equivalent (unit f9). */}
@@ -585,7 +622,7 @@ export function Session({
   );
 }
 
-/** The restored proof grading, when the plan named one. */
-function RestoredProof({ api, field }: { api: ApiClient; field: ProofGradingField }) {
-  return field ? <RestoredProofGrading api={api} field={field} /> : null;
+/** D-PR1: a written proof served inside a lesson runs the revision loop. */
+function isLessonProof(problem: ServedProblem, task: PlanTask): boolean {
+  return problem.proof !== undefined && task.task_type === 'lesson';
 }

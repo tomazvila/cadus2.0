@@ -31,6 +31,7 @@ import { useCall } from '@/hooks/useCall';
 import { LoadingBlock } from '@/components/primitives';
 import { pct } from '@/lib/format';
 import { STATES, countByStatus } from './layout';
+import { TopicProofs } from '@/views/proofs/Proofs';
 import type { CyHandle } from './CyCanvas';
 import type { ApiClient, GraphNode, GraphResponse, TopicStatus } from '@/api/types';
 
@@ -257,6 +258,8 @@ export function CurriculumMap({ api, demo, onUnauthorized, onExit }: CurriculumM
               <span className="muted">{` · ${selected.module}`}</span>
             </p>
             <p className="mono">{abilityLine(selected)}</p>
+            {/* D-PR1: the revision chains of this topic, versions and verdicts. */}
+            <TopicProofs key={selected.id} api={api} topic={selected.id} />
           </aside>
         ) : null}
       </div>

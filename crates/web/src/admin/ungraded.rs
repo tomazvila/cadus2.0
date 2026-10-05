@@ -6,8 +6,19 @@
 //!
 //! | Method and path | What it answers |
 //! |---|---|
-//! | `GET /api/admin/ungraded` | the last ungraded attempts of the learner, oldest first |
+//! | `GET /api/admin/ungraded` | the last ungraded attempts of the learner, oldest first, and the disputed proof gradings |
 //! | `POST /api/admin/ungraded/{attempt_id}/regrade` | `{attempt_id, outcome, replayed}` |
+//!
+//! # Disputed proof gradings (D-PR1)
+//!
+//! A learner who says "this grade is wrong" (`POST
+//! /api/proof-grading/{id}/dispute`) puts the graded attempt in the
+//! `disputed` list here. The regrade of that attempt id appends the same
+//! `regraded` correction as any other — a later correction supersedes the
+//! background grader's — and records the human verdict on the grading row, so
+//! the revision chain reads it (a human pass closes a lesson point on
+//! Continue). A draft revised from the proofs list records no attempt; its
+//! regrade writes the human verdict on the row alone.
 //!
 //! The regrade appends a `regraded` event and never edits the original row (C2).
 //! A `regraded` event in the log forces the whole-log replay, so the model the
@@ -22,6 +33,7 @@ use cadus_core::event::{
     AttemptOutcome, Event, Regraded, RegradedAttempt, SchemaVersion, Slug, WorkQuality,
 };
 use cadus_core::learner::UNGRADED_WINDOW;
+use cadus_store::proof_grading::{OVERRIDE_NEEDS_REVISION, OVERRIDE_PASS};
 use cadus_store::state::load_events;
 use serde_json::{Value, json};
 
@@ -80,7 +92,30 @@ pub async fn list_ungraded(AdminUser(_authed): AdminUser, req: Ready) -> Reply {
             })
         })
         .collect();
-    let body = json!({ "items": items, "limit": UNGRADED_WINDOW });
+    let disputes = req
+        .store(cadus_store::proof_grading::open_disputes(&mut *tx))
+        .await?;
+    let disputed: Vec<Value> = disputes
+        .iter()
+        .map(|row| {
+            let grading = row.grading();
+            json!({
+                "attempt_id": row.attempt_id,
+                "job_id": row.id,
+                "context": row.context,
+                "topic": row.payload_str("topic"),
+                "kp": row.payload_str("kp"),
+                "problem": row.payload_str("problem"),
+                "answer": row.payload_str("given_answer"),
+                "status": row.status,
+                "verdict": row.verdict(),
+                "feedback": grading.as_ref().map(|g| g.feedback.clone()),
+                "note": row.dispute_note,
+                "disputed_at": row.disputed_at.map(|at| at.to_rfc3339()),
+            })
+        })
+        .collect();
+    let body = json!({ "items": items, "limit": UNGRADED_WINDOW, "disputed": disputed });
     reply_read(tx, body).await
 }
 
@@ -137,9 +172,37 @@ pub async fn regrade_ungraded(
     let input = req.input();
     let (mut tx, _projection) = req.locked_projection(&input).await?;
     let rows = req.store(load_events(&mut tx, req.user_id)).await?;
+    let human = if outcome == AttemptOutcome::Correct {
+        OVERRIDE_PASS
+    } else {
+        OVERRIDE_NEEDS_REVISION
+    };
     let Some((task_id, topic)) = target_of(&rows, &attempt_id) else {
-        tx.rollback().await.ok();
-        return Err(unknown_ungraded());
+        // A disputed draft of the proofs list records no attempt: the human
+        // verdict lands on its grading row alone.
+        let disputed = req
+            .store(cadus_store::proof_grading::job_by_attempt(
+                &mut *tx,
+                &attempt_id,
+            ))
+            .await?
+            .is_some_and(|row| row.disputed_at.is_some());
+        if !disputed {
+            tx.rollback().await.ok();
+            return Err(unknown_ungraded());
+        }
+        req.store(cadus_store::proof_grading::set_override(
+            &mut *tx,
+            &attempt_id,
+            human,
+        ))
+        .await?;
+        tx.commit().await.map_err(db_failed)?;
+        return Ok(Json(json!({
+            "attempt_id": attempt_id,
+            "outcome": outcome.as_str(),
+            "replayed": false,
+        })));
     };
     let event = Event::Regraded(Regraded {
         ts: req.now,
@@ -160,6 +223,14 @@ pub async fn regrade_ungraded(
     });
     let projection = req.append_and_fold(&mut tx, &event, &input).await?;
     let standing = projection.model.ungraded.len();
+    // A graded proof keeps the human verdict on its grading row too, so its
+    // revision chain reads it (D-PR1). Any other attempt has no row.
+    req.store(cadus_store::proof_grading::set_override(
+        &mut *tx,
+        &attempt_id,
+        human,
+    ))
+    .await?;
     tx.commit().await.map_err(db_failed)?;
     Ok(Json(json!({
         "attempt_id": attempt_id,

@@ -221,6 +221,8 @@ async fn serve_one(
             let mut payload =
                 serve_payload(live, task, graph, content.cfg.drill.target_secs, elapsed);
             stamp_hint_availability(&mut payload, &readiness, task, live);
+            let live = live.clone();
+            crate::proof_grading::lesson::stamp(state, &mut tx, task, &live, &mut payload).await?;
             payload
         }
         None => {
@@ -412,6 +414,33 @@ pub(crate) async fn install_next(
             }
         }
     }
+    // D-PR1: a proof-gated point whose written proof is due serves it — the
+    // open chain's own problem, or the point's proof exemplar — and draws
+    // nothing from the pool.
+    if task.task_type == TaskType::Lesson && feedback.is_none() {
+        let proof_kp = progress_for(scratch, task, graph).proof_kp.clone();
+        let due = crate::proof_grading::lesson::due_item(
+            state,
+            tx,
+            graph,
+            &target.serve,
+            &target.kp,
+            proof_kp.as_deref(),
+        )
+        .await?;
+        if let Some(item) = due {
+            let request = ProofServe {
+                task,
+                target: &target,
+                item,
+                index,
+                started_at,
+                handoff_at,
+                elapsed,
+            };
+            return install_proof(state, content, tx, user_id, scratch, readiness, request).await;
+        }
+    }
     // Audit finding (j), the server half. A lesson practices a knowledge point
     //
     // The plan gate of D-F5 stops an unteachable lesson at the START knowledge
@@ -475,12 +504,107 @@ pub(crate) async fn install_next(
     };
     let mut payload = serve_payload(&served, task, graph, content.cfg.drill.target_secs, elapsed);
     stamp_hint_availability(&mut payload, readiness, task, &served);
+    crate::proof_grading::lesson::stamp(state, tx, task, &served, &mut payload).await?;
     scratch.record_served(&target.serve, &task_id, &row.instance_hash);
     scratch.served.insert(task_id, served);
     let row = progress_for(scratch, task, graph);
     if feedback.is_none() || task.task_type == TaskType::Lesson {
         row.served = row.served.saturating_add(1);
     }
+    Ok(payload)
+}
+
+/// The written proof one lesson serve installs (D-PR1).
+struct ProofServe<'a> {
+    task: &'a Task,
+    target: &'a Target,
+    item: crate::proof_grading::lesson::DueItem,
+    index: i64,
+    started_at: f64,
+    handoff_at: Timestamp,
+    elapsed: Option<i64>,
+}
+
+/// Install the written proof a lesson owes, with the hand-off record every
+/// served problem gets, and give back its client-safe payload. The payload
+/// carries the chain state and never the solution.
+async fn install_proof(
+    state: &AppState,
+    content: &Content,
+    tx: &mut Transaction<'_, Postgres>,
+    user_id: Uuid,
+    scratch: &mut WebState,
+    readiness: &ReadinessSet,
+    request: ProofServe<'_>,
+) -> Result<Value, ApiError> {
+    let ProofServe {
+        task,
+        target,
+        item,
+        index,
+        started_at,
+        handoff_at,
+        elapsed,
+    } = request;
+    let graph = &content.curriculum;
+    let row = PoolRow {
+        id: Uuid::nil(),
+        source: Source::Exemplar,
+        content_digest: None,
+        generation_context: None,
+        problem: cadus_core::pool::PoolProblem {
+            v: cadus_core::pool::POOL_ROW_VERSION,
+            text: item.text.clone(),
+            bindings: BTreeMap::new(),
+            seed: 0,
+        },
+        expected_answer: cadus_core::pool::PoolAnswer {
+            v: cadus_core::pool::POOL_ROW_VERSION,
+            answer_contract: Some(cadus_core::answer::AnswerContract::None),
+            answer: item.answer.clone(),
+        },
+        instance_hash: problem_text_hash(&item.text),
+    };
+    let (problem_id, handoff) = record_handoff(
+        tx,
+        HandoffRequest {
+            state,
+            content,
+            user_id,
+            task_id: &task.task_id,
+            target,
+            scratch,
+            row: &row,
+            expected: &row.expected_answer,
+            previously_claimed: false,
+            at: handoff_at,
+        },
+    )
+    .await?;
+    let served = ServedProblem {
+        timing_interrupted: false,
+        problem_id,
+        task_id: task.task_id.clone(),
+        topic: Some(target.record.clone()),
+        serve_topic: Some(target.serve.clone()),
+        kp: Some(target.kp.clone()),
+        answer_kind: answer_kind_of(graph, &target.serve),
+        text: item.text,
+        expected: row.expected_answer.clone(),
+        solution_sketch: item.solution,
+        started_at,
+        hints_given: Vec::new(),
+        index,
+        rework: None,
+        handoff: Some(handoff),
+    };
+    let mut payload = serve_payload(&served, task, graph, content.cfg.drill.target_secs, elapsed);
+    stamp_hint_availability(&mut payload, readiness, task, &served);
+    crate::proof_grading::lesson::stamp(state, tx, task, &served, &mut payload).await?;
+    scratch.record_served(&target.serve, &task.task_id, &row.instance_hash);
+    scratch.served.insert(task.task_id.clone(), served);
+    let progress = progress_for(scratch, task, graph);
+    progress.served = progress.served.saturating_add(1);
     Ok(payload)
 }
 

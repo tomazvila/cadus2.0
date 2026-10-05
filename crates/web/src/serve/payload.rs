@@ -83,6 +83,7 @@ pub(crate) fn progress_for<'state>(
                     .and_then(|topic| lesson_kp(None, task, graph, topic)),
                 _ => None,
             },
+            proof_kp: None,
         })
 }
 
@@ -164,7 +165,12 @@ pub(super) fn serve_payload(
     // attempt still grades UNGRADED — no verdict, no mastery credit). A graded
     // item reveals nothing here (Hard Rule 1): its solution waits for the
     // grade reply after the attempt commits.
+    //
+    // A written PROOF is the exception to the exception (D-PR1): its
+    // solution waits for a pass or for the revision cap, so the learner
+    // writes the proof before they read one.
     if served.expected.answer_contract == Some(AnswerContract::None)
+        && !crate::proof_grading::is_proof_item(served)
         && let Some(solution) = served.solution_sketch.as_deref()
     {
         payload["solution"] = json!(solution);

@@ -3,7 +3,8 @@
 //!
 //! 1. a pass: the job settles done, a `regraded` correction (outcome correct)
 //!    lands and the model refolds, and the ledger bills the call;
-//! 2. a needs-revision grading: done with the checks, no correction;
+//! 2. a needs-revision grading: done with the checks, and a `regraded`
+//!    correction (outcome incorrect): a decided miss for scheduling (D-PR1);
 //! 3. an unparseable reply: the row returns to the queue, and fails on its
 //!    last claim; no correction;
 //! 4. the daily cap of 20: the row settles `capped` with no model call;
@@ -192,9 +193,10 @@ async fn a_passed_proof_folds_the_attempt_correct() {
     .await;
 }
 
-/// (2) A needs-revision grading stores the checks and leaves the attempt.
+/// (2) A needs-revision grading stores the checks and folds the attempt as a
+/// decided miss.
 #[tokio::test]
-async fn a_needs_revision_grading_keeps_the_attempt_ungraded() {
+async fn a_needs_revision_grading_folds_the_attempt_incorrect() {
     TestDb::with(|db| async move {
         let db: &TestDb = db.as_ref();
         let server =
@@ -212,7 +214,19 @@ async fn a_needs_revision_grading_keeps_the_attempt_ungraded() {
         let result = result.unwrap();
         assert_eq!(result["verdict"], json!("needs_revision"));
         assert_eq!(result["feedback"], json!("Step 3 is not justified."));
-        assert_eq!(corrections(db, alice).await, 0);
+        assert_eq!(corrections(db, alice).await, 1);
+        let correction = sqlx::query_scalar::<_, Value>(
+            "SELECT payload FROM events WHERE user_id = $1 AND type = 'regraded'",
+        )
+        .bind(alice)
+        .fetch_one(&db.admin)
+        .await
+        .unwrap();
+        assert_eq!(correction["attempts"][0]["outcome"], json!("incorrect"));
+        assert_eq!(
+            correction["attempts"][0]["work_quality"],
+            json!("nearly_passable")
+        );
     })
     .await;
 }

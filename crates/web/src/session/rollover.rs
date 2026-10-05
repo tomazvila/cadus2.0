@@ -335,6 +335,7 @@ mod tests {
                 answered: 2,
                 done: false,
                 current_kp: None,
+                proof_kp: None,
             },
         );
         let facts = OpenSession::of(&events, &scratch, "s_a").expect("a window");

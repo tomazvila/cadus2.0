@@ -204,6 +204,7 @@ pub fn exhausted_quiz_progress() -> cadus_web::state::TaskProgress {
         answered: QUIZ_QUESTIONS,
         done: false,
         current_kp: None,
+        proof_kp: None,
     }
 }
 

@@ -14,7 +14,11 @@ import type {
   ApproveResponse,
   DiagnosisJob,
   EquivalencePoll,
+  ProofContinueResponse,
   ProofGradingPoll,
+  ProofReviseResponse,
+  ProofSeenResponse,
+  ProofsResponse,
   EnrollResponse,
   GraphResponse,
   HealthResponse,
@@ -186,6 +190,25 @@ export const api: ApiClient = {
   // The poll of a background proof grading (Amendment K point 6).
   getProofGrading: (jobId) =>
     request<ProofGradingPoll>('GET', `/proof-grading/${seg(jobId)}`),
+  // The proof revision loop (D-PR1).
+  proofSeen: (jobId) =>
+    request<ProofSeenResponse>('POST', `/proof-grading/${seg(jobId)}/seen`, {}),
+  // A WHITELIST: an absent note is omitted, never sent as `undefined`.
+  proofDispute: (jobId, note) =>
+    request<ProofGradingPoll>(
+      'POST',
+      `/proof-grading/${seg(jobId)}/dispute`,
+      note === undefined ? {} : { note },
+    ),
+  listProofs: (topic) =>
+    request<ProofsResponse>(
+      'GET',
+      topic ? `/proofs?topic=${encodeURIComponent(topic)}` : '/proofs',
+    ),
+  reviseProof: (jobId, answer) =>
+    request<ProofReviseResponse>('POST', `/proofs/${seg(jobId)}/revise`, { answer }),
+  taskProofContinue: (taskId) =>
+    request<ProofContinueResponse>('POST', `/task/${seg(taskId)}/proof/continue`, {}),
   // One subscription per session, not per problem. `EventSource` sends the cookie on a
   // same-origin URL, so this carries no credential either.
   diagnosisStreamUrl: () => '/api/diagnosis/stream',

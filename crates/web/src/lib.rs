@@ -252,6 +252,11 @@ pub fn create_app(state: AppState) -> Router {
         .route("/api/task/{task_id}/hint", post(serve::hint))
         // Unit U8, spec section 11. The same rule: before the three layers.
         .route("/api/task/{task_id}/answer", post(grade::answer))
+        // D-PR1: a passed written proof closes its lesson knowledge point.
+        .route(
+            "/api/task/{task_id}/proof/continue",
+            post(grade::proof_continue),
+        )
         .route("/api/task/{task_id}/report", post(problem_reports::create))
         .route("/api/reports/{report_id}", get(problem_reports::get))
         // D-F10: the integrated task. A multi-step task with an authored item
@@ -285,8 +290,9 @@ pub fn create_app(state: AppState) -> Router {
         // Amendment K (note 114): the poll route of a background equivalence
         // check. GET, before the three layers, like the diagnosis poll.
         .merge(equivalence::router())
-        // Amendment K point 6: the poll route of a background proof grading.
-        // GET, before the three layers, like the equivalence poll.
+        // Amendment K point 6 and D-PR1: the poll of a background proof
+        // grading and the learner routes of the revision loop, before the
+        // three layers like every other route.
         .merge(proof_grading::router())
         // M5 U12: the A6 operator view. It reads its own credential, and it
         // refuses every account that is not an admin.

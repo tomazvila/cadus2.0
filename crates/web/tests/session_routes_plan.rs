@@ -104,6 +104,7 @@ async fn progress_done_is_true_for_a_recomposed_failed_review() {
                 answered: 3,
                 done: true,
                 current_kp: None,
+                proof_kp: None,
             },
         );
         sqlx::query!(

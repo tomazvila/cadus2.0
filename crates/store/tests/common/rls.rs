@@ -309,7 +309,7 @@ pub const PUBLIC_FUNCTIONS: [(&str, bool, &str, bool, bool, bool); 11] = [
 /// therefore rewrote the authoritative event document with every C2 test green.
 /// `aw` is INSERT plus UPDATE: the two column lists of `users` in
 /// `0006_grants_rls.sql`. Neither list holds `id` or `is_admin`.
-pub const COLUMN_ACL_GRANTS: [(&str, &str, &str); 21] = [
+pub const COLUMN_ACL_GRANTS: [(&str, &str, &str); 31] = [
     // migration 0020: the exposure backfill can write the legacy cursor.
     // migration 0024: the input-column INSERT of an equivalence job.
     ("equivalence_jobs", "attempt_id", "cadus_app=a"),
@@ -325,9 +325,21 @@ pub const COLUMN_ACL_GRANTS: [(&str, &str, &str); 21] = [
     ("problem_reports", "source_hash", "cadus_app=a"),
     ("problem_reports", "task_id", "cadus_app=a"),
     ("problem_reports", "user_id", "cadus_app=a"),
-    // migration 0025: the input-column INSERT of a proof-grading job.
+    // migration 0025: the input-column INSERT of a proof-grading job;
+    // migration 0026: the chain columns of a new job (INSERT) and the
+    // learner-side marks of a standing one (UPDATE).
     ("proof_grading_jobs", "attempt_id", "cadus_app=a"),
+    ("proof_grading_jobs", "closed_at", "cadus_app=w"),
+    ("proof_grading_jobs", "context", "cadus_app=a"),
+    ("proof_grading_jobs", "dispute_note", "cadus_app=w"),
+    ("proof_grading_jobs", "disputed_at", "cadus_app=w"),
+    ("proof_grading_jobs", "override_verdict", "cadus_app=w"),
     ("proof_grading_jobs", "payload", "cadus_app=a"),
+    ("proof_grading_jobs", "revealed_at", "cadus_app=w"),
+    ("proof_grading_jobs", "revision", "cadus_app=a"),
+    ("proof_grading_jobs", "revision_of", "cadus_app=a"),
+    ("proof_grading_jobs", "rewrite", "cadus_app=a"),
+    ("proof_grading_jobs", "seen_at", "cadus_app=w"),
     ("proof_grading_jobs", "user_id", "cadus_app=a"),
     ("users", "created_at", "cadus_app=aw"),
     ("users", "disabled_at", "cadus_app=aw"),
@@ -343,7 +355,7 @@ pub const COLUMN_ACL_GRANTS: [(&str, &str, &str); 21] = [
 /// `n` is SET NULL, and `a` is NO ACTION. `events` must stay `r`: C2 says the
 /// event log outlives the account, and a flip to CASCADE erases a learner's
 /// whole history on one `DELETE FROM users` with the store suite green.
-pub const FOREIGN_KEY_DELETE_ACTIONS: [(&str, &str, &str); 26] = [
+pub const FOREIGN_KEY_DELETE_ACTIONS: [(&str, &str, &str); 27] = [
     ("anki_cards_created", "anki_cards_created_user_id_fkey", "c"),
     ("anki_queue", "anki_queue_user_id_fkey", "c"),
     ("auth_sessions", "auth_sessions_user_id_fkey", "c"),
@@ -381,6 +393,12 @@ pub const FOREIGN_KEY_DELETE_ACTIONS: [(&str, &str, &str); 26] = [
     ),
     ("problem_reports", "problem_reports_user_id_fkey", "c"),
     ("profiles", "profiles_user_id_fkey", "c"),
+    // migration 0026: a revision whose draft is gone keeps its row.
+    (
+        "proof_grading_jobs",
+        "proof_grading_jobs_revision_of_fkey",
+        "n",
+    ),
     ("proof_grading_jobs", "proof_grading_jobs_user_id_fkey", "c"),
     ("serving_pool", "serving_pool_content_digest_fkey", "a"),
     ("serving_pool", "serving_pool_user_id_fkey", "c"),

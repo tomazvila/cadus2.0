@@ -5,8 +5,9 @@
 //! ungraded written proof writes one `proof_grading_jobs` row in the grade
 //! transaction and the reply names it), the routing (a written proof skips
 //! the equivalence check; a decided miss never enqueues a proof job), and the
-//! poll route (pending, then the worker's checks, feedback and the reference
-//! solution; another tenant reads 404).
+//! poll route (pending, then the worker's checks and feedback with the
+//! reference solution held back until a pass (D-PR1); another tenant reads
+//! 404).
 
 #![allow(clippy::unwrap_used, clippy::panic)]
 
@@ -122,7 +123,9 @@ async fn a_written_proof_enqueues_one_job_and_the_poll_follows_it() {
         assert_eq!(body["status"], json!("needs_revision"));
         assert_eq!(body["feedback"], json!("The conclusion is not stated."));
         assert_eq!(body["checks"][1]["evidence"], json!("Let a = 2k+1"));
-        assert_eq!(body["solution"], json!(REFERENCE));
+        assert_eq!(body["first_unmet"]["id"], json!("G5"));
+        assert_eq!(body["chain"]["phase"], json!("revise"));
+        assert!(body.get("solution").is_none(), "{body}");
     })
     .await;
 }
@@ -148,16 +151,17 @@ async fn a_numeric_miss_enqueues_no_proof_job() {
     .await;
 }
 
-/// A reload loses the grade reply; the plan names the job of the session's
-/// last answer again, and stops naming it once a later answer stands.
+/// A reload loses the grade reply. The plan names the OPEN REVISION — the
+/// lesson task that carries it — and no restore field of the last attempt
+/// (D-PR1).
 #[tokio::test]
-async fn the_plan_restores_the_last_answers_proof_grading() {
+async fn the_plan_names_the_open_revision_and_no_restore_field() {
     TestDb::with(|db| async move {
         let user = lesson_learner(&db, "proof-restore@example.test", proof_item()).await;
         let app = lesson_app(&db);
         let (status, before) = get(&app, "/api/session/plan", user).await;
         assert_eq!(status, StatusCode::OK, "{before}");
-        assert!(before.get("proof_grading").is_none(), "{before}");
+        assert_eq!(before["open_revisions"], json!([]), "{before}");
 
         let reply = answer_task_ok(
             &app,
@@ -169,21 +173,12 @@ async fn the_plan_restores_the_last_answers_proof_grading() {
         let job = reply["proof_grading"]["id"].clone();
         let (status, plan) = get(&app, "/api/session/plan", user).await;
         assert_eq!(status, StatusCode::OK, "{plan}");
-        assert_eq!(plan["proof_grading"]["id"], job);
-        assert_eq!(plan["proof_grading"]["status"], json!("pending"));
-        assert_eq!(plan["proof_grading"]["attempt_id"], reply["attempt_id"]);
-
-        // A later decided answer is the last one now: nothing is restored.
-        let live = common::stored_state(&db, user).await.served[LESSON].clone();
-        answer_task_ok(
-            &app,
-            user,
-            LESSON,
-            json!({"problem_id": live.problem_id, "answer": "0"}),
-        )
-        .await;
-        let (_, after) = get(&app, "/api/session/plan", user).await;
-        assert!(after.get("proof_grading").is_none(), "{after}");
+        assert!(plan.get("proof_grading").is_none(), "{plan}");
+        assert_eq!(plan["open_revisions"][0]["job_id"], job);
+        assert_eq!(plan["open_revisions"][0]["phase"], json!("grading"));
+        assert_eq!(plan["open_revisions"][0]["task_id"], json!(LESSON));
+        assert_eq!(plan["tasks"][0]["task_id"], json!(LESSON));
+        assert_eq!(plan["tasks"][0]["proof_revision"]["job_id"], job);
     })
     .await;
 }

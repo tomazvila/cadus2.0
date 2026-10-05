@@ -34,7 +34,7 @@ fn elapsed_of(secs: i64) -> f64 {
 }
 
 /// Write the D-S6 row and commit the transaction.
-async fn save_and_commit(
+pub(super) async fn save_and_commit(
     state: &AppState,
     mut tx: Transaction<'static, Postgres>,
     user_id: Uuid,
@@ -102,6 +102,19 @@ pub async fn answer(request: TaskWithBody) -> Result<Json<Value>, ApiError> {
     let written_proof = !verified_answer
         && grade.outcome.is_ungraded()
         && proof_grading::is_written_proof(&served, kind);
+    // D-PR1: a written PROOF inside a lesson runs the revision loop. The step
+    // is decided BEFORE anything is appended, so a draft the chain refuses
+    // (still grading, already passed, the solution not yet shown) records
+    // nothing.
+    let proof_step = if written_proof
+        && task.task_type == TaskType::Lesson
+        && served.rework.is_none()
+        && proof_grading::is_proof_item(&served)
+    {
+        Some(proof_grading::lesson::lesson_step(&state, &mut tx, &served, &submitted.answer).await?)
+    } else {
+        None
+    };
     // A property item has no key to be equivalent to: its stored answer is
     // one example, and the exact predicate already decided the learner's own
     // object. A decided miss is final, and an unreadable answer stays
@@ -142,7 +155,7 @@ pub async fn answer(request: TaskWithBody) -> Result<Json<Value>, ApiError> {
         submitted.assisted || !served.hints_given.is_empty()
     } else {
         reference_assisted(task.task_type, submitted.assisted, served.hints_given.len())
-    };
+    } || proof_step.is_some_and(|step| step.rewrite());
     let session = scratch.session.clone();
     let timing = timing::reading(graph, &task, &served, &grade, secs, assisted, &timing_tags);
     let graded = Graded {
@@ -198,9 +211,10 @@ pub async fn answer(request: TaskWithBody) -> Result<Json<Value>, ApiError> {
 
     // Step 7. The lesson advance, its close event, and its remediation.
     let moved = advance_and_fold(
-        &state, content, &mut tx, user_id, &task, &recorded, &events, &readiness,
+        &state, content, &mut tx, user_id, &task, &recorded, &events, &readiness, proof_step,
     )
     .await?;
+    let proof_pending = moved.status == STATUS_PROOF_PENDING;
 
     // Step 8 and step 10: move the task on, draw the next problem, write the row.
     if task.task_type == TaskType::Quiz && !recorded.feedback_practice {
@@ -247,15 +261,35 @@ pub async fn answer(request: TaskWithBody) -> Result<Json<Value>, ApiError> {
     // Amendment K point 6: the background proof grading, enqueued in the same
     // transaction. No model call here (L6); the verdict lands later.
     let proof_job = if written_proof {
-        proof_grading::enqueue(
+        let job = proof_step.map_or_else(
+            || cadus_store::proof_grading::NewJob::first(proof_grading::context_of(&served)),
+            |step| step.job,
+        );
+        let id = proof_grading::enqueue(
             &state,
             &mut tx,
             user_id,
             &attempt_id,
             &served,
             &submitted.answer,
+            &job,
         )
-        .await?
+        .await?;
+        // The unaided rewrite after the cap closes its chain at once.
+        if let Some(id) = id
+            && job.rewrite
+        {
+            store(
+                &state,
+                cadus_store::proof_grading::mark(
+                    &mut *tx,
+                    id,
+                    cadus_store::proof_grading::Mark::Closed,
+                ),
+            )
+            .await?;
+        }
+        id
     } else {
         None
     };
@@ -273,6 +307,9 @@ pub async fn answer(request: TaskWithBody) -> Result<Json<Value>, ApiError> {
     // the order of the questions moves.
     let handed_on = crate::serve::mixed::after_answer(&plan, &scratch, &task);
     let next = match handed_on.as_deref() {
+        // A proof under grading keeps its problem live: the revision answers
+        // the SAME problem, and nothing new is drawn (D-PR1).
+        _ if proof_pending => None,
         Some(other) => {
             mixed_hand_on(
                 &state,
@@ -323,6 +360,20 @@ pub async fn answer(request: TaskWithBody) -> Result<Json<Value>, ApiError> {
     // review closed: the client re-serves, and the serve route finds it.
     if hand_on_failed {
         body["next_unavailable"] = json!(true);
+    }
+    if let Some(step) = proof_step {
+        if let Some(map) = body.as_object_mut() {
+            map.remove("next_unavailable");
+        }
+        body["proof"] = json!({
+            "context": cadus_store::proof_grading::CONTEXT_LESSON,
+            "phase": if step.rewrite() { "closed" } else { "grading" },
+            "job_id": proof_job,
+            "revision": step.job.revision,
+            "cap": proof_grading::REVISION_CAP,
+            "revisions_left": (proof_grading::REVISION_CAP - step.job.revision).max(0),
+            "rewrite": step.rewrite(),
+        });
     }
     Ok(Json(body))
 }
@@ -439,17 +490,44 @@ async fn advance_and_fold(
     recorded: &Attempt,
     events: &[EventRow],
     readiness: &ReadinessSet,
+    proof_step: Option<proof_grading::lesson::LessonStep>,
 ) -> Result<Advance, ApiError> {
     let now = recorded.ts;
     let history = store(state, load_session_view(tx, user_id)).await?;
-    let moved = if task.task_type == TaskType::Review {
+    let moved = if let Some(step) = proof_step {
+        // D-PR1: a draft waits for its verdict; the unaided rewrite after the
+        // cap closes the point as assisted.
+        match recorded.kp.as_ref().filter(|_| step.rewrite()) {
+            Some(kp) => {
+                let close = CloseOf {
+                    session: recorded.session.clone(),
+                    topic: recorded.topic.clone(),
+                    task_id: &recorded.task_id,
+                    quality: PROOF_ASSISTED_TIER,
+                    assisted: true,
+                };
+                proof_close(
+                    &content.curriculum,
+                    &content.cfg,
+                    now,
+                    &close,
+                    kp.as_str(),
+                    events,
+                )
+            }
+            None => Advance {
+                status: STATUS_PROOF_PENDING,
+                ..Advance::carry_on()
+            },
+        }
+    } else if task.task_type == TaskType::Review {
         review::close_review(task, recorded, events, &content.cfg)
     } else if task.task_type == TaskType::Quiz {
         quiz::close_quiz(task, recorded, events, &content.cfg)
     } else if task.task_type == TaskType::Drill {
         drill::close_drill(task, recorded, events)
     } else {
-        advance(
+        let moved = advance(
             &content.curriculum,
             &content.cfg,
             now,
@@ -457,7 +535,9 @@ async fn advance_and_fold(
             events,
             &history,
             Some(readiness),
-        )
+        );
+        // D-PR1: a proof-gated point serves its written proof before it closes.
+        hold_for_proof(&content.curriculum, recorded, moved)
     };
     for extra in moved.events() {
         store(state, append_event(tx, user_id, &extra, None)).await?;
@@ -518,7 +598,7 @@ async fn quiz_receipt(
     clippy::too_many_arguments,
     reason = "the draw reads the content, the task, the scratch and the transaction"
 )]
-async fn next_problem(
+pub(super) async fn next_problem(
     state: &AppState,
     content: &Content,
     tx: &mut Transaction<'static, Postgres>,

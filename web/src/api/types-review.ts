@@ -169,11 +169,29 @@ interface UngradedAttempt {
   reason: string;
 }
 
+/** One proof grading the learner disputed ("this grade is wrong", D-PR1). */
+interface DisputedGrading {
+  attempt_id: string;
+  job_id: string;
+  context: string;
+  topic: string | null;
+  kp: string | null;
+  problem: string | null;
+  answer: string | null;
+  status: string;
+  verdict: string | null;
+  feedback: string | null;
+  note: string | null;
+  disputed_at: string | null;
+}
+
 /** `GET /api/admin/ungraded`. The list is oldest first. */
 export interface UngradedListResponse {
   items: UngradedAttempt[];
   /** The count of entries the recovery list keeps. */
   limit: number;
+  /** The disputed proof gradings that wait for a human verdict (D-PR1). */
+  disputed?: DisputedGrading[];
 }
 
 /** `POST /api/admin/ungraded/{attempt_id}/regrade`. */
@@ -183,8 +201,8 @@ export interface RegradeResponse {
   outcome: 'correct' | 'incorrect';
   /** The correction forced the whole-log replay (D-O6). */
   replayed: boolean;
-  /** The count of ungraded attempts still waiting. */
-  ungraded: number;
+  /** The count of ungraded attempts still waiting. Absent for a draft that recorded no attempt. */
+  ungraded?: number;
 }
 
 

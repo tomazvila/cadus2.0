@@ -62,6 +62,8 @@ export interface DashboardProps {
   onDiagnostic: () => void;
   /** Go to the curriculum map. */
   onMap: () => void;
+  /** Go to "Your proofs" (D-PR1). */
+  onProofs: () => void;
 }
 
 /**
@@ -154,6 +156,7 @@ export function Dashboard({
   onQuiz,
   onDiagnostic,
   onMap,
+  onProofs,
 }: DashboardProps) {
   const life = useLifetime();
   const dialogs = useDialogs();
@@ -366,6 +369,9 @@ export function Dashboard({
         <div className="more-actions">
           <button type="button" className="btn" onClick={onMap}>
             Curriculum map
+          </button>
+          <button type="button" className="btn" onClick={onProofs}>
+            Your proofs
           </button>
           <button
             type="button"

@@ -23,7 +23,11 @@ import type {
   ApiClient,
   DiagnosisJob,
   EquivalencePoll,
+  ProofContinueResponse,
   ProofGradingPoll,
+  ProofReviseResponse,
+  ProofSeenResponse,
+  ProofsResponse,
   PlanTask,
   RetentionRow,
   ServedProblem,
@@ -409,6 +413,16 @@ export function createDemoApi(): ApiClient {
       refuse(404, 'unknown_diagnosis', `The demo wrote no check ${equivalenceId}.`),
     getProofGrading: async (jobId): Promise<ProofGradingPoll> =>
       refuse(404, 'unknown_diagnosis', `The demo wrote no grading ${jobId}.`),
+    // D-PR1. The demo serves no written proof, so no chain exists to read or to move.
+    proofSeen: async (jobId): Promise<ProofSeenResponse> =>
+      refuse(404, 'not_found', `The demo wrote no grading ${jobId}.`),
+    proofDispute: async (jobId): Promise<ProofGradingPoll> =>
+      refuse(404, 'not_found', `The demo wrote no grading ${jobId}.`),
+    listProofs: () => reply<ProofsResponse>({ chains: [] }),
+    reviseProof: async (jobId): Promise<ProofReviseResponse> =>
+      refuse(404, 'not_found', `The demo wrote no grading ${jobId}.`),
+    taskProofContinue: async (): Promise<ProofContinueResponse> =>
+      refuse(409, 'proof_not_passed', 'The demo serves no written proof.'),
     // The demo serves no stream. An `EventSource` on this path fails at once, and the
     // panel falls back to the poll, which refuses — the same path a dropped SSE takes.
     diagnosisStreamUrl: () => '/api/diagnosis/stream',

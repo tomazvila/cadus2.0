@@ -3,6 +3,41 @@ use super::*;
 use cadus_core::event::ReviewResult;
 use cadus_core::fire::assess_review;
 
+/// The attempts with the background proof grader's landed verdicts applied.
+///
+/// Only the grader's own corrections apply here (their `grader_note` is
+/// [`cadus_store::proof_grading::GRADER_NOTE`]); every other correction keeps
+/// the path it had.
+fn proof_verdicts(prior: &[EventRow], attempts: &[&Attempt]) -> Vec<Attempt> {
+    let mut verdicts: std::collections::BTreeMap<&str, &cadus_core::event::RegradedAttempt> =
+        std::collections::BTreeMap::new();
+    for row in prior {
+        if let Event::Regraded(correction) = &row.event {
+            for corrected in &correction.attempts {
+                if corrected.grader_note.as_deref() == Some(cadus_store::proof_grading::GRADER_NOTE)
+                {
+                    verdicts.insert(corrected.attempt_id.as_str(), corrected);
+                }
+            }
+        }
+    }
+    attempts
+        .iter()
+        .map(|attempt| {
+            let mut fixed = (*attempt).clone();
+            if let Some(corrected) = verdicts.get(attempt.attempt_id.as_str())
+                && fixed.outcome.is_ungraded()
+                && let Some(outcome) = &corrected.outcome
+            {
+                fixed.correct = *outcome == AttemptOutcome::Correct;
+                fixed.outcome = outcome.clone();
+                fixed.work_quality = corrected.work_quality;
+            }
+            fixed
+        })
+        .collect()
+}
+
 /// Close a complete review from its recorded evidence.
 pub(super) fn close_review(
     task: &Task,
@@ -29,6 +64,10 @@ pub(super) fn close_review(
     if !attempt.feedback_practice {
         attempts.push(attempt);
     }
+    // A written proof the background grader already graded counts with its
+    // verdict: a pass as correct, a needs-revision as a decided miss (D-PR1).
+    let corrected = proof_verdicts(prior, &attempts);
+    let attempts: Vec<&Attempt> = corrected.iter().collect();
     if i64::try_from(attempts.len()).unwrap_or(i64::MAX)
         < task.n_problems.unwrap_or(cfg.review.questions)
     {
@@ -83,5 +122,6 @@ pub(super) fn close_review(
         remediation,
         xp: Some(round2(xp)),
         next_kp: None,
+        proof_due: None,
     }
 }

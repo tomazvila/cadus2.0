@@ -113,6 +113,7 @@ const nav = () => ({
   onQuiz: vi.fn(),
   onDiagnostic: vi.fn(),
   onMap: vi.fn(),
+  onProofs: vi.fn(),
 });
 
 /** Mount into the `<main>` the shell owns, and settle the status fetch. */

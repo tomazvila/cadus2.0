@@ -48,6 +48,7 @@ import { Diagnostic } from '@/views/Diagnostic';
 import { Quiz } from '@/views/Quiz';
 import { Session } from '@/views/session/Session';
 import { CurriculumMap } from '@/views/map/Map';
+import { ProofsScreen } from '@/views/proofs/Proofs';
 import { OperatorScreen } from '@/views/admin/Ops';
 import { ReviewScreen } from '@/views/admin/Review';
 import { resolveDiag } from '@/api/diag';
@@ -66,6 +67,7 @@ export type View =
   | { name: 'session' }
   | { name: 'quiz'; task: PlanTask; fromSession: boolean }
   | { name: 'diagnostic' }
+  | { name: 'proofs' }
   | { name: 'map'; back: View };
 
 /** The dashboard, which is where every exit path ends. */
@@ -304,6 +306,8 @@ function Screen({ api, route, view, placement, onUnauthorized, goHome, setView }
       return <Diagnostic diag={placement} reportApi={api} demo={api.demo} onUnauthorized={onUnauthorized} onExit={goHome} />;
     case 'map':
       return <CurriculumMap {...common} onExit={() => { setView(view.back); }} />;
+    case 'proofs':
+      return <ProofsScreen {...common} onExit={goHome} />;
     default:
       return (
         <Dashboard
@@ -312,6 +316,7 @@ function Screen({ api, route, view, placement, onUnauthorized, goHome, setView }
           onQuiz={(task) => { setView({ name: 'quiz', task, fromSession: false }); }}
           onDiagnostic={openDiagnostic}
           onMap={() => { setView({ name: 'map', back: HOME }); }}
+          onProofs={() => { setView({ name: 'proofs' }); }}
         />
       );
   }

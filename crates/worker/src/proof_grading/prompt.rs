@@ -362,6 +362,7 @@ mod tests {
             expected: None,
             rubric,
             given_answer: LEARNER.to_owned(),
+            kp: None,
         }
     }
 

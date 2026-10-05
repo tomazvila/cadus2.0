@@ -273,7 +273,7 @@ async fn migrate_is_idempotent() {
             .fetch_one(&db.admin)
             .await
             .unwrap();
-        assert_eq!(count, 25);
+        assert_eq!(count, 26);
     })
     .await;
 }

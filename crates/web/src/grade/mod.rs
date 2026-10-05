@@ -131,9 +131,11 @@ mod advance;
 mod answer_format;
 mod drill;
 mod feedback;
+mod proof;
 mod quiz;
 mod reply;
 mod review;
+pub use proof::proof_continue;
 pub use quiz::result as quiz_result;
 mod route;
 mod submission;
@@ -145,6 +147,7 @@ use crate::proof_grading;
 use advance::*;
 use reply::*;
 pub use route::answer;
+use route::{next_problem, save_and_commit};
 use submission::*;
 use verdict::round2;
 pub use verdict::{
@@ -174,6 +177,10 @@ pub const STATUS_TASK_PASSED: &str = "task_passed";
 
 /// The task closed with a failure.
 pub const STATUS_TASK_FAILED: &str = "task_failed";
+
+/// A written proof inside a lesson waits for its background verdict: the
+/// knowledge point closes on a pass, not on the submission (D-PR1).
+pub const STATUS_PROOF_PENDING: &str = "proof_pending";
 
 /// The INSERT of step 6 met an `attempt_id` that already stands, so nothing was
 /// appended (`api.py:596`, `:1592-1593`).

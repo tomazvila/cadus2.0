@@ -16,6 +16,9 @@ pub(super) struct Advance {
     /// The knowledge point a `kp_advance` moves the lesson to
     /// (`_next_kp`, `api.py:230-236`).
     pub(super) next_kp: Option<String>,
+    /// The proof-gated knowledge point whose decided items just passed: the
+    /// lesson serves its written proof next (D-PR1).
+    pub(super) proof_due: Option<String>,
 }
 
 impl Advance {
@@ -27,6 +30,7 @@ impl Advance {
             remediation: Vec::new(),
             xp: None,
             next_kp: None,
+            proof_due: None,
         }
     }
 
@@ -208,6 +212,20 @@ fn failed_lesson_practice(attempt: &Attempt, prior: &[EventRow]) -> bool {
         Event::LessonResult(result) if !result.passed && result.topic == attempt.topic && result.session == attempt.session))
 }
 
+/// What a passing lesson close reads about the answer that closed it.
+pub(super) struct CloseOf<'a> {
+    /// The session the close credits.
+    pub(super) session: Option<String>,
+    /// The topic of the lesson.
+    pub(super) topic: Slug,
+    /// The lesson task.
+    pub(super) task_id: &'a str,
+    /// The tier the XP is priced at.
+    pub(super) quality: WorkQuality,
+    /// Whether the closing answer was reference-assisted.
+    pub(super) assisted: bool,
+}
+
 /// The passing lesson close and its XP (`advance_task`, the pass arm).
 fn lesson_passed(
     cfg: &Config,
@@ -216,22 +234,40 @@ fn lesson_passed(
     prior: &[EventRow],
     kp_count: usize,
 ) -> Advance {
-    let quality = attempt.work_quality;
+    let close = CloseOf {
+        session: attempt.session.clone(),
+        topic: attempt.topic.clone(),
+        task_id: &attempt.task_id,
+        quality: attempt.work_quality,
+        assisted: attempt.assisted,
+    };
+    lesson_passed_with(cfg, now, &close, prior, kp_count)
+}
+
+/// The passing lesson close of [`CloseOf`].
+fn lesson_passed_with(
+    cfg: &Config,
+    now: Timestamp,
+    close: &CloseOf<'_>,
+    prior: &[EventRow],
+    kp_count: usize,
+) -> Advance {
+    let quality = close.quality;
     let count = i64::try_from(kp_count).unwrap_or(i64::MAX);
     let xp = task_xp(TaskType::Lesson, quality, cfg, count, 0, false);
     // The passing lesson is reference-assisted when ANY of its attempts was.
-    let assisted = attempt.assisted
+    let assisted = close.assisted
         || prior.iter().any(|row| {
             matches!(&row.event, Event::Attempt(body)
-                if body.task_id == attempt.task_id && body.assisted)
+                if body.task_id == close.task_id && body.assisted)
         });
     Advance {
         status: STATUS_TASK_PASSED,
         result: Some(Event::LessonResult(LessonResult {
             ts: now,
-            session: attempt.session.clone(),
+            session: close.session.clone(),
             v: SchemaVersion::current(),
-            topic: attempt.topic.clone(),
+            topic: close.topic.clone(),
             passed: true,
             failed_at_kp: None,
             xp,
@@ -241,6 +277,69 @@ fn lesson_passed(
         remediation: Vec::new(),
         xp: Some(round2(xp)),
         next_kp: None,
+        proof_due: None,
+    }
+}
+
+/// The tier of a knowledge point closed by a passed proof: the tier the
+/// background grader prices a pass at.
+pub(super) const PROOF_PASS_TIER: WorkQuality = WorkQuality::NearlyPerfect;
+
+/// The tier of a knowledge point closed by the unaided rewrite after the
+/// revision cap: below a pass, so the close earns less XP (D-PR1).
+pub(super) const PROOF_ASSISTED_TIER: WorkQuality = WorkQuality::Passable;
+
+/// Close the proof-gated knowledge point `kp` of `close.topic` (D-PR1): a
+/// later point advances the lesson to it, the last point passes the lesson
+/// with its XP.
+pub(super) fn proof_close(
+    graph: &Curriculum,
+    cfg: &Config,
+    now: Timestamp,
+    close: &CloseOf<'_>,
+    kp: &str,
+    prior: &[EventRow],
+) -> Advance {
+    let points = graph
+        .idx_of(close.topic.as_str())
+        .map(|idx| graph.knowledge_points(idx))
+        .unwrap_or_default();
+    let at = points.iter().position(|point| point.id.as_str() == kp);
+    if let Some(at) = at.filter(|at| at + 1 < points.len()) {
+        return Advance {
+            status: STATUS_KP_ADVANCE,
+            next_kp: points.get(at + 1).map(|point| point.id.as_str().to_owned()),
+            ..Advance::carry_on()
+        };
+    }
+    lesson_passed_with(cfg, now, close, prior, points.len())
+}
+
+/// Hold a lesson that just passed the decided items of a proof-gated point
+/// until its written proof closes (D-PR1).
+///
+/// `moved` is the advance of a DECIDED lesson answer. When it passes `kp`
+/// (a `kp_advance` or the lesson pass) and `kp` authors a written proof, the
+/// lesson carries on and serves the proof instead; the close waits for the
+/// proof's chain.
+pub(super) fn hold_for_proof(graph: &Curriculum, attempt: &Attempt, moved: Advance) -> Advance {
+    let passed_kp = matches!(moved.status, STATUS_KP_ADVANCE | STATUS_TASK_PASSED)
+        && moved
+            .result
+            .as_ref()
+            .is_none_or(|event| matches!(event, Event::LessonResult(result) if result.passed));
+    if attempt.task_type != TaskType::Lesson || !passed_kp {
+        return moved;
+    }
+    let Some(kp) = attempt.kp.as_ref().map(Slug::as_str) else {
+        return moved;
+    };
+    if crate::proof_grading::lesson::proof_exemplar(graph, attempt.topic.as_str(), kp).is_none() {
+        return moved;
+    }
+    Advance {
+        proof_due: Some(kp.to_owned()),
+        ..Advance::carry_on()
     }
 }
 
@@ -300,6 +399,7 @@ fn lesson_failed(
         remediation,
         xp: Some(round2(xp)),
         next_kp: None,
+        proof_due: None,
     }
 }
 
@@ -336,6 +436,10 @@ pub(super) fn task_moved_on(
     if task_type == TaskType::Lesson {
         if let Some(point) = &moved.next_kp {
             progress.current_kp = Some(point.clone());
+            progress.proof_kp = None;
+        }
+        if let Some(point) = &moved.proof_due {
+            progress.proof_kp = Some(point.clone());
         }
         let closed = matches!(moved.status, STATUS_TASK_PASSED | STATUS_TASK_FAILED);
         progress.done = closed;

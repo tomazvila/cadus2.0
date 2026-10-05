@@ -194,6 +194,7 @@ describe('F-F2-2: a slow write never moves the learner', () => {
       onQuiz: vi.fn(),
       onDiagnostic: vi.fn(),
       onMap: vi.fn(),
+      onProofs: vi.fn(),
     };
     let view!: ReturnType<typeof render>;
     await act(async () => {

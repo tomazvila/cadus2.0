@@ -203,6 +203,7 @@ pub fn lesson_state(live: ServedProblem, answered: i64, done: bool) -> WebState 
             answered,
             done,
             current_kp: live.kp.clone(),
+            proof_kp: None,
         },
     );
     scratch.served.insert(live.task_id.clone(), live);

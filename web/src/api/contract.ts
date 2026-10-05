@@ -4,7 +4,14 @@
  * `types.ts` carries the conventions and the source-of-truth order. Every rule there holds
  * here.
  */
-import type { EquivalencePoll, ProofGradingPoll } from './types-study';
+import type {
+  EquivalencePoll,
+  ProofContinueResponse,
+  ProofGradingPoll,
+  ProofReviseResponse,
+  ProofSeenResponse,
+  ProofsResponse,
+} from './types-study';
 import type { ProblemReportReceipt, ProblemReportSubmission } from './types-report';
 import type {
   EnrollResponse,
@@ -137,6 +144,19 @@ export interface ApiClient {
   getEquivalence(equivalenceId: string): Promise<EquivalencePoll>;
   /** The standing result of one background proof grading (Amendment K point 6). */
   getProofGrading(jobId: string): Promise<ProofGradingPoll>;
+  /**
+   * D-PR1: the learner saw a verdict. At the revision cap this reply carries the reference
+   * solution ONCE; every later read hides it until the chain closes.
+   */
+  proofSeen(jobId: string): Promise<ProofSeenResponse>;
+  /** D-PR1: "this grade is wrong" — the grading goes to the human recovery list. */
+  proofDispute(jobId: string, note?: string): Promise<ProofGradingPoll>;
+  /** D-PR1: every revision chain, or the chains of one topic. */
+  listProofs(topic?: string): Promise<ProofsResponse>;
+  /** D-PR1: the next draft of a non-lesson chain, named by its head. */
+  reviseProof(jobId: string, answer: string): Promise<ProofReviseResponse>;
+  /** D-PR1: a passed lesson proof closes its knowledge point. */
+  taskProofContinue(taskId: string): Promise<ProofContinueResponse>;
   /** The URL an `EventSource` subscribes to. One connection per session, not per problem. */
   diagnosisStreamUrl(): string;
 
@@ -252,6 +272,12 @@ export const ROUTES: readonly RouteRow[] = [
   { method: 'GET', path: '/api/equivalence/{id}', auth: 'S', via: 'method', client: 'getEquivalence' },
   // Amendment K point 6: the poll of a background proof grading.
   { method: 'GET', path: '/api/proof-grading/{id}', auth: 'S', via: 'method', client: 'getProofGrading' },
+  // D-PR1: the proof revision loop.
+  { method: 'POST', path: '/api/proof-grading/{id}/seen', auth: 'S', via: 'method', client: 'proofSeen' },
+  { method: 'POST', path: '/api/proof-grading/{id}/dispute', auth: 'S', via: 'method', client: 'proofDispute' },
+  { method: 'GET', path: '/api/proofs', auth: 'S', via: 'method', client: 'listProofs' },
+  { method: 'POST', path: '/api/proofs/{id}/revise', auth: 'S', via: 'method', client: 'reviseProof' },
+  { method: 'POST', path: '/api/task/{task_id}/proof/continue', auth: 'S', via: 'method', client: 'taskProofContinue' },
 
   { method: 'GET', path: '/api/operator/flags', auth: 'S', via: 'method', client: 'getOperatorFlags' },
 

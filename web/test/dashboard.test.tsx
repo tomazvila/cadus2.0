@@ -293,8 +293,9 @@ describe('the dashboard', () => {
     await mount();
     const more = document.querySelector('details.more-menu') as HTMLDetailsElement;
     expect(more.open).toBe(false);
-    // Five actions. The retention card (D-F11) stands on the main dashboard.
-    expect(more.querySelectorAll('button').length).toBe(5);
+    // Six actions, "Your proofs" (D-PR1) among them. The retention card (D-F11) stands on
+    // the main dashboard.
+    expect(more.querySelectorAll('button').length).toBe(6);
   });
 
   it('reports zero axe violations', async () => {

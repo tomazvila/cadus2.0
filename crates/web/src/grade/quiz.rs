@@ -109,8 +109,15 @@ pub async fn result(request: TaskWithBody) -> Result<Json<Value>, ApiError> {
         else {
             continue;
         };
-        let job =
-            proof_grading::enqueue_payload(&state, &mut tx, user_id, &attempt_id, &payload).await?;
+        let job = proof_grading::enqueue_payload(
+            &state,
+            &mut tx,
+            user_id,
+            &attempt_id,
+            &payload,
+            &proof_grading::QUIZ_JOB,
+        )
+        .await?;
         answer[proof_grading::FIELD] = proof_grading::reply_field(job);
     }
     let answers = buffer.answers.clone();

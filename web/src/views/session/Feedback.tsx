@@ -25,7 +25,7 @@ import { signed } from '@/lib/format';
 import { isUngraded } from '@/api/types';
 import type { AnswerResponse, ApiClient, AttemptOutcome, ReworkResponse } from '@/api/types';
 import type { Lifetime } from '@/hooks/useLifetime';
-import { PROOF_TITLE, ProofResult, useProofGrading, type ProofState } from './ProofGrading';
+import { PROOF_TITLE, ProofResult, useProofGrading, useSeen, type ProofState } from './ProofGrading';
 
 /** The panel mood of each outcome. `ungraded` is neutral: it is not a miss (D-F2). */
 const MOOD: Record<AttemptOutcome, string> = {
@@ -191,6 +191,7 @@ function Reason({ reason }: { reason: string | undefined }) {
 /** The feedback panel of one grade reply, following its proof grading when it has one. */
 export function ProofAwareFeedback({ api, life, ...props }: FeedbackProps & { api: ApiClient; life: Lifetime }) {
   const proof = useProofGrading(api, life, props.res.proof_grading);
+  useSeen(api, props.res.proof_grading, proof);
   return <Feedback {...props} proof={proof} />;
 }
 

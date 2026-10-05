@@ -10,7 +10,7 @@ import {
   LESSON, REVIEW, TEACHING, P, clickNext, graded, mount, planOf, press, progressCount,
   stubApi, submitAnswer,
 } from './helpers/session';
-import type { ApiClient, PlanTask, ProofGradingPoll } from '@/api/types';
+import type { ApiClient, PlanTask } from '@/api/types';
 
 const DECIMALS: PlanTask = {
   ...REVIEW,
@@ -106,32 +106,5 @@ describe('the mixed review block', () => {
       api: stubApi({ taskServe: async () => P(2, { total: null }) }),
     });
     expect(progressCount()).toBe('2');
-  });
-});
-
-describe('a reload restores the last proof grading', () => {
-  it('follows the job the plan names above the problem until the learner moves on', async () => {
-    const passed: ProofGradingPoll = {
-      id: 'job-9', attempt_id: 'a-0', status: 'pass', feedback: 'Sound proof.', checks: [],
-    };
-    const getProofGrading = vi.fn<ApiClient['getProofGrading']>(async () => passed);
-    await mount({
-      plan: { ...planOf(REVIEW), proof_grading: { id: 'job-9', status: 'pending', attempt_id: 'a-0' } },
-      api: stubApi({ getProofGrading }),
-    });
-
-    await waitFor(() => expect(screen.getByText('Proof accepted')).toBeTruthy());
-    expect(getProofGrading).toHaveBeenCalledWith('job-9');
-    expect(screen.getByText('Your last proof')).toBeTruthy();
-    expect(screen.getByText('Sound proof.')).toBeTruthy();
-
-    await submitAnswer('3/4');
-    await clickNext();
-    expect(screen.queryByText('Your last proof')).toBeNull();
-  });
-
-  it('shows nothing when the plan names no grading', async () => {
-    await mount();
-    expect(screen.queryByText('Your last proof')).toBeNull();
   });
 });

@@ -8,8 +8,17 @@
 //! # Who writes what
 //!
 //! The request tier calls [`enqueue`] inside the grade transaction and reads
-//! with [`job`]. The worker claims with [`claim`] and settles with [`settle`].
-//! Nothing else writes the table.
+//! with [`job`], [`jobs`] and [`open_heads`]. It writes the learner-side
+//! marks of a row ([`mark`], [`dispute`]) and the human verdict of a disputed
+//! row ([`set_override`]). The worker claims with [`claim`] and settles with
+//! [`settle`]. Nothing else writes the table.
+//!
+//! # The revision chain
+//!
+//! A resubmitted proof is a NEW row whose `revision_of` names the row it
+//! revises, so one problem's drafts form a linked list: the root has no
+//! `revision_of`, the head has no successor. Each row keeps its own verdict
+//! and feedback, and `closed_at` on the head ends the chain.
 
 use serde::{Deserialize, Serialize};
 use serde_json::Value as Json;
@@ -46,6 +55,11 @@ pub const VERDICT_PASS: &str = "pass";
 /// The `verdict` of a proof the grading sends back.
 pub const VERDICT_NEEDS_REVISION: &str = "needs_revision";
 
+/// The `grader_note` of the `regraded` correction the background proof
+/// grader appends. The request tier reads it back to apply a landed verdict
+/// to the evidence of a review that closes after it.
+pub const GRADER_NOTE: &str = "proof grading (background model)";
+
 /// What the grade transaction hands the worker.
 ///
 /// Every field the grading prompt needs: the problem, the reference solution,
@@ -77,6 +91,11 @@ pub struct JobPayload {
     pub rubric: Vec<String>,
     /// What the learner wrote, raw.
     pub given_answer: String,
+    /// The knowledge point of the problem, inside `topic`. A lesson chain is
+    /// found by `(topic, kp)`. Rows written before the revision loop carry
+    /// none.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub kp: Option<String>,
 }
 
 /// One graded check of a [`Grading`].
@@ -124,7 +143,30 @@ impl Grading {
     }
 }
 
-/// One `proof_grading_jobs` row, as the poll route reads it.
+/// `proof_grading_jobs.context` of a row written before the revision loop.
+pub const CONTEXT_LEGACY: &str = "legacy";
+
+/// `proof_grading_jobs.context` of a written proof inside a lesson: the
+/// blocking loop (the knowledge point closes on a pass).
+pub const CONTEXT_LESSON: &str = "lesson";
+
+/// `proof_grading_jobs.context` of a written proof outside a lesson and a
+/// quiz: graded in the background, revised from the proofs list.
+pub const CONTEXT_REVIEW: &str = "review";
+
+/// `proof_grading_jobs.context` of a quiz proof, graded after the reveal.
+pub const CONTEXT_QUIZ: &str = "quiz";
+
+/// `proof_grading_jobs.context` of a free-explanation self-check.
+pub const CONTEXT_SELFCHECK: &str = "selfcheck";
+
+/// The human verdict of a disputed row that accepts the proof.
+pub const OVERRIDE_PASS: &str = "pass";
+
+/// The human verdict of a disputed row that keeps the revision.
+pub const OVERRIDE_NEEDS_REVISION: &str = "needs_revision";
+
+/// One `proof_grading_jobs` row, as the request tier reads it.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct JobRow {
     /// The primary key. It is the `id` the client polls.
@@ -140,6 +182,94 @@ pub struct JobRow {
     pub result: Option<Json>,
     /// When the grade transaction wrote the row.
     pub created_at: DateTime<Utc>,
+    /// The job this draft revises, `None` for the first draft of a problem.
+    pub revision_of: Option<Uuid>,
+    /// How many needs-revision verdicts the chain used before this draft.
+    pub revision: i32,
+    /// Where the draft was written ([`CONTEXT_LESSON`] and the others).
+    pub context: String,
+    /// Whether this is the unaided rewrite after the revision cap.
+    pub rewrite: bool,
+    /// When the learner first saw the verdict.
+    pub seen_at: Option<DateTime<Utc>>,
+    /// When the reference solution was shown after the revision cap.
+    pub revealed_at: Option<DateTime<Utc>>,
+    /// When the chain closed (set on its head).
+    pub closed_at: Option<DateTime<Utc>>,
+    /// When the learner disputed the verdict.
+    pub disputed_at: Option<DateTime<Utc>>,
+    /// The learner's note on the dispute.
+    pub dispute_note: Option<String>,
+    /// The human verdict of a disputed row, when one stands.
+    pub override_verdict: Option<String>,
+}
+
+impl JobRow {
+    /// The verdict that stands for this row: the human verdict of a resolved
+    /// dispute, else the model verdict of a settled grading. `None` while the
+    /// job runs, and for a failed or capped job with no human verdict.
+    #[must_use]
+    pub fn verdict(&self) -> Option<&str> {
+        if let Some(human) = self.override_verdict.as_deref() {
+            return Some(human);
+        }
+        if self.status != JOB_DONE {
+            return None;
+        }
+        self.result
+            .as_ref()
+            .and_then(|doc| doc.get("verdict"))
+            .and_then(Json::as_str)
+    }
+
+    /// The model grading of a settled row.
+    #[must_use]
+    pub fn grading(&self) -> Option<Grading> {
+        if self.status != JOB_DONE {
+            return None;
+        }
+        self.result
+            .as_ref()
+            .and_then(|doc| serde_json::from_value(doc.clone()).ok())
+    }
+
+    /// The payload document, when it reads.
+    #[must_use]
+    pub fn job_payload(&self) -> Option<JobPayload> {
+        serde_json::from_value(self.payload.clone()).ok()
+    }
+
+    /// A string field of the payload.
+    #[must_use]
+    pub fn payload_str(&self, key: &str) -> Option<&str> {
+        self.payload.get(key).and_then(Json::as_str)
+    }
+}
+
+/// The chain columns of a new row.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct NewJob<'a> {
+    /// [`CONTEXT_LESSON`] and the others.
+    pub context: &'a str,
+    /// The job this draft revises.
+    pub revision_of: Option<Uuid>,
+    /// How many needs-revision verdicts the chain used before this draft.
+    pub revision: i32,
+    /// Whether this is the unaided rewrite after the cap.
+    pub rewrite: bool,
+}
+
+impl<'a> NewJob<'a> {
+    /// The first draft of a problem in `context`.
+    #[must_use]
+    pub const fn first(context: &'a str) -> Self {
+        Self {
+            context,
+            revision_of: None,
+            revision: 0,
+            rewrite: false,
+        }
+    }
 }
 
 /// One claimed row, as the worker reads it.
@@ -170,28 +300,66 @@ pub async fn enqueue(
     user_id: Uuid,
     attempt_id: &str,
     payload: &Json,
+    job: &NewJob<'_>,
 ) -> Result<Uuid, StoreError> {
-    let id = sqlx::query_scalar!(
+    let id = sqlx::query_scalar::<_, Uuid>(
         r#"
         WITH inserted AS (
-            INSERT INTO proof_grading_jobs (user_id, attempt_id, payload)
-            VALUES ($1, $2, $3)
+            INSERT INTO proof_grading_jobs
+                   (user_id, attempt_id, payload, context, revision_of, revision, rewrite)
+            VALUES ($1, $2, $3, $4, $5, $6, $7)
             ON CONFLICT (user_id, attempt_id) DO NOTHING
             RETURNING id
         )
-        SELECT id AS "id!" FROM inserted
+        SELECT id FROM inserted
         UNION ALL
-        SELECT id AS "id!" FROM proof_grading_jobs
+        SELECT id FROM proof_grading_jobs
          WHERE user_id = $1 AND attempt_id = $2
         LIMIT 1
         "#,
-        user_id,
-        attempt_id,
-        payload,
     )
+    .bind(user_id)
+    .bind(attempt_id)
+    .bind(payload)
+    .bind(job.context)
+    .bind(job.revision_of)
+    .bind(job.revision)
+    .bind(job.rewrite)
     .fetch_one(&mut **tx)
     .await?;
     Ok(id)
+}
+
+/// The column list every row read selects, as a literal the statements
+/// `concat!` (sqlx takes literal SQL only).
+macro_rules! columns {
+    () => {
+        "id, attempt_id, status, payload, result, created_at, revision_of, revision, context, \
+         rewrite, seen_at, revealed_at, closed_at, disputed_at, dispute_note, override_verdict"
+    };
+}
+
+/// Read one selected row.
+fn row_of(row: &sqlx::postgres::PgRow) -> Result<JobRow, sqlx::Error> {
+    use sqlx::Row;
+    Ok(JobRow {
+        id: row.try_get("id")?,
+        attempt_id: row.try_get("attempt_id")?,
+        status: row.try_get("status")?,
+        payload: row.try_get("payload")?,
+        result: row.try_get("result")?,
+        created_at: row.try_get("created_at")?,
+        revision_of: row.try_get("revision_of")?,
+        revision: row.try_get("revision")?,
+        context: row.try_get("context")?,
+        rewrite: row.try_get("rewrite")?,
+        seen_at: row.try_get("seen_at")?,
+        revealed_at: row.try_get("revealed_at")?,
+        closed_at: row.try_get("closed_at")?,
+        disputed_at: row.try_get("disputed_at")?,
+        dispute_note: row.try_get("dispute_note")?,
+        override_verdict: row.try_get("override_verdict")?,
+    })
 }
 
 /// Read one job by its primary key, under the caller's tenant binding.
@@ -206,26 +374,213 @@ pub async fn job<'e, E>(executor: E, id: Uuid) -> Result<Option<JobRow>, StoreEr
 where
     E: PgExecutor<'e>,
 {
-    let row = sqlx::query!(
-        r#"
-        SELECT id AS "id!", attempt_id AS "attempt_id!", status AS "status!",
-               payload AS "payload!", result, created_at AS "created_at!"
-        FROM proof_grading_jobs
-        WHERE id = $1
-        "#,
-        id,
-    )
-    .fetch_optional(executor)
-    .await?;
+    let sql = concat!(
+        "SELECT ",
+        columns!(),
+        " FROM proof_grading_jobs WHERE id = $1"
+    );
+    let row = sqlx::query(sql).bind(id).fetch_optional(executor).await?;
+    Ok(row.as_ref().map(row_of).transpose()?)
+}
 
-    Ok(row.map(|row| JobRow {
-        id: row.id,
-        attempt_id: row.attempt_id,
-        status: row.status,
-        payload: row.payload,
-        result: row.result,
-        created_at: row.created_at,
-    }))
+/// Every job of the caller's tenant, oldest first, at most `limit` rows.
+///
+/// The request tier groups them into revision chains. The per-learner daily
+/// cap of the worker keeps the table small.
+///
+/// # Errors
+///
+/// Returns [`StoreError::Db`] when the statement fails.
+pub async fn jobs<'e, E>(executor: E, limit: i64) -> Result<Vec<JobRow>, StoreError>
+where
+    E: PgExecutor<'e>,
+{
+    let sql = concat!(
+        "SELECT ",
+        columns!(),
+        " FROM (SELECT * FROM proof_grading_jobs ORDER BY created_at DESC, id LIMIT $1) recent \
+         ORDER BY created_at, id"
+    );
+    let rows = sqlx::query(sql).bind(limit).fetch_all(executor).await?;
+    Ok(rows.iter().map(row_of).collect::<Result<_, _>>()?)
+}
+
+/// The open heads of the caller's tenant: rows of `contexts` with no
+/// successor and no `closed_at`, oldest first.
+///
+/// # Errors
+///
+/// Returns [`StoreError::Db`] when the statement fails.
+pub async fn open_heads<'e, E>(executor: E, contexts: &[&str]) -> Result<Vec<JobRow>, StoreError>
+where
+    E: PgExecutor<'e>,
+{
+    let contexts: Vec<String> = contexts.iter().map(|c| (*c).to_owned()).collect();
+    let sql = concat!(
+        "SELECT ",
+        columns!(),
+        " FROM proof_grading_jobs j \
+          WHERE j.closed_at IS NULL AND j.context = ANY($1) \
+            AND NOT EXISTS (SELECT 1 FROM proof_grading_jobs s WHERE s.revision_of = j.id) \
+          ORDER BY j.created_at, j.id"
+    );
+    let rows = sqlx::query(sql).bind(contexts).fetch_all(executor).await?;
+    Ok(rows.iter().map(row_of).collect::<Result<_, _>>()?)
+}
+
+/// The open lesson head of one knowledge point (`topic` is the serving
+/// topic of the payload), when one stands.
+///
+/// # Errors
+///
+/// Returns [`StoreError::Db`] when the statement fails.
+pub async fn open_lesson_head<'e, E>(
+    executor: E,
+    topic: &str,
+    kp: &str,
+) -> Result<Option<JobRow>, StoreError>
+where
+    E: PgExecutor<'e>,
+{
+    let sql = concat!(
+        "SELECT ",
+        columns!(),
+        " FROM proof_grading_jobs j \
+          WHERE j.closed_at IS NULL AND j.context = $1 \
+            AND j.payload->>'topic' = $2 AND j.payload->>'kp' = $3 \
+            AND NOT EXISTS (SELECT 1 FROM proof_grading_jobs s WHERE s.revision_of = j.id) \
+          ORDER BY j.created_at DESC, j.id LIMIT 1"
+    );
+    let row = sqlx::query(sql)
+        .bind(CONTEXT_LESSON)
+        .bind(topic)
+        .bind(kp)
+        .fetch_optional(executor)
+        .await?;
+    Ok(row.as_ref().map(row_of).transpose()?)
+}
+
+/// The job that grades `attempt_id`, under the caller's tenant binding.
+///
+/// # Errors
+///
+/// Returns [`StoreError::Db`] when the statement fails.
+pub async fn job_by_attempt<'e, E>(
+    executor: E,
+    attempt_id: &str,
+) -> Result<Option<JobRow>, StoreError>
+where
+    E: PgExecutor<'e>,
+{
+    let sql = concat!(
+        "SELECT ",
+        columns!(),
+        " FROM proof_grading_jobs WHERE attempt_id = $1 LIMIT 1"
+    );
+    let row = sqlx::query(sql)
+        .bind(attempt_id)
+        .fetch_optional(executor)
+        .await?;
+    Ok(row.as_ref().map(row_of).transpose()?)
+}
+
+/// The disputed rows that wait for a human verdict, oldest first.
+///
+/// # Errors
+///
+/// Returns [`StoreError::Db`] when the statement fails.
+pub async fn open_disputes<'e, E>(executor: E) -> Result<Vec<JobRow>, StoreError>
+where
+    E: PgExecutor<'e>,
+{
+    let sql = concat!(
+        "SELECT ",
+        columns!(),
+        " FROM proof_grading_jobs \
+          WHERE disputed_at IS NOT NULL AND override_verdict IS NULL \
+          ORDER BY disputed_at, id"
+    );
+    let rows = sqlx::query(sql).fetch_all(executor).await?;
+    Ok(rows.iter().map(row_of).collect::<Result<_, _>>()?)
+}
+
+/// Which learner-side mark [`mark`] writes.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum Mark {
+    /// `seen_at`: the learner saw the verdict.
+    Seen,
+    /// `revealed_at`: the reference solution was shown after the cap.
+    Revealed,
+    /// `closed_at`: the chain is over.
+    Closed,
+}
+
+/// Stamp one learner-side mark on one row, keeping a stamp that stands.
+/// The answer is `true` when this call wrote the stamp.
+///
+/// # Errors
+///
+/// Returns [`StoreError::Db`] when the statement fails.
+pub async fn mark<'e, E>(executor: E, id: Uuid, which: Mark) -> Result<bool, StoreError>
+where
+    E: PgExecutor<'e>,
+{
+    let sql = match which {
+        Mark::Seen => {
+            "UPDATE proof_grading_jobs SET seen_at = now() WHERE id = $1 AND seen_at IS NULL"
+        }
+        Mark::Revealed => {
+            "UPDATE proof_grading_jobs SET revealed_at = now() WHERE id = $1 AND revealed_at IS NULL"
+        }
+        Mark::Closed => {
+            "UPDATE proof_grading_jobs SET closed_at = now() WHERE id = $1 AND closed_at IS NULL"
+        }
+    };
+    let done = sqlx::query(sql).bind(id).execute(executor).await?;
+    Ok(done.rows_affected() > 0)
+}
+
+/// Record the learner's dispute of one row's verdict.
+///
+/// # Errors
+///
+/// Returns [`StoreError::Db`] when the statement fails.
+pub async fn dispute<'e, E>(executor: E, id: Uuid, note: Option<&str>) -> Result<bool, StoreError>
+where
+    E: PgExecutor<'e>,
+{
+    let done = sqlx::query(
+        "UPDATE proof_grading_jobs SET disputed_at = now(), dispute_note = $2 \
+          WHERE id = $1 AND disputed_at IS NULL",
+    )
+    .bind(id)
+    .bind(note)
+    .execute(executor)
+    .await?;
+    Ok(done.rows_affected() > 0)
+}
+
+/// Record the human verdict of the row that grades `attempt_id`. The answer
+/// is `true` when a row took it.
+///
+/// # Errors
+///
+/// Returns [`StoreError::Db`] when the statement fails.
+pub async fn set_override<'e, E>(
+    executor: E,
+    attempt_id: &str,
+    verdict: &str,
+) -> Result<bool, StoreError>
+where
+    E: PgExecutor<'e>,
+{
+    let done =
+        sqlx::query("UPDATE proof_grading_jobs SET override_verdict = $2 WHERE attempt_id = $1")
+            .bind(attempt_id)
+            .bind(verdict)
+            .execute(executor)
+            .await?;
+    Ok(done.rows_affected() > 0)
 }
 
 /// The id of the job that grades `attempt_id`, under the caller's tenant

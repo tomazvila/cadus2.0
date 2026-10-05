@@ -61,6 +61,11 @@ export interface PlanTask {
   /** D-F6: the task confirms a topic the course inferred from a placement. */
   confirm?: boolean;
   /**
+   * D-PR1: the open proof revision this lesson carries. The plan carries the lesson FIRST
+   * while its chain is open, across a reload, a session end and the day rollover.
+   */
+  proof_revision?: OpenRevision;
+  /**
    * Server-side completion. The session view filters the WHOLE task list on
    * `progress.done`: per-mount memory left a reload restarting at a closed task and
    * serving a `409 task_complete` the learner could not escape.
@@ -105,11 +110,69 @@ export interface SessionPlanResponse {
   /** RFC 3339, or null when nothing blocks the frontier. */
   frontier_blocked_until: string | null;
   /**
-   * The background grading of the open session's LAST answer, when that answer is a
-   * written proof. A reload loses the grade reply that named the job, so the plan names it
-   * again. Absent otherwise.
+   * D-PR1: every open revision chain (lesson and review), oldest first. A lesson chain names
+   * the plan task that carries it.
    */
-  proof_grading?: { id: string; status: 'pending'; attempt_id: string };
+  open_revisions?: OpenRevision[];
+}
+
+/** What a learner may do next with one revision chain (D-PR1). */
+export type ProofPhase =
+  | 'draft'
+  | 'grading'
+  | 'passed'
+  | 'revise'
+  | 'reveal'
+  | 'rewrite'
+  | 'unavailable'
+  | 'closed';
+
+/** Where a written proof was drafted. A lesson proof blocks its knowledge point. */
+export type ProofContext = 'lesson' | 'review' | 'quiz' | 'selfcheck' | 'legacy';
+
+/** One open revision chain, as the plan names it. */
+export interface OpenRevision {
+  job_id: string;
+  context: ProofContext;
+  topic: string;
+  topic_name: string | null;
+  kp: string | null;
+  phase: ProofPhase;
+  revision: number;
+  /** Whether the learner saw the verdict of the head (`seen_at`). */
+  seen: boolean;
+  /** The plan task that carries a lesson chain. */
+  task_id: string | null;
+}
+
+/** The first check a revision fixes, with the learner's own words. */
+export interface ProofUnmet {
+  id: string;
+  text: string;
+  evidence: string;
+  quote_verified?: boolean;
+}
+
+/**
+ * The `proof` field of a served written proof (D-PR1): the chain state the screen draws.
+ * It never carries the reference solution.
+ */
+export interface ProofField {
+  context: ProofContext;
+  phase: ProofPhase;
+  job_id?: string;
+  status?: ProofGradingStatus;
+  revision: number;
+  cap: number;
+  revisions_left: number;
+  /** The learner's last draft, to revise. */
+  draft?: string;
+  feedback?: string;
+  first_unmet?: ProofUnmet | null;
+  seen?: boolean;
+  disputed?: boolean;
+  /** On a grade reply: the unaided rewrite after the cap. */
+  rewrite?: boolean;
 }
 
 /**
@@ -181,6 +244,11 @@ export interface ServedProblem {
    * key: the answer is not in this payload (Hard Rule 1).
    */
   choices?: string[];
+  /**
+   * D-PR1: a written proof. Its solution waits for a pass or for the revision cap, so the
+   * payload never carries one.
+   */
+  proof?: ProofField;
 }
 
 /** `POST /api/task/{task_id}/teach` — the authored teach page (L4). */
@@ -247,6 +315,8 @@ type TaskStatus =
   | 'task_passed'
   | 'task_inconclusive'
   | 'task_failed'
+  /** D-PR1: a lesson proof waits for its verdict; the point closes on a pass. */
+  | 'proof_pending'
   /** NOTHING was recorded twice: the attempt already stood. Never a normal advance. */
   | 'already_recorded';
 
@@ -389,6 +459,8 @@ export interface AnswerResponse {
    */
   next_unavailable?: boolean;
   xp?: number;
+  /** D-PR1: the chain state after a lesson proof's draft or rewrite. */
+  proof?: ProofField;
 }
 
 /** The reply field of a written proof whose background grading is pending. */
@@ -416,9 +488,94 @@ export interface ProofGradingPoll {
   status: ProofGradingStatus;
   feedback?: string;
   checks?: ProofCheck[];
-  /** The reference solution, revealed once the grading is in. */
+  /** The first check to fix, with the learner's own words. */
+  first_unmet?: ProofUnmet | null;
+  /**
+   * The reference solution. A quiz proof shows it once graded; a lesson or review proof
+   * only after a pass or once its chain closed (D-PR1).
+   */
   solution?: string;
   model?: string;
+  context?: ProofContext;
+  revision?: number;
+  rewrite?: boolean;
+  disputed?: boolean;
+  /** The chain the job belongs to. */
+  chain?: {
+    root_id: string;
+    head_id: string;
+    phase: ProofPhase;
+    revision: number;
+    cap: number;
+    revisions_left: number;
+  };
+}
+
+/** One draft of a revision chain. */
+export interface ProofVersion {
+  id: string;
+  attempt_id: string;
+  revision: number;
+  rewrite: boolean;
+  status: ProofGradingStatus;
+  answer: string;
+  created_at: string;
+  seen: boolean;
+  disputed: boolean;
+  human_verdict: 'pass' | 'needs_revision' | null;
+  feedback?: string;
+  checks?: ProofCheck[];
+  first_unmet?: ProofUnmet | null;
+}
+
+/** One problem's revision chain (D-PR1). */
+export interface ProofChain {
+  root_id: string;
+  head_id: string;
+  context: ProofContext;
+  task_id: string | null;
+  topic: string | null;
+  topic_name?: string | null;
+  kp: string | null;
+  problem: string | null;
+  phase: ProofPhase;
+  revision: number;
+  cap: number;
+  revisions_left: number;
+  passed: boolean;
+  /** The head's text. */
+  draft: string;
+  versions: ProofVersion[];
+  feedback?: string;
+  first_unmet?: ProofUnmet | null;
+  /** Present only after a pass, once the chain closed, or in the ONE reveal at the cap. */
+  solution?: string;
+}
+
+/** `POST /api/proof-grading/{id}/seen`. */
+export interface ProofSeenResponse {
+  job: ProofGradingPoll;
+  chain: ProofChain;
+}
+
+/** `GET /api/proofs`. */
+export interface ProofsResponse {
+  chains: ProofChain[];
+}
+
+/** `POST /api/proofs/{id}/revise`. */
+export interface ProofReviseResponse {
+  proof_grading: ProofGradingField;
+  chain: ProofChain;
+}
+
+/** `POST /api/task/{task_id}/proof/continue`: a passed proof closed its knowledge point. */
+export interface ProofContinueResponse {
+  task_status: TaskStatus;
+  remediation: Remediation[];
+  next: ServedProblem | null;
+  next_unavailable?: boolean;
+  xp?: number;
 }
 
 /** The poll reply of one background equivalence check (Amendment K, note 114). */

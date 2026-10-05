@@ -10,10 +10,12 @@
 //! 4. ask the hosted model one forced-tool question ([`prompt`]), and put the
 //!    bill of every HTTP attempt in `model_call_log` (T6) before the settle;
 //! 5. CODE decides the verdict from the checks ([`prompt::verdict_of`]);
-//! 6. land it in ONE transaction: a pass appends a `regraded` event (outcome
-//!    correct, the owner's decision: a passed proof counts for mastery like a
-//!    correct short answer) and refolds the learner model; both verdicts
-//!    settle the row `done` with the result document the learner reads.
+//! 6. land it in ONE transaction: the verdict appends a `regraded` event and
+//!    refolds the learner model — a pass is outcome correct (the owner's
+//!    decision: a passed proof counts for mastery like a correct short
+//!    answer), a needs-revision verdict is outcome incorrect (a decided miss
+//!    for scheduling, D-PR1); both settle the row `done` with the result
+//!    document the learner reads.
 //!
 //! A reply that does not parse, or a model that does not answer, returns the
 //! row to `pending` until its [`MAX_ATTEMPTS`]th claim, then it fails; the
@@ -78,11 +80,15 @@ const LEASE: Duration = Duration::from_secs(900);
 /// The client-side bound of every statement of this module.
 const STATEMENT_BOUND_MS: u64 = 30_000;
 
-/// The reason the fold's correction names.
+/// The reason the fold's correction names for a pass.
 pub const FOLD_REASON: &str = "the background proof grader passed the written proof";
 
+/// The reason the fold's correction names for a needs-revision verdict.
+pub const FOLD_REASON_REVISION: &str =
+    "the background proof grader sent the written proof back for revision";
+
 /// The grader note the correction carries.
-pub const FOLD_NOTE: &str = "proof grading (background model)";
+pub const FOLD_NOTE: &str = proof_grading::GRADER_NOTE;
 
 /// The configured job: the model client and the curriculum the fold reads.
 #[derive(Debug)]
@@ -123,7 +129,7 @@ pub enum Outcome {
     Idle,
     /// The proof passed; the fold appended the correction.
     Passed,
-    /// The proof needs revision; the attempt stays ungraded.
+    /// The proof needs revision; the fold appended the miss.
     NeedsRevision,
     /// The daily cap refused the call.
     Capped,
@@ -265,7 +271,7 @@ pub async fn run_once(db: &Db, job: &ProofGradingJob) -> Result<Report, WorkerEr
     } else {
         Outcome::NeedsRevision
     };
-    land(db, job, &claimed, &grading).await?;
+    land(db, &job.curriculum, &claimed, &grading).await?;
     Ok(Report {
         outcome,
         job_id: Some(claimed.id),
@@ -273,19 +279,24 @@ pub async fn run_once(db: &Db, job: &ProofGradingJob) -> Result<Report, WorkerEr
     })
 }
 
-/// Land one grading: the fold of a pass and the settle, in ONE transaction.
+/// Land one grading: the fold of the verdict and the settle, in ONE
+/// transaction.
 ///
 /// The row never reads done while the learner's log still holds the
-/// ungraded verdict of a passed proof: a fold that fails rolls the settle
+/// ungraded verdict of a graded proof: a fold that fails rolls the settle
 /// back, and the sweep of a later pass reclaims the row.
-async fn land(
+///
+/// # Errors
+///
+/// Returns [`WorkerError`] when a statement or the fold fails; nothing lands.
+pub async fn land(
     db: &Db,
-    job: &ProofGradingJob,
+    curriculum: &Curriculum,
     claimed: &Claimed,
     grading: &Grading,
 ) -> Result<(), WorkerError> {
     let mut tx: Transaction<'static, Postgres> = db.pool().begin().await?;
-    if let Err(err) = land_inner(&mut tx, job, claimed, grading).await {
+    if let Err(err) = land_inner(&mut tx, curriculum, claimed, grading).await {
         let _ = tx.rollback().await;
         return Err(err);
     }
@@ -295,27 +306,29 @@ async fn land(
 /// The statements of one [`land`], on the caller's transaction.
 async fn land_inner(
     tx: &mut Transaction<'static, Postgres>,
-    job: &ProofGradingJob,
+    curriculum: &Curriculum,
     claimed: &Claimed,
     grading: &Grading,
 ) -> Result<(), WorkerError> {
     let document = serde_json::to_value(grading).unwrap_or_else(|_| json!({}));
-    if grading.passed() {
-        fold_pass(tx, job, claimed).await?;
-    }
+    fold_verdict(tx, curriculum, claimed, grading.passed()).await?;
     proof_grading::settle(&mut **tx, claimed.id, JOB_DONE, Some(&document)).await?;
     Ok(())
 }
 
-/// Append the `regraded` correction of a passed proof and refold the model.
+/// Append the `regraded` correction of a graded proof and refold the model:
+/// outcome correct for a pass, outcome incorrect for a needs-revision
+/// verdict (D-PR1).
 ///
-/// No fold when the attempt is gone (a reset) or when a correction of the
-/// attempt already stands (a human regrade wins: the worker never supersedes
-/// it).
-async fn fold_pass(
+/// No fold when the attempt is not in the log (a reset, or a revision drafted
+/// from the proofs list, which records no attempt) or when a correction of
+/// the attempt already stands (a human regrade wins: the worker never
+/// supersedes it).
+async fn fold_verdict(
     tx: &mut Transaction<'static, Postgres>,
-    job: &ProofGradingJob,
+    curriculum: &Curriculum,
     claimed: &Claimed,
+    passed: bool,
 ) -> Result<(), WorkerError> {
     let target = sqlx::query!(
         r#"
@@ -359,18 +372,32 @@ async fn fold_pass(
         topic,
         attempts: vec![RegradedAttempt {
             attempt_id: claimed.attempt_id.clone(),
-            outcome: Some(AttemptOutcome::Correct),
-            work_quality: WorkQuality::NearlyPerfect,
+            outcome: Some(if passed {
+                AttemptOutcome::Correct
+            } else {
+                AttemptOutcome::Incorrect
+            }),
+            // The tiers a human regrade prices for the same two verdicts.
+            work_quality: if passed {
+                WorkQuality::NearlyPerfect
+            } else {
+                WorkQuality::NearlyPassable
+            },
             error_tags: Vec::new(),
             grader_note: Some(FOLD_NOTE.to_owned()),
         }],
         quality_tier: None,
         xp: None,
-        reason: FOLD_REASON.to_owned(),
+        reason: if passed {
+            FOLD_REASON
+        } else {
+            FOLD_REASON_REVISION
+        }
+        .to_owned(),
     });
     append_event(tx, claimed.user_id, &event, None).await?;
     let cfg = Config::default();
-    let input = cadus_core::projector::ProjectionInput::new(&job.curriculum, &cfg, now);
+    let input = cadus_core::projector::ProjectionInput::new(curriculum, &cfg, now);
     project_and_save(tx, claimed.user_id, &input, None).await?;
     Ok(())
 }

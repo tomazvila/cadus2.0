@@ -46,6 +46,25 @@ pub async fn session_plan(req: Ready) -> Reply {
     let readiness = req.readiness(&mut tx).await?;
     let mut plan = compose_plan(&req.content, &view, &model, &session, req.now, &readiness);
     crate::serve::restore_session_tasks(&mut plan, &scratch, &events, graph, &model);
+    // D-PR1: the open revision chains. A lesson chain carries its lesson
+    // FIRST, at the chain's knowledge point, into this plan and every later
+    // one (the day rollover included) until the chain closes.
+    let heads = req
+        .store(cadus_store::proof_grading::open_heads(
+            &mut *tx,
+            &[
+                cadus_store::proof_grading::CONTEXT_LESSON,
+                cadus_store::proof_grading::CONTEXT_REVIEW,
+            ],
+        ))
+        .await?;
+    let lesson_heads: Vec<_> = heads
+        .iter()
+        .filter(|head| head.context == cadus_store::proof_grading::CONTEXT_LESSON)
+        .cloned()
+        .collect();
+    crate::proof_grading::lesson::carry_open(&mut plan, &lesson_heads, graph, &view.learned_at);
+    let open_revisions = crate::proof_grading::lesson::open_items(&heads, &plan, graph);
 
     let tasks: Vec<Value> = plan
         .tasks
@@ -62,15 +81,20 @@ pub async fn session_plan(req: Ready) -> Reply {
             {
                 value["progress"]["done"] = json!(true);
             }
+            // The open revision a lesson carries: the plan names the
+            // revision task, not the last attempt.
+            if let Some(item) = open_revisions
+                .iter()
+                .find(|item| item["task_id"].as_str() == Some(task.task_id.as_str()))
+            {
+                value["proof_revision"] = item.clone();
+            }
             value
         })
         .collect();
     let complete = is_course_complete(&model.topics, graph, &req.content.cfg, course, None);
-    // A reload loses the grade reply that named a background proof grading;
-    // the plan names it again so the session can show its result.
-    let proof = crate::proof_grading::restore_field(&req.state, &mut tx, &events).await?;
 
-    let mut body = json!({
+    let body = json!({
         "session": plan.session,
         "tasks": tasks,
         "quiz_due": plan.quiz_due,
@@ -87,10 +111,8 @@ pub async fn session_plan(req: Ready) -> Reply {
             .frontier_blocked_until
             .and_then(|stamp| DateTime::<Utc>::from_timestamp_micros(stamp.micros()))
             .map(|stamp| stamp.to_rfc3339()),
+        "open_revisions": open_revisions,
     });
-    if let Some(proof) = proof {
-        body["proof_grading"] = proof;
-    }
     reply_read(tx, body).await
 }
 

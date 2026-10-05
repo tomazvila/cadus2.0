@@ -416,6 +416,7 @@ pub async fn learner_at_review_index(db: &TestDb, email: &str, served: i64) -> U
             answered: served,
             done: false,
             current_kp: None,
+            proof_kp: None,
         },
     );
     put_state(db, user, &scratch).await;
