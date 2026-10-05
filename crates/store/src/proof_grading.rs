@@ -383,6 +383,146 @@ where
     Ok(row.as_ref().map(row_of).transpose()?)
 }
 
+/// Read the complete revision chain containing `id`, root first, under the
+/// caller's tenant binding. The lookup follows `revision_of` in both
+/// directions, so presentation limits in [`jobs`] cannot truncate the chain.
+/// An id outside the caller's tenant returns `None`.
+///
+/// # Errors
+///
+/// Returns [`StoreError::Db`] when the statement fails.
+pub async fn chain_rows<'e, E>(executor: E, id: Uuid) -> Result<Option<Vec<JobRow>>, StoreError>
+where
+    E: PgExecutor<'e>,
+{
+    let sql = concat!(
+        "WITH RECURSIVE ancestors(id, revision_of, depth, path) AS (",
+        " SELECT id, revision_of, 0, ARRAY[id] FROM proof_grading_jobs WHERE id = $1",
+        " UNION ALL",
+        " SELECT parent.id, parent.revision_of, a.depth + 1, a.path || parent.id",
+        " FROM proof_grading_jobs parent JOIN ancestors a ON parent.id = a.revision_of",
+        " WHERE NOT parent.id = ANY(a.path)",
+        "), root AS (SELECT id FROM ancestors ORDER BY depth DESC LIMIT 1),",
+        " chain(id, depth, path) AS (",
+        " SELECT id, 0, ARRAY[id] FROM root",
+        " UNION ALL",
+        " SELECT child.id, c.depth + 1, c.path || child.id FROM proof_grading_jobs child",
+        " JOIN chain c ON child.revision_of = c.id WHERE NOT child.id = ANY(c.path)",
+        ") SELECT j.* FROM proof_grading_jobs j JOIN chain c ON c.id = j.id ORDER BY c.depth"
+    );
+    let rows = sqlx::query(sql).bind(id).fetch_all(executor).await?;
+    if rows.is_empty() {
+        return Ok(None);
+    }
+    Ok(Some(rows.iter().map(row_of).collect::<Result<_, _>>()?))
+}
+
+/// Read complete chains touched by the newest `limit` jobs, plus every open
+/// lesson/review chain, under the caller's tenant binding. This bounds the
+/// number of historical chains shown while retaining each selected chain's
+/// root and head, including older open work.
+///
+/// # Errors
+///
+/// Returns [`StoreError::Db`] when the statement fails.
+pub async fn jobs_for_list<'e, E>(executor: E, limit: i64) -> Result<Vec<JobRow>, StoreError>
+where
+    E: PgExecutor<'e>,
+{
+    let sql = concat!(
+        "WITH RECURSIVE recent AS (",
+        " SELECT id FROM proof_grading_jobs ORDER BY created_at DESC, id LIMIT $1",
+        "), ancestor(id, revision_of, path) AS (",
+        " SELECT j.id, j.revision_of, ARRAY[j.id] FROM proof_grading_jobs j",
+        " JOIN recent r ON r.id = j.id",
+        " UNION ALL",
+        " SELECT p.id, p.revision_of, a.path || p.id FROM proof_grading_jobs p",
+        " JOIN ancestor a ON p.id = a.revision_of WHERE NOT p.id = ANY(a.path)",
+        "), open_head(id) AS (",
+        " SELECT j.id FROM proof_grading_jobs j",
+        " WHERE j.closed_at IS NULL AND j.context = ANY($2)",
+        " AND NOT EXISTS (SELECT 1 FROM proof_grading_jobs s WHERE s.revision_of = j.id)",
+        "), open_ancestor(id, revision_of, path) AS (",
+        " SELECT j.id, j.revision_of, ARRAY[j.id] FROM proof_grading_jobs j",
+        " JOIN open_head h ON h.id = j.id",
+        " UNION ALL",
+        " SELECT p.id, p.revision_of, a.path || p.id FROM proof_grading_jobs p",
+        " JOIN open_ancestor a ON p.id = a.revision_of WHERE NOT p.id = ANY(a.path)",
+        "), roots(id) AS (",
+        " SELECT id FROM ancestor WHERE revision_of IS NULL",
+        " UNION SELECT id FROM open_ancestor WHERE revision_of IS NULL",
+        "), selected(id, depth, path) AS (",
+        " SELECT r.id, 0, ARRAY[r.id] FROM roots r",
+        " UNION ALL",
+        " SELECT s.id, selected.depth + 1, selected.path || s.id FROM proof_grading_jobs s",
+        " JOIN selected ON s.revision_of = selected.id",
+        " WHERE NOT s.id = ANY(selected.path)",
+        ") SELECT j.* FROM proof_grading_jobs j JOIN selected s ON s.id = j.id",
+        " ORDER BY j.created_at, j.id"
+    );
+    let rows = sqlx::query(sql)
+        .bind(limit)
+        .bind(vec![CONTEXT_LESSON, CONTEXT_REVIEW])
+        .fetch_all(executor)
+        .await?;
+    Ok(rows.iter().map(row_of).collect::<Result<_, _>>()?)
+}
+
+/// The heads of closed lesson proof chains attempted after the most recent
+/// `lesson_result` for `topic`, ordered by root attempt sequence. Both the
+/// event and proof rows are read under the caller's tenant binding. This
+/// identifies proof points completed in the current lesson run across session
+/// rollover while excluding earlier runs.
+///
+/// # Errors
+///
+/// Returns [`StoreError::Db`] when the statement fails.
+pub async fn closed_lesson_heads_after_latest_result<'e, E>(
+    executor: E,
+    topic: &str,
+) -> Result<Vec<Uuid>, StoreError>
+where
+    E: PgExecutor<'e>,
+{
+    let rows = sqlx::query_scalar::<_, Uuid>(
+        r#"
+        WITH RECURSIVE boundary AS (
+            SELECT COALESCE(MAX(seq), 0) AS seq
+              FROM events
+             WHERE type = 'lesson_result' AND payload->>'topic' = $1
+        ), roots AS (
+            SELECT j.id, e.seq
+              FROM proof_grading_jobs j
+              JOIN events e ON e.attempt_id = j.attempt_id
+             CROSS JOIN boundary b
+             WHERE j.context = 'lesson' AND j.revision_of IS NULL
+               AND j.payload->>'topic' = $1
+               AND e.type = 'attempt' AND e.payload->>'topic' = $1
+               AND e.seq > b.seq
+        ), chain(id, root_id, seq) AS (
+            SELECT id, id, seq FROM roots
+            UNION ALL
+            SELECT child.id, chain.root_id, chain.seq
+              FROM proof_grading_jobs child
+              JOIN chain ON child.revision_of = chain.id
+        )
+        SELECT chain.id
+          FROM chain
+          JOIN proof_grading_jobs head ON head.id = chain.id
+         WHERE head.closed_at IS NOT NULL
+           AND NOT EXISTS (
+               SELECT 1 FROM proof_grading_jobs successor
+                WHERE successor.revision_of = head.id
+           )
+         ORDER BY chain.seq, chain.root_id
+        "#,
+    )
+    .bind(topic)
+    .fetch_all(executor)
+    .await?;
+    Ok(rows)
+}
+
 /// Every job of the caller's tenant, oldest first, at most `limit` rows.
 ///
 /// The request tier groups them into revision chains. The per-learner daily

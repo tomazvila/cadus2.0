@@ -511,7 +511,7 @@ async fn advance_and_fold(
 ) -> Result<Advance, ApiError> {
     let now = recorded.ts;
     let history = store(state, load_session_view(tx, user_id)).await?;
-    let moved = if lesson_proof {
+    let mut moved = if lesson_proof {
         // D-PR1: the first draft of a lesson proof waits for its verdict.
         Advance {
             status: STATUS_PROOF_PENDING,
@@ -536,6 +536,13 @@ async fn advance_and_fold(
         // D-PR1: a proof-gated point serves its written proof before it closes.
         hold_for_proof(&content.curriculum, recorded, moved)
     };
+    if matches!(
+        moved.result.as_ref(),
+        Some(Event::LessonResult(result)) if result.passed
+    ) {
+        let score = super::proof_score::completed(state, tx, recorded.topic.as_str()).await?;
+        moved = super::proof_score::apply(&content.curriculum, &content.cfg, moved, score);
+    }
     for extra in moved.events() {
         store(state, append_event(tx, user_id, &extra, None)).await?;
     }

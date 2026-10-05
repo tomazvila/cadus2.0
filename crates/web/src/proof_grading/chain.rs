@@ -191,12 +191,6 @@ impl Chain {
     pub fn reference(&self) -> Option<&str> {
         self.root().payload_str("reference")
     }
-
-    /// Whether the chain holds the row `id`.
-    #[must_use]
-    pub fn holds(&self, id: Uuid) -> bool {
-        self.rows.iter().any(|row| row.id == id)
-    }
 }
 
 /// Group rows into chains, oldest root first.
@@ -233,12 +227,6 @@ pub fn chains(rows: Vec<JobRow>) -> Vec<Chain> {
         }
     }
     out
-}
-
-/// The chain that holds the row `id`.
-#[must_use]
-pub fn chain_of(rows: Vec<JobRow>, id: Uuid) -> Option<Chain> {
-    chains(rows).into_iter().find(|chain| chain.holds(id))
 }
 
 /// The client view of one version of a chain.

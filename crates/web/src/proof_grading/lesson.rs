@@ -161,10 +161,10 @@ pub async fn lesson_step(
     let Some(head) = head else {
         return Ok(LessonStep::first());
     };
-    let rows = store(state, proof_grading::jobs(&mut **tx, super::LIST_LIMIT)).await?;
-    let attempt = chain::chain_of(rows, head.id).map_or_else(
+    let rows = store(state, proof_grading::chain_rows(&mut **tx, head.id)).await?;
+    let attempt = rows.map_or_else(
         || format!("{}-r1", head.attempt_id),
-        |chain| format!("{}-r{}", chain.root().attempt_id, chain.rows.len()),
+        |rows| format!("{}-r{}", rows[0].attempt_id, rows.len()),
     );
     let next = |revision: i32, rewrite: bool| LessonStep {
         job: NewJob {

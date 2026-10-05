@@ -132,6 +132,7 @@ mod answer_format;
 mod drill;
 mod feedback;
 mod proof;
+mod proof_score;
 mod quiz;
 mod reply;
 mod review;

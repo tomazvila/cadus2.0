@@ -12,7 +12,7 @@
 
 use super::*;
 use crate::proof_grading::{Phase, chain};
-use cadus_store::proof_grading::{Mark, jobs, mark, open_lesson_head};
+use cadus_store::proof_grading::{Mark, mark, open_lesson_head};
 
 /// The `409` of a Continue on a proof that has not passed.
 fn not_passed() -> ApiError {
@@ -67,12 +67,15 @@ pub async fn proof_continue(request: TaskWithBody) -> Result<Json<Value>, ApiErr
     store(&state, mark(&mut *tx, head.id, Mark::Closed)).await?;
     // One problem, one signal (D-PR1): a pass on the first graded draft earns
     // the pass tier; a pass reached through revision earns less.
-    let rows = store(&state, jobs(&mut *tx, proof_grading::LIST_LIMIT)).await?;
-    let first_try = chain::chain_of(rows, head.id).is_none_or(|chain| {
-        chain.rows[..chain.rows.len() - 1]
-            .iter()
-            .all(|row| row.verdict().is_none())
-    });
+    let rows = store(
+        &state,
+        cadus_store::proof_grading::chain_rows(&mut *tx, head.id),
+    )
+    .await?
+    .ok_or_else(|| broken_state("the passed proof chain is missing"))?;
+    let first_try = rows[..rows.len() - 1]
+        .iter()
+        .all(|row| row.verdict().is_none());
 
     let record = live
         .topic
@@ -90,7 +93,14 @@ pub async fn proof_continue(request: TaskWithBody) -> Result<Json<Value>, ApiErr
         },
         assisted: false,
     };
-    let moved = proof_close(graph, &content.cfg, now, &close, &kp, &events);
+    let mut moved = proof_close(graph, &content.cfg, now, &close, &kp, &events);
+    if matches!(
+        moved.result.as_ref(),
+        Some(Event::LessonResult(result)) if result.passed
+    ) {
+        let score = super::proof_score::completed(&state, &mut tx, &topic).await?;
+        moved = super::proof_score::apply(graph, &content.cfg, moved, score);
+    }
     for extra in moved.events() {
         store(&state, append_event(&mut tx, user_id, &extra, None)).await?;
     }
@@ -222,7 +232,14 @@ pub(super) async fn revise_in_lesson(
         assisted: true,
     };
     let kp = served.kp.clone().unwrap_or_default();
-    let moved = proof_close(graph, &content.cfg, now, &close, &kp, events);
+    let mut moved = proof_close(graph, &content.cfg, now, &close, &kp, events);
+    if matches!(
+        moved.result.as_ref(),
+        Some(Event::LessonResult(result)) if result.passed
+    ) {
+        let score = super::proof_score::completed(state, &mut tx, close.topic.as_str()).await?;
+        moved = super::proof_score::apply(graph, &content.cfg, moved, score);
+    }
     for extra in moved.events() {
         store(state, append_event(&mut tx, user_id, &extra, None)).await?;
     }

@@ -46,8 +46,9 @@ fn conflict(code: &'static str, message: &'static str) -> ApiError {
 
 /// The chain that holds `id`, read in `tx`, or `404`.
 async fn chain_holding(state: &AppState, tx: &mut Tx, id: Uuid) -> Result<Chain, ApiError> {
-    let rows = store(state, proof_grading::jobs(&mut **tx, LIST_LIMIT)).await?;
-    chain::chain_of(rows, id).ok_or_else(ApiError::not_found)
+    let rows = store(state, proof_grading::chain_rows(&mut **tx, id)).await?;
+    rows.map(|rows| Chain { rows })
+        .ok_or_else(ApiError::not_found)
 }
 
 /// The row `id` of `chain`.
@@ -78,9 +79,8 @@ pub(crate) async fn seen(
     }
     let reveal =
         row.id == chain.head().id && chain::loops(&row.context) && chain.phase() == Phase::Reveal;
-    if reveal {
-        store(&state, proof_grading::mark(&mut *tx, id, Mark::Revealed)).await?;
-    }
+    // Only the transaction that wins the atomic stamp may reveal the solution.
+    let reveal = reveal && store(&state, proof_grading::mark(&mut *tx, id, Mark::Revealed)).await?;
     // Read the chain again, so the view names the phase the marks moved to.
     let chain = chain_holding(&state, &mut tx, id).await?;
     tx.commit().await.map_err(db_failed)?;
@@ -160,7 +160,7 @@ pub(crate) async fn list(
     Query(query): Query<ProofsQuery>,
 ) -> Result<Json<Value>, ApiError> {
     let mut tx = begin(&state, user_id).await?;
-    let rows = store(&state, proof_grading::jobs(&mut *tx, LIST_LIMIT)).await?;
+    let rows = store(&state, proof_grading::jobs_for_list(&mut *tx, LIST_LIMIT)).await?;
     drop(tx);
     let graph = state.content.as_deref().map(|content| &content.curriculum);
     let chains: Vec<Value> = chain::chains(rows)

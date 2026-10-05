@@ -285,9 +285,9 @@ pub(crate) async fn poll(
     let Some(row) = row else {
         return Err(ApiError::not_found());
     };
-    let rows = store(&state, proof_grading::jobs(&mut *tx, LIST_LIMIT)).await?;
+    let rows = store(&state, proof_grading::chain_rows(&mut *tx, id)).await?;
     drop(tx);
-    let chain = chain::chain_of(rows, id);
+    let chain = rows.map(|rows| chain::Chain { rows });
     Ok(Json(poll_view(&row, chain.as_ref())))
 }
 
