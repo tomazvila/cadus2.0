@@ -122,7 +122,14 @@ mod tests {
         for spec in specs() {
             let mut out = Proposals::default();
             add_reviewed_hint(&mut out, &spec, &[]);
-            assert_eq!(out.drafts.len(), 1, "{}", spec.topic_id);
+            assert_eq!(
+                out.drafts.len(),
+                1,
+                "{}/{}: {:?}",
+                spec.topic_id,
+                spec.kp_id,
+                out.refusals
+            );
         }
     }
 

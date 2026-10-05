@@ -27,9 +27,9 @@ fn independent_representations_and_answers_are_pinned() {
         "A machine divides its input by $-4$",
         "Three identical boxes each contain $2x-1$ counters",
         "For $f(x)=7x-3x-5$",
-        "The graphs $y=|x|$ and $y=5$ intersect",
-        "The graphs $y=|x+4|$ and $y=2$ intersect",
-        "The graph $y=|3x-6|$ meets the horizontal line $y=12$",
+        "At which $x$-coordinates does the graph of $y = |x|$ meet the line $y = 5$?",
+        "At which $x$-coordinates does the graph of $y = |x + 4|$ meet the line $y = 2$?",
+        "At which $x$-coordinates does the graph of $y = |3x - 6|$ meet the line $y = 12$?",
     ] {
         assert!(source.contains(representation), "{representation}");
     }
