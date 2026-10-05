@@ -1,0 +1,83 @@
+{
+ "schema": "cadus.packet.v1",
+ "spec_version": "v1",
+ "template_version": "author-1",
+ "kp": "calculus-1/chain-rule/kp1",
+ "course": "calculus-1",
+ "file": "curriculum/calculus-1/02-differentiation-rules.yaml",
+ "topic": {
+  "id": "chain-rule",
+  "name": "The Chain Rule",
+  "answer_kind": "expression",
+  "prerequisites": [
+   {
+    "id": "general-power-rule",
+    "name": "The General Power Rule"
+   },
+   {
+    "id": "function-composition",
+    "name": "Composition of Functions"
+   },
+   {
+    "id": "product-quotient-rules",
+    "name": "Product and Quotient Rules"
+   }
+  ],
+  "later_kps": [
+   "kp2: Nested compositions (chain rule twice)",
+   "kp3: Chain rule combined with product and quotient rules"
+  ]
+ },
+ "kp_block": {
+  "id": "kp1",
+  "name": "The chain rule in general form",
+  "key_prerequisites": [
+   "general-power-rule",
+   "function-composition"
+  ],
+  "constraints": "table values are single digits; the Leibniz-form problem uses a named u"
+ },
+ "proof_kp": false,
+ "floor": 6,
+ "teach_page": {
+  "concept": "A composite function changes at the rate of its outer function, measured at the inner value, times the rate of its inner function. The two rates multiply because a small change of x first changes the inner value and that change then changes the outer value.",
+  "worked_example": {
+   "problem": "Let $h(x) = f(g(x))$ with $g(3) = 1$, $g'(3) = 2$, $f'(1) = 4$. Find $h'(3)$.",
+   "steps": [
+    "Write the rule: $h'(x) = f'(g(x)) \\cdot g'(x)$.",
+    "Find the inner value: $g(3) = 1$, so the outer rate is $f'(1) = 4$.",
+    "Multiply the two rates: $4 \\cdot 2 = 8$."
+   ]
+  }
+ },
+ "existing": [
+  {
+   "hash": "86d2057cb791",
+   "status": "keep",
+   "problem": "Let $h(x) = f(g(x))$ with $g(1) = 2$, $g'(1) = 3$, $f'(2) = 5$. Find $h'(1)$.",
+   "answer": "15",
+   "solution_sketch": "$h'(1) = f'(g(1)) \\cdot g'(1) = f'(2) \\cdot g'(1) = 5 \\cdot 3 = 15$."
+  },
+  {
+   "hash": "5ad3b567ab04",
+   "status": "keep",
+   "problem": "Let $h(x) = f(g(x))$ with $g(0) = 3$, $g'(0) = -4$, $f'(3) = 2$. Find $h'(0)$.",
+   "answer": "-8",
+   "solution_sketch": null
+  },
+  {
+   "hash": "03d456790232",
+   "status": "keep",
+   "problem": "With $y = u^5$ and $u = x^2 + 1$, use $\\frac{dy}{dx} = \\frac{dy}{du} \\cdot \\frac{du}{dx}$ to find $\\frac{dy}{dx}$.",
+   "answer": "10x(x^2 + 1)^4",
+   "solution_sketch": "$5u^4 \\cdot 2x$ with $u = x^2 + 1$."
+  }
+ ],
+ "need": {
+  "new_items": 3,
+  "p3_item": false
+ },
+ "diagnostic_problem": "Differentiate $f(x) = x^3(3x - 2)^2$.",
+ "function_variant": true,
+ "early": false
+}

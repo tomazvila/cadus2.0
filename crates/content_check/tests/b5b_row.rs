@@ -7,7 +7,7 @@ mod support;
 
 use serde_json::{Value, json};
 use support::{
-    Run, assert_findings, assert_keys, curriculum, error_text, fixture, flow, pairs, run, scratch,
+    Run, assert_findings, assert_keys, error_text, fixture, flow, golden_base, pairs, run, scratch,
 };
 
 const ROWCHECK: [&str; 9] = [
@@ -19,15 +19,8 @@ const ROWCHECK: [&str; 9] = [
 fn golden(name: &str) -> Run {
     let row = flow(&format!("spec/golden/{name}.row.json"));
     let packet = flow(&format!("spec/golden/{name}.packet.json"));
-    run(&[
-        "row",
-        "--row",
-        &row,
-        "--packet",
-        &packet,
-        "--base",
-        &curriculum(),
-    ])
+    let base = golden_base(name);
+    run(&["row", "--row", &row, "--packet", &packet, "--base", &base])
 }
 
 fn assert_golden_pass(name: &str, v_before: u64, u: (u64, u64)) {
@@ -66,13 +59,11 @@ fn golden_row_proof_induction_passes() {
     assert_golden_pass("proof-induction", 0, (2, 1));
 }
 
-/// The chain-rule row: three `function` items of pack v9. The base of the
-/// freeze pack had 3 verdict exemplars; the campaign applied the row to the
-/// shipped tree (applied/calculus-1/chain-rule__kp1.json, commit 1b4fb581,
-/// V 3 -> 6), so the tree read of this test holds the applied base.
+/// The chain-rule row: three `function` items of pack v9 on the 3 verdict
+/// exemplars of the freeze base.
 #[test]
 fn golden_row_calc_chain_rule_passes() {
-    assert_golden_pass("calc-chain-rule", 6, (0, 0));
+    assert_golden_pass("calc-chain-rule", 3, (0, 0));
 }
 
 // ---- rows against the fixture tree ----

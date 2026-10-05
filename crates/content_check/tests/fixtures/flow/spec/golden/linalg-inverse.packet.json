@@ -1,0 +1,87 @@
+{
+ "schema": "cadus.packet.v1",
+ "spec_version": "v1",
+ "template_version": "author-1",
+ "kp": "linear-algebra/matrix-inverse-2x2-formula/kp1",
+ "course": "linear-algebra",
+ "file": "curriculum/linear-algebra/02-matrix-algebra.yaml",
+ "topic": {
+  "id": "matrix-inverse-2x2-formula",
+  "name": "The 2x2 Inverse Formula",
+  "answer_kind": "numeric",
+  "prerequisites": [
+   {
+    "id": "matrix-multiplication",
+    "name": "Matrix Multiplication"
+   },
+   {
+    "id": "identity-zero-matrices",
+    "name": "Identity and Zero Matrices"
+   },
+   {
+    "id": "diagonal-triangular-matrices",
+    "name": "Diagonal and Triangular Matrices"
+   }
+  ],
+  "later_kps": [
+   "kp2: Fractional and diagonal inverses",
+   "kp3: Singularity via the determinant condition"
+  ]
+ },
+ "kp_block": {
+  "id": "kp1",
+  "name": "Applying the formula",
+  "key_prerequisites": [
+   "matrix-multiplication",
+   "identity-zero-matrices"
+  ],
+  "constraints": "prefer ad - bc = +-1 for integer inverses"
+ },
+ "proof_kp": false,
+ "floor": 6,
+ "teach_page": {
+  "concept": "For a 2 by 2 matrix the inverse has a closed formula. The determinant $ad - bc$ measures the area scale of the matrix, and the inverse must undo that scale, so each entry of the swapped matrix is divided by the determinant.",
+  "worked_example": {
+   "problem": "Find $A^{-1}$ for $A = \\begin{pmatrix}3&2\\\\7&5\\end{pmatrix}$. Give the matrix as [a,b;c,d].",
+   "steps": [
+    "Compute the determinant: $ad - bc = 15 - 14 = 1$.",
+    "Swap the diagonal entries: $3$ and $5$ change places.",
+    "Change the sign of the other two entries: $2$ becomes $-2$ and $7$ becomes $-7$.",
+    "Divide by the determinant: each entry divided by $1$ gives [5,-2;-7,3]."
+   ]
+  }
+ },
+ "existing": [
+  {
+   "hash": "f7dff19bb503",
+   "status": "keep",
+   "problem": "Find $A^{-1}$ for $A = \\begin{pmatrix}2&1\\\\5&3\\end{pmatrix}$.",
+   "answer": "[3,-1;-5,2]",
+   "answer_contract": {
+    "cols": 2,
+    "kind": "matrix",
+    "rows": 2
+   },
+   "solution_sketch": "$ad - bc = 6 - 5 = 1$; swap the diagonal, negate the off-diagonal, divide by $1$. Check: $AA^{-1} = I$."
+  },
+  {
+   "hash": "874b42707a4e",
+   "status": "keep",
+   "problem": "Find $A^{-1}$ for $A = \\begin{pmatrix}1&1\\\\1&2\\end{pmatrix}$.",
+   "answer": "[2,-1;-1,1]",
+   "answer_contract": {
+    "cols": 2,
+    "kind": "matrix",
+    "rows": 2
+   },
+   "solution_sketch": "$ad - bc = 2 - 1 = 1$."
+  }
+ ],
+ "need": {
+  "new_items": 4,
+  "p3_item": false
+ },
+ "diagnostic_problem": "Find $A^{-1}$ for $A = \\begin{pmatrix}4&2\\\\3&4\\end{pmatrix}$, and state the value of $k$ for which $\\begin{pmatrix}4&2\\\\3&k\\end{pmatrix}$ would have no inverse.",
+ "function_variant": true,
+ "early": false
+}

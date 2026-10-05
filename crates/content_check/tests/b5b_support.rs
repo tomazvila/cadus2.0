@@ -6,7 +6,7 @@ use std::collections::BTreeSet;
 use std::path::PathBuf;
 use std::process::Command;
 
-use serde_json::Value;
+use serde_json::{Value, json};
 
 pub struct Run {
     pub exit: i32,
@@ -80,11 +80,13 @@ pub fn curriculum() -> String {
     format!("{}/curriculum", repo())
 }
 
-/// The `FLOW` directory of the campaign (`FLOW_DIR` names a different place).
+/// The copy of the campaign `FLOW` files that these tests read: the golden
+/// pairs of the freeze pack and the seeded selftest trees. `FLOW_DIR` names a
+/// different place.
 pub fn flow(rel: &str) -> String {
     let root = std::env::var("FLOW_DIR")
-        .unwrap_or_else(|_| "/home/deploy/.cache/cadus2_scripts/flow".to_owned());
-    let path = PathBuf::from(root).join(rel);
+        .map_or_else(|_| crate_dir().join("tests/fixtures/flow"), PathBuf::from);
+    let path = root.join(rel);
     assert!(path.exists(), "{} is not there", path.display());
     path.to_str().unwrap().to_owned()
 }
@@ -107,4 +109,74 @@ pub fn pairs(list: &Value) -> Vec<(String, String)> {
             (text("kp"), text("invariant"))
         })
         .collect()
+}
+
+/// The base tree of a golden packet: the one KP of the packet with its base
+/// exemplars (`existing`, the tree at the freeze commit `d2ca1421`), in a unit
+/// beside one stub topic per prerequisite. The campaign applied the golden rows
+/// to the shipped tree and later rewrote those KPs, so the shipped tree is no
+/// longer the base the rows were written against; the packet still is.
+pub fn packet_tree(name: &str, packet: &Value) -> String {
+    let topic = &packet["topic"];
+    let block = &packet["kp_block"];
+    let course = packet["course"].as_str().unwrap();
+    let field = |entry: &Value, key: &str| entry.get(key).filter(|value| !value.is_null()).cloned();
+    let exemplars: Vec<Value> = packet["existing"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|entry| {
+            let mut exemplar = serde_json::Map::new();
+            for key in ["problem", "answer", "answer_contract", "solution_sketch"] {
+                if let Some(value) = field(entry, key) {
+                    exemplar.insert(key.to_owned(), value);
+                }
+            }
+            Value::Object(exemplar)
+        })
+        .collect();
+    let stub = |id: &Value, name: &Value| {
+        json!({"id": id, "name": name, "core": true, "difficulty": 0.5, "drill": false,
+            "answer_kind": "numeric", "expected_time_secs": 180, "prerequisites": [],
+            "knowledge_points": [{"id": "kp1", "name": "stub", "key_prerequisites": [],
+                "exemplars": []}]})
+    };
+    let prerequisites = topic["prerequisites"].as_array().unwrap();
+    let mut topics: Vec<Value> = prerequisites
+        .iter()
+        .map(|prerequisite| stub(&prerequisite["id"], &prerequisite["name"]))
+        .collect();
+    let mut kp = json!({"id": block["id"], "name": block["name"],
+        "key_prerequisites": block["key_prerequisites"], "exemplars": exemplars});
+    if let Some(constraints) = field(block, "constraints") {
+        kp["constraints"] = constraints;
+    }
+    let target = json!({"id": topic["id"], "name": topic["name"], "core": true,
+        "difficulty": 0.5, "drill": false, "answer_kind": topic["answer_kind"],
+        "expected_time_secs": 180,
+        "prerequisites": prerequisites.iter().map(|p| json!({"id": p["id"], "weight": 1.0, "key": true})).collect::<Vec<_>>(),
+        "knowledge_points": [kp]});
+    topics.push(target);
+    // JSON is YAML: the loader reads the unit as written.
+    let unit = json!({"unit": "golden", "course": course, "module": "Golden", "topics": topics});
+    let file = packet["file"]
+        .as_str()
+        .unwrap()
+        .trim_start_matches("curriculum/");
+    let courses = format!("courses:\n  - id: {course}\n    name: {course}\n    order: 1\n");
+    // A directory of its own per call: tests that run in parallel never read a
+    // unit file that another test is writing.
+    static CALLS: std::sync::atomic::AtomicUsize = std::sync::atomic::AtomicUsize::new(0);
+    let call = CALLS.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+    let dir = format!("golden-{name}-{}-{call}", std::process::id());
+    let root = scratch(&format!("{dir}/courses.yaml"), &courses);
+    scratch(&format!("{dir}/{file}"), &unit.to_string());
+    root.trim_end_matches("/courses.yaml").to_owned()
+}
+
+/// The base tree of the golden packet `name` (see `packet_tree`).
+pub fn golden_base(name: &str) -> String {
+    let packet = flow(&format!("spec/golden/{name}.packet.json"));
+    let doc: Value = serde_json::from_str(&std::fs::read_to_string(&packet).unwrap()).unwrap();
+    packet_tree(name, &doc)
 }

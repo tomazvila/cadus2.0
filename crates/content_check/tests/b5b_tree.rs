@@ -9,7 +9,8 @@ use std::time::Instant;
 
 use serde_json::{Value, json};
 use support::{
-    assert_findings, assert_keys, curriculum, error_text, flow, pairs, repo, run, scratch,
+    assert_findings, assert_keys, curriculum, error_text, flow, golden_base, pairs, repo, run,
+    scratch,
 };
 
 const CHAIN_RULE: &str = "calculus-1/chain-rule/kp1";
@@ -108,9 +109,21 @@ fn dump_kp_gives_the_chain_rule_example_of_the_brief() {
     assert_eq!(doc["topic"]["answer_kind"], "expression");
 }
 
+/// The proof KP of the brief at the freeze base (golden packet
+/// `proof-induction`): the campaign has since given the shipped KP verdict items.
+const PROOF_KP: &str = "proofs/induction-divisibility-proofs/kp1";
+
 #[test]
 fn dump_kp_gives_no_verdict_for_the_proof_kp_of_the_brief() {
-    let doc = dump("proofs/induction-divisibility-proofs/kp1");
+    let result = run(&[
+        "dump-kp",
+        "--kp",
+        PROOF_KP,
+        "--base",
+        &golden_base("proof-induction"),
+    ]);
+    assert_eq!(result.exit, 0, "{}", result.doc);
+    let doc = result.doc;
     assert_eq!((&doc["V"], &doc["U"]), (&json!(0), &json!(2)));
     assert_eq!(column(&doc, "exemplars", "verdict"), [false, false]);
     assert_eq!(
@@ -217,10 +230,16 @@ fn report_of_the_full_tree_has_3138_kps_and_runs_in_less_than_60_seconds() {
     ] {
         assert!(files.iter().any(|have| *have == file), "{file}");
     }
-    // "No verdict" is never "pass": an exemplar with no verdict counts zero.
-    let proof_kp = "proofs/induction-divisibility-proofs/kp1";
+}
+
+#[test]
+fn report_counts_an_exemplar_with_no_verdict_as_zero() {
+    // "No verdict" is never "pass": an exemplar with no verdict counts zero. The
+    // proof KP of the brief at the freeze base has two such exemplars.
+    let result = run(&["report", "--all", "--base", &golden_base("proof-induction")]);
+    assert_eq!(result.exit, 1, "{}", result.doc);
     let kps = result.doc["kps"].as_array().unwrap();
-    let kp = kps.iter().find(|kp| kp["kp"] == proof_kp).unwrap();
+    let kp = kps.iter().find(|kp| kp["kp"] == PROOF_KP).unwrap();
     assert_eq!((&kp["V"], &kp["U"]), (&json!(0), &json!(2)));
     assert_eq!((&kp["goal"], &kp["serves"]), (&json!(false), &json!(false)));
     assert_eq!(column(kp, "existing", "verdict"), [false, false]);

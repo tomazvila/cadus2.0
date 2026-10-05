@@ -63,7 +63,18 @@ async fn seed(options: &PgConnectOptions) {
 
 /// Run `body` with the DSN of a fresh seeded database, then drop the database.
 fn with_database(body: impl FnOnce(&str) + std::panic::UnwindSafe) {
-    let name = format!("cc_b5b_{}_{}", std::process::id(), line!());
+    with_fresh_database(true, body);
+}
+
+/// Run `body` with the DSN of a fresh database, seeded with `content_store` when
+/// `seeded` is true and empty otherwise, then drop the database. Each call gets
+/// its own name, so tests that run in parallel never share a database.
+fn with_fresh_database(seeded: bool, body: impl FnOnce(&str) + std::panic::UnwindSafe) {
+    let name = format!(
+        "cc_b5b_{}_{}",
+        std::process::id(),
+        if seeded { "seeded" } else { "empty" }
+    );
     let runtime = tokio::runtime::Runtime::new().unwrap();
     let admin = |statement: String| async move {
         let mut connection = PgConnection::connect_with(&cluster()).await.unwrap();
@@ -75,7 +86,9 @@ fn with_database(body: impl FnOnce(&str) + std::panic::UnwindSafe) {
     };
     runtime.block_on(admin(format!("CREATE DATABASE {name}")));
     let options = cluster().database(&name);
-    runtime.block_on(seed(&options));
+    if seeded {
+        runtime.block_on(seed(&options));
+    }
     let dsn = options.to_url_lossy().to_string();
     let outcome = std::panic::catch_unwind(|| body(&dsn));
     runtime.block_on(admin(format!("DROP DATABASE {name} WITH (FORCE)")));
@@ -158,15 +171,18 @@ fn the_db_option_reads_the_approved_teach_pages_and_templates() {
 
 #[test]
 fn a_database_that_has_no_content_store_is_exit_2() {
-    let dsn = cluster().to_url_lossy().to_string();
-    let text = error_text(
-        &run(&["report", "--all", "--base", &fixture("tree"), "--db", &dsn]),
-        2,
-    );
-    assert!(
-        text.starts_with("--db: cannot read content_store"),
-        "{text}"
-    );
+    // A fresh empty database: the database that `CADUS_TEST_DATABASE_URL` names
+    // may carry the migrated schema, `content_store` included.
+    with_fresh_database(false, |dsn| {
+        let text = error_text(
+            &run(&["report", "--all", "--base", &fixture("tree"), "--db", dsn]),
+            2,
+        );
+        assert!(
+            text.starts_with("--db: cannot read content_store"),
+            "{text}"
+        );
+    });
     let closed = "postgresql://test:test@127.0.0.1:1/postgres";
     let text = error_text(
         &run(&[

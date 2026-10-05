@@ -7,8 +7,12 @@ use serde_json::{Value, json};
 #[path = "b5a_support.rs"]
 mod support;
 
-/// The golden rows of the freeze pack. `FLOW_SPEC_GOLDEN` names a different place.
-const GOLDEN: &str = "/home/deploy/.cache/cadus2_scripts/flow/spec/golden";
+/// The golden rows of the freeze pack, copied into the fixtures of this crate.
+/// `FLOW_SPEC_GOLDEN` names a different place.
+const GOLDEN: &str = concat!(
+    env!("CARGO_MANIFEST_DIR"),
+    "/tests/fixtures/flow/spec/golden"
+);
 
 // ---- the golden rows ----
 

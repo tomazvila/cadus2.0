@@ -1,0 +1,156 @@
+unit: proof-techniques
+course: proofs
+module: "Proof Techniques"
+topics:
+  - id: induction-divisibility-proofs
+    name: Induction Proofs of Divisibility
+    core: true
+    difficulty: 0.5
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 180
+    prerequisites: []
+    knowledge_points:
+      - id: kp1
+        name: "Show the rewrite of the step, a = 7 (defect 7, file rule)"
+        key_prerequisites: []
+        exemplars:
+          - problem: "In the induction proof that n^3 + 2n is divisible by 3, compute the value of n^3 + 2n at the base case n = 1."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The base case puts 1 in the place of n, which gives 1 + 2. Add the two numbers; thus the base value is 3."
+          - problem: "The induction step for 7^n - 1 writes 7^(k+1) - 1 = 7(7^k - 1) + c. Determine the constant c."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Expand the right side to get 7^(k+1) - 7 + c, and compare it with the left side. The constants give -7 + c = -1; thus c = 6."
+          - problem: "The number 7^3 - 1 is divisible by 6. Find the quotient (7^3 - 1)/6."
+            answer: "57"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Compute the power 7^3 = 343 and subtract 1 to get 342. Divide 342 by 6; thus the quotient is 57."
+          - problem: "An induction step shows that 6 divides 7^(k+1) - 1. The step starts from 7^(k+1) - 1 and must reach a form that shows the hypothesis. Which line is the correct form?"
+            answer: "7(7^k - 1) + 6"
+            answer_contract: {"kind": "label", "options": [["7(7^k - 1) + 6"], ["7(7^k - 1)"], ["7^k - 1 + 6"], ["7(7^k) + 6"]]}
+            solution_sketch: "Expand each candidate and compare it with the start value. The option 7(7^k - 1) loses the constant, the option 7^k - 1 + 6 loses the factor, and the option 7(7^k) + 6 has the wrong sign; thus the answer is 7(7^k - 1) + 6."
+          - problem: "A student proves by induction that 7^n - 1 is a multiple of 6. The student uses the induction hypothesis in exactly one place. Which statement is the induction hypothesis?"
+            answer: "6 divides 7^k - 1 for one fixed k"
+            answer_contract: {"kind": "label", "options": [["6 divides 7^k - 1 for one fixed k"], ["6 divides 7^(k+1) - 1"], ["6 divides 7^n - 1 for each n"], ["6 divides 7 - 1"]]}
+            solution_sketch: "The hypothesis is the claim for one fixed integer k, and the step derives the next case from it. The option 6 divides 7^(k+1) - 1 is the goal, the option 6 divides 7^n - 1 for each n is the theorem, and the option 6 divides 7 - 1 is the base case; thus the answer is 6 divides 7^k - 1 for one fixed k."
+          - problem: "The induction step reaches the sum 7(7^k - 1) + 6. Which reason shows that 6 divides this sum?"
+            answer: "6 divides each of the two terms"
+            answer_contract: {"kind": "label", "options": [["6 divides each of the two terms"], ["6 divides 7"], ["the sum is even"], ["7^k is prime"]]}
+            solution_sketch: "The hypothesis gives the first term and the second term is 6 itself, so the divisor goes into each term. The option 6 divides 7 is false, the option the sum is even proves too little, and the option 7^k is prime is false; thus the answer is 6 divides each of the two terms."
+      - id: kp2
+        name: "Show the rewrite of the step, a = 5"
+        key_prerequisites: []
+        exemplars:
+          - problem: "In the induction proof that n^3 + 5n is divisible by 3, compute the value of n^3 + 5n at the base case n = 1."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The base case puts 1 in the place of n, which gives 1 + 5. Add the two numbers; thus the base value is 6."
+          - problem: "The induction step for 5^n - 1 writes 5^(k+1) - 1 = 5(5^k - 1) + c. Determine the constant c."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Expand the right side to get 5^(k+1) - 5 + c, and compare it with the left side. The constants give -5 + c = -1; thus c = 4."
+          - problem: "The number 5^3 - 1 is divisible by 4. Find the quotient (5^3 - 1)/4."
+            answer: "31"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Compute the power 5^3 = 125 and subtract 1 to get 124. Divide 124 by 4; thus the quotient is 31."
+          - problem: "An induction step shows that 4 divides 5^(k+1) - 1. The step starts from 5^(k+1) - 1 and must reach a form that shows the hypothesis. Which line is the correct form?"
+            answer: "5(5^k - 1) + 4"
+            answer_contract: {"kind": "label", "options": [["5(5^k - 1) + 4"], ["5(5^k - 1)"], ["5^k - 1 + 4"], ["5(5^k) + 4"]]}
+            solution_sketch: "Expand each candidate and compare it with the start value. The option 5(5^k - 1) loses the constant, the option 5^k - 1 + 4 loses the factor, and the option 5(5^k) + 4 has the wrong sign; thus the answer is 5(5^k - 1) + 4."
+          - problem: "A student proves by induction that 5^n - 1 is a multiple of 4. The student uses the induction hypothesis in exactly one place. Which statement is the induction hypothesis?"
+            answer: "4 divides 5^k - 1 for one fixed k"
+            answer_contract: {"kind": "label", "options": [["4 divides 5^k - 1 for one fixed k"], ["4 divides 5^(k+1) - 1"], ["4 divides 5^n - 1 for each n"], ["4 divides 5 - 1"]]}
+            solution_sketch: "The hypothesis is the claim for one fixed integer k, and the step derives the next case from it. The option 4 divides 5^(k+1) - 1 is the goal, the option 4 divides 5^n - 1 for each n is the theorem, and the option 4 divides 5 - 1 is the base case; thus the answer is 4 divides 5^k - 1 for one fixed k."
+          - problem: "The induction step reaches the sum 5(5^k - 1) + 4. Which reason shows that 4 divides this sum?"
+            answer: "4 divides each of the two terms"
+            answer_contract: {"kind": "label", "options": [["4 divides each of the two terms"], ["4 divides 5"], ["the sum is even"], ["5^k is prime"]]}
+            solution_sketch: "The hypothesis gives the first term and the second term is 4 itself, so the divisor goes into each term. The option 4 divides 5 is false, the option the sum is even proves too little, and the option 5^k is prime is false; thus the answer is 4 divides each of the two terms."
+      - id: kp3
+        name: "Show the rewrite of the step, a = 4"
+        key_prerequisites: []
+        exemplars:
+          - problem: "In the induction proof that n^3 + 8n is divisible by 3, compute the value of n^3 + 8n at the base case n = 1."
+            answer: "9"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The base case puts 1 in the place of n, which gives 1 + 8. Add the two numbers; thus the base value is 9."
+          - problem: "The induction step for 4^n - 1 writes 4^(k+1) - 1 = 4(4^k - 1) + c. Determine the constant c."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Expand the right side to get 4^(k+1) - 4 + c, and compare it with the left side. The constants give -4 + c = -1; thus c = 3."
+          - problem: "The number 4^3 - 1 is divisible by 3. Find the quotient (4^3 - 1)/3."
+            answer: "21"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Compute the power 4^3 = 64 and subtract 1 to get 63. Divide 63 by 3; thus the quotient is 21."
+          - problem: "How many of the integers from 1 to 15 make n^2 + n divisible by 2?"
+            answer: "15"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The product n(n + 1) has one even factor for each integer n, so each integer makes the value even. Count each integer of the range; thus the answer is 15."
+          - problem: "An induction step shows that 3 divides 4^(k+1) - 1. The step starts from 4^(k+1) - 1 and must reach a form that shows the hypothesis. Which line is the correct form?"
+            answer: "4(4^k - 1) + 3"
+            answer_contract: {"kind": "label", "options": [["4(4^k - 1) + 3"], ["4(4^k - 1)"], ["4^k - 1 + 3"], ["4(4^k) + 3"]]}
+            solution_sketch: "Expand each candidate and compare it with the start value. The option 4(4^k - 1) loses the constant, the option 4^k - 1 + 3 loses the factor, and the option 4(4^k) + 3 has the wrong sign; thus the answer is 4(4^k - 1) + 3."
+          - problem: "A student proves by induction that 4^n - 1 is a multiple of 3. The student uses the induction hypothesis in exactly one place. Which statement is the induction hypothesis?"
+            answer: "3 divides 4^k - 1 for one fixed k"
+            answer_contract: {"kind": "label", "options": [["3 divides 4^k - 1 for one fixed k"], ["3 divides 4^(k+1) - 1"], ["3 divides 4^n - 1 for each n"], ["3 divides 4 - 1"]]}
+            solution_sketch: "The hypothesis is the claim for one fixed integer k, and the step derives the next case from it. The option 3 divides 4^(k+1) - 1 is the goal, the option 3 divides 4^n - 1 for each n is the theorem, and the option 3 divides 4 - 1 is the base case; thus the answer is 3 divides 4^k - 1 for one fixed k."
+      - id: kp4
+        name: "Show the rewrite of the step, a = 9"
+        key_prerequisites: []
+        exemplars:
+          - problem: "In the induction proof that n^3 + 11n is divisible by 3, compute the value of n^3 + 11n at the base case n = 1."
+            answer: "12"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The base case puts 1 in the place of n, which gives 1 + 11. Add the two numbers; thus the base value is 12."
+          - problem: "The induction step for 9^n - 1 writes 9^(k+1) - 1 = 9(9^k - 1) + c. Determine the constant c."
+            answer: "8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Expand the right side to get 9^(k+1) - 9 + c, and compare it with the left side. The constants give -9 + c = -1; thus c = 8."
+          - problem: "The number 9^3 - 1 is divisible by 8. Find the quotient (9^3 - 1)/8."
+            answer: "91"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Compute the power 9^3 = 729 and subtract 1 to get 728. Divide 728 by 8; thus the quotient is 91."
+          - problem: "How many of the integers from 1 to 17 make n^2 + n divisible by 2?"
+            answer: "17"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The product n(n + 1) has one even factor for each integer n, so each integer makes the value even. Count each integer of the range; thus the answer is 17."
+          - problem: "An induction step shows that 8 divides 9^(k+1) - 1. The step starts from 9^(k+1) - 1 and must reach a form that shows the hypothesis. Which line is the correct form?"
+            answer: "9(9^k - 1) + 8"
+            answer_contract: {"kind": "label", "options": [["9(9^k - 1) + 8"], ["9(9^k - 1)"], ["9^k - 1 + 8"], ["9(9^k) + 8"]]}
+            solution_sketch: "Expand each candidate and compare it with the start value. The option 9(9^k - 1) loses the constant, the option 9^k - 1 + 8 loses the factor, and the option 9(9^k) + 8 has the wrong sign; thus the answer is 9(9^k - 1) + 8."
+          - problem: "A student proves by induction that 9^n - 1 is a multiple of 8. The student uses the induction hypothesis in exactly one place. Which statement is the induction hypothesis?"
+            answer: "8 divides 9^k - 1 for one fixed k"
+            answer_contract: {"kind": "label", "options": [["8 divides 9^k - 1 for one fixed k"], ["8 divides 9^(k+1) - 1"], ["8 divides 9^n - 1 for each n"], ["8 divides 9 - 1"]]}
+            solution_sketch: "The hypothesis is the claim for one fixed integer k, and the step derives the next case from it. The option 8 divides 9^(k+1) - 1 is the goal, the option 8 divides 9^n - 1 for each n is the theorem, and the option 8 divides 9 - 1 is the base case; thus the answer is 8 divides 9^k - 1 for one fixed k."
+      - id: kp5
+        name: "Justify the parity of the value (defect 11)"
+        key_prerequisites: []
+        exemplars:
+          - problem: "In the induction proof that n^3 + 14n is divisible by 3, compute the value of n^3 + 14n at the base case n = 1."
+            answer: "15"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The base case puts 1 in the place of n, which gives 1 + 14. Add the two numbers; thus the base value is 15."
+          - problem: "The induction step for 6^n - 1 writes 6^(k+1) - 1 = 6(6^k - 1) + c. Determine the constant c."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Expand the right side to get 6^(k+1) - 6 + c, and compare it with the left side. The constants give -6 + c = -1; thus c = 5."
+          - problem: "An integer n makes 6^n - 1 a multiple of 5. State the parity of 6^n - 1 for each such n."
+            answer: "odd"
+            solution_sketch: "The power 6^n is even for each positive integer n, because 6 is even. Subtract 1 from an even number; thus the parity is odd."
+          - problem: "The number 6^3 - 1 is divisible by 5. Find the quotient (6^3 - 1)/5."
+            answer: "43"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Compute the power 6^3 = 216 and subtract 1 to get 215. Divide 215 by 5; thus the quotient is 43."
+          - problem: "How many of the integers from 1 to 19 make n^2 + n divisible by 2?"
+            answer: "19"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The product n(n + 1) has one even factor for each integer n, so each integer makes the value even. Count each integer of the range; thus the answer is 19."
+          - problem: "Let S(n) = n^2 + n. Evaluate S(k+1) - S(k) at k = 8."
+            answer: "18"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Expand S(k+1) - S(k) = (k+1)^2 + (k+1) - k^2 - k, which is 2k + 2. Put 8 in the place of k; thus the value is 18."
+          - problem: "An induction proof that 5 divides 6^n - 1 starts at n = 2. State the value of 6^2 - 1."
+            answer: "35"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Compute the power 6^2 = 36 with one multiplication. Subtract 1 from 36; thus the start value is 35."
