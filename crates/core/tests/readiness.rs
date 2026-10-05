@@ -116,19 +116,21 @@ fn two_exemplars_neither_practice_nor_assess() {
     assert_eq!(pair.decidable_exemplars, 2);
     assert_eq!(pair.practice_items, 2);
     assert!(!pair.practicable && !pair.assessable);
-    assert_eq!(
-        pair.lesson_blockers(),
-        [Blocker::Practicable, Blocker::Assessable]
-    );
-    assert!(!pair.serves_lesson() && !pair.serves_review());
+    assert_eq!(pair.blockers(), [Blocker::Practicable, Blocker::Assessable]);
+    // Note 103 b: a short pool and a missing held-out item never stop a lesson
+    // on a knowledge point with decidable exemplars. The review still needs the
+    // practice pool.
+    assert!(pair.lesson_blockers().is_empty());
+    assert!(pair.serves_lesson() && !pair.serves_review());
 
     // One approved template lifts the practice count to three; the held-out
-    // item still needs a third decidable EXEMPLAR, so the lesson stays blocked.
+    // item still needs a third decidable EXEMPLAR, so assessment stays unmet.
     let stocked = index.resolve(&stocked(1));
     let pair = stocked.get("pair/kp1").expect("the fixture names it");
     assert!(pair.practicable && !pair.assessable);
     assert_eq!(pair.practice_items, 3);
-    assert_eq!(pair.lesson_blockers(), [Blocker::Assessable]);
+    assert_eq!(pair.blockers(), [Blocker::Assessable]);
+    assert!(pair.lesson_blockers().is_empty());
     assert!(pair.serves_review());
 }
 
@@ -232,9 +234,13 @@ fn the_gate_answers_the_selector_and_ignores_a_key_it_does_not_hold() {
     let index = ReadinessIndex::build(&tree());
     let set = index.resolve(&stocked(0));
     assert!(set.lesson_blockers("add", "kp1").is_empty());
+    // Note 103 b: the thin pool of `pair` blocks no lesson.
+    assert!(set.lesson_blockers("pair", "kp1").is_empty());
+    // A missing teach page does.
+    let untaught = index.resolve(&EmptyContent);
     assert_eq!(
-        set.lesson_blockers("pair", "kp1"),
-        [Blocker::Practicable, Blocker::Assessable]
+        untaught.lesson_blockers("pair", "kp1"),
+        [Blocker::Teachable]
     );
     assert!(set.topic_practicable("add"));
     assert!(!set.topic_practicable("pair"));
@@ -251,9 +257,11 @@ fn the_report_counts_the_course_the_topics_and_the_blockers() {
     let course = report.course("c").expect("the fixture names one course");
     assert_eq!(course.topics, 4);
     assert_eq!(course.knowledge_points, 4);
-    assert_eq!(course.ready, 1);
-    assert_eq!(course.blocked, 3);
-    assert_eq!(report.totals(), (1, 3));
+    // Every point has its teach page, and note 103 b lets the thin pools of
+    // `pair`, `mixed` and `bar-graph` serve the lesson from their exemplars.
+    assert_eq!(course.ready, 4);
+    assert_eq!(course.blocked, 0);
+    assert_eq!(report.totals(), (4, 0));
     let histogram = report.histogram();
     assert_eq!(histogram.get(&Blocker::Practicable), Some(&3));
     assert_eq!(histogram.get(&Blocker::Assessable), Some(&2));
@@ -265,8 +273,8 @@ fn the_report_counts_the_course_the_topics_and_the_blockers() {
         .find(|topic| topic.topic_id == "pair")
         .expect("the fixture names it");
     assert_eq!(topic.course_id, "c");
-    assert_eq!(topic.ready, 0);
-    assert_eq!(topic.blocked, 1);
+    assert_eq!(topic.ready, 1);
+    assert_eq!(topic.blocked, 0);
     assert_eq!(
         topic.blocker_list(),
         [Blocker::Practicable, Blocker::Assessable]
@@ -278,6 +286,11 @@ fn the_report_counts_the_course_the_topics_and_the_blockers() {
             .courses
             .is_empty()
     );
+    // A store with no teach page blocks every point on the Teachable rule.
+    let empty = index.resolve(&EmptyContent);
+    let bare = ReadinessReport::build(&index, &empty, Some("c"));
+    assert_eq!(bare.totals(), (0, 4));
+    assert_eq!(bare.histogram().get(&Blocker::Teachable), Some(&4));
     assert_eq!(index.course_of("add"), "c");
     assert_eq!(index.course_of("ghost"), "");
 }
@@ -340,9 +353,10 @@ fn a_zero_exemplar_knowledge_point_completes_with_its_teach_page() {
 
 #[test]
 fn the_topic_serves_lesson_when_any_point_serves() {
-    // A topic whose start point has two decidable items (too thin to serve) but a
-    // later all-none point: the plan serves the topic (note 84 b) because one point
-    // serves the lesson.
+    // A topic whose start point has no teach page (blocked) but a later all-none
+    // point: the plan serves the topic (note 84 b) because one point serves the
+    // lesson. Since note 103 b the teach page is the only lesson blocker of a
+    // point with decidable exemplars.
     let mut mixed_topic = plain_topic("thin", &[]);
     mixed_topic.knowledge_points = vec![
         kp_with(
@@ -359,12 +373,15 @@ fn the_topic_serves_lesson_when_any_point_serves() {
     ];
     let index = ReadinessIndex::build(&graph(vec![mixed_topic]));
     let mut content = stocked(0);
-    for key in ["thin/kp1", "thin/kp2"] {
-        content.insert(key, KIND_TEACH, 1);
-        content.insert(key, KIND_HINT_LADDER, 1);
-    }
+    content.insert("thin/kp1", KIND_HINT_LADDER, 1);
+    content.insert("thin/kp2", KIND_TEACH, 1);
+    content.insert("thin/kp2", KIND_HINT_LADDER, 1);
     let set = index.resolve(&content);
     // `thin/kp1` is blocked; `thin/kp2` (all-none) serves under the 84 b rule.
+    assert_eq!(
+        set.get("thin/kp1").unwrap().lesson_blockers(),
+        [Blocker::Teachable]
+    );
     // A topic the set does not name serves as it did before the rule.
     assert!(!set.get("thin/kp1").unwrap().serves_lesson());
     assert!(set.get("thin/kp2").unwrap().serves_lesson());

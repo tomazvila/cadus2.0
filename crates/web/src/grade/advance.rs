@@ -61,9 +61,12 @@ impl Advance {
 /// close explicitly, because their pass rule is order-sensitive over the whole
 /// question set, so every non-lesson attempt is [`STATUS_CONTINUE`].
 ///
-/// An UNGRADED attempt advances nothing (D-F2). It is not in the knowledge-point
-/// sequence, it closes no lesson, and it earns no XP, because the checker gave no
-/// verdict to count. The learner still takes the next problem.
+/// An UNGRADED attempt is never evidence (D-F2): it stays out of the
+/// knowledge-point sequence, because the checker gave no verdict to count. The
+/// one exception is the teach-only knowledge point of note 84 b, which has no
+/// decidable item at all: there the unassisted self-check answer completes the
+/// point (see [`self_check_completion`]), and at the last point the lesson
+/// closes with its standing XP. Otherwise the learner takes the next problem.
 pub(super) fn advance(
     graph: &Curriculum,
     cfg: &Config,

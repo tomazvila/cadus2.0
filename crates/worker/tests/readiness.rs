@@ -86,7 +86,9 @@ async fn an_empty_content_store_blocks_every_knowledge_point_on_the_teach_page()
 }
 
 /// The report counts the approved documents by kind, and one approved teach
-/// page clears the `teachable` blocker of its knowledge point alone.
+/// page clears the `teachable` blocker of its knowledge point alone. That point
+/// has decidable exemplars, so its short pool blocks no lesson (note 103 b) and
+/// it is the one ready point.
 #[tokio::test]
 async fn one_approved_teach_page_clears_one_teachable_blocker() {
     TestDb::with(|db| async move {
@@ -117,13 +119,15 @@ async fn one_approved_teach_page_clears_one_teachable_blocker() {
             .unwrap();
         assert_eq!(run.approved_documents.get("teach"), Some(&1));
 
-        let blocked = run.report.totals().1;
+        let (ready, blocked) = run.report.totals();
+        assert_eq!(ready, 1);
+        // Every other point still lacks its teach page.
         let histogram = run.report.histogram();
-        assert_eq!(histogram.get(&Blocker::Teachable), Some(&(blocked - 1)));
+        assert_eq!(histogram.get(&Blocker::Teachable), Some(&blocked));
 
         let json = render_readiness_json(&run);
-        assert_eq!(json["histogram"]["teachable"], blocked - 1);
-        assert_eq!(json["ready"], 0);
+        assert_eq!(json["histogram"]["teachable"], blocked);
+        assert_eq!(json["ready"], 1);
         assert_eq!(json["approved_documents"]["teach"], 1);
         assert!(!json["contracts"].as_array().unwrap().is_empty());
     })

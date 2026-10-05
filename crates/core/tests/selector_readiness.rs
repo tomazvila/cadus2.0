@@ -1,7 +1,9 @@
 //! The eligibility rule of D-F5 inside `compose_session`.
 //!
 //! A lesson is served only when its knowledge point is teachable, practicable
-//! and assessable. A review, a quiz question and a drill need `practicable`.
+//! and assessable, where a knowledge point with decidable exemplars counts as
+//! practicable and assessable for the lesson (note 103 b). A review, a quiz
+//! question and a drill need `practicable`.
 //! Every task the rule stops stands in `SessionPlan::blocked` with its reasons.
 
 #![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
@@ -49,7 +51,9 @@ fn thin_kp(id: &str) -> KnowledgePoint {
     point
 }
 
-/// `rich` teaches, practices and assesses. `thin` does none of the three.
+/// `rich` teaches, practices and assesses. `thin` has a short practice pool and
+/// no held-out item: it serves a lesson from its exemplars (note 103 b) and no
+/// review.
 fn tree() -> Curriculum {
     common::selector::graph_of(
         vec![
@@ -113,20 +117,15 @@ fn a_lesson_with_no_teach_page_leaves_the_plan_and_names_its_blockers() {
     let set = set_of(&graph, &content);
     let plan = compose(&graph, &states, Some(&set), &cfg());
 
-    let topics = served_topics(&plan);
-    assert!(topics.is_empty(), "no lesson serves: {topics:?}");
+    // `rich` has no teach page and leaves the plan; `thin` has its page and
+    // serves from its two exemplars (note 103 b).
+    assert_eq!(served_topics(&plan), ["thin"]);
     let blocked: Vec<(&str, Vec<Blocker>)> = plan
         .blocked
         .iter()
         .map(|held| (held.topic.as_str(), held.blockers.clone()))
         .collect();
-    assert_eq!(
-        blocked,
-        [
-            ("rich", vec![Blocker::Teachable]),
-            ("thin", vec![Blocker::Practicable, Blocker::Assessable]),
-        ]
-    );
+    assert_eq!(blocked, [("rich", vec![Blocker::Teachable])]);
     assert!(
         plan.blocked
             .iter()
@@ -141,9 +140,10 @@ fn the_plan_takes_the_next_ready_lesson() {
     let states: BTreeMap<String, TopicState> = BTreeMap::new();
     let set = set_of(&graph, &stocked());
     let plan = compose(&graph, &states, Some(&set), &cfg());
-    assert_eq!(served_topics(&plan), ["rich"]);
-    assert_eq!(plan.blocked.len(), 1);
-    assert_eq!(plan.blocked[0].topic, "thin");
+    // Both points have a teach page; the thin pool of `thin` blocks no lesson
+    // (note 103 b), so the plan takes both lessons in order.
+    assert_eq!(served_topics(&plan), ["rich", "thin"]);
+    assert!(plan.blocked.is_empty());
 }
 
 #[test]

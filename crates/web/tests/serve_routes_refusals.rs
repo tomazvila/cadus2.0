@@ -58,20 +58,21 @@ async fn a_knowledge_point_with_no_exemplar_and_no_pool_row_is_409_pool_unavaila
     .await;
 }
 
-/// A progress row that names a knowledge point the arena no longer holds takes
-/// the same refusal: the pool is empty and there is no author to fall back to.
+/// A progress row that names a knowledge point the arena no longer holds serves
+/// nothing at that point, so the kp-skip (notes 84 b, 101 b) serves the first
+/// point of the topic that authors, and the route persists that choice in the
+/// row (note 93 a). The learner is never stuck on a stale point.
 #[tokio::test]
-async fn a_progress_row_at_an_unknown_knowledge_point_is_409_pool_unavailable() {
+async fn a_progress_row_at_an_unknown_knowledge_point_serves_the_first_authoring_point() {
     TestDb::with(|db| async move {
         let user = learner_at_kp(&db, "unknown-kp@example.com", "kp9").await;
         let app = app(&db);
 
-        assert_refused(
-            &serve_task(&app, user, LESSON).await,
-            StatusCode::CONFLICT,
-            "pool_unavailable",
-        );
-        assert!(!stored_state(&db, user).await.served.contains_key(LESSON));
+        let served = serve_ok(&app, user, LESSON).await;
+        assert_eq!(served["kp"], "kp1", "{served}");
+        let scratch = stored_state(&db, user).await;
+        assert!(scratch.served.contains_key(LESSON));
+        assert_eq!(scratch.tasks[LESSON].current_kp.as_deref(), Some("kp1"));
     })
     .await;
 }

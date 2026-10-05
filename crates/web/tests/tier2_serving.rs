@@ -11,9 +11,11 @@
 //! 2. A knowledge point whose answer contract is `none` — or whose authored
 //!    answer leaves the decidable grammar (V2) — serves its worked solution
 //!    PLAINLY (the exemplar's `solution_sketch` is in the serve payload), and
-//!    EVERY attempt on it grades UNGRADED: no correct/wrong verdict, no
-//!    mastery credit, and a deterministic wrong can never fire — not even for
-//!    the exact authored answer.
+//!    EVERY attempt on it grades UNGRADED: no correct/wrong verdict, and a
+//!    deterministic wrong can never fire — not even for the exact authored
+//!    answer. The unassisted self-check answer completes the teach-only point
+//!    (the note-84 b completion arm), so a one-point lesson closes with the
+//!    standing lesson XP.
 //!
 //! The header of `serve_routes.rs` gives the requirements and the rules.
 
@@ -119,8 +121,9 @@ async fn a_topic_with_no_template_serves_practice_from_its_exemplars() {
 
 /// The `kind: none` exemplar serves as a SELF-CHECK: the worked solution is in
 /// the serve payload plainly, and every attempt — a wrong one, the exact
-/// authored one — grades UNGRADED. No correct/wrong verdict, no mastery
-/// credit, and no deterministic wrong can ever fire.
+/// authored one — grades UNGRADED. No correct/wrong verdict and no
+/// deterministic wrong can ever fire; the self-check answer completes the
+/// teach-only point and closes the one-point lesson (note 84 b completion arm).
 #[tokio::test]
 async fn a_contract_none_kp_shows_the_worked_solution_and_never_a_verdict() {
     TestDb::with(|db| async move {
@@ -152,7 +155,7 @@ async fn a_contract_none_kp_shows_the_worked_solution_and_never_a_verdict() {
         assert_eq!(sources, vec!["exemplar".to_string()]);
 
         // A WRONG answer takes no deterministic wrong: the attempt is
-        // UNGRADED, the reply claims no correctness, and no XP moves.
+        // UNGRADED and the reply claims no correctness.
         let problem_id = served["problem_id"].as_str().unwrap().to_string();
         let graded = common::answer_task(
             &router,
@@ -168,20 +171,33 @@ async fn a_contract_none_kp_shows_the_worked_solution_and_never_a_verdict() {
             body.get("correct").is_none(),
             "the self-check reply claimed a correctness: {body}"
         );
-        assert!(body.get("xp").is_none(), "the self-check attempt paid XP");
         assert!(
             body.get("re_solve").is_none(),
             "an ungraded attempt is not a miss, so no re-solve text leaves"
         );
+        // The completion arm of note 84 b: the unassisted self-check answer
+        // completes the teach-only point, the lesson closes at its last point,
+        // and the close pays the standing lesson XP. The attempt itself stays
+        // UNGRADED.
+        assert_eq!(body["task_status"], "task_passed", "{body}");
+        assert!(
+            body["xp"].as_f64().is_some_and(|xp| xp > 0.0),
+            "the lesson close paid no XP: {body}"
+        );
+        let closes = events_of_type(&db, user, "lesson_result").await;
+        assert_eq!(closes.len(), 1);
+        assert_eq!(closes[0]["passed"], true);
 
         // The EXACT authored answer takes no verdict either: the `none`
-        // contract refuses before the checker reads the pair, so even a
-        // self-confirmed answer earns no mastery credit.
-        let again = serve_ok(&router, user, SETS).await;
+        // contract refuses before the checker reads the pair. A second learner
+        // answers it, because the first one's lesson is closed.
+        let other = seed_learner(&db, "tier2-none-exact@example.com").await;
+        seed_open_session(&db, other).await;
+        let again = serve_ok(&router, other, SETS).await;
         let problem_id = again["problem_id"].as_str().unwrap().to_string();
         let graded = common::answer_task(
             &router,
-            user,
+            other,
             SETS,
             json!({"problem_id": problem_id, "answer": "no"}),
         )
@@ -190,14 +206,14 @@ async fn a_contract_none_kp_shows_the_worked_solution_and_never_a_verdict() {
         assert_eq!(graded.1["outcome"], "ungraded", "{}", graded.1);
         assert!(graded.1.get("correct").is_none());
 
-        // The log holds the two attempts as UNGRADED: no verdict event, so the
-        // fold ignores both attempts and no mastery credit moves.
-        let attempts = events_of_type(&db, user, "attempt").await;
-        assert_eq!(attempts.len(), 2);
-        for attempt in &attempts {
+        // The log holds each attempt as UNGRADED: no verdict event.
+        for learner in [user, other] {
+            let attempts = events_of_type(&db, learner, "attempt").await;
+            assert_eq!(attempts.len(), 1);
             assert!(
-                attempt["outcome"]["ungraded"]["reason"].is_string(),
-                "the attempt was not recorded as ungraded: {attempt}"
+                attempts[0]["outcome"]["ungraded"]["reason"].is_string(),
+                "the attempt was not recorded as ungraded: {}",
+                attempts[0]
             );
         }
     })
@@ -244,7 +260,10 @@ async fn a_kp_with_no_decidable_authored_answer_still_serves_its_exemplar() {
         assert_eq!(graded.0, StatusCode::OK, "{}", graded.1);
         assert_eq!(graded.1["outcome"], "ungraded", "{}", graded.1);
         assert!(graded.1.get("correct").is_none());
-        assert!(graded.1.get("xp").is_none());
+        // The point holds no decidable exemplar, so the self-check answer
+        // completes it and the one-point lesson closes (note 84 b completion
+        // arm).
+        assert_eq!(graded.1["task_status"], "task_passed", "{}", graded.1);
     })
     .await;
 }

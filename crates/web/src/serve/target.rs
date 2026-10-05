@@ -374,24 +374,33 @@ mod advance_84b_tests {
 
     #[test]
     fn a_topic_with_an_all_none_point_serves_past_it() {
-        // kp1: two decidable exemplars only (too thin to serve a lesson); kp2: the
-        // explicit none contract (a self-check point, no verdict). The serve reads
-        // kp1 first, the skip picks kp2, and the route WRITES it into the row.
+        // kp1: one decidable exemplar and no approved teach page (blocked); kp2:
+        // the explicit none contract (a self-check point, no verdict). The serve
+        // reads kp1 first, the skip picks kp2, and the route WRITES it into the row.
+        // A short pool alone no longer blocks kp1 (note 103 b), so the missing teach
+        // page is what blocks it here.
         let mut prose = topic_doc("mixed84", &[("kp1", &["1"]), ("kp2", &["2"])]);
         let kps = prose.get_mut("knowledge_points").unwrap();
         kps[1] = serde_json::json!({"id": "kp2", "name": "kp2", "exemplars": [
             {"problem": "Explain the sign.", "answer": "the worked solution",
              "answer_contract": {"kind": "none"}}]});
         let graph = arena(&[prose]);
-        let ready = readiness(&graph);
+        let mut content = MapContent::default();
+        content.insert("mixed84/kp1".to_owned(), KIND_HINT_LADDER, 1);
+        content.insert("mixed84/kp2".to_owned(), KIND_TEACH, 1);
+        content.insert("mixed84/kp2".to_owned(), KIND_HINT_LADDER, 1);
+        let ready = ReadinessIndex::build(&graph).resolve(&content);
         let lesson = task(TaskType::Lesson, Some("mixed84"));
         let row = TaskProgress::default();
         // The serve reads kp1 first: a fresh row starts the lesson at the first point.
         let found = target_of(&lesson, 0, &row, &graph).unwrap();
         assert_eq!(found.kp, "kp1");
-        // The readiness side of 84 b: kp1 (thin) stays blocked; kp2 (all `none`)
-        // serves through the teach-only rule, so the topic is servable.
-        assert!(!ReadinessGate::lesson_blockers(&ready, "mixed84", "kp1").is_empty());
+        // The readiness side of 84 b: kp1 (untaught) stays blocked; kp2 (all
+        // `none`) serves through the teach-only rule, so the topic is servable.
+        assert_eq!(
+            ReadinessGate::lesson_blockers(&ready, "mixed84", "kp1"),
+            [cadus_core::readiness::Blocker::Teachable]
+        );
         assert!(ReadinessGate::lesson_blockers(&ready, "mixed84", "kp2").is_empty());
         assert!(ready.topic_serves_lesson("mixed84"));
     }

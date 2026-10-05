@@ -113,8 +113,9 @@ fn answer_of(text: &str) -> String {
 }
 
 /// With an empty `content_store` the plan serves no lesson, and the `blocked`
-/// list names the topic and the three conditions the content does not meet.
-/// Audit findings (h) and (j) together.
+/// list names the topic and the missing teach page. Audit findings (h) and (j)
+/// together; since note 103 b the short pool of a point with decidable
+/// exemplars is no lesson blocker, so the teach page is the one named.
 #[tokio::test]
 async fn an_empty_content_store_blocks_every_lesson_and_the_plan_says_why() {
     TestDb::with(|db| async move {
@@ -129,18 +130,16 @@ async fn an_empty_content_store_blocks_every_lesson_and_the_plan_says_why() {
         assert_eq!(blocked[0]["topic"], "addition");
         assert_eq!(blocked[0]["task_type"], "lesson");
         assert_eq!(blocked[0]["kp"], "kp1");
-        assert_eq!(
-            blockers(&blocked[0]),
-            ["teachable", "practicable", "assessable"]
-        );
+        assert_eq!(blockers(&blocked[0]), ["teachable"]);
     })
     .await;
 }
 
-/// An approved teach page alone does not open the lesson: three practice items
-/// and one held-out item are owed too, and that fixture authors two exemplars.
+/// An approved teach page opens the lesson of a point with two decidable
+/// exemplars: the short practice pool and the missing held-out item are pool
+/// rules that never stop the lesson (note 103 b).
 #[tokio::test]
-async fn a_teach_page_alone_leaves_the_practice_and_assessment_blockers() {
+async fn a_teach_page_opens_the_lesson_of_a_short_pool() {
     TestDb::with(|db| async move {
         let user = seed_learner(&db, "readiness-teach@example.com").await;
         let app = gated_app(&db);
@@ -148,15 +147,22 @@ async fn a_teach_page_alone_leaves_the_practice_and_assessment_blockers() {
         seed_teach_page(&db, &common::drill_curriculum(), KEY, "digest-teach").await;
 
         let plan = plan_body(&app, user).await;
-        let first = plan["blocked"]
-            .as_array()
-            .unwrap()
-            .iter()
-            .find(|entry| entry["topic"] == "addition")
-            .unwrap()
-            .clone();
-        assert_eq!(blockers(&first), ["practicable", "assessable"]);
-        assert_eq!(plan["tasks"].as_array().unwrap().len(), 0, "{plan}");
+        assert!(
+            !plan["blocked"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .any(|entry| entry["topic"] == "addition"),
+            "{plan}"
+        );
+        assert!(
+            plan["tasks"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .any(|task| task["topic"]["id"] == "addition" && task["task_type"] == "lesson"),
+            "{plan}"
+        );
     })
     .await;
 }
