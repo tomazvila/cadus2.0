@@ -15,14 +15,15 @@ fn drafts() -> Vec<serde_json::Value> {
 #[test]
 fn all_pending_templates_exhaust_the_real_gate_and_avoid_authored_and_sibling_problems() {
     let rows = drafts();
-    assert_eq!(rows.len(), 78);
+    assert_eq!(rows.len(), 75);
     let report = run_rows(&rows, "target/unit08/regression");
     // Reviewed domains: 75 ordinary twelve-case rows, one 24-case rate row,
     // eleven fresh same-base equations, and three eligible natural-exponential cases.
+    // Three ordinary rows were retired on 2026-10-05 (75 rows, 938 - 36 instances).
     assert_report_with_instance_overrides(
         &report,
-        78,
-        938,
+        75,
+        902,
         &[
             ("percent-growth-decay-factors/kp3", 24),
             ("exponential-equations-same-base/kp3", 11),
@@ -92,11 +93,11 @@ fn wrong_samples_small_spaces_and_wrong_contracts_are_rejected() {
 fn label_templates_reject_wrong_samples_and_hidden_answer_bindings() {
     let row = drafts()
         .into_iter()
-        .find(|r| r["kp_id"] == "exponential-functions/kp1")
+        .find(|r| r["kp_id"] == "graphs-of-exponential-functions/kp3")
         .unwrap();
-    let spec = spec("exponential-functions/kp1");
+    let spec = spec("graphs-of-exponential-functions/kp3");
     let mut wrong = row["arguments"].clone();
-    wrong["samples"][0]["expected"] = json!("decay");
+    wrong["samples"][0]["expected"] = json!("increasing");
     assert_eq!(
         verify_kind(Kind::Template, &spec, &wrong, &[])
             .unwrap_err()
@@ -104,7 +105,7 @@ fn label_templates_reject_wrong_samples_and_hidden_answer_bindings() {
         "sample-agreement"
     );
     let mut hidden = row["arguments"].clone();
-    hidden["statement"] = json!("Does $f(x)=3\\cdot({a})^x$ model growth or decay?");
+    hidden["statement"] = json!("Is the graph of $y=4\\cdot({a})^x$ increasing or decreasing?");
     assert_eq!(
         verify_kind(Kind::Template, &spec, &hidden, &[])
             .unwrap_err()
@@ -134,4 +135,22 @@ fn inequality_templates_reject_wrong_samples_and_unsafe_variables() {
         sample["params"]["x"] = json!("x or y");
     }
     assert!(verify_kind(Kind::Template, &spec, &unsafe_variable, &[]).is_err());
+}
+
+#[test]
+fn the_retired_label_templates_left_the_set_and_keep_their_gate_refusal() {
+    let pending = drafts()
+        .iter()
+        .map(|row| row["kp_id"].as_str().unwrap().to_owned())
+        .collect();
+    let directory = "docs/content-foundations/functions-exponentials/templates";
+    let sources: Vec<String> = common::retired::keys("functions-exponentials")
+        .iter()
+        .map(|key| format!("{directory}/{}.json", key.replace('/', "__")))
+        .collect();
+    let sources: Vec<&str> = sources.iter().map(String::as_str).collect();
+    assert_eq!(
+        common::retired::assert_retired("functions-exponentials", &sources, &pending),
+        3
+    );
 }

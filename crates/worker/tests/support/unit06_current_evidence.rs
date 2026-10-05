@@ -94,14 +94,16 @@ pub fn wrong_answer(answer: &str, contract: &AnswerContract) -> String {
 pub fn current_receipt(root: &Path) -> Value {
     let bytes = fs::read(root.join(CANDIDATES)).unwrap();
     let rows: Vec<Value> = serde_json::from_slice(&bytes).unwrap();
-    assert_eq!(rows.len(), 78);
+    // 78 reviewed candidates; pythagorean-converse/kp1 and kp2 were retired on
+    // 2026-10-05 (docs/reports/unit06-correction-retired-pending-templates.json).
+    assert_eq!(rows.len(), 76);
     let (curriculum, findings) = curriculum::load_curriculum(&root.join("curriculum")).unwrap();
     assert!(findings.is_empty(), "{findings:?}");
     let keys: Vec<String> = rows
         .iter()
         .map(|r| r["kp_id"].as_str().unwrap().to_owned())
         .collect();
-    assert_eq!(keys.iter().collect::<BTreeSet<_>>().len(), 78);
+    assert_eq!(keys.iter().collect::<BTreeSet<_>>().len(), 76);
     let specs = cli::select(&curriculum, &keys).unwrap();
     let mut authored = BTreeSet::new();
     for spec in &specs {

@@ -47,3 +47,42 @@ pub fn sample_labels(row: &Value) -> BTreeSet<&str> {
         .map(|sample| sample["expected"].as_str().unwrap())
         .collect()
 }
+
+/// The symbolic-repair files whose rows the 2026-10-05 retirement removed.
+pub const RETIRED_SOURCES: &[&str] = &[
+    "docs/content-foundations/symbolic-repair/shard9-templates.json",
+    "docs/content-foundations/symbolic-repair/shard10-template.json",
+    "docs/content-foundations/symbolic-repair/shard11-template.json",
+];
+
+/// Every knowledge point that still has a pending symbolic-repair template.
+pub fn pending_keys() -> BTreeSet<String> {
+    let directory = repo_root().join("docs/content-foundations/symbolic-repair");
+    let mut keys = BTreeSet::new();
+    for entry in std::fs::read_dir(directory).unwrap() {
+        let path = entry.unwrap().path();
+        let value: Value = serde_json::from_str(&std::fs::read_to_string(&path).unwrap()).unwrap();
+        for row in value["templates"].as_array().unwrap() {
+            keys.insert(row["kp_id"].as_str().unwrap().to_owned());
+        }
+    }
+    keys
+}
+
+/// The shard at `path` holds no pending row, its retired rows are exactly
+/// `keys`, and every retired symbolic-repair row keeps its recorded verdict.
+pub fn assert_shard_retired(path: &str, keys: &[&str]) {
+    assert!(rows(&[path]).is_empty(), "{path} still holds pending rows");
+    let retired: BTreeSet<_> = super::retired::report("symbolic-repair")
+        .into_iter()
+        .filter(|row| row["source"] == path)
+        .map(|row| row["kp_key"].as_str().unwrap().to_owned())
+        .collect();
+    assert_eq!(
+        retired,
+        keys.iter()
+            .map(|key| (*key).to_owned())
+            .collect::<BTreeSet<_>>()
+    );
+    super::retired::assert_retired("symbolic-repair", RETIRED_SOURCES, &pending_keys());
+}

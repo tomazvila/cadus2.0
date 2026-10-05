@@ -1,32 +1,25 @@
-//! Current-gate and semantic regression for three-way linear classification.
+//! Three-way linear classification shard eleven: retired after the rewrite.
+//!
+//! The shard keyed every equation by one of three labels, "one solution" among
+//! them. Commits c8a84e32 and 88a9a73c key a one-solution item by the solution
+//! itself, so the classifier template left the pending set.
 #![allow(clippy::unwrap_used, clippy::panic)]
 mod common;
-use common::symbolic::{curriculum_source, rows, sample_labels, verify_rows};
+use common::symbolic::{assert_shard_retired, curriculum_source};
 
 const KEYS: &[&str] = &["equations-special-cases/kp3"];
-const PATHS: &[&str] = &["docs/content-foundations/symbolic-repair/shard11-template.json"];
+const PATH: &str = "docs/content-foundations/symbolic-repair/shard11-template.json";
 
 #[test]
-fn three_way_classifier_passes_current_production_gate() {
-    verify_rows(&rows(PATHS), KEYS);
+fn the_three_way_classifier_is_retired_with_its_recorded_gate_verdict() {
+    assert_shard_retired(PATH, KEYS);
 }
+
 #[test]
-fn three_way_classifier_covers_all_outcomes_and_signed_coefficients() {
-    let row = rows(PATHS).remove(0);
-    let body = &row["body"];
-    let labels = sample_labels(&row);
-    assert_eq!(
-        labels.into_iter().collect::<Vec<_>>(),
-        ["all real numbers", "no solution", "one solution"]
-    );
-    assert!(
-        body["samples"]
-            .as_array()
-            .unwrap()
-            .iter()
-            .any(|sample| sample["params"]["a"].as_i64().unwrap() < 0)
-    );
+fn the_rewritten_knowledge_point_keys_one_solution_by_its_value() {
     let source = curriculum_source("curriculum/foundations/03-expressions-equations.yaml");
-    assert!(source.contains("Exactly one real value works"));
-    assert!(source.contains("false comparison"));
+    assert!(source.contains("Solve $7x + 6 = 4x + 6$."));
+    assert!(source.contains("Solve $4(2x + 3) = 8x + 15$."));
+    assert!(source.contains("Solve $9(x + 2) = 9x + 18$."));
+    assert!(!source.contains("\"one solution\""));
 }

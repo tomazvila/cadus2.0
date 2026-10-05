@@ -1,5 +1,6 @@
 //! Exhaustive source-only worker-gate evidence for the five U07 residuals.
 #![allow(clippy::unwrap_used, clippy::panic)]
+mod common;
 use std::{collections::BTreeSet, fs, path::PathBuf};
 
 use cadus_core::{
@@ -45,7 +46,8 @@ fn exhaustive_production_gate_and_negative_controls() {
         }
     }
     let mut evidence = Vec::new();
-    assert_eq!(rows().len(), 5);
+    // Five reviewed residuals; polynomial-basics/kp2 was retired on 2026-10-05.
+    assert_eq!(rows().len(), 4);
     for row in rows() {
         let key = row["kp_id"].as_str().unwrap();
         assert_eq!(row["status"], "pending");
@@ -71,6 +73,22 @@ fn exhaustive_production_gate_and_negative_controls() {
         serde_json::to_string_pretty(&evidence).unwrap() + "\n",
     )
     .unwrap();
+}
+
+#[test]
+fn the_retired_residual_left_the_set_and_keeps_its_gate_refusal() {
+    let pending = rows()
+        .iter()
+        .map(|row| row["kp_id"].as_str().unwrap().to_owned())
+        .collect();
+    assert_eq!(
+        common::retired::assert_retired(
+            "unit07-complement",
+            &["docs/content-foundations/unit07-complement/templates.json"],
+            &pending,
+        ),
+        1
+    );
 }
 
 fn reviewed_domain(key: &str) -> Value {

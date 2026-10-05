@@ -1,5 +1,6 @@
 //! Separate source-bound historical replay and current native Unit06 regression.
 #![allow(clippy::unwrap_used, clippy::panic)]
+mod common;
 use std::{
     collections::{BTreeMap, BTreeSet},
     fs,
@@ -272,14 +273,18 @@ fn every_historical_candidate_is_recorded_pending_or_explicitly_superseded() {
 }
 
 /// Preserve true mirrors and independently source-bound pre-existing draft lineages.
+///
+/// `retired` names the original keys that left the pending set; every other
+/// key of the original 78-KP inventory must still be present.
 fn validate_current_lineages(
     drafts: &[Value],
     candidates: &[Value],
     manifest: &Value,
+    retired: &BTreeSet<String>,
 ) -> Result<(), String> {
     let index = |rows: &[Value]| -> Result<BTreeMap<String, Value>, String> {
-        if rows.len() != 78 {
-            return Err("expected78lineage rows".to_owned());
+        if rows.len() + retired.len() != 78 {
+            return Err("expected78lineage rows less the retired ones".to_owned());
         }
         let mut found = BTreeMap::new();
         for row in rows {
@@ -297,9 +302,12 @@ fn validate_current_lineages(
     let candidates = index(candidates)?;
     let expected: BTreeSet<String> =
         serde_json::from_value(manifest["all_kp_ids"].clone()).map_err(|e| e.to_string())?;
-    if expected.len() != 78
-        || drafts.keys().cloned().collect::<BTreeSet<_>>() != expected
-        || candidates.keys().cloned().collect::<BTreeSet<_>>() != expected
+    if expected.len() != 78 || !retired.is_subset(&expected) {
+        return Err("retired keys outside the original78KP inventory".to_owned());
+    }
+    let current: BTreeSet<String> = expected.difference(retired).cloned().collect();
+    if drafts.keys().cloned().collect::<BTreeSet<_>>() != current
+        || candidates.keys().cloned().collect::<BTreeSet<_>>() != current
     {
         return Err("lineage key sets differ from original78KP inventory".to_owned());
     }
@@ -310,7 +318,7 @@ fn validate_current_lineages(
         return Err("expected21named distinct lineages".to_owned());
     }
     let mut mirrors = 0;
-    for key in &expected {
+    for key in &current {
         let draft = &drafts[key];
         let candidate = &candidates[key];
         if let Some(binding) = distinct.get(key) {
@@ -328,8 +336,12 @@ fn validate_current_lineages(
             mirrors += 1;
         }
     }
-    if mirrors != 57 {
-        return Err("expected57true mirrors".to_owned());
+    let retired_mirrors = retired
+        .iter()
+        .filter(|key| !distinct.contains_key(*key))
+        .count();
+    if mirrors + retired_mirrors != 57 {
+        return Err("expected57true mirrors less the retired ones".to_owned());
     }
     Ok(())
 }
@@ -357,10 +369,15 @@ fn assert_current_lineages() {
     };
     // Replay the original two lineages from exact archived source bytes as well
     // as checking their current descendants; Git and the original checkout are unnecessary.
-    validate_current_lineages(&archived("drafts"), &archived("fixture"), &manifest).unwrap();
+    let none = BTreeSet::new();
+    validate_current_lineages(&archived("drafts"), &archived("fixture"), &manifest, &none).unwrap();
     let drafts = read("drafts.json");
     let candidates = read("candidates.json");
-    validate_current_lineages(&drafts, &candidates, &manifest).unwrap();
+    let retired = common::retired::keys("unit06-correction");
+    validate_current_lineages(&drafts, &candidates, &manifest, &retired).unwrap();
+    // A retired key may not stay on one side, and the current rows may not
+    // claim the full inventory while a retirement stands.
+    assert!(validate_current_lineages(&drafts, &candidates, &manifest, &none).is_err());
     // Mutate each named distinct lineage independently on both sides. A relaxed
     // exception must never allow a changed row to inherit its original binding.
     for key in manifest["distinct_lineages"].as_object().unwrap().keys() {
@@ -371,7 +388,7 @@ fn assert_current_lineages() {
             .unwrap();
         row["arguments"]["statement"] = json!("altered draft lineage negative control");
         assert!(
-            validate_current_lineages(&changed_drafts, &candidates, &manifest).is_err(),
+            validate_current_lineages(&changed_drafts, &candidates, &manifest, &retired).is_err(),
             "{key}: changed draft accepted"
         );
         let mut changed_candidates = candidates.clone();
@@ -381,7 +398,7 @@ fn assert_current_lineages() {
             .unwrap();
         row["arguments"]["statement"] = json!("altered fixture lineage negative control");
         assert!(
-            validate_current_lineages(&drafts, &changed_candidates, &manifest).is_err(),
+            validate_current_lineages(&drafts, &changed_candidates, &manifest, &retired).is_err(),
             "{key}: changed fixture accepted"
         );
     }
@@ -397,7 +414,24 @@ fn assert_current_lineages() {
     let mut changed_mirror = drafts.clone();
     changed_mirror[mirror_index]["arguments"]["statement"] =
         json!("altered true mirror negative control");
-    assert!(validate_current_lineages(&changed_mirror, &candidates, &manifest).is_err());
+    assert!(validate_current_lineages(&changed_mirror, &candidates, &manifest, &retired).is_err());
+}
+
+#[test]
+fn the_retired_candidates_left_both_current_sets_and_keep_their_gate_refusal() {
+    let pending: BTreeSet<String> = read("drafts.json")
+        .iter()
+        .chain(&read("candidates.json"))
+        .map(|row| row["kp_id"].as_str().unwrap().to_owned())
+        .collect();
+    assert_eq!(
+        common::retired::assert_retired(
+            "unit06-correction",
+            &["docs/content-foundations/unit06-correction/drafts.json"],
+            &pending,
+        ),
+        2
+    );
 }
 
 #[test]

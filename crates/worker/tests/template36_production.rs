@@ -1,5 +1,6 @@
 //! Exhaustive production verification and whole-corpus collision inventory.
 #![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
+mod common;
 use cadus_core::{
     curriculum::load_curriculum,
     learner::problem_text_hash,
@@ -88,12 +89,25 @@ fn exact_36_keys_pass_worker_gate_exhaustively() {
         .iter()
         .map(|v| v.as_str().unwrap().to_owned())
         .collect();
-    assert_eq!(rows.len(), 36);
-    assert_eq!(
-        rows.iter()
-            .map(|r| r["kp_id"].as_str().unwrap().to_owned())
-            .collect::<BTreeSet<_>>(),
-        expected
+    // The reviewed scope holds 36 keys. Three templates were retired on
+    // 2026-10-05 after their knowledge points were rewritten; the retirement
+    // report keeps them, and they still get their recorded gate refusal.
+    let retired = common::retired::keys("template36");
+    assert_eq!((expected.len(), retired.len()), (36, 3));
+    assert!(retired.is_subset(&expected));
+    assert_eq!(rows.len(), 33);
+    let pending: BTreeSet<_> = rows
+        .iter()
+        .map(|r| r["kp_id"].as_str().unwrap().to_owned())
+        .collect();
+    assert_eq!(pending, &expected - &retired);
+    common::retired::assert_retired(
+        "template36",
+        &[
+            "docs/content-foundations/template36/inequalities.json",
+            "docs/content-foundations/template36/graphs.json",
+        ],
+        &pending,
     );
     let mut counts = BTreeMap::new();
     let mut errors = Vec::new();

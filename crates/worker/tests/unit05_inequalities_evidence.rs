@@ -35,7 +35,9 @@ fn current_worker_gate_evidence_and_explicit_residuals() {
             }
         }
     }
-    assert_eq!(evidence.len(), 27);
+    // 19 templates and 8 blockers at review; two templates were retired on
+    // 2026-10-05 and are checked by `unit05_inequalities`.
+    assert_eq!(evidence.len(), 25);
     if let Some(path) = std::env::var_os("CADUS_U05_GATE_EVIDENCE") {
         fs::write(
             path,

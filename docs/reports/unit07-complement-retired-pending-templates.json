@@ -1,0 +1,336 @@
+[
+  {
+    "kp_key": "polynomial-basics/kp2",
+    "source": "docs/content-foundations/unit07-complement/templates.json",
+    "previous_digest": "sha256:37ebff5cee9e5e9ab531a7c825d1d47620bbee46527df0fde42b93c0be7de2a9",
+    "current_gate": {
+      "code": "sample-eval",
+      "message": "answer_expr failed on sample {'a': 0, 'b': 0, 'c': 0, 'd': -9, 'f': 'monomial', 'g': 'binomial', 'h': 'trinomial'}: answer_expr reads \"f\", which is bound to the text \"monomial\" and not to a number",
+      "result": "refused"
+    },
+    "refusal_code": "sample-eval",
+    "refusal": "answer_expr failed on sample {'a': 0, 'b': 0, 'c': 0, 'd': -9, 'f': 'monomial', 'g': 'binomial', 'h': 'trinomial'}: answer_expr reads \"f\", which is bound to the text \"monomial\" and not to a number",
+    "retirement_reason": "the knowledge point's rewritten exemplars changed its answer contract, and the current gate refuses the template",
+    "superseded_by": [
+      "62ca5934"
+    ],
+    "body": {
+      "kp_id": "polynomial-basics/kp2",
+      "kind": "template",
+      "status": "pending",
+      "arguments": {
+        "statement": "Classify ${a}x^4+({b})x^3+({c})x+({d})$ after omitting zero terms. Choose {f}, {g}, or {h}.",
+        "answer_expr": "signcase(a/2+b/3+c/5-d/9-2,[f,g,h])",
+        "solution_sketch": "The four power groups have coefficients ${a}$, ${b}$, ${c}$, and ${d}$. Each nonzero coefficient contributes one term; a zero coefficient contributes none. Distinct powers cannot be combined.",
+        "hints": [
+          "Count nonzero power groups, including the constant when it is nonzero."
+        ],
+        "params": {
+          "a": {
+            "kind": "choice",
+            "values": [
+              0,
+              2
+            ]
+          },
+          "b": {
+            "kind": "choice",
+            "values": [
+              0,
+              3
+            ]
+          },
+          "c": {
+            "kind": "choice",
+            "values": [
+              0,
+              5
+            ]
+          },
+          "d": {
+            "kind": "choice",
+            "values": [
+              0,
+              -9
+            ]
+          },
+          "f": {
+            "kind": "choice",
+            "values": [
+              "monomial"
+            ]
+          },
+          "g": {
+            "kind": "choice",
+            "values": [
+              "binomial"
+            ]
+          },
+          "h": {
+            "kind": "choice",
+            "values": [
+              "trinomial"
+            ]
+          }
+        },
+        "constraints": [
+          {
+            "op": "ge",
+            "left": {
+              "add": [
+                {
+                  "mul": [
+                    {
+                      "lit": "1/2"
+                    },
+                    "a"
+                  ]
+                },
+                {
+                  "mul": [
+                    {
+                      "lit": "1/3"
+                    },
+                    "b"
+                  ]
+                },
+                {
+                  "mul": [
+                    {
+                      "lit": "1/5"
+                    },
+                    "c"
+                  ]
+                },
+                {
+                  "mul": [
+                    {
+                      "lit": "-1/9"
+                    },
+                    "d"
+                  ]
+                }
+              ]
+            },
+            "right": {
+              "lit": 1
+            }
+          },
+          {
+            "op": "le",
+            "left": {
+              "add": [
+                {
+                  "mul": [
+                    {
+                      "lit": "1/2"
+                    },
+                    "a"
+                  ]
+                },
+                {
+                  "mul": [
+                    {
+                      "lit": "1/3"
+                    },
+                    "b"
+                  ]
+                },
+                {
+                  "mul": [
+                    {
+                      "lit": "1/5"
+                    },
+                    "c"
+                  ]
+                },
+                {
+                  "mul": [
+                    {
+                      "lit": "-1/9"
+                    },
+                    "d"
+                  ]
+                }
+              ]
+            },
+            "right": {
+              "lit": 3
+            }
+          }
+        ],
+        "samples": [
+          {
+            "params": {
+              "a": 0,
+              "b": 0,
+              "c": 0,
+              "d": -9,
+              "f": "monomial",
+              "g": "binomial",
+              "h": "trinomial"
+            },
+            "expected": "monomial"
+          },
+          {
+            "params": {
+              "a": 0,
+              "b": 0,
+              "c": 5,
+              "d": 0,
+              "f": "monomial",
+              "g": "binomial",
+              "h": "trinomial"
+            },
+            "expected": "monomial"
+          },
+          {
+            "params": {
+              "a": 0,
+              "b": 0,
+              "c": 5,
+              "d": -9,
+              "f": "monomial",
+              "g": "binomial",
+              "h": "trinomial"
+            },
+            "expected": "binomial"
+          },
+          {
+            "params": {
+              "a": 0,
+              "b": 3,
+              "c": 0,
+              "d": 0,
+              "f": "monomial",
+              "g": "binomial",
+              "h": "trinomial"
+            },
+            "expected": "monomial"
+          },
+          {
+            "params": {
+              "a": 0,
+              "b": 3,
+              "c": 0,
+              "d": -9,
+              "f": "monomial",
+              "g": "binomial",
+              "h": "trinomial"
+            },
+            "expected": "binomial"
+          },
+          {
+            "params": {
+              "a": 0,
+              "b": 3,
+              "c": 5,
+              "d": 0,
+              "f": "monomial",
+              "g": "binomial",
+              "h": "trinomial"
+            },
+            "expected": "binomial"
+          },
+          {
+            "params": {
+              "a": 0,
+              "b": 3,
+              "c": 5,
+              "d": -9,
+              "f": "monomial",
+              "g": "binomial",
+              "h": "trinomial"
+            },
+            "expected": "trinomial"
+          },
+          {
+            "params": {
+              "a": 2,
+              "b": 0,
+              "c": 0,
+              "d": 0,
+              "f": "monomial",
+              "g": "binomial",
+              "h": "trinomial"
+            },
+            "expected": "monomial"
+          },
+          {
+            "params": {
+              "a": 2,
+              "b": 0,
+              "c": 0,
+              "d": -9,
+              "f": "monomial",
+              "g": "binomial",
+              "h": "trinomial"
+            },
+            "expected": "binomial"
+          },
+          {
+            "params": {
+              "a": 2,
+              "b": 0,
+              "c": 5,
+              "d": 0,
+              "f": "monomial",
+              "g": "binomial",
+              "h": "trinomial"
+            },
+            "expected": "binomial"
+          },
+          {
+            "params": {
+              "a": 2,
+              "b": 0,
+              "c": 5,
+              "d": -9,
+              "f": "monomial",
+              "g": "binomial",
+              "h": "trinomial"
+            },
+            "expected": "trinomial"
+          },
+          {
+            "params": {
+              "a": 2,
+              "b": 3,
+              "c": 0,
+              "d": 0,
+              "f": "monomial",
+              "g": "binomial",
+              "h": "trinomial"
+            },
+            "expected": "binomial"
+          },
+          {
+            "params": {
+              "a": 2,
+              "b": 3,
+              "c": 0,
+              "d": -9,
+              "f": "monomial",
+              "g": "binomial",
+              "h": "trinomial"
+            },
+            "expected": "trinomial"
+          },
+          {
+            "params": {
+              "a": 2,
+              "b": 3,
+              "c": 5,
+              "d": 0,
+              "f": "monomial",
+              "g": "binomial",
+              "h": "trinomial"
+            },
+            "expected": "trinomial"
+          }
+        ],
+        "distractors": []
+      }
+    }
+  }
+]
