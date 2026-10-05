@@ -168,7 +168,10 @@ fn self_check_completion(
     let Some(slug) = attempt.kp.as_ref() else {
         return Advance::carry_on();
     };
-    let Some(at) = points.iter().position(|point| point.id.as_str() == slug.as_str()) else {
+    let Some(at) = points
+        .iter()
+        .position(|point| point.id.as_str() == slug.as_str())
+    else {
         return Advance::carry_on();
     };
     // The teach-only check: the CURRENT point serves no verdict item at all,
@@ -428,14 +431,23 @@ mod tests {
         let mut prior_body = attempt.clone();
         prior_body.attempt_id = "s_2026-09-24i-lesson-characteristic-polynomial-0".to_owned();
         prior_body.ts = attempt.ts;
-        let prior = vec![
-            EventRow {
-                seq: 1,
-                event: Event::Attempt(prior_body),
-            },
-        ];
-        let moved = advance(&graph, &cfg, attempt.ts, &attempt, &prior, &SessionView::default(), Some(&ReadinessSet::default()));
-        assert_eq!(moved.status, STATUS_KP_ADVANCE, "two correct kp1 answers pass 2consec");
+        let prior = vec![EventRow {
+            seq: 1,
+            event: Event::Attempt(prior_body),
+        }];
+        let moved = advance(
+            &graph,
+            &cfg,
+            attempt.ts,
+            &attempt,
+            &prior,
+            &SessionView::default(),
+            Some(&ReadinessSet::default()),
+        );
+        assert_eq!(
+            moved.status, STATUS_KP_ADVANCE,
+            "two correct kp1 answers pass 2consec"
+        );
         assert_eq!(moved.next_kp.as_deref(), Some("kp2"));
     }
 
@@ -473,8 +485,7 @@ mod tests {
             Some(&ready),
         );
         assert_eq!(
-            moved.status,
-            STATUS_TASK_PASSED,
+            moved.status, STATUS_TASK_PASSED,
             "the teach-only last point completes the lesson on its self-check answer"
         );
     }

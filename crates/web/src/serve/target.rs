@@ -320,8 +320,8 @@ mod tests {
 mod advance_84b_tests {
     use super::fixture::{arena, task, topic_doc};
     use super::*;
-    use cadus_core::readiness::{ContentIndex, MapContent, ReadinessGate, ReadinessIndex};
     use cadus_core::instruction::{KIND_HINT_LADDER, KIND_TEACH};
+    use cadus_core::readiness::{ContentIndex, MapContent, ReadinessGate, ReadinessIndex};
 
     /// The readiness set of `graph` with a teach page and a hint ladder on every
     /// serving key.
@@ -341,15 +341,18 @@ mod advance_84b_tests {
     fn a_verdict_capable_topic_serves_each_point_and_the_row_advances() {
         // Each knowledge point carries 4 decidable exemplars (3 practice + 1 held
         // out): every point serves a lesson.
-        let trio = topic_doc("trio", &[
-            ("kp1", &["1", "11", "21", "31"]),
-            ("kp2", &["2", "12", "22", "32"]),
-            ("kp3", &["3", "13", "23", "33"]),
-        ]);
+        let trio = topic_doc(
+            "trio",
+            &[
+                ("kp1", &["1", "11", "21", "31"]),
+                ("kp2", &["2", "12", "22", "32"]),
+                ("kp3", &["3", "13", "23", "33"]),
+            ],
+        );
         let graph = arena(&[trio]);
         let ready = readiness(&graph);
         let mut lesson = task(TaskType::Lesson, Some("trio"));
-        lesson.start_at_kp = Some("kp2".to_string());   // the pinned start of the session
+        lesson.start_at_kp = Some("kp2".to_string()); // the pinned start of the session
         // The progress row wins over start_at_kp: the serve continues where the
         // session stands (the standing fixture test pins the same order).
         let row = TaskProgress {
@@ -363,9 +366,8 @@ mod advance_84b_tests {
         // route writes after the skip carries `current_kp = Some(chosen)`.
         let chosen = target_of(&lesson, 0, &TaskProgress::default(), &graph).unwrap();
         let mut row = TaskProgress::default();
-        row.current_kp = Some(chosen.kp.clone());          // the 93 a write, spelled
+        row.current_kp = Some(chosen.kp.clone()); // the 93 a write, spelled
         assert_eq!(row.current_kp.as_deref(), Some(chosen.kp.as_str()));
-
     }
 
     #[test]

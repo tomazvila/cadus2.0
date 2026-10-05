@@ -306,8 +306,10 @@ fn an_all_none_knowledge_point_serves_self_checks_and_completes() {
     let mut prose = plain_topic("prose", &[]);
     prose.knowledge_points = vec![kp_with(
         "kp1",
-        vec![none_exemplar("why the sign flips", "the worked solution"),
-             none_exemplar("why the terms cancel", "the worked solution")],
+        vec![
+            none_exemplar("why the sign flips", "the worked solution"),
+            none_exemplar("why the terms cancel", "the worked solution"),
+        ],
     )];
     let index = ReadinessIndex::build(&graph(vec![prose]));
     let mut content = stocked(0);
@@ -343,11 +345,17 @@ fn the_topic_serves_lesson_when_any_point_serves() {
     // serves the lesson.
     let mut mixed_topic = plain_topic("thin", &[]);
     mixed_topic.knowledge_points = vec![
-        kp_with("kp1", vec![exemplar("5 + 5", "10", true), exemplar("6 + 6", "12", true)]),
-        kp_with("kp2", vec![
-            none_exemplar("why", "the worked solution"),
-            none_exemplar("why again", "the worked solution"),
-        ]),
+        kp_with(
+            "kp1",
+            vec![exemplar("5 + 5", "10", true), exemplar("6 + 6", "12", true)],
+        ),
+        kp_with(
+            "kp2",
+            vec![
+                none_exemplar("why", "the worked solution"),
+                none_exemplar("why again", "the worked solution"),
+            ],
+        ),
     ];
     let index = ReadinessIndex::build(&graph(vec![mixed_topic]));
     let mut content = stocked(0);
@@ -373,11 +381,16 @@ fn the_topic_serves_lesson_when_any_point_serves() {
 fn authors_practice_names_the_points_that_draw_authored_rows() {
     let mut topic = plain_topic("auth", &[]);
     topic.knowledge_points = vec![
-        kp_with("kp1", Vec::new()),                    // zero exemplars: teach page only
-        kp_with("kp2", vec![exemplar("5 + 5", "10", true),
-                            exemplar("6 + 6", "12", true),
-                            exemplar("7 + 7", "14", true),
-                            exemplar("8 + 8", "16", true)]),  // graded practice
+        kp_with("kp1", Vec::new()), // zero exemplars: teach page only
+        kp_with(
+            "kp2",
+            vec![
+                exemplar("5 + 5", "10", true),
+                exemplar("6 + 6", "12", true),
+                exemplar("7 + 7", "14", true),
+                exemplar("8 + 8", "16", true),
+            ],
+        ), // graded practice
     ];
     let index = ReadinessIndex::build(&graph(vec![topic]));
     let mut content = stocked(0);
@@ -393,8 +406,10 @@ fn authors_practice_names_the_points_that_draw_authored_rows() {
     let mut prose = plain_topic("prose", &[]);
     prose.knowledge_points = vec![kp_with(
         "kp1",
-        vec![none_exemplar("why", "the worked solution"),
-             none_exemplar("why again", "the worked solution")],
+        vec![
+            none_exemplar("why", "the worked solution"),
+            none_exemplar("why again", "the worked solution"),
+        ],
     )];
     let index = ReadinessIndex::build(&graph(vec![prose]));
     let mut content = stocked(0);

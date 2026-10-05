@@ -113,13 +113,12 @@ async fn a_miss_enqueues_and_serves_the_next_task() {
             .unwrap()
             .expect("the job row");
         assert_eq!(row.status, "pending");
-        let payload: Option<serde_json::Value> = sqlx::query_scalar(
-            "SELECT payload FROM equivalence_jobs WHERE id = $1",
-        )
-        .bind(id)
-        .fetch_one(&mut *tx)
-        .await
-        .unwrap();
+        let payload: Option<serde_json::Value> =
+            sqlx::query_scalar("SELECT payload FROM equivalence_jobs WHERE id = $1")
+                .bind(id)
+                .fetch_one(&mut *tx)
+                .await
+                .unwrap();
         let payload: cadus_store::equivalence::JobPayload =
             serde_json::from_value(payload.unwrap()).unwrap();
         assert_eq!(payload.given_answer, OWNER_ANSWER);

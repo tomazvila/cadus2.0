@@ -300,7 +300,10 @@ mod tests {
         });
         let graph = arena(&[mixed]);
         let rows = exemplar_rows(&graph, &target("mixed101", "kp1"));
-        assert!(!rows.is_empty(), "the decidable exemplar authors a graded row");
+        assert!(
+            !rows.is_empty(),
+            "the decidable exemplar authors a graded row"
+        );
         assert!(
             rows.iter().all(|row| row
                 .expected_answer
@@ -328,10 +331,11 @@ mod tests {
         let graph = arena(&[all_none]);
         let rows = exemplar_rows(&graph, &target("prose101", "kp1"));
         assert_eq!(rows.len(), 2, "each all-none exemplar is a self-check row");
-        assert!(rows.iter().all(|row| row
-            .expected_answer
-            .answer_contract
-            .as_ref()
-            .is_some_and(|contract| matches!(contract, AnswerContract::None))));
+        assert!(rows.iter().all(|row| {
+            row.expected_answer
+                .answer_contract
+                .as_ref()
+                .is_some_and(|contract| matches!(contract, AnswerContract::None))
+        }));
     }
 }

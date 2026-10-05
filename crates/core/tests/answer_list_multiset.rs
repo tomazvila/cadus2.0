@@ -5,8 +5,8 @@
 
 #![allow(clippy::unwrap_used, clippy::panic)]
 
-use cadus_core::answer::contract::{AnswerContract, check_contract};
 use cadus_core::answer::Outcome;
+use cadus_core::answer::contract::{AnswerContract, check_contract};
 
 fn exact(expected: &str, learner: &str) -> bool {
     match check_contract(expected, learner, AnswerContract::Exact) {

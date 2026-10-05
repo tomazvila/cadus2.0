@@ -15,8 +15,8 @@
 
 use serde::{Deserialize, Serialize};
 use serde_json::Value as Json;
-use sqlx::types::chrono::{DateTime, Utc};
 use sqlx::types::Uuid;
+use sqlx::types::chrono::{DateTime, Utc};
 use sqlx::{PgExecutor, Postgres, Transaction};
 
 use crate::StoreError;
@@ -369,7 +369,10 @@ mod tests {
     /// decimal comma, so the worker's write and the web lookup meet.
     #[test]
     fn the_cache_key_normalizes_the_answer() {
-        assert_eq!(super::cache_key("  Not a  solution, 5 "), "not a solution. 5");
+        assert_eq!(
+            super::cache_key("  Not a  solution, 5 "),
+            "not a solution. 5"
+        );
         assert_eq!(super::cache_key("\u{2212}3"), "-3");
     }
 

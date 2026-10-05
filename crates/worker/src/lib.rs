@@ -40,7 +40,10 @@ pub use authoring::job::{
 };
 pub use authoring::prompt::{AuthoringSpec, KINDS, Kind as AuthoringKind};
 pub use diagnosis::{DiagnosisJob, Outcome as DiagnosisOutcome, Report as DiagnosisReport};
-pub use equivalence::{DAILY_CAP as EQUIVALENCE_DAILY_CAP, EquivalenceJob, Outcome as EquivalenceOutcome, Report as EquivalenceReport};
+pub use equivalence::{
+    DAILY_CAP as EQUIVALENCE_DAILY_CAP, EquivalenceJob, Outcome as EquivalenceOutcome,
+    Report as EquivalenceReport,
+};
 pub use model_log::{
     CallRecord, PURPOSE_AUTHORING, PURPOSE_DIAGNOSIS, PURPOSE_EQUIVALENCE, PURPOSE_PROOF_GRADING,
 };

@@ -269,14 +269,14 @@ fn trim_task(task: &Task, graph: &Curriculum, scratch: &WebState) -> Value {
 #[cfg(test)]
 mod gap_tests {
     use super::*;
-    use std::collections::BTreeMap;
-    use cadus_core::config::Config;
     use crate::state::Content;
+    use cadus_core::config::Config;
     use cadus_core::curriculum::{Curriculum, load_curriculum};
     use cadus_core::event::{TaskType, Timestamp, TopicStatus};
     use cadus_core::learner::TopicState;
     use cadus_core::selector::{is_course_complete, known_set};
     use cadus_store::state::SessionView;
+    use std::collections::BTreeMap;
 
     /// The learner of the 2026-09-24 staging walk at its stop: 37 passed
     /// linear-algebra topics, the mastery floor of foundations credited, every
@@ -331,9 +331,18 @@ mod gap_tests {
                 "foundations" => TopicStatus::Floor,
                 _ => continue,
             };
-            topics.insert(id.to_owned(), TopicState { status, ..TopicState::default() });
+            topics.insert(
+                id.to_owned(),
+                TopicState {
+                    status,
+                    ..TopicState::default()
+                },
+            );
         }
-        LearnerModel { topics, ..LearnerModel::default() }
+        LearnerModel {
+            topics,
+            ..LearnerModel::default()
+        }
     }
 
     fn content_of(graph: Curriculum) -> Content {
@@ -346,21 +355,29 @@ mod gap_tests {
         let (curriculum, _findings) = load_curriculum(&root).expect("the tree loads");
         let model = walker_model(&curriculum);
         assert!(
-            !is_course_complete(&model.topics, &curriculum, &Config::default(),
-                Some("linear-algebra"), None),
+            !is_course_complete(
+                &model.topics,
+                &curriculum,
+                &Config::default(),
+                Some("linear-algebra"),
+                None
+            ),
             "topics stand unpassed"
         );
         // The enrolled course's frontier is empty (the wall): no unpassed
         // linear-algebra topic has every prerequisite known.
-        let frontier = cadus_core::selector::frontier(
-            &curriculum,
-            &known_set(&model.topics, &curriculum),
-        );
-        let in_course = frontier.indices().filter(|idx| {
-            curriculum.course_of(*idx) == "linear-algebra"
-        }).count();
+        let frontier =
+            cadus_core::selector::frontier(&curriculum, &known_set(&model.topics, &curriculum));
+        let in_course = frontier
+            .indices()
+            .filter(|idx| curriculum.course_of(*idx) == "linear-algebra")
+            .count();
         assert_eq!(in_course, 0, "the frontier of the enrolled course is empty");
-        let (serving, chain) = gap_context(&content_of(curriculum.clone()), &model, Some("linear-algebra"));
+        let (serving, chain) = gap_context(
+            &content_of(curriculum.clone()),
+            &model,
+            Some("linear-algebra"),
+        );
         let curriculum = &curriculum;
         let tip = serving.expect("the stack descends into a lower course");
         assert_ne!(tip.as_str(), "linear-algebra");
@@ -395,5 +412,4 @@ mod gap_tests {
             "the gap fill serves lessons where the old compose served none"
         );
     }
-
 }

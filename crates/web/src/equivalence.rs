@@ -24,8 +24,8 @@
 //! The cap counts in the worker ([`DAILY_CAP`]), at claim time: the request
 //! tier does no counting queries on its hot path.
 
-use axum::extract::{Path as ApiPath, State};
 use axum::Json;
+use axum::extract::{Path as ApiPath, State};
 use cadus_store::equivalence::{self, JOB_CAPPED, JOB_DONE, JOB_PENDING, Verdict};
 use serde_json::{Value, json};
 use sqlx::types::Uuid;
@@ -92,8 +92,11 @@ pub async fn lookup(
     served: &ServedProblem,
     answer: &str,
 ) -> Result<Option<Cached>, ApiError> {
-    let hit = store(state, equivalence::cache_hit(&mut **tx, &item_digest(served), &cache_key(answer)))
-        .await?;
+    let hit = store(
+        state,
+        equivalence::cache_hit(&mut **tx, &item_digest(served), &cache_key(answer)),
+    )
+    .await?;
     Ok(hit.map(|verdict| {
         if verdict.equivalent {
             Cached::Accepted(verdict)
@@ -134,9 +137,10 @@ pub async fn enqueue(
             .map(|contract| serde_json::to_string(contract).unwrap_or_default()),
         given_answer: answer.to_owned(),
     };
-    let document = serde_json::to_value(&payload)
-        .map_err(|_| ApiError::internal("equivalence payload"))?;
-    let write = equivalence::enqueue(tx, user_id, attempt_id, &document);    match store(state, write).await {
+    let document =
+        serde_json::to_value(&payload).map_err(|_| ApiError::internal("equivalence payload"))?;
+    let write = equivalence::enqueue(tx, user_id, attempt_id, &document);
+    match store(state, write).await {
         Ok(id) => Ok(Some(id)),
         // A failed enqueue never stops the grade: the deterministic verdict
         // stands, and the next attempt of the same answer re-enqueues.
@@ -171,8 +175,10 @@ pub fn reply_field(hit: Option<&Cached>, job: Option<Uuid>) -> Value {
 pub fn poll_view(row: &equivalence::JobRow) -> Value {
     let status = match row.status.as_str() {
         JOB_DONE => {
-            let verdict: Option<Verdict> =
-                row.result.as_ref().and_then(|doc| serde_json::from_value(doc.clone()).ok());
+            let verdict: Option<Verdict> = row
+                .result
+                .as_ref()
+                .and_then(|doc| serde_json::from_value(doc.clone()).ok());
             match verdict {
                 Some(verdict) if verdict.equivalent => json!({
                     "status": STATUS_ACCEPTED,
