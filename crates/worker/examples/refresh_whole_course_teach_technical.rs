@@ -97,6 +97,29 @@ fn main() {
             "duplicate template {kp}"
         );
     }
+    // Source templates the current gate refuses after the curated exemplars
+    // were rewritten. They stay out of `inputs/templates.json`; the Teach page
+    // of such a KP is gated against the curated exemplars alone.
+    let retired_path = root.join("docs/reports/whole-course-teach-retired-source-templates.json");
+    let mut retired = BTreeMap::new();
+    for row in serde_json::from_slice::<Value>(&fs::read(&retired_path).expect("retired bytes"))
+        .expect("retired json")
+        .as_array()
+        .expect("retired rows")
+    {
+        let kp = row["kp_key"].as_str().expect("retired kp").to_owned();
+        assert!(
+            !templates.contains_key(&kp),
+            "{kp} is both selected and retired"
+        );
+        let refusal = verify_kind(Kind::Template, &specs[&kp], &row["body"]["arguments"], &[])
+            .expect_err("a retired template is still refused");
+        assert_eq!(refusal.code, row["refusal_code"], "{kp}");
+        assert!(
+            retired.insert(kp.clone(), row.clone()).is_none(),
+            "duplicate retired {kp}"
+        );
+    }
     let mut input_hashes = BTreeMap::new();
     input_hashes.insert("inputs/templates.json".to_owned(), hash(&template_bytes));
     let mut historical_row_sha256 = BTreeMap::new();
@@ -129,13 +152,28 @@ fn main() {
         {
             let kp = draft["kp_id"].as_str().expect("kp");
             let spec = &specs[kp];
-            let template = templates.get(kp).expect("selected template");
-            let template_body = verify_kind(Kind::Template, spec, &template["arguments"], &[])
-                .unwrap_or_else(|e| panic!("{kp}: {e}"));
-            let served = template_instances(&template_body);
+            let (template_digest, served, coverage) = match templates.get(kp) {
+                Some(template) => {
+                    let template_body =
+                        verify_kind(Kind::Template, spec, &template["arguments"], &[])
+                            .unwrap_or_else(|e| panic!("{kp}: {e}"));
+                    (
+                        Value::String(document_digest(kp, Kind::Template, &template_body)),
+                        template_instances(&template_body),
+                        "sampled_template_instances",
+                    )
+                }
+                None => {
+                    assert!(
+                        retired.contains_key(kp),
+                        "{kp}: no selected or retired template"
+                    );
+                    (Value::Null, Vec::new(), "curated_exemplars_only")
+                }
+            };
             let teach_body = verify_kind(Kind::Teach, spec, &draft["arguments"], &served)
                 .unwrap_or_else(|e| panic!("{kp}: {e}"));
-            rows.push(json!({"kp_id":kp,"teach_digest":document_digest(kp, Kind::Teach, &teach_body),"template_digest":document_digest(kp, Kind::Template, &template_body),"collision":"clear","production_gate":"accepted","context_coverage":"sampled_template_instances","ai_review":"pending"}));
+            rows.push(json!({"kp_id":kp,"teach_digest":document_digest(kp, Kind::Teach, &teach_body),"template_digest":template_digest,"collision":"clear","production_gate":"accepted","context_coverage":coverage,"ai_review":"pending"}));
         }
     }
     rows.sort_by(|a, b| a["kp_id"].as_str().cmp(&b["kp_id"].as_str()));

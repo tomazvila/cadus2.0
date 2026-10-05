@@ -113,7 +113,51 @@ fn part_paths(prefix: &str) -> BTreeSet<String> {
         .collect()
 }
 
-type Sources = BTreeMap<String, (String, Vec<cadus_core::instruction::ServedInstance>)>;
+/// The source template of each KP: its digest and served instances, or `None`
+/// with no instances when the template is retired.
+type Sources = BTreeMap<String, (Option<String>, Vec<cadus_core::instruction::ServedInstance>)>;
+
+/// The coverage a Teach page of a KP with a selected source template records.
+const SAMPLED: &str = "sampled_template_instances";
+
+/// The coverage a Teach page records when its source template is retired.
+const CURATED_ONLY: &str = "curated_exemplars_only";
+
+/// The source templates the current gate refuses after the curated exemplars
+/// were rewritten (2026-09-23..10-05). Each is absent from the selected set
+/// and still refused, with the recorded code, by the unchanged template gate.
+fn retired_sources(
+    specs: &BTreeMap<String, AuthoringSpec>,
+    templates: &BTreeMap<String, Value>,
+) -> BTreeSet<String> {
+    let retired =
+        read(root().join("docs/reports/whole-course-teach-retired-source-templates.json"));
+    let retired = retired.as_array().expect("retired rows");
+    assert_eq!(retired.len(), 15);
+    let mut keys = BTreeSet::new();
+    for row in retired {
+        let kp = row["kp_key"].as_str().expect("retired kp");
+        assert!(keys.insert(kp.to_owned()), "duplicate retired {kp}");
+        assert!(
+            !templates.contains_key(kp),
+            "{kp}: a retired template is still selected"
+        );
+        assert_eq!(row["body"]["kp_id"], kp);
+        assert!(
+            row["previous_digest"]
+                .as_str()
+                .unwrap()
+                .starts_with("sha256:"),
+            "{kp}"
+        );
+        assert!(!row["superseded_by"].as_str().unwrap().is_empty(), "{kp}");
+        let refusal = verify_kind(Kind::Template, &specs[kp], &row["body"]["arguments"], &[])
+            .expect_err("a retired template is still refused");
+        assert_eq!(refusal.code, row["refusal_code"], "{kp}");
+        assert_eq!(refusal.message, row["refusal"], "{kp}");
+    }
+    keys
+}
 
 fn manifests(directory: &Path) -> (Value, Value) {
     let manifest = read(directory.join("manifest.json"));
@@ -245,11 +289,17 @@ fn source_evidence(
 ) -> (Sources, BTreeSet<String>) {
     let templates = read(directory.join("inputs/templates.json"));
     let templates = keyed(templates.as_array().expect("templates"), "template");
-    assert_eq!(templates.len(), 809);
+    // 809 Foundations KPs: 794 selected source templates and 15 retired ones.
+    assert_eq!(templates.len(), 794);
+    let retired = retired_sources(specs, &templates);
     let mut sources = BTreeMap::new();
     let mut occupied = BTreeSet::new();
     for (kp, spec) in specs {
         occupied.extend(spec.exemplars.iter().map(|row| normalized(&row.problem)));
+        if retired.contains(kp) {
+            sources.insert(kp.clone(), (None, Vec::new()));
+            continue;
+        }
         let template = &templates[kp];
         assert_eq!(template["kind"], "template", "{kp}");
         assert_eq!(template.as_object().unwrap().len(), 3, "{kp}");
@@ -259,13 +309,13 @@ fn source_evidence(
         occupied.extend(served.iter().map(|row| normalized(&row.problem)));
         sources.insert(
             kp.clone(),
-            (document_digest(kp, Kind::Template, &body), served),
+            (Some(document_digest(kp, Kind::Template, &body)), served),
         );
     }
     (sources, occupied)
 }
 
-fn verify_review(kp: &str, review: &Value) {
+fn verify_review(kp: &str, review: &Value, coverage: &str) {
     assert_eq!(review["kp_id"], kp);
     assert_eq!(review["ai_review"], "pending", "{kp}");
     assert_eq!(review["verification"]["collision"], "clear", "{kp}");
@@ -273,10 +323,7 @@ fn verify_review(kp: &str, review: &Value) {
         review["verification"]["production_gate"], "accepted",
         "{kp}"
     );
-    assert_eq!(
-        review["verification"]["context_coverage"], "sampled_template_instances",
-        "{kp}"
-    );
+    assert_eq!(review["verification"]["context_coverage"], coverage, "{kp}");
     assert!(
         review["historical_review"]["path"]
             .as_str()
@@ -313,9 +360,18 @@ fn verify_pages(
         assert_eq!(draft["kind"], "teach", "{kp}");
         assert_eq!(draft.as_object().unwrap().len(), 3, "{kp}");
         let review = &reviews[kp];
-        verify_review(kp, review);
         let (source_digest, served) = &sources[kp];
-        assert_eq!(review["template_digest"], *source_digest, "{kp}");
+        let coverage = if source_digest.is_some() {
+            SAMPLED
+        } else {
+            CURATED_ONLY
+        };
+        verify_review(kp, review, coverage);
+        assert_eq!(
+            review["template_digest"],
+            source_digest.clone().map_or(Value::Null, Value::String),
+            "{kp}"
+        );
         let body = verify_kind(Kind::Teach, &specs[kp], &draft["arguments"], served)
             .unwrap_or_else(|error| panic!("{kp}: {error}"));
         assert_eq!(

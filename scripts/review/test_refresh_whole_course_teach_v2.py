@@ -99,6 +99,33 @@ class RefreshWholeCourseTeachV2Test(unittest.TestCase):
         self.assertEqual(read_json(sidecar / "reviews/part-01.json")[0]["teach_digest"], "teach-0")
         self.assertEqual(manifest["technical_evidence"]["sha256"], raw(sidecar / "technical-evidence-v2.json"))
 
+    def test_retired_template_row_binds_no_template_digest(self):
+        temp, root, sidecar, evidence, rows, history = self.make_root()
+        self.addCleanup(temp.cleanup)
+        value = read_json(evidence)
+        value["rows"][0]["template_digest"] = None
+        value["rows"][0]["context_coverage"] = "curated_exemplars_only"
+        write_json(evidence, value)
+        refresh.update(root, evidence)
+        review = read_json(sidecar / "reviews/part-01.json")[0]
+        self.assertIsNone(review["template_digest"])
+        self.assertEqual(review["verification"]["context_coverage"], "curated_exemplars_only")
+        self.assertEqual(review["ai_review"], "pending")
+
+    def test_retired_template_row_with_a_digest_refuses(self):
+        temp, root, _, evidence, _, _ = self.make_root()
+        self.addCleanup(temp.cleanup)
+        value = read_json(evidence)
+        value["rows"][0]["context_coverage"] = "curated_exemplars_only"
+        write_json(evidence, value)
+        with self.assertRaisesRegex(refresh.Refused, "technical digests"):
+            refresh.update(root, evidence)
+        value["rows"][0]["context_coverage"] = "sampled_template_instances"
+        value["rows"][0]["template_digest"] = None
+        write_json(evidence, value)
+        with self.assertRaisesRegex(refresh.Refused, "technical digests"):
+            refresh.update(root, evidence)
+
     def test_tampered_archive_refuses_before_any_write(self):
         temp, root, sidecar, evidence, _, _ = self.make_root()
         self.addCleanup(temp.cleanup)

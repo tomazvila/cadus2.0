@@ -73,9 +73,19 @@ def validate_technical_row(key, row):
         raise Refused(f"technical row shape: {key}")
     if row["collision"] != "clear" or row["production_gate"] != "accepted":
         raise Refused(f"technical gate: {key}")
-    if row["context_coverage"] != "sampled_template_instances" or row["ai_review"] != "pending":
+    if row["ai_review"] != "pending":
         raise Refused(f"technical lifecycle: {key}")
-    if not all(isinstance(row[field], str) and row[field] for field in ("teach_digest", "template_digest")):
+    # A KP whose source template was retired (it conflicts with the rewritten
+    # curated exemplars) is gated against those exemplars alone and binds no
+    # template digest.
+    coverage = row["context_coverage"]
+    if coverage == "sampled_template_instances":
+        template_ok = isinstance(row["template_digest"], str) and bool(row["template_digest"])
+    elif coverage == "curated_exemplars_only":
+        template_ok = row["template_digest"] is None
+    else:
+        raise Refused(f"technical lifecycle: {key}")
+    if not (isinstance(row["teach_digest"], str) and row["teach_digest"] and template_ok):
         raise Refused(f"technical digests: {key}")
 
 
