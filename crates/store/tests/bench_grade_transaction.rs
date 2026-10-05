@@ -134,6 +134,7 @@ fn job_payload(index: usize) -> Json {
         answer_kind: "numeric".to_string(),
         given_answer: (index + 4).to_string(),
         work: None,
+        answer_property: None,
     })
     .unwrap()
 }

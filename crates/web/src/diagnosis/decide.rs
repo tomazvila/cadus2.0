@@ -139,6 +139,11 @@ pub(crate) async fn decide(
         answer_kind: served.answer_kind.clone().unwrap_or_default(),
         given_answer: miss.answer.to_string(),
         work: miss.work.map(str::to_string),
+        answer_property: served
+            .expected
+            .answer_contract
+            .as_ref()
+            .and_then(cadus_core::answer::AnswerContract::property_description),
     };
     // The payload is strings and one integer, so the write cannot refuse.
     let document = json_of(&payload);

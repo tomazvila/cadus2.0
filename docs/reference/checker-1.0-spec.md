@@ -928,6 +928,74 @@ degree sign, so no 1.0 verdict on such a pair is comparable. The productions pin
 verdicts in their own test files: `answer_rational_exponent.rs`, `answer_remainder.rs`,
 `answer_unit.rs`, `answer_set.rs`, and `answer_coordinates.rs`.
 
+### 8.5 The `property` contract (example-generation items)
+
+An example-generation item asks for any object with a property: "Give a number with exactly
+three factors", "Give a fraction strictly between 2/5 and 1/2", "Find a counterexample to:
+n² + n + 41 is prime for every whole number n". Many answers are correct, so no stored key can
+grade it. The `property` contract tests the learner's object against a named predicate:
+
+```json
+{"kind": "property", "check": "divisor_count", "args": {"n": 3}}
+```
+The authored `answer` is ONE valid example. The loader requires it to have the property (the
+`answer_contract` lint and `check_keys` rung 1), and the worked solution shows it after the
+attempt. It is never a key the learner must match. Code: `crates/core/src/answer/contract/property.rs`.
+
+| `check` | Required args | Correct when the learner's value is |
+|---|---|---|
+| `divisor_count` | `n` (1..=64) | a positive integer with exactly `n` positive divisors (value at most 10^12) |
+| `prime` | none | a prime |
+| `composite` | none | an integer greater than 1 that is not prime |
+| `multiple_of` | `k` (nonzero) | an integer multiple of `k` |
+| `divisor_of` | `k` (nonzero) | a positive integer that divides `k` |
+| `coprime_to` | `k` (nonzero) | an integer with gcd 1 with `k` |
+| `integer_in_range` | `min`, `max`, or both | an integer inside the bounds |
+| `between` | `low`, `high` (exact numbers, `low < high`) | a rational strictly between them |
+| `prime_counterexample` | `expr` (polynomial of degree 1..=4 in `var`); optional `var` (one lowercase letter, default `n`) and `min` | an integer `var >= min` (at most 10^6 in size) at which `expr` is not prime |
+
+Every integer check (all rows except `between` and `prime_counterexample`) also takes the
+optional filters `min`, `max` (inclusive), `not_multiple_of` (size at least 2) and `coprime_to`
+(nonzero). An argument is a YAML integer or a quoted string (`"2/5"`, `"0.4"`,
+`"n^2 + n + 41"`). An unknown check, an argument the check does not take, or a bad argument value
+fails the typed parse, so the curriculum loader reports the item with the named reason
+(`property divisor_count needs `n` from 1 through 64`, ...).
+
+Verdict rules. All arithmetic is exact (D6):
+
+- The learner text goes through the ordinary grammar (§8.1), so `9/20`, `0.45`, `45%`,
+  `\frac{9}{20}` and `x = 0.45` are one value. A leading `name =` label is ignored.
+- Text outside the grammar keeps its refusal and grades UNGRADED with format guidance, as
+  for every other contract.
+- A readable value of the wrong type (a fraction for an integer check, an expression, a
+  list) is a decided miss.
+- Primality is Miller-Rabin with the first thirteen prime bases. These bases prove the result
+  for every number below 3.3 × 10^24. A larger number, a `divisor_count` value above 10^12,
+  or a counterexample variable larger than 10^6 in size gives no verdict (`a number too
+  large for this property check`). The learner sees "Give a smaller example".
+
+Background model checks. A decided property verdict is final. The answer route never sends
+a property item to the Amendment K equivalence check, for a decided miss or for an
+unreadable answer. The question "is this equivalent to the key?" is the wrong question for
+an example, and the predicate already decided the learner's object exactly. The diagnosis
+job gets `answer_property`, which describes the property in plain words. The prompt then
+calls the stored answer one example of many and states the property, so the model does not
+compare the learner's answer with the example. The equivalence prompt gives the same
+description if a property job is ever enqueued.
+
+Self-checks. A `+1` mutant of an example can also have the property: 41 is a counterexample
+just as 40 is. So `check_keys` and `content_check mutants` (rule `property-near-miss`) use a
+different list. They try the predicate's boundary values (an endpoint of `between`, one past
+a bound, `min - 1`) and then the integers that walk outward from the example. They take the
+first candidate that does not grade correct, and that candidate must grade WRONG. When every
+candidate grades correct, the item fails, because a predicate that accepts everything near
+the example tests nothing.
+
+Scope. A `property` contract serves authored exemplars only. Its arguments are literals and
+cannot follow template parameters, so template instantiation refuses it. A KP whose
+exemplars share a property contract gives no shared template policy, and a list cannot take
+a property contract as its member.
+
 ---
 
 ## 9. A proposed fuzz oracle (V3)

@@ -79,3 +79,45 @@ fn a_label_key_mutates_to_a_different_option() {
         ("passed".to_owned(), vec![])
     );
 }
+
+fn property(json: &str) -> AnswerContract {
+    serde_json::from_str(json).unwrap_or(AnswerContract::None)
+}
+
+#[test]
+fn a_property_example_must_have_the_property() {
+    let three = property(r#"{"kind":"property","check":"divisor_count","args":{"n":3}}"#);
+    assert!(three.property_description().is_some());
+    assert_eq!(
+        run("49", Some(&three), AnswerKind::Expression),
+        ("passed".to_owned(), vec![])
+    );
+    let (status, reasons) = run("12", Some(&three), AnswerKind::Expression);
+    assert_eq!(status, "failed");
+    assert!(
+        reasons[0].contains("the stored example does not have the property"),
+        "{reasons:?}"
+    );
+}
+
+#[test]
+fn a_property_counterexample_passes_although_its_plus_one_mutant_also_works() {
+    // 40 and 41 are both counterexamples to "n^2 + n + 41 is prime"; the near
+    // miss 39 (a prime value) grades wrong.
+    let euler = property(
+        r#"{"kind":"property","check":"prime_counterexample","args":{"expr":"n^2+n+41","min":0}}"#,
+    );
+    assert_eq!(
+        run("40", Some(&euler), AnswerKind::Expression),
+        ("passed".to_owned(), vec![])
+    );
+}
+
+#[test]
+fn a_property_that_rejects_no_near_miss_fails() {
+    // Every integer is a multiple of 1, so the item asks nothing.
+    let wide = property(r#"{"kind":"property","check":"multiple_of","args":{"k":1}}"#);
+    let (status, reasons) = run("5", Some(&wide), AnswerKind::Expression);
+    assert_eq!(status, "failed");
+    assert!(reasons[0].contains("every near miss"), "{reasons:?}");
+}

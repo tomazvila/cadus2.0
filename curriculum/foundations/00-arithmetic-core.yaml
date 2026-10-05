@@ -1666,6 +1666,18 @@ topics:
           - problem: 'List all the factors of $24$.'
             answer: "1, 2, 3, 4, 6, 8, 12, 24"
             solution_sketch: 'Factor pairs: $1 \times 24$, $2 \times 12$, $3 \times 8$, $4 \times 6$.'
+          - problem: 'Give a factor of $40$ that is greater than $5$ but less than $40$.'
+            answer: "10"
+            answer_contract: {"kind": "property", "check": "divisor_of", "args": {"k": 40, "min": 6, "max": 39}}
+            solution_sketch: 'Pair up the factors of $40$: $1 \times 40$, $2 \times 20$, $4 \times 10$, $5 \times 8$. The factors above $5$, other than $40$ itself, are $8$, $10$ and $20$. For example $10$ works because $40 = 4 \times 10$.'
+          - problem: 'Find a number less than $50$ that has exactly four factors.'
+            answer: "6"
+            answer_contract: {"kind": "property", "check": "divisor_count", "args": {"n": 4, "max": 49}}
+            solution_sketch: '$6$ has the factors $1, 2, 3, 6$: exactly four. A product of two different primes always has four factors (1, each prime, and the product), so $10$, $14$, $15$, $21$, $35$ and others work too. A prime cubed also has four: $8$ has $1, 2, 4, 8$.'
+          - problem: 'Give a whole number that has exactly three factors.'
+            answer: "9"
+            answer_contract: {"kind": "property", "check": "divisor_count", "args": {"n": 3}}
+            solution_sketch: '$9$ has the factors $1, 3, 9$. Factors come in pairs, so an odd count needs a pair whose two partners are equal, like $3 \times 3$: the number is a square. The square of a prime, such as $4$, $9$, $25$ or $49$, has exactly three factors.'
           - problem: 'List all the factors of $36$.'
             answer: "1, 2, 3, 4, 6, 9, 12, 18, 36"
             solution_sketch: 'Factor pairs: $1 \times 36$, $2 \times 18$, $3 \times 12$, $4 \times 9$, $6 \times 6$.'
@@ -1683,6 +1695,18 @@ topics:
           - problem: 'Write the first four multiples of $7$.'
             answer: "7, 14, 21, 28"
             solution_sketch: 'Skip count by $7$: $7, 14, 21, 28$.'
+          - problem: 'Give a multiple of $7$ between $50$ and $65$.'
+            answer: "56"
+            answer_contract: {"kind": "property", "check": "multiple_of", "args": {"k": 7, "min": 51, "max": 64}}
+            solution_sketch: 'Skip count by $7$: $49, 56, 63, 70$. Both $56 = 7 \times 8$ and $63 = 7 \times 9$ lie between $50$ and $65$.'
+          - problem: 'Find a number that is a multiple of both $4$ and $6$.'
+            answer: "12"
+            answer_contract: {"kind": "property", "check": "multiple_of", "args": {"k": 12}}
+            solution_sketch: 'List multiples of $6$ ($6, 12, 18, \dots$) and test each for $4$. The first that works is $12 = 4 \times 3 = 6 \times 2$. Any multiple of $12$, such as $60$, is also a multiple of both.'
+          - problem: 'Give a three-digit multiple of $25$.'
+            answer: "125"
+            answer_contract: {"kind": "property", "check": "multiple_of", "args": {"k": 25, "min": 100, "max": 999}}
+            solution_sketch: 'Multiples of $25$ go $25, 50, 75, 100, 125, \dots$, so they end in $00$, $25$, $50$ or $75$. Any three-digit number with one of those endings works, for example $125 = 25 \times 5$.'
           - problem: 'What are the first three multiples of $12$?'
             answer: "12, 24, 36"
             solution_sketch: 'Skip count by $12$: $12, 24, 36$.'
@@ -1703,6 +1727,14 @@ topics:
             answer: "relation = F; quotient = 7"
             answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["F"], ["M"]]}, "name": "relation"}, {"contract": {"kind": "exact"}, "name": "quotient"}]}
             solution_sketch: "The full result is relation = F; quotient = 7. Step 1: divide 63 by 9 using division facts; 63 divided by 9 is 7 with remainder 0. Step 2: a whole-number quotient means 9 is a factor of 63, so the code is F. The wrong option M would mean 9 is a multiple of 63, but a multiple of 63 must be at least 63, and 9 is smaller. The quotient is 7. The final answer is relation = F; quotient = 7."
+          - problem: 'Give a number that is both a factor of $48$ and a multiple of $4$.'
+            answer: "12"
+            answer_contract: {"kind": "property", "check": "divisor_of", "args": {"k": 48, "multiple_of": 4}}
+            solution_sketch: 'The factors of $48$ are $1, 2, 3, 4, 6, 8, 12, 16, 24, 48$. The ones that $4$ divides are $4, 8, 12, 16, 24, 48$. For example $12$: $48 = 12 \times 4$ and $12 = 4 \times 3$.'
+          - problem: 'Name a number that has $6$ as a factor and is also a factor of $60$.'
+            answer: "30"
+            answer_contract: {"kind": "property", "check": "divisor_of", "args": {"k": 60, "multiple_of": 6}}
+            solution_sketch: 'Since $60 = 6 \times 10$, such a number is $6$ times a factor of $10$: $6$, $12$, $30$ or $60$. For example $30 = 6 \times 5$, and $60 = 30 \times 2$.'
           - problem: "For the numbers 40 and 6, use M if 40 is a multiple of 6, and N if it is not a multiple of 6. Also compute the remainder when 40 is divided by 6. What are the relation code and the remainder?"
             answer: "relation = N; remainder = 4"
             answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["M"], ["N"]]}, "name": "relation"}, {"contract": {"kind": "exact"}, "name": "remainder"}]}
@@ -1749,6 +1781,14 @@ topics:
             answer: "0"
             answer_contract: {"kind": "exact"}
             solution_sketch: "Step 1: The rule for 5 says the units digit must be 0 or 5. Step 2: The number is 74d, so d is 0 or 5. Step 3: The smallest of these possible digits is 0. The answer is 0."
+          - problem: 'Give a three-digit number that is divisible by $5$ but not by $10$.'
+            answer: "125"
+            answer_contract: {"kind": "property", "check": "multiple_of", "args": {"k": 5, "not_multiple_of": 10, "min": 100, "max": 999}}
+            solution_sketch: 'Divisible by $5$ means the last digit is $0$ or $5$; divisible by $10$ means the last digit is $0$. So any three-digit number ending in $5$ works, for example $125$.'
+          - problem: 'Give a number in the three hundreds that is divisible by both $2$ and $5$.'
+            answer: "350"
+            answer_contract: {"kind": "property", "check": "multiple_of", "args": {"k": 10, "min": 300, "max": 399}}
+            solution_sketch: 'The rule for $2$ needs an even last digit and the rule for $5$ needs a last digit of $0$ or $5$, so the last digit must be $0$. Any of $300, 310, \dots, 390$ works, for example $350$.'
           - problem: "A 3-digit number has hundreds digit 2 and tens digit 8. Its units digit is unknown. The number is divisible by 2 but not by 10. Find the smallest possible value of its units digit."
             answer: "2"
             answer_contract: {"kind": "exact"}
@@ -1770,6 +1810,14 @@ topics:
             answer: "711"
             answer_contract: {"kind": "exact"}
             solution_sketch: "Use the division fact for 9: 9 times 78 = 702, so 703 is one more than a multiple of 9. The next multiple of 9 is 702 + 9 = 711. Check with the digit-sum rule for 9: 7 + 1 + 1 = 9, which is a multiple of 9, so 9 divides 711. The smallest three-digit number greater than 703 that is divisible by 9 is 711."
+          - problem: 'Give a three-digit number that is divisible by $3$ but not by $9$.'
+            answer: "123"
+            answer_contract: {"kind": "property", "check": "multiple_of", "args": {"k": 3, "not_multiple_of": 9, "min": 100, "max": 999}}
+            solution_sketch: 'Use digit sums: a multiple of $3$ has a digit sum that is a multiple of $3$, and a multiple of $9$ has a digit sum that is a multiple of $9$. $123$ has digit sum $6$, a multiple of $3$ but not of $9$. Any digit sum of $3, 6, 12, 15, 21$ or $24$ works.'
+          - problem: 'Find a number between $500$ and $600$ that is divisible by $9$.'
+            answer: "513"
+            answer_contract: {"kind": "property", "check": "multiple_of", "args": {"k": 9, "min": 500, "max": 600}}
+            solution_sketch: 'The first digit is $5$, so the other two digits must bring the digit sum to $9$ or $18$: they add to $4$ or $13$. For example $513$ has $5 + 1 + 3 = 9$. Others are $504$, $522$, $558$ and $594$.'
           - problem: "The three-digit number 4?7 has a question mark for its middle digit and is divisible by 9. Find that middle digit."
             answer: "7"
             answer_contract: {"kind": "exact"}
@@ -1791,6 +1839,14 @@ topics:
             answer: "2"
             answer_contract: {"kind": "exact"}
             solution_sketch: "The rule for 4 uses only the last two digits, which must form a multiple of 4. For 81d the last two digits are 1d, so test d=0: the number 10 is not a multiple of 4. Test d=1: the number 11 is not a multiple of 4. Test d=2: the number 12 is a multiple of 4, so 812 is divisible by 4. No smaller digit works, and the answer is 2."
+          - problem: 'Give a three-digit number that is divisible by $6$ but not by $4$.'
+            answer: "102"
+            answer_contract: {"kind": "property", "check": "multiple_of", "args": {"k": 6, "not_multiple_of": 4, "min": 100, "max": 999}}
+            solution_sketch: 'Divisible by $6$: even, with a digit sum that is a multiple of $3$. Not divisible by $4$: the last two digits do not form a multiple of $4$. $102$ is even, $1 + 0 + 2 = 3$, and $02$ is not a multiple of $4$.'
+          - problem: 'Find a three-digit number that is divisible by both $4$ and $6$.'
+            answer: "132"
+            answer_contract: {"kind": "property", "check": "multiple_of", "args": {"k": 12, "min": 100, "max": 999}}
+            solution_sketch: 'Check both rules. For $132$ the last two digits make $32$, a multiple of $4$; the number is even and $1 + 3 + 2 = 6$, so $6$ divides it too. A number divisible by $4$ and by $6$ is exactly a multiple of $12$, so $108$, $120$ and $144$ also work.'
           - problem: "How many digits d make the 3-digit number 41d divisible by 6? Give the count."
             answer: "1"
             answer_contract: {"kind": "exact"}
@@ -1840,6 +1896,18 @@ topics:
             answer: "verdict = composite; factors = 5"
             answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["prime"], ["composite"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "factors"}]}
             solution_sketch: "Step 1: list all factors of 16: 1, 2, 4, 8, 16. Step 2: count them to get 5 factors. Step 3: apply the definition; since there are more than two factors, 16 is composite. Calling 16 prime would wrongly assume it has exactly two factors. The answer is verdict = composite; factors = 5."
+          - problem: 'Give an odd number less than $50$ that is composite.'
+            answer: "9"
+            answer_contract: {"kind": "property", "check": "composite", "args": {"not_multiple_of": 2, "max": 49}}
+            solution_sketch: 'Odd does not mean prime. $9 = 3 \times 3$ has the factors $1, 3, 9$, more than two, so it is composite. Odd multiples of $3$, $5$ or $7$, such as $15$, $21$, $25$, $35$ and $49$, work too.'
+          - problem: 'Find a composite number less than $100$ that is not divisible by $2$, $3$ or $5$.'
+            answer: "49"
+            answer_contract: {"kind": "property", "check": "composite", "args": {"coprime_to": 30, "max": 99}}
+            solution_sketch: 'With no factor $2$, $3$ or $5$, every prime factor is at least $7$, and a composite number needs two of them. The smallest is $7 \times 7 = 49$; the others below $100$ are $7 \times 11 = 77$ and $7 \times 13 = 91$.'
+          - problem: 'The expression $n^2 + n + 1$ gives $3$, $7$ and $13$ for $n = 1, 2, 3$. Sam claims it gives a prime for every whole number $n \ge 1$. Find a value of $n$ that shows Sam is wrong.'
+            answer: "4"
+            answer_contract: {"kind": "property", "check": "prime_counterexample", "args": {"expr": "n^2 + n + 1", "min": 1}}
+            solution_sketch: 'Keep testing: $n = 4$ gives $16 + 4 + 1 = 21 = 3 \times 7$, which is composite, so $n = 4$ is a counterexample. A few cases that work never prove a claim about every $n$, but one failure disproves it. $n = 7$ gives $57 = 3 \times 19$, another counterexample.'
           - problem: "How many factors does 25 have, and does it have exactly two factors or more than two factors?"
             answer: "factors = 3; verdict = composite"
             answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "factors"}, {"contract": {"kind": "label", "options": [["prime"], ["composite"]]}, "name": "verdict"}]}
@@ -1858,6 +1926,18 @@ topics:
           - problem: 'List all the primes between $20$ and $30$.'
             answer: "23, 29"
             solution_sketch: 'Checking each candidate from $20$ to $30$: $23, 29$ have no smaller factor.'
+          - problem: 'Give a prime number between $50$ and $70$.'
+            answer: "59"
+            answer_contract: {"kind": "property", "check": "prime", "args": {"min": 50, "max": 70}}
+            solution_sketch: 'Cross out the even numbers and the multiples of $3$, $5$ and $7$ from $50$ to $70$. What remains is $53, 59, 61, 67$. For example $59$: no whole number from $2$ to $7$ divides it, and $8 \times 8 = 64$ is already larger than $59$.'
+          - problem: 'Find a two-digit prime number greater than $80$.'
+            answer: "89"
+            answer_contract: {"kind": "property", "check": "prime", "args": {"min": 81, "max": 99}}
+            solution_sketch: 'From $81$ to $99$, drop the even numbers, those ending in $5$, those whose digit sum is a multiple of $3$, and $91 = 7 \times 13$. The primes left are $83$, $89$ and $97$.'
+          - problem: 'The expression $n^2 + n + 41$ gives a prime for $n = 0, 1, 2, \dots$ for a long run of values. Find a whole number $n$ for which it is not prime.'
+            answer: "40"
+            answer_contract: {"kind": "property", "check": "prime_counterexample", "args": {"expr": "n^2 + n + 41", "min": 0}}
+            solution_sketch: 'Look for an $n$ that makes every term share a factor. At $n = 41$ each term is a multiple of $41$: $41^2 + 41 + 41 = 41 \times 43$. At $n = 40$ the value is $1600 + 40 + 41 = 1681 = 41^2$. Both are counterexamples; every $n$ from $0$ to $39$ gives a prime.'
           - problem: 'Find the smallest prime number greater than $43$.'
             answer: "47"
             solution_sketch: '$44$ and $46$ are even, and $45$ is divisible by $3$. For $47$, none of $2,3,5,6$ divides evenly, and $4$ cannot divide an odd number. Any factor pair would have a member below $7$, since $7\times7=49>47$. Thus $47$ is prime.'
@@ -1877,6 +1957,14 @@ topics:
             answer: "0"
             answer_contract: {"kind": "exact"}
             solution_sketch: "Step 1, definitions: a prime has exactly two positive factors and a composite has more than two, and both definitions apply to counting numbers greater than 1. Step 2, apply them to 0: 0 is not prime and not composite, since the two definitions do not cover it. Step 3, compare: the whole numbers begin at 0, and 0 is neither prime nor composite, so no smaller whole number qualifies. The smallest whole number that is neither prime nor composite is 0."
+          - problem: 'Give an even number less than $20$ that is composite.'
+            answer: "4"
+            answer_contract: {"kind": "property", "check": "composite", "args": {"multiple_of": 2, "max": 19}}
+            solution_sketch: 'Every even number above $2$ has $2$ as a factor besides $1$ and itself, so it is composite: $4, 6, 8, \dots, 18$ all work.'
+          - problem: 'Find a counterexample to the claim: every odd number greater than $1$ is prime.'
+            answer: "9"
+            answer_contract: {"kind": "property", "check": "composite", "args": {"not_multiple_of": 2}}
+            solution_sketch: 'A counterexample is an odd number above $1$ that is not prime. $9 = 3 \times 3$ is odd and has the factor $3$, so the claim fails. $15$, $21$ and $25$ are other counterexamples.'
           - problem: "The number 2 is the smallest even case that people classify. Give the classification of the number 2 and its number of positive factors."
             answer: "class = prime; factors = 2"
             answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["prime"], ["composite"]]}, "name": "class"}, {"contract": {"kind": "exact"}, "name": "factors"}]}
@@ -2004,6 +2092,14 @@ topics:
             answer: "5"
             answer_contract: {"kind":"exact"}
             solution_sketch: 'Factors of $15$: $1,3,5,15$; of $25$: $1,5,25$; largest common is $5$.'
+          - problem: 'Give a common factor of $20$ and $30$ that is greater than $1$.'
+            answer: "5"
+            answer_contract: {"kind": "property", "check": "divisor_of", "args": {"k": 10, "min": 2}}
+            solution_sketch: 'Factors of $20$: $1, 2, 4, 5, 10, 20$. Factors of $30$: $1, 2, 3, 5, 6, 10, 15, 30$. The shared ones above $1$ are $2$, $5$ and $10$, which are the factors of the GCF $10$. For example $5$: $20 = 5 \times 4$ and $30 = 5 \times 6$.'
+          - problem: 'Find a number other than $6$ whose greatest common factor with $18$ is $6$.'
+            answer: "12"
+            answer_contract: {"kind": "property", "check": "multiple_of", "args": {"k": 6, "not_multiple_of": 9, "min": 7}}
+            solution_sketch: 'The GCF is $6$ when $6$ divides the number but the larger common factors $9$ and $18$ do not. Since $18 = 2 \times 3^2$, the number must be a multiple of $6$ that is not a multiple of $9$. $12$ works: its factors shared with $18$ are $1, 2, 3, 6$. So do $24$, $30$ and $42$; $36$ does not, because $18$ divides it.'
           - problem: 'Determine the GCF of $21$ and $14$.'
             answer: "7"
             answer_contract: {"kind":"exact"}
@@ -2025,6 +2121,14 @@ topics:
             answer: "6"
             answer_contract: {"kind":"exact"}
             solution_sketch: 'Factors of $48$: $1,2,3,4,6,8,12,16,24,48$; of $54$: $1,2,3,6,9,18,27,54$; largest common is $6$.'
+          - problem: 'Give a common factor of $48$ and $72$ that is not their greatest common factor.'
+            answer: "8"
+            answer_contract: {"kind": "property", "check": "divisor_of", "args": {"k": 24, "max": 23}}
+            solution_sketch: 'The common factors of $48$ and $72$ are the factors of their GCF, $24$: $1, 2, 3, 4, 6, 8, 12, 24$. Any of these except $24$ works, for example $8$: $48 = 8 \times 6$ and $72 = 8 \times 9$.'
+          - problem: 'Give a number less than $100$, other than $15$, whose greatest common factor with $45$ is $15$.'
+            answer: "30"
+            answer_contract: {"kind": "property", "check": "multiple_of", "args": {"k": 15, "not_multiple_of": 9, "min": 16, "max": 99}}
+            solution_sketch: 'Since $45 = 3^2 \times 5$, a GCF of $15 = 3 \times 5$ means the number is a multiple of $15$ but not of $9$. The multiples of $15$ below $100$ are $15, 30, 45, 60, 75, 90$; dropping $15$, and $45$ and $90$ (multiples of $9$), leaves $30$, $60$ and $75$.'
           - problem: 'Determine the GCF of $40$ and $56$.'
             answer: "8"
             answer_contract: {"kind":"exact"}
@@ -2046,6 +2150,14 @@ topics:
             answer: "9"
             answer_contract: {"kind":"exact"}
             solution_sketch: 'Factors of $9$: $1,3,9$; of $27$: $1,3,9,27$; largest common is $9$.'
+          - problem: 'Give a number between $20$ and $30$ that has no common factor with $12$ other than $1$.'
+            answer: "25"
+            answer_contract: {"kind": "property", "check": "coprime_to", "args": {"k": 12, "min": 21, "max": 29}}
+            solution_sketch: 'Since $12 = 2^2 \times 3$, the number must avoid the factors $2$ and $3$: it is odd and not a multiple of $3$. Between $20$ and $30$ that leaves $23$, $25$ and $29$. $25$ is not prime, yet it still shares no factor with $12$.'
+          - problem: 'Find a composite number whose greatest common factor with $10$ is $1$.'
+            answer: "21"
+            answer_contract: {"kind": "property", "check": "composite", "args": {"coprime_to": 10}}
+            solution_sketch: 'The number must avoid the prime factors of $10$, which are $2$ and $5$, and still have a factor besides $1$ and itself. $21 = 3 \times 7$ works, since GCF$(21, 10) = 1$. So do $9$, $27$ and $49$.'
           - problem: 'Determine the GCF of $8$ and $15$.'
             answer: "1"
             answer_contract: {"kind":"exact"}
@@ -2090,6 +2202,10 @@ topics:
             answer: "24"
             answer_contract: {"kind":"exact"}
             solution_sketch: 'Multiples of $6$ and $8$ first meet at $24$: $\text{LCM}(6,8)=24$.'
+          - problem: 'Give a common multiple of $6$ and $8$ that is not their least common multiple.'
+            answer: "48"
+            answer_contract: {"kind": "property", "check": "multiple_of", "args": {"k": 24, "min": 25}}
+            solution_sketch: 'The LCM of $6$ and $8$ is $24$, and every common multiple is a multiple of $24$: $48, 72, 96, \dots$. For example $48 = 6 \times 8 = 8 \times 6$.'
           - problem: 'Determine the LCM of $4$ and $10$.'
             answer: "20"
             answer_contract: {"kind":"exact"}
@@ -2111,6 +2227,10 @@ topics:
             answer: "9"
             answer_contract: {"kind":"exact"}
             solution_sketch: 'Multiples of $9$ and $3$ first meet at $9$: $\text{LCM}(9,3)=9$.'
+          - problem: 'Give a number whose least common multiple with $6$ is $30$.'
+            answer: "10"
+            answer_contract: {"kind": "property", "check": "divisor_of", "args": {"k": 30, "multiple_of": 5}}
+            solution_sketch: 'The LCM is a multiple of the number, so the number divides $30$. Since $6$ has no factor $5$, the $5$ in $30$ must come from the number. The factors of $30$ that are multiples of $5$ are $5$, $10$, $15$ and $30$. Check $10$: its multiples are $10, 20, 30$, and $30$ is the first that $6$ divides.'
           - problem: 'Determine the LCM of $4$ and $9$.'
             answer: "36"
             answer_contract: {"kind":"exact"}

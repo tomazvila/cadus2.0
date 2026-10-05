@@ -45,11 +45,33 @@ pub struct Question<'a> {
     pub learner: &'a str,
 }
 
+/// Whether a recorded contract is a `property` contract (an example-generation
+/// item, whose stored key is one valid example).
+fn is_property(contract: &str) -> bool {
+    serde_json::from_str::<Value>(contract)
+        .is_ok_and(|doc| doc.get("kind").and_then(Value::as_str) == Some("property"))
+}
+
 impl Question<'_> {
     /// The user message: the four fields, then the question.
     #[must_use]
     pub fn message(&self) -> String {
         let contract = self.contract.unwrap_or("none recorded");
+        if is_property(contract) {
+            // The key of a property item is one example of many: the question
+            // is whether the learner's object has the property, never whether
+            // it equals the example.
+            return format!(
+                "Problem: {problem}\nOne valid example (NOT the only answer): {key}\nAnswer \
+                 contract: {contract}\nLearner answer: {learner}\n\nThe problem asks for any \
+                 answer with the property in the contract. Does the learner answer have that \
+                 property? A different answer that has it counts as EQUIVALENT. Reply with \
+                 exactly one word, EQUIVALENT or NOT, then one line why.",
+                problem = self.problem,
+                key = self.key,
+                learner = self.learner,
+            );
+        }
         format!(
             "Problem: {problem}\nStored key: {key}\nAnswer contract: {contract}\nLearner \
              answer: {learner}\n\nIs the learner answer mathematically equivalent to the \
@@ -305,6 +327,21 @@ mod tests {
         assert!(message.contains("Stored key: 13.5"));
         assert!(message.contains("Answer contract: exact"));
         assert!(message.contains("Learner answer: the answer is 13.5."));
+        assert!(message.contains("EQUIVALENT or NOT"));
+    }
+
+    #[test]
+    fn a_property_key_is_described_as_one_example() {
+        let question = Question {
+            problem: "Give a number with exactly three factors.",
+            key: "9",
+            contract: Some(r#"{"kind":"property","check":"divisor_count","args":{"n":3}}"#),
+            learner: "twenty-five",
+        };
+        let message = question.message();
+        assert!(message.contains("One valid example (NOT the only answer): 9"));
+        assert!(message.contains("A different answer that has it counts as EQUIVALENT"));
+        assert!(!message.contains("Stored key"));
         assert!(message.contains("EQUIVALENT or NOT"));
     }
 

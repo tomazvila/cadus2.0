@@ -258,6 +258,17 @@ impl<'doc> Compiled<'doc> {
     /// unbound placeholder, when the answer does not evaluate, and when the
     /// answer does not canonicalize (V2).
     pub fn instantiate(&self, bindings: Bindings) -> Result<Instance, InstantiateError> {
+        // A property contract carries literal arguments, so it cannot follow
+        // the parameters of a template: it serves authored exemplars only.
+        if matches!(
+            self.doc.answer_contract,
+            Some(crate::answer::AnswerContract::Property { .. })
+        ) {
+            return Err(EvalError::Grammar(crate::answer::Undecidable::new(
+                "a property contract serves authored exemplars only, not templates",
+            ))
+            .into());
+        }
         let text = render(&self.doc.statement, &bindings)?;
         let Answer {
             text: answer,

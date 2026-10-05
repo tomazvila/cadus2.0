@@ -247,12 +247,21 @@ impl AuthoringSpec {
     /// One shared deterministic policy for templates of this knowledge point.
     #[must_use]
     pub fn template_contract(&self) -> Option<cadus_core::answer::AnswerContract> {
-        let contract = self.exemplars.first()?.answer_contract.clone()?;
+        // A property exemplar asks for any object with a property; its literal
+        // arguments never become a template policy, so it takes no part in the
+        // shared policy of the other exemplars (the core refuses it in a
+        // template).
+        let mut graded = self.exemplars.iter().filter(|item| {
+            !matches!(
+                item.answer_contract,
+                Some(cadus_core::answer::AnswerContract::Property { .. })
+            )
+        });
+        let contract = graded.next()?.answer_contract.clone()?;
         if contract == cadus_core::answer::AnswerContract::None {
             return None;
         }
-        self.exemplars
-            .iter()
+        graded
             .all(|item| item.answer_contract.as_ref() == Some(&contract))
             .then_some(contract)
     }
@@ -279,7 +288,17 @@ pub fn render_exemplars(exemplars: &[Exemplar]) -> String {
     let mut lines = Vec::new();
     for (index, exemplar) in exemplars.iter().enumerate() {
         lines.push(format!("{}. Problem: {}", index + 1, exemplar.problem));
-        lines.push(format!("   Answer: {}", exemplar.answer));
+        match exemplar
+            .answer_contract
+            .as_ref()
+            .and_then(cadus_core::answer::AnswerContract::property_description)
+        {
+            Some(property) => lines.push(format!(
+                "   Answer: {} (one example; any answer that is {property} is correct)",
+                exemplar.answer
+            )),
+            None => lines.push(format!("   Answer: {}", exemplar.answer)),
+        }
         if let Some(contract) = &exemplar.answer_contract {
             lines.push(format!("   Answer contract: {}", json!(contract)));
         }

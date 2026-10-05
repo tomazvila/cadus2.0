@@ -147,6 +147,7 @@ fn grade(expected: &Canon, text: &str, learner: &str, contract: &AnswerContract)
         | AnswerContract::PolynomialRelation
         | AnswerContract::RelationSetup
         | AnswerContract::Function { .. }
+        | AnswerContract::Property { .. }
         | AnswerContract::None => {
             unreachable!("the structured contracts decide before the learner answer canonicalizes")
         }
@@ -211,6 +212,7 @@ fn structured_contract(
             .map_or_else(Outcome::Undecidable, |spec| {
                 super::function::check(&spec, text, learner)
             }),
+        AnswerContract::Property { check, args } => super::property::grade(*check, args, learner),
         AnswerContract::Exact
         | AnswerContract::Approx { .. }
         | AnswerContract::Tolerance { .. }
@@ -501,6 +503,18 @@ mod tests {
         };
         let mut cases = cases;
         cases.push((function, "y = x^2/2 + C", "x*x/2 + 7", "2*(x^2/2) + x"));
+        // A property item: a different valid example is correct.
+        cases.push((
+            AnswerContract::Property {
+                check: crate::answer::PropertyCheck::DivisorCount,
+                args: [("n".to_owned(), crate::answer::PropertyArg::Integer(3))]
+                    .into_iter()
+                    .collect(),
+            },
+            "9",
+            "25",
+            "10",
+        ));
         for (contract, expected, correct, mutated) in cases {
             assert!(
                 super::super::triage_verdict(&contract) == super::super::TriageVerdict::Grades,

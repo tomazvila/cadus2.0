@@ -124,9 +124,29 @@ fn plan(contract: &Value, key: &str) -> Plan {
         Some("set" | "list") => member_removed(key),
         Some("multipart") => part_mutants(contract, key),
         Some("exact") => plus_one(key, true),
+        Some("property") => property_near_miss(contract, key),
         Some("approx") if contract["tolerance"].is_string() => approx_tolerance(contract, key),
         _ => plus_one(key, false),
     }
+}
+
+/// `property-near-miss` for a contract JSON with `"kind": "property"`.
+///
+/// The key is one example of many, so `+1` may have the property too. The
+/// candidates are the boundary values of the predicate, then the integers
+/// walking outward from the key; the first one that does not grade correct is
+/// the mutant (D39), and none at all is `no-distinct-mutant`.
+fn property_near_miss(contract: &Value, key: &str) -> Plan {
+    let misses = parse_contract(contract)
+        .ok()
+        .and_then(|contract| contract.property_near_misses(key))
+        .unwrap_or_default();
+    let mut misses = misses.into_iter();
+    let slot = misses.next().map(|first| Slot {
+        rest: misses.collect(),
+        ..Slot::new("property-near-miss", first)
+    });
+    Plan::of(slot.into_iter().collect(), "no-near-miss")
 }
 
 /// `plus-one`: the rule of `check_keys::mutate::mutate_plus_one`.

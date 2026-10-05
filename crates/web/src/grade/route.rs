@@ -102,8 +102,16 @@ pub async fn answer(request: TaskWithBody) -> Result<Json<Value>, ApiError> {
     let written_proof = !verified_answer
         && grade.outcome.is_ungraded()
         && proof_grading::is_written_proof(&served, kind);
+    // A property item has no key to be equivalent to: its stored answer is
+    // one example, and the exact predicate already decided the learner's own
+    // object. A decided miss is final, and an unreadable answer stays
+    // ungraded with its format guidance; neither goes to the model.
+    let property_item = matches!(
+        served.expected.answer_contract,
+        Some(cadus_core::answer::AnswerContract::Property { .. })
+    );
     let mut equivalence_hit = None;
-    if !verified_answer && !grade.correct && !written_proof {
+    if !verified_answer && !grade.correct && !written_proof && !property_item {
         match equivalence::lookup(&state, &mut tx, &served, &submitted.answer).await {
             Ok(Some(equivalence::Cached::Accepted(verdict))) => {
                 grade = Grade {
@@ -217,7 +225,7 @@ pub async fn answer(request: TaskWithBody) -> Result<Json<Value>, ApiError> {
     // Amendment K: on a wrong or unparseable answer with no cached verdict,
     // the background check is enqueued in the same transaction. A miss that
     // was flipped by the cache carries no job (the verdict is already here).
-    let equivalence_job = if grade.correct || written_proof {
+    let equivalence_job = if grade.correct || written_proof || property_item {
         None
     } else {
         match equivalence_hit {

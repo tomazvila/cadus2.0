@@ -49,6 +49,30 @@ fn mixed_item_policies_require_an_explicit_authoring_decision() {
     assert_eq!(spec.template_contract(), None);
 }
 
+/// A property exemplar (one example of an example-generation task) never
+/// joins the shared template policy and never breaks it.
+#[test]
+fn property_exemplars_take_no_part_in_the_shared_template_policy() {
+    let mut spec = squares_spec();
+    spec.exemplars[0].answer_contract = Some(AnswerContract::Exact);
+    let mut property = spec.exemplars[0].clone();
+    property.problem = "Give a whole number that has exactly three factors.".to_owned();
+    property.answer = "9".to_owned();
+    property.answer_contract = Some(
+        serde_json::from_str(r#"{"kind":"property","check":"divisor_count","args":{"n":3}}"#)
+            .unwrap(),
+    );
+    spec.exemplars.push(property.clone());
+    assert_eq!(spec.template_contract(), Some(AnswerContract::Exact));
+    let prompt = cadus_worker::authoring::prompt::render_exemplars(&spec.exemplars);
+    assert!(prompt.contains(
+        "Answer: 9 (one example; any answer that is a positive integer with exactly 3 positive \
+         divisors is correct)"
+    ));
+    spec.exemplars = vec![property];
+    assert_eq!(spec.template_contract(), None);
+}
+
 #[test]
 fn an_uncontracted_multi_step_spec_accepts_a_validated_pending_contract() {
     let mut spec = squares_spec();

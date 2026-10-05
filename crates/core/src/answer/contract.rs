@@ -7,6 +7,7 @@ pub mod function;
 mod list;
 mod notation;
 mod power;
+pub mod property;
 mod radical;
 mod relation;
 mod scientific;
@@ -24,6 +25,7 @@ use structured::{label_value, multipart_values, tolerance_value, validate_shape}
 
 pub use evaluate::check_contract;
 pub use form::NumericForm;
+pub use property::{PropertyArg, PropertyArgs, PropertyCheck};
 pub use triage::{TriageVerdict, triage_verdict};
 
 /// A reviewed item's answer policy. Absence retains the historical policy.
@@ -100,6 +102,18 @@ pub enum AnswerContract {
         #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
         domain: BTreeMap<String, (String, String)>,
     },
+    /// Any learner object with a named property: an example-generation task.
+    ///
+    /// The authored answer is one valid example, shown in the worked solution;
+    /// the verdict tests the learner's own object against the predicate (see
+    /// `property`), so a different valid example is correct.
+    Property {
+        /// The named predicate.
+        check: PropertyCheck,
+        /// The authored arguments of the predicate.
+        #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
+        args: PropertyArgs,
+    },
     /// The item has no deterministic assessment.
     None,
 }
@@ -165,6 +179,11 @@ enum ContractDoc {
         #[serde(default)]
         domain: BTreeMap<String, (String, String)>,
     },
+    Property {
+        check: PropertyCheck,
+        #[serde(default)]
+        args: PropertyArgs,
+    },
     None {},
 }
 
@@ -203,6 +222,7 @@ impl TryFrom<ContractDoc> for AnswerContract {
                 up_to_constant,
                 domain,
             },
+            ContractDoc::Property { check, args } => Self::Property { check, args },
             document => fieldless_contract(document),
         };
         contract.validate()?;
@@ -275,7 +295,31 @@ impl AnswerContract {
                 up_to_constant,
                 domain,
             } => function::FunctionSpec::new(vars, *up_to_constant, domain).map(|_| ()),
+            Self::Property { check, args } => property::validate(*check, args),
             _ => Ok(()),
+        }
+    }
+
+    /// For a `property` contract, the property in one line of plain words.
+    ///
+    /// The model prompts read it: the stored answer of such an item is one
+    /// example, and any object with this property is correct.
+    #[must_use]
+    pub fn property_description(&self) -> Option<String> {
+        match self {
+            Self::Property { check, args } => Some(property::describe(*check, args)),
+            _ => None,
+        }
+    }
+
+    /// For a `property` contract, wrong-answer candidates near the example.
+    ///
+    /// The key self-checks take the first one that does not grade correct.
+    #[must_use]
+    pub fn property_near_misses(&self, example: &str) -> Option<Vec<String>> {
+        match self {
+            Self::Property { check, args } => Some(property::near_misses(*check, args, example)),
+            _ => None,
         }
     }
 
@@ -307,6 +351,7 @@ impl AnswerContract {
                 domain,
             } => function::FunctionSpec::new(vars, *up_to_constant, domain)
                 .and_then(|spec| function::expected(&spec, expected)),
+            Self::Property { check, args } => property::expected(*check, args, expected),
             Self::RequiredForm { form } if !form::accepts(*form, expected) => Err(
                 Undecidable::new("the authored answer does not match its required form"),
             ),

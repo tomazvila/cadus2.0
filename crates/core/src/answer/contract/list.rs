@@ -11,6 +11,7 @@ pub(super) fn validate(ordered: bool, member: &AnswerContract) -> Result<(), Und
             | AnswerContract::RequiredSimplestRadical
             | AnswerContract::Multipart { .. }
             | AnswerContract::List { .. }
+            | AnswerContract::Property { .. }
     ) {
         return Err(Undecidable::new(
             "a list requires a flat deterministic member contract",

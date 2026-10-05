@@ -32,6 +32,7 @@ pub fn triage_verdict(contract: &AnswerContract) -> TriageVerdict {
         | AnswerContract::Matrix { .. }
         | AnswerContract::Multipart { .. }
         | AnswerContract::PolynomialRelation
+        | AnswerContract::Property { .. }
         | AnswerContract::QuotientRemainder { .. }
         | AnswerContract::ReducedRatio
         | AnswerContract::RelationSetup
@@ -99,8 +100,12 @@ mod tests {
                     contract: AnswerContract::Exact,
                 }],
             },
+            AnswerContract::Property {
+                check: crate::answer::PropertyCheck::Prime,
+                args: crate::answer::PropertyArgs::new(),
+            },
         ];
-        assert_eq!(graded.len(), 22);
+        assert_eq!(graded.len(), 23);
         for contract in graded {
             assert_eq!(triage_verdict(&contract), TriageVerdict::Grades);
         }

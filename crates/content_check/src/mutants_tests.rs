@@ -267,3 +267,40 @@ fn member_removed_reads_the_latex_set_and_the_word_and() {
     assert_eq!(learners(&plan(&list, "(a and b), c")), ["c"]);
     assert_eq!(plan(&list, "x and and y").slots[0].rest.len(), 1);
 }
+
+#[test]
+fn a_property_key_takes_the_first_near_miss_the_predicate_rejects() {
+    let between = json!({"kind": "property", "check": "between",
+        "args": {"low": "2/5", "high": "1/2"}});
+    let request = crate::cli::Request {
+        contract: between.clone(),
+        expected: "9/20".to_owned(),
+        learner: None,
+    };
+    let doc = mutants_doc(&request).unwrap_or_default();
+    assert_eq!(doc["key_verdict"], "correct");
+    assert_eq!(doc["mutants"][0]["rule"], "property-near-miss");
+    assert_eq!(doc["mutants"][0]["learner"], "1/2");
+    assert_eq!(doc["pass"], true);
+    // 41 is also a counterexample to "n^2 + n + 41 is prime"; the boundary
+    // candidate -1 (below `min`) is the mutant.
+    let euler = json!({"kind": "property", "check": "prime_counterexample",
+        "args": {"expr": "n^2 + n + 41", "min": 0}});
+    let request = crate::cli::Request {
+        contract: euler,
+        expected: "40".to_owned(),
+        learner: None,
+    };
+    let doc = mutants_doc(&request).unwrap_or_default();
+    assert_eq!(doc["mutants"][0]["verdict"], "wrong");
+    assert_eq!(doc["pass"], true);
+    let anything = json!({"kind": "property", "check": "multiple_of", "args": {"k": 1}});
+    let request = crate::cli::Request {
+        contract: anything,
+        expected: "5".to_owned(),
+        learner: None,
+    };
+    let doc = mutants_doc(&request).unwrap_or_default();
+    assert_eq!(doc["cause"], "no-distinct-mutant");
+    assert_eq!(doc["pass"], false);
+}

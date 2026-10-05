@@ -238,6 +238,9 @@ fn format_guidance(expected: &str, answer: &str, reason: &str) -> String {
             "Enter one formula, for example 3x^2 + 1. Do not enter a list, a set, or an inequality."
                 .to_string()
         }
+        "a number too large for this property check" => {
+            "That number is too large to check here. Give a smaller example.".to_string()
+        }
         other => bucket_guidance(expected, other),
     }
 }

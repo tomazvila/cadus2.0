@@ -94,6 +94,10 @@ pub struct JobPayload {
     /// The learner's shown work, when the submission carried any.
     #[serde(default)]
     pub work: Option<String>,
+    /// For a `property` item, the property in plain words. The `expected`
+    /// answer of such an item is one example of many, never the one key.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub answer_property: Option<String>,
 }
 
 /// One `diagnosis_jobs` row, as the poll route and the SSE handler read it.

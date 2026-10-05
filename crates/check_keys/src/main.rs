@@ -7,7 +7,9 @@
 //! - the authored answer must parse under its contract (or, with no contract,
 //!   under the topic's `answer_kind`),
 //! - the grader must return CORRECT for it, and never `Outcome::Undecidable`,
-//! - a mutated answer (+1 on one numeric component) must grade WRONG.
+//! - a mutated answer (+1 on one numeric component) must grade WRONG; for a
+//!   `property` item, whose authored answer is one example of many, the first
+//!   near miss that does not grade CORRECT must grade WRONG.
 //!
 //! Templates come from the approved rows of `content_store` (`kind =
 //! 'template'`, read-only), keyed by the serving key `<topic_id>/<kp_id>` of
@@ -467,6 +469,22 @@ fn check_answer(
             });
             return Status::Failed;
         }
+    }
+    // Rung 3 of a property item: the stored answer is one example, so a +1
+    // mutant may have the property too. A near miss that the predicate
+    // rejects must exist, or the item accepts almost anything.
+    if let Some(misses) = contract.and_then(|contract| contract.property_near_misses(answer)) {
+        let Some(miss) = misses.iter().find(|learner| {
+            !matches!(grade(answer, learner, contract, kind), Outcome::Decided(v) if v.correct)
+        }) else {
+            failures.push(Failure {
+                at: at.clone(),
+                item: item.to_owned(),
+                reason: "every near miss of the property example grades CORRECT".to_owned(),
+            });
+            return Status::Failed;
+        };
+        return mutant_status(answer, miss, contract, kind, at, item, failures);
     }
     // Rung 3: the +1 mutation grades WRONG, or no numeric component exists.
     let Some(mutant) = mutate::mutant_for(answer, contract) else {

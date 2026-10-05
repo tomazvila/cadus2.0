@@ -62,15 +62,29 @@ low-confidence diagnosis is stored and its tags are not shown.",
 #[must_use]
 pub fn user_message(payload: &JobPayload) -> String {
     let work = payload.work.as_deref().unwrap_or("(none provided)");
+    // A property item asks for ANY object with a property: the stored answer
+    // is one example, and the checker tested the property itself, exactly.
+    let reference = payload.answer_property.as_deref().map_or_else(
+        || format!("Correct final answer (reference): {}", payload.expected),
+        |property| {
+            format!(
+                "One valid example (NOT the only answer): {}\n\
+Required property: {property}. Any answer with this property is correct; the server tested \
+the learner's answer against the property with exact arithmetic and found it does not have it. \
+Do not compare the learner's answer with the example.",
+                payload.expected
+            )
+        },
+    );
     format!(
         "Problem: {}\n\
-Correct final answer (reference): {}\n\
+{reference}\n\
 Answer kind: {}\n\
 Learner's answer: '{}'\n\
 Learner's shown work: {work}\n\
 The checker marked the answer wrong. If it is in fact correct, say so.\n\
 Name the misconception and write the diagnosis via the {TOOL_NAME} tool.",
-        payload.problem, payload.expected, payload.answer_kind, payload.given_answer
+        payload.problem, payload.answer_kind, payload.given_answer
     )
 }
 
@@ -124,8 +138,40 @@ pub fn result_document(arguments: &Value, model_id: &str) -> Value {
 
 #[cfg(test)]
 mod tests {
-    use super::{MODEL_ERROR_TAGS, filter_tags, result_document, system_prompt};
+    use super::{MODEL_ERROR_TAGS, filter_tags, result_document, system_prompt, user_message};
+    use cadus_store::diagnosis::JobPayload;
     use serde_json::json;
+
+    fn payload(answer_property: Option<&str>) -> JobPayload {
+        JobPayload {
+            v: 1,
+            session: None,
+            task_id: "t".to_owned(),
+            topic: "factors-and-multiples".to_owned(),
+            kp: None,
+            problem: "Give a number with exactly three factors.".to_owned(),
+            expected: "9".to_owned(),
+            answer_kind: "expression".to_owned(),
+            given_answer: "6".to_owned(),
+            work: None,
+            answer_property: answer_property.map(str::to_owned),
+        }
+    }
+
+    /// A property item's stored answer is one example; the prompt says so and
+    /// states the property, so the model never compares 6 with 9.
+    #[test]
+    fn a_property_item_names_the_example_and_the_property() {
+        let property = user_message(&payload(Some(
+            "a positive integer with exactly 3 positive divisors",
+        )));
+        assert!(property.contains("One valid example (NOT the only answer): 9"));
+        assert!(property.contains("Required property: a positive integer with exactly 3"));
+        assert!(!property.contains("Correct final answer"));
+        let plain = user_message(&payload(None));
+        assert!(plain.contains("Correct final answer (reference): 9"));
+        assert!(!plain.contains("Required property"));
+    }
 
     /// The vocabulary is the 11 tags of spec section 5.3, in 1.0 order.
     ///
