@@ -311,10 +311,6 @@ pub struct TaskProgress {
     /// The knowledge point a lesson stands at.
     #[serde(default)]
     pub current_kp: Option<String>,
-    /// The proof-gated knowledge point whose decided items passed: the lesson
-    /// serves its written proof next (D-PR1).
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub proof_kp: Option<String>,
 }
 
 /// The buffered answers of a quiz. The count and the completion live on the

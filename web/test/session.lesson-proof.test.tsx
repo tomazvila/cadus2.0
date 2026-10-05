@@ -160,3 +160,28 @@ describe('a lesson proof', () => {
     expect(screen.getByText(/Sent for a human check/)).toBeTruthy();
   });
 });
+
+describe('a lesson proof the grader could not grade', () => {
+  it('offers a dispute, a free resubmission and a way on, so the point is never stranded', async () => {
+    const proofSeen = vi.fn<ApiClient['proofSeen']>(async () => ({
+      job: { id: 'job-1', attempt_id: 'a-1', status: 'capped' },
+      chain: chain({ phase: 'unavailable', feedback: '', first_unmet: null }),
+    }));
+    const proofDispute = vi.fn<ApiClient['proofDispute']>(async () => job({ status: 'capped', disputed: true }));
+    const taskServe = vi.fn<ApiClient['taskServe']>(async (taskId) => (
+      taskId === 't-lesson' ? proofProblem({ phase: 'unavailable', job_id: 'job-1' }) : P(1)));
+    await mount({
+      plan: planOf(LESSON, REVIEW),
+      api: stubApi({ taskTeach: async () => TEACHING, taskServe, proofSeen, proofDispute }),
+    });
+    await press("I've got it — practice ▸");
+    await waitFor(() => expect(screen.getByText(LESSON_PROOF_TEXT.unavailable)).toBeTruthy());
+    expect(textarea().value).toBe(DRAFT);
+    expect(screen.getByRole('button', { name: 'Submit again' })).toBeTruthy();
+    await press('This grade is wrong');
+    await press('Send for a human check');
+    expect(proofDispute).toHaveBeenCalledWith('job-1', undefined);
+    await press('Continue with the next task');
+    expect(taskServe.mock.calls.at(-1)).toEqual(['t-review']);
+  });
+});

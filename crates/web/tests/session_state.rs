@@ -101,7 +101,6 @@ fn plan_progress_never_installs_a_row() {
             answered: 2,
             done: true,
             current_kp: None,
-            proof_kp: None,
         },
     );
 

@@ -16,7 +16,9 @@ mod common;
 use axum::Router;
 use axum::http::{Method, StatusCode};
 use cadus_core::answer::AnswerContract;
+use cadus_core::config::Config;
 use cadus_core::curriculum::{Curriculum, Exemplar};
+use cadus_core::event::{TaskType, WorkQuality};
 use cadus_store::proof_grading::{Check, Claimed, Grading};
 use cadus_store::test_support::TestDb;
 use cadus_store::{DEFAULT_CLIENT_TIMEOUT_MS, Db};
@@ -192,6 +194,43 @@ async fn job_row(db: &TestDb, id: Uuid) -> (Option<Uuid>, i32, bool, bool, Strin
     .unwrap()
 }
 
+/// The owed proofs of `user`, as `(topic, kp)`.
+async fn owed(db: &TestDb, user: Uuid) -> Vec<(String, String)> {
+    sqlx::query_as("SELECT topic, kp FROM proof_owed WHERE user_id = $1 ORDER BY topic, kp")
+        .bind(user)
+        .fetch_all(&db.admin)
+        .await
+        .unwrap()
+}
+
+/// The XP of the two-point lesson closed at `tier`.
+fn lesson_xp(tier: WorkQuality) -> f64 {
+    let xp = cadus_core::xp::task_xp(TaskType::Lesson, tier, &Config::default(), 2, 0, false);
+    (xp * 100.0).round() / 100.0
+}
+
+/// Pass the decided items of `kp1`: two correct answers, the second of which
+/// holds the point for its proof. Gives the proof's problem id.
+async fn pass_kp1_decided(app: &Router, user: Uuid) -> String {
+    let reply = answer_task_ok(
+        app,
+        user,
+        LESSON,
+        json!({"problem_id": PROBLEM_ID, "answer": EXPECTED_ANSWER}),
+    )
+    .await;
+    let next = reply["next"]["problem_id"].as_str().unwrap().to_owned();
+    let reply = answer_task_ok(
+        app,
+        user,
+        LESSON,
+        json!({"problem_id": next, "answer": EXPECTED_ANSWER}),
+    )
+    .await;
+    assert_eq!(reply["next"]["text"], PROOF1, "{reply}");
+    reply["next"]["problem_id"].as_str().unwrap().to_owned()
+}
+
 /// The cached learner model of `user`.
 async fn model_of(db: &TestDb, user: Uuid) -> Value {
     sqlx::query_scalar("SELECT model FROM learner_models WHERE user_id = $1")
@@ -283,11 +322,14 @@ async fn a_lesson_proof_closes_on_a_pass_and_not_on_the_submission() {
         assert_eq!(poll["chain"]["phase"], "revise");
         assert!(!raw.contains(REF2), "{raw}");
 
-        // The resubmission is a new attempt, linked to the draft it revises.
+        // The resubmission is a new graded draft on the chain, linked to the
+        // draft it revises; it appends no attempt event (one problem, one
+        // scheduling signal).
         let (second, reply) = submit(&app, user, DRAFT2).await;
         assert_eq!(reply["task_status"], "proof_pending");
         assert_eq!(reply["proof"]["revision"], 1);
-        assert_eq!(reply["attempt_id"], "s_2026-01-01a-lesson-addition-2");
+        assert_eq!(reply["attempt_id"], "s_2026-01-01a-lesson-addition-1-r1");
+        assert_eq!(events_of_type(&db, user, "attempt").await.len(), 1);
         let (revision_of, revision, rewrite, closed, _) = job_row(&db, second).await;
         assert_eq!(
             (revision_of, revision, rewrite, closed),
@@ -306,10 +348,10 @@ async fn a_lesson_proof_closes_on_a_pass_and_not_on_the_submission() {
         assert_eq!(status, StatusCode::CONFLICT, "{body}");
         assert_eq!(body["error"]["code"], "proof_not_passed");
 
-        // The pass: the poll now shows the solution.
+        // The pass: no second correction (the first draft was the signal),
+        // and the poll now shows the solution.
         land(&db, user, second, true).await;
-        let corrections = events_of_type(&db, user, "regraded").await;
-        assert_eq!(corrections[1]["attempts"][0]["outcome"], "correct");
+        assert_eq!(events_of_type(&db, user, "regraded").await.len(), 1);
         let (_, poll, _) = request(
             &app,
             Method::GET,
@@ -334,12 +376,18 @@ async fn a_lesson_proof_closes_on_a_pass_and_not_on_the_submission() {
         .await;
         assert_eq!(status, StatusCode::OK, "{raw}");
         assert_eq!(closed["task_status"], "task_passed");
-        assert!(closed["xp"].as_f64().unwrap() > 0.0, "{closed}");
+        // A pass reached through revision closes below a first-try pass.
+        assert_eq!(
+            closed["xp"],
+            json!(lesson_xp(WorkQuality::Passable)),
+            "{closed}"
+        );
         let results = events_of_type(&db, user, "lesson_result").await;
         assert_eq!(results.len(), 1);
         assert_eq!(results[0]["passed"], true);
-        assert_eq!(results[0]["quality_tier"], "nearly_perfect");
+        assert_eq!(results[0]["quality_tier"], "passable");
         assert_ne!(results[0]["assisted"], true, "{}", results[0]);
+        assert_eq!(events_of_type(&db, user, "regraded").await.len(), 1);
         assert_eq!(
             model_of(&db, user).await["topics"]["addition"]["status"],
             "learning"
@@ -403,12 +451,21 @@ async fn the_cap_shows_the_solution_once_and_the_rewrite_closes_assisted() {
         assert_eq!(reply["proof"]["phase"], "closed");
         let (revision_of, _, is_rewrite, closed, _) = job_row(&db, rewrite).await;
         assert_eq!((revision_of, is_rewrite, closed), (Some(head), true, true));
+        assert_eq!(reply["xp"], json!(lesson_xp(WorkQuality::Passable)));
         let results = events_of_type(&db, user, "lesson_result").await;
         assert_eq!(results.len(), 1);
         assert_eq!(results[0]["assisted"], true);
         assert_eq!(results[0]["quality_tier"], "passable");
-        let attempts = events_of_type(&db, user, "attempt").await;
-        assert_eq!(attempts.last().unwrap()["assisted"], true);
+        // One problem, one signal: the first draft's attempt and its one
+        // correction (a miss); the revisions and the rewrite stay on the chain.
+        assert_eq!(events_of_type(&db, user, "attempt").await.len(), 1);
+        let corrections = events_of_type(&db, user, "regraded").await;
+        assert_eq!(corrections.len(), 1);
+        assert_eq!(corrections[0]["attempts"][0]["outcome"], "incorrect");
+        assert_eq!(
+            corrections[0]["attempts"][0]["attempt_id"],
+            "s_2026-01-01a-lesson-addition-1"
+        );
 
         // The closed chain shows its solution.
         let (_, poll, _) = request(&app, Method::GET, &uri, user, None).await;
@@ -455,7 +512,10 @@ async fn a_mixed_point_serves_its_proof_after_the_decided_items_pass() {
         assert_eq!(reply["next"]["proof"]["phase"], "draft");
         assert!(!reply.to_string().contains(REF1), "{reply}");
         let state = stored_state(&db, user).await;
-        assert_eq!(state.tasks[LESSON].proof_kp.as_deref(), Some("kp1"));
+        assert_eq!(
+            owed(&db, user).await,
+            [("addition".to_owned(), "kp1".to_owned())]
+        );
         assert_eq!(state.tasks[LESSON].current_kp.as_deref(), Some("kp1"));
 
         // The proof's pass closes kp1 and advances the lesson to kp2, whose
@@ -469,6 +529,10 @@ async fn a_mixed_point_serves_its_proof_after_the_decided_items_pass() {
         )
         .await;
         assert_eq!(reply["task_status"], "proof_pending");
+        assert!(
+            owed(&db, user).await.is_empty(),
+            "the first draft opened the chain"
+        );
         let id = Uuid::parse_str(reply["proof_grading"]["id"].as_str().unwrap()).unwrap();
         land(&db, user, id, true).await;
         let (status, closed, raw) = request(
@@ -486,7 +550,6 @@ async fn a_mixed_point_serves_its_proof_after_the_decided_items_pass() {
         assert!(!raw.contains(REF2), "{raw}");
         let state = stored_state(&db, user).await;
         assert_eq!(state.tasks[LESSON].current_kp.as_deref(), Some("kp2"));
-        assert_eq!(state.tasks[LESSON].proof_kp, None);
         assert!(events_of_type(&db, user, "lesson_result").await.is_empty());
     })
     .await;
@@ -741,6 +804,197 @@ async fn a_free_explanation_keeps_the_self_check_completion() {
         assert!(reply.get("proof").is_none());
         let id = Uuid::parse_str(reply["proof_grading"]["id"].as_str().unwrap()).unwrap();
         assert_eq!(job_row(&db, id).await.4, "selfcheck");
+    })
+    .await;
+}
+
+/// A first-draft pass is a normal correct: one correction (correct) on the
+/// first draft's attempt, and the point closes at the pass tier.
+#[tokio::test]
+async fn a_first_draft_pass_closes_at_the_pass_tier() {
+    TestDb::with(|db| async move {
+        let app = app(&db, false);
+        let user = lesson_learner(&db, "pr-first@example.test", proof_problem()).await;
+        let (id, _) = submit(&app, user, DRAFT3).await;
+        land(&db, user, id, true).await;
+        let (status, closed, raw) = request(
+            &app,
+            Method::POST,
+            &format!("/api/task/{LESSON}/proof/continue"),
+            user,
+            Some(json!({})),
+        )
+        .await;
+        assert_eq!(status, StatusCode::OK, "{raw}");
+        assert_eq!(closed["task_status"], "task_passed");
+        assert_eq!(closed["xp"], json!(lesson_xp(WorkQuality::NearlyPerfect)));
+        assert_eq!(events_of_type(&db, user, "attempt").await.len(), 1);
+        let corrections = events_of_type(&db, user, "regraded").await;
+        assert_eq!(corrections.len(), 1);
+        assert_eq!(corrections[0]["attempts"][0]["outcome"], "correct");
+        let results = events_of_type(&db, user, "lesson_result").await;
+        assert_eq!(results.len(), 1);
+        assert_eq!(results[0]["quality_tier"], "nearly_perfect");
+        assert_ne!(results[0]["assisted"], true);
+    })
+    .await;
+}
+
+/// The proof a point owes outlives the D-S6 row: after a session end the
+/// next session's plan carries the lesson FIRST at the point, and its serve
+/// is the proof — no decided item is answered again.
+#[tokio::test]
+async fn an_owed_proof_survives_a_session_end() {
+    TestDb::with(|db| async move {
+        let app = app(&db, false);
+        let user = lesson_learner(
+            &db,
+            "pr-owed-end@example.test",
+            lesson_problem(5.0, "kp1", Vec::new()),
+        )
+        .await;
+        pass_kp1_decided(&app, user).await;
+        let (status, _, raw) = request(
+            &app,
+            Method::POST,
+            "/api/session/end",
+            user,
+            Some(json!({})),
+        )
+        .await;
+        assert_eq!(status, StatusCode::OK, "{raw}");
+        let (status, started, raw) =
+            request(&app, Method::POST, "/api/session/start", user, None).await;
+        assert_eq!(status, StatusCode::OK, "{raw}");
+        let task = format!("{}-lesson-addition", started["session"].as_str().unwrap());
+        let (_, plan, _) = request(&app, Method::GET, "/api/session/plan", user, None).await;
+        assert_eq!(plan["tasks"][0]["task_id"], task.as_str(), "{plan}");
+        assert_eq!(plan["tasks"][0]["start_at_kp"], "kp1");
+        assert_eq!(plan["tasks"][0]["proof_revision"]["phase"], "draft");
+        let (status, raw) = serve_raw(&app, user, &task).await;
+        assert_eq!(status, StatusCode::OK, "{raw}");
+        assert_eq!(parse(&raw)["text"], PROOF1);
+        assert_eq!(parse(&raw)["proof"]["phase"], "draft");
+        assert!(!raw.contains(REF1), "{raw}");
+        assert_eq!(events_of_type(&db, user, "attempt").await.len(), 2);
+    })
+    .await;
+}
+
+/// The same across the day rollover: yesterday's owed proof comes first today.
+#[tokio::test]
+async fn an_owed_proof_survives_the_day_rollover() {
+    TestDb::with(|db| async move {
+        let app = app(&db, true);
+        let user = seed_learner(&db, "pr-owed-roll@example.test").await;
+        seed_open_session(&db, user).await;
+        sqlx::query("INSERT INTO proof_owed (user_id, topic, kp) VALUES ($1, 'addition', 'kp1')")
+            .bind(user)
+            .execute(&db.admin)
+            .await
+            .unwrap();
+        let (status, started, raw) =
+            request(&app, Method::POST, "/api/session/start", user, None).await;
+        assert_eq!(status, StatusCode::OK, "{raw}");
+        let today = started["session"].as_str().unwrap().to_owned();
+        assert_ne!(today, "s_2026-01-01a");
+        let task = format!("{today}-lesson-addition");
+        let (_, plan, _) = request(&app, Method::GET, "/api/session/plan", user, None).await;
+        assert_eq!(plan["tasks"][0]["task_id"], task.as_str(), "{plan}");
+        assert_eq!(plan["open_revisions"][0]["phase"], "draft");
+        let (status, raw) = serve_raw(&app, user, &task).await;
+        assert_eq!(status, StatusCode::OK, "{raw}");
+        assert_eq!(parse(&raw)["text"], PROOF1);
+    })
+    .await;
+}
+
+/// A grading the daily cap refused never strands the point: the learner may
+/// dispute it (the admin path sees it), resubmit for free, or leave it — the
+/// plan keeps carrying it; a human pass then closes the point.
+#[tokio::test]
+async fn a_capped_grading_can_be_disputed_and_never_strands_the_point() {
+    TestDb::with(|db| async move {
+        let app = app(&db, false);
+        let user = lesson_learner(&db, "pr-capped@example.test", proof_problem()).await;
+        sqlx::query("UPDATE users SET is_admin = true WHERE id = $1")
+            .bind(user)
+            .execute(&db.admin)
+            .await
+            .unwrap();
+        let (id, reply) = submit(&app, user, DRAFT1).await;
+        let attempt = reply["attempt_id"].as_str().unwrap().to_owned();
+        sqlx::query(
+            "UPDATE proof_grading_jobs SET status = 'capped', finished_at = now() WHERE id = $1",
+        )
+        .bind(id)
+        .execute(&db.admin)
+        .await
+        .unwrap();
+        let (_, raw) = serve_raw(&app, user, LESSON).await;
+        assert_eq!(parse(&raw)["proof"]["phase"], "unavailable");
+        let (_, plan, _) = request(&app, Method::GET, "/api/session/plan", user, None).await;
+        assert_eq!(plan["tasks"][0]["proof_revision"]["phase"], "unavailable");
+
+        let (status, body, raw) = request(
+            &app,
+            Method::POST,
+            &format!("/api/proof-grading/{id}/dispute"),
+            user,
+            Some(json!({"note": "The daily limit stopped the check."})),
+        )
+        .await;
+        assert_eq!(status, StatusCode::OK, "{raw}");
+        assert_eq!(body["status"], "capped");
+        let (_, list, _) = request(&app, Method::GET, "/api/admin/ungraded", user, None).await;
+        assert_eq!(list["disputed"][0]["attempt_id"], attempt.as_str());
+        let (status, _, raw) = request(
+            &app,
+            Method::POST,
+            &format!("/api/admin/ungraded/{attempt}/regrade"),
+            user,
+            Some(json!({"outcome": "correct"})),
+        )
+        .await;
+        assert_eq!(status, StatusCode::OK, "{raw}");
+        let (status, closed, raw) = request(
+            &app,
+            Method::POST,
+            &format!("/api/task/{LESSON}/proof/continue"),
+            user,
+            Some(json!({})),
+        )
+        .await;
+        assert_eq!(status, StatusCode::OK, "{raw}");
+        assert_eq!(closed["task_status"], "task_passed");
+    })
+    .await;
+}
+
+/// A capped grading takes a free resubmission (no revision used).
+#[tokio::test]
+async fn a_capped_grading_takes_a_free_resubmission() {
+    TestDb::with(|db| async move {
+        let app = app(&db, false);
+        let user = lesson_learner(&db, "pr-retry@example.test", proof_problem()).await;
+        let (id, _) = submit(&app, user, DRAFT1).await;
+        sqlx::query("UPDATE proof_grading_jobs SET status = 'capped' WHERE id = $1")
+            .bind(id)
+            .execute(&db.admin)
+            .await
+            .unwrap();
+        let (retry, reply) = submit(&app, user, DRAFT1).await;
+        assert_eq!(reply["task_status"], "proof_pending");
+        let (revision_of, revision, _, _, _) = job_row(&db, retry).await;
+        assert_eq!((revision_of, revision), (Some(id), 0));
+        // The retry's verdict is the chain's first: it folds onto the root.
+        land(&db, user, retry, false).await;
+        let corrections = events_of_type(&db, user, "regraded").await;
+        assert_eq!(corrections.len(), 1);
+        assert_eq!(
+            corrections[0]["attempts"][0]["attempt_id"],
+            "s_2026-01-01a-lesson-addition-1"
+        );
     })
     .await;
 }

@@ -11,7 +11,7 @@ use sqlx::{AssertSqlSafe, Connection, PgConnection};
 use uuid::Uuid;
 
 /// The line that the operator reads in `docker compose logs migrate`.
-pub const APPLIED_ALL: &str = "cadus-migrate: applied 26 migrations (26 total)";
+pub const APPLIED_ALL: &str = "cadus-migrate: applied 27 migrations (27 total)";
 
 /// The environment variable that names the lock database of the binary.
 pub const MAINTENANCE_DB_VAR: &str = "CADUS_MAINTENANCE_DB";

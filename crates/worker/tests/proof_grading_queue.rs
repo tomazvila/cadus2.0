@@ -450,3 +450,43 @@ async fn a_hanging_proof_call_does_not_stall_the_other_passes() {
     })
     .await;
 }
+
+/// (6) One problem, one scheduling signal (D-PR1): a revision whose chain
+/// already holds a verdict settles its grading and folds nothing.
+#[tokio::test]
+async fn a_revision_after_a_verdict_folds_nothing() {
+    TestDb::with(|db| async move {
+        let db: &TestDb = db.as_ref();
+        let server = FakeModel::start(vec![reply("grade_proof", &grading(&[]), None)]).await;
+        let alice = db.seed_user("proof-revision@example.test").await;
+        seed_attempt(db, alice).await;
+        let root = sqlx::query_scalar::<_, Uuid>(
+            "INSERT INTO proof_grading_jobs (user_id, attempt_id, payload, status, result, context) \
+             VALUES ($1, 'attempt-1', $2, 'done', '{\"verdict\": \"needs_revision\"}', 'lesson') RETURNING id",
+        )
+        .bind(alice)
+        .bind(payload())
+        .fetch_one(&db.admin)
+        .await
+        .unwrap();
+        let revision = sqlx::query_scalar::<_, Uuid>(
+            "INSERT INTO proof_grading_jobs (user_id, attempt_id, payload, context, revision_of, revision) \
+             VALUES ($1, 'attempt-1-r1', $2, 'lesson', $3, 1) RETURNING id",
+        )
+        .bind(alice)
+        .bind(payload())
+        .bind(root)
+        .fetch_one(&db.admin)
+        .await
+        .unwrap();
+
+        let report = run_once(&common::handle(db), &job_of(&server))
+            .await
+            .unwrap();
+        assert_eq!(report.outcome, Outcome::Passed, "{report:?}");
+        assert_eq!(report.job_id, Some(revision));
+        assert_eq!(row_of(db, revision).await.0, "done");
+        assert_eq!(corrections(db, alice).await, 0);
+    })
+    .await;
+}

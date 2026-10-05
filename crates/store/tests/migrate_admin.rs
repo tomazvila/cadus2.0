@@ -43,7 +43,7 @@ async fn admin_login_flag_grants_the_login() {
         );
         // The migrations of this database ran already, so this run applies none.
         assert!(
-            stdout.contains("cadus-migrate: applied 0 migrations (26 total)"),
+            stdout.contains("cadus-migrate: applied 0 migrations (27 total)"),
             "stdout: {stdout}"
         );
         // No password variable is set, so the binary reports no password.

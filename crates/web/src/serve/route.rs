@@ -418,16 +418,9 @@ pub(crate) async fn install_next(
     // open chain's own problem, or the point's proof exemplar — and draws
     // nothing from the pool.
     if task.task_type == TaskType::Lesson && feedback.is_none() {
-        let proof_kp = progress_for(scratch, task, graph).proof_kp.clone();
-        let due = crate::proof_grading::lesson::due_item(
-            state,
-            tx,
-            graph,
-            &target.serve,
-            &target.kp,
-            proof_kp.as_deref(),
-        )
-        .await?;
+        let due =
+            crate::proof_grading::lesson::due_item(state, tx, graph, &target.serve, &target.kp)
+                .await?;
         if let Some(item) = due {
             let request = ProofServe {
                 task,

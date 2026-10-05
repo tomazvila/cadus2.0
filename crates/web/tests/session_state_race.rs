@@ -60,7 +60,6 @@ async fn a_second_tab_answering_a_closed_task_gets_409_task_complete() {
                 answered: 1,
                 done: true,
                 current_kp: None,
-                proof_kp: None,
             },
         );
         save_web_state(&mut a, user, &a_state.to_doc())

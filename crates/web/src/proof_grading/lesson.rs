@@ -101,13 +101,25 @@ pub fn kp_all_undecidable(graph: &Curriculum, topic: &str, kp: &str) -> bool {
 }
 
 /// The chain step one lesson submission takes.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct LessonStep {
     /// The chain columns of the new job.
     pub job: NewJob<'static>,
+    /// The job's attempt id when the submission revises a draft. A revision
+    /// records no `attempt` event (the FIRST draft is the problem's one
+    /// scheduling signal), so its id is the root's with a draft number.
+    pub revision_attempt: Option<String>,
 }
 
 impl LessonStep {
+    /// The first draft of a problem.
+    const fn first() -> Self {
+        Self {
+            job: NewJob::first(CONTEXT_LESSON),
+            revision_attempt: None,
+        }
+    }
+
     /// Whether the submission is the unaided rewrite that closes the chain.
     #[must_use]
     pub const fn rewrite(&self) -> bool {
@@ -147,10 +159,13 @@ pub async fn lesson_step(
     let kp = served.kp.as_deref().unwrap_or_default();
     let head = store(state, proof_grading::open_lesson_head(&mut **tx, topic, kp)).await?;
     let Some(head) = head else {
-        return Ok(LessonStep {
-            job: NewJob::first(CONTEXT_LESSON),
-        });
+        return Ok(LessonStep::first());
     };
+    let rows = store(state, proof_grading::jobs(&mut **tx, super::LIST_LIMIT)).await?;
+    let attempt = chain::chain_of(rows, head.id).map_or_else(
+        || format!("{}-r1", head.attempt_id),
+        |chain| format!("{}-r{}", chain.root().attempt_id, chain.rows.len()),
+    );
     let next = |revision: i32, rewrite: bool| LessonStep {
         job: NewJob {
             context: CONTEXT_LESSON,
@@ -158,6 +173,7 @@ pub async fn lesson_step(
             revision,
             rewrite,
         },
+        revision_attempt: Some(attempt.clone()),
     };
     match chain::phase_of(&head) {
         Phase::Grading => Err(conflict(
@@ -176,9 +192,7 @@ pub async fn lesson_step(
         // A grading that never landed costs no revision.
         Phase::Unavailable => Ok(next(head.revision, false)),
         Phase::Rewrite => Ok(next(head.revision, true)),
-        Phase::Closed => Ok(LessonStep {
-            job: NewJob::first(CONTEXT_LESSON),
-        }),
+        Phase::Closed => Ok(LessonStep::first()),
     }
 }
 
@@ -195,7 +209,7 @@ pub struct DueItem {
 
 /// The proof a lesson owes at `(topic, kp)`: the open chain's own problem,
 /// else the point's proof exemplar when the point's decided items passed
-/// (`proof_kp`) or the point has none.
+/// (the durable `proof_owed` row) or the point has none.
 ///
 /// # Errors
 ///
@@ -206,7 +220,6 @@ pub async fn due_item(
     graph: &Curriculum,
     topic: &str,
     kp: &str,
-    proof_kp: Option<&str>,
 ) -> Result<Option<DueItem>, ApiError> {
     let exemplar = proof_exemplar(graph, topic, kp);
     let head = store(state, proof_grading::open_lesson_head(&mut **tx, topic, kp)).await?;
@@ -225,7 +238,8 @@ pub async fn due_item(
     let Some(exemplar) = exemplar else {
         return Ok(None);
     };
-    let due = proof_kp == Some(kp) || kp_all_undecidable(graph, topic, kp);
+    let due = kp_all_undecidable(graph, topic, kp)
+        || store(state, proof_grading::is_owed(&mut **tx, topic, kp)).await?;
     Ok(due.then(|| DueItem {
         text: exemplar.problem.clone(),
         answer: exemplar.answer.clone(),
@@ -302,24 +316,49 @@ pub async fn stamp(
     Ok(())
 }
 
-/// The open lesson heads of the learner, oldest first.
+/// The lesson points that owe or revise a written proof, as
+/// `(topic, kp)`, oldest first: the open lesson chains, then the owed proofs
+/// whose first draft is still to come.
 ///
 /// # Errors
 ///
 /// Returns the store failure.
-pub async fn open_lesson_heads(
+pub async fn open_lesson_points(
     state: &AppState,
     tx: &mut Transaction<'_, Postgres>,
-) -> Result<Vec<JobRow>, ApiError> {
-    store(
+) -> Result<Vec<(String, String)>, ApiError> {
+    let heads = store(
         state,
         proof_grading::open_heads(&mut **tx, &[CONTEXT_LESSON]),
     )
-    .await
+    .await?;
+    let owed = store(state, proof_grading::owed(&mut **tx)).await?;
+    Ok(lesson_points(&heads, &owed))
 }
 
-/// Carry every open lesson revision into `plan`, FIRST, at its knowledge
-/// point.
+/// The `(topic, kp)` of each open lesson head, then each owed proof, once.
+#[must_use]
+pub fn lesson_points(heads: &[JobRow], owed: &[(String, String)]) -> Vec<(String, String)> {
+    let mut points: Vec<(String, String)> = heads
+        .iter()
+        .filter(|head| head.context == CONTEXT_LESSON)
+        .filter_map(|head| {
+            Some((
+                head.payload_str("topic")?.to_owned(),
+                head.payload_str("kp")?.to_owned(),
+            ))
+        })
+        .collect();
+    for point in owed {
+        if !points.contains(point) {
+            points.push(point.clone());
+        }
+    }
+    points
+}
+
+/// Carry every lesson point that owes or revises a written proof into
+/// `plan`, FIRST, at its knowledge point.
 ///
 /// A plan that already lists the topic's lesson moves it to the front and
 /// starts it at the chain's point; one that does not gains the lesson. A
@@ -327,15 +366,13 @@ pub async fn open_lesson_heads(
 /// changes the composed plan only (trap W3).
 pub fn carry_open(
     plan: &mut SessionPlan,
-    heads: &[JobRow],
+    points: &[(String, String)],
     graph: &Curriculum,
     learned: &BTreeMap<String, i64>,
 ) {
-    // Oldest last, so the oldest open chain ends up first.
-    for head in heads.iter().rev() {
-        let (Some(topic), Some(kp)) = (head.payload_str("topic"), head.payload_str("kp")) else {
-            continue;
-        };
+    // Oldest last, so the oldest open point ends up first.
+    for (topic, kp) in points.iter().rev() {
+        let (topic, kp) = (topic.as_str(), kp.as_str());
         if learned.contains_key(topic) || graph.idx_of(topic).is_none() {
             continue;
         }
@@ -361,29 +398,53 @@ pub fn carry_open(
     }
 }
 
+/// The plan task that carries the lesson of `topic`.
+fn lesson_task_of(plan: &SessionPlan, topic: &str) -> Option<String> {
+    plan.tasks
+        .iter()
+        .find(|task| task.task_type == TaskType::Lesson && task.topic.as_deref() == Some(topic))
+        .map(|task| task.task_id.clone())
+}
+
+/// The display name of one topic.
+fn name_of(graph: &Curriculum, topic: &str) -> Option<String> {
+    graph
+        .idx_of(topic)
+        .and_then(|idx| graph.topic(idx))
+        .map(|found| found.name.clone())
+}
+
 /// The open revisions the plan names: one entry per open lesson or review
-/// chain, with the plan task that carries a lesson chain.
+/// chain, with the plan task that carries a lesson chain, then one entry per
+/// owed proof whose first draft is still to come (phase `draft`).
 #[must_use]
-pub fn open_items(heads: &[JobRow], plan: &SessionPlan, graph: &Curriculum) -> Vec<Value> {
+pub fn open_items(
+    heads: &[JobRow],
+    owed: &[(String, String)],
+    plan: &SessionPlan,
+    graph: &Curriculum,
+) -> Vec<Value> {
+    let owed_items = owed.iter().map(|(topic, kp)| {
+        json!({
+            "job_id": null,
+            "context": CONTEXT_LESSON,
+            "topic": topic,
+            "topic_name": name_of(graph, topic),
+            "kp": kp,
+            "phase": "draft",
+            "revision": 0,
+            "seen": true,
+            "task_id": lesson_task_of(plan, topic),
+        })
+    });
     heads
         .iter()
         .map(|head| {
             let topic = head.payload_str("topic").unwrap_or_default();
             let task_id = (head.context == CONTEXT_LESSON)
-                .then(|| {
-                    plan.tasks
-                        .iter()
-                        .find(|task| {
-                            task.task_type == TaskType::Lesson
-                                && task.topic.as_deref() == Some(topic)
-                        })
-                        .map(|task| task.task_id.clone())
-                })
+                .then(|| lesson_task_of(plan, topic))
                 .flatten();
-            let name = graph
-                .idx_of(topic)
-                .and_then(|idx| graph.topic(idx))
-                .map(|found| found.name.clone());
+            let name = name_of(graph, topic);
             json!({
                 "job_id": head.id,
                 "context": head.context,
@@ -396,6 +457,7 @@ pub fn open_items(heads: &[JobRow], plan: &SessionPlan, graph: &Curriculum) -> V
                 "task_id": task_id,
             })
         })
+        .chain(owed_items)
         .collect()
 }
 
@@ -488,28 +550,22 @@ pub(crate) mod tests {
     fn an_open_revision_carries_first() {
         let graph = graph();
         let head = row(1, None, Some("needs_revision"), 0);
+        let points = lesson_points(std::slice::from_ref(&head), &[]);
+        assert_eq!(points, [("parity".to_owned(), "kp1".to_owned())]);
         let mut plan = plan_of(vec![lesson("other"), lesson("parity")]);
-        carry_open(
-            &mut plan,
-            std::slice::from_ref(&head),
-            &graph,
-            &BTreeMap::new(),
-        );
+        carry_open(&mut plan, &points, &graph, &BTreeMap::new());
         assert_eq!(plan.tasks[0].topic.as_deref(), Some("parity"));
         assert_eq!(plan.tasks[0].start_at_kp.as_deref(), Some("kp1"));
         assert_eq!(plan.tasks.len(), 2);
         let mut empty = plan_of(Vec::new());
-        carry_open(
-            &mut empty,
-            std::slice::from_ref(&head),
-            &graph,
-            &BTreeMap::new(),
-        );
+        // An owed proof with no chain yet carries the same way.
+        let owed = lesson_points(&[], &[("parity".to_owned(), "kp1".to_owned())]);
+        carry_open(&mut empty, &owed, &graph, &BTreeMap::new());
         assert_eq!(empty.tasks[0].task_id, "s_2026-01-02a-lesson-parity");
         assert_eq!(empty.tasks[0].why, CARRY_WHY);
         let learned = BTreeMap::from([("parity".to_owned(), 1_i64)]);
         let mut done = plan_of(Vec::new());
-        carry_open(&mut done, &[head], &graph, &learned);
+        carry_open(&mut done, &points, &graph, &learned);
         assert!(done.tasks.is_empty());
     }
 }

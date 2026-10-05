@@ -10,8 +10,10 @@
 //! 4. ask the hosted model one forced-tool question ([`prompt`]), and put the
 //!    bill of every HTTP attempt in `model_call_log` (T6) before the settle;
 //! 5. CODE decides the verdict from the checks ([`prompt::verdict_of`]);
-//! 6. land it in ONE transaction: the verdict appends a `regraded` event and
-//!    refolds the learner model — a pass is outcome correct (the owner's
+//! 6. land it in ONE transaction: the FIRST verdict of a revision chain
+//!    appends a `regraded` event on the chain's root attempt and refolds the
+//!    learner model (later drafts stay on the chain: one problem, one
+//!    scheduling signal) — a pass is outcome correct (the owner's
 //!    decision: a passed proof counts for mastery like a correct short
 //!    answer), a needs-revision verdict is outcome incorrect (a decided miss
 //!    for scheduling, D-PR1); both settle the row `done` with the result
@@ -330,6 +332,35 @@ async fn fold_verdict(
     claimed: &Claimed,
     passed: bool,
 ) -> Result<(), WorkerError> {
+    // One problem, one scheduling signal (D-PR1): only the FIRST verdict of a
+    // revision chain folds, and it folds onto the chain's root attempt. A later
+    // revision and the unaided rewrite after the cap stay on the chain.
+    let lineage = sqlx::query_as::<_, (String, bool, bool)>(
+        r#"
+        WITH RECURSIVE chain AS (
+            SELECT id, revision_of, attempt_id, rewrite,
+                   (status = 'done' OR override_verdict IS NOT NULL) AS judged, 0 AS depth
+              FROM proof_grading_jobs WHERE id = $1
+            UNION ALL
+            SELECT p.id, p.revision_of, p.attempt_id, p.rewrite,
+                   (p.status = 'done' OR p.override_verdict IS NOT NULL), chain.depth + 1
+              FROM proof_grading_jobs p JOIN chain ON p.id = chain.revision_of
+        )
+        SELECT attempt_id, rewrite, judged FROM chain ORDER BY depth
+        "#,
+    )
+    .bind(claimed.id)
+    .fetch_all(&mut **tx)
+    .await?;
+    let rewrite = lineage.first().is_some_and(|row| row.1);
+    let judged_before = lineage.iter().skip(1).any(|row| row.2);
+    if rewrite || judged_before {
+        tracing::info!(job = %claimed.id, "proof grading: a later draft of the chain; no fold");
+        return Ok(());
+    }
+    let root_attempt = lineage
+        .last()
+        .map_or_else(|| claimed.attempt_id.clone(), |row| row.0.clone());
     let target = sqlx::query!(
         r#"
         SELECT payload->>'task_id' AS "task_id!",
@@ -345,7 +376,7 @@ async fn fold_verdict(
          LIMIT 1
         "#,
         claimed.user_id,
-        claimed.attempt_id,
+        root_attempt.as_str(),
     )
     .fetch_optional(&mut **tx)
     .await?;
@@ -371,7 +402,7 @@ async fn fold_verdict(
         task_id: target.task_id,
         topic,
         attempts: vec![RegradedAttempt {
-            attempt_id: claimed.attempt_id.clone(),
+            attempt_id: root_attempt.clone(),
             outcome: Some(if passed {
                 AttemptOutcome::Correct
             } else {

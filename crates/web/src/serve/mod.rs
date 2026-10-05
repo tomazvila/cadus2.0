@@ -288,12 +288,12 @@ pub(crate) async fn open(
         &content.curriculum,
         &projection.model,
     );
-    // D-PR1: an open lesson revision carries its lesson first, so a task the
-    // plan route listed is a task these routes find.
-    let heads = crate::proof_grading::lesson::open_lesson_heads(state, &mut tx).await?;
+    // D-PR1: an owed or open lesson proof carries its lesson first, so a task
+    // the plan route listed is a task these routes find.
+    let points = crate::proof_grading::lesson::open_lesson_points(state, &mut tx).await?;
     crate::proof_grading::lesson::carry_open(
         &mut plan,
-        &heads,
+        &points,
         &content.curriculum,
         &view.learned_at,
     );

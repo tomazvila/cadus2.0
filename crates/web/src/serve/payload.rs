@@ -83,7 +83,6 @@ pub(crate) fn progress_for<'state>(
                     .and_then(|topic| lesson_kp(None, task, graph, topic)),
                 _ => None,
             },
-            proof_kp: None,
         })
 }
 

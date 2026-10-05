@@ -606,6 +606,83 @@ where
     Ok(id)
 }
 
+/// Record that the lesson owes the written proof of `(topic, kp)`: its
+/// decided items passed (D-PR1). A second record changes nothing.
+///
+/// # Errors
+///
+/// Returns [`StoreError::Db`] when the statement fails.
+pub async fn owe<'e, E>(executor: E, user_id: Uuid, topic: &str, kp: &str) -> Result<(), StoreError>
+where
+    E: PgExecutor<'e>,
+{
+    sqlx::query(
+        "INSERT INTO proof_owed (user_id, topic, kp) VALUES ($1, $2, $3) \
+         ON CONFLICT (user_id, topic, kp) DO NOTHING",
+    )
+    .bind(user_id)
+    .bind(topic)
+    .bind(kp)
+    .execute(executor)
+    .await?;
+    Ok(())
+}
+
+/// Whether the lesson owes the written proof of `(topic, kp)`, under the
+/// caller's tenant binding.
+///
+/// # Errors
+///
+/// Returns [`StoreError::Db`] when the statement fails.
+pub async fn is_owed<'e, E>(executor: E, topic: &str, kp: &str) -> Result<bool, StoreError>
+where
+    E: PgExecutor<'e>,
+{
+    let owed = sqlx::query_scalar::<_, bool>(
+        "SELECT EXISTS (SELECT 1 FROM proof_owed WHERE topic = $1 AND kp = $2)",
+    )
+    .bind(topic)
+    .bind(kp)
+    .fetch_one(executor)
+    .await?;
+    Ok(owed)
+}
+
+/// Every owed proof of the caller's tenant as `(topic, kp)`, oldest first.
+///
+/// # Errors
+///
+/// Returns [`StoreError::Db`] when the statement fails.
+pub async fn owed<'e, E>(executor: E) -> Result<Vec<(String, String)>, StoreError>
+where
+    E: PgExecutor<'e>,
+{
+    let rows = sqlx::query_as::<_, (String, String)>(
+        "SELECT topic, kp FROM proof_owed ORDER BY created_at, topic, kp",
+    )
+    .fetch_all(executor)
+    .await?;
+    Ok(rows)
+}
+
+/// The owed proof of `(topic, kp)` is no longer owed: its first draft opened
+/// the revision chain.
+///
+/// # Errors
+///
+/// Returns [`StoreError::Db`] when the statement fails.
+pub async fn settle_owed<'e, E>(executor: E, topic: &str, kp: &str) -> Result<(), StoreError>
+where
+    E: PgExecutor<'e>,
+{
+    sqlx::query("DELETE FROM proof_owed WHERE topic = $1 AND kp = $2")
+        .bind(topic)
+        .bind(kp)
+        .execute(executor)
+        .await?;
+    Ok(())
+}
+
 /// Take the oldest pending row (`FOR UPDATE SKIP LOCKED`, the D-O5 pattern).
 ///
 /// # Errors

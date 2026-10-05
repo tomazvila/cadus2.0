@@ -172,7 +172,6 @@ async fn served_quiz_with_arbitrary_task_id_stays_private_after_one_answer() {
                 answered: 0,
                 done: false,
                 current_kp: None,
-                proof_kp: None,
             },
         );
         put_state(&db, user, &scratch).await;

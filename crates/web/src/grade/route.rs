@@ -115,6 +115,25 @@ pub async fn answer(request: TaskWithBody) -> Result<Json<Value>, ApiError> {
     } else {
         None
     };
+    // A REVISION of a lesson proof is recorded on its chain alone: the first
+    // draft is the problem's one scheduling signal, so no attempt event and
+    // no fold follow a later draft (D-PR1).
+    if let Some(step) = proof_step
+        .as_ref()
+        .filter(|step| step.job.revision_of.is_some())
+    {
+        let revision = super::proof::Revision {
+            task: &task,
+            served: &served,
+            answer: &submitted.answer,
+            step: step.clone(),
+            now,
+        };
+        return super::proof::revise_in_lesson(
+            &state, content, tx, user_id, scratch, &events, &readiness, revision,
+        )
+        .await;
+    }
     // A property item has no key to be equivalent to: its stored answer is
     // one example, and the exact predicate already decided the learner's own
     // object. A decided miss is final, and an unreadable answer stays
@@ -155,7 +174,7 @@ pub async fn answer(request: TaskWithBody) -> Result<Json<Value>, ApiError> {
         submitted.assisted || !served.hints_given.is_empty()
     } else {
         reference_assisted(task.task_type, submitted.assisted, served.hints_given.len())
-    } || proof_step.is_some_and(|step| step.rewrite());
+    };
     let session = scratch.session.clone();
     let timing = timing::reading(graph, &task, &served, &grade, secs, assisted, &timing_tags);
     let graded = Graded {
@@ -211,7 +230,15 @@ pub async fn answer(request: TaskWithBody) -> Result<Json<Value>, ApiError> {
 
     // Step 7. The lesson advance, its close event, and its remediation.
     let moved = advance_and_fold(
-        &state, content, &mut tx, user_id, &task, &recorded, &events, &readiness, proof_step,
+        &state,
+        content,
+        &mut tx,
+        user_id,
+        &task,
+        &recorded,
+        &events,
+        &readiness,
+        proof_step.is_some(),
     )
     .await?;
     let proof_pending = moved.status == STATUS_PROOF_PENDING;
@@ -261,7 +288,7 @@ pub async fn answer(request: TaskWithBody) -> Result<Json<Value>, ApiError> {
     // Amendment K point 6: the background proof grading, enqueued in the same
     // transaction. No model call here (L6); the verdict lands later.
     let proof_job = if written_proof {
-        let job = proof_step.map_or_else(
+        let job = proof_step.as_ref().map_or_else(
             || cadus_store::proof_grading::NewJob::first(proof_grading::context_of(&served)),
             |step| step.job,
         );
@@ -275,16 +302,14 @@ pub async fn answer(request: TaskWithBody) -> Result<Json<Value>, ApiError> {
             &job,
         )
         .await?;
-        // The unaided rewrite after the cap closes its chain at once.
-        if let Some(id) = id
-            && job.rewrite
-        {
+        // The first draft opens the chain: the proof is no longer merely owed.
+        if proof_step.is_some() {
             store(
                 &state,
-                cadus_store::proof_grading::mark(
+                cadus_store::proof_grading::settle_owed(
                     &mut *tx,
-                    id,
-                    cadus_store::proof_grading::Mark::Closed,
+                    served.serving_topic().unwrap_or_default(),
+                    served.kp.as_deref().unwrap_or_default(),
                 ),
             )
             .await?;
@@ -361,19 +386,11 @@ pub async fn answer(request: TaskWithBody) -> Result<Json<Value>, ApiError> {
     if hand_on_failed {
         body["next_unavailable"] = json!(true);
     }
-    if let Some(step) = proof_step {
+    if proof_step.is_some() {
         if let Some(map) = body.as_object_mut() {
             map.remove("next_unavailable");
         }
-        body["proof"] = json!({
-            "context": cadus_store::proof_grading::CONTEXT_LESSON,
-            "phase": if step.rewrite() { "closed" } else { "grading" },
-            "job_id": proof_job,
-            "revision": step.job.revision,
-            "cap": proof_grading::REVISION_CAP,
-            "revisions_left": (proof_grading::REVISION_CAP - step.job.revision).max(0),
-            "rewrite": step.rewrite(),
-        });
+        body["proof"] = super::proof::pending_field(proof_job, 0);
     }
     Ok(Json(body))
 }
@@ -490,35 +507,15 @@ async fn advance_and_fold(
     recorded: &Attempt,
     events: &[EventRow],
     readiness: &ReadinessSet,
-    proof_step: Option<proof_grading::lesson::LessonStep>,
+    lesson_proof: bool,
 ) -> Result<Advance, ApiError> {
     let now = recorded.ts;
     let history = store(state, load_session_view(tx, user_id)).await?;
-    let moved = if let Some(step) = proof_step {
-        // D-PR1: a draft waits for its verdict; the unaided rewrite after the
-        // cap closes the point as assisted.
-        match recorded.kp.as_ref().filter(|_| step.rewrite()) {
-            Some(kp) => {
-                let close = CloseOf {
-                    session: recorded.session.clone(),
-                    topic: recorded.topic.clone(),
-                    task_id: &recorded.task_id,
-                    quality: PROOF_ASSISTED_TIER,
-                    assisted: true,
-                };
-                proof_close(
-                    &content.curriculum,
-                    &content.cfg,
-                    now,
-                    &close,
-                    kp.as_str(),
-                    events,
-                )
-            }
-            None => Advance {
-                status: STATUS_PROOF_PENDING,
-                ..Advance::carry_on()
-            },
+    let moved = if lesson_proof {
+        // D-PR1: the first draft of a lesson proof waits for its verdict.
+        Advance {
+            status: STATUS_PROOF_PENDING,
+            ..Advance::carry_on()
         }
     } else if task.task_type == TaskType::Review {
         review::close_review(task, recorded, events, &content.cfg)
@@ -541,6 +538,14 @@ async fn advance_and_fold(
     };
     for extra in moved.events() {
         store(state, append_event(tx, user_id, &extra, None)).await?;
+    }
+    // D-PR1: the proof the held point owes outlives the D-S6 row.
+    if let Some(kp) = moved.proof_due.as_deref() {
+        store(
+            state,
+            cadus_store::proof_grading::owe(&mut **tx, user_id, recorded.topic.as_str(), kp),
+        )
+        .await?;
     }
     // f19-retention: the attempt on a probe task is the delayed measurement, so it
     // writes its own event with the provenance (D-F11). A plain task writes none.

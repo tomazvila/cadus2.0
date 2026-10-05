@@ -12,7 +12,7 @@
 
 use super::*;
 use crate::proof_grading::{Phase, chain};
-use cadus_store::proof_grading::{Mark, mark, open_lesson_head};
+use cadus_store::proof_grading::{Mark, jobs, mark, open_lesson_head};
 
 /// The `409` of a Continue on a proof that has not passed.
 fn not_passed() -> ApiError {
@@ -65,6 +65,14 @@ pub async fn proof_continue(request: TaskWithBody) -> Result<Json<Value>, ApiErr
         .filter(|head| chain::phase_of(head) == Phase::Passed)
         .ok_or_else(not_passed)?;
     store(&state, mark(&mut *tx, head.id, Mark::Closed)).await?;
+    // One problem, one signal (D-PR1): a pass on the first graded draft earns
+    // the pass tier; a pass reached through revision earns less.
+    let rows = store(&state, jobs(&mut *tx, proof_grading::LIST_LIMIT)).await?;
+    let first_try = chain::chain_of(rows, head.id).is_none_or(|chain| {
+        chain.rows[..chain.rows.len() - 1]
+            .iter()
+            .all(|row| row.verdict().is_none())
+    });
 
     let record = live
         .topic
@@ -75,7 +83,11 @@ pub async fn proof_continue(request: TaskWithBody) -> Result<Json<Value>, ApiErr
         session: scratch.session.clone(),
         topic: record,
         task_id: &task_id,
-        quality: PROOF_PASS_TIER,
+        quality: if first_try {
+            PROOF_PASS_TIER
+        } else {
+            PROOF_REVISED_TIER
+        },
         assisted: false,
     };
     let moved = proof_close(graph, &content.cfg, now, &close, &kp, &events);
@@ -87,7 +99,6 @@ pub async fn proof_continue(request: TaskWithBody) -> Result<Json<Value>, ApiErr
 
     let progress = progress_for(&mut scratch, &task, graph);
     let closed = task_moved_on(progress, TaskType::Lesson, &moved);
-    progress.proof_kp = None;
     let next = next_problem(
         &state,
         content,
@@ -111,6 +122,134 @@ pub async fn proof_continue(request: TaskWithBody) -> Result<Json<Value>, ApiErr
     if !closed && body["next"].is_null() {
         body["next_unavailable"] = json!(true);
     }
+    if let Some(xp) = moved.xp {
+        body["xp"] = json!(xp);
+    }
+    Ok(Json(body))
+}
+
+/// The `proof` field of a reply whose lesson proof is being graded.
+pub(super) fn pending_field(job: Option<Uuid>, revision: i32) -> Value {
+    json!({
+        "context": cadus_store::proof_grading::CONTEXT_LESSON,
+        "phase": "grading",
+        "job_id": job,
+        "revision": revision,
+        "cap": proof_grading::REVISION_CAP,
+        "revisions_left": (proof_grading::REVISION_CAP - revision).max(0),
+    })
+}
+
+/// One revision of a lesson proof: the draft that revises the chain's head.
+pub(super) struct Revision<'a> {
+    pub(super) task: &'a Task,
+    pub(super) served: &'a ServedProblem,
+    pub(super) answer: &'a str,
+    pub(super) step: proof_grading::lesson::LessonStep,
+    pub(super) now: Timestamp,
+}
+
+/// Record one revision of a lesson proof on its chain (D-PR1).
+///
+/// The FIRST draft is the problem's one scheduling signal, so a revision
+/// appends no `attempt` event and folds nothing: it is a new grading job
+/// linked to the draft it revises, under the attempt id the step names. The
+/// unaided rewrite after the cap closes the knowledge point as assisted, which
+/// appends the close (a `kp_advance` writes nothing; the last point appends
+/// its `lesson_result`).
+#[expect(
+    clippy::too_many_arguments,
+    reason = "the close reads the content, the scratch, the window and the transaction"
+)]
+pub(super) async fn revise_in_lesson(
+    state: &AppState,
+    content: &Content,
+    mut tx: Transaction<'static, Postgres>,
+    user_id: Uuid,
+    mut scratch: WebState,
+    events: &[EventRow],
+    readiness: &ReadinessSet,
+    revision: Revision<'_>,
+) -> Result<Json<Value>, ApiError> {
+    let Revision {
+        task,
+        served,
+        answer,
+        step,
+        now,
+    } = revision;
+    let graph = &content.curriculum;
+    let attempt_id = step.revision_attempt.clone().unwrap_or_default();
+    let job = proof_grading::enqueue(
+        state,
+        &mut tx,
+        user_id,
+        &attempt_id,
+        served,
+        answer,
+        &step.job,
+    )
+    .await?;
+    let mut body = json!({
+        "attempt_id": attempt_id,
+        "outcome": "ungraded",
+        "reason": PROOF_UNGRADED,
+        "error_tags": [],
+        "remediation": [],
+        "diagnosis": {"status": "not_offered"},
+        "proof_grading": proof_grading::reply_field(job),
+    });
+    if !step.rewrite() {
+        save_and_commit(state, tx, user_id, &scratch).await?;
+        body["task_status"] = json!(STATUS_PROOF_PENDING);
+        body["next"] = Value::Null;
+        body["proof"] = pending_field(job, step.job.revision);
+        return Ok(Json(body));
+    }
+    if let Some(id) = job {
+        store(state, mark(&mut *tx, id, Mark::Closed)).await?;
+    }
+    let record = served
+        .topic
+        .as_deref()
+        .and_then(|id| Slug::new(id).ok())
+        .ok_or_else(|| broken_state("the served problem names no topic"))?;
+    let close = CloseOf {
+        session: scratch.session.clone(),
+        topic: record,
+        task_id: &task.task_id,
+        quality: PROOF_ASSISTED_TIER,
+        assisted: true,
+    };
+    let kp = served.kp.clone().unwrap_or_default();
+    let moved = proof_close(graph, &content.cfg, now, &close, &kp, events);
+    for extra in moved.events() {
+        store(state, append_event(&mut tx, user_id, &extra, None)).await?;
+    }
+    let input = projection_input(content, now);
+    store(state, project_and_save(&mut tx, user_id, &input, None)).await?;
+    let progress = progress_for(&mut scratch, task, graph);
+    let closed = task_moved_on(progress, TaskType::Lesson, &moved);
+    let next = next_problem(
+        state,
+        content,
+        &mut tx,
+        user_id,
+        task,
+        &mut scratch,
+        readiness,
+        now,
+        closed,
+    )
+    .await;
+    save_and_commit(state, tx, user_id, &scratch).await?;
+    body["task_status"] = json!(moved.status);
+    body["remediation"] = json!(moved.remediation_view());
+    body["proof"] = json!({"context": "lesson", "phase": "closed", "job_id": job, "rewrite": true});
+    if !closed && next.is_none() {
+        body["next_unavailable"] = json!(true);
+    }
+    body["next"] = json!(next);
     if let Some(xp) = moved.xp {
         body["xp"] = json!(xp);
     }

@@ -285,6 +285,10 @@ fn lesson_passed_with(
 /// background grader prices a pass at.
 pub(super) const PROOF_PASS_TIER: WorkQuality = WorkQuality::NearlyPerfect;
 
+/// The tier of a knowledge point closed by a proof that passed after one or
+/// more revisions: below a first-try pass (D-PR1).
+pub(super) const PROOF_REVISED_TIER: WorkQuality = WorkQuality::Passable;
+
 /// The tier of a knowledge point closed by the unaided rewrite after the
 /// revision cap: below a pass, so the close earns less XP (D-PR1).
 pub(super) const PROOF_ASSISTED_TIER: WorkQuality = WorkQuality::Passable;
@@ -436,10 +440,6 @@ pub(super) fn task_moved_on(
     if task_type == TaskType::Lesson {
         if let Some(point) = &moved.next_kp {
             progress.current_kp = Some(point.clone());
-            progress.proof_kp = None;
-        }
-        if let Some(point) = &moved.proof_due {
-            progress.proof_kp = Some(point.clone());
         }
         let closed = matches!(moved.status, STATUS_TASK_PASSED | STATUS_TASK_FAILED);
         progress.done = closed;

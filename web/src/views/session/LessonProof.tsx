@@ -50,7 +50,7 @@ export const LESSON_PROOF_TEXT = {
   revise: 'Not yet. Fix the first unmet check below, then resubmit the proof.',
   reveal: 'You used both revisions. Read the solution once. Then rewrite the proof without it.',
   rewrite: 'Rewrite the proof from memory, without the solution.',
-  unavailable: 'The automatic check could not grade this draft. Submit it again, or continue and come back later.',
+  unavailable: 'The automatic check could not grade this draft. Submit it again, ask for a human check, or continue: this proof comes first in your next session.',
   closed: 'This part of the lesson is closed.',
   assisted: 'Closed with help: you read the solution, so it earns less XP and comes back for review sooner.',
 } as const;
@@ -330,9 +330,13 @@ function Verdict({ api, call, stage, busy, onSubmit, onClosePoint, onLeave }: {
     );
   }
   if (chain.phase === 'unavailable') {
+    // A grading that never landed (the daily limit, a failed check) never strands the
+    // point: submit again for free, leave it for later (the plan carries it), or send it
+    // to a human check.
     return (
       <div className="proof-verdict" data-verdict="unavailable">
         <p role="status">{LESSON_PROOF_TEXT.unavailable}</p>
+        <Dispute api={api} call={call} jobId={chain.head_id} disputed={job.disputed === true} />
         <Write stage={{ kind: 'write', mode: 'retry', chain }} busy={busy} onSubmit={onSubmit} onLeave={onLeave} />
       </div>
     );

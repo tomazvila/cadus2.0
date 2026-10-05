@@ -46,9 +46,9 @@ pub async fn session_plan(req: Ready) -> Reply {
     let readiness = req.readiness(&mut tx).await?;
     let mut plan = compose_plan(&req.content, &view, &model, &session, req.now, &readiness);
     crate::serve::restore_session_tasks(&mut plan, &scratch, &events, graph, &model);
-    // D-PR1: the open revision chains. A lesson chain carries its lesson
-    // FIRST, at the chain's knowledge point, into this plan and every later
-    // one (the day rollover included) until the chain closes.
+    // D-PR1: the open revision chains and the owed proofs. Each lesson point
+    // carries its lesson FIRST, at that point, into this plan and every later
+    // one (the day rollover included) until its chain closes.
     let heads = req
         .store(cadus_store::proof_grading::open_heads(
             &mut *tx,
@@ -58,13 +58,12 @@ pub async fn session_plan(req: Ready) -> Reply {
             ],
         ))
         .await?;
-    let lesson_heads: Vec<_> = heads
-        .iter()
-        .filter(|head| head.context == cadus_store::proof_grading::CONTEXT_LESSON)
-        .cloned()
-        .collect();
-    crate::proof_grading::lesson::carry_open(&mut plan, &lesson_heads, graph, &view.learned_at);
-    let open_revisions = crate::proof_grading::lesson::open_items(&heads, &plan, graph);
+    let owed = req
+        .store(cadus_store::proof_grading::owed(&mut *tx))
+        .await?;
+    let points = crate::proof_grading::lesson::lesson_points(&heads, &owed);
+    crate::proof_grading::lesson::carry_open(&mut plan, &points, graph, &view.learned_at);
+    let open_revisions = crate::proof_grading::lesson::open_items(&heads, &owed, &plan, graph);
 
     let tasks: Vec<Value> = plan
         .tasks
