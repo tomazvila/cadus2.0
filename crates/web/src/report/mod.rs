@@ -26,10 +26,12 @@
 
 pub mod probe;
 
+use axum::extract::Query;
 use cadus_core::retention::report::{
     IntegratedPerformance, PlacementError, RetentionReport, RetentionRow,
 };
 use cadus_store::state::load_events;
+use serde::Deserialize;
 use serde_json::{Value, json};
 
 use crate::session::{Ready, Reply, reply_read};
@@ -97,23 +99,43 @@ pub fn report_json(report: &RetentionReport, policy_digest: &str) -> Value {
     })
 }
 
+/// The query of `GET /api/report/retention`.
+#[derive(Debug, Default, Deserialize)]
+pub struct RetentionQuery {
+    /// `probes` answers the policy, retention and placement blocks only, from
+    /// the cached model, and reads no event row. `integrated` is then `null`.
+    /// The dashboard card loads on every visit, so it asks for this scope.
+    #[serde(default)]
+    pub scope: Option<String>,
+}
+
 /// `GET /api/report/retention` (D-F11).
 ///
 /// # Errors
 ///
 /// Returns the store envelope when the projection or the log read fails.
-pub async fn retention(req: Ready) -> Reply {
+pub async fn retention(req: Ready, Query(query): Query<RetentionQuery>) -> Reply {
     let (mut tx, projection) = req.begin_projection().await?;
-    let rows = req.store(load_events(&mut tx, req.user_id)).await?;
-    let events: Vec<_> = rows.into_iter().map(|row| row.event).collect();
+    let probes_only = query.scope.as_deref() == Some("probes");
+    let integrated = if probes_only {
+        IntegratedPerformance::default()
+    } else {
+        let rows = req.store(load_events(&mut tx, req.user_id)).await?;
+        let events: Vec<_> = rows.into_iter().map(|row| row.event).collect();
+        IntegratedPerformance::of_events(&events)
+    };
     let cfg = &req.content.cfg;
     let report = RetentionReport::build(
         &projection.model,
         &cfg.retention,
         &cfg.policy_version,
-        IntegratedPerformance::of_events(&events),
+        integrated,
     );
-    reply_read(tx, report_json(&report, &cfg.policy_digest())).await
+    let mut body = report_json(&report, &cfg.policy_digest());
+    if probes_only {
+        body["integrated"] = Value::Null;
+    }
+    reply_read(tx, body).await
 }
 
 #[cfg(test)]

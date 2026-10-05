@@ -422,7 +422,7 @@ export function createDemoApi(): ApiClient {
     // f19-retention. The demo account answered no delayed probe, so every rate is
     // `null`. That is the honest rehearsal: the card has to render "no evidence yet"
     // for every learner who never reached the first 7-day probe.
-    getRetentionReport: () =>
+    getRetentionReport: (scope) =>
       reply({
         policy: {
           version: 1,
@@ -437,7 +437,9 @@ export function createDemoApi(): ApiClient {
           total: emptyRetentionRow(0),
         },
         placement: { failed_confirmation: [], awaiting_confirmation: [] },
-        integrated: { served: 0, passed: 0, failed: 0, inconclusive: 0, open: 0, pass_rate: null },
+        integrated: scope === 'probes'
+          ? null
+          : { served: 0, passed: 0, failed: 0, inconclusive: 0, open: 0, pass_rate: null },
       }),
 
     // The review surface (C6). The demo account is NOT an admin, so every admin route

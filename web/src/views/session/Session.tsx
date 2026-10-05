@@ -11,6 +11,7 @@ import type { AnswerFieldHandle } from '@/components/AnswerField';
 import { AnswerInput, TypedSubmit } from '@/components/AnswerInput';
 import { WorkField, type WorkFieldHandle } from '@/components/WorkField';
 import { LoadingBlock } from '@/components/primitives';
+import { toast } from '@/app/toast';
 import { closeWith } from '@/hooks/screen';
 import { useCall } from '@/hooks/useCall';
 import { useLifetime } from '@/hooks/useLifetime';
@@ -366,6 +367,13 @@ export function Session({
     answeredForRef: answeredFor, timedOutForRef: timedOutFor,
     setResult, setRework, setElapsed, setHints, setReferenceLesson,
     onSubmitted: report.remember,
+    onRolledOver: () => {
+      gate.enter('loading');
+      toast('A new day started, so a new session is open. That answer was set aside.', {
+        kind: 'info',
+      });
+      replanForBlock();
+    },
     countdown, elapsed,
   });
 

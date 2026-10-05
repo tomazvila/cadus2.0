@@ -57,12 +57,17 @@ use sqlx::types::chrono::{DateTime, NaiveDate, Utc};
 mod dashboard;
 mod lifecycle;
 mod plan;
+mod rollover;
 mod store;
 
 pub use dashboard::{GraphQuery, export, graph, modules, status};
 pub use lifecycle::{enroll, session_end, session_start};
 pub(crate) use plan::compose_plan;
 pub use plan::session_plan;
+pub(crate) use rollover::Rollover;
+pub use rollover::{
+    OpenSession, QUIZ_HOLD_DAYS, ROLLOVER_IDLE_US, SESSION_ROLLED_OVER, is_stale, rolled_over,
+};
 pub(crate) use store::*;
 
 /// The code of a failure the caller cannot fix.

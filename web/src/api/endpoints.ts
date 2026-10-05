@@ -93,7 +93,13 @@ export const api: ApiClient = {
 
   // --- Dashboard and curriculum -------------------------------------------
   getStatus: () => request<StatusResponse>('GET', '/status'),
-  getRetentionReport: () => request<RetentionReportResponse>('GET', '/report/retention'),
+  // `probes` reads the cached model alone and leaves `integrated` null: the dashboard card
+  // loads on every visit, and the integrated block reads the whole event log.
+  getRetentionReport: (scope) =>
+    request<RetentionReportResponse>(
+      'GET',
+      scope ? `/report/retention?scope=${encodeURIComponent(scope)}` : '/report/retention',
+    ),
   // `scope` is a VIEW FILTER only. The learner whose state is joined comes from the
   // session identity, never from this parameter.
   getGraph: (scope) =>

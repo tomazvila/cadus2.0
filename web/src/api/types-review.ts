@@ -234,6 +234,7 @@ export interface RetentionReportResponse {
     failed_confirmation: string[];
     awaiting_confirmation: string[];
   };
+  /** `null` when the request asked for the `probes` scope. */
   integrated: {
     served: number;
     passed: number;
@@ -241,5 +242,5 @@ export interface RetentionReportResponse {
     inconclusive: number;
     open: number;
     pass_rate: number | null;
-  };
+  } | null;
 }

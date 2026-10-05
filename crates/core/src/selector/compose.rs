@@ -200,6 +200,15 @@ impl SlotInputs<'_> {
     }
 }
 
+/// The index the delayed retention probe takes in the task list (D-F11).
+///
+/// The probe opens the session, unless the session opens with a remediation
+/// task: remediation is priority 1, so it keeps the first place and the probe
+/// comes second. Either way the probe is reached after at most one task.
+fn probe_position(tasks: &[Task]) -> usize {
+    usize::from(tasks.first().is_some_and(|task| task.is_remediation))
+}
+
 /// Compose the ordered session plan of PEDAGOGY 5 (`compose_session`, `selector.py:1235-1481`).
 ///
 /// The priority order is: the remediation queue, the compressed due reviews, the
@@ -307,10 +316,14 @@ pub fn compose_session(
         tasks.push(drill_task(&tid, cfg));
     }
 
-    // The delayed retention probe of D-F11. It stands LAST of the study tasks: a
-    // measurement never displaces the work of the session. `ctx.retention` of
-    // `None` turns the whole rule off, so every caller that never read the
-    // retention state composes the plan it composed before this unit.
+    // The delayed retention probe of D-F11. It stands EARLY, at
+    // [`probe_position`], so a session that stops after one or two tasks still
+    // reaches it. Placed last it was never reached: a learner rarely runs a plan
+    // to its end, and production logged zero probes in 844k attempts. A probe
+    // is one problem, and every task is whole, so the probe never splits a
+    // lesson's knowledge-point sequence. `ctx.retention` of `None` turns the
+    // whole rule off, so every caller that never read the retention state
+    // composes the plan it composed before this unit.
     if let Some(probe) = retention_probe(ctx, states, graph, cfg, t_us) {
         let seen: Vec<String> = ctx
             .retention
@@ -319,7 +332,8 @@ pub fn compose_session(
             .into_iter()
             .map(std::borrow::ToOwned::to_owned)
             .collect();
-        tasks.push(probe_task(&probe, states, graph, seen));
+        let at = probe_position(&tasks);
+        tasks.insert(at, probe_task(&probe, states, graph, seen));
     }
 
     if let Some(limit) = ctx.n {
@@ -490,6 +504,104 @@ mod tests {
         let front = Frontier::new(&none, &tree, &cfg, T_US, Some("c"), None);
         assert_eq!(front.available, ["drill", "root"]);
         assert_eq!(front.blocked_until, None);
+    }
+
+    /// The states of [`states`] with the lesson of `r0` passed.
+    fn passed_r0() -> BTreeMap<String, TopicState> {
+        let mut states = states();
+        if let Some(state) = states.get_mut("r0") {
+            state
+                .kp_progress
+                .insert("kp1".to_owned(), crate::event::KpProgress::Passed);
+        }
+        states
+    }
+
+    /// `r0` passed its lesson 40 days before `T`.
+    fn r0_learned() -> BTreeMap<String, i64> {
+        BTreeMap::from([("r0".to_owned(), T_US - 40 * crate::fire::testing::DAY_US)])
+    }
+
+    #[test]
+    fn the_due_probe_opens_the_session_under_its_own_id_and_a_review_label() {
+        let cfg = Config::default();
+        let learned_at = r0_learned();
+        let retention = crate::retention::RetentionState::default();
+        // The multi-step task already closed, so `r0` stays a review of its own.
+        let closed: BTreeSet<String> = ["s-multi-step".to_owned()].into();
+        let ctx = SessionContext::default()
+            .with_multistep(0, &closed)
+            .with_learned_at(Some(&learned_at))
+            .with_retention(Some(&retention));
+        let plan = compose_session(
+            &passed_r0(),
+            &tree(),
+            &cfg,
+            T_US,
+            &mut SeededSampler::new(1),
+            &ctx,
+        );
+        let probe = &plan.tasks[0];
+        assert_eq!(probe.probe_delay_days, Some(7));
+        assert_eq!(probe.probe_kp.as_deref(), Some("kp1"));
+        // The learner sees an ordinary review before answering.
+        assert_eq!(probe.why, "due review");
+        assert_eq!(probe.task_type, TaskType::Review);
+        // `r0` is ALSO a due review of this session. The two tasks keep apart:
+        // one id per task, so the serve and the grade find the probe.
+        assert_eq!(probe.task_id, "s-review-r0-probe");
+        assert!(plan.tasks.iter().any(|task| task.task_id == "s-review-r0"));
+        let ids: BTreeSet<&str> = plan.tasks.iter().map(|t| t.task_id.as_str()).collect();
+        assert_eq!(ids.len(), plan.tasks.len(), "every task id is unique");
+        assert_eq!(
+            plan.tasks
+                .iter()
+                .filter(|task| task.probe_delay_days.is_some())
+                .count(),
+            1,
+            "one probe per session"
+        );
+
+        // A one-task session still carries the probe.
+        let short = SessionContext::default()
+            .with_learned_at(Some(&learned_at))
+            .with_retention(Some(&retention))
+            .with_limit(Some(1));
+        let one = compose_session(
+            &passed_r0(),
+            &tree(),
+            &cfg,
+            T_US,
+            &mut SeededSampler::new(1),
+            &short,
+        );
+        assert_eq!(one.tasks.len(), 1);
+        assert_eq!(one.tasks[0].probe_delay_days, Some(7));
+    }
+
+    #[test]
+    fn a_remediation_task_keeps_the_first_place_and_the_probe_comes_second() {
+        let cfg = Config::default();
+        let learned_at = r0_learned();
+        let retention = crate::retention::RetentionState::default();
+        let pending = vec![PendingRemediation {
+            kind: "quiz_miss".to_owned(),
+            targets: vec![Slug::new("r1").expect("a slug")],
+        }];
+        let ctx = SessionContext::default()
+            .with_pending_remediation(&pending)
+            .with_learned_at(Some(&learned_at))
+            .with_retention(Some(&retention));
+        let plan = compose_session(
+            &passed_r0(),
+            &tree(),
+            &cfg,
+            T_US,
+            &mut SeededSampler::new(1),
+            &ctx,
+        );
+        assert!(plan.tasks[0].is_remediation);
+        assert_eq!(plan.tasks[1].probe_delay_days, Some(7));
     }
 
     /// No closed task ids.

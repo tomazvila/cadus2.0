@@ -1,12 +1,10 @@
 /**
  * The retention card of unit f19 (D-F11): the three honesty rules of the screen.
  *
- * The card sits under the quiet disclosure and loads on demand, so every test here
- * opens "More" and presses "Load the report" first.
+ * The card stands on the main dashboard and loads with it, in the `probes` scope.
  */
 import { describe, expect, it, vi } from 'vitest';
 import { screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import { mount, stubApi } from './helpers/dashboard';
 import type { RetentionReportResponse, RetentionRow } from '@/api/types';
 
@@ -45,12 +43,11 @@ const report = (rows: RetentionRow[], total = row(0)): RetentionReportResponse =
   integrated: { served: 3, passed: 1, failed: 1, inconclusive: 0, open: 1, pass_rate: 0.5 },
 });
 
-/** Open the quiet menu, load the report, and answer with `body`. */
+/** Mount the dashboard and answer the report read with `body`. */
 async function load(body: RetentionReportResponse) {
   const getRetentionReport = vi.fn(async () => body);
   await mount({ api: stubApi({ getRetentionReport }) });
-  await userEvent.click(screen.getByText('More'));
-  await userEvent.click(screen.getByRole('button', { name: 'Load the report' }));
+  await screen.findByRole('table');
   return getRetentionReport;
 }
 
@@ -61,20 +58,24 @@ const cells = (label: string) => {
 };
 
 describe('the retention card', () => {
-  it('reads the report only when the learner asks for it', async () => {
-    const getRetentionReport = vi.fn(async () => report([row(7)]));
-    await mount({ api: stubApi({ getRetentionReport }) });
-    expect(getRetentionReport).not.toHaveBeenCalled();
-    await userEvent.click(screen.getByText('More'));
-    expect(getRetentionReport).not.toHaveBeenCalled();
-    await userEvent.click(screen.getByRole('button', { name: 'Load the report' }));
+  it('loads once with the dashboard, outside the quiet menu, in the probes scope', async () => {
+    const getRetentionReport = await load(report([row(7)]));
     expect(getRetentionReport).toHaveBeenCalledTimes(1);
+    expect(getRetentionReport).toHaveBeenCalledWith('probes');
+    expect(screen.queryByRole('button', { name: 'Load the report' })).toBeNull();
+    expect(screen.getByRole('table').closest('details')).toBeNull();
+  });
+
+  it('marks every delay below the sample size as too few to read yet', async () => {
+    await load(report([row(7), row(30), row(90)]));
+    expect(cells('30 days later')[0]).toBe('no answer yet · too few to read yet (0 of 20)');
+    expect(cells('Every delay')[0]).toContain('too few to read yet');
   });
 
   it('prints "no answer yet" for a delay with no probe, and never a zero', async () => {
     await load(report([row(7), row(30), row(90)]));
-    expect(cells('7 days later')[0]).toBe('no answer yet');
-    expect(cells('90 days later')[0]).toBe('no answer yet');
+    expect(cells('7 days later')[0]).toContain('no answer yet');
+    expect(cells('90 days later')[0]).toContain('no answer yet');
     expect(screen.queryByText('0%')).toBeNull();
   });
 
@@ -91,7 +92,7 @@ describe('the retention card', () => {
     );
     const seven = cells('7 days later');
     expect(seven[0]).toContain('100%');
-    expect(seven[0]).toContain('too few to read');
+    expect(seven[0]).toContain('too few to read yet (2 of 20)');
     expect(seven[1]).toBe('2 of 2');
   });
 
@@ -129,5 +130,11 @@ describe('the retention card', () => {
     expect(screen.getByText(/1 topic\(s\) failed their confirmation/)).toBeTruthy();
     expect(screen.getByText(/3 served, 1 passed/)).toBeTruthy();
     expect(screen.getByText(/pass rate 50%/)).toBeTruthy();
+  });
+
+  it('leaves out the integrated line when the probes scope answers none', async () => {
+    await load({ ...report([row(7)]), integrated: null });
+    expect(screen.queryByText(/Integrated tasks/)).toBeNull();
+    expect(screen.getByText(/1 topic\(s\) failed their confirmation/)).toBeTruthy();
   });
 });

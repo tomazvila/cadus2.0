@@ -98,6 +98,7 @@ impl Settings {
             .with_content(Arc::clone(&self.content))
             .with_argon2(self.argon2)
             .with_oauth(self.oauth.clone())
+            .with_day_rollover(true)
     }
 }
 

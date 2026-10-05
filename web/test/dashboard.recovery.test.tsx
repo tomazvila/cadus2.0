@@ -1,5 +1,4 @@
 import { act, screen, within } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import { expect, it, vi } from 'vitest';
 import { ApiError, createDemoApi } from '@/api';
 import type { RetentionReportResponse } from '@/api/types';
@@ -17,24 +16,20 @@ it('shows zero confirmations without highlighting the count when all practiced w
   expect(view.container.querySelector('.mastery-grid')?.textContent).toContain('8practiced');
 });
 
-it('offers another on-demand retention read after a failure and shows the successful report', async () => {
+it('says the retention read failed and shows the report after the toast retry', async () => {
   const pending = held<RetentionReportResponse>();
   const getRetentionReport = vi.fn<() => Promise<RetentionReportResponse>>()
     .mockRejectedValueOnce(new ApiError(503, 'unavailable', 'Report temporarily unavailable.'))
     .mockReturnValueOnce(pending.promise);
   await mount({ api: stubApi({ getRetentionReport }) });
-  await userEvent.click(screen.getByText('More'));
-  await userEvent.click(screen.getByRole('button', { name: 'Load the report' }));
+  await screen.findByText('The retention report did not load.');
   expect(toastStore.getSnapshot()[0].message).toBe('Report temporarily unavailable.');
   expect(screen.queryByRole('table')).toBeNull();
 
-  await userEvent.click(screen.getByRole('button', { name: 'Load the report' }));
-  expect(screen.getByText('Reading the retention report…')).toBeTruthy();
-  expect(screen.queryByRole('button', { name: 'Load the report' })).toBeNull();
+  await act(async () => { toastStore.getSnapshot()[0].onAction?.(); });
   await act(async () => { pending.release(await createDemoApi().getRetentionReport()); });
   expect(getRetentionReport).toHaveBeenCalledTimes(2);
   expect(screen.getByRole('table')).toBeTruthy();
   expect(screen.getByRole('rowheader', { name: 'Every delay' })).toBeTruthy();
-  expect(screen.queryByText('Reading the retention report…')).toBeNull();
-  expect(screen.queryByRole('button', { name: 'Load the report' })).toBeNull();
+  expect(screen.queryByText('The retention report did not load.')).toBeNull();
 });

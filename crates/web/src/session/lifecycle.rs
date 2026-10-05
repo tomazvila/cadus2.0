@@ -9,6 +9,7 @@ use cadus_store::state::{clear_web_state, project_and_save};
 use serde_json::{Value, json};
 
 use super::dashboard::due_counts;
+use super::rollover::Rollover;
 use super::store::{
     Ready, Reply, enrolled_event, event_slug, json_of, no_open_session, reply_committed,
     unknown_course,
@@ -90,7 +91,25 @@ pub async fn session_start(req: Ready) -> Reply {
     let input = req.input();
     let (mut tx, before) = req.locked_projection(&input).await?;
 
-    let open = before.view.current_session.clone();
+    let mut open = before.view.current_session.clone();
+    // The day rollover: a session left open on an earlier day ends here, and
+    // the branch below opens today's session.
+    if let Some(stale) = open.as_deref() {
+        let scratch = req.read_state(&mut tx).await?;
+        let rollover = Rollover {
+            state: &req.state,
+            content: &req.content,
+            user_id: req.user_id,
+            view: &before.view,
+            session: stale,
+            scratch: &scratch,
+            now: req.now,
+        };
+        if rollover.is_due(&mut tx).await? {
+            rollover.end(&mut tx).await?;
+            open = None;
+        }
+    }
     let reopened = open.is_some();
     let session = match open {
         Some(session) => session,

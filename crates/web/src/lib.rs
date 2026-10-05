@@ -135,6 +135,12 @@ pub struct AppState {
     /// unchanged: a deployment that runs no review screen needs no second
     /// connection.
     pub admin: Option<Db>,
+    /// Whether a session left open on an earlier day closes at the learner's
+    /// next request (the day rollover, `session::rollover`).
+    ///
+    /// The binary turns it on. The library default keeps it off, so a test
+    /// that seeds a session at a fixed past instant keeps that session open.
+    pub day_rollover: bool,
 }
 
 impl AppState {
@@ -151,7 +157,15 @@ impl AppState {
             oauth: OAuthConfig::default(),
             diagnosis: Arc::new(DiagnosisHub::new()),
             admin: None,
+            day_rollover: false,
         }
+    }
+
+    /// The same state with the day rollover on or off.
+    #[must_use]
+    pub fn with_day_rollover(mut self, on: bool) -> Self {
+        self.day_rollover = on;
+        self
     }
 
     /// The same state with a loaded curriculum.

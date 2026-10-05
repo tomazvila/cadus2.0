@@ -171,6 +171,12 @@ pub fn assign_ids(tasks: &mut [Task], session_id: &str) {
         {
             task.task_id.push_str(&format!("-confirm-{kp}"));
         }
+        // A retention probe often lands on a topic the same session also
+        // reviews. Without its own id the serve finds the review instead, and
+        // the probe is never served (D-F11).
+        if task.probe_delay_days.is_some() {
+            task.task_id.push_str("-probe");
+        }
     }
 }
 

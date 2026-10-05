@@ -357,6 +357,9 @@ export function Dashboard({
         onDiagnostic={onDiagnostic}
       />
 
+      {/* f19-retention: the delayed-probe report, loaded with the dashboard (D-F11). */}
+      <RetentionCard api={api} call={call} />
+
       {/* W-C5: everything else is quiet, under a native disclosure. */}
       <details className="more-menu">
         <summary>More</summary>
@@ -395,8 +398,6 @@ export function Dashboard({
         <p className="muted small more-caption">
           Export my data downloads your full event log — the same data a re-import consumes.
         </p>
-        {/* f19-retention: the delayed-probe report. It loads on demand (D-F11). */}
-        <RetentionCard api={api} call={call} />
       </details>
 
       {demo ? (

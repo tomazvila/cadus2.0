@@ -102,7 +102,20 @@ pub(super) fn target_of(
         TaskType::Review | TaskType::Drill | TaskType::Diagnostic => {
             let topic = topic_or_refuse(task)?;
             let serve = component_of(task, position, graph).unwrap_or_else(|| topic.clone());
-            let kp = if task.task_type == TaskType::Review && task.is_remediation {
+            let probe_kp = task.probe_kp.as_ref().filter(|kp| {
+                task.probe_delay_days.is_some()
+                    && graph
+                        .idx_of(&serve)
+                        .and_then(|idx| graph.kp_idx_of(idx, kp))
+                        .is_some()
+            });
+            let kp = if let Some(probe_kp) = probe_kp {
+                // D-F11: the probe tests the knowledge point the schedule chose.
+                // The rotation would always draw the topic's first point, the
+                // fold would mark THAT point done, and the chosen point would
+                // stay due and probe the same topic session after session.
+                probe_kp.clone()
+            } else if task.task_type == TaskType::Review && task.is_remediation {
                 task.start_at_kp
                     .clone()
                     .map(Ok)
@@ -171,6 +184,23 @@ mod tests {
         target_of(task, index, &TaskProgress::default(), &graph())
             .map(|found| (found.record, found.serve, found.kp))
             .map_err(|err| err.code)
+    }
+
+    #[test]
+    fn a_retention_probe_draws_the_knowledge_point_its_schedule_chose() {
+        let mut probe = task(TaskType::Review, Some("addition"));
+        probe.probe_delay_days = Some(7);
+        probe.probe_kp = Some("kp2".to_string());
+        assert_eq!(
+            target(&probe, 0),
+            Ok(("addition".into(), "addition".into(), "kp2".into()))
+        );
+        // A point the topic does not hold falls back to the rotation.
+        probe.probe_kp = Some("ghost".to_string());
+        assert_eq!(
+            target(&probe, 0),
+            Ok(("addition".into(), "addition".into(), "kp1".into()))
+        );
     }
 
     #[test]

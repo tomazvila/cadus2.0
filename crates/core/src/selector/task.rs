@@ -194,10 +194,9 @@ pub(super) fn probe_task(
     graph: &Curriculum,
     seen: Vec<String>,
 ) -> Task {
-    let why = format!(
-        "retention probe; the lesson passed {} days ago and this item is new",
-        plan.elapsed_days
-    );
+    // The learner reads the label of an ordinary due review. A probe that
+    // announces itself before the answer is a different measurement.
+    let why = "due review".to_owned();
     Task {
         probe_delay_days: Some(plan.delay_days),
         probe_kp: Some(plan.kp.clone()),

@@ -80,8 +80,8 @@ use std::collections::{BTreeMap, BTreeSet};
 
 use crate::route_prelude::*;
 use crate::session::{
-    INTERNAL_ERROR, begin, compose_plan, content, now_pair, projection_input, read_state,
-    readiness_of, view_for_open_session, write_state,
+    INTERNAL_ERROR, Rollover, begin, compose_plan, content, now_pair, projection_input, read_state,
+    readiness_of, rolled_over, view_for_open_session, write_state,
 };
 use crate::state::Content;
 use crate::state::{
@@ -256,6 +256,26 @@ pub(crate) async fn open(
     // The plan route and the dashboard call the SAME helper (V3, V9).
     let events = view_for_open_session(state, &mut tx, user_id, &mut view, &session).await?;
     let mut scratch = read_state(&state.db, &mut tx, user_id).await?;
+    // The day rollover. A write route of a session left open on an earlier day
+    // closes it and opens today's, commits, and answers `409
+    // session_rolled_over`: the task id of the request names the closed
+    // session, and the client loads the new plan.
+    if lock {
+        let rollover = Rollover {
+            state,
+            content,
+            user_id,
+            view: &view,
+            session: &session,
+            scratch: &scratch,
+            now,
+        };
+        if rollover.is_due(&mut tx).await? {
+            rollover.roll(&mut tx).await?;
+            tx.commit().await.map_err(db_failed)?;
+            return Err(rolled_over());
+        }
+    }
     scratch.bind(&session);
     // The readiness of D-F5, read in the SAME transaction: the plan these three
     // routes look a task up in is the plan `GET /api/session/plan` listed.

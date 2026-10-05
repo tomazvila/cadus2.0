@@ -27,6 +27,7 @@
  * it (the React rule of `useCall`).
  */
 import { useEffect, type RefObject } from 'react';
+import { ApiError } from '@/api';
 import type { SubmittedProblemContext } from '@/api/types-report';
 import { isQuizReceipt, isRework } from '@/api/types';
 import { releaseOnFail } from '@/hooks/screen';
@@ -57,6 +58,11 @@ export interface GradeDeps {
   /** The problem whose drill timeout already fired. */
   timedOutForRef: RefObject<string | null>;
   onSubmitted?: (context: SubmittedProblemContext) => void;
+  /**
+   * The answer met `409 session_rolled_over`: a new day closed the session the problem
+   * belonged to, and the service set the answer aside. The view loads the new plan.
+   */
+  onRolledOver?: () => void;
   setResult: (result: AnswerResponse | null) => void;
   setRework: (rework: ReworkResponse | null) => void;
   setElapsed: (secs: number) => void;
@@ -67,6 +73,9 @@ export interface GradeDeps {
   elapsed: number;
 }
 
+/** The code of an answer for a session the day rollover closed. */
+const SESSION_ROLLED_OVER = 'session_rolled_over';
+
 export interface Grade {
   submit: (opts?: { timedOut?: boolean }) => void;
   requestHint: () => void;
@@ -75,7 +84,7 @@ export interface Grade {
 export function useGrade({
   api, call, gate, life, session,
   problemRef, taskRef, answerRef, workRef, answeredForRef, timedOutForRef,
-  setResult, setRework, setElapsed, setHints, setReferenceLesson, onSubmitted,
+  setResult, setRework, setElapsed, setHints, setReferenceLesson, onSubmitted, onRolledOver,
   countdown, elapsed,
 }: GradeDeps): Grade {
   // Plain functions, rebuilt per render: `session` is a new object every render, so a memo
@@ -98,12 +107,25 @@ export function useGrade({
 
     const work = workRef.current!.value();
     void call(
-      () => api.taskAnswer(task.task_id, {
-        problem_id: current.problem_id,
-        answer,
-        ...(work ? { work } : {}),
-      }),
+      async () => {
+        try {
+          return await api.taskAnswer(task.task_id, {
+            problem_id: current.problem_id,
+            answer,
+            ...(work ? { work } : {}),
+          });
+        } catch (error) {
+          // The day rollover is no failure of this answer: no Retry, no error toast.
+          if (error instanceof ApiError && error.code === SESSION_ROLLED_OVER) return null;
+          throw error;
+        }
+      },
       (reply) => {
+        if (reply === null) {
+          answeredForRef.current = current.problem_id;
+          onRolledOver?.();
+          return;
+        }
         // THE SERVICE ANSWERED THIS PROBLEM, whatever the reply says. The latch is set here,
         // before any branch: a branch that returns the view to `ready` leaves the leftover
         // seconds to run out, and the auto-submit then posts a BLANK second attempt for a

@@ -13,7 +13,9 @@ import { DialogProvider } from '@/components/Modal';
 import { Dashboard, type DashboardProps } from '@/views/Dashboard';
 import { resetToasts } from '@/app/toast';
 import { renderInView } from './render';
-import type { ApiClient, StatusResponse } from '@/api/types';
+import type {
+  ApiClient, RetentionReportResponse, RetentionRow, StatusResponse,
+} from '@/api/types';
 
 const STATUS: StatusResponse = {
   course: { id: 'foundations', name: 'Foundations' },
@@ -60,8 +62,50 @@ export const ONE_COURSE = [{ id: 'foundations', name: 'Foundations', current: tr
  * override is a type error rather than a `not a function` inside a handler.
  */
 export function stubApi(over: Partial<ApiClient> = {}): ApiClient {
-  return { ...createDemoApi(), getStatus: async () => status(), ...over };
+  return {
+    ...createDemoApi(),
+    getStatus: async () => status(),
+    getRetentionReport: async () => RETENTION,
+    ...over,
+  };
 }
+
+/** One retention row with no probe behind it. */
+const emptyRow = (delay_days: number): RetentionRow => ({
+  delay_days,
+  probes: 0,
+  retained_accuracy: null,
+  assistance_dependence: null,
+  mean_independent_secs: null,
+  sufficient: false,
+  provenance: {
+    independent: 0,
+    independent_correct: 0,
+    correct: 0,
+    assisted: 0,
+    repeated: 0,
+    unknown_exposure: 0,
+    ungraded: 0,
+  },
+});
+
+/**
+ * The report the dashboard card reads on mount. It answers AT ONCE: the demo client waits
+ * 120 ms, and a reply that lands after `mount` settled is a state update outside `act`.
+ */
+const RETENTION: RetentionReportResponse = {
+  policy: {
+    version: 1,
+    label: 'v1 (uncalibrated)',
+    calibrated: false,
+    digest: 'demo000000000000',
+    probe_delays_days: [7, 30, 90],
+    min_sample: 20,
+  },
+  retention: { by_delay: [7, 30, 90].map(emptyRow), total: emptyRow(0) },
+  placement: { failed_confirmation: [], awaiting_confirmation: [] },
+  integrated: null,
+};
 
 const nav = () => ({
   onUnauthorized: vi.fn(),

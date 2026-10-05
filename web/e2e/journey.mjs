@@ -68,15 +68,19 @@ async function main() {
   run.note('journey completed and session closed');
   await page.getByRole('button', { name: 'Back to dashboard' }).click();
   await page.waitForSelector('.view-dashboard .primary-action', { timeout: 25000 });
-  await page.locator('.more-menu summary').click();
-  await page.getByRole('button', { name: 'Load the report' }).click();
-  await page.waitForSelector('.retention-table', { timeout: 25000 });
+  // The retention card loads with the dashboard, outside the quiet menu.
+  await page.waitForSelector('.view-dashboard .retention-table', { timeout: 25000 });
   const report = await run.text('.retention-card');
   if (!report.includes('7 days later') || !report.includes('100%')) {
     run.fail(`the delayed result is absent from the retention report: "${report.slice(0, 180)}"`);
   }
-  if (!report.includes('2 served, 2 passed')) {
-    run.fail(`the integrated tally is wrong: "${report.slice(-180)}"`);
+  // The card reads the probes scope; the integrated tally stays on the full report.
+  const integrated = await page.evaluate(async () => {
+    const res = await fetch('/api/report/retention', { credentials: 'same-origin' });
+    return (await res.json()).integrated;
+  });
+  if (!integrated || integrated.served !== 2 || integrated.passed !== 2) {
+    run.fail(`the integrated tally is wrong: ${JSON.stringify(integrated)}`);
   }
   run.note('retention report shows the 7-day independent result and integrated tally');
   await run.snap('retention-report');

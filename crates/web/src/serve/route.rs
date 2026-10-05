@@ -224,7 +224,7 @@ async fn serve_one(
             payload
         }
         None => {
-            install_next(
+            let installed = install_next(
                 state,
                 content,
                 &mut tx,
@@ -234,7 +234,20 @@ async fn serve_one(
                 &readiness,
                 now,
             )
-            .await?
+            .await;
+            match installed {
+                Ok(payload) => payload,
+                // D-F11: a probe that finds no unseen item serves nothing. It
+                // stands first in the plan, so a refusal here would stop the
+                // whole session; the probe closes instead and the learner goes
+                // on to the next task.
+                Err(error) if task.probe_delay_days.is_some() => {
+                    return Err(
+                        set_probe_aside(state, tx, user_id, scratch, task, graph, error).await,
+                    );
+                }
+                Err(error) => return Err(error),
+            }
         }
     };
     super::mixed::stamp(&mut payload, &plan, &scratch, &task_id);
@@ -255,6 +268,33 @@ async fn serve_one(
     write_state(&state.db, &mut tx, user_id, &scratch).await?;
     tx.commit().await.map_err(db_failed)?;
     Ok(Json(payload))
+}
+
+/// Close a retention probe whose draw found nothing to serve, and answer the
+/// `409 task_complete` that sends the client to the next task (D-F11).
+///
+/// The close is a scratch row only: no event records a probe that never
+/// reached the learner, so the report counts nothing for it. When the scratch
+/// write fails, the draw's own refusal stands.
+async fn set_probe_aside(
+    state: &AppState,
+    mut tx: Transaction<'_, Postgres>,
+    user_id: Uuid,
+    mut scratch: WebState,
+    task: &Task,
+    graph: &Curriculum,
+    error: ApiError,
+) -> ApiError {
+    tracing::info!(task = %task.task_id, code = %error.code, "retention probe set aside: no unseen item");
+    progress_for(&mut scratch, task, graph).done = true;
+    if write_state(&state.db, &mut tx, user_id, &scratch)
+        .await
+        .is_err()
+        || tx.commit().await.is_err()
+    {
+        return error;
+    }
+    conflict(TASK_COMPLETE, "This task is already complete.")
 }
 
 /// The knowledge point a lesson at `current` serves next (notes 84 b and 101 b).

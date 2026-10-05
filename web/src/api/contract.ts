@@ -90,8 +90,11 @@ export interface ApiClient {
 
   // Dashboard and curriculum.
   getStatus(): Promise<StatusResponse>;
-  /** The delayed-retention report of D-F11. */
-  getRetentionReport(): Promise<RetentionReportResponse>;
+  /**
+   * The delayed-retention report of D-F11. `probes` answers from the cached model and
+   * leaves `integrated` null.
+   */
+  getRetentionReport(scope?: 'probes'): Promise<RetentionReportResponse>;
   getGraph(scope?: string): Promise<GraphResponse>;
   listModules(): Promise<ModulesResponse>;
   enroll(course: string): Promise<EnrollResponse>;

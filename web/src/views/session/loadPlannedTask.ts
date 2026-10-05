@@ -14,9 +14,12 @@ export async function loadPlannedTask<T>(
   try {
     return { kind: 'loaded', value: await request() };
   } catch (error) {
+    // `session_rolled_over`: a new day closed the session this task belonged to, and the
+    // service opened today's. The plan below is the new session's.
     if (!(error instanceof ApiError)
       || !((error.status === 404 && error.code === 'unknown_task')
-        || (error.status === 409 && error.code === 'task_complete'))) throw error;
+        || (error.status === 409 && error.code === 'task_complete')
+        || (error.status === 409 && error.code === 'session_rolled_over'))) throw error;
 
     const plan = await api.getPlan();
     // An inconsistent response stays retryable without an automatic request loop.
