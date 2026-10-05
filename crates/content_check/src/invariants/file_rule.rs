@@ -1,5 +1,10 @@
 //! I10, the file rule: in a unit file with 10 or more label items, the correct
 //! option is the one longest option in 40% or fewer of the label items.
+//!
+//! The rule guards against a length cue among invented distractors, so it reads
+//! label items with three or more options. A two-way verdict (`yes`/`no`,
+//! `prime`/`composite`, `no solution`/`all real numbers`) has the options the
+//! mathematics gives it, and the longer word is the key about half the time.
 
 use super::super::kp_view::{Item, KpView};
 use super::{finding, label};
@@ -7,6 +12,9 @@ use crate::output::Finding;
 
 /// The smallest count of label items for which the rule applies.
 const MIN_LABEL_ITEMS: usize = 10;
+
+/// The fewest options a label item needs to count for the rule.
+const MIN_OPTIONS: usize = 3;
 
 /// True if the correct option text is longer than each other option text.
 fn correct_is_longest(item: &Item) -> bool {
@@ -24,6 +32,11 @@ fn correct_is_longest(item: &Item) -> bool {
     })
 }
 
+/// The number of options of a label item.
+fn option_count(item: &Item) -> usize {
+    item.contract["options"].as_array().map_or(0, Vec::len)
+}
+
 /// The I10 finding of one unit file. `views` are the KPs of the file in file
 /// order. The finding names the first KP of the file, because the rule has no
 /// KP of its own.
@@ -31,7 +44,7 @@ pub fn check(views: &[&KpView]) -> Option<Finding> {
     let labels: Vec<&Item> = views
         .iter()
         .flat_map(|view| &view.items)
-        .filter(|item| label::is_label(item))
+        .filter(|item| label::is_label(item) && option_count(item) >= MIN_OPTIONS)
         .collect();
     let longest = labels
         .iter()
@@ -60,6 +73,17 @@ mod tests {
         let contract =
             json!({"kind": "label", "options": [["long option"], ["aa"], ["bb"], ["cc"]]});
         item(&format!("Select case {n}."), key, contract, None)
+    }
+
+    #[test]
+    fn i10_skips_two_way_verdicts() {
+        let contract = json!({"kind": "label", "options": [["yes"], ["no"]]});
+        let verdicts = view(
+            (0..12)
+                .map(|n| item(&format!("Is case {n} true?"), "yes", contract.clone(), None))
+                .collect(),
+        );
+        assert_eq!(check(&[&verdicts]), None);
     }
 
     #[test]
