@@ -1659,12 +1659,15 @@ topics:
         exemplars:
           - problem: 'List all the factors of $12$.'
             answer: "1, 2, 3, 4, 6, 12"
+            answer_contract: {"kind": "list", "ordered": false, "member": {"kind": "exact"}}
             solution_sketch: 'Factor pairs: $1 \times 12$, $2 \times 6$, $3 \times 4$.'
           - problem: 'Write every factor of $18$.'
             answer: "1, 2, 3, 6, 9, 18"
+            answer_contract: {"kind": "list", "ordered": false, "member": {"kind": "exact"}}
             solution_sketch: 'Factor pairs: $1 \times 18$, $2 \times 9$, $3 \times 6$.'
           - problem: 'List all the factors of $24$.'
             answer: "1, 2, 3, 4, 6, 8, 12, 24"
+            answer_contract: {"kind": "list", "ordered": false, "member": {"kind": "exact"}}
             solution_sketch: 'Factor pairs: $1 \times 24$, $2 \times 12$, $3 \times 8$, $4 \times 6$.'
           - problem: 'Give a factor of $40$ that is greater than $5$ but less than $40$.'
             answer: "10"
@@ -1680,20 +1683,24 @@ topics:
             solution_sketch: '$9$ has the factors $1, 3, 9$. Factors come in pairs, so an odd count needs a pair whose two partners are equal, like $3 \times 3$: the number is a square. The square of a prime, such as $4$, $9$, $25$ or $49$, has exactly three factors.'
           - problem: 'List all the factors of $36$.'
             answer: "1, 2, 3, 4, 6, 9, 12, 18, 36"
+            answer_contract: {"kind": "list", "ordered": false, "member": {"kind": "exact"}}
             solution_sketch: 'Factor pairs: $1 \times 36$, $2 \times 18$, $3 \times 12$, $4 \times 9$, $6 \times 6$.'
         constraints: "numbers up to 50"
       - id: kp2
         name: Listing multiples
         key_prerequisites: [multiplication-tables]
         exemplars:
-          - problem: 'List the first four multiples of $6$.'
+          - problem: 'List the first four multiples of $6$, starting with $6$ itself.'
             answer: "6, 12, 18, 24"
-            solution_sketch: 'Skip count by $6$: $6, 12, 18, 24$.'
+            answer_contract: {"kind": "list", "ordered": false, "member": {"kind": "exact"}}
+            solution_sketch: 'The multiples of $6$ are $6 \times 1$, $6 \times 2$, $6 \times 3$, $6 \times 4$, and so on. Skip counting by $6$ gives $6, 12, 18, 24$. The numbers $1, 2, 3, 6$ are the factors of $6$, which divide into $6$ instead.'
           - problem: 'List the first three multiples of $9$.'
             answer: "9, 18, 27"
+            answer_contract: {"kind": "list", "ordered": false, "member": {"kind": "exact"}}
             solution_sketch: 'Skip count by $9$: $9, 18, 27$.'
           - problem: 'Write the first four multiples of $7$.'
             answer: "7, 14, 21, 28"
+            answer_contract: {"kind": "list", "ordered": false, "member": {"kind": "exact"}}
             solution_sketch: 'Skip count by $7$: $7, 14, 21, 28$.'
           - problem: 'Give a multiple of $7$ between $50$ and $65$.'
             answer: "56"
@@ -1709,24 +1716,25 @@ topics:
             solution_sketch: 'Multiples of $25$ go $25, 50, 75, 100, 125, \dots$, so they end in $00$, $25$, $50$ or $75$. Any three-digit number with one of those endings works, for example $125 = 25 \times 5$.'
           - problem: 'What are the first three multiples of $12$?'
             answer: "12, 24, 36"
+            answer_contract: {"kind": "list", "ordered": false, "member": {"kind": "exact"}}
             solution_sketch: 'Skip count by $12$: $12, 24, 36$.'
         constraints: "base 2-12, first 3-5 multiples"
       - id: kp3
         name: Factor or multiple?
         key_prerequisites: [division-facts]
         exemplars:
-          - problem: "For the numbers 7 and 84, use F if 7 is a factor of 84, and M if 7 is a multiple of 84. Also compute 84 divided by 7. What are the relation code and the quotient?"
-            answer: "relation = F; quotient = 12"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["F"], ["M"]]}, "name": "relation"}, {"contract": {"kind": "exact"}, "name": "quotient"}]}
-            solution_sketch: "The full result is relation = F; quotient = 12. Step 1: divide 84 by 7 using division facts; 84 divided by 7 is 12 with remainder 0. Step 2: a whole-number quotient means 7 is a factor of 84, so the code is F. The wrong option M would mean 7 is a multiple of 84, but 84 is the multiple because 84 = 7 times 12. The quotient is 12. The final answer is relation = F; quotient = 12."
-          - problem: "For the numbers 51 and 3, use M if 51 is a multiple of 3, and F if 51 is a factor of 3. Also compute 51 divided by 3. What are the relation code and the quotient?"
-            answer: "relation = M; quotient = 17"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["M"], ["F"]]}, "name": "relation"}, {"contract": {"kind": "exact"}, "name": "quotient"}]}
-            solution_sketch: "The full result is relation = M; quotient = 17. Step 1: divide 51 by 3 using division facts; 51 divided by 3 is 17 with remainder 0. Step 2: a whole-number quotient means 51 is a multiple of 3, so the code is M. The wrong option F would mean 51 is a factor of 3, but the factors of 3 are only 1 and 3. The quotient is 17. The final answer is relation = M; quotient = 17."
-          - problem: "For the numbers 9 and 63, decide if 9 is a factor of 63 or a multiple of 63. Write F for factor and M for multiple. Also compute 63 divided by 9. What are the relation code and the quotient?"
-            answer: "relation = F; quotient = 7"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["F"], ["M"]]}, "name": "relation"}, {"contract": {"kind": "exact"}, "name": "quotient"}]}
-            solution_sketch: "The full result is relation = F; quotient = 7. Step 1: divide 63 by 9 using division facts; 63 divided by 9 is 7 with remainder 0. Step 2: a whole-number quotient means 9 is a factor of 63, so the code is F. The wrong option M would mean 9 is a multiple of 63, but a multiple of 63 must be at least 63, and 9 is smaller. The quotient is 7. The final answer is relation = F; quotient = 7."
+          - problem: 'Is $7$ a factor of $84$?'
+            answer: "yes"
+            answer_contract: {"kind": "label", "options": [["yes", "it is", "yes, it is", "7 is a factor of 84"], ["no", "it is not", "no, it is not", "7 is not a factor of 84"]]}
+            solution_sketch: 'Divide: $84 \div 7 = 12$ with no remainder, so $84 = 7 \times 12$. That makes $7$ a factor of $84$, and $84$ a multiple of $7$.'
+          - problem: 'Name a factor of $63$, other than $1$ and $63$, that is a multiple of $3$.'
+            answer: "21"
+            answer_contract: {"kind": "property", "check": "divisor_of", "args": {"k": 63, "multiple_of": 3, "min": 2, "max": 62}}
+            solution_sketch: 'The factor pairs of $63$ are $1 \times 63$, $3 \times 21$ and $7 \times 9$. Of the factors $3, 7, 9, 21$, the multiples of $3$ are $3$, $9$ and $21$. For example $21 = 3 \times 7$ and $63 = 21 \times 3$.'
+          - problem: 'Find the number between $40$ and $50$ that has both $3$ and $4$ as factors.'
+            answer: "48"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'A number with both $3$ and $4$ as factors is a multiple of $12$: $12, 24, 36, 48, 60, \dots$. The only one between $40$ and $50$ is $48 = 3 \times 16 = 4 \times 12$.'
           - problem: 'Give a number that is both a factor of $48$ and a multiple of $4$.'
             answer: "12"
             answer_contract: {"kind": "property", "check": "divisor_of", "args": {"k": 48, "multiple_of": 4}}
@@ -1735,10 +1743,10 @@ topics:
             answer: "30"
             answer_contract: {"kind": "property", "check": "divisor_of", "args": {"k": 60, "multiple_of": 6}}
             solution_sketch: 'Since $60 = 6 \times 10$, such a number is $6$ times a factor of $10$: $6$, $12$, $30$ or $60$. For example $30 = 6 \times 5$, and $60 = 30 \times 2$.'
-          - problem: "For the numbers 40 and 6, use M if 40 is a multiple of 6, and N if it is not a multiple of 6. Also compute the remainder when 40 is divided by 6. What are the relation code and the remainder?"
-            answer: "relation = N; remainder = 4"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["M"], ["N"]]}, "name": "relation"}, {"contract": {"kind": "exact"}, "name": "remainder"}]}
-            solution_sketch: "The full result is relation = N; remainder = 4. Step 1: divide 40 by 6 using division facts; 40 divided by 6 is 6 with remainder 4. Step 2: a nonzero remainder means 40 is not a multiple of 6, so the code is N. The wrong option M would mean 40 is a multiple of 6, but 6 times 6 is 36 and 6 times 7 is 42, so 40 lies between multiples. The remainder is 4. The final answer is relation = N; remainder = 4."
+          - problem: 'Is $40$ a multiple of $6$?'
+            answer: "no"
+            answer_contract: {"kind": "label", "options": [["yes", "it is", "yes, it is", "40 is a multiple of 6"], ["no", "it is not", "no, it is not", "40 is not a multiple of 6"]]}
+            solution_sketch: 'The multiples of $6$ near $40$ are $6 \times 6 = 36$ and $6 \times 7 = 42$. $40$ lies between them, and $40 \div 6 = 6$ remainder $4$, so $40$ is not a multiple of $6$.'
         constraints: "numbers up to 100"
     diagnostic_exemplar:
       problem: 'List all the factors of $20$ that are also multiples of $4$.'
@@ -1778,18 +1786,18 @@ topics:
           answer: 'Its ones digit is $0$, which is even and is also $0$ or $5$'
           why: 'Tests for $2$, $5$ and $10$ read only the ones digit, because every other place value is a multiple of $10$; digit sums are the test for $3$ and $9$.'
         exemplars:
-          - problem: "A 3-digit number has hundreds digit 6 and tens digit 3. Its units digit is not known. The number is divisible by 5. Find the greatest possible value of its units digit."
-            answer: "5"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1: The rule for 5 says a number is divisible by 5 exactly when its units digit is 0 or 5. Step 2: The number is 63d, so d must be 0 or 5. Step 3: The greatest of these possible digits is 5. The answer is 5."
-          - problem: "A 3-digit number has hundreds digit 5 and tens digit 1. Its units digit is unknown. The number is divisible by 2. Find the greatest possible value of its units digit."
-            answer: "8"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1: The rule for 2 says the units digit must be even. Step 2: The number is 51d, and d must be one of 0, 2, 4, 6, 8. Step 3: The greatest even digit is 8. The answer is 8."
-          - problem: "A 3-digit number has hundreds digit 7 and tens digit 4. Its units digit is unknown. The number is divisible by 5. Find the smallest possible value of its units digit."
-            answer: "0"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1: The rule for 5 says the units digit must be 0 or 5. Step 2: The number is 74d, so d is 0 or 5. Step 3: The smallest of these possible digits is 0. The answer is 0."
+          - problem: 'Is $735$ divisible by $10$?'
+            answer: "no"
+            answer_contract: {"kind": "label", "options": [["yes", "it is", "yes, it is", "735 is divisible by 10"], ["no", "it is not", "no, it is not", "735 is not divisible by 10"]]}
+            solution_sketch: 'A number is divisible by $10$ only when its ones digit is $0$. The ones digit of $735$ is $5$, so $735$ is not divisible by $10$; it is divisible by $5$.'
+          - problem: 'Which digits could replace $\square$ in $63\square$ so that the number is divisible by $5$?'
+            answer: "0, 5"
+            answer_contract: {"kind": "list", "ordered": false, "member": {"kind": "exact"}}
+            solution_sketch: 'A number is divisible by $5$ exactly when its ones digit is $0$ or $5$. So the box can hold $0$ or $5$, giving $630$ and $635$. Every other digit leaves a remainder.'
+          - problem: 'Is $482$ divisible by $2$?'
+            answer: "yes"
+            answer_contract: {"kind": "label", "options": [["yes", "it is", "yes, it is", "482 is divisible by 2"], ["no", "it is not", "no, it is not", "482 is not divisible by 2"]]}
+            solution_sketch: 'A number is divisible by $2$ when its ones digit is even. The ones digit of $482$ is $2$, which is even, so yes: $482 = 2 \times 241$.'
           - problem: 'Give a three-digit number that is divisible by $5$ but not by $10$.'
             answer: "125"
             answer_contract: {"kind": "property", "check": "multiple_of", "args": {"k": 5, "not_multiple_of": 10, "min": 100, "max": 999}}
@@ -1798,10 +1806,10 @@ topics:
             answer: "350"
             answer_contract: {"kind": "property", "check": "multiple_of", "args": {"k": 10, "min": 300, "max": 399}}
             solution_sketch: 'The rule for $2$ needs an even last digit and the rule for $5$ needs a last digit of $0$ or $5$, so the last digit must be $0$. Any of $300, 310, \dots, 390$ works, for example $350$.'
-          - problem: "A 3-digit number has hundreds digit 2 and tens digit 8. Its units digit is unknown. The number is divisible by 2 but not by 10. Find the smallest possible value of its units digit."
-            answer: "2"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1: The rule for 2 says the units digit must be even. Step 2: The rule for 10 says a multiple of 10 must end in 0, so the units digit cannot be 0. Step 3: The number is 28d, and d is an even digit that is not 0; the smallest such digit is 2. The answer is 2."
+          - problem: 'Give a number between $280$ and $290$ that is divisible by $2$ but not by $10$.'
+            answer: "282"
+            answer_contract: {"kind": "property", "check": "multiple_of", "args": {"k": 2, "not_multiple_of": 10, "min": 281, "max": 289}}
+            solution_sketch: 'Divisible by $2$ means an even ones digit, and not divisible by $10$ means that digit is not $0$. Between $280$ and $290$ that leaves $282$, $284$, $286$ and $288$; for example $282$.'
         constraints: "3-digit numbers"
       - id: kp2
         name: Rules for 3 and 9 (digit sums)
@@ -1821,14 +1829,14 @@ topics:
           answer: '$633$ and $6+3+3$ leave the same remainder when divided by $3$'
           why: '$633=6\cdot100+3\cdot10+3$, and $100=99+1$ and $10=9+1$, so $633$ and its digit sum differ by a multiple of $3$; a ones digit of $3$ proves nothing, since $13$ is not a multiple of $3$.'
         exemplars:
-          - problem: "Consider the three-digit number 273. Select the one statement that fits it."
-            answer: "only 3"
-            answer_contract: {"kind": "label", "options": [["both 3 and 9"], ["only 3"], ["only 9"], ["neither"]]}
-            solution_sketch: "Add the digits of 273: 2 + 7 + 3 = 12. The rule for 3 says a number is divisible by 3 when its digit sum is a multiple of 3, and 12 is, so 3 divides 273. The rule for 9 says the digit sum must be a multiple of 9, and 12 is not, so 9 does not divide 273. The option 'both 3 and 9' fails because the digit sum 12 is not a multiple of 9. The option 'only 9' fails because 12 is not a multiple of 9, and every multiple of 9 is also a multiple of 3. The option 'neither' fails because 12 is a multiple of 3. The statement that fits 273 is: only 3."
-          - problem: "The three-digit number 814 is written on the board. Select the one statement that fits it."
-            answer: "neither"
-            answer_contract: {"kind": "label", "options": [["both 3 and 9"], ["only 3"], ["only 9"], ["neither"]]}
-            solution_sketch: "Add the digits of 814: 8 + 1 + 4 = 13. The rule for 3 says a number is divisible by 3 when its digit sum is a multiple of 3, and 13 is not, so 3 does not divide 814, and then 9 cannot divide it either. The option 'both 3 and 9' fails because 13 is not a multiple of 3. The option 'only 3' fails because 13 is not a multiple of 3. The option 'only 9' fails because 13 is not a multiple of 9, and every multiple of 9 is also a multiple of 3. The statement that fits 814 is: neither."
+          - problem: 'Is $273$ divisible by $9$?'
+            answer: "no"
+            answer_contract: {"kind": "label", "options": [["yes", "it is", "yes, it is", "273 is divisible by 9"], ["no", "it is not", "no, it is not", "273 is not divisible by 9"]]}
+            solution_sketch: 'Add the digits: $2 + 7 + 3 = 12$. A number is divisible by $9$ only when its digit sum is a multiple of $9$, and $12$ is not, so $273$ is not divisible by $9$. It is divisible by $3$, since $12$ is a multiple of $3$.'
+          - problem: 'Is $717$ divisible by $3$?'
+            answer: "yes"
+            answer_contract: {"kind": "label", "options": [["yes", "it is", "yes, it is", "717 is divisible by 3"], ["no", "it is not", "no, it is not", "717 is not divisible by 3"]]}
+            solution_sketch: 'Add the digits: $7 + 1 + 7 = 15$, a multiple of $3$. So $717$ is divisible by $3$; indeed $717 = 3 \times 239$.'
           - problem: "Find the smallest three-digit number greater than 703 that is divisible by 9."
             answer: "711"
             answer_contract: {"kind": "exact"}
@@ -1859,14 +1867,14 @@ topics:
           answer: '$700$ is a multiple of $4$, so only the $36$ left over matters'
           why: 'Every hundred is $4\times25$, so $736=700+36$ is a multiple of $4$ exactly when $36$ is; an even ones digit only guarantees $2$ ($26$ is even but not a multiple of $4$).'
         exemplars:
-          - problem: "Consider the 3-digit number 732. State its class for divisibility by 4 and by 6."
-            answer: "by both"
-            answer_contract: {"kind": "label", "options": [["by both"], ["by 4 only"], ["by 6 only"], ["by neither"]]}
-            solution_sketch: "The rule for 4 checks only the last two digits: they are 32, and 32 is a multiple of 4, so 732 is divisible by 4. The rule for 6 needs an even number whose digit sum is a multiple of 3: 732 is even and 7+3+2=12, so 732 is divisible by 6. The option by 4 only is wrong because 732 also passes the rule for 6. The option by 6 only is wrong because 732 also passes the rule for 4. The option by neither is wrong because both rules pass. The class of 732 is by both."
-          - problem: "Take the 3-digit number 342. State its class for divisibility by 4 and by 6."
-            answer: "by 6 only"
-            answer_contract: {"kind": "label", "options": [["by both"], ["by 4 only"], ["by 6 only"], ["by neither"]]}
-            solution_sketch: "The rule for 6 needs an even number whose digit sum is a multiple of 3: 342 is even and 3+4+2=9, a multiple of 3, so 342 is divisible by 6. The rule for 4 checks only the last two digits: they are 42, and 42 is not a multiple of 4, so 342 is not divisible by 4. The option by 4 only is wrong because 342 fails the rule for 4. The option by both is wrong because 342 is not divisible by 4. The option by neither is wrong because 342 is divisible by 6. The class of 342 is by 6 only."
+          - problem: 'Is $732$ divisible by $6$?'
+            answer: "yes"
+            answer_contract: {"kind": "label", "options": [["yes", "it is", "yes, it is", "732 is divisible by 6"], ["no", "it is not", "no, it is not", "732 is not divisible by 6"]]}
+            solution_sketch: 'A number is divisible by $6$ when it passes the tests for both $2$ and $3$. $732$ is even, and $7 + 3 + 2 = 12$ is a multiple of $3$, so yes: $732 = 6 \times 122$.'
+          - problem: 'Is $342$ divisible by $4$?'
+            answer: "no"
+            answer_contract: {"kind": "label", "options": [["yes", "it is", "yes, it is", "342 is divisible by 4"], ["no", "it is not", "no, it is not", "342 is not divisible by 4"]]}
+            solution_sketch: 'Only the last two digits decide divisibility by $4$, because $300$ is a multiple of $4$. Here they form $42$, and $42 = 4 \times 10 + 2$, so $342$ is not divisible by $4$. Being even is not enough.'
           - problem: "Find the smallest digit d so that the 3-digit number 81d is divisible by 4."
             answer: "2"
             answer_contract: {"kind": "exact"}
@@ -1879,14 +1887,14 @@ topics:
             answer: "132"
             answer_contract: {"kind": "property", "check": "multiple_of", "args": {"k": 12, "min": 100, "max": 999}}
             solution_sketch: 'Check both rules. For $132$ the last two digits make $32$, a multiple of $4$; the number is even and $1 + 3 + 2 = 6$, so $6$ divides it too. A number divisible by $4$ and by $6$ is exactly a multiple of $12$, so $108$, $120$ and $144$ also work.'
-          - problem: "How many digits d make the 3-digit number 41d divisible by 6? Give the count."
-            answer: "1"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The rule for 6 needs an even number whose digit sum is a multiple of 3. For 41d the digit sum is 4+1+d = 5+d, which must be a multiple of 3, so d can be 1, 4, or 7. The number must also be even, and among 1, 4, 7 only d=4 is even, so 414 is the only one divisible by 6. Exactly one digit qualifies, and the answer is 1."
+          - problem: 'Which digits could replace $\square$ in $52\square$ so that the number is divisible by $6$?'
+            answer: "2, 8"
+            answer_contract: {"kind": "list", "ordered": false, "member": {"kind": "exact"}}
+            solution_sketch: 'For $3$, the digit sum $5 + 2 + d = 7 + d$ must be a multiple of $3$, so $d$ is $2$, $5$ or $8$. For $2$, the number must be even, which rules out $5$. So the digits are $2$ and $8$, giving $522$ and $528$.'
         constraints: "3-digit numbers"
     diagnostic_exemplar:
-      problem: 'Is $438$ divisible by $6$? (yes/no)'
-      answer_contract: {kind: label, options: [[yes], [no]]}
+      problem: 'Is $438$ divisible by $6$?'
+      answer_contract: {"kind": "label", "options": [["yes", "it is", "yes, it is", "438 is divisible by 6"], ["no", "it is not", "no, it is not", "438 is not divisible by 6"]]}
       answer: "yes"
       solution_sketch: 'Divisible by $6$ means divisible by both $2$ and $3$: $438$ is even and $4 + 3 + 8 = 15$ is a multiple of $3$.'
     anki_seeds:
@@ -1930,18 +1938,18 @@ topics:
           answer: '$49$ is composite: it has the factor $7$ besides $1$ and $49$'
           why: 'A prime has exactly two factors, $1$ and itself; $49$ has $1$, $7$ and $49$, and neither being odd nor having a prime factor makes a number prime.'
         exemplars:
-          - problem: "Determine whether 13 has exactly two factors or more than two factors, and give its number of factors."
-            answer: "verdict = prime; factors = 2"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["prime"], ["composite"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "factors"}]}
-            solution_sketch: "Step 1: list all factors of 13; they are 1 and 13. Step 2: apply the definition of prime numbers, which says a prime has exactly two factors. Step 3: count the factors to get 2. Calling 13 composite would wrongly assume it has more than two factors. The answer is verdict = prime; factors = 2."
-          - problem: "Give the number of factors of 12 and state whether it has exactly two factors or more than two factors."
-            answer: "factors = 6; verdict = composite"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "factors"}, {"contract": {"kind": "label", "options": [["prime"], ["composite"]]}, "name": "verdict"}]}
-            solution_sketch: "Step 1: list all factors of 12: 1, 2, 3, 4, 6, 12. Step 2: count them to get 6 factors. Step 3: apply the definition of composite numbers, which says a composite has more than two factors. Calling 12 prime would wrongly assume it has exactly two factors. The answer is factors = 6; verdict = composite."
-          - problem: "A number is 16. Determine its number of factors and whether it has exactly two factors or more than two factors."
-            answer: "verdict = composite; factors = 5"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["prime"], ["composite"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "factors"}]}
-            solution_sketch: "Step 1: list all factors of 16: 1, 2, 4, 8, 16. Step 2: count them to get 5 factors. Step 3: apply the definition; since there are more than two factors, 16 is composite. Calling 16 prime would wrongly assume it has exactly two factors. The answer is verdict = composite; factors = 5."
+          - problem: 'Is $51$ prime or composite?'
+            answer: "composite"
+            answer_contract: {"kind": "label", "options": [["prime", "it is prime", "it's prime", "51 is prime"], ["composite", "it is composite", "it's composite", "51 is composite"]]}
+            solution_sketch: 'Its digit sum $5 + 1 = 6$ is a multiple of $3$, and indeed $51 = 3 \times 17$. So $51$ has the factors $1, 3, 17, 51$, more than two, and it is composite.'
+          - problem: 'Is $13$ prime or composite?'
+            answer: "prime"
+            answer_contract: {"kind": "label", "options": [["prime", "it is prime", "it's prime", "13 is prime"], ["composite", "it is composite", "it's composite", "13 is composite"]]}
+            solution_sketch: 'Test the possible divisors: $2$, $3$ and $4$ leave remainders, and $4 \times 4 = 16$ is already past $13$. So the only factors of $13$ are $1$ and $13$, and it is prime.'
+          - problem: 'Which of the numbers $21$, $23$ and $27$ is prime?'
+            answer: "23"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: '$21 = 3 \times 7$ and $27 = 3 \times 9$ are composite. $23$ is not divisible by $2$, $3$ or $4$, and $5 \times 5 = 25$ is past $23$, so $23$ is prime.'
           - problem: 'Give an odd number less than $50$ that is composite.'
             answer: "9"
             answer_contract: {"kind": "property", "check": "composite", "args": {"not_multiple_of": 2, "max": 49}}
@@ -1954,10 +1962,10 @@ topics:
             answer: "4"
             answer_contract: {"kind": "property", "check": "prime_counterexample", "args": {"expr": "n^2 + n + 1", "min": 1}}
             solution_sketch: 'Keep testing: $n = 4$ gives $16 + 4 + 1 = 21 = 3 \times 7$, which is composite, so $n = 4$ is a counterexample. A few cases that work never prove a claim about every $n$, but one failure disproves it. $n = 7$ gives $57 = 3 \times 19$, another counterexample.'
-          - problem: "How many factors does 25 have, and does it have exactly two factors or more than two factors?"
-            answer: "factors = 3; verdict = composite"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "factors"}, {"contract": {"kind": "label", "options": [["prime"], ["composite"]]}, "name": "verdict"}]}
-            solution_sketch: "Step 1: list all factors of 25: 1, 5, 25. Step 2: count them to get 3 factors. Step 3: apply the definition; since there are more than two factors, 25 is composite. Calling 25 prime would wrongly assume it has exactly two factors. The answer is factors = 3; verdict = composite."
+          - problem: 'Only one of $33$, $35$, $37$ and $39$ is prime. Which one?'
+            answer: "37"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: '$33 = 3 \times 11$, $35 = 5 \times 7$ and $39 = 3 \times 13$ are composite. $37$ is not divisible by $2$, $3$, $4$, $5$ or $6$, and $7 \times 7 = 49$ is past $37$, so $37$ is the prime.'
         constraints: "numbers 2-50"
       - id: kp2
         name: Knowing the small primes
@@ -1974,12 +1982,14 @@ topics:
         exemplars:
           - problem: 'List all the primes between $10$ and $20$.'
             answer: "11, 13, 17, 19"
+            answer_contract: {"kind": "list", "ordered": false, "member": {"kind": "exact"}}
             solution_sketch: 'Checking each candidate from $10$ to $20$: $11, 13, 17, 19$ have no smaller factor.'
           - problem: 'What is the smallest prime greater than $30$?'
             answer: "31"
             solution_sketch: '$31$ has no factor besides $1$ and itself; $30$ is even.'
           - problem: 'List all the primes between $20$ and $30$.'
             answer: "23, 29"
+            answer_contract: {"kind": "list", "ordered": false, "member": {"kind": "exact"}}
             solution_sketch: 'Checking each candidate from $20$ to $30$: $23, 29$ have no smaller factor.'
           - problem: 'Give a prime number between $50$ and $70$.'
             answer: "59"
@@ -2010,10 +2020,10 @@ topics:
           answer: 'It has more than two positive factors: $1, 2, 11, 22$'
           why: 'Composite means more than two positive factors; evenness is not the reason, since $2$ is even and prime.'
         exemplars:
-          - problem: "The number 1 is a special case in the prime and composite system. How many positive factors does the number 1 have?"
-            answer: "1"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1, definition of a factor: test each positive whole number to see which divide 1 with no remainder. Step 2, count: only 1 divides 1, so the list of positive factors of 1 is just 1 itself. A prime needs exactly two positive factors and a composite needs more than two, so 1 fits neither class. The number of positive factors of the number 1 is 1."
+          - problem: 'Is $1$ prime, composite, or neither?'
+            answer: "neither"
+            answer_contract: {"kind": "label", "options": [["prime", "it is prime", "1 is prime"], ["composite", "it is composite", "1 is composite"], ["neither", "it is neither", "neither prime nor composite", "1 is neither"]]}
+            solution_sketch: 'The only positive factor of $1$ is $1$ itself. A prime needs exactly two factors and a composite needs more than two, so $1$ is neither.'
           - problem: 'What is the only even prime number?'
             answer: "2"
             solution_sketch: 'Every other even number is divisible by $2$ itself, so it is composite; $2$ alone is prime.'
@@ -2029,10 +2039,10 @@ topics:
             answer: "9"
             answer_contract: {"kind": "property", "check": "composite", "args": {"not_multiple_of": 2}}
             solution_sketch: 'A counterexample is an odd number above $1$ that is not prime. $9 = 3 \times 3$ is odd and has the factor $3$, so the claim fails. $15$, $21$ and $25$ are other counterexamples.'
-          - problem: "The number 2 is the smallest even case that people classify. Give the classification of the number 2 and its number of positive factors."
-            answer: "class = prime; factors = 2"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["prime"], ["composite"]]}, "name": "class"}, {"contract": {"kind": "exact"}, "name": "factors"}]}
-            solution_sketch: "Step 1, definition: a prime has exactly two positive factors and a composite has more than two. Step 2, test the divisors of 2: only 1 and 2 divide 2 with no remainder, so the count of positive factors is 2. Step 3, classify: exactly two positive factors means the class is prime; the wrong option composite comes from the mistaken rule that every even number is composite. The full answer is class = prime; factors = 2."
+          - problem: 'Is $2$ prime, composite, or neither?'
+            answer: "prime"
+            answer_contract: {"kind": "label", "options": [["prime", "it is prime", "2 is prime"], ["composite", "it is composite", "2 is composite"], ["neither", "it is neither", "neither prime nor composite", "2 is neither"]]}
+            solution_sketch: 'The factors of $2$ are exactly $1$ and $2$, so $2$ is prime. It is the only even prime: every larger even number also has the factor $2$.'
         constraints: "the numbers 0, 1, 2 and even numbers"
     diagnostic_exemplar:
       problem: 'List all the primes less than $10$.'
@@ -2091,6 +2101,14 @@ topics:
           - problem: 'What is $20$ written as a product of its prime factors?'
             answer: "2 x 2 x 5"
             solution_sketch: '$20 = 2 \times 2 \times 5$.'
+          - problem: 'Which number has the prime factorization $2 \times 3 \times 5$?'
+            answer: "30"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Multiply the primes: $2 \times 3 = 6$ and $6 \times 5 = 30$. Each factor is prime, so $2 \times 3 \times 5$ is the prime factorization of $30$.'
+          - problem: 'What is the largest prime factor of $27$?'
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: '$27 = 3 \times 9 = 3 \times 3 \times 3$. The factor $9$ is not prime, so the only prime factor, and hence the largest, is $3$.'
         constraints: "numbers 4-30; give the product of primes"
       - id: kp2
         name: Factor trees for larger numbers
@@ -2117,6 +2135,14 @@ topics:
           - problem: 'Write the prime factorization of $45$.'
             answer: "3 x 3 x 5"
             solution_sketch: '$45 = 3 \times 3 \times 5$.'
+          - problem: 'The prime factorization of $98$ is $2 \times 7 \times \square$. Which prime goes in the box?'
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Split off the known primes: $98 \div 2 = 49$ and $49 \div 7 = 7$. The box holds $7$, and $2 \times 7 \times 7 = 98$.'
+          - problem: 'Give a number between $30$ and $40$ that is the product of two different primes.'
+            answer: "35"
+            answer_contract: {"kind": "property", "check": "divisor_count", "args": {"n": 4, "min": 31, "max": 39}}
+            solution_sketch: 'For example $35 = 5 \times 7$. The other numbers in that range that work are $33 = 3 \times 11$, $34 = 2 \times 17$, $38 = 2 \times 19$ and $39 = 3 \times 13$. A number like $32 = 2^5$ or $36 = 2^2 \times 3^2$ uses a repeated prime.'
         constraints: "numbers 30-100"
       - id: kp3
         name: Repeated prime factors
@@ -2143,6 +2169,14 @@ topics:
           - problem: 'What is $108$ written as a product of its prime factors?'
             answer: "2 x 2 x 3 x 3 x 3"
             solution_sketch: '$108 = 2 \times 2 \times 3 \times 3 \times 3$.'
+          - problem: 'Which number has the prime factorization $2^4 \times 5$?'
+            answer: "80"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The power $2^4$ means four factors of $2$: $2 \times 2 \times 2 \times 2 = 16$. Then $16 \times 5 = 80$.'
+          - problem: 'How many times does the prime $2$ appear in the prime factorization of $112$?'
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Halve until the result is odd: $112 \to 56 \to 28 \to 14 \to 7$. That is four divisions by $2$, so $112 = 2^4 \times 7$ and $2$ appears $4$ times.'
         constraints: "numbers with repeated factors, up to 150"
     diagnostic_exemplar:
       problem: 'Write the prime factorization of $90$.'
@@ -2179,7 +2213,7 @@ topics:
             answer: "4"
             answer_contract: {"kind":"exact"}
             solution_sketch: 'Factors of $8$: $1,2,4,8$; of $20$: $1,2,4,5,10,20$; largest common is $4$.'
-          - problem: '$15$ and $25$ share a greatest common factor. Find it.'
+          - problem: 'What is the largest number that divides both $15$ and $25$?'
             answer: "5"
             answer_contract: {"kind":"exact"}
             solution_sketch: 'Factors of $15$: $1,3,5,15$; of $25$: $1,5,25$; largest common is $5$.'
@@ -2208,7 +2242,7 @@ topics:
             answer: "15"
             answer_contract: {"kind":"exact"}
             solution_sketch: '$\text{GCF}(30, 45) = 15$.'
-          - problem: '$48$ and $54$ share a greatest common factor. Find it.'
+          - problem: 'What is the largest number that divides both $48$ and $54$?'
             answer: "6"
             answer_contract: {"kind":"exact"}
             solution_sketch: 'Factors of $48$: $1,2,3,4,6,8,12,16,24,48$; of $54$: $1,2,3,6,9,18,27,54$; largest common is $6$.'
@@ -2237,7 +2271,7 @@ topics:
             answer: "7"
             answer_contract: {"kind":"exact"}
             solution_sketch: '$\text{GCF}(7, 35) = 7$; $7$ divides $35$.'
-          - problem: '$9$ and $27$ share a greatest common factor. Find it.'
+          - problem: 'What is the largest number that divides both $9$ and $27$?'
             answer: "9"
             answer_contract: {"kind":"exact"}
             solution_sketch: 'Factors of $9$: $1,3,9$; of $27$: $1,3,9,27$; largest common is $9$.'
@@ -2280,6 +2314,20 @@ topics:
       - id: kp1
         name: LCM by listing multiples
         key_prerequisites: [factors-and-multiples]
+        try_first:
+          problem: 'Hot dogs come in packs of $10$ and buns in packs of $8$. What is the smallest number of hot dogs you can buy so that you can also buy exactly that many buns?'
+          answer_contract: {"kind":"exact"}
+          answer: '40'
+          reveal: 'The count must be in both lists, $10, 20, 30, 40$ and $8, 16, 24, 32, 40$, and $40$ is the first number they share. That first shared multiple is the least common multiple.'
+        step_check:
+          step: 'The first entry common to both increasing lists is $77$'
+          question: 'Why does the first shared entry, $77$, give the least common multiple?'
+          options:
+            - 'Each list is in increasing order, so no smaller number is in both lists'
+            - 'The least common multiple is always the product of the two numbers'
+            - '$77$ is the largest number in the list of multiples of $11$'
+          answer: 'Each list is in increasing order, so no smaller number is in both lists'
+          why: 'Every common multiple appears in both lists, and increasing lists meet first at the smallest one; the product works here only because $7$ and $11$ share no factor.'
         exemplars:
           - problem: 'Find the LCM of $4$ and $6$.'
             answer: "12"
@@ -2288,8 +2336,8 @@ topics:
           - problem: 'What is the least common multiple of $3$ and $5$?'
             answer: "15"
             answer_contract: {"kind":"exact"}
-            solution_sketch: '$\text{LCM}(3, 5) = 15$.'
-          - problem: '$6$ and $8$ share a least common multiple. Find it.'
+            solution_sketch: 'Multiples of $5$: $5, 10, 15$. The first of these that $3$ divides is $15$, so $\text{LCM}(3, 5) = 15$.'
+          - problem: 'What is the smallest positive number that is a multiple of both $6$ and $8$?'
             answer: "24"
             answer_contract: {"kind":"exact"}
             solution_sketch: 'Multiples of $6$ and $8$ first meet at $24$: $\text{LCM}(6,8)=24$.'
@@ -2305,6 +2353,15 @@ topics:
       - id: kp2
         name: Special cases
         key_prerequisites: [factors-and-multiples]
+        step_check:
+          step: 'the least common multiple is their product'
+          question: 'Why is the least common multiple of $8$ and $15$ their product, $120$?'
+          options:
+            - 'Every multiple of a number is larger than the number itself'
+            - 'With no shared factor, a common multiple needs all of $8$ and all of $15$'
+            - 'The product of two numbers is always their least common multiple'
+          answer: 'With no shared factor, a common multiple needs all of $8$ and all of $15$'
+          why: 'A multiple of $8$ needs $2^3$ and a multiple of $15$ needs $3 \times 5$; nothing overlaps, so the smallest number with both is $8 \times 15 = 120$, while for $6$ and $8$ the product $48$ is too big.'
         exemplars:
           - problem: 'Find the LCM of $6$ and $18$.'
             answer: "18"
@@ -2314,7 +2371,7 @@ topics:
             answer: "35"
             answer_contract: {"kind":"exact"}
             solution_sketch: 'No common factors, so the LCM is the product $5 \times 7$.'
-          - problem: '$9$ and $3$ share a least common multiple. Find it.'
+          - problem: 'What is the smallest positive number that is a multiple of both $9$ and $3$?'
             answer: "9"
             answer_contract: {"kind":"exact"}
             solution_sketch: 'Multiples of $9$ and $3$ first meet at $9$: $\text{LCM}(9,3)=9$.'
@@ -2330,23 +2387,36 @@ topics:
       - id: kp3
         name: LCM of three numbers
         key_prerequisites: [multiplication-tables]
+        step_check:
+          step: 'Combine that result with $7$'
+          question: 'Why may we combine $10$ with $7$ instead of working with all of $5$, $7$ and $10$?'
+          options:
+            - 'The largest of the three numbers is always the least common multiple'
+            - '$5$ is prime, and primes can be left out of a least common multiple'
+            - 'A multiple of $10$ is already a multiple of $5$, so $5$ adds nothing'
+          answer: 'A multiple of $10$ is already a multiple of $5$, so $5$ adds nothing'
+          why: 'The common multiples of $5$ and $10$ are exactly the multiples of $10$, so $\text{LCM}(5, 7, 10) = \text{LCM}(10, 7) = 70$; leaving out the prime $7$ would lose a needed factor.'
         exemplars:
           - problem: 'Find the LCM of $2$, $3$, and $4$.'
             answer: "12"
             answer_contract: {"kind":"exact"}
             solution_sketch: '$\text{LCM}(2, 3, 4) = 12$.'
-          - problem: 'What is the least common multiple of $3$, $4$, and $6$?'
-            answer: "12"
+          - problem: 'What is the least common multiple of $3$, $4$, and $5$?'
+            answer: "60"
             answer_contract: {"kind":"exact"}
-            solution_sketch: '$\text{LCM}(3, 4, 6) = 12$.'
-          - problem: '$2$, $5$, and $6$ share a least common multiple. Find it.'
+            solution_sketch: 'First $\text{LCM}(3, 4) = 12$, since $3$ and $4$ share no factor. Then $12$ and $5$ share no factor either, so $\text{LCM}(12, 5) = 60$.'
+          - problem: 'What is the smallest positive number divisible by $2$, $5$, and $6$?'
             answer: "30"
             answer_contract: {"kind":"exact"}
-            solution_sketch: '$\text{LCM}(2,5,6) = 30$.'
+            solution_sketch: 'Any multiple of $6$ is already even, so only $6$ and $5$ matter. They share no factor, so the answer is $6 \times 5 = 30$.'
           - problem: 'Determine the LCM of $4$, $6$, and $8$.'
             answer: "24"
             answer_contract: {"kind":"exact"}
             solution_sketch: '$\text{LCM}(4,6,8) = 24$.'
+          - problem: 'Give a common multiple of $2$, $3$, and $4$ that is greater than $50$.'
+            answer: "60"
+            answer_contract: {"kind": "property", "check": "multiple_of", "args": {"k": 12, "min": 51}}
+            solution_sketch: 'The least common multiple of $2$, $3$ and $4$ is $12$, and every common multiple is a multiple of $12$. Above $50$ these are $60, 72, 84, \dots$; for example $60 = 12 \times 5$.'
         constraints: "three numbers up to 10"
     diagnostic_exemplar:
       problem: 'Find the LCM of $4$, $6$, and $9$.'
@@ -2381,6 +2451,15 @@ topics:
       - id: kp1
         name: GCF via prime factorization
         key_prerequisites: [prime-factorization]
+        step_check:
+          step: 'For each shared prime, take the lower power'
+          question: 'Why does the GCF use $2^2$ from $108$ and not $2^4$ from $144$?'
+          options:
+            - 'The GCF always takes each prime to its higher power'
+            - '$2^4 = 16$ does not divide $108$, while $2^2 = 4$ divides both'
+            - 'Lower powers are used because the GCF is smaller than the LCM'
+          answer: '$2^4 = 16$ does not divide $108$, while $2^2 = 4$ divides both'
+          why: 'A common factor must divide both numbers, so it can use $2$ only as often as the number with fewer factors of $2$; $108 = 4 \times 27$ has just two.'
         exemplars:
           - problem: 'Find the GCF of $45$ and $60$.'
             answer: "15"
@@ -2390,10 +2469,10 @@ topics:
             answer: "24"
             answer_contract: {"kind":"exact"}
             solution_sketch: '$72 = 2^3 \times 3^2$, $120 = 2^3 \times 3 \times 5$; $2^3 \times 3 = 24$.'
-          - problem: '$90$ and $105$ share a greatest common factor. Find it.'
-            answer: "15"
+          - problem: 'What is the largest number that divides both $90$ and $126$?'
+            answer: "18"
             answer_contract: {"kind":"exact"}
-            solution_sketch: '$90 = 2 \times 3 \times 3 \times 5$, $105 = 3 \times 5 \times 7$; common part gives $15$.'
+            solution_sketch: '$90 = 2 \times 3^2 \times 5$ and $126 = 2 \times 3^2 \times 7$. The shared part is $2 \times 3^2 = 18$.'
           - problem: 'Determine the GCF of $126$ and $84$.'
             answer: "42"
             answer_contract: {"kind":"exact"}
@@ -2402,6 +2481,15 @@ topics:
       - id: kp2
         name: LCM via prime factorization
         key_prerequisites: [prime-factorization]
+        step_check:
+          step: 'using its highest exponent'
+          question: 'Why does the LCM of $14$ and $20$ use $2^2$ rather than $2^1$?'
+          options:
+            - 'The LCM takes each prime to its lowest power'
+            - '$2$ appears in both numbers, so its power is doubled'
+            - 'A multiple of $20$ must contain $2^2$, so $2^1$ is too few'
+          answer: 'A multiple of $20$ must contain $2^2$, so $2^1$ is too few'
+          why: '$2 \times 5 \times 7 = 70$ is not a multiple of $20$; the LCM must contain each number''s full factorization, so every prime appears with its highest exponent.'
         exemplars:
           - problem: 'Find the LCM of $8$ and $12$.'
             answer: "24"
@@ -2410,11 +2498,11 @@ topics:
           - problem: 'What is the least common multiple of $9$ and $15$?'
             answer: "45"
             answer_contract: {"kind":"exact"}
-            solution_sketch: '$\text{LCM}(9, 15) = 45$.'
-          - problem: '$12$ and $18$ share a least common multiple. Find it.'
+            solution_sketch: '$9 = 3^2$ and $15 = 3 \times 5$. Take $3^2$ and $5$: $\text{LCM}(9, 15) = 9 \times 5 = 45$.'
+          - problem: 'What is the smallest positive number that is a multiple of both $12$ and $18$?'
             answer: "36"
             answer_contract: {"kind":"exact"}
-            solution_sketch: '$\text{LCM}(12, 18) = 36$.'
+            solution_sketch: '$12 = 2^2 \times 3$ and $18 = 2 \times 3^2$. Take the highest powers: $2^2 \times 3^2 = 36$.'
           - problem: 'Determine the LCM of $20$ and $30$.'
             answer: "60"
             answer_contract: {"kind":"exact"}
@@ -2423,6 +2511,15 @@ topics:
       - id: kp3
         name: GCF and LCM in applications
         key_prerequisites: [greatest-common-factor]
+        step_check:
+          step: 'is the GCF of 30 and 45, not the LCM'
+          question: 'Why does the largest tile size come from the GCF of $30$ and $45$?'
+          options:
+            - 'The tile side must be a multiple of both $30$ and $45$'
+            - 'The tile is square, so its side is the smaller length, $30$'
+            - 'The tile side must divide both $30$ and $45$ with nothing left'
+          answer: 'The tile side must divide both $30$ and $45$ with nothing left'
+          why: 'Whole tiles fit along a side only if the tile length divides it, and the largest length dividing both is the GCF; a common multiple would be longer than the floor.'
         exemplars:
           - problem: 'One bus leaves every $12$ minutes and another every $18$ minutes. They leave together at 9:00. In how many minutes do they next leave together?'
             answer: "36"
@@ -2436,6 +2533,14 @@ topics:
           - problem: 'What is the side length of the largest square tile that exactly covers an $18$ by $30$ floor?'
             answer: "6"
             solution_sketch: '$\text{GCF}(18, 30) = 6$.'
+          - problem: 'A florist has $42$ roses and $70$ tulips. She makes identical bouquets, using every flower. What is the greatest number of bouquets she can make?'
+            answer: "14"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The number of bouquets must divide both $42$ and $70$, so it is a common factor; the greatest is the GCF. $42 = 2 \times 3 \times 7$ and $70 = 2 \times 5 \times 7$, so the GCF is $14$: each bouquet has $3$ roses and $5$ tulips.'
+          - problem: 'One light flashes every $6$ seconds and another every $15$ seconds. They flash together now. After how many seconds do they next flash together?'
+            answer: "30"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'They flash together at times that are multiples of both $6$ and $15$, so the first such time is the LCM. $6 = 2 \times 3$ and $15 = 3 \times 5$, so the LCM is $2 \times 3 \times 5 = 30$ seconds.'
         constraints: "recognize whether the situation needs the GCF or the LCM"
     diagnostic_exemplar:
       problem: 'A gardener has $84$ tulips and $126$ daffodils and makes identical bunches with no flowers left over. What is the greatest number of bunches?'
