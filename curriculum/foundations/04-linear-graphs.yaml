@@ -200,19 +200,19 @@ topics:
         name: "Increasing, decreasing, constant"
         key_prerequisites: [coordinate-plane]
         exemplars:
-          - problem: "A distance-time graph is horizontal from t=2 to t=5. Give the behavior of the distance and the duration of this segment."
+          - problem: "A distance-time graph is horizontal from t=2 to t=5. Give the behavior of the distance (increasing, decreasing or constant) and the duration of this segment."
             answer: "behavior = constant; duration = 3"
             answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["increasing"], ["decreasing"], ["constant"]]}, "name": "behavior"}, {"contract": {"kind": "exact"}, "name": "duration"}]}
             solution_sketch: "Step 1: Read the shape of the segment. A horizontal segment has no rise or fall, so the distance is constant. Step 2: Read the endpoints. The segment runs from t=2 to t=5, so the duration is 5 - 2 = 3. The option increasing is wrong because a horizontal segment does not rise. The option decreasing is wrong because a horizontal segment does not fall. The answer is behavior = constant; duration = 3."
-          - problem: "A temperature-time graph falls steadily from t=1 to t=5. Give the behavior of the temperature and the duration of this segment."
+          - problem: "A temperature-time graph falls steadily from t=1 to t=5. Give the behavior of the temperature (increasing, decreasing or constant) and the duration of this segment."
             answer: "behavior = decreasing; duration = 4"
             answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["increasing"], ["decreasing"], ["constant"]]}, "name": "behavior"}, {"contract": {"kind": "exact"}, "name": "duration"}]}
             solution_sketch: "Step 1: Read the direction. The graph falls from left to right, so the temperature is decreasing. Step 2: Read the endpoints. The segment runs from t=1 to t=5, so the duration is 5 - 1 = 4. The option increasing is wrong because the graph does not rise. The option constant is wrong because the graph is not horizontal. The answer is behavior = decreasing; duration = 4."
-          - problem: "A savings-account graph rises steadily from t=0 to t=6. Give the behavior of the amount saved and the duration of this segment."
+          - problem: "A savings-account graph rises steadily from t=0 to t=6. Give the behavior of the amount saved (increasing, decreasing or constant) and the duration of this segment."
             answer: "behavior = increasing; duration = 6"
             answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["increasing"], ["decreasing"], ["constant"]]}, "name": "behavior"}, {"contract": {"kind": "exact"}, "name": "duration"}]}
             solution_sketch: "Step 1: Read the direction. The graph rises from left to right, so the amount saved is increasing. Step 2: Read the endpoints. The segment runs from t=0 to t=6, so the duration is 6 - 0 = 6. The option decreasing is wrong because the graph does not fall. The option constant is wrong because the graph is not horizontal. The answer is behavior = increasing; duration = 6."
-          - problem: "A car's speed-time graph is flat at 60 km/h from t=1 to t=3. Give the behavior of the speed and the duration of this segment."
+          - problem: "A car's speed-time graph is flat at 60 km/h from t=1 to t=3. Give the behavior of the speed (increasing, decreasing or constant) and the duration of this segment."
             answer: "behavior = constant; duration = 2"
             answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["increasing"], ["decreasing"], ["constant"]]}, "name": "behavior"}, {"contract": {"kind": "exact"}, "name": "duration"}]}
             solution_sketch: "Step 1: Read the shape. A flat segment means the speed does not change, so the behavior is constant. Step 2: Read the endpoints. The segment runs from t=1 to t=3, so the duration is 3 - 1 = 2. The option increasing is wrong because a flat segment does not rise. The option decreasing is wrong because a flat segment does not fall. The answer is behavior = constant; duration = 2."
@@ -1951,7 +1951,7 @@ topics:
             solution_sketch: "The model is y = 0.12m + 9, in slope-intercept form, and the slope is 0.12, the coefficient of m. By the rule that the slope is the rate of change, each extra minute of calls adds 0.12 euros to the monthly cost. The answer is 0.12."
           - problem: "A candle's height is y = 22 - 0.4t centimeters after t minutes of burning. State whether the height goes up or goes down as t grows, and give the rate of change in centimeters per minute as a signed decimal to 1 place."
             answer: "verdict = decreases; rate = -0.4"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["increases"], ["decreases"]]}, "name": "verdict"}, {"contract": {"decimals": 1, "kind": "approx"}, "name": "rate"}]}
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["increases", "goes up", "up", "increasing"], ["decreases", "goes down", "down", "decreasing"]]}, "name": "verdict"}, {"contract": {"decimals": 1, "kind": "approx"}, "name": "rate"}]}
             solution_sketch: "The model is y = 22 - 0.4t, in slope-intercept form, and the slope is -0.4, the coefficient of t. By the rule that a negative slope is a decreasing rate, the height goes down at 0.4 centimeters per minute, so the rate of change is -0.4 centimeters per minute. The option increases is wrong because a negative slope means the quantity falls, not rises. The answer is verdict = decreases; rate = -0.4."
         constraints: "slope = rate with units"
       - id: kp2
@@ -1965,11 +1965,11 @@ topics:
             solution_sketch: "The model y = -4x + 60 is in slope-intercept form, whose constant term is the y-value at x = 0. At 0 minutes the tank has not lost any water, so the intercept 60 is the starting volume; the drain amount per minute is the slope 4, not the intercept. Wrong options: 'the volume drained each minute' confuses the intercept with the slope, 'the volume left after 60 minutes' uses 60 as an input time, and 'the number of minutes until the tank is empty' treats the intercept as a duration. The 60 is the volume in the tank before any draining."
           - problem: "A repair shop models the cost of a job by C = 18h + 75, where h is the number of hours of work and C is in euros. Determine whether the 75 is a one-time charge or a per-hour charge, and give the cost in euros of a job with zero hours of work."
             answer: "verdict = fixed; fee = 75"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["fixed"], ["hourly"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "fee"}]}
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["fixed", "one-time charge", "a one-time charge", "one-time"], ["hourly", "per-hour charge", "a per-hour charge", "per-hour"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "fee"}]}
             solution_sketch: "The model C = 18h + 75 is in slope-intercept form, whose constant term is the value at h = 0. A job with zero hours of work costs C = 75 euros, so the 75 is charged before any work and is a one-time charge; the per-hour part is the slope 18. The option hourly is the error of reading the slope as the intercept. verdict = fixed; fee = 75"
           - problem: "A mobile plan costs y = 0.12m + 19 euros for m call minutes in a month. Determine whether the 19 is charged even when no calls are made or charged for each call minute, and give the cost in euros of a month with zero calls."
             answer: "verdict = flat; cost = 19"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["flat"], ["metered"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "cost"}]}
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["flat", "charged even when no calls are made", "even when no calls are made"], ["metered", "charged for each call minute", "for each call minute"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "cost"}]}
             solution_sketch: "The model y = 0.12m + 19 is in slope-intercept form, whose constant term is the value at m = 0. A month with zero calls costs 0.12 · 0 + 19 = 19 euros, so the 19 is charged regardless of usage; the per-call part is the slope 0.12. The option metered is the error of reading the slope as the intercept. verdict = flat; cost = 19"
           - problem: "Taxi app A charges y = 2.5x + 4 euros for a ride of x km, and app B charges y = 1.8x + 9 euros; each model is a starting fee plus a per-km charge. Find how many euros larger the starting fee of app B is than the starting fee of app A."
             answer: "5"

@@ -197,9 +197,36 @@ fn every_scientific_notation_answer_keeps_its_coefficient_normalized() {
     assert!(failures.is_empty(), "{}", failures.join("\n"));
 }
 
-/// Every `radical-equations-basic/kp3` "no solution" exemplar names a
-/// negative right-hand side: the domain fact that makes it genuinely
-/// unsolvable over the reals, not an arbitrary label.
+/// The value the radical equals once it is isolated, for an equation of the
+/// form `a\sqrt{...} + b = c` (the coefficient `a` and the term `b` are
+/// optional) in the first `$...$` span of `problem`.
+fn isolated_radical_value(problem: &str) -> Option<f64> {
+    let math = problem.split('$').nth(1)?;
+    let (lhs, rhs) = math.split_once('=')?;
+    let rhs: f64 = rhs.trim().parse().ok()?;
+    let (coefficient, rest) = lhs.split_once("\\sqrt")?;
+    let coefficient: f64 = match coefficient.trim() {
+        "" => 1.0,
+        "-" => -1.0,
+        text => text.parse().ok()?,
+    };
+    let close = rest.find('}')?;
+    let tail: String = rest[close + 1..]
+        .chars()
+        .filter(|c| !c.is_whitespace())
+        .collect();
+    let term: f64 = if tail.is_empty() {
+        0.0
+    } else {
+        tail.parse().ok()?
+    };
+    Some((rhs - term) / coefficient)
+}
+
+/// Every `radical-equations-basic` exemplar whose key is "no solution" or a
+/// rejected candidate isolates the square root equal to a negative value: the
+/// domain fact that makes it genuinely unsolvable over the reals, not an
+/// arbitrary label.
 #[test]
 fn no_solution_radical_equations_name_a_negative_right_hand_side() {
     let curriculum = clean_curriculum();
@@ -210,19 +237,16 @@ fn no_solution_radical_equations_name_a_negative_right_hand_side() {
         }
         for kp in &topic.knowledge_points {
             for exemplar in &kp.exemplars {
-                if exemplar.answer != "no solution" {
+                if exemplar.answer != "no solution"
+                    && !exemplar.answer.starts_with("verdict = reject")
+                {
                     continue;
                 }
                 checked += 1;
-                let after_equals = exemplar.problem.rsplit('=').next().unwrap();
-                let rhs: String = after_equals
-                    .chars()
-                    .filter(|c| *c != '$' && *c != '.')
-                    .collect();
-                let rhs = rhs.trim();
+                let value = isolated_radical_value(&exemplar.problem);
                 assert!(
-                    rhs.starts_with('-'),
-                    "{:?} should isolate sqrt(...) equal to a negative value",
+                    value.is_some_and(|value| value < 0.0),
+                    "{:?} should isolate sqrt(...) equal to a negative value, got {value:?}",
                     exemplar.problem
                 );
             }
@@ -230,7 +254,23 @@ fn no_solution_radical_equations_name_a_negative_right_hand_side() {
     }
     assert_eq!(
         checked, 2,
-        "expected exactly the two authored no-solution exemplars"
+        "expected exactly the two authored unsolvable exemplars"
+    );
+}
+
+#[test]
+fn the_isolated_radical_value_reads_the_coefficient_and_the_term() {
+    assert_eq!(
+        isolated_radical_value("Solve $2\\sqrt{x} + 7 = 3$."),
+        Some(-2.0)
+    );
+    assert_eq!(
+        isolated_radical_value("Solve $\\sqrt{x + 7} = -2$."),
+        Some(-2.0)
+    );
+    assert_eq!(
+        isolated_radical_value("Solve $3\\sqrt{x} - 2 = 7$."),
+        Some(3.0)
     );
 }
 

@@ -89,6 +89,31 @@ fn quotient_remainder_items_reject_a_swapped_and_an_oversized_remainder() {
     );
 }
 
+/// The closed-option checks of one label key: the key passes, every OTHER
+/// option is rejected, and a word outside the list is never correct.
+fn assert_label_rejects(answer: &str, options: &[Vec<String>], contract: &AnswerContract) {
+    assert!(
+        decided_correct(check_contract(answer, answer, contract.clone())),
+        "{answer} vs itself under {contract:?}"
+    );
+    // every OTHER labeled option is rejected against this item's true answer
+    for group in options {
+        let alias = &group[0];
+        if alias != answer {
+            assert!(
+                !decided_correct(check_contract(answer, alias, contract.clone())),
+                "{alias} wrongly accepted against {answer}"
+            );
+        }
+    }
+    // a word outside the closed option list is undecidable, never silently correct
+    let outside = "maybe-adversarial-not-an-option";
+    assert!(
+        !decided_correct(check_contract(answer, outside, contract.clone())),
+        "an unlisted word was wrongly accepted against {answer}"
+    );
+}
+
 #[test]
 fn label_items_reject_the_other_option_and_an_unlisted_word() {
     let doc = unit();
@@ -99,27 +124,29 @@ fn label_items_reject_the_other_option_and_an_unlisted_word() {
         let AnswerContract::Label { options } = contract else {
             continue;
         };
-        assert!(
-            decided_correct(check_contract(answer, answer, contract.clone())),
-            "{answer} vs itself under {contract:?}"
-        );
-        // every OTHER labeled option is rejected against this item's true answer
-        for group in options {
-            let alias = &group[0];
-            if alias != answer {
-                assert!(
-                    !decided_correct(check_contract(answer, alias, contract.clone())),
-                    "{alias} wrongly accepted against {answer}"
-                );
+        assert_label_rejects(answer, options, contract);
+        checked += 1;
+    }
+    // A label can also be one part of a multipart key ("1, 13, prime"). The
+    // part check is run once for each option taken as the key.
+    for (_, contract) in
+        exemplars_with_contract(&doc, |c| matches!(c, AnswerContract::Multipart { .. }))
+    {
+        let AnswerContract::Multipart { parts } = contract else {
+            continue;
+        };
+        let mut has_label = false;
+        for part in parts {
+            if let AnswerContract::Label { options } = &part.contract {
+                has_label = true;
+                for group in options {
+                    assert_label_rejects(&group[0], options, &part.contract);
+                }
             }
         }
-        // a word outside the closed option list is undecidable, never silently correct
-        let outside = "maybe-adversarial-not-an-option";
-        assert!(
-            !decided_correct(check_contract(answer, outside, contract.clone())),
-            "an unlisted word was wrongly accepted against {answer}"
-        );
-        checked += 1;
+        if has_label {
+            checked += 1;
+        }
     }
     assert!(checked >= 10, "only {checked} label items checked");
 }

@@ -101,6 +101,22 @@ fn interval_endpoints_are_graded_as_sets() {
     }
 }
 
+/// Whether `alias` appears in `problem` as a whole word or phrase, ignoring case.
+fn mentions(problem: &str, alias: &str) -> bool {
+    let problem = problem.to_lowercase();
+    let alias = alias.to_lowercase();
+    problem.match_indices(&alias).any(|(at, _)| {
+        let before = problem[..at].chars().next_back();
+        let after = problem[at + alias.len()..].chars().next();
+        !before.is_some_and(char::is_alphanumeric) && !after.is_some_and(char::is_alphanumeric)
+    })
+}
+
+/// An interpretation item offers a closed choice the learner can see. A
+/// top-level label is served with its options as buttons (`choices`), so it
+/// needs two options and its key among them. A label PART of a multipart key
+/// is not served as buttons, so the problem text itself must name one alias of
+/// every option.
 #[test]
 fn interpretation_choices_are_visible_and_non_singleton() {
     let curriculum = curriculum();
@@ -111,22 +127,53 @@ fn interpretation_choices_are_visible_and_non_singleton() {
         "interpreting-linear-models/kp1",
         "interpreting-linear-models/kp2",
     ] {
-        for index in 0..4 {
-            let exemplar = item(&curriculum, key, index);
-            assert!(
-                exemplar.problem.contains(" or "),
-                "{key}[{index}] hides its choices"
-            );
-            let Some(AnswerContract::Label { options }) = &exemplar.answer_contract else {
-                panic!("{key}[{index}] must be a label");
-            };
-            assert!(options.len() >= 2);
-            assert!(
-                options
-                    .iter()
-                    .flatten()
-                    .any(|alias| alias == &exemplar.answer)
-            );
+        let (topic_id, kp_id) = key.split_once('/').unwrap();
+        let topic = curriculum
+            .topics()
+            .iter()
+            .find(|topic| topic.id.as_str() == topic_id)
+            .unwrap();
+        let kp = topic
+            .knowledge_points
+            .iter()
+            .find(|kp| kp.id.as_str() == kp_id)
+            .unwrap();
+        let mut choices = 0;
+        for (index, exemplar) in kp.exemplars.iter().enumerate() {
+            match &exemplar.answer_contract {
+                Some(AnswerContract::Label { options }) => {
+                    choices += 1;
+                    assert!(options.len() >= 2, "{key}[{index}] is a singleton");
+                    assert!(
+                        options
+                            .iter()
+                            .flatten()
+                            .any(|alias| alias == &exemplar.answer),
+                        "{key}[{index}] keys an answer outside its options"
+                    );
+                }
+                Some(AnswerContract::Multipart { parts }) => {
+                    for part in parts {
+                        let AnswerContract::Label { options } = &part.contract else {
+                            continue;
+                        };
+                        choices += 1;
+                        assert!(options.len() >= 2, "{key}[{index}] is a singleton");
+                        for option in options {
+                            assert!(
+                                option
+                                    .iter()
+                                    .any(|alias| mentions(&exemplar.problem, alias)),
+                                "{key}[{index}] hides the choice {:?} of its part {}",
+                                option[0],
+                                part.name
+                            );
+                        }
+                    }
+                }
+                _ => {}
+            }
         }
+        assert!(choices > 0, "{key} offers no interpretation choice");
     }
 }

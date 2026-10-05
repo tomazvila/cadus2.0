@@ -4,7 +4,7 @@
 
 mod common;
 
-use cadus_core::answer::{AnswerContract, Outcome, check_contract};
+use cadus_core::answer::{AnswerContract, Outcome, check, check_contract};
 use cadus_core::curriculum::load_raw_curriculum;
 use serde_json::Value;
 
@@ -50,8 +50,18 @@ fn reviewed_manifest_matches_curriculum_and_rejects_other_choices() {
             lineage.0 += 1;
         } else {
             lineage.1 += 1;
-            let current = item.answer_contract.as_ref().unwrap();
-            assert!(correct(&item.answer, &item.answer, current));
+            // A replacement either captures its own contract or relies on the
+            // topic's deterministic checker; either way its key must decide.
+            if let Some(current) = item.answer_contract.as_ref() {
+                assert!(correct(&item.answer, &item.answer, current));
+            } else {
+                let kind = topic.topic.answer_kind;
+                assert!(item.verdict_policy(kind).is_ok(), "{}", item.problem);
+                match check(&item.answer, &item.answer, kind) {
+                    Outcome::Decided(verdict) => assert!(verdict.correct, "{}", item.problem),
+                    Outcome::Undecidable(reason) => panic!("{}: {reason:?}", item.problem),
+                }
+            }
         }
         match &contract {
             AnswerContract::Label { options } => {
@@ -86,7 +96,10 @@ fn reviewed_manifest_matches_curriculum_and_rejects_other_choices() {
         }
     }
     assert_eq!(counts, (71, 27));
-    assert_eq!(lineage, (41, 57));
+    // The 2026-10-05 Foundations rewrites (04d15daa..2d82c3f9) gave the reviewed
+    // labels natural aliases and replaced yes/no collapses with direct questions,
+    // so all but one reviewed item now carries a replacement that decides its own key.
+    assert_eq!(lineage, (1, 97));
 }
 
 #[test]

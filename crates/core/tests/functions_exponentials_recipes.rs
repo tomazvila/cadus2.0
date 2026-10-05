@@ -58,10 +58,18 @@ fn logarithm_conversion_labels_grade_aliases_and_reject_the_competing_equation()
     for kp in topic.knowledge_points.iter().take(2) {
         for exemplar in &kp.exemplars {
             let contract = exemplar.answer_contract.clone().unwrap();
+            // kp1 converts with a two-way choice (the equation or its swapped
+            // neighbor); kp2 also asks for the two sides of the power form as a
+            // multipart, which carries no choice.
             let AnswerContract::Label { options } = &contract else {
-                unreachable!("conversion equations require the reviewed choice policy")
+                assert!(
+                    matches!(contract, AnswerContract::Multipart { .. }),
+                    "{}",
+                    exemplar.problem
+                );
+                continue;
             };
-            assert_eq!(options.len(), 2);
+            assert!(options.len() >= 2, "{}", exemplar.problem);
             for aliases in options {
                 let should_pass = aliases.contains(&exemplar.answer);
                 for alias in aliases {
