@@ -3,7 +3,7 @@
 //! The loader already refuses a malformed block. This file pins what the
 //! loader cannot see: each try-first answer grades correct under its own
 //! contract, a plausible miss grades incorrect, and the ten authored topics
-//! carry their blocks.
+//! carry their blocks (the owner's next forty lessons).
 
 #![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 
@@ -12,9 +12,9 @@ mod common;
 use cadus_core::answer::{Outcome, check_contract};
 use common::paths::tree;
 
-/// The owner's next ten Foundations lessons, each authored with a step check
+/// The owner's next forty Foundations lessons, each authored with a step check
 /// on every knowledge point.
-const AUTHORED: [&str; 10] = [
+const AUTHORED: [&str; 40] = [
     "divisibility-rules",
     "prime-composite-numbers",
     "prime-factorization",
@@ -25,6 +25,36 @@ const AUTHORED: [&str; 10] = [
     "absolute-value-equations",
     "consecutive-integer-problems",
     "equations-special-cases",
+    "least-common-multiple",
+    "adding-subtracting-fractions",
+    "understanding-ratios",
+    "unit-rates",
+    "ratios-proportions",
+    "improper-fractions-mixed-numbers",
+    "mixed-numbers",
+    "decimal-multiplication-powers-of-ten",
+    "percent-conversions",
+    "percent-of-a-number",
+    "percentages",
+    "fractions-on-number-line",
+    "percent-finding-the-whole",
+    "comparing-ordering-fractions",
+    "dividing-mixed-numbers",
+    "gcf-lcm",
+    "equations-with-fractions",
+    "equations-with-decimals",
+    "equivalent-expressions",
+    "fraction-word-problems",
+    "comparing-ordering-whole-numbers",
+    "comparing-ordering-decimals",
+    "rounding-whole-numbers",
+    "percent-applications",
+    "rounding-estimation",
+    "factoring-linear-expressions",
+    "ratio-tables-equivalent-ratios",
+    "perfect-square-roots",
+    "square-roots",
+    "exponent-product-rule",
 ];
 
 /// A wrong answer of the same shape as `answer`.
@@ -65,11 +95,11 @@ fn every_try_first_grades_its_own_answer_and_refuses_a_miss() {
             );
         }
     }
-    assert_eq!(seen, 5, "the authored try-first count moved");
+    assert_eq!(seen, 19, "the authored try-first count moved");
 }
 
 #[test]
-fn the_ten_authored_topics_carry_a_step_check_on_every_point() {
+fn the_forty_authored_topics_carry_a_step_check_on_every_point() {
     let graph = tree();
     for id in AUTHORED {
         let idx = graph
