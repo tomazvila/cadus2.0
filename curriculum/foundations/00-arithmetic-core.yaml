@@ -374,6 +374,15 @@ topics:
       - id: kp1
         name: Compare two numbers
         key_prerequisites: [place-value]
+        step_check:
+          step: 'Tens digit: 1 in 7,512 versus 2 in 7,521'
+          question: 'Why does the tens digit decide which number is larger?'
+          options:
+            - 'The tens digit always decides between two four-digit numbers'
+            - 'The number whose digits add up to more is the larger one'
+            - 'It is the first place from the left where the numbers differ'
+          answer: 'It is the first place from the left where the numbers differ'
+          why: 'The thousands and hundreds digits match, and one extra ten outweighs any ones digit, so the first differing place from the left decides.'
         exemplars:
           - problem: 'Which is larger, $4{,}562$ or $4{,}652$?'
             answer: "4652"
@@ -391,6 +400,15 @@ topics:
       - id: kp2
         name: Order a list of numbers
         key_prerequisites: [place-value]
+        step_check:
+          step: 'Compare hundreds digits'
+          question: 'Why is $5{,}308$ greatest without looking at its tens or ones digits?'
+          options:
+            - 'With equal thousands, $3$ hundreds beat $0$ hundreds whatever follows'
+            - 'A number ending in $8$ is larger than one ending in $3$'
+            - 'Its digits add up to more than the digits of the other two'
+          answer: 'With equal thousands, $3$ hundreds beat $0$ hundreds whatever follows'
+          why: 'All three share $5$ thousands; $5{,}308$ has at least $300$ more after that, while the others have at most $99$, so the hundreds place settles it.'
         exemplars:
           - problem: 'Order from least to greatest: $315$, $351$, $153$.'
             answer: "153, 315, 351"
@@ -434,6 +452,15 @@ topics:
       - id: kp1
         name: Round to the nearest ten or hundred
         key_prerequisites: [place-value]
+        step_check:
+          step: '$7$ is $5$ or more, so raise the hundreds digit $3$ to $4$.'
+          question: 'Why does $372$ round up to $400$ at the nearest hundred?'
+          options:
+            - 'Its hundreds digit $3$ is less than $5$, so it goes up'
+            - 'Its tens digit $7$ puts it past the halfway point $350$'
+            - 'Rounding to the nearest hundred always rounds up'
+          answer: 'Its tens digit $7$ puts it past the halfway point $350$'
+          why: '$372$ lies between $300$ and $400$, and since $372 > 350$ it is nearer to $400$; the tens digit is the digit that shows this.'
         exemplars:
           - problem: 'Round $47$ to the nearest ten.'
             answer: "50"
@@ -444,13 +471,27 @@ topics:
           - problem: 'Round $342$ to the nearest hundred.'
             answer: "300"
             solution_sketch: 'The tens digit is $4 (< 5)$, so round down to $300$.'
-          - problem: 'What is $267$ rounded to the nearest hundred?'
-            answer: "300"
-            solution_sketch: 'The digit to the right of the hundreds place is $6$, so round up: $300$.'
+          - problem: 'What is $638$ rounded to the nearest hundred?'
+            answer: "600"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The digit to the right of the hundreds place is the tens digit $3$, which is less than $5$. So $638$ rounds down to $600$.'
+          - problem: 'Write a whole number that rounds to $350$ when rounded to the nearest ten.'
+            answer: "352"
+            answer_contract: {"kind":"property","check":"integer_in_range","args":{"min":345,"max":354}}
+            solution_sketch: 'A whole number rounds to $350$ at the nearest ten when it is at least $345$ and less than $355$. So $352$ works, and so does any whole number from $345$ to $354$.'
         constraints: "2-3 digit numbers"
       - id: kp2
         name: Round to larger places, including boundary cases
         key_prerequisites: [place-value]
+        step_check:
+          step: '$5500$ is an exact boundary case.'
+          question: 'Why does $5500$ round to $6000$ at the nearest thousand?'
+          options:
+            - 'It is nearer to $6000$ than to $5000$'
+            - 'Its hundreds digit $5$ is odd, so it rounds up'
+            - 'A number exactly halfway between rounds up by convention'
+          answer: 'A number exactly halfway between rounds up by convention'
+          why: '$5500$ is $500$ from both $5000$ and $6000$, so distance cannot decide; the rounding rule sends an exact halfway value up.'
         exemplars:
           - problem: 'Round $2{,}681$ to the nearest thousand.'
             answer: "3000"
@@ -464,6 +505,10 @@ topics:
           - problem: 'To the nearest thousand, what is $9{,}500$?'
             answer: "10000"
             solution_sketch: 'The digit to the right of the thousands place is $5$, so round up: $10{,}000$.'
+          - problem: 'Write a whole number that rounds to $6{,}000$ at the nearest thousand and to $5{,}600$ at the nearest hundred.'
+            answer: "5612"
+            answer_contract: {"kind":"property","check":"integer_in_range","args":{"min":5550,"max":5649}}
+            solution_sketch: 'Rounding to $5{,}600$ at the nearest hundred needs a number from $5{,}550$ to $5{,}649$. Every such number is at least $5{,}500$, so it also rounds to $6{,}000$; for example $5612$.'
         constraints: "up to 4 digits; include boundary (5) cases"
     diagnostic_exemplar:
       problem: 'Round $6{,}350$ to the nearest hundred.'
@@ -2576,6 +2621,15 @@ topics:
       - id: kp1
         name: Estimating sums and differences
         key_prerequisites: [rounding-whole-numbers]
+        step_check:
+          step: 'Round 187 to the nearest hundred: 200.'
+          question: 'Why round each number before subtracting?'
+          options:
+            - 'Rounding first gives the exact difference more quickly'
+            - 'Round numbers subtract easily and stay close to the originals'
+            - 'Rounding both numbers makes the errors cancel exactly'
+          answer: 'Round numbers subtract easily and stay close to the originals'
+          why: '$500 - 200$ is mental arithmetic, and each rounded number is within $50$ of the original, so $300$ is close to the exact difference $337$.'
         exemplars:
           - problem: 'Estimate $68 + 21$ by rounding each number to the nearest ten.'
             answer: "90"
@@ -2583,9 +2637,10 @@ topics:
           - problem: 'Estimate $412 - 189$ by rounding each number to the nearest hundred.'
             answer: "200"
             solution_sketch: 'Round $412$ to $400$ and $189$ to $200$, then subtract: $400 - 200$ gives an estimate of $200$.'
-          - problem: 'Round $537$ and $148$ each to the nearest ten, then add the rounded values.'
+          - problem: 'Estimate $537 + 148$ by rounding each number to the nearest ten.'
             answer: "690"
-            solution_sketch: '$540 + 150 = 690$.'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: '$537$ rounds to $540$ and $148$ rounds to $150$. Adding the rounded values gives the estimate $540 + 150 = 690$.'
           - problem: 'Estimate $623 - 274$ by rounding each number to the nearest ten.'
             answer: "350"
             solution_sketch: '$620 - 270 = 350$.'
@@ -2593,6 +2648,15 @@ topics:
       - id: kp2
         name: Estimating products and quotients
         key_prerequisites: [multiplying-by-one-digit]
+        step_check:
+          step: '720 is close to 723 and divides evenly by 9.'
+          question: 'Why use $720$ instead of $700$ to estimate $723 \div 9$?'
+          options:
+            - '$720$ is the nearest hundred to $723$'
+            - 'The dividend must first be rounded to the nearest ten'
+            - '$720$ is a multiple of $9$, so the division is exact'
+          answer: '$720$ is a multiple of $9$, so the division is exact'
+          why: '$700 \div 9$ does not come out evenly, but $720 = 9 \times 80$ does and is only $3$ away from $723$.'
         exemplars:
           - problem: 'Estimate $49 \times 31$ by rounding each factor to the nearest ten.'
             answer: "1500"
@@ -2600,9 +2664,10 @@ topics:
           - problem: 'Estimate $358 \div 6$ using the compatible numbers $360$ and $6$.'
             answer: "60"
             solution_sketch: '$360 \div 6 = 60$.'
-          - problem: 'Round $27$ and $42$ each to the nearest ten, then multiply the rounded values.'
+          - problem: 'Estimate $27 \times 42$ by rounding each factor to the nearest ten.'
             answer: "1200"
-            solution_sketch: '$30 \times 40 = 1{,}200$.'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: '$27$ rounds to $30$ and $42$ rounds to $40$. The estimate is $30 \times 40 = 1200$.'
           - problem: 'Use the compatible numbers $280$ and $7$ to estimate $284 \div 7$.'
             answer: "40"
             solution_sketch: '$280 \div 7 = 40$.'
@@ -2610,21 +2675,30 @@ topics:
       - id: kp3
         name: Judging reasonableness
         key_prerequisites: [multi-digit-addition-subtraction]
+        step_check:
+          step: 'Those changes need not cancel.'
+          question: 'Why can the rounding alone not show whether $60 \times 20$ is too high or too low?'
+          options:
+            - 'Rounding to tens always gives an underestimate'
+            - 'One factor went down and one went up, so the effects pull opposite ways'
+            - 'Rounding to tens always gives an overestimate'
+          answer: 'One factor went down and one went up, so the effects pull opposite ways'
+          why: 'Lowering $63$ by $3$ and raising $19$ by $1$ change the product by different amounts, so only the exact product $1197$ settles it.'
         exemplars:
           - problem: 'Without computing exactly, is $297 + 304$ closer to $600$ or to $700$?'
             answer: "600"
             solution_sketch: '$297 \approx 300$ and $304 \approx 300$; the exact sum is $601$.'
-          - problem: "Ellie estimates $42 \\times 19$ as $42 \\times 20 = 840$. Compare the exact product with $840$. Give the verdict and the difference."
-            answer: "verdict = smaller; difference = 42"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["larger"], ["smaller"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "difference"}]}
-            solution_sketch: "Step 1 (estimate): the estimate is $42 \\times 20 = 840$. Step 2 (multiplication): the exact product is $42 \\times 19 = 798$. Step 3 (comparison): $798$ is less than $840$, so the verdict is smaller. Step 4 (subtraction): the difference is $840 - 798 = 42$. The wrong option larger is wrong because rounding $19$ up makes the estimate too big. So the answer is verdict = smaller; difference = 42."
+          - problem: 'Ellie estimates $42 \times 19$ as $42 \times 20 = 840$. How much larger is her estimate than the exact product?'
+            answer: "42"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Rounding $19$ up to $20$ adds one extra $42$, since $42 \times 20 = 42 \times 19 + 42$. The exact product is $798$, so the estimate $840$ is $42$ too large.'
           - problem: 'Without finding the exact sum, is $198 + 305$ closer to $500$ or to $600$?'
             answer: "500"
             solution_sketch: '$198 \approx 200$ and $305 \approx 300$; the exact sum is $503$.'
-          - problem: "Maya estimates $58 \\times 21$ as $60 \\times 20 = 1200$. Compare the exact product with $1200$. Give the verdict and the difference."
-            answer: "verdict = larger; difference = 18"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["larger"], ["smaller"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "difference"}]}
-            solution_sketch: "Step 1 (estimate): the estimate is $60 \\times 20 = 1200$. Step 2 (multiplication): the exact product is $58 \\times 21 = 1218$. Step 3 (comparison): $1218$ is greater than $1200$, so the verdict is larger. Step 4 (subtraction): the difference is $1218 - 1200 = 18$. The wrong option smaller is wrong because rounding $58$ up and $21$ down makes the estimate too low. So the answer is verdict = larger; difference = 18."
+          - problem: 'Maya estimates $58 \times 21$ as $60 \times 20 = 1200$. How far is her estimate from the exact product?'
+            answer: "18"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'One factor was rounded up by $2$ and the other down by $1$, so the changes need not cancel. The exact product is $58 \times 21 = 1218$, so the estimate $1200$ is $18$ below it.'
         constraints: "answer chooses between options or over/under"
     diagnostic_exemplar:
       problem: 'Estimate $62 \times 38$ by rounding each factor to the nearest ten.'
