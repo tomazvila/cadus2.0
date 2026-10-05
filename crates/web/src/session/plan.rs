@@ -128,8 +128,8 @@ fn gap_context(
         0,
         enrolled,
     );
-    let (tip, parents) = match stack.split_last() {
-        Some(split) if !split.1.is_empty() => split,
+    let tip = match stack.split_last() {
+        Some((tip, parents)) if !parents.is_empty() => tip,
         _ => return (enrolled.map(str::to_owned), None),
     };
     let Some(chain) = gap_fill_chain_for_stack(&model.topics, &content.curriculum, &stack, None)

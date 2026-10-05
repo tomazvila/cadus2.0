@@ -321,7 +321,7 @@ mod advance_84b_tests {
     use super::fixture::{arena, task, topic_doc};
     use super::*;
     use cadus_core::instruction::{KIND_HINT_LADDER, KIND_TEACH};
-    use cadus_core::readiness::{ContentIndex, MapContent, ReadinessGate, ReadinessIndex};
+    use cadus_core::readiness::{MapContent, ReadinessGate, ReadinessIndex};
 
     /// The readiness set of `graph` with a teach page and a hint ladder on every
     /// serving key.
@@ -365,8 +365,10 @@ mod advance_84b_tests {
         // The serve route persists the chosen point (note 93 a): the progress row the
         // route writes after the skip carries `current_kp = Some(chosen)`.
         let chosen = target_of(&lesson, 0, &TaskProgress::default(), &graph).unwrap();
-        let mut row = TaskProgress::default();
-        row.current_kp = Some(chosen.kp.clone()); // the 93 a write, spelled
+        let row = TaskProgress {
+            current_kp: Some(chosen.kp.clone()), // the 93 a write, spelled
+            ..TaskProgress::default()
+        };
         assert_eq!(row.current_kp.as_deref(), Some(chosen.kp.as_str()));
     }
 
@@ -384,6 +386,9 @@ mod advance_84b_tests {
         let ready = readiness(&graph);
         let lesson = task(TaskType::Lesson, Some("mixed84"));
         let row = TaskProgress::default();
+        // The serve reads kp1 first: a fresh row starts the lesson at the first point.
+        let found = target_of(&lesson, 0, &row, &graph).unwrap();
+        assert_eq!(found.kp, "kp1");
         // The readiness side of 84 b: kp1 (thin) stays blocked; kp2 (all `none`)
         // serves through the teach-only rule, so the topic is servable.
         assert!(!ReadinessGate::lesson_blockers(&ready, "mixed84", "kp1").is_empty());

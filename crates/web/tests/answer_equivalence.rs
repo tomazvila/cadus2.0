@@ -13,7 +13,7 @@
 //!    next task; one job row stands for the worker to fold later;
 //! 4. a cached NOT keeps the deterministic wrong and carries the reason.
 
-#![allow(clippy::unwrap_used, clippy::panic)]
+#![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 
 mod common;
 
