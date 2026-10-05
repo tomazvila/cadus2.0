@@ -32,18 +32,21 @@ const CORPUS_ANSWERS: usize = 3_492;
 /// (see [`respell`]). A pair of this count runs the parser and the exact
 /// canonicalizer on BOTH sides, so this literal is the count of measured calls
 /// that reach the arithmetic the 5 ms segment pays for. It is the counter that
-/// proves the string rung did not answer the run: 2,994 of the 3,492 calls take
+/// proves the string rung did not answer the run: 2,996 of the 3,492 calls take
 /// the parse-and-canonicalize path, where the self-check of M4 review 1
 /// finding 20 took it zero times.
 ///
-/// The other 498 pairs still run the parser but do not produce canonical forms
+/// The other 496 pairs still run the parser but do not produce canonical forms
 /// on both sides. The expanded grammar moved nine pairs into the exact
 /// canonical path; their answer contract still refuses a decided verdict, so
-/// the verdict totals below remain 2,985 correct and 507 undecidable.
-const CANONICALIZED_PAIRS: usize = 2_994;
+/// the verdict totals stayed 2,985 correct and 507 undecidable. The arctan
+/// reading of 8626b83e moved two more (`arctan x + x/(1 + x^2)` and
+/// `arctan(2x) + 2x/(1 + 4x^2)`), and the checker now decides both correct:
+/// 2,987 correct and 505 undecidable.
+const CANONICALIZED_PAIRS: usize = 2_996;
 
 /// The count of re-spelled pairs the checker decides correct.
-const RESPELLED_CORRECT: usize = 2_985;
+const RESPELLED_CORRECT: usize = 2_987;
 
 /// The count of re-spelled pairs the checker decides wrong.
 ///
@@ -52,7 +55,7 @@ const RESPELLED_CORRECT: usize = 2_985;
 const RESPELLED_WRONG: usize = 0;
 
 /// The count of re-spelled pairs the checker refuses (V2).
-const RESPELLED_UNDECIDABLE: usize = 507;
+const RESPELLED_UNDECIDABLE: usize = 505;
 
 /// The p50 floor of the L2 half, in nanoseconds.
 ///
