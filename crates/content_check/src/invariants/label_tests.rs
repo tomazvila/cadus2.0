@@ -48,18 +48,12 @@ fn a_clean_label_item_has_no_finding() {
 }
 
 #[test]
-fn i8_needs_four_options_at_the_top_level() {
+fn i8_needs_two_options_at_the_top_level() {
     let two = view(vec![label_of(1, "circle", &["circle", "ellipse"])]);
-    let found = check(&two);
-    assert_eq!(invariants(&found), ["I8"]);
-    assert_eq!(found[0].code, "label-quality");
-    assert_eq!(
-        two.status(0),
-        (
-            "must_replace",
-            Some("I8: label with 2 options (minimum 4)".to_owned())
-        )
-    );
+    assert_eq!(check(&two), []);
+    let one = view(vec![label_of(1, "circle", &["circle"])]);
+    let found = check(&one);
+    assert!(details(&found).contains(&"I8: label with 1 options (minimum 2)"));
 }
 
 #[test]
@@ -164,25 +158,10 @@ fn the_key_is_an_alias_of_exactly_one_option() {
 }
 
 #[test]
-fn the_problem_text_does_not_show_an_option() {
+fn the_problem_text_may_name_the_options() {
     let mut shown = label_of(1, "circle", &WORDS);
-    shown.exemplar.problem = "Is the curve an Ellipse or not?".to_owned();
-    let found = check(&view(vec![shown]));
-    assert_eq!(
-        details(&found),
-        ["X12: the problem text shows the option `ellipse`"]
-    );
-    // Short options and `Step <n>` options are exempt.
-    let mut steps = label_of(1, "Step 3", &["Step 1", "Step 2", "Step 3", "Step 4"]);
-    steps.exemplar.problem =
-        "Step 1: a. Step 2: b. Step 3: c. Step 4: d. Which is wrong?".to_owned();
-    assert_eq!(check(&view(vec![steps])), []);
-    let mut short = label_of(1, "max", &["max", "min", "sad", "non"]);
-    short.exemplar.problem = "Is it a max or a min?".to_owned();
-    assert_eq!(check(&view(vec![short])), []);
-    let mut not_a_step = label_of(1, "Step x", &["Step x", "Step y", "Step z", "Step w"]);
-    not_a_step.exemplar.problem = "Is Step y wrong?".to_owned();
-    assert_eq!(invariants(&check(&view(vec![not_a_step]))), ["X12"]);
+    shown.exemplar.problem = "Is the curve a circle or an ellipse?".to_owned();
+    assert_eq!(check(&view(vec![shown])), []);
 }
 
 #[test]

@@ -76,10 +76,15 @@ pub fn correct_option(item: &Item) -> Option<usize> {
 }
 
 /// I8: the option count of a top-level label, and the options of a label part.
+///
+/// A verdict question has as many options as the mathematics gives it: two for
+/// "is it a solution?", three for "one, none or infinitely many solutions". A
+/// floor of four forced invented options and hidden vocabularies on such items,
+/// so the floor is two, the same as for a label part.
 pub fn option_count_breach(item: &Item) -> Option<String> {
     if is_label(item) {
         let count = options(&item.contract).len();
-        return (count < 4).then(|| format!("label with {count} options (minimum 4)"));
+        return (count < 2).then(|| format!("label with {count} options (minimum 2)"));
     }
     label_parts(&item.contract)
         .into_iter()
@@ -151,22 +156,6 @@ fn shape_breach(texts: &[&str]) -> Option<String> {
         .then(|| format!("option lengths {shortest} to {longest}: the ratio is more than 3"))
 }
 
-/// An option text of more than 3 characters that the problem text shows.
-/// Options of the form `Step <n>` are exempt (content-spec X12).
-fn shown_in_problem(item: &Item, texts: &[&str]) -> Option<String> {
-    let problem = item.exemplar.problem.to_lowercase();
-    let is_step = |text: &str| {
-        text.strip_prefix("Step ")
-            .is_some_and(|n| !n.is_empty() && n.chars().all(|ch| ch.is_ascii_digit()))
-    };
-    texts
-        .iter()
-        .find(|text| {
-            text.chars().count() > 3 && !is_step(text) && problem.contains(&text.to_lowercase())
-        })
-        .map(|text| format!("the problem text shows the option `{text}`"))
-}
-
 /// The quality rules of one top-level label item: the rule id and the text.
 fn quality(item: &Item) -> Vec<(&'static str, String)> {
     let texts = display_texts(&item.contract);
@@ -177,7 +166,6 @@ fn quality(item: &Item) -> Vec<(&'static str, String)> {
         ("I10", forbidden_text(&item.contract)),
         ("L4", shape_breach(&texts)),
         ("X1", one_key),
-        ("X12", shown_in_problem(item, &texts)),
     ]
     .into_iter()
     .filter_map(|(rule, text)| Some((rule, text?)))
