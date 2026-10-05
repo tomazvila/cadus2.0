@@ -151,7 +151,12 @@ async fn binary_exits_2_when_the_database_refuses_the_connection() {
             .env("BIND_ADDR", "127.0.0.1:0"),
     );
 
-    let (code, stderr) = exit_of(child, Duration::from_secs(10), "connection refused");
+    // The binary loads the whole curriculum before the connect (about 3.5 s in
+    // the debug profile on the gate box), and the pool then retries the refused
+    // connect for `ACQUIRE_TIMEOUT` before it gives up. The budget covers both
+    // with the same margin as the admin-connect case below.
+    let limit = cadus_store::ACQUIRE_TIMEOUT + Duration::from_secs(15);
+    let (code, stderr) = exit_of(child, limit, "connection refused");
 
     assert_eq!(code, Some(2), "stderr:\n{stderr}");
 }
