@@ -1020,6 +1020,11 @@ rewrite that leaves an expression, a pair or unreadable text keeps the strict ou
 number right: the number is compared by the strict rule. The verdict carries no
 `notation` tag, because that tag names the period-grouping and rounding readings only.
 
+A multipart answer written without part names reads its parts in key order. When the
+comma pieces outnumber the parts and exactly one part takes a `list`, the surplus pieces
+belong to that list, so `1, 2, 4, 8, 16, composite` reads as the factor list and the
+verdict (`crates/core/tests/answer_multipart_order.rs`).
+
 Pinned changes: `answer_unit.rs` (`5` against `5 cm` and `30` against `30°` now grade
 correct; they were "a unit on the learner side only"), `crates/web/src/grade/verdict_tests.rs`
 (`13.5 cm` for `13.5` and `6/5 units` for `6/5` now correct) and `crates/web/tests/grade_route.rs`

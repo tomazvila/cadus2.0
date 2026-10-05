@@ -260,13 +260,17 @@ pub(super) fn named_parts<'a>(parts: &[AnswerPart], text: &'a str) -> Option<Vec
 /// assignment. A comma that may group thousands ("1,000") makes the text
 /// unreadable. A misread order gives a wrong verdict, which the background
 /// equivalence check then reviews.
+///
+/// When the comma pieces outnumber the parts and exactly one part takes a
+/// list, the surplus pieces belong to that list: `1, 2, 4, 8, 16, composite`
+/// reads as the list `1, 2, 4, 8, 16` and the label `composite`.
 pub(super) fn ordered_parts<'a>(parts: &[AnswerPart], text: &'a str) -> Option<Vec<&'a str>> {
     let pieces: Vec<&str> = if text.contains(';') {
         text.split(';').map(str::trim).collect()
     } else if thousands_comma(text) {
         return None;
     } else {
-        top_level_commas(text)
+        merge_into_list(parts, text, top_level_commas(text))
     };
     if pieces.len() != parts.len()
         || pieces
@@ -292,6 +296,35 @@ fn thousands_comma(text: &str) -> bool {
                 .is_some_and(|run| run.iter().all(u8::is_ascii_digit))
             && !bytes.get(index + 4).is_some_and(u8::is_ascii_digit)
     })
+}
+
+/// Join the surplus comma pieces into the one list part, or keep the pieces.
+fn merge_into_list<'a>(parts: &[AnswerPart], text: &'a str, pieces: Vec<&'a str>) -> Vec<&'a str> {
+    let lists: Vec<usize> = parts
+        .iter()
+        .enumerate()
+        .filter(|(_, part)| matches!(part.contract, AnswerContract::List { .. }))
+        .map(|(at, _)| at)
+        .collect();
+    let ([list], Some(surplus)) = (lists.as_slice(), pieces.len().checked_sub(parts.len())) else {
+        return pieces;
+    };
+    if surplus == 0 {
+        return pieces;
+    }
+    let (Some(first), Some(last)) = (pieces.get(*list), pieces.get(list + surplus)) else {
+        return pieces;
+    };
+    // Every piece is a slice of `text`, so the offsets name one span of it.
+    let start = first.as_ptr() as usize - text.as_ptr() as usize;
+    let end = last.as_ptr() as usize - text.as_ptr() as usize + last.len();
+    let Some(joined) = text.get(start..end) else {
+        return pieces;
+    };
+    let mut merged = pieces[..*list].to_vec();
+    merged.push(joined);
+    merged.extend_from_slice(&pieces[list + surplus + 1..]);
+    merged
 }
 
 /// Split on commas at bracket depth zero.

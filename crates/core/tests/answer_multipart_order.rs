@@ -81,3 +81,23 @@ fn a_comma_that_may_group_thousands_does_not_separate_parts() {
 fn an_interval_does_not_split_on_its_comma() {
     assert!(!decided(FACTORS_VERDICT, KEY, "(1, 2], composite"));
 }
+
+const LIST_VERDICT: &str = r#"{"kind":"multipart","parts":[
+    {"name":"factors","contract":{"kind":"list","ordered":false,"member":{"kind":"exact"}}},
+    {"name":"verdict","contract":{"kind":"label","options":[["composite"],["prime"]]}}]}"#;
+
+const LIST_KEY: &str = "factors = 1, 2, 4, 8, 16; verdict = composite";
+
+#[test]
+fn surplus_commas_belong_to_the_one_list_part() {
+    assert!(decided(LIST_VERDICT, LIST_KEY, "1, 2, 4, 8, 16, composite"));
+    assert!(decided(LIST_VERDICT, LIST_KEY, "16, 8, 4, 2, 1, composite"));
+    assert!(decided(LIST_VERDICT, LIST_KEY, "1, 2, 4, 8, 16; composite"));
+    assert!(!decided(LIST_VERDICT, LIST_KEY, "1, 2, 4, 16, composite"));
+    assert!(!decided(LIST_VERDICT, LIST_KEY, "1, 2, 4, 8, 16, prime"));
+    assert!(!decided(
+        LIST_VERDICT,
+        LIST_KEY,
+        "composite, 1, 2, 4, 8, 16"
+    ));
+}
