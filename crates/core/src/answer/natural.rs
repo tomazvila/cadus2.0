@@ -116,11 +116,14 @@ pub(crate) fn rescue(
         return None;
     }
     if let Some(number) = percent_number(expected) {
+        // A percent key never takes the unit reading: `0.65 ft` or `65 ft` is
+        // not a percent, and the rewrite below would grade it as `0.65` or `65`.
         let bare = strip_percent_word(learner);
-        let outcome = grade(number, bare);
-        if matches!(outcome, Outcome::Decided(verdict) if verdict.correct) {
-            return Some(outcome);
+        if strip_unit(bare).is_some() {
+            return None;
         }
+        let outcome = grade(number, bare);
+        return matches!(outcome, Outcome::Decided(_)).then_some(outcome);
     }
     let plain_number = matches!(canonical_form(expected), Ok(Canon::Rational(_)));
     if !plain_number {
@@ -249,6 +252,32 @@ mod tests {
         for learner in ["66", "6.5", "650", "0.66", "66 percent"] {
             assert_eq!(exact("65%", learner), Some(false), "{learner}");
         }
+    }
+
+    #[test]
+    fn a_percent_key_never_takes_a_unit() {
+        for learner in ["0.65 ft", "0.65 kg", "65 ft", "65 kg", "€65", "0.65 m"] {
+            assert_ne!(exact("65%", learner), Some(true), "{learner}");
+            assert_ne!(plain("65%", learner), Some(true), "{learner}");
+        }
+        for learner in ["65", "65 percent", "65%"] {
+            assert_eq!(exact("65%", learner), Some(true), "{learner}");
+        }
+    }
+
+    #[test]
+    fn a_named_unit_is_not_checked_against_the_question() {
+        // Accepted limitation (checker spec 8.6): the unit is dropped, not
+        // compared with the unit the question asked in, and no notation tag
+        // marks the reading.
+        let outcome = check_contract("8", "8 cm", AnswerContract::Exact);
+        assert_eq!(
+            outcome,
+            Outcome::Decided(crate::answer::Verdict {
+                correct: true,
+                notation: false
+            })
+        );
     }
 
     #[test]

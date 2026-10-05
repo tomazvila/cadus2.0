@@ -1017,8 +1017,11 @@ the grammar. A single letter counts only through the lists, so `21 x` keeps its 
 reading. The rewrite must leave a plain number: `2 x 4 cm` is graded as `8`, and a
 rewrite that leaves an expression, a pair or unreadable text keeps the strict outcome. A
 `$...$` pair is a math delimiter and is never stripped. The rewrite never turns a wrong
-number right: the number is compared by the strict rule. The verdict carries no
+number right: the number is compared by the strict rule. A percent key never takes the
+unit rewrite (`0.65 ft` and `65 ft` stay wrong for `65%`). The verdict carries no
 `notation` tag, because that tag names the period-grouping and rounding readings only.
+Accepted limitation: the dropped unit is not compared with the unit the question asked
+in, so `8 cm` grades correct for the key `8` even when the question asked for metres.
 
 A multipart answer written without part names reads its parts in key order. When the
 comma pieces outnumber the parts and exactly one part takes a `list`, the surplus pieces
