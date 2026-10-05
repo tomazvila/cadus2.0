@@ -16,8 +16,13 @@
 //! and the try-first problem, and only the check route, after the learner
 //! committed, returns `answer`, `why` and `reveal`.
 //!
-//! The blocks are absent from the canonical dump, so they never move the M1
-//! curriculum hash.
+//! The blocks are absent from the canonical dump, so they do not move the M1
+//! curriculum hash. They are part of the serialized topics that
+//! [`super::review_context_digest`] hashes, so adding or editing a block moves
+//! the curriculum review context and stales every approval stamped under the
+//! old one. `cadus_store::content::restamp_content_currency` re-stamps the
+//! approved rows at boot, and that keeps approved content serving after such an
+//! edit.
 
 use serde::{Deserialize, Serialize};
 
