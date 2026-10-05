@@ -107,11 +107,11 @@ describe('the probe card', () => {
       diag: stubDiag({ diagAnswer: async () => ({ correct: true, next_probe: probe({ problem_id: 'd2' }) }) }),
     });
     await begin();
-    expect(fill().style.width).toBe('2.5%');
+    expect(fill().style.transform).toBe('scaleX(0.025)');
     await answer('5');
     await tick(DIAG_BEAT_MS);
     expect(screen.getByText('Question 2 of up to 40')).toBeTruthy();
-    expect(fill().style.width).toBe('5%');
+    expect(fill().style.transform).toBe('scaleX(0.05)');
   });
 
   it.each([

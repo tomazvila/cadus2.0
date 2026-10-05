@@ -24,8 +24,9 @@ describe('the demo client', () => {
     // `/api/report/retention` row landed (D-F11), 42 until the integrated
     // instruction row completed the A4.1 journey; the two question-report routes brought it
     // to 45, the equivalence and proof-grading polls (Amendment K) brought it to 47, and
-    // the active worked-example check (step 5a) brings it to 48.
-    expect(named.length).toBe(48);
+    // the active worked-example check (step 5a) brought it to 48, and the S6 content
+    // revoke brings it to 49.
+    expect(named.length).toBe(49);
     for (const member of named) {
       expect(typeof demo[member], `the demo lacks ${member}`).toBe('function');
     }
