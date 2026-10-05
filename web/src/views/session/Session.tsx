@@ -11,7 +11,6 @@ import type { AnswerFieldHandle } from '@/components/AnswerField';
 import { AnswerInput, TypedSubmit } from '@/components/AnswerInput';
 import { WorkField, type WorkFieldHandle } from '@/components/WorkField';
 import { LoadingBlock } from '@/components/primitives';
-import { toast } from '@/app/toast';
 import { closeWith } from '@/hooks/screen';
 import { useCall } from '@/hooks/useCall';
 import { useLifetime } from '@/hooks/useLifetime';
@@ -79,7 +78,12 @@ export function Session({
   onDiagnostic,
 }: SessionProps) {
   const life = useLifetime();
-  const call = useCall({ demo, onUnauthorized });
+  // The day rollover closed the session on screen (`409 session_rolled_over`): drop what is
+  // on screen and load the new session's plan. `useCall` already told the learner. Read
+  // through a ref, because the moves it calls are defined further down.
+  const rolledOver = useRef<() => void>(() => {});
+  const [onRolledOver] = useState(() => () => { rolledOver.current(); });
+  const call = useCall({ demo, onUnauthorized, onRolledOver });
   const [phase, gate] = usePhase<SessionPhase>('loading');
   const session = useSessionPlan();
   // ONE connection for the whole session, never one per problem (spec section 4.1). It opens
@@ -303,6 +307,17 @@ export function Session({
     closeWith(call, gate, 'done', () => api.sessionEnd(), setSummary);
   };
 
+  useEffect(() => {
+    rolledOver.current = () => {
+      if (!life.alive()) return;
+      gate.enter('loading');
+      setTeaching(null);
+      setIntegrated(null);
+      setRework(null);
+      replanForBlock();
+    };
+  });
+
   /** The task is over. `advance` put the phase at `loading` before it came here. */
   const advanceTask = (): void => {
     setLive(null, 0);
@@ -367,13 +382,6 @@ export function Session({
     answeredForRef: answeredFor, timedOutForRef: timedOutFor,
     setResult, setRework, setElapsed, setHints, setReferenceLesson,
     onSubmitted: report.remember,
-    onRolledOver: () => {
-      gate.enter('loading');
-      toast('A new day started, so a new session is open. That answer was set aside.', {
-        kind: 'info',
-      });
-      replanForBlock();
-    },
     countdown, elapsed,
   });
 
@@ -483,6 +491,7 @@ export function Session({
       <button type="button" className="btn btn-ghost" onClick={onExit}>Exit</button>
       <Integrated key={session.task.task_id} api={api} reportApi={api} taskId={session.task.task_id}
         problem={integrated} onUnauthorized={demo ? undefined : onUnauthorized}
+        onRolledOver={onRolledOver}
         onGraded={() => gate.enter('feedback')}
         onContinue={() => {
           if (!gate.tryEnter('feedback', 'loading')) return;

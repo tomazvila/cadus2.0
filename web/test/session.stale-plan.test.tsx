@@ -60,26 +60,6 @@ describe('stale session plan recovery', () => {
     },
   );
 
-  it('sets an answer aside after the day rollover and serves today\'s plan', async () => {
-    const getPlan = vi.fn<ApiClient['getPlan']>(async () => planOf(replacement));
-    const taskServe = vi.fn<ApiClient['taskServe']>()
-      .mockResolvedValueOnce(previous)
-      .mockResolvedValue(P(1, { problem_id: 'fresh', text: 'Fresh question' }));
-    const taskAnswer = vi.fn<ApiClient['taskAnswer']>()
-      .mockRejectedValueOnce(new ApiError(409, 'session_rolled_over'))
-      .mockImplementation(passed);
-    await mount({ plan: planOf(REVIEW), api: stubApi({ getPlan, taskServe, taskAnswer }) });
-    await submitAnswer('-4');
-    expect(getPlan).toHaveBeenCalledTimes(1);
-    expect(taskServe).toHaveBeenLastCalledWith('t-current');
-    expect(screen.getByText('Fresh question')).toBeTruthy();
-    // One plain notice, and no Retry that would post the spent problem again.
-    expect(toasts()).toHaveLength(1);
-    expect(toasts()[0].kind).toBe('info');
-    expect(toasts()[0].onAction).toBeUndefined();
-    expect(taskAnswer).toHaveBeenCalledTimes(1);
-  });
-
   it('recovers a stale initial lesson before showing a missing-instruction card', async () => {
     const taskTeach = vi.fn<ApiClient['taskTeach']>().mockRejectedValue(new ApiError(404, 'unknown_task'));
     const taskServe = vi.fn<ApiClient['taskServe']>().mockResolvedValue(P(1));

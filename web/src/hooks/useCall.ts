@@ -43,6 +43,13 @@ export const SESSION_EXPIRED_MESSAGE = 'Your session has expired — please sign
 /** The line a foreign throw with no message falls back to. */
 export const GENERIC_FAILURE_MESSAGE = 'Something went wrong.';
 
+/** The code of a request for a session the day rollover closed. */
+export const SESSION_ROLLED_OVER = 'session_rolled_over';
+
+/** The line the learner sees when a new day closed the session on screen. */
+export const ROLLED_OVER_MESSAGE =
+  'A new day started, so a new session is open. Unsaved work on that question was set aside.';
+
 /** The line a Retry gets when the screen moved past the request it would re-send. */
 export const RETRY_STALE_MESSAGE = 'That retry came too late. Continue from the screen.';
 
@@ -82,9 +89,15 @@ export interface CallDeps {
   demo: boolean;
   /** Called on a session-expired 401, before the navigation. */
   onUnauthorized: () => void;
+  /**
+   * Called on `409 session_rolled_over`: the request named a session the day rollover
+   * closed. The view moves to the new session's plan. A retry of the same request can only
+   * fail again, so this failure carries NO Retry.
+   */
+  onRolledOver?: (() => void) | undefined;
 }
 
-export function useCall({ demo, onUnauthorized }: CallDeps): Call {
+export function useCall({ demo, onUnauthorized, onRolledOver }: CallDeps): Call {
   // A thin wrapper over `run`, which is also what a Retry re-enters, so the first attempt and
   // every retry execute THE SAME code. A duplicate of the body in the retry path is two
   // chances for a contract this exact to drift.
@@ -94,8 +107,10 @@ export function useCall({ demo, onUnauthorized }: CallDeps): Call {
   // never during render, because a render-time ref write is what the react-hooks rule
   // forbids. The initializer already holds the right values, so the first render is correct
   // without a wait for the effect.
-  const depsRef = useRef({ demo, onUnauthorized });
-  useEffect(() => { depsRef.current = { demo, onUnauthorized }; }, [demo, onUnauthorized]);
+  const depsRef = useRef<CallDeps>({ demo, onUnauthorized, onRolledOver });
+  useEffect(() => {
+    depsRef.current = { demo, onUnauthorized, onRolledOver };
+  }, [demo, onUnauthorized, onRolledOver]);
 
   // ONE function per mount, so a dependency array that holds it holds.
   const [call] = useState<Call>(
@@ -117,10 +132,17 @@ async function run<T, R>(
   try {
     res = await fn();
   } catch (e) {
-    const { demo, onUnauthorized } = deps.current;
+    const { demo, onUnauthorized, onRolledOver } = deps.current;
     // FIRST, and on every failure path: the caller releases whatever it locked, so the
     // screen behind the toast works and a retry meets a view in a known phase.
     opts?.onFail?.();
+    // The day rollover: a plain notice and the view's move to the new session. A Retry
+    // would re-send a request for the closed session, which can only fail again.
+    if (e instanceof ApiError && e.code === SESSION_ROLLED_OVER) {
+      toast(ROLLED_OVER_MESSAGE, { kind: 'info' });
+      onRolledOver?.();
+      return undefined;
+    }
     // `sessionExpired` is `status === 401` and nothing else. A 403 from the CSRF layer is a
     // different failure and takes the Retry path.
     if (e instanceof ApiError && e.sessionExpired && !demo) {

@@ -24,6 +24,8 @@
  */
 import { useEffect, useRef, useState } from 'react';
 import { ApiError } from '@/api';
+import { toast } from '@/app/toast';
+import { ROLLED_OVER_MESSAGE, SESSION_ROLLED_OVER } from '@/hooks/useCall';
 import { usePhase } from '@/hooks/usePhase';
 import { useLifetime } from '@/hooks/useLifetime';
 import { MathBlock } from '@/components/MathBlock';
@@ -50,6 +52,11 @@ export interface IntegratedProps {
   onGraded?: (grade: IntegratedGrade) => void;
   onContinue?: () => void;
   onUnauthorized?: (() => void) | undefined;
+  /**
+   * The day rollover closed the session of this item (`409 session_rolled_over`). The
+   * item cannot be sent again, so the view leaves it for the new session's plan.
+   */
+  onRolledOver?: () => void;
 }
 
 /** The answer text and the opened-hint count of one field. */
@@ -85,7 +92,7 @@ function VerdictRow({ label, grade }: { label: string; grade: IntegratedFieldGra
   );
 }
 
-export function Integrated({ api, reportApi, taskId, problem, onGraded, onContinue, onUnauthorized }: IntegratedProps) {
+export function Integrated({ api, reportApi, taskId, problem, onGraded, onContinue, onUnauthorized, onRolledOver}: IntegratedProps) {
   const [fields, setFields] = useState<Record<string, FieldState>>(() => Object.fromEntries(
     Object.entries(problem.hints_used ?? {}).map(([id, hintsUsed]) => [id, { ...emptyField, hintsUsed }]),
   ));
@@ -108,6 +115,12 @@ export function Integrated({ api, reportApi, taskId, problem, onGraded, onContin
   const patch = (id: string, next: Partial<FieldState>) =>
     setFields((held) => ({ ...held, [id]: { ...(held[id] ?? emptyField), ...next } }));
 
+  /** The rollover answer: tell the learner once and hand the screen back. */
+  const handBack = (): void => {
+    toast(ROLLED_OVER_MESSAGE, { kind: 'info' });
+    onRolledOver?.();
+  };
+
   const askHint = async (id: string) => {
     if (!gate.tryEnter('ready', 'hinting')) return;
     const held = field(id);
@@ -122,6 +135,7 @@ export function Integrated({ api, reportApi, taskId, problem, onGraded, onContin
       });
     } catch (error) {
       if (!life.alive()) return;
+      if (error instanceof ApiError && error.code === SESSION_ROLLED_OVER) { handBack(); return; }
       if (error instanceof ApiError && error.sessionExpired) onUnauthorized?.();
       setFailure('The hint did not arrive. Try again.');
     } finally {
@@ -152,6 +166,7 @@ export function Integrated({ api, reportApi, taskId, problem, onGraded, onContin
       reply = await api.taskIntegratedAnswer(taskId, body);
     } catch (error) {
       if (!life.alive()) return;
+      if (error instanceof ApiError && error.code === SESSION_ROLLED_OVER) { handBack(); return; }
       if (error instanceof ApiError && error.sessionExpired) onUnauthorized?.();
       setFailure('The submission did not reach the service. Try again.');
       gate.enter('ready');
@@ -168,8 +183,10 @@ export function Integrated({ api, reportApi, taskId, problem, onGraded, onContin
     try {
       const corrected = await api.taskIntegratedAnswer(taskId, submittedBody.current);
       if (life.alive()) setGrade(corrected);
-    } catch {
-      if (life.alive()) setFailure('The correction is saved. Reload this task to refresh its result.');
+    } catch (error) {
+      if (!life.alive()) return;
+      if (error instanceof ApiError && error.code === SESSION_ROLLED_OVER) { handBack(); return; }
+      setFailure('The correction is saved. Reload this task to refresh its result.');
     }
   };
 

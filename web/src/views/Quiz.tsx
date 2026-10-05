@@ -137,7 +137,12 @@ export function Quiz({
   fromSession = false,
 }: QuizProps) {
   const life = useLifetime();
-  const call = useCall({ demo, onUnauthorized });
+  // The day rollover closed the quiz's session (`409 session_rolled_over`); the quiz
+  // cannot finish there, so the screen hands back. `onDone` reads its latest value.
+  const onDoneRef = useRef(onDone);
+  useEffect(() => { onDoneRef.current = onDone; });
+  const [onRolledOver] = useState(() => () => { onDoneRef.current(); });
+  const call = useCall({ demo, onUnauthorized, onRolledOver });
   const [phase, gate] = usePhase<Phase>('loading');
 
   const [problem, setProblem] = useState<ServedProblem | null>(null);
