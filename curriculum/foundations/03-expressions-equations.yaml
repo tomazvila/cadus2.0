@@ -852,18 +852,18 @@ topics:
         name: "Verify a value by substitution"
         key_prerequisites: [substituting-values]
         exemplars:
-          - problem: 'Is $x = -2$ a solution of $6x + 2 = -15$?'
-            answer: 'no'
-            answer_contract: {"kind":"label","options":[["yes","yes, it is","it is","is a solution","it is a solution","x = -2 is a solution","x=-2 is a solution"],["no","no, it is not","it is not","not a solution","is not a solution","it is not a solution","x = -2 is not a solution","x=-2 is not a solution"]]}
-            solution_sketch: 'Substituting gives $6(-2)+2=-12+2=-10$ on the left. The right side is $-15$, and $-10\ne-15$, so $x=-2$ is not a solution.'
+          - problem: 'Change the right side of $6x + 2 = -15$ so that $x = -2$ becomes a solution. What must the right side be?'
+            answer: "-10"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Substitute $x = -2$ into the left side: $6(-2) + 2 = -12 + 2 = -10$. So $x = -2$ solves $6x + 2 = -10$, and it does not solve the original equation with $-15$.'
           - problem: 'Is $x = -3$ a solution of $3x + 4 = -5$?'
             answer: 'yes'
             answer_contract: {"kind":"label","options":[["yes","yes, it is","it is","is a solution","it is a solution","x = -3 is a solution","x=-3 is a solution"],["no","no, it is not","it is not","not a solution","is not a solution","it is not a solution","x = -3 is not a solution","x=-3 is not a solution"]]}
             solution_sketch: 'Substituting gives $3(-3)+4=-9+4=-5$ on the left. That equals the right side $-5$, so $x=-3$ is a solution.'
-          - problem: 'Kai says $x = 4$ solves $-3x + 9 = 3$. Substitute $x = 4$ into the left side. What value do you get?'
-            answer: '-3'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The left side is $-3(4)+9=-12+9=-3$. Since $-3\ne3$, Kai is wrong: $x=4$ is not a solution (the solution is $x=2$).'
+          - problem: 'Kai says $x = 4$ solves $-3x + 9 = 3$. Is Kai right?'
+            answer: "no"
+            answer_contract: {"kind":"label","options":[["no","kai is wrong","he is wrong","not a solution","no, -3","no, it gives -3","no, the left side is -3","no, kai is wrong"],["yes","kai is right","he is right","it is a solution","yes, kai is right","yes, it is"]]}
+            solution_sketch: 'Substitute $x = 4$: the left side is $-3(4) + 9 = -12 + 9 = -3$, not $3$. So Kai is wrong; the solution is $x = 2$.'
           - problem: 'For which number $c$ is $x = 2$ a solution of $4x - 1 = c$?'
             answer: '7'
             answer_contract: {"kind":"exact"}
@@ -1408,10 +1408,10 @@ topics:
             answer: '8'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The right side expands to $8x + 2$. With $m = 8$ the $x$-terms cancel and leave $-3 = 2$, which is false.'
-          - problem: 'Solve $2(x + 4) = 2x + 8$.'
-            answer: 'all real numbers'
-            answer_contract: {"kind":"label","options":[["no solution","none","no solutions","there is no solution","no real solution","no real solutions"],["all real numbers","every real number","infinitely many solutions","any real number","all reals","infinitely many","all real x","every number"]]}
-            solution_sketch: 'The left side expands to $2x + 8$, the same as the right side. Every value of $x$ works, so the solution is all real numbers.'
+          - problem: 'Solve $2(x + 4) = 2x + 5$.'
+            answer: "no real solution"
+            answer_contract: {"kind":"label","options":[["no real solution","no solution","none","no solutions","there is no solution","no real solutions","no real number"],["all real numbers","every real number","infinitely many solutions","any real number"]]}
+            solution_sketch: 'Expand the left side to get $2x + 8 = 2x + 5$. Subtracting $2x$ leaves $8 = 5$, which is false, so no value of $x$ works.'
           - problem: 'For what value of $b$ does $3(bx + 2) = 12x + 1$ have no solution?'
             answer: '4'
             answer_contract: {"kind":"exact"}
@@ -1446,10 +1446,10 @@ topics:
             answer: '10'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The right side expands to $5x + 10$. The two sides are identical exactly when $k = 10$.'
-          - problem: 'Solve $4x - 2x + 7 = 2x + 9$.'
-            answer: 'no solution'
-            answer_contract: {"kind":"label","options":[["no solution","none","no solutions","there is no solution","no real solution","no real solutions"],["all real numbers","every real number","infinitely many solutions","any real number","all reals","infinitely many","all real x","every number"]]}
-            solution_sketch: 'The left side simplifies to $2x + 7$. Subtracting $2x$ leaves $7 = 9$, which is false, so there is no solution.'
+          - problem: 'Solve $4x - 2x + 7 = 2x + 7$.'
+            answer: "every real number"
+            answer_contract: {"kind":"label","options":[["no solution","none","no solutions","there is no solution","no real solution"],["every real number","all real numbers","infinitely many solutions","any real number","all real x","all reals"]]}
+            solution_sketch: 'The left side simplifies to $2x + 7$, the same as the right side. Subtracting $2x$ leaves $7 = 7$, which is always true, so every real number is a solution.'
           - problem: 'For what value of $a$ does $ax + 6 = 3(2x + 2)$ have infinitely many solutions?'
             answer: '6'
             answer_contract: {"kind":"exact"}
@@ -2061,10 +2061,10 @@ topics:
             answer: '-2, 6'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The graphs meet where $3x - 6 = 12$ or $3x - 6 = -12$. Solving gives $x = 6$ or $x = -2$.'
-          - problem: 'Solve $|4x - 8| = 12$.'
-            answer: '-1, 5'
+          - problem: 'A sensor reports the size of an error, $|4x - 8|$, as $12$. What values of $x$ are possible?'
+            answer: "-1, 5"
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'Set $4x - 8 = 12$ or $4x - 8 = -12$. Then $4x = 20$ or $4x = -4$, so $x = 5$ or $x = -1$.'
+            solution_sketch: 'The expression inside is either $12$ or $-12$. From $4x - 8 = 12$ we get $x = 5$, and from $4x - 8 = -12$ we get $x = -1$.'
           - problem: 'A student solves $|5x + 5| = 15$ and finds only $x = 2$. Solve the equation completely.'
             answer: '-4, 2'
             answer_contract: {"kind":"exact"}
@@ -2133,9 +2133,9 @@ topics:
             answer: 'no solution'
             answer_contract: {"kind":"label","options":[["no solution","none","no solutions","there is no solution","no real solution","no real solutions"],["all real numbers","every real number","infinitely many solutions","any real number","all reals","infinitely many","all real x","every number"]]}
             solution_sketch: 'An absolute value is a distance, so it is never negative. No number makes $|x - 5|$ equal $-3$, so there is no solution.'
-          - problem: 'Does $|2x| + 7 = 3$ have a solution?'
-            answer: 'no'
-            answer_contract: {"kind":"label","options":[["no","it does not","no solution","there is no solution"],["yes","it does","it has a solution","there is a solution"]]}
+          - problem: 'Solve $|2x| + 7 = 3$.'
+            answer: "no real solution"
+            answer_contract: {"kind":"label","options":[["no real solution","no solution","none","no solutions","there is no solution","no real solutions","no real number"],["all real numbers","every real number","infinitely many solutions","any real number"]]}
             solution_sketch: 'Subtract $7$ to isolate the absolute value: $|2x| = -4$. An absolute value is never negative, so the equation has no solution.'
           - problem: 'Solve $|x + 3| + 4 = 4$.'
             answer: '-3'
