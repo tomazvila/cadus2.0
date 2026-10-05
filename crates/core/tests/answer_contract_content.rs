@@ -241,7 +241,9 @@ fn the_sixty_multi_step_topics_have_explicit_usable_exact_items() {
 }
 
 #[test]
-fn contextual_fraction_items_require_the_explicit_lowest_terms_form() {
+fn contextual_fraction_items_accept_every_equal_value() {
+    // A word problem asks for an amount, so an unreduced equal fraction is a
+    // correct amount; reducing is the skill of other knowledge points.
     let (raw, findings) = load_raw_curriculum(&curriculum_root()).unwrap();
     assert!(findings.is_empty(), "{findings:?}");
     let topic = raw
@@ -254,22 +256,15 @@ fn contextual_fraction_items_require_the_explicit_lowest_terms_form() {
         .iter()
         .find(|kp| kp.id.as_str() == "kp1")
         .unwrap();
-    let policy = AnswerContract::RequiredForm {
-        form: cadus_core::answer::NumericForm::ReducedFraction,
-    };
     let unreduced = ["34/24", "2/12", "26/24", "26/48"];
     assert_eq!(kp.exemplars.len(), unreduced.len());
-    for (item, wrong_form) in kp.exemplars.iter().zip(unreduced) {
-        assert_eq!(item.answer_contract, Some(policy.clone()));
-        assert!(item.problem.contains("lowest terms"));
-        assert_contract_accepts_own_answer(&item.answer, policy.clone());
+    for (item, equal) in kp.exemplars.iter().zip(unreduced) {
+        assert_eq!(item.answer_contract, Some(AnswerContract::Exact));
+        assert!(!item.problem.contains("lowest terms"));
+        assert_contract_accepts_own_answer(&item.answer, AnswerContract::Exact);
         assert!(matches!(
-            check_contract(&item.answer, wrong_form, AnswerContract::Exact),
+            check_contract(&item.answer, equal, AnswerContract::Exact),
             Outcome::Decided(verdict) if verdict.correct
-        ));
-        assert!(matches!(
-            check_contract(&item.answer, wrong_form, policy.clone()),
-            Outcome::Decided(verdict) if !verdict.correct
         ));
     }
 }

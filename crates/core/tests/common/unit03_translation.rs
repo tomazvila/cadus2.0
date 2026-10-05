@@ -5,6 +5,8 @@
 pub fn reconstruct(sentence: &str) -> (String, String) {
     let (shape, values) = cadus_testkit::translation::sentence_parts(sentence);
     let shape = shape.split(". Use *").next().unwrap_or(&shape);
+    let shape = shape.replacen("Write an equation for: ", "Write an equation: ", 1);
+    let shape = shape.strip_suffix('.').unwrap_or(&shape);
     match (shape, values.as_slice()) {
         ("Write an equation: {} more than {} times a number {} is {}", [b, a, x, c]) => (
             format!("{a}*{x} + {b} = {c}"),
@@ -33,6 +35,16 @@ pub fn reconstruct(sentence: &str) -> (String, String) {
         ),
         (
             "Write an equation: the quotient of the difference of a number {} and {}, and {}, is {}",
+            [x, b, a, c],
+        ) => (
+            format!("({x} - {b})/{a} = {c}"),
+            format!("{x} - {b}/{a} = {c}"),
+        ),
+        ("Write an equation: the difference of {} and twice a number {} is {}", [b, x, c]) => {
+            (format!("{b} - 2*{x} = {c}"), format!("2*{x} - {b} = {c}"))
+        }
+        (
+            "Write an equation: the difference of a number {} and {}, divided by {}, is {}",
             [x, b, a, c],
         ) => (
             format!("({x} - {b})/{a} = {c}"),
