@@ -1485,57 +1485,113 @@ topics:
       - id: kp1
         name: Comparing two decimals
         key_prerequisites: [decimal-place-value]
+        step_check:
+          step: 'Writing the pair as $0.90$ and $0.48$ aligns equal place values.'
+          question: 'Why rewrite $0.9$ as $0.90$ before comparing it with $0.48$?'
+          options:
+            - 'Only decimals with equally many digits can be compared'
+            - 'It lines up tenths with tenths and hundredths with hundredths'
+            - 'The extra zero makes $0.9$ ten times larger'
+          answer: 'It lines up tenths with tenths and hundredths with hundredths'
+          why: 'The zero adds nothing to the value; it only lets the digits be compared place by place, tenths first.'
         exemplars:
           - problem: 'Which is larger, $0.7$ or $0.65$?'
             answer: "0.7"
             solution_sketch: 'Compare tenths: $7 > 6$, so $0.7 > 0.65$.'
-          - problem: 'Two runners finish in $2.09$ minutes and $2.4$ minutes. Give the faster time.'
+          - problem: 'Two runners finish a race in $2.09$ minutes and $2.4$ minutes. Which time is faster?'
             answer: "2.09"
-            solution_sketch: 'Pad $2.4$ to $2.40$. Since $2.09<2.40$, the smaller time $2.09$ is faster.'
-          - problem: 'Which point lies farther right on a number line, $0.45$ or $0.5$? Give the coordinate.'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Pad $2.4$ to $2.40$. Since $2.09<2.40$, the smaller time $2.09$ minutes is faster.'
+          - problem: 'Which lies farther right on a number line, $0.45$ or $0.5$?'
             answer: "0.5"
-            solution_sketch: '$0.5=50/100$ and $0.45=45/100$. Fifty hundredths lies farther right.'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Write $0.5$ as $0.50$, which is fifty hundredths, while $0.45$ is forty-five hundredths. The larger number $0.5$ lies farther right.'
           - problem: 'A shelf opening is $3.08$ m wide. A board is $3.2$ m long. Which measurement is smaller?'
             answer: "3.08"
             solution_sketch: 'Write $3.2=3.20$. The tenths digits $0<2$ establish $3.08<3.20$.'
+          - problem: 'Which is smaller, $0.099$ or $0.1$?'
+            answer: "0.099"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Pad $0.1$ to $0.100$. At the tenths place $0<1$, so $0.099$ is smaller even though it has more digits.'
+          - problem: 'Write a decimal that is greater than $0.3$ but less than $0.31$.'
+            answer: "0.305"
+            answer_contract: {"kind": "property", "check": "between", "args": {"low": "0.3", "high": "0.31"}}
+            solution_sketch: 'Pad to thousandths: $0.300$ and $0.310$. Any decimal strictly between them works, such as $0.305$, $0.301$ or $0.3099$.'
         constraints: "1-2 decimal places; traps where more digits does not mean larger"
       - id: kp2
         name: Trailing zeros
         key_prerequisites: [decimal-place-value]
+        step_check:
+          step: 'Drop the three end zeros.'
+          question: 'Why does dropping the end zeros of $1.7000$ leave the length unchanged?'
+          options:
+            - 'Each end zero counts zero of its place, so it adds nothing'
+            - 'Zeros at the end of any number can be dropped freely'
+            - 'The seven moves left to fill the empty places'
+          answer: 'Each end zero counts zero of its place, so it adds nothing'
+          why: 'A zero after the last nonzero decimal digit means none of that place; dropping zeros from a whole number such as $170$ does change it, because there the zero fixes the place of the $7$.'
         exemplars:
-          - problem: "The decimals 0.5 and 0.50 differ only by a trailing zero, so they name the same value. Give the answer to 1 decimal."
-            answer: "0.5"
-            answer_contract: {"decimals": 1, "kind": "approx"}
-            solution_sketch: "The full object is the pair 0.5 and 0.50. Step 1: read place values; 0.5 is five tenths, and 0.50 is five tenths and zero hundredths. Step 2: apply the trailing-zero rule; the zero in the hundredths place adds nothing, so 0.50 equals 0.5. The common value to 1 decimal is 0.5."
-          - problem: "The decimals 0.080 and 0.08 differ only by trailing zeros, so they name the same value. Give the answer to 2 decimals."
-            answer: "0.08"
-            answer_contract: {"decimals": 2, "kind": "approx"}
-            solution_sketch: "The full object is the pair 0.080 and 0.08. Step 1: write place values; 0.080 has eight hundredths and no thousandths, while 0.08 has eight hundredths. Step 2: apply the trailing-zero rule; the final zero in 0.080 does not change the value, so 0.080 equals 0.08. The common value to 2 decimals is 0.08."
-          - problem: "A ruler marks 1.20 m and 1.2 m. The two decimals differ only by a trailing zero, so they name the same length. Give the answer to 1 decimal."
-            answer: "1.2"
-            answer_contract: {"decimals": 1, "kind": "approx"}
-            solution_sketch: "The full object is the pair 1.20 m and 1.2 m. Step 1: align place values; 1.20 is one and two tenths and zero hundredths, and 1.2 is one and two tenths. Step 2: apply the trailing-zero rule; the zero in the hundredths place adds no length, so 1.20 equals 1.2. The common length to 1 decimal is 1.2."
-          - problem: "A scale shows 0.400 kg and then 0.4 kg. The two decimals differ only by trailing zeros, so they name the same mass. Give the answer to 1 decimal."
-            answer: "0.4"
-            answer_contract: {"decimals": 1, "kind": "approx"}
-            solution_sketch: "The full object is the pair 0.400 kg and 0.4 kg. Step 1: write place values; 0.400 is four tenths with zeros in the hundredths and thousandths places, and 0.4 is four tenths. Step 2: apply the trailing-zero rule; the trailing zeros in 0.400 do not change the mass, so 0.400 equals 0.4. The common mass to 1 decimal is 0.4."
+          - problem: 'Which of $0.3$, $0.30$, $0.03$ and $0.300$ has a different value from the other three?'
+            answer: "0.03"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The trailing zeros in $0.30$ and $0.300$ add nothing, so both equal $0.3$, three tenths. The number $0.03$ is three hundredths, so it is the odd one out.'
+          - problem: 'How many hundredths are there in $0.4$?'
+            answer: "40"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Write $0.4$ as $0.40$; the trailing zero does not change the value. So $0.4$ is $40$ hundredths.'
+          - problem: 'Sam says $0.50$ is ten times as large as $0.5$, because $50$ is ten times $5$. Is Sam right?'
+            answer: "no"
+            answer_contract: {"kind":"label","options":[["no","he is not right","sam is not right","not right","he is wrong","sam is wrong","wrong"],["yes","he is right","sam is right","right"]]}
+            solution_sketch: 'Both numbers are five tenths; the zero in the hundredths place of $0.50$ adds nothing. So $0.50=0.5$ and Sam is not right.'
+          - problem: 'Compute $0.60 - 0.6$.'
+            answer: "0"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The trailing zero means $0.60$ is the same number as $0.6$. A number minus itself is $0$.'
+          - problem: 'A board is labelled $3.20$ m and another is labelled $3.2$ m. Are the two boards the same length?'
+            answer: "yes"
+            answer_contract: {"kind":"label","options":[["yes","they are","same","the same","same length","they are the same length"],["no","they are not","different","not the same"]]}
+            solution_sketch: 'Both labels mean three metres and two tenths of a metre. The trailing zero in $3.20$ adds no length, so yes, the boards are the same length.'
+          - problem: 'How many thousandths are there in $0.6$?'
+            answer: "600"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Write $0.6$ as $0.600$ by adding trailing zeros, which leaves the value unchanged. So $0.6$ is $600$ thousandths.'
         constraints: "pairs differing only by trailing zeros"
       - id: kp3
         name: Ordering lists of decimals
         key_prerequisites: [decimal-place-value]
+        step_check:
+          step: 'so $4.475$ is the least of the three even though it carries the most digits'
+          question: 'Why is $4.475$ the least of $4.5$, $4.475$ and $4.51$?'
+          options:
+            - 'Its last digit is smaller than the other last digits'
+            - 'Its tenths digit $4$ is smaller than the other tenths digits'
+            - 'A decimal with more digits is always the smaller one'
+          answer: 'Its tenths digit $4$ is smaller than the other tenths digits'
+          why: 'Decimals with the same whole part are decided at the first place where they differ, here the tenths; the number of digits does not decide the order.'
         exemplars:
           - problem: 'Order from least to greatest: $0.3$, $0.28$, $0.302$.'
             answer: "0.28, 0.3, 0.302"
-            solution_sketch: 'Pad to thousandths: $0.300$, $0.280$, $0.302$.'
+            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
+            solution_sketch: 'Pad to thousandths: $0.300$, $0.280$, $0.302$. Compared place by place, the order is $0.28$, $0.3$, $0.302$.'
           - problem: 'Which is greatest: $1.45$, $1.5$, or $1.405$?'
             answer: "1.5"
             solution_sketch: 'Comparing place by place, $1.5$ is the greatest of $1.45$, $1.5$, $1.405$.'
-          - problem: 'Three race times are $0.6$, $0.55$, and $0.603$ minutes. Give the middle time.'
+          - problem: 'Three race times are $0.6$, $0.55$, and $0.603$ minutes. Which is the middle time?'
             answer: "0.6"
-            solution_sketch: 'Align thousandths: $0.550<0.600<0.603$. The middle value is $0.6$.'
-          - problem: 'Mark $2.07$, $2.7$, and $2.099$ on a number line. Give the leftmost coordinate.'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Align thousandths: $0.550<0.600<0.603$. The middle value is $0.6$ minutes.'
+          - problem: 'Which of $2.07$, $2.7$ and $2.099$ lies farthest left on a number line?'
             answer: "2.07"
-            solution_sketch: 'Align places: $2.070<2.099<2.700$. The leftmost coordinate is $2.07$.'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Align places: $2.070<2.099<2.700$. The least number, $2.07$, lies farthest left.'
+          - problem: 'Order from greatest to least: $5.06$, $5.6$, $5.059$.'
+            answer: "5.6, 5.06, 5.059"
+            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
+            solution_sketch: 'Pad to thousandths: $5.060$, $5.600$, $5.059$. The tenths decide that $5.6$ is greatest, and the thousandths put $5.06$ above $5.059$, giving $5.6$, $5.06$, $5.059$.'
+          - problem: 'Order from least to greatest: $1.3$, $1.03$, $1.29$, $1.301$.'
+            answer: "1.03, 1.29, 1.3, 1.301"
+            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
+            solution_sketch: 'Pad to thousandths: $1.300$, $1.030$, $1.290$, $1.301$. Comparing place by place gives $1.03$, $1.29$, $1.3$, $1.301$.'
         constraints: "3 decimals with different numbers of places"
     diagnostic_exemplar:
       problem: 'Order from least to greatest: $0.4$, $0.38$, $0.409$.'
@@ -1639,6 +1695,15 @@ topics:
       - id: kp1
         name: Multiply by 10 and 100
         key_prerequisites: [multiplying-by-powers-of-ten]
+        step_check:
+          step: 'Multiplying by 100 moves the decimal point two places to the right.'
+          question: 'Why does multiplying by $100$ move the decimal point two places right?'
+          options:
+            - 'Multiplying by $100$ adds two zeros to the end of $7.2$'
+            - 'The number $7.2$ has exactly two digits'
+            - 'Each digit becomes worth $100$ times as much, two places higher'
+          answer: 'Each digit becomes worth $100$ times as much, two places higher'
+          why: 'Every place is worth ten times the place to its right, so a hundredfold value means two places left for each digit; writing $7.200$ adds zeros but leaves the value unchanged.'
         exemplars:
           - problem: 'Compute $0.47 \times 10$.'
             answer: "4.7"
@@ -1656,10 +1721,20 @@ topics:
       - id: kp2
         name: Divide by 10 and 100
         key_prerequisites: [decimal-place-value]
+        step_check:
+          step: 'Dividing by 100 moves the decimal point two places to the left.'
+          question: 'Why does dividing by $100$ move the decimal point two places left?'
+          options:
+            - 'Each digit becomes worth one hundredth as much, two places lower'
+            - 'Dividing by $100$ removes two zeros from the end'
+            - 'The answer must always be less than $1$'
+          answer: 'Each digit becomes worth one hundredth as much, two places lower'
+          why: 'Each place is worth one tenth of the place to its left, so dividing by $100$ moves every digit two places right, which reads as the point moving two places left; $156$ has no end zeros to remove.'
         exemplars:
           - problem: 'Compute $25 \div 100$.'
             answer: "0.25"
-            solution_sketch: 'Dividing by $100$ moves the decimal point 2 place(s) left: $0.25$.'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Dividing by $100$ moves every digit two places to the right of where it was. The $2$ tens become $2$ tenths and the $5$ ones become $5$ hundredths, so the result is $0.25$.'
           - problem: 'Share $4.2$ litres equally among ten bottles. How many litres go into each?'
             answer: "0.42"
             solution_sketch: 'Ten equal shares give $4.2\div10=0.42$ litre per bottle.'
@@ -1669,23 +1744,43 @@ topics:
           - problem: 'A place-value chart shifts the digits of $18.5$ one column right. What number results?'
             answer: "1.85"
             solution_sketch: 'The tens become ones, ones become tenths, and tenths become hundredths: $18.5\div10=1.85$.'
+          - problem: 'Compute $3.4 \div 100$.'
+            answer: "0.034"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Dividing by $100$ moves the decimal point two places left. A zero fills the empty tenths place, so $3.4\div100=0.034$.'
+          - problem: 'Ten identical pencils weigh $56$ g altogether. How much does one pencil weigh, in grams?'
+            answer: "5.6"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'One pencil weighs $56\div10$ grams. Dividing by $10$ moves the decimal point one place left, so each pencil weighs $5.6$ g.'
         constraints: "results have at most 3 decimal places"
       - id: kp3
         name: Thousands and combined moves
         key_prerequisites: [multiplying-by-powers-of-ten]
+        step_check:
+          step: 'Multiplying by 1000 moves the decimal point three places to the right.'
+          question: 'Why does multiplying by $1000$ move the decimal point three places?'
+          options:
+            - '$0.048$ has three decimal places'
+            - '$1000=10\times10\times10$, and each $10$ moves it one place'
+            - '$1000$ has three digits after its first digit'
+          answer: '$1000=10\times10\times10$, and each $10$ moves it one place'
+          why: 'Multiplying by $1000$ is multiplying by $10$ three times, and each factor of $10$ shifts every digit one place left; the number of decimal places in $0.048$ plays no part.'
         exemplars:
           - problem: 'Compute $0.05 \times 1000$.'
             answer: "50"
-            solution_sketch: 'Multiplying by $1000$ moves the decimal point 3 place(s) right: $50$.'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Multiplying by $1000$ moves the decimal point three places right. Pad $0.05$ to $0.050$ and shift: $0.05\times1000=50$.'
           - problem: 'Compute $7.5 \div 1000$.'
             answer: "0.0075"
-            solution_sketch: 'Dividing by $1000$ moves the decimal point 3 place(s) left: $0.0075$.'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Dividing by $1000$ moves the decimal point three places left. Zeros fill the tenths and hundredths places, so $7.5\div1000=0.0075$.'
           - problem: 'Convert $0.9$ kilometres to metres, using $1000$ metres per kilometre.'
             answer: "900"
             solution_sketch: 'Nine tenths of $1000$ metres is $900$ metres: $0.9\times1000=900$.'
-          - problem: 'First divide $12$ by $10$, then divide that result by $100$. Give the final decimal.'
+          - problem: 'Divide $12$ by $10$, then divide the result by $100$. What number do you get?'
             answer: "0.012"
-            solution_sketch: '$12\div10=1.2$ and $1.2\div100=0.012$. The decimal point moves three places left in total.'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: '$12\div10=1.2$ and $1.2\div100=0.012$. The decimal point moves three places left in total, the same as dividing by $1000$.'
         constraints: "shifts of 3 places, may need padding zeros"
     diagnostic_exemplar:
       problem: 'Compute $6.3 \div 1000$.'
@@ -1799,12 +1894,22 @@ topics:
           - problem: 'Five jars each hold $1.2$ litres. How many litres do they hold altogether?'
             answer: "6"
             solution_sketch: 'Five groups of $1.2$ contain $5\times1.2=6$ litres.'
-          - problem: 'Find the area of a rectangle with sides $2.5$ m and $0.3$ m. Give square metres.'
+          - problem: 'Find the area of a rectangle with sides $2.5$ m and $0.3$ m, in square metres.'
             answer: "0.75"
-            solution_sketch: 'The area is $(25/10)(3/10)=75/100=0.75$ square metre.'
-          - problem: 'An $8$-column by $7$-row rectangle is marked on a grid of hundredth-sized cells. What decimal fraction of a unit square does it cover?'
-            answer: "0.56"
-            solution_sketch: 'The rectangle covers $8\times7=56$ cells, each $0.01$ of the unit square: $0.56$.'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The area is $2.5\times0.3$. As fractions this is $(25/10)(3/10)=75/100$, so the area is $0.75$ square metre.'
+          - problem: 'Compute $0.5 \times 0.8$.'
+            answer: "0.4"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: '$5\times8=40$, and the factors have $1+1=2$ decimal places, so the product is $0.40$. The trailing zero can be dropped, giving $0.4$.'
+          - problem: 'Find the product of $1.2$ and $0.3$.'
+            answer: "0.36"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: '$12\times3=36$, and the factors have two decimal places between them. So $1.2\times0.3=0.36$, which is a little more than a third of $1$.'
+          - problem: 'Petrol costs €$1.80$ per litre. How much do $2.5$ litres cost, in euros?'
+            answer: "4.5"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The cost is $2.5\times1.80$. Since $25\times18=450$ and the factors have two decimal places in total, the cost is €$4.50$.'
         constraints: "at most 1 decimal place per factor"
       - id: kp2
         name: Divide by a whole number
@@ -1812,9 +1917,11 @@ topics:
         exemplars:
           - problem: 'Compute $3.6 \div 4$.'
             answer: "0.9"
-            solution_sketch: '$3.6 \div 4 = 0.9$.'
-          - problem: 'Share $7.2$ litres equally among six containers. Give the litres in each.'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: '$3.6$ is $36$ tenths, and $36$ tenths divided by $4$ is $9$ tenths. So $3.6\div4=0.9$, which is less than $1$ because $3.6<4$.'
+          - problem: 'Share $7.2$ litres equally among six containers. How many litres go in each?'
             answer: "1.2"
+            answer_contract: {"kind":"exact"}
             solution_sketch: '$7.2$ litres is $72$ tenths. Each container gets $72\div6=12$ tenths, or $1.2$ litres.'
           - problem: 'A rectangle has area $2.8$ square metres and length $5$ metres. What is its width in metres?'
             answer: "0.56"
@@ -1822,6 +1929,14 @@ topics:
           - problem: 'What is the midpoint between $0$ and $1.7$ on a number line?'
             answer: "0.85"
             solution_sketch: 'Halve the span: $1.7\div2=170/200=0.85$.'
+          - problem: 'Compute $0.48 \div 6$.'
+            answer: "0.08"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: '$0.48$ is $48$ hundredths, and $48\div6=8$. So the quotient is $8$ hundredths, written $0.08$ with a zero in the tenths place.'
+          - problem: 'Four friends split a bill of €$25.40$ equally. How much does each pay, in euros?'
+            answer: "6.35"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Divide $25.40$ by $4$: $24\div4=6$ and $1.40\div4=0.35$. Each friend pays €$6.35$.'
         constraints: "1-digit divisor; quotients terminate within 2 decimal places"
       - id: kp3
         name: Divide by a decimal
@@ -1836,9 +1951,10 @@ topics:
           - problem: 'A rectangle has area $3.6$ square metres and width $0.9$ metre. Find its length in metres.'
             answer: "4"
             solution_sketch: 'Length is $3.6\div0.9=36\div9=4$ metres.'
-          - problem: 'A number-line unit is changed to a length of $0.08$. How many new units reach the old position $0.72$?'
-            answer: "9"
-            solution_sketch: 'Scale both by $100$: $0.72\div0.08=72\div8=9$ new units.'
+          - problem: 'Compute $1.35 \div 0.5$.'
+            answer: "2.7"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Multiply both numbers by $10$ so the divisor is whole: $13.5\div5$. Since $13.5\div5=2.7$, the quotient is $2.7$.'
         constraints: "shift both numbers until the divisor is whole"
     diagnostic_exemplar:
       problem: 'Compute $5.6 \div 0.7$.'
@@ -1876,12 +1992,14 @@ topics:
             answer: "0.75"
             answer_contract: {"kind":"required_form","form":"decimal"}
             solution_sketch: '$3 \div 4 = 0.75$.'
-          - problem: 'Shade one fifth of a ten-cell strip. What decimal part is shaded?'
+          - problem: 'One fifth of a strip of ten equal cells is shaded. What decimal part of the strip is shaded?'
             answer: "0.2"
-            solution_sketch: 'One fifth equals two tenths: $1/5=2/10=0.2$.'
-          - problem: 'A line from $0$ to $1$ has ten equal steps. Write the coordinate $7/10$ in decimal form.'
+            answer_contract: {"kind":"required_form","form":"decimal"}
+            solution_sketch: 'One fifth of ten cells is two cells, so two tenths of the strip is shaded. Since $1/5=2/10$, the decimal is $0.2$.'
+          - problem: 'A number line from $0$ to $1$ is split into ten equal steps. Which decimal labels the point $\frac{7}{10}$?'
             answer: "0.7"
-            solution_sketch: 'Seven tenth-sized steps represent seven tenths, written $0.7$.'
+            answer_contract: {"kind":"required_form","form":"decimal"}
+            solution_sketch: 'Seven steps of one tenth each make seven tenths. Seven tenths is written $0.7$.'
           - problem: 'Give a decimal between $\frac{1}{4}$ and $\frac{3}{10}$.'
             answer: "0.28"
             answer_contract: {"kind": "property", "check": "between", "args": {"low": "1/4", "high": "3/10"}}
@@ -1890,9 +2008,10 @@ topics:
             answer: "0.65"
             answer_contract: {"kind": "property", "check": "between", "args": {"low": "3/5", "high": "7/10"}}
             solution_sketch: 'Convert both: $\frac{3}{5} = 0.6$ and $\frac{7}{10} = 0.7$. Any decimal strictly between works, for example $0.65$, $0.61$ or $0.699$.'
-          - problem: 'A $3$-litre sample is shared equally among eight bottles. Express the volume per bottle as a decimal number of litres.'
+          - problem: 'Three litres of juice are poured equally into eight bottles. Write the amount in each bottle, in litres, as a decimal.'
             answer: "0.375"
-            solution_sketch: 'Divide $3$ by $8$: $3/8=375/1000=0.375$ litre.'
+            answer_contract: {"kind":"required_form","form":"decimal"}
+            solution_sketch: 'Each bottle gets $3/8$ litre. Dividing $3$ by $8$, or writing $3/8=375/1000$, gives $0.375$ litre.'
         constraints: "terminating decimals; denominators 2, 4, 5, 8, 10"
       - id: kp2
         name: Decimal to fraction
@@ -1902,12 +2021,14 @@ topics:
             answer: "3/5"
             answer_contract: {"kind":"required_form","form":"reduced_fraction"}
             solution_sketch: '$0.6 = \frac{6}{10} = \frac{3}{5}$.'
-          - problem: 'A hundred-cell grid is $0.25$ shaded. What fraction of the grid is shaded, in lowest terms?'
+          - problem: 'In a hundred-cell grid, $0.25$ of the cells are shaded. What fraction of the grid is shaded, in lowest terms?'
             answer: "1/4"
-            solution_sketch: '$0.25$ is $25/100$; dividing by the GCF $25$ yields $1/4$.'
-          - problem: 'A point is eight tenth-sized steps from zero. Write its decimal coordinate $0.8$ as a reduced fraction.'
+            answer_contract: {"kind":"required_form","form":"reduced_fraction"}
+            solution_sketch: '$0.25$ is $25/100$. Dividing top and bottom by their greatest common factor $25$ gives $1/4$.'
+          - problem: 'Write $0.8$ as a fraction in simplest form.'
             answer: "4/5"
-            solution_sketch: '$0.8=8/10$. Cancel a factor of $2$ to obtain $4/5$.'
+            answer_contract: {"kind":"required_form","form":"reduced_fraction"}
+            solution_sketch: '$0.8$ is eight tenths, $8/10$. Cancel the common factor $2$ to obtain $4/5$.'
           - problem: 'Give a fraction between $0.4$ and $0.45$.'
             answer: "17/40"
             answer_contract: {"kind": "property", "check": "between", "args": {"low": "0.4", "high": "0.45"}}
@@ -1916,9 +2037,10 @@ topics:
             answer: "29/40"
             answer_contract: {"kind": "property", "check": "between", "args": {"low": "0.7", "high": "0.75"}}
             solution_sketch: '$0.7 = \frac{7}{10}$ and $0.75 = \frac{3}{4}$. Over $20$ they are $\frac{14}{20}$ and $\frac{15}{20}$, neighbours, so go to $40$ths: $\frac{29}{40}$ lies between. $0.72 = \frac{18}{25}$ works too.'
-          - problem: 'A length of $0.35$ metre is $35$ centimetres out of $100$. Express the length as a fraction of a metre in lowest terms.'
+          - problem: 'A pencil is $0.35$ m long. What fraction of a metre is that, in lowest terms?'
             answer: "7/20"
-            solution_sketch: '$35/100=(35\div5)/(100\div5)=7/20$ metre.'
+            answer_contract: {"kind":"required_form","form":"reduced_fraction"}
+            solution_sketch: '$0.35$ m is $35/100$ of a metre. Dividing top and bottom by $5$ gives $7/20$ of a metre.'
         constraints: "1-2 decimal places"
       - id: kp3
         name: Longer divisions and repeating decimals
@@ -1931,9 +2053,10 @@ topics:
           - problem: 'Write $\frac{1}{3}$ as a decimal, rounded to three decimal places.'
             answer: "0.333"
             solution_sketch: '$1 \div 3 = 0.333\ldots$ repeats forever; to three places it is $0.333$.'
-          - problem: 'Five litres are shared equally among sixteen bottles. Give the exact decimal litres per bottle.'
+          - problem: 'Five litres of water are shared equally among sixteen bottles. Write the amount per bottle, in litres, as a decimal.'
             answer: "0.3125"
-            solution_sketch: '$5/16=(5\times625)/(16\times625)=3125/10000=0.3125$.'
+            answer_contract: {"kind":"required_form","form":"decimal"}
+            solution_sketch: 'Each bottle gets $5/16$ litre. Since $5/16=(5\times625)/(16\times625)=3125/10000$, the amount is $0.3125$ litre.'
           - problem: 'Give a fraction that lies between $0.33$ and $0.34$.'
             answer: "1/3"
             answer_contract: {"kind": "property", "check": "between", "args": {"low": "0.33", "high": "0.34"}}
@@ -1942,9 +2065,10 @@ topics:
             answer: "0.82"
             answer_contract: {"kind": "property", "check": "between", "args": {"low": "0.8", "high": "5/6"}}
             solution_sketch: '$\frac{5}{6} = 0.8333\ldots$, so any number above $0.8$ and below $0.8333\ldots$ works, such as $0.81$, $0.82$ or $\frac{9}{11} = 0.8181\ldots$. $0.84$ is too large, because it is past $0.8333\ldots$.'
-          - problem: 'A line segment of length $2$ is divided into three equal intervals. Give the first tick as a decimal rounded to three places.'
+          - problem: 'A $2$ m rope is cut into three equal pieces. How long is each piece in metres, rounded to three decimal places?'
             answer: "0.667"
-            solution_sketch: 'The tick is $2/3=0.6666\ldots$. The fourth decimal digit is $6$, so the third rounds up to give $0.667$.'
+            answer_contract: {"kind": "approx", "decimals": 3}
+            solution_sketch: 'Each piece is $2/3$ m, and $2\div3=0.6666\ldots$. The fourth decimal digit is $6$, so the third rounds up to give $0.667$ m.'
         constraints: "may include a simple repeating decimal"
     diagnostic_exemplar:
       problem: 'Write $\frac{5}{8}$ as a decimal.'
@@ -2297,65 +2421,121 @@ topics:
       - id: kp1
         name: Writing ratios
         key_prerequisites: [equivalent-fractions]
+        try_first:
+          problem: 'A bag holds $4$ red counters and $6$ blue counters. For every $2$ red counters, how many blue counters are there?'
+          answer_contract: {"kind":"exact"}
+          answer: '3'
+          reveal: 'Split the bag into $2$ equal groups, each with $2$ red and $3$ blue counters, so there are $3$ blue for every $2$ red. That comparison is the ratio $4:6$, which simplifies to $2:3$.'
+        step_check:
+          step: 'Find the total count: $10 + 15 = 25$.'
+          question: 'Why add $10+15$ before writing the ratio?'
+          options:
+            - 'Every ratio must include the sum of its parts'
+            - 'The ratio compares forks with all utensils, so it needs the total'
+            - 'Adding first makes the numbers easier to simplify'
+          answer: 'The ratio compares forks with all utensils, so it needs the total'
+          why: 'A part-to-whole ratio puts the whole group second; a part-to-part ratio such as forks to spoons would use $10:15$ with no adding.'
         exemplars:
           - problem: 'There are $6$ apples and $9$ oranges. Write the ratio of apples to oranges in simplest form.'
             answer: "2:3"
             answer_contract: {"kind":"reduced_ratio"}
             solution_sketch: '$\text{GCF}(6, 9) = 3$; $6:9 = 2:3$.'
-          - problem: 'A bag has $3$ red and $5$ blue marbles. Write the ratio of red marbles to ALL marbles.'
+          - problem: 'A bag has $3$ red and $5$ blue marbles. Write the ratio of red marbles to all the marbles.'
             answer: "3:8"
             answer_contract: {"kind":"reduced_ratio"}
-            solution_sketch: 'Total is $3 + 5 = 8$; $3:8$.'
+            solution_sketch: 'The bag holds $3 + 5 = 8$ marbles in total. Red to all marbles is $3:8$, already in simplest form.'
           - problem: 'There are $4$ dogs and $10$ cats. Write the ratio of dogs to cats in simplest form.'
             answer: "2:5"
             answer_contract: {"kind":"reduced_ratio"}
             solution_sketch: '$\text{GCF}(4, 10) = 2$; $4:10 = 2:5$.'
-          - problem: 'A drawer has $5$ pens and $7$ pencils. Write the ratio of pens to ALL items in the drawer.'
+          - problem: 'A drawer has $5$ pens and $7$ pencils. Write the ratio of pens to all the items in the drawer.'
             answer: "5:12"
             answer_contract: {"kind":"reduced_ratio"}
-            solution_sketch: 'Total is $5 + 7 = 12$; $5:12$.'
+            solution_sketch: 'The drawer holds $5 + 7 = 12$ items. Pens to all items is $5:12$, and $5$ and $12$ share no factor except $1$.'
+          - problem: 'A fruit bowl holds $8$ bananas and $12$ pears. Write the ratio of pears to bananas in simplest form.'
+            answer: "3:2"
+            answer_contract: {"kind":"reduced_ratio"}
+            solution_sketch: 'Pears come first, so the ratio is $12:8$. Dividing both parts by their GCF $4$ gives $3:2$.'
+          - problem: 'A class has $14$ girls and $16$ boys. Write the ratio of boys to the whole class in simplest form.'
+            answer: "8:15"
+            answer_contract: {"kind":"reduced_ratio"}
+            solution_sketch: 'The class has $14+16=30$ pupils, so boys to the whole class is $16:30$. Dividing both parts by $2$ gives $8:15$.'
         constraints: "part:part and part:whole forms; parts up to 20"
       - id: kp2
         name: Simplifying ratios
         key_prerequisites: [division-facts]
+        step_check:
+          step: 'The simplest form is $7:11$.'
+          question: 'Why is $7:11$ the simplest form of $14:22$?'
+          options:
+            - 'Both $7$ and $11$ are odd numbers'
+            - 'Neither part can be halved again'
+            - '$7$ and $11$ have no common factor except $1$'
+          answer: '$7$ and $11$ have no common factor except $1$'
+          why: 'A ratio is in simplest form when its parts share no factor other than $1$; $9:15$ has two odd parts and cannot be halved, yet both divide by $3$.'
         exemplars:
           - problem: 'Simplify the ratio $8:12$.'
             answer: "2:3"
             answer_contract: {"kind":"reduced_ratio"}
             solution_sketch: 'Divide both parts by GCF $4$.'
-          - problem: 'A drink uses $15$ parts juice and $25$ parts water. Group both counts into packets of five. Give the reduced juice-to-water ratio.'
+          - problem: 'A drink is made from $15$ ml of juice and $35$ ml of water. Write the ratio of juice to water in simplest form.'
+            answer: "3:7"
+            answer_contract: {"kind":"reduced_ratio"}
+            solution_sketch: 'The ratio is $15:35$. Both parts divide by their GCF $5$, giving $3:7$.'
+          - problem: 'A $120$ cm rope is cut into pieces of $45$ cm and $75$ cm. Write the ratio of the shorter piece to the longer piece in simplest form.'
             answer: "3:5"
             answer_contract: {"kind":"reduced_ratio"}
-            solution_sketch: '$15\div5=3$ and $25\div5=5$; the reduced ratio is $3:5$.'
-          - problem: 'Reduce $12:30$ using their prime factors $12=2\times2\times3$ and $30=2\times3\times5$.'
-            answer: "2:5"
-            answer_contract: {"kind":"reduced_ratio"}
-            solution_sketch: 'Cancel the shared factor $2\times3=6$ from both parts to get $2:5$.'
-          - problem: 'The ratio $18:24$ was reduced once to $9:12$. Finish reducing it to its simplest form.'
+            solution_sketch: 'The ratio is $45:75$. Both parts divide by their GCF $15$, giving $3:5$.'
+          - problem: 'Ana simplifies $18:24$ to $9:12$ and stops. Write $18:24$ in simplest form.'
             answer: "3:4"
             answer_contract: {"kind":"reduced_ratio"}
-            solution_sketch: 'Both remaining parts divide by $3$: $9:12=3:4$, and $3$ and $4$ are coprime.'
+            solution_sketch: 'Both parts of $9:12$ still divide by $3$, so Ana stopped too early: $9:12=3:4$. Dividing $18:24$ by the GCF $6$ gives $3:4$ in one step.'
+          - problem: 'Write the ratio $40$ cm to $1$ m in simplest form.'
+            answer: "2:5"
+            answer_contract: {"kind":"reduced_ratio"}
+            solution_sketch: 'Use the same unit first: $1$ m is $100$ cm, so the ratio is $40:100$. Dividing both parts by $20$ gives $2:5$.'
+          - problem: 'Simplify $28:42$.'
+            answer: "2:3"
+            answer_contract: {"kind":"reduced_ratio"}
+            solution_sketch: 'The greatest common factor of $28$ and $42$ is $14$. Dividing both parts by $14$ gives $2:3$.'
         constraints: "parts up to 40"
       - id: kp3
         name: Equivalent ratios
         key_prerequisites: [equivalent-fractions]
+        step_check:
+          step: 'The first terms give a scale factor: 30 ÷ 6 = 5.'
+          question: 'Why divide $30$ by $6$ to complete $6:11 = 30:?$'
+          options:
+            - 'It finds how much was added to $6$ to reach $30$'
+            - 'It finds the factor that turns $6$ into $30$, used for both terms'
+            - 'Dividing the two given first terms always gives the answer'
+          answer: 'It finds the factor that turns $6$ into $30$, used for both terms'
+          why: 'Equivalent ratios multiply both terms by the same factor; adding $24$ to each term instead would give $6:11=30:35$, which is a different ratio.'
         exemplars:
           - problem: 'Fill in: $2:3 = 8:\square$.'
             answer: "12"
             answer_contract: {"kind":"exact"}
             solution_sketch: 'Both parts were multiplied by $4$.'
-          - problem: 'Are $4:6$ and $10:15$ equivalent? (yes/no)'
+          - problem: 'Are the ratios $4:6$ and $10:15$ equivalent?'
             answer: "yes"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: 'Both simplify to $2:3$.'
-          - problem: 'Fill in: $3:5 = \square:20$.'
-            answer: "12"
+            answer_contract: {"kind":"label","options":[["yes","they are","equivalent","they are equivalent","yes they are"],["no","they are not","not equivalent","they are not equivalent","no they are not"]]}
+            solution_sketch: 'Dividing $4:6$ by $2$ gives $2:3$, and dividing $10:15$ by $5$ also gives $2:3$. Both simplify to the same ratio, so yes, they are equivalent.'
+          - problem: 'Fill in: $3:5 = \square:25$.'
+            answer: "15"
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'The second part scales by $20\div5=4$; the first becomes $3\times4=12$.'
-          - problem: 'A recipe scales $3:4$ to $9:12$. Does each part use the same scale factor? Answer yes or no.'
-            answer: "yes"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: '$9\div3=3$ and $12\div4=3$, so both parts use scale factor $3$.'
+            solution_sketch: 'The second part scales by $25\div5=5$. The first part becomes $3\times5=15$.'
+          - problem: 'Tom says $3:4$ is equivalent to $5:6$, because he added $2$ to both parts. Is Tom right?'
+            answer: "no"
+            answer_contract: {"kind":"label","options":[["no","he is not right","tom is not right","not right","he is wrong","tom is wrong","wrong"],["yes","he is right","tom is right","right"]]}
+            solution_sketch: 'Equivalent ratios multiply both parts by the same number. Adding $2$ changes the comparison: $3/4=0.75$ but $5/6\approx0.83$, so Tom is not right.'
+          - problem: 'Find the missing number: $\square:9 = 20:36$.'
+            answer: "5"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The second parts scale from $9$ to $36$, a factor of $4$. Dividing $20$ by $4$ gives the missing first part, $5$.'
+          - problem: 'Find the missing number: $12:\square = 3:5$.'
+            answer: "20"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The first part $12$ is $4$ times $3$. So the missing part is $4\times5=20$, giving $12:20=3:5$.'
         constraints: "scale factors 2-5"
     diagnostic_exemplar:
       problem: 'In a class of $30$ pupils there are $12$ boys. Write the ratio of boys to girls in simplest form.'
@@ -2384,6 +2564,15 @@ topics:
       - id: kp1
         name: Completing a ratio table
         key_prerequisites: [understanding-ratios]
+        step_check:
+          step: 'Multiply the plank count by the same factor: $4 \times 11=44$.'
+          question: 'Why is the plank count multiplied by $11$?'
+          options:
+            - 'Both counts must grow by the same amount, $70$'
+            - 'Both counts must grow by the same factor to keep the ratio'
+            - 'The plank count must stay the smaller number'
+          answer: 'Both counts must grow by the same factor to keep the ratio'
+          why: 'Each row of a ratio table is the first row times one number; adding $70$ planks would give $77:74$, which is a different ratio.'
         exemplars:
           - problem: 'A recipe uses $2$ eggs for every $3$ cups of flour. How many cups of flour go with $4$ eggs?'
             answer: "6"
@@ -2393,18 +2582,27 @@ topics:
             answer: "36"
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The first entry scales by $9\div3=3$; multiply $12$ by $3$ to get $36$.'
-          - problem: 'A table pairs $3$ eggs with $5$ cups of flour. Combine three identical rows. How many cups pair with $9$ eggs?'
+          - problem: 'A ratio table has the rows $4$ eggs with $6$ cups of flour and $6$ eggs with $9$ cups of flour. How many cups of flour go with $10$ eggs?'
             answer: "15"
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'Add the flour entries $5+5+5=15$ while the egg entries total $3+3+3=9$.'
-          - problem: 'A machine pairs $4$ input units with $10$ output units. A table row has $20$ input units. Complete its output entry.'
+            solution_sketch: 'Adding the two rows gives $4+6=10$ eggs with $6+9=15$ cups. The ratio stays $2:3$, so $10$ eggs need $15$ cups of flour.'
+          - problem: 'A mill turns $4$ kg of grain into $10$ loaves. How many loaves does $20$ kg of grain make?'
             answer: "50"
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'The row is $20\div4=5$ times the basic row, so output is $10\times5=50$.'
+            solution_sketch: 'The grain scales by $20\div4=5$. The loaves scale by the same factor, so $10\times5=50$ loaves.'
         constraints: "whole-number scale factors"
       - id: kp2
         name: Scaling ratios up and down
         key_prerequisites: [understanding-ratios]
+        step_check:
+          step: 'Divide the blue count by the same factor: $15 \div 3=5$.'
+          question: 'Why is the blue count divided by $3$?'
+          options:
+            - 'The red count was divided by $3$, and both must change alike'
+            - 'Subtracting $12$ blue tiles matches the $12$ red tiles removed'
+            - '$15$ is the only number here that is a multiple of $3$'
+          answer: 'The red count was divided by $3$, and both must change alike'
+          why: 'Scaling a ratio down divides both parts by the same number; subtracting $12$ from both would give $6:3$, a different pattern.'
         exemplars:
           - problem: 'Punch mixes $3$ parts juice with $2$ parts soda. With $9$ cups of juice, how many cups of soda?'
             answer: "6"
@@ -2426,23 +2624,45 @@ topics:
       - id: kp3
         name: Comparing ratios
         key_prerequisites: [understanding-ratios]
+        try_first:
+          problem: 'Juice A is $1$ cup of syrup to $4$ cups of water. Juice B is $2$ cups of syrup to $10$ cups of water. Is juice A stronger than juice B?'
+          answer_contract: {"kind":"label","options":[["yes","it is","a is stronger"],["no","it is not","b is stronger"]]}
+          answer: 'yes'
+          reveal: 'Doubled, juice A is $2$ cups of syrup to $8$ cups of water, so with the same syrup it uses less water. Rewriting both ratios with a common part is how ratios are compared.'
+        step_check:
+          step: 'Use a common time of $12$ hours'
+          question: 'Why rewrite both cars for the same time of $12$ hours?'
+          options:
+            - 'With equal times, the larger distance shows the faster car'
+            - '$260$ km is more than $150$ km, so B needs no rewriting'
+            - '$12$ hours is how long both trips take together'
+          answer: 'With equal times, the larger distance shows the faster car'
+          why: 'Two rates can be compared directly only when one part is the same; $260$ and $150$ km were covered in different times, and the trips together last $7$ hours, not $12$.'
         exemplars:
-          - problem: 'Mix A uses $9$ cups of concentrate with $15$ cups of water. Mix B uses $12$ with $20$. Give the common concentrate amount when both are scaled to $60$ cups of water.'
-            answer: "36"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Scale A by $4$ to $36:60$ and B by $3$ to $36:60$. Both use $36$ cups of concentrate.'
-          - problem: "Class A has 12 girls and 18 boys; Class B has 10 girls and 15 boys. Scale both classes to 30 boys. Give the common number of girls."
-            answer: "20"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1 (scale to a common part): Class A is 12 to 18, so scaling to 30 boys gives 12 times 30/18, which is 20 girls. Class B is 10 to 15, so scaling to 30 boys gives 10 times 2, which is 20 girls. Step 2 (compare the common part): both scaled forms have 20 girls for 30 boys. The common number of girls is 20."
-          - problem: "Mix A uses 2 scoops of cocoa per 3 cups of milk. Mix B uses 3 scoops per 5 cups of milk. Rewrite both mixes with 15 cups of milk. Find the positive difference in scoops of cocoa."
+          - problem: 'Mix A uses $9$ cups of concentrate with $15$ cups of water. Mix B uses $12$ cups of concentrate with $20$ cups of water. Which mix is stronger, or are they equally strong?'
+            answer: "equal"
+            answer_contract: {"kind":"label","options":[["equal","equally strong","they are equally strong","the same","same","neither","they are the same"],["mix a","a","mix a is stronger"],["mix b","b","mix b is stronger"]]}
+            solution_sketch: 'Scale both to $60$ cups of water: A becomes $36:60$ and B becomes $36:60$. Both use $36$ cups of concentrate for $60$ cups of water, so they are equally strong.'
+          - problem: 'Runner A covers $400$ m in $80$ s. Runner B covers $300$ m in $50$ s. Which runner is faster?'
+            answer: "runner b"
+            answer_contract: {"kind":"label","options":[["runner b","b","b is faster","runner b is faster"],["runner a","a","a is faster","runner a is faster"]]}
+            solution_sketch: 'Scale both to $400$ s: A runs $400\times5=2000$ m and B runs $300\times8=2400$ m. In the same time B runs farther, so runner B is faster.'
+          - problem: 'Mix A uses $2$ scoops of cocoa per $3$ cups of milk. Mix B uses $3$ scoops per $5$ cups of milk. For $15$ cups of milk, how many more scoops of cocoa does Mix A use than Mix B?'
             answer: "1"
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1 (rewrite with a common part): Mix A is 2 to 3, and multiplying both parts by 5 gives 10 scoops per 15 cups. Mix B is 3 to 5, and multiplying both parts by 3 gives 9 scoops per 15 cups. Step 2 (compare): subtract the smaller amount from the larger amount, 10 minus 9, which is 1. The positive difference in scoops is 1."
-          - problem: "Paint A uses 4 scoops of pigment per 5 cups of base. Paint B uses 6 scoops per 8 cups of base. Rewrite both paints with 40 cups of base. Find the positive difference in pigment scoops."
+            solution_sketch: 'Multiply $2:3$ by $5$ to get $10:15$, so Mix A uses $10$ scoops for $15$ cups; multiply $3:5$ by $3$ to get $9:15$, so Mix B uses $9$ scoops. Mix A uses $10-9=1$ more scoop.'
+          - problem: 'Paint A uses $4$ scoops of pigment per $5$ cups of base. Paint B uses $6$ scoops per $8$ cups of base. For $40$ cups of base, how many more scoops of pigment does Paint A use than Paint B?'
             answer: "2"
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1 (rewrite with a common part): Paint A is 4 to 5, and multiplying both parts by 8 gives 32 scoops per 40 cups. Paint B is 6 to 8, and multiplying both parts by 5 gives 30 scoops per 40 cups. Step 2 (compare): subtract the smaller amount from the larger amount, 32 minus 30, which is 2. The positive difference in pigment scoops is 2."
+            solution_sketch: 'Multiply $4:5$ by $8$ to get $32:40$, so Paint A uses $32$ scoops for $40$ cups; multiply $6:8$ by $5$ to get $30:40$, so Paint B uses $30$ scoops. Paint A uses $32-30=2$ more scoops.'
+          - problem: 'Shop A sells $3$ kg of apples for €$4.50$. Shop B sells $5$ kg for €$7.00$. How much less does Shop B charge than Shop A for $15$ kg, in euros?'
+            answer: "1.5"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'For $15$ kg, Shop A charges $5\times4.50=22.50$ euros and Shop B charges $3\times7.00=21$ euros. Shop B charges $22.50-21=1.50$ euros less, that is €$1.5$.'
+          - problem: 'Recipe A uses $2$ cups of sugar for $5$ cups of flour. Recipe B uses $3$ cups of sugar for $8$ cups of flour. With $40$ cups of flour, how many cups of sugar does the sweeter recipe use?'
+            answer: "16"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Scale both to $40$ cups of flour: A becomes $16:40$ and B becomes $15:40$. Recipe A is sweeter and uses $16$ cups of sugar.'
         constraints: "compare after rewriting with a common part"
     diagnostic_exemplar:
       problem: 'Which mix is stronger: $3$ scoops of cocoa per $4$ cups of milk, or $4$ scoops per $6$ cups?'
@@ -2472,6 +2692,20 @@ topics:
       - id: kp1
         name: Computing a unit rate
         key_prerequisites: [understanding-ratios]
+        try_first:
+          problem: 'A tap fills a $20$ litre bucket in $4$ minutes at a steady rate. How many litres does it pour in one minute?'
+          answer_contract: {"kind":"exact"}
+          answer: '5'
+          reveal: 'The $20$ litres are shared equally among the $4$ minutes, so each minute brings $20\div4=5$ litres. An amount for one unit of the other quantity is called a unit rate.'
+        step_check:
+          step: 'Divide total distance by total time: 372 ÷ 6.'
+          question: 'Why is the speed found by dividing $372$ by $6$?'
+          options:
+            - 'The larger number is always divided by the smaller one'
+            - 'Dividing by $6$ turns the hours into minutes'
+            - 'The distance is shared equally among the $6$ hours'
+          answer: 'The distance is shared equally among the $6$ hours'
+          why: 'Speed in km per hour is the distance covered in one hour, so the total distance is split into $6$ equal hourly parts.'
         exemplars:
           - problem: 'A car travels $240$ km in $4$ hours. What is its speed in km per hour?'
             answer: "60"
@@ -2493,19 +2727,28 @@ topics:
       - id: kp2
         name: Unit prices and better buys
         key_prerequisites: [decimal-operations]
+        step_check:
+          step: 'Convert €4.80 to cents: 480 cents.'
+          question: 'Why convert €$4.80$ to $480$ cents before dividing?'
+          options:
+            - 'The answer is wanted in cents, and $480$ divides evenly by $8$'
+            - 'A price in euros cannot be divided by a whole number'
+            - 'Converting to cents makes each pen cost more'
+          answer: 'The answer is wanted in cents, and $480$ divides evenly by $8$'
+          why: 'Working in cents gives the unit price in the unit asked for; $4.80\div8=0.60$ euros is the same price, so converting changes only the unit.'
         exemplars:
-          - problem: "Jar A holds 300 g and costs 3.60 euros. Jar B holds 400 g and costs 4.00 euros. Determine the better buy by cost per 100 g. Give the answer as verdict = the label of the better jar; price = the cost per 100 g of the better buy in cents."
-            answer: "verdict = B; price = 100"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["A"], ["B"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "price"}]}
-            solution_sketch: "Step 1 (unit price for A): 3.60 divided by 3 gives 1.20 euros per 100 g, which is 120 cents. Step 2 (unit price for B): 4.00 divided by 4 gives 1.00 euro per 100 g, which is 100 cents. Step 3 (compare): the wrong option A has the higher cost of 120 cents, so it is not the better buy; B is cheaper, so verdict = B; price = 100."
-          - problem: 'Six eggs cost €2.40. What is the cost per egg in cents?'
+          - problem: 'Jar A holds $300$ g of honey and costs €$3.60$. Jar B holds $400$ g and costs €$4.00$. Which jar is the better buy?'
+            answer: "jar b"
+            answer_contract: {"kind":"label","options":[["jar b","b","jar b is the better buy","b is the better buy","jar b is better"],["jar a","a","jar a is the better buy","a is the better buy","jar a is better"]]}
+            solution_sketch: 'Per $100$ g, jar A costs $3.60\div3=1.20$ euros and jar B costs $4.00\div4=1.00$ euro. Jar B costs less for the same amount, so jar B is the better buy.'
+          - problem: 'Six eggs cost €$2.40$. What is the cost per egg in cents?'
             answer: "40"
             answer_contract: {"kind":"exact"}
             solution_sketch: '$2.40 \div 6 = 0.4$ euros, which is $40$ cents.'
-          - problem: "Bag A holds 250 g and costs 2.00 euros. Bag B holds 500 g and costs 4.50 euros. Determine the better buy by cost per 100 g. Give the answer as verdict = the label of the better bag; price = the cost per 100 g of the better buy in cents."
-            answer: "verdict = A; price = 80"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["A"], ["B"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "price"}]}
-            solution_sketch: "Step 1 (unit price for A): 2.00 divided by 2.5 gives 0.80 euros per 100 g, which is 80 cents. Step 2 (unit price for B): 4.50 divided by 5 gives 0.90 euros per 100 g, which is 90 cents. Step 3 (compare): the wrong option B has the higher cost of 90 cents, so it is not the better buy; A is cheaper, so verdict = A; price = 80."
+          - problem: 'Bag A holds $250$ g of rice and costs €$2.00$. Bag B holds $500$ g and costs €$4.50$. Which bag is the better buy?'
+            answer: "bag a"
+            answer_contract: {"kind":"label","options":[["bag a","a","bag a is the better buy","a is the better buy","bag a is better"],["bag b","b","bag b is the better buy","b is the better buy","bag b is better"]]}
+            solution_sketch: 'Two bags A hold $500$ g and cost $2\times2.00=4.00$ euros, while bag B costs $4.50$ euros for the same $500$ g. Bag A is cheaper per gram, so bag A is the better buy.'
           - problem: 'Four notebooks cost €5.00. What is the cost per notebook in cents?'
             answer: "125"
             answer_contract: {"kind":"exact"}
@@ -2522,6 +2765,15 @@ topics:
       - id: kp3
         name: Using a rate to scale up
         key_prerequisites: [understanding-ratios]
+        step_check:
+          step: 'Multiply the rate by the number of hours: 24 × 9.'
+          question: 'Why is the total found by multiplying $24$ by $9$?'
+          options:
+            - 'Each of the $9$ hours adds another $24$ pages'
+            - 'Multiplying the two numbers given always gives a total'
+            - 'Each extra hour adds one page, so the rate grows'
+          answer: 'Each of the $9$ hours adds another $24$ pages'
+          why: 'A rate of $24$ pages per hour means $9$ hours hold $9$ equal groups of $24$ pages, and the total of equal groups is a product.'
         exemplars:
           - problem: 'At $55$ km per hour, how far do you travel in $3$ hours?'
             answer: "165"
@@ -2535,10 +2787,10 @@ topics:
             answer: "288"
             answer_contract: {"kind":"exact"}
             solution_sketch: 'Four equal hourly groups contain $72\times4=288$ boxes.'
-          - problem: 'A table lists $45$ words per minute. Complete the total-word entry for $8$ minutes.'
+          - problem: 'A pump moves $45$ litres of water per minute. How many litres does it move in $8$ minutes?'
             answer: "360"
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'Multiply the per-minute rate by the duration: $45\times8=360$ words.'
+            solution_sketch: 'Each of the $8$ minutes moves another $45$ litres. So the pump moves $45\times8=360$ litres.'
         constraints: "rate times whole-number quantity"
     diagnostic_exemplar:
       problem: 'A $500$ g pack of muesli costs €4.00 and a $750$ g pack costs €5.25. Which is the better buy (lower cost per $100$ g)?'
@@ -2570,6 +2822,15 @@ topics:
       - id: kp1
         name: Solving a proportion
         key_prerequisites: [multiplying-fractions]
+        step_check:
+          step: 'The denominator scales from $4$ to $8$ by a factor of $2$.'
+          question: 'Why must the numerator $7$ also be multiplied by $2$?'
+          options:
+            - 'The numerator must grow by $4$, as the denominator did'
+            - 'Equal fractions multiply top and bottom by the same number'
+            - 'The numerator is always half of the denominator'
+          answer: 'Equal fractions multiply top and bottom by the same number'
+          why: 'Multiplying the top and bottom of $7/4$ by $2$ gives the same value $14/8$; adding $4$ to each part would give $11/8$, a different number.'
         exemplars:
           - problem: 'Solve for $x$: $\frac{3}{4} = \frac{x}{12}$.'
             answer: "9"
@@ -2577,16 +2838,27 @@ topics:
           - problem: 'Solve for $x$: $\frac{2}{5} = \frac{6}{x}$.'
             answer: "15"
             solution_sketch: 'Cross-multiply: $2x = 30$, so $x = 15$.'
-          - problem: 'Two ratios are equal: $5:6=x:18$. Use the scale factor between corresponding second parts to find $x$.'
-            answer: "15"
-            solution_sketch: '$18\div6=3$, so $x=5\times3=15$.'
-          - problem: 'Solve $4/9=20/x$ by cross-multiplication.'
+          - problem: 'Solve for $x$: $5:6 = x:24$.'
+            answer: "20"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The second parts scale by $24\div6=4$. So $x=5\times4=20$.'
+          - problem: 'Solve for $x$: $\frac{4}{9} = \frac{20}{x}$.'
             answer: "45"
-            solution_sketch: '$4x=9\times20=180$, so $x=180/4=45$.'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Cross-multiply: $4x=9\times20=180$. So $x=180/4=45$.'
         constraints: "one unknown; whole-number solution"
       - id: kp2
         name: Proportion word problems
         key_prerequisites: [unit-rates]
+        step_check:
+          step: 'Divide to find the unit price: $21 \div 7=3$ euros per ticket.'
+          question: 'Why find the price of one ticket first?'
+          options:
+            - 'Then any number of tickets costs that price times the count'
+            - 'Five more tickets then cost five more euros'
+            - 'Dividing the two given numbers always gives the answer'
+          answer: 'Then any number of tickets costs that price times the count'
+          why: 'At a fixed rate the cost is the unit price times the number of tickets; each extra ticket adds €$3$, not €$1$.'
         exemplars:
           - problem: 'If $3$ pens cost €6, how much do $5$ pens cost?'
             answer: "10"
@@ -2594,16 +2866,27 @@ topics:
           - problem: 'A recipe uses $8$ cups of rice for $4$ people. How many cups are needed for $12$ people?'
             answer: "24"
             solution_sketch: 'The rate is $8\div4=2$ cups per person; $12\times2=24$ cups.'
-          - problem: 'A machine fills $4$ trays with $12$ portions. At the same whole-number rate, how many portions fill $6$ trays?'
+          - problem: 'Four trays hold $12$ portions. At the same rate, how many portions fill $6$ trays?'
             answer: "18"
-            solution_sketch: '$12\div4=3$ portions per tray; $6\times3=18$ portions.'
-          - problem: 'A distance table pairs $3$ hours with $18$ km. At the same rate, complete the distance for $9$ hours.'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Each tray holds $12\div4=3$ portions. So $6$ trays hold $6\times3=18$ portions.'
+          - problem: 'A cyclist rides $18$ km in $3$ hours. At the same speed, how many km does she ride in $9$ hours?'
             answer: "54"
-            solution_sketch: 'The rate is $18\div3=6$ km per hour, so $9\times6=54$ km.'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Her speed is $18\div3=6$ km per hour. In $9$ hours she rides $9\times6=54$ km.'
         constraints: "whole-number rates and answers"
       - id: kp3
         name: Scale and indirect measurement
         key_prerequisites: [understanding-ratios]
+        step_check:
+          step: 'The drawn length scales by $10 \div 2=5$.'
+          question: 'Why does the real length scale by the same factor $5$?'
+          options:
+            - 'The real length grows by $8$ cm, like the drawn length'
+            - '$500$ is a multiple of $5$'
+            - 'Drawn and real lengths stay in the ratio $2:500$'
+          answer: 'Drawn and real lengths stay in the ratio $2:500$'
+          why: 'A scale drawing keeps one fixed ratio between drawn and real lengths, so multiplying the drawn length by $5$ multiplies the real length by $5$.'
         exemplars:
           - problem: 'A model car is built at a $1:24$ scale. The model is $7$ cm long. How long is the real car in cm?'
             answer: "168"
