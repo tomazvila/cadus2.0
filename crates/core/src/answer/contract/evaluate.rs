@@ -99,6 +99,20 @@ fn unbraced(text: &str) -> &str {
 }
 
 fn grade(expected: &Canon, text: &str, learner: &str, contract: &AnswerContract) -> Outcome {
+    let strict = grade_strict(expected, text, learner, contract);
+    // The `exact` contract also reads a percent key against its bare number and
+    // a number key against the same number with a unit named. A unit-required
+    // or form-required contract keeps its strict verdict (checker spec 8.6).
+    if !matches!(contract, AnswerContract::Exact) {
+        return strict;
+    }
+    crate::answer::natural::rescue(text, learner, strict, |text, learner| {
+        check_contract(text, learner, AnswerContract::Exact)
+    })
+    .unwrap_or(strict)
+}
+
+fn grade_strict(expected: &Canon, text: &str, learner: &str, contract: &AnswerContract) -> Outcome {
     if let Err(reason) = bounded(learner) {
         return Outcome::Undecidable(reason);
     }

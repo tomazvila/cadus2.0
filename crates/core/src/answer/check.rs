@@ -30,6 +30,11 @@
 //!    `notation = true` (ruling `D6-dec`). A rounding this build cannot decide
 //!    exactly is [`Outcome::Undecidable`] (V2).
 //! 6. Otherwise: `correct = false`.
+//! 7. When rungs 2 to 6 give no "correct": a percent key (`65%`) takes the bare
+//!    percent number (`65`, `65 percent`), and a plain number key takes the
+//!    same number with a unit or currency named (`8 ft`, `€18`, `165 km`). The
+//!    rewrite is graded by rungs 2 to 6 again, so the number is still exact
+//!    (`super::natural`, checker spec section 8.6).
 //!
 //! # Where 2.0 leaves 1.0
 //!
@@ -105,7 +110,16 @@ impl Outcome {
 /// deterministically becomes [`Outcome::Undecidable`].
 #[must_use]
 pub fn check(expected: &str, learner: &str, kind: AnswerKind) -> Outcome {
-    decide(expected, learner, kind).0
+    let strict = decide(expected, learner, kind).0;
+    // Rung 7: a percent key against its bare number, and a number key against
+    // the same number with a unit named (`super::natural`).
+    if !matches!(kind, AnswerKind::Numeric | AnswerKind::Expression) {
+        return strict;
+    }
+    super::natural::rescue(expected, learner, strict, |expected, learner| {
+        decide(expected, learner, kind).0
+    })
+    .unwrap_or(strict)
 }
 
 /// The learner-facing note of a correct answer that carries the `notation` tag.

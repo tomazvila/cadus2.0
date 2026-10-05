@@ -235,8 +235,11 @@ fn a_unit_on_one_side_alone_gives_no_verdict() {
     assert_undecidable("$5", "5", N, "a unit is missing");
     assert_undecidable("5 cm", "5x", E, "a unit is missing");
     assert_undecidable("d = 5 cm", "5", N, "a unit is missing");
-    assert_undecidable("5", "5 cm", N, "a unit on the learner side only");
-    assert_undecidable("30", "30°", N, "a unit on the learner side only");
+    // A unit on the learner side only names the unit the question asked in:
+    // the number decides (checker spec 8.6), and a wrong number stays wrong.
+    assert_eq!(check("5", "5 cm", N), decided(true, false));
+    assert_eq!(check("30", "30°", N), decided(true, false));
+    assert_eq!(check("5", "6 cm", N), decided(false, false));
     // A glued one-letter unit is the product, so `5m` for `5 m` has no unit.
     assert_undecidable("5 m", "5m", N, "a unit is missing");
     // A unit inside an expression leaves the grammar (V2).

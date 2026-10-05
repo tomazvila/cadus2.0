@@ -41,7 +41,7 @@ use super::lexer::{Tok, Token, lex};
 use super::normalize::MAX_ANSWER_CHARS;
 
 /// The functions the grammar knows (spec section 8.1, production `fn`).
-const FUNCTIONS: [&str; 17] = [
+pub(crate) const FUNCTIONS: [&str; 17] = [
     "sqrt", "sin", "cos", "tan", "sec", "csc", "cot", "asin", "acos", "atan", "sinh", "cosh",
     "tanh", "exp", "ln", "log", "abs",
 ];

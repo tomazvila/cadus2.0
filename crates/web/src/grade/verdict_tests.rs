@@ -93,13 +93,13 @@ fn the_unit_guidance_reads_the_authored_spelling() {
 /// expression tells them where a unit may stand.
 #[test]
 fn the_other_unit_refusals_teach_their_own_form() {
+    // A unit named beside a bare-number key is read as the number (checker
+    // spec 8.6): the value decides, with no refusal.
     let grade = deterministic_grade("13.5", "13.5 cm", AnswerKind::Numeric);
-    assert_eq!(
-        grade.outcome.reason(),
-        Some(
-            "The expected answer here is a bare number, so enter the value alone, without a unit."
-        )
-    );
+    assert!(grade.correct);
+    let grade = deterministic_grade("13.5", "14.5 cm", AnswerKind::Numeric);
+    assert!(!grade.correct);
+    assert_eq!(grade.outcome.reason(), None);
     let grade = deterministic_grade("30°", "sin(30°)", AnswerKind::Expression);
     assert_eq!(
         grade.outcome.reason(),
@@ -139,7 +139,11 @@ fn the_trailing_text_refusal_keeps_its_two_guidances() {
 /// ruling, and C4 keeps the checker from inventing a reading for prose.
 #[test]
 fn a_word_beside_the_value_teaches_the_format() {
+    // A trailing unit word beside the value is read as the number (checker
+    // spec 8.6); a word that is not a unit, inside the answer, still teaches.
     let grade = deterministic_grade("6/5", "6/5 units", AnswerKind::Numeric);
+    assert!(grade.correct);
+    let grade = deterministic_grade("6/5", "6/5 units long", AnswerKind::Numeric);
     assert!(matches!(grade.outcome, AttemptOutcome::Ungraded { .. }));
     assert_eq!(
         grade.outcome.reason(),

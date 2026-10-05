@@ -35,6 +35,7 @@ pub mod check;
 pub mod contract;
 pub mod evalf;
 pub mod lexer;
+mod natural;
 pub mod normalize;
 pub mod parse;
 pub mod rounding;

@@ -998,6 +998,35 @@ a property contract as its member.
 
 ---
 
+### 8.6 Natural readings: a percent number and a named unit (2026-10-05)
+
+Two learner habits gave a decided miss, or no verdict, to a correct value. Both are a
+question of reading. `crates/core/src/answer/natural.rs` adds one rewrite that runs only
+after the strict verdict is not "correct", for the contract-free check and the `exact`
+contract. Every other contract, `unit` and `required_form` included, keeps its strict
+verdict.
+
+| Authored answer | Learner | Rewrite | Example |
+|---|---|---|---|
+| a percent literal (`65%`) | the percent's number, with or without `percent` / `per cent` | grade the learner number against the key's number | `65`, `65 percent` correct; `66`, `6.5` wrong |
+| a plain number (`18`, `4/9`) | the number with one currency mark (`€ $ £ °`, before or after) and/or one trailing unit word | grade the number alone | `€18`, `18 euros`, `4/9 m`, `165 km`, `8 ft` correct; `€19`, `16.5 km` wrong |
+
+A unit word is a word of the unit table, a listed unit or currency word, or any
+alphabetic word of two letters or more that is not a function, constant or variable of
+the grammar. A single letter counts only through the lists, so `21 x` keeps its strict
+reading. The rewrite must leave a plain number: `2 x 4 cm` is graded as `8`, and a
+rewrite that leaves an expression, a pair or unreadable text keeps the strict outcome. A
+`$...$` pair is a math delimiter and is never stripped. The rewrite never turns a wrong
+number right: the number is compared by the strict rule. The verdict carries no
+`notation` tag, because that tag names the period-grouping and rounding readings only.
+
+Pinned changes: `answer_unit.rs` (`5` against `5 cm` and `30` against `30°` now grade
+correct; they were "a unit on the learner side only"), `crates/web/src/grade/verdict_tests.rs`
+(`13.5 cm` for `13.5` and `6/5 units` for `6/5` now correct) and `crates/web/tests/grade_route.rs`
+(the ISSUE-13 refusal now uses `6/5 units long`). The 1.0 oracle pair counts do not move.
+
+---
+
 ## 9. A proposed fuzz oracle (V3)
 
 ### 9.1 The exact call

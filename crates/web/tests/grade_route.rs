@@ -220,9 +220,10 @@ async fn a_unitless_answer_to_a_measured_problem_teaches_the_format() {
     .await;
 }
 
-/// ISSUE-13 (ISSUES.md): a correct value followed by a word (`units`) is
-/// UNGRADED with learner-facing copy that names the form to type, never the
-/// grammar's wording, and it reveals no solution (D-F2).
+/// ISSUE-13 (ISSUES.md): a correct value followed by words the checker cannot
+/// read is UNGRADED with learner-facing copy that names the form to type, never
+/// the grammar's wording, and it reveals no solution (D-F2). A single trailing
+/// unit word (`6/5 units`) is read as the number (checker spec 8.6).
 #[tokio::test]
 async fn a_word_beside_the_value_teaches_the_format() {
     TestDb::with(|db| async move {
@@ -231,7 +232,7 @@ async fn a_word_beside_the_value_teaches_the_format() {
         live.expected.answer = "6/5".to_string();
         let user = lesson_learner(&db, "name-refusal@example.com", live).await;
 
-        let body = answer_lesson_ok(&app, user, "6/5 units").await;
+        let body = answer_lesson_ok(&app, user, "6/5 units long").await;
         assert_eq!(body["outcome"], "ungraded");
         assert_eq!(body.get("correct"), None);
         assert_eq!(
