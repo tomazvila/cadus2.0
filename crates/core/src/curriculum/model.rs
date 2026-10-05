@@ -255,9 +255,32 @@ pub struct KnowledgePoint {
     /// with no visual.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub visuals: Vec<crate::visual::VisualSpec>,
+    /// A self-explanation question on one step of the teach page's worked
+    /// example (NEW IN 2.0, [`super::active`]). Absent from the canonical dump.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub step_check: Option<super::active::StepCheck>,
+    /// A motivating problem attempted before the worked example (NEW IN 2.0,
+    /// [`super::active`]). Absent from the canonical dump.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub try_first: Option<super::active::TryFirst>,
 }
 
 impl KnowledgePoint {
+    /// Validate the optional active-example blocks (`step_check`, `try_first`).
+    pub fn validate_active_example(&self) -> Result<(), String> {
+        if let Some(check) = &self.step_check {
+            check.validate()?;
+        }
+        if let Some(first) = &self.try_first {
+            first.validate(
+                self.exemplars
+                    .iter()
+                    .map(|exemplar| exemplar.problem.as_str()),
+            )?;
+        }
+        Ok(())
+    }
+
     /// Validate a finite policy and bind every canonical exemplar to one case.
     pub fn validate_finite_objective_domain(&self) -> Result<(), String> {
         let Some(policy) = &self.finite_objective_domain else {

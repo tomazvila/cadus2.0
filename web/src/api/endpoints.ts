@@ -40,6 +40,7 @@ import type {
   StatusResponse,
   TaskAnswerResponse,
   QuizResultResponse,
+  TeachCheckResponse,
   TeachResponse,
   UngradedListResponse,
 } from './types';
@@ -119,6 +120,8 @@ export const api: ApiClient = {
     request<ProblemReportReceipt>('GET', `/reports/${seg(reportId)}`, undefined, signal),
   taskServe: (taskId) => request<ServedProblem>('POST', `/task/${seg(taskId)}/serve`, {}),
   taskTeach: (taskId) => request<TeachResponse>('POST', `/task/${seg(taskId)}/teach`, {}),
+  taskTeachCheck: (taskId, body) =>
+    request<TeachCheckResponse>('POST', `/task/${seg(taskId)}/teach/check`, body),
   taskHint: (taskId, problemId) =>
     request<HintResponse>('POST', `/task/${seg(taskId)}/hint`, { problem_id: problemId }),
   // A WHITELIST, not a passthrough. An absent `work` or `assisted` is OMITTED, never sent

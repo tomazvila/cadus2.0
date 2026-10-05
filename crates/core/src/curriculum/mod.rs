@@ -4,6 +4,7 @@
 //! The authority is `docs/reference/curriculum-1.0-spec.md`. Persisted ids are
 //! strings here; the arena interns them to indices (D2).
 
+pub mod active;
 pub mod arena;
 pub mod dump;
 pub mod finding;
@@ -13,6 +14,7 @@ pub mod lint;
 pub mod load;
 pub mod model;
 
+pub use active::{StepCheck, StepRef, TryFirst};
 pub use arena::{
     Curriculum, CurriculumError, EncLink, EncNode, KpIdx, LoadError, TopicIdx, load_curriculum,
 };

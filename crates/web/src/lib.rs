@@ -234,6 +234,7 @@ pub fn create_app(state: AppState) -> Router {
         // Unit U7, spec section 11. The same rule: before the three layers.
         .route("/api/task/{task_id}/serve", post(serve::serve))
         .route("/api/task/{task_id}/teach", post(serve::teach))
+        .route("/api/task/{task_id}/teach/check", post(serve::teach_check))
         .route("/api/task/{task_id}/hint", post(serve::hint))
         // Unit U8, spec section 11. The same rule: before the three layers.
         .route("/api/task/{task_id}/answer", post(grade::answer))

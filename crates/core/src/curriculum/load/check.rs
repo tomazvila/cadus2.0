@@ -345,7 +345,7 @@ impl<'a> Checker<'a> {
     }
 
     fn check_knowledge_point(&mut self, value: &Value) {
-        const FIELDS: [&str; 7] = [
+        const FIELDS: [&str; 9] = [
             "visuals",
             "id",
             "name",
@@ -353,6 +353,8 @@ impl<'a> Checker<'a> {
             "exemplars",
             "constraints",
             "finite_objective_domain",
+            "step_check",
+            "try_first",
         ];
         let Some(map) = self.struct_map(value, "KnowledgePoint") else {
             return;
@@ -383,10 +385,23 @@ impl<'a> Checker<'a> {
                 Err(reason) => checker.report(&reason.to_string()),
             }
         });
-        if let Ok(point) = crate::curriculum::KnowledgePoint::deserialize(value.clone())
-            && let Err(reason) = point.validate_finite_objective_domain()
-        {
-            self.report(&reason);
+        self.field(map, "step_check", false, |checker, value| {
+            if let Err(reason) = crate::curriculum::StepCheck::deserialize(value.clone()) {
+                checker.report(&reason.to_string());
+            }
+        });
+        self.field(map, "try_first", false, |checker, value| {
+            if let Err(reason) = crate::curriculum::TryFirst::deserialize(value.clone()) {
+                checker.report(&reason.to_string());
+            }
+        });
+        if let Ok(point) = crate::curriculum::KnowledgePoint::deserialize(value.clone()) {
+            if let Err(reason) = point.validate_finite_objective_domain() {
+                self.report(&reason);
+            }
+            if let Err(reason) = point.validate_active_example() {
+                self.report(&reason);
+            }
         }
         self.extras(map, &FIELDS);
     }
@@ -459,3 +474,6 @@ mod tests {
 
 #[cfg(test)]
 mod finite_tests;
+
+#[cfg(test)]
+mod active_tests;

@@ -29,6 +29,8 @@ fn kp(id: &str, count: usize) -> KnowledgePoint {
             .collect(),
         constraints: None,
         finite_objective_domain: None,
+        step_check: None,
+        try_first: None,
         visuals: Vec::new(),
     }
 }

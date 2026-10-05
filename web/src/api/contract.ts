@@ -32,6 +32,8 @@ import type {
   SessionStartResponse,
   TaskAnswerResponse,
   QuizResultResponse,
+  TeachCheckRequest,
+  TeachCheckResponse,
   TeachResponse,
 } from './types-study';
 import type {
@@ -103,6 +105,7 @@ export interface ApiClient {
   taskServe(taskId: string): Promise<ServedProblem>;
   taskQuizResult(taskId: string, practice?: boolean): Promise<QuizResultResponse>;
   taskTeach(taskId: string): Promise<TeachResponse>;
+  taskTeachCheck(taskId: string, body: TeachCheckRequest): Promise<TeachCheckResponse>;
   taskHint(taskId: string, problemId: string): Promise<HintResponse>;
   taskAnswer(
     taskId: string,
@@ -208,6 +211,7 @@ export const ROUTES: readonly RouteRow[] = [
 
   { method: 'POST', path: '/api/task/{task_id}/serve', auth: 'S', via: 'method', client: 'taskServe' },
   { method: 'POST', path: '/api/task/{task_id}/teach', auth: 'S', via: 'method', client: 'taskTeach' },
+  { method: 'POST', path: '/api/task/{task_id}/teach/check', auth: 'S', via: 'method', client: 'taskTeachCheck' },
   { method: 'POST', path: '/api/task/{task_id}/hint', auth: 'S', via: 'method', client: 'taskHint' },
   { method: 'POST', path: '/api/task/{task_id}/answer', auth: 'S', via: 'method', client: 'taskAnswer' },
   { method: 'POST', path: '/api/task/{task_id}/report', auth: 'S', via: 'method', client: 'taskReport' },

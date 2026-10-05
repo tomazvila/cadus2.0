@@ -126,11 +126,11 @@ use draw::*;
 pub use hint::hint;
 pub(crate) use payload::progress_for;
 use payload::*;
-pub(crate) use route::{install_next, record_first_serve};
 pub use route::serve;
+pub(crate) use route::{install_next, record_first_serve};
 pub(crate) use session_tasks::restore_session_tasks;
 use target::*;
-pub use teach::teach;
+pub use teach::{teach, teach_check};
 
 /// The code of a task id that is not in this session's plan.
 pub const UNKNOWN_TASK: &str = "unknown_task";
@@ -143,6 +143,9 @@ pub const QUIZ_EXHAUSTED: &str = "quiz_exhausted";
 
 /// The code of a teach request that has no worked example to give.
 pub const NO_INSTRUCTION: &str = "no_instruction";
+
+/// The code of a teach check on a knowledge point with no such active example.
+pub const NO_ACTIVE_EXAMPLE: &str = "no_active_example";
 
 /// The code of a hint request inside a quiz (`api.py:1813`).
 pub const NO_HINTS_IN_QUIZ: &str = "no_hints_in_quiz";

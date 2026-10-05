@@ -187,8 +187,34 @@ export interface ServedProblem {
 export interface TeachResponse {
   kp: string;
   concept: string;
-  worked_example: { problem: string; steps: string };
+  /** The service sends one entry per step; an older page may send one string. */
+  worked_example: { problem: string; steps: string | string[] };
+  /**
+   * A self-explanation question on one step (step 5a). `step` is 1-based. The payload
+   * carries the options and never the correct one (Hard Rule 1): the pick goes to
+   * `taskTeachCheck`, which returns the verdict and `why`.
+   */
+  step_check?: { step: number; question: string; options: string[] };
+  /**
+   * A motivating problem attempted BEFORE the worked example (step 5a). No answer and no
+   * reveal here: both arrive from `taskTeachCheck` after the attempt. `choices` follows the
+   * `ServedProblem` rule.
+   */
+  try_first?: { problem: string; choices?: string[] };
 }
+
+/** The body of `POST /api/task/{task_id}/teach/check`. */
+export type TeachCheckRequest =
+  | { part: 'step_check'; choice: string }
+  | { part: 'try_first'; answer: string };
+
+/**
+ * The reply of `POST /api/task/{task_id}/teach/check`. The service writes nothing for it:
+ * no event, no XP, no mastery, no scheduling.
+ */
+export type TeachCheckResponse =
+  | { part: 'step_check'; correct: boolean; answer: string; why: string }
+  | { part: 'try_first'; outcome: AttemptOutcome; correct: boolean; answer: string; reveal: string };
 
 /** `POST /api/task/{task_id}/hint` — one rung of the authored ladder (L5). */
 export interface HintResponse {

@@ -343,6 +343,12 @@ export function createDemoApi(): ApiClient {
       });
     },
 
+    // The demo page authors no active example, so every check is refused as the service does.
+    taskTeachCheck: async (taskId) => {
+      if (taskId !== DEMO_TASK_ID) refuse(404, 'unknown_task', 'The demo plans one task.');
+      return refuse(409, 'no_active_example', "This lesson's knowledge point has no such active example.");
+    },
+
     // A hint never contains the expected answer (Hard Rule 1).
     taskHint: async (taskId, problemId) => {
       if (taskId !== DEMO_TASK_ID) refuse(404, 'unknown_task', 'The demo plans one task.');

@@ -45,6 +45,8 @@ pub fn kp(id: &str, exemplars: Vec<Exemplar>) -> KnowledgePoint {
         exemplars,
         constraints: None,
         finite_objective_domain: None,
+        step_check: None,
+        try_first: None,
         visuals: Vec::new(),
     }
 }

@@ -23,8 +23,9 @@ describe('the demo client', () => {
     // `/api/task/{task_id}/integrated*` rows landed (D-F10), 41 until the
     // `/api/report/retention` row landed (D-F11), 42 until the integrated
     // instruction row completed the A4.1 journey; the two question-report routes brought it
-    // to 45, and the equivalence and proof-grading polls (Amendment K) bring it to 47.
-    expect(named.length).toBe(47);
+    // to 45, the equivalence and proof-grading polls (Amendment K) brought it to 47, and
+    // the active worked-example check (step 5a) brings it to 48.
+    expect(named.length).toBe(48);
     for (const member of named) {
       expect(typeof demo[member], `the demo lacks ${member}`).toBe('function');
     }

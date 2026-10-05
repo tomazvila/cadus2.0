@@ -1768,6 +1768,15 @@ topics:
       - id: kp1
         name: Rules for 2, 5, and 10
         key_prerequisites: [factors-and-multiples]
+        step_check:
+          step: 'Test $530$'
+          question: 'Step 3 says both $2$ and $5$ divide $530$. Which fact justifies that?'
+          options:
+            - 'Its ones digit is $0$, which is even and is also $0$ or $5$'
+            - 'Its digit sum $5+3+0=8$ is even'
+            - 'Its first digit is $5$'
+          answer: 'Its ones digit is $0$, which is even and is also $0$ or $5$'
+          why: 'Tests for $2$, $5$ and $10$ read only the ones digit, because every other place value is a multiple of $10$; digit sums are the test for $3$ and $9$.'
         exemplars:
           - problem: "A 3-digit number has hundreds digit 6 and tens digit 3. Its units digit is not known. The number is divisible by 5. Find the greatest possible value of its units digit."
             answer: "5"
@@ -1797,6 +1806,20 @@ topics:
       - id: kp2
         name: Rules for 3 and 9 (digit sums)
         key_prerequisites: [factors-and-multiples]
+        try_first:
+          problem: 'Without dividing, decide: is $111{,}111$ divisible by $3$?'
+          answer_contract: {"kind":"label","options":[["yes"],["no"]]}
+          answer: 'yes'
+          reveal: 'Its digit sum is $6$, a multiple of $3$, so yes: $111{,}111=3\times37{,}037$. Each place value is one more than a multiple of $3$ ($10=9+1$, $100=99+1$), so only the digit sum decides.'
+        step_check:
+          step: 'Add the digits of 633'
+          question: 'Why may we test the digit sum $12$ instead of $633$ itself?'
+          options:
+            - '$633$ and $6+3+3$ leave the same remainder when divided by $3$'
+            - 'The ones digit is $3$, so $633$ is a multiple of $3$'
+            - 'The first digit $6$ is a multiple of $3$'
+          answer: '$633$ and $6+3+3$ leave the same remainder when divided by $3$'
+          why: '$633=6\cdot100+3\cdot10+3$, and $100=99+1$ and $10=9+1$, so $633$ and its digit sum differ by a multiple of $3$; a ones digit of $3$ proves nothing, since $13$ is not a multiple of $3$.'
         exemplars:
           - problem: "Consider the three-digit number 273. Select the one statement that fits it."
             answer: "only 3"
@@ -1826,6 +1849,15 @@ topics:
       - id: kp3
         name: Rules for 4 and 6
         key_prerequisites: [factors-and-multiples]
+        step_check:
+          step: 'Look at the last two digits of 736'
+          question: 'Why is it enough to test only $36$ for divisibility by $4$?'
+          options:
+            - '$700$ is a multiple of $4$, so only the $36$ left over matters'
+            - 'Any number ending in an even digit is divisible by $4$'
+            - 'The digit sum $7+3+6=16$ is divisible by $4$'
+          answer: '$700$ is a multiple of $4$, so only the $36$ left over matters'
+          why: 'Every hundred is $4\times25$, so $736=700+36$ is a multiple of $4$ exactly when $36$ is; an even ones digit only guarantees $2$ ($26$ is even but not a multiple of $4$).'
         exemplars:
           - problem: "Consider the 3-digit number 732. State its class for divisibility by 4 and by 6."
             answer: "by both"
@@ -1883,6 +1915,20 @@ topics:
       - id: kp1
         name: Classifying numbers as prime or composite
         key_prerequisites: [factors-and-multiples]
+        try_first:
+          problem: 'You have $13$ square tiles. How many different rectangles can you make using all of them? (A $1\times13$ and a $13\times1$ rectangle count as the same.)'
+          answer_contract: {"kind":"exact"}
+          answer: '1'
+          reveal: 'Only $1\times13$ works, because $13$ has no factor pair except $1$ and itself: that is what prime means. With $12$ tiles you get $1\times12$, $2\times6$ and $3\times4$, so $12$ is composite.'
+        step_check:
+          step: '$7 \times 7=49$'
+          question: 'What does $7\times7=49$ prove about $49$?'
+          options:
+            - '$49$ is composite: it has the factor $7$ besides $1$ and $49$'
+            - '$49$ is prime, because its factor $7$ is prime'
+            - '$49$ is prime, because it is odd'
+          answer: '$49$ is composite: it has the factor $7$ besides $1$ and $49$'
+          why: 'A prime has exactly two factors, $1$ and itself; $49$ has $1$, $7$ and $49$, and neither being odd nor having a prime factor makes a number prime.'
         exemplars:
           - problem: "Determine whether 13 has exactly two factors or more than two factors, and give its number of factors."
             answer: "verdict = prime; factors = 2"
@@ -1916,6 +1962,15 @@ topics:
       - id: kp2
         name: Knowing the small primes
         key_prerequisites: [factors-and-multiples]
+        step_check:
+          step: '$7^2=49>41$'
+          question: 'Why is no divisor above $5$ needed once $7^2=49$ exceeds $41$?'
+          options:
+            - 'A factor of $7$ or more would need a partner below $7$, and those were all ruled out'
+            - 'Primes above $5$ never divide numbers below $50$'
+            - 'An odd number can only have factors below $7$'
+          answer: 'A factor of $7$ or more would need a partner below $7$, and those were all ruled out'
+          why: 'Factors of $41$ come in pairs that multiply to $41$; two factors of at least $7$ would multiply to at least $49$, so one partner would already have been tested.'
         exemplars:
           - problem: 'List all the primes between $10$ and $20$.'
             answer: "11, 13, 17, 19"
@@ -1945,6 +2000,15 @@ topics:
       - id: kp3
         name: Edge cases
         key_prerequisites: [factors-and-multiples]
+        step_check:
+          step: '$22=2\times11$'
+          question: 'Why is $22$ composite and not prime?'
+          options:
+            - 'It has more than two positive factors: $1, 2, 11, 22$'
+            - 'It is even, and every even number is composite'
+            - 'It is built from the prime $11$, so it is prime too'
+          answer: 'It has more than two positive factors: $1, 2, 11, 22$'
+          why: 'Composite means more than two positive factors; evenness is not the reason, since $2$ is even and prime.'
         exemplars:
           - problem: "The number 1 is a special case in the prime and composite system. How many positive factors does the number 1 have?"
             answer: "1"
@@ -2005,6 +2069,15 @@ topics:
       - id: kp1
         name: Factoring small numbers
         key_prerequisites: [prime-composite-numbers]
+        step_check:
+          step: 'Split the remaining factor: $9 = 3 \times 3$'
+          question: 'Why does step 2 split $9$ again but leave $3$ alone?'
+          options:
+            - '$9$ is composite and $3$ is prime'
+            - 'The larger factor is always the one to split'
+            - '$9$ is odd, and odd factors must be split'
+          answer: '$9$ is composite and $3$ is prime'
+          why: 'A prime factorization stops only when every piece is prime; $9=3\times3$ still splits, while $3$ has no factor pair to give.'
         exemplars:
           - problem: 'Write the prime factorization of $12$.'
             answer: "2 x 2 x 3"
@@ -2022,6 +2095,15 @@ topics:
       - id: kp2
         name: Factor trees for larger numbers
         key_prerequisites: [divisibility-rules]
+        step_check:
+          step: 'Collect all prime leaves'
+          question: 'Why does the answer keep $2$ twice?'
+          options:
+            - 'Every leaf counts: $2\times2\times19=76$, while $2\times19=38$'
+            - 'A repeated prime is optional; $2\times19$ is just as correct'
+            - '$2$ is the smallest prime, so it is always written twice'
+          answer: 'Every leaf counts: $2\times2\times19=76$, while $2\times19=38$'
+          why: 'Multiplying all the prime leaves must rebuild the starting number, so each repeated prime stays.'
         exemplars:
           - problem: 'Write the prime factorization of $60$.'
             answer: "2 x 2 x 3 x 5"
@@ -2039,6 +2121,15 @@ topics:
       - id: kp3
         name: Repeated prime factors
         key_prerequisites: [divisibility-rules]
+        step_check:
+          step: 'That is seven divisions by 2'
+          question: 'How many factors of $2$ belong in the answer, and why?'
+          options:
+            - 'Seven, one for each division that came out even'
+            - 'Six, because the last division $2/2=1$ does not count'
+            - 'Eight, because $128$ itself is also a factor'
+          answer: 'Seven, one for each division that came out even'
+          why: 'Each even division removes one factor of $2$, including the last one; check: $2^7=128$, while $2^6=64$.'
         exemplars:
           - problem: 'Write the prime factorization of $72$.'
             answer: "2 x 2 x 2 x 3 x 3"

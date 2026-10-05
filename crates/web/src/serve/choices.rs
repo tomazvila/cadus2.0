@@ -27,6 +27,17 @@ pub(crate) fn label_choices(
     Some(choices)
 }
 
+/// `options` in an order fixed by `seed` alone.
+///
+/// A step check's author often writes the correct option first; the shuffle
+/// keeps the position from naming it. One seed gives one order, so a reload
+/// shows the same page.
+pub(crate) fn shuffled(options: &[String], seed: &str) -> Vec<String> {
+    let mut items = options.to_vec();
+    shuffle(&mut items, seed_of(seed));
+    items
+}
+
 /// The first 8 bytes of SHA-256 of `problem_id`, as a big-endian integer.
 fn seed_of(problem_id: &str) -> u64 {
     let digest = Sha256::digest(problem_id.as_bytes());

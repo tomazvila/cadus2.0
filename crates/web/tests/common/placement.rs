@@ -53,6 +53,8 @@ pub fn topic(id: &str, prereq: Option<&str>) -> Topic {
             exemplars: Vec::new(),
             constraints: None,
             finite_objective_domain: None,
+            step_check: None,
+            try_first: None,
             visuals: Vec::new(),
         }],
         diagnostic_exemplar: Some(Exemplar {

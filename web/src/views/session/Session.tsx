@@ -453,9 +453,17 @@ export function Session({
   }
 
   if (teaching) {
+    const teachTaskId = session.task.task_id;
     return (
       <section className="view-session" aria-busy={phase === 'loading'}>
-        <Teach task={session.task} instruction={teaching} onContinue={practise} />
+        <Teach
+          // A new knowledge point is a new page: its active parts start unanswered.
+          key={`${teachTaskId}/${teaching.kp}`}
+          task={session.task}
+          instruction={teaching}
+          onContinue={practise}
+          onCheck={(body) => api.taskTeachCheck(teachTaskId, body)}
+        />
         <ProblemReport report={report} />
       </section>
     );
