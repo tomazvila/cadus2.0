@@ -27,6 +27,25 @@ pub(crate) fn block_of<'plan>(
     mixed_review_block(&plan.tasks, task_id, |id| scratch.plan_progress(id).1)
 }
 
+/// The open retention probe of `block`, once the block has served a question
+/// and the probe was not the one answered last (D-F11).
+///
+/// The probe is one question, so the most-left rule would hold it to the end
+/// of the block, where a learner who stops early never reaches it. It serves
+/// second instead: never first, so the block does not open on it, and early
+/// enough that a short session still measures it.
+fn probe_due(block: &[&Task], scratch: &WebState, last: Option<&str>) -> Option<String> {
+    let last = last?;
+    block
+        .iter()
+        .find(|task| {
+            task.probe_delay_days.is_some()
+                && task.task_id != last
+                && !scratch.plan_progress(&task.task_id).1
+        })
+        .map(|task| task.task_id.clone())
+}
+
 /// The review of `block` the rule serves next, after `last`.
 fn choose(
     session: &str,
@@ -34,6 +53,9 @@ fn choose(
     scratch: &WebState,
     last: Option<&str>,
 ) -> Option<String> {
+    if let Some(probe) = probe_due(block, scratch, last) {
+        return Some(probe);
+    }
     let slots: Vec<ReviewSlot<'_>> = block
         .iter()
         .map(|task| {
@@ -110,7 +132,15 @@ pub(crate) fn after_answer(plan: &SessionPlan, scratch: &WebState, task: &Task) 
 ///
 /// A task outside a block keeps its payload unchanged.
 pub(crate) fn stamp(payload: &mut Value, plan: &SessionPlan, scratch: &WebState, task_id: &str) {
-    let block = block_of(plan, scratch, task_id);
+    // A closed retention probe still counts in its block, so the block's total
+    // does not drop by one after its first questions (D-F11).
+    let block = mixed_review_block(&plan.tasks, task_id, |id| {
+        scratch.plan_progress(id).1
+            && !plan
+                .tasks
+                .iter()
+                .any(|task| task.task_id == id && task.probe_delay_days.is_some())
+    });
     if block.is_empty() {
         return;
     }

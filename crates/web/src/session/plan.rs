@@ -4,7 +4,7 @@
 use std::collections::BTreeSet;
 
 use cadus_core::curriculum::Curriculum;
-use cadus_core::event::Timestamp;
+use cadus_core::event::{TaskType, Timestamp};
 use cadus_core::learner::LearnerModel;
 use cadus_core::readiness::{Blocker, ReadinessSet};
 use cadus_core::selector::{
@@ -250,7 +250,9 @@ fn trim_task(task: &Task, graph: &Curriculum, scratch: &WebState) -> Value {
         "topic": topic,
         "kp": task.start_at_kp,
         "start_at_kp": task.start_at_kp,
-        "n_problems": task.n_problems,
+        // A review lists no question count, so a one-question retention probe
+        // reads like any review (D-F11).
+        "n_problems": if task.task_type == TaskType::Review { None } else { task.n_problems },
         "mix": task.mix,
         "component_topics": task.component_topics,
         "time_budget_secs": task.time_budget_secs,

@@ -92,6 +92,21 @@ describe('the mixed review block', () => {
     expect(topicName()).toBe('Review');
     expect(progressCount()).toBe('1 / 3');
   });
+
+  it('a review served with no total shows no count, so a one-question probe looks the same', async () => {
+    // The service sends no per-task total for a review (D-F11).
+    await mount({ api: stubApi({ taskServe: async () => P(1, { total: null }) }) });
+    expect(topicName()).toBe('Review');
+    expect(progressCount()).toBe('');
+  });
+
+  it('a drill served with no total still shows its question number', async () => {
+    await mount({
+      plan: planOf({ ...LESSON, task_type: 'drill' }),
+      api: stubApi({ taskServe: async () => P(2, { total: null }) }),
+    });
+    expect(progressCount()).toBe('2');
+  });
 });
 
 describe('a reload restores the last proof grading', () => {

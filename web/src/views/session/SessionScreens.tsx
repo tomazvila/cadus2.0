@@ -128,13 +128,20 @@ export function reviewTopic(task: PlanTask): string | null {
   return task.task_type === 'review' ? task.topic?.name || task.topic?.id || null : null;
 }
 
-/** The progress line of a problem: corrective practice, the mixed block, or the task count. */
-function progressOf(problem: ServedProblem): string {
+/**
+ * The progress line of a problem: corrective practice, the mixed block, or the task count.
+ *
+ * The service sends no `total` for a review: a retention probe is one question where a review
+ * is four, so a per-task count would mark the probe before the answer (D-F11). A review with
+ * no total shows the block's count, or none, and never a bare question number.
+ */
+function progressOf(task: PlanTask, problem: ServedProblem): string {
   if (problem.feedback_practice) return 'Independent practice';
   if (problem.mixed_review) {
     return `${num(problem.mixed_review.position)} / ${num(problem.mixed_review.total)}`;
   }
-  return problem.total != null ? `${num(problem.index)} / ${num(problem.total)}` : `${num(problem.index)}`;
+  if (problem.total != null) return `${num(problem.index)} / ${num(problem.total)}`;
+  return task.task_type === 'review' ? '' : `${num(problem.index)}`;
 }
 
 /**
@@ -156,7 +163,7 @@ export function ProblemHeader({ task, problem, elapsed, countdown, onExit }: Pro
         {topic?.module ? <span className="topic-module">{topic.module}</span> : null}
       </div>
       <div className="task-right">
-        <span className="progress-count">{progressOf(problem)}</span>
+        <span className="progress-count">{progressOf(task, problem)}</span>
         <span className={`timer${countdown && elapsed <= 3 ? ' urgent' : ''}`}>
           {fmtClock(elapsed)}
         </span>

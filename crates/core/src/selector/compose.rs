@@ -17,6 +17,7 @@ use super::eligible::{gate_of, hold_lessons, hold_quiz, hold_topics};
 use super::frontier::Frontier;
 use super::gap_fill::is_course_complete;
 use super::interleave::{SlotKind, arrange_lessons, assign_ids, interleave};
+use super::mixed_review::joins_mixed_review;
 use super::multistep::{multistep_components, multistep_is_due, multistep_task, remediation_tasks};
 use super::plan::{BlockedTask, SessionPlan};
 use super::quiz::{QuizSampler, quiz_composer, quiz_is_due};
@@ -202,11 +203,17 @@ impl SlotInputs<'_> {
 
 /// The index the delayed retention probe takes in the task list (D-F11).
 ///
-/// The probe opens the session, unless the session opens with a remediation
-/// task: remediation is priority 1, so it keeps the first place and the probe
-/// comes second. Either way the probe is reached after at most one task.
-fn probe_position(tasks: &[Task]) -> usize {
-    usize::from(tasks.first().is_some_and(|task| task.is_remediation))
+/// With an ordinary review in the plan, the probe stands at the head of the
+/// first run of them, so it joins that mixed review block and serves as one
+/// more question of the interleaved sequence. With none, it opens the session,
+/// unless the session opens with a remediation task: remediation is priority
+/// 1, so it keeps the first place and the probe comes second.
+#[must_use]
+pub fn probe_position(tasks: &[Task]) -> usize {
+    tasks
+        .iter()
+        .position(joins_mixed_review)
+        .unwrap_or_else(|| usize::from(tasks.first().is_some_and(|task| task.is_remediation)))
 }
 
 /// Compose the ordered session plan of PEDAGOGY 5 (`compose_session`, `selector.py:1235-1481`).
@@ -561,6 +568,11 @@ mod tests {
             1,
             "one probe per session"
         );
+        // The probe heads the first run of reviews, so it is one question of
+        // that mixed review block.
+        let block = crate::selector::mixed_review_block(&plan.tasks, &probe.task_id, |_| false);
+        assert!(block.len() >= 2, "the probe joins a block");
+        assert!(block.iter().any(|task| task.probe_delay_days.is_none()));
 
         // A one-task session still carries the probe.
         let short = SessionContext::default()

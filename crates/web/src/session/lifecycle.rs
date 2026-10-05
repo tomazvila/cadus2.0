@@ -9,7 +9,7 @@ use cadus_store::state::{clear_web_state, project_and_save};
 use serde_json::{Value, json};
 
 use super::dashboard::due_counts;
-use super::rollover::Rollover;
+use super::rollover::{Rollover, session_day};
 use super::store::{
     Ready, Reply, enrolled_event, event_slug, json_of, no_open_session, reply_committed,
     unknown_course,
@@ -114,7 +114,9 @@ pub async fn session_start(req: Ready) -> Reply {
     let session = match open {
         Some(session) => session,
         None => {
-            let session = before.view.new_session_id(req.wall);
+            // Named by the local day the rollover reads (UTC when no zone is set).
+            let day = session_day(req.now.micros(), req.content.cfg.timezone.as_deref());
+            let session = before.view.new_session_id(day);
             let event = Event::SessionStart(SessionStart {
                 ts: req.now,
                 session: Some(session.clone()),

@@ -47,7 +47,7 @@ mod trigger;
 
 pub use crate::xp::{is_inferred, is_known, is_practiced};
 
-pub use compose::compose_session;
+pub use compose::{compose_session, probe_position};
 pub use compress::{Compression, compress};
 pub use confirm::{CONFIRM_PROBLEMS, confirmations};
 pub use context::SessionContext;

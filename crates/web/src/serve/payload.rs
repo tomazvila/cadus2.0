@@ -130,10 +130,18 @@ pub(super) fn serve_payload(
         Some(total) if total > 0 => served.index.saturating_add(1).min(total),
         _ => served.index.saturating_add(1),
     };
+    // A review states no question count before the answer: a retention probe
+    // is one question where a review is four, so a per-task total would mark
+    // the probe (D-F11). A review in a mixed block reads the block's progress.
+    let total = if task.task_type == TaskType::Review {
+        None
+    } else {
+        task.n_problems
+    };
     let mut payload = json!({
         "problem_id": served.problem_id,
         "index": index,
-        "total": task.n_problems,
+        "total": total,
         "text": served.text,
         "kp": served.kp,
         "time_budget_secs": time_budget_secs,
@@ -418,13 +426,15 @@ mod tests {
         let mut problem = served(Some("addition"));
         problem.index = 1;
         let payload = serve_payload(&problem, &review, &graph(), 45, None);
-        assert_eq!(payload["total"], 1);
+        // A review states no total (D-F11), and its index stays within its count.
+        assert!(payload["total"].is_null(), "{payload}");
         assert_eq!(payload["index"], 1);
-        assert!(
-            payload["index"].as_i64().unwrap() <= payload["total"].as_i64().unwrap(),
-            "a review reported {} of {}: {payload}",
-            payload["index"],
-            payload["total"]
+        let mut drill = task(TaskType::Drill, Some("addition"));
+        drill.n_problems = Some(20);
+        assert_eq!(
+            serve_payload(&problem, &drill, &graph(), 45, None)["total"],
+            20,
+            "a drill keeps its count"
         );
     }
 

@@ -2,7 +2,7 @@
 
 use super::*;
 use cadus_core::learner::LearnerModel;
-use cadus_core::selector::{DIFFICULTY_TARGET, review_mix};
+use cadus_core::selector::{DIFFICULTY_TARGET, probe_position, review_mix};
 
 /// Restore original review metadata and pending lesson/quiz feedback.
 /// This only changes the response plan; listing a plan remains read-only.
@@ -41,6 +41,12 @@ pub(crate) fn restore_session_tasks(
         // The task already handed to the learner remains authoritative.
         if let Some(current) = plan.tasks.iter_mut().find(|task| task.task_id == *id) {
             *current = recorded;
+        } else if recorded.probe_delay_days.is_some() {
+            // Once served, the probe leaves the composed plan (one per
+            // session). It keeps the place the composer gave it, so it stays a
+            // question of its mixed review block (D-F11).
+            let at = probe_position(&plan.tasks);
+            plan.tasks.insert(at, recorded);
         } else {
             plan.tasks.push(recorded);
         }

@@ -23,15 +23,16 @@ use super::task::Task;
 
 /// Whether `task` joins a mixed review block.
 ///
-/// Only an ordinary due or nearly-due review joins. A remediation review, a
-/// D-F6 confirmation item, a retention probe and an integrated assessment keep
-/// their own serving.
+/// An ordinary due or nearly-due review joins, and so does the delayed
+/// retention probe (D-F11): inside a block it is one more question of the
+/// interleaved sequence, so nothing marks it as a test. A remediation review,
+/// a D-F6 confirmation item and an integrated assessment keep their own
+/// serving.
 #[must_use]
 pub fn joins_mixed_review(task: &Task) -> bool {
     task.task_type == TaskType::Review
         && !task.is_remediation
         && !task.confirm
-        && task.probe_delay_days.is_none()
         && task.integrated_assessment_of.is_none()
         && task.integrated_item_id.is_none()
 }
@@ -306,7 +307,8 @@ mod tests {
             review("d"),
             lesson("l"),
             review("e"),
-            probe,
+            lesson("m"),
+            probe.clone(),
         ];
         let ids = |block: Vec<&Task>| -> Vec<String> {
             block.iter().map(|task| task.task_id.clone()).collect()
@@ -337,5 +339,9 @@ mod tests {
         );
         let only_b = |id: &str| id != "b";
         assert!(mixed_review_block(&tasks, "b", only_b).is_empty());
+        // A retention probe beside a review is one more question of its block.
+        let beside = vec![probe, review("x")];
+        assert_eq!(ids(mixed_review_block(&beside, "x", none)), ["p", "x"]);
+        assert_eq!(ids(mixed_review_block(&beside, "p", none)), ["p", "x"]);
     }
 }

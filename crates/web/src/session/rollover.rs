@@ -110,6 +110,20 @@ fn day_of(us: i64, tz: Option<&str>) -> Option<NaiveDate> {
     local_day(us, tz).or_else(|_| local_day(us, None)).ok()
 }
 
+/// The instant whose UTC date is the local day of `now_us` in `tz`.
+///
+/// [`SessionView::new_session_id`] names a session by the UTC date of the
+/// instant it gets. Handing it noon of the LOCAL day makes the id carry the day
+/// the rollover rule reads, so the session that opens "today" is named today.
+#[must_use]
+pub fn session_day(now_us: i64, tz: Option<&str>) -> DateTime<Utc> {
+    day_of(now_us, tz)
+        .and_then(|day| day.and_hms_opt(12, 0, 0))
+        .map(|noon| noon.and_utc())
+        .or_else(|| DateTime::<Utc>::from_timestamp_micros(now_us))
+        .unwrap_or_default()
+}
+
 /// Whether the open session is stale at `now_us`. See the module rules.
 #[must_use]
 pub fn is_stale(open: &OpenSession, now_us: i64, tz: Option<&str>) -> bool {
@@ -179,8 +193,8 @@ impl Rollover<'_> {
     /// events. The answer is the new session id; the caller commits.
     pub(crate) async fn roll(&self, tx: &mut Tx) -> Result<String, ApiError> {
         self.end(tx).await?;
-        let wall = DateTime::<Utc>::from_timestamp_micros(self.now.micros()).unwrap_or_default();
-        let next = self.view.new_session_id(wall);
+        let day = session_day(self.now.micros(), self.content.cfg.timezone.as_deref());
+        let next = self.view.new_session_id(day);
         let event = Event::SessionStart(SessionStart {
             ts: self.now,
             session: Some(next.clone()),
@@ -271,6 +285,18 @@ mod tests {
             now,
             Some("Nowhere/City")
         ));
+    }
+
+    #[test]
+    fn the_new_session_is_named_by_the_local_day() {
+        // 2026-10-05 01:00 UTC is 2026-10-04 in New York.
+        let now = NOW - 8 * HOUR;
+        let view = SessionView::default();
+        assert_eq!(view.new_session_id(session_day(now, None)), "s_2026-10-05a");
+        assert_eq!(
+            view.new_session_id(session_day(now, Some("America/New_York"))),
+            "s_2026-10-04a"
+        );
     }
 
     #[test]

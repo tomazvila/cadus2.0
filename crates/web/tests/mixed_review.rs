@@ -464,3 +464,133 @@ async fn a_reload_serves_the_corrective_practice_a_sibling_review_owes() {
     })
     .await;
 }
+
+/// A learner whose `addition` and `subtraction` reviews are due and whose
+/// `multiplication` lesson passed at 2026-01-01, long enough ago to owe the
+/// 7-day retention probe (D-F11).
+async fn learner_owing_a_probe(db: &TestDb, email: &str, curriculum: &Curriculum) -> Uuid {
+    let user = seed_learner(db, email).await;
+    seed_open_session(db, user).await;
+    seed_typed_event(
+        db,
+        user,
+        2,
+        &lesson(SESSION, "multiplication", 0.0, true, 2),
+    )
+    .await;
+    let mut passed = TopicState {
+        status: TopicStatus::Learning,
+        rep_num: 3.0,
+        memory_base: 1.0,
+        t0: Some(Timestamp::from_micros(
+            sqlx::types::chrono::Utc::now().timestamp_micros(),
+        )),
+        interval_days: 60.0,
+        ability: 0.6,
+        ..TopicState::default()
+    };
+    for kp in ["kp1", "kp2"] {
+        passed
+            .kp_progress
+            .insert(kp.to_owned(), cadus_core::event::KpProgress::Passed);
+    }
+    let model = LearnerModel {
+        topics: BTreeMap::from([
+            ("addition".to_owned(), due()),
+            ("subtraction".to_owned(), due()),
+            ("multiplication".to_owned(), passed),
+        ]),
+        ..LearnerModel::default()
+    };
+    seed_cached_model(db, user, &model, 2).await;
+    put_state(db, user, &WebState::for_session(SESSION)).await;
+    let digest = review_context_digest(curriculum).unwrap();
+    for topic in ["addition", "subtraction", "multiplication"] {
+        for kp in ["kp1", "kp2"] {
+            for index in 0..10 {
+                seed_pool_row(
+                    db,
+                    user,
+                    &format!("{topic}/{kp}"),
+                    &format!("Give {topic} {kp} value {index}."),
+                    &index.to_string(),
+                    &format!("probe-{topic}-{kp}-{index}"),
+                    (&digest, cadus_core::review_engine::DIGEST),
+                )
+                .await;
+            }
+        }
+    }
+    user
+}
+
+#[tokio::test]
+async fn the_retention_probe_is_one_question_of_the_block_and_still_records() {
+    TestDb::with(|db| async move {
+        const PROBE: &str = "s_2026-01-01a-review-multiplication-probe";
+        let curriculum = three_topic_curriculum();
+        let app = app_with_content(&db, curriculum.clone());
+        let user = learner_owing_a_probe(&db, "mixed-probe@example.com", &curriculum).await;
+
+        // The plan lists the probe as a review, with no question count on any review.
+        let plan = plan_of(&app, user).await;
+        let reviews: Vec<&Value> = plan["tasks"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .filter(|task| task["task_type"] == "review")
+            .collect();
+        assert_eq!(reviews.len(), 3, "{plan}");
+        assert_eq!(reviews[0]["task_id"], PROBE, "{plan}");
+        assert!(
+            reviews.iter().all(|task| task["n_problems"].is_null()),
+            "{plan}"
+        );
+        assert!(
+            reviews.iter().all(|task| task["why"] == "due review"),
+            "{plan}"
+        );
+
+        // Walk the block by hand-off alone.
+        let first = serve_ok(&app, user, ADDITION).await;
+        let mut current = first["task_id"].as_str().unwrap().to_owned();
+        let mut payloads = vec![first];
+        let mut order = Vec::new();
+        loop {
+            order.push(current.clone());
+            let reply = answer_live(&app, &db, user, &current, true).await;
+            if reply["next"].is_null() {
+                break;
+            }
+            current = reply["next"]["task_id"].as_str().unwrap().to_owned();
+            payloads.push(reply["next"].clone());
+        }
+        assert_eq!(order.len(), 9, "{order:?}");
+        assert_eq!(order[1], PROBE, "the probe is the block's second question");
+        assert_eq!(order.iter().filter(|task| *task == PROBE).count(), 1);
+        // No per-task count, and the block's count runs on through the probe.
+        for (at, payload) in payloads.iter().enumerate() {
+            assert!(payload["total"].is_null(), "no per-task count: {payload}");
+            if at < 8 {
+                assert_eq!(payload["mixed_review"]["total"], 9, "{payload}");
+                assert_eq!(payload["mixed_review"]["position"], at + 1, "{payload}");
+            }
+        }
+
+        // The probe keeps its own marker and its own measurement event.
+        let served = events_of_type(&db, user, "task_served").await;
+        let marked: Vec<&Value> = served
+            .iter()
+            .filter(|event| event["probe_delay_days"] == 7)
+            .collect();
+        assert_eq!(marked.len(), 1, "{served:?}");
+        assert_eq!(marked[0]["task_id"], PROBE);
+        let probes = events_of_type(&db, user, "retention_probe").await;
+        assert_eq!(probes.len(), 1, "{probes:?}");
+        assert_eq!(probes[0]["topic"], "multiplication");
+        assert_eq!(probes[0]["kp"], "kp1");
+        assert_eq!(probes[0]["delay_days"], 7);
+        assert_eq!(probes[0]["exposure"], "first");
+    })
+    .await;
+}
