@@ -77,7 +77,10 @@ const WRONG_ROWS: usize = 350;
 const RESPELLED_ROWS: usize = 2_792;
 
 /// The count of grades that come back `correct`.
-const CORRECT_GRADES: usize = 2_390;
+///
+/// 2,391 since the arctan reading of 8626b83e: one re-spelled arctan row now
+/// grades correct instead of nearly passable.
+const CORRECT_GRADES: usize = 2_391;
 
 /// The count of grades that come back `poor`.
 ///
@@ -86,7 +89,7 @@ const CORRECT_GRADES: usize = 2_390;
 const POOR_GRADES: usize = 350;
 
 /// The count of grades that come back `nearly_passable`.
-const NEARLY_PASSABLE_GRADES: usize = 752;
+const NEARLY_PASSABLE_GRADES: usize = 751;
 
 /// The count of grades that carry the `blank-answer` tag.
 const BLANK_TAGS: usize = 350;
