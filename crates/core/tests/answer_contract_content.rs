@@ -233,10 +233,12 @@ fn the_sixty_multi_step_topics_have_explicit_usable_exact_items() {
             items += 1;
         }
     }
-    assert_eq!(topics, 59);
-    // Twelve writing-quadratics-from-roots exemplars and one applying-the-quadratic-formula
-    // exemplar now use explicit exact contracts (restored from polynomial_relation).
-    assert_eq!(items, 516);
+    // The count started at 59 topics and 516 items. Twelve writing-quadratics-from-roots
+    // exemplars and one applying-the-quadratic-formula exemplar use explicit exact
+    // contracts (restored from polynomial_relation); the 2026-09-23..10-05 flow waves
+    // and Foundations rewrites added exact items to 17 more multi-step topics.
+    assert_eq!(topics, 76);
+    assert_eq!(items, 647);
     assert!(lint_curriculum(&curriculum_root()).is_empty());
 }
 

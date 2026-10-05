@@ -447,8 +447,12 @@ fn every_shipped_knowledge_point_whose_exemplar_shows_its_answer_gates() {
     // fail-closed invariant for every member of both cohorts.
     // The reviewed full-factoring example in multiplying-dividing-rational-expressions/kp2
     // answers "1", which appears in its problem and adds one Foundations cohort member.
-    assert_eq!((exempted, blind), (442, 77));
-    assert_eq!((foundations_exempted, foundations_blind), (158, 29));
+    // 2026-10-05: the flow waves added verdict items whose answers appear in their
+    // problems across the upper courses (442 -> 910 exempted), while the
+    // Foundations rewrites replaced many answer-revealing items (158 -> 131).
+    // The sweep above holds for every member.
+    assert_eq!((exempted, blind), (910, 43));
+    assert_eq!((foundations_exempted, foundations_blind), (131, 12));
 }
 
 /// A sample that does not instantiate and a draw that does not evaluate

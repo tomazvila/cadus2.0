@@ -74,46 +74,50 @@ const HISTORICAL_SHAPE_COUNTS: [(&str, usize); 16] = [
 const HISTORICAL_DISTINCT_DECIDABLE: [(usize, usize); 4] = [(0, 115), (1, 53), (2, 583), (3, 58)];
 
 const LIVE_KNOWLEDGE_POINTS: usize = 809;
-const LIVE_EXEMPLARS: usize = 3_247;
+const LIVE_EXEMPLARS: usize = 3_405;
 const LIVE_WITHOUT_SKETCH: usize = 0;
 const LIVE_SHAPE_COUNTS: [(&str, usize); 16] = [
     ("coordinates", 265),
-    ("decimal", 93),
-    ("equation_or_inequality", 422),
-    ("expression", 598),
-    ("fraction", 233),
-    ("integer", 1_169),
+    ("decimal", 109),
+    ("equation_or_inequality", 509),
+    ("expression", 603),
+    ("fraction", 257),
+    ("integer", 1_283),
     ("interval", 20),
-    ("mixed_number", 13),
-    ("ordered_list", 35),
-    ("other", 8),
-    ("prose", 183),
+    ("mixed_number", 21),
+    ("ordered_list", 73),
+    ("other", 12),
+    ("prose", 54),
     ("quotient_remainder", 24),
     ("radical", 108),
     ("rational_exponent", 6),
-    ("set", 28),
-    ("value_with_unit", 42),
+    ("set", 8),
+    ("value_with_unit", 53),
 ];
-const LIVE_DISTINCT_DECIDABLE: [(usize, usize); 6] =
-    [(0, 74), (1, 4), (2, 17), (3, 8), (4, 699), (5, 7)];
-const LIVE_VERDICT_COUNTS: [(&str, usize); 8] = [
-    ("decided", 2_893),
+const LIVE_DISTINCT_DECIDABLE: [(usize, usize); 8] = [
+    (0, 55),
+    (1, 4),
+    (2, 14),
+    (3, 7),
+    (4, 660),
+    (5, 18),
+    (6, 46),
+    (7, 5),
+];
+const LIVE_VERDICT_COUNTS: [(&str, usize); 7] = [
+    ("decided", 3_094),
     (
         "undecidable(a chained inequality needs one variable in the middle)",
         2,
     ),
-    ("undecidable(a character outside the grammar)", 131),
+    ("undecidable(a character outside the grammar)", 223),
     (
         "undecidable(a disjunction requires finite scalar solutions)",
         19,
     ),
-    (
-        "undecidable(a name that is not a function or variable)",
-        184,
-    ),
-    ("undecidable(a symbol where a value belongs)", 4),
+    ("undecidable(a name that is not a function or variable)", 55),
     ("undecidable(an inequality with no bare variable)", 4),
-    ("undecidable(trailing text after the answer)", 10),
+    ("undecidable(trailing text after the answer)", 8),
 ];
 
 #[test]

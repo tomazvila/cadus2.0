@@ -12,13 +12,13 @@ use cadus_core::curriculum::{
 use common::dump::tree;
 
 /// The semantic curriculum hash of the checked-in tree (spec section 3).
-const TREE_HASH: &str = "80afa9964008e7305f1005efbe0e116a36886d6916536e652de82a0d0e8c6bea";
+const TREE_HASH: &str = "b167fa33ab56d2cfbddc9e5e47033f79acbca4d594e3391d7e79ae08c489e9fc";
 
 /// The length of the dump in bytes, without the trailing newline.
-const DUMP_LEN: usize = 4_852_074;
+const DUMP_LEN: usize = 10_723_357;
 
 /// The `counts` object of the dump, as the oracle writes it.
-const COUNTS: &str = "\"counts\":{\"anki_seeds\":2144,\"courses\":13,\"encompassing_edges\":3200,\"exemplars\":9191,\"knowledge_points\":3138,\"prereq_edges\":3281,\"topics\":1090,\"units\":88}";
+const COUNTS: &str = "\"counts\":{\"anki_seeds\":2144,\"courses\":13,\"encompassing_edges\":3200,\"exemplars\":17007,\"knowledge_points\":3138,\"prereq_edges\":3281,\"topics\":1090,\"units\":88}";
 
 // --------------------------------------------------------------------------- //
 // The hash and the shape of the dump
