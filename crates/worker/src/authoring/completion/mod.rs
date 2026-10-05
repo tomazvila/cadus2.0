@@ -52,6 +52,20 @@ fn keep(
     }
 }
 
+/// Generated completion templates with a bare arithmetic prompt own an Exact
+/// answer, even when their source KP also reviews measured-value exemplars.
+pub(super) fn attach_mixed_reviewed_exact(spec: &AuthoringSpec, arguments: &mut Value) {
+    if arguments.get("answer_contract").is_some() {
+        return;
+    }
+    let has_reviewed_exact = spec
+        .mixed_scalar_template_contracts()
+        .is_some_and(|policies| policies.contains(&cadus_core::answer::AnswerContract::Exact));
+    if has_reviewed_exact {
+        arguments["answer_contract"] = json!({"kind":"exact"});
+    }
+}
+
 fn add_teaching_candidates(
     out: &mut Proposals,
     spec: &AuthoringSpec,
@@ -131,7 +145,8 @@ fn add_practice_candidate(
             json!({"params":{parameter.to_string():value},"expected":calculation.answer})
         })
         .collect();
-    let arguments = json!({"statement":statement,"params":{parameter.to_string():{"kind":"choice","values":values}},"constraints":[],"answer_expr":formula,"solution_sketch":method::rule(spec),"hints":[method::rule(spec)],"distractors":[],"samples":samples});
+    let mut arguments = json!({"statement":statement,"params":{parameter.to_string():{"kind":"choice","values":values}},"constraints":[],"answer_expr":formula,"solution_sketch":method::rule(spec),"hints":[method::rule(spec)],"distractors":[],"samples":samples});
+    attach_mixed_reviewed_exact(spec, &mut arguments);
     keep(out, spec, Kind::Template, arguments, served)
 }
 

@@ -70,6 +70,7 @@ mod tests {
             AnswerContract::Unit {
                 quantity: Quantity::Length,
                 unit: "m".into(),
+                allow_omitted: false,
             },
             AnswerContract::QuotientRemainder { divisor: None },
             AnswerContract::Coordinates { arity: 2 },

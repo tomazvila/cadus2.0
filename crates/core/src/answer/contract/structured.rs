@@ -20,6 +20,38 @@ pub(super) fn tolerance_value(text: &str) -> Result<BigRational, Undecidable> {
     ))
 }
 
+/// Liquid and cubic volume use equal base magnitudes: one millilitre is one
+/// cubic centimetre. Rebind that shared dimension inside a Unit contract while
+/// preserving the legacy wire variants and global canonical representation.
+pub(super) fn unit_compatible_value(contract: &AnswerContract, value: Canon) -> Canon {
+    let AnswerContract::Unit { quantity, .. } = contract else {
+        return value;
+    };
+    let Canon::Quantity {
+        quantity: actual,
+        value: magnitude,
+    } = value
+    else {
+        return value;
+    };
+    let compatible_volumes = matches!(
+        (actual, *quantity),
+        (super::Quantity::Volume, super::Quantity::CubicVolume)
+            | (super::Quantity::CubicVolume, super::Quantity::Volume)
+    );
+    if compatible_volumes || actual == *quantity {
+        Canon::Quantity {
+            quantity: *quantity,
+            value: magnitude,
+        }
+    } else {
+        Canon::Quantity {
+            quantity: actual,
+            value: magnitude,
+        }
+    }
+}
+
 pub(super) fn validate_shape(contract: &AnswerContract, value: &Canon) -> bool {
     match contract {
         AnswerContract::Approx { .. } => number(value),

@@ -151,9 +151,14 @@ impl Work {
             return Err(Undecidable::new("a unit outside the table"));
         };
         let scaled = self.multiply(&value, &Canon::Rational(unit.factor()))?;
+        let normalized = if unit.offset().is_zero() {
+            scaled
+        } else {
+            self.add(&scaled, &Canon::Rational(unit.offset()))?
+        };
         Ok(Canon::Quantity {
             quantity: unit.quantity,
-            value: Box::new(scaled),
+            value: Box::new(normalized),
         })
     }
 

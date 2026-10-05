@@ -10,6 +10,7 @@
 
 mod common;
 
+use cadus_core::answer::Quantity;
 use common::check::*;
 
 #[test]
@@ -386,6 +387,22 @@ fn the_dot_thousands_hole_of_spec_7_2_stays_closed() {
 
 #[test]
 fn every_answer_the_grammar_accepts_also_canonicalizes() {
+    // The value-with-unit production reads the corpus values for temperature
+    // and flow that were in the 1.0 undecidable fixture.
+    assert_eq!(
+        form("18 degrees Celsius"),
+        Canon::Quantity {
+            quantity: Quantity::Temperature,
+            value: Box::new(Canon::Rational(whole(18))),
+        }
+    );
+    assert_eq!(
+        form("7 L/min"),
+        Canon::Quantity {
+            quantity: Quantity::Flow,
+            value: Box::new(Canon::Rational(ratio(350, 3))),
+        }
+    );
     let corpus = corpus();
     assert_eq!(corpus.len(), 3_492, "the corpus is 3,492 answers");
     let mut canonical = 0_usize;
@@ -399,12 +416,13 @@ fn every_answer_the_grammar_accepts_also_canonicalizes() {
     // FIXM2a pinned 265 answers as outside the grammar. The rational-exponent
     // production of D-F3 (unit f2-grammar) reads 15 of them and the
     // quotient-and-remainder production reads 16 (`recovered_2_0.jsonl`), and
-    // the value-with-unit production refuses `cos 70°`. Lane B3 (freeze pack,
-    // `rust-api.md` section 3) reads the 2 `arctan` rows, so 3,492 - 233 = 3,259
-    // answers parse. Every one of them canonicalizes.
+    // the value-with-unit production still refuses `cos 70°`. Lane B3 (freeze
+    // pack, `rust-api.md` section 3) reads 2 `arctan` rows. The temperature
+    // and flow units recover `18 degrees Celsius` and `7 L/min`, bringing the
+    // corpus from 3,259 to 3,261 accepted answers. Every accepted answer canonicalizes.
     assert_eq!(
         canonical,
-        3_259,
+        3_261,
         "the first refusals are {:?}",
         refused.iter().take(5).collect::<Vec<_>>()
     );

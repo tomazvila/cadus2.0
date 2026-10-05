@@ -1,24 +1,11 @@
 //! Natural readings of a learner answer that the strict grammar misreads.
 //!
-//! Two learner habits gave a decided "wrong" (or no verdict) to a correct
-//! value, and both are a question of reading, not of mathematics:
-//!
-//! - **Percent number.** The authored answer is a percent literal (`65%`) and
-//!   the learner writes the percent's number (`65`, `65 percent`, `65 per
-//!   cent`). The grammar reads `65%` as `65/100`, so the bare `65` missed.
-//! - **Trailing unit.** The authored answer is a unitless number and the
-//!   learner names the unit the question asked in (`8 ft`, `4/9 m`, `€18`,
-//!   `18 euros`, `165 km`). The grammar refused the word or read the pair as a
-//!   quantity against a number.
-//!
-//! [`rescue`] runs only AFTER the strict verdict is not "correct". It rewrites
-//! the learner text once and grades the rewrite with the same strict rule, so
-//! the number is still compared exactly: a wrong number stays wrong, and a
-//! rewrite that the grammar cannot read gives back the strict outcome. A
-//! unit-required contract never reaches this module (the caller passes only the
-//! `exact` contract and the contract-free check).
+//! Percent numbers can be written with or without the percent sign/word. The
+//! authored percent literal is divided by 100 by the grammar, while learners
+//! often write its displayed number. This module rewrites that number and
+//! grades it with the same exact rule. Named units are always retained; measured
+//! values use an explicit `Unit` contract.
 
-use super::canon::Canon;
 use super::check::{Outcome, canonical_form};
 
 /// The longest learner text this module rewrites.
@@ -125,17 +112,7 @@ pub(crate) fn rescue(
         let outcome = grade(number, bare);
         return matches!(outcome, Outcome::Decided(_)).then_some(outcome);
     }
-    let plain_number = matches!(canonical_form(expected), Ok(Canon::Rational(_)));
-    if !plain_number {
-        return None;
-    }
-    let bare = strip_unit(learner)?;
-    // The rewrite must be a plain number on its own, so a unit never hides an
-    // expression such as `2 x` or a pair such as `3, 4`.
-    if !matches!(canonical_form(&bare), Ok(Canon::Rational(_))) {
-        return None;
-    }
-    Some(grade(expected, &bare))
+    None
 }
 
 /// The number of a percent literal (`65%` gives `65`), or `None`.
@@ -267,21 +244,14 @@ mod tests {
 
     #[test]
     fn a_named_unit_is_not_checked_against_the_question() {
-        // Accepted limitation (checker spec 8.6): the unit is dropped, not
-        // compared with the unit the question asked in, and no notation tag
-        // marks the reading.
-        let outcome = check_contract("8", "8 cm", AnswerContract::Exact);
-        assert_eq!(
-            outcome,
-            Outcome::Decided(crate::answer::Verdict {
-                correct: true,
-                notation: false
-            })
-        );
+        assert!(!matches!(
+            check_contract("8", "8 cm", AnswerContract::Exact),
+            Outcome::Decided(verdict) if verdict.correct
+        ));
     }
 
     #[test]
-    fn a_bare_number_key_ignores_a_named_unit() {
+    fn a_bare_number_key_rejects_an_uncontracted_named_unit() {
         for (key, learner) in [
             ("8", "8 ft"),
             ("4/9", "4/9 m"),
@@ -296,8 +266,8 @@ mod tests {
             ("30", "30°"),
             ("21", "21 beads"),
         ] {
-            assert_eq!(exact(key, learner), Some(true), "{key} vs {learner}");
-            assert_eq!(plain(key, learner), Some(true), "{key} vs {learner}");
+            assert_ne!(exact(key, learner), Some(true), "{key} vs {learner}");
+            assert_ne!(plain(key, learner), Some(true), "{key} vs {learner}");
         }
     }
 
@@ -335,9 +305,18 @@ mod tests {
         let unit = AnswerContract::Unit {
             quantity: crate::answer::Quantity::Length,
             unit: "cm".to_owned(),
+            allow_omitted: false,
         };
         assert!(!matches!(
             check_contract("18 cm", "18", unit),
+            Outcome::Decided(verdict) if verdict.correct
+        ));
+
+        let required_form = AnswerContract::RequiredForm {
+            form: crate::answer::NumericForm::Integer,
+        };
+        assert!(!matches!(
+            check_contract("18", "18 cm", required_form),
             Outcome::Decided(verdict) if verdict.correct
         ));
     }

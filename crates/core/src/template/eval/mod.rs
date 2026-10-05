@@ -395,7 +395,17 @@ fn unit_answer(
     unit: &str,
 ) -> Result<Answer, EvalError> {
     let value = answer(ast, bindings)?;
-    if matches!(value.canon, Canon::Quantity { .. }) {
+    // The explicit policy supplies the unit of an omitted-unit answer. Keep
+    // the evaluated spelling so reviewed finite keys remain byte-identical.
+    if matches!(value.canon, Canon::Quantity { .. })
+        || matches!(
+            contract,
+            AnswerContract::Unit {
+                allow_omitted: true,
+                ..
+            }
+        )
+    {
         return contracted(value.text, contract);
     }
     contracted(format!("{} {unit}", value.text), contract)

@@ -100,9 +100,8 @@ fn unbraced(text: &str) -> &str {
 
 fn grade(expected: &Canon, text: &str, learner: &str, contract: &AnswerContract) -> Outcome {
     let strict = grade_strict(expected, text, learner, contract);
-    // The `exact` contract also reads a percent key against its bare number and
-    // a number key against the same number with a unit named. A unit-required
-    // or form-required contract keeps its strict verdict (checker spec 8.6).
+    // The `exact` contract also reads a percent key against its displayed
+    // number. Unit contracts own every measured-value reading.
     if !matches!(contract, AnswerContract::Exact) {
         return strict;
     }
@@ -118,6 +117,38 @@ fn grade_strict(expected: &Canon, text: &str, learner: &str, contract: &AnswerCo
     }
     if learner.trim().is_empty() {
         return decided(false);
+    }
+    if let AnswerContract::Unit {
+        unit,
+        allow_omitted,
+        ..
+    } = contract
+    {
+        match super::super::check::canonical_quantity_in_contract_context(learner) {
+            Ok(Some(value)) => {
+                let value = super::structured::unit_compatible_value(contract, value);
+                return decided(validate_shape(contract, &value) && same_answer(expected, &value));
+            }
+            Err(reason) => return Outcome::Undecidable(reason),
+            Ok(None) => {}
+        }
+        let parsed = match canonical_form(learner) {
+            Ok(value) => value,
+            Err(reason) => return Outcome::Undecidable(reason),
+        };
+        if matches!(parsed, Canon::Rational(_) | Canon::Radical(_)) {
+            if !allow_omitted {
+                return decided(false);
+            }
+            return match canonical_form(&format!("{learner} {unit}")) {
+                Ok(value) => {
+                    let value = super::structured::unit_compatible_value(contract, value);
+                    decided(validate_shape(contract, &value) && same_answer(expected, &value))
+                }
+                Err(reason) => Outcome::Undecidable(reason),
+            };
+        }
+        return Outcome::Undecidable(Undecidable::new("a unit outside the table"));
     }
     if let Some(outcome) = structured_contract(expected, text, learner, contract) {
         return outcome;
@@ -396,6 +427,7 @@ mod tests {
                 AnswerContract::Unit {
                     quantity: Quantity::Volume,
                     unit: "L".into(),
+                    allow_omitted: false,
                 },
                 "4.2 L",
                 "4200 ml",

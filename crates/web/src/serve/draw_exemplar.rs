@@ -279,6 +279,54 @@ mod tests {
         assert_eq!(captured.answer_contract, Some(AnswerContract::Exact));
     }
 
+    #[test]
+    fn a_legacy_numeric_exemplar_captures_its_authored_unit_before_grading() {
+        use cadus_core::answer::{Outcome, check_contract};
+
+        let mut topic = topic_doc("length", &[("kp1", &["8"])]);
+        let item = &mut topic["knowledge_points"][0]["exemplars"][0];
+        item["problem"] =
+            json!("Two lengths are 3 m and 5 m. What is their total length in metres?");
+        item["answer_contract"] = json!({
+            "kind": "unit", "quantity": "length", "unit": "m", "allow_omitted": true
+        });
+        let graph = arena(&[topic]);
+        let target = target("length", "kp1");
+        let instance = exemplar_rows(&graph, &target).remove(0);
+        let mut row = PoolRow {
+            id: Uuid::nil(),
+            source: Source::Exemplar,
+            content_digest: None,
+            generation_context: None,
+            problem: instance.problem,
+            expected_answer: instance.expected_answer,
+            instance_hash: instance.instance_hash,
+        };
+        row.expected_answer.answer_contract = Some(AnswerContract::Exact);
+        let captured = answer_of(&graph, &target, &row);
+        assert_eq!(captured.answer, "8");
+        let contract = captured.answer_contract.unwrap();
+        for (answer, correct) in [
+            ("8", true),
+            ("8 m", true),
+            ("800 cm", true),
+            ("8 cm", false),
+            ("8 kg", false),
+        ] {
+            assert!(
+                matches!(
+                    check_contract(&captured.answer, answer, contract.clone()),
+                    Outcome::Decided(verdict) if verdict.correct == correct
+                ),
+                "answer {answer}"
+            );
+        }
+        assert_eq!(
+            row.expected_answer.answer_contract,
+            Some(AnswerContract::Exact)
+        );
+    }
+
     /// Note 101 (b), branch 2: the self-check rows join the batch ONLY for an
     /// ALL-`none` knowledge point. A MIXED list (a decidable exemplar beside a
     /// teach-only one) serves its graded drills; the teach-only member serves

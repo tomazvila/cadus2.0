@@ -205,5 +205,10 @@ fn arguments(recipe: Recipe, rule: &str) -> Option<Value> {
 /// Return an exact recipe for an audited closed family.
 pub(super) fn special(spec: &AuthoringSpec) -> Option<Value> {
     let key = format!("{}/{}", spec.topic_id, spec.kp_id);
-    accepted::arguments(&key).or_else(|| arguments(recipe(&key)?, super::method::rule(spec)))
+    if let Some(candidate) = accepted::arguments(&key) {
+        return Some(candidate);
+    }
+    let mut candidate = arguments(recipe(&key)?, super::method::rule(spec))?;
+    super::attach_mixed_reviewed_exact(spec, &mut candidate);
+    Some(candidate)
 }

@@ -190,7 +190,17 @@ fn check_one_instance(
             ),
         ));
     }
-    if spec.answer_kind == AnswerKind::Numeric && !structured {
+    // A validated numeric quantity carries a unit identifier, not a free
+    // variable. Its typed canonical round trip below checks the full value.
+    let measured = matches!(
+        instance.answer_contract,
+        Some(crate::answer::AnswerContract::Unit { .. })
+    ) && matches!(
+        &instance.canon,
+        Canon::Quantity { value, .. }
+            if matches!(value.as_ref(), Canon::Rational(_) | Canon::Radical(_))
+    );
+    if spec.answer_kind == AnswerKind::Numeric && !structured && !measured {
         let leftover: Vec<String> = tokens
             .into_iter()
             .filter(|token| !RESERVED_NAMES.contains(&token.as_str()))

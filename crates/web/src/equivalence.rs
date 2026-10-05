@@ -28,6 +28,7 @@ use axum::Json;
 use axum::extract::{Path as ApiPath, State};
 use cadus_store::equivalence::{self, JOB_CAPPED, JOB_DONE, JOB_PENDING, Verdict};
 use serde_json::{Value, json};
+use sha2::{Digest, Sha256};
 use sqlx::types::Uuid;
 
 use crate::AppState;
@@ -73,6 +74,35 @@ pub fn item_digest(served: &ServedProblem) -> String {
     )
 }
 
+/// The cache namespace for equivalence verdicts on structured unit answers.
+/// A versioned prefix keeps model interpretations made before unit contracts
+/// distinct while leaving general hand-off identity unchanged.
+const UNIT_CACHE_NAMESPACE: &str = "cadus/equivalence-cache/unit/v1";
+
+/// The identity used only by the equivalence cache and its worker jobs.
+///
+/// Unit policy adds meaning that the hand-off digest deliberately omits. Hash
+/// a structured JSON tuple so the statement digest, expected key, and complete
+/// unit contract cannot collide through ambiguous string concatenation. Other
+/// contracts retain the historical text-only cache identity.
+#[must_use]
+pub fn cache_item_digest(served: &ServedProblem) -> String {
+    let base = item_digest(served);
+    if !matches!(
+        served.expected.answer_contract,
+        Some(cadus_core::answer::AnswerContract::Unit { .. })
+    ) {
+        return base;
+    }
+    let identity = json!([
+        UNIT_CACHE_NAMESPACE,
+        base,
+        served.expected.answer,
+        served.expected.answer_contract,
+    ]);
+    format!("{:x}", Sha256::digest(identity.to_string().as_bytes()))
+}
+
 /// The outcome the cached verdict turns the deterministic grade into.
 pub enum Cached {
     /// The model accepted the answer: correct, with the equivalence note.
@@ -94,7 +124,7 @@ pub async fn lookup(
 ) -> Result<Option<Cached>, ApiError> {
     let hit = store(
         state,
-        equivalence::cache_hit(&mut **tx, &item_digest(served), &cache_key(answer)),
+        equivalence::cache_hit(&mut **tx, &cache_item_digest(served), &cache_key(answer)),
     )
     .await?;
     Ok(hit.map(|verdict| {
@@ -127,7 +157,7 @@ pub async fn enqueue(
         v: equivalence::PAYLOAD_VERSION,
         task_id: served.task_id.clone(),
         topic: served.serving_topic().unwrap_or_default().to_owned(),
-        item_digest: item_digest(served),
+        item_digest: cache_item_digest(served),
         problem: served.text.clone(),
         expected: served.expected.answer.clone(),
         answer_contract: served

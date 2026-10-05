@@ -911,7 +911,7 @@ is a finite parse and an exact canonical form; none samples a value (R3, V1).
 |---|---|---|---|
 | rational exponent | `atom ('^' \| '**') '(' ['-'] int '/' int ')'`, and the `^{p/q}` spelling; written `q` in 2..6, written `\|p\|` at most 12; reduced to lowest terms, a whole result is `Pow` | `Atom::Root(base, index)` under one root law: a prime base carries the exponent per prime (a half is `Atom::Sqrt`), an atom base carries it on the atom, a sum base is one opaque root | `2^(1/2)` = `sqrt(2)`, `8^(2/3)` = 4, `x^(1/2)` = `sqrt(x)`; outside the bound: `Undecidable`, `a rational exponent outside the bound` |
 | quotient and remainder | `expr 'remainder' expr`; `num 'R' num` with the number tokens on both sides of `R`, glued or spaced | `Canon::Tuple` of two, the form of the authored `(q, r)` | `9 R2` = `9 R 2` = `(9, 2)`; `9 R3` is a miss; `9 r 2` is the product |
-| value with unit | `number_expr unit`, `'$' number_expr`, `'€' number_expr`; a one-letter unit needs a space in front; the unit table of `crates/core/src/answer/unit.rs` (`mm cm m km g kg ml l L s min h m/s km/h cm^2 m^2 cm^3 m^3 € $ °`) | `Canon::Quantity { quantity, value }`, the value scaled into the base unit of its kind | same kind: by value (`1 m` = `100 cm`, `1.5 h` = `90 min`); another kind: a miss; one side alone: `Undecidable`, `a unit is missing`; a rounding reads the learner unit |
+| value with unit | `number_expr unit`, `'$' number_expr`, `'€' number_expr`; a one-letter unit needs a space in front; spellings and aliases are in `crates/core/src/answer/unit.rs` | `Canon::Quantity { quantity, value }`, scaled to exact canonical units (length cm, mass g, volume ml, time s, speed m/s, area cm², volume cm³, flow ml/s, energy J, temperature °C); Fahrenheit uses the exact affine conversion | compatible dimensions compare by exact value (`1 m` = `100 cm`, `1 ft` = `12 in`, `32 °F` = `0 °C`); another dimension is a miss; roundings are read in the learner unit |
 | unordered set | `'{' expr (',' expr)* '}'` (unchanged) | `Canon::Set` (a `BTreeSet`; order and repeats fall away) | `{1, 2}` = `{2, 1}`; against a list or a tuple: `Undecidable`, `a set against a list` / `a set against a tuple` |
 | coordinates | `'(' expr ',' expr ')'` (the tuple production, unchanged) | `Canon::Tuple` | `(3, 4)` = `(3.0, 8/2)`; `(4, 3)` is a miss |
 
@@ -998,30 +998,46 @@ a property contract as its member.
 
 ---
 
-### 8.6 Natural readings: a percent number and a named unit (2026-10-05)
+### 8.6 Natural percent readings and unit-aware contracts (2026-10-05)
 
-Two learner habits gave a decided miss, or no verdict, to a correct value. Both are a
-question of reading. `crates/core/src/answer/natural.rs` adds one rewrite that runs only
-after the strict verdict is not "correct", for the contract-free check and the `exact`
-contract. Every other contract, `unit` and `required_form` included, keeps its strict
-verdict.
+The natural-reading rewrite in `crates/core/src/answer/natural.rs` runs after the strict
+verdict for contract-free checks and the `exact` contract. It accepts a percent literal's
+displayed number: `65%`, `65`, `65 percent`, and `65 per cent` grade alike. The rewrite
+compares the number exactly; `66` and `6.5` remain wrong for `65%`. A unit or currency
+mark on a percent answer remains part of the value, so `65 cm` is not a percent answer.
 
-| Authored answer | Learner | Rewrite | Example |
-|---|---|---|---|
-| a percent literal (`65%`) | the percent's number, with or without `percent` / `per cent` | grade the learner number against the key's number | `65`, `65 percent` correct; `66`, `6.5` wrong |
-| a plain number (`18`, `4/9`) | the number with one currency mark (`€ $ £ °`, before or after) and/or one trailing unit word | grade the number alone | `€18`, `18 euros`, `4/9 m`, `165 km`, `8 ft` correct; `€19`, `16.5 km` wrong |
+A named unit is never discarded from a unitless key. Authored measured answers use the
+`unit` contract with a `quantity`, an output `unit`, and optional `allow_omitted`.
+The field defaults to `false` and is omitted from serialized contracts when false, so
+older Unit contracts retain their required-unit behavior. When `allow_omitted` is true, a
+bare authored key and a bare learner number are interpreted in the contract's unit. This
+supports legacy pool rows whose numeric key remains unchanged while its current authored
+contract supplies the measured quantity.
 
-A unit word is a word of the unit table, a listed unit or currency word, or any
-alphabetic word of two letters or more that is not a function, constant or variable of
-the grammar. A single letter counts only through the lists, so `21 x` keeps its strict
-reading. The rewrite must leave a plain number: `2 x 4 cm` is graded as `8`, and a
-rewrite that leaves an expression, a pair or unreadable text keeps the strict outcome. A
-`$...$` pair is a math delimiter and is never stripped. The rewrite never turns a wrong
-number right: the number is compared by the strict rule. A percent key never takes the
-unit rewrite (`0.65 ft` and `65 ft` stay wrong for `65%`). The verdict carries no
-`notation` tag, because that tag names the period-grouping and rounding readings only.
-Accepted limitation: the dropped unit is not compared with the unit the question asked
-in, so `8 cm` grades correct for the key `8` even when the question asked for metres.
+A Unit contract supplies quantity context to the existing parser. Known unit suffixes
+read glued or spaced: `8m`, `8 m`, and `8m/s` use the same quantity interpretation as
+their spaced forms. Ordinary algebra parsing keeps its existing interpretation of
+one-letter variables. Unsupported quantity input remains ungraded and eligible for the
+background equivalence check; a recognized wrong magnitude or dimension is incorrect.
+A recognized bare number under a strict Unit contract still lacks its required unit.
+
+Examples for `{"kind":"unit","quantity":"length","unit":"m","allow_omitted":true}`:
+
+- Authored `8`: learner `8m`, `8 m`, `800cm`, `800 cm`, or `8` is correct.
+- Authored `8`: learner `8 cm`, `8 kg`, or `9 m` is wrong.
+- Liquid and cubic volume compare in the same physical dimension: `1 L` equals
+  `1000 cm^3`, and `1 m^3` equals `1000 L`.
+- A strict Unit contract requires a unit-bearing key and learner answer; `8 m` and
+  `800 cm` are equivalent, and a mass answer is wrong.
+
+Curriculum sets `allow_omitted:true` when the question states the output unit or
+unambiguously supplies it in context. Tasks that require the learner to state a unit keep
+the default strict policy. Unit conversions use exact canonical quantities, including
+length, mass, volume, time, speed, area, cubic volume, flow, energy, currency, angles, and
+affine Celsius/Fahrenheit temperatures. Radian-to-degree conversion is outside this table
+because it requires a symbolic `π` scale. Required-form contracts remain strict. Percent
+and unit notation do not produce a `notation` tag, which remains reserved for period
+grouping and decimal rounding.
 
 A multipart answer written without part names reads its parts in key order. When the
 comma pieces outnumber the parts and exactly one part takes a `list`, the surplus pieces

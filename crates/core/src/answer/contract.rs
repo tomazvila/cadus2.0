@@ -42,7 +42,13 @@ pub enum AnswerContract {
     #[serde(rename = "approx")]
     Tolerance { tolerance: String },
     /// A measured value; equivalent units of the same quantity are accepted.
-    Unit { quantity: Quantity, unit: String },
+    Unit {
+        quantity: Quantity,
+        unit: String,
+        /// A bare number may use the unit named by the question. Defaults to false.
+        #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+        allow_omitted: bool,
+    },
     /// An integer quotient and a nonnegative integer remainder.
     QuotientRemainder {
         /// An optional positive divisor bounds the remainder.
@@ -138,6 +144,8 @@ enum ContractDoc {
     Unit {
         quantity: Quantity,
         unit: String,
+        #[serde(default)]
+        allow_omitted: bool,
     },
     QuotientRemainder {
         divisor: Option<u64>,
@@ -205,7 +213,15 @@ impl TryFrom<ContractDoc> for AnswerContract {
                     "choose exactly one approximate answer policy",
                 ));
             }
-            ContractDoc::Unit { quantity, unit } => Self::Unit { quantity, unit },
+            ContractDoc::Unit {
+                quantity,
+                unit,
+                allow_omitted,
+            } => Self::Unit {
+                quantity,
+                unit,
+                allow_omitted,
+            },
             ContractDoc::QuotientRemainder { divisor } => Self::QuotientRemainder { divisor },
             ContractDoc::Coordinates { arity } => Self::Coordinates { arity },
             ContractDoc::Matrix { rows, cols } => Self::Matrix { rows, cols },
@@ -274,7 +290,7 @@ impl AnswerContract {
                     "a matrix requires one to 64 entries in at least one row and column",
                 ))
             }
-            Self::Unit { quantity, unit } => match super::unit::lookup(unit) {
+            Self::Unit { quantity, unit, .. } => match super::unit::lookup(unit) {
                 Some(found) if found.quantity == *quantity => Ok(()),
                 _ => Err(Undecidable::new(
                     "the contract unit does not match its quantity",
@@ -352,6 +368,34 @@ impl AnswerContract {
             } => function::FunctionSpec::new(vars, *up_to_constant, domain)
                 .and_then(|spec| function::expected(&spec, expected)),
             Self::Property { check, args } => property::expected(*check, args, expected),
+            Self::Unit {
+                unit,
+                allow_omitted,
+                ..
+            } => {
+                let explicit = super::check::canonical_quantity_in_contract_context(expected)?;
+                let value = match explicit {
+                    Some(value) => value,
+                    None => {
+                        let parsed = canonical_form(expected)?;
+                        if *allow_omitted
+                            && matches!(parsed, Canon::Rational(_) | Canon::Radical(_))
+                        {
+                            canonical_form(&format!("{expected} {unit}"))?
+                        } else {
+                            parsed
+                        }
+                    }
+                };
+                let value = structured::unit_compatible_value(self, value);
+                if validate_shape(self, &value) {
+                    Ok(value)
+                } else {
+                    Err(Undecidable::new(
+                        "the authored answer does not match its contract shape",
+                    ))
+                }
+            }
             Self::RequiredForm { form } if !form::accepts(*form, expected) => Err(
                 Undecidable::new("the authored answer does not match its required form"),
             ),

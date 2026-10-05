@@ -25,6 +25,7 @@ fn units_require_a_dimension_and_accept_exact_conversions() {
     let policy = AnswerContract::Unit {
         quantity: Quantity::Volume,
         unit: "L".into(),
+        allow_omitted: false,
     };
     for learner in ["4200 ml", "4.2 L", "21/5 L"] {
         check(&policy, "4.2 L", learner, true);
@@ -38,6 +39,86 @@ fn units_require_a_dimension_and_accept_exact_conversions() {
             .validate_expected("90 s")
             .is_ok()
     );
+}
+
+#[test]
+fn opt_in_unit_contract_interprets_bare_keys_in_the_named_unit() {
+    let policy: AnswerContract =
+        contract(r#"{"kind":"unit","quantity":"length","unit":"m","allow_omitted":true}"#);
+    assert!(policy.validate_expected("8").is_ok());
+    assert!(policy.validate_expected("8 m").is_ok());
+    for learner in ["8 m", "800 cm", "8", "800/100 m"] {
+        check(&policy, "8", learner, true);
+    }
+    for learner in ["8 cm", "8 kg", "9 m"] {
+        check(&policy, "8", learner, false);
+    }
+
+    let legacy = contract(r#"{"kind":"unit","quantity":"length","unit":"m"}"#);
+    check(&legacy, "8 m", "800 cm", true);
+    check(&legacy, "8 m", "8", false);
+    let serialized = serde_json::to_value(&legacy).unwrap();
+    assert!(serialized.get("allow_omitted").is_none());
+}
+
+#[test]
+fn unit_contracts_compare_liquid_and_cubic_volume_exactly() {
+    let liquid =
+        contract(r#"{"kind":"unit","quantity":"volume","unit":"litre","allow_omitted":true}"#);
+    check(&liquid, "1 litre", "1000 cm^3", true);
+    check(&liquid, "1", "1000cm^3", true);
+    check(&liquid, "1 litre", "999 cm^3", false);
+    check(&liquid, "1 litre", "1 kg", false);
+
+    let cubic =
+        contract(r#"{"kind":"unit","quantity":"cubic_volume","unit":"cm^3","allow_omitted":true}"#);
+    check(&cubic, "1000 cm^3", "1 litre", true);
+    check(&cubic, "1000", "1 L", true);
+    check(&cubic, "1000 cm^3", "999 ml", false);
+    check(&cubic, "1000 cm^3", "1 m^2", false);
+
+    let strict = contract(r#"{"kind":"unit","quantity":"volume","unit":"L"}"#);
+    check(&strict, "1 L", "1000 cm^3", true);
+    check(&strict, "1 L", "1", false);
+}
+
+#[test]
+fn unit_contract_parsing_accepts_glued_units_without_changing_algebra() {
+    let policy = contract(r#"{"kind":"unit","quantity":"length","unit":"m","allow_omitted":true}"#);
+    for expected in ["8", "8m"] {
+        for learner in ["8m", "8 m", "800cm", "800 cm", "8 metres"] {
+            check(&policy, expected, learner, true);
+        }
+        for learner in ["8cm", "8kg", "8m/s", "9m"] {
+            check(&policy, expected, learner, false);
+        }
+    }
+
+    assert_ne!(
+        canonical_form("8m").unwrap(),
+        canonical_form("8 m").unwrap()
+    );
+    assert!(matches!(
+        check_contract("8", "8m/s^2", policy.clone()),
+        Outcome::Undecidable(_)
+    ));
+    assert!(matches!(
+        check_contract("8", "8 furlong", policy.clone()),
+        Outcome::Undecidable(_)
+    ));
+
+    let strict = contract(r#"{"kind":"unit","quantity":"length","unit":"m"}"#);
+    check(&strict, "8 m", "8m", true);
+    check(&strict, "8 m", "8", false);
+    check(&strict, "8 m", "8kg", false);
+    assert!(matches!(
+        check_contract(
+            "8 m",
+            &"8m".repeat(cadus_core::answer::MAX_ANSWER_CHARS),
+            strict
+        ),
+        Outcome::Undecidable(_)
+    ));
 }
 
 #[test]

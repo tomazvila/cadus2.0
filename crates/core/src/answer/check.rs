@@ -30,11 +30,9 @@
 //!    `notation = true` (ruling `D6-dec`). A rounding this build cannot decide
 //!    exactly is [`Outcome::Undecidable`] (V2).
 //! 6. Otherwise: `correct = false`.
-//! 7. When rungs 2 to 6 give no "correct": a percent key (`65%`) takes the bare
-//!    percent number (`65`, `65 percent`), and a plain number key takes the
-//!    same number with a unit or currency named (`8 ft`, `€18`, `165 km`). The
-//!    rewrite is graded by rungs 2 to 6 again, so the number is still exact
-//!    (`super::natural`, checker spec section 8.6).
+//! 7. A percent key (`65%`) accepts its displayed number (`65`, `65 percent`)
+//!    through the bounded natural-reading rewrite. A measured value needs an
+//!    explicit Unit contract, which checks both its magnitude and dimension.
 //!
 //! # Where 2.0 leaves 1.0
 //!
@@ -52,12 +50,13 @@
 
 use num_bigint::BigInt;
 use num_rational::BigRational;
+use num_traits::Zero;
 
 use crate::curriculum::AnswerKind;
 
 use super::Undecidable;
 use super::ast::Ast;
-use super::canon::{Canon, canon};
+use super::canon::{Basis, Canon, canon};
 use super::normalize::{MAX_ANSWER_CHARS, is_grouped_integer, normalize};
 use super::parse::parse;
 use super::rounding::{Rounding, rounds_to};
@@ -111,8 +110,7 @@ impl Outcome {
 #[must_use]
 pub fn check(expected: &str, learner: &str, kind: AnswerKind) -> Outcome {
     let strict = decide(expected, learner, kind).0;
-    // Rung 7: a percent key against its bare number, and a number key against
-    // the same number with a unit named (`super::natural`).
+    // Rung 7: a percent key against its displayed number (`super::natural`).
     if !matches!(kind, AnswerKind::Numeric | AnswerKind::Expression) {
         return strict;
     }
@@ -279,22 +277,34 @@ fn rounding_variant(expected: &Canon, learner_tree: &Ast) -> Rounding {
     if unit.quantity != *quantity {
         return Rounding::Different;
     }
-    match in_unit(value, &unit.factor()) {
+    match in_unit(value, &unit.factor(), &unit.offset()) {
         Some(expected) => rounds_to(&expected, &decimal, scale),
         None => Rounding::NotANumber,
     }
 }
 
 /// Write a number of base units in a unit of `factor` base units.
-fn in_unit(value: &Canon, factor: &BigRational) -> Option<Canon> {
+fn in_unit(value: &Canon, factor: &BigRational, offset: &BigRational) -> Option<Canon> {
     match value {
-        Canon::Rational(number) => Some(Canon::Rational(number / factor)),
-        Canon::Radical(parts) => Some(Canon::Radical(
-            parts
-                .iter()
-                .map(|(basis, coefficient)| (basis.clone(), coefficient / factor))
-                .collect(),
-        )),
+        Canon::Rational(number) => Some(Canon::Rational((number - offset) / factor)),
+        Canon::Radical(parts) => {
+            let mut normalized = parts.clone();
+            let rational = Basis {
+                radicand: BigInt::from(1),
+                pi: 0,
+                e: 0,
+            };
+            if !offset.is_zero() {
+                *normalized.entry(rational).or_insert_with(BigRational::zero) -= offset;
+                normalized.retain(|_, coefficient| !coefficient.is_zero());
+            }
+            Some(Canon::Radical(
+                normalized
+                    .into_iter()
+                    .map(|(basis, coefficient)| (basis, coefficient / factor))
+                    .collect(),
+            ))
+        }
         _ => None,
     }
 }
@@ -375,6 +385,16 @@ pub fn same_answer(expected: &Canon, learner: &Canon) -> bool {
 /// Returns [`Undecidable`] when the string leaves the decidable grammar (V2).
 pub fn canonical_form(text: &str) -> Result<Canon, Undecidable> {
     canonical(&normalize(text).source)
+}
+
+/// Canonicalize a quantity using the unit-token interpretation supplied by a Unit contract.
+pub(crate) fn canonical_quantity_in_contract_context(
+    text: &str,
+) -> Result<Option<Canon>, Undecidable> {
+    let normalized = normalize(text);
+    super::parse::parse_quantity_in_contract_context(&normalized.source)?
+        .map(|tree| canon(&tree))
+        .transpose()
 }
 
 /// Parse and canonicalize one already-normalized source string.

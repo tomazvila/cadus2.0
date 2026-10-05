@@ -131,6 +131,11 @@ pub fn parse_with_functions(source: &str, extra: &[&str]) -> Result<Ast, Undecid
     Ok(ast)
 }
 
+/// Parse a quantity with one-letter unit spellings enabled by a Unit contract.
+pub(crate) fn parse_quantity_in_contract_context(source: &str) -> Result<Option<Ast>, Undecidable> {
+    unit::parse_quantity_in_contract_context(source)
+}
+
 /// The parser state: the token list and the read cursor.
 struct Parser<'a> {
     tokens: &'a [Token],

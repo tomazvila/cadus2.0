@@ -26,8 +26,8 @@ fn historical_classification_and_all_live_statements_have_a_closed_boundary() {
         }
     }
     current.sort_by_key(key);
-    // 987 live statements at the review; the 2026-09-23..10-05 Foundations
-    // rewrites added 38 multi-step items, all with a contract.
+    // 1025 live statements; the 2026-09-23..10-05 Foundations rewrites added 38
+    // multi-step items, and the reviewed unit-contract pass updated existing keys.
     assert_eq!(current.len(), 1025);
     assert_eq!(
         current
@@ -46,7 +46,7 @@ fn historical_classification_and_all_live_statements_have_a_closed_boundary() {
     );
     assert_eq!(
         sha256_hex(serde_json::to_string(&current).unwrap().as_bytes()),
-        "7ea004f67189058567c5bcf4c77ef3b2194fadddc23c6cbc94ea286bba35de1d"
+        "68884ca50ec245f8e4f20811c140bb64c6a961013f1d786f72de8dec816e8476"
     );
     let current_keys: BTreeSet<_> = current.iter().map(key).collect();
     assert_eq!(current_keys.len(), current.len());
@@ -70,7 +70,7 @@ fn historical_classification_and_all_live_statements_have_a_closed_boundary() {
             ("approx".to_owned(), 3),
             ("ascending_chain".to_owned(), 3),
             ("coordinates".to_owned(), 180),
-            ("exact".to_owned(), 565),
+            ("exact".to_owned(), 485),
             ("inequality_union".to_owned(), 27),
             ("label".to_owned(), 33),
             ("list".to_owned(), 14),
@@ -81,8 +81,8 @@ fn historical_classification_and_all_live_statements_have_a_closed_boundary() {
             ("relation_setup".to_owned(), 6),
             ("required_assignment".to_owned(), 4),
             ("required_inequality_notation".to_owned(), 8),
-            ("uncontracted".to_owned(), 48),
-            ("unit".to_owned(), 8),
+            ("uncontracted".to_owned(), 45),
+            ("unit".to_owned(), 91),
         ])
     );
 
@@ -135,7 +135,7 @@ fn historical_classification_and_all_live_statements_have_a_closed_boundary() {
             .filter(|row| row["answer_contract"].is_null())
             .filter(|row| reviewed_keys.contains(&key(row)))
             .count(),
-        48
+        45
     );
     assert_eq!(
         reviewed

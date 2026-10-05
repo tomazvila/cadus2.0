@@ -90,6 +90,10 @@ fn every_audited_family_produces_exact_distinct_practice() {
                 .unwrap_or_else(|| panic!("{key}: {}", proposals.refusals.join("; ")))
         };
         let body = verify_kind(Kind::Template, &spec, &draft["arguments"], &[]).unwrap();
+        if *key == "decimal-multiplication-powers-of-ten/kp3" {
+            let verified: serde_json::Value = serde_json::from_str(&body).unwrap();
+            assert_eq!(verified["answer_contract"]["kind"], "exact");
+        }
         let instances = if let Some(expected) = finite_count {
             let doc = cadus_core::template::from_body(&body).unwrap();
             let compiled = cadus_core::template::Compiled::new(&doc).unwrap();

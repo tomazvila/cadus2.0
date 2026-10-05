@@ -17,8 +17,9 @@
 
 mod common;
 
+use cadus_core::answer::{AnswerContract, Quantity};
 use cadus_store::test_support::TestDb;
-use cadus_web::equivalence::{cache_key, item_digest};
+use cadus_web::equivalence::{cache_item_digest, cache_key, item_digest};
 use common::{LESSON, PROBLEM_ID, answer_task_ok, lesson_app, lesson_learner, lesson_problem};
 use serde_json::json;
 use sqlx::types::Uuid;
@@ -184,6 +185,144 @@ async fn a_deterministic_correct_answer_skips_the_equivalence_path() {
         .await;
         assert_eq!(reply["outcome"], json!("correct"), "{reply}");
         assert_eq!(reply["equivalence"], json!(null));
+    })
+    .await;
+}
+
+fn unit_case() -> cadus_web::state::ServedProblem {
+    let mut live = lesson_problem(5.0, "kp1", Vec::new());
+    live.expected.answer = "8".to_owned();
+    live.expected.answer_contract = Some(AnswerContract::Unit {
+        quantity: Quantity::Length,
+        unit: "m".to_owned(),
+        allow_omitted: true,
+    });
+    live.answer_kind = Some("numeric".to_owned());
+    live.text = "A length is 8 m. Give its value in metres.".to_owned();
+    live
+}
+
+#[tokio::test]
+async fn a_unit_policy_does_not_reuse_an_old_accepted_answer_for_the_same_text_key() {
+    TestDb::with(|db| async move {
+        let served = unit_case();
+        let user =
+            lesson_learner(&db, "unit-cache-invalidation@example.test", served.clone()).await;
+        let answer = "8 kg";
+        let old_verdict = cadus_store::equivalence::Verdict {
+            equivalent: true,
+            reason: "old cache interpretation".to_owned(),
+            model: "old-model".to_owned(),
+        };
+        // Simulate a positive cache record from before the Unit policy existed.
+        cadus_store::equivalence::cache_put(
+            &db.admin,
+            &item_digest(&served),
+            &cache_key(answer),
+            &old_verdict,
+        )
+        .await
+        .unwrap();
+
+        let app = lesson_app(&db);
+        let reply = answer_task_ok(
+            &app,
+            user,
+            LESSON,
+            json!({"problem_id": PROBLEM_ID, "answer": answer}),
+        )
+        .await;
+        assert_eq!(reply["correct"], json!(false), "{reply}");
+        assert_eq!(reply["equivalence"]["status"], json!("pending"), "{reply}");
+        assert_ne!(cache_item_digest(&served), item_digest(&served));
+    })
+    .await;
+}
+
+#[tokio::test]
+async fn a_unit_cache_uses_its_versioned_identity_and_non_unit_identity_stays_compatible() {
+    TestDb::with(|db| async move {
+        let unit = unit_case();
+        let user = lesson_learner(&db, "unit-cache-hit@example.test", unit.clone()).await;
+        let answer = "8x";
+        let verdict = cadus_store::equivalence::Verdict {
+            equivalent: true,
+            reason: "cached unit-model result".to_owned(),
+            model: "unit-model".to_owned(),
+        };
+        let unit_digest = cache_item_digest(&unit);
+        let mut different_key = unit.clone();
+        different_key.expected.answer = "9".to_owned();
+        assert_ne!(unit_digest, cache_item_digest(&different_key));
+        let mut different_policy = unit.clone();
+        different_policy.expected.answer_contract = Some(AnswerContract::Unit {
+            quantity: Quantity::Length,
+            unit: "cm".to_owned(),
+            allow_omitted: true,
+        });
+        assert_ne!(unit_digest, cache_item_digest(&different_policy));
+        cadus_store::equivalence::cache_put(&db.admin, &unit_digest, &cache_key(answer), &verdict)
+            .await
+            .unwrap();
+
+        let app = lesson_app(&db);
+        let reply = answer_task_ok(
+            &app,
+            user,
+            LESSON,
+            json!({"problem_id": PROBLEM_ID, "answer": answer}),
+        )
+        .await;
+        assert_eq!(reply["correct"], json!(true), "{reply}");
+        assert_eq!(reply["equivalence"]["status"], json!("accepted"), "{reply}");
+
+        let non_unit = owner_case();
+        assert_eq!(cache_item_digest(&non_unit), item_digest(&non_unit));
+    })
+    .await;
+}
+
+#[tokio::test]
+async fn unit_notation_is_deterministic_and_unsupported_input_stays_pending() {
+    TestDb::with(|db| async move {
+        let served = unit_case();
+        let app = lesson_app(&db);
+        let normal_user =
+            lesson_learner(&db, "unit-normal-notation@example.test", served.clone()).await;
+        let normal = answer_task_ok(
+            &app,
+            normal_user,
+            LESSON,
+            json!({"problem_id": PROBLEM_ID, "answer": "8m"}),
+        )
+        .await;
+        assert_eq!(normal["correct"], json!(true), "{normal}");
+        assert_eq!(normal["equivalence"], json!(null), "{normal}");
+
+        let uncertain_user =
+            lesson_learner(&db, "unit-uncertain-answer@example.test", served).await;
+        let uncertain = answer_task_ok(
+            &app,
+            uncertain_user,
+            LESSON,
+            json!({"problem_id": PROBLEM_ID, "answer": "8x"}),
+        )
+        .await;
+        assert_eq!(uncertain["outcome"], json!("ungraded"), "{uncertain}");
+        assert!(uncertain.get("correct").is_none(), "{uncertain}");
+        assert_eq!(
+            uncertain["equivalence"]["status"],
+            json!("pending"),
+            "{uncertain}"
+        );
+
+        let job_count: i64 =
+            sqlx::query_scalar("SELECT count(*) FROM equivalence_jobs WHERE user_id = $1")
+                .bind(normal_user)
+                .fetch_one(&db.admin)
+                .await
+                .unwrap();
+        assert_eq!(job_count, 0);
     })
     .await;
 }

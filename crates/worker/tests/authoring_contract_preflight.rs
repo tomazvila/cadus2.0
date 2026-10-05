@@ -82,6 +82,58 @@ fn an_explicit_contract_cannot_replace_or_malform_the_reviewed_policy() {
 }
 
 #[test]
+fn mixed_reviewed_scalar_policies_constrain_explicit_template_contracts() {
+    let mut spec = squares_spec();
+    spec.exemplars[0].answer_contract = Some(AnswerContract::Exact);
+    let mut measured = spec.exemplars[0].clone();
+    measured.answer_contract = Some(AnswerContract::Unit {
+        quantity: cadus_core::answer::Quantity::Length,
+        unit: "m".to_owned(),
+        allow_omitted: true,
+    });
+    spec.exemplars.push(measured);
+    assert_eq!(spec.template_contract(), None);
+    let allowed = spec.mixed_scalar_template_contracts().unwrap();
+    assert!(allowed.contains(&AnswerContract::Exact));
+    assert!(allowed.contains(&AnswerContract::Unit {
+        quantity: cadus_core::answer::Quantity::Length,
+        unit: "m".to_owned(),
+        allow_omitted: true,
+    }));
+
+    let mut arguments = good_arguments();
+    assert_eq!(
+        verify_kind(Kind::Template, &spec, &arguments, &[])
+            .unwrap_err()
+            .code,
+        "answer-contract",
+        "mixed reviewed policies require an explicit choice"
+    );
+    arguments["answer_contract"] = json!({"kind":"required_form","form":"reduced_fraction"});
+    assert_eq!(
+        verify_kind(Kind::Template, &spec, &arguments, &[])
+            .unwrap_err()
+            .code,
+        "answer-contract",
+        "an unreviewed form policy cannot bypass mixed scalar review"
+    );
+    arguments["answer_contract"] =
+        json!({"kind":"unit","quantity":"speed","unit":"cm/h","allow_omitted":true});
+    assert!(verify_kind(Kind::Template, &spec, &arguments, &[]).is_ok());
+    arguments["answer_contract"] =
+        json!({"kind":"unit","quantity":"speed","unit":"kg","allow_omitted":true});
+    assert_eq!(
+        verify_kind(Kind::Template, &spec, &arguments, &[])
+            .unwrap_err()
+            .code,
+        "answer-contract",
+        "an invalid quantity/unit pair is refused"
+    );
+    arguments["answer_contract"] = json!({"kind":"exact"});
+    assert!(verify_kind(Kind::Template, &spec, &arguments, &[]).is_ok());
+}
+
+#[test]
 fn exact_policy_allows_a_validated_set_refinement_and_rejects_its_reverse() {
     let mut spec = squares_spec();
     spec.answer_kind = AnswerKind::MultiStep;

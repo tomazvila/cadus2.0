@@ -265,6 +265,31 @@ impl AuthoringSpec {
             .all(|item| item.answer_contract.as_ref() == Some(&contract))
             .then_some(contract)
     }
+
+    /// Distinct reviewed scalar policies that a template may explicitly choose.
+    /// Mixed structural, absent, or unconstrained policies remain outside this
+    /// narrow authoring constraint.
+    #[must_use]
+    pub fn mixed_scalar_template_contracts(
+        &self,
+    ) -> Option<Vec<cadus_core::answer::AnswerContract>> {
+        use cadus_core::answer::AnswerContract;
+        let mut policies = Vec::new();
+        for item in self
+            .exemplars
+            .iter()
+            .filter(|item| !matches!(item.answer_contract, Some(AnswerContract::Property { .. })))
+        {
+            let policy = item.answer_contract.as_ref()?;
+            if !matches!(policy, AnswerContract::Exact | AnswerContract::Unit { .. }) {
+                return None;
+            }
+            if !policies.contains(policy) {
+                policies.push(policy.clone());
+            }
+        }
+        (policies.len() > 1).then_some(policies)
+    }
 }
 
 /// The retry block of `prompts.py:766-774`, with the gate's literal message.

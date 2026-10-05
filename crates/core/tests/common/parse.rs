@@ -119,9 +119,9 @@ pub fn value(text: &str) -> Canon {
 ///   inequality, or the integral sign.
 /// - `equation` 1 parses. `y = x` is the value `x` with the label `y`, which the
 ///   parser reads as `Ast::Assign` (review finding #2).
-/// - `value_with_unit` 11 parse. `5 m/s`, `2x + h`, `60 km/h` and `2π cm^2` are
-///   legal expressions over single-letter variables; the multi-letter unit `min`
-///   holds an `i`, which no letter run splits on, so `7 L/min` still fails.
+/// - `value_with_unit` 11 parse at the 1.0 snapshot. `5 m/s`, `2x + h`,
+///   `60 km/h` and `2π cm^2` are legal expressions over single-letter variables.
+///   The 2.0 unit table now reads `7 L/min` as a flow rate.
 /// - `comma_list` 28 parse. 15 of the 43 rows are prose that carries a comma
 ///   (`slope 3, y-intercept -5`), so they belong to the section 7.6 class.
 /// - `expression_symbolic` 632 and `expression_numeric` 228 parse. The 11 rows
@@ -132,9 +132,10 @@ pub fn value(text: &str) -> Canon {
 ///   `expression_symbolic` rows (`x^(1/2)`, `(5/2)x^(3/2)`) and one
 ///   `expression_numeric` row (`3 + 3*2^(1/3)`), so the two buckets hold 646
 ///   and 229. The quotient-and-remainder production reads all 16
-///   `quotient_remainder` rows (`9 R2`, `x + 2 remainder 3`). The
-///   value-with-unit production refuses `cos 70°`, a unit inside an
-///   expression, so `expression_numeric` holds 228 and 5.
+///   `quotient_remainder` rows (`9 R2`, `x + 2 remainder 3`). The unit
+///   production reads `7 L/min` and `18 degrees Celsius`, so
+///   `value_with_unit` holds 12 and 0, and `prose_or_words` holds 3 and 164.
+///   It still refuses `cos 70°`, a unit inside an expression.
 pub const SHAPE_COUNTS: [(&str, usize, usize); 15] = [
     ("comma_list", 28, 15),
     ("decimal", 128, 0),
@@ -147,10 +148,10 @@ pub const SHAPE_COUNTS: [(&str, usize, usize); 15] = [
     ("mixed_number", 8, 0),
     ("ordered_tuple", 178, 0),
     ("other", 7, 0),
-    ("prose_or_words", 2, 165),
+    ("prose_or_words", 3, 164),
     ("quotient_remainder", 16, 0),
     ("set_or_list", 5, 0),
-    ("value_with_unit", 11, 1),
+    ("value_with_unit", 12, 0),
 ];
 
 /// The tree of `2 cos 2t + (5/2) sin 2t`, which two spellings of the argument chain share.

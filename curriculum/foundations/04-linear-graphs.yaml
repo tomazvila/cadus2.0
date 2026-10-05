@@ -224,15 +224,15 @@ topics:
         exemplars:
           - problem: "A store prints a cost-versus-items graph with the number of items on the horizontal axis and the total cost in euros on the vertical axis. The point (7, 21) is labeled. What is the total cost in euros of 7 items?"
             answer: "21"
-            answer_contract: {"kind": "exact"}
+            answer_contract: {"kind":"unit","quantity":"euro","unit":"euro","allow_omitted":true}
             solution_sketch: "Read the axes first: items lie along the horizontal axis and total cost along the vertical axis. The labeled point (7, 21) pairs 7 items with a total cost of 21 euros, so the cost is the second coordinate of the point. The answer is 21."
           - problem: "A height-versus-time graph of a thrown ball has time in seconds on the horizontal axis and height in meters on the vertical axis. The highest point of the graph is (3, 45). At how many seconds does the ball reach its maximum height?"
             answer: "3"
-            answer_contract: {"kind": "exact"}
+            answer_contract: {"kind":"unit","quantity":"time","unit":"second","allow_omitted":true}
             solution_sketch: "The graph plots height on the vertical axis against time on the horizontal axis. The highest point (3, 45) carries two pieces of information: the time 3 seconds and the maximum height 45 meters, and the question asks for the time coordinate. The answer is 3."
           - problem: "A distance-versus-time graph of a hiker has time in hours on the horizontal axis and distance in kilometers on the vertical axis. The point (6, 24) is labeled. After how many hours has the hiker walked 24 kilometers?"
             answer: "6"
-            answer_contract: {"kind": "exact"}
+            answer_contract: {"kind":"unit","quantity":"time","unit":"hour","allow_omitted":true}
             solution_sketch: "Name the axes: time in hours is horizontal and distance in kilometers is vertical. The labeled point (6, 24) means that after 6 hours the hiker has walked 24 kilometers, so the requested time is the first coordinate of the point. The answer is 6."
           - problem: "A volume-versus-time graph of a water tank has time in minutes on the horizontal axis and water volume in liters on the vertical axis. One part of the graph is a horizontal segment. What does that horizontal segment tell you about the water?"
             answer: "no flow in or out"
@@ -333,7 +333,7 @@ topics:
         exemplars:
           - problem: "Five kilograms cost €20. Find the cost per kilogram in euros."
             answer: "4"
-            answer_contract: {"kind": "exact"}
+            answer_contract: {"kind":"unit","quantity":"euro_per_mass","unit":"€/kg","allow_omitted":true}
             solution_sketch: "Divide the cost by mass: $20/5=4$ euros per kilogram."
           - problem: "A cyclist travels $42$ km in $3$ hours at a constant rate. Find kilometres per hour."
             answer: "14"
@@ -351,6 +351,7 @@ topics:
     diagnostic_exemplar:
       problem: '$4$ kilograms of cheese cost €30. What is the price per kilogram, in euros?'
       answer: '7.50'
+      answer_contract: {"kind":"unit","quantity":"euro_per_mass","unit":"€/kg","allow_omitted":true}
       solution_sketch: '$k = \frac{30}{4} = 7.5$.'
     anki_seeds:
       - front: "For a proportional relationship y = kx, the constant of proportionality k equals:"
@@ -432,11 +433,11 @@ topics:
             solution_sketch: "The constant is $12/3=4$; solve $18=4x$, giving $x=9/2$."
           - problem: "Eight metres of fabric cost €20. At the same rate, how many metres cost €35?"
             answer: "14"
-            answer_contract: {"kind": "exact"}
+            answer_contract: {"kind":"unit","quantity":"length","unit":"m","allow_omitted":true}
             solution_sketch: "The cost per metre is $20/8=5/2$. Thus $(5/2)x=35$, giving $x=14$ metres."
           - problem: "A pump fills $15$ L in $6$ minutes at a proportional rate. How many litres does it fill in $9$ minutes?"
             answer: "45/2"
-            answer_contract: {"kind": "exact"}
+            answer_contract: {"kind":"unit","quantity":"volume","unit":"litre","allow_omitted":true}
             solution_sketch: "The rate is $15/6=5/2$ L/min; multiply by $9$ to get $45/2$ L."
         constraints: "find k first, then solve; integer or half-integer answers"
     diagnostic_exemplar:
@@ -929,15 +930,15 @@ topics:
         exemplars:
           - problem: "Distance increases from $10$ km at $1$ hour to $34$ km at $3$ hours. Give the rate in km/h."
             answer: "12"
-            answer_contract: {"kind": "exact"}
+            answer_contract: {"kind":"unit","quantity":"speed","unit":"km/h","allow_omitted":true}
             solution_sketch: "The change is $34-10=24$ km over $3-1=2$ h; $24/2=12$ km/h."
           - problem: "A tank falls from $80$ L at minute $2$ to $50$ L at minute $5$. Give the signed rate in L/min."
             answer: "-10"
-            answer_contract: {"kind": "exact"}
+            answer_contract: {"kind":"unit","quantity":"flow","unit":"L/min","allow_omitted":true}
             solution_sketch: "The volume change is $50-80=-30$ L over $5-2=3$ min, giving $-10$ L/min."
           - problem: "A table records seconds $4,7$ and distance metres $18,30$. Give the rate in m/s."
             answer: "4"
-            answer_contract: {"kind": "exact"}
+            answer_contract: {"kind":"unit","quantity":"speed","unit":"m/s","allow_omitted":true}
             solution_sketch: "Divide the distance change $30-18=12$ m by elapsed time $7-4=3$ s, giving $4$ m/s."
           - problem: "A learner divides €26 by $4$ kg for purchases of $1$ kg costing €8 and $4$ kg costing €26. Find the increase in cost per added kg."
             answer: "6"
@@ -977,7 +978,7 @@ topics:
             solution_sketch: "The output changes by $19-7=12$ over $5-2=3$, so the rate is $4$."
           - problem: "A tank table lists minutes $1,4$ and litres $90,60$. Find the signed rate in L/min."
             answer: "-10"
-            answer_contract: {"kind": "exact"}
+            answer_contract: {"kind":"unit","quantity":"flow","unit":"L/min","allow_omitted":true}
             solution_sketch: "The change is $60-90=-30$ L over $4-1=3$ min; the rate is $-10$ L/min."
           - problem: "A table has input $-2,2$ and output $3,11$. Find the rate."
             answer: "2"
@@ -991,6 +992,7 @@ topics:
     diagnostic_exemplar:
       problem: 'A candle is $30$ cm tall at $t = 0$ and $18$ cm tall at $t = 4$ hours. Find the rate of change of its height, in cm per hour.'
       answer: "-3"
+      answer_contract: {"kind":"unit","quantity":"speed","unit":"cm/h","allow_omitted":true}
       solution_sketch: '$\frac{18 - 30}{4 - 0} = -3$ cm per hour.'
     anki_seeds:
       - front: "In a linear model, the slope is the ___ of change, measured in units of ___ per unit of ___."
@@ -1973,7 +1975,7 @@ topics:
             solution_sketch: "The model y = 0.12m + 19 is in slope-intercept form, whose constant term is the value at m = 0. A month with zero calls costs 0.12 · 0 + 19 = 19 euros, so the 19 is charged regardless of usage; the per-call part is the slope 0.12. The option metered is the error of reading the slope as the intercept. verdict = flat; cost = 19"
           - problem: "Taxi app A charges y = 2.5x + 4 euros for a ride of x km, and app B charges y = 1.8x + 9 euros; each model is a starting fee plus a per-km charge. Find how many euros larger the starting fee of app B is than the starting fee of app A."
             answer: "5"
-            answer_contract: {"kind": "exact"}
+            answer_contract: {"kind":"unit","quantity":"euro","unit":"euro","allow_omitted":true}
             solution_sketch: "The models y = 2.5x + 4 and y = 1.8x + 9 are in slope-intercept form, where the constant term b is the value at x = 0. The starting fee of app A is 4 euros and that of app B is 9 euros. Difference: 9 - 4 = 5 by subtraction of the two intercepts. The starting fee of app B is 5 euros larger."
         constraints: "intercept = starting or fixed value"
       - id: kp3
@@ -1983,19 +1985,19 @@ topics:
         exemplars:
           - problem: "A fare is $C=3d+4$ euros. Find the fare in euros for $d=5$ km."
             answer: "19"
-            answer_contract: {"kind": "exact"}
+            answer_contract: {"kind":"unit","quantity":"euro","unit":"euro","allow_omitted":true}
             solution_sketch: "$C=3(5)+4=15+4=19$, meaning a five-kilometre trip costs €19."
           - problem: "A tank contains $V=60-4t$ litres after $t$ minutes. Find its volume in litres after $8$ minutes."
             answer: "28"
-            answer_contract: {"kind": "exact"}
+            answer_contract: {"kind":"unit","quantity":"volume","unit":"litre","allow_omitted":true}
             solution_sketch: "$V=60-4(8)=60-32=28$, so $28$ L remain."
           - problem: "A temperature model is $T=2h-3$ degrees Celsius. Find the temperature in degrees Celsius at hour $h=4$."
             answer: "5"
-            answer_contract: {"kind": "exact"}
+            answer_contract: {"kind":"unit","quantity":"temperature","unit":"°C","allow_omitted":true}
             solution_sketch: "$T=2(4)-3=8-3=5$, the temperature at hour four."
           - problem: "A learner says $S=10+5w$ means €30 saved at week $w=3$. Find the actual amount in euros."
             answer: "25"
-            answer_contract: {"kind": "exact"}
+            answer_contract: {"kind":"unit","quantity":"euro","unit":"euro","allow_omitted":true}
             solution_sketch: "The model gives $10+5(3)=25$: €10 initially plus €15 saved across three weeks."
         constraints: "evaluate at a given input; interpret with units"
     diagnostic_exemplar:
@@ -2078,11 +2080,11 @@ topics:
         exemplars:
           - problem: "A taxi fare is $C=2d+5$ euros. Find the distance in kilometres when the fare is €19."
             answer: "7"
-            answer_contract: {"kind": "exact"}
+            answer_contract: {"kind":"unit","quantity":"length","unit":"km","allow_omitted":true}
             solution_sketch: "Set $19=2d+5$, subtract $5$, and divide by $2$: $d=7$ km."
           - problem: "A tank has $V=80-5t$ litres. After how many minutes will $30$ L remain?"
             answer: "10"
-            answer_contract: {"kind": "exact"}
+            answer_contract: {"kind":"unit","quantity":"time","unit":"minute","allow_omitted":true}
             solution_sketch: "$30=80-5t$ gives $-50=-5t$, so $t=10$ minutes."
           - problem: "Savings follow $S=7w+5$ euros. At which week will savings equal €40?"
             answer: "5"
@@ -2096,6 +2098,7 @@ topics:
     diagnostic_exemplar:
       problem: 'A candle is $24$ cm tall after $1$ hour of burning and $12$ cm tall after $5$ hours. After how many hours of burning is it $6$ cm tall?'
       answer: '7'
+      answer_contract: {"kind":"unit","quantity":"time","unit":"hour","allow_omitted":true}
       solution_sketch: '$m = \frac{12 - 24}{5 - 1} = -3$ and $b = 27$; solve $6 = -3t + 27$ to get $t = 7$.'
     anki_seeds:
       - front: "In a linear model y = mx + b, the per-unit rate and the fixed fee map to..."

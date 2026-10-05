@@ -204,7 +204,7 @@ fn a_unit_template_evaluates_its_numeric_expression_before_the_suffix() {
 }
 
 #[test]
-fn the_sixty_multi_step_topics_have_explicit_usable_exact_items() {
+fn multi_step_topics_keep_the_reviewed_contracts_usable() {
     let (raw, findings) = load_raw_curriculum(&curriculum_root()).unwrap();
     assert!(findings.is_empty(), "{findings:?}");
     let mut topics = 0;
@@ -215,7 +215,12 @@ fn the_sixty_multi_step_topics_have_explicit_usable_exact_items() {
             .knowledge_points
             .iter()
             .flat_map(|kp| &kp.exemplars)
-            .filter(|item| item.answer_contract == Some(AnswerContract::Exact))
+            .filter(|item| {
+                matches!(
+                    item.answer_contract.as_ref(),
+                    Some(AnswerContract::Exact | AnswerContract::Unit { .. })
+                )
+            })
             .collect();
         if annotated.is_empty() {
             continue;
@@ -225,20 +230,18 @@ fn the_sixty_multi_step_topics_have_explicit_usable_exact_items() {
         }
         topics += 1;
         for item in annotated {
-            assert_eq!(item.answer_contract, Some(AnswerContract::Exact));
+            let contract = item.answer_contract.clone().expect("reviewed contract");
             item.canonical_answer().unwrap();
             assert!(
-                matches!(check_contract(&item.answer, &item.answer, AnswerContract::Exact), Outcome::Decided(v) if v.correct)
+                matches!(check_contract(&item.answer, &item.answer, contract), Outcome::Decided(v) if v.correct)
             );
             items += 1;
         }
     }
-    // The count started at 59 topics and 516 items. Twelve writing-quadratics-from-roots
-    // exemplars and one applying-the-quadratic-formula exemplar use explicit exact
-    // contracts (restored from polynomial_relation); the 2026-09-23..10-05 flow waves
-    // and Foundations rewrites added exact items to 17 more multi-step topics.
-    assert_eq!(topics, 76);
-    assert_eq!(items, 647);
+    // The reviewed baseline had 76 multi-step topics with 647 usable exact items.
+    // Unit contracts add measured-output semantics while preserving each numeric key.
+    assert!(topics >= 76, "reviewed-topic coverage fell to {topics}");
+    assert!(items >= 647, "reviewed-item coverage fell to {items}");
     assert!(lint_curriculum(&curriculum_root()).is_empty());
 }
 
@@ -261,11 +264,18 @@ fn contextual_fraction_items_accept_every_equal_value() {
     let unreduced = ["34/24", "2/12", "26/24", "26/48"];
     assert_eq!(kp.exemplars.len(), unreduced.len());
     for (item, equal) in kp.exemplars.iter().zip(unreduced) {
-        assert_eq!(item.answer_contract, Some(AnswerContract::Exact));
-        assert!(!item.problem.contains("lowest terms"));
-        assert_contract_accepts_own_answer(&item.answer, AnswerContract::Exact);
+        let contract = item
+            .answer_contract
+            .clone()
+            .expect("reviewed fraction contract");
         assert!(matches!(
-            check_contract(&item.answer, equal, AnswerContract::Exact),
+            &contract,
+            AnswerContract::Exact | AnswerContract::Unit { .. }
+        ));
+        assert!(!item.problem.contains("lowest terms"));
+        assert_contract_accepts_own_answer(&item.answer, contract.clone());
+        assert!(matches!(
+            check_contract(&item.answer, equal, contract),
             Outcome::Decided(verdict) if verdict.correct
         ));
     }

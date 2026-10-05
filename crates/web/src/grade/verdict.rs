@@ -43,11 +43,14 @@ pub fn grade_item(
         None => return deterministic_grade(&expected.answer, answer, kind),
         Some(contract) => contract,
     };
-    grade_outcome(
-        &expected.answer,
-        answer,
-        cadus_core::answer::check_contract(&expected.answer, answer, contract),
-    )
+    let quantity_answer = matches!(&contract, cadus_core::answer::AnswerContract::Unit { .. });
+    let outcome = cadus_core::answer::check_contract(&expected.answer, answer, contract);
+    if quantity_answer && matches!(&outcome, Outcome::Undecidable(_)) {
+        return ungraded_grade(
+            "I could not interpret this quantity reliably. This answer is ungraded.",
+        );
+    }
+    grade_outcome(&expected.answer, answer, outcome)
 }
 
 /// Grade a served item with source-scoped input representation support.

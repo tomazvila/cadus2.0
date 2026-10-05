@@ -61,6 +61,24 @@ fn a_number_and_one_unit_token_read_into_a_quantity() {
     assert_eq!(ast("3 mm"), quantity(int(3), "mm"));
     assert_eq!(ast("4 s"), quantity(int(4), "s"));
     assert_eq!(ast("7 g"), quantity(int(7), "g"));
+    assert_eq!(ast("5 C"), Ast::Mul(vec![int(5), v("C")]));
+    assert_eq!(ast("5 F"), Ast::Mul(vec![int(5), v("F")]));
+    assert_eq!(ast("5 J"), Ast::Mul(vec![int(5), v("J")]));
+    assert_eq!(ast("12 inches"), quantity(int(12), "inches"));
+    assert_eq!(ast("3 feet"), quantity(int(3), "feet"));
+    assert_eq!(ast("2 pounds"), quantity(int(2), "pounds"));
+    assert_eq!(ast("25 mg"), quantity(int(25), "mg"));
+    assert_eq!(ast("150 cents/kg"), quantity(int(150), "cents/kg"));
+    assert_eq!(ast("4 €/kg"), quantity(int(4), "€/kg"));
+    assert_eq!(ast("€4/kg"), quantity(int(4), "€/kg"));
+    assert_eq!(ast("10 km/L"), quantity(int(10), "km/L"));
+    assert_eq!(ast("32°F"), quantity(int(32), "°F"));
+    assert_eq!(ast("32 degrees Fahrenheit"), quantity(int(32), "°F"));
+    assert_eq!(ast("0 degrees Celsius"), quantity(int(0), "°C"));
+    assert_eq!(ast("3 L/min"), quantity(int(3), "L/min"));
+    assert_eq!(ast("2 L/h"), quantity(int(2), "L/h"));
+    assert_eq!(ast("2 L/hour"), quantity(int(2), "L/hour"));
+    assert_eq!(ast("1 Wh"), quantity(int(1), "Wh"));
     // The value is one expression in front of the unit.
     assert_eq!(ast("-5 cm"), quantity(Ast::Neg(Box::new(int(5))), "cm"));
     assert_eq!(ast("1/2 kg"), quantity(ast("1/2"), "kg"));
@@ -102,12 +120,15 @@ fn a_letter_outside_the_unit_position_keeps_its_variable_reading() {
             Box::new(Ast::Pow(Box::new(v("s")), 2))
         )
     );
-    // A spelling outside the table is no unit: `5 M/S` and `5 mi`.
+    // A spelling outside the table is no unit: `5 M/S` and `5 furlong`.
     assert_eq!(
         ast("5 M/S"),
         Ast::Div(Box::new(Ast::Mul(vec![int(5), v("M")])), Box::new(v("S")))
     );
-    assert_eq!(refusal("5 mi"), "a name that is not a function or variable");
+    assert_eq!(
+        refusal("5 furlong"),
+        "a name that is not a function or variable"
+    );
     // A head that is no number expression falls back to the ordinary read.
     assert_eq!(ast("x m"), Ast::Mul(vec![v("x"), v("m")]));
     assert_eq!(ast("2x cm"), ast("2x*cm"));
@@ -180,7 +201,7 @@ fn a_hand_built_quantity_outside_the_production_is_refused() {
     // A quantity carries no arithmetic; a hand-built tree that adds one is refused.
     let sum = Ast::Add(vec![quantity(int(5), "cm"), int(1)]);
     assert_eq!(canon(&sum).unwrap_err().reason, "arithmetic on a quantity");
-    let outside = quantity(int(5), "mi");
+    let outside = quantity(int(5), "furlong");
     assert_eq!(
         canon(&outside).unwrap_err().reason,
         "a unit outside the table"
@@ -205,6 +226,8 @@ fn the_task_pairs_of_d_f3_are_decided_on_both_kinds() {
         ("5 cm", "0.05 m", N, true),
         ("60 km/h", "60 km/h", N, true),
         ("36 km/h", "10 m/s", N, true),
+        ("-360000 cm/hour", "-1 m/s", N, true),
+        ("-6 cm/h", "-6 cm/hour", N, true),
         ("2π cm^2", "2*pi cm^2", E, true),
         ("2π cm^2", "2π cm²", E, true),
         ("$5", "5 $", N, true),
@@ -213,6 +236,19 @@ fn the_task_pairs_of_d_f3_are_decided_on_both_kinds() {
         ("16 m", "1600 cm", N, true),
         ("25 L", "25 l", N, true),
         ("25 L", "25000 ml", N, true),
+        ("1 ft", "12 inches", N, true),
+        ("1 mi", "1760 yards", N, true),
+        ("1 lb", "16 oz", N, true),
+        ("1 cent", "0.01 euros", N, true),
+        ("150 cents/kg", "1.5 €/kg", N, true),
+        ("4 euros/kg", "400 cents/kg", N, true),
+        ("10 km/L", "10000 m/L", N, true),
+        ("25 mg", "0.025 g", N, true),
+        ("0 °C", "32 °F", N, true),
+        ("100 Celsius", "212 Fahrenheit", N, true),
+        ("3 L/min", "50 ml/s", N, true),
+        ("3 L/h", "5/6 ml/s", N, true),
+        ("1 Wh", "3600 joules", N, true),
         // A different value, or a different kind, is incorrect.
         ("1 m", "10 cm", N, false),
         ("1 m", "1 cm", N, false),
@@ -221,9 +257,15 @@ fn the_task_pairs_of_d_f3_are_decided_on_both_kinds() {
         ("5 €", "5 $", N, false),
         ("1.5 h", "1.5 min", N, false),
         ("60 km/h", "60 m/s", N, false),
+        ("-6 cm/h", "-6 cm", N, false),
         ("1 m^2", "1 m^3", N, false),
         ("1 m^2", "100 cm^2", N, false),
         ("90°", "45°", N, false),
+        ("5 °C", "5°", N, false),
+        ("5°", "5 °C", N, false),
+        ("1 ft", "1 in", N, false),
+        ("0 °C", "0 °F", N, false),
+        ("10 km/L", "10 €/kg", N, false),
     ]);
 }
 
@@ -235,11 +277,10 @@ fn a_unit_on_one_side_alone_gives_no_verdict() {
     assert_undecidable("$5", "5", N, "a unit is missing");
     assert_undecidable("5 cm", "5x", E, "a unit is missing");
     assert_undecidable("d = 5 cm", "5", N, "a unit is missing");
-    // A unit on the learner side only names the unit the question asked in:
-    // the number decides (checker spec 8.6), and a wrong number stays wrong.
-    assert_eq!(check("5", "5 cm", N), decided(true, false));
-    assert_eq!(check("30", "30°", N), decided(true, false));
-    assert_eq!(check("5", "6 cm", N), decided(false, false));
+    // A named unit must remain part of the answer when the key is unitless.
+    assert_undecidable("5", "5 cm", N, "a unit on the learner side only");
+    assert_undecidable("30", "30°", N, "a unit on the learner side only");
+    assert_undecidable("5", "6 cm", N, "a unit on the learner side only");
     // A glued one-letter unit is the product, so `5m` for `5 m` has no unit.
     assert_undecidable("5 m", "5m", N, "a unit is missing");
     // A unit inside an expression leaves the grammar (V2).

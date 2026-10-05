@@ -109,6 +109,42 @@ fn assemble_kept(kind: Kind, spec: &AuthoringSpec, arguments: &Value) -> Result<
 fn template_contract(spec: &AuthoringSpec, arguments: &Value) -> Result<Option<Value>, Rejection> {
     let supplied = arguments.get("answer_contract");
     let Some(reviewed) = spec.template_contract() else {
+        if let Some(allowed) = spec.mixed_scalar_template_contracts() {
+            let supplied = supplied.ok_or_else(|| Rejection {
+                code: "answer-contract",
+                message: "the mixed reviewed exemplar policies require an explicit answer contract"
+                    .to_owned(),
+            })?;
+            let parsed =
+                serde_json::from_value::<cadus_core::answer::AnswerContract>(supplied.clone())
+                    .map_err(|error| Rejection {
+                        code: "answer-contract",
+                        message: format!("the supplied answer contract is malformed: {error}"),
+                    })?;
+            if let cadus_core::answer::AnswerContract::Unit { .. } = &parsed {
+                parsed.validate().map_err(|error| Rejection {
+                    code: "answer-contract",
+                    message: format!("the supplied unit contract is invalid: {error}"),
+                })?;
+                if allowed
+                    .iter()
+                    .any(|policy| matches!(policy, cadus_core::answer::AnswerContract::Unit { .. }))
+                {
+                    return Ok(Some(supplied.clone()));
+                }
+            }
+            if allowed.contains(&parsed)
+                || (parsed == cadus_core::answer::AnswerContract::Set
+                    && allowed.contains(&cadus_core::answer::AnswerContract::Exact))
+            {
+                return Ok(Some(supplied.clone()));
+            }
+            return Err(Rejection {
+                code: "answer-contract",
+                message: "the supplied answer contract conflicts with the reviewed exemplar policy"
+                    .to_owned(),
+            });
+        }
         return Ok(supplied.cloned());
     };
     if let Some(supplied) = supplied {

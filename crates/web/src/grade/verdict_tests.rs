@@ -93,13 +93,17 @@ fn the_unit_guidance_reads_the_authored_spelling() {
 /// expression tells them where a unit may stand.
 #[test]
 fn the_other_unit_refusals_teach_their_own_form() {
-    // A unit named beside a bare-number key is read as the number (checker
-    // spec 8.6): the value decides, with no refusal.
-    let grade = deterministic_grade("13.5", "13.5 cm", AnswerKind::Numeric);
-    assert!(grade.correct);
-    let grade = deterministic_grade("13.5", "14.5 cm", AnswerKind::Numeric);
-    assert!(!grade.correct);
-    assert_eq!(grade.outcome.reason(), None);
+    for answer in ["13.5 cm", "14.5 cm"] {
+        let grade = deterministic_grade("13.5", answer, AnswerKind::Numeric);
+        assert!(!grade.correct);
+        assert!(matches!(grade.outcome, AttemptOutcome::Ungraded { .. }));
+        assert_eq!(
+            grade.outcome.reason(),
+            Some(
+                "The expected answer here is a bare number, so enter the value alone, without a unit."
+            )
+        );
+    }
     let grade = deterministic_grade("30°", "sin(30°)", AnswerKind::Expression);
     assert_eq!(
         grade.outcome.reason(),
@@ -132,26 +136,22 @@ fn the_trailing_text_refusal_keeps_its_two_guidances() {
 // ISSUE-13 (ISSUES.md): the name refusal speaks human, the way H-1 taught
 // the unit refusals to.
 
-/// The exact screen of ISSUE-13: a correct value followed by the word
-/// `units` is refused with the format to type, never with the grammar's
-/// wording. A trailing word is not auto-accepted: the learner-side unit
-/// (`13.5 cm` against `13.5`) is refused with teaching under the same
-/// ruling, and C4 keeps the checker from inventing a reading for prose.
+/// The exact screen of ISSUE-13: a value with trailing words is refused with
+/// the format to type, never with the grammar's wording.
 #[test]
 fn a_word_beside_the_value_teaches_the_format() {
-    // A trailing unit word beside the value is read as the number (checker
-    // spec 8.6); a word that is not a unit, inside the answer, still teaches.
-    let grade = deterministic_grade("6/5", "6/5 units", AnswerKind::Numeric);
-    assert!(grade.correct);
-    let grade = deterministic_grade("6/5", "6/5 units long", AnswerKind::Numeric);
-    assert!(matches!(grade.outcome, AttemptOutcome::Ungraded { .. }));
-    assert_eq!(
-        grade.outcome.reason(),
-        Some(
-            "I could not read a word in that answer. Enter just the number or expression \
-             \u{2014} remove any words, such as 'units'."
-        )
-    );
+    for answer in ["6/5 units", "6/5 units long"] {
+        let grade = deterministic_grade("6/5", answer, AnswerKind::Numeric);
+        assert!(!grade.correct);
+        assert!(matches!(grade.outcome, AttemptOutcome::Ungraded { .. }));
+        assert_eq!(
+            grade.outcome.reason(),
+            Some(
+                "I could not read a word in that answer. Enter just the number or expression \
+                 \u{2014} remove any words, such as 'units'."
+            )
+        );
+    }
 }
 
 /// The mixed-number ruling of ISSUE-13: the natural mixed-number input

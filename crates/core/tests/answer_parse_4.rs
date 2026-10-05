@@ -28,7 +28,6 @@ fn the_prose_class_never_parses() {
         "undefined",
         "all real numbers",
         "perpendicular",
-        "18 degrees Celsius",
         "vertices",
         "sides",
         "true",
@@ -141,13 +140,13 @@ fn deep_nesting_is_refused_and_never_overflows_the_stack() {
 }
 
 #[test]
-fn the_corpus_splits_into_3259_parsed_and_233_undecidable_answers() {
+fn the_corpus_splits_into_3261_parsed_and_231_undecidable_answers() {
     // The 1.0 residue was 265. The rational-exponent production of D-F3 (unit
-    // f2-grammar) reads 15 of those rows and the quotient-and-remainder
-    // production reads 16, which `recovered_2_0.jsonl` names. The
-    // value-with-unit production refuses one row, `cos 70°`: 1.0 read it as
-    // the cosine of 70 radians, and a unit inside an expression has no reading.
-    // The `arc_function_name` production of lane B3 reads 2 more rows.
+    // f2-grammar) reads 15 rows; quotient-and-remainder reads 16; and the
+    // `arc_function_name` production of lane B3 reads 2. The value-with-unit
+    // production reads the flow value `7 L/min`, while the temperature unit
+    // production reads `18 degrees Celsius`. It still refuses `cos 70°`: a
+    // unit inside an expression has no reading.
     let rows = corpus();
     assert_eq!(rows.len(), 3_492, "corpus size");
     let mut parsed = 0_usize;
@@ -159,8 +158,8 @@ fn the_corpus_splits_into_3259_parsed_and_233_undecidable_answers() {
             refused += 1;
         }
     }
-    assert_eq!(parsed, 3_259, "answers inside the grammar");
-    assert_eq!(refused, 233, "answers outside the grammar");
+    assert_eq!(parsed, 3_261, "answers inside the grammar");
+    assert_eq!(refused, 231, "answers outside the grammar");
 }
 
 #[test]
@@ -195,17 +194,18 @@ fn the_undecidable_answers_are_exactly_the_committed_fixture() {
         missing.is_empty() && extra.is_empty(),
         "the residue moved: missing {missing:?}, extra {extra:?}"
     );
-    assert_eq!(committed.len(), 233);
+    assert_eq!(committed.len(), 231);
 }
 
 #[test]
 fn the_recovered_answers_keep_their_identity_and_parse() {
     // The 1.0 residue held 265 answers. A 2.0 production moves a row it reads
-    // into `recovered_2_0.jsonl` with the production name, so the two fixtures
-    // together are still the 265 rows of the 1.0 residue. The productions of
-    // D-F3 (unit f2-grammar): `rational_exponent` reads 15 rows, and
-    // `quotient_remainder` reads 16 rows. The production of lane B3 (freeze
-    // pack, `rust-api.md` section 3): `arc_function_name` reads 2 rows.
+    // into `recovered_2_0.jsonl` with the production name, so the residue and
+    // recovered fixtures together still account for the 265 rows of the 1.0
+    // residue plus the one value-with-unit row newly refused by 2.0 (`cos 70°`).
+    // D-F3 reads 15 rational exponents and 16 quotient-and-remainder rows;
+    // lane B3 reads 2 `arc_function_name` rows; the unit grammar reads the
+    // temperature and flow rows `18 degrees Celsius` and `7 L/min`.
     let residue = committed_residue();
     let recovered = committed_recovered();
     let keys = recovered_keys();
@@ -239,33 +239,38 @@ fn the_recovered_answers_keep_their_identity_and_parse() {
         [
             ("arc_function_name", 2),
             ("quotient_remainder", 16),
-            ("rational_exponent", 15)
+            ("rational_exponent", 15),
+            ("temperature_unit", 1),
+            ("value_with_unit", 1)
         ]
     );
 }
 
 #[test]
-fn no_answer_of_the_prose_class_claims_a_verdict() {
-    // The 1.0 shape rule puts each answer with a long letter run in the prose
-    // class, and `arctan` is such a run. The 2 rows of the `arc_function_name`
-    // production are function calls, and `recovered_2_0.jsonl` names them. No
-    // other row of the prose class parses.
-    let arc_rows: BTreeSet<String> = committed_recovered()
+fn only_explicitly_recovered_rows_parse_from_the_prose_class() {
+    // The frozen 1.0 shape labels `arctan` and `18 degrees Celsius` as prose.
+    // The first two have the dedicated `arc_function_name` reading; the
+    // temperature is explicitly recovered by the unit grammar.
+    let recovered_prose: BTreeSet<String> = committed_recovered()
         .into_iter()
-        .filter(|row| row.production == "arc_function_name")
+        .filter(|row| {
+            matches!(
+                row.production.as_str(),
+                "arc_function_name" | "temperature_unit"
+            )
+        })
         .map(|row| row.answer)
         .collect();
-    assert_eq!(arc_rows.len(), 2);
-    let parsed: Vec<String> = corpus()
+    assert_eq!(recovered_prose.len(), 3);
+    let parsed: BTreeSet<String> = corpus()
         .into_iter()
         .filter(|row| row.shape == "prose_or_words")
-        .filter(|row| !arc_rows.contains(&row.answer))
         .filter(|row| parse(&normalize(&row.answer).source).is_ok())
         .map(|row| row.answer)
         .collect();
-    assert!(
-        parsed.is_empty(),
-        "C4: prose must never reach a deterministic verdict, but {parsed:?} parsed"
+    assert_eq!(
+        parsed, recovered_prose,
+        "only named productions recover prose-shaped answers"
     );
 }
 
