@@ -29,6 +29,7 @@ import type {
   RegradeResponse,
   RejectResponse,
   RetentionReportResponse,
+  RevokeResponse,
   ReviewDocument,
   ReviewListResponse,
   ServedProblem,
@@ -230,6 +231,8 @@ export const api: ApiClient = {
       }),
   rejectContent: (digest, reason) =>
     request<RejectResponse>('POST', `/admin/content/${seg(digest)}/reject`, { reason }),
+  revokeContent: (digest, reason) =>
+    request<RevokeResponse>('POST', `/admin/content/${seg(digest)}/revoke`, { reason }),
   listUngraded: () => request<UngradedListResponse>('GET', '/admin/ungraded'),
   regradeUngraded: (attemptId, outcome) =>
     request<RegradeResponse>('POST', `/admin/ungraded/${seg(attemptId)}/regrade`, { outcome }),

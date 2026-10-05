@@ -153,6 +153,14 @@ export interface RejectResponse {
   status: string;
 }
 
+/** `POST /api/admin/content/{digest}/revoke`. The digest leaves service: its key is wrong (S6). */
+export interface RevokeResponse {
+  digest: string;
+  status: string;
+  revoked_by: string;
+  reason: string;
+}
+
 /** One ungraded attempt of the recovery list (D-F2). */
 interface UngradedAttempt {
   attempt_id: string;

@@ -43,6 +43,7 @@ import type {
   RegradeResponse,
   RejectResponse,
   RetentionReportResponse,
+  RevokeResponse,
   ReviewDocument,
   ReviewListResponse,
   UngradedListResponse,
@@ -156,6 +157,8 @@ export interface ApiClient {
   ): Promise<ApproveResponse>;
   /** The reason is required by the service and by the screen (REVIEW-reason). */
   rejectContent(digest: string, reason: string): Promise<RejectResponse>;
+  /** Pull an approved digest out of service because its key is wrong (S6). The reason is required. */
+  revokeContent(digest: string, reason: string): Promise<RevokeResponse>;
 
   // The recovery path of the third outcome (D-F2). Admin only, like the four above.
   listUngraded(): Promise<UngradedListResponse>;
@@ -259,6 +262,7 @@ export const ROUTES: readonly RouteRow[] = [
   { method: 'GET', path: '/api/admin/content/{digest}', auth: 'S', via: 'method', client: 'getContent' },
   { method: 'POST', path: '/api/admin/content/{digest}/approve', auth: 'S', via: 'method', client: 'approveContent' },
   { method: 'POST', path: '/api/admin/content/{digest}/reject', auth: 'S', via: 'method', client: 'rejectContent' },
+  { method: 'POST', path: '/api/admin/content/{digest}/revoke', auth: 'S', via: 'method', client: 'revokeContent' },
 
   // f4-outcome: the recovery path of the third outcome (D-F2). Admin only.
   { method: 'GET', path: '/api/admin/ungraded', auth: 'S', via: 'method', client: 'listUngraded' },
