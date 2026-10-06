@@ -135,57 +135,133 @@ topics:
       - id: kp1
         name: "Divide powers of the same base"
         key_prerequisites: [integer-addition-subtraction]
+        try_first:
+          problem: 'Written out as single factors, $\frac{x^6}{x^2}$ is $\frac{x \cdot x \cdot x \cdot x \cdot x \cdot x}{x \cdot x}$. After cancelling, how many factors of $x$ are left on top?'
+          answer_contract: {"kind":"exact"}
+          answer: '4'
+          reveal: 'Each $x$ below cancels one $x$ above, so $6-2=4$ factors remain and $\frac{x^6}{x^2}=x^4$. Dividing powers of the same base subtracts the exponents.'
+        step_check:
+          step: 'Subtract the denominator exponent from the numerator exponent: $11-2=9$.'
+          question: 'Why are the exponents subtracted?'
+          options:
+            - 'Dividing powers always divides the exponents, rounded down'
+            - 'The two factors of $x$ below cancel two of the eleven above'
+            - 'The bases are subtracted, so the exponents are subtracted too'
+          answer: 'The two factors of $x$ below cancel two of the eleven above'
+          why: '$x^{11}/x^2$ has eleven factors of $x$ over two; each factor below cancels one above, leaving nine, while dividing the exponents would give $11/2$, which is not even a whole number.'
         exemplars:
           - problem: 'Simplify $\frac{x^8}{x^3}$.'
             answer: "x^5"
-            solution_sketch: 'Subtract exponents: $8 - 3 = 5$.'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The bases match, so subtract the exponents. Since $8 - 3 = 5$, the quotient is $x^5$.'
           - problem: 'Simplify $\frac{y^6}{y^2}$.'
             answer: "y^4"
-            solution_sketch: '$6 - 2 = 4$.'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Two factors of $y$ below cancel two above. So $6 - 2 = 4$ factors remain, giving $y^4$.'
+          - problem: 'A rectangle has an area of $x^{11}$ square units and a width of $x^4$ units. What is its length?'
+            answer: "x^7"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Length is area divided by width, so compute $x^{11}/x^4$. Subtracting exponents gives $11 - 4 = 7$, so the length is $x^7$ units.'
           - problem: 'Simplify $\frac{a^9}{a^4}$.'
             answer: "a^5"
-            solution_sketch: '$9 - 4 = 5$.'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The bases match, so subtract the exponents. Since $9 - 4 = 5$, the quotient is $a^5$.'
+          - problem: 'A tank holds $m^{12}$ litres of water. The water is poured into buckets that each hold $m^3$ litres. How many buckets can be filled?'
+            answer: "m^9"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The number of buckets is the total divided by one bucket, $m^{12}/m^3$. Subtracting exponents gives $12 - 3 = 9$, so $m^9$ buckets are filled.'
           - problem: 'Simplify $\frac{b^7}{b^3}$.'
             answer: "b^4"
-            solution_sketch: '$7 - 3 = 4$.'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Three factors of $b$ below cancel three above. So $7 - 3 = 4$ factors remain, giving $b^4$.'
+          - problem: 'Lena simplifies $\frac{x^{12}}{x^4}$ and writes $x^3$. What is the correct simplification?'
+            answer: "x^8"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Lena divided the exponents, but a quotient of powers subtracts them. Since $12 - 4 = 8$, the correct result is $x^8$.'
         constraints: "same base; larger exponent on top; subtract exponents"
       - id: kp2
         name: "Numeric bases left in exponent form"
         key_prerequisites: [integer-exponents-intro]
+        step_check:
+          step: 'Subtract the exponents: $8-3=5$.'
+          question: 'Why does the result keep the base $11$ instead of becoming $1^5$?'
+          options:
+            - 'Dividing $11$ by $11$ makes the base $1$, so the result is $1^5$'
+            - 'Five factors of $11$ remain after the three below cancel'
+            - 'The base becomes $11-11=0$ when two powers are divided'
+          answer: 'Five factors of $11$ remain after the three below cancel'
+          why: '$11^8/11^3$ has eight factors of $11$ over three; cancelling leaves five factors of $11$, which is $11^5$, while dividing the bases would wrongly give $1^5=1$.'
         exemplars:
           - problem: 'Write $\frac{3^5}{3^2}$ as a single power of $3$.'
             answer: "3^3"
             answer_contract: {"kind":"required_single_power"}
-            solution_sketch: '$5 - 2 = 3$.'
-          - problem: 'What single power of $7$ equals $\frac{7^6}{7^5}$?'
-            answer: "7^1"
+            solution_sketch: 'The base stays $3$ and the exponents subtract. Since $5 - 2 = 3$, the quotient is $3^3$.'
+          - problem: 'Write $\frac{7^9}{7^5}$ as a single power of $7$.'
+            answer: "7^4"
             answer_contract: {"kind":"required_single_power"}
-            solution_sketch: '$6 - 5 = 1$.'
-          - problem: 'Simplify $\frac{5^7}{5^3}$ and write the result as $5$ raised to one exponent.'
-            answer: "5^4"
+            solution_sketch: 'The base stays $7$ and the exponents subtract. Since $9 - 5 = 4$, the quotient is $7^4$.'
+          - problem: 'A hard drive holds $2^{40}$ bytes. A video file takes up $2^{28}$ bytes. How many such files fit on the drive?'
+            answer: "2^12"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The number of files is the capacity divided by one file, $2^{40}/2^{28}$. Since $40 - 28 = 12$, exactly $2^{12} = 4096$ files fit.'
+          - problem: 'What single power of $10$ equals $10^9 \div 10^4$?'
+            answer: "10^5"
             answer_contract: {"kind":"required_single_power"}
-            solution_sketch: '$7 - 3 = 4$.'
-          - problem: 'A collection of $2^9$ items is split into groups of $2^6$ items. Express the number of groups as a single power of $2$.'
+            solution_sketch: 'The base stays $10$ and the exponents subtract. Since $9 - 4 = 5$, the quotient is $10^5$.'
+          - problem: 'A city has about $10^6$ inhabitants and a village has about $10^3$. About how many times larger is the population of the city?'
+            answer: "10^3"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'How many times larger means divide: $10^6/10^3$. Since $6 - 3 = 3$, the city is about $10^3 = 1000$ times larger.'
+          - problem: 'A collection of $2^9$ stamps is split into packs of $2^6$ stamps. How many packs are there?'
             answer: "2^3"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The number of packs is $2^9$ divided by $2^6$. Since $9 - 6 = 3$, there are $2^3 = 8$ packs.'
+          - problem: 'Omar writes $\frac{6^8}{6^2}$ as $1^6$. Write the quotient correctly as a single power of $6$.'
+            answer: "6^6"
             answer_contract: {"kind":"required_single_power"}
-            solution_sketch: '$9 - 6 = 3$.'
+            solution_sketch: 'Omar divided the bases, but the base stays $6$. The exponents subtract, $8 - 2 = 6$, so the quotient is $6^6$.'
         constraints: "answer stays as a single power, not evaluated"
       - id: kp3
         name: "Quotients that leave exponent 1, and bare bases"
         key_prerequisites: [integer-addition-subtraction]
+        step_check:
+          step: 'Thus $w^{11}/w^{10}=w^1=w$.'
+          question: 'Why is $w^1$ written simply as $w$?'
+          options:
+            - 'A first power is one factor of $w$, which is just $w$'
+            - 'Any base raised to the first power is equal to $1$'
+            - 'The exponent is dropped to save space, though $w^1$ is larger'
+          answer: 'A first power is one factor of $w$, which is just $w$'
+          why: 'An exponent counts factors, so $w^1$ is the single factor $w$; it is $w^0$, with no factors left, that equals $1$.'
         exemplars:
           - problem: 'Simplify $\frac{y^5}{y^4}$.'
             answer: "y"
-            solution_sketch: '$y^{5-4} = y^1 = y$.'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Subtract the exponents: $5 - 4 = 1$. A first power is just the base, so the result is $y$.'
           - problem: 'Simplify $\frac{x^6}{x}$.'
             answer: "x^5"
-            solution_sketch: 'A bare $x$ is $x^1$; $6 - 1 = 5$.'
-          - problem: 'Simplify $\frac{a^8}{a^7}$.'
-            answer: "a"
-            solution_sketch: '$a^{8-7} = a^1 = a$.'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'A bare $x$ is $x^1$. Subtract the exponents, $6 - 1 = 5$, to get $x^5$.'
+          - problem: 'A rectangle has an area of $p^7$ square units and a length of $p^6$ units. What is its width?'
+            answer: "p"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Width is area divided by length, $p^7/p^6$. Since $7 - 6 = 1$, the width is $p^1 = p$ units.'
           - problem: 'Simplify $\frac{b^9}{b}$.'
             answer: "b^8"
-            solution_sketch: 'A bare $b$ is $b^1$; $9 - 1 = 8$.'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'A bare $b$ is $b^1$. Subtract the exponents, $9 - 1 = 8$, to get $b^8$.'
+          - problem: 'A jar of $k^{13}$ sweets is shared equally among $k$ children. How many sweets does each child get?'
+            answer: "k^12"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Sharing equally means dividing: $k^{13}/k$. The bare $k$ is $k^1$, and $13 - 1 = 12$, so each child gets $k^{12}$ sweets.'
+          - problem: 'Mia simplifies $\frac{a^8}{a^7}$ and writes $1$. What is the correct simplification?'
+            answer: "a"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Subtracting the exponents gives $8 - 7 = 1$, so one factor of $a$ remains. The result is $a^1 = a$, and only $a^0$ would equal $1$.'
+          - problem: 'Simplify $\frac{m^{10}}{m}$.'
+            answer: "m^9"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'A bare $m$ is $m^1$. Subtract the exponents, $10 - 1 = 9$, to get $m^9$.'
         constraints: "treat a bare base as exponent 1; keep results with positive exponents"
     diagnostic_exemplar:
       problem: 'Simplify $\frac{x^7}{x}$.'
@@ -218,53 +294,144 @@ topics:
       - id: kp1
         name: "Product and quotient rules together"
         key_prerequisites: [exponent-product-rule, exponent-quotient-rule]
+        step_check:
+          step: 'The numerator is $x^{6+2}=x^8$.'
+          question: 'Why is the numerator $x^8$ and not $x^{12}$?'
+          options:
+            - 'Exponents in a product multiply only when the bases differ'
+            - 'Six factors of $x$ times two more factors make eight factors'
+            - 'The exponent $5$ below is used first to reduce the product'
+          answer: 'Six factors of $x$ times two more factors make eight factors'
+          why: '$x^6\cdot x^2$ is $x$ used $6+2=8$ times; multiplying the exponents gives $x^{12}$, which is $(x^6)^2$, a different expression.'
         exemplars:
           - problem: 'Simplify $\frac{x^5 \cdot x^2}{x^3}$.'
             answer: "x^4"
-            solution_sketch: '$5 + 2 - 3 = 4$.'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The numerator is $x^{5+2} = x^7$. Dividing by $x^3$ gives $7 - 3 = 4$, so the result is $x^4$.'
           - problem: 'Simplify $\frac{a^4 \cdot a^4}{a^6}$.'
             answer: "a^2"
-            solution_sketch: '$4 + 4 - 6 = 2$.'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The numerator is $a^{4+4} = a^8$. Dividing by $a^6$ gives $8 - 6 = 2$, so the result is $a^2$.'
+          - problem: 'A box has a base of area $x^5$ square units and a height of $x^3$ units. Its contents are poured into cups that each hold $x^6$ cubic units. How many cups are filled?'
+            answer: "x^2"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The volume is base area times height, $x^5 \cdot x^3 = x^8$. Dividing by one cup gives $x^{8-6} = x^2$ cups.'
           - problem: 'Simplify $\frac{b^6 \cdot b^3}{b^5}$.'
             answer: "b^4"
-            solution_sketch: '$6 + 3 - 5 = 4$.'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The numerator is $b^{6+3} = b^9$. Dividing by $b^5$ gives $9 - 5 = 4$, so the result is $b^4$.'
+          - problem: 'A rectangle measures $y^7$ units by $y^3$ units. It is cut into $y^4$ identical tiles. What is the area of each tile?'
+            answer: "y^6"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The rectangle has area $y^7 \cdot y^3 = y^{10}$. Shared among $y^4$ tiles, each tile has area $y^{10-4} = y^6$ square units.'
           - problem: 'Simplify $\frac{m^8 \cdot m}{m^5}$.'
             answer: "m^4"
-            solution_sketch: 'A bare $m$ is $m^1$; $8 + 1 - 5 = 4$.'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'A bare $m$ is $m^1$, so the numerator is $m^{8+1} = m^9$. Dividing by $m^5$ gives $9 - 5 = 4$, so the result is $m^4$.'
+          - problem: 'Simplify $\frac{n^{11}}{n^2 \cdot n^3}$.'
+            answer: "n^6"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The denominator is $n^{2+3} = n^5$. Dividing gives $11 - 5 = 6$, so the result is $n^6$.'
+          - problem: 'Theo simplifies $\frac{x^4 \cdot x^6}{x^2}$ and writes $x^{12}$. What is the correct simplification?'
+            answer: "x^8"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Theo multiplied the exponents $4$ and $6$ and then divided by $2$. The product adds them, $4 + 6 = 10$, and the quotient subtracts, $10 - 2 = 8$, giving $x^8$.'
         constraints: "one product and one quotient step per problem"
       - id: kp2
         name: "Coefficients with product/quotient rules"
         key_prerequisites: [integer-multiplication-division]
+        step_check:
+          step: 'The coefficient is $(5\cdot8)/4=10$.'
+          question: 'Why are the coefficients multiplied and divided while the exponents are added and subtracted?'
+          options:
+            - 'Coefficients and exponents follow one rule, so both should add'
+            - 'The coefficients are added because the exponents are added'
+            - 'Coefficients are plain numbers; exponents count factors of $x$'
+          answer: 'Coefficients are plain numbers; exponents count factors of $x$'
+          why: '$5\cdot8/4$ is ordinary arithmetic on numbers and gives $10$; the exponents count factors of $x$, so they add for the product and subtract for the quotient, $3+4-2=5$.'
         exemplars:
           - problem: 'Simplify $(3x^2)(4x^5)$.'
             answer: "12x^7"
-            solution_sketch: '$3 \cdot 4 = 12$; add exponents $2 + 5 = 7$.'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Multiply the coefficients: $3 \cdot 4 = 12$. Add the exponents: $2 + 5 = 7$, so the product is $12x^7$.'
           - problem: 'Simplify $\frac{15a^7}{5a^4}$.'
             answer: "3a^3"
-            solution_sketch: '$\frac{15}{5} = 3$; subtract exponents $7 - 4 = 3$.'
-          - problem: 'What is $(2x^3)(5x^4)$ in simplest form?'
-            answer: "10x^7"
-            solution_sketch: '$2 \cdot 5 = 10$; add exponents $3 + 4 = 7$.'
-          - problem: 'Reduce $\frac{24a^8}{6a^3}$ to a single term.'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Divide the coefficients: $\frac{15}{5} = 3$. Subtract the exponents: $7 - 4 = 3$, so the quotient is $3a^3$.'
+          - problem: 'A rectangle is $6x^4$ units long and $3x^2$ units wide. What is its area?'
+            answer: "18x^6"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Area is length times width, so multiply. The coefficients give $6 \cdot 3 = 18$ and the exponents give $4 + 2 = 6$, so the area is $18x^6$ square units.'
+          - problem: 'Simplify $\frac{24a^8}{6a^3}$.'
             answer: "4a^5"
-            solution_sketch: '$\frac{24}{6} = 4$; subtract exponents $8 - 3 = 5$.'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Divide the coefficients: $\frac{24}{6} = 4$. Subtract the exponents: $8 - 3 = 5$, so the quotient is $4a^5$.'
+          - problem: 'A rectangle has an area of $20x^9$ square units and a width of $4x^3$ units. What is its length?'
+            answer: "5x^6"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Length is area divided by width. The coefficients give $20 \div 4 = 5$ and the exponents give $9 - 3 = 6$, so the length is $5x^6$ units.'
+          - problem: 'Simplify $(2x^3)(5x^4)$.'
+            answer: "10x^7"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Multiply the coefficients: $2 \cdot 5 = 10$. Add the exponents: $3 + 4 = 7$, so the product is $10x^7$.'
+          - problem: 'A warehouse packs $36y^{10}$ cans equally into $9y^4$ crates. How many cans are in each crate?'
+            answer: "4y^6"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Packing equally means dividing. The coefficients give $36 \div 9 = 4$ and the exponents give $10 - 4 = 6$, so each crate holds $4y^6$ cans.'
+          - problem: 'Simplify $\frac{(6a^5)(2a^3)}{4a^2}$.'
+            answer: "3a^6"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The coefficient is $(6 \cdot 2)/4 = 3$. The exponent is $5 + 3 - 2 = 6$, so the result is $3a^6$.'
+          - problem: 'Priya writes $\frac{12x^8}{3x^2} = 9x^4$. What is the correct simplification?'
+            answer: "4x^6"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Priya subtracted the coefficients and divided the exponents. The coefficients divide, $12 \div 3 = 4$, and the exponents subtract, $8 - 2 = 6$, giving $4x^6$.'
         constraints: "multiply/divide coefficients; apply exponent rule to variables"
       - id: kp3
         name: "Two variables at once"
         key_prerequisites: [exponent-product-rule, exponent-quotient-rule]
+        step_check:
+          step: 'For $y$, the exponent is $3+2-1=4$.'
+          question: 'Why is $1$ subtracted from the exponent of $y$?'
+          options:
+            - 'The denominator $x^3y$ has one factor of $y$, which is $y^1$'
+            - 'A bare $y$ has exponent $0$, so the $1$ is a correction'
+            - 'One is always subtracted when a quotient has two variables'
+          answer: 'The denominator $x^3y$ has one factor of $y$, which is $y^1$'
+          why: 'The bare $y$ below is $y^1$ and cancels one of the $3+2=5$ factors of $y$ above, leaving $y^4$; ignoring it would give $y^5$.'
         exemplars:
           - problem: 'Simplify $(x^2 y^3)(x^4 y)$.'
             answer: "x^6 y^4"
-            solution_sketch: 'Handle each base separately: $x^{2+4}$, $y^{3+1}$.'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Handle each base separately. For $x$, $2 + 4 = 6$; for $y$, $3 + 1 = 4$, so the product is $x^6y^4$.'
           - problem: 'Simplify $\frac{a^5 b^3}{a^2 b}$.'
             answer: "a^3 b^2"
-            solution_sketch: 'Handle each base separately: $a^{5-2}$, $b^{3-1}$.'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Handle each base separately. For $a$, $5 - 2 = 3$; for $b$, $3 - 1 = 2$, so the quotient is $a^3b^2$.'
+          - problem: 'A rectangle has an area of $x^7 y^5$ square units and a width of $x^3 y^2$ units. What is its length?'
+            answer: "x^4 y^3"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Length is area divided by width. For $x$, $7 - 3 = 4$; for $y$, $5 - 2 = 3$, so the length is $x^4y^3$ units.'
           - problem: 'Simplify $(x^3 y^2)(x^2 y^4)$.'
             answer: "x^5 y^6"
-            solution_sketch: 'Handle each base separately: $x^{3+2}$, $y^{2+4}$.'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Handle each base separately. For $x$, $3 + 2 = 5$; for $y$, $2 + 4 = 6$, so the product is $x^5y^6$.'
+          - problem: 'A box measures $a^2 b$ by $a b^3$ by $a^4 b^2$ units. What is its volume?'
+            answer: "a^7 b^6"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Volume is the product of the three dimensions. For $a$, $2 + 1 + 4 = 7$; for $b$, $1 + 3 + 2 = 6$, so the volume is $a^7b^6$ cubic units.'
           - problem: 'Simplify $\frac{a^6 b^5}{a^3 b^2}$.'
             answer: "a^3 b^3"
-            solution_sketch: 'Handle each base separately: $a^{6-3}$, $b^{5-2}$.'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Handle each base separately. For $a$, $6 - 3 = 3$; for $b$, $5 - 2 = 3$, so the quotient is $a^3b^3$.'
+          - problem: 'Simplify $\frac{(x^4 y^2)(x^3 y^5)}{x^2 y^3}$.'
+            answer: "x^5 y^4"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Handle each base separately. For $x$, $4 + 3 - 2 = 5$; for $y$, $2 + 5 - 3 = 4$, so the result is $x^5y^4$.'
+          - problem: 'Jonas simplifies $\frac{p^6 q^4}{p^2 q}$ and writes $p^3 q^4$. What is the correct simplification?'
+            answer: "p^4 q^3"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Jonas divided the exponents of $p$ and ignored the bare $q$. Subtracting gives $6 - 2 = 4$ for $p$ and $4 - 1 = 3$ for $q$, so the result is $p^4q^3$.'
         constraints: "apply the rules base by base"
     diagnostic_exemplar:
       problem: 'Simplify $\frac{(2x^3y)(6xy^2)}{4x^2y}$.'
@@ -295,57 +462,145 @@ topics:
       - id: kp1
         name: "Multiply the exponents"
         key_prerequisites: [integer-multiplication-division]
+        try_first:
+          problem: 'Written as a product, $(x^3)^2$ is $x^3 \cdot x^3$. How many factors of $x$ does it contain?'
+          answer_contract: {"kind":"exact"}
+          answer: '6'
+          reveal: '$(x^3)^2 = x^3 \cdot x^3$ is two groups of three factors, $6$ factors of $x$, so it is $x^6$. Raising a power to a power multiplies the exponents: $3 \cdot 2 = 6$.'
+        step_check:
+          step: 'Multiply the inner and outer exponents: $5\cdot5=25$.'
+          question: 'Why are the exponents multiplied rather than added?'
+          options:
+            - 'The outer $5$ means five copies of $x^5$, each with five factors'
+            - 'Exponents written next to each other are always multiplied'
+            - 'Adding gives $x^{10}$, which has the same value as $x^{25}$'
+          answer: 'The outer $5$ means five copies of $x^5$, each with five factors'
+          why: '$(x^5)^5 = x^5\cdot x^5\cdot x^5\cdot x^5\cdot x^5$ is five groups of five factors, $25$ in all; adding the exponents gives $x^{10}$, which is only two groups.'
         exemplars:
           - problem: 'Simplify $(x^3)^4$.'
             answer: "x^12"
-            solution_sketch: 'Multiply exponents: $3 \cdot 4 = 12$.'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Four copies of $x^3$ hold four groups of three factors. Multiply the exponents: $3 \cdot 4 = 12$, giving $x^{12}$.'
           - problem: 'Simplify $(a^5)^2$.'
             answer: "a^10"
-            solution_sketch: '$5 \cdot 2 = 10$.'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Two copies of $a^5$ hold two groups of five factors. Multiply the exponents: $5 \cdot 2 = 10$, giving $a^{10}$.'
+          - problem: 'A square has sides of length $x^4$ units. What is its area?'
+            answer: "x^8"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The area of a square is the side squared, $(x^4)^2$. Multiply the exponents: $4 \cdot 2 = 8$, so the area is $x^8$ square units.'
           - problem: 'Simplify $(b^2)^6$.'
             answer: "b^12"
-            solution_sketch: '$2 \cdot 6 = 12$.'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Six copies of $b^2$ hold six groups of two factors. Multiply the exponents: $2 \cdot 6 = 12$, giving $b^{12}$.'
+          - problem: 'A cube has edges of length $k^3$ units. What is its volume?'
+            answer: "k^9"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The volume of a cube is the edge cubed, $(k^3)^3$. Multiply the exponents: $3 \cdot 3 = 9$, so the volume is $k^9$ cubic units.'
           - problem: 'Simplify $(m^3)^5$.'
             answer: "m^15"
-            solution_sketch: '$3 \cdot 5 = 15$.'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Five copies of $m^3$ hold five groups of three factors. Multiply the exponents: $3 \cdot 5 = 15$, giving $m^{15}$.'
+          - problem: 'A square has an area of $y^{10}$ square units. What is its side length?'
+            answer: "y^5"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The side $s$ satisfies $s^2 = y^{10}$. Since $(y^5)^2 = y^{5 \cdot 2} = y^{10}$, the side length is $y^5$ units.'
+          - problem: 'Ella writes $(n^4)^3 = n^7$. What is the correct simplification?'
+            answer: "n^12"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Ella added the exponents. Three copies of $n^4$ contain $4 \cdot 3 = 12$ factors, so the result is $n^{12}$.'
         constraints: "single variable base; multiply the exponents"
       - id: kp2
         name: "Numeric bases left in exponent form"
         key_prerequisites: [integer-exponents-intro]
+        step_check:
+          step: 'Multiply the exponents: $4\cdot5=20$.'
+          question: 'Why is $(7^4)^5$ equal to $7^{20}$ and not $7^9$?'
+          options:
+            - 'Exponents add whenever a power is raised to a power'
+            - 'Five copies of $7^4$ contain $5\cdot4=20$ factors of $7$'
+            - 'The outer $5$ multiplies the base $7$ before the exponents'
+          answer: 'Five copies of $7^4$ contain $5\cdot4=20$ factors of $7$'
+          why: '$(7^4)^5=7^4\cdot7^4\cdot7^4\cdot7^4\cdot7^4$ holds $4+4+4+4+4=20$ factors of $7$; $7^9$ would come from adding the exponents.'
         exemplars:
           - problem: 'Write $(2^2)^3$ as a single power of $2$.'
             answer: "2^6"
             answer_contract: {"kind":"required_single_power"}
-            solution_sketch: '$2 \cdot 3 = 6$.'
+            solution_sketch: 'The base stays $2$ and the exponents multiply. Since $2 \cdot 3 = 6$, the result is $2^6$.'
           - problem: 'What single power of $10$ equals $(10^3)^2$?'
             answer: "10^6"
             answer_contract: {"kind":"required_single_power"}
-            solution_sketch: '$3 \cdot 2 = 6$.'
-          - problem: 'Simplify $(3^2)^4$ and write the result as $3$ raised to one exponent.'
+            solution_sketch: 'The base stays $10$ and the exponents multiply. Since $3 \cdot 2 = 6$, the result is $10^6$.'
+          - problem: 'Write $(3^2)^4$ as a single power of $3$.'
             answer: "3^8"
             answer_contract: {"kind":"required_single_power"}
-            solution_sketch: '$2 \cdot 4 = 8$.'
-          - problem: 'A cube has side length $5^3$ units. Express its volume as a single power of $5$.'
+            solution_sketch: 'The base stays $3$ and the exponents multiply. Since $2 \cdot 4 = 8$, the result is $3^8$.'
+          - problem: 'A cube has edges of length $5^3$ units. Write its volume as a single power of $5$.'
             answer: "5^9"
             answer_contract: {"kind":"required_single_power"}
-            solution_sketch: '$3 \cdot 3 = 9$.'
+            solution_sketch: 'The volume is the edge cubed, $(5^3)^3$. Multiply the exponents: $3 \cdot 3 = 9$, so the volume is $5^9$ cubic units.'
+          - problem: 'A square field has an area of $3^8$ square metres. How long is each side?'
+            answer: "3^4"
+            answer_contract: {"kind":"unit","quantity":"length","unit":"m","allow_omitted":true}
+            solution_sketch: 'The side squared equals the area, and $(3^4)^2 = 3^8$. So each side is $3^4 = 81$ metres long.'
+          - problem: 'What single power of $6$ equals $(6^5)^3$?'
+            answer: "6^15"
+            answer_contract: {"kind":"required_single_power"}
+            solution_sketch: 'The base stays $6$ and the exponents multiply. Since $5 \cdot 3 = 15$, the result is $6^{15}$.'
+          - problem: 'A data centre has $(2^{10})^4$ bytes of storage. Write this number as a single power of $2$.'
+            answer: "2^40"
+            answer_contract: {"kind":"required_single_power"}
+            solution_sketch: 'Four copies of $2^{10}$ are multiplied together. Multiply the exponents: $10 \cdot 4 = 40$, giving $2^{40}$ bytes.'
+          - problem: 'Kai writes $(9^2)^5 = 9^7$. Write $(9^2)^5$ correctly as a single power of $9$.'
+            answer: "9^10"
+            answer_contract: {"kind":"required_single_power"}
+            solution_sketch: 'Kai added the exponents. Five copies of $9^2$ contain $2 \cdot 5 = 10$ factors of $9$, so the result is $9^{10}$.'
         constraints: "answer stays as a single power, not evaluated"
       - id: kp3
         name: "Combine with product and quotient rules"
         key_prerequisites: [exponent-product-quotient-rules]
+        step_check:
+          step: 'The nested power becomes $a^{3\cdot2}=a^6$.'
+          question: 'Why is $(a^3)^2$ simplified on its own before multiplying by $a^5$?'
+          options:
+            - 'The outer $2$ applies to the whole product $a^3\cdot a^5$'
+            - 'Products are always worked out before any powers'
+            - 'The outer $2$ applies only to $a^3$ inside the brackets'
+          answer: 'The outer $2$ applies only to $a^3$ inside the brackets'
+          why: 'The brackets hold only $a^3$, so $(a^3)^2=a^6$ and then $a^6\cdot a^5=a^{11}$; squaring both factors would give $a^{16}$.'
         exemplars:
           - problem: 'Simplify $(x^2)^3 \cdot x^4$.'
             answer: "x^10"
-            solution_sketch: '$x^6 \cdot x^4 = x^{10}$.'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'First $(x^2)^3 = x^6$. Then $x^6 \cdot x^4 = x^{6+4} = x^{10}$.'
           - problem: 'Simplify $\frac{(y^3)^3}{y^4}$.'
             answer: "y^5"
-            solution_sketch: '$y^9 / y^4 = y^5$.'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'First $(y^3)^3 = y^9$. Then $y^9 / y^4 = y^{9-4} = y^5$.'
           - problem: 'Simplify $(a^2)^4 \cdot a^3$.'
             answer: "a^11"
-            solution_sketch: '$a^8 \cdot a^3 = a^{11}$.'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'First $(a^2)^4 = a^8$. Then $a^8 \cdot a^3 = a^{8+3} = a^{11}$.'
+          - problem: 'A cube has edges of length $x^3$ units. It is filled with small blocks, each with a volume of $x^4$ cubic units. How many blocks fill the cube?'
+            answer: "x^5"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The cube has volume $(x^3)^3 = x^9$. Dividing by one block gives $x^{9-4} = x^5$ blocks.'
           - problem: 'Simplify $\frac{(b^4)^2}{b^5}$.'
             answer: "b^3"
-            solution_sketch: '$b^8 / b^5 = b^3$.'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'First $(b^4)^2 = b^8$. Then $b^8 / b^5 = b^{8-5} = b^3$.'
+          - problem: 'A floor is covered by $m^4$ square tiles, each with sides of length $m^3$ units. What is the area of the floor?'
+            answer: "m^10"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Each tile has area $(m^3)^2 = m^6$. The floor is $m^4$ tiles, so its area is $m^6 \cdot m^4 = m^{10}$ square units.'
+          - problem: 'Simplify $\frac{(p^2)^5 \cdot p^3}{(p^3)^2}$.'
+            answer: "p^7"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The powers give $p^{10} \cdot p^3 = p^{13}$ on top and $p^6$ below. Then $13 - 6 = 7$, so the result is $p^7$.'
+          - problem: 'Noah writes $(x^3)^2 \cdot x^4 = x^9$. What is the correct simplification?'
+            answer: "x^10"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Noah added all three numbers. The power of a power multiplies, $(x^3)^2 = x^6$, and then $x^6 \cdot x^4 = x^{10}$.'
         constraints: "power of a power first, then product/quotient rule"
     diagnostic_exemplar:
       problem: 'Simplify $\frac{(x^4)^2}{x^3}$.'
@@ -376,53 +631,149 @@ topics:
       - id: kp1
         name: "Power of a product"
         key_prerequisites: [power-of-a-power-rule]
+        try_first:
+          problem: 'Multiply out $(3x)(3x)$. What is the coefficient of $x^2$?'
+          answer_contract: {"kind":"exact"}
+          answer: '9'
+          reveal: '$(3x)(3x) = 3 \cdot 3 \cdot x \cdot x = 9x^2$, so the $3$ is squared too. A power of a product raises every factor to that power: $(3x)^2 = 9x^2$.'
+        step_check:
+          step: 'Raise both factors: $7^2(x^5)^2$.'
+          question: 'Why is the $7$ squared as well as $x^5$?'
+          options:
+            - 'Only the variable part of a term carries the exponent'
+            - 'The $7$ is doubled because the outer exponent is $2$'
+            - 'Squaring multiplies the whole product $7x^5$ by itself'
+          answer: 'Squaring multiplies the whole product $7x^5$ by itself'
+          why: '$(7x^5)^2=(7x^5)(7x^5)=7\cdot7\cdot x^5\cdot x^5=49x^{10}$; leaving the $7$ alone gives $7x^{10}$ and doubling it gives $14x^{10}$.'
         exemplars:
           - problem: 'Simplify $(2x)^3$.'
             answer: "8x^3"
-            solution_sketch: '$2^3 = 8$; $x^3$.'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Cube each factor. Since $2^3 = 8$ and $x$ cubed is $x^3$, the result is $8x^3$.'
           - problem: 'Simplify $(3a^2)^2$.'
             answer: "9a^4"
-            solution_sketch: '$3^2 = 9$; $(a^2)^2 = a^4$.'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Square each factor. Since $3^2 = 9$ and $(a^2)^2 = a^4$, the result is $9a^4$.'
+          - problem: 'A square has sides of length $5x^3$ units. What is its area?'
+            answer: "25x^6"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The area is the side squared, $(5x^3)^2$. Since $5^2 = 25$ and $(x^3)^2 = x^6$, the area is $25x^6$ square units.'
           - problem: 'Simplify $(2x^2)^3$.'
             answer: "8x^6"
-            solution_sketch: '$2^3 = 8$; $(x^2)^3 = x^6$.'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Cube each factor. Since $2^3 = 8$ and $(x^2)^3 = x^6$, the result is $8x^6$.'
+          - problem: 'A cube has edges of length $4y^2$ units. What is its volume?'
+            answer: "64y^6"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The volume is the edge cubed, $(4y^2)^3$. Since $4^3 = 64$ and $(y^2)^3 = y^6$, the volume is $64y^6$ cubic units.'
           - problem: 'Simplify $(4a)^2$.'
             answer: "16a^2"
-            solution_sketch: '$4^2 = 16$; $a^2$.'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Square each factor. Since $4^2 = 16$ and $a$ squared is $a^2$, the result is $16a^2$.'
+          - problem: 'A square has an area of $36x^{10}$ square units. What is its side length?'
+            answer: "6x^5"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The side squared must equal the area. Since $(6x^5)^2 = 36x^{10}$, the side length is $6x^5$ units.'
+          - problem: 'Zoe writes $(3x^4)^2 = 3x^8$. What is the correct simplification?'
+            answer: "9x^8"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Zoe forgot to square the coefficient. Since $3^2 = 9$ and $(x^4)^2 = x^8$, the result is $9x^8$.'
         constraints: "raise each factor to the power"
       - id: kp2
         name: "Power of a quotient"
         key_prerequisites: [power-of-a-power-rule]
+        step_check:
+          step: 'Raise numerator and denominator: $(x^5)^3/(y^2)^3$.'
+          question: 'Why is the denominator cubed as well as the numerator?'
+          options:
+            - 'Cubing the fraction multiplies it by itself, tops and bottoms alike'
+            - 'Only the numerator of a fraction can carry an outside exponent'
+            - 'A denominator is cubed only when it contains a variable'
+          answer: 'Cubing the fraction multiplies it by itself, tops and bottoms alike'
+          why: '$(x^5/y^2)^3=\frac{x^5}{y^2}\cdot\frac{x^5}{y^2}\cdot\frac{x^5}{y^2}$, and multiplying fractions multiplies the tops and the bottoms, giving $x^{15}/y^6$.'
         exemplars:
           - problem: 'Simplify $(x^2 / y)^3$.'
             answer: "x^6 / y^3"
-            solution_sketch: 'Raise numerator and denominator to the power: $x^{2 \cdot 3}/y^3$.'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Cube the numerator and the denominator. The numerator is $x^{2 \cdot 3} = x^6$ and the denominator is $y^3$, giving $x^6/y^3$.'
           - problem: 'Simplify $(2 / x^3)^2$.'
             answer: "4 / x^6"
-            solution_sketch: '$2^2 = 4$; $(x^3)^2 = x^6$.'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Square the numerator and the denominator. Since $2^2 = 4$ and $(x^3)^2 = x^6$, the result is $4/x^6$.'
+          - problem: 'A square has sides of length $\frac{x^3}{2}$ units. What is its area?'
+            answer: "x^6 / 4"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The area is the side squared, so square the top and the bottom. Since $(x^3)^2 = x^6$ and $2^2 = 4$, the area is $x^6/4$ square units.'
           - problem: 'Simplify $(a / b^2)^3$.'
             answer: "a^3 / b^6"
-            solution_sketch: 'Raise numerator and denominator to the power: $a^3/b^{2 \cdot 3}$.'
-          - problem: 'What is $(3 / x^2)^2$ in simplest form?'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Cube the numerator and the denominator. The numerator is $a^3$ and the denominator is $b^{2 \cdot 3} = b^6$, giving $a^3/b^6$.'
+          - problem: 'A cube has edges of length $\frac{a^2}{3}$ units. What is its volume?'
+            answer: "a^6 / 27"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The volume is the edge cubed, so cube the top and the bottom. Since $(a^2)^3 = a^6$ and $3^3 = 27$, the volume is $a^6/27$ cubic units.'
+          - problem: 'Simplify $(3 / x^2)^2$.'
             answer: "9 / x^4"
-            solution_sketch: '$3^2 = 9$; $(x^2)^2 = x^4$.'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Square the numerator and the denominator. Since $3^2 = 9$ and $(x^2)^2 = x^4$, the result is $9/x^4$.'
+          - problem: 'Simplify $\left(\frac{2x^3}{y^4}\right)^3$.'
+            answer: "8x^9 / y^12"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Cube every factor on top and below. The numerator is $2^3x^{3 \cdot 3} = 8x^9$ and the denominator is $y^{4 \cdot 3} = y^{12}$.'
+          - problem: 'Leo writes $\left(\frac{x^4}{5}\right)^2 = \frac{x^8}{5}$. What is the correct simplification?'
+            answer: "x^8 / 25"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Leo forgot to square the denominator. Since $(x^4)^2 = x^8$ and $5^2 = 25$, the result is $x^8/25$.'
         constraints: "raise numerator and denominator to the power"
       - id: kp3
         name: "Combinations of power rules"
         key_prerequisites: [exponent-product-quotient-rules, power-of-a-power-rule]
+        step_check:
+          step: 'The powered product is $2^2x^{3\cdot2}=4x^6$.'
+          question: 'Why is $(2x^3)^2$ worked out before multiplying by $3x^2$?'
+          options:
+            - 'The square belongs only to the bracket $2x^3$'
+            - 'Multiplying first and squaring after gives the same result'
+            - 'Powers are applied last, after every product is done'
+          answer: 'The square belongs only to the bracket $2x^3$'
+          why: 'The exponent $2$ sits on $(2x^3)$ alone, so it becomes $4x^6$ first and then $4x^6\cdot3x^2=12x^8$; squaring the whole product would give $36x^{10}$.'
         exemplars:
           - problem: 'Simplify $(2x^3)^2 \cdot x$.'
             answer: "4x^7"
-            solution_sketch: '$(2x^3)^2 = 4x^6$; times $x = 4x^7$.'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'First $(2x^3)^2 = 4x^6$. Then multiplying by $x$ adds one to the exponent, giving $4x^7$.'
           - problem: 'Simplify $(3x^2)^2 (2x)$.'
             answer: "18x^5"
-            solution_sketch: '$9x^4 \cdot 2x = 18x^5$.'
-          - problem: 'Simplify $(2x^2)^2 \cdot x^3$.'
-            answer: "4x^7"
-            solution_sketch: '$(2x^2)^2 = 4x^4$; times $x^3 = 4x^7$.'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'First $(3x^2)^2 = 9x^4$. Then $9x^4 \cdot 2x = 18x^5$.'
+          - problem: 'A box has a square base with sides of length $3x^2$ units and a height of $5x^3$ units. What is its volume?'
+            answer: "45x^7"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The base area is $(3x^2)^2 = 9x^4$. Multiplying by the height gives $9x^4 \cdot 5x^3 = 45x^7$ cubic units.'
           - problem: 'Simplify $(3x)^2(2x^2)$.'
             answer: "18x^4"
-            solution_sketch: '$(3x)^2 = 9x^2$; $9x^2 \cdot 2x^2 = 18x^4$.'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'First $(3x)^2 = 9x^2$. Then $9x^2 \cdot 2x^2 = 18x^4$.'
+          - problem: 'Simplify $(2a^3)^3 \cdot 3a$.'
+            answer: "24a^10"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'First $(2a^3)^3 = 8a^9$. Then $8a^9 \cdot 3a = 24a^{10}$.'
+          - problem: 'A cube has edges of length $4x^3$ units. It is cut into $8x^5$ identical small blocks. What is the volume of each block?'
+            answer: "8x^4"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The cube has volume $(4x^3)^3 = 64x^9$. Dividing by the number of blocks gives $64 \div 8 = 8$ and $9 - 5 = 4$, so each block is $8x^4$ cubic units.'
+          - problem: 'Simplify $\frac{(3x^4)^2}{x^5}$.'
+            answer: "9x^3"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'First $(3x^4)^2 = 9x^8$. Then dividing by $x^5$ gives $9x^{8-5} = 9x^3$.'
+          - problem: 'Ravi writes $(5x^2)^2 \cdot 2x^3 = 10x^7$. What is the correct simplification?'
+            answer: "50x^7"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Ravi did not square the $5$. In fact $(5x^2)^2 = 25x^4$, and $25x^4 \cdot 2x^3 = 50x^7$.'
+          - problem: 'Simplify $(2x^2)^2 \cdot x^3$.'
+            answer: "4x^7"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'First $(2x^2)^2 = 4x^4$. Then $4x^4 \cdot x^3 = 4x^7$.'
         constraints: "power rules first, then product rule; small coefficients"
     diagnostic_exemplar:
       problem: 'Simplify $(2x^2)^3 \cdot x^2$.'
