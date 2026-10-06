@@ -22,60 +22,137 @@ topics:
       - id: kp1
         name: Degree and leading coefficient
         key_prerequisites: [integer-exponents-intro]
+        try_first:
+          problem: 'What is the highest power of $x$ that appears in $7 + 2x^2 - x^4 + 3x$?'
+          answer_contract: {"kind":"exact"}
+          answer: '4'
+          reveal: 'The highest power is $x^4$, even though it is written third. That exponent is the degree of the polynomial, and the coefficient on that term, here $-1$, is its leading coefficient.'
+        step_check:
+          step: 'The degree is $5$ and its coefficient is $6$'
+          question: 'Why is the leading coefficient of $6x^5-3x^4+x^2-9$ equal to $6$?'
+          options:
+            - 'It is the largest number that appears in the polynomial'
+            - 'It belongs to $x^5$, the term with the highest power'
+            - 'It is the first coefficient, whatever power it sits on'
+          answer: 'It belongs to $x^5$, the term with the highest power'
+          why: 'The leading coefficient is read from the highest-degree term after simplifying; in $3+2x-5x^3$ it is $-5$ even though $-5x^3$ is written last.'
         exemplars:
           - problem: 'State the degree and leading coefficient of $4x^3 - x + 7$.'
             answer: "degree = 3; leading_coefficient = 4"
-            answer_contract: {kind: multipart, parts: [{name: degree, contract: {kind: exact}}, {name: leading_coefficient, contract: {kind: exact}}]}
-            solution_sketch: 'The highest power present is $x^3$, with coefficient $4$.'
-          - problem: 'State the degree of $5x^2 - 2x^4 + 1$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"degree","contract":{"kind":"exact"}},{"name":"leading_coefficient","contract":{"kind":"exact"}}]}
+            solution_sketch: 'The highest power of $x$ present is $x^3$, so the degree is $3$. The coefficient of that term is $4$, so the leading coefficient is $4$.'
+          - problem: 'What is the degree of $5x^2 - 2x^4 + 1$?'
             answer: "4"
-            solution_sketch: 'The highest power present is $x^4$.'
-          - problem: 'A coefficient table lists powers $5,2,1$ with coefficients $6,-3,1$. State the degree and leading coefficient.'
-            answer: "degree = 5; leading_coefficient = 6"
-            answer_contract: {kind: multipart, parts: [{name: degree, contract: {kind: exact}}, {name: leading_coefficient, contract: {kind: exact}}]}
-            solution_sketch: 'The highest power present is $x^5$, with coefficient $6$.'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The powers of $x$ present are $2$, $4$ and $0$. The highest is $4$, from the term $-2x^4$, so the degree is $4$.'
+          - problem: 'What is the leading coefficient of $8 + x^2 - 6x^4 + 2x$?'
+            answer: "-6"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The term with the highest power is $-6x^4$, even though it is written third. Its coefficient, sign included, is $-6$.'
           - problem: 'After simplifying $3x^5-2x^4+7x^3-3x^5-1$, state the degree and leading coefficient.'
             answer: "degree = 4; leading_coefficient = -2"
-            answer_contract: {kind: multipart, parts: [{name: degree, contract: {kind: exact}}, {name: leading_coefficient, contract: {kind: exact}}]}
-            solution_sketch: 'The two $x^5$ terms cancel. The highest remaining term is $-2x^4$, so the degree is $4$ and its coefficient is $-2$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"degree","contract":{"kind":"exact"}},{"name":"leading_coefficient","contract":{"kind":"exact"}}]}
+            solution_sketch: 'The two $x^5$ terms cancel. The highest remaining term is $-2x^4$, so the degree is $4$ and the leading coefficient is $-2$.'
+          - problem: 'A ball is thrown upward, and its height in feet after $t$ seconds is $h = 6 + 48t - 16t^2$. What is the leading coefficient of this polynomial?'
+            answer: "-16"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The highest power of $t$ is $t^2$, in the term $-16t^2$. The leading coefficient is therefore $-16$, even though that term is written last.'
+          - problem: 'An open box folded from a square sheet of card has volume $V = 4x^3 - 60x^2 + 225x$ cubic centimetres. What is the degree of $V$?'
+            answer: "3"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The powers of $x$ in $V$ are $3$, $2$ and $1$. The highest is $3$, from $4x^3$, so $V$ has degree $3$.'
+          - problem: 'Zoe says the leading coefficient of $2x - 9x^2 + x^3$ is $2$ because it comes first. What is the leading coefficient?'
+            answer: "1"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The leading coefficient belongs to the highest power, which is $x^3$. The term $x^3$ means $1x^3$, so the leading coefficient is $1$.'
+          - problem: 'A theatre''s revenue in dollars from selling $x$ tickets is $R = 30x - \frac{1}{2}x^2$. What is the leading coefficient of $R$?'
+            answer: "-1/2"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The highest power of $x$ in $R$ is $x^2$. Its coefficient, sign included, is $-\frac{1}{2}$, so the leading coefficient is $-1/2$.'
         constraints: "degree <= 5; integer coefficients"
       - id: kp2
         name: Classify by number of terms
         key_prerequisites: []
+        step_check:
+          step: 'The cubic terms cancel'
+          question: 'Why are the cubic terms not counted when classifying $5x^3+7x-5x^3+2x-4$?'
+          options:
+            - 'Only the first and last terms of a polynomial are counted'
+            - 'Terms with a power above $2$ are never counted'
+            - 'They add to $0x^3$, so no cubic term remains'
+          answer: 'They add to $0x^3$, so no cubic term remains'
+          why: 'Classification counts the nonzero terms after like terms are combined; $5x^3-5x^3=0$, leaving $9x-4$ with two terms.'
         exemplars:
-          - problem: "Select the classification of 9x^2 - 4x by number of terms."
+          - problem: 'Is $9x^2 - 4x$ a monomial, a binomial, or a trinomial?'
             answer: "binomial"
-            answer_contract: {"kind": "label", "options": [["monomial"], ["binomial"], ["trinomial"], ["quadrinomial"]]}
-            solution_sketch: "The full polynomial is 9x^2 - 4x. Step 1 uses the definition of a term: the nonzero terms are 9x^2 and -4x. Step 2 uses the term-count naming rule: two terms make a binomial. The wrong option monomial comes from counting only the leading term; trinomial comes from treating the subtraction sign as a separate term; quadrinomial comes from counting the coefficient and the power as separate terms. The answer is binomial."
-          - problem: "After combining like terms in x^2 + 7x - 2x + 4, state the number of terms in the combined result."
+            answer_contract: {"kind":"label","options":[["monomial","a monomial","it is a monomial","one term","1 term"],["binomial","a binomial","it is a binomial","two terms","2 terms"],["trinomial","a trinomial","it is a trinomial","three terms","3 terms"]]}
+            solution_sketch: 'The terms are $9x^2$ and $-4x$, and they are not like terms. Two terms make a binomial.'
+          - problem: 'How many terms does $x^2 + 7x - 2x + 4$ have once like terms are combined?'
             answer: "3"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The full expression is x^2 + 7x - 2x + 4. Step 1 uses combining like terms: 7x - 2x = 5x, so the expression becomes x^2 + 5x + 4. Step 2 uses the term-count rule: the nonzero terms are x^2, 5x, and 4, so there are three terms. The number of terms is 3."
-          - problem: "An algebra-tile model contains six positive x^5 pieces and no other pieces. State the number of terms in its polynomial."
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Combine $7x - 2x = 5x$ to get $x^2 + 5x + 4$. The nonzero terms are $x^2$, $5x$ and $4$, so there are $3$ terms.'
+          - problem: 'A rectangle has length $x + 5$ and width $x - 5$, with $x > 5$. How many terms does the simplified polynomial for its perimeter have?'
             answer: "1"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The full polynomial is 6x^5. Step 1 uses like-term grouping: all six x^5 pieces form one term. Step 2 uses the term-count rule: a single nonzero term means the polynomial has one term. The number of terms is 1."
-          - problem: "A coefficient table has nonzero entries 4, -7, 2 at powers 3, 1, 0. Select the classification of the polynomial by number of terms."
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The perimeter is $(x+5)+(x-5)+(x+5)+(x-5) = 4x$. The constants cancel, so the perimeter polynomial has $1$ term.'
+          - problem: 'A company models its profit in dollars from selling $x$ items as $P = -2x^2 + 40x - 150$. Is this polynomial a monomial, a binomial, or a trinomial?'
             answer: "trinomial"
-            answer_contract: {"kind": "label", "options": [["monomial"], ["binomial"], ["trinomial"], ["quadrinomial"]]}
-            solution_sketch: "The full polynomial is 4x^3 - 7x + 2. Step 1 uses the definition of a term: the nonzero terms are 4x^3, -7x, and 2. Step 2 uses the term-count naming rule: three terms make a trinomial. The wrong option monomial comes from counting only the leading term; binomial comes from missing the constant term; quadrinomial comes from counting coefficients as extra terms. The answer is trinomial."
+            answer_contract: {"kind":"label","options":[["monomial","a monomial","it is a monomial","one term","1 term"],["binomial","a binomial","it is a binomial","two terms","2 terms"],["trinomial","a trinomial","it is a trinomial","three terms","3 terms"]]}
+            solution_sketch: 'The terms $-2x^2$, $40x$ and $-150$ have different powers of $x$, so none combine. Three terms make a trinomial.'
+          - problem: 'How many terms does $6x^5 + 2x^3 - 6x^5 + x - 2x^3 + 8$ have once like terms are combined?'
+            answer: "2"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The $x^5$ terms cancel and the $x^3$ terms cancel. What remains is $x + 8$, which has $2$ terms.'
+          - problem: 'Leo says $4x^3 + 2x^2 - 4x^3 + 5x^2 - 1$ is a trinomial because three different powers of $x$ are written. How many terms does it really have?'
+            answer: "2"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The cubic terms cancel and $2x^2 + 5x^2 = 7x^2$. The result $7x^2 - 1$ has $2$ terms, so it is a binomial.'
+          - problem: 'A triangle has sides of length $x^2$, $3x$ and $x^2 + 2$. How many terms does the simplified polynomial for its perimeter have?'
+            answer: "3"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The perimeter is $x^2 + 3x + x^2 + 2 = 2x^2 + 3x + 2$. The terms $2x^2$, $3x$ and $2$ are unlike, so there are $3$ terms.'
         constraints: "one to three terms"
       - id: kp3
         name: Write polynomials in standard form
         key_prerequisites: [combining-like-terms]
+        step_check:
+          step: 'Arrange powers from highest to lowest'
+          question: 'Why does the result begin with $-x^2$ and not $x^2$?'
+          options:
+            - 'Moving a term to the front changes its sign'
+            - 'The minus sign belongs to the $x^2$ term and moves with it'
+            - 'Standard form must always begin with a negative term'
+          answer: 'The minus sign belongs to the $x^2$ term and moves with it'
+          why: 'Reordering only changes where a term is written; each term keeps its own sign, so $-x^2$ leads $-x^2+7x+2$.'
         exemplars:
           - problem: 'Write $3 - x^2 + 5x$ in standard form.'
             answer: "-x^2 + 5x + 3"
-            solution_sketch: 'Descending order is $-x^2 + 5x + 3$; no like terms to combine.'
-          - problem: 'Simplify and write in standard form: $2x + x^3 + 4x - 1$.'
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'There are no like terms to combine. Ordering the powers $2$, $1$, $0$ from highest to lowest gives $-x^2 + 5x + 3$.'
+          - problem: 'Simplify $2x + x^3 + 4x - 1$ and write it in standard form.'
             answer: "x^3 + 6x - 1"
-            solution_sketch: 'Combine $2x + 4x$; order by descending degree.'
-          - problem: 'An algebra-tile inventory contains five positive square tiles, three positive $x$ tiles, and seven negative unit tiles. Write its polynomial in descending powers.'
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'Combine $2x + 4x = 6x$. Ordering by descending power gives $x^3 + 6x - 1$.'
+          - problem: 'A triangle has sides of length $2x + 1$, $x^2 - 3$ and $5x$. Write its perimeter as a polynomial in standard form.'
+            answer: "x^2 + 7x - 2"
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'The perimeter is the sum $2x + 1 + x^2 - 3 + 5x$. Combining gives $7x$ and $-2$, and descending order gives $x^2 + 7x - 2$.'
+          - problem: 'A workshop''s weekly cost in dollars of making $n$ chairs is $C = 200 - 5n + 3n^2$. Write the right-hand side in standard form.'
+            answer: "3n^2 - 5n + 200"
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'The powers of $n$ are $0$, $1$ and $2$. Writing them from highest to lowest, each with its own sign, gives $3n^2 - 5n + 200$.'
+          - problem: 'Write $7x - 2x^4 + 6 - 3x + x^4$ in standard form.'
+            answer: "-x^4 + 4x + 6"
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'Combine $-2x^4 + x^4 = -x^4$ and $7x - 3x = 4x$. Descending order gives $-x^4 + 4x + 6$.'
+          - problem: 'Mia writes $5 + 4x^2 - x$ in standard form as $4x^2 + x + 5$. What is the correct standard form?'
+            answer: "4x^2 - x + 5"
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'The $x$ term is $-x$, and its minus sign stays with it when the terms are reordered. The standard form is $4x^2 - x + 5$.'
+          - problem: 'Five $x^2$-tiles, three $x$-tiles and seven negative unit tiles lie on a desk. Write the polynomial they represent in standard form.'
             answer: "5x^2 + 3x - 7"
-            solution_sketch: 'The tile groups represent $5x^2$, $3x$, and $-7$; descending powers are $2,1,0$.'
-          - problem: 'A coefficient list gives the constant $5$, the $x$ coefficient $2$, and two cubic contributions $-1$ and $-3$. Write the polynomial in standard form.'
-            answer: "-4x^3 + 2x + 5"
-            solution_sketch: 'The cubic contributions add to $-4$; the coefficient of $x^2$ is zero. Descending order gives $-4x^3+2x+5$.'
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'The tiles represent $5x^2$, $3x$ and $-7$. In descending powers the polynomial is $5x^2 + 3x - 7$.'
         constraints: "descending powers; combine like terms first"
     diagnostic_exemplar:
       problem: 'State the degree and leading coefficient of $7 + 2x - 5x^3$.'
@@ -110,53 +187,132 @@ topics:
       - id: kp1
         name: Evaluate at positive integers
         key_prerequisites: [evaluating-expressions]
+        step_check:
+          step: 'Substitute: $q(3)=3^3-2\cdot3$'
+          question: 'Why is $3$ put in place of $x$ in both $x^3$ and $-2x$?'
+          options:
+            - 'The input replaces only the term with the highest power'
+            - 'Each term of the polynomial gets its own input value'
+            - 'Every $x$ in the polynomial stands for the same input'
+          answer: 'Every $x$ in the polynomial stands for the same input'
+          why: '$q(3)$ means the value of the whole polynomial when $x=3$, so each $x$ becomes $3$, giving $27-6=21$.'
         exemplars:
-          - problem: 'Evaluate $x^2 + 3x - 2$ at $x = 2$.'
+          - problem: 'Evaluate $x^2 + 3x - 2$ when $x = 2$.'
             answer: "8"
-            solution_sketch: '$4 + 6 - 2 = 8$.'
-          - problem: 'Use Horner form $p(x)=x(2x^2-1)$ to find $p(3)$.'
-            answer: "51"
-            solution_sketch: 'Work inside out: $2(3)^2-1=17$, then $3(17)=51$.'
-          - problem: 'Complete the output entry for input $3$ in the function table for $p(x)=x^2-5x+4$.'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Substitute $2$ for every $x$: $2^2 + 3(2) - 2$. This is $4 + 6 - 2 = 8$.'
+          - problem: 'Find $p(2)$ for $p(x) = 2x^3 - x + 4$.'
+            answer: "18"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Substitute $2$: $p(2) = 2(2)^3 - 2 + 4$. The power comes first, $2 \cdot 8 = 16$, so $p(2) = 16 - 2 + 4 = 18$.'
+          - problem: 'Find $p(3)$ for $p(x) = x^2 - 5x + 4$.'
             answer: "-2"
-            solution_sketch: '$9 - 15 + 4 = -2$.'
-          - problem: 'A machine maps a positive integer $x$ to $3x^2+x-1$. What output corresponds to input $4$?'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Substitute $3$: $p(3) = 3^2 - 5(3) + 4$. This is $9 - 15 + 4 = -2$.'
+          - problem: 'A rectangular garden is $x$ metres wide and $x + 3$ metres long, so its area is $A = x^2 + 3x$ square metres. Find the area when the garden is $7$ metres wide.'
+            answer: "70"
+            answer_contract: {"kind":"unit","quantity":"area","unit":"m^2","allow_omitted":true}
+            solution_sketch: 'The width is $x$, so substitute $x = 7$. The area is $7^2 + 3(7) = 49 + 21 = 70$ square metres.'
+          - problem: 'When each of $n$ people shakes hands once with every other person, the number of handshakes is $H = \frac{1}{2}n^2 - \frac{1}{2}n$. How many handshakes take place among $10$ people?'
+            answer: "45"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Substitute $n = 10$: $H = \frac{1}{2}(100) - \frac{1}{2}(10)$. This is $50 - 5 = 45$ handshakes.'
+          - problem: 'Tom evaluates $3x^2 + x - 1$ at $x = 4$ and gets $147$. What is the correct value?'
             answer: "51"
-            solution_sketch: '$48 + 4 - 1 = 51$.'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Square the input before multiplying: $3(4)^2 = 3 \cdot 16 = 48$. The value is $48 + 4 - 1 = 51$; Tom squared $3 \cdot 4 = 12$ instead and got $144 + 4 - 1 = 147$.'
+          - problem: 'Evaluate $x^3 - 4x^2 + 2x + 5$ when $x = 5$.'
+            answer: "40"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Substitute $5$: $125 - 4(25) + 2(5) + 5$. This is $125 - 100 + 10 + 5 = 40$.'
+          - problem: 'Use the nested form $p(x) = x(2x^2 - 1)$ to find $p(3)$.'
+            answer: "51"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Work from the inside out: $2(3)^2 - 1 = 17$. Then multiply by $x = 3$ to get $p(3) = 51$.'
         constraints: "degree <= 3; small positive inputs"
       - id: kp2
         name: Evaluate at negative inputs
         key_prerequisites: [evaluating-expressions, integer-multiplication-division]
+        step_check:
+          step: 'Square the input first: $(-5)^2=25$'
+          question: 'Why is $(-5)^2$ equal to $25$ even though $r(-5)$ comes out negative?'
+          options:
+            - 'The square acts on $-5$; the minus in $-x^2$ is applied after'
+            - 'Squaring a negative number always gives a negative number'
+            - 'A negative input makes every term of the polynomial negative'
+          answer: 'The square acts on $-5$; the minus in $-x^2$ is applied after'
+          why: 'The parentheses keep the input together, so $(-5)^2=25$; the minus sign of $-x^2$ sits outside the power and turns $25$ into $-25$.'
         exemplars:
-          - problem: 'Evaluate $x^2 - 4x + 1$ at $x = -2$.'
+          - problem: 'Evaluate $x^2 - 4x + 1$ when $x = -2$.'
             answer: "13"
-            solution_sketch: '$(-2)^2 = 4$; $4 + 8 + 1 = 13$.'
-          - problem: 'A student obtains $14$ for $p(-3)$ when $p(x)=-x^2+5$ by squaring the minus sign with the input. Give the correct output.'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Substitute with parentheses: $(-2)^2 - 4(-2) + 1$. This is $4 + 8 + 1 = 13$.'
+          - problem: 'Ben finds $p(-3)$ for $p(x) = -x^2 + 5$ and gets $14$. What is the correct value of $p(-3)$?'
             answer: "-4"
-            solution_sketch: 'Only the input is squared: $-(-3)^2+5=-9+5=-4$.'
-          - problem: 'Complete the output entry at input $-4$ in a table for $p(x)=x(x+3)-5$.'
-            answer: "-1"
-            solution_sketch: 'Horner form gives $(-4)(-4+3)-5=4-5=-1$.'
-          - problem: 'For the even polynomial $p(x)=-2x^2+3$, the table gives $p(2)=-5$. Find $p(-2)$ using symmetry.'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Only the input is squared: $(-3)^2 = 9$. The leading minus then gives $p(-3) = -9 + 5 = -4$.'
+          - problem: 'Find $p(-4)$ for $p(x) = x^3 + 3x^2 - 5$.'
+            answer: "-21"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Substitute $-4$: $(-4)^3 + 3(-4)^2 - 5$. An odd power stays negative and an even power is positive, so this is $-64 + 48 - 5 = -21$.'
+          - problem: 'The temperature in degrees Celsius $t$ hours after midnight is modelled by $T = t^2 - 2t - 3$, where negative $t$ means hours before midnight. Find the temperature at $t = -3$.'
+            answer: "12"
+            answer_contract: {"kind":"unit","quantity":"temperature","unit":"°C","allow_omitted":true}
+            solution_sketch: 'Substitute $t = -3$: $(-3)^2 - 2(-3) - 3$. This is $9 + 6 - 3 = 12$ degrees Celsius.'
+          - problem: 'A particle''s position in metres $t$ seconds after a timer starts is $s = t^3 - 4t + 1$, where negative $t$ means before the timer started. Find its position at $t = -2$.'
+            answer: "1"
+            answer_contract: {"kind":"unit","quantity":"length","unit":"m","allow_omitted":true}
+            solution_sketch: 'Substitute $t = -2$: $(-2)^3 - 4(-2) + 1$. This is $-8 + 8 + 1 = 1$, so the particle is at $1$ metre.'
+          - problem: 'For $p(x) = -2x^2 + 3$, the value $p(2)$ is $-5$. What is $p(-2)$?'
             answer: "-5"
-            solution_sketch: 'An even power has the same value at opposite inputs. Substituting $-2$ therefore gives the stated table value, $-5$.'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The only power of $x$ is even, and $(-2)^2 = 2^2 = 4$. So $p(-2) = -2(4) + 3 = -5$, the same as $p(2)$.'
+          - problem: 'Evaluate $-x^3 + 2x^2 - x$ when $x = -1$.'
+            answer: "4"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Substitute $-1$: $-(-1)^3 + 2(-1)^2 - (-1)$. This is $1 + 2 + 1 = 4$.'
         constraints: "watch (-a)^2 vs -a^2"
       - id: kp3
         name: Evaluate formula-style polynomials
         key_prerequisites: [evaluating-expressions]
+        step_check:
+          step: 'Substitute once: $h=-5(2)^2+25(2)$'
+          question: 'Why is $-5(2)^2$ equal to $-20$ rather than $100$?'
+          options:
+            - 'Only the $2$ is squared; the result is then multiplied by $-5$'
+            - 'The $-5$ and the $2$ are multiplied first, then squared'
+            - 'Squaring applies to every number written in the term'
+          answer: 'Only the $2$ is squared; the result is then multiplied by $-5$'
+          why: 'The exponent belongs to $t$ alone, so $-5t^2$ at $t=2$ is $-5\cdot4=-20$; squaring $-10$ would treat the coefficient as part of the base.'
         exemplars:
-          - problem: 'The height of a ball in metres is $h = -5t^2 + 20t$. Find $h$ at $t = 1$.'
+          - problem: 'The height of a ball in metres $t$ seconds after it is thrown is $h = -5t^2 + 20t$. Find the height at $t = 1$.'
             answer: "15"
-            solution_sketch: '$-5 + 20 = 15$.'
-          - problem: 'For $P = n^2 + 3n$, find $P$ at $n = 5$.'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"m","allow_omitted":true}
+            solution_sketch: 'Substitute $t = 1$: $h = -5(1)^2 + 20(1)$. This is $-5 + 20 = 15$ metres.'
+          - problem: 'A polygon with $n$ sides has $D = \frac{1}{2}n^2 - \frac{3}{2}n$ diagonals. How many diagonals does a polygon with $12$ sides have?'
+            answer: "54"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Substitute $n = 12$: $D = \frac{1}{2}(144) - \frac{3}{2}(12)$. This is $72 - 18 = 54$ diagonals.'
+          - problem: 'For $P = n^2 + 3n$, find $P$ when $n = 5$.'
             answer: "40"
-            solution_sketch: '$25 + 15 = 40$.'
-          - problem: 'The area of a square garden in square metres is $A = s^2$. Find $A$ at $s = 6$.'
-            answer: '36'
-            solution_sketch: '$6^2 = 36$.'
-          - problem: 'For $C = 2n^2 - n$, find $C$ at $n = 4$.'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Substitute $n = 5$: $P = 5^2 + 3(5)$. This is $25 + 15 = 40$.'
+          - problem: 'Ana evaluates the height formula $h = -5t^2 + 30t$ at $t = 4$ and gets $200$ metres. Is her answer too high or too low, and by how much?'
+            answer: "direction = high; by = 160"
+            answer_contract: {"kind":"multipart","parts":[{"name":"direction","contract":{"kind":"label","options":[["high","too high","it is too high","too big","an overestimate","over"],["low","too low","it is too low","too small","an underestimate","under"]]}},{"name":"by","contract":{"kind":"exact"}}]}
+            solution_sketch: 'The correct height is $-5(16) + 30(4) = -80 + 120 = 40$ metres. Her $200$ is too high by $200 - 40 = 160$; she added $5 \cdot 16 = 80$ instead of subtracting it.'
+          - problem: 'A factory''s cost in dollars of making $n$ bikes in a day is $C = 2n^2 + 15n + 100$. Find the cost of making $10$ bikes.'
+            answer: "450"
+            answer_contract: {"kind":"unit","quantity":"dollar","unit":"dollar","allow_omitted":true}
+            solution_sketch: 'Substitute $n = 10$: $C = 2(100) + 15(10) + 100$. This is $200 + 150 + 100 = 450$ dollars.'
+          - problem: 'A box has a square base of side $x$ cm and height $x + 2$ cm, so its volume is $V = x^3 + 2x^2$ cubic centimetres. Find the volume when $x = 4$.'
+            answer: "96"
+            answer_contract: {"kind":"unit","quantity":"cubic_volume","unit":"cm^3","allow_omitted":true}
+            solution_sketch: 'Substitute $x = 4$: $V = 4^3 + 2(4)^2$. This is $64 + 32 = 96$ cubic centimetres.'
+          - problem: 'For $C = 2n^2 - n$, find $C$ when $n = 4$.'
             answer: "28"
-            solution_sketch: '$2(16) - 4 = 28$.'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Substitute $n = 4$: $C = 2(16) - 4$. This is $32 - 4 = 28$.'
         constraints: "single substitution; clean integer outputs"
     diagnostic_exemplar:
       problem: 'Evaluate $x^2 - 2x + 3$ at $x = -1$.'
@@ -187,53 +343,124 @@ topics:
       - id: kp1
         name: Add linear polynomials
         key_prerequisites: [combining-like-terms]
+        step_check:
+          step: 'Combine the x-terms: $-6x + 9x = 3x$'
+          question: 'Why may $-6x$ and $9x$ be combined while $9x$ and $14$ stay separate?'
+          options:
+            - 'Terms can only be combined when both are positive'
+            - 'Terms that sit next to each other are combined first'
+            - '$-6x$ and $9x$ are like terms, but $14$ has no $x$'
+          answer: '$-6x$ and $9x$ are like terms, but $14$ has no $x$'
+          why: 'Only like terms, with the same variable part, add their coefficients: $-6x+9x=3x$, while $3x$ and $12$ remain two separate terms.'
         exemplars:
           - problem: 'Add $(2x + 9) + (5x - 3)$.'
             answer: "7x + 6"
-            solution_sketch: '$2x + 5x = 7x$; $9 - 3 = 6$.'
-          - problem: 'Two consecutive path sections have lengths $4x-7$ and $x+2$, with $x>2$. Write their total length in standard form.'
-            answer: "5x - 5"
-            solution_sketch: '$4x + x = 5x$; $-7 + 2 = -5$.'
-          - problem: 'Add coefficient rows $(3,4)$ and $(2,-10)$, ordered as $(x,1)$. Write the resulting linear polynomial.'
-            answer: "5x - 6"
-            solution_sketch: '$3x + 2x = 5x$; $4 - 10 = -6$.'
-          - problem: 'A student adds $(6x-1)+(-2x+5)$ and writes $8x+4$. Correct the polynomial.'
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'Combine the $x$ terms: $2x + 5x = 7x$. Combine the constants: $9 - 3 = 6$, so the sum is $7x + 6$.'
+          - problem: 'Find the sum of $4x - 7$ and $-x + 2$.'
+            answer: "3x - 5"
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'The $x$ terms give $4x - x = 3x$. The constants give $-7 + 2 = -5$, so the sum is $3x - 5$.'
+          - problem: 'A triangle has sides of length $2x + 3$, $3x - 1$ and $x + 4$ centimetres. Write a polynomial for its perimeter.'
+            answer: "6x + 6"
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'The perimeter is the sum of the three sides. The $x$ terms give $2x + 3x + x = 6x$ and the constants give $3 - 1 + 4 = 6$, so the perimeter is $6x + 6$ cm.'
+          - problem: 'Lily adds $(6x - 1) + (-2x + 5)$ and writes $8x + 4$. What is the correct sum?'
             answer: "4x + 4"
-            solution_sketch: 'The second $x$ coefficient is negative: $6+(-2)=4$. The constants give $-1+5=4$.'
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'The second $x$ coefficient is negative, so $6x + (-2x) = 4x$. The constants give $-1 + 5 = 4$, and the sum is $4x + 4$.'
+          - problem: 'A path is made of two sections of lengths $4x - 7$ and $x + 2$ metres, with $x > 2$. Write a polynomial for the total length of the path.'
+            answer: "5x - 5"
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'The total length is the sum of the sections. The $x$ terms give $4x + x = 5x$ and the constants give $-7 + 2 = -5$, so the length is $5x - 5$ metres.'
+          - problem: 'Simplify $(-3x + 8) + (7x - 12)$.'
+            answer: "4x - 4"
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'The $x$ terms give $-3x + 7x = 4x$. The constants give $8 - 12 = -4$, so the sum is $4x - 4$.'
+          - problem: 'A rectangle has length $3x + 2$ and width $x - 1$, with $x > 1$. Write a polynomial for its perimeter.'
+            answer: "8x + 2"
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'A rectangle has two lengths and two widths, so the perimeter is $(3x+2)+(3x+2)+(x-1)+(x-1)$. The $x$ terms give $8x$ and the constants give $2 + 2 - 1 - 1 = 2$, so the perimeter is $8x + 2$.'
         constraints: "degree 1; integer coefficients"
       - id: kp2
         name: Add quadratics term by term
         key_prerequisites: [combining-like-terms]
+        step_check:
+          step: 'Combine the $x$ terms: $7x - 7x = 0$'
+          question: 'Why does the final sum $6x^2 - 6$ have no $x$ term?'
+          options:
+            - 'The $x$ coefficients $7$ and $-7$ add to $0$'
+            - 'Adding two quadratics always removes the $x$ term'
+            - 'The $x$ terms are absorbed into the $x^2$ term'
+          answer: 'The $x$ coefficients $7$ and $-7$ add to $0$'
+          why: '$7x+(-7x)=0x=0$, and a zero term is not written; $x$ and $x^2$ terms are unlike and never merge.'
         exemplars:
           - problem: 'Add $(3x^2 + 2x - 5) + (x^2 - 4x + 7)$.'
             answer: "4x^2 - 2x + 2"
-            solution_sketch: '$3x^2 + x^2 = 4x^2$; $2x - 4x = -2x$; $-5 + 7 = 2$.'
-          - problem: 'An algebra-tile tray represents $x^2-3x$ and another $2x^2+x-4$. Write the polynomial represented when the trays are combined.'
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'Combine like terms: $3x^2 + x^2 = 4x^2$, $2x - 4x = -2x$ and $-5 + 7 = 2$. The sum is $4x^2 - 2x + 2$.'
+          - problem: 'Find the sum of $x^2 - 3x$ and $2x^2 + x - 4$.'
             answer: "3x^2 - 2x - 4"
-            solution_sketch: '$x^2 + 2x^2 = 3x^2$; $-3x + x = -2x$.'
-          - problem: 'Add coefficient rows $(4,-1,2)$ and $(2,3,-5)$ in columns $(x^2,x,1)$. Write the resulting polynomial.'
-            answer: "6x^2 + 2x - 3"
-            solution_sketch: '$4x^2 + 2x^2 = 6x^2$; $-x + 3x = 2x$; $2 - 5 = -3$.'
-          - problem: 'Two garden plots have areas $x^2+5x$ and $3x^2-2x+6$ square metres, with $x>1$. Write the total area polynomial.'
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'Combine like terms: $x^2 + 2x^2 = 3x^2$ and $-3x + x = -2x$. The constant $-4$ has no partner, so the sum is $3x^2 - 2x - 4$.'
+          - problem: 'Two garden plots have areas $x^2 + 5x$ and $3x^2 - 2x + 6$ square metres, with $x > 1$. Write a polynomial for their total area.'
             answer: "4x^2 + 3x + 6"
-            solution_sketch: '$x^2 + 3x^2 = 4x^2$; $5x - 2x = 3x$.'
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'The total area is the sum of the two areas. Combining gives $x^2 + 3x^2 = 4x^2$ and $5x - 2x = 3x$, with the constant $6$, so the total is $4x^2 + 3x + 6$ square metres.'
+          - problem: 'Simplify $(-4x^2 + 6x - 1) + (4x^2 - 2x + 9)$.'
+            answer: "4x + 8"
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'The $x^2$ terms cancel: $-4x^2 + 4x^2 = 0$. Then $6x - 2x = 4x$ and $-1 + 9 = 8$, so the sum is $4x + 8$.'
+          - problem: 'A triangle has sides of length $x^2 + 1$, $2x^2 - x$ and $x^2 + 3x - 4$, with $x > 2$. Write a polynomial for its perimeter.'
+            answer: "4x^2 + 2x - 3"
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'The perimeter is the sum of the three sides. The $x^2$ terms give $1 + 2 + 1 = 4$, the $x$ terms give $-1 + 3 = 2$ and the constants give $1 - 4 = -3$, so the perimeter is $4x^2 + 2x - 3$.'
+          - problem: 'Raj adds $(5x^2 - 3x + 2) + (x^2 + 3x - 6)$ and writes $6x^4 - 4$. What is the correct sum?'
+            answer: "6x^2 - 4"
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'Adding like terms adds coefficients and keeps the power, so $5x^2 + x^2 = 6x^2$. The $x$ terms cancel and $2 - 6 = -4$, giving $6x^2 - 4$.'
+          - problem: 'Add $(4x^2 - x + 2) + (2x^2 + 3x - 5)$.'
+            answer: "6x^2 + 2x - 3"
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'Combine like terms: $4x^2 + 2x^2 = 6x^2$, $-x + 3x = 2x$ and $2 - 5 = -3$. The sum is $6x^2 + 2x - 3$.'
         constraints: "degree 2; line up like terms"
       - id: kp3
         name: Add with missing terms
         key_prerequisites: [combining-like-terms, polynomial-basics]
+        step_check:
+          step: 'Line up by power, filling gaps with 0'
+          question: 'Why may we write $0x^2$ into the first polynomial before adding?'
+          options:
+            - 'Every polynomial must contain an $x^2$ term'
+            - 'A missing term has coefficient $1$'
+            - 'Adding $0x^2$ adds zero, so the polynomial is unchanged'
+          answer: 'Adding $0x^2$ adds zero, so the polynomial is unchanged'
+          why: '$0x^2=0$, so the placeholder changes nothing; it only keeps each power in its own column so that $6x^2$ is carried down correctly.'
         exemplars:
           - problem: 'Add $(x^3 + 2x - 1) + (x^2 - 2x + 4)$.'
             answer: "x^3 + x^2 + 3"
-            solution_sketch: '$2x - 2x = 0$; no other like terms overlap.'
-          - problem: 'Add coefficient rows $(2,0,-1,0)$ and $(1,0,0,5)$ in columns $(x^3,x^2,x,1)$. Write the sum in standard form.'
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'The $x^3$ and $x^2$ terms have no partners. The $x$ terms cancel, $2x - 2x = 0$, and $-1 + 4 = 3$, so the sum is $x^3 + x^2 + 3$.'
+          - problem: 'Add $(2x^3 - x) + (x^3 + 5)$.'
             answer: "3x^3 - x + 5"
-            solution_sketch: '$2x^3 + x^3 = 3x^3$; no other like terms overlap.'
-          - problem: 'Two volume contributions are $x^3-4x$ and $2x^2+4x-3$, for $x>3$. Write their total as a polynomial and combine the cancelling terms.'
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'Only the cubic terms are like terms: $2x^3 + x^3 = 3x^3$. The terms $-x$ and $5$ carry down, so the sum is $3x^3 - x + 5$.'
+          - problem: 'A storage unit has two parts with volumes $x^3 - 4x$ and $2x^2 + 4x - 3$ cubic metres, for $x > 3$. Write a polynomial for its total volume.'
             answer: "x^3 + 2x^2 - 3"
-            solution_sketch: '$-4x + 4x = 0$; combine the remaining terms.'
-          - problem: 'A student adds $(3x^3+2x^2)+(x^3-2x^2+7)$ and keeps $4x^2$ in the answer. Correct the sum.'
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'The total volume is the sum of the parts. The $x$ terms cancel, $-4x + 4x = 0$, and the other terms carry down, giving $x^3 + 2x^2 - 3$ cubic metres.'
+          - problem: 'Kai adds $(3x^3 + 2x^2) + (x^3 - 2x^2 + 7)$ and writes $4x^3 + 4x^2 + 7$. What is the correct sum?'
             answer: "4x^3 + 7"
-            solution_sketch: '$2x^2 - 2x^2 = 0$; $3x^3 + x^3 = 4x^3$.'
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'The $x^2$ coefficients are $2$ and $-2$, so they cancel. With $3x^3 + x^3 = 4x^3$ and the constant $7$, the sum is $4x^3 + 7$.'
+          - problem: 'A quadrilateral has sides of length $x^3$, $2x^2 + 1$, $5x - 3$ and $x^2 - 5x$, for $x > 5$. Write a polynomial for its perimeter.'
+            answer: "x^3 + 3x^2 - 2"
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'The perimeter is the sum of the four sides. The $x^2$ terms give $2x^2 + x^2 = 3x^2$, the $x$ terms cancel and $1 - 3 = -2$, so the perimeter is $x^3 + 3x^2 - 2$.'
+          - problem: 'Add $(x^4 + 3x^2 - 2) + (2x^3 - 3x^2 + x)$.'
+            answer: "x^4 + 2x^3 + x - 2"
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'The $x^2$ terms cancel: $3x^2 - 3x^2 = 0$. Every other power appears once, so the sum is $x^4 + 2x^3 + x - 2$.'
         constraints: "some powers absent; keep standard form"
     diagnostic_exemplar:
       problem: 'Add $(2x^3 + x - 5) + (x^2 - 3x + 2)$.'
@@ -267,52 +494,132 @@ topics:
         name: Subtract polynomials by distributing the negative
         key_prerequisites: [distributive-property]
         constraints: "subtraction distributes over every term of the second polynomial"
+        try_first:
+          problem: 'Work out $10 - (4 - 1)$.'
+          answer_contract: {"kind":"exact"}
+          answer: '7'
+          reveal: 'The bracket is $3$, so the answer is $7$; removing the bracket correctly gives $10 - 4 + 1$, with the sign of the $1$ flipped. Subtracting a polynomial works the same way: every term inside the subtracted bracket changes sign.'
+        step_check:
+          step: 'Distribute: $9x^2+3x-10-4x^2+7x-2$'
+          question: 'Why does $-7x$ become $+7x$ in step 2?'
+          options:
+            - 'Subtracting a polynomial changes the sign of only its first term'
+            - 'The minus applies to every term of $4x^2-7x+2$, and $-(-7x)=+7x$'
+            - 'Like terms always change sign when they are combined'
+          answer: 'The minus applies to every term of $4x^2-7x+2$, and $-(-7x)=+7x$'
+          why: 'Subtracting $4x^2-7x+2$ means subtracting each of its terms, so $-4x^2$, $+7x$ and $-2$ all appear; flipping only $4x^2$ would give $3x-7x$ instead of $3x+7x$.'
         exemplars:
-          - problem: 'Subtract $(5x^2 - 3x + 4) - (2x^2 + x - 6)$.'
+          - problem: 'Simplify $(5x^2 - 3x + 4) - (2x^2 + x - 6)$.'
             answer: "3x^2 - 4x + 10"
-            solution_sketch: 'Distribute the minus: $5x^2 - 2x^2 = 3x^2$; $-3x - x = -4x$; $4 - (-6) = 10$.'
-          - problem: 'A length $3x-8$ is cut from a bar of length $7x-2$, with $x>3$. Write the remaining length as a polynomial.'
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'Distribute the minus: $5x^2 - 3x + 4 - 2x^2 - x + 6$. Combining gives $3x^2 - 4x + 10$.'
+          - problem: 'Subtract $3x^2 - 2x + 5$ from $7x^2 + x - 1$.'
+            answer: "4x^2 + 3x - 6"
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'Subtracting from $7x^2 + x - 1$ means $(7x^2 + x - 1) - (3x^2 - 2x + 5) = 7x^2 + x - 1 - 3x^2 + 2x - 5$. Combining gives $4x^2 + 3x - 6$.'
+          - problem: 'A piece of length $3x - 8$ cm is cut from a bar of length $7x - 2$ cm, with $x > 3$. Write a polynomial for the length of bar that remains.'
             answer: "4x + 6"
-            solution_sketch: 'Distribute the minus: $7x - 3x = 4x$; $-2 - (-8) = 6$.'
-          - problem: 'Subtract coefficient row $(3,4,-1)$ from $(6,-2,5)$ in columns $(x^2,x,1)$. Write the resulting polynomial.'
-            answer: "3x^2 - 6x + 6"
-            solution_sketch: 'Distribute the minus: $6x^2 - 3x^2 = 3x^2$; $-2x - 4x = -6x$; $5 - (-1) = 6$.'
-          - problem: 'A student writes $(4x-9)-(x-2)=3x-11$. Correct the result by distributing the subtraction sign.'
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'The remaining length is $(7x - 2) - (3x - 8) = 7x - 2 - 3x + 8$. Combining gives $4x + 6$ cm.'
+          - problem: 'Noah writes $(4x - 9) - (x - 2) = 3x - 11$. What is the correct difference?'
             answer: "3x - 7"
-            solution_sketch: 'Distribute the minus: $4x - x = 3x$; $-9 - (-2) = -7$.'
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'The minus applies to the $-2$ as well: $4x - 9 - x + 2$. Combining gives $3x - 7$; Noah subtracted $2$ instead of adding it.'
+          - problem: 'A triangle has perimeter $6x^2 + 5x - 1$. Two of its sides have lengths $2x^2 + x$ and $x^2 + 3x - 4$. Write a polynomial for the length of the third side.'
+            answer: "3x^2 + x + 3"
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'The third side is the perimeter minus the two known sides: $(6x^2 + 5x - 1) - (2x^2 + x) - (x^2 + 3x - 4)$. The coefficients give $6 - 2 - 1 = 3$, $5 - 1 - 3 = 1$ and $-1 + 4 = 3$, so the side is $3x^2 + x + 3$.'
+          - problem: 'When a shop sells $x$ items, its revenue is $50x - x^2$ dollars and its costs are $10x + 300$ dollars. Write a polynomial for its profit.'
+            answer: "-x^2 + 40x - 300"
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'Profit is revenue minus costs: $(50x - x^2) - (10x + 300) = 50x - x^2 - 10x - 300$. Combining gives $-x^2 + 40x - 300$.'
+          - problem: 'Simplify $(6x^2 - 2x + 5) - (3x^2 + 4x - 1)$.'
+            answer: "3x^2 - 6x + 6"
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'Distribute the minus: $6x^2 - 2x + 5 - 3x^2 - 4x + 1$. Combining gives $3x^2 - 6x + 6$.'
       - id: kp2
         name: Subtract with missing terms and cancellation
         key_prerequisites: [adding-polynomials, distributive-property]
+        step_check:
+          step: 'The cubic and linear terms cancel'
+          question: 'Why do the linear terms cancel once the subtraction is distributed?'
+          options:
+            - 'The second polynomial has no $x$ term to subtract'
+            - '$-5x$ and $+5x$ are opposites, so they add to $0$'
+            - 'Linear terms always cancel when two cubics are subtracted'
+          answer: '$-5x$ and $+5x$ are opposites, so they add to $0$'
+          why: 'The second polynomial contains $-5x$, and subtracting it gives $+5x$, which cancels the $-5x$ of the first; equal terms subtracted always cancel.'
         exemplars:
           - problem: 'Simplify $(x^3 + 2x - 1) - (x^3 - x^2 + 2x - 4)$.'
             answer: "x^2 + 3"
-            solution_sketch: '$x^3$ cancels; $+x^2$; $2x - 2x = 0$; $-1 + 4 = 3$.'
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'Distribute the minus: $x^3 + 2x - 1 - x^3 + x^2 - 2x + 4$. The cubic and linear terms cancel, leaving $x^2 + 3$.'
           - problem: 'Simplify $(2x^2 + 5) - (x^2 + 3x)$.'
             answer: "x^2 - 3x + 5"
-            solution_sketch: 'Distribute the minus: $2x^2 - x^2 = x^2$; the $-3x$ carries through.'
-          - problem: 'Find $P-Q$ from coefficient rows $P=(1,0,3,0)$ and $Q=(1,-2,1,-4)$ in columns $(x^3,x^2,x,1)$.'
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'Distribute the minus: $2x^2 + 5 - x^2 - 3x$. The first polynomial has no $x$ term, so $-3x$ carries through, giving $x^2 - 3x + 5$.'
+          - problem: 'A triangle has perimeter $x^3 + 4x + 9$. Two of its sides have lengths $x^3 - x^2$ and $x^2 + 2x$, with $x > 1$. Write a polynomial for the length of the third side.'
+            answer: "2x + 9"
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'The third side is $(x^3 + 4x + 9) - (x^3 - x^2) - (x^2 + 2x) = x^3 + 4x + 9 - x^3 + x^2 - x^2 - 2x$. The cubic and square terms cancel, leaving $2x + 9$.'
+          - problem: 'Find $P - Q$ when $P = x^3 + 3x$ and $Q = x^3 - 2x^2 + x - 4$.'
             answer: "2x^2 + 2x + 4"
-            solution_sketch: '$x^3$ cancels; $+2x^2$; $3x - x = 2x$; $0 - (-4) = 4$.'
-          - problem: 'A tile tray represents $3x^2+2x$. Removing a tray representing $x^2+2x-6$ uses zero pairs for the negative units. What polynomial remains?'
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'Distribute the minus: $x^3 + 3x - x^3 + 2x^2 - x + 4$. The cubic terms cancel, leaving $2x^2 + 2x + 4$.'
+          - problem: 'A tank holds $3x^3 + 2x^2 - 5$ litres of water. After $x^3 + 2x^2 - 8$ litres are drained, how much water is left?'
+            answer: "2x^3 + 3"
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'The water left is $(3x^3 + 2x^2 - 5) - (x^3 + 2x^2 - 8) = 3x^3 + 2x^2 - 5 - x^3 - 2x^2 + 8$. The square terms cancel, leaving $2x^3 + 3$ litres.'
+          - problem: 'Emma simplifies $(4x^3 - x + 6) - (4x^3 - 2x^2 - x)$ and gets $-2x^2 - 2x + 6$. What is the correct result?'
             answer: "2x^2 + 6"
-            solution_sketch: '$3x^2 - x^2 = 2x^2$; $2x - 2x = 0$; $0 - (-6) = 6$.'
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'Distribute the minus to every term: $4x^3 - x + 6 - 4x^3 + 2x^2 + x$. The cubic and linear terms cancel, leaving $2x^2 + 6$.'
+          - problem: 'Simplify $(5x^2 - 7) - (5x^2 - 3x - 7)$.'
+            answer: "3x"
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'Distribute the minus: $5x^2 - 7 - 5x^2 + 3x + 7$. The square terms and the constants cancel, leaving $3x$.'
         constraints: 'some powers absent from one polynomial; terms may cancel completely; degree <= 3'
       - id: kp3
         name: Combine three polynomials
         key_prerequisites: [adding-polynomials]
+        step_check:
+          step: 'The third polynomial contributes $-3x^2+x-9$'
+          question: 'Why does the third polynomial contribute $-3x^2+x-9$?'
+          options:
+            - 'The minus in front of it changes the sign of each of its terms'
+            - 'Only its first term changes sign, as it follows the minus'
+            - 'Its terms are reversed so that the constant comes last'
+          answer: 'The minus in front of it changes the sign of each of its terms'
+          why: 'Subtracting $3x^2-x+9$ subtracts all three terms, so it adds $-3x^2$, $+x$ and $-9$ to the total.'
         exemplars:
           - problem: 'Simplify $(4x^2 - 1) + (x^2 + 6x) - (2x^2 - 3)$.'
             answer: "3x^2 + 6x + 2"
-            solution_sketch: '$4x^2 + x^2 - 2x^2 = 3x^2$; the $6x$ carries; $-1 - (-3) = 2$.'
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'Remove the brackets: $4x^2 - 1 + x^2 + 6x - 2x^2 + 3$. The square coefficients give $4 + 1 - 2 = 3$ and the constants give $-1 + 3 = 2$, so the result is $3x^2 + 6x + 2$.'
+          - problem: 'Simplify $(5x^2 + 2x) - (3x^2 - x) - (x^2 + 4)$.'
+            answer: "x^2 + 3x - 4"
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'Remove the brackets: $5x^2 + 2x - 3x^2 + x - x^2 - 4$. The square coefficients give $5 - 3 - 1 = 1$ and the $x$ terms give $2 + 1 = 3$, so the result is $x^2 + 3x - 4$.'
+          - problem: 'A warehouse starts the day with $2x^2 + x$ boxes, receives a delivery of $x^2 - 5$ boxes and ships out $x^2 - 3x$ boxes, with $x > 5$. Write a polynomial for the number of boxes at the end of the day.'
+            answer: "2x^2 + 4x - 5"
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'The delivery is added and the shipment is subtracted: $(2x^2 + x) + (x^2 - 5) - (x^2 - 3x)$. This gives $2x^2 + x - (-3x) - 5 = 2x^2 + 4x - 5$ boxes.'
+          - problem: 'Mr Diaz has $5x^2 + 2x$ dollars, with $x > 10$. He spends $x^2 + 7x$ dollars on books and $2x^2 - x + 30$ dollars on a bike. Write a polynomial for the money he has left.'
+            answer: "2x^2 - 4x - 30"
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'Both amounts spent are subtracted: $(5x^2 + 2x) - (x^2 + 7x) - (2x^2 - x + 30)$. The coefficients give $5 - 1 - 2 = 2$, $2 - 7 + 1 = -4$ and $-30$, so he has $2x^2 - 4x - 30$ dollars left.'
+          - problem: 'Find $P + Q - R$ for $P = x^2 - 4$, $Q = 2x^2 + x$ and $R = x^2 - 2x + 1$.'
+            answer: "2x^2 + 3x - 5"
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'Remove the brackets: $x^2 - 4 + 2x^2 + x - x^2 + 2x - 1$. The square coefficients give $1 + 2 - 1 = 2$, the $x$ terms give $3x$ and the constants give $-5$, so the result is $2x^2 + 3x - 5$.'
+          - problem: 'Simplify $(3x^2 - x) - (x^2 + 2x) + (x^2 + x - 6)$.'
+            answer: "3x^2 - 2x - 6"
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'Remove the brackets: $3x^2 - x - x^2 - 2x + x^2 + x - 6$. The square coefficients give $3 - 1 + 1 = 3$ and the $x$ terms give $-1 - 2 + 1 = -2$, so the result is $3x^2 - 2x - 6$.'
           - problem: 'Simplify $(x^2 + 2x) + (3x^2 - x) - (2x^2 + 4)$.'
             answer: "2x^2 + x - 4"
-            solution_sketch: 'Combine the $x^2$ coefficients $1 + 3 - 2$ to get $2x^2$; the $x$ terms give $2x - x = x$; the constants give $0 - 4 = -4$.'
-          - problem: 'A stock model starts at $2x^2+x$, receives $x^2-5$, and dispatches $x^2-3x$, with $x>5$. Write the net stock polynomial.'
-            answer: "2x^2 + 4x - 5"
-            solution_sketch: '$2x^2 + x^2 - x^2 = 2x^2$; $x - (-3x) = 4x$; $0 - 5 = -5$.'
-          - problem: 'Compute $P+Q-R$ using coefficient rows $P=(1,0,-4)$, $Q=(2,1,0)$, $R=(1,-2,1)$ in columns $(x^2,x,1)$.'
-            answer: "2x^2 + 3x - 5"
-            solution_sketch: '$1 + 2 - 1 = 2$ for $x^2$; $x - (-2x) = 3x$; $-4 - 1 = -5$.'
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'The square coefficients give $1 + 3 - 2 = 2$ and the $x$ terms give $2x - x = x$. The only constant is $-4$, so the result is $2x^2 + x - 4$.'
         constraints: 'three polynomials, at least one subtracted; degree <= 2; answer in standard form'
     diagnostic_exemplar:
       problem: 'Simplify $(3x^2 + 5) + (x^2 - 2x) - (2x^2 + 3)$.'
@@ -1094,53 +1401,137 @@ topics:
       - id: kp1
         name: Divide each term by the monomial
         key_prerequisites: [exponent-product-quotient-rules]
+        try_first:
+          problem: 'Work out $\frac{40 + 12}{4}$ by dividing each number in the numerator by $4$.'
+          answer_contract: {"kind":"exact"}
+          answer: '13'
+          reveal: '$\frac{40}{4} + \frac{12}{4} = 10 + 3 = 13$, the same as $\frac{52}{4}$. Dividing a polynomial by a monomial works the same way: each term of the numerator is divided by the monomial.'
+        step_check:
+          step: 'The second is $(10/5)x^{3-2}=2x$'
+          question: 'Why is the second quotient $2x$ and not $2x^3$?'
+          options:
+            - 'Only the first term of the numerator is divided by $x^2$'
+            - 'The $x^3$ is divided by $x^2$ as well, which leaves $x$'
+            - 'The $x^2$ in the divisor divides the coefficient $10$ instead'
+          answer: 'The $x^3$ is divided by $x^2$ as well, which leaves $x$'
+          why: 'Every term is divided by the whole monomial $5x^2$: $10/5=2$ and $x^3/x^2=x$, so leaving $x^3$ would divide only the coefficient.'
         exemplars:
-          - problem: 'Divide $\frac{6x^3 - 9x^2 + 3x}{3x}$.'
+          - problem: 'Simplify $\frac{6x^3 - 9x^2 + 3x}{3x}$.'
             answer: "2x^2 - 3x + 1"
-            solution_sketch: 'The three quotients are $6x^3/(3x)=2x^2$, $-9x^2/(3x)=-3x$, and $3x/(3x)=1$. Add them.'
-          - problem: 'Divide $\frac{8x^4 + 4x^2}{4x^2}$.'
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'Divide each term by $3x$: $6x^3/(3x) = 2x^2$, $-9x^2/(3x) = -3x$ and $3x/(3x) = 1$. The quotient is $2x^2 - 3x + 1$.'
+          - problem: 'Divide $8x^4 + 4x^2$ by $4x^2$.'
             answer: "2x^2 + 1"
-            solution_sketch: 'Divide each term: $8x^4/(4x^2)=2x^2$ and $4x^2/(4x^2)=1$. The quotient is $2x^2+1$.'
-          - problem: 'A rectangle has area $15x^4-5x^2$ and width $5x^2$, for $x>1$. Write its length polynomial.'
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'Divide each term: $8x^4/(4x^2) = 2x^2$ and $4x^2/(4x^2) = 1$. The quotient is $2x^2 + 1$.'
+          - problem: 'A rectangle has area $15x^4 - 5x^2$ square centimetres and width $5x^2$ cm, with $x > 1$. Find its length.'
             answer: "3x^2 - 1"
-            solution_sketch: 'Length is area divided by width. The term quotients are $15x^4/(5x^2)=3x^2$ and $-5x^2/(5x^2)=-1$.'
-          - problem: 'A quotient table divides terms $6x^5$ and $-9x^3$ by $3x^2$. Combine the two quotients.'
-            answer: "2x^3 - 3x"
-            solution_sketch: 'Divide coefficients and subtract the divisor''s exponent: $6x^5/(3x^2)=2x^3$ and $-9x^3/(3x^2)=-3x$.'
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'Length is area divided by width. The term quotients are $15x^4/(5x^2) = 3x^2$ and $-5x^2/(5x^2) = -1$, so the length is $3x^2 - 1$ cm.'
+          - problem: 'A prize of $12x^3 + 8x^2$ dollars is shared equally among $4x$ people. How much does each person receive?'
+            answer: "3x^2 + 2x"
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'Sharing equally means dividing by $4x$. The quotients are $12x^3/(4x) = 3x^2$ and $8x^2/(4x) = 2x$, so each person receives $3x^2 + 2x$ dollars.'
+          - problem: 'Leo simplifies $\frac{9x^4 + 3x}{3x}$ and writes $3x^3$. What is the correct quotient?'
+            answer: "3x^3 + 1"
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'Both terms must be divided by $3x$: $9x^4/(3x) = 3x^3$ and $3x/(3x) = 1$. The quotient is $3x^3 + 1$; the second term does not vanish.'
+          - problem: 'Simplify $\frac{20x^5 + 12x^4 - 4x^3}{4x^3}$.'
+            answer: "5x^2 + 3x - 1"
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'Divide each term by $4x^3$: $20x^5$ gives $5x^2$, $12x^4$ gives $3x$ and $-4x^3$ gives $-1$. The quotient is $5x^2 + 3x - 1$.'
+          - problem: 'Over $3x$ days a shop sells $18x^3 + 6x^2$ items. What is the average number of items sold per day?'
+            answer: "6x^2 + 2x"
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'The average per day is the total divided by the number of days. The quotients are $18x^3/(3x) = 6x^2$ and $6x^2/(3x) = 2x$, so the average is $6x^2 + 2x$ items.'
+          - problem: 'A box has volume $6x^3 + 10x^2$ cubic centimetres, and its base has area $2x^2$ square centimetres. Find the height of the box.'
+            answer: "3x + 5"
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'Volume is base area times height, so the height is the volume divided by $2x^2$. The quotients are $6x^3/(2x^2) = 3x$ and $10x^2/(2x^2) = 5$, so the height is $3x + 5$ cm.'
         constraints: "every term divisible; positive coefficients on the divisor"
       - id: kp2
         name: Negative coefficients and signs
         key_prerequisites: [exponent-product-quotient-rules, integer-multiplication-division]
+        step_check:
+          step: 'The second is $(9/-3)x^{2-1}=-3x$'
+          question: 'Why is the second quotient negative?'
+          options:
+            - 'Dividing by a monomial makes every term negative'
+            - 'The first quotient is positive, so the second must be negative'
+            - '$9$ and $-3$ have opposite signs, so their quotient is negative'
+          answer: '$9$ and $-3$ have opposite signs, so their quotient is negative'
+          why: 'Each term takes its own sign: $-21/-3=7$ is positive because the signs agree, while $9/-3=-3$ is negative because they differ.'
         exemplars:
-          - problem: 'Divide $\frac{-10x^3 + 5x^2}{5x}$.'
-            answer: "-2x^2 + x"
-            solution_sketch: '$-10/5 = -2$; $5/5 = 1$.'
-          - problem: 'Divide $\frac{12x^5 - 8x^3}{-4x^2}$.'
-            answer: "-3x^3 + 2x"
-            solution_sketch: '$12/-4 = -3$; $-8/-4 = 2$.'
-          - problem: 'Correct $(-6x^4+9x^3)/(3x^2)=-2x^2+3x^3$ by checking the exponent subtraction.'
-            answer: "-2x^2 + 3x"
-            solution_sketch: 'Each term divides by $3x^2$: $-6x^4$ gives $-2x^2$ and $9x^3$ gives $3x$.'
-          - problem: 'Divide $\frac{-20x^4 + 15x^3 - 5x^2}{-5x^2}$.'
+          - problem: 'Simplify $\frac{-10x^3 + 5x^2}{-5x}$.'
+            answer: "2x^2 - x"
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'Divide each term by $-5x$: $-10x^3/(-5x) = 2x^2$ because the signs agree, and $5x^2/(-5x) = -x$ because they differ. The quotient is $2x^2 - x$.'
+          - problem: 'Divide $4x^5 - 8x^3$ by $-4x^2$.'
+            answer: "-x^3 + 2x"
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'A positive divided by a negative is negative: $4x^5/(-4x^2) = -x^3$. A negative divided by a negative is positive: $-8x^3/(-4x^2) = 2x$, so the quotient is $-x^3 + 2x$.'
+          - problem: 'Ava divides $-3x^4 + 9x^3$ by $3x^2$ and writes $-x^2 + 3x^3$. What is the correct quotient?'
+            answer: "-x^2 + 3x"
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'Subtract $2$ from each exponent: $-3x^4/(3x^2) = -x^2$ and $9x^3/(3x^2) = 3x$. The quotient is $-x^2 + 3x$.'
+          - problem: 'Simplify $\frac{-20x^4 + 15x^3 - 5x^2}{-5x^2}$.'
             answer: "4x^2 - 3x + 1"
-            solution_sketch: 'Divide all three terms by $-5x^2$: $-20x^4$ gives $4x^2$, $15x^3$ gives $-3x$, and $-5x^2$ gives $1$.'
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'Divide all three terms by $-5x^2$: $-20x^4$ gives $4x^2$, $15x^3$ gives $-3x$ and $-5x^2$ gives $1$. The quotient is $4x^2 - 3x + 1$.'
+          - problem: 'A company''s balance changes by $-3x^3 + 12x^2$ dollars over $3x$ months. What is the average change per month?'
+            answer: "-x^2 + 4x"
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'The average change per month is the total change divided by $3x$. The quotients are $-3x^3/(3x) = -x^2$ and $12x^2/(3x) = 4x$, so the average is $-x^2 + 4x$ dollars.'
+          - problem: 'A diver''s height above the sea floor changes by $-3x^2 - 9x$ metres over $3x$ minutes. What is the average change in height per minute?'
+            answer: "-x - 3"
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'Divide the total change by the $3x$ minutes. The quotients are $-3x^2/(3x) = -x$ and $-9x/(3x) = -3$, so the average change is $-x - 3$ metres per minute.'
+          - problem: 'Simplify $\frac{2x^3 - 6x^2 + 8x}{-2x}$.'
+            answer: "-x^2 + 3x - 4"
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'Each term changes sign when divided by $-2x$: $2x^3$ gives $-x^2$, $-6x^2$ gives $3x$ and $8x$ gives $-4$. The quotient is $-x^2 + 3x - 4$.'
         constraints: "track the sign of each quotient term"
       - id: kp3
         name: Two variables
         key_prerequisites: [exponent-product-quotient-rules]
+        step_check:
+          step: 'The second is $-3x^{2-2}y^{1-1}=-3$'
+          question: 'Why does the second quotient contain no $x$ or $y$?'
+          options:
+            - 'Both exponents become $0$, and $x^0 = y^0 = 1$'
+            - 'Variables vanish whenever the coefficient is negative'
+            - 'The divisor cancels only one variable from each term'
+          answer: 'Both exponents become $0$, and $x^0 = y^0 = 1$'
+          why: '$x^2/x^2=1$ and $y/y=1$, so only the coefficient $-15/5=-3$ remains.'
         exemplars:
-          - problem: 'Divide $\frac{9x^2y^3 + 6xy^2}{3xy}$.'
+          - problem: 'Simplify $\frac{9x^2y^3 + 6xy^2}{3xy}$.'
             answer: "3xy^2 + 2y"
-            solution_sketch: 'The quotients are $9x^2y^3/(3xy)=3xy^2$ and $6xy^2/(3xy)=2y$, found by subtracting the exponents of each variable.'
-          - problem: 'Divide $\frac{4a^3b - 2a^2b^2}{2a^2b}$.'
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'Subtract the exponents of each variable separately. $9x^2y^3/(3xy) = 3xy^2$ and $6xy^2/(3xy) = 2y$, so the quotient is $3xy^2 + 2y$.'
+          - problem: 'Divide $4a^3b - 2a^2b^2$ by $2a^2b$.'
             answer: "2a - b"
-            solution_sketch: 'Divide $4a^3b$ by $2a^2b$ to get $2a$. Divide $-2a^2b^2$ by the same divisor to get $-b$. Add the two quotients.'
-          - problem: 'For nonzero $x,y$, a product equals $15x^3y^2+10x^2y^3$ and one factor is $5x^2y$. Find the other polynomial factor.'
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'Divide $4a^3b$ by $2a^2b$ to get $2a$. Divide $-2a^2b^2$ by the same divisor to get $-b$, so the quotient is $2a - b$.'
+          - problem: 'A rectangle has area $15x^3y^2 + 10x^2y^3$ and length $5x^2y$. Find its width.'
             answer: "3xy + 2y^2"
-            solution_sketch: 'Divide coefficients and subtract exponents per variable: $3xy$ and $2y^2$.'
-          - problem: 'Correct $(8a^2b^3-4ab^2)/(4ab)=2ab^2-1$ by dividing the second term in both variables.'
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'Width is area divided by length. The quotients are $15x^3y^2/(5x^2y) = 3xy$ and $10x^2y^3/(5x^2y) = 2y^2$, so the width is $3xy + 2y^2$.'
+          - problem: 'Mo divides $8a^2b^3 - 4ab^2$ by $4ab$ and writes $2ab^2 - 1$. What is the correct quotient?'
             answer: "2ab^2 - b"
-            solution_sketch: 'Divide coefficients and subtract exponents per variable: $2ab^2$ and $-b$.'
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'The second term still has a factor $b$ left over: $-4ab^2/(4ab) = -b$. With $8a^2b^3/(4ab) = 2ab^2$, the quotient is $2ab^2 - b$.'
+          - problem: 'A school spends $12m^2n + 18mn^2$ dollars on $6mn$ identical calculators. How much does each calculator cost?'
+            answer: "2m + 3n"
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'The cost of one calculator is the total divided by the number of calculators. The quotients are $12m^2n/(6mn) = 2m$ and $18mn^2/(6mn) = 3n$, so each costs $2m + 3n$ dollars.'
+          - problem: 'Simplify $\frac{-14x^3y^2 + 21x^2y^4}{-7x^2y^2}$.'
+            answer: "2x - 3y^2"
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'Divide each term by $-7x^2y^2$. The first gives $2x$ and the second gives $-3y^2$, so the quotient is $2x - 3y^2$.'
+          - problem: 'Divide $20p^4q^3 - 15p^3q^2 + 5p^2q$ by $5p^2q$.'
+            answer: "4p^2q^2 - 3pq + 1"
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'Subtract the exponents of $p$ and of $q$ in each term. The quotients are $4p^2q^2$, $-3pq$ and $1$, so the result is $4p^2q^2 - 3pq + 1$.'
         constraints: "each variable handled separately"
     diagnostic_exemplar:
       problem: 'Divide $\frac{9x^3y^2 - 6x^2y}{-3x^2y}$.'
