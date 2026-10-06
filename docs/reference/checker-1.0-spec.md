@@ -1057,7 +1057,7 @@ key exactly; the form check runs first, so a value in the wrong form is a decide
 | `form` | Correct when the learner's expression | Refused |
 |---|---|---|
 | `factored_polynomial` | is a product of constants, monomials and primitive sums (integer coefficients without a common factor, no variable in every term), with as many sum factors, counted with multiplicity, as the authored key | `x^2 + 7x + 12` for `(x + 3)(x + 4)`; `2(x^2 + 3x)` for `2x(x + 3)`; `(x^2 - 4)(x^2 + 4)` for `(x^2 + 4)(x + 2)(x - 2)` |
-| `expanded_polynomial` | is a sum of monomials with nonnegative integer exponents, no sum inside a term and no two terms with one monomial | `(x + 2)(x + 3)` and `x^2 + 2x + 3x + 6` for `x^2 + 5x + 6` |
+| `expanded_polynomial` | is a sum of multiplied-out monomials (at most one number and each variable once per term, nonnegative integer exponents), no sum inside a term and no two terms with one monomial | `(x + 2)(x + 3)` and `x^2 + 2x + 3x + 6` for `x^2 + 5x + 6`; `3x^2 * 5x^4` and `(2x)^2` as terms |
 
 The factor count is sound because the authored key is a complete factorization: with equal values,
 k primitive sum factors against the key's k irreducible ones leave one irreducible factor in each

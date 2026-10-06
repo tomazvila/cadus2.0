@@ -60,6 +60,11 @@ fn a_product_or_uncombined_like_terms_are_wrong() {
     assert!(!expanded("x^2 + 5x + 6", "(x + 2)(x + 3)"));
     assert!(!expanded("x^2 + 5x + 6", "x^2 + 2x + 3x + 6"));
     assert!(!expanded("x^2 + 5x + 6", "x(x + 5) + 6"));
-    assert!(!expanded("4x^2 - 9", "(2x)^2 - 3^2 + 0"));
+    assert!(!expanded("4x^2 - 9", "4x^2 - 9 + 0"));
     assert!(!expanded("x^2 + 5x + 6", "x^2 + 5x + 7"));
+    assert!(!expanded("15x^6", "(3x^2)(5x^4)"));
+    assert!(!expanded("15x^6", "3x^2*5x^4"));
+    assert!(!expanded("4x^2 + 1", "(2x)^2 + 1"));
+    assert!(expanded("15x^6", "15x^6"));
+    assert!(expanded("x^2/2 - 3x", "x^2/2 - 3x"));
 }

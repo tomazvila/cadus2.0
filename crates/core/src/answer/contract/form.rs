@@ -197,7 +197,7 @@ fn primitive(poly: &Poly) -> bool {
 }
 
 /// A sum of monomial terms with nonnegative integer exponents, no sum inside a
-/// term, and no two terms with the same monomial.
+/// term, each term multiplied out, and no two terms with the same monomial.
 fn expanded_polynomial(tree: &Ast) -> bool {
     let terms: Vec<&Ast> = match tree {
         Ast::Add(terms) => terms.iter().collect(),
@@ -206,7 +206,7 @@ fn expanded_polynomial(tree: &Ast) -> bool {
     let single = terms.len() == 1;
     let mut seen = std::collections::BTreeSet::new();
     for term in terms {
-        if holds_sum(term) {
+        if holds_sum(term) || !plain_monomial(term) {
             return false;
         }
         let monomial = match canon(term) {
@@ -227,6 +227,54 @@ fn expanded_polynomial(tree: &Ast) -> bool {
         }
     }
     true
+}
+
+/// A term written multiplied out: at most one number and each variable once,
+/// as in `-15x^6` or `2*a*b`; `3x^2*5x^4` and `(2x)^2` are not.
+fn plain_monomial(node: &Ast) -> bool {
+    fn number(node: &Ast) -> bool {
+        matches!(
+            node,
+            Ast::Integer(_) | Ast::Decimal { .. } | Ast::Fraction { .. }
+        )
+    }
+    fn variable(node: &Ast) -> Option<&str> {
+        match node {
+            Ast::Var(name) => Some(name),
+            Ast::Pow(base, power) if *power >= 1 => match base.as_ref() {
+                Ast::Var(name) => Some(name),
+                _ => None,
+            },
+            _ => None,
+        }
+    }
+    match node {
+        Ast::Neg(inner) => plain_monomial(inner),
+        Ast::Div(numerator, denominator) => number(denominator) && plain_monomial(numerator),
+        Ast::Mul(_) => {
+            let mut flat = Vec::new();
+            flatten(node, &mut flat);
+            let mut numbers = 0_usize;
+            let mut names = std::collections::BTreeSet::new();
+            flat.into_iter().all(|factor| {
+                if number(factor) {
+                    numbers += 1;
+                    numbers == 1
+                } else {
+                    variable(factor).is_some_and(|name| names.insert(name))
+                }
+            })
+        }
+        other => number(other) || variable(other).is_some(),
+    }
+}
+
+/// The factors of a product, with nested products opened (`2ab` is `2*(a*b)`).
+fn flatten<'a>(node: &'a Ast, out: &mut Vec<&'a Ast>) {
+    match node {
+        Ast::Mul(factors) => factors.iter().for_each(|factor| flatten(factor, out)),
+        other => out.push(other),
+    }
 }
 
 /// Whether a sum sits anywhere inside `node`.
