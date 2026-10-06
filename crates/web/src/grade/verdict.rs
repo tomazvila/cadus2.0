@@ -55,10 +55,13 @@ pub fn grade_item(
 
 /// Grade a served item with source-scoped input representation support.
 ///
-/// Equivalent factor-pair input is checked against the captured answer contract.
+/// Equivalent factor-pair input is checked against the captured answer contract,
+/// and a counted answer ("8 packs") to a "how many" question grades its number.
 /// The caller retains the original submission for learner history.
 pub fn grade_served_item(served: &ServedProblem, answer: &str, kind: AnswerKind) -> Grade {
-    let normalized = super::answer_format::factor_pairs(served, answer, kind);
+    let normalized = super::answer_format::factor_pairs(served, answer, kind)
+        .or_else(|| super::answer_format::count_noun(served, answer, kind))
+        .or_else(|| super::answer_format::measured_noun(served, answer, kind));
     grade_item(
         &served.expected,
         normalized.as_deref().unwrap_or(answer),

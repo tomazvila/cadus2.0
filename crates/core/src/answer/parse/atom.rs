@@ -9,6 +9,39 @@ use crate::answer::Undecidable;
 use crate::answer::ast::{Ast, Const};
 use crate::answer::lexer::Tok;
 
+/// The name of the call that holds a root with an index above 2.
+pub(crate) const ROOT_CALL: &str = "root";
+
+/// Whether `name` is a spelling of a root written as a function call.
+fn is_root_call(name: &str) -> bool {
+    name == "root" || name == "cbrt"
+}
+
+/// Check the index of a root: a whole number from 2 to 9.
+fn root_index(index: i64) -> Result<i64, Undecidable> {
+    if (2..=9).contains(&index) {
+        Ok(index)
+    } else {
+        Err(Undecidable::new("a root index outside 2 to 9"))
+    }
+}
+
+/// Build the root node of an index: the index 2 is the square root.
+///
+/// A root with a larger index is the call `root(index, radicand)`, which the
+/// canonicalizer reads as `radicand^(1/index)`. The call keeps the radical form
+/// of an answer apart from the fractional exponent.
+fn make_root(radicand: Ast, index: i64) -> Ast {
+    if index == 2 {
+        Ast::Sqrt(Box::new(radicand))
+    } else {
+        Ast::Func(
+            ROOT_CALL.to_string(),
+            vec![Ast::Integer(BigInt::from(index)), radicand],
+        )
+    }
+}
+
 impl Parser<'_> {
     /// Parse a sign chain in front of a power.
     pub(super) fn parse_unary(&mut self) -> Result<Ast, Undecidable> {
@@ -124,9 +157,31 @@ impl Parser<'_> {
                     let argument = parser.parse_body(&body, "a root with no argument")?;
                     Ok(Ast::Sqrt(Box::new(argument)))
                 }
+                Tok::NthRoot(index, body) => {
+                    let index = index.clone();
+                    let body = body.clone();
+                    parser.bump();
+                    let argument = parser.parse_body(&body, "a root with no argument")?;
+                    let index = root_index(index.parse().unwrap_or(0))?;
+                    Ok(make_root(argument, index))
+                }
                 Tok::Root => {
                     parser.bump();
-                    parser.parse_root_glyph()
+                    let argument = parser.parse_root_glyph()?;
+                    Ok(Ast::Sqrt(Box::new(argument)))
+                }
+                Tok::IndexedRoot(index) => {
+                    let index = *index;
+                    parser.bump();
+                    let argument = parser.parse_root_glyph()?;
+                    Ok(make_root(argument, index))
+                }
+                Tok::Ident(name)
+                    if is_root_call(name) && parser.peek_at(1) == Some(&Tok::LParen) =>
+                {
+                    let name = name.clone();
+                    parser.bump();
+                    parser.parse_root_call(&name)
                 }
                 Tok::Ident(name) => {
                     let name = name.clone();
@@ -190,7 +245,29 @@ impl Parser<'_> {
             }
             _ => return Err(no_argument),
         };
-        Ok(Ast::Sqrt(Box::new(argument)))
+        Ok(argument)
+    }
+
+    /// Read `root(n, a)` or `cbrt(a)`. The caller took the name and saw the bracket.
+    ///
+    /// The index of `root` is one whole-number literal from 2 to 9, and `cbrt`
+    /// is the index 3.
+    fn parse_root_call(&mut self, name: &str) -> Result<Ast, Undecidable> {
+        self.bump();
+        let index = if name == "cbrt" {
+            3
+        } else {
+            let Some(Tok::Num(text)) = self.peek() else {
+                return Err(Undecidable::new("a root with no whole index"));
+            };
+            let index = text.parse().unwrap_or(0);
+            self.bump();
+            self.expect(&Tok::Comma, "a root with no argument")?;
+            root_index(index)?
+        };
+        let argument = self.parse_expr()?;
+        self.expect(&Tok::RParen, "a function call with no closing bracket")?;
+        Ok(make_root(argument, index))
     }
 
     /// Turn an identifier into a function call, a constant, or a variable.
@@ -308,7 +385,7 @@ impl Parser<'_> {
         };
         match ahead {
             Some(Tok::Ident(name)) => self.is_function(name),
-            Some(Tok::Sqrt(_) | Tok::Root) => true,
+            Some(Tok::Sqrt(_) | Tok::NthRoot(..) | Tok::Root | Tok::IndexedRoot(_)) => true,
             _ => false,
         }
     }

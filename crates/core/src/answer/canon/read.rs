@@ -121,6 +121,12 @@ impl Work {
 
     /// Read a function application.
     fn applied(&mut self, name: &str, arguments: &[Ast]) -> Result<Canon, Undecidable> {
+        // `root(n, a)` is the parser's spelling of an nth root, `a^(1/n)`.
+        if let ("root", [Ast::Integer(index), radicand]) = (name, arguments)
+            && let Ok(index) = i64::try_from(index)
+        {
+            return self.rational_exponent_power(radicand, 1, index);
+        }
         let values = self.items(arguments)?;
         self.call(name, values)
     }

@@ -276,12 +276,12 @@ fn a_split_contract_counts_the_bars_of_the_full_answer() {
         "(|-1|, |-3|)",
         r#"{"kind":"coordinates","arity":2}"#,
     );
-    // The multipart reader refuses a part with a bar before the lexer runs.
-    refused_with(
-        "a = 1, b = 3",
-        "a = |-1|, b = |-3|",
-        parts,
-        "each named answer part must occur exactly once",
+    // The comma-named multipart reading reaches each part, and a part with a bar
+    // pair is never correct against a key without the bars.
+    let outcome = check_contract("a = 1, b = 3", "a = |-1|, b = |-3|", contract(parts));
+    assert!(
+        !matches!(outcome, Outcome::Decided(verdict) if verdict.correct),
+        "{outcome:?}"
     );
     // Two bars in the full answer: one member has the bar pair.
     for (learner, correct) in [("|-1|, 3", false), ("abs(1), 3", false), ("1, 3", true)] {

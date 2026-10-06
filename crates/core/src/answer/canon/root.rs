@@ -27,7 +27,7 @@ use num_integer::Integer;
 use num_rational::BigRational;
 use num_traits::{One, Signed, ToPrimitive, Zero};
 
-use super::sum::{from_sum, insert_atom, is_one, one_term, term};
+use super::sum::{atom_value, from_sum, insert_atom, is_one, one_term, term};
 use super::{Atom, Basis, Canon, Monomial, TRIAL_DIVISION_LIMIT, Undecidable, Work};
 use crate::answer::ast::Ast;
 
@@ -91,6 +91,25 @@ impl Work {
     ) -> Result<Canon, Undecidable> {
         let mut monomial = Monomial::new();
         let mut coefficient = BigRational::one();
+        if denominator % 2 != 0
+            && let Some(factors) = plain_monomial(base)
+        {
+            // An odd root takes each power of a plain monomial on its own:
+            // `(x^2)^(1/3)` and `x^(2/3)` are one value, and so is `cbrt(x^2)`.
+            // An even root keeps the monomial whole, because `sqrt(x^2)` is
+            // `|x|` and not `x`.
+            for (atom, exponent) in factors {
+                let exponent = checked_product(exponent, numerator)?;
+                self.add_root(
+                    &mut monomial,
+                    &mut coefficient,
+                    &atom_value(atom),
+                    denominator,
+                    exponent,
+                )?;
+            }
+            return Ok(from_sum(term(monomial, coefficient)));
+        }
         self.add_root(
             &mut monomial,
             &mut coefficient,
@@ -280,6 +299,23 @@ fn add_opaque_root(
         )?;
     }
     Ok(())
+}
+
+/// The atoms and exponents of a base that is one monomial with coefficient 1.
+fn plain_monomial(base: &Canon) -> Option<Vec<(Atom, i64)>> {
+    let Canon::Poly(sum) = base else {
+        return None;
+    };
+    let (monomial, coefficient) = sum.iter().next().filter(|_| sum.len() == 1)?;
+    if !coefficient.is_one() || monomial.is_empty() {
+        return None;
+    }
+    Some(
+        monomial
+            .iter()
+            .map(|(atom, exponent)| (atom.clone(), *exponent))
+            .collect(),
+    )
 }
 
 /// Read the base as one atom with exponent 1 and coefficient 1, if it is one.

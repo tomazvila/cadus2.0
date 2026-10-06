@@ -144,6 +144,9 @@ fn applied(ast: &Ast, env: &Env, depth: usize) -> Option<f64> {
             denominator,
         } => power::rational_pow(at(base)?, *numerator, *denominator),
         Ast::Func(name, args) => match args.as_slice() {
+            [Ast::Integer(index), radicand] if name == "root" => {
+                power::rational_pow(at(radicand)?, 1, i64::try_from(index).ok()?)
+            }
             [arg] => func::apply(name, at(arg)?),
             _ => None,
         },

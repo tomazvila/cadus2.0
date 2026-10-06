@@ -141,6 +141,50 @@ pub(super) fn equivalent(expected: &str, learner: &str) -> Result<bool, Undecida
     Ok(expected == learner)
 }
 
+/// Whether `text` is a rational or a simplest radical (`2√3`, `5/2`, `√6/3`).
+/// `Err` when the text does not read at all.
+pub(crate) fn simplest(text: &str) -> Result<bool, Undecidable> {
+    read(text).map(|value| value.is_some())
+}
+
+/// Whether `text` is a sum of at most one rational and simplest radicals with
+/// distinct radicands: `1 + 2√2` and `3√2 - √3`, not `√12 + √6`, `√2 + √2`
+/// or `(1 + √2)(3 - √2)`. `Err` when the text does not read.
+pub(crate) fn simplest_sum(text: &str) -> Result<bool, Undecidable> {
+    let source = normalize(text).source;
+    let tokens = lex(&source)?;
+    if negative_denominator(&tokens) {
+        return Ok(false);
+    }
+    let ast = parse(&source)?;
+    let terms: Vec<&Ast> = match &ast {
+        Ast::Add(terms) => terms.iter().collect(),
+        other => vec![other],
+    };
+    let mut radicands = std::collections::BTreeSet::new();
+    let mut rationals = 0_usize;
+    for term in &terms {
+        match read_ast(term)? {
+            Some(Canon::Rational(value)) => {
+                rationals += 1;
+                if rationals > 1 || (terms.len() > 1 && value.is_zero()) {
+                    return Ok(false);
+                }
+            }
+            Some(Canon::Radical(parts)) => {
+                let Some(basis) = parts.keys().next() else {
+                    return Ok(false);
+                };
+                if !radicands.insert(basis.radicand.clone()) {
+                    return Ok(false);
+                }
+            }
+            _ => return Ok(false),
+        }
+    }
+    Ok(true)
+}
+
 fn read(text: &str) -> Result<Option<Canon>, Undecidable> {
     let source = normalize(text).source;
     let tokens = lex(&source)?;
@@ -148,13 +192,18 @@ fn read(text: &str) -> Result<Option<Canon>, Undecidable> {
         return Ok(None);
     }
     let ast = parse(&source)?;
-    if rational_literal(&ast) {
-        let value = canon(&ast)?;
+    read_ast(&ast)
+}
+
+/// The value of one rational or simplest-radical term, or `None`.
+fn read_ast(ast: &Ast) -> Result<Option<Canon>, Undecidable> {
+    if rational_literal(ast) {
+        let value = canon(ast)?;
         return Ok(matches!(value, Canon::Rational(_)).then_some(value));
     }
 
     let mut shape = RadicalShape::new();
-    if !shape.collect(&ast) {
+    if !shape.collect(ast) {
         return Ok(None);
     }
     let Some(coefficient) = shape.coefficient() else {
@@ -163,7 +212,7 @@ fn read(text: &str) -> Result<Option<Canon>, Undecidable> {
     let Some(radicand) = shape.radicand else {
         return Ok(None);
     };
-    let value = canon(&ast)?;
+    let value = canon(ast)?;
     let Canon::Radical(terms) = &value else {
         return Ok(None);
     };

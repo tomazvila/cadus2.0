@@ -224,6 +224,27 @@ impl Unit {
     }
 }
 
+/// The answer without one trailing unit spelling: `2√3 m` and `2√3m` give
+/// `2√3`. The longest spelling wins (`cm` before `m`), and the unit must follow
+/// a space, a digit or a closing bracket, so `2√3` and `x` stay whole.
+#[must_use]
+pub fn magnitude(text: &str) -> &str {
+    let trimmed = text.trim();
+    let mut best: Option<&str> = None;
+    for unit in UNITS {
+        let Some(prefix) = trimmed.strip_suffix(unit.spelling) else {
+            continue;
+        };
+        let joined = prefix.chars().next_back().is_some_and(|c| {
+            c.is_whitespace() || c.is_ascii_digit() || matches!(c, ')' | '}' | ']')
+        });
+        if joined && best.is_none_or(|kept| prefix.len() < kept.len()) {
+            best = Some(prefix);
+        }
+    }
+    best.map_or(trimmed, str::trim)
+}
+
 /// Look up a unit by the spelling the answer writes.
 #[must_use]
 pub fn lookup(spelling: &str) -> Option<&'static Unit> {

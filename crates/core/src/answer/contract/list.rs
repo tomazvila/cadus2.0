@@ -141,6 +141,23 @@ fn refuse_bars(member: &AnswerContract, text: &str) -> Result<(), Undecidable> {
     Ok(())
 }
 
+/// A list written after one name, "b = 7, 8, 13", reads as its members when the
+/// key names nothing and no member carries a name of its own.
+fn unlabeled_list<'a>(expected_text: &str, learner: &'a str) -> &'a str {
+    let Some((name, rest)) = learner.split_once('=') else {
+        return learner;
+    };
+    let name = name.trim();
+    let named = !name.is_empty()
+        && name.chars().all(|c| c.is_ascii_alphabetic())
+        && name.chars().count() <= 12;
+    if named && !expected_text.contains('=') && rest.contains(',') && !rest.contains('=') {
+        rest.trim()
+    } else {
+        learner
+    }
+}
+
 fn bad_list() -> Undecidable {
     Undecidable::new("a list requires one to 32 complete members")
 }
@@ -166,6 +183,7 @@ pub(super) fn grade(
     expected_text: &str,
     learner: &str,
 ) -> Outcome {
+    let learner = unlabeled_list(expected_text, learner);
     let bars = refuse_bars(member, expected_text).and_then(|()| refuse_bars(member, learner));
     let result = if let Err(refusal) = bars {
         Err(refusal)

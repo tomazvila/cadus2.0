@@ -45,6 +45,7 @@ fn candidate(problem: &str, answer: &str) -> (Option<AnswerContract>, &'static s
                 quantity,
                 unit: unit.into(),
                 allow_omitted: false,
+                form: None,
             }),
             "review_unit_policy",
         );

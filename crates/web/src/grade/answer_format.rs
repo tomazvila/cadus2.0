@@ -81,3 +81,45 @@ fn positive_integer(text: &str) -> Option<u64> {
     }
     text.parse::<u64>().ok().filter(|value| *value > 0)
 }
+
+/// Read the number of a counted answer ("8 packs") to a "how many" question.
+///
+/// Core decides which words may fall away (`cadus_core::answer::count_answer`);
+/// this adapter only supplies the served question and keeps the contract.
+pub(super) fn count_noun(served: &ServedProblem, answer: &str, kind: AnswerKind) -> Option<String> {
+    if !matches!(kind, AnswerKind::Numeric | AnswerKind::Expression)
+        || !matches!(
+            served.expected.answer_contract.as_ref(),
+            None | Some(AnswerContract::Exact)
+        )
+    {
+        return None;
+    }
+    cadus_core::answer::count_answer(&served.text, &served.expected.answer, answer)
+}
+
+/// Read a measured answer without its decoration ("A = (x+4)(x+5) m^2",
+/// "≈7.1", "7.1 m"): core decides what may fall away from the served question;
+/// the stripped text is graded under the item's own contract.
+pub(super) fn measured_noun(
+    served: &ServedProblem,
+    answer: &str,
+    kind: AnswerKind,
+) -> Option<String> {
+    if !matches!(kind, AnswerKind::Numeric | AnswerKind::Expression)
+        || !matches!(
+            served.expected.answer_contract.as_ref(),
+            None | Some(
+                AnswerContract::Exact
+                    | AnswerContract::Approx { .. }
+                    | AnswerContract::Tolerance { .. }
+                    | AnswerContract::RequiredForm { .. }
+                    | AnswerContract::RequiredSimplestRadical
+                    | AnswerContract::RequiredNormalizedScientificNotation
+            )
+        )
+    {
+        return None;
+    }
+    cadus_core::answer::measured_answer(&served.text, &served.expected.answer, answer)
+}

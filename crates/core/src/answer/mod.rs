@@ -48,6 +48,7 @@ pub use contract::{
     AnswerContract, AnswerPart, NumericForm, PropertyArg, PropertyArgs, PropertyCheck,
     TriageVerdict, check_contract, triage_verdict,
 };
+pub use natural::{count_answer, measured_answer, scientific, unit_phrases};
 pub use normalize::{MAX_ANSWER_CHARS, Normalized, normalize};
 pub use parse::{parse, parse_with_functions};
 pub use rounding::{Rounding, rounds_to};

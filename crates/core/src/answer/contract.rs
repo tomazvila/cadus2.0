@@ -48,6 +48,10 @@ pub enum AnswerContract {
         /// A bare number may use the unit named by the question. Defaults to false.
         #[serde(default, skip_serializing_if = "std::ops::Not::not")]
         allow_omitted: bool,
+        /// A required form of the magnitude, read without its unit. `None`
+        /// accepts every equal value.
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        form: Option<UnitForm>,
     },
     /// An integer quotient and a nonnegative integer remainder.
     QuotientRemainder {
@@ -124,6 +128,26 @@ pub enum AnswerContract {
     None,
 }
 
+/// The form a measured answer's magnitude must take (spec section 8.7).
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum UnitForm {
+    /// A reduced rational times one simplified square root, with a rational
+    /// denominator: `2√3 m`, not `√12 m` or `6/√3 m`.
+    SimplestRadical,
+}
+
+impl UnitForm {
+    /// Whether the magnitude text (the answer without its unit) has this form.
+    /// A magnitude the reader cannot read is left to the value check.
+    #[must_use]
+    pub fn holds(self, magnitude: &str) -> bool {
+        match self {
+            Self::SimplestRadical => radical::simplest(magnitude).unwrap_or(true),
+        }
+    }
+}
+
 /// One named part of an answer, written as `name = value`.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -146,6 +170,8 @@ enum ContractDoc {
         unit: String,
         #[serde(default)]
         allow_omitted: bool,
+        #[serde(default)]
+        form: Option<UnitForm>,
     },
     QuotientRemainder {
         divisor: Option<u64>,
@@ -217,10 +243,12 @@ impl TryFrom<ContractDoc> for AnswerContract {
                 quantity,
                 unit,
                 allow_omitted,
+                form,
             } => Self::Unit {
                 quantity,
                 unit,
                 allow_omitted,
+                form,
             },
             ContractDoc::QuotientRemainder { divisor } => Self::QuotientRemainder { divisor },
             ContractDoc::Coordinates { arity } => Self::Coordinates { arity },
@@ -371,8 +399,14 @@ impl AnswerContract {
             Self::Unit {
                 unit,
                 allow_omitted,
+                form,
                 ..
             } => {
+                if form.is_some_and(|form| !form.holds(super::unit::magnitude(expected))) {
+                    return Err(Undecidable::new(
+                        "the authored answer does not match its required form",
+                    ));
+                }
                 let explicit = super::check::canonical_quantity_in_contract_context(expected)?;
                 let value = match explicit {
                     Some(value) => value,

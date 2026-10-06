@@ -156,3 +156,60 @@ async fn grading_factor_pairs_preserves_the_original_submitted_event_answer() {
     })
     .await;
 }
+
+fn served_item(text: &str, expected: &str, contract: Option<AnswerContract>) -> ServedProblem {
+    let mut live = lesson_problem(5.0, "kp1", Vec::new());
+    live.answer_kind = Some("expression".to_owned());
+    live.text = text.to_owned();
+    live.expected.answer = expected.to_owned();
+    live.expected.answer_contract = contract;
+    live
+}
+
+/// A counted answer to a "how many" question grades its number; a unit, a
+/// variable or another question keeps the strict reading.
+#[test]
+fn a_counted_answer_grades_its_number_only_for_how_many() {
+    let packs = served_item(
+        "A collection of $2^9$ stamps is split into packs of $2^6$ stamps. How many packs are there?",
+        "8",
+        Some(AnswerContract::Exact),
+    );
+    for answer in ["8 packs", "8 packs.", "2^3 packs", "8"] {
+        let grade = grade_served_item(&packs, answer, AnswerKind::Expression);
+        assert_eq!(grade.outcome, AttemptOutcome::Correct, "{answer:?}");
+    }
+    for answer in ["9 packs", "8 x", "8 cm"] {
+        let grade = grade_served_item(&packs, answer, AnswerKind::Expression);
+        assert_ne!(grade.outcome, AttemptOutcome::Correct, "{answer:?}");
+    }
+    let plain = served_item("Evaluate $2^3$.", "8", Some(AnswerContract::Exact));
+    let grade = grade_served_item(&plain, "8 packs", AnswerKind::Expression);
+    assert_ne!(grade.outcome, AttemptOutcome::Correct);
+}
+
+/// A measured algebraic answer may carry its name and the question's unit.
+#[test]
+fn a_named_measured_polynomial_grades_its_value() {
+    let factored: AnswerContract =
+        serde_json::from_value(json!({"kind":"required_form","form":"factored_polynomial"}))
+            .unwrap();
+    let area = served_item(
+        "A rug has area $x^2 + 9x + 20$ square metres. Factor the area to find expressions for its length and width.",
+        "(x + 4)(x + 5)",
+        Some(factored),
+    );
+    for answer in [
+        "(x+4)(x+5)",
+        "A = (x+4)(x+5)",
+        "(x+4)(x+5) m^2",
+        "(x + 5)(x + 4) square metres",
+    ] {
+        let grade = grade_served_item(&area, answer, AnswerKind::Expression);
+        assert_eq!(grade.outcome, AttemptOutcome::Correct, "{answer:?}");
+    }
+    for answer in ["x^2 + 9x + 20 m^2", "(x+4)(x+5) kg", "A = (x+4)(x+6)"] {
+        let grade = grade_served_item(&area, answer, AnswerKind::Expression);
+        assert_ne!(grade.outcome, AttemptOutcome::Correct, "{answer:?}");
+    }
+}

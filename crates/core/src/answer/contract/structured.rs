@@ -59,7 +59,12 @@ pub(super) fn validate_shape(contract: &AnswerContract, value: &Canon) -> bool {
         AnswerContract::RequiredForm { form } => match form {
             NumericForm::FactoredLinear
             | NumericForm::FactoredPolynomial
-            | NumericForm::ExpandedPolynomial => matches!(value, Canon::Poly(_)),
+            | NumericForm::ExpandedPolynomial
+            | NumericForm::StandardFormPolynomial => matches!(value, Canon::Poly(_)),
+            NumericForm::SimplestRadicalSum => {
+                matches!(value, Canon::Rational(_) | Canon::Radical(_))
+            }
+            NumericForm::RationalExponent | NumericForm::Radical => true,
             _ => matches!(value, Canon::Rational(_)),
         },
         AnswerContract::Unit { quantity, .. } => {
@@ -216,11 +221,88 @@ pub(super) fn validate_labels(options: &[Vec<String>]) -> Result<(), Undecidable
 
 pub(super) fn label_value(options: &[Vec<String>], text: &str) -> Option<Canon> {
     let key = choice_key(text);
-    options
+    let exact = options
         .iter()
-        .find(|aliases| aliases.iter().any(|alias| choice_key(alias) == key))
+        .find(|aliases| aliases.iter().any(|alias| choice_key(alias) == key));
+    exact
+        .or_else(|| spoken_choice(options, text))
         .and_then(|aliases| aliases.first())
         .map(|alias| Canon::Label(choice_key(alias)))
+}
+
+/// The one option a spoken answer names, under [`spoken_key`].
+///
+/// The answer matches an alias after both are spoken-normalized, or it ends
+/// with "is <alias>" / "are <alias>" and adds no negation the alias lacks ("the
+/// bacterium is longer" names "longer"; "the bacterium is not longer" names
+/// nothing). An answer that names two options names none.
+fn spoken_choice<'a>(options: &'a [Vec<String>], text: &str) -> Option<&'a Vec<String>> {
+    let spoken = spoken_key(text);
+    if spoken.is_empty() {
+        return None;
+    }
+    let negated = |words: &str| {
+        words
+            .split(' ')
+            .any(|word| matches!(word, "not" | "no" | "never" | "isn't" | "aren't" | "nor"))
+    };
+    let names = |alias: &str| {
+        let alias = spoken_key(alias);
+        if alias.is_empty() {
+            return false;
+        }
+        if spoken == alias {
+            return true;
+        }
+        spoken.strip_suffix(alias.as_str()).is_some_and(|head| {
+            (head.ends_with(" is ") || head.ends_with(" are ")) && !negated(head)
+        })
+    };
+    let mut found = options
+        .iter()
+        .filter(|aliases| aliases.iter().any(|alias| names(alias)));
+    let first = found.next()?;
+    found.next().is_none().then_some(first)
+}
+
+/// A choice spelling with the spoken variation removed: lower case, no
+/// parentheses, no trailing punctuation, no leading "there are" / "there is" /
+/// "the equation has", "roots" and "zeros" read as "solutions", the word
+/// "real" dropped, a plural "solutions" read as "solution", and the empty-set
+/// spellings `∅`, `{}` and "the empty set" read as "no solution".
+fn spoken_key(text: &str) -> String {
+    let mut key = choice_key(text).replace(['(', ')'], "");
+    while let Some(stripped) = key
+        .strip_suffix(['.', '!', '?', ';', ',', ':'])
+        .map(str::trim_end)
+    {
+        key = stripped.to_owned();
+    }
+    for lead in [
+        "there are ",
+        "there is ",
+        "the equation has ",
+        "it has ",
+        "the answer is ",
+    ] {
+        if let Some(rest) = key.strip_prefix(lead) {
+            key = rest.to_owned();
+        }
+    }
+    if matches!(
+        key.as_str(),
+        "∅" | "{}" | "{ }" | "the empty set" | "empty set"
+    ) {
+        return "no solution".to_owned();
+    }
+    key.split(' ')
+        .filter(|word| !word.is_empty() && *word != "real")
+        .map(|word| match word {
+            "roots" | "root" | "zeros" | "zeroes" | "zero" | "solutions" => "solution",
+            other => other,
+        })
+        .collect::<Vec<_>>()
+        .join(" ")
 }
 
 pub(super) fn validate_parts(parts: &[AnswerPart]) -> Result<(), Undecidable> {
@@ -260,8 +342,14 @@ pub(super) fn validate_parts(parts: &[AnswerPart]) -> Result<(), Undecidable> {
 }
 
 pub(super) fn named_parts<'a>(parts: &[AnswerPart], text: &'a str) -> Option<Vec<&'a str>> {
-    let fields: Vec<_> = text
-        .split(';')
+    // "a = 1; b = -3; c = 2" or, with every comma piece named, "a = 1, b = -3, c = 2".
+    let pieces: Vec<&str> = if text.contains(';') {
+        text.split(';').collect()
+    } else {
+        top_level_commas(text)
+    };
+    let fields: Vec<_> = pieces
+        .into_iter()
         .map(|field| field.trim().split_once('='))
         .collect::<Option<_>>()?;
     if fields.len() != parts.len() {
@@ -299,6 +387,9 @@ pub(super) fn named_parts<'a>(parts: &[AnswerPart], text: &'a str) -> Option<Vec
 /// list, the surplus pieces belong to that list: `1, 2, 4, 8, 16, composite`
 /// reads as the list `1, 2, 4, 8, 16` and the label `composite`.
 pub(super) fn ordered_parts<'a>(parts: &[AnswerPart], text: &'a str) -> Option<Vec<&'a str>> {
+    if let Some(pieces) = verdict_sentence(parts, text) {
+        return Some(pieces);
+    }
     let pieces: Vec<&str> = if text.contains(';') {
         text.split(';').map(str::trim).collect()
     } else if thousands_comma(text) {
@@ -314,6 +405,51 @@ pub(super) fn ordered_parts<'a>(parts: &[AnswerPart], text: &'a str) -> Option<V
         return None;
     }
     Some(pieces)
+}
+
+/// A verdict and its value in one sentence: "too high by 160" for a label part
+/// followed by one value part. The text opens with an alias of the label (the
+/// longest alias that fits, at a word boundary), then an optional "by", and the
+/// rest is the value. A text with a comma or a semicolon keeps the plain split.
+fn verdict_sentence<'a>(parts: &[AnswerPart], text: &'a str) -> Option<Vec<&'a str>> {
+    let [first, second] = parts else {
+        return None;
+    };
+    let AnswerContract::Label { options } = &first.contract else {
+        return None;
+    };
+    let commas = text.matches(',').count();
+    if matches!(second.contract, AnswerContract::Label { .. })
+        || text.contains([';', '='])
+        || commas > 1
+    {
+        return None;
+    }
+    let trimmed = text.trim();
+    let mut aliases: Vec<&String> = options.iter().flatten().collect();
+    aliases.sort_by_key(|alias| std::cmp::Reverse(alias.len()));
+    aliases.into_iter().find_map(|alias| {
+        let head = trimmed.get(..alias.len())?;
+        if !head.eq_ignore_ascii_case(alias) {
+            return None;
+        }
+        let rest = trimmed.get(alias.len()..)?;
+        // One comma is allowed only between the label and "by": "too high, by 160".
+        let (rest, comma) = match rest.strip_prefix(',') {
+            Some(after) => (after, true),
+            None => (rest, false),
+        };
+        if !rest.starts_with(' ') || commas != usize::from(comma) {
+            return None;
+        }
+        let rest = rest.trim_start();
+        let by = rest.strip_prefix("by ");
+        if comma && by.is_none() {
+            return None;
+        }
+        let value = by.unwrap_or(rest).trim();
+        (!value.is_empty()).then(|| vec![head, value])
+    })
 }
 
 /// Whether a comma sits between a digit and exactly three digits, as in "1,000".

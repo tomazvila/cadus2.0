@@ -26,6 +26,7 @@ fn units_require_a_dimension_and_accept_exact_conversions() {
         quantity: Quantity::Volume,
         unit: "L".into(),
         allow_omitted: false,
+        form: None,
     };
     for learner in ["4200 ml", "4.2 L", "21/5 L"] {
         check(&policy, "4.2 L", learner, true);

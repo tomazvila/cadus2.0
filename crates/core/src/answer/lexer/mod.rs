@@ -18,6 +18,7 @@
 //!   recursively, so whitespace inside a brace changes no token at all.
 //! - `\sqrt{A}` is one [`Tok::Sqrt`] token, and `\sqrt A` is the name `sqrt`.
 //! - `√` is [`Tok::Root`], which takes exactly one primary (1.0 `:153-157`).
+//!   `∛` and `∜` are [`Tok::IndexedRoot`], and `\sqrt[n]{A}` is [`Tok::NthRoot`].
 //! - `%` is the postfix [`Tok::Percent`], which the parser binds to the primary
 //!   in front of it and to nothing else.
 //! - `^{n}` becomes `Pow LParen … RParen`, so the exponent keeps its brackets.
@@ -36,8 +37,8 @@ mod word;
 
 use alias::{bar_body, brackets_close, count_bars, grammar_name};
 use word::{
-    match_literal, raises_a_superscript, read_braced_after, read_frac, read_number, read_symbol,
-    superscript_digit,
+    match_literal, raises_a_superscript, read_braced_after, read_frac, read_nth_root, read_number,
+    read_symbol, superscript_digit,
 };
 
 use super::Undecidable;
@@ -85,8 +86,15 @@ pub enum Tok {
     },
     /// A square root that carries its argument in braces: `\sqrt{A}`.
     Sqrt(Vec<Token>),
+    /// An nth root that carries its index and argument: `\sqrt[3]{A}`.
+    ///
+    /// The index is the digit run of the brackets. The parser checks its range.
+    NthRoot(String, Vec<Token>),
     /// The radical glyph `√`, which takes exactly one primary after it.
     Root,
+    /// The glyph of a root with a fixed index (`∛` is 3, `∜` is 4). It takes one
+    /// primary after it, as `√` does.
+    IndexedRoot(i64),
     /// The postfix percent sign. It divides the primary in front of it by 100.
     Percent,
     /// A unit glyph: `°`, `€`, or `$` (D-F3).
@@ -221,6 +229,14 @@ impl Lexer<'_> {
                 self.push(Tok::Root, 1);
                 Ok(())
             }
+            '∛' => {
+                self.push(Tok::IndexedRoot(3), 1);
+                Ok(())
+            }
+            '∜' => {
+                self.push(Tok::IndexedRoot(4), 1);
+                Ok(())
+            }
             '%' => {
                 self.push(Tok::Percent, 1);
                 Ok(())
@@ -300,6 +316,11 @@ impl Lexer<'_> {
                 numerator: lex_run(numerator, self.depth + 1, self.bars)?,
                 denominator: lex_run(denominator, self.depth + 1, self.bars)?,
             };
+            self.push(kind, next - at);
+            return Ok(());
+        }
+        if let Some((index, body, next)) = read_nth_root(self.chars, at) {
+            let kind = Tok::NthRoot(index, lex_run(body, self.depth + 1, self.bars)?);
             self.push(kind, next - at);
             return Ok(());
         }

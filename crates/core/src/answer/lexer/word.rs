@@ -10,7 +10,14 @@ use crate::answer::Undecidable;
 pub(super) fn raises_a_superscript(previous: Option<&Token>) -> bool {
     matches!(
         previous.map(|token| &token.kind),
-        Some(Tok::Num(_) | Tok::Ident(_) | Tok::RParen | Tok::Sqrt(_) | Tok::Frac { .. })
+        Some(
+            Tok::Num(_)
+                | Tok::Ident(_)
+                | Tok::RParen
+                | Tok::Sqrt(_)
+                | Tok::NthRoot(..)
+                | Tok::Frac { .. }
+        )
     )
 }
 
@@ -47,6 +54,28 @@ pub(super) fn read_frac(chars: &[char], at: usize) -> Option<(&[char], &[char], 
     let close = matching_delimiter(chars, after_first, '{', '}')?;
     let denominator = &chars[after_first + 1..close];
     Some((numerator, denominator, close + 1))
+}
+
+/// Match `\sqrt[n]{a}` at `at` and return the index digits, the body, and the
+/// index after the closing brace.
+///
+/// The brackets hold one run of digits and nothing else; the parser checks the
+/// range of the index.
+pub(super) fn read_nth_root(chars: &[char], at: usize) -> Option<(String, &[char], usize)> {
+    let mut index = match_literal(chars, at, "\\sqrt[")?;
+    let start = index;
+    while matches!(chars.get(index), Some(c) if c.is_ascii_digit()) {
+        index += 1;
+    }
+    if index == start || chars.get(index) != Some(&']') {
+        return None;
+    }
+    let digits: String = chars.get(start..index)?.iter().collect();
+    if chars.get(index + 1) != Some(&'{') {
+        return None;
+    }
+    let close = matching_delimiter(chars, index + 1, '{', '}')?;
+    Some((digits, &chars[index + 2..close], close + 1))
 }
 
 /// Match `keyword` at `at`, immediately followed by a balanced `{…}` group.

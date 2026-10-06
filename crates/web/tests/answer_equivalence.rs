@@ -196,6 +196,7 @@ fn unit_case() -> cadus_web::state::ServedProblem {
         quantity: Quantity::Length,
         unit: "m".to_owned(),
         allow_omitted: true,
+        form: None,
     });
     live.answer_kind = Some("numeric".to_owned());
     live.text = "A length is 8 m. Give its value in metres.".to_owned();
@@ -259,6 +260,7 @@ async fn a_unit_cache_uses_its_versioned_identity_and_non_unit_identity_stays_co
             quantity: Quantity::Length,
             unit: "cm".to_owned(),
             allow_omitted: true,
+            form: None,
         });
         assert_ne!(unit_digest, cache_item_digest(&different_policy));
         cadus_store::equivalence::cache_put(&db.admin, &unit_digest, &cache_key(answer), &verdict)

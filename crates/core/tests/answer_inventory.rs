@@ -76,43 +76,46 @@ const HISTORICAL_DISTINCT_DECIDABLE: [(usize, usize); 4] = [(0, 115), (1, 53), (
 const LIVE_KNOWLEDGE_POINTS: usize = 809;
 const LIVE_EXEMPLARS: usize = 3_828;
 const LIVE_WITHOUT_SKETCH: usize = 0;
+// 2026-10-06: the natural-answer and nth-root grader changes and the rewritten
+// exemplars in units 00, 01, 03, 06 and 07 move the shape, verdict and distinct
+// decidable counts below; the exemplar total is unchanged.
 const LIVE_SHAPE_COUNTS: [(&str, usize); 16] = [
     ("coordinates", 264),
     ("decimal", 120),
-    ("equation_or_inequality", 440),
-    ("expression", 801),
-    ("fraction", 286),
-    ("integer", 1_394),
+    ("equation_or_inequality", 451),
+    ("expression", 803),
+    ("fraction", 270),
+    ("integer", 1_378),
     ("interval", 20),
     ("mixed_number", 21),
     ("ordered_list", 157),
     ("other", 12),
-    ("prose", 65),
+    ("prose", 69),
     ("quotient_remainder", 24),
-    ("radical", 163),
-    ("rational_exponent", 0),
+    ("radical", 164),
+    ("rational_exponent", 14),
     ("set", 8),
     ("value_with_unit", 53),
 ];
 const LIVE_DISTINCT_DECIDABLE: [(usize, usize); 10] = [
     (0, 54),
     (1, 2),
-    (2, 13),
-    (3, 7),
+    (2, 14),
+    (3, 8),
     (4, 545),
     (5, 19),
     (6, 54),
     (7, 58),
-    (8, 54),
+    (8, 52),
     (9, 3),
 ];
 const LIVE_VERDICT_COUNTS: [(&str, usize); 7] = [
-    ("decided", 3_513),
+    ("decided", 3_502),
     (
         "undecidable(a chained inequality needs one variable in the middle)",
         2,
     ),
-    ("undecidable(a character outside the grammar)", 216),
+    ("undecidable(a character outside the grammar)", 227),
     (
         "undecidable(a disjunction requires finite scalar solutions)",
         19,

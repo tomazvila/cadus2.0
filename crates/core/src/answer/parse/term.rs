@@ -162,7 +162,9 @@ impl Parser<'_> {
                     | Tok::LParen
                     | Tok::Frac { .. }
                     | Tok::Sqrt(_)
+                    | Tok::NthRoot(..)
                     | Tok::Root
+                    | Tok::IndexedRoot(_)
             )
         )
     }

@@ -38,14 +38,11 @@ fn bare_list_multiset(expected: &Canon, text: &str, learner: &str) -> Option<Out
     }
     let expected_text = unbraced(text).replace(", and ", " and ");
     let expected_members = super::list::values_grouped(&expected_text).ok()?;
-    if expected_members.len() < 2 || !matches!(expected, Canon::Tuple(_) | Canon::Set(_)) {
-        return None;
-    }
     let learner_side = learner.trim();
     if wrapped(learner_side) {
         return None;
     }
-    let learner_text = plus_minus(unbraced(learner_side))
+    let learner_text = unbraced(learner_side)
         .replace(", and ", " and ")
         .replace(", or ", ", ")
         .replace(" or ", ", ");
@@ -53,7 +50,15 @@ fn bare_list_multiset(expected: &Canon, text: &str, learner: &str) -> Option<Out
         .ok()?
         .into_iter()
         .map(|member| member.strip_suffix('.').unwrap_or(member))
+        .flat_map(plus_minus)
         .collect::<Vec<_>>();
+    let learner_members: Vec<&str> = learner_members.iter().map(String::as_str).collect();
+    if expected_members.len() == 1 {
+        return repeated_root(expected, text, &learner_members);
+    }
+    if !matches!(expected, Canon::Tuple(_) | Canon::Set(_)) {
+        return None;
+    }
     let mut unused = vec![true; learner_members.len()];
     let mut undecidable = None;
     for expected_member in expected_members {
@@ -124,32 +129,68 @@ fn wrapped(text: &str) -> bool {
     false
 }
 
-/// One `±` (also `+/-` or `\pm`) written as its two members: `-3 ± 2√2` reads
-/// `-3 + 2√2, -3 - 2√2`, `x = ±4` reads `x = 4, x = -4`. Any other text is
-/// returned unchanged, so two signs or none keep their plain reading.
-fn plus_minus(text: &str) -> String {
+/// A double root written twice ("3, 3", "x = 3 or x = 3") against a one-value
+/// key: correct when every member, two or more, is the key's value. Any other
+/// list keeps its plain reading.
+fn repeated_root(expected: &Canon, text: &str, members: &[&str]) -> Option<Outcome> {
+    if members.len() < 2 || !matches!(expected, Canon::Rational(_) | Canon::Radical(_)) {
+        return None;
+    }
+    members
+        .iter()
+        .all(|member| {
+            matches!(
+                check_contract(text, member, AnswerContract::Exact),
+                Outcome::Decided(verdict) if verdict.correct
+            )
+        })
+        .then(|| decided(true))
+}
+
+/// One `±` (also `+/-`, `\pm`, or `+-` after `=` or at the start) written as
+/// its two members: `-3 ± 2√2` reads `-3 + 2√2, -3 - 2√2`, `x = ±4` reads
+/// `x = 4, x = -4`. Any other member is returned unchanged, so two signs or
+/// none keep their plain reading.
+fn plus_minus(member: &str) -> Vec<String> {
+    let text = spelled_plus_minus(member);
+    let text = text.as_str();
     let mut found = None;
     for sign in ["±", "+/-", "\\pm"] {
         let count = text.matches(sign).count();
         if count > 1 || (count == 1 && found.is_some()) {
-            return text.to_owned();
+            return vec![text.to_owned()];
         }
         if count == 1 {
             found = Some(sign);
         }
     }
     let Some((before, after)) = found.and_then(|sign| text.split_once(sign)) else {
-        return text.to_owned();
+        return vec![text.to_owned()];
     };
     if after.contains(',') || before.contains(',') || after.trim().is_empty() {
-        return text.to_owned();
+        return vec![text.to_owned()];
     }
     let lead = before.trim_end();
     if lead.is_empty() || lead.ends_with('=') {
-        format!("{before}{after}, {before}-{after}")
+        vec![format!("{before}{after}"), format!("{before}-{after}")]
     } else {
-        format!("{before}+{after}, {before}-{after}")
+        vec![format!("{before}+{after}"), format!("{before}-{after}")]
     }
+}
+
+/// `+-` written for `±` where a sign starts the value: at the start of the
+/// member or right after `=` ("x = +-4"). `3 +- 4` keeps its plain reading.
+fn spelled_plus_minus(member: &str) -> String {
+    let trimmed = member.trim_start();
+    if let Some(rest) = trimmed.strip_prefix("+-") {
+        return format!("±{rest}");
+    }
+    if let Some((name, value)) = member.split_once('=')
+        && let Some(rest) = value.trim_start().strip_prefix("+-")
+    {
+        return format!("{name}= ±{rest}");
+    }
+    member.to_owned()
 }
 
 /// The spelling of one side without the outermost brace pair.
@@ -164,6 +205,20 @@ fn unbraced(text: &str) -> &str {
 
 fn grade(expected: &Canon, text: &str, learner: &str, contract: &AnswerContract) -> Outcome {
     let strict = grade_strict(expected, text, learner, contract);
+    // "3.2x10^5", "3.2e5" and "7.2×10⁻⁴" for a numeric key in scientific form.
+    if !matches!(strict, Outcome::Decided(Verdict { correct: true, .. }))
+        && matches!(expected, Canon::Rational(_))
+        && matches!(
+            contract,
+            AnswerContract::Exact | AnswerContract::RequiredNormalizedScientificNotation
+        )
+        && let Some(spelled) = crate::answer::natural::scientific(learner)
+    {
+        let outcome = grade_strict(expected, text, &spelled, contract);
+        if matches!(outcome, Outcome::Decided(_)) {
+            return outcome;
+        }
+    }
     // The `exact` contract also reads a percent key against its displayed
     // number. Unit contracts own every measured-value reading.
     if !matches!(contract, AnswerContract::Exact) {
@@ -185,9 +240,15 @@ fn grade_strict(expected: &Canon, text: &str, learner: &str, contract: &AnswerCo
     if let AnswerContract::Unit {
         unit,
         allow_omitted,
+        form,
         ..
     } = contract
     {
+        let phrased = crate::answer::natural::unit_phrases(learner);
+        let learner = phrased.as_str();
+        if form.is_some_and(|form| !form.holds(crate::answer::unit::magnitude(learner))) {
+            return decided(false);
+        }
         match super::super::check::canonical_quantity_in_contract_context(learner) {
             Ok(Some(value)) => {
                 let value = super::structured::unit_compatible_value(contract, value);
@@ -492,6 +553,7 @@ mod tests {
                     quantity: Quantity::Volume,
                     unit: "L".into(),
                     allow_omitted: false,
+                    form: None,
                 },
                 "4.2 L",
                 "4200 ml",

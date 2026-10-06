@@ -284,7 +284,10 @@ fn the_task_pairs_of_d_f3_are_correct_on_both_kinds() {
         ("3 + 3*2^(1/3)", "3*2^(1/3) + 3", N, true),
         ("3 + 3*2^(1/3)", "3 + 3*4^(1/3)/2^(1/3)", N, true),
         ("(2/3)x^(3/2) + C", "C + (2/3)x*sqrt(x)", E, true),
-        ("x^(2/3)", "(x^2)^(1/3)", E, false),
+        // An odd root takes a power of a variable apart, so this pair is one value.
+        ("x^(2/3)", "(x^2)^(1/3)", E, true),
+        ("x^(1/2)", "(x^2)^(1/4)", E, false),
+        ("x", "(x^2)^(1/2)", E, false),
         // Wrong values stay wrong (C4).
         ("sqrt(2)", "2^(1/3)", N, false),
         ("4", "8^(1/3)", N, false),

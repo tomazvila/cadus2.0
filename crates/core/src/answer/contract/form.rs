@@ -20,6 +20,15 @@ pub enum NumericForm {
     FactoredPolynomial,
     /// A sum of monomials with nonnegative integer exponents and no like terms.
     ExpandedPolynomial,
+    /// An expanded polynomial whose terms are written in descending degree.
+    StandardFormPolynomial,
+    /// A sum of a rational and simplest radicals with distinct radicands.
+    SimplestRadicalSum,
+    /// One power of one variable, the exponent an integer or a fraction, with
+    /// at most a numeric coefficient and no radical sign: `x^(5/6)`, `3x^(1/2)`.
+    RationalExponent,
+    /// An expression written with radical signs and no fractional exponent.
+    Radical,
 }
 
 /// Whether the learner `text` is written in `form`. `expected` is the authored
@@ -31,6 +40,14 @@ pub(super) fn accepts(form: NumericForm, text: &str, expected: &str) -> bool {
     match form {
         NumericForm::FactoredPolynomial => return factored_polynomial(&tree, expected),
         NumericForm::ExpandedPolynomial => return expanded_polynomial(&tree),
+        NumericForm::StandardFormPolynomial => {
+            return expanded_polynomial(&tree) && descending(&tree);
+        }
+        NumericForm::SimplestRadicalSum => {
+            return super::radical::simplest_sum(text).unwrap_or(false);
+        }
+        NumericForm::RationalExponent => return single_power(&tree),
+        NumericForm::Radical => return !holds_rational_power(&tree),
         NumericForm::Integer
         | NumericForm::Decimal
         | NumericForm::ReducedFraction
@@ -287,6 +304,73 @@ fn holds_sum(node: &Ast) -> bool {
         Ast::RationalPow { base, .. } => holds_sum(base),
         Ast::Mul(factors) => factors.iter().any(holds_sum),
         Ast::Div(numerator, denominator) => holds_sum(numerator) || holds_sum(denominator),
+        _ => false,
+    }
+}
+
+/// Whether the terms of a sum are written in non-increasing total degree.
+fn descending(tree: &Ast) -> bool {
+    let terms: Vec<&Ast> = match tree {
+        Ast::Add(terms) => terms.iter().collect(),
+        other => vec![other],
+    };
+    let mut last: Option<i64> = None;
+    for term in terms {
+        let degree = match canon(term) {
+            Ok(Canon::Rational(_)) => 0,
+            Ok(Canon::Poly(poly)) if poly.len() == 1 => poly
+                .keys()
+                .next()
+                .map_or(0, |monomial| monomial.values().sum()),
+            _ => return false,
+        };
+        if last.is_some_and(|previous| degree > previous) {
+            return false;
+        }
+        last = Some(degree);
+    }
+    true
+}
+
+/// One power of one variable with at most a numeric coefficient.
+fn single_power(tree: &Ast) -> bool {
+    fn power(node: &Ast) -> bool {
+        match node {
+            Ast::Var(_) => true,
+            Ast::Pow(base, _) | Ast::RationalPow { base, .. } => {
+                matches!(base.as_ref(), Ast::Var(_))
+            }
+            _ => false,
+        }
+    }
+    fn number(node: &Ast) -> bool {
+        matches!(
+            node,
+            Ast::Integer(_) | Ast::Decimal { .. } | Ast::Fraction { .. }
+        )
+    }
+    let node = match tree {
+        Ast::Neg(inner) => inner.as_ref(),
+        other => other,
+    };
+    match node {
+        Ast::Mul(factors) => {
+            matches!(factors.as_slice(), [first, second] if number(first) && power(second))
+        }
+        Ast::Div(numerator, denominator) => power(numerator) && number(denominator),
+        other => power(other),
+    }
+}
+
+/// Whether a fractional exponent sits anywhere inside `node`.
+fn holds_rational_power(node: &Ast) -> bool {
+    match node {
+        Ast::RationalPow { .. } => true,
+        Ast::Neg(inner) | Ast::Pow(inner, _) | Ast::Sqrt(inner) => holds_rational_power(inner),
+        Ast::Add(items) | Ast::Mul(items) => items.iter().any(holds_rational_power),
+        Ast::Div(numerator, denominator) => {
+            holds_rational_power(numerator) || holds_rational_power(denominator)
+        }
         _ => false,
     }
 }
