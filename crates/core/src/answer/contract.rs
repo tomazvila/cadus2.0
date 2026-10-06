@@ -396,7 +396,7 @@ impl AnswerContract {
                     ))
                 }
             }
-            Self::RequiredForm { form } if !form::accepts(*form, expected) => Err(
+            Self::RequiredForm { form } if !form::accepts(*form, expected, expected) => Err(
                 Undecidable::new("the authored answer does not match its required form"),
             ),
             _ => {

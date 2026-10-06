@@ -24,21 +24,31 @@ pub fn check_contract(expected: &str, learner: &str, contract: AnswerContract) -
 /// ordered expression. The rule lives here: when the authored answer is a bare
 /// comma list (or the same list in braces, which carry no meaning), the learner
 /// side splits into members and the members match as a multiset. Spacing, a
-/// trailing period, braces and the word `and` as a separator carry no meaning;
-/// a parenthesized or bracketed learner side keeps the ordered tuple reading of
-/// the 1.0 spec, and every other pair falls through unchanged.
+/// trailing period, braces and the words `and` and `or` as separators carry no
+/// meaning (the solutions of an equation read `x = -5 or x = 4`);
+/// one `±` stands for its two members (`x = -3 ± 2√2`). A learner side wrapped
+/// whole in parentheses or brackets keeps the ordered tuple reading of the 1.0
+/// spec; `(3+√5)/2, (3-√5)/2` is a bare list whose first member opens with a
+/// parenthesis. Every other pair falls through unchanged.
 fn bare_list_multiset(expected: &Canon, text: &str, learner: &str) -> Option<Outcome> {
     // The Oxford comma of a spoken list ("1, 2, and 3") is the same separator.
+    // A disjunction key ("x = 7 or x = -7") keeps its own set reading.
+    if text.contains(" or ") {
+        return None;
+    }
     let expected_text = unbraced(text).replace(", and ", " and ");
     let expected_members = super::list::values_grouped(&expected_text).ok()?;
     if expected_members.len() < 2 || !matches!(expected, Canon::Tuple(_) | Canon::Set(_)) {
         return None;
     }
     let learner_side = learner.trim();
-    if learner_side.starts_with('(') || learner_side.starts_with('[') {
+    if wrapped(learner_side) {
         return None;
     }
-    let learner_text = unbraced(learner_side).replace(", and ", " and ");
+    let learner_text = plus_minus(unbraced(learner_side))
+        .replace(", and ", " and ")
+        .replace(", or ", ", ")
+        .replace(" or ", ", ");
     let learner_members = super::list::values_grouped(&learner_text)
         .ok()?
         .into_iter()
@@ -86,6 +96,60 @@ fn bare_list_multiset(expected: &Canon, text: &str, learner: &str) -> Option<Out
         }
     }
     Some(decided(!extra))
+}
+
+/// Whether one parenthesis or bracket pair encloses the whole of `text`.
+fn wrapped(text: &str) -> bool {
+    let close = match text.chars().next() {
+        Some('(') => ')',
+        Some('[') => ']',
+        _ => return false,
+    };
+    if !text.ends_with(close) {
+        return false;
+    }
+    let mut depth = 0_usize;
+    for (at, ch) in text.char_indices() {
+        match ch {
+            '(' | '[' | '{' => depth += 1,
+            ')' | ']' | '}' => {
+                depth = depth.saturating_sub(1);
+                if depth == 0 {
+                    return at + ch.len_utf8() == text.len();
+                }
+            }
+            _ => {}
+        }
+    }
+    false
+}
+
+/// One `±` (also `+/-` or `\pm`) written as its two members: `-3 ± 2√2` reads
+/// `-3 + 2√2, -3 - 2√2`, `x = ±4` reads `x = 4, x = -4`. Any other text is
+/// returned unchanged, so two signs or none keep their plain reading.
+fn plus_minus(text: &str) -> String {
+    let mut found = None;
+    for sign in ["±", "+/-", "\\pm"] {
+        let count = text.matches(sign).count();
+        if count > 1 || (count == 1 && found.is_some()) {
+            return text.to_owned();
+        }
+        if count == 1 {
+            found = Some(sign);
+        }
+    }
+    let Some((before, after)) = found.and_then(|sign| text.split_once(sign)) else {
+        return text.to_owned();
+    };
+    if after.contains(',') || before.contains(',') || after.trim().is_empty() {
+        return text.to_owned();
+    }
+    let lead = before.trim_end();
+    if lead.is_empty() || lead.ends_with('=') {
+        format!("{before}{after}, {before}-{after}")
+    } else {
+        format!("{before}+{after}, {before}-{after}")
+    }
 }
 
 /// The spelling of one side without the outermost brace pair.
@@ -158,7 +222,7 @@ fn grade_strict(expected: &Canon, text: &str, learner: &str, contract: &AnswerCo
     {
         return outcome;
     }
-    let required_form = !matches!(contract, AnswerContract::RequiredForm { form } if !super::form::accepts(*form, learner));
+    let required_form = !matches!(contract, AnswerContract::RequiredForm { form } if !super::form::accepts(*form, learner, text));
     let learner = match canonical_form(learner) {
         Ok(value) => value,
         Err(reason) => return Outcome::Undecidable(reason),

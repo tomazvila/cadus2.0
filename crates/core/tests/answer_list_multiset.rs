@@ -1,6 +1,6 @@
 //! Note 115 (owner defect): a comma-separated list key compares as a multiset
-//! unless `ordered: true`; spacing, a trailing period, braces and the word
-//! `and` as a separator carry no meaning. The served row of the defect carried
+//! unless `ordered: true`; spacing, a trailing period, braces and the words
+//! `and` and `or` as separators carry no meaning. The served row of the defect carried
 //! no contract, so the key takes the `Exact` path — every case here is Exact.
 
 #![allow(clippy::unwrap_used, clippy::panic)]
@@ -50,6 +50,30 @@ fn braces_spacing_and_trailing_period_carry_no_meaning() {
 fn the_word_and_is_a_separator() {
     assert!(exact("1, 2, 3", "3, 2 and 1"));
     assert!(exact("1, 2, 3", "3, 2, and 1"));
+}
+
+/// A bare list whose first member opens with a parenthesis is still a list,
+/// and one `±` stands for its two members.
+#[test]
+fn a_radical_pair_reads_in_any_order_and_with_plus_minus() {
+    let key = "(3 + sqrt(5))/2, (3 - sqrt(5))/2";
+    assert!(exact(key, "(3-√5)/2, (3+√5)/2"));
+    assert!(exact(key, "x = (3 ± √5)/2"));
+    assert!(exact(key, "(3 +/- sqrt(5))/2"));
+    assert!(!exact(key, "(3 ± √3)/2"));
+    assert!(exact("-3 + 2sqrt(2), -3 - 2sqrt(2)", "x = -3 ± 2√2"));
+    assert!(exact("-4, 4", "x = ±4"));
+    assert!(exact("-4, 4", "±4"));
+    assert!(!exact("-4, 4", "4"));
+}
+
+/// The solutions of an equation read with `or`: "x = -5 or x = 4".
+#[test]
+fn the_word_or_is_a_separator() {
+    assert!(exact("-5, 4", "x = -5 or x = 4"));
+    assert!(exact("-5, 4", "4 or -5"));
+    assert!(exact("1, 2, 3", "3, 2, or 1"));
+    assert!(!exact("-5, 4", "x = -5 or x = 5"));
 }
 
 #[test]

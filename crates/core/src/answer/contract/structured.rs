@@ -57,7 +57,9 @@ pub(super) fn validate_shape(contract: &AnswerContract, value: &Canon) -> bool {
         AnswerContract::Approx { .. } => number(value),
         AnswerContract::Tolerance { .. } => matches!(value, Canon::Rational(_)),
         AnswerContract::RequiredForm { form } => match form {
-            NumericForm::FactoredLinear => matches!(value, Canon::Poly(_)),
+            NumericForm::FactoredLinear
+            | NumericForm::FactoredPolynomial
+            | NumericForm::ExpandedPolynomial => matches!(value, Canon::Poly(_)),
             _ => matches!(value, Canon::Rational(_)),
         },
         AnswerContract::Unit { quantity, .. } => {

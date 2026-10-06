@@ -1049,6 +1049,30 @@ correct; they were "a unit on the learner side only"), `crates/web/src/grade/ver
 (`13.5 cm` for `13.5` and `6/5 units` for `6/5` now correct) and `crates/web/tests/grade_route.rs`
 (the ISSUE-13 refusal now uses `6/5 units long`). The 1.0 oracle pair counts do not move.
 
+### 8.7 Polynomial forms and spoken solution lists (2026-10-06)
+
+Two `required_form` values grade the form of a polynomial answer. The value must still equal the
+key exactly; the form check runs first, so a value in the wrong form is a decided miss.
+
+| `form` | Correct when the learner's expression | Refused |
+|---|---|---|
+| `factored_polynomial` | is a product of constants, monomials and primitive sums (integer coefficients without a common factor, no variable in every term), with as many sum factors, counted with multiplicity, as the authored key | `x^2 + 7x + 12` for `(x + 3)(x + 4)`; `2(x^2 + 3x)` for `2x(x + 3)`; `(x^2 - 4)(x^2 + 4)` for `(x^2 + 4)(x + 2)(x - 2)` |
+| `expanded_polynomial` | is a sum of monomials with nonnegative integer exponents, no sum inside a term and no two terms with one monomial | `(x + 2)(x + 3)` and `x^2 + 2x + 3x + 6` for `x^2 + 5x + 6` |
+
+The factor count is sound because the authored key is a complete factorization: with equal values,
+k primitive sum factors against the key's k irreducible ones leave one irreducible factor in each
+(unique factorization over the integers). Order, signs and powers are free: `(2 - x)(3 - x)`
+equals `(x - 2)(x - 3)`, and `(x + 5)^2` equals `(x + 5)(x + 5)`. The key itself must pass its
+form, as for every required form. Code: `crates/core/src/answer/contract/form.rs`; tests:
+`crates/core/tests/answer_polynomial_form.rs`.
+
+A bare comma-list key (note 115) also reads the learner's `or` as a separator (a key that is itself an `or` disjunction keeps its set reading), so
+`x = -5 or x = 4` matches `-5, 4` as `x = -5 and x = 4` already did. One `±` (or `+/-`, `\pm`)
+stands for its two members: `x = -3 ± 2√2` reads `x = -3 + 2√2, x = -3 - 2√2`, and `x = ±4`
+reads `x = 4, x = -4`; two signs keep the plain reading. A learner side is an ordered tuple only
+when one parenthesis or bracket pair encloses all of it, so `(3-√5)/2, (3+√5)/2` is a bare list
+in any order. Tests: `crates/core/tests/answer_list_multiset.rs`.
+
 ---
 
 ## 9. A proposed fuzz oracle (V3)
