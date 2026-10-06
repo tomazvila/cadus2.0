@@ -212,7 +212,11 @@ impl Unit {
     #[must_use]
     pub fn offset(&self) -> BigRational {
         match self.spelling {
-            "°F" | "F" | "fahrenheit" | "Fahrenheit" => {
+            // Bare "F" is not a registered spelling (`UNITS` holds only
+            // "°F", "fahrenheit", and "Fahrenheit"): the parser reads a
+            // lone "F" as an identifier, never as this unit, so that arm
+            // was dead.
+            "°F" | "fahrenheit" | "Fahrenheit" => {
                 BigRational::new(BigInt::from(-160), BigInt::from(9))
             }
             _ => BigRational::from_integer(BigInt::from(0)),
@@ -224,4 +228,35 @@ impl Unit {
 #[must_use]
 pub fn lookup(spelling: &str) -> Option<&'static Unit> {
     UNITS.iter().find(|unit| unit.spelling == spelling)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    /// Bare "F" is not in `UNITS`: `lookup` misses it, and the parser's
+    /// `temperature_unit` only ever builds "°C" or "°F" from a one-letter
+    /// name, so no looked-up `Unit` ever carries the spelling "F".
+    #[test]
+    fn bare_f_is_not_a_registered_unit() {
+        assert!(lookup("F").is_none());
+    }
+
+    /// Every spelling of Fahrenheit in `UNITS` carries the same offset, and a
+    /// unit with no offset (Celsius, the canonical temperature spelling)
+    /// stays at zero.
+    #[test]
+    fn offset_covers_every_registered_fahrenheit_spelling() {
+        let fahrenheit = BigRational::new(BigInt::from(-160), BigInt::from(9));
+        for spelling in ["°F", "fahrenheit", "Fahrenheit"] {
+            assert_eq!(lookup(spelling).unwrap().offset(), fahrenheit, "{spelling}");
+        }
+        for spelling in ["°C", "celsius", "Celsius"] {
+            assert_eq!(
+                lookup(spelling).unwrap().offset(),
+                BigRational::from_integer(BigInt::from(0)),
+                "{spelling}"
+            );
+        }
+    }
 }
