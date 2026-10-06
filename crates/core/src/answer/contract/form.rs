@@ -269,10 +269,12 @@ fn plain_monomial(node: &Ast) -> bool {
     }
 }
 
-/// The factors of a product, with nested products opened (`2ab` is `2*(a*b)`).
+/// The factors of a product, with nested products and signs opened (`2ab` is
+/// `2*(a*b)`, and `-8x^4` carries its sign on the number).
 fn flatten<'a>(node: &'a Ast, out: &mut Vec<&'a Ast>) {
     match node {
         Ast::Mul(factors) => factors.iter().for_each(|factor| flatten(factor, out)),
+        Ast::Neg(inner) => flatten(inner, out),
         other => out.push(other),
     }
 }
