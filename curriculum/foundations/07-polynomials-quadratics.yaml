@@ -1334,53 +1334,128 @@ topics:
       - id: kp1
         name: GCF of coefficients
         key_prerequisites: [gcf-lcm]
+        step_check:
+          step: 'The shared prime factors give $2\cdot13=26$'
+          question: 'Why does the GCF use $2\cdot13$ and not $2^2\cdot13$?'
+          options:
+            - 'A GCF never contains a squared prime'
+            - '$78=2\cdot3\cdot13$ has only one factor of $2$'
+            - 'The smaller number $52$ sets every exponent'
+          answer: '$78=2\cdot3\cdot13$ has only one factor of $2$'
+          why: 'A common factor must divide both numbers, so each shared prime takes the lower of its two exponents: $2^1$ because $78$ has a single $2$, and $13^1$.'
         exemplars:
           - problem: 'Find the GCF of $28$ and $42$.'
-            answer: "14"
-            solution_sketch: '$28 = 2^2 \cdot 7$, $42 = 2 \cdot 3 \cdot 7$; take $2 \cdot 7$.'
-          - problem: 'Two prime-factor lists are $2\cdot3^2$ and $3^2\cdot5$. Find their greatest common factor.'
-            answer: "9"
-            solution_sketch: '$18 = 2 \cdot 3^2$, $45 = 3^2 \cdot 5$; take $3^2 = 9$.'
-          - problem: 'A florist has $24$ roses and $36$ lilies. What is the greatest number of identical bouquets using every flower?'
-            answer: "12"
-            solution_sketch: 'The bouquet count must divide both totals. Their prime factors share $2^2\cdot3=12$, so twelve bouquets are possible.'
-          - problem: 'A student claims the GCF of $16$ and $40$ is $4$. Give the largest common factor.'
-            answer: "8"
-            solution_sketch: 'Both numbers divide by $8$: $16=2(8)$ and $40=5(8)$. Since $2$ and $5$ are coprime, no larger common factor exists.'
+            answer: '14'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Factor $28 = 2^2 \cdot 7$ and $42 = 2 \cdot 3 \cdot 7$. The shared primes with their lower exponents are $2$ and $7$, so the GCF is $2 \cdot 7 = 14$.'
+          - problem: 'Find the greatest common factor of $18$ and $45$.'
+            answer: '9'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Factor $18 = 2 \cdot 3^2$ and $45 = 3^2 \cdot 5$. Only the prime $3$ is shared, with lower exponent $2$, so the GCF is $3^2 = 9$.'
+          - problem: 'A florist has $24$ roses and $36$ lilies. What is the greatest number of identical bouquets she can make using every flower?'
+            answer: '12'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The number of bouquets must divide both $24$ and $36$. Their greatest common factor is $2^2 \cdot 3 = 12$, so she can make $12$ bouquets of $2$ roses and $3$ lilies.'
+          - problem: 'Sam says the GCF of $16$ and $40$ is $4$. What is the correct GCF?'
+            answer: '8'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Both numbers are multiples of $8$: $16 = 2 \cdot 8$ and $40 = 5 \cdot 8$. The quotients $2$ and $5$ share no factor, so the GCF is $8$, not $4$.'
+          - problem: 'A rectangular floor measures $84$ cm by $56$ cm. It is to be covered with equal square tiles, without cutting any tile. What is the largest possible side length of a tile?'
+            answer: '28'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"cm","allow_omitted":true}
+            solution_sketch: 'The tile side must divide both $84$ and $56$ exactly. Since $84 = 2^2 \cdot 3 \cdot 7$ and $56 = 2^3 \cdot 7$, the GCF is $2^2 \cdot 7 = 28$, so the largest tile has side $28$ cm.'
+          - problem: 'Find the GCF of $36$, $60$ and $84$.'
+            answer: '12'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Factor $36 = 2^2 \cdot 3^2$, $60 = 2^2 \cdot 3 \cdot 5$ and $84 = 2^2 \cdot 3 \cdot 7$. The primes in all three are $2^2$ and $3$, so the GCF is $12$.'
+          - problem: 'A teacher packs $48$ pencils and $72$ erasers into identical packs with nothing left over. What is the greatest number of packs she can make?'
+            answer: '24'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The number of packs must divide both $48$ and $72$. Since $48 = 2^4 \cdot 3$ and $72 = 2^3 \cdot 3^2$, the GCF is $2^3 \cdot 3 = 24$, giving $24$ packs of $2$ pencils and $3$ erasers.'
         constraints: "two-digit integers"
       - id: kp2
         name: GCF of one-variable monomials
         key_prerequisites: [gcf-lcm, exponent-product-quotient-rules]
+        step_check:
+          step: 'The lowest shared power is $x^3$'
+          question: 'Why is the variable part of the GCF $x^3$ rather than $x^5$?'
+          options:
+            - 'The GCF takes the power from the term with the smaller coefficient'
+            - 'The GCF takes the higher power so that both terms fit inside it'
+            - '$x^3$ divides both $x^5$ and $x^3$, but $x^5$ does not divide $x^3$'
+          answer: '$x^3$ divides both $x^5$ and $x^3$, but $x^5$ does not divide $x^3$'
+          why: 'A common factor must divide every term: $x^5 = x^3 \cdot x^2$, while $x^5$ is too big to divide $25x^3$.'
         exemplars:
           - problem: 'Find the GCF of $12x^3$ and $18x^2$.'
-            answer: "6x^2"
-            solution_sketch: '$\text{GCF}(12, 18) = 6$; lowest power of $x$ is $x^2$.'
-          - problem: 'A monomial table lists coefficient/exponent pairs $(8,2)$ and $(20,1)$ for the variable $x$. Find the GCF monomial.'
-            answer: "4x"
-            solution_sketch: '$\text{GCF}(8, 20) = 4$; lowest power of $x$ is $x^1$.'
-          - problem: 'A student proposes $5x^4$ as the GCF of $15x^4$ and $25x^2$. Correct the monomial.'
-            answer: "5x^2"
-            solution_sketch: '$\text{GCF}(15, 25) = 5$; lowest power of $x$ is $x^2$.'
-          - problem: 'A common monomial factor must divide both terms of $9x^3+6x$. Find the greatest such monomial.'
-            answer: "3x"
-            solution_sketch: '$\text{GCF}(9, 6) = 3$; lowest power of $x$ is $x^1$.'
+            answer: '6x^2'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The coefficient GCF is $\gcd(12, 18) = 6$. The lowest power of $x$ in both terms is $x^2$, so the GCF is $6x^2$.'
+          - problem: 'Find the greatest common factor of $8x^2$ and $20x$.'
+            answer: '4x'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The coefficient GCF is $\gcd(8, 20) = 4$. The lowest power of $x$ is $x^1$, so the GCF is $4x$.'
+          - problem: 'Two rectangles have areas $14x^3$ and $21x^5$ square units, and they have the same width, a monomial. What is the largest possible width?'
+            answer: '7x^3'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'A common width must divide both areas, so the largest one is their GCF. The coefficient GCF is $7$ and the lowest power is $x^3$, giving $7x^3$.'
+          - problem: 'Sam says the GCF of $15x^4$ and $25x^2$ is $5x^4$. What is the correct GCF?'
+            answer: '5x^2'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The coefficient GCF $5$ is right. But $x^4$ does not divide $25x^2$; the lowest power is $x^2$, so the GCF is $5x^2$.'
+          - problem: 'What is the largest monomial that divides both terms of $9x^3 + 6x$?'
+            answer: '3x'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The coefficient GCF of $9$ and $6$ is $3$. The lowest power of $x$ in the two terms is $x^1$, so the largest common monomial is $3x$.'
+          - problem: 'Boards of lengths $20x^3$ and $30x^2$ are cut into pieces that all have the same length, a monomial, with nothing left over. What is the longest possible piece?'
+            answer: '10x^2'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The piece length must divide both board lengths, so the longest piece is their GCF. The coefficient GCF is $10$ and the lowest power is $x^2$, giving $10x^2$.'
+          - problem: 'Find the GCF of $16a^5$ and $24a^3$.'
+            answer: '8a^3'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The coefficient GCF is $\gcd(16, 24) = 8$. The lowest power of $a$ is $a^3$, so the GCF is $8a^3$.'
         constraints: "take the lowest power of the shared variable"
       - id: kp3
         name: GCF with two variables or three monomials
         key_prerequisites: [gcf-lcm, exponent-product-quotient-rules]
+        step_check:
+          step: 'The lowest exponents are $2$ for both $x$ and $y$'
+          question: 'Why does the GCF of $20x^3y^2$ and $30x^2y^4$ contain $y^2$ and not $y^4$?'
+          options:
+            - 'Only $y^2$ divides $20x^3y^2$, so it is the highest common power'
+            - 'The coefficient GCF $10$ fixes the exponent of $y$'
+            - 'The exponent of $y$ is the larger exponent divided by two'
+          answer: 'Only $y^2$ divides $20x^3y^2$, so it is the highest common power'
+          why: 'Each variable takes the lowest exponent that appears in every term; $20x^3y^2$ has only $y^2$, so $y^4$ cannot divide it.'
         exemplars:
           - problem: 'Find the GCF of $12x^2y^3$ and $18xy^4$.'
-            answer: "6xy^3"
-            solution_sketch: 'Coefficient GCF $6$; lowest powers $x$ and $y^3$.'
-          - problem: 'Find the GCF of $6x^3$, $9x^2$, and $12x$.'
-            answer: "3x"
-            solution_sketch: 'Coefficient GCF $3$; lowest power $x^1$.'
-          - problem: 'Exponent-table rows $(10,3,2)$ and $(15,1,4)$ list coefficient, $x$ exponent, and $y$ exponent. Find the GCF of the represented monomials.'
-            answer: "5xy^2"
-            solution_sketch: 'Coefficient GCF $5$; lowest powers $x^1$ and $y^2$.'
-          - problem: 'A student proposes $4x^2y^2$ as the common monomial factor of $8x^2y$, $12xy^2$, and $20xy$. Correct the GCF.'
-            answer: "4xy"
-            solution_sketch: 'Coefficient GCF $4$; lowest powers $x^1$ and $y^1$.'
+            answer: '6xy^3'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The coefficient GCF is $6$. The lowest powers are $x^1$ and $y^3$, so the GCF is $6xy^3$.'
+          - problem: 'Find the GCF of $6x^3$, $9x^2$ and $12x$.'
+            answer: '3x'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The coefficient GCF of $6$, $9$ and $12$ is $3$. The lowest power of $x$ among the three terms is $x^1$, so the GCF is $3x$.'
+          - problem: 'Find the greatest common factor of $10a^3b^2$ and $15ab^4$.'
+            answer: '5ab^2'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The coefficient GCF is $5$. The lowest powers are $a^1$ and $b^2$, so the GCF is $5ab^2$.'
+          - problem: 'Sam says the GCF of $8x^2y$, $12xy^2$ and $20xy$ is $4x^2y^2$. What is the correct GCF?'
+            answer: '4xy'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The coefficient GCF $4$ is right. But $20xy$ contains only $x^1$ and $y^1$, so neither $x^2$ nor $y^2$ is common, and the GCF is $4xy$.'
+          - problem: 'Three rectangular panels have areas $18x^2y$, $24xy^2$ and $30xy$ square units, and all three have the same width, a monomial. What is the largest possible width?'
+            answer: '6xy'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'A common width must divide all three areas, so the largest one is their GCF. The coefficient GCF of $18$, $24$ and $30$ is $6$, and the lowest powers are $x^1$ and $y^1$, giving $6xy$.'
+          - problem: 'Two rectangular plots have areas $16m^3n^2$ and $40m^2n^3$ square metres and the same width, a monomial. Find the largest possible width.'
+            answer: '8m^2n^2'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The width must divide both areas, so the largest width is their GCF. The coefficient GCF is $8$ and the lowest powers are $m^2$ and $n^2$, giving $8m^2n^2$.'
+          - problem: 'Find the GCF of $x^2y$ and $xy^2z$.'
+            answer: 'xy'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Both terms contain $x$ and $y$, each at least to the first power. The variable $z$ is missing from $x^2y$, so it is not shared, and the GCF is $xy$.'
         constraints: "lowest power of each shared variable"
     diagnostic_exemplar:
       problem: 'Find the GCF of $12x^3y^2$ and $18x^2y^4$.'
@@ -1413,53 +1488,132 @@ topics:
       - id: kp1
         name: Factor the GCF out of a polynomial
         key_prerequisites: [distributive-property, gcf-of-monomials]
+        step_check:
+          step: 'Divide each term by $7xy$'
+          question: 'Why is each term divided by $7xy$ to find what goes inside the brackets?'
+          options:
+            - 'Dividing by the GCF turns every term in the brackets into $1$'
+            - 'The bracket times $7xy$ must give back each original term'
+            - 'Dividing removes the variables, so the bracket holds only numbers'
+          answer: 'The bracket times $7xy$ must give back each original term'
+          why: 'Factoring undoes distribution: $7xy \cdot 2x = 14x^2y$ and $7xy \cdot 3 = 21xy$, so the bracket holds the quotients $2x$ and $3$.'
         exemplars:
           - problem: 'Factor $6x^2 + 9x$.'
-            answer: "3x(2x + 3)"
-            solution_sketch: 'GCF is $3x$; $\frac{6x^2}{3x} = 2x$, $\frac{9x}{3x} = 3$.'
-          - problem: 'A design model has volume $10x^3 - 15x^2 + 5x$ for $x>20$. Write this model as a product of integer-coefficient polynomial factors by extracting its GCF.'
-            answer: "5x(2x^2 - 3x + 1)"
-            solution_sketch: 'The coefficient GCF is $5$ and every term contains $x$. Dividing by $5x$ gives $2x^2$, $-3x$, and $1$, so extract $5x$.'
-          - problem: 'A polynomial has the following nonzero coefficients: power $2$: coefficient $8$; power $1$: coefficient $12$. Reconstruct it and write its factored form over the integers.'
-            answer: '4*x*(2*x + 3)'
-            solution_sketch: 'GCF is $4x$; $\frac{8x^2}{4x} = 2x$, $\frac{12x}{4x} = 3$.'
-          - problem: 'A learner extracts $3x$ from $9x^3-6x^2+3x$ but writes $3x(3x^2-2x)$. Correct the factored expression.'
-            answer: '3*x*(3*x^2 - 2*x + 1)'
-            solution_sketch: 'GCF is $3x$; $\frac{9x^3}{3x} = 3x^2$, $\frac{-6x^2}{3x} = -2x$, $\frac{3x}{3x} = 1$.'
+            answer: '3x(2x + 3)'
+            answer_contract: {"kind":"required_form","form":"factored_polynomial"}
+            solution_sketch: 'The GCF of $6x^2$ and $9x$ is $3x$. Dividing gives $6x^2 \div 3x = 2x$ and $9x \div 3x = 3$, so $6x^2 + 9x = 3x(2x + 3)$.'
+          - problem: 'Factor $10x^3 - 15x^2 + 20x$.'
+            answer: '5x(2x^2 - 3x + 4)'
+            answer_contract: {"kind":"required_form","form":"factored_polynomial"}
+            solution_sketch: 'The coefficient GCF is $5$ and every term contains $x$, so the GCF is $5x$. Dividing each term by $5x$ leaves $2x^2 - 3x + 4$, which has no integer factors.'
+          - problem: 'Factor $8y^2 + 12y$.'
+            answer: '4y(2y + 3)'
+            answer_contract: {"kind":"required_form","form":"factored_polynomial"}
+            solution_sketch: 'The GCF of $8y^2$ and $12y$ is $4y$. Dividing gives $2y$ and $3$, so the factored form is $4y(2y + 3)$.'
+          - problem: 'Sam factors $9x^3 - 6x^2 + 3x$ as $3x(3x^2 - 2x)$. What is the correct factorization?'
+            answer: '3x(3x^2 - 2x + 1)'
+            answer_contract: {"kind":"required_form","form":"factored_polynomial"}
+            solution_sketch: 'Sam lost the last term: $3x \div 3x = 1$, not $0$. The quotients are $3x^2$, $-2x$ and $1$, so the factorization is $3x(3x^2 - 2x + 1)$.'
+          - problem: 'A rectangle has area $12x^2 + 8x$ square centimetres and width $4x$ centimetres. Find its length.'
+            answer: '3x + 2'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Length is area divided by width. Dividing each term by $4x$ gives $12x^2 \div 4x = 3x$ and $8x \div 4x = 2$, so the length is $3x + 2$ centimetres.'
+          - problem: 'The height of a ball $t$ seconds after it is kicked is $20t - 5t^2$ metres. Factor this expression.'
+            answer: '5t(4 - t)'
+            answer_contract: {"kind":"required_form","form":"factored_polynomial"}
+            solution_sketch: 'Both terms contain $5$ and $t$, so the GCF is $5t$. Dividing gives $20t \div 5t = 4$ and $-5t^2 \div 5t = -t$, so the height is $5t(4 - t)$, which is zero at $t = 0$ and $t = 4$.'
+          - problem: 'Factor $12a^2b - 18ab^2$.'
+            answer: '6ab(2a - 3b)'
+            answer_contract: {"kind":"required_form","form":"factored_polynomial"}
+            solution_sketch: 'The coefficient GCF is $6$, and both terms contain $a$ and $b$ to at least the first power. Dividing by $6ab$ leaves $2a - 3b$, so the result is $6ab(2a - 3b)$.'
+          - problem: 'A garden has area $x^2 + 6x$ square metres and width $x$ metres. How long is it?'
+            answer: 'x + 6'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Length is area divided by width. Since $x^2 + 6x = x(x + 6)$, dividing by $x$ leaves a length of $x + 6$ metres.'
         constraints: "verify by redistributing"
       - id: kp2
         name: Factor out a negative or higher-power GCF
         key_prerequisites: [integer-multiplication-division, gcf-of-monomials]
+        step_check:
+          step: 'The term quotients are $2x^2$, $-5x$ and $1$'
+          question: 'Why is the last quotient $1$?'
+          options:
+            - 'Every bracket must end with $+1$ after factoring'
+            - 'The $1$ stands for the $x$ that moved outside the bracket'
+            - 'The last term $-2x$ equals the factor, and $-2x \div (-2x) = 1$'
+          answer: 'The last term $-2x$ equals the factor, and $-2x \div (-2x) = 1$'
+          why: 'Each term is divided by $-2x$; a term equal to the factor leaves $1$, and without it redistributing would lose the term $-2x$.'
         exemplars:
-          - problem: 'Factor $-4x^2 - 8x$.'
-            answer: "-4x(x + 2)"
-            solution_sketch: 'Factor out $-4x$ so the leading sign is positive inside.'
-          - problem: 'A design model has volume $14x^4 + 21x^3 - 7x^2$ for $x>20$. Write this model as a product of integer-coefficient polynomial factors by extracting its GCF.'
-            answer: "7x^2(2x^2 + 3x - 1)"
-            solution_sketch: 'Coefficients share $7$ and the smallest exponent is $2$. Divide by $7x^2$: the remaining terms are $2x^2$, $3x$, and $-1$.'
-          - problem: 'Extract a negative GCF from $-6x^2-9x$, leaving a positive leading coefficient inside the bracket.'
-            answer: '-3*x*(2*x + 3)'
-            solution_sketch: 'Factor out $-3x$ so the leading sign is positive inside.'
-          - problem: 'A learner proposes $4x^2(3x^2-2x)$ for $12x^4-8x^3+4x^2$. Restore the missing term and give the factored expression.'
-            answer: '4*x^2*(3*x^2 - 2*x + 1)'
-            solution_sketch: 'GCF is $4x^2$; $\frac{12x^4}{4x^2} = 3x^2$, $\frac{-8x^3}{4x^2} = -2x$, $\frac{4x^2}{4x^2} = 1$.'
+          - problem: 'Factor out $-4x$ from $-4x^2 - 8x$.'
+            answer: '-4x(x + 2)'
+            answer_contract: {"kind":"required_form","form":"factored_polynomial"}
+            solution_sketch: 'Divide each term by $-4x$: $-4x^2 \div (-4x) = x$ and $-8x \div (-4x) = 2$. The result is $-4x(x + 2)$.'
+          - problem: 'Factor $14x^4 + 21x^3 - 7x^2$.'
+            answer: '7x^2(2x^2 + 3x - 1)'
+            answer_contract: {"kind":"required_form","form":"factored_polynomial"}
+            solution_sketch: 'The coefficients share $7$ and the lowest power is $x^2$, so the GCF is $7x^2$. Dividing leaves $2x^2 + 3x - 1$, which has no integer factors.'
+          - problem: 'Sam factors $12x^4 - 8x^3 + 4x^2$ as $4x^2(3x^2 - 2x)$. What is the correct factorization?'
+            answer: '4x^2(3x^2 - 2x + 1)'
+            answer_contract: {"kind":"required_form","form":"factored_polynomial"}
+            solution_sketch: 'The last term $4x^2$ equals the GCF, so it leaves $1$ in the bracket. The quotients are $3x^2$, $-2x$ and $1$, giving $4x^2(3x^2 - 2x + 1)$.'
+          - problem: 'A ball is thrown upward, and its height after $t$ seconds is $-16t^2 + 48t$ feet. Factor this expression by taking out $-16t$.'
+            answer: '-16t(t - 3)'
+            answer_contract: {"kind":"required_form","form":"factored_polynomial"}
+            solution_sketch: 'Divide each term by $-16t$: $-16t^2 \div (-16t) = t$ and $48t \div (-16t) = -3$. So the height is $-16t(t - 3)$, which is zero when $t = 0$ or $t = 3$.'
+          - problem: 'A box has volume $6x^3 + 9x^2$ cubic units, and its base has area $3x^2$ square units. Find its height.'
+            answer: '2x + 3'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Height is volume divided by base area. Dividing each term by $3x^2$ gives $2x$ and $3$, so the height is $2x + 3$ units.'
+          - problem: 'Factor $-5x^3 + 15x^2 - 5x$ by taking out a negative common factor.'
+            answer: '-5x(x^2 - 3x + 1)'
+            answer_contract: {"kind":"required_form","form":"factored_polynomial"}
+            solution_sketch: 'The GCF is $5x$; take out $-5x$. Dividing gives $x^2$, $-3x$ and $1$, so the result is $-5x(x^2 - 3x + 1)$.'
+          - problem: 'Factor $-6x^2 - 9x$ by taking out a negative common factor.'
+            answer: '-3x(2x + 3)'
+            answer_contract: {"kind":"required_form","form":"factored_polynomial"}
+            solution_sketch: 'The GCF of the magnitudes is $3x$, so take out $-3x$. Dividing gives $2x$ and $3$, and the result is $-3x(2x + 3)$.'
         constraints: "watch the leftover 1 when a term equals the GCF"
       - id: kp3
         name: Factor out a common binomial
         key_prerequisites: [distributive-property]
+        step_check:
+          step: 'Factor $(x - 6)$ out of both terms'
+          question: 'Why can $(x - 6)$ be factored out of $5x(x - 6) + 2(x - 6)$?'
+          options:
+            - 'It multiplies both terms, so the distributive law runs in reverse'
+            - 'Both terms contain $x$, so $x - 6$ is the GCF of $5x$ and $2$'
+            - 'The brackets must be expanded first and then regrouped'
+          answer: 'It multiplies both terms, so the distributive law runs in reverse'
+          why: 'The sum has the form $5x \cdot B + 2 \cdot B$ with $B = x - 6$, which equals $(5x + 2)B$.'
         exemplars:
           - problem: 'Factor $3x(x + 2) + 5(x + 2)$.'
-            answer: "(x + 2)(3x + 5)"
-            solution_sketch: 'The binomial $(x + 2)$ is the common factor.'
-          - problem: 'Two adjacent rectangles share width $x-4$ and have lengths $x$ and $3$, with $x>4$. Their total area is $x(x-4)+3(x-4)$. Write it as one product.'
-            answer: "(x - 4)(x + 3)"
-            solution_sketch: 'The binomial $(x - 4)$ is the common factor.'
-          - problem: 'A factor table lists two products: $4x$ times $(x+5)$, and $3$ times $(x+5)$. Factor their sum without expanding the common binomial.'
-            answer: '(x + 5)*(4*x + 3)'
-            solution_sketch: 'The binomial $(x + 5)$ is the common factor.'
-          - problem: 'Correct the incomplete extraction $2x(x-1)-5(x-1)=(x-1)(2x)$.'
-            answer: '(x - 1)*(2*x - 5)'
-            solution_sketch: 'Both summands contain $(x-1)$. Their remaining factors are $2x$ and $-5$, so the second bracket is $2x-5$.'
+            answer: '(x + 2)(3x + 5)'
+            answer_contract: {"kind":"required_form","form":"factored_polynomial"}
+            solution_sketch: 'Both terms contain the binomial $(x + 2)$. Taking it out leaves $3x$ and $5$, so the product is $(x + 2)(3x + 5)$.'
+          - problem: 'Two rectangles share the width $x - 4$ and have lengths $x$ and $3$, where $x > 4$. Their total area is $x(x - 4) + 3(x - 4)$. Write the total area as a single product.'
+            answer: '(x - 4)(x + 3)'
+            answer_contract: {"kind":"required_form","form":"factored_polynomial"}
+            solution_sketch: 'Both areas contain the width $(x - 4)$. Taking it out leaves the combined length $x + 3$, so the total area is $(x - 4)(x + 3)$.'
+          - problem: 'Factor $4y(y + 5) + 3(y + 5)$.'
+            answer: '(y + 5)(4y + 3)'
+            answer_contract: {"kind":"required_form","form":"factored_polynomial"}
+            solution_sketch: 'The common binomial is $(y + 5)$. The factors left behind are $4y$ and $3$, so the product is $(y + 5)(4y + 3)$.'
+          - problem: 'Sam writes $2x(x - 1) - 5(x - 1) = (x - 1)(2x)$. What is the correct factorization?'
+            answer: '(x - 1)(2x - 5)'
+            answer_contract: {"kind":"required_form","form":"factored_polynomial"}
+            solution_sketch: 'Both terms contain $(x - 1)$. The factors left behind are $2x$ and $-5$, so Sam dropped the $-5$; the result is $(x - 1)(2x - 5)$.'
+          - problem: 'Factor $x(x - 7) - (x - 7)$.'
+            answer: '(x - 7)(x - 1)'
+            answer_contract: {"kind":"required_form","form":"factored_polynomial"}
+            solution_sketch: 'The second term is $-1 \cdot (x - 7)$. Taking out $(x - 7)$ leaves $x$ and $-1$, so the result is $(x - 7)(x - 1)$.'
+          - problem: 'A garden has two rectangular beds side by side, both $x + 6$ metres deep. Their widths are $2x$ metres and $5$ metres. Write the total area as a single product.'
+            answer: '(x + 6)(2x + 5)'
+            answer_contract: {"kind":"required_form","form":"factored_polynomial"}
+            solution_sketch: 'The areas are $2x(x + 6)$ and $5(x + 6)$. Both contain $(x + 6)$, so the total area is $(x + 6)(2x + 5)$ square metres.'
+          - problem: 'Factor $a(b + 4) - 3(b + 4)$.'
+            answer: '(b + 4)(a - 3)'
+            answer_contract: {"kind":"required_form","form":"factored_polynomial"}
+            solution_sketch: 'Both terms contain the binomial $(b + 4)$. Taking it out leaves $a$ and $-3$, so the result is $(b + 4)(a - 3)$.'
         constraints: "common factor is a binomial; sets up factoring by grouping"
     diagnostic_exemplar:
       problem: 'Factor completely: $4x(x + 1) - 8(x + 1)$.'
@@ -1496,36 +1650,95 @@ topics:
       - id: kp1
         name: Group four-term polynomials
         key_prerequisites: [factoring-gcf]
+        try_first:
+          problem: 'Is $x^3 + 5x^2 + 2x + 10$ equal to $(x + 5)(x^2 + 2)$?'
+          answer_contract: {"kind":"label","options":[["yes","yes, it is","it is","they are equal","equal"],["no","no, it is not","it is not","they are not equal","not equal"]]}
+          answer: 'yes'
+          reveal: 'Expanding gives $x^3 + 2x + 5x^2 + 10$, the same four terms. Grouping runs this backwards: $x^2(x + 5) + 2(x + 5)$ shows the shared factor $x + 5$.'
+        step_check:
+          step: 'Extract each group GCF'
+          question: 'Why is it useful that both groups leave the bracket $(x + 5)$?'
+          options:
+            - 'Matching brackets show the polynomial is a perfect square'
+            - 'The repeated $(x + 5)$ is a common factor of the two products'
+            - 'It shows that $x = 5$ makes the polynomial zero'
+          answer: 'The repeated $(x + 5)$ is a common factor of the two products'
+          why: '$x^2(x + 5) + 4(x + 5)$ has the form $x^2B + 4B$ with $B = x + 5$, so it equals $(x + 5)(x^2 + 4)$.'
         exemplars:
           - problem: 'Factor $x^3 + 2x^2 + 3x + 6$.'
-            answer: "(x + 2)(x^2 + 3)"
-            solution_sketch: '$x^2(x+2) + 3(x+2) = (x+2)(x^2+3)$.'
-          - problem: 'A design model has volume $x^3 - 4x^2 + 2x - 8$ for $x>20$. Write this model as a product of integer-coefficient polynomial factors, factoring completely over the integers.'
-            answer: "(x - 4)(x^2 + 2)"
-            solution_sketch: '$x^2(x - 4) + 2(x - 4) = (x - 4)(x^2 + 2)$.'
-          - problem: 'A polynomial has the following nonzero coefficients: power $3$: coefficient $1$; power $2$: coefficient $-5$; power $1$: coefficient $3$; power $0$: coefficient $-15$. Reconstruct it and write its factored form over the integers.'
-            answer: '(x - 5)*(x^2 + 3)'
-            solution_sketch: '$x^2(x - 5) + 3(x - 5) = (x - 5)(x^2 + 3)$.'
-          - problem: 'A learner groups $x^3-2x^2+7x-14$ as $x^2(x-2)+7(x-2)$ and stops. Complete the factorization.'
-            answer: '(x - 2)*(x^2 + 7)'
-            solution_sketch: 'Both groups contain $x-2$. Extract it to obtain $(x-2)(x^2+7)$; the quadratic has no integer factors.'
+            answer: '(x + 2)(x^2 + 3)'
+            answer_contract: {"kind":"required_form","form":"factored_polynomial"}
+            solution_sketch: 'Group as $x^2(x + 2) + 3(x + 2)$. Both groups contain $(x + 2)$, so the result is $(x + 2)(x^2 + 3)$.'
+          - problem: 'Factor $x^3 - 4x^2 + 2x - 8$ by grouping.'
+            answer: '(x - 4)(x^2 + 2)'
+            answer_contract: {"kind":"required_form","form":"factored_polynomial"}
+            solution_sketch: 'Group as $x^2(x - 4) + 2(x - 4)$. The common binomial is $(x - 4)$, so the result is $(x - 4)(x^2 + 2)$.'
+          - problem: 'Sam groups $x^3 - 2x^2 + 7x - 14$ as $x^2(x - 2) + 7(x - 2)$ and stops. What is the factorization?'
+            answer: '(x - 2)(x^2 + 7)'
+            answer_contract: {"kind":"required_form","form":"factored_polynomial"}
+            solution_sketch: 'Sam still has a sum of two products. Both contain $x - 2$, so extract it to get $(x - 2)(x^2 + 7)$; the quadratic has no integer factors.'
+          - problem: 'A box has volume $x^3 + 6x^2 + 5x + 30$ cubic centimetres and height $x + 6$ centimetres. Find the area of its base.'
+            answer: 'x^2 + 5'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Base area is volume divided by height. Grouping gives $x^2(x + 6) + 5(x + 6) = (x + 6)(x^2 + 5)$, so the base area is $x^2 + 5$ square centimetres.'
+          - problem: 'Factor $y^3 - 5y^2 + 3y - 15$.'
+            answer: '(y - 5)(y^2 + 3)'
+            answer_contract: {"kind":"required_form","form":"factored_polynomial"}
+            solution_sketch: 'Group as $y^2(y - 5) + 3(y - 5)$. The shared binomial is $(y - 5)$, so the result is $(y - 5)(y^2 + 3)$.'
+          - problem: 'A rectangle has area $x^3 + x^2 + 9x + 9$ square units. Factor the area to find expressions for its length and width.'
+            answer: '(x + 1)(x^2 + 9)'
+            answer_contract: {"kind":"required_form","form":"factored_polynomial"}
+            solution_sketch: 'Group as $x^2(x + 1) + 9(x + 1)$, which gives $(x + 1)(x^2 + 9)$. The sides are $x + 1$ and $x^2 + 9$ units.'
+          - problem: 'Factor $x^3 + 4x^2 - 3x - 12$.'
+            answer: '(x + 4)(x^2 - 3)'
+            answer_contract: {"kind":"required_form","form":"factored_polynomial"}
+            solution_sketch: 'Take $x^2$ from the first pair and $-3$ from the second: $x^2(x + 4) - 3(x + 4)$. The result is $(x + 4)(x^2 - 3)$, since $3$ is not a perfect square.'
         constraints: 'four terms with leading coefficient 1; group the first two and the last two; integer coefficients'
       - id: kp2
         name: Grouping with a common binomial factor
         key_prerequisites: [factoring-gcf, distributive-property]
+        step_check:
+          step: 'Extract $x^2$ and $3$'
+          question: 'Why is $3$ the factor taken out of $9x + 6$?'
+          options:
+            - 'It matches the leading coefficient $3$ of the polynomial'
+            - 'Any common factor works, and $3$ is the smallest'
+            - 'It is the GCF of $9x$ and $6$ and leaves the same $3x + 2$'
+          answer: 'It is the GCF of $9x$ and $6$ and leaves the same $3x + 2$'
+          why: '$9x + 6 = 3(3x + 2)$ leaves the bracket that also appears in $x^2(3x + 2)$, which is what lets the binomial factor out.'
         exemplars:
           - problem: 'Factor $6x^2 + 3x + 4x + 2$.'
-            answer: "(2x + 1)(3x + 2)"
-            solution_sketch: '$3x(2x+1) + 2(2x+1) = (2x+1)(3x+2)$.'
-          - problem: 'A design model has volume $2x^3 - x^2 - 6x + 3$ for $x>20$. Write this model as a product of integer-coefficient polynomial factors, factoring completely over the integers.'
-            answer: "(2x - 1)(x^2 - 3)"
-            solution_sketch: '$x^2(2x - 1) - 3(2x - 1) = (2x - 1)(x^2 - 3)$.'
-          - problem: 'A polynomial has the following nonzero coefficients: power $3$: coefficient $3$; power $2$: coefficient $-2$; power $1$: coefficient $12$; power $0$: coefficient $-8$. Reconstruct it and write its factored form over the integers.'
-            answer: '(3*x - 2)*(x^2 + 4)'
-            solution_sketch: '$x^2(3x - 2) + 4(3x - 2) = (3x - 2)(x^2 + 4)$.'
-          - problem: 'Correct the grouped factorization $2x^3-5x^2+6x-15=(2x-5)(x^2+6)$.'
-            answer: '(2*x - 5)*(x^2 + 3)'
-            solution_sketch: 'The groups are $x^2(2x-5)$ and $3(2x-5)$. The second bracket must be $x^2+3$.'
+            answer: '(2x + 1)(3x + 2)'
+            answer_contract: {"kind":"required_form","form":"factored_polynomial"}
+            solution_sketch: 'Group as $3x(2x + 1) + 2(2x + 1)$. The shared binomial is $(2x + 1)$, so the result is $(2x + 1)(3x + 2)$.'
+          - problem: 'Factor $2x^3 - x^2 - 6x + 3$.'
+            answer: '(2x - 1)(x^2 - 3)'
+            answer_contract: {"kind":"required_form","form":"factored_polynomial"}
+            solution_sketch: 'Take $x^2$ from the first pair and $-3$ from the second: $x^2(2x - 1) - 3(2x - 1)$. The result is $(2x - 1)(x^2 - 3)$.'
+          - problem: 'Sam factors $2x^3 - 5x^2 + 6x - 15$ as $(2x - 5)(x^2 + 6)$. What is the correct factorization?'
+            answer: '(2x - 5)(x^2 + 3)'
+            answer_contract: {"kind":"required_form","form":"factored_polynomial"}
+            solution_sketch: 'The groups are $x^2(2x - 5)$ and $3(2x - 5)$, because $6x - 15 = 3(2x - 5)$. So the second bracket is $x^2 + 3$, not $x^2 + 6$.'
+          - problem: 'A box has volume $2x^3 + 3x^2 + 8x + 12$ cubic centimetres, and its base has area $x^2 + 4$ square centimetres. Find its height.'
+            answer: '2x + 3'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Height is volume divided by base area. Grouping gives $x^2(2x + 3) + 4(2x + 3) = (2x + 3)(x^2 + 4)$, so the height is $2x + 3$ centimetres.'
+          - problem: 'Factor $3y^3 - 2y^2 + 12y - 8$.'
+            answer: '(3y - 2)(y^2 + 4)'
+            answer_contract: {"kind":"required_form","form":"factored_polynomial"}
+            solution_sketch: 'Group as $y^2(3y - 2) + 4(3y - 2)$. The shared binomial is $(3y - 2)$, so the result is $(3y - 2)(y^2 + 4)$.'
+          - problem: 'The floor of a storage unit is a rectangle with area $3x^3 - 6x^2 + 5x - 10$ square metres. Factor the area to find expressions for its length and width.'
+            answer: '(x - 2)(3x^2 + 5)'
+            answer_contract: {"kind":"required_form","form":"factored_polynomial"}
+            solution_sketch: 'Group as $3x^2(x - 2) + 5(x - 2)$, which gives $(x - 2)(3x^2 + 5)$. The sides are $x - 2$ and $3x^2 + 5$ metres.'
+          - problem: 'Factor $4x^3 + 6x^2 - 2x - 3$.'
+            answer: '(2x + 3)(2x^2 - 1)'
+            answer_contract: {"kind":"required_form","form":"factored_polynomial"}
+            solution_sketch: 'Take $2x^2$ from the first pair and $-1$ from the second: $2x^2(2x + 3) - 1(2x + 3)$. The result is $(2x + 3)(2x^2 - 1)$.'
+          - problem: 'Factor $ax + ay + 3x + 3y$.'
+            answer: '(x + y)(a + 3)'
+            answer_contract: {"kind":"required_form","form":"factored_polynomial"}
+            solution_sketch: 'Group as $a(x + y) + 3(x + y)$. The shared binomial is $(x + y)$, so the result is $(x + y)(a + 3)$.'
         constraints: 'leading coefficient may exceed 1; both groups must leave the same binomial factor'
     diagnostic_exemplar:
       problem: 'Factor $2x^3 + 3x^2 - 10x - 15$.'
@@ -1563,53 +1776,133 @@ topics:
         name: Positive b and c
         key_prerequisites: [integer-multiplication-division, integer-addition-subtraction]
         constraints: "two integers that multiply to c and add to b; both positive"
+        try_first:
+          problem: 'Two whole numbers have product $12$ and sum $7$. What is the larger of the two?'
+          answer_contract: {"kind":"exact"}
+          answer: '4'
+          reveal: 'The numbers are $3$ and $4$. They are exactly the constants in $x^2 + 7x + 12 = (x + 3)(x + 4)$, because expanding multiplies $3 \cdot 4$ and adds $3x + 4x$.'
+        step_check:
+          step: 'Find the pair that also adds to $11$'
+          question: 'Why must the chosen pair add to $11$?'
+          options:
+            - 'Every factor pair of $30$ adds to $11$'
+            - 'In $(x + p)(x + q)$ the middle term is $(p + q)x$'
+            - 'Adding the pair checks that its product is $30$'
+          answer: 'In $(x + p)(x + q)$ the middle term is $(p + q)x$'
+          why: 'Expanding $(x + p)(x + q)$ gives $x^2 + (p + q)x + pq$, so $p + q$ must match $11$ and $pq$ must match $30$.'
         exemplars:
           - problem: 'Factor $x^2 + 7x + 12$.'
-            answer: "(x + 3)(x + 4)"
-            solution_sketch: '$3 \cdot 4 = 12$ and $3 + 4 = 7$.'
-          - problem: 'A design model has area $x^2 + 9x + 20$ for $x>20$. Write this model as a product of integer-coefficient polynomial factors, factoring completely over the integers.'
-            answer: "(x + 4)(x + 5)"
-            solution_sketch: '$4 \cdot 5 = 20$ and $4 + 5 = 9$.'
-          - problem: 'A polynomial has the following nonzero coefficients: power $2$: coefficient $1$; power $1$: coefficient $8$; power $0$: coefficient $12$. Reconstruct it and write its factored form over the integers.'
-            answer: '(x + 2)*(x + 6)'
-            solution_sketch: '$6 \cdot 2 = 12$ and $6 + 2 = 8$.'
-          - problem: 'A learner proposes $(x+1)(x+21)$ for $x^2+10x+21$. Replace it with the correct factorization.'
-            answer: '(x + 3)*(x + 7)'
-            solution_sketch: 'The proposed constants multiply to $21$ but add to $22$. The pair $3,7$ has product $21$ and sum $10$.'
+            answer: '(x + 3)(x + 4)'
+            answer_contract: {"kind":"required_form","form":"factored_polynomial"}
+            solution_sketch: 'Look for two numbers with product $12$ and sum $7$. Since $3 \cdot 4 = 12$ and $3 + 4 = 7$, the result is $(x + 3)(x + 4)$.'
+          - problem: 'A rectangle has area $x^2 + 9x + 20$ square metres and width $x + 4$ metres. Find its length.'
+            answer: 'x + 5'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Length is area divided by width. Since $4 \cdot 5 = 20$ and $4 + 5 = 9$, the area is $(x + 4)(x + 5)$, so the length is $x + 5$ metres.'
+          - problem: 'Factor $n^2 + 8n + 12$.'
+            answer: '(n + 2)(n + 6)'
+            answer_contract: {"kind":"required_form","form":"factored_polynomial"}
+            solution_sketch: 'Look for two numbers with product $12$ and sum $8$. The pair $2$ and $6$ works, so the result is $(n + 2)(n + 6)$.'
+          - problem: 'Sam factors $x^2 + 10x + 21$ as $(x + 1)(x + 21)$. What is the correct factorization?'
+            answer: '(x + 3)(x + 7)'
+            answer_contract: {"kind":"required_form","form":"factored_polynomial"}
+            solution_sketch: 'Sam''s constants multiply to $21$ but add to $22$. The pair $3$ and $7$ has product $21$ and sum $10$, so the result is $(x + 3)(x + 7)$.'
+          - problem: 'A square photo of side $x$ cm is mounted on a card. The card is a rectangle of area $x^2 + 6x + 8$ square cm, and each of its sides is longer than $x$ by a whole number of centimetres. Factor the area to find the dimensions of the card.'
+            answer: '(x + 2)(x + 4)'
+            answer_contract: {"kind":"required_form","form":"factored_polynomial"}
+            solution_sketch: 'Look for two whole numbers with product $8$ and sum $6$. The pair $2$ and $4$ works, so the card measures $x + 2$ by $x + 4$ centimetres.'
+          - problem: 'Find every positive integer $b$ for which $x^2 + bx + 12$ factors as $(x + p)(x + q)$ with integers $p$ and $q$.'
+            answer: '7, 8, 13'
+            answer_contract: {"kind":"list","ordered":false,"member":{"kind":"exact"}}
+            solution_sketch: 'We need $pq = 12$ and $b = p + q > 0$, so $p$ and $q$ are both positive. The pairs $3, 4$, $2, 6$ and $1, 12$ give $b = 7$, $8$ and $13$.'
+          - problem: 'Factor $t^2 + 13t + 36$.'
+            answer: '(t + 4)(t + 9)'
+            answer_contract: {"kind":"required_form","form":"factored_polynomial"}
+            solution_sketch: 'Look for two numbers with product $36$ and sum $13$. The pair $4$ and $9$ works, so the result is $(t + 4)(t + 9)$.'
       - id: kp2
         name: Negative constant term
         key_prerequisites: [integer-multiplication-division, integer-addition-subtraction]
         constraints: "c < 0: the factor pair has opposite signs"
+        step_check:
+          step: 'Find two integers with product $-40$ and sum $3$'
+          question: 'Why must the two integers have opposite signs?'
+          options:
+            - 'Their sum $3$ is positive'
+            - 'Their product $-40$ is negative'
+            - 'The coefficient of $x^2$ is $1$'
+          answer: 'Their product $-40$ is negative'
+          why: 'Two numbers with the same sign have a positive product, so a negative product forces opposite signs; the positive sum then says the positive one is larger.'
         exemplars:
           - problem: 'Factor $x^2 + 2x - 15$.'
-            answer: "(x + 5)(x - 3)"
-            solution_sketch: '$5 \cdot (-3) = -15$ and $5 - 3 = 2$.'
-          - problem: 'A design model has area $x^2 - 3x - 10$ for $x>20$. Write this model as a product of integer-coefficient polynomial factors, factoring completely over the integers.'
-            answer: "(x - 5)(x + 2)"
-            solution_sketch: '$-5 \cdot 2 = -10$ and $-5 + 2 = -3$.'
-          - problem: 'A polynomial has the following nonzero coefficients: power $2$: coefficient $1$; power $1$: coefficient $4$; power $0$: coefficient $-21$. Reconstruct it and write its factored form over the integers.'
-            answer: '(x - 3)*(x + 7)'
-            solution_sketch: '$7 \cdot (-3) = -21$ and $7 - 3 = 4$.'
-          - problem: 'A learner proposes $(x-5)(x+8)$ for $x^2-3x-40$. Correct the signs in the factorization.'
-            answer: '(x - 8)*(x + 5)'
-            solution_sketch: 'The constants must multiply to $-40$ and add to $-3$: use $-8$ and $5$.'
+            answer: '(x + 5)(x - 3)'
+            answer_contract: {"kind":"required_form","form":"factored_polynomial"}
+            solution_sketch: 'Look for two numbers with product $-15$ and sum $2$. Since $5 \cdot (-3) = -15$ and $5 - 3 = 2$, the result is $(x + 5)(x - 3)$.'
+          - problem: 'Factor $x^2 - 3x - 10$.'
+            answer: '(x - 5)(x + 2)'
+            answer_contract: {"kind":"required_form","form":"factored_polynomial"}
+            solution_sketch: 'Look for two numbers with product $-10$ and sum $-3$. Since $-5 \cdot 2 = -10$ and $-5 + 2 = -3$, the result is $(x - 5)(x + 2)$.'
+          - problem: 'Sam factors $x^2 - 3x - 40$ as $(x - 5)(x + 8)$. What is the correct factorization?'
+            answer: '(x - 8)(x + 5)'
+            answer_contract: {"kind":"required_form","form":"factored_polynomial"}
+            solution_sketch: 'Sam''s constants add to $+3$, so the signs are swapped. The constants must multiply to $-40$ and add to $-3$, which gives $-8$ and $5$: $(x - 8)(x + 5)$.'
+          - problem: 'A rectangular plot has area $x^2 + 4x - 21$ square metres and width $x - 3$ metres. Find its length.'
+            answer: 'x + 7'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Length is area divided by width. Since $7 \cdot (-3) = -21$ and $7 - 3 = 4$, the area is $(x - 3)(x + 7)$, so the length is $x + 7$ metres.'
+          - problem: 'A square of side $x$ cm is changed into a rectangle by lengthening one side and shortening the other, each by a whole number of centimetres. The rectangle has area $x^2 + 5x - 14$ square cm. By how many centimetres was one side shortened?'
+            answer: '2'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"cm","allow_omitted":true}
+            solution_sketch: 'Factor the area: $7 \cdot (-2) = -14$ and $7 - 2 = 5$, so it is $(x + 7)(x - 2)$. One side grew by $7$ cm and the other was shortened by $2$ cm.'
+          - problem: 'Factor $m^2 - m - 42$.'
+            answer: '(m - 7)(m + 6)'
+            answer_contract: {"kind":"required_form","form":"factored_polynomial"}
+            solution_sketch: 'Look for two numbers with product $-42$ and sum $-1$. The pair $-7$ and $6$ works, so the result is $(m - 7)(m + 6)$.'
+          - problem: 'Factor $y^2 - 2y - 48$.'
+            answer: '(y - 8)(y + 6)'
+            answer_contract: {"kind":"required_form","form":"factored_polynomial"}
+            solution_sketch: 'Look for two numbers with product $-48$ and sum $-2$. The pair $-8$ and $6$ works, so the result is $(y - 8)(y + 6)$.'
       - id: kp3
         name: Negative middle term, positive constant
         key_prerequisites: [integer-multiplication-division, integer-addition-subtraction]
         constraints: "b < 0, c > 0: both factors negative"
+        step_check:
+          step: 'since the sum is negative and the product is positive, both integers are negative'
+          question: 'Why must both integers be negative?'
+          options:
+            - 'A negative middle term needs one negative and one positive integer'
+            - 'The constant $40$ is positive, so both integers are positive'
+            - 'A positive product needs equal signs, and a negative sum rules out two positives'
+          answer: 'A positive product needs equal signs, and a negative sum rules out two positives'
+          why: '$(-5)(-8) = 40$ keeps the product positive, while $-5 + (-8) = -13$ gives the negative middle coefficient.'
         exemplars:
           - problem: 'Factor $x^2 - 5x + 6$.'
-            answer: "(x - 2)(x - 3)"
-            solution_sketch: '$(-2)(-3) = 6$ and $-2 - 3 = -5$.'
-          - problem: 'A design model has area $x^2 - 9x + 14$ for $x>20$. Write this model as a product of integer-coefficient polynomial factors, factoring completely over the integers.'
-            answer: "(x - 2)(x - 7)"
-            solution_sketch: '$(-2)(-7) = 14$ and $-2 - 7 = -9$.'
-          - problem: 'A polynomial has the following nonzero coefficients: power $2$: coefficient $1$; power $1$: coefficient $-7$; power $0$: coefficient $12$. Reconstruct it and write its factored form over the integers.'
-            answer: '(x - 4)*(x - 3)'
-            solution_sketch: '$(-3)(-4) = 12$ and $-3 - 4 = -7$.'
-          - problem: 'Correct $(x+4)(x+5)$ as a factorization of $x^2-9x+20$.'
-            answer: '(x - 5)*(x - 4)'
-            solution_sketch: 'The positive product and negative sum require two negative constants: $-4-5=-9$ and $(-4)(-5)=20$.'
+            answer: '(x - 2)(x - 3)'
+            answer_contract: {"kind":"required_form","form":"factored_polynomial"}
+            solution_sketch: 'Look for two numbers with product $6$ and sum $-5$. Both are negative: $(-2)(-3) = 6$ and $-2 - 3 = -5$, so the result is $(x - 2)(x - 3)$.'
+          - problem: 'Factor $a^2 - 9a + 14$.'
+            answer: '(a - 2)(a - 7)'
+            answer_contract: {"kind":"required_form","form":"factored_polynomial"}
+            solution_sketch: 'Look for two numbers with product $14$ and sum $-9$. The pair $-2$ and $-7$ works, so the result is $(a - 2)(a - 7)$.'
+          - problem: 'Sam factors $x^2 - 9x + 20$ as $(x + 4)(x + 5)$. What is the correct factorization?'
+            answer: '(x - 4)(x - 5)'
+            answer_contract: {"kind":"required_form","form":"factored_polynomial"}
+            solution_sketch: 'Sam''s constants add to $+9$. A positive product and a negative sum need two negative constants: $(-4)(-5) = 20$ and $-4 - 5 = -9$, so the result is $(x - 4)(x - 5)$.'
+          - problem: 'A rectangle has area $x^2 - 7x + 12$ square metres and length $x - 3$ metres. Find its width.'
+            answer: 'x - 4'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Width is area divided by length. Since $(-3)(-4) = 12$ and $-3 - 4 = -7$, the area is $(x - 3)(x - 4)$, so the width is $x - 4$ metres.'
+          - problem: 'A square garden has side $x$ metres. Both sides are shortened by whole numbers of metres, giving a rectangle of area $x^2 - 11x + 24$ square metres. Factor the area to find the new side lengths.'
+            answer: '(x - 3)(x - 8)'
+            answer_contract: {"kind":"required_form","form":"factored_polynomial"}
+            solution_sketch: 'Look for two negative numbers with product $24$ and sum $-11$. The pair $-3$ and $-8$ works, so the new sides are $x - 3$ and $x - 8$ metres.'
+          - problem: 'Factor $x^2 - 12x + 35$.'
+            answer: '(x - 5)(x - 7)'
+            answer_contract: {"kind":"required_form","form":"factored_polynomial"}
+            solution_sketch: 'Look for two numbers with product $35$ and sum $-12$. The pair $-5$ and $-7$ works, so the result is $(x - 5)(x - 7)$.'
+          - problem: 'Factor $p^2 - 10p + 16$.'
+            answer: '(p - 2)(p - 8)'
+            answer_contract: {"kind":"required_form","form":"factored_polynomial"}
+            solution_sketch: 'Look for two numbers with product $16$ and sum $-10$. The pair $-2$ and $-8$ works, so the result is $(p - 2)(p - 8)$.'
     diagnostic_exemplar:
       problem: 'Factor $x^2 - 2x - 24$.'
       answer: '(x - 6)(x + 4)'
@@ -1649,52 +1942,136 @@ topics:
         name: Leading coefficient not equal to 1 (ac-method)
         key_prerequisites: [factoring-monic-trinomials, factoring-by-grouping]
         constraints: "split bx using two integers that multiply to ac and add to b"
+        try_first:
+          problem: 'Two integers have product $2 \cdot 3 = 6$ and sum $7$. What is the larger of the two?'
+          answer_contract: {"kind":"exact"}
+          answer: '6'
+          reveal: 'The integers are $6$ and $1$. They split the middle term of $2x^2 + 7x + 3$ into $6x + x$, and grouping $2x(x + 3) + 1(x + 3)$ then gives $(2x + 1)(x + 3)$.'
+        step_check:
+          step: 'Find two integers that multiply to $30$ and add to $17$'
+          question: 'Why look for integers that multiply to $30$ rather than to $6$?'
+          options:
+            - 'The constant $6$ has too few factor pairs to work'
+            - 'Multiplying by $5$ removes the leading coefficient from the answer'
+            - '$30$ is $a \cdot c$, and only then do the split terms regroup'
+          answer: '$30$ is $a \cdot c$, and only then do the split terms regroup'
+          why: 'Splitting $17x$ as $2x + 15x$ with $2 \cdot 15 = 5 \cdot 6$ makes both pairs share a binomial: $x(5x + 2) + 3(5x + 2)$.'
         exemplars:
           - problem: 'Factor $2x^2 + 7x + 3$.'
-            answer: "(2x + 1)(x + 3)"
-            solution_sketch: '$ac = 6$; split $7x$ as $6x + x$; group.'
-          - problem: 'A design model has area $3x^2 - 10x + 8$ for $x>20$. Write this model as a product of integer-coefficient polynomial factors, factoring completely over the integers.'
-            answer: "(3x - 4)(x - 2)"
-            solution_sketch: '$ac = 24$; split $-10x$ as $-6x - 4x$; group.'
-          - problem: 'A polynomial has the following nonzero coefficients: power $2$: coefficient $2$; power $1$: coefficient $5$; power $0$: coefficient $3$. Reconstruct it and write its factored form over the integers.'
-            answer: '(x + 1)*(2*x + 3)'
-            solution_sketch: '$ac = 6$; split $5x$ as $2x + 3x$; group.'
-          - problem: 'The $ac$ method splits $3x^2+7x+2$ into $3x^2+6x+x+2$. Finish the factorization by grouping.'
-            answer: '(x + 2)*(3*x + 1)'
-            solution_sketch: 'Group as $3x(x+2)+1(x+2)$, then extract the shared $x+2$.'
+            answer: '(2x + 1)(x + 3)'
+            answer_contract: {"kind":"required_form","form":"factored_polynomial"}
+            solution_sketch: 'Here $ac = 6$, and $6 + 1 = 7$, so split $7x$ as $6x + x$. Grouping gives $2x(x + 3) + 1(x + 3) = (2x + 1)(x + 3)$.'
+          - problem: 'Factor $3x^2 - 10x + 8$.'
+            answer: '(3x - 4)(x - 2)'
+            answer_contract: {"kind":"required_form","form":"factored_polynomial"}
+            solution_sketch: 'Here $ac = 24$, and $-6 - 4 = -10$, so split $-10x$ as $-6x - 4x$. Grouping gives $3x(x - 2) - 4(x - 2) = (3x - 4)(x - 2)$.'
+          - problem: 'Sam factors $3x^2 + 7x + 2$ as $(3x + 2)(x + 1)$. What is the correct factorization?'
+            answer: '(3x + 1)(x + 2)'
+            answer_contract: {"kind":"required_form","form":"factored_polynomial"}
+            solution_sketch: 'Sam''s product expands to $3x^2 + 5x + 2$, so the middle term is wrong. With $ac = 6$, split $7x$ as $6x + x$: $3x(x + 2) + 1(x + 2) = (3x + 1)(x + 2)$.'
+          - problem: 'A rectangle has area $6x^2 + 19x + 15$ square centimetres and width $2x + 3$ centimetres. Find its length.'
+            answer: '3x + 5'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Length is area divided by width. With $ac = 90$, split $19x$ as $9x + 10x$: $3x(2x + 3) + 5(2x + 3) = (2x + 3)(3x + 5)$, so the length is $3x + 5$ centimetres.'
+          - problem: 'Factor $2y^2 + 5y + 3$.'
+            answer: '(y + 1)(2y + 3)'
+            answer_contract: {"kind":"required_form","form":"factored_polynomial"}
+            solution_sketch: 'Here $ac = 6$, and $2 + 3 = 5$, so split $5y$ as $2y + 3y$. Grouping gives $2y(y + 1) + 3(y + 1) = (y + 1)(2y + 3)$.'
+          - problem: 'A rectangular rug has area $4x^2 + 8x + 3$ square metres. Factor the area to find expressions for its length and width.'
+            answer: '(2x + 1)(2x + 3)'
+            answer_contract: {"kind":"required_form","form":"factored_polynomial"}
+            solution_sketch: 'Here $ac = 12$, and $2 + 6 = 8$, so split $8x$ as $2x + 6x$. Grouping gives $2x(2x + 1) + 3(2x + 1) = (2x + 1)(2x + 3)$, so the sides are $2x + 1$ and $2x + 3$ metres.'
+          - problem: 'Factor $5x^2 - 17x + 6$.'
+            answer: '(5x - 2)(x - 3)'
+            answer_contract: {"kind":"required_form","form":"factored_polynomial"}
+            solution_sketch: 'Here $ac = 30$, and $-15 - 2 = -17$, so split $-17x$ as $-15x - 2x$. Grouping gives $5x(x - 3) - 2(x - 3) = (5x - 2)(x - 3)$.'
       - id: kp2
         name: Non-monic trinomials with negative constants
         key_prerequisites: [factoring-monic-trinomials, factoring-by-grouping]
+        step_check:
+          step: 'Group and factor each pair'
+          question: 'Why is $-4$, not $4$, taken out of $-4x - 12$?'
+          options:
+            - 'The GCF of two negative terms is always negative'
+            - 'Taking out $-4$ leaves $x + 3$, the same bracket as the first group'
+            - 'Taking out $4$ would change the value of $-4x - 12$'
+          answer: 'Taking out $-4$ leaves $x + 3$, the same bracket as the first group'
+          why: '$-4x - 12 = -4(x + 3)$ matches $3x(x + 3)$; taking out $4$ gives $4(-x - 3)$, a different bracket, so grouping would stall.'
         exemplars:
           - problem: 'Factor $6x^2 + x - 2$.'
-            answer: "(3x + 2)(2x - 1)"
-            solution_sketch: '$ac = -12$; split $x$ as $4x - 3x$; group.'
-          - problem: 'A design model has area $4x^2 - 4x - 3$ for $x>20$. Write this model as a product of integer-coefficient polynomial factors, factoring completely over the integers.'
-            answer: "(2x - 3)(2x + 1)"
-            solution_sketch: '$ac = -12$; split $-4x$ as $-6x + 2x$; group.'
-          - problem: 'A polynomial has the following nonzero coefficients: power $2$: coefficient $5$; power $1$: coefficient $3$; power $0$: coefficient $-2$. Reconstruct it and write its factored form over the integers.'
-            answer: '(x + 1)*(5*x - 2)'
-            solution_sketch: '$ac = -10$; split $3x$ as $5x - 2x$; group.'
-          - problem: 'The middle term of $6x^2+5x-4$ is split as $8x-3x$. Finish the $ac$-method factorization.'
-            answer: '(2*x - 1)*(3*x + 4)'
-            solution_sketch: 'Write $2x(3x+4)-1(3x+4)$ and extract $3x+4$.'
+            answer: '(3x + 2)(2x - 1)'
+            answer_contract: {"kind":"required_form","form":"factored_polynomial"}
+            solution_sketch: 'Here $ac = -12$, and $4 - 3 = 1$, so split $x$ as $4x - 3x$. Grouping gives $2x(3x + 2) - 1(3x + 2) = (3x + 2)(2x - 1)$.'
+          - problem: 'Factor $4x^2 - 4x - 3$.'
+            answer: '(2x - 3)(2x + 1)'
+            answer_contract: {"kind":"required_form","form":"factored_polynomial"}
+            solution_sketch: 'Here $ac = -12$, and $-6 + 2 = -4$, so split $-4x$ as $-6x + 2x$. Grouping gives $2x(2x - 3) + 1(2x - 3) = (2x - 3)(2x + 1)$.'
+          - problem: 'Sam factors $6x^2 + 5x - 4$ as $(3x - 4)(2x + 1)$. What is the correct factorization?'
+            answer: '(2x - 1)(3x + 4)'
+            answer_contract: {"kind":"required_form","form":"factored_polynomial"}
+            solution_sketch: 'Sam''s product expands to $6x^2 - 5x - 4$, so the signs are swapped. With $ac = -24$, split $5x$ as $8x - 3x$: $2x(3x + 4) - 1(3x + 4) = (2x - 1)(3x + 4)$.'
+          - problem: 'A rectangular banner has area $3x^2 + 5x - 2$ square metres and length $x + 2$ metres. Find its width.'
+            answer: '3x - 1'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Width is area divided by length. With $ac = -6$, split $5x$ as $6x - x$: $3x(x + 2) - 1(x + 2) = (x + 2)(3x - 1)$, so the width is $3x - 1$ metres.'
+          - problem: 'Factor $5n^2 + 3n - 2$.'
+            answer: '(n + 1)(5n - 2)'
+            answer_contract: {"kind":"required_form","form":"factored_polynomial"}
+            solution_sketch: 'Here $ac = -10$, and $5 - 2 = 3$, so split $3n$ as $5n - 2n$. Grouping gives $5n(n + 1) - 2(n + 1) = (n + 1)(5n - 2)$.'
+          - problem: 'A rectangular field has area $10x^2 - x - 3$ square metres. Factor the area to find expressions for its length and width.'
+            answer: '(5x - 3)(2x + 1)'
+            answer_contract: {"kind":"required_form","form":"factored_polynomial"}
+            solution_sketch: 'Here $ac = -30$, and $5 - 6 = -1$, so split $-x$ as $5x - 6x$. Grouping gives $5x(2x + 1) - 3(2x + 1) = (5x - 3)(2x + 1)$, so the sides are $5x - 3$ and $2x + 1$ metres.'
+          - problem: 'Factor $8x^2 - 2x - 15$.'
+            answer: '(4x + 5)(2x - 3)'
+            answer_contract: {"kind":"required_form","form":"factored_polynomial"}
+            solution_sketch: 'Here $ac = -120$, and $10 - 12 = -2$, so split $-2x$ as $10x - 12x$. Grouping gives $2x(4x + 5) - 3(4x + 5) = (4x + 5)(2x - 3)$.'
         constraints: 'leading coefficient > 1 and negative constant term; the split pair has opposite signs'
       - id: kp3
         name: Factor out a GCF first, then the trinomial
         key_prerequisites: [factoring-gcf, factoring-monic-trinomials]
+        step_check:
+          step: 'Extract the GCF $3$'
+          question: 'Why take out the $3$ before looking for a factor pair?'
+          options:
+            - 'The trinomial left is simpler, and the $3$ belongs in the final product'
+            - 'A trinomial with a common factor cannot be factored any other way'
+            - 'Taking out $3$ turns the trinomial into a perfect square'
+          answer: 'The trinomial left is simpler, and the $3$ belongs in the final product'
+          why: '$3x^2 + 21x + 30 = 3(x^2 + 7x + 10) = 3(x + 2)(x + 5)$; an answer like $(3x + 6)(x + 5)$ hides the $3$ inside a bracket and is not complete.'
         exemplars:
-          - problem: 'Factor $2x^2 + 10x + 12$.'
-            answer: "2(x + 2)(x + 3)"
-            solution_sketch: '$2(x^2 + 5x + 6) = 2(x+2)(x+3)$.'
-          - problem: 'A design model has area $6x^2 - 15x - 9$ for $x>20$. Write this model as a product of integer-coefficient polynomial factors, factoring completely over the integers.'
-            answer: "3(2x + 1)(x - 3)"
-            solution_sketch: 'Extract $3$, leaving $2x^2-5x-3$. Split $-5x$ as $-6x+x$, group as $2x(x-3)+(x-3)$, and obtain $3(2x+1)(x-3)$.'
-          - problem: 'A polynomial has the following nonzero coefficients: power $2$: coefficient $2$; power $1$: coefficient $12$; power $0$: coefficient $10$. Reconstruct it and write its factored form over the integers.'
-            answer: '2*(x + 1)*(x + 5)'
-            solution_sketch: '$2(x^2 + 6x + 5) = 2(x+1)(x+5)$.'
-          - problem: 'A learner stops at $2(2x^2+2x-12)$ while factoring $4x^2+4x-24$. Complete the factorization.'
-            answer: '4*(x - 2)*(x + 3)'
-            solution_sketch: 'Extract the remaining $2$ to get $4(x^2+x-6)$. The constants $3,-2$ multiply to $-6$ and add to $1$.'
+          - problem: 'Factor $2x^2 + 10x + 12$ completely.'
+            answer: '2(x + 2)(x + 3)'
+            answer_contract: {"kind":"required_form","form":"factored_polynomial"}
+            solution_sketch: 'Take out $2$ to get $2(x^2 + 5x + 6)$. Since $2 \cdot 3 = 6$ and $2 + 3 = 5$, the result is $2(x + 2)(x + 3)$.'
+          - problem: 'Factor $6x^2 - 15x - 9$ completely.'
+            answer: '3(2x + 1)(x - 3)'
+            answer_contract: {"kind":"required_form","form":"factored_polynomial"}
+            solution_sketch: 'Take out $3$, leaving $2x^2 - 5x - 3$. Split $-5x$ as $-6x + x$ and group as $2x(x - 3) + 1(x - 3)$, so the result is $3(2x + 1)(x - 3)$.'
+          - problem: 'Sam factors $4x^2 + 4x - 24$ as $2(2x^2 + 2x - 12)$. What is the complete factorization?'
+            answer: '4(x - 2)(x + 3)'
+            answer_contract: {"kind":"required_form","form":"factored_polynomial"}
+            solution_sketch: 'The bracket still has the common factor $2$, so the GCF is $4$: $4(x^2 + x - 6)$. The constants $3$ and $-2$ multiply to $-6$ and add to $1$, giving $4(x - 2)(x + 3)$.'
+          - problem: 'A box has volume $2x^3 + 14x^2 + 24x$ cubic centimetres. Factor the volume completely to find expressions for its three dimensions.'
+            answer: '2x(x + 3)(x + 4)'
+            answer_contract: {"kind":"required_form","form":"factored_polynomial"}
+            solution_sketch: 'Take out $2x$ to get $2x(x^2 + 7x + 12)$. Since $3 \cdot 4 = 12$ and $3 + 4 = 7$, the volume is $2x(x + 3)(x + 4)$, so the dimensions are $2x$, $x + 3$ and $x + 4$ centimetres.'
+          - problem: 'Ana factors $3x^2 + 21x + 36$ as $(3x + 9)(x + 4)$. What is the complete factorization?'
+            answer: '3(x + 3)(x + 4)'
+            answer_contract: {"kind":"required_form","form":"factored_polynomial"}
+            solution_sketch: 'Ana''s product is correct but not complete, because $3x + 9 = 3(x + 3)$. So the complete factorization is $3(x + 3)(x + 4)$.'
+          - problem: 'A rectangle has area $4x^2 + 20x + 24$ square metres and width $x + 2$ metres. Find its length.'
+            answer: '4x + 12'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Length is area divided by width. The area is $4(x^2 + 5x + 6) = 4(x + 2)(x + 3)$, so the length is $4(x + 3) = 4x + 12$ metres.'
+          - problem: 'Factor $5y^2 - 5y - 30$ completely.'
+            answer: '5(y - 3)(y + 2)'
+            answer_contract: {"kind":"required_form","form":"factored_polynomial"}
+            solution_sketch: 'Take out $5$ to get $5(y^2 - y - 6)$. The constants $-3$ and $2$ multiply to $-6$ and add to $-1$, so the result is $5(y - 3)(y + 2)$.'
+          - problem: 'The height of a rocket $t$ seconds after launch is $-5t^2 + 15t + 50$ metres. Factor this expression completely.'
+            answer: '-5(t - 5)(t + 2)'
+            answer_contract: {"kind":"required_form","form":"factored_polynomial"}
+            solution_sketch: 'Take out $-5$ to get $-5(t^2 - 3t - 10)$. The constants $-5$ and $2$ multiply to $-10$ and add to $-3$, so the height is $-5(t - 5)(t + 2)$, which is zero at $t = 5$.'
         constraints: 'integer GCF 2-3 common to all three terms; factor it out before the ac-method'
     diagnostic_exemplar:
       problem: 'Factor $6x^2 + 9x - 6$.'
@@ -1725,56 +2102,147 @@ topics:
         weight: 0.3
     knowledge_points:
       - id: kp1
-        finite_objective_domain: {"schema_version": 1, "review_ref": "sha256:c33d3b80825332dd657355002c9898f30406534dccc846181d7ccc19dc84a966", "cases": [{"id": "fact-1", "role": "practice_fresh", "variants": [{"problem": "Factor $x^2-1$. Report lower_factor and upper_factor, the monic linear factors in increasing constant order.", "answer": "lower_factor = (-1) + x; upper_factor = 1 + x", "answer_contract": {"kind": "multipart", "parts": [{"name": "lower_factor", "contract": {"kind": "exact"}}, {"name": "upper_factor", "contract": {"kind": "exact"}}]}}]}, {"id": "fact-4", "role": "practice_fresh", "variants": [{"problem": "Factor $x^2-4$. Report lower_factor and upper_factor, the monic linear factors in increasing constant order.", "answer": "lower_factor = (-2) + x; upper_factor = 2 + x", "answer_contract": {"kind": "multipart", "parts": [{"name": "lower_factor", "contract": {"kind": "exact"}}, {"name": "upper_factor", "contract": {"kind": "exact"}}]}}]}, {"id": "fact-9", "role": "practice_fresh", "variants": [{"problem": "Factor $x^2-9$. Report lower_factor and upper_factor, the monic linear factors in increasing constant order.", "answer": "lower_factor = (-3) + x; upper_factor = 3 + x", "answer_contract": {"kind": "multipart", "parts": [{"name": "lower_factor", "contract": {"kind": "exact"}}, {"name": "upper_factor", "contract": {"kind": "exact"}}]}}, {"problem": "Factor $x^2 - 9$.", "answer": "(x + 3)(x - 3)"}]}, {"id": "fact-16", "role": "practice_fresh", "variants": [{"problem": "Factor $x^2-16$. Report lower_factor and upper_factor, the monic linear factors in increasing constant order.", "answer": "lower_factor = (-4) + x; upper_factor = 4 + x", "answer_contract": {"kind": "multipart", "parts": [{"name": "lower_factor", "contract": {"kind": "exact"}}, {"name": "upper_factor", "contract": {"kind": "exact"}}]}}]}, {"id": "fact-25", "role": "practice_fresh", "variants": [{"problem": "Factor $x^2-25$. Report lower_factor and upper_factor, the monic linear factors in increasing constant order.", "answer": "lower_factor = (-5) + x; upper_factor = 5 + x", "answer_contract": {"kind": "multipart", "parts": [{"name": "lower_factor", "contract": {"kind": "exact"}}, {"name": "upper_factor", "contract": {"kind": "exact"}}]}}, {"problem": "A polynomial has the following nonzero coefficients: power $2$: coefficient $1$; power $0$: coefficient $-25$. Reconstruct it and write its factored form over the integers.", "answer": "(x - 5)*(x + 5)"}]}, {"id": "fact-49", "role": "practice_fresh", "variants": [{"problem": "Factor $x^2-49$. Report lower_factor and upper_factor, the monic linear factors in increasing constant order.", "answer": "lower_factor = (-7) + x; upper_factor = 7 + x", "answer_contract": {"kind": "multipart", "parts": [{"name": "lower_factor", "contract": {"kind": "exact"}}, {"name": "upper_factor", "contract": {"kind": "exact"}}]}}, {"problem": "A design model has area $x^2 - 49$ for $x>20$. Write this model as a product of integer-coefficient polynomial factors, factoring completely over the integers.", "answer": "(x + 7)(x - 7)"}]}, {"id": "fact-64", "role": "practice_fresh", "variants": [{"problem": "Factor $x^2-64$. Report lower_factor and upper_factor, the monic linear factors in increasing constant order.", "answer": "lower_factor = (-8) + x; upper_factor = 8 + x", "answer_contract": {"kind": "multipart", "parts": [{"name": "lower_factor", "contract": {"kind": "exact"}}, {"name": "upper_factor", "contract": {"kind": "exact"}}]}}]}, {"id": "fact-81", "role": "practice_fresh", "variants": [{"problem": "Factor $x^2-81$. Report lower_factor and upper_factor, the monic linear factors in increasing constant order.", "answer": "lower_factor = (-9) + x; upper_factor = 9 + x", "answer_contract": {"kind": "multipart", "parts": [{"name": "lower_factor", "contract": {"kind": "exact"}}, {"name": "upper_factor", "contract": {"kind": "exact"}}]}}]}, {"id": "fact-100", "role": "practice_fresh", "variants": [{"problem": "Factor $x^2-100$. Report lower_factor and upper_factor, the monic linear factors in increasing constant order.", "answer": "lower_factor = (-10) + x; upper_factor = 10 + x", "answer_contract": {"kind": "multipart", "parts": [{"name": "lower_factor", "contract": {"kind": "exact"}}, {"name": "upper_factor", "contract": {"kind": "exact"}}]}}, {"problem": "A learner writes $x^2-100=(x-10)^2$. Correct the factorization.", "answer": "(x-10)*(x+10)"}]}, {"id": "fact-36", "role": "teach_only", "variants": [{"problem": "Factor $x^2-36$. Report lower_factor and upper_factor in increasing constant order.", "answer": "lower_factor = x-6; upper_factor = x+6", "answer_contract": {"kind": "multipart", "parts": [{"name": "lower_factor", "contract": {"kind": "exact"}}, {"name": "upper_factor", "contract": {"kind": "exact"}}]}}]}]}
         name: Recognize and factor a^2 - b^2
         key_prerequisites: [polynomial-multiplication, square-roots]
+        try_first:
+          problem: 'Calculate $21 \times 19$ without a calculator.'
+          answer_contract: {"kind":"exact"}
+          answer: '399'
+          reveal: 'Write $21 \times 19 = (20 + 1)(20 - 1) = 20^2 - 1^2 = 400 - 1 = 399$. The same pattern runs backwards to factor $x^2 - 1$ as $(x + 1)(x - 1)$.'
+        step_check:
+          step: 'Since $36=6^2$, the conjugate factors are $x-6$ and $x+6$'
+          question: 'Why do $x - 6$ and $x + 6$ multiply back to $x^2 - 36$?'
+          options:
+            - 'Any two binomials with constant $6$ multiply to $x^2 - 36$'
+            - '$(x - 6)^2$ and $(x - 6)(x + 6)$ are the same product'
+            - 'The cross terms $6x$ and $-6x$ cancel, leaving $x^2 - 6^2$'
+          answer: 'The cross terms $6x$ and $-6x$ cancel, leaving $x^2 - 6^2$'
+          why: '$(x - 6)(x + 6) = x^2 + 6x - 6x - 36 = x^2 - 36$; with equal signs, as in $(x - 6)^2$, the cross terms add instead of cancelling.'
         exemplars:
           - problem: 'Factor $x^2 - 9$.'
-            answer: "(x + 3)(x - 3)"
-            solution_sketch: '$x^2 - 3^2 = (x + 3)(x - 3)$.'
-          - problem: 'A design model has area $x^2 - 49$ for $x>20$. Write this model as a product of integer-coefficient polynomial factors, factoring completely over the integers.'
-            answer: "(x + 7)(x - 7)"
-            solution_sketch: '$x^2 - 7^2 = (x + 7)(x - 7)$.'
-          - problem: 'A polynomial has the following nonzero coefficients: power $2$: coefficient $1$; power $0$: coefficient $-25$. Reconstruct it and write its factored form over the integers.'
-            answer: '(x - 5)*(x + 5)'
-            solution_sketch: '$x^2 - 5^2 = (x + 5)(x - 5)$.'
-          - problem: 'A learner writes $x^2-100=(x-10)^2$. Correct the factorization.'
-            answer: '(x-10)*(x+10)'
-            solution_sketch: 'The squares are $x^2$ and $10^2$. Opposite signs cancel the cross terms: $(x-10)(x+10)=x^2-100$.'
+            answer: '(x + 3)(x - 3)'
+            answer_contract: {"kind":"required_form","form":"factored_polynomial"}
+            solution_sketch: 'Both terms are squares: $x^2 - 9 = x^2 - 3^2$. A difference of squares factors as $(x + 3)(x - 3)$.'
+          - problem: 'Factor $y^2 - 49$.'
+            answer: '(y + 7)(y - 7)'
+            answer_contract: {"kind":"required_form","form":"factored_polynomial"}
+            solution_sketch: 'Both terms are squares: $y^2 - 49 = y^2 - 7^2$. The conjugate factors are $y + 7$ and $y - 7$.'
+          - problem: 'Sam factors $x^2 - 100$ as $(x - 10)^2$. What is the correct factorization?'
+            answer: '(x - 10)(x + 10)'
+            answer_contract: {"kind":"required_form","form":"factored_polynomial"}
+            solution_sketch: 'Sam''s square expands to $x^2 - 20x + 100$. Opposite signs make the cross terms cancel: $(x - 10)(x + 10) = x^2 - 100$.'
+          - problem: 'Calculate $51 \times 49$ without a calculator.'
+            answer: '2499'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Write the product as $(50 + 1)(50 - 1)$, a difference of squares. It equals $50^2 - 1^2 = 2500 - 1 = 2499$.'
+          - problem: 'A square garden of side $x$ metres has a square pond of side $5$ metres in it. Write the area of the rest of the garden in factored form.'
+            answer: '(x + 5)(x - 5)'
+            answer_contract: {"kind":"required_form","form":"factored_polynomial"}
+            solution_sketch: 'The remaining area is $x^2 - 5^2 = x^2 - 25$ square metres. As a difference of squares it factors as $(x + 5)(x - 5)$.'
+          - problem: 'Factor $a^2 - 64$.'
+            answer: '(a + 8)(a - 8)'
+            answer_contract: {"kind":"required_form","form":"factored_polynomial"}
+            solution_sketch: 'Both terms are squares: $a^2 - 64 = a^2 - 8^2$. The conjugate factors are $a + 8$ and $a - 8$.'
+          - problem: 'Calculate $103^2 - 97^2$ without a calculator.'
+            answer: '1200'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Factor the difference of squares: $103^2 - 97^2 = (103 + 97)(103 - 97)$. That is $200 \cdot 6 = 1200$.'
+          - problem: 'Factor $x^2 - 1$.'
+            answer: '(x + 1)(x - 1)'
+            answer_contract: {"kind":"required_form","form":"factored_polynomial"}
+            solution_sketch: 'Since $1 = 1^2$, the expression is $x^2 - 1^2$. It factors as $(x + 1)(x - 1)$.'
         constraints: 'monic square minus a perfect-square constant up to 100; no GCF to remove'
       - id: kp2
         name: Coefficients and higher even powers
         key_prerequisites: [square-roots]
+        step_check:
+          step: 'Write $(4x^2)^2-15^2$'
+          question: 'Why is $16x^4$ written as $(4x^2)^2$?'
+          options:
+            - '$(4x)^4 = 16x^4$, so the square root is $4x$'
+            - 'Only the coefficient $16$ has to be a square'
+            - '$4x^2$ times itself is $16x^4$, so it is the square root'
+          answer: '$4x^2$ times itself is $16x^4$, so it is the square root'
+          why: 'Squaring $4x^2$ squares both parts: $4^2 = 16$ and $(x^2)^2 = x^4$; by contrast $(4x)^4 = 256x^4$.'
         exemplars:
           - problem: 'Factor $4x^2 - 25$.'
-            answer: "(2x + 5)(2x - 5)"
-            solution_sketch: '$(2x)^2 - 5^2$.'
-          - problem: 'A design model has volume $9x^4 - 16$ for $x>20$. Write this model as a product of integer-coefficient polynomial factors, factoring completely over the integers.'
-            answer: "(3x^2 + 4)(3x^2 - 4)"
-            solution_sketch: '$(3x^2)^2 - 4^2$.'
-          - problem: 'A polynomial has the following nonzero coefficients: power $2$: coefficient $16$; power $0$: coefficient $-9$. Reconstruct it and write its factored form over the integers.'
-            answer: '(4*x - 3)*(4*x + 3)'
-            solution_sketch: '$(4x)^2 - 3^2$.'
-          - problem: 'Correct $(5x-2)(5x+2)$ as a factorization of $25x^4-4$.'
-            answer: '(5*x^2 - 2)*(5*x^2 + 2)'
-            solution_sketch: 'The square root of $25x^4$ is $5x^2$. The conjugate factors are therefore $5x^2-2$ and $5x^2+2$.'
+            answer: '(2x + 5)(2x - 5)'
+            answer_contract: {"kind":"required_form","form":"factored_polynomial"}
+            solution_sketch: 'Both terms are squares: $4x^2 = (2x)^2$ and $25 = 5^2$. The factors are $(2x + 5)(2x - 5)$.'
+          - problem: 'Factor $9x^4 - 16$.'
+            answer: '(3x^2 + 4)(3x^2 - 4)'
+            answer_contract: {"kind":"required_form","form":"factored_polynomial"}
+            solution_sketch: 'Write $9x^4 - 16 = (3x^2)^2 - 4^2 = (3x^2 + 4)(3x^2 - 4)$. Neither factor splits further, because $3$ is not a square.'
+          - problem: 'Sam factors $25x^4 - 4$ as $(5x - 2)(5x + 2)$. What is the correct factorization?'
+            answer: '(5x^2 - 2)(5x^2 + 2)'
+            answer_contract: {"kind":"required_form","form":"factored_polynomial"}
+            solution_sketch: 'Sam''s product is $25x^2 - 4$. The square root of $25x^4$ is $5x^2$, so the factors are $5x^2 - 2$ and $5x^2 + 2$.'
+          - problem: 'A square tile of side $3x$ cm has a square hole of side $2$ cm cut out of it. Write the remaining area in factored form.'
+            answer: '(3x + 2)(3x - 2)'
+            answer_contract: {"kind":"required_form","form":"factored_polynomial"}
+            solution_sketch: 'The remaining area is $(3x)^2 - 2^2 = 9x^2 - 4$ square centimetres. As a difference of squares it is $(3x + 2)(3x - 2)$.'
+          - problem: 'Factor $16y^2 - 9$.'
+            answer: '(4y - 3)(4y + 3)'
+            answer_contract: {"kind":"required_form","form":"factored_polynomial"}
+            solution_sketch: 'Both terms are squares: $16y^2 = (4y)^2$ and $9 = 3^2$. The factors are $(4y - 3)(4y + 3)$.'
+          - problem: 'A rectangle has area $49x^2 - 1$ square units and width $7x - 1$ units. Find its length.'
+            answer: '7x + 1'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Length is area divided by width. Since $49x^2 - 1 = (7x - 1)(7x + 1)$, the length is $7x + 1$ units.'
+          - problem: 'Factor $x^2 - 4y^2$.'
+            answer: '(x + 2y)(x - 2y)'
+            answer_contract: {"kind":"required_form","form":"factored_polynomial"}
+            solution_sketch: 'Both terms are squares: $4y^2 = (2y)^2$. So $x^2 - (2y)^2 = (x + 2y)(x - 2y)$.'
+          - problem: 'Factor $81 - x^2$.'
+            answer: '(9 - x)(9 + x)'
+            answer_contract: {"kind":"required_form","form":"factored_polynomial"}
+            solution_sketch: 'The first term is the square $9^2$ and the second is $x^2$. So $81 - x^2 = (9 - x)(9 + x)$.'
         constraints: 'perfect-square coefficients; even powers up to 4'
       - id: kp3
         name: Factor a GCF first, or factor repeatedly
         key_prerequisites: [factoring-gcf]
+        step_check:
+          step: 'Extract $3$: $3(x^2-16)$'
+          question: 'Why take out the $3$ before using the difference of squares?'
+          options:
+            - 'The difference of squares works only when the coefficient is $3$'
+            - '$3x^2$ and $48$ are not squares, but $x^2$ and $16$ are'
+            - 'Taking out $3$ turns the expression into a perfect-square trinomial'
+          answer: '$3x^2$ and $48$ are not squares, but $x^2$ and $16$ are'
+          why: 'After removing the common factor, $x^2 - 16 = x^2 - 4^2$ fits the pattern, giving $3(x - 4)(x + 4)$.'
         exemplars:
-          - problem: 'Factor $2x^2 - 18$.'
-            answer: "2(x + 3)(x - 3)"
-            solution_sketch: 'Extract the coefficient GCF $2$, leaving $x^2-9=x^2-3^2$. The conjugate factors are $x-3$ and $x+3$.'
-          - problem: 'A design model has volume $x^4 - 16$ for $x>20$. Write this model as a product of integer-coefficient polynomial factors, factoring completely over the integers.'
-            answer: "(x^2 + 4)(x + 2)(x - 2)"
-            solution_sketch: '$x^4 - 16 = (x^2 + 4)(x^2 - 4)$, and $x^2 - 4$ splits again.'
-          - problem: 'A polynomial has the following nonzero coefficients: power $2$: coefficient $3$; power $0$: coefficient $-27$. Reconstruct it and write its factored form over the integers.'
-            answer: '3*(x - 3)*(x + 3)'
-            solution_sketch: 'The coefficients reconstruct $3x^2-27$. Extract $3$ to leave $x^2-9$; its square roots give factors $x-3$ and $x+3$.'
-          - problem: 'A learner stops at $(x^2-9)(x^2+9)$ when factoring $x^4-81$. Complete the factorization over the integers.'
-            answer: '(x - 3)*(x + 3)*(x^2 + 9)'
-            solution_sketch: 'The factor $x^2-9$ is another difference of squares, $(x-3)(x+3)$; $x^2+9$ remains irreducible over the integers.'
+          - problem: 'Factor $2x^2 - 18$ completely.'
+            answer: '2(x + 3)(x - 3)'
+            answer_contract: {"kind":"required_form","form":"factored_polynomial"}
+            solution_sketch: 'Take out the common factor $2$, leaving $x^2 - 9 = x^2 - 3^2$. The result is $2(x + 3)(x - 3)$.'
+          - problem: 'Factor $x^4 - 16$ completely.'
+            answer: '(x^2 + 4)(x + 2)(x - 2)'
+            answer_contract: {"kind":"required_form","form":"factored_polynomial"}
+            solution_sketch: 'First $x^4 - 16 = (x^2 + 4)(x^2 - 4)$. The factor $x^2 - 4$ is again a difference of squares, so the result is $(x^2 + 4)(x + 2)(x - 2)$.'
+          - problem: 'Sam factors $x^4 - 81$ as $(x^2 - 9)(x^2 + 9)$. What is the complete factorization?'
+            answer: '(x - 3)(x + 3)(x^2 + 9)'
+            answer_contract: {"kind":"required_form","form":"factored_polynomial"}
+            solution_sketch: 'Sam stopped too early: $x^2 - 9$ is another difference of squares, $(x - 3)(x + 3)$. The sum $x^2 + 9$ does not factor, so the result is $(x - 3)(x + 3)(x^2 + 9)$.'
+          - problem: 'A square metal plate of side $x$ cm has a square of side $2$ cm cut from each of its four corners. Write the remaining area in factored form.'
+            answer: '(x - 4)(x + 4)'
+            answer_contract: {"kind":"required_form","form":"factored_polynomial"}
+            solution_sketch: 'The four corners remove $4 \cdot 2^2 = 16$ square centimetres, leaving $x^2 - 16$. As a difference of squares this is $(x - 4)(x + 4)$.'
+          - problem: 'Two square tiles have sides $5x$ cm and $5$ cm. Write the difference of their areas in completely factored form.'
+            answer: '25(x - 1)(x + 1)'
+            answer_contract: {"kind":"required_form","form":"factored_polynomial"}
+            solution_sketch: 'The difference is $25x^2 - 25$. Take out $25$ to get $25(x^2 - 1)$, which gives $25(x - 1)(x + 1)$.'
+          - problem: 'Factor $3y^2 - 27$ completely.'
+            answer: '3(y - 3)(y + 3)'
+            answer_contract: {"kind":"required_form","form":"factored_polynomial"}
+            solution_sketch: 'Take out $3$ to get $3(y^2 - 9)$. Since $9 = 3^2$, the result is $3(y - 3)(y + 3)$.'
+          - problem: 'Factor $5x^3 - 20x$ completely.'
+            answer: '5x(x - 2)(x + 2)'
+            answer_contract: {"kind":"required_form","form":"factored_polynomial"}
+            solution_sketch: 'Take out $5x$ to get $5x(x^2 - 4)$. Since $4 = 2^2$, the result is $5x(x - 2)(x + 2)$.'
+          - problem: 'Factor $16x^4 - 1$ completely.'
+            answer: '(4x^2 + 1)(2x + 1)(2x - 1)'
+            answer_contract: {"kind":"required_form","form":"factored_polynomial"}
+            solution_sketch: 'First $16x^4 - 1 = (4x^2 + 1)(4x^2 - 1)$. Then $4x^2 - 1 = (2x + 1)(2x - 1)$, so the result is $(4x^2 + 1)(2x + 1)(2x - 1)$.'
         constraints: 'an integer GCF or a factor that is itself a difference of squares; factor completely'
     diagnostic_exemplar:
       problem: 'Factor completely: $x^4 - 1$.'
@@ -1805,55 +2273,145 @@ topics:
       - id: kp1
         name: Recognize the pattern a^2 ± 2ab + b^2
         key_prerequisites: [special-products, square-roots]
+        try_first:
+          problem: 'Expand $(x + 5)^2$. What is the coefficient of $x$?'
+          answer_contract: {"kind":"exact"}
+          answer: '10'
+          reveal: 'Since $(x + 5)^2 = x^2 + 5x + 5x + 25$, the middle coefficient is twice $5$. A trinomial is a perfect square only when its middle term is twice the product of the square roots of its end terms.'
+        step_check:
+          step: 'The required middle term would be $2(x)(4)=8x$'
+          question: 'Why must the middle term be $2(x)(4)$?'
+          options:
+            - 'The middle term of a square is the product $(x)(4)$ of the roots'
+            - 'Squaring $x + 4$ gives the cross term $4x$ twice'
+            - 'Any middle term works once both end terms are squares'
+          answer: 'Squaring $x + 4$ gives the cross term $4x$ twice'
+          why: '$(x + 4)^2 = x^2 + 4x + 4x + 16 = x^2 + 8x + 16$; since $x^2 + 6x + 16$ has $6x$, it is not a perfect square.'
         exemplars:
-          - problem: 'The trinomial $x^2 + 6x + 9$ is a perfect square. Factor it.'
-            answer: "(x + 3)^2"
-            solution_sketch: '$9 = 3^2$ and $6x = 2 \cdot 3 \cdot x$, so it is $(x + 3)^2$.'
-          - problem: "The trinomial $x^2 + 5x + 25$ is not a perfect square. Find the positive coefficient of $x$ that would make $x^2 + kx + 25$ a perfect square."
-            answer: "10"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Rule: a perfect square has the form a^2 + 2ab + b^2. Here the end terms are x^2 and 25, so a = x and b = 5. The required middle term is 2ab = 2*x*5 = 10x. The given 5x fails, so the positive coefficient is 10."
-          - problem: 'An area model has one $x^2$ square, two strips of area $4x$, and a corner of area $16$. Write the total area as a squared binomial.'
+          - problem: 'Is $x^2 + 10x + 25$ a perfect square trinomial?'
+            answer: 'yes'
+            answer_contract: {"kind":"label","options":[["yes","yes, it is","it is","a perfect square","it is a perfect square"],["no","no, it is not","it is not","not a perfect square","it is not a perfect square"]]}
+            solution_sketch: 'The end terms are $x^2$ and $5^2$. Twice their roots multiplied is $2(x)(5) = 10x$, which matches, so it is $(x + 5)^2$.'
+          - problem: 'For what positive value of $k$ is $x^2 + kx + 25$ a perfect square trinomial?'
+            answer: '10'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The end terms are $x^2$ and $5^2$, so the square would be $(x + 5)^2$. Its middle term is $2(x)(5) = 10x$, so $k = 10$.'
+          - problem: 'An area model has one $x^2$ square, two strips of area $4x$, and a corner square of area $16$. Write the total area as a squared binomial.'
             answer: '(x + 4)^2'
-            solution_sketch: 'The strips total $8x=2(x)(4)$ and the corner is $4^2$, so the assembled square has side $x+4$.'
-          - problem: "The trinomial $x^2 - 14x + 49$ has square end terms. Find the negative value of $b$ that makes the middle term equal $2ab$ with $a = x$."
-            answer: "-7"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Rule: a perfect square has the form a^2 - 2ab + b^2 when the middle term is negative. Here a = x and b^2 = 49, and the middle term is -14x = 2ab. Substitute a = x: 2*x*b = -14x, so b = -7. The negative value that fits is -7."
+            answer_contract: {"kind":"required_form","form":"factored_polynomial"}
+            solution_sketch: 'The total area is $x^2 + 8x + 16$. The strips total $8x = 2(x)(4)$ and the corner is $4^2$, so the pieces form a square of side $x + 4$.'
+          - problem: 'For what value of $c$ is $x^2 - 14x + c$ a perfect square trinomial?'
+            answer: '49'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The middle term $-14x$ must equal $-2(x)(b)$, so $b = 7$. The constant must be $b^2 = 49$, making $(x - 7)^2$.'
+          - problem: 'Is $x^2 + 12x + 16$ a perfect square trinomial?'
+            answer: 'no'
+            answer_contract: {"kind":"label","options":[["yes","yes, it is","it is","a perfect square","it is a perfect square"],["no","no, it is not","it is not","not a perfect square","it is not a perfect square"]]}
+            solution_sketch: 'The end terms are $x^2$ and $4^2$, so a square would need the middle term $2(x)(4) = 8x$. The actual middle term is $12x$, so it is not a perfect square.'
+          - problem: 'A square patio has area $x^2 + 18x + 81$ square metres. Find its side length.'
+            answer: 'x + 9'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The area is $x^2 + 2(x)(9) + 9^2 = (x + 9)^2$. The side of a square is the square root of its area, so the side is $x + 9$ metres.'
+          - problem: 'Sam says $x^2 + 8x + 64$ is a perfect square because $x^2$ and $64$ are squares. What middle term, with a positive coefficient, would make it one?'
+            answer: '16x'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The roots of the end terms are $x$ and $8$, so the square is $(x + 8)^2$. Its middle term is $2(x)(8) = 16x$, not $8x$.'
+          - problem: 'For what positive value of $k$ is $4x^2 + kx + 9$ a perfect square trinomial?'
+            answer: '12'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The end terms are $(2x)^2$ and $3^2$, so the square would be $(2x + 3)^2$. Its middle term is $2(2x)(3) = 12x$, so $k = 12$.'
         constraints: "check the middle term against 2ab"
       - id: kp2
         name: Factor monic perfect squares
         key_prerequisites: [factoring-monic-trinomials, special-products]
+        step_check:
+          step: 'Since $289=17^2$ and $2(17)=34$'
+          question: 'Why check that $2(17) = 34$ after finding $289 = 17^2$?'
+          options:
+            - 'It decides whether the binomial uses a plus or a minus sign'
+            - 'A square constant is not enough; the middle term must be $2 \cdot 17x$'
+            - 'It confirms that $17$ is a prime number'
+          answer: 'A square constant is not enough; the middle term must be $2 \cdot 17x$'
+          why: '$x^2 - 30x + 289$ also ends in $17^2$ but is not a perfect square; only $-34x$ matches $(x - 17)^2 = x^2 - 34x + 289$.'
         exemplars:
           - problem: 'Factor $x^2 + 10x + 25$.'
-            answer: "(x + 5)^2"
-            solution_sketch: '$25 = 5^2$ and $10x = 2 \cdot 5 \cdot x$.'
-          - problem: 'A design model has area $x^2 - 12x + 36$ for $x>20$. Write this model as a product of integer-coefficient polynomial factors, factoring completely over the integers.'
-            answer: "(x - 6)^2"
-            solution_sketch: 'The constant is $36=6^2$ and the middle term is $-12x=-2(x)(6)$. These match the square $(x-6)^2$.'
-          - problem: 'A polynomial has the following nonzero coefficients: power $2$: coefficient $1$; power $1$: coefficient $14$; power $0$: coefficient $49$. Reconstruct it and write its factored form over the integers.'
-            answer: '(x + 7)^2'
-            solution_sketch: '$49 = 7^2$ and $14x = 2 \cdot 7 \cdot x$.'
-          - problem: 'Correct $(x+8)^2$ as a factorization of $x^2-16x+64$.'
+            answer: '(x + 5)^2'
+            answer_contract: {"kind":"required_form","form":"factored_polynomial"}
+            solution_sketch: 'The constant is $25 = 5^2$ and the middle term is $10x = 2(x)(5)$. So the trinomial is $(x + 5)^2$.'
+          - problem: 'Factor $x^2 - 12x + 36$.'
+            answer: '(x - 6)^2'
+            answer_contract: {"kind":"required_form","form":"factored_polynomial"}
+            solution_sketch: 'The constant is $36 = 6^2$ and the middle term is $-12x = -2(x)(6)$. So the trinomial is $(x - 6)^2$.'
+          - problem: 'Sam factors $x^2 - 16x + 64$ as $(x + 8)^2$. What is the correct factorization?'
             answer: '(x - 8)^2'
-            solution_sketch: 'Since $64=8^2$ and the middle term is $-2(x)(8)$, the binomial is $x-8$.'
+            answer_contract: {"kind":"required_form","form":"factored_polynomial"}
+            solution_sketch: 'Sam''s square expands to $x^2 + 16x + 64$. The middle term is negative, so the binomial is $x - 8$ and the result is $(x - 8)^2$.'
+          - problem: 'A square rug has area $x^2 - 8x + 16$ square feet, where $x > 4$. Find the length of one side.'
+            answer: 'x - 4'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The area is $x^2 - 2(x)(4) + 4^2 = (x - 4)^2$. The side is the square root of the area, so it is $x - 4$ feet.'
+          - problem: 'Factor $y^2 + 14y + 49$.'
+            answer: '(y + 7)^2'
+            answer_contract: {"kind":"required_form","form":"factored_polynomial"}
+            solution_sketch: 'The constant is $49 = 7^2$ and the middle term is $14y = 2(y)(7)$. So the trinomial is $(y + 7)^2$.'
+          - problem: 'A square picture of side $x$ inches has a frame of the same width all around it. The framed picture covers $x^2 + 6x + 9$ square inches. How wide is the frame?'
+            answer: '1.5'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"in","allow_omitted":true}
+            solution_sketch: 'The area is $(x + 3)^2$, so the framed side is $x + 3$ inches. The frame adds its width on both sides, so the width is $3 \div 2 = 1.5$ inches.'
+          - problem: 'Factor $x^2 - 20x + 100$.'
+            answer: '(x - 10)^2'
+            answer_contract: {"kind":"required_form","form":"factored_polynomial"}
+            solution_sketch: 'The constant is $100 = 10^2$ and the middle term is $-20x = -2(x)(10)$. So the trinomial is $(x - 10)^2$.'
+          - problem: 'Factor $a^2 + 2a + 1$.'
+            answer: '(a + 1)^2'
+            answer_contract: {"kind":"required_form","form":"factored_polynomial"}
+            solution_sketch: 'The constant is $1 = 1^2$ and the middle term is $2a = 2(a)(1)$. So the trinomial is $(a + 1)^2$.'
         constraints: "constant is a perfect square; sign follows the middle term"
       - id: kp3
         name: Perfect squares with leading coefficients
         key_prerequisites: [special-products, square-roots]
+        step_check:
+          step: 'Twice their product is $2(4x)(3)=24x$'
+          question: 'Why compare $2(4x)(3)$ with the middle term $24x$?'
+          options:
+            - 'In $(4x + 3)^2$ the two cross terms add up to $2(4x)(3)$'
+            - 'The product $(4x)(3)$ alone must equal the middle term'
+            - 'It shows that the leading coefficient $16$ is a square'
+          answer: 'In $(4x + 3)^2$ the two cross terms add up to $2(4x)(3)$'
+          why: '$(4x + 3)^2 = 16x^2 + 12x + 12x + 9$, so the cross terms give $24x$; any other middle term rules out a square.'
         exemplars:
           - problem: 'Factor $4x^2 - 12x + 9$.'
-            answer: "(2x - 3)^2"
-            solution_sketch: '$(2x)^2$, $3^2$, and $12x = 2 \cdot 2x \cdot 3$.'
-          - problem: 'A design model has area $9x^2 + 30x + 25$ for $x>20$. Write this model as a product of integer-coefficient polynomial factors, factoring completely over the integers.'
-            answer: "(3x + 5)^2"
-            solution_sketch: '$(3x)^2$, $5^2$, and $30x = 2 \cdot 3x \cdot 5$.'
-          - problem: 'A polynomial has the following nonzero coefficients: power $2$: coefficient $16$; power $1$: coefficient $-24$; power $0$: coefficient $9$. Reconstruct it and write its factored form over the integers.'
-            answer: '(4*x - 3)^2'
-            solution_sketch: '$(4x)^2$, $3^2$, and $24x = 2 \cdot 4x \cdot 3$.'
-          - problem: 'Correct $(5x+4)^2$ as a factorization of $25x^2+20x+4$.'
-            answer: '(5*x + 2)^2'
-            solution_sketch: 'The end terms are $(5x)^2$ and $2^2$. The middle term $2(5x)(2)=20x$ confirms $(5x+2)^2$.'
+            answer: '(2x - 3)^2'
+            answer_contract: {"kind":"required_form","form":"factored_polynomial"}
+            solution_sketch: 'The end terms are $(2x)^2$ and $3^2$, and $2(2x)(3) = 12x$ matches the middle term. The middle term is negative, so the result is $(2x - 3)^2$.'
+          - problem: 'Factor $9x^2 + 30x + 25$.'
+            answer: '(3x + 5)^2'
+            answer_contract: {"kind":"required_form","form":"factored_polynomial"}
+            solution_sketch: 'The end terms are $(3x)^2$ and $5^2$, and $2(3x)(5) = 30x$ matches the middle term. So the result is $(3x + 5)^2$.'
+          - problem: 'Sam factors $25x^2 + 20x + 4$ as $(5x + 4)^2$. What is the correct factorization?'
+            answer: '(5x + 2)^2'
+            answer_contract: {"kind":"required_form","form":"factored_polynomial"}
+            solution_sketch: 'Sam used $4$ instead of its square root. The end terms are $(5x)^2$ and $2^2$, and $2(5x)(2) = 20x$, so the result is $(5x + 2)^2$.'
+          - problem: 'A square tablecloth has area $4x^2 + 20x + 25$ square feet. Find the length of one side.'
+            answer: '2x + 5'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The area is $(2x)^2 + 2(2x)(5) + 5^2 = (2x + 5)^2$. The side is the square root of the area, so it is $2x + 5$ feet.'
+          - problem: 'Factor $16y^2 - 24y + 9$.'
+            answer: '(4y - 3)^2'
+            answer_contract: {"kind":"required_form","form":"factored_polynomial"}
+            solution_sketch: 'The end terms are $(4y)^2$ and $3^2$, and $2(4y)(3) = 24y$ matches the middle term. The middle term is negative, so the result is $(4y - 3)^2$.'
+          - problem: 'A square courtyard has area $9x^2 - 42x + 49$ square metres, where $x > 3$. Find its perimeter.'
+            answer: '12x - 28'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The area is $(3x)^2 - 2(3x)(7) + 7^2 = (3x - 7)^2$, so each side is $3x - 7$ metres. The perimeter is $4(3x - 7) = 12x - 28$ metres.'
+          - problem: 'Factor $49x^2 - 28x + 4$.'
+            answer: '(7x - 2)^2'
+            answer_contract: {"kind":"required_form","form":"factored_polynomial"}
+            solution_sketch: 'The end terms are $(7x)^2$ and $2^2$, and $2(7x)(2) = 28x$ matches the middle term. The middle term is negative, so the result is $(7x - 2)^2$.'
+          - problem: 'Factor $2x^2 + 12x + 18$ completely.'
+            answer: '2(x + 3)^2'
+            answer_contract: {"kind":"required_form","form":"factored_polynomial"}
+            solution_sketch: 'Take out $2$ to get $2(x^2 + 6x + 9)$. The bracket is $(x + 3)^2$, since $9 = 3^2$ and $6x = 2(x)(3)$, so the result is $2(x + 3)^2$.'
         constraints: "both end terms perfect squares; verify 2ab"
     diagnostic_exemplar:
       problem: 'Factor $9x^2 - 24x + 16$.'
