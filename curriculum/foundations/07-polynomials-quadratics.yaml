@@ -2691,65 +2691,141 @@ topics:
       - id: kp1
         name: Solve pre-factored monic equations
         key_prerequisites: [one-step-equations]
+        try_first:
+          problem: 'For which value of $x$ is $7(x - 2) = 0$?'
+          answer_contract: {"kind":"exact"}
+          answer: '2'
+          reveal: 'The factor $7$ is never zero, so the product is zero only when $x - 2 = 0$. With two variable factors, each factor can be the zero one, so each gives a solution.'
+        step_check:
+          step: 'The factors give $x+8=0$ or $x-6=0$'
+          question: 'Why may each factor be set equal to zero on its own?'
+          options:
+            - 'Both factors must be zero for the same value of $x$'
+            - 'A product is zero exactly when at least one factor is zero'
+            - 'The two factors are equal, so each of them must be zero'
+          answer: 'A product is zero exactly when at least one factor is zero'
+          why: 'At $x=-8$ the first factor is $0$ and $0\cdot(-14)=0$, although the second factor is not zero; each factor gives its own solution.'
         exemplars:
           - problem: 'Solve $(x - 3)(x + 5) = 0$.'
-            answer: "x = 3 or x = -5"
-            answer_contract: {kind: exact}
-            solution_sketch: 'The factors give $x-3=0$ or $x+5=0$. Solving the linear equations gives $x=3$ or $x=-5$.'
-          - problem: 'The graph $y=x(x-4)$ meets the horizontal axis where a factor vanishes. Find all corresponding $x$ values.'
-            answer: "x = 0 or x = 4"
-            answer_contract: {kind: exact}
-            solution_sketch: 'At an axis intersection the product is zero. The factors $x$ and $x-4$ give $x=0$ and $x=4$.'
-          - problem: 'A student keeps only $x=6$ from $(x-6)(x+2)=0$. Give the complete solution set.'
-            answer: "x = 6 or x = -2"
-            answer_contract: {kind: exact}
-            solution_sketch: 'The second factor also can vanish: $x+2=0$ gives $-2$. Together with $x-6=0$, the full root set is $6,-2$.'
-          - problem: 'A rectangular model has signed area $A=x(x+9)$. Find every real parameter $x$ for which this algebraic area is zero.'
-            answer: "x = 0 or x = -9"
-            answer_contract: {kind: exact}
-            solution_sketch: 'The area product vanishes at $x=0$ or $x+9=0$. Both are allowed real parameters, giving $0,-9$.'
+            answer: '-5, 3'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The product is zero when $x - 3 = 0$ or $x + 5 = 0$. Solving each linear equation gives $x = 3$ or $x = -5$.'
+          - problem: 'Solve $x(x - 4) = 0$.'
+            answer: '0, 4'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The factor $x$ is zero when $x = 0$. The factor $x - 4$ is zero when $x = 4$, so the solutions are $0$ and $4$.'
+          - problem: 'A ball is kicked from the ground. Its height in metres after $t$ seconds is $h = t(4 - t)$. After how many seconds does it land?'
+            answer: '4'
+            answer_contract: {"kind":"unit","quantity":"time","unit":"s","allow_omitted":true}
+            solution_sketch: 'The ball is on the ground when $t(4 - t) = 0$, so $t = 0$ or $t = 4$. The time $t = 0$ is the kick itself, so it lands after $4$ seconds.'
+          - problem: 'Sam solves $(x - 6)(x + 2) = 0$ and writes only $x = 6$. Solve the equation completely.'
+            answer: '-2, 6'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The factor $x - 6$ gives $x = 6$. Sam missed the factor $x + 2$, which is zero when $x = -2$, so the solutions are $6$ and $-2$.'
+          - problem: 'A company''s profit, in thousands of dollars, from selling $x$ hundred phone cases is $P = (x - 2)(10 - x)$. For which sales levels does the company break even?'
+            answer: '2, 10'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Breaking even means $P = 0$, so $x - 2 = 0$ or $10 - x = 0$. The company breaks even at $x = 2$ and at $x = 10$ hundred cases.'
+          - problem: 'Solve $(x - 7)^2 = 0$.'
+            answer: '7'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Here both factors are $x - 7$, which is zero only when $x = 7$. The equation has the single solution $7$.'
+          - problem: 'Mia''s calculation for the width $w$ of a garden in metres leads to $(w - 6)(w + 11) = 0$. How wide is the garden?'
+            answer: '6'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"m","allow_omitted":true}
+            solution_sketch: 'The equation gives $w = 6$ or $w = -11$. A width cannot be negative, so the garden is $6$ m wide.'
+          - problem: 'Solve $(x + 9)(x + 1) = 0$.'
+            answer: '-9, -1'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Set each factor to zero: $x + 9 = 0$ or $x + 1 = 0$. The solutions are $x = -9$ and $x = -1$.'
         constraints: "already factored; integer roots"
       - id: kp2
         name: Factors with coefficients
         key_prerequisites: [two-step-equations]
+        step_check:
+          step: 'From $4x-3=0$, obtain $x=3/4$'
+          question: 'Why is the solution from $4x-3=0$ equal to $3/4$ and not $3$?'
+          options:
+            - 'The root is the constant with its sign changed, so it is $3$'
+            - 'The factor is zero when $4x=3$, so divide $3$ by $4$'
+            - 'Multiply the constant by the coefficient, so the root is $12$'
+          answer: 'The factor is zero when $4x=3$, so divide $3$ by $4$'
+          why: 'Check by substituting: $4\cdot\tfrac34-3=0$, while $4\cdot3-3=9$ is not zero.'
         exemplars:
           - problem: 'Solve $(2x - 1)(3x + 4) = 0$.'
-            answer: "x = 1/2 or x = -4/3"
-            answer_contract: {kind: exact}
-            solution_sketch: '$2x = 1$ or $3x = -4$.'
-          - problem: 'The graph $y=(5x+2)(x-6)$ meets the horizontal axis. Find both $x$ coordinates from the factors.'
-            answer: "x = -2/5 or x = 6"
-            answer_contract: {kind: exact}
-            solution_sketch: '$5x = -2$ or $x = 6$.'
-          - problem: 'A learner obtains $x=2$ or $x=-5$ from $(3x-2)(2x+5)=0$. Correct the solutions.'
-            answer: "x = 2/3 or x = -5/2"
-            answer_contract: {kind: exact}
-            solution_sketch: '$3x = 2$ or $2x = -5$.'
-          - problem: 'A signed product model is $P=(4x+1)(x-3)$. Find all real parameters giving $P=0$.'
-            answer: "x = -1/4 or x = 3"
-            answer_contract: {kind: exact}
-            solution_sketch: '$4x = -1$ or $x = 3$.'
+            answer: '-4/3, 1/2'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'From $2x - 1 = 0$ we get $2x = 1$, so $x = 1/2$. From $3x + 4 = 0$ we get $3x = -4$, so $x = -4/3$.'
+          - problem: 'A stone is thrown straight up from the ground. Its height in metres after $t$ seconds is $h = t(15 - 5t)$. After how many seconds does it land?'
+            answer: '3'
+            answer_contract: {"kind":"unit","quantity":"time","unit":"s","allow_omitted":true}
+            solution_sketch: 'The stone is on the ground when $t(15 - 5t) = 0$, so $t = 0$ or $5t = 15$. The time $t = 0$ is the throw, so it lands after $3$ seconds.'
+          - problem: 'Ravi solves $(3x - 2)(2x + 5) = 0$ and gets $x = 2$ or $x = -5$. What are the correct solutions?'
+            answer: '-5/2, 2/3'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Ravi forgot to divide by the coefficients. From $3x = 2$ we get $x = 2/3$, and from $2x = -5$ we get $x = -5/2$.'
+          - problem: 'A diver leaves a board. Her height above the water in metres after $t$ seconds is $h = (2 - t)(5t + 5)$. When does she reach the water?'
+            answer: '2'
+            answer_contract: {"kind":"unit","quantity":"time","unit":"s","allow_omitted":true}
+            solution_sketch: 'She reaches the water when $h = 0$, so $2 - t = 0$ or $5t + 5 = 0$. That gives $t = 2$ or $t = -1$, and a negative time is before the dive, so she reaches the water after $2$ seconds.'
+          - problem: 'Solve $(5x + 2)(x - 6) = 0$.'
+            answer: '-2/5, 6'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'From $5x + 2 = 0$ we get $5x = -2$, so $x = -2/5$. From $x - 6 = 0$ we get $x = 6$.'
+          - problem: 'Solve $x(3x - 7) = 0$.'
+            answer: '0, 7/3'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The factor $x$ gives $x = 0$. From $3x - 7 = 0$ we get $3x = 7$, so $x = 7/3$.'
+          - problem: 'Solve $(4x + 1)(x - 3) = 0$.'
+            answer: '-1/4, 3'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'From $4x + 1 = 0$ we get $4x = -1$, so $x = -1/4$. From $x - 3 = 0$ we get $x = 3$.'
+          - problem: 'Solve $(2x + 5)(2x - 5) = 0$.'
+            answer: '-5/2, 5/2'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'From $2x + 5 = 0$ we get $x = -5/2$. From $2x - 5 = 0$ we get $x = 5/2$, so the solutions are opposites.'
         constraints: "linear factors with small coefficients; fractional roots allowed"
       - id: kp3
         name: Three factors
         key_prerequisites: [one-step-equations, two-step-equations]
+        step_check:
+          step: 'The constant $3$ is nonzero'
+          question: 'Why does the constant $3$ give no solution of its own?'
+          options:
+            - 'It gives the solution $x=3$'
+            - 'It gives the solution $x=1/3$'
+            - 'The statement $3=0$ is never true'
+          answer: 'The statement $3=0$ is never true'
+          why: 'Only a factor that can equal zero gives a solution, so the solutions come from $x=0$, $x+6=0$ and $x-9=0$.'
         exemplars:
           - problem: 'Solve $x(x - 2)(x + 7) = 0$.'
-            answer: "x = 0 or x = 2 or x = -7"
-            answer_contract: {kind: exact}
-            solution_sketch: 'Set each variable factor to zero: $x=0$, $x-2=0$, or $x+7=0$. The roots are $0,2,-7$.'
-          - problem: 'Find all horizontal-axis crossing values of $y=2x(x+1)(x-5)$ using the zero-product property.'
-            answer: "x = 0 or x = -1 or x = 5"
-            answer_contract: {kind: exact}
-            solution_sketch: 'The constant 2 is never zero; three variable factors.'
-          - problem: 'A student cancels $x$ in $x(x-3)(x+4)=0$ and loses a root. Give the complete solution set.'
-            answer: "x = 0 or x = 3 or x = -4"
-            answer_contract: {kind: exact}
-            solution_sketch: 'The factor $x$ contributes zero; cancelling it would lose that root. The other equations $x-3=0$ and $x+4=0$ give $3$ and $-4$.'
-          - problem: 'The signed volume model $V=3x(x+1)(x-6)$ vanishes. Find every real parameter value that makes any variable factor zero.'
-            answer: "x = 0 or x = -1 or x = 6"
-            answer_contract: {kind: exact}
-            solution_sketch: 'The constant 3 is never zero; three variable factors.'
+            answer: '-7, 0, 2'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Set each variable factor to zero: $x = 0$, $x - 2 = 0$ or $x + 7 = 0$. The solutions are $0$, $2$ and $-7$.'
+          - problem: 'Solve $2x(x + 1)(x - 5) = 0$.'
+            answer: '-1, 0, 5'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The constant $2$ is never zero. The factors $x$, $x + 1$ and $x - 5$ give $x = 0$, $x = -1$ and $x = 5$.'
+          - problem: 'A roller-coaster track dips through a tunnel. Its height above ground level in metres, $x$ metres from the start, is $h = \frac{1}{500}x(x - 20)(x - 50)$. At which distances from the start is the track exactly at ground level?'
+            answer: '0, 20, 50'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Ground level means $h = 0$, and the constant $\frac{1}{500}$ is never zero. The factors give $x = 0$, $x = 20$ and $x = 50$ metres from the start.'
+          - problem: 'Lena divides both sides of $x(x - 3)(x + 4) = 0$ by $x$ and reports $x = 3$ or $x = -4$. Solve the equation completely.'
+            answer: '-4, 0, 3'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Dividing by $x$ throws away the factor that gives $x = 0$. The three factors give $0$, $3$ and $-4$.'
+          - problem: 'A box is built so that its length is $x$ cm, its width is $(8 - x)$ cm and its height is $(x - 2)$ cm. For which values of $x$ does the volume formula $V = x(8 - x)(x - 2)$ give zero?'
+            answer: '0, 2, 8'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The volume is zero when one of the three dimensions is zero. That happens at $x = 0$, $x = 8$ or $x = 2$.'
+          - problem: 'Solve $(x + 1)(2x - 3)(x - 4) = 0$.'
+            answer: '-1, 3/2, 4'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Set each factor to zero: $x + 1 = 0$, $2x - 3 = 0$ or $x - 4 = 0$. The solutions are $-1$, $3/2$ and $4$.'
+          - problem: 'Solve $5x(x - 8)(x + 8) = 0$.'
+            answer: '-8, 0, 8'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The constant $5$ is never zero. The factors $x$, $x - 8$ and $x + 8$ give $0$, $8$ and $-8$.'
         constraints: "one root per variable factor"
     diagnostic_exemplar:
       problem: 'Solve $x(2x - 5)(x + 3) = 0$.'
@@ -2785,65 +2861,140 @@ topics:
       - id: kp1
         name: Factor a monic quadratic, then solve
         key_prerequisites: [factoring-trinomials, zero-product-property]
+        step_check:
+          step: 'The integers $3$ and $-6$ multiply to $-18$ and add to $-3$'
+          question: 'Why must the two integers multiply to $-18$ and add to $-3$?'
+          options:
+            - 'They must multiply to $-3$ and add to $-18$'
+            - 'Expanding $(x+p)(x+q)$ gives $x^2+(p+q)x+pq$'
+            - 'The roots are always the constant divided by the $x$-coefficient'
+          answer: 'Expanding $(x+p)(x+q)$ gives $x^2+(p+q)x+pq$'
+          why: 'Check: $(x+3)(x-6)=x^2-3x-18$; the sum $3+(-6)$ is the $x$-coefficient and the product $3\cdot(-6)$ is the constant.'
         exemplars:
           - problem: 'Solve $x^2 + 7x + 12 = 0$.'
-            answer: "x = -3 or x = -4"
-            answer_contract: {kind: exact}
-            solution_sketch: '$(x+3)(x+4) = 0$.'
-          - problem: 'Find all horizontal-axis crossing values of $y=x^2-5x-14$ by factoring its quadratic.'
-            answer: "x = 7 or x = -2"
-            answer_contract: {kind: exact}
-            solution_sketch: '$(x-7)(x+2) = 0$.'
-          - problem: 'A learner proposes roots $-4$ and $9$ for $x^2+5x-36=0$. Correct both roots by factoring.'
-            answer: "x = 4 or x = -9"
-            answer_contract: {kind: exact}
-            solution_sketch: '$(x-4)(x+9) = 0$.'
-          - problem: 'A quadratic''s coefficient row is $(1,9,18)$ in descending order. Set the polynomial equal to zero and solve by factoring.'
-            answer: "x = -3 or x = -6"
-            answer_contract: {kind: exact}
-            solution_sketch: '$(x+3)(x+6) = 0$.'
+            answer: '-4, -3'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The numbers $3$ and $4$ multiply to $12$ and add to $7$, so $(x + 3)(x + 4) = 0$. The solutions are $x = -3$ and $x = -4$.'
+          - problem: 'Solve $x^2 - 5x - 14 = 0$.'
+            answer: '-2, 7'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The numbers $-7$ and $2$ multiply to $-14$ and add to $-5$, so $(x - 7)(x + 2) = 0$. The solutions are $x = 7$ and $x = -2$.'
+          - problem: 'A company''s profit, in thousands of dollars, from selling $x$ hundred lamps is $P = -x^2 + 12x - 20$. At which sales levels does the company break even?'
+            answer: '2, 10'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Break even means $P = 0$; multiplying by $-1$ gives $x^2 - 12x + 20 = 0$. This factors as $(x - 2)(x - 10) = 0$, so $x = 2$ or $x = 10$ hundred lamps.'
+          - problem: 'Priya solves $x^2 + 5x - 36 = 0$ and gets $x = -4$ or $x = 9$. What are the correct solutions?'
+            answer: '-9, 4'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The numbers $9$ and $-4$ multiply to $-36$ and add to $5$, so $(x + 9)(x - 4) = 0$. Priya flipped the signs; the solutions are $x = -9$ and $x = 4$.'
+          - problem: 'A ball is thrown upward from the top of a building. Its height in metres after $t$ seconds is $h = -5t^2 + 15t + 20$. When does it hit the ground?'
+            answer: '4'
+            answer_contract: {"kind":"unit","quantity":"time","unit":"s","allow_omitted":true}
+            solution_sketch: 'Set $h = 0$ and divide by $-5$: $t^2 - 3t - 4 = 0$, so $(t - 4)(t + 1) = 0$. The time cannot be negative, so the ball lands after $4$ seconds.'
+          - problem: 'Solve $x^2 - 10x + 25 = 0$.'
+            answer: '5'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The trinomial is a perfect square: $(x - 5)^2 = 0$. Both factors give $x = 5$, so there is one solution.'
+          - problem: 'Solve $x^2 + 9x + 18 = 0$.'
+            answer: '-6, -3'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The numbers $3$ and $6$ multiply to $18$ and add to $9$, so $(x + 3)(x + 6) = 0$. The solutions are $x = -3$ and $x = -6$.'
+          - problem: 'Solve $x^2 - 2x - 48 = 0$.'
+            answer: '-6, 8'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The numbers $-8$ and $6$ multiply to $-48$ and add to $-2$, so $(x - 8)(x + 6) = 0$. The solutions are $x = 8$ and $x = -6$.'
         constraints: 'monic trinomial already equal to 0; integer roots'
       - id: kp2
         name: Rearrange to standard form first
         key_prerequisites: [factoring-trinomials, two-step-equations]
+        step_check:
+          step: 'Subtract $35$'
+          question: 'Why subtract $35$ before factoring $x^2-2x=35$?'
+          options:
+            - 'The zero-product property needs a product equal to zero'
+            - 'Factoring works only when the constant is negative'
+            - 'So that $x(x-2)=35$ splits into $x=35$ or $x-2=35$'
+          answer: 'The zero-product property needs a product equal to zero'
+          why: 'A product equal to $35$ does not force either factor to be anything in particular: $x=7$ gives $7\cdot5=35$. Only a zero product forces a factor to be zero.'
         exemplars:
           - problem: 'Solve $x^2 + 6x = -8$.'
-            answer: "x = -2 or x = -4"
-            answer_contract: {kind: exact}
-            solution_sketch: '$x^2 + 6x + 8 = 0$; $(x+2)(x+4) = 0$.'
-          - problem: 'Find the $x$ coordinates where the curves $y=3x^2$ and $y=12x$ intersect. Rearrange and solve by factoring.'
-            answer: "x = 0 or x = 4"
-            answer_contract: {kind: exact}
-            solution_sketch: '$3x^2 - 12x = 0$; $3x(x - 4) = 0$. Never divide by $x$.'
-          - problem: 'A learner rearranges $x^2+4x=21$ as $x^2+4x+21=0$. Correct the rearrangement and give all roots by factoring.'
-            answer: "x = 3 or x = -7"
-            answer_contract: {kind: exact}
-            solution_sketch: '$x^2 + 4x - 21 = 0$; $(x+7)(x-3) = 0$.'
-          - problem: 'A signed-area model equates $5x^2$ and $20x$. Move the terms to one side and find every real solution, including zero.'
-            answer: "x = 4 or x = 0"
-            answer_contract: {kind: exact}
-            solution_sketch: '$5x^2 - 20x = 0$; $5x(x - 4) = 0$. Never divide by $x$.'
+            answer: '-4, -2'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Add $8$ to get $x^2 + 6x + 8 = 0$, which factors as $(x + 2)(x + 4) = 0$. The solutions are $x = -2$ and $x = -4$.'
+          - problem: 'A rectangular rug is $3$ m longer than it is wide. Its area is $28$ m$^2$. How wide is the rug?'
+            answer: '4'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"m","allow_omitted":true}
+            solution_sketch: 'With width $w$, the area gives $w(w + 3) = 28$, so $w^2 + 3w - 28 = 0$ and $(w + 7)(w - 4) = 0$. A width cannot be negative, so the rug is $4$ m wide.'
+          - problem: 'Omar rewrites $x^2 + 4x = 21$ as $x^2 + 4x + 21 = 0$. Solve the original equation correctly.'
+            answer: '-7, 3'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Subtracting $21$ gives $x^2 + 4x - 21 = 0$, which factors as $(x + 7)(x - 3) = 0$. The solutions are $x = -7$ and $x = 3$.'
+          - problem: 'The product of two consecutive positive integers is $132$. What is the smaller integer?'
+            answer: '11'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'With smaller integer $n$, the product gives $n(n + 1) = 132$, so $n^2 + n - 132 = 0$ and $(n + 12)(n - 11) = 0$. The integers are positive, so $n = 11$.'
+          - problem: 'Solve $3x^2 = 12x$.'
+            answer: '0, 4'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Subtract $12x$ to get $3x^2 - 12x = 0$, which factors as $3x(x - 4) = 0$. Dividing by $x$ would lose a root; the solutions are $0$ and $4$.'
+          - problem: 'A ball is thrown upward. Its height in metres after $t$ seconds is $h = -5t^2 + 20t$. At what time is it $15$ m high on its way down?'
+            answer: '3'
+            answer_contract: {"kind":"unit","quantity":"time","unit":"s","allow_omitted":true}
+            solution_sketch: 'Set $-5t^2 + 20t = 15$ and divide by $-5$: $t^2 - 4t + 3 = 0$, so $(t - 1)(t - 3) = 0$. The ball passes $15$ m going up at $1$ second and coming down at $3$ seconds.'
+          - problem: 'Solve $x^2 = 5x + 24$.'
+            answer: '-3, 8'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Move every term to the left: $x^2 - 5x - 24 = 0$, which factors as $(x - 8)(x + 3) = 0$. The solutions are $x = 8$ and $x = -3$.'
+          - problem: 'Solve $x(x + 2) = 35$.'
+            answer: '-7, 5'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Expand and subtract $35$: $x^2 + 2x - 35 = 0$, which factors as $(x + 7)(x - 5) = 0$. The solutions are $x = -7$ and $x = 5$.'
         constraints: 'terms on both sides; collect into standard form before factoring; integer roots'
       - id: kp3
         name: Non-monic quadratics and special patterns
         key_prerequisites: [factoring-trinomials, zero-product-property]
+        step_check:
+          step: 'the pair $-6$ and $1$ adds to $-5$'
+          question: 'Why look for a pair whose product is $ac=-6$, not $c=-2$?'
+          options:
+            - 'The pair must multiply to $c=-2$, as in the monic case'
+            - 'Any pair that adds to $-5$ will do'
+            - 'Splitting $-5x$ that way lets both groups share a factor'
+          answer: 'Splitting $-5x$ that way lets both groups share a factor'
+          why: '$3x^2-6x+x-2$ groups as $3x(x-2)+1(x-2)$ only because $(-6)(1)=3\cdot(-2)$.'
         exemplars:
           - problem: 'Solve $2x^2 - 5x - 3 = 0$.'
-            answer: "x = 3 or x = -1/2"
-            answer_contract: {kind: exact}
-            solution_sketch: '$(2x + 1)(x - 3) = 0$.'
-          - problem: 'Find the horizontal-axis crossing values of $y=x^2-25$ by factoring a difference of squares.'
-            answer: "x = 5 or x = -5"
-            answer_contract: {kind: exact}
-            solution_sketch: 'Difference of squares: $(x+5)(x-5) = 0$.'
-          - problem: 'A learner factors $3x^2+5x-2$ as $(3x-1)(x+2)$ but reports $x=1,-2$. Correct the solution set.'
-            answer: "x = 1/3 or x = -2"
-            answer_contract: {kind: exact}
-            solution_sketch: '$(3x - 1)(x + 2) = 0$.'
-          - problem: 'A quadratic''s coefficient row is $(1,0,-64)$. Set it equal to zero and solve by factoring the special pattern.'
-            answer: "x = 8 or x = -8"
-            answer_contract: {kind: exact}
-            solution_sketch: 'Difference of squares: $(x+8)(x-8) = 0$.'
+            answer: '-1/2, 3'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Here $ac = -6$, and $-6$ and $1$ add to $-5$, so the trinomial factors as $(2x + 1)(x - 3) = 0$. The solutions are $x = -1/2$ and $x = 3$.'
+          - problem: 'A rectangle''s length is $1$ cm less than twice its width, and its area is $28$ cm$^2$. What is its width?'
+            answer: '4'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"cm","allow_omitted":true}
+            solution_sketch: 'With width $w$, the area gives $w(2w - 1) = 28$, so $2w^2 - w - 28 = 0$ and $(2w + 7)(w - 4) = 0$. A width cannot be negative, so the width is $4$ cm.'
+          - problem: 'Ana factors $3x^2 + 5x - 2$ as $(3x - 1)(x + 2)$ and reports $x = 1$ or $x = -2$. What are the correct solutions of $3x^2 + 5x - 2 = 0$?'
+            answer: '-2, 1/3'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The factorization is right, but $3x - 1 = 0$ gives $x = 1/3$. The other factor gives $x = -2$.'
+          - problem: 'Solve $x^2 - 25 = 0$.'
+            answer: '-5, 5'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'This is a difference of squares: $(x - 5)(x + 5) = 0$. The solutions are $x = 5$ and $x = -5$.'
+          - problem: 'Three times the square of a whole number is $4$ less than $13$ times the number. What is the number?'
+            answer: '4'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The condition is $3n^2 = 13n - 4$, so $3n^2 - 13n + 4 = 0$ and $(3n - 1)(n - 4) = 0$. The root $n = 1/3$ is not a whole number, so the number is $4$.'
+          - problem: 'Solve $4x^2 - 9 = 0$.'
+            answer: '-3/2, 3/2'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'This is a difference of squares: $(2x - 3)(2x + 3) = 0$. The solutions are $x = 3/2$ and $x = -3/2$.'
+          - problem: 'A ball is dropped from a tower $45$ m high. Its height in metres after $t$ seconds is $h = 45 - 5t^2$. When does it reach the ground?'
+            answer: '3'
+            answer_contract: {"kind":"unit","quantity":"time","unit":"s","allow_omitted":true}
+            solution_sketch: 'Set $45 - 5t^2 = 0$ and factor: $5(3 - t)(3 + t) = 0$. The negative time is before the drop, so the ball lands after $3$ seconds.'
+          - problem: 'Solve $5x^2 + 13x - 6 = 0$.'
+            answer: '-3, 2/5'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Here $ac = -30$, and $15$ and $-2$ add to $13$, so the trinomial factors as $(5x - 2)(x + 3) = 0$. The solutions are $x = 2/5$ and $x = -3$.'
         constraints: 'leading coefficient > 1 or a difference-of-squares pattern; roots may be fractions'
     diagnostic_exemplar:
       problem: 'Solve $2x^2 + 7x = -3$.'
@@ -2874,65 +3025,149 @@ topics:
       - id: kp1
         name: Solve x^2 = k
         key_prerequisites: [square-roots]
+        try_first:
+          problem: 'Find a negative number whose square is $49$.'
+          answer_contract: {"kind":"exact"}
+          answer: '-7'
+          reveal: 'Both $7$ and $-7$ square to $49$, so $x^2 = 49$ has two solutions. Taking the square root of both sides must keep both signs.'
+        step_check:
+          step: 'Since $19^2=361$, take both signs'
+          question: 'Why does $x^2=361$ need both signs?'
+          options:
+            - 'The symbol $\sqrt{361}$ already means both $19$ and $-19$'
+            - 'The square $(-19)^2$ is also $361$'
+            - 'The negative root is needed only when $k$ is negative'
+          answer: 'The square $(-19)^2$ is also $361$'
+          why: 'Squaring $19$ or $-19$ gives $361$; $\sqrt{361}$ alone names only $19$, so the $\pm$ comes from the equation.'
         exemplars:
           - problem: 'Solve $x^2 = 49$.'
-            answer: "x = 7 or x = -7"
-            answer_contract: {kind: exact}
-            solution_sketch: 'Both square roots: $x = \pm 7$.'
-          - problem: 'The graph $y=x^2$ intersects the horizontal line $y=100$. Find both $x$ coordinates using square roots.'
-            answer: "x = 10 or x = -10"
-            answer_contract: {kind: exact}
-            solution_sketch: 'Both square roots: $x = \pm 10$.'
-          - problem: 'A student concludes $x=9$ from $x^2=81$. Give the complete real solution set.'
-            answer: "x = 9 or x = -9"
-            answer_contract: {kind: exact}
-            solution_sketch: 'Both square roots: $x = \pm 9$.'
-          - problem: 'On a number line, the squared distance of $x$ from zero is $144$. Find all signed coordinates $x$.'
-            answer: "x = 12 or x = -12"
-            answer_contract: {kind: exact}
-            solution_sketch: 'Distance is $\sqrt{144}=12$, so the two coordinates are $12$ and $-12$.'
+            answer: '-7, 7'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Both $7^2$ and $(-7)^2$ equal $49$. The solutions are $x = 7$ and $x = -7$.'
+          - problem: 'A square plot of land has an area of $144$ m$^2$. How long is each side?'
+            answer: '12'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"m","allow_omitted":true}
+            solution_sketch: 'With side $s$, the area gives $s^2 = 144$, so $s = 12$ or $s = -12$. A length cannot be negative, so each side is $12$ m.'
+          - problem: 'Jo solves $x^2 = 81$ and writes $x = 9$. Solve the equation completely.'
+            answer: '-9, 9'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Jo kept only the positive root. Since $(-9)^2 = 81$ as well, the solutions are $x = 9$ and $x = -9$.'
+          - problem: 'Solve $x^2 = -16$.'
+            answer: 'no real solution'
+            answer_contract: {"kind":"label","options":[["no real solution","no solution","none","no solutions","there is no solution","no real solutions","no real number"],["all real numbers","every real number","infinitely many solutions","any real number"]]}
+            solution_sketch: 'The square of a real number is never negative. No real $x$ has $x^2 = -16$, so there is no real solution.'
+          - problem: 'A stone is dropped from a bridge $80$ m above a river. After $t$ seconds it has fallen $5t^2$ metres. How long does it take to reach the water?'
+            answer: '4'
+            answer_contract: {"kind":"unit","quantity":"time","unit":"s","allow_omitted":true}
+            solution_sketch: 'The stone reaches the water when $5t^2 = 80$, so $t^2 = 16$. Time after the drop is positive, so it takes $4$ seconds.'
+          - problem: 'Solve $x^2 - 100 = 0$.'
+            answer: '-10, 10'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Add $100$ to get $x^2 = 100$. Both signs work, so the solutions are $x = 10$ and $x = -10$.'
+          - problem: 'Solve $x^2 = \frac{25}{36}$.'
+            answer: '-5/6, 5/6'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Since $5^2 = 25$ and $6^2 = 36$, the square roots of $\frac{25}{36}$ are $\pm\frac{5}{6}$. The solutions are $x = 5/6$ and $x = -5/6$.'
+          - problem: 'A square floor tile covers $400$ cm$^2$. How long is each edge?'
+            answer: '20'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"cm","allow_omitted":true}
+            solution_sketch: 'With edge $e$, the area gives $e^2 = 400$, so $e = 20$ or $e = -20$. An edge length is positive, so each edge is $20$ cm.'
         constraints: "perfect-square k; always two roots"
       - id: kp2
         name: Isolate the square first
         key_prerequisites: [two-step-equations, square-roots]
+        step_check:
+          step: 'Add $147$ and divide by $3$'
+          question: 'Why isolate $(x-5)^2$ before taking square roots?'
+          options:
+            - 'Taking the root of each term, $\sqrt3(x-5)-\sqrt{147}=0$, works as well'
+            - 'So that the right side becomes negative'
+            - 'A square root undoes the square only when the square stands alone'
+          answer: 'A square root undoes the square only when the square stands alone'
+          why: 'The square root of a difference is not the difference of the roots, so the $-147$ and the factor $3$ must go first.'
         exemplars:
-          - problem: 'Solve $3(x-1)^2-27=0$ by first isolating the square.'
-            answer: 'x = 4 or x = -2'
-            answer_contract: {kind: exact}
-            solution_sketch: 'Divide by $3$ after adding $27$: $(x-1)^2=9$. Thus $x-1=3$ or $x-1=-3$, giving $4$ and $-2$.'
-          - problem: 'The parabola $y=(x-3)^2$ meets the line $y=16$. Find both $x$ coordinates using the square-root property.'
-            answer: "x = 7 or x = -1"
-            answer_contract: {kind: exact}
-            solution_sketch: '$x - 3 = \pm 4$.'
-          - problem: 'Correct a learner''s single solution $x=6$ for $2(x-2)^2-32=0$. Give all real solutions.'
-            answer: 'x = 6 or x = -2'
-            answer_contract: {kind: exact}
-            solution_sketch: 'Isolate $(x-2)^2=16$, then use both signs: $x-2=\pm4$. The roots are $6$ and $-2$.'
-          - problem: 'A number-line coordinate has squared distance $25$ from $-2$. Find all coordinates using $(x+2)^2=25$.'
-            answer: "x = 3 or x = -7"
-            answer_contract: {kind: exact}
-            solution_sketch: '$x + 2 = \pm 5$.'
+          - problem: 'Solve $3(x - 1)^2 - 27 = 0$.'
+            answer: '-2, 4'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Add $27$ and divide by $3$: $(x - 1)^2 = 9$. Then $x - 1 = 3$ or $x - 1 = -3$, so $x = 4$ or $x = -2$.'
+          - problem: 'Solve $(x - 3)^2 = 16$.'
+            answer: '-1, 7'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Take both square roots: $x - 3 = 4$ or $x - 3 = -4$. Adding $3$ gives $x = 7$ or $x = -1$.'
+          - problem: 'A square lawn is surrounded by a path $2$ m wide. The lawn and path together cover $121$ m$^2$. What is the side length of the lawn?'
+            answer: '7'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"m","allow_omitted":true}
+            solution_sketch: 'The outer square has side $s + 4$, so $(s + 4)^2 = 121$ and $s + 4 = 11$ or $s + 4 = -11$. A side cannot be negative, so the lawn has side $7$ m.'
+          - problem: 'Dev solves $2(x - 2)^2 - 32 = 0$ and gets only $x = 6$. Solve the equation completely.'
+            answer: '-2, 6'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Isolate the square: $(x - 2)^2 = 16$, so $x - 2 = 4$ or $x - 2 = -4$. Dev missed the negative root; the solutions are $6$ and $-2$.'
+          - problem: 'A ball is thrown upward from a cliff. Its height above the beach in metres after $t$ seconds is $h = 45 - 5(t - 1)^2$. When does it land on the beach?'
+            answer: '4'
+            answer_contract: {"kind":"unit","quantity":"time","unit":"s","allow_omitted":true}
+            solution_sketch: 'Set $h = 0$: $5(t - 1)^2 = 45$, so $(t - 1)^2 = 9$ and $t - 1 = \pm 3$. The time $t = -2$ is before the throw, so it lands after $4$ seconds.'
+          - problem: 'Solve $(x + 2)^2 = 25$.'
+            answer: '-7, 3'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Take both square roots: $x + 2 = 5$ or $x + 2 = -5$. Subtracting $2$ gives $x = 3$ or $x = -7$.'
+          - problem: 'Solve $4(x + 1)^2 = 9$.'
+            answer: '-5/2, 1/2'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Divide by $4$: $(x + 1)^2 = \frac{9}{4}$, so $x + 1 = \pm\frac{3}{2}$. The solutions are $x = 1/2$ and $x = -5/2$.'
+          - problem: 'Solve $(2x - 1)^2 = 49$.'
+            answer: '-3, 4'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Take both square roots: $2x - 1 = 7$ or $2x - 1 = -7$. Then $2x = 8$ or $2x = -6$, so $x = 4$ or $x = -3$.'
+          - problem: 'Solve $(x - 5)^2 + 9 = 0$.'
+            answer: 'no real solution'
+            answer_contract: {"kind":"label","options":[["no real solution","no solution","none","no solutions","there is no solution","no real solutions","no real number"],["all real numbers","every real number","infinitely many solutions","any real number"]]}
+            solution_sketch: 'Isolating the square gives $(x - 5)^2 = -9$. A real square is never negative, so the equation has no real solution.'
         constraints: "shifted squares (x - h)^2 = k with perfect-square k"
       - id: kp3
         name: Irrational solutions
         key_prerequisites: [simplifying-radicals]
+        step_check:
+          step: 'Extract the square factor'
+          question: 'Why is $\sqrt{45}$ rewritten as $3\sqrt5$?'
+          options:
+            - 'Since $45=3\cdot15$, a $3$ comes out of the root'
+            - 'Since $45=9\cdot5$ and $\sqrt9=3$'
+            - 'Since $\sqrt{45}=\sqrt{40}+\sqrt5$'
+          answer: 'Since $45=9\cdot5$ and $\sqrt9=3$'
+          why: 'Check: $(3\sqrt5)^2=9\cdot5=45$; only a square factor such as $9$ can leave the radical.'
         exemplars:
-          - problem: 'Solve $x^2 = 12$. Give exact answers.'
-            answer: "x = 2*sqrt(3) or x = -2*sqrt(3)"
-            answer_contract: {kind: exact}
-            solution_sketch: '$\pm\sqrt{12} = \pm 2\sqrt{3}$.'
-          - problem: 'Find the $x$ coordinates where $y=(x+1)^2$ meets $y=5$. Keep both answers exact.'
-            answer: "x = -1 + sqrt(5) or x = -1 - sqrt(5)"
-            answer_contract: {kind: exact}
-            solution_sketch: '$x + 1 = \pm\sqrt{5}$.'
-          - problem: 'A student writes $x=\pm10$ for $x^2=20$. Give the corrected real solutions with simplified radicals.'
-            answer: "x = 2*sqrt(5) or x = -2*sqrt(5)"
-            answer_contract: {kind: exact}
-            solution_sketch: '$\pm\sqrt{20} = \pm 2\sqrt{5}$.'
-          - problem: 'A coordinate has squared distance $8$ from $2$ on a number line. Find all such coordinates in exact radical form.'
-            answer: "x = 2 + 2*sqrt(2) or x = 2 - 2*sqrt(2)"
-            answer_contract: {kind: exact}
-            solution_sketch: '$x - 2 = \pm\sqrt{8} = \pm 2\sqrt{2}$.'
+          - problem: 'Solve $x^2 = 12$ exactly.'
+            answer: '-2*sqrt(3), 2*sqrt(3)'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Take both square roots: $x = \pm\sqrt{12}$. Since $12 = 4 \cdot 3$, this simplifies to $x = \pm 2\sqrt{3}$.'
+          - problem: 'Solve $(x + 1)^2 = 5$ exactly.'
+            answer: '-1 + sqrt(5), -1 - sqrt(5)'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Take both square roots: $x + 1 = \pm\sqrt{5}$. Subtracting $1$ gives $x = -1 + \sqrt{5}$ or $x = -1 - \sqrt{5}$.'
+          - problem: 'A square plot has an area of $50$ m$^2$. How many metres long is each side, to one decimal place?'
+            answer: '7.1'
+            answer_contract: {"kind":"approx","decimals":1}
+            solution_sketch: 'The side satisfies $s^2 = 50$, and only the positive root is a length. So $s = \sqrt{50} = 5\sqrt{2} \approx 7.07$, which is $7.1$ m to one decimal place.'
+          - problem: 'Kim solves $x^2 = 20$ and writes $x = \pm 10$. What are the correct solutions?'
+            answer: '-2*sqrt(5), 2*sqrt(5)'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Kim halved $20$ instead of taking its square root. The solutions are $x = \pm\sqrt{20} = \pm 2\sqrt{5}$.'
+          - problem: 'A stone is dropped from a cliff $60$ m above the sea. After $t$ seconds it has fallen $5t^2$ metres. How many seconds does it take to reach the sea, to one decimal place?'
+            answer: '3.5'
+            answer_contract: {"kind":"approx","decimals":1}
+            solution_sketch: 'The stone reaches the sea when $5t^2 = 60$, so $t^2 = 12$. Time is positive, so $t = 2\sqrt{3} \approx 3.46$, which is $3.5$ seconds to one decimal place.'
+          - problem: 'Solve $(x - 2)^2 = 8$ exactly.'
+            answer: '2 + 2*sqrt(2), 2 - 2*sqrt(2)'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Take both square roots: $x - 2 = \pm\sqrt{8} = \pm 2\sqrt{2}$. Adding $2$ gives $x = 2 \pm 2\sqrt{2}$.'
+          - problem: 'Solve $2x^2 - 36 = 0$ exactly.'
+            answer: '-3*sqrt(2), 3*sqrt(2)'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Add $36$ and divide by $2$: $x^2 = 18$. Since $18 = 9 \cdot 2$, the solutions are $x = \pm 3\sqrt{2}$.'
+          - problem: 'A circular pond has an area of $40\pi$ m$^2$. Find its exact radius.'
+            answer: '2*sqrt(10)'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The area gives $\pi r^2 = 40\pi$, so $r^2 = 40$. A radius is positive, so $r = \sqrt{40} = 2\sqrt{10}$ m.'
         constraints: "simplify the radical; exact form, no decimals"
     diagnostic_exemplar:
       problem: 'Solve $(x + 3)^2 = 7$. Give exact answers.'
@@ -3059,64 +3294,148 @@ topics:
         name: Complete the square on x^2 + bx
         key_prerequisites: [perfect-square-trinomials]
         constraints: "add (b/2)^2 to form a perfect-square trinomial"
+        try_first:
+          problem: 'What number must be added to $x^2 + 6x$ so that the sum equals $(x + 3)^2$?'
+          answer_contract: {"kind":"exact"}
+          answer: '9'
+          reveal: 'Expanding gives $(x + 3)^2 = x^2 + 6x + 9$, so the missing piece is $3^2 = 9$: half of $6$, squared. Completing the square always adds the square of half the $x$-coefficient.'
+        step_check:
+          step: 'The signed half-coefficient is $h=20/2=10$'
+          question: 'Why is the added constant the square of $20/2$?'
+          options:
+            - 'The constant is always $b^2$, here $400$'
+            - '$(x+10)^2=x^2+20x+100$, so the middle term is $2\cdot10x$'
+            - 'The constant is always $b/2$, here $10$'
+          answer: '$(x+10)^2=x^2+20x+100$, so the middle term is $2\cdot10x$'
+          why: 'In $(x+h)^2=x^2+2hx+h^2$ the $x$-coefficient is $2h$, so $h=10$ and the constant is $h^2=100$.'
         exemplars:
-          - problem: 'What constant completes the square for $x^2 + 8x$? Write it as a perfect square.'
-            answer: "constant = 16; perfect_square = (x + 4)^2"
-            answer_contract: {kind: multipart, parts: [{name: constant, contract: {kind: exact}}, {name: perfect_square, contract: {kind: exact}}]}
-            solution_sketch: '$(8/2)^2 = 16$.'
-          - problem: 'An area layout contains $x^2$ with two signed strips totalling $-6x$. State the missing corner constant and the completed squared binomial.'
-            answer: "constant = 9; perfect_square = (x - 3)^2"
-            answer_contract: {kind: multipart, parts: [{name: constant, contract: {kind: exact}}, {name: perfect_square, contract: {kind: exact}}]}
-            solution_sketch: '$(-6/2)^2 = 9$.'
-          - problem: 'A learner adds $10$ to $x^2+10x$ and claims a perfect square. Give the correct added constant and squared-binomial form.'
-            answer: "constant = 25; perfect_square = (x + 5)^2"
-            answer_contract: {kind: multipart, parts: [{name: constant, contract: {kind: exact}}, {name: perfect_square, contract: {kind: exact}}]}
-            solution_sketch: '$(10/2)^2 = 25$.'
-          - problem: 'Fill the missing constant in $x^2-4x+\square$ so that it is a perfect square. Report both the constant and the squared binomial.'
-            answer: "constant = 4; perfect_square = (x - 2)^2"
-            answer_contract: {kind: multipart, parts: [{name: constant, contract: {kind: exact}}, {name: perfect_square, contract: {kind: exact}}]}
-            solution_sketch: '$(-4/2)^2 = 4$.'
+          - problem: 'What number must be added to $x^2 + 8x$ to make a perfect square trinomial?'
+            answer: '16'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Half of $8$ is $4$, and $4^2 = 16$. Then $x^2 + 8x + 16 = (x + 4)^2$.'
+          - problem: 'Find $c$ so that $x^2 - 6x + c$ is a perfect square trinomial.'
+            answer: '9'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Half of $-6$ is $-3$, and $(-3)^2 = 9$. Then $x^2 - 6x + 9 = (x - 3)^2$.'
+          - problem: 'A garden bed is a square $x$ m by $x$ m, with a strip $x$ m long and $3$ m wide along each of two adjacent sides. What area must a corner piece have to complete a larger square?'
+            answer: '9'
+            answer_contract: {"kind":"unit","quantity":"area","unit":"m^2","allow_omitted":true}
+            solution_sketch: 'The bed and strips cover $x^2 + 6x$ square metres and leave a $3$ m by $3$ m gap in the corner. Filling it with $9$ m$^2$ makes a square of side $x + 3$.'
+          - problem: 'Ben adds $10$ to $x^2 + 10x$ to complete the square. What should he have added?'
+            answer: '25'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Ben added $b$ instead of $(b/2)^2$. Half of $10$ is $5$ and $5^2 = 25$, so $x^2 + 10x + 25 = (x + 5)^2$.'
+          - problem: 'A rectangle measures $x$ cm by $(x + 12)$ cm. Its pieces are rearranged into a square of side $(x + 6)$ cm with one corner missing. What is the area of the missing corner?'
+            answer: '36'
+            answer_contract: {"kind":"unit","quantity":"area","unit":"cm^2","allow_omitted":true}
+            solution_sketch: 'The rectangle has area $x^2 + 12x$, and the full square has area $(x + 6)^2 = x^2 + 12x + 36$. The missing corner is a $6$ cm by $6$ cm square of area $36$ cm$^2$.'
+          - problem: 'What number must be added to $x^2 + 5x$ to make a perfect square trinomial?'
+            answer: '25/4'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Half of $5$ is $5/2$, and $(5/2)^2 = 25/4$. Then $x^2 + 5x + 25/4 = (x + 5/2)^2$.'
+          - problem: 'Write $x^2 + 6x + 2$ in the form $(x + p)^2 + q$. What is $q$?'
+            answer: '-7'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Add and subtract $9$: $x^2 + 6x + 9 - 9 + 2 = (x + 3)^2 - 7$. So $q = -7$.'
+          - problem: 'Find $c$ so that $x^2 - 18x + c$ is a perfect square trinomial.'
+            answer: '81'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Half of $-18$ is $-9$, and $(-9)^2 = 81$. Then $x^2 - 18x + 81 = (x - 9)^2$.'
       - id: kp2
         name: Solve a quadratic by completing the square (rational roots)
         key_prerequisites: [square-root-property]
+        step_check:
+          step: 'Add $(10/2)^2=25$ to both sides'
+          question: 'Why add $25$ to both sides and not only to the left side?'
+          options:
+            - 'The $25$ is needed only on the left to make the square'
+            - 'The right side must stay $24$ because it is the constant'
+            - 'Adding to one side only would change the solutions'
+          answer: 'Adding to one side only would change the solutions'
+          why: 'An equation stays true only when both sides change by the same amount; $(x+5)^2=24$ would give roots that do not satisfy $x^2+10x-24=0$.'
         exemplars:
           - problem: 'Solve $x^2 + 6x + 5 = 0$ by completing the square.'
-            answer: "x = -1 or x = -5"
-            answer_contract: {kind: exact}
-            solution_sketch: '$x^2 + 6x = -5$; add $9$: $(x+3)^2 = 4$; $x + 3 = \pm 2$.'
-          - problem: 'Find the horizontal-axis crossing values of $y=x^2-4x-12$ by completing the square.'
-            answer: "x = 6 or x = -2"
-            answer_contract: {kind: exact}
-            solution_sketch: '$x^2 - 4x = 12$; add $4$: $(x-2)^2 = 16$; $x - 2 = \pm 4$.'
-          - problem: 'A learner changes $x^2+8x+7=0$ into $(x+4)^2=-7$. Repair the square-completion step and give all roots.'
-            answer: "x = -1 or x = -7"
-            answer_contract: {kind: exact}
-            solution_sketch: 'Move $7$, then add $16$ to both sides: $(x+4)^2=9$. Thus $x=-4\pm3$, giving $-1,-7$.'
-          - problem: 'A monic quadratic has coefficient row $(1,-10,16)$. Set it equal to zero and solve by completing the square.'
-            answer: "x = 8 or x = 2"
-            answer_contract: {kind: exact}
-            solution_sketch: '$x^2 - 10x = -16$; add $25$: $(x-5)^2 = 9$; $x - 5 = \pm 3$.'
+            answer: '-5, -1'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Move the constant: $x^2 + 6x = -5$. Add $9$ to both sides: $(x + 3)^2 = 4$, so $x + 3 = \pm 2$ and $x = -1$ or $x = -5$.'
+          - problem: 'Solve $x^2 - 4x - 12 = 0$ by completing the square.'
+            answer: '-2, 6'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Move the constant: $x^2 - 4x = 12$. Add $4$ to both sides: $(x - 2)^2 = 16$, so $x - 2 = \pm 4$ and $x = 6$ or $x = -2$.'
+          - problem: 'A rectangular garden is $10$ m longer than it is wide, and its area is $56$ m$^2$. Complete the square to find its width.'
+            answer: '4'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"m","allow_omitted":true}
+            solution_sketch: 'With width $w$, the area gives $w^2 + 10w = 56$. Adding $25$ gives $(w + 5)^2 = 81$, so $w + 5 = 9$ and the width is $4$ m; the root $w = -14$ is not a length.'
+          - problem: 'Tia rewrites $x^2 + 8x + 7 = 0$ as $(x + 4)^2 = -7$. Solve the equation correctly.'
+            answer: '-7, -1'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Tia forgot to add $16$ to the right side. Correctly, $x^2 + 8x = -7$ becomes $(x + 4)^2 = 9$, so $x = -4 \pm 3$, giving $-1$ and $-7$.'
+          - problem: 'A rocket is launched upward. Its height in metres after $t$ seconds is $h = 40t - 5t^2$. At what time is it $60$ m high on the way down?'
+            answer: '6'
+            answer_contract: {"kind":"unit","quantity":"time","unit":"s","allow_omitted":true}
+            solution_sketch: 'Set $40t - 5t^2 = 60$ and divide by $-5$: $t^2 - 8t = -12$. Adding $16$ gives $(t - 4)^2 = 4$, so $t = 2$ going up or $t = 6$ coming down.'
+          - problem: 'Solve $x^2 - 10x + 16 = 0$ by completing the square.'
+            answer: '2, 8'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Move the constant: $x^2 - 10x = -16$. Add $25$ to both sides: $(x - 5)^2 = 9$, so $x - 5 = \pm 3$ and $x = 8$ or $x = 2$.'
+          - problem: 'Solve $x^2 + 2x = 24$ by completing the square.'
+            answer: '-6, 4'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Add $1$ to both sides: $(x + 1)^2 = 25$. Then $x + 1 = \pm 5$, so $x = 4$ or $x = -6$.'
+          - problem: 'Solve $x^2 - 12x + 27 = 0$ by completing the square.'
+            answer: '3, 9'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Move the constant: $x^2 - 12x = -27$. Add $36$ to both sides: $(x - 6)^2 = 9$, so $x - 6 = \pm 3$ and $x = 9$ or $x = 3$.'
         constraints: 'monic with even b; the completed square leaves a perfect square, so roots are rational'
       - id: kp3
         name: Irrational roots requiring a radical
         key_prerequisites: [simplifying-radicals, square-root-property]
+        step_check:
+          step: 'Take both roots and subtract $4$'
+          question: 'Why are the roots left as $-4\pm\sqrt{19}$?'
+          options:
+            - 'Only the positive root counts, so $x=-4+\sqrt{19}$'
+            - 'Split $\sqrt{19}$ as $\sqrt{16}+\sqrt3=4+\sqrt3$'
+            - '$19$ is not a perfect square and has no square factor'
+          answer: '$19$ is not a perfect square and has no square factor'
+          why: '$\sqrt{19}$ cannot be simplified, and both signs solve $(x+4)^2=19$, so the exact roots keep the radical.'
         exemplars:
           - problem: 'Solve $x^2 + 2x - 4 = 0$ by completing the square.'
-            answer: "x = -1 + √5 or x = -1 - √5"
-            answer_contract: {kind: exact}
-            solution_sketch: '$(x+1)^2 = 5$; $x = -1 \pm \sqrt{5}$.'
-          - problem: 'Find the horizontal-axis crossing values of $y=x^2-8x+5$ by completing the square. Keep exact radicals.'
-            answer: "x = 4 + √11 or x = 4 - √11"
-            answer_contract: {kind: exact}
-            solution_sketch: '$(x-4)^2 = 11$.'
-          - problem: 'A learner rewrites $x^2+4x-1=0$ as $(x+2)^2=1$. Correct the completed square and give both exact roots.'
-            answer: "x = -2 + sqrt(5) or x = -2 - sqrt(5)"
-            answer_contract: {kind: exact}
-            solution_sketch: '$(x+2)^2 = 5$; $x = -2 \pm \sqrt{5}$.'
-          - problem: 'A monic quadratic''s coefficient row is $(1,-2,-6)$. Set it equal to zero and complete the square to find both exact roots.'
-            answer: "x = 1 + sqrt(7) or x = 1 - sqrt(7)"
-            answer_contract: {kind: exact}
-            solution_sketch: '$(x-1)^2 = 7$; $x = 1 \pm \sqrt{7}$.'
+            answer: '-1 + sqrt(5), -1 - sqrt(5)'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Move the constant and add $1$: $(x + 1)^2 = 5$. Then $x + 1 = \pm\sqrt{5}$, so $x = -1 \pm \sqrt{5}$.'
+          - problem: 'Solve $x^2 - 8x + 5 = 0$ by completing the square.'
+            answer: '4 + sqrt(11), 4 - sqrt(11)'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Move the constant and add $16$: $(x - 4)^2 = 11$. Then $x - 4 = \pm\sqrt{11}$, so $x = 4 \pm \sqrt{11}$.'
+          - problem: 'Leo rewrites $x^2 + 4x - 1 = 0$ as $(x + 2)^2 = 1$. Solve the equation correctly.'
+            answer: '-2 + sqrt(5), -2 - sqrt(5)'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Leo did not add $4$ to the right side. Correctly, $x^2 + 4x = 1$ becomes $(x + 2)^2 = 5$, so $x = -2 \pm \sqrt{5}$.'
+          - problem: 'A rectangular field is $6$ m longer than it is wide, and its area is $30$ m$^2$. How many metres wide is it, to one decimal place?'
+            answer: '3.2'
+            answer_contract: {"kind":"approx","decimals":1}
+            solution_sketch: 'With width $w$, the area gives $w^2 + 6w = 30$, and adding $9$ gives $(w + 3)^2 = 39$. The positive root is $w = -3 + \sqrt{39} \approx 3.24$, so the width is $3.2$ m.'
+          - problem: 'A ball is thrown upward from a height of $2$ m. Its height in metres after $t$ seconds is $h = 2 + 10t - 5t^2$. After how many seconds does it hit the ground, to one decimal place?'
+            answer: '2.2'
+            answer_contract: {"kind":"approx","decimals":1}
+            solution_sketch: 'Set $h = 0$ and divide by $-5$: $t^2 - 2t = 0.4$, so $(t - 1)^2 = 1.4$. The positive root is $t = 1 + \sqrt{1.4} \approx 2.18$, which is $2.2$ seconds.'
+          - problem: 'Solve $x^2 - 2x - 6 = 0$ by completing the square.'
+            answer: '1 + sqrt(7), 1 - sqrt(7)'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Move the constant and add $1$: $(x - 1)^2 = 7$. Then $x - 1 = \pm\sqrt{7}$, so $x = 1 \pm \sqrt{7}$.'
+          - problem: 'Solve $x^2 + 6x + 3 = 0$ by completing the square.'
+            answer: '-3 + sqrt(6), -3 - sqrt(6)'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Move the constant and add $9$: $(x + 3)^2 = 6$. Then $x + 3 = \pm\sqrt{6}$, so $x = -3 \pm \sqrt{6}$.'
+          - problem: 'Solve $x^2 + 10x + 7 = 0$ by completing the square.'
+            answer: '-5 + 3*sqrt(2), -5 - 3*sqrt(2)'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Move the constant and add $25$: $(x + 5)^2 = 18$. Since $\sqrt{18} = 3\sqrt{2}$, the solutions are $x = -5 \pm 3\sqrt{2}$.'
+          - problem: 'Solve $x^2 - 6x + 11 = 0$ by completing the square.'
+            answer: 'no real solution'
+            answer_contract: {"kind":"label","options":[["no real solution","no solution","none","no solutions","there is no solution","no real solutions","no real number"],["all real numbers","every real number","infinitely many solutions","any real number"]]}
+            solution_sketch: 'Move the constant and add $9$: $(x - 3)^2 = -2$. A real square is never negative, so there is no real solution.'
         constraints: 'monic with even b; the completed square leaves a non-square, so answers keep an exact radical'
     diagnostic_exemplar:
       problem: 'Solve $x^2 - 6x + 2 = 0$ by completing the square.'
@@ -3238,65 +3557,132 @@ topics:
       - id: kp1
         name: Identify a, b, c
         key_prerequisites: [evaluating-expressions]
+        step_check:
+          step: 'Add $3x^2$ to both sides'
+          question: 'Why move $-3x^2$ to the left before reading the coefficients?'
+          options:
+            - 'The coefficients are read from $Ax^2+Bx+C=0$, with zero on one side'
+            - 'Reading $7x-4=-3x^2$ as it stands gives $A=-3$, $B=7$, $C=-4$'
+            - 'The order of the terms decides the letters, so $A=7$ and $B=-4$'
+          answer: 'The coefficients are read from $Ax^2+Bx+C=0$, with zero on one side'
+          why: 'The equation $-3x^2+7x-4=0$ is a different equation from $7x-4=-3x^2$; only after collecting every term on one side do the coefficients describe the original equation.'
         exemplars:
-          - problem: 'For $3x^2 - 5x + 2 = 0$, state $a$, $b$, and $c$.'
-            answer: "a = 3; b = -5; c = 2"
-            answer_contract: {kind: multipart, parts: [{name: a, contract: {kind: exact}}, {name: b, contract: {kind: exact}}, {name: c, contract: {kind: exact}}]}
-            solution_sketch: 'Read the coefficients directly off the standard form $3x^2 - 5x + 2 = 0$.'
-          - problem: 'Rewrite $x^2 = 4x - 3$ in standard form and state $a$, $b$, $c$. Represent the equation as $Ax^2+Bx+C=0$ and return its coefficient tuple (A,B,C).'
-            answer: "(1, -4, 3)"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'Move every term to the left and combine like powers: $(1)x^2+(-4)x+(3)=0$. Read the signed coefficients of the quadratic term, linear term, and constant in that order.'
-          - problem: 'A coefficient table lists powers $2,1,0$ with entries $4,3,-1$. State $a,b,c$ for the quadratic formula.'
-            answer: "a = 4; b = 3; c = -1"
-            answer_contract: {kind: multipart, parts: [{name: a, contract: {kind: exact}}, {name: b, contract: {kind: exact}}, {name: c, contract: {kind: exact}}]}
-            solution_sketch: 'Read the coefficients directly off the standard form $4x^2 + 3x - 1 = 0$.'
-          - problem: 'A learner identifies $b=3$ from $x^2+5=3x$. Move all terms to the left and state the correct $a,b,c$.'
-            answer: "a = 1; b = -3; c = 5"
-            answer_contract: {kind: multipart, parts: [{name: a, contract: {kind: exact}}, {name: b, contract: {kind: exact}}, {name: c, contract: {kind: exact}}]}
-            solution_sketch: 'Move every term to one side: $x^2 - 3x + 5 = 0$.'
+          - problem: 'When $x^2 + 5 = 3x$ is written as $ax^2 + bx + c = 0$ with $a = 1$, what is $b$?'
+            answer: '-3'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Subtract $3x$ from both sides: $x^2 - 3x + 5 = 0$. The coefficient of $x$ is $b = -3$, with the sign it carries on the left.'
+          - problem: 'For the equation $2x^2 - 7x + 3 = 0$, evaluate $b^2 - 4ac$.'
+            answer: '25'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Here $a = 2$, $b = -7$ and $c = 3$. Then $b^2 - 4ac = 49 - 24 = 25$.'
+          - problem: 'A rectangle is $3$ m longer than it is wide and has an area of $40$ m$^2$. Its width $w$ satisfies an equation of the form $w^2 + bw + c = 0$. What is $c$?'
+            answer: '-40'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The area gives $w(w + 3) = 40$, so $w^2 + 3w - 40 = 0$. The constant term is $c = -40$.'
+          - problem: 'Noah reads $c = 6$ from $x^2 + 4x = 6$. What is the correct value of $c$ when the equation is written as $ax^2 + bx + c = 0$ with $a = 1$?'
+            answer: '-6'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The right side must be zero first: subtract $6$ to get $x^2 + 4x - 6 = 0$. So $c = -6$, not $6$.'
+          - problem: 'A ball''s height in metres after $t$ seconds is $h = 1 + 12t - 5t^2$. To find when it is $8$ m high, the equation is written as $5t^2 + bt + c = 0$. What is $b$?'
+            answer: '-12'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Set $1 + 12t - 5t^2 = 8$ and move every term to the side of $5t^2$: $5t^2 - 12t + 7 = 0$. So $b = -12$.'
+          - problem: 'Write $4x^2 = 9 - x$ as $ax^2 + bx + c = 0$ with $a = 4$, and evaluate $b^2 - 4ac$.'
+            answer: '145'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Moving the terms gives $4x^2 + x - 9 = 0$, so $a = 4$, $b = 1$ and $c = -9$. Then $b^2 - 4ac = 1 + 144 = 145$.'
+          - problem: 'In the equation $5x^2 - 2x = 0$, what is the value of $c$?'
+            answer: '0'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The equation has no constant term, so it reads $5x^2 - 2x + 0 = 0$. A missing term has coefficient $0$, so $c = 0$.'
+          - problem: 'Write $3x^2 = 12$ as $ax^2 + bx + c = 0$ with $a = 3$, and evaluate $b^2 - 4ac$.'
+            answer: '144'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Subtracting $12$ gives $3x^2 + 0x - 12 = 0$, so $b = 0$ and $c = -12$. Then $b^2 - 4ac = 0 - 4(3)(-12) = 144$.'
         constraints: "include rearrangement into standard form; signs matter"
       - id: kp2
         name: Rational roots from the formula
         key_prerequisites: [evaluating-expressions, square-roots]
+        step_check:
+          step: '$b^2 - 4ac = 9 - 4(2)(-5) = 9 + 40 = 49$'
+          question: 'Why does $-4ac$ become $+40$ here?'
+          options:
+            - 'The term $-4ac$ is always added, whatever the signs'
+            - 'The discriminant is always made positive'
+            - 'Since $c=-5$, the product $-4(2)(-5)$ is $+40$'
+          answer: 'Since $c=-5$, the product $-4(2)(-5)$ is $+40$'
+          why: 'The two minus signs cancel; with $c=5$ instead, $-4(2)(5)=-40$ would be subtracted.'
         exemplars:
           - problem: 'Solve $x^2 + 5x + 6 = 0$ using the quadratic formula.'
-            answer: "x = -2 or x = -3"
-            answer_contract: {kind: exact}
-            solution_sketch: '$a = 1$, $b = 5$, $c = 6$; disc $= 1$; $x = \frac{-5 \pm 1}{2}$.'
-          - problem: 'Find the horizontal-axis crossing values of $y=2x^2-7x+3$ using the quadratic formula.'
-            answer: "x = 3 or x = 1/2"
-            answer_contract: {kind: exact}
-            solution_sketch: 'disc $= 25$; $x = \frac{7 \pm 5}{4}$.'
-          - problem: 'A learner uses $-2$ in place of $-b$ for $x^2-2x-8=0$. Correct the formula substitution and give both roots.'
-            answer: "x = 4 or x = -2"
-            answer_contract: {kind: exact}
-            solution_sketch: 'disc $= 4 + 32 = 36$; $x = \frac{2 \pm 6}{2}$.'
-          - problem: 'A quadratic has coefficient row $(3,-5,2)$. Set it equal to zero and find both roots using the quadratic formula.'
-            answer: "x = 1 or x = 2/3"
-            answer_contract: {kind: exact}
-            solution_sketch: 'disc $= 25 - 24 = 1$; $x = \frac{5 \pm 1}{6}$.'
+            answer: '-3, -2'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'With $a = 1$, $b = 5$, $c = 6$, the discriminant is $25 - 24 = 1$. So $x = \frac{-5 \pm 1}{2}$, giving $x = -2$ or $x = -3$.'
+          - problem: 'Solve $2x^2 - 7x + 3 = 0$ using the quadratic formula.'
+            answer: '1/2, 3'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The discriminant is $49 - 24 = 25$, so $x = \frac{7 \pm 5}{4}$. The roots are $12/4 = 3$ and $2/4 = 1/2$.'
+          - problem: 'A rectangular poster is $2$ cm taller than it is wide and has an area of $120$ cm$^2$. Use the quadratic formula to find its width.'
+            answer: '10'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"cm","allow_omitted":true}
+            solution_sketch: 'The area gives $w^2 + 2w - 120 = 0$, with discriminant $4 + 480 = 484 = 22^2$. So $w = \frac{-2 \pm 22}{2}$, and the positive root gives a width of $10$ cm.'
+          - problem: 'Eli solves $x^2 - 2x - 8 = 0$ with the quadratic formula but uses $-2$ for $-b$, getting $x = 2$ or $x = -4$. What are the correct solutions?'
+            answer: '-2, 4'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Since $b = -2$, the value of $-b$ is $2$. The discriminant is $4 + 32 = 36$, so $x = \frac{2 \pm 6}{2}$, giving $4$ and $-2$.'
+          - problem: 'A ball is thrown upward from a platform $3$ m high. Its height in metres after $t$ seconds is $h = 3 + 14t - 5t^2$. When does it hit the ground?'
+            answer: '3'
+            answer_contract: {"kind":"unit","quantity":"time","unit":"s","allow_omitted":true}
+            solution_sketch: 'Setting $h = 0$ gives $5t^2 - 14t - 3 = 0$, with discriminant $196 + 60 = 256$. So $t = \frac{14 \pm 16}{10}$, and rejecting the negative time leaves $3$ seconds.'
+          - problem: 'Solve $x^2 - 6x - 16 = 0$ using the quadratic formula.'
+            answer: '-2, 8'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The discriminant is $36 + 64 = 100$, so $x = \frac{6 \pm 10}{2}$. The roots are $8$ and $-2$.'
+          - problem: 'Solve $x^2 = 4x + 21$ using the quadratic formula.'
+            answer: '-3, 7'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Rearrange to $x^2 - 4x - 21 = 0$; the discriminant is $16 + 84 = 100$. So $x = \frac{4 \pm 10}{2}$, giving $7$ and $-3$.'
         constraints: "perfect-square discriminant"
       - id: kp3
         name: Perfect-square discriminants with a > 1
         key_prerequisites: [evaluating-expressions, square-roots]
+        step_check:
+          step: 'The formula gives $x=(-3\pm13)/20$'
+          question: 'Why is the denominator $20$ for both roots?'
+          options:
+            - 'Only the $\pm13$ part is divided, by $2a=20$'
+            - 'The whole numerator $-3\pm13$ is divided by $2a=20$'
+            - 'The denominator is $a+b+c$ doubled'
+          answer: 'The whole numerator $-3\pm13$ is divided by $2a=20$'
+          why: 'In $x=\frac{-b\pm\sqrt D}{2a}$ the fraction bar covers $-b$ and $\pm\sqrt D$ together, so both roots share the denominator $2\cdot10=20$.'
         exemplars:
           - problem: 'Solve $6x^2 + x - 2 = 0$ using the quadratic formula.'
-            answer: "x = 1/2 or x = -2/3"
-            answer_contract: {kind: exact}
-            solution_sketch: 'disc $= 1 + 48 = 49$; $x = \frac{-1 \pm 7}{12}$.'
-          - problem: 'Find the horizontal-axis crossing values of $y=4x^2-4x-3$ using the quadratic formula; reduce both fractions.'
-            answer: "x = 3/2 or x = -1/2"
-            answer_contract: {kind: exact}
-            solution_sketch: 'disc $= 16 + 48 = 64$; $x = \frac{4 \pm 8}{8}$.'
-          - problem: 'A learner uses denominator $4$ in the formula for $4x^2+11x-3=0$. Correct the denominator and solve with reduced fractions.'
-            answer: "x = 1/4 or x = -3"
-            answer_contract: {kind: exact}
-            solution_sketch: 'disc $= 121 + 48 = 169$; $x = \frac{-11 \pm 13}{8}$.'
-          - problem: 'A quadratic has coefficient row $(9,-6,-8)$. Set it equal to zero and use the quadratic formula, reducing both roots fully.'
-            answer: "x = 4/3 or x = -2/3"
-            answer_contract: {kind: exact}
-            solution_sketch: 'disc $= 36 + 288 = 324$; $x = \frac{6 \pm 18}{18}$.'
+            answer: '-2/3, 1/2'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The discriminant is $1 + 48 = 49$, so $x = \frac{-1 \pm 7}{12}$. The roots reduce to $6/12 = 1/2$ and $-8/12 = -2/3$.'
+          - problem: 'Solve $4x^2 - 4x - 3 = 0$ using the quadratic formula.'
+            answer: '-1/2, 3/2'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The discriminant is $16 + 48 = 64$, so $x = \frac{4 \pm 8}{8}$. The roots reduce to $12/8 = 3/2$ and $-4/8 = -1/2$.'
+          - problem: 'A stone is thrown upward from a ledge $2$ m high. Its height in metres after $t$ seconds is $h = 2 + 9t - 5t^2$. When does it hit the ground?'
+            answer: '2'
+            answer_contract: {"kind":"unit","quantity":"time","unit":"s","allow_omitted":true}
+            solution_sketch: 'Setting $h = 0$ gives $5t^2 - 9t - 2 = 0$, with discriminant $81 + 40 = 121$. So $t = \frac{9 \pm 11}{10}$, and rejecting $t = -1/5$ leaves $2$ seconds.'
+          - problem: 'Zara solves $4x^2 + 11x - 3 = 0$ with the quadratic formula but divides by $4$ instead of $2a$. What are the correct solutions?'
+            answer: '-3, 1/4'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The discriminant is $121 + 48 = 169$, and the denominator is $2a = 8$. So $x = \frac{-11 \pm 13}{8}$, giving $1/4$ and $-3$.'
+          - problem: 'A rectangle''s length is $3$ cm more than twice its width, and its area is $35$ cm$^2$. Find its width.'
+            answer: '3.5'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"cm","allow_omitted":true}
+            solution_sketch: 'The area gives $w(2w + 3) = 35$, so $2w^2 + 3w - 35 = 0$ with discriminant $9 + 280 = 289$. Then $w = \frac{-3 \pm 17}{4}$, and the positive root is $3.5$ cm.'
+          - problem: 'Solve $9x^2 - 6x - 8 = 0$ using the quadratic formula.'
+            answer: '-2/3, 4/3'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The discriminant is $36 + 288 = 324$, so $x = \frac{6 \pm 18}{18}$. The roots reduce to $24/18 = 4/3$ and $-12/18 = -2/3$.'
+          - problem: 'Solve $10x^2 - x - 3 = 0$ using the quadratic formula.'
+            answer: '-1/2, 3/5'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The discriminant is $1 + 120 = 121$, so $x = \frac{1 \pm 11}{20}$. The roots reduce to $12/20 = 3/5$ and $-10/20 = -1/2$.'
         constraints: "fractional roots reduce to lowest terms"
     diagnostic_exemplar:
       problem: 'Solve $3x^2 + 7x + 2 = 0$ using the quadratic formula.'
@@ -3330,65 +3716,132 @@ topics:
       - id: kp1
         name: Irrational roots that need a simplified radical
         key_prerequisites: [simplifying-radicals, applying-the-quadratic-formula]
+        step_check:
+          step: 'Simplify $\sqrt{24}=2\sqrt6$'
+          question: 'Why is $\sqrt{24}$ rewritten as $2\sqrt6$?'
+          options:
+            - 'Since $24=2\cdot12$, so $\sqrt{24}=2\sqrt{12}$'
+            - 'Since $\sqrt{24}=\sqrt{20}+\sqrt4$'
+            - 'Since $24=4\cdot6$ and $\sqrt4=2$'
+          answer: 'Since $24=4\cdot6$ and $\sqrt4=2$'
+          why: 'Check: $(2\sqrt6)^2=4\cdot6=24$; pulling out the square factor gives a $2$ that cancels with the denominator $2a=2$.'
         exemplars:
           - problem: 'Solve $x^2 - 4x + 1 = 0$ using the quadratic formula.'
-            answer: "x = 2 + √3 or x = 2 - √3"
-            answer_contract: {kind: exact}
-            solution_sketch: 'disc $= 12$; $\sqrt{12} = 2\sqrt{3}$; $x = \frac{4 \pm 2\sqrt{3}}{2} = 2 \pm \sqrt{3}$.'
-          - problem: 'Find the horizontal-axis crossing values of $y=x^2+6x+4$ with the quadratic formula. Simplify the discriminant''s radical.'
-            answer: "x = -3 + √5 or x = -3 - √5"
-            answer_contract: {kind: exact}
-            solution_sketch: 'disc $= 20$; $\sqrt{20} = 2\sqrt{5}$; $x = \frac{-6 \pm 2\sqrt{5}}{2} = -3 \pm \sqrt{5}$.'
-          - problem: 'A learner obtains $(2\pm\sqrt{12})/2$ from $x^2-2x-2=0$. Finish simplifying and give both roots separately.'
-            answer: "x = 1 + sqrt(3) or x = 1 - sqrt(3)"
-            answer_contract: {kind: exact}
-            solution_sketch: 'disc $= 4 + 8 = 12$; $\sqrt{12} = 2\sqrt{3}$; $x = \frac{2 \pm 2\sqrt{3}}{2} = 1 \pm \sqrt{3}$.'
-          - problem: 'A quadratic has coefficient row $(1,8,13)$. Set it equal to zero, use the quadratic formula, and simplify the radical and fraction.'
-            answer: "x = -4 + sqrt(3) or x = -4 - sqrt(3)"
-            answer_contract: {kind: exact}
-            solution_sketch: 'disc $= 64 - 52 = 12$; $\sqrt{12} = 2\sqrt{3}$; $x = \frac{-8 \pm 2\sqrt{3}}{2} = -4 \pm \sqrt{3}$.'
+            answer: '2 + sqrt(3), 2 - sqrt(3)'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The discriminant is $16 - 4 = 12$ and $\sqrt{12} = 2\sqrt{3}$. So $x = \frac{4 \pm 2\sqrt{3}}{2} = 2 \pm \sqrt{3}$.'
+          - problem: 'Solve $x^2 + 6x + 4 = 0$ using the quadratic formula.'
+            answer: '-3 + sqrt(5), -3 - sqrt(5)'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The discriminant is $36 - 16 = 20$ and $\sqrt{20} = 2\sqrt{5}$. So $x = \frac{-6 \pm 2\sqrt{5}}{2} = -3 \pm \sqrt{5}$.'
+          - problem: 'A rectangle is $4$ m longer than it is wide and has an area of $20$ m$^2$. How many metres wide is it, to one decimal place?'
+            answer: '2.9'
+            answer_contract: {"kind":"approx","decimals":1}
+            solution_sketch: 'The area gives $w^2 + 4w - 20 = 0$, with discriminant $16 + 80 = 96$ and $\sqrt{96} = 4\sqrt{6}$. The positive root is $w = -2 + 2\sqrt{6} \approx 2.90$, so the width is $2.9$ m.'
+          - problem: 'Maya solves $x^2 - 2x - 2 = 0$, reaches $x = \frac{2 \pm \sqrt{12}}{2}$, and then writes $x = 1 \pm \sqrt{12}$. What are the correct solutions?'
+            answer: '1 + sqrt(3), 1 - sqrt(3)'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Maya divided only the $2$ by $2$. Since $\sqrt{12} = 2\sqrt{3}$, the whole fraction is $\frac{2 \pm 2\sqrt{3}}{2} = 1 \pm \sqrt{3}$.'
+          - problem: 'A positive number multiplied by the number $6$ greater than it gives $11$. Find the number exactly.'
+            answer: '-3 + 2*sqrt(5)'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The condition is $x(x + 6) = 11$, so $x^2 + 6x - 11 = 0$ with discriminant $36 + 44 = 80$. Since $\sqrt{80} = 4\sqrt{5}$, the roots are $-3 \pm 2\sqrt{5}$, and only $-3 + 2\sqrt{5}$ is positive.'
+          - problem: 'Solve $x^2 + 8x + 13 = 0$ using the quadratic formula.'
+            answer: '-4 + sqrt(3), -4 - sqrt(3)'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The discriminant is $64 - 52 = 12$ and $\sqrt{12} = 2\sqrt{3}$. So $x = \frac{-8 \pm 2\sqrt{3}}{2} = -4 \pm \sqrt{3}$.'
+          - problem: 'Solve $x^2 - 10x + 7 = 0$ using the quadratic formula.'
+            answer: '5 + 3*sqrt(2), 5 - 3*sqrt(2)'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The discriminant is $100 - 28 = 72$ and $\sqrt{72} = 6\sqrt{2}$. So $x = \frac{10 \pm 6\sqrt{2}}{2} = 5 \pm 3\sqrt{2}$.'
         constraints: "discriminant has a perfect-square factor; fraction reduces fully"
       - id: kp2
         name: Radical results over a denominator
         key_prerequisites: [simplifying-radicals, applying-the-quadratic-formula]
+        step_check:
+          step: 'Divide both numerator terms and the denominator by $4$'
+          question: 'Why divide both $4$ and $8\sqrt3$ by $4$?'
+          options:
+            - 'Only $8\sqrt3$ shares a factor with $8$, so the result is $4\pm\sqrt3$'
+            - 'A fraction is reduced by dividing the whole numerator and the denominator'
+            - 'Dividing only the $4$ is enough, which gives $(1\pm8\sqrt3)/2$'
+          answer: 'A fraction is reduced by dividing the whole numerator and the denominator'
+          why: '$\frac{4\pm8\sqrt3}{8}=\frac{4(1\pm2\sqrt3)}{8}=\frac{1\pm2\sqrt3}{2}$; cancelling from only one term changes the value.'
         exemplars:
           - problem: 'Solve $2x^2 + 4x - 3 = 0$ using the quadratic formula.'
-            answer: "x = (-2 + √10)/2 or x = (-2 - √10)/2"
-            answer_contract: {kind: exact}
-            solution_sketch: 'disc $= 40$; $\frac{-4 \pm 2\sqrt{10}}{4} = \frac{-2 \pm \sqrt{10}}{2}$.'
-          - problem: 'Find the horizontal-axis crossing values of $y=3x^2-2x-2$ using the quadratic formula. Cancel the common numerator-denominator factor.'
-            answer: "x = (1 + √7)/3 or x = (1 - √7)/3"
-            answer_contract: {kind: exact}
-            solution_sketch: 'disc $= 28$; $\frac{2 \pm 2\sqrt{7}}{6} = \frac{1 \pm \sqrt{7}}{3}$.'
-          - problem: 'A learner stops at $(2\pm\sqrt{44})/4$ for $2x^2-2x-5=0$. Give both roots in fully reduced radical form.'
-            answer: "x = (1 + sqrt(11))/2 or x = (1 - sqrt(11))/2"
-            answer_contract: {kind: exact}
-            solution_sketch: 'disc $= 4 + 40 = 44$; $\frac{2 \pm 2\sqrt{11}}{4} = \frac{1 \pm \sqrt{11}}{2}$.'
-          - problem: 'A quadratic has coefficient row $(3,4,-2)$. Set it equal to zero and use the quadratic formula, reducing the final fractions.'
-            answer: "x = (-2 + sqrt(10))/3 or x = (-2 - sqrt(10))/3"
-            answer_contract: {kind: exact}
-            solution_sketch: 'disc $= 16 + 24 = 40$; $\frac{-4 \pm 2\sqrt{10}}{6} = \frac{-2 \pm \sqrt{10}}{3}$.'
+            answer: '(-2 + sqrt(10))/2, (-2 - sqrt(10))/2'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The discriminant is $16 + 24 = 40$ and $\sqrt{40} = 2\sqrt{10}$. So $x = \frac{-4 \pm 2\sqrt{10}}{4} = \frac{-2 \pm \sqrt{10}}{2}$.'
+          - problem: 'Solve $3x^2 - 2x - 2 = 0$ using the quadratic formula.'
+            answer: '(1 + sqrt(7))/3, (1 - sqrt(7))/3'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The discriminant is $4 + 24 = 28$ and $\sqrt{28} = 2\sqrt{7}$. So $x = \frac{2 \pm 2\sqrt{7}}{6} = \frac{1 \pm \sqrt{7}}{3}$.'
+          - problem: 'A ball is thrown upward from a height of $1$ m. Its height in metres after $t$ seconds is $h = 1 + 8t - 5t^2$. After how many seconds does it hit the ground, to one decimal place?'
+            answer: '1.7'
+            answer_contract: {"kind":"approx","decimals":1}
+            solution_sketch: 'Setting $h = 0$ gives $5t^2 - 8t - 1 = 0$, with discriminant $64 + 20 = 84 = 4 \cdot 21$. The positive root is $t = \frac{4 + \sqrt{21}}{5} \approx 1.72$, which is $1.7$ seconds.'
+          - problem: 'Ivy solves $2x^2 - 2x - 5 = 0$ and simplifies $\frac{2 \pm \sqrt{44}}{4}$ to $\frac{1 \pm \sqrt{44}}{2}$. What are the correct solutions?'
+            answer: '(1 + sqrt(11))/2, (1 - sqrt(11))/2'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Ivy cancelled the $2$ without simplifying $\sqrt{44} = 2\sqrt{11}$. Then $\frac{2 \pm 2\sqrt{11}}{4} = \frac{1 \pm \sqrt{11}}{2}$.'
+          - problem: 'A rectangle has width $x$ cm, length $(2x + 1)$ cm and area $4$ cm$^2$. How many centimetres wide is it, to one decimal place?'
+            answer: '1.2'
+            answer_contract: {"kind":"approx","decimals":1}
+            solution_sketch: 'The area gives $2x^2 + x - 4 = 0$, with discriminant $1 + 32 = 33$. The positive root is $x = \frac{-1 + \sqrt{33}}{4} \approx 1.19$, which is $1.2$ cm.'
+          - problem: 'Solve $3x^2 + 4x - 2 = 0$ using the quadratic formula.'
+            answer: '(-2 + sqrt(10))/3, (-2 - sqrt(10))/3'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The discriminant is $16 + 24 = 40$ and $\sqrt{40} = 2\sqrt{10}$. So $x = \frac{-4 \pm 2\sqrt{10}}{6} = \frac{-2 \pm \sqrt{10}}{3}$.'
+          - problem: 'Solve $4x^2 + 8x + 1 = 0$ using the quadratic formula.'
+            answer: '(-2 + sqrt(3))/2, (-2 - sqrt(3))/2'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The discriminant is $64 - 16 = 48$ and $\sqrt{48} = 4\sqrt{3}$. So $x = \frac{-8 \pm 4\sqrt{3}}{8} = \frac{-2 \pm \sqrt{3}}{2}$.'
         constraints: "cancel the common factor between numerator and denominator"
       - id: kp3
         name: Reduce fully and spot no-real-solution cases
         key_prerequisites: [simplifying-radicals, applying-the-quadratic-formula]
+        step_check:
+          step: 'A negative number has no real square root'
+          question: 'Why does $D=-16$ mean the equation has no real roots?'
+          options:
+            - 'Use $\sqrt{16}=4$ instead, which gives two roots'
+            - 'A negative discriminant gives one repeated root'
+            - 'No real number squares to $-16$, so $\sqrt{-16}$ is not real'
+          answer: 'No real number squares to $-16$, so $\sqrt{-16}$ is not real'
+          why: 'The formula needs $\sqrt D$; every real number squared is $0$ or more, so $\sqrt{-16}$ has no real value and neither do the roots.'
         exemplars:
           - problem: 'Solve $2x^2 + 6x + 3 = 0$ using the quadratic formula.'
-            answer: "x = (-3 + √3)/2 or x = (-3 - √3)/2"
-            answer_contract: {kind: exact}
-            solution_sketch: 'disc $= 12$; $\frac{-6 \pm 2\sqrt{3}}{4} = \frac{-3 \pm \sqrt{3}}{2}$.'
-          - problem: 'How many real solutions does $x^2 + 2x + 5 = 0$ have?'
-            answer: "0"
-            answer_contract: {kind: exact}
-            solution_sketch: 'disc $= 4 - 20 = -16 < 0$.'
-          - problem: 'A learner stops at $(-4\pm\sqrt{24})/4$ for $2x^2+4x-1=0$. Give both fully reduced exact roots.'
-            answer: "x = (-2 + sqrt(6))/2 or x = (-2 - sqrt(6))/2"
-            answer_contract: {kind: exact}
-            solution_sketch: 'disc $= 16 + 8 = 24$; $\frac{-4 \pm 2\sqrt{6}}{4} = \frac{-2 \pm \sqrt{6}}{2}$.'
-          - problem: 'A learner replaces the negative discriminant of $x^2+4x+8=0$ with its absolute value. How many real roots does the actual quadratic have?'
-            answer: "0"
-            answer_contract: {kind: exact}
-            solution_sketch: 'The discriminant is $4^2-4(1)(8)=-16$. A negative discriminant has no real square root, so the real-root count is $0$.'
+            answer: '(-3 + sqrt(3))/2, (-3 - sqrt(3))/2'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The discriminant is $36 - 24 = 12$ and $\sqrt{12} = 2\sqrt{3}$. So $x = \frac{-6 \pm 2\sqrt{3}}{4} = \frac{-3 \pm \sqrt{3}}{2}$.'
+          - problem: 'Solve $x^2 + 2x + 5 = 0$.'
+            answer: 'no real solution'
+            answer_contract: {"kind":"label","options":[["no real solution","no solution","none","no solutions","there is no solution","no real solutions","no real number"],["all real numbers","every real number","infinitely many solutions","any real number"]]}
+            solution_sketch: 'The discriminant is $4 - 20 = -16$, which is negative. No real number has a negative square, so there is no real solution.'
+          - problem: 'Omar solves $x^2 + 4x + 8 = 0$, replaces $\sqrt{-16}$ with $4$, and gets $x = 0$ or $x = -4$. How many real solutions does the equation have?'
+            answer: '0'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The discriminant is $16 - 32 = -16$, and $\sqrt{-16}$ is not a real number. Omar''s values fail: $0^2 + 4 \cdot 0 + 8 = 8$, so the equation has $0$ real solutions.'
+          - problem: 'A ball is thrown upward. Its height in metres after $t$ seconds is $h = 1 + 10t - 5t^2$. Does the ball ever reach a height of $8$ m?'
+            answer: 'no'
+            answer_contract: {"kind":"label","options":[["yes","yes it does","yes, it does","it does"],["no","no it does not","no, it does not","it does not","no it doesnt","never","it never does"]]}
+            solution_sketch: 'Setting $h = 8$ gives $5t^2 - 10t + 7 = 0$, with discriminant $100 - 140 = -40$. There is no real time at which $h = 8$, so the ball never gets that high.'
+          - problem: 'A farmer uses $20$ m of fencing for a rectangular pen with an area of $20$ m$^2$. How many metres long is the shorter side, to one decimal place?'
+            answer: '2.8'
+            answer_contract: {"kind":"approx","decimals":1}
+            solution_sketch: 'The sides add to $10$ m, so $w(10 - w) = 20$ and $w^2 - 10w + 20 = 0$, with discriminant $100 - 80 = 20$. The roots are $5 \pm \sqrt{5}$, and the shorter side is $5 - \sqrt{5} \approx 2.76$, which is $2.8$ m.'
+          - problem: 'Solve $2x^2 + 4x - 1 = 0$ using the quadratic formula.'
+            answer: '(-2 + sqrt(6))/2, (-2 - sqrt(6))/2'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The discriminant is $16 + 8 = 24$ and $\sqrt{24} = 2\sqrt{6}$. So $x = \frac{-4 \pm 2\sqrt{6}}{4} = \frac{-2 \pm \sqrt{6}}{2}$.'
+          - problem: 'How many real solutions does $4x^2 - 12x + 9 = 0$ have?'
+            answer: '1'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The discriminant is $144 - 144 = 0$. Both signs of the formula give the same value, so there is $1$ real solution, $x = 3/2$.'
+          - problem: 'Solve $9x^2 - 6x + 1 = 0$ using the quadratic formula.'
+            answer: '1/3'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The discriminant is $36 - 36 = 0$, so $x = \frac{6 \pm 0}{18}$. The single repeated root is $x = 1/3$.'
         constraints: "negative discriminant means no real roots; state it, do not invent decimals"
     diagnostic_exemplar:
       problem: 'Solve $2x^2 - 6x + 1 = 0$ using the quadratic formula.'
