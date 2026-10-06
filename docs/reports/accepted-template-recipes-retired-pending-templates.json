@@ -250,13 +250,11 @@
     "source": "docs/content-foundations/accepted-template-recipes/drafts.json",
     "previous_digest": "sha256:10a3bae75121eee29059562ab8fbe3a57563ad635104098099cd99c13940dca1",
     "current_gate": {
-      "code": "answer-contract",
-      "message": "the mixed reviewed exemplar policies require an explicit answer contract",
-      "result": "refused"
+      "result": "accepted"
     },
-    "refusal_code": "answer-contract",
-    "refusal": "the mixed reviewed exemplar policies require an explicit answer contract",
-    "retirement_reason": "the knowledge point's rewritten exemplars changed its answer contract, and the current gate refuses the template",
+    "refusal_code": null,
+    "refusal": null,
+    "retirement_reason": "the 2026-10-06 rewrite of the knowledge point's exemplars makes the current gate accept this body again; it was retired after 30f75056 and stays out of the pending set, so the row records the current verdict only",
     "superseded_by": [
       "30f75056"
     ],
@@ -366,6 +364,129 @@
       },
       "kind": "template",
       "kp_id": "radical-operations/kp2"
+    }
+  },
+  {
+    "kp_key": "polynomial-basics/kp3",
+    "source": "docs/content-foundations/accepted-template-recipes/drafts.json",
+    "previous_digest": "sha256:3c4b732ed2da942b65dc432008864f1824e9232cf4c513ac8fe851b54b3389bd",
+    "current_gate": {
+      "code": "sample-agreement",
+      "message": "answer_expr gives '1 + (-6)*x**2 + x' for {'a': -6} but the sample claims '1 + (-6)*x**2 + x' — the expression does not compute the stated answer",
+      "result": "refused"
+    },
+    "refusal_code": "sample-agreement",
+    "refusal": "answer_expr gives '1 + (-6)*x**2 + x' for {'a': -6} but the sample claims '1 + (-6)*x**2 + x' — the expression does not compute the stated answer",
+    "retirement_reason": "the knowledge point's rewritten exemplars changed its answer contract, and the current gate refuses the template",
+    "superseded_by": [
+      "uncommitted-2026-10-06-foundations-rewrite"
+    ],
+    "body": {
+      "arguments": {
+        "answer_expr": "a*x**2+x+1",
+        "constraints": [],
+        "distractors": [],
+        "hints": [
+          "Which term has the highest power of x?"
+        ],
+        "params": {
+          "a": {
+            "kind": "choice",
+            "values": [
+              -6,
+              -5,
+              -4,
+              -3,
+              -2,
+              -1,
+              1,
+              2,
+              3,
+              4,
+              5,
+              6
+            ]
+          }
+        },
+        "samples": [
+          {
+            "expected": "1 + (-6)*x**2 + x",
+            "params": {
+              "a": -6
+            }
+          },
+          {
+            "expected": "1 + (-5)*x**2 + x",
+            "params": {
+              "a": -5
+            }
+          },
+          {
+            "expected": "1 + (-4)*x**2 + x",
+            "params": {
+              "a": -4
+            }
+          },
+          {
+            "expected": "1 + (-3)*x**2 + x",
+            "params": {
+              "a": -3
+            }
+          },
+          {
+            "expected": "1 + (-2)*x**2 + x",
+            "params": {
+              "a": -2
+            }
+          },
+          {
+            "expected": "1 + (-1)*x**2 + x",
+            "params": {
+              "a": -1
+            }
+          },
+          {
+            "expected": "1 + x**2 + x",
+            "params": {
+              "a": 1
+            }
+          },
+          {
+            "expected": "1 + 2*x**2 + x",
+            "params": {
+              "a": 2
+            }
+          },
+          {
+            "expected": "1 + 3*x**2 + x",
+            "params": {
+              "a": 3
+            }
+          },
+          {
+            "expected": "1 + 4*x**2 + x",
+            "params": {
+              "a": 4
+            }
+          },
+          {
+            "expected": "1 + 5*x**2 + x",
+            "params": {
+              "a": 5
+            }
+          },
+          {
+            "expected": "1 + 6*x**2 + x",
+            "params": {
+              "a": 6
+            }
+          }
+        ],
+        "solution_sketch": "Order the quadratic, linear, and constant terms by decreasing exponent.",
+        "statement": "Write x + 1 + {a}x^2 in descending powers and give its value as an expression."
+      },
+      "kind": "template",
+      "kp_id": "polynomial-basics/kp3"
     }
   }
 ]

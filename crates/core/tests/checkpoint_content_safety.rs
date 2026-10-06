@@ -26,20 +26,25 @@ fn kp<'a>(unit: &'a Unit, topic_id: &str, kp_id: &str) -> &'a KnowledgePoint {
 #[test]
 fn standard_form_request_remains_in_the_authored_answer() {
     let unit = unit();
-    // "When x^2 + 5 = 3x is written as ax^2 + bx + c = 0 with a = 1, what is b?"
+    // "Write x^2 + 5 = 3x in the form ax^2 + bx + c = 0, and identify a, b
+    // and c." The item asks for all three coefficients now, not b alone.
     let exemplar = &kp(&unit, "applying-the-quadratic-formula", "kp1").exemplars[0];
     assert!(
-        exemplar.problem.contains("written as $ax^2 + bx + c = 0$")
-            && exemplar.problem.contains("$a = 1$"),
-        "the prompt must bind standard form and its scale to the graded coefficient"
+        exemplar.problem.contains("in the form $ax^2 + bx + c = 0$"),
+        "the prompt must ask for the standard form before the coefficients"
     );
-    assert_eq!(exemplar.answer, "-3");
-    assert_eq!(exemplar.answer_contract, Some(AnswerContract::Exact));
-    // "3" reads b off the unrearranged equation; "-6" is the coefficient of
-    // the doubled standard form, which the fixed scale a = 1 excludes.
-    for wrong in ["3", "-6"] {
+    assert_eq!(exemplar.answer, "a = 1; b = -3; c = 5");
+    let contract = exemplar.answer_contract.clone().unwrap();
+    assert!(matches!(contract, AnswerContract::Multipart { .. }));
+    assert!(matches!(
+        check_contract(&exemplar.answer, "1, -3, 5", contract.clone()),
+        Outcome::Decided(verdict) if verdict.correct
+    ));
+    // "1, 3, 5" reads b off the unrearranged equation; "2, -6, 10" is the
+    // doubled standard form, not the one the rearrangement gives.
+    for wrong in ["1, 3, 5", "2, -6, 10"] {
         assert!(matches!(
-            check_contract(&exemplar.answer, wrong, AnswerContract::Exact),
+            check_contract(&exemplar.answer, wrong, contract.clone()),
             Outcome::Decided(verdict) if !verdict.correct
         ));
     }

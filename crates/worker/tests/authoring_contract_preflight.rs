@@ -90,6 +90,7 @@ fn mixed_reviewed_scalar_policies_constrain_explicit_template_contracts() {
         quantity: cadus_core::answer::Quantity::Length,
         unit: "m".to_owned(),
         allow_omitted: true,
+        form: None,
     });
     spec.exemplars.push(measured);
     assert_eq!(spec.template_contract(), None);
@@ -99,6 +100,7 @@ fn mixed_reviewed_scalar_policies_constrain_explicit_template_contracts() {
         quantity: cadus_core::answer::Quantity::Length,
         unit: "m".to_owned(),
         allow_omitted: true,
+        form: None,
     }));
 
     let mut arguments = good_arguments();

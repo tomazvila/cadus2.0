@@ -48,7 +48,7 @@ fn historical_classification_and_all_live_statements_have_a_closed_boundary() {
     );
     assert_eq!(
         sha256_hex(serde_json::to_string(&current).unwrap().as_bytes()),
-        "71958a1bfd6131521bc17550654119660a3724861d449f2e910e24c360467dee"
+        "369fc66c6b903d74c3f942ec41ba84196eeec33eda5aa4708efd64f98cff7016"
     );
     let current_keys: BTreeSet<_> = current.iter().map(key).collect();
     assert_eq!(current_keys.len(), current.len());
@@ -66,17 +66,19 @@ fn historical_classification_and_all_live_statements_have_a_closed_boundary() {
             .validate_expected(row["answer"].as_str().unwrap())
             .unwrap();
     }
+    // 2026-10-06 (later): the units 00 to 07 content pass and the natural-answer
+    // grader move eleven live statements from `exact` to `multipart`.
     assert_eq!(
         contracts,
         BTreeMap::from([
             ("approx".to_owned(), 11),
             ("ascending_chain".to_owned(), 3),
             ("coordinates".to_owned(), 180),
-            ("exact".to_owned(), 518),
+            ("exact".to_owned(), 507),
             ("inequality_union".to_owned(), 27),
             ("label".to_owned(), 39),
             ("list".to_owned(), 14),
-            ("multipart".to_owned(), 98),
+            ("multipart".to_owned(), 109),
             ("polynomial_relation".to_owned(), 7),
             ("property".to_owned(), 1),
             ("reduced_ratio".to_owned(), 13),

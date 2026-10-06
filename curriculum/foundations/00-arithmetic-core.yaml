@@ -380,6 +380,7 @@ topics:
           options:
             - 'The tens digit always decides between two four-digit numbers'
             - 'The number whose digits add up to more is the larger one'
+            - 'The number with the larger ones digit is always the larger one'
             - 'It is the first place from the left where the numbers differ'
           answer: 'It is the first place from the left where the numbers differ'
           why: 'The thousands and hundreds digits match, and one extra ten outweighs any ones digit, so the first differing place from the left decides.'
@@ -404,9 +405,10 @@ topics:
           step: 'Compare hundreds digits'
           question: 'Why is $5{,}308$ greatest without looking at its tens or ones digits?'
           options:
+            - 'It ends in $8$, and a number ending in $8$ beats one ending in $3$'
             - 'With equal thousands, $3$ hundreds beat $0$ hundreds whatever follows'
-            - 'A number ending in $8$ is larger than one ending in $3$'
-            - 'Its digits add up to more than the digits of the other two'
+            - 'Its digits add up to more than the digits of either of the other two'
+            - 'It has the most nonzero digits, so it must be the greatest of the three'
           answer: 'With equal thousands, $3$ hundreds beat $0$ hundreds whatever follows'
           why: 'All three share $5$ thousands; $5{,}308$ has at least $300$ more after that, while the others have at most $99$, so the hundreds place settles it.'
         exemplars:
@@ -456,9 +458,10 @@ topics:
           step: '$7$ is $5$ or more, so raise the hundreds digit $3$ to $4$.'
           question: 'Why does $372$ round up to $400$ at the nearest hundred?'
           options:
-            - 'Its hundreds digit $3$ is less than $5$, so it goes up'
             - 'Its tens digit $7$ puts it past the halfway point $350$'
-            - 'Rounding to the nearest hundred always rounds up'
+            - 'Its hundreds digit $3$ is less than $5$, so it goes up'
+            - 'Rounding to the nearest hundred always rounds the number up'
+            - 'Its hundreds digit $3$ is odd, and odd digits always round up'
           answer: 'Its tens digit $7$ puts it past the halfway point $350$'
           why: '$372$ lies between $300$ and $400$, and since $372 > 350$ it is nearer to $400$; the tens digit is the digit that shows this.'
         exemplars:
@@ -487,9 +490,10 @@ topics:
           step: '$5500$ is an exact boundary case.'
           question: 'Why does $5500$ round to $6000$ at the nearest thousand?'
           options:
-            - 'It is nearer to $6000$ than to $5000$'
-            - 'Its hundreds digit $5$ is odd, so it rounds up'
+            - 'It is nearer to $6000$ than to $5000$, so it rounds up'
+            - 'Its hundreds digit $5$ is odd, so the thousands digit goes up'
             - 'A number exactly halfway between rounds up by convention'
+            - 'Its thousands digit $5$ is $5$ or more, so it rounds up to $6000$'
           answer: 'A number exactly halfway between rounds up by convention'
           why: '$5500$ is $500$ from both $5000$ and $6000$, so distance cannot decide; the rounding rule sends an exact halfway value up.'
         exemplars:
@@ -1827,9 +1831,10 @@ topics:
           step: 'Test $530$'
           question: 'Step 3 says both $2$ and $5$ divide $530$. Which fact justifies that?'
           options:
+            - 'Its digit sum $5+3+0=8$ is even, and an even sum passes both'
+            - 'Its first digit is $5$, so $5$ divides it, and $530$ has a zero'
+            - 'It has a $5$ among its digits, and its digit sum $8$ is even'
             - 'Its ones digit is $0$, which is even and is also $0$ or $5$'
-            - 'Its digit sum $5+3+0=8$ is even'
-            - 'Its first digit is $5$'
           answer: 'Its ones digit is $0$, which is even and is also $0$ or $5$'
           why: 'Tests for $2$, $5$ and $10$ read only the ones digit, because every other place value is a multiple of $10$; digit sums are the test for $3$ and $9$.'
         exemplars:
@@ -1870,9 +1875,10 @@ topics:
           step: 'Add the digits of 633'
           question: 'Why may we test the digit sum $12$ instead of $633$ itself?'
           options:
+            - 'The ones digit is $3$, so $633$ must be a multiple of $3$ as well'
             - '$633$ and $6+3+3$ leave the same remainder when divided by $3$'
-            - 'The ones digit is $3$, so $633$ is a multiple of $3$'
-            - 'The first digit $6$ is a multiple of $3$'
+            - 'The first digit $6$ is a multiple of $3$, so the whole number is'
+            - '$12$ is a factor of $633$, so every factor of $12$ divides it too'
           answer: '$633$ and $6+3+3$ leave the same remainder when divided by $3$'
           why: '$633=6\cdot100+3\cdot10+3$, and $100=99+1$ and $10=9+1$, so $633$ and its digit sum differ by a multiple of $3$; a ones digit of $3$ proves nothing, since $13$ is not a multiple of $3$.'
         exemplars:
@@ -1908,9 +1914,10 @@ topics:
           step: 'Look at the last two digits of 736'
           question: 'Why is it enough to test only $36$ for divisibility by $4$?'
           options:
+            - 'Any number ending in an even digit is divisible by $4$ as well'
+            - 'The digit sum $7+3+6=16$ is divisible by $4$, so $736$ is too'
             - '$700$ is a multiple of $4$, so only the $36$ left over matters'
-            - 'Any number ending in an even digit is divisible by $4$'
-            - 'The digit sum $7+3+6=16$ is divisible by $4$'
+            - 'The hundreds digit $7$ is odd, so it drops out of the test for $4$'
           answer: '$700$ is a multiple of $4$, so only the $36$ left over matters'
           why: 'Every hundred is $4\times25$, so $736=700+36$ is a multiple of $4$ exactly when $36$ is; an even ones digit only guarantees $2$ ($26$ is even but not a multiple of $4$).'
         exemplars:
@@ -1980,8 +1987,9 @@ topics:
           question: 'What does $7\times7=49$ prove about $49$?'
           options:
             - '$49$ is composite: it has the factor $7$ besides $1$ and $49$'
-            - '$49$ is prime, because its factor $7$ is prime'
-            - '$49$ is prime, because it is odd'
+            - '$49$ is prime, because its only factor $7$ is itself a prime'
+            - '$49$ is prime, because it is odd and not divisible by $2$ or $5$'
+            - '$49$ is neither prime nor composite, because $7\times7$ is a square'
           answer: '$49$ is composite: it has the factor $7$ besides $1$ and $49$'
           why: 'A prime has exactly two factors, $1$ and itself; $49$ has $1$, $7$ and $49$, and neither being odd nor having a prime factor makes a number prime.'
         exemplars:
@@ -2029,10 +2037,11 @@ topics:
           step: '$7^2=49>41$'
           question: 'Why is no divisor above $5$ needed once $7^2=49$ exceeds $41$?'
           options:
-            - 'A factor of $7$ or more would need a partner below $7$, and those were all ruled out'
-            - 'Primes above $5$ never divide numbers below $50$'
-            - 'An odd number can only have factors below $7$'
-          answer: 'A factor of $7$ or more would need a partner below $7$, and those were all ruled out'
+            - 'Primes above $5$ never divide numbers below $50$, so testing can stop at $5$'
+            - 'An odd number can only have factors below $7$, so larger ones need no test'
+            - 'A factor of $7$ or more needs a partner below $7$, and those were ruled out'
+            - 'Every number above $7$ is a multiple of $2$, $3$ or $5$, and those were tested'
+          answer: 'A factor of $7$ or more needs a partner below $7$, and those were ruled out'
           why: 'Factors of $41$ come in pairs that multiply to $41$; two factors of at least $7$ would multiply to at least $49$, so one partner would already have been tested.'
         exemplars:
           - problem: 'List all the primes between $10$ and $20$.'
@@ -2069,9 +2078,10 @@ topics:
           step: '$22=2\times11$'
           question: 'Why is $22$ composite and not prime?'
           options:
+            - 'It is even, and every even number is composite, so it is too'
             - 'It has more than two positive factors: $1, 2, 11, 22$'
-            - 'It is even, and every even number is composite'
             - 'It is built from the prime $11$, so it is prime too'
+            - 'Its two digits are equal, and such numbers are always composite'
           answer: 'It has more than two positive factors: $1, 2, 11, 22$'
           why: 'Composite means more than two positive factors; evenness is not the reason, since $2$ is even and prime.'
         exemplars:
@@ -2141,6 +2151,7 @@ topics:
             - '$9$ is composite and $3$ is prime'
             - 'The larger factor is always the one to split'
             - '$9$ is odd, and odd factors must be split'
+            - 'Only square numbers such as $9$ are ever split'
           answer: '$9$ is composite and $3$ is prime'
           why: 'A prime factorization stops only when every piece is prime; $9=3\times3$ still splits, while $3$ has no factor pair to give.'
         exemplars:
@@ -2172,9 +2183,10 @@ topics:
           step: 'Collect all prime leaves'
           question: 'Why does the answer keep $2$ twice?'
           options:
-            - 'Every leaf counts: $2\times2\times19=76$, while $2\times19=38$'
-            - 'A repeated prime is optional; $2\times19$ is just as correct'
+            - 'A repeated prime is optional, so $2\times19$ is just as correct'
             - '$2$ is the smallest prime, so it is always written twice'
+            - 'A prime is written once for each level of the factor tree'
+            - 'Every leaf counts: $2\times2\times19=76$, while $2\times19=38$'
           answer: 'Every leaf counts: $2\times2\times19=76$, while $2\times19=38$'
           why: 'Multiplying all the prime leaves must rebuild the starting number, so each repeated prime stays.'
         exemplars:
@@ -2206,9 +2218,10 @@ topics:
           step: 'That is seven divisions by 2'
           question: 'How many factors of $2$ belong in the answer, and why?'
           options:
-            - 'Seven, one for each division that came out even'
             - 'Six, because the last division $2/2=1$ does not count'
+            - 'Seven, one for each division that came out even'
             - 'Eight, because $128$ itself is also a factor'
+            - 'One, because each prime is written only once in the answer'
           answer: 'Seven, one for each division that came out even'
           why: 'Each even division removes one factor of $2$, including the last one; check: $2^7=128$, while $2^6=64$.'
         exemplars:
@@ -2379,8 +2392,9 @@ topics:
           question: 'Why does the first shared entry, $77$, give the least common multiple?'
           options:
             - 'Each list is in increasing order, so no smaller number is in both lists'
-            - 'The least common multiple is always the product of the two numbers'
-            - '$77$ is the largest number in the list of multiples of $11$'
+            - 'The least common multiple is always the product, here $7\times11=77$'
+            - '$77$ is the largest entry written out in the list of multiples of $11$'
+            - 'Two lists share only one entry, so the first shared one is the only one'
           answer: 'Each list is in increasing order, so no smaller number is in both lists'
           why: 'Every common multiple appears in both lists, and increasing lists meet first at the smallest one; the product works here only because $7$ and $11$ share no factor.'
         exemplars:
@@ -2412,9 +2426,10 @@ topics:
           step: 'the least common multiple is their product'
           question: 'Why is the least common multiple of $8$ and $15$ their product, $120$?'
           options:
-            - 'Every multiple of a number is larger than the number itself'
+            - 'The product of any two numbers is always their least common multiple'
+            - '$8$ is even and $15$ is odd, so their least common multiple is the product'
+            - 'Both numbers are composite, so their least common multiple is the product'
             - 'With no shared factor, a common multiple needs all of $8$ and all of $15$'
-            - 'The product of two numbers is always their least common multiple'
           answer: 'With no shared factor, a common multiple needs all of $8$ and all of $15$'
           why: 'A multiple of $8$ needs $2^3$ and a multiple of $15$ needs $3 \times 5$; nothing overlaps, so the smallest number with both is $8 \times 15 = 120$, while for $6$ and $8$ the product $48$ is too big.'
         exemplars:
@@ -2449,6 +2464,7 @@ topics:
             - 'The largest of the three numbers is always the least common multiple'
             - '$5$ is prime, and primes can be left out of a least common multiple'
             - 'A multiple of $10$ is already a multiple of $5$, so $5$ adds nothing'
+            - 'The least common multiple of three numbers uses only the two largest'
           answer: 'A multiple of $10$ is already a multiple of $5$, so $5$ adds nothing'
           why: 'The common multiples of $5$ and $10$ are exactly the multiples of $10$, so $\text{LCM}(5, 7, 10) = \text{LCM}(10, 7) = 70$; leaving out the prime $7$ would lose a needed factor.'
         exemplars:
@@ -2510,9 +2526,10 @@ topics:
           step: 'For each shared prime, take the lower power'
           question: 'Why does the GCF use $2^2$ from $108$ and not $2^4$ from $144$?'
           options:
-            - 'The GCF always takes each prime to its higher power'
-            - '$2^4 = 16$ does not divide $108$, while $2^2 = 4$ divides both'
+            - 'The GCF always uses the square of each prime, so $2^2$ here'
             - 'Lower powers are used because the GCF is smaller than the LCM'
+            - '$2^4 = 16$ does not divide $108$, while $2^2 = 4$ divides both'
+            - 'The exponents $4$ and $2$ are subtracted, so the GCF uses $2^{4-2}$'
           answer: '$2^4 = 16$ does not divide $108$, while $2^2 = 4$ divides both'
           why: 'A common factor must divide both numbers, so it can use $2$ only as often as the number with fewer factors of $2$; $108 = 4 \times 27$ has just two.'
         exemplars:
@@ -2540,9 +2557,10 @@ topics:
           step: 'using its highest exponent'
           question: 'Why does the LCM of $14$ and $20$ use $2^2$ rather than $2^1$?'
           options:
-            - 'The LCM takes each prime to its lowest power'
-            - '$2$ appears in both numbers, so its power is doubled'
             - 'A multiple of $20$ must contain $2^2$, so $2^1$ is too few'
+            - '$2$ appears in both numbers, so its power is doubled'
+            - '$14$ has $2^1$ and $20$ has $2^2$, so the powers are multiplied'
+            - 'The LCM squares every prime that the two numbers share'
           answer: 'A multiple of $20$ must contain $2^2$, so $2^1$ is too few'
           why: '$2 \times 5 \times 7 = 70$ is not a multiple of $20$; the LCM must contain each number''s full factorization, so every prime appears with its highest exponent.'
         exemplars:
@@ -2570,9 +2588,10 @@ topics:
           step: 'is the GCF of 30 and 45, not the LCM'
           question: 'Why does the largest tile size come from the GCF of $30$ and $45$?'
           options:
-            - 'The tile side must be a multiple of both $30$ and $45$'
-            - 'The tile is square, so its side is the smaller length, $30$'
+            - 'The tile side must be a multiple of both $30$ and $45$, the LCM'
             - 'The tile side must divide both $30$ and $45$ with nothing left'
+            - 'The tile is square, so its side is the smaller length, $30$'
+            - 'The tile side is $45-30=15$, the gap between the two lengths'
           answer: 'The tile side must divide both $30$ and $45$ with nothing left'
           why: 'Whole tiles fit along a side only if the tile length divides it, and the largest length dividing both is the GCF; a common multiple would be longer than the floor.'
         exemplars:
@@ -2637,9 +2656,10 @@ topics:
           step: 'Round 187 to the nearest hundred: 200.'
           question: 'Why round each number before subtracting?'
           options:
-            - 'Rounding first gives the exact difference more quickly'
+            - 'Rounding first gives the exact difference, only more quickly'
+            - 'Rounding both numbers the same way makes the errors cancel exactly'
+            - 'An estimate must always use numbers rounded to the nearest hundred'
             - 'Round numbers subtract easily and stay close to the originals'
-            - 'Rounding both numbers makes the errors cancel exactly'
           answer: 'Round numbers subtract easily and stay close to the originals'
           why: '$500 - 200$ is mental arithmetic, and each rounded number is within $50$ of the original, so $300$ is close to the exact difference $337$.'
         exemplars:
@@ -2664,9 +2684,10 @@ topics:
           step: '720 is close to 723 and divides evenly by 9.'
           question: 'Why use $720$ instead of $700$ to estimate $723 \div 9$?'
           options:
-            - '$720$ is the nearest hundred to $723$'
-            - 'The dividend must first be rounded to the nearest ten'
+            - '$720$ is $723$ rounded to the nearest hundred'
             - '$720$ is a multiple of $9$, so the division is exact'
+            - 'The dividend must first be rounded to the nearest ten'
+            - 'Dividing by $9$ needs a dividend that ends in $0$'
           answer: '$720$ is a multiple of $9$, so the division is exact'
           why: '$700 \div 9$ does not come out evenly, but $720 = 9 \times 80$ does and is only $3$ away from $723$.'
         exemplars:
@@ -2691,10 +2712,11 @@ topics:
           step: 'Those changes need not cancel.'
           question: 'Why can the rounding alone not show whether $60 \times 20$ is too high or too low?'
           options:
-            - 'Rounding to tens always gives an underestimate'
-            - 'One factor went down and one went up, so the effects pull opposite ways'
-            - 'Rounding to tens always gives an overestimate'
-          answer: 'One factor went down and one went up, so the effects pull opposite ways'
+            - 'One factor went down and one up, so the effects pull opposite ways'
+            - 'Rounding both factors to tens always gives an underestimate'
+            - 'Rounding both factors to tens always gives an overestimate'
+            - 'Both factors were rounded to tens, so their errors cancel out exactly'
+          answer: 'One factor went down and one up, so the effects pull opposite ways'
           why: 'Lowering $63$ by $3$ and raising $19$ by $1$ change the product by different amounts, so only the exact product $1197$ settles it.'
         exemplars:
           - problem: 'Without computing exactly, is $297 + 304$ closer to $600$ or to $700$?'

@@ -112,9 +112,11 @@ fn main() {
             !templates.contains_key(&kp),
             "{kp} is both selected and retired"
         );
-        let refusal = verify_kind(Kind::Template, &specs[&kp], &row["body"]["arguments"], &[])
-            .expect_err("a retired template is still refused");
-        assert_eq!(refusal.code, row["refusal_code"], "{kp}");
+        match verify_kind(Kind::Template, &specs[&kp], &row["body"]["arguments"], &[]) {
+            Err(refusal) => assert_eq!(refusal.code, row["refusal_code"], "{kp}"),
+            // The row records that the gate accepts this body again.
+            Ok(_) => assert!(row["refusal_code"].is_null(), "{kp}"),
+        }
         assert!(
             retired.insert(kp.clone(), row.clone()).is_none(),
             "duplicate retired {kp}"

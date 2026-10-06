@@ -34,6 +34,13 @@ pub const STEP_CHECK_MIN_OPTIONS: usize = 3;
 /// The most options a step check offers.
 pub const STEP_CHECK_MAX_OPTIONS: usize = 4;
 
+/// The longest option of a step check is at most this many times the shortest,
+/// as the fraction [`STEP_CHECK_LENGTH_RATIO_NUM`] over this denominator.
+pub const STEP_CHECK_LENGTH_RATIO_DEN: usize = 5;
+
+/// The numerator of the longest-to-shortest option length bound (8 / 5 = 1.6).
+pub const STEP_CHECK_LENGTH_RATIO_NUM: usize = 8;
+
 /// Which step of the worked example a step check points at.
 ///
 /// A number is the 1-based position of the step. A string is a fragment of the
@@ -136,6 +143,46 @@ impl StepCheck {
                 self.answer, self.options
             ));
         }
+        self.validate_option_lengths()
+    }
+
+    /// Refuse a check whose option lengths give the answer away.
+    ///
+    /// A learner who guesses the longest option, or the one that stands out,
+    /// must not score: the correct option is not strictly longer than every
+    /// other option, and the longest option is at most 1.6 times the shortest.
+    fn validate_option_lengths(&self) -> Result<(), String> {
+        let lengths: Vec<usize> = self
+            .options
+            .iter()
+            .map(|option| option.trim().chars().count())
+            .collect();
+        let answer = self.answer.trim();
+        let answer_length = answer.chars().count();
+        let longest_other = self
+            .options
+            .iter()
+            .zip(&lengths)
+            .filter(|(option, _)| option.trim() != answer)
+            .map(|(_, length)| *length)
+            .max()
+            .unwrap_or(0);
+        if answer_length > longest_other {
+            return Err(format!(
+                "step_check.answer is the unique longest option ({answer_length} characters, the \
+                 next longest has {longest_other}); a learner can guess it from its length, so \
+                 trim it or lengthen a distractor"
+            ));
+        }
+        let longest = lengths.iter().copied().max().unwrap_or(0);
+        let shortest = lengths.iter().copied().min().unwrap_or(0);
+        if longest * STEP_CHECK_LENGTH_RATIO_DEN > shortest * STEP_CHECK_LENGTH_RATIO_NUM {
+            return Err(format!(
+                "step_check.options: the longest option has {longest} characters and the \
+                 shortest {shortest}; keep the longest within 1.6 times the shortest so no \
+                 option stands out"
+            ));
+        }
         Ok(())
     }
 
@@ -220,8 +267,8 @@ mod tests {
         StepCheck {
             step: StepRef::Number(2),
             question: "Which rule justifies step 2?".to_owned(),
-            options: vec!["a".to_owned(), "b".to_owned(), "c".to_owned()],
-            answer: "b".to_owned(),
+            options: vec!["aa".to_owned(), "bb".to_owned(), "cc".to_owned()],
+            answer: "bb".to_owned(),
             why: "Because.".to_owned(),
         }
     }
@@ -242,9 +289,9 @@ mod tests {
     #[test]
     fn an_answer_outside_the_options_is_refused_by_name() {
         let mut bad = check();
-        bad.answer = "d".to_owned();
+        bad.answer = "dd".to_owned();
         let message = bad.validate().unwrap_err();
-        assert!(message.contains("step_check.answer \"d\" is not one of its options"));
+        assert!(message.contains("step_check.answer \"dd\" is not one of its options"));
         assert!(check().validate().is_ok());
     }
 
@@ -258,7 +305,50 @@ mod tests {
                 .contains("give 3 to 4 options, not 2")
         );
         let mut twice = check();
-        twice.options[2] = "a".to_owned();
+        twice.options[2] = "aa".to_owned();
         assert!(twice.validate().unwrap_err().contains("appears twice"));
+    }
+
+    #[test]
+    fn an_answer_longer_than_every_other_option_is_refused() {
+        let mut longest = check();
+        longest.options[1] = "bbb".to_owned();
+        longest.answer = "bbb".to_owned();
+        let message = longest.validate().unwrap_err();
+        assert!(
+            message.contains("the unique longest option (3 characters, the next longest has 2)"),
+            "{message}"
+        );
+        // A tie for the longest option gives nothing away.
+        let mut tied = longest.clone();
+        tied.options[0] = "aaa".to_owned();
+        assert!(tied.validate().is_ok(), "{:?}", tied.validate());
+        // Length counts characters, not bytes.
+        let mut accented = check();
+        accented.options[1] = "\u{e9}\u{e9}".to_owned();
+        accented.answer = "\u{e9}\u{e9}".to_owned();
+        assert!(accented.validate().is_ok(), "{:?}", accented.validate());
+    }
+
+    #[test]
+    fn an_option_far_longer_than_the_shortest_is_refused() {
+        let mut ratio = check();
+        ratio.options = vec![
+            "a".repeat(10),
+            "b".repeat(16),
+            "c".repeat(16),
+            "d".repeat(16),
+        ];
+        ratio.answer = "b".repeat(16);
+        assert!(
+            ratio.validate().is_ok(),
+            "1.6 times the shortest is allowed"
+        );
+        ratio.options[2] = "c".repeat(17);
+        let message = ratio.validate().unwrap_err();
+        assert!(
+            message.contains("the longest option has 17 characters and the shortest 10"),
+            "{message}"
+        );
     }
 }

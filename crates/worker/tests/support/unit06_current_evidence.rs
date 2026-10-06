@@ -1,7 +1,7 @@
 //! Source-bound native evidence for current Unit06 recipes; no AI or storage approval.
 #![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 use cadus_core::{
-    answer::{AnswerContract, Outcome},
+    answer::{AnswerContract, NumericForm, Outcome},
     curriculum,
     learner::problem_text_hash,
     template,
@@ -92,6 +92,25 @@ pub fn wrong_answer(answer: &str, contract: &AnswerContract) -> String {
                 next => format!("{next}*sqrt({radical}"),
             }
         }
+    } else if matches!(
+        contract,
+        AnswerContract::RequiredForm {
+            form: NumericForm::RationalExponent
+        }
+    ) {
+        // Keep one coefficient times one fractional power and change the
+        // coefficient; `(answer)+1` would leave the required form.
+        match answer.trim().split_once('*') {
+            Some((coefficient, power)) if coefficient.trim().parse::<i64>().is_ok() => {
+                let next: i64 = coefficient.trim().parse::<i64>().unwrap() + 1;
+                match next {
+                    0 => format!("-{power}"),
+                    1 => power.to_owned(),
+                    next => format!("{next}*{power}"),
+                }
+            }
+            _ => format!("2*{}", answer.trim()),
+        }
     } else if matches!(contract, AnswerContract::Multipart { .. }) {
         let mut fields: Vec<String> = answer.split(';').map(|x| x.trim().to_owned()).collect();
         let (name, value) = fields[0].split_once('=').expect("named multipart field");
@@ -102,7 +121,11 @@ pub fn wrong_answer(answer: &str, contract: &AnswerContract) -> String {
     };
     contract
         .validate_expected(&wrong)
-        .expect("negative control must retain the response type");
+        .unwrap_or_else(|reason| {
+            panic!(
+                "negative control must retain the response type: {reason:?} for {answer:?} -> {wrong:?} under {contract:?}"
+            )
+        });
     assert!(
         matches!(cadus_core::answer::check_contract(answer, &wrong, contract.clone()),
         Outcome::Decided(verdict) if !verdict.correct),

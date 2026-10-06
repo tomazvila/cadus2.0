@@ -40,6 +40,8 @@ where
 pub(super) struct Checker<'a> {
     file: &'a str,
     loc: Vec<String>,
+    /// The id of the topic being walked, so a knowledge-point finding names it.
+    topic: Option<String>,
     out: Vec<Finding>,
 }
 impl<'a> Checker<'a> {
@@ -47,6 +49,7 @@ impl<'a> Checker<'a> {
         Self {
             file,
             loc: Vec::new(),
+            topic: None,
             out: Vec::new(),
         }
     }
@@ -304,6 +307,7 @@ impl<'a> Checker<'a> {
         let Some(map) = self.struct_map(value, "Topic") else {
             return;
         };
+        self.topic = map.get("id").and_then(Value::as_str).map(ToOwned::to_owned);
         self.field(map, "id", true, Self::check_slug);
         self.field(map, "name", true, Self::check_string);
         self.field(map, "core", false, Self::check_bool);
@@ -400,7 +404,11 @@ impl<'a> Checker<'a> {
                 self.report(&reason);
             }
             if let Err(reason) = point.validate_active_example() {
-                self.report(&reason);
+                let topic = self.topic.as_deref().unwrap_or("?");
+                self.report(&format!(
+                    "topic {topic}, knowledge point {}: {reason}",
+                    point.id
+                ));
             }
         }
         self.extras(map, &FIELDS);

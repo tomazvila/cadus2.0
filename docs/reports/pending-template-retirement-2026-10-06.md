@@ -8,6 +8,7 @@ The reports use the fields of the 2026-10-05 retirement (`body`, `previous_diges
 | accepted-template-recipes | evaluating-polynomials/kp1 | refused: answer-contract | 7c25bed7 |
 | accepted-template-recipes | evaluating-polynomials/kp2 | refused: answer-contract | 7c25bed7 |
 | accepted-template-recipes | radical-operations/kp2 | refused: answer-contract | 30f75056 |
+| accepted-template-recipes | polynomial-basics/kp3 | refused: sample-agreement | uncommitted rewrite of 2026-10-06 (the units 00 to 07 content pass) |
 | unit06-correction | exponent-quotient-rule/kp2 | draft accepted; candidate refused: sample-eval | dddf5ba3 |
 | unit06-correction | power-of-a-power-rule/kp2 | draft accepted; candidate refused: sample-eval | dddf5ba3 |
 | unit06-correction | zero-exponent-rule/kp2 | refused: answer-contract (draft and candidate) | 42e35bce |
@@ -29,3 +30,5 @@ The reports use the fields of the 2026-10-05 retirement (`body`, `previous_diges
 The unit06 rows were removed from both `unit06-correction/drafts.json` and `crates/worker/tests/fixtures/unit06-template-candidates.json`, and `unit06-correction/current-technical.json` was regenerated with `cargo run -p cadus-worker --example unit06_templates`. The receipt's negative-control helper now changes the coefficient of a simplest-radical answer, because six remaining candidates inherit the new `required_simplest_radical` contract. `accepted-template-recipes/manifest.json` counts 36 recipes.
 
 The whole-course Teach source set retired 34 more templates (21 answer-contract, 7 answer-kind, 5 sample-agreement, 1 space-floor) into `whole-course-teach-retired-source-templates.json`; `inputs/templates.json` holds 760. Their Teach pages are gated against the curated exemplars alone. `scientific-notation/kp1` and `kp2` have no Teach page, so their `previous_digest` is the canonical SHA-256 of the removed row. The technical evidence was regenerated with the refresh example and `refresh_whole_course_teach_v2.py --update` against curriculum hash 22e69d47.
+
+The units 00 to 07 content pass retired `polynomial-basics/kp3` from the accepted recipes (35 remain) and from the whole-course Teach source templates (759 remain, 50 retired). The gate now accepts the bodies of `radical-operations/kp2` (accepted recipes, unit06 and Teach) and `completing-the-square/kp1` (Teach) again; their rows stay retired and record the accepted verdict (`refusal_code` null). The unit06 receipt and the Teach evidence were regenerated against curriculum hash 81882198. The receipt's negative-control helper now changes the coefficient of a rational-exponent answer.
