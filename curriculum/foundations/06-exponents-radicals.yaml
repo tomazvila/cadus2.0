@@ -2558,53 +2558,144 @@ topics:
       - id: kp1
         name: "Multiply radicals"
         key_prerequisites: [simplifying-radicals]
+        step_check:
+          step: 'Multiply the coefficients: $2 \cdot 3 = 6$'
+          question: 'Why are $2$ and $3$ multiplied separately from $\sqrt5$ and $\sqrt2$?'
+          options:
+            - 'The coefficients must first be moved under the root as $\sqrt2$ and $\sqrt3$'
+            - 'Factors can be regrouped: $2\sqrt5\cdot3\sqrt2 = (2\cdot3)(\sqrt5\cdot\sqrt2)$'
+            - 'Coefficients outside a root are added, and only the roots are multiplied'
+          answer: 'Factors can be regrouped: $2\sqrt5\cdot3\sqrt2 = (2\cdot3)(\sqrt5\cdot\sqrt2)$'
+          why: '$2\sqrt5\cdot3\sqrt2$ is one product of four factors, so it regroups to $6\sqrt{10}$; adding the coefficients would give $5\sqrt{10}$, and moving them under the root changes their value.'
         exemplars:
           - problem: 'Simplify $\sqrt{3} \cdot \sqrt{12}$.'
             answer: "6"
-            solution_sketch: '$\sqrt{36} = 6$.'
-          - problem: 'Simplify $2\sqrt{5} \cdot 3\sqrt{2}$.'
-            answer: "6*sqrt(10)"
-            solution_sketch: '$2 \cdot 3 = 6$; $\sqrt{5 \cdot 2} = \sqrt{10}$.'
-          - problem: 'What is $\sqrt{2} \cdot \sqrt{8}$?'
-            answer: "4"
-            solution_sketch: '$\sqrt{16} = 4$.'
+            answer_contract: {"kind":"required_simplest_radical"}
+            solution_sketch: 'Multiply under one root: $\sqrt{3 \cdot 12} = \sqrt{36}$. Since $6^2 = 36$, the product is $6$.'
+          - problem: 'Simplify $4\sqrt{3} \cdot 2\sqrt{5}$.'
+            answer: "8*sqrt(15)"
+            answer_contract: {"kind":"required_simplest_radical"}
+            solution_sketch: 'Multiply the coefficients: $4 \cdot 2 = 8$. Multiply the radicands: $\sqrt{3 \cdot 5} = \sqrt{15}$, and $15$ has no square factor, so the product is $8\sqrt{15}$.'
+          - problem: 'A rectangle measures $3\sqrt{2}$ cm by $\sqrt{6}$ cm. Find its area.'
+            answer: "6*sqrt(3)"
+            answer_contract: {"kind":"unit","quantity":"area","unit":"cm^2","allow_omitted":true}
+            solution_sketch: 'Area is length times width: $3\sqrt{2} \cdot \sqrt{6} = 3\sqrt{12}$. Since $\sqrt{12} = 2\sqrt{3}$, the area is $6\sqrt{3}$ square centimetres.'
           - problem: 'Simplify $3\sqrt{2} \cdot 2\sqrt{8}$.'
             answer: "24"
-            solution_sketch: '$3 \cdot 2 = 6$; $\sqrt{2 \cdot 8} = \sqrt{16} = 4$; $6 \cdot 4 = 24$.'
+            answer_contract: {"kind":"required_simplest_radical"}
+            solution_sketch: 'Multiply the coefficients: $3 \cdot 2 = 6$. Multiply the radicands: $\sqrt{2 \cdot 8} = \sqrt{16} = 4$, so the product is $6 \cdot 4 = 24$.'
+          - problem: 'A square has sides of length $2\sqrt{7}$ m. Find its area.'
+            answer: "28"
+            answer_contract: {"kind":"unit","quantity":"area","unit":"m^2","allow_omitted":true}
+            solution_sketch: 'The area is the side squared: $(2\sqrt{7})^2 = 2^2 \cdot 7$. That is $4 \cdot 7 = 28$ square metres.'
+          - problem: 'Mia simplifies $2\sqrt{3} \cdot 5\sqrt{3}$ and gets $10\sqrt{3}$. What is the correct value?'
+            answer: "30"
+            answer_contract: {"kind":"required_simplest_radical"}
+            solution_sketch: 'Mia multiplied the coefficients but kept $\sqrt{3}$ instead of multiplying the roots. The coefficients give $2 \cdot 5 = 10$ and $\sqrt{3} \cdot \sqrt{3} = 3$, so the value is $10 \cdot 3 = 30$.'
+          - problem: 'Simplify $\sqrt{6} \cdot \sqrt{10}$.'
+            answer: "2*sqrt(15)"
+            answer_contract: {"kind":"required_simplest_radical"}
+            solution_sketch: 'Multiply under one root: $\sqrt{60}$. Since $60 = 4 \cdot 15$, the product simplifies to $2\sqrt{15}$.'
+          - problem: 'A right triangle has legs of length $\sqrt{8}$ cm and $\sqrt{18}$ cm. Find its area.'
+            answer: "6"
+            answer_contract: {"kind":"unit","quantity":"area","unit":"cm^2","allow_omitted":true}
+            solution_sketch: 'The area is half the product of the legs: $\frac{1}{2}\sqrt{8 \cdot 18} = \frac{1}{2}\sqrt{144}$. That is $\frac{1}{2} \cdot 12 = 6$ square centimetres.'
+          - problem: 'What is $\sqrt{2} \cdot \sqrt{8}$?'
+            answer: "4"
+            answer_contract: {"kind":"required_simplest_radical"}
+            solution_sketch: 'Multiply under one root: $\sqrt{2 \cdot 8} = \sqrt{16}$. Since $4^2 = 16$, the product is $4$.'
         constraints: "sqrt(a)*sqrt(b) = sqrt(ab); multiply coefficients separately"
       - id: kp2
         name: "Distribute a radical over a sum"
         key_prerequisites: [distributive-property, simplifying-radicals]
+        step_check:
+          step: 'Distribute the radical over the three terms'
+          question: 'Why is $\sqrt3$ multiplied by all three terms in the bracket?'
+          options:
+            - 'Only the first term touches the bracket, so the other terms stay unchanged'
+            - 'The radical is multiplied only by the terms that also contain radicals'
+            - 'By the distributive property a factor multiplies every term of the sum'
+          answer: 'By the distributive property a factor multiplies every term of the sum'
+          why: '$\sqrt3(\sqrt{48}+\sqrt{75}-\sqrt{11})$ means $\sqrt3$ times the whole sum, and $a(b+c-d) = ab+ac-ad$; multiplying only some of the terms changes the value.'
         exemplars:
           - problem: 'Expand and simplify $\sqrt{2}(\sqrt{6} + \sqrt{3})$.'
             answer: "2*sqrt(3) + sqrt(6)"
-            solution_sketch: '$\sqrt{12} + \sqrt{6} = 2\sqrt{3} + \sqrt{6}$.'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Distribute: $\sqrt{2}\cdot\sqrt{6} + \sqrt{2}\cdot\sqrt{3} = \sqrt{12} + \sqrt{6}$. Since $\sqrt{12} = 2\sqrt{3}$, the result is $2\sqrt{3} + \sqrt{6}$.'
           - problem: 'Expand and simplify $\sqrt{3}(2\sqrt{3} - 5)$.'
             answer: "6 - 5*sqrt(3)"
-            solution_sketch: '$2 \cdot 3 - 5\sqrt{3}$.'
-          - problem: 'Expand and simplify $\sqrt{3}(\sqrt{12} - \sqrt{2})$.'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Distribute: $\sqrt{3}\cdot 2\sqrt{3} = 2 \cdot 3 = 6$ and $\sqrt{3}\cdot 5 = 5\sqrt{3}$. The result is $6 - 5\sqrt{3}$.'
+          - problem: 'A rectangular garden is $\sqrt{5}$ m wide and $(3\sqrt{5} - 1)$ m long. Find its area.'
+            answer: "15 - sqrt(5)"
+            answer_contract: {"kind":"unit","quantity":"area","unit":"m^2","allow_omitted":true}
+            solution_sketch: 'Area is width times length: $\sqrt{5}(3\sqrt{5} - 1) = 3 \cdot 5 - \sqrt{5}$. The area is $15 - \sqrt{5}$ square metres.'
+          - problem: 'Multiply out $\sqrt{3}(\sqrt{12} - \sqrt{2})$ and simplify.'
             answer: "6 - sqrt(6)"
-            solution_sketch: '$\sqrt{36} - \sqrt{6} = 6 - \sqrt{6}$.'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Distribute: $\sqrt{3 \cdot 12} - \sqrt{3 \cdot 2} = \sqrt{36} - \sqrt{6}$. Since $\sqrt{36} = 6$, the result is $6 - \sqrt{6}$.'
+          - problem: 'A rectangle is $\sqrt{6}$ cm wide and $(\sqrt{6} + \sqrt{2})$ cm long. Find its area.'
+            answer: "6 + 2*sqrt(3)"
+            answer_contract: {"kind":"unit","quantity":"area","unit":"cm^2","allow_omitted":true}
+            solution_sketch: 'Area is width times length: $\sqrt{6}\cdot\sqrt{6} + \sqrt{6}\cdot\sqrt{2} = 6 + \sqrt{12}$. Since $\sqrt{12} = 2\sqrt{3}$, the area is $6 + 2\sqrt{3}$ square centimetres.'
+          - problem: 'Leo writes $\sqrt{2}(\sqrt{8} + 3) = 4 + 3$. What is the correct value of $\sqrt{2}(\sqrt{8} + 3)$?'
+            answer: "4 + 3*sqrt(2)"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Leo did not multiply the $3$ by $\sqrt{2}$. The products are $\sqrt{2}\cdot\sqrt{8} = \sqrt{16} = 4$ and $\sqrt{2}\cdot 3 = 3\sqrt{2}$, so the value is $4 + 3\sqrt{2}$.'
           - problem: 'Expand and simplify $\sqrt{5}(3\sqrt{5} + 2)$.'
             answer: "15 + 2*sqrt(5)"
-            solution_sketch: '$3 \cdot 5 + 2\sqrt{5}$.'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Distribute: $\sqrt{5}\cdot 3\sqrt{5} = 3 \cdot 5 = 15$ and $\sqrt{5}\cdot 2 = 2\sqrt{5}$. The result is $15 + 2\sqrt{5}$.'
+          - problem: 'Multiply out $2\sqrt{3}(\sqrt{6} - \sqrt{3})$ and simplify.'
+            answer: "6*sqrt(2) - 6"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Distribute: $2\sqrt{18} - 2\cdot 3$. Since $\sqrt{18} = 3\sqrt{2}$, the result is $6\sqrt{2} - 6$.'
         constraints: "distribute, then simplify each product"
       - id: kp3
         name: "Binomial products and conjugates"
         key_prerequisites: [adding-subtracting-radicals, distributive-property]
+        step_check:
+          step: 'The opposite radical terms cancel'
+          question: 'Why do $-4\sqrt5$ and $+4\sqrt5$ disappear from the product?'
+          options:
+            - 'Radical terms are always dropped once the brackets are expanded'
+            - 'They are like terms with opposite signs, so their sum is $0$'
+            - 'They multiply to $-80$, which is then moved into the constant'
+          answer: 'They are like terms with opposite signs, so their sum is $0$'
+          why: '$-4\sqrt5+4\sqrt5=0$; this happens for every conjugate pair, so $(p+\sqrt q)(p-\sqrt q)=p^2-q$, while other binomial products keep a radical term.'
         exemplars:
           - problem: 'Expand and simplify $(1 + \sqrt{2})(3 - \sqrt{2})$.'
             answer: "1 + 2*sqrt(2)"
-            solution_sketch: '$3 - \sqrt{2} + 3\sqrt{2} - 2 = 1 + 2\sqrt{2}$.'
-          - problem: 'Expand and simplify $(2 + \sqrt{3})(2 - \sqrt{3})$.'
-            answer: "1"
-            solution_sketch: '$4 - 3 = 1$ (conjugate pair).'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Multiply each term by each term: $3 - \sqrt{2} + 3\sqrt{2} - 2$. Combine like terms to get $1 + 2\sqrt{2}$.'
           - problem: 'Expand and simplify $(2 + \sqrt{5})(1 - \sqrt{5})$.'
             answer: "-3 - sqrt(5)"
-            solution_sketch: '$2 - 2\sqrt{5} + \sqrt{5} - 5 = -3 - \sqrt{5}$.'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Multiply each term by each term: $2 - 2\sqrt{5} + \sqrt{5} - 5$. Combine like terms to get $-3 - \sqrt{5}$.'
+          - problem: 'A square has sides of length $(2 + \sqrt{3})$ cm. Find its area.'
+            answer: "7 + 4*sqrt(3)"
+            answer_contract: {"kind":"unit","quantity":"area","unit":"cm^2","allow_omitted":true}
+            solution_sketch: 'The area is $(2 + \sqrt{3})^2 = 4 + 2\sqrt{3} + 2\sqrt{3} + 3$. Combining like terms gives $7 + 4\sqrt{3}$ square centimetres.'
+          - problem: 'Simplify $(2 + \sqrt{3})(2 - \sqrt{3})$.'
+            answer: "1"
+            answer_contract: {"kind":"required_simplest_radical"}
+            solution_sketch: 'This is a conjugate pair, so the radical terms cancel. The product is $2^2 - 3 = 4 - 3 = 1$.'
+          - problem: 'A rectangle measures $(\sqrt{5} + 1)$ m by $(\sqrt{5} - 1)$ m. Find its area.'
+            answer: "4"
+            answer_contract: {"kind":"unit","quantity":"area","unit":"m^2","allow_omitted":true}
+            solution_sketch: 'The sides form a conjugate pair, so the radical terms cancel. The area is $5 - 1 = 4$ square metres.'
+          - problem: 'Ana writes $(3 + \sqrt{2})^2 = 9 + 2 = 11$. What is the correct value of $(3 + \sqrt{2})^2$?'
+            answer: "11 + 6*sqrt(2)"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Ana left out the two middle terms. Expanding gives $9 + 3\sqrt{2} + 3\sqrt{2} + 2 = 11 + 6\sqrt{2}$.'
           - problem: 'What is $(3 + \sqrt{2})(3 - \sqrt{2})$?'
             answer: "7"
-            solution_sketch: '$9 - 2 = 7$ (conjugate pair).'
+            answer_contract: {"kind":"required_simplest_radical"}
+            solution_sketch: 'This is a conjugate pair, so the middle terms cancel. The product is $9 - 2 = 7$.'
+          - problem: 'Expand and simplify $(\sqrt{3} + \sqrt{2})(\sqrt{3} + 2\sqrt{2})$.'
+            answer: "7 + 3*sqrt(6)"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Multiply each term by each term: $3 + 2\sqrt{6} + \sqrt{6} + 2 \cdot 2$. Combine like terms to get $7 + 3\sqrt{6}$.'
         constraints: "FOIL-style products; conjugate pairs give integers"
     diagnostic_exemplar:
       problem: 'Expand and simplify $(2 + \sqrt{3})(1 + \sqrt{3})$.'
@@ -2638,53 +2729,132 @@ topics:
       - id: kp1
         name: "Quotient rule for radicals"
         key_prerequisites: [square-roots]
+        step_check:
+          step: 'Combine the quotient under one radical: $\sqrt{200/2}$'
+          question: 'Why may $\sqrt{200}/\sqrt2$ be written as $\sqrt{200/2}$?'
+          options:
+            - 'Dividing roots subtracts the radicands, giving $\sqrt{200-2}$'
+            - 'The two roots cancel each other, leaving just $200/2$'
+            - 'For $a\ge0$ and $b>0$, $\sqrt a/\sqrt b=\sqrt{a/b}$'
+          answer: 'For $a\ge0$ and $b>0$, $\sqrt a/\sqrt b=\sqrt{a/b}$'
+          why: '$\sqrt{a/b}\cdot\sqrt b=\sqrt a$, so $\sqrt{a/b}$ is the quotient; here $\sqrt{100}=10$, while dropping the roots would give $100$.'
         exemplars:
           - problem: 'Simplify $\frac{\sqrt{50}}{\sqrt{2}}$.'
             answer: "5"
-            solution_sketch: '$\sqrt{50/2} = \sqrt{25} = 5$.'
+            answer_contract: {"kind":"required_simplest_radical"}
+            solution_sketch: 'Divide under one root: $\sqrt{50/2} = \sqrt{25}$. Since $5^2 = 25$, the quotient is $5$.'
+          - problem: 'A rectangle has area $\sqrt{72}$ cm$^2$ and width $\sqrt{2}$ cm. Find its length.'
+            answer: "6"
+            answer_contract: {"kind":"unit","quantity":"length","unit":"cm","allow_omitted":true}
+            solution_sketch: 'The length is the area divided by the width: $\frac{\sqrt{72}}{\sqrt{2}} = \sqrt{36}$. So the length is $6$ cm.'
           - problem: 'What is $\frac{\sqrt{48}}{\sqrt{3}}$?'
             answer: "4"
-            solution_sketch: '$\sqrt{16} = 4$.'
-          - problem: 'Find $\frac{\sqrt{72}}{\sqrt{2}}$.'
-            answer: "6"
-            solution_sketch: '$\sqrt{72/2} = \sqrt{36} = 6$.'
+            answer_contract: {"kind":"required_simplest_radical"}
+            solution_sketch: 'Divide under one root: $\sqrt{48/3} = \sqrt{16}$. Since $4^2 = 16$, the quotient is $4$.'
+          - problem: 'One rope is $\sqrt{98}$ m long and another is $\sqrt{2}$ m long. How many times longer is the first rope than the second?'
+            answer: "7"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Divide the two lengths: $\frac{\sqrt{98}}{\sqrt{2}} = \sqrt{49}$. Since $\sqrt{49} = 7$, the first rope is $7$ times as long.'
           - problem: 'Evaluate $\frac{\sqrt{45}}{\sqrt{5}}$.'
             answer: "3"
-            solution_sketch: '$\sqrt{45/5} = \sqrt{9} = 3$.'
+            answer_contract: {"kind":"required_simplest_radical"}
+            solution_sketch: 'Divide under one root: $\sqrt{45/5} = \sqrt{9}$. Since $3^2 = 9$, the quotient is $3$.'
+          - problem: 'Kai writes $\frac{\sqrt{600}}{\sqrt{6}} = \sqrt{594}$. What is the correct value of $\frac{\sqrt{600}}{\sqrt{6}}$?'
+            answer: "10"
+            answer_contract: {"kind":"required_simplest_radical"}
+            solution_sketch: 'Kai subtracted the radicands instead of dividing them. The quotient is $\sqrt{600/6} = \sqrt{100} = 10$.'
+          - problem: 'Simplify $\frac{\sqrt{30}}{\sqrt{6}}$.'
+            answer: "sqrt(5)"
+            answer_contract: {"kind":"required_simplest_radical"}
+            solution_sketch: 'Divide under one root: $\sqrt{30/6}$. The radicand is $5$, which has no square factor, so the quotient is $\sqrt{5}$.'
         constraints: "quotient of radicands is a perfect square"
       - id: kp2
         name: "Roots of fractions with simplification"
         key_prerequisites: [dividing-fractions, simplifying-radicals]
+        step_check:
+          step: 'Split the root: $\sqrt{45}/\sqrt{64}$'
+          question: 'Why may $\sqrt{45/64}$ be split as $\sqrt{45}/\sqrt{64}$?'
+          options:
+            - 'The root of a quotient equals the quotient of the roots'
+            - 'Splitting is allowed only because $64$ is a perfect square'
+            - 'The root applies to the denominator only, so it splits off'
+          answer: 'The root of a quotient equals the quotient of the roots'
+          why: '$\sqrt{a/b}=\sqrt a/\sqrt b$ for any nonnegative $a$ and positive $b$; $64$ being a perfect square only makes the denominator root the whole number $8$.'
         exemplars:
           - problem: 'Simplify $\sqrt{\frac{18}{49}}$.'
             answer: "3*sqrt(2)/7"
-            solution_sketch: '$\frac{\sqrt{18}}{\sqrt{49}} = \frac{3\sqrt{2}}{7}$.'
-          - problem: 'What is $\sqrt{\frac{75}{16}}$?'
+            answer_contract: {"kind":"required_simplest_radical"}
+            solution_sketch: 'Split the root: $\frac{\sqrt{18}}{\sqrt{49}}$. Since $\sqrt{18} = 3\sqrt{2}$ and $\sqrt{49} = 7$, the result is $\frac{3\sqrt{2}}{7}$.'
+          - problem: 'A square tile has area $\frac{75}{16}$ cm$^2$. How long is each side?'
             answer: "5*sqrt(3)/4"
-            solution_sketch: '$\frac{\sqrt{75}}{4} = \frac{5\sqrt{3}}{4}$.'
-          - problem: 'Find $\sqrt{\frac{50}{81}}$.'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"cm","allow_omitted":true}
+            solution_sketch: 'The side is the square root of the area: $\frac{\sqrt{75}}{\sqrt{16}}$. Since $\sqrt{75} = 5\sqrt{3}$ and $\sqrt{16} = 4$, each side is $\frac{5\sqrt{3}}{4}$ cm.'
+          - problem: 'Simplify $\sqrt{\frac{50}{81}}$.'
             answer: "5*sqrt(2)/9"
-            solution_sketch: '$\frac{\sqrt{50}}{\sqrt{81}} = \frac{5\sqrt{2}}{9}$.'
-          - problem: 'Evaluate $\sqrt{\frac{48}{25}}$.'
+            answer_contract: {"kind":"required_simplest_radical"}
+            solution_sketch: 'Split the root: $\frac{\sqrt{50}}{\sqrt{81}}$. Since $\sqrt{50} = 5\sqrt{2}$ and $\sqrt{81} = 9$, the result is $\frac{5\sqrt{2}}{9}$.'
+          - problem: 'What is $\sqrt{\frac{48}{25}}$?'
             answer: "4*sqrt(3)/5"
-            solution_sketch: '$\frac{\sqrt{48}}{5} = \frac{4\sqrt{3}}{5}$.'
+            answer_contract: {"kind":"required_simplest_radical"}
+            solution_sketch: 'Split the root: $\frac{\sqrt{48}}{\sqrt{25}}$. Since $\sqrt{48} = 4\sqrt{3}$ and $\sqrt{25} = 5$, the result is $\frac{4\sqrt{3}}{5}$.'
+          - problem: 'A square garden has area $\frac{98}{9}$ m$^2$. Find the length of one side.'
+            answer: "7*sqrt(2)/3"
+            answer_contract: {"kind":"unit","quantity":"length","unit":"m","allow_omitted":true}
+            solution_sketch: 'The side is the square root of the area: $\frac{\sqrt{98}}{\sqrt{9}}$. Since $\sqrt{98} = 7\sqrt{2}$ and $\sqrt{9} = 3$, the side is $\frac{7\sqrt{2}}{3}$ m.'
+          - problem: 'Evaluate $\sqrt{\frac{20}{36}}$.'
+            answer: "sqrt(5)/3"
+            answer_contract: {"kind":"required_simplest_radical"}
+            solution_sketch: 'Split the root: $\frac{\sqrt{20}}{\sqrt{36}} = \frac{2\sqrt{5}}{6}$. Reduce the common factor $2$ to get $\frac{\sqrt{5}}{3}$.'
+          - problem: 'Zoe simplifies $\sqrt{\frac{27}{4}}$ to $\frac{3\sqrt{3}}{4}$. What is the correct value of $\sqrt{\frac{27}{4}}$?'
+            answer: "3*sqrt(3)/2"
+            answer_contract: {"kind":"required_simplest_radical"}
+            solution_sketch: 'Zoe took the root of the numerator but not of the denominator. Since $\sqrt{27} = 3\sqrt{3}$ and $\sqrt{4} = 2$, the value is $\frac{3\sqrt{3}}{2}$.'
         constraints: "perfect-square denominators; numerator may need simplifying"
       - id: kp3
         name: "Quotients with coefficients"
         key_prerequisites: [simplifying-radicals, dividing-fractions]
+        step_check:
+          step: 'Divide the radicands: $\sqrt{\frac{32}{8}} = \sqrt{4}$'
+          question: 'Why can the coefficients and the radicands be divided separately?'
+          options:
+            - 'The coefficient $9$ must first go under the root as $\sqrt9$'
+            - 'Coefficients are subtracted while the radicands are divided'
+            - 'A quotient of products splits: $\frac{9\sqrt{32}}{3\sqrt8}=\frac93\cdot\frac{\sqrt{32}}{\sqrt8}$'
+          answer: 'A quotient of products splits: $\frac{9\sqrt{32}}{3\sqrt8}=\frac93\cdot\frac{\sqrt{32}}{\sqrt8}$'
+          why: '$\frac{ab}{cd}=\frac ac\cdot\frac bd$, so the quotient is $3\cdot\sqrt4=6$; writing $9$ as $\sqrt9$ would change its value from $9$ to $3$.'
         exemplars:
           - problem: 'Simplify $\frac{6\sqrt{20}}{3\sqrt{5}}$.'
             answer: "4"
-            solution_sketch: '$\frac{6}{3}\sqrt{\frac{20}{5}} = 2\sqrt{4} = 4$.'
+            answer_contract: {"kind":"required_simplest_radical"}
+            solution_sketch: 'Divide the coefficients: $6/3 = 2$. Divide the radicands: $\sqrt{20/5} = \sqrt{4} = 2$, so the quotient is $2 \cdot 2 = 4$.'
+          - problem: 'A path $8\sqrt{18}$ m long is marked into sections that are each $2\sqrt{2}$ m long. How many sections are there?'
+            answer: "12"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The number of sections is the total length divided by one section: $\frac{8\sqrt{18}}{2\sqrt{2}} = 4\sqrt{9}$. That is $4 \cdot 3 = 12$ sections.'
           - problem: 'What is $\frac{10\sqrt{27}}{5\sqrt{3}}$?'
             answer: "6"
-            solution_sketch: '$2\sqrt{9} = 6$.'
-          - problem: 'Find $\frac{8\sqrt{18}}{4\sqrt{2}}$.'
-            answer: "6"
-            solution_sketch: '$\frac{8}{4}\sqrt{\frac{18}{2}} = 2\sqrt{9} = 6$.'
+            answer_contract: {"kind":"required_simplest_radical"}
+            solution_sketch: 'Divide the coefficients: $10/5 = 2$. Divide the radicands: $\sqrt{27/3} = \sqrt{9} = 3$, so the quotient is $2 \cdot 3 = 6$.'
+          - problem: 'A rectangle has area $12\sqrt{30}$ cm$^2$ and one side of length $4\sqrt{6}$ cm. Find the length of the other side.'
+            answer: "3*sqrt(5)"
+            answer_contract: {"kind":"unit","quantity":"length","unit":"cm","allow_omitted":true}
+            solution_sketch: 'The other side is the area divided by the known side: $\frac{12\sqrt{30}}{4\sqrt{6}}$. Divide coefficients and radicands: $3\sqrt{5}$ cm.'
           - problem: 'Evaluate $\frac{12\sqrt{50}}{6\sqrt{2}}$.'
             answer: "10"
-            solution_sketch: '$\frac{12}{6}\sqrt{\frac{50}{2}} = 2\sqrt{25} = 10$.'
+            answer_contract: {"kind":"required_simplest_radical"}
+            solution_sketch: 'Divide the coefficients: $12/6 = 2$. Divide the radicands: $\sqrt{50/2} = \sqrt{25} = 5$, so the quotient is $2 \cdot 5 = 10$.'
+          - problem: 'Simplify $\frac{15\sqrt{42}}{5\sqrt{6}}$.'
+            answer: "3*sqrt(7)"
+            answer_contract: {"kind":"required_simplest_radical"}
+            solution_sketch: 'Divide the coefficients: $15/5 = 3$. Divide the radicands: $\sqrt{42/6} = \sqrt{7}$, so the quotient is $3\sqrt{7}$.'
+          - problem: 'Raj simplifies $\frac{8\sqrt{18}}{4\sqrt{2}}$ and gets $2\sqrt{16}$. What is the correct value?'
+            answer: "6"
+            answer_contract: {"kind":"required_simplest_radical"}
+            solution_sketch: 'Raj subtracted the radicands instead of dividing them. The quotient is $\frac{8}{4}\sqrt{\frac{18}{2}} = 2\sqrt{9} = 2 \cdot 3 = 6$.'
+          - problem: 'Tower A is $20\sqrt{3}$ m tall and tower B is $5\sqrt{12}$ m tall. How many times taller is tower A than tower B?'
+            answer: "2"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Divide the heights: $\frac{20\sqrt{3}}{5\sqrt{12}} = 4\sqrt{\frac{3}{12}} = 4 \cdot \frac{1}{2}$. Tower A is $2$ times as tall as tower B.'
         constraints: "divide coefficients and radicands separately"
     diagnostic_exemplar:
       problem: 'Simplify $\sqrt{\frac{50}{9}}$.'
@@ -2715,53 +2885,137 @@ topics:
       - id: kp1
         name: "Single-radical denominators"
         key_prerequisites: [dividing-radicals]
+        try_first:
+          problem: 'Compute $\sqrt{7} \cdot \sqrt{7}$.'
+          answer_contract: {"kind":"exact"}
+          answer: '7'
+          reveal: 'A square root times itself is a whole number: $\sqrt7\cdot\sqrt7=7$. Multiplying the top and bottom of $\frac{a}{\sqrt7}$ by $\sqrt7$ therefore turns the denominator into $7$ without changing the value.'
+        step_check:
+          step: 'Multiply top and bottom by $\sqrt{11}$'
+          question: 'Why are both the numerator and the denominator multiplied by $\sqrt{11}$?'
+          options:
+            - 'Multiplying only the denominator would leave the value unchanged'
+            - 'It multiplies the fraction by $\frac{\sqrt{11}}{\sqrt{11}}=1$, so the value stays the same'
+            - 'It makes the numerator a whole number as well as the denominator'
+          answer: 'It multiplies the fraction by $\frac{\sqrt{11}}{\sqrt{11}}=1$, so the value stays the same'
+          why: '$\frac{8}{\sqrt{11}}\cdot\frac{\sqrt{11}}{\sqrt{11}}$ is the same number written over $11$; multiplying only the bottom would divide the value by $\sqrt{11}$.'
         exemplars:
-          - problem: 'Rationalize $\frac{1}{\sqrt{2}}$.'
+          - problem: 'Rationalize the denominator of $\frac{1}{\sqrt{2}}$.'
             answer: "sqrt(2)/2"
-            solution_sketch: 'Multiply by $\frac{\sqrt{2}}{\sqrt{2}}$.'
-          - problem: 'Rationalize $\frac{5}{\sqrt{3}}$.'
+            answer_contract: {"kind":"required_simplest_radical"}
+            solution_sketch: 'Multiply the top and bottom by $\sqrt{2}$. The denominator becomes $\sqrt{2}\cdot\sqrt{2} = 2$, so the result is $\frac{\sqrt{2}}{2}$.'
+          - problem: 'Rationalize the denominator of $\frac{5}{\sqrt{3}}$.'
             answer: "5*sqrt(3)/3"
-            solution_sketch: 'Multiply by $\frac{\sqrt{3}}{\sqrt{3}}$: $\frac{5\sqrt{3}}{3}$.'
-          - problem: 'What is $\frac{1}{\sqrt{3}}$ rationalized?'
-            answer: "sqrt(3)/3"
-            solution_sketch: 'Multiply by $\frac{\sqrt{3}}{\sqrt{3}}$.'
-          - problem: 'Simplify the rationalized form of $\frac{7}{\sqrt{5}}$.'
+            answer_contract: {"kind":"required_simplest_radical"}
+            solution_sketch: 'Multiply the top and bottom by $\sqrt{3}$. The denominator becomes $3$, so the result is $\frac{5\sqrt{3}}{3}$.'
+          - problem: 'A rectangle has area $6$ m$^2$ and width $\sqrt{3}$ m. Find its length.'
+            answer: "2*sqrt(3)"
+            answer_contract: {"kind":"unit","quantity":"length","unit":"m","allow_omitted":true}
+            solution_sketch: 'The length is the area divided by the width: $\frac{6}{\sqrt{3}}$. Multiplying top and bottom by $\sqrt{3}$ gives $\frac{6\sqrt{3}}{3} = 2\sqrt{3}$ m.'
+          - problem: 'Write $\frac{7}{\sqrt{5}}$ with a rational denominator.'
             answer: "7*sqrt(5)/5"
-            solution_sketch: 'Multiply by $\frac{\sqrt{5}}{\sqrt{5}}$: $\frac{7\sqrt{5}}{5}$.'
+            answer_contract: {"kind":"required_simplest_radical"}
+            solution_sketch: 'Multiply the top and bottom by $\sqrt{5}$. The denominator becomes $5$, so the result is $\frac{7\sqrt{5}}{5}$.'
+          - problem: 'The diagonal of a square is $\sqrt{2}$ times as long as its side. A square has a diagonal of $8$ cm. How long is each side?'
+            answer: "4*sqrt(2)"
+            answer_contract: {"kind":"unit","quantity":"length","unit":"cm","allow_omitted":true}
+            solution_sketch: 'The side is the diagonal divided by $\sqrt{2}$: $\frac{8}{\sqrt{2}}$. Multiplying top and bottom by $\sqrt{2}$ gives $\frac{8\sqrt{2}}{2} = 4\sqrt{2}$ cm.'
+          - problem: 'Write $\frac{3}{\sqrt{6}}$ with a rational denominator.'
+            answer: "sqrt(6)/2"
+            answer_contract: {"kind":"required_simplest_radical"}
+            solution_sketch: 'Multiply the top and bottom by $\sqrt{6}$ to get $\frac{3\sqrt{6}}{6}$. Reduce the common factor $3$ to get $\frac{\sqrt{6}}{2}$.'
+          - problem: 'Eli rationalizes $\frac{4}{\sqrt{7}}$ and writes $\frac{4\sqrt{7}}{49}$. What is the correct result?'
+            answer: "4*sqrt(7)/7"
+            answer_contract: {"kind":"required_simplest_radical"}
+            solution_sketch: 'Eli squared $7$ instead of multiplying $\sqrt{7}$ by $\sqrt{7}$. Since $\sqrt{7}\cdot\sqrt{7} = 7$, the result is $\frac{4\sqrt{7}}{7}$.'
         constraints: "multiply top and bottom by the radical"
       - id: kp2
         name: "Simplify before or after rationalizing"
         key_prerequisites: [dividing-radicals]
+        step_check:
+          step: 'Reduce the radical: $\sqrt{18} = \sqrt{9\cdot2} = 3\sqrt2$'
+          question: 'Why is $\sqrt{18}$ reduced to $3\sqrt2$ before rationalizing?'
+          options:
+            - 'Rationalizing $\frac{9}{\sqrt{18}}$ directly would give a different value'
+            - '$\sqrt{18}$ cannot be rationalized until it has been reduced'
+            - 'The factor $3$ can then cancel with $9$, so the numbers stay small'
+          answer: 'The factor $3$ can then cancel with $9$, so the numbers stay small'
+          why: 'Both routes give the same value, since $\frac{9\sqrt{18}}{18}=\frac{\sqrt{18}}{2}=\frac{3\sqrt2}{2}$, but reducing first lets $9$ cancel with $3$ and avoids larger numbers.'
         exemplars:
           - problem: 'Rationalize and simplify $\frac{6}{\sqrt{12}}$.'
             answer: "sqrt(3)"
-            solution_sketch: '$\frac{6}{2\sqrt{3}} = \frac{3}{\sqrt{3}} = \sqrt{3}$.'
-          - problem: 'What is $\frac{4}{\sqrt{8}}$ rationalized and simplified?'
-            answer: "sqrt(2)"
-            solution_sketch: '$\frac{4}{2\sqrt{2}} = \frac{2}{\sqrt{2}} = \sqrt{2}$.'
+            answer_contract: {"kind":"required_simplest_radical"}
+            solution_sketch: 'Reduce the radical: $\sqrt{12} = 2\sqrt{3}$, so $\frac{6}{2\sqrt{3}} = \frac{3}{\sqrt{3}}$. Multiplying top and bottom by $\sqrt{3}$ gives $\frac{3\sqrt{3}}{3} = \sqrt{3}$.'
           - problem: 'Rationalize and simplify $\frac{8}{\sqrt{20}}$.'
             answer: "4*sqrt(5)/5"
-            solution_sketch: '$\frac{8}{2\sqrt{5}} = \frac{4}{\sqrt{5}} = \frac{4\sqrt{5}}{5}$.'
-          - problem: 'Simplify the rationalized form of $\frac{9}{\sqrt{27}}$.'
+            answer_contract: {"kind":"required_simplest_radical"}
+            solution_sketch: 'Reduce the radical: $\sqrt{20} = 2\sqrt{5}$, so $\frac{8}{2\sqrt{5}} = \frac{4}{\sqrt{5}}$. Multiplying top and bottom by $\sqrt{5}$ gives $\frac{4\sqrt{5}}{5}$.'
+          - problem: 'A rectangle has area $12$ cm$^2$ and width $\sqrt{8}$ cm. Find its length.'
+            answer: "3*sqrt(2)"
+            answer_contract: {"kind":"unit","quantity":"length","unit":"cm","allow_omitted":true}
+            solution_sketch: 'The length is the area divided by the width: $\frac{12}{\sqrt{8}} = \frac{12}{2\sqrt{2}} = \frac{6}{\sqrt{2}}$. Multiplying top and bottom by $\sqrt{2}$ gives $3\sqrt{2}$ cm.'
+          - problem: 'Simplify $\frac{10}{\sqrt{50}}$.'
+            answer: "sqrt(2)"
+            answer_contract: {"kind":"required_simplest_radical"}
+            solution_sketch: 'Reduce the radical: $\sqrt{50} = 5\sqrt{2}$, so $\frac{10}{5\sqrt{2}} = \frac{2}{\sqrt{2}}$. Multiplying top and bottom by $\sqrt{2}$ gives $\frac{2\sqrt{2}}{2} = \sqrt{2}$.'
+          - problem: 'A rectangular plot has area $15$ m$^2$ and length $\sqrt{45}$ m. Find its width.'
+            answer: "sqrt(5)"
+            answer_contract: {"kind":"unit","quantity":"length","unit":"m","allow_omitted":true}
+            solution_sketch: 'The width is the area divided by the length: $\frac{15}{\sqrt{45}} = \frac{15}{3\sqrt{5}} = \frac{5}{\sqrt{5}}$. Multiplying top and bottom by $\sqrt{5}$ gives $\sqrt{5}$ m.'
+          - problem: 'Nora simplifies $\frac{9}{\sqrt{27}}$ and writes $\frac{1}{3}$. What is the correct value of $\frac{9}{\sqrt{27}}$?'
             answer: "sqrt(3)"
-            solution_sketch: '$\frac{9}{3\sqrt{3}} = \frac{3}{\sqrt{3}} = \sqrt{3}$.'
+            answer_contract: {"kind":"required_simplest_radical"}
+            solution_sketch: 'Nora divided $9$ by $27$ as if the root were not there. Since $\sqrt{27} = 3\sqrt{3}$, the value is $\frac{9}{3\sqrt{3}} = \frac{3}{\sqrt{3}} = \sqrt{3}$.'
+          - problem: 'Simplify $\frac{4}{\sqrt{24}}$.'
+            answer: "sqrt(6)/3"
+            answer_contract: {"kind":"required_simplest_radical"}
+            solution_sketch: 'Reduce the radical: $\sqrt{24} = 2\sqrt{6}$, so $\frac{4}{2\sqrt{6}} = \frac{2}{\sqrt{6}}$. Multiplying top and bottom by $\sqrt{6}$ gives $\frac{2\sqrt{6}}{6} = \frac{\sqrt{6}}{3}$.'
         constraints: "reduce the radical first to keep numbers small"
       - id: kp3
         name: "Conjugate denominators"
         key_prerequisites: [radical-operations]
+        step_check:
+          step: 'Denominator: $(3-\sqrt7)(3+\sqrt7) = 9 - 7 = 2$'
+          question: 'Why is the fraction multiplied by $3+\sqrt7$ instead of by $\sqrt7$?'
+          options:
+            - 'Multiplying by $\sqrt7$ would change the value of the fraction'
+            - 'The conjugate product $(3-\sqrt7)(3+\sqrt7)=9-7$ has no radical left'
+            - '$3+\sqrt7$ is larger than $\sqrt7$, so the result comes out simpler'
+          answer: 'The conjugate product $(3-\sqrt7)(3+\sqrt7)=9-7$ has no radical left'
+          why: '$(3-\sqrt7)\sqrt7=3\sqrt7-7$ still contains a radical, but in the conjugate product the middle terms cancel and leave the integer $2$.'
         exemplars:
-          - problem: 'Rationalize $\frac{2}{1 + \sqrt{3}}$.'
+          - problem: 'Rationalize the denominator of $\frac{2}{1 + \sqrt{3}}$.'
             answer: "sqrt(3) - 1"
-            solution_sketch: 'Multiply by $\frac{1 - \sqrt{3}}{1 - \sqrt{3}}$: $\frac{2(1 - \sqrt{3})}{1 - 3} = \sqrt{3} - 1$.'
-          - problem: 'Rationalize $\frac{1}{\sqrt{5} - 2}$.'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Multiply top and bottom by the conjugate $1 - \sqrt{3}$. The denominator is $1 - 3 = -2$, so the result is $\frac{2(1 - \sqrt{3})}{-2} = \sqrt{3} - 1$.'
+          - problem: 'Rationalize the denominator of $\frac{1}{\sqrt{5} - 2}$.'
             answer: "sqrt(5) + 2"
-            solution_sketch: '$\frac{\sqrt{5} + 2}{5 - 4} = \sqrt{5} + 2$.'
-          - problem: 'Rationalize $\frac{3}{2 + \sqrt{5}}$.'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Multiply top and bottom by the conjugate $\sqrt{5} + 2$. The denominator is $5 - 4 = 1$, so the result is $\sqrt{5} + 2$.'
+          - problem: 'A rectangle has area $4$ m$^2$ and width $(\sqrt{3} + 1)$ m. Find its length, written without a radical in the denominator.'
+            answer: "2*sqrt(3) - 2"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The length is $\frac{4}{\sqrt{3} + 1}$. Multiply top and bottom by $\sqrt{3} - 1$: the denominator is $3 - 1 = 2$, so the length is $2(\sqrt{3} - 1) = 2\sqrt{3} - 2$ m.'
+          - problem: 'Write $\frac{3}{2 + \sqrt{5}}$ without a radical in the denominator.'
             answer: "-6 + 3*sqrt(5)"
-            solution_sketch: 'Multiply by $\frac{2-\sqrt5}{2-\sqrt5}$: $\frac{3(2-\sqrt5)}{4-5} = -6 + 3\sqrt5$.'
-          - problem: 'What is $\frac{1}{\sqrt{10} - 3}$ rationalized?'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Multiply top and bottom by the conjugate $2 - \sqrt{5}$. The denominator is $4 - 5 = -1$, so the result is $-3(2 - \sqrt{5}) = -6 + 3\sqrt{5}$.'
+          - problem: 'A rectangle measures $2$ cm by $(\sqrt{5} - 1)$ cm. Find the ratio of the longer side to the shorter side, written without a radical in the denominator.'
+            answer: "(1 + sqrt(5))/2"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Since $\sqrt{5} - 1 \approx 1.24$, the longer side is $2$ cm and the ratio is $\frac{2}{\sqrt{5} - 1}$. Multiplying by $\sqrt{5} + 1$ gives $\frac{2(\sqrt{5} + 1)}{4} = \frac{1 + \sqrt{5}}{2}$.'
+          - problem: 'Simplify $\frac{1}{\sqrt{10} - 3}$ by rationalizing the denominator.'
             answer: "sqrt(10) + 3"
-            solution_sketch: '$\frac{\sqrt{10}+3}{10-9} = \sqrt{10} + 3$.'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Multiply top and bottom by the conjugate $\sqrt{10} + 3$. The denominator is $10 - 9 = 1$, so the result is $\sqrt{10} + 3$.'
+          - problem: 'Ivy rationalizes $\frac{4}{3 - \sqrt{5}}$ and gets $\frac{4(3 + \sqrt{5})}{9 + 5}$. What is the correct result?'
+            answer: "3 + sqrt(5)"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Ivy added in the denominator, but the conjugate product is $9 - 5 = 4$. So the result is $\frac{4(3 + \sqrt{5})}{4} = 3 + \sqrt{5}$.'
+          - problem: 'Write $\frac{6}{\sqrt{7} + \sqrt{5}}$ with a rational denominator.'
+            answer: "3*sqrt(7) - 3*sqrt(5)"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Multiply top and bottom by the conjugate $\sqrt{7} - \sqrt{5}$. The denominator is $7 - 5 = 2$, so the result is $3(\sqrt{7} - \sqrt{5}) = 3\sqrt{7} - 3\sqrt{5}$.'
         constraints: "multiply by the conjugate; denominator becomes an integer"
     diagnostic_exemplar:
       problem: 'Rationalize $\frac{2}{\sqrt{3} + 1}$.'
@@ -2795,53 +3049,137 @@ topics:
       - id: kp1
         name: "Unit fractions: a^(1/n) is an nth root"
         key_prerequisites: [square-roots, cube-roots]
+        try_first:
+          problem: 'Find $k$ if $x^{1/2} \cdot x^{1/2} = x^k$.'
+          answer_contract: {"kind":"exact"}
+          answer: '1'
+          reveal: 'Adding exponents gives $x^{1/2}\cdot x^{1/2}=x^1=x$. The positive number that multiplied by itself gives $x$ is $\sqrt{x}$, so $x^{1/2}=\sqrt{x}$.'
+        step_check:
+          step: 'Use exponent $1/7$'
+          question: 'Why does the root index $7$ become the denominator of the exponent?'
+          options:
+            - 'Roots make numbers smaller, so the index goes below the fraction bar'
+            - '$(x^{1/7})^7=x^{7/7}=x$, so $x^{1/7}$ is a number whose seventh power is $x$'
+            - 'The exponent $7$ describes the same root, so either form works'
+          answer: '$(x^{1/7})^7=x^{7/7}=x$, so $x^{1/7}$ is a number whose seventh power is $x$'
+          why: 'By the power rule $(x^{1/7})^7 = x$, which is exactly what $\sqrt[7]{x}$ means; $x^7$ is a different number, much larger than $x$ when $x>1$.'
         exemplars:
-          - problem: 'Write $\sqrt{x}$ as a power of $x$.'
-            answer: "x^(1/2)"
-            solution_sketch: 'The root index becomes the denominator of the exponent: $x^{1/2}$.'
-          - problem: 'In radical form $x^{1/3}$ is the $n$th root of $x$. What is $n$?'
+          - problem: 'Find $k$ if $\sqrt[4]{x} = x^k$ for $x > 0$.'
+            answer: "1/4"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'A root with index $4$ is the power with exponent $1/4$. So $\sqrt[4]{x} = x^{1/4}$ and $k = 1/4$.'
+          - problem: 'Find $n$ if $x^{1/3} = \sqrt[n]{x}$ for $x > 0$.'
             answer: "3"
-            solution_sketch: 'The denominator of the fractional exponent is the root index.'
-          - problem: 'Write $\sqrt[4]{x}$ as a power of $x$.'
-            answer: "x^(1/4)"
-            solution_sketch: 'The root index $4$ becomes the exponent denominator.'
-          - problem: 'The exponent $x^{1/5}$ names the $n$th root of $x$. Find $n$.'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The denominator of a unit fractional exponent is the root index. So $x^{1/3}$ is the cube root of $x$ and $n = 3$.'
+          - problem: 'A square has area $A$. Its side length can be written as $A^k$. Find $k$.'
+            answer: "1/2"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The side of a square is the square root of its area, $\sqrt{A}$. A square root is the power $1/2$, so $k = 1/2$.'
+          - problem: 'A cube has volume $V$. Its edge length can be written as $V^k$. Find $k$.'
+            answer: "1/3"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The edge of a cube is the cube root of its volume, $\sqrt[3]{V}$. A cube root is the power $1/3$, so $k = 1/3$.'
+          - problem: 'Find $n$ if $y^{1/5} = \sqrt[n]{y}$ for $y > 0$.'
             answer: "5"
-            solution_sketch: 'The denominator of the fractional exponent is the root index.'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The denominator of a unit fractional exponent is the root index. So $y^{1/5}$ is the fifth root of $y$ and $n = 5$.'
+          - problem: 'Find $k$ if $\sqrt[6]{t} = t^k$ for $t > 0$.'
+            answer: "1/6"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'A root with index $6$ is the power with exponent $1/6$. So $\sqrt[6]{t} = t^{1/6}$ and $k = 1/6$.'
+          - problem: 'Find $k$ if $\sqrt{5} = 5^k$.'
+            answer: "1/2"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'A square root has index $2$, so it is the power with exponent $1/2$. Therefore $\sqrt{5} = 5^{1/2}$ and $k = 1/2$.'
         constraints: "a^(1/n) is the nth root of a"
       - id: kp2
         name: "General m/n form"
         key_prerequisites: [cube-roots]
+        step_check:
+          step: 'Place the power over the index'
+          question: 'Why does the power $4$ go in the numerator and the index $7$ in the denominator?'
+          options:
+            - 'The larger of the two numbers always goes in the denominator'
+            - 'The index counts the repeated factors, so it belongs on top'
+            - '$\sqrt[7]{x^4}=(x^4)^{1/7}=x^{4\cdot\frac17}$ by the power rule'
+          answer: '$\sqrt[7]{x^4}=(x^4)^{1/7}=x^{4\cdot\frac17}$ by the power rule'
+          why: 'Writing the root as the power $1/7$ gives $(x^4)^{1/7}$, and multiplying exponents gives $x^{4/7}$; $x^{7/4}$ would be the fourth root of $x^7$.'
         exemplars:
-          - problem: 'Write $\sqrt[3]{x^2}$ as a power of $x$.'
-            answer: "x^(2/3)"
-            solution_sketch: 'Power $2$, root index $3$: $x^{2/3}$.'
-          - problem: 'In radical form $x^{3/4} = \sqrt[4]{x^m}$. What is $m$?'
+          - problem: 'Find $k$ if $\sqrt[5]{x^3} = x^k$ for $x > 0$.'
+            answer: "3/5"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The power inside the root is $3$ and the root index is $5$. The power goes over the index, so $k = 3/5$.'
+          - problem: 'Find $m$ if $x^{3/4} = \sqrt[4]{x^m}$ for $x > 0$.'
             answer: "3"
-            solution_sketch: 'The numerator of the fractional exponent is the power inside the radical.'
-          - problem: 'What single power of $x$ equals $\sqrt[5]{x^3}$?'
-            answer: "x^(3/5)"
-            solution_sketch: 'Power $3$, root index $5$: $x^{3/5}$.'
-          - problem: 'The exponent form $x^{2/5} = \sqrt[5]{x^m}$ names what value of $m$?'
-            answer: "2"
-            solution_sketch: 'The numerator of the fractional exponent is the power inside the radical.'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The numerator of the fractional exponent is the power inside the root. So $x^{3/4} = \sqrt[4]{x^3}$ and $m = 3$.'
+          - problem: 'A cube has volume $V$. The area of one face can be written as $V^k$. Find $k$.'
+            answer: "2/3"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The edge is $V^{1/3}$ and a face has area equal to the edge squared. So the face area is $(V^{1/3})^2 = V^{2/3}$ and $k = 2/3$.'
+          - problem: 'A square has area $A$. A cube has edges as long as the sides of the square. Its volume can be written as $A^k$. Find $k$.'
+            answer: "3/2"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The side of the square is $A^{1/2}$, and the volume of the cube is that length cubed. So the volume is $(A^{1/2})^3 = A^{3/2}$ and $k = 3/2$.'
+          - problem: 'Find $n$ if $x^{2/5} = \sqrt[n]{x^2}$ for $x > 0$.'
+            answer: "5"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The denominator of the fractional exponent is the root index. So $x^{2/5}$ is the fifth root of $x^2$ and $n = 5$.'
+          - problem: 'Find $k$ if $\sqrt{x^5} = x^k$ for $x > 0$.'
+            answer: "5/2"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The power inside the root is $5$ and a square root has index $2$. The power goes over the index, so $k = 5/2$.'
+          - problem: 'Jon writes $\sqrt[4]{x^3} = x^{4/3}$. Find the correct $k$ for which $\sqrt[4]{x^3} = x^k$ when $x > 0$.'
+            answer: "3/4"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Jon put the index over the power. The power $3$ goes in the numerator and the index $4$ in the denominator, so $k = 3/4$.'
         constraints: "numerator is the power, denominator is the root index"
       - id: kp3
         name: "Evaluate unit fractional exponents"
         key_prerequisites: [square-roots, cube-roots]
+        step_check:
+          step: '$32 = 2^5$, a perfect fifth power'
+          question: 'Why does $32 = 2^5$ show that $32^{1/5} = 2$?'
+          options:
+            - '$32^{1/5}$ is the number whose fifth power is $32$, and that number is $2$'
+            - 'Raising $32$ to the power $1/5$ means dividing $32$ by $5$'
+            - 'The power $1/5$ means taking the square root of $32$ five times'
+          answer: '$32^{1/5}$ is the number whose fifth power is $32$, and that number is $2$'
+          why: '$(32^{1/5})^5 = 32$ and $2^5 = 32$, so $32^{1/5} = 2$; dividing by $5$ would give $6.4$, whose fifth power is far larger than $32$.'
         exemplars:
-          - problem: 'Compute $25^{1/2}$.'
+          - problem: 'Evaluate $25^{1/2}$.'
             answer: "5"
-            solution_sketch: '$\sqrt{25} = 5$.'
-          - problem: 'What is $8^{1/3}$?'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The exponent $1/2$ means the square root. Since $5^2 = 25$, the value is $5$.'
+          - problem: 'Evaluate $8^{1/3}$.'
             answer: "2"
-            solution_sketch: '$\sqrt[3]{8} = 2$.'
-          - problem: 'Find $16^{1/2}$.'
-            answer: "4"
-            solution_sketch: '$\sqrt{16} = 4$.'
-          - problem: 'Evaluate $27^{1/3}$.'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The exponent $1/3$ means the cube root. Since $2^3 = 8$, the value is $2$.'
+          - problem: 'The edge length of a cube with volume $V$ is $V^{1/3}$. Find the edge length of a cube with volume $512$ cm$^3$.'
+            answer: "8"
+            answer_contract: {"kind":"unit","quantity":"length","unit":"cm","allow_omitted":true}
+            solution_sketch: 'The edge length is $512^{1/3}$, the cube root of $512$. Since $8^3 = 512$, each edge is $8$ cm.'
+          - problem: 'The side of a square with area $A$ is $A^{1/2}$. Find the side length of a square field with area $3600$ m$^2$.'
+            answer: "60"
+            answer_contract: {"kind":"unit","quantity":"length","unit":"m","allow_omitted":true}
+            solution_sketch: 'The side length is $3600^{1/2}$, the square root of $3600$. Since $60^2 = 3600$, each side is $60$ m.'
+          - problem: 'What is $81^{1/4}$?'
             answer: "3"
-            solution_sketch: '$\sqrt[3]{27} = 3$.'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The exponent $1/4$ means the fourth root. Since $3^4 = 81$, the value is $3$.'
+          - problem: 'Find $1000^{1/3}$.'
+            answer: "10"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The exponent $1/3$ means the cube root. Since $10^3 = 1000$, the value is $10$.'
+          - problem: 'Pia says $64^{1/2} = 32$ because half of $64$ is $32$. What is the correct value of $64^{1/2}$?'
+            answer: "8"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The exponent $1/2$ means the square root, not half of the number. Since $8^2 = 64$, the value is $8$.'
+          - problem: 'Evaluate $\left(\frac{16}{81}\right)^{1/4}$.'
+            answer: "2/3"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Take the fourth root of the numerator and of the denominator. Since $2^4 = 16$ and $3^4 = 81$, the value is $\frac{2}{3}$.'
         constraints: "perfect powers; positive base"
     diagnostic_exemplar:
       problem: 'Write $\sqrt{x^3}$ as a power of $x$.'
@@ -2874,53 +3212,136 @@ topics:
       - id: kp1
         name: "Evaluate a^(m/n)"
         key_prerequisites: [radical-exponent-conversion]
+        step_check:
+          step: 'Take the fifth root first: $32^{1/5} = 2$'
+          question: 'Why is the fifth root of $32$ taken before squaring?'
+          options:
+            - 'Squaring first would give a different final value'
+            - '$32^{2/5}=(32^{1/5})^2$, and the root of $32$ is a small exact number'
+            - 'The root is taken first because $5$ is larger than $2$'
+          answer: '$32^{2/5}=(32^{1/5})^2$, and the root of $32$ is a small exact number'
+          why: '$(32^{1/5})^2 = 2^2 = 4$ and $(32^2)^{1/5} = 1024^{1/5} = 4$ agree; taking the root first only keeps the numbers small.'
         exemplars:
-          - problem: 'Compute $8^{2/3}$.'
+          - problem: 'Evaluate $8^{2/3}$.'
             answer: "4"
-            solution_sketch: "$2\\cdot2\\cdot2=8$, so the cube root is $2$. Then square that root: $2\\cdot2=4$."
-          - problem: 'What is $16^{3/4}$?'
-            answer: "8"
-            solution_sketch: '$(16^{1/4})^3 = 2^3 = 8$.'
-          - problem: 'Find $4^{3/2}$.'
-            answer: "8"
-            solution_sketch: '$(4^{1/2})^3 = 2^3 = 8$.'
-          - problem: 'Evaluate $9^{3/2}$.'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Take the cube root first: $8^{1/3} = 2$. Then square it: $2^2 = 4$.'
+          - problem: 'What is $9^{3/2}$?'
             answer: "27"
-            solution_sketch: "$3\\cdot3=9$, so the principal square root is $3$. Cube it: $3\\cdot3\\cdot3=27$."
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Take the square root first: $9^{1/2} = 3$. Then cube it: $3^3 = 27$.'
+          - problem: 'A bacteria population multiplies by $4$ every hour. By what factor does it grow in $1.5$ hours?'
+            answer: "8"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'In $1.5 = 3/2$ hours the growth factor is $4^{3/2}$. The square root of $4$ is $2$, and $2^3 = 8$.'
+          - problem: 'The value of an investment multiplies by $27$ every $3$ years. By what factor does it grow in $2$ years?'
+            answer: "9"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Each year the value multiplies by $27^{1/3} = 3$, so over $2$ years the factor is $27^{2/3}$. That is $3^2 = 9$.'
+          - problem: 'Evaluate $125^{2/3}$.'
+            answer: "25"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Take the cube root first: $125^{1/3} = 5$. Then square it: $5^2 = 25$.'
+          - problem: 'Ben computes $25^{3/2}$ as $\frac{3}{2} \cdot 25 = 37.5$. What is the correct value of $25^{3/2}$?'
+            answer: "125"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Ben multiplied by the exponent instead of taking a root and a power. The square root of $25$ is $5$, and $5^3 = 125$.'
+          - problem: 'The area of one face of a cube with volume $V$ is $V^{2/3}$. Find the area of one face of a cube with volume $1000$ cm$^3$.'
+            answer: "100"
+            answer_contract: {"kind":"unit","quantity":"area","unit":"cm^2","allow_omitted":true}
+            solution_sketch: 'The face area is $1000^{2/3}$. The cube root of $1000$ is $10$, and $10^2 = 100$ square centimetres.'
+          - problem: 'Evaluate $\left(\frac{4}{9}\right)^{3/2}$.'
+            answer: "8/27"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Take the square root first: $\left(\frac{4}{9}\right)^{1/2} = \frac{2}{3}$. Then cube it: $\frac{2^3}{3^3} = \frac{8}{27}$.'
         constraints: "take the root first, then the power; perfect powers only"
       - id: kp2
         name: "Negative rational exponents"
         key_prerequisites: [negative-zero-exponents, radical-exponent-conversion]
+        step_check:
+          step: 'Rewrite as a reciprocal: $16^{-3/4} = \frac{1}{16^{3/4}}$'
+          question: 'Why does the negative exponent turn $16^{-3/4}$ into a reciprocal?'
+          options:
+            - 'A negative exponent makes the value negative, so it equals $-16^{3/4}$'
+            - 'The minus sign flips the exponent, so it equals $16^{4/3}$'
+            - '$a^{-r}=\frac{1}{a^r}$ for every exponent $r$, fractions included'
+          answer: '$a^{-r}=\frac{1}{a^r}$ for every exponent $r$, fractions included'
+          why: '$16^{-3/4}\cdot16^{3/4}=16^0=1$, so $16^{-3/4}$ is the reciprocal $\frac18$; it is positive, and $16^{4/3}$ is a different number.'
         exemplars:
-          - problem: 'Compute $4^{-1/2}$.'
+          - problem: 'Evaluate $4^{-1/2}$.'
             answer: "1/2"
-            solution_sketch: '$\frac{1}{\sqrt{4}} = \frac{1}{2}$.'
-          - problem: 'What is $27^{-2/3}$?'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'A negative exponent gives a reciprocal: $4^{-1/2} = \frac{1}{4^{1/2}}$. Since $4^{1/2} = 2$, the value is $\frac{1}{2}$.'
+          - problem: 'Evaluate $27^{-2/3}$.'
             answer: "1/9"
-            solution_sketch: '$\frac{1}{(27^{1/3})^2} = \frac{1}{9}$.'
-          - problem: 'Find $9^{-1/2}$.'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'A negative exponent gives a reciprocal: $\frac{1}{27^{2/3}}$. The cube root of $27$ is $3$ and $3^2 = 9$, so the value is $\frac{1}{9}$.'
+          - problem: 'A colony of cells multiplies by $9$ every hour. What fraction of its present size was it $30$ minutes ago?'
             answer: "1/3"
-            solution_sketch: '$\frac{1}{\sqrt{9}} = \frac{1}{3}$.'
-          - problem: 'Evaluate $8^{-2/3}$.'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Going back half an hour multiplies the size by $9^{-1/2}$. Since $9^{1/2} = 3$, the colony was $\frac{1}{3}$ of its present size.'
+          - problem: 'The amount of a radioactive substance is multiplied by $\frac{1}{64}$ every $3$ days. By what factor is it multiplied over $2$ days?'
+            answer: "1/16"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Over $2$ days the factor is $\left(\frac{1}{64}\right)^{2/3} = 64^{-2/3}$. The cube root of $64$ is $4$ and $4^2 = 16$, so the factor is $\frac{1}{16}$.'
+          - problem: 'What is $8^{-2/3}$?'
             answer: "1/4"
-            solution_sketch: '$\frac{1}{(8^{1/3})^2} = \frac{1}{4}$.'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'A negative exponent gives a reciprocal: $\frac{1}{8^{2/3}}$. The cube root of $8$ is $2$ and $2^2 = 4$, so the value is $\frac{1}{4}$.'
+          - problem: 'Tom writes $25^{-1/2} = -5$. What is the correct value of $25^{-1/2}$?'
+            answer: "1/5"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'A negative exponent gives a reciprocal, not a negative number. Since $25^{1/2} = 5$, the value is $\frac{1}{5}$.'
+          - problem: 'Find $\left(\frac{1}{32}\right)^{-2/5}$.'
+            answer: "4"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The negative exponent flips the fraction: $\left(\frac{1}{32}\right)^{-2/5} = 32^{2/5}$. The fifth root of $32$ is $2$ and $2^2 = 4$.'
         constraints: "negative exponent -> reciprocal, then evaluate"
       - id: kp3
         name: "Exponent laws with rational exponents"
         key_prerequisites: [power-rule-exponents, radical-exponent-conversion]
+        step_check:
+          step: 'Multiply the exponents: $(2/5)(5/2)=1$'
+          question: 'Why are the exponents multiplied in $(x^{2/5})^{5/2}$?'
+          options:
+            - 'A power of a power multiplies the exponents: $(x^a)^b=x^{ab}$'
+            - 'Exponents are added whenever brackets appear around a power'
+            - 'Fractional exponents are divided, so the result uses $\frac25\div\frac52$'
+          answer: 'A power of a power multiplies the exponents: $(x^a)^b=x^{ab}$'
+          why: '$(x^a)^b = x^{ab}$ holds for rational exponents when $x>0$, giving $x^1 = x$; adding the exponents would give $x^{29/10}$.'
         exemplars:
-          - problem: 'Simplify $x^{1/2} \cdot x^{1/3}$.'
-            answer: "x^(5/6)"
-            solution_sketch: '$\frac{1}{2} + \frac{1}{3} = \frac{5}{6}$.'
-          - problem: 'Simplify $(x^{2/3})^3$.'
-            answer: "x^2"
-            solution_sketch: '$\frac{2}{3} \cdot 3 = 2$.'
-          - problem: 'What is $x^{1/4} \cdot x^{1/2}$ in simplest form?'
-            answer: "x^(3/4)"
-            solution_sketch: '$\frac{1}{4} + \frac{1}{2} = \frac{3}{4}$.'
-          - problem: 'What is $(x^{3/4})^4$ in simplest form?'
+          - problem: 'Find $k$ if $x^{1/2} \cdot x^{1/3} = x^k$ for $x > 0$.'
+            answer: "5/6"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Multiplying powers of the same base adds the exponents. With a common denominator, $\frac{1}{2} + \frac{1}{3} = \frac{3}{6} + \frac{2}{6} = \frac{5}{6}$.'
+          - problem: 'Find $k$ if $(x^{2/3})^3 = x^k$ for $x > 0$.'
+            answer: "2"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'A power of a power multiplies the exponents. So $k = \frac{2}{3} \cdot 3 = 2$.'
+          - problem: 'A square has side length $x^{3/4}$ cm. Its area is $x^k$ cm$^2$. Find $k$.'
+            answer: "3/2"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The area is the side squared: $(x^{3/4})^2$. Multiplying the exponents gives $k = \frac{3}{4} \cdot 2 = \frac{3}{2}$.'
+          - problem: 'A rectangle has area $x^{5/6}$ m$^2$ and width $x^{1/2}$ m. Its length is $x^k$ m. Find $k$.'
+            answer: "1/3"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The length is the area divided by the width, so subtract the exponents. That gives $k = \frac{5}{6} - \frac{3}{6} = \frac{2}{6} = \frac{1}{3}$.'
+          - problem: 'Find $k$ if $\frac{x^{3/4}}{x^{1/3}} = x^k$ for $x > 0$.'
+            answer: "5/12"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Dividing powers of the same base subtracts the exponents. With a common denominator, $\frac{9}{12} - \frac{4}{12} = \frac{5}{12}$.'
+          - problem: 'Lena simplifies $x^{1/4} \cdot x^{1/2}$ to $x^{1/8}$. Find the correct $k$ for which $x^{1/4} \cdot x^{1/2} = x^k$.'
+            answer: "3/4"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Lena multiplied the exponents, but a product of powers adds them. So $k = \frac{1}{4} + \frac{2}{4} = \frac{3}{4}$.'
+          - problem: 'A cube has edge length $x^{2/3}$ cm. Its volume is $x^k$ cm$^3$. Find $k$.'
+            answer: "2"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The volume is the edge cubed: $(x^{2/3})^3$. Multiplying the exponents gives $k = \frac{2}{3} \cdot 3 = 2$.'
+          - problem: 'Simplify $(x^{3/4})^4$ for $x > 0$.'
             answer: "x^3"
-            solution_sketch: '$\frac{3}{4} \cdot 4 = 3$.'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'A power of a power multiplies the exponents. Since $\frac{3}{4} \cdot 4 = 3$, the result is $x^3$.'
         constraints: "same product/quotient/power rules, fractional arithmetic"
     diagnostic_exemplar:
       problem: 'Compute $27^{2/3} \cdot 27^{-1/3}$.'
