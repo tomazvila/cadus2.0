@@ -28,7 +28,9 @@ fn historical_classification_and_all_live_statements_have_a_closed_boundary() {
     current.sort_by_key(key);
     // 1025 live statements; the 2026-09-23..10-05 Foundations rewrites added 38
     // multi-step items, and the reviewed unit-contract pass updated existing keys.
-    assert_eq!(current.len(), 1025);
+    // The 2026-10-06 exponents-radicals and polynomials-quadratics rewrites add
+    // 78 more multi-step items, all with a contract (1103).
+    assert_eq!(current.len(), 1103);
     assert_eq!(
         current
             .iter()
@@ -46,7 +48,7 @@ fn historical_classification_and_all_live_statements_have_a_closed_boundary() {
     );
     assert_eq!(
         sha256_hex(serde_json::to_string(&current).unwrap().as_bytes()),
-        "68884ca50ec245f8e4f20811c140bb64c6a961013f1d786f72de8dec816e8476"
+        "71958a1bfd6131521bc17550654119660a3724861d449f2e910e24c360467dee"
     );
     let current_keys: BTreeSet<_> = current.iter().map(key).collect();
     assert_eq!(current_keys.len(), current.len());
@@ -67,22 +69,23 @@ fn historical_classification_and_all_live_statements_have_a_closed_boundary() {
     assert_eq!(
         contracts,
         BTreeMap::from([
-            ("approx".to_owned(), 3),
+            ("approx".to_owned(), 11),
             ("ascending_chain".to_owned(), 3),
             ("coordinates".to_owned(), 180),
-            ("exact".to_owned(), 485),
+            ("exact".to_owned(), 518),
             ("inequality_union".to_owned(), 27),
-            ("label".to_owned(), 33),
+            ("label".to_owned(), 39),
             ("list".to_owned(), 14),
-            ("multipart".to_owned(), 105),
+            ("multipart".to_owned(), 98),
             ("polynomial_relation".to_owned(), 7),
             ("property".to_owned(), 1),
             ("reduced_ratio".to_owned(), 13),
             ("relation_setup".to_owned(), 6),
             ("required_assignment".to_owned(), 4),
             ("required_inequality_notation".to_owned(), 8),
+            ("required_simplest_radical".to_owned(), 4),
             ("uncontracted".to_owned(), 45),
-            ("unit".to_owned(), 91),
+            ("unit".to_owned(), 125),
         ])
     );
 
@@ -122,7 +125,7 @@ fn historical_classification_and_all_live_statements_have_a_closed_boundary() {
     let reviewed_keys: BTreeSet<_> = reviewed.iter().map(key).collect();
     assert_eq!(reviewed_keys.len(), reviewed.len());
     assert!(reviewed_keys.is_subset(&current_keys));
-    assert_eq!(current_keys.difference(&reviewed_keys).count(), 483);
+    assert_eq!(current_keys.difference(&reviewed_keys).count(), 561);
     assert!(
         current
             .iter()
@@ -145,7 +148,7 @@ fn historical_classification_and_all_live_statements_have_a_closed_boundary() {
                 live["problem"] == row["problem"] && live["answer"] == row["answer"]
             })
             .count(),
-        199
+        184
     );
     assert_eq!(
         counts,

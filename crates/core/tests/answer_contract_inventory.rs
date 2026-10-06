@@ -116,14 +116,16 @@ fn current_inventory_covers_every_exemplar_and_preserves_the_review_snapshot() {
             }
         }
     }
-    assert_eq!(rows.len(), 3405);
+    assert_eq!(rows.len(), 3828);
     // The pre-unit corpus had 2,084 authored contracts; 47 newly reviewed
-    // measured-output KP exemplars bring the current count to 2,131.
+    // measured-output KP exemplars brought the count to 2,131, and the
+    // exponents-radicals and polynomials-quadratics rewrites (06: 63 -> 442,
+    // 07: 150 -> 561 contracted) bring it to 2,921.
     assert_eq!(
         rows.iter()
             .filter(|row| !row["existing_contract"].is_null())
             .count(),
-        2131
+        2921
     );
     assert!(rows.iter().all(|row| row["automatic_approval"] == false));
     let current_keys: BTreeSet<_> = rows.iter().map(identity).collect();

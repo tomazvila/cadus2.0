@@ -14,10 +14,10 @@ use common::dump::{curriculum_root, fixture_arena};
 
 /// The semantic curriculum hash of the checked-in tree (spec section 3).
 // Regenerated for the expanded live tree; independently derived alongside parity.rs.
-const TREE_HASH: &str = "07436345f495159ae486911d631521f741cd9b7928ee7bc1761488eb85cbd020";
+const TREE_HASH: &str = "22e69d470d0007bb32ceff750d2b15e2c80ceb42105efd973d7562ac1588d7d7";
 
 /// The length of the dump in bytes, without the trailing newline.
-const DUMP_LEN: usize = 10_736_520;
+const DUMP_LEN: usize = 10_917_978;
 
 #[test]
 fn the_binary_writes_the_dump_and_the_hash() {

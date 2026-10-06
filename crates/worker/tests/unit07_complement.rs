@@ -46,8 +46,9 @@ fn exhaustive_production_gate_and_negative_controls() {
         }
     }
     let mut evidence = Vec::new();
-    // Five reviewed residuals; polynomial-basics/kp2 was retired on 2026-10-05.
-    assert_eq!(rows().len(), 4);
+    // Five reviewed residuals; polynomial-basics/kp2 was retired on 2026-10-05
+    // and difference-of-squares/kp1 on 2026-10-06.
+    assert_eq!(rows().len(), 3);
     for row in rows() {
         let key = row["kp_id"].as_str().unwrap();
         assert_eq!(row["status"], "pending");
@@ -87,7 +88,7 @@ fn the_retired_residual_left_the_set_and_keeps_its_gate_refusal() {
             &["docs/content-foundations/unit07-complement/templates.json"],
             &pending,
         ),
-        1
+        2
     );
 }
 

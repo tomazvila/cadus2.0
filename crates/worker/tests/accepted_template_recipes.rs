@@ -1,5 +1,6 @@
 //! Production-gate proof for the pending templates of reviewed curriculum additions.
 #![allow(clippy::expect_used, clippy::panic)]
+mod common;
 use std::{collections::BTreeSet, path::Path};
 
 use cadus_core::{curriculum::load_curriculum, instruction::template_instances};
@@ -16,7 +17,9 @@ fn every_checked_in_recipe_passes_the_production_gate() {
     )
     .expect("recipe drafts");
     let drafts: Vec<Value> = serde_json::from_str(&source).expect("recipe JSON");
-    assert_eq!(drafts.len(), 39);
+    // 39 reviewed recipes; radical-operations/kp2 and evaluating-polynomials/kp1
+    // and kp2 were retired on 2026-10-06.
+    assert_eq!(drafts.len(), 36);
     let mut keys = BTreeSet::new();
     for draft in drafts {
         let key = draft["kp_id"].as_str().expect("kp_id");
@@ -52,4 +55,17 @@ fn every_checked_in_recipe_passes_the_production_gate() {
             );
         }
     }
+}
+
+#[test]
+fn the_retired_recipes_left_the_set_and_keep_their_gate_refusal() {
+    let source = "docs/content-foundations/accepted-template-recipes/drafts.json";
+    let pending = common::json_rows(&[source], None)
+        .iter()
+        .map(|row| row["kp_id"].as_str().expect("kp_id").to_owned())
+        .collect();
+    assert_eq!(
+        common::retired::assert_retired("accepted-template-recipes", &[source], &pending),
+        3
+    );
 }

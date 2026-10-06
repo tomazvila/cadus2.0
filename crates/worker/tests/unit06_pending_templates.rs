@@ -380,7 +380,13 @@ fn assert_current_lineages() {
     assert!(validate_current_lineages(&drafts, &candidates, &manifest, &none).is_err());
     // Mutate each named distinct lineage independently on both sides. A relaxed
     // exception must never allow a changed row to inherit its original binding.
+    // A retired distinct lineage has no current row to mutate.
+    let mut mutated = 0;
     for key in manifest["distinct_lineages"].as_object().unwrap().keys() {
+        if retired.contains(key) {
+            continue;
+        }
+        mutated += 1;
         let mut changed_drafts = drafts.clone();
         let row = changed_drafts
             .iter_mut()
@@ -402,6 +408,10 @@ fn assert_current_lineages() {
             "{key}: changed fixture accepted"
         );
     }
+    assert_eq!(
+        mutated, 14,
+        "21 distinct lineages less the seven retired ones"
+    );
     let mirror_index = drafts
         .iter()
         .position(|row| {
@@ -430,8 +440,36 @@ fn the_retired_candidates_left_both_current_sets_and_keep_their_gate_refusal() {
             &["docs/content-foundations/unit06-correction/drafts.json"],
             &pending,
         ),
-        2
+        18
     );
+    // A distinct-lineage key also left the candidate fixture with its own body;
+    // the report keeps that body under `candidate` with its digest and verdict.
+    let mut candidates = 0;
+    for row in common::retired::report("unit06-correction") {
+        let Some(candidate) = row.get("candidate") else {
+            continue;
+        };
+        let key = row["kp_key"].as_str().unwrap();
+        assert_ne!(
+            candidate["body"], row["body"],
+            "{key}: a mirror needs no candidate"
+        );
+        assert_eq!(
+            candidate["source"],
+            "crates/worker/tests/fixtures/unit06-template-candidates.json"
+        );
+        assert_eq!(candidate["body"]["kp_id"], key);
+        assert_eq!(
+            candidate["previous_digest"],
+            current_evidence::hash_bytes(candidate["body"].to_string().as_bytes()),
+            "{key}: candidate body drift"
+        );
+        let gate = common::retired::current_gate(&candidate["body"]);
+        assert_eq!(gate["result"], "refused", "{key}");
+        assert_eq!(candidate["current_gate"], gate, "{key}: candidate verdict");
+        candidates += 1;
+    }
+    assert_eq!(candidates, 7);
 }
 
 #[test]

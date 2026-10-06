@@ -92,9 +92,10 @@ fn zero_product_property_rejects_a_sign_flipped_root() {
     let (curriculum, findings) = load_curriculum(&root().join("curriculum")).unwrap();
     assert!(findings.is_empty());
     // "Solve (x - 3)(x + 5) = 0." roots are 3 and -5; a learner who reads
-    // the sign of the second factor wrong answers "3 or 5".
+    // the sign of the second factor wrong answers "3, 5", in either list form.
     let (item, kind) = exemplar(&curriculum, "zero-product-property", "kp1", 0);
-    assert_eq!(item.answer, "x = 3 or x = -5");
+    assert_eq!(item.answer, "-5, 3");
+    assert_marked_incorrect(grade(item, kind, "3, 5"), "sign-flipped root");
     assert_marked_incorrect(grade(item, kind, "x = 3 or x = 5"), "sign-flipped root");
 }
 
@@ -127,11 +128,12 @@ fn discriminant_rejects_the_b_squared_only_shortcut() {
 fn completing_the_square_rejects_a_sign_error_on_both_roots() {
     let (curriculum, findings) = load_curriculum(&root().join("curriculum")).unwrap();
     assert!(findings.is_empty());
-    // "Solve x^2 + 6x + 5 = 0 by completing the square." roots -1, -5; the
-    // sign-flipped pair "1 or 5" is a common completing-the-square mistake
+    // "Solve x^2 + 6x + 5 = 0 by completing the square." roots -5, -1; the
+    // sign-flipped pair "1, 5" is a common completing-the-square mistake
     // (forgetting the vertex form subtracts, not adds, the shift).
     let (item, kind) = exemplar(&curriculum, "completing-the-square", "kp2", 0);
-    assert_eq!(item.answer, "x = -1 or x = -5");
+    assert_eq!(item.answer, "-5, -1");
+    assert_marked_incorrect(grade(item, kind, "1, 5"), "sign-flipped root pair");
     assert_marked_incorrect(
         grade(item, kind, "x = 1 or x = 5"),
         "sign-flipped root pair",
@@ -168,27 +170,42 @@ fn parabola_direction_label_rejects_the_opposite_direction() {
 fn negative_discriminant_count_never_accepts_two_as_correct() {
     let (curriculum, findings) = load_curriculum(&root().join("curriculum")).unwrap();
     assert!(findings.is_empty());
-    // Complex-answer policy: "How many real solutions does x^2 + 2x + 5 = 0
-    // have?" has a negative discriminant (complex roots), and this
-    // Foundations file's policy is to report the REAL-root count "0", never
-    // a complex pair. A learner who counts the two complex roots as if they
-    // were real answers "2"; that must never be marked correct.
-    let (item, kind) = exemplar(&curriculum, "quadratic-formula", "kp3", 1);
+    // Complex-answer policy: "Omar solves x^2 + 4x + 8 = 0 ... How many real
+    // solutions does the equation have?" has a negative discriminant
+    // (complex roots), and this Foundations file's policy is to report the
+    // REAL-root count "0", never a complex pair. A learner who counts the two
+    // complex roots as if they were real answers "2"; that must never be
+    // marked correct.
+    let (item, kind) = exemplar(&curriculum, "quadratic-formula", "kp3", 2);
+    assert!(item.problem.contains("How many real solutions"));
     assert_eq!(item.answer, "0");
-    assert!(!matches!(
-        grade(item, kind, "2"),
-        Outcome::Decided(Verdict { correct: true, .. })
-    ));
+    for wrong in ["2", "two"] {
+        assert!(!matches!(
+            grade(item, kind, wrong),
+            Outcome::Decided(Verdict { correct: true, .. })
+        ));
+    }
+    // "Solve x^2 + 2x + 5 = 0." reports the empty real solution set; a
+    // count of two roots is never accepted in its place either.
+    let (item, kind) = exemplar(&curriculum, "quadratic-formula", "kp3", 1);
+    assert_eq!(item.answer, "no real solution");
+    for wrong in ["2", "two"] {
+        assert!(!matches!(
+            grade(item, kind, wrong),
+            Outcome::Decided(Verdict { correct: true, .. })
+        ));
+    }
 }
 
 #[test]
 fn negative_discriminant_count_never_accepts_a_complex_number_as_correct() {
     let (curriculum, findings) = load_curriculum(&root().join("curriculum")).unwrap();
     assert!(findings.is_empty());
-    // The same item never accepts literal complex-number notation either;
+    // "Solve x^2 + 2x + 5 = 0." never accepts literal complex-number notation;
     // this file authors no complex-number answers anywhere, and a learner
     // who writes the roots directly must not be marked correct by accident.
     let (item, kind) = exemplar(&curriculum, "quadratic-formula", "kp3", 1);
+    assert_eq!(item.answer, "no real solution");
     assert!(!matches!(
         grade(item, kind, "x = -1 + 2i or x = -1 - 2i"),
         Outcome::Decided(Verdict { correct: true, .. })

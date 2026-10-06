@@ -26,22 +26,23 @@ fn kp<'a>(unit: &'a Unit, topic_id: &str, kp_id: &str) -> &'a KnowledgePoint {
 #[test]
 fn standard_form_request_remains_in_the_authored_answer() {
     let unit = unit();
-    let exemplar = &kp(&unit, "applying-the-quadratic-formula", "kp1").exemplars[1];
+    // "When x^2 + 5 = 3x is written as ax^2 + bx + c = 0 with a = 1, what is b?"
+    let exemplar = &kp(&unit, "applying-the-quadratic-formula", "kp1").exemplars[0];
     assert!(
-        exemplar.problem.contains("standard form")
-            && exemplar.problem.contains("coefficient tuple (A,B,C)"),
-        "the prompt must bind standard form to its graded coefficient tuple"
+        exemplar.problem.contains("written as $ax^2 + bx + c = 0$")
+            && exemplar.problem.contains("$a = 1$"),
+        "the prompt must bind standard form and its scale to the graded coefficient"
     );
-    assert_eq!(exemplar.answer, "(1, -4, 3)");
+    assert_eq!(exemplar.answer, "-3");
     assert_eq!(exemplar.answer_contract, Some(AnswerContract::Exact));
-    assert!(matches!(
-        check_contract(
-            &exemplar.answer,
-            "(2, -8, 6)",
-            AnswerContract::Exact
-        ),
-        Outcome::Decided(verdict) if !verdict.correct
-    ));
+    // "3" reads b off the unrearranged equation; "-6" is the coefficient of
+    // the doubled standard form, which the fixed scale a = 1 excludes.
+    for wrong in ["3", "-6"] {
+        assert!(matches!(
+            check_contract(&exemplar.answer, wrong, AnswerContract::Exact),
+            Outcome::Decided(verdict) if !verdict.correct
+        ));
+    }
 }
 
 #[test]

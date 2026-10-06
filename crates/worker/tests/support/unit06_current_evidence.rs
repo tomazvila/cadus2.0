@@ -72,6 +72,26 @@ pub fn wrong_answer(answer: &str, contract: &AnswerContract) -> String {
             "negative label must not be an alias of the expected meaning"
         );
         candidate
+    } else if contract == &AnswerContract::RequiredSimplestRadical {
+        // Keep one simplified square root and change its integer coefficient;
+        // `(answer)+1` would leave the simplest-radical response type.
+        let trimmed = answer.trim();
+        if trimmed.starts_with("sqrt(") {
+            format!("2*{trimmed}")
+        } else {
+            let (coefficient, radical) = trimmed
+                .split_once("*sqrt(")
+                .expect("a native simplest-radical answer is k*sqrt(r) or sqrt(r)");
+            let coefficient: i64 = coefficient
+                .trim()
+                .parse()
+                .expect("an integer simplest-radical coefficient");
+            match coefficient + 1 {
+                0 => format!("-sqrt({radical}"),
+                1 => format!("sqrt({radical}"),
+                next => format!("{next}*sqrt({radical}"),
+            }
+        }
     } else if matches!(contract, AnswerContract::Multipart { .. }) {
         let mut fields: Vec<String> = answer.split(';').map(|x| x.trim().to_owned()).collect();
         let (name, value) = fields[0].split_once('=').expect("named multipart field");
@@ -95,15 +115,16 @@ pub fn current_receipt(root: &Path) -> Value {
     let bytes = fs::read(root.join(CANDIDATES)).unwrap();
     let rows: Vec<Value> = serde_json::from_slice(&bytes).unwrap();
     // 78 reviewed candidates; pythagorean-converse/kp1 and kp2 were retired on
-    // 2026-10-05 (docs/reports/unit06-correction-retired-pending-templates.json).
-    assert_eq!(rows.len(), 76);
+    // 2026-10-05 and sixteen exponent, radical and Pythagoras candidates on
+    // 2026-10-06 (docs/reports/unit06-correction-retired-pending-templates.json).
+    assert_eq!(rows.len(), 60);
     let (curriculum, findings) = curriculum::load_curriculum(&root.join("curriculum")).unwrap();
     assert!(findings.is_empty(), "{findings:?}");
     let keys: Vec<String> = rows
         .iter()
         .map(|r| r["kp_id"].as_str().unwrap().to_owned())
         .collect();
-    assert_eq!(keys.iter().collect::<BTreeSet<_>>().len(), 76);
+    assert_eq!(keys.iter().collect::<BTreeSet<_>>().len(), 60);
     let specs = cli::select(&curriculum, &keys).unwrap();
     let mut authored = BTreeSet::new();
     for spec in &specs {

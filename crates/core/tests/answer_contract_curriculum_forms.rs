@@ -27,27 +27,38 @@ fn accepts(given: &str, expected: &str, contract: AnswerContract) -> bool {
     matches!(check_contract(given, expected, contract), Outcome::Decided(v) if v.correct)
 }
 
+/// The evaluated number of a single-power key such as `3^3`.
+fn evaluated(key: &str) -> String {
+    let (base, exponent) = key.split_once('^').unwrap();
+    let base: u128 = base.trim().parse().unwrap();
+    let exponent: u32 = exponent.trim().parse().unwrap();
+    base.pow(exponent).to_string()
+}
+
+/// Every single-power item of the three same-base KPs refuses its evaluated
+/// number; the in-context items of those KPs ask for a count and take `exact`.
 #[test]
 fn same_base_power_tasks_reject_evaluated_numbers() {
-    for (topic, evaluated) in [
-        ("exponent-product-rule", ["128", "3125", "729", "117649"]),
-        ("exponent-quotient-rule", ["27", "7", "625", "8"]),
-        (
-            "power-of-a-power-rule",
-            ["64", "1000000", "6561", "1953125"],
-        ),
+    for topic in [
+        "exponent-product-rule",
+        "exponent-quotient-rule",
+        "power-of-a-power-rule",
     ] {
-        let items = exemplars(topic, "kp2");
-        assert_eq!(items.len(), evaluated.len());
-        for (item, number) in items.iter().zip(evaluated) {
+        let mut strict = 0;
+        for item in exemplars(topic, "kp2") {
             let expected = item["answer"].as_str().unwrap();
             let contract: AnswerContract =
                 serde_json::from_value(item["answer_contract"].clone()).unwrap();
-            assert_eq!(contract, AnswerContract::RequiredSinglePower);
-            assert!(accepts(number, expected, AnswerContract::Exact));
+            if contract != AnswerContract::RequiredSinglePower {
+                continue;
+            }
+            strict += 1;
+            let number = evaluated(expected);
+            assert!(accepts(&number, expected, AnswerContract::Exact));
             assert!(accepts(expected, expected, contract.clone()));
-            assert!(!accepts(number, expected, contract));
+            assert!(!accepts(&number, expected, contract), "{topic}: {expected}");
         }
+        assert!(strict >= 4, "{topic}: only {strict} single-power items");
     }
 }
 

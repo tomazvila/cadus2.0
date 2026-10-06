@@ -451,8 +451,11 @@ fn every_shipped_knowledge_point_whose_exemplar_shows_its_answer_gates() {
     // problems across the upper courses (442 -> 910 exempted), while the
     // Foundations rewrites replaced many answer-revealing items (158 -> 131).
     // The sweep above holds for every member.
-    assert_eq!((exempted, blind), (910, 43));
-    assert_eq!((foundations_exempted, foundations_blind), (131, 12));
+    // 2026-10-06: the exponents-radicals and polynomials-quadratics rewrites
+    // raise the Foundations knowledge points with an answer-revealing exemplar
+    // by fifteen (131 -> 146, 910 -> 925 overall); the blind counts are unchanged.
+    assert_eq!((exempted, blind), (925, 43));
+    assert_eq!((foundations_exempted, foundations_blind), (146, 12));
 }
 
 /// A sample that does not instantiate and a draw that does not evaluate

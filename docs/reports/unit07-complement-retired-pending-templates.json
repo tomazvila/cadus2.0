@@ -332,5 +332,125 @@
         "distractors": []
       }
     }
+  },
+  {
+    "kp_key": "difference-of-squares/kp1",
+    "source": "docs/content-foundations/unit07-complement/templates.json",
+    "previous_digest": "sha256:d04bb4a3c865facaceefca43a8cdf6ed4e9e4274d3dbacdf1d34a3caa8063054",
+    "current_gate": {
+      "code": "space-floor",
+      "message": "the declared domains produce only 9 distinct problem(s); at least 12 are needed for randomized values and for avoidance of a recently-served problem to mean anything (Hard Rule 4)",
+      "result": "refused"
+    },
+    "refusal_code": "space-floor",
+    "refusal": "the declared domains produce only 9 distinct problem(s); at least 12 are needed for randomized values and for avoidance of a recently-served problem to mean anything (Hard Rule 4)",
+    "retirement_reason": "the knowledge point's rewritten exemplars now include problems the template generates, which leaves fewer than twelve new problems, and the current gate refuses the template",
+    "superseded_by": [
+      "61311a0c"
+    ],
+    "body": {
+      "kp_id": "difference-of-squares/kp1",
+      "kind": "template",
+      "status": "pending",
+      "arguments": {
+        "statement": "Factor $x^2-{a}$. Report lower_factor and upper_factor, the monic linear factors in increasing constant order.",
+        "answer_expr": "multipart(x-sqrt(a),x+sqrt(a))",
+        "solution_sketch": "The positive square root of ${a}$ gives the magnitude of both constants. Choose opposite signs: their sum is zero and their product is $-{a}$, reconstructing the original polynomial.",
+        "hints": [
+          "The two monic factors are conjugates; their constant product must be negative."
+        ],
+        "params": {
+          "a": {
+            "kind": "choice",
+            "values": [
+              1,
+              4,
+              9,
+              16,
+              25,
+              49,
+              64,
+              81,
+              100
+            ]
+          }
+        },
+        "constraints": [],
+        "samples": [
+          {
+            "params": {
+              "a": 1
+            },
+            "expected": "lower_factor = x-1; upper_factor = x+1"
+          },
+          {
+            "params": {
+              "a": 4
+            },
+            "expected": "lower_factor = x-2; upper_factor = x+2"
+          },
+          {
+            "params": {
+              "a": 9
+            },
+            "expected": "lower_factor = x-3; upper_factor = x+3"
+          },
+          {
+            "params": {
+              "a": 16
+            },
+            "expected": "lower_factor = x-4; upper_factor = x+4"
+          },
+          {
+            "params": {
+              "a": 25
+            },
+            "expected": "lower_factor = x-5; upper_factor = x+5"
+          },
+          {
+            "params": {
+              "a": 49
+            },
+            "expected": "lower_factor = x-7; upper_factor = x+7"
+          },
+          {
+            "params": {
+              "a": 64
+            },
+            "expected": "lower_factor = x-8; upper_factor = x+8"
+          },
+          {
+            "params": {
+              "a": 81
+            },
+            "expected": "lower_factor = x-9; upper_factor = x+9"
+          },
+          {
+            "params": {
+              "a": 100
+            },
+            "expected": "lower_factor = x-10; upper_factor = x+10"
+          }
+        ],
+        "distractors": [],
+        "answer_contract": {
+          "kind": "multipart",
+          "parts": [
+            {
+              "name": "lower_factor",
+              "contract": {
+                "kind": "exact"
+              }
+            },
+            {
+              "name": "upper_factor",
+              "contract": {
+                "kind": "exact"
+              }
+            }
+          ]
+        }
+      }
+    }
   }
 ]
