@@ -174,8 +174,10 @@ pub const APP_TABLE_PRIVILEGES: [(&str, [bool; 5]); 31] = [
     // columns of a proof-grading job; the worker owns every other column.
     ("proof_grading_jobs", [true, false, false, false, false]),
     // D-PR1 (0027): the owed proof is written and settled by the request
-    // tier; it is never updated.
-    ("proof_owed", [true, true, false, true, false]),
+    // tier; it is never updated. Migration 0028 narrowed the INSERT to the
+    // three columns the app writes, so `has_table_privilege` no longer sees
+    // a table-level grant (the same shape as `proof_grading_jobs` above).
+    ("proof_owed", [true, false, false, true, false]),
     ("serving_pool", [true, true, true, true, false]),
     ("session_plans", [true, true, true, true, false]),
     ("user_settings", [true, true, true, true, false]),
@@ -314,7 +316,7 @@ pub const PUBLIC_FUNCTIONS: [(&str, bool, &str, bool, bool, bool); 11] = [
 /// therefore rewrote the authoritative event document with every C2 test green.
 /// `aw` is INSERT plus UPDATE: the two column lists of `users` in
 /// `0006_grants_rls.sql`. Neither list holds `id` or `is_admin`.
-pub const COLUMN_ACL_GRANTS: [(&str, &str, &str); 31] = [
+pub const COLUMN_ACL_GRANTS: [(&str, &str, &str); 34] = [
     // migration 0020: the exposure backfill can write the legacy cursor.
     // migration 0024: the input-column INSERT of an equivalence job.
     ("equivalence_jobs", "attempt_id", "cadus_app=a"),
@@ -346,6 +348,12 @@ pub const COLUMN_ACL_GRANTS: [(&str, &str, &str); 31] = [
     ("proof_grading_jobs", "rewrite", "cadus_app=a"),
     ("proof_grading_jobs", "seen_at", "cadus_app=w"),
     ("proof_grading_jobs", "user_id", "cadus_app=a"),
+    // migration 0028: narrows the table-wide INSERT of 0027 to the three
+    // columns `owe` writes (crates/store/src/proof_grading.rs). `created_at`
+    // keeps its DEFAULT and is never set by the app.
+    ("proof_owed", "kp", "cadus_app=a"),
+    ("proof_owed", "topic", "cadus_app=a"),
+    ("proof_owed", "user_id", "cadus_app=a"),
     ("users", "created_at", "cadus_app=aw"),
     ("users", "disabled_at", "cadus_app=aw"),
     ("users", "email", "cadus_app=aw"),
