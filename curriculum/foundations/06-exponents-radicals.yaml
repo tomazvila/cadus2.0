@@ -804,53 +804,141 @@ topics:
       - id: kp1
         name: "Evaluate a nonzero base to the zero power"
         key_prerequisites: [integer-exponents-intro]
+        try_first:
+          problem: 'In the pattern $3^3 = 27$, $3^2 = 9$, $3^1 = 3$, each line divides the previous value by $3$. Continuing the pattern, what is $3^0$?'
+          answer_contract: {"kind":"exact"}
+          answer: '1'
+          reveal: 'Dividing $3$ by $3$ once more gives $3^0 = 1$. Lowering an exponent by one divides by the base, so every nonzero base to the power $0$ is $1$.'
+        step_check:
+          step: '$(-7)^0 = 1$ since $-7$ is a nonzero base'
+          question: 'Why is $(-7)^0$ equal to $1$ and not $-1$?'
+          options:
+            - 'An exponent always removes the negative sign from its base, even inside parentheses'
+            - 'The parentheses make $-7$ the base, and a nonzero base to the power $0$ is $1$'
+            - 'A zero exponent turns any number into its absolute value'
+          answer: 'The parentheses make $-7$ the base, and a nonzero base to the power $0$ is $1$'
+          why: '$(-7)^0 = \frac{(-7)^1}{(-7)^1} = 1$; without parentheses, $-7^0$ means $-(7^0) = -1$, so the sign only survives when it sits outside the power.'
         exemplars:
           - problem: 'Simplify $5^0$.'
             answer: "1"
-            solution_sketch: '$5^0 = 1$ for any nonzero base.'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The base $5$ is nonzero. Any nonzero base raised to the power $0$ equals $1$, so $5^0 = 1$.'
           - problem: 'Simplify $(-4)^0$.'
             answer: "1"
-            solution_sketch: '$(-4)^0 = 1$; the base is nonzero, so its sign does not matter here.'
-          - problem: 'What does $8^0$ equal?'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The parentheses make $-4$ the base, and it is nonzero. So $(-4)^0 = 1$; the sign of the base does not matter.'
+          - problem: 'Evaluate $-3^0$.'
+            answer: "-1"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Without parentheses the exponent applies only to $3$. So $-3^0 = -(3^0) = -1$, while $(-3)^0$ would be $1$.'
+          - problem: 'Each fold of a sheet of paper doubles the number of layers, so after $n$ folds there are $2^n$ layers. How many layers does the sheet have before any fold, when $n = 0$?'
             answer: "1"
-            solution_sketch: '$8^0 = 1$ since $8 \ne 0$.'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Before folding, $n = 0$ and the sheet has $2^0$ layers. Since $2^0 = 1$, the unfolded sheet is a single layer.'
+          - problem: 'Evaluate $9^0 + 9^1$.'
+            answer: "10"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The zero power gives $9^0 = 1$ and the first power gives $9^1 = 9$. So the sum is $1 + 9 = 10$.'
+          - problem: 'Evaluate $2^0 + 2^1 + 2^2$.'
+            answer: "7"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The powers are $2^0 = 1$, $2^1 = 2$ and $2^2 = 4$. Their sum is $1 + 2 + 4 = 7$.'
+          - problem: 'A bacteria culture triples every hour, so after $t$ hours it is $3^t$ times its starting size. By what factor has it grown at $t = 0$?'
+            answer: "1"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'At $t = 0$ the growth factor is $3^0$. Since $3^0 = 1$, the culture is still exactly its starting size.'
           - problem: 'What does $(-11)^0$ equal?'
             answer: "1"
-            solution_sketch: '$(-11)^0 = 1$ since the base is nonzero.'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The base $-11$ is inside parentheses and is nonzero. Therefore $(-11)^0 = 1$.'
         constraints: "any nonzero base to the 0 power is 1"
       - id: kp2
         name: "Zero exponents inside expressions"
         key_prerequisites: [exponent-product-quotient-rules]
+        step_check:
+          step: 'only $x$ has exponent zero'
+          question: 'Why does $6x^0$ equal $6$ while $(6x)^0$ equals $1$?'
+          options:
+            - 'A coefficient in front of a zero power is always dropped'
+            - 'Without parentheses the zero exponent covers the whole product $6x$'
+            - 'The exponent $0$ belongs only to $x$, so the factor $6$ stays'
+          answer: 'The exponent $0$ belongs only to $x$, so the factor $6$ stays'
+          why: 'An exponent applies only to the symbol right before it, so $6x^0 = 6\cdot x^0 = 6\cdot1 = 6$; with parentheses the whole $6x$ is the base and $(6x)^0 = 1$.'
         exemplars:
           - problem: 'Simplify $(3x)^0$ for $x \ne 0$.'
             answer: "1"
-            solution_sketch: 'The whole base $3x$ is nonzero and raised to the $0$ power: $1$.'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The whole product $3x$ is the base, and it is nonzero. A nonzero base to the power $0$ is $1$.'
           - problem: 'Simplify $3x^0$ for $x \ne 0$.'
             answer: "3"
-            solution_sketch: 'Only $x$ carries the exponent: $3 \cdot 1 = 3$.'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Only $x$ carries the exponent $0$, so $x^0 = 1$. The coefficient stays: $3 \cdot 1 = 3$.'
+          - problem: 'A culture has $N = 400 \cdot 2^t$ bacteria $t$ hours after it is started. How many bacteria are there at the start?'
+            answer: "400"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The start is $t = 0$, so $N = 400 \cdot 2^0$. Since $2^0 = 1$, there are $400$ bacteria.'
+          - problem: 'Evaluate $8a^0 + (2a)^0$ for $a \ne 0$.'
+            answer: "9"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'In $8a^0$ only $a$ is powered, giving $8 \cdot 1 = 8$. The grouped $(2a)^0$ is $1$, so the sum is $8 + 1 = 9$.'
+          - problem: 'Lena simplifies $7x^0$ to $1$ for $x \ne 0$. What is the correct value of $7x^0$?'
+            answer: "7"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The zero exponent applies only to $x$, so $x^0 = 1$. The coefficient remains: $7 \cdot 1 = 7$.'
+          - problem: 'A car is worth $V = 18000 \cdot 0.85^t$ euros $t$ years after it is bought. How much was it worth when it was bought?'
+            answer: "18000"
+            answer_contract: {"kind":"unit","quantity":"euro","unit":"euro","allow_omitted":true}
+            solution_sketch: 'At purchase $t = 0$, so $V = 18000 \cdot 0.85^0$. Since $0.85^0 = 1$, the car was worth $18000$ euros.'
           - problem: 'What is $(5x)^0$ for $x \ne 0$?'
             answer: "1"
-            solution_sketch: 'The whole base $5x$ is nonzero and raised to the $0$ power: $1$.'
-          - problem: 'What is $7x^0$ for $x \ne 0$?'
-            answer: "7"
-            solution_sketch: 'Only $x$ carries the exponent: $7 \cdot 1 = 7$.'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The whole base $5x$ is nonzero and raised to the power $0$. So $(5x)^0 = 1$.'
+          - problem: 'Simplify $6x^0y^2$ for $x \ne 0$.'
+            answer: "6y^2"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Only $x$ has the exponent $0$, so $x^0 = 1$. The rest is unchanged: $6 \cdot 1 \cdot y^2 = 6y^2$.'
         constraints: "contrast (ax)^0 with a*x^0"
       - id: kp3
         name: "Why it works: the quotient rule"
         key_prerequisites: [exponent-product-quotient-rules]
+        step_check:
+          step: 'Since any nonzero number divided by itself is 1, $z^0 = 1$'
+          question: 'Why must $z^0$ equal $1$ here?'
+          options:
+            - 'An exponent of $0$ means multiplying $z$ by $0$, and that empty product is then counted as $1$'
+            - 'The base $z$ cancels out and the exponent $0$ is replaced by $1$'
+            - '$z^0$ equals $\frac{z^7}{z^7}$, and a nonzero number divided by itself is $1$'
+          answer: '$z^0$ equals $\frac{z^7}{z^7}$, and a nonzero number divided by itself is $1$'
+          why: 'The quotient rule turns $\frac{z^7}{z^7}$ into $z^0$, and the same fraction is plainly $1$, so the only value consistent with the rule is $z^0 = 1$.'
         exemplars:
           - problem: 'Use the quotient rule to write $\frac{x^5}{x^5}$ as a single power of $x$. What is that power worth for $x \ne 0$?'
             answer: "1"
-            solution_sketch: '$x^{5-5} = x^0$; but any nonzero number divided by itself is $1$, so $x^0 = 1$.'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The quotient rule gives $x^{5-5} = x^0$. Any nonzero number divided by itself is $1$, so $x^0 = 1$.'
+          - problem: 'Simplify $\frac{12x^3}{4x^3}$ for $x \ne 0$.'
+            answer: "3"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Divide the coefficients: $12 \div 4 = 3$. The powers give $x^{3-3} = x^0 = 1$, so the result is $3$.'
+          - problem: 'A warehouse holds $10^4$ boxes, and each truck carries $10^4$ boxes. How many trucks are needed to move all the boxes?'
+            answer: "1"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The number of trucks is $\frac{10^4}{10^4} = 10^{4-4} = 10^0$. Since $10^0 = 1$, one truck is enough.'
+          - problem: 'A baker shares $4 \cdot 6^2$ cookies equally among $6^2$ friends. How many cookies does each friend get?'
+            answer: "4"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Each friend gets $\frac{4 \cdot 6^2}{6^2} = 4 \cdot 6^0$ cookies. Since $6^0 = 1$, each friend gets $4$ cookies.'
           - problem: 'Compute $2^0 + 3^0$.'
             answer: "2"
-            solution_sketch: '$2^0 = 1$ and $3^0 = 1$; $1 + 1 = 2$.'
-          - problem: 'Use the quotient rule to write $\frac{y^3}{y^3}$ as a single power of $y$. What is that power worth for $y \ne 0$?'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Each nonzero base to the power $0$ is $1$. So $2^0 + 3^0 = 1 + 1 = 2$.'
+          - problem: 'Sam writes $\frac{y^3}{y^3} = y^0 = 0$ for $y \ne 0$. What is the correct value of $\frac{y^3}{y^3}$?'
             answer: "1"
-            solution_sketch: '$y^{3-3} = y^0$; and $y^3/y^3 = 1$, so $y^0 = 1$.'
-          - problem: 'What is $4^0 + 5^0$?'
-            answer: "2"
-            solution_sketch: '$4^0 = 1$ and $5^0 = 1$; $1 + 1 = 2$.'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'A nonzero number divided by itself is $1$, so $\frac{y^3}{y^3} = 1$. The quotient rule gives $y^{3-3} = y^0$, which therefore equals $1$, not $0$.'
+          - problem: 'Simplify $\frac{15a^2b^4}{5a^2b}$ for $a, b \ne 0$.'
+            answer: "3b^3"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Divide the coefficients: $15 \div 5 = 3$. Then $a^{2-2} = a^0 = 1$ and $b^{4-1} = b^3$, so the result is $3b^3$.'
         constraints: "connect a^0 = 1 to a^n / a^n"
     diagnostic_exemplar:
       problem: 'Evaluate $5x^0 + (3x)^0$ for $x \ne 0$.'
@@ -883,56 +971,144 @@ topics:
       - id: kp1
         name: "Negative exponent as a reciprocal"
         key_prerequisites: [dividing-fractions]
+        try_first:
+          problem: 'In the pattern $2^2 = 4$, $2^1 = 2$, $2^0 = 1$, each line divides the previous value by $2$. Continuing the pattern, what is $2^{-2}$?'
+          answer_contract: {"kind":"exact"}
+          answer: '1/4'
+          reveal: 'Two more divisions by $2$ give $2^{-1} = \frac{1}{2}$ and $2^{-2} = \frac{1}{4}$. A negative exponent gives the reciprocal of the positive power: $2^{-2} = \frac{1}{2^2}$.'
+        step_check:
+          step: '$3^{-3}=1/3^3$'
+          question: 'Why does $3^{-3}$ equal $1/3^3$?'
+          options:
+            - 'A negative exponent makes the value negative, so $3^{-3}$ equals $-3^3 = -27$'
+            - 'Each step down in the exponent divides by $3$ again, starting from $3^0 = 1$'
+            - 'The exponent multiplies the base, so $3^{-3} = 3 \cdot (-3) = -9$'
+          answer: 'Each step down in the exponent divides by $3$ again, starting from $3^0 = 1$'
+          why: 'Starting from $3^0 = 1$, the exponents $-1, -2, -3$ give $\frac13, \frac19, \frac1{27}$, so $3^{-3} = \frac{1}{27} = 1/3^3$; a negative exponent never changes the sign of the value.'
         exemplars:
-          - problem: 'Write $2^{-3}$ as a fraction.'
+          - problem: 'Evaluate $2^{-3}$.'
             answer: "1/8"
-            solution_sketch: '$\frac{1}{2^3} = \frac{1}{8}$.'
-          - problem: 'Rewrite $x^{-2}$ with a positive exponent.'
-            answer: "1/x^2"
-            solution_sketch: '$x^{-2} = \frac{1}{x^2}$.'
-          - problem: 'Express $3^{-2}$ as a fraction.'
-            answer: "1/9"
-            solution_sketch: '$\frac{1}{3^2} = \frac{1}{9}$.'
-          - problem: 'Rewrite $y^{-4}$ with a positive exponent.'
-            answer: "1/y^4"
-            solution_sketch: '$y^{-4} = \frac{1}{y^4}$.'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'A negative exponent gives the reciprocal: $2^{-3} = \frac{1}{2^3}$. Since $2^3 = 8$, the value is $\frac{1}{8}$.'
+          - problem: 'Evaluate $5^{-2}$.'
+            answer: "1/25"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Take the reciprocal of the positive power: $5^{-2} = \frac{1}{5^2}$. Since $5^2 = 25$, the value is $\frac{1}{25}$.'
+          - problem: 'A sheet of paper is cut in half, one half is cut in half again, and so on. After $n$ cuts the smallest piece is $2^{-n}$ of the sheet. What fraction of the sheet is the smallest piece after $4$ cuts?'
+            answer: "1/16"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'After $4$ cuts the piece is $2^{-4}$ of the sheet. That is $\frac{1}{2^4} = \frac{1}{16}$ of the sheet.'
+          - problem: 'Evaluate $(-3)^{-3}$.'
+            answer: "-1/27"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The reciprocal rule gives $(-3)^{-3} = \frac{1}{(-3)^3}$. Since $(-3)^3 = -27$, the value is $-\frac{1}{27}$.'
+          - problem: 'A radioactive sample has $80 \cdot 2^{-t}$ grams left after $t$ days. How many grams are left after $3$ days?'
+            answer: "10"
+            answer_contract: {"kind":"unit","quantity":"mass","unit":"g","allow_omitted":true}
+            solution_sketch: 'After $3$ days the mass is $80 \cdot 2^{-3} = \frac{80}{2^3}$ grams. Since $2^3 = 8$, that is $80 \div 8 = 10$ grams.'
+          - problem: 'A camera shutter stays open for $2^{-8}$ of a second. How many such exposures would fit into one second?'
+            answer: "256"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'One exposure lasts $2^{-8} = \frac{1}{2^8} = \frac{1}{256}$ of a second. Dividing one second by $\frac{1}{256}$ gives $256$ exposures.'
+          - problem: 'Evaluate $10^{-4}$.'
+            answer: "1/10000"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'A negative exponent gives the reciprocal: $10^{-4} = \frac{1}{10^4}$. Since $10^4 = 10000$, the value is $\frac{1}{10000}$.'
+          - problem: 'Jo writes $4^{-2} = -16$. What is the correct value of $4^{-2}$?'
+            answer: "1/16"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'A negative exponent means a reciprocal, not a negative number. So $4^{-2} = \frac{1}{4^2} = \frac{1}{16}$.'
         constraints: "a^-n = 1/a^n"
       - id: kp2
         name: "Negative exponents in denominators"
         key_prerequisites: [dividing-fractions]
+        step_check:
+          step: 'multiplying by its reciprocal'
+          question: 'Why does dividing $1$ by $1/y^5$ give $y^5$?'
+          options:
+            - 'A negative exponent in a denominator makes the whole fraction negative'
+            - 'The $1$ on top cancels the $1$ in $1/y^5$, which leaves $y^{-5}$'
+            - 'Dividing by a fraction multiplies by its reciprocal, and $1/y^5$ flips to $y^5$'
+          answer: 'Dividing by a fraction multiplies by its reciprocal, and $1/y^5$ flips to $y^5$'
+          why: '$1 \div \frac{1}{y^5} = 1 \cdot \frac{y^5}{1} = y^5$, so a power with a negative exponent in a denominator moves up with a positive exponent.'
         exemplars:
-          - problem: 'Rewrite $\frac{1}{x^{-3}}$ with a positive exponent.'
-            answer: "x^3"
-            solution_sketch: 'Dividing by $\frac{1}{x^3}$ multiplies by $x^3$.'
-          - problem: 'Write $\left(\frac{2}{3}\right)^{-1}$ as a fraction.'
+          - problem: 'Evaluate $\frac{1}{2^{-3}}$.'
+            answer: "8"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The denominator is $2^{-3} = \frac{1}{8}$. Dividing $1$ by $\frac{1}{8}$ multiplies by $8$, so the value is $8$.'
+          - problem: 'Evaluate $\left(\frac{2}{3}\right)^{-1}$.'
             answer: "3/2"
-            solution_sketch: '$(a/b)^{-1} = b/a$, so $(2/3)^{-1} = 3/2$.'
-          - problem: 'Rewrite $\frac{1}{y^{-4}}$ with a positive exponent.'
-            answer: "y^4"
-            solution_sketch: 'Dividing by $\frac{1}{y^4}$ multiplies by $y^4$.'
-          - problem: 'Express $\left(\frac{3}{5}\right)^{-1}$ as a fraction.'
-            answer: "5/3"
-            solution_sketch: '$(a/b)^{-1} = b/a$: $\frac{5}{3}$.'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'An exponent of $-1$ gives the reciprocal. The reciprocal of $\frac{2}{3}$ is $\frac{3}{2}$.'
+          - problem: 'A grain of sand has a mass of about $10^{-5}$ kg. About how many grains of sand make up $1$ kg?'
+            answer: "100000"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The number of grains is $\frac{1}{10^{-5}} = 10^5$. That is $100000$ grains.'
+          - problem: 'Evaluate $\frac{5}{x^{-2}}$ for $x = 3$.'
+            answer: "45"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Dividing by $x^{-2}$ multiplies by $x^2$, so $\frac{5}{x^{-2}} = 5x^2$. With $x = 3$ this is $5 \cdot 9 = 45$.'
+          - problem: 'A wheel turns $3^{-2}$ of a full turn each second. How many seconds does one full turn take?'
+            answer: "9"
+            answer_contract: {"kind":"unit","quantity":"time","unit":"s","allow_omitted":true}
+            solution_sketch: 'One full turn takes $1 \div 3^{-2} = \frac{1}{3^{-2}} = 3^2$ seconds. That is $9$ seconds.'
+          - problem: 'Evaluate $\left(\frac{2}{5}\right)^{-2}$.'
+            answer: "25/4"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'A negative exponent flips the fraction: $\left(\frac{2}{5}\right)^{-2} = \left(\frac{5}{2}\right)^2$. Squaring gives $\frac{25}{4}$.'
+          - problem: 'Omar says $\frac{1}{4^{-2}} = \frac{1}{16}$. What is the correct value of $\frac{1}{4^{-2}}$?'
+            answer: "16"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The denominator is $4^{-2} = \frac{1}{16}$. Dividing $1$ by $\frac{1}{16}$ gives $16$.'
         constraints: "a^-n in a denominator moves up as a^n; (a/b)^-1 = b/a"
       - id: kp3
         name: "Combine with exponent rules"
         key_prerequisites: [exponent-product-quotient-rules]
+        step_check:
+          step: 'Add the exponents: $2+(-5)=-3$'
+          question: 'Why are the exponents $2$ and $-5$ added?'
+          options:
+            - 'A negative exponent means the exponents are subtracted, giving $7$'
+            - 'The powers of $x$ are multiplied, and multiplying powers of one base adds exponents'
+            - 'The coefficient $3$ makes the exponents multiply instead'
+          answer: 'The powers of $x$ are multiplied, and multiplying powers of one base adds exponents'
+          why: '$x^2\cdot x^{-5} = x^2 \cdot \frac{1}{x^5}$, two factors of $x$ over five, which leaves $\frac{1}{x^3} = x^{-3}$; the product rule holds for negative exponents too.'
         exemplars:
-          - problem: 'Simplify $x^3 \cdot x^{-5}$ and write with a positive exponent.'
+          - problem: 'Simplify $x^3 \cdot x^{-5}$.'
             answer: "1/x^2"
-            solution_sketch: '$x^{3-5} = x^{-2} = \frac{1}{x^2}$.'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Add the exponents: $3 + (-5) = -2$, so the product is $x^{-2}$. As a reciprocal this is $\frac{1}{x^2}$.'
           - problem: 'Simplify $3x^{-2} \cdot x^5$.'
             answer: "3x^3"
-            solution_sketch: '$3 \cdot x^{-2+5} = 3x^3$.'
-          - problem: 'Simplify $y^4 \cdot y^{-6}$ and write with a positive exponent.'
-            answer: "1/y^2"
-            solution_sketch: '$y^{4-6} = y^{-2} = \frac{1}{y^2}$.'
-          - problem: 'What is $2x^{-3} \cdot x^7$ in simplest form?'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Add the exponents of $x$: $-2 + 5 = 3$. The coefficient stays, so the result is $3x^3$.'
+          - problem: 'Simplify $\frac{x^2}{x^6}$.'
+            answer: "1/x^4"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Subtract the exponents: $2 - 6 = -4$, so the quotient is $x^{-4}$. As a reciprocal this is $\frac{1}{x^4}$.'
+          - problem: 'A baker has $2^3$ kg of flour and splits it equally into $2^5$ bags. How many kilograms of flour go into each bag?'
+            answer: "1/4"
+            answer_contract: {"kind":"unit","quantity":"mass","unit":"kg","allow_omitted":true}
+            solution_sketch: 'Each bag holds $\frac{2^3}{2^5} = 2^{3-5} = 2^{-2}$ kg. That is $\frac{1}{2^2} = \frac{1}{4}$ kg.'
+          - problem: 'A square tile has sides of length $2^{-3}$ m. What is the area of the tile?'
+            answer: "1/64"
+            answer_contract: {"kind":"unit","quantity":"area","unit":"m^2","allow_omitted":true}
+            solution_sketch: 'The area is $2^{-3} \cdot 2^{-3} = 2^{-6}$ square metres. That is $\frac{1}{2^6} = \frac{1}{64}$ square metres.'
+          - problem: 'Evaluate $4^3 \cdot 4^{-5}$.'
+            answer: "1/16"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Add the exponents: $3 + (-5) = -2$, so the product is $4^{-2}$. That equals $\frac{1}{4^2} = \frac{1}{16}$.'
+          - problem: 'Rae simplifies $x^4 \cdot x^{-7}$ to $x^{-28}$. What is the correct simplification?'
+            answer: "1/x^3"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Multiplying powers adds the exponents: $4 + (-7) = -3$. So the product is $x^{-3} = \frac{1}{x^3}$.'
+          - problem: 'Simplify $2x^{-3} \cdot x^7$.'
             answer: "2x^4"
-            solution_sketch: '$2 \cdot x^{-3+7} = 2x^4$.'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Add the exponents of $x$: $-3 + 7 = 4$. The coefficient stays, so the result is $2x^4$.'
         constraints: "combine exponents first, then rewrite negatives as reciprocals"
     diagnostic_exemplar:
-      problem: 'Simplify $x^2 \cdot x^{-5}$ and write with a positive exponent.'
+      problem: 'Simplify $x^2 \cdot x^{-5}$.'
       answer: "1/x^3"
       solution_sketch: '$x^{2-5} = x^{-3} = \frac{1}{x^3}$.'
     anki_seeds:
@@ -1041,53 +1217,137 @@ topics:
       - id: kp1
         name: "Convert large numbers to and from scientific notation"
         key_prerequisites: [place-value]
+        try_first:
+          problem: 'Multiplying $6.7$ by $10$ gives $67$, and by $100$ gives $670$. If $6{,}700{,}000 = 6.7 \times 10^n$, what is $n$?'
+          answer_contract: {"kind":"exact"}
+          answer: '6'
+          reveal: 'Each factor of $10$ moves the decimal point one place right, and $6.7$ needs six such moves to become $6{,}700{,}000$. So $6{,}700{,}000 = 6.7 \times 10^6$, which is how scientific notation writes a large number.'
+        step_check:
+          step: 'Compensate with $10^6$'
+          question: 'Why is $6.7$ multiplied by $10^6$?'
+          options:
+            - 'The exponent counts the zeros after $67$ in $6{,}700{,}000$'
+            - 'Moving the point six places left divided the number by $10^6$, so multiplying by $10^6$ restores it'
+            - 'The exponent counts every digit of $6{,}700{,}000$'
+          answer: 'Moving the point six places left divided the number by $10^6$, so multiplying by $10^6$ restores it'
+          why: '$6{,}700{,}000 \div 10^6 = 6.7$, so $6.7 \times 10^6$ is the same number; counting the five zeros would give $6.7 \times 10^5 = 670{,}000$, ten times too small.'
         exemplars:
           - problem: 'Write $45000$ in scientific notation.'
-            answer: "4.5 x 10^4"
-            solution_sketch: '$45000 = 4.5 \times 10^4$: move the decimal point $4$ places.'
-          - problem: 'Write $3.2 \times 10^3$ as a standard number.'
+            answer: "4.5*10^4"
+            answer_contract: {"kind":"required_normalized_scientific_notation"}
+            solution_sketch: 'Move the decimal point $4$ places left to get the coefficient $4.5$. Then $45000 = 4.5 \times 10^4$.'
+          - problem: 'Write $3.2 \times 10^3$ as an ordinary number.'
             answer: "3200"
-            solution_sketch: '$3.2 \times 10^3 = 3200$: move the decimal point $3$ places right.'
-          - problem: 'Express $67000$ in scientific notation.'
-            answer: "6.7 x 10^4"
-            solution_sketch: 'Move the decimal point $4$ places: $6.7 \times 10^4$.'
-          - problem: 'Express $5.1 \times 10^2$ as a standard number.'
-            answer: "510"
-            solution_sketch: 'Move the decimal point $2$ places right: $510$.'
+            answer_contract: {"kind":"required_form","form":"integer"}
+            solution_sketch: 'Multiplying by $10^3$ moves the decimal point $3$ places right. So $3.2 \times 10^3 = 3200$.'
+          - problem: 'The Sun is about $150{,}000{,}000$ km from Earth. Write this number of kilometres in scientific notation.'
+            answer: "1.5*10^8"
+            answer_contract: {"kind":"required_normalized_scientific_notation"}
+            solution_sketch: 'Move the decimal point $8$ places left to get the coefficient $1.5$. So the distance is $1.5 \times 10^8$ km.'
+          - problem: 'The population of the world is about $8.1 \times 10^9$ people. Write this population as an ordinary number.'
+            answer: "8100000000"
+            answer_contract: {"kind":"required_form","form":"integer"}
+            solution_sketch: 'Multiplying by $10^9$ moves the decimal point $9$ places right. So $8.1 \times 10^9 = 8100000000$ people.'
+          - problem: 'Write $307000$ in scientific notation.'
+            answer: "3.07*10^5"
+            answer_contract: {"kind":"required_normalized_scientific_notation"}
+            solution_sketch: 'Move the decimal point $5$ places left; the zero between $3$ and $7$ stays. So $307000 = 3.07 \times 10^5$.'
+          - problem: 'Write $5.06 \times 10^5$ as an ordinary number.'
+            answer: "506000"
+            answer_contract: {"kind":"required_form","form":"integer"}
+            solution_sketch: 'Multiplying by $10^5$ moves the decimal point $5$ places right. So $5.06 \times 10^5 = 506000$.'
+          - problem: 'A large stadium has about $90000$ seats. Write this number of seats in scientific notation.'
+            answer: "9*10^4"
+            answer_contract: {"kind":"required_normalized_scientific_notation"}
+            solution_sketch: 'Move the decimal point $4$ places left to get the coefficient $9$. So $90000 = 9 \times 10^4$ seats.'
         constraints: "coefficient a satisfies 1 <= a < 10"
       - id: kp2
         name: "Small numbers with negative exponents"
         key_prerequisites: [negative-zero-exponents]
+        step_check:
+          step: 'The exponent is $-5$'
+          question: 'Why is the exponent $-5$ and not $5$?'
+          options:
+            - 'A negative exponent shows that the number itself is negative'
+            - 'The exponent counts the zeros after the decimal point of $0.000058$'
+            - 'The number is below $1$; moving the point five places right multiplied it by $10^5$, and $10^{-5}$ undoes that'
+          answer: 'The number is below $1$; moving the point five places right multiplied it by $10^5$, and $10^{-5}$ undoes that'
+          why: '$5.8 \times 10^{-5} = 5.8 \div 10^5 = 0.000058$; counting only the four zeros after the point would give $5.8 \times 10^{-4} = 0.00058$, ten times too large.'
         exemplars:
           - problem: 'Write $0.00072$ in scientific notation.'
-            answer: "7.2 x 10^-4"
-            solution_sketch: '$0.00072 = 7.2 \times 10^{-4}$: move the decimal point $4$ places right.'
-          - problem: 'Write $6 \times 10^{-3}$ as a decimal.'
+            answer: "7.2*10^-4"
+            answer_contract: {"kind":"required_normalized_scientific_notation"}
+            solution_sketch: 'Move the decimal point $4$ places right to get the coefficient $7.2$. The number is below $1$, so $0.00072 = 7.2 \times 10^{-4}$.'
+          - problem: 'Write $6 \times 10^{-3}$ as an ordinary number.'
             answer: "0.006"
-            solution_sketch: '$6 \times 10^{-3} = 0.006$: move the decimal point $3$ places left.'
+            answer_contract: {"kind":"required_form","form":"decimal"}
+            solution_sketch: 'Multiplying by $10^{-3}$ moves the decimal point $3$ places left. So $6 \times 10^{-3} = 0.006$.'
+          - problem: 'A human hair is about $0.00008$ m thick. Write this thickness in metres in scientific notation.'
+            answer: "8*10^-5"
+            answer_contract: {"kind":"required_normalized_scientific_notation"}
+            solution_sketch: 'Move the decimal point $5$ places right to get the coefficient $8$. So the hair is $8 \times 10^{-5}$ m thick.'
+          - problem: 'A grain of pollen has a mass of about $2.5 \times 10^{-8}$ g. Write this mass in grams as an ordinary number.'
+            answer: "0.000000025"
+            answer_contract: {"kind":"required_form","form":"decimal"}
+            solution_sketch: 'Multiplying by $10^{-8}$ moves the decimal point $8$ places left. So $2.5 \times 10^{-8} = 0.000000025$ g.'
+          - problem: 'Write $0.000305$ in scientific notation.'
+            answer: "3.05*10^-4"
+            answer_contract: {"kind":"required_normalized_scientific_notation"}
+            solution_sketch: 'Move the decimal point $4$ places right to get the coefficient $3.05$. So $0.000305 = 3.05 \times 10^{-4}$.'
+          - problem: 'Write $4.1 \times 10^{-6}$ as an ordinary number.'
+            answer: "0.0000041"
+            answer_contract: {"kind":"required_form","form":"decimal"}
+            solution_sketch: 'Multiplying by $10^{-6}$ moves the decimal point $6$ places left. So $4.1 \times 10^{-6} = 0.0000041$.'
           - problem: 'Express $0.0004$ in scientific notation.'
-            answer: "4 x 10^-4"
-            solution_sketch: 'Move the decimal point $4$ places right: $4 \times 10^{-4}$.'
-          - problem: 'Express $9 \times 10^{-2}$ as a decimal.'
-            answer: "0.09"
-            solution_sketch: 'Move the decimal point $2$ places left: $0.09$.'
+            answer: "4*10^-4"
+            answer_contract: {"kind":"required_normalized_scientific_notation"}
+            solution_sketch: 'Move the decimal point $4$ places right to get the coefficient $4$. So $0.0004 = 4 \times 10^{-4}$.'
         constraints: "negative exponent for numbers less than 1"
       - id: kp3
         name: "Valid form and comparing magnitudes"
         key_prerequisites: [place-value, negative-zero-exponents]
+        step_check:
+          step: 'The exponent $-2$ is greater than $-3$.'
+          question: 'Why does comparing the exponents decide which number is larger?'
+          options:
+            - 'The number with the larger coefficient is always the larger number, whatever its exponent is'
+            - 'Both coefficients lie from $1$ up to $10$, so a higher power of $10$ outweighs any coefficient'
+            - 'An exponent closer to zero always gives a smaller number'
+          answer: 'Both coefficients lie from $1$ up to $10$, so a higher power of $10$ outweighs any coefficient'
+          why: '$3.9 \times 10^{-2} = 0.039$ and $4 \times 10^{-3} = 0.004$; a normalized coefficient is less than $10$, so one extra power of $10$ always wins.'
         exemplars:
-          - problem: 'Rewrite $12 \times 10^3$ in proper scientific notation.'
-            answer: "1.2 x 10^4"
-            solution_sketch: '$12 = 1.2 \times 10$; add one to the exponent.'
+          - problem: 'Rewrite $12 \times 10^3$ in scientific notation.'
+            answer: "1.2*10^4"
+            answer_contract: {"kind":"required_normalized_scientific_notation"}
+            solution_sketch: 'The coefficient $12$ is too large, and $12 = 1.2 \times 10$. So $12 \times 10^3 = 1.2 \times 10^4$.'
           - problem: 'Which is larger: $3 \times 10^5$ or $9 \times 10^4$?'
-            answer: "3 x 10^5"
-            solution_sketch: 'Compare exponents first: $10^5 > 10^4$.'
-          - problem: 'Express $45 \times 10^2$ in proper scientific notation.'
-            answer: "4.5 x 10^3"
-            solution_sketch: '$45 = 4.5 \times 10$; add one to the exponent: $4.5 \times 10^3$.'
-          - problem: 'Between $2 \times 10^6$ and $8 \times 10^5$, which is larger?'
-            answer: "2 x 10^6"
-            solution_sketch: 'Compare exponents first: $10^6 > 10^5$.'
+            answer: "3*10^5"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Both are normalized, so compare exponents first. Since $10^5 > 10^4$, the larger number is $3 \times 10^5$.'
+          - problem: 'Rewrite $0.52 \times 10^{-3}$ in scientific notation.'
+            answer: "5.2*10^-4"
+            answer_contract: {"kind":"required_normalized_scientific_notation"}
+            solution_sketch: 'The coefficient $0.52$ is too small, and $0.52 = 5.2 \times 10^{-1}$. So $0.52 \times 10^{-3} = 5.2 \times 10^{-4}$.'
+          - problem: 'A virus is about $1.2 \times 10^{-7}$ m long and a bacterium is about $2 \times 10^{-6}$ m long. Which is longer, the virus or the bacterium?'
+            answer: "the bacterium"
+            answer_contract: {"kind":"label","options":[["the bacterium","bacterium","the bacteria","bacteria"],["the virus","virus"]]}
+            solution_sketch: 'Both lengths are normalized, so compare exponents. Since $-6 > -7$, the bacterium at $2 \times 10^{-6}$ m is longer.'
+          - problem: 'Mount Everest is about $8.8 \times 10^3$ m high, and the Mariana Trench is about $1.1 \times 10^4$ m deep. Which is greater, the height of Everest or the depth of the trench?'
+            answer: "the depth"
+            answer_contract: {"kind":"label","options":[["the depth","depth","the depth of the trench","the trench","the Mariana Trench"],["the height","height","the height of Everest","Everest","Mount Everest"]]}
+            solution_sketch: 'The exponent $4$ is greater than $3$. So the depth of $1.1 \times 10^4$ m is greater than the height of $8.8 \times 10^3$ m.'
+          - problem: 'Which is smaller: $4.5 \times 10^{-3}$ or $8 \times 10^{-4}$?'
+            answer: "8*10^-4"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Compare exponents first: $-4 < -3$. So the smaller number is $8 \times 10^{-4}$, even though its coefficient is larger.'
+          - problem: 'Express $45 \times 10^2$ in scientific notation.'
+            answer: "4.5*10^3"
+            answer_contract: {"kind":"required_normalized_scientific_notation"}
+            solution_sketch: 'Write $45 = 4.5 \times 10$ and add one to the exponent. So $45 \times 10^2 = 4.5 \times 10^3$.'
+          - problem: 'Kai rewrites $0.6 \times 10^5$ as $6 \times 10^6$. What is the correct scientific notation for $0.6 \times 10^5$?'
+            answer: "6*10^4"
+            answer_contract: {"kind":"required_normalized_scientific_notation"}
+            solution_sketch: 'Making the coefficient ten times larger, $0.6 \to 6$, needs one less power of ten. So $0.6 \times 10^5 = 6 \times 10^4$.'
         constraints: "renormalize the coefficient into [1, 10); compare exponents before coefficients"
     diagnostic_exemplar:
       problem: 'Rewrite $340 \times 10^{-6}$ in proper scientific notation.'
@@ -1120,56 +1380,139 @@ topics:
       - id: kp1
         name: "Multiply in scientific notation"
         key_prerequisites: [exponent-product-quotient-rules]
+        step_check:
+          step: 'Add the exponents: $10^{6 + (-3)} = 10^3$.'
+          question: 'Why are the exponents $6$ and $-3$ added?'
+          options:
+            - 'Exponents are multiplied whenever the coefficients are multiplied'
+            - 'The smaller exponent is always taken away from the larger one'
+            - 'The powers of $10$ are multiplied, and multiplying powers of $10$ adds exponents'
+          answer: 'The powers of $10$ are multiplied, and multiplying powers of $10$ adds exponents'
+          why: '$10^6 \cdot 10^{-3}$ is six factors of $10$ times three divisions by $10$, which leaves $10^3$; multiplying the exponents would give $10^{-18}$.'
         exemplars:
           - problem: 'Compute $(2 \times 10^3)(3 \times 10^4)$.'
-            answer: "6 x 10^7"
-            solution_sketch: '$2 \cdot 3 = 6$; $10^{3+4} = 10^7$.'
+            answer: "6*10^7"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Multiply the coefficients: $2 \cdot 3 = 6$. Add the exponents: $10^{3+4} = 10^7$, so the product is $6 \times 10^7$.'
           - problem: 'What is $(3 \times 10^{-2})(2 \times 10^5)$?'
-            answer: "6 x 10^3"
-            solution_sketch: '$3 \cdot 2 = 6$; $10^{-2+5} = 10^3$.'
-          - problem: 'Multiply $(4 \times 10^2)(2 \times 10^3)$.'
-            answer: "8 x 10^5"
-            solution_sketch: '$4 \cdot 2 = 8$; $10^{2+3} = 10^5$.'
+            answer: "6*10^3"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Multiply the coefficients: $3 \cdot 2 = 6$. Add the exponents: $10^{-2+5} = 10^3$, so the product is $6 \times 10^3$.'
+          - problem: 'Light travels about $3 \times 10^5$ km each second. How far does light travel in $2 \times 10^3$ seconds?'
+            answer: "6*10^8"
+            answer_contract: {"kind":"unit","quantity":"length","unit":"km","allow_omitted":true}
+            solution_sketch: 'Distance is speed times time: $(3 \times 10^5)(2 \times 10^3)$. That is $6 \times 10^{5+3} = 6 \times 10^8$ km.'
+          - problem: 'One hard drive stores $4 \times 10^{12}$ bytes. How many bytes can $2 \times 10^3$ such drives store?'
+            answer: "8*10^15"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Multiply the capacity of one drive by the number of drives. That gives $(4 \cdot 2) \times 10^{12+3} = 8 \times 10^{15}$ bytes.'
           - problem: 'Find the product $(3 \times 10^{-4})(3 \times 10^6)$.'
-            answer: "9 x 10^2"
-            solution_sketch: '$3 \cdot 3 = 9$; $10^{-4+6} = 10^2$.'
+            answer: "9*10^2"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Multiply the coefficients: $3 \cdot 3 = 9$. Add the exponents: $10^{-4+6} = 10^2$, so the product is $9 \times 10^2$.'
+          - problem: 'A sheet of paper is $1.2 \times 10^{-4}$ m thick. How tall is a stack of $5 \times 10^2$ sheets?'
+            answer: "6*10^-2"
+            answer_contract: {"kind":"unit","quantity":"length","unit":"m","allow_omitted":true}
+            solution_sketch: 'The height is the thickness times the number of sheets. That is $(1.2 \cdot 5) \times 10^{-4+2} = 6 \times 10^{-2}$ m.'
+          - problem: 'Compute $(4 \times 10^2)(2 \times 10^3)$.'
+            answer: "8*10^5"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Multiply the coefficients: $4 \cdot 2 = 8$. Add the exponents: $10^{2+3} = 10^5$, so the product is $8 \times 10^5$.'
         constraints: "multiply coefficients, add exponents"
       - id: kp2
         name: "Divide in scientific notation"
         key_prerequisites: [exponent-product-quotient-rules]
+        step_check:
+          step: 'Subtract the exponents: $10^{6-3} = 10^3$.'
+          question: 'Why is the exponent $3$ subtracted from $6$?'
+          options:
+            - 'Exponents are divided when the numbers are divided, just like the coefficients'
+            - 'Dividing by $10^3$ removes three of the six factors of $10$'
+            - 'Subtracting keeps the exponent of the answer positive'
+          answer: 'Dividing by $10^3$ removes three of the six factors of $10$'
+          why: '$\frac{10^6}{10^3}$ cancels three factors of $10$ from top and bottom, leaving $10^{6-3} = 10^3$; dividing the exponents would give $10^2$.'
         exemplars:
           - problem: 'Compute $\frac{8 \times 10^5}{2 \times 10^2}$.'
-            answer: "4 x 10^3"
-            solution_sketch: '$\frac{8}{2} = 4$; $10^{5-2} = 10^3$.'
+            answer: "4*10^3"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Divide the coefficients: $\frac{8}{2} = 4$. Subtract the exponents: $10^{5-2} = 10^3$, so the quotient is $4 \times 10^3$.'
           - problem: 'What is $\frac{9 \times 10^3}{3 \times 10^5}$?'
-            answer: "3 x 10^-2"
-            solution_sketch: '$\frac{9}{3} = 3$; $10^{3-5} = 10^{-2}$.'
-          - problem: 'Divide $\frac{6 \times 10^4}{3 \times 10^2}$.'
-            answer: "2 x 10^2"
-            solution_sketch: '$\frac{6}{3} = 2$; $10^{4-2} = 10^2$.'
+            answer: "3*10^-2"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Divide the coefficients: $\frac{9}{3} = 3$. Subtract the exponents: $10^{3-5} = 10^{-2}$, so the quotient is $3 \times 10^{-2}$.'
+          - problem: 'The mass of Earth is about $6 \times 10^{24}$ kg, and the mass of the Moon is about $7.5 \times 10^{22}$ kg. How many times the mass of the Moon is the mass of Earth?'
+            answer: "80"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Divide the two masses: $\frac{6 \times 10^{24}}{7.5 \times 10^{22}} = 0.8 \times 10^{2}$. That is $80$, so Earth has about $80$ times the mass of the Moon.'
+          - problem: 'Light travels about $3 \times 10^5$ km each second, and the Sun is about $1.5 \times 10^8$ km from Earth. How many seconds does sunlight take to reach Earth?'
+            answer: "500"
+            answer_contract: {"kind":"unit","quantity":"time","unit":"s","allow_omitted":true}
+            solution_sketch: 'Time is distance divided by speed: $\frac{1.5 \times 10^8}{3 \times 10^5} = 0.5 \times 10^3$. That is $500$ seconds.'
+          - problem: 'A country of $5 \times 10^7$ people uses $2 \times 10^{10}$ litres of water each day. On average, how many litres does one person use each day?'
+            answer: "400"
+            answer_contract: {"kind":"unit","quantity":"volume","unit":"litre","allow_omitted":true}
+            solution_sketch: 'Share the total among the people: $\frac{2 \times 10^{10}}{5 \times 10^7} = 0.4 \times 10^3$. That is $400$ litres per person.'
           - problem: 'Find the quotient $\frac{9 \times 10^7}{3 \times 10^4}$.'
-            answer: "3 x 10^3"
-            solution_sketch: '$\frac{9}{3} = 3$; $10^{7-4} = 10^3$.'
+            answer: "3*10^3"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Divide the coefficients: $\frac{9}{3} = 3$. Subtract the exponents: $10^{7-4} = 10^3$, so the quotient is $3 \times 10^3$.'
+          - problem: 'A red blood cell is about $8 \times 10^{-6}$ m wide. How many red blood cells placed side by side would span $4 \times 10^{-2}$ m?'
+            answer: "5000"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Divide the length by the width of one cell: $\frac{4 \times 10^{-2}}{8 \times 10^{-6}} = 0.5 \times 10^4$. That is $5000$ cells.'
+          - problem: 'Nia computes $\frac{6 \times 10^8}{2 \times 10^2}$ as $3 \times 10^4$. What is the correct quotient?'
+            answer: "3*10^6"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Dividing subtracts the exponents, so $10^{8-2} = 10^6$ and $\frac{6}{2} = 3$. The quotient is $3 \times 10^6$.'
         constraints: "divide coefficients, subtract exponents"
       - id: kp3
         name: "Renormalize the result"
         key_prerequisites: [scientific-notation-conversion]
+        step_check:
+          step: 'The coefficient $63$ is too large; write it as $6.3\times10$.'
+          question: 'Why does writing $63$ as $6.3\times10$ raise the exponent from $7$ to $8$?'
+          options:
+            - 'Moving the decimal point left always lowers the exponent by one'
+            - 'The exponent must equal the number of digits in the coefficient'
+            - 'The extra factor $10$ joins $10^7$ to make $10^8$, so the value is unchanged'
+          answer: 'The extra factor $10$ joins $10^7$ to make $10^8$, so the value is unchanged'
+          why: '$63 \times 10^7 = 6.3 \times 10 \times 10^7 = 6.3 \times 10^8$; making the coefficient ten times smaller must make the power of ten ten times larger.'
         exemplars:
-          - problem: 'Compute $(4 \times 10^3)(5 \times 10^4)$ in proper scientific notation.'
-            answer: "2 x 10^8"
-            solution_sketch: '$20 \times 10^7 = 2 \times 10^8$.'
-          - problem: 'Compute $\frac{2 \times 10^2}{8 \times 10^5}$ in proper scientific notation.'
-            answer: "2.5 x 10^-4"
-            solution_sketch: '$0.25 \times 10^{-3} = 2.5 \times 10^{-4}$.'
-          - problem: 'Find $(6 \times 10^3)(4 \times 10^4)$ in proper scientific notation.'
-            answer: "2.4 x 10^8"
-            solution_sketch: '$24 \times 10^7 = 2.4 \times 10^8$.'
-          - problem: 'Find $\frac{3 \times 10^2}{6 \times 10^5}$ in proper scientific notation.'
-            answer: "5 x 10^-4"
-            solution_sketch: '$0.5 \times 10^{-3} = 5 \times 10^{-4}$.'
+          - problem: 'Write $(4 \times 10^3)(5 \times 10^4)$ in scientific notation.'
+            answer: "2*10^8"
+            answer_contract: {"kind":"required_normalized_scientific_notation"}
+            solution_sketch: 'The product is $20 \times 10^7$. Since $20 = 2 \times 10$, it equals $2 \times 10^8$.'
+          - problem: 'Write $\frac{2 \times 10^2}{8 \times 10^5}$ in scientific notation.'
+            answer: "2.5*10^-4"
+            answer_contract: {"kind":"required_normalized_scientific_notation"}
+            solution_sketch: 'The quotient is $0.25 \times 10^{-3}$. Since $0.25 = 2.5 \times 10^{-1}$, it equals $2.5 \times 10^{-4}$.'
+          - problem: 'A beach holds about $8 \times 10^6$ grains of sand in each cubic metre and contains $5 \times 10^4$ cubic metres of sand. About how many grains of sand are on the beach? Write the result in scientific notation.'
+            answer: "4*10^11"
+            answer_contract: {"kind":"required_normalized_scientific_notation"}
+            solution_sketch: 'Multiply grains per cubic metre by cubic metres: $(8 \cdot 5) \times 10^{6+4} = 40 \times 10^{10}$. Renormalized, that is $4 \times 10^{11}$ grains.'
+          - problem: 'The Milky Way contains about $2 \times 10^{11}$ stars, and a star cluster contains about $8 \times 10^2$ stars. How many times as many stars does the Milky Way contain? Write the result in scientific notation.'
+            answer: "2.5*10^8"
+            answer_contract: {"kind":"required_normalized_scientific_notation"}
+            solution_sketch: 'Divide the two star counts: $\frac{2 \times 10^{11}}{8 \times 10^2} = 0.25 \times 10^9$. Renormalized, that is $2.5 \times 10^8$ times as many.'
+          - problem: 'Ali writes $(5 \times 10^4)(6 \times 10^3)$ as $30 \times 10^7$ and then as $3 \times 10^6$. What is the correct scientific notation for the product?'
+            answer: "3*10^8"
+            answer_contract: {"kind":"required_normalized_scientific_notation"}
+            solution_sketch: 'The product $30 \times 10^7$ is right. Since $30 = 3 \times 10$, the exponent goes up by one: $3 \times 10^8$.'
+          - problem: 'Write $(6 \times 10^3)(4 \times 10^4)$ in scientific notation.'
+            answer: "2.4*10^8"
+            answer_contract: {"kind":"required_normalized_scientific_notation"}
+            solution_sketch: 'The product is $24 \times 10^7$. Since $24 = 2.4 \times 10$, it equals $2.4 \times 10^8$.'
+          - problem: 'Write $\frac{3 \times 10^2}{6 \times 10^5}$ in scientific notation.'
+            answer: "5*10^-4"
+            answer_contract: {"kind":"required_normalized_scientific_notation"}
+            solution_sketch: 'The quotient is $0.5 \times 10^{-3}$. Since $0.5 = 5 \times 10^{-1}$, it equals $5 \times 10^{-4}$.'
+          - problem: 'A water molecule has a mass of about $3 \times 10^{-23}$ g. About how many water molecules are in a droplet of mass $1.5 \times 10^{-3}$ g? Write the result in scientific notation.'
+            answer: "5*10^19"
+            answer_contract: {"kind":"required_normalized_scientific_notation"}
+            solution_sketch: 'Divide the droplet mass by the mass of one molecule: $\frac{1.5 \times 10^{-3}}{3 \times 10^{-23}} = 0.5 \times 10^{20}$. Renormalized, that is $5 \times 10^{19}$ molecules.'
         constraints: "coefficient must land back in [1, 10)"
     diagnostic_exemplar:
-      problem: 'Compute $(4 \times 10^2)(5 \times 10^5)$ in proper scientific notation.'
+      problem: 'Write $(4 \times 10^2)(5 \times 10^5)$ in scientific notation.'
       answer: '2 x 10^8'
       solution_sketch: '$4 \times 5 = 20$ and $10^{2+5} = 10^7$; renormalize: $20 \times 10^7 = 2 \times 10^8$.'
     anki_seeds:
