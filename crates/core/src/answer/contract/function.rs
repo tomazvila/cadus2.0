@@ -35,6 +35,13 @@ pub const CONSTANT_NAMES: [&str; 4] = ["C", "c", "K", "k"];
 pub const DEFAULT_DOMAIN: (&str, &str) = ("1/4", "11/4");
 /// The symmetric interval that such a variable tries first (D45).
 const SYMMETRIC_DEFAULT: (f64, f64) = (-3.0, 3.0);
+/// The intervals that a defaulted variable tries when the two defaults leave the
+/// key finite at too few points: below `pi/2`, above 2, and inside (-1, 1).
+const EXTRA_DOMAINS: [(f64, f64); 3] = [(0.05, 1.5), (2.25, 12.25), (-0.95, 0.95)];
+/// The largest scale of the tolerance. A key of 1e10 has a roundoff of 1e-6, so
+/// the scale stops at 1e4 and the tolerance stays near 1e-5: a small extra term
+/// such as `+ x` is then wrong at a point where the key is large.
+const MAX_SCALE: f64 = 1e4;
 
 const BAD_VARS: &str = "a function contract requires one to three distinct variable names";
 const BAD_DOMAIN: &str =
@@ -160,7 +167,20 @@ impl FunctionSpec {
             }
             let fallback = spec.domain[index];
             spec.domain[index] = SYMMETRIC_DEFAULT;
-            if spec.finite_points(key) < MIN_FINITE_POINTS {
+            if spec.finite_points(key) >= MIN_FINITE_POINTS {
+                continue;
+            }
+            spec.domain[index] = fallback;
+            if spec.finite_points(key) >= MIN_FINITE_POINTS {
+                continue;
+            }
+            // A key such as `sqrt(x - 2)` or `-ln(cos(x))` is finite on a part of
+            // the line only: try the next interval where it is defined.
+            for candidate in EXTRA_DOMAINS {
+                spec.domain[index] = candidate;
+                if spec.finite_points(key) >= MIN_FINITE_POINTS {
+                    break;
+                }
                 spec.domain[index] = fallback;
             }
         }
@@ -325,12 +345,8 @@ pub fn expected(spec: &FunctionSpec, expected: &str) -> Result<Canon, Undecidabl
 
 /// The notation that a key must not use, because it has two readings (D28).
 ///
-/// `log` is the natural logarithm for the evaluator and base 10 for the
-/// curriculum. The parser reads `1e-5` as `1*e - 5`, not as a power of ten.
+/// The parser reads `1e-5` as `1*e - 5`, not as a power of ten.
 fn ambiguous_notation(source: &str) -> Option<&'static str> {
-    if source.to_lowercase().contains("log") {
-        return Some("the authored function must use ln, because log has two readings");
-    }
     let bytes = source.as_bytes();
     let exponent_at = |at: usize| {
         let sign = usize::from(matches!(bytes.get(at + 2), Some(b'+' | b'-')));
@@ -406,9 +422,9 @@ fn agrees_at(expected: &Ast, learner: &Ast, spec: &FunctionSpec, constant: f64) 
     if spec.up_to_constant {
         variation(&pairs)
     } else {
-        pairs
-            .iter()
-            .all(|(key, answer)| (key - answer).abs() <= TOLERANCE * key.abs().max(1.0))
+        pairs.iter().all(|(key, answer)| {
+            (key - answer).abs() <= TOLERANCE * key.abs().clamp(1.0, MAX_SCALE)
+        })
     }
 }
 
@@ -420,7 +436,7 @@ fn variation(pairs: &[(f64, f64)]) -> bool {
     let (first_key, first_answer) = pairs[0];
     pairs.iter().all(|(key, answer)| {
         ((key - first_key) - (answer - first_answer)).abs()
-            <= TOLERANCE * key.abs().max(first_key.abs()).max(1.0)
+            <= TOLERANCE * key.abs().max(first_key.abs()).clamp(1.0, MAX_SCALE)
     })
 }
 

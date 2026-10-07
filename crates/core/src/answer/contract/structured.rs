@@ -64,7 +64,11 @@ pub(super) fn validate_shape(contract: &AnswerContract, value: &Canon) -> bool {
             NumericForm::SimplestRadicalSum => {
                 matches!(value, Canon::Rational(_) | Canon::Radical(_))
             }
-            NumericForm::RationalExponent | NumericForm::Radical => true,
+            NumericForm::RationalExponent
+            | NumericForm::Radical
+            | NumericForm::SimplifiedRational
+            | NumericForm::VertexForm
+            | NumericForm::RepeatedMultiplication => true,
             _ => matches!(value, Canon::Rational(_)),
         },
         AnswerContract::Unit { quantity, .. } => {
@@ -226,6 +230,7 @@ pub(super) fn label_value(options: &[Vec<String>], text: &str) -> Option<Canon> 
         .find(|aliases| aliases.iter().any(|alias| choice_key(alias) == key));
     exact
         .or_else(|| spoken_choice(options, text))
+        .or_else(|| super::sentence::contained_choice(options, text).and_then(|at| options.get(at)))
         .and_then(|aliases| aliases.first())
         .map(|alias| Canon::Label(choice_key(alias)))
 }
@@ -394,6 +399,9 @@ pub(super) fn ordered_parts<'a>(parts: &[AnswerPart], text: &'a str) -> Option<V
         text.split(';').map(str::trim).collect()
     } else if thousands_comma(text) {
         return None;
+    } else if text.contains(" and ") && !text.contains(',') {
+        // `18 and 24` is the two parts `18` and `24`.
+        text.split(" and ").map(str::trim).collect()
     } else {
         merge_into_list(parts, text, top_level_commas(text))
     };

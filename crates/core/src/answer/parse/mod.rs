@@ -41,9 +41,9 @@ use super::lexer::{Tok, Token, lex};
 use super::normalize::MAX_ANSWER_CHARS;
 
 /// The functions the grammar knows (spec section 8.1, production `fn`).
-pub(crate) const FUNCTIONS: [&str; 17] = [
+pub(crate) const FUNCTIONS: [&str; 20] = [
     "sqrt", "sin", "cos", "tan", "sec", "csc", "cot", "asin", "acos", "atan", "sinh", "cosh",
-    "tanh", "exp", "ln", "log", "abs",
+    "tanh", "sech", "csch", "coth", "exp", "ln", "log", "abs",
 ];
 
 /// The spelled Greek variable names the grammar knows.
@@ -148,7 +148,7 @@ struct Parser<'a> {
 impl Parser<'_> {
     /// Whether the name is a function of this parse.
     fn is_function(&self, name: &str) -> bool {
-        FUNCTIONS.contains(&name) || self.extra.contains(&name)
+        FUNCTIONS.contains(&name) || name.starts_with("log_") || self.extra.contains(&name)
     }
 
     /// The argument counts the named function takes.
@@ -275,14 +275,22 @@ impl Parser<'_> {
         }
         if let Some(var) = self.read_value_label() {
             let value = self.parse_answer()?;
+            // `q = 9, r = 2` is the pair, and `q` names no unknown.
+            if var == "q" && matches!(value, Ast::Tuple(_)) {
+                return Ok(value);
+            }
             return Ok(Ast::Assign {
                 var,
                 value: Box::new(value),
             });
         }
+        // `quotient x + 2, remainder 3` and `q = 9, r = 2` name each part.
+        self.skip_part_name(&["quotient", "q"]);
         let first = self.parse_expr()?;
+        self.skip_remainder_lead();
         if self.at_remainder_marker() {
             self.bump();
+            self.eat(&Tok::Eq);
             let remainder = self.parse_expr()?;
             return Ok(Ast::Tuple(vec![first, remainder]));
         }
@@ -302,6 +310,46 @@ impl Parser<'_> {
             items.push(self.parse_expr()?);
         }
         Ok(Ast::Tuple(items))
+    }
+
+    /// Whether the cursor is on the words `with remainder` or `and remainder`.
+    pub(super) fn at_with_remainder(&self) -> bool {
+        matches!(self.peek(), Some(Tok::Ident(word)) if word == "with" || word == "and")
+            && matches!(self.peek_at(1), Some(Tok::Ident(next)) if next == "remainder")
+    }
+
+    /// Skip a leading part name of a quotient (`quotient` or `q =`).
+    fn skip_part_name(&mut self, names: &[&str]) {
+        if let Some(Tok::Ident(name)) = self.peek()
+            && names.contains(&name.as_str())
+            && (name != "q" || self.peek_at(1) == Some(&Tok::Eq))
+            && self.tokens.len() > self.at + 1
+        {
+            self.bump();
+            self.eat(&Tok::Eq);
+        }
+    }
+
+    /// Skip the comma or the words `with` and `and` in front of a remainder
+    /// marker: `x + 2, remainder 3`, `9 with remainder 2`, `q = 9, r = 2`.
+    fn skip_remainder_lead(&mut self) {
+        let lead = usize::from(matches!(self.peek(), Some(Tok::Comma)))
+            + usize::from(
+                matches!(self.peek_at(usize::from(self.peek() == Some(&Tok::Comma))), Some(Tok::Ident(w)) if w == "with" || w == "and"),
+            );
+        let after = self.peek_at(lead);
+        let marker = match after {
+            Some(Tok::Ident(name)) if name == "remainder" => true,
+            Some(Tok::Ident(name))
+                if (name == "r" || name == "R") && self.peek_at(lead + 1) == Some(&Tok::Eq) =>
+            {
+                true
+            }
+            _ => false,
+        };
+        if lead > 0 && marker {
+            self.at += lead;
+        }
     }
 
     /// Whether the cursor is on the marker of a quotient with a remainder (D-F3).
@@ -327,8 +375,25 @@ impl Parser<'_> {
             return false;
         }
         let before = self.at.checked_sub(1).and_then(|at| self.tokens.get(at));
-        matches!(before.map(|token| &token.kind), Some(Tok::Num(_)))
-            && matches!(self.peek_at(1), Some(Tok::Num(_)))
+        let after = match self.peek_at(1) {
+            Some(Tok::Minus) => self.peek_at(2),
+            other => other,
+        };
+        let is_number = |token: Option<&Tok>| matches!(token, Some(Tok::Num(_)));
+        let named = self.peek_at(1) == Some(&Tok::Eq) && self.at_comma_before();
+        named || (is_number(before.map(|token| &token.kind)) && is_number(after))
+    }
+
+    /// Whether the token in front of the cursor ends a part after a comma: the
+    /// cursor stands on `r` of `q = 9, r = 2`.
+    fn at_comma_before(&self) -> bool {
+        matches!(
+            self.at
+                .checked_sub(1)
+                .and_then(|at| self.tokens.get(at))
+                .map(|token| &token.kind),
+            Some(Tok::Comma)
+        )
     }
 
     /// Refuse a comma thousands group that the whole-answer rule did not strip.

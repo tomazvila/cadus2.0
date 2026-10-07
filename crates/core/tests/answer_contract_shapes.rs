@@ -144,8 +144,16 @@ fn coordinates_and_sets_select_distinct_shapes() {
         check(&coordinates, "(1,2)", learner, false);
     }
     assert!(coordinates.validate_expected("(x, 2)").is_err());
-    check(&AnswerContract::Set, "{2,4,6}", "{6,2,4,2}", true);
-    for learner in ["{2,4}", "{2,4,6,8}", "(6,2,4)", "[2,4,6]"] {
+    // Grader pass 3: a bare comma list is a set, and a member written twice is wrong.
+    check(&AnswerContract::Set, "{2,4,6}", "6, 2, 4", true);
+    for learner in [
+        "{2,4}",
+        "{2,4,6,8}",
+        "(6,2,4)",
+        "[2,4,6]",
+        "{6,2,4,2}",
+        "6, 2, 4, 2",
+    ] {
         check(&AnswerContract::Set, "{2,4,6}", learner, false);
     }
 }

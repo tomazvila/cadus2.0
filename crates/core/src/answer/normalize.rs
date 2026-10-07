@@ -114,7 +114,29 @@ fn to_source(text: &str) -> String {
     let no_period = stripped.trim_end_matches('.').trim();
     let collapsed = collapse_whitespace(no_period);
     let body = unicode_operators_to_ascii(collapsed.trim());
-    strip_thousands_groups(body.trim()).trim().to_string()
+    let signed = spoken_minus(body.trim());
+    strip_thousands_groups(&signed).trim().to_string()
+}
+
+/// Write a sign in front of a currency sign behind it, and `minus` as `-`:
+/// `-$20` is `$-20`, `-€1.50` is `€-1.50`, and `minus 11` is `-11`.
+fn spoken_minus(s: &str) -> String {
+    let currency = |c: char| matches!(c, '$' | '€' | '£');
+    if let Some(rest) = s.strip_prefix('-')
+        && let Some(sign) = rest.trim_start().chars().next().filter(|c| currency(*c))
+    {
+        return format!(
+            "{sign}-{}",
+            rest.trim_start()[sign.len_utf8()..].trim_start()
+        );
+    }
+    let lower = s.to_lowercase();
+    if lower.starts_with("minus ")
+        && let Some(rest) = s.get("minus ".len()..)
+    {
+        return spoken_minus(&format!("-{}", rest.trim_start()));
+    }
+    s.to_string()
 }
 
 /// Remove one outer `$…$` pair (1.0 `sympy_check.py:40-41`).
@@ -189,7 +211,62 @@ fn strip_thousands_groups(s: &str) -> String {
     if is_grouped_integer(s, &SPACE_SEPARATORS) {
         return s.chars().filter(|c| !c.is_whitespace()).collect();
     }
-    s.to_string()
+    grouped_with_unit(s).unwrap_or_else(|| s.to_string())
+}
+
+/// One grouped number with a currency sign in front, a decimal part, or a unit
+/// behind it: `$1,710`, `$-12,700.50`, `4,743 km`, `2,574,000 m^3`, `1,710 dollars`.
+///
+/// The number is the whole answer except for the currency sign and the unit, so
+/// `(1,234)` and `1,234, 5` keep their comma reading.
+fn grouped_with_unit(s: &str) -> Option<String> {
+    let chars: Vec<char> = s.chars().collect();
+    let mut at = 0;
+    let mut head = String::new();
+    let take = |at: &mut usize, accept: &dyn Fn(char) -> bool, head: &mut String| {
+        if let Some(c) = chars.get(*at).copied().filter(|c| accept(*c)) {
+            head.push(c);
+            *at += 1;
+            true
+        } else {
+            false
+        }
+    };
+    take(&mut at, &|c| c == '-', &mut head);
+    let currency = take(&mut at, &|c| matches!(c, '$' | '€' | '£'), &mut head);
+    take(&mut at, &|c| c == '-', &mut head);
+    let digits_start = at;
+    while matches!(chars.get(at), Some(c) if c.is_ascii_digit() || *c == ',') {
+        at += 1;
+    }
+    let number: String = chars.get(digits_start..at)?.iter().collect();
+    if !number.contains(',') || !is_grouped_integer(&number, &[',']) {
+        return None;
+    }
+    let mut fraction = String::new();
+    if chars.get(at) == Some(&'.') {
+        fraction.push('.');
+        at += 1;
+        while matches!(chars.get(at), Some(c) if c.is_ascii_digit()) {
+            fraction.push(chars[at]);
+            at += 1;
+        }
+    }
+    let tail: String = chars.get(at..)?.iter().collect();
+    let words = tail.trim();
+    let unit_tail = tail.starts_with(' ')
+        && !words.is_empty()
+        && !words.starts_with(|c: char| c.is_ascii_digit())
+        && words.chars().all(|c| {
+            c.is_alphabetic()
+                || c.is_ascii_digit()
+                || matches!(c, ' ' | '/' | '^' | '°' | '²' | '³')
+        });
+    if !((currency && words.is_empty()) || unit_tail) {
+        return None;
+    }
+    let plain: String = number.chars().filter(|c| *c != ',').collect();
+    Some(format!("{head}{plain}{fraction}{tail}"))
 }
 
 /// Whether the whole string is one integer grouped by `separators`.

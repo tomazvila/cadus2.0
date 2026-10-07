@@ -213,9 +213,10 @@ const LEAD_WORDS: &[&str] = &[
 /// the item's own contract.
 #[must_use]
 pub fn count_answer(problem: &str, key: &str, learner: &str) -> Option<String> {
-    if learner.chars().count() > MAX_CHARS || !problem.to_lowercase().contains("how many") {
+    if learner.chars().count() > MAX_CHARS {
         return None;
     }
+    let asks_how_many = problem.to_lowercase().contains("how many");
     match canonical_form(key) {
         Ok(super::Canon::Rational(value)) if value.is_integer() => {}
         _ => return None,
@@ -239,8 +240,28 @@ pub fn count_answer(problem: &str, key: &str, learner: &str) -> Option<String> {
     if !words.iter().all(|word| countable_word(word)) {
         return None;
     }
+    // Any other question must name the counted noun itself (`6 glasses`).
+    if !asks_how_many && !words.iter().all(|word| problem_names_noun(problem, word)) {
+        return None;
+    }
     let number = number.join(" ");
     matches!(canonical_form(&number), Ok(super::Canon::Rational(_))).then_some(number)
+}
+
+/// Whether the question holds the noun of a counted answer, in its singular or
+/// its plural: `pencils` is named by "a box of 8 pencils" and by "one pencil".
+fn problem_names_noun(problem: &str, noun: &str) -> bool {
+    let lower = noun.to_lowercase();
+    let stem = if let Some(head) = lower.strip_suffix("ren").filter(|head| head.len() >= 3) {
+        head
+    } else if let Some(head) = lower.strip_suffix("es").filter(|head| head.len() >= 4) {
+        head
+    } else if let Some(head) = lower.strip_suffix('s').filter(|head| head.len() >= 3) {
+        head
+    } else {
+        lower.as_str()
+    };
+    problem.to_lowercase().contains(stem)
 }
 
 /// A plain word of a counted noun phrase: letters (and inner hyphens) only, two
@@ -314,7 +335,12 @@ const DESCRIPTORS: &[&str] = &[
 /// after the last number, so a variable inside the value is never rewritten.
 #[must_use]
 pub fn unit_phrases(text: &str) -> String {
-    let mut words: Vec<String> = text.split_whitespace().map(str::to_owned).collect();
+    let mut words: Vec<String> = squared_unit(text.trim())
+        .split_whitespace()
+        .map(str::to_owned)
+        .collect();
+    spoken_per(&mut words);
+    compound_time(&mut words);
     let is_unit_end = |word: &str| {
         super::unit::lookup(word).is_some()
             || UNIT_PHRASES.iter().any(|(spoken, _)| {
@@ -347,6 +373,105 @@ pub fn unit_phrases(text: &str) -> String {
         }
     }
     words.join(" ")
+}
+
+/// The short spelling of a unit word that stands beside `per`, as the compound
+/// units of the table write it (`kilometres` is `km`, `hour` is `h`).
+fn short_unit_word(word: &str) -> Option<&'static str> {
+    Some(match word.to_lowercase().as_str() {
+        "km" | "kilometre" | "kilometres" | "kilometer" | "kilometers" => "km",
+        "m" | "metre" | "metres" | "meter" | "meters" => "m",
+        "cm" | "centimetre" | "centimetres" | "centimeter" | "centimeters" => "cm",
+        "mg" | "milligram" | "milligrams" => "mg",
+        "g" | "gram" | "grams" => "g",
+        "kg" | "kilogram" | "kilograms" => "kg",
+        "l" | "litre" | "litres" | "liter" | "liters" => "L",
+        "ml" | "millilitre" | "millilitres" | "milliliter" | "milliliters" => "mL",
+        "mol" | "mole" | "moles" => "mol",
+        "euro" | "euros" | "€" => "euro",
+        "h" | "hr" | "hour" | "hours" => "h",
+        "min" | "minute" | "minutes" => "min",
+        "s" | "sec" | "second" | "seconds" => "s",
+        _ => return None,
+    })
+}
+
+/// A time in two units, `4 hours 30 minutes`, as one number of the smaller unit:
+/// `270 min`. Both values are whole numbers and the two units are times.
+fn compound_time(words: &mut Vec<String>) {
+    let [.., big, big_unit, small, small_unit] = words.as_slice() else {
+        return;
+    };
+    let (Ok(big), Ok(small)) = (big.parse::<u64>(), small.parse::<u64>()) else {
+        return;
+    };
+    let (Some(a), Some(b)) = (
+        super::unit::lookup(big_unit),
+        super::unit::lookup(small_unit),
+    ) else {
+        return;
+    };
+    if a.quantity != super::Quantity::Time || b.quantity != super::Quantity::Time {
+        return;
+    }
+    let (fa, fb) = (a.factor(), b.factor());
+    if fa <= fb {
+        return;
+    }
+    let total = num_rational::BigRational::from_integer(big.into()) * fa
+        + num_rational::BigRational::from_integer(small.into()) * fb.clone();
+    let value = total / fb;
+    let text = if value.is_integer() {
+        value.to_integer().to_string()
+    } else {
+        format!("{}/{}", value.numer(), value.denom())
+    };
+    let unit = small_unit.clone();
+    words.truncate(words.len() - 4);
+    words.push(text);
+    words.push(unit);
+}
+
+/// A spoken compound unit in table spelling: `18 km per hour` reads `18 km/h`,
+/// `22.5 litres per minute` reads `22.5 L/min`. The words stay as they are when
+/// the table has no such unit.
+fn spoken_per(words: &mut Vec<String>) {
+    let Some(at) = words
+        .iter()
+        .rposition(|word| word.eq_ignore_ascii_case("per"))
+    else {
+        return;
+    };
+    if at == 0 || at + 2 != words.len() {
+        return;
+    }
+    let (Some(top), Some(bottom)) = (
+        short_unit_word(&words[at - 1]),
+        short_unit_word(&words[at + 1]),
+    ) else {
+        return;
+    };
+    let compound = format!("{top}/{bottom}");
+    if super::unit::lookup(&compound).is_some() {
+        words.truncate(at - 1);
+        words.push(compound);
+    }
+}
+
+/// A temperature written with the word `degrees` or a bare degree sign, read in
+/// the unit of the contract: `-15 degrees` under `°C` is `-15 °C`.
+pub(crate) fn temperature_degrees(text: &str, unit: &str) -> Option<String> {
+    let found = super::unit::lookup(unit)?;
+    if found.quantity != super::Quantity::Temperature {
+        return None;
+    }
+    let text = text.trim();
+    let value = text
+        .strip_suffix("degrees")
+        .or_else(|| text.strip_suffix("degree"))
+        .or_else(|| text.strip_suffix('°'))?
+        .trim_end();
+    (!value.is_empty()).then(|| format!("{value} {unit}"))
 }
 
 /// A number in scientific notation written with `x` or `X` as the times sign,
@@ -456,6 +581,46 @@ pub fn measured_answer(problem: &str, key: &str, learner: &str) -> Option<String
     if learner.chars().count() > MAX_CHARS || key.contains('=') {
         return None;
     }
+    // A list of measured values (`27 m, 25 m`) strips each value on its own.
+    let parts = list_parts(learner);
+    if parts.len() > 1 && key.contains(',') {
+        let stripped: Vec<String> = parts
+            .iter()
+            .map(|part| measured_one(problem, "1", part).unwrap_or_else(|| (*part).to_owned()))
+            .collect();
+        let joined = stripped.join(", ");
+        return (joined != learner.trim()).then_some(joined);
+    }
+    measured_one(problem, key, learner)
+}
+
+/// The parts of a list answer split at commas and at the word `and`.
+fn list_parts(text: &str) -> Vec<&str> {
+    let mut parts = Vec::new();
+    let mut depth = 0_usize;
+    let mut start = 0;
+    for (at, c) in text.char_indices() {
+        match c {
+            '(' | '[' | '{' => depth += 1,
+            ')' | ']' | '}' => depth = depth.saturating_sub(1),
+            ',' if depth == 0 => {
+                parts.push(&text[start..at]);
+                start = at + 1;
+            }
+            _ => {}
+        }
+    }
+    parts.push(&text[start..]);
+    parts
+        .into_iter()
+        .flat_map(|part| part.split(" and "))
+        .map(str::trim)
+        .filter(|part| !part.is_empty())
+        .collect()
+}
+
+/// One measured value without its decoration.
+fn measured_one(problem: &str, key: &str, learner: &str) -> Option<String> {
     let mut text = unit_phrases(learner);
     if matches!(canonical_form(key), Ok(super::Canon::Rational(_))) {
         if let Some(rest) = text.trim_start().strip_prefix('≈') {
@@ -471,6 +636,12 @@ pub fn measured_answer(problem: &str, key: &str, learner: &str) -> Option<String
     {
         text = value.trim().to_owned();
     }
+    if let Some(rest) = strip_degree_words(problem, key, &text) {
+        text = rest;
+    }
+    if let Some(rest) = strip_scale_word(problem, &text) {
+        text = rest;
+    }
     if let Some((value, unit)) = text.rsplit_once(' ')
         && let Some(found) = super::unit::lookup(unit)
         && !value.trim().is_empty()
@@ -480,6 +651,65 @@ pub fn measured_answer(problem: &str, key: &str, learner: &str) -> Option<String
         text = value.trim().to_owned();
     }
     (text != learner.trim()).then_some(text)
+}
+
+/// The text without a trailing degree word or sign, when the question names the
+/// thing the sign belongs to: a temperature (`-15 degrees`, `20 °C`), an angle
+/// (`36.9°`), or radians (`5pi/6 radians`).
+fn strip_degree_words(problem: &str, key: &str, text: &str) -> Option<String> {
+    let lower = problem.to_lowercase();
+    let text = text.trim();
+    let temperature = ["temperature", "celsius", "fahrenheit", "°c", "°f"]
+        .iter()
+        .any(|word| lower.contains(word));
+    let angle = lower.contains("angle") || lower.contains("degree") || lower.contains('°');
+    let radians = lower.contains("radian") || key.contains("pi");
+    let mut tails: Vec<&str> = Vec::new();
+    if temperature {
+        tails.extend([
+            " degrees celsius",
+            " degrees fahrenheit",
+            " degrees",
+            " degree",
+            "°c",
+            "°f",
+            " °c",
+            " °f",
+            "°",
+            " °",
+        ]);
+    } else if angle {
+        tails.extend(["°", " °", " degrees", " degree"]);
+    }
+    if radians {
+        tails.extend([" radians", " radian", " rad"]);
+    }
+    let lower_text = text.to_lowercase();
+    tails.iter().find_map(|tail| {
+        let head = lower_text.strip_suffix(tail)?;
+        let head = text.get(..head.len())?.trim_end();
+        (!head.is_empty()).then(|| head.to_owned())
+    })
+}
+
+/// The text without the scale word of `13 million dollars` when the question
+/// itself counts in millions (`in millions of dollars`).
+fn strip_scale_word(problem: &str, text: &str) -> Option<String> {
+    let lower = problem.to_lowercase();
+    for word in ["billion", "million", "thousand"] {
+        if !lower.contains(word) {
+            continue;
+        }
+        let mut words: Vec<&str> = text.split_whitespace().collect();
+        let at = words.iter().position(|w| w.eq_ignore_ascii_case(word))?;
+        if at == 0 {
+            return None;
+        }
+        words.remove(at);
+        let rest = words.join(" ");
+        return Some(rest);
+    }
+    None
 }
 
 /// The words that mark an estimate in front of a number ("about 7.1").
@@ -499,6 +729,12 @@ fn squared_unit(text: &str) -> String {
     let Some((head, last)) = text.rsplit_once(' ') else {
         return text.to_owned();
     };
+    // `cm2` and `m3` are the area and the volume units.
+    for (name, power) in [("cm", "2"), ("m", "2"), ("cm", "3"), ("m", "3")] {
+        if last == format!("{name}{power}") {
+            return format!("{head} {name}^{power}");
+        }
+    }
     for (mark, power) in [('²', "^2"), ('³', "^3")] {
         if let Some(unit) = last.strip_suffix(mark)
             && !unit.is_empty()

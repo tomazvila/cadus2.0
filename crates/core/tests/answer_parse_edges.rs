@@ -156,11 +156,11 @@ fn the_refusal_type_carries_its_reason() {
 #[test]
 fn a_refusal_inside_a_juxtaposed_argument_and_a_root_glyph_reaches_the_top() {
     assert_eq!(
-        refusal("6 x 10^y"),
+        refusal("6 x 10^0.5"),
         "an exponent that is not a whole number"
     );
     assert_eq!(
-        refusal("sin 2 x 3^y"),
+        refusal("sin 2 x 3^0.5"),
         "an exponent that is not a whole number"
     );
     assert_eq!(

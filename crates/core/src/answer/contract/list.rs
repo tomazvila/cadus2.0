@@ -158,6 +158,40 @@ fn unlabeled_list<'a>(expected_text: &str, learner: &'a str) -> &'a str {
     }
 }
 
+/// A list written with its outer parentheses (`(3, 7, 15)`) or with spaces and
+/// no commas (`1 0 0 1`) reads as the comma list. A key that holds parentheses
+/// keeps its own reading, and only whole numbers and fractions are split at
+/// spaces.
+fn spaced_list(expected_text: &str, learner: &str) -> String {
+    let text = learner.trim();
+    let text = match text
+        .strip_prefix('(')
+        .and_then(|inner| inner.strip_suffix(')'))
+    {
+        Some(inner)
+            if !expected_text.contains('(')
+                && !inner.contains(['(', ')'])
+                && inner.contains(',') =>
+        {
+            inner.trim()
+        }
+        _ => text,
+    };
+    let tokens: Vec<&str> = text.split_whitespace().collect();
+    let number = |token: &str| {
+        let digits = token.strip_prefix('-').unwrap_or(token);
+        !digits.is_empty()
+            && digits.chars().any(|c| c.is_ascii_digit())
+            && digits
+                .chars()
+                .all(|c| c.is_ascii_digit() || matches!(c, '.' | '/'))
+    };
+    if !text.contains(',') && tokens.len() > 1 && tokens.iter().all(|token| number(token)) {
+        return tokens.join(", ");
+    }
+    text.to_owned()
+}
+
 fn bad_list() -> Undecidable {
     Undecidable::new("a list requires one to 32 complete members")
 }
@@ -184,6 +218,8 @@ pub(super) fn grade(
     learner: &str,
 ) -> Outcome {
     let learner = unlabeled_list(expected_text, learner);
+    let spaced = spaced_list(expected_text, learner);
+    let learner = spaced.as_str();
     let bars = refuse_bars(member, expected_text).and_then(|()| refuse_bars(member, learner));
     let result = if let Err(refusal) = bars {
         Err(refusal)

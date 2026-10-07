@@ -156,13 +156,17 @@ fn an_answer_that_is_not_one_formula_gets_no_verdict() {
     );
     // A bad key gives no verdict for each answer.
     assert_eq!(verdict(X, "x/sqrt(x^2+9", "x"), Err(parser_reason));
-    assert_eq!(verdict(X, "ln(x - 5)", "ln(x - 5)"), Err(FEW_POINTS));
+    assert_eq!(verdict(X, "ln(-1 - x^2)", "ln(-1 - x^2)"), Err(FEW_POINTS));
 }
 
 #[test]
 fn a_key_with_fewer_than_six_finite_points_is_refused() {
-    assert_eq!(key_refusal(X, "ln(x - 5)"), FEW_POINTS);
-    assert_eq!(key_refusal(X, "sqrt(x - 2)"), FEW_POINTS);
+    assert_eq!(key_refusal(X, "ln(-1 - x^2)"), FEW_POINTS);
+    assert_eq!(key_refusal(X, "sqrt(-1 - x^2)"), FEW_POINTS);
+    // Grader pass 3: a key finite on a part of the line samples there. `x - 5`
+    // and `x - 2` are finite above 5 and above 2, so they are no longer refused.
+    assert!(contract(X).validate_expected("ln(x - 5)").is_ok());
+    assert!(contract(X).validate_expected("sqrt(x - 2)").is_ok());
     assert_eq!(key_refusal(X, "1/(x - x)"), FEW_POINTS);
     let moved = r#"{"kind":"function","vars":["x"],"domain":{"x":["6","9"]}}"#;
     assert!(contract(moved).validate_expected("ln(x - 5)").is_ok());
@@ -173,7 +177,7 @@ fn a_key_with_fewer_than_six_finite_points_is_refused() {
     // Two points that are not finite are permitted (0.40625 and 0.71875).
     assert!(contract(X).validate_expected("ln(x - 0.75)").is_ok());
     // Three are not.
-    assert_eq!(key_refusal(X, "ln(x - 1.04)"), FEW_POINTS);
+    assert_eq!(key_refusal(X, "ln(-x^2 - 1.04)"), FEW_POINTS);
 }
 
 #[test]
@@ -193,10 +197,10 @@ fn the_other_key_refusals() {
 }
 
 #[test]
-fn a_key_with_log_or_with_e_notation_is_refused() {
-    let log = "the authored function must use ln, because log has two readings";
-    for key in ["log(x)", "x*log(x+1)", "\\log(x)", "LOG(x)"] {
-        assert_eq!(key_refusal(X, key), log, "{key}");
+fn a_key_with_e_notation_is_refused() {
+    // `log` has base 10 and reads as a key since grader pass 3.
+    for key in ["log(x)", "x*log(x+1)"] {
+        assert!(contract(X).validate_expected(key).is_ok(), "{key}");
     }
     let e_notation =
         "the authored function must use 10^(n), because the form 1e-5 reads as 1*e - 5";
@@ -206,8 +210,9 @@ fn a_key_with_log_or_with_e_notation_is_refused() {
     for key in ["ln(x)", "2e^x", "x + 3e", "e^(2x)", "2 e - 5x", "x*e"] {
         assert!(contract(X).validate_expected(key).is_ok(), "{key}");
     }
-    // A learner can write `log`: the evaluator reads it as `ln`.
-    assert_eq!(verdict(X, "ln(x)", "log(x)"), Ok(true));
+    // `log` has base 10 and `ln` has base e, so the two differ.
+    assert_eq!(verdict(X, "ln(x)", "log(x)"), Ok(false));
+    assert_eq!(verdict(X, "log(x)", "ln(x)/ln(10)"), Ok(true));
 }
 
 #[test]
@@ -227,9 +232,10 @@ fn the_return_value_is_the_canonical_form_or_a_label() {
 
 #[test]
 fn the_tolerance_is_relative_above_one_and_absolute_below_one() {
-    // |a| = 1e6: the limit is 1e-3.
-    assert_eq!(verdict(X, "1000000 + 0*x", "1000000.0005"), Ok(true));
-    assert_eq!(verdict(X, "1000000 + 0*x", "1000000.002"), Ok(false));
+    // |a| = 1e6: the scale stops at 1e4, so the limit is 1e-5 (grader pass 3: a
+    // large key must not hide a small extra term).
+    assert_eq!(verdict(X, "1000000 + 0*x", "1000000.000005"), Ok(true));
+    assert_eq!(verdict(X, "1000000 + 0*x", "1000000.0005"), Ok(false));
     // |a| < 1: the limit is 1e-9.
     assert_eq!(verdict(X, "1/2", "0.5000000005"), Ok(true));
     assert_eq!(verdict(X, "1/2", "0.500000002"), Ok(false));
@@ -265,11 +271,11 @@ fn grade_gives_wrong_for_a_key_with_fewer_than_six_finite_points() {
     let spec = FunctionSpec::new(&["x".to_string()], false, &Default::default()).unwrap();
     let tree = |text: &str| parse(&normalize(text).source).unwrap();
     // `validate_expected` refuses this key. `grade` is the last defense.
-    let key = tree("ln(x - 5)");
-    assert!(!grade(&key, &tree("2*ln(sqrt(x - 5))"), &spec).correct);
+    let key = tree("ln(-1 - x^2)");
+    assert!(!grade(&key, &tree("2*ln(sqrt(-1 - x^2))"), &spec).correct);
     assert!(!grade(&key, &tree("7"), &spec).correct);
     // Equal canonical forms are correct before the points are in use.
-    assert!(grade(&key, &tree("ln(x-5)"), &spec).correct);
+    assert!(grade(&key, &tree("ln(-1 - x^2)"), &spec).correct);
     assert!(grade(&tree("y = x^2"), &tree("z = x*x"), &spec).correct);
 }
 

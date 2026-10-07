@@ -148,6 +148,8 @@ fn applied(ast: &Ast, env: &Env, depth: usize) -> Option<f64> {
                 power::rational_pow(at(radicand)?, 1, i64::try_from(index).ok()?)
             }
             [arg] => func::apply(name, at(arg)?),
+            [base, exponent] if name == "pow" => Some(at(base)?.powf(at(exponent)?)),
+            [arg, base] if name == "log" => Some(at(arg)?.ln() / at(base)?.ln()),
             _ => None,
         },
         _ => None,

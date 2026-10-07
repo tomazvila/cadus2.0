@@ -55,6 +55,11 @@ fn unit_split(tokens: &[Token], glued_single_letter: bool) -> Option<(&'static s
     let (last, head) = tokens.split_last()?;
     let unit = match &last.kind {
         Tok::Unit(glyph) => lookup(glyph)?,
+        // `5 F` and `5 J` are products outside a unit contract: `F` and `J` are
+        // variable names there.
+        Tok::Ident(name) if !glued_single_letter && matches!(name.as_str(), "F" | "J") => {
+            return None;
+        }
         Tok::Ident(name) if spaced_or_long(name, last, glued_single_letter) => lookup(name)?,
         _ => return None,
     };

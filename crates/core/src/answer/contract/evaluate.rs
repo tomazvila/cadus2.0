@@ -2,7 +2,7 @@
 
 use num_bigint::BigInt;
 use num_rational::BigRational;
-use num_traits::Signed;
+use num_traits::{Signed, Zero};
 
 use super::function::FunctionSpec;
 use super::structured::{label_value, named_parts, ordered_parts, tolerance_value, validate_shape};
@@ -204,6 +204,82 @@ fn unbraced(text: &str) -> &str {
 }
 
 fn grade(expected: &Canon, text: &str, learner: &str, contract: &AnswerContract) -> Outcome {
+    let outcome = grade_natural(expected, text, learner, contract);
+    if matches!(outcome, Outcome::Decided(Verdict { correct: true, .. })) {
+        return outcome;
+    }
+    if matches!(contract, AnswerContract::Exact) {
+        if let Some(rescued) = interval_spelling(text, learner) {
+            return rescued;
+        }
+        if let Some(same) = super::nested::same_value(text, learner) {
+            return decided(same);
+        }
+    }
+    named_value(text, learner, contract).unwrap_or(outcome)
+}
+
+/// An inequality key against an interval or a union spelling of it: key
+/// `y > 0` takes `(0, ∞)` and `y is greater than 0`; key `-1 <= y <= 1` takes
+/// `[-1, 1]`. Both sides read as exact unions of intervals.
+fn interval_spelling(text: &str, learner: &str) -> Option<Outcome> {
+    if !text.contains(['<', '>']) {
+        return None;
+    }
+    let key = super::union::read(text).ok()?;
+    let learner = super::union::read(learner).ok()?;
+    Some(decided(super::union::equivalent(&key, &learner)))
+}
+
+/// Grade the text after a name the learner wrote in front of the value
+/// (`d = 13 km`, `f'(x) = 2x`, `x = 2, y = 3`). The key must hold no `=`, and
+/// only the contracts that grade a value or a formula read the rest.
+fn named_value(text: &str, learner: &str, contract: &AnswerContract) -> Option<Outcome> {
+    use super::prefix::{strip_name, strip_named_list};
+    if text.contains('=')
+        || !matches!(
+            contract,
+            AnswerContract::Exact
+                | AnswerContract::Approx { .. }
+                | AnswerContract::Tolerance { .. }
+                | AnswerContract::Unit { .. }
+                | AnswerContract::Coordinates { .. }
+                | AnswerContract::RequiredForm { .. }
+                | AnswerContract::Function { .. }
+                | AnswerContract::Property { .. }
+                | AnswerContract::List { .. }
+        )
+    {
+        return None;
+    }
+    let rest = if matches!(
+        contract,
+        AnswerContract::Coordinates { .. } | AnswerContract::List { .. }
+    ) {
+        strip_named_list(learner).or_else(|| strip_name(learner))?
+    } else {
+        strip_name(learner)?
+    };
+    let rest = if matches!(contract, AnswerContract::Coordinates { .. })
+        && rest.contains(',')
+        && !rest.starts_with('(')
+    {
+        format!("({rest})")
+    } else {
+        rest
+    };
+    match check_contract(text, &rest, contract.clone()) {
+        outcome @ Outcome::Decided(_) => Some(outcome),
+        Outcome::Undecidable(_) => None,
+    }
+}
+
+fn grade_natural(
+    expected: &Canon,
+    text: &str,
+    learner: &str,
+    contract: &AnswerContract,
+) -> Outcome {
     let strict = grade_strict(expected, text, learner, contract);
     // "3.2x10^5", "3.2e5" and "7.2×10⁻⁴" for a numeric key in scientific form.
     if !matches!(strict, Outcome::Decided(Verdict { correct: true, .. }))
@@ -245,7 +321,8 @@ fn grade_strict(expected: &Canon, text: &str, learner: &str, contract: &AnswerCo
     } = contract
     {
         let phrased = crate::answer::natural::unit_phrases(learner);
-        let learner = phrased.as_str();
+        let degrees = crate::answer::natural::temperature_degrees(&phrased, unit);
+        let learner = degrees.as_deref().unwrap_or(phrased.as_str());
         if form.is_some_and(|form| !form.holds(crate::answer::unit::magnitude(learner))) {
             return decided(false);
         }
@@ -283,6 +360,18 @@ fn grade_strict(expected: &Canon, text: &str, learner: &str, contract: &AnswerCo
     {
         return outcome;
     }
+    let braced;
+    let learner = if matches!(contract, AnswerContract::Set) {
+        // A bare comma list `2, 5` is a set written without its braces, and a
+        // member that stands twice is a wrong set.
+        braced = bare_set(learner);
+        if repeats_a_member(&braced) {
+            return decided(false);
+        }
+        braced.as_str()
+    } else {
+        learner
+    };
     let required_form = !matches!(contract, AnswerContract::RequiredForm { form } if !super::form::accepts(*form, learner, text));
     let learner = match canonical_form(learner) {
         Ok(value) => value,
@@ -315,6 +404,8 @@ fn grade_strict(expected: &Canon, text: &str, learner: &str, contract: &AnswerCo
         | AnswerContract::ReducedRatio
         | AnswerContract::AscendingChain
         | AnswerContract::PolynomialRelation
+        | AnswerContract::MonicPolynomialRelation
+        | AnswerContract::PolynomialDivision { .. }
         | AnswerContract::RelationSetup
         | AnswerContract::Function { .. }
         | AnswerContract::Property { .. }
@@ -322,6 +413,37 @@ fn grade_strict(expected: &Canon, text: &str, learner: &str, contract: &AnswerCo
             unreachable!("the structured contracts decide before the learner answer canonicalizes")
         }
     }
+}
+
+/// The learner text of a `set` answer with braces: a bare comma list gets them.
+fn bare_set(learner: &str) -> String {
+    let text = learner.trim().trim_end_matches('.').trim();
+    let braced = text.starts_with('{') || text.starts_with("\\{") || text.starts_with("$");
+    if braced || wrapped(text) || !text.contains(',') {
+        learner.to_owned()
+    } else {
+        format!("{{{text}}}")
+    }
+}
+
+/// Whether a set answer lists one member twice.
+fn repeats_a_member(text: &str) -> bool {
+    let Ok(crate::answer::Ast::Set(items)) =
+        crate::answer::parse(&crate::answer::normalize(text).source)
+    else {
+        return false;
+    };
+    let mut seen = Vec::new();
+    for item in &items {
+        let Ok(value) = crate::answer::canon(item) else {
+            return false;
+        };
+        if seen.contains(&value) {
+            return true;
+        }
+        seen.push(value);
+    }
+    false
 }
 
 /// Grade contracts whose learner text has a dedicated parser.
@@ -332,6 +454,12 @@ fn structured_contract(
     contract: &AnswerContract,
 ) -> Option<Outcome> {
     let outcome = match contract {
+        AnswerContract::RequiredForm { form } if form.is_line() => {
+            if !super::form::accepts(*form, learner, text) {
+                return Some(decided(false));
+            }
+            parsed(super::relation::read(learner), expected)
+        }
         AnswerContract::RequiredAssignment => required_assignment(text, learner),
         AnswerContract::Label { options } => {
             decided(label_value(options, learner).as_ref() == Some(expected))
@@ -372,7 +500,23 @@ fn structured_contract(
             super::notation::recognizes_chain(learner),
         ),
         AnswerContract::Matrix { rows, cols } => matrix(expected, *rows, *cols, learner),
+        AnswerContract::PolynomialDivision { divisor } => {
+            match super::division::equivalent(divisor, text, learner) {
+                Ok(correct) => decided(correct),
+                Err(reason) => Outcome::Undecidable(reason),
+            }
+        }
         AnswerContract::PolynomialRelation => parsed(super::relation::read(learner), expected),
+        AnswerContract::MonicPolynomialRelation => {
+            if super::relation::is_monic(learner) {
+                parsed(super::relation::read(learner), expected)
+            } else {
+                match super::relation::read(learner) {
+                    Ok(_) => decided(false),
+                    Err(reason) => Outcome::Undecidable(reason),
+                }
+            }
+        }
         AnswerContract::RelationSetup => parsed(super::setup::read(learner), expected),
         AnswerContract::Function {
             vars,
@@ -501,15 +645,51 @@ fn absolute_tolerance(expected: &Canon, learner: &Canon, text: &str) -> Outcome 
     }
 }
 
+/// Whether a learner decimal with more digits than the contract asks for is a
+/// correct, more precise spelling of the key.
+///
+/// A key that is itself a rounding (`2.81` with two decimals) is the value of
+/// the learner rounded to the same count of digits. A key that is the exact
+/// value (`sqrt(2)`, `1/3`) takes the learner decimal only as its exact rounding
+/// at the learner's own digits. At most six extra digits count.
+fn more_precise(expected: &Canon, value: &BigRational, scale: u32) -> bool {
+    let ten = BigRational::from_integer(BigInt::from(10_u32));
+    let mut own = scale;
+    let mut grid = ten.pow(i32::try_from(scale).unwrap_or(0));
+    while !(value * &grid).is_integer() {
+        own += 1;
+        grid *= &ten;
+        if own > scale + 6 {
+            return false;
+        }
+    }
+    if matches!(rounds_to(expected, value, own), Rounding::Same) {
+        return true;
+    }
+    let Canon::Rational(key) = expected else {
+        return false;
+    };
+    let base = ten.pow(i32::try_from(scale).unwrap_or(0));
+    if !(key * &base).is_integer() {
+        return false;
+    }
+    let scaled = value * &base;
+    let rounded = BigRational::from_integer(scaled.round().to_integer());
+    // `round` ties away from zero, and a tie means the value is not a rounding.
+    let tie = (scaled.clone() - scaled.floor() - BigRational::new(1.into(), 2.into())).is_zero();
+    !tie && rounded / base == *key
+}
+
 fn approximate(expected: &Canon, learner: &Canon, decimals: u8) -> Outcome {
     let Canon::Rational(value) = learner else {
         return decided(false);
     };
     let scale = u32::from(decimals);
     let grid = BigRational::from_integer(BigInt::from(10_u32).pow(scale));
-    // Reject extra digits before the integral comparison in the round helper.
-    if !(value * grid).is_integer() {
-        return decided(false);
+    // Extra digits are right only when the learner wrote a MORE precise value of
+    // the authored answer (key 2.81, two decimals: `2.807` is correct).
+    if !(value * &grid).is_integer() {
+        return decided(more_precise(expected, value, scale));
     }
     match rounds_to(expected, value, scale) {
         Rounding::Same => decided(true),

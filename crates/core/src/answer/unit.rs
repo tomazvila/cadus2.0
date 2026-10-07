@@ -46,6 +46,10 @@ pub enum Quantity {
     EuroPerMass,
     /// A length per volume, in centimeters per milliliter.
     LengthPerVolume,
+    /// A mass per volume of liquid, in milligrams per liter.
+    Concentration,
+    /// An amount of substance per volume, in moles per liter.
+    Molarity,
 }
 
 /// One unit of the table.
@@ -77,6 +81,10 @@ const UNITS: &[Unit] = &[
     unit("metre", Quantity::Length, (100, 1)),
     unit("metres", Quantity::Length, (100, 1)),
     unit("km", Quantity::Length, (100_000, 1)),
+    unit("micrometer", Quantity::Length, (1, 10_000)),
+    unit("micrometers", Quantity::Length, (1, 10_000)),
+    unit("micrometre", Quantity::Length, (1, 10_000)),
+    unit("micrometres", Quantity::Length, (1, 10_000)),
     unit("kilometer", Quantity::Length, (100_000, 1)),
     unit("kilometers", Quantity::Length, (100_000, 1)),
     unit("kilometre", Quantity::Length, (100_000, 1)),
@@ -100,6 +108,8 @@ const UNITS: &[Unit] = &[
     unit("gram", Quantity::Mass, (1, 1)),
     unit("grams", Quantity::Mass, (1, 1)),
     unit("kg", Quantity::Mass, (1_000, 1)),
+    unit("tonne", Quantity::Mass, (1_000_000, 1)),
+    unit("tonnes", Quantity::Mass, (1_000_000, 1)),
     unit("kilogram", Quantity::Mass, (1_000, 1)),
     unit("kilograms", Quantity::Mass, (1_000, 1)),
     unit("lb", Quantity::Mass, (45_359_237, 100_000)),
@@ -110,6 +120,7 @@ const UNITS: &[Unit] = &[
     unit("ounce", Quantity::Mass, (226_796_185, 8_000_000)),
     unit("ounces", Quantity::Mass, (226_796_185, 8_000_000)),
     unit("ml", Quantity::Volume, (1, 1)),
+    unit("mL", Quantity::Volume, (1, 1)),
     unit("milliliter", Quantity::Volume, (1, 1)),
     unit("milliliters", Quantity::Volume, (1, 1)),
     unit("millilitre", Quantity::Volume, (1, 1)),
@@ -133,7 +144,15 @@ const UNITS: &[Unit] = &[
     unit("hours", Quantity::Time, (3_600, 1)),
     unit("day", Quantity::Time, (86_400, 1)),
     unit("days", Quantity::Time, (86_400, 1)),
+    unit("week", Quantity::Time, (604_800, 1)),
+    unit("weeks", Quantity::Time, (604_800, 1)),
+    // A month is a twelfth of a 365-day year.
+    unit("month", Quantity::Time, (2_628_000, 1)),
+    unit("months", Quantity::Time, (2_628_000, 1)),
+    unit("year", Quantity::Time, (31_536_000, 1)),
+    unit("years", Quantity::Time, (31_536_000, 1)),
     unit("m/s", Quantity::Speed, (1, 1)),
+    unit("m/min", Quantity::Speed, (1, 60)),
     unit("cm/h", Quantity::Speed, (1, 360_000)),
     unit("cm/hour", Quantity::Speed, (1, 360_000)),
     unit("km/h", Quantity::Speed, (5, 18)),
@@ -157,6 +176,7 @@ const UNITS: &[Unit] = &[
     unit("celsius", Quantity::Temperature, (1, 1)),
     unit("Celsius", Quantity::Temperature, (1, 1)),
     unit("°F", Quantity::Temperature, (5, 9)),
+    unit("F", Quantity::Temperature, (5, 9)),
     unit("fahrenheit", Quantity::Temperature, (5, 9)),
     unit("Fahrenheit", Quantity::Temperature, (5, 9)),
     unit("L/min", Quantity::Flow, (50, 3)),
@@ -171,6 +191,10 @@ const UNITS: &[Unit] = &[
     unit("kWh", Quantity::Energy, (3_600_000, 1)),
     unit("joule", Quantity::Energy, (1, 1)),
     unit("joules", Quantity::Energy, (1, 1)),
+    unit("J", Quantity::Energy, (1, 1)),
+    unit("kJ", Quantity::Energy, (1_000, 1)),
+    unit("kilojoule", Quantity::Energy, (1_000, 1)),
+    unit("kilojoules", Quantity::Energy, (1_000, 1)),
     unit("€/kg", Quantity::EuroPerMass, (1, 1)),
     unit("euro/kg", Quantity::EuroPerMass, (1, 1)),
     unit("euros/kg", Quantity::EuroPerMass, (1, 1)),
@@ -190,6 +214,14 @@ const UNITS: &[Unit] = &[
     unit("m/l", Quantity::LengthPerVolume, (1, 10)),
     unit("cm/L", Quantity::LengthPerVolume, (1, 1_000)),
     unit("cm/l", Quantity::LengthPerVolume, (1, 1_000)),
+    unit("mg/L", Quantity::Concentration, (1, 1)),
+    unit("mg/l", Quantity::Concentration, (1, 1)),
+    unit("g/L", Quantity::Concentration, (1_000, 1)),
+    unit("g/l", Quantity::Concentration, (1_000, 1)),
+    unit("mol/L", Quantity::Molarity, (1, 1)),
+    unit("mol/l", Quantity::Molarity, (1, 1)),
+    unit("mmol/L", Quantity::Molarity, (1, 1_000)),
+    unit("mmol/l", Quantity::Molarity, (1, 1_000)),
 ];
 
 /// Build one table entry.
@@ -216,7 +248,7 @@ impl Unit {
             // "°F", "fahrenheit", and "Fahrenheit"): the parser reads a
             // lone "F" as an identifier, never as this unit, so that arm
             // was dead.
-            "°F" | "fahrenheit" | "Fahrenheit" => {
+            "°F" | "F" | "fahrenheit" | "Fahrenheit" => {
                 BigRational::new(BigInt::from(-160), BigInt::from(9))
             }
             _ => BigRational::from_integer(BigInt::from(0)),
@@ -259,8 +291,9 @@ mod tests {
     /// `temperature_unit` only ever builds "°C" or "°F" from a one-letter
     /// name, so no looked-up `Unit` ever carries the spelling "F".
     #[test]
-    fn bare_f_is_not_a_registered_unit() {
-        assert!(lookup("F").is_none());
+    fn bare_f_reads_as_fahrenheit_with_the_offset() {
+        let fahrenheit = BigRational::new(BigInt::from(-160), BigInt::from(9));
+        assert_eq!(lookup("F").unwrap().offset(), fahrenheit);
     }
 
     /// Every spelling of Fahrenheit in `UNITS` carries the same offset, and a

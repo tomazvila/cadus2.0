@@ -29,11 +29,41 @@ pub enum NumericForm {
     RationalExponent,
     /// An expression written with radical signs and no fractional exponent.
     Radical,
+    /// A rational expression in lowest terms: no common numeric, monomial or
+    /// polynomial factor, and no fraction inside the numerator or denominator.
+    SimplifiedRational,
+    /// `a(x - h)^2 + k`: one squared binomial with a numeric coefficient.
+    VertexForm,
+    /// A sum of place-value terms: `4000 + 500 + 6`, not `4506`.
+    ExpandedPlaceValue,
+    /// A product of one factor written again and again: `5*5*5`.
+    RepeatedMultiplication,
+    /// A fraction with the same denominator as the key: `6/9` for `2/3`.
+    FractionWithDenominator,
+    /// A line `Ax + By = C` with whole `A`, `B`, `C` in lowest terms and `A > 0`.
+    StandardFormLine,
+    /// A line `y = mx + b`.
+    SlopeInterceptForm,
+    /// A line `y - y1 = m(x - x1)`.
+    PointSlopeForm,
+}
+
+impl NumericForm {
+    /// Whether the form is a form of an equation of a line.
+    pub(super) const fn is_line(self) -> bool {
+        matches!(
+            self,
+            Self::StandardFormLine | Self::SlopeInterceptForm | Self::PointSlopeForm
+        )
+    }
 }
 
 /// Whether the learner `text` is written in `form`. `expected` is the authored
 /// key; only [`NumericForm::FactoredPolynomial`] reads it, for its factor count.
 pub(super) fn accepts(form: NumericForm, text: &str, expected: &str) -> bool {
+    if form.is_line() {
+        return super::lowest::line(form, text);
+    }
     let Ok(tree) = parse(&normalize(text).source) else {
         return false;
     };
@@ -47,11 +77,21 @@ pub(super) fn accepts(form: NumericForm, text: &str, expected: &str) -> bool {
             return super::radical::simplest_sum(text).unwrap_or(false);
         }
         NumericForm::RationalExponent => return single_power(&tree),
+        NumericForm::SimplifiedRational => return super::lowest::simplified(&tree),
+        NumericForm::VertexForm => return super::lowest::vertex(&tree),
+        NumericForm::ExpandedPlaceValue => return super::lowest::place_value_sum(&tree),
+        NumericForm::RepeatedMultiplication => return super::lowest::repeated(&tree),
+        NumericForm::FractionWithDenominator => {
+            return super::lowest::with_key_denominator(&tree, expected);
+        }
         NumericForm::Radical => return !holds_rational_power(&tree),
         NumericForm::Integer
         | NumericForm::Decimal
         | NumericForm::ReducedFraction
-        | NumericForm::FactoredLinear => {}
+        | NumericForm::FactoredLinear
+        | NumericForm::StandardFormLine
+        | NumericForm::SlopeInterceptForm
+        | NumericForm::PointSlopeForm => {}
     }
     let mut node = &tree;
     while let Ast::Neg(inner) = node {

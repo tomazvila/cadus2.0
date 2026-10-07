@@ -25,6 +25,22 @@ pub(super) fn read(text: &str) -> Result<Canon, Undecidable> {
 pub(super) fn read_with_notation(text: &str) -> Result<(Canon, Notation), Undecidable> {
     let source = notation_source(text);
     let normalized = source.split_whitespace().collect::<Vec<_>>().join(" ");
+    let normalized = spoken_comparisons(&ascii_union(&normalized));
+    if let Some(excluded) = excluded_points(&normalized) {
+        return excluded.map(|(var, ranges)| {
+            let list = Canon::List(canonical_ranges(ranges));
+            match var {
+                Some(var) => (
+                    Canon::Assign {
+                        var,
+                        value: Box::new(list),
+                    },
+                    Notation::Inequality,
+                ),
+                None => (list, Notation::Interval),
+            }
+        });
+    }
     let single_interval = normalized.contains(',')
         && matches!(normalized.chars().next(), Some('(' | '['))
         && matches!(normalized.chars().last(), Some(')' | ']'));
@@ -38,25 +54,21 @@ pub(super) fn read_with_notation(text: &str) -> Result<(Canon, Notation), Undeci
     let mut variable = None;
     let mut ranges = Vec::new();
     for branch in branches {
-        let Canon::Interval {
-            var: Some(var),
-            lo,
-            hi,
-            lo_closed,
-            hi_closed,
-        } = canonical_form(branch)?
-        else {
-            return Err(refused());
-        };
-        if variable.as_ref().is_some_and(|name| name != &var) {
-            return Err(refused());
+        // `x > -7 and x < 7` is the overlap of two half lines.
+        let mut range: Option<Range> = None;
+        for piece in branch.split(" and ") {
+            let (var, next) = branch_range(piece)?;
+            if variable.as_ref().is_some_and(|name| name != &var) {
+                return Err(refused());
+            }
+            variable = Some(var);
+            range = Some(match range {
+                Some(previous) => overlap(&previous, &next),
+                None => next,
+            });
         }
-        variable = Some(var);
-        let range = Range {
-            lo: rational(lo)?,
-            hi: rational(hi)?,
-            lo_closed,
-            hi_closed,
+        let Some(range) = range else {
+            return Err(refused());
         };
         if nonempty(&range) {
             ranges.push(range);
@@ -72,6 +84,171 @@ pub(super) fn read_with_notation(text: &str) -> Result<(Canon, Notation), Undeci
         },
         Notation::Inequality,
     ))
+}
+
+/// The variable of an exclusion, if the text names one, and the ranges left.
+type Excluded = (Option<String>, Vec<Range>);
+
+/// One inequality, as its variable and its range.
+fn branch_range(text: &str) -> Result<(String, Range), Undecidable> {
+    let Canon::Interval {
+        var: Some(var),
+        lo,
+        hi,
+        lo_closed,
+        hi_closed,
+    } = canonical_form(text)?
+    else {
+        return Err(refused());
+    };
+    let range = Range {
+        lo: rational(lo)?,
+        hi: rational(hi)?,
+        lo_closed,
+        hi_closed,
+    };
+    Ok((var, range))
+}
+
+/// The overlap of two ranges.
+fn overlap(left: &Range, right: &Range) -> Range {
+    let (lo, lo_closed) = match (&left.lo, &right.lo) {
+        (None, _) => (right.lo.clone(), right.lo_closed),
+        (_, None) => (left.lo.clone(), left.lo_closed),
+        (Some(a), Some(b)) if a > b => (left.lo.clone(), left.lo_closed),
+        (Some(a), Some(b)) if a < b => (right.lo.clone(), right.lo_closed),
+        _ => (left.lo.clone(), left.lo_closed && right.lo_closed),
+    };
+    let (hi, hi_closed) = match (&left.hi, &right.hi) {
+        (None, _) => (right.hi.clone(), right.hi_closed),
+        (_, None) => (left.hi.clone(), left.hi_closed),
+        (Some(a), Some(b)) if a < b => (left.hi.clone(), left.hi_closed),
+        (Some(a), Some(b)) if a > b => (right.hi.clone(), right.hi_closed),
+        _ => (left.hi.clone(), left.hi_closed && right.hi_closed),
+    };
+    Range {
+        lo,
+        hi,
+        lo_closed,
+        hi_closed,
+    }
+}
+
+/// An ASCII `U` between two intervals is the union sign.
+fn ascii_union(text: &str) -> String {
+    let chars: Vec<char> = text.chars().collect();
+    let mut out = String::with_capacity(text.len());
+    for (at, c) in chars.iter().enumerate() {
+        let between = *c == 'U'
+            && chars[..at]
+                .iter()
+                .rev()
+                .find(|c| !c.is_whitespace())
+                .is_some_and(|c| matches!(c, ')' | ']'))
+            && chars[at + 1..]
+                .iter()
+                .find(|c| !c.is_whitespace())
+                .is_some_and(|c| matches!(c, '(' | '['));
+        out.push(if between { '∪' } else { *c });
+    }
+    out
+}
+
+/// The spoken comparisons of a sentence in symbols: `y is greater than 0` is `y > 0`.
+fn spoken_comparisons(text: &str) -> String {
+    let mut out = text.to_owned();
+    for (spoken, symbol) in [
+        (" is greater than or equal to ", " >= "),
+        (" is at least ", " >= "),
+        (" is less than or equal to ", " <= "),
+        (" is at most ", " <= "),
+        (" is greater than ", " > "),
+        (" is more than ", " > "),
+        (" is less than ", " < "),
+        (" is not equal to ", " != "),
+    ] {
+        out = out.replace(spoken, symbol);
+    }
+    out
+}
+
+/// A set of every number but a few points: `x != 0`, `x ≠ 2, 5`,
+/// `x != 2 and x != 5`, `all real numbers except 3`. `None` when the text is
+/// another notation. The variable is `None` for the sentence form.
+fn excluded_points(text: &str) -> Option<Result<Excluded, Undecidable>> {
+    let text = text.replace('≠', "!=");
+    let lower = text.to_lowercase();
+    let (var, list) = if let Some(rest) = [
+        "all real numbers except ",
+        "all reals except ",
+        "every real number except ",
+    ]
+    .iter()
+    .find_map(|lead| lower.strip_prefix(lead).map(|_| &text[lead.len()..]))
+    {
+        (None, rest.to_owned())
+    } else if text.contains("!=") && !text.contains(['<', '>', '='])
+        || text.matches("!=").count() > 0 && !text.contains(['<', '>'])
+    {
+        let mut var: Option<String> = None;
+        let mut values = Vec::new();
+        for piece in text.split(" and ") {
+            let (name, rest) = piece.split_once("!=")?;
+            let name = name.trim();
+            let is_name = !name.is_empty() && name.chars().all(char::is_alphabetic);
+            if is_name {
+                if var.as_ref().is_some_and(|known| known != name) {
+                    return Some(Err(refused()));
+                }
+                var = Some(name.to_owned());
+            } else if !name.is_empty() {
+                return Some(Err(refused()));
+            }
+            values.push(rest.trim().to_owned());
+        }
+        (var, values.join(","))
+    } else {
+        return None;
+    };
+    Some(points_complement(var, &list))
+}
+
+/// The complement of the listed points, as ranges.
+fn points_complement(var: Option<String>, list: &str) -> Result<Excluded, Undecidable> {
+    let mut points = Vec::new();
+    for piece in list.replace(" and ", ",").split(',') {
+        let piece = piece.trim();
+        if piece.is_empty() {
+            continue;
+        }
+        match canonical_form(piece)? {
+            Canon::Rational(value) => points.push(value),
+            _ => return Err(refused()),
+        }
+    }
+    points.sort();
+    points.dedup();
+    if points.is_empty() || points.len() > 15 {
+        return Err(refused());
+    }
+    let mut ranges = Vec::new();
+    let mut lo: Option<BigRational> = None;
+    for point in points {
+        ranges.push(Range {
+            lo: lo.clone(),
+            hi: Some(point.clone()),
+            lo_closed: false,
+            hi_closed: false,
+        });
+        lo = Some(point);
+    }
+    ranges.push(Range {
+        lo,
+        hi: None,
+        lo_closed: false,
+        hi_closed: false,
+    });
+    Ok((var, merge(ranges)))
 }
 
 /// Read only the LaTeX control words that are tokens of this contract's grammar.
@@ -209,9 +386,12 @@ fn interval(text: &str) -> Result<Range, Undecidable> {
 fn endpoint(text: &str, lower: bool) -> Result<Option<BigRational>, Undecidable> {
     let text = text.trim();
     let infinite = if lower {
-        matches!(text, "-∞" | "-infinity" | "-oo")
+        matches!(text, "-∞" | "-infinity" | "-oo" | "-inf")
     } else {
-        matches!(text, "∞" | "+∞" | "infinity" | "+infinity" | "oo" | "+oo")
+        matches!(
+            text,
+            "∞" | "+∞" | "infinity" | "+infinity" | "oo" | "+oo" | "inf" | "+inf"
+        )
     };
     if infinite {
         return Ok(None);

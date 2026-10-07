@@ -160,11 +160,11 @@ fn i14_needs_an_explicit_contract_on_a_new_verdict_item() {
 }
 
 #[test]
-fn d28_refuses_log_and_e_notation_in_a_function_key() {
+fn d28_refuses_e_notation_in_a_function_key() {
     let function = json!({"kind": "function", "vars": ["x"]});
+    // `log` is base 10 in the grader, so a key may use it.
     for key in ["log(x)", "2log x", "x + log10(x)"] {
-        let found = d28(&function, key);
-        assert!(found.is_some_and(|text| text.contains("`log`")), "{key}");
+        assert_eq!(d28(&function, key), None, "{key}");
     }
     for key in ["1e-5 x", "2.5E3", "3e+2", "2e6x"] {
         let found = d28(&function, key);
@@ -193,12 +193,12 @@ fn d28_reads_each_function_part_and_each_item_of_the_tree() {
         {"name": "n", "contract": {"kind": "exact"}}]);
     let contract = json!({"kind": "multipart", "parts": parts});
     assert_eq!(d28(&contract, "fx = 2x; n = 1e-5"), None);
-    let text = d28(&contract, "fx = log(x); n = 2");
+    let text = d28(&contract, "fx = 1e-5 x; n = 2");
     assert!(text.is_some_and(|text| text.starts_with("D28: the function part `fx`")));
     // An old item of the tree gets the finding too.
     let old = item(
         "Find f.",
-        "log(x)",
+        "1e-5 x",
         json!({"kind": "function", "vars": ["x"]}),
         None,
     );

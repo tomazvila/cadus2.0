@@ -38,7 +38,7 @@ mod word;
 use alias::{bar_body, brackets_close, count_bars, grammar_name};
 use word::{
     match_literal, raises_a_superscript, read_braced_after, read_frac, read_nth_root, read_number,
-    read_symbol, superscript_digit,
+    read_subscript, read_symbol, superscript_digit,
 };
 
 use super::Undecidable;
@@ -277,8 +277,29 @@ impl Lexer<'_> {
             end += 1;
         }
         let text: String = self.chars.get(self.at..end).unwrap_or(&[]).iter().collect();
-        let width = end - self.at;
-        self.push(Tok::Ident(grammar_name(text)), width);
+        let mut width = end - self.at;
+        let mut name = grammar_name(text);
+        // `log2` and `log10` write the base as digits right after the name.
+        if name == "log" {
+            let digits = self.chars[end..]
+                .iter()
+                .take_while(|c| c.is_ascii_digit())
+                .count();
+            if digits > 0 && digits <= 3 {
+                let base: String = self.chars[end..end + digits].iter().collect();
+                name = format!("log_{base}");
+                width += digits;
+                end += digits;
+            }
+        }
+        // A subscript `_n`, `_2`, or `_{n-1}` is part of the name: `a_n`, `log_b`.
+        if self.chars.get(end) == Some(&'_')
+            && let Some((subscript, next)) = read_subscript(self.chars, end + 1)
+        {
+            name = format!("{name}_{subscript}");
+            width = next - self.at;
+        }
+        self.push(Tok::Ident(name), width);
     }
 
     /// Read a vulgar glyph, a superscript run, or an operator at the cursor.

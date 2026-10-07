@@ -3,7 +3,7 @@
 use num_bigint::BigInt;
 
 use super::build::{collapse, letter_run, make_call, make_interval, make_quotient, parse_number};
-use super::exponent::raise;
+use super::exponent::{Exponent, raise};
 use super::{GREEK_VARIABLES, Parser};
 use crate::answer::Undecidable;
 use crate::answer::ast::{Ast, Const};
@@ -123,11 +123,39 @@ impl Parser<'_> {
             let exponent = self.parse_unary()?;
             return Ok(Ast::Func("exp".to_string(), vec![exponent]));
         }
-        let exponent = self.parse_exponent()?;
+        let saved = self.at;
+        let exponent = match self.parse_exponent() {
+            Ok(exponent) => exponent,
+            Err(reason) => return self.variable_power(base, saved, reason),
+        };
         if self.peek() == Some(&Tok::Pow) {
             return Err(Undecidable::new("a tower of powers"));
         }
         Ok(raise(base, exponent))
+    }
+
+    /// Read a power whose exponent holds a variable: `3^t`, `1.005^(12t)`,
+    /// `4^(n-1)`. The node is the call `pow(base, exponent)`, which the
+    /// canonical form keeps whole and the `function` contract compares by value.
+    /// An exponent with no variable keeps the refusal it had.
+    fn variable_power(
+        &mut self,
+        base: Ast,
+        saved: usize,
+        reason: Undecidable,
+    ) -> Result<Ast, Undecidable> {
+        self.at = saved;
+        // The template grammar (extra function names) keeps its refusal.
+        if !self.extra.is_empty() {
+            return Err(reason);
+        }
+        let Ok(exponent) = self.free_exponent() else {
+            return Err(reason);
+        };
+        if crate::answer::evalf::free_vars(&exponent).is_empty() || self.peek() == Some(&Tok::Pow) {
+            return Err(reason);
+        }
+        Ok(Ast::Func("pow".to_string(), vec![base, exponent]))
     }
 
     /// Parse one atom: a literal, a name, a bracketed group, or a collection.
@@ -272,8 +300,15 @@ impl Parser<'_> {
 
     /// Turn an identifier into a function call, a constant, or a variable.
     fn parse_name(&mut self, name: &str) -> Result<Ast, Undecidable> {
+        if let Some(base) = name.strip_prefix("log_") {
+            return self.parse_based_log(base);
+        }
         if self.is_function(name) {
             return self.parse_call(name);
+        }
+        if name.contains('_') {
+            // A subscripted name such as `a_n` or `u_n-1` is one variable.
+            return Ok(Ast::Var(name.to_string()));
         }
         if name == "pi" {
             return Ok(Ast::Const(Const::Pi));
@@ -290,6 +325,47 @@ impl Parser<'_> {
         Err(Undecidable::new(
             "a name that is not a function or variable",
         ))
+    }
+
+    /// Parse `log_b(x)`, `log_2 x`, or `log2(x)` as `log(x, base)`.
+    fn parse_based_log(&mut self, base: &str) -> Result<Ast, Undecidable> {
+        let base_ast = if base.starts_with(|c: char| c.is_ascii_digit()) {
+            Ast::Integer(
+                base.parse::<BigInt>()
+                    .map_err(|_| Undecidable::new("a logarithm base outside the grammar"))?,
+            )
+        } else if base.chars().count() == 1 {
+            Ast::Var(base.to_string())
+        } else {
+            return Err(Undecidable::new("a logarithm base outside the grammar"));
+        };
+        let call = self.parse_call("log")?;
+        match call {
+            Ast::Func(name, mut args) if name == "log" && args.len() == 1 => {
+                args.push(base_ast);
+                Ok(Ast::Func(name, args))
+            }
+            _ => Err(Undecidable::new(
+                "a logarithm with a base and a second base",
+            )),
+        }
+    }
+
+    /// The exponent of a power with a variable: a bracketed expression or one atom.
+    fn free_exponent(&mut self) -> Result<Ast, Undecidable> {
+        if self.eat(&Tok::LParen) {
+            let inner = self.parse_expr()?;
+            self.expect(&Tok::RParen, "an exponent with no closing bracket")?;
+            Ok(inner)
+        } else {
+            let negative = self.eat(&Tok::Minus);
+            let atom = self.parse_atom()?;
+            Ok(if negative {
+                Ast::Neg(Box::new(atom))
+            } else {
+                atom
+            })
+        }
     }
 
     /// Parse the argument of a whitelisted function, with or without brackets.
@@ -314,6 +390,15 @@ impl Parser<'_> {
             return Err(Undecidable::new("a function name with no argument"));
         }
         let argument = self.parse_juxtaposed_argument()?;
+        // `sin^-1(x)` is the inverse sine, the way a calculator key writes it.
+        if power == Some(Exponent::Whole(-1))
+            && let Some(inverse) = ["asin", "acos", "atan"]
+                .into_iter()
+                .zip(["sin", "cos", "tan"])
+                .find_map(|(inverse, plain)| (plain == name).then_some(inverse))
+        {
+            return Ok(make_call(inverse, vec![argument]));
+        }
         let call = make_call(name, vec![argument]);
         Ok(match power {
             Some(exponent) => raise(call, exponent),

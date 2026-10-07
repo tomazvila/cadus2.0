@@ -413,6 +413,7 @@ fn every_answer_the_grammar_accepts_also_canonicalizes() {
             Err(reason) => refused.push((&row.answer, reason.reason)),
         }
     }
+    // Grader pass 3 reads subscript names and based logarithms: 3,261 to 3,285 (subscripts, based logarithms, variable exponents).
     // FIXM2a pinned 265 answers as outside the grammar. The rational-exponent
     // production of D-F3 (unit f2-grammar) reads 15 of them and the
     // quotient-and-remainder production reads 16 (`recovered_2_0.jsonl`), and
@@ -422,7 +423,7 @@ fn every_answer_the_grammar_accepts_also_canonicalizes() {
     // corpus from 3,259 to 3,261 accepted answers. Every accepted answer canonicalizes.
     assert_eq!(
         canonical,
-        3_261,
+        3_285,
         "the first refusals are {:?}",
         refused.iter().take(5).collect::<Vec<_>>()
     );

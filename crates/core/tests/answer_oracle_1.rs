@@ -92,10 +92,11 @@ fn a_divergence_leaves_class_3_only_when_a_predicate_names_a_1_0_line() {
         documented_reason(&parse_divergence, false, one_zero_says_yes),
         None
     );
-    // The same answer with a `sin` in it, and with a `log` in it.
+    // The same answer with a `sin` in it, and with an `ln` in it. A bare `log`
+    // has its own documented reason since grader pass 3 (1.0 reads it as `ln`).
     let with_sin = probe_pair("(4/3)sin 3t", "(4/3)*sin 3*t", "expression_symbolic");
     assert_eq!(documented_reason(&with_sin, false, one_zero_says_yes), None);
-    let with_log = probe_pair("log(2x)", "2*log(x)", "expression_symbolic");
+    let with_log = probe_pair("ln(2x)", "2*ln(x)", "expression_symbolic");
     assert_eq!(documented_reason(&with_log, false, one_zero_says_yes), None);
     // The identity that IS the documented narrowing gets no reason here either:
     // no test of the two strings reads a 1.0 `simplify` result. The pair is

@@ -68,12 +68,34 @@ fn is_plain_exact(view: &KpView, item: &Item) -> bool {
     }
 }
 
+/// True if the item asks for a logarithm in a named form (expand or condense).
+///
+/// `function` grades by value, so it accepts `ln(x^3)` for "Expand ln(x^3)". The
+/// plain exact comparison reads the logarithm by value too, but it keeps the
+/// form of the sum, so `exact` is the contract for such an item.
+fn is_rewrite_item(item: &Item) -> bool {
+    let question = item.exemplar.problem.to_lowercase();
+    let key = &item.exemplar.answer;
+    let has_log = key.contains("ln") || key.contains("log");
+    has_log
+        && [
+            "expand",
+            "condense",
+            "single logarithm",
+            "as a sum",
+            "as one log",
+        ]
+        .iter()
+        .any(|word| question.contains(word))
+}
+
 /// The R3 findings of the verdict exemplars of the KP.
 pub fn check(view: &KpView) -> Vec<Finding> {
     view.items
         .iter()
         .filter(|item| item.verdict && is_plain_exact(view, item))
         .filter(|item| is_formula_key(&item.exemplar.answer))
+        .filter(|item| !is_rewrite_item(item))
         .map(|item| {
             let detail = format!(
                 "R3: the key `{}` has a function name and a variable, and the plain exact \
@@ -118,6 +140,19 @@ mod tests {
         ] {
             assert!(!is_formula_key(key), "{key}");
         }
+    }
+
+    #[test]
+    fn r3_allows_exact_on_an_expand_or_condense_log_item() {
+        let rewrite =
+            |question: &str, key: &str| item(question, key, json!({"kind": "exact"}), None);
+        let found = check(&view(vec![rewrite(
+            "Expand $\\ln(x^3 y)$.",
+            "3 ln(x) + ln(y)",
+        )]));
+        assert!(found.is_empty());
+        let found = check(&view(vec![rewrite("Differentiate.", "3 ln(x) + ln(y)")]));
+        assert_eq!(invariants(&found), ["R3"]);
     }
 
     #[test]

@@ -141,7 +141,7 @@ pub const SHAPE_COUNTS: [(&str, usize, usize); 15] = [
     ("decimal", 128, 0),
     ("equation", 1, 0),
     ("expression_numeric", 228, 5),
-    ("expression_symbolic", 646, 40),
+    ("expression_symbolic", 670, 16),
     ("fraction", 350, 2),
     ("integer", 1622, 0),
     ("interval_ineq", 29, 5),

@@ -91,15 +91,6 @@ fn i13(item: &Item) -> Option<String> {
         .map(|run| format!("the sketch does not show the digits `{run}` of the key"))
 }
 
-/// True if the text has the name `log` (`log(x)`, `log10(x)`, `2log x`).
-fn has_log(key: &str) -> bool {
-    key.match_indices("log").any(|(at, _)| {
-        let before = key[..at].chars().next_back();
-        let after = key[at + 3..].chars().next();
-        !before.is_some_and(char::is_alphabetic) && !after.is_some_and(char::is_alphabetic)
-    })
-}
-
 /// True if the text has a number in `e` notation (`1e-5`, `2.5E3`).
 fn has_e_notation(key: &str) -> bool {
     let chars: Vec<char> = key.chars().collect();
@@ -117,14 +108,9 @@ fn has_e_notation(key: &str) -> bool {
 }
 
 fn d28_text(what: &str, key: &str) -> Option<String> {
-    if has_log(key) {
-        Some(format!(
-            "D28: {what} has the name `log`; write `ln(x)` or `ln(x)/ln(10)`"
-        ))
-    } else {
-        has_e_notation(key)
-            .then(|| format!("D28: {what} has a number in `e` notation; write `10^(-5)`"))
-    }
+    // `log` has base 10 in the grader since grader pass 3, so the key may use it.
+    has_e_notation(key)
+        .then(|| format!("D28: {what} has a number in `e` notation; write `10^(-5)`"))
 }
 
 /// D28 for a top-level `function` key and for each `function` part.

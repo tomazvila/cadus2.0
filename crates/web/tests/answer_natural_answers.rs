@@ -223,3 +223,256 @@ fn every_natural_spelling_grades_through_the_served_path() {
         failures.join("\n")
     );
 }
+
+const ANGLE: &str =
+    "A ladder makes an angle with the ground. Find the angle, to one decimal place, in degrees.";
+const METRES: &str = "A ramp rises 3 metres over a run of 4 metres. How long is the ramp, to one decimal place, in metres?";
+const TEMPERATURE: &str = "At night the temperature falls from 5 to a lower value. What is the new temperature in degrees Celsius?";
+const RADIANS: &str = "A wheel turns through 150 degrees. Write the angle in radians.";
+const YEARS: &str =
+    "Sam saves 12 euros each year. After how many years has Sam saved 36 euros? Answer in years.";
+const PENCILS: &str = "Maria puts 8 pencils in each of 3 boxes. Find the total number of pencils.";
+const SIDES: &str =
+    "A field has two sides of 27 metres and 25 metres. List the two lengths in metres.";
+const MILLIONS: &str =
+    "A firm earned 13 million dollars. Write the earnings in millions of dollars.";
+const CONNECTED: &str = "Is the graph connected?";
+const TWO_PARTS: &str = "Find the two numbers.";
+const MONEY: &str = "How much does the bike cost, in dollars?";
+
+const DOLLAR: &str = r#"{"kind":"unit","quantity":"dollar","unit":"dollar","allow_omitted":true}"#;
+const KM: &str = r#"{"kind":"unit","quantity":"length","unit":"km","allow_omitted":true}"#;
+const FUNCTION_X: &str = r#"{"kind":"function","vars":["x"]}"#;
+const TWO_DECIMALS: &str = r#"{"kind":"approx","decimals":2}"#;
+const ONE_DECIMAL: &str = r#"{"kind":"approx","decimals":1}"#;
+const SET: &str = r#"{"kind":"set"}"#;
+const CONNECTED_LABEL: &str = r#"{"kind":"label","options":[["yes","connected","it is connected"],["no","not connected","disconnected"]]}"#;
+const PAIR: &str = r#"{"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}}]}"#;
+const SETUP: &str = r#"{"kind":"relation_setup"}"#;
+const DIVISION: &str = r#"{"kind":"polynomial_division","divisor":"x+1"}"#;
+
+fn cases_pass_3() -> Vec<Case> {
+    vec![
+        case(
+            ANGLE,
+            "36.9",
+            ONE_DECIMAL,
+            &["36.9°", "36.9 degrees", "36.9", "≈36.9°", "36.91"],
+            &["37°", "36.8°", "36.8 degrees"],
+        ),
+        case(
+            METRES,
+            "5.0",
+            ONE_DECIMAL,
+            &["5 m", "5.0 m", "5.0"],
+            &["5.1 m", "5 cm"],
+        ),
+        case(
+            TEMPERATURE,
+            "-15",
+            EXACT,
+            &["-15 degrees", "-15°C", "-15 °C", "-15"],
+            &["-14 degrees", "15 degrees"],
+        ),
+        case(
+            RADIANS,
+            "5*pi/6",
+            EXACT,
+            &["5pi/6 radians", "5π/6 radians", "5π/6", "5pi/6 rad"],
+            &["5pi/3 radians", "5 radians"],
+        ),
+        case(
+            YEARS,
+            "3",
+            EXACT,
+            &["3 years", "3 year", "3"],
+            &["4 years", "3 months"],
+        ),
+        case(
+            PENCILS,
+            "24",
+            EXACT,
+            &["24 pencils", "24"],
+            &["25 pencils", "23 pencils"],
+        ),
+        case(
+            SIDES,
+            "27, 25",
+            EXACT,
+            &[
+                "27 m, 25 m",
+                "27 metres and 25 metres",
+                "27, 25",
+                "25 m, 27 m",
+            ],
+            &["27 m, 26 m", "27 cm, 25 cm"],
+        ),
+        case(
+            TWO_PARTS,
+            "a = 18; b = 24",
+            PAIR,
+            &["18 and 24", "18, 24", "18; 24"],
+            &["24 and 18", "18 and 25"],
+        ),
+        case(
+            MILLIONS,
+            "13",
+            EXACT,
+            &["13 million dollars", "13 million", "13"],
+            &["14 million dollars", "130 million dollars"],
+        ),
+        case(
+            MONEY,
+            "1710",
+            DOLLAR,
+            &["$1,710", "1,710 dollars", "$1710", "1710 dollars"],
+            &["$1,711", "$171"],
+        ),
+        case(
+            MONEY,
+            "-20",
+            DOLLAR,
+            &["-$20", "-20 dollars", "-$20.00"],
+            &["$20", "-$21"],
+        ),
+        case(
+            MONEY,
+            "12700",
+            DOLLAR,
+            &["$12,700", "12,700 dollars"],
+            &["$1,270"],
+        ),
+        case(MONEY, "-3.65", DOLLAR, &["-$3.65"], &["-$3.56"]),
+        case(
+            PLAIN,
+            "13 km",
+            KM,
+            &["d = 13 km", "d = 13", "13 km"],
+            &["d = 14 km"],
+        ),
+        case(
+            PLAIN,
+            "2x",
+            FUNCTION_X,
+            &["f'(x) = 2x", "dy/dx = 2x"],
+            &["f'(x) = 3x"],
+        ),
+        case(
+            PLAIN,
+            "2.81",
+            TWO_DECIMALS,
+            &["2.81", "2.807", "2.8149"],
+            &["2.9", "2.8", "2.8049"],
+        ),
+        case(
+            CONNECTED,
+            "yes",
+            CONNECTED_LABEL,
+            &["Yes, it is", "Yes, it must be connected"],
+            &["No, it is not", "it is disconnected"],
+        ),
+        case(
+            PLAIN,
+            "{2, 5}",
+            SET,
+            &["2, 5", "5, 2", "{2,5}"],
+            &["2, 2, 5", "2", "2, 6"],
+        ),
+        case(
+            PLAIN,
+            "m/2 + 3 >= 12",
+            SETUP,
+            &["0.5m+3>=12", "(1/2)m+3>=12", "12 <= m/2 + 3"],
+            &["m/2 + 3 > 12", "m >= 18"],
+        ),
+        case(
+            PLAIN,
+            "|x| < 5",
+            SETUP,
+            &["|x| < 5", "5 > |x|"],
+            &["|x| <= 5", "x < 5"],
+        ),
+        case(
+            PLAIN,
+            "x + 2 remainder 3",
+            DIVISION,
+            &["x+2+3/(x+1)", "x+2 r 3", "quotient x+2, remainder 3"],
+            &["x+2+3/(x+2)", "x + 2 remainder 4"],
+        ),
+        case(
+            PLAIN,
+            "ln(8)",
+            EXACT,
+            &["3 ln 2", "3*ln(2)", "ln 8"],
+            &["ln 9", "2 ln 3"],
+        ),
+        case(
+            PLAIN,
+            "log(45)",
+            EXACT,
+            &["log10(45)", "lg(45)", "ln(45)/ln(10)", "log(5)+log(9)"],
+            &["ln(45)", "log(54)"],
+        ),
+        case(
+            PLAIN,
+            "ln(10)/ln(2)",
+            EXACT,
+            &["log_2(10)", "log2(10)"],
+            &["log_3(10)", "ln(10)"],
+        ),
+        case(
+            PLAIN,
+            "x*x*x",
+            &form("repeated_multiplication"),
+            &["x*x*x"],
+            &["x^3"],
+        ),
+        case(
+            PLAIN,
+            "4000 + 500 + 6",
+            &form("expanded_place_value"),
+            &["4000 + 500 + 6", "4*1000 + 5*100 + 6"],
+            &["4506"],
+        ),
+        case(
+            PLAIN,
+            "3x/4",
+            &form("simplified_rational"),
+            &["3x/4"],
+            &["6x/8"],
+        ),
+        case(
+            PLAIN,
+            "y = (x+3)^2 - 4",
+            &form("vertex_form"),
+            &["y = (x+3)^2 - 4"],
+            &["y = x^2 + 6x + 5"],
+        ),
+    ]
+}
+
+#[test]
+fn the_pass_three_spellings_grade_through_the_served_path() {
+    let mut failures = Vec::new();
+    let mut rows = 0;
+    for case in cases_pass_3() {
+        for learner in case.right {
+            rows += 1;
+            if grade(case.question, case.key, &case.contract, learner) != AttemptOutcome::Correct {
+                failures.push(format!("should be correct: {} | {learner}", case.key));
+            }
+        }
+        for learner in case.wrong {
+            rows += 1;
+            if grade(case.question, case.key, &case.contract, learner) == AttemptOutcome::Correct {
+                failures.push(format!("should be wrong: {} | {learner}", case.key));
+            }
+        }
+    }
+    assert!(
+        failures.is_empty(),
+        "{} of {rows} rows:\n{}",
+        failures.len(),
+        failures.join("\n")
+    );
+}

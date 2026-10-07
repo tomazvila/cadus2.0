@@ -265,10 +265,9 @@ impl Work {
     /// Apply a whitelisted function to canonical arguments.
     fn call(&mut self, name: &str, arguments: Vec<Canon>) -> Result<Canon, Undecidable> {
         self.spend(1)?;
-        // `ln` and `log` are one function: the natural logarithm. 1.0 makes `ln`
-        // an alias of `log`, and the corpus authors both spellings on the topic
-        // `change-of-base-formula`.
-        let name = if name == "ln" { "log" } else { name };
+        if name == "ln" || name == "log" {
+            return self.logarithm(name, &arguments);
+        }
         if arguments.len() == 1 {
             if name == "sqrt"
                 && let Some(argument) = arguments.first()

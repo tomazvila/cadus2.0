@@ -1,16 +1,21 @@
 //! Per-item acceptance rules (D-F1, C4, D6).
 
 mod assignment;
+mod division;
 mod evaluate;
 mod form;
 pub mod function;
 mod list;
+mod lowest;
+mod nested;
 mod notation;
 mod power;
+mod prefix;
 pub mod property;
 mod radical;
 mod relation;
 mod scientific;
+mod sentence;
 mod setup;
 mod structured;
 mod triage;
@@ -59,6 +64,9 @@ pub enum AnswerContract {
         #[serde(default, skip_serializing_if = "Option::is_none")]
         divisor: Option<u64>,
     },
+    /// A polynomial quotient and remainder (`x + 2 remainder 3`); the stored
+    /// divisor also accepts the mixed form `x + 2 + 3/(x + 1)`.
+    PolynomialDivision { divisor: String },
     /// An ordered tuple of two to four real numeric coordinates.
     Coordinates { arity: u8 },
     /// A grid of exact rational entries, compared entry by entry.
@@ -93,6 +101,8 @@ pub enum AnswerContract {
     AscendingChain,
     /// A polynomial equality or inequality, compared after exact normalization.
     PolynomialRelation,
+    /// A polynomial relation whose leading coefficient is 1 as the learner wrote it.
+    MonicPolynomialRelation,
     /// An equality or inequality that preserves the authored unsolved operation structure.
     RelationSetup,
     /// A closed choice vocabulary, with explicit aliases per option.
@@ -135,6 +145,10 @@ pub enum UnitForm {
     /// A reduced rational times one simplified square root, with a rational
     /// denominator: `2√3 m`, not `√12 m` or `6/√3 m`.
     SimplestRadical,
+    /// A rational plus simplest radicals with distinct radicands: `30 + 10√3`.
+    SimplestRadicalSum,
+    /// A fraction in lowest terms: `1/6 L`, not `2/12 L`.
+    ReducedFraction,
 }
 
 impl UnitForm {
@@ -144,6 +158,11 @@ impl UnitForm {
     pub fn holds(self, magnitude: &str) -> bool {
         match self {
             Self::SimplestRadical => radical::simplest(magnitude).unwrap_or(true),
+            Self::SimplestRadicalSum => radical::simplest_sum(magnitude).unwrap_or(true),
+            Self::ReducedFraction => {
+                form::accepts(NumericForm::ReducedFraction, magnitude, magnitude)
+                    || !magnitude.contains('/')
+            }
         }
     }
 }
@@ -176,6 +195,9 @@ enum ContractDoc {
     QuotientRemainder {
         divisor: Option<u64>,
     },
+    PolynomialDivision {
+        divisor: String,
+    },
     Coordinates {
         arity: u8,
     },
@@ -199,6 +221,7 @@ enum ContractDoc {
     ReducedRatio {},
     AscendingChain {},
     PolynomialRelation {},
+    MonicPolynomialRelation {},
     RelationSetup {},
     Label {
         options: Vec<Vec<String>>,
@@ -251,6 +274,7 @@ impl TryFrom<ContractDoc> for AnswerContract {
                 form,
             },
             ContractDoc::QuotientRemainder { divisor } => Self::QuotientRemainder { divisor },
+            ContractDoc::PolynomialDivision { divisor } => Self::PolynomialDivision { divisor },
             ContractDoc::Coordinates { arity } => Self::Coordinates { arity },
             ContractDoc::Matrix { rows, cols } => Self::Matrix { rows, cols },
             ContractDoc::RequiredForm { form } => Self::RequiredForm { form },
@@ -283,6 +307,7 @@ fn fieldless_contract(document: ContractDoc) -> AnswerContract {
         ContractDoc::ReducedRatio {} => AnswerContract::ReducedRatio,
         ContractDoc::AscendingChain {} => AnswerContract::AscendingChain,
         ContractDoc::PolynomialRelation {} => AnswerContract::PolynomialRelation,
+        ContractDoc::MonicPolynomialRelation {} => AnswerContract::MonicPolynomialRelation,
         ContractDoc::RelationSetup {} => AnswerContract::RelationSetup,
         ContractDoc::RequiredAssignment {} => AnswerContract::RequiredAssignment,
         ContractDoc::RequiredInequalityNotation {} => AnswerContract::RequiredInequalityNotation,
@@ -388,6 +413,13 @@ impl AnswerContract {
             | Self::RequiredSimplestRadical) => required_syntax_expected(contract, expected),
             Self::ReducedRatio | Self::AscendingChain => notation::expected(self, expected),
             Self::PolynomialRelation => relation::read(expected),
+            Self::MonicPolynomialRelation => {
+                if relation::is_monic(expected) {
+                    relation::read(expected)
+                } else {
+                    Err(Undecidable::new("the authored relation is not monic"))
+                }
+            }
             Self::RelationSetup => setup::read(expected),
             Self::Function {
                 vars,
@@ -395,6 +427,7 @@ impl AnswerContract {
                 domain,
             } => function::FunctionSpec::new(vars, *up_to_constant, domain)
                 .and_then(|spec| function::expected(&spec, expected)),
+            Self::PolynomialDivision { divisor } => division::expected(divisor, expected),
             Self::Property { check, args } => property::expected(*check, args, expected),
             Self::Unit {
                 unit,
@@ -427,6 +460,15 @@ impl AnswerContract {
                 } else {
                     Err(Undecidable::new(
                         "the authored answer does not match its contract shape",
+                    ))
+                }
+            }
+            Self::RequiredForm { form } if form.is_line() => {
+                if form::accepts(*form, expected, expected) {
+                    relation::read(expected)
+                } else {
+                    Err(Undecidable::new(
+                        "the authored answer does not match its required form",
                     ))
                 }
             }

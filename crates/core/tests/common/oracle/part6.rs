@@ -26,7 +26,9 @@ use super::*;
 /// old substring test claimed it did, and it excused five parse divergences that
 /// hold no identity (M2 review 2, findings 10 and 14). The narrowing keeps its
 /// literal pairs in `answer_divergence.rs` instead.
-pub const DOCUMENTED_REASONS: [&str; 16] = [
+pub const DOCUMENTED_REASONS: [&str; 17] = [
+    // 1.0 reads `log` as `ln`; 2.0 reads base 10 (grader pass 3).
+    "1.0 reads `log` as the natural logarithm, 2.0 as base 10 (grader pass 3)",
     // The two narrowings of the canonical rational form (FIXM2h). Both mark a
     // correct learner WRONG in 2.0, and both carry a SPECIFIC predicate: the
     // recorded SymPy evidence must say the difference is zero, AND the two

@@ -69,7 +69,9 @@
 //!   spelling as well. The rest of the argument becomes [`Atom::Exp`], which
 //!   obeys the exponent law: `e**(-x)` and `1/e**x` are one value, and `e**x`
 //!   and `e**(2*x)` are two values.
-//! - `ln` and `log` are one function, the natural logarithm, as they are in 1.0.
+//! - `ln` is the natural logarithm and `log` has base 10. A positive rational argument
+//!   splits into the logarithms of its primes, so `ln(8)` and `3*ln(2)` are one value
+//!   and `log(45)` and `ln(45)/ln(10)` are one value (`log.rs`).
 //! - `sin(x)**2 + cos(x)**2` and `1` are different values. That is the documented
 //!   narrowing of 1.0 (V1).
 //!
@@ -104,6 +106,7 @@
 //! of a whole sum runs through it.
 
 mod arith;
+mod log;
 mod quotient;
 mod read;
 mod root;

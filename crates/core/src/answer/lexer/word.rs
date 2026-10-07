@@ -175,3 +175,35 @@ pub(super) fn read_symbol(c: char, next: Option<char>) -> Result<(Tok, usize), U
     };
     Ok((token, 1))
 }
+
+/// Read the subscript that follows an `_` at `at - 1`: a braced body or one run
+/// of letters and digits. The answer is the subscript text and the index after it.
+///
+/// A braced body holds letters, digits, `+`, and `-` only, so `a_{n-1}` is the
+/// name `a_n-1` and no other construct hides in a subscript.
+pub(super) fn read_subscript(chars: &[char], at: usize) -> Option<(String, usize)> {
+    if chars.get(at) == Some(&'{') {
+        let close = matching_delimiter(chars, at, '{', '}')?;
+        let body: String = chars[at + 1..close]
+            .iter()
+            .filter(|c| !c.is_whitespace())
+            .collect();
+        let clean = !body.is_empty()
+            && body
+                .chars()
+                .all(|c| c.is_ascii_alphanumeric() || c == '+' || c == '-');
+        return clean.then_some((body, close + 1));
+    }
+    let run: String = chars[at.min(chars.len())..]
+        .iter()
+        .take_while(|c| c.is_ascii_alphanumeric())
+        .collect();
+    // A letter run keeps one letter: `a_n x` is a name and a product.
+    let run: String = if run.chars().next()?.is_ascii_digit() {
+        run.chars().take_while(char::is_ascii_digit).collect()
+    } else {
+        run.chars().take(1).collect()
+    };
+    let width = run.chars().count();
+    Some((run, at + width))
+}

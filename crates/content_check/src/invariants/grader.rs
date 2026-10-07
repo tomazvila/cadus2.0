@@ -123,9 +123,10 @@ mod tests {
             breach_of("6", "plus-one", "correct").as_deref(),
             Some("the mutant `6` (plus-one) grades correct")
         );
-        // Each candidate of the set `{2, 2}` is equal to the key.
+        // The set `{2, 2}` repeats a member, and the grader since pass 3 refuses a
+        // repeat, so the key itself grades wrong.
         let breach = probe_contract("{2, 2}", &json!({"kind": "set"}));
-        assert!(breach.is_some_and(|text| text.ends_with("(member-removed) grades correct")));
+        assert_eq!(breach.as_deref(), Some("the key grades wrong"));
         let ungraded = breach_of("x", "label-other", "ungraded");
         assert!(ungraded.is_some_and(|text| text.ends_with("grades ungraded")));
     }

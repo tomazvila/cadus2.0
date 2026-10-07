@@ -31,7 +31,9 @@ pub fn triage_verdict(contract: &AnswerContract) -> TriageVerdict {
         | AnswerContract::List { .. }
         | AnswerContract::Matrix { .. }
         | AnswerContract::Multipart { .. }
+        | AnswerContract::PolynomialDivision { .. }
         | AnswerContract::PolynomialRelation
+        | AnswerContract::MonicPolynomialRelation
         | AnswerContract::Property { .. }
         | AnswerContract::QuotientRemainder { .. }
         | AnswerContract::ReducedRatio

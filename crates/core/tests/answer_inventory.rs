@@ -115,14 +115,15 @@ const LIVE_VERDICT_COUNTS: [(&str, usize); 7] = [
         "undecidable(a chained inequality needs one variable in the middle)",
         2,
     ),
-    ("undecidable(a character outside the grammar)", 227),
+    // Grader pass 3: subscripts and `log_b` read, four rows now end in trailing text.
+    ("undecidable(a character outside the grammar)", 223),
     (
         "undecidable(a disjunction requires finite scalar solutions)",
         19,
     ),
     ("undecidable(a name that is not a function or variable)", 66),
     ("undecidable(an inequality with no bare variable)", 4),
-    ("undecidable(trailing text after the answer)", 8),
+    ("undecidable(trailing text after the answer)", 12),
 ];
 
 #[test]

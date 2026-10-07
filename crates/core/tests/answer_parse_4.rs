@@ -52,7 +52,6 @@ fn out_of_grammar_shapes_never_parse() {
     // the list with the quotient-and-remainder production of D-F3 (unit
     // f2-grammar), which `answer_remainder.rs` pins.
     for text in [
-        "log_b(x)",
         "n!",
         "3/0",
         "0/0",
@@ -63,7 +62,6 @@ fn out_of_grammar_shapes_never_parse() {
         "6 ≤ ∫ ≤ 15",
         "2y · dy/dx",
         "5 <= 7, so it holds",
-        "$3a_1 - a_2$",
         "",
         "   ",
         "$",
@@ -140,7 +138,10 @@ fn deep_nesting_is_refused_and_never_overflows_the_stack() {
 }
 
 #[test]
-fn the_corpus_splits_into_3261_parsed_and_231_undecidable_answers() {
+fn the_corpus_splits_into_3285_parsed_and_207_undecidable_answers() {
+    // Grader pass 3: the subscript name (`a_1`), the based logarithm
+    // (`log_b(x)`), and the power with a variable exponent (`3^t`) now parse,
+    // which moves 11 + 13 rows from the residue to the recovered fixture.
     // The 1.0 residue was 265. The rational-exponent production of D-F3 (unit
     // f2-grammar) reads 15 rows; quotient-and-remainder reads 16; and the
     // `arc_function_name` production of lane B3 reads 2. The value-with-unit
@@ -158,8 +159,8 @@ fn the_corpus_splits_into_3261_parsed_and_231_undecidable_answers() {
             refused += 1;
         }
     }
-    assert_eq!(parsed, 3_261, "answers inside the grammar");
-    assert_eq!(refused, 231, "answers outside the grammar");
+    assert_eq!(parsed, 3_285, "answers inside the grammar");
+    assert_eq!(refused, 207, "answers outside the grammar");
 }
 
 #[test]
@@ -194,7 +195,7 @@ fn the_undecidable_answers_are_exactly_the_committed_fixture() {
         missing.is_empty() && extra.is_empty(),
         "the residue moved: missing {missing:?}, extra {extra:?}"
     );
-    assert_eq!(committed.len(), 231);
+    assert_eq!(committed.len(), 207);
 }
 
 #[test]
@@ -240,8 +241,10 @@ fn the_recovered_answers_keep_their_identity_and_parse() {
             ("arc_function_name", 2),
             ("quotient_remainder", 16),
             ("rational_exponent", 15),
+            ("subscript_and_based_log", 11),
             ("temperature_unit", 1),
-            ("value_with_unit", 1)
+            ("value_with_unit", 1),
+            ("variable_exponent", 13)
         ]
     );
 }

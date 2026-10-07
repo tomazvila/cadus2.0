@@ -168,10 +168,9 @@ fn a_descending_chain_carries_its_upper_end_closedness() {
 }
 
 #[test]
-fn ln_and_log_are_one_function() {
-    // M2 review 1, finding 8. 1.0 makes `ln` an alias of `log`, and the corpus
-    // authors both spellings on the topic `change-of-base-formula`.
-    // 1.0: True for the first two pairs.
+fn ln_and_log_differ_but_a_quotient_of_either_is_one_value() {
+    // `log` has base 10 and `ln` has base e (grader pass 3), so a change-of-base
+    // quotient is the same number in either spelling and a bare log is not.
     assert_eq!(
         check("log(12)/log(5)", "ln(12)/ln(5)", E),
         decided(true, false)
@@ -180,7 +179,7 @@ fn ln_and_log_are_one_function() {
         check("ln(7)/ln(3)", "log(7)/log(3)", E),
         decided(true, false)
     );
-    assert_eq!(form("ln(x)"), form("log(x)"));
+    assert_ne!(form("ln(x)"), form("log(x)"));
     // C4: the alias must not accept another value or another function.
     assert_eq!(
         check("log(12)/log(5)", "ln(12)/ln(7)", E),
@@ -189,6 +188,7 @@ fn ln_and_log_are_one_function() {
     assert_eq!(check("ln(2)", "log(3)", E), decided(false, false));
     assert_eq!(check("ln(x)", "sin(x)", E), decided(false, false));
     assert_eq!(check("ln(x)", "log(x, 2)", E), decided(false, false));
+    assert_eq!(check("log(45)", "ln(45)", E), decided(false, false));
 }
 
 #[test]

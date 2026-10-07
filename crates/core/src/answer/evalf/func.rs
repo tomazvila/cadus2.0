@@ -1,13 +1,13 @@
-//! The 17 functions of the grammar as `f64` functions.
+//! The 20 functions of the grammar as `f64` functions.
 
 /// One function of one real argument.
 type Real = fn(f64) -> f64;
 
 /// Each function name of the grammar with its `f64` function.
 ///
-/// `ln` and `log` are the natural logarithm. A value outside the domain is
+/// `ln` is the natural logarithm and `log` has base 10. A value outside the domain is
 /// NaN or infinite here, and the caller refuses it.
-const TABLE: [(&str, Real); 17] = [
+const TABLE: [(&str, Real); 20] = [
     ("sqrt", f64::sqrt),
     ("sin", f64::sin),
     ("cos", f64::cos),
@@ -21,9 +21,12 @@ const TABLE: [(&str, Real); 17] = [
     ("sinh", f64::sinh),
     ("cosh", f64::cosh),
     ("tanh", f64::tanh),
+    ("sech", |x| 1.0 / x.cosh()),
+    ("csch", |x| 1.0 / x.sinh()),
+    ("coth", |x| x.cosh() / x.sinh()),
     ("exp", f64::exp),
     ("ln", f64::ln),
-    ("log", f64::ln),
+    ("log", f64::log10),
     ("abs", f64::abs),
 ];
 

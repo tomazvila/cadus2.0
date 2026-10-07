@@ -46,31 +46,36 @@ fn multipart_part_with_no_numeric_leaf_gets_its_own_mutant() {
 }
 
 #[test]
-fn member_removed_tries_the_next_member_when_the_mutant_grades_correct() {
+fn member_removed_drops_the_first_member_of_a_set() {
     for (key, want) in [
-        ("{2, 2, 3}", "{2, 2}"),
-        ("{1/2, 0.5, 3}", "{1/2, 0.5}"),
-        ("{(1,2), (1, 2), 5}", "{(1,2), (1, 2)}"),
+        ("{2, 3}", "{3}"),
+        ("{1/2, 3, 5}", "{3, 5}"),
+        ("{(1,2), (3, 4), 5}", "{(3, 4), 5}"),
     ] {
         let doc = mutants(r#"{"kind":"set"}"#, key).doc();
         assert_eq!(mutant_learners(&doc), [want], "{key}");
         assert_eq!(doc.get("cause"), None);
         assert_eq!(doc["pass"], true, "{key}");
     }
-    // Each candidate is equal to the key: no distinct mutant.
-    let doc = mutants(r#"{"kind":"set"}"#, "{2, 2}").doc();
-    assert_eq!(doc["mutants"][0]["verdict"], "correct");
-    assert_eq!(doc["cause"], "no-distinct-mutant");
-    assert_eq!(doc["pass"], false);
 }
 
 #[test]
-fn set_part_of_a_multipart_key_tries_the_next_member() {
+fn a_set_key_that_repeats_a_member_does_not_grade_correct() {
+    // Grader pass 3 refuses a repeated member, so such a key is a defect.
+    for key in ["{2, 2}", "{2, 2, 3}", "{1/2, 0.5, 3}", "{(1,2), (1, 2), 5}"] {
+        let doc = mutants(r#"{"kind":"set"}"#, key).doc();
+        assert_eq!(doc["key_verdict"], "wrong", "{key}");
+        assert_eq!(doc["pass"], false, "{key}");
+    }
+}
+
+#[test]
+fn set_part_of_a_multipart_key_drops_a_member() {
     let contract = r#"{"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"s","contract":{"kind":"set"}}]}"#;
-    let doc = mutants(contract, "a = 1; s = {2, 2, 3}").doc();
+    let doc = mutants(contract, "a = 1; s = {2, 3}").doc();
     assert_eq!(
         mutant_learners(&doc),
-        ["a = 2; s = {2, 2, 3}", "a = 1; s = {2, 2}"]
+        ["a = 2; s = {2, 3}", "a = 1; s = {3}"]
     );
     assert_eq!(doc["mutants"][1]["rule"], "part:s:member-removed");
     assert_eq!(doc["pass"], true);

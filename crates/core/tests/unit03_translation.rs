@@ -151,6 +151,8 @@ fn relation_setup_accepts_notation_variants_and_rejects_changed_setups() {
         ("3*x + 5 = 26", "5 + x*3=26"),
         ("x/4 - 7 = 9", "x / 4 - 7=9"),
         ("2*x + 5 <= 17", "5+2x<=17"),
+        // Grader pass 3: an inequality with its sides swapped is the same setup.
+        ("2*x + 5 <= 17", "17 >= 2*x + 5"),
     ] {
         assert!(accepted(expected, equivalent, contract.clone()));
     }
@@ -169,12 +171,7 @@ fn relation_setup_accepts_notation_variants_and_rejects_changed_setups() {
             "{wrong}"
         );
     }
-    for (expected, wrong) in [
-        ("2*x + 5 <= 17", "2*x + 5 < 17"),
-        ("2*x + 5 <= 17", "17 >= 2*x + 5"),
-    ] {
-        assert!(!accepted(expected, wrong, contract.clone()), "{wrong}");
-    }
+    assert!(!accepted("2*x + 5 <= 17", "2*x + 5 < 17", contract.clone()));
     let oversized = format!("{}x = 1", "1+".repeat(2_100));
     assert!(!accepted("x = 1", &oversized, contract));
 }

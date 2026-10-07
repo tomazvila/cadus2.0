@@ -66,6 +66,41 @@ pub(super) fn read(text: &str) -> Result<Canon, Undecidable> {
     ]))
 }
 
+/// Whether the highest-degree term of the relation, moved to the side the
+/// learner wrote it on, has the coefficient 1: `x^2 + 2x - 15 = 0` and
+/// `0 = x^2 + 2x - 15` are monic, `2x^2 + 4x - 30 = 0` and `-x^2 - 2x + 15 = 0`
+/// are not.
+pub(super) fn is_monic(text: &str) -> bool {
+    let source = normalize(text).source;
+    let Ok((left, _, right)) = split(&source) else {
+        return false;
+    };
+    let (Ok(left), Ok(right)) = (
+        canonical_form(left).and_then(as_poly),
+        canonical_form(right).and_then(as_poly),
+    ) else {
+        return false;
+    };
+    let degree = |monomial: &Monomial| monomial.values().sum::<i64>();
+    let lead = |poly: &Poly| {
+        poly.iter()
+            .max_by_key(|(monomial, _)| (degree(monomial), (*monomial).clone()))
+            .map(|(monomial, coefficient)| (degree(monomial), coefficient.clone()))
+    };
+    let mut difference = left.clone();
+    for (monomial, coefficient) in &right {
+        *difference.entry(monomial.clone()).or_default() -= coefficient;
+    }
+    difference.retain(|_, coefficient| !coefficient.is_zero());
+    let one = num_rational::BigRational::from_integer(1.into());
+    match (lead(&difference), left.is_empty(), right.is_empty()) {
+        (Some((_, coefficient)), _, true) => coefficient == one,
+        (Some((_, coefficient)), true, _) => coefficient == -one,
+        (Some((_, coefficient)), false, false) => coefficient == one,
+        _ => false,
+    }
+}
+
 pub(super) fn setup_sides(text: &str) -> Result<(String, String), Undecidable> {
     let source = normalize(text).source;
     let (left, _, right) = split(&source)?;
@@ -80,6 +115,14 @@ fn as_poly(value: Canon) -> Result<Poly, Undecidable> {
             if !number.is_zero() {
                 polynomial.insert(Monomial::new(), number);
             }
+            Ok(polynomial)
+        }
+        // A lone `abs(x)` is one atom with coefficient 1; other functions are no polynomial.
+        Canon::Func(name, arguments) if name == "abs" => {
+            let mut monomial = Monomial::new();
+            monomial.insert(crate::answer::Atom::Call(name, arguments), 1);
+            let mut polynomial = BTreeMap::new();
+            polynomial.insert(monomial, num_rational::BigRational::from_integer(1.into()));
             Ok(polynomial)
         }
         _ => Err(refusal()),

@@ -228,7 +228,7 @@ fn tolerance_edges() {
         (X, "sin(x)", "sin(x) + x/10^9", Wrong),
         (X, "x^2", "x^2 (1 + 10^(-9)/2)", Correct),
         (X, "x^2", "x^2 (1 + 2*10^(-9))", Wrong),
-        (X, "10^6 x", "10^6 x + 1/10000", Correct),
+        (X, "10^6 x", "10^6 x + 1/10000", Wrong), // the scale of the tolerance stops at 1e4
         (X, "10^6 x", "10^6 x + 1/1000", Wrong),
         (X, "0.3679", "e^(-1)", Wrong),
         (X, "pi x", "3.14159265 x", Wrong),
@@ -348,19 +348,15 @@ fn refusals_at_authoring_time() {
         contract.validate_expected(key).is_err()
     };
     for key in [
-        "log(x)",
-        "Log(x) + 1",
         "1e-5 x",
         "2E3",
-        "ln(x - 5)",
-        "sqrt(1 - x)",
-        "asin(x)",
+        "ln(-1 - x^2)",
+        "sqrt(-1 - x^2)",
         "(1, 2)",
         "x > 2",
         "x + y",
         "x + C",
         "",
-        "2^x",
     ] {
         assert!(refused(X, key), "{key}");
     }
@@ -377,6 +373,10 @@ fn refusals_at_authoring_time() {
         "1/(x - 33/32)",
         "y = x e^(-x)",
         "asin(x/3)",
+        // Grader pass 3: a key may use `asin`, `2^x`, and `log` (base 10).
+        "asin(x)",
+        "2^x",
+        "log(x)",
     ] {
         assert!(!refused(X, key), "{key}");
     }
@@ -423,11 +423,11 @@ fn learner_text_that_is_not_one_formula() {
         (X, "x", "x/sqrt(x^2+9", Ungraded),
         (X, "x", " ", Wrong),
         (X, "2x", "y = 2x", Correct),
-        (X, "2x", "f(x) = 2x", Ungraded), // low: a natural learner form; the parser refuses it
-        (X, "2x", "dy/dx = 2x", Ungraded),
+        (X, "2x", "f(x) = 2x", Correct), // a name in front of the formula falls away
+        (X, "2x", "dy/dx = 2x", Correct),
         (X, "2x", "2X", Wrong),
         (X, "x^2", "x = x^2", Correct), // low: the label is ignored, also the label `x`
-        (X, "ln(x)", "log(x)", Correct), // the learner side reads `log` as `ln` (D28 is key side)
+        (X, "ln(x)", "log(x)", Wrong),  // `log` has base 10, `ln` base e
     ]);
 }
 

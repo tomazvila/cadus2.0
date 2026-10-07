@@ -205,6 +205,9 @@ fn narrowing_reason(pair: &Pair) -> Option<&'static str> {
     if the_1_0_float_rung_closes_the_gap(pair) {
         return Some("no float tolerance rung (D6)");
     }
+    if either_side(pair, |text| text.contains("log(")) {
+        return Some("1.0 reads `log` as the natural logarithm, 2.0 as base 10 (grader pass 3)");
+    }
     // The two narrowings of the canonical rational form, in a fixed order.
     // A radical shape takes the radical reason, and every other shape takes
     // the GCD reason, so one pair gets one reason.

@@ -253,11 +253,15 @@ pub const GENERATOR_COUNTS: [(&str, usize); 47] = [
 /// quantity (`5 m/s`, `30°`) stay out of the set, because 1.0 has no
 /// comparable verdict on them: the set holds 17,675 pairs, class 1 is 1,050,
 /// and class 3 is 16,305.
+///
+/// Grader pass 3 reads `log` as base 10, so a pair with a bare `log` differs
+/// from 1.0 (which reads `log` as `ln`): class 1 is 1,051, class 3 is 16,291,
+/// class 4 is 333.
 pub const CLASS_COUNTS: [(&str, usize); 5] = [
-    ("class 1 outside_grammar", 1050),
+    ("class 1 outside_grammar", 1051),
     ("class 2 prose_expected", 0),
-    ("class 3 comparable", 16305),
-    ("class 4 documented_divergence", 320),
+    ("class 3 comparable", 16291),
+    ("class 4 documented_divergence", 333),
     ("oracle_silent", 0),
 ];
 
@@ -299,7 +303,12 @@ pub const CLASS_COUNTS: [(&str, usize); 5] = [
 ///
 /// `crates/core/tests/answer_divergence.rs` and
 /// `crates/core/tests/answer_decimal.rs` pin one pair of each shape.
-pub const REASON_COUNTS: [(&str, usize); 16] = [
+pub const REASON_COUNTS: [(&str, usize); 17] = [
+    // 1.0 reads `log` as `ln`, 2.0 reads base 10 (grader pass 3).
+    (
+        "1.0 reads `log` as the natural logarithm, 2.0 as base 10 (grader pass 3)",
+        13,
+    ),
     ("no polynomial GCD (V1 narrowing)", 6),
     ("no radical rationalization (V1 narrowing)", 6),
     ("no float tolerance rung (D6)", 5),

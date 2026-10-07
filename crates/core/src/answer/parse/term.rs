@@ -151,7 +151,7 @@ impl Parser<'_> {
     /// The marker of a quotient with a remainder starts no factor: a product
     /// ends in front of it, and the answer production reads it (D-F3).
     pub(super) fn starts_operand(&self) -> bool {
-        if self.at_remainder_marker() {
+        if self.at_remainder_marker() || self.at_with_remainder() {
             return false;
         }
         matches!(

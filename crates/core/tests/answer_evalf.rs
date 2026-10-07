@@ -83,7 +83,8 @@ fn the_examples_with_a_value() {
     assert_eq!(eval(&p("(-8)^(1/3)"), &Env::new()), Some(-2.0));
     assert_eq!(eval(&p("2 1/2"), &Env::new()), Some(2.5));
     assert_eq!(eval(&p("50%"), &Env::new()), Some(0.5));
-    assert_eq!(at_x("log(x)", E), Some(1.0));
+    assert_eq!(at_x("ln(x)", E), Some(1.0));
+    assert_eq!(at_x("log(x)", 100.0), Some(2.0));
     let left = at_x("sec(x)^2", 1.0).unwrap();
     let right = at_x("1 + tan(x)^2", 1.0).unwrap();
     assert!((left - right).abs() < TOLERANCE);
@@ -162,7 +163,7 @@ fn each_function_name_agrees_with_std() {
         ("tanh", x.tanh()),
         ("exp", x.exp()),
         ("ln", x.ln()),
-        ("log", x.ln()),
+        ("log", x.log10()),
         ("abs", x),
     ];
     for (name, want) in table {
