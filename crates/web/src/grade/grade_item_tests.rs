@@ -149,3 +149,60 @@ fn the_none_contract_on_a_different_kind_keeps_the_checker_reason() {
     assert_ne!(grade.outcome.reason(), Some(PROOF_UNGRADED));
     assert!(matches!(by_contract, Outcome::Undecidable(_)));
 }
+
+/// A wrong-form answer carries the learner-facing notation text; a right-form one carries none.
+#[test]
+fn a_wrong_form_answer_carries_notation_text() {
+    let contract: AnswerContract = serde_json::from_value(
+        serde_json::json!({"kind": "required_form", "form": "mixed_number"}),
+    )
+    .unwrap();
+    let pool = item("4 2/5", Some(contract));
+    let kind = AnswerKind::Numeric;
+    for (answer, want) in [
+        (
+            "22/5",
+            Some(
+                "Write the mixed number as a whole number, a space, then the fraction, like 4 2/5",
+            ),
+        ),
+        ("4 * 2/5", None),
+        ("4 2/5", None),
+    ] {
+        let grade = grade_item(&pool, answer, kind);
+        let text = notation_text(&pool, answer, kind, &grade);
+        match want {
+            Some(want) => assert_eq!(text.as_deref(), Some(want), "{answer}"),
+            None if answer == "4 * 2/5" => {
+                assert!(text.unwrap().contains("means 4 times 2/5"));
+            }
+            None => assert_eq!(text, None),
+        }
+    }
+}
+
+/// The degree and leading coefficient item reads the natural spellings.
+#[test]
+fn the_degree_and_leading_coefficient_item_reads_natural_spellings() {
+    let contract: AnswerContract = serde_json::from_value(serde_json::json!({
+        "kind": "multipart",
+        "parts": [
+            {"name": "degree", "contract": {"kind": "exact"}},
+            {"name": "leading_coefficient", "contract": {"kind": "exact"}}
+        ]
+    }))
+    .unwrap();
+    let pool = item("degree = 3; leading_coefficient = 4", Some(contract));
+    for answer in [
+        "degree = 3, leading coefficient = 4",
+        "degree = 3, leading_coefficient = 4",
+        "3, 4",
+        "degree 3, lc 4",
+        "degree: 3; leading coefficient: 4",
+    ] {
+        let grade = grade_item(&pool, answer, AnswerKind::Numeric);
+        assert_eq!(verdict(&grade), Want::Correct, "{answer}");
+    }
+    let wrong = grade_item(&pool, "4, 3", AnswerKind::Numeric);
+    assert_eq!(verdict(&wrong), Want::Incorrect);
+}

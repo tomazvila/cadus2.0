@@ -134,16 +134,22 @@ async fn run() -> Result<(), Fatal> {
     if let (Some(admin_db), Some(content)) = (&admin, state.content.as_deref())
         && let Ok(curriculum_digest) = content.curriculum_context_digest()
     {
+        let live_policy = cadus_web::diag::live_policy_map(content).unwrap_or_default();
         let restamped = cadus_store::content::restamp_content_currency(
             Admin::new(admin_db),
             content.review_engine_digest(),
             curriculum_digest,
+            &live_policy,
         )
         .await;
         match restamped {
-            Ok(n) if n > 0 => {
+            Ok(n) if n.currency > 0 || n.policy > 0 => {
                 tracing::info!(
-                    "content currency: re-stamped {n} approved documents to the current engine and curriculum digests"
+                    currency = n.currency,
+                    policy = n.policy,
+                    "content currency: re-stamped {} approved documents to the current engine and curriculum digests and {} to the live policy digest",
+                    n.currency,
+                    n.policy
                 );
             }
             Ok(_) => {}
@@ -151,6 +157,18 @@ async fn run() -> Result<(), Fatal> {
                 tracing::error!(
                     error = %err,
                     "content currency re-stamp failed at boot; approved content may read as stale"
+                );
+            }
+        }
+        // After the restamp no approved row may hold a policy stamp that
+        // differs from the live one. A row listed here never serves.
+        if let Ok(rows) = cadus_web::diag::stale_policy_rows(admin_db, content).await {
+            for row in &rows {
+                tracing::warn!(
+                    kp = %row.kp_id,
+                    kind = %row.kind,
+                    digest = %row.digest,
+                    "content policy: approved row holds a stale policy stamp after the boot restamp"
                 );
             }
         }

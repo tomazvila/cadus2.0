@@ -1,6 +1,7 @@
 import { useId, useRef } from 'react';
 import { MathBlock } from '@/components/MathBlock';
 import type { ProblemReportReceipt, SubmittedProblemContext } from '@/api/types';
+import { reportStatusText } from '@/lib/stageCopy';
 import { useProblemReport, type ProblemReportApi, type ProblemReportState, type ReportApplied } from './useProblemReport';
 
 function ReportResult({ result }: { result: NonNullable<ProblemReportReceipt['result']> }) {
@@ -43,7 +44,7 @@ function ReportDetails({ report, submitted, hideResult, close }: {
       onChange={(event) => report.setNote(event.target.value)} />
     <div role="status" aria-live="polite" aria-atomic="true">
       {report.busy && !report.receipt ? <p>Sending report...</p> : null}
-      {report.receipt ? <p>{report.receipt.status}: {hideResult ? 'Review details stay hidden until the quiz ends.' : report.receipt.stage} (attempt {report.receipt.attempt} of {report.receipt.max_attempts})</p> : null}
+      {report.receipt ? <p>{hideResult ? 'Review details stay hidden until the quiz ends.' : reportStatusText(report.receipt.status, report.receipt.stage, report.receipt.attempt, report.receipt.max_attempts)}</p> : null}
     </div>
     {report.error ? <p role="alert">{report.error}</p> : null}
     {report.receipt?.result && !hideResult ? <ReportResult result={report.receipt.result} /> : null}
@@ -63,7 +64,7 @@ export function ProblemReport({ report, hideResult = false, label }: {
   return <aside className="card problem-report" aria-label={submitted ? 'Report a submitted question' : 'Report a question'}>
     <button ref={trigger} type="button" className="btn btn-ghost" aria-expanded={report.open}
       aria-controls={panelId} onClick={report.open ? close : report.show}>
-      {label ?? (submitted ? 'Report submitted question' : 'Report question')}
+      {label ?? (submitted ? 'Report submitted question' : 'Report this question')}
     </button>
     <div id={panelId} hidden={!report.open}>{report.open ?
       <ReportDetails report={report} submitted={submitted} hideResult={hideResult} close={close} /> : null}</div>

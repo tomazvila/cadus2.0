@@ -24,7 +24,7 @@ import { Chip, Cross, Question, Tick } from '@/components/primitives';
 import { MathBlock } from '@/components/MathBlock';
 import { signed } from '@/lib/format';
 import { isUngraded } from '@/api/types';
-import type { AnswerResponse, ApiClient, AttemptOutcome, EquivalencePoll, Remediation, ReworkResponse } from '@/api/types';
+import type { AnswerResponse, ApiClient, AttemptOutcome, EquivalencePoll, EquivalenceStep, Remediation, ReworkResponse } from '@/api/types';
 import type { Lifetime } from '@/hooks/useLifetime';
 import { PROOF_TITLE, ProofResult, useProofGrading, useSeen, type ProofState } from './ProofGrading';
 
@@ -75,7 +75,9 @@ export interface FeedbackProps {
 }
 
 export function Feedback(props: FeedbackProps) {
-  if (props.res.equivalence?.status === 'pending') return <CheckingFeedback continueRef={props.continueRef} />;
+  const status = props.res.equivalence?.status;
+  if (status === 'pending') return <CheckingFeedback continueRef={props.continueRef} steps={props.res.equivalence?.steps} />;
+  if (status === 'failed') return <UnfinishedFeedback {...props} />;
   return <GradedFeedback {...props} />;
 }
 
@@ -102,13 +104,14 @@ function GradedFeedback({
         <span className="feedback-mark">{head.mark}</span>
         <span className="feedback-title">{head.title}</span>
         {/* An ungraded attempt earned no tier and no XP, so neither chip appears. */}
-        <HeadChips res={res} hidden={ungraded || accepted} />
+        <HeadChips res={res} hidden={ungraded} accepted={accepted} />
       </div>
 
       {revealTopic ? <p className="feedback-topic muted">{`Topic: ${revealTopic}`}</p> : null}
-      {accepted ? <p role="status">Correct. Your progress is updated.</p> : null}
+      <AcceptedLines res={res} />
       <TaskStatusLines res={res} />
-      {head.proof ? <ProofResult state={head.proof} /> : <Reason reason={res.reason} />}
+      {head.proof ? <ProofResult state={head.proof} /> : <Reason reason={res.reason} shown={notationHint(res) === null} />}
+      <NotationHint text={notationHint(res)} />
 
       {/* Verbatim, never re-interpreted: the checker owns the vocabulary (trap T3). */}
       {res.error_tags.length ? (
@@ -144,7 +147,7 @@ function GradedFeedback({
 
       <div className="actions">
         <button ref={continueRef} type="button" className="btn btn-primary" onClick={onContinue}>
-          {res.feedback_blocked ? 'Get a fresh problem →' : res.feedback_practice ? 'Try a fresh problem →' : hasNext ? 'Next problem →' : 'Continue →'}
+          {continueLabel(res, hasNext)}
         </button>
         {/* The way out from here is always safe: the attempt already stands, and an
             unfinished task is re-served next time. */}
@@ -155,9 +158,31 @@ function GradedFeedback({
   );
 }
 
+/** The label of the forward button. A corrected attempt always reads "Continue". */
+function continueLabel(res: AnswerResponse, hasNext: boolean): string {
+  if (res.equivalence?.status === 'accepted') return 'Continue →';
+  if (res.feedback_blocked) return 'Get a fresh problem →';
+  if (res.feedback_practice) return 'Try a fresh problem →';
+  return hasNext ? 'Next problem →' : 'Continue →';
+}
+
+/** The lines of an answer the background check accepted. */
+function AcceptedLines({ res }: { res: AnswerResponse }) {
+  if (res.equivalence?.status !== 'accepted') return null;
+  const form = res.equivalence.accepted_form;
+  return (
+    <>
+      <p role="status">Correct. Your progress is updated.</p>
+      {form ? <p role="status">{`Accepted. Shorter form: \`${form}\`.`}</p> : null}
+    </>
+  );
+}
+
 /** The quality and XP chips. An ungraded or re-graded reply earned no figures of its own. */
-function HeadChips({ res, hidden }: { res: AnswerResponse; hidden: boolean }) {
+function HeadChips({ res, hidden, accepted }: { res: AnswerResponse; hidden: boolean; accepted: boolean }) {
   if (hidden) return null;
+  // A corrected attempt shows the XP it earned and no quality chip left from the first pass.
+  if (accepted) return res.xp != null ? <Chip className="chip-xp">{`${signed(res.xp)} XP`}</Chip> : null;
   return (
     <>
       <Chip className="chip-quality">{String(res.work_quality).replace(/_/g, ' ')}</Chip>
@@ -197,13 +222,21 @@ export const EQUIVALENCE_POLL_MS = 3000;
  */
 export function settleEquivalence(res: AnswerResponse, poll: EquivalencePoll): AnswerResponse {
   const v = poll.verdict;
-  if (v.status === 'pending') return res;
-  const equivalence = { ...(res.equivalence ?? {}), status: v.status };
+  const equivalence = {
+    ...(res.equivalence ?? {}),
+    status: v.status,
+    ...(v.steps ? { steps: v.steps } : {}),
+    ...(v.accepted_form ? { accepted_form: v.accepted_form } : {}),
+  };
+  if (v.status === 'pending') return { ...res, equivalence };
   if (v.status === 'accepted') {
     const rest = { ...res };
     delete rest.re_solve;
     delete rest.equivalence_reason;
-    return { ...rest, outcome: 'correct', correct: true, error_tags: [], remediation: [], equivalence };
+    delete rest.xp;
+    delete rest.feedback_blocked;
+    delete rest.feedback_practice;
+    return { ...rest, ...(v.xp != null ? { xp: v.xp } : {}), outcome: 'correct', correct: true, error_tags: [], remediation: [], equivalence };
   }
   return { ...res, equivalence, ...(v.status === 'refused' && v.reason ? { equivalence_reason: v.reason } : {}) };
 }
@@ -222,7 +255,11 @@ function useEquivalence(api: ApiClient, life: Lifetime, res: AnswerResponse): An
       } catch {
         return;
       }
-      if (done || !life.alive() || job.verdict.status === 'pending') return;
+      if (done || !life.alive()) return;
+      if (job.verdict.status === 'pending') {
+        if (job.verdict.steps) setLanded({ id, res: settleEquivalence(res, job) });
+        return;
+      }
       done = true;
       life.clearTimer(interval);
       setLanded({ id, res: settleEquivalence(res, job) });
@@ -231,20 +268,48 @@ function useEquivalence(api: ApiClient, life: Lifetime, res: AnswerResponse): An
     interval = life.setInterval(() => { void poll(); }, EQUIVALENCE_POLL_MS);
     return () => { done = true; life.clearTimer(interval); };
   }, [api, life, id, res]);
+  // The poll reply owns the panel from its first landing: pending with steps, then final.
   return id !== null && landed?.id === id ? landed.res : res;
 }
 
 /** The neutral panel of an answer whose background check has not landed. */
-function CheckingFeedback({ continueRef }: Pick<FeedbackProps, 'continueRef'>) {
+function CheckingFeedback({ continueRef, steps }: Pick<FeedbackProps, 'continueRef'> & { steps: EquivalenceStep[] | undefined }) {
   return (
     <div className="feedback feedback-pending" role="status">
       <div className="feedback-head"><span className="feedback-title">Checking your answer…</span></div>
+      {steps?.length ? (
+        <ol className="equivalence-steps">
+          {steps.map((step, i) => <li key={`${i}-${step.text}`}>{step.text}</li>)}
+        </ol>
+      ) : null}
       <div className="actions">
         {/* aria-disabled, not disabled: a disabled button cannot take the focus the view gives it. */}
         <button ref={continueRef} type="button" className="btn btn-primary" aria-disabled="true" onClick={(e) => e.preventDefault()}>
           Waiting for the check…
         </button>
       </div>
+    </div>
+  );
+}
+
+/** The neutral panel of an answer whose background check ended without a verdict. */
+function UnfinishedFeedback({ res, hasNext, onContinue, onEnd, continueRef }: FeedbackProps) {
+  return (
+    <div className="feedback feedback-pending">
+      <div className="feedback-head"><span className="feedback-title">Not marked</span></div>
+      <p role="status">The check did not finish. This answer counts as pending, not wrong.</p>
+      {res.equivalence?.steps?.length ? (
+        <ol className="equivalence-steps">
+          {res.equivalence.steps.map((step, i) => <li key={`${i}-${step.text}`}>{step.text}</li>)}
+        </ol>
+      ) : null}
+      <div className="actions">
+        <button ref={continueRef} type="button" className="btn btn-primary" onClick={onContinue}>
+          {hasNext ? 'Next problem →' : 'Continue →'}
+        </button>
+        <button type="button" className="btn btn-ghost" onClick={onEnd}>Stop for now</button>
+      </div>
+      <p className="muted small">{STOP_NOTE}</p>
     </div>
   );
 }
@@ -285,9 +350,25 @@ function TaskStatusLines({ res }: { res: AnswerResponse }) {
   );
 }
 
+/**
+ * The notation hint of a wrong-form reply, or null.
+ *
+ * The grade reply sets `notation` (the hint text) or tags the miss `notation` and sends the hint
+ * in `reason`. The learner reads it as the lesson of the reply, not as a muted side line.
+ */
+export function notationHint(res: AnswerResponse): string | null {
+  if (typeof res.notation === 'string' && res.notation !== '') return res.notation;
+  if (res.notation === true || res.error_tags.includes('notation')) return res.reason ?? null;
+  return null;
+}
+
+function NotationHint({ text }: { text: string | null }) {
+  return text ? <p className="feedback-notation" role="status">{text}</p> : null;
+}
+
 /** The service's own reason for a reply with no verdict. */
-function Reason({ reason }: { reason: string | undefined }) {
-  return reason ? <p className="feedback-reason muted">{reason}</p> : null;
+function Reason({ reason, shown = true }: { reason: string | undefined; shown?: boolean }) {
+  return reason && shown ? <p className="feedback-reason muted">{reason}</p> : null;
 }
 
 /** The feedback panel of one grade reply, following its proof grading when it has one. */

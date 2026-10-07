@@ -82,10 +82,10 @@ async fn a_different_option_of_a_proof_item_is_incorrect() {
     .await;
 }
 
-/// The attempt enters the pass sequence: one earlier correct answer at `kp1` is
-/// in the log, so the correct `proof` answer passes the knowledge point.
+/// A label answer is not pass evidence: one earlier correct answer at `kp1` is
+/// in the log, and the correct label answer still leaves the point open.
 #[tokio::test]
-async fn a_correct_proof_answer_counts_in_the_pass_sequence() {
+async fn a_correct_label_proof_answer_is_not_pass_evidence() {
     TestDb::with(|db| async move {
         let app = lesson_app(&db);
         let user = seed_learner(&db, "proof-label-pass@example.com").await;
@@ -109,7 +109,7 @@ async fn a_correct_proof_answer_counts_in_the_pass_sequence() {
 
         let body = answer(&app, user, "Step 3").await;
         assert_eq!(body["outcome"], "correct", "{body}");
-        assert_eq!(body["task_status"], "kp_advance", "{body}");
+        assert_eq!(body["task_status"], "continue", "{body}");
     })
     .await;
 }

@@ -450,21 +450,20 @@ pub(crate) async fn install_next(
     // task can reach `done` instead of dead-ending on `no_instruction` (ISSUE-5).
     //
     let windows = (scratch.ring(&target.serve), scratch.memory(&task_id));
-    let (row, previously_claimed) = draw_fresh(
-        state,
-        tx,
-        user_id,
-        content,
-        &target,
-        windows,
-        FreshPolicy {
-            feedback: feedback.as_ref(),
-            probe_seen: task
-                .probe_delay_days
-                .map(|_| task.recent_problem_hashes.as_slice()),
-        },
-    )
-    .await?;
+    let policy = FreshPolicy {
+        feedback: feedback.as_ref(),
+        probe_seen: task
+            .probe_delay_days
+            .map(|_| task.recent_problem_hashes.as_slice()),
+    };
+    let drawn_for = target.kp.clone();
+    let (row, previously_claimed) =
+        super::fallback::draw_servable(state, tx, user_id, content, &mut target, windows, policy)
+            .await?;
+    if target.kp != drawn_for && task.task_type == TaskType::Lesson && feedback.is_none() {
+        // The fallback moved to a sibling point; the lesson stands there from now on.
+        progress_for(scratch, task, graph).current_kp = Some(target.kp.clone());
+    }
     let solution_sketch = solution_of(state, tx, content, &target, &row).await?;
     let expected = answer_of(graph, &target, &row);
     let (problem_id, handoff) = record_handoff(
@@ -621,13 +620,14 @@ fn fresh_unavailable() -> ApiError {
 }
 
 /// Extra exclusions applied while drawing one fresh problem.
-struct FreshPolicy<'a> {
-    feedback: Option<&'a Value>,
-    probe_seen: Option<&'a [String]>,
+#[derive(Clone, Copy)]
+pub(super) struct FreshPolicy<'a> {
+    pub(super) feedback: Option<&'a Value>,
+    pub(super) probe_seen: Option<&'a [String]>,
 }
 
 /// Draw within a bounded freshness window, preserving an explicit block when exhausted.
-async fn draw_fresh(
+pub(super) async fn draw_fresh(
     state: &AppState,
     tx: &mut Transaction<'_, Postgres>,
     user_id: Uuid,

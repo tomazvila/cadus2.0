@@ -131,11 +131,13 @@ mod advance;
 mod answer_format;
 mod drill;
 mod feedback;
+mod landing;
 mod proof;
 mod proof_score;
 mod quiz;
 mod reply;
 mod review;
+pub use landing::land_accepted;
 pub use proof::proof_continue;
 pub use quiz::result as quiz_result;
 mod route;
@@ -152,8 +154,8 @@ use route::{next_problem, save_and_commit};
 use submission::*;
 use verdict::round2;
 pub use verdict::{
-    deterministic_grade, grade_item, grade_served_item, measure_secs, reference_assisted,
-    ungraded_grade,
+    deterministic_grade, grade_item, grade_served_item, measure_secs, notation_text,
+    reference_assisted, ungraded_grade,
 };
 
 /// The code of an answer or a work field over its cap (`api.py:1292-1293`).

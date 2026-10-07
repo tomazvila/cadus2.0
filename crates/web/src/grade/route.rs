@@ -284,7 +284,12 @@ pub async fn answer(request: TaskWithBody) -> Result<Json<Value>, ApiError> {
             Some(equivalence::Cached::Accepted(_)) => None,
         }
     };
-    let equivalence_field = equivalence::reply_field(equivalence_hit.as_ref(), equivalence_job);
+    let equivalence_field = equivalence::reply_field(
+        equivalence_hit.as_ref(),
+        equivalence_job,
+        &served,
+        &submitted.answer,
+    );
     // Amendment K point 6: the background proof grading, enqueued in the same
     // transaction. No model call here (L6); the verdict lands later.
     let proof_job = if written_proof {
@@ -382,6 +387,9 @@ pub async fn answer(request: TaskWithBody) -> Result<Json<Value>, ApiError> {
         equivalence_field,
         proof_grading::reply_field(proof_job),
     );
+    if let Some(text) = notation_text(&served.expected, &submitted.answer, kind, &grade) {
+        body["notation"] = json!(text);
+    }
     // A failed hand-off leaves a question of the block owed, even when this
     // review closed: the client re-serves, and the serve route finds it.
     if hand_on_failed {
@@ -499,7 +507,7 @@ async fn already_recorded(
     clippy::too_many_arguments,
     reason = "the advance reads the state, the content, the attempt and the whole-log view"
 )]
-async fn advance_and_fold(
+pub(super) async fn advance_and_fold(
     state: &AppState,
     content: &Content,
     tx: &mut Transaction<'static, Postgres>,

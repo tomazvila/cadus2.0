@@ -105,6 +105,6 @@ describe('the mixed review block', () => {
       plan: planOf({ ...LESSON, task_type: 'drill' }),
       api: stubApi({ taskServe: async () => P(2, { total: null }) }),
     });
-    expect(progressCount()).toBe('2');
+    expect(progressCount()).toBe('Question 2');
   });
 });

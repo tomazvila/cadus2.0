@@ -192,7 +192,7 @@ describe('the payload shapes', () => {
     });
     expect(document.querySelector('.topic-name')!.textContent).toBe('Practice');
     expect(document.querySelector('.topic-module')).toBeNull();
-    expect(progressCount()).toBe('1');
+    expect(progressCount()).toBe('Question 1');
     expect(timer().textContent).toBe('0:00');
   });
 

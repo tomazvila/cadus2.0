@@ -123,3 +123,69 @@ pub(super) fn measured_noun(
     }
     cadus_core::answer::measured_answer(&served.text, &served.expected.answer, answer)
 }
+
+/// The name of a part as a learner writes it: underscores become spaces.
+fn spoken(name: &str) -> String {
+    name.replace('_', " ")
+}
+
+/// The initials of a part name, "leading_coefficient" -> "lc".
+fn initials(name: &str) -> String {
+    name.split('_')
+        .filter_map(|word| word.chars().next())
+        .collect()
+}
+
+/// The part one comma-separated piece of a multipart answer names, with the
+/// rest of the piece after the label. The label is the part name, the same
+/// name with spaces, or its initials when they are unique among the parts.
+fn labelled<'a>(names: &'a [String], piece: &str) -> Option<(&'a str, String)> {
+    let lower = piece.trim().to_lowercase();
+    for name in names {
+        let unique_initials = names
+            .iter()
+            .filter(|n| initials(n) == initials(name))
+            .count()
+            == 1;
+        let mut labels = vec![name.to_lowercase(), spoken(name).to_lowercase()];
+        if unique_initials && initials(name).len() > 1 {
+            labels.push(initials(name).to_lowercase());
+        }
+        // The longest label first, so "leading coefficient" beats "lead".
+        labels.sort_by_key(|label| std::cmp::Reverse(label.len()));
+        for label in labels {
+            if let Some(rest) = lower.strip_prefix(&label)
+                && rest.starts_with(|c: char| c.is_whitespace() || c == '=' || c == ':')
+            {
+                let value =
+                    rest.trim_start_matches(|c: char| c.is_whitespace() || c == '=' || c == ':');
+                return Some((name.as_str(), value.trim().to_owned()));
+            }
+        }
+    }
+    None
+}
+
+/// Rewrite a multipart answer that labels its parts loosely ("degree 3, lc 4",
+/// "leading coefficient: 4") into the `name = value; name = value` spelling.
+/// Returns `None` unless every piece carries a label of a distinct part.
+pub(super) fn part_labels(contract: &AnswerContract, answer: &str) -> Option<String> {
+    let AnswerContract::Multipart { parts } = contract else {
+        return None;
+    };
+    let names: Vec<String> = parts.iter().map(|part| part.name.clone()).collect();
+    let pieces: Vec<&str> = answer.split([',', ';']).collect();
+    if pieces.len() != names.len() || answer.chars().count() > MAX_ANSWER_CHARS {
+        return None;
+    }
+    let mut seen = BTreeSet::new();
+    let mut out = Vec::new();
+    for piece in pieces {
+        let (name, value) = labelled(&names, piece)?;
+        if value.is_empty() || !seen.insert(name) {
+            return None;
+        }
+        out.push(format!("{name} = {value}"));
+    }
+    Some(out.join("; "))
+}

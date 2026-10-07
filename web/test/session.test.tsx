@@ -32,12 +32,12 @@ describe('the study loop', () => {
   it('serves the first task and paints the problem, the count and the clock', async () => {
     await mount();
 
-    expect(screen.getByText('review')).toBeTruthy();
+    expect(document.querySelector('.chip-review')!.textContent).toBe('Review');
     // A review names no topic before the answer: choosing the method is part of it.
     expect(screen.queryByText('Fractions')).toBeNull();
     expect(screen.queryByText('Arithmetic')).toBeNull();
     expect(document.querySelector('.topic-name')!.textContent).toBe('Review');
-    expect(screen.getByText('due for review')).toBeTruthy();
+    expect(screen.getByText('This is a skill to review so that you keep it.')).toBeTruthy();
     expect(progressCount()).toBe('1 / 3');
     expect(timer().textContent).toBe('0:00');
     expect(document.querySelector('.problem-text')!.textContent).toContain('Simplify');

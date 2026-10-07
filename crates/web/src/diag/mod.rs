@@ -40,7 +40,13 @@ use crate::serve::unix_seconds;
 use crate::session::{Tx, store, write_state};
 use crate::state::{Content, ServedProblem, WebState};
 
+mod overturn;
+mod policy_health;
 mod routes;
+
+pub use policy_health::{live_policy_map, stale_policy_rows};
+
+pub use overturn::overturns;
 
 pub use routes::{answer, finish, start};
 
@@ -125,6 +131,9 @@ fn probe_problem(
     let contract = served.expected.answer_contract.as_ref();
     if let Some(choices) = crate::serve::choices::label_choices(contract, &problem_id) {
         probe["choices"] = json!(choices);
+    }
+    if let Some(hint) = crate::serve::choices::contract_hint(contract) {
+        probe["answer_contract"] = hint;
     }
     (served, probe)
 }

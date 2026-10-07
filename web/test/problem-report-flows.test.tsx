@@ -28,7 +28,7 @@ describe('reports across question flows', () => {
     const api = reportApi();
     api.taskServe = vi.fn().mockResolvedValue(Q(1));
     await mount({ api, plan: planOf(REVIEW) });
-    await click('Report question');
+    await click('Report this question');
     await click('Send report');
     expect(api.taskReport).toHaveBeenCalledWith(REVIEW.task_id, {
       problem_id: 'q1', report_kind: 'served', request_id: expect.any(String),
@@ -41,7 +41,7 @@ describe('reports across question flows', () => {
     const api = reportApi();
     api.taskServe = vi.fn().mockResolvedValue(Q(1));
     await act(async () => { render(<Quiz api={api} task={QUIZ} demo onUnauthorized={vi.fn()} onDone={vi.fn()} />); });
-    await click('Report question');
+    await click('Report this question');
     await click('Send report');
     expect(api.taskReport).toHaveBeenCalledWith(QUIZ.task_id, expect.objectContaining({ problem_id: 'q1', report_kind: 'served' }), expect.any(AbortSignal));
     expect(api.taskAnswer).not.toHaveBeenCalled();
@@ -71,7 +71,7 @@ describe('reports across question flows', () => {
     const api = reportApi();
     api.taskIntegratedAnswer = vi.fn().mockResolvedValue(gradeReply());
     render(<Integrated api={api} reportApi={api} taskId="integrated" problem={PROBLEM} />);
-    await click('Report question');
+    await click('Report this question');
     await click('Send report');
     expect(api.taskIntegratedAnswer).not.toHaveBeenCalled();
     expect(api.taskReport).toHaveBeenLastCalledWith('integrated', expect.objectContaining({
@@ -104,7 +104,7 @@ describe('reports across question flows', () => {
     };
     render(<Diagnostic diag={diag} reportApi={api} demo onUnauthorized={vi.fn()} onExit={vi.fn()} />);
     await act(async () => { fireEvent.click(screen.getByRole('button', { name: /Start the questions/ })); });
-    await click('Report question');
+    await click('Report this question');
     await click('Send report');
     expect(diag.diagAnswer).not.toHaveBeenCalled();
     expect(api.taskReport).toHaveBeenLastCalledWith('diag', expect.objectContaining({ problem_id: 'd1', report_kind: 'served' }), expect.any(AbortSignal));

@@ -29,6 +29,7 @@ fn proofs() -> Curriculum {
         problem: "Which step is the first step that is not valid?".to_string(),
         answer: KEY.to_string(),
         solution_sketch: Some("Step 3 divides by zero.".to_string()),
+        visual: None,
     };
     common::one_unit_curriculum(vec![common::topic(
         "proofs",

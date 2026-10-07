@@ -322,8 +322,12 @@ pub async fn insert_pending(admin: Admin<'_>, doc: &NewDocument<'_>) -> Result<b
 /// re-stamps the two currency digests of every approved row and recomputes the
 /// per-row template context, so an approval keeps meaning "a reviewer approved
 /// this content", not "a reviewer approved this content under Tuesday's
-/// binary". Rows still `pending` or `rejected` are untouched. The count of
-/// re-stamped rows is what the boot log reports.
+/// binary". Rows still `pending` or `rejected` are untouched. The counts of
+/// re-stamped rows are what the boot log reports.
+///
+/// `live_policy` maps every knowledge point of the loaded tree to its live
+/// finite-policy fingerprint (`None` without a finite domain). Approved teach,
+/// hint ladder and diagnosis rows take that value; template rows keep theirs.
 ///
 /// # Errors
 ///
@@ -333,10 +337,33 @@ pub async fn restamp_content_currency(
     admin: Admin<'_>,
     engine_digest: &str,
     curriculum_digest: &str,
-) -> Result<u64, StoreError> {
+    live_policy: &[(String, Option<String>)],
+) -> Result<Restamped, StoreError> {
     let db = admin.db();
     crate::bounded(db, async move {
         let mut tx = db.pool().begin().await?;
+        let (kp_ids, digests): (Vec<String>, Vec<Option<String>>) =
+            live_policy.iter().cloned().unzip();
+        // A finite domain that changed its cases, appeared or vanished moves
+        // the live policy fingerprint, and the old stamp then hides the
+        // approved document for good. Templates keep their stamp on purpose:
+        // a template approved under an old policy must not serve.
+        let policy = sqlx::query(
+            r#"
+            UPDATE content_store AS cs
+            SET approved_policy_digest = live.digest
+            FROM unnest($1::text[], $2::text[]) AS live(kp_id, digest)
+            WHERE cs.status = 'approved'
+              AND cs.kind IN ('teach','hint_ladder','diagnosis')
+              AND cs.kp_id = live.kp_id
+              AND cs.approved_policy_digest IS DISTINCT FROM live.digest
+            "#,
+        )
+        .bind(&kp_ids)
+        .bind(&digests)
+        .execute(&mut *tx)
+        .await?
+        .rows_affected();
         let stale = sqlx::query_scalar::<_, i64>(
             r#"
             SELECT count(*) FROM content_store
@@ -349,9 +376,9 @@ pub async fn restamp_content_currency(
         .bind(curriculum_digest)
         .fetch_one(&mut *tx)
         .await?;
-        if stale == 0 {
+        if stale == 0 && policy == 0 {
             tx.commit().await?;
-            return Ok(0);
+            return Ok(Restamped::default());
         }
         sqlx::query(
             r#"
@@ -379,9 +406,83 @@ pub async fn restamp_content_currency(
         .execute(&mut *tx)
         .await?;
         tx.commit().await?;
-        Ok(u64::try_from(stale).unwrap_or(0))
+        Ok(Restamped {
+            currency: u64::try_from(stale).unwrap_or(0),
+            policy,
+        })
     })
     .await
+}
+
+/// The counts of one [`restamp_content_currency`] run.
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
+pub struct Restamped {
+    /// Approved rows whose engine or curriculum digest was out of date.
+    pub currency: u64,
+    /// Approved teach, hint ladder and diagnosis rows whose policy stamp moved
+    /// to the live fingerprint of their knowledge point.
+    pub policy: u64,
+}
+
+/// One approved row whose policy stamp differs from the live fingerprint.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct PolicyDrift {
+    /// Topic-qualified knowledge point key.
+    pub kp_id: String,
+    /// Document kind.
+    pub kind: String,
+    /// Content address of the row.
+    pub digest: String,
+    /// The stamp the row holds.
+    pub stamped: Option<String>,
+    /// The live fingerprint of the knowledge point.
+    pub live: Option<String>,
+}
+
+/// List approved teach, hint ladder and diagnosis rows whose policy stamp
+/// differs from the live fingerprint of their knowledge point.
+///
+/// After a boot restamp the list is empty. A row whose knowledge point is not
+/// in `live_policy` is not listed: the loaded tree no longer names it.
+///
+/// # Errors
+///
+/// Returns [`StoreError::Db`] when the read fails and [`StoreError::Timeout`]
+/// when the client-side bound expires.
+pub async fn policy_drift(
+    db: &Db,
+    live_policy: &[(String, Option<String>)],
+) -> Result<Vec<PolicyDrift>, StoreError> {
+    let (kp_ids, digests): (Vec<String>, Vec<Option<String>>) = live_policy.iter().cloned().unzip();
+    let rows = crate::bounded(
+        db,
+        sqlx::query_as::<_, (String, String, String, Option<String>, Option<String>)>(
+            r#"
+            SELECT cs.kp_id, cs.kind, cs.digest, cs.approved_policy_digest, live.digest
+            FROM content_store AS cs
+            JOIN unnest($1::text[], $2::text[]) AS live(kp_id, digest)
+              ON cs.kp_id = live.kp_id
+            WHERE cs.status = 'approved'
+              AND cs.kind IN ('teach','hint_ladder','diagnosis')
+              AND cs.approved_policy_digest IS DISTINCT FROM live.digest
+            ORDER BY cs.kp_id, cs.kind, cs.digest
+            "#,
+        )
+        .bind(&kp_ids)
+        .bind(&digests)
+        .fetch_all(db.pool()),
+    )
+    .await?;
+    Ok(rows
+        .into_iter()
+        .map(|(kp_id, kind, digest, stamped, live)| PolicyDrift {
+            kp_id,
+            kind,
+            digest,
+            stamped,
+            live,
+        })
+        .collect())
 }
 
 pub async fn refresh_prompt_digest(

@@ -209,6 +209,193 @@ where
     }))
 }
 
+/// One learner-facing line of a job's progress.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct Step {
+    /// The line the learner reads.
+    pub text: String,
+}
+
+/// What the poll route reads of a job beyond [`JobRow`]: the steps, the
+/// payload, and the landing record.
+#[derive(Debug, Clone, PartialEq)]
+pub struct JobDetail {
+    /// The lines the worker appended, in order.
+    pub steps: Vec<Step>,
+    /// The payload document the worker was handed.
+    pub payload: Json,
+    /// Whether the web tier already rewrote the stored attempt.
+    pub landed: bool,
+    /// The XP that rewrite awarded.
+    pub landed_xp: Option<f64>,
+}
+
+/// Read the steps, payload and landing record of one job (tenant-scoped).
+///
+/// # Errors
+///
+/// Returns [`StoreError::Db`] when the statement fails.
+pub async fn detail<'e, E>(executor: E, id: Uuid) -> Result<Option<JobDetail>, StoreError>
+where
+    E: PgExecutor<'e>,
+{
+    let row = sqlx::query_as::<_, (Json, Json, bool, Option<f64>)>(
+        "SELECT steps, payload, landed_at IS NOT NULL, landed_xp \
+           FROM equivalence_jobs WHERE id = $1",
+    )
+    .bind(id)
+    .fetch_optional(executor)
+    .await?;
+    Ok(row.map(|(steps, payload, landed, landed_xp)| JobDetail {
+        steps: serde_json::from_value(steps).unwrap_or_default(),
+        payload,
+        landed,
+        landed_xp,
+    }))
+}
+
+/// Append one learner-facing line to a job. The worker is the only caller.
+///
+/// # Errors
+///
+/// Returns [`StoreError::Db`] when the statement fails.
+pub async fn add_step(
+    executor: impl PgExecutor<'_>,
+    id: Uuid,
+    text: &str,
+) -> Result<(), StoreError> {
+    sqlx::query(
+        "UPDATE equivalence_jobs \
+            SET steps = steps || jsonb_build_array(jsonb_build_object('text', $2::text)) \
+          WHERE id = $1 AND octet_length(steps::text) < 12000",
+    )
+    .bind(id)
+    .bind(text)
+    .execute(executor)
+    .await?;
+    Ok(())
+}
+
+/// Win the right to rewrite the stored attempt of a done job.
+///
+/// Returns `true` for exactly one caller per job. The caller runs the rewrite
+/// in the same transaction, so a rewrite that rolls back gives the right back.
+///
+/// # Errors
+///
+/// Returns [`StoreError::Db`] when the statement fails.
+pub async fn claim_landing(executor: impl PgExecutor<'_>, id: Uuid) -> Result<bool, StoreError> {
+    let done = sqlx::query(
+        "UPDATE equivalence_jobs SET landed_at = now() \
+          WHERE id = $1 AND status = 'done' AND landed_at IS NULL",
+    )
+    .bind(id)
+    .execute(executor)
+    .await?;
+    Ok(done.rows_affected() == 1)
+}
+
+/// Record the XP the rewrite of a job awarded.
+///
+/// # Errors
+///
+/// Returns [`StoreError::Db`] when the statement fails.
+pub async fn set_landed_xp(
+    executor: impl PgExecutor<'_>,
+    id: Uuid,
+    xp: f64,
+) -> Result<(), StoreError> {
+    sqlx::query("UPDATE equivalence_jobs SET landed_xp = $2 WHERE id = $1")
+        .bind(id)
+        .bind(xp)
+        .execute(executor)
+        .await?;
+    Ok(())
+}
+
+/// One row of the overturn report: an item and how often a background check
+/// overturned the first-pass fail on it.
+#[derive(Debug, Clone, PartialEq)]
+pub struct Overturn {
+    /// The item digest (the cache key's first half).
+    pub item_digest: String,
+    /// The topic of the item.
+    pub topic: String,
+    /// Settled background checks of the item.
+    pub checks: i64,
+    /// Checks that accepted the answer the first pass had refused.
+    pub overturned: i64,
+}
+
+/// The items with at least `min_checks` settled checks, the highest overturn
+/// rate first. Admin pool only: it reads every tenant.
+///
+/// # Errors
+///
+/// Returns [`StoreError::Db`] when the statement fails.
+pub async fn overturn_rates(
+    executor: impl PgExecutor<'_>,
+    min_checks: i64,
+    limit: i64,
+) -> Result<Vec<Overturn>, StoreError> {
+    let rows = sqlx::query_as::<_, (String, String, i64, i64)>(
+        "SELECT payload->>'item_digest', coalesce(max(payload->>'topic'), ''), \
+                count(*), count(*) FILTER (WHERE (result->>'equivalent')::boolean) \
+           FROM equivalence_jobs \
+          WHERE status = 'done' AND result ? 'equivalent' \
+          GROUP BY payload->>'item_digest' \
+         HAVING count(*) >= $1 \
+          ORDER BY (count(*) FILTER (WHERE (result->>'equivalent')::boolean))::float8 \
+                   / count(*) DESC, count(*) DESC \
+          LIMIT $2",
+    )
+    .bind(min_checks)
+    .bind(limit)
+    .fetch_all(executor)
+    .await?;
+    Ok(rows
+        .into_iter()
+        .map(|(item_digest, topic, checks, overturned)| Overturn {
+            item_digest,
+            topic,
+            checks,
+            overturned,
+        })
+        .collect())
+}
+
+/// The standard short form of an accepted answer whose form differed.
+///
+/// A multipart answer ("degree = 3; leading_coefficient = 4") has the bare
+/// values ("3, 4") as its short form. The form is offered only when it is
+/// shorter than what the learner typed. Any other contract has none.
+#[must_use]
+pub fn shorter_form(expected: &str, contract: Option<&str>, learner: &str) -> Option<String> {
+    let doc: Json = serde_json::from_str(contract?).ok()?;
+    if doc.get("kind").and_then(Json::as_str) != Some("multipart") {
+        return None;
+    }
+    let values: Vec<&str> = expected
+        .split([';', ','])
+        .map(|piece| piece.rsplit('=').next().unwrap_or(piece).trim())
+        .filter(|value| !value.is_empty())
+        .collect();
+    let form = values.join(", ");
+    (!form.is_empty() && form.len() < learner.trim().len()).then_some(form)
+}
+
+/// Clip a learner or key text to a short quoted line for a step.
+#[must_use]
+pub fn clip(text: &str) -> String {
+    let flat = text.split_whitespace().collect::<Vec<_>>().join(" ");
+    if flat.chars().count() > 120 {
+        let head: String = flat.chars().take(117).collect();
+        format!("{head}...")
+    } else {
+        flat
+    }
+}
+
 /// The cached verdict of `(item_digest, answer_key)`, or `None`.
 ///
 /// `answer_key` is the NORMALIZED learner text, never the raw one: the cache

@@ -33,6 +33,7 @@ fn proof_exemplar(problem: &str, reference: &str) -> Exemplar {
         problem: problem.to_owned(),
         answer: "See the solution.".to_owned(),
         solution_sketch: Some(reference.to_owned()),
+        visual: None,
     }
 }
 

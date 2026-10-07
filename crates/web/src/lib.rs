@@ -309,6 +309,8 @@ pub fn create_app(state: AppState) -> Router {
         .route("/api/admin/content/{digest}/revoke", post(admin::revoke))
         // f4-outcome: the recovery path of the third outcome (D-F2). Both
         // refuse an account that is not an admin.
+        // The items whose first pass the background check overturned most.
+        .route("/api/admin/equivalence/overturns", get(diag::overturns))
         .route("/api/admin/ungraded", get(admin::list_ungraded))
         .route(
             "/api/admin/ungraded/{attempt_id}/regrade",

@@ -51,6 +51,7 @@ fn written_exemplar() -> Exemplar {
         problem: SENTENCE.to_owned(),
         answer: SENTENCE_REF.to_owned(),
         solution_sketch: Some("Swap the two sides and negate both.".to_owned()),
+        visual: None,
     }
 }
 
@@ -61,6 +62,7 @@ fn proof_exemplar() -> Exemplar {
         problem: PROOF.to_owned(),
         answer: "See the solution.".to_owned(),
         solution_sketch: Some(PROOF_REF.to_owned()),
+        visual: None,
     }
 }
 

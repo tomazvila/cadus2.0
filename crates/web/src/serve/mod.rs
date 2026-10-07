@@ -111,6 +111,7 @@ use serde::de::DeserializeOwned;
 pub(crate) mod choices;
 mod draw;
 mod exposure;
+mod fallback;
 mod finite;
 #[cfg(test)]
 mod fixture;
@@ -118,6 +119,7 @@ mod hint;
 pub(crate) mod mixed;
 mod payload;
 mod route;
+pub mod servable;
 mod session_tasks;
 mod target;
 mod teach;
@@ -357,9 +359,13 @@ fn no_ladder() -> ApiError {
 }
 
 /// `409 pool_unavailable`: this knowledge point can produce no problem.
+///
+/// The learner reads a sentence with a way forward. The knowledge point id goes
+/// to the log, never to the learner.
 fn no_problem(topic_id: &str) -> ApiError {
+    tracing::warn!(kp_id = %topic_id, "serve: no problem can be served for this point");
     conflict(
         POOL_UNAVAILABLE,
-        format!("Topic {topic_id:?} has no problem to serve."),
+        "No problem is ready for this skill yet. Go back to the lesson and try again later.",
     )
 }

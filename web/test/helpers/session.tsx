@@ -42,7 +42,7 @@ export const REVIEW: PlanTask = {
   component_topics: null,
   time_budget_secs: 600,
   difficulty_target: 0.6,
-  why: 'due for review',
+  why: 'due review',
   progress: { answered: 0, done: false },
 };
 

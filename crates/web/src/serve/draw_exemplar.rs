@@ -258,6 +258,7 @@ mod tests {
             problem: "Give 7.".to_owned(),
             answer: "7".to_owned(),
             solution_sketch: Some("Count to 7.".to_owned()),
+            visual: None,
         };
         declared.answer_contract = Some(AnswerContract::None);
         assert_eq!(

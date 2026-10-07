@@ -7,6 +7,7 @@
  */
 import { Chip, Stat } from '@/components/primitives';
 import { fmtClock, num, signed } from '@/lib/format';
+import { taskKindText, taskReasonText } from '@/lib/stageCopy';
 import type { PlanTask, ServedProblem, SessionEndResponse, SessionPlanResponse } from '@/api/types';
 
 /** The one sentence a lesson with no approved teach page says (audit finding j). */
@@ -141,7 +142,7 @@ function progressOf(task: PlanTask, problem: ServedProblem): string {
     return `${num(problem.mixed_review.position)} / ${num(problem.mixed_review.total)}`;
   }
   if (problem.total != null) return `${num(problem.index)} / ${num(problem.total)}`;
-  return task.task_type === 'review' ? '' : `${num(problem.index)}`;
+  return task.task_type === 'review' ? '' : `Question ${num(problem.index)}`;
 }
 
 /**
@@ -156,7 +157,7 @@ export function ProblemHeader({ task, problem, elapsed, countdown, onExit }: Pro
   return (
     <div className="task-header">
       <div className="task-meta">
-        <Chip className={`chip-${task.task_type}`}>{task.task_type}</Chip>
+        <Chip className={`chip-${task.task_type}`}>{taskKindText(task.task_type, task.why)}</Chip>
         {task.task_type === 'review'
           ? <span className="topic-name">{problem.mixed_review ? 'Mixed review' : 'Review'}</span>
           : <span className="topic-name">{topic?.name || topic?.id || 'Practice'}</span>}
@@ -176,9 +177,8 @@ export function ProblemHeader({ task, problem, elapsed, countdown, onExit }: Pro
           Exit
         </button>
       </div>
-      {/* VERBATIM. The selector re-parses substrings of this prose to decide whether a
-          task may be re-served, so a reword changes which tasks survive. */}
-      {task.why ? <div className="why-chip">{task.why}</div> : null}
+      {/* The plan keeps `why` verbatim, the selector re-parses it; the learner reads the mapped text. */}
+      {taskReasonText(task.why) ? <div className="why-chip">{taskReasonText(task.why)}</div> : null}
     </div>
   );
 }

@@ -44,13 +44,47 @@ pub fn grade_item(
         Some(contract) => contract,
     };
     let quantity_answer = matches!(&contract, cadus_core::answer::AnswerContract::Unit { .. });
-    let outcome = cadus_core::answer::check_contract(&expected.answer, answer, contract);
+    let relabelled = super::answer_format::part_labels(&contract, answer);
+    let mut outcome =
+        cadus_core::answer::check_contract(&expected.answer, answer, contract.clone());
+    // A multipart answer that labels its parts loosely ("degree 3, lc 4") is
+    // read again with the part names spelled out; only a correct reading wins.
+    if !matches!(&outcome, Outcome::Decided(verdict) if verdict.correct)
+        && let Some(text) = relabelled
+    {
+        let second = cadus_core::answer::check_contract(&expected.answer, &text, contract);
+        if matches!(&second, Outcome::Decided(verdict) if verdict.correct) {
+            outcome = second;
+        }
+    }
     if quantity_answer && matches!(&outcome, Outcome::Undecidable(_)) {
         return ungraded_grade(
             "I could not interpret this quantity reliably. This answer is ungraded.",
         );
     }
     grade_outcome(&expected.answer, answer, outcome)
+}
+
+/// The learner-facing notation text of one graded answer, or `None`.
+///
+/// A wrong answer in the wrong form gets the hint of the contract (`format_hint`).
+/// A correct answer that carries the notation tag gets the notation note. The
+/// text is already learner wording, so it passes through as it is.
+#[must_use]
+pub fn notation_text(
+    expected: &cadus_core::pool::PoolAnswer,
+    answer: &str,
+    kind: AnswerKind,
+    grade: &Grade,
+) -> Option<String> {
+    if grade.error_tags.iter().any(|tag| tag == TAG_NOTATION) {
+        return cadus_core::answer::check::notation_note(&expected.answer, answer, kind);
+    }
+    if grade.correct || grade.outcome.is_ungraded() {
+        return None;
+    }
+    let contract = expected.answer_contract.as_ref()?;
+    cadus_core::answer::format_hint(&expected.answer, answer, contract)
 }
 
 /// Grade a served item with source-scoped input representation support.

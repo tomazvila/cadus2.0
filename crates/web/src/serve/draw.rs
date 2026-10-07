@@ -19,7 +19,7 @@ use super::*;
 mod draw_exemplar;
 
 pub(super) use draw_exemplar::answer_of;
-use draw_exemplar::exemplar_rows;
+pub(super) use draw_exemplar::exemplar_rows;
 
 /// Take one instance out of the pool, and fall back to the exemplars (A6).
 ///
@@ -49,7 +49,7 @@ pub(super) async fn draw(
         let spec = cadus_core::template::GateSpec::new(topic.answer_kind, &kp.exemplars)
             .with_finite(&target.key, policy)
             .map_err(|_| no_problem(&target.serve))?;
-        return super::finite::draw(
+        match super::finite::draw(
             state,
             tx,
             user_id,
@@ -58,7 +58,22 @@ pub(super) async fn draw(
             avoid,
             &generation_context,
         )
-        .await;
+        .await
+        {
+            Err(error) if error.code == POOL_UNAVAILABLE => {
+                // No approved reviewed template is current for this point (the
+                // approval stamp trails the curriculum, or the content was
+                // revoked). The authored exemplars of a finite point are cases
+                // of its policy, so they serve instead of leaving the point dark.
+                tracing::warn!(
+                    user_id = %user_id,
+                    kp_id = %target.key,
+                    "serve: the finite point has no current approved template; \
+                     the authored exemplars serve instead"
+                );
+            }
+            settled => return settled,
+        }
     }
     let popped = store(
         state,

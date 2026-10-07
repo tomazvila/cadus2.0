@@ -69,6 +69,91 @@ describe('pending equivalence check', () => {
   });
 });
 
+const apiWith = (verdict: EquivalencePoll['verdict']): ApiClient => ({ ...createDemoApi(), getEquivalence: async (): Promise<EquivalencePoll> =>
+  ({ id: 'e1', attempt_id: 'a-1', verdict }) });
+const landAfterPoll = async (verdict: EquivalencePoll['verdict'], res = pendingRes()) => {
+  render(<ProofAwareFeedback api={apiWith(verdict)} life={createLifetime()} res={res} hasNext onContinue={vi.fn()} onEnd={vi.fn()} />);
+  await act(async () => { await vi.advanceTimersByTimeAsync(EQUIVALENCE_POLL_MS + 10); });
+};
+
+describe('equivalence steps and final statuses', () => {
+  it('renders the steps in order under the neutral panel', () => {
+    const res = pendingRes();
+    res.equivalence = { id: 'e1', status: 'pending', steps: [{ text: 'Reading your answer: `3, 4`' }, { text: 'Read as: degree 3, leading coefficient 4' }] };
+    render(<Feedback res={res} hasNext onContinue={vi.fn()} onEnd={vi.fn()} />);
+    const items = [...document.querySelectorAll('.equivalence-steps li')].map((li) => li.textContent);
+    expect(items).toEqual(['Reading your answer: `3, 4`', 'Read as: degree 3, leading coefficient 4']);
+    expect(document.querySelector('.feedback')!.className).toBe('feedback feedback-pending');
+  });
+
+  it('shows steps that arrive by poll while the check is still pending', async () => {
+    vi.useFakeTimers();
+    try {
+      await landAfterPoll({ status: 'pending', steps: [{ text: 'Reading your answer' }] });
+      expect(document.querySelector('.feedback')!.className).toBe('feedback feedback-pending');
+      expect(text()).toContain('Reading your answer');
+    } finally { vi.useRealTimers(); }
+  });
+
+  it('flips to the correct panel in place with XP, Continue and the shorter form', async () => {
+    vi.useFakeTimers();
+    try {
+      await landAfterPoll({ status: 'accepted', xp: 2, accepted_form: '3, 4' });
+      expect(document.querySelector('.feedback')!.className).toBe('feedback feedback-correct');
+      expect(text()).toContain('Accepted. Shorter form: `3, 4`.');
+      expect(document.querySelector('.chip-xp')!.textContent).toBe('+2 XP');
+      expect(screen.getByRole('button', { name: 'Continue →' })).toBeTruthy();
+      for (const gone of ['Not quite', 'Follow-up', 'lesson_fail', 'Checking']) expect(text()).not.toContain(gone);
+    } finally { vi.useRealTimers(); }
+  });
+
+  it('never paints a red panel with status accepted, even with a stale reason', async () => {
+    vi.useFakeTimers();
+    try {
+      const res = pendingRes();
+      res.equivalence_reason = 'The answer is mathematically correct.';
+      await landAfterPoll({ status: 'accepted' }, res);
+      expect(document.querySelector('.feedback-incorrect')).toBeNull();
+      expect(document.querySelector('.feedback')!.className).toBe('feedback feedback-correct');
+    } finally { vi.useRealTimers(); }
+  });
+
+  it('shows the reason in the failure panel when the check refuses', async () => {
+    vi.useFakeTimers();
+    try {
+      await landAfterPoll({ status: 'refused', reason: 'Not the same value.' });
+      expect(document.querySelector('.feedback')!.className).toBe('feedback feedback-incorrect');
+      expect(text()).toContain('Checked: Not the same value.');
+    } finally { vi.useRealTimers(); }
+  });
+
+  it('shows the neutral unfinished text and the forward button when the check fails', async () => {
+    vi.useFakeTimers();
+    try {
+      await landAfterPoll({ status: 'failed' });
+      expect(document.querySelector('.feedback')!.className).toBe('feedback feedback-pending');
+      expect(text()).toContain('The check did not finish. This answer counts as pending, not wrong.');
+      expect(text()).not.toContain('Not quite');
+      expect(document.querySelector('.feedback-mark')).toBeNull();
+      expect(screen.getByRole('button', { name: 'Next problem →' })).toBeTruthy();
+    } finally { vi.useRealTimers(); }
+  });
+
+  it('polls again after the panel is unmounted and mounted again', async () => {
+    vi.useFakeTimers();
+    try {
+      const getEquivalence = vi.fn(async (): Promise<EquivalencePoll> => ({ id: 'e1', attempt_id: 'a-1', verdict: { status: 'pending' } }));
+      const api: ApiClient = { ...createDemoApi(), getEquivalence };
+      const mount = () => render(<ProofAwareFeedback api={api} life={createLifetime()} res={pendingRes()} hasNext onContinue={vi.fn()} onEnd={vi.fn()} />);
+      mount().unmount();
+      const before = getEquivalence.mock.calls.length;
+      mount();
+      await act(async () => { await vi.advanceTimersByTimeAsync(EQUIVALENCE_POLL_MS + 10); });
+      expect(getEquivalence.mock.calls.length).toBeGreaterThan(before);
+    } finally { vi.useRealTimers(); }
+  });
+});
+
 describe('follow-up rows', () => {
   it('renders no raw key for a lesson_fail row with no targets', () => {
     render(<Feedback res={graded({ correct: false, remediation: [{ kind: 'lesson_fail', targets: [] }] })} hasNext onContinue={vi.fn()} onEnd={vi.fn()} />);

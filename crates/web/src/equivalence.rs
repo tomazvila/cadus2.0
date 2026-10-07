@@ -127,6 +127,11 @@ pub async fn lookup(
         equivalence::cache_hit(&mut **tx, &cache_item_digest(served), &cache_key(answer)),
     )
     .await?;
+    tracing::info!(
+        hit = hit.is_some(),
+        equivalent = hit.as_ref().map(|verdict| verdict.equivalent),
+        "equivalence: cache lookup"
+    );
     Ok(hit.map(|verdict| {
         if verdict.equivalent {
             Cached::Accepted(verdict)
@@ -181,29 +186,91 @@ pub async fn enqueue(
     }
 }
 
+/// The lines a cached verdict shows: the same lines a worked job would carry.
+fn cached_steps(served: &ServedProblem, answer: &str, verdict: &Verdict) -> Vec<Value> {
+    let reason = equivalence::clip(&verdict.reason);
+    let result = if verdict.equivalent {
+        format!("Result: correct. {reason}")
+    } else {
+        format!("Result: not the same answer. {reason}")
+    };
+    vec![
+        json!({ "text": format!("Reading your answer: `{}`", equivalence::clip(answer)) }),
+        json!({ "text": format!(
+            "Comparing it with the expected answer: `{}`",
+            equivalence::clip(&served.expected.answer)
+        ) }),
+        json!({ "text": result }),
+    ]
+}
+
+/// The short form of an accepted answer whose form differed, when one exists.
+fn accepted_form(served: &ServedProblem, answer: &str) -> Option<String> {
+    let contract = served
+        .expected
+        .answer_contract
+        .as_ref()
+        .and_then(|contract| serde_json::to_string(contract).ok());
+    equivalence::shorter_form(&served.expected.answer, contract.as_deref(), answer)
+}
+
 /// The reply field of one submission: the cache verdict, or the pending job.
 #[must_use]
-pub fn reply_field(hit: Option<&Cached>, job: Option<Uuid>) -> Value {
+pub fn reply_field(
+    hit: Option<&Cached>,
+    job: Option<Uuid>,
+    served: &ServedProblem,
+    answer: &str,
+) -> Value {
     match (hit, job) {
-        (Some(Cached::Accepted(verdict)), _) => json!({
-            "status": STATUS_ACCEPTED,
-            "reason": verdict.reason,
-            "model": verdict.model,
-        }),
+        (Some(Cached::Accepted(verdict)), _) => {
+            let mut field = json!({
+                "status": STATUS_ACCEPTED,
+                "reason": verdict.reason,
+                "model": verdict.model,
+                "steps": cached_steps(served, answer, verdict),
+            });
+            if let Some(form) = accepted_form(served, answer) {
+                field["accepted_form"] = json!(form);
+            }
+            field
+        }
         (Some(Cached::Refused(verdict)), _) => json!({
             "status": STATUS_REFUSED,
             "reason": verdict.reason,
             "model": verdict.model,
+            "steps": cached_steps(served, answer, verdict),
         }),
-        (None, Some(id)) => json!({ "id": id.to_string(), "status": STATUS_PENDING }),
+        (None, Some(id)) => json!({
+            "id": id.to_string(),
+            "status": STATUS_PENDING,
+            "steps": Vec::<Value>::new(),
+        }),
         (None, None) => Value::Null,
     }
 }
 
 /// Read one job row into the poll reply (the tenant policy scopes the read).
+///
+/// The reply derives from the stored job and the stored attempt: the status
+/// from the settled result, the lines from the job's steps, the XP from the
+/// rewrite of the attempt.
 #[must_use]
-pub fn poll_view(row: &equivalence::JobRow) -> Value {
-    let status = match row.status.as_str() {
+pub fn poll_view(
+    row: &equivalence::JobRow,
+    detail: Option<&equivalence::JobDetail>,
+    xp: Option<f64>,
+) -> Value {
+    let steps: Vec<Value> = detail
+        .map(|detail| {
+            detail
+                .steps
+                .iter()
+                .map(|step| json!({ "text": step.text }))
+                .collect()
+        })
+        .unwrap_or_default();
+    let mut status = match row.status.as_str() {
         JOB_DONE => {
             let verdict: Option<Verdict> = row
                 .result
@@ -229,6 +296,21 @@ pub fn poll_view(row: &equivalence::JobRow) -> Value {
         JOB_CAPPED => json!({ "status": STATUS_FAILED }),
         other => json!({ "status": other }),
     };
+    status["steps"] = json!(steps);
+    if status["status"] == STATUS_ACCEPTED {
+        if let Some(payload) = detail.and_then(|detail| {
+            serde_json::from_value::<equivalence::JobPayload>(detail.payload.clone()).ok()
+        }) && let Some(form) = equivalence::shorter_form(
+            &payload.expected,
+            payload.answer_contract.as_deref(),
+            &payload.given_answer,
+        ) {
+            status["accepted_form"] = json!(form);
+        }
+        if let Some(xp) = xp {
+            status["xp"] = json!(xp);
+        }
+    }
     json!({
         "id": row.id,
         "attempt_id": row.attempt_id,
@@ -248,11 +330,28 @@ pub(crate) async fn poll(
 ) -> Result<Json<Value>, ApiError> {
     let mut tx = begin(&state, user_id).await?;
     let row = store(&state, equivalence::job(&mut *tx, id)).await?;
+    let detail = store(&state, equivalence::detail(&mut *tx, id)).await?;
     drop(tx);
     let Some(row) = row else {
         return Err(ApiError::not_found());
     };
-    Ok(Json(poll_view(&row)))
+    let accepted = row.status == JOB_DONE
+        && row
+            .result
+            .as_ref()
+            .and_then(|doc| serde_json::from_value::<Verdict>(doc.clone()).ok())
+            .is_some_and(|verdict| verdict.equivalent);
+    let mut xp = detail.as_ref().and_then(|detail| detail.landed_xp);
+    if accepted && detail.as_ref().is_some_and(|detail| !detail.landed) {
+        // The first poll that reads an accepted job rewrites the stored
+        // attempt. A failure leaves the job un-landed, and the next poll
+        // tries again; the reply still tells the truth about the verdict.
+        match crate::grade::land_accepted(&state, user_id, id, &row.attempt_id).await {
+            Ok(landed) => xp = landed.or(xp),
+            Err(_) => tracing::warn!(job = %id, "equivalence: the rewrite did not land"),
+        }
+    }
+    Ok(Json(poll_view(&row, detail.as_ref(), xp)))
 }
 
 /// The router of the poll route.

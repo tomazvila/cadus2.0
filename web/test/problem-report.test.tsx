@@ -27,6 +27,17 @@ describe('submitted question reports', () => {
     render(<Harness api={createDemoApi()} />);
     expect(screen.queryByRole('button', { name: 'Report submitted question' })).toBeNull();
   });
+  it('names an unsubmitted screen "Report this question"', () => {
+    const api = createDemoApi();
+    const unsubmitted = { task_id: 'task', problem_id: 'step-1', report_kind: 'served' as const, problem_text: 'Worked example', answer: '', work: '' };
+    function Served() {
+      const report = useProblemReport(api, unsubmitted);
+      return <ProblemReport report={report} />;
+    }
+    render(<Served />);
+    expect(screen.getByRole('button', { name: 'Report this question' })).toBeTruthy();
+    expect(screen.queryByRole('button', { name: 'Report submitted question' })).toBeNull();
+  });
   it('posts frozen attempt identity and shows the plain explanation without review internals', async () => {
     const api = createDemoApi();
     api.taskReport = vi.fn().mockResolvedValue(completed);
