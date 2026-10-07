@@ -81,6 +81,16 @@
 	# `web/e2e/packaging.sh` proves that order against a running Caddy: it reads
 	# 404 from /api/ready, {"ok":true} from /api/health, and the document from
 	# both / and /ops.
+	# A file under /assets/ that does not exist is a 404, never the SPA fallback.
+	# After a deploy a tab that still runs the old bundle asks for a chunk that is
+	# gone; the document (text/html) as the answer makes the module import fail
+	# with a MIME error instead of a clean 404 the SPA can recover from.
+	@assets path /assets/*
+	handle @assets {
+		root * /srv
+		file_server
+	}
+
 	handle {
 		# The five security headers of `crates/web/src/security.rs`
 		# (SECURITY_HEADERS), character for character. The service stamps them on

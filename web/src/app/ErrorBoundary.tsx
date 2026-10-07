@@ -13,6 +13,7 @@
  * new key builds a new boundary with `error: null`. Try again clears the error in place, and
  * React mounts the screen once more under the same boundary.
  */
+import { isChunkError, reloadOnce } from './staleChunk';
 import { Component, type ErrorInfo, type ReactNode } from 'react';
 
 interface Props {
@@ -34,11 +35,24 @@ export class ErrorBoundary extends Component<Props, State> {
     // Keep the 1.0 observability: the throw still reaches the console, where an uncaught
     // error goes today.
     console.error('view crashed', error, info.componentStack);
+    // A removed chunk after a deploy: reload once. A second failure shows the reload card.
+    if (isChunkError(error)) reloadOnce();
   }
 
   override render(): ReactNode {
     const { error } = this.state;
     if (error === null) return this.props.children;
+
+    if (isChunkError(error)) {
+      return (
+        <section className="empty" role="alert">
+          <p>A new version was installed. Reload the page.</p>
+          <button type="button" className="btn btn-primary" onClick={() => { location.reload(); }}>
+            Reload
+          </button>
+        </section>
+      );
+    }
 
     return (
       <section className="empty" role="alert">

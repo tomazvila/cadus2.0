@@ -20,6 +20,7 @@ import { createRoot } from 'react-dom/client';
 import type { Root as ReactRoot } from 'react-dom/client';
 import { Root } from './app/Root';
 import { toast } from './app/toast';
+import { installChunkRecovery } from './app/staleChunk';
 import { ApiError, resolveApi } from './api';
 import type { ApiClient, User } from './api';
 import type { AuthMode } from './views/Auth';
@@ -137,6 +138,7 @@ export async function bootWith(
   search: string,
 ): Promise<ReactRoot> {
   const mount = resolveMount(document);
+  installChunkRecovery();
   const { verifyToken, resetToken } = readBootParams(pathname, search);
 
   let user: User | null = null;
