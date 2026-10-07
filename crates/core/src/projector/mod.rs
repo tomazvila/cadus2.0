@@ -55,7 +55,7 @@ mod regrade;
 mod state;
 
 pub use entry::{
-    ProjectionInput, blob_digest, canonical_blob, kp_failed, kp_passed, project,
+    ProjectionInput, blob_digest, canonical_blob, is_pass_evidence, kp_failed, kp_passed, project,
     project_incremental,
 };
 pub use pass_rule::PassRule;

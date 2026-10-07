@@ -1,11 +1,11 @@
-//! The label rules of CK8: I8, I9, I11, the option quality rules, and the
+//! The label rules of CK8: I8, I9 (the typed verdict floor), I11, the option quality rules, and the
 //! pack rule D27 (label parts of a `multipart`).
 
 use std::collections::BTreeSet;
 
 use serde_json::Value;
 
-use super::super::kp_view::{Item, KpView};
+use super::super::kp_view::{HARD_FLOOR, Item, KpView};
 use super::finding;
 use crate::output::Finding;
 
@@ -172,26 +172,14 @@ fn quality(item: &Item) -> Vec<(&'static str, String)> {
     .collect()
 }
 
-/// I9: a top-level label counts 2 half units, a label part counts 1.
+/// I9: the typed verdict floor. A KP needs `HARD_FLOOR` verdict exemplars whose
+/// contract is not `label`, `none` or `written`, so the pass rule is reachable
+/// without a label answer. A proof KP has the same floor.
 fn i9(view: &KpView) -> Option<Finding> {
-    let halves: usize = view
-        .items
-        .iter()
-        .map(|item| {
-            if is_label(item) {
-                2
-            } else {
-                label_parts(&item.contract).len()
-            }
-        })
-        .sum();
-    let limit = if view.proof_kp { 6 } else { 4 };
-    (halves > limit).then(|| {
-        let half = if halves % 2 == 1 { ".5" } else { "" };
+    let typed = view.typed_v();
+    (typed < HARD_FLOOR).then(|| {
         let detail = format!(
-            "I9: label count {}{half} (limit {}; a label part of a multipart counts 0.5)",
-            halves / 2,
-            limit / 2
+            "I9: typed verdict count {typed} (minimum {HARD_FLOOR}): a label answer is not pass evidence"
         );
         finding(view, "label-quality", "I9", None, detail)
     })

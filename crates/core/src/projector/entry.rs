@@ -1,9 +1,10 @@
 //! The entry points of the fold, the parity blob, and the lesson
 //! knowledge-point gates (`projector.py:773-872`).
 
+use crate::answer::AnswerContract;
 use crate::config::Config;
 use crate::curriculum::{Curriculum, render_json, sha256_hex};
-use crate::event::{Event, Timestamp};
+use crate::event::{Attempt, Event, Timestamp};
 use crate::learner::LearnerModel;
 
 use super::pass_rule::PassRule;
@@ -160,6 +161,21 @@ pub fn blob_digest(model: &LearnerModel) -> Result<String, ProjectorError> {
 // The lesson knowledge-point gates (`projector.py:860-872`)
 // --------------------------------------------------------------------------- //
 
+/// Whether an attempt is evidence for the pass rule and counts toward
+/// `lesson.fail_after`.
+///
+/// The owner's rule: a label answer is not pass evidence. A yes/no or one-word
+/// answer is a guess half the time, so a `label` attempt is recorded, scored
+/// and shown, but it stays out of the per-knowledge-point sequence that
+/// [`kp_passed`] and [`kp_failed`] read.
+#[must_use]
+pub fn is_pass_evidence(attempt: &Attempt) -> bool {
+    !matches!(
+        attempt.problem.answer_contract.as_deref(),
+        Some(AnswerContract::Label { .. })
+    )
+}
+
 /// Whether a lesson knowledge point is mastered (`projector.py:860-867`).
 ///
 /// `rule` is the parsed `lesson.kp_pass`, which [`crate::config::LessonConfig::pass_rule`]
@@ -229,5 +245,44 @@ mod tests {
         assert!(!kp_passed(&[true, false], rule));
         assert!(kp_failed(&[false, false, false, false, false], &cfg));
         assert!(!kp_failed(&[true, true], &cfg));
+    }
+
+    /// A label attempt is not pass evidence; a typed or legacy attempt is.
+    #[test]
+    fn a_label_attempt_is_not_pass_evidence() {
+        let attempt = |contract: serde_json::Value| -> Attempt {
+            let mut problem = serde_json::json!({"text": "Is $2$ even?", "expected": "yes"});
+            if !contract.is_null() {
+                problem["answer_contract"] = contract;
+            }
+            serde_json::from_value(serde_json::json!({
+                "ts": "2026-01-01T00:00:10Z",
+                "attempt_id": "t-1",
+                "task_id": "t",
+                "topic": "addition",
+                "task_type": "lesson",
+                "problem": problem,
+                "given_answer": "yes",
+                "correct": true,
+                "secs": 20,
+                "work_quality": "nearly_passable",
+            }))
+            .expect("an attempt")
+        };
+        let label = attempt(serde_json::json!({"kind": "label", "options": [["yes"], ["no"]]}));
+        assert!(!is_pass_evidence(&label));
+        assert!(is_pass_evidence(&attempt(serde_json::Value::Null)));
+        assert!(is_pass_evidence(&attempt(
+            serde_json::json!({"kind": "exact"})
+        )));
+        // The sequence the filter leaves: label, label, typed-wrong never passes.
+        let cfg = Config::default();
+        let seq: Vec<bool> = [(&label, true), (&label, true)]
+            .iter()
+            .filter(|(a, _)| is_pass_evidence(a))
+            .map(|(_, ok)| *ok)
+            .chain([false])
+            .collect();
+        assert!(!kp_passed(&seq, cfg.lesson.pass_rule()));
     }
 }

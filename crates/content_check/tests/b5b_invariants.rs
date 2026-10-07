@@ -40,13 +40,15 @@ const CLEAN: &str = "precalculus/fx/kp1";
 
 #[test]
 fn i2_hard_floor_and_goal() {
-    assert_breach("precalculus/fx/kp2", "I2", CLEAN);
+    // kp2 has 3 verdict exemplars: below the typed floor of I9 as well.
+    assert_eq!(of("precalculus/fx/kp2"), ["I2", "I9"]);
     assert_breach("precalculus/fx/kp3", "I2", CLEAN);
 }
 
 #[test]
 fn i2_floor_is_four_for_geometry() {
-    assert_breach("geometry/gx/kp2", "I2", "geometry/gx/kp1");
+    assert_eq!(of("geometry/gx/kp2"), ["I2", "I9"]);
+    assert_eq!(of("geometry/gx/kp1"), [] as [&str; 0]);
 }
 
 #[test]
@@ -81,7 +83,7 @@ fn i8_label_option_count() {
 }
 
 #[test]
-fn i9_label_count() {
+fn i9_typed_verdict_floor() {
     assert_breach("precalculus/fx/kp10", "I9", "precalculus/not-longest/kp1");
 }
 
@@ -127,5 +129,5 @@ fn r3_formula_key_under_the_exact_comparison() {
 
 #[test]
 fn no_other_finding_is_in_the_fixture_tree() {
-    assert_eq!(findings().len(), 18, "{:?}", findings());
+    assert_eq!(findings().len(), 20, "{:?}", findings());
 }

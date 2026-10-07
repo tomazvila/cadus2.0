@@ -471,7 +471,7 @@ fn selftest_finds_each_defect_of_the_fixture_trees() {
     assert_keys(&result.doc, &SELFTEST);
     assert_eq!(
         result.doc,
-        json!({"schema": "cadus.selftest.v1", "pass": true, "expected": 19, "flagged": 19,
+        json!({"schema": "cadus.selftest.v1", "pass": true, "expected": 21, "flagged": 21,
             "missing": [], "extra": []})
     );
 }
@@ -490,7 +490,7 @@ fn selftest_finds_each_defect_of_the_seeded_trees() {
     assert_eq!(result.exit, 0, "{}", result.doc);
     assert_eq!(
         (&result.doc["expected"], &result.doc["flagged"]),
-        (&json!(10), &json!(10))
+        (&json!(12), &json!(12))
     );
     assert_eq!(result.doc["pass"], true);
 }
@@ -513,7 +513,7 @@ fn selftest_reports_a_missing_defect_and_an_extra_finding() {
         (&json!(2), &json!(1))
     );
     assert_findings(&result.doc["extra"]);
-    assert_eq!(result.doc["extra"].as_array().unwrap().len(), 17);
+    assert_eq!(result.doc["extra"].as_array().unwrap().len(), 19);
 }
 
 #[test]

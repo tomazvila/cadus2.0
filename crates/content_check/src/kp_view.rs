@@ -68,6 +68,11 @@ impl Item {
         !self.verdict && !self.written
     }
 
+    /// The contract is not `label`, `none` or `written`: a typed answer.
+    pub fn is_typed(&self) -> bool {
+        !self.written && !matches!(self.kind(), Some("label" | "none" | "written"))
+    }
+
     /// The `kind` text of the contract, if the exemplar has a contract.
     pub fn kind(&self) -> Option<&str> {
         self.contract["kind"].as_str()
@@ -102,6 +107,18 @@ impl KpView {
             .items
             .iter()
             .filter(|item| item.verdict)
+            .map(|item| item.hash.as_str())
+            .collect();
+        hashes.len()
+    }
+
+    /// The typed V: the verdict exemplars with different hashes whose contract
+    /// is not `label`, `none` or `written`. Rule I9 reads it.
+    pub fn typed_v(&self) -> usize {
+        let hashes: BTreeSet<&str> = self
+            .items
+            .iter()
+            .filter(|item| item.verdict && item.is_typed())
             .map(|item| item.hash.as_str())
             .collect();
         hashes.len()

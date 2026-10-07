@@ -260,7 +260,8 @@ fn report_counts_an_exemplar_with_no_verdict_as_zero() {
         .into_iter()
         .map(|pair| pair.1)
         .collect();
-    assert_eq!(rules, ["I2", "I4", "I4"]);
+    // I9: the two items without a verdict are not typed verdicts either.
+    assert_eq!(rules, ["I2", "I4", "I4", "I9"]);
 }
 
 #[test]

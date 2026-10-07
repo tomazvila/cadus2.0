@@ -40,6 +40,17 @@ pub(in crate::serve) fn exemplar_rows(graph: &Curriculum, target: &Target) -> Ve
             Vec::new()
         }
     };
+    // A label answer is not pass evidence (owner rule, 2026-10-07), so the typed
+    // rows go first: the ring takes the first row it has not served, and the
+    // knowledge point reaches the typed answers its pass rule reads before it
+    // spends its label rows. The sort is stable, so author order holds inside
+    // each group.
+    rows.sort_by_key(|row| {
+        matches!(
+            row.expected_answer.answer_contract,
+            Some(AnswerContract::Label { .. })
+        )
+    });
     // The self-check rows join the batch ONLY for an ALL-`none` knowledge point
     // (note 101 b): the learner views the worked solution and the completion
     // counts. A knowledge point WITH verdict-capable exemplars keeps its graded
@@ -167,6 +178,22 @@ mod tests {
             (json!({"kind": "exact"}), "many words"),
             (Value::Null, "many words"),
         ]
+    }
+
+    /// A label exemplar is served after the typed ones, whatever its author
+    /// position (a label answer is not pass evidence).
+    #[test]
+    fn the_typed_rows_come_before_the_label_rows() {
+        let mut topic = topic_doc("counting", &[("kp1", &["1", "2", "3"])]);
+        topic["knowledge_points"][0]["exemplars"][0]["answer_contract"] =
+            json!({"kind": "label", "options": [["1"], ["2"]]});
+        let graph = arena(&[topic]);
+        let rows = exemplar_rows(&graph, &target("counting", "kp1"));
+        let answers: Vec<&str> = rows
+            .iter()
+            .map(|row| row.expected_answer.answer.as_str())
+            .collect();
+        assert_eq!(answers, ["2", "3", "1"]);
     }
 
     /// Each exemplar is a graded row if `verdict_policy` gives a verdict, and

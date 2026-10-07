@@ -7,6 +7,15 @@ use super::*;
 
 const WORDS: [&str; 4] = ["ellipse", "parabola", "hyperbola", "circle"];
 
+/// The findings without I9: these tests read one label rule at a time, and a
+/// view of a few items is always below the typed floor. The I9 test calls
+/// `super::check`.
+fn check(view: &KpView) -> Vec<Finding> {
+    let mut found = super::check(view);
+    found.retain(|finding| finding.invariant.as_deref() != Some("I9"));
+    found
+}
+
 fn label_of(n: usize, key: &str, options: &[&str]) -> Item {
     let options: Vec<Value> = options.iter().map(|text| json!([text])).collect();
     let contract = json!({"kind": "label", "options": options});
@@ -165,32 +174,32 @@ fn the_problem_text_may_name_the_options() {
 }
 
 #[test]
-fn i9_counts_a_label_as_one_and_a_label_part_as_a_half() {
+fn i9_needs_four_typed_verdict_exemplars() {
     let labels =
         |count: usize| -> Vec<Item> { (0..count).map(|n| label_of(n, WORDS[n], &WORDS)).collect() };
-    assert_eq!(check(&view(labels(2))), []);
-    let found = check(&view(labels(3)));
+    let typed = |count: usize| -> Vec<Item> { (0..count).map(|n| exact(n + 100)).collect() };
+    let mut four = typed(4);
+    four.extend(labels(3));
+    assert_eq!(super::check(&view(four)), []);
+    let mut three = typed(3);
+    three.extend(labels(4));
+    let found = super::check(&view(three));
     assert_eq!(
         details(&found),
-        ["I9: label count 3 (limit 2; a label part of a multipart counts 0.5)"]
+        ["I9: typed verdict count 3 (minimum 4): a label answer is not pass evidence"]
     );
-    let mut proof = view(labels(3));
+    let mut proof = view(typed(3));
     proof.proof_kp = true;
-    assert_eq!(check(&proof), []);
-    proof.items = labels(4);
-    assert_eq!(invariants(&check(&proof)), ["I9"]);
-    let mut half = labels(2);
-    let key = "verdict = converges; L = 1/2";
-    half.push(multipart(
+    assert_eq!(invariants(&super::check(&proof)), ["I9"]);
+    proof.items = typed(4);
+    assert_eq!(super::check(&proof), []);
+    let mut part = typed(3);
+    part.push(multipart(
         9,
-        key,
+        "verdict = converges; L = 1/2",
         verdict_part(json!([["converges"], ["diverges"]])),
     ));
-    let found = check(&view(half));
-    assert!(
-        found[0].detail.starts_with("I9: label count 2.5"),
-        "{found:?}"
-    );
+    assert_eq!(super::check(&view(part)), []);
 }
 
 #[test]

@@ -8,7 +8,7 @@ use std::collections::BTreeMap;
 use cadus_core::config::Config;
 use cadus_core::event::{Attempt, Event, QuizTopicResult, Regraded, TaskType, WorkQuality};
 use cadus_core::fire::assess_review;
-use cadus_core::projector::{apply_regrades, kp_failed, kp_passed};
+use cadus_core::projector::{apply_regrades, is_pass_evidence, kp_failed, kp_passed};
 use cadus_core::xp::{is_rushing, task_xp};
 use serde::{Deserialize, Serialize};
 use serde_json::{Value, json};
@@ -267,6 +267,8 @@ async fn reopen_lesson(
                     .or_else(|| policy.knowledge_points.first().map(String::as_str))
                     == Some(kp.as_str())
             })
+            // A label answer is not pass evidence (D-F7a).
+            .filter(|a| is_pass_evidence(a))
             .map(|a| a.correct)
             .collect();
         !kp_passed(&sequence, policy.config.lesson.pass_rule())
@@ -610,6 +612,8 @@ fn lesson_result(
                     .or_else(|| policy.knowledge_points.first().map(String::as_str))
                     == Some(kp.as_str())
             })
+            // A label answer is not pass evidence (D-F7a).
+            .filter(|a| is_pass_evidence(a))
             .map(|a| a.correct)
             .collect();
         let passed = kp_passed(&sequence, cfg.lesson.pass_rule());
@@ -730,6 +734,35 @@ mod tests {
             json!({"type":"lesson_result","ts":"2026-01-01T12:01:00Z","session":"s",
             "topic":"q","passed":false,"failed_at_kp":"k","xp":0,"quality_tier":"poor"}),
         )
+    }
+    fn label_attempt(id: &str) -> Attempt {
+        let Event::Attempt(mut body) = attempt(id, true, "lesson") else {
+            unreachable!()
+        };
+        body.problem.answer_contract = Some(Box::new(cadus_core::answer::AnswerContract::Label {
+            options: vec![vec!["3".to_owned()], vec!["4".to_owned()]],
+        }));
+        body
+    }
+    /// A label answer is not pass evidence: two correct label answers do not
+    /// pass the point, and two correct typed answers do.
+    #[test]
+    fn label_attempts_do_not_pass_a_recalculated_lesson() {
+        let Event::LessonResult(original) = lesson() else {
+            unreachable!()
+        };
+        let labels = [label_attempt("a1"), label_attempt("a2")];
+        let refs: Vec<&Attempt> = labels.iter().collect();
+        assert!(lesson_result(&original, &refs, &policy()).is_none());
+        let Event::Attempt(t1) = attempt("a1", true, "lesson") else {
+            unreachable!()
+        };
+        let Event::Attempt(t2) = attempt("a2", true, "lesson") else {
+            unreachable!()
+        };
+        let typed = [t1, t2];
+        let refs: Vec<&Attempt> = typed.iter().collect();
+        assert!(lesson_result(&original, &refs, &policy()).unwrap().passed);
     }
     #[test]
     fn corrected_lesson_reprices_original_close_and_session_xp() {

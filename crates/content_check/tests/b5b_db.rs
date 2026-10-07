@@ -132,8 +132,8 @@ fn the_db_option_reads_the_approved_teach_pages_and_templates() {
         // kp2: a pending page and a rejected template only: I15, T = 0.
         let kp2 = kp_of(doc, "precalculus/fx/kp2");
         assert_eq!((&kp2["teach"], &kp2["T"]), (&json!(false), &json!(0)));
-        assert_eq!(rules(kp2), ["I2", "I15"]);
-        assert_eq!(kp2["findings"][1]["code"], "invariant:I15");
+        assert_eq!(rules(kp2), ["I2", "I9", "I15"]);
+        assert_eq!(kp2["findings"][2]["code"], "invariant:I15");
         // kp3: the worked example of the teach page is equal to exemplar 1.
         let kp3 = kp_of(doc, "precalculus/fx/kp3");
         assert_eq!(rules(kp3), ["I2", "I5"]);

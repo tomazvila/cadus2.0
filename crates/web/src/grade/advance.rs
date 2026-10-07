@@ -66,8 +66,14 @@ impl Advance {
 /// question set, so every non-lesson attempt is [`STATUS_CONTINUE`].
 ///
 /// An UNGRADED attempt is never evidence (D-F2): it stays out of the
-/// knowledge-point sequence, because the checker gave no verdict to count. The
-/// one exception is the teach-only knowledge point of note 84 b, which has no
+/// knowledge-point sequence, because the checker gave no verdict to count.
+///
+/// A LABEL attempt (answer contract `label`) is not evidence either: the
+/// owner's rule is "a label answer is not pass evidence". The attempt is
+/// recorded and scored, but the knowledge-point sequence skips it, so it does
+/// not count toward the pass rule or toward `lesson.fail_after`.
+///
+/// The one exception is the teach-only knowledge point of note 84 b, which has no
 /// decidable item at all: there the unassisted self-check answer completes the
 /// point (see [`self_check_completion`]), and at the last point the lesson
 /// closes with its standing XP. Otherwise the learner takes the next problem.
@@ -112,6 +118,7 @@ pub(super) fn advance(
                 if body.task_id == attempt.task_id
                     && !body.outcome.is_ungraded()
                     && !body.assisted
+                    && is_pass_evidence(body)
                     && body.kp.as_ref().map(|slug| slug.as_str().to_string()) == kp =>
             {
                 Some(body.correct)
@@ -119,7 +126,11 @@ pub(super) fn advance(
             _ => None,
         })
         .collect();
-    sequence.push(attempt.correct);
+    // A label answer is not pass evidence (owner rule, 2026-10-07): the current
+    // attempt joins the sequence only when it is not a label attempt.
+    if is_pass_evidence(attempt) {
+        sequence.push(attempt.correct);
+    }
 
     if kp_failed(&sequence, cfg) {
         return lesson_failed(graph, cfg, now, attempt, kp.as_deref(), history);
@@ -680,5 +691,87 @@ topics:
             .remediation_view(),
             vec![json!({"kind": "repeat_fail", "targets": ["subtraction"]})]
         );
+    }
+
+    /// One lesson attempt on `characteristic-polynomial` kp1: `typed` picks a
+    /// function contract, otherwise a `label` contract.
+    fn lesson_attempt(n: usize, typed: bool, correct: bool) -> Attempt {
+        let raw = include_str!("../../tests/fixtures/tp23-attempt.json");
+        let mut attempt: Attempt = serde_json::from_str(raw).expect("the fixture decodes");
+        attempt.attempt_id = format!("s_2026-09-24i-lesson-characteristic-polynomial-{n}");
+        attempt.correct = correct;
+        attempt.problem.answer_contract = if typed {
+            attempt.problem.answer_contract.clone()
+        } else {
+            Some(Box::new(cadus_core::answer::AnswerContract::Label {
+                options: vec![vec!["yes".to_owned()], vec!["no".to_owned()]],
+            }))
+        };
+        attempt
+    }
+
+    /// The status the last of `answers` gets, the earlier ones being prior rows.
+    fn status_after(answers: &[(bool, bool)], cfg: &Config) -> &'static str {
+        let root = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../curriculum");
+        let (graph, _findings) =
+            cadus_core::curriculum::load_curriculum(&root).expect("the tree loads");
+        let attempts: Vec<Attempt> = answers
+            .iter()
+            .enumerate()
+            .map(|(n, (typed, correct))| lesson_attempt(n, *typed, *correct))
+            .collect();
+        let (last, earlier) = attempts.split_last().expect("one answer");
+        let prior: Vec<EventRow> = earlier
+            .iter()
+            .enumerate()
+            .map(|(n, body)| EventRow {
+                seq: i64::try_from(n).expect("small") + 1,
+                event: Event::Attempt(body.clone()),
+            })
+            .collect();
+        advance(
+            &graph,
+            cfg,
+            last.ts,
+            last,
+            &prior,
+            &SessionView::default(),
+            Some(&ReadinessSet::default()),
+        )
+        .status
+    }
+
+    /// A label answer is not pass evidence: label-correct, label-correct,
+    /// typed-wrong does not pass.
+    #[test]
+    fn two_correct_label_answers_do_not_pass_a_knowledge_point() {
+        let cfg = Config::default();
+        let status = status_after(&[(false, true), (false, true), (true, false)], &cfg);
+        assert_eq!(status, STATUS_CONTINUE);
+        let status = status_after(&[(false, true), (false, true)], &cfg);
+        assert_eq!(status, STATUS_CONTINUE);
+    }
+
+    /// Typed-correct, label-wrong, typed-correct passes `2consec`: the wrong
+    /// label answer breaks nothing.
+    #[test]
+    fn typed_answers_pass_around_a_wrong_label_answer() {
+        let cfg = Config::default();
+        let status = status_after(&[(true, true), (false, false), (true, true)], &cfg);
+        assert_eq!(status, STATUS_KP_ADVANCE);
+    }
+
+    /// `lesson.fail_after` counts typed attempts only.
+    #[test]
+    fn fail_after_counts_typed_attempts_only() {
+        let cfg = Config::default();
+        let fail_after = usize::try_from(cfg.lesson.fail_after).expect("positive");
+        let mut answers = vec![(true, false); fail_after - 1];
+        // Labels pile up past the limit and never fail the lesson.
+        answers.extend(vec![(false, false); fail_after]);
+        assert_eq!(status_after(&answers, &cfg), STATUS_CONTINUE);
+        // The typed attempt that reaches the limit fails it.
+        answers.push((true, false));
+        assert_eq!(status_after(&answers, &cfg), STATUS_TASK_FAILED);
     }
 }
