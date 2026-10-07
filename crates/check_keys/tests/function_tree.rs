@@ -42,12 +42,15 @@ const GOOD_ITEMS: &str = r#"          - problem: 'Differentiate $\sqrt{x^2+9}$.'
             answer: "fx = 2xy; fy = x^2"
 "#;
 
-const BAD_ITEMS: &str = r#"          - problem: 'Differentiate $x \ln(x - 5)$.'
+// Grader pass 3 made `ln(x - 5)` finite on a fallback interval and gave `log`
+// one reading (base 10), so the refused keys are a function with no finite
+// value anywhere and a key that names a letter outside its variables.
+const BAD_ITEMS: &str = r#"          - problem: 'Differentiate $\sqrt{-x^2 - 1}$.'
             answer_contract: {kind: function, vars: [x]}
-            answer: "ln(x - 5) + x/(x - 5)"
-          - problem: 'Differentiate $x \log x$.'
+            answer: "-x/sqrt(-x^2 - 1)"
+          - problem: 'Differentiate $ax^2$.'
             answer_contract: {kind: function, vars: [x]}
-            answer: "log(x) + 1"
+            answer: "2ax"
 "#;
 
 /// Write the tree below the target directory of the build (not below `/tmp`).
@@ -95,5 +98,5 @@ fn a_function_key_that_the_contract_refuses_is_a_failure() {
         text.contains("fewer than six finite sample points"),
         "{text}"
     );
-    assert!(text.contains("must use ln"), "{text}");
+    assert!(text.contains("name outside its variables"), "{text}");
 }
