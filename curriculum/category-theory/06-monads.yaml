@@ -525,10 +525,10 @@ topics:
             answer: '5'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'First $T\eta(4,a)=(4,(0,a))$. Then $\nu$ gives the log $4+0+1=5$. The unit law would need the log $4$, so the unit law fails for $\nu$.'
-          - problem: 'Logs in $\mathbb Z$ are combined by subtraction, $\mu(m,(n,a))=(m-n,a)$, with $T(A)=\mathbb Z\times A$ and $\eta(a)=(0,a)$. Do the three monad laws all hold?'
-            answer: 'no'
-            answer_contract: {"kind": "label", "options": [["no", "it is not a monad", "not a monad", "it fails", "fails", "they do not", "they do not hold", "the laws do not hold"], ["yes", "it is a monad", "a monad", "it holds", "holds", "they do", "they hold", "the laws hold"]]}
-            solution_sketch: 'Associativity would need $(m-n)-p=m-(n-p)$. With $m=1$, $n=2$, $p=3$ the left side is $-4$ and the right side is $2$. So associativity fails and the answer is no.'
+          - problem: 'Logs in $\mathbb Z$ are combined by subtraction, $\mu(m,(n,a))=(m-n,a)$, with $T(A)=\mathbb Z\times A$ and $\eta(a)=(0,a)$. Apply $\mu_A\circ T(\mu_A)$ and $\mu_A\circ\mu_{TA}$ to the element $(1,(2,(3,a)))$ of $T^3(A)$. What is the absolute value of the difference of the two resulting logs?'
+            answer: '6'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The composite $\mu_A\circ T(\mu_A)$ combines the inner logs first: $(1,(2,(3,a)))\mapsto(1,(-1,a))\mapsto(2,a)$. The composite $\mu_A\circ\mu_{TA}$ combines the outer logs first: $(1,(2,(3,a)))\mapsto(-1,(3,a))\mapsto(-4,a)$. The logs $2$ and $-4$ differ by $6$, so associativity fails.'
           - problem: 'Write the full proof that, for a monoid $(M,\cdot,e)$, the writer functor $TA=M\times A$ with $\eta_A(a)=(e,a)$ and $\mu_A(m,(m_2,a))=(m\cdot m_2,a)$ is a monad, tracing each monad law back to the corresponding monoid law. Then compare with the solution.'
             answer: 'See the solution.'
             answer_contract: {"kind": "none"}
@@ -654,18 +654,14 @@ topics:
             answer: '3'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Since $h\colon C\to TD$, applying $T$ twice gives $T^2h\colon T^2C\to T^2(TD)=T^3D$. So $n=3$, because $T^2$ is applied to the target $TD$ of $h$. The arrow $\mu_{TD}\colon T^3D\to T^2D$ then continues from this target.'
-          - problem: 'A textbook proves that Kleisli composition is associative for arrows $f\colon A\to TB$, $g\colon B\to TC$, $h\colon C\to TD$. Step 1: $h\circ_T(g\circ_T f)=\mu_D\circ T(h)\circ\mu_C\circ T(g)\circ f$. Step 2: naturality of $\mu$ at $h$ rewrites this as $\mu_D\circ\mu_{TD}\circ T^2(h)\circ T(g)\circ f$. Step 3: the monad associativity law rewrites it as $\mu_D\circ T(\mu_D)\circ T^2(h)\circ T(g)\circ f$. Step 4: functoriality of $T$ identifies this with $(h\circ_T g)\circ_T f$. Which step is the first whose assertion or reason fails, if any?'
-            answer: 'none'
-            answer_contract: {"kind": "label", "options": [["none", "all valid", "no step fails", "every step is valid", "all steps are valid", "no step", "none of them", "0"], ["step 1", "1", "first step", "step one", "step 1 fails"], ["step 2", "2", "second step", "step two", "step 2 fails"], ["step 3", "3", "third step", "step three", "step 3 fails"], ["step 4", "4", "fourth step", "step four", "step 4 fails"]]}
-            solution_sketch: 'Step 2 is naturality of $\mu$ at $h\colon C\to TD$, which gives $Th\circ\mu_C=\mu_{TD}\circ T^2h$ with the multiplication at $TD$. Step 3 is the monad associativity law $\mu_D\circ\mu_{TD}=\mu_D\circ T\mu_D$. Step 4 uses functoriality of $T$ to repackage $T(\mu_D\circ Th\circ g)$. All four steps are justified, so the answer is none.'
-          - problem: 'Sam derives the right identity law $f\circ_T\eta_A=f$ for $f\colon A\to TB$ as follows. Step 1: expansion gives $\mu_B\circ T(f)\circ\eta_A$. Step 2: naturality of $\eta$ at $f$ gives $\mu_B\circ\eta_{TB}\circ f$. Step 3: the adjacent pair is deleted by the monad equation $\mu_B\circ T(\eta_B)=1_{TB}$. Step 4: the remaining arrow is $f$. Which step is the first whose assertion or reason fails, if any?'
-            answer: 'step 3'
-            answer_contract: {"kind": "label", "options": [["none", "all valid", "no step fails", "every step is valid", "all steps are valid", "no step", "none of them", "0"], ["step 1", "1", "first step", "step one", "step 1 fails"], ["step 2", "2", "second step", "step two", "step 2 fails"], ["step 3", "3", "third step", "step three", "step 3 fails"], ["step 4", "4", "fourth step", "step four", "step 4 fails"]]}
-            solution_sketch: 'Naturality of $\eta$ at $f$ gives $T(f)\circ\eta_A=\eta_{TB}\circ f$, so Step 2 is correct. The adjacent pair in Step 3 is $\mu_B\circ\eta_{TB}$, which is deleted by the monad equation $\mu\circ\eta T=1_T$. The equation quoted in Step 3 has $T(\eta_B)$ instead, so it does not apply. The first step that fails is step 3.'
           - problem: 'Writing out $g\circ_T f=\mu_C\circ Tg\circ f$ uses one copy of $\mu$. After writing the Kleisli composite of a chain of five arrows $f_1,\dots,f_5$ as one expression in $\mu$, $T$ and the $f_i$, how many copies of $\mu$ does it contain?'
             answer: '4'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Each Kleisli composition of two arrows adds exactly one copy of $\mu$, and a chain of five arrows is joined by $4$ compositions. Associativity of the Kleisli composite means the bracketing does not change the count. So the expression contains $4$ copies of $\mu$.'
+          - problem: 'In the Kleisli category of the list monad, let $f(1)=[3,2]$, $g(2)=[7,7]$ and $g(3)=[8]$. What is $(g\circ_T f)(1)$?'
+            answer: '[8, 7, 7]'
+            answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
+            solution_sketch: 'The composite is $\mu\circ Tg\circ f$. First $Tg$ turns $[3,2]$ into $[[8],[7,7]]$, and then $\mu$ concatenates this to $[8,7,7]$.'
           - problem: 'Write the full proof that, for a monad $(T,\eta,\mu)$ on a category $\mathcal C$ whose Kleisli composite is $g\circ_T f=\mu_C\circ Tg\circ f$, the operation $\circ_T$ is associative. Then compare with the solution.'
             answer: 'See the solution.'
             answer_contract: {"kind": "none"}

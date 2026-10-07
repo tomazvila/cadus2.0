@@ -421,10 +421,10 @@ topics:
             answer: '8'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'After $n$ steps the hand has moved $9n$ hours, and it shows the starting hour again when $9n$ is a multiple of $24$. This is the order of $9$ in $\mathbb{Z}_{24}$, which divides $24$. Since $9 \cdot 8 = 72 = 3 \cdot 24$ and no smaller $n$ works, the answer is $8$.'
-          - problem: 'Sam argues about a finite group $G$ of order $12$. Claim: every element other than $e$ has order $12$. Step 1: for any $g$, the set $\langle g \rangle$ is a subgroup of $G$. Step 2: by Lagrange''s theorem, $|\langle g \rangle|$ divides $12$. Step 3: since $|g| = |\langle g \rangle|$, the order of $g$ divides $12$. Step 4: the only divisor of $12$ greater than $1$ is $12$, so $|g| = 12$. Which is the first step of Sam''s argument that is not valid?'
-            answer: 'Step 4'
-            answer_contract: {"kind":"label","options":[["Step 1","1","the first step"],["Step 2","2","the second step"],["Step 3","3","the third step"],["Step 4","4","the fourth step"]]}
-            solution_sketch: 'Steps 1, 2 and 3 are valid: the cyclic subgroup is a subgroup, Lagrange''s theorem applies, and $|g| = |\langle g \rangle|$. Step 4 is not valid, because $2, 3, 4$ and $6$ also divide $12$ and exceed $1$. For example the element $6$ of $\mathbb{Z}_{12}$ has order $2$. So the first invalid step is Step 4.'
+          - problem: 'Sam argues that every element other than $e$ of a group of order $12$ has order $12$, because Lagrange''s theorem says the order divides $12$. Find the order of the element $4$ in the additive group $\mathbb{Z}_{12}$.'
+            answer: '3'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The order of $4$ is the least positive $m$ with $4m \equiv 0 \pmod{12}$. Since $4 \cdot 3 = 12$, the order is $3$, not $12$. So Sam is wrong: Lagrange''s theorem says only that the order divides $12$.'
           - problem: 'Find the order of the element $6$ in the additive group $\mathbb{Z}_{12}$.'
             answer: '2'
             answer_contract: {"kind":"exact"}
@@ -604,10 +604,10 @@ topics:
             answer: 'yes'
             answer_contract: {"kind":"label","options":[["yes","it is normal","normal","it is"],["no","it is not normal","not normal","it is not"]]}
             solution_sketch: 'Every element of $D_4$ has the form $r^k$ or $r^k s$. Conjugating $r^2$ by $r^k$ gives $r^2$ again, and conjugating by $s$ gives $sr^2s^{-1} = r^{-2} = r^2$. Conjugation keeps $r^2$ inside $N$, and it keeps $e$, so $N$ is normal.'
-          - problem: 'Sam argues: Claim: every subgroup $N$ of an abelian group $G$ is normal. Step 1: let $g$ be in $G$ and $n$ in $N$. Step 2: since $G$ is abelian, $gng^{-1} = ngg^{-1} = n$. Step 3: the element $ng$ lies in $N$ because $n$ is in $N$ and $G$ is abelian. Step 4: hence $gng^{-1}$ is in $N$ for all $g$ and $n$, so $N$ is normal. Which is the first step that is not valid?'
-            answer: 'Step 3'
-            answer_contract: {"kind":"label","options":[["Step 1","1","the first step"],["Step 2","2","the second step"],["Step 3","3","the third step"],["Step 4","4","the fourth step"]]}
-            solution_sketch: 'Step 1 is a correct setup, and Step 2 is correct because commutativity gives $ngg^{-1} = n$. Step 3 is not valid: $g$ need not lie in $N$, so $ng$ lies in the coset $Ng$ and not necessarily in $N$. Step 4 only needs $gng^{-1} = n$, which is already in $N$. So the first invalid step is Step 3.'
+          - problem: 'Sam argues that every subgroup $N$ of an abelian group $G$ is normal, because for $n$ in $N$ and $g$ in $G$ the product $ng$ lies in $N$. Take $G = \mathbb{Z}_{12}$ with $N = \{0, 4, 8\}$, $g = 5$ and $n = 4$. Compute $g + n$ in $\mathbb{Z}_{12}$.'
+            answer: '9'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'We have $5 + 4 = 9$ in $\mathbb{Z}_{12}$. The element $9$ is not in $N = \{0, 4, 8\}$, so $ng$ need not lie in $N$. The subgroup $N$ is still normal, because $g + n - g = n$ lies in $N$.'
           - problem: 'In the additive group $\mathbb{Z}_9$ let $N = \{0, 3, 6\}$. For $g = 7$ and $n = 3$, compute $g + n - g$ in $\mathbb{Z}_9$.'
             answer: '3'
             answer_contract: {"kind":"exact"}
@@ -694,10 +694,10 @@ topics:
             answer: '7'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The map $x \mapsto gx$ is a bijection from $H$ onto $gH$. So $gH$ has as many elements as $H$, which is $7$.'
-          - problem: 'Sam argues: Claim: if $H$ has index $2$ in $G$, then $H$ is normal. Step 1: the left cosets of $H$ are $H$ and $gH$, where $g$ is outside $H$. Step 2: the right cosets are $H$ and $Hg$. Step 3: since $gH$ and $Hg$ have the same number of elements, $gH = Hg$. Step 4: so $gH = Hg$ for every $g$ in $G$, and $H$ is normal. Which is the first step that is not valid?'
-            answer: 'Step 3'
-            answer_contract: {"kind":"label","options":[["Step 1","1","the first step"],["Step 2","2","the second step"],["Step 3","3","the third step"],["Step 4","4","the fourth step"]]}
-            solution_sketch: 'Step 1 and Step 2 are valid, because with two cosets the one containing $g$ is the other coset. Step 3 is not valid: two sets with the same size need not be equal. The correct reason is that both $gH$ and $Hg$ equal the complement of $H$ in $G$. So the first invalid step is Step 3.'
+          - problem: 'Sam argues that $gH = Hg$ whenever the cosets $gH$ and $Hg$ have the same number of elements. In $S_3$ let $H = \{e, (1\,2)\}$ and $g = (1\,3)$. Both $gH$ and $Hg$ have $2$ elements. How many elements do $gH$ and $Hg$ have in common?'
+            answer: '1'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'We have $gH = \{(1\,3), (1\,3)(1\,2)\}$ and $Hg = \{(1\,3), (1\,2)(1\,3)\}$. The two $3$-cycles $(1\,3)(1\,2)$ and $(1\,2)(1\,3)$ differ, so only $(1\,3)$ is common to both. So the cosets share $1$ element and are not equal.'
           - problem: 'A subgroup $H$ has index $2$ in a finite group $G$ with $26$ elements. How many elements of $G$ lie outside $H$?'
             answer: '13'
             answer_contract: {"kind":"exact"}

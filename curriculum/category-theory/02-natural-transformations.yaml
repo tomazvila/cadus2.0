@@ -70,10 +70,6 @@ topics:
             answer: '(9, 6)'
             answer_contract: {"arity": 2, "kind": "coordinates"}
             solution_sketch: 'The component $\alpha_X$ is a function from $F(X)$ to $G(X)$. There are $3\cdot 3=9$ ordered pairs of customers, so the domain has $9$ elements. Each of the $3$ customers is marked gold or silver, so the codomain has $3\cdot 2=6$ elements.'
-          - problem: 'Sam writes a program in which $F$ sends a type $T$ to the lists over $T$ and $G$ sends $T$ to the optional values over $T$ (a value of $T$ or nothing). Sam says that a component $\alpha_T$ of a natural transformation $\alpha\colon F\Rightarrow G$ may go from $G(T)$ to $F(T)$ if that is more convenient. Is Sam right?'
-            answer: 'no'
-            answer_contract: {"kind": "label", "options": [["yes", "Sam is right", "he is right"], ["no", "Sam is not right", "he is not right", "he is wrong", "it is not right"]]}
-            solution_sketch: 'The component of $\alpha\colon F\Rightarrow G$ at $T$ is a morphism $F(T)\to G(T)$, from lists to optional values. A map from $G(T)$ to $F(T)$ would be a component of a transformation $G\Rightarrow F$ instead, so Sam is not right.'
           - problem: 'Write the full proof that for parallel functors $F,G\colon\mathcal{C}\to P$ into a poset $P$ viewed as a category, there is exactly one natural transformation $F\Rightarrow G$ when $F(A)\le G(A)$ holds for every object $A$ of $\mathcal{C}$, and none otherwise. Then compare with the solution.'
             answer: 'See the solution.'
             answer_contract: {"kind": "none"}
@@ -235,10 +231,10 @@ topics:
             answer: '(1, 2)'
             answer_contract: {"arity": 2, "kind": "coordinates"}
             solution_sketch: 'The leg $f(c_A(4))$ is the image of $A=\{4\}$, which is $\{9\}$ with $1$ element. The leg $c_B(f(4))=c_B(9)=B=\{4,9\}$ has $2$ elements. The legs differ, so the square does not commute and $c$ is not natural.'
-          - problem: 'Sam claims that the singleton map $\eta_A(a)=\{a\}$ satisfies the naturality square for every $f\colon A\to B$, as a transformation from the identity functor to the power-set functor $\mathcal{P}$. Sam argues: Step 1: take a general element $a$ of $A$. Step 2: one leg gives $\eta_B(f(a))=\{f(a)\}$. Step 3: the other leg gives $\mathcal{P}(f)(\eta_A(a))=\mathcal{P}(f)(\{a\})=\{a\}$. Step 4: the two legs give the same subset of $B$, so the square commutes. Which step is the first that is not valid?'
-            answer: 'Step 3'
-            answer_contract: {"kind": "label", "options": [["Step 1", "1", "step one", "Step 1 is wrong", "Step 1 is not valid", "Step 1 is invalid", "it is Step 1"], ["Step 2", "2", "step two", "Step 2 is wrong", "Step 2 is not valid", "Step 2 is invalid", "it is Step 2"], ["Step 3", "3", "step three", "Step 3 is wrong", "Step 3 is not valid", "Step 3 is invalid", "it is Step 3"], ["Step 4", "4", "step four", "Step 4 is wrong", "Step 4 is not valid", "Step 4 is invalid", "it is Step 4"]]}
-            solution_sketch: 'Step 1 and Step 2 are valid. Step 3 is wrong: $\mathcal{P}(f)$ sends a subset to its image, so $\mathcal{P}(f)(\{a\})=\{f(a)\}$, not $\{a\}$. With this correction the two legs do agree, so the claim is true but the argument fails at Step 3.'
+          - problem: 'Sam claims that the singleton map $\eta_A(a)=\{a\}$ is natural as a transformation from the identity functor to the power-set functor $\mathcal{P}$, where $\mathcal{P}(f)$ sends a subset to its image. For $f\colon\{1,2\}\to\{3,4\}$ with $f(1)=4$ and $f(2)=3$, Sam computes the leg $\mathcal{P}(f)(\eta_A(1))$ as $\{1\}$. What is the one element of the correct set $\mathcal{P}(f)(\eta_A(1))$?'
+            answer: '4'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The set $\eta_A(1)$ is $\{1\}$, and $\mathcal{P}(f)$ sends it to its image. The image is $\{f(1)\}=\{4\}$, so the element is $4$. Sam left out the application of $f$.'
           - problem: 'A program recodes every entry of a list with $g(x)=x-1$, and another program turns a nonempty list into the pair (first entry, first entry). On the list $[4,6,9]$, recoding first and then forming the pair gives the same pair as forming the pair first and then recoding both entries. What is that pair?'
             answer: '(3, 3)'
             answer_contract: {"arity": 2, "kind": "coordinates"}
@@ -281,10 +277,10 @@ topics:
             answer: '9'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'A natural transformation $\tau$ is determined by the single function $\tau_B(\mathrm{id}_B)\colon A\to B$, because $\tau_X(g)=g\circ\tau_B(\mathrm{id}_B)$. Every function $A\to B$ occurs. There are $3^2=9$ functions from a $2$-element set to a $3$-element set, so there are $9$ natural transformations.'
-          - problem: 'Sam checks that pre-composition with $f\colon A\to B$ is natural, as a transformation $\mathrm{Hom}(B,-)\Rightarrow\mathrm{Hom}(A,-)$. Sam writes: Step 1: the square at $k\colon X\to Y$ requires $\mathrm{Hom}(A,k)\circ(f^*)_X=(f^*)_Y\circ\mathrm{Hom}(B,k)$. Step 2: for $g\colon B\to X$ the left side sends $g$ to $k\circ(g\circ f)$. Step 3: the right side sends $g$ to $g\circ(k\circ f)$. Step 4: by associativity the two composites agree, so $f^*$ is natural. Which step is the first that is not valid?'
-            answer: 'Step 3'
-            answer_contract: {"kind": "label", "options": [["Step 1", "1", "step one", "Step 1 is wrong", "Step 1 is not valid", "Step 1 is invalid", "it is Step 1"], ["Step 2", "2", "step two", "Step 2 is wrong", "Step 2 is not valid", "Step 2 is invalid", "it is Step 2"], ["Step 3", "3", "step three", "Step 3 is wrong", "Step 3 is not valid", "Step 3 is invalid", "it is Step 3"], ["Step 4", "4", "step four", "Step 4 is wrong", "Step 4 is not valid", "Step 4 is invalid", "it is Step 4"]]}
-            solution_sketch: 'Step 1 and Step 2 are valid. In Step 3 the right side first applies $k\circ{-}$ to get $k\circ g$ and then pre-composes with $f$, so it sends $g$ to $(k\circ g)\circ f$, not to $g\circ(k\circ f)$. The expression in Step 3 does not even type check, since $k\circ f$ is not defined.'
+          - problem: 'Sam checks that pre-composition with $f\colon A\to B$ is natural, as a transformation $\mathrm{Hom}(B,-)\Rightarrow\mathrm{Hom}(A,-)$. For $g\colon B\to X$ and $k\colon X\to Y$ the correct leg sends $g$ to $(k\circ g)\circ f$, but Sam writes it as $g\circ(k\circ f)$. Take $A=B=X=Y=\mathbb Z$, $f(x)=2x$, $g(x)=x^2$ and $k(x)=x+1$. What is the value of $(k\circ g)\circ f$ at $3$?'
+            answer: '37'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The correct leg applies $f$, then $g$, then $k$. So $f(3)=6$, $g(6)=36$ and $k(36)=37$. Sam''s expression $g\circ(k\circ f)$ gives $49$, which is a different value.'
           - problem: 'Three hotel guests $1,2,3$ are booked into the hotels $H_1,H_2,H_1$. The hotel $H_1$ has $4$ stars and $H_2$ has $3$ stars. A price table gives $45$ for a $4$-star hotel and $30$ for a $3$-star hotel. Pre-composing the star rating with the booking, and then post-composing with the price table, gives one price for each guest. What price results for guest $1$?'
             answer: '45'
             answer_contract: {"kind": "exact"}
@@ -332,10 +328,6 @@ topics:
             answer: '4'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Naturality at $u$ forces $\alpha_Y(F(u)(x))=G(u)(\alpha_X(x))$, so $\alpha_Y$ is determined by $\alpha_X$. The square at $v$ then holds automatically because $v$ is inverse to $u$ in both functors. The function $\alpha_X\colon\{1,2\}\to\{1,2\}$ is free, which gives $2^2=4$ natural transformations.'
-          - problem: 'Sam argues that for every functor $F\colon C\to\mathbf{Set}$ the identity family is natural. Sam writes: Step 1: for each morphism $f\colon A\to B$ the square requires $F(f)\circ\mathrm{id}_{F(A)}=\mathrm{id}_{F(B)}\circ F(f)$. Step 2: here $F(f)$ is itself an identity map, so the left leg equals the identity at $A$. Step 3: by the unit law the right leg equals $F(f)$. Step 4: so both legs are equal and the family is natural. Which step is the first that is not valid?'
-            answer: 'Step 2'
-            answer_contract: {"kind": "label", "options": [["Step 1", "1", "step one", "Step 1 is wrong", "Step 1 is not valid", "Step 1 is invalid", "it is Step 1"], ["Step 2", "2", "step two", "Step 2 is wrong", "Step 2 is not valid", "Step 2 is invalid", "it is Step 2"], ["Step 3", "3", "step three", "Step 3 is wrong", "Step 3 is not valid", "Step 3 is invalid", "it is Step 3"], ["Step 4", "4", "step four", "Step 4 is wrong", "Step 4 is not valid", "Step 4 is invalid", "it is Step 4"]]}
-            solution_sketch: 'Step 1 is the correct square. Step 2 is wrong because $F(f)$ is not an identity map in general. The family is still natural, since by the unit law both legs equal $F(f)$, so the error is only in the argument of Step 2.'
           - problem: 'Let $\mathcal{C}$ be the category with one object and only its identity morphism, and let $F\colon\mathcal{C}\to\mathbf{Set}$ send the object to a finite set $S$. What is the least number of elements of $S$ for which $F$ has a natural transformation to itself other than the identity?'
             answer: '2'
             answer_contract: {"kind": "exact"}
@@ -471,10 +463,6 @@ topics:
             answer: '12'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The route `single` then `twice` turns $3$ into $[3,3]$, and applying $f$ gives $[6,6]$. The route that applies $f$ first gives $6$, then $[6]$, then $[6,6]$. Both routes give $[6,6]$, whose entries sum to $12$.'
-          - problem: 'Sam proves that the vertical composite $\beta\alpha$ of natural transformations $\alpha\colon F\Rightarrow G$ and $\beta\colon G\Rightarrow H$ is natural. Sam writes: Step 1: for $f\colon A\to B$ we must show $Hf\circ(\beta\alpha)_A=(\beta\alpha)_B\circ Ff$. Step 2: naturality of $\beta$ gives $Hf\circ\beta_A=\beta_B\circ Gf$. Step 3: naturality of $\alpha$ gives $Gf\circ\alpha_A=\alpha_B\circ Ff$. Step 4: combining, $Hf\circ\beta_A\circ\alpha_A=\beta_A\circ\alpha_B\circ Ff$, so the composite is natural. Which step is the first that is not valid?'
-            answer: 'Step 4'
-            answer_contract: {"kind": "label", "options": [["Step 1", "1", "step one", "Step 1 is wrong", "Step 1 is not valid", "Step 1 is invalid", "it is Step 1"], ["Step 2", "2", "step two", "Step 2 is wrong", "Step 2 is not valid", "Step 2 is invalid", "it is Step 2"], ["Step 3", "3", "step three", "Step 3 is wrong", "Step 3 is not valid", "Step 3 is invalid", "it is Step 3"], ["Step 4", "4", "step four", "Step 4 is wrong", "Step 4 is not valid", "Step 4 is invalid", "it is Step 4"]]}
-            solution_sketch: 'Steps 1, 2 and 3 are valid. In Step 4 the combination gives $\beta_B\circ Gf\circ\alpha_A=\beta_B\circ\alpha_B\circ Ff$, so the leftmost factor must be $\beta_B$. The expression $\beta_A\circ\alpha_B$ is not even defined, since the target of $\alpha_B$ is $G(B)$, not $G(A)$.'
           - problem: 'Let $\mathcal{C}$ be the category with objects $A,B$ and one non-identity morphism $u\colon A\to B$. Let $\alpha\colon F\Rightarrow G$ and $\beta\colon G\Rightarrow H$ be natural transformations between functors $\mathcal{C}\to\mathbf{Set}$ with $F(A)=\{1,2,3\}$, $F(B)=\{1,2\}$, $H(A)=\{10,20,30\}$, $H(B)=\{10,20\}$. The map $F(u)$ sends $1\mapsto 1$, $2\mapsto 2$, $3\mapsto 2$, and $H(u)$ sends $10\mapsto 10$, $20\mapsto 20$, $30\mapsto 20$. The composite has $(\beta\alpha)_A$ given by $1\mapsto 10$, $2\mapsto 20$, $3\mapsto 30$. What is $(\beta\alpha)_B(2)$?'
             answer: '20'
             answer_contract: {"kind": "exact"}
@@ -483,6 +471,10 @@ topics:
             answer: '13'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The route `twice` then `reverse` turns $[1,2,3]$ into $[3,3,2,2,1,1]$, and applying $f$ gives $[13,13,12,12,11,11]$. The route that applies $f$ first gives $[11,12,13]$, then $[11,11,12,12,13,13]$, then the reverse $[13,13,12,12,11,11]$. The first entry is $13$.'
+          - problem: 'Let $\mathcal{C}$ be the category with objects $A,B$ and one non-identity morphism $u\colon A\to B$. Let $\alpha\colon F\Rightarrow G$ and $\beta\colon G\Rightarrow H$ be natural transformations between functors $\mathcal{C}\to\mathbf{Set}$ with $F(A)=\{1,2,3\}$, $F(B)=\{1,2\}$, $H(A)=\{4,5,6\}$ and $H(B)=\{4,5\}$. The map $F(u)$ sends $1\mapsto 1$, $2\mapsto 2$, $3\mapsto 1$, and $H(u)$ sends $4\mapsto 4$, $5\mapsto 5$, $6\mapsto 4$. The composite $\beta\alpha$ has $(\beta\alpha)_A$ given by $1\mapsto 5$, $2\mapsto 4$, $3\mapsto 5$. What is $(\beta\alpha)_B(1)$?'
+            answer: '5'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The composite is natural, so $(\beta\alpha)_B(F(u)(x))=H(u)((\beta\alpha)_A(x))$. Choose $x=1$, so that $F(u)(1)=1$ and $(\beta\alpha)_A(1)=5$. Then $(\beta\alpha)_B(1)=H(u)(5)=5$.'
           - problem: 'Write the full proof that if $\alpha\colon F\Rightarrow G$ and $\beta\colon G\Rightarrow H$ are natural transformations, then the vertical composite $\beta\circ\alpha$, with components $(\beta\circ\alpha)_A=\beta_A\circ\alpha_A$, is again a natural transformation. Then compare with the solution.'
             answer: 'See the solution.'
             answer_contract: {"kind": "none"}
@@ -513,10 +505,6 @@ topics:
             answer: '(3, 0)'
             answer_contract: {"arity": 2, "kind": "coordinates"}
             solution_sketch: 'The first leg is $\alpha_A(0)=A\setminus\{0\}=\{1,2,3\}$, which has $3$ elements. The second leg starts from $\alpha_1(*)=1\setminus\{*\}=\emptyset$, and the image of the empty set is empty, so it has $0$ elements. The legs differ, so the family is not natural.'
-          - problem: 'Sam proposes that sending each vector $v$ of a real inner product space $V$ to the function taking $w$ to the inner product of $v$ and $w$ is a natural transformation from the identity functor to the dual functor. Sam argues: Step 1: the identity functor and the dual functor have the same source category and the same target category. Step 2: each component function is linear. Step 3: for every linear $f\colon V\to W$ the naturality square at $f$ must commute. Step 4: for $f(x,y)=(x+y,y)$ and $v=(0,1)$, both composites send $w$ to the same number, so the family is natural. Which step is the first that is not valid?'
-            answer: 'Step 1'
-            answer_contract: {"kind": "label", "options": [["Step 1", "1", "step one", "Step 1 is wrong", "Step 1 is not valid", "Step 1 is invalid", "it is Step 1"], ["Step 2", "2", "step two", "Step 2 is wrong", "Step 2 is not valid", "Step 2 is invalid", "it is Step 2"], ["Step 3", "3", "step three", "Step 3 is wrong", "Step 3 is not valid", "Step 3 is invalid", "it is Step 3"], ["Step 4", "4", "step four", "Step 4 is wrong", "Step 4 is not valid", "Step 4 is invalid", "it is Step 4"]]}
-            solution_sketch: 'The dual functor reverses the direction of maps, so it is contravariant, while the identity functor is covariant. They do not have the same source and target categories, so no transformation between them exists. The argument fails at Step 1, before any square is tested.'
           - problem: 'A program sorts a list of numbers into increasing order, and another program recodes every entry of a list with $f(1)=3$, $f(2)=1$, $f(3)=2$. On the list $[1,2,3]$, what is the first entry of the list obtained by sorting and then recoding, and what is the first entry of the list obtained by recoding and then sorting?'
             answer: '(3, 1)'
             answer_contract: {"arity": 2, "kind": "coordinates"}
@@ -591,10 +579,10 @@ topics:
             answer: '(1, 0)'
             answer_contract: {"arity": 2, "kind": "coordinates"}
             solution_sketch: 'The leg $G(u)\circ\alpha_A$ sends $0$ to $\alpha_A(0)=0$ and then to $G(u)(0)=1$. The leg $\alpha_B\circ F(u)$ sends $0$ to $F(u)(0)=1$ and then to $\alpha_B(1)=0$. The legs give $1$ and $0$, which differ.'
-          - problem: 'Sam wants to show that the inverses of the components of a natural isomorphism $\alpha\colon F\Rightarrow G$ form a natural transformation. Sam writes: Step 1: naturality of $\alpha$ gives $Gf\circ\alpha_A=\alpha_B\circ Ff$ for every $f\colon A\to B$. Step 2: precompose both sides with $\alpha_A^{-1}$, so $Gf=\alpha_B\circ Ff\circ\alpha_A^{-1}$. Step 3: postcompose both sides of the Step 2 equation with $\alpha_B^{-1}$, so $Gf\circ\alpha_B^{-1}=Ff\circ\alpha_A^{-1}$. Step 4: this is naturality of $\beta$ with $\beta_A=\alpha_A^{-1}$. Which step is the first that is not valid?'
-            answer: 'Step 3'
-            answer_contract: {"kind": "label", "options": [["Step 1", "1", "step one", "Step 1 is wrong", "Step 1 is not valid", "Step 1 is invalid", "it is Step 1"], ["Step 2", "2", "step two", "Step 2 is wrong", "Step 2 is not valid", "Step 2 is invalid", "it is Step 2"], ["Step 3", "3", "step three", "Step 3 is wrong", "Step 3 is not valid", "Step 3 is invalid", "it is Step 3"], ["Step 4", "4", "step four", "Step 4 is wrong", "Step 4 is not valid", "Step 4 is invalid", "it is Step 4"]]}
-            solution_sketch: 'Steps 1 and 2 are valid. In Step 3 composing with $\alpha_B^{-1}$ on the left gives $\alpha_B^{-1}\circ Gf=Ff\circ\alpha_A^{-1}$, with $\alpha_B^{-1}$ on the left of $Gf$. Sam put it on the right of $Gf$, where the composite is not defined.'
+          - problem: 'Let $\alpha\colon F\Rightarrow G$ be a natural isomorphism whose component $\alpha_B\colon\mathbb Q\to\mathbb Q$ is $x\mapsto2x$, and let $Gf\colon\mathbb Q\to\mathbb Q$ be $x\mapsto x+3$. Sam wants the composite that applies $Gf$ first and $\alpha_B^{-1}$ second, writes it as $Gf\circ\alpha_B^{-1}$ and gets $5$ at $x=4$. What is the correct value of $\alpha_B^{-1}\circ Gf$ at $4$?'
+            answer: '7/2'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The composite $\alpha_B^{-1}\circ Gf$ applies $Gf$ first, so $Gf(4)=7$. Then $\alpha_B^{-1}(7)=7/2$. Sam applied $\alpha_B^{-1}$ first, which gives $2+3=5$ and is the other composite.'
           - problem: 'Let $\mathcal{C}$ be the category with objects $A,B$ and one non-identity morphism $u\colon A\to B$. Let $F,G\colon\mathcal{C}\to\mathbf{Set}$ be functors with all four object sets equal to $\{0,1,2\}$, and let $\alpha\colon F\Rightarrow G$ be a natural isomorphism with $\alpha_A$ given by $0\mapsto 2$, $1\mapsto 0$, $2\mapsto 1$ and $\alpha_B$ given by $0\mapsto 1$, $1\mapsto 2$, $2\mapsto 0$. The map $F(u)$ sends $0\mapsto 2$, $1\mapsto 0$, $2\mapsto 1$. What is $G(u)(2)$?'
             answer: '0'
             answer_contract: {"kind": "exact"}
@@ -649,10 +637,10 @@ topics:
             answer: 'yes'
             answer_contract: {"kind": "label", "options": [["yes", "it is natural", "it is a natural isomorphism", "natural"], ["no", "it is not natural", "it is not a natural isomorphism", "not natural"]]}
             solution_sketch: 'Each $\theta_X$ is a bijection, because a function on $\{0,1\}$ is determined by its two values and any pair of values occurs. For $g\colon X\to Y$ both legs send $h$ to $(g(h(0)),g(h(1)))$. So the squares commute and $\theta$ is a natural isomorphism.'
-          - problem: 'Sam claims that the maps $\theta_X\colon\mathrm{Hom}(1,X)\to X$, $f\mapsto f(*)$, form a natural isomorphism $\mathrm{Hom}(1,-)\Rightarrow\mathrm{Id}$ on $\mathbf{Set}$. Sam writes: Step 1: $\theta_X$ is injective, since a map $1\to X$ is determined by the image of $*$. Step 2: $\theta_X$ is surjective, since $x$ is the image of the map $*\mapsto x$. Step 3: naturality means $\theta_Y\circ\mathrm{Hom}(1,g)=g\circ\theta_X$ for every $g\colon X\to Y$. Step 4: $\theta_Y(\mathrm{Hom}(1,g)(f))=\theta_Y(g\circ f)=f(*)$, which equals $g(\theta_X(f))$, so the square commutes. Which step is the first that is not valid?'
-            answer: 'Step 4'
-            answer_contract: {"kind": "label", "options": [["Step 1", "1", "step one", "Step 1 is wrong", "Step 1 is not valid", "Step 1 is invalid", "it is Step 1"], ["Step 2", "2", "step two", "Step 2 is wrong", "Step 2 is not valid", "Step 2 is invalid", "it is Step 2"], ["Step 3", "3", "step three", "Step 3 is wrong", "Step 3 is not valid", "Step 3 is invalid", "it is Step 3"], ["Step 4", "4", "step four", "Step 4 is wrong", "Step 4 is not valid", "Step 4 is invalid", "it is Step 4"]]}
-            solution_sketch: 'Steps 1, 2 and 3 are valid. In Step 4 the value $\theta_Y(g\circ f)=(g\circ f)(*)=g(f(*))$ is not $f(*)$. It does equal $g(\theta_X(f))$, but the middle expression $f(*)$ is wrong, so the chain of equalities breaks at Step 4.'
+          - problem: 'Let $1=\{*\}$ and let $\theta_X\colon\mathrm{Hom}(1,X)\to X$ be $f\mapsto f(*)$. Sam says that $\theta_Y(g\circ f)=f(*)$ for $f\colon1\to X$ and $g\colon X\to Y$. Take $X=Y=\mathbb Z$, $g(x)=3x$ and $f(*)=2$. What is the correct value of $\theta_Y(g\circ f)$?'
+            answer: '6'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'We have $\theta_Y(g\circ f)=(g\circ f)(*)=g(f(*))=g(2)=6$. Sam''s value $f(*)=2$ leaves out the map $g$.'
           - problem: 'Let $\mathcal{C}$ be the category with objects $A,B$ and one non-identity morphism $u\colon A\to B$. Let $F,G\colon\mathcal{C}\to\mathbf{Set}$ be functors with all four object sets equal to $\{0,1,2\}$. The map $F(u)$ sends $0\mapsto 2$, $1\mapsto 0$, $2\mapsto 1$ and $G(u)$ sends $0\mapsto 0$, $1\mapsto 1$, $2\mapsto 2$. Let $\alpha\colon F\Rightarrow G$ be the natural isomorphism with $\alpha_A$ given by $0\mapsto 2$, $1\mapsto 1$, $2\mapsto 0$ and $\alpha_B$ given by $0\mapsto 1$, $1\mapsto 0$, $2\mapsto 2$. What is $\beta_B(1)$ for the inverse $\beta=\alpha^{-1}$?'
             answer: '0'
             answer_contract: {"kind": "exact"}
@@ -791,10 +779,6 @@ topics:
             answer: '2'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The whiskered component at $s_1$ is $\alpha_{K(s_1)}=\alpha_{\text{Tue}}$, which multiplies by $3$ modulo $10$. We need $3x\equiv6\pmod{10}$. Since $3\cdot7\equiv1$, multiply by $7$ to get $x\equiv42\equiv2$, and check $3\cdot2=6$.'
-          - problem: 'A proof that the right whiskering $\alpha K\colon FK\Rightarrow GK$ is natural has four steps. Step 1: the goal at $g\colon b\to b''$ is $(GK)(g)\circ(\alpha K)_b=(\alpha K)_{b''}\circ(FK)(g)$. Step 2: by definition, $(\alpha K)_b=\alpha_{Kb}$ and $(\alpha K)_{b''}=\alpha_{Kb''}$. Step 3: since $K$ is a functor, we may write $(\alpha K)_b=K(\alpha_b)$. Step 4: substituting, the square commutes by functoriality of $K$. Sam reads the proof. Which step is the first that is not valid?'
-            answer: 'Step 3'
-            answer_contract: {"kind": "label", "options": [["Step 1", "1", "Step one"], ["Step 2", "2", "Step two"], ["Step 3", "3", "Step three"], ["Step 4", "4", "Step four"]]}
-            solution_sketch: 'Step 1 states the goal correctly and step 2 is the definition of right whiskering. Step 3 is the first invalid step: whiskering applies no functor to a component, and $\alpha_b$ is not even defined because $b$ is an object of $\mathcal{B}$, not of $\mathcal{C}$. The correct proof uses naturality of $\alpha$ at the arrow $Kg$.'
           - problem: 'Write the full proof that, for functors $F,G\colon\mathcal{C}\to\mathcal{D}$ and $K\colon\mathcal{B}\to\mathcal{C}$ and a natural transformation $\alpha\colon F\Rightarrow G$, the right whiskering $\alpha K$ with components $(\alpha K)_b=\alpha_{Kb}$ is a natural transformation $FK\Rightarrow GK$.'
             answer: 'See the solution.'
             answer_contract: {"kind": "none"}
@@ -912,10 +896,10 @@ topics:
             answer: 'yes'
             answer_contract: {"kind": "label", "options": [["yes", "it is the identity", "it is", "identity"], ["no", "it is not the identity", "it is not", "not the identity", "not identity"]]}
             solution_sketch: 'The component of the composite is $\beta_Y(\alpha_Y(y))=\beta_Y(y,y)=y$ for every set $Y$ and every element $y$. So each component is the identity function of $Y$, and the composite is the identity transformation. The answer is yes.'
-          - problem: 'Sam claims that for natural transformations $\alpha\colon F\Rightarrow G$ and $\beta\colon G\Rightarrow H$ the vertical composite has components $(\beta\cdot\alpha)_A=\alpha_A\circ\beta_A$. Sam argues in four steps. Step 1: a component of a transformation $F\Rightarrow H$ must be an arrow from $FA$ to $HA$. Step 2: $\alpha_A$ goes from $FA$ to $GA$, and $\beta_A$ goes from $GA$ to $HA$. Step 3: therefore $\alpha_A\circ\beta_A$ is a defined arrow from $FA$ to $HA$. Step 4: the naturality squares stack, so the family is natural. Which step is the first that is not valid?'
-            answer: 'Step 3'
-            answer_contract: {"kind": "label", "options": [["Step 1", "1", "Step one"], ["Step 2", "2", "Step two"], ["Step 3", "3", "Step three"], ["Step 4", "4", "Step four"]]}
-            solution_sketch: 'Step 1 and step 2 are correct statements of the types of the arrows. Step 3 is the first invalid step: $\beta_A$ ends at $HA$ while $\alpha_A$ starts at $FA$, so $\alpha_A\circ\beta_A$ is not composable, and the correct order is $\beta_A\circ\alpha_A$. The answer is Step 3.'
+          - problem: 'For natural transformations $\alpha\colon F\Rightarrow G$ and $\beta\colon G\Rightarrow H$ Sam writes the vertical composite as $(\beta\cdot\alpha)_A=\alpha_A\circ\beta_A$. Suppose that the components are the functions $\alpha_A(x)=x+1$ and $\beta_A(x)=2x$ on $\mathbb Z$. What is the correct value of $(\beta\cdot\alpha)_A(3)$?'
+            answer: '8'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The vertical composite applies $\alpha_A$ first and then $\beta_A$, so $(\beta\cdot\alpha)_A=\beta_A\circ\alpha_A$. Then $\alpha_A(3)=4$ and $\beta_A(4)=8$. Sam''s order gives $\alpha_A(\beta_A(3))=7$.'
           - problem: 'Let $\mathcal{A}$ be the category with objects $a,b$ and one non-identity arrow $u\colon a\to b$. Let $F,G,H\colon\mathcal{A}\to\mathbf{Set}$ with $F(a)=G(a)=H(a)=\{0,1,2\}$, $F(b)=\{0,1\}$ and $G(b)=H(b)=\{0,1,2\}$. The arrows go to $F(u)\colon 0\mapsto0,1\mapsto1,2\mapsto1$; $G(u)\colon 0\mapsto1,1\mapsto2,2\mapsto0$; $H(u)\colon 0\mapsto2,1\mapsto1,2\mapsto0$. Let $\alpha\colon F\Rightarrow G$ and $\beta\colon G\Rightarrow H$ be natural transformations with $\alpha_a\colon 0\mapsto0,1\mapsto2,2\mapsto2$ and $\beta_a\colon 0\mapsto2,1\mapsto1,2\mapsto1$. Find $(\beta\cdot\alpha)_b(0)$.'
             answer: '0'
             answer_contract: {"kind": "exact"}
@@ -1002,10 +986,6 @@ topics:
             answer: 'naturality of β at α''_A'
             answer_contract: {"kind": "label", "options": [["naturality of β at α'_A", "β at α'_A", "beta at alpha'_A", "naturality of beta at alpha'_A"], ["naturality of β at α_A", "β at α_A", "beta at alpha_A", "naturality of beta at alpha_A"], ["naturality of β' at α'_A", "β' at α'_A", "beta' at alpha'_A", "naturality of beta' at alpha'_A"], ["naturality of α' at α_A", "α' at α_A", "alpha' at alpha_A", "naturality of alpha' at alpha_A"]]}
             solution_sketch: 'The factors to exchange are $\beta_{F''''A}\circ G(\alpha''_A)$ and $G''(\alpha''_A)\circ\beta_{F''A}$. These are the two sides of the naturality square of $\beta\colon G\Rightarrow G''$ at the arrow $\alpha''_A\colon F''A\to F''''A$ of $\mathcal{D}$. The other options use the wrong transformation or the wrong arrow.'
-          - problem: 'Sam argues for the interchange law $(\beta''\cdot\beta)*(\alpha''\cdot\alpha)=(\beta''*\alpha'')\cdot(\beta*\alpha)$ as follows. Step 1: at an object $A$, the left side is $(\beta''\cdot\beta)_{F''''A}\circ G(\alpha''_A\circ\alpha_A)$. Step 2: at $A$, the right side is $\beta''_{F''''A}\circ G''(\alpha''_A)\circ\beta_{F''A}\circ G(\alpha_A)$. Step 3: by naturality of $\beta$ at the arrow $\alpha_A$, the factor $\beta_{F''A}$ can be moved past $G(\alpha''_A)$, so the two sides agree. Step 4: since the components agree at every object, the two transformations are equal. Which step is the first that is not valid?'
-            answer: 'Step 3'
-            answer_contract: {"kind": "label", "options": [["Step 1", "1", "Step one"], ["Step 2", "2", "Step two"], ["Step 3", "3", "Step three"], ["Step 4", "4", "Step four"]]}
-            solution_sketch: 'Step 1 whiskers the vertical composite, using that $G$ preserves composition, and step 2 expands the right side by the whisker formula. Step 3 is the first invalid step: naturality of $\beta$ at $\alpha_A$ says $\beta_{F''A}\circ G(\alpha_A)=G''(\alpha_A)\circ\beta_{FA}$, which does not exchange the factors in question. The square needed is the one at $\alpha''_A$.'
           - problem: 'A warehouse relabels items twice. Stage one relabels item $x$ as $(x+1)\bmod5$ and stage two relabels the result $y$ as $2y\bmod5$. Items are shipped in pairs, and a packing machine either keeps a pair $(x,y)$ in order or swaps it to $(y,x)$. Pairs are first swapped, then the pair is relabeled by both stages, then it is swapped again. Using the interchange law with $G=G''=G''''$ the pairing functor and $\beta=\beta''$ the swap, find the final pair for the starting pair $(3,4)$.'
             answer: '(3,0)'
             answer_contract: {"kind": "coordinates", "arity": 2}
@@ -1014,6 +994,10 @@ topics:
             answer: '16'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'A record ends with label $0$ when $x\bmod3$ is even. That happens for $x=0,2,3,5$, which is $4$ records. A pair needs both entries from these $4$ records, so there are $4\times4=16$ starting pairs.'
+          - problem: 'Use the one-object category $\mathbf{1}$, so that functors $\mathbf{1}\to\mathbf{Set}$ are sets and natural transformations are functions. Let $F$, $F''$, $F''''$ be the set $\{0,1,2\}$, let $\alpha(x)=x+1 \bmod 3$ and $\alpha''(x)=2x \bmod 3$. On $\mathbf{Set}$ let $G$ and $G''''$ send $Y$ to $Y\times Y$ and let $G''$ be the identity functor. Let $\beta_Y(y,z)=z$ be the second projection $G\Rightarrow G''$ and let $\beta''_Y(y)=(y,y)$ be the diagonal $G''\Rightarrow G''''$. Find the value of $(\beta''\cdot\beta)*(\alpha''\cdot\alpha)$ at the element $(1,2)$ of $G(F)$.'
+            answer: '(0,0)'
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: 'The map $\alpha''\cdot\alpha$ sends $1\mapsto2\mapsto1$ and $2\mapsto0\mapsto0$, so $G(\alpha''\cdot\alpha)(1,2)=(1,0)$. Then $\beta''\cdot\beta$ sends $(u,v)$ to $(v,v)$, which gives $(0,0)$. The right side of the interchange law gives the same pair.'
           - problem: 'Write the full proof that, for natural transformations $\alpha\colon F\Rightarrow F''$ and $\alpha''\colon F''\Rightarrow F''''$ between functors $\mathcal{C}\to\mathcal{D}$ and $\beta\colon G\Rightarrow G''$ and $\beta''\colon G''\Rightarrow G''''$ between functors $\mathcal{D}\to\mathcal{E}$, the interchange law $(\beta''\cdot\beta)*(\alpha''\cdot\alpha)=(\beta''*\alpha'')\cdot(\beta*\alpha)$ holds, by expanding both sides at an object $A$ and reducing the equality to one naturality square.'
             answer: 'See the solution.'
             answer_contract: {"kind": "none"}
@@ -1087,10 +1071,6 @@ topics:
             answer: '6'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'A plan is a pair of levels $(x,y)$ with $x\le y$ from $\{0,1,2\}$. For $x=0$ there are $3$ choices of $y$, for $x=1$ there are $2$, and for $x=2$ there is $1$. The total is $3+2+1=6$.'
-          - problem: 'Sam proves that if $\mathcal{D}$ is a groupoid, then every natural transformation $\alpha\colon F\Rightarrow G$ between functors from $\mathcal{C}$ to $\mathcal{D}$ is an isomorphism in $[\mathcal{C},\mathcal{D}]$. Step 1: each component $\alpha_A$ is an isomorphism in $\mathcal{D}$ with inverse $\beta_A$. Step 2: define $\beta\colon G\Rightarrow F$ with components $\beta_A$. Step 3: $\beta$ is natural, because each component $\beta_A$ is an invertible arrow of $\mathcal{D}$. Step 4: for each arrow $f\colon A\to B$, naturality of $\alpha$ gives $G(f)\alpha_A=\alpha_BF(f)$, and composing with $\beta_B$ on the left and $\beta_A$ on the right gives $F(f)\beta_A=\beta_BG(f)$. Step 5: so $\beta\alpha=1_F$ and $\alpha\beta=1_G$. Which step is the first that is not valid?'
-            answer: 'Step 3'
-            answer_contract: {"kind": "label", "options": [["Step 1", "1", "Step one"], ["Step 2", "2", "Step two"], ["Step 3", "3", "Step three"], ["Step 4", "4", "Step four"], ["Step 5", "5", "Step five"]]}
-            solution_sketch: 'Step 1 and step 2 are correct: in a groupoid every component has an inverse, and these inverses form the family $\beta$. Step 3 is the first invalid step: invertible components do not make $\beta$ natural, because naturality ties the components together along arrows. Step 4 supplies the correct argument from the naturality of $\alpha$.'
           - problem: 'Let $\mathcal{C}$ be the discrete category with objects $a,b$. Let $F,G,H,K\colon\mathcal{C}\to\mathbf{Set}$ each send both objects to $\{0,1,2,3,4\}$. Natural transformations $\alpha\colon F\Rightarrow G$, $\beta\colon G\Rightarrow H$ and $\gamma\colon H\Rightarrow K$ have components $\alpha_a(x)=(x+1)\bmod5$, $\alpha_b(x)=2x\bmod5$, $\beta_a(x)=3x\bmod5$, $\beta_b(x)=(x+2)\bmod5$, $\gamma_a(x)=(x+4)\bmod5$, $\gamma_b(x)=3x\bmod5$. In $[\mathcal{C},\mathbf{Set}]$, find $\big((\gamma\cdot\beta)\cdot\alpha\big)_b(3)$.'
             answer: '4'
             answer_contract: {"kind": "exact"}
@@ -1134,10 +1114,6 @@ topics:
             answer: '0'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'A bijection that commutes with the toggle sends fixed lamps to fixed lamps. The second board has $2$ fixed lamps and the first board has none. So no bijection commutes with the toggle, and the count is $0$.'
-          - problem: 'Sam proves that if every component of a natural transformation $\alpha\colon F\Rightarrow G$ between functors from $\mathcal{C}$ to $\mathbf{Set}$ is a bijection, then $\alpha$ is an isomorphism in $[\mathcal{C},\mathbf{Set}]$. Step 1: each $\alpha_a$ has an inverse function $G(a)\to F(a)$. Step 2: define $\beta\colon G\Rightarrow F$ by taking these inverse functions as components. Step 3: any assignment of a bijection $G(a)\to F(a)$ to every object $a$ is automatically a natural transformation. Step 4: componentwise, $\beta_a\circ\alpha_a$ and $\alpha_a\circ\beta_a$ are identities. Step 5: hence $\beta\circ\alpha=1_F$ and $\alpha\circ\beta=1_G$. Which step is the first that is not valid?'
-            answer: 'Step 3'
-            answer_contract: {"kind": "label", "options": [["Step 1", "1", "Step one"], ["Step 2", "2", "Step two"], ["Step 3", "3", "Step three"], ["Step 4", "4", "Step four"], ["Step 5", "5", "Step five"]]}
-            solution_sketch: 'Steps 1 and 2 are valid, since a bijection has an inverse function and these name the components of $\beta$. Step 3 is the first invalid step: naturality ties the components together along the arrows of $\mathcal{C}$, so a family of bijections chosen object by object need not satisfy it. The correct argument conjugates the square of $\alpha$ by the inverses.'
           - problem: 'Let $\mathcal{C}$ be the category with objects $X,Y$ and one non-identity arrow $f\colon X\to Y$. Let $F=G\colon\mathcal{C}\to\mathbf{Set}$ send both objects to $\{0,1\}$ and send $f$ to the identity map. Let $\alpha$ be the family with $\alpha_X$ the identity of $\{0,1\}$ and $\alpha_Y$ the swap $0\mapsto1,1\mapsto0$. Is $\alpha$ an isomorphism in $[\mathcal{C},\mathbf{Set}]$?'
             answer: 'no'
             answer_contract: {"kind": "label", "options": [["yes", "it is an isomorphism", "it is", "yes it is"], ["no", "it is not an isomorphism", "it is not", "not an isomorphism", "not natural"]]}
@@ -1186,14 +1162,10 @@ topics:
             answer: '4'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The square needs $\alpha_1(p)=T(\alpha_0(1))=T(\alpha_0(2))$. Since $T$ is injective, $\alpha_0(1)=\alpha_0(2)$, which gives $2$ choices, and $\alpha_0(3)$ has $2$ choices. Then $\alpha_1(p)$ and $\alpha_1(q)$ are determined, so there are $2\times2=4$.'
-          - problem: 'Sam claims that in the functor category $[\mathbf{2},\mathbf{Set}]$ every pair of functions $\alpha_0\colon F(0)\to G(0)$ and $\alpha_1\colon F(1)\to G(1)$ is a natural transformation $F\Rightarrow G$. Step 1: a natural transformation assigns to each object of $\mathbf{2}$ a function from the $F$-image to the $G$-image. Step 2: the objects of $\mathbf{2}$ are $0$ and $1$, so the components are $\alpha_0$ and $\alpha_1$. Step 3: naturality requires $\alpha_1\circ F(a)=G(a)\circ\alpha_0$ for the arrow $a$. Step 4: this equation holds for every choice of $\alpha_0$ and $\alpha_1$, so every pair is a natural transformation. Which step is the first that is not valid?'
-            answer: 'Step 4'
-            answer_contract: {"kind": "label", "options": [["Step 1", "1", "Step one"], ["Step 2", "2", "Step two"], ["Step 3", "3", "Step three"], ["Step 4", "4", "Step four"]]}
-            solution_sketch: 'Steps 1, 2 and 3 are valid: they state the components and the naturality square at the single arrow $a$. Step 4 is the first invalid step, because the square condition is a real restriction. For example it fails when $\alpha_0$ and $\alpha_1$ send an element and its image under $F(a)$ to places that $G(a)$ does not connect.'
-          - problem: 'Let $\mathbf{2}$ be the category with objects $0,1$ and one non-identity arrow $a\colon0\to1$. Let $F,G\colon\mathbf{2}\to\mathbf{Set}$ have $F(0)=G(0)=\{0,1\}$ and $F(1)=G(1)=\{0,1,2\}$, with $F(a)=G(a)$ the function $0\mapsto0,1\mapsto2$. Let $\alpha_0$ be the swap of $\{0,1\}$ and let $\alpha_1$ be the identity of $\{0,1,2\}$. Do $\alpha_0$ and $\alpha_1$ form a morphism from $F$ to $G$ in $[\mathbf{2},\mathbf{Set}]$?'
-            answer: 'no'
-            answer_contract: {"kind": "label", "options": [["yes", "they form a morphism", "it is a morphism", "yes they do"], ["no", "they do not form a morphism", "it is not a morphism", "not a morphism", "the square does not commute"]]}
-            solution_sketch: 'A morphism needs $\alpha_1\circ F(a)=G(a)\circ\alpha_0$. At the element $0$ the left side is $\alpha_1(0)=0$, while the right side is $G(a)(\alpha_0(0))=G(a)(1)=2$. The two values differ, so the square does not commute and the answer is no.'
+          - problem: 'Let $\mathbf{2}$ be the category with objects $0,1$ and one non-identity arrow $a\colon0\to1$. Let $F,G\colon\mathbf{2}\to\mathbf{Set}$ have $F(0)=G(0)=\{0,1\}$ and $F(1)=G(1)=\{0,1,2\}$, with $F(a)=G(a)$ the function $0\mapsto0,1\mapsto2$. Let $\alpha_0$ be the swap of $\{0,1\}$ and let $\alpha_1$ be the identity of $\{0,1,2\}$. For how many elements $x$ of $F(0)$ do the two routes of the naturality square at $a$ give the same element of $G(1)$?'
+            answer: '0'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'At $x=0$ the route through $F(a)$ and $\alpha_1$ gives $0$, and the route through $\alpha_0$ and $G(a)$ gives $G(a)(1)=2$. At $x=1$ the first route gives $2$ and the second gives $G(a)(0)=0$. The routes differ at both elements, so the number is $0$ and the pair is not a natural transformation.'
           - problem: 'Write the full proof that, for the shape category $\mathbf{2}$ with objects $0,1$ and one non-identity arrow $a\colon0\to1$, the functor category $[\mathbf{2},\mathbf{Set}]$ is the arrow category of $\mathbf{Set}$, whose objects are the functions of $\mathbf{Set}$ and whose morphisms are the commuting squares.'
             answer: 'See the solution.'
             answer_contract: {"kind": "none"}
@@ -1264,10 +1236,6 @@ topics:
             answer: 'no'
             answer_contract: {"kind": "label", "options": [["yes", "it is an isomorphism", "it is", "yes it is"], ["no", "it is not an isomorphism", "it is not", "not an isomorphism", "no isomorphism"]]}
             solution_sketch: 'An isomorphism of categories needs a bijection on objects. $\mathcal{C}$ has $3$ objects and $\mathcal{D}$ has $1$, so $F$ is not bijective on objects. Hence there is no strict inverse, and the answer is no.'
-          - problem: 'Sam claims that equivalence of categories is transitive and argues as follows. Step 1: the hypotheses give $F\colon\mathcal{C}\to\mathcal{D}$, $G\colon\mathcal{D}\to\mathcal{C}$ with a natural isomorphism $\eta\colon1_{\mathcal{C}}\Rightarrow GF$, and $F''\colon\mathcal{D}\to\mathcal{E}$, $G''\colon\mathcal{E}\to\mathcal{D}$ with $\eta''\colon1_{\mathcal{D}}\Rightarrow G''F''$. Step 2: use $F''F\colon\mathcal{C}\to\mathcal{E}$ and $GG''\colon\mathcal{E}\to\mathcal{C}$. Step 3: a natural isomorphism from $1_{\mathcal{C}}$ to $GG''F''F$ is obtained by composing $\eta$ with $\eta''$. Step 4: the same argument on the other side gives the second natural isomorphism. Which step is the first that is not valid?'
-            answer: 'Step 3'
-            answer_contract: {"kind": "label", "options": [["Step 1", "1", "Step one"], ["Step 2", "2", "Step two"], ["Step 3", "3", "Step three"], ["Step 4", "4", "Step four"]]}
-            solution_sketch: 'Step 1 restates the hypotheses and step 2 correctly composes functors. Step 3 is the first invalid step: $\eta$ and $\eta''$ are transformations between endofunctors of different categories, so they cannot be composed directly. The valid construction is the whiskered $G\eta''F\colon GF\Rightarrow GG''F''F$ composed after $\eta$.'
           - problem: 'Let $\mathcal{C}$ be the category with three objects and exactly one arrow from each object to each object, and let $\mathcal{D}$ be the same kind of category with two objects. A functor from $\mathcal{C}$ to $\mathcal{D}$ must send each object of $\mathcal{C}$ to an object of $\mathcal{D}$. How many functors from $\mathcal{C}$ to $\mathcal{D}$ are there?'
             answer: '8'
             answer_contract: {"kind": "exact"}

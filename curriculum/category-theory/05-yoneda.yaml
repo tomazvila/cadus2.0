@@ -541,10 +541,10 @@ topics:
             answer: '2'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Each natural transformation is fixed by $u=\alpha_a(1_a)$ in $F(a)$, and then $\alpha_b(t)=F(t)(u)$. The map $F(t)$ sends 0 and 1 to 0, and it sends 2 to 1. So $u=0$ or $u=1$, which gives 2 natural transformations.'
-          - problem: 'Let $\mathcal C$ be the category with objects $a$, $b$, their identities and one other morphism $t\colon a\to b$. Let $F\colon\mathcal C\to\mathbf{Set}$ have $F(a)=\{0,1\}$, $F(b)=\{0,1,2\}$ and $F(t)$ sending $0$ to $2$ and $1$ to $0$. Two natural transformations $\alpha,\beta\colon\mathrm{Hom}(a,-)\Rightarrow F$ have $\alpha_b(t)=\beta_b(t)$. Must $\alpha=\beta$?'
-            answer: 'yes'
-            answer_contract: {"kind": "label", "options": [["yes", "yes they are equal", "they must be equal", "equal", "yes they must be equal", "they are equal"], ["no", "not necessarily", "they need not be equal", "they can differ", "no they can differ", "no not necessarily", "alpha need not equal beta"]]}
-            solution_sketch: 'Each natural transformation is fixed by $u=\alpha_a(1_a)$, and $\alpha_b(t)=F(t)(u)$. The map $F(t)$ is injective, since it sends 0 and 1 to the different values 2 and 0. So equal values at $t$ force equal $u$, and hence $\alpha=\beta$.'
+          - problem: 'Let $\mathcal C$ be the category with objects $a$, $b$, their identities and one other morphism $t\colon a\to b$. Let $F\colon\mathcal C\to\mathbf{Set}$ have $F(a)=\{0,1\}$, $F(b)=\{0,1,2\}$ and $F(t)$ sending $0$ to $2$ and $1$ to $0$. A natural transformation $\alpha\colon\mathrm{Hom}(a,-)\Rightarrow F$ has $\alpha_b(t)=2$. What is $\alpha_a(1_a)$?'
+            answer: '0'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Naturality at $t$ gives $\alpha_b(t)=F(t)(\alpha_a(1_a))$. The map $F(t)$ sends $0$ to $2$ and $1$ to $0$, so the value $2$ comes only from the element $0$. Hence $\alpha_a(1_a)=0$.'
           - problem: 'Let $\mathcal C$ be the category with objects $1,2,3$, morphisms $s\colon 1\to 2$ and $t\colon 2\to 3$, their composite $t\circ s\colon 1\to 3$ and the identities. Let $F\colon\mathcal C\to\mathbf{Set}$ have $F(1)=\{0,1,2,3\}$, $F(2)=\{0,1,\dots,6\}$ and $F(3)=\{0,1,\dots,9\}$, with $F(s)(x)=2x$ and $F(t)(y)=y+3$. The element $u=2$ of $F(1)$ corresponds to a natural transformation $\Theta\colon\mathrm{Hom}(1,-)\Rightarrow F$. What is $\Theta_3(t\circ s)$?'
             answer: '7'
             answer_contract: {"kind": "exact"}
@@ -584,14 +584,14 @@ topics:
             answer: '(2, 2)'
             answer_contract: {"kind": "coordinates", "arity": 2}
             solution_sketch: 'By naturality $\alpha_C(k\circ g)=F(k\circ g)(\alpha_A(1_A))=F(k\circ g)(1,2)$. This equals $(k(g(1)),k(g(2)))$. Since $g(1)=3$ and $g(2)=1$, we get $(k(3),k(1))=(2,2)$.'
-          - problem: 'Let $g\colon A\to B$ be a morphism and let $\alpha\colon\mathrm{Hom}(A,-)\Rightarrow F$ be a natural transformation, where $F\colon\mathcal C\to\mathbf{Set}$. Which of the following is defined and equals $\alpha_B(g)$: (i) $(Fg)(\alpha_A(1_A))$, or (ii) $(Fg)(\alpha_B(1_B))$?'
-            answer: '(i)'
-            answer_contract: {"kind": "label", "options": [["(i)", "i", "the first", "first", "option (i)", "(i) is correct", "expression (i)"], ["(ii)", "ii", "the second", "second", "option (ii)", "(ii) is correct", "expression (ii)"]]}
-            solution_sketch: 'Naturality along $g$ at $1_A$ gives $\alpha_B(g)=(Fg)(\alpha_A(1_A))$, and $Fg$ maps $F(A)$ to $F(B)$. The expression in (ii) is not defined, because $1_B$ is not a morphism out of $A$, so $\alpha_B(1_B)$ has no meaning. Hence (i) is the correct one.'
           - problem: 'In $\mathbf{Set}$ let $A=\{1,2\}$, $B=\{1,2,3\}$ and $g\colon A\to B$ with $g(1)=3$ and $g(2)=1$. Let $C=\{c\}$ and $F=\mathrm{Hom}(C,-)$. Let $\alpha\colon\mathrm{Hom}(A,-)\Rightarrow F$ correspond to the function $u\colon C\to A$ with $u(c)=1$. Then $\alpha_B(g)$ is a function $C\to B$. What is its value at $c$?'
             answer: '3'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'By naturality $\alpha_B(g)=F(g)(u)$, and $F=\mathrm{Hom}(C,-)$ acts by composing with $g$, so $\alpha_B(g)=g\circ u$. Then $(g\circ u)(c)=g(u(c))=g(1)=3$.'
+          - problem: 'In $\mathbf{Set}$ let $A=\{0,1\}$, $B=\{4,7\}$ and let $g\colon A\to B$ be given by $g(0)=4$ and $g(1)=7$. Let $\alpha\colon\mathrm{Hom}(A,-)\Rightarrow\mathrm{Id}$ be the natural transformation with $\alpha_A(1_A)=1$. What is $\alpha_B(g)$?'
+            answer: '7'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'By naturality $\alpha_B(g)=\mathrm{Id}(g)(\alpha_A(1_A))=g(1)$. Since $g(1)=7$, we get $\alpha_B(g)=7$.'
           - problem: 'Write the full proof that the Yoneda bijection $\Psi\colon\mathrm{Nat}(\mathrm{Hom}(A,-),F)\to FA$, given by $\Psi(\alpha)=\alpha_A(1_A)$, is natural in $F$ and in $A$.'
             answer: 'Yoneda bijection is natural in F and A'
             answer_contract: {"kind": "none"}
@@ -1049,10 +1049,6 @@ topics:
             answer: '4'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The rule says $F(7)\le n$ exactly when $7\le 2n$, so $F(7)$ is the least whole number $n$ with $2n\ge 7$. Since $2\cdot 3=6$ is too small and $2\cdot 4=8$ is enough, $F(7)=4$.'
-          - problem: 'Let $F$ and $F''$ both be left adjoint to the forgetful functor $\mathbf{Ab}\to\mathbf{Set}$, with $FX=F''X=\mathbb Z^2$ for $X=\{a,b\}$. The insertion of $F$ sends $a\mapsto(1,0)$ and $b\mapsto(0,1)$, while the insertion of $F''$ sends $a\mapsto(0,1)$ and $b\mapsto(1,0)$. Sam notes that both the identity map and the swap $(x,y)\mapsto(y,x)$ are isomorphisms $\mathbb Z^2\to\mathbb Z^2$, and concludes that the comparison of $FX$ with $F''X$ is not unique. Which of these is compatible with the insertions: the identity map, the swap, both of them, or neither?'
-            answer: 'swap'
-            answer_contract: {"kind": "label", "options": [["swap", "the swap", "the swap map", "swap map", "(x,y)->(y,x)", "the second map"], ["identity", "the identity", "the identity map", "the first map"], ["both", "both of them"], ["neither", "none of them"]]}
-            solution_sketch: 'The identity sends the insertion of $F$ at $a$ to $(1,0)$, but the insertion of $F''$ at $a$ is $(0,1)$. The swap sends $(1,0)$ to $(0,1)$ and $(0,1)$ to $(1,0)$, so only the swap is compatible, and the comparison is unique.'
           - problem: 'Eggs are packed in boxes of $12$, so $n$ boxes hold $G(n)=12n$ eggs. The number of boxes $F(x)$ needed for $x$ eggs is characterised by the rule that $F(x)\le n$ exactly when $x\le G(n)$, for every whole number $n$. What is $F(30)$?'
             answer: '3'
             answer_contract: {"kind": "exact"}

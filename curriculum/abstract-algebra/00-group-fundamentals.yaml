@@ -295,10 +295,10 @@ topics:
             answer: '32'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'If the start is $s$, then $s + 17 \equiv 9 \pmod{40}$, so $s \equiv 9 - 17 = -8 \equiv 32$. Check: $32 + 17 = 49 = 40 + 9$.'
-          - problem: 'In a group $G$, solve $axb = c$ for $x$. Which one is correct: (A) $x = a^{-1}cb^{-1}$, (B) $x = ca^{-1}b^{-1}$, (C) $x = a^{-1}b^{-1}c$, or (D) $x = b^{-1}ca^{-1}$?'
-            answer: 'a^(-1) c b^(-1)'
-            answer_contract: {"kind":"label","options":[["a^(-1) c b^(-1)","a^-1 c b^-1","a^-1cb^-1","a^(-1)cb^(-1)","a^{-1}cb^{-1}","x = a^(-1) c b^(-1)","x = a^{-1}cb^{-1}","A"],["c a^(-1) b^(-1)","c a^-1 b^-1","ca^-1b^-1","ca^(-1)b^(-1)","ca^{-1}b^{-1}","x = c a^(-1) b^(-1)","x = ca^{-1}b^{-1}","B"],["a^(-1) b^(-1) c","a^-1 b^-1 c","a^-1b^-1c","a^(-1)b^(-1)c","a^{-1}b^{-1}c","x = a^(-1) b^(-1) c","x = a^{-1}b^{-1}c","C"],["b^(-1) c a^(-1)","b^-1 c a^-1","b^-1ca^-1","b^(-1)ca^(-1)","b^{-1}ca^{-1}","x = b^(-1) c a^(-1)","x = b^{-1}ca^{-1}","D"]]}
-            solution_sketch: 'Multiply on the left by $a^{-1}$ and on the right by $b^{-1}$, which gives $a^{-1}(axb)b^{-1} = x$. So $x = a^{-1}cb^{-1}$, which is option A. The other options move $a^{-1}$ or $b^{-1}$ to the wrong side of $c$, and a group need not be abelian.'
+          - problem: 'In the group of invertible $2 \times 2$ matrices, let $A = \begin{pmatrix}1&1\\0&1\end{pmatrix}$, $B = \begin{pmatrix}2&1\\1&1\end{pmatrix}$ and $C = \begin{pmatrix}9&7\\5&4\end{pmatrix}$. Solve $AXB = C$ for the matrix $X$.'
+            answer: '[[1,2],[1,3]]'
+            answer_contract: {"kind":"matrix","rows":2,"cols":2}
+            solution_sketch: 'Multiply on the left by $A^{-1}$ and on the right by $B^{-1}$, which gives $X = A^{-1}CB^{-1}$. Here $A^{-1}$ has rows $(1, -1)$ and $(0, 1)$ and $B^{-1}$ has rows $(1, -1)$ and $(-1, 2)$. So $A^{-1}C$ has rows $(4, 3)$ and $(5, 4)$, and $X$ has rows $(1, 2)$ and $(1, 3)$. Check: $AXB = C$.'
           - problem: 'In the group of invertible $2 \times 2$ matrices, let $A = \begin{pmatrix}1&1\\0&1\end{pmatrix}$ and $B = \begin{pmatrix}2&3\\1&2\end{pmatrix}$. Solve $AX = B$ for the matrix $X$.'
             answer: '[[1,1],[1,2]]'
             answer_contract: {"kind":"matrix","rows":2,"cols":2}
@@ -338,10 +338,6 @@ topics:
           answer: 'A product with $xy$ equal to $e$ gives the inverse of $xy$, which is unique'
           why: 'If a product with $xy$ equals $e$, the second factor is an inverse of $xy$. An inverse is unique, so $y^{-1}x^{-1}$ is the inverse of $xy$.'
         exemplars:
-          - problem: 'In any group, which of these equals $(ab)^{-1}$: (A) $a^{-1}b^{-1}$, (B) $b^{-1}a^{-1}$, (C) $ba^{-1}$, or (D) $b^{-1}a$?'
-            answer: 'b^(-1)a^(-1)'
-            answer_contract: {"kind":"label","options":[["a^(-1)b^(-1)","a^-1b^-1","a^-1 b^-1","a^{-1}b^{-1}","A"],["b^(-1)a^(-1)","b^-1a^-1","b^-1 a^-1","b^{-1}a^{-1}","B"],["b a^(-1)","b a^-1","ba^{-1}","ba^(-1)","C"],["b^(-1)a","b^-1a","b^-1 a","b^{-1}a","D"]]}
-            solution_sketch: 'The inverse of a product reverses the order and inverts each factor, so $(ab)^{-1} = b^{-1}a^{-1}$. Check: $(ab)(b^{-1}a^{-1}) = a(bb^{-1})a^{-1} = aa^{-1} = e$. This is option B.'
           - problem: 'In $U(15)$, find the inverse of the product $2 \cdot 4$.'
             answer: '2'
             answer_contract: {"kind":"exact"}
@@ -354,10 +350,6 @@ topics:
             answer: '3'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The order of $a^k$ is $|a|/\gcd(|a|, k)$. Here $\gcd(6, 4) = 2$, so the order of $a^4$ is $6/2 = 3$. Check: $(a^4)^3 = a^{12} = e$.'
-          - problem: 'A robot arm performs move $a$ and then move $b$. To undo both moves, which sequence should it perform: (A) undo $b$, then undo $a$, or (B) undo $a$, then undo $b$?'
-            answer: 'undo b, then undo a'
-            answer_contract: {"kind":"label","options":[["undo b, then undo a","undo b then undo a","undo b first","A","undo b then a","undo b, then a","b then a"],["undo a, then undo b","undo a then undo b","undo a first","B","undo a then b","undo a, then b","a then b"]]}
-            solution_sketch: 'The inverse of the combined move $ab$ is $b^{-1}a^{-1}$, so the last move must be undone first. The arm performs the inverse of $b$ and then the inverse of $a$, like taking off shoes before socks.'
           - problem: 'A text is shifted $5$ places and then shifted $12$ places, with the letters numbered $0$ to $25$. By how many places must the result be shifted to undo both shifts together?'
             answer: '9'
             answer_contract: {"kind":"exact"}
@@ -684,10 +676,10 @@ topics:
             answer: '1'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'We have $4 \cdot 4 = 16 = 15 + 1$, so the product is $1$. Since $1$ is not in $H$, the set $H$ is not closed under the operation and is not a subgroup.'
-          - problem: 'Sam tries to show that $H = \{0, 2, 4, 6\}$ is a subgroup of $\mathbb{Z}_9$ with the one-step test. Step 1: $H$ is nonempty since $0 \in H$. Step 2: for $a = 2$ and $b = 6$, $a - b = -4 \equiv 5 \pmod 9$, and $5 \in H$. Step 3: for $a = 2$ and $b = 4$, $a - b = -2 \equiv 7 \pmod 9$, and $7 \in H$. Step 4: so $H$ is a subgroup. Which is the first step that is wrong?'
-            answer: 'Step 2'
-            answer_contract: {"kind":"label","options":[["Step 1","step one","the first step","1"],["Step 2","step two","the second step","2"],["Step 3","step three","the third step","3"],["Step 4","step four","the fourth step","4"]]}
-            solution_sketch: 'Step 1 is correct, since $0$ lies in $H$. Step 2 is wrong: $2 - 6 \equiv 5 \pmod 9$, and $5$ is not in $H = \{0, 2, 4, 6\}$. Step 3 is false too, since $2 - 4 \equiv 7$ is not in $H$, and Step 4 rests on both claims, but Step 2 is the first error.'
+          - problem: 'Sam tries to show that $H = \{0, 2, 4, 6\}$ is a subgroup of $\mathbb{Z}_9$ with the one-step test. He checks that $0 \in H$ and that $4 - 2 = 2 \in H$, and then he stops and says that $H$ is a subgroup. Find $2 - 6$ in $\mathbb{Z}_9$, a difference that Sam did not check.'
+            answer: '5'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'In $\mathbb{Z}_9$ we have $2 - 6 = -4 \equiv 5$. The element $5$ is not in $H = \{0, 2, 4, 6\}$, so $H$ fails the one-step test. Sam checked only one pair of elements, but the test needs every pair.'
           - problem: 'An element $a$ of a group has order $9$. Its inverse is $a^k$ for exactly one integer $k$ with $1 \le k \le 8$. Find $k$.'
             answer: '8'
             answer_contract: {"kind":"exact"}
@@ -735,10 +727,6 @@ topics:
             answer: '3'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The order of $z^k$ is $n/\gcd(n, k)$, where $n$ is the order of $z$. Here $\gcd(12, 8) = 4$, so the order of $z^8$ is $12/4 = 3$.'
-          - problem: 'Sam tries to prove that $C(a) = \{g : ga = ag\}$ is a subgroup. Step 1: $e$ lies in $C(a)$ because $ea = ae$. Step 2: let $g$ and $h$ lie in $C(a)$. Step 3: $(gh)a = g(ha) = g(ah) = (ga)h = (ag)h = a(gh)$, so $gh$ lies in $C(a)$. Step 4: from $ga = ag$, divide both sides by $g$ to get $a = a$, so $g^{-1}$ lies in $C(a)$. Which is the first step that is wrong?'
-            answer: 'Step 4'
-            answer_contract: {"kind":"label","options":[["Step 1","step one","the first step","1"],["Step 2","step two","the second step","2"],["Step 3","step three","the third step","3"],["Step 4","step four","the fourth step","4"]]}
-            solution_sketch: 'Steps 1 to 3 are correct: $ea = ae$ holds in every group, and Step 3 uses associativity and the commuting relations $ha = ah$ and $ga = ag$. Step 4 divides by a group element, which is not an operation. The correct move multiplies $ga = ag$ by $g^{-1}$ on both sides, which gives $ag^{-1} = g^{-1}a$.'
           - problem: 'Let $z$ and $w$ be elements of the center $Z(G)$ with orders $4$ and $9$. What is the order of $zw^{-1}$?'
             answer: '36'
             answer_contract: {"kind":"exact"}

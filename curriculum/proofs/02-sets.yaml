@@ -38,10 +38,10 @@ topics:
             answer: '3'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Squaring the integers $-2, -1, 0, 1, 2$ gives $4, 1, 0, 1, 4$. A set lists each element once, so the repeats of $4$ and $1$ count once and the set is $\{0, 1, 4\}$, which has 3 elements.'
-          - problem: 'Which of these sets equals $\{1, 4, 9, 16\}$? (a) $\{k^2 : k \in \mathbb{Z}, 1 \le k \le 4\}$, (b) $\{2k : k \in \mathbb{Z}, 1 \le k \le 4\}$, (c) $\{k^2 : k \in \mathbb{Z}, 0 \le k \le 3\}$, (d) $\{k^2 + 1 : k \in \mathbb{Z}, 1 \le k \le 4\}$.'
-            answer: 'a'
-            answer_contract: {"kind": "label", "options": [["a", "(a)", "option a"], ["b", "(b)", "option b"], ["c", "(c)", "option c"], ["d", "(d)", "option d"]]}
-            solution_sketch: 'Substitute the allowed integers into each formula and compare with the roster. Option (a) gives $1, 4, 9, 16$. Option (b) gives $2, 4, 6, 8$, option (c) starts at $0$, and option (d) gives $2, 5, 10, 17$.'
+          - problem: 'The set $\{1, 4, 9, 16\}$ equals $\{k^2 : k \in \mathbb{Z}, 1 \le k \le m\}$ for one value of $m$. Find $m$.'
+            answer: '4'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The squares of $k = 1, 2, 3, 4$ are $1$, $4$, $9$ and $16$, and $5^2 = 25$ is not in the set. So the upper limit is $m = 4$.'
           - problem: 'List the elements of $\{4k : k \in \mathbb{Z}, 1 \le k \le 4\}$.'
             answer: '4, 8, 12, 16'
             answer_contract: {"kind": "exact"}
@@ -124,10 +124,10 @@ topics:
           answer: 'One integer $k$ with $n = 5k$ is enough to show that $n$ is a multiple of $5$'
           why: 'A number is a multiple of $5$ when one multiplier $k$ gives it, so the quantifier must be existential.'
         exemplars:
-          - problem: 'Which of these describes the set of positive multiples of $3$? (a) $\{n \in \mathbb{Z} : n = 3k \text{ for some integer } k\}$, (b) $\{n \in \mathbb{Z} : n = 3k \text{ for some positive integer } k\}$, (c) $\{n \in \mathbb{Z} : n = k + 3 \text{ for some integer } k\}$, (d) $\{n \in \mathbb{Z} : n = 3k + 1 \text{ for some positive integer } k\}$.'
-            answer: 'b'
-            answer_contract: {"kind": "label", "options": [["a", "(a)", "option a"], ["b", "(b)", "option b"], ["c", "(c)", "option c"], ["d", "(d)", "option d"]]}
-            solution_sketch: 'A multiple of $3$ has the form $3k$ for an integer $k$, and the multiple is positive exactly when $k$ is positive. Option (a) also allows $0$ and negative multiples, option (c) allows every integer, and option (d) lists numbers such as $4$ and $7$ that are not multiples of $3$. Only option (b) fits.'
+          - problem: 'The set of positive multiples of $3$ equals $\{n \in \mathbb{Z} : n = 3k \text{ for some integer } k \ge a\}$ for one integer $a$. Find $a$.'
+            answer: '1'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'A positive multiple of $3$ is $3k$ with $k$ a positive integer. So the smallest allowed value of $k$ is $1$, which gives $3 \cdot 1 = 3$. Hence $a = 1$.'
           - problem: 'Let $S = \{n \in \mathbb{Z} : n = 4k + 1 \text{ for some integer } k\}$. Which of the integers $17, 21, 30, 33, 43$ belong to $S$?'
             answer: '17, 21, 33'
             answer_contract: {"kind": "exact"}
@@ -152,10 +152,10 @@ topics:
             answer: '14'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'An order of $84$ rolls is in the set when $84 = 6k$ for a positive integer $k$. Dividing gives $k = 84 \div 6 = 14$. The order needs 14 boxes.'
-          - problem: 'Which of these describes the set of integers that leave remainder $1$ when divided by $4$? (a) $\{n \in \mathbb{Z} : n = 4k \text{ for some integer } k\}$, (b) $\{n \in \mathbb{Z} : n = 4k - 1 \text{ for some positive integer } k\}$, (c) $\{n \in \mathbb{Z} : n = 4k + 1 \text{ for some integer } k\}$, (d) $\{n \in \mathbb{Z} : n = k + 4 \text{ for some integer } k\}$.'
-            answer: 'c'
-            answer_contract: {"kind": "label", "options": [["a", "(a)", "option a"], ["b", "(b)", "option b"], ["c", "(c)", "option c"], ["d", "(d)", "option d"]]}
-            solution_sketch: 'An integer leaves remainder $1$ after division by $4$ exactly when it is $1$ more than a multiple of $4$, that is $n = 4k + 1$. Option (a) gives remainder $0$, option (b) gives remainders $3$ and only positive values, and option (d) gives every integer. So option (c) is the one.'
+          - problem: 'The set of integers that leave remainder $1$ when divided by $4$ equals $\{n \in \mathbb{Z} : n = 4k + r \text{ for some integer } k\}$ for one integer $r$ with $0 \le r \le 3$. Find $r$.'
+            answer: '1'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'An integer with remainder $1$ on division by $4$ has the form $4k + 1$, as in $1, 5, 9$ and $-3$. So $r = 1$. The other values $r = 0, 2, 3$ give the integers with remainder $0$, $2$ and $3$.'
         constraints: 'Translate English descriptions of infinite integer sets into defining predicates; preserve the variable domain and quantifier. Items ask for the matching description, a witness, a count or a member.'
     diagnostic_exemplar:
       problem: 'Write the set $\{1, 4, 9, 16, 25, \dots\}$ of squares of positive integers in set-builder notation, and decide whether it is a subset of $\mathbb{N}$, of $\mathbb{Z}$ and of $\mathbb{Q}$.'
@@ -477,10 +477,10 @@ topics:
             answer: '1, 3'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'First $B^{c} = \{1, 3, 4, 7\}$, the elements of $U$ outside $B$. Intersecting with $A = \{1, 2, 3, 5\}$ keeps $1$ and $3$. This is the same set as $A \setminus B$.'
-          - problem: 'Which of these equals $A \setminus B$ for all subsets $A$ and $B$ of a universe $U$? (a) $A \cap B^{c}$, (b) $A \cup B^{c}$, (c) $A^{c} \cap B$, (d) $A \cap B$.'
-            answer: 'a'
-            answer_contract: {"kind": "label", "options": [["a", "(a)", "option a"], ["b", "(b)", "option b"], ["c", "(c)", "option c"], ["d", "(d)", "option d"]]}
-            solution_sketch: 'A member of $A \setminus B$ is in $A$ and not in $B$, and not in $B$ means in $B^{c}$. So $A \setminus B = A \cap B^{c}$. Option (b) adds all of $B^{c}$, option (c) takes the members of $B$ outside $A$, and option (d) keeps what $B$ shares with $A$.'
+          - problem: 'Let $U = \{1, 2, \dots, 12\}$, let $A$ be the set of multiples of $3$ in $U$ and let $B$ be the set of even numbers in $U$. Find $A \setminus B$.'
+            answer: '3, 9'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'We have $A = \{3, 6, 9, 12\}$ and $B$ is the set of even numbers. Remove from $A$ every element of $B$, that is $6$ and $12$. This leaves $A \setminus B = A \cap B^{c} = \{3, 9\}$.'
           - problem: 'Let $U = \{1, 2, \dots, 10\}$, $A = \{1, 2, 3, 4, 5, 6\}$ and $B = \{2, 4, 6, 8, 10\}$. Find $A \setminus B^{c}$.'
             answer: '2, 4, 6'
             answer_contract: {"kind": "exact"}
@@ -501,10 +501,10 @@ topics:
             answer: '1, 2'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Sam''s expression $A^{c} \cap B$ keeps the elements of $B$ outside $A$, which is the set $B \setminus A = \{4\}$. The set $A \setminus B$ keeps the elements of $A$ outside $B$. Removing $3$ from $A$ leaves $1, 2$.'
-          - problem: 'Which of these equals $A \setminus (B \cup C)$ for all subsets $A$, $B$ and $C$ of a universe $U$? (a) $A \cap (B \cap C)^{c}$, (b) $A^{c} \cap (B \cup C)$, (c) $A \cap (B \cup C)^{c}$, (d) $A \cup (B \cup C)^{c}$.'
-            answer: 'c'
-            answer_contract: {"kind": "label", "options": [["a", "(a)", "option a"], ["b", "(b)", "option b"], ["c", "(c)", "option c"], ["d", "(d)", "option d"]]}
-            solution_sketch: 'A member of $A \setminus (B \cup C)$ is in $A$ and not in $B \cup C$, and not in $B \cup C$ means in $(B \cup C)^{c}$. So the set equals $A \cap (B \cup C)^{c}$. Option (a) removes only the elements that lie in both $B$ and $C$, option (b) takes elements outside $A$, and option (d) adds all of $(B \cup C)^{c}$.'
+          - problem: 'Let $U = \{1, 2, \dots, 10\}$, $A = \{1, 2, \dots, 8\}$, $B = \{2, 4, 6\}$ and $C = \{6, 7, 8, 9\}$. Find $A \setminus (B \cup C)$.'
+            answer: '1, 3, 5'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'First $B \cup C = \{2, 4, 6, 7, 8, 9\}$. Remove these elements from $A = \{1, 2, \dots, 8\}$. What remains is $A \setminus (B \cup C) = A \cap (B \cup C)^{c} = \{1, 3, 5\}$.'
         constraints: 'rewrite a set difference with a complement and intersection; check by members of an arbitrary element, then compute on small sets and in contexts'
     diagnostic_exemplar:
       problem: 'With universe $U = \{1, 2, \dots, 8\}$, $A = \{1,2,3,4\}$ and $B = \{3,4,5\}$: verify that $A \setminus B = A \cap B^{c}$, and say what $A^{c}$ becomes if the universe is changed to $V = \{1, \dots, 5\}$.'
@@ -601,10 +601,10 @@ topics:
             answer: '1, 3, 4'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The union is $\{1, 2, 3, 4, 5\}$ and the intersection is $\{2, 5\}$. Removing the intersection from the union leaves $1, 3, 4$. This is $A \triangle B$ written with union, intersection and difference.'
-          - problem: 'Which of these equals $A \triangle B$ for all sets $A$ and $B$? (a) $(A \cup B) \setminus (A \cap B)$, (b) $(A \cup B) \cap (A \cap B)$, (c) $(A \setminus B) \cap (B \setminus A)$, (d) $(A \cap B) \setminus (A \cup B)$.'
-            answer: 'a'
-            answer_contract: {"kind": "label", "options": [["a", "(a)", "option a"], ["b", "(b)", "option b"], ["c", "(c)", "option c"], ["d", "(d)", "option d"]]}
-            solution_sketch: 'The set $A \triangle B$ holds the elements in $A$ or $B$ but not in both, which is $(A \cup B) \setminus (A \cap B)$. Option (b) gives $A \cap B$ itself. Options (c) and (d) are always empty, because no element is in $A \setminus B$ and $B \setminus A$ at once, and no element of $A \cap B$ is outside $A \cup B$.'
+          - problem: 'Let $A = \{2, 4, 6, 8\}$ and $B = \{4, 8, 12\}$. Find $A \triangle B$.'
+            answer: '2, 6, 12'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The union is $\{2, 4, 6, 8, 12\}$ and the intersection is $\{4, 8\}$. Remove the intersection from the union. This leaves $A \triangle B = \{2, 6, 12\}$.'
           - problem: 'Let $A = \{3, 6, 9, 12\}$ and $B = \{6, 12, 15\}$. Compute $(A \setminus B) \cup (B \setminus A)$.'
             answer: '3, 9, 15'
             answer_contract: {"kind": "exact"}
@@ -621,10 +621,10 @@ topics:
             answer: '3, 8, 21, 34'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'We want the elements of the union that are not in the intersection. The union is $3, 5, 8, 13, 21, 34$ and the intersection is $5, 13$. Removing $5$ and $13$ leaves $3, 8, 21, 34$.'
-          - problem: 'Which of these is not equal to $A \triangle B$ in general? (a) $(A \setminus B) \cup (B \setminus A)$, (b) $B \triangle A$, (c) $(A \cup B) \setminus (A \cap B)$, (d) $(A \setminus B) \cap (B \setminus A)$.'
-            answer: 'd'
-            answer_contract: {"kind": "label", "options": [["a", "(a)", "option a"], ["b", "(b)", "option b"], ["c", "(c)", "option c"], ["d", "(d)", "option d"]]}
-            solution_sketch: 'Options (a) and (c) are the two standard forms of $A \triangle B$, and option (b) is the same set because the definition treats $A$ and $B$ alike. Option (d) asks for elements in $A \setminus B$ and in $B \setminus A$ at once. No element is in both, so option (d) is always empty.'
+          - problem: 'Sam claims that $A \triangle B = (A \setminus B) \cap (B \setminus A)$. For $A = \{1, 2, 3\}$ and $B = \{2, 3, 4\}$, how many elements of $A \triangle B$ are missing from Sam''s set?'
+            answer: '2'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Here $A \setminus B = \{1\}$ and $B \setminus A = \{4\}$, so Sam''s set $(A \setminus B) \cap (B \setminus A)$ is empty. The true set is $A \triangle B = \{1, 4\}$. Both of its $2$ elements are missing from Sam''s set.'
         constraints: 'compute both standard forms on small sets, pick the correct rewrite among options, and count elements in exactly one set in contexts'
       - id: kp3
         name: 'Basic properties'

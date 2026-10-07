@@ -1388,10 +1388,10 @@ topics:
             answer: 'yes'
             answer_contract: {"kind":"label","options":[["yes","it is maximal","maximal"],["no","it is not maximal","not maximal"]]}
             solution_sketch: 'A finite integral domain is a field: multiplication by a nonzero element is injective, hence onto, so it hits $1$. Since $R/I$ is a field, $I$ is maximal.'
-          - problem: 'Claim: every prime ideal of a commutative ring with unity is maximal. Step 1: let $P$ be a prime ideal of $R$. Step 2: $R/P$ is an integral domain. Step 3: every integral domain is a field. Step 4: so $R/P$ is a field and $P$ is maximal. Which step is the first one that is not valid?'
-            answer: 'Step 3'
-            answer_contract: {"kind":"label","options":[["Step 1","1","first step"],["Step 2","2","second step"],["Step 3","3","third step"],["Step 4","4","fourth step"]]}
-            solution_sketch: 'Steps 1 and 2 are valid by the quotient characterization of prime ideals. Step 3 is false: $\mathbb{Z}$ is an integral domain but not a field, so $\langle 0\rangle$ is prime but not maximal in $\mathbb{Z}$ and Step 4 does not follow.'
+          - problem: 'Sam claims that every prime ideal of a commutative ring with unity is maximal, because every integral domain is a field. In the integral domain $\mathbb{Z}$, find the smallest integer $n$ with $n > 1$ that has no multiplicative inverse in $\mathbb{Z}$.'
+            answer: '2'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'A multiplicative inverse of $n$ in $\mathbb{Z}$ is an integer $m$ with $nm = 1$. For $n = 2$ this needs $m = 1/2$, which is not an integer, so $2$ has no inverse. Hence $\mathbb{Z}$ is an integral domain that is not a field, and $\langle 0 \rangle$ is prime but not maximal.'
           - problem: 'Let $M$ be a maximal ideal of a commutative ring $R$ with unity, and suppose $R/M$ has exactly $4$ elements. How many solutions does the equation $y^2=0$ have in $R/M$?'
             answer: '1'
             answer_contract: {"kind":"exact"}
@@ -1772,14 +1772,14 @@ topics:
           answer: 'Both norms exceed $1$ and $9=3\cdot 3$ is the only split'
           why: 'Non-units have norm greater than $1$, and $9=1\cdot 9=3\cdot 3$ gives only the split $3\cdot 3$ with both parts above $1$.'
         exemplars:
-          - problem: 'In $\mathbb{Z}[\sqrt{-5}]$ the norm is $N(a+b\sqrt{-5})=a^2+5b^2$. Which of the following describes the element $2$?'
-            answer: 'irreducible but not prime'
-            answer_contract: {"kind":"label","options":[["irreducible and prime","prime and irreducible"],["irreducible but not prime","irreducible, not prime","irreducible not prime"],["reducible and not prime","reducible"],["a unit of this ring","a unit","unit"]]}
-            solution_sketch: 'If $2=xy$ with both factors nonunits, then $N(x)N(y)=4$ forces $N(x)=2$, but $a^2+5b^2=2$ has no integer solution, so $2$ is irreducible. Yet $2$ divides $6=(1+\sqrt{-5})(1-\sqrt{-5})$ and divides neither factor, because $N(2)=4$ does not divide $6$, so $2$ is not prime.'
-          - problem: 'In $\mathbb{Z}[\sqrt{-5}]$ with the norm $N(a+b\sqrt{-5})=a^2+5b^2$, which of the following describes the element $5$?'
-            answer: 'reducible and not prime'
-            answer_contract: {"kind":"label","options":[["irreducible and prime","prime and irreducible"],["irreducible but not prime","irreducible, not prime","irreducible not prime"],["reducible and not prime","reducible"],["a unit of this ring","a unit","unit"]]}
-            solution_sketch: 'The element $5$ factors as $5=\sqrt{-5}\cdot(-\sqrt{-5})$, and each factor has norm $5$, so neither is a unit. Hence $5$ is reducible, and a reducible element is not prime.'
+          - problem: 'In $\mathbb{Z}[\sqrt{-5}]$ the norm is $N(a+b\sqrt{-5})=a^2+5b^2$. Is $2$ an irreducible element of $\mathbb{Z}[\sqrt{-5}]$?'
+            answer: 'yes'
+            answer_contract: {"kind":"label","options":[["yes","it is irreducible","irreducible","2 is irreducible"],["no","it is not irreducible","not irreducible","reducible","2 is reducible"]]}
+            solution_sketch: 'If $2=xy$ with both factors nonunits, then $N(x)N(y)=4$ forces $N(x)=2$. But $a^2+5b^2=2$ has no integer solution, so no such factorization exists. Hence $2$ is irreducible, and the answer is yes.'
+          - problem: 'Find the product $ab$ of two elements $a$ and $b$ of $\mathbb{Z}[\sqrt{-5}]$ that $2$ divides, although $2$ divides neither $a$ nor $b$. Take $a = 1+\sqrt{-5}$ and $b = 1-\sqrt{-5}$.'
+            answer: '6'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'We have $ab = (1+\sqrt{-5})(1-\sqrt{-5}) = 1+5 = 6 = 2\cdot 3$, so $2$ divides $6$. But $(1\pm\sqrt{-5})/2$ is not in the ring, since its coordinates are not integers, so $2$ divides neither factor. Hence $2$ is not prime, although it is irreducible.'
           - problem: 'Find the Gaussian integer $a+bi$ with $a>b>0$ whose norm is $13$.'
             answer: '3+2i'
             answer_contract: {"kind":"exact"}

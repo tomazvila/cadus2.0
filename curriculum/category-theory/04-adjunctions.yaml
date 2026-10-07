@@ -811,14 +811,14 @@ topics:
             answer: '9'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'For $k=1_{GY}$ the formula reads $\varepsilon_Y(f,a)=1(f)(a)=f(a)$. So the counit evaluates a function at an argument, and at $a=1$ this is $f(1)=9$.'
-          - problem: 'Sam derives the first triangle identity. Step 1: $\eta_C=\Phi(1_{FC})$. Step 2: apply $\Phi^{-1}$ to get $\Phi^{-1}(\eta_C)=1_{FC}$. Step 3: in $\Phi^{-1}(k)=\varepsilon_D\circ Fk$ take $k=\eta_C$ and $D=C$. Step 4: conclude $\varepsilon_{FC}\circ F\eta_C=1_{FC}$. Which step is the first that fails?'
-            answer: 'Step 3'
-            answer_contract: {"kind":"label","options":[["Step 3","3","step three","the third step"],["Step 1","1","step one","the first step"],["Step 2","2","step two","the second step"],["Step 4","4","step four","the fourth step"],["none","no step fails","all steps are valid","none of them"]]}
-            solution_sketch: 'The unit $\eta_C$ has type $C\to GFC$, so in the formula $\Phi^{-1}(k)=\varepsilon_D\circ Fk$ the object $D$ must be $FC$, not $C$. Steps 1 and 2 are valid, so Step 3 is the first that fails.'
           - problem: 'Let $k\colon C\to GD$ be a map and let $\Phi^{-1}(k)=\varepsilon_D\circ Fk$. For $k=\eta_C$, the unit at $C$, which object is $D$?'
             answer: 'FC'
             answer_contract: {"kind":"label","options":[["FC","F(C)","F C","D = FC","D = F(C)","D is FC","the object FC","F of C"],["C","the object C"],["GC","G(C)","G C"],["GFC","G(F(C))","GF(C)","G F C"]]}
             solution_sketch: 'The unit $\eta_C$ has type $C\to GFC$. Comparing this with the type $C\to GD$ of the map $k$ gives $D=FC$, so the counit used is $\varepsilon_{FC}$.'
+          - problem: 'In $\mathbf{Set}$ fix $A=\{0,1\}$ and use the adjunction $-\times A\dashv(-)^A$, with unit $\eta_X(x)=(a\mapsto(x,a))$ and counit $\varepsilon_Y(f,a)=f(a)$. Let $X=\mathbb{N}$, so that $F\eta_X$ sends $(x,a)$ to $(\eta_X(x),a)$. What is $\varepsilon_{FX}(F\eta_X(5,1))$?'
+            answer: '(5, 1)'
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: 'First $F\eta_X(5,1)=(\eta_X(5),1)$, where $\eta_X(5)$ is the function $a\mapsto(5,a)$. Then $\varepsilon_{FX}$ evaluates this function at $1$, which gives $(5,1)$. So the composite is the identity, as the first triangle identity says.'
           - problem: 'Write the full proof that $G\varepsilon_D\circ\eta_{GD}=1_{GD}$ for every object $D$, starting from the definition $\varepsilon_D=\Phi^{-1}(1_{GD})$ and the formula $\Phi(h)=Gh\circ\eta_C$.'
             answer: 'See the solution.'
             answer_contract: {"kind":"none"}
@@ -1524,10 +1524,6 @@ topics:
             answer: 'no'
             answer_contract: {"kind":"label","options":[["no","no, it does not","it does not","it is not preserved"],["yes","yes, it does","it does","it is preserved"]]}
             solution_sketch: 'The coproduct of the underlying sets is a set with $4$ elements. The underlying set of $\mathbb{Z}/2*\mathbb{Z}/2$ is infinite, so the comparison map is not a bijection and $U$ does not preserve the coproduct.'
-          - problem: 'Sam proves that $U\colon\mathbf{Grp}\to\mathbf{Set}$ preserves the pullback $P=A\times_CB$ of $p\colon A\to C$ and $q\colon B\to C$, where $F\dashv U$. Step 1: $\mathrm{Hom}_{\mathbf{Set}}(X,UP)\cong\mathrm{Hom}_{\mathbf{Grp}}(FX,P)$ by the adjunction. Step 2: $\mathrm{Hom}_{\mathbf{Grp}}(FX,P)$ is the product $\mathrm{Hom}_{\mathbf{Grp}}(FX,A)\times\mathrm{Hom}_{\mathbf{Grp}}(FX,B)$. Step 3: by the adjunction again, this is $\mathrm{Hom}_{\mathbf{Set}}(X,UA)\times\mathrm{Hom}_{\mathbf{Set}}(X,UB)$. Step 4: by Yoneda, $UP$ is the pullback of $UA$ and $UB$ over $UC$. Which step is the first that fails?'
-            answer: 'Step 2'
-            answer_contract: {"kind":"label","options":[["Step 2","2","step two","the second step"],["Step 1","1","step one","the first step"],["Step 3","3","step three","the third step"],["Step 4","4","step four","the fourth step"],["none","no step fails","all steps are valid","none of them"]]}
-            solution_sketch: 'A homomorphism $FX\to P$ is a pair of homomorphisms $(u,v)$ with $p\circ u=q\circ v$. So the hom-set is a pullback of hom-sets over $\mathrm{Hom}_{\mathbf{Grp}}(FX,C)$, not the full product. Step 1 is the adjunction and is valid, so Step 2 is the first step that fails.'
           - problem: 'Write the full proof that if $F$ is left adjoint to $G$, then $G$ carries every limit that exists to a limit, by running the argument through the adjunction bijection and the Yoneda lemma.'
             answer: 'See the solution.'
             answer_contract: {"kind":"none"}

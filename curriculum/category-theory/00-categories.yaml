@@ -777,10 +777,6 @@ topics:
             answer: '(0, 2)'
             answer_contract: {"kind": "coordinates", "arity": 2}
             solution_sketch: 'The composite starts at $0$ and ends at $2$. Since there is only one arrow from $0$ to $2$, the composite is that arrow.'
-          - problem: 'The indiscrete category $\mathbf D$ has objects $a,b,c$. Is there a functor $F\colon \mathbf D \to \mathbf{Set}$ with $F(a)$ a set of $2$ elements and $F(b)$ a set of $3$ elements?'
-            answer: 'no'
-            answer_contract: {"kind": "label", "options": [["yes", "yes, there is", "there is such a functor", "there is"], ["no", "no, there is not", "there is no such functor", "there is not", "no such functor"]]}
-            solution_sketch: 'Every arrow of $\mathbf D$ is an isomorphism, and a functor sends isomorphisms to isomorphisms. So the arrow $a \to b$ would become a bijection from $F(a)$ to $F(b)$, which is impossible between sets of $2$ and $3$ elements.'
           - problem: 'The indiscrete category $\mathbf D$ has objects $a,b,c$, and $F\colon \mathbf D \to \mathbf{Set}$ is a functor with $F(a)$ a set of $2$ elements. How many elements does $F(b)$ have?'
             answer: '2'
             answer_contract: {"kind": "exact"}
@@ -801,10 +797,10 @@ topics:
             answer: '16'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The indiscrete category has one arrow for every ordered pair, including pairs of equal objects, because each object needs at least its identity. So there are $4 \cdot 4=16$ morphisms, which is $12$ arrows between different objects and $4$ loops.'
-          - problem: 'The indiscrete category $\mathbf D$ has objects $a,b,c$. Is there a functor $F\colon \mathbf D \to \mathbf{Set}$ with $F(a)$, $F(b)$ and $F(c)$ each a set of $2$ elements?'
-            answer: 'yes'
-            answer_contract: {"kind": "label", "options": [["yes", "yes, there is", "there is such a functor", "such a functor"], ["no", "no, there is not", "there is no such functor", "no such functor"]]}
-            solution_sketch: 'Send each of $a$, $b$, $c$ to the set $\{0,1\}$ and each arrow to the identity function. Identities go to identities and composites go to composites, so $F$ is a functor. So such a functor exists.'
+          - problem: 'The indiscrete category $\mathbf D$ has objects $a,b,c$. A functor $F\colon \mathbf D \to \mathbf{Set}$ has $F(a)=F(b)=\{0,1\}$ and sends the arrow $a \to b$ to the swap $0\mapsto1$, $1\mapsto0$. What is $F(g)(0)$ for the arrow $g\colon b \to a$?'
+            answer: '1'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'In $\mathbf D$ the composite of $a \to b$ and $g\colon b \to a$ is an arrow $a \to a$, so it is $1_a$ because there is only one arrow $a \to a$. Hence $F(g)$ undoes the swap, so $F(g)$ is the swap and $F(g)(0)=1$.'
           - problem: 'Write the full proof that in the indiscrete category on a set $S$ the composite of the arrow $x \to y$ with the arrow $y \to z$ is the arrow $x \to z$, and that every morphism is an isomorphism.'
             answer: 'Composites are forced and all arrows are isos'
             answer_contract: {"kind": "none"}
@@ -1756,10 +1752,10 @@ topics:
             answer: 'no'
             answer_contract: {"kind": "label", "options": [["yes", "it is a groupoid", "groupoid", "it is"], ["no", "it is not a groupoid", "not a groupoid", "it is not", "e is not invertible", "e has no inverse", "not a groupoid because e has no inverse"]]}
             solution_sketch: 'A groupoid needs every morphism to have a two-sided inverse. For $e$ we would need $b$ with $b\circ e=1$, but $1\circ e=e$ and $e\circ e=e$ are both $e$, never $1$. So $e$ is not invertible and the category is not a groupoid.'
-          - problem: 'Which of these categories is a groupoid: finite sets and bijections, finite sets and injections, finite sets and surjections, or finite sets and all functions?'
-            answer: 'finite sets and bijections'
-            answer_contract: {"kind": "label", "options": [["finite sets and bijections", "bijections", "the category of finite sets and bijections", "finite sets with bijections", "bijection", "finite sets and bijective functions", "sets and bijections"], ["finite sets and injections", "injections", "the category of finite sets and injections", "finite sets with injections", "injection", "finite sets and injective functions", "sets and injections"], ["finite sets and surjections", "surjections", "the category of finite sets and surjections", "finite sets with surjections", "surjection", "finite sets and surjective functions", "sets and surjections"], ["finite sets and all functions", "all functions", "the category of finite sets and all functions", "finite sets with all functions", "finite sets and functions", "sets and all functions"]]}
-            solution_sketch: 'The inverse of a bijection is again a bijection, so every morphism is invertible. An injection from $\{1\}$ to $\{1,2\}$ has no inverse, a surjection from $\{1,2\}$ to $\{1\}$ has none, and neither has a constant function. Only the bijections give a groupoid.'
+          - problem: 'Sam says that the category of finite sets and injective functions is a groupoid. Let $f\colon\{1\}\to\{1,2\}$ be the injective function with $f(1)=1$. How many injective functions $g\colon\{1,2\}\to\{1\}$ satisfy $g\circ f=1_{\{1\}}$?'
+            answer: '0'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'A function from $\{1,2\}$ to $\{1\}$ sends both $1$ and $2$ to $1$, so it is not injective. So there is no morphism $g$ at all, the number is $0$, and $f$ has no inverse. Hence the category is not a groupoid.'
           - problem: 'Let $\mathcal C$ be the full subcategory of $\mathbf{Set}$ whose objects are $A=\{0,1\}$ and $B=\{b\}$. It has 8 morphisms: four maps $A\to A$, one map $A\to B$, one map $B\to B$ and two maps $B\to A$. How many of them are isomorphisms?'
             answer: '3'
             answer_contract: {"kind": "exact"}
@@ -2574,10 +2570,6 @@ topics:
             answer: "3"
             answer_contract: {"kind":"exact"}
             solution_sketch: 'Since $g\circ f$ is an epimorphism, the dual theorem says that $g$ is an epimorphism, so $g$ is surjective onto $Z$. Then the image $g(Y)$ is all of $Z$, which has $3$ elements.'
-          - problem: 'Sam proves, using only duality, that a composite of two epimorphisms is an epimorphism. Step 1: let $f\colon A\to B$ and $g\colon B\to C$ be epimorphisms of $\mathcal{C}$. Step 2: in $\mathcal{C}^{op}$, $f^{op}\colon B\to A$ and $g^{op}\colon C\to B$ are monomorphisms. Step 3: the known theorem shows that $f^{op}$ followed by $g^{op}$ is a monomorphism of $\mathcal{C}^{op}$. Step 4: reading back into $\mathcal{C}$, the composite of $f$ and $g$ is an epimorphism. Which step is the first that is not valid?'
-            answer: "Step 3"
-            answer_contract: {"kind":"label","options":[["Step 1","1","step one","the first step"],["Step 2","2","step two","the second step"],["Step 3","3","step three","the third step"],["Step 4","4","step four","the fourth step"]]}
-            solution_sketch: 'Step 1 only names two epimorphisms, and Step 2 is the correct dictionary from $\mathcal{C}$ to $\mathcal{C}^{op}$. Step 3 is the first invalid step, because $f^{op}\colon B\to A$ ends at $A$ and $g^{op}\colon C\to B$ starts at $C$, so $f^{op}$ followed by $g^{op}$ is not defined. The composable order is $g^{op}$ followed by $f^{op}$. Step 4 is fine once the order is repaired.'
           - problem: 'A shop chain has two shops, $1$ and $2$. Customers $c_1,c_2,c_3,c_4$ are registered at shop $1$, and customers $c_5,c_6$ at shop $2$. Let $f$ send each customer to the shop where the customer is registered. The manager wants a contact list that names one customer for each shop, and the named customer must be registered at that shop. By the dual of a known theorem, a morphism with a section is an epimorphism. How many sections does $f$ have in $\mathbf{Set}$?'
             answer: "8"
             answer_contract: {"kind":"exact"}

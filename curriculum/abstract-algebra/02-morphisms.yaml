@@ -58,10 +58,10 @@ topics:
             answer: '5'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Division by $b$ is multiplication by $b^{-1}$, and an isomorphism sends inverses to inverses, so $\varphi(a/b) = \varphi(a) - \varphi(b)$. Here this is $3 - (-2) = 5$, so the quotient $a/b$ has logarithm $5$.'
-          - problem: 'Sam claims that $\varphi : \mathbb{Z}_5 \to \mathbb{Z}_5$, $\varphi(k) = k^2 \bmod 5$, is an isomorphism of the additive group $\mathbb{Z}_5$. Step 1: $\varphi(a+b) = (a+b)^2$. Step 2: $\varphi(a) + \varphi(b) = a^2 + b^2$. Step 3: $(a+b)^2 = a^2 + b^2$ for all $a, b$, so $\varphi$ is a homomorphism. Step 4: $\varphi$ is injective, so $\varphi$ is an isomorphism. Which step is the first that is not valid?'
-            answer: 'Step 3'
-            answer_contract: {"kind": "label", "options": [["Step 1", "1", "first step"], ["Step 2", "2", "second step"], ["Step 3", "3", "third step"], ["Step 4", "4", "fourth step"]]}
-            solution_sketch: 'Steps 1 and 2 only evaluate $\varphi$ and are correct. Step 3 is false, because $(a+b)^2 = a^2 + 2ab + b^2$ and the term $2ab$ is not always $0$ modulo $5$: for $a = b = 1$ the left side is $4$ and the right side is $2$. So $\varphi$ is not a homomorphism, and Step 3 is the first invalid step.'
+          - problem: 'Sam claims that $\varphi : \mathbb{Z}_5 \to \mathbb{Z}_5$, $\varphi(k) = k^2 \bmod 5$, is an isomorphism of the additive group $\mathbb{Z}_5$, because $(a+b)^2 = a^2 + b^2$ for all $a, b$. For $a = b = 1$, find $\varphi(a+b) - (\varphi(a) + \varphi(b))$ in $\mathbb{Z}_5$.'
+            answer: '2'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'We have $\varphi(1+1) = \varphi(2) = 4$ and $\varphi(1) + \varphi(1) = 1 + 1 = 2$. So the difference is $4 - 2 = 2$, which is not $0$. Hence $\varphi$ is not a homomorphism, because $(a+b)^2 = a^2 + 2ab + b^2$.'
           - problem: 'Write the full proof that the map $\varphi : (\mathbb{R}, +) \to (\mathbb{R}_{>0}, \cdot)$, $\varphi(x) = 5^x$, is an isomorphism.'
             answer: 'The map is a bijective homomorphism.'
             answer_contract: {"kind": "none"}
@@ -113,10 +113,10 @@ topics:
             answer: 'yes'
             answer_contract: {"kind": "label", "options": [["yes", "yes, H is abelian", "it must be abelian", "H is abelian", "H must be abelian", "must be abelian", "yes, it must be abelian"], ["no", "no, H need not be abelian", "not necessarily", "H need not be abelian", "no, not necessarily"]]}
             solution_sketch: 'Let $\varphi : G \to H$ be an isomorphism and take $x, y \in H$. Because $\varphi$ is onto, $x = \varphi(a)$ and $y = \varphi(b)$ for some $a, b \in G$, and $xy = \varphi(ab) = \varphi(ba) = yx$ since $G$ is abelian. So $H$ is abelian, and the answer is yes.'
-          - problem: 'Sam tries to prove that $H$ is abelian when $\varphi : G \to H$ is an isomorphism and $G$ is abelian. Step 1: let $x, y \in H$. Step 2: since $\varphi$ is injective, choose $a, b \in G$ with $\varphi(a) = x$ and $\varphi(b) = y$. Step 3: $ab = ba$ because $G$ is abelian. Step 4: $xy = \varphi(a)\varphi(b) = \varphi(ab) = \varphi(ba) = \varphi(b)\varphi(a) = yx$. Step 5: so $H$ is abelian. Which step is the first that is not valid?'
-            answer: 'Step 2'
-            answer_contract: {"kind": "label", "options": [["Step 1", "1", "first step"], ["Step 2", "2", "second step"], ["Step 3", "3", "third step"], ["Step 4", "4", "fourth step"], ["Step 5", "5", "fifth step"]]}
-            solution_sketch: 'Step 2 is the error: finding $a$ and $b$ with $\varphi(a) = x$ and $\varphi(b) = y$ needs $\varphi$ to be surjective, and injectivity does not give that. Steps 3, 4 and 5 are correct once such $a$ and $b$ exist. So Step 2 is the first invalid step.'
+          - problem: 'Sam tries to prove that $H$ is abelian when $\varphi : G \to H$ is an injective homomorphism and $G$ is abelian, by writing every $x$ in $H$ as $\varphi(a)$. Let $G = \mathbb{Z}_2$ and let $H = S_3$, which has $6$ elements, with $\varphi$ injective. How many elements of $H$ are not of the form $\varphi(a)$?'
+            answer: '4'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The group $\mathbb{Z}_2$ has $2$ elements and $\varphi$ is injective, so the image has $2$ elements. The other $6 - 2 = 4$ elements of $S_3$ are not of the form $\varphi(a)$. So Sam''s argument fails, because it needs $\varphi$ to be onto.'
           - problem: 'Write the full proof that if $\varphi : G \to H$ is an isomorphism and $G$ is cyclic, then $H$ is cyclic.'
             answer: 'A generator maps to a generator.'
             answer_contract: {"kind": "none"}
@@ -164,10 +164,6 @@ topics:
             answer: '3'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The map $x \mapsto kx$ is a homomorphism for every $k$, and it is an automorphism exactly when $\gcd(k, 9) = 1$. The values $k = 1$ and $k = 2$ are coprime to $9$, but $\gcd(3, 9) = 3$ and $3 \cdot 3 = 0 = 3 \cdot 0$, so the map is not injective. The smallest failing value is $k = 3$.'
-          - problem: 'Sam wants to show that the inverse of an isomorphism $\varphi : G \to H$ is an isomorphism. Step 1: $\varphi$ is bijective, so the inverse function $\varphi^{-1}$ exists. Step 2: for $h_1, h_2 \in H$ write $h_1 = \varphi(g_1)$ and $h_2 = \varphi(g_2)$. Step 3: $h_1 h_2 = \varphi(g_1 g_2)$, so $\varphi^{-1}(h_1 h_2) = g_1 g_2 = \varphi^{-1}(h_1)\varphi^{-1}(h_2)$. Step 4: also $\varphi^{-1}(h_1 h_2) = \varphi^{-1}(h_2)\varphi^{-1}(h_1)$, which equals $\varphi^{-1}(h_1)\varphi^{-1}(h_2)$ in every group. Which step is the first that is not valid?'
-            answer: 'Step 4'
-            answer_contract: {"kind": "label", "options": [["Step 1", "1", "first step"], ["Step 2", "2", "second step"], ["Step 3", "3", "third step"], ["Step 4", "4", "fourth step"]]}
-            solution_sketch: 'Steps 1, 2 and 3 are valid: the inverse function exists, preimages exist because $\varphi$ is onto, and the homomorphism law gives $\varphi^{-1}(h_1 h_2) = g_1 g_2$. Step 4 is false, because the two products $\varphi^{-1}(h_2)\varphi^{-1}(h_1)$ and $\varphi^{-1}(h_1)\varphi^{-1}(h_2)$ are different in a nonabelian group. The conclusion of Step 3 already finishes the proof, so the first invalid step is Step 4.'
           - problem: 'Write the full proof that the automorphisms of a group $G$ form a group under composition.'
             answer: 'Automorphisms form a group.'
             answer_contract: {"kind": "none"}
@@ -597,10 +593,10 @@ topics:
             answer: '2'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'We need $3x = 6$ modulo $9$, which means that $x = 2$ modulo $3$. The elements of $\mathbb{Z}_9$ with this property are $2, 5, 8$, and they form one coset of $\ker\varphi = \{0, 3, 6\}$. The smallest is $x = 2$.'
-          - problem: 'Sam wants to show that the map $\bar\varphi : G/K \to \mathrm{im}\,\varphi$ given by $\bar\varphi(gK) = \varphi(g)$, where $K = \ker\varphi$, is well defined. Step 1: suppose $gK = hK$. Step 2: then $g = h$. Step 3: hence $\varphi(g) = \varphi(h)$, so the value does not depend on the representative. Step 4: so $\bar\varphi$ is well defined. Which step is the first that is not valid?'
-            answer: 'Step 2'
-            answer_contract: {"kind": "label", "options": [["Step 1", "1", "first step"], ["Step 2", "2", "second step"], ["Step 3", "3", "third step"], ["Step 4", "4", "fourth step"]]}
-            solution_sketch: 'Step 1 is the correct start of the check. Step 2 is the error: $gK = hK$ means only that $h^{-1}g$ lies in $K$, and different elements of $G$ can lie in one coset. The correct next line is $h^{-1}g \in K$, and then $\varphi(g) = \varphi(h)\varphi(h^{-1}g) = \varphi(h)$.'
+          - problem: 'Sam wants to show that $\bar\varphi(gK) = \varphi(g)$ is well defined, and he says that $gK = hK$ forces $g = h$. Let $\varphi : \mathbb{Z}_{12} \to \mathbb{Z}_4$ be $\varphi(x) = x \bmod 4$, with kernel $K = \{0, 4, 8\}$. Find the smallest $h$ greater than $1$ with $h + K = 1 + K$.'
+            answer: '5'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The coset $1 + K$ is $\{1, 5, 9\}$. The smallest element greater than $1$ is $5$, so $5 + K = 1 + K$ although $5 \ne 1$. So $gK = hK$ means only that $h^{-1}g$ lies in $K$.'
           - problem: 'A counter has $60$ states $0, 1, \dots, 59$, and a display shows the remainder of the state on division by $12$. This display is a homomorphism $\varphi : \mathbb{Z}_{60} \to \mathbb{Z}_{12}$, and the states that look the same on the display form one coset of $\ker\varphi$. How many states look the same as state $0$?'
             answer: '5'
             answer_contract: {"kind": "exact"}
@@ -644,10 +640,10 @@ topics:
             answer: '5'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The image of $f$ is $\{0, 2, 4, 6, 8\}$, which is cyclic of order $5$ and generated by $2$. By the first isomorphism theorem, $\mathbb{Z}_{10}/\{0, 5\} \cong \mathbb{Z}_5$, so $m = 5$.'
-          - problem: 'Sam claims that $\mathbb{Z}_6/\{0, 3\}$ is isomorphic to $\mathbb{Z}_3$. Step 1: $f(x) = 2x$ is a homomorphism of $\mathbb{Z}_6$. Step 2: $\ker f = \{0, 3\}$. Step 3: the image of $f$ is $\{0, 2, 4, 6\}$. Step 4: the image is cyclic of order $3$, so by the first isomorphism theorem $\mathbb{Z}_6/\{0, 3\} \cong \mathbb{Z}_3$. Which step is the first that is not valid?'
-            answer: 'Step 3'
-            answer_contract: {"kind": "label", "options": [["Step 1", "1", "first step"], ["Step 2", "2", "second step"], ["Step 3", "3", "third step"], ["Step 4", "4", "fourth step"]]}
-            solution_sketch: 'Steps 1 and 2 are correct, since $2x = 0$ modulo $6$ exactly for $x = 0$ and $x = 3$. Step 3 is wrong because $6$ is not an element of $\mathbb{Z}_6$: it equals $0$, so the image is $\{0, 2, 4\}$. Step 4 then holds for this correct image, so the first invalid step is Step 3.'
+          - problem: 'Sam claims that $\mathbb{Z}_6/\{0, 3\}$ is isomorphic to $\mathbb{Z}_3$. He takes $f(x) = 2x$ on $\mathbb{Z}_6$, which has kernel $\{0, 3\}$, and he lists the image as $\{0, 2, 4, 6\}$. How many different elements does the image of $f$ have?'
+            answer: '3'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'In $\mathbb{Z}_6$ the value $6$ equals $0$, so the image is $\{0, 2, 4\}$. It has $3$ elements, which agrees with $6/|\ker f| = 6/2 = 3$. So the quotient is isomorphic to $\mathbb{Z}_3$.'
           - problem: 'In $\mathbb{Z}_6$ let $f(x) = cx \bmod 6$ with $0 < c < 6$. To identify $\mathbb{Z}_6/\{0, 2, 4\}$ with the first isomorphism theorem, we need $f$ to have kernel $\{0, 2, 4\}$. Find $c$.'
             answer: '3'
             answer_contract: {"kind": "exact"}
@@ -695,10 +691,10 @@ topics:
             answer: '2'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The first isomorphism theorem gives $\mathbb{Z}_{12}/\ker\varphi \cong \mathbb{Z}_6$, so $|\ker\varphi| = 12/6 = 2$. Such a map exists, for example the reduction map $x \mapsto x \bmod 6$.'
-          - problem: 'Sam tries to prove that a surjective homomorphism $\mathbb{Z}_{10} \to \mathbb{Z}_4$ exists. Step 1: by the first isomorphism theorem the image would have order $4$ and would be a quotient of $\mathbb{Z}_{10}$. Step 2: the kernel would then have order $10/4$. Step 3: an order need not be a whole number, so this is no obstruction. Step 4: therefore the surjection exists. Which step is the first that is not valid?'
-            answer: 'Step 3'
-            answer_contract: {"kind": "label", "options": [["Step 1", "1", "first step"], ["Step 2", "2", "second step"], ["Step 3", "3", "third step"], ["Step 4", "4", "fourth step"]]}
-            solution_sketch: 'Step 1 is correct, and Step 2 correctly computes $|\ker\varphi| = |\mathbb{Z}_{10}|/4 = 10/4$. Step 3 is false, because the order of a subgroup is a positive whole number, and $10/4 = 2.5$ is not one. So no such kernel exists, and Step 3 is the first invalid step.'
+          - problem: 'Sam tries to prove that a surjective homomorphism $\mathbb{Z}_{10} \to \mathbb{Z}_4$ exists, and he says that a kernel of order $10/4$ is no obstruction. Find the largest $n$ with $n \le 4$ for which a surjective homomorphism $\mathbb{Z}_{10} \to \mathbb{Z}_n$ exists.'
+            answer: '2'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'A surjective homomorphism $\mathbb{Z}_{10} \to \mathbb{Z}_n$ has a kernel of order $10/n$, so $n$ must divide $10$. Among $1, 2, 3, 4$ only $1$ and $2$ divide $10$, so the largest is $2$. The value $n = 4$ fails because $10/4 = 2.5$ is not a whole number.'
           - problem: 'What is the largest possible number of elements of the image of a homomorphism from $\mathbb{Z}_9$ to $\mathbb{Z}_4$?'
             answer: '1'
             answer_contract: {"kind": "exact"}
@@ -851,10 +847,10 @@ topics:
             answer: '5'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The third isomorphism theorem cancels $20\mathbb{Z}$ and gives $(\mathbb{Z}/20\mathbb{Z})/(5\mathbb{Z}/20\mathbb{Z}) \cong \mathbb{Z}/5\mathbb{Z} \cong \mathbb{Z}_5$, so $m = 5$. Sam used the order $4$ of the subgroup instead of the order of the quotient, which is $20/4 = 5$.'
-          - problem: 'Let $N$ and $K$ be normal subgroups of a group $G$ with $N \subseteq K$. Which statement is true? (A) $(G/N)/(K/N) \cong K/N$. (B) $(G/N)/(K/N) \cong G/N$. (C) $(G/N)/(K/N) \cong G/K$. (D) $(G/N)/(K/N) \cong N/K$.'
-            answer: 'C'
-            answer_contract: {"kind": "label", "options": [["A", "(A)"], ["B", "(B)"], ["C", "(C)"], ["D", "(D)"]]}
-            solution_sketch: 'The third isomorphism theorem says that the common factor $N$ cancels, which leaves $G/K$, so statement (C) is true. Statement (A) names the subgroup being factored out, not the quotient. Statement (B) forgets to divide by $K/N$. Statement (D) is not meaningful, since $N/K$ is not a group when $N \subseteq K$ is proper.'
+          - problem: 'Let $N$ and $K$ be normal subgroups of a group $G$ with $N \subseteq K$. Suppose that $|G| = 60$, $|N| = 4$ and $|K| = 12$. How many elements does the group $(G/N)/(K/N)$ have?'
+            answer: '5'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'By the third isomorphism theorem, $(G/N)/(K/N) \cong G/K$. So the order is $|G|/|K| = 60/12 = 5$. Check: $G/N$ has $15$ elements and $K/N$ has $3$, and $15/3 = 5$.'
           - problem: 'Write the full proof of the third isomorphism theorem: if $N$ and $K$ are normal subgroups of $G$ with $N \subseteq K$, then $K/N$ is normal in $G/N$ and $(G/N)/(K/N) \cong G/K$.'
             answer: '(G/N)/(K/N) is isomorphic to G/K'
             answer_contract: {"kind": "none"}

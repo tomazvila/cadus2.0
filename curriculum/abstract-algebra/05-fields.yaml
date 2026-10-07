@@ -50,10 +50,10 @@ topics:
             answer: '2, 4, 5, 6, 8'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'An element $a$ of $\mathbb{Z}_{10}$ has an inverse exactly when $\gcd(a, 10) = 1$. The elements $1, 3, 7, 9$ pass this test. The nonzero elements $2, 4, 5, 6, 8$ share the factor $2$ or $5$ with $10$, so they have no inverse.'
-          - problem: 'Which of the following describes the polynomial ring $\mathbb{Z}[x]$: a field, an integral domain that is not a field, or neither?'
-            answer: 'integral domain'
-            answer_contract: {"kind": "label", "options": [["field", "it is a field", "a field"], ["domain", "integral domain", "an integral domain", "an integral domain that is not a field", "it is an integral domain"], ["neither", "it is neither", "neither of these"]]}
-            solution_sketch: 'The ring $\mathbb{Z}[x]$ has no zero divisors, because the leading coefficients of two nonzero polynomials multiply to a nonzero integer. It is not a field, because $x$ has no inverse: no polynomial $g$ satisfies $x\,g(x) = 1$. So $\mathbb{Z}[x]$ is an integral domain that is not a field.'
+          - problem: 'How many polynomials $g$ in $\mathbb{Z}[x]$ satisfy $x\,g(x) = 1$?'
+            answer: '0'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'If $g$ is nonzero, then $x\,g(x)$ has degree at least $1$, so it is not the constant polynomial $1$. If $g = 0$, then $x\,g(x) = 0$. So no polynomial satisfies the equation, and $x$ has no inverse in $\mathbb{Z}[x]$, which means that $\mathbb{Z}[x]$ is not a field. The count is $0$.'
           - problem: 'For which integers $n$ with $2 \le n \le 12$ is $\mathbb{Z}_n$ a field?'
             answer: '2, 3, 5, 7, 11'
             answer_contract: {"kind": "exact"}
@@ -1084,10 +1084,10 @@ topics:
             answer: '32'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'Each step multiplies the degree by at most $2$. After five steps the largest possible degree is $2^5=32$.'
-          - problem: 'Sam argues that $\sqrt[3]{2}$ is constructible. Step 1: $\sqrt[3]{2}$ is a root of $x^3 - 2$. Step 2: $x^3 - 2$ has no rational root, so $[\mathbb{Q}(\sqrt[3]{2}):\mathbb{Q}] = 3$. Step 3: $3 = 2 + 1$ is a sum of powers of $2$, hence a power of $2$. Step 4: by the criterion, $\sqrt[3]{2}$ is constructible. Which is the first step that is not valid?'
-            answer: 'Step 3'
-            answer_contract: {"kind":"label","options":[["step 1","1"],["step 2","2"],["step 3","3"],["step 4","4"]]}
-            solution_sketch: 'A sum of powers of $2$ is not a power of $2$. The degree $3$ is not a power of $2$, so Step 3 is wrong and $\sqrt[3]{2}$ is not constructible.'
+          - problem: 'Sam argues that $\sqrt[3]{2}$ is constructible, because the degree $3 = 2 + 1$ is a sum of powers of $2$ and so is a power of $2$. List the powers of $2$ that lie between $1$ and $10$.'
+            answer: '1, 2, 4, 8'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The powers of $2$ are $1, 2, 4, 8, 16, \dots$, so those between $1$ and $10$ are $1, 2, 4, 8$. The number $3$ is not in this list, so the degree $3$ is not a power of $2$. Hence $\sqrt[3]{2}$ is not constructible.'
           - problem: 'Starting from a segment of length $1$, a construction draws the diagonal of a unit square, which has length $\sqrt2$. It then draws the diagonal of a rectangle with sides $1$ and $\sqrt2$, then the diagonal of a rectangle with sides $\sqrt2$ and $\sqrt3$. Find the degree over $\mathbb{Q}$ of the smallest field that contains all three constructed lengths.'
             answer: '8'
             answer_contract: {"kind":"exact"}
@@ -1131,10 +1131,6 @@ topics:
             answer: 'no'
             answer_contract: {"kind":"label","options":[["yes","it can","possible","it can be trisected"],["no","it cannot","it can not","impossible","not possible","it cannot be trisected","cannot be trisected"]]}
             solution_sketch: 'A trisection constructs $\cos20^\circ$, which has degree $3$ over $\mathbb{Q}$. The degree $3$ is not a power of $2$, so the angle cannot be trisected.'
-          - problem: 'Sam argues that $60^\circ$ can be trisected. Step 1: $\cos20^\circ$ is a root of $8x^3-6x-1$, which is irreducible over $\mathbb{Q}$. Step 2: so $[\mathbb{Q}(\cos20^\circ):\mathbb{Q}]=3$. Step 3: a constructible number has degree a power of $2$ over $\mathbb{Q}$. Step 4: since $3$ is not a power of $2$, $\cos20^\circ$ is constructible. Which step is wrong?'
-            answer: 'Step 4'
-            answer_contract: {"kind":"label","options":[["step 1","1"],["step 2","2"],["step 3","3"],["step 4","4"]]}
-            solution_sketch: 'Steps 1 to 3 are correct. A degree that is not a power of $2$ shows that $\cos20^\circ$ is not constructible, so the conclusion of Step 4 is reversed.'
           - problem: 'The length $\sqrt5$ is constructible. Find $[\mathbb{Q}(\sqrt5):\mathbb{Q}]$.'
             answer: '2'
             answer_contract: {"kind":"exact"}
@@ -1186,10 +1182,10 @@ topics:
             answer: '4'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The degree is $\varphi(15)/2=8/2=4$. Since $4$ is a power of $2$, the regular $15$-gon is constructible.'
-          - problem: 'Sam argues that the circle can be squared. Step 1: the side $s$ of the square satisfies $s^2=\pi$. Step 2: every constructible number has degree a power of $2$ over $\mathbb{Q}$. Step 3: $\sqrt\pi$ is a square root, so its degree over $\mathbb{Q}$ is $2$. Step 4: so $\sqrt\pi$ is constructible. Which is the first step that is not valid?'
-            answer: 'Step 3'
-            answer_contract: {"kind":"label","options":[["step 1","1"],["step 2","2"],["step 3","3"],["step 4","4"]]}
-            solution_sketch: 'A square root of a number has degree $2$ only when that number is algebraic over $\mathbb{Q}$ of degree at most $2$. The number $\pi$ is transcendental, so $\sqrt\pi$ has no degree and Step 3 is wrong.'
+          - problem: 'Sam argues that the circle can be squared, because the side $s$ of the square satisfies $s^2 = \pi$ and so $s$ is a square root with degree $2$ over $\mathbb{Q}$. Sam uses the polynomial $x^2 - c$ with root $s$. Find $c$.'
+            answer: 'pi'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'From $s^2 = \pi$ we get $s^2 - \pi = 0$, so $c = \pi$. This polynomial has a coefficient that is not rational, because $\pi$ is transcendental. So $s$ has no degree over $\mathbb{Q}$, and Sam''s claim of degree $2$ is wrong.'
           - problem: 'The number $\cos(2\pi/17)$ has degree $\varphi(17)/2$ over $\mathbb{Q}$. Find $[\mathbb{Q}(\cos(2\pi/17)):\mathbb{Q}]$.'
             answer: '8'
             answer_contract: {"kind":"exact"}

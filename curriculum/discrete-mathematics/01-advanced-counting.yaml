@@ -743,10 +743,10 @@ topics:
             answer: '120'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Each $7$-topping pizza matches exactly one set of $3$ toppings left off. So the number is $\binom{10}{3} = \binom{10}{7} = 120$.'
-          - problem: 'Maya proves that $\binom{n}{k} = \binom{n}{n-k}$ by matching each $k$-subset of an $n$-set with its complement. Step 1: Let $S$ be a $k$-subset of the $n$-set. Step 2: Match $S$ with its complement. Step 3: This matching is not one-to-one, because two different $k$-subsets can have the same complement. Step 4: So the two counts are equal. Which step is the first one that is not valid?'
-            answer: 'Step 3'
-            answer_contract: {"kind": "label", "options": [["Step 1", "1", "step one"], ["Step 2", "2", "step two"], ["Step 3", "3", "step three"], ["Step 4", "4", "step four"]]}
-            solution_sketch: 'Step 1 and Step 2 are fine. Step 3 is false, because two subsets with the same complement are equal, so the matching is one-to-one. Step 4 follows once Step 3 is corrected.'
+          - problem: 'Maya proves that $\binom{n}{k} = \binom{n}{n-k}$ by matching each $k$-subset of an $n$-set with its complement. She says that this matching is not one-to-one, because two different $k$-subsets can have the same complement. Test her claim with $n = 4$ and $k = 2$. How many $2$-subsets of $\{1, 2, 3, 4\}$ have the complement $\{3, 4\}$?'
+            answer: '1'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The complement of a subset is the set of the elements that it leaves out. Only the subset $\{1, 2\}$ leaves out exactly $\{3, 4\}$, so $1$ subset has this complement. So the matching is one-to-one and Maya is wrong.'
           - problem: 'A club has $9$ members, and Ana is one of them. Counting the $4$-member committees by whether they include Ana gives $\binom{8}{3}$ that include her and $\binom{8}{4}$ that do not. How many $4$-member committees are there in all?'
             answer: '126'
             answer_contract: {"kind": "exact"}
@@ -790,10 +790,10 @@ topics:
             answer: '32'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Each of the $5$ toppings has $2$ choices, and the choices are independent. So there are $2^5 = 32$ sundaes.'
-          - problem: 'Leo proves that $k\binom{n}{k} = n\binom{n-1}{k-1}$ by counting the pairs (committee of $k$ people, chair on it). Step 1: Choosing the committee first gives $\binom{n}{k}$ ways, and then the chair gives $k$ ways. Step 2: Choosing the chair first gives $n$ ways. Step 3: Then the other $k-1$ members are chosen from all $n$ people, in $\binom{n}{k-1}$ ways. Step 4: Both counts are of the same set, so the two sides are equal. Which step is the first one that is not valid?'
-            answer: 'Step 3'
-            answer_contract: {"kind": "label", "options": [["Step 1", "1", "step one"], ["Step 2", "2", "step two"], ["Step 3", "3", "step three"], ["Step 4", "4", "step four"]]}
-            solution_sketch: 'Step 1 and Step 2 are fine. In Step 3 the chair is already on the committee, so the other $k-1$ members come from the remaining $n-1$ people in $\binom{n-1}{k-1}$ ways. Step 4 follows once Step 3 is corrected.'
+          - problem: 'Leo proves that $k\binom{n}{k} = n\binom{n-1}{k-1}$ by counting the pairs (committee of $k$ people, chair on it). He chooses the chair first in $n$ ways. Then he says that the other $k-1$ members are chosen from all $n$ people, in $\binom{n}{k-1}$ ways. Find the correct number of ways to choose the other $k-1$ members when $n = 5$ and $k = 3$.'
+            answer: '6'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The chair is already on the committee, so the other $k-1 = 2$ members come from the remaining $n-1 = 4$ people. This gives $\binom{4}{2} = 6$ ways, and not $\binom{5}{2} = 10$ ways.'
           - problem: 'A club has $6$ members. In how many ways can a committee of any size, with at least one member, be formed and one of its members be named chair?'
             answer: '192'
             answer_contract: {"kind": "exact"}
