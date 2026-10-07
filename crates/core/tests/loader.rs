@@ -54,7 +54,8 @@ fn loads_the_checked_in_curriculum_with_the_literal_counts() {
         .sum();
     // 2026-10-07, courses rewrite: 25153 exemplars (was 17430).
     // 2026-10-07, lettered-items pass: 25125 exemplars (was 25153).
-    assert_eq!(exemplars, 25125, "exemplars");
+    // 2026-10-07, written items (courses rewrite): 25165 exemplars (was 25125).
+    assert_eq!(exemplars, 25165, "exemplars");
 
     let anki_seeds: usize = topics.iter().map(|t| t.topic.anki_seeds.len()).sum();
     assert_eq!(anki_seeds, 2144, "anki seeds");

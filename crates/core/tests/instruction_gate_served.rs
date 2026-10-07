@@ -458,7 +458,8 @@ fn every_shipped_knowledge_point_whose_exemplar_shows_its_answer_gates() {
     // more answer-revealing exemplar (925 -> 924 overall, 146 -> 145 in Foundations).
     // 2026-10-07, courses rewrite: (1407, 12) overall (was (924, 43)).
     // 2026-10-07, lettered-items pass: (1407, 12) overall (was (1429, 12)).
-    assert_eq!((exempted, blind), (1407, 12));
+    // 2026-10-07, written items (courses rewrite): (1407, 11) overall (was (1407, 12)).
+    assert_eq!((exempted, blind), (1407, 11));
     // Foundations: (231, 5) (was (145, 12)).
     assert_eq!((foundations_exempted, foundations_blind), (231, 5));
 }
