@@ -24,82 +24,148 @@ topics:
       - id: kp1
         name: Common difference and next terms
         key_prerequisites: [integer-addition-subtraction]
-        constraints: "integer first terms and differences, |d| <= 9, include a decreasing sequence; two-part answers requested as an ordered pair"
+        step_check:
+          step: 'subtracting the first term from the second term'
+          question: 'Why can the common difference be found from just the first two terms of an arithmetic sequence?'
+          options:
+            - 'The first two terms are always the two smallest numbers in the sequence'
+            - 'The second term is always twice the first term, so subtracting gives d'
+            - 'Neighboring terms always differ by the same amount, so one pair shows d'
+            - 'Only the first pair is used because later pairs change as the terms grow'
+          answer: 'Neighboring terms always differ by the same amount, so one pair shows d'
+          why: 'The difference between neighboring terms is constant, so any one pair gives d. Here 12 - 7 = 5 and 17 - 12 = 5.'
         exemplars:
-          - problem: 'For the sequence $5, 9, 13, \ldots$, give the ordered pair (common difference, next term).'
-            answer: "(4, 17)"
-          - problem: 'For the sequence $20, 14, 8, \ldots$, give the ordered pair (common difference, next term).'
-            answer: "(-6, 2)"
-          - problem: "The terms of an arithmetic sequence are $12, 19, 26, \\ldots$. Give the common difference and the next term as (common difference, next term)."
-            answer: "(7, 33)"
-            answer_contract: {"arity": 2, "kind": "coordinates"}
-            solution_sketch: "Subtract consecutive terms: $19 - 12 = 7$, so the common difference is $7$. Add the difference to the last listed term: $26 + 7 = 33$. The ordered pair (common difference, next term) is (7, 33)."
-          - problem: "An arithmetic sequence lists $55, 47, 39, \\ldots$. Give the common difference and the next term as (common difference, next term)."
-            answer: "(-8, 31)"
-            answer_contract: {"arity": 2, "kind": "coordinates"}
-            solution_sketch: "Subtract consecutive terms: $47 - 55 = -8$, so the common difference is $-8$ and the sequence is decreasing. Add the difference to the last listed term: $39 + (-8) = 31$. The ordered pair (common difference, next term) is (-8, 31)."
-          - problem: "A parking garage holds $40$ cars on level 1, $34$ on level 2, and $28$ on level 3, and the pattern continues. Give the common difference and the level 4 count as (common difference, level 4 count)."
-            answer: "(-6, 22)"
-            answer_contract: {"arity": 2, "kind": "coordinates"}
-            solution_sketch: "The level counts $40, 34, 28$ form an arithmetic sequence. The common difference is $34 - 40 = -6$. Adding $-6$ to the level 3 count gives $28 + (-6) = 22$ cars on level 4. The ordered pair (common difference, level 4 count) is (-6, 22)."
-          - problem: "An arithmetic sequence has first term $-3$ and common difference $-5$. Give the second and third terms as (second term, third term)."
-            answer: "(-8, -13)"
-            answer_contract: {"arity": 2, "kind": "coordinates"}
-            solution_sketch: "Start from $a_1 = -3$ and add the common difference once for each new term. Second term: $-3 + (-5) = -8$. Third term: $-8 + (-5) = -13$. The ordered pair (second term, third term) is (-8, -13)."
+          - problem: 'What is the common difference of the arithmetic sequence $5, 9, 13, \ldots$?'
+            answer: '4'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Subtract a term from the term after it: $9 - 5 = 4$. Check with the next pair: $13 - 9 = 4$, so the difference is the same each time. The common difference is $4$.'
+          - problem: 'What is the next term of the arithmetic sequence $20, 14, 8, \ldots$?'
+            answer: '2'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The terms drop by the same amount each time: $14 - 20 = -6$. Add this difference to the last term: $8 + (-6) = 2$. The next term is $2$.'
+          - problem: 'What is the fifth term of the arithmetic sequence $55, 47, 39, \ldots$?'
+            answer: '23'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The common difference is $47 - 55 = -8$. The fourth term is $39 + (-8) = 31$, and the fifth term is $31 + (-8) = 23$.'
+          - problem: 'A parking garage holds $40$ cars on level 1, $34$ on level 2 and $28$ on level 3, and the pattern continues. How many cars does level 6 hold?'
+            answer: '10'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The counts drop by $6$ from level to level, so the common difference is $-6$. Level 4 holds $22$ cars, level 5 holds $16$ cars, and level 6 holds $10$ cars.'
+          - problem: 'An arithmetic sequence has first term $-3$ and common difference $-5$. What is its third term?'
+            answer: '-13'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Start from $-3$ and add the common difference once for each new term. The second term is $-3 + (-5) = -8$. The third term is $-8 + (-5) = -13$.'
+          - problem: 'A sunflower is $4$ cm tall at the end of week 1, $7$ cm at the end of week 2 and $10$ cm at the end of week 3, and it grows by the same amount each week. By how many centimetres does it grow each week?'
+            answer: '3'
+            answer_contract: {"kind": "unit", "quantity": "length", "unit": "cm", "allow_omitted": true}
+            solution_sketch: 'The heights form an arithmetic sequence, and the growth each week is the common difference. Subtract neighboring heights: $7 - 4 = 3$ and $10 - 7 = 3$. The sunflower grows $3$ cm each week.'
+          - problem: 'Sam says the common difference of $30, 24, 18, \ldots$ is $6$. What is the correct common difference?'
+            answer: '-6'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Sam subtracted in the wrong order. The common difference is the later term minus the earlier term: $24 - 30 = -6$. The terms get smaller, so the difference is negative.'
+          - problem: 'Mia saves $15$ dollars in week 1, $22$ dollars in week 2 and $29$ dollars in week 3, and her weekly saving keeps growing by the same amount. How much does she save in week 5?'
+            answer: '43'
+            answer_contract: {"kind": "unit", "quantity": "dollar", "unit": "dollar", "allow_omitted": true}
+            solution_sketch: 'The common difference is $22 - 15 = 7$ dollars. Week 4 is $29 + 7 = 36$ dollars, and week 5 is $36 + 7 = 43$ dollars.'
+        constraints: 'integer first terms and differences, |d| <= 9, include a decreasing sequence; each question asks for one number: the common difference, the next term or a later term'
       - id: kp2
         name: The explicit formula
         key_prerequisites: [evaluating-expressions, function-notation]
-        constraints: "a_n = a_1 + (n-1)d; n up to 30"
+        step_check:
+          step: 'Plug the values into the explicit formula'
+          question: 'Why does the formula for the 15th term multiply d by 14 and not by 15?'
+          options:
+            - 'The formula always uses one less than n to keep the answer small'
+            - 'The 15th term has position 14, because the count of terms starts at zero'
+            - 'The common difference is added once for each term except the 15th term'
+            - 'The first term is already listed, so only 14 steps of d are added'
+          answer: 'The first term is already listed, so only 14 steps of d are added'
+          why: 'Going from the 1st term to the 15th term takes 14 steps, and each step adds d. That gives 5 + 14 * 4 = 61.'
         exemplars:
-          - problem: 'Find the 10th term of $3, 7, 11, \ldots$'
-            answer: "39"
-            solution_sketch: '$a_{10} = 3 + 9 \cdot 4 = 39$.'
-          - problem: 'The arithmetic sequence with $a_1 = 2$ and $d = 5$ has explicit formula $a_n = \ldots$. Give the expression in $n$.'
-            answer: "5n - 3"
-            solution_sketch: '$a_n = 2 + (n - 1) \cdot 5 = 5n - 3$ (so $a_{20} = 97$).'
-          - problem: "An arithmetic sequence has first term $8$ and common difference $5$. Find its 13th term."
-            answer: "68"
+          - problem: 'Find the 10th term of the arithmetic sequence $3, 7, 11, \ldots$'
+            answer: '39'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Use the explicit formula $a_n = a_1 + (n - 1)d$ for an arithmetic sequence. Substitute $a_1 = 8$, $d = 5$, and $n = 13$: $a_{13} = 8 + (13 - 1) \\cdot 5$. Compute the product: $12 \\cdot 5 = 60$. Add the first term: $8 + 60 = 68$. So the 13th term is 68."
-          - problem: "An arithmetic sequence has first term $-3$ and common difference $4$. Give its explicit formula as a function of $n$."
-            answer: "4n - 7"
+            solution_sketch: 'The first term is $3$ and the common difference is $4$. The 10th term adds $9$ differences to the first term: $3 + 9 \cdot 4 = 39$.'
+          - problem: 'An arithmetic sequence has first term $2$ and common difference $5$. Write a formula for its $n$th term $a_n$.'
+            answer: '5n - 3'
             answer_contract: {"kind": "function", "vars": ["n"]}
-            solution_sketch: "Start from the explicit formula $a_n = a_1 + (n - 1)d$. Substitute $a_1 = -3$ and $d = 4$: $a_n = -3 + (n - 1) \\cdot 4$. Distribute the 4: $-3 + 4n - 4$. Combine the constants: $4n - 7$. The explicit formula is 4n - 7."
-          - problem: "An arithmetic sequence is defined by $a_n = 11 - 2(n - 1)$. Find the 10th term."
-            answer: "-7"
+            solution_sketch: 'Use $a_n = a_1 + (n - 1)d$ with $a_1 = 2$ and $d = 5$. This gives $a_n = 2 + 5(n - 1) = 5n - 3$. A check: $n = 1$ gives $2$ and $n = 2$ gives $7$.'
+          - problem: 'An arithmetic sequence has first term $8$ and common difference $5$. What is its 13th term?'
+            answer: '68'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The sequence is arithmetic because its explicit formula has the form $a_n = a_1 + (n - 1)d$ with $a_1 = 11$ and $d = -2$. Substitute $n = 10$ into $a_n = 11 - 2(n - 1)$: $a_{10} = 11 - 2(10 - 1)$. Simplify inside the parentheses: $10 - 1 = 9$. Multiply: $2 \\cdot 9 = 18$, so $a_{10} = 11 - 18$. Subtract: $11 - 18 = -7$. The 10th term is -7."
-          - problem: "A theater has $20$ seats in the first row, and each row after the first has $3$ more seats than the row before. How many seats are in the 12th row?"
-            answer: "53"
+            solution_sketch: 'Substitute $a_1 = 8$, $d = 5$ and $n = 13$ into $a_n = a_1 + (n - 1)d$. This gives $8 + 12 \cdot 5 = 8 + 60 = 68$.'
+          - problem: 'An arithmetic sequence has first term $-3$ and common difference $4$. Write a formula for $a_n$.'
+            answer: '4n - 7'
+            answer_contract: {"kind": "function", "vars": ["n"]}
+            solution_sketch: 'Substitute $a_1 = -3$ and $d = 4$ into $a_n = a_1 + (n - 1)d$. This gives $-3 + 4(n - 1) = -3 + 4n - 4 = 4n - 7$.'
+          - problem: 'An arithmetic sequence is defined by $a_n = 11 - 2(n - 1)$. What is the 10th term?'
+            answer: '-7'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "This is an arithmetic sequence with first term $a_1 = 20$ and common difference $d = 3$. Use the explicit formula $a_n = a_1 + (n - 1)d$. Substitute $n = 12$: $a_{12} = 20 + (12 - 1) \\cdot 3$. Compute $12 - 1 = 11$, then $11 \\cdot 3 = 33$. Add: $20 + 33 = 53$. The 12th row has 53 seats."
+            solution_sketch: 'Substitute $n = 10$ into the formula: $a_{10} = 11 - 2(10 - 1) = 11 - 18$. The 10th term is $-7$.'
+          - problem: 'A theater has $20$ seats in the first row, and each row after the first has $3$ more seats than the row before. How many seats are in the 12th row?'
+            answer: '53'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The seat counts form an arithmetic sequence with $a_1 = 20$ and $d = 3$. For row 12, $a_{12} = 20 + 11 \cdot 3 = 20 + 33 = 53$.'
+          - problem: 'The lowest rung of a ladder is $30$ cm above the ground, and each rung is $25$ cm higher than the one below it. How high above the ground is the 9th rung?'
+            answer: '230'
+            answer_contract: {"kind": "unit", "quantity": "length", "unit": "cm", "allow_omitted": true}
+            solution_sketch: 'The rung heights form an arithmetic sequence with $a_1 = 30$ and $d = 25$. The 9th rung is $8$ steps above the first: $30 + 8 \cdot 25 = 30 + 200 = 230$ cm.'
+          - problem: 'The terms of an arithmetic sequence start $100, 92, 84, \ldots$ What is the 20th term?'
+            answer: '-52'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The common difference is $92 - 100 = -8$. The 20th term is $100 + 19 \cdot (-8) = 100 - 152 = -52$.'
+        constraints: 'a_n = a_1 + (n-1)d; n up to 50; the answer is a term, or a formula in n for a given first term and difference'
       - id: kp3
         name: Recover d or n from given terms
         key_prerequisites: [evaluating-expressions]
-        constraints: "give a_1 and one later term (or a target value); the unknown d or n is a small positive integer via a_n = a_1 + (n-1)d"
+        step_check:
+          step: 'Subtract 3 from both sides'
+          question: 'Why subtract 3 from both sides of 15 = 3 + 4d before dividing by 4?'
+          options:
+            - 'It removes the first term because the first term is never used for d'
+            - 'It leaves 4d alone on one side, so dividing by 4 then gives d'
+            - 'It changes the equation so that d is multiplied by 3 instead of 4'
+            - 'It turns 4d into d, so no division is needed afterwards'
+          answer: 'It leaves 4d alone on one side, so dividing by 4 then gives d'
+          why: 'The term 3 is added to 4d, so subtracting 3 undoes it. Then 12 = 4d and dividing by 4 gives d = 3.'
         exemplars:
-          - problem: 'An arithmetic sequence has $a_1 = 4$ and $a_7 = 22$. Find $d$.'
-            answer: "3"
-            solution_sketch: '$22 = 4 + 6d$, so $d = 3$.'
-          - problem: 'The sequence $1, 5, 9, \ldots$ has $a_n = 41$. Find $n$.'
-            answer: "11"
-            solution_sketch: '$1 + 4(n - 1) = 41$ gives $n = 11$.'
-          - problem: "An arithmetic sequence has $a_1 = 6$ and $a_8 = 34$. Find the common difference $d$."
-            answer: "4"
+          - problem: 'An arithmetic sequence has $a_1 = 4$ and $a_7 = 22$. What is the common difference?'
+            answer: '3'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "For an arithmetic sequence, the term formula is $a_n = a_1 + (n-1)d$. Substitute the given values: $34 = 6 + (8-1)d = 6 + 7d$. Subtract 6: $28 = 7d$, and divide by 7. The common difference is $d = 4$."
-          - problem: "An arithmetic sequence has $a_1 = 3$ and common difference $d = 5$. The term $a_n$ equals $58$. Find $n$."
-            answer: "12"
+            solution_sketch: 'Seven terms means $6$ steps of $d$ from the first term, so $22 = 4 + 6d$. Then $6d = 18$ and $d = 3$.'
+          - problem: 'The arithmetic sequence $1, 5, 9, \ldots$ has a term equal to $41$. Which term number is it?'
+            answer: '11'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Start with the arithmetic term formula $a_n = a_1 + (n-1)d$. Substitute the known values: $58 = 3 + 5(n-1)$. Subtract 3: $55 = 5(n-1)$, then divide by 5 to get $n-1 = 11$. The index is $n = 12$."
-          - problem: "A theater's first row has 10 seats, and each later row has 3 more seats than the row before, so the seat counts form an arithmetic sequence. One row has 46 seats. Find the row number $n$."
-            answer: "13"
+            solution_sketch: 'The common difference is $4$, so $41 = 1 + 4(n - 1)$. Then $4(n - 1) = 40$, so $n - 1 = 10$ and $n = 11$.'
+          - problem: 'An arithmetic sequence has $a_1 = 6$ and $a_8 = 34$. What is its common difference?'
+            answer: '4'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The seat counts form an arithmetic sequence with $a_1 = 10$ and $d = 3$. Use $a_n = a_1 + (n-1)d$, so $46 = 10 + 3(n-1)$. Subtract 10: $36 = 3(n-1)$, then divide by 3 to get $n-1 = 12$. The row number is $n = 13$."
-          - problem: "An arithmetic sequence has $a_1 = 12$ and its tenth term is $57$. Find the common difference $d$."
-            answer: "5"
+            solution_sketch: 'Use $a_8 = a_1 + 7d$, so $34 = 6 + 7d$. Then $7d = 28$ and $d = 4$.'
+          - problem: 'A theater''s first row has $10$ seats, and each later row has $3$ more seats than the row before. One row has $46$ seats. Which row is it?'
+            answer: '13'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Use the arithmetic term formula $a_n = a_1 + (n-1)d$. Substitute the given terms: $57 = 12 + (10-1)d = 12 + 9d$. Subtract 12: $45 = 9d$, and divide by 9. The common difference is $d = 5$."
+            solution_sketch: 'The seat counts satisfy $46 = 10 + 3(n - 1)$. Then $3(n - 1) = 36$, so $n - 1 = 12$ and $n = 13$. It is row $13$.'
+          - problem: 'The odometer of a car reads $120$ km at the end of day 1 and $505$ km at the end of day 8. The car travels the same distance each day. How far does it travel each day?'
+            answer: '55'
+            answer_contract: {"kind": "unit", "quantity": "length", "unit": "km", "allow_omitted": true}
+            solution_sketch: 'The readings form an arithmetic sequence, and the distance per day is the common difference. From day 1 to day 8 there are $7$ steps, so $505 = 120 + 7d$. Then $7d = 385$ and $d = 55$ km.'
+          - problem: 'A charity sells $12$ tickets on day 1, and on each later day it sells $5$ more tickets than on the day before. On which day does it sell $87$ tickets?'
+            answer: '16'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The daily sales satisfy $87 = 12 + 5(n - 1)$. Then $5(n - 1) = 75$, so $n - 1 = 15$ and $n = 16$. It is day $16$.'
+          - problem: 'An arithmetic sequence has $a_1 = 50$ and $a_6 = 20$. What is its common difference?'
+            answer: '-6'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Five steps lead from $a_1$ to $a_6$, so $20 = 50 + 5d$. Then $5d = -30$ and $d = -6$.'
+          - problem: 'Is $100$ a term of the arithmetic sequence $7, 12, 17, \ldots$?'
+            answer: 'no'
+            answer_contract: {"kind": "label", "options": [["yes", "correct", "right", "yes it is", "it is", "it is a term"], ["no", "incorrect", "wrong", "no it is not", "it is not", "not a term"]]}
+            solution_sketch: 'The common difference is $5$, so $100 = 7 + 5(n - 1)$ would need $5(n - 1) = 93$. Then $n - 1 = 18.6$, which is not a whole number, so $100$ is not a term.'
+          - problem: 'In an arithmetic sequence $a_3 = 8$ and $a_{11} = 40$. What is the common difference?'
+            answer: '4'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'From the 3rd term to the 11th term there are $8$ steps of $d$, so $40 - 8 = 8d$. Then $8d = 32$ and $d = 4$.'
+        constraints: 'give a_1 (or one earlier term) and one later term, or a target value; the unknown d or n is found from a_n = a_1 + (n-1)d'
     diagnostic_exemplar:
       problem: 'An arithmetic sequence has $a_1 = 5$ and $a_9 = 37$. Find $d$.'
       answer: "4"
@@ -129,84 +195,144 @@ topics:
       - id: kp1
         name: Sum with first and last term
         key_prerequisites: [arithmetic-sequences]
-        constraints: "S_n = n(a_1 + a_n)/2; n <= 100"
+        step_check:
+          step: 'Each pair of terms taken from opposite ends has the same total, $a_1 + a_n$'
+          question: 'Why does the sum of an arithmetic series equal n times (a_1 + a_n), divided by 2?'
+          options:
+            - 'The terms are added in n/2 groups, and each group totals the last term'
+            - 'Half of the terms are removed because they repeat the other half'
+            - 'The average of the first and last term is only an estimate, so 2 corrects it'
+            - 'The n terms make n/2 pairs, and each pair adds up to a_1 + a_n'
+          answer: 'The n terms make n/2 pairs, and each pair adds up to a_1 + a_n'
+          why: 'Pair the first term with the last, the second with the second to last, and so on. Every pair has the total a_1 + a_n, and there are n/2 pairs.'
         exemplars:
           - problem: 'Compute $1 + 2 + 3 + \cdots + 100$.'
-            answer: "5050"
-            solution_sketch: '$S = \frac{100(1 + 100)}{2}$.'
+            answer: '5050'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Pair the terms from the two ends: $1 + 100$, $2 + 99$, and so on, each pair totals $101$. There are $50$ pairs, so the sum is $50 \cdot 101 = 5050$. The formula gives the same value: $\frac{100(1 + 100)}{2} = 5050$.'
           - problem: 'Compute $3 + 7 + 11 + \cdots + 39$.'
-            answer: "210"
-            solution_sketch: 'There are $10$ terms; $S = \frac{10(3 + 39)}{2}$.'
-          - problem: "An arithmetic series has first term 6, last term 66, and 16 terms. Compute its sum."
-            answer: "576"
+            answer: '210'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The arithmetic series sum formula is S_n = n(a_1 + a_n)/2. Substitute n = 16, a_1 = 6, and a_n = 66 to get S_16 = 16(6 + 66)/2 = 576. The sum is 576."
-          - problem: "An arithmetic series has first term 8, common difference 6, and last term 98. Compute its sum."
-            answer: "848"
+            solution_sketch: 'The common difference is $4$, so $39 = 3 + 4(n - 1)$ gives $n = 10$ terms. The sum is $\frac{10(3 + 39)}{2} = 5 \cdot 42 = 210$.'
+          - problem: 'An arithmetic series has $16$ terms, first term $6$ and last term $66$. What is its sum?'
+            answer: '576'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The arithmetic series sum formula is S_n = n(a_1 + a_n)/2. First find n from a_n = a_1 + (n-1)d: 98 = 8 + 6(n-1), so n = 16. Then S_16 = 16(8 + 98)/2 = 848. The sum is 848."
-          - problem: "An arithmetic series has first term 10, last term 88, and sum 490. Find the number of terms."
-            answer: "10"
+            solution_sketch: 'Use $S_n = \frac{n(a_1 + a_n)}{2}$ with $n = 16$, $a_1 = 6$ and $a_n = 66$. Then $S_{16} = \frac{16(6 + 66)}{2} = 8 \cdot 72 = 576$.'
+          - problem: 'An arithmetic series has first term $8$, common difference $6$ and last term $98$. What is its sum?'
+            answer: '848'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The arithmetic series sum formula is S_n = n(a_1 + a_n)/2. Substitute S_n = 490, a_1 = 10, and a_n = 88: 490 = n(10 + 88)/2 = 49n. Solve to get n = 10. The number of terms is 10."
-          - problem: "A theater has 21 rows. The first row has 15 seats and the last row has 75 seats. The row sizes form an arithmetic series. Find the total number of seats."
-            answer: "945"
+            solution_sketch: 'First find the number of terms from $98 = 8 + 6(n - 1)$. This gives $6(n - 1) = 90$, so $n = 16$. Then $S_{16} = \frac{16(8 + 98)}{2} = 8 \cdot 106 = 848$.'
+          - problem: 'An arithmetic series has first term $10$, last term $88$ and sum $490$. How many terms does it have?'
+            answer: '10'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The arithmetic series sum formula is S_n = n(a_1 + a_n)/2. Substitute n = 21, a_1 = 15, and a_n = 75: S_21 = 21(15 + 75)/2 = 945. The total number of seats is 945."
+            solution_sketch: 'Substitute into $S_n = \frac{n(a_1 + a_n)}{2}$: $490 = \frac{n(10 + 88)}{2} = 49n$. Divide both sides by $49$ to get $n = 10$.'
+          - problem: 'A theater has $21$ rows. The first row has $15$ seats and the last row has $75$ seats, and the seat counts form an arithmetic sequence. How many seats does the theater have in total?'
+            answer: '945'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The row sizes form an arithmetic series with $n = 21$, $a_1 = 15$ and $a_n = 75$. The total is $\frac{21(15 + 75)}{2} = \frac{21 \cdot 90}{2} = 945$ seats.'
+          - problem: 'Pipes are stacked in layers. The bottom layer has $25$ pipes and each layer above it has one pipe fewer than the layer below, up to a top layer of $1$ pipe. How many pipes are in the stack?'
+            answer: '325'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The layer counts $25, 24, \ldots, 1$ form an arithmetic series with $25$ terms. The total is $\frac{25(25 + 1)}{2} = \frac{25 \cdot 26}{2} = 325$ pipes.'
+          - problem: 'A runner plans to run $4$ km on the first day and $32$ km on the last day, increasing the distance by the same amount each day. The plan covers $270$ km in total. How many days does the plan last?'
+            answer: '15'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The distances form an arithmetic series with $a_1 = 4$ and $a_n = 32$. Then $270 = \frac{n(4 + 32)}{2} = 18n$, so $n = 15$ days.'
+        constraints: 'S_n = n(a_1 + a_n)/2; n <= 100; the number of terms is given or found from the first term, last term and common difference; one question asks for the number of terms from the sum'
       - id: kp2
         name: Sum without the last term
         key_prerequisites: [arithmetic-sequences]
-        constraints: "S_n = n(2a_1 + (n-1)d)/2"
+        step_check:
+          step: 'Plug the values into the formula'
+          question: 'Why does the formula for S_10 contain the factor 9 in 2 * 3 + 9 * 4?'
+          options:
+            - 'It takes 9 steps of d to get from the first term to the 10th term'
+            - 'The number 9 is the second term of the sequence, so it is used with d'
+            - 'The sum of 10 terms always has 9 gaps, and each gap is the first term'
+            - 'The formula uses n minus one because the last term is not counted'
+          answer: 'It takes 9 steps of d to get from the first term to the 10th term'
+          why: 'The last term is a_10 = 3 + 9 * 4, because 9 steps of d lead from a_1 to a_10. The formula uses 2a_1 + (n - 1)d, which equals a_1 + a_n.'
         exemplars:
           - problem: 'Find the sum of the first $20$ terms of $5, 8, 11, \ldots$'
-            answer: "670"
-            solution_sketch: '$S = \frac{20}{2}(2 \cdot 5 + 19 \cdot 3) = 10 \cdot 67$.'
+            answer: '670'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The first term is $5$ and the common difference is $3$. Then $S_{20} = \frac{20}{2}(2 \cdot 5 + 19 \cdot 3) = 10 \cdot 67 = 670$.'
           - problem: 'Find the sum of the first $15$ terms of $2, 4, 6, \ldots$'
-            answer: "240"
-            solution_sketch: '$S = \frac{15}{2}(4 + 14 \cdot 2) = \frac{15 \cdot 32}{2}$.'
-          - problem: "Find the sum of the first 18 terms of the arithmetic sequence whose first three terms are 7, 11, and 15."
-            answer: "738"
+            answer: '240'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Use the arithmetic series formula S_n = n(2a_1 + (n-1)d)/2. Here n = 18, a_1 = 7, and d = 4. Substitute and compute: S = 18/2(2*7 + 17*4) = 9(14 + 68) = 9*82 = 738. The sum is 738."
-          - problem: "A theater has 24 rows of seats. The first row has 12 seats, and each later row has 3 more seats than the row before it. Find the total number of seats in the theater."
-            answer: "1116"
+            solution_sketch: 'The first term is $2$ and the common difference is $2$. Then $S_{15} = \frac{15}{2}(2 \cdot 2 + 14 \cdot 2) = \frac{15 \cdot 32}{2} = 240$.'
+          - problem: 'Find the sum of the first $18$ terms of the arithmetic sequence that starts $7, 11, 15, \ldots$'
+            answer: '738'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Use S_n = n(2a_1 + (n-1)d)/2 with n = 24, a_1 = 12, and d = 3. Compute S = 24/2(2*12 + 23*3) = 12(24 + 69) = 12*93 = 1116. The total number of seats is 1116."
-          - problem: "An arithmetic series has first term 3 and common difference 4. The sum of the first n terms is 300. Find n."
-            answer: "12"
+            solution_sketch: 'The common difference is $4$. Use $S_n = \frac{n}{2}(2a_1 + (n - 1)d)$: $S_{18} = 9(2 \cdot 7 + 17 \cdot 4) = 9(14 + 68) = 9 \cdot 82 = 738$.'
+          - problem: 'A theater has $24$ rows. The first row has $12$ seats, and each later row has $3$ more seats than the row before it. How many seats does the theater have in total?'
+            answer: '1116'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Use S_n = n(2a_1 + (n-1)d)/2 with a_1 = 3 and d = 4. Set S = 300 = n/2(2*3 + (n-1)*4) = n/2(4n + 2). Multiply by 2: 600 = 4n^2 + 2n, so 2n^2 + n - 300 = 0. Factor: (n - 12)(2n + 25) = 0, so n = 12. The number of terms is n = 12."
-          - problem: "An arithmetic series has first term 10 and 8 terms. Its sum is 276. Find the common difference."
-            answer: "7"
+            solution_sketch: 'The seat counts form an arithmetic series with $n = 24$, $a_1 = 12$ and $d = 3$. Then $S_{24} = 12(2 \cdot 12 + 23 \cdot 3) = 12 \cdot 93 = 1116$ seats.'
+          - problem: 'An arithmetic series has first term $3$ and common difference $4$. The sum of its first $n$ terms is $300$. What is $n$?'
+            answer: '12'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Use S_n = n(2a_1 + (n-1)d)/2 with a_1 = 10, n = 8, and S = 276. Substitute: 276 = 8/2(2*10 + 7d) = 4(20 + 7d). Divide by 4: 69 = 20 + 7d, so 7d = 49. Thus d = 7. The common difference is 7."
+            solution_sketch: 'Write $300 = \frac{n}{2}(2 \cdot 3 + 4(n - 1)) = n(2n + 1)$. This gives $2n^2 + n - 300 = 0$, which factors as $(n - 12)(2n + 25) = 0$. Only $n = 12$ is a positive whole number.'
+          - problem: 'An arithmetic series has first term $10$ and $8$ terms. Its sum is $276$. What is the common difference?'
+            answer: '7'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Write $276 = \frac{8}{2}(2 \cdot 10 + 7d) = 4(20 + 7d)$. Divide by $4$ to get $69 = 20 + 7d$, so $7d = 49$ and $d = 7$.'
+          - problem: 'Lena puts $5$ dollars in a jar in week 1, $8$ dollars in week 2, $11$ dollars in week 3, and so on, adding $3$ dollars more each week. How much has she put in the jar after $26$ weeks?'
+            answer: '1105'
+            answer_contract: {"kind": "unit", "quantity": "dollar", "unit": "dollar", "allow_omitted": true}
+            solution_sketch: 'The weekly amounts form an arithmetic series with $a_1 = 5$ and $d = 3$. Then $S_{26} = 13(2 \cdot 5 + 25 \cdot 3) = 13 \cdot 85 = 1105$ dollars.'
+          - problem: 'A tank is drained for $15$ minutes. In the first minute $120$ litres leave the tank, and in each later minute $4$ litres less leave than in the minute before. How many litres leave the tank in total?'
+            answer: '1380'
+            answer_contract: {"kind": "unit", "quantity": "volume", "unit": "L", "allow_omitted": true}
+            solution_sketch: 'The amounts form an arithmetic series with $a_1 = 120$ and $d = -4$. Then $S_{15} = \frac{15}{2}(2 \cdot 120 + 14 \cdot (-4)) = \frac{15}{2} \cdot 184 = 1380$ litres.'
+        constraints: 'S_n = n(2a_1 + (n-1)d)/2; the last term is not given; n <= 30; one question asks for n (a quadratic with an integer root) and one for d'
       - id: kp3
         name: Sums in sigma notation
         key_prerequisites: [summation-notation, arithmetic-sequences]
-        constraints: "sums of (ak + b) with small integer a, b; index from 1 to n <= 20; evaluated exactly"
+        step_check:
+          step: 'The terms of $\sum_{k=1}^{15}(2k+1)$ are $3, 5, 7, \ldots, 31$, and they differ by the constant $2$'
+          question: 'Why can the arithmetic series formula find the value of the sum of 2k + 1 from k = 1 to 15?'
+          options:
+            - 'The sum has 15 terms, and any sum with 15 terms is arithmetic'
+            - 'The terms 3, 5, 7, ... differ by a constant 2, so they are arithmetic'
+            - 'The index k goes up by 1 each time, and that makes the terms arithmetic'
+            - 'The sigma sign always means that the terms are added in pairs'
+          answer: 'The terms 3, 5, 7, ... differ by a constant 2, so they are arithmetic'
+          why: 'A series is arithmetic when consecutive terms differ by a constant. Here each term is 2 more than the one before, so S = 15(3 + 31)/2 = 255.'
         exemplars:
           - problem: 'Evaluate $\sum_{k=1}^{15} (2k + 1)$.'
-            answer: "255"
-            solution_sketch: '$2 \cdot \frac{15 \cdot 16}{2} + 15 = 240 + 15$.'
-          - problem: 'Evaluate $\sum_{k=1}^{10} (3k - 2)$.'
-            answer: "145"
-            solution_sketch: '$3 \cdot 55 - 20 = 145$.'
-          - problem: "Find the value of $\\sum_{k=1}^{20} (3k + 2)$."
-            answer: "670"
+            answer: '255'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The full object is the sum from k=1 to 20 of (3k + 2). Step 1: apply the distributive property to write it as 3 times the sum of k plus 2 times the sum of 1. Step 2: use the sum of the first n integers, n(n+1)/2, and the sum of n ones. Substitute n=20: 3(20*21/2) + 2(20) = 630 + 40 = 670. The value of the sum is 670."
-          - problem: "Compute $\\sum_{j=1}^{18} (5j - 4)$."
-            answer: "783"
+            solution_sketch: 'The terms are $3, 5, 7, \ldots, 31$, an arithmetic series with $15$ terms. Its sum is $\frac{15(3 + 31)}{2} = \frac{15 \cdot 34}{2} = 255$. The split $2 \cdot 120 + 15 = 255$ gives the same value.'
+          - problem: 'Sam evaluates $\sum_{k=1}^{10} (3k - 2)$ as $3 \cdot 55 - 2 = 163$. What is the correct value?'
+            answer: '145'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The full object is the sum from j=1 to 18 of (5j - 4). Step 1: use the distributive property to split the sum into 5 times the sum of j minus 4 times the sum of 1. Step 2: apply the formulas sum j = n(n+1)/2 and sum 1 = n. With n=18: 5(18*19/2) - 4(18) = 855 - 72 = 783. The value of the sum is 783."
-          - problem: "Determine the sum $\\sum_{m=1}^{14} (6m + 3)$."
-            answer: "672"
+            solution_sketch: 'Sam subtracted $2$ only once, but the $-2$ is part of each of the $10$ terms. The correct sum is $3 \cdot 55 - 2 \cdot 10 = 165 - 20 = 145$.'
+          - problem: 'Find the value of $\sum_{k=1}^{20} (3k + 2)$.'
+            answer: '670'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The full object is the sum from m=1 to 14 of (6m + 3). Step 1: separate the sum using the distributive property into 6 times the sum of m plus 3 times the sum of 1. Step 2: use the arithmetic series formulas sum m = n(n+1)/2 and sum 1 = n. Substitute n=14: 6(14*15/2) + 3(14) = 630 + 42 = 672. The value of the sum is 672."
-          - problem: "What is the total of the arithmetic series $\\sum_{t=1}^{16} (7t - 5)$?"
-            answer: "872"
+            solution_sketch: 'The terms start at $5$ and end at $62$, with common difference $3$. The sum is $\frac{20(5 + 62)}{2} = 10 \cdot 67 = 670$.'
+          - problem: 'Compute $\sum_{j=1}^{18} (5j - 4)$.'
+            answer: '783'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The full object is the sum from t=1 to 16 of (7t - 5). Step 1: apply the distributive property to write it as 7 times the sum of t minus 5 times the sum of 1. Step 2: use the formulas for the sum of the first n integers and the sum of n ones. With n=16: 7(16*17/2) - 5(16) = 952 - 80 = 872. The value of the sum is 872."
+            solution_sketch: 'The first term is $1$ and the last term is $5 \cdot 18 - 4 = 86$. The terms form an arithmetic series, so the sum is $\frac{18(1 + 86)}{2} = 9 \cdot 87 = 783$.'
+          - problem: 'In a display of cans, row $k$ from the top holds $2k + 1$ cans. How many cans are in the first $12$ rows?'
+            answer: '168'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The total is $\sum_{k=1}^{12} (2k + 1)$. The rows hold $3, 5, \ldots, 25$ cans, so the sum is $\frac{12(3 + 25)}{2} = 6 \cdot 28 = 168$ cans.'
+          - problem: 'A theater has $18$ rows, and row $k$ has $4k + 6$ seats. How many seats does the theater have?'
+            answer: '792'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The total is $\sum_{k=1}^{18} (4k + 6)$. The first row has $10$ seats and the last row has $78$ seats, so the sum is $\frac{18(10 + 78)}{2} = 9 \cdot 88 = 792$.'
+          - problem: 'Evaluate $\sum_{k=3}^{10} (2k - 1)$.'
+            answer: '96'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The index starts at $3$, so the first term is $2 \cdot 3 - 1 = 5$ and the last term is $2 \cdot 10 - 1 = 19$. There are $8$ terms, so the sum is $\frac{8(5 + 19)}{2} = 96$.'
+          - problem: 'Evaluate $\sum_{k=4}^{20} 3k$.'
+            answer: '612'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The first term is $12$ and the last term is $60$. The index runs from $4$ to $20$, which is $17$ terms, so the sum is $\frac{17(12 + 60)}{2} = 17 \cdot 36 = 612$.'
+        constraints: 'sums of (ak + b) with small integer a, b; the index runs from 1 or a small lower limit to n <= 20; evaluated exactly; some items in context'
     diagnostic_exemplar:
       problem: 'Evaluate $\sum_{k=1}^{12} (4k + 1)$.'
       answer: "324"
@@ -238,80 +364,144 @@ topics:
       - id: kp1
         name: Common ratio and next terms
         key_prerequisites: [multiplying-fractions]
-        constraints: "integer or simple fractional ratios; include a negative ratio"
+        step_check:
+          step: 'dividing the second term by the first term'
+          question: 'Why is the common ratio found by dividing a term by the term before it, and not by subtracting?'
+          options:
+            - 'Each term is r times the one before, so division undoes the product'
+            - 'Dividing is the only operation that works on negative numbers'
+            - 'The ratio is always the larger term minus the smaller term, then halved'
+            - 'A quotient shows how many terms come before it, and that count is r'
+          answer: 'Each term is r times the one before, so division undoes the product'
+          why: 'A geometric sequence multiplies by r at every step, so a term divided by the term before it gives r. Here -8 / 4 = -2 and 16 / (-8) = -2.'
         exemplars:
-          - problem: 'For the sequence $3, 6, 12, \ldots$, give the ordered pair (common ratio, next term).'
-            answer: "(2, 24)"
-          - problem: 'For the sequence $81, 27, 9, \ldots$, give the ordered pair (common ratio, next term).'
-            answer: "(1/3, 3)"
-          - problem: 'For the sequence $2, -6, 18, \ldots$, give the ordered pair (common ratio, next term).'
-            answer: "(-3, -54)"
-          - problem: "The terms 5, 15, and 45 form a geometric sequence. Find the common ratio and the term after 45, and give the ordered pair as (ratio, next term)."
-            answer: "(3, 135)"
-            answer_contract: {"arity": 2, "kind": "coordinates"}
-            solution_sketch: "Step 1: divide a term by the term before it. Here 15/5 = 3, so the common ratio is 3. Step 2: multiply the last shown term by the common ratio. Here 45 * 3 = 135, so the ordered pair is (3, 135)."
-          - problem: "Each term of 64, -32, 16, ... is found by multiplying the term before it by the same number. Find the common ratio and the following term, and give the ordered pair as (ratio, next term)."
-            answer: "(-1/2, -8)"
-            answer_contract: {"arity": 2, "kind": "coordinates"}
-            solution_sketch: "Step 1: divide a term by the term before it. Here -32/64 = -1/2, so the common ratio is -1/2. Step 2: multiply the last shown term by the ratio. Here 16 * (-1/2) = -8, so the ordered pair is (-1/2, -8)."
-          - problem: "A sample of sand loses the same fraction of its mass each day. Its recorded masses for three days are 100, 20, and 4 grams. Find the common ratio and the next mass, and give the ordered pair as (ratio, next mass)."
-            answer: "(1/5, 4/5)"
-            answer_contract: {"arity": 2, "kind": "coordinates"}
-            solution_sketch: "Step 1: divide a term by the term before it. Here 20/100 = 1/5, so the common ratio is 1/5. Step 2: multiply the last mass by the ratio. Here 4 * (1/5) = 4/5, so the ordered pair is (1/5, 4/5)."
+          - problem: 'What is the common ratio of the geometric sequence $3, 6, 12, \ldots$?'
+            answer: '2'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Divide a term by the term before it: $6 \div 3 = 2$. The next pair agrees, since $12 \div 6 = 2$. The common ratio is $2$.'
+          - problem: 'What is the next term of the geometric sequence $81, 27, 9, \ldots$?'
+            answer: '3'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The common ratio is $27 \div 81 = \frac{1}{3}$. Multiply the last term by the ratio: $9 \cdot \frac{1}{3} = 3$.'
+          - problem: 'What is the next term of the geometric sequence $2, -6, 18, \ldots$?'
+            answer: '-54'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The common ratio is $-6 \div 2 = -3$. Multiply the last term by the ratio: $18 \cdot (-3) = -54$.'
+          - problem: 'What is the fifth term of the geometric sequence $64, -32, 16, \ldots$?'
+            answer: '4'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The common ratio is $-32 \div 64 = -\frac{1}{2}$. The fourth term is $16 \cdot (-\frac{1}{2}) = -8$, and the fifth term is $-8 \cdot (-\frac{1}{2}) = 4$.'
+          - problem: 'The mass of a sand sample is the same fraction of the mass on the day before. Its masses on three days are $100$ g, $20$ g and $4$ g. What is its mass on the fourth day?'
+            answer: '0.8'
+            answer_contract: {"kind": "unit", "quantity": "mass", "unit": "g", "allow_omitted": true}
+            solution_sketch: 'The common ratio is $20 \div 100 = \frac{1}{5}$. The mass on day 4 is $4 \cdot \frac{1}{5} = \frac{4}{5} = 0.8$ g.'
+          - problem: 'A colony has $200$ cells in hour 1, $600$ cells in hour 2 and $1800$ cells in hour 3, and it keeps growing by the same factor. By what factor does the colony grow each hour?'
+            answer: '3'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The factor is the common ratio, found by dividing a count by the count before it: $600 \div 200 = 3$. Check: $1800 \div 600 = 3$.'
+          - problem: 'Sam says the common ratio of $48, 24, 12, \ldots$ is $24$. What is the correct common ratio?'
+            answer: '1/2'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Sam subtracted, but a ratio comes from division. The common ratio is $24 \div 48 = \frac{1}{2}$, and $12 \div 24 = \frac{1}{2}$ agrees.'
+          - problem: 'Is the sequence $3, 6, 12, 18, \ldots$ geometric, arithmetic or neither?'
+            answer: 'neither'
+            answer_contract: {"kind": "label", "options": [["geometric", "it is geometric", "a geometric sequence"], ["arithmetic", "it is arithmetic", "an arithmetic sequence"], ["neither", "neither one", "it is neither", "none"]]}
+            solution_sketch: 'The differences are $3, 6, 6$, which are not constant, so the sequence is not arithmetic. The ratios are $2, 2, \frac{3}{2}$, which are not constant, so it is not geometric. It is neither.'
+        constraints: 'integer or simple fractional ratios; include a negative ratio; each question asks for one number: the common ratio, the next term or a later term; one item classifies a sequence'
       - id: kp2
         name: The explicit formula
         key_prerequisites: [exponent-product-quotient-rules]
-        constraints: "a_n = a_1 · r^(n-1); keep values under 1000"
+        step_check:
+          step: 'Simplify the exponent'
+          question: 'Why is the exponent in a_4 = 3 * 4^(4-1) equal to 3 and not 4?'
+          options:
+            - 'The ratio is applied once less because the sequence starts at index 0'
+            - 'Each factor of r after the first is counted twice, so 4 is cut down to 3'
+            - 'The first term has no factor of r, so the 4th term has 3 factors of r'
+            - 'The exponent is always one less than r so that the value stays small'
+          answer: 'The first term has no factor of r, so the 4th term has 3 factors of r'
+          why: 'The first term is a_1 itself. Each step to the next term multiplies by r, so reaching the 4th term takes 3 multiplications.'
         exemplars:
           - problem: 'Find the 6th term of the geometric sequence with $a_1 = 5$ and $r = 2$.'
-            answer: "160"
-            solution_sketch: '$a_6 = 5 \cdot 2^5 = 5 \cdot 32$.'
-          - problem: 'Find the 5th term of $4, 12, 36, \ldots$'
-            answer: "324"
-            solution_sketch: '$a_5 = 4 \cdot 3^4$.'
-          - problem: "The geometric sequence has $a_1 = 3$ and $r = 2$. Find the 7th term."
-            answer: "192"
+            answer: '160'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Write the explicit formula for a geometric sequence: a_n = a_1 * r^(n-1). Substitute a_1 = 3, r = 2 and n = 7 to get a_7 = 3 * 2^6 = 3 * 64. The 7th term is 192."
-          - problem: "The geometric sequence begins $2, 10, 50, ...$ Find its 4th term."
-            answer: "250"
+            solution_sketch: 'Use $a_n = a_1 \cdot r^{n-1}$ with $n = 6$. Then $a_6 = 5 \cdot 2^5 = 5 \cdot 32 = 160$.'
+          - problem: 'Find the 5th term of the geometric sequence $4, 12, 36, \ldots$'
+            answer: '324'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Write the explicit formula a_n = a_1 * r^(n-1). The ratio is r = 10/2 = 5 and a_1 = 2, so a_4 = 2 * 5^3 = 2 * 125. The 4th term is 250."
-          - problem: "A geometric sequence has ratio $r = 2$ and 5th term $a_5 = 48$. Find its first term."
-            answer: "3"
+            solution_sketch: 'The common ratio is $12 \div 4 = 3$. Then $a_5 = 4 \cdot 3^4 = 4 \cdot 81 = 324$.'
+          - problem: 'A geometric sequence begins $2, 10, 50, \ldots$ What is its 4th term?'
+            answer: '250'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Write the explicit formula a_n = a_1 * r^(n-1). Substitute a_5 = 48, r = 2 and n = 5: 48 = a_1 * 2^4 = 16a_1. Solve to get a_1 = 3, so the first term is 3."
-          - problem: "The geometric sequence $3, 9, 27, ...$ has a term equal to $729$. Which term number is it?"
-            answer: "6"
+            solution_sketch: 'The common ratio is $10 \div 2 = 5$. Then $a_4 = 2 \cdot 5^3 = 2 \cdot 125 = 250$.'
+          - problem: 'A geometric sequence has common ratio $r = 2$ and fifth term $a_5 = 48$. What is its first term?'
+            answer: '3'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Write the explicit formula a_n = a_1 * r^(n-1). The sequence has a_1 = 3 and r = 3, and we need a_n = 729. Solve 3 * 3^(n-1) = 729, so 3^n = 729 = 3^6 and n = 6. The term number is 6."
+            solution_sketch: 'Substitute into $a_n = a_1 \cdot r^{n-1}$: $48 = a_1 \cdot 2^4 = 16a_1$. Divide both sides by $16$ to get $a_1 = 3$.'
+          - problem: 'The geometric sequence $3, 9, 27, \ldots$ has a term equal to $729$. Which term is it?'
+            answer: '6'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Here $a_1 = 3$ and $r = 3$, so $729 = 3 \cdot 3^{n-1} = 3^n$. Since $729 = 3^6$, the term number is $n = 6$.'
+          - problem: 'A ball is dropped from a height of $160$ cm. Each rebound reaches half the height of the one before. How high does the ball rise on the fifth rebound?'
+            answer: '5'
+            answer_contract: {"kind": "unit", "quantity": "length", "unit": "cm", "allow_omitted": true}
+            solution_sketch: 'The first rebound reaches $80$ cm, so the rebound heights form a geometric sequence with $a_1 = 80$ and $r = \frac{1}{2}$. The fifth rebound reaches $80 \cdot (\frac{1}{2})^4 = \frac{80}{16} = 5$ cm.'
+          - problem: 'A culture starts with $500$ bacteria, and the number triples every hour. How many bacteria are there after $4$ hours?'
+            answer: '40500'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The counts at hours $0, 1, 2, \ldots$ form a geometric sequence with $a_1 = 500$ and $r = 3$. After $4$ hours the count is the fifth term: $500 \cdot 3^4 = 500 \cdot 81 = 40500$.'
+          - problem: 'The number of fish in a lake triples every year. In year 5 there are $810$ fish. How many fish were in the lake in year 1?'
+            answer: '10'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Four years of tripling lead from year 1 to year 5, so $810 = a_1 \cdot 3^4 = 81a_1$. Divide by $81$ to get $a_1 = 10$ fish.'
+        constraints: 'a_n = a_1 * r^(n-1); keep values under 100000; the unknown may be a term, the first term or the term number'
       - id: kp3
         name: Recover the ratio from two terms
         key_prerequisites: [exponent-product-quotient-rules]
-        constraints: "two given terms at most three positions apart; r a small integer or ±2, ±3; remind both signs when the gap is even"
+        step_check:
+          step: 'Dividing $a_4$ by $a_1$ leaves $r^3$, because three factors of $r$ lie between them'
+          question: 'Why does a_4 divided by a_1 equal r^3 and not r^4?'
+          options:
+            - 'Four terms are used, and one of them is always dropped from the power'
+            - 'The ratio of two terms is always the cube root of the number of terms'
+            - 'The terms a_1 and a_4 are cubed because they are the end terms'
+            - 'It takes three steps from a_1 to a_4, and each step multiplies by r'
+          answer: 'It takes three steps from a_1 to a_4, and each step multiplies by r'
+          why: 'From a_1 to a_4 there are three steps, so a_4 = a_1 * r^3. Dividing by a_1 leaves r^3.'
         exemplars:
-          - problem: 'A geometric sequence has $a_1 = 2$ and $a_4 = 54$. Find $r$.'
-            answer: "3"
-            solution_sketch: '$r^3 = 27$, so $r = 3$.'
-          - problem: 'A geometric sequence has $a_3 = 20$ and $a_5 = 80$. Give the two possible values of $r$ as the ordered pair (positive, negative).'
-            answer: "(2, -2)"
-            solution_sketch: '$r^2 = 4$ — remember both signs.'
-          - problem: "A geometric sequence has $a_2 = 7$ and $a_5 = 56$. Find $r$."
-            answer: "2"
+          - problem: 'A geometric sequence has $a_1 = 2$ and $a_4 = 54$. What is the common ratio?'
+            answer: '3'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Use a5/a2 = r^3 for a geometric sequence. The quotient is 56/7 = 8, so r^3 = 8 and r = 2."
-          - problem: "A geometric sequence has $a_1 = 5$ and $a_3 = 45$. Give the two possible values of $r$ as (positive, negative)."
-            answer: "(3, -3)"
-            answer_contract: {"arity": 2, "kind": "coordinates"}
-            solution_sketch: "Use a3 = a1 r^2 for a geometric sequence: 45 = 5 r^2, so r^2 = 9. The two signs give r = 3 and r = -3, and the ordered pair positive then negative is (3, -3)."
-          - problem: "A geometric sequence has $a_3 = 5$ and $a_6 = -40$. Determine $r$."
-            answer: "-2"
+            solution_sketch: 'Three steps lead from $a_1$ to $a_4$, so $54 = 2r^3$. Then $r^3 = 27$ and $r = 3$.'
+          - problem: 'A geometric sequence has $a_3 = 20$ and $a_5 = 80$. What are the possible values of the common ratio?'
+            answer: '2, -2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Use a6/a3 = r^3 for a geometric sequence. The quotient is -40/5 = -8, so r^3 = -8 and r = -2."
-          - problem: "A geometric sequence has $a_3 = 7$ and $a_6 = -189$. Determine $r$."
-            answer: "-3"
+            solution_sketch: 'Two steps lead from $a_3$ to $a_5$, so $80 = 20r^2$. Then $r^2 = 4$, and both $r = 2$ and $r = -2$ work, because a square is positive for either sign.'
+          - problem: 'A geometric sequence has $a_2 = 7$ and $a_5 = 56$. What is the common ratio?'
+            answer: '2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Use a6/a3 = r^3 for a geometric sequence. The quotient is -189/7 = -27, so r^3 = -27 and r = -3."
+            solution_sketch: 'Three steps lead from $a_2$ to $a_5$, so $r^3 = \frac{56}{7} = 8$. The cube root of $8$ is $r = 2$.'
+          - problem: 'A geometric sequence has $a_2 = 6$ and $a_4 = 54$. What are the possible values of the common ratio?'
+            answer: '3, -3'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Two steps lead from $a_2$ to $a_4$, so $r^2 = \frac{54}{6} = 9$. Both $r = 3$ and $r = -3$ satisfy this.'
+          - problem: 'A geometric sequence has $a_3 = 5$ and $a_6 = -40$. What is the common ratio?'
+            answer: '-2'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Three steps lead from $a_3$ to $a_6$, so $r^3 = \frac{-40}{5} = -8$. The cube root of $-8$ is $r = -2$.'
+          - problem: 'A town had $4000$ people in 2020 and $13500$ people in 2023. Its population multiplies by the same factor each year. By what factor does it multiply each year?'
+            answer: '3/2'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Three years separate 2020 and 2023, so $13500 = 4000r^3$. Then $r^3 = \frac{13500}{4000} = \frac{27}{8}$ and $r = \frac{3}{2}$.'
+          - problem: 'A machine is worth $12000$ dollars after one year and $6750$ dollars after three years. Its value is multiplied by the same positive factor each year. What is that factor?'
+            answer: '3/4'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Two years separate the two values, so $6750 = 12000r^2$. Then $r^2 = \frac{6750}{12000} = \frac{9}{16}$, and the positive factor is $r = \frac{3}{4}$.'
+          - problem: 'Sam finds the common ratio of a geometric sequence with $a_2 = 12$ and $a_5 = 96$ by computing $96 \div 12 = 8$ and says $r = 8$. What is the correct common ratio?'
+            answer: '2'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The quotient $96 \div 12 = 8$ equals $r^3$, because three steps lead from $a_2$ to $a_5$. So $r^3 = 8$ and the correct ratio is $r = 2$.'
+        constraints: 'two given terms at most three positions apart; r is a small integer or a simple fraction; a gap of two positions gives two ratios unless the question says the terms are positive; answers are single values or a comma list'
     diagnostic_exemplar:
       problem: 'A geometric sequence has $a_1 = 3$ and $a_4 = 81$. Find $r$.'
       answer: "3"
@@ -343,86 +533,154 @@ topics:
       - id: kp1
         name: Finite geometric sums
         key_prerequisites: [geometric-sequences]
-        constraints: "S_n = a_1(1 - r^n)/(1 - r); n <= 8"
+        step_check:
+          step: 'Plug the values into the formula'
+          question: 'Why does the sum formula for the first n terms contain r^n in the numerator?'
+          options:
+            - 'The last term is a_1 r^n, so the formula uses the power of the last term'
+            - 'Subtracting r times the sum cancels the middle terms and leaves 1 - r^n'
+            - 'The first term already contains r, so one more power is needed'
+            - 'The ratio is applied n times because the sum starts from the zeroth term'
+          answer: 'Subtracting r times the sum cancels the middle terms and leaves 1 - r^n'
+          why: 'Subtract r times S_n from S_n. All middle terms cancel and S_n(1 - r) = a_1(1 - r^n), which gives the formula.'
         exemplars:
           - problem: 'Compute $2 + 6 + 18 + 54 + 162$.'
-            answer: "242"
-            solution_sketch: '$S_5 = \frac{2(3^5 - 1)}{3 - 1} = \frac{2 \cdot 242}{2}$.'
-          - problem: 'Find the sum of the first $6$ terms of $1, 2, 4, \ldots$'
-            answer: "63"
-            solution_sketch: '$2^6 - 1$.'
-          - problem: "Compute the sum 5 + 15 + 45 + 135 + 405."
-            answer: "605"
+            answer: '242'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The series is geometric with first term a_1 = 5, common ratio r = 3, and n = 5 terms. Apply the finite sum formula S_n = a_1(1 - r^n)/(1 - r): S_5 = 5(1 - 3^5)/(1 - 3) = 5(1 - 243)/(-2) = 5(-242)/(-2) = 605. The sum is 605."
-          - problem: "Find the sum of the first 7 terms of the geometric sequence 5, 10, 20, ..."
-            answer: "635"
+            solution_sketch: 'The first term is $2$, the ratio is $3$ and there are $5$ terms. Then $S_5 = \frac{2(3^5 - 1)}{3 - 1} = \frac{2 \cdot 242}{2} = 242$.'
+          - problem: 'Find the sum of the first $6$ terms of the geometric sequence $1, 2, 4, \ldots$'
+            answer: '63'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The sequence has a_1 = 5 and r = 2. Use the finite sum formula S_n = a_1(1 - r^n)/(1 - r) with n = 7: S_7 = 5(1 - 2^7)/(1 - 2) = 5(1 - 128)/(-1) = 635. The sum is 635."
-          - problem: "Evaluate the finite sum $\\sum_{k=1}^{6} 4 \\cdot 3^{k-1}$."
-            answer: "1456"
+            solution_sketch: 'The first term is $1$ and the ratio is $2$. Then $S_6 = \frac{1(2^6 - 1)}{2 - 1} = 64 - 1 = 63$.'
+          - problem: 'Find the sum of the first $7$ terms of the geometric sequence $5, 10, 20, \ldots$'
+            answer: '635'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The summand is geometric with first value a_1 = 4 at k = 1 and common ratio r = 3, and there are n = 6 terms. By the finite sum formula S_n = a_1(1 - r^n)/(1 - r), S_6 = 4(1 - 3^6)/(1 - 3) = 4(1 - 729)/(-2) = 1456. The sum is 1456."
-          - problem: "A geometric series has first term 7, common ratio 1/2, and 5 terms. Find its sum as a fraction."
-            answer: "217/16"
+            solution_sketch: 'The first term is $5$ and the ratio is $2$. Then $S_7 = \frac{5(1 - 2^7)}{1 - 2} = \frac{5 \cdot (-127)}{-1} = 635$.'
+          - problem: 'Evaluate $\sum_{k=1}^{6} 4 \cdot 3^{k-1}$.'
+            answer: '1456'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The series has a_1 = 7, r = 1/2, and n = 5. Use S_n = a_1(1 - r^n)/(1 - r): S_5 = 7(1 - (1/2)^5)/(1 - 1/2) = 7(31/32)/(1/2) = 217/16. The sum is 217/16."
+            solution_sketch: 'The first term is $4$ and the ratio is $3$, with $6$ terms. Then $S_6 = \frac{4(1 - 3^6)}{1 - 3} = \frac{4 \cdot (-728)}{-2} = 1456$.'
+          - problem: 'A geometric series has first term $7$, common ratio $\frac{1}{2}$ and $5$ terms. What is its sum?'
+            answer: '217/16'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Use $S_n = \frac{a_1(1 - r^n)}{1 - r}$ with $a_1 = 7$, $r = \frac{1}{2}$ and $n = 5$. Then $S_5 = \frac{7 \cdot \frac{31}{32}}{\frac{1}{2}} = \frac{217}{16}$.'
+          - problem: 'A rumor spreads through a school. On day 1 one student hears it, and each day three times as many students hear it for the first time as on the day before. How many students have heard it by the end of day 6?'
+            answer: '364'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The numbers of new listeners are $1, 3, 9, \ldots$, a geometric sequence with ratio $3$. Over $6$ days the total is $\frac{1(3^6 - 1)}{3 - 1} = \frac{728}{2} = 364$ students.'
+          - problem: 'A savings plan puts $100$ dollars in the account in year 1, and each later year it puts in twice the amount of the year before. How much has been put in after $7$ years?'
+            answer: '12700'
+            answer_contract: {"kind": "unit", "quantity": "dollar", "unit": "dollar", "allow_omitted": true}
+            solution_sketch: 'The yearly deposits form a geometric sequence with $a_1 = 100$ and $r = 2$. Then $S_7 = \frac{100(2^7 - 1)}{2 - 1} = 100 \cdot 127 = 12700$ dollars.'
+          - problem: 'A fund collects $3$ dollars on day 1, and on each later day it collects twice as much as on the day before. On which day does the total collected first reach $381$ dollars?'
+            answer: '7'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The total after $n$ days is $\frac{3(2^n - 1)}{2 - 1} = 3(2^n - 1)$. Setting this equal to $381$ gives $2^n - 1 = 127$, so $2^n = 128$ and $n = 7$.'
+          - problem: 'Sam finds the sum of the first $6$ terms of $3, 6, 12, \ldots$ as $\frac{3(1 - 2^5)}{1 - 2} = 93$. What is the correct sum?'
+            answer: '189'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Sam used the exponent $5$, but the exponent in the formula is the number of terms, which is $6$. The correct sum is $\frac{3(1 - 2^6)}{1 - 2} = \frac{3 \cdot (-63)}{-1} = 189$.'
+        constraints: 'S_n = a_1(1 - r^n)/(1 - r); n <= 8 unless the sum is a given and n is asked; sums are given as lists of terms, in sigma notation or in words'
       - id: kp2
         name: Infinite geometric sums
         key_prerequisites: [geometric-sequences, adding-subtracting-fractions]
-        constraints: "|r| < 1 only; ask when the sum exists"
+        step_check:
+          step: 'Check if the series converges by verifying $|r| < 1$'
+          question: 'Why must |r| be less than 1 before the formula S = a/(1 - r) is used?'
+          options:
+            - 'A ratio below 1 makes every term positive, which the formula needs'
+            - 'Only fractions with a denominator below 10 can be summed by the formula'
+            - 'The formula divides by 1 - r, and r above 1 makes the sum negative'
+            - 'If |r| < 1 the terms shrink toward 0, so the sums settle on one value'
+          answer: 'If |r| < 1 the terms shrink toward 0, so the sums settle on one value'
+          why: 'When |r| < 1 the terms get closer to 0 and the sums approach one number. When |r| is 1 or more, the terms do not shrink and the sums grow without limit or jump about.'
         exemplars:
           - problem: 'Compute $8 + 4 + 2 + 1 + \cdots$'
-            answer: "16"
-            solution_sketch: '$S = \frac{8}{1 - 1/2}$.'
+            answer: '16'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The first term is $8$ and the ratio is $\frac{1}{2}$. Since $|r| < 1$, the sum is $\frac{8}{1 - \frac{1}{2}} = \frac{8}{\frac{1}{2}} = 16$.'
           - problem: 'Compute $9 - 3 + 1 - \frac{1}{3} + \cdots$'
-            answer: "27/4"
-            solution_sketch: '$r = -\frac{1}{3}$; $S = \frac{9}{1 + 1/3} = \frac{9}{4/3}$.'
-          - problem: "Consider the infinite geometric series 5 + 5/3 + 5/9 + 5/27 + ... State whether the series has a finite sum, and give that sum as a fraction."
-            answer: "verdict = converges; sum = 15/2"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["converges"], ["diverges"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "sum"}]}
-            solution_sketch: "The infinite geometric series 5 + 5/3 + 5/9 + ... has first term a = 5 and common ratio r = 1/3. Because |r| < 1, it converges, so the choice diverges would come from treating |r| as at least 1. The infinite sum formula gives S = a/(1-r) = 5/(1 - 1/3) = 5/(2/3) = 15/2. Thus verdict = converges; sum = 15/2."
-          - problem: "An infinite geometric series begins with the terms 10, 2, 2/5, and 2/25. What is the sum of this series as a fraction?"
-            answer: "25/2"
+            answer: '27/4'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The series is geometric with first term a = 10 and common ratio r = 1/5, since each term is one fifth of the one before. Since |r| < 1, use the infinite geometric sum formula S = a/(1-r). This gives S = 10/(1 - 1/5) = 10/(4/5) = 25/2. The sum is 25/2."
-          - problem: "An alternating infinite geometric series starts with the terms 6, -2, 2/3, and -2/9. What is its sum, given as a fraction?"
-            answer: "9/2"
+            solution_sketch: 'The first term is $9$ and the ratio is $-\frac{1}{3}$, so $|r| < 1$. The sum is $\frac{9}{1 + \frac{1}{3}} = \frac{9}{\frac{4}{3}} = \frac{27}{4}$.'
+          - problem: 'Does the infinite series $3 + 6 + 12 + 24 + \cdots$ have a finite sum?'
+            answer: 'no'
+            answer_contract: {"kind": "label", "options": [["yes", "correct", "right", "it does", "yes it does", "it has a finite sum"], ["no", "incorrect", "wrong", "it does not", "no it does not", "no finite sum"]]}
+            solution_sketch: 'The common ratio is $2$, and $|2| > 1$. The terms keep growing, so the partial sums grow without limit and the series has no finite sum.'
+          - problem: 'What is the sum of the infinite geometric series $5 + \frac{5}{3} + \frac{5}{9} + \frac{5}{27} + \cdots$?'
+            answer: '15/2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "This series has first term a = 6 and common ratio r = -1/3, because each term is -1/3 times the previous one. Because |r| < 1, the infinite sum formula S = a/(1-r) applies. Substitute: S = 6/(1 - (-1/3)) = 6/(4/3) = 9/2. The sum is 9/2."
-          - problem: "An infinite geometric series has first term 18 and common ratio 2/3. Find its sum."
-            answer: "54"
+            solution_sketch: 'The first term is $5$ and the ratio is $\frac{1}{3}$, so $|r| < 1$. The sum is $\frac{5}{1 - \frac{1}{3}} = \frac{5}{\frac{2}{3}} = \frac{15}{2}$.'
+          - problem: 'An infinite geometric series begins with the terms $10, 2, \frac{2}{5}, \frac{2}{25}$. What is its sum?'
+            answer: '25/2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The series has a = 18 and r = 2/3. Since |r| < 1, the infinite geometric sum formula S = a/(1-r) applies. Compute S = 18/(1 - 2/3) = 18/(1/3) = 54. The sum is 54."
+            solution_sketch: 'Each term is one fifth of the term before it, so $a = 10$ and $r = \frac{1}{5}$. The sum is $\frac{10}{1 - \frac{1}{5}} = \frac{10}{\frac{4}{5}} = \frac{25}{2}$.'
+          - problem: 'An infinite geometric series starts with the terms $6, -2, \frac{2}{3}, -\frac{2}{9}$. What is its sum?'
+            answer: '9/2'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Each term is $-\frac{1}{3}$ times the term before it, so $a = 6$ and $r = -\frac{1}{3}$. The sum is $\frac{6}{1 + \frac{1}{3}} = \frac{6}{\frac{4}{3}} = \frac{9}{2}$.'
+          - problem: 'A ball is dropped from $12$ m. After each bounce it rises to $\frac{2}{3}$ of the height it fell. What is the total distance the ball travels before it comes to rest?'
+            answer: '60'
+            answer_contract: {"kind": "unit", "quantity": "length", "unit": "m", "allow_omitted": true}
+            solution_sketch: 'The ball falls $12$ m once. After that, each rebound height is travelled up and down: the heights $8, \frac{16}{3}, \ldots$ have sum $\frac{8}{1 - \frac{2}{3}} = 24$. The total is $12 + 2 \cdot 24 = 60$ m.'
+          - problem: 'The first swing of a pendulum is $30$ cm long, and each later swing is $0.8$ times as long as the swing before. What total distance does the pendulum travel before it stops?'
+            answer: '150'
+            answer_contract: {"kind": "unit", "quantity": "length", "unit": "cm", "allow_omitted": true}
+            solution_sketch: 'The swing lengths form an infinite geometric series with $a = 30$ and $r = 0.8$. Since $|r| < 1$, the total is $\frac{30}{1 - 0.8} = \frac{30}{0.2} = 150$ cm.'
+          - problem: 'An infinite geometric series has common ratio $\frac{1}{3}$ and sum $24$. What is its first term?'
+            answer: '16'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The sum satisfies $24 = \frac{a}{1 - \frac{1}{3}} = \frac{3a}{2}$. Multiply by $\frac{2}{3}$ to get $a = 16$.'
+        constraints: '|r| < 1 for the sums; one item asks whether a sum exists; the unknown may also be the first term'
       - id: kp3
         name: Repeating decimals as geometric series
         key_prerequisites: [geometric-sequences]
-        constraints: "one- or two-digit repeating blocks; first term block/10 or block/100 with r = 1/10 or 1/100; answers in lowest terms"
+        step_check:
+          step: 'Express the repeating decimal as a geometric series'
+          question: 'Why is the common ratio 1/100 and not 1/10 for the decimal 0.121212...?'
+          options:
+            - 'The block has two digits, so each repeat moves two places: 1/100'
+            - 'The numerator 12 is larger than 10, so the ratio must use 100'
+            - 'Every repeating decimal has the ratio 1/100 because it repeats forever'
+            - 'The ratio equals the first term 12/100, rounded to a single power of ten'
+          answer: 'The block has two digits, so each repeat moves two places: 1/100'
+          why: 'Each repeat of the two-digit block 12 sits two places further right, so it is 1/100 of the block before it.'
         exemplars:
-          - problem: 'Write $0.\overline{7}$ as a fraction using a geometric series.'
-            answer: "7/9"
-            solution_sketch: '$\frac{7}{10} + \frac{7}{100} + \cdots = \frac{7/10}{1 - 1/10}$.'
-          - problem: 'Write $0.\overline{36}$ as a fraction in lowest terms.'
-            answer: "4/11"
-            solution_sketch: '$\frac{36/100}{1 - 1/100} = \frac{36}{99}$.'
-          - problem: "Find the fraction in lowest terms equal to 0.\\overline{5} by treating it as a geometric series."
-            answer: "5/9"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1 (repeating decimal as a series): 0.\\overline{5} = 5/10 + 5/100 + 5/1000 + ... . Step 2 (geometric series formula): the first term is a = 5/10 and the ratio is r = 1/10, so S = a/(1 - r) = (5/10)/(1 - 1/10). Step 3 (simplify): (5/10)/(9/10) = 5/9. The fraction in lowest terms is 5/9."
-          - problem: "Find the fraction in lowest terms equal to 0.\\overline{12} by using a geometric series."
-            answer: "4/33"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1 (repeating decimal as a series): 0.\\overline{12} = 12/100 + 12/10000 + 12/1000000 + ... . Step 2 (geometric series formula): the first term is a = 12/100 and the ratio is r = 1/100, so S = a/(1 - r) = (12/100)/(1 - 1/100). Step 3 (simplify): (12/100)/(99/100) = 12/99 = 4/33. The fraction in lowest terms is 4/33."
-          - problem: "A calculator shows the repeating decimal 0.\\overline{27}. Find its exact value as a fraction in lowest terms by using a geometric series."
-            answer: "3/11"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1 (repeating decimal as a series): 0.\\overline{27} = 27/100 + 27/10000 + 27/1000000 + ... . Step 2 (geometric series formula): the first term is a = 27/100 and the ratio is r = 1/100, so S = a/(1 - r) = (27/100)/(1 - 1/100). Step 3 (simplify): (27/100)/(99/100) = 27/99 = 3/11. The exact value in lowest terms is 3/11."
-          - problem: "The repeating decimal 0.\\overline{81} can be written as the sum 81/100 + 81/10000 + 81/1000000 + ... . Find its value as a fraction in lowest terms."
-            answer: "9/11"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1 (identify the series): the sum is geometric with first term a = 81/100 and ratio r = 1/100. Step 2 (geometric series formula): S = a/(1 - r) = (81/100)/(1 - 1/100). Step 3 (simplify): (81/100)/(99/100) = 81/99 = 9/11. The fraction in lowest terms is 9/11."
+          - problem: 'Use a geometric series to write $0.\overline{7}$ as a fraction.'
+            answer: '7/9'
+            answer_contract: {"kind": "required_form", "form": "reduced_fraction"}
+            solution_sketch: 'Write $0.\overline{7} = \frac{7}{10} + \frac{7}{100} + \cdots$, a geometric series with $a = \frac{7}{10}$ and $r = \frac{1}{10}$. The sum is $\frac{7/10}{1 - 1/10} = \frac{7/10}{9/10} = \frac{7}{9}$.'
+          - problem: 'Use a geometric series to write $0.\overline{36}$ as a fraction.'
+            answer: '4/11'
+            answer_contract: {"kind": "required_form", "form": "reduced_fraction"}
+            solution_sketch: 'Write $0.\overline{36} = \frac{36}{100} + \frac{36}{10000} + \cdots$, with $a = \frac{36}{100}$ and $r = \frac{1}{100}$. The sum is $\frac{36/100}{99/100} = \frac{36}{99} = \frac{4}{11}$.'
+          - problem: 'A calculator shows the repeating decimal $0.\overline{27}$. Use a geometric series to find the fraction this number equals.'
+            answer: '3/11'
+            answer_contract: {"kind": "required_form", "form": "reduced_fraction"}
+            solution_sketch: 'Write $0.\overline{27} = \frac{27}{100} + \frac{27}{10000} + \cdots$, with $a = \frac{27}{100}$ and $r = \frac{1}{100}$. The sum is $\frac{27/100}{99/100} = \frac{27}{99} = \frac{3}{11}$.'
+          - problem: 'Write $0.1\overline{6}$ as a fraction.'
+            answer: '1/6'
+            answer_contract: {"kind": "required_form", "form": "reduced_fraction"}
+            solution_sketch: 'Split the decimal as $0.1 + 0.0\overline{6}$. The repeating part is $\frac{6}{100} + \frac{6}{1000} + \cdots$, with $a = \frac{6}{100}$ and $r = \frac{1}{10}$, so it equals $\frac{6/100}{9/10} = \frac{1}{15}$. Then $\frac{1}{10} + \frac{1}{15} = \frac{1}{6}$.'
+          - problem: 'A tank is $0.\overline{45}$ full. What fraction of the tank is full?'
+            answer: '5/11'
+            answer_contract: {"kind": "required_form", "form": "reduced_fraction"}
+            solution_sketch: 'Write $0.\overline{45} = \frac{45}{100} + \frac{45}{10000} + \cdots$, with $a = \frac{45}{100}$ and $r = \frac{1}{100}$. The sum is $\frac{45}{99} = \frac{5}{11}$ of the tank.'
+          - problem: 'Use a geometric series to decide whether $0.\overline{9}$ equals $1$.'
+            answer: 'yes'
+            answer_contract: {"kind": "label", "options": [["yes", "correct", "right", "yes it is", "it is", "they are equal"], ["no", "incorrect", "wrong", "no it is not", "it is not", "not equal"]]}
+            solution_sketch: 'Write $0.\overline{9} = \frac{9}{10} + \frac{9}{100} + \cdots$, with $a = \frac{9}{10}$ and $r = \frac{1}{10}$. The sum is $\frac{9/10}{1 - 1/10} = \frac{9/10}{9/10} = 1$, so the two numbers are equal.'
+          - problem: 'A runner covers $0.\overline{72}$ of a lap in one minute. What fraction of a lap is that?'
+            answer: '8/11'
+            answer_contract: {"kind": "required_form", "form": "reduced_fraction"}
+            solution_sketch: 'Write $0.\overline{72} = \frac{72}{100} + \frac{72}{10000} + \cdots$, with $a = \frac{72}{100}$ and $r = \frac{1}{100}$. The sum is $\frac{72}{99} = \frac{8}{11}$ of a lap.'
+          - problem: 'What is the sum of the infinite series $\frac{7}{100} + \frac{7}{10000} + \frac{7}{1000000} + \cdots$?'
+            answer: '7/99'
+            answer_contract: {"kind": "required_form", "form": "reduced_fraction"}
+            solution_sketch: 'The first term is $\frac{7}{100}$ and the ratio is $\frac{1}{100}$. The sum is $\frac{7/100}{1 - 1/100} = \frac{7/100}{99/100} = \frac{7}{99}$.'
+        constraints: 'one- or two-digit repeating blocks, and one decimal with a non-repeating digit before the block; first term block/10 or block/100 with r = 1/10 or 1/100; fractions in lowest terms'
     diagnostic_exemplar:
-      problem: 'Write $0.\overline{45}$ as a fraction in lowest terms using a geometric series.'
+      problem: 'Use a geometric series to write $0.\overline{45}$ as a fraction.'
       answer: "5/11"
       solution_sketch: '$\frac{45}{100} + \frac{45}{10000} + \cdots = \frac{45/100}{1 - 1/100} = \frac{45}{99} = \frac{5}{11}$.'
     anki_seeds:
@@ -455,85 +713,156 @@ topics:
       - id: kp1
         name: Generate terms from a recursion
         key_prerequisites: [evaluating-expressions]
-        constraints: "one-term recursions, 3-5 steps, integer arithmetic"
+        step_check:
+          step: 'Start with the initial term'
+          question: 'Why must a recursive definition give the first term as well as the rule?'
+          options:
+            - 'The first term tells how many terms the sequence has'
+            - 'The rule only turns a term into the next one, so it needs a start'
+            - 'The first term is the only term that the rule is allowed to change'
+            - 'Without a first term the rule cannot be written in terms of n'
+          answer: 'The rule only turns a term into the next one, so it needs a start'
+          why: 'The rule a_n = a_{n-1} + 4 needs a known a_{n-1} to produce a_n. The initial term a_1 = 3 supplies the first known value.'
         exemplars:
-          - problem: 'Let $a_1 = 2$ and $a_n = a_{n-1} + 3$. Find $a_4$.'
-            answer: "11"
-            solution_sketch: '$2, 5, 8, 11$.'
-          - problem: 'Let $a_1 = 1$ and $a_n = 2a_{n-1} + 1$. Find $a_4$.'
-            answer: "15"
-            solution_sketch: '$1, 3, 7, 15$.'
-          - problem: "Let $a_1 = 3$ and $a_n = a_{n-1} + 4$ for n = 2, 3, 4, ... Find $a_5$."
-            answer: "19"
+          - problem: 'Let $a_1 = 2$ and $a_n = a_{n-1} + 3$ for $n \ge 2$. Find $a_4$.'
+            answer: '11'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Start with the initial term a_1 = 3. Apply the one-term recursion a_n = a_{n-1} + 4: a_2 = 7, a_3 = 11, a_4 = 15, and a_5 = 19. The answer is 19."
-          - problem: "Let $a_1 = 5$ and $a_n = 2a_{n-1} - 1$ for n = 2, 3, 4, ... Find $a_5$."
-            answer: "65"
+            solution_sketch: 'Apply the rule one term at a time: $a_2 = 2 + 3 = 5$, $a_3 = 5 + 3 = 8$ and $a_4 = 8 + 3 = 11$.'
+          - problem: 'Let $a_1 = 1$ and $a_n = 2a_{n-1} + 1$ for $n \ge 2$. Find $a_4$.'
+            answer: '15'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Start with the initial term a_1 = 5. Use the one-term recursion a_n = 2a_{n-1} - 1: a_2 = 9, a_3 = 17, a_4 = 33, and a_5 = 65. The answer is 65."
-          - problem: "Let $a_1 = 4$ and $a_n = 3a_{n-1} + 2$ for n = 2, 3, 4, ... Find $a_4$."
-            answer: "134"
+            solution_sketch: 'Double the previous term and add $1$ each time: $a_2 = 2 \cdot 1 + 1 = 3$, $a_3 = 2 \cdot 3 + 1 = 7$ and $a_4 = 2 \cdot 7 + 1 = 15$.'
+          - problem: 'Let $a_1 = 5$ and $a_n = 2a_{n-1} - 1$ for $n \ge 2$. Find $a_5$.'
+            answer: '65'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Begin at the initial term a_1 = 4. Apply the one-term recursion a_n = 3a_{n-1} + 2: a_2 = 14, a_3 = 44, and a_4 = 134. The answer is 134."
-          - problem: "Let $a_1 = 10$ and $a_n = a_{n-1} - 6$ for n = 2, 3, 4, ... Find $a_5$."
-            answer: "-14"
+            solution_sketch: 'Each term is twice the previous term minus $1$. The terms are $a_2 = 9$, $a_3 = 17$, $a_4 = 33$ and $a_5 = 65$.'
+          - problem: 'Let $a_1 = 10$ and $a_n = a_{n-1} - 6$ for $n \ge 2$. Find $a_5$.'
+            answer: '-14'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Set the initial term a_1 = 10. Use the one-term recursion a_n = a_{n-1} - 6: a_2 = 4, a_3 = -2, a_4 = -8, and a_5 = -14. The answer is -14."
+            solution_sketch: 'Subtract $6$ from the previous term each time: $a_2 = 4$, $a_3 = -2$, $a_4 = -8$ and $a_5 = -14$.'
+          - problem: 'In month 1 a library has $120$ books. Each month it keeps half of its books and buys $20$ new ones. How many books does it have in month 4?'
+            answer: '50'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The rule is $a_n = \frac{1}{2}a_{n-1} + 20$ with $a_1 = 120$. Then $a_2 = 60 + 20 = 80$, $a_3 = 40 + 20 = 60$ and $a_4 = 30 + 20 = 50$ books.'
+          - problem: 'A tank holds $200$ litres at the start of day 1, and $15$ litres are used each day. How many litres are in the tank at the start of day 5?'
+            answer: '140'
+            answer_contract: {"kind": "unit", "quantity": "volume", "unit": "L", "allow_omitted": true}
+            solution_sketch: 'Each day the amount drops by $15$, so $a_n = a_{n-1} - 15$ with $a_1 = 200$. The amounts are $185$, $170$, $155$ and $140$ litres at the starts of days 2, 3, 4 and 5.'
+          - problem: 'A $256$ g sample of a substance loses half of its mass every hour. How many grams are left after $5$ hours?'
+            answer: '8'
+            answer_contract: {"kind": "unit", "quantity": "mass", "unit": "g", "allow_omitted": true}
+            solution_sketch: 'The mass at the start is $a_1 = 256$, and each hour gives $a_n = \frac{1}{2}a_{n-1}$. After $5$ hours the mass is $a_6$: $128, 64, 32, 16, 8$, so $8$ g are left.'
+          - problem: 'Let $a_1 = 4$ and $a_n = 3a_{n-1} - 2$ for $n \ge 2$. Sam finds $a_2 = 10$ and then computes $a_3 = 3 \cdot 4 - 2 = 10$ again. What is the correct value of $a_3$?'
+            answer: '28'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Sam used $a_1$ again, but the rule needs the previous term, which is $a_2 = 10$. The correct value is $a_3 = 3 \cdot 10 - 2 = 28$.'
+        constraints: 'one-term recursions a_n = c*a_{n-1} + b or a_n = a_{n-1}/c + b with integer arithmetic; ask for a term at most 6 steps from the start; some items in words'
       - id: kp2
         name: Two-term recursions
         key_prerequisites: [evaluating-expressions]
-        constraints: "recursions a_n = ±a_{n-1} ± a_{n-2} with small integer seeds; ask for a term within 6 steps"
+        step_check:
+          step: 'each term is the sum of the two before it'
+          question: 'Why does a two-term recursion need two starting terms?'
+          options:
+            - 'Two terms are needed so that the rule can be applied twice'
+            - 'The rule gives the average of two terms, so it needs a pair'
+            - 'A single seed would make every later term equal to it'
+            - 'The first new term, a_3, uses both a_2 and a_1'
+          answer: 'The first new term, a_3, uses both a_2 and a_1'
+          why: 'The rule builds a_3 from a_2 and a_1, so both must be known. With a_1 = 2 and a_2 = 5 this gives a_3 = 7.'
         exemplars:
-          - problem: 'Let $a_1 = 1$, $a_2 = 1$, and $a_n = a_{n-1} + a_{n-2}$. Find $a_6$.'
-            answer: "8"
-            solution_sketch: '$1, 1, 2, 3, 5, 8$.'
-          - problem: 'Let $a_1 = 3$, $a_2 = 1$, and $a_n = a_{n-1} - a_{n-2}$. Find $a_5$.'
-            answer: "-1"
-            solution_sketch: '$a_3 = 1 - 3 = -2$, $a_4 = -2 - 1 = -3$, $a_5 = -3 - (-2) = -1$.'
-          - problem: "Let $a_1 = 2$, $a_2 = 5$, and $a_n = a_{n-1} + a_{n-2}$. Find $a_6$."
-            answer: "31"
+          - problem: 'Let $a_1 = 1$, $a_2 = 1$ and $a_n = a_{n-1} + a_{n-2}$ for $n \ge 3$. Find $a_6$.'
+            answer: '8'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Use the two-term addition rule to build the terms from the seeds: $2, 5, 7, 12, 19, 31$. Each new term is the sum of the two terms before it. The sixth term is 31."
-          - problem: "Let $a_1 = 5$, $a_2 = 2$, and $a_n = a_{n-1} - a_{n-2}$. Find $a_6$."
-            answer: "3"
+            solution_sketch: 'Each term is the sum of the two before it. The terms are $1, 1, 2, 3, 5, 8$, so $a_6 = 8$.'
+          - problem: 'Let $a_1 = 3$, $a_2 = 1$ and $a_n = a_{n-1} - a_{n-2}$ for $n \ge 3$. Find $a_5$.'
+            answer: '-1'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Apply the two-term subtraction rule in order: $a_3 = 2 - 5 = -3$, $a_4 = -3 - 2 = -5$, $a_5 = -5 - (-3) = -2$, and $a_6 = -2 - (-5) = 3$. The listed terms are $5, 2, -3, -5, -2, 3$. The sixth term is 3."
-          - problem: "Let $a_1 = 1$, $a_2 = 3$, and $a_n = -a_{n-1} + a_{n-2}$. Find $a_5$."
-            answer: "-7"
+            solution_sketch: 'Subtract the term two places back from the previous term. Then $a_3 = 1 - 3 = -2$, $a_4 = -2 - 1 = -3$ and $a_5 = -3 - (-2) = -1$.'
+          - problem: 'Let $a_1 = 2$, $a_2 = 5$ and $a_n = a_{n-1} + a_{n-2}$ for $n \ge 3$. Find $a_6$.'
+            answer: '31'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Use the mixed-sign two-term rule: $a_3 = -3 + 1 = -2$, $a_4 = -(-2) + 3 = 5$, and $a_5 = -5 + (-2) = -7$. The first five terms are $1, 3, -2, 5, -7$. The fifth term is -7."
-          - problem: "A sequence starts with first term 4 and second term 1. Each term after that is the sum of the two preceding terms. Find the sixth term."
-            answer: "17"
+            solution_sketch: 'Build the terms from the two seeds: $2, 5, 7, 12, 19, 31$. Each new term is the sum of the two terms before it, so $a_6 = 31$.'
+          - problem: 'Let $a_1 = 5$, $a_2 = 2$ and $a_n = a_{n-1} - a_{n-2}$ for $n \ge 3$. Find $a_6$.'
+            answer: '3'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Translate the words into the two-term recursion $a_1 = 4$, $a_2 = 1$, and $a_n = a_{n-1} + a_{n-2}$. The terms are $4, 1, 5, 6, 11, 17$. The sixth term is 17."
+            solution_sketch: 'Apply the rule in order: $a_3 = 2 - 5 = -3$, $a_4 = -3 - 2 = -5$, $a_5 = -5 - (-3) = -2$ and $a_6 = -2 - (-5) = 3$.'
+          - problem: 'Let $a_1 = 1$, $a_2 = 3$ and $a_n = -a_{n-1} + a_{n-2}$ for $n \ge 3$. Find $a_5$.'
+            answer: '-7'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Apply the rule with its signs: $a_3 = -3 + 1 = -2$, $a_4 = -(-2) + 3 = 5$ and $a_5 = -5 + (-2) = -7$.'
+          - problem: 'A gardener plants $4$ seeds on day 1 and $1$ seed on day 2. From day 3 on, she plants each day as many seeds as on the previous two days together. How many seeds does she plant on day 6?'
+            answer: '17'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The rule is $a_n = a_{n-1} + a_{n-2}$ with $a_1 = 4$ and $a_2 = 1$. The daily numbers are $4, 1, 5, 6, 11, 17$, so day 6 has $17$ seeds.'
+          - problem: 'A vine has $1$ branch in month 1 and $2$ branches in month 2. From month 3 on, the number of branches equals the sum of the numbers in the two months before. How many branches does the vine have in month 7?'
+            answer: '21'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The counts follow $a_n = a_{n-1} + a_{n-2}$ with $a_1 = 1$ and $a_2 = 2$. They are $1, 2, 3, 5, 8, 13, 21$, so month 7 has $21$ branches.'
+          - problem: 'Let $a_1 = 3$, $a_2 = 2$ and $a_n = a_{n-1} + 2a_{n-2}$ for $n \ge 3$. Find $a_6$.'
+            answer: '52'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Add the previous term and twice the term before it. Then $a_3 = 2 + 6 = 8$, $a_4 = 8 + 4 = 12$, $a_5 = 12 + 16 = 28$ and $a_6 = 28 + 24 = 52$.'
+          - problem: 'A sequence satisfies $a_n = a_{n-1} + a_{n-2}$ for $n \ge 3$, with $a_2 = 5$ and $a_3 = 8$. What is $a_1$?'
+            answer: '3'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The rule at $n = 3$ says $a_3 = a_2 + a_1$, so $8 = 5 + a_1$. Subtract $5$ from both sides to get $a_1 = 3$.'
+        constraints: 'recursions a_n = ±a_{n-1} ± c*a_{n-2} with small integer seeds and c = 1 or 2; ask for a term within 7 steps; one item runs backwards to a seed'
       - id: kp3
         name: Translate between recursive and explicit forms
         key_prerequisites: [arithmetic-sequences, geometric-sequences]
-        constraints: "arithmetic or geometric sequences only; recursive parameters requested as an ordered pair, explicit formulas as an expression in n; the item must test THIS KP: Translate between recursive and explicit forms"
+        step_check:
+          step: 'Adding $7$ at every step makes the common difference $7$, so $a_n = 4 + 7(n - 1)$'
+          question: 'Why does a_1 = 4 with a_n = a_{n-1} + 7 give the formula a_n = 7n - 3?'
+          options:
+            - 'The n - 1 steps after a_1 each add 7, so a_n = 4 + 7(n - 1)'
+            - 'The rule adds 7 to a_1 only once, so a_n = 4 + 7 for every n'
+            - 'Each step adds 7 and there are n steps, so a_n = 4 + 7n'
+            - 'The rule multiplies by 7 at each step, giving a_n = 4 * 7^n'
+          answer: 'The n - 1 steps after a_1 each add 7, so a_n = 4 + 7(n - 1)'
+          why: 'From a_1 to a_n there are n - 1 steps, and each step adds 7. So a_n = 4 + 7(n - 1) = 7n - 3.'
         exemplars:
-          - problem: 'The sequence $5, 8, 11, 14, \ldots$ has a recursive definition of the form $a_1 = p$, $a_n = a_{n-1} + q$. Give the ordered pair $(p, q)$.'
-            answer: "(5, 3)"
-            solution_sketch: 'The first term is $5$ and each term adds $3$.'
-          - problem: "The geometric sequence 4, 12, 36, 108, ... has a recursive definition a_1 = p and a_n = r a_{n-1} for n >= 2. Give the ordered pair as (p, r)."
-            answer: "(4, 3)"
-            answer_contract: {"arity": 2, "kind": "coordinates"}
-            solution_sketch: "The sequence 4, 12, 36, 108, ... has first term p = 4. The common ratio is r = 3 because each term is three times the previous term. The ordered pair is (4, 3)."
-          - problem: "The arithmetic sequence is defined by a_1 = 4 and a_n = a_{n-1} + 7 for n >= 2. Give the explicit formula for a_n as an expression in n."
-            answer: "7n - 3"
+          - problem: 'Which of these defines the sequence $5, 8, 11, 14, \ldots$? (A) $a_1 = 5$ and $a_n = a_{n-1} + 3$. (B) $a_1 = 5$ and $a_n = 3a_{n-1}$. (C) $a_1 = 3$ and $a_n = a_{n-1} + 5$.'
+            answer: 'a'
+            answer_contract: {"kind": "label", "options": [["a", "option a", "(a)", "first one"], ["b", "option b", "(b)", "second one"], ["c", "option c", "(c)", "third one"]]}
+            solution_sketch: 'The first term is $5$, so only (A) and (B) start correctly. Each term is $3$ more than the term before it, since $8 - 5 = 3$ and $11 - 8 = 3$, so the rule is (A). Rule (B) would give $5, 15, 45, \ldots$'
+          - problem: 'A sequence is defined by $a_1 = 4$ and $a_n = a_{n-1} + 7$ for $n \ge 2$. Write a formula for $a_n$ in terms of $n$.'
+            answer: '7n - 3'
             answer_contract: {"kind": "function", "vars": ["n"]}
-            solution_sketch: "The recursive rule a_n = a_{n-1} + 7 means the common difference is 7. With a_1 = 4, the explicit formula is a_n = 7n - 3. The explicit formula is 7n - 3."
-          - problem: "The geometric sequence has explicit formula a_n = 6 * 4^(n-1) for n >= 1. Give the ordered pair as (a_1, r)."
-            answer: "(6, 4)"
-            answer_contract: {"arity": 2, "kind": "coordinates"}
-            solution_sketch: "The explicit formula a_n = 6 * 4^(n-1) has first term a_1 = 6. The common ratio is r = 4. The ordered pair is (6, 4)."
-          - problem: "The arithmetic sequence has explicit formula a_n = 5n + 1 for n >= 1. Give the ordered pair as (a_1, d), where d is the common difference."
-            answer: "(6, 5)"
-            answer_contract: {"arity": 2, "kind": "coordinates"}
-            solution_sketch: "The explicit formula a_n = 5n + 1 gives a_1 = 6. The common difference is d = 5. The ordered pair is (6, 5)."
-          - problem: "A geometric sequence has a_2 = 10 and a_4 = 40, and its common ratio is positive. Give the ordered pair as (a_1, r)."
-            answer: "(5, 2)"
-            answer_contract: {"arity": 2, "kind": "coordinates"}
-            solution_sketch: "The terms satisfy a_2 = a_1 r = 10 and a_4 = a_1 r^3 = 40. Dividing gives r^2 = 4, so r = 2 because the ratio is positive. Then a_1 = 10/2 = 5. The ordered pair is (5, 2)."
+            solution_sketch: 'The rule adds $7$ at each of the $n - 1$ steps after the first term. So $a_n = 4 + 7(n - 1) = 7n - 3$.'
+          - problem: 'A sequence has $a_1 = 3$ and $a_n = 2a_{n-1}$ for $n \ge 2$. Find $a_{12}$.'
+            answer: '6144'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Each term is $2$ times the one before, so the sequence is geometric with $r = 2$. Then $a_{12} = 3 \cdot 2^{11} = 3 \cdot 2048 = 6144$.'
+          - problem: 'A sequence has the explicit formula $a_n = 5n + 1$. What number must be added to $a_{n-1}$ to get $a_n$?'
+            answer: '5'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Compare two neighboring terms: $a_n - a_{n-1} = (5n + 1) - (5(n - 1) + 1) = 5$. So $5$ is added at each step.'
+          - problem: 'A gym charges $30$ dollars in month 1, and each later month costs $4$ dollars more than the month before. What does it cost in month 25?'
+            answer: '126'
+            answer_contract: {"kind": "unit", "quantity": "dollar", "unit": "dollar", "allow_omitted": true}
+            solution_sketch: 'The costs follow $c_n = c_{n-1} + 4$, so they form an arithmetic sequence. Then $c_{25} = 30 + 24 \cdot 4 = 30 + 96 = 126$ dollars.'
+          - problem: 'A geometric sequence has the explicit formula $a_n = 6 \cdot 4^{n-1}$. By what number is each term multiplied to give the next term?'
+            answer: '4'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'In $a_n = a_1 r^{n-1}$ the base of the power is the common ratio. Here the base is $4$, so each term is $4$ times the term before it.'
+          - problem: 'A mouse population is $50$ in month 1, and each month it is three times the population of the month before. How many mice are there in month 6?'
+            answer: '12150'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The rule is $p_n = 3p_{n-1}$ with $p_1 = 50$, so the explicit formula is $p_n = 50 \cdot 3^{n-1}$. Then $p_6 = 50 \cdot 3^5 = 50 \cdot 243 = 12150$.'
+          - problem: 'A sequence has $a_1 = 5$ and $a_n = r \cdot a_{n-1}$ for $n \ge 2$, and its fourth term is $40$. What is $r$?'
+            answer: '2'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Three steps lead from $a_1$ to $a_4$, so $a_4 = 5r^3 = 40$. Then $r^3 = 8$ and $r = 2$.'
+          - problem: 'A geometric sequence has $a_2 = 10$ and $a_4 = 40$, and its common ratio is positive. What is its first term?'
+            answer: '5'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Two steps lead from $a_2$ to $a_4$, so $r^2 = \frac{40}{10} = 4$ and the positive ratio is $r = 2$. Since $a_2 = a_1 r$, the first term is $a_1 = \frac{10}{2} = 5$.'
+          - problem: 'Sam says that $a_1 = 2$ with $a_n = a_{n-1} + 3$, and $a_n = 3n - 1$, define the same sequence. Is Sam right?'
+            answer: 'yes'
+            answer_contract: {"kind": "label", "options": [["yes", "correct", "right", "yes he is", "he is", "he is right"], ["no", "incorrect", "wrong", "no he is not", "he is not", "he is wrong"]]}
+            solution_sketch: 'The recursion gives $2, 5, 8, \ldots$ with difference $3$. The formula gives $3 \cdot 1 - 1 = 2$, $3 \cdot 2 - 1 = 5$ and $3 \cdot 3 - 1 = 8$, so Sam is right.'
+        constraints: 'arithmetic or geometric sequences only; a rule is chosen from three given definitions or an explicit formula in n is written; items also ask for a far term (so the explicit form is needed), the number added or the ratio; the item must test THIS KP: Translate between recursive and explicit forms'
     diagnostic_exemplar:
       problem: 'Let $a_1 = 2$, $a_2 = 3$, and $a_n = a_{n-1} + a_{n-2}$. Find $a_6$.'
       answer: "21"

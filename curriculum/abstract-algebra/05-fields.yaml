@@ -21,93 +21,172 @@ topics:
         key: false
     knowledge_points:
       - id: kp1
-        name: "Field axioms; fields vs domains"
+        name: 'Field axioms; fields vs domains'
         key_prerequisites: [integral-domains-zero-divisors, units-in-modular-rings]
+        step_check:
+          step: 'Multiply both sides of the equation $ab = 0$ by $a^{-1}$'
+          question: 'Why are we allowed to multiply both sides by $a^{-1}$ here?'
+          options:
+            - 'Because every element of every commutative ring has a multiplicative inverse'
+            - 'Because $a \neq 0$, and a nonzero element of a field has an inverse'
+            - 'Because $ab = 0$ already tells us that $a^{-1}$ is equal to the element $b$'
+            - 'Because we may multiply both sides of any equation by any symbol we like'
+          answer: 'Because $a \neq 0$, and a nonzero element of a field has an inverse'
+          why: 'A field gives an inverse to every nonzero element, and $a$ is nonzero; the element $0$ has no inverse, so the argument would fail for $a = 0$.'
         exemplars:
-          - problem: "A commutative ring with unity (1 not 0) becomes a field when one more axiom is added. Which property is that? Select the property that holds for every nonzero rational number."
-            answer: "every nonzero element has an inverse"
-            answer_contract: {"kind": "label", "options": [["every nonzero element has an inverse"], ["every element has an inverse"], ["there are no zero divisors"], ["the ring has finitely many elements"]]}
-            solution_sketch: "The field axiom adds inverses for every nonzero element; that is exactly what makes division by any nonzero element possible. Option 'every element has an inverse' fails because 0 has no inverse; option 'there are no zero divisors' is a consequence, not the added axiom; option 'the ring has finitely many elements' is unrelated. The required property is every nonzero element has an inverse."
-          - problem: "In the field of real numbers, suppose a*b = 0 and a is not 0. What value must b have? Give the number."
-            answer: "0"
+          - problem: 'Is the ring $\mathbb{Z}_9$ a field?'
+            answer: 'no'
+            answer_contract: {"kind": "label", "options": [["yes", "it is a field", "it is", "a field", "Z_9 is a field"], ["no", "it is not a field", "it is not", "not a field", "Z_9 is not a field"]]}
+            solution_sketch: 'The element $3$ is nonzero, but $3 \cdot 3 = 9 = 0$ in $\mathbb{Z}_9$, so $3$ is a zero divisor. A field has no zero divisors, because a nonzero element with an inverse cannot multiply another nonzero element to $0$. So $\mathbb{Z}_9$ is not a field.'
+          - problem: 'In the field $\mathbb{Q}$, an element $b$ satisfies $\frac{3}{7}\,b = 0$. What is $b$?'
+            answer: '0'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Start with a*b = 0 in a field. Since a is nonzero, multiply both sides by the multiplicative inverse a^(-1). This gives b = a^(-1)*0 = 0, so b must be 0."
-          - problem: "In the ring of integers Z, how many multiplicative inverses does the element 2 have? Give the number."
-            answer: "0"
+            solution_sketch: 'Since $\frac37 \neq 0$, it has the inverse $\frac73$ in the field $\mathbb{Q}$. Multiplying both sides of $\frac37 b = 0$ by $\frac73$ gives $b = 0$.'
+          - problem: 'Which nonzero integers have a multiplicative inverse in $\mathbb{Z}$?'
+            answer: '-1, 1'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "We need an integer k with 2k = 1. No integer k satisfies this equation. Therefore 2 has no multiplicative inverse in Z, so the number of inverses is 0."
-          - problem: "In Z_6, how many of the five nonzero elements do not have a multiplicative inverse? Give the number."
-            answer: "3"
+            solution_sketch: 'We need an integer $m$ with $nm = 1$. This forces $|n| \cdot |m| = 1$, so $|n| = 1$. The nonzero integers with an inverse are $-1$ and $1$, and each is its own inverse.'
+          - problem: 'Which nonzero elements of $\mathbb{Z}_{10}$ have no multiplicative inverse?'
+            answer: '2, 4, 5, 6, 8'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "List the nonzero elements of Z_6: 1, 2, 3, 4, 5. The units are 1 and 5 because gcd(1,6)=1 and gcd(5,6)=1. The remaining elements 2, 3, 4 have no inverse, so there are 3."
-          - problem: "Consider the polynomial ring Z[x] with usual addition and multiplication. Which term best describes it? Select one."
-            answer: "domain"
-            answer_contract: {"kind": "label", "options": [["field"], ["domain"], ["neither"], ["both"]]}
-            solution_sketch: "Z[x] is an integral domain because Z is an integral domain and polynomial rings over an integral domain have no zero divisors. It is not a field because x has no inverse in Z[x]. Option 'field' is wrong since x lacks an inverse; option 'neither' is wrong since it is an integral domain; option 'both' is wrong because it is not a field. The best term is domain."
-          - problem: "Find the smallest integer n greater than 1 such that Z_n is a field."
-            answer: "2"
+            solution_sketch: 'An element $a$ of $\mathbb{Z}_{10}$ has an inverse exactly when $\gcd(a, 10) = 1$. The elements $1, 3, 7, 9$ pass this test. The nonzero elements $2, 4, 5, 6, 8$ share the factor $2$ or $5$ with $10$, so they have no inverse.'
+          - problem: 'Which of the following describes the polynomial ring $\mathbb{Z}[x]$: a field, an integral domain that is not a field, or neither?'
+            answer: 'integral domain'
+            answer_contract: {"kind": "label", "options": [["field", "it is a field", "a field"], ["domain", "integral domain", "an integral domain", "an integral domain that is not a field", "it is an integral domain"], ["neither", "it is neither", "neither of these"]]}
+            solution_sketch: 'The ring $\mathbb{Z}[x]$ has no zero divisors, because the leading coefficients of two nonzero polynomials multiply to a nonzero integer. It is not a field, because $x$ has no inverse: no polynomial $g$ satisfies $x\,g(x) = 1$. So $\mathbb{Z}[x]$ is an integral domain that is not a field.'
+          - problem: 'For which integers $n$ with $2 \le n \le 12$ is $\mathbb{Z}_n$ a field?'
+            answer: '2, 3, 5, 7, 11'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "A ring Z_n is a field exactly when n is prime. The smallest integer greater than 1 that is prime is 2. Thus the smallest such n is 2."
-        constraints: "axiom-level questions; classify Q, R, Z, Z_n, Z[x] as field / domain / neither"
+            solution_sketch: 'The ring $\mathbb{Z}_n$ is a field exactly when $n$ is prime. The primes from $2$ to $12$ are $2, 3, 5, 7, 11$. Every other $n$ in the range is composite and gives a ring with zero divisors.'
+          - problem: 'Sam says that the equation $x^2 = 1$ has only the solutions $1$ and $7$ in $\mathbb{Z}_8$, because a product is $0$ only when a factor is $0$. List all solutions of $x^2 = 1$ in $\mathbb{Z}_8$.'
+            answer: '1, 3, 5, 7'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Write $x^2 - 1 = (x - 1)(x + 1) = 0$. In a field this forces $x = 1$ or $x = -1$, but $\mathbb{Z}_8$ has zero divisors. Testing the residues gives $3^2 = 9 = 1$, $5^2 = 25 = 1$ and $7^2 = 49 = 1$ besides $1^2 = 1$, so the solutions are $1, 3, 5, 7$.'
+          - problem: 'A lock has $11$ positions numbered $0$ to $10$, and arithmetic is done modulo $11$. The lock scrambles a reading $r$ into $4r$. By what number must a scrambled reading be multiplied to recover $r$?'
+            answer: '3'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'We need a number $k$ with $4k = 1$ in $\mathbb{Z}_{11}$, which is the inverse of $4$. Since $4 \cdot 3 = 12 = 1$ in $\mathbb{Z}_{11}$, the number is $3$. Because $11$ is prime, such an inverse exists for every nonzero multiplier.'
+          - problem: 'A machine on a $12$-hour dial replaces each hour $h$ by $3h$, counted modulo $12$ with $12$ read as $0$. Which hours from $0$ to $11$ does the machine send to $0$?'
+            answer: '0, 4, 8'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'We need $3h$ to be a multiple of $12$, which means $h$ is a multiple of $4$. The hours are $0, 4, 8$. The nonzero hours $4$ and $8$ show that $3$ is a zero divisor in $\mathbb{Z}_{12}$, so $3$ has no inverse.'
+        constraints: 'axiom-level questions; classify Q, R, Z, Z_n, Z[x] as field / domain / neither; zero divisors and inverses in small Z_n'
       - id: kp2
-        name: "Characteristic of a ring"
+        name: 'Characteristic of a ring'
         key_prerequisites: [units-in-modular-rings]
+        step_check:
+          step: 'The characteristic of $\mathbb{R}$ is $0$ because there is no finite positive integer $n$ such that $n \cdot 1 = 0$'
+          question: 'Why is the characteristic of $\mathbb{R}$ equal to $0$ and not a positive number?'
+          options:
+            - 'Because $\mathbb{R}$ has infinitely many elements, and every infinite ring has characteristic $0$'
+            - 'Because $0$ is the additive identity of the ring, so $0 \cdot 1 = 0$ is the least case'
+            - 'Because $\mathbb{R}$ has no unity element, so no multiple of $1$ can ever exist'
+            - 'Because a sum $1 + 1 + \dots + 1$ of positive length is always positive'
+          answer: 'Because a sum $1 + 1 + \dots + 1$ of positive length is always positive'
+          why: 'The characteristic is $0$ exactly when no positive multiple of $1$ vanishes; infinite rings such as $\mathbb{Z}_5[x]$ can still have a positive characteristic.'
         exemplars:
-          - problem: "Find the characteristic of the ring $\\mathbb{Z}_{12}$ and of the ring $\\mathbb{Z}_7$. Give the characteristic of $\\mathbb{Z}_{12}$ as c12 and the characteristic of $\\mathbb{Z}_7$ as c7."
-            answer: "c12 = 12; c7 = 7"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "c12"}, {"contract": {"kind": "exact"}, "name": "c7"}]}
-            solution_sketch: "Step 1 (definition of characteristic): the characteristic is the least positive integer k with k times the identity equal to 0. Step 2 (additive order of the identity): in Z_n the identity 1 has additive order exactly n, since n times 1 is 0 and no smaller positive multiple of 1 is 0. So the characteristic of Z_12 is 12 and the characteristic of Z_7 is 7. Therefore c12 = 12; c7 = 7."
-          - problem: "A ring R has characteristic 6, so 6 times the identity is 0 in R, and k times the identity is nonzero for every 1 <= k <= 5. Determine whether a field with characteristic 6 is possible, and give the smallest integer m > 1 such that $m \\cdot 1$ is a zero divisor in R."
-            answer: "verdict = impossible; m = 2"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["possible"], ["impossible"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "m"}]}
-            solution_sketch: "Step 1 (zero divisors from a composite characteristic): in characteristic 6 the elements 2 times 1 and 3 times 1 are both nonzero, but their product is 6 times 1 = 0, so by the zero-product definition both are zero divisors; the smallest such m is 2. Step 2 (field axiom: no zero divisors): a field has no zero divisors, so a field can never have a composite characteristic. The option possible is the error of ignoring that a composite characteristic forces zero divisors. Therefore verdict = impossible; m = 2."
-          - problem: "Find the characteristic of the field $\\mathbb{Q}$ of rational numbers."
-            answer: "0"
+          - problem: 'Find the characteristic of the ring $\mathbb{Z}_{12}$.'
+            answer: '12'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1 (definition of characteristic): the characteristic is the least positive integer k with k times 1 equal to 0, and it is 0 when no such k exists. Step 2 (apply to Q): for every positive integer n, n times 1 equals n, which is nonzero in Q, so no positive multiple of the identity vanishes. Therefore the characteristic is 0."
-          - problem: "Find the characteristic of the product ring $\\mathbb{Z}_4 \\times \\mathbb{Z}_6$."
-            answer: "12"
+            solution_sketch: 'The characteristic is the least positive integer $k$ with $k \cdot 1 = 0$. In $\mathbb{Z}_{12}$ the sum of $k$ ones is $k$, which is $0$ only when $12$ divides $k$. So the least such $k$ is $12$.'
+          - problem: 'Find the characteristic of the field $\mathbb{Q}$.'
+            answer: '0'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1 (characteristic of each factor): the additive order of the identity (1, 1) is the least k with k in both Z_4 and Z_6 killing each component, so char of Z_4 is 4 and char of Z_6 is 6. Step 2 (lcm rule for products): the characteristic of R x S is the least common multiple of the factor characteristics, so the answer is lcm(4, 6) = 12. Therefore 12."
-          - problem: "A field F has characteristic 5. Find the characteristic of the product ring $F \\times \\mathbb{Z}_6$."
-            answer: "30"
+            solution_sketch: 'For every positive integer $n$ the sum $n \cdot 1$ equals $n$, which is nonzero in $\mathbb{Q}$. No positive multiple of $1$ is $0$, so the characteristic is $0$.'
+          - problem: 'A ring $R$ has characteristic $6$. Can $R$ be a field?'
+            answer: 'no'
+            answer_contract: {"kind": "label", "options": [["yes", "it can", "R can be a field", "it is possible", "possible"], ["no", "it cannot", "R cannot be a field", "it is not possible", "impossible", "not possible"]]}
+            solution_sketch: 'In $R$ the elements $2 \cdot 1$ and $3 \cdot 1$ are nonzero, because $6$ is the least positive $k$ with $k \cdot 1 = 0$. Their product is $6 \cdot 1 = 0$, so both are zero divisors. A field has no zero divisors, so $R$ is not a field; the characteristic of a field is $0$ or a prime.'
+          - problem: 'A ring $R$ has characteristic $6$. Find the smallest integer $m > 1$ for which $m \cdot 1$ is a zero divisor in $R$.'
+            answer: '2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1 (characteristic of each factor): the identity of F has additive order 5, and the identity of Z_6 has additive order 6, so the factor characteristics are 5 and 6. Step 2 (lcm rule for products): in the product ring, k times the identity is zero exactly when k kills both components, which is the least common multiple. So the characteristic is lcm(5, 6) = 30. Therefore 30."
-          - problem: "Compute the characteristic of the product ring $\\mathbb{Z}_3 \\times \\mathbb{Z}_5$."
-            answer: "15"
+            solution_sketch: 'The element $2 \cdot 1$ is nonzero, and $(2 \cdot 1)(3 \cdot 1) = 6 \cdot 1 = 0$ with $3 \cdot 1 \neq 0$. So $2 \cdot 1$ is a zero divisor. No smaller integer $m > 1$ exists, so $m = 2$.'
+          - problem: 'Find the characteristic of the product ring $\mathbb{Z}_4 \times \mathbb{Z}_6$.'
+            answer: '12'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1 (characteristic of each factor): in Z_3 the identity has additive order 3, and in Z_5 the identity has additive order 5. Step 2 (lcm rule for products): the characteristic of the product is the least common multiple of the factor characteristics, and since 3 and 5 are coprime, lcm(3, 5) = 15. Therefore 15."
-        constraints: "characteristics of Z_n, Q, products; the primality proof"
+            solution_sketch: 'The identity of $\mathbb{Z}_4 \times \mathbb{Z}_6$ is $(1, 1)$, and $k \cdot (1, 1) = 0$ exactly when $4$ divides $k$ and $6$ divides $k$. The least such $k$ is $\operatorname{lcm}(4, 6) = 12$.'
+          - problem: 'A field $F$ has characteristic $5$. Find the characteristic of the product ring $F \times \mathbb{Z}_6$.'
+            answer: '30'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The identity of $F \times \mathbb{Z}_6$ is $(1, 1)$. A sum of $k$ copies is $0$ exactly when $5$ divides $k$ and $6$ divides $k$. The least such $k$ is $\operatorname{lcm}(5, 6) = 30$.'
+          - problem: 'Two counters start at $0$ and each adds $1$ every second. The first counter shows the values $0, 1, \dots, 7$ and wraps back to $0$ after $7$. The second shows $0, 1, \dots, 11$ and wraps back to $0$ after $11$. After how many seconds do both counters show $0$ again for the first time?'
+            answer: '24'
+            answer_contract: {"kind": "unit", "quantity": "time", "unit": "s", "allow_omitted": true}
+            solution_sketch: 'The first counter shows $0$ again after every $8$ seconds, since it has $8$ values, and the second after every $12$ seconds. Both show $0$ when the time is a multiple of $8$ and of $12$. The first such time is $\operatorname{lcm}(8, 12) = 24$ seconds.'
+          - problem: 'A counter shows the values $0, 1, \dots, 17$ and wraps back to $0$ after $17$. It starts at $0$ and jumps forward by $6$ every second. After how many seconds does it show $0$ again for the first time?'
+            answer: '3'
+            answer_contract: {"kind": "unit", "quantity": "time", "unit": "s", "allow_omitted": true}
+            solution_sketch: 'After $k$ seconds the counter shows $6k$ modulo $18$. This is $0$ exactly when $18$ divides $6k$, which means $3$ divides $k$. So the counter first shows $0$ again after $3$ seconds, that is $\frac{18}{\gcd(6, 18)} = 3$.'
+          - problem: 'What is the characteristic of the polynomial ring $\mathbb{Z}_5[x]$?'
+            answer: '5'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The identity of $\mathbb{Z}_5[x]$ is the constant polynomial $1$, and $k \cdot 1$ is the constant $k$ reduced modulo $5$. This is $0$ first when $k = 5$, so the characteristic is $5$. The ring has infinitely many elements, but its characteristic is still positive.'
+          - problem: 'A ring has characteristic $12$. Find the least positive integer $k$ with $k \cdot (8 \cdot 1) = 0$.'
+            answer: '3'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'In a ring of characteristic $12$, $n \cdot 1 = 0$ exactly when $12$ divides $n$. So we need $12 \mid 8k$, which means $3 \mid 2k$ and hence $3 \mid k$. The least such $k$ is $3$.'
+          - problem: 'Sam says that the characteristic of $\mathbb{Z}_4 \times \mathbb{Z}_{10}$ is $40$, because $4 \cdot 10 = 40$. What is the correct characteristic?'
+            answer: '20'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'We have $k \cdot (1, 1) = 0$ exactly when $4 \mid k$ and $10 \mid k$, so $k$ must be a multiple of $\operatorname{lcm}(4, 10) = 20$. Sam used the product $40$, but $4$ and $10$ share the factor $2$, so the least common multiple is smaller. The characteristic is $20$.'
+        constraints: 'characteristics of Z_n, Q, polynomial rings and products (lcm rule); counters with wrap-around as contexts'
       - id: kp3
-        name: "The Frobenius endomorphism in characteristic p"
+        name: 'The Frobenius endomorphism in characteristic p'
         key_prerequisites: [units-in-modular-rings]
+        step_check:
+          step: 'Since the characteristic is $2$, the coefficient $2$ becomes $0$'
+          question: 'Why does the coefficient $2$ become $0$ in this ring?'
+          options:
+            - 'Because $2 \cdot r = (1 + 1)\,r = 0$ for every element $r$ when $1 + 1 = 0$'
+            - 'Because the middle term of a square is always dropped in any commutative ring'
+            - 'Because $x$ and $y$ commute, so the two copies of $xy$ cancel each other'
+            - 'Because every even number is equal to $0$ in every ring'
+          answer: 'Because $2 \cdot r = (1 + 1)\,r = 0$ for every element $r$ when $1 + 1 = 0$'
+          why: 'In characteristic $2$ we have $1 + 1 = 0$, so any multiple $2r$ is $0$; in characteristic $3$ the coefficient $2$ would stay.'
         exemplars:
           - problem: 'In a commutative ring of characteristic $3$, expand $(a + b)^3$.'
-            answer: '$a^3 + b^3$'
-            solution_sketch: 'Binomial coefficients $\binom{3}{1} = \binom{3}{2} = 3 \equiv 0$; only the end terms survive.'
-          - problem: "In the field $\\mathbb{Z}_5$, compute $(2 + 4)^5$ and give the result as an element of $\\mathbb{Z}_5$."
-            answer: "1"
+            answer: 'a^3 + b^3'
+            answer_contract: {"kind": "required_form", "form": "expanded_polynomial"}
+            solution_sketch: 'The binomial theorem gives $(a + b)^3 = a^3 + 3a^2b + 3ab^2 + b^3$. The middle coefficients are $3$, which is $0$ in characteristic $3$. Only $a^3 + b^3$ remains.'
+          - problem: 'Compute $(2 + 4)^5$ in the field $\mathbb{Z}_5$.'
+            answer: '1'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "In $\\mathbb{Z}_5$, compute the base first: $2 + 4 = 6$, which is $1$ modulo $5$. Then $(2 + 4)^5 = 1^5 = 1$. The Frobenius identity agrees: $2^5 + 4^5 = 32 + 1024 = 1056$, and $1056$ modulo $5$ is $1$. The result is 1."
-          - problem: "In the field $\\mathbb{Z}_3$, compute $(1 + 2)^3$ and give the result as an element of $\\mathbb{Z}_3$."
-            answer: "0"
+            solution_sketch: 'Add first: $2 + 4 = 6 = 1$ in $\mathbb{Z}_5$, so $(2 + 4)^5 = 1^5 = 1$. The Frobenius rule gives the same value: $2^5 + 4^5 = 32 + 1024 = 1056$, and $1056 = 1$ modulo $5$.'
+          - problem: 'In a commutative ring of characteristic $5$, what is the coefficient of $a^2b^3$ in the expansion of $(a + b)^5$?'
+            answer: '0'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "In $\\mathbb{Z}_3$, compute the base first: $1 + 2 = 3$, which is $0$ modulo $3$. Then $(1 + 2)^3 = 0^3 = 0$. The Frobenius identity agrees: $1^3 + 2^3 = 1 + 8 = 9$, and $9$ modulo $3$ is $0$. The value is 0."
-          - problem: "In a commutative ring of characteristic $5$, find the coefficient of $a^2 b^3$ in the expansion of $(a + b)^5$."
-            answer: "0"
+            solution_sketch: 'The coefficient is $\binom{5}{2} = 10$. Since $10 = 2 \cdot 5$, it equals $0$ in characteristic $5$. So the coefficient is $0$.'
+          - problem: 'In a commutative ring of characteristic $2$, expand $(a + b)^2$.'
+            answer: 'a^2 + b^2'
+            answer_contract: {"kind": "required_form", "form": "expanded_polynomial"}
+            solution_sketch: 'We have $(a + b)^2 = a^2 + 2ab + b^2$. The middle coefficient is $2$, and $2 = 0$ in characteristic $2$, so the middle term vanishes. The result is $a^2 + b^2$.'
+          - problem: 'In a field of characteristic $5$, two elements $a$ and $b$ satisfy $a + b = 3$ and $a^5 = 4$. Find $b^5$.'
+            answer: '4'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "In characteristic $5$, expand $(a + b)^5$ and read the coefficient of $a^2 b^3$. The binomial theorem gives that coefficient as the binomial coefficient five choose two, which is $10$. Reduce modulo $5$: $10 = 2 \\cdot 5$, so it is $0$. The coefficient is 0."
-          - problem: "In a commutative ring of characteristic $2$, give the expansion of $(a + b)^2$ in simplest form."
-            answer: "a^2+b^2"
-            answer_contract: {"kind": "function", "vars": ["a", "b"]}
-            solution_sketch: "In characteristic $2$, expand $(a + b)^2 = a^2 + 2ab + b^2$. The middle coefficient is $2$, and $2$ modulo $2$ is $0$, so the middle term vanishes. The remaining terms are $a^2$ and $b^2$. The expansion is a^2+b^2."
-          - problem: "In a commutative ring of characteristic $5$, state the simplified form of $(a + b)^5$."
-            answer: "a^5+b^5"
-            answer_contract: {"kind": "function", "vars": ["a", "b"]}
-            solution_sketch: "In characteristic $5$, expand $(a + b)^5 = a^5 + 5a^4b + 10a^3b^2 + 10a^2b^3 + 5ab^4 + b^5$. Every middle coefficient is $5$ or $10$, and each is $0$ modulo $5$. Only the first and last terms survive. The simplified form is a^5+b^5."
-        constraints: "p in {2, 3, 5}; expansions verified with small numbers"
+            solution_sketch: 'By the Frobenius rule $(a + b)^5 = a^5 + b^5$. The left side is $3^5 = 243 = 3$ in the field, because $243 = 48 \cdot 5 + 3$. So $b^5 = 3 - 4 = -1 = 4$.'
+          - problem: 'In a commutative ring of characteristic $2$, expand $(a + b)^4$.'
+            answer: 'a^4 + b^4'
+            answer_contract: {"kind": "required_form", "form": "expanded_polynomial"}
+            solution_sketch: 'Write $(a + b)^4 = \big((a + b)^2\big)^2 = (a^2 + b^2)^2$ using the rule for $p = 2$. Apply the rule again to get $a^4 + b^4$. The binomial coefficients $4, 6, 4$ are all even, which agrees.'
+          - problem: 'Expand $(x + 1)^5$ in the polynomial ring $\mathbb{Z}_5[x]$.'
+            answer: 'x^5 + 1'
+            answer_contract: {"kind": "required_form", "form": "expanded_polynomial"}
+            solution_sketch: 'In $\mathbb{Z}_5[x]$ the characteristic is $5$, so the Frobenius rule gives $(x + 1)^5 = x^5 + 1^5$. Since $1^5 = 1$, the result is $x^5 + 1$. The binomial coefficients $5$ and $10$ all vanish modulo $5$.'
+          - problem: 'Sam says that in a commutative ring of characteristic $4$ one has $(a + b)^4 = a^4 + b^4$, just as in characteristic $2$. What is the coefficient of $a^2b^2$ in the correct expansion of $(a + b)^4$ in this ring?'
+            answer: '2'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The coefficient of $a^2b^2$ is $\binom{4}{2} = 6$, and $6 = 2$ modulo $4$. It is not $0$, so the rule fails. The rule needs a prime characteristic, because only then does $p$ divide every middle binomial coefficient.'
+          - problem: 'Compute $(1 + 2)^3$ in the field $\mathbb{Z}_3$.'
+            answer: '0'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Add first: $1 + 2 = 3 = 0$ in $\mathbb{Z}_3$, so $(1 + 2)^3 = 0^3 = 0$. The Frobenius rule agrees: $1^3 + 2^3 = 1 + 8 = 9 = 0$ modulo $3$.'
+          - problem: 'In a commutative ring of characteristic $5$, expand $(a + b)^5$.'
+            answer: 'a^5 + b^5'
+            answer_contract: {"kind": "required_form", "form": "expanded_polynomial"}
+            solution_sketch: 'We have $(a + b)^5 = a^5 + 5a^4b + 10a^3b^2 + 10a^2b^3 + 5ab^4 + b^5$. Every middle coefficient is $5$ or $10$, which is $0$ modulo $5$. So $(a + b)^5 = a^5 + b^5$.'
+        constraints: 'p in {2, 3, 5} for expansions; one counterexample with a composite characteristic; elements and polynomial rings over Z_p'
     diagnostic_exemplar:
-      problem: 'In a commutative ring of characteristic $5$, expand $(a + b)^5$ in simplest form and justify which terms vanish. Then give the characteristic of a field with $25$ elements.'
+      problem: 'In a commutative ring of characteristic $5$, expand $(a + b)^5$ and justify which terms vanish. Then give the characteristic of a field with $25$ elements.'
       answer: '$(a+b)^5 = a^5 + b^5$: by the binomial theorem the middle coefficients are $\binom{5}{1} = 5$, $\binom{5}{2} = 10$, $\binom{5}{3} = 10$, $\binom{5}{4} = 5$, each divisible by $5$, so those terms are $0$ in characteristic $5$. A field with $25 = 5^2$ elements has characteristic $5$: its prime subfield is $\mathbb{Z}_5$, and a finite field of order $p^{n}$ has characteristic the prime $p$.'
       answer_contract: {kind: none}
       solution_sketch: 'Only the two end terms of the binomial expansion survive — this is the Frobenius map $x \mapsto x^{p}$. A finite field has prime-power order and characteristic that prime.'
@@ -144,92 +223,174 @@ topics:
         key: true
     knowledge_points:
       - id: kp1
-        name: "The construction: fractions as equivalence classes"
+        name: 'The construction: fractions as equivalence classes'
         key_prerequisites: [integral-domains-zero-divisors, equivalence-classes-partitions]
+        step_check:
+          step: 'Since $d \neq 0$ and $D$ has no zero divisors, we can cancel $d$ to get $af = be$'
+          question: 'Why may we cancel $d$ from the equation $d(af - be) = 0$?'
+          options:
+            - 'Because every nonzero element of an integral domain has an inverse, so we divide by $d$'
+            - 'Because $af - be$ and $d$ are equal, so cancelling $d$ leaves the number $1$'
+            - 'Because $d \neq 0$ and a domain has no zero divisors, so $af - be = 0$'
+            - 'Because $d$ equals $1$ once the fractions are written in lowest terms'
+          answer: 'Because $d \neq 0$ and a domain has no zero divisors, so $af - be = 0$'
+          why: 'This is the only step that uses the domain property; in $\mathbb{Z}_6$ we have $3 \cdot 2 = 0$ with $3 \neq 0$, and cancelling $3$ would be wrong.'
         exemplars:
-          - problem: "On $\\mathbb{Z} \\times (\\mathbb{Z} \\setminus \\{0\\})$ define $(a, b) \\sim (c, d)$ iff $ad = bc$. Take $(a, b) = (4, 6)$, $(c, d) = (2, 3)$ and $(e, f) = (10, 15)$, so $ad = bc$ and $cf = de$ hold. The transitivity proof reaches $d(af - be) = 0$ and cancels $d$, which is legal because $\\mathbb{Z}$ has no zero divisors. State the verdict for whether $(4, 6)$ and $(10, 15)$ lie in one equivalence class, and give the value of $af - be$."
-            answer: "verdict = equal; value = 0"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["equal"], ["distinct"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "value"}]}
-            solution_sketch: "Step 1 (definition of the relation): $ad = 4 \\cdot 3 = 12 = 6 \\cdot 2 = bc$, and $cf = 2 \\cdot 15 = 30 = 3 \\cdot 10 = de$. Step 2 (transitivity computation): combining the two equations gives $d(af - be) = 6(60 - 60) = 0$. Step 3 (domain cancellation): since $d = 6 \\neq 0$ and $\\mathbb{Z}$ has no zero divisors, $af - be = 0$, so the pairs share one class; the option distinct would require $af - be \\neq 0$, which the cancellation forbids. Therefore verdict = equal; value = 0."
-          - problem: "Adding fractions by $(a, b) + (c, d) = (ad + bc, bd)$ needs the denominator $bd$ to be nonzero; a domain guarantees this, a ring with zero divisors does not. In $\\mathbb{Z}_6$ the element $3$ is nonzero but has zero-divisor partners. Find all nonzero elements $d$ of $\\mathbb{Z}_6$ with $3d = 0$, and give the answer as a set."
-            answer: "{2, 4}"
-            answer_contract: {"kind": "set"}
-            solution_sketch: "Step 1 (zero divisors): in $\\mathbb{Z}_6$, $3 \\cdot 2 = 6 \\equiv 0$ and $3 \\cdot 4 = 12 \\equiv 0$, while $3 \\cdot 1, 3 \\cdot 3, 3 \\cdot 5$ stay nonzero. Step 2 (denominator closure): the set found is exactly the list of $d$ for which the sum formula would produce the zero denominator $bd = 0$, the failure that cannot occur in an integral domain. The answer is the set {2, 4}."
-          - problem: "In the fraction construction on $\\mathbb{Z}$, the pairs $(1, 2)$ and $(2, 4)$ are equivalent, and the sum is defined by $(a, b) + (c, d) = (ad + bc, bd)$. Compute the sum of $(1, 2)$ and $(1, 3)$, and then the sum of $(2, 4)$ and $(1, 3)$. Give both resulting pairs as (p, q), then (r, s)."
-            answer: "first = (5, 6); second = (10, 12)"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"arity": 2, "kind": "coordinates"}, "name": "first"}, {"contract": {"arity": 2, "kind": "coordinates"}, "name": "second"}]}
-            solution_sketch: "Step 1 (sum formula, first representatives): $(1, 2) + (1, 3) = (1 \\cdot 3 + 2 \\cdot 1,\\ 2 \\cdot 3) = (5, 6)$. Step 2 (representative change): $(2, 4) + (1, 3) = (2 \\cdot 3 + 4 \\cdot 1,\\ 4 \\cdot 3) = (10, 12)$. Step 3 (well-definedness check): $5 \\cdot 12 = 60 = 6 \\cdot 10$, so the two results are equivalent and the sum does not depend on the representative. So first = (5, 6); second = (10, 12)."
-          - problem: "In the field $\\mathbb{Z}_5$, the product of fractions is defined by $(a, b) \\cdot (c, d) = (ac, bd)$. Compute the product of $(2, 3)$ and $(4, 2)$ in this construction. Give the answer as (numerator, denominator)."
-            answer: "(3, 1)"
-            answer_contract: {"arity": 2, "kind": "coordinates"}
-            solution_sketch: "Step 1 (product formula): $(2, 3) \\cdot (4, 2) = (2 \\cdot 4,\\ 3 \\cdot 2) = (8, 6)$ before reduction. Step 2 (reduce in $\\mathbb{Z}_5$): $8 \\equiv 3$ and $6 \\equiv 1$, and both entries are nonzero, so the pair is a legal fraction. The product as (numerator, denominator) is (3, 1)."
-          - problem: "On $\\mathbb{Z}_7 \\times (\\mathbb{Z}_7 \\setminus \\{0\\})$ define $(a, b) \\sim (c, d)$ iff $ad = bc$. The pair $(3, 4)$ is equivalent to $(c, 6)$ for exactly one $c$ in $\\mathbb{Z}_7$. Find $c$."
-            answer: "1"
+          - problem: 'On the pairs $(a, b)$ of integers with $b \neq 0$, write $(a, b) \sim (c, d)$ when $ad = bc$. Is $(4, 6) \sim (10, 15)$?'
+            answer: 'yes'
+            answer_contract: {"kind": "label", "options": [["yes", "they are equivalent", "equivalent", "it is", "yes they are"], ["no", "they are not equivalent", "not equivalent", "it is not", "no they are not"]]}
+            solution_sketch: 'Here $a = 4$, $b = 6$, $c = 10$ and $d = 15$. Then $ad = 4 \cdot 15 = 60$ and $bc = 6 \cdot 10 = 60$. The products are equal, so the pairs are equivalent.'
+          - problem: 'Fractions over a ring are added by $(a, b) + (c, d) = (ad + bc, bd)$, which needs $bd \neq 0$. In the ring $\mathbb{Z}_6$, which nonzero $d$ make $3d = 0$, so that the denominator of $(1, 3) + (1, d)$ would be zero?'
+            answer: '2, 4'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1 (equivalence condition): $(3, 4) \\sim (c, 6)$ means $3 \\cdot 6 = 4c$ in $\\mathbb{Z}_7$. Step 2 (solve in the field $\\mathbb{Z}_7$): $18 \\equiv 4$, so $4c = 4$; since $4 \\cdot 2 = 8 \\equiv 1$, the inverse of $4$ is $2$, giving $c = 8 \\equiv 1$. Therefore $c = 1$."
-          - problem: "On $\\mathbb{Z} \\times (\\mathbb{Z} \\setminus \\{0\\})$, two pairs lie in one equivalence class iff $ad = bc$; these classes are the elements of the field of fractions. Select the pair that lies in the equivalence class of $(6, 8)$."
-            answer: "(12, 16)"
-            answer_contract: {"kind": "label", "options": [["(12, 16)"], ["(8, 6)"], ["(12, 18)"], ["(3, 5)"]]}
-            solution_sketch: "Step 1 (class membership test): a pair $(x, y)$ lies in the class of $(6, 8)$ iff $6y = 8x$. Step 2 (check the correct option): $(12, 16)$ gives $6 \\cdot 16 = 96 = 8 \\cdot 12$, so it qualifies. Step 3 (named errors): the option (8, 6) inverts the pair, giving $36 \\neq 64$; the option (12, 18) scales the two entries by different factors, giving $108 \\neq 96$; the option (3, 5) subtracts 3 from each entry instead of dividing, giving $30 \\neq 24$. The correct option is (12, 16)."
-        constraints: "the transitivity and denominator-closure arguments, each localizing exactly where the domain hypothesis is used; well-definedness of + or x checked on one representative change"
+            solution_sketch: 'Compute $3d$ for each nonzero $d$: $3 \cdot 1 = 3$, $3 \cdot 2 = 6 = 0$, $3 \cdot 3 = 9 = 3$, $3 \cdot 4 = 12 = 0$ and $3 \cdot 5 = 15 = 3$. So $d = 2$ and $d = 4$. These zero divisors are why the construction needs an integral domain.'
+          - problem: 'Fractions are added by $(a, b) + (c, d) = (ad + bc, bd)$. Compute $(1, 2) + (1, 3)$.'
+            answer: '(5, 6)'
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: 'Here $ad + bc = 1 \cdot 3 + 2 \cdot 1 = 5$ and $bd = 2 \cdot 3 = 6$. So the sum is $(5, 6)$.'
+          - problem: 'Using $(a, b) + (c, d) = (ad + bc, bd)$, compute $(2, 4) + (1, 3)$.'
+            answer: '(10, 12)'
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: 'Here $ad + bc = 2 \cdot 3 + 4 \cdot 1 = 10$ and $bd = 4 \cdot 3 = 12$, so the sum is $(10, 12)$. It is equivalent to $(5, 6)$, the sum of $(1, 2)$ and $(1, 3)$, because $10 \cdot 6 = 60 = 12 \cdot 5$. The sum does not depend on the representatives.'
+          - problem: 'Fractions over $\mathbb{Z}_5$ are multiplied by $(a, b) \cdot (c, d) = (ac, bd)$. The product $(2, 3) \cdot (4, 2)$ is equivalent to $(c, 1)$ for exactly one $c$ in $\mathbb{Z}_5$. Find $c$.'
+            answer: '3'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The product is $(2 \cdot 4, 3 \cdot 2) = (8, 6)$. In $\mathbb{Z}_5$ we have $8 = 3$ and $6 = 1$, so the product is $(3, 1)$. Hence $c = 3$.'
+          - problem: 'On $\mathbb{Z}_7 \times (\mathbb{Z}_7 \setminus \{0\})$ define $(a, b) \sim (c, d)$ when $ad = bc$. The pair $(3, 4)$ is equivalent to $(c, 6)$ for exactly one $c$ in $\mathbb{Z}_7$. Find $c$.'
+            answer: '1'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The condition is $3 \cdot 6 = 4c$ in $\mathbb{Z}_7$. Since $18 = 4$ modulo $7$, we get $4c = 4$. Multiplying by $4^{-1} = 2$ gives $c = 2 \cdot 4 = 8 = 1$.'
+          - problem: 'With $(a, b) \sim (c, d)$ when $ad = bc$, find the integer $y$ with $(6, 8) \sim (21, y)$.'
+            answer: '28'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The condition is $6y = 8 \cdot 21 = 168$. Dividing by $6$ gives $y = 28$. Check: the ratio $6 : 8$ equals $21 : 28$, since both equal $3 : 4$.'
+          - problem: 'A cyclist covers $a$ metres in $b$ seconds, recorded as the pair $(a, b)$, and two records describe the same speed when $ad = bc$. The record $(60, 8)$ and a second record $(c, 12)$ describe the same speed. Find $c$.'
+            answer: '90'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The condition is $60 \cdot 12 = 8c$, so $8c = 720$. Dividing by $8$ gives $c = 90$. Check: $60$ metres in $8$ seconds and $90$ metres in $12$ seconds are both $7.5$ metres per second.'
+          - problem: 'A paint mix of $3$ parts red to $5$ parts white is recorded as $(3, 5)$, and two mixes have the same colour when $ad = bc$. How many parts $c$ of red go with $40$ parts of white to give the same colour?'
+            answer: '24'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The condition for $(3, 5) \sim (c, 40)$ is $3 \cdot 40 = 5c$, so $5c = 120$. Dividing by $5$ gives $c = 24$. The mix $24 : 40$ is the mix $3 : 5$ scaled by $8$.'
+          - problem: 'Sam adds the fractions $(2, 3)$ and $(4, 5)$ as $(6, 8)$, adding numerators and denominators. Compute the sum correctly with $(a, b) + (c, d) = (ad + bc, bd)$.'
+            answer: '(22, 15)'
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: 'The correct numerator is $ad + bc = 2 \cdot 5 + 3 \cdot 4 = 22$ and the denominator is $bd = 3 \cdot 5 = 15$. So the sum is $(22, 15)$. Sam''s pair $(6, 8)$ is not equivalent to it, since $6 \cdot 15 = 90$ and $8 \cdot 22 = 176$.'
+        constraints: 'the transitivity and denominator-closure arguments, each localizing exactly where the domain hypothesis is used; well-definedness of + or x checked on one representative change; speed and mixture records as contexts'
       - id: kp2
-        name: "Recognizing fields of fractions: Q, F(x), Q(√2)"
+        name: 'Recognizing fields of fractions: Q, F(x), Q(√2)'
         key_prerequisites: [integral-domains-zero-divisors, polynomial-rings, fields-characteristic]
+        step_check:
+          step: 'This field is $\mathbb{Q}(\sqrt{2}) = \{a + b\sqrt{2} \mid a, b \in \mathbb{Q}\}$'
+          question: 'Why can every quotient $\frac{a + b\sqrt2}{c + d\sqrt2}$ be written as $p + q\sqrt2$ with $p$ and $q$ rational?'
+          options:
+            - 'The product with $c - d\sqrt2$ turns the denominator into the rational $c^2 - 2d^2$'
+            - 'Because $\sqrt2$ is irrational, so a denominator containing it cannot be simplified at all'
+            - 'Because $\mathbb{Z}[\sqrt2]$ is already a field, so all of its quotients stay in the ring'
+            - 'Because dividing by $c + d\sqrt2$ just means dividing $c$ and $d$ by that number separately'
+          answer: 'The product with $c - d\sqrt2$ turns the denominator into the rational $c^2 - 2d^2$'
+          why: 'The product $(c + d\sqrt2)(c - d\sqrt2) = c^2 - 2d^2$ is a rational number, and it is nonzero because $\sqrt2$ is irrational; the quotient then splits into a rational part and a rational multiple of $\sqrt2$.'
         exemplars:
-          - problem: "The ring Z is an integral domain. Its field of fractions is the least field that contains a copy of Z, formed by inverting every nonzero member. Which field results from this construction?"
-            answer: "Q: elements are ratios a/b"
-            answer_contract: {"kind": "label", "options": [["Q: elements are ratios a/b"], ["Z: elements are integers"], ["Z[x]: elements are polynomials"], ["Q[x]: elements are polynomials"]]}
-            solution_sketch: "Step 1 (construction): the field of fractions of Z is built from equivalence classes of pairs a/b with a and b in Z and b nonzero. Step 2 (identification): each such class is an ordinary rational number, and each rational number occurs as one of these classes. Step 3 (wrong options): 'Z: elements are integers' errs because Z is not closed under division, so inverting nonzero members must enlarge it; 'Z[x]: elements are polynomials' errs because it is a polynomial ring, not the fraction field of Z; 'Q[x]: elements are polynomials' errs because it is a polynomial ring over Q, not a field of ratios of integers. Step 4 (answer): the resulting field is Q: elements are ratios a/b."
-          - problem: "Let F be a field. Its field of fractions is built by inverting every nonzero member. Which field results from this construction?"
-            answer: "F: elements are elements of F"
-            answer_contract: {"kind": "label", "options": [["F: elements are elements of F"], ["Z: elements are integers"], ["F[x]: elements are polynomials"], ["F(x): elements are ratios p/q"]]}
-            solution_sketch: "Step 1 (construction): the field of fractions of F is built from equivalence classes of pairs a/b with a and b in F and b nonzero. Step 2 (collapse): since b is invertible in a field, the class of a/b equals the class of ab^(-1)/1, which is a member of F, and every member of F appears as a/1. Step 3 (wrong options): 'Z: elements are integers' errs because F was not assumed to be Z and a general field need not contain the integers; 'F[x]: elements are polynomials' errs because adjoining an indeterminate gives a larger polynomial ring, not the fraction field; 'F(x): elements are ratios p/q' errs because ratios of polynomials appear only when the base ring is F[x], not when it is already the field F. Step 4 (answer): the resulting field is F: elements are elements of F."
-          - problem: "The polynomial ring Q[x] is an integral domain. Its field of fractions is written Q(x). Give the general form of one element of Q(x) using two polynomials p and q."
-            answer: "p/q"
-            answer_contract: {"kind": "function", "vars": ["p", "q"]}
-            solution_sketch: "Step 1 (construction): the field of fractions of Q[x] is built from equivalence classes of pairs (p, q) with p and q in Q[x] and q nonzero. Step 2 (notation): each class is recorded as the quotient p/q. Step 3 (answer): the general form of one element of Q(x) is p/q."
-          - problem: "The polynomial ring Z_5[x] over the field Z_5 is an integral domain. Its field of fractions is written Z_5(x). Give the general form of one element of Z_5(x) using two polynomials f and g."
-            answer: "f/g"
-            answer_contract: {"kind": "function", "vars": ["f", "g"]}
-            solution_sketch: "Step 1 (construction): the field of fractions of Z_5[x] is built from equivalence classes of pairs (f, g) with f and g in Z_5[x] and g nonzero. Step 2 (notation): each class is recorded as the quotient f/g. Step 3 (answer): the general form of one element of Z_5(x) is f/g."
-          - problem: "The ring Z[sqrt(2)] consists of the values m + n sqrt(2) with m and n whole numbers. Its field of fractions is the subfield Q(sqrt(2)) of the real numbers. Give the general form of one element of Q(sqrt(2)) using two rational numbers a and b."
-            answer: "a + b sqrt(2)"
-            answer_contract: {"kind": "function", "vars": ["a", "b"]}
-            solution_sketch: "Step 1 (elements): Z[sqrt(2)] is the set of values m + n sqrt(2) with m and n whole numbers. Step 2 (field of fractions): inverting every nonzero member gives the field Q(sqrt(2)). Step 3 (answer): the general form of one element of Q(sqrt(2)) is a + b sqrt(2), with a and b rational."
-          - problem: "In the field of fractions of Z[sqrt(2)] every element is a ratio of two members of the ring. Write the value 5/(3 - sqrt(2)) in the form a + b sqrt(2) with rational a and b. Find b."
-            answer: "5/7"
+          - problem: 'What is the field of fractions of $\mathbb{Z}$?'
+            answer: 'Q'
+            answer_contract: {"kind": "label", "options": [["Q", "the rationals", "the rational numbers", "rational numbers", "rationals"], ["Z", "the integers", "integers"], ["R", "the reals", "the real numbers", "real numbers"]]}
+            solution_sketch: 'The field of fractions of $\mathbb{Z}$ consists of the classes of pairs $\frac ab$ with $a, b \in \mathbb{Z}$ and $b \neq 0$. Each class is an ordinary rational number, and every rational number occurs. So the field is $\mathbb{Q}$.'
+          - problem: 'Let $F$ be a field. What is the field of fractions of $F$?'
+            answer: 'F itself'
+            answer_contract: {"kind": "label", "options": [["F itself", "F", "itself", "the field F"], ["F(x)", "rational functions", "the field of rational functions"], ["F[x]", "polynomials", "the polynomial ring"]]}
+            solution_sketch: 'In a field every nonzero denominator $b$ is already invertible, so the fraction $\frac ab$ equals $ab^{-1}$ in $F$. Thus every element of the field of fractions is an element of $F$, and the field of fractions is $F$ itself.'
+          - problem: 'In the field of fractions $\mathbb{Q}(x)$ of the polynomial ring $\mathbb{Q}[x]$, simplify $\frac{x^2 - 1}{x - 1}$.'
+            answer: 'x + 1'
+            answer_contract: {"kind": "required_form", "form": "expanded_polynomial"}
+            solution_sketch: 'Factor the numerator: $x^2 - 1 = (x - 1)(x + 1)$. The fractions $\frac{x^2-1}{x-1}$ and $\frac{x+1}{1}$ are equal, because $(x^2 - 1) \cdot 1 = (x - 1)(x + 1)$. So the quotient is $x + 1$.'
+          - problem: 'Every element of the field of fractions of $\mathbb{Z}[\sqrt2]$ is a quotient of two members of the ring. Write $\frac{5}{3 - \sqrt2}$ in the form $a + b\sqrt2$ with $a$ and $b$ rational.'
+            answer: '15/7 + 5/7*sqrt(2)'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1 (rationalize): multiply the numerator and the denominator by 3 + sqrt(2), the conjugate of 3 - sqrt(2). Step 2 (simplify): the denominator becomes 9 - 2 = 7 and the numerator becomes 15 + 5 sqrt(2). Step 3 (read off): the element is 15/7 + (5/7) sqrt(2), so b = 5/7."
-        constraints: "identifications for Z, F[x] (F in {Q, Z_p}), Z[sqrt(2)] (giving Q(sqrt(2)) = {a + b sqrt(2), a, b rational}), and fields; each identification says what the elements look like"
+            solution_sketch: 'Multiply the numerator and the denominator by $3 + \sqrt2$, the conjugate of $3 - \sqrt2$. The denominator becomes $9 - 2 = 7$ and the numerator becomes $15 + 5\sqrt2$. So the quotient is $\frac{15}{7} + \frac57\sqrt2$, and so $a = \frac{15}{7}$ and $b = \frac57$.'
+          - problem: 'Write $\frac{1}{1 + \sqrt2}$ in the form $a + b\sqrt2$ with $a$ and $b$ rational.'
+            answer: '-1 + sqrt(2)'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Multiply the numerator and the denominator by $1 - \sqrt2$. The denominator becomes $1 - 2 = -1$ and the numerator becomes $1 - \sqrt2$. So the quotient is $-1 + \sqrt2$, that is $a = -1$ and $b = 1$.'
+          - problem: 'A filter has transfer function $\frac{s + 1}{s^2 + 1}$. The inverse filter has the multiplicative inverse of this quotient in the field $\mathbb{R}(s)$ of ratios of real polynomials. What is its transfer function?'
+            answer: '(s^2+1)/(s+1)'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The inverse of $\frac pq$ is $\frac qp$ when $p \neq 0$. Here $p = s + 1$ is a nonzero polynomial, so the inverse is $\frac{s^2 + 1}{s + 1}$. Check: the product of the two quotients is $\frac{(s+1)(s^2+1)}{(s^2+1)(s+1)} = 1$.'
+          - problem: 'Two filters with transfer functions $\frac{1}{s + 1}$ and $\frac{1}{s + 2}$ run in parallel and their outputs add. Find the transfer function of the pair as one quotient in $\mathbb{R}(s)$.'
+            answer: '(2s+3)/((s+1)(s+2))'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Add with a common denominator: $\frac{1}{s+1} + \frac{1}{s+2} = \frac{(s + 2) + (s + 1)}{(s+1)(s+2)}$. The numerator is $2s + 3$. So the sum is $\frac{2s + 3}{(s+1)(s+2)}$.'
+          - problem: 'Write $\frac{2 + \sqrt2}{3 + \sqrt2}$ in the form $a + b\sqrt2$ with $a$ and $b$ rational.'
+            answer: '4/7 + 1/7*sqrt(2)'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Multiply the numerator and the denominator by $3 - \sqrt2$. The numerator becomes $(2 + \sqrt2)(3 - \sqrt2) = 6 - 2\sqrt2 + 3\sqrt2 - 2 = 4 + \sqrt2$ and the denominator becomes $9 - 2 = 7$. So the quotient is $\frac47 + \frac17\sqrt2$, and so $a = \frac47$ and $b = \frac17$.'
+          - problem: 'The Gaussian integers $\mathbb{Z}[i]$ have the field of fractions $\mathbb{Q}(i)$. Write $\frac{1}{2 + i}$ in the form $a + bi$ with $a$ and $b$ rational.'
+            answer: '2/5 - 1/5*i'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Multiply the numerator and the denominator by $2 - i$. The denominator becomes $4 + 1 = 5$ and the numerator becomes $2 - i$. So the quotient is $\frac25 - \frac15 i$, and so $a = \frac25$ and $b = -\frac15$.'
+          - problem: 'In $\mathbb{Q}(x)$, simplify $\frac{x^3 - x}{x}$.'
+            answer: 'x^2 - 1'
+            answer_contract: {"kind": "required_form", "form": "expanded_polynomial"}
+            solution_sketch: 'Factor the numerator: $x^3 - x = x(x^2 - 1)$. Cancelling the nonzero factor $x$ gives $x^2 - 1$. The cancellation is legal because $\mathbb{Q}[x]$ is an integral domain.'
+        constraints: 'identifications for Z, fields, F[x] (F in {Q, R}), Z[sqrt(2)] (giving Q(sqrt(2)) = {a + b sqrt(2), a, b rational}) and Z[i]; quotients rationalized or simplified; transfer functions as contexts'
       - id: kp3
-        name: "The embedding: every domain sits inside its smallest field"
+        name: 'The embedding: every domain sits inside its smallest field'
         key_prerequisites: [integral-domains-zero-divisors, fields-characteristic]
+        step_check:
+          step: 'Every field $K$ containing $D$ contains a copy of $\mathrm{Frac}(D)$, so $\mathrm{Frac}(D)$ is the smallest field containing $D$'
+          question: 'Why does this show that $\mathrm{Frac}(D)$ is the smallest field containing $D$?'
+          options:
+            - 'Because $\mathrm{Frac}(D)$ has fewer elements than any other field has'
+            - 'Because $\mathrm{Frac}(D)$ is a subset of $D$, so it cannot be larger than $D$'
+            - 'Because every field is a field of fractions of the domain $D$ in this way'
+            - 'Because no such field is smaller than its copy of $\mathrm{Frac}(D)$'
+          answer: 'Because no such field is smaller than its copy of $\mathrm{Frac}(D)$'
+          why: 'Each field $K$ holding $D$ also holds a copy of $\mathrm{Frac}(D)$, so $K$ is at least that large; and $\mathrm{Frac}(D)$ itself is such a field.'
         exemplars:
-          - problem: "For D = Z, define iota(a) = a/1 in Frac(Z). Let a = 4 and b = 9. State whether iota(a)+iota(b) equals iota(a+b), and give the common value."
-            answer: "verdict = equals; sum = 13"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["equals"], ["differs"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "sum"}]}
-            solution_sketch: "Step 1: The embedding is iota(a) = a/1, so iota(4) = 4 and iota(9) = 9. Step 2: In Frac(Z), iota(4) + iota(9) = 4 + 9 = 13. Step 3: Also iota(4+9) = iota(13) = 13, so the two sides match. The option differs would come from forgetting that iota preserves addition. verdict = equals; sum = 13."
-          - problem: "For D = Z, define iota(a) = a/1 in Frac(D). If iota(m) = iota(8), find m."
-            answer: "8"
+          - problem: 'In $\mathrm{Frac}(\mathbb{Z})$ the integer $a$ is identified with $\frac{a}{1}$. Compute $\frac41 + \frac91$ using $\frac ab + \frac cd = \frac{ad + bc}{bd}$.'
+            answer: '13'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1: The embedding sends m to m/1. Step 2: Equality iota(m) = iota(8) means m/1 = 8/1. Step 3: Cross multiplication gives m * 1 = 1 * 8, so m = 8. The value is 8."
-          - problem: "For D = Z, define iota(a) = a/1 in Frac(D). Compute iota(3) * iota(4) in Frac(D)."
-            answer: "12"
+            solution_sketch: 'The rule gives $\frac{4 \cdot 1 + 1 \cdot 9}{1 \cdot 1} = \frac{13}{1}$. This is the integer $13$, the image of $4 + 9$. So the embedding $a \mapsto \frac a1$ preserves addition.'
+          - problem: 'In $\mathrm{Frac}(\mathbb{Z})$, for which integer $m$ is $\frac{m}{1} = \frac{24}{3}$?'
+            answer: '8'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1: The embedding is multiplicative, so iota(3) * iota(4) = (3/1) * (4/1). Step 2: Multiply fractions: (3*4)/(1*1) = 12/1. Step 3: In Frac(Z), 12/1 equals 12. The product is 12."
-          - problem: "For D = Z, the minimality proof says every field containing D contains iota(a) iota(b)^(-1). Find the element of Q equal to iota(1) * iota(2)^(-1). Give the answer as a fraction."
-            answer: "1/2"
+            solution_sketch: 'Fractions $\frac ab$ and $\frac cd$ are equal when $ad = bc$. Here $m \cdot 3 = 1 \cdot 24$, so $3m = 24$ and $m = 8$.'
+          - problem: 'What is the field of fractions of the Gaussian integers $\mathbb{Z}[i]$?'
+            answer: 'Q(i)'
+            answer_contract: {"kind": "label", "options": [["Q(i)", "Q[i]", "the rationals with i adjoined"], ["Q(x)", "the rational functions"], ["Q(\u221a2)", "Q(sqrt(2))"]]}
+            solution_sketch: 'Every quotient $\frac{a + bi}{c + di}$ of Gaussian integers equals a number $p + qi$ with $p$ and $q$ rational, after multiplying by the conjugate. Conversely, each $p + qi$ is such a quotient. So the field of fractions is $\mathbb{Q}(i)$, the numbers $p + qi$ with $p, q \in \mathbb{Q}$.'
+          - problem: 'Compute $\frac31 \cdot \frac41$ in $\mathrm{Frac}(\mathbb{Z})$.'
+            answer: '12'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1: The minimality step uses iota(a) * iota(b)^(-1). Step 2: Here iota(1) = 1 and iota(2) = 2, so iota(2)^(-1) = 1/2 in Q. Step 3: The product is 1 * 1/2 = 1/2. Together the embedding and minimality steps conclude that every integral domain embeds in a field. The value is 1/2."
-          - problem: "Let D be the Gaussian integers. The field of fractions Frac(D) is the smallest field containing D. Select the field isomorphic to Frac(D)."
-            answer: "Q(i)"
-            answer_contract: {"kind": "label", "options": [["Q(i)"], ["Q(2)"], ["Q(-1)"], ["Z(i)"]]}
-            solution_sketch: "Step 1: The Gaussian integers form an integral domain. Step 2: Its field of fractions must contain the images of a and i, so it contains Q(i). Step 3: Any field containing the Gaussian integers already contains Q(i), so Q(i) is smallest. The option Q(2) is wrong because it belongs to the sqrt(2) example, not to i; the option Q(-1) is wrong because replacing i by its square -1 collapses the field to Q; the option Z(i) is wrong because it is not a field. The selected field is Q(i)."
-          - problem: "Let D = Z/5Z, an integral domain. The embedding iota(a) = a/1 maps D into Frac(D). Compute iota(4) + iota(4) in Frac(D)."
-            answer: "3"
+            solution_sketch: 'The product rule gives $\frac{3 \cdot 4}{1 \cdot 1} = \frac{12}{1}$, which is the integer $12$. So the embedding $a \mapsto \frac a1$ also preserves products.'
+          - problem: 'The field $\mathbb{Q}$ contains $\mathbb{Z}$. The embedding of $\mathrm{Frac}(\mathbb{Z})$ into $\mathbb{Q}$ sends $\frac ab$ to $ab^{-1}$. What is the image of $\frac{6}{-4}$?'
+            answer: '-3/2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1: The embedding gives iota(4) = 4/1 in Frac(D). Step 2: Add: 4/1 + 4/1 = 8/1. Step 3: In Z/5Z, 8 is congruent to 3, so 8/1 equals 3/1. The value is 3."
-        constraints: "the embedding and minimality proofs in guided steps; conclude 'every integral domain embeds in a field' explicitly once per set"
+            solution_sketch: 'The image is $6 \cdot (-4)^{-1} = 6 \cdot \left(-\frac14\right) = -\frac64 = -\frac32$. Equal fractions have equal images, since $\frac{6}{-4}$ equals $\frac{-3}{2}$ in $\mathrm{Frac}(\mathbb{Z})$.'
+          - problem: 'The ring $\mathbb{Z}_5$ is a field, so it is its own field of fractions. What is $\frac41 + \frac41$ in $\mathrm{Frac}(\mathbb{Z}_5) = \mathbb{Z}_5$?'
+            answer: '3'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The sum is $\frac81$, which is the element $8$ of $\mathbb{Z}_5$. Since $8 = 5 + 3$, it is the element $3$.'
+          - problem: 'Can the ring $\mathbb{Z}_6$ be a subring of some field?'
+            answer: 'no'
+            answer_contract: {"kind": "label", "options": [["yes", "it can", "it is possible", "possible", "Z_6 can be a subring"], ["no", "it cannot", "it is not possible", "not possible", "impossible", "Z_6 cannot be a subring"]]}
+            solution_sketch: 'In $\mathbb{Z}_6$ we have $2 \cdot 3 = 6 = 0$ with $2 \neq 0$ and $3 \neq 0$. A subring of a field inherits this equation, but a field has no zero divisors. So $\mathbb{Z}_6$ cannot lie inside a field; only integral domains embed in a field.'
+          - problem: 'Which nonzero elements $x$ of $\mathbb{Z}_6$ satisfy $2x = 0$?'
+            answer: '3'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Compute $2x$ for $x = 1, \dots, 5$: the values are $2, 4, 0, 2, 4$. Only $x = 3$ gives $0$. Since $2 \cdot 3 = 0$, the ring has zero divisors and does not embed in a field.'
+          - problem: 'A computer algebra system stores the integer $n$ as the pair $(n, 1)$. It adds and multiplies pairs by $(a, b) + (c, d) = (ad + bc, bd)$ and $(a, b)(c, d) = (ac, bd)$. It computes $(7, 1) + (5, 1)$ and multiplies the result by $(3, 1)$. Which pair does it hold?'
+            answer: '(36, 1)'
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: 'The sum is $(7 \cdot 1 + 1 \cdot 5, 1 \cdot 1) = (12, 1)$. The product with $(3, 1)$ is $(12 \cdot 3, 1 \cdot 1) = (36, 1)$. This is the pair for the integer $36 = (7 + 5) \cdot 3$.'
+          - problem: 'The same system stores $\frac13$ as the pair $(1, 3)$. To divide $21$ by $3$ it multiplies $(21, 1)$ by $(1, 3)$ with $(a, b)(c, d) = (ac, bd)$. The result represents an integer $m$. Find $m$.'
+            answer: '7'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The product is $(21 \cdot 1, 1 \cdot 3) = (21, 3)$. This pair represents $\frac{21}{3}$. Since $21 \cdot 1 = 3 \cdot 7$, it is equivalent to $(7, 1)$, so $m = 7$.'
+          - problem: 'In $\mathrm{Frac}(\mathbb{Z}[i])$ the Gaussian integer $a + bi$ is identified with $\frac{a + bi}{1}$. What is the real part of the product $\frac{2 + 3i}{1} \cdot \frac{1 - i}{1}$?'
+            answer: '5'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The product is $(2 + 3i)(1 - i) = 2 - 2i + 3i - 3i^2 = 2 + i + 3 = 5 + i$. Its real part is $5$. The embedding $z \mapsto \frac z1$ preserves this product.'
+        constraints: 'the embedding and minimality proofs in guided steps; conclude "every integral domain embeds in a field" explicitly once per set; computer-algebra pairs as contexts'
     diagnostic_exemplar:
       problem: 'Identify the field of fractions of the integral domain $\mathbb{Z}[\sqrt{2}] = \{a + b\sqrt{2} : a, b \in \mathbb{Z}\}$ as an explicit subfield of $\mathbb{R}$, and justify your answer.'
       answer: 'It is $\mathbb{Q}(\sqrt{2}) = \{p + q\sqrt{2} : p, q \in \mathbb{Q}\}$. Every quotient of elements of $\mathbb{Z}[\sqrt2]$ lies there: for $c + d\sqrt2 \ne 0$, $\frac{a+b\sqrt2}{c+d\sqrt2} = \frac{(a+b\sqrt2)(c-d\sqrt2)}{c^2 - 2d^2}$, and $c^2 - 2d^2 \ne 0$ because $\sqrt2$ is irrational; the result has the form $p + q\sqrt2$ with $p, q \in \mathbb{Q}$. Conversely $\mathbb{Q}(\sqrt2)$ is a field containing $\mathbb{Z}[\sqrt2]$, and any field containing a domain $D$ contains a copy of $\mathrm{Frac}(D)$ via $a/b \mapsto ab^{-1}$; since each $p + q\sqrt2$ is such a quotient, $\mathrm{Frac}(\mathbb{Z}[\sqrt2]) = \mathbb{Q}(\sqrt2)$.'
@@ -265,91 +426,171 @@ topics:
         key: false
     knowledge_points:
       - id: kp1
-        name: "Arithmetic in Z_p: inverses and linear equations"
+        name: 'Arithmetic in Z_p: inverses and linear equations'
         key_prerequisites: [fields-characteristic, euclidean-algorithm]
+        step_check:
+          step: 'multiply both sides by $4^{-1}$'
+          question: 'Why does multiplying both sides of $4x = 10$ by $4^{-1}$ leave $x$ alone on the left side?'
+          options:
+            - 'Because $4^{-1}$ is the decimal $0.25$, and $0.25 \cdot 4 = 1$ as numbers'
+            - 'Because $4^{-1}$ is the negative of $4$, so the two cancel each other'
+            - 'Because $4^{-1} \cdot 4 = 1$, so the left side becomes $1 \cdot x$'
+            - 'Because $4 \cdot 4^{-1} = 0$ in $\mathbb{Z}_{11}$, which removes the factor $4$ entirely'
+          answer: 'Because $4^{-1} \cdot 4 = 1$, so the left side becomes $1 \cdot x$'
+          why: 'The inverse is defined by $4^{-1} \cdot 4 = 1$; here $4 \cdot 3 = 12 = 1$ in $\mathbb{Z}_{11}$, so $4^{-1} = 3$.'
         exemplars:
           - problem: 'Solve $3x + 5 = 1$ in $\mathbb{Z}_7$.'
-            answer: '$x = 1$'
-            solution_sketch: '$3x = -4 = 3$, and multiplying by $3^{-1} = 5$ gives $x = 15 = 1$. Check: $3 + 5 = 8 \equiv 1$.'
-          - problem: "Find the larger solution of x^2 = 2 in Z_7."
-            answer: "4"
+            answer: '1'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Rule: solve a quadratic in Z_7 by testing each residue. Step 1: compute squares modulo 7: 1^2=1, 2^2=4, 3^2=2, 4^2=2, 5^2=4, 6^2=1. Step 2: the roots are 3 and 4, so the larger root is 4. The larger solution is 4."
-          - problem: "Find the inverse of 8 in Z_13."
-            answer: "5"
+            solution_sketch: 'Subtract $5$ from both sides: $3x = -4 = 3$ in $\mathbb{Z}_7$. The inverse of $3$ is $5$, because $3 \cdot 5 = 15 = 1$. So $x = 5 \cdot 3 = 15 = 1$. Check: $3 + 5 = 8 = 1$.'
+          - problem: 'Find the inverse of $8$ in $\mathbb{Z}_{13}$.'
+            answer: '5'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The element is 8 in Z_13. Rule: an inverse x satisfies 8x = 1 modulo 13. Step 1: test x = 5: 8*5 = 40 = 3*13 + 1, so 8*5 = 1 in Z_13. Step 2: because x = 5 gives 1, it is the inverse. The inverse is 5."
-          - problem: "Solve 5x + 2 = 9 in Z_11. Give the integer representative x between 0 and 10."
-            answer: "8"
+            solution_sketch: 'We need $x$ with $8x = 1$ in $\mathbb{Z}_{13}$. Since $8 \cdot 5 = 40 = 3 \cdot 13 + 1$, the inverse is $5$.'
+          - problem: 'Find all solutions of $x^2 = 2$ in $\mathbb{Z}_7$.'
+            answer: '3, 4'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The equation is 5x + 2 = 9 in Z_11. Rule: isolate x by field arithmetic. Step 1: subtract 2 from both sides: 5x = 7 in Z_11. Step 2: the inverse of 5 modulo 11 is 9, because 5*9 = 45 = 1 in Z_11. Step 3: multiply by 9: x = 7*9 = 63 = 8 in Z_11. The solution is 8."
-          - problem: "Solve x^2 + 3x + 2 = 0 in Z_7. Give the larger solution."
-            answer: "6"
+            solution_sketch: 'Square each residue modulo $7$: the values for $x = 1, \dots, 6$ are $1, 4, 2, 2, 4, 1$. The value $2$ appears for $x = 3$ and $x = 4$. These are the two solutions, and they add to $7 = 0$, as $x$ and $-x$ should.'
+          - problem: 'Solve $5x + 2 = 9$ in $\mathbb{Z}_{11}$.'
+            answer: '8'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The equation is x^2 + 3x + 2 = 0 in Z_7. Rule: factor the quadratic over Z_7. Step 1: x^2 + 3x + 2 = (x+1)(x+2) = (x+6)(x+5). Step 2: set each factor to zero: x = 6 and x = 5. Step 3: the larger integer representative is 6. The larger solution is 6."
-          - problem: "Find the inverse of 6 in Z_13."
-            answer: "11"
+            solution_sketch: 'Subtract $2$: $5x = 7$. The inverse of $5$ in $\mathbb{Z}_{11}$ is $9$, because $5 \cdot 9 = 45 = 4 \cdot 11 + 1$. So $x = 7 \cdot 9 = 63 = 8$. Check: $5 \cdot 8 + 2 = 42 = 9$ in $\mathbb{Z}_{11}$.'
+          - problem: 'Compute $\frac58$ in $\mathbb{Z}_{13}$.'
+            answer: '12'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The element is 6 in Z_13. Rule: an inverse x satisfies 6x = 1 modulo 13. Step 1: test x = 11: 6*11 = 66 = 5*13 + 1, so 6*11 = 1 in Z_13. Step 2: because x = 11 gives 1, it is the inverse. The inverse is 11."
-        constraints: "p <= 13; linear and quadratic equations solved by field arithmetic"
+            solution_sketch: 'Division by $8$ means multiplication by $8^{-1}$, and $8 \cdot 5 = 40 = 1$ in $\mathbb{Z}_{13}$, so $8^{-1} = 5$. Then $\frac58 = 5 \cdot 5 = 25 = 12$ in $\mathbb{Z}_{13}$. Check: $8 \cdot 12 = 96 = 7 \cdot 13 + 5$.'
+          - problem: 'Solve $x^2 + 3x + 2 = 0$ in $\mathbb{Z}_7$.'
+            answer: '5, 6'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Factor: $x^2 + 3x + 2 = (x + 1)(x + 2)$. In a field a product is $0$ only when a factor is $0$, so $x = -1 = 6$ or $x = -2 = 5$.'
+          - problem: 'A toy cipher on $\mathbb{Z}_{11}$ encrypts a message number $m$ as $c = 4m + 3$. Decrypt the cipher number $c = 9$.'
+            answer: '7'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Solve $4m + 3 = 9$. Subtract $3$ to get $4m = 6$. The inverse of $4$ is $3$, because $4 \cdot 3 = 12 = 1$, so $m = 6 \cdot 3 = 18 = 7$. Check: $4 \cdot 7 + 3 = 31 = 9$ in $\mathbb{Z}_{11}$.'
+          - problem: 'A cipher on $\mathbb{Z}_{17}$ scrambles each number $m$ into $9m$. By what number must a scrambled value be multiplied to recover $m$?'
+            answer: '2'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The number is the inverse of $9$ in $\mathbb{Z}_{17}$. Since $9 \cdot 2 = 18 = 1$, it is $2$. Indeed $2 \cdot 9m = 18m = m$.'
+          - problem: 'Sam solves $3x = 4$ in $\mathbb{Z}_7$ by dividing as in the real numbers and writes $x = \frac43$. What is the correct solution in $\mathbb{Z}_7$?'
+            answer: '6'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'In $\mathbb{Z}_7$, dividing by $3$ means multiplying by $3^{-1} = 5$, since $3 \cdot 5 = 15 = 1$. Then $x = 4 \cdot 5 = 20 = 6$. Check: $3 \cdot 6 = 18 = 4$.'
+        constraints: 'p <= 101 for inverses; linear and quadratic equations solved by field arithmetic; division as multiplication by an inverse'
       - id: kp2
-        name: "Why Z_p is a field; Fermat inverses"
+        name: 'Why Z_p is a field; Fermat inverses'
         key_prerequisites: [fields-characteristic, euclidean-algorithm]
+        step_check:
+          step: '$p=11$ is prime and $5\not\equiv 0$'
+          question: 'Why does Fermat''s little theorem apply to $5$ modulo $11$?'
+          options:
+            - 'Because $11$ is prime and $5$ is not a multiple of $11$'
+            - 'Because $5$ is smaller than $11$, and any smaller number works for every modulus'
+            - 'Because $5$ is itself a prime, and the modulus does not matter'
+            - 'Because $5 \cdot 11 \equiv 1$ modulo $11$, so $5$ is its own inverse'
+          answer: 'Because $11$ is prime and $5$ is not a multiple of $11$'
+          why: 'Fermat''s little theorem says $a^{p-1} \equiv 1$ when $p$ is prime and $p$ does not divide $a$; modulo $12$, for example, $5^{11} \equiv 5$, not $1$.'
         exemplars:
-          - problem: "In Z_7, the integers 3 and 7 are coprime. Use the extended Euclidean algorithm to find the least positive integer x with 3x = 1 (mod 7)."
-            answer: "5"
+          - problem: 'Use the Euclidean algorithm to find the inverse of $3$ in $\mathbb{Z}_7$.'
+            answer: '5'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The congruence is 3x = 1 (mod 7). Step 1: the Euclidean algorithm gives 7 = 2*3 + 1, so 1 = 7 - 2*3. Step 2: Bezout's identity gives 3*(-2) + 7*1 = 1. Step 3: reduce -2 modulo 7 to get 5, and 3*5 = 15 = 1 (mod 7). The inverse is 5."
-          - problem: "Use Fermat's little theorem to compute the inverse of 5 in Z_11. Give the residue as an integer from 0 to 10."
-            answer: "9"
+            solution_sketch: 'Divide: $7 = 2 \cdot 3 + 1$, so $1 = 7 - 2 \cdot 3$. Modulo $7$ this says $3 \cdot (-2) = 1$. Since $-2 = 5$ in $\mathbb{Z}_7$, the inverse is $5$; indeed $3 \cdot 5 = 15 = 1$.'
+          - problem: 'Use Fermat''s little theorem to find the inverse of $5$ in $\mathbb{Z}_{11}$.'
+            answer: '9'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Fermat's little theorem gives 5^10 = 1 (mod 11), so the inverse of 5 is 5^9. Compute 5^2 = 3, 5^4 = 9, 5^8 = 4 mod 11, so 5^9 = 5^8*5 = 4*5 = 20 = 9 (mod 11). The inverse is 9."
-          - problem: "Use Fermat's little theorem to find 2^{-1} in Z_5. Give the answer as a residue from 0 to 4."
-            answer: "3"
+            solution_sketch: 'Fermat''s little theorem gives $5^{10} = 1$ modulo $11$, so the inverse of $5$ is $5^9$. Compute $5^2 = 3$, $5^4 = 9$ and $5^8 = 81 = 4$ modulo $11$. Then $5^9 = 5^8 \cdot 5 = 4 \cdot 5 = 20 = 9$. Check: $5 \cdot 9 = 45 = 1$.'
+          - problem: 'Use Fermat''s little theorem to find $2^{-1}$ in $\mathbb{Z}_5$.'
+            answer: '3'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Since 5 is prime, Fermat's little theorem gives 2^4 = 1 (mod 5), so 2^{-1} = 2^3. Compute 2^3 = 8 = 3 (mod 5). Check 2*3 = 6 = 1 (mod 5). The inverse is 3."
-          - problem: "Solve 7x = 1 (mod 11) for the residue x using Fermat's little theorem. Give x from 0 to 10."
-            answer: "8"
+            solution_sketch: 'Since $5$ is prime, Fermat''s little theorem gives $2^4 = 1$ modulo $5$, so $2^{-1} = 2^3$. Compute $2^3 = 8 = 3$ modulo $5$. Check: $2 \cdot 3 = 6 = 1$ modulo $5$.'
+          - problem: 'Solve $7x \equiv 1 \pmod{11}$.'
+            answer: '8'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The congruence 7x = 1 (mod 11) has a solution because 11 is prime. Fermat's little theorem gives 7^10 = 1, so 7^{-1} = 7^9. Compute 7^2 = 5, 7^4 = 3, 7^8 = 9 mod 11, so 7^9 = 9*7 = 63 = 8 (mod 11). The residue is x = 8."
-          - problem: "In Z_7, decide whether 2 is invertible. If it is, use Fermat's little theorem to find its inverse. State the verdict and the inverse residue."
-            answer: "verdict = invertible; inv = 4"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["invertible"], ["noninvertible"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "inv"}]}
-            solution_sketch: "Fermat's little theorem applies because 7 is prime, so 2^6 = 1 (mod 7) and 2^{-1} = 2^5 = 32 = 4 (mod 7). Check 2*4 = 8 = 1 (mod 7). The option noninvertible is wrong because a nonzero residue modulo a prime always has an inverse. The result is verdict = invertible; inv = 4."
-          - problem: "What is the multiplicative inverse of 10 modulo 11? Use Fermat's little theorem to find it and give the answer as a residue from 0 to 10."
-            answer: "10"
+            solution_sketch: 'Since $11$ is prime, Fermat''s little theorem gives $7^{10} = 1$, so $x = 7^{-1} = 7^9$. Compute $7^2 = 5$, $7^4 = 25 = 3$ and $7^8 = 9$ modulo $11$, so $7^9 = 9 \cdot 7 = 63 = 8$. Check: $7 \cdot 8 = 56 = 5 \cdot 11 + 1$.'
+          - problem: 'Does $6$ have a multiplicative inverse in $\mathbb{Z}_{15}$?'
+            answer: 'no'
+            answer_contract: {"kind": "label", "options": [["yes", "it does", "6 has an inverse", "it has an inverse"], ["no", "it does not", "6 has no inverse", "it has no inverse", "no inverse"]]}
+            solution_sketch: 'An element $a$ of $\mathbb{Z}_n$ has an inverse exactly when $\gcd(a, n) = 1$. Here $\gcd(6, 15) = 3$, so $6$ has no inverse. Equivalently, $6 \cdot 5 = 30 = 0$, so $6$ is a zero divisor.'
+          - problem: 'Find the inverse of $7$ in $\mathbb{Z}_{15}$.'
+            answer: '13'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The residue 10 is -1 modulo 11, and 11 is prime, so Fermat's little theorem gives 10^10 = 1. Thus 10^{-1} = 10^9 = (-1)^9 = -1 = 10 (mod 11). Check 10*10 = 100 = 1 (mod 11). The inverse is 10."
-        constraints: "the Bezout proof; Fermat-inverse computations with p <= 11"
+            solution_sketch: 'Since $\gcd(7, 15) = 1$, an inverse exists. Divide: $15 = 2 \cdot 7 + 1$, so $1 = 15 - 2 \cdot 7$ and $7 \cdot (-2) = 1$ modulo $15$. Then $-2 = 13$ in $\mathbb{Z}_{15}$, and $7 \cdot 13 = 91 = 6 \cdot 15 + 1$.'
+          - problem: 'Find the multiplicative inverse of $10$ in $\mathbb{Z}_{11}$.'
+            answer: '10'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'We have $10 = -1$ modulo $11$, so $10 \cdot 10 = (-1)(-1) = 1$. The inverse of $10$ is $10$ itself. Check: $10 \cdot 10 = 100 = 9 \cdot 11 + 1$.'
+          - problem: 'A program computes modulo the prime $101$ and must divide by $3$. It does this by multiplying by the inverse of $3$. Find that inverse.'
+            answer: '34'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'We need $x$ with $3x = 1$ modulo $101$. Since $3 \cdot 34 = 102 = 101 + 1$, the inverse is $34$. Euclid agrees: $101 = 33 \cdot 3 + 2$ and $3 = 1 \cdot 2 + 1$, and back-substitution gives $1 = 34 \cdot 3 - 101$.'
+          - problem: 'A checksum program works modulo the prime $19$. It must divide $7$ by $4$. What value does it obtain?'
+            answer: '16'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Division by $4$ is multiplication by $4^{-1}$. Since $4 \cdot 5 = 20 = 1$ modulo $19$, we get $4^{-1} = 5$. So $\frac74 = 7 \cdot 5 = 35 = 16$. Check: $4 \cdot 16 = 64 = 3 \cdot 19 + 7$.'
+          - problem: 'Sam says that the inverse of $3$ in $\mathbb{Z}_{11}$ is $8$, because $3 + 8 = 0$. What is the correct multiplicative inverse?'
+            answer: '4'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The number $8$ is the additive inverse of $3$, not the multiplicative inverse, because $3 \cdot 8 = 24 = 2$. The multiplicative inverse satisfies $3x = 1$. Since $3 \cdot 4 = 12 = 1$, it is $4$.'
+        constraints: 'the Bezout proof; Euclid and Fermat inverse computations with p <= 19 (and 101 once); gcd test for Z_n'
       - id: kp3
-        name: "Finite fields beyond Z_p: order p^n"
+        name: 'Finite fields beyond Z_p: order p^n'
         key_prerequisites: [fields-characteristic]
+        step_check:
+          step: 'Identify the prime power: $8 = 2^3$, so we need an irreducible cubic over $\mathbb{Z}_2$'
+          question: 'Why does an irreducible cubic over $\mathbb{Z}_2$ give a field with $8$ elements?'
+          options:
+            - 'Because a cubic has $3$ roots, so the quotient has exactly $3$ elements'
+            - 'Because an irreducible $f$ of degree $3$ gives $2^3$ remainder classes'
+            - 'Because a reducible cubic also gives a field, so only the degree matters here'
+            - 'Because every cubic over $\mathbb{Z}_2$ has $8$ roots in the quotient ring'
+          answer: 'Because an irreducible $f$ of degree $3$ gives $2^3$ remainder classes'
+          why: 'Each class has a unique remainder $a + b\alpha + c\alpha^2$ with $a, b, c \in \mathbb{Z}_2$, which gives $2^3 = 8$ classes; irreducibility makes the quotient a field.'
+        try_first:
+          problem: 'A field has exactly $4$ elements. What is $1 + 1$ in this field?'
+          answer_contract: {"kind": "exact"}
+          answer: '0'
+          reveal: 'A finite field has a prime power of elements, so $4 = 2^2$ forces characteristic $2$, and then $1 + 1 = 0$. This is why $\mathbb{Z}_4$ is not a field with $4$ elements and a new construction is needed.'
         exemplars:
-          - problem: "Every finite field has order p^n for a prime p and a whole number n at least 1. Find the smallest integer greater than 1 that is not the order of any finite field."
-            answer: "6"
+          - problem: 'What is the smallest integer greater than $1$ that is not the number of elements of any finite field?'
+            answer: '6'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The object is the list of possible orders of finite fields, namely the prime powers. Rule: a finite field has order p^n for a prime p. Step 1: 2, 3, 4 = 2^2 and 5 are all prime powers, so each is a possible order. Step 2: 6 = 2 * 3 has two distinct prime factors, so it is not a prime power. The answer is 6."
-          - problem: "The polynomial x^2 + x + 1 is irreducible over Z_2, so the quotient Z_2[x]/(x^2 + x + 1) is a field. How many nonzero elements does this field have?"
-            answer: "3"
+            solution_sketch: 'The number of elements of a finite field is a prime power $p^n$. The numbers $2, 3, 4 = 2^2$ and $5$ are prime powers, so fields of these sizes exist. The number $6 = 2 \cdot 3$ has two different prime factors, so no field has $6$ elements.'
+          - problem: 'The polynomial $x^2 + x + 1$ is irreducible over $\mathbb{Z}_2$, so $\mathbb{Z}_2[x]/(x^2 + x + 1)$ is a field. How many nonzero elements does this field have?'
+            answer: '3'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The object is the field Z_2[x]/(x^2 + x + 1). Rule: a quotient by an irreducible polynomial of degree n over Z_p is a field with p^n elements. Step 1: p = 2 and n = 2, so the field has 2^2 = 4 elements. Step 2: the number of nonzero elements is 4 - 1 = 3. The answer is 3."
-          - problem: "A finite field F has exactly 16 elements. Find the number of elements of its prime subfield."
-            answer: "2"
+            solution_sketch: 'The elements are $a + b\alpha$ with $a, b \in \mathbb{Z}_2$, so there are $2^2 = 4$ elements. Removing $0$ leaves $4 - 1 = 3$ nonzero elements.'
+          - problem: 'A finite field has exactly $16$ elements. How many elements does its prime subfield have?'
+            answer: '2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The object is a finite field F of order 16. Rule: a finite field of order p^n has prime subfield Z_p and characteristic p. Step 1: write 16 = 2^4, so the prime is p = 2. Step 2: the prime subfield is Z_2, which has 2 elements. The answer is 2."
-          - problem: "Over Z_3 the polynomial x^2 + 1 has no root, so the quotient Z_3[x]/(x^2 + 1) is a field. Find the number of elements of this field."
-            answer: "9"
+            solution_sketch: 'Since $16 = 2^4$, the characteristic is $2$. The prime subfield is $\mathbb{Z}_2$, which has $2$ elements.'
+          - problem: 'Over $\mathbb{Z}_3$ the polynomial $x^2 + 1$ has no root, so $\mathbb{Z}_3[x]/(x^2 + 1)$ is a field. How many elements does it have?'
+            answer: '9'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The object is the quotient Z_3[x]/(x^2 + 1) built from an irreducible quadratic. Rule: a quotient by an irreducible polynomial of degree n over Z_p gives a field with p^n elements. Step 1: p = 3 and n = 2. Step 2: 3^2 = 9. The answer is 9."
-          - problem: "A field F has a multiplicative group of order 26. Find the number of elements of F."
-            answer: "27"
+            solution_sketch: 'A quadratic without a root in $\mathbb{Z}_3$ is irreducible, and the quotient is a field. Its elements are $a + b\alpha$ with $a, b \in \mathbb{Z}_3$, so there are $3^2 = 9$ of them.'
+          - problem: 'The nonzero elements of a field $F$ form a group of order $26$. How many elements does $F$ have?'
+            answer: '27'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The object is a field F whose multiplicative group has order 26. Rule: the nonzero elements of a field with q elements form a group of order q - 1. Step 1: q - 1 = 26, so q = 27. Step 2: 27 = 3^3 is a prime power, so a field of that order exists. The answer is 27."
-          - problem: "The polynomial x^3 + x + 1 is irreducible over Z_2, so the quotient Z_2[x]/(x^3 + x + 1) is a field. Find how many elements this field has."
-            answer: "8"
+            solution_sketch: 'The nonzero elements are all elements except $0$, so $|F| = 26 + 1 = 27$. Since $27 = 3^3$ is a prime power, a field with $27$ elements exists.'
+          - problem: 'Is there a field with exactly $12$ elements?'
+            answer: 'no'
+            answer_contract: {"kind": "label", "options": [["yes", "there is", "there is such a field", "such a field exists", "it exists"], ["no", "there is not", "there is no such field", "no such field", "no such field exists", "it does not exist"]]}
+            solution_sketch: 'A finite field has $p^n$ elements for a prime $p$. We have $12 = 2^2 \cdot 3$, which is not a power of one prime. So no field has exactly $12$ elements.'
+          - problem: 'Let $\alpha$ be the class of $x$ in the field $\mathbb{Z}_2[x]/(x^2 + x + 1)$. Compute $\alpha^3$.'
+            answer: '1'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The object is the quotient Z_2[x]/(x^3 + x + 1), built from an irreducible cubic. Rule: a quotient by an irreducible polynomial of degree n over Z_p is a field with p^n elements. Step 1: p = 2 and n = 3. Step 2: 2^3 = 8. The answer is 8."
-        constraints: "existence/size questions for orders <= 27; construction via irreducible polynomials may be quoted"
+            solution_sketch: 'In the field $\alpha^2 + \alpha + 1 = 0$, so $\alpha^2 = \alpha + 1$, because $-1 = 1$ in $\mathbb{Z}_2$. Then $\alpha^3 = \alpha \cdot \alpha^2 = \alpha^2 + \alpha = (\alpha + 1) + \alpha = 2\alpha + 1 = 1$.'
+          - problem: 'A byte has $8$ bits, so there are $256$ bytes. A coding scheme treats each byte as an element of a field with $256$ elements. How many bytes have a multiplicative inverse in this scheme?'
+            answer: '255'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Every nonzero element of a field has an inverse, and $0$ has none. There are $256$ elements, one of them $0$, so $256 - 1 = 255$ of them have an inverse. Such a field exists because $256 = 2^8$.'
+          - problem: 'A designer builds a field with $27$ elements as $\mathbb{Z}_3[x]/(f)$ for an irreducible polynomial $f$ over $\mathbb{Z}_3$. What is the degree of $f$?'
+            answer: '3'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The quotient has $3^{\deg f}$ elements. Since $27 = 3^3$, we need $\deg f = 3$.'
+          - problem: 'Sam builds a field with $4$ elements as $\mathbb{Z}_4$. Find a nonzero element of $\mathbb{Z}_4$ that has no multiplicative inverse.'
+            answer: '2'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'In $\mathbb{Z}_4$ we have $2 \cdot 2 = 4 = 0$, so $2$ is a zero divisor and has no inverse. Hence $\mathbb{Z}_4$ is not a field. A field with $4$ elements is instead $\mathbb{Z}_2[x]/(x^2 + x + 1)$.'
+        constraints: 'existence/size questions for orders <= 256; construction via irreducible polynomials may be quoted; arithmetic in the field with 4 elements'
     diagnostic_exemplar:
       problem: 'Describe a field with exactly $9$ elements, justifying that it is a field, and compute the inverse of $\alpha$, the root of the polynomial you adjoin.'
       answer: 'Take $F = \mathbb{Z}_3[x]/\langle x^2 + 1\rangle$. The polynomial $x^2 + 1$ has no root in $\mathbb{Z}_3$ ($0, 1, 2$ give $1, 2, 2$), so being of degree $2$ it is irreducible; hence $\langle x^2+1\rangle$ is maximal and the quotient is a field. Its elements are $a + b\alpha$ with $a, b \in \mathbb{Z}_3$ and $\alpha$ the class of $x$, so $|F| = 3^2 = 9$. Since $\alpha^2 = -1 = 2$, we get $\alpha \cdot 2\alpha = 2\alpha^2 = 2 \cdot 2 = 4 = 1$, so $\alpha^{-1} = 2\alpha$.'
@@ -390,70 +631,178 @@ topics:
         key: false
     knowledge_points:
       - id: kp1
-        name: "Algebraic vs transcendental"
+        name: 'Algebraic vs transcendental'
         key_prerequisites: [irreducibility-factorization, simplifying-radicals]
+        step_check:
+          step: 'Square both sides: $(x+3)^2 = 5$'
+          question: 'Why do we square both sides of $x + 3 = \sqrt5$?'
+          options:
+            - 'Because squaring both sides gives the exact value of $x$ as a rational number'
+            - 'Because squaring removes the radical and leaves a rational polynomial equation'
+            - 'Because squaring makes the right side equal to $x$, which finishes the whole problem'
+            - 'Because squaring is the only step that keeps an equation true for every $x$'
+          answer: 'Because squaring removes the radical and leaves a rational polynomial equation'
+          why: 'The root $\sqrt5$ is irrational, but $(\sqrt5)^2 = 5$ is rational; so the squared equation is a polynomial equation over $\mathbb{Q}$ that $x$ still satisfies.'
         exemplars:
-          - problem: 'An element $\alpha \in \mathbb{R}$ is algebraic over $\mathbb{Q}$ when some nonzero $f \in \mathbb{Q}[x]$ has $f(\alpha) = 0$. Give such an $f$ for $\alpha = \sqrt{3} + 2$.'
-            answer: '$x^2 - 4x + 1$'
-            solution_sketch: 'Isolate the radical and square: $(x - 2)^2 = 3$, i.e. $x^2 - 4x + 1 = 0$, a nonzero rational polynomial killing $\sqrt3 + 2$.'
-          - problem: 'Name a transcendental number.'
-            answer: '$\pi$'
-            solution_sketch: 'Lindemann proved $\pi$ transcendental (transcendence may be quoted, not proved): no nonzero polynomial with rational coefficients kills it. $e$ is another valid answer.'
-        constraints: "find explicit annihilating polynomials by isolating radicals and squaring"
+          - problem: 'A number is algebraic over $\mathbb{Q}$ when it is a root of a nonzero polynomial with rational coefficients. Find the monic quadratic with rational coefficients that has $\sqrt3 + 2$ as a root.'
+            answer: 'x^2 - 4x + 1'
+            answer_contract: {"kind": "required_form", "form": "expanded_polynomial"}
+            solution_sketch: 'Write $x = \sqrt3 + 2$, so $x - 2 = \sqrt3$. Squaring gives $(x - 2)^2 = 3$, which is $x^2 - 4x + 4 = 3$, that is $x^2 - 4x + 1 = 0$. So the polynomial is $x^2 - 4x + 1$.'
+          - problem: 'Find the monic quadratic with rational coefficients that has $\sqrt5 - 3$ as a root.'
+            answer: 'x^2 + 6x + 4'
+            answer_contract: {"kind": "required_form", "form": "expanded_polynomial"}
+            solution_sketch: 'Write $x = \sqrt5 - 3$, so $x + 3 = \sqrt5$. Squaring gives $(x + 3)^2 = 5$, which is $x^2 + 6x + 9 = 5$, that is $x^2 + 6x + 4 = 0$. So the polynomial is $x^2 + 6x + 4$.'
+          - problem: 'Find the monic cubic with rational coefficients that has $\sqrt[3]{5} - 2$ as a root.'
+            answer: 'x^3 + 6x^2 + 12x + 3'
+            answer_contract: {"kind": "required_form", "form": "expanded_polynomial"}
+            solution_sketch: 'Write $x = \sqrt[3]{5} - 2$, so $x + 2 = \sqrt[3]{5}$. Cubing gives $(x + 2)^3 = 5$, which is $x^3 + 6x^2 + 12x + 8 = 5$, that is $x^3 + 6x^2 + 12x + 3 = 0$.'
+          - problem: 'Which of the numbers $\sqrt2$, $1 + \sqrt3$, $\frac57$ and $\pi$ is transcendental over $\mathbb{Q}$?'
+            answer: 'pi'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The number $\sqrt2$ is a root of $x^2 - 2$, the number $1 + \sqrt3$ is a root of $x^2 - 2x - 2$, and $\frac57$ is a root of $7x - 5$. By Lindemann''s theorem no nonzero polynomial with rational coefficients has $\pi$ as a root, so $\pi$ is the transcendental number.'
+          - problem: 'Find the monic polynomial of degree $4$ with rational coefficients that has $\sqrt2 + \sqrt3$ as a root.'
+            answer: 'x^4 - 10x^2 + 1'
+            answer_contract: {"kind": "required_form", "form": "expanded_polynomial"}
+            solution_sketch: 'Write $x = \sqrt2 + \sqrt3$. Squaring gives $x^2 = 5 + 2\sqrt6$, so $x^2 - 5 = 2\sqrt6$. Squaring again gives $(x^2 - 5)^2 = 24$, which is $x^4 - 10x^2 + 25 = 24$, that is $x^4 - 10x^2 + 1 = 0$.'
+          - problem: 'Is $\sqrt2 + \sqrt3$ algebraic over $\mathbb{Q}$?'
+            answer: 'yes'
+            answer_contract: {"kind": "label", "options": [["yes", "it is algebraic", "algebraic", "it is"], ["no", "it is not algebraic", "not algebraic", "it is transcendental", "transcendental", "it is not"]]}
+            solution_sketch: 'The number $\sqrt2 + \sqrt3$ is a root of the nonzero polynomial $x^4 - 10x^2 + 1$, which has rational coefficients. A number that is a root of such a polynomial is algebraic, so the answer is yes.'
+          - problem: 'Find the monic quadratic with rational coefficients that has $2\sqrt3 + 1$ as a root.'
+            answer: 'x^2 - 2x - 11'
+            answer_contract: {"kind": "required_form", "form": "expanded_polynomial"}
+            solution_sketch: 'Write $x = 2\sqrt3 + 1$, so $x - 1 = 2\sqrt3$. Squaring gives $(x - 1)^2 = 12$, which is $x^2 - 2x + 1 = 12$, that is $x^2 - 2x - 11 = 0$.'
+          - problem: 'A square plot has area $10$ square metres, and a path $1$ metre wide is added along one side. The total length of the plot and the path is $s = \sqrt{10} + 1$ metres. Find the monic quadratic with rational coefficients that has $s$ as a root.'
+            answer: 'x^2 - 2x - 9'
+            answer_contract: {"kind": "required_form", "form": "expanded_polynomial"}
+            solution_sketch: 'From $x = \sqrt{10} + 1$ we get $x - 1 = \sqrt{10}$. Squaring gives $(x - 1)^2 = 10$, which is $x^2 - 2x + 1 = 10$, that is $x^2 - 2x - 9 = 0$.'
+          - problem: 'A cube has volume $2$ cubic metres, so its edge is $e = \sqrt[3]{2}$ metres. A frame uses one edge and one more metre, so its length is $e + 1$ metres. Find the monic cubic with rational coefficients that has $e + 1$ as a root.'
+            answer: 'x^3 - 3x^2 + 3x - 3'
+            answer_contract: {"kind": "required_form", "form": "expanded_polynomial"}
+            solution_sketch: 'From $x = e + 1$ we get $x - 1 = e$, and $e^3 = 2$. So $(x - 1)^3 = 2$, which is $x^3 - 3x^2 + 3x - 1 = 2$, that is $x^3 - 3x^2 + 3x - 3 = 0$.'
+          - problem: 'Sam says that $\sqrt2 + 1$ is a root of $x^2 - 3$, because squaring $x = \sqrt2 + 1$ gives $x^2 = 2 + 1$. Find the monic quadratic with rational coefficients that has $\sqrt2 + 1$ as a root.'
+            answer: 'x^2 - 2x - 1'
+            answer_contract: {"kind": "required_form", "form": "expanded_polynomial"}
+            solution_sketch: 'Squaring $\sqrt2 + 1$ gives $2 + 2\sqrt2 + 1$, not $2 + 1$; Sam dropped the middle term. Isolate the radical first: $x - 1 = \sqrt2$. Then $(x - 1)^2 = 2$, which is $x^2 - 2x + 1 = 2$, that is $x^2 - 2x - 1 = 0$.'
+        constraints: 'find explicit annihilating polynomials of prescribed degree by isolating radicals and squaring or cubing; algebraic versus transcendental by name; square and cube roots as contexts'
       - id: kp2
-        name: "Finding minimal polynomials"
+        name: 'Finding minimal polynomials'
         key_prerequisites: [irreducibility-factorization]
+        step_check:
+          step: 'A reducible quadratic over $\mathbb{Q}$ must split into linear factors and hence have a rational root'
+          question: 'Why does having no rational root show that the quadratic is irreducible over $\mathbb{Q}$?'
+          options:
+            - 'Because every polynomial without a rational root has no roots at all, real or complex'
+            - 'Because the rational root test lists every factor of every possible polynomial'
+            - 'Because every irreducible polynomial over $\mathbb{Q}$ must have degree exactly $2$'
+            - 'Because a factored quadratic has a linear factor, which gives a rational root'
+          answer: 'Because a factored quadratic has a linear factor, which gives a rational root'
+          why: 'A quadratic that is a product of two nonconstant polynomials is a product of two linear ones, so it would have a rational root; this argument does not work for polynomials of degree $4$ or more.'
         exemplars:
+          - problem: 'Find the minimal polynomial of $2 + \sqrt3$ over $\mathbb{Q}$.'
+            answer: 'x^2 - 4x + 1'
+            answer_contract: {"kind": "required_form", "form": "expanded_polynomial"}
+            solution_sketch: 'Write $x = 2 + \sqrt3$, so $(x - 2)^2 = 3$, which gives $x^2 - 4x + 1 = 0$. The only possible rational roots are $\pm 1$, and $1 - 4 + 1 = -2$ and $1 + 4 + 1 = 6$ are nonzero. So the quadratic is irreducible over $\mathbb{Q}$ and is the minimal polynomial.'
+          - problem: 'Find the minimal polynomial of $1 + \sqrt2$ over $\mathbb{Q}$.'
+            answer: 'x^2 - 2x - 1'
+            answer_contract: {"kind": "required_form", "form": "expanded_polynomial"}
+            solution_sketch: 'Write $x = 1 + \sqrt2$, so $(x - 1)^2 = 2$, which gives $x^2 - 2x - 1 = 0$. Its roots $1 \pm \sqrt2$ are irrational, so it has no rational root and is irreducible. So it is the minimal polynomial.'
+          - problem: 'Find the minimal polynomial of $\sqrt5 - 2$ over $\mathbb{Q}$.'
+            answer: 'x^2 + 4x - 1'
+            answer_contract: {"kind": "required_form", "form": "expanded_polynomial"}
+            solution_sketch: 'Write $x = \sqrt5 - 2$, so $(x + 2)^2 = 5$, which gives $x^2 + 4x - 1 = 0$. Its roots $-2 \pm \sqrt5$ are irrational, so it is irreducible over $\mathbb{Q}$. So it is the minimal polynomial.'
           - problem: 'Find the minimal polynomial of $\sqrt[3]{2}$ over $\mathbb{Q}$.'
-            answer: '$x^3 - 2$'
-            solution_sketch: 'It annihilates $\sqrt[3]2$ and is irreducible by Eisenstein at $p = 2$; minimal polynomials are the monic irreducible annihilators.'
-          - problem: 'Find the minimal polynomial of $1 + \sqrt{2}$ over $\mathbb{Q}$.'
-            answer: '$x^2 - 2x - 1$'
-            solution_sketch: '$(x - 1)^2 = 2$ gives the quadratic; it is irreducible since its roots $1 \pm \sqrt2$ are irrational.'
-          - problem: "Find the minimal polynomial over Q of 3 + sqrt(2)."
-            answer: "x^2 - 6x + 7"
-            answer_contract: {"kind": "function", "vars": ["x"]}
-            solution_sketch: "The candidate polynomial is x^2 - 6x + 7. Step 1: let alpha = 3 + sqrt(2), so alpha - 3 = sqrt(2); squaring gives (x - 3)^2 = 2, which expands to x^2 - 6x + 7 = 0. Step 2: the rational root test allows only 1, -1, 7, and -7, and none is a root, so the quadratic is irreducible over Q. Step 3: a minimal polynomial is the monic irreducible annihilator, so the minimal polynomial is x^2 - 6x + 7."
-          - problem: "Find the minimal polynomial over Q of sqrt(5) - 2."
-            answer: "x^2 + 4x - 1"
-            answer_contract: {"kind": "function", "vars": ["x"]}
-            solution_sketch: "The candidate polynomial is x^2 + 4x - 1. Step 1: set alpha = sqrt(5) - 2, so alpha + 2 = sqrt(5); squaring gives (x + 2)^2 = 5 and x^2 + 4x - 1 = 0. Step 2: its roots are -2 plus or minus sqrt(5), which are irrational, so it has no rational root and is irreducible over Q. Step 3: the monic irreducible annihilator is the minimal polynomial, so the answer is x^2 + 4x - 1."
-          - problem: "Find the minimal polynomial over Q of the real cube root of 5."
-            answer: "x^3 - 5"
-            answer_contract: {"kind": "function", "vars": ["x"]}
-            solution_sketch: "The candidate polynomial is x^3 - 5. Step 1: let alpha be the real cube root of 5, so alpha^3 = 5 and x^3 - 5 annihilates it. Step 2: Eisenstein at p = 5 applies because 5 divides -5, 25 does not divide -5, and 5 does not divide the leading coefficient 1, so x^3 - 5 is irreducible over Q. Step 3: hence the minimal polynomial is x^3 - 5."
-          - problem: "Find the minimal polynomial over Q of 2 plus the real cube root of 3."
-            answer: "x^3 - 6x^2 + 12x - 11"
-            answer_contract: {"kind": "function", "vars": ["x"]}
-            solution_sketch: "The candidate polynomial is x^3 - 6x^2 + 12x - 11. Step 1: let alpha = 2 plus the real cube root of 3, so alpha - 2 has cube 3; cubing x - 2 gives (x - 2)^3 = 3, which expands to x^3 - 6x^2 + 12x - 11. Step 2: substitute x = y + 2; the polynomial becomes y^3 - 3, and Eisenstein at p = 3 shows y^3 - 3 is irreducible, so the original cubic is irreducible over Q. Step 3: therefore the minimal polynomial is x^3 - 6x^2 + 12x - 11."
-        constraints: "elements of the form a + b sqrt(d), cube roots; verify irreducibility explicitly"
+            answer: 'x^3 - 2'
+            answer_contract: {"kind": "required_form", "form": "expanded_polynomial"}
+            solution_sketch: 'The number $\sqrt[3]{2}$ is a root of $x^3 - 2$. By Eisenstein''s criterion at $p = 2$ this polynomial is irreducible over $\mathbb{Q}$. A monic irreducible polynomial with the number as a root is the minimal polynomial.'
+          - problem: 'A rectangle is golden when its long side divided by its short side equals $\varphi = \frac{1 + \sqrt5}{2}$. Find the minimal polynomial of $\varphi$ over $\mathbb{Q}$.'
+            answer: 'x^2 - x - 1'
+            answer_contract: {"kind": "required_form", "form": "expanded_polynomial"}
+            solution_sketch: 'From $2x - 1 = \sqrt5$ we get $(2x - 1)^2 = 5$, which is $4x^2 - 4x - 4 = 0$, that is $x^2 - x - 1 = 0$ after dividing by $4$. Its roots $\frac{1 \pm \sqrt5}{2}$ are irrational, so it is irreducible and monic. So it is the minimal polynomial.'
+          - problem: 'Find the minimal polynomial of $1 + i$ over $\mathbb{Q}$.'
+            answer: 'x^2 - 2x + 2'
+            answer_contract: {"kind": "required_form", "form": "expanded_polynomial"}
+            solution_sketch: 'Write $x = 1 + i$, so $(x - 1)^2 = i^2 = -1$, which gives $x^2 - 2x + 2 = 0$. Its roots $1 \pm i$ are not real, so it has no rational root and is irreducible. So it is the minimal polynomial.'
+          - problem: 'Find the minimal polynomial of $\sqrt2 + \sqrt8$ over $\mathbb{Q}$.'
+            answer: 'x^2 - 18'
+            answer_contract: {"kind": "required_form", "form": "expanded_polynomial"}
+            solution_sketch: 'Since $\sqrt8 = 2\sqrt2$, the number is $3\sqrt2$, and its square is $18$. So $x^2 - 18$ has it as a root. The roots $\pm 3\sqrt2$ are irrational, so $x^2 - 18$ is irreducible, and the minimal polynomial has degree $2$, not $4$.'
+          - problem: 'A cube has volume $3$ cubic metres, and a beam $2$ metres long is added to one edge, so the total length is $L = 2 + \sqrt[3]{3}$ metres. Find the minimal polynomial of $L$ over $\mathbb{Q}$.'
+            answer: 'x^3 - 6x^2 + 12x - 11'
+            answer_contract: {"kind": "required_form", "form": "expanded_polynomial"}
+            solution_sketch: 'Since $(x - 2)^3 = 3$, the number $L$ is a root of $x^3 - 6x^2 + 12x - 8 - 3 = x^3 - 6x^2 + 12x - 11$. Substituting $x = y + 2$ turns this into $y^3 - 3$, which is irreducible by Eisenstein''s criterion at $3$. So the cubic is the minimal polynomial.'
+          - problem: 'Find the minimal polynomial of $\sqrt2 + \sqrt5$ over $\mathbb{Q}$.'
+            answer: 'x^4 - 14x^2 + 9'
+            answer_contract: {"kind": "required_form", "form": "expanded_polynomial"}
+            solution_sketch: 'Write $x = \sqrt2 + \sqrt5$, so $x^2 = 7 + 2\sqrt{10}$ and $(x^2 - 7)^2 = 40$. This gives $x^4 - 14x^2 + 9 = 0$. This quartic has no rational root and no factorization into two rational quadratics, so it is irreducible and is the minimal polynomial.'
+          - problem: 'Sam finds the minimal polynomial of $1 + \sqrt3$ by writing $(x - 1)^2 = 3$ and then $x^2 = 4$, so he gives $x^2 - 4$. Find the correct minimal polynomial.'
+            answer: 'x^2 - 2x - 2'
+            answer_contract: {"kind": "required_form", "form": "expanded_polynomial"}
+            solution_sketch: 'Expanding $(x - 1)^2 = 3$ gives $x^2 - 2x + 1 = 3$, that is $x^2 - 2x - 2 = 0$. Sam dropped the term $-2x$. The roots $1 \pm \sqrt3$ are irrational, so $x^2 - 2x - 2$ is irreducible and is the minimal polynomial.'
+          - problem: 'Find the minimal polynomial of $\frac73$ over $\mathbb{Q}$.'
+            answer: 'x - 7/3'
+            answer_contract: {"kind": "required_form", "form": "expanded_polynomial"}
+            solution_sketch: 'A rational number $r$ is a root of $x - r$. This polynomial is monic of degree $1$, so it is irreducible. The minimal polynomial of $\frac73$ is $x - \frac73$.'
+        constraints: 'elements of the form a + b sqrt(d), cube roots, i, sums of two square roots; verify irreducibility explicitly; cube and golden-rectangle contexts'
       - id: kp3
-        name: "Degree of an algebraic element"
+        name: 'Degree of an algebraic element'
         key_prerequisites: [irreducibility-factorization]
+        step_check:
+          step: 'an irreducible polynomial with $\alpha$ as a root is the minimal polynomial of $\alpha$'
+          question: 'Why does the irreducibility of $x^4 - 2$ show that no polynomial of smaller degree has $\alpha$ as a root?'
+          options:
+            - 'Because $x^4 - 2$ has smaller coefficients than any other such polynomial'
+            - 'Because every polynomial with $\alpha$ as a root has to have degree exactly $4$'
+            - 'Because the minimal polynomial divides $x^4 - 2$, which has no smaller divisor'
+            - 'Because the Eisenstein criterion shows that $\sqrt[4]{2}$ is an irrational number'
+          answer: 'Because the minimal polynomial divides $x^4 - 2$, which has no smaller divisor'
+          why: 'The minimal polynomial divides every polynomial that has $\alpha$ as a root; an irreducible polynomial has only itself as a divisor of positive degree, so they are equal.'
         exemplars:
-          - problem: 'What is the degree of $\sqrt{5}$ over $\mathbb{Q}$?'
-            answer: "2"
-            solution_sketch: 'The degree is that of the minimal polynomial $x^2 - 5$, so $2$. (Over $\mathbb{R}$ it would drop to $1$, with min poly $x - \sqrt5$: degree depends on the base field.)'
-          - problem: 'Find the degree of $\sqrt[3]{7}$ over $\mathbb{Q}$.'
-            answer: "3"
-            solution_sketch: '$x^3 - 7$ is irreducible by Eisenstein at $7$.'
-          - problem: "Let $\\alpha = \\sqrt[4]{2}$. Find the degree of $\\alpha$ over $\\mathbb{Q}$."
-            answer: "4"
+          - problem: 'What is the degree of $\sqrt5$ over $\mathbb{Q}$?'
+            answer: '2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Let alpha = $\\sqrt[4]{2}$. First, alpha satisfies $x^4 - 2 = 0$, so $x^4 - 2$ is a candidate minimal polynomial. Second, Eisenstein at 2 shows $x^4 - 2$ is irreducible over $\\mathbb{Q}$. The minimal polynomial has degree 4, so the degree is 4."
-          - problem: "Let $\\alpha = \\sqrt{2}$ and let the base field be $\\mathbb{Q}(\\sqrt{2})$. Find the degree of $\\alpha$ over this base field."
-            answer: "1"
+            solution_sketch: 'The number $\sqrt5$ is a root of $x^2 - 5$, which is irreducible over $\mathbb{Q}$ because $\sqrt5$ is irrational. So the minimal polynomial is $x^2 - 5$ and the degree is $2$.'
+          - problem: 'What is the degree of $\sqrt[3]{7}$ over $\mathbb{Q}$?'
+            answer: '3'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Let alpha = $\\sqrt{2}$. The base field is $\\mathbb{Q}(\\sqrt{2})$, and alpha already lies in this field. Its minimal polynomial over the base field is $x - \\sqrt{2}$, which has degree 1. Therefore the degree is 1."
-          - problem: "Let $\\alpha = \\sqrt{3} + \\sqrt{2}$. Find the degree of $\\alpha$ over $\\mathbb{Q}$."
-            answer: "4"
+            solution_sketch: 'The number $\sqrt[3]{7}$ is a root of $x^3 - 7$, which is irreducible over $\mathbb{Q}$ by Eisenstein''s criterion at $7$. So the minimal polynomial has degree $3$.'
+          - problem: 'What is the degree of $\sqrt[4]{2}$ over $\mathbb{Q}$?'
+            answer: '4'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Let alpha = $\\sqrt{3} + \\sqrt{2}$. Squaring gives $alpha^2 = 5 + 2\\sqrt{6}$, so $(alpha^2 - 5)^2 = 24$. This gives the polynomial $x^4 - 10x^2 + 1 = 0$. The rational root test and a check of quadratic factorizations show it is irreducible over $\\mathbb{Q}$. Hence the minimal polynomial has degree 4, so the degree is 4."
-          - problem: "Let $\\alpha = 1 + \\sqrt[3]{2}$. Find the degree of $\\alpha$ over $\\mathbb{Q}$."
-            answer: "3"
+            solution_sketch: 'The number $\sqrt[4]{2}$ is a root of $x^4 - 2$, which is irreducible by Eisenstein''s criterion at $2$. So the minimal polynomial is $x^4 - 2$ and the degree is $4$.'
+          - problem: 'What is the degree of $\sqrt2$ over the field $\mathbb{Q}(\sqrt2)$?'
+            answer: '1'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Let alpha = $1 + \\sqrt[3]{2}$. Then $alpha - 1 = \\sqrt[3]{2}$, so $(alpha - 1)^3 = 2$. Expanding gives $alpha^3 - 3alpha^2 + 3alpha - 3 = 0$. The polynomial $x^3 - 3x^2 + 3x - 3$ is irreducible by Eisenstein at 3. Hence the minimal polynomial has degree 3, so the degree is 3."
-        constraints: "degrees 1-4; base field always stated"
+            solution_sketch: 'The number $\sqrt2$ lies in the base field $\mathbb{Q}(\sqrt2)$. So it is a root of $x - \sqrt2$, which has coefficients in that field and degree $1$. The degree is $1$.'
+          - problem: 'What is the degree of $\sqrt2 + \sqrt7$ over $\mathbb{Q}$?'
+            answer: '4'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Write $x = \sqrt2 + \sqrt7$, so $x^2 = 9 + 2\sqrt{14}$ and $(x^2 - 9)^2 = 56$. This gives $x^4 - 18x^2 + 25 = 0$. This quartic is irreducible over $\mathbb{Q}$, so the degree is $4$.'
+          - problem: 'What is the degree of $1 + \sqrt[3]{2}$ over $\mathbb{Q}$?'
+            answer: '3'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Write $x = 1 + \sqrt[3]{2}$, so $(x - 1)^3 = 2$, which is $x^3 - 3x^2 + 3x - 3 = 0$. This cubic is irreducible by Eisenstein''s criterion at $3$. So the degree is $3$.'
+          - problem: 'What is the degree of $\sqrt{2 + \sqrt2}$ over $\mathbb{Q}$?'
+            answer: '4'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Write $x = \sqrt{2 + \sqrt2}$, so $x^2 = 2 + \sqrt2$ and $(x^2 - 2)^2 = 2$. This gives $x^4 - 4x^2 + 2 = 0$, which is irreducible by Eisenstein''s criterion at $2$. So the degree is $4$.'
+          - problem: 'What is the degree of $\sqrt3$ over the field $\mathbb{Q}(\sqrt2)$?'
+            answer: '2'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The polynomial $x^2 - 3$ has $\sqrt3$ as a root. It is irreducible over $\mathbb{Q}(\sqrt2)$, because $\sqrt3$ is not of the form $a + b\sqrt2$ with $a, b$ rational. So the degree is $2$.'
+          - problem: 'To double the volume of a cube of edge $1$ one needs a cube of edge $e = \sqrt[3]{2}$. What is the degree of $e$ over $\mathbb{Q}$?'
+            answer: '3'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The number $e$ is a root of $x^3 - 2$, which is irreducible over $\mathbb{Q}$. So the degree is $3$. Since $3$ is not a power of $2$, this edge cannot be constructed with straightedge and compass.'
+          - problem: 'A square has area $12$ square metres. What is the degree of its side length over $\mathbb{Q}$?'
+            answer: '2'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The side length is $s = \sqrt{12} = 2\sqrt3$, a root of $x^2 - 12$. This polynomial is irreducible over $\mathbb{Q}$ because $12$ is not a perfect square. So the degree is $2$.'
+          - problem: 'Sam says that $\sqrt[4]{2}$ has degree $2$ over $\mathbb{Q}$, because $(\sqrt[4]{2})^2 = \sqrt2$ and $\sqrt2$ has degree $2$. What is the correct degree?'
+            answer: '4'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Sam found that $\sqrt[4]{2}$ is a root of $x^2 - \sqrt2$, but this polynomial does not have rational coefficients. Over $\mathbb{Q}$ the minimal polynomial is $x^4 - 2$, which is irreducible by Eisenstein''s criterion at $2$. So the degree is $4$.'
+        constraints: 'degrees 1-4; base field always stated; towers of square roots and cube roots; geometry contexts'
     diagnostic_exemplar:
       problem: 'Find the minimal polynomial of $\sqrt{3} - 1$ over $\mathbb{Q}$.'
       answer: '$x^2 + 2x - 2$'
@@ -500,87 +849,169 @@ topics:
       - id: kp1
         name: "Extensions F(alpha) and basis representations"
         key_prerequisites: [minimal-polynomials, rationalizing-denominators]
+        step_check:
+          step: 'multiply top and bottom by the conjugate $2 - \sqrt3$'
+          question: 'Why multiply top and bottom by the conjugate $2-\sqrt3$?'
+          options:
+            - 'The product $(2+\sqrt3)(2-\sqrt3)=4-3$ is rational, so the denominator loses its radical'
+            - 'Multiplying by the conjugate changes the value of the fraction into a simpler number with no radical'
+            - 'The conjugate is the reciprocal of the denominator, so the fraction becomes $1$'
+            - 'Squaring the denominator removes the radical, and the sign change keeps it positive'
+          answer: 'The product $(2+\sqrt3)(2-\sqrt3)=4-3$ is rational, so the denominator loses its radical'
+          why: 'A sum and its conjugate multiply to a difference of squares: $(2+\sqrt3)(2-\sqrt3)=4-3=1$. The fraction keeps its value because the factor equals $1$.'
         exemplars:
           - problem: 'Every element of $\mathbb{Q}(\sqrt{2})$ can be written uniquely as $a + b\sqrt2$ with $a, b \in \mathbb{Q}$. Express $\frac{1}{1 + \sqrt{2}}$ in this form.'
-            answer: '$-1 + \sqrt{2}$'
-            solution_sketch: 'Rationalize: $\frac{1}{1+\sqrt2}\cdot\frac{\sqrt2 - 1}{\sqrt2 - 1} = \frac{\sqrt2 - 1}{2 - 1} = \sqrt2 - 1$.'
-          - problem: 'In $\mathbb{Q}(\sqrt[3]{2})$, which powers of $\alpha = \sqrt[3]{2}$ form the standard basis over $\mathbb{Q}$?'
-            answer: '$1, \alpha, \alpha^2$'
-            solution_sketch: 'The degree is $3$, so $\{1, \alpha, \alpha^2\}$ spans; higher powers reduce via $\alpha^3 = 2$.'
-          - problem: "In $\\mathbb{Q}(\\sqrt2)$, every element can be written as $a + b\\sqrt2$ with rational $a$ and $b$. Express $\\frac{1}{3 + 2\\sqrt2}$ in this form. Find the expression in the form a + b sqrt2."
-            answer: "3 - 2sqrt(2)"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The element is $\\frac{1}{3 + 2\\sqrt2}$. Step 1: rationalize with the conjugate $3 - 2\\sqrt2$: multiply numerator and denominator to get $\\frac{3 - 2\\sqrt2}{(3)^2 - (2\\sqrt2)^2}$. Step 2: simplify the denominator to $9 - 8 = 1$. The answer is 3 - 2sqrt(2)."
-          - problem: "Let $\\alpha = \\sqrt[3]{2}$. Every element of $\\mathbb{Q}(\\alpha)$ can be written as $a + b\\alpha + c\\alpha^2$. Express $\\alpha^4 - \\alpha^2$ in this basis. Give the answer as a function of $\\alpha$."
-            answer: "2alpha - alpha^2"
-            answer_contract: {"kind": "function", "vars": ["alpha"]}
-            solution_sketch: "The element is $\\alpha^4 - \\alpha^2$ with $\\alpha = \\sqrt[3]{2}$. Step 1: reduce the fourth power using $\\alpha^3 = 2$, so $\\alpha^4 = \\alpha \\cdot \\alpha^3 = 2\\alpha$. Step 2: subtract $\\alpha^2$ from $2\\alpha$. The answer is 2alpha - alpha^2."
-          - problem: "In $\\mathbb{Q}(\\sqrt5)$, reduce $(\\sqrt5)^3 - 2\\sqrt5 + 4$ to the form $a + b\\sqrt5$. Find the expression in the form a + b sqrt5."
-            answer: "4 + 3sqrt(5)"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The element is $(\\sqrt5)^3 - 2\\sqrt5 + 4$. Step 1: reduce the cube using $(\\sqrt5)^2 = 5$, so $(\\sqrt5)^3 = 5\\sqrt5$. Step 2: combine like radicals: $5\\sqrt5 - 2\\sqrt5 = 3\\sqrt5$, and keep the constant 4. The answer is 4 + 3sqrt(5)."
-          - problem: "In $\\mathbb{Q}(i)$, express $\\frac{3 + i}{1 - i}$ in the form $a + bi$. Give the answer in the form a + bi."
-            answer: "1 + 2i"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The element is $\\frac{3 + i}{1 - i}$. Step 1: rationalize by multiplying numerator and denominator by $1 + i$. Step 2: compute $\\frac{(3 + i)(1 + i)}{(1 - i)(1 + i)} = \\frac{2 + 4i}{2}$. Step 3: divide each term by 2. The answer is 1 + 2i."
-        constraints: "quadratic and cubic extensions of Q; rationalize denominators, reduce powers"
+            answer: '-1 + sqrt(2)'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Multiply the numerator and the denominator by the conjugate $\sqrt2 - 1$. The denominator becomes $2 - 1 = 1$, so the quotient is $-1 + \sqrt2$.'
+          - problem: 'In $\mathbb{Q}(\sqrt2)$, express $\frac{1}{3 + 2\sqrt2}$ in the form $a + b\sqrt2$.'
+            answer: '3 - 2sqrt(2)'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Multiply the numerator and the denominator by the conjugate $3 - 2\sqrt2$. The denominator becomes $9 - 8 = 1$, so the quotient is $3 - 2\sqrt2$.'
+          - problem: 'A rectangle has area $1$ square metre, and one side has length $2+\sqrt5$ metres. Write the other side in the form $a+b\sqrt5$ with $a,b\in\mathbb{Q}$.'
+            answer: '-2 + sqrt(5)'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The other side is the area divided by the known side, so it is $\frac{1}{2+\sqrt5}$. The conjugate $2-\sqrt5$ gives denominator $4-5=-1$, so the side is $-(2-\sqrt5)=-2+\sqrt5$.'
+          - problem: 'Let $\alpha = \sqrt[3]{2}$. Every element of $\mathbb{Q}(\alpha)$ can be written uniquely as $a + b\alpha + c\alpha^2$ with $a,b,c\in\mathbb{Q}$. Express $\alpha^4 - \alpha^2$ in this form.'
+            answer: '2alpha - alpha^2'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Since $\alpha^3 = 2$, we get $\alpha^4 = \alpha\cdot\alpha^3 = 2\alpha$. So $\alpha^4 - \alpha^2 = 2\alpha - \alpha^2$.'
+          - problem: 'Let $\alpha = \sqrt[3]{2}$. Which powers of $\alpha$ form the standard basis of $\mathbb{Q}(\alpha)$ over $\mathbb{Q}$?'
+            answer: '1, alpha, alpha^2'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The minimal polynomial $x^3-2$ of $\alpha$ has degree $3$, so the basis has $3$ elements. The powers $1,\alpha,\alpha^2$ span, because $\alpha^3=2$ reduces every higher power.'
+          - problem: 'Sam claims that $\frac{1}{3+\sqrt2} = 3-\sqrt2$ in $\mathbb{Q}(\sqrt2)$. What is the correct value, written in the form $a+b\sqrt2$?'
+            answer: '3/7 - sqrt(2)/7'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Multiply the numerator and the denominator by $3-\sqrt2$. The denominator becomes $9-2=7$, not $1$, so the quotient is $\frac{3-\sqrt2}{7}$. Sam forgot to divide by $7$.'
+          - problem: 'In $\mathbb{Q}(i)$, express $\frac{3 + i}{1 - i}$ in the form $a + bi$.'
+            answer: '1 + 2i'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Multiply the numerator and the denominator by the conjugate $1+i$. The numerator is $(3+i)(1+i) = 2+4i$ and the denominator is $2$, so the quotient is $1+2i$.'
+          - problem: 'In $\mathbb{Q}(\sqrt5)$, reduce $(\sqrt5)^3 - 2\sqrt5 + 4$ to the form $a + b\sqrt5$.'
+            answer: '4 + 3sqrt(5)'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Since $(\sqrt5)^2=5$, we get $(\sqrt5)^3 = 5\sqrt5$. So the sum is $5\sqrt5 - 2\sqrt5 + 4 = 4 + 3\sqrt5$.'
+          - problem: 'A rectangle has sides of length $2+\sqrt3$ metres and $3-\sqrt3$ metres. Write its area in square metres in the form $a+b\sqrt3$.'
+            answer: '3 + sqrt(3)'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The area is the product of the sides, $(2+\sqrt3)(3-\sqrt3) = 6 - 2\sqrt3 + 3\sqrt3 - 3$. Since $(\sqrt3)^2 = 3$, this equals $3 + \sqrt3$.'
+          - problem: 'Let $\alpha = \sqrt[3]{2}$. Write $\frac{1}{1+\alpha}$ in the form $a + b\alpha + c\alpha^2$ with $a,b,c\in\mathbb{Q}$.'
+            answer: '1/3 - alpha/3 + alpha^2/3'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Since $(1+\alpha)(1-\alpha+\alpha^2) = 1+\alpha^3 = 3$, the inverse of $1+\alpha$ is $\frac{1-\alpha+\alpha^2}{3}$. So the coefficients are $\frac13$, $-\frac13$ and $\frac13$.'
+        constraints: 'quadratic and cubic extensions of Q; rationalize denominators, reduce powers'
       - id: kp2
         name: "Degree of an extension; [F(alpha):F] = deg of min poly"
         key_prerequisites: [minimal-polynomials]
+        step_check:
+          step: 'Find the minimal polynomial of $\alpha$ over $\mathbb{Q}$'
+          question: 'Why does $[\mathbb{Q}(\sqrt3):\mathbb{Q}]$ equal the degree of $x^2-3$?'
+          options:
+            - 'A polynomial of degree $2$ always gives an extension of degree $2$, irreducible or not'
+            - 'The polynomial $x^2-3$ has the two roots $\pm\sqrt3$, and the degree counts how many of them the field contains'
+            - 'It is irreducible, so $\{1,\sqrt3\}$ is a basis and the dimension over $\mathbb{Q}$ is $2$'
+            - 'The number $3$ is prime, so the degree equals the exponent of $x$ in $x^2-3$'
+          answer: 'It is irreducible, so $\{1,\sqrt3\}$ is a basis and the dimension over $\mathbb{Q}$ is $2$'
+          why: 'The degree of the extension is the dimension over $\mathbb{Q}$. The irreducible $x^2-3$ gives the basis $\{1,\sqrt3\}$, so the dimension is $2$.'
         exemplars:
-          - problem: 'What is $[\mathbb{C} : \mathbb{R}]$?'
-            answer: "2"
-            solution_sketch: '$\mathbb{C} = \mathbb{R}(i)$ and the minimal polynomial of $i$ over $\mathbb{R}$ is $x^2 + 1$.'
-          - problem: "Find [Q(sqrt2):Q] and [Q(cbrt2):Q], and give the answer as (d1, d2)."
-            answer: "(2, 3)"
-            answer_contract: {"arity": 2, "kind": "coordinates"}
-            solution_sketch: "The extension Q(sqrt2) is generated by sqrt2, whose minimal polynomial over Q is x^2 - 2, of degree 2. The extension Q(cbrt2) is generated by cbrt2, whose minimal polynomial is x^3 - 2, irreducible by Eisenstein, of degree 3. By the degree formula [F(alpha):F] = deg(min poly), the degrees are 2 and 3, so the answer is (2, 3)."
-          - problem: "Find [Q(sqrt3):Q]."
-            answer: "2"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The extension Q(sqrt3) is generated by sqrt3, whose minimal polynomial over Q is x^2 - 3. This polynomial has degree 2, so by the degree formula [F(alpha):F] = deg(min poly) the degree is 2."
-          - problem: "Find [Q(sqrt[4]{2}):Q]."
-            answer: "4"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The extension Q(sqrt[4]{2}) is generated by sqrt[4]{2}, whose minimal polynomial over Q is x^4 - 2. This polynomial is irreducible by Eisenstein at 2 and has degree 4, so by the degree formula the degree is 4."
-          - problem: "Find [Q(sqrt3+sqrt7):Q]."
-            answer: "4"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Let alpha = sqrt3 + sqrt7. Then alpha^2 = 10 + 2sqrt21, so (alpha^2 - 10)^2 = 84, giving alpha^4 - 20 alpha^2 + 16 = 0. The polynomial x^4 - 20x^2 + 16 has no rational roots and does not factor into quadratics over Q, so it is the minimal polynomial of alpha. Its degree is 4, so by the degree formula [Q(alpha):Q] = 4."
-          - problem: "Find [Q(cbrt11):Q]."
-            answer: "3"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The extension Q(cbrt11) is generated by cbrt11, whose minimal polynomial over Q is x^3 - 11. This polynomial is irreducible by Eisenstein at 11 and has degree 3, so by the degree formula the degree is 3."
-        constraints: "simple extensions; degrees 2-4"
+          - problem: 'Find $[\mathbb{Q}(\sqrt{5}):\mathbb{Q}]$.'
+            answer: '2'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The number $\sqrt5$ is a root of $x^2-5$, which is irreducible over $\mathbb{Q}$ by Eisenstein at $5$. So the degree is $2$.'
+          - problem: 'Find $[\mathbb{Q}(\sqrt[3]{11}):\mathbb{Q}]$.'
+            answer: '3'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The number $\sqrt[3]{11}$ is a root of $x^3-11$, which is irreducible by Eisenstein at $11$. So the degree is $3$.'
+          - problem: 'A real number $\alpha$ is a root of $x^5 - 6x + 3$. Eisenstein''s criterion at the prime $3$ shows that this polynomial is irreducible over $\mathbb{Q}$. Find $[\mathbb{Q}(\alpha):\mathbb{Q}]$.'
+            answer: '5'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'An irreducible monic polynomial with root $\alpha$ is the minimal polynomial of $\alpha$. Its degree is $5$, so $[\mathbb{Q}(\alpha):\mathbb{Q}]=5$.'
+          - problem: 'Find $[\mathbb{Q}(\sqrt[4]{2}):\mathbb{Q}]$.'
+            answer: '4'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The number $\sqrt[4]{2}$ is a root of $x^4-2$, which is irreducible by Eisenstein at $2$. So the degree is $4$.'
+          - problem: 'Sam claims that $[\mathbb{Q}(\sqrt{12}):\mathbb{Q}] = 12$, because the number under the root sign is $12$. What is the correct degree?'
+            answer: '2'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The number $\sqrt{12}=2\sqrt3$ is a root of $x^2-12$, which has degree $2$. The degree does not depend on the size of the number under the root sign, so it is $2$.'
+          - problem: 'Find $[\mathbb{Q}(\sqrt3+\sqrt7):\mathbb{Q}]$.'
+            answer: '4'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Squaring twice gives the polynomial $x^4-20x^2+16$ with root $\sqrt3+\sqrt7$. This polynomial is irreducible over $\mathbb{Q}$, so the degree is $4$.'
+          - problem: 'Priya adjoins a real root $\beta$ of the polynomial $x^3-3x+1$ to $\mathbb{Q}$. This polynomial has no rational root, so it is irreducible. What is the dimension of $\mathbb{Q}(\beta)$ as a vector space over $\mathbb{Q}$?'
+            answer: '3'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'A cubic with no rational root is irreducible, so it is the minimal polynomial of $\beta$. The dimension is its degree, $3$, with basis $1,\beta,\beta^2$.'
+          - problem: 'Find $[\mathbb{C}:\mathbb{R}]$.'
+            answer: '2'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Every complex number is $a+bi$ with $a,b\in\mathbb{R}$. So $\{1,i\}$ is a basis of $\mathbb{C}$ over $\mathbb{R}$, and the degree is $2$.'
+          - problem: 'Find $[\mathbb{Q}(\sqrt[6]{2}):\mathbb{Q}]$.'
+            answer: '6'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The number $\sqrt[6]{2}$ is a root of $x^6-2$, which is irreducible by Eisenstein at $2$. So the degree is $6$.'
+        constraints: 'simple extensions; degrees 2-6'
       - id: kp3
         name: "The tower law"
         key_prerequisites: [minimal-polynomials]
+        step_check:
+          step: 'Apply the tower law to the tower $F \subseteq E \subseteq K$'
+          question: 'Why do the two step degrees multiply, and not add?'
+          options:
+            - 'Dimensions of a tower of fields add, and multiplying is a shortcut that works only for degree $2$'
+            - 'Each step doubles the size of the field, so degrees multiply by $2$ at every step'
+            - 'The sum $[K:E]+[E:F]$ counts the basis vectors of the two steps, which overlap, so we multiply'
+            - 'Products of basis vectors of $K$ over $E$ and of $E$ over $F$ form a basis of $K$ over $F$'
+          answer: 'Products of basis vectors of $K$ over $E$ and of $E$ over $F$ form a basis of $K$ over $F$'
+          why: 'If $\{e_i\}$ is a basis of $E$ over $F$ and $\{k_j\}$ is a basis of $K$ over $E$, then $\{e_ik_j\}$ is a basis of $K$ over $F$. It has $[E:F]\cdot[K:E]$ elements.'
+        try_first:
+          problem: 'Fields satisfy $F\subseteq E\subseteq K$ with $[E:F]=2$ and $[K:E]=3$. Find $[K:F]$.'
+          answer_contract: {"kind":"exact"}
+          answer: '6'
+          reveal: 'The degree of the whole tower is the product $2\cdot3=6$, not the sum $5$. A basis of $K$ over $F$ is made of the products of basis vectors from the two steps.'
         exemplars:
-          - problem: "Let K = Q(sqrt2, sqrt3) and E = Q(sqrt2). Given [K:E] = 2, find [K:Q]."
-            answer: "4"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1: the minimal polynomial x^2 - 2 gives [E:Q] = 2. Step 2: the tower law gives [K:Q] = [K:E][E:Q] = 2 times 2. Thus [K:Q] = 4."
-          - problem: "Let K = Q(cuberoot2). Can K contain sqrt2? State whether it can and give [K:Q]."
-            answer: "verdict = no; degree = 3"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "degree"}]}
-            solution_sketch: "Step 1: x^3 - 2 is irreducible over Q, so [K:Q] = 3. Step 2: if K contained sqrt2, then Q(sqrt2) would be an intermediate field of degree 2 over Q. Step 3: the tower law would force 2 to divide 3, which is false. Thus verdict = no; degree = 3."
-          - problem: "Let F contained in E contained in K be a tower of fields with [E:F] = 4 and [K:E] = 5. Find [K:F]."
-            answer: "20"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1: the tower law states [K:F] = [K:E][E:F]. Step 2: substitute the given degrees to get [K:F] = 5 times 4. Thus [K:F] = 20."
-          - problem: "Let F contained in E contained in K with [K:F] = 24 and [E:F] = 4. Determine [K:E]."
-            answer: "6"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1: the tower law gives [K:F] = [K:E][E:F]. Step 2: substitute 24 = [K:E] times 4 and solve. Thus [K:E] = 6."
-          - problem: "Let F contained in E contained in K with [K:F] = 45 and [K:E] = 5. Find [E:F]."
-            answer: "9"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1: by the tower law, [K:F] = [K:E][E:F]. Step 2: divide 45 by 5 to get [E:F]. Thus [E:F] = 9."
-          - problem: "Let F contained in E contained in K. Suppose [K:F] = 30 and [E:F] = 6. Can [K:E] be 4? State whether it can and give [K:E]."
-            answer: "verdict = no; index = 5"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "index"}]}
-            solution_sketch: "Step 1: the tower law gives [K:F] = [K:E][E:F]. Step 2: substitute 30 = [K:E] times 6, so [K:E] = 5. Step 3: since 5 is not 4, the proposed value is impossible. Thus verdict = no; index = 5."
-        constraints: "towers of height 2; divisibility arguments from the tower law"
+          - problem: 'Let $K = \mathbb{Q}(\sqrt2, \sqrt3)$ and $E = \mathbb{Q}(\sqrt2)$. Given $[K:E] = 2$, find $[K:\mathbb{Q}]$.'
+            answer: '4'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The tower is $\mathbb{Q}\subseteq E\subseteq K$ and $[E:\mathbb{Q}]=2$. By the tower law, $[K:\mathbb{Q}] = 2\cdot 2 = 4$.'
+          - problem: 'Fields satisfy $F\subseteq E\subseteq K$ with $[E:F] = 4$ and $[K:E] = 5$. Find $[K:F]$.'
+            answer: '20'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'By the tower law, $[K:F]=[K:E]\cdot[E:F]=5\cdot4=20$.'
+          - problem: 'Fields satisfy $F\subseteq E\subseteq K$ with $[K:F] = 24$ and $[E:F] = 4$. Find $[K:E]$.'
+            answer: '6'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'By the tower law, $24 = [K:E]\cdot 4$. So $[K:E] = 24/4 = 6$.'
+          - problem: 'Sam claims that the field $\mathbb{Q}(\sqrt[3]{2})$ contains $\sqrt2$. Is Sam right?'
+            answer: 'no'
+            answer_contract: {"kind":"label","options":[["yes","sam is right","it does","contains"],["no","sam is wrong","it does not","does not contain"]]}
+            solution_sketch: 'If $\sqrt2\in\mathbb{Q}(\sqrt[3]{2})$, then $\mathbb{Q}(\sqrt2)$ is an intermediate field of degree $2$. By the tower law $2$ divides $[\mathbb{Q}(\sqrt[3]{2}):\mathbb{Q}]=3$, which is false. So Sam is wrong.'
+          - problem: 'Fields satisfy $F\subseteq E\subseteq K$ with $[K:F] = 45$ and $[K:E] = 5$. Find $[E:F]$.'
+            answer: '9'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'By the tower law, $45 = 5\cdot[E:F]$. So $[E:F]=45/5=9$.'
+          - problem: 'Fields satisfy $F\subseteq E\subseteq K$ with $[K:F] = 30$. Can $[E:F]$ equal $6$?'
+            answer: 'yes'
+            answer_contract: {"kind":"label","options":[["yes","it can","can"],["no","it cannot","it can not","cannot"]]}
+            solution_sketch: 'By the tower law, $[E:F]$ divides $[K:F]=30$. Since $30 = 6\cdot 5$, the value $6$ is possible, with $[K:E] = 5$.'
+          - problem: 'Ana adjoins $\alpha=\sqrt[3]{2}$ to $\mathbb{Q}$ and then adjoins $\omega=e^{2\pi i/3}$ to $\mathbb{Q}(\alpha)$. She knows that $[\mathbb{Q}(\alpha):\mathbb{Q}]=3$ and $[\mathbb{Q}(\alpha,\omega):\mathbb{Q}(\alpha)]=2$. Find $[\mathbb{Q}(\alpha,\omega):\mathbb{Q}]$.'
+            answer: '6'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The two steps form a tower. By the tower law, the total degree is $3\cdot 2 = 6$.'
+          - problem: 'Find $[\mathbb{Q}(\sqrt{5}, \sqrt[3]{2}) : \mathbb{Q}]$, given that $\sqrt5 \notin \mathbb{Q}(\sqrt[3]{2})$.'
+            answer: '6'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The field $\mathbb{Q}(\sqrt[3]{2})$ has degree $3$. Since $\sqrt5$ is not in it, $x^2-5$ stays irreducible there, so the next step has degree $2$ and the total is $3\cdot2=6$.'
+          - problem: 'A field $K$ has dimension $36$ as a vector space over $F$. A subfield $E$ has dimension $9$ over $F$. What is the dimension of $K$ as a vector space over $E$?'
+            answer: '4'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Dimensions of the steps multiply: $36=[K:E]\cdot 9$. So the dimension of $K$ over $E$ is $36/9=4$.'
+          - problem: 'Let $K=\mathbb{Q}(\sqrt2,\sqrt3,\sqrt5)$. Given $[\mathbb{Q}(\sqrt2,\sqrt3):\mathbb{Q}]=4$ and $[K:\mathbb{Q}(\sqrt2,\sqrt3)]=2$, find $[K:\mathbb{Q}]$.'
+            answer: '8'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'By the tower law, $[K:\mathbb{Q}]=2\cdot4=8$.'
+        constraints: 'towers of height 2 or 3; divisibility arguments from the tower law'
     diagnostic_exemplar:
       problem: 'Compute $[\mathbb{Q}(\sqrt[3]{2}, \sqrt{5}) : \mathbb{Q}]$, given that $\sqrt5 \notin \mathbb{Q}(\sqrt[3]2)$.'
       answer: "6"
@@ -622,102 +1053,156 @@ topics:
       - id: kp1
         name: "Constructible numbers form a field of degree-2^k elements"
         key_prerequisites: [field-extensions-degree]
+        step_check:
+          step: 'Since $\sqrt[3]{2}$ is a root of the irreducible polynomial $x^3 - 2$'
+          question: 'Why does the irreducible polynomial $x^3-2$ give degree $3$?'
+          options:
+            - 'The equation $x^3=2$ has three roots, so the extension has degree $3$ whatever polynomial we use'
+            - 'The degree is the number of real roots of $x^3-2$, and the cube root has multiplicity $3$'
+            - 'An irreducible polynomial with that root is its minimal polynomial, so its degree is the degree'
+            - 'The number $\sqrt[3]{2}$ is irrational, so its degree is the exponent in the root sign'
+          answer: 'An irreducible polynomial with that root is its minimal polynomial, so its degree is the degree'
+          why: 'The minimal polynomial is the monic irreducible polynomial with the number as a root. The degree of $\mathbb{Q}(\sqrt[3]{2})$ over $\mathbb{Q}$ is the degree of that polynomial.'
         exemplars:
-          - problem: "Starting from $\\mathbb{Q}$, a constructible length $\\alpha$ is reached by a tower of three extensions, each of degree $2$ over the previous field. Compute $[\\mathbb{Q}(\\alpha):\\mathbb{Q}]$."
-            answer: "8"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Full object: the tower $\\mathbb{Q} = F_0 \\subset F_1 \\subset F_2 \\subset F_3$ reaching $\\alpha$, with every step of degree $2$. Tower law: the degree multiplies along the tower, so $[\\mathbb{Q}(\\alpha):\\mathbb{Q}] = 2 \\cdot 2 \\cdot 2 = 8$. This multiplication along a degree-2 tower is exactly what forces constructible degrees to be powers of $2$. The answer is 8."
-          - problem: "A length $\\alpha > 0$ satisfies $\\alpha^4 = 3$, and it is obtained by adjoining $\\sqrt{3}$ to $\\mathbb{Q}$ and then a square root of that result. Compute $[\\mathbb{Q}(\\alpha):\\mathbb{Q}]$."
-            answer: "4"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Full object: $\\alpha = \\sqrt{\\sqrt{3}}$, the positive number with $\\alpha^4 = 3$. Step 1 (degree of a square root): $\\sqrt{3}$ has degree $2$ over $\\mathbb{Q}$. Step 2: $\\sqrt{\\sqrt{3}}$ has degree $2$ over $\\mathbb{Q}(\\sqrt{3})$, since $\\sqrt{3}$ is not a square in that field. Tower law: $2 \\cdot 2 = 4$. The answer is 4."
-          - problem: "The real number $\\alpha = \\sqrt[3]{3}$ has minimal polynomial $x^3 - 3$ over $\\mathbb{Q}$. Determine whether $\\alpha$ is constructible and give $[\\mathbb{Q}(\\alpha):\\mathbb{Q}]$. Give the verdict as yes or no and the degree as a number."
-            answer: "verdict = no; degree = 3"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "degree"}]}
-            solution_sketch: "Full object: $\\alpha = \\sqrt[3]{3}$ with minimal polynomial $x^3 - 3$ over $\\mathbb{Q}$. Degree: the minimal polynomial has degree $3$, so $[\\mathbb{Q}(\\alpha):\\mathbb{Q}] = 3$. Criterion: a constructible length has degree a power of $2$ over $\\mathbb{Q}$, and $3$ is not a power of $2$, so $\\alpha$ is not constructible. The answer is verdict = no; degree = 3."
-          - problem: "A student claims that every constructible number has degree $1$, $2$, $4$, or $8$ over $\\mathbb{Q}$. Give the smallest degree of a constructible number that contradicts this claim."
-            answer: "16"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Full object: the claim that constructible degrees are only $1, 2, 4, 8$. Constructible example: $\\alpha = \\sqrt{\\sqrt{\\sqrt{\\sqrt{2}}}}$ is built by four successive square-root steps, each of degree $2$, so by the tower law its degree is $2 \\cdot 2 \\cdot 2 \\cdot 2 = 16$. Every power of $2$ below $16$ is already on the student's list, so $16$ is the smallest contradicting degree. The answer is 16."
-          - problem: "A student argues that $\\sqrt[3]{2}$ is constructible. Step 1: $\\sqrt[3]{2}$ satisfies $x^3 - 2 = 0$. Step 2: $x^3 - 2$ has no rational root, so $[\\mathbb{Q}(\\sqrt[3]{2}):\\mathbb{Q}] = 3$. Step 3: $3 = 2 + 1$ is a sum of powers of $2$, hence a power of $2$. Step 4: by the criterion, $\\sqrt[3]{2}$ is constructible. Which step is the first step that is not valid?"
-            answer: "Step 3"
-            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
-            solution_sketch: "Step 1 is true: cubing $\\sqrt[3]{2}$ gives $2$. Step 2 is true: $x^3 - 2$ has no rational root, so it is the minimal polynomial and the degree is $3$. Step 3 is the first false step: a sum of powers of $2$ need not be a power of $2$, and $3$ is not equal to $2^k$ for any $k$. Step 4 is also wrong, since the criterion is only one-directional, but the failure there comes later. The answer is Step 3."
-          - problem: "In the proof that a constructible length $\\alpha$ satisfies $[\\mathbb{Q}(\\alpha):\\mathbb{Q}] = 2^k$ for some $k$, one has a tower $\\mathbb{Q} = F_0 \\subset F_1 \\subset \\cdots \\subset F_n$ containing $\\alpha$, where each extension has degree $1$ or $2$. The final line, which computes $[\\mathbb{Q}(\\alpha):\\mathbb{Q}]$ from these extensions, is missing. Select the line that is true and completes the proof."
-            answer: "the product of the step degrees, which is 2^k"
-            answer_contract: {"kind": "label", "options": [["the product of the step degrees, which is 2^k"], ["the sum of the step degrees"], ["2 to the power n, with n the number of steps"], ["twice the degree of the largest step"]]}
-            solution_sketch: "Full object: a tower $\\mathbb{Q} = F_0 \\subset F_1 \\subset \\cdots \\subset F_n$ containing $\\alpha$, each extension of degree $1$ or $2$. Tower law: $[F_n:\\mathbb{Q}]$ is the product of the extension degrees, hence $2^k$ where $k$ counts the steps of degree $2$. The option 'the sum of the step degrees' confuses the tower law with addition; the option '2 to the power n, with n the number of steps' ignores the steps of degree $1$; the option 'twice the degree of the largest step' is not any valid rule. The answer is the product of the step degrees, which is 2^k."
-          - problem: "Write the full proof: if a length $\\alpha$ is constructible by straightedge and compass, then $[\\mathbb{Q}(\\alpha):\\mathbb{Q}]$ is a power of $2$. Then compare with the solution."
-            answer: "See the solution."
-            answer_contract: {"kind": "none"}
-            solution_sketch: "Field closure: sums, differences, products and quotients of constructible numbers are constructible, since each is obtained by the basic straightedge and compass constructions, so the constructible numbers form a field containing $\\mathbb{Q}$. Degree of one step: each construction step produces an intersection of two lines, of a line and a circle, or of two circles; solving for its coordinates uses at worst a quadratic equation over the field built so far, so adjoining it gives an extension of degree $1$ or $2$. Tower: after $n$ steps there is a chain $\\mathbb{Q} = F_0 \\subset F_1 \\subset \\cdots \\subset F_n$ with $\\alpha \\in F_n$ and each $[F_{i+1}:F_i]$ equal to $1$ or $2$. Tower law: $[F_n:\\mathbb{Q}]$ is the product of the step degrees, so $[F_n:\\mathbb{Q}] = 2^k$, where $k$ is the number of steps of degree $2$. Conclusion: $[\\mathbb{Q}(\\alpha):\\mathbb{Q}]$ divides $2^k$ by the tower law applied to $\\mathbb{Q} \\subset \\mathbb{Q}(\\alpha) \\subset F_n$, and a divisor of $2^k$ is itself a power of $2$. Hence every constructible length has degree $2^k$ over $\\mathbb{Q}$."
-        constraints: "the criterion as a usable tool; degree-2 tower intuition, no analytic geometry details"
+          - problem: 'A construction from $\mathbb{Q}$ gives fields $\mathbb{Q}=F_0\subset F_1\subset F_2\subset F_3$, where each $F_{k+1}$ has degree $2$ over $F_k$. Find $[F_3:\mathbb{Q}]$.'
+            answer: '8'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'By the tower law, the degrees of the three steps multiply. So $[F_3:\mathbb{Q}]=2\cdot2\cdot2=8$.'
+          - problem: 'The length $\alpha=\sqrt[4]{3}$ is obtained by adjoining $\sqrt3$ to $\mathbb{Q}$ and then adjoining a square root of $\sqrt3$. The polynomial $x^4-3$ is irreducible over $\mathbb{Q}$ by Eisenstein at the prime $3$. Find $[\mathbb{Q}(\alpha):\mathbb{Q}]$.'
+            answer: '4'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The number $\alpha$ is a root of the irreducible polynomial $x^4-3$. So the degree is $4=2\cdot2$, a power of $2$, as the two square-root steps predict.'
+          - problem: 'The real number $\alpha = \sqrt[3]{3}$ has minimal polynomial $x^3 - 3$ over $\mathbb{Q}$. Is $\alpha$ constructible with straightedge and compass?'
+            answer: 'no'
+            answer_contract: {"kind":"label","options":[["yes","it is constructible","constructible","possible"],["no","it is not constructible","not constructible","impossible","not possible","it cannot be constructed","cannot be constructed"]]}
+            solution_sketch: 'The degree $[\mathbb{Q}(\alpha):\mathbb{Q}]$ is $3$. A constructible number has degree a power of $2$ over $\mathbb{Q}$, and $3$ is not a power of $2$. So $\alpha$ is not constructible.'
+          - problem: 'Sam claims that every constructible number has degree $1$, $2$, $4$ or $8$ over $\mathbb{Q}$. What is the smallest degree of a constructible number that contradicts this claim?'
+            answer: '16'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Powers of $2$ continue past $8$ with $16$. A tower of four square-root steps, such as $\mathbb{Q}(\sqrt[16]{2})$ with $x^{16}-2$ irreducible, gives a constructible number of degree $16$.'
+          - problem: 'A construction places five points one after another. The coordinates of each new point lie in a field of degree at most $2$ over the field generated by the earlier points. What is the largest possible degree over $\mathbb{Q}$ of the field that contains the coordinates of all five points?'
+            answer: '32'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Each step multiplies the degree by at most $2$. After five steps the largest possible degree is $2^5=32$.'
+          - problem: 'Sam argues that $\sqrt[3]{2}$ is constructible. Step 1: $\sqrt[3]{2}$ is a root of $x^3 - 2$. Step 2: $x^3 - 2$ has no rational root, so $[\mathbb{Q}(\sqrt[3]{2}):\mathbb{Q}] = 3$. Step 3: $3 = 2 + 1$ is a sum of powers of $2$, hence a power of $2$. Step 4: by the criterion, $\sqrt[3]{2}$ is constructible. Which is the first step that is not valid?'
+            answer: 'Step 3'
+            answer_contract: {"kind":"label","options":[["step 1","1"],["step 2","2"],["step 3","3"],["step 4","4"]]}
+            solution_sketch: 'A sum of powers of $2$ is not a power of $2$. The degree $3$ is not a power of $2$, so Step 3 is wrong and $\sqrt[3]{2}$ is not constructible.'
+          - problem: 'Starting from a segment of length $1$, a construction draws the diagonal of a unit square, which has length $\sqrt2$. It then draws the diagonal of a rectangle with sides $1$ and $\sqrt2$, then the diagonal of a rectangle with sides $\sqrt2$ and $\sqrt3$. Find the degree over $\mathbb{Q}$ of the smallest field that contains all three constructed lengths.'
+            answer: '8'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The lengths are $\sqrt2$, $\sqrt3$ and $\sqrt5$. Each is not in the field before it, so each step has degree $2$. The tower law gives $2\cdot2\cdot2=8$.'
+          - problem: 'The real number $\sqrt[3]{3}$ has minimal polynomial $x^3-3$ over $\mathbb{Q}$. Find $[\mathbb{Q}(\sqrt[3]{3}):\mathbb{Q}]$.'
+            answer: '3'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The degree of the extension equals the degree of the minimal polynomial. The minimal polynomial is $x^3-3$, so the degree is $3$.'
+          - problem: 'Write the full proof that if a length $\alpha$ is constructible by straightedge and compass, then $[\mathbb{Q}(\alpha):\mathbb{Q}]$ is a power of $2$.'
+            answer: '[Q(alpha):Q] is a power of 2'
+            answer_contract: {"kind":"none"}
+            solution_sketch: 'Each construction step lies in a field of degree $1$ or $2$ over the field before it. By the tower law, the field at the end of the construction has degree $2^k$ for some $k$. Since $\mathbb{Q}(\alpha)$ lies inside it, $[\mathbb{Q}(\alpha):\mathbb{Q}]$ divides $2^k$, so it is a power of $2$.'
+        constraints: 'the criterion as a usable tool; degree-2 tower intuition, no analytic geometry details'
       - id: kp2
         name: "Doubling the cube and trisecting the angle"
         key_prerequisites: [field-extensions-degree]
+        step_check:
+          step: 'which is not a power of $2$'
+          question: 'Why does a degree of $3$ over $\mathbb{Q}$ rule out a construction?'
+          options:
+            - 'A constructible number must have even degree, and $3$ is odd'
+            - 'Constructible numbers have degree $1$, $2$, $4$, $8$, and so on, and $3$ is not in this list'
+            - 'The degree $3$ is too big, because each construction step allows degree at most $2$'
+            - 'The degree $3$ means the minimal polynomial has three roots, and a compass meets a line in two'
+          answer: 'Constructible numbers have degree $1$, $2$, $4$, $8$, and so on, and $3$ is not in this list'
+          why: 'A tower of square-root steps has degree $2^k$, so a constructible number has degree $1,2,4,8,\dots$. Degree $3$ is not in this list.'
         exemplars:
-          - problem: "The doubling-the-cube proof uses the criterion that a real number constructible from Q has degree a power of 2 over Q. The cube root of 2 has minimal polynomial x^3 - 2 over Q, which is irreducible by Eisenstein's criterion at the prime 2. Find the degree of Q(cube root of 2) over Q."
-            answer: "3"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The object is the cube root of 2 with minimal polynomial x^3 - 2. Step 1 (Eisenstein's criterion): x^3 - 2 is irreducible at the prime 2, so the minimal polynomial has degree 3 and the field Q(cube root of 2) has degree 3 over Q. Step 2 (constructibility criterion): a constructible real number must have degree a power of 2 over Q, and 3 is not a power of 2. The degree is 3."
-          - problem: "In the trisection problem the number cos 20 degrees satisfies 8x^3 - 6x - 1 = 0, and this cubic is given as irreducible over Q. The constructibility criterion requires the degree of the field over Q to be a power of 2. State the degree of Q(cos 20 degrees) over Q."
-            answer: "3"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The object is cos 20 degrees, a root of the cubic 8x^3 - 6x - 1. Step 1 (given irreducibility fact): this cubic is irreducible over Q, so it is the minimal polynomial and the field Q(cos 20 degrees) has degree 3 over Q. Step 2 (constructibility criterion): the required degree must be a power of 2, and 3 is not such a power. The degree is 3."
-          - problem: "With x = cos 20 degrees the triple-angle identity cos 3t = 4x^3 - 3x gives 4x^3 - 3x = 1/2, and the resulting cubic is irreducible over Q, while the constructibility criterion needs a degree that is a power of 2. Clearing the fraction and collecting all terms on one side writes this cubic as A x^3 - 6x - 1 = 0. Find A."
-            answer: "8"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The object is the equation 4x^3 - 3x = 1/2 for x = cos 20 degrees. Step 1 (clear the denominator): multiply both sides by 2, giving 8x^3 - 6x = 1. Step 2 (collect on one side): subtract 1 from both sides, giving 8x^3 - 6x - 1 = 0, so the coefficient A is 8. The value of A is 8."
-          - problem: "The length sqrt(5) is constructible, and the criterion says a constructible number has degree a power of 2 over Q. The minimal polynomial of sqrt(5) over Q is x^2 - 5, which is irreducible by Eisenstein's criterion at the prime 5. Find the degree of Q(sqrt(5)) over Q."
-            answer: "2"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The object is sqrt(5) with minimal polynomial x^2 - 5. Step 1 (Eisenstein's criterion): x^2 - 5 is irreducible at the prime 5, so the minimal polynomial has degree 2 and the field Q(sqrt(5)) has degree 2 over Q. Step 2 (constructibility criterion): 2 is a power of 2, so this degree is consistent with a straightedge-compass construction. The degree is 2."
-          - problem: "Claim: the 60 degree angle can be trisected. Step 1: cos 20 degrees satisfies the cubic 8x^3 - 6x - 1 = 0, which is irreducible over Q. Step 2: so the degree of Q(cos 20 degrees) over Q is 3. Step 3: the constructibility criterion says a constructible number has degree a power of 2 over Q. Step 4: since 3 is not a power of 2, cos 20 degrees is constructible, and the angle can be trisected. Which step is the first step that is not valid?"
-            answer: "Step 4"
-            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
-            solution_sketch: "The object is the numbered argument about the 60 degree angle. Step 1 correctly gives the irreducible cubic for cos 20 degrees. Step 2 correctly reads off the degree 3 from that irreducible cubic. Step 3 correctly states the constructibility criterion. Step 4 is not valid: it reverses the criterion, because degree 3 is not a power of 2, so cos 20 degrees is not constructible. The answer is Step 4."
-          - problem: "The number 2^(1/4) is a constructible length, and the criterion requires its degree over Q to be a power of 2. Its minimal polynomial over Q is x^4 - 2, which is irreducible by Eisenstein's criterion at the prime 2. Find the degree of Q(2^(1/4)) over Q."
-            answer: "4"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The object is 2^(1/4) with minimal polynomial x^4 - 2. Step 1 (Eisenstein's criterion): x^4 - 2 is irreducible at the prime 2, so the minimal polynomial has degree 4 and the field Q(2^(1/4)) has degree 4 over Q. Step 2 (constructibility criterion): 4 is a power of 2, so this degree allows a construction. The degree is 4."
-          - problem: "Write the full proof: no straightedge and compass construction trisects the 60 degree angle. Then compare with the solution."
-            answer: "See the solution."
-            answer_contract: {"kind": "none"}
-            solution_sketch: "Step 1 (triple-angle identity): with x = cos 20 degrees, the identity cos 3t = 4x^3 - 3x at t = 20 degrees, together with cos 60 degrees = 1/2, gives 4x^3 - 3x = 1/2, that is 8x^3 - 6x - 1 = 0. Step 2 (irreducibility fact): the cubic 8x^3 - 6x - 1 is irreducible over Q, so it is the minimal polynomial of x and the field Q(cos 20 degrees) has degree 3 over Q. Step 3 (constructibility criterion): every real number constructible from Q lies in a field extension whose degree over Q is a power of 2. Since 3 is not a power of 2, cos 20 degrees is not constructible. Conclusion: a 60 degree angle cannot be trisected by straightedge and compass."
-        constraints: "cite the criterion plus one irreducibility fact; the cubic 8x^3 - 6x - 1 may be given as irreducible"
+          - problem: 'A cube has edge $1$. A cube of twice the volume has edge $\sqrt[3]{2}$. Find $[\mathbb{Q}(\sqrt[3]{2}):\mathbb{Q}]$.'
+            answer: '3'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The number $\sqrt[3]{2}$ is a root of $x^3-2$, which is irreducible by Eisenstein at $2$. So the degree is $3$. This is not a power of $2$, so the cube cannot be doubled.'
+          - problem: 'Let $c=\cos20^\circ$. The triple-angle identity $\cos3t=4\cos^3t-3\cos t$ with $t=20^\circ$ gives $4c^3-3c=\frac12$. Put $y=2c$ and write the monic polynomial in $y$ with integer coefficients that $y$ satisfies.'
+            answer: 'y^3 - 3y - 1'
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'Replace $c$ by $y/2$ to get $\frac{y^3}{2}-\frac{3y}{2}=\frac12$. Multiply by $2$ and collect terms: $y^3-3y-1=0$.'
+          - problem: 'The cubic $y^3-3y-1$ has no rational root. Find $[\mathbb{Q}(2\cos20^\circ):\mathbb{Q}]$.'
+            answer: '3'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The only possible rational roots are $1$ and $-1$, and neither is a root. A cubic with no rational root is irreducible, so it is the minimal polynomial of $2\cos20^\circ$. The degree is $3$.'
+          - problem: 'Can an angle of $60^\circ$ be trisected with straightedge and compass?'
+            answer: 'no'
+            answer_contract: {"kind":"label","options":[["yes","it can","possible","it can be trisected"],["no","it cannot","it can not","impossible","not possible","it cannot be trisected","cannot be trisected"]]}
+            solution_sketch: 'A trisection constructs $\cos20^\circ$, which has degree $3$ over $\mathbb{Q}$. The degree $3$ is not a power of $2$, so the angle cannot be trisected.'
+          - problem: 'Sam argues that $60^\circ$ can be trisected. Step 1: $\cos20^\circ$ is a root of $8x^3-6x-1$, which is irreducible over $\mathbb{Q}$. Step 2: so $[\mathbb{Q}(\cos20^\circ):\mathbb{Q}]=3$. Step 3: a constructible number has degree a power of $2$ over $\mathbb{Q}$. Step 4: since $3$ is not a power of $2$, $\cos20^\circ$ is constructible. Which step is wrong?'
+            answer: 'Step 4'
+            answer_contract: {"kind":"label","options":[["step 1","1"],["step 2","2"],["step 3","3"],["step 4","4"]]}
+            solution_sketch: 'Steps 1 to 3 are correct. A degree that is not a power of $2$ shows that $\cos20^\circ$ is not constructible, so the conclusion of Step 4 is reversed.'
+          - problem: 'The length $\sqrt5$ is constructible. Find $[\mathbb{Q}(\sqrt5):\mathbb{Q}]$.'
+            answer: '2'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The number $\sqrt5$ is a root of $x^2-5$, which is irreducible by Eisenstein at $5$. The degree $2$ is a power of $2$, which fits the criterion.'
+          - problem: 'A sculptor has a cube of edge $3$ metres and wants a cube of twice the volume. The new edge is $3\sqrt[3]{2}$ metres. Find the degree of $\mathbb{Q}(3\sqrt[3]{2})$ over $\mathbb{Q}$.'
+            answer: '3'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Since $3$ is rational, $\mathbb{Q}(3\sqrt[3]{2})=\mathbb{Q}(\sqrt[3]{2})$. This field has degree $3$ over $\mathbb{Q}$.'
+          - problem: 'A square has side $3$. A square of twice the area has side $s$. Find $[\mathbb{Q}(s):\mathbb{Q}]$.'
+            answer: '2'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The new area is $18$, so $s=\sqrt{18}=3\sqrt2$. Then $\mathbb{Q}(s)=\mathbb{Q}(\sqrt2)$, which has degree $2$. So doubling a square is possible.'
+          - problem: 'Write the full proof that an angle of $60^\circ$ cannot be trisected with straightedge and compass.'
+            answer: 'cos(20 degrees) has degree 3 over Q'
+            answer_contract: {"kind":"none"}
+            solution_sketch: 'A trisection of $60^\circ$ would construct $\cos20^\circ$. The number $2\cos20^\circ$ is a root of the irreducible polynomial $y^3-3y-1$, so $\cos20^\circ$ has degree $3$ over $\mathbb{Q}$. The degree $3$ is not a power of $2$, so no construction exists.'
+        constraints: 'cite the criterion plus one irreducibility fact; the cubic 8x^3 - 6x - 1 may be given as irreducible'
       - id: kp3
         name: "Squaring the circle; what remains constructible"
         key_prerequisites: [field-extensions-degree]
+        step_check:
+          step: 'a regular $n$-gon is constructible if and only if $\varphi(n)$ is a power of $2$'
+          question: 'Why does the criterion for the regular $n$-gon look at $\varphi(n)$?'
+          options:
+            - 'The value $\varphi(n)$ is the number of diagonals that leave one vertex of the $n$-gon'
+            - 'The value $\varphi(n)$ counts the prime factors of $n$, and each one needs a construction step'
+            - 'The value $\varphi(n)$ counts the sides of the $n$-gon that a ruler can draw directly'
+            - 'It is the degree of $\mathbb{Q}(e^{2\pi i/n})$ over $\mathbb{Q}$, the field of the vertices'
+          answer: 'It is the degree of $\mathbb{Q}(e^{2\pi i/n})$ over $\mathbb{Q}$, the field of the vertices'
+          why: 'The vertices of the $n$-gon are the powers of $e^{2\pi i/n}$. Their field has degree $\varphi(n)$ over $\mathbb{Q}$, and that degree must be a power of $2$.'
         exemplars:
-          - problem: "To square a circle of radius $1$, one must construct a square of the same area. Its side $s$ satisfies $s^2 = \\pi$. Give the side as a radical expression in $\\pi$."
-            answer: "sqrt(pi)"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1 (area formula): the unit circle has area $\\pi$, so the equal-area square has side $s$ with $s^2 = \\pi$. Step 2 (solve for the side): taking the positive square root gives $s = \\sqrt{\\pi}$; this is exactly the number whose constructibility the impossibility proof must rule out, since $\\pi$ is transcendental by the quoted theorem. The answer is sqrt(pi)."
-          - problem: "The regular pentagon is constructible, and its construction uses the central angle of $72$ degrees with $\\cos(72^{\\circ}) = (\\sqrt{5} - 1)/4$. Give the degree of $\\cos(72^{\\circ})$ over the rationals."
-            answer: "2"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1 (quadratic extension): $\\cos(72^{\\circ}) = (\\sqrt{5} - 1)/4$ lies in the field $\\mathbb{Q}(\\sqrt{5})$, which has degree $2$ over the rationals. Step 2 (criterion): the degree $2$ is a power of $2$, so the number is constructible, consistent with the pentagon being a positive example. The degree of $\\cos(72^{\\circ})$ over the rationals is 2."
-          - problem: "A regular $n$-gon is constructible exactly when $\\cos(2\\pi/n)$ has degree a power of $2$ over the rationals. The minimal polynomial of $\\cos(2\\pi/7)$ over the rationals is $8x^3 + 4x^2 - 4x - 1$. Determine whether a regular heptagon is constructible with straightedge and compass, and give the degree of $\\cos(2\\pi/7)$ over the rationals."
-            answer: "verdict = impossible; degree = 3"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["constructible"], ["impossible"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "degree"}]}
-            solution_sketch: "Step 1 (minimal polynomial): $8x^3 + 4x^2 - 4x - 1$ is the minimal polynomial of $\\cos(2\\pi/7)$, so its degree over the rationals is $3$. Step 2 (criterion): $3$ is not a power of $2$, so $\\cos(2\\pi/7)$ is not constructible, and neither is the regular heptagon; this is the standard impossible example of odd degree. The answer is verdict = impossible; degree = 3."
-          - problem: "For a regular $n$-gon, the number $\\cos(2\\pi/n)$ has degree $\\varphi(n)/2$ over the rationals, and the polygon is constructible exactly when this degree is a power of $2$. The regular $15$-gon is a classical positive example, and $\\varphi(15) = 8$. Give the degree of $\\cos(2\\pi/15)$ over the rationals."
-            answer: "4"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1 (degree formula): for a regular $n$-gon the degree of $\\cos(2\\pi/n)$ over the rationals is $\\varphi(n)/2$. Step 2 (compute): with $\\varphi(15) = 8$, the degree is $8/2 = 4$. Step 3 (criterion): $4 = 2^2$ is a power of $2$, so the $15$-gon is constructible, a positive example alongside the pentagon. The degree of $\\cos(2\\pi/15)$ over the rationals is 4."
-          - problem: "A student claims that squaring the circle is possible and argues: Step 1: the side $s$ of the square with the same area as the unit circle satisfies $s^2 = \\pi$. Step 2: every constructible number has degree a power of $2$ over the rationals. Step 3: $\\sqrt{\\pi}$ is a square root, so its degree over the rationals is $2$. Step 4: $2$ is a power of $2$, so $\\sqrt{\\pi}$ is constructible. Step 5: therefore squaring the circle is possible. Which step is the first step that is not valid?"
-            answer: "Step 3"
-            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"], ["Step 5"]]}
-            solution_sketch: "Step 1 (area equation): the equal-area square has side $s$ with $s^2 = \\pi$, which is correct, so Step 1 is a valid step and not the invalid one. Step 2 (constructibility criterion): every constructible number has degree a power of $2$ over the rationals, which is also correct, so Step 2 is valid and not the invalid one. Step 3 (degree of the square root): the claim that $\\sqrt{\\pi}$ has degree $2$ is the first invalid step, because a square root has degree $2$ only when the radicand lies in the base field; since $\\pi$ is transcendental by the quoted theorem of Lindemann, $\\sqrt{\\pi}$ is not algebraic at all and has no finite degree. Step 4 is wrong only as a consequence of Step 3, so it is not the first invalid step. Step 5 is likewise wrong only as a consequence of Step 3, so it is not the first invalid step. The answer is Step 3."
-          - problem: "Claim: a regular heptagon is not constructible. Line 1: if the heptagon were constructible, then $\\cos(2\\pi/7)$ would be a constructible number. Line 2: every constructible number has degree a power of $2$ over the rationals. Line 3: the minimal polynomial of $\\cos(2\\pi/7)$ over the rationals is $8x^3 + 4x^2 - 4x - 1$, so its degree is $3$. Line 4: MISSING. Line 5: hence $\\cos(2\\pi/7)$ is not constructible, and neither is the regular heptagon. Select the line that fits at Line 4."
-            answer: "3 is not a power of 2, so the criterion fails"
-            answer_contract: {"kind": "label", "options": [["3 is not a power of 2, so the criterion fails"], ["3 is odd, and odd degrees are never algebraic"], ["3 is not a power of 2, but the heptagon is still constructible by another method"], ["the degree 3 must be doubled to 6 before comparing with powers of 2"]]}
-            solution_sketch: "Lines 1 to 3 are correct: constructibility transfers to $\\cos(2\\pi/7)$, the criterion is stated, and the minimal polynomial gives degree $3$. The missing line must compare $3$ with the power-of-$2$ criterion. The option '3 is odd, and odd degrees are never algebraic' is wrong because odd-degree numbers can be algebraic; oddness ruins constructibility, not algebraicity. The option '3 is not a power of 2, but the heptagon is still constructible by another method' forgets that the criterion is an if-and-only-if, so no other method can exist. The option 'the degree 3 must be doubled to 6 before comparing with powers of 2' doubles the degree with no justification. The correct line is '3 is not a power of 2, so the criterion fails'."
-          - problem: "Write the full proof: the regular heptagon is not constructible with straightedge and compass. Then compare with the solution."
-            answer: "See the solution."
-            answer_contract: {"kind": "none"}
-            solution_sketch: "Step 1 (criterion): a real number constructible with straightedge and compass from a unit length has degree a power of $2$ over the rationals, because each construction step adjoins a quantity satisfying a linear or quadratic equation, so the field extension has degree $1$ or $2$, and degrees multiply in towers. Step 2 (reduction): if a regular heptagon were constructible, its vertices would be constructible points, so the length $\\cos(2\\pi/7)$ would be a constructible number. Step 3 (algebra): $\\cos(2\\pi/7)$ is a root of $8x^3 + 4x^2 - 4x - 1 = 0$, obtained from $\\zeta^7 = 1$ with $\\zeta \\ne 1$; this cubic is irreducible over the rationals by the rational root test, so the degree of $\\cos(2\\pi/7)$ over the rationals is $3$. Step 4 (contradiction): $3$ is not a power of $2$, so $\\cos(2\\pi/7)$ is not constructible, contradicting Step 2. Conclusion: the regular heptagon is not constructible with straightedge and compass. In contrast, the pentagon ($\\cos 72^{\\circ}$ of degree $2$) and the $15$-gon (degree $4$) pass the criterion, while squaring the circle fails earlier: the required side $\\sqrt{\\pi}$ is not even algebraic, since $\\pi$ is transcendental by the quoted theorem of Lindemann."
-        constraints: "quotable transcendence of pi; positive examples (pentagon, 15-gon) vs impossible ones (heptagon: degree 3)"
+          - problem: 'A circle has radius $1$. Find the side length of a square with the same area.'
+            answer: 'sqrt(pi)'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The circle has area $\pi\cdot1^2=\pi$. A square of side $s$ has area $s^2$, so $s^2=\pi$ and $s=\sqrt\pi$.'
+          - problem: 'The regular pentagon is constructible. Its construction uses $\cos72^\circ=\frac{\sqrt5-1}{4}$. Find $[\mathbb{Q}(\cos72^\circ):\mathbb{Q}]$.'
+            answer: '2'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The field $\mathbb{Q}(\cos72^\circ)$ equals $\mathbb{Q}(\sqrt5)$, because the other terms are rational. The number $\sqrt5$ has degree $2$, a power of $2$.'
+          - problem: 'A tile maker wants a regular heptagonal tile and has only straightedge and compass. The minimal polynomial of $\cos(2\pi/7)$ over $\mathbb{Q}$ is $8x^3+4x^2-4x-1$. Find $[\mathbb{Q}(\cos(2\pi/7)):\mathbb{Q}]$.'
+            answer: '3'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The degree of the extension equals the degree of the minimal polynomial. This degree is $3$, which is not a power of $2$, so the tile maker cannot construct the heptagon.'
+          - problem: 'Is it possible to square the circle with straightedge and compass?'
+            answer: 'no'
+            answer_contract: {"kind":"label","options":[["yes","it is possible","possible"],["no","it is not possible","not possible","impossible"]]}
+            solution_sketch: 'A square with the area of the unit circle needs the length $\sqrt\pi$. The number $\pi$ is transcendental, so $\sqrt\pi$ is not algebraic and has no degree. A constructible number is algebraic, so it is impossible.'
+          - problem: 'A designer wants to draw a regular $15$-gon. The number $\cos(2\pi/15)$ has degree $\varphi(15)/2$ over $\mathbb{Q}$, and $\varphi(15)=8$. Find $[\mathbb{Q}(\cos(2\pi/15)):\mathbb{Q}]$.'
+            answer: '4'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The degree is $\varphi(15)/2=8/2=4$. Since $4$ is a power of $2$, the regular $15$-gon is constructible.'
+          - problem: 'Sam argues that the circle can be squared. Step 1: the side $s$ of the square satisfies $s^2=\pi$. Step 2: every constructible number has degree a power of $2$ over $\mathbb{Q}$. Step 3: $\sqrt\pi$ is a square root, so its degree over $\mathbb{Q}$ is $2$. Step 4: so $\sqrt\pi$ is constructible. Which is the first step that is not valid?'
+            answer: 'Step 3'
+            answer_contract: {"kind":"label","options":[["step 1","1"],["step 2","2"],["step 3","3"],["step 4","4"]]}
+            solution_sketch: 'A square root of a number has degree $2$ only when that number is algebraic over $\mathbb{Q}$ of degree at most $2$. The number $\pi$ is transcendental, so $\sqrt\pi$ has no degree and Step 3 is wrong.'
+          - problem: 'The number $\cos(2\pi/17)$ has degree $\varphi(17)/2$ over $\mathbb{Q}$. Find $[\mathbb{Q}(\cos(2\pi/17)):\mathbb{Q}]$.'
+            answer: '8'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Since $17$ is prime, $\varphi(17)=16$. The degree is $16/2=8$, a power of $2$, so the regular $17$-gon is constructible.'
+          - problem: 'A regular $n$-gon is constructible exactly when $\varphi(n)$ is a power of $2$. Find the smallest odd $n\ge7$ for which the regular $n$-gon is constructible.'
+            answer: '15'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Compute $\varphi(n)$ for odd $n$: $\varphi(7)=6$, $\varphi(9)=6$, $\varphi(11)=10$, $\varphi(13)=12$, none a power of $2$. Then $\varphi(15)=8$, a power of $2$, so $n=15$.'
+          - problem: 'Write the full proof that the regular heptagon is not constructible with straightedge and compass.'
+            answer: 'cos(2pi/7) has degree 3 over Q'
+            answer_contract: {"kind":"none"}
+            solution_sketch: 'A constructible heptagon needs the constructible number $\cos(2\pi/7)$. Its minimal polynomial over $\mathbb{Q}$ is $8x^3+4x^2-4x-1$, so its degree is $3$. The degree $3$ is not a power of $2$, which contradicts the criterion.'
+        constraints: 'quotable transcendence of pi; positive examples (pentagon, 15-gon, 17-gon) vs impossible ones (heptagon: degree 3)'
     diagnostic_exemplar:
       problem: 'Using the constructibility criterion, decide which are constructible: (a) $\sqrt[3]{5}$, (b) $\sqrt{7}$, (c) a $60^\circ$ angle trisector (i.e. $\cos 20^\circ$).'
       answer: '(a) No — degree $3$. (b) Yes — degree $2$. (c) No — degree $3$.'
@@ -759,89 +1244,164 @@ topics:
       - id: kp1
         name: "Adjoining a root: Kronecker's construction"
         key_prerequisites: [quotient-rings, irreducibility-factorization]
+        step_check:
+          step: 'Since $f(x)$ is irreducible, $\langle f(x) \rangle$ is a maximal ideal'
+          question: 'Why does an irreducible $f$ make $F[x]/\langle f\rangle$ a field?'
+          options:
+            - 'Every quotient of a polynomial ring by a principal ideal is a field, so irreducibility only fixes the size'
+            - 'Irreducible means $f$ has no roots, so each coset has a root, and so each coset has an inverse'
+            - 'Irreducible means $f$ is prime as an integer, so the quotient is $\mathbb{Z}_p$'
+            - 'An irreducible $f$ generates a maximal ideal, and a ring modulo a maximal ideal is a field'
+          answer: 'An irreducible $f$ generates a maximal ideal, and a ring modulo a maximal ideal is a field'
+          why: 'In the principal ideal domain $F[x]$, an irreducible $f$ makes $\langle f\rangle$ maximal. A commutative ring modulo a maximal ideal is a field.'
         exemplars:
-          - problem: "The polynomial x^2 + 1 over Z_3 has no root, so it is irreducible. Find the number of elements in the field Z_3[x]/<x^2 + 1>."
-            answer: "9"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The polynomial x^2+1 over Z_3 has values 1,2,2 at 0,1,2, so it has no root and is irreducible by the root test. A quotient by a maximal ideal is a field, and <x^2+1> is maximal because x^2+1 is irreducible. The field Z_3[x]/<x^2+1> has degree 2 over Z_3, so it has 3^2 = 9 elements. The answer is 9."
-          - problem: "Let f(x) = x^3 + x + 1 over Z_2. Use a root test to see that f is irreducible. Find the degree [Z_2[x]/<f> : Z_2]."
-            answer: "3"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "For f(x) = x^3+x+1 over Z_2, f(0)=1 and f(1)=1, so f has no root. A degree-3 polynomial with no root is irreducible, so <f> is maximal. The quotient Z_2[x]/<f> is a field extension of degree equal to deg f = 3. The degree is 3."
-          - problem: "Let alpha be the coset of x in Q[x]/<x^2 - 2>. The construction makes alpha a root of x^2 - 2. Find the value of alpha^2."
-            answer: "2"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "In Q[x]/<x^2-2>, let alpha be the coset of x. The relation x^2 - 2 = 0 in the quotient gives alpha^2 - 2 = 0, so alpha^2 = 2. The answer is 2."
-          - problem: "Let f(x) = x^2 + x + 1 over Z_2. A root test shows f has no root in Z_2, so f is irreducible. Find the number of elements in Z_2[x]/<f>."
-            answer: "4"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "For f(x) = x^2+x+1 over Z_2, f(0)=1 and f(1)=1, so f has no root and is irreducible. The quotient Z_2[x]/<f> is a field of degree 2 over Z_2. It has 2^2 = 4 elements. The answer is 4."
-          - problem: "Let f(x) = x^3 + 2x + 1 over Z_3. Check that f has no root in Z_3, so f is irreducible. Find the number of elements in Z_3[x]/<f>."
-            answer: "27"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "For f(x)=x^3+2x+1 over Z_3, f(0)=1, f(1)=1, f(2)=1, so f has no root. A degree-3 polynomial with no root is irreducible, so <f> is maximal. The quotient is a field of degree 3 over Z_3, so it has 3^3 = 27 elements. The answer is 27."
-          - problem: "Let alpha be the coset of x in Q[x]/<x^3 - 2>. The quotient construction makes alpha a root of x^3 - 2. Find the value of alpha^3."
-            answer: "2"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "In Q[x]/<x^3-2>, let alpha be the coset of x. The relation x^3 - 2 = 0 in the quotient gives alpha^3 - 2 = 0, so alpha^3 = 2. The answer is 2."
-        constraints: "Kronecker constructions over Z_2, Z_3, Q with degree-2 or degree-3 polynomials; irreducibility checked by root tests"
+          - problem: 'The polynomial $x^2+1$ has no root in $\mathbb{Z}_3$, so it is irreducible. How many elements does the field $\mathbb{Z}_3[x]/\langle x^2+1\rangle$ have?'
+            answer: '9'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Every coset has a unique representative $a+bx$ with $a,b\in\mathbb{Z}_3$. There are $3$ choices for each of $a$ and $b$, so the field has $3^2=9$ elements.'
+          - problem: 'Let $f(x)=x^3+x+1$ over $\mathbb{Z}_2$. Since $f(0)=f(1)=1$, a cubic with no root is irreducible. Find $[\mathbb{Z}_2[x]/\langle f\rangle:\mathbb{Z}_2]$.'
+            answer: '3'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The degree of the quotient field over $\mathbb{Z}_2$ equals the degree of the irreducible polynomial $f$. So the degree is $3$.'
+          - problem: 'Let $\alpha$ be the coset of $x$ in $\mathbb{Q}[x]/\langle x^2-2\rangle$. Find the value of $\alpha^4$.'
+            answer: '4'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'In the quotient, $\alpha^2-2=0$, so $\alpha^2=2$. Then $\alpha^4=(\alpha^2)^2=2^2=4$.'
+          - problem: 'Find the roots of $x^2+1$ in $\mathbb{Z}_5$.'
+            answer: '2, 3'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Test the elements of $\mathbb{Z}_5$: $2^2+1=5\equiv0$ and $3^2+1=10\equiv0$, while $0$, $1$ and $4$ give $1$, $2$ and $2$. The roots are $2$ and $3$.'
+          - problem: 'Is $\mathbb{Z}_5[x]/\langle x^2+1\rangle$ a field?'
+            answer: 'no'
+            answer_contract: {"kind":"label","options":[["yes","it is a field","field"],["no","it is not a field","not a field"]]}
+            solution_sketch: 'The polynomial $x^2+1$ has the root $2$ in $\mathbb{Z}_5$, so it factors as $(x-2)(x-3)$. It is not irreducible, so the ideal is not maximal and the quotient is not a field.'
+          - problem: 'Marta wants a finite field with $16$ elements and builds it as $\mathbb{Z}_2[x]/\langle f\rangle$ with $f$ irreducible. What is the degree of $f$?'
+            answer: '4'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The quotient has $2^{\deg f}$ elements. The equation $2^{\deg f}=16$ gives $\deg f=4$.'
+          - problem: 'Let $f(x)=x^3+2x+1$ over $\mathbb{Z}_3$. Since $f$ has no root in $\mathbb{Z}_3$, it is irreducible. How many elements does $\mathbb{Z}_3[x]/\langle f\rangle$ have?'
+            answer: '27'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Every coset has a unique representative $a+bx+cx^2$ with $a,b,c\in\mathbb{Z}_3$. So the field has $3^3=27$ elements.'
+          - problem: 'Sam says that $x^2+1$ is irreducible over $\mathbb{Z}_2$ because $x^2+1$ has no real root. Find the roots of $x^2+1$ in $\mathbb{Z}_2$.'
+            answer: '1'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Test the elements of $\mathbb{Z}_2$: $0^2+1=1$ and $1^2+1=2\equiv0$. So $1$ is a root and $x^2+1=(x+1)^2$ is reducible, even though it has no real root.'
+          - problem: 'A coding engineer needs a field with $125$ elements and builds it as $\mathbb{Z}_5[x]/\langle f\rangle$ with $f$ irreducible. What is the degree of $f$?'
+            answer: '3'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The quotient has $5^{\deg f}$ elements. Since $125=5^3$, the degree of $f$ is $3$.'
+          - problem: 'Let $\alpha$ be the coset of $x$ in $\mathbb{Q}[x]/\langle x^3-2\rangle$. Find the value of $\alpha^3$.'
+            answer: '2'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'In the quotient, $\alpha^3-2=0$. So $\alpha^3=2$.'
+        constraints: 'Kronecker constructions over Z_2, Z_3, Z_5, Q with degree-2 or degree-3 polynomials; irreducibility checked by root tests'
       - id: kp2
         name: "Splitting fields over Q"
         key_prerequisites: [field-extensions-degree, complex-numbers]
+        step_check:
+          step: 'so $x^2 + 1$ has no root there and stays irreducible'
+          question: 'Why does $x^2+1$ have no root in $\mathbb{Q}(\sqrt[4]{2})$?'
+          options:
+            - 'The polynomial $x^2+1$ is irreducible over $\mathbb{Q}$, and an irreducible polynomial never gets a root in a larger field'
+            - 'Every element of $\mathbb{Q}(\sqrt[4]{2})$ is a real number, and $x^2+1$ is positive for every real $x$'
+            - 'A root of $x^2+1$ is $\sqrt{-1}$, and no square root can lie in a field built with a fourth root'
+            - 'The field has degree $4$ over $\mathbb{Q}$, and a degree $2$ polynomial cannot fit in degree $4$'
+          answer: 'Every element of $\mathbb{Q}(\sqrt[4]{2})$ is a real number, and $x^2+1$ is positive for every real $x$'
+          why: 'The field $\mathbb{Q}(\sqrt[4]{2})$ is inside $\mathbb{R}$. A root of $x^2+1$ would be a real number with square $-1$, which does not exist.'
         exemplars:
-          - problem: "The polynomial p(x) = x^4 - 1 has roots 1, -1, i, -i. Find the degree over Q of the splitting field of p(x)."
-            answer: "2"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The full root list is 1, -1, i, -i. The rational roots 1 and -1 already lie in Q, and adjoining i also gives -i, so the splitting field is Q(i). By the degree formula, [Q(i):Q] = 2 because x^2 + 1 is irreducible over Q. The degree is 2."
-          - problem: "The polynomial p(x) = x^3 - 2 has roots 2^(1/3), 2^(1/3)*omega, and 2^(1/3)*omega^2, where omega is a primitive cube root of unity. Find the degree over Q of the splitting field of p(x)."
-            answer: "6"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The full root list is 2^(1/3), 2^(1/3)*omega, 2^(1/3)*omega^2. Adjoining 2^(1/3) gives a degree 3 extension. The primitive cube root omega is a root of x^2 + x + 1, which stays irreducible over the real field Q(2^(1/3)), so adjoining omega adds degree 2. By the tower law, the splitting field Q(2^(1/3), omega) has degree 3*2 = 6. The degree is 6."
-          - problem: "The polynomial p(x) = x^4 - 5x^2 + 6 has roots sqrt(2), -sqrt(2), sqrt(3), and -sqrt(3). Find the degree over Q of the splitting field of p(x)."
-            answer: "4"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The full root list is sqrt(2), -sqrt(2), sqrt(3), -sqrt(3). The splitting field is Q(sqrt(2), sqrt(3)). Adjoining sqrt(2) gives degree 2 over Q. Since sqrt(3) is not in Q(sqrt(2)), its minimal polynomial x^2 - 3 is irreducible there, so adjoining it adds degree 2. By the tower law the degree is 2*2 = 4. The degree is 4."
-          - problem: "The polynomial p(x) = x^4 - 2 has roots 2^(1/4), -2^(1/4), i*2^(1/4), and -i*2^(1/4). Find the degree over Q of the splitting field of p(x)."
-            answer: "8"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The full root list is 2^(1/4), -2^(1/4), i*2^(1/4), -i*2^(1/4). The splitting field is Q(2^(1/4), i). Adjoining 2^(1/4) gives degree 4 over Q by x^4 - 2. The field Q(2^(1/4)) is real, so i is not in it and x^2 + 1 is irreducible there, adding degree 2. By the tower law the degree is 4*2 = 8. The degree is 8."
-          - problem: "Consider p(x) = x^3 - 3. Its roots are 3^(1/3), 3^(1/3)*omega, and 3^(1/3)*omega^2, where omega is a primitive cube root of unity. Find the degree over Q of the splitting field of p(x)."
-            answer: "6"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The full root list is 3^(1/3), 3^(1/3)*omega, 3^(1/3)*omega^2. The splitting field is Q(3^(1/3), omega). Adjoining 3^(1/3) gives degree 3 over Q by x^3 - 3. The primitive cube root omega satisfies x^2 + x + 1, which is irreducible over the real field Q(3^(1/3)), so adjoining omega adds degree 2. By the tower law the degree is 3*2 = 6. The degree is 6."
-          - problem: "The polynomial p(x) = x^4 - 5x^2 + 4 has roots 1, -1, 2, and -2. Find the degree over Q of the splitting field of p(x)."
-            answer: "1"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The full root list is 1, -1, 2, -2. Every root already lies in Q, so the splitting field is Q itself. By the definition of degree, [Q:Q] = 1. The degree is 1."
-        constraints: "polynomials of degree <= 4 over Q with radical or root-of-unity roots; every problem exhibits the full root list"
+          - problem: 'The polynomial $p(x) = x^3 - 2$ has roots $\sqrt[3]{2}$, $\sqrt[3]{2}\,\omega$ and $\sqrt[3]{2}\,\omega^2$, where $\omega$ is a primitive cube root of unity. Find the degree over $\mathbb{Q}$ of the splitting field of $p(x)$.'
+            answer: '6'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The splitting field is $\mathbb{Q}(\sqrt[3]{2},\omega)$. The first step has degree $3$. The field $\mathbb{Q}(\sqrt[3]{2})$ is real, so $\omega$ adds degree $2$, and the total is $3\cdot2=6$.'
+          - problem: 'The polynomial $p(x) = x^4 - 1$ has roots $1$, $-1$, $i$ and $-i$. Find the degree over $\mathbb{Q}$ of the splitting field of $p(x)$.'
+            answer: '2'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The roots $1$ and $-1$ are rational, so the splitting field is $\mathbb{Q}(i)$. The number $i$ is a root of $x^2+1$, so the degree is $2$.'
+          - problem: 'The polynomial $p(x) = x^4 - 5x^2 + 6$ has roots $\sqrt{2}$, $-\sqrt{2}$, $\sqrt{3}$ and $-\sqrt{3}$. Find the degree over $\mathbb{Q}$ of the splitting field of $p(x)$.'
+            answer: '4'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The splitting field is $\mathbb{Q}(\sqrt2,\sqrt3)$. Since $\sqrt3\notin\mathbb{Q}(\sqrt2)$, the total degree is $2\cdot2=4$.'
+          - problem: 'The polynomial $p(x) = x^4 - 3$ has roots $\sqrt[4]{3}$, $-\sqrt[4]{3}$, $i\sqrt[4]{3}$ and $-i\sqrt[4]{3}$. Find the degree over $\mathbb{Q}$ of the splitting field of $p(x)$.'
+            answer: '8'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The polynomial $x^4-3$ is irreducible by Eisenstein at $3$, so $\mathbb{Q}(\sqrt[4]{3})$ has degree $4$. This field is real, so adjoining $i$ adds degree $2$, and the total is $8$.'
+          - problem: 'The polynomial $p(x) = x^4 - 5x^2 + 4$ has roots $1$, $-1$, $2$ and $-2$. Find the degree over $\mathbb{Q}$ of the splitting field of $p(x)$.'
+            answer: '1'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'All four roots are rational, so the splitting field is $\mathbb{Q}$ itself. Its degree over $\mathbb{Q}$ is $1$.'
+          - problem: 'Mia wants all solutions of $z^6=1$ in the complex numbers. The solutions are $\pm1$ and $\pm\frac{1}{2}\pm\frac{\sqrt3}{2}i$. Find the degree over $\mathbb{Q}$ of the smallest field that contains all of them.'
+            answer: '2'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The solutions lie in $\mathbb{Q}(\sqrt3\,i)=\mathbb{Q}(\sqrt{-3})$. The number $\sqrt{-3}$ is a root of $x^2+3$, so the field has degree $2$.'
+          - problem: 'Sam says that the splitting field of $x^3-2$ over $\mathbb{Q}$ is $\mathbb{Q}(\sqrt[3]{2})$, of degree $3$. What is the degree of the splitting field?'
+            answer: '6'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The field $\mathbb{Q}(\sqrt[3]{2})$ is real, so it misses the roots $\sqrt[3]{2}\,\omega$ and $\sqrt[3]{2}\,\omega^2$. Adjoining $\omega$ adds degree $2$, so the degree is $3\cdot2=6$.'
+          - problem: 'Find the degree over $\mathbb{Q}$ of the splitting field of $x^3-5$.'
+            answer: '6'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The roots are $\sqrt[3]{5}$ times the cube roots of unity. The field $\mathbb{Q}(\sqrt[3]{5})$ has degree $3$ and is real, so $\omega$ adds degree $2$, and the total is $6$.'
+          - problem: 'Ali wants all solutions of $z^8=1$ in the complex numbers. Find the degree over $\mathbb{Q}$ of the smallest field that contains all of them.'
+            answer: '4'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The solutions are the powers of $\zeta=e^{2\pi i/8}=\frac{\sqrt2}{2}(1+i)$. The smallest field containing them is $\mathbb{Q}(\sqrt2,i)$, of degree $2\cdot2=4$.'
+        constraints: 'polynomials of degree <= 6 over Q with radical or root-of-unity roots; most problems exhibit the full root list'
       - id: kp3
         name: "Degrees of splitting fields"
         key_prerequisites: [field-extensions-degree, irreducibility-factorization]
+        step_check:
+          step: 'the polynomial $x^2-7$ stays irreducible there'
+          question: 'Why is the second step of degree $2$ and not $1$?'
+          options:
+            - 'Since $\sqrt7$ is not in $\mathbb{Q}(\sqrt5)$, $x^2-7$ has no root there and stays irreducible'
+            - 'A polynomial of degree $2$ always adds degree $2$, even when its roots are in the field already'
+            - 'The number $7$ is prime, so $x^2-7$ is irreducible over every field'
+            - 'The field $\mathbb{Q}(\sqrt5)$ has $\sqrt5$ already, so $\sqrt7$ needs two new coordinates'
+          answer: 'Since $\sqrt7$ is not in $\mathbb{Q}(\sqrt5)$, $x^2-7$ has no root there and stays irreducible'
+          why: 'A quadratic with no root in a field is irreducible over that field. So $\sqrt7$ has degree $2$ over $\mathbb{Q}(\sqrt5)$, not $1$.'
         exemplars:
           - problem: 'Find the degree over $\mathbb{Q}$ of the splitting field of $(x^2 - 2)(x^2 - 3)$.'
-            answer: "4"
-            solution_sketch: 'The splitting field is $\mathbb{Q}(\sqrt2, \sqrt3)$. Tower: $[\mathbb{Q}(\sqrt2) : \mathbb{Q}] = 2$, and $\sqrt3 \notin \mathbb{Q}(\sqrt2)$ keeps $x^2 - 3$ irreducible there, so another factor of $2$: total $4$.'
-          - problem: "Let E be the splitting field over Q of a cubic polynomial. By the n! bound, what is the largest possible value of [E : Q]?"
-            answer: "6"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "For a cubic, E is a splitting field over Q and [E : Q] divides 3! = 6. The bound is attained by x^3 - 2, so the largest possible value is 6."
-          - problem: "Let E be the splitting field of x^4 - 2 over Q. Find [E : Q]."
-            answer: "8"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The splitting field is E = Q(2^(1/4), i). Eisenstein at 2 shows x^4 - 2 is irreducible, so [Q(2^(1/4)) : Q] = 4. Since i is not in the real field Q(2^(1/4)), [E : Q(2^(1/4))] = 2. The tower law gives [E : Q] = 4 * 2 = 8."
-          - problem: "Find the degree over Q of the splitting field of x^4 + x^2 + 1."
-            answer: "2"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The splitting field of x^4 + x^2 + 1 is Q(sqrt(-3)). Factor x^4 + x^2 + 1 = (x^2 + x + 1)(x^2 - x + 1). The roots of both quadratics lie in Q(sqrt(-3)). Since [Q(sqrt(-3)) : Q] = 2, the splitting field has degree 2."
-          - problem: "Let E be the splitting field over Q of (x^3 - 2)(x^2 - 2). Given that sqrt(2) is not in Q(2^(1/3), omega), where omega is a primitive cube root of unity, find [E : Q]."
-            answer: "12"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The splitting field is E = Q(2^(1/3), omega, sqrt(2)). The splitting field of x^3 - 2 is Q(2^(1/3), omega), of degree 6 over Q. The given non-membership makes x^2 - 2 irreducible over that field, adding degree 2. By the tower law, [E : Q] = 6 * 2 = 12."
-          - problem: "For a quartic polynomial over Q, the n! bound limits the degree of its splitting field. Find the largest possible degree over Q of such a splitting field."
-            answer: "24"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "A quartic has n = 4, so its splitting field degree is bounded by 4! = 24. The bound is sharp, so the largest possible degree is 24."
-        constraints: "tower-law computations of height <= 2; the n! bound may be quoted; non-membership facts like sqrt(3) not in Q(sqrt(2)) may be given"
+            answer: '4'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The roots are $\pm\sqrt2$ and $\pm\sqrt3$, so the splitting field is $\mathbb{Q}(\sqrt2,\sqrt3)$. Since $\sqrt3\notin\mathbb{Q}(\sqrt2)$, the degree is $2\cdot2=4$.'
+          - problem: 'Let $E$ be the splitting field over $\mathbb{Q}$ of a cubic polynomial. What is the largest possible value of $[E:\mathbb{Q}]$?'
+            answer: '6'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Adjoin the roots one at a time. The first root gives degree at most $3$, the second at most $2$, and the third degree $1$. So $[E:\mathbb{Q}]\le3\cdot2\cdot1=6$. The polynomial $x^3-2$ reaches this bound, so the largest possible value is $6$.'
+          - problem: 'Find the degree over $\mathbb{Q}$ of the splitting field of $x^4 + x^2 + 1$.'
+            answer: '2'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The polynomial factors as $(x^2+x+1)(x^2-x+1)$. Both factors have roots $\pm\omega$ and $\pm\omega^2$ in $\mathbb{Q}(\omega)$, which has degree $2$.'
+          - problem: 'Let $E$ be the splitting field over $\mathbb{Q}$ of $(x^3 - 2)(x^2 - 2)$. Given that $\sqrt{2}\notin\mathbb{Q}(\sqrt[3]{2},\omega)$, where $\omega$ is a primitive cube root of unity, find $[E:\mathbb{Q}]$.'
+            answer: '12'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The splitting field of $x^3-2$ is $\mathbb{Q}(\sqrt[3]{2},\omega)$, of degree $6$. Since $\sqrt2$ is not in it, $x^2-2$ adds degree $2$, and $[E:\mathbb{Q}]=6\cdot2=12$.'
+          - problem: 'The polynomial $x^3-3x+1$ is irreducible over $\mathbb{Q}$. If $\alpha$ is a root, then so are $\alpha^2-2$ and $(\alpha^2-2)^2-2$. Find the degree over $\mathbb{Q}$ of the splitting field of $x^3-3x+1$.'
+            answer: '3'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The three roots are all polynomials in $\alpha$, so they lie in $\mathbb{Q}(\alpha)$. This field has degree $3$, so the splitting field equals $\mathbb{Q}(\alpha)$ and has degree $3$, not $6$.'
+          - problem: 'Let $E$ be the splitting field of $x^4 - 2$ over $\mathbb{Q}$. Find $[E : \mathbb{Q}]$.'
+            answer: '8'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The roots are $i^k\sqrt[4]{2}$ for $k=0,1,2,3$. The field $\mathbb{Q}(\sqrt[4]{2})$ is real of degree $4$, and $i$ adds degree $2$. So $[E:\mathbb{Q}]=4\cdot2=8$.'
+          - problem: 'Find the degree over $\mathbb{Q}$ of the splitting field of $(x^2-2)(x^2-3)(x^2-5)$.'
+            answer: '8'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The splitting field is $\mathbb{Q}(\sqrt2,\sqrt3,\sqrt5)$. Each new square root is not in the field before it, so each step has degree $2$. The total is $2\cdot2\cdot2=8$.'
+          - problem: 'Sam says that the splitting field of $(x^2-2)(x^2-8)$ over $\mathbb{Q}$ has degree $4$, because each factor adds degree $2$. What is the correct degree?'
+            answer: '2'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The roots of $x^2-8$ are $\pm2\sqrt2$, and they lie in $\mathbb{Q}(\sqrt2)$. So the second factor adds nothing, and the splitting field is $\mathbb{Q}(\sqrt2)$ of degree $2$.'
+          - problem: 'An engineer needs all four solutions of $x^4-10x^2+1=0$, which are $\pm\sqrt2\pm\sqrt3$. Find the degree over $\mathbb{Q}$ of the smallest field that contains all of them.'
+            answer: '4'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'All four solutions lie in $\mathbb{Q}(\sqrt2,\sqrt3)$. Conversely $\sqrt2+\sqrt3$ and $\sqrt3-\sqrt2$ give $\sqrt3$ and $\sqrt2$ by sums and differences. So the field has degree $4$.'
+          - problem: 'Lea wants all solutions of $x^6=8$ in the complex numbers. They are $\sqrt2$ times the sixth roots of unity. Find the degree over $\mathbb{Q}$ of the smallest field that contains all of them.'
+            answer: '4'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The field contains $\sqrt2$ and, by division, the sixth roots of unity, which need $\sqrt{-3}$. Since $\sqrt{-3}\notin\mathbb{Q}(\sqrt2)$, the degree is $2\cdot2=4$.'
+        constraints: 'tower-law computations of height <= 3; the n! bound may be quoted; non-membership facts like sqrt(3) not in Q(sqrt(2)) may be given'
     diagnostic_exemplar:
       problem: 'Find the degree over $\mathbb{Q}$ of the splitting field of $x^3 - 5$.'
       answer: "6"

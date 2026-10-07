@@ -22,91 +22,151 @@ topics:
         weight: 0.3
     knowledge_points:
       - id: kp1
-        name: Read p from x² = 4py and y² = 4px
+        name: 'Read p from x² = 4py and y² = 4px'
         key_prerequisites: [quadratic-graphs-vertex]
-        constraints: "vertex at the origin; 4p a small even integer"
+        step_check:
+          step: 'Set $4p = 12$ and solve for $p$'
+          question: 'Why is the focus of $x^2 = 12y$ at $(0, 3)$ and not at $(0, 12)$?'
+          options:
+            - 'The coefficient $12$ is the distance from the vertex to the directrix'
+            - 'The focus lies half of the coefficient from the vertex, that is $6$ units'
+            - 'The coefficient is $4p$, and the focus lies $p$ units from the vertex'
+            - 'The focus lies $4p$ units from the vertex, along the $y$-axis'
+          answer: 'The coefficient is $4p$, and the focus lies $p$ units from the vertex'
+          why: 'In $x^2 = 4py$ the number in front of $y$ is $4p$, so $p = 12/4 = 3$. The focus is $p$ units above the vertex, at $(0, 3)$, and the directrix is $y = -3$.'
         exemplars:
-          - problem: "The parabola is x^2 = 8y. Give its focus as (x, y) and the y-coordinate of its directrix."
-            answer: "focus = (0, 2); directrix = -2"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"arity": 2, "kind": "coordinates"}, "name": "focus"}, {"contract": {"kind": "exact"}, "name": "directrix"}]}
-            solution_sketch: "For x^2 = 8y, the full result is focus = (0, 2); directrix = -2. The standard form rule is x^2 = 4py, and comparing coefficients gives p = 2. The focus rule gives (0, 2), and the directrix rule gives y = -2. Thus focus = (0, 2); directrix = -2."
-          - problem: "The parabola is y^2 = 12x. Give its focus as (x, y) and the x-coordinate of its directrix."
-            answer: "focus = (3, 0); directrix = -3"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"arity": 2, "kind": "coordinates"}, "name": "focus"}, {"contract": {"kind": "exact"}, "name": "directrix"}]}
-            solution_sketch: "For y^2 = 12x, the full result is focus = (3, 0); directrix = -3. The standard form rule is y^2 = 4px, and comparing coefficients gives p = 3. The focus rule gives (3, 0), and the directrix rule gives x = -3. Thus focus = (3, 0); directrix = -3."
-          - problem: "The parabola is x^2 = 4y. Find p."
-            answer: "1"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "For x^2 = 4y, the standard form rule is x^2 = 4py. Compare 4p with 4 to get p = 1. The value of p is 1."
-          - problem: "The parabola is y^2 = 16x. Give its focus as (x, y)."
-            answer: "(4, 0)"
-            answer_contract: {"arity": 2, "kind": "coordinates"}
-            solution_sketch: "For y^2 = 16x, the standard form rule is y^2 = 4px. Compare 4p with 16 to get p = 4. The focus rule for a right-opening parabola gives (p, 0) = (4, 0). The focus is (4, 0)."
-          - problem: "The parabola is x^2 = -4y. Find the y-coordinate of its focus."
-            answer: "-1"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "For x^2 = -4y, the standard form rule is x^2 = 4py. Compare 4p with -4 to get p = -1. The focus rule for a vertical parabola gives (0, p) = (0, -1). The y-coordinate is -1."
-          - problem: "The parabola is y^2 = -8x. Determine p."
-            answer: "-2"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "For y^2 = -8x, the standard form rule is y^2 = 4px. Compare 4p with -8 to get p = -2. The value of p is -2."
+          - problem: 'Find the focus of the parabola $x^2 = 8y$.'
+            answer: '(0, 2)'
+            answer_contract: {"kind":"coordinates","arity":2}
+            solution_sketch: 'Compare $x^2 = 8y$ with $x^2 = 4py$: $4p = 8$, so $p = 2$. The parabola opens upward, so the focus is $p$ units above the vertex, at $(0, 2)$.'
+          - problem: 'Find the equation of the directrix of the parabola $y^2 = 12x$.'
+            answer: 'x = -3'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Compare $y^2 = 12x$ with $y^2 = 4px$: $4p = 12$, so $p = 3$. The focus is $(3, 0)$, and the directrix lies $p$ units on the other side of the vertex, so it is the line $x = -3$.'
+          - problem: 'In which direction does the parabola $y^2 = -8x$ open?'
+            answer: 'left'
+            answer_contract: {"kind":"label","options":[["left","to the left","it opens left","opens left","leftward","leftwards"],["right","to the right","it opens right","opens right","rightward","rightwards"],["up","upward","upwards","it opens upward","opens upward"],["down","downward","downwards","it opens downward","opens downward"]]}
+            solution_sketch: 'Compare $y^2 = -8x$ with $y^2 = 4px$: $4p = -8$, so $p = -2$. A negative $p$ puts the focus at $(-2, 0)$, left of the vertex, so the parabola opens to the left.'
+          - problem: 'The cross-section of a satellite dish is the parabola $y = \frac{x^2}{16}$, with $x$ and $y$ in metres and the vertex at the origin. The receiver is placed at the focus. How far above the vertex is the receiver?'
+            answer: '4'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"m","allow_omitted":true}
+            solution_sketch: 'Rewrite $y = \frac{x^2}{16}$ as $x^2 = 16y$. Then $4p = 16$, so $p = 4$, and the receiver sits $4$ m above the vertex.'
+          - problem: 'The reflector of a torch has the cross-section $y^2 = 20x$, with $x$ and $y$ in centimetres and the vertex at the origin. The bulb is fixed at the focus. How far is the bulb from the vertex?'
+            answer: '5'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"cm","allow_omitted":true}
+            solution_sketch: 'Compare $y^2 = 20x$ with $y^2 = 4px$: $4p = 20$, so $p = 5$. The bulb is $5$ cm from the vertex, on the axis of the reflector.'
+          - problem: 'Sam reads the focus of $x^2 = 12y$ as $(0, 12)$. What is the correct focus?'
+            answer: '(0, 3)'
+            answer_contract: {"kind":"coordinates","arity":2}
+            solution_sketch: 'The number $12$ is $4p$, not $p$. So $p = 12 \div 4 = 3$, and the focus is $(0, 3)$.'
+          - problem: 'Find the focus of the parabola $y^2 = 6x$.'
+            answer: '(3/2, 0)'
+            answer_contract: {"kind":"coordinates","arity":2}
+            solution_sketch: 'Compare $y^2 = 6x$ with $y^2 = 4px$: $4p = 6$, so $p = \frac{3}{2}$. The parabola opens to the right, so the focus is $(\frac{3}{2}, 0)$.'
+          - problem: 'Find the equation of the directrix of the parabola $x^2 = -20y$.'
+            answer: 'y = 5'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Compare $x^2 = -20y$ with $x^2 = 4py$: $4p = -20$, so $p = -5$. The focus is $(0, -5)$, and the directrix is the line $y = -p = 5$.'
+        constraints: 'vertex at the origin; 4p an integer or a simple fraction; focus, directrix, direction of opening, and measured contexts'
       - id: kp2
-        name: Write the equation from focus or directrix
+        name: 'Write the equation from focus or directrix'
         key_prerequisites: [distance-midpoint-formulas]
-        constraints: "vertex at the origin; focus on an axis with integer p, |p| <= 4; answers in x^2 = 4py or y^2 = 4px form"
+        step_check:
+          step: 'The focus is $(0, -4)$, so $p = -4$'
+          question: 'Why is $p$ negative for the focus $(0, -4)$?'
+          options:
+            - 'A negative sign is attached to $p$ for every focus on the $y$-axis'
+            - 'The focus lies below the vertex, and $p$ is measured from the vertex'
+            - 'The parabola opens downward, so $4p$ must be written as a positive number'
+            - 'The $x$-coordinate $0$ of the focus forces $p$ to take the opposite sign'
+          answer: 'The focus lies below the vertex, and $p$ is measured from the vertex'
+          why: 'The sign of $p$ says on which side of the vertex the focus lies. A focus below the vertex gives $p = -4$, so $x^2 = 4(-4)y = -16y$.'
         exemplars:
-          - problem: 'Write the equation of the parabola with focus $(0, 3)$ and directrix $y = -3$.'
-            answer: "x^2 = 12y"
-            answer_contract: {kind: polynomial_relation}
-            solution_sketch: 'Vertex at the origin, $p = 3$, opens upward: $x^2 = 4py$.'
-          - problem: 'Write the equation of the parabola with vertex at the origin and focus $(-2, 0)$.'
-            answer: "y^2 = -8x"
-            answer_contract: {kind: polynomial_relation}
-          - problem: "A parabola has its vertex at the origin, and its focus is the point (0, 4). The equation of the parabola can be written in the form x^2 = ay for some constant a. Find a."
-            answer: "16"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1, focus rule: the focus (0, 4) sits on the positive y-axis, so p = 4 and the parabola opens upward. Step 2, standard form: the full equation is x^2 = 4py = 16y. Comparing x^2 = 16y with x^2 = ay gives a = 16."
-          - problem: "A parabola has its vertex at the origin, and its directrix is the vertical line x = 4. The equation of the parabola can be written in the form y^2 = bx for some constant b. Find b."
-            answer: "-16"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1, directrix rule: the directrix x = 4 is on the positive x side of the vertex, so p = -4 and the parabola opens to the left. Step 2, standard form: the full equation is y^2 = 4px = -16x. Comparing y^2 = -16x with y^2 = bx gives b = -16."
-          - problem: "A parabola has its vertex at the origin, and its directrix is the horizontal line y = 1. Its equation can be written in the form x^2 = cy, and its focus is the point (0, f). Give the value of c and the value of f."
-            answer: "c = -4; f = -1"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "c"}, {"contract": {"kind": "exact"}, "name": "f"}]}
-            solution_sketch: "Step 1, directrix rule: the directrix y = 1 is on the positive y side of the vertex, so p = -1 and the parabola opens downward. Step 2, standard form: the full equation is x^2 = 4py = -4y, so c = -4. Step 3, focus rule: the focus sits p units from the vertex on the opening side, at (0, -1), so f = -1. The answer is c = -4; f = -1."
-          - problem: "A parabola has its vertex at the origin, and its focus is the point (1, 0). Its equation can be written in the form y^2 = dx, and its directrix is the line x = k. Give the value of d and the value of k."
-            answer: "d = 4; k = -1"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "d"}, {"contract": {"kind": "exact"}, "name": "k"}]}
-            solution_sketch: "Step 1, focus rule: the focus (1, 0) sits on the positive x-axis, so p = 1 and the parabola opens to the right. Step 2, standard form: the full equation is y^2 = 4px = 4x, so d = 4. Step 3, directrix rule: the directrix sits p units from the vertex on the opposite side, the line x = -1, so k = -1. The answer is d = 4; k = -1."
+          - problem: 'Write the equation of the parabola with vertex at the origin and focus $(0, 2)$.'
+            answer: 'x^2 = 8y'
+            answer_contract: {"kind":"polynomial_relation"}
+            solution_sketch: 'The focus is on the positive $y$-axis, so $p = 2$ and the parabola opens upward. The equation $x^2 = 4py$ becomes $x^2 = 8y$.'
+          - problem: 'Find the equation of the parabola with vertex at the origin and directrix $x = 4$.'
+            answer: 'y^2 = -16x'
+            answer_contract: {"kind":"polynomial_relation"}
+            solution_sketch: 'The directrix $x = 4$ lies right of the vertex, so the focus is at $(-4, 0)$ and $p = -4$. The parabola opens to the left, and $y^2 = 4px$ becomes $y^2 = -16x$.'
+          - problem: 'Write the equation of the parabola with focus $(-3, 0)$ and directrix $x = 3$.'
+            answer: 'y^2 = -12x'
+            answer_contract: {"kind":"polynomial_relation"}
+            solution_sketch: 'The vertex is halfway between the focus and the directrix, at the origin, and $p = -3$. The equation $y^2 = 4px$ becomes $y^2 = -12x$.'
+          - problem: 'A satellite dish has a parabolic cross-section with its vertex at the origin, opening upward. The receiver is at the focus, $1.5$ m above the vertex. Write the equation of the cross-section, with $x$ and $y$ in metres.'
+            answer: 'x^2 = 6y'
+            answer_contract: {"kind":"polynomial_relation"}
+            solution_sketch: 'The focus is $1.5$ m above the vertex, so $p = 1.5$ and $4p = 6$. The cross-section is $x^2 = 6y$.'
+          - problem: 'The reflector of a torch has a parabolic cross-section with its vertex at the origin, opening to the right along the $x$-axis. The bulb is at the focus, $2.5$ cm from the vertex. Write the equation of the cross-section.'
+            answer: 'y^2 = 10x'
+            answer_contract: {"kind":"polynomial_relation"}
+            solution_sketch: 'The bulb is at the focus, so $p = 2.5$ and $4p = 10$. A parabola opening to the right has the equation $y^2 = 4px = 10x$.'
+          - problem: 'A mirror has a parabolic cross-section with its vertex at the origin, opening upward. Its rim passes through the point $(6, 3)$, with lengths in centimetres. Write the equation of the cross-section.'
+            answer: 'x^2 = 12y'
+            answer_contract: {"kind":"polynomial_relation"}
+            solution_sketch: 'The equation has the form $x^2 = 4py$. The point $(6, 3)$ lies on it, so $36 = 4p \cdot 3$ and $4p = 12$. The equation is $x^2 = 12y$.'
+          - problem: 'Sam writes $x^2 = 8y$ for the parabola with vertex at the origin and focus $(0, -2)$. What is the correct equation?'
+            answer: 'x^2 = -8y'
+            answer_contract: {"kind":"polynomial_relation"}
+            solution_sketch: 'The focus lies below the vertex, so $p = -2$, not $2$. The equation is $x^2 = 4py = -8y$.'
+          - problem: 'Write the equation of the parabola with vertex at the origin and directrix $y = -5$.'
+            answer: 'x^2 = 20y'
+            answer_contract: {"kind":"polynomial_relation"}
+            solution_sketch: 'The directrix lies $5$ units below the vertex, so the focus is $(0, 5)$ and $p = 5$. The equation is $x^2 = 4py = 20y$.'
+        constraints: 'vertex at the origin; focus on an axis with p a small integer or a half-integer, or the directrix given, or one point on the parabola; the answer is an equation of the form x^2 = 4py or y^2 = 4px'
       - id: kp3
-        name: Shifted vertex
+        name: 'Shifted vertex'
         key_prerequisites: [quadratic-graphs-vertex, completing-the-square]
-        constraints: "equations given in shifted standard form (x - h)^2 = 4p(y - k) or (y - k)^2 = 4p(x - h); integer h, k, p; report vertex, focus, and directrix"
+        try_first:
+          problem: 'The parabola $x^2 = 8y$ has its focus at $(0, 2)$. The whole graph is moved $3$ units to the right and $1$ unit down. What is the $y$-coordinate of the new focus?'
+          answer_contract: {"kind":"exact"}
+          answer: '1'
+          reveal: 'Every point of the graph moves with it, so the focus moves from $(0, 2)$ to $(3, 1)$. The new parabola is $(x - 3)^2 = 8(y + 1)$, which is the shifted standard form.'
+        step_check:
+          step: 'move $p$ units down from the vertex'
+          question: 'Why does the directrix lie below the vertex when the parabola opens upward?'
+          options:
+            - 'The directrix always lies below the $x$-axis, whatever the direction of opening'
+            - 'The directrix is the mirror image of the focus in the $y$-axis'
+            - 'The directrix is $p$ units from the focus, not from the vertex'
+            - 'The directrix lies on the opposite side of the vertex from the focus'
+          answer: 'The directrix lies on the opposite side of the vertex from the focus'
+          why: 'The vertex is halfway between the focus and the directrix. The focus is $p$ units above the vertex, so the directrix is $p$ units below it, at $y = 4 - 3 = 1$.'
         exemplars:
-          - problem: "The parabola has equation (x - 1)^2 = 4(y + 2). Find the vertex, the focus, and the value c in the directrix y = c, and give the vertex and focus as (x, y)."
-            answer: "vertex = (1, -2); focus = (1, -1); directrix = -3"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"arity": 2, "kind": "coordinates"}, "name": "vertex"}, {"contract": {"arity": 2, "kind": "coordinates"}, "name": "focus"}, {"contract": {"kind": "exact"}, "name": "directrix"}]}
-            solution_sketch: "Write the shifted standard form (x - 1)^2 = 4(y + 2) and compare with (x - h)^2 = 4p(y - k): h = 1, k = -2, and p = 1. The vertex is (h, k) = (1, -2). The focus is (h, k + p) = (1, -1) because the parabola opens up. The directrix is y = k - p = -3. The answer is vertex = (1, -2); focus = (1, -1); directrix = -3."
-          - problem: 'Find the vertex and focus of $(y - 3)^2 = 8(x - 1)$.'
-            answer: "vertex = (1, 3); focus = (3, 3)"
-            answer_contract: {kind: multipart, parts: [{name: vertex, contract: {kind: coordinates, arity: 2}}, {name: focus, contract: {kind: coordinates, arity: 2}}]}
-            solution_sketch: '$p = 2$, opening right.'
-          - problem: "The parabola has equation (x - 3)^2 = 12(y + 1). Find the vertex, the focus, and the value c in the directrix y = c, and give the vertex and focus as (x, y)."
-            answer: "vertex = (3, -1); focus = (3, 2); directrix = -4"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"arity": 2, "kind": "coordinates"}, "name": "vertex"}, {"contract": {"arity": 2, "kind": "coordinates"}, "name": "focus"}, {"contract": {"kind": "exact"}, "name": "directrix"}]}
-            solution_sketch: "Compare (x - 3)^2 = 12(y + 1) with (x - h)^2 = 4p(y - k): h = 3, k = -1, and p = 3. The vertex is (h, k) = (3, -1). The focus is (h, k + p) = (3, 2) because the parabola opens up. The directrix is y = k - p = -4. The answer is vertex = (3, -1); focus = (3, 2); directrix = -4."
-          - problem: "The parabola has equation (y + 4)^2 = 16(x - 2). Find the vertex, the focus, and the value c in the directrix x = c, and give the vertex and focus as (x, y)."
-            answer: "vertex = (2, -4); focus = (6, -4); directrix = -2"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"arity": 2, "kind": "coordinates"}, "name": "vertex"}, {"contract": {"arity": 2, "kind": "coordinates"}, "name": "focus"}, {"contract": {"kind": "exact"}, "name": "directrix"}]}
-            solution_sketch: "Compare (y + 4)^2 = 16(x - 2) with (y - k)^2 = 4p(x - h): h = 2, k = -4, and p = 4. The vertex is (h, k) = (2, -4). The focus is (h + p, k) = (6, -4) because the parabola opens right. The directrix is x = h - p = -2. The answer is vertex = (2, -4); focus = (6, -4); directrix = -2."
-          - problem: "The parabola has equation (x + 2)^2 = -8(y - 3). Find the vertex, the focus, and the value c in the directrix y = c, and give the vertex and focus as (x, y)."
-            answer: "vertex = (-2, 3); focus = (-2, 1); directrix = 5"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"arity": 2, "kind": "coordinates"}, "name": "vertex"}, {"contract": {"arity": 2, "kind": "coordinates"}, "name": "focus"}, {"contract": {"kind": "exact"}, "name": "directrix"}]}
-            solution_sketch: "Compare (x + 2)^2 = -8(y - 3) with (x - h)^2 = 4p(y - k): h = -2, k = 3, and p = -2. The vertex is (h, k) = (-2, 3). The focus is (h, k + p) = (-2, 1) because p is negative and the parabola opens down. The directrix is y = k - p = 5. The answer is vertex = (-2, 3); focus = (-2, 1); directrix = 5."
-          - problem: "The parabola has equation (y - 5)^2 = -12(x + 1). Find the vertex, the focus, and the value c in the directrix x = c, and give the vertex and focus as (x, y)."
-            answer: "vertex = (-1, 5); focus = (-4, 5); directrix = 2"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"arity": 2, "kind": "coordinates"}, "name": "vertex"}, {"contract": {"arity": 2, "kind": "coordinates"}, "name": "focus"}, {"contract": {"kind": "exact"}, "name": "directrix"}]}
-            solution_sketch: "Compare (y - 5)^2 = -12(x + 1) with (y - k)^2 = 4p(x - h): h = -1, k = 5, and p = -3. The vertex is (h, k) = (-1, 5). The focus is (h + p, k) = (-4, 5) because p is negative and the parabola opens left. The directrix is x = h - p = 2. The answer is vertex = (-1, 5); focus = (-4, 5); directrix = 2."
+          - problem: 'Find the focus of the parabola $(x - 1)^2 = 4(y + 2)$.'
+            answer: '(1, -1)'
+            answer_contract: {"kind":"coordinates","arity":2}
+            solution_sketch: 'Compare with $(x - h)^2 = 4p(y - k)$: $h = 1$, $k = -2$, and $4p = 4$, so $p = 1$. The vertex is $(1, -2)$ and the parabola opens upward, so the focus is $(1, -2 + 1) = (1, -1)$.'
+          - problem: 'Find the focus of the parabola $(y - 3)^2 = 8(x - 1)$.'
+            answer: '(3, 3)'
+            answer_contract: {"kind":"coordinates","arity":2}
+            solution_sketch: 'Compare with $(y - k)^2 = 4p(x - h)$: $h = 1$, $k = 3$, and $4p = 8$, so $p = 2$. The vertex is $(1, 3)$ and the parabola opens to the right, so the focus is $(1 + 2, 3) = (3, 3)$.'
+          - problem: 'Find the equation of the directrix of the parabola $(x + 2)^2 = -8(y - 3)$.'
+            answer: 'y = 5'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Compare with $(x - h)^2 = 4p(y - k)$: $h = -2$, $k = 3$, and $4p = -8$, so $p = -2$. The directrix is the line $y = k - p = 3 + 2 = 5$.'
+          - problem: 'Find the equation of the directrix of the parabola $(y + 4)^2 = 16(x - 2)$.'
+            answer: 'x = -2'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Compare with $(y - k)^2 = 4p(x - h)$: $h = 2$, $k = -4$, and $4p = 16$, so $p = 4$. The directrix is the line $x = h - p = 2 - 4 = -2$.'
+          - problem: 'A floodlight reflector has the cross-section $(x - 2)^2 = 6(y - 1)$, with $x$ and $y$ in metres. The lamp is placed at the focus. Where is the lamp?'
+            answer: '(2, 5/2)'
+            answer_contract: {"kind":"coordinates","arity":2}
+            solution_sketch: 'Compare with $(x - h)^2 = 4p(y - k)$: the vertex is $(2, 1)$ and $4p = 6$, so $p = \frac{3}{2}$. The reflector opens upward, so the lamp is at $(2, 1 + \frac{3}{2}) = (2, \frac{5}{2})$.'
+          - problem: 'A radio telescope dish has its vertex at $(0, 2)$ and opens upward. The receiver is at the focus, $1.5$ m above the vertex. Write the equation of the cross-section of the dish, with lengths in metres.'
+            answer: 'x^2 = 6(y - 2)'
+            answer_contract: {"kind":"polynomial_relation"}
+            solution_sketch: 'The focus is $1.5$ m above the vertex, so $p = 1.5$ and $4p = 6$. With the vertex at $(0, 2)$ the equation $(x - h)^2 = 4p(y - k)$ becomes $x^2 = 6(y - 2)$.'
+          - problem: 'Write the equation of the parabola with vertex $(2, -1)$ and focus $(5, -1)$.'
+            answer: '(y + 1)^2 = 12(x - 2)'
+            answer_contract: {"kind":"polynomial_relation"}
+            solution_sketch: 'The focus is $3$ units right of the vertex, so $p = 3$ and the parabola opens to the right. The equation $(y - k)^2 = 4p(x - h)$ becomes $(y + 1)^2 = 12(x - 2)$.'
+          - problem: 'Sam reads the vertex of $(x + 5)^2 = 4(y - 2)$ as $(5, 2)$. What is the correct vertex?'
+            answer: '(-5, 2)'
+            answer_contract: {"kind":"coordinates","arity":2}
+            solution_sketch: 'The form $(x - h)^2$ with $x + 5 = x - (-5)$ gives $h = -5$, not $5$. The vertex is $(-5, 2)$.'
+        constraints: 'equations in shifted standard form (x - h)^2 = 4p(y - k) or (y - k)^2 = 4p(x - h) with integer h, k; focus, directrix, vertex, or the equation from the vertex and focus; contexts with a shifted dish'
     diagnostic_exemplar:
       problem: 'For $(x + 2)^2 = 8(y - 1)$, find the vertex, focus, and directrix.'
       answer: "vertex (-2, 1); focus (-2, 3); directrix y = -1"
@@ -140,75 +200,141 @@ topics:
         weight: 0.0            # conceptual only: the circle as the a = b special case
     knowledge_points:
       - id: kp1
-        name: Vertices and axes from standard form
+        name: 'Vertices and axes from standard form'
         key_prerequisites: [distance-midpoint-formulas]
-        constraints: "a² and b² perfect squares; center at the origin first"
+        step_check:
+          step: 'Since $a^2$ is under $x^2$, the vertices are at $(\pm 4, 0)$'
+          question: 'Why are the vertices of $\frac{x^2}{16} + \frac{y^2}{4} = 1$ on the $x$-axis and not on the $y$-axis?'
+          options:
+            - 'The term written first always gives the long axis, whatever the denominators'
+            - 'The smaller denominator $4$ is under $y^2$, so the long axis runs along $y$'
+            - 'The larger denominator $16$ is under $x^2$, so the long axis runs along $x$'
+          answer: 'The larger denominator $16$ is under $x^2$, so the long axis runs along $x$'
+          why: 'The major axis lies along the variable with the larger denominator. Here $a^2 = 16$ is under $x^2$, so the vertices are $(\pm 4, 0)$ and the minor-axis endpoints are $(0, \pm 2)$.'
         exemplars:
-          - problem: "Consider the ellipse x^2/36 + y^2/9 = 1. Find the right vertex and the upper endpoint of the minor axis as (x1, y1, x2, y2)."
-            answer: "(6, 0, 0, 3)"
-            answer_contract: {"arity": 4, "kind": "coordinates"}
-            solution_sketch: "The standard form has a^2 = 36 under x^2, so the major axis is horizontal and a = 6. The right vertex is (6, 0). The smaller denominator is 9 under y^2, so b = 3 and the upper minor-axis endpoint is (0, 3). The answer is (6, 0, 0, 3)."
-          - problem: "Consider the ellipse x^2/9 + y^2/49 = 1. Select the direction of the major axis."
-            answer: "vertical"
-            answer_contract: {"kind": "label", "options": [["vertical"], ["horizontal"], ["diagonal"], ["circular"]]}
-            solution_sketch: "The larger denominator is 49, and it is under y^2, so the major axis is vertical. A student who picks horizontal reads the larger denominator under x^2; one who picks diagonal assumes the axes are tilted; one who picks circular assumes a = b. The major-axis direction is vertical."
-          - problem: "Consider the ellipse x^2/100 + y^2/36 = 1. Find the length of the major axis."
-            answer: "20"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The larger denominator is 100 under x^2, so a^2 = 100 and a = 10. The major axis length is 2a = 20. The length of the major axis is 20."
-          - problem: "Consider the ellipse x^2/9 + y^2/81 = 1. Find the length of the minor axis."
-            answer: "6"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The larger denominator is 81 under y^2, so the major axis is vertical and a^2 = 81. The smaller denominator is 9 under x^2, so b^2 = 9 and b = 3. The minor axis length is 2b = 6. The length of the minor axis is 6."
-          - problem: "Consider the ellipse x^2/36 + y^2/100 = 1. Find the vertex with positive y-coordinate as (x, y)."
-            answer: "(0, 10)"
-            answer_contract: {"arity": 2, "kind": "coordinates"}
-            solution_sketch: "The larger denominator is 100 under y^2, so the major axis is vertical and a^2 = 100. Then a = 10 and the vertices are (0, 10) and (0, -10). The vertex with positive y-coordinate is (0, 10)."
-          - problem: "Consider the ellipse (x - 2)^2/9 + (y + 1)^2/64 = 1. Find the right endpoint of the minor axis as (x, y)."
-            answer: "(5, -1)"
-            answer_contract: {"arity": 2, "kind": "coordinates"}
-            solution_sketch: "The center is (2, -1). The larger denominator 64 is under (y + 1)^2, so the major axis is vertical and a^2 = 64. The smaller denominator 9 gives b^2 = 9 and b = 3. The minor axis is horizontal, so its endpoints are (2 plus/minus 3, -1). The right endpoint is (5, -1)."
+          - problem: 'Find the vertices of the ellipse $\frac{x^2}{36} + \frac{y^2}{9} = 1$.'
+            answer: '(6, 0) and (-6, 0)'
+            answer_contract: {"kind":"list","ordered":false,"member":{"kind":"coordinates","arity":2}}
+            solution_sketch: 'The larger denominator is $36$, under $x^2$, so $a^2 = 36$ and $a = 6$. The major axis is horizontal, so the vertices are $(6, 0)$ and $(-6, 0)$.'
+          - problem: 'Is the major axis of the ellipse $\frac{x^2}{9} + \frac{y^2}{49} = 1$ horizontal or vertical?'
+            answer: 'vertical'
+            answer_contract: {"kind":"label","options":[["vertical","vertically","it is vertical","the major axis is vertical"],["horizontal","horizontally","it is horizontal","the major axis is horizontal"]]}
+            solution_sketch: 'The larger denominator is $49$, and it is under $y^2$. So the ellipse is longer in the $y$-direction, and its major axis is vertical.'
+          - problem: 'Find the length of the major axis of the ellipse $\frac{x^2}{100} + \frac{y^2}{36} = 1$.'
+            answer: '20'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The larger denominator is $100$, so $a^2 = 100$ and $a = 10$. The major axis runs from vertex to vertex, so its length is $2a = 20$.'
+          - problem: 'A running track is the ellipse $\frac{x^2}{2500} + \frac{y^2}{900} = 1$, with $x$ and $y$ in metres and the origin at the centre. How far is it from one end of the track to the other along its longest direction?'
+            answer: '100'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"m","allow_omitted":true}
+            solution_sketch: 'The larger denominator is $2500$, so $a = \sqrt{2500} = 50$. The track is $2a = 100$ m long from end to end.'
+          - problem: 'Find the endpoints of the minor axis of the ellipse $\frac{x^2}{9} + \frac{y^2}{64} = 1$.'
+            answer: '(3, 0) and (-3, 0)'
+            answer_contract: {"kind":"list","ordered":false,"member":{"kind":"coordinates","arity":2}}
+            solution_sketch: 'The smaller denominator is $9$, under $x^2$, so $b = 3$. The major axis is vertical, so the minor axis lies along the $x$-axis and its endpoints are $(3, 0)$ and $(-3, 0)$.'
+          - problem: 'A garden bed is the ellipse $\frac{x^2}{81} + \frac{y^2}{25} = 1$, with $x$ and $y$ in metres. How wide is the bed in its shorter direction?'
+            answer: '10'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"m","allow_omitted":true}
+            solution_sketch: 'The smaller denominator is $25$, so $b = 5$. The bed is $2b = 10$ m wide in its shorter direction.'
+          - problem: 'Find the right endpoint of the minor axis of the ellipse $\frac{(x - 2)^2}{9} + \frac{(y + 1)^2}{64} = 1$.'
+            answer: '(5, -1)'
+            answer_contract: {"kind":"coordinates","arity":2}
+            solution_sketch: 'The center is $(2, -1)$. The larger denominator $64$ is under $(y + 1)^2$, so the major axis is vertical and the minor axis is horizontal with $b = 3$. Its right endpoint is $(2 + 3, -1) = (5, -1)$.'
+          - problem: 'Sam says that the vertices of $\frac{x^2}{25} + \frac{y^2}{9} = 1$ are $(\pm 25, 0)$. What are the correct vertices?'
+            answer: '(5, 0) and (-5, 0)'
+            answer_contract: {"kind":"list","ordered":false,"member":{"kind":"coordinates","arity":2}}
+            solution_sketch: 'The number $25$ is $a^2$, not $a$. So $a = \sqrt{25} = 5$, and the vertices are $(5, 0)$ and $(-5, 0)$.'
+        constraints: 'a² and b² perfect squares; centre at the origin first, then a shifted centre; vertices, axis lengths, minor-axis endpoints, direction of the major axis, and measured contexts'
       - id: kp2
-        name: Find the foci with c² = a² - b²
+        name: 'Find the foci with c² = a² - b²'
         key_prerequisites: [distance-midpoint-formulas, simplifying-radicals]
-        constraints: "centre at the origin; a², b² chosen so c is an integer (or a single clean radical); cover both horizontal and vertical major axes"
+        step_check:
+          step: 'Calculate $c^2$ using the formula $c^2 = a^2 - b^2$'
+          question: 'Why is $b^2$ subtracted from $a^2$ for an ellipse and not added?'
+          options:
+            - 'The foci lie between the center and the vertices, so $c<a$'
+            - 'The foci lie beyond the vertices, so $c$ is found as a difference'
+            - 'The formula uses addition for ellipses and subtraction for circles'
+            - 'Subtraction is used so that $c$ always comes out as a whole number'
+          answer: 'The foci lie between the center and the vertices, so $c<a$'
+          why: 'Each focus is inside the ellipse, closer to the center than the vertex is. So $c < a$ and $c^2 = a^2 - b^2 = 16 - 4 = 12$.'
         exemplars:
-          - problem: 'Find the foci of $\frac{x^2}{25} + \frac{y^2}{9} = 1$.'
-            answer: "(4, 0) and (-4, 0)"
-            answer_contract: {kind: list, ordered: false, member: {kind: coordinates, arity: 2}}
-            solution_sketch: '$c^2 = 25 - 9 = 16$.'
-          - problem: 'Find the foci of $\frac{x^2}{9} + \frac{y^2}{25} = 1$.'
-            answer: "(0, -4) and (0, 4)"
-            answer_contract: {kind: list, ordered: false, member: {kind: coordinates, arity: 2}}
-            solution_sketch: 'Vertical major axis; $c^2 = 25 - 9 = 16$, so the foci are $(0, \\pm 4)$.'
+          - problem: 'Find the foci of the ellipse $\frac{x^2}{25} + \frac{y^2}{9} = 1$.'
+            answer: '(4, 0) and (-4, 0)'
+            answer_contract: {"kind":"list","ordered":false,"member":{"kind":"coordinates","arity":2}}
+            solution_sketch: 'Here $a^2 = 25$ and $b^2 = 9$, so $c^2 = 25 - 9 = 16$ and $c = 4$. The major axis is horizontal, so the foci are $(4, 0)$ and $(-4, 0)$.'
+          - problem: 'Find the foci of the ellipse $\frac{x^2}{9} + \frac{y^2}{25} = 1$.'
+            answer: '(0, 4) and (0, -4)'
+            answer_contract: {"kind":"list","ordered":false,"member":{"kind":"coordinates","arity":2}}
+            solution_sketch: 'The larger denominator $25$ is under $y^2$, so $a^2 = 25$ and $b^2 = 9$. Then $c^2 = 16$ and $c = 4$, and the major axis is vertical, so the foci are $(0, 4)$ and $(0, -4)$.'
+          - problem: 'How far is each focus of the ellipse $\frac{x^2}{169} + \frac{y^2}{144} = 1$ from the center?'
+            answer: '5'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Here $a^2 = 169$ and $b^2 = 144$, so $c^2 = 169 - 144 = 25$. Each focus is $c = 5$ units from the center.'
+          - problem: 'The floor of a whispering gallery is the ellipse $\frac{x^2}{625} + \frac{y^2}{400} = 1$, with $x$ and $y$ in metres. A whisper at one focus is heard clearly at the other. How far apart are the two foci?'
+            answer: '30'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"m","allow_omitted":true}
+            solution_sketch: 'Here $c^2 = 625 - 400 = 225$, so $c = 15$. The foci are $c$ on each side of the center, so they are $2c = 30$ m apart.'
+          - problem: 'An elliptical pond is the ellipse $\frac{x^2}{169} + \frac{y^2}{25} = 1$, with lengths in metres and the origin at the center. A fountain stands at each focus. How far is each fountain from the center of the pond?'
+            answer: '12'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"m","allow_omitted":true}
+            solution_sketch: 'Here $c^2 = 169 - 25 = 144$, so $c = 12$. Each fountain is $12$ m from the center.'
+          - problem: 'Find the foci of the ellipse $\frac{x^2}{16} + \frac{y^2}{9} = 1$.'
+            answer: '(sqrt(7), 0) and (-sqrt(7), 0)'
+            answer_contract: {"kind":"list","ordered":false,"member":{"kind":"coordinates","arity":2}}
+            solution_sketch: 'Here $c^2 = 16 - 9 = 7$, so $c = \sqrt{7}$. The major axis is horizontal, so the foci are $(\sqrt{7}, 0)$ and $(-\sqrt{7}, 0)$.'
+          - problem: 'Sam finds the foci of $\frac{x^2}{100} + \frac{y^2}{64} = 1$ by computing $c = \sqrt{100 + 64}$. What are the correct foci?'
+            answer: '(6, 0) and (-6, 0)'
+            answer_contract: {"kind":"list","ordered":false,"member":{"kind":"coordinates","arity":2}}
+            solution_sketch: 'For an ellipse $c^2 = a^2 - b^2$, so $c^2 = 100 - 64 = 36$ and $c = 6$. The major axis is horizontal, so the foci are $(6, 0)$ and $(-6, 0)$.'
+          - problem: 'Find the upper focus of the ellipse $\frac{(x - 1)^2}{9} + \frac{(y + 2)^2}{25} = 1$.'
+            answer: '(1, 2)'
+            answer_contract: {"kind":"coordinates","arity":2}
+            solution_sketch: 'The center is $(1, -2)$, and the major axis is vertical with $a^2 = 25$ and $b^2 = 9$. Then $c = \sqrt{25 - 9} = 4$, so the upper focus is $(1, -2 + 4) = (1, 2)$.'
+        constraints: 'a² and b² chosen so that c is an integer or one simple radical; both horizontal and vertical major axes; a shifted centre in one item; foci, distance from the centre to a focus, distance between the foci, and measured contexts'
       - id: kp3
-        name: Write the equation from geometric data
+        name: 'Write the equation from geometric data'
         key_prerequisites: [parabola-focus-directrix]
-        constraints: "data as vertices/foci on an axis or centre plus semi-axes; integer a, b, c; answers in standard form with denominators a², b²"
+        step_check:
+          step: 'so the major axis is vertical'
+          question: 'Why does the larger denominator $36$ go under $y^2$ in the final equation?'
+          options:
+            - 'The first fraction of an ellipse equation always carries $a^2$'
+            - 'The major axis is vertical, so $a^2$ goes under $y^2$'
+            - 'The foci are on the $y$-axis, so $c^2 = 16$ goes under $y^2$'
+            - 'The denominator under $y^2$ is always the smaller of the two numbers'
+          answer: 'The major axis is vertical, so $a^2$ goes under $y^2$'
+          why: 'The vertices $(0, \pm 6)$ lie on the $y$-axis, so $a^2 = 36$ goes under $y^2$. The other denominator is $b^2 = 36 - 16 = 20$, giving $\frac{x^2}{20} + \frac{y^2}{36} = 1$.'
         exemplars:
           - problem: 'Write the equation of the ellipse with vertices $(\pm 5, 0)$ and foci $(\pm 3, 0)$.'
-            answer: "x^2/25 + y^2/16 = 1"
-            answer_contract: {kind: polynomial_relation}
-            solution_sketch: '$b^2 = a^2 - c^2 = 25 - 9 = 16$.'
-          - problem: 'Write the equation of the ellipse centered at $(2, -1)$ with a horizontal semi-major axis $4$ and semi-minor axis $2$.'
-            answer: "(x - 2)^2/16 + (y + 1)^2/4 = 1"
-            answer_contract: {kind: polynomial_relation}
-          - problem: "An ellipse centered at the origin has vertices (0, ±7) and foci (0, ±5). Give a2 and b2 for its standard form equation."
-            answer: "a2 = 49; b2 = 24"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "a2"}, {"contract": {"kind": "exact"}, "name": "b2"}]}
-            solution_sketch: "The full standard form is x^2/24 + y^2/49 = 1. The vertices (0, ±7) give a = 7, so a2 = 49. The foci (0, ±5) give c = 5, so c2 = 25. The ellipse relation b2 = a2 - c2 gives b2 = 49 - 25 = 24. Thus a2 = 49; b2 = 24."
-          - problem: "An ellipse centered at (3, -2) has a horizontal major axis with vertices at (7, -2) and (-1, -2) and foci at (5, -2) and (1, -2). Give a2 and b2 for its standard form equation."
-            answer: "a2 = 16; b2 = 12"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "a2"}, {"contract": {"kind": "exact"}, "name": "b2"}]}
-            solution_sketch: "The full standard form is (x - 3)^2/16 + (y + 2)^2/12 = 1. The vertices (7, -2) and (-1, -2) give a = 4, so a2 = 16. The foci (5, -2) and (1, -2) give c = 2, so c2 = 4. The relation b2 = a2 - c2 gives b2 = 16 - 4 = 12. Thus a2 = 16; b2 = 12."
-          - problem: "An ellipse has vertices (0, ±6) and foci (0, ±2). Which equation is its standard form?"
-            answer: "x^2/32 + y^2/36 = 1"
-            answer_contract: {"kind": "label", "options": [["x^2/32 + y^2/36 = 1"], ["x^2/36 + y^2/32 = 1"], ["x^2/4 + y^2/36 = 1"], ["x^2/36 + y^2/4 = 1"]]}
-            solution_sketch: "The full standard form is x^2/32 + y^2/36 = 1. The vertices (0, ±6) give a = 6, so a2 = 36. The foci (0, ±2) give c = 2, so c2 = 4. The relation b2 = a2 - c2 gives b2 = 36 - 4 = 32, and the major axis is vertical. The option x^2/36 + y^2/32 = 1 swaps the denominators; x^2/4 + y^2/36 = 1 uses c2 for b2; x^2/36 + y^2/4 = 1 uses a2 and c2 with the wrong orientation. The correct option is x^2/32 + y^2/36 = 1."
-          - problem: "An ellipse centered at (-1, 4) has a vertical major axis with vertices at (-1, 9) and (-1, -1) and foci at (-1, 7) and (-1, 1). Which equation is its standard form?"
-            answer: "(x + 1)^2/16 + (y - 4)^2/25 = 1"
-            answer_contract: {"kind": "label", "options": [["(x + 1)^2/16 + (y - 4)^2/25 = 1"], ["(x - 1)^2/16 + (y + 4)^2/25 = 1"], ["(x + 1)^2/25 + (y - 4)^2/16 = 1"], ["(x + 1)^2/9 + (y - 4)^2/25 = 1"]]}
-            solution_sketch: "The full standard form is (x + 1)^2/16 + (y - 4)^2/25 = 1. The center is (-1, 4). The vertices (-1, 9) and (-1, -1) give a = 5, so a2 = 25. The foci (-1, 7) and (-1, 1) give c = 3, so c2 = 9. The relation b2 = a2 - c2 gives b2 = 25 - 9 = 16, and the major axis is vertical. The option (x - 1)^2/16 + (y + 4)^2/25 = 1 uses the wrong center signs; (x + 1)^2/25 + (y - 4)^2/16 = 1 swaps the denominators; (x + 1)^2/9 + (y - 4)^2/25 = 1 uses c2 for b2. The correct option is (x + 1)^2/16 + (y - 4)^2/25 = 1."
+            answer: 'x^2/25 + y^2/16 = 1'
+            answer_contract: {"kind":"polynomial_relation"}
+            solution_sketch: 'The vertices give $a = 5$, so $a^2 = 25$. The foci give $c = 3$, so $b^2 = a^2 - c^2 = 25 - 9 = 16$, and the equation is $\frac{x^2}{25} + \frac{y^2}{16} = 1$.'
+          - problem: 'Write the equation of the ellipse centered at $(2, -1)$ with horizontal semi-major axis $4$ and semi-minor axis $2$.'
+            answer: '(x - 2)^2/16 + (y + 1)^2/4 = 1'
+            answer_contract: {"kind":"polynomial_relation"}
+            solution_sketch: 'The center is $(2, -1)$, with $a = 4$ along $x$ and $b = 2$ along $y$. So $a^2 = 16$ and $b^2 = 4$, and the equation is $\frac{(x - 2)^2}{16} + \frac{(y + 1)^2}{4} = 1$.'
+          - problem: 'Find the equation of the ellipse with vertices $(0, \pm 7)$ and foci $(0, \pm 5)$.'
+            answer: 'x^2/24 + y^2/49 = 1'
+            answer_contract: {"kind":"polynomial_relation"}
+            solution_sketch: 'The vertices give $a = 7$, so $a^2 = 49$. The foci give $c = 5$, so $b^2 = 49 - 25 = 24$. The major axis is vertical, so the equation is $\frac{x^2}{24} + \frac{y^2}{49} = 1$.'
+          - problem: 'An elliptical mirror is $12$ cm wide and $8$ cm tall. Put the origin at the center of the mirror, with the width along the $x$-axis. Write the equation of its edge.'
+            answer: 'x^2/36 + y^2/16 = 1'
+            answer_contract: {"kind":"polynomial_relation"}
+            solution_sketch: 'The semi-axes are half of the width and half of the height, so $a = 6$ and $b = 4$. Then $a^2 = 36$ and $b^2 = 16$, and the edge is $\frac{x^2}{36} + \frac{y^2}{16} = 1$.'
+          - problem: 'The floor plan of a whispering gallery is an ellipse $40$ m long, and its two focal points are $24$ m apart. Put the origin at the center with the long direction along the $x$-axis. Write the equation of the floor plan, with lengths in metres.'
+            answer: 'x^2/400 + y^2/256 = 1'
+            answer_contract: {"kind":"polynomial_relation"}
+            solution_sketch: 'The length $40$ gives $a = 20$, so $a^2 = 400$. The focal distance $24$ gives $c = 12$, so $b^2 = 400 - 144 = 256$, and the equation is $\frac{x^2}{400} + \frac{y^2}{256} = 1$.'
+          - problem: 'Write the equation of the ellipse with vertices $(-1, 9)$ and $(-1, -1)$ and foci $(-1, 7)$ and $(-1, 1)$.'
+            answer: '(x + 1)^2/16 + (y - 4)^2/25 = 1'
+            answer_contract: {"kind":"polynomial_relation"}
+            solution_sketch: 'The center is halfway between the vertices, at $(-1, 4)$. The vertices are $5$ from the center, so $a^2 = 25$, and the foci are $3$ from it, so $b^2 = 25 - 9 = 16$. The major axis is vertical, so the equation is $\frac{(x + 1)^2}{16} + \frac{(y - 4)^2}{25} = 1$.'
+          - problem: 'Sam writes $\frac{x^2}{36} + \frac{y^2}{4} = 1$ for the ellipse with vertices $(0, \pm 6)$ and foci $(0, \pm 2)$. What is the correct equation?'
+            answer: 'x^2/32 + y^2/36 = 1'
+            answer_contract: {"kind":"polynomial_relation"}
+            solution_sketch: 'Sam used $c^2 = 4$ as a denominator. The correct value is $b^2 = a^2 - c^2 = 36 - 4 = 32$, and the vertical major axis puts $a^2 = 36$ under $y^2$, so the equation is $\frac{x^2}{32} + \frac{y^2}{36} = 1$.'
+        constraints: 'data as vertices and foci on an axis, as a centre with semi-axes, or as a width and a height; integer a, b, c; the answer is an equation with denominators a² and b²; contexts with measured sizes'
     diagnostic_exemplar:
       problem: 'Write the equation of the ellipse with vertices $(0, \pm 5)$ and foci $(0, \pm 4)$.'
       answer: "x^2/9 + y^2/25 = 1"
@@ -238,91 +364,142 @@ topics:
         weight: 0.0            # conceptual only: prior exposure to asymptote language
     knowledge_points:
       - id: kp1
-        name: Vertices, foci, and asymptotes (horizontal transverse axis)
+        name: 'Vertices, foci, and asymptotes (horizontal transverse axis)'
         key_prerequisites: [ellipses]
-        constraints: "c² = a² + b²; asymptotes y = ±(b/a)x"
+        step_check:
+          step: 'Find $c$ using $c^2 = a^2 + b^2$'
+          question: 'Why is $b^2$ added to $a^2$ for a hyperbola, when an ellipse subtracts it?'
+          options:
+            - 'The foci lie between the center and the vertices, so $c<a$'
+            - 'The foci lie beyond the vertices, so $c$ is greater than $a$'
+            - 'The minus sign between the fractions turns the subtraction into addition'
+            - 'Addition is used whenever both denominators are perfect squares'
+          answer: 'The foci lie beyond the vertices, so $c$ is greater than $a$'
+          why: 'The foci of a hyperbola lie beyond the vertices, so $c > a$. Hence $c^2 = a^2 + b^2 = 25 + 9 = 34$, which is larger than $a^2 = 25$.'
         exemplars:
-          - problem: "For x^2/25 - y^2/144 = 1, find the focus with positive x-coordinate. Give the answer as (x, y)."
-            answer: "(13, 0)"
-            answer_contract: {"arity": 2, "kind": "coordinates"}
-            solution_sketch: "The equation x^2/25 - y^2/144 = 1 has a^2 = 25 and b^2 = 144. Use the relation c^2 = a^2 + b^2, so c^2 = 25 + 144 = 169. The foci are at (13, 0) and (-13, 0), so the focus with positive x-coordinate is (13, 0)."
-          - problem: "For x^2/36 - y^2/49 = 1, find the positive slope of the asymptotes."
-            answer: "7/6"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The equation x^2/36 - y^2/49 = 1 has a^2 = 36 and b^2 = 49. Use the asymptote-slope rule b/a, so the positive slope is sqrt(49)/sqrt(36) = 7/6. The positive slope of the asymptotes is 7/6."
-          - problem: "For x^2/49 - y^2/576 = 1, find the right vertex. Give the answer as (x, y)."
-            answer: "(7, 0)"
-            answer_contract: {"arity": 2, "kind": "coordinates"}
-            solution_sketch: "The equation x^2/49 - y^2/576 = 1 has a^2 = 49, so a = 7. The vertex rule for a horizontal transverse axis gives vertices at (7, 0) and (-7, 0). The right vertex is (7, 0)."
-          - problem: "For x^2/64 - y^2/225 = 1, find the distance from the center to a focus."
-            answer: "17"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The equation x^2/64 - y^2/225 = 1 has a^2 = 64 and b^2 = 225. Use c^2 = a^2 + b^2, so c^2 = 64 + 225 = 289. Thus c = 17, and the distance from the center to a focus is 17."
-          - problem: "For x^2/16 - y^2/9 = 1, find the asymptote with positive slope. Give it as a function of x."
-            answer: "3x/4"
-            answer_contract: {"kind": "function", "vars": ["x"]}
-            solution_sketch: "The equation x^2/16 - y^2/9 = 1 has a^2 = 16 and b^2 = 9. The asymptote slope rule gives b/a = 3/4. The positive-slope asymptote is y = (3/4)x, so as a function of x it is 3x/4."
-          - problem: "For x^2/81 - y^2/1600 = 1, find the distance between the two foci."
-            answer: "82"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The equation x^2/81 - y^2/1600 = 1 has a^2 = 81 and b^2 = 1600. Use c^2 = a^2 + b^2, so c^2 = 81 + 1600 = 1681. Thus c = 41, and the distance between the two foci is 2c = 82."
+          - problem: 'Find the foci of the hyperbola $\frac{x^2}{25} - \frac{y^2}{144} = 1$.'
+            answer: '(13, 0) and (-13, 0)'
+            answer_contract: {"kind":"list","ordered":false,"member":{"kind":"coordinates","arity":2}}
+            solution_sketch: 'Here $a^2 = 25$ and $b^2 = 144$, so $c^2 = a^2 + b^2 = 169$ and $c = 13$. The transverse axis is horizontal, so the foci are $(13, 0)$ and $(-13, 0)$.'
+          - problem: 'Find the slopes of the asymptotes of the hyperbola $\frac{x^2}{36} - \frac{y^2}{49} = 1$.'
+            answer: '7/6, -7/6'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Here $a = 6$ and $b = 7$. The asymptotes are $y = \pm\frac{b}{a}x$, so their slopes are $\frac{7}{6}$ and $-\frac{7}{6}$.'
+          - problem: 'Find the vertices of the hyperbola $\frac{x^2}{49} - \frac{y^2}{576} = 1$.'
+            answer: '(7, 0) and (-7, 0)'
+            answer_contract: {"kind":"list","ordered":false,"member":{"kind":"coordinates","arity":2}}
+            solution_sketch: 'The $x^2$ term is positive, so the transverse axis is horizontal. Here $a^2 = 49$, so $a = 7$ and the vertices are $(7, 0)$ and $(-7, 0)$.'
+          - problem: 'The side of a cooling tower follows the hyperbola $\frac{x^2}{900} - \frac{y^2}{2500} = 1$, with $x$ and $y$ in metres and $y = 0$ at the narrowest level. How wide is the tower at its narrowest level?'
+            answer: '60'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"m","allow_omitted":true}
+            solution_sketch: 'At $y = 0$ the tower is at its vertices, where $x = \pm a$ with $a = \sqrt{900} = 30$. The tower is $2a = 60$ m wide there.'
+          - problem: 'Two radio stations stand at the foci of the hyperbola $\frac{x^2}{16} - \frac{y^2}{9} = 1$, with $x$ and $y$ in kilometres. How far apart are the stations?'
+            answer: '10'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"km","allow_omitted":true}
+            solution_sketch: 'Here $c^2 = 16 + 9 = 25$, so $c = 5$. The foci are $c$ on each side of the center, so the stations are $2c = 10$ km apart.'
+          - problem: 'How far is each focus of the hyperbola $\frac{x^2}{64} - \frac{y^2}{225} = 1$ from the center?'
+            answer: '17'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Here $a^2 = 64$ and $b^2 = 225$, so $c^2 = 64 + 225 = 289$. Each focus is $c = 17$ units from the center.'
+          - problem: 'Sam finds the foci of $\frac{x^2}{9} - \frac{y^2}{16} = 1$ by computing $c = \sqrt{16 - 9}$. What are the correct foci?'
+            answer: '(5, 0) and (-5, 0)'
+            answer_contract: {"kind":"list","ordered":false,"member":{"kind":"coordinates","arity":2}}
+            solution_sketch: 'For a hyperbola $c^2 = a^2 + b^2$, so $c^2 = 9 + 16 = 25$ and $c = 5$. The transverse axis is horizontal, so the foci are $(5, 0)$ and $(-5, 0)$.'
+          - problem: 'Find the equation of the asymptote of $\frac{x^2}{16} - \frac{y^2}{9} = 1$ that has positive slope.'
+            answer: 'y = 3x/4'
+            answer_contract: {"kind":"polynomial_relation"}
+            solution_sketch: 'Here $a = 4$ and $b = 3$, and the asymptotes are $y = \pm\frac{b}{a}x$. The one with positive slope is $y = \frac{3}{4}x$.'
+        constraints: 'c² = a² + b²; asymptotes y = ±(b/a)x; a, b, c integers or one simple radical; vertices, foci, distances, asymptote slopes and equations, and measured contexts'
       - id: kp2
-        name: Vertical transverse axis
+        name: 'Vertical transverse axis'
         key_prerequisites: [ellipses, simplifying-radicals]
-        constraints: "y² term positive; a², b² chosen so c is an integer or one clean radical; asymptote slopes ±a/b, simplified"
+        step_check:
+          step: 'Asymptotes: $y = \pm\frac{a}{b}x = \pm\frac{3}{4}x$'
+          question: 'Why is the asymptote slope $\frac{a}{b}$ here, when for a horizontal hyperbola it is $\frac{b}{a}$?'
+          options:
+            - 'The slope is always the smaller number divided by the larger one'
+            - 'Both orientations use $\frac{b}{a}$, and the letters only swap names'
+            - 'The $y^2$ term comes first, so the slope uses the second denominator'
+            - 'The branches open up and down, so the rise comes from $a$'
+          answer: 'The branches open up and down, so the rise comes from $a$'
+          why: 'The vertices are $(0, \pm a)$, so the box that guides the branches is $a$ high and $b$ wide. Its diagonal has slope $\frac{a}{b} = \frac{3}{4}$.'
         exemplars:
-          - problem: "For y^2/9 - x^2/16 = 1, the transverse axis is vertical. Give the y-coordinate of the upper vertex as v and the y-coordinate of the upper focus as f."
-            answer: "v = 3; f = 5"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "v"}, {"contract": {"kind": "exact"}, "name": "f"}]}
-            solution_sketch: "The equation y^2/9 - x^2/16 = 1 has a^2 = 9 and b^2 = 16, so a = 3. For a vertical transverse axis the vertices are (0, ±a), so the upper vertex has y = 3. The focal distance satisfies c^2 = a^2 + b^2 = 9 + 16 = 25, so c = 5 and the upper focus has y = 5. Thus v = 3; f = 5."
-          - problem: "For y^2/25 - x^2/144 = 1, find the positive slope m of the asymptotes as a simplified fraction."
-            answer: "5/12"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The equation y^2/25 - x^2/144 = 1 has a^2 = 25 and b^2 = 144, so a = 5 and b = 12. For a vertical transverse axis the asymptote slopes are ±a/b. The positive slope is 5/12. Thus m = 5/12."
-          - problem: "For y^2/16 - x^2/20 = 1, find the upper focus. Give the answer as (x, y)."
-            answer: "(0, 6)"
-            answer_contract: {"arity": 2, "kind": "coordinates"}
-            solution_sketch: "The equation y^2/16 - x^2/20 = 1 has a^2 = 16 and b^2 = 20. For a vertical hyperbola the focal distance satisfies c^2 = a^2 + b^2 = 16 + 20 = 36, so c = 6. The upper focus is (0, c), which is (0, 6). Thus the upper focus is (0, 6)."
-          - problem: "For y^2/49 - x^2/576 = 1, find the focal distance c."
-            answer: "25"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The equation y^2/49 - x^2/576 = 1 gives a^2 = 49 and b^2 = 576. For a vertical hyperbola the focal distance satisfies c^2 = a^2 + b^2. Compute c^2 = 49 + 576 = 625, so c = 25. Thus c = 25."
-          - problem: "For y^2/36 - x^2/28 = 1, find the positive slope m of the asymptotes, simplified."
-            answer: "3sqrt(7)/7"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The equation y^2/36 - x^2/28 = 1 has a^2 = 36 and b^2 = 28, so a = 6 and b = sqrt(28) = 2sqrt(7). For a vertical transverse axis the positive asymptote slope is a/b. Compute 6/(2sqrt(7)) = 3/sqrt(7) = 3sqrt(7)/7. Thus m = 3sqrt(7)/7."
-          - problem: "For y^2/64 - x^2/225 = 1, find the length of the transverse axis."
-            answer: "16"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The equation y^2/64 - x^2/225 = 1 has a^2 = 64, so a = 8. The transverse axis is vertical and its length is 2a. Compute 2a = 2(8) = 16. Thus the length is 16."
+          - problem: 'Find the vertices of the hyperbola $\frac{y^2}{9} - \frac{x^2}{16} = 1$.'
+            answer: '(0, 3) and (0, -3)'
+            answer_contract: {"kind":"list","ordered":false,"member":{"kind":"coordinates","arity":2}}
+            solution_sketch: 'The $y^2$ term is positive, so the transverse axis is vertical. Here $a^2 = 9$, so $a = 3$ and the vertices are $(0, 3)$ and $(0, -3)$.'
+          - problem: 'Find the foci of the hyperbola $\frac{y^2}{16} - \frac{x^2}{20} = 1$.'
+            answer: '(0, 6) and (0, -6)'
+            answer_contract: {"kind":"list","ordered":false,"member":{"kind":"coordinates","arity":2}}
+            solution_sketch: 'Here $a^2 = 16$ and $b^2 = 20$, so $c^2 = 16 + 20 = 36$ and $c = 6$. The transverse axis is vertical, so the foci are $(0, 6)$ and $(0, -6)$.'
+          - problem: 'What are the slopes of the asymptotes of the hyperbola $\frac{y^2}{25} - \frac{x^2}{144} = 1$?'
+            answer: '5/12, -5/12'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Here $a = 5$ and $b = 12$. For a vertical transverse axis the slopes are $\pm\frac{a}{b}$, so they are $\frac{5}{12}$ and $-\frac{5}{12}$.'
+          - problem: 'How far is each focus of the hyperbola $\frac{y^2}{49} - \frac{x^2}{576} = 1$ from the center?'
+            answer: '25'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Here $a^2 = 49$ and $b^2 = 576$, so $c^2 = 49 + 576 = 625$. Each focus is $c = 25$ units from the center.'
+          - problem: 'A telescope uses two mirrors shaped like the two branches of the hyperbola $\frac{y^2}{64} - \frac{x^2}{225} = 1$, with lengths in centimetres. How far apart are the vertices of the two branches?'
+            answer: '16'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"cm","allow_omitted":true}
+            solution_sketch: 'Here $a^2 = 64$, so $a = 8$. The vertices are $(0, 8)$ and $(0, -8)$, so they are $2a = 16$ cm apart.'
+          - problem: 'Two microphones are placed at the foci of the hyperbola $\frac{y^2}{36} - \frac{x^2}{64} = 1$, with lengths in metres. How far apart are the microphones?'
+            answer: '20'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"m","allow_omitted":true}
+            solution_sketch: 'Here $c^2 = 36 + 64 = 100$, so $c = 10$. The foci are on the $y$-axis, $c$ on each side of the center, so the microphones are $2c = 20$ m apart.'
+          - problem: 'What are the slopes of the asymptotes of the hyperbola $\frac{y^2}{36} - \frac{x^2}{28} = 1$?'
+            answer: '3sqrt(7)/7, -3sqrt(7)/7'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Here $a = 6$ and $b = \sqrt{28} = 2\sqrt{7}$. The slopes are $\pm\frac{a}{b} = \pm\frac{6}{2\sqrt{7}} = \pm\frac{3\sqrt{7}}{7}$.'
+          - problem: 'Sam says that the asymptotes of $\frac{y^2}{9} - \frac{x^2}{16} = 1$ have slopes $\pm\frac{4}{3}$. What are the correct slopes?'
+            answer: '3/4, -3/4'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The $y^2$ term is positive, so the slopes are $\pm\frac{a}{b}$, not $\pm\frac{b}{a}$. With $a = 3$ and $b = 4$ they are $\frac{3}{4}$ and $-\frac{3}{4}$.'
+        constraints: 'y² term positive; a² and b² chosen so that c is an integer or one simple radical; asymptote slopes ±a/b, simplified; vertices, foci, distances, slopes, and measured contexts'
       - id: kp3
-        name: Write the equation from vertices and foci
+        name: 'Write the equation from vertices and foci'
         key_prerequisites: [ellipses]
-        constraints: "vertices and foci on the same axis, integer a, c with c > a; b² = c² - a²; answers in standard form"
+        step_check:
+          step: 'Compute $b^2$: $b^2 = c^2 - a^2 = 36 - 16 = 20$'
+          question: 'Why is $b^2$ found as $c^2 - a^2$ for a hyperbola, and not as $a^2 - c^2$?'
+          options:
+            - 'The order of the subtraction is the same as for an ellipse'
+            - 'The vertices lie farther from the center than the foci, so $a > c$'
+            - 'A hyperbola has $c > a$, so only $c^2 - a^2$ is positive'
+            - 'The minus sign in the equation reverses the order of the subtraction'
+          answer: 'A hyperbola has $c > a$, so only $c^2 - a^2$ is positive'
+          why: 'The foci lie beyond the vertices, so $c^2 = 36$ is larger than $a^2 = 16$. Then $b^2 = 20$ is positive, and the equation is $\frac{y^2}{16} - \frac{x^2}{20} = 1$.'
         exemplars:
           - problem: 'Write the equation of the hyperbola with vertices $(\pm 2, 0)$ and foci $(\pm 3, 0)$.'
-            answer: "x^2/4 - y^2/5 = 1"
-            answer_contract: {kind: polynomial_relation}
-            solution_sketch: '$b^2 = c^2 - a^2 = 9 - 4 = 5$.'
+            answer: 'x^2/4 - y^2/5 = 1'
+            answer_contract: {"kind":"polynomial_relation"}
+            solution_sketch: 'The vertices give $a = 2$, so $a^2 = 4$. The foci give $c = 3$, so $b^2 = c^2 - a^2 = 9 - 4 = 5$, and the equation is $\frac{x^2}{4} - \frac{y^2}{5} = 1$.'
           - problem: 'Write the equation of the hyperbola with vertices $(0, \pm 3)$ and foci $(0, \pm 5)$.'
-            answer: "y^2/9 - x^2/16 = 1"
-            answer_contract: {kind: polynomial_relation}
-          - problem: "A hyperbola centered at the origin has vertices (3, 0) and (-3, 0) and foci (5, 0) and (-5, 0). Its equation can be written as x^2/A - y^2/B = 1 with integers A and B. Give A and B."
-            answer: "A = 9; B = 16"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "A"}, {"contract": {"kind": "exact"}, "name": "B"}]}
-            solution_sketch: "The full standard form for a horizontal hyperbola is x^2/A - y^2/B = 1. Step 1, the vertex rule: the vertices (+/-3, 0) give a = 3, so A = a^2 = 9. Step 2, the focus rule: the foci (+/-5, 0) give c = 5, and the relation B = c^2 - a^2 gives B = 25 - 9 = 16. Therefore the answer is A = 9; B = 16."
-          - problem: "A hyperbola centered at the origin has vertices (0, 4) and (0, -4) and foci (0, 5) and (0, -5). Its equation can be written as y^2/A - x^2/B = 1 with integers A and B. Find A and B."
-            answer: "A = 16; B = 9"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "A"}, {"contract": {"kind": "exact"}, "name": "B"}]}
-            solution_sketch: "The full standard form for a vertical hyperbola is y^2/A - x^2/B = 1. Step 1, the vertex rule: the vertices (0, +/-4) give a = 4, so A = a^2 = 16. Step 2, the focus rule: the foci (0, +/-5) give c = 5, and B = c^2 - a^2 = 25 - 16 = 9. Therefore the answer is A = 16; B = 9."
-          - problem: "A hyperbola centered at the origin opens left and right. Its vertices are (6, 0) and (-6, 0), and its two foci on the x-axis are 20 units apart. Its equation can be written as x^2/A - y^2/B = 1 with integers A and B. Give A and B."
-            answer: "A = 36; B = 64"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "A"}, {"contract": {"kind": "exact"}, "name": "B"}]}
-            solution_sketch: "The full standard form for a hyperbola opening left and right is x^2/A - y^2/B = 1. Step 1, the vertex rule: the vertices (+/-6, 0) give a = 6, so A = a^2 = 36. Step 2, the focus separation rule: foci 20 units apart give 2c = 20, so c = 10, and B = c^2 - a^2 = 100 - 36 = 64. Therefore the answer is A = 36; B = 64."
-          - problem: "A hyperbola centered at the origin opens up and down. Its vertices are (0, 8) and (0, -8), and its foci are (0, 10) and (0, -10). Its equation can be written as y^2/A - x^2/B = 1 with integers A and B. Determine A and B."
-            answer: "A = 64; B = 36"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "A"}, {"contract": {"kind": "exact"}, "name": "B"}]}
-            solution_sketch: "The full standard form for a hyperbola opening up and down is y^2/A - x^2/B = 1. Step 1, the vertex rule: the vertices (0, +/-8) give a = 8, so A = a^2 = 64. Step 2, the focus rule: the foci (0, +/-10) give c = 10, and B = c^2 - a^2 = 100 - 64 = 36. Therefore the answer is A = 64; B = 36."
+            answer: 'y^2/9 - x^2/16 = 1'
+            answer_contract: {"kind":"polynomial_relation"}
+            solution_sketch: 'The vertices are on the $y$-axis, so the $y^2$ term comes first, with $a^2 = 9$. The foci give $c = 5$, so $b^2 = 25 - 9 = 16$, and the equation is $\frac{y^2}{9} - \frac{x^2}{16} = 1$.'
+          - problem: 'A hyperbola has its center at the origin and its vertices at $(\pm 6, 0)$. Its two foci are on the $x$-axis, $20$ units apart. Write its equation.'
+            answer: 'x^2/36 - y^2/64 = 1'
+            answer_contract: {"kind":"polynomial_relation"}
+            solution_sketch: 'The vertices give $a = 6$, so $a^2 = 36$. The foci are $20$ apart, so $c = 10$ and $b^2 = 100 - 36 = 64$. The equation is $\frac{x^2}{36} - \frac{y^2}{64} = 1$.'
+          - problem: 'The cross-section of a cooling tower is a hyperbola with its center at the origin and its vertices on the $x$-axis, $24$ m apart. Its foci are $26$ m apart. Write the equation of the cross-section, with lengths in metres.'
+            answer: 'x^2/144 - y^2/25 = 1'
+            answer_contract: {"kind":"polynomial_relation"}
+            solution_sketch: 'The vertices are $24$ apart, so $a = 12$ and $a^2 = 144$. The foci are $26$ apart, so $c = 13$ and $b^2 = 169 - 144 = 25$. The equation is $\frac{x^2}{144} - \frac{y^2}{25} = 1$.'
+          - problem: 'A telescope mirror is part of a hyperbola with its center at the origin. Its vertices are on the $y$-axis, $16$ cm apart, and its foci are $20$ cm apart. Write the equation of the hyperbola, with lengths in centimetres.'
+            answer: 'y^2/64 - x^2/36 = 1'
+            answer_contract: {"kind":"polynomial_relation"}
+            solution_sketch: 'The vertices are $16$ apart, so $a = 8$ and $a^2 = 64$. The foci are $20$ apart, so $c = 10$ and $b^2 = 100 - 64 = 36$. The equation is $\frac{y^2}{64} - \frac{x^2}{36} = 1$.'
+          - problem: 'Write the equation of the hyperbola with vertices $(-2, -2)$ and $(4, -2)$ and foci $(-4, -2)$ and $(6, -2)$.'
+            answer: '(x - 1)^2/9 - (y + 2)^2/16 = 1'
+            answer_contract: {"kind":"polynomial_relation"}
+            solution_sketch: 'The center is halfway between the vertices, at $(1, -2)$. The vertices are $3$ from the center, so $a^2 = 9$, and the foci are $5$ from it, so $b^2 = 25 - 9 = 16$. The equation is $\frac{(x - 1)^2}{9} - \frac{(y + 2)^2}{16} = 1$.'
+          - problem: 'Sam writes $\frac{x^2}{16} - \frac{y^2}{41} = 1$ for the hyperbola with vertices $(\pm 4, 0)$ and foci $(\pm 5, 0)$. What is the correct equation?'
+            answer: 'x^2/16 - y^2/9 = 1'
+            answer_contract: {"kind":"polynomial_relation"}
+            solution_sketch: 'Sam added $a^2$ and $c^2$, but $b^2 = c^2 - a^2$. So $b^2 = 25 - 16 = 9$, and the equation is $\frac{x^2}{16} - \frac{y^2}{9} = 1$.'
+        constraints: 'vertices and foci on the same axis with integer a and c, c > a, so that b² = c² - a²; a centre at the origin or a shifted centre; the answer is an equation in standard form; contexts with measured sizes'
     diagnostic_exemplar:
       problem: 'Write the equation of the hyperbola with vertices $(0, \pm 2)$ and foci $(0, \pm 4)$, and give the equations of its asymptotes.'
       answer: 'y^2/4 - x^2/12 = 1; asymptotes y = ±(√3/3)x'
@@ -356,79 +533,142 @@ topics:
         weight: 0.4
     knowledge_points:
       - id: kp1
-        name: Classify from the coefficients
+        name: 'Classify from the coefficients'
         key_prerequisites: [ellipses, hyperbolas, parabola-focus-directrix]
-        constraints: "no xy term; compare signs of the x² and y² coefficients"
+        step_check:
+          step: 'Since the coefficients have opposite signs, the conic is a hyperbola'
+          question: 'Why do the coefficients $3$ and $-6$, with opposite signs, give a hyperbola and not an ellipse?'
+          options:
+            - 'The coefficient $-6$ is larger in size than $3$, so the curve opens out'
+            - 'A negative coefficient always makes the graph open downward'
+            - 'The equation is a difference of two squares, which gives two branches'
+            - 'The linear terms $12x$ and $-24y$ decide the type, not the squares'
+          answer: 'The equation is a difference of two squares, which gives two branches'
+          why: 'With a positive $x^2$ term and a negative $y^2$ term the equation has the shape (square) minus (square) = constant. That shape gives two separate branches, a hyperbola; the same signs would give a closed curve.'
         exemplars:
-          - problem: 'Classify $4x^2 + 4y^2 - 8x = 0$.'
-            answer: "circle"
-            answer_contract: {kind: label, options: [[circle], [ellipse], [hyperbola], [parabola]]}
-            solution_sketch: 'Equal $x^2$ and $y^2$ coefficients.'
-          - problem: 'Classify $9x^2 - 4y^2 + 18x + 8y = 31$.'
-            answer: "hyperbola"
-            answer_contract: {kind: label, options: [[circle], [ellipse], [hyperbola], [parabola]]}
-            solution_sketch: 'The $x^2$ and $y^2$ coefficients have opposite signs.'
-          - problem: 'Classify $x^2 + 6x - y + 5 = 0$.'
-            answer: "parabola"
-            answer_contract: {kind: label, options: [[circle], [ellipse], [hyperbola], [parabola]]}
-            solution_sketch: 'Only one squared variable appears.'
+          - problem: 'What type of conic section is $4x^2 + 9y^2 - 16x + 18y = 11$?'
+            answer: 'ellipse'
+            answer_contract: {"kind":"label","options":[["ellipse","an ellipse","it is an ellipse"],["circle","a circle","it is a circle"],["hyperbola","a hyperbola","it is a hyperbola"],["parabola","a parabola","it is a parabola"]]}
+            solution_sketch: 'There is no $xy$ term, and the coefficients $4$ and $9$ of $x^2$ and $y^2$ have the same sign but are not equal. So the curve is an ellipse.'
+          - problem: 'For which value of $k$ does $4x^2 + ky^2 = 36$ describe a circle?'
+            answer: '4'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'A circle needs equal coefficients of $x^2$ and $y^2$. The coefficient of $x^2$ is $4$, so $k = 4$, and the equation becomes $x^2 + y^2 = 9$.'
+          - problem: 'For which value of $k$ does $x^2 + ky^2 - 6x - y = 2$ describe a parabola?'
+            answer: '0'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'A parabola has only one squared variable. With $k = 0$ the $y^2$ term vanishes, and $x^2 - 6x - y = 2$ is a parabola.'
+          - problem: 'A designer wants the outline $5x^2 + ky^2 = 45$, with $x$ and $y$ in metres, to be a circle. What is the radius of the circle?'
+            answer: '3'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"m","allow_omitted":true}
+            solution_sketch: 'The outline is a circle only if $k = 5$. Then $5x^2 + 5y^2 = 45$ gives $x^2 + y^2 = 9$, so the radius is $3$ m.'
+          - problem: 'The cross-section of a cooling tower follows the curve $9x^2 - 4y^2 + 18x + 8y = 31$. What type of conic section is it?'
+            answer: 'hyperbola'
+            answer_contract: {"kind":"label","options":[["hyperbola","a hyperbola","it is a hyperbola"],["circle","a circle","it is a circle"],["ellipse","an ellipse","it is an ellipse"],["parabola","a parabola","it is a parabola"]]}
+            solution_sketch: 'The coefficients $9$ and $-4$ of $x^2$ and $y^2$ have opposite signs. So the curve is a hyperbola.'
+          - problem: 'For which value of $k$ is $3x^2 + (k + 1)y^2 = 12$ a circle?'
+            answer: '2'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The coefficients of $x^2$ and $y^2$ must be equal, so $k + 1 = 3$ and $k = 2$. The equation is then $3x^2 + 3y^2 = 12$, a circle of radius $2$.'
+        constraints: 'no xy term; compare the signs and sizes of the x² and y² coefficients; at most two classification items per knowledge point, the others ask for the value of a coefficient that gives a named conic or for a measure of the circle'
       - id: kp2
-        name: Circle and ellipse to standard form
+        name: 'Circle and ellipse to standard form'
         key_prerequisites: [completing-the-square]
-        constraints: "integer centres; complete the square in one or both variables; circle radii are integers, ellipse denominators perfect squares"
+        step_check:
+          step: 'Complete the square for $x$: $x^2 - 4x + 4 = (x - 2)^2$'
+          question: 'Why is $4$ added to $x^2 - 4x$ to complete the square?'
+          options:
+            - 'Half of $-4$ is $-2$, and $(-2)^2 = 4$ makes a perfect square'
+            - 'The number $4$ is the coefficient of $x$ with its sign dropped'
+            - 'Adding $4$ cancels the $x$ term and leaves only a constant'
+            - 'Half of $4$ is $2$, and $2$ is the number that must be added'
+          answer: 'Half of $-4$ is $-2$, and $(-2)^2 = 4$ makes a perfect square'
+          why: 'A square $(x - m)^2$ has the middle term $-2mx$. Here $-2m = -4$ gives $m = 2$, so the missing last term is $m^2 = 4$. The same $4$ must be added to the other side.'
         exemplars:
-          - problem: "Complete the square for x^2 + y^2 - 6x + 4y - 3 = 0. Give the center as (x, y) and the radius."
-            answer: "center = (3, -2); radius = 4"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"arity": 2, "kind": "coordinates"}, "name": "center"}, {"contract": {"kind": "exact"}, "name": "radius"}]}
-            solution_sketch: "The circle equation is x^2 + y^2 - 6x + 4y - 3 = 0. Step 1: group x and y terms and complete the square for x: x^2 - 6x = (x - 3)^2 - 9. Step 2: complete the square for y: y^2 + 4y = (y + 2)^2 - 4. Step 3: substitute and simplify to (x - 3)^2 + (y + 2)^2 = 16. The final result is center = (3, -2); radius = 4."
+          - problem: 'Find the center and the radius of the circle $x^2 + y^2 + 8x - 2y = 8$.'
+            answer: 'center = (-4, 1); radius = 5'
+            answer_contract: {"kind":"multipart","parts":[{"name":"center","contract":{"kind":"coordinates","arity":2}},{"name":"radius","contract":{"kind":"exact"}}]}
+            solution_sketch: 'Complete the square in both variables: $(x + 4)^2 - 16 + (y - 1)^2 - 1 = 8$. So $(x + 4)^2 + (y - 1)^2 = 25$, and the circle has center $(-4, 1)$ and radius $5$.'
+          - problem: 'Find the center of the ellipse $9x^2 + 4y^2 - 18x + 16y = 11$.'
+            answer: '(1, -2)'
+            answer_contract: {"kind":"coordinates","arity":2}
+            solution_sketch: 'Group the terms: $9(x^2 - 2x) + 4(y^2 + 4y) = 11$. Completing the squares gives $9(x - 1)^2 + 4(y + 2)^2 = 36$, so the center is $(1, -2)$.'
+          - problem: 'Find the radius of the circle $x^2 + y^2 - 6x + 4y = 3$.'
+            answer: '4'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Complete the squares: $(x - 3)^2 - 9 + (y + 2)^2 - 4 = 3$. So $(x - 3)^2 + (y + 2)^2 = 16$, and the radius is $\sqrt{16} = 4$.'
+          - problem: 'A circular pond is the region inside the curve $x^2 + y^2 - 10x + 8y = -16$, with $x$ and $y$ in metres. How wide is the pond from one side to the other?'
+            answer: '10'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"m","allow_omitted":true}
+            solution_sketch: 'Complete the squares: $(x - 5)^2 + (y + 4)^2 = -16 + 25 + 16 = 25$. The radius is $5$ m, so the pond is $10$ m wide.'
+          - problem: 'A lawn is the disc bounded by the circle $x^2 + y^2 - 12x - 4y = -31$, with lengths in metres. A sprinkler at the center of the lawn must water all the way to the edge. Where should the sprinkler stand, and how far must the water reach?'
+            answer: 'center = (6, 2); radius = 3'
+            answer_contract: {"kind":"multipart","parts":[{"name":"center","contract":{"kind":"coordinates","arity":2}},{"name":"radius","contract":{"kind":"unit","quantity":"length","unit":"m","allow_omitted":true}}]}
+            solution_sketch: 'Complete the squares: $(x - 6)^2 + (y - 2)^2 = -31 + 36 + 4 = 9$. The sprinkler stands at the center $(6, 2)$, and the water must reach the radius, $3$ m.'
+          - problem: 'Find the length of the major axis of the ellipse $25x^2 + 16y^2 + 150x - 64y = 111$.'
+            answer: '10'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Complete the squares: $25(x + 3)^2 + 16(y - 2)^2 = 111 + 225 + 64 = 400$. Dividing by $400$ gives $\frac{(x + 3)^2}{16} + \frac{(y - 2)^2}{25} = 1$, so $a = 5$ and the major axis has length $2a = 10$.'
           - problem: 'Write $4x^2 + y^2 - 8x = 0$ in standard form.'
-            answer: "(x - 1)^2/1 + y^2/4 = 1"
-            answer_contract: {kind: polynomial_relation}
-            solution_sketch: '$4(x - 1)^2 + y^2 = 4$; divide by $4$.'
-          - problem: "Complete the square for x^2 + y^2 + 8x - 2y - 8 = 0. Give the center as (x, y) and the radius."
-            answer: "center = (-4, 1); radius = 5"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"arity": 2, "kind": "coordinates"}, "name": "center"}, {"contract": {"kind": "exact"}, "name": "radius"}]}
-            solution_sketch: "The circle equation is x^2 + y^2 + 8x - 2y - 8 = 0. Step 1: complete the square for x: x^2 + 8x = (x + 4)^2 - 16. Step 2: complete the square for y: y^2 - 2y = (y - 1)^2 - 1. Step 3: substitute and simplify to (x + 4)^2 + (y - 1)^2 = 25. The final result is center = (-4, 1); radius = 5."
-          - problem: "Complete the square for 9x^2 + 4y^2 - 18x + 16y - 11 = 0. Give the center as (x, y) and the two denominators in x then y order."
-            answer: "center = (1, -2); denoms = 4, 9"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"arity": 2, "kind": "coordinates"}, "name": "center"}, {"contract": {"kind": "list", "member": {"kind": "exact"}, "ordered": true}, "name": "denoms"}]}
-            solution_sketch: "The ellipse equation is 9x^2 + 4y^2 - 18x + 16y - 11 = 0. Step 1: factor 9 from x terms and 4 from y terms: 9(x^2 - 2x) + 4(y^2 + 4y) = 11. Step 2: complete each square: 9((x - 1)^2 - 1) + 4((y + 2)^2 - 4) = 11. Step 3: simplify to 9(x - 1)^2 + 4(y + 2)^2 = 36 and divide by 36. The final result is center = (1, -2); denoms = 4, 9."
-          - problem: "Complete the square for 4x^2 + 9y^2 - 16x + 18y - 11 = 0. Give the center as (x, y) and the two denominators in x then y order."
-            answer: "center = (2, -1); denoms = 9, 4"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"arity": 2, "kind": "coordinates"}, "name": "center"}, {"contract": {"kind": "list", "member": {"kind": "exact"}, "ordered": true}, "name": "denoms"}]}
-            solution_sketch: "The ellipse equation is 4x^2 + 9y^2 - 16x + 18y - 11 = 0. Step 1: factor 4 from x terms and 9 from y terms: 4(x^2 - 4x) + 9(y^2 + 2y) = 11. Step 2: complete each square: 4((x - 2)^2 - 4) + 9((y + 1)^2 - 1) = 11. Step 3: simplify to 4(x - 2)^2 + 9(y + 1)^2 = 36 and divide by 36. The final result is center = (2, -1); denoms = 9, 4."
-          - problem: "The equation 25x^2 + 16y^2 + 150x - 64y - 111 = 0 is an ellipse. After completing the square, give the center as (x, y) and the two denominators in x then y order."
-            answer: "center = (-3, 2); denoms = 16, 25"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"arity": 2, "kind": "coordinates"}, "name": "center"}, {"contract": {"kind": "list", "member": {"kind": "exact"}, "ordered": true}, "name": "denoms"}]}
-            solution_sketch: "The ellipse equation is 25x^2 + 16y^2 + 150x - 64y - 111 = 0. Step 1: factor 25 from x terms and 16 from y terms: 25(x^2 + 6x) + 16(y^2 - 4y) = 111. Step 2: complete each square: 25((x + 3)^2 - 9) + 16((y - 2)^2 - 4) = 111. Step 3: simplify to 25(x + 3)^2 + 16(y - 2)^2 = 400 and divide by 400. The final result is center = (-3, 2); denoms = 16, 25."
+            answer: '(x - 1)^2 + y^2/4 = 1'
+            answer_contract: {"kind":"polynomial_relation"}
+            solution_sketch: 'Complete the square in $x$: $4(x^2 - 2x) + y^2 = 0$ becomes $4(x - 1)^2 + y^2 = 4$. Dividing by $4$ gives $(x - 1)^2 + \frac{y^2}{4} = 1$.'
+          - problem: 'Sam completes the squares for $x^2 + y^2 + 2x - 8y = 8$ and writes $(x + 1)^2 + (y - 4)^2 = 8$. What is the correct right-hand side?'
+            answer: '25'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Sam forgot to add the two numbers that completing the squares puts on the left. The right-hand side is $8 + 1 + 16 = 25$.'
+        constraints: 'integer centres; complete the square in one or both variables; circle radii are integers or simple radicals, ellipse denominators are perfect squares; centre, radius, axis length, or the standard form itself; contexts with a lawn, a pond or a lens'
       - id: kp3
-        name: Hyperbola to standard form
+        name: 'Hyperbola to standard form'
         key_prerequisites: [completing-the-square, hyperbolas]
-        constraints: "x² and y² coefficients of opposite sign, both dividing the constant cleanly; integer centres; denominators perfect squares after dividing through"
+        step_check:
+          step: 'Divide through by 9'
+          question: 'Why is the whole equation divided by $9$ in the last step?'
+          options:
+            - 'Dividing by $9$ makes both coefficients of the squares negative'
+            - 'Dividing by $9$ moves the center of the hyperbola to the origin'
+            - 'Dividing by $9$ makes the two denominators equal to each other'
+            - 'The standard form needs the number $1$ on the right-hand side'
+          answer: 'The standard form needs the number $1$ on the right-hand side'
+          why: 'The standard form is (square)/$a^2$ - (square)/$b^2$ = $1$. Dividing $(x + 3)^2 - 9(y + 1)^2 = 9$ by $9$ gives $\frac{(x + 3)^2}{9} - (y + 1)^2 = 1$.'
         exemplars:
           - problem: 'Write $x^2 - 4y^2 + 2x + 16y = 19$ in standard form.'
-            answer: "(x + 1)^2/4 - (y - 2)^2 = 1"
-            answer_contract: {kind: polynomial_relation}
-            solution_sketch: '$(x + 1)^2 - 1 - 4[(y - 2)^2 - 4] = 19$ gives $(x + 1)^2 - 4(y - 2)^2 = 4$.'
-          - problem: 'Find the center of the conic $x^2 - y^2 - 2x - 4y = 4$.'
-            answer: "(1, -2)"
-            solution_sketch: '$(x - 1)^2 - (y + 2)^2 = 4 + 1 - 4 = 1$.'
-          - problem: "The conic $x^2 - 9y^2 + 4x + 18y = 14$ is a hyperbola. Find its center as (x, y)."
-            answer: "(-2, 1)"
-            answer_contract: {"arity": 2, "kind": "coordinates"}
-            solution_sketch: "Start with the conic $x^2 - 9y^2 + 4x + 18y = 14$. Complete the square in $x$: $x^2 + 4x = (x + 2)^2 - 4$. Complete the square in $y$: $-9y^2 + 18y = -9[(y - 1)^2 - 1]$. Substitute: $(x + 2)^2 - 9(y - 1)^2 = 9$, so the center is (-2, 1)."
-          - problem: "The conic $x^2 - 4y^2 - 6x + 8y = 11$ is a hyperbola. Find the value of $a^2$ in its standard form."
-            answer: "16"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Start with the conic $x^2 - 4y^2 - 6x + 8y = 11$. Complete the square in $x$: $x^2 - 6x = (x - 3)^2 - 9$. Complete the square in $y$: $-4y^2 + 8y = -4[(y - 1)^2 - 1]$. Substitute: $(x - 3)^2 - 4(y - 1)^2 = 16$, so the standard form has a^2 = 16."
-          - problem: "The conic $16x^2 - 9y^2 - 64x - 18y = 89$ is a hyperbola. Find the right vertex as (x, y)."
-            answer: "(5, -1)"
-            answer_contract: {"arity": 2, "kind": "coordinates"}
-            solution_sketch: "Start with the conic $16x^2 - 9y^2 - 64x - 18y = 89$. Complete the square in $x$: $16x^2 - 64x = 16[(x - 2)^2 - 4]$. Complete the square in $y$: $-9y^2 - 18y = -9[(y + 1)^2 - 1]$. Substitute: $16(x - 2)^2 - 9(y + 1)^2 = 144$, so $(x - 2)^2/9 - (y + 1)^2/16 = 1$. The right vertex is at (2 + 3, -1) = (5, -1)."
-          - problem: "The conic $-25x^2 + 16y^2 - 100x - 96y = 356$ is a hyperbola. Find $c^2$ for its standard form."
-            answer: "41"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Start with the conic $-25x^2 + 16y^2 - 100x - 96y = 356$. Complete the square in $x$: $-25x^2 - 100x = -25[(x + 2)^2 - 4]$. Complete the square in $y$: $16y^2 - 96y = 16[(y - 3)^2 - 9]$. Substitute: $-25(x + 2)^2 + 16(y - 3)^2 = 400$, so $(y - 3)^2/25 - (x + 2)^2/16 = 1$. Then $a^2 = 25$ and $b^2 = 16$, so c^2 = 25 + 16 = 41."
+            answer: '(x + 1)^2/4 - (y - 2)^2 = 1'
+            answer_contract: {"kind":"polynomial_relation"}
+            solution_sketch: 'Complete the squares: $(x + 1)^2 - 1 - 4[(y - 2)^2 - 4] = 19$, which gives $(x + 1)^2 - 4(y - 2)^2 = 4$. Dividing by $4$ gives $\frac{(x + 1)^2}{4} - (y - 2)^2 = 1$.'
+          - problem: 'Find the center of the hyperbola $x^2 - y^2 - 2x - 4y = 4$.'
+            answer: '(1, -2)'
+            answer_contract: {"kind":"coordinates","arity":2}
+            solution_sketch: 'Complete the squares: $(x - 1)^2 - 1 - [(y + 2)^2 - 4] = 4$. So $(x - 1)^2 - (y + 2)^2 = 1$, and the center is $(1, -2)$.'
+          - problem: 'The conic $x^2 - 9y^2 + 4x + 18y = 14$ is a hyperbola. Find its center.'
+            answer: '(-2, 1)'
+            answer_contract: {"kind":"coordinates","arity":2}
+            solution_sketch: 'Complete the squares: $(x + 2)^2 - 4 - 9[(y - 1)^2 - 1] = 14$. So $(x + 2)^2 - 9(y - 1)^2 = 9$, and the center is $(-2, 1)$.'
+          - problem: 'Find the distance between the vertices of the hyperbola $x^2 - 4y^2 - 6x + 8y = 11$.'
+            answer: '8'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Complete the squares: $(x - 3)^2 - 9 - 4[(y - 1)^2 - 1] = 11$. So $(x - 3)^2 - 4(y - 1)^2 = 16$, and dividing by $16$ gives $a^2 = 16$. The vertices are $2a = 8$ apart.'
+          - problem: 'Find the right vertex of the hyperbola $16x^2 - 9y^2 - 64x - 18y = 89$.'
+            answer: '(5, -1)'
+            answer_contract: {"kind":"coordinates","arity":2}
+            solution_sketch: 'Complete the squares: $16(x - 2)^2 - 64 - 9[(y + 1)^2 - 1] = 89$, which gives $16(x - 2)^2 - 9(y + 1)^2 = 144$. Dividing by $144$ gives $\frac{(x - 2)^2}{9} - \frac{(y + 1)^2}{16} = 1$, so $a = 3$ and the right vertex is $(2 + 3, -1) = (5, -1)$.'
+          - problem: 'Find the upper focus of the hyperbola $-25x^2 + 16y^2 - 100x - 96y = 356$.'
+            answer: '(-2, 3 + sqrt(41))'
+            answer_contract: {"kind":"coordinates","arity":2}
+            solution_sketch: 'Complete the squares to get $-25(x + 2)^2 + 16(y - 3)^2 = 400$, so $\frac{(y - 3)^2}{25} - \frac{(x + 2)^2}{16} = 1$. Then $c^2 = 25 + 16 = 41$, and the upper focus is $(-2, 3 + \sqrt{41})$.'
+          - problem: 'The side wall of a cooling tower follows the curve $16x^2 - 9y^2 + 180y = 1476$, with $x$ and $y$ in metres. How wide is the tower at its narrowest level?'
+            answer: '12'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"m","allow_omitted":true}
+            solution_sketch: 'Complete the square in $y$: $16x^2 - 9(y - 10)^2 = 1476 - 900 = 576$. Dividing by $576$ gives $\frac{x^2}{36} - \frac{(y - 10)^2}{64} = 1$, so $a = 6$. The tower is narrowest at $y = 10$, where it is $2a = 12$ m wide.'
+          - problem: 'A telescope uses two mirrors shaped like the branches of the hyperbola $-16x^2 + 9y^2 - 32x - 54y = 79$, with lengths in centimetres. How far apart are the vertices of the two branches?'
+            answer: '8'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"cm","allow_omitted":true}
+            solution_sketch: 'Complete the squares to get $9(y - 3)^2 - 16(x + 1)^2 = 144$, so $\frac{(y - 3)^2}{16} - \frac{(x + 1)^2}{9} = 1$. The transverse axis is vertical with $a = 4$, so the vertices are $2a = 8$ cm apart.'
+          - problem: 'Sam completes the squares for $4x^2 - y^2 + 8x + 6y = 21$ and writes $4(x + 1)^2 - (y - 3)^2 = 34$. What is the correct right-hand side?'
+            answer: '16'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Completing the square in $x$ gives $4(x + 1)^2 = 4x^2 + 8x + 4$, so $4$ is added on the left and must be added on the right. Completing the square in $y$ gives $-(y - 3)^2 = -y^2 + 6y - 9$, so $9$ is subtracted on the left because of the minus sign, and must be subtracted on the right. So the right-hand side is $21 + 4 - 9 = 16$.'
+        constraints: 'x² and y² coefficients of opposite sign, both dividing the constant cleanly; integer centres; denominators perfect squares after dividing through; the standard form, the center, vertices, foci, or a measured width, and contexts with a tower or a mirror'
     diagnostic_exemplar:
       problem: 'Write $9x^2 - 4y^2 - 18x - 16y = 43$ in standard form.'
       answer: "(x - 1)^2/4 - (y + 2)^2/9 = 1"
@@ -463,44 +703,138 @@ topics:
         weight: 0.3
     knowledge_points:
       - id: kp1
-        name: Line and parabola
+        name: 'Line and parabola'
         key_prerequisites: [systems-substitution, quadratic-equations-factoring]
-        constraints: "substitute the line into the parabola; integer intersection points; one tangency case decided by the discriminant; the item must test THIS KP: Line and parabola"
+        step_check:
+          step: 'Substitute the line equation into the parabola equation'
+          question: 'Why can the expression for $y$ from the line be put into the parabola equation?'
+          options:
+            - 'The two graphs always meet where $y = 0$, so $y$ can be replaced by it'
+            - 'At a common point both equations hold, so $y$ is the same in each'
+            - 'Substituting turns the line into the same curve as the parabola'
+            - 'Any expression may replace $y$, whether or not the graphs meet'
+          answer: 'At a common point both equations hold, so $y$ is the same in each'
+          why: 'A point on both graphs satisfies both equations, so the line and the parabola give the same $y$ there. Setting them equal, $x^2 = 2x + 3$, leaves one equation in $x$ alone.'
         exemplars:
           - problem: 'Solve the system $y = x^2$ and $y = x + 2$.'
-            answer: "(-1, 1) and (2, 4)"
-            answer_contract: {kind: list, ordered: false, member: {kind: coordinates, arity: 2}}
-            solution_sketch: '$x^2 = x + 2$ gives $(x - 2)(x + 1) = 0$; substitute back for $y$.'
+            answer: '(-1, 1) and (2, 4)'
+            answer_contract: {"kind":"list","ordered":false,"member":{"kind":"coordinates","arity":2}}
+            solution_sketch: 'Substitute the line into the parabola: $x^2 = x + 2$, so $x^2 - x - 2 = (x - 2)(x + 1) = 0$. Then $x = 2$ or $x = -1$, and $y = x + 2$ gives the points $(2, 4)$ and $(-1, 1)$.'
           - problem: 'For which value of $c$ does the line $y = 2x + c$ meet the parabola $y = x^2$ in exactly one point?'
-            answer: "c = -1"
-            solution_sketch: '$x^2 - 2x - c = 0$ has one solution when the discriminant $4 + 4c = 0$.'
+            answer: '-1'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Setting $x^2 = 2x + c$ gives $x^2 - 2x - c = 0$. There is exactly one solution when the discriminant $4 + 4c$ is $0$, so $c = -1$.'
+          - problem: 'Solve the system $y = x^2 - 4x$ and $y = x - 6$.'
+            answer: '(2, -4) and (3, -3)'
+            answer_contract: {"kind":"list","ordered":false,"member":{"kind":"coordinates","arity":2}}
+            solution_sketch: 'Set the two expressions for $y$ equal: $x^2 - 4x = x - 6$, so $x^2 - 5x + 6 = (x - 2)(x - 3) = 0$. Then $x = 2$ or $x = 3$, and $y = x - 6$ gives $(2, -4)$ and $(3, -3)$.'
+          - problem: 'A ball is thrown from the foot of a hillside. Its height is $y = 6x - x^2$ metres at a horizontal distance of $x$ metres, and the hillside is the line $y = x$. At what horizontal distance from the thrower does the ball land on the hillside?'
+            answer: '5'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"m","allow_omitted":true}
+            solution_sketch: 'The ball is on the hillside where $6x - x^2 = x$, so $5x - x^2 = x(5 - x) = 0$. The solution $x = 0$ is the throw itself, so the ball lands at $x = 5$ m.'
+          - problem: 'A company makes $x$ hundred units. Its revenue is $R = 20x - x^2$ and its cost is $C = 4x + 48$, both in thousands of dollars. For which values of $x$ is the revenue equal to the cost?'
+            answer: '4, 12'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Set $20x - x^2 = 4x + 48$, so $x^2 - 16x + 48 = (x - 4)(x - 12) = 0$. Revenue equals cost at $x = 4$ and at $x = 12$.'
+          - problem: 'How many points do the parabola $y = x^2$ and the line $y = 2x - 3$ have in common?'
+            answer: '0'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Setting $x^2 = 2x - 3$ gives $x^2 - 2x + 3 = 0$, with discriminant $4 - 12 = -8$. The discriminant is negative, so there is no common point, and the answer is $0$.'
+          - problem: 'Sam solves the system $y = x^2$ and $y = x + 6$. He gets $x^2 = x + 6$ and $x = 3$, and writes the solution $(3, 9)$. What is the full solution?'
+            answer: '(-2, 4) and (3, 9)'
+            answer_contract: {"kind":"list","ordered":false,"member":{"kind":"coordinates","arity":2}}
+            solution_sketch: 'The equation $x^2 - x - 6 = (x - 3)(x + 2) = 0$ has two roots, $x = 3$ and $x = -2$. Sam missed the second one. The points are $(3, 9)$ and $(-2, 4)$.'
+        constraints: 'substitute the line into the parabola; integer intersection points; one tangency case decided by the discriminant; the number of common points; contexts with a ball and a hillside or with revenue and cost'
       - id: kp2
-        name: Line and circle
+        name: 'Line and circle'
         key_prerequisites: [equations-of-circles, systems-substitution]
-        constraints: "circles centred at the origin or with integer centres; count 0, 1, or 2 intersections via the discriminant"
+        step_check:
+          step: 'Substitute $y = x + 1$ into $x^2 + y^2 = 25$ to get $2x^2 + 2x - 24 = 0$.'
+          question: 'Why do the roots of this quadratic give the points where the line meets the circle?'
+          options:
+            - 'Only common points satisfy both, so their $x$-values are the roots'
+            - 'Each root is the radius of the circle, measured in the direction of the line'
+            - 'The quadratic describes the circle after the line has been deleted'
+            - 'A line and a circle always meet in exactly two points, one for each root'
+          answer: 'Only common points satisfy both, so their $x$-values are the roots'
+          why: 'A point of intersection lies on the line and on the circle, so its coordinates satisfy both equations. After substitution, the $x$-coordinates of those points are exactly the roots of $x^2 + x - 12 = 0$, that is $x = 3$ and $x = -4$.'
         exemplars:
           - problem: 'Solve the system $x^2 + y^2 = 25$ and $y = x + 1$.'
-            answer: "(3, 4) and (-4, -3)"
-            answer_contract: {kind: list, ordered: false, member: {kind: coordinates, arity: 2}}
-            solution_sketch: '$x^2 + (x + 1)^2 = 25$ gives $x^2 + x - 12 = 0 = (x + 4)(x - 3)$.'
+            answer: '(3, 4) and (-4, -3)'
+            answer_contract: {"kind":"list","ordered":false,"member":{"kind":"coordinates","arity":2}}
+            solution_sketch: 'Substitute $y = x + 1$: $x^2 + (x + 1)^2 = 25$, which simplifies to $x^2 + x - 12 = (x + 4)(x - 3) = 0$. So $x = 3$ or $x = -4$, and $y = x + 1$ gives $(3, 4)$ and $(-4, -3)$.'
           - problem: 'In how many points do the line $x + y = 10$ and the circle $x^2 + y^2 = 25$ intersect?'
-            answer: "0"
-            solution_sketch: 'Substituting $y = 10 - x$ gives $2x^2 - 20x + 75 = 0$ with discriminant $400 - 600 < 0$: no intersection points.'
+            answer: '0'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Substituting $y = 10 - x$ gives $2x^2 - 20x + 75 = 0$, with discriminant $400 - 600 = -200$. The discriminant is negative, so the line and the circle have $0$ common points.'
+          - problem: 'Find the points where the line $y = 2x$ meets the circle $x^2 + y^2 = 20$.'
+            answer: '(2, 4) and (-2, -4)'
+            answer_contract: {"kind":"list","ordered":false,"member":{"kind":"coordinates","arity":2}}
+            solution_sketch: 'Substitute $y = 2x$: $x^2 + 4x^2 = 20$, so $x^2 = 4$ and $x = \pm 2$. Then $y = 2x$ gives the points $(2, 4)$ and $(-2, -4)$.'
+          - problem: 'A radar station at the origin detects ships within $10$ km. A ship sails along the line $y = 2x - 10$, with $x$ and $y$ in kilometres. At which points does its route cross the edge of the radar range?'
+            answer: '(0, -10) and (8, 6)'
+            answer_contract: {"kind":"list","ordered":false,"member":{"kind":"coordinates","arity":2}}
+            solution_sketch: 'The edge of the range is $x^2 + y^2 = 100$. Substituting $y = 2x - 10$ gives $5x^2 - 40x = 5x(x - 8) = 0$, so $x = 0$ or $x = 8$, and the points are $(0, -10)$ and $(8, 6)$.'
+          - problem: 'A straight path along the line $x + y = 6$ just touches a circular pond centered at the origin, with lengths in metres. What is the radius of the pond?'
+            answer: '3sqrt(2)'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"m","allow_omitted":true,"form":"simplest_radical"}
+            solution_sketch: 'The path is the line $y = 6 - x$. It touches the circle $x^2 + y^2 = r^2$ in one point, so $2x^2 - 12x + 36 - r^2 = 0$ has discriminant $0$, which gives $r^2 = 18$. The radius is $3\sqrt{2}$ m.'
+          - problem: 'For which values of $k$ does the line $y = x + k$ touch the circle $x^2 + y^2 = 8$?'
+            answer: '4, -4'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Substituting gives $2x^2 + 2kx + k^2 - 8 = 0$. The line touches the circle when the discriminant $64 - 4k^2$ is $0$, so $k = 4$ or $k = -4$.'
+          - problem: 'Sam says that the line $y = x + 2$ and the circle $x^2 + y^2 = 2$ meet in two points. In how many points do they meet?'
+            answer: '1'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Substituting gives $2x^2 + 4x + 2 = 2(x + 1)^2 = 0$, which has the single root $x = -1$. The line touches the circle in exactly $1$ point.'
+          - problem: 'Solve the system $x^2 + y^2 = 10$ and $x + y = 4$.'
+            answer: '(1, 3) and (3, 1)'
+            answer_contract: {"kind":"list","ordered":false,"member":{"kind":"coordinates","arity":2}}
+            solution_sketch: 'Substitute $y = 4 - x$: $x^2 + (4 - x)^2 = 10$, so $2x^2 - 8x + 6 = 2(x - 1)(x - 3) = 0$. Then $x = 1$ or $x = 3$, and the points are $(1, 3)$ and $(3, 1)$.'
+        constraints: 'circles centred at the origin; substitute the line and solve the quadratic, or count 0, 1 or 2 intersections, or find the value that makes the line tangent; contexts with a radar range or a path along a pond'
       - id: kp3
-        name: Conic and conic
+        name: 'Conic and conic'
         key_prerequisites: [equations-of-circles, quadratic-equations-factoring]
-        constraints: "eliminate by substitution or by adding/subtracting the equations; integer or simple-radical intersections; reject roots inconsistent with a branch (e.g. y = x² forces y ≥ 0)"
+        step_check:
+          step: 'Since $u = x^2 \ge 0$, we take $u = \frac{-1 + \sqrt{101}}{2}$'
+          question: 'Why is the root $u = \frac{-1 - \sqrt{101}}{2}$ rejected?'
+          options:
+            - 'It is irrational, and only rational roots can be used'
+            - 'A negative root of a quadratic is always extraneous'
+            - 'It equals $x^2$, which cannot be negative for a real $x$'
+            - 'The second root gives a value of $y$ that fails the circle equation'
+          answer: 'It equals $x^2$, which cannot be negative for a real $x$'
+          why: 'Here $u = x^2$, and a real number squared is never negative. The root $\frac{-1 - \sqrt{101}}{2}$ is negative, so no real $x$ gives it; only $u = \frac{-1 + \sqrt{101}}{2}$ is used.'
         exemplars:
           - problem: 'Solve the system $x^2 + y^2 = 20$ and $y = x^2$.'
-            answer: "(2, 4) and (-2, 4)"
-            answer_contract: {kind: list, ordered: false, member: {kind: coordinates, arity: 2}}
-            solution_sketch: '$y + y^2 = 20$ gives $y = 4$ or $y = -5$; reject $y = -5$ since $y = x^2 \ge 0$, then $x = \pm 2$.'
+            answer: '(2, 4) and (-2, 4)'
+            answer_contract: {"kind":"list","ordered":false,"member":{"kind":"coordinates","arity":2}}
+            solution_sketch: 'Replace $x^2$ by $y$ in the circle equation: $y + y^2 = 20$, so $(y - 4)(y + 5) = 0$. Since $y = x^2 \ge 0$, reject $y = -5$. Then $y = 4$ gives $x = \pm 2$, so the points are $(2, 4)$ and $(-2, 4)$.'
           - problem: 'Solve the system $x^2 + y^2 = 9$ and $x^2 - y^2 = 9$.'
-            answer: "(3, 0) and (-3, 0)"
-            answer_contract: {kind: list, ordered: false, member: {kind: coordinates, arity: 2}}
-            solution_sketch: 'Adding gives $2x^2 = 18$, so $x = \pm 3$ and $y = 0$.'
-          - problem: 'What is the maximum number of points in which a circle and an ellipse can intersect?'
-            answer: "4"
+            answer: '(3, 0) and (-3, 0)'
+            answer_contract: {"kind":"list","ordered":false,"member":{"kind":"coordinates","arity":2}}
+            solution_sketch: 'Adding the equations gives $2x^2 = 18$, so $x = \pm 3$. Subtracting them gives $2y^2 = 0$, so $y = 0$. The points are $(3, 0)$ and $(-3, 0)$.'
+          - problem: 'Solve the system $x^2 + y^2 = 34$ and $x^2 - y^2 = 16$.'
+            answer: '(5, 3), (5, -3), (-5, 3) and (-5, -3)'
+            answer_contract: {"kind":"list","ordered":false,"member":{"kind":"coordinates","arity":2}}
+            solution_sketch: 'Adding the equations gives $2x^2 = 50$, so $x = \pm 5$. Subtracting them gives $2y^2 = 18$, so $y = \pm 3$. All four combinations work, so there are four points.'
+          - problem: 'What is the greatest number of points in which a circle and an ellipse can meet?'
+            answer: '4'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Eliminating one variable from two conic equations leaves an equation of degree at most $4$. So the two curves meet in at most $4$ points, and a circle and an ellipse can reach that number.'
+          - problem: 'A rectangular field has a diagonal of $13$ m and an area of $60$ square metres. What are the lengths of its sides, in metres?'
+            answer: '5, 12'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'With sides $x$ and $y$, $x^2 + y^2 = 169$ and $xy = 60$. Substituting $y = 60/x$ gives $x^4 - 169x^2 + 3600 = 0$, so $x^2 = 25$ or $x^2 = 144$. The sides are $5$ m and $12$ m.'
+          - problem: 'A radar station at the origin detects aircraft within $5$ km, so the edge of its range is $x^2 + y^2 = 25$. An aircraft flies along the parabola $y = x^2 - 5$, with $x$ and $y$ in kilometres. At which points does its path cross the edge of the range?'
+            answer: '(0, -5), (3, 4) and (-3, 4)'
+            answer_contract: {"kind":"list","ordered":false,"member":{"kind":"coordinates","arity":2}}
+            solution_sketch: 'Replace $x^2$ by $y + 5$ in the circle equation: $y + 5 + y^2 = 25$, so $(y - 4)(y + 5) = 0$. Both $y = 4$ and $y = -5$ are allowed because $y + 5 \ge 0$. Then $y = 4$ gives $x = \pm 3$ and $y = -5$ gives $x = 0$, so the points are $(0, -5)$, $(3, 4)$ and $(-3, 4)$.'
+          - problem: 'Sam says that $x^2 + y^2 = 6$ and $y = x^2$ meet in four points, two for each solution of $y^2 + y - 6 = 0$. In how many points do they actually meet?'
+            answer: '2'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The equation $y^2 + y - 6 = (y - 2)(y + 3) = 0$ gives $y = 2$ or $y = -3$. But $y = x^2 \ge 0$ rejects $y = -3$. Only $y = 2$ remains, with $x = \pm\sqrt{2}$, so there are $2$ points.'
+        constraints: 'eliminate by substitution or by adding and subtracting the equations; integer or simple-radical intersections; reject roots that do not fit a branch (for example y = x² forces y ≥ 0); contexts with a field, a flight path or a radar range'
     diagnostic_exemplar:
       problem: 'Solve the system $x^2 + y^2 = 25$ and $x^2 - y^2 = 7$.'
       answer: "(4, 3), (4, -3), (-4, 3), (-4, -3)"

@@ -4,10 +4,10 @@ module: "Constructions"
 topics:
   - id: straightedge-compass-constructions
     name: Basic Straightedge and Compass Constructions
-    core: false                # terminal construction craft; only prospective consumer is the supplemental abstract-algebra impossibility capstone
+    core: false
     difficulty: 0.42
     drill: false
-    answer_kind: numeric       # flipped from multi-step: exemplars are single-answer (labels with contracts / numerals), per the proven pattern
+    answer_kind: numeric
     expected_time_secs: 150
     prerequisites:
       - id: triangle-congruence-criteria
@@ -24,63 +24,126 @@ topics:
         key: false
     knowledge_points:
       - id: kp1
-        name: Copy a segment and copy an angle
+        name: 'Copy a segment and copy an angle'
         key_prerequisites: [triangle-congruence-criteria]
+        step_check:
+          step: 'Both arcs have the same opening, so $AB = PQ$ and $AC = PR$ in the two arc triangles.'
+          question: 'Why must the arcs at $A$ and at $P$ use the same radius?'
+          options:
+            - 'Equal radii give two pairs of equal sides, and the arc to arc distance gives the third'
+            - 'Equal radii make the two angles equal directly, by the definition of a circle, with no triangle used'
+            - 'Equal radii make the copied ray parallel to the original ray, and parallel rays fix the angle'
+            - 'Equal radii give the same arc length along the two sides, and equal arcs give equal angles'
+          answer: 'Equal radii give two pairs of equal sides, and the arc to arc distance gives the third'
+          why: 'The three pairs of equal sides make the two triangles congruent by SSS, which makes the angles equal. The angles are not equal by the definition of a circle, the rays are not parallel, and an arc length along unequal circles would not match.'
         exemplars:
-          - problem: 'In the copy-an-angle construction, an arc through both sides of $\angle A$ is copied at $P$, and the arc-to-arc distance is transferred. The two arc triangles then have three pairs of congruent sides. Which congruence criterion proves the copied angle is congruent to $\angle A$: SSS, SAS, ASA, or AAS?'
-            answer: 'SSS'
-            answer_contract: {kind: label, options: [[SSS], [SAS], [ASA], [AAS]]}
-            solution_sketch: 'Equal compass radii give two pairs of congruent sides; the transferred arc-to-arc distance gives the third. SSS plus corresponding parts.'
-          - problem: 'To copy a segment $\overline{AB}$ onto a ray with endpoint $P$, the compass is set to radius $AB$ and an arc is drawn with center $P$ meeting the ray at $Q$. Why is $\overline{PQ} \cong \overline{AB}$: both are radii of equal circles, both are diameters, they lie on parallel lines, or they share an endpoint?'
-            answer: 'both are radii of equal circles'
-            answer_contract: {kind: label, options: [['both are radii of equal circles'], ['both are diameters'], ['they lie on parallel lines'], ['they share an endpoint']]}
-            solution_sketch: 'The compass was set to $AB$, so the arc centered at $P$ has radius $AB$; $PQ$ is that radius, hence $PQ = AB$.'
-          - problem: 'In the copy-a-segment construction, how many arcs are drawn with the compass after it is set to radius $AB$: zero, one, two, or three?'
-            answer: "1"
-            solution_sketch: 'One arc with center $P$ marks the copy point $Q$ on the ray.'
-          - problem: 'A copied angle at $P$ has measure $52^\circ$. What is the measure of the original angle, in degrees?'
-            answer: "52"
-            solution_sketch: 'The construction produces a congruent copy, so the angles are equal.'
-        constraints: "steps must use only straightedge (line through two points) and compass (circle with chosen center and radius); every step names its center and radius; justification questions name a congruence criterion"
+          - problem: 'In the construction that copies $\angle A$ onto a ray from $P$, an arc centered at $A$ meets the two sides of the angle at $B$ and $C$. An arc of the same radius centered at $P$ meets the ray at $Q$, and an arc centered at $Q$ with radius $BC$ crosses it at $R$. Which congruence criterion shows that $\angle QPR \cong \angle BAC$?'
+            answer_contract: {"kind":"label","options":[["SSS congruence","SSS","side-side-side","side side side"],["SAS congruence","SAS","side-angle-side","side angle side"],["ASA congruence","ASA","angle-side-angle","angle side angle"],["hypotenuse-leg congruence","HL congruence","HL","hypotenuse leg"]]}
+            answer: 'SSS congruence'
+            solution_sketch: 'Triangles $ABC$ and $PQR$ have $AB = PQ$ and $AC = PR$, because both pairs are radii of arcs with the same opening, and $BC = QR$ because the third arc was set to $BC$. Three pairs of congruent sides give $\triangle ABC \cong \triangle PQR$ by SSS, and the angles at $A$ and $P$ correspond.'
+          - problem: 'In the construction that copies $\angle A$, the arc centered at $A$ has radius $3.5$ cm and meets the sides at $B$ and $C$, which are $4.2$ cm apart. The arc centered at $P$ also has radius $3.5$ cm and meets the new ray at $Q$. The next arc is centered at $Q$ and has radius $4.2$ cm, and it crosses the arc centered at $P$ at $R$. How far is $R$ from $P$, in centimetres?'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"cm","allow_omitted":true}
+            answer: '3.5'
+            solution_sketch: 'The point $R$ lies on the arc centered at $P$, so it is one radius from $P$. That radius is $3.5$ cm, and the arc centered at $Q$ only fixes which point of the first arc is $R$, with $QR = 4.2$ cm.'
+          - problem: 'A carpenter copies the pitch angle of an old roof onto a new plan. At the old vertex she scribes an arc of radius $8.0$ cm that meets the two arms $5.6$ cm apart. At the new vertex she scribes an arc of the same radius, which meets the new base line at $Q$. What compass opening, in centimetres, must she set to scribe the next arc from $Q$?'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"cm","allow_omitted":true}
+            answer: '5.6'
+            solution_sketch: 'The next arc must create a point $R$ whose distance from $Q$ equals the distance between the two marks on the old arms. That distance is $5.6$ cm, so she sets the compass to $5.6$ cm.'
+          - problem: 'A student copies an angle $\angle A$ that measures $50^\circ$ by first drawing an arc centered at $A$ that meets the sides at $B$ and $C$. What is the measure of $\angle ABC$, in degrees?'
+            answer_contract: {"kind":"unit","quantity":"angle","unit":"°","allow_omitted":true}
+            answer: '65'
+            solution_sketch: 'The points $B$ and $C$ lie on one arc centered at $A$, so $AB = AC$ and triangle $ABC$ is isosceles. The two base angles share $180 - 50 = 130$ degrees, so each measures $130 / 2 = 65$ degrees.'
+          - problem: 'A groundskeeper uses a $2.4$ m string as a compass to space posts along a straight line. She marks the second post with an arc from a peg at the first post, then moves the peg to the second post to mark the third, and continues until the sixth post is marked. How far is the sixth post from the first, in metres?'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"m","allow_omitted":true}
+            answer: '12'
+            solution_sketch: 'Each arc copies the $2.4$ m length once, and posts $1$ to $6$ are separated by $5$ such steps. The distance is $5 \cdot 2.4 = 12$ m.'
+          - problem: 'A student copies $\angle A$ by drawing the arc at $A$ with radius $4$ cm, which meets the sides at $B$ and $C$. At the new vertex $P$ she draws the first arc with radius $5$ cm and then finishes the construction as usual with an opening of $BC$. Is the angle at $P$ that she constructs congruent to $\angle A$?'
+            answer_contract: {"kind":"label","options":[["no","no, it is not congruent","it is not congruent","not congruent"],["yes","yes, it is congruent","it is congruent","congruent"]]}
+            answer: 'no'
+            solution_sketch: 'The two arc triangles have sides $4$, $4$, $BC$ at $A$ and $5$, $5$, $BC$ at $P$, so they are not congruent. The angle at $P$ is smaller than $\angle A$, so the copy fails unless both arcs have the same radius.'
+        constraints: 'steps use only a straightedge (line through two points) and a compass (circle with chosen center and radius); every step names its center and radius; justification items name a congruence criterion; numeric items ask for lengths or angles that the construction fixes'
       - id: kp2
-        name: Bisect a segment (perpendicular bisector)
+        name: 'Bisect a segment (perpendicular bisector)'
         key_prerequisites: [perpendicular-bisectors, triangle-congruence-criteria]
+        step_check:
+          step: 'Every point of that arc is 8 units from B.'
+          question: 'Why is every point of the arc centered at $B$ the same distance from $B$?'
+          options:
+            - 'The arc is drawn from the midpoint of $AB$, so each point is equally far from both ends'
+            - 'The arc crosses the other arc, and a crossing point is equidistant from the two centers'
+            - 'The arc is part of a circle, and every point of a circle is one radius from its center'
+            - 'The arc is drawn with the straightedge, so its points are on a line at a fixed distance'
+          answer: 'The arc is part of a circle, and every point of a circle is one radius from its center'
+          why: 'A circle is the set of points at one fixed distance, the radius, from its center. The arc is centered at $B$, not at the midpoint, and being equidistant from both centers holds only for the crossing points.'
         exemplars:
-          - problem: 'In the perpendicular-bisector construction, the crossing points $X$ and $Y$ satisfy $XA = XB$ and $YA = YB$. Why is line $XY$ the perpendicular bisector of $\overline{AB}$: both points are equidistant from $A$ and $B$, the line is vertical, $XY = AB$, or the arcs are congruent?'
-            answer: 'both points are equidistant from A and B'
-            answer_contract: {kind: label, options: [['both points are equidistant from A and B'], ['the line is vertical'], ['XY = AB'], ['the arcs are congruent']]}
-            solution_sketch: 'Points equidistant from $A$ and $B$ lie on the perpendicular bisector, so the line through $X$ and $Y$ is it.'
-          - problem: 'Constructing the perpendicular bisector of $\overline{AB}$, a student uses arcs of radius $5$ from both endpoints, with $AB = 8$. How far from $A$ is each crossing point $X$ (in the same units)?'
-            answer: "5"
-            solution_sketch: '$X$ lies on the arc centered at $A$ of radius $5$, so $XA = 5$ (and $XB = 5$ as well).'
-          - problem: 'When constructing a perpendicular bisector, the arc radius must be more than half the segment''s length. For $\overline{AB}$ with $AB = 10$, which radius works: $4$, $5$, $6$, or $0$?'
-            answer: "6"
-            answer_contract: {kind: label, options: [["4"], ["5"], ["6"], ["0"]]}
-            solution_sketch: 'The radius must exceed $10/2 = 5$ for the arcs to cross; $6$ works (and $5$ itself barely fails, giving arcs that touch at one point).'
-          - problem: 'The perpendicular bisector of $\overline{AB}$ with $AB = 14$ is constructed. What is the distance from the midpoint of $\overline{AB}$ to each endpoint?'
-            answer: "7"
-            solution_sketch: 'The perpendicular bisector passes through the midpoint, which is $14/2 = 7$ from each endpoint.'
-        constraints: "equal radii from both endpoints, radius exceeding half the segment; justification cites the equidistance characterization of the perpendicular bisector"
+          - problem: 'Arcs of equal radius centered at $A$ and at $B$ cross at $X$ and $Y$, so that $XA = XB$ and $YA = YB$. Which congruence criterion shows that triangles $XAY$ and $XBY$ are congruent?'
+            answer_contract: {"kind":"label","options":[["SSS congruence","SSS","side-side-side","side side side"],["SAS congruence","SAS","side-angle-side","side angle side"],["ASA congruence","ASA","angle-side-angle","angle side angle"],["hypotenuse-leg congruence","HL congruence","HL","hypotenuse leg"]]}
+            answer: 'SSS congruence'
+            solution_sketch: 'The triangles have $XA = XB$, $YA = YB$ and the shared side $XY$, which is three pairs of congruent sides. So $\triangle XAY \cong \triangle XBY$ by SSS, and then the angles at $X$ and at $Y$ are bisected by $XY$.'
+          - problem: 'A segment $\overline{AB}$ has $AB = 14$ cm. Arcs of radius $9$ cm centered at $A$ and at $B$ cross at $X$, and line $XY$ meets $\overline{AB}$ at its midpoint $M$. How long is $\overline{XM}$, in centimetres?'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"cm","allow_omitted":true,"form":"simplest_radical"}
+            answer: '4*sqrt(2)'
+            solution_sketch: 'The line $XY$ is the perpendicular bisector, so $XM \perp AB$ and $AM = 7$ cm. In right triangle $AMX$ the Pythagorean theorem gives $XM = \sqrt{9^2 - 7^2} = \sqrt{32} = 4\sqrt{2}$ cm.'
+          - problem: 'Two schools stand $600$ m apart on a straight road. A town wants a fountain at a point $X$ that is $500$ m from each school and lies on the perpendicular bisector of the segment joining the schools. How far is the fountain from the road, in metres?'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"m","allow_omitted":true}
+            answer: '400'
+            solution_sketch: 'The perpendicular bisector meets the road at the midpoint, which is $300$ m from each school. By the Pythagorean theorem the distance is $\sqrt{500^2 - 300^2} = \sqrt{160000} = 400$ m.'
+          - problem: 'A surveyor marks the centre line between two posts $A$ and $B$ that are $11$ m apart, using a string as a compass, cut to a whole number of metres and used with the same length at both posts. What is the shortest string length, in metres, for which the two arcs cross?'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"m","allow_omitted":true}
+            answer: '6'
+            solution_sketch: 'The arcs cross only if the string is longer than half of $AB$, which is $11 / 2 = 5.5$ m. The shortest whole number of metres above $5.5$ is $6$ m.'
+          - problem: 'A student bisects $\overline{AB}$ with $AB = 12$ cm, using arcs of radius $6$ cm centered at $A$ and at $B$. Do the arcs cross at two points, so that she can draw a line through them?'
+            answer_contract: {"kind":"label","options":[["no","no, they do not","they do not cross at two points","they only touch"],["yes","yes, they do","they cross at two points"]]}
+            answer: 'no'
+            solution_sketch: 'The radius $6$ cm equals half of $AB$, so the two arcs meet only at the midpoint of $\overline{AB}$. One touching point does not fix a line, so she needs a larger radius.'
+          - problem: 'Two arcs of equal radius centered at $A$ and at $B$ cross at $X$, and $\angle AXB$ measures $84^\circ$. What is the measure of $\angle XAB$, in degrees?'
+            answer_contract: {"kind":"unit","quantity":"angle","unit":"°","allow_omitted":true}
+            answer: '48'
+            solution_sketch: 'Both $XA$ and $XB$ are radii of equal arcs, so triangle $XAB$ is isosceles with apex $\angle AXB = 84^\circ$. The base angles share $180 - 84 = 96$ degrees, so $\angle XAB = 48$ degrees.'
+          - problem: 'A student constructs the perpendicular bisector of a segment $\overline{AB}$ with $AB = 10$ cm. She uses arcs of equal radius centered at $A$ and at $B$, which cross at $X$ and $Y$, and she measures $XY = 24$ cm. What radius did she use, in centimetres?'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"cm","allow_omitted":true}
+            answer: '13'
+            solution_sketch: 'The line $XY$ is the perpendicular bisector of $\overline{AB}$, so it meets $\overline{AB}$ at its midpoint $M$ with $XM = 12$ cm and $AM = 5$ cm. In right triangle $AMX$ the radius is $XA = \sqrt{12^2 + 5^2} = \sqrt{169} = 13$ cm.'
+        constraints: 'equal radii from both endpoints, with a radius greater than half the segment; justification cites the equidistance characterization of the perpendicular bisector or a congruence criterion; numeric items use right triangles or isosceles triangles formed by the arcs'
       - id: kp3
-        name: Bisect an angle; recognize invalid constructions
+        name: 'Bisect an angle; recognize invalid constructions'
         key_prerequisites: [angle-bisectors, triangle-congruence-criteria]
+        step_check:
+          step: 'Triangles $ABD$ and $ACD$ share $\overline{AD}$, with $AB = AC$ and $BD = CD$, so they are congruent.'
+          question: 'Why are triangles $ABD$ and $ACD$ congruent in the angle-bisector construction?'
+          options:
+            - 'Two pairs of sides and a right angle are equal, because the arcs cross at right angles'
+            - 'Three pairs of sides are equal: two pairs from equal-radius arcs and one shared side'
+            - 'Two pairs of angles are equal, because both arcs are centered at points on the sides'
+            - 'The triangles are reflections in the line $BC$, so they have the same area and shape'
+          answer: 'Three pairs of sides are equal: two pairs from equal-radius arcs and one shared side'
+          why: 'The equal radii and the shared side give three pairs of equal sides, so SSS applies. The arcs do not cross at right angles in general, no angle pairs are known before the congruence, and the line of reflection is $AD$, not $BC$.'
         exemplars:
-          - problem: 'In the angle-bisector construction, triangles $ABD$ and $ACD$ have $AB = AC$, $BD = CD$, and shared $\overline{AD}$. Which congruence criterion proves $\angle BAD \cong \angle CAD$: SSS, SAS, ASA, or AAS?'
-            answer: 'SSS'
-            answer_contract: {kind: label, options: [[SSS], [SAS], [ASA], [AAS]]}
-            solution_sketch: 'Three pairs of congruent sides (two from equal-radius arcs, one shared) give SSS, and CPCTC delivers the congruent angle halves.'
-          - problem: "A student bisects a 96 degree angle by reading the angle's size from the markings of a ruler and drawing the middle ray by eye. The allowed straightedge-and-compass fix instead draws an arc centered at the vertex meeting the sides at B and C, then two arcs of equal radius centered at B and C meeting at D, then the ray from the vertex through D. State the verdict on the student's method, and give the degree measure of each half angle in the fix."
-            answer: "verdict = invalid; angle = 48"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["valid"], ["invalid"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "angle"}]}
-            solution_sketch: "Step 1 (allowed moves): the only straightedge-and-compass moves are drawing a line through two located points, drawing a circle centered at a located point through another, and marking intersections; a marked ruler and judging by eye use none of these, so the verdict on the method is invalid. Step 2 (fix by angle bisector): the arc centered at the vertex meets the sides at B and C with AB = AC, the two equal-radius arcs centered at B and C meet at D, and triangles ABD and ACD are congruent by SSS, so the ray AD bisects the 96 degree angle. Step 3 (halves): each half angle is 96/2, so the full result is verdict = invalid; angle = 48."
-          - problem: 'The angle bisector of a $84^\circ$ angle splits it into two congruent angles. Find the measure of each, in degrees.'
-            answer: "42"
-            solution_sketch: '$84/2 = 42$.'
-          - problem: "In the straightedge-and-compass construction that bisects an angle, the first arc is drawn with the compass point at the vertex A of angle BAC, and this one arc crosses side AB at P and side AC at Q. If AP = 11 centimeters, find the sum AP + AQ in centimeters, and give the number only."
-            answer: "22"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1 (construction): the first arc of the angle-bisector construction is one arc of a single circle drawn with the compass point at the vertex A, and it meets side AB at P and side AC at Q. Step 2 (radii of one circle): P and Q both lie on this same circle centered at A, so AP and AQ are two radii of that circle and AP = AQ. Step 3 (sum): with AP = 11, we also have AQ = 11, so the sum AP + AQ = 22."
-        constraints: "invalid-construction items involve measuring with a marked ruler or judging by eye; the fix must restate the allowed straightedge and compass moves"
+          - problem: 'In the angle-bisector construction, an arc centered at the vertex $A$ meets the sides at $B$ and $C$, and arcs of equal radius centered at $B$ and at $C$ cross at $D$. Triangles $ABD$ and $ACD$ have $AB = AC$, $BD = CD$ and the shared side $\overline{AD}$. Which congruence criterion shows that $\angle BAD \cong \angle CAD$?'
+            answer_contract: {"kind":"label","options":[["SSS congruence","SSS","side-side-side","side side side"],["SAS congruence","SAS","side-angle-side","side angle side"],["ASA congruence","ASA","angle-side-angle","angle side angle"],["hypotenuse-leg congruence","HL congruence","HL","hypotenuse leg"]]}
+            answer: 'SSS congruence'
+            solution_sketch: 'The triangles have three pairs of congruent sides: $AB = AC$ from one arc, $BD = CD$ from the equal arcs, and the shared side $AD$. So $\triangle ABD \cong \triangle ACD$ by SSS, and the angles at $A$ are corresponding parts, so they are congruent.'
+          - problem: 'A carpenter bisects the $128^\circ$ angle between two roof planes on the plan, using a straightedge and compass. What angle does the bisector make with each plane, in degrees?'
+            answer_contract: {"kind":"unit","quantity":"angle","unit":"°","allow_omitted":true}
+            answer: '64'
+            solution_sketch: 'The bisector splits the angle into two congruent angles. Each of them measures $128 / 2 = 64$ degrees.'
+          - problem: 'In an angle-bisector construction, a $60^\circ$ angle has its vertex at $A$. An arc of radius $6$ cm centered at $A$ meets the sides at $B$ and $C$. Arcs of radius $6$ cm centered at $B$ and at $C$ cross at $A$ and at a second point $D$. How long is $\overline{AD}$, in centimetres?'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"cm","allow_omitted":true,"form":"simplest_radical"}
+            answer: '6*sqrt(3)'
+            solution_sketch: 'Triangle $ABC$ has $AB = AC = 6$ and a $60^\circ$ angle at $A$, so it is equilateral with $BC = 6$. Then $ABDC$ has four sides of $6$ cm, and its long diagonal is $AD = 2 \cdot 6 \cdot \cos 30^\circ = 6\sqrt{3}$ cm.'
+          - problem: 'The bisector of $\angle BAC$ is constructed with $\overrightarrow{AD}$ inside the angle, so that $m\angle BAD = (3x + 4)^\circ$ and $m\angle DAC = (5x - 12)^\circ$. What is the measure of $\angle BAC$, in degrees?'
+            answer_contract: {"kind":"unit","quantity":"angle","unit":"°","allow_omitted":true}
+            answer: '56'
+            solution_sketch: 'A bisector makes $\angle BAD \cong \angle DAC$, so $3x + 4 = 5x - 12$ and $x = 8$. Each part measures $28^\circ$, so $m\angle BAC = 28 + 28 = 56$ degrees.'
+          - problem: 'A frame for a pentagonal mirror has each corner joint cut along the bisector of the corner angle, found by a straightedge-and-compass construction. The cut line makes an angle of $54^\circ$ with one side of the corner. What is the full corner angle, in degrees?'
+            answer_contract: {"kind":"unit","quantity":"angle","unit":"°","allow_omitted":true}
+            answer: '108'
+            solution_sketch: 'The cut is the bisector, so it makes the same angle of $54^\circ$ with the other side. The full corner angle is $54 + 54 = 108$ degrees, which is the interior angle of a regular pentagon.'
+          - problem: 'A student bisects $\angle BAC$ by reading its size, $96^\circ$, from a protractor, working out $48^\circ$, and marking that angle from side $AB$ with the protractor. Is this a straightedge-and-compass construction of the bisector?'
+            answer_contract: {"kind":"label","options":[["no","no, it is not a construction","it is not a construction","not a construction"],["yes","yes, it is a construction","it is a construction","construction"]]}
+            answer: 'no'
+            solution_sketch: 'A construction may use only a straightedge to draw lines and a compass to draw circles. A protractor measures and marks angles, which a construction does not allow, so the method is not a construction even though $48^\circ$ is the right half.'
+        constraints: 'invalid-construction items involve measuring with a protractor or marked ruler, or judging by eye; the allowed moves are a line through two points and a circle with a chosen center and radius; numeric items fix angles or lengths from the equal-radius arcs'
     diagnostic_exemplar:
       problem: 'Describe the straightedge-and-compass steps that bisect a given angle $\angle A$, and name the congruence criterion that proves the two resulting angles are congruent.'
       answer: 'Arc from center $A$ crossing both sides at $B$ and $C$; equal arcs from centers $B$ and $C$ meeting at $D$; draw $\overrightarrow{AD}$. By SSS ($AB = AC$, $BD = CD$, $AD$ shared), $\triangle ABD \cong \triangle ACD$, so $\angle BAD \cong \angle CAD$.'
@@ -96,13 +159,13 @@ topics:
 
   - id: perpendicular-parallel-constructions
     name: Perpendicular, Parallel, and Polygon Constructions
-    core: false                # terminal construction craft; nothing downstream builds on it
+    core: false
     difficulty: 0.48
     drill: false
-    answer_kind: numeric       # flipped from multi-step: exemplars are single-answer (labels with contracts / numerals), per the proven pattern
+    answer_kind: numeric
     expected_time_secs: 180
     prerequisites:
-      - {id: isosceles-equilateral-triangles, weight: 0.3, key: false} # L1 #11: kp3's hexagon-side justification uses the isosceles base-angle theorem
+      - {id: isosceles-equilateral-triangles, weight: 0.3, key: false}
       - id: straightedge-compass-constructions
         weight: 0.8
         key: true
@@ -114,68 +177,134 @@ topics:
         key: false
     knowledge_points:
       - id: kp1
-        name: Perpendicular through a point
+        name: 'Perpendicular through a point'
         key_prerequisites: [straightedge-compass-constructions]
+        step_check:
+          step: 'The two arcs both have radius 6, so Q is 6 from A and 6 from B, and Q lies on the perpendicular bisector of AB.'
+          question: 'Why does the line through $P$ and $Q$ meet $\ell$ at a right angle?'
+          options:
+            - '$Q$ is the center of an arc that meets $\ell$ at $A$ and at $B$, so $QP$ must be a radius'
+            - '$P$ is the midpoint of $AB$, and every line through a midpoint meets the segment at $90^\circ$'
+            - '$QP$ is the longest segment from $Q$ to $\ell$, and the longest segment is the perpendicular one'
+            - '$P$ and $Q$ are each equidistant from $A$ and $B$, so $PQ$ is the perpendicular bisector'
+          answer: '$P$ and $Q$ are each equidistant from $A$ and $B$, so $PQ$ is the perpendicular bisector'
+          why: 'Two points that are each equally far from $A$ and $B$ determine the perpendicular bisector of $\overline{AB}$, and $\ell$ contains $AB$. A line through a midpoint can be slanted, and the perpendicular from a point is the shortest segment, not the longest.'
         exemplars:
-          - problem: 'To construct the perpendicular to line $\ell$ through a point $P$ on $\ell$, arcs of equal radius from two points $A$ and $B$ on $\ell$ (with $P$ their midpoint) are drawn to meet at $Q$. Why is $PQ \perp \ell$: $P$ and $Q$ are equidistant from $A$ and $B$, $PQ = AB$, the arcs are congruent, or $Q$ is far away?'
-            answer: 'P and Q are equidistant from A and B'
-            answer_contract: {kind: label, options: [['P and Q are equidistant from A and B'], ['PQ = AB'], ['the arcs are congruent'], ['Q is far away']]}
-            solution_sketch: 'Two points equidistant from $A$ and $B$ define the perpendicular bisector of $\overline{AB}$, which is perpendicular to $\ell$ at $P$.'
-          - problem: 'In the perpendicular-through-$P$ construction ($P$ off the line), the first arc centered at $P$ crosses $\ell$ at $A$ and $B$. What kind of triangle is $PAB$: equilateral, isosceles, or scalene?'
-            answer: 'isosceles'
-            answer_contract: {kind: label, options: [[equilateral], [isosceles], [scalene]]}
-            solution_sketch: '$PA = PB$ because both are radii of the same arc, so $\triangle PAB$ is isosceles.'
-          - problem: 'The perpendicular to $\ell$ through $P$ is constructed, meeting $\ell$ at $90^\circ$. If a line makes a $35^\circ$ angle with $\ell$ at that point, how many degrees short of perpendicular is it (i.e. what is $90$ minus that angle)?'
-            answer: "55"
-            solution_sketch: '$90 - 35 = 55$; a perpendicular must make exactly $90^\circ$.'
-          - problem: 'In the perpendicular construction, equal arcs from centers $A$ and $B$ meet at $Q$ on the far side of $\ell$. Which fact makes $QA = QB$: equal compass radii, the arcs are vertical, $Q$ lies on $\ell$, or the arcs share a center?'
-            answer: 'equal compass radii'
-            answer_contract: {kind: label, options: [['equal compass radii'], ['the arcs are vertical'], ['Q lies on l'], ['the arcs share a center']]}
-            solution_sketch: 'Both arcs were drawn with the same radius, so $Q$ (on each arc) is equidistant from $A$ and $B$.'
-        constraints: "both cases: point on the line and point off the line; single-answer items (numeric angle/length facts or label-contract justifications citing the perpendicular-bisector characterization)"
+          - problem: 'To construct the perpendicular to line $\ell$ through a point $P$ on $\ell$, a student marks $A$ and $B$ on $\ell$ with $P$ midway between them and $AB = 8$ cm. She draws arcs of radius $6$ cm centered at $A$ and at $B$, and they cross at $Q$. How long is $\overline{QP}$, in centimetres?'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"cm","allow_omitted":true,"form":"simplest_radical"}
+            answer: '2*sqrt(5)'
+            solution_sketch: 'The point $Q$ is $6$ cm from both $A$ and $B$, so $QP$ is the perpendicular to $\ell$ at the midpoint $P$, and $AP = 4$ cm. By the Pythagorean theorem $QP = \sqrt{6^2 - 4^2} = \sqrt{20} = 2\sqrt{5}$ cm.'
+          - problem: 'In the construction of the perpendicular to $\ell$ through a point $P$ on $\ell$, equal arcs centered at $A$ and $B$ on $\ell$, with $P$ midway between them, meet at $Q$. Which congruence criterion shows that triangles $QPA$ and $QPB$ are congruent, so that $\angle QPA \cong \angle QPB$?'
+            answer_contract: {"kind":"label","options":[["SSS congruence","SSS","side-side-side","side side side"],["SAS congruence","SAS","side-angle-side","side angle side"],["ASA congruence","ASA","angle-side-angle","angle side angle"],["hypotenuse-leg congruence","HL congruence","HL","hypotenuse leg"]]}
+            answer: 'SSS congruence'
+            solution_sketch: 'The triangles have $QA = QB$ from the equal arcs, $PA = PB$ because $P$ is midway between $A$ and $B$, and the shared side $QP$. Three pairs of congruent sides give SSS, so $\angle QPA \cong \angle QPB$, and as a linear pair they are both right angles.'
+          - problem: 'A groundskeeper lays out a fence line perpendicular to a straight road at a post $P$. She marks stakes $A$ and $B$ on the road $5$ m on each side of $P$, then swings a $13$ m string from each stake, and the two arcs cross at $Q$. How far is $Q$ from the road, in metres?'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"m","allow_omitted":true}
+            answer: '12'
+            solution_sketch: 'The point $Q$ is $13$ m from both stakes, so the line $QP$ is perpendicular to the road and $QP$ is the distance from $Q$ to the road. Then $QP = \sqrt{13^2 - 5^2} = \sqrt{144} = 12$ m.'
+          - problem: 'A buoy $P$ floats off a straight shoreline $\ell$. An arc of radius $17$ m centered at $P$ meets the shoreline at $A$ and $B$, which are $16$ m apart. Equal arcs centered at $A$ and $B$ then give the perpendicular from $P$ to $\ell$. How far is the buoy from the shoreline, in metres?'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"m","allow_omitted":true}
+            answer: '15'
+            solution_sketch: 'The perpendicular from $P$ meets $\overline{AB}$ at its midpoint $M$, so $AM = 8$ m. In right triangle $PMA$ the distance is $PM = \sqrt{17^2 - 8^2} = \sqrt{225} = 15$ m.'
+          - problem: 'In the construction of the perpendicular to $\ell$ through a point $P$ that is not on $\ell$, a student sets the first arc centered at $P$ with a radius of $3$ cm, but $P$ is $4$ cm from $\ell$. Can she mark the two points $A$ and $B$ on $\ell$ with this arc?'
+            answer_contract: {"kind":"label","options":[["no","no, she cannot","the arc does not reach the line","it does not reach"],["yes","yes, she can","the arc reaches the line"]]}
+            answer: 'no'
+            solution_sketch: 'Every point of the arc is $3$ cm from $P$, but the nearest point of $\ell$ is $4$ cm from $P$. So the arc does not reach $\ell$, and she needs a radius greater than $4$ cm.'
+          - problem: 'In the construction of the perpendicular from a point $P$ that is not on $\ell$, the first arc centered at $P$ meets $\ell$ at $A$ and $B$, and $\angle APB$ measures $70^\circ$. The perpendicular from $P$ meets $\ell$ at $M$. What is the measure of $\angle APM$, in degrees?'
+            answer_contract: {"kind":"unit","quantity":"angle","unit":"°","allow_omitted":true}
+            answer: '35'
+            solution_sketch: 'Both $PA$ and $PB$ are radii of the same arc, so triangle $PAB$ is isosceles. The perpendicular from the apex $P$ bisects the apex angle, so $\angle APM = 70 / 2 = 35$ degrees.'
+          - problem: 'A line $\ell$ holds points $A$ and $B$ with $AB = 10$ cm, with the midpoint $P$. Arcs of radius $13$ cm centered at $A$ and at $B$ cross at $Q$, so $QP$ is perpendicular to $\ell$. What is the area of triangle $QAB$, in square centimetres?'
+            answer_contract: {"kind":"unit","quantity":"area","unit":"cm^2","allow_omitted":true}
+            answer: '60'
+            solution_sketch: 'The height $QP$ is $\sqrt{13^2 - 5^2} = 12$ cm, since $AP = 5$ cm. The area is $\frac{1}{2} \cdot 10 \cdot 12 = 60$ square centimetres.'
+        constraints: 'both cases: point on the line and point off the line; justification items name a congruence criterion or the perpendicular-bisector characterization; numeric items use right triangles formed by the arcs; construction-failure items check radius conditions'
       - id: kp2
-        name: Parallel through a point by copying an angle
+        name: 'Parallel through a point by copying an angle'
         key_prerequisites: [straightedge-compass-constructions, proving-lines-parallel]
+        step_check:
+          step: 'Congruent corresponding angles make the new line through P parallel to ℓ.'
+          question: 'Why do congruent corresponding angles make the new line through $P$ parallel to $\ell$?'
+          options:
+            - 'Lines cut by a transversal are parallel if corresponding angles are congruent'
+            - 'The angles add up to $180^\circ$, and lines with this sum cannot meet anywhere'
+            - 'The angles are vertical angles, and vertical angles lie only on parallel lines'
+            - 'Both angles are right angles, and two perpendiculars to a line are parallel'
+          answer: 'Lines cut by a transversal are parallel if corresponding angles are congruent'
+          why: 'This is the converse of the corresponding angles postulate. Corresponding angles do not need to add up to $180^\circ$, they are not vertical angles, and they need not be right angles.'
         exemplars:
-          - problem: 'The parallel construction copies at $P$ the angle formed at $Q$, in corresponding position. Which theorem proves the constructed line is parallel to $\ell$: the converse of the corresponding angles postulate, the Pythagorean theorem, the triangle angle sum, or the definition of a bisector?'
-            answer: 'the converse of the corresponding angles postulate'
-            answer_contract: {kind: label, options: [['the converse of the corresponding angles postulate'], ['the Pythagorean theorem'], ['the triangle angle sum'], ['the definition of a bisector']]}
-            solution_sketch: 'The copied angle equals the original (SSS on the copy construction), so corresponding angles are congruent and the converse applies.'
-          - problem: 'A copied angle at $P$ makes congruent corresponding angles with a transversal crossing $\ell$ at $Q$. If the angle at $Q$ measures $48^\circ$, what is the measure of the copied angle at $P$, in degrees?'
-            answer: "48"
-            solution_sketch: 'The copy is congruent to the original by SSS, so both measure $48^\circ$.'
-          - problem: 'To copy the angle at $Q$ onto point $P$, the first arc is centered at: $P$, $Q$, or the intersection of the two lines?'
-            answer: 'Q'
-            answer_contract: {kind: label, options: [[P], [Q], ['the intersection of the two lines']]}
-            solution_sketch: 'The angle being copied lives at $Q$, so the arc cutting both of its sides is centered at $Q$.'
-          - problem: 'After copying the angle at $P$ in corresponding position, the new line through $P$ is parallel to $\ell$. What postulate''s converse guarantees this: corresponding angles, vertical angles, or the linear pair postulate?'
-            answer: 'corresponding angles'
-            answer_contract: {kind: label, options: [['corresponding angles'], ['vertical angles'], ['the linear pair postulate']]}
-            solution_sketch: 'Congruent corresponding angles force parallel lines — the converse of the corresponding angles postulate.'
-        constraints: "the justification must name the converse used (corresponding angles, or alternate interior angles if the copy is placed in alternate position)"
+          - problem: 'A line through $P$ is constructed by copying, at $P$ and in the corresponding position, the angle that a transversal makes with $\ell$ at $Q$. Which theorem proves that the new line is parallel to $\ell$?'
+            answer_contract: {"kind":"label","options":[["corresponding angles converse","converse of the corresponding angles postulate","the converse of the corresponding angles postulate","if corresponding angles are congruent, the lines are parallel"],["alternate interior angles theorem","the alternate interior angles theorem"],["triangle angle sum theorem","the triangle angle sum theorem"],["Pythagorean theorem","the Pythagorean theorem"]]}
+            answer: 'corresponding angles converse'
+            solution_sketch: 'The copy is congruent to the angle at $Q$, so the two corresponding angles formed by the transversal are congruent. If corresponding angles are congruent, then the lines are parallel, which is the converse of the corresponding angles postulate.'
+          - problem: 'A transversal crosses $\ell$ at $Q$ and makes an angle of $(4x + 8)^\circ$ there. The angle is copied at $P$ in the corresponding position, and the copy measures $(5x - 6)^\circ$. What is the measure of the angle at $Q$, in degrees?'
+            answer_contract: {"kind":"unit","quantity":"angle","unit":"°","allow_omitted":true}
+            answer: '64'
+            solution_sketch: 'The copy is congruent to the original, so $4x + 8 = 5x - 6$ and $x = 14$. The angle at $Q$ measures $4(14) + 8 = 64$ degrees, and the copy measures $5(14) - 6 = 64$ degrees.'
+          - problem: 'A carpenter wants a rafter through a point $P$ parallel to a straight beam $\ell$. A brace through $P$ meets the beam at $Q$ at an angle of $58^\circ$, and she copies this angle at $P$ in the corresponding position. What is the measure of the angle at $P$ that forms a straight line with the copied angle, in degrees?'
+            answer_contract: {"kind":"unit","quantity":"angle","unit":"°","allow_omitted":true}
+            answer: '122'
+            solution_sketch: 'The copied angle measures $58^\circ$, like the original. The angle that forms a straight line with it is its linear pair, so it measures $180 - 58 = 122$ degrees.'
+          - problem: 'A student copies the $70^\circ$ angle at $Q$ onto $P$ in the corresponding position, but her compass slips on the last arc and the copy measures $72^\circ$. Is the line through $P$ that she draws parallel to $\ell$?'
+            answer_contract: {"kind":"label","options":[["no","no, it is not parallel","it is not parallel","not parallel"],["yes","yes, it is parallel","it is parallel","parallel"]]}
+            answer: 'no'
+            solution_sketch: 'Lines are parallel only if the corresponding angles are congruent, and $70^\circ$ and $72^\circ$ differ. So the line she draws meets $\ell$ at a point far away and is not parallel to it.'
+          - problem: 'A shelf bracket $\overline{PQ}$ is $9$ cm long, with $Q$ on a straight wall rail $\ell$, and it meets the rail at an angle of $30^\circ$. A line $m$ through $P$ is constructed parallel to $\ell$ by copying the angle. How far is $m$ from $\ell$, in centimetres?'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"cm","allow_omitted":true}
+            answer: '4.5'
+            solution_sketch: 'The lines are parallel, so the distance between them is the height of $P$ above $\ell$. That height is $9 \sin 30^\circ = 9 \cdot \frac{1}{2} = 4.5$ cm.'
+          - problem: 'A transversal makes an angle of $(5x - 7)^\circ$ with $\ell$ at $Q$. A parallel line through $P$ is constructed by copying the angle in the alternate interior position, and the copy measures $(3x + 19)^\circ$. What is the measure of the copied angle, in degrees?'
+            answer_contract: {"kind":"unit","quantity":"angle","unit":"°","allow_omitted":true}
+            answer: '58'
+            solution_sketch: 'The copy is congruent to the original, so $5x - 7 = 3x + 19$ and $x = 13$. The copied angle measures $3(13) + 19 = 58$ degrees, and the angle at $Q$ is $5(13) - 7 = 58$ degrees.'
+        constraints: 'the justification names the converse used (corresponding angles, or alternate interior angles if the copy is placed in alternate position); numeric items use the congruence of the copy and the angle pairs formed by the transversal'
       - id: kp3
-        name: Equilateral triangle and regular hexagon
+        name: 'Equilateral triangle and regular hexagon'
         key_prerequisites: [straightedge-compass-constructions, central-angles-arcs]
+        step_check:
+          step: 'Each side of the hexagon spans a central angle of 60 degrees, since 360 divided by 6 is 60.'
+          question: 'Why does a central angle of $60^\circ$ make the side of the hexagon equal to the radius?'
+          options:
+            - 'The side is a diameter of a smaller circle, and a diameter is always twice its radius'
+            - 'The two radii are equal, so the other two angles of the triangle are equal and also $60^\circ$'
+            - 'The arc of $60^\circ$ is one sixth of the circle, so the side is one sixth of the circumference'
+            - 'The triangle is right-angled at the center, so the radius is a leg and the side a hypotenuse'
+          answer: 'The two radii are equal, so the other two angles of the triangle are equal and also $60^\circ$'
+          why: 'The base angles of an isosceles triangle are equal, so each is $(180 - 60) / 2 = 60$ degrees, and an equiangular triangle is equilateral. The side is a chord, not a share of the circumference, and the angle at the center is not a right angle.'
         exemplars:
-          - problem: 'An equilateral triangle is constructed on $\overline{AB}$ by arcs of radius $AB$ centered at $A$ and $B$ meeting at $C$. Why are all three sides congruent: $AC$ and $BC$ are both radii equal to $AB$, the triangle is isosceles, $AB$ is the longest side, or $C$ is equidistant from the arcs?'
-            answer: 'AC and BC are both radii equal to AB'
-            answer_contract: {kind: label, options: [['AC and BC are both radii equal to AB'], ['the triangle is isosceles'], ['AB is the longest side'], ['C is equidistant from the arcs']]}
-            solution_sketch: '$AC$ is a radius of the circle centered at $A$, $BC$ of the circle centered at $B$, and both circles have radius $AB$ — so all three sides equal $AB$.'
-          - problem: 'A regular hexagon is inscribed in a circle of radius $r$ by stepping the compass around it. Its side length equals the radius. Answer with one word: radius or diameter?'
-            answer: 'radius'
-            answer_contract: {kind: label, options: [[radius], [diameter]]}
-            solution_sketch: 'Each side subtends a central angle of $360^\circ/6 = 60^\circ$; the triangle formed by two radii and one side is isosceles with a $60^\circ$ apex, hence equilateral, so the side equals $r$.'
-          - problem: 'How many times is the compass stepped around the circle to construct a regular hexagon?'
-            answer: "6"
-            solution_sketch: 'A hexagon has six sides, each cut off by stepping the radius around the circle six times.'
-          - problem: 'In the hexagon construction, each side subtends a central angle of $60^\circ$. How many such angles fill the full circle, in degrees?'
-            answer: "360"
-            solution_sketch: 'Six arcs of $60^\circ$ each: $6 \cdot 60 = 360$.'
-        constraints: "figures limited to equilateral triangle, inscribed regular hexagon, and inscribed square via perpendicular diameters; justification uses radii equality and central angles"
+          - problem: 'An equilateral triangle is constructed on a segment $\overline{AB}$ with $AB = 5.5$ cm. Arcs of radius $AB$ centered at $A$ and at $B$ meet at $C$. What is the perimeter of triangle $ABC$, in centimetres?'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"cm","allow_omitted":true}
+            answer: '16.5'
+            solution_sketch: 'The point $C$ is on both arcs, so $AC = AB$ and $BC = AB$, and all three sides measure $5.5$ cm. The perimeter is $3 \cdot 5.5 = 16.5$ cm.'
+          - problem: 'A hexagonal gazebo floor is laid out by stepping a $4$ m string six times around a circle of radius $4$ m, so that the six marked points are the corners. What is the area of the floor, in square metres?'
+            answer_contract: {"kind":"unit","quantity":"area","unit":"m^2","allow_omitted":true}
+            answer: '24*sqrt(3)'
+            solution_sketch: 'The six steps of $4$ m cut the circle into six equilateral triangles with side $4$ m. Each has area $\frac{\sqrt{3}}{4} \cdot 4^2 = 4\sqrt{3}$, so the floor has area $6 \cdot 4\sqrt{3} = 24\sqrt{3}$ square metres.'
+          - problem: 'A regular hexagon is built by stepping the radius of a circle six times around the circle. Each side and the two radii to its ends form a triangle. What is the measure of each interior angle of the hexagon at a corner, in degrees?'
+            answer_contract: {"kind":"unit","quantity":"angle","unit":"°","allow_omitted":true}
+            answer: '120'
+            solution_sketch: 'Each triangle has three sides equal to the radius, so it is equilateral with $60^\circ$ angles. At a corner two such angles meet, so the interior angle is $60 + 60 = 120$ degrees.'
+          - problem: 'A student steps a compass set to $5$ cm around a circle of radius $6$ cm, hoping to mark the corners of a regular hexagon. Do the six steps return exactly to the starting point?'
+            answer_contract: {"kind":"label","options":[["no","no, they do not","they do not return to the start","not exactly"],["yes","yes, they do","they return to the start"]]}
+            answer: 'no'
+            solution_sketch: 'Only a compass opening equal to the radius, $6$ cm here, makes each step span $60^\circ$ of the circle. A $5$ cm opening spans about $49^\circ$ per step, so six steps cover about $295^\circ$ and stop short of the start.'
+          - problem: 'A square is inscribed in a circle of radius $5$ cm by drawing two perpendicular diameters and joining their endpoints. What is the side length of the square, in centimetres?'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"cm","allow_omitted":true,"form":"simplest_radical"}
+            answer: '5*sqrt(2)'
+            solution_sketch: 'Two neighboring corners and the center form a right triangle with legs of $5$ cm, the radii. The side is the hypotenuse, $\sqrt{5^2 + 5^2} = \sqrt{50} = 5\sqrt{2}$ cm.'
+          - problem: 'A park bed is a regular hexagon laid out by stepping a $2.5$ m rope six times around a centre stake. How much edging, in metres, goes around the bed?'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"m","allow_omitted":true}
+            answer: '15'
+            solution_sketch: 'The side of the hexagon equals the radius of the circle, which is the $2.5$ m rope. The edging has length $6 \cdot 2.5 = 15$ m.'
+          - problem: 'Joining every second corner of a regular hexagon, built by stepping a compass around a circle, gives a triangle inside the circle. Is this triangle equilateral?'
+            answer_contract: {"kind":"label","options":[["yes","yes, it is equilateral","it is equilateral","equilateral"],["no","no, it is not equilateral","it is not equilateral","not equilateral"]]}
+            answer: 'yes'
+            solution_sketch: 'Each side of this triangle joins two corners that are two steps apart, so it spans $120^\circ$ of the circle. All three sides span the same arc, so they are congruent chords and the triangle is equilateral.'
+        constraints: 'figures limited to the equilateral triangle, the regular hexagon inscribed by stepping the radius, and the inscribed square built from perpendicular diameters; justification uses radii equality and central angles; numeric items ask for perimeters, areas, or angles of these figures'
     diagnostic_exemplar:
-      problem: 'To construct the line through $P$ parallel to $\ell$ ($P$ not on $\ell$), a transversal through $P$ meets $\ell$ at $Q$, and the angle the transversal makes at $Q$ is copied at $P$ in corresponding position (the copy is congruent by SSS). Which theorem proves the new line through $P$ is parallel to $\ell$: the converse of the corresponding angles postulate, the vertical angles theorem, the triangle angle sum, or the definition of a bisector?'
-      answer: 'the converse of the corresponding angles postulate'
-      answer_contract: {kind: label, options: [['the converse of the corresponding angles postulate'], ['the vertical angles theorem'], ['the triangle angle sum'], ['the definition of a bisector']]}
+      problem: 'To construct the line through $P$ parallel to $\ell$ ($P$ not on $\ell$), a transversal through $P$ meets $\ell$ at $Q$, and the angle the transversal makes at $Q$ is copied at $P$ in corresponding position (the copy is congruent by SSS). Which theorem proves that the new line through $P$ is parallel to $\ell$?'
+      answer: 'converse of the corresponding angles postulate'
+      answer_contract: {"kind":"label","options":[["converse of the corresponding angles postulate","the converse of the corresponding angles postulate","corresponding angles converse"],["vertical angles theorem","the vertical angles theorem"],["triangle angle sum theorem","the triangle angle sum"],["definition of a bisector","the definition of a bisector"]]}
       solution_sketch: 'Copying the angle makes congruent corresponding angles with the transversal, and congruent corresponding angles force parallel lines — the converse of the corresponding angles postulate.'
     anki_seeds:
       - front: "The side of a regular hexagon inscribed in a circle of radius r has length..."

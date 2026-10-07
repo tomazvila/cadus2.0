@@ -23,89 +23,157 @@ topics:
       - id: kp1
         name: "Definition and verifying the axioms"
         key_prerequisites: [elementary-group-properties, permutations-cycle-notation]
+        try_first:
+          problem: 'A dial has the positions $0,1,\dots,11$. Turning it $7$ steps clockwise and then $8$ more steps clockwise moves it from position $0$ to which position?'
+          answer_contract: {"kind": "exact"}
+          answer: '3'
+          reveal: 'Two turns act as one turn by $7+8 = 15 \equiv 3$ steps, so the dial stops at position $3$. This is the second axiom of an action: acting by $h$ and then by $g$ equals acting once by the product.'
+        step_check:
+          step: 'Check the compatibility axiom'
+          question: 'Why does this step compute $g\cdot(h\cdot x)$ and compare it with $(gh)\cdot x$?'
+          options:
+            - 'The axiom says that $g\cdot(h\cdot x)$ must equal $g\cdot x$ for every element $h$ of the group'
+            - 'The axiom says that acting by $h$ and then by $g$ equals acting once by the product $gh$'
+            - 'The axiom says that $g\cdot(h\cdot x)$ must equal $h\cdot(g\cdot x)$ for all $g$ and $h$'
+            - 'The axiom says that $g\cdot x = x$ must hold for every element $g$ of the group'
+          answer: 'The axiom says that acting by $h$ and then by $g$ equals acting once by the product $gh$'
+          why: 'The second axiom says that acting by $h$ and then by $g$ is the same as acting once by $gh$; it does not make the group commute, and it does not ask $g$ to fix points.'
         exemplars:
-          - problem: "Let G = Z/6 with addition mod 6 act on X = Z/6 by g.x = x + g mod 6. State which outcome applies, and give 0 if it is an action or the smallest positive g that breaks the second rule if it is not."
-            answer: "verdict = valid; n = 0"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["valid"], ["identity"], ["compose"], ["closure"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "n"}]}
-            solution_sketch: "The full object is the operation g.x = x + g mod 6 on Z/6. Identity step: 0.x = x + 0 = x, so identity holds and the identity option is wrong. Compose step: g.(h.x) = (x+h)+g = x+h+g and (g+h).x = x+(g+h) = x+g+h, so the two sides are equal and the compose option is wrong. Closure step: x+g is still in Z/6, so the closure option is wrong. The answer is verdict = valid; n = 0."
-          - problem: "In the dihedral group D3, label the elements 0=e, 1=r, 2=r^2, 3=s, 4=rs, 5=r^2 s. Define a proposed operation on X=D3 by g.x = xg. State which outcome applies, and give 0 if it is an action or the smallest positive label g that breaks the second rule if it is not."
-            answer: "verdict = compose; n = 1"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["valid"], ["identity"], ["compose"], ["closure"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "n"}]}
-            solution_sketch: "The full object is the operation g.x = xg on D3. Identity step: 0.x = x0 = x, so identity holds and the identity option is wrong. Compose step: for g=1 and h=3 with x=0, g.(h.x) = 1.(3.0) = 1.3 = s r = 5, while (gh).x = (1*3).0 = rs = 4, so the compose option is correct. Closure step: every product stays in D3, so the closure option is wrong. The valid option is wrong because the compose failure shows the operation is not an action. The answer is verdict = compose; n = 1."
-          - problem: "In the dihedral group D3, label the elements 0=e, 1=r, 2=r^2, 3=s, 4=rs, 5=r^2 s. The operation g.x = x g^(-1) is an action on X=D3. Compute the label of 4.(1.3)."
-            answer: "0"
+          - problem: 'The group $\mathbb{Z}_6$ with addition modulo $6$ acts on the set $X=\mathbb{Z}_6$ by $g\cdot x = x+g \bmod 6$. Does this rule define an action of the group on $X$?'
+            answer: 'yes'
+            answer_contract: {"kind": "label", "options": [["yes", "it is an action", "it is a group action", "it defines an action", "valid"], ["no", "it is not an action", "not an action", "it does not define an action", "invalid"]]}
+            solution_sketch: 'The identity $0$ gives $0\cdot x = x+0 = x$, so the first axiom holds. For the second, $g\cdot(h\cdot x) = (x+h)+g = x+(g+h) = (g+h)\cdot x$ modulo $6$, and the result stays in $\mathbb{Z}_6$, so the rule is an action.'
+          - problem: 'The group $\mathbb{Z}_5$ acts on $X=\mathbb{Z}_5$ by $g\cdot x = x+3g \bmod 5$. Compute $3\cdot(4\cdot 2)$.'
+            answer: '3'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The full object is 4.(1.3) for the action g.x = x g^(-1). Step 1: compute the inner action 1.3 = 3*1^(-1) = s*r^2 = rs = 4. Step 2: apply g=4=rs to the result 4, giving 4.4 = 4*4^(-1) = rs*(rs)^(-1) = e = 0. The answer is 0."
-          - problem: "In the dihedral group D3, label the elements 0=e, 1=r, 2=r^2, 3=s, 4=rs, 5=r^2 s. Define a proposed operation on X=D3 by g.x = xg. How many ordered pairs (g,h) in D3xD3 make g.(h.0) different from (gh).0?"
-            answer: "18"
+            solution_sketch: 'First compute the inner action: $4\cdot 2 = 2+3\cdot 4 = 14 \equiv 4 \pmod 5$. Then $3\cdot 4 = 4+3\cdot 3 = 13 \equiv 3 \pmod 5$, so the value is $3$. As a check, $(3\cdot 4)\cdot 2 = 2\cdot 2 = 2+6 = 8 \equiv 3$, the same value.'
+          - problem: 'The dial of a safe has the positions $0,1,\dots,11$. Turning the dial $g$ steps clockwise gives an action of $\mathbb{Z}_{12}$ on the positions. The dial starts at position $5$, is turned $7$ steps and is then turned $8$ steps. At which position does it stop?'
+            answer: '8'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The full object is the set of ordered pairs (g,h) where g.(h.0) is not (gh).0 for g.x = xg. Step 1: with x=0, g.(h.0) = h g and (gh).0 = g h, so the condition is h g not equal to g h. Step 2: count commuting pairs in D3. The centralizer sizes are 6 for e, 3 for r, 3 for r^2, and 2 for each of s, rs, r^2 s, giving 6+3+3+2+2+2 = 18 commuting pairs. Step 3: total ordered pairs are 36, so the failing pairs are 36-18 = 18. The answer is 18."
-          - problem: "Let G = Z/4 and X = Z/4, with addition mod 4. Define g.x = x + g + 1 mod 4. State which outcome applies, and give the value of 0.0."
-            answer: "verdict = identity; n = 1"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["valid"], ["identity"], ["compose"], ["closure"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "n"}]}
-            solution_sketch: "The full object is the operation g.x = x + g + 1 mod 4 on Z/4. Identity step: 0.0 = 0+0+1 = 1, which is not 0, so the identity option is correct. Compose step: the operation is not even identity-compatible, so the compose option is wrong as the first failure. Closure step: x+g+1 is still in Z/4, so the closure option is wrong. The valid option is wrong because the identity rule fails. The answer is verdict = identity; n = 1."
-          - problem: "Let G = Z/5 with addition mod 5 act on X = Z/5 by g.x = x + 3g mod 5. Compute the value of 3.(4.2)."
-            answer: "3"
+            solution_sketch: 'Turning the dial is an action of $\mathbb{Z}_{12}$ on the positions, so two turns together act as one turn by the sum. The turns of $7$ and $8$ steps equal one turn of $15 \equiv 3$ steps, and $5+3 = 8$. The dial stops at position $8$.'
+          - problem: 'Sam says that the rule $g\cdot x = xg$ defines an action of the group $S_3$ on the set $S_3$, because $e\cdot x = x$ holds. Is Sam right?'
+            answer: 'no'
+            answer_contract: {"kind": "label", "options": [["yes", "Sam is right", "it is an action", "it is a group action"], ["no", "Sam is wrong", "Sam is not right", "it is not an action", "not an action", "it does not define an action"]]}
+            solution_sketch: 'The rule gives $g\cdot(h\cdot x) = (xh)g = xhg$, while $(gh)\cdot x = x(gh) = xgh$. In the non-abelian group $S_3$ these differ for some $g$ and $h$, so the second axiom fails even though $e\cdot x = x$ holds. Sam is wrong; the rule $g\cdot x = xg^{-1}$ repairs it.'
+          - problem: 'Products of permutations are composed from right to left. Sam''s rule $g\cdot x = xg$ acts on the set $S_3$. Take $g=(1\,2)$, $h=(1\,3)$ and $x=e$. What is the image of $1$ under the permutation $g\cdot(h\cdot x)$?'
+            answer: '2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The full object is 3.(4.2) for the action g.x = x + 3g mod 5. Step 1: compute the inner action 4.2 = 2 + 3*4 = 14 mod 5 = 4. Step 2: apply g=3 to 4, giving 3.4 = 4 + 3*3 = 13 mod 5 = 3. The answer is 3."
-        constraints: "verify or refute proposed actions; include one failing example (e.g. g.x = xg^{-1} variants with wrong order)"
+            solution_sketch: 'With $x=e$ the rule gives $h\cdot e = h$ and then $g\cdot h = hg$. Composing from right to left, $(hg)(1) = h(g(1)) = h(2) = 2$, so the image of $1$ is $2$. The other side $(gh)\cdot e = gh$ sends $1$ to $g(h(1)) = g(3) = 3$, so the two sides differ.'
+          - problem: 'Sam''s rule $g\cdot x = xg$ acts on the set $S_3$. For how many ordered pairs $(g,h)$ of elements of $S_3$ does $g\cdot(h\cdot e)$ differ from $(gh)\cdot e$?'
+            answer: '18'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'We have $g\cdot(h\cdot e) = hg$ and $(gh)\cdot e = gh$, and these differ exactly when $g$ and $h$ do not commute. The identity commutes with all $6$ elements, each $3$-cycle with $3$, and each transposition with $2$, so $6+6+6 = 18$ of the $36$ ordered pairs commute and $18$ do not.'
+          - problem: 'For which value of $k$ in $\mathbb{Z}_7$ does the rule $g\cdot x = x+g+k \bmod 7$ define an action of $\mathbb{Z}_7$ on $\mathbb{Z}_7$?'
+            answer: '0'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The first axiom needs $0\cdot x = x$, and the rule gives $0\cdot x = x+0+k = x+k$. This equals $x$ for every $x$ only when $k\equiv 0 \pmod 7$. For $k=0$ the second axiom also holds, so $k = 0$.'
+          - problem: 'The dial of a safe has the positions $0,1,\dots,11$, and turning it $g$ steps clockwise gives an action of $\mathbb{Z}_{12}$ on the positions. A single turn moves the dial from position $5$ to position $2$. What is the smallest number of steps by which it could have been turned?'
+            answer: '9'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Turning by $g$ steps moves position $5$ to $5+g$, so we need $5+g\equiv 2 \pmod{12}$. Subtract $5$ to get $g\equiv -3\equiv 9 \pmod{12}$. A single turn of $9$ steps does the job.'
+        constraints: 'verify or refute proposed actions; include failing examples (right multiplication without the inverse, a shifted rule); compute composites of actions in context'
       - id: kp2
         name: "Standard examples: rotation, permutation, conjugation, left multiplication"
         key_prerequisites: [permutations-cycle-notation, dihedral-groups]
+        step_check:
+          step: 'leaving 3 unchanged'
+          question: 'Why does the step say that $(1\,2)$ leaves $3$ unchanged?'
+          options:
+            - 'A transposition always fixes the largest point of the set it acts on'
+            - 'The point $3$ is odd while $1$ and $2$ are not, so it cannot move'
+            - 'Every permutation of $\{1,2,3\}$ fixes exactly one point of the set'
+            - 'A cycle moves only the points it lists, so $3$ stays where it is'
+          answer: 'A cycle moves only the points it lists, so $3$ stays where it is'
+          why: 'A permutation written as cycles sends each listed point to the next one in its cycle, and every point not listed is sent to itself.'
         exemplars:
-          - problem: '$D_4$ acts on the $4$ vertices of a square. Describe how the counterclockwise rotation $r$ (by $90^\circ$) acts, as a permutation in cycle notation (vertices labeled $1,2,3,4$ counterclockwise).'
-            answer: '$(1\,2\,3\,4)$'
-            solution_sketch: 'A quarter-turn sends each vertex to the next one counterclockwise.'
-          - problem: "A group $G$ acts on itself by conjugation: $g \\cdot x = g x g^{-1}$. The orbits of this action are called what?"
-            answer: "Conjugacy classes"
-            answer_contract: {"kind": "label", "options": [["Conjugacy classes"], ["Cosets"], ["Stabilizers"], ["Centralizers"]]}
-            solution_sketch: "The conjugation action sends $x$ to $gxg^{-1}$, so an orbit collects all elements conjugate to $x$. Step 1 (conjugation action): the orbit of $x$ is $\\{gxg^{-1} : g \\in G\\}$. Step 2 (naming): such orbits are the conjugacy classes of $G$. Wrong option Cosets: cosets are the orbits of the left multiplication action, not of conjugation. Wrong option Stabilizers: a stabilizer is the set of group elements fixing one point, not an orbit. Wrong option Centralizers: the centralizer of $x$ is its stabilizer under conjugation, not the orbit. The orbits of the conjugation action are the Conjugacy classes."
-          - problem: "$D_4$ acts on the four vertices of a square, labeled $1,2,3,4$ counterclockwise. The rotation $r$ turns the square $90^\\circ$ counterclockwise. The action of $r^2$ as a permutation in cycle notation is what?"
-            answer: "(1 3)(2 4)"
-            answer_contract: {"kind": "label", "options": [["(1 3)(2 4)"], ["(1 2 3 4)"], ["(1 4)(2 3)"], ["(1 2)(3 4)"]]}
-            solution_sketch: "Step 1 (rotation action): the quarter-turn $r$ sends each vertex to the next one, so $r = (1\\,2\\,3\\,4)$. Step 2 (compose the action): $r^2$ applies $r$ twice, so $1$ goes to $3$ and $2$ goes to $4$, giving $(1\\,3)(2\\,4)$. Wrong option (1 2 3 4): that is the quarter-turn $r$ itself, not the half-turn $r^2$. Wrong option (1 4)(2 3): that is the reflection across a diagonal, not a rotation. Wrong option (1 2)(3 4): that is the reflection across a midline, not a rotation. Hence the action of $r^2$ is (1 3)(2 4)."
-          - problem: "The symmetric group $S_3$ acts on itself by conjugation: $g \\cdot x = g x g^{-1}$. The orbit size of the transposition $(1\\,2)$ is what?"
-            answer: "3"
+          - problem: 'The dihedral group $D_4$ acts on the vertices $1,2,3,4$ of a square, labelled counterclockwise. The rotation $r$ turns the square by $90^\circ$ counterclockwise and sends vertex $1$ to vertex $2$. To which vertex does $r^2$ send vertex $1$?'
+            answer: '3'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1 (conjugation action): the orbit of $x$ is the set of all conjugates $gxg^{-1}$. Step 2 (classify by cycle type): in $S_3$ conjugacy classes are cycle types, and the class of a transposition consists of all transpositions. Step 3 (count): $S_3$ has exactly three transpositions, $(1\\,2)$, $(1\\,3)$, $(2\\,3)$. Thus the orbit size is 3."
-          - problem: "The symmetric group $S_4$ acts on the set $\\{1,2,3,4\\}$ by permutation. The cyclic subgroup generated by $(1\\,2\\,3\\,4)$ acts on the same set. The orbit size of $1$ under this subgroup is what?"
-            answer: "4"
+            solution_sketch: 'The action of $r$ on the vertices sends $1\to2\to3\to4\to1$, and $r^2$ is this move done twice. So $r^2$ sends $1$ to $2$ and then to $3$. The answer is vertex $3$.'
+          - problem: 'A group $G$ acts on itself by conjugation, $g\cdot x = gxg^{-1}$. What name is given to the orbits of this action?'
+            answer: 'conjugacy classes'
+            answer_contract: {"kind": "label", "options": [["conjugacy classes", "conjugacy class", "the conjugacy classes", "classes of conjugate elements"], ["cosets", "left cosets", "the cosets"], ["stabilizers", "stabilizer", "the stabilizers"], ["centralizers", "centralizer", "the centralizers"]]}
+            solution_sketch: 'The orbit of $x$ under conjugation is $\{gxg^{-1} : g\in G\}$, the set of all elements conjugate to $x$. These sets are the conjugacy classes of $G$. Cosets are orbits of the left multiplication action, and stabilizers and centralizers are subgroups, not orbits.'
+          - problem: 'The symmetric group $S_3$ acts on itself by conjugation, $g\cdot x = gxg^{-1}$. How many elements are in the orbit of the transposition $(1\,2)$?'
+            answer: '3'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1 (permutation action): the orbit of $1$ is the set of images of $1$ under the powers of $(1\\,2\\,3\\,4)$. Step 2 (iterate): applying the generator repeatedly sends $1$ to $2$, then $3$, then $4$, then back to $1$. Step 3 (count): the orbit is $\\{1,2,3,4\\}$, so its size is 4."
-          - problem: "The group $D_4$ acts on itself by left multiplication: $g \\cdot x = gx$. The orbit size of the element $r$ under this action is what?"
-            answer: "8"
+            solution_sketch: 'Conjugation keeps the cycle type, so every conjugate of $(1\,2)$ is a transposition. Conjugating by suitable elements reaches all three transpositions $(1\,2)$, $(1\,3)$ and $(2\,3)$, so the orbit has $3$ elements.'
+          - problem: 'The symmetric group $S_4$ acts on the set $\{1,2,3,4\}$ by permuting the points, and the cyclic subgroup generated by $(1\,2\,3\,4)$ acts on the same set. How many points are in the orbit of $1$ under this subgroup?'
+            answer: '4'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1 (left multiplication action): the orbit of $x$ is $Gx$. Step 2 (transitivity): for any $y \\in G$, write $y = (yx^{-1})x$, so every element lies in the orbit of $r$. Step 3 (count): the orbit is all of $D_4$, and $|D_4| = 8$, so the orbit size is 8."
-        constraints: "the four canonical actions; concrete cycle-notation answers where applicable"
+            solution_sketch: 'The generator sends $1\to2\to3\to4\to1$, so the powers of $(1\,2\,3\,4)$ send $1$ to each of the four points. The orbit of $1$ is $\{1,2,3,4\}$, so its size is $4$.'
+          - problem: 'The dihedral group $D_4$ acts on itself by left multiplication, $g\cdot x = gx$. How many elements are in the orbit of the rotation $r$?'
+            answer: '8'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Left multiplication by $g$ sends $r$ to $gr$, and every $y$ in $D_4$ equals $(yr^{-1})r$, so every element is reached. The orbit is all of $D_4$, which has $8$ elements.'
+          - problem: 'The group $\mathbb{Z}_6$, written additively, acts on itself by conjugation, $g\cdot x = g+x-g$. How many elements are in the orbit of $3$?'
+            answer: '1'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The group is abelian, so conjugation gives $g+3-g = 3$ for every $g$. The orbit of $3$ is just $\{3\}$, which has $1$ element.'
+          - problem: 'A round table has $10$ seats numbered $0,1,\dots,9$. Turning the table by $g$ seats moves a guest from seat $x$ to seat $x+g$ modulo $10$, which is an action of $\mathbb{Z}_{10}$. A guest who sat in seat $7$ now sits in seat $2$. What is the smallest number of seats by which the table could have been turned?'
+            answer: '5'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Turning the table by $g$ seats moves a guest from seat $7$ to seat $7+g$ modulo $10$. We need $7+g\equiv 2$, so $g\equiv -5\equiv 5 \pmod{10}$. The table was turned by $5$ seats.'
+          - problem: 'A round table has $8$ seats numbered $0,1,\dots,7$. Turning the table by $g$ seats moves a guest from seat $x$ to seat $x+g$ modulo $8$. A guest sits in seat $6$ and the table is turned by $5$ seats. In which seat is the guest now?'
+            answer: '3'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'A turn of $5$ seats moves seat $6$ to seat $6+5 = 11$, and $11\equiv 3 \pmod 8$ because the table has $8$ seats. The guest is now in seat $3$.'
+          - problem: 'The group $S_4$ acts on $\{1,2,3,4\}$ by $\sigma\cdot i = \sigma(i)$. Let $g=(1\,2)(3\,4)$ and $h=(1\,3)$. What is $g\cdot(h\cdot 2)$?'
+            answer: '1'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'First $h=(1\,3)$ fixes $2$, so $h\cdot 2 = 2$. Then $g=(1\,2)(3\,4)$ sends $2$ to $1$, so $g\cdot(h\cdot 2) = 1$.'
+        constraints: 'the four canonical actions; images of points and orbit sizes rather than cycle-notation answers; round-table and dial contexts'
       - id: kp3
         name: "Actions as homomorphisms to symmetric groups"
         key_prerequisites: [permutations-cycle-notation]
+        step_check:
+          step: 'The permutations $\sigma_e$, $\sigma_a$, and $\sigma_{a^2}$ are all distinct'
+          question: 'Why do three distinct permutations show that the homomorphism is injective?'
+          options:
+            - 'Different elements have different images, so the kernel is trivial'
+            - 'Three images fill all of $S_3$, and every map onto a group is injective'
+            - 'Distinct permutations always form a cyclic subgroup of the group $S_X$'
+            - 'Each permutation has order $3$, and that equals the order of the group'
+          answer: 'Different elements have different images, so the kernel is trivial'
+          why: 'A homomorphism is injective exactly when its kernel is trivial, which happens when different elements always have different images.'
         exemplars:
-          - problem: "The cyclic group $C_3 = \\{e, a, a^2\\}$ acts on the set $X = \\{e, a, a^2\\}$ by left translation, $g \\cdot x = gx$, so the action gives a homomorphism from $C_3$ to $S_3$. Give the one-line notation of the permutation $\\sigma_a$ induced by $a$ on the ordered set $(e, a, a^2)$, as a list of three numbers."
-            answer: "2, 3, 1"
-            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
-            solution_sketch: "Step 1 (homomorphism step): the left-translation action gives a homomorphism from $C_3$ to $S_3$, sending each group element to the permutation it induces on $X$. Step 2 (compute images): left multiplication by $a$ sends $e$ to $a$, $a$ to $a^2$, and $a^2$ to $e$. Step 3 (one-line notation): in the ordered set $(e, a, a^2)$ these images are the 2nd, 3rd, and 1st elements. The one-line notation of $\\sigma_a$ is 2, 3, 1."
-          - problem: "The dihedral group $D_4$ acts on the vertices $1, 2, 3, 4$ of a square, labeled in cyclic order, giving a homomorphism $\\varphi: D_4 \\to S_4$. A symmetry that fixes all four vertices must be the identity, so $\\varphi$ is injective. Find the order of the image $\\varphi(D_4)$."
-            answer: "8"
+          - problem: 'The group $\mathbb{Z}_5$ acts on the set $\{0,1,2,3,4\}$ by $g\cdot x = x+g \bmod 5$. Each element $g$ gives a permutation $\sigma_g$ of the set, and $g\mapsto\sigma_g$ is a homomorphism from $\mathbb{Z}_5$ to $S_5$. Find $\sigma_3(4)$.'
+            answer: '2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1 (homomorphism step): the vertex action gives the homomorphism $\\varphi: D_4 \\to S_4$. Step 2 (faithfulness): an element of the kernel fixes every vertex, hence is the identity symmetry, so $\\varphi$ is injective. Step 3 (order of the image): an injective homomorphism makes the image the same size as the group, and the dihedral group of the square has order 8. The order of $\\varphi(D_4)$ is 8."
-          - problem: "The dihedral group $D_4$ acts on the two diagonals of a square: $X$ has two elements, the diagonal joining vertices 1 and 3, and the diagonal joining vertices 2 and 4. The quarter turn $r$ swaps the two diagonals, and the action gives a homomorphism $D_4 \\to S_2$. Find the order of the kernel of this homomorphism."
-            answer: "4"
+            solution_sketch: 'The permutation $\sigma_3$ adds $3$ to each point modulo $5$. So $\sigma_3(4) = 4+3 = 7 \equiv 2 \pmod 5$, and the image of $4$ is $2$.'
+          - problem: 'The dihedral group $D_4$ acts on the vertices $1,2,3,4$ of a square, giving a homomorphism $\varphi: D_4 \to S_4$. A symmetry that fixes all four vertices must be the identity. What is the order of the image $\varphi(D_4)$?'
+            answer: '8'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1 (homomorphism step): the diagonal action gives a homomorphism $\\varphi: D_4 \\to S_2$. Step 2 (track the diagonals): the quarter turn $r$ and the two edge-midpoint reflections swap the diagonals, while $e$, the half turn $r^2$, and the two diagonal reflections fix both diagonals. Step 3 (kernel): the elements acting trivially are $e$, $r^2$, and the two diagonal reflections, a subgroup of order 4. The order of the kernel is 4."
-          - problem: "The Klein four group $V = \\{e, a, b, c\\}$, with $a^2 = b^2 = c^2 = e$ and $ab = c$, acts on itself by left translation $g \\cdot x = gx$, giving a homomorphism $V \\to S_4$. Give the one-line notation of the permutation $\\sigma_a$ on the ordered set $(e, a, b, c)$, as a list of four numbers."
-            answer: "2, 1, 4, 3"
-            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
-            solution_sketch: "Step 1 (homomorphism step): left translation gives a homomorphism from $V$ to $S_4$ acting on the ordered set $(e, a, b, c)$. Step 2 (compute images): since $a^2 = e$, left multiplication by $a$ swaps $e$ and $a$; since $ab = c$, it sends $b$ to $c$ and $c$ to $b$. Step 3 (one-line notation): the images are the 2nd, 1st, 4th, and 3rd elements. The one-line notation of $\\sigma_a$ is 2, 1, 4, 3."
-          - problem: "Let $\\mathbb{Z}_4 = \\{0, 1, 2, 3\\}$ act on the set $\\{1, 2\\}$ so that the element 1 acts as the swap exchanging 1 and 2 and the element 0 acts as the identity map; this gives a homomorphism $\\mathbb{Z}_4 \\to S_2$. How many elements of $\\mathbb{Z}_4$ act as the identity permutation?"
-            answer: "2"
+            solution_sketch: 'A symmetry that fixes all four vertices is the identity, so the kernel of $\varphi$ is trivial and $\varphi$ is injective. An injective map keeps the number of elements, so the image has $8$ elements.'
+          - problem: 'The dihedral group $D_4$ acts on the two diagonals of a square, the one joining vertices $1$ and $3$ and the one joining vertices $2$ and $4$. The quarter turn $r$ swaps the two diagonals, and the action gives a homomorphism $D_4\to S_2$. What is the order of its kernel?'
+            answer: '4'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1 (homomorphism step): the action gives a homomorphism $\\varphi: \\mathbb{Z}_4 \\to S_2$ with $\\varphi(1)$ the swap of 1 and 2. Step 2 (order of the image): the swap has order 2, so $\\varphi(k)$ is the identity exactly when $k$ is even. Step 3 (kernel): the kernel is $\\{0, 2\\}$, so 2 elements of $\\mathbb{Z}_4$ act as the identity permutation."
-          - problem: "In the dihedral group $D_4$, the rotation $r$ acts on the vertices $1, 2, 3, 4$ of a square, labeled in cyclic order, by sending 1 to 2, 2 to 3, 3 to 4, and 4 to 1. Give the one-line notation of the permutation induced by $r^2$ on the ordered vertices $(1, 2, 3, 4)$, as a list of four numbers."
-            answer: "3, 4, 1, 2"
-            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
-            solution_sketch: "Step 1 (homomorphism step): the vertex action gives a homomorphism, so the permutation of $r^2$ is the permutation of $r$ applied twice. Step 2 (compute images): applying the four-cycle twice sends 1 to 3, 2 to 4, 3 to 1, and 4 to 2. Step 3 (one-line notation): reading these images in the order $(1, 2, 3, 4)$ gives the one-line notation 3, 4, 1, 2."
-        constraints: "translate actions to permutation representations; faithfulness checks on small examples"
+            solution_sketch: 'The elements acting trivially on the diagonals are $e$, the half-turn $r^2$ and the two reflections in the diagonals, since each of these keeps both diagonals in place. These form the kernel, and it has $4$ elements. The quarter turns and the two midline reflections swap the diagonals, so they lie outside the kernel.'
+          - problem: 'The group $\mathbb{Z}_4=\{0,1,2,3\}$ acts on the set $\{1,2\}$ so that the element $1$ acts as the swap of $1$ and $2$ and the element $0$ acts as the identity. This gives a homomorphism $\mathbb{Z}_4\to S_2$. How many elements of $\mathbb{Z}_4$ act as the identity permutation?'
+            answer: '2'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The generator $1$ acts as the swap, so $k$ acts as the swap when $k$ is odd and as the identity when $k$ is even. The elements $0$ and $2$ act as the identity, so there are $2$ of them.'
+          - problem: 'The group $V=\mathbb{Z}_2\times\mathbb{Z}_2$ acts on itself by translation, $g\cdot x = g+x$, where addition is done coordinate by coordinate modulo $2$. Each $g$ gives a permutation $\sigma_g$ of the four elements of $V$. Find $\sigma_{(1,0)}(0,1)$.'
+            answer: '(1, 1)'
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: 'The element $(1,0)$ acts by adding $(1,0)$ coordinate by coordinate modulo $2$. So $\sigma_{(1,0)}(0,1) = (0+1,\ 1+0) = (1,1)$.'
+          - problem: 'The group $\mathbb{Z}_6$ acts on the set $\{0,1,2\}$ by $g\cdot x = x+g \bmod 3$. An action is faithful when different group elements give different permutations. Is this action faithful?'
+            answer: 'no'
+            answer_contract: {"kind": "label", "options": [["yes", "it is faithful", "faithful"], ["no", "it is not faithful", "not faithful", "unfaithful"]]}
+            solution_sketch: 'The element $3$ acts as $x\mapsto x+3\equiv x \pmod 3$, which is the identity on $\{0,1,2\}$, yet $3\neq 0$ in $\mathbb{Z}_6$. So two different group elements give the same permutation, the kernel is not trivial, and the action is not faithful.'
+          - problem: 'The group $\mathbb{Z}_6$ acts on the set $\{0,1,2\}$ by $g\cdot x = x+g \bmod 3$, which gives a homomorphism $\mathbb{Z}_6\to S_3$. What is the order of its kernel?'
+            answer: '2'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'An element $g$ acts as the identity exactly when $g\equiv 0 \pmod 3$. In $\mathbb{Z}_6$ this gives $g=0$ and $g=3$, so the kernel has $2$ elements.'
+          - problem: 'A group $G$ of order $12$ acts on a set of $5$ objects. Moving the objects around by the elements of $G$ gives a homomorphism $G\to S_5$ whose kernel has order $3$. How many different rearrangements of the objects do the $12$ elements of $G$ produce?'
+            answer: '4'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Two elements of $G$ give the same rearrangement exactly when they lie in the same coset of the kernel. The kernel has $3$ elements, so the number of different rearrangements is $12/3 = 4$.'
+          - problem: 'A group of order $30$ acts on a set of toy blocks. Together its elements produce exactly $6$ different rearrangements of the blocks. How many elements of the group leave every block in place?'
+            answer: '5'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The different rearrangements correspond to the cosets of the kernel, so $30 = 6\cdot|\text{kernel}|$. The kernel is the set of elements that leave every block in place, and it has $30/6 = 5$ elements.'
+        constraints: 'translate actions to permutation representations; images of points, orders of images and kernels; faithfulness checks on small examples'
     diagnostic_exemplar:
       problem: 'Does $g \cdot x = x g$ (right multiplication used as a left action) define an action of a non-abelian $G$ on itself? Check the composition axiom.'
       answer: 'No: $g \cdot (h \cdot x) = xhg$ but $(gh) \cdot x = xgh$, and $xhg \neq xgh$ in general.'
@@ -143,89 +211,152 @@ topics:
       - id: kp1
         name: "Computing orbits"
         key_prerequisites: [group-actions, equivalence-classes-partitions]
+        step_check:
+          step: 'Apply the generator repeatedly to each element'
+          question: 'Why does the worked example apply the generator again and again to each starting point?'
+          options:
+            - 'Each new application of the generator creates a new orbit that must be listed on its own'
+            - 'Repeating the generator tests whether the action satisfies the two axioms of an action'
+            - 'The orbit holds all images under powers of the generator, so we repeat until it closes'
+            - 'The first image of a point is enough, because every orbit of this group has two points'
+          answer: 'The orbit holds all images under powers of the generator, so we repeat until it closes'
+          why: 'Every element of a cyclic group is a power of its generator, so the orbit of a point is the list of its images under these powers, which closes up when a point repeats.'
         exemplars:
-          - problem: "The cyclic group $\\langle (1\\,3)(2\\,4) \\rangle \\le S_4$ acts on $\\{1,2,3,4\\}$. Give the orbit of $1$ as a set."
-            answer: "{1, 3}"
-            answer_contract: {"kind": "set"}
-            solution_sketch: "First write the full group: the powers of $g = (1\\,3)(2\\,4)$ are $g$ and the identity, since $g^2 = e$. Rule: the orbit of $x$ is $\\{h \\cdot x : h \\in G\\}$. Applying $g$ to $1$ gives $3$, and applying $g$ to $3$ gives $1$, so the block $\\{1,3\\}$ never meets $\\{2,4\\}$. The orbit of $1$ is {1, 3}."
-          - problem: "The subgroup $\\langle (1\\,2), (3\\,4) \\rangle$ of $S_4$ acts on $\\{1,2,3,4\\}$. Orbits of a group action partition the set. How many orbits does this action have?"
-            answer: "2"
+          - problem: 'The cyclic subgroup $\langle (1\,3)(2\,4)\rangle$ of $S_4$ acts on the set $\{1,2,3,4\}$. What is the orbit of $1$?'
+            answer: '1, 3'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The full group consists of products of the two commuting swaps $(1\\,2)$ and $(3\\,4)$. Rule: orbits are the equivalence classes of the relation $x \\sim y$ iff some group element sends $x$ to $y$, and these classes partition the set. Every product of the generators swaps only within $\\{1,2\\}$ and within $\\{3,4\\}$, so the classes are $\\{1,2\\}$ and $\\{3,4\\}$. Counting the classes of the partition, the action has 2 orbits."
-          - problem: "The cyclic group $\\langle (1\\,2\\,3)(4\\,5) \\rangle \\le S_5$ acts on $\\{1,2,3,4,5\\}$. Give the orbit of $1$ as a set."
-            answer: "{1, 2, 3}"
-            answer_contract: {"kind": "set"}
-            solution_sketch: "Write the full generator $g = (1\\,2\\,3)(4\\,5)$; its powers $g$, $g^2$, $g^3 = e$ form the group. Rule: the orbit of $x$ is the set of images of $x$ under all powers of $g$. The powers send $1$ to $2$ and then to $3$ and back to $1$, while the swap part never touches $1,2,3$. The orbit of 1 is {1, 2, 3}."
-          - problem: "The subgroup $\\langle (1\\,2\\,3), (3\\,4\\,5) \\rangle$ of $S_6$ acts on $\\{1,2,3,4,5,6\\}$. Give the orbit of $4$ as a set."
-            answer: "{1, 2, 3, 4, 5}"
-            answer_contract: {"kind": "set"}
-            solution_sketch: "The full group is generated by $a = (1\\,2\\,3)$ and $b = (3\\,4\\,5)$. Rule: the orbit of $x$ is the smallest set containing $x$ that is closed under both generators. From $4$, the generator $b$ gives $5$ and $3$; from $3$, the generator $a$ gives $1$ and $2$, and $b$ sends $3$ back to $4$ and $5$. Point $6$ is fixed by both generators. The orbit of 4 is {1, 2, 3, 4, 5}."
-          - problem: "The cyclic group $\\langle (1\\,2\\,6)(3\\,4) \\rangle \\le S_6$ acts on $\\{1,2,3,4,5,6\\}$. How many orbits does this action have?"
-            answer: "3"
+            solution_sketch: 'The group has two elements, the identity and $g=(1\,3)(2\,4)$, because $g^2=e$. Applying $g$ to $1$ gives $3$, so the orbit of $1$ is $\{1,3\}$.'
+          - problem: 'The subgroup $\langle (1\,2),\,(3\,4)\rangle$ of $S_4$ acts on the set $\{1,2,3,4\}$. How many orbits does this action have?'
+            answer: '2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Write the full generator $g = (1\\,2\\,6)(3\\,4)$; its powers form the acting group. Rule: the orbits of a cyclic action come from the cycles of the generator, and they partition the set. The 3-cycle gives the orbit $\\{1,2,6\\}$, the swap gives the orbit $\\{3,4\\}$, and the point $5$ is fixed, giving the orbit $\\{5\\}$. Counting the three blocks of this partition, the action has 3 orbits."
-          - problem: "The subgroup $\\langle (1\\,2)(4\\,5), (2\\,3)(5\\,6) \\rangle$ of $S_6$ acts on $\\{1,2,3,4,5,6\\}$. Give the orbit of $5$ as a set."
-            answer: "{4, 5, 6}"
-            answer_contract: {"kind": "set"}
-            solution_sketch: "Write the full generators $a = (1\\,2)(4\\,5)$ and $b = (2\\,3)(5\\,6)$. Rule: the orbit of $x$ is the closure of $\\{x\\}$ under both generators, since every group element is a product of them. From $5$, $a$ gives $4$ and $b$ gives $6$; from $4$ only $a$ leads back to $5$, from $6$ only $b$ leads back to $5$, and no generator sends $4$, $5$, or $6$ into $1$, $2$, $3$. The orbit of 5 is {4, 5, 6}."
-        constraints: "subgroups of S_n (n <= 6) acting on points; orbits as explicit sets"
+            solution_sketch: 'Every product of the two commuting swaps moves points only inside $\{1,2\}$ or only inside $\{3,4\}$. So the orbits are $\{1,2\}$ and $\{3,4\}$, and there are $2$ orbits.'
+          - problem: 'The cyclic subgroup $\langle (1\,2\,3)(4\,5)\rangle$ of $S_5$ acts on the set $\{1,2,3,4,5\}$. What is the orbit of $1$?'
+            answer: '1, 2, 3'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The powers of $g=(1\,2\,3)(4\,5)$ send $1$ to $2$, then to $3$, then back to $1$, while the swap $(4\,5)$ never touches these points. The orbit of $1$ is $\{1,2,3\}$.'
+          - problem: 'The subgroup $\langle (1\,2\,3),\,(3\,4\,5)\rangle$ of $S_6$ acts on the set $\{1,2,3,4,5,6\}$. What is the orbit of $4$?'
+            answer: '1, 2, 3, 4, 5'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The orbit of $4$ is the smallest set containing $4$ that both generators map into itself. The generator $(3\,4\,5)$ takes $4$ to $5$ and to $3$, and then $(1\,2\,3)$ takes $3$ to $1$ and $2$. No generator moves $6$, so the orbit is $\{1,2,3,4,5\}$.'
+          - problem: 'The cyclic subgroup $\langle (1\,2\,6)(3\,4)\rangle$ of $S_6$ acts on the set $\{1,2,3,4,5,6\}$. How many orbits does this action have?'
+            answer: '3'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The orbits of a cyclic group are the cycles of its generator, including the fixed points. The generator $(1\,2\,6)(3\,4)$ has the cycles $\{1,2,6\}$ and $\{3,4\}$, and it fixes $5$. So there are $3$ orbits.'
+          - problem: 'The subgroup $\langle (1\,2)(4\,5),\,(2\,3)(5\,6)\rangle$ of $S_6$ acts on the set $\{1,2,3,4,5,6\}$. What is the orbit of $5$?'
+            answer: '4, 5, 6'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The generator $(1\,2)(4\,5)$ sends $5$ to $4$, and $(2\,3)(5\,6)$ sends $5$ to $6$. Neither generator moves any of $4,5,6$ into $1,2,3$, so the orbit of $5$ is $\{4,5,6\}$.'
+          - problem: 'A dial has the positions $0,1,\dots,11$. A mechanic is allowed to turn it only by multiples of $4$ steps, which gives an action of the subgroup $\{0,4,8\}$ of $\mathbb{Z}_{12}$ on the positions. Which positions can the dial reach from position $3$?'
+            answer: '3, 7, 11'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The allowed turns are $0$, $4$ and $8$ steps modulo $12$. From position $3$ they reach positions $3$, $7$ and $11$, so these are the positions the dial can reach.'
+          - problem: 'A dial has $15$ positions numbered $0,1,\dots,14$, and it may be turned only by multiples of $6$ steps. These turns act on the positions through the subgroup of $\mathbb{Z}_{15}$ generated by $6$. Into how many orbits do the $15$ positions split?'
+            answer: '3'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The multiples of $6$ modulo $15$ are the same as the multiples of $\gcd(6,15)=3$, so each orbit has $5$ positions. The $15$ positions therefore split into $15/5 = 3$ orbits.'
+        constraints: 'subgroups of S_n (n <= 6) acting on points, and turns of a dial; orbits as comma lists of points or as counts'
       - id: kp2
         name: "Computing stabilizers"
         key_prerequisites: [group-actions, subgroups-subgroup-tests]
+        step_check:
+          step: 'so $2$ is pinned and cannot move'
+          question: 'Why is the condition $\sigma(2)=2$ all that is needed for $\sigma$ to lie in $\mathrm{Stab}(2)$?'
+          options:
+            - 'The stabilizer is the set of permutations that fix every point of the set'
+            - 'The stabilizer is the set of permutations that send $2$ to every other point'
+            - 'The stabilizer is the set of permutations that send $2$ into its own orbit'
+            - 'The stabilizer is the set of elements that send the point $2$ to itself'
+          answer: 'The stabilizer is the set of elements that send the point $2$ to itself'
+          why: 'By definition $\mathrm{Stab}(x)=\{g : g\cdot x = x\}$, so only the image of the single point $x$ matters; the other points may move.'
         exemplars:
-          - problem: '$S_3$ acts on $\{1,2,3\}$. Find the stabilizer of $1$.'
-            answer: '$\{e, (2\,3)\}$'
-            solution_sketch: 'The permutations fixing $1$ may only permute $\{2,3\}$.'
-          - problem: "The symmetric group S3 acts on the set {1, 2, 3} by permuting the elements. Which subset of S3 is the stabilizer of the element 2?"
-            answer: "e and (1 3)"
-            answer_contract: {"kind": "label", "options": [["e and (1 3)"], ["e, (1 2)"], ["e, (1 3), (1 2 3)"], ["e only"]]}
-            solution_sketch: "Step 1: an element of the stabilizer must satisfy g·2 = 2, and the stabilizer is automatically a subgroup. Step 2: e fixes 2, and the transposition (1 3) fixes 2, so the stabilizer is exactly e and (1 3). The option e, (1 2) is the stabilizer of 3, the wrong point; the option e, (1 3), (1 2 3) wrongly adds a 3-cycle that sends 2 to 3; the option e only forgets the transposition of the other two letters. The stabilizer of 2 is e and (1 3)."
-          - problem: "The symmetric group S4 acts on the set {1, 2, 3, 4} by permuting the elements. How many permutations are in the stabilizer of 1?"
-            answer: "6"
+          - problem: 'The symmetric group $S_4$ acts on the set $\{1,2,3,4\}$ by permuting the points. How many permutations are in the stabilizer of $1$?'
+            answer: '6'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1: the stabilizer of 1 contains exactly the permutations with sigma(1) = 1. Step 2: such a permutation permutes {2, 3, 4} freely, giving 3! = 6 elements, a subgroup isomorphic to S3. The stabilizer of 1 has 6 elements."
-          - problem: "The dihedral group D5 of the symmetries of a regular pentagon acts on its five vertices 1 to 5, labelled counterclockwise. How many elements of D5 are in the stabilizer of vertex 3?"
-            answer: "2"
+            solution_sketch: 'A permutation in the stabilizer of $1$ must satisfy $\sigma(1)=1$. It can permute the other three points $2,3,4$ freely, so there are $3! = 6$ of them.'
+          - problem: 'The dihedral group $D_5$ of symmetries of a regular pentagon acts on its five vertices, labelled $1$ to $5$ counterclockwise. How many elements of $D_5$ are in the stabilizer of vertex $3$?'
+            answer: '2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1: the identity fixes every vertex, so e lies in the stabilizer of vertex 3. Step 2: every nontrivial rotation moves vertex 3, and among the reflections only the one whose axis passes through vertex 3 and the midpoint of the opposite side fixes it; the other reflections fix other vertices. The stabilizer of vertex 3 has 2 elements."
-          - problem: "The symmetric group S3 acts on the set of the three two-element subsets of {1, 2, 3}. Determine the size of the orbit of {1, 2} and the size of the stabilizer of {1, 2}. Give the orbit size and the stabilizer size."
-            answer: "orbit = 3; stab = 2"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "orbit"}, {"contract": {"kind": "exact"}, "name": "stab"}]}
-            solution_sketch: "Step 1: acting on the pair {1, 2}: e fixes it, (2 3) sends it to {1, 3}, and (1 3) sends it to {2, 3}, so the orbit is all three pairs and has size 3. Step 2: a permutation stabilizing {1, 2} must map the pair onto itself, and only e and (1 2) do so, so the stabilizer has size 2. The orbit of {1, 2} has 3 elements and its stabilizer has 2 elements."
-          - problem: "The symmetric group S4 permutes the vertices 1, 2, 3, 4 of the complete graph on four vertices, and so acts on its six edges. Determine the number of permutations in the stabilizer of the edge joining 1 and 2."
-            answer: "4"
+            solution_sketch: 'The identity fixes every vertex. A nontrivial rotation moves every vertex, and of the five reflections only the one whose axis passes through vertex $3$ fixes it, so the stabilizer has $2$ elements.'
+          - problem: 'The symmetric group $S_3$ acts on the three two-element subsets of $\{1,2,3\}$. How many permutations are in the stabilizer of the subset $\{1,2\}$?'
+            answer: '2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1: to stabilize the edge {1, 2} a permutation must send the pair {1, 2} to itself, so it either fixes both 1 and 2 or swaps them: 2 options. Step 2: the remaining vertices 3 and 4 may be permuted in 2! = 2 ways. Step 3: multiply: 2 · 2 = 4; the stabilizer is the subgroup {e, (1 2), (3 4), (1 2)(3 4)}. The stabilizer of the edge has 4 elements."
-        constraints: "stabilizers in S_n and D_n actions; always subgroups"
+            solution_sketch: 'A permutation fixes the subset $\{1,2\}$ when it sends the pair to itself. Only $e$ and $(1\,2)$ do this, so the stabilizer has $2$ elements. The orbit has $3$ pairs, and $6 = 3\cdot 2$.'
+          - problem: 'The symmetric group $S_4$ permutes the vertices $1,2,3,4$ of the complete graph on four vertices, and so acts on its six edges. How many permutations are in the stabilizer of the edge joining $1$ and $2$?'
+            answer: '4'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'To fix the edge $\{1,2\}$ a permutation must send the pair $\{1,2\}$ to itself, which can happen in $2$ ways. The points $3$ and $4$ can then be permuted in $2$ ways, so the stabilizer has $2\cdot 2 = 4$ elements.'
+          - problem: 'The group $\mathbb{Z}_{12}$ acts on the set $\mathbb{Z}_4$ by $g\cdot x = x+g \bmod 4$. What is the stabilizer of the point $0$?'
+            answer: '0, 4, 8'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'An element $g$ fixes the point $0$ when $0+g\equiv 0 \pmod 4$, that is, when $g$ is a multiple of $4$. In $\mathbb{Z}_{12}$ these elements are $0, 4, 8$, and they form a subgroup.'
+          - problem: 'The symmetric group $S_5$ acts on the ten two-element subsets of $\{1,2,3,4,5\}$. How many permutations are in the stabilizer of the subset $\{1,2\}$?'
+            answer: '12'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'A permutation fixes the subset $\{1,2\}$ if it fixes both $1$ and $2$ or swaps them, which is $2$ choices. The other three points can be permuted in $3! = 6$ ways, so the stabilizer has $2\cdot 6 = 12$ elements.'
+          - problem: 'Sam says that in the action of $S_3$ on $\{1,2,3\}$ the stabilizer of $1$ has $3$ elements, because the set has $3$ points. How many elements does the stabilizer of $1$ really have?'
+            answer: '2'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'A permutation fixes the point $1$ only if $\sigma(1)=1$, and then it permutes the other two points freely. That gives $2! = 2$ elements, namely $e$ and $(2\,3)$, so Sam is wrong.'
+          - problem: 'Five students sit at five desks. The group $S_5$ of all $120$ rearrangements acts on the students. How many of the rearrangements leave the student who sits at desk $1$ at that desk?'
+            answer: '24'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Leaving the student at desk $1$ in place leaves the other $4$ students to be rearranged freely among the other $4$ desks. That gives $4! = 24$ rearrangements.'
+          - problem: 'The $12$ symmetries of a regular hexagon act on the six positions of a bracelet at its corners. How many of the symmetries keep one chosen corner where it is?'
+            answer: '2'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The group has $12$ symmetries and acts transitively on the $6$ corners, so the stabilizer of a corner has $12/6 = 2$ elements. They are the identity and the reflection through that corner.'
+        constraints: 'stabilizer sizes in S_n and D_n actions, stabilizers as sets of integers for Z_n actions; always subgroups'
       - id: kp3
         name: "Fixed points and transitive actions"
         key_prerequisites: [group-actions]
+        step_check:
+          step: 'so $x$ is in the center of $S_3$'
+          question: 'Why does a fixed point of the conjugation action have to lie in the center?'
+          options:
+            - 'Fixing $x$ means $gxg^{-1}=e$ for every $g$, so $x$ has to be the identity'
+            - 'Fixing $x$ means $gxg^{-1}=x$, so $x$ commutes with every $g$'
+            - 'Conjugation by $g$ fixes $x$ exactly when $g$ itself lies in the center'
+            - 'Every element commutes with its own conjugates, so every $x$ is central'
+          answer: 'Fixing $x$ means $gxg^{-1}=x$, so $x$ commutes with every $g$'
+          why: 'Multiplying $gxg^{-1}=x$ on the right by $g$ gives $gx = xg$, so $x$ commutes with every element, which is the definition of the center.'
         exemplars:
-          - problem: "The dihedral group $D_4$ acts on the 4 vertices of a square by its natural symmetry action. Determine whether the action has a single orbit, and give the verdict and the number of orbits."
-            answer: "verdict = transitive; orbits = 1"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["transitive"], ["intransitive"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "orbits"}]}
-            solution_sketch: "Use the orbit rule: compute the orbit of one point. A quarter-turn rotation sends vertex 1 to 2 to 3 to 4, so the orbit of any vertex is all 4 vertices. There is exactly one orbit, so the action is transitive and the number of orbits is 1. The answer is verdict = transitive; orbits = 1."
-          - problem: "For the conjugation action of $S_3$ on itself, count the fixed points, that is, the elements $x$ with $g x g^{-1} = x$ for every $g$ in $S_3$. Give the number of fixed points."
-            answer: "1"
+          - problem: 'The dihedral group $D_4$ acts on the four vertices of a square by its symmetries. Is the action transitive?'
+            answer: 'yes'
+            answer_contract: {"kind": "label", "options": [["yes", "it is transitive", "transitive", "the action is transitive"], ["no", "it is not transitive", "not transitive", "intransitive"]]}
+            solution_sketch: 'The rotation $r$ sends vertex $1$ to $2$, then $3$, then $4$, so the orbit of vertex $1$ is all four vertices. A single orbit means any vertex can be moved to any other, so the action is transitive.'
+          - problem: 'The group $S_3$ acts on itself by conjugation, $g\cdot x = gxg^{-1}$. How many fixed points does this action have, that is, how many elements $x$ satisfy $gxg^{-1}=x$ for every $g$?'
+            answer: '1'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Use the fixed-point rule: a fixed point of conjugation is exactly a central element. Check each type in $S_3$: $e$ commutes with all; the transposition $(12)$ conjugated by $(23)$ gives $(13)$, so it moves; conjugating $(123)$ by $(12)$ gives its inverse $(132)$, so it moves. Only $e$ is central, so the number of fixed points is 1."
-          - problem: "Consider the conjugation action of $D_4$ on itself, where $D_4 = \\{e, r, r^2, r^3, s, rs, r^2s, r^3s\\}$. Count the elements $x$ with $g x g^{-1} = x$ for every $g$ in $D_4$. Give the number of fixed points."
-            answer: "2"
+            solution_sketch: 'A fixed point $x$ of conjugation satisfies $gxg^{-1}=x$ for all $g$, so $x$ is in the center of $S_3$. The transposition $(1\,2)$ is moved to $(1\,3)$ by $(2\,3)$, and $(1\,2\,3)$ is moved to its inverse by $(1\,2)$, so only $e$ is fixed. There is $1$ fixed point.'
+          - problem: 'The group $D_4=\{e,r,r^2,r^3,s,rs,r^2s,r^3s\}$ acts on itself by conjugation. How many elements $x$ satisfy $gxg^{-1}=x$ for every $g$ in $D_4$?'
+            answer: '2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Use the fixed-point rule: the fixed points of conjugation form the center of the group. In $D_4$, the half-turn $r^2$ commutes with every rotation and with every reflection since $s r^2 s = r^{-2} = r^2$, while $r$ does not commute with $s$. The center is $\\{e, r^2\\}$, so the number of fixed points is 2."
-          - problem: "The group $S_3$ acts on itself by conjugation. Decide whether this action has a single orbit, and give the verdict and the number of orbits."
-            answer: "verdict = intransitive; orbits = 3"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["transitive"], ["intransitive"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "orbits"}]}
-            solution_sketch: "Use the orbit rule: the orbits of the conjugation action are the conjugacy classes. The classes in $S_3$ are $\\{e\\}$, the three transpositions, and the two 3-cycles, so there are 3 orbits. Since more than one orbit exists, the verdict is intransitive; the answer is verdict = intransitive; orbits = 3."
-          - problem: "Let $H = \\{e, (123), (132)\\}$, a cyclic subgroup of $S_3$, act on the set $\\{1, 2, 3\\}$. State whether the action has a single orbit, and give the verdict and the number of orbits."
-            answer: "verdict = transitive; orbits = 1"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["transitive"], ["intransitive"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "orbits"}]}
-            solution_sketch: "Use the orbit rule: compute the orbit of a point. The element $(123)$ sends 1 to 2 and $(132)$ sends 1 to 3, so the orbit of 1 is $\\{1, 2, 3\\}$, the whole set. A single orbit means the action is transitive; the answer is verdict = transitive; orbits = 1."
-          - problem: "$D_4$ acts on the 4 vertices of a square. Count the fixed points of the action, that is, the vertices $v$ with $g v = v$ for every $g$ in $D_4$. Give the number of fixed points."
-            answer: "0"
+            solution_sketch: 'The fixed points of conjugation form the center of $D_4$. The half-turn $r^2$ commutes with every rotation and every reflection, since $sr^2s = r^{-2} = r^2$, while $r$ does not commute with $s$. The center is $\{e, r^2\}$, so there are $2$ fixed points.'
+          - problem: 'The group $S_3$ acts on itself by conjugation. How many orbits does this action have?'
+            answer: '3'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Use the fixed-point rule: a fixed point of the action must be fixed by every group element, in particular by the quarter-turn $r$. The rotation $r$ sends vertex 1 to vertex 2, so no vertex is fixed by $r$. Hence no vertex is fixed by all of $D_4$; the number of fixed points is 0."
-        constraints: "transitivity verdicts; fixed points of conjugation = center"
+            solution_sketch: 'The orbits of conjugation are the conjugacy classes. In $S_3$ these are $\{e\}$, the three transpositions and the two $3$-cycles, so there are $3$ orbits.'
+          - problem: 'Does the group $S_3$ act transitively on itself by conjugation?'
+            answer: 'no'
+            answer_contract: {"kind": "label", "options": [["yes", "it does", "it is transitive", "transitive"], ["no", "it does not", "it is not transitive", "not transitive", "intransitive"]]}
+            solution_sketch: 'The orbit of $e$ under conjugation is $\{e\}$, which is not all of $S_3$. So there is more than one orbit and the action is not transitive; there are $3$ orbits in total.'
+          - problem: 'The dihedral group $D_4$ acts on the four vertices of a square. How many vertices are fixed by every element of $D_4$?'
+            answer: '0'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'A vertex fixed by all of $D_4$ would have to be fixed by the quarter turn $r$. But $r$ sends vertex $1$ to $2$ and moves every vertex, so no vertex is fixed by all of $D_4$. There are $0$ fixed points.'
+          - problem: 'The cyclic group $\langle (1\,2\,3)\rangle$ acts on the set $\{1,2,3,4,5\}$. How many points are fixed by every element of the group?'
+            answer: '2'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The group generated by $(1\,2\,3)$ moves $1$, $2$ and $3$ but fixes $4$ and $5$. A point fixed by every element must be fixed by the generator, so exactly $2$ points are fixed.'
+          - problem: 'A carousel has $12$ horses in a ring, numbered $0$ to $11$. A rider may move every horse forward only by a multiple of $4$ places. These moves act on the horses through the subgroup $\{0,4,8\}$ of $\mathbb{Z}_{12}$. Into how many orbits do the horses split?'
+            answer: '4'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The allowed moves are $0$, $4$ and $8$ places, so each orbit has $3$ horses. The $12$ horses split into $12/3 = 4$ orbits, one for each set of horses whose numbers differ by multiples of $4$.'
+          - problem: 'Six dancers stand at the positions $1,\dots,6$. At a signal the dancer at position $1$ moves to $2$, the one at $2$ moves to $3$, the one at $3$ moves to $1$, and the dancers at $4$ and $5$ swap places, which is the permutation $(1\,2\,3)(4\,5)$. How many dancers end at the position where they started?'
+            answer: '1'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The permutation $(1\,2\,3)(4\,5)$ moves the positions $1,2,3,4,5$ and leaves position $6$ alone. Exactly $1$ dancer stays in place.'
+        constraints: 'transitivity verdicts paired with the number of orbits; fixed points of conjugation = center'
     diagnostic_exemplar:
       problem: '$D_4$ acts on the four vertices $1, 2, 3, 4$ of a square (labelled counterclockwise). Find the orbit and the stabilizer of vertex $1$, and say whether the action is transitive.'
       answer: 'The rotation $r$ acts as the $4$-cycle $(1\,2\,3\,4)$, so the orbit of $1$ is all of $\{1,2,3,4\}$ and the action is transitive (a single orbit). The stabilizer is $\mathrm{Stab}(1) = \{e, d\}$, where $d$ is the reflection in the diagonal through vertices $1$ and $3$ — the only nonidentity symmetry fixing vertex $1$. Note $|D_4| = 8 = 4 \cdot 2 = |\mathrm{Orb}(1)| \cdot |\mathrm{Stab}(1)|$.'
@@ -260,87 +391,165 @@ topics:
       - id: kp1
         name: "Statement and the coset bijection"
         key_prerequisites: [orbits-stabilizers, lagranges-theorem]
+        try_first:
+          problem: 'A square tile has $8$ symmetries. A dot is painted at one corner, and moving the tile through all $8$ symmetries puts the dot at $4$ different corners. How many of the $8$ symmetries leave the dot at its own corner?'
+          answer_contract: {"kind": "exact"}
+          answer: '2'
+          reveal: 'The $8$ symmetries split into $4$ equal groups, one for each corner the dot can reach, so each group has $8/4 = 2$ symmetries. The group that keeps the dot in place is the stabilizer, and this is the orbit-stabilizer theorem $|G| = |\mathrm{Orb}|\cdot|\mathrm{Stab}|$.'
+        step_check:
+          step: 'The map $\phi$ is a bijection, proving the Orbit-Stabilizer Theorem'
+          question: 'Why does a bijection between $G/\mathrm{Stab}(x)$ and $\mathrm{Orb}(x)$ prove that $|G| = |\mathrm{Orb}(x)|\cdot|\mathrm{Stab}(x)|$?'
+          options:
+            - 'The bijection makes the orbit a subgroup of $G$, so Lagrange''s theorem gives the product'
+            - 'Each coset has $|\mathrm{Orb}(x)|$ elements, and there are $|\mathrm{Stab}(x)|$ such cosets'
+            - 'There are $|\mathrm{Orb}(x)|$ cosets, and each has $|\mathrm{Stab}(x)|$ elements'
+            - 'The bijection shows that the stabilizer is normal, so the quotient group is the orbit'
+          answer: 'There are $|\mathrm{Orb}(x)|$ cosets, and each has $|\mathrm{Stab}(x)|$ elements'
+          why: 'The group splits into cosets of $\mathrm{Stab}(x)$, all of the same size $|\mathrm{Stab}(x)|$, and the bijection says the number of cosets is $|\mathrm{Orb}(x)|$; the orbit itself need not be a subgroup.'
         exemplars:
-          - problem: "For a finite group G acting on a set X, which equation is the orbit-stabilizer theorem? Select the correct equation."
-            answer: "|G| = |Orb(x)| * |Stab(x)|"
-            answer_contract: {"kind": "label", "options": [["|G| = |Orb(x)| * |Stab(x)|"], ["|Orb(x)| = |G| * |Stab(x)|"], ["|Stab(x)| = |G| * |Orb(x)|"], ["|G| = |Orb(x)| + |Stab(x)|"]]}
-            solution_sketch: "The full theorem says that for every x in X, the group order factors as |G| = |Orb(x)| * |Stab(x)|. The option |Orb(x)| = |G| * |Stab(x)| is wrong because it multiplies instead of dividing by |Stab(x)|; the option |Stab(x)| = |G| * |Orb(x)| is wrong because it multiplies instead of dividing by |Orb(x)|; the option |G| = |Orb(x)| + |Stab(x)| is wrong because the theorem uses a product, not a sum. Therefore the correct equation is |G| = |Orb(x)| * |Stab(x)|."
-          - problem: "Let G act on a set X, let x be in X, and let h be in Stab(x). Which equality shows that the cosets g Stab(x) and gh Stab(x) map to the same orbit point? Select the correct equality."
-            answer: "(gh).x = g.x"
-            answer_contract: {"kind": "label", "options": [["(gh).x = g.x"], ["g.x = h.x"], ["(gh).x = h.x"], ["g.x = x"]]}
-            solution_sketch: "The full computation uses the action axiom: (gh).x = g.(h.x). Because h lies in Stab(x), h.x = x, so g.(h.x) = g.x; the option g.x = h.x is wrong because h fixes x and does not generally equal g; the option (gh).x = h.x is wrong because g still acts after h; the option g.x = x is wrong because g need not fix x. Thus the equality is (gh).x = g.x."
-          - problem: "A finite group G of order 24 acts on a set X. For a point x, the stabilizer has order 6. Find the size of the orbit of x."
-            answer: "4"
+          - problem: 'A finite group $G$ of order $56$ acts on a set $X$, and the stabilizer of a point $x$ has order $8$. How many points are in the orbit of $x$?'
+            answer: '7'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The full object is a finite group G of order 24 acting on X with |Stab(x)| = 6. By the orbit-stabilizer theorem, |G| = |Orb(x)| * |Stab(x)|. Substitute: 24 = |Orb(x)| * 6. Divide both sides by 6, so |Orb(x)| = 4."
-          - problem: "A finite group G of order 30 acts on a set X. The orbit of a point x has size 5. Find the order of the stabilizer of x."
-            answer: "6"
+            solution_sketch: 'By the orbit-stabilizer theorem, $|G| = |\mathrm{Orb}(x)|\cdot|\mathrm{Stab}(x)|$. So $56 = |\mathrm{Orb}(x)|\cdot 8$, and dividing by $8$ gives an orbit of $7$ points.'
+          - problem: 'A finite group $G$ of order $30$ acts on a set $X$, and the orbit of a point $x$ has $5$ points. What is the order of the stabilizer of $x$?'
+            answer: '6'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The full object is a finite group G of order 30 acting on X with |Orb(x)| = 5. By the orbit-stabilizer theorem, |G| = |Orb(x)| * |Stab(x)|. Substitute: 30 = 5 * |Stab(x)|. Divide both sides by 5, so |Stab(x)| = 6."
-          - problem: "A finite group G of order 45 acts on a set X. The stabilizer of a point x has order 5. Find the number of cosets of the stabilizer of x."
-            answer: "9"
+            solution_sketch: 'The orbit-stabilizer theorem gives $30 = 5\cdot|\mathrm{Stab}(x)|$ for the point $x$. Dividing both sides by $5$ shows that the stabilizer has order $6$.'
+          - problem: 'A finite group $G$ of order $45$ acts on a set $X$, and the stabilizer of a point $x$ has order $5$. How many cosets does the stabilizer of $x$ have in $G$?'
+            answer: '9'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The full object is the coset space G/Stab(x) for a group of order 45 with |Stab(x)| = 5. The coset bijection identifies G/Stab(x) with Orb(x), so the number of cosets is |G|/|Stab(x)|. Substitute: 45/5 = 9. Thus the number of cosets is 9."
-          - problem: "A finite group G of order 40 acts on a set X. The stabilizer of a point x has order 5. Determine how many elements lie in the orbit of x."
-            answer: "8"
+            solution_sketch: 'The cosets of $\mathrm{Stab}(x)$ correspond one to one with the points of the orbit, so their number is $|G|/|\mathrm{Stab}(x)|$. Here that is $45/5 = 9$ cosets.'
+          - problem: 'A group $G$ of order $40$ acts on a set $X$, and the orbit of a point $x$ has $8$ points. Dana says that the stabilizer of $x$ has order $40-8 = 32$. Is Dana right?'
+            answer: 'no'
+            answer_contract: {"kind": "label", "options": [["yes", "Dana is right", "yes, Dana is right"], ["no", "Dana is wrong", "Dana is not right", "no, Dana is wrong"]]}
+            solution_sketch: 'The theorem is a product formula, $|G| = |\mathrm{Orb}(x)|\cdot|\mathrm{Stab}(x)|$, not a sum. So $40 = 8\cdot|\mathrm{Stab}(x)|$ and the stabilizer has order $5$, not $40-8=32$. Dana is wrong.'
+          - problem: 'A group $G$ of order $36$ acts on a set $X$, and the orbit of a point $x$ has $9$ points. What is the order of the stabilizer of $x$?'
+            answer: '4'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The full object is a finite group G of order 40 acting on X with |Stab(x)| = 5. The orbit-stabilizer theorem states |G| = |Orb(x)| * |Stab(x)|. Substitute: 40 = |Orb(x)| * 5. Divide both sides by 5, so |Orb(x)| = 8."
-        constraints: "statement plus one step of the bijection proof"
+            solution_sketch: 'By the orbit-stabilizer theorem, $36 = 9\cdot|\mathrm{Stab}(x)|$. So the stabilizer has order $36/9 = 4$.'
+          - problem: 'The group $\mathbb{Z}_{12}$ acts on $\mathbb{Z}_4$ by $g\cdot x = x+g \bmod 4$, and the stabilizer of $0$ is $\{0,4,8\}$. All elements of the coset $5+\{0,4,8\} = \{1,5,9\}$ send $0$ to the same point. Which point is it?'
+            answer: '1'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'If $h$ is in the stabilizer, then $(g+h)\cdot 0 = g\cdot(h\cdot 0) = g\cdot 0$, so every element of a coset sends $0$ to the same point. For the coset $5+\mathrm{Stab}(0)$ this point is $5\cdot 0 = 5 \equiv 1 \pmod 4$, and indeed $1\cdot 0 = 1$ and $9\cdot 0 = 9\equiv 1$.'
+          - problem: 'A finite group $G$ of order $40$ acts on a set $X$, and the stabilizer of a point $x$ has order $5$. How many elements does the orbit of $x$ have?'
+            answer: '8'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The orbit-stabilizer theorem gives $40 = |\mathrm{Orb}(x)|\cdot 5$. Dividing by $5$, the orbit of $x$ has $8$ elements.'
+          - problem: 'The rotation group of a regular tetrahedron acts transitively on its $4$ vertices, and the stabilizer of a vertex has order $3$. What is the order of the rotation group?'
+            answer: '12'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The group acts transitively on the $4$ vertices, so the orbit has $4$ points. By the theorem, $|G| = 4\cdot 3 = 12$, so the group has $12$ rotations.'
+          - problem: 'The group of all $48$ symmetries of a cube acts transitively on its $8$ corners. How many of the symmetries keep one chosen corner fixed?'
+            answer: '6'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The group acts transitively on the $8$ corners, so $48 = 8\cdot|\mathrm{Stab}|$. Dividing by $8$, exactly $6$ symmetries keep a given corner in place.'
+        constraints: 'statement plus one step of the bijection proof; solve for the missing one of |G|, orbit size, stabilizer order, number of cosets'
       - id: kp2
         name: "Numerical applications"
         key_prerequisites: [orbits-stabilizers, lagranges-theorem]
+        step_check:
+          step: 'Apply the Orbit-Stabilizer Theorem'
+          question: 'Why does the example multiply $|\mathrm{Orb}(x)|$ by $|\mathrm{Stab}(x)|$ to obtain $|G|$ and not add them?'
+          options:
+            - 'The orbit and the stabilizer are two disjoint parts that together make up the whole group'
+            - 'Each orbit point is reached by one group element, and the stabilizer then doubles that count'
+            - 'Multiplying is the only operation that keeps the result a divisor of the order of the group'
+            - 'The group splits into $|\mathrm{Orb}(x)|$ cosets, each of size $|\mathrm{Stab}(x)|$'
+          answer: 'The group splits into $|\mathrm{Orb}(x)|$ cosets, each of size $|\mathrm{Stab}(x)|$'
+          why: 'Counting cosets: there are $|\mathrm{Orb}(x)|$ of them and each has $|\mathrm{Stab}(x)|$ elements, so the group order is a product.'
         exemplars:
-          - problem: '$D_4$ (order $8$) acts transitively on the $4$ vertices of a square. What is the order of the stabilizer of a vertex?'
-            answer: "2"
-            solution_sketch: '$|\mathrm{Stab}| = |G|/|\mathrm{Orb}| = 8/4 = 2$: the identity and the diagonal reflection through that vertex.'
-          - problem: 'The rotation group of the cube acts transitively on its $6$ faces, and the stabilizer of a face has order $4$. Find the order of the rotation group.'
-            answer: "24"
-            solution_sketch: '$|G| = 6 \cdot 4 = 24$.'
-          - problem: "The full symmetry group of a regular pentagon has order $10$ and acts on its $5$ vertices. What is the order of the stabilizer of a vertex?"
-            answer: "2"
+          - problem: 'The dihedral group $D_4$ of order $8$ acts transitively on the $4$ vertices of a square. What is the order of the stabilizer of a vertex?'
+            answer: '2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The action is transitive, so the orbit of a vertex is all $5$ vertices. Orbit-stabilizer gives $|\\mathrm{Stab}| = |G|/|\\mathrm{Orb}| = 10/5$. The stabilizer consists of the identity and the reflection through that vertex, so the order is 2."
-          - problem: "The full symmetry group of the cube, including reflections, acts transitively on the $6$ faces, and the stabilizer of a face has order $8$. Find the order of the full symmetry group."
-            answer: "48"
+            solution_sketch: 'The action is transitive, so the orbit of a vertex is all $4$ vertices. By the orbit-stabilizer theorem $|\mathrm{Stab}| = 8/4 = 2$, namely the identity and the reflection through that vertex.'
+          - problem: 'The rotation group of a cube acts transitively on its $6$ faces, and the stabilizer of a face has order $4$. What is the order of the rotation group?'
+            answer: '24'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Orbit-stabilizer states $|G| = |\\mathrm{Orb}| \\cdot |\\mathrm{Stab}|$ for any point of the action. Here the orbit of a face has $6$ points and the stabilizer has order $8$. Multiplying gives $6 \\cdot 8 = 48$, so the order of the group is 48."
-          - problem: "The rotation group of the cube has order $24$ and acts on the $8$ vertices, and the stabilizer of a vertex has order $3$. Find the size of the orbit of a vertex."
-            answer: "8"
+            solution_sketch: 'The orbit of a face is all $6$ faces and its stabilizer has order $4$. By the orbit-stabilizer theorem $|G| = 6\cdot 4 = 24$.'
+          - problem: 'The rotation group of a cube has order $24$ and acts on the $8$ corners of the cube. The stabilizer of a corner has order $3$. How many corners are in the orbit of a corner?'
+            answer: '8'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Orbit-stabilizer gives $|\\mathrm{Orb}| = |G|/|\\mathrm{Stab}|$. With $|G| = 24$ and stabilizer order $3$, the orbit size is $24/3$. Each rotation sending a vertex to a target vertex is counted, so the orbit has 8 vertices."
-          - problem: "The full symmetry group of a regular polygon has order $20$ and acts on its vertices, and the stabilizer of a vertex has order $2$. How many vertices does the polygon have?"
-            answer: "10"
+            solution_sketch: 'By the orbit-stabilizer theorem $|\mathrm{Orb}| = |G|/|\mathrm{Stab}| = 24/3 = 8$. So a corner can be carried to any of the $8$ corners of the cube.'
+          - problem: 'The symmetry group of a regular polygon has order $20$ and acts on the vertices of the polygon. The stabilizer of a vertex has order $2$. How many vertices does the polygon have?'
+            answer: '10'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The action on vertices of a regular polygon is transitive, so the orbit is the full vertex set. Orbit-stabilizer gives the number of vertices as $|\\mathrm{Orb}| = |G|/|\\mathrm{Stab}| = 20/2$. Hence the polygon has 10 vertices."
-        constraints: "solve for the missing one of |G|, orbit size, stabilizer size; geometric actions (polygons, cube)"
+            solution_sketch: 'The action on the vertices is transitive, so the number of vertices equals the size of the orbit. By the theorem $|\mathrm{Orb}| = 20/2 = 10$, so the polygon has $10$ vertices.'
+          - problem: 'The group of all symmetries of a cube, including reflections, acts transitively on the $6$ faces, and the stabilizer of a face has order $8$. What is the order of this group?'
+            answer: '48'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The orbit of a face has $6$ points and the stabilizer has order $8$. Multiplying gives $|G| = 6\cdot 8 = 48$.'
+          - problem: 'The group of all $24$ symmetries of a regular tetrahedron acts transitively on its $6$ edges. What is the order of the stabilizer of an edge?'
+            answer: '4'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The group acts transitively on the $6$ edges, so $24 = 6\cdot|\mathrm{Stab}|$. The stabilizer of an edge has order $24/6 = 4$.'
+          - problem: 'The rotation group of a regular dodecahedron has order $60$ and acts transitively on its $20$ corners. What is the order of the stabilizer of a corner?'
+            answer: '3'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The group acts transitively on the $20$ corners, so $60 = 20\cdot|\mathrm{Stab}|$. The stabilizer of a corner has order $60/20 = 3$.'
+          - problem: 'The rotation group of a regular tetrahedron has order $12$ and acts transitively on its $4$ vertices. Sam says that the stabilizer of a vertex has order $12-4 = 8$. What is the correct order of the stabilizer?'
+            answer: '3'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The group acts transitively on the $4$ vertices, so $12 = 4\cdot|\mathrm{Stab}|$ and the stabilizer has order $12/4 = 3$, not $12-4=8$. The theorem is a product, so we divide.'
+          - problem: 'The full symmetry group of a regular pentagon has order $10$ and acts on its $5$ vertices. What is the order of the stabilizer of a vertex?'
+            answer: '2'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The action on the $5$ vertices is transitive, so $|\mathrm{Stab}| = 10/5 = 2$. The stabilizer is the identity and the reflection through that vertex.'
+        constraints: 'solve for the missing one of |G|, orbit size, stabilizer size; geometric actions (polygons, cube, tetrahedron, dodecahedron)'
       - id: kp3
         name: "Conjugacy classes and centralizers"
         key_prerequisites: [orbits-stabilizers]
+        step_check:
+          step: 'Identify the given values'
+          question: 'Why can the orbit-stabilizer theorem be applied to a class size and the order $|C(r)|$?'
+          options:
+            - 'The orbit of an element is its class, and its stabilizer is its centralizer'
+            - 'Under conjugation every element has the same orbit, which is the center of the group'
+            - 'The centralizer is the set of elements that carry $r$ to the other elements of its class'
+            - 'Conjugation is the only action of a group on itself, so the theorem always applies'
+          answer: 'The orbit of an element is its class, and its stabilizer is its centralizer'
+          why: 'For the action $g\cdot x = gxg^{-1}$ the orbit of $x$ is $\{gxg^{-1}\}$, its class, and $\mathrm{Stab}(x)=\{g : gxg^{-1}=x\}=C(x)$, so the theorem reads $|G| = |\text{class}|\cdot|C(x)|$.'
         exemplars:
-          - problem: 'Under conjugation, the orbit of $x$ is its conjugacy class and the stabilizer is the centralizer $C(x)$. In $S_3$, the conjugacy class of $(1\,2)$ has size $3$. Find $|C((1\,2))|$.'
-            answer: "2"
-            solution_sketch: '$|S_3| = 6 = 3 \cdot |C((1\,2))|$, so the centralizer is $\{e, (1\,2)\}$.'
-          - problem: "In $S_3$, which has order 6, the centralizer of the 3-cycle $(1\\,2\\,3)$ has order 3. For the conjugation action of $S_3$ on itself, find the number of elements in the conjugacy class of $(1\\,2\\,3)$."
-            answer: "2"
+          - problem: 'Under conjugation, the orbit of an element $x$ is its conjugacy class and the stabilizer of $x$ is its centralizer $C(x)$. In $S_3$ the conjugacy class of $(1\,2)$ has $3$ elements. What is the order of $C((1\,2))$?'
+            answer: '2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "For the conjugation action of $S_3$ on itself, the orbit of an element is its conjugacy class and the stabilizer is its centralizer, so the orbit-stabilizer theorem gives class size $= |S_3| / |C((1\\,2\\,3))|$. Substituting, class size $= 6/3$. The conjugacy class of $(1\\,2\\,3)$ has 2 elements."
-          - problem: "In the dihedral group $D_4$ of order 8, the conjugacy class of the half-turn rotation $r^2$ is the singleton $\\{r^2\\}$. Find the order of the centralizer $C(r^2)$."
-            answer: "8"
+            solution_sketch: 'By the orbit-stabilizer theorem for conjugation, $|S_3| = |\text{class}|\cdot|C(x)|$, so $6 = 3\cdot|C((1\,2))|$. Hence $|C((1\,2))| = 2$, and the centralizer is $\{e,(1\,2)\}$.'
+          - problem: 'In the dihedral group $D_4$ of order $8$, the conjugacy class of the half-turn $r^2$ is the single element $\{r^2\}$. What is the order of the centralizer $C(r^2)$?'
+            answer: '8'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Under the conjugation action of $D_4$ on itself, the orbit of $r^2$ is its conjugacy class $\\{r^2\\}$, of size 1, and the stabilizer is the centralizer $C(r^2)$. By the orbit-stabilizer theorem, $|\\text{class}| \\cdot |C(r^2)| = |D_4| = 8$. Hence $|C(r^2)| = 8/1 = 8$."
-          - problem: "In the dihedral group $D_4$ of order 8, the conjugacy class of the quarter-turn rotation $r$ is $\\{r, r^3\\}$. Find the order $|C(r)|$ of the centralizer of $r$."
-            answer: "4"
+            solution_sketch: 'The class of $r^2$ has size $1$, so $|C(r^2)| = |D_4|/1 = 8$. Thus $r^2$ commutes with every element, which means it lies in the center.'
+          - problem: 'In the dihedral group $D_4$ of order $8$, the conjugacy class of the quarter turn $r$ is $\{r, r^3\}$. What is the order of its centralizer $C(r)$?'
+            answer: '4'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Under the conjugation action of $D_4$ on itself, the orbit of $r$ is the class $\\{r, r^3\\}$, which has size 2. By the orbit-stabilizer theorem, $|\\text{class}| \\cdot |C(r)| = |D_4| = 8$. Hence $|C(r)| = 8/2 = 4$."
-          - problem: "The group $S_4$ has order 24. Under conjugation, the conjugacy class of the double transposition $(1\\,2)(3\\,4)$ contains 3 elements. Find $|C((1\\,2)(3\\,4))|$, the order of its centralizer."
-            answer: "8"
+            solution_sketch: 'The class $\{r, r^3\}$ has size $2$, so $|C(r)| = 8/2 = 4$. The centralizer is the cyclic group of rotations $\{e,r,r^2,r^3\}$.'
+          - problem: 'Five cards are rearranged by a shuffle $\sigma$ that moves all five cards around one loop, and the rearrangements that commute with $\sigma$ are exactly its $5$ powers. Among the $120$ rearrangements of five cards, how many are conjugate to $\sigma$?'
+            answer: '24'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "For the conjugation action of $S_4$ on itself, the orbit of $x$ is its conjugacy class and the stabilizer is its centralizer $C(x)$. By the orbit-stabilizer theorem, $|\\text{class}| \\cdot |C(x)| = |S_4| = 24$. The class of $(1\\,2)(3\\,4)$ has 3 elements, so $|C((1\\,2)(3\\,4))| = 24/3 = 8$."
-          - problem: "In $S_4$, the centralizer of the 3-cycle $(1\\,2\\,3)$ has order 4. Use the orbit-stabilizer theorem for the conjugation action of $S_4$ on itself to find the size of the conjugacy class of $(1\\,2\\,3)$."
-            answer: "6"
+            solution_sketch: 'Under conjugation the class of $\sigma$ has $|S_5|/|C(\sigma)| = 120/5 = 24$ elements, because the centralizer is the group of the $5$ powers of $\sigma$. So $24$ rearrangements are conjugate to $\sigma$.'
+          - problem: 'In $S_3$, which has order $6$, the centralizer of the $3$-cycle $(1\,2\,3)$ has order $3$. How many elements are in the conjugacy class of $(1\,2\,3)$?'
+            answer: '2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "For the conjugation action, the stabilizer of $(1\\,2\\,3)$ is its centralizer, so the orbit-stabilizer theorem gives class size $= |S_4| / |C((1\\,2\\,3))|$. With $|S_4| = 24$ and $|C((1\\,2\\,3))| = 4$, the class size is $24/4 = 6$. The conjugacy class of $(1\\,2\\,3)$ has 6 elements."
-        constraints: "class sizes and centralizer orders in S_3, S_4, D_4"
+            solution_sketch: 'The orbit-stabilizer theorem for conjugation gives class size $|S_3|/|C((1\,2\,3))| = 6/3 = 2$. The class of $(1\,2\,3)$ is $\{(1\,2\,3),(1\,3\,2)\}$.'
+          - problem: 'The group $S_4$ has order $24$, and the conjugacy class of the double transposition $(1\,2)(3\,4)$ has $3$ elements. What is the order of its centralizer?'
+            answer: '8'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'By the orbit-stabilizer theorem, $|S_4| = |\text{class}|\cdot|C(x)|$. So $|C((1\,2)(3\,4))| = 24/3 = 8$.'
+          - problem: 'In $S_4$ the centralizer of the $3$-cycle $(1\,2\,3)$ has order $3$. How many elements are in the conjugacy class of $(1\,2\,3)$?'
+            answer: '8'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'By the orbit-stabilizer theorem the class of $(1\,2\,3)$ has $|S_4|/|C((1\,2\,3))| = 24/3 = 8$ elements. These are the eight $3$-cycles of $S_4$.'
+          - problem: 'Six guests sit around a table and $\sigma$ moves every guest one seat to the right. The rearrangements of the $6$ guests that commute with $\sigma$ are exactly its $6$ powers. Among the $720$ rearrangements of six guests, how many are conjugate to $\sigma$?'
+            answer: '120'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The class of $\sigma$ has $|S_6|/|C(\sigma)| = 720/6 = 120$ elements, because the centralizer is the group of the $6$ powers of $\sigma$. So $120$ rearrangements are conjugate to $\sigma$.'
+          - problem: 'Sam finds that the conjugacy class of $(1\,2)$ in $S_4$ has $6$ elements and concludes that its centralizer has order $6$. What is the correct order of the centralizer of $(1\,2)$?'
+            answer: '4'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The theorem gives $24 = 6\cdot|C((1\,2))|$, so $|C((1\,2))| = 4$; Sam confused the class size with the centralizer order. The centralizer is $\{e,(1\,2),(3\,4),(1\,2)(3\,4)\}$.'
+          - problem: 'A group of order $21$ contains an element $x$ whose centralizer has order $3$. How many conjugates does $x$ have, counting $x$ itself?'
+            answer: '7'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The number of conjugates is the size of the class, $|G|/|C(x)| = 21/3 = 7$. So $x$ has $7$ conjugates.'
+        constraints: 'class sizes and centralizer orders in S_3, S_4, S_5, S_6, D_4 and small abstract groups'
     diagnostic_exemplar:
       problem: 'In $S_4$ the conjugacy class of $(1\,2)$ has $6$ elements. Using the orbit-stabilizer theorem for the conjugation action of $S_4$ on itself, find $|C((1\,2))|$ and list the elements of that centralizer.'
       answer: 'Under conjugation the orbit of $(1\,2)$ is its conjugacy class and the stabilizer is the centralizer, so $|S_4| = |\mathrm{class}| \cdot |C((1\,2))|$ gives $|C((1\,2))| = 24/6 = 4$. The four elements are $e$, $(1\,2)$, $(3\,4)$ and $(1\,2)(3\,4)$.'
@@ -375,84 +584,153 @@ topics:
       - id: kp1
         name: "Burnside's lemma and fixed-point counts"
         key_prerequisites: [orbit-stabilizer-theorem]
+        try_first:
+          problem: 'Two beads on a ring are each black or white, and a half turn of the ring swaps the two beads. Two colorings count as the same when a rotation turns one into the other. How many different colorings are there?'
+          answer_contract: {"kind": "exact"}
+          answer: '3'
+          reveal: 'The colorings are two black beads, two white beads, and one of each, which gives $3$. Burnside''s lemma gives the same by $(4+2)/2 = 3$: the identity fixes all $4$ colorings and the half turn fixes $2$.'
+        step_check:
+          step: 'Apply Burnside''s lemma'
+          question: 'Why does Burnside''s lemma divide the total of the fixed-point counts by $|G|$?'
+          options:
+            - 'The division turns the total into the fixed-point count of one single element'
+            - 'Each orbit is counted $|G|$ times in the total, once for every group element'
+            - 'The division removes the identity element, which fixes every one of the points'
+            - 'Dividing by $|G|$ makes the result a whole number for every group and action'
+          answer: 'Each orbit is counted $|G|$ times in the total, once for every group element'
+          why: 'The total counts the pairs $(g,x)$ with $g\cdot x = x$, which is $\sum_x|\mathrm{Stab}(x)|$; by orbit-stabilizer each orbit contributes $|G|$, so dividing by $|G|$ leaves one for each orbit.'
         exemplars:
-          - problem: 'A group $G$ of order $8$ acts on a set of colorings, and the fixed-point counts $|\mathrm{Fix}(g)|$ over its eight elements sum to $56$. How many orbits are there?'
-            answer: "7"
-            solution_sketch: 'Burnside''s lemma: the number of orbits is the average number of fixed points, $\frac{1}{|G|}\sum_{g \in G}|\mathrm{Fix}(g)| = 56/8 = 7$.'
-          - problem: 'A rotation by $90^\circ$ acts on $2$-colorings of the $4$ beads of a necklace. How many colorings does it fix?'
-            answer: "2"
-            solution_sketch: 'A fixed coloring must be constant on the single 4-cycle of beads: $2$ choices.'
-          - problem: "A rotation by 120 degrees permutes the 6 beads of a bracelet in two cycles of length 3 and acts on its 3-colorings. How many colorings does this rotation fix?"
-            answer: "9"
+          - problem: 'A group $G$ of order $8$ acts on a set of colorings, and the numbers $|\mathrm{Fix}(g)|$ of colorings fixed by the eight elements of $G$ add up to $56$. How many orbits are there?'
+            answer: '7'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "First count the cycles of the permutation on the beads: the rotation splits the 6 beads into 2 cycles of length 3. A coloring fixed by the rotation must be constant on each cycle, by the fixed-coloring rule, giving 3 choices per cycle. The number of fixed colorings is 3^2 = 9."
-          - problem: "A permutation acts on the 3-colorings of a row of 12 tiles and fixes exactly 81 of them. Find the number of cycles in the cycle decomposition of this permutation."
-            answer: "4"
+            solution_sketch: 'Burnside''s lemma says that the number of orbits is the average of the fixed-point counts. Here the average is $56/8 = 7$, so there are $7$ orbits.'
+          - problem: 'A rotation by $90^\circ$ acts on the $2$-colorings of the $4$ beads of a necklace. How many colorings does it fix?'
+            answer: '2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The fixed-coloring rule says a permutation with c cycles fixes 3^c colorings when there are 3 colors. Set 3^c = 81 and solve: since 3^4 = 81, the permutation has 4 cycles."
-          - problem: "A group of order 10 acts on a set of colorings. Four of its elements fix 8 colorings each, and the remaining six elements fix 3 colorings each. Find the number of orbits."
-            answer: "5"
+            solution_sketch: 'A coloring fixed by the rotation has every bead the same color as the next bead. So all four beads share one color, which gives $2$ fixed colorings.'
+          - problem: 'A rotation by $120^\circ$ permutes the $6$ beads of a bracelet in two cycles of length $3$, and it acts on the $3$-colorings of the bracelet. How many colorings does this rotation fix?'
+            answer: '9'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Burnside's lemma: the number of orbits is the average of the fixed-point counts over all group elements. The sum is 4 times 8 plus 6 times 3, which is 32 + 18 = 50. Divide by the group order: 50/10 = 5, so the answer is 5."
-          - problem: "A group of order 4 acts on the 2-colorings of the 4 corners of a square. The fixed-point counts of its four elements are 16, 2, 4 and 2. Find the number of orbits."
-            answer: "6"
+            solution_sketch: 'The rotation splits the $6$ beads into $2$ cycles of length $3$. A fixed coloring is constant on each cycle, so there are $3$ choices per cycle and $3^2 = 9$ fixed colorings.'
+          - problem: 'A permutation of a row of $12$ tiles acts on the $3$-colorings of the row and fixes exactly $81$ of them. How many cycles does the permutation have?'
+            answer: '4'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Burnside's lemma divides the sum of the fixed-point counts by the group order. The full list of counts is 16, 2, 4, 2, and their sum is 16 + 2 + 4 + 2 = 24. The average is 24/4 = 6, so the action has 6 orbits."
-        constraints: "fixed colorings of a single group element: 2 or 3 colors, k^(number of cycles)"
+            solution_sketch: 'A permutation with $c$ cycles fixes $3^c$ colorings, because a fixed coloring is constant on each cycle. Since $3^4 = 81$, the permutation has $4$ cycles.'
+          - problem: 'A group of order $10$ acts on a set of colorings. Four of its elements fix $8$ colorings each, and the other six elements fix $3$ colorings each. How many orbits are there?'
+            answer: '5'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'By Burnside''s lemma the number of orbits is the average of the fixed-point counts. The sum is $4\cdot 8 + 6\cdot 3 = 32+18 = 50$, and $50/10 = 5$ orbits.'
+          - problem: 'A group of order $6$ acts on a set of colorings, and its six elements fix $36$, $3$, $3$, $6$, $6$ and $6$ colorings. How many orbits are there?'
+            answer: '10'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Burnside''s lemma divides the sum of the counts by the group order. The sum is $36+3+3+6+6+6 = 60$, so there are $60/6 = 10$ orbits.'
+          - problem: 'A group of order $4$ acts on the $2$-colorings of the corners of a square, and its four elements fix $16$, $2$, $4$ and $2$ colorings. Sam adds the four numbers and says that there are $24$ orbits. How many orbits are there?'
+            answer: '6'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Sam added the counts but forgot to divide by the order of the group. The sum is $16+2+4+2 = 24$, and Burnside''s lemma gives $24/4 = 6$ orbits.'
+          - problem: 'Ten lamps stand in a ring and each is either on or off. Moving every lamp $4$ places around the ring is a rotation of the ring. How many of the $2^{10}$ on-off settings does this rotation leave unchanged?'
+            answer: '4'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The rotation by $4$ positions splits the $10$ lamps into $\gcd(4,10)=2$ cycles. A setting is unchanged exactly when each cycle is all on or all off, so there are $2^2 = 4$ such settings.'
+          - problem: 'A row of $8$ tiles is painted with $3$ colors, one color per tile. Reversing the row, so that the first tile swaps places with the last, the second with the seventh and so on, is a permutation of the tiles. How many colorings does the reversal leave unchanged?'
+            answer: '81'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The reversal swaps tile $1$ with tile $8$, tile $2$ with tile $7$, and so on, which gives $4$ cycles of length $2$. A fixed coloring is constant on each cycle, so there are $3^4 = 81$ of them.'
+        constraints: 'averaging given fixed-point counts; fixed colorings of a single permutation: k^(number of cycles); rings, rows and reversals in context'
       - id: kp2
         name: "Necklaces under rotation"
         key_prerequisites: [orbit-stabilizer-theorem, permutations-cycle-notation]
+        step_check:
+          step: 'Calculate the number of fixed colorings for each rotation'
+          question: 'Why is the number of colorings fixed by a rotation equal to $k^{\gcd(r,n)}$?'
+          options:
+            - 'The rotation fixes $\gcd(r,n)$ beads, and the remaining beads can take any of the $k$ colors'
+            - 'Each of the $\gcd(r,n)$ colors must be used on exactly one bead of the ring'
+            - 'The beads form $\gcd(r,n)$ cycles, and a fixed coloring has one color per cycle'
+            - 'The rotation by $r$ positions fixes $k$ colorings for every divisor of $n$ that it meets'
+          answer: 'The beads form $\gcd(r,n)$ cycles, and a fixed coloring has one color per cycle'
+          why: 'A fixed coloring must give all beads of one cycle the same color, so the colors of the $\gcd(r,n)$ cycles can be chosen freely, which gives $k^{\gcd(r,n)}$ choices.'
         exemplars:
-          - problem: 'Count the distinct necklaces of $4$ beads in $2$ colors, up to rotation only.'
-            answer: "6"
-            solution_sketch: 'Fix counts for rotations by $0^\circ, 90^\circ, 180^\circ, 270^\circ$: $16, 2, 4, 2$. Average: $24/4 = 6$.'
-          - problem: 'Count necklaces of $3$ beads in $3$ colors, up to rotation.'
-            answer: "11"
-            solution_sketch: '$(3^3 + 3 + 3)/3 = 33/3 = 11$.'
-          - problem: "A bracelet has 5 beads in a circle, and each bead is one of 2 colors. Two colorings are the same when a rotation turns one into the other. Find the number of distinct colorings."
-            answer: "8"
+          - problem: 'How many distinct necklaces can be made from $4$ beads in $2$ colors if rotating a necklace does not change it?'
+            answer: '6'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1 (cycle structure): the identity rotation has 5 cycles, so it fixes 2^5 = 32 colorings; each of the four nontrivial rotations has gcd(r, 5) = 1 cycle, so each fixes 2^1 = 2 colorings. Step 2 (Burnside's lemma): average the fixed counts, (32 + 2 + 2 + 2 + 2)/5 = 40/5 = 8. The number of distinct colorings is 8."
-          - problem: "Six beads are placed evenly on a ring and each is colored with one of 2 colors. Two colorings are considered the same if a rotation carries one to the other. Determine the number of distinct colorings."
-            answer: "14"
+            solution_sketch: 'The rotations by $0$, $1$, $2$ and $3$ positions fix $16$, $2$, $4$ and $2$ colorings. By Burnside''s lemma the number of necklaces is $(16+2+4+2)/4 = 24/4 = 6$.'
+          - problem: 'How many distinct necklaces of $3$ beads can be made with $3$ available colors, if two necklaces that differ by a rotation count as the same?'
+            answer: '11'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1 (cycle structure): the rotations by 0 through 5 positions have gcd(r, 6) = 6, 1, 2, 3, 2, 1 cycles, so the fixed counts are 2^6, 2, 2^2, 2^3, 2^2, 2. Step 2 (Burnside's lemma): the average is (64 + 2 + 4 + 8 + 4 + 2)/6 = 84/6 = 14. The number of distinct colorings is 14."
-          - problem: "A necklace has 6 beads and 3 colors are available. The rotation by 180 degrees sends each bead to the bead 3 positions away, so the 6 bead positions form 3 cycles of length 2. How many colorings are fixed by this rotation?"
-            answer: "27"
+            solution_sketch: 'The identity fixes $3^3 = 27$ colorings, and each of the two nontrivial rotations is a single $3$-cycle fixing $3$ colorings. So the number of necklaces is $(27+3+3)/3 = 33/3 = 11$.'
+          - problem: 'A bracelet has $5$ beads in a circle, and each bead is one of $2$ colors. Two colorings are the same when a rotation turns one into the other. How many distinct colorings are there?'
+            answer: '8'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1 (cycle structure): the rotation by 3 positions has gcd(3, 6) = 3 cycles, each of length 2. Step 2 (fixed colorings): a coloring is fixed exactly when each cycle is monochrome, so there are 3^3 = 27 choices. The number of fixed colorings is 27."
-          - problem: "A ring has 5 beads and each bead is colored with one of 3 colors. Rotations of the ring are allowed. Using Burnside's lemma, find the number of distinct colorings."
-            answer: "51"
+            solution_sketch: 'The identity fixes $2^5 = 32$ colorings, and each of the four nontrivial rotations is one $5$-cycle fixing $2$ colorings. The average is $(32+2+2+2+2)/5 = 40/5 = 8$.'
+          - problem: 'Six beads are placed evenly on a ring and each is colored with one of $2$ colors. Two colorings are considered the same if a rotation carries one to the other. How many distinct colorings are there?'
+            answer: '14'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1 (cycle structure): the identity has 5 cycles and fixes 3^5 = 243 colorings; each of the four nontrivial rotations has gcd(r, 5) = 1 cycle and fixes 3^1 = 3 colorings. Step 2 (Burnside's lemma): the average is (243 + 3 + 3 + 3 + 3)/5 = 255/5 = 51. The number of distinct colorings is 51."
-        constraints: "n beads (n <= 6), k colors (k <= 3), cyclic group only; fixed colorings = k^{gcd(r, n)}"
+            solution_sketch: 'The rotations by $0$ to $5$ positions have $\gcd(r,6) = 6,1,2,3,2,1$ cycles, so they fix $2^6, 2, 2^2, 2^3, 2^2, 2$ colorings. The average is $(64+2+4+8+4+2)/6 = 84/6 = 14$.'
+          - problem: 'A necklace has $6$ beads and $3$ colors are available. The rotation by $180^\circ$ sends each bead to the bead $3$ positions away, so the $6$ positions form $3$ cycles of length $2$. How many colorings are fixed by this rotation?'
+            answer: '27'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The rotation by $3$ positions has $\gcd(3,6)=3$ cycles, each of length $2$, and a fixed coloring is constant on each cycle. So the number of fixed colorings is $3^3 = 27$.'
+          - problem: 'How many distinct colorings does a ring of $5$ beads have when each bead has one of $3$ colors and rotations of the ring do not count as different?'
+            answer: '51'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The identity fixes $3^5 = 243$ colorings and each of the four nontrivial rotations fixes $3$ colorings. By Burnside''s lemma the average is $(243+3+3+3+3)/5 = 255/5 = 51$.'
+          - problem: 'A jeweller makes designs by threading $4$ beads on a ring from $3$ available colors. A design that is only a rotated copy of another is not counted as new. How many different designs are there?'
+            answer: '24'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The rotations by $0$ to $3$ positions fix $3^4=81$, $3$, $3^2=9$ and $3$ colorings. By Burnside''s lemma there are $(81+3+9+3)/4 = 96/4 = 24$ different designs.'
+          - problem: 'A jeweller makes bracelets from $7$ beads in a circle, each bead black or white, and treats rotated copies as the same bracelet. How many different bracelets are possible?'
+            answer: '20'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The identity fixes $2^7 = 128$ colorings and each of the six nontrivial rotations is a single $7$-cycle fixing $2$ colorings. So there are $(128+6\cdot 2)/7 = 140/7 = 20$ different bracelets.'
+        constraints: 'n beads (n <= 7), k colors (k <= 3), cyclic group only; fixed colorings = k^{gcd(r, n)}'
       - id: kp3
         name: "Adding reflections: dihedral symmetry"
         key_prerequisites: [orbit-stabilizer-theorem, permutations-cycle-notation]
+        step_check:
+          step: 'colorings symmetric across the axis are fixed'
+          question: 'Why does each reflection of the triangle fix $2^2 = 4$ of the $2$-colorings?'
+          options:
+            - 'It has two cycles, so a fixed coloring picks one of two colors for each'
+            - 'It fixes all three vertices, but only half of the colorings survive the flip'
+            - 'It swaps two vertices and fixes one, so the swapped vertices cannot be colored'
+            - 'Each reflection fixes the same four colorings that the identity fixes'
+          answer: 'It has two cycles, so a fixed coloring picks one of two colors for each'
+          why: 'The reflection has one fixed vertex and one swapped pair, which is two cycles; a fixed coloring is constant on each cycle, so it has $2\cdot 2 = 4$ choices.'
         exemplars:
-          - problem: 'Count the colorings of the $4$ corners of a square with $3$ colors, up to all $8$ symmetries of the square.'
-            answer: "21"
-            solution_sketch: 'Fix counts: identity $81$; rotations $90^\circ/270^\circ$: $3$ each; $180^\circ$: $9$; two diagonal reflections: $27$ each; two edge reflections: $9$ each. Total $168/8 = 21$.'
-          - problem: 'Count $2$-colorings of the square''s corners up to $D_4$.'
-            answer: "6"
-            solution_sketch: '$(16 + 2 + 4 + 2 + 8 + 8 + 4 + 4)/8 = 48/8 = 6$.'
-          - problem: "An equilateral triangle has one of three colours at each vertex. Two colourings are identified when a symmetry of the triangle maps one to the other. How many distinct colourings are there?"
-            answer: "10"
+          - problem: 'How many distinct ways are there to color the four corners of a square with $3$ colors, when colorings that differ by a rotation or a reflection of the square count as the same?'
+            answer: '21'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The group D3 has six symmetries: the identity, two rotations by 120 and 240 degrees, and three reflections. The identity fixes all 3^3 = 27 colourings. Each nontrivial rotation is a 3-cycle, so it fixes 3 colourings. Each reflection fixes one vertex and swaps two, so it fixes 3^2 = 9 colourings. Burnside's lemma gives (27 + 3 + 3 + 9 + 9 + 9)/6 = 60/6 = 10. The number of distinct colourings is 10."
-          - problem: "A square has four colours available for its four corners, one colour per corner. Two corner colourings are the same when a rotation or reflection of the square sends one to the other. How many distinct corner colourings are there?"
-            answer: "55"
+            solution_sketch: 'The group has $8$ symmetries. The identity fixes $3^4 = 81$ colorings, the two quarter turns fix $3$ each, the half turn fixes $3^2=9$, the two diagonal reflections fix $3^3 = 27$ each, and the two edge reflections fix $3^2 = 9$ each. The total is $81+3+3+9+27+27+9+9 = 168$, and $168/8 = 21$.'
+          - problem: 'Each corner of a square tile is painted red or blue. Two tiles are the same when one can be rotated or flipped over to look like the other. How many different tiles are there?'
+            answer: '6'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The group D4 has eight symmetries: the identity, rotations by 90, 180 and 270 degrees, two diagonal reflections, and two edge reflections. The identity fixes 4^4 = 256 colourings. Each 90 or 270 degree rotation is a 4-cycle and fixes 4 colourings, giving 8 total. The 180 degree rotation is two 2-cycles and fixes 4^2 = 16. Each diagonal reflection fixes two corners and swaps two, fixing 4^3 = 64, giving 128. Each edge reflection is two 2-cycles and fixes 4^2 = 16, giving 32. Burnside's lemma gives (256 + 8 + 16 + 128 + 32)/8 = 440/8 = 55. The number of distinct colourings is 55."
-          - problem: "For an equilateral triangle, the number of colourings of its three vertices up to the six symmetries of D3 is 20. How many colours were available?"
-            answer: "4"
+            solution_sketch: 'The $8$ symmetries fix $16$ colorings (identity), $2$ and $2$ (quarter turns), $4$ (half turn), $8$ and $8$ (diagonal reflections), and $4$ and $4$ (edge reflections). The average is $48/8 = 6$.'
+          - problem: 'An equilateral triangle has one of three colors at each vertex. Two colorings are the same when a symmetry of the triangle maps one to the other. How many distinct colorings are there?'
+            answer: '10'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Let m be the number of available colours. For D3, Burnside's lemma gives (m^3 + 3m^2 + 2m)/6: identity contributes m^3, two rotations contribute m each, and three reflections contribute m^2 each. Setting this equal to 20 gives m^3 + 3m^2 + 2m = 120, or m^3 + 3m^2 + 2m - 120 = 0. Testing m = 4 gives 64 + 48 + 8 = 120, and the remaining quadratic factor has no positive integer root. The number of colours is 4."
-          - problem: "Each corner of a square is painted one of six colours. Colourings that a rotation or a reflection of the square sends to each other count as one. How many different colourings of the corners are there?"
-            answer: "231"
+            solution_sketch: 'The group $D_3$ has six symmetries. The identity fixes $3^3 = 27$ colorings, each of the two rotations fixes $3$, and each of the three reflections fixes $3^2 = 9$. Burnside''s lemma gives $(27+3+3+9+9+9)/6 = 60/6 = 10$.'
+          - problem: 'A square has four colors available for its corners, one color per corner. Two colorings are the same when a rotation or a reflection of the square sends one to the other. How many distinct colorings are there?'
+            answer: '55'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Enumerate the cycle structure of each of the eight symmetries in D4. The identity is four 1-cycles and fixes 6^4 = 1296 colourings. Each 90 and 270 degree rotation is one 4-cycle and fixes 6 colourings, giving 12. The 180 degree rotation is two 2-cycles and fixes 6^2 = 36. Each diagonal reflection fixes two corners and swaps two, fixing 6^3 = 216, so the two give 432. Each edge reflection is two 2-cycles and fixes 36, so the two give 72. Burnside's lemma gives (1296 + 12 + 36 + 432 + 72)/8 = 1848/8 = 231. The number of different colourings is 231."
-        constraints: "square or triangle only; enumerate cycle structures of all group elements"
+            solution_sketch: 'The identity fixes $4^4 = 256$ colorings, the two quarter turns fix $4$ each, the half turn fixes $4^2=16$, the two diagonal reflections fix $4^3=64$ each, and the two edge reflections fix $4^2 = 16$ each. Burnside''s lemma gives $(256+8+16+128+32)/8 = 440/8 = 55$.'
+          - problem: 'The corners of an equilateral triangle are colored from a set of $m$ colors, and colorings that a rotation or a reflection of the triangle sends to each other count as one. There are exactly $20$ different colorings. What is $m$?'
+            answer: '4'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The number of colorings is $(m^3+3m^2+2m)/6$: the identity fixes $m^3$, the two rotations fix $m$ each, and the three reflections fix $m^2$ each. Setting this equal to $20$ gives $m^3+3m^2+2m = 120$, and $m=4$ works since $64+48+8=120$. The left side increases with $m$, so $m=4$ is the only solution.'
+          - problem: 'Each corner of a square is painted one of six colors. Colorings that a rotation or a reflection sends to each other count as one. How many different colorings are there?'
+            answer: '231'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The identity fixes $6^4 = 1296$ colorings, the two quarter turns fix $6$ each, the half turn fixes $6^2=36$, the two diagonal reflections fix $6^3 = 216$ each, and the two edge reflections fix $36$ each. Burnside''s lemma gives $(1296+12+36+432+72)/8 = 1848/8 = 231$.'
+          - problem: 'A bracelet has $5$ beads in a circle, each one of $3$ colors, and the bracelet may be turned over as well as rotated. How many different bracelets are there?'
+            answer: '39'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The group $D_5$ has $10$ elements. The identity fixes $3^5 = 243$ colorings, each of the four nontrivial rotations fixes $3$, and each of the five reflections fixes $3^3 = 27$. So there are $(243+12+135)/10 = 390/10 = 39$ bracelets.'
+          - problem: 'A flat hexagonal medal has a gem at each of its $6$ corners, and each gem is red or green. Medals that can be rotated or flipped over to match are the same. How many different medals are there?'
+            answer: '13'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The $12$ symmetries of the hexagon fix $2^6=64$ colorings (identity), $2$ each (rotations by $60^\circ$ and $300^\circ$), $4$ each (rotations by $120^\circ$ and $240^\circ$), $8$ (half turn), $2^4=16$ each (three corner reflections) and $2^3 = 8$ each (three edge reflections). The average is $(64+4+8+8+48+24)/12 = 156/12 = 13$.'
+        constraints: 'triangle, square, pentagon bracelet and hexagon medal; enumerate cycle structures of all group elements'
     diagnostic_exemplar:
       problem: 'How many distinct necklaces of $5$ beads in $2$ colours are there, counting two as the same when one is a rotation or a reflection of the other?'
       answer: '8'
@@ -483,102 +761,152 @@ topics:
       - id: kp1
         name: "Left multiplication is a permutation"
         key_prerequisites: [group-actions]
+        step_check:
+          step: 'Multiply on the right by $x^{-1}$'
+          question: 'Why is multiplying on the right by $x^{-1}$ the right move to remove $x$ from $ix = x$?'
+          options:
+            - 'Multiplying on the left would change the group element, but on the right it does not'
+            - 'The factor $x$ stands at the right end of both sides, so $x^{-1}$ cancels it there'
+            - 'Right multiplication is the only operation under which a group is closed'
+            - 'The inverse $x^{-1}$ must go last so that the product $ix$ stays equal to $x$'
+          answer: 'The factor $x$ stands at the right end of both sides, so $x^{-1}$ cancels it there'
+          why: 'Multiplying $ix = x$ on the right by $x^{-1}$ turns $xx^{-1}$ into $e$ on both sides, leaving $i = e$; multiplying on the left would not cancel $x$.'
         exemplars:
-          - problem: "In the additive group $G = \\mathbb{Z}_6$, let $\\lambda_2(x) = 2 + x$. The inverse map of $\\lambda_2$ is $\\lambda_h$ for exactly one element $h$ of $G$. Find $h$."
-            answer: "4"
+          - problem: 'In the additive group $G=\mathbb{Z}_6$ let $\lambda_2(x) = 2+x$. The inverse map of $\lambda_2$ is $\lambda_h$ for exactly one element $h$ of $G$. Find $h$.'
+            answer: '4'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The full map is $\\lambda_2: x \\mapsto 2 + x$ on $\\mathbb{Z}_6$. To invert it, compose with $\\lambda_h$ by the inverse-map rule: $\\lambda_h(\\lambda_2(x)) = h + (2 + x) = (h + 2) + x$, which equals $x$ for all $x$ exactly when $h + 2 \\equiv 0$ mod $6$, so $h = 4$. Indeed $\\lambda_4(\\lambda_2(x)) = 4 + 2 + x = 6 + x = x$. The answer is 4."
-          - problem: "In $G = \\mathbb{Z}_5$, let $\\lambda_3(x) = 3 + x$. Determine how many elements $x$ of $G$ satisfy $\\lambda_3(x) = x$."
-            answer: "0"
+            solution_sketch: 'The composite $\lambda_h(\lambda_2(x)) = h+2+x$ equals $x$ for all $x$ exactly when $h+2\equiv 0 \pmod 6$. So $h = 4$, and indeed $\lambda_4(\lambda_2(x)) = 6+x = x$.'
+          - problem: 'In the group $G=\mathbb{Z}_5$ let $\lambda_3(x) = 3+x$. How many elements $x$ of $G$ satisfy $\lambda_3(x) = x$?'
+            answer: '0'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The full equation is $3 + x = x$ in $\\mathbb{Z}_5$. By the cancellation rule, subtracting $x$ from both sides gives $3 = 0$ in $\\mathbb{Z}_5$, which is false since $3$ and $0$ are distinct residues. So no element satisfies the equation and $\\lambda_3$ fixes nothing. The answer is 0."
-          - problem: "In $G = \\mathbb{Z}_7$, let $\\lambda_3(x) = 3 + x$, and the maps satisfy $\\lambda_a \\circ \\lambda_b = \\lambda_{a+b}$. Determine the order of the permutation $\\lambda_3$."
-            answer: "7"
+            solution_sketch: 'The equation $3+x = x$ in $\mathbb{Z}_5$ gives $3 = 0$ after subtracting $x$, which is false. So no element satisfies it and $\lambda_3$ has $0$ fixed points.'
+          - problem: 'In the group $G=\mathbb{Z}_7$ let $\lambda_3(x) = 3+x$, and recall that $\lambda_a\circ\lambda_b = \lambda_{a+b}$. What is the order of the permutation $\lambda_3$?'
+            answer: '7'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The full map is $\\lambda_3: x \\mapsto 3 + x$ on $\\mathbb{Z}_7$. By the composition rule $\\lambda_a \\circ \\lambda_b = \\lambda_{a+b}$, the $k$-fold composition $\\lambda_3^k$ equals $\\lambda_{3k}$. The identity map is $\\lambda_0$, so we need the smallest $k \\ge 1$ with $3k \\equiv 0$ mod $7$; since $7$ is prime and $3 \\cdot 7 = 21$, this is $k = 7$. The answer is 7."
-          - problem: "Let $g, x, y$ be elements of a group $G$ with $gx = gy$. To prove that the map $\\lambda_g$ is injective one must derive $x = y$. Select the valid next step."
-            answer: "cancel g on the left"
-            answer_contract: {"kind": "label", "options": [["cancel g on the left"], ["cancel x on the right"], ["multiply by g on the right"], ["conclude g = e"]]}
-            solution_sketch: "From the full equation $gx = gy$ one multiplies both sides on the left by $g^{-1}$, which cancels $g$ and gives $x = y$. The option 'cancel x on the right' cancels the wrong element and quietly assumes the goal. The option 'multiply by g on the right' produces $gxg = gyg$, which proves nothing. The option 'conclude g = e' confuses injectivity of $\\lambda_g$ with the fixed-point argument. The answer is cancel g on the left."
-          - problem: "Claim: for $g \\neq e$ in $G$, the map $\\lambda_g$ has no fixed point. Step 1: suppose $gx = x$ for some $x \\in G$. Step 2: multiply both sides of $gx = x$ on the right by $x^{-1}$. Step 3: this gives $g = x^{-1}$. Step 4: hence $g = e$, contradicting $g \\neq e$. Step 5: therefore $\\lambda_g$ has no fixed point. Which step is the first step that is not valid?"
-            answer: "Step 3"
-            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"], ["Step 5"]]}
-            solution_sketch: "Step 1 is a valid supposition for a contradiction argument. Step 2 is a legal move, multiplying on the right by $x^{-1}$. Step 3 is false: from $gx = x$, right multiplication by $x^{-1}$ gives $gxx^{-1} = xx^{-1}$, hence $g = e$ directly, not $g = x^{-1}$. Step 4 would follow only after Step 3 is corrected. Step 5 is the final claim of the argument. The answer is Step 3."
-          - problem: "In $G = \\mathbb{Z}_9$, let $\\lambda_5(x) = 5 + x$. The map $\\lambda_5$ is a bijection, so the equation $\\lambda_5(x) = 2$ has exactly one solution. Solve $\\lambda_5(x) = 2$ in $\\mathbb{Z}_9$."
-            answer: "6"
+            solution_sketch: 'Since $\lambda_a\circ\lambda_b = \lambda_{a+b}$, the $k$-fold composite $\lambda_3^k$ equals $\lambda_{3k}$. It is the identity exactly when $3k\equiv 0 \pmod 7$, and because $7$ is prime the smallest such $k$ is $7$.'
+          - problem: 'Let $g$, $x$, $y$ be elements of a group $G$ with $gx = gy$. To show that $x=y$, and so that the map $\lambda_g$ is injective, one multiplies both sides on the left by a single element of $G$. Which element is it?'
+            answer: 'g^(-1)'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The full equation is $5 + x = 2$ in $\\mathbb{Z}_9$. By the cancellation rule, subtract $5$ from both sides: $x \\equiv 2 - 5 \\equiv -3$ mod $9$. Since $-3 + 9 = 6$, the unique solution is $x = 6$, confirming that $\\lambda_5$ is onto. The answer is 6."
-          - problem: "Write the full proof: for a fixed element $g$ of a group $G$, the map $\\lambda_g : G \\to G$ with $\\lambda_g(x) = gx$ is a bijection. Then compare with the solution."
-            answer: "See the solution."
+            solution_sketch: 'Multiplying $gx = gy$ on the left by $g^{-1}$ gives $(g^{-1}g)x = (g^{-1}g)y$, which is $x = y$. So $\lambda_g$ is injective, and the element used is $g^{-1}$.'
+          - problem: 'Sam wants to show that for $g\neq e$ the map $\lambda_g$ has no fixed point. Step 1: suppose $gx = x$ for some $x$. Step 2: multiply both sides on the right by $x^{-1}$. Step 3: this gives $g = x^{-1}$. Step 4: hence $g = e$, contradicting $g\neq e$. Step 5: so $\lambda_g$ has no fixed point. Which step is the first one that is not valid?'
+            answer: 'Step 3'
+            answer_contract: {"kind": "label", "options": [["step 1", "1", "step one", "one", "first step", "the first step"], ["step 2", "2", "step two", "two", "second step", "the second step"], ["step 3", "3", "step three", "three", "third step", "the third step"], ["step 4", "4", "step four", "four", "fourth step", "the fourth step"], ["step 5", "5", "step five", "five", "fifth step", "the fifth step"]]}
+            solution_sketch: 'Steps 1 and 2 are legal: Step 1 supposes the opposite, and Step 2 multiplies by $x^{-1}$. Step 3 is false, since $gxx^{-1} = xx^{-1}$ gives $g=e$ directly, not $g=x^{-1}$. So Step 3 is the first invalid step.'
+          - problem: 'In the group $G=\mathbb{Z}_9$ let $\lambda_5(x) = 5+x$. Solve $\lambda_5(x) = 2$ for $x$ in $\mathbb{Z}_9$.'
+            answer: '6'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'We need $5+x\equiv 2 \pmod 9$. Subtracting $5$ gives $x\equiv -3\equiv 6 \pmod 9$, so the unique solution is $x = 6$, which shows that $\lambda_5$ is onto.'
+          - problem: 'A carousel has $9$ horses in a ring, and a ride moves every horse $5$ places forward, which is the permutation $\lambda_5$ of $\mathbb{Z}_9$. What is the smallest number of places by which the carousel must then be turned forward to undo the ride?'
+            answer: '4'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Turning forward by $5$ places and then by $h$ places is a turn by $5+h$ places modulo $9$. This is a turn of $0$ exactly when $h = 4$, since $5+4 = 9$.'
+          - problem: 'A carousel has $12$ horses in a ring, and every ride moves each horse $8$ places forward, which is the permutation $\lambda_8$ of $\mathbb{Z}_{12}$. After how many rides are all the horses first back at their starting places?'
+            answer: '3'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The $k$-fold ride is a turn of $8k$ places, and it brings every horse back when $8k\equiv 0 \pmod{12}$. The smallest positive $k$ is $3$, since $8\cdot 3 = 24 = 2\cdot 12$.'
+          - problem: 'Write the full proof that for each element $g$ of a group $G$ the map $\lambda_g: G\to G$ defined by $\lambda_g(x) = gx$ is a bijection.'
+            answer: 'Each map x -> gx is a bijection of G.'
             answer_contract: {"kind": "none"}
-            solution_sketch: "Setup: fix $g \\in G$ and consider $\\lambda_g: G \\to G$, $\\lambda_g(x) = gx$. Step 1, injectivity: suppose $\\lambda_g(x) = \\lambda_g(y)$, that is $gx = gy$. Multiply on the left by $g^{-1}$: $g^{-1}(gx) = g^{-1}(gy)$, so by associativity $(g^{-1}g)x = (g^{-1}g)y$, hence $ey = ey$ gives $x = y$. So $\\lambda_g$ is injective. Step 2, surjectivity: take any $y \\in G$ and set $x = g^{-1}y$. Then $\\lambda_g(x) = g(g^{-1}y) = (gg^{-1})y = ey = y$, so every $y$ has a preimage and $\\lambda_g$ is surjective. Step 3, conclusion: $\\lambda_g$ is both injective and surjective, hence a bijection; equivalently, $\\lambda_{g^{-1}}$ is a two-sided inverse since $\\lambda_{g^{-1}} \\circ \\lambda_g = \\lambda_{g^{-1}g} = \\lambda_e$ is the identity map. This bijection property is exactly what Cayley's theorem uses to view each element $g$ as a permutation of the set $G$."
-        constraints: "properties of the left-regular maps lambda_g"
+            solution_sketch: 'First, $\lambda_g$ is injective: if $gx = gy$, multiplying on the left by $g^{-1}$ gives $x = y$. Second, $\lambda_g$ is surjective: for any $y$ in $G$ the element $x = g^{-1}y$ satisfies $\lambda_g(x) = g(g^{-1}y) = y$. An injective and surjective map is a bijection; equivalently, $\lambda_{g^{-1}}$ is a two-sided inverse of $\lambda_g$. This is why each element $g$ can be viewed as a permutation of the set $G$.'
+        constraints: 'properties of the left-regular maps lambda_g; one proof request'
       - id: kp2
         name: "The theorem and its proof"
         key_prerequisites: [group-actions, group-isomorphisms]
+        step_check:
+          step: 'In particular, $\lambda_g(e) = ge = e$'
+          question: 'Why does the proof evaluate $\lambda_g$ at the identity element $e$?'
+          options:
+            - 'The identity element is the only point at which $\lambda_g$ can be evaluated'
+            - 'Evaluating at $e$ shows directly that $\lambda_g$ is a bijection of the group'
+            - 'Every permutation of $G$ fixes $e$, so the value $g$ tells us nothing'
+            - 'The identity permutation fixes $e$, and $\lambda_g(e)$ equals $g$'
+          answer: 'The identity permutation fixes $e$, and $\lambda_g(e)$ equals $g$'
+          why: 'A permutation that is the identity fixes every point, in particular $e$; since $\lambda_g(e) = ge = g$, this forces $g = e$ and the kernel is trivial.'
         exemplars:
-          - problem: "Cayley's proof uses the left-regular action of $G = \\mathbb{Z}_8$ on itself, given by $\\lambda_g(x) = g + x$, with identity element $0$. To test whether $g$ lies in the kernel of the map $g \\mapsto \\lambda_g$, one evaluates $\\lambda_g$ at the identity. Give $\\lambda_5(0)$."
-            answer: "5"
+          - problem: 'Cayley''s theorem embeds a group of order $7$ in a symmetric group by letting the group act on its own elements. How many elements does that symmetric group have?'
+            answer: '5040'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The kernel test evaluates the permutation at the identity element of the group. In the left-regular action of $\\mathbb{Z}_8$, the rule is $\\lambda_g(x) = g + x$, so $\\lambda_5(0) = 5 + 0 = 5$. If $\\lambda_g$ were the identity permutation, then $\\lambda_g(0) = 0$ would force $g = 0$, so $g = 5$ is not in the kernel. The value is 5."
-          - problem: "Cayley's theorem states that every group of order $n$ is isomorphic to a subgroup of the symmetric group $S_n$. Apply the theorem to a group of order $7$. Give the degree $n$ of the symmetric group and the order $s$ of $S_n$."
-            answer: "n = 7; s = 5040"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "n"}, {"contract": {"kind": "exact"}, "name": "s"}]}
-            solution_sketch: "By Cayley's theorem, the regular action embeds a group of order $n$ into the symmetric group on its own underlying set, so the degree equals the group order. For a group of order $7$ the target is $S_7$. The symmetric group $S_7$ has $7! = 5040$ elements. The answer is n = 7; s = 5040."
-          - problem: "In the proof of Cayley's theorem, the map $\\varphi: G \\to S_G$ sends each $g$ to the permutation $\\lambda_g$ defined by $\\lambda_g(x) = gx$. The kernel consists of those $g$ for which $\\lambda_g$ is the identity permutation. Evaluating $\\lambda_g$ at the identity element gives $\\lambda_g(e) = ge = g$. For $G = \\mathbb{Z}_5$, how many elements are in the kernel of $\\varphi$?"
-            answer: "1"
+            solution_sketch: 'Cayley''s theorem lets a group of order $n$ act on its own $n$ elements, so a group of order $7$ embeds in $S_7$. The group $S_7$ has $7! = 5040$ elements.'
+          - problem: 'In the proof of Cayley''s theorem the map $\varphi$ sends each element $g$ of $G$ to the permutation $\lambda_g$, where $\lambda_g(x) = g+x$. For $G=\mathbb{Z}_5$, how many elements $g$ give the identity permutation $\lambda_g$?'
+            answer: '1'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The kernel consists of the elements $g$ with $\\lambda_g$ equal to the identity permutation. Evaluating $\\lambda_g$ at $e$ gives $\\lambda_g(e) = ge = g$, so $\\lambda_g = \\mathrm{id}$ forces $g = e$. Hence only the identity element lies in the kernel. The kernel of the map has exactly 1 element."
-          - problem: "The homomorphism property used in Cayley's proof says $\\lambda_g \\circ \\lambda_h = \\lambda_{g+h}$ for the left-regular action of $\\mathbb{Z}_{12}$, where $\\lambda_g(x) = g + x$. Compute $(\\lambda_7 \\circ \\lambda_5)(0)$."
-            answer: "0"
+            solution_sketch: 'The permutation $\lambda_g$ is the identity only if $\lambda_g(0) = g+0 = g$ equals $0$, that is $g=0$. So only $0$ gives the identity permutation, and the kernel has $1$ element.'
+          - problem: 'Cayley''s proof uses the left-regular action of $G=\mathbb{Z}_8$ on itself, $\lambda_g(x) = g+x$. What is $\lambda_5(0)$?'
+            answer: '5'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The homomorphism property is verified by evaluating both sides at the identity element $0$. By definition of composition, $(\\lambda_7 \\circ \\lambda_5)(0) = \\lambda_7(\\lambda_5(0)) = 7 + (5 + 0) = 12$, and $12 \\equiv 0$ in $\\mathbb{Z}_{12}$. This matches $\\lambda_{12}(0) = \\lambda_0(0) = 0$. The value is 0."
-          - problem: "In the left-regular action of $\\mathbb{Z}_9$, the permutation $\\lambda_3$ satisfies $\\lambda_3^k(x) = 3k + x$, so $\\lambda_3^k$ is the identity permutation exactly when $3k$ is a multiple of $9$. Give the order of the permutation $\\lambda_3$."
-            answer: "3"
+            solution_sketch: 'In the left-regular action of $\mathbb{Z}_8$ the rule is $\lambda_g(x) = g+x$. So $\lambda_5(0) = 5+0 = 5$, and since $5\neq 0$ the element $5$ is not in the kernel.'
+          - problem: 'For the left-regular action of $\mathbb{Z}_{12}$, where $\lambda_g(x) = g+x$, the map $g\mapsto\lambda_g$ is a homomorphism: $\lambda_g\circ\lambda_h = \lambda_{g+h}$. What is $(\lambda_7\circ\lambda_5)(0)$?'
+            answer: '0'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The powers of the permutation satisfy $\\lambda_3^k(x) = 3k + x$ by the homomorphism property of the action. So $\\lambda_3^k$ is the identity exactly when $3k \\equiv 0$ modulo $9$. The smallest positive such $k$ is $3$, since $3 \\cdot 3 = 9$. The order of $\\lambda_3$ is 3."
-          - problem: "In the proof that the map sending each group element to its left translation is a homomorphism, one checks $\\lambda_g \\lambda_h = \\lambda_{gh}$ for the left-regular action $\\lambda_g(x) = gx$. Take $G = \\mathbb{Z}_{20}$ with $g = 13$ and $h = 17$, so that the composite $\\lambda_{13} \\lambda_{17}$ equals $\\lambda_c$. Give $c$."
-            answer: "10"
+            solution_sketch: 'By definition $(\lambda_7\circ\lambda_5)(0) = 7+(5+0) = 12$, and $12\equiv 0$ in $\mathbb{Z}_{12}$. This agrees with $\lambda_{7+5}(0) = \lambda_0(0) = 0$, as the homomorphism property predicts.'
+          - problem: 'In the left-regular action of $\mathbb{Z}_9$ the permutation $\lambda_3$ satisfies $\lambda_3^k(x) = 3k+x$. What is the order of $\lambda_3$?'
+            answer: '3'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The homomorphism property is checked by evaluating the composite at an arbitrary element $x$ and comparing it with the right-hand side. Since $\\lambda_{13}\\lambda_{17}(x) = 13 + (17 + x) = 30 + x$, associativity of addition in $\\mathbb{Z}_{20}$ shows this equals $(13 + 17) + x$. Reducing the index modulo $20$ gives $30 + x = 10 + x = \\lambda_{10}(x)$, so the composite is $\\lambda_{10}$ and the index is $c = 10$. The answer is 10."
-          - problem: "Write the full proof: every group $G$ is isomorphic to a subgroup of the symmetric group $S_G$. Then compare with the solution."
-            answer: "See the solution."
+            solution_sketch: 'The powers satisfy $\lambda_3^k(x) = 3k+x$, so $\lambda_3^k$ is the identity exactly when $3k\equiv 0 \pmod 9$. The smallest positive such $k$ is $3$, since $3\cdot 3 = 9$.'
+          - problem: 'The dial of a lock has $20$ positions, and turning it $g$ steps forward is the permutation $\lambda_g$ of $\mathbb{Z}_{20}$. Turning the dial $17$ steps and then $13$ steps gives the same result as a single turn. What is the smallest number of steps in such a single turn?'
+            answer: '10'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The two turns are the composite $\lambda_{13}\circ\lambda_{17}$, which equals $\lambda_{13+17}$ by the homomorphism property. Since $30\equiv 10 \pmod{20}$, one turn of $10$ steps gives the same result.'
+          - problem: 'A turntable has $15$ positions, and turning it $g$ positions forward is the permutation $\lambda_g$ of $\mathbb{Z}_{15}$. The table is turned $11$ positions and then $9$ positions. What is the smallest number of positions in a single turn that has the same effect?'
+            answer: '5'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The two turns give $\lambda_{9+11} = \lambda_{20}$, and $20\equiv 5 \pmod{15}$. So a single turn of $5$ positions has the same effect.'
+          - problem: 'Write the full proof of Cayley''s theorem: every group $G$ is isomorphic to a subgroup of the symmetric group $S_G$.'
+            answer: 'G embeds in S_G by g -> lambda_g.'
             answer_contract: {"kind": "none"}
-            solution_sketch: "Step 1 (the action): let $G$ act on its underlying set by left multiplication, $\\lambda_g(x) = gx$. Each $\\lambda_g$ is a bijection of $G$ because it has inverse $\\lambda_{g^{-1}}$, so $\\lambda_g$ belongs to $S_G$. Step 2 (homomorphism): for all $x$, $\\lambda_g \\lambda_h(x) = g(hx) = (gh)x = \\lambda_{gh}(x)$, so the map $\\varphi: g \\mapsto \\lambda_g$ is a homomorphism from $G$ into $S_G$. Step 3 (kernel triviality): suppose $\\lambda_g = \\mathrm{id}$; then $\\lambda_g(e) = e$, but $\\lambda_g(e) = ge = g$, hence $g = e$, so the kernel of $\\varphi$ is $\\{e\\}$. Step 4 (isomorphism): the image $\\varphi(G)$ is a subgroup of $S_G$, and since the kernel is trivial the map is injective, so $G \\cong \\varphi(G) \\le S_G$. Conclusion: every group is isomorphic to a subgroup of a symmetric group, and a group of order $n$ embeds as a subgroup of $S_n$."
-        constraints: "full proof or key steps; the kernel-triviality argument is required"
+            solution_sketch: 'Let $G$ act on the set $G$ by left multiplication, $\lambda_g(x) = gx$. Each $\lambda_g$ is a bijection with inverse $\lambda_{g^{-1}}$, so it lies in $S_G$. For all $x$ we have $\lambda_g\lambda_h(x) = g(hx) = (gh)x = \lambda_{gh}(x)$, so $\varphi: g\mapsto\lambda_g$ is a homomorphism into $S_G$. If $\lambda_g$ is the identity permutation, then $g = ge = \lambda_g(e) = e$, so the kernel is trivial and $\varphi$ is injective. Hence $G$ is isomorphic to the subgroup $\varphi(G)$ of $S_G$, and a group of order $n$ embeds in $S_n$.'
+        constraints: 'the kernel-triviality argument and the homomorphism property; one proof request of the full theorem'
       - id: kp3
         name: "Computing regular representations"
         key_prerequisites: [group-actions]
+        step_check:
+          step: 'Close the cycle'
+          question: 'Why does the example stop applying the map once it returns to $0$?'
+          options:
+            - 'Every cycle of a permutation of $\mathbb{Z}_5$ has to contain the point $0$'
+            - 'The map has order $2$, so it can be applied only twice in a row'
+            - 'The map is a bijection, so after $0$ the points repeat in the same order'
+            - 'Once $0$ is reached, the remaining points are fixed by the permutation'
+          answer: 'The map is a bijection, so after $0$ the points repeat in the same order'
+          why: 'A bijection that returns to its starting point repeats the same points in the same order, so the cycle is complete; here it already contains all five points.'
         exemplars:
-          - problem: "In the left-regular representation of the cyclic group $\\mathbb{Z}_3$, the element $1$ acts on the residues $\\{0, 1, 2\\}$ by adding $1$ modulo $3$. Give the image of $1$ as a permutation in one-line notation, that is, as (f(0), f(1), f(2))."
-            answer: "(1,2,0)"
-            answer_contract: {"arity": 3, "kind": "coordinates"}
-            solution_sketch: "Step 1 (left-regular representation): the image of $1$ adds $1$ modulo $3$, so it sends $0 \\mapsto 1$, $1 \\mapsto 2$, and $2 \\mapsto 0$; in cycle notation this is a single three-cycle. Step 2 (one-line notation): listing the images of $0$, $1$, and $2$ in order gives the tuple of values. The answer is (1,2,0)."
-          - problem: "In the left-regular representation of $\\mathbb{Z}_4$, the element $2$ acts on the residues $\\{0, 1, 2, 3\\}$ by adding $2$ modulo $4$. Give $k$, the number of disjoint cycles in the image of $2$, and $m$, the length of each of those cycles."
-            answer: "k = 2; m = 2"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "k"}, {"contract": {"kind": "exact"}, "name": "m"}]}
-            solution_sketch: "Step 1 (left-regular representation): adding $2$ modulo $4$ sends $0 \\mapsto 2$, $2 \\mapsto 0$, $1 \\mapsto 3$, and $3 \\mapsto 1$, so the image is the product of the disjoint transpositions $(0\\,2)(1\\,3)$. Step 2 (cycle structure): the image splits into $k = 2$ disjoint cycles, and each cycle has length $m = 2$. The answer is k = 2; m = 2."
-          - problem: "In the left-regular representation of $\\mathbb{Z}_6$, the element $2$ acts on the residues $\\{0, 1, 2, 3, 4, 5\\}$ by adding $2$ modulo $6$. Find the order of the image of $2$ in the symmetric group on these six points."
-            answer: "3"
+          - problem: 'In the left-regular representation of $\mathbb{Z}_3$ the element $1$ acts on the residues $\{0,1,2\}$ by adding $1$ modulo $3$. To which residue does this permutation send $2$?'
+            answer: '0'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1 (orbits of the action): adding $2$ modulo $6$ sends $0 \\to 2 \\to 4 \\to 0$ and $1 \\to 3 \\to 5 \\to 1$, so the image is the permutation $(0,2,4)(1,3,5)$. Step 2 (order of a product of disjoint cycles): the order is the least common multiple of the cycle lengths, which is $3$. The order of the image of $2$ is 3."
-          - problem: "A student asserts that for every $n$ with $2 \\le n \\le 6$, the image of each element of $\\mathbb{Z}_n$ other than $0$ under the left-regular representation has order $n$. Find the smallest $n$ for which the assertion is false."
-            answer: "4"
+            solution_sketch: 'The image of $1$ adds $1$ modulo $3$, so it sends $0\to1$, $1\to2$ and $2\to0$. The residue $2$ goes to $0$.'
+          - problem: 'In the left-regular representation of $\mathbb{Z}_4$ the element $2$ acts on the residues $\{0,1,2,3\}$ by adding $2$ modulo $4$. Into how many disjoint cycles does this permutation split the four residues?'
+            answer: '2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1 (check the smallest groups): in $\\mathbb{Z}_2$ and $\\mathbb{Z}_3$ every nonzero element generates the whole group, so its image is an $n$-cycle of order $n$; the assertion holds for $n = 2$ and $n = 3$. Step 2 (test $\\mathbb{Z}_4$): the image of $2$ adds $2$ modulo $4$ and is the permutation $(0,2)(1,3)$, which has order $2$, not $4$. Step 3 (smallest counterexample): the smallest $n$ for which the assertion fails is $4$. The answer is 4."
-          - problem: "In the left-regular representation of $\\mathbb{Z}_5$, the element $3$ acts on the residues $\\{0, 1, 2, 3, 4\\}$ by adding $3$ modulo $5$. Find the order of the image of $3$ in the symmetric group on these five points."
-            answer: "5"
+            solution_sketch: 'Adding $2$ modulo $4$ sends $0\to2\to0$ and $1\to3\to1$. So the permutation $(0\,2)(1\,3)$ splits the residues into $2$ disjoint cycles.'
+          - problem: 'In the left-regular representation of $\mathbb{Z}_6$ the element $2$ acts on the residues $\{0,1,2,3,4,5\}$ by adding $2$ modulo $6$. What is the order of the image of $2$ in the symmetric group on these six points?'
+            answer: '3'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1 (orbits of the action): adding $3$ modulo $5$ sends $0 \\to 3 \\to 1 \\to 4 \\to 2 \\to 0$, so the image is the five-cycle $(0,3,1,4,2)$. Step 2 (order of a cycle): a cycle of length $5$ has order $5$, and no smaller positive power returns every point to itself. The order of the image of $3$ is 5."
-          - problem: "Take the Klein four-group $V = \\{e, a, b, c\\}$, in which the elements $a$, $b$, $c$ are self-inverse and $ab = c$, $ac = b$, $bc = a$. In the left-regular representation the element $b$ acts by $x \\mapsto bx$. How many elements of $V$ does the image of $b$ fix?"
-            answer: "0"
+            solution_sketch: 'Adding $2$ modulo $6$ sends $0\to2\to4\to0$ and $1\to3\to5\to1$, so the image of $2$ is a product of two disjoint $3$-cycles. The order of a product of disjoint cycles is the least common multiple of the lengths, which is $3$.'
+          - problem: 'Sam asserts that for every $n$ with $2\le n\le 6$ the image of each nonzero element of $\mathbb{Z}_n$ under the left-regular representation has order $n$. What is the smallest $n$ for which Sam is wrong?'
+            answer: '4'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1 (left multiplication by $b$): the element $b$ sends $e \\mapsto b$, $a \\mapsto ba = c$, $b \\mapsto e$, and $c \\mapsto bc = a$. Step 2 (fixed points and cycle notation): a fixed element would satisfy $bx = x$, which forces $b = e$ after cancelling, so no element is fixed; the image $(e,b)(a,c)$ moves all four elements. The answer is 0."
-          - problem: "Write the full proof: the left-regular representation of a group $G$ is an injective homomorphism from $G$ into the symmetric group on the set $G$. Then compare with the solution."
-            answer: "See the solution."
+            solution_sketch: 'In $\mathbb{Z}_2$ and $\mathbb{Z}_3$ every nonzero element generates the group, so its image is an $n$-cycle of order $n$. In $\mathbb{Z}_4$ the image of $2$ is $(0\,2)(1\,3)$, which has order $2$, not $4$, so the smallest counterexample is $n=4$.'
+          - problem: 'In the left-regular representation of $\mathbb{Z}_5$ the element $3$ acts on the residues $\{0,1,2,3,4\}$ by adding $3$ modulo $5$. What is the order of the image of $3$ in the symmetric group on these five points?'
+            answer: '5'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Adding $3$ modulo $5$ sends $0\to3\to1\to4\to2\to0$, which is a single $5$-cycle. A cycle of length $5$ has order $5$, so the image of $3$ has order $5$.'
+          - problem: 'Take the Klein four-group $V=\mathbb{Z}_2\times\mathbb{Z}_2$, with addition coordinate by coordinate modulo $2$. In the left-regular representation the element $b=(0,1)$ acts by $x\mapsto b+x$. How many elements of $V$ does the image of $b$ fix?'
+            answer: '0'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Left translation by $b$ sends $x$ to $b+x$, and $b+x = x$ would force $b = (0,0)$ after cancelling $x$. Since $b\neq(0,0)$, no element is fixed, so the image of $b$ fixes $0$ elements; it is the product of two swaps.'
+          - problem: 'Ten guests sit at a round table with $10$ seats numbered $0$ to $9$. At each signal every guest moves $4$ seats to the right, which is the image of $4$ in the left-regular representation of $\mathbb{Z}_{10}$. Into how many separate loops of seats do the guests move?'
+            answer: '2'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Shifting by $4$ seats modulo $10$ gives $\gcd(4,10)=2$ cycles, each of length $5$. So the guests move around $2$ separate loops.'
+          - problem: 'A conveyor belt has $14$ trays numbered $0$ to $13$, and at each step every tray moves $6$ places forward around the belt, which is the image of $6$ in the left-regular representation of $\mathbb{Z}_{14}$. After how many steps are all trays first back at their starting places?'
+            answer: '7'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Shifting by $6$ trays modulo $14$ splits the trays into $\gcd(6,14)=2$ loops of length $7$. All trays are back after $7$ steps, and no smaller number works.'
+          - problem: 'Write the full proof that the left-regular representation $g\mapsto\lambda_g$ of a group $G$, where $\lambda_g(x) = gx$, is an injective homomorphism from $G$ into the symmetric group on the set $G$.'
+            answer: 'The map g -> lambda_g is an embedding.'
             answer_contract: {"kind": "none"}
-            solution_sketch: "Step 1 (the images are permutations): for each element $a$ of $G$, let $\\lambda_a$ be the map $x \\mapsto ax$ on the set $G$. The map $x \\mapsto a^{-1}x$ undoes it on both sides, so $\\lambda_a$ is a bijection of $G$ and belongs to the symmetric group on $G$. Step 2 (homomorphism): for elements $a$ and $b$ and any $x$ in $G$, the map $\\lambda_{ab}$ sends $x$ to $(ab)x = a(bx)$, which is $\\lambda_a$ applied to $\\lambda_b(x)$; hence $\\lambda_{ab} = \\lambda_a \\lambda_b$, so the assignment respects products and is a group homomorphism. Step 3 (injectivity): if $\\lambda_a$ is the identity permutation, then evaluating at the identity element $e$ gives $a = ae = \\lambda_a(e) = e$, so the kernel is trivial, and a homomorphism with trivial kernel is injective. Step 4 (conclusion): $G$ embeds as a subgroup of the symmetric group on the set $G$, and for a finite group of order $n$ this is an embedding into the symmetric group on $n$ points, which is Cayley's theorem."
-        constraints: "regular representations of Z_n (n <= 6) and the Klein group; cycle-notation answers"
+            solution_sketch: 'Each $\lambda_a$ is a bijection of $G$, because $x\mapsto a^{-1}x$ undoes it on both sides, so $\lambda_a$ lies in the symmetric group on $G$. For $a$, $b$ and any $x$ in $G$, $\lambda_{ab}(x) = (ab)x = a(bx) = \lambda_a(\lambda_b(x))$, so $\lambda_{ab} = \lambda_a\lambda_b$ and the assignment is a homomorphism. If $\lambda_a$ is the identity permutation, then $a = ae = \lambda_a(e) = e$, so the kernel is trivial and the homomorphism is injective. Hence $G$ embeds as a subgroup of the symmetric group on the set $G$, which for a finite group of order $n$ is an embedding into $S_n$.'
+        constraints: 'regular representations of Z_n and the Klein group; images of points, cycle counts and orders; one proof request'
     diagnostic_exemplar:
       problem: 'Cayley''s theorem embeds $(\mathbb{Z}_6, +)$ into a symmetric group $S_n$. Give $n$, write the permutation representing the element $3$ in cycle notation, and explain why the embedding is injective.'
       answer: '$n = 6$: the group acts on its own six elements by left translation. The element $3$ gives $\lambda_3(x) = x + 3$, i.e. $0 \mapsto 3,\ 1 \mapsto 4,\ 2 \mapsto 5,\ 3 \mapsto 0,\ 4 \mapsto 1,\ 5 \mapsto 2$, which in cycle notation is $(0\,3)(1\,4)(2\,5)$. The map $g \mapsto \lambda_g$ is injective because $\lambda_g = \mathrm{id}$ forces $g = \lambda_g(0) = 0$.'

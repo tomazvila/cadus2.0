@@ -24,81 +24,163 @@ topics:
         weight: 0.3
     knowledge_points:
       - id: kp1
-        name: Evaluate at standard values
+        name: 'Evaluate at standard values'
         key_prerequisites: [unit-circle]
-        constraints: "inputs drawn from unit-circle values; answers in radians"
+        constraints: 'inputs drawn from unit-circle values; answers in radians; includes short word problems that ask for an angle'
+        step_check:
+          step: 'Identify the angle $\theta$ where $\cos(\theta) = \frac{\sqrt{2}}{2}$'
+          question: 'Why is $\arccos\left(\frac{\sqrt{2}}{2}\right)$ equal to $\frac{\pi}{4}$ and not to $\frac{7\pi}{4}$, which has the same cosine?'
+          options:
+            - 'The cosine of $\frac{7\pi}{4}$ is negative, so that angle cannot be the answer'
+            - 'Angles larger than $\pi$ do not exist on the unit circle, so only $\frac{\pi}{4}$ is left'
+            - 'Arccos only returns angles from $0$ to $\pi$, and $\frac{7\pi}{4}$ is outside that range'
+            - 'Arccos always returns an angle in the first quadrant, and $\frac{7\pi}{4}$ is not there'
+          answer: 'Arccos only returns angles from $0$ to $\pi$, and $\frac{7\pi}{4}$ is outside that range'
+          why: 'Arccos is defined to return the one angle in $[0, \pi]$ with the given cosine, and $\cos\frac{\pi}{4}=\frac{\sqrt{2}}{2}$.'
         exemplars:
-          - problem: 'Evaluate $\arcsin\left(\frac{1}{2}\right)$.'
-            answer: "π/6"
+          - problem: 'Evaluate $\arcsin\left(\frac{\sqrt{3}}{2}\right)$.'
+            answer: 'pi/3'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The angle between $-\frac{\pi}{2}$ and $\frac{\pi}{2}$ whose sine is $\frac{\sqrt{3}}{2}$ is $\frac{\pi}{3}$. Arcsin returns exactly that angle, so the value is $\frac{\pi}{3}$.'
           - problem: 'Evaluate $\arctan(1)$.'
-            answer: "π/4"
+            answer: 'pi/4'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The tangent of $\frac{\pi}{4}$ is $1$, and $\frac{\pi}{4}$ lies between $-\frac{\pi}{2}$ and $\frac{\pi}{2}$, the range of arctan. So $\arctan(1)=\frac{\pi}{4}$.'
           - problem: 'Evaluate $\arccos\left(-\frac{1}{2}\right)$.'
-            answer: "2π/3"
-            solution_sketch: 'Arccos returns angles in $[0, \pi]$; $\cos(2\pi/3) = -\frac{1}{2}$.'
-          - problem: "Evaluate asin(sqrt(3)/2)."
-            answer: "pi/3"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The full object is asin(sqrt(3)/2). The inverse sine rule returns an angle in [-pi/2, pi/2]. The unit-circle value rule gives sin(pi/3) = sqrt(3)/2. Therefore asin(sqrt(3)/2) = pi/3."
-          - problem: "Evaluate acos(0)."
-            answer: "pi/2"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The full object is acos(0). The inverse cosine rule returns an angle in [0, pi]. The unit-circle value rule gives cos(pi/2) = 0. Therefore acos(0) = pi/2."
-          - problem: "Evaluate atan(-1)."
-            answer: "-pi/4"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The full object is atan(-1). The inverse tangent rule returns an angle in (-pi/2, pi/2). The unit-circle value rule gives tan(-pi/4) = -1. Therefore atan(-1) = -pi/4."
+            answer: '2pi/3'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Arccos returns angles in $[0, \pi]$, and in that range $\cos\frac{2\pi}{3}=-\frac{1}{2}$. So $\arccos\left(-\frac{1}{2}\right)=\frac{2\pi}{3}$.'
+          - problem: 'Evaluate $\arctan\left(-\sqrt{3}\right)$.'
+            answer: '-pi/3'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The tangent of $\frac{\pi}{3}$ is $\sqrt{3}$, so the angle with tangent $-\sqrt{3}$ in $\left(-\frac{\pi}{2}, \frac{\pi}{2}\right)$ is $-\frac{\pi}{3}$. Arctan of a negative number is a negative angle.'
+          - problem: 'Evaluate $\arcsin\left(-\frac{\sqrt{2}}{2}\right)$.'
+            answer: '-pi/4'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Since $\sin\frac{\pi}{4}=\frac{\sqrt{2}}{2}$, the angle with sine $-\frac{\sqrt{2}}{2}$ in $\left[-\frac{\pi}{2}, \frac{\pi}{2}\right]$ is $-\frac{\pi}{4}$. Arcsin keeps the negative sign as a negative angle.'
+          - problem: 'A ramp rises $1$ m for every $\sqrt{3}$ m of horizontal run. What angle does the ramp make with the horizontal, in radians?'
+            answer: 'pi/6'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The tangent of the angle is rise over run, which is $\frac{1}{\sqrt{3}}$. Since $\tan\frac{\pi}{6}=\frac{1}{\sqrt{3}}$, the angle is $\arctan\frac{1}{\sqrt{3}}=\frac{\pi}{6}$.'
+          - problem: 'A $2$ m ladder leans against a wall with its top $\sqrt{2}$ m above the ground. What angle does the ladder make with the ground, in radians?'
+            answer: 'pi/4'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The sine of the angle is height over length, which is $\frac{\sqrt{2}}{2}$. So the angle is $\arcsin\frac{\sqrt{2}}{2}=\frac{\pi}{4}$.'
+          - problem: 'A point on the upper half of the unit circle has $x$-coordinate $-\frac{\sqrt{3}}{2}$. What angle does the point make with the positive $x$-axis, in radians?'
+            answer: '5pi/6'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The $x$-coordinate of a point on the unit circle is the cosine of its angle. So the angle is $\arccos\left(-\frac{\sqrt{3}}{2}\right)=\frac{5\pi}{6}$, which lies in $[0, \pi]$.'
+          - problem: 'Evaluate $\arccos(0)$.'
+            answer: 'pi/2'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The cosine of $\frac{\pi}{2}$ is $0$, and $\frac{\pi}{2}$ lies in the range $[0, \pi]$ of arccos. So $\arccos(0)=\frac{\pi}{2}$.'
       - id: kp2
-        name: Principal ranges
+        name: 'Principal ranges'
         key_prerequisites: [inverse-functions, unit-circle]
-        constraints: "arcsin: [-π/2, π/2]; arccos: [0, π]; arctan: (-π/2, π/2)"
+        constraints: 'arcsin: [-π/2, π/2]; arccos: [0, π]; arctan: (-π/2, π/2)'
+        try_first:
+          problem: 'Evaluate $\arcsin(\sin\pi)$.'
+          answer_contract: {"kind":"exact"}
+          answer: '0'
+          reveal: 'Since $\sin\pi=0$, the value is $\arcsin 0=0$. Arcsin always returns an angle in $\left[-\frac{\pi}{2}, \frac{\pi}{2}\right]$, so it cannot give back $\pi$.'
+        step_check:
+          step: 'Determine the angle in the principal range $(-\frac{\pi}{2}, \frac{\pi}{2})$'
+          question: 'Why is $\arctan(-1)$ equal to $-\frac{\pi}{4}$ and not to $\frac{3\pi}{4}$, which also has tangent $-1$?'
+          options:
+            - 'Arctan only gives angles from $-\frac{\pi}{2}$ to $\frac{\pi}{2}$, and $\frac{3\pi}{4}$ is not there'
+            - 'The tangent of $\frac{3\pi}{4}$ is $1$ and not $-1$, so that angle gives the wrong value for this problem'
+            - 'Arctan only gives angles from $0$ to $\pi$, so it moves the angle to the nearest one in that range'
+            - 'An angle in the second quadrant has no tangent, so it is replaced by the angle $-\frac{\pi}{4}$ instead'
+          answer: 'Arctan only gives angles from $-\frac{\pi}{2}$ to $\frac{\pi}{2}$, and $\frac{3\pi}{4}$ is not there'
+          why: 'Tangent repeats every $\pi$, so arctan picks the one angle in $\left(-\frac{\pi}{2}, \frac{\pi}{2}\right)$ with the given tangent.'
         exemplars:
           - problem: 'Evaluate $\arcsin\left(\sin\frac{5\pi}{6}\right)$.'
-            answer: "π/6"
-            solution_sketch: '$\sin(5\pi/6) = \frac{1}{2}$, and arcsin returns the angle in $[-\pi/2, \pi/2]$.'
+            answer: 'pi/6'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'First $\sin\frac{5\pi}{6}=\frac{1}{2}$. Arcsin returns the angle in $\left[-\frac{\pi}{2}, \frac{\pi}{2}\right]$ with sine $\frac{1}{2}$, which is $\frac{\pi}{6}$, not $\frac{5\pi}{6}$.'
           - problem: 'Evaluate $\arccos(-1)$.'
-            answer: "π"
-          - problem: "Evaluate asin(sin(7pi/6))."
-            answer: "-pi/6"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Start with asin(sin(7pi/6)). Step 1: sin(7pi/6) = -1/2 by the unit circle. Step 2: asin(-1/2) must lie in [-pi/2, pi/2], so it is -pi/6. The principal value is -pi/6."
-          - problem: "Evaluate acos(cos(5pi/4))."
-            answer: "3pi/4"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Start with acos(cos(5pi/4)). Step 1: cos(5pi/4) = -sqrt(2)/2 by the unit circle. Step 2: acos(-sqrt(2)/2) must lie in [0, pi], so it is 3pi/4. The principal value is 3pi/4."
-          - problem: "Evaluate atan(tan(4pi/5))."
-            answer: "-pi/5"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Start with atan(tan(4pi/5)). Step 1: tan(4pi/5) = -tan(pi/5) by periodicity. Step 2: atan(-tan(pi/5)) must lie in (-pi/2, pi/2), so it is -pi/5. The principal value is -pi/5."
-          - problem: "Evaluate acos(cos(7pi/6))."
-            answer: "5pi/6"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Start with acos(cos(7pi/6)). Step 1: cos(7pi/6) = -sqrt(3)/2 by the unit circle. Step 2: acos(-sqrt(3)/2) must lie in [0, pi], so it is 5pi/6. The principal value is 5pi/6."
+            answer: 'pi'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The only angle in the range $[0, \pi]$ of arccos with cosine $-1$ is $\pi$. So $\arccos(-1)=\pi$.'
+          - problem: 'Evaluate $\arcsin\left(\sin\frac{7\pi}{6}\right)$.'
+            answer: '-pi/6'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'First $\sin\frac{7\pi}{6}=-\frac{1}{2}$. The angle in $\left[-\frac{\pi}{2}, \frac{\pi}{2}\right]$ with sine $-\frac{1}{2}$ is $-\frac{\pi}{6}$.'
+          - problem: 'Evaluate $\arccos\left(\cos\frac{5\pi}{4}\right)$.'
+            answer: '3pi/4'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'First $\cos\frac{5\pi}{4}=-\frac{\sqrt{2}}{2}$. The angle in $[0, \pi]$ with that cosine is $\frac{3\pi}{4}$.'
+          - problem: 'Evaluate $\arctan\left(\tan\frac{4\pi}{5}\right)$.'
+            answer: '-pi/5'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The tangent repeats every $\pi$, so $\tan\frac{4\pi}{5}=\tan\left(-\frac{\pi}{5}\right)$. The angle in $\left(-\frac{\pi}{2}, \frac{\pi}{2}\right)$ with this tangent is $-\frac{\pi}{5}$.'
+          - problem: 'Evaluate $\arccos\left(\cos\left(-\frac{\pi}{3}\right)\right)$.'
+            answer: 'pi/3'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Cosine is even, so $\cos\left(-\frac{\pi}{3}\right)=\frac{1}{2}$. The angle in $[0, \pi]$ with cosine $\frac{1}{2}$ is $\frac{\pi}{3}$, not $-\frac{\pi}{3}$.'
+          - problem: 'A point $P$ on the unit circle is at angle $\frac{7\pi}{6}$ from the positive $x$-axis. A point $Q$ on the upper half of the circle has the same $x$-coordinate as $P$. What angle does $Q$ make with the positive $x$-axis?'
+            answer: '5pi/6'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The $x$-coordinate of $P$ is $\cos\frac{7\pi}{6}=-\frac{\sqrt{3}}{2}$. On the upper half the angle is in $[0, \pi]$, so $Q$ is at $\arccos\left(-\frac{\sqrt{3}}{2}\right)=\frac{5\pi}{6}$.'
+          - problem: 'A point $R$ on the unit circle is at angle $\frac{5\pi}{4}$ from the positive $x$-axis. A point $S$ on the right half of the circle has the same $y$-coordinate as $R$. What angle does $S$ make with the positive $x$-axis?'
+            answer: '-pi/4'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The $y$-coordinate of $R$ is $\sin\frac{5\pi}{4}=-\frac{\sqrt{2}}{2}$. On the right half the angle is in $\left[-\frac{\pi}{2}, \frac{\pi}{2}\right]$, so $S$ is at $\arcsin\left(-\frac{\sqrt{2}}{2}\right)=-\frac{\pi}{4}$.'
+          - problem: 'Sam says $\arccos\left(\cos\frac{7\pi}{4}\right)=\frac{7\pi}{4}$ because the two functions undo each other. What is the correct value?'
+            answer: 'pi/4'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Arccos only returns angles in $[0, \pi]$, and $\frac{7\pi}{4}$ is outside that range. Since $\cos\frac{7\pi}{4}=\frac{\sqrt{2}}{2}$, the correct value is $\frac{\pi}{4}$.'
       - id: kp3
-        name: Compose trig with inverse trig
+        name: 'Compose trig with inverse trig'
         key_prerequisites: [unit-circle, trig-identities-basic]
-        constraints: "use a right triangle or the Pythagorean identity; first-quadrant inputs"
+        constraints: 'use a right triangle or the Pythagorean identity; first-quadrant inputs; includes right-triangle word problems'
+        step_check:
+          step: 'Draw a right triangle with adjacent side $7$ and hypotenuse $25$'
+          question: 'Why do the numbers $7$ and $25$ become the adjacent side and the hypotenuse for $\theta=\arccos\frac{7}{25}$?'
+          options:
+            - 'Because sine is adjacent over hypotenuse, and arccos swaps sine and cosine'
+            - 'Because arccos of a ratio is the length of the hypotenuse of the triangle'
+            - 'Because the top number of a ratio is always the side next to the angle'
+            - 'Because $\cos\theta=\frac{7}{25}$, and cosine is adjacent over hypotenuse'
+          answer: 'Because $\cos\theta=\frac{7}{25}$, and cosine is adjacent over hypotenuse'
+          why: 'The definition $\cos\theta=\frac{\text{adjacent}}{\text{hypotenuse}}$ puts $7$ next to the angle and $25$ opposite the right angle.'
         exemplars:
           - problem: 'Evaluate $\cos\left(\arcsin\frac{3}{5}\right)$.'
-            answer: "4/5"
-            solution_sketch: 'A right triangle with opposite $3$, hypotenuse $5$ has adjacent $4$.'
+            answer: '4/5'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Let $\theta=\arcsin\frac{3}{5}$, so the opposite side is $3$ and the hypotenuse is $5$. The adjacent side is $\sqrt{25-9}=4$, so $\cos\theta=\frac{4}{5}$.'
           - problem: 'Evaluate $\tan\left(\arccos\frac{5}{13}\right)$.'
-            answer: "12/5"
-          - problem: "Evaluate sin(arccos(8/17))."
-            answer: "15/17"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1: Let theta = arccos(8/17), so cos(theta) = 8/17 and theta is in the first quadrant. Step 2: Use the Pythagorean identity sin^2(theta) + cos^2(theta) = 1 to get sin(theta) = sqrt(1 - (8/17)^2) = sqrt(225/289). Step 3: The positive square root gives sin(theta) = 15/17."
-          - problem: "Evaluate cos(arctan(20/21))."
-            answer: "21/29"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1: Let theta = arctan(20/21), so tan(theta) = 20/21. Step 2: Form a right triangle with opposite side 20 and adjacent side 21; the hypotenuse is sqrt(20^2 + 21^2) = 29. Step 3: Cosine is adjacent over hypotenuse, so cos(theta) = 21/29."
-          - problem: "Evaluate sin(arctan(9/40))."
-            answer: "9/41"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1: Let theta = arctan(9/40), so tan(theta) = 9/40. Step 2: A right triangle has opposite side 9 and adjacent side 40, so the hypotenuse is sqrt(9^2 + 40^2) = 41. Step 3: Sine is opposite over hypotenuse, so sin(theta) = 9/41."
-          - problem: "Evaluate cos(arcsin(28/53))."
-            answer: "45/53"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1: Let theta = arcsin(28/53), so sin(theta) = 28/53 and theta is in the first quadrant. Step 2: Use the Pythagorean identity sin^2(theta) + cos^2(theta) = 1. Step 3: Then cos(theta) = sqrt(1 - (28/53)^2) = sqrt(2025/2809) = 45/53, since theta is in the first quadrant."
+            answer: '12/5'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Let $\theta=\arccos\frac{5}{13}$, so the adjacent side is $5$ and the hypotenuse is $13$. The opposite side is $12$, so $\tan\theta=\frac{12}{5}$.'
+          - problem: 'Evaluate $\sin\left(\arccos\frac{8}{17}\right)$.'
+            answer: '15/17'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Let $\theta=\arccos\frac{8}{17}$, so $\cos\theta=\frac{8}{17}$ and $\theta$ is in the first quadrant. Then $\sin\theta=\sqrt{1-\frac{64}{289}}=\frac{15}{17}$.'
+          - problem: 'Evaluate $\cos\left(\arctan\frac{20}{21}\right)$.'
+            answer: '21/29'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Let $\theta=\arctan\frac{20}{21}$, so the opposite side is $20$ and the adjacent side is $21$. The hypotenuse is $\sqrt{400+441}=29$, so $\cos\theta=\frac{21}{29}$.'
+          - problem: 'Evaluate $\sin\left(\arctan\frac{9}{40}\right)$.'
+            answer: '9/41'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Let $\theta=\arctan\frac{9}{40}$, so the opposite side is $9$ and the adjacent side is $40$. The hypotenuse is $\sqrt{81+1600}=41$, so $\sin\theta=\frac{9}{41}$.'
+          - problem: 'Evaluate $\cos\left(\arcsin\frac{28}{53}\right)$.'
+            answer: '45/53'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Let $\theta=\arcsin\frac{28}{53}$, so $\sin\theta=\frac{28}{53}$ and $\theta$ is in the first quadrant. Then $\cos\theta=\sqrt{1-\frac{784}{2809}}=\frac{45}{53}$.'
+          - problem: 'A guy wire makes an angle $\theta=\arcsin\frac{8}{17}$ with level ground. It is anchored $30$ m from the base of a vertical pole. How high up the pole does the wire reach?'
+            answer: '16'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"m","allow_omitted":true}
+            solution_sketch: 'The height is $30\tan\theta$. With $\sin\theta=\frac{8}{17}$ the adjacent side is $15$, so $\tan\theta=\frac{8}{15}$ and the height is $30\cdot\frac{8}{15}=16$ m.'
+          - problem: 'A ramp makes an angle $\theta=\arccos\frac{12}{13}$ with the ground and rises $10$ m. How long is the ramp?'
+            answer: '26'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"m","allow_omitted":true}
+            solution_sketch: 'The rise is the ramp length times $\sin\theta$. Since $\cos\theta=\frac{12}{13}$, we get $\sin\theta=\frac{5}{13}$, so the length is $10\div\frac{5}{13}=26$ m.'
+          - problem: 'Maya says $\cos\left(\arctan\frac{3}{4}\right)=\frac{3}{4}$. What is the correct value?'
+            answer: '4/5'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Let $\theta=\arctan\frac{3}{4}$, so the opposite side is $3$ and the adjacent side is $4$. The hypotenuse is $5$, so $\cos\theta=\frac{4}{5}$; the ratio $\frac{3}{4}$ is the tangent.'
     diagnostic_exemplar:
       problem: 'Evaluate $\tan\left(\arcsin\frac{5}{13}\right)$.'
       answer: "5/12"
@@ -128,69 +210,154 @@ topics:
         weight: 0.3
     knowledge_points:
       - id: kp1
-        name: Exact values at non-special angles
+        name: 'Exact values at non-special angles'
         key_prerequisites: [unit-circle, simplifying-radicals]
-        constraints: "targets like 15°, 75°, 105° built from 30/45/60"
+        constraints: 'targets like 15°, 75°, 105° built from 30/45/60; includes word problems that need an exact value'
+        step_check:
+          step: 'Identify the angles that sum to $75^\circ$'
+          question: 'Why is $75^\circ$ written as $45^\circ+30^\circ$ before the sine sum identity is used?'
+          options:
+            - 'The identity only works when the two angles add up to a multiple of $15^\circ$ exactly'
+            - 'The values for $45^\circ$ and $30^\circ$ are known exactly, but not those for $75^\circ$'
+            - 'Splitting an angle gives $\sin 75^\circ=\sin 45^\circ+\sin 30^\circ$, which is then added'
+            - 'Every angle has to be split into two parts before any exact value can be found for it at all'
+          answer: 'The values for $45^\circ$ and $30^\circ$ are known exactly, but not those for $75^\circ$'
+          why: 'The identity turns $\sin 75^\circ$ into products of values from the unit circle, which are known exactly.'
         exemplars:
-          - problem: 'Use $\cos(45^\circ - 30^\circ)$ to find the exact value of $\cos 15^\circ$.'
-            answer: "(√6 + √2)/4"
-            solution_sketch: '$\cos 45 \cos 30 + \sin 45 \sin 30 = \frac{\sqrt{2}}{2}\cdot\frac{\sqrt{3}}{2} + \frac{\sqrt{2}}{2}\cdot\frac{1}{2} = \frac{\sqrt{6} + \sqrt{2}}{4}$.'
+          - problem: 'Use $\cos(45^\circ-30^\circ)$ to find the exact value of $\cos 15^\circ$.'
+            answer: '(sqrt(6)+sqrt(2))/4'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'By the cosine difference identity, $\cos 15^\circ=\cos 45^\circ\cos 30^\circ+\sin 45^\circ\sin 30^\circ$. This is $\frac{\sqrt{2}}{2}\cdot\frac{\sqrt{3}}{2}+\frac{\sqrt{2}}{2}\cdot\frac{1}{2}=\frac{\sqrt{6}+\sqrt{2}}{4}$.'
           - problem: 'Find the exact value of $\sin 15^\circ$.'
-            answer: "(√6 - √2)/4"
-            solution_sketch: '$\sin(45^\circ - 30^\circ) = \sin 45 \cos 30 - \cos 45 \sin 30$.'
-          - problem: "Use the tangent difference identity with 45 degrees and 30 degrees. Find the exact value of tan 15 degrees."
-            answer: "2 - sqrt(3)"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1: Write tan(45 - 30) = (tan 45 - tan 30)/(1 + tan 45 tan 30) by the tangent difference identity. Step 2: Substitute tan 45 = 1 and tan 30 = sqrt(3)/3 to get (1 - sqrt(3)/3)/(1 + sqrt(3)/3). Step 3: Multiply numerator and denominator by 3 and rationalize to obtain 2 - sqrt(3). The exact value is 2 - sqrt(3)."
-          - problem: "Use the cosine sum identity with 60 degrees and 45 degrees. Find the exact value of cos 105 degrees."
-            answer: "(sqrt(2)-sqrt(6))/4"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1: Write cos(60 + 45) = cos 60 cos 45 - sin 60 sin 45 by the cosine sum identity. Step 2: Substitute cos 60 = 1/2, cos 45 = sqrt(2)/2, sin 60 = sqrt(3)/2, and sin 45 = sqrt(2)/2. Step 3: Multiply each pair and combine over the common denominator 4 to get (sqrt(2) - sqrt(6))/4. The exact value is (sqrt(2)-sqrt(6))/4."
-          - problem: "Use the tangent sum identity with 45 degrees and 30 degrees. Find the exact value of tan 75 degrees."
-            answer: "2 + sqrt(3)"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1: Write tan(45 + 30) = (tan 45 + tan 30)/(1 - tan 45 tan 30) by the tangent sum identity. Step 2: Substitute tan 45 = 1 and tan 30 = sqrt(3)/3 to get (1 + sqrt(3)/3)/(1 - sqrt(3)/3). Step 3: Multiply numerator and denominator by 3 and rationalize to obtain 2 + sqrt(3). The exact value is 2 + sqrt(3)."
-          - problem: "Use the tangent sum identity with 60 degrees and 45 degrees. Find the exact value of tan 105 degrees."
-            answer: "-2 - sqrt(3)"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1: Write tan(60 + 45) = (tan 60 + tan 45)/(1 - tan 60 tan 45) by the tangent sum identity. Step 2: Substitute tan 60 = sqrt(3) and tan 45 = 1 to get (sqrt(3) + 1)/(1 - sqrt(3)). Step 3: Multiply numerator and denominator by 1 + sqrt(3) and simplify to get -2 - sqrt(3). The exact value is -2 - sqrt(3)."
+            answer: '(sqrt(6)-sqrt(2))/4'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Write $15^\circ=45^\circ-30^\circ$, so $\sin 15^\circ=\sin 45^\circ\cos 30^\circ-\cos 45^\circ\sin 30^\circ$. This equals $\frac{\sqrt{6}}{4}-\frac{\sqrt{2}}{4}=\frac{\sqrt{6}-\sqrt{2}}{4}$.'
+          - problem: 'Use $\tan(45^\circ-30^\circ)$ to find the exact value of $\tan 15^\circ$.'
+            answer: '2 - sqrt(3)'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The tangent difference identity gives $\frac{\tan 45^\circ-\tan 30^\circ}{1+\tan 45^\circ\tan 30^\circ}=\frac{1-\frac{\sqrt{3}}{3}}{1+\frac{\sqrt{3}}{3}}$. Multiplying top and bottom by $3$ and rationalizing gives $2-\sqrt{3}$.'
+          - problem: 'Find the exact value of $\cos 105^\circ$.'
+            answer: '(sqrt(2)-sqrt(6))/4'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Write $105^\circ=60^\circ+45^\circ$, so $\cos 105^\circ=\cos 60^\circ\cos 45^\circ-\sin 60^\circ\sin 45^\circ$. This is $\frac{\sqrt{2}}{4}-\frac{\sqrt{6}}{4}=\frac{\sqrt{2}-\sqrt{6}}{4}$.'
+          - problem: 'Use $\tan(45^\circ+30^\circ)$ to find the exact value of $\tan 75^\circ$.'
+            answer: '2 + sqrt(3)'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The tangent sum identity gives $\frac{1+\frac{\sqrt{3}}{3}}{1-\frac{\sqrt{3}}{3}}$. Multiplying top and bottom by $3$ and rationalizing gives $2+\sqrt{3}$.'
+          - problem: 'Find the exact value of $\cos 165^\circ$.'
+            answer: '-(sqrt(6)+sqrt(2))/4'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Write $165^\circ=120^\circ+45^\circ$, so $\cos 165^\circ=\cos 120^\circ\cos 45^\circ-\sin 120^\circ\sin 45^\circ$. This is $-\frac{\sqrt{2}}{4}-\frac{\sqrt{6}}{4}=-\frac{\sqrt{6}+\sqrt{2}}{4}$.'
+          - problem: 'Find the exact value of $\tan 105^\circ$.'
+            answer: '-2 - sqrt(3)'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Write $105^\circ=60^\circ+45^\circ$, so $\tan 105^\circ=\frac{\sqrt{3}+1}{1-\sqrt{3}}$. Multiplying top and bottom by $1+\sqrt{3}$ gives $\frac{4+2\sqrt{3}}{-2}=-2-\sqrt{3}$.'
+          - problem: 'A ramp $8$ m long makes an angle of $15^\circ$ with the ground. What exact horizontal distance does it cover?'
+            answer: '2sqrt(6)+2sqrt(2)'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"m","allow_omitted":true}
+            solution_sketch: 'The horizontal distance is $8\cos 15^\circ$. Since $\cos 15^\circ=\frac{\sqrt{6}+\sqrt{2}}{4}$ by the difference identity, the distance is $2\sqrt{6}+2\sqrt{2}$ m.'
+          - problem: 'The sun is at an angle of elevation of $75^\circ$. A vertical post $1$ m tall casts a shadow on level ground. What is the exact length of the shadow?'
+            answer: '2 - sqrt(3)'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"m","allow_omitted":true}
+            solution_sketch: 'The shadow is the post height divided by $\tan 75^\circ$, so it is $\frac{1}{\tan 75^\circ}=\tan 15^\circ$. By the difference identity $\tan 15^\circ=2-\sqrt{3}$, so the shadow is $2-\sqrt{3}$ m long.'
       - id: kp2
-        name: Collapse an expression into a single sine or cosine
+        name: 'Collapse an expression into a single sine or cosine'
         key_prerequisites: [trig-identities-basic]
-        constraints: "expressions matching a sum/difference expansion exactly; numeric angle pairs collapse to a unit-circle angle"
+        constraints: 'expressions matching a sum/difference expansion exactly; numeric angle pairs collapse to a unit-circle angle; includes signal and circuit models'
+        step_check:
+          step: 'Identify the expression as matching the form $\sin A \cos B + \cos A \sin B$'
+          question: 'Why can $\sin 30^\circ\cos 45^\circ+\cos 30^\circ\sin 45^\circ$ be collapsed into a single sine?'
+          options:
+            - 'Its terms follow the pattern of the sine sum expansion, with $A=30^\circ$, $B=45^\circ$'
+            - 'Both terms contain a sine and a cosine, and any two such terms can always be merged'
+            - 'The two products use the same two angles, so they add up like terms into one single sine'
+            - 'Every sum of two products of sines and cosines is equal to one sine of the angle sum'
+          answer: 'Its terms follow the pattern of the sine sum expansion, with $A=30^\circ$, $B=45^\circ$'
+          why: 'The sine sum identity states $\sin(A+B)=\sin A\cos B+\cos A\sin B$, so the whole expression equals $\sin 75^\circ$.'
         exemplars:
-          - problem: 'Write $\sin x \cos y + \cos x \sin y$ as a single trig function.'
-            answer: "sin(x + y)"
-          - problem: 'Evaluate $\cos 80^\circ \cos 20^\circ + \sin 80^\circ \sin 20^\circ$ exactly.'
-            answer: "1/2"
-            solution_sketch: 'This is $\cos(80^\circ - 20^\circ) = \cos 60^\circ$.'
+          - problem: 'Write $\sin x\cos y+\cos x\sin y$ as a single trig function.'
+            answer: 'sin(x + y)'
+            answer_contract: {"kind":"function","vars":["x","y"]}
+            solution_sketch: 'The expression has the exact pattern of the sine sum identity. So it equals $\sin(x+y)$, a single sine of the sum of the two angles.'
+          - problem: 'Find the exact value of $\cos 80^\circ\cos 20^\circ+\sin 80^\circ\sin 20^\circ$.'
+            answer: '1/2'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The expression matches the cosine difference identity, so it equals $\cos(80^\circ-20^\circ)=\cos 60^\circ$. This is $\frac{1}{2}$.'
+          - problem: 'Simplify $\cos 3x\cos x-\sin 3x\sin x$.'
+            answer: 'cos(4x)'
+            answer_contract: {"kind":"function","vars":["x"]}
+            solution_sketch: 'The expression matches the cosine sum identity $\cos A\cos B-\sin A\sin B=\cos(A+B)$. With $A=3x$ and $B=x$ it equals $\cos 4x$.'
+          - problem: 'Simplify $\sin 5x\cos 2x-\cos 5x\sin 2x$.'
+            answer: 'sin(3x)'
+            answer_contract: {"kind":"function","vars":["x"]}
+            solution_sketch: 'The expression matches the sine difference identity $\sin A\cos B-\cos A\sin B=\sin(A-B)$. With $A=5x$ and $B=2x$ it equals $\sin 3x$.'
+          - problem: 'Find the exact value of $\sin 40^\circ\cos 20^\circ+\cos 40^\circ\sin 20^\circ$.'
+            answer: 'sqrt(3)/2'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The expression is the sine sum identity with $A=40^\circ$ and $B=20^\circ$, so it equals $\sin 60^\circ$. This is $\frac{\sqrt{3}}{2}$.'
+          - problem: 'Find the exact value of $\dfrac{\tan 80^\circ-\tan 20^\circ}{1+\tan 80^\circ\tan 20^\circ}$.'
+            answer: 'sqrt(3)'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The fraction is the tangent difference identity, so it equals $\tan(80^\circ-20^\circ)=\tan 60^\circ$. This is $\sqrt{3}$.'
+          - problem: 'Simplify $\cos 2x\cos x+\sin 2x\sin x$.'
+            answer: 'cos(x)'
+            answer_contract: {"kind":"function","vars":["x"]}
+            solution_sketch: 'The expression matches the cosine difference identity $\cos A\cos B+\sin A\sin B=\cos(A-B)$. With $A=2x$ and $B=x$ it equals $\cos x$.'
+          - problem: 'A signal is modelled by $s(t)=\sin 7t\cos 3t-\cos 7t\sin 3t$. Write $s(t)$ as a single sine function.'
+            answer: 'sin(4t)'
+            answer_contract: {"kind":"function","vars":["t"]}
+            solution_sketch: 'The model matches the sine difference identity with $A=7t$ and $B=3t$. So $s(t)=\sin(7t-3t)=\sin 4t$.'
+          - problem: 'The voltage in a circuit is $v(t)=\cos 5t\cos 2t+\sin 5t\sin 2t$. Write $v(t)$ as a single cosine function.'
+            answer: 'cos(3t)'
+            answer_contract: {"kind":"function","vars":["t"]}
+            solution_sketch: 'The model matches the cosine difference identity with $A=5t$ and $B=2t$. So $v(t)=\cos(5t-2t)=\cos 3t$.'
       - id: kp3
-        name: Sum formulas from given sine and cosine values
+        name: 'Sum formulas from given sine and cosine values'
         key_prerequisites: [trig-identities-basic, unit-circle]
-        constraints: "use Pythagorean-triple values; state the quadrant"
+        constraints: 'use Pythagorean-triple values; state the quadrant; includes angles built from two triangles'
+        step_check:
+          step: 'Use the Pythagorean identity to find the cosine of $\alpha$ from its sine, and take the sign from the quadrant.'
+          question: 'Why must the quadrant of $\alpha$ be known before $\cos\alpha$ is written down?'
+          options:
+            - 'The quadrant changes the value of $\sin\alpha$ that was given in the problem'
+            - 'The Pythagorean identity holds only for angles that lie in Quadrant I of the plane'
+            - 'The identity gives only $\cos^2\alpha$, so the quadrant sets the sign'
+            - 'The sum formula uses a different rule for the cosine in each of the quadrants'
+          answer: 'The identity gives only $\cos^2\alpha$, so the quadrant sets the sign'
+          why: 'From $\cos^2\alpha=1-\sin^2\alpha$ both a positive and a negative root are possible, and only the quadrant tells which one is right.'
         exemplars:
-          - problem: 'Given $\sin\alpha = \frac{3}{5}$ and $\cos\beta = \frac{5}{13}$ with $\alpha, \beta$ in Quadrant I, find $\sin(\alpha + \beta)$.'
-            answer: "63/65"
-            solution_sketch: '$\cos\alpha = \frac{4}{5}$, $\sin\beta = \frac{12}{13}$; $\frac{3}{5}\cdot\frac{5}{13} + \frac{4}{5}\cdot\frac{12}{13} = \frac{15 + 48}{65}$.'
-          - problem: 'With the same values, find $\cos(\alpha + \beta)$.'
-            answer: "-16/65"
-            solution_sketch: '$\frac{4}{5}\cdot\frac{5}{13} - \frac{3}{5}\cdot\frac{12}{13} = \frac{20 - 36}{65}$.'
-          - problem: "Given sin(alpha) = 8/17 with alpha in Quadrant II and cos(beta) = 3/5 with beta in Quadrant IV. Find sin(alpha + beta) as a fraction."
-            answer: "84/85"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Find sin(alpha + beta) with sin(alpha) = 8/17 in QII and cos(beta) = 3/5 in QIV. Use the Pythagorean identity to get cos(alpha) = -15/17 because alpha is in QII. Use the Pythagorean identity again to get sin(beta) = -4/5 because beta is in QIV. Use the sine sum formula: sin(alpha + beta) = sin(alpha) cos(beta) + cos(alpha) sin(beta) = (8/17)(3/5) + (-15/17)(-4/5) = 24/85 + 60/85 = 84/85. The answer is 84/85."
-          - problem: "Given cos(alpha) = 7/25 with alpha in Quadrant IV and sin(beta) = 4/5 with beta in Quadrant II. Find cos(alpha + beta) as a fraction."
-            answer: "3/5"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Find cos(alpha + beta) with cos(alpha) = 7/25 in QIV and sin(beta) = 4/5 in QII. Use the Pythagorean identity to get sin(alpha) = -24/25 because alpha is in QIV. Use the Pythagorean identity again to get cos(beta) = -3/5 because beta is in QII. Use the cosine sum formula: cos(alpha + beta) = cos(alpha) cos(beta) - sin(alpha) sin(beta) = (7/25)(-3/5) - (-24/25)(4/5) = -21/125 + 96/125 = 75/125 = 3/5. The answer is 3/5."
-          - problem: "Given sin(alpha) = 5/13 with alpha in Quadrant II and cos(beta) = 8/17 with beta in Quadrant I. Find sin(alpha + beta) as a fraction."
-            answer: "-140/221"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Find sin(alpha + beta) with sin(alpha) = 5/13 in QII and cos(beta) = 8/17 in QI. Use the Pythagorean identity to get cos(alpha) = -12/13 because alpha is in QII. Use the Pythagorean identity again to get sin(beta) = 15/17 because beta is in QI. Use the sine sum formula: sin(alpha + beta) = sin(alpha) cos(beta) + cos(alpha) sin(beta) = (5/13)(8/17) + (-12/13)(15/17) = 40/221 - 180/221 = -140/221. The answer is -140/221."
-          - problem: "Given cos(alpha) = 4/5 with alpha in Quadrant I and sin(beta) = -24/25 with beta in Quadrant III. Find cos(alpha + beta) as a fraction."
-            answer: "44/125"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Find cos(alpha + beta) with cos(alpha) = 4/5 in QI and sin(beta) = -24/25 in QIII. Use the Pythagorean identity to get sin(alpha) = 3/5 because alpha is in QI. Use the Pythagorean identity again to get cos(beta) = -7/25 because beta is in QIII. Use the cosine sum formula: cos(alpha + beta) = cos(alpha) cos(beta) - sin(alpha) sin(beta) = (4/5)(-7/25) - (3/5)(-24/25) = -28/125 + 72/125 = 44/125. The answer is 44/125."
+          - problem: 'Given $\sin\alpha=\frac{3}{5}$ and $\cos\beta=\frac{5}{13}$, with $\alpha$ and $\beta$ both in Quadrant I, find $\sin(\alpha+\beta)$.'
+            answer: '63/65'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The Pythagorean identity gives the missing values. Here $\cos\alpha=\frac{4}{5}$ and $\sin\beta=\frac{12}{13}$. So $\sin(\alpha+\beta)=\frac{3}{5}\cdot\frac{5}{13}+\frac{4}{5}\cdot\frac{12}{13}=\frac{15+48}{65}=\frac{63}{65}$.'
+          - problem: 'Given $\sin\alpha=\frac{3}{5}$ and $\cos\beta=\frac{5}{13}$, with $\alpha$ and $\beta$ both in Quadrant I, find $\cos(\alpha+\beta)$.'
+            answer: '-16/65'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The Pythagorean identity gives the missing values. Here $\cos\alpha=\frac{4}{5}$ and $\sin\beta=\frac{12}{13}$. So $\cos(\alpha+\beta)=\frac{4}{5}\cdot\frac{5}{13}-\frac{3}{5}\cdot\frac{12}{13}=\frac{20-36}{65}=-\frac{16}{65}$.'
+          - problem: 'Given $\sin\alpha=\frac{8}{17}$ with $\alpha$ in Quadrant II and $\cos\beta=\frac{3}{5}$ with $\beta$ in Quadrant IV, find $\sin(\alpha+\beta)$.'
+            answer: '84/85'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The Pythagorean identity gives the missing values. Here $\cos\alpha=-\frac{15}{17}$ because $\alpha$ is in Quadrant II, and $\sin\beta=-\frac{4}{5}$ because $\beta$ is in Quadrant IV. So $\sin(\alpha+\beta)=\frac{8}{17}\cdot\frac{3}{5}+\left(-\frac{15}{17}\right)\left(-\frac{4}{5}\right)=\frac{24+60}{85}=\frac{84}{85}$.'
+          - problem: 'Given $\cos\alpha=\frac{7}{25}$ with $\alpha$ in Quadrant IV and $\sin\beta=\frac{4}{5}$ with $\beta$ in Quadrant II, find $\cos(\alpha+\beta)$.'
+            answer: '3/5'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The Pythagorean identity gives the missing values. Here $\sin\alpha=-\frac{24}{25}$ because $\alpha$ is in Quadrant IV, and $\cos\beta=-\frac{3}{5}$ because $\beta$ is in Quadrant II. So $\cos(\alpha+\beta)=\frac{7}{25}\left(-\frac{3}{5}\right)-\left(-\frac{24}{25}\right)\frac{4}{5}=\frac{-21+96}{125}=\frac{3}{5}$.'
+          - problem: 'Given $\sin\alpha=\frac{5}{13}$ with $\alpha$ in Quadrant II and $\cos\beta=\frac{8}{17}$ with $\beta$ in Quadrant I, find $\sin(\alpha+\beta)$.'
+            answer: '-140/221'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The Pythagorean identity gives the missing values. Here $\cos\alpha=-\frac{12}{13}$ and $\sin\beta=\frac{15}{17}$. So $\sin(\alpha+\beta)=\frac{5}{13}\cdot\frac{8}{17}+\left(-\frac{12}{13}\right)\frac{15}{17}=\frac{40-180}{221}=-\frac{140}{221}$.'
+          - problem: 'Given $\cos\alpha=\frac{4}{5}$ with $\alpha$ in Quadrant I and $\sin\beta=-\frac{24}{25}$ with $\beta$ in Quadrant III, find $\cos(\alpha+\beta)$.'
+            answer: '44/125'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The Pythagorean identity gives the missing values. Here $\sin\alpha=\frac{3}{5}$ and $\cos\beta=-\frac{7}{25}$. So $\cos(\alpha+\beta)=\frac{4}{5}\left(-\frac{7}{25}\right)-\frac{3}{5}\left(-\frac{24}{25}\right)=\frac{-28+72}{125}=\frac{44}{125}$.'
+          - problem: 'In a right triangle with sides $3$, $4$ and $5$, the angle $\alpha$ is opposite the side $3$. In a right triangle with sides $5$, $12$ and $13$, the angle $\beta$ is opposite the side $5$. The two angles are placed side by side to make one angle $\alpha+\beta$. Find $\cos(\alpha+\beta)$.'
+            answer: '33/65'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Read the sine and cosine of each angle from its own triangle. From the triangles, $\sin\alpha=\frac{3}{5}$, $\cos\alpha=\frac{4}{5}$, $\sin\beta=\frac{5}{13}$ and $\cos\beta=\frac{12}{13}$. So $\cos(\alpha+\beta)=\frac{4}{5}\cdot\frac{12}{13}-\frac{3}{5}\cdot\frac{5}{13}=\frac{48-15}{65}=\frac{33}{65}$.'
+          - problem: 'Two beams leave the same point and both slope upward at acute angles with the floor. Beam A makes an angle $\alpha$ with $\sin\alpha=\frac{15}{17}$, and beam B makes an angle $\beta$ with $\cos\beta=\frac{4}{5}$. The angle between the beams is $\alpha-\beta$. Find $\sin(\alpha-\beta)$.'
+            answer: '36/85'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The Pythagorean identity gives the missing values. Here $\cos\alpha=\frac{8}{17}$ and $\sin\beta=\frac{3}{5}$. So $\sin(\alpha-\beta)=\frac{15}{17}\cdot\frac{4}{5}-\frac{8}{17}\cdot\frac{3}{5}=\frac{60-24}{85}=\frac{36}{85}$.'
     diagnostic_exemplar:
       problem: 'Given $\sin\alpha = \frac{4}{5}$ and $\sin\beta = \frac{12}{13}$ with $\alpha, \beta$ in Quadrant I, find $\sin(\alpha + \beta)$.'
       answer: "56/65"
@@ -221,73 +388,162 @@ topics:
         weight: 0.4
     knowledge_points:
       - id: kp1
-        name: Double-angle values from a known ratio
+        name: 'Double-angle values from a known ratio'
         key_prerequisites: [trig-identities-basic]
-        constraints: "Pythagorean-triple values; quadrant given"
+        constraints: 'Pythagorean-triple values; quadrant given; includes projectile and ramp problems'
+        step_check:
+          step: 'First, find $\cos\theta$ using the Pythagorean identity'
+          question: 'Why is $\cos\theta$ needed to find $\sin 2\theta$ when only $\sin\theta=\frac{5}{13}$ is given?'
+          options:
+            - 'Because doubling the angle doubles the sine, and the cosine gives the size of the angle'
+            - 'Because $\sin 2\theta=\sin\theta+\sin\theta$ and the cosine only fixes the sign'
+            - 'Because $\sin 2\theta=2\sin\theta$ is true only after the cosine has been added to it'
+            - 'Because $\sin 2\theta=2\sin\theta\cos\theta$ has both ratios, and only one is given'
+          answer: 'Because $\sin 2\theta=2\sin\theta\cos\theta$ has both ratios, and only one is given'
+          why: 'The double-angle formula $\sin 2\theta=2\sin\theta\cos\theta$ is a product, and $2\sin\theta$ alone would give $\frac{10}{13}$, which is wrong.'
         exemplars:
-          - problem: 'If $\sin\theta = \frac{3}{5}$ with $\theta$ in Quadrant I, find $\sin 2\theta$.'
-            answer: "24/25"
-            solution_sketch: '$\cos\theta = \frac{4}{5}$; $\sin 2\theta = 2 \cdot \frac{3}{5} \cdot \frac{4}{5}$.'
-          - problem: 'With the same $\theta$, find $\cos 2\theta$.'
-            answer: "7/25"
-            solution_sketch: '$\cos 2\theta = 1 - 2\sin^2\theta = 1 - \frac{18}{25}$.'
-          - problem: "The angle theta lies in Quadrant II and sin(theta) = 5/13. Use the double-angle identity to find sin(2theta) as a fraction."
-            answer: "-120/169"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Use the Pythagorean identity sin^2(theta) + cos^2(theta) = 1: cos^2(theta) = 1 - 25/169 = 144/169. Because theta is in Quadrant II, the rule 'cosine is negative in Quadrant II' gives cos(theta) = -12/13. The double-angle rule sin(2theta) = 2 sin(theta) cos(theta) then gives 2 * (5/13) * (-12/13) = -120/169. The answer is -120/169."
-          - problem: "The angle theta lies in Quadrant IV and cos(theta) = 8/17. Use a double-angle identity to find cos(2theta) as a fraction."
-            answer: "-161/289"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Use the double-angle rule cos(2theta) = 2 cos^2(theta) - 1 with cos(theta) = 8/17. Square the ratio: cos^2(theta) = 64/289, so 2 cos^2(theta) = 128/289. Subtract one whole: 128/289 - 289/289 = -161/289. The answer is -161/289."
-          - problem: "The angle theta lies in Quadrant III and tan(theta) = 3/4. Use a double-angle identity to find tan(2theta) as a fraction."
-            answer: "24/7"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Use the double-angle rule tan(2theta) = 2 tan(theta) / (1 - tan^2(theta)). With tan(theta) = 3/4 the numerator is 2 * 3/4 = 3/2 and the denominator is 1 - 9/16 = 7/16. Dividing gives (3/2) * (16/7) = 48/14 = 24/7. The answer is 24/7."
-          - problem: "The angle theta lies in Quadrant II and sin(theta) = 7/25. Use a double-angle identity to find cos(2theta) as a fraction."
-            answer: "527/625"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Use the double-angle rule cos(2theta) = 1 - 2 sin^2(theta) with sin(theta) = 7/25. Square the ratio: sin^2(theta) = 49/625, so 2 sin^2(theta) = 98/625. Subtract from one whole: 625/625 - 98/625 = 527/625. The answer is 527/625."
+          - problem: 'If $\sin\theta=\frac{3}{5}$ and $\theta$ is in Quadrant I, find $\sin 2\theta$.'
+            answer: '24/25'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Since $\theta$ is in Quadrant I, the Pythagorean identity gives $\cos\theta=\frac{4}{5}$. Then $\sin 2\theta=2\cdot\frac{3}{5}\cdot\frac{4}{5}=\frac{24}{25}$.'
+          - problem: 'If $\sin\theta=\frac{3}{5}$ and $\theta$ is in Quadrant I, find $\cos 2\theta$.'
+            answer: '7/25'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Use $\cos 2\theta=1-2\sin^2\theta$, which needs only the given sine. This gives $1-2\cdot\frac{9}{25}=\frac{25-18}{25}=\frac{7}{25}$.'
+          - problem: 'The angle $\theta$ is in Quadrant II and $\sin\theta=\frac{5}{13}$. Find $\sin 2\theta$.'
+            answer: '-120/169'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'In Quadrant II the cosine is negative, so $\cos\theta=-\frac{12}{13}$. Then $\sin 2\theta=2\cdot\frac{5}{13}\cdot\left(-\frac{12}{13}\right)=-\frac{120}{169}$.'
+          - problem: 'The angle $\theta$ is in Quadrant IV and $\cos\theta=\frac{8}{17}$. Find $\cos 2\theta$.'
+            answer: '-161/289'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Use $\cos 2\theta=2\cos^2\theta-1$, which needs no quadrant at all. This gives $2\cdot\frac{64}{289}-1=\frac{128-289}{289}=-\frac{161}{289}$.'
+          - problem: 'The angle $\theta$ is in Quadrant III and $\tan\theta=\frac{3}{4}$. Find $\tan 2\theta$.'
+            answer: '24/7'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Use $\tan 2\theta=\frac{2\tan\theta}{1-\tan^2\theta}$. The numerator is $\frac{3}{2}$ and the denominator is $1-\frac{9}{16}=\frac{7}{16}$, so the result is $\frac{3}{2}\cdot\frac{16}{7}=\frac{24}{7}$.'
+          - problem: 'The angle $\theta$ is in Quadrant II and $\sin\theta=\frac{7}{25}$. Find $\cos 2\theta$.'
+            answer: '527/625'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Use $\cos 2\theta=1-2\sin^2\theta$, which needs no quadrant at all. This gives $1-2\cdot\frac{49}{625}=\frac{625-98}{625}=\frac{527}{625}$.'
+          - problem: 'A ball is kicked from level ground at speed $v$ and an acute angle $\theta$ above the horizontal, with $\sin\theta=\frac{4}{5}$. Its range is $R=\frac{v^2\sin 2\theta}{g}$. With $v^2=250\ \text{m}^2/\text{s}^2$ and $g=10\ \text{m/s}^2$, how far does the ball travel?'
+            answer: '24'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"m","allow_omitted":true}
+            solution_sketch: 'Since $\theta$ is acute, $\cos\theta=\frac{3}{5}$, so $\sin 2\theta=2\cdot\frac{4}{5}\cdot\frac{3}{5}=\frac{24}{25}$. The range is $\frac{250}{10}\cdot\frac{24}{25}=24$ m.'
+          - problem: 'A ramp makes an acute angle $\theta$ with the ground, where $\tan\theta=\frac{5}{12}$. A second ramp is built at twice that angle. What is the slope (rise over run) of the second ramp?'
+            answer: '120/119'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The slope of the second ramp is $\tan 2\theta=\frac{2\tan\theta}{1-\tan^2\theta}$. This is $\frac{5/6}{1-25/144}=\frac{5}{6}\cdot\frac{144}{119}=\frac{120}{119}$.'
       - id: kp2
-        name: The three forms of cos 2θ
+        name: 'The three forms of cos 2θ'
         key_prerequisites: [sum-difference-identities]
-        constraints: "pick the cos 2θ form matching the given ratio (no quadrant needed); rewriting tasks match one form exactly"
+        constraints: 'pick the cos 2θ form matching the given ratio (no quadrant needed); rewriting tasks match one form exactly; includes signal and rotation models'
+        step_check:
+          step: 'Use the identity $\cos 2\theta = 2\cos^2\theta - 1$'
+          question: 'Why is this the most direct form of $\cos 2\theta$ to use when $\cos\theta=\frac{2}{5}$ is given?'
+          options:
+            - 'It is the only form of $\cos 2\theta$ that is true for every angle'
+            - 'It uses only $\cos\theta$, so no sine and no quadrant are needed'
+            - 'The other two forms hold only when $\theta$ is in Quadrant I of the plane'
+            - 'A given cosine always has to go into the form with a squared cosine in it'
+          answer: 'It uses only $\cos\theta$, so no sine and no quadrant are needed'
+          why: 'The forms $1-2\sin^2\theta$ and $\cos^2\theta-\sin^2\theta$ would need a sine, while $2\cos^2\theta-1$ uses the given cosine directly.'
         exemplars:
-          - problem: 'If $\cos\theta = \frac{1}{3}$, find $\cos 2\theta$.'
-            answer: "-7/9"
-            solution_sketch: '$\cos 2\theta = 2\cos^2\theta - 1 = \frac{2}{9} - 1$. No quadrant needed.'
-          - problem: 'Write $1 - 2\sin^2 x$ as a single trig function.'
-            answer: "cos 2x"
+          - problem: 'If $\cos\theta=\frac{1}{3}$, find $\cos 2\theta$.'
+            answer: '-7/9'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Use $\cos 2\theta=2\cos^2\theta-1$, which needs no quadrant at all. This gives $\frac{2}{9}-1=-\frac{7}{9}$.'
+          - problem: 'Write $1-2\sin^2 x$ as a single trig function.'
+            answer: 'cos(2x)'
+            answer_contract: {"kind":"function","vars":["x"]}
+            solution_sketch: 'The expression is one of the three forms of the double-angle identity for cosine. So $1-2\sin^2 x=\cos 2x$.'
+          - problem: 'If $\sin\theta=\frac{2}{3}$, find $\cos 2\theta$.'
+            answer: '1/9'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Use $\cos 2\theta=1-2\sin^2\theta$, which needs only the given sine. This gives $1-2\cdot\frac{4}{9}=\frac{9-8}{9}=\frac{1}{9}$.'
+          - problem: 'Simplify $\cos^2 3x-\sin^2 3x$.'
+            answer: 'cos(6x)'
+            answer_contract: {"kind":"function","vars":["x"]}
+            solution_sketch: 'The expression has the form $\cos^2 A-\sin^2 A$ with $A=3x$. By the double-angle identity it equals $\cos 2A=\cos 6x$.'
+          - problem: 'Simplify $2\cos^2 5x-1$.'
+            answer: 'cos(10x)'
+            answer_contract: {"kind":"function","vars":["x"]}
+            solution_sketch: 'The expression has the form $2\cos^2 A-1$ with $A=5x$. By the double-angle identity it equals $\cos 2A=\cos 10x$.'
+          - problem: 'If $\cos\theta=-\frac{3}{4}$, find $\cos 2\theta$.'
+            answer: '1/8'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Use the form $\cos 2\theta=2\cos^2\theta-1$. Squaring removes the negative sign, so this gives $2\cdot\frac{9}{16}-1=\frac{18-16}{16}=\frac{1}{8}$.'
+          - problem: 'The displacement of a vibrating point is $d(t)=1-2\sin^2 4t$ cm. Write $d(t)$ as a single cosine function.'
+            answer: 'cos(8t)'
+            answer_contract: {"kind":"function","vars":["t"]}
+            solution_sketch: 'The model has the form $1-2\sin^2 A$ with $A=4t$. By the double-angle identity it equals $\cos 2A$, so $d(t)=\cos 8t$.'
+          - problem: 'A lighthouse beam turns through an angle $\theta$ with $\cos\theta=\frac{5}{13}$ and then turns through the same angle again. What is the cosine of the total angle turned?'
+            answer: '-119/169'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The total angle is $2\theta$, so use $\cos 2\theta=2\cos^2\theta-1$. This gives $2\cdot\frac{25}{169}-1=\frac{50-169}{169}=-\frac{119}{169}$.'
+          - problem: 'The horizontal position of a rotating arm is $x(t)=5\cos^2 t-5\sin^2 t$ cm. Write $x(t)$ as a single trig function.'
+            answer: '5cos(2t)'
+            answer_contract: {"kind":"function","vars":["t"]}
+            solution_sketch: 'Factor out $5$ to get $5(\cos^2 t-\sin^2 t)$. The bracket equals $\cos 2t$ by the double-angle identity, so $x(t)=5\cos 2t$.'
       - id: kp3
-        name: Half-angle values
+        name: 'Half-angle values'
         key_prerequisites: [sum-difference-identities, simplifying-radicals]
-        constraints: "half-angle of 30°, 45°, 60°, 90°; choose the sign from the quadrant"
+        constraints: 'half-angle of 30°, 45°, 60°, 90°, 135°, or a given cosine with the quadrant stated; choose the sign from the quadrant of the half-angle; includes isosceles-triangle word problems'
+        step_check:
+          step: 'Choose the positive square root, because half of the angle lies in Quadrant I where sine and cosine are positive.'
+          question: 'Why is the sign of the square root decided by the quadrant of the half-angle and not by the original angle?'
+          options:
+            - 'The formula gives the value for the half-angle, so the half-angle sets the sign'
+            - 'The square root in a half-angle formula is always positive, whatever the angle is'
+            - 'The original angle is always in Quadrant I, so both signs would be the same'
+            - 'Half-angle formulas hold only for angles that are less than a right angle'
+          answer: 'The formula gives the value for the half-angle, so the half-angle sets the sign'
+          why: 'For $\sin 112.5^\circ$ or $\cos 112.5^\circ$ the signs follow from $112.5^\circ$ in Quadrant II, although $225^\circ$ lies in Quadrant III.'
         exemplars:
-          - problem: 'Use a half-angle identity to find the exact value of $\cos 15^\circ$ as a nested radical.'
-            answer: "√(2 + √3)/2"
-            solution_sketch: '$\cos 15^\circ = \sqrt{\frac{1 + \cos 30^\circ}{2}} = \sqrt{\frac{2 + \sqrt{3}}{4}}$.'
-          - problem: 'Find $\sin 22.5^\circ$ exactly.'
-            answer: "√(2 - √2)/2"
-            solution_sketch: '$\sin 22.5^\circ = \sqrt{\frac{1 - \cos 45^\circ}{2}} = \sqrt{\frac{2 - \sqrt{2}}{4}}$.'
-          - problem: "The half-angle lies in quadrant I, so take the positive sign. Use a half-angle identity to find the exact value of cos(22.5 degrees) as a nested radical."
-            answer: "sqrt(2+sqrt(2))/2"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The target is cos(22.5 degrees). The half-angle is in quadrant I, so the positive sign is used. Half-angle identity: cos(theta/2) = sqrt((1 + cos(theta))/2) with theta = 45 degrees, so cos(22.5) = sqrt((1 + cos(45))/2). Substitute cos(45) = sqrt(2)/2: sqrt((1 + sqrt(2)/2)/2) = sqrt((2 + sqrt(2))/4). The answer is sqrt(2+sqrt(2))/2."
-          - problem: "The half-angle lies in quadrant I, so take the positive sign. Use a half-angle identity to find the exact value of cot(15 degrees)."
-            answer: "2+sqrt(3)"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The target is cot(15 degrees). The half-angle is in quadrant I, so the positive sign is used. Half-angle identity for tangent: tan(theta/2) = (1 - cos(theta))/sin(theta) with theta = 30 degrees, so tan(15) = (1 - cos(30))/sin(30) = (1 - sqrt(3)/2)/(1/2) = 2 - sqrt(3). Then cot(15) = 1/tan(15) = 1/(2 - sqrt(3)) = (2 + sqrt(3))/((2 - sqrt(3))(2 + sqrt(3))) = 2 + sqrt(3). The answer is 2+sqrt(3)."
-          - problem: "The half-angle lies in quadrant I, so take the positive sign. Use a half-angle identity to find the exact value of sec(30 degrees)."
-            answer: "2sqrt(3)/3"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The target is sec(30 degrees). The half-angle is in quadrant I, so the positive sign is used. First find cos(30) with the half-angle identity at theta = 60 degrees: cos(30) = sqrt((1 + cos(60))/2) = sqrt((1 + 1/2)/2) = sqrt(3/4) = sqrt(3)/2. Then sec(30) = 1/cos(30) = 2/sqrt(3) = 2sqrt(3)/3. The answer is 2sqrt(3)/3."
-          - problem: "The half-angle lies in quadrant I, so take the positive sign. Use a half-angle identity to find the exact value of csc(45 degrees)."
-            answer: "sqrt(2)"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The target is csc(45 degrees). The half-angle is in quadrant I, so the positive sign is used. First find sin(45) with the half-angle identity at theta = 90 degrees: sin(45) = sqrt((1 - cos(90))/2) = sqrt((1 - 0)/2) = sqrt(1/2) = sqrt(2)/2. Then csc(45) = 1/sin(45) = 2/sqrt(2) = sqrt(2). The answer is sqrt(2)."
+          - problem: 'Use a half-angle identity to find the exact value of $\sin 22.5^\circ$.'
+            answer: 'sqrt(2-sqrt(2))/2'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Write $22.5^\circ=\frac{45^\circ}{2}$, which is in Quadrant I, so the root is positive. Then $\sin 22.5^\circ=\sqrt{\frac{1-\cos 45^\circ}{2}}=\sqrt{\frac{2-\sqrt{2}}{4}}=\frac{\sqrt{2-\sqrt{2}}}{2}$.'
+          - problem: 'Use a half-angle identity to find the exact value of $\cos 22.5^\circ$.'
+            answer: 'sqrt(2+sqrt(2))/2'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Write $22.5^\circ=\frac{45^\circ}{2}$, which is in Quadrant I, so the root is positive. Then $\cos 22.5^\circ=\sqrt{\frac{1+\cos 45^\circ}{2}}=\sqrt{\frac{2+\sqrt{2}}{4}}=\frac{\sqrt{2+\sqrt{2}}}{2}$.'
+          - problem: 'Use a half-angle identity to find the exact value of $\tan 15^\circ$.'
+            answer: '2 - sqrt(3)'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Use $\tan\frac{\theta}{2}=\frac{1-\cos\theta}{\sin\theta}$ with $\theta=30^\circ$, so the half-angle is $15^\circ$. This gives $\frac{1-\frac{\sqrt{3}}{2}}{\frac{1}{2}}=2-\sqrt{3}$.'
+          - problem: 'Use a half-angle identity to find the exact value of $\cos 112.5^\circ$.'
+            answer: '-sqrt(2-sqrt(2))/2'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Write $112.5^\circ=\frac{225^\circ}{2}$. The angle $112.5^\circ$ is in Quadrant II, so the cosine is negative, and $\cos 112.5^\circ=-\sqrt{\frac{1+\cos 225^\circ}{2}}=-\frac{\sqrt{2-\sqrt{2}}}{2}$.'
+          - problem: 'Use a half-angle identity to find the exact value of $\tan 22.5^\circ$.'
+            answer: 'sqrt(2) - 1'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Use $\tan\frac{\theta}{2}=\frac{1-\cos\theta}{\sin\theta}$ with $\theta=45^\circ$, so the half-angle is $22.5^\circ$. This gives $\frac{1-\frac{\sqrt{2}}{2}}{\frac{\sqrt{2}}{2}}=\frac{2-\sqrt{2}}{\sqrt{2}}=\sqrt{2}-1$.'
+          - problem: 'Given $\cos\theta=-\frac{7}{25}$ with $90^\circ<\theta<180^\circ$, find $\sin\frac{\theta}{2}$.'
+            answer: '4/5'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The half-angle $\frac{\theta}{2}$ is between $45^\circ$ and $90^\circ$, so its sine is positive. Then $\sin\frac{\theta}{2}=\sqrt{\frac{1+\frac{7}{25}}{2}}=\sqrt{\frac{16}{25}}=\frac{4}{5}$.'
+          - problem: 'Given $\cos\theta=-\frac{24}{25}$ with $180^\circ<\theta<270^\circ$, find $\cos\frac{\theta}{2}$.'
+            answer: '-sqrt(2)/10'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The half-angle $\frac{\theta}{2}$ is between $90^\circ$ and $135^\circ$, in Quadrant II, so its cosine is negative. Then $\cos\frac{\theta}{2}=-\sqrt{\frac{1-\frac{24}{25}}{2}}=-\sqrt{\frac{1}{50}}=-\frac{\sqrt{2}}{10}$.'
+          - problem: 'Given $\cos\theta=\frac{3}{5}$ with $0^\circ<\theta<90^\circ$, find $\cos\frac{\theta}{2}$.'
+            answer: '2sqrt(5)/5'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The half-angle is in Quadrant I, so its cosine is positive. Then $\cos\frac{\theta}{2}=\sqrt{\frac{1+\frac{3}{5}}{2}}=\sqrt{\frac{4}{5}}=\frac{2\sqrt{5}}{5}$.'
+          - problem: 'An isosceles triangle has two sides of length $1$ m that enclose an angle of $45^\circ$. What is the exact length of the third side?'
+            answer: 'sqrt(2-sqrt(2))'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The altitude to the third side splits the triangle into two right triangles with angle $22.5^\circ$ at the top. The third side is $2\sin 22.5^\circ=2\cdot\frac{\sqrt{2-\sqrt{2}}}{2}=\sqrt{2-\sqrt{2}}$ m.'
+          - problem: 'An isosceles triangle has two sides of length $1$ m that enclose an angle of $135^\circ$. What is the exact length of the third side?'
+            answer: 'sqrt(2+sqrt(2))'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The altitude splits the top angle into two angles of $67.5^\circ$, and the third side is $2\sin 67.5^\circ$. By the half-angle identity $\sin 67.5^\circ=\frac{\sqrt{2+\sqrt{2}}}{2}$, so the side is $\sqrt{2+\sqrt{2}}$ m.'
     diagnostic_exemplar:
-      problem: 'Use a half-angle identity to find the exact value of $\sin 15^\circ$ as a nested radical.'
-      answer: "√(2 - √3)/2"
-      solution_sketch: '$\sin 15^\circ = \sqrt{\frac{1 - \cos 30^\circ}{2}} = \sqrt{\frac{2 - \sqrt{3}}{4}}$; positive since $15^\circ$ is in Quadrant I.'
+      problem: 'Use a half-angle identity to find the exact value of $\cos 67.5^\circ$.'
+      answer: "√(2 - √2)/2"
+      solution_sketch: '$\cos 67.5^\circ = \sqrt{\frac{1 + \cos 135^\circ}{2}} = \sqrt{\frac{2 - \sqrt{2}}{4}}$; positive since $67.5^\circ$ is in Quadrant I.'
     anki_seeds:
       - front: "sin 2θ = ?"
         back: "2 sin θ cos θ"
@@ -316,57 +572,159 @@ topics:
         weight: 0.3
     knowledge_points:
       - id: kp1
-        name: Rewrite a product as a sum
+        name: 'Rewrite a product as a sum'
         key_prerequisites: [sum-difference-identities]
-        constraints: "arguments mx, nx with m, n small positive integers, m != n; derive from adding/subtracting two sum-difference expansions when asked"
+        constraints: 'arguments mx, nx with m, n small positive integers, m != n; derive from adding/subtracting two sum-difference expansions when asked; includes signal, circuit and integration set-ups'
+        try_first:
+          problem: 'Add the expansions of $\sin(75^\circ+15^\circ)$ and $\sin(75^\circ-15^\circ)$. What is the exact value of the sum?'
+          answer_contract: {"kind":"exact"}
+          answer: '1 + sqrt(3)/2'
+          reveal: 'The terms $\cos 75^\circ\sin 15^\circ$ cancel, so the sum equals $2\sin 75^\circ\cos 15^\circ$, and it is also $\sin 90^\circ+\sin 60^\circ=1+\frac{\sqrt{3}}{2}$. This is how a product of a sine and a cosine becomes a sum.'
+        step_check:
+          step: 'Use the odd function property of sine'
+          question: 'Why does $\sin(-x)$ become $-\sin x$ in this step?'
+          options:
+            - 'Sine is an even function, so the sign of the angle moves in front of the term'
+            - 'The minus sign in the angle cancels with the factor $\frac{1}{2}$ in front'
+            - 'Sine is an odd function, so a negative angle gives the opposite value'
+            - 'The sine of any negative angle is equal to minus one times that angle'
+          answer: 'Sine is an odd function, so a negative angle gives the opposite value'
+          why: 'Because $\sin(-x)=-\sin x$, the term $\frac{1}{2}\sin(-x)$ becomes $-\frac{1}{2}\sin x$, which gives the difference in the final answer.'
         exemplars:
-          - problem: 'Write $\sin 3x \cos x$ as a sum of trig functions.'
-            answer: "(sin(4x) + sin(2x))/2"
-            solution_sketch: 'Add the expansions of $\sin(3x + x)$ and $\sin(3x - x)$: the $\cos 3x \sin x$ terms cancel, leaving $\sin 4x + \sin 2x = 2\sin 3x\cos x$.'
-          - problem: 'Write $\cos 5x \cos 2x$ as a sum.'
-            answer: "(cos(3x) + cos(7x))/2"
-            solution_sketch: '$\cos A\cos B = \frac{1}{2}[\cos(A - B) + \cos(A + B)]$ with $A = 5x$, $B = 2x$.'
-          - problem: 'Write $\sin 4x \sin x$ as a sum.'
-            answer: "(cos(3x) - cos(5x))/2"
-            solution_sketch: '$\sin A\sin B = \frac{1}{2}[\cos(A - B) - \cos(A + B)]$: subtracting the two cosine expansions isolates the $\sin A \sin B$ terms.'
+          - problem: 'Write $\sin 3x\cos x$ as a sum of trig functions.'
+            answer: '(sin(4x)+sin(2x))/2'
+            answer_contract: {"kind":"function","vars":["x"]}
+            solution_sketch: 'Use $\sin A\cos B=\frac{1}{2}[\sin(A+B)+\sin(A-B)]$ with $A=3x$ and $B=x$. This gives $\frac{1}{2}[\sin 4x+\sin 2x]$.'
+          - problem: 'Write $\cos 5x\cos 2x$ as a sum.'
+            answer: '(cos(3x)+cos(7x))/2'
+            answer_contract: {"kind":"function","vars":["x"]}
+            solution_sketch: 'Use $\cos A\cos B=\frac{1}{2}[\cos(A-B)+\cos(A+B)]$ with $A=5x$ and $B=2x$. This gives $\frac{1}{2}[\cos 3x+\cos 7x]$.'
+          - problem: 'Write $\sin 4x\sin x$ as a sum.'
+            answer: '(cos(3x)-cos(5x))/2'
+            answer_contract: {"kind":"function","vars":["x"]}
+            solution_sketch: 'Use $\sin A\sin B=\frac{1}{2}[\cos(A-B)-\cos(A+B)]$ with $A=4x$ and $B=x$. This gives $\frac{1}{2}[\cos 3x-\cos 5x]$.'
+          - problem: 'Write $\cos 6x\sin 2x$ as a sum.'
+            answer: '(sin(8x)-sin(4x))/2'
+            answer_contract: {"kind":"function","vars":["x"]}
+            solution_sketch: 'Use $\cos A\sin B=\frac{1}{2}[\sin(A+B)-\sin(A-B)]$ with $A=6x$ and $B=2x$. This gives $\frac{1}{2}[\sin 8x-\sin 4x]$.'
+          - problem: 'Write $\sin x\cos 4x$ as a sum.'
+            answer: '(sin(5x)-sin(3x))/2'
+            answer_contract: {"kind":"function","vars":["x"]}
+            solution_sketch: 'Use $\sin A\cos B=\frac{1}{2}[\sin(A+B)+\sin(A-B)]$ with $A=x$ and $B=4x$. This gives $\frac{1}{2}[\sin 5x+\sin(-3x)]=\frac{1}{2}[\sin 5x-\sin 3x]$.'
+          - problem: 'Write $\sin 7x\sin 3x$ as a sum.'
+            answer: '(cos(4x)-cos(10x))/2'
+            answer_contract: {"kind":"function","vars":["x"]}
+            solution_sketch: 'Use $\sin A\sin B=\frac{1}{2}[\cos(A-B)-\cos(A+B)]$ with $A=7x$ and $B=3x$. This gives $\frac{1}{2}[\cos 4x-\cos 10x]$.'
+          - problem: 'Two tones are mixed by multiplying them, which gives the signal $s(t)=\sin 440t\cos 20t$. Write $s(t)$ as a sum of two pure tones.'
+            answer: '(sin(460t)+sin(420t))/2'
+            answer_contract: {"kind":"function","vars":["t"]}
+            solution_sketch: 'Use $\sin A\cos B=\frac{1}{2}[\sin(A+B)+\sin(A-B)]$ with $A=440t$ and $B=20t$. This gives $s(t)=\frac{1}{2}[\sin 460t+\sin 420t]$.'
+          - problem: 'The current in a circuit is $i(t)=\cos 5t$ and the voltage is $v(t)=\cos 3t$. The power is $p(t)=i(t)v(t)$. Write $p(t)$ as a sum of two cosines.'
+            answer: '(cos(2t)+cos(8t))/2'
+            answer_contract: {"kind":"function","vars":["t"]}
+            solution_sketch: 'The power is the product $\cos 5t\cos 3t$. Use $\cos A\cos B=\frac{1}{2}[\cos(A-B)+\cos(A+B)]$ to get $p(t)=\frac{1}{2}[\cos 2t+\cos 8t]$.'
+          - problem: 'Before integrating $\sin 3x\cos 5x$, Ana rewrites it as a sum of sines. What sum does she get?'
+            answer: '(sin(8x)-sin(2x))/2'
+            answer_contract: {"kind":"function","vars":["x"]}
+            solution_sketch: 'Use $\sin A\cos B=\frac{1}{2}[\sin(A+B)+\sin(A-B)]$ with $A=3x$ and $B=5x$. This gives $\frac{1}{2}[\sin 8x+\sin(-2x)]=\frac{1}{2}[\sin 8x-\sin 2x]$.'
       - id: kp2
-        name: Exact values via product-to-sum
+        name: 'Exact values via product-to-sum'
         key_prerequisites: [sum-difference-identities, unit-circle]
-        constraints: "angle pairs whose sum and difference are unit-circle angles (e.g. 75° and 15°, 105° and 15°)"
+        constraints: 'angle pairs whose sum and difference are unit-circle angles (e.g. 75° and 15°, 105° and 15°); includes area and product-of-values problems'
+        step_check:
+          step: 'Evaluate the sine functions: $\sin(120^\circ) = \frac{\sqrt{3}}{2}$ and $\sin(90^\circ) = 1$'
+          question: 'Why does the product-to-sum identity give an exact value for $\sin 105^\circ\cos 15^\circ$?'
+          options:
+            - 'The identity replaces $105^\circ$ and $15^\circ$ by simple numbers that are rounded'
+            - 'A sum of two sines always has an exact value, even for angles such as $105^\circ$'
+            - 'The product of a sine and a cosine is always equal to the number $\frac{1}{2}$'
+            - 'The new angles $120^\circ$ and $90^\circ$ are unit-circle angles with known sines'
+          answer: 'The new angles $120^\circ$ and $90^\circ$ are unit-circle angles with known sines'
+          why: 'Neither $\sin 105^\circ$ nor $\cos 15^\circ$ is a unit-circle value, but $105^\circ\pm15^\circ$ give $120^\circ$ and $90^\circ$, which are.'
         exemplars:
-          - problem: 'Evaluate $\sin 75^\circ \sin 15^\circ$ exactly using a product-to-sum identity.'
-            answer: "1/4"
-            solution_sketch: '$\frac{1}{2}[\cos(75^\circ - 15^\circ) - \cos(75^\circ + 15^\circ)] = \frac{1}{2}[\cos 60^\circ - \cos 90^\circ] = \frac{1}{2}\left[\frac{1}{2} - 0\right]$.'
-          - problem: 'Evaluate $\sin 75^\circ \cos 15^\circ$ exactly.'
-            answer: "(2 + √3)/4"
-            solution_sketch: '$\frac{1}{2}[\sin 90^\circ + \sin 60^\circ] = \frac{1}{2}\left[1 + \frac{\sqrt{3}}{2}\right] = \frac{2 + \sqrt{3}}{4}$.'
-          - problem: "Evaluate $\\cos 105^\\circ \\cos 15^\\circ$ exactly using a product-to-sum identity."
-            answer: "-1/4"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "For the product cos 105 cos 15, use the product-to-sum identity cos A cos B = 1/2[cos(A+B)+cos(A-B)] by the sum and difference identities. Substitute A = 105 and B = 15: this gives 1/2[cos 120 + cos 90]. Use the unit circle values cos 120 = -1/2 and cos 90 = 0, so the result is 1/2[-1/2 + 0]. The exact value is -1/4."
-          - problem: "Evaluate $\\sin 105^\\circ \\sin 45^\\circ$ exactly using a product-to-sum identity."
-            answer: "(1+sqrt(3))/4"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "For the product sin 105 sin 45, use the product-to-sum identity sin A sin B = 1/2[cos(A-B)-cos(A+B)]. Substitute A = 105 and B = 45: this gives 1/2[cos 60 - cos 150]. Use unit circle values cos 60 = 1/2 and cos 150 = -sqrt(3)/2, so the result is 1/2[1/2 + sqrt(3)/2]. Simplify to (1+sqrt(3))/4, so the exact value is (1+sqrt(3))/4."
-          - problem: "Evaluate $\\cos 105^\\circ \\sin 15^\\circ$ exactly using a product-to-sum identity."
-            answer: "(sqrt(3)-2)/4"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "For the product cos 105 sin 15, use the product-to-sum identity cos A sin B = 1/2[sin(A+B)-sin(A-B)]. Substitute A = 105 and B = 15: this gives 1/2[sin 120 - sin 90]. Use unit circle values sin 120 = sqrt(3)/2 and sin 90 = 1, so the result is 1/2[sqrt(3)/2 - 1]. Simplify to (sqrt(3)-2)/4, so the exact value is (sqrt(3)-2)/4."
-          - problem: "Evaluate $\\cos 75^\\circ \\cos 45^\\circ$ exactly using a product-to-sum identity."
-            answer: "(sqrt(3)-1)/4"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "For the product cos 75 cos 45, use the product-to-sum identity cos A cos B = 1/2[cos(A+B)+cos(A-B)]. Substitute A = 75 and B = 45: this gives 1/2[cos 120 + cos 30]. Use unit circle values cos 120 = -1/2 and cos 30 = sqrt(3)/2, so the result is 1/2[-1/2 + sqrt(3)/2]. Simplify to (sqrt(3)-1)/4, so the exact value is (sqrt(3)-1)/4."
+          - problem: 'Use a product-to-sum identity to find the exact value of $\sin 75^\circ\sin 15^\circ$.'
+            answer: '1/4'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Use $\sin A\sin B=\frac{1}{2}[\cos(A-B)-\cos(A+B)]$. This gives $\frac{1}{2}[\cos 60^\circ-\cos 90^\circ]=\frac{1}{2}\left[\frac{1}{2}-0\right]=\frac{1}{4}$.'
+          - problem: 'Use a product-to-sum identity to find the exact value of $\sin 75^\circ\cos 15^\circ$.'
+            answer: '(2+sqrt(3))/4'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Use $\sin A\cos B=\frac{1}{2}[\sin(A+B)+\sin(A-B)]$. This gives $\frac{1}{2}[\sin 90^\circ+\sin 60^\circ]=\frac{1}{2}\left[1+\frac{\sqrt{3}}{2}\right]=\frac{2+\sqrt{3}}{4}$.'
+          - problem: 'Use a product-to-sum identity to find the exact value of $\cos 105^\circ\cos 15^\circ$.'
+            answer: '-1/4'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Use $\cos A\cos B=\frac{1}{2}[\cos(A+B)+\cos(A-B)]$. This gives $\frac{1}{2}[\cos 120^\circ+\cos 90^\circ]=\frac{1}{2}\left[-\frac{1}{2}+0\right]=-\frac{1}{4}$.'
+          - problem: 'Use a product-to-sum identity to find the exact value of $\sin 105^\circ\sin 45^\circ$.'
+            answer: '(1+sqrt(3))/4'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Use $\sin A\sin B=\frac{1}{2}[\cos(A-B)-\cos(A+B)]$. This gives $\frac{1}{2}[\cos 60^\circ-\cos 150^\circ]=\frac{1}{2}\left[\frac{1}{2}+\frac{\sqrt{3}}{2}\right]=\frac{1+\sqrt{3}}{4}$.'
+          - problem: 'Use a product-to-sum identity to find the exact value of $\cos 105^\circ\sin 15^\circ$.'
+            answer: '(sqrt(3)-2)/4'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Use $\cos A\sin B=\frac{1}{2}[\sin(A+B)-\sin(A-B)]$. This gives $\frac{1}{2}[\sin 120^\circ-\sin 90^\circ]=\frac{1}{2}\left[\frac{\sqrt{3}}{2}-1\right]=\frac{\sqrt{3}-2}{4}$.'
+          - problem: 'Use a product-to-sum identity to find the exact value of $\cos 75^\circ\cos 45^\circ$.'
+            answer: '(sqrt(3)-1)/4'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Use $\cos A\cos B=\frac{1}{2}[\cos(A+B)+\cos(A-B)]$. This gives $\frac{1}{2}[\cos 120^\circ+\cos 30^\circ]=\frac{1}{2}\left[-\frac{1}{2}+\frac{\sqrt{3}}{2}\right]=\frac{\sqrt{3}-1}{4}$.'
+          - problem: 'A rectangle has sides of length $\cos 75^\circ$ m and $\sin 15^\circ$ m. What is its exact area?'
+            answer: '(2-sqrt(3))/4'
+            answer_contract: {"kind":"unit","quantity":"area","unit":"m^2","allow_omitted":true}
+            solution_sketch: 'The area is $\cos 75^\circ\sin 15^\circ$. Use $\cos A\sin B=\frac{1}{2}[\sin(A+B)-\sin(A-B)]$ to get $\frac{1}{2}[\sin 90^\circ-\sin 60^\circ]=\frac{2-\sqrt{3}}{4}$ square metres.'
+          - problem: 'A mixer outputs the product of its two input signals. At one instant the signals have the values $\cos 105^\circ$ and $\cos 45^\circ$. What is the exact output value?'
+            answer: '(1-sqrt(3))/4'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The output is $\cos 105^\circ\cos 45^\circ$. Use $\cos A\cos B=\frac{1}{2}[\cos(A+B)+\cos(A-B)]$ to get $\frac{1}{2}[\cos 150^\circ+\cos 60^\circ]=\frac{1}{2}\left[-\frac{\sqrt{3}}{2}+\frac{1}{2}\right]=\frac{1-\sqrt{3}}{4}$.'
       - id: kp3
-        name: Sum-to-product (the reverse direction)
+        name: 'Sum-to-product (the reverse direction)'
         key_prerequisites: [sum-difference-identities]
-        constraints: "sums/differences of sines or cosines with arguments mx, nx of the same parity, so half-sum and half-difference are integer multiples of x"
+        constraints: 'sums/differences of sines or cosines with arguments mx, nx of the same parity, so half-sum and half-difference are integer multiples of x; includes beat and wave-superposition models'
+        step_check:
+          step: 'Apply the sum-to-product identity: $\sin A + \sin B = 2\sin\frac{A + B}{2}\cos\frac{A - B}{2}$'
+          question: 'Why does the sum $\sin A+\sin B$ turn into a product with a half-sum and a half-difference?'
+          options:
+            - 'Dividing each angle by $2$ turns a sum of sines into a product of a sine and a cosine of the same angle'
+            - 'Adding $\sin(P+Q)$ and $\sin(P-Q)$ leaves $2\sin P\cos Q$, with half-sum $P$ and half-difference $Q$'
+            - 'The sum identity multiplies the two sines and halves the angles to keep the value the same as before'
+            - 'A sine of a sum always splits into the product of the two sines, so each angle must be halved first'
+          answer: 'Adding $\sin(P+Q)$ and $\sin(P-Q)$ leaves $2\sin P\cos Q$, with half-sum $P$ and half-difference $Q$'
+          why: 'With $P=\frac{A+B}{2}$ and $Q=\frac{A-B}{2}$ we get $P+Q=A$ and $P-Q=B$, so $\sin A+\sin B=2\sin P\cos Q$.'
         exemplars:
-          - problem: 'Write $\sin 5x + \sin 3x$ as a product.'
-            answer: "2 sin(4x) cos(x)"
-            solution_sketch: '$\sin A + \sin B = 2\sin\frac{A + B}{2}\cos\frac{A - B}{2}$ with half-sum $4x$ and half-difference $x$.'
-          - problem: 'Evaluate $\cos 75^\circ + \cos 15^\circ$ exactly by writing it as a product.'
-            answer: "√6/2"
-            solution_sketch: '$2\cos 45^\circ \cos 30^\circ = 2 \cdot \frac{\sqrt{2}}{2} \cdot \frac{\sqrt{3}}{2} = \frac{\sqrt{6}}{2}$.'
+          - problem: 'Write $\sin 5x+\sin 3x$ as a product.'
+            answer: '2sin(4x)cos(x)'
+            answer_contract: {"kind":"function","vars":["x"]}
+            solution_sketch: 'Use $\sin A+\sin B=2\sin\frac{A+B}{2}\cos\frac{A-B}{2}$ with $A=5x$ and $B=3x$. The half-sum is $4x$ and the half-difference is $x$, so the product is $2\sin 4x\cos x$.'
+          - problem: 'Find the exact value of $\cos 75^\circ+\cos 15^\circ$ by first writing it as a product.'
+            answer: 'sqrt(6)/2'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Use $\cos A+\cos B=2\cos\frac{A+B}{2}\cos\frac{A-B}{2}$. The half-sum is $45^\circ$ and the half-difference is $30^\circ$, so this gives $2\cos 45^\circ\cos 30^\circ=2\cdot\frac{\sqrt{2}}{2}\cdot\frac{\sqrt{3}}{2}=\frac{\sqrt{6}}{2}$.'
+          - problem: 'Write $\sin 7x-\sin x$ as a product.'
+            answer: '2cos(4x)sin(3x)'
+            answer_contract: {"kind":"function","vars":["x"]}
+            solution_sketch: 'Use $\sin A-\sin B=2\cos\frac{A+B}{2}\sin\frac{A-B}{2}$ with $A=7x$ and $B=x$. The half-sum is $4x$ and the half-difference is $3x$, so the product is $2\cos 4x\sin 3x$.'
+          - problem: 'Write $\cos 3x-\cos 5x$ as a product.'
+            answer: '2sin(4x)sin(x)'
+            answer_contract: {"kind":"function","vars":["x"]}
+            solution_sketch: 'Use $\cos A-\cos B=-2\sin\frac{A+B}{2}\sin\frac{A-B}{2}$ with $A=3x$ and $B=5x$. The half-sum is $4x$ and the half-difference is $-x$, so the product is $-2\sin 4x\sin(-x)=2\sin 4x\sin x$.'
+          - problem: 'Write $\cos 9x+\cos 3x$ as a product.'
+            answer: '2cos(6x)cos(3x)'
+            answer_contract: {"kind":"function","vars":["x"]}
+            solution_sketch: 'Use $\cos A+\cos B=2\cos\frac{A+B}{2}\cos\frac{A-B}{2}$ with $A=9x$ and $B=3x$. The half-sum is $6x$ and the half-difference is $3x$, so the product is $2\cos 6x\cos 3x$.'
+          - problem: 'Find the exact value of $\sin 75^\circ-\sin 15^\circ$ by first writing it as a product.'
+            answer: 'sqrt(2)/2'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Use $\sin A-\sin B=2\cos\frac{A+B}{2}\sin\frac{A-B}{2}$. The half-sum is $45^\circ$ and the half-difference is $30^\circ$, so this gives $2\cos 45^\circ\sin 30^\circ=2\cdot\frac{\sqrt{2}}{2}\cdot\frac{1}{2}=\frac{\sqrt{2}}{2}$.'
+          - problem: 'Two tuning forks sound together and produce $y(t)=\sin 442t+\sin 438t$. Write $y(t)$ as a product of a sine and a cosine.'
+            answer: '2sin(440t)cos(2t)'
+            answer_contract: {"kind":"function","vars":["t"]}
+            solution_sketch: 'Use $\sin A+\sin B=2\sin\frac{A+B}{2}\cos\frac{A-B}{2}$ with $A=442t$ and $B=438t$. The half-sum is $440t$ and the half-difference is $2t$, so $y(t)=2\sin 440t\cos 2t$.'
+          - problem: 'Two waves combine to give $w(t)=\cos 7t+\cos t$. Write $w(t)$ as a product of two cosines.'
+            answer: '2cos(4t)cos(3t)'
+            answer_contract: {"kind":"function","vars":["t"]}
+            solution_sketch: 'Use $\cos A+\cos B=2\cos\frac{A+B}{2}\cos\frac{A-B}{2}$ with $A=7t$ and $B=t$. The half-sum is $4t$ and the half-difference is $3t$, so $w(t)=2\cos 4t\cos 3t$.'
+          - problem: 'Find the exact value of $\cos 105^\circ-\cos 15^\circ$ by first writing it as a product.'
+            answer: '-sqrt(6)/2'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Use $\cos A-\cos B=-2\sin\frac{A+B}{2}\sin\frac{A-B}{2}$. The half-sum is $60^\circ$ and the half-difference is $45^\circ$, so this gives $-2\sin 60^\circ\sin 45^\circ=-2\cdot\frac{\sqrt{3}}{2}\cdot\frac{\sqrt{2}}{2}=-\frac{\sqrt{6}}{2}$.'
     diagnostic_exemplar:
       problem: 'Evaluate $\sin 105^\circ + \sin 15^\circ$ exactly by writing it as a product.'
       answer: "√6/2"
@@ -404,85 +762,166 @@ topics:
         name: Read all four parameters
         key_prerequisites: [trig-graphs-midline, function-transformations-shifts]
         constraints: "B in {1, 2, 3, 1/2}; C a multiple of π/6 or π/4; include one unfactored argument Bx - φ that must be factored before reading the shift"
+        step_check:
+          step: 'Factor the argument: $3x - \frac{\pi}{2} = 3\left(x - \frac{\pi}{6}\right)$'
+          question: 'Why is the argument factored as $3\left(x - \frac{\pi}{6}\right)$ before the shift is read?'
+          options:
+            - 'The shift is always the constant $\frac{\pi}{2}$, and factoring only changes its look'
+            - 'The factor $3$ must be removed so that the amplitude of the wave equals $1$'
+            - 'The shift is what is subtracted from $x$ alone, so $3$ is taken out'
+            - 'The shift is $\frac{\pi}{2}$ divided by $3$ only when the function is a cosine'
+          answer: 'The shift is what is subtracted from $x$ alone, so $3$ is taken out'
+          why: 'The shift is the number subtracted from $x$ itself, so the argument must have the form $B(x - C)$ before $C$ is read.'
+        try_first:
+          problem: 'The graph of $y = \sin(2x - 2)$ is the graph of $y = \sin 2x$ moved to the right. By how much?'
+          answer_contract: {"kind": "exact"}
+          answer: '1'
+          reveal: 'Factoring gives $\sin(2x - 2) = \sin(2(x - 1))$, so the shift is $1$ and not $2$. The shift is read only from the factored form $B(x - C)$.'
         exemplars:
-          - problem: "A sinusoid has equation y = 5 sin(2(x - pi/3)) - 4. Give its amplitude, its period, its signed phase shift in radians (positive means a shift to the right), and its midline value, in that order, as amp, per, sh, mid."
-            answer: "amp = 5; per = pi; sh = pi/3; mid = -4"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "amp"}, {"contract": {"kind": "exact"}, "name": "per"}, {"contract": {"kind": "exact"}, "name": "sh"}, {"contract": {"kind": "exact"}, "name": "mid"}]}
-            solution_sketch: "The full object is y = 5 sin(2(x - pi/3)) - 4. Amplitude rule: the amplitude is the absolute value of the leading coefficient, so 5. Period rule: the period is 2pi/B with B = 2, giving pi. Phase shift rule: the argument is already factored as 2(x - pi/3), so the signed shift is pi/3, positive because the constant is subtracted. Midline rule: the midline is the vertical shift D = -4. Answer: amp = 5; per = pi; sh = pi/3; mid = -4."
-          - problem: "A sinusoid has equation y = cos(x + pi/3). Give its signed phase shift in radians, where a positive value means a shift to the right and a negative value means a shift to the left is not needed for the sign."
-            answer: "-pi/3"
+          - problem: 'How far to the right is the graph of $y = 3\sin\left(2x - \frac{\pi}{3}\right) + 1$ shifted from the graph of $y = 3\sin 2x + 1$?'
+            answer: 'pi/6'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The full object is y = cos(x + pi/3). Rewrite rule: write the argument as x - (-pi/3), so the shift constant is C = -pi/3. Sign rule: a negative shift constant means the graph moves in the negative horizontal direction, and the signed answer keeps that minus sign. Answer: -pi/3."
-          - problem: "A sinusoid has equation y = sin(3x - 3pi/4). Factor the argument first, then give the period and the signed phase shift in radians (positive means a shift to the right), in that order, as per and sh."
-            answer: "per = 2pi/3; sh = pi/4"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "per"}, {"contract": {"kind": "exact"}, "name": "sh"}]}
-            solution_sketch: "The full object is y = sin(3x - 3pi/4). Factoring rule: 3x - 3pi/4 = 3(x - pi/4), so the shift is read from pi/4 and not from the unfactored constant 3pi/4. Period rule: the period is 2pi/B with B = 3, giving 2pi/3. Shift rule: the factored constant is subtracted, so the signed shift is pi/4. Answer: per = 2pi/3; sh = pi/4."
-          - problem: "A sinusoid has equation y = -3 cos(x/2 + pi/4) + 2. Give its amplitude and its midline value, in that order, as amp and mid."
-            answer: "amp = 3; mid = 2"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "amp"}, {"contract": {"kind": "exact"}, "name": "mid"}]}
-            solution_sketch: "The full object is y = -3 cos(x/2 + pi/4) + 2. Amplitude rule: the amplitude is the absolute value of the leading coefficient, |-3| = 3; the minus sign only reflects the graph across the midline. Midline rule: the midline is the constant vertical shift D = 2. Answer: amp = 3; mid = 2."
-          - problem: "A sinusoid has equation y = 4 cos(x/2 + pi/6) - 1. Give its period and its signed phase shift in radians (positive means a shift to the right), in that order, as per and sh."
-            answer: "per = 4pi; sh = -pi/3"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "per"}, {"contract": {"kind": "exact"}, "name": "sh"}]}
-            solution_sketch: "The full object is y = 4 cos(x/2 + pi/6) - 1. Factoring rule: x/2 + pi/6 = (1/2)(x + pi/3), so the signed shift is -pi/3; dividing the constant pi/6 by B = 1/2 gives the size pi/3, and the plus sign makes it negative. Period rule: the period is 2pi/B = 2pi/(1/2) = 4pi. Answer: per = 4pi; sh = -pi/3."
-          - problem: "A sinusoid has equation y = 2 cos(3x + 3pi/4) + 4. Factor the argument first, then state the direction of the phase shift and give its magnitude in radians, as dir and sh."
-            answer: "dir = left; sh = pi/4"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["right"], ["left"]]}, "name": "dir"}, {"contract": {"kind": "exact"}, "name": "sh"}]}
-            solution_sketch: "The full object is y = 2 cos(3x + 3pi/4) + 4. Factoring rule: 3x + 3pi/4 = 3(x + pi/4), so the shift is read from pi/4 and not from the unfactored constant 3pi/4. Direction rule: the factored constant is added, so the graph moves in the negative horizontal direction. The wrong option right is the error of keeping the sign of the added constant instead of negating it. Answer: dir = left; sh = pi/4."
+            solution_sketch: 'Factor the argument: $2x - \frac{\pi}{3} = 2\left(x - \frac{\pi}{6}\right)$. The shift is the number subtracted from $x$ alone, so it is $\frac{\pi}{6}$ to the right.'
+          - problem: 'State the amplitude of $y = -3\cos\left(\frac{x}{2} + \frac{\pi}{4}\right) + 2$.'
+            answer: '3'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The amplitude is the absolute value of the leading coefficient. The sign of $-3$ only reflects the graph, so the amplitude is $3$.'
+          - problem: 'Find the period of $y = 4\cos\left(\frac{x}{2} + \frac{\pi}{6}\right) - 1$.'
+            answer: '4*pi'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The period is $\frac{2\pi}{B}$ with $B = \frac{1}{2}$. Dividing $2\pi$ by $\frac{1}{2}$ gives $4\pi$.'
+          - problem: 'State the midline of $y = 5\sin\left(2\left(x - \frac{\pi}{3}\right)\right) - 4$.'
+            answer: 'y = -4'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The midline is the horizontal line through the vertical shift $D$. Here $D = -4$, so the midline is $y = -4$.'
+          - problem: 'The depth of the water in a harbour is $h(t) = 2.5\cos\left(\frac{\pi}{6}(t - 3)\right) + 6$ metres, where $t$ is the time in hours after midnight. How deep is the water at high tide?'
+            answer: '8.5'
+            answer_contract: {"kind": "unit", "quantity": "length", "unit": "m", "allow_omitted": true}
+            solution_sketch: 'High tide is the maximum of the cosine, which is the midline plus the amplitude. That gives $6 + 2.5 = 8.5$ metres.'
+          - problem: 'The depth of the water in a harbour is $h(t) = 2.5\cos\left(\frac{\pi}{6}(t - 3)\right) + 6$ metres, where $t$ is the time in hours after midnight. How many hours pass between one high tide and the next?'
+            answer: '12'
+            answer_contract: {"kind": "unit", "quantity": "time", "unit": "h", "allow_omitted": true}
+            solution_sketch: 'The time between two high tides is one period, $\frac{2\pi}{B}$. With $B = \frac{\pi}{6}$ the period is $12$ hours.'
+          - problem: 'Is the graph of $y = 2\cos\left(3x + \frac{3\pi}{4}\right) + 4$ shifted to the left or to the right of the graph of $y = 2\cos 3x + 4$?'
+            answer: 'left'
+            answer_contract: {"kind": "label", "options": [["left", "to the left", "shifted left", "shifted to the left", "it is shifted to the left", "moves left", "the left"], ["right", "to the right", "shifted right", "shifted to the right", "it is shifted to the right", "moves right", "the right"]]}
+            solution_sketch: 'Factor the argument: $3x + \frac{3\pi}{4} = 3\left(x + \frac{\pi}{4}\right) = 3\left(x - \left(-\frac{\pi}{4}\right)\right)$. The shift is $-\frac{\pi}{4}$, which is negative, so the graph moves to the left.'
+          - problem: 'Find the phase shift of $y = \cos\left(x + \frac{\pi}{3}\right)$, where a positive shift is to the right.'
+            answer: '-pi/3'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Write the argument as $x - \left(-\frac{\pi}{3}\right)$. The shift is $-\frac{\pi}{3}$, which means $\frac{\pi}{3}$ to the left.'
+          - problem: 'Sam reads the phase shift of $y = \sin\left(3x - \frac{3\pi}{4}\right)$ as $\frac{3\pi}{4}$. What is the correct phase shift?'
+            answer: 'pi/4'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Sam skipped the factoring. Since $3x - \frac{3\pi}{4} = 3\left(x - \frac{\pi}{4}\right)$, the shift is $\frac{\pi}{4}$ to the right.'
+          - problem: 'The graph of $y = 4\cos\left(\frac{x}{2} + \frac{\pi}{6}\right) - 1$ is the graph of $y = 4\cos\frac{x}{2} - 1$ moved to the left. By how much?'
+            answer: 'pi/3'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Factor the argument: $\frac{x}{2} + \frac{\pi}{6} = \frac{1}{2}\left(x + \frac{\pi}{3}\right)$. The shift is the number added to $x$ inside the bracket, so it is $\frac{\pi}{3}$ to the left, and not $\frac{\pi}{6}$.'
+          - problem: 'The depth of the water in a harbour is $h(t) = 2.5\cos\left(\frac{\pi}{6}(t - 3)\right) + 6$ metres, where $t$ is the time in hours after midnight. How many hours after midnight is the first high tide?'
+            answer: '3'
+            answer_contract: {"kind": "unit", "quantity": "time", "unit": "h", "allow_omitted": true}
+            solution_sketch: 'The cosine reaches its maximum when its argument is $0$. That happens when $t - 3 = 0$, so the first high tide is $3$ hours after midnight.'
       - id: kp2
         name: Write the equation from features or a graph
         key_prerequisites: [trig-graphs-midline, function-transformations-shifts]
         constraints: "integer amplitudes and midlines; periods 2π, π, or 4π; features given as max/min values and locations at multiples of π/6 or π/4"
+        step_check:
+          step: 'The midline is halfway between the maximum and the minimum, so $D = \frac{5 + (-1)}{2} = 2$'
+          question: 'Why is the midline found by averaging the maximum and the minimum?'
+          options:
+            - 'The midline is the $x$-axis, which always lies halfway between the extremes'
+            - 'The wave is symmetric about its midline, halfway between the extremes'
+            - 'Half of the maximum is the amplitude, and the amplitude is the midline'
+          answer: 'The wave is symmetric about its midline, halfway between the extremes'
+          why: 'The curve rises above the midline as far as it falls below it, so the midline is the average of the highest and the lowest value.'
         exemplars:
-          - problem: 'Write a sine function with amplitude $2$, period $\pi$, phase shift $\frac{\pi}{4}$ right, and midline $y = 3$. Give the right-hand side of $y = \ldots$'
-            answer: "2 sin(2(x - π/4)) + 3"
-            solution_sketch: '$B = \frac{2\pi}{\text{period}} = 2$; assemble $A\sin(B(x - C)) + D$.'
-          - problem: 'A sinusoid with period $2\pi$ has a maximum of $5$ at $x = \frac{\pi}{2}$ and a minimum of $-1$. Write it as a cosine function.'
-            answer: "y = 3 cos(x - π/2) + 2"
-            solution_sketch: 'Amplitude $\frac{5 - (-1)}{2} = 3$, midline $y = 2$; a cosine peaks at its phase shift, so shift right $\frac{\pi}{2}$.'
+          - problem: 'Write the equation of the sine curve with amplitude $2$, period $\pi$, phase shift $\frac{\pi}{4}$ to the right and midline $y = 3$.'
+            answer: '2 sin(2(x - pi/4)) + 3'
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: 'The period $\pi$ gives $B = \frac{2\pi}{\pi} = 2$. With amplitude $2$, shift $\frac{\pi}{4}$ and midline $3$, the curve is $y = 2\sin\left(2\left(x - \frac{\pi}{4}\right)\right) + 3$.'
+          - problem: 'A sinusoid with period $2\pi$ has a maximum of $5$ at $x = \frac{\pi}{2}$ and a minimum of $-1$. Write its equation as a cosine function.'
+            answer: '3 cos(x - pi/2) + 2'
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: 'The midline is $\frac{5 + (-1)}{2} = 2$ and the amplitude is $\frac{5 - (-1)}{2} = 3$. A cosine peaks at its shift, so $C = \frac{\pi}{2}$ and $B = 1$.'
           - problem: 'The graph of $y = \sin x$ has a maximum at $\left(\frac{\pi}{2}, 1\right)$. Where is the corresponding maximum of $y = \sin\left(x - \frac{\pi}{3}\right) + 2$?'
-            answer: "(5π/6, 3)"
-            solution_sketch: 'Every point moves right $\frac{\pi}{3}$ and up $2$.'
-          - problem: "A sinusoid has a maximum value 7 at x = pi/6 and a minimum value -1 at x = 2pi/3. Its period is pi. Give the right-hand side of its equation as y = A cos(B(x - C)) + D."
-            answer: "4 cos(2(x - pi/6)) + 3"
+            answer: '(5*pi/6, 3)'
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: 'The shift $\frac{\pi}{3}$ moves the maximum to the right, so its $x$-coordinate is $\frac{\pi}{2} + \frac{\pi}{3} = \frac{5\pi}{6}$. The midline $2$ lifts the maximum, so its $y$-coordinate is $1 + 2 = 3$.'
+          - problem: 'A sinusoid has a maximum value of $7$ at $x = \frac{\pi}{6}$ and its next minimum value of $-1$ at $x = \frac{2\pi}{3}$. Write its equation as a cosine function.'
+            answer: '4 cos(2(x - pi/6)) + 3'
             answer_contract: {"kind": "function", "vars": ["x"]}
-            solution_sketch: "The full model is y = A cos(B(x - C)) + D. Midline rule: D = (7 + (-1))/2 = 3. Amplitude rule: A = (7 - (-1))/2 = 4. Period rule: B = 2pi/pi = 2. Phase-shift rule: a cosine reaches its maximum at x = C, so C = pi/6. The equation is 4 cos(2(x - pi/6)) + 3."
-          - problem: "A sinusoid has a maximum value 3 at x = pi/4 and a minimum value -5 at x = 9pi/4. Its period is 4pi. Give the right-hand side of its equation as y = A sin(B(x - C)) + D."
-            answer: "4 sin((x + 3pi/4)/2) - 1"
+            solution_sketch: 'A maximum and the next minimum are half a period apart, so the period is $2\left(\frac{2\pi}{3} - \frac{\pi}{6}\right) = \pi$ and $B = 2$. The midline is $3$, the amplitude is $4$ and the cosine peaks at $x = \frac{\pi}{6}$.'
+          - problem: 'A sinusoid with period $4\pi$ has a maximum of $3$ at $x = \frac{\pi}{4}$ and a minimum of $-5$. Write its equation as a sine function.'
+            answer: '4 sin((x + 3pi/4)/2) - 1'
             answer_contract: {"kind": "function", "vars": ["x"]}
-            solution_sketch: "The full model is y = A sin(B(x - C)) + D. Midline rule: D = (3 + (-5))/2 = -1. Amplitude rule: A = (3 - (-5))/2 = 4. Period rule: B = 2pi/(4pi) = 1/2. Phase-shift rule: a sine reaches its maximum when B(x - C) = pi/2, so (1/2)(pi/4 - C) = pi/2 and C = -3pi/4. The equation is 4 sin((x + 3pi/4)/2) - 1."
-          - problem: "A sinusoid has a maximum value 4 at x = 4pi/3 and a minimum value -2 at x = pi/3. Its period is 2pi. Give the right-hand side of its equation as y = A cos(B(x - C)) + D."
-            answer: "3 cos(x - 4pi/3) + 1"
+            solution_sketch: 'The midline is $-1$ and the amplitude is $4$. Here $B = \frac{2\pi}{4\pi} = \frac{1}{2}$, and a sine peaks when its argument is $\frac{\pi}{2}$, so $\frac{1}{2}(x - C) = \frac{\pi}{2}$ at $x = \frac{\pi}{4}$ gives $C = -\frac{3\pi}{4}$.'
+          - problem: 'A sinusoid with period $2\pi$ has a maximum of $4$ at $x = \frac{4\pi}{3}$ and a minimum of $-2$ at $x = \frac{\pi}{3}$. Write its equation as a cosine function.'
+            answer: '3 cos(x - 4pi/3) + 1'
             answer_contract: {"kind": "function", "vars": ["x"]}
-            solution_sketch: "The full model is y = A cos(B(x - C)) + D. Midline rule: D = (4 + (-2))/2 = 1. Amplitude rule: A = (4 - (-2))/2 = 3. Period rule: B = 2pi/(2pi) = 1. Phase-shift rule: a cosine reaches its maximum at x = C, so C = 4pi/3. The equation is 3 cos(x - 4pi/3) + 1."
+            solution_sketch: 'The midline is $\frac{4 + (-2)}{2} = 1$ and the amplitude is $3$. The cosine peaks at its shift, so $C = \frac{4\pi}{3}$ and $B = 1$.'
+          - problem: 'A mass on a spring moves between $2$ cm and $10$ cm above a table. It is at its highest point when $t = 1$ s, and one full oscillation takes $2\pi$ s. Write its height $h$ in centimetres as a cosine function of $t$.'
+            answer: '4 cos(t - 1) + 6'
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: 'The midline is $\frac{10 + 2}{2} = 6$ and the amplitude is $\frac{10 - 2}{2} = 4$. A period of $2\pi$ gives $B = 1$, and the highest point at $t = 1$ makes the shift $1$.'
+          - problem: 'The voltage across a component varies between $-5$ V and $5$ V with a period of $\pi$ s. It is at its maximum when $t = \frac{\pi}{8}$ s. Write the voltage $V$ as a sine function of $t$.'
+            answer: '5 sin(2(t + pi/8))'
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: 'The amplitude is $5$, the midline is $0$ and $B = \frac{2\pi}{\pi} = 2$. A sine peaks when $2(t - C) = \frac{\pi}{2}$, so at $t = \frac{\pi}{8}$ we get $C = \frac{\pi}{8} - \frac{\pi}{4} = -\frac{\pi}{8}$.'
       - id: kp3
         name: Sinusoidal modeling
         key_prerequisites: [trig-graphs-midline]
         constraints: "metric units and 24-hour times; periods giving B as a simple π-fraction; the phase pinned by a stated maximum, minimum, or start position"
+        step_check:
+          step: 'The period is $90$ s, so $B = \frac{2\pi}{90} = \frac{\pi}{45}$'
+          question: 'Why is $B$ found as $\frac{2\pi}{90}$?'
+          options:
+            - 'One turn needs $Bt$ to grow by $2\pi$, so $B \times 90 = 2\pi$'
+            - 'The period of a cosine is $B$ times $2\pi$, so $B = \frac{90}{2\pi}$'
+            - 'A cosine repeats after $\pi$, so $B \times 90 = \pi$'
+          answer: 'One turn needs $Bt$ to grow by $2\pi$, so $B \times 90 = 2\pi$'
+          why: 'The cosine completes one cycle when $Bt$ grows by $2\pi$, and one cycle takes the whole period, so $B$ times the period equals $2\pi$.'
         exemplars:
-          - problem: "A Ferris wheel of radius 7 m has its centre 9 m over the ground and turns once every 24 s. A cabin starts at the lowest point at t = 0. Give the cosine expression for its height h in metres, using t as the variable."
-            answer: "9 - 7 cos(pi t/12)"
+          - problem: 'A Ferris wheel of radius $7$ m has its centre $9$ m above the ground and turns once every $24$ s. A cabin starts at the lowest point at $t = 0$. Write the height $h$ of the cabin in metres as a cosine function of $t$.'
+            answer: '9 - 7 cos(pi t/12)'
             answer_contract: {"kind": "function", "vars": ["t"]}
-            solution_sketch: "Step 1: read the midline. The centre is 9 m, so D = 9 by the midline rule. Step 2: read the amplitude. Radius 7 m gives A = 7 by the amplitude rule. Step 3: the period 24 s gives B = 2pi/24 = pi/12 by the period rule. Step 4: starting at the lowest point pins a reflected cosine, so the full model is 9 - 7 cos(pi t/12)."
-          - problem: "At a harbour the high tide of 7 m occurs at 05:00 and the next low tide of 3 m at 11:00. Model the depth with a cosine, with t in hours after midnight. Give the cosine expression for the depth d in metres, using t as the variable."
-            answer: "2 cos(pi (t - 5)/6) + 5"
+            solution_sketch: 'The midline is $9$, the amplitude is $7$ and $B = \frac{2\pi}{24} = \frac{\pi}{12}$. The cabin starts at the minimum, so the cosine is reflected: $h = 9 - 7\cos\left(\frac{\pi t}{12}\right)$.'
+          - problem: 'At a harbour the high tide of $7$ m occurs at 05:00 and the next low tide of $3$ m at 11:00. Model the depth $d$ in metres with a cosine function of $t$, the hours after midnight.'
+            answer: '2 cos(pi (t - 5)/6) + 5'
             answer_contract: {"kind": "function", "vars": ["t"]}
-            solution_sketch: "Step 1: midline D = (7+3)/2 = 5 by the midline rule. Step 2: amplitude A = (7-3)/2 = 2 by the amplitude rule. Step 3: high to low is half a period, so the period is 12 h and B = 2pi/12 = pi/6 by the period rule. Step 4: the cosine peaks at t = 5, so the phase shift is 5 and the full model is 2 cos(pi (t - 5)/6) + 5."
-          - problem: 'Using $h(t) = 12 - 10\cos\left(\frac{\pi t}{30}\right)$, find the cabin height at $t = 15$ s.'
-            answer: "12 m"
-            solution_sketch: '$\cos\left(\frac{\pi}{2}\right) = 0$, so $h = 12$: the cabin is level with the centre.'
-          - problem: "The temperature in a greenhouse is 4 degrees Celsius at 02:00 and 16 degrees Celsius at 14:00. A cosine model has a 24-hour period, with t in hours after midnight. Give the cosine expression for the temperature T in degrees Celsius, using t as the variable."
-            answer: "10 - 6 cos(pi (t - 2)/12)"
+            solution_sketch: 'The midline is $5$ and the amplitude is $2$. High tide to low tide takes $6$ hours, which is half a period, so the period is $12$ hours and $B = \frac{\pi}{6}$. The cosine peaks at $t = 5$.'
+          - problem: 'The height of a cabin on a Ferris wheel is $h(t) = 12 - 10\cos\left(\frac{\pi t}{30}\right)$ metres at $t$ seconds. Find the height of the cabin at $t = 15$ s.'
+            answer: '12'
+            answer_contract: {"kind": "unit", "quantity": "length", "unit": "m", "allow_omitted": true}
+            solution_sketch: 'At $t = 15$ the argument is $\frac{\pi \cdot 15}{30} = \frac{\pi}{2}$. Since $\cos\frac{\pi}{2} = 0$, the height is $12 - 0 = 12$ metres.'
+          - problem: 'The temperature in a greenhouse is $4$ degrees Celsius at 02:00 and $16$ degrees Celsius at 14:00. A cosine model has a period of $24$ hours, with $t$ the hours after midnight. Write the temperature $T$ in degrees Celsius as a function of $t$.'
+            answer: '10 - 6 cos(pi (t - 2)/12)'
             answer_contract: {"kind": "function", "vars": ["t"]}
-            solution_sketch: "Step 1: midline D = (4+16)/2 = 10 by the midline rule. Step 2: amplitude A = (16-4)/2 = 6 by the amplitude rule. Step 3: the 24-hour period gives B = 2pi/24 = pi/12 by the period rule. Step 4: the minimum at t = 2 pins a reflected cosine, so the full model is 10 - 6 cos(pi (t - 2)/12)."
-          - problem: "A water wheel of radius 3 m has its centre 5 m over the water. It turns once every 16 s. A paddle starts level with the centre and moving upward at t = 0. Give the cosine expression for its height h in metres, using t as the variable."
-            answer: "5 + 3 cos(pi t/8 - pi/2)"
+            solution_sketch: 'The midline is $\frac{16 + 4}{2} = 10$ and the amplitude is $6$. The minimum occurs at $t = 2$, so the cosine is reflected and shifted $2$ hours: $T = 10 - 6\cos\left(\frac{\pi(t - 2)}{12}\right)$.'
+          - problem: 'A water wheel of radius $3$ m has its centre $5$ m above the water and turns once every $16$ s. A paddle starts level with the centre and moving upward at $t = 0$. Write the height $h$ of the paddle in metres as a cosine function of $t$.'
+            answer: '5 + 3 cos(pi t/8 - pi/2)'
             answer_contract: {"kind": "function", "vars": ["t"]}
-            solution_sketch: "Step 1: midline D = 5 m by the midline rule. Step 2: amplitude A = 3 m by the amplitude rule. Step 3: the period 16 s gives B = 2pi/16 = pi/8 by the period rule. Step 4: starting at the centre and rising means the cosine phase is -pi/2, so the full model is 5 + 3 cos(pi t/8 - pi/2)."
-          - problem: "A Ferris wheel of radius 6 m has its centre 8 m over the ground and turns once every 30 s. A cabin starts at the highest point at t = 0. Give the cosine expression for its height h in metres, using t as the variable."
-            answer: "8 + 6 cos(pi t/15)"
+            solution_sketch: 'The midline is $5$, the amplitude is $3$ and $B = \frac{2\pi}{16} = \frac{\pi}{8}$. A cosine that is at its midline and rising is a quarter period behind a maximum, so it has the shift $\frac{\pi}{2}$ in its argument: $h = 5 + 3\cos\left(\frac{\pi t}{8} - \frac{\pi}{2}\right)$.'
+          - problem: 'A Ferris wheel of radius $6$ m has its centre $8$ m above the ground and turns once every $30$ s. A cabin starts at the highest point at $t = 0$. Write the height $h$ of the cabin in metres as a cosine function of $t$.'
+            answer: '8 + 6 cos(pi t/15)'
             answer_contract: {"kind": "function", "vars": ["t"]}
-            solution_sketch: "Step 1: midline D = 8 m by the midline rule. Step 2: amplitude A = 6 m by the amplitude rule. Step 3: the period 30 s gives B = 2pi/30 = pi/15 by the period rule. Step 4: starting at the highest point pins a positive cosine with zero phase, so the full model is 8 + 6 cos(pi t/15)."
+            solution_sketch: 'The midline is $8$, the amplitude is $6$ and $B = \frac{2\pi}{30} = \frac{\pi}{15}$. The cabin starts at the maximum, so the cosine is not reflected: $h = 8 + 6\cos\left(\frac{\pi t}{15}\right)$.'
+          - problem: 'The height of a cabin is $h(t) = 12 - 10\cos\left(\frac{\pi t}{30}\right)$ metres at $t$ seconds. How long does one full turn of the wheel take?'
+            answer: '60'
+            answer_contract: {"kind": "unit", "quantity": "time", "unit": "s", "allow_omitted": true}
+            solution_sketch: 'One turn is one period of the cosine. The period is $\frac{2\pi}{B} = \frac{2\pi}{\pi/30} = 60$ seconds.'
+          - problem: 'The height of a cabin is $h(t) = 12 - 10\cos\left(\frac{\pi t}{30}\right)$ metres at $t$ seconds. At what time after $t = 0$ is the cabin first at a height of $22$ m?'
+            answer: '30'
+            answer_contract: {"kind": "unit", "quantity": "time", "unit": "s", "allow_omitted": true}
+            solution_sketch: 'The height $22$ is the maximum, $12 + 10$. That needs $\cos\left(\frac{\pi t}{30}\right) = -1$, so $\frac{\pi t}{30} = \pi$ and $t = 30$ seconds.'
+          - problem: 'A wheel turns once every $24$ s. Mia writes the height of a cabin as $h = 9 - 7\cos(24t)$. What value of $B$ in $\cos(Bt)$ is correct?'
+            answer: 'pi/12'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Mia used the period as $B$. The value of $B$ is $\frac{2\pi}{\text{period}}$, so the correct value is $\frac{2\pi}{24} = \frac{\pi}{12}$.'
+          - problem: 'In a northern town the longest day has $18$ hours of daylight on day $172$ of the year and the shortest day has $6$ hours. Write the hours of daylight $D$ as a cosine function of $t$, the day of the year, with a period of $365$ days.'
+            answer: '12 + 6 cos(2 pi (t - 172)/365)'
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: 'The midline is $\frac{18 + 6}{2} = 12$ and the amplitude is $6$. The period is $365$ days, so $B = \frac{2\pi}{365}$, and the maximum falls on day $172$.'
     diagnostic_exemplar:
       problem: 'A Ferris wheel of radius $8$ m has its centre $10$ m above the ground and turns once every $40$ s. A cabin starts at the lowest point at $t = 0$. Write its height $h(t)$ in metres as a cosine function.'
       answer: "h(t) = 10 - 8 cos(πt/20)"
@@ -525,77 +964,145 @@ topics:
         name: The tangent graph
         key_prerequisites: [unit-circle-special-angles, vertical-horizontal-asymptotes]
         constraints: "asymptotes written x = π/2 + πk with k an integer; zeros at integer multiples of π"
+        step_check:
+          step: 'The function has vertical asymptotes where $\cos x = 0$'
+          question: 'Why does $y = \tan x$ have vertical asymptotes where $\cos x = 0$?'
+          options:
+            - 'The numerator of $\frac{\sin x}{\cos x}$ is zero there, so the value blows up'
+            - 'The denominator $\cos x$ is zero there while $\sin x$ is not'
+            - 'The tangent is the reciprocal of $\sin x$, which is zero there'
+          answer: 'The denominator $\cos x$ is zero there while $\sin x$ is not'
+          why: 'Since $\tan x = \frac{\sin x}{\cos x}$, a zero denominator with a nonzero numerator makes the values grow without bound.'
         exemplars:
-          - problem: "Find the period of the graph of y = tan x."
-            answer: "pi"
+          - problem: 'At which values of $x$ between $0$ and $2\pi$ does the graph of $y = \tan x$ have vertical asymptotes?'
+            answer: 'pi/2, 3*pi/2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The graph of y = tan x repeats because the identity tan(x + pi) = tan x holds for every x where tangent is defined. The period is the length of one full repeat of the graph. The period of y = tan x is pi."
-          - problem: "On the interval (-pi/2, pi/2), state the direction of the graph of y = tan x, and give the x-coordinate where it crosses the x-axis."
-            answer: "direction = increasing; x0 = 0"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["increasing"], ["decreasing"]]}, "name": "direction"}, {"contract": {"kind": "exact"}, "name": "x0"}]}
-            solution_sketch: "The full branch of y = tan x on the interval (-pi/2, pi/2) runs from negative infinity at the left asymptote up to positive infinity at the right asymptote, so the graph is increasing on the branch. The graph crosses the x-axis where tan x = 0, which happens at x = 0. So direction = increasing; x0 = 0."
-          - problem: "Find the smallest positive x-value that is not in the domain of y = tan x."
-            answer: "pi/2"
+            solution_sketch: 'The tangent is $\frac{\sin x}{\cos x}$, so it has an asymptote wherever $\cos x = 0$. Between $0$ and $2\pi$ that happens at $x = \frac{\pi}{2}$ and $x = \frac{3\pi}{2}$.'
+          - problem: 'Find the period of the graph of $y = \tan x$.'
+            answer: 'pi'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The function y = tan x equals sin x divided by cos x, so it is undefined exactly where cos x = 0. The unit circle gives cos x = 0 at x = pi/2 + pi*k for integers k, and the smallest positive of these values is pi/2. The smallest positive x-value not in the domain is pi/2."
-          - problem: "Which equation gives every vertical asymptote of the graph of y = tan x?"
-            answer: "x = pi/2 + pi*k"
-            answer_contract: {"kind": "label", "options": [["x = pi/2 + pi*k"], ["x = pi*k"], ["x = pi/4 + pi*k"], ["x = 2*pi*k"]]}
-            solution_sketch: "The graph of y = tan x has vertical asymptotes exactly where cos x = 0, which is at x = pi/2 + pi*k for every integer k. The option x = pi*k lists the zeros of tangent, not the asymptotes. The option x = pi/4 + pi*k uses a special angle where cosine is not zero. The option x = 2*pi*k keeps only whole turns and misses most asymptotes. The correct equation is x = pi/2 + pi*k."
-          - problem: "The graph of y = tan x has a zero at x = 4pi. Find the x-coordinate of the vertical asymptote that lies immediately to the right of this zero."
-            answer: "9pi/2"
+            solution_sketch: 'The tangent repeats after a shift of $\pi$, because adding $\pi$ changes the signs of both sine and cosine. So the period is $\pi$, not $2\pi$.'
+          - problem: 'Is the graph of $y = \tan x$ increasing or decreasing between its asymptotes at $x = -\frac{\pi}{2}$ and $x = \frac{\pi}{2}$?'
+            answer: 'increasing'
+            answer_contract: {"kind": "label", "options": [["increasing", "it is increasing", "increases", "it increases", "rising", "goes up", "the graph is increasing"], ["decreasing", "it is decreasing", "decreases", "it decreases", "falling", "goes down", "the graph is decreasing"]]}
+            solution_sketch: 'On this interval $\tan x$ runs from very negative values, through $0$ at $x = 0$, to very positive values. So the graph is increasing.'
+          - problem: 'The graph of $y = \tan x$ has a zero at $x = 4\pi$. Find the $x$-coordinate of the vertical asymptote immediately to the right of this zero.'
+            answer: '9*pi/2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The zero of y = tan x at x = 4pi sits in the middle of a branch bounded by the asymptotes at 7pi/2 and 9pi/2. Each branch of the tangent graph runs between two consecutive asymptotes, with the zero at its middle, so the asymptote right of 4pi is at x = 9pi/2. The x-coordinate is 9pi/2."
-          - problem: "Find the x-coordinate of the zero of y = tan x that lies between the vertical asymptotes at x = 3pi/2 and x = 5pi/2."
-            answer: "2pi"
+            solution_sketch: 'An asymptote lies half a period, $\frac{\pi}{2}$, from each neighbouring zero. So the next asymptote is at $4\pi + \frac{\pi}{2} = \frac{9\pi}{2}$.'
+          - problem: 'Find the zero of $y = \tan x$ that lies between the vertical asymptotes at $x = \frac{3\pi}{2}$ and $x = \frac{5\pi}{2}$.'
+            answer: '2*pi'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The zeros of y = tan x sit at every integer multiple of pi, one at the middle of each branch. The branch between the asymptotes at x = 3pi/2 and x = 5pi/2 is centered at x = 2pi. The x-coordinate of the zero is 2pi."
+            solution_sketch: 'The zero lies halfway between two neighbouring asymptotes. The midpoint of $\frac{3\pi}{2}$ and $\frac{5\pi}{2}$ is $\frac{4\pi}{2} = 2\pi$.'
+          - problem: 'A searchlight stands $50$ m from a long straight wall. When its beam makes an angle $\theta$ with the perpendicular to the wall, the spot lies $d = 50\tan\theta$ metres along the wall from the nearest point. How far along the wall is the spot when $\theta = \frac{\pi}{4}$?'
+            answer: '50'
+            answer_contract: {"kind": "unit", "quantity": "length", "unit": "m", "allow_omitted": true}
+            solution_sketch: 'Substitute $\theta = \frac{\pi}{4}$ into the model. Since $\tan\frac{\pi}{4} = 1$, the distance is $50 \times 1 = 50$ metres.'
+          - problem: 'A searchlight stands $50$ m from a long straight wall, and its spot lies $d = 50\tan\theta$ metres along the wall when the beam makes an angle $\theta$ with the perpendicular. At which angle $\theta$ between $0$ and $\pi$ does the model have a vertical asymptote?'
+            answer: 'pi/2'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The model has an asymptote where $\tan\theta$ is undefined, which means $\cos\theta = 0$. Between $0$ and $\pi$ that is $\theta = \frac{\pi}{2}$, where the beam runs parallel to the wall.'
       - id: kp2
         name: Secant and cosecant from their reciprocals
         key_prerequisites: [reciprocal-trig-functions, sine-cosine-parent-graphs]
         constraints: "derive every feature from the sine or cosine graph: asymptotes at its zeros, branches anchored at its max/min"
+        step_check:
+          step: 'it will have vertical asymptotes at these points'
+          question: 'Why does $y = \csc x$ have vertical asymptotes where $\sin x = 0$?'
+          options:
+            - 'There $\sin x$ is at its maximum, so $\csc x$ is at its minimum value'
+            - 'There $\csc x = 0$, so the curve touches the $x$-axis and turns back'
+            - 'There $\frac{1}{\sin x}$ divides by zero, so its values blow up'
+          answer: 'There $\frac{1}{\sin x}$ divides by zero, so its values blow up'
+          why: 'Since $\csc x = \frac{1}{\sin x}$, the values grow without bound wherever $\sin x$ is zero.'
+        try_first:
+          problem: 'Does the graph of $y = \sec x$ ever take the value $\frac{1}{2}$?'
+          answer_contract: {"kind": "label", "options": [["yes", "yes it does"], ["no", "never", "it does not", "no it does not", "no, never"]]}
+          answer: 'no'
+          reveal: 'Since $\sec x = \frac{1}{\cos x}$ and $\cos x$ never goes above $1$, the value of $\sec x$ is never between $-1$ and $1$. The graph has a gap there.'
         exemplars:
-          - problem: 'State the vertical asymptotes of $y = \sec x$ on $[0, 2\pi]$.'
-            answer: "π/2, 3π/2"
-            answer_contract: {kind: list, ordered: false, member: {kind: exact}}
-            solution_sketch: 'Secant blows up exactly where $\cos x = 0$.'
+          - problem: 'State the vertical asymptotes of $y = \csc x$ on $[0, 2\pi]$.'
+            answer: '0, pi, 2*pi'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Since $\csc x = \frac{1}{\sin x}$, the asymptotes are where $\sin x = 0$. On $[0, 2\pi]$ that is $x = 0$, $x = \pi$ and $x = 2\pi$.'
           - problem: 'State the range of $y = \csc x$.'
-            answer: "y ≤ -1 or y ≥ 1"
-            answer_contract: {kind: inequality_union}
-            solution_sketch: 'Reciprocals of $\sin x \in [-1, 1] \setminus \{0\}$ never land in $(-1, 1)$.'
-          - problem: 'The graph of $y = \cos x$ has a maximum at $(0, 1)$. What feature does $y = \sec x$ have there?'
-            answer: "a local minimum at (0, 1)"
-            answer_contract: {kind: label, options: [["a local minimum at (0, 1)"], ["a local maximum at (0, 1)"], [a vertical asymptote], [an x-intercept]]}
-            solution_sketch: 'Where the base graph peaks at $1$, its reciprocal bottoms out at $1$.'
+            answer: 'y <= -1 or y >= 1'
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: 'The values of $\sin x$ lie in $[-1, 1]$ and $\csc x$ is their reciprocal. Reciprocals of numbers with absolute value at most $1$ have absolute value at least $1$, so $y \le -1$ or $y \ge 1$.'
+          - problem: 'The graph of $y = \cos x$ has a maximum at $(0, 1)$. What does the graph of $y = \sec x$ have at $x = 0$: a local maximum, a local minimum, a vertical asymptote or an $x$-intercept?'
+            answer: 'local minimum'
+            answer_contract: {"kind": "label", "options": [["local minimum", "a local minimum", "local min", "minimum", "a minimum"], ["local maximum", "a local maximum", "local max", "maximum", "a maximum"], ["vertical asymptote", "a vertical asymptote", "asymptote", "it is a vertical asymptote"], ["x-intercept", "an x-intercept", "intercept", "it is an x-intercept"]]}
+            solution_sketch: 'At $x = 0$ we have $\cos x = 1$, so $\sec x = \frac{1}{1} = 1$. Near $x = 0$ the cosine is smaller than $1$, so $\sec x$ is larger than $1$ and the point $(0, 1)$ is a local minimum.'
+          - problem: 'At what value of $x$ between $0$ and $\pi$ does the graph of $y = \sec x$ have a vertical asymptote?'
+            answer: 'pi/2'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The secant is $\frac{1}{\cos x}$, so its asymptotes are where $\cos x = 0$. Between $0$ and $\pi$ that is only $x = \frac{\pi}{2}$.'
+          - problem: 'The branch of $y = \csc x$ that opens downward has a highest point. What is the $y$-coordinate of that point?'
+            answer: '-1'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The downward branch lies where $\sin x$ is negative. Its highest point is at the lowest point of the sine graph, where $\sin x = -1$, so $\csc x = \frac{1}{-1} = -1$.'
+          - problem: 'Find the range of $y = 3\csc x$.'
+            answer: 'y <= -3 or y >= 3'
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: 'The values of $\csc x$ satisfy $y \le -1$ or $y \ge 1$. Multiplying by $3$ stretches the graph, so the values satisfy $y \le -3$ or $y \ge 3$.'
+          - problem: 'A ramp must rise $3$ m. When it makes an angle $\theta$ with the ground, its length is $L = 3\csc\theta$ metres. Find the length when $\theta = \frac{\pi}{6}$.'
+            answer: '6'
+            answer_contract: {"kind": "unit", "quantity": "length", "unit": "m", "allow_omitted": true}
+            solution_sketch: 'Substitute $\theta = \frac{\pi}{6}$. Since $\sin\frac{\pi}{6} = \frac{1}{2}$, we get $\csc\frac{\pi}{6} = 2$ and $L = 3 \times 2 = 6$ metres.'
+          - problem: 'A lighthouse stands $20$ m from a straight shore. The beam to a point on the shore at an angle $\theta$ from the perpendicular has length $r = 20\sec\theta$ metres. What is the shortest possible length of the beam?'
+            answer: '20'
+            answer_contract: {"kind": "unit", "quantity": "length", "unit": "m", "allow_omitted": true}
+            solution_sketch: 'For a beam that reaches the shore, $\cos\theta$ lies between $0$ and $1$, so $\sec\theta \ge 1$ and its smallest value is $1$ at $\theta = 0$. So the shortest beam has length $20 \times 1 = 20$ metres.'
       - id: kp3
         name: Cotangent and transformed graphs
         key_prerequisites: [reciprocal-trig-functions, unit-circle-special-angles]
         constraints: "cot as the reflected/shifted tangent shape; transformed arguments limited to 2x and x/2"
+        step_check:
+          step: 'Determine the vertical asymptotes by setting the argument equal to $\pi k$'
+          question: 'Why is the argument $\frac{x}{2}$ set equal to $\pi k$?'
+          options:
+            - 'Cotangent has $\sin$ in its denominator, which is zero at multiples of $\pi$'
+            - 'Cotangent has $\cos$ in its denominator, which is zero at multiples of $\pi$'
+            - 'Cotangent is zero at multiples of $\pi$, so those are its asymptotes'
+          answer: 'Cotangent has $\sin$ in its denominator, which is zero at multiples of $\pi$'
+          why: 'Since $\cot u = \frac{\cos u}{\sin u}$, it is undefined where $\sin u = 0$, which is at $u = \pi k$.'
         exemplars:
-          - problem: "Find the distance between consecutive vertical asymptotes of y = cot(x)."
-            answer: "pi"
+          - problem: 'Find the period of $y = \cot\frac{x}{2}$.'
+            answer: '2*pi'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Full object: y = cot(x). The cotangent has vertical asymptotes where sin(x) = 0, so at x = pi*k for every integer k. Consecutive asymptotes are pi apart. The answer is pi."
-          - problem: "For y = tan(2x), give its period and the x-coordinate of its vertical asymptote in the interval (0, pi/2)."
-            answer: "period = pi/2; asymptote = pi/4"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "period"}, {"contract": {"kind": "exact"}, "name": "asymptote"}]}
-            solution_sketch: "Full object: y = tan(2x). The period rule for tangent gives period pi/|2| = pi/2. Vertical asymptotes satisfy 2x = pi/2 + pi*k, so x = pi/4 + pi*k/2. In (0, pi/2) the asymptote is x = pi/4. The answer is period = pi/2; asymptote = pi/4."
-          - problem: "State the monotonic behavior of y = cot(x) on the interval (0, pi), and give its period."
-            answer: "behavior = decreasing; period = pi"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["decreasing"], ["increasing"]]}, "name": "behavior"}, {"contract": {"kind": "exact"}, "name": "period"}]}
-            solution_sketch: "Full object: y = cot(x) on (0, pi). The cotangent curve falls from positive infinity to negative infinity, so the monotonic behavior is decreasing. Choosing increasing confuses cotangent with tangent on this interval. The period of cotangent is pi. The answer is behavior = decreasing; period = pi."
-          - problem: "Find the multiplier of pi that gives the period of y = cot(x/2)."
-            answer: "2"
+            solution_sketch: 'The period of $\cot x$ is $\pi$. For $\cot\frac{x}{2}$ divide by $B = \frac{1}{2}$, which gives $\frac{\pi}{1/2} = 2\pi$.'
+          - problem: 'Find the first positive vertical asymptote of $y = \cot 2x$.'
+            answer: 'pi/2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Full object: y = cot(x/2). The period rule for cotangent gives pi / (1/2) = 2pi. So the period is 2 times pi, and the multiplier is 2. The answer is 2."
-          - problem: "Find the x-coordinate of the first positive vertical asymptote of y = cot(2x)."
-            answer: "pi/2"
+            solution_sketch: 'The cotangent has asymptotes where its argument is a multiple of $\pi$. Here $2x = \pi$ is the first positive case, so $x = \frac{\pi}{2}$.'
+          - problem: 'Find the period of $y = -3\tan\frac{x}{4} + 1$.'
+            answer: '4*pi'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Full object: y = cot(2x). Cotangent has vertical asymptotes where sin(2x) = 0, so 2x = pi*k and x = pi*k/2. The first positive one uses k = 1, which gives x = pi/2. The answer is pi/2."
-          - problem: "The graph of y = cot(x) is a reflected and shifted copy of the graph of y = tan(x). Find the smallest positive a for which cot(x) = -tan(x - a)."
-            answer: "pi/2"
+            solution_sketch: 'The factor $-3$ reflects and stretches the graph and the $+1$ lifts it, but none of them changes the period. The period is $\frac{\pi}{B}$ with $B = \frac{1}{4}$, which gives $4\pi$.'
+          - problem: 'Find the period of $y = \tan 2x$.'
+            answer: 'pi/2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Full object: cot(x) = -tan(x - a). Cotangent is tangent reflected in the x-axis and shifted horizontally. The identity tan(x - pi/2) = -cot(x) gives -tan(x - pi/2) = cot(x). Thus the smallest positive shift is a = pi/2. The answer is pi/2."
+            solution_sketch: 'The period of $\tan x$ is $\pi$. Dividing by $B = 2$ gives the period $\frac{\pi}{2}$.'
+          - problem: 'Find the vertical asymptote of $y = \tan\frac{x}{3}$ between $0$ and $3\pi$.'
+            answer: '3*pi/2'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The tangent has an asymptote where its argument is $\frac{\pi}{2}$. So $\frac{x}{3} = \frac{\pi}{2}$ gives $x = \frac{3\pi}{2}$, which lies between $0$ and $3\pi$.'
+          - problem: 'Is the graph of $y = \cot x$ increasing or decreasing on the interval $(0, \pi)$?'
+            answer: 'decreasing'
+            answer_contract: {"kind": "label", "options": [["decreasing", "it is decreasing", "decreases", "it decreases", "falling", "goes down", "the graph is decreasing"], ["increasing", "it is increasing", "increases", "it increases", "rising", "goes up", "the graph is increasing"]]}
+            solution_sketch: 'On $(0, \pi)$ the cotangent falls from very large positive values, through $0$ at $x = \frac{\pi}{2}$, to very large negative values. So the graph is decreasing.'
+          - problem: 'Find the smallest positive number $a$ for which $\cot x = -\tan(x - a)$ at every $x$ where both sides are defined.'
+            answer: 'pi/2'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Since $\tan\left(x - \frac{\pi}{2}\right) = -\cot x$, taking $a = \frac{\pi}{2}$ gives $-\tan\left(x - \frac{\pi}{2}\right) = \cot x$. No smaller positive value works.'
+          - problem: 'A beam sweeps along a wall so that its position is $d = 40\tan\left(\frac{\pi t}{6}\right)$ metres at time $t$ seconds. At which time $t$ between $0$ s and $5$ s does the graph of $d$ have a vertical asymptote?'
+            answer: '3'
+            answer_contract: {"kind": "unit", "quantity": "time", "unit": "s", "allow_omitted": true}
+            solution_sketch: 'The tangent has an asymptote where its argument is $\frac{\pi}{2}$. So $\frac{\pi t}{6} = \frac{\pi}{2}$ gives $t = 3$ seconds.'
+          - problem: 'A sensor reading is $r = \cot\left(\frac{\pi t}{4}\right)$ at time $t$ seconds. How many seconds pass between two consecutive times when the reading is undefined?'
+            answer: '4'
+            answer_contract: {"kind": "unit", "quantity": "time", "unit": "s", "allow_omitted": true}
+            solution_sketch: 'The reading is undefined where the argument is a multiple of $\pi$. The argument grows by $\pi$ when $t$ grows by $\frac{\pi}{\pi/4} = 4$ seconds.'
     diagnostic_exemplar:
       problem: 'Find the period of $y = \tan\frac{x}{2}$ and the equation of its vertical asymptote in $(0, 2\pi)$.'
       answer: "period 2π; asymptote x = π"
@@ -635,81 +1142,153 @@ topics:
         name: Solve directly on [0, 2π)
         key_prerequisites: [unit-circle]
         constraints: "unit-circle values only; always ask for all solutions in [0, 2π)"
+        step_check:
+          step: 'Determine the angles in $[0, 2\pi)$ where $\tan x = 1$'
+          question: 'Why does $\tan x = 1$ have a second solution, $\frac{5\pi}{4}$, in $[0, 2\pi)$?'
+          options:
+            - 'Tangent repeats every $\pi$, so $\frac{\pi}{4} + \pi$ also works'
+            - 'Tangent repeats every $2\pi$, so $\frac{\pi}{4} + 2\pi$ is the other'
+            - 'Tangent is positive in Quadrant II, so $\pi - \frac{\pi}{4}$ also works'
+          answer: 'Tangent repeats every $\pi$, so $\frac{\pi}{4} + \pi$ also works'
+          why: 'The tangent has period $\pi$, so the reference angle $\frac{\pi}{4}$ and $\frac{\pi}{4} + \pi = \frac{5\pi}{4}$ both give $\tan x = 1$.'
         exemplars:
           - problem: 'Solve $\sin x = \frac{1}{2}$ on $[0, 2\pi)$.'
-            answer: "x = π/6, 5π/6"
+            answer: 'pi/6, 5*pi/6'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The reference angle with sine $\frac{1}{2}$ is $\frac{\pi}{6}$. Sine is positive in Quadrants I and II, so the solutions are $\frac{\pi}{6}$ and $\pi - \frac{\pi}{6} = \frac{5\pi}{6}$.'
           - problem: 'Solve $\cos x = -\frac{\sqrt{2}}{2}$ on $[0, 2\pi)$.'
-            answer: "x = 3π/4, 5π/4"
-          - problem: "Solve $\\sin x = -\\frac{\\sqrt{3}}{2}$ on $[0, 2\\pi)$, and give all solutions in increasing order as x1 = smaller solution, x2 = larger solution."
-            answer: "x1 = 4pi/3; x2 = 5pi/3"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "x1"}, {"contract": {"kind": "exact"}, "name": "x2"}]}
-            solution_sketch: "The equation $\\sin x = -\\frac{\\sqrt{3}}{2}$ on $[0, 2\\pi)$ is the full object. Sine is negative in the third and fourth quadrants, and the reference angle with sine $\\frac{\\sqrt{3}}{2}$ is $\\frac{\\pi}{3}$ by the unit-circle rule. The two angles are $\\pi + \\frac{\\pi}{3} = \\frac{4\\pi}{3}$ and $2\\pi - \\frac{\\pi}{3} = \\frac{5\\pi}{3}$. The answer is x1 = 4pi/3; x2 = 5pi/3."
-          - problem: "Solve $\\cos x = -\\frac{1}{2}$ on $[0, 2\\pi)$, and give all solutions in increasing order as x1 = smaller solution, x2 = larger solution."
-            answer: "x1 = 2pi/3; x2 = 4pi/3"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "x1"}, {"contract": {"kind": "exact"}, "name": "x2"}]}
-            solution_sketch: "The equation $\\cos x = -\\frac{1}{2}$ on $[0, 2\\pi)$ is the full object. Cosine is negative in the second and third quadrants, and the reference angle with cosine $\\frac{1}{2}$ is $\\frac{\\pi}{3}$ by the unit-circle rule. The two angles are $\\pi - \\frac{\\pi}{3} = \\frac{2\\pi}{3}$ and $\\pi + \\frac{\\pi}{3} = \\frac{4\\pi}{3}$. The answer is x1 = 2pi/3; x2 = 4pi/3."
-          - problem: "Solve $\\tan x = -1$ on $[0, 2\\pi)$, and give all solutions in increasing order as x1 = smaller solution, x2 = larger solution."
-            answer: "x1 = 3pi/4; x2 = 7pi/4"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "x1"}, {"contract": {"kind": "exact"}, "name": "x2"}]}
-            solution_sketch: "The equation $\\tan x = -1$ on $[0, 2\\pi)$ is the full object. Tangent is negative in the second and fourth quadrants, and $\\tan\\frac{\\pi}{4} = 1$ gives the reference angle $\\frac{\\pi}{4}$ by the unit-circle rule. The two angles are $\\pi - \\frac{\\pi}{4} = \\frac{3\\pi}{4}$ and $2\\pi - \\frac{\\pi}{4} = \\frac{7\\pi}{4}$. The answer is x1 = 3pi/4; x2 = 7pi/4."
-          - problem: "Solve $\\cos x = \\frac{\\sqrt{3}}{2}$ on $[0, 2\\pi)$, and give all solutions in increasing order as x1 = smaller solution, x2 = larger solution."
-            answer: "x1 = pi/6; x2 = 11pi/6"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "x1"}, {"contract": {"kind": "exact"}, "name": "x2"}]}
-            solution_sketch: "The equation $\\cos x = \\frac{\\sqrt{3}}{2}$ on $[0, 2\\pi)$ is the full object. Cosine is positive in the first and fourth quadrants, and the reference angle with cosine $\\frac{\\sqrt{3}}{2}$ is $\\frac{\\pi}{6}$ by the unit-circle rule. The two angles are $\\frac{\\pi}{6}$ and $2\\pi - \\frac{\\pi}{6} = \\frac{11\\pi}{6}$. The answer is x1 = pi/6; x2 = 11pi/6."
+            answer: '3*pi/4, 5*pi/4'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The reference angle with cosine $\frac{\sqrt{2}}{2}$ is $\frac{\pi}{4}$. Cosine is negative in Quadrants II and III, so the solutions are $\pi - \frac{\pi}{4} = \frac{3\pi}{4}$ and $\pi + \frac{\pi}{4} = \frac{5\pi}{4}$.'
+          - problem: 'Solve $\sin x = -\frac{\sqrt{3}}{2}$ on $[0, 2\pi)$.'
+            answer: '4*pi/3, 5*pi/3'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The reference angle with sine $\frac{\sqrt{3}}{2}$ is $\frac{\pi}{3}$. Sine is negative in Quadrants III and IV, so the solutions are $\pi + \frac{\pi}{3} = \frac{4\pi}{3}$ and $2\pi - \frac{\pi}{3} = \frac{5\pi}{3}$.'
+          - problem: 'Solve $\tan x = -1$ on $[0, 2\pi)$.'
+            answer: '3*pi/4, 7*pi/4'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The reference angle with tangent $1$ is $\frac{\pi}{4}$. Tangent is negative in Quadrants II and IV, so the solutions are $\pi - \frac{\pi}{4} = \frac{3\pi}{4}$ and $2\pi - \frac{\pi}{4} = \frac{7\pi}{4}$.'
+          - problem: 'Solve $\cos x = \frac{\sqrt{3}}{2}$ on $[0, 2\pi)$.'
+            answer: 'pi/6, 11*pi/6'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The reference angle with cosine $\frac{\sqrt{3}}{2}$ is $\frac{\pi}{6}$. Cosine is positive in Quadrants I and IV, so the solutions are $\frac{\pi}{6}$ and $2\pi - \frac{\pi}{6} = \frac{11\pi}{6}$.'
+          - problem: 'Solve $\sin x = 1$ on $[0, 2\pi)$.'
+            answer: 'pi/2'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Sine equals $1$ at the top of the unit circle only. So the only solution in $[0, 2\pi)$ is $\frac{\pi}{2}$.'
+          - problem: 'A point on the unit circle lies at an angle $\theta$ with $0 \le \theta < 2\pi$, and its $y$-coordinate is $-\frac{1}{2}$. Find every possible value of $\theta$.'
+            answer: '7*pi/6, 11*pi/6'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The $y$-coordinate of the point is $\sin\theta$, so $\sin\theta = -\frac{1}{2}$. The reference angle is $\frac{\pi}{6}$, and sine is negative in Quadrants III and IV, giving $\frac{7\pi}{6}$ and $\frac{11\pi}{6}$.'
+          - problem: 'A point on the unit circle lies in the upper half-plane at an angle $\theta$ with $0 \le \theta < 2\pi$, and its $x$-coordinate is $\frac{1}{2}$. Find $\theta$.'
+            answer: 'pi/3'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The $x$-coordinate of the point is $\cos\theta$, so $\cos\theta = \frac{1}{2}$ and the reference angle is $\frac{\pi}{3}$. The solutions are $\frac{\pi}{3}$ and $\frac{5\pi}{3}$, and only $\frac{\pi}{3}$ lies in the upper half-plane.'
+          - problem: 'Sam solves $\cos x = -\frac{1}{2}$ on $[0, 2\pi)$ and finds only $x = \frac{2\pi}{3}$. Find all solutions.'
+            answer: '2*pi/3, 4*pi/3'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Sam found the Quadrant II angle but not the one in Quadrant III. Cosine is negative in both quadrants, so the solutions are $\frac{2\pi}{3}$ and $\pi + \frac{\pi}{3} = \frac{4\pi}{3}$.'
       - id: kp2
         name: Isolate the trig function first
         key_prerequisites: [two-step-equations, unit-circle]
         constraints: "one or two algebraic steps (add/divide) isolating sin, cos, or tan to a unit-circle value; solutions on [0, 2π)"
+        step_check:
+          step: 'Divide both sides by 3'
+          question: 'Why are both sides divided by $3$ before the angles are found?'
+          options:
+            - 'Dividing by $3$ also divides the angle, so the solutions become smaller'
+            - 'The number $3$ must be removed so that the equation has only one solution'
+            - 'The unit circle gives angles for a value of $\sin x$, not of $3\sin x$'
+          answer: 'The unit circle gives angles for a value of $\sin x$, not of $3\sin x$'
+          why: 'Reference angles come from a value of $\sin x$ itself, so the factor $3$ has to be divided out first.'
         exemplars:
           - problem: 'Solve $2\cos x - 1 = 0$ on $[0, 2\pi)$.'
-            answer: "x = π/3, 5π/3"
-            solution_sketch: '$\cos x = \frac{1}{2}$.'
+            answer: 'pi/3, 5*pi/3'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Add $1$ and divide by $2$ to get $\cos x = \frac{1}{2}$. The reference angle is $\frac{\pi}{3}$, and cosine is positive in Quadrants I and IV, so $x = \frac{\pi}{3}$ or $x = \frac{5\pi}{3}$.'
           - problem: 'Solve $\sqrt{3}\tan x = 1$ on $[0, 2\pi)$.'
-            answer: "x = π/6, 7π/6"
-            solution_sketch: '$\tan x = \frac{\sqrt{3}}{3}$; tangent is positive in Quadrants I and III.'
-          - problem: "Solve 2 sin x + 1 = 0 on [0, 2pi). Give the solutions in increasing order."
-            answer: "7pi/6, 11pi/6"
-            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
-            solution_sketch: "Step 1 (two-step equations): subtract 1 and divide by 2, giving sin x = -1/2. Step 2 (unit circle): sine equals -1/2 at 7pi/6 and 11pi/6 in [0, 2pi). The solutions in increasing order are 7pi/6, 11pi/6."
-          - problem: "Solve 2 cos x + sqrt(2) = 0 on [0, 2pi). Give the solutions in increasing order."
-            answer: "3pi/4, 5pi/4"
-            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
-            solution_sketch: "Step 1 (two-step equations): subtract sqrt(2) and divide by 2, giving cos x = -sqrt(2)/2. Step 2 (unit circle): cosine equals -sqrt(2)/2 at 3pi/4 and 5pi/4. The solutions in increasing order are 3pi/4, 5pi/4."
-          - problem: "Solve tan x + 1 = 0 on [0, 2pi). Give the solutions in increasing order."
-            answer: "3pi/4, 7pi/4"
-            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
-            solution_sketch: "Step 1 (two-step equations): subtract 1, giving tan x = -1. Step 2 (unit circle): tangent equals -1 at 3pi/4 and 7pi/4 in [0, 2pi). The solutions in increasing order are 3pi/4, 7pi/4."
-          - problem: "Solve sqrt(2) sin x - 1 = 0 on [0, 2pi). Give the solutions in increasing order."
-            answer: "pi/4, 3pi/4"
-            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
-            solution_sketch: "Step 1 (two-step equations): add 1 and divide by sqrt(2), giving sin x = sqrt(2)/2. Step 2 (unit circle): sine equals sqrt(2)/2 at pi/4 and 3pi/4. The solutions in increasing order are pi/4, 3pi/4."
+            answer: 'pi/6, 7*pi/6'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Divide by $\sqrt{3}$ to get $\tan x = \frac{1}{\sqrt{3}}$. The reference angle is $\frac{\pi}{6}$, and tangent repeats every $\pi$, so $x = \frac{\pi}{6}$ or $x = \frac{7\pi}{6}$.'
+          - problem: 'Solve $2\sin x + 1 = 0$ on $[0, 2\pi)$.'
+            answer: '7*pi/6, 11*pi/6'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Subtract $1$ and divide by $2$ to get $\sin x = -\frac{1}{2}$. Sine is negative in Quadrants III and IV, so $x = \frac{7\pi}{6}$ or $x = \frac{11\pi}{6}$.'
+          - problem: 'Solve $2\cos x + \sqrt{2} = 0$ on $[0, 2\pi)$.'
+            answer: '3*pi/4, 5*pi/4'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Isolate the cosine: $\cos x = -\frac{\sqrt{2}}{2}$. Cosine is negative in Quadrants II and III with reference angle $\frac{\pi}{4}$, so $x = \frac{3\pi}{4}$ or $x = \frac{5\pi}{4}$.'
+          - problem: 'Solve $\tan x + 1 = 0$ on $[0, 2\pi)$.'
+            answer: '3*pi/4, 7*pi/4'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Subtract $1$ to get $\tan x = -1$. Tangent is negative in Quadrants II and IV with reference angle $\frac{\pi}{4}$, so $x = \frac{3\pi}{4}$ or $x = \frac{7\pi}{4}$.'
+          - problem: 'Solve $\sqrt{2}\sin x - 1 = 0$ on $[0, 2\pi)$.'
+            answer: 'pi/4, 3*pi/4'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Add $1$ and divide by $\sqrt{2}$ to get $\sin x = \frac{\sqrt{2}}{2}$. Sine is positive in Quadrants I and II with reference angle $\frac{\pi}{4}$, so $x = \frac{\pi}{4}$ or $x = \frac{3\pi}{4}$.'
+          - problem: 'The height of a cabin on a Ferris wheel is $h = 10 - 8\cos\theta$ metres, where $\theta$ is the angle turned and $0 \le \theta < 2\pi$. At which angles $\theta$ is the cabin $14$ m above the ground?'
+            answer: '2*pi/3, 4*pi/3'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Set $10 - 8\cos\theta = 14$, so $-8\cos\theta = 4$ and $\cos\theta = -\frac{1}{2}$. Cosine is negative in Quadrants II and III with reference angle $\frac{\pi}{3}$, so $\theta = \frac{2\pi}{3}$ or $\theta = \frac{4\pi}{3}$.'
+          - problem: 'A pendulum bob is $d = 8\sin\theta$ centimetres from the centre line at phase $\theta$, where $0 \le \theta < 2\pi$. At which phases is $d = -4\sqrt{3}$ centimetres?'
+            answer: '4*pi/3, 5*pi/3'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Set $8\sin\theta = -4\sqrt{3}$ and divide by $8$ to get $\sin\theta = -\frac{\sqrt{3}}{2}$. Sine is negative in Quadrants III and IV with reference angle $\frac{\pi}{3}$, so $\theta = \frac{4\pi}{3}$ or $\theta = \frac{5\pi}{3}$.'
       - id: kp3
         name: Multiple-angle equations
         key_prerequisites: [unit-circle, radians-degrees]
         constraints: "arguments 2x or x/2; expand the solution window before dividing"
+        step_check:
+          step: 'Since the argument is $2x$, the range becomes $[0, 4\pi)$'
+          question: 'Why does the range become $[0, 4\pi)$ for the angle $2x$?'
+          options:
+            - 'The period of $\sin 2x$ is $4\pi$, so the range is made one period long'
+            - 'As $x$ runs from $0$ to $2\pi$, the angle $2x$ runs from $0$ to $4\pi$'
+            - 'Doubling the argument doubles the number of solutions, so the range doubles'
+          answer: 'As $x$ runs from $0$ to $2\pi$, the angle $2x$ runs from $0$ to $4\pi$'
+          why: 'Every value of $2x$ that comes from some $x$ in $[0, 2\pi)$ lies in $[0, 4\pi)$, so all of those angles must be searched.'
+        try_first:
+          problem: 'How many solutions does $\cos 2x = -\frac{1}{2}$ have in $[0, 2\pi)$?'
+          answer_contract: {"kind": "exact"}
+          answer: '4'
+          reveal: 'The angle $2x$ runs through $[0, 4\pi)$, which is two full turns. Each turn gives two angles with cosine $-\frac{1}{2}$, so there are $4$ solutions for $2x$ and so $4$ for $x$.'
         exemplars:
+          - problem: 'Solve $\sin 2x = \frac{\sqrt{3}}{2}$ on $[0, 2\pi)$.'
+            answer: 'pi/6, pi/3, 7*pi/6, 4*pi/3'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The angle $2x$ lies in $[0, 4\pi)$. Sine is $\frac{\sqrt{3}}{2}$ at $\frac{\pi}{3}, \frac{2\pi}{3}, \frac{7\pi}{3}, \frac{8\pi}{3}$, and dividing by $2$ gives $\frac{\pi}{6}, \frac{\pi}{3}, \frac{7\pi}{6}, \frac{4\pi}{3}$.'
           - problem: 'Solve $\sin 2x = 1$ on $[0, 2\pi)$.'
-            answer: "x = π/4, 5π/4"
-            solution_sketch: '$2x = \frac{\pi}{2} + 2\pi k$ with $2x \in [0, 4\pi)$: $2x = \frac{\pi}{2}, \frac{5\pi}{2}$.'
+            answer: 'pi/4, 5*pi/4'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The angle $2x$ lies in $[0, 4\pi)$, and sine is $1$ at $\frac{\pi}{2}$ and $\frac{5\pi}{2}$. Dividing by $2$ gives $x = \frac{\pi}{4}$ and $x = \frac{5\pi}{4}$.'
           - problem: 'Solve $\cos\frac{x}{2} = \frac{\sqrt{3}}{2}$ on $[0, 2\pi)$.'
-            answer: "x = π/3"
-            solution_sketch: '$\frac{x}{2} \in [0, \pi)$, so only $\frac{x}{2} = \frac{\pi}{6}$ lands in range.'
-          - problem: "Solve cos(2x) = 0 on [0, 2pi). Give the solutions in increasing order."
-            answer: "pi/4, 3pi/4, 5pi/4, 7pi/4"
-            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
-            solution_sketch: "The equation is cos(2x) = 0 on [0, 2pi). Step 1: set theta = 2x, so theta lies in [0, 4pi) because the window expands before dividing. Step 2: by the unit circle, cos(theta) = 0 at theta = pi/2, 3pi/2, 5pi/2, 7pi/2. Step 3: divide each by 2 to undo the substitution: x = pi/4, 3pi/4, 5pi/4, 7pi/4. The solutions are pi/4, 3pi/4, 5pi/4, 7pi/4."
-          - problem: "Solve sin(x/2) = -1/2 for x in [0, 4pi). Give the solutions in increasing order."
-            answer: "7pi/3, 11pi/3"
-            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
-            solution_sketch: "The equation is sin(x/2) = -1/2 for x in [0, 4pi). Step 1: set theta = x/2, so theta lies in [0, 2pi). Step 2: by the unit circle, sin(theta) = -1/2 at theta = 7pi/6 and theta = 11pi/6. Step 3: multiply each by 2 to undo the substitution: x = 7pi/3 and x = 11pi/3. The solutions are 7pi/3, 11pi/3."
-          - problem: "Solve tan(2x) = 1 for x in [0, pi). Give the solutions in increasing order."
-            answer: "pi/8, 5pi/8"
-            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
-            solution_sketch: "The equation is tan(2x) = 1 for x in [0, pi). Step 1: set theta = 2x, so theta lies in [0, 2pi). Step 2: by the unit circle, tan(theta) = 1 at theta = pi/4 and theta = 5pi/4. Step 3: divide each by 2: x = pi/8 and x = 5pi/8. The solutions are pi/8, 5pi/8."
-          - problem: "Solve sin(2x) = sqrt(3)/2 on [0, 2pi). Give the solutions in increasing order."
-            answer: "pi/6, pi/3, 7pi/6, 4pi/3"
-            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
-            solution_sketch: "The equation is sin(2x) = sqrt(3)/2 on [0, 2pi). Step 1: set theta = 2x, so theta lies in [0, 4pi) because the window expands before dividing. Step 2: by the unit circle, sin(theta) = sqrt(3)/2 at theta = pi/3, 2pi/3, 7pi/3, 8pi/3. Step 3: divide each by 2: x = pi/6, pi/3, 7pi/6, 4pi/3. The solutions are pi/6, pi/3, 7pi/6, 4pi/3."
+            answer: 'pi/3'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The angle $\frac{x}{2}$ lies in $[0, \pi)$. Cosine is $\frac{\sqrt{3}}{2}$ there only at $\frac{\pi}{6}$, so $x = 2 \cdot \frac{\pi}{6} = \frac{\pi}{3}$.'
+          - problem: 'Solve $\cos 2x = 0$ on $[0, 2\pi)$.'
+            answer: 'pi/4, 3*pi/4, 5*pi/4, 7*pi/4'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The angle $2x$ lies in $[0, 4\pi)$, and cosine is $0$ at $\frac{\pi}{2}, \frac{3\pi}{2}, \frac{5\pi}{2}, \frac{7\pi}{2}$. Dividing by $2$ gives $\frac{\pi}{4}, \frac{3\pi}{4}, \frac{5\pi}{4}, \frac{7\pi}{4}$.'
+          - problem: 'Solve $\sin\frac{x}{2} = -\frac{1}{2}$ for $x$ in $[0, 4\pi)$.'
+            answer: '7*pi/3, 11*pi/3'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The angle $\frac{x}{2}$ lies in $[0, 2\pi)$. Sine is $-\frac{1}{2}$ at $\frac{7\pi}{6}$ and $\frac{11\pi}{6}$, so $x = \frac{7\pi}{3}$ and $x = \frac{11\pi}{3}$.'
+          - problem: 'Solve $\tan 2x = 1$ for $x$ in $[0, \pi)$.'
+            answer: 'pi/8, 5*pi/8'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The angle $2x$ lies in $[0, 2\pi)$, and tangent is $1$ at $\frac{\pi}{4}$ and $\frac{5\pi}{4}$. Dividing by $2$ gives $x = \frac{\pi}{8}$ and $x = \frac{5\pi}{8}$.'
+          - problem: 'The voltage in a circuit is $V = 10\sin 2t$ volts at time $t$, where $0 \le t < 2\pi$. At which times is the voltage $5$ volts?'
+            answer: 'pi/12, 5*pi/12, 13*pi/12, 17*pi/12'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Set $10\sin 2t = 5$, so $\sin 2t = \frac{1}{2}$ with $2t$ in $[0, 4\pi)$. Then $2t = \frac{\pi}{6}, \frac{5\pi}{6}, \frac{13\pi}{6}, \frac{17\pi}{6}$, and dividing by $2$ gives the four times.'
+          - problem: 'The height of a buoy is $h = 3\cos\frac{t}{2}$ metres at time $t$, where $0 \le t < 4\pi$. At which times is the buoy $\frac{3\sqrt{3}}{2}$ m above its rest level?'
+            answer: 'pi/3, 11*pi/3'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Set $3\cos\frac{t}{2} = \frac{3\sqrt{3}}{2}$, so $\cos\frac{t}{2} = \frac{\sqrt{3}}{2}$ with $\frac{t}{2}$ in $[0, 2\pi)$. Then $\frac{t}{2} = \frac{\pi}{6}$ or $\frac{11\pi}{6}$, so $t = \frac{\pi}{3}$ or $\frac{11\pi}{3}$.'
+          - problem: 'Mia solves $\sin 2x = \frac{1}{2}$ on $[0, 2\pi)$. She finds $x = \frac{\pi}{12}$ and $x = \frac{5\pi}{12}$ and stops. Find all solutions.'
+            answer: 'pi/12, 5*pi/12, 13*pi/12, 17*pi/12'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Mia searched only $2x$ in $[0, 2\pi)$, but $2x$ runs through $[0, 4\pi)$. The second turn adds $2x = \frac{13\pi}{6}$ and $\frac{17\pi}{6}$, so $x = \frac{13\pi}{12}$ and $\frac{17\pi}{12}$ complete the list.'
     diagnostic_exemplar:
       problem: 'Solve $\cos 2x = \frac{1}{2}$ on $[0, 2\pi)$.'
       answer: "x = π/6, 5π/6, 7π/6, 11π/6"
@@ -742,83 +1321,145 @@ topics:
         name: Quadratic in one trig function
         key_prerequisites: [quadratic-equations-factoring, basic-trig-equations]
         constraints: "factorable quadratics in sin x or cos x whose roots are unit-circle values; solutions on [0, 2π)"
+        step_check:
+          step: 'Factor the quadratic: $2\sin^2 x + \sin x - 1 = (2\sin x - 1)(\sin x + 1)$'
+          question: 'Why can $2\sin^2 x + \sin x - 1$ be factored in the same way as $2u^2 + u - 1$?'
+          options:
+            - 'Squaring changes $\sin x$ into $\cos x$, so the usual rules apply'
+            - 'It is a quadratic in the one quantity $\sin x$, which plays the role of $u$'
+            - 'Every trig equation of degree two splits into one factor for sine and one for cosine'
+          answer: 'It is a quadratic in the one quantity $\sin x$, which plays the role of $u$'
+          why: 'The equation uses $\sin x$ and $\sin^2 x$ only, so with $u = \sin x$ it is the quadratic $2u^2 + u - 1 = 0$.'
         exemplars:
+          - problem: 'Solve $2\sin^2 x + \sin x - 1 = 0$ on $[0, 2\pi)$.'
+            answer: 'pi/6, 5*pi/6, 3*pi/2'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Factor: $(2\sin x - 1)(\sin x + 1) = 0$. Then $\sin x = \frac{1}{2}$ gives $\frac{\pi}{6}$ and $\frac{5\pi}{6}$, and $\sin x = -1$ gives $\frac{3\pi}{2}$.'
+          - problem: 'Solve $2\cos^2 x + \cos x - 1 = 0$ on $[0, 2\pi)$.'
+            answer: 'pi/3, pi, 5*pi/3'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Factor: $(2\cos x - 1)(\cos x + 1) = 0$. Then $\cos x = \frac{1}{2}$ gives $\frac{\pi}{3}$ and $\frac{5\pi}{3}$, and $\cos x = -1$ gives $\pi$.'
           - problem: 'Solve $2\sin^2 x - \sin x - 1 = 0$ on $[0, 2\pi)$.'
-            answer: "x = π/2, 7π/6, 11π/6"
-            solution_sketch: '$(2\sin x + 1)(\sin x - 1) = 0$: $\sin x = 1$ or $\sin x = -\frac{1}{2}$.'
+            answer: 'pi/2, 7*pi/6, 11*pi/6'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Factor: $(2\sin x + 1)(\sin x - 1) = 0$. Then $\sin x = -\frac{1}{2}$ gives $\frac{7\pi}{6}$ and $\frac{11\pi}{6}$, and $\sin x = 1$ gives $\frac{\pi}{2}$.'
           - problem: 'Solve $2\cos^2 x - \cos x = 0$ on $[0, 2\pi)$.'
-            answer: "x = π/2, 3π/2, π/3, 5π/3"
-            solution_sketch: '$\cos x (2\cos x - 1) = 0$.'
-          - problem: "Solve the equation 2 sin^2 x + sin x - 1 = 0 for x on [0, 2pi). Give the solutions as a list in increasing order."
-            answer: "pi/6, 5pi/6, 3pi/2"
-            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
-            solution_sketch: "Start with 2 sin^2 x + sin x - 1 = 0. Factor the quadratic in sin x: (2 sin x - 1)(sin x + 1) = 0. By the zero-product rule, sin x = 1/2 or sin x = -1. On [0, 2pi), sin x = 1/2 gives x = pi/6 and x = 5pi/6, and sin x = -1 gives x = 3pi/2. The solutions in increasing order are pi/6, 5pi/6, 3pi/2."
-          - problem: "Solve 2 cos^2 x + cos x - 1 = 0 on [0, 2pi). Give the solutions as a list in increasing order."
-            answer: "pi/3, pi, 5pi/3"
-            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
-            solution_sketch: "Start with 2 cos^2 x + cos x - 1 = 0. Factor: (2 cos x - 1)(cos x + 1) = 0. The zero-product rule gives cos x = 1/2 or cos x = -1. On [0, 2pi), cos x = 1/2 gives x = pi/3 and x = 5pi/3, while cos x = -1 gives x = pi. The solutions in increasing order are pi/3, pi, 5pi/3."
-          - problem: "Solve 2 sin^2 x - 3 sin x + 1 = 0 on [0, 2pi). Give the solutions as a list in increasing order."
-            answer: "pi/6, pi/2, 5pi/6"
-            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
-            solution_sketch: "Start with 2 sin^2 x - 3 sin x + 1 = 0. Factor: (2 sin x - 1)(sin x - 1) = 0. By the zero-product rule, sin x = 1/2 or sin x = 1. On [0, 2pi), sin x = 1/2 gives x = pi/6 and x = 5pi/6, and sin x = 1 gives x = pi/2. The solutions in increasing order are pi/6, pi/2, 5pi/6."
-          - problem: "Solve 2 cos^2 x + 3 cos x + 1 = 0 on [0, 2pi). Give the solutions as a list in increasing order."
-            answer: "2pi/3, pi, 4pi/3"
-            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
-            solution_sketch: "Start with 2 cos^2 x + 3 cos x + 1 = 0. Factor: (2 cos x + 1)(cos x + 1) = 0. The zero-product rule gives cos x = -1/2 or cos x = -1. On [0, 2pi), cos x = -1/2 gives x = 2pi/3 and x = 4pi/3, and cos x = -1 gives x = pi. The solutions in increasing order are 2pi/3, pi, 4pi/3."
+            answer: 'pi/3, pi/2, 3*pi/2, 5*pi/3'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Factor out the cosine: $\cos x\,(2\cos x - 1) = 0$. Then $\cos x = 0$ gives $\frac{\pi}{2}$ and $\frac{3\pi}{2}$, and $\cos x = \frac{1}{2}$ gives $\frac{\pi}{3}$ and $\frac{5\pi}{3}$.'
+          - problem: 'Solve $2\sin^2 x - 3\sin x + 1 = 0$ on $[0, 2\pi)$.'
+            answer: 'pi/6, pi/2, 5*pi/6'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Factor: $(2\sin x - 1)(\sin x - 1) = 0$. Then $\sin x = \frac{1}{2}$ gives $\frac{\pi}{6}$ and $\frac{5\pi}{6}$, and $\sin x = 1$ gives $\frac{\pi}{2}$.'
+          - problem: 'Solve $2\cos^2 x + 3\cos x + 1 = 0$ on $[0, 2\pi)$.'
+            answer: '2*pi/3, pi, 4*pi/3'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Factor: $(2\cos x + 1)(\cos x + 1) = 0$. Then $\cos x = -\frac{1}{2}$ gives $\frac{2\pi}{3}$ and $\frac{4\pi}{3}$, and $\cos x = -1$ gives $\pi$.'
+          - problem: 'Solve $\tan^2 x - 3 = 0$ on $[0, 2\pi)$.'
+            answer: 'pi/3, 2*pi/3, 4*pi/3, 5*pi/3'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Add $3$ to both sides to get $\tan^2 x = 3$, so $\tan x = \sqrt{3}$ or $\tan x = -\sqrt{3}$. The first gives $\frac{\pi}{3}$ and $\frac{4\pi}{3}$, and the second gives $\frac{2\pi}{3}$ and $\frac{5\pi}{3}$.'
+          - problem: 'A vibrating plate is $d = 2\sin^2\theta - \sin\theta$ millimetres from its rest position at phase $\theta$, where $0 \le \theta < 2\pi$. At which phases is the plate at its rest position, $d = 0$?'
+            answer: '0, pi/6, 5*pi/6, pi'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Factor: $\sin\theta\,(2\sin\theta - 1) = 0$. Then $\sin\theta = 0$ gives $0$ and $\pi$, and $\sin\theta = \frac{1}{2}$ gives $\frac{\pi}{6}$ and $\frac{5\pi}{6}$.'
+          - problem: 'The signal in a circuit is $s = 2\cos^2\theta - 3\cos\theta + 1$ volts at phase $\theta$, where $0 \le \theta < 2\pi$. At which phases is the signal zero?'
+            answer: '0, pi/3, 5*pi/3'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Factor: $(2\cos\theta - 1)(\cos\theta - 1) = 0$. Then $\cos\theta = \frac{1}{2}$ gives $\frac{\pi}{3}$ and $\frac{5\pi}{3}$, and $\cos\theta = 1$ gives $0$.'
       - id: kp2
         name: Convert with the Pythagorean identity
         key_prerequisites: [trig-identities-basic, quadratic-equations-factoring]
         constraints: "substitute sin² = 1 - cos² (or vice versa) to reach one function"
+        step_check:
+          step: 'Replace $\cos^2 x$ by $1 - \sin^2 x$ so that only $\sin x$ remains'
+          question: 'Why is $\cos^2 x$ replaced by $1 - \sin^2 x$ before solving?'
+          options:
+            - 'The identity $\sin^2 x + \cos^2 x = 1$ gives an equation in one function'
+            - 'Replacing $\cos^2 x$ removes the solutions that would lie outside $[0, 2\pi)$'
+            - 'A square of cosine cannot be factored, but a square of sine can'
+          answer: 'The identity $\sin^2 x + \cos^2 x = 1$ gives an equation in one function'
+          why: 'With a single trig function the equation becomes an ordinary quadratic, which can be factored; two different functions cannot be handled together.'
         exemplars:
-          - problem: 'Solve $2\sin^2 x = 2 + \cos x$ on $[0, 2\pi)$.'
-            answer: "x = π/2, 3π/2, 2π/3, 4π/3"
-            solution_sketch: '$2(1 - \cos^2 x) = 2 + \cos x$ gives $\cos x(2\cos x + 1) = 0$.'
-          - problem: 'Solve $\sin^2 x - \cos^2 x = 0$ on $[0, \pi)$.'
-            answer: "x = π/4, 3π/4"
-            solution_sketch: '$\cos 2x = 0$, so $2x = \frac{\pi}{2}, \frac{3\pi}{2}$.'
-          - problem: "Solve 2cos^2 x + sin x = 1 on [0, 2pi). Give the answer as a set of exact values."
-            answer: "{pi/2, 7pi/6, 11pi/6}"
-            answer_contract: {"kind": "set"}
-            solution_sketch: "Use the Pythagorean identity cos^2 x = 1 - sin^2 x to write 2(1 - sin^2 x) + sin x = 1. Simplify to 2 sin^2 x - sin x - 1 = 0 and factor as (2 sin x + 1)(sin x - 1) = 0. Then sin x = -1/2 gives x = 7pi/6 and 11pi/6, and sin x = 1 gives x = pi/2. The solution set is {pi/2, 7pi/6, 11pi/6}."
-          - problem: "Solve 2sin^2 x + 3cos x - 3 = 0 on [0, 2pi). Give the answer as a set of exact values."
-            answer: "{0, pi/3, 5pi/3}"
-            answer_contract: {"kind": "set"}
-            solution_sketch: "Use the Pythagorean identity sin^2 x = 1 - cos^2 x to write 2(1 - cos^2 x) + 3 cos x - 3 = 0. Simplify to 2 cos^2 x - 3 cos x + 1 = 0 and factor as (2 cos x - 1)(cos x - 1) = 0. Then cos x = 1/2 gives x = pi/3 and 5pi/3, and cos x = 1 gives x = 0. The solution set is {0, pi/3, 5pi/3}."
-          - problem: "Solve 2cos^2 x - sin x - 2 = 0 on [0, 2pi). Give the answer as a set of exact values."
-            answer: "{0, pi, 7pi/6, 11pi/6}"
-            answer_contract: {"kind": "set"}
-            solution_sketch: "Use the Pythagorean identity cos^2 x = 1 - sin^2 x to write 2(1 - sin^2 x) - sin x - 2 = 0. Simplify to 2 sin^2 x + sin x = 0 and factor as sin x (2 sin x + 1) = 0. Then sin x = 0 gives x = 0 and pi; sin x = -1/2 gives x = 7pi/6 and 11pi/6. The solution set is {0, pi, 7pi/6, 11pi/6}."
-          - problem: "Solve 3sin^2 x - 2cos x - 3 = 0 on [0, 2pi). How many solutions does the equation have?"
-            answer: "4"
+          - problem: 'Solve $2\cos^2 x + \sin x = 1$ on $[0, 2\pi)$.'
+            answer: 'pi/2, 7*pi/6, 11*pi/6'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Substitute sin^2 x = 1 - cos^2 x into 3sin^2 x - 2cos x - 3 = 0 to get 3(1 - cos^2 x) - 2cos x - 3 = 0. Simplify to 3cos^2 x + 2cos x = 0 and factor as cos x (3cos x + 2) = 0. Then cos x = 0 gives x = pi/2 and 3pi/2, and cos x = -2/3 gives one solution in quadrant II and one in quadrant III. Counting all four values on [0, 2pi), the equation has 4 solutions."
+            solution_sketch: 'Replace $\cos^2 x$ by $1 - \sin^2 x$ to get $2\sin^2 x - \sin x - 1 = 0$, which factors as $(2\sin x + 1)(\sin x - 1) = 0$. Then $\sin x = -\frac{1}{2}$ or $\sin x = 1$ gives $\frac{7\pi}{6}$, $\frac{11\pi}{6}$ and $\frac{\pi}{2}$.'
+          - problem: 'Solve $2\sin^2 x = 2 + \cos x$ on $[0, 2\pi)$.'
+            answer: 'pi/2, 2*pi/3, 4*pi/3, 3*pi/2'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Replace $\sin^2 x$ by $1 - \cos^2 x$ to get $2\cos^2 x + \cos x = 0$, which factors as $\cos x\,(2\cos x + 1) = 0$. Then $\cos x = 0$ gives $\frac{\pi}{2}$ and $\frac{3\pi}{2}$, and $\cos x = -\frac{1}{2}$ gives $\frac{2\pi}{3}$ and $\frac{4\pi}{3}$.'
+          - problem: 'Solve $\sin^2 x - \cos^2 x = 0$ on $[0, \pi)$.'
+            answer: 'pi/4, 3*pi/4'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Replace $\cos^2 x$ by $1 - \sin^2 x$ to get $2\sin^2 x - 1 = 0$, so $\sin x = \pm\frac{\sqrt{2}}{2}$. On $[0, \pi)$ the sine is positive, so $x = \frac{\pi}{4}$ or $x = \frac{3\pi}{4}$.'
+          - problem: 'Solve $2\sin^2 x + 3\cos x - 3 = 0$ on $[0, 2\pi)$.'
+            answer: '0, pi/3, 5*pi/3'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Replace $\sin^2 x$ by $1 - \cos^2 x$ to get $2\cos^2 x - 3\cos x + 1 = 0$, which factors as $(2\cos x - 1)(\cos x - 1) = 0$. Then $\cos x = \frac{1}{2}$ gives $\frac{\pi}{3}$ and $\frac{5\pi}{3}$, and $\cos x = 1$ gives $0$.'
+          - problem: 'Solve $2\cos^2 x - \sin x - 2 = 0$ on $[0, 2\pi)$.'
+            answer: '0, pi, 7*pi/6, 11*pi/6'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Replace $\cos^2 x$ by $1 - \sin^2 x$ to get $-2\sin^2 x - \sin x = 0$, which factors as $\sin x\,(2\sin x + 1) = 0$. Then $\sin x = 0$ gives $0$ and $\pi$, and $\sin x = -\frac{1}{2}$ gives $\frac{7\pi}{6}$ and $\frac{11\pi}{6}$.'
+          - problem: 'Solve $2\sin^2 x + \cos x - 1 = 0$ on $[0, 2\pi)$.'
+            answer: '0, 2*pi/3, 4*pi/3'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Replace $\sin^2 x$ by $1 - \cos^2 x$ to get $2\cos^2 x - \cos x - 1 = 0$, which factors as $(2\cos x + 1)(\cos x - 1) = 0$. Then $\cos x = -\frac{1}{2}$ gives $\frac{2\pi}{3}$ and $\frac{4\pi}{3}$, and $\cos x = 1$ gives $0$.'
+          - problem: 'A point $P = (\cos\theta, \sin\theta)$ moves around the unit circle. At which angles $\theta$ in $[0, 2\pi)$ is the $y$-coordinate of $P$ equal to twice the square of its $x$-coordinate, minus $1$?'
+            answer: 'pi/6, 5*pi/6, 3*pi/2'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The condition is $\sin\theta = 2\cos^2\theta - 1$. Replace $\cos^2\theta$ by $1 - \sin^2\theta$ to get $2\sin^2\theta + \sin\theta - 1 = 0$, so $\sin\theta = \frac{1}{2}$ or $\sin\theta = -1$, giving $\frac{\pi}{6}$, $\frac{5\pi}{6}$ and $\frac{3\pi}{2}$.'
+          - problem: 'The voltage of a signal is $V = \sin^2\theta - \cos\theta$ volts at phase $\theta$, where $0 \le \theta < 2\pi$. At which phases is the voltage $1$ volt?'
+            answer: 'pi/2, pi, 3*pi/2'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Set $\sin^2\theta - \cos\theta = 1$ and replace $\sin^2\theta$ by $1 - \cos^2\theta$ to get $\cos^2\theta + \cos\theta = 0$. Then $\cos\theta = 0$ gives $\frac{\pi}{2}$ and $\frac{3\pi}{2}$, and $\cos\theta = -1$ gives $\pi$.'
       - id: kp3
         name: Use a double-angle identity
         key_prerequisites: [double-half-angle-identities, basic-trig-equations]
         constraints: "never divide by a trig factor — factor it out instead"
+        step_check:
+          step: 'Rearrange the equation to set it to zero'
+          question: 'Why is the equation rearranged to equal zero before factoring?'
+          options:
+            - 'Only an equation equal to zero can use a double-angle identity'
+            - 'Setting the right side to zero keeps the solutions inside $[0, 2\pi)$'
+            - 'A product is zero only when a factor is, so each factor is solved'
+          answer: 'A product is zero only when a factor is, so each factor is solved'
+          why: 'Only the zero product property lets us solve each factor separately, so the right side must be zero.'
+        try_first:
+          problem: 'Is $x = 0$ a solution of $\sin x\cos x = \sin x$?'
+          answer_contract: {"kind": "label", "options": [["yes", "it is a solution", "yes it is", "yes, it is"], ["no", "it is not a solution", "no it is not", "no, it is not"]]}
+          answer: 'yes'
+          reveal: 'Both sides are $0$ when $x = 0$, so it is a solution. Dividing both sides by $\sin x$ would lose it, which is why we factor $\sin x$ out instead.'
         exemplars:
           - problem: 'Solve $\sin 2x = \sin x$ on $[0, 2\pi)$.'
-            answer: "x = 0, π, π/3, 5π/3"
-            solution_sketch: '$2\sin x\cos x - \sin x = \sin x(2\cos x - 1) = 0$.'
+            answer: '0, pi/3, pi, 5*pi/3'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Use $\sin 2x = 2\sin x\cos x$ and factor: $\sin x\,(2\cos x - 1) = 0$. Then $\sin x = 0$ gives $0$ and $\pi$, and $\cos x = \frac{1}{2}$ gives $\frac{\pi}{3}$ and $\frac{5\pi}{3}$.'
           - problem: 'Solve $\cos 2x + \sin x = 0$ on $[0, 2\pi)$.'
-            answer: "x = π/2, 7π/6, 11π/6"
-            solution_sketch: '$1 - 2\sin^2 x + \sin x = 0$, i.e. $2\sin^2 x - \sin x - 1 = 0$; factor as $(2\sin x + 1)(\sin x - 1) = 0$.'
-          - problem: "Solve sin(2x) = cos(x) on the interval [0, 2pi). How many solutions does the equation have?"
-            answer: "4"
+            answer: 'pi/2, 7*pi/6, 11*pi/6'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1, double-angle identity: replace sin(2x) by 2 sin(x) cos(x), so the equation reads 2 sin(x) cos(x) = cos(x). Step 2, factoring: move every term to one side and factor out cos(x), giving cos(x)(2 sin(x) - 1) = 0; never divide by cos(x), since that would drop the cos(x) = 0 solutions. Step 3, basic equations: cos(x) = 0 gives x = pi/2 and 3pi/2, and sin(x) = 1/2 gives x = pi/6 and 5pi/6. Counting them, the equation has 4 solutions on [0, 2pi)."
-          - problem: "Solve sin(2x) = -cos(x) on the interval [0, 2pi). State the smallest solution."
-            answer: "pi/2"
+            solution_sketch: 'Use $\cos 2x = 1 - 2\sin^2 x$ to get $2\sin^2 x - \sin x - 1 = 0$, which factors as $(2\sin x + 1)(\sin x - 1) = 0$. Then $\sin x = -\frac{1}{2}$ gives $\frac{7\pi}{6}$ and $\frac{11\pi}{6}$, and $\sin x = 1$ gives $\frac{\pi}{2}$.'
+          - problem: 'Two signals have values $\sin 2t$ and $\cos t$ at time $t$, where $0 \le t < 2\pi$. At which times are the two values equal?'
+            answer: 'pi/6, pi/2, 5*pi/6, 3*pi/2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1, double-angle identity: write sin(2x) = 2 sin(x) cos(x) and move all terms left, so 2 sin(x) cos(x) + cos(x) = 0. Step 2, factoring: factor out cos(x) to get cos(x)(2 sin(x) + 1) = 0, keeping both factors instead of dividing by cos(x). Step 3, basic equations: cos(x) = 0 gives x = pi/2 and 3pi/2, and sin(x) = -1/2 gives x = 7pi/6 and 11pi/6. In increasing order the solutions are pi/2, 7pi/6, 3pi/2, 11pi/6, so the smallest solution is pi/2."
-          - problem: "Solve cos(2x) = sin(x) + 1 on the interval [0, 2pi). State the largest solution."
-            answer: "11pi/6"
+            solution_sketch: 'Use $\sin 2t = 2\sin t\cos t$ and factor: $\cos t\,(2\sin t - 1) = 0$. Then $\cos t = 0$ gives $\frac{\pi}{2}$ and $\frac{3\pi}{2}$, and $\sin t = \frac{1}{2}$ gives $\frac{\pi}{6}$ and $\frac{5\pi}{6}$.'
+          - problem: 'Solve $\cos 2x + \cos x = 0$ on $[0, 2\pi)$.'
+            answer: 'pi/3, pi, 5*pi/3'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1, double-angle identity: use cos(2x) = 1 - 2 sin^2 x, so 1 - 2 sin^2 x = sin(x) + 1. Step 2, simplify and factor: this gives -2 sin^2 x - sin(x) = 0, that is, -sin(x)(2 sin(x) + 1) = 0; factor out sin(x) rather than dividing by it, since dividing would lose the sin(x) = 0 solutions. Step 3, basic equations: sin(x) = 0 gives x = 0 and pi, and sin(x) = -1/2 gives x = 7pi/6 and 11pi/6. The largest solution on [0, 2pi) is 11pi/6."
-          - problem: "Solve cos(2x) + cos(x) = 0 on the interval [0, 2pi). How many solutions are there?"
-            answer: "3"
+            solution_sketch: 'Use $\cos 2x = 2\cos^2 x - 1$ to get $2\cos^2 x + \cos x - 1 = 0$, which factors as $(2\cos x - 1)(\cos x + 1) = 0$. Then $\cos x = \frac{1}{2}$ gives $\frac{\pi}{3}$ and $\frac{5\pi}{3}$, and $\cos x = -1$ gives $\pi$.'
+          - problem: 'The heights of two buoys at time $t$ are $y_1 = \cos 2t$ and $y_2 = \sin t + 1$ metres, where $0 \le t < 2\pi$. At which times are the buoys at the same height?'
+            answer: '0, pi, 7*pi/6, 11*pi/6'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1, double-angle identity: write cos(2x) = 2 cos^2 x - 1, so the equation becomes 2 cos^2 x - 1 + cos(x) = 0. Step 2, quadratic factoring: factor the quadratic in cos(x) as (2 cos(x) - 1)(cos(x) + 1) = 0, never dividing by a trig factor. Step 3, basic equations: cos(x) = 1/2 gives x = pi/3 and 5pi/3, and cos(x) = -1 gives x = pi. Listing them, the solutions are pi/3, pi, and 5pi/3, so there are 3 solutions."
+            solution_sketch: 'Use $\cos 2t = 1 - 2\sin^2 t$ to get $-2\sin^2 t = \sin t$, so $\sin t\,(2\sin t + 1) = 0$. Then $\sin t = 0$ gives $0$ and $\pi$, and $\sin t = -\frac{1}{2}$ gives $\frac{7\pi}{6}$ and $\frac{11\pi}{6}$.'
+          - problem: 'Solve $\sin 2x + \sin x = 0$ on $[0, 2\pi)$.'
+            answer: '0, 2*pi/3, pi, 4*pi/3'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Use $\sin 2x = 2\sin x\cos x$ and factor: $\sin x\,(2\cos x + 1) = 0$. Then $\sin x = 0$ gives $0$ and $\pi$, and $\cos x = -\frac{1}{2}$ gives $\frac{2\pi}{3}$ and $\frac{4\pi}{3}$.'
+          - problem: 'Sam divides both sides of $\sin 2x = -\cos x$ by $\cos x$, gets $2\sin x = -1$ and finds two solutions in $[0, 2\pi)$. Solve the equation completely.'
+            answer: 'pi/2, 7*pi/6, 3*pi/2, 11*pi/6'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Dividing by $\cos x$ lost the solutions where $\cos x = 0$. Instead write $2\sin x\cos x + \cos x = \cos x\,(2\sin x + 1) = 0$, so $\cos x = 0$ gives $\frac{\pi}{2}$ and $\frac{3\pi}{2}$, and $\sin x = -\frac{1}{2}$ gives $\frac{7\pi}{6}$ and $\frac{11\pi}{6}$.'
     diagnostic_exemplar:
       problem: 'Solve $\cos 2x = \cos x$ on $[0, 2\pi)$.'
       answer: "x = 0, 2π/3, 4π/3"

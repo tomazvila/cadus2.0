@@ -21,68 +21,105 @@ topics:
         key: true
     knowledge_points:
       - id: kp1
-        name: "Quotient and remainder, including negative dividends"
+        name: 'Quotient and remainder, including negative dividends'
         key_prerequisites: [long-division]
+        step_check:
+          step: 'Find the largest multiple of $8$ that is less than or equal to $-19$'
+          question: 'Why do we use $-24$, the largest multiple of $8$ that is at most $-19$, and not $-16$?'
+          options:
+            - 'The remainder must be larger than $8$, and $-24$ gives the larger one'
+            - 'With $-16$ the remainder would be $-3$, which is not allowed'
+            - 'The quotient $-19/8$ is rounded toward zero, which gives $-24$'
+            - 'The sign is dropped first, then $19$ is divided and the sign is put back'
+          answer: 'With $-16$ the remainder would be $-3$, which is not allowed'
+          why: 'The remainder $r = -19 - 8q$ must lie from $0$ to $7$. With $q = -2$ it is $-3$, which is too small, and with $q = -3$ it is $5$.'
         exemplars:
           - problem: 'Find the quotient $q$ and remainder $r$ with $0 \le r < 13$ when $100$ is divided by $13$.'
             answer: '7 R9'
-            answer_contract: {kind: quotient_remainder, divisor: 13}
-            solution_sketch: '$13 \cdot 7 = 91 \le 100 < 104 = 13 \cdot 8$, so $q = 7$ and $r = 100 - 91 = 9$.'
-          - problem: 'Find $q$ and $r$ with $0 \le r < 6$ so that $-27 = 6q + r$.'
+            answer_contract: {"kind":"quotient_remainder","divisor":13}
+            solution_sketch: '$13 \cdot 7 = 91 \le 100 < 104 = 13 \cdot 8$, so the quotient is $7$. The remainder is $100 - 91 = 9$, and $0 \le 9 < 13$.'
+          - problem: 'Find $q$ and $r$ with $-27 = 6q + r$ and $0 \le r < 6$.'
             answer: '-5 R3'
-            answer_contract: {kind: quotient_remainder, divisor: 6}
-            solution_sketch: 'The remainder must be nonnegative: $6 \cdot (-5) = -30 \le -27$, so $r = -27 - (-30) = 3$. Note $q = -4$ would give $r = -3 < 0$, which is not allowed.'
-          - problem: "Find the quotient $q$ and remainder $r$ with $0 \\le r < 5$ when $84$ is divided by $5$. Give the answer as (q, r)."
-            answer: "(16, 4)"
-            answer_contract: {"arity": 2, "kind": "coordinates"}
-            solution_sketch: "Step 1: By the division algorithm, write $84 = 5q + r$ with $0 \\le r < 5$. Step 2: By testing multiples, $5 \\cdot 16 = 80$, so $q = 16$ and $r = 84 - 80 = 4$. The quotient and remainder are (16, 4)."
-          - problem: "Find the quotient $q$ and remainder $r$ with $0 \\le r < 7$ so that $-100 = 7q + r$. Give the answer as (q, r)."
-            answer: "(-15, 5)"
-            answer_contract: {"arity": 2, "kind": "coordinates"}
-            solution_sketch: "Step 1: By the division algorithm for a negative dividend, $q = floor(-100/7) = -15$. Step 2: By the remainder formula, $r = -100 - 7(-15) = 5$, and $0 \\le 5 < 7$. The quotient and remainder are (-15, 5)."
-          - problem: "Use the division algorithm to divide $250$ by $14$. Give the quotient $q$ and remainder $r$ as (q, r), with $0 \\le r < 14$."
-            answer: "(17, 12)"
-            answer_contract: {"arity": 2, "kind": "coordinates"}
-            solution_sketch: "Step 1: By the division algorithm, locate the largest multiple of $14$ not exceeding $250$. Step 2: Since $14 \\cdot 17 = 238$ and $14 \\cdot 18 = 252$, $q = 17$ and $r = 250 - 238 = 12$. The quotient and remainder are (17, 12)."
-          - problem: "Find $q$ and $r$ with $0 \\le r < 9$ so that $-47 = 9q + r$. Give the answer as (q, r)."
-            answer: "(-6, 7)"
-            answer_contract: {"arity": 2, "kind": "coordinates"}
-            solution_sketch: "Step 1: By the division algorithm for a negative dividend, $q = floor(-47/9) = -6$. Step 2: By the remainder formula, $r = -47 - 9(-6) = 7$, and $0 \\le 7 < 9$. The quotient and remainder are (-6, 7)."
-        constraints: "divisors 2-15; include at least one negative dividend; remainder must satisfy 0 <= r < d"
+            answer_contract: {"kind":"quotient_remainder","divisor":6}
+            solution_sketch: 'The remainder must not be negative, so take the largest multiple of $6$ that is at most $-27$. That multiple is $6 \cdot (-5) = -30$, so $q = -5$ and $r = -27 - (-30) = 3$. The choice $q = -4$ would give $r = -3$, which is not allowed.'
+          - problem: 'A bakery packs $250$ rolls into boxes of $14$. How many full boxes does it fill, and how many rolls are left over?'
+            answer: '17 R12'
+            answer_contract: {"kind":"quotient_remainder","divisor":14}
+            solution_sketch: 'The number of full boxes is the quotient of $250$ by $14$. Since $14 \cdot 17 = 238 \le 250 < 252 = 14 \cdot 18$, there are $17$ full boxes. The rolls left over number $250 - 238 = 12$.'
+          - problem: 'A baker fills $17$ boxes with $14$ rolls each and has $12$ rolls left over. How many rolls did the baker have to start with?'
+            answer: '250'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The full boxes hold $17 \cdot 14 = 238$ rolls. Adding the $12$ rolls left over gives $238 + 12 = 250$ rolls.'
+          - problem: 'A flight lasts $475$ minutes. How many whole hours is that, and how many minutes remain?'
+            answer: '7 R55'
+            answer_contract: {"kind":"quotient_remainder","divisor":60}
+            solution_sketch: 'An hour has $60$ minutes, so divide $475$ by $60$. Since $60 \cdot 7 = 420 \le 475 < 480 = 60 \cdot 8$, the flight lasts $7$ whole hours. The minutes that remain number $475 - 420 = 55$.'
+          - problem: 'Divide $-47$ by $9$: find $q$ and $r$ with $-47 = 9q + r$, where $0 \le r < 9$.'
+            answer: '-6 R7'
+            answer_contract: {"kind":"quotient_remainder","divisor":9}
+            solution_sketch: 'The quotient is $\lfloor -47/9 \rfloor = -6$ because $9 \cdot (-6) = -54 \le -47 < -45 = 9 \cdot (-5)$. The remainder is $r = -47 - (-54) = 7$, and $0 \le 7 < 9$.'
+          - problem: 'Sam divides $-100$ by $7$ and writes $-100 = 7 \cdot (-14) + (-2)$. A remainder cannot be negative. What are the correct quotient and remainder, with $0 \le r < 7$?'
+            answer: '-15 R5'
+            answer_contract: {"kind":"quotient_remainder","divisor":7}
+            solution_sketch: 'The remainder must satisfy $0 \le r < 7$, so move down one more multiple of $7$. Then $7 \cdot (-15) = -105 \le -100$, so $q = -15$ and $r = -100 + 105 = 5$.'
+          - problem: 'When an integer $n$ is divided by $7$, the quotient is $15$ and the remainder is $5$. What is $n$?'
+            answer: '110'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'By the division algorithm $n = 7 \cdot 15 + 5$. So $n = 105 + 5 = 110$.'
+        constraints: 'divisors 2-60; include negative dividends and contexts that need division and multiplication; remainder must satisfy 0 <= r < d'
       - id: kp2
-        name: "Residue classes as a case tool"
+        name: 'Residue classes as a case tool'
         key_prerequisites: [divisibility-parity-proofs]
+        step_check:
+          step: 'Consider the possible forms of an integer modulo $8$'
+          question: 'Why does it suffice to test only the eight forms $8k, 8k+1, \dots, 8k+7$?'
+          options:
+            - 'Squares come in groups of eight, so eight cases cover all the squares'
+            - 'Only integers smaller than $8$ matter, since larger ones just repeat them'
+            - 'The square of an integer is at most eight times larger than the integer'
+            - 'Each integer leaves a remainder from $0$ to $7$, so it fits one form'
+          answer: 'Each integer leaves a remainder from $0$ to $7$, so it fits one form'
+          why: 'Each integer is $8k + r$ with $0 \le r \le 7$ by the division algorithm, so these eight forms cover every integer.'
+        try_first:
+          problem: 'Can the square of a whole number leave remainder $2$ when divided by $6$?'
+          answer_contract: {"kind":"label","options":[["yes","it can","it is possible","possible","yes, it can"],["no","it cannot","never","it is not possible","not possible","impossible","no, it cannot"]]}
+          answer: 'no'
+          reveal: 'No: a whole number leaves one of the remainders $0$ to $5$ on division by $6$, and the squares of these residues leave $0, 1, 4, 3, 4, 1$. Sorting integers into residue classes turns infinitely many cases into six.'
         exemplars:
-          - problem: 'Every integer has the form $3k$, $3k+1$, or $3k+2$. Which of these forms can a perfect square take? Equivalently: what are the possible remainders of $n^2$ on division by $3$?'
-            answer: '{0, 1}'
-            answer_contract: {kind: set}
-            solution_sketch: '$(3k)^2 = 3(3k^2)$ leaves $0$; $(3k+1)^2 = 3(3k^2+2k)+1$ leaves $1$; $(3k+2)^2 = 3(3k^2+4k+1)+1$ leaves $1$.'
-          - problem: 'What are the possible remainders of a perfect square on division by $4$?'
-            answer: '{0, 1}'
-            answer_contract: {kind: set}
-            solution_sketch: 'A perfect square is never $2$ or $3$ mod $4$. Even squares $(2k)^2 = 4k^2$ leave $0$; odd squares $(2k+1)^2 = 4(k^2+k)+1$ leave $1$.'
-          - problem: "Use the residue classes modulo 8. Find all possible remainders of n^3 on division by 8."
-            answer: "{0, 1, 3, 5, 7}"
-            answer_contract: {"kind": "set"}
-            solution_sketch: "The full residue class list modulo 8 is 0,1,2,3,4,5,6,7. Residue-class step: test each class. Substitution step: cubing gives 0,1,8,27,64,125,216,343. Reduction step: these are 0,1,0,3,0,5,0,7 modulo 8. Collect step: the distinct remainders are 0,1,3,5,7, so the answer is {0, 1, 3, 5, 7}."
-          - problem: "Use the residue classes modulo 4. Find all possible remainders of n^3 on division by 4."
-            answer: "{0, 1, 3}"
-            answer_contract: {"kind": "set"}
-            solution_sketch: "The full residue class list modulo 4 is 0,1,2,3. Residue-class step: test each class. Substitution step: cubing gives 0,1,8,27. Reduction step: these are 0,1,0,3 modulo 4. Collect step: the distinct remainders are 0,1,3, so the answer is {0, 1, 3}."
-          - problem: "Use the residue classes modulo 8. Find all possible remainders of n(n+1) on division by 8."
-            answer: "{0, 2, 4, 6}"
-            answer_contract: {"kind": "set"}
-            solution_sketch: "The full residue class list modulo 8 is 0,1,2,3,4,5,6,7. Residue-class step: test each class. Substitution step: n(n+1) gives 0,2,6,12,20,30,42,56. Reduction step: these are 0,2,6,4,4,6,2,0 modulo 8. Collect step: the distinct remainders are 0,2,4,6, so the answer is {0, 2, 4, 6}."
-          - problem: "Use the residue classes modulo 8. Find all possible remainders of n^2 + n + 1 on division by 8."
-            answer: "{1, 3, 5, 7}"
-            answer_contract: {"kind": "set"}
-            solution_sketch: "The full residue class list modulo 8 is 0,1,2,3,4,5,6,7. Residue-class step: test each class. Substitution step: n^2+n+1 gives 1,3,7,13,21,31,43,57. Reduction step: these are 1,3,7,5,5,7,3,1 modulo 8. Collect step: the distinct remainders are 1,3,5,7, so the answer is {1, 3, 5, 7}."
-        constraints: "moduli 3, 4, or 8; verify claims by checking each residue class"
+          - problem: 'What are the possible remainders when the square of an integer is divided by $3$?'
+            answer: '0, 1'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Every integer has the form $3k$, $3k+1$ or $3k+2$. The squares are $9k^2 = 3(3k^2)$, then $9k^2 + 6k + 1 = 3(3k^2 + 2k) + 1$, then $9k^2 + 12k + 4 = 3(3k^2 + 4k + 1) + 1$. These leave remainders $0$, $1$ and $1$, so only $0$ and $1$ occur.'
+          - problem: 'What are the possible remainders when the cube of an integer is divided by $8$?'
+            answer: '0, 1, 3, 5, 7'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'An integer leaves one of the remainders $0, 1, \dots, 7$ on division by $8$, and its cube leaves the same remainder as the cube of that residue. The cubes $0, 1, 8, 27, 64, 125, 216, 343$ leave $0, 1, 0, 3, 0, 5, 0, 7$ on division by $8$. The distinct remainders are $0, 1, 3, 5, 7$.'
+          - problem: 'Ravi arranges $n^2$ marbles, where $n$ is a whole number, into bags of $5$. What are the possible numbers of marbles left over?'
+            answer: '0, 1, 4'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The number left over is the remainder of $n^2$ on division by $5$. The residues $n = 0, 1, 2, 3, 4$ give $n^2 = 0, 1, 4, 9, 16$, which leave $0, 1, 4, 4, 1$. So the possible numbers left over are $0$, $1$ and $4$.'
+          - problem: 'What are the possible remainders when $n(n+1)$ is divided by $8$, for an integer $n$?'
+            answer: '0, 2, 4, 6'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The remainder depends only on $n$ modulo $8$. For $n = 0, 1, \dots, 7$ the product $n(n+1)$ is $0, 2, 6, 12, 20, 30, 42, 56$, which leaves $0, 2, 6, 4, 4, 6, 2, 0$ on division by $8$. The distinct remainders are $0, 2, 4, 6$.'
+          - problem: 'Can the square of an integer leave remainder $3$ when divided by $4$?'
+            answer: 'no'
+            answer_contract: {"kind":"label","options":[["yes","it can","it is possible","possible","yes, it can"],["no","it cannot","never","it is not possible","not possible","impossible","no, it cannot"]]}
+            solution_sketch: 'An even integer $2k$ has square $4k^2$, which leaves remainder zero. An odd integer $2k+1$ has square $4(k^2 + k) + 1$, which leaves remainder one. So the remainder never equals three, and the answer is no.'
+          - problem: 'What are the possible remainders when $n^2 + n + 1$ is divided by $8$, for an integer $n$?'
+            answer: '1, 3, 5, 7'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The remainder depends only on $n$ modulo $8$. For $n = 0, 1, \dots, 7$ the value $n^2 + n + 1$ is $1, 3, 7, 13, 21, 31, 43, 57$, which leaves $1, 3, 7, 5, 5, 7, 3, 1$ on division by $8$. The distinct remainders are $1, 3, 5, 7$.'
+          - problem: 'A square floor has $n$ tiles along each side, so it has $n^2$ tiles in all. The tiles are packed in crates of $4$. What are the possible numbers of tiles left over after all full crates are packed?'
+            answer: '0, 1'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The number left over is the remainder of $n^2$ on division by $4$. An even $n = 2k$ gives $4k^2$, which leaves $0$. An odd $n = 2k+1$ gives $4(k^2 + k) + 1$, which leaves $1$.'
+        constraints: 'moduli 3, 4, 5 or 8; answers are remainder sets as a comma list or a yes/no verdict; verify by checking each residue class'
     diagnostic_exemplar:
-      problem: 'Using the residue classes mod $8$, find all possible remainders of a perfect square on division by $8$.'
-      answer: '{0, 1, 4}'
-      answer_contract: {kind: set}
-      solution_sketch: 'Check $r = 0, \dots, 7$: $r^2 \bmod 8$ gives $0, 1, 4, 1, 0, 1, 4, 1$.'
+      problem: 'What are the possible remainders of a perfect square on division by $8$?'
+      answer: '0, 1, 4'
+      answer_contract: {"kind":"exact"}
+      solution_sketch: 'Check $r = 0, \dots, 7$: $r^2 \bmod 8$ gives $0, 1, 4, 1, 0, 1, 4, 1$. So the possible remainders are $0$, $1$ and $4$.'
     anki_seeds:
       - front: "Division algorithm: for integers $a$ and $d > 0$ there exist unique $q, r$ with..."
         back: '$a = dq + r$ and $0 \le r < d$.'
@@ -107,93 +144,147 @@ topics:
         key: true
     knowledge_points:
       - id: kp1
-        name: "Computing gcd by repeated division"
+        name: 'Computing gcd by repeated division'
         key_prerequisites: [division-algorithm, gcf-lcm]
+        step_check:
+          step: 'Replace 840 with 450 and 450 with 390'
+          question: 'Why may we continue with the pair $450$ and $390$ instead of $840$ and $450$?'
+          options:
+            - 'The smaller pair is easier, and the gcd of a smaller pair is always smaller'
+            - 'The remainder $390$ is the gcd, and $450$ is only a check of it'
+            - 'The pair $450, 390$ has the same common divisors as the pair $840, 450$'
+            - 'Replacing the pair halves both numbers, which halves the gcd as well'
+          answer: 'The pair $450, 390$ has the same common divisors as the pair $840, 450$'
+          why: 'A number that divides $840$ and $450$ also divides $390 = 840 - 450$, and a divisor of $450$ and $390$ divides $840$, so the gcd is unchanged.'
         exemplars:
-          - problem: 'Use the Euclidean algorithm to compute $\gcd(252, 198)$.'
-            answer: "18"
-            solution_sketch: '$252 = 1 \cdot 198 + 54$; $198 = 3 \cdot 54 + 36$; $54 = 1 \cdot 36 + 18$; $36 = 2 \cdot 18 + 0$. Last nonzero remainder: $18$.'
-          - problem: 'Use the Euclidean algorithm to compute $\gcd(1071, 462)$.'
-            answer: "21"
-            solution_sketch: '$1071 = 2 \cdot 462 + 147$; $462 = 3 \cdot 147 + 21$; $147 = 7 \cdot 21 + 0$.'
-          - problem: "Find the greatest common divisor of 418 and 253 by repeated division."
-            answer: "11"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Find the greatest common divisor of 418 and 253 by repeated division. The Euclidean algorithm uses the division algorithm to replace the gcd of a and b by the gcd of b and a mod b. Compute 418 = 1*253 + 165, so gcd(418, 253) = gcd(253, 165). Next 253 = 1*165 + 88, so gcd(253, 165) = gcd(165, 88). Next 165 = 1*88 + 77, so gcd(165, 88) = gcd(88, 77). Next 88 = 1*77 + 11, so gcd(88, 77) = gcd(77, 11). Finally 77 = 7*11 + 0, so the last nonzero remainder is 11. The greatest common divisor is 11."
-          - problem: "A florist has a 1274 cm ribbon and an 858 cm ribbon. She cuts both ribbons into pieces of one equal whole length, with no ribbon left over, choosing the greatest such length. Find that length in cm."
-            answer: "26"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The greatest piece length is the gcd of 1274 and 858. The Euclidean algorithm uses the division algorithm to replace the gcd of a and b by the gcd of b and a mod b. Compute 1274 = 1*858 + 416, so gcd(1274, 858) = gcd(858, 416). Next 858 = 2*416 + 26, so gcd(858, 416) = gcd(416, 26). Finally 416 = 16*26 + 0, so the last nonzero remainder is 26. The piece length is 26."
-          - problem: "A rectangular floor measures 840 cm by 468 cm. It is tiled exactly by square tiles of the largest possible side length. Find that side length in cm."
-            answer: "12"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The largest square tile side is the gcd of 840 and 468. Use the Euclidean algorithm with the division algorithm at each step. Compute 840 = 1*468 + 372, so gcd(840, 468) = gcd(468, 372). Next 468 = 1*372 + 96, so gcd(468, 372) = gcd(372, 96). Next 372 = 3*96 + 84, so gcd(372, 96) = gcd(96, 84). Next 96 = 1*84 + 12, so gcd(96, 84) = gcd(84, 12). Finally 84 = 7*12 + 0, so the last nonzero remainder is 12. The side length is 12."
-          - problem: "A teacher has 561 markers and 323 crayons. She packs them all into identical kits, each kit holding the same number of markers and the same number of crayons as every other kit. Find the greatest number of kits she can make."
-            answer: "17"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The greatest number of kits is the gcd of 561 and 323. The Euclidean algorithm uses the division algorithm to replace the gcd of a and b by the gcd of b and a mod b. Compute 561 = 1*323 + 238, so gcd(561, 323) = gcd(323, 238). Next 323 = 1*238 + 85, so gcd(323, 238) = gcd(238, 85). Next 238 = 2*85 + 68, so gcd(238, 85) = gcd(85, 68). Next 85 = 1*68 + 17, so gcd(85, 68) = gcd(68, 17). Finally 68 = 4*17 + 0, so the last nonzero remainder is 17. The greatest number of kits is 17."
-        constraints: "operands 40-2000 requiring 3-5 division steps; answers > 1 preferred"
+          - problem: 'Use the Euclidean algorithm to find $\gcd(252, 198)$.'
+            answer: '18'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: '$252 = 1 \cdot 198 + 54$, $198 = 3 \cdot 54 + 36$, $54 = 1 \cdot 36 + 18$, $36 = 2 \cdot 18 + 0$. The last nonzero remainder is $18$, so the gcd is $18$.'
+          - problem: 'Use the Euclidean algorithm to find $\gcd(1071, 462)$.'
+            answer: '21'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: '$1071 = 2 \cdot 462 + 147$, $462 = 3 \cdot 147 + 21$, $147 = 7 \cdot 21 + 0$. The last nonzero remainder is $21$, so the gcd is $21$.'
+          - problem: 'A florist has a $1274$ cm ribbon and an $858$ cm ribbon. She cuts both into pieces of one equal length, with no ribbon left over. What is the greatest possible length of a piece?'
+            answer: '26'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"cm","allow_omitted":true}
+            solution_sketch: 'The piece length must divide both $1274$ and $858$, so the greatest length is $\gcd(1274, 858)$. $1274 = 1 \cdot 858 + 416$, $858 = 2 \cdot 416 + 26$, $416 = 16 \cdot 26 + 0$. The last nonzero remainder is $26$, so the greatest piece length is $26$ cm.'
+          - problem: 'A rectangular floor measures $840$ cm by $468$ cm. It is covered exactly by square tiles, with no tile cut. What is the largest possible side length of a tile?'
+            answer: '12'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"cm","allow_omitted":true}
+            solution_sketch: 'The side length must divide both $840$ and $468$, so the largest side is $\gcd(840, 468)$. $840 = 1 \cdot 468 + 372$, $468 = 1 \cdot 372 + 96$, $372 = 3 \cdot 96 + 84$, $96 = 1 \cdot 84 + 12$, $84 = 7 \cdot 12 + 0$. The last nonzero remainder is $12$, so the side length is $12$ cm.'
+          - problem: 'A rectangular floor measures $840$ cm by $468$ cm. It is covered exactly by the largest possible square tiles. How many tiles are needed?'
+            answer: '2730'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The largest square tile has side $\gcd(840, 468) = 12$ cm. The floor holds $840 / 12 = 70$ tiles along one side and $468 / 12 = 39$ along the other. So $70 \cdot 39 = 2730$ tiles are needed.'
+          - problem: 'A teacher has $561$ markers and $323$ crayons. She packs identical kits, each with the same number of markers and the same number of crayons, and uses every item. What is the greatest number of kits she can make?'
+            answer: '17'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The number of kits must divide both $561$ and $323$, so the greatest number is $\gcd(561, 323)$. $561 = 1 \cdot 323 + 238$, $323 = 1 \cdot 238 + 85$, $238 = 2 \cdot 85 + 68$, $85 = 1 \cdot 68 + 17$, $68 = 4 \cdot 17 + 0$. The last nonzero remainder is $17$, so she can make $17$ kits.'
+          - problem: 'Find the greatest common divisor of $418$ and $253$.'
+            answer: '11'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: '$418 = 1 \cdot 253 + 165$, $253 = 1 \cdot 165 + 88$, $165 = 1 \cdot 88 + 77$, $88 = 1 \cdot 77 + 11$, $77 = 7 \cdot 11 + 0$. The last nonzero remainder is $11$, so the gcd is $11$.'
+          - problem: 'A caterer has $360$ sandwiches and $480$ cookies. They are shared equally onto the greatest possible number of identical platters, using every item. How many cookies are on each platter?'
+            answer: '4'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The number of platters is $\gcd(360, 480) = 120$, because $480 = 1 \cdot 360 + 120$ and $360 = 3 \cdot 120 + 0$. Each platter holds $480 / 120 = 4$ cookies.'
+        constraints: 'operands 40-2000 requiring 3-5 division steps; answers > 1 preferred; include sharing and tiling contexts'
       - id: kp2
-        name: "gcd-lcm relationship"
+        name: 'gcd-lcm relationship'
         key_prerequisites: [gcf-lcm]
+        step_check:
+          step: 'Divide the product by the GCD'
+          question: 'Why do we divide the product $120 \cdot 90$ by the gcd $30$?'
+          options:
+            - 'The product has every factor of the gcd twice, so one copy is removed'
+            - 'The gcd is the smallest multiple, so dividing by it gives a smaller multiple'
+            - 'Dividing by the gcd turns the product into the sum of the two numbers'
+            - 'The product is too large to be a multiple of either number'
+          answer: 'The product has every factor of the gcd twice, so one copy is removed'
+          why: 'The product $ab$ counts the shared factors twice, once from each number, and dividing by the gcd removes one copy, leaving the lcm.'
         exemplars:
-          - problem: 'Given $\gcd(252, 198) = 18$, compute $\mathrm{lcm}(252, 198)$.'
-            answer: "2772"
-            solution_sketch: '$\mathrm{lcm}(a,b) = ab/\gcd(a,b) = 252 \cdot 198 / 18 = 252 \cdot 11 = 2772$.'
-          - problem: 'Two positive integers have product $864$ and gcd $6$. What is their lcm?'
-            answer: "144"
-            solution_sketch: '$\mathrm{lcm} = 864 / 6 = 144$.'
-          - problem: "Two positive integers are 48 and 180. Using the identity $\\gcd(a,b) \\cdot \\mathrm{lcm}(a,b) = ab$, compute $\\mathrm{lcm}(48, 180)$."
-            answer: "720"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1, Euclidean algorithm: 180 = 3*48 + 36, 48 = 1*36 + 12, 36 = 3*12 + 0, so gcd(48, 180) = 12. Step 2, product identity: gcd(48, 180) * lcm(48, 180) = 48 * 180 = 8640. Step 3, division: lcm = 8640 / 12 = 720. The lcm of 48 and 180 is 720."
-          - problem: "Let $g = \\gcd(72, 120)$ and $l = \\mathrm{lcm}(72, 120)$. Compute both values, using the identity $g \\cdot l = 72 \\cdot 120$. Give the answer as g = value; l = value."
-            answer: "g = 24; l = 360"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "g"}, {"contract": {"kind": "exact"}, "name": "l"}]}
-            solution_sketch: "Step 1, Euclidean algorithm: 120 = 1*72 + 48, 72 = 1*48 + 24, 48 = 2*24 + 0, so g = gcd(72, 120) = 24. Step 2, product identity: g * l = 72 * 120 = 8640. Step 3, division: l = 8640 / 24 = 360. The results are g = 24; l = 360."
-          - problem: "One bell rings every 85 seconds and another rings every 119 seconds, and both just rang at the same moment. Using the identity $\\gcd(a,b) \\cdot \\mathrm{lcm}(a,b) = ab$, determine after how many seconds the two bells will next ring at the same time."
-            answer: "595"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1, simultaneous ring: the first time that is a multiple of both 85 and 119 is lcm(85, 119). Step 2, Euclidean algorithm: 119 = 1*85 + 34, 85 = 2*34 + 17, 34 = 2*17 + 0, so gcd(85, 119) = 17. Step 3, product identity: lcm = 85 * 119 / 17 = 10115 / 17 = 595. The bells next ring together after 595 seconds."
-          - problem: "A student claims that $\\mathrm{lcm}(34, 48) = 1632$. Compute $\\gcd(34, 48)$ with the Euclidean algorithm, then use the identity $\\gcd(a,b) \\cdot \\mathrm{lcm}(a,b) = 34 \\cdot 48$ to check the claim. Give the verdict and the lcm in the form verdict = word; lcm = number."
-            answer: "verdict = incorrect; lcm = 816"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["correct"], ["incorrect"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "lcm"}]}
-            solution_sketch: "Step 1, Euclidean algorithm: 48 = 1*34 + 14, 34 = 2*14 + 6, 14 = 2*6 + 2, 6 = 3*2 + 0, so gcd(34, 48) = 2. Step 2, product identity: lcm(34, 48) = 34 * 48 / 2 = 1632 / 2 = 816. The wrong option correct comes from multiplying 34 by 48 and forgetting to divide by the gcd 2. Thus verdict = incorrect; lcm = 816."
-        constraints: "use gcd(a,b) * lcm(a,b) = ab; numbers chosen so the division is exact"
+          - problem: 'The greatest common divisor of $252$ and $198$ is $18$. What is their least common multiple?'
+            answer: '2772'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'For positive integers, $\gcd(a, b) \cdot \mathrm{lcm}(a, b) = ab$. So $\mathrm{lcm}(252, 198) = 252 \cdot 198 / 18 = 252 \cdot 11 = 2772$.'
+          - problem: 'Two positive integers have product $864$ and greatest common divisor $6$. What is their least common multiple?'
+            answer: '144'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The product of two positive integers equals their gcd times their lcm. So the lcm is $864 / 6 = 144$.'
+          - problem: 'Find $\mathrm{lcm}(48, 180)$.'
+            answer: '720'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'First find the gcd: $180 = 3 \cdot 48 + 36$, $48 = 1 \cdot 36 + 12$, $36 = 3 \cdot 12 + 0$, so $\gcd(48, 180) = 12$. Then $\mathrm{lcm} = 48 \cdot 180 / 12 = 8640 / 12 = 720$.'
+          - problem: 'Find the least common multiple of $72$ and $120$.'
+            answer: '360'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'First find the gcd: $120 = 1 \cdot 72 + 48$, $72 = 1 \cdot 48 + 24$, $48 = 2 \cdot 24 + 0$, so $\gcd(72, 120) = 24$. Then $\mathrm{lcm} = 72 \cdot 120 / 24 = 8640 / 24 = 360$.'
+          - problem: 'One bell rings every $85$ seconds and another rings every $119$ seconds. They have just rung together. After how many seconds will they next ring together?'
+            answer: '595'
+            answer_contract: {"kind":"unit","quantity":"time","unit":"s","allow_omitted":true}
+            solution_sketch: 'The bells ring together at the first time that is a multiple of both $85$ and $119$, which is $\mathrm{lcm}(85, 119)$. Now $119 = 1 \cdot 85 + 34$, $85 = 2 \cdot 34 + 17$, $34 = 2 \cdot 17 + 0$, so $\gcd = 17$ and $\mathrm{lcm} = 85 \cdot 119 / 17 = 595$. They next ring together after $595$ seconds.'
+          - problem: 'Sam says that $\mathrm{lcm}(34, 48) = 1632$. What is the correct value?'
+            answer: '816'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Sam multiplied $34$ by $48$ and forgot to divide by the gcd. Now $48 = 1 \cdot 34 + 14$, $34 = 2 \cdot 14 + 6$, $14 = 2 \cdot 6 + 2$, $6 = 3 \cdot 2 + 0$, so $\gcd(34, 48) = 2$. The correct value is $1632 / 2 = 816$.'
+          - problem: 'Two positive integers have greatest common divisor $12$ and least common multiple $720$. One of them is $48$. What is the other?'
+            answer: '180'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The product of the two integers equals $\gcd \cdot \mathrm{lcm} = 12 \cdot 720 = 8640$. The other integer is $8640 / 48 = 180$.'
+          - problem: 'A gear with $18$ teeth meshes with a gear with $30$ teeth. A tooth on each gear is marked, and the two marked teeth touch now. After how many full turns of the smaller gear do the same two marked teeth touch again?'
+            answer: '5'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The marked teeth touch again after $\mathrm{lcm}(18, 30)$ teeth have passed. Since $\gcd(18, 30) = 6$, the lcm is $18 \cdot 30 / 6 = 90$. The smaller gear has $18$ teeth, so that is $90 / 18 = 5$ full turns.'
+        constraints: 'use gcd(a,b) * lcm(a,b) = ab; numbers chosen so the division is exact; include contexts'
       - id: kp3
-        name: "Back-substitution: gcd as an integer combination"
+        name: 'Back-substitution: gcd as an integer combination'
         key_prerequisites: [division-algorithm]
+        step_check:
+          step: 'Back-substitute to express $1$ as a combination of $15$ and $4$'
+          question: 'Why is the remainder $3$ replaced by $15 - 3 \cdot 4$ in the equation $1 = 4 - 1 \cdot 3$?'
+          options:
+            - 'Every remainder must be replaced by the first number, which is $15$ here'
+            - 'The number $3$ is a divisor of $15$, so it may be replaced by $15$'
+            - 'The replacement makes the coefficient of $4$ larger, which is needed'
+            - 'The first equation gives $3 = 15 - 3 \cdot 4$, using only $15$ and $4$'
+          answer: 'The first equation gives $3 = 15 - 3 \cdot 4$, using only $15$ and $4$'
+          why: 'Writing $3$ in terms of $15$ and $4$ makes the combination use only the two original numbers, as $1 = 4 - (15 - 3 \cdot 4) = 4 \cdot 4 - 15$.'
         exemplars:
-          - problem: 'Find integers $x, y$ with $20x + 7y = 1$.'
-            answer: 'x = -1; y = 3'
-            answer_contract: {kind: multipart, parts: [{name: x, contract: {kind: exact}}, {name: y, contract: {kind: exact}}]}
-            solution_sketch: '$20 = 2 \cdot 7 + 6$; $7 = 1 \cdot 6 + 1$. Back-substitute: $1 = 7 - 6 = 7 - (20 - 2 \cdot 7) = 3 \cdot 7 - 20$.'
-          - problem: 'Express $\gcd(42, 30) = 6$ in the form $42x + 30y$.'
+          - problem: 'Find the integers $x$ and $y$ with $20x + 7y = 1$ and $0 \le x < 7$.'
+            answer: 'x = 6; y = -17'
+            answer_contract: {"kind":"multipart","parts":[{"name":"x","contract":{"kind":"exact"}},{"name":"y","contract":{"kind":"exact"}}]}
+            solution_sketch: 'Euclid: $20 = 2 \cdot 7 + 6$, $7 = 1 \cdot 6 + 1$. Back-substitute: $1 = 7 - 6 = 7 - (20 - 2 \cdot 7) = 3 \cdot 7 - 20$, so $(x, y) = (-1, 3)$ is one solution. All solutions are $x = -1 + 7k$, $y = 3 - 20k$, and $0 \le x < 7$ forces $k = 1$. So $x = 6$ and $y = -17$, and $20 \cdot 6 - 7 \cdot 17 = 120 - 119 = 1$.'
+          - problem: 'Use the extended Euclidean algorithm to write $\gcd(42, 30)$ as $42x + 30y$ with $0 \le x < 5$.'
             answer: 'x = 3; y = -4'
-            answer_contract: {kind: multipart, parts: [{name: x, contract: {kind: exact}}, {name: y, contract: {kind: exact}}]}
-            solution_sketch: '$42 = 1 \cdot 30 + 12$; $30 = 2 \cdot 12 + 6$. Back-substitute: $6 = 30 - 2 \cdot 12 = 30 - 2(42 - 30) = 3 \cdot 30 - 2 \cdot 42$; equivalently $42 \cdot 3 + 30 \cdot (-4) = 126 - 120 = 6$. Any pair satisfying the equation is correct.'
-          - problem: "Use the Euclidean algorithm on 56 and 15, then back-substitute to express gcd(56, 15) = 1 as 56x + 15y. Give integers x and y as x = ...; y = ..."
-            answer: "x = -4; y = 15"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "x"}, {"contract": {"kind": "exact"}, "name": "y"}]}
-            solution_sketch: "Euclidean algorithm: 56 = 3*15 + 11, 15 = 1*11 + 4, 11 = 2*4 + 3, 4 = 1*3 + 1, so the last nonzero remainder is 1. Back-substitution: 1 = 4 - 1*3 = 4 - (11 - 2*4) = 3*4 - 11 = 3*(15 - 11) - 11 = 3*15 - 4*11 = 3*15 - 4*(56 - 3*15) = 15*15 - 4*56. Verification: 56*(-4) + 15*15 = -224 + 225 = 1, so x = -4; y = 15."
-          - problem: "Express gcd(50, 18) = 2 in the form 50x + 18y using back-substitution from the Euclidean algorithm. Give integers x and y as x = ...; y = ..."
-            answer: "x = 4; y = -11"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "x"}, {"contract": {"kind": "exact"}, "name": "y"}]}
-            solution_sketch: "Euclidean algorithm: 50 = 2*18 + 14, 18 = 1*14 + 4, 14 = 3*4 + 2, so the last nonzero remainder is 2. Back-substitution: 2 = 14 - 3*4 = 14 - 3*(18 - 14) = 4*14 - 3*18 = 4*(50 - 2*18) - 3*18 = 4*50 - 11*18. Verification: 50*4 + 18*(-11) = 200 - 198 = 2, so x = 4; y = -11."
-          - problem: "Find the integer x with 0 <= x < 6 such that 23x + 6y = 1 for some integer y."
-            answer: "5"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Euclidean algorithm: 23 = 3*6 + 5, 6 = 1*5 + 1, so gcd(23, 6) = 1. Back-substitution: 1 = 6 - 1*5 = 6 - (23 - 3*6) = 4*6 - 23, giving a base solution x = -1, y = 4. General solutions are x = -1 + 6k, y = 4 - 23k. The condition 0 <= x < 6 forces k = 1, so x = 5."
-          - problem: "Find integers x and y with 40x + 17y = 1, using the Euclidean algorithm and back-substitution."
-            answer: "x = 3; y = -7"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "x"}, {"contract": {"kind": "exact"}, "name": "y"}]}
-            solution_sketch: "Euclidean algorithm: 40 = 2*17 + 6, 17 = 2*6 + 5, 6 = 1*5 + 1, so the last nonzero remainder is 1. Back-substitution: 1 = 6 - 1*5 = 6 - (17 - 2*6) = 3*6 - 17 = 3*(40 - 2*17) - 17 = 3*40 - 7*17. Verification: 40*3 + 17*(-7) = 120 - 119 = 1, so x = 3; y = -7."
-        constraints: "operands small enough for 2-3 back-substitution steps; accept any valid Bezout pair, require a verification check"
+            answer_contract: {"kind":"multipart","parts":[{"name":"x","contract":{"kind":"exact"}},{"name":"y","contract":{"kind":"exact"}}]}
+            solution_sketch: 'Euclid: $42 = 1 \cdot 30 + 12$, $30 = 2 \cdot 12 + 6$, so $\gcd = 6$. Back-substitute: $6 = 30 - 2 \cdot 12 = 30 - 2(42 - 30) = 3 \cdot 30 - 2 \cdot 42$. All solutions are $x = -2 + 5k$, and $0 \le x < 5$ forces $k = 1$, so $x = 3$ and $y = -4$. Check: $42 \cdot 3 - 30 \cdot 4 = 126 - 120 = 6$.'
+          - problem: 'Find the integer $y$ such that $56x + 15y = 1$ for some integer $x$ with $0 \le x < 15$.'
+            answer: '-41'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Euclid: $56 = 3 \cdot 15 + 11$, $15 = 1 \cdot 11 + 4$, $11 = 2 \cdot 4 + 3$, $4 = 1 \cdot 3 + 1$. Back-substitution gives $1 = 15 \cdot 15 - 4 \cdot 56$, and shifting $x$ into the range gives $x = 11$. Then $15y = 1 - 56 \cdot 11 = -615$, so $y = -41$.'
+          - problem: 'An empty tank is filled with a $23$-litre bucket and emptied with a $6$-litre cup. What is the smallest positive number of bucket loads after which, with a suitable number of cups removed, exactly $1$ litre is left in the tank?'
+            answer: '5'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'We need $23x - 6c = 1$ for a positive $x$ and a whole number $c$. Euclid: $23 = 3 \cdot 6 + 5$, $6 = 1 \cdot 5 + 1$, and back-substitution gives $23 \cdot (-1) + 6 \cdot 4 = 1$. So $x \equiv -1 \equiv 5 \pmod 6$, and the smallest positive value is $5$: $23 \cdot 5 = 115 = 19 \cdot 6 + 1$.'
+          - problem: 'In a game a hit scores $40$ points and a miss costs $17$ points. A player starts with $0$ points. What is the smallest positive number of hits with which the player can finish with exactly $1$ point?'
+            answer: '3'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'We need $40h - 17m = 1$ with $m \ge 0$. Euclid: $40 = 2 \cdot 17 + 6$, $17 = 2 \cdot 6 + 5$, $6 = 1 \cdot 5 + 1$, and back-substitution gives $1 = 3 \cdot 40 - 7 \cdot 17$. So $h \equiv 3 \pmod{17}$, and the smallest positive value is $3$ hits with $7$ misses.'
+          - problem: 'Find the smallest positive integer $x$ for which $50x + 18y = 2$ has an integer solution $y$.'
+            answer: '4'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Divide by $2$: $25x + 9y = 1$. Euclid: $25 = 2 \cdot 9 + 7$, $9 = 1 \cdot 7 + 2$, $7 = 3 \cdot 2 + 1$, and back-substitution gives $1 = 4 \cdot 25 - 11 \cdot 9$. So $x \equiv 4 \pmod 9$, and the smallest positive $x$ is $4$ with $y = -11$.'
+          - problem: 'What is the smallest positive integer that can be written as $35x + 14y$ for integers $x$ and $y$?'
+            answer: '7'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'By Bezout''s identity the smallest positive value of $35x + 14y$ is $\gcd(35, 14)$. Euclid: $35 = 2 \cdot 14 + 7$, $14 = 2 \cdot 7 + 0$, so the gcd is $7$. For example $35 \cdot 1 + 14 \cdot (-2) = 7$.'
+        constraints: 'operands small enough for 2-4 back-substitution steps; the answer is unique by a stated range or a smallest-value condition'
     diagnostic_exemplar:
-      problem: 'Run the Euclidean algorithm on $25$ and $7$, then back-substitute to find integers $x, y$ with $25x + 7y = 1$.'
+      problem: 'Run the Euclidean algorithm on $25$ and $7$, then back-substitute to find the integers $x$ and $y$ with $25x + 7y = 1$ and $0 \le x < 7$.'
       answer: 'x = 2; y = -7'
-      answer_contract: {kind: multipart, parts: [{name: x, contract: {kind: exact}}, {name: y, contract: {kind: exact}}]}
-      solution_sketch: '$25 = 3 \cdot 7 + 4$, $7 = 1 \cdot 4 + 3$, $4 = 1 \cdot 3 + 1$; back: $1 = 4 - 3 = 2 \cdot 4 - 7 = 2 \cdot 25 - 7 \cdot 7$.'
+      answer_contract: {"kind":"multipart","parts":[{"name":"x","contract":{"kind":"exact"}},{"name":"y","contract":{"kind":"exact"}}]}
+      solution_sketch: '$25 = 3 \cdot 7 + 4$, $7 = 1 \cdot 4 + 3$, $4 = 1 \cdot 3 + 1$; back: $1 = 4 - 3 = 2 \cdot 4 - 7 = 2 \cdot 25 - 7 \cdot 7$. So $x = 2$ and $y = -7$.'
     anki_seeds:
       - front: "Euclidean algorithm key step: $\\gcd(a, b) = \\gcd(b, \\; ?)$ for $a = bq + r$"
         back: '$\gcd(b, r)$ — replace the pair with the divisor and the remainder.'
@@ -221,88 +312,159 @@ topics:
         key: false
     knowledge_points:
       - id: kp1
-        name: "Reducing mod m, including negatives"
+        name: 'Reducing mod m, including negatives'
         key_prerequisites: [division-algorithm]
+        step_check:
+          step: 'Add multiples of $3$ to $-8$ until the result is nonnegative'
+          question: 'Why does adding multiples of $3$ to $-8$ keep us on the right answer?'
+          options:
+            - 'Adding $9$ makes the number positive, and any positive number is a residue'
+            - 'Adding a multiple of $3$ does not change the remainder on division by $3$'
+            - 'The multiples of $3$ cancel the sign, so the residue is the same as for $8$'
+            - 'Each added multiple lowers the remainder by one until it reaches zero'
+          answer: 'Adding a multiple of $3$ does not change the remainder on division by $3$'
+          why: '$-8$ and $-8 + 9 = 1$ differ by a multiple of $3$, so they leave the same remainder modulo $3$; $1$ is the one in $0, 1, 2$.'
+        try_first:
+          problem: 'A clock shows $2$ o''clock. What time does it show $50$ hours later? Use a $12$-hour clock.'
+          answer_contract: {"kind":"exact"}
+          answer: '4'
+          reveal: 'After $50$ hours the clock shows $2 + 50 = 52$, and $52 = 4 \cdot 12 + 4$, so it shows $4$ o''clock. Wrapping around a clock is exactly the idea of working modulo $12$: only the remainder matters.'
         exemplars:
-          - problem: 'Compute $17 \bmod 5$.'
-            answer: "2"
-          - problem: 'Compute $-13 \bmod 7$ (answer in $\{0, 1, \dots, 6\}$).'
-            answer: "1"
-            solution_sketch: '$-13 = 7 \cdot (-2) + 1$, so the least nonnegative residue is $1$.'
-          - problem: "Compute -34 mod 26 and give the least nonnegative residue."
-            answer: "18"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1 (division algorithm): write the full statement -34 = 26q + r with 0 <= r < 26. Step 2 (choose the quotient): take q = -2, so 26 * (-2) = -52, and then r = -34 + 52 = 18, which satisfies 0 <= 18 < 26. The least nonnegative residue is 18."
-          - problem: "Compute (-5)^3 mod 23 and give the least nonnegative residue."
-            answer: "13"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1 (integer exponents): the full value is (-5)^3 = -125. Step 2 (division algorithm): write -125 = 23q + r with 0 <= r < 23. Step 3 (choose the quotient): take q = -6, so 23 * (-6) = -138 and r = -125 + 138 = 13, with 0 <= 13 < 23. The least nonnegative residue is 13."
-          - problem: "Compute the least nonnegative residue of -(7^2) modulo 15."
-            answer: "11"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1 (integer exponents): the full value is -(7^2) = -49. Step 2 (division algorithm): write -49 = 15q + r with 0 <= r < 15. Step 3 (choose the quotient): take q = -4, so 15 * (-4) = -60 and r = -49 + 60 = 11, with 0 <= 11 < 15. The least nonnegative residue is 11."
-          - problem: "A modulus m with 2 <= m <= 26 satisfies: the least nonnegative residue of 90 modulo m is 18. Find m."
-            answer: "24"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1 (division algorithm): the condition 90 mod m = 18 means 90 = mq + 18 for some integer q, so m divides 90 - 18 = 72, and since the remainder is 18 we need m > 18. Step 2 (divisibility): the divisors of 72 are 1, 2, 3, 4, 6, 8, 9, 12, 18, 24, 36, 72; the only one with 18 < m <= 26 is 24. Step 3 (check): 90 = 24 * 3 + 18, and 0 <= 18 < 24. The answer is 24."
-        constraints: "moduli 2-26; include negative arguments; answers are least nonnegative residues"
+          - problem: 'Find the least nonnegative residue of $-13$ modulo $7$.'
+            answer: '1'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Write $-13 = 7 \cdot (-2) + 1$. The remainder satisfies $0 \le 1 < 7$, so the least nonnegative residue is $1$.'
+          - problem: 'Find the least nonnegative residue of $-34$ modulo $26$.'
+            answer: '18'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Add multiples of $26$ until the value is nonnegative. Adding $2 \cdot 26 = 52$ gives $-34 + 52 = 18$, and $0 \le 18 < 26$. So the least nonnegative residue is $18$.'
+          - problem: 'Find the least nonnegative residue of $(-5)^3$ modulo $23$.'
+            answer: '13'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'First $(-5)^3 = -125$. Adding $6 \cdot 23 = 138$ gives $-125 + 138 = 13$, and $0 \le 13 < 23$. So the least nonnegative residue is $13$.'
+          - problem: 'Find the least nonnegative residue of $-(7^2)$ modulo $15$.'
+            answer: '11'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'First $-(7^2) = -49$. Adding $4 \cdot 15 = 60$ gives $-49 + 60 = 11$, and $0 \le 11 < 15$. So the least nonnegative residue is $11$.'
+          - problem: 'A clock shows $3$ o''clock. What time does it show $200$ hours earlier? Use a $12$-hour clock.'
+            answer: '7'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Going back $200$ hours from $3$ gives $3 - 200 = -197$. Adding $17 \cdot 12 = 204$ gives $-197 + 204 = 7$. So the clock showed $7$ o''clock.'
+          - problem: 'A circular board has $26$ squares, numbered $0$ to $25$. A token on square $5$ moves back $47$ squares, wrapping around. On which square does it land?'
+            answer: '10'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The token goes to $5 - 47 = -42$ in the count around the board. Adding $2 \cdot 26 = 52$ gives $-42 + 52 = 10$, and $0 \le 10 < 26$. So it lands on square $10$.'
+          - problem: 'When $90$ is divided by an integer $m$ with $2 \le m \le 26$, the remainder is $18$. Find $m$.'
+            answer: '24'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The remainder $18$ means $90 = mq + 18$, so $m$ divides $90 - 18 = 72$, and $m > 18$ because the remainder is less than $m$. The divisors of $72$ are $1, 2, 3, 4, 6, 8, 9, 12, 18, 24, 36, 72$, and only $24$ lies in the range $18 < m \le 26$. Check: $90 = 24 \cdot 3 + 18$.'
+          - problem: 'Sam says that $-20 \bmod 6 = -2$, because $20 = 3 \cdot 6 + 2$. What is the correct least nonnegative residue of $-20$ modulo $6$?'
+            answer: '4'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Sam kept the negative sign on the remainder, but a residue must lie in $0$ to $5$. Adding $4 \cdot 6 = 24$ gives $-20 + 24 = 4$, and $-20 = 6 \cdot (-4) + 4$. So the residue is $4$.'
+        constraints: 'moduli 2-26; include negative arguments; answers are least nonnegative residues'
       - id: kp2
-        name: "Adding and multiplying residues"
+        name: 'Adding and multiplying residues'
         key_prerequisites: [division-algorithm]
+        step_check:
+          step: 'Reduce each operand modulo $15$'
+          question: 'Why may $52$ and $37$ be replaced by $7$ and $7$ before they are added?'
+          options:
+            - 'Only the last digit of a number matters when the numbers are added'
+            - 'The numbers must be made smaller than $15$, or the sum would exceed $15$'
+            - 'Each number differs from its residue by a multiple of $15$'
+            - 'The residues are always added without a final reduction'
+          answer: 'Each number differs from its residue by a multiple of $15$'
+          why: '$52 = 3 \cdot 15 + 7$ and $37 = 2 \cdot 15 + 7$, so the sum $89$ and $7 + 7 = 14$ differ by a multiple of $15$.'
         exemplars:
-          - problem: 'Compute $(37 \cdot 43) \bmod 10$ without multiplying the full numbers.'
-            answer: "1"
-            solution_sketch: 'Reduce first: $37 \equiv 7$ and $43 \equiv 3 \pmod{10}$, so the product is $\equiv 21 \equiv 1$.'
-          - problem: 'Compute $(6 + 9) \bmod 11$.'
-            answer: "4"
-            solution_sketch: '$15 = 11 + 4$.'
-          - problem: "Compute (58 * 47) mod 13 by reducing each factor first. Give the residue in 0 to 12."
-            answer: "9"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "For (58 * 47) mod 13, reduce first using the division algorithm: 58 = 4*13 + 6, so 58 mod 13 = 6, and 47 = 3*13 + 8, so 47 mod 13 = 8. By the multiplication rule for residues, 6*8 = 48. Reduce the product modulo 13: 48 = 3*13 + 9. The answer is 9."
-          - problem: "Compute (17 + 29) mod 12 by reducing each summand first. Give the residue in 0 to 11."
-            answer: "10"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "For (17 + 29) mod 12, reduce first using the division algorithm: 17 = 1*12 + 5, so 17 mod 12 = 5, and 29 = 2*12 + 5, so 29 mod 12 = 5. By the addition rule for residues, 5 + 5 = 10. Since 10 is less than 12, the answer is 10."
-          - problem: "Compute (123 * 45) mod 26 by reducing each factor first. Give the residue in 0 to 25."
-            answer: "23"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "For (123 * 45) mod 26, reduce first using the division algorithm: 123 = 4*26 + 19, so 123 mod 26 = 19, and 45 = 1*26 + 19, so 45 mod 26 = 19. By the multiplication rule for residues, 19*19 = 361. Reduce modulo 26: 361 = 13*26 + 23. The answer is 23."
-          - problem: "Compute (87 * 64 + 25) mod 17 by reducing each number first. Give the residue in 0 to 16."
-            answer: "0"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "For (87 * 64 + 25) mod 17, reduce first using the division algorithm: 87 = 5*17 + 2, so 87 mod 17 = 2; 64 = 3*17 + 13, so 64 mod 17 = 13; and 25 = 1*17 + 8, so 25 mod 17 = 8. By the multiplication rule for residues, 2*13 = 26, and 26 mod 17 = 9. By the addition rule for residues, 9 + 8 = 17, and 17 mod 17 = 0. The answer is 0."
-        constraints: "force reduce-first strategy: operands 2-3 digits, moduli <= 26"
+          - problem: 'What is the remainder when $37 \cdot 43$ is divided by $10$?'
+            answer: '1'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Reduce each factor first: $37 \equiv 7$ and $43 \equiv 3 \pmod{10}$. The product is congruent to $7 \cdot 3 = 21$, and $21 = 2 \cdot 10 + 1$. So the remainder is $1$.'
+          - problem: 'Find the remainder when $58 \cdot 47$ is divided by $13$.'
+            answer: '9'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Reduce each factor: $58 = 4 \cdot 13 + 6$ and $47 = 3 \cdot 13 + 8$. The product is congruent to $6 \cdot 8 = 48$, and $48 = 3 \cdot 13 + 9$. So the remainder is $9$.'
+          - problem: 'A farm collects $17$ eggs in the morning and $29$ in the afternoon. The eggs are packed in cartons of $12$. How many eggs are left after all full cartons are packed?'
+            answer: '10'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Reduce each count modulo $12$: $17 \equiv 5$ and $29 \equiv 5$. The total is congruent to $5 + 5 = 10$, and $10 < 12$. So $10$ eggs are left over.'
+          - problem: 'A school has $123$ boxes, each holding $45$ pencils. The pencils are bundled in packs of $26$. How many pencils are left over after all full packs are made?'
+            answer: '23'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Reduce each factor modulo $26$: $123 = 4 \cdot 26 + 19$ and $45 = 1 \cdot 26 + 19$. The product is congruent to $19 \cdot 19 = 361 = 13 \cdot 26 + 23$. So $23$ pencils are left over.'
+          - problem: 'Find the remainder when $87 \cdot 64 + 25$ is divided by $17$.'
+            answer: '0'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Reduce each number modulo $17$: $87 \equiv 2$, $64 \equiv 13$ and $25 \equiv 8$. Then $2 \cdot 13 + 8 = 34$, and $34 = 2 \cdot 17 + 0$. So the remainder is $0$.'
+          - problem: 'What is the last digit of $1234 \cdot 5678$?'
+            answer: '2'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The last digit is the remainder modulo $10$. Since $1234 \equiv 4$ and $5678 \equiv 8 \pmod{10}$, the product is congruent to $4 \cdot 8 = 32$. So the last digit is $2$.'
+          - problem: 'Maya reduces $19 \cdot 25$ modulo $7$ by adding the residues: $19 \equiv 5$ and $25 \equiv 4$, so she gets $5 + 4 = 9 \equiv 2$. What is the correct remainder of $19 \cdot 25$ on division by $7$?'
+            answer: '6'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Maya added the residues, but a product needs the product of the residues. So $19 \cdot 25 \equiv 5 \cdot 4 = 20 \pmod 7$, and $20 = 2 \cdot 7 + 6$. The correct remainder is $6$.'
+          - problem: 'Find the least nonnegative residue of $4 - 6 \cdot 9$ modulo $11$.'
+            answer: '5'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'First $4 - 6 \cdot 9 = 4 - 54 = -50$. Adding $5 \cdot 11 = 55$ gives $-50 + 55 = 5$. So the least nonnegative residue is $5$.'
+        constraints: 'force reduce-first strategy: operands 2-4 digits, moduli <= 26'
       - id: kp3
-        name: "Modular exponentiation by repeated squaring"
+        name: 'Modular exponentiation by repeated squaring'
         key_prerequisites: [division-algorithm, integer-exponents-intro]
+        step_check:
+          step: 'Compute $2^3 = 8 \equiv -1 \pmod 9$'
+          question: 'Why does $2^3 \equiv -1 \pmod 9$ make $2^8$ easy to find?'
+          options:
+            - 'Powers of $-1$ are only $1$ or $-1$, so little work is left'
+            - 'Powers of $2$ repeat every three steps, so $2^8$ equals $2^3$'
+            - 'The exponent $3$ divides $8$, so $2^8$ is the cube of $2^3$'
+            - 'The residue $-1$ is negative, so the answer is also negative'
+          answer: 'Powers of $-1$ are only $1$ or $-1$, so little work is left'
+          why: '$2^8 = (2^3)^2 \cdot 2^2 \equiv (-1)^2 \cdot 4 = 4$; only the small leftover power $2^2$ has to be computed.'
         exemplars:
-          - problem: 'Compute $2^{10} \bmod 7$.'
-            answer: "2"
-            solution_sketch: '$2^3 = 8 \equiv 1 \pmod 7$, so $2^{10} = (2^3)^3 \cdot 2 \equiv 1 \cdot 2 = 2$.'
-          - problem: 'Compute $3^4 \bmod 5$.'
-            answer: "1"
-            solution_sketch: '$3^2 = 9 \equiv 4 \equiv -1$, so $3^4 \equiv (-1)^2 = 1 \pmod 5$.'
-          - problem: "Find the remainder when $5^{11}$ is divided by $13$."
-            answer: "8"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The full object is 5^11 modulo 13. Use repeated squaring. Step 1: 5^2 = 25 and 25 mod 13 = 12, so 5^2 is congruent to -1 modulo 13. Step 2: split 5^11 as (5^2)^5 times 5, so 5^11 is congruent to (-1)^5 times 5 = -5 modulo 13. Step 3: reduce to a least nonnegative residue: -5 + 13 = 8. The answer is 8."
-          - problem: "What is the least nonnegative residue of $7^5$ modulo $11$?"
-            answer: "10"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The full object is 7^5 modulo 11. Use repeated squaring. Step 1: 7^2 = 49 and 49 mod 11 = 5. Step 2: square that: 7^4 is congruent to 5^2 = 25, and 25 mod 11 = 3. Step 3: multiply by 7 once more: 7^5 is congruent to 3 times 7 = 21, and 21 mod 11 = 10, which is -1 modulo 11. The answer is 10."
-          - problem: "Evaluate $6^7$ modulo $13$."
-            answer: "7"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The full object is 6^7 modulo 13. Use repeated squaring. Step 1: 6^3 = 216 and 216 mod 13 = 8. Step 2: square: 6^6 is congruent to 8^2 = 64, and 64 mod 13 = 12, so 6^6 is congruent to -1 modulo 13. Step 3: multiply by 6 once more: 6^7 is congruent to 12 times 6 = 72, and 72 mod 13 = 7. The answer is 7."
-          - problem: "Determine the value of $4^9$ modulo $11$."
-            answer: "3"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The full object is 4^9 modulo 11. Use repeated squaring. Step 1: 4^2 = 16 and 16 mod 11 = 5. Step 2: square: 4^4 is congruent to 5^2 = 25, and 25 mod 11 = 3. Step 3: 4^5 is congruent to 3 times 4 = 12, and 12 mod 11 = 1. Step 4: 4^9 is congruent to 1 times 3 = 3. The answer is 3."
-        constraints: "exponents 3-20, moduli <= 15; solvable by spotting a small power congruent to 1 or -1"
+          - problem: 'What is the remainder when $2^{10}$ is divided by $7$?'
+            answer: '2'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Since $2^3 = 8 \equiv 1 \pmod 7$, write $2^{10} = (2^3)^3 \cdot 2$. Then $2^{10} \equiv 1^3 \cdot 2 = 2$, so the remainder is $2$.'
+          - problem: 'Find the remainder when $3^{20}$ is divided by $5$.'
+            answer: '1'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Since $3^2 = 9 \equiv -1 \pmod 5$, we get $3^4 \equiv (-1)^2 = 1$. So $3^{20} = (3^4)^5 \equiv 1^5 = 1$, and the remainder is $1$.'
+          - problem: 'Find the remainder when $5^{11}$ is divided by $13$.'
+            answer: '8'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Since $5^2 = 25 \equiv -1 \pmod{13}$, write $5^{11} = (5^2)^5 \cdot 5$. Then $5^{11} \equiv (-1)^5 \cdot 5 = -5$, and $-5 + 13 = 8$. So the remainder is $8$.'
+          - problem: 'What is the least nonnegative residue of $7^5$ modulo $11$?'
+            answer: '10'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Square step by step: $7^2 = 49 \equiv 5$ and $7^4 \equiv 5^2 = 25 \equiv 3 \pmod{11}$. Then $7^5 \equiv 3 \cdot 7 = 21 \equiv 10$. So the least nonnegative residue is $10$.'
+          - problem: 'Find the remainder when $6^7$ is divided by $13$.'
+            answer: '7'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Compute $6^3 = 216 \equiv 8 \pmod{13}$, so $6^6 \equiv 8^2 = 64 \equiv 12 \equiv -1$. Then $6^7 \equiv -6 \equiv 7$. So the remainder is $7$.'
+          - problem: 'What is the least nonnegative residue of $4^9$ modulo $11$?'
+            answer: '3'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Compute $4^2 = 16 \equiv 5$ and $4^4 \equiv 5^2 = 25 \equiv 3 \pmod{11}$. Then $4^5 \equiv 3 \cdot 4 = 12 \equiv 1$, so $4^9 = 4^5 \cdot 4^4 \equiv 1 \cdot 3 = 3$. The residue is $3$.'
+          - problem: 'A rumor spreads so that on day $n$ exactly $3^n$ people have heard it. On day $20$ they are seated in full rows of $7$. How many people are left over after all full rows are filled?'
+            answer: '2'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The people in the last row are the remainder of $3^{20}$ on division by $7$. Since $3^6 = 729 = 104 \cdot 7 + 1$, we get $3^{20} = (3^6)^3 \cdot 3^2 \equiv 9 \equiv 2 \pmod 7$. So $2$ people sit in the last row.'
+          - problem: 'What is the last digit of $8^{50}$?'
+            answer: '4'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The last digit is the remainder modulo $10$. We have $8^2 = 64 \equiv 4$ and $8^4 \equiv 4^2 = 16 \equiv 6$, and every power of $6$ ends in $6$. So $8^{48} = (8^4)^{12} \equiv 6$ and $8^{50} \equiv 6 \cdot 4 = 24 \equiv 4$.'
+          - problem: 'A data center stores $5^{25}$ files. They are copied onto disks that hold $13$ files each. How many files are left over after all full disks are filled?'
+            answer: '5'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The files left over are the remainder of $5^{25}$ on division by $13$. Since $5^4 = 625 = 48 \cdot 13 + 1$, we get $5^{25} = (5^4)^6 \cdot 5 \equiv 5 \pmod{13}$. So $5$ files are left over.'
+        constraints: 'exponents 3-50, moduli <= 15; solvable by spotting a small power congruent to 1 or -1'
     diagnostic_exemplar:
-      problem: 'Compute $2^{20} \bmod 9$.'
+      problem: 'Find the remainder when $2^{20}$ is divided by $9$.'
       answer: '4'
+      answer_contract: {"kind":"exact"}
       solution_sketch: '$2^6 = 64 \equiv 1 \pmod 9$, so $2^{18} \equiv 1$ and $2^{20} \equiv 2^2 = 4$.'
     anki_seeds:
       - front: 'Definition: $a \equiv b \pmod m$ means...'
@@ -328,89 +490,146 @@ topics:
         key: true
     knowledge_points:
       - id: kp1
-        name: "When is ax = b (mod m) solvable?"
+        name: 'When is ax = b (mod m) solvable?'
         key_prerequisites: [euclidean-algorithm, modular-arithmetic]
+        step_check:
+          step: 'Divide through by $d$'
+          question: 'Why does the modulus $10$ become $5$ when $6x \equiv 4 \pmod{10}$ is divided through by $2$?'
+          options:
+            - 'The modulus is always halved when the other numbers are divided by $2$'
+            - 'The modulus must stay smaller than the coefficient $6$ of $x$'
+            - 'Dividing by $2$ removes the factor of $2$ from $x$ as well'
+            - '$6x-4$ is a multiple of $10$ just when $3x-2$ is a multiple of $5$'
+          answer: '$6x-4$ is a multiple of $10$ just when $3x-2$ is a multiple of $5$'
+          why: '$10 \mid 6x - 4$ means $6x - 4 = 10k$, so $3x - 2 = 5k$; the reduced congruence has modulus $5$ and its solutions repeat every $5$.'
         exemplars:
-          - problem: 'Give the set of all solutions mod $6$ of $4x \equiv 2 \pmod 6$.'
-            answer: '$\{2, 5\}$'
-            solution_sketch: '$d = \gcd(4,6) = 2$ divides $2$, so there are $d = 2$ solutions. Divide through: $2x \equiv 1 \pmod 3$, so $x \equiv 2 \pmod 3$, giving $x \in \{2, 5\}$ mod $6$.'
-          - problem: 'How many solutions mod $6$ does $4x \equiv 3 \pmod 6$ have?'
-            answer: "0"
-            solution_sketch: '$\gcd(4,6) = 2$ does not divide $3$, so the congruence is unsolvable.'
-          - problem: "Compute the number of solutions of the congruence 9x ≡ 6 (mod 15)."
-            answer: "3"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The congruence is 9x ≡ 6 (mod 15). Step 1 (solvability criterion): compute gcd(9,15) = 3 with the Euclidean algorithm. Step 2 (divisibility test): 3 divides 6, so the congruence is solvable. Step 3 (solution count): the number of solutions mod 15 equals gcd(9,15), which is 3. The final count is 3."
-          - problem: "Find the number of residues b mod 10 for which the congruence 6x ≡ b (mod 10) has a solution."
-            answer: "5"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The congruence family is 6x ≡ b (mod 10). Step 1 (solvability criterion): compute gcd(6,10) = 2. Step 2 (divisibility test): a solution exists exactly when 2 divides b. Step 3 (counting): the even residues mod 10 are 0, 2, 4, 6, 8, so 5 residues work. The final count is 5."
-          - problem: "State how many solutions mod 18 the congruence 12x ≡ 8 (mod 18) has."
-            answer: "0"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The congruence is 12x ≡ 8 (mod 18). Step 1 (solvability criterion): compute gcd(12,18) = 6 with the Euclidean algorithm. Step 2 (divisibility test): 6 does not divide 8, so the congruence has no solution mod 18. The number of solutions is 0."
-          - problem: "Determine the number of solutions of 8x ≡ 20 (mod 12)."
-            answer: "4"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The congruence is 8x ≡ 20 (mod 12). Step 1 (solvability criterion): compute gcd(8,12) = 4. Step 2 (divisibility test): 4 divides 20, so the congruence is solvable. Step 3 (solution count): the number of solutions mod 12 equals gcd(8,12) = 4. The final count is 4."
-        constraints: "moduli <= 30; include both solvable and unsolvable cases; solution count = gcd(a,m) when it divides b, else 0"
+          - problem: 'What are the solutions of $4x \equiv 2 \pmod 6$ with $0 \le x < 6$?'
+            answer: '2, 5'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Here $\gcd(4, 6) = 2$ divides $2$, so there are $2$ solutions modulo $6$. Dividing through by $2$ gives $2x \equiv 1 \pmod 3$, so $x \equiv 2 \pmod 3$, and the solutions in the range are $x = 2$ and $x = 5$.'
+          - problem: 'How many values of $x$ with $0 \le x < 6$ satisfy $4x \equiv 3 \pmod 6$?'
+            answer: '0'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The gcd $\gcd(4, 6) = 2$ does not divide $3$. So no value of $x$ satisfies the congruence, and the number of solutions is $0$.'
+          - problem: 'How many solutions does $9x \equiv 6 \pmod{15}$ have modulo $15$?'
+            answer: '3'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Here $\gcd(9, 15) = 3$ divides $6$, so the congruence is solvable. A solvable congruence has exactly $\gcd(9, 15) = 3$ solutions modulo $15$.'
+          - problem: 'A circular track has $10$ squares, numbered $0$ to $9$. A runner starts on square $0$, and every move takes the runner $6$ squares forward, wrapping around after square $9$. How many different squares can the runner land on?'
+            answer: '5'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'After $x$ moves the runner is on square $6x \bmod 10$. The congruence $6x \equiv b \pmod{10}$ is solvable exactly when $\gcd(6, 10) = 2$ divides $b$. So the runner reaches the even squares $0, 2, 4, 6, 8$, which is $5$ squares.'
+          - problem: 'A circular track has $18$ squares, numbered $0$ to $17$. A runner starts on square $0$, and every move takes the runner $12$ squares forward. Can the runner ever land on square $8$?'
+            answer: 'no'
+            answer_contract: {"kind":"label","options":[["yes","it can","it is possible","possible","yes, it can"],["no","it cannot","never","it is not possible","not possible","impossible","no, it cannot"]]}
+            solution_sketch: 'Landing on square $8$ needs $12x \equiv 8 \pmod{18}$. Since $\gcd(12, 18) = 6$ does not divide $8$, the congruence has no solution. So the runner can never land on that square, and the answer is no.'
+          - problem: 'Find the number of solutions of $8x \equiv 20 \pmod{12}$ in the range $0 \le x < 12$.'
+            answer: '4'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Here $\gcd(8, 12) = 4$ divides $20$, so the congruence is solvable. A solvable congruence has exactly $\gcd(8, 12) = 4$ solutions modulo $12$: they are $x = 1, 4, 7, 10$.'
+          - problem: 'Sam claims that $6x \equiv 9 \pmod{15}$ has no solution because $6$ does not divide $9$. How many solutions modulo $15$ does it actually have?'
+            answer: '3'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The test is whether $\gcd(6, 15) = 3$ divides $9$, not whether $6$ does. Since $3$ divides $9$, the congruence is solvable with exactly $3$ solutions modulo $15$, namely $x = 4, 9, 14$.'
+        constraints: 'moduli <= 30; include both solvable and unsolvable cases; solution count = gcd(a,m) when it divides b, else 0'
       - id: kp2
-        name: "Modular inverses via the extended Euclidean algorithm"
+        name: 'Modular inverses via the extended Euclidean algorithm'
         key_prerequisites: [euclidean-algorithm]
+        step_check:
+          step: 'Thus, $9$ is its own inverse modulo $20$'
+          question: 'Why does $1 = 9 \cdot 9 - 4 \cdot 20$ show that $9$ is its own inverse modulo $20$?'
+          options:
+            - '$4 \cdot 20$ is a multiple of $20$, so $9 \cdot 9 \equiv 1 \pmod{20}$'
+            - 'The coefficients $9$ and $9$ are equal, so the number is its own inverse'
+            - 'The gcd of $9$ and $20$ is $1$, and that makes every inverse equal to itself'
+            - 'The coefficient $-4$ is the inverse, and it is $16$ modulo $20$'
+          answer: '$4 \cdot 20$ is a multiple of $20$, so $9 \cdot 9 \equiv 1 \pmod{20}$'
+          why: 'Moving the multiple of $20$ across gives $9 \cdot 9 = 1 + 4 \cdot 20 \equiv 1 \pmod{20}$, and that is the definition of an inverse.'
         exemplars:
-          - problem: 'Find the inverse of $7$ modulo $26$.'
-            answer: "15"
-            solution_sketch: '$26 = 3 \cdot 7 + 5$; $7 = 1 \cdot 5 + 2$; $5 = 2 \cdot 2 + 1$. Back-substitute: $1 = 5 - 2 \cdot 2 = 5 - 2(7 - 5) = 3 \cdot 5 - 2 \cdot 7 = 3 \cdot 26 - 11 \cdot 7$, so $-11 \equiv 15$ works. Check: $7 \cdot 15 = 105 = 4 \cdot 26 + 1$.'
-          - problem: 'Find the inverse of $5$ modulo $12$.'
-            answer: "5"
-            solution_sketch: '$5 \cdot 5 = 25 = 2 \cdot 12 + 1$, so $5$ is its own inverse mod $12$.'
-          - problem: "What number x satisfies 9x congruent to 1 modulo 26? Give x as the least positive residue."
-            answer: "3"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1 (Euclidean algorithm): 26 = 2*9 + 8 and 9 = 1*8 + 1. Step 2 (back-substitution): 1 = 9 - 8 = 9 - (26 - 2*9) = 3*9 - 26. Step 3 (least positive residue): the coefficient of 9 is 3, so x = 3. Step 4 (verification product): 9*3 = 27 = 1*26 + 1, so 9*3 is 1 modulo 26. The answer is 3."
-          - problem: "Find the least positive residue x with 17x congruent to 1 modulo 40."
-            answer: "33"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1 (Euclidean algorithm): 40 = 2*17 + 6, 17 = 2*6 + 5, and 6 = 1*5 + 1. Step 2 (back-substitution): 1 = 6 - 5 = 6 - (17 - 2*6) = 3*6 - 17 = 3*(40 - 2*17) - 17 = 3*40 - 7*17. Step 3 (least positive residue): the coefficient of 17 is -7, and -7 is 33 modulo 40. Step 4 (verification product): 17*33 = 561 = 14*40 + 1, so 17*33 is 1 modulo 40. The answer is 33."
-          - problem: "In a check-digit scheme, a multiplier 23 is used modulo 31. Find its modular inverse as the least positive residue."
-            answer: "27"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1 (Euclidean algorithm): 31 = 1*23 + 8, 23 = 2*8 + 7, and 8 = 1*7 + 1. Step 2 (back-substitution): 1 = 8 - 7 = 8 - (23 - 2*8) = 3*8 - 23 = 3*(31 - 23) - 23 = 3*31 - 4*23. Step 3 (least positive residue): the coefficient of 23 is -4, and -4 is 27 modulo 31. Step 4 (verification product): 23*27 = 621 = 20*31 + 1, so 23*27 is 1 modulo 31. The answer is 27."
-          - problem: "Use the Euclidean algorithm to find the inverse of 13 modulo 37. Give the answer as the least positive residue."
-            answer: "20"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1 (Euclidean algorithm): 37 = 2*13 + 11, 13 = 1*11 + 2, and 11 = 5*2 + 1. Step 2 (back-substitution): 1 = 11 - 5*2 = 11 - 5*(13 - 11) = 6*11 - 5*13 = 6*(37 - 2*13) - 5*13 = 6*37 - 17*13. Step 3 (least positive residue): the coefficient of 13 is -17, and -17 is 20 modulo 37. Step 4 (verification product): 13*20 = 260 = 7*37 + 1, so 13*20 is 1 modulo 37. The answer is 20."
-        constraints: "gcd(a,m) = 1 always; moduli 7-40; answer as least positive residue; require the verification product"
+          - problem: 'Find the least positive inverse of $7$ modulo $26$.'
+            answer: '15'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Euclid: $26 = 3 \cdot 7 + 5$, $7 = 1 \cdot 5 + 2$, $5 = 2 \cdot 2 + 1$, $2 = 2 \cdot 1 + 0$. Back-substitution gives $1 = -11 \cdot 7 + 3 \cdot 26$, so the inverse is $15$, and $-11$ is the same as $15$ modulo $26$. Check: $7 \cdot 15 = 105 = 4 \cdot 26 + 1$.'
+          - problem: 'Which integer $x$ between $1$ and $11$ satisfies $5x \equiv 1 \pmod{12}$?'
+            answer: '5'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Try $x = 5$: $5 \cdot 5 = 25 = 2 \cdot 12 + 1$. So $5$ is its own inverse modulo $12$, and it lies between $1$ and $11$.'
+          - problem: 'What number $x$ in $\{1, \dots, 25\}$ satisfies $9x \equiv 1 \pmod{26}$?'
+            answer: '3'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Euclid: $26 = 2 \cdot 9 + 8$, $9 = 1 \cdot 8 + 1$, $8 = 8 \cdot 1 + 0$. Back-substitution gives $1 = 3 \cdot 9 - 26$, so the inverse is $3$. Check: $9 \cdot 3 = 27 = 1 \cdot 26 + 1$.'
+          - problem: 'Find the least positive integer $x$ with $17x \equiv 1 \pmod{40}$.'
+            answer: '33'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Euclid: $40 = 2 \cdot 17 + 6$, $17 = 2 \cdot 6 + 5$, $6 = 1 \cdot 5 + 1$, $5 = 5 \cdot 1 + 0$. Back-substitution gives $1 = -7 \cdot 17 + 3 \cdot 40$, so the inverse is $33$, and $-7$ is the same as $33$ modulo $40$. Check: $17 \cdot 33 = 561 = 14 \cdot 40 + 1$.'
+          - problem: 'A check-digit scheme multiplies each number by $23$ and reduces modulo $31$. To undo it, a number is multiplied by the inverse of $23$ modulo $31$. What is the least positive such multiplier?'
+            answer: '27'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Euclid: $31 = 1 \cdot 23 + 8$, $23 = 2 \cdot 8 + 7$, $8 = 1 \cdot 7 + 1$, $7 = 7 \cdot 1 + 0$. Back-substitution gives $1 = -4 \cdot 23 + 3 \cdot 31$, so the inverse is $27$, and $-4$ is the same as $27$ modulo $31$. Check: $23 \cdot 27 = 621 = 20 \cdot 31 + 1$.'
+          - problem: 'Find the least positive inverse of $13$ modulo $37$.'
+            answer: '20'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Euclid: $37 = 2 \cdot 13 + 11$, $13 = 1 \cdot 11 + 2$, $11 = 5 \cdot 2 + 1$, $2 = 2 \cdot 1 + 0$. Back-substitution gives $1 = -17 \cdot 13 + 6 \cdot 37$, so the inverse is $20$, and $-17$ is the same as $20$ modulo $37$. Check: $13 \cdot 20 = 260 = 7 \cdot 37 + 1$.'
+          - problem: 'A cipher on the $26$ letters, numbered $0$ to $25$, replaces a letter number $p$ by the remainder of $11p$ on division by $26$. To decrypt, each number $c$ is multiplied by $k$ and reduced modulo $26$. What is the least positive $k$ that decrypts every message?'
+            answer: '19'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Euclid: $26 = 2 \cdot 11 + 4$, $11 = 2 \cdot 4 + 3$, $4 = 1 \cdot 3 + 1$, $3 = 3 \cdot 1 + 0$. Back-substitution gives $1 = -7 \cdot 11 + 3 \cdot 26$, so the inverse is $19$, and $-7$ is the same as $19$ modulo $26$. Check: $11 \cdot 19 = 209 = 8 \cdot 26 + 1$.'
+          - problem: 'Does $6$ have an inverse modulo $15$?'
+            answer: 'no'
+            answer_contract: {"kind":"label","options":[["yes","it does","it has an inverse","there is one","yes, it does"],["no","it does not","it has no inverse","there is none","no inverse","no, it does not"]]}
+            solution_sketch: 'An inverse of $6$ modulo $15$ exists only when $\gcd(6, 15) = 1$. Here $\gcd(6, 15) = 3$, so every multiple $6x$ is a multiple of $3$ modulo $15$ and can never equal $1$. So there is no inverse, and the answer is no.'
+        constraints: 'gcd(a,m) = 1 except one verdict item; moduli 7-40; the inverse is asked in a stated range'
       - id: kp3
-        name: "Solving by multiplying by the inverse"
+        name: 'Solving by multiplying by the inverse'
         key_prerequisites: [euclidean-algorithm, modular-arithmetic]
+        step_check:
+          step: 'Multiply both sides by the inverse'
+          question: 'Why does multiplying both sides of $7x \equiv 3 \pmod{26}$ by the inverse of $7$ give $x$?'
+          options:
+            - 'The inverse of $7$ is added to both sides, which removes the $7$'
+            - 'The inverse times $7$ is $1$ modulo $26$, so $7x$ becomes $x$'
+            - 'The inverse is a multiple of $26$, so it cancels the modulus'
+            - 'Multiplying makes the right side smaller, which leaves only $x$'
+          answer: 'The inverse times $7$ is $1$ modulo $26$, so $7x$ becomes $x$'
+          why: 'The inverse $15$ satisfies $15 \cdot 7 \equiv 1 \pmod{26}$, so $15 \cdot 7x \equiv x$ on the left and the right side becomes $15 \cdot 3$.'
         exemplars:
-          - problem: 'Solve $7x \equiv 3 \pmod{26}$; give $x$ as the least nonnegative residue.'
-            answer: "19"
-            solution_sketch: '$7^{-1} \equiv 15 \pmod{26}$, so $x \equiv 15 \cdot 3 = 45 \equiv 19$. Check: $7 \cdot 19 = 133 = 5 \cdot 26 + 3$.'
-          - problem: 'Solve $5x \equiv 7 \pmod{12}$; give $x$ as the least nonnegative residue.'
-            answer: "11"
-            solution_sketch: '$5^{-1} \equiv 5$, so $x \equiv 5 \cdot 7 = 35 \equiv 11 \pmod{12}$. Check: $55 = 4 \cdot 12 + 7$.'
-          - problem: "A linear congruence says that 87x is congruent to 14 modulo 163, that is 87x - 14 = 163k for some integer k. Find the least nonnegative residue x."
-            answer: "47"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Full object: solve 87x congruent to 14 modulo 163. Step 1 (Euclidean algorithm): 163 = 1*87 + 76, 87 = 1*76 + 11, 76 = 6*11 + 10, 11 = 1*10 + 1; back-substitution gives 1 = 15*87 - 8*163, so the inverse of 87 modulo 163 is 15. Step 2 (multiply by the inverse): x = 15*14 = 210 = 163 + 47, so x = 47. Check: 87*47 = 4089 = 25*163 + 14. The least nonnegative residue is 47."
-          - problem: "A cipher works modulo 251: it replaces a message number t with the remainder of 144t on division by 251. One message turned into 97. Find the original number t as the least nonnegative residue."
-            answer: "107"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Decryption solves 144t congruent to 97 modulo 251; gcd(144, 251) = 1, so 144 is invertible. Step 1 (Euclidean algorithm): 251 = 1*144 + 107, 144 = 1*107 + 37, 107 = 2*37 + 33, 37 = 1*33 + 4, 33 = 8*4 + 1; back-substitution gives 1 = 35*251 - 61*144, so the inverse of 144 modulo 251 is 190. Step 2 (multiply by the inverse): t = 190*97 = 18430 = 73*251 + 107. Check: 144*107 = 15408 = 61*251 + 97. The least nonnegative residue is 107."
-          - problem: "The modular inverse of 205 modulo 306 is the least nonnegative a with 205a congruent to 1 modulo 306, that is 205a - 1 = 306k for some integer k. Find a."
-            answer: "103"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Full object: solve 205a congruent to 1 modulo 306. Step 1 (Euclidean algorithm and Bezout): 306 = 1*205 + 101, 205 = 2*101 + 3, 101 = 33*3 + 2, 3 = 1*2 + 1; back-substitution gives 1 = 103*205 - 69*306. Step 2 (read off the inverse): the coefficient of 205 is the inverse, so a = 103. Check: 205*103 = 21115 = 69*306 + 1. The least nonnegative residue is 103."
-          - problem: "Find the least nonnegative integer x with 178x congruent to 50 modulo 397; in other words, 397 divides 178x - 50. Give x as the least nonnegative residue."
-            answer: "259"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Full object: solve 178x congruent to 50 modulo 397. Step 1 (Euclidean algorithm): 397 = 2*178 + 41, 178 = 4*41 + 14, 41 = 2*14 + 13, 14 = 1*13 + 1; back-substitution gives 1 = 29*178 - 13*397, so the inverse of 178 modulo 397 is 29. Step 2 (multiply by the inverse): x = 29*50 = 1450 = 3*397 + 259, so x = 259. Check: 178*259 = 46102 = 116*397 + 50. The least nonnegative residue is 259."
-        constraints: "coefficient invertible mod m; unique answer as least nonnegative residue with a check"
+          - problem: 'Solve $7x \equiv 3 \pmod{26}$ for $x$ with $0 \le x < 26$.'
+            answer: '19'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'First find the inverse of $7$ modulo $26$. Euclid: $26 = 3 \cdot 7 + 5$, $7 = 1 \cdot 5 + 2$, $5 = 2 \cdot 2 + 1$, $2 = 2 \cdot 1 + 0$, and back-substitution gives $1 = -11 \cdot 7 + 3 \cdot 26$, so the inverse of $7$ is $15$ modulo $26$. Multiply both sides by it: $x \equiv 15 \cdot 3 = 45 \equiv 19 \pmod{26}$. Check: $7 \cdot 19 = 133 = 5 \cdot 26 + 3$.'
+          - problem: 'Solve $5x \equiv 7 \pmod{12}$ for $x$ with $0 \le x < 12$.'
+            answer: '11'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'First find the inverse of $5$ modulo $12$. Euclid: $12 = 2 \cdot 5 + 2$, $5 = 2 \cdot 2 + 1$, $2 = 2 \cdot 1 + 0$, and back-substitution gives $1 = 5 \cdot 5 - 2 \cdot 12$, so the inverse of $5$ is $5$ modulo $12$. Multiply both sides by it: $x \equiv 5 \cdot 7 = 35 \equiv 11 \pmod{12}$. Check: $5 \cdot 11 = 55 = 4 \cdot 12 + 7$.'
+          - problem: 'Find the solution of $87x \equiv 14 \pmod{163}$ with $0 \le x < 163$.'
+            answer: '47'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'First find the inverse of $87$ modulo $163$. Euclid: $163 = 1 \cdot 87 + 76$, $87 = 1 \cdot 76 + 11$, $76 = 6 \cdot 11 + 10$, $11 = 1 \cdot 10 + 1$, $10 = 10 \cdot 1 + 0$, and back-substitution gives $1 = 15 \cdot 87 - 8 \cdot 163$, so the inverse of $87$ is $15$ modulo $163$. Multiply both sides by it: $x \equiv 15 \cdot 14 = 210 \equiv 47 \pmod{163}$. Check: $87 \cdot 47 = 4089 = 25 \cdot 163 + 14$.'
+          - problem: 'A cipher works modulo $251$. It replaces a message number $t$, with $0 \le t < 251$, by the remainder of $144t$ on division by $251$. One message turned into $97$. What was the original number $t$?'
+            answer: '107'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'First find the inverse of $144$ modulo $251$. Euclid: $251 = 1 \cdot 144 + 107$, $144 = 1 \cdot 107 + 37$, $107 = 2 \cdot 37 + 33$, $37 = 1 \cdot 33 + 4$, $33 = 8 \cdot 4 + 1$, $4 = 4 \cdot 1 + 0$, and back-substitution gives $1 = 35 \cdot 251 - 61 \cdot 144$, so the inverse of $144$ is $190$ modulo $251$. Multiply both sides by it: $x \equiv 190 \cdot 97 = 18430 \equiv 107 \pmod{251}$. Check: $144 \cdot 107 = 15408 = 61 \cdot 251 + 97$.'
+          - problem: 'A token starts on square $0$ of a circular board with $16$ squares, numbered $0$ to $15$. Each turn it moves $5$ squares forward, wrapping around. What is the smallest positive number of turns after which it lands on square $9$?'
+            answer: '5'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'First find the inverse of $5$ modulo $16$. Euclid: $16 = 3 \cdot 5 + 1$, $5 = 5 \cdot 1 + 0$, and back-substitution gives $1 = 16 - 3 \cdot 5$, so the inverse of $5$ is $13$ modulo $16$. Multiply both sides by it: $x \equiv 13 \cdot 9 = 117 \equiv 5 \pmod{16}$. Check: $5 \cdot 5 = 25 = 1 \cdot 16 + 9$.'
+          - problem: 'What is the least nonnegative solution of $178x \equiv 50 \pmod{397}$?'
+            answer: '259'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'First find the inverse of $178$ modulo $397$. Euclid: $397 = 2 \cdot 178 + 41$, $178 = 4 \cdot 41 + 14$, $41 = 2 \cdot 14 + 13$, $14 = 1 \cdot 13 + 1$, $13 = 13 \cdot 1 + 0$, and back-substitution gives $1 = 29 \cdot 178 - 13 \cdot 397$, so the inverse of $178$ is $29$ modulo $397$. Multiply both sides by it: $x \equiv 29 \cdot 50 = 1450 \equiv 259 \pmod{397}$. Check: $178 \cdot 259 = 46102 = 116 \cdot 397 + 50$.'
+          - problem: 'Find $x$ with $0 \le x < 11$ and $3x + 4 \equiv 2 \pmod{11}$.'
+            answer: '3'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Subtract $4$ from both sides: $3x \equiv -2 \equiv 9 \pmod{11}$. Since $\gcd(3, 11) = 1$ and $3 \cdot 4 = 12 \equiv 1$, the inverse of $3$ is $4$, so $x \equiv 4 \cdot 9 = 36 \equiv 3$. Check: $3 \cdot 3 + 4 = 13 \equiv 2 \pmod{11}$.'
+          - problem: 'Maya solves $3x \equiv 5 \pmod 7$ and writes $x \equiv 5/3$. A fraction is not a residue. What is the least nonnegative solution?'
+            answer: '4'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Division by $3$ means multiplication by the inverse of $3$ modulo $7$. Since $3 \cdot 5 = 15 \equiv 1$, the inverse is $5$, so $x \equiv 5 \cdot 5 = 25 \equiv 4 \pmod 7$. Check: $3 \cdot 4 = 12 \equiv 5 \pmod 7$.'
+        constraints: 'coefficient invertible mod m; unique answer as least nonnegative residue; include contexts'
     diagnostic_exemplar:
-      problem: 'Solve $3x \equiv 4 \pmod 7$; give $x$ as the least nonnegative residue.'
-      answer: "6"
+      problem: 'Find the solution of $3x \equiv 4 \pmod 7$ with $0 \le x < 7$.'
+      answer: '6'
+      answer_contract: {"kind":"exact"}
       solution_sketch: '$3 \cdot 5 = 15 \equiv 1$, so $3^{-1} \equiv 5$ and $x \equiv 5 \cdot 4 = 20 \equiv 6$. Check: $3 \cdot 6 = 18 \equiv 4 \pmod 7$.'
     anki_seeds:
       - front: '$ax \equiv b \pmod m$ is solvable iff...'
@@ -435,59 +654,108 @@ topics:
       - id: kp1
         name: "Two congruences with coprime moduli"
         key_prerequisites: [linear-congruences]
+        try_first:
+          problem: 'Which positive number below $12$ leaves remainder $2$ when divided by $3$ and remainder $1$ when divided by $4$?'
+          answer_contract: {"kind":"exact"}
+          answer: '5'
+          reveal: 'It is $5$: the numbers $2, 5, 8, 11$ leave remainder $2$ on division by $3$, and only $5$ leaves remainder $1$ on division by $4$. Listing gets slow for large moduli. A faster method writes $x = 4k + 1$ and substitutes it into the other congruence.'
+        step_check:
+          step: 'Write $x = 5k + 3$'
+          question: 'Why can every solution of $x \equiv 3 \pmod 5$ be written as $x = 5k + 3$?'
+          options:
+            - 'Because $x$ must be a multiple of $5$ and then $3$ is added on top'
+            - 'Because the remainder $3$ is the modulus of the other congruence'
+            - 'Because $x - 3$ is a multiple of $5$, so $x = 3 + 5k$'
+            - 'Because $k$ counts how many solutions lie below the number $5$'
+          answer: 'Because $x - 3$ is a multiple of $5$, so $x = 3 + 5k$'
+          why: '$x \equiv 3 \pmod 5$ means $5$ divides $x - 3$, so $x - 3 = 5k$ for some integer $k$; this turns two congruences into one congruence for $k$.'
         exemplars:
-          - problem: 'Find the least nonnegative $x$ with $x \equiv 2 \pmod 3$ and $x \equiv 3 \pmod 5$ (the full solution class is unique mod $15$).'
+          - problem: 'Find the least nonnegative $x$ with $x \equiv 2 \pmod 3$ and $x \equiv 3 \pmod 5$.'
             answer: '8'
-            solution_sketch: 'Write $x = 5k + 3$; then $5k + 3 \equiv 2 \pmod 3$ gives $2k \equiv 2$, so $k \equiv 1 \pmod 3$. Thus $x = 5(3j + 1) + 3 = 15j + 8$. Check: $8 \bmod 3 = 2$, $8 \bmod 5 = 3$.'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Write $x = 5k + 3$ from the second congruence. Then $5k + 3 \equiv 2 \pmod 3$ gives $2k \equiv 2 \pmod 3$, so $k \equiv 1 \pmod 3$ and $x = 5 \cdot 1 + 3 = 8$. Check: $8 = 2 \cdot 3 + 2$ and $8 = 1 \cdot 5 + 3$.'
           - problem: 'Find the smallest positive $x$ with $x \equiv 0 \pmod 7$ and $x \equiv 1 \pmod 4$.'
-            answer: "21"
-            solution_sketch: 'Check multiples of $7$ mod $4$: $7 \equiv 3$, $14 \equiv 2$, $21 \equiv 1$. So $x \equiv 21 \pmod{28}$.'
-          - problem: "Find the least nonnegative $x$ with $x \\equiv 1 \\pmod 5$ and $x \\equiv 2 \\pmod 7$."
-            answer: "16"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Write $x = 5k + 1$ from the first congruence. Substitute into the second: $5k + 1 \\equiv 2 \\pmod 7$, so $5k \\equiv 1 \\pmod 7$. Multiply by the inverse $3$: $k \\equiv 3 \\pmod 7$. Thus $x = 5(3) + 1 = 16$. Check: $16 \\bmod 5 = 1$ and $16 \\bmod 7 = 2$. The least nonnegative solution is 16."
-          - problem: "Find the least nonnegative $x$ with $x \\equiv 3 \\pmod 4$ and $x \\equiv 4 \\pmod 9$."
-            answer: "31"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Write $x = 4k + 3$ from the first congruence. Substitute into the second: $4k + 3 \\equiv 4 \\pmod 9$, so $4k \\equiv 1 \\pmod 9$. The inverse of $4$ modulo $9$ is $7$, so $k \\equiv 7 \\pmod 9$. Then $x = 4(7) + 3 = 31$. Check: $31 \\bmod 4 = 3$ and $31 \\bmod 9 = 4$. The least nonnegative solution is 31."
-          - problem: "A number leaves remainder $2$ when divided by $5$ and remainder $4$ when divided by $7$. Find the smallest positive such number."
-            answer: "32"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Let $x$ be the number, so $x \\equiv 2 \\pmod 5$ and $x \\equiv 4 \\pmod 7$. Write $x = 5k + 2$. Substitute: $5k + 2 \\equiv 4 \\pmod 7$, so $5k \\equiv 2 \\pmod 7$. The inverse of $5$ modulo $7$ is $3$, so $k \\equiv 6 \\pmod 7$. Then $x = 5(6) + 2 = 32$. Check: $32 \\bmod 5 = 2$ and $32 \\bmod 7 = 4$. The smallest positive such number is 32."
-          - problem: "Find the least nonnegative $x$ with $x \\equiv 5 \\pmod 9$ and $x \\equiv 1 \\pmod{11}$."
-            answer: "23"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Write $x = 9k + 5$ from the first congruence. Substitute into the second: $9k + 5 \\equiv 1 \\pmod{11}$, so $9k \\equiv 7 \\pmod{11}$. The inverse of $9$ modulo $11$ is $5$, so $k \\equiv 35 \\equiv 2 \\pmod{11}$. Then $x = 9(2) + 5 = 23$. Check: $23 \\bmod 9 = 5$ and $23 \\bmod{11} = 1$. The least nonnegative solution is 23."
-        constraints: "pairwise coprime moduli, each <= 13; answer as the unique residue mod the product plus a verification; the item must test THIS KP: Two congruences with coprime moduli"
+            answer: '21'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The first congruence says that $x$ is a multiple of $7$, so try $7, 14, 21, \dots$. These leave remainders $3, 2, 1$ on division by $4$, so the first match is $21$. The solutions repeat every $28$, so $21$ is the smallest positive one.'
+          - problem: 'A basket holds fewer than $35$ eggs. Counted in fives, $1$ egg is left over; counted in sevens, $2$ eggs are left over. How many eggs are in the basket?'
+            answer: '16'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Counting in fives with $1$ left over means $x = 5k + 1$. Then $5k + 1 \equiv 2 \pmod 7$ gives $5k \equiv 1 \pmod 7$, and since $5 \cdot 3 = 15 \equiv 1$, we get $k \equiv 3 \pmod 7$. So $x = 5 \cdot 3 + 1 = 16$, the only possibility below $35$.'
+          - problem: 'Find the least nonnegative $x$ with $x \equiv 3 \pmod 4$ and $x \equiv 4 \pmod 9$.'
+            answer: '31'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Write $x = 4k + 3$ from the first congruence. Then $4k + 3 \equiv 4 \pmod 9$ gives $4k \equiv 1 \pmod 9$. The inverse of $4$ modulo $9$ is $7$, so $k \equiv 7 \pmod 9$ and $x = 4 \cdot 7 + 3 = 31$. Check: $31 = 7 \cdot 4 + 3 = 3 \cdot 9 + 4$.'
+          - problem: 'A librarian puts books in stacks of $9$ and has $5$ books left over. With stacks of $11$ she has $1$ book left over. What is the least number of books she could have?'
+            answer: '23'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Let $x$ be the number of books, so $x \equiv 5 \pmod 9$ and $x \equiv 1 \pmod{11}$. Write $x = 9k + 5$; then $9k \equiv -4 \equiv 7 \pmod{11}$, and the inverse of $9$ modulo $11$ is $5$, so $k \equiv 35 \equiv 2 \pmod{11}$. Hence $x = 9 \cdot 2 + 5 = 23$.'
+          - problem: 'Find all integers $x$ with $0 \le x \le 200$ such that $x \equiv 3 \pmod 8$ and $x \equiv 5 \pmod{11}$.'
+            answer: '27, 115'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Write $x = 8k + 3$; then $8k + 3 \equiv 5 \pmod{11}$ gives $8k \equiv 2 \pmod{11}$. Since $8 \cdot 7 = 56 \equiv 1$, $k \equiv 14 \equiv 3 \pmod{11}$, so the first solution is $x = 27$. Solutions repeat every $88$, which gives $27$ and $115$; the next one, $203$, is above $200$.'
+          - problem: 'Sam claims that $x = 18$ solves both $x \equiv 2 \pmod 4$ and $x \equiv 3 \pmod 7$. What is the least positive solution of the system?'
+            answer: '10'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Sam checked only the first congruence: $18 = 2 \cdot 7 + 4$ leaves remainder $4$ on division by $7$, not $3$. Write $x = 7k + 3$, which gives $3, 10, 17, \dots$. Since $10 \equiv 2 \pmod 4$, the least positive solution is $10$.'
+          - problem: 'How many integers $x$ with $1 \le x \le 500$ satisfy both $x \equiv 2 \pmod 7$ and $x \equiv 5 \pmod 9$?'
+            answer: '8'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The moduli $7$ and $9$ are coprime, so the system has exactly one solution modulo $63$, namely $x \equiv 23 \pmod{63}$. The solutions in range are $23, 86, \dots, 464$, that is $23 + 63k$ for $k = 0, 1, \dots, 7$. The next one, $527$, is above $500$, so there are $8$ solutions.'
+        constraints: 'pairwise coprime moduli, each <= 13; the answer is the unique residue mod the product, asked as the least nonnegative or smallest positive solution, a solution list in a range, or a count of solutions in a range; the item must test THIS KP: Two congruences with coprime moduli'
       - id: kp2
         name: "Systems of congruences; uniqueness mod the product"
         key_prerequisites: [linear-congruences]
+        step_check:
+          step: 'Multiply both sides by the modular inverse of $3$ modulo $4$, which is $3$'
+          question: 'Why do we multiply $3k \equiv 1 \pmod 4$ by $3$ to solve for $k$?'
+          options:
+            - 'Because $3$ is the modulus of the first congruence in this system'
+            - 'Because $3 \cdot 3 = 9 \equiv 1 \pmod 4$, so $3$ turns $3k$ into $k$'
+            - 'Because multiplying by $3$ also changes the modulus from $4$ to $12$ here'
+            - 'Because both sides of any congruence may be divided by $3$ freely'
+          answer: 'Because $3 \cdot 3 = 9 \equiv 1 \pmod 4$, so $3$ turns $3k$ into $k$'
+          why: '$3 \cdot 3 = 9 = 2 \cdot 4 + 1$, so $3$ is the inverse of $3$ modulo $4$: multiplying by it leaves $k \equiv 3 \cdot 1 = 3 \pmod 4$.'
         exemplars:
-          - problem: 'Solve the system $x \equiv 1 \pmod 2$, $x \equiv 2 \pmod 3$, $x \equiv 3 \pmod 5$; give the least nonnegative solution.'
+          - problem: 'Find the least nonnegative solution of the system $x \equiv 1 \pmod 2$, $x \equiv 2 \pmod 3$, $x \equiv 3 \pmod 5$.'
             answer: '23'
-            solution_sketch: 'From the last two: $x \equiv 8 \pmod{15}$ (i.e. $x \in \{8, 23\}$ mod $30$). Oddness picks $23$. Check: $23 = 11 \cdot 2 + 1 = 7 \cdot 3 + 2 = 4 \cdot 5 + 3$.'
-          - problem: 'A number of soldiers leaves remainder $3$ when lined up in rows of $4$ and remainder $1$ in rows of $5$. What is the smallest possible positive count?'
-            answer: "11"
-            solution_sketch: '$x \equiv 3 \pmod 4$ and $x \equiv 1 \pmod 5$: candidates $1, 6, 11, \dots$; $11 \equiv 3 \pmod 4$. So $x \equiv 11 \pmod{20}$, smallest positive is $11$.'
-          - problem: "Solve the system $x \\equiv 1 \\pmod 3$, $x \\equiv 4 \\pmod 5$, $x \\equiv 3 \\pmod 7$. Give the least nonnegative solution."
-            answer: "94"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "First combine $x \\equiv 1 \\pmod 3$ and $x \\equiv 4 \\pmod 5$: write $x = 1 + 3k$, then $3k \\equiv 3 \\pmod 5$, so $k \\equiv 1 \\pmod 5$ by modular inverse, giving $x \\equiv 4 \\pmod{15}$. Now combine with the third congruence: $x = 4 + 15m \\equiv 3 \\pmod 7$, so $15m \\equiv 6 \\pmod 7$; since $15 \\equiv 1 \\pmod 7$, $m \\equiv 6 \\pmod 7$. Thus $x = 4 + 15 \\cdot 6 = 94$ modulo $105$, and verification gives $94 \\equiv 1 \\pmod 3$, $4 \\pmod 5$, $3 \\pmod 7$. The least nonnegative solution is 94."
-          - problem: "Solve the system $x \\equiv 2 \\pmod 3$, $x \\equiv 3 \\pmod 4$, $x \\equiv 4 \\pmod 5$. Give the least positive integer solution."
-            answer: "59"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "First combine $x \\equiv 2 \\pmod 3$ and $x \\equiv 3 \\pmod 4$: write $x = 2 + 3k$, then $3k \\equiv 1 \\pmod 4$, so $k \\equiv 3 \\pmod 4$ by modular inverse, giving $x \\equiv 11 \\pmod{12}$. Combine with $x \\equiv 4 \\pmod 5$: $x = 11 + 12m \\equiv 4 \\pmod 5$, so $12m \\equiv 3 \\pmod 5$; since $12 \\equiv 2 \\pmod 5$, $m \\equiv 4 \\pmod 5$. Thus $x = 11 + 12 \\cdot 4 = 59$ modulo 60, and $59 \\equiv 2 \\pmod 3$, $3 \\pmod 4$, $4 \\pmod 5$. The least positive solution is 59."
-          - problem: "A pile of stones has remainder 1 when grouped in pairs, remainder 2 when grouped in fives, and remainder 3 when grouped in sevens. What is the least positive number of stones?"
-            answer: "17"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Translate to congruences: $x \\equiv 1 \\pmod 2$, $x \\equiv 2 \\pmod 5$, $x \\equiv 3 \\pmod 7$. First combine $x \\equiv 1 \\pmod 2$ and $x \\equiv 2 \\pmod 5$: write $x = 1 + 2k$, then $2k \\equiv 1 \\pmod 5$, so $k \\equiv 3 \\pmod 5$, giving $x \\equiv 7 \\pmod{10}$. Combine with the third: $x = 7 + 10m \\equiv 3 \\pmod 7$, so $10m \\equiv 3 \\pmod 7$; since $10 \\equiv 3 \\pmod 7$, $3m \\equiv 3$, so $m \\equiv 1 \\pmod 7$. Thus $x = 7 + 10 \\cdot 1 = 17$ modulo 70, and $17 \\equiv 1 \\pmod 2$, $2 \\pmod 5$, $3 \\pmod 7$. The least positive number of stones is 17."
-          - problem: "Solve the system $x \\equiv 5 \\pmod 7$, $x \\equiv 8 \\pmod 9$. Give the least nonnegative solution."
-            answer: "26"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Substitute $x = 5 + 7k$ into the second congruence: $5 + 7k \\equiv 8 \\pmod 9$, so $7k \\equiv 3 \\pmod 9$. The modular inverse of 7 modulo 9 is 4 because $7 \\cdot 4 = 28 \\equiv 1 \\pmod 9$, so $k \\equiv 12 \\equiv 3 \\pmod 9$. Then $x = 5 + 7 \\cdot 3 = 26$ modulo 63, and $26 \\equiv 5 \\pmod 7$, $8 \\pmod 9$. The least nonnegative solution is 26."
-        constraints: "2-3 congruences, moduli pairwise coprime with product <= 120; solve iteratively (substitution), always verify"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The last two congruences give $x \equiv 8 \pmod{15}$, so $x$ is one of $8, 23, 38, \dots$. Only odd values satisfy $x \equiv 1 \pmod 2$, and the first odd one is $23$. Check: $23 = 11 \cdot 2 + 1 = 7 \cdot 3 + 2 = 4 \cdot 5 + 3$.'
+          - problem: 'A number of soldiers leaves remainder $3$ when lined up in rows of $4$ and remainder $1$ when lined up in rows of $5$. What is the smallest possible positive number of soldiers?'
+            answer: '11'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'We need $x \equiv 3 \pmod 4$ and $x \equiv 1 \pmod 5$. The numbers $1, 6, 11, \dots$ leave remainder $1$ on division by $5$, and $11 \equiv 3 \pmod 4$. So $x \equiv 11 \pmod{20}$ and the smallest positive number is $11$.'
+          - problem: 'Find the least nonnegative solution of the system $x \equiv 1 \pmod 3$, $x \equiv 4 \pmod 5$, $x \equiv 3 \pmod 7$.'
+            answer: '94'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Combine the first two: $x = 1 + 3k$ gives $3k \equiv 3 \pmod 5$, so $k \equiv 1 \pmod 5$ and $x \equiv 4 \pmod{15}$. Now $x = 4 + 15m \equiv 3 \pmod 7$ gives $m \equiv 6 \pmod 7$, since $15 \equiv 1 \pmod 7$. So $x = 4 + 15 \cdot 6 = 94$, unique modulo $105$.'
+          - problem: 'Find the least positive solution of the system $x \equiv 2 \pmod 3$, $x \equiv 3 \pmod 4$, $x \equiv 4 \pmod 5$.'
+            answer: '59'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Combine the first two: $x = 2 + 3k$ gives $3k \equiv 1 \pmod 4$, so $k \equiv 3 \pmod 4$ and $x \equiv 11 \pmod{12}$. Then $x = 11 + 12m \equiv 4 \pmod 5$ gives $2m \equiv 3 \pmod 5$, so $m \equiv 4 \pmod 5$. Hence $x = 11 + 12 \cdot 4 = 59$, unique modulo $60$.'
+          - problem: 'A pile of stones leaves remainder $1$ when grouped in pairs, remainder $2$ when grouped in fives, and remainder $3$ when grouped in sevens. What is the least positive number of stones?'
+            answer: '17'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The conditions are $x \equiv 1 \pmod 2$, $x \equiv 2 \pmod 5$, $x \equiv 3 \pmod 7$. The first two give $x \equiv 7 \pmod{10}$. Then $x = 7 + 10m \equiv 3 \pmod 7$ gives $3m \equiv 3$, so $m \equiv 1 \pmod 7$ and $x = 17$, unique modulo $70$.'
+          - problem: 'Find the least nonnegative solution of the system $x \equiv 3 \pmod 4$, $x \equiv 2 \pmod 5$, $x \equiv 6 \pmod 7$.'
+            answer: '27'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The first two give $x \equiv 7 \pmod{20}$, so $x = 7 + 20k$. Then $7 + 20k \equiv 6 \pmod 7$ gives $6k \equiv 6$, so $k \equiv 1 \pmod 7$ and $x = 27$. Check: $27 = 6 \cdot 4 + 3 = 5 \cdot 5 + 2 = 3 \cdot 7 + 6$, and the solution is unique modulo $140$.'
+          - problem: 'The number $58$ solves the system $x \equiv 1 \pmod 3$, $x \equiv 2 \pmod 4$, $x \equiv 3 \pmod 5$. What is the next larger solution?'
+            answer: '118'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The moduli $3, 4, 5$ are pairwise coprime, so the solutions of the system are exactly the numbers congruent to $58$ modulo $3 \cdot 4 \cdot 5 = 60$. The next larger solution is therefore $58 + 60 = 118$.'
+          - problem: 'A school has between $1000$ and $1100$ students. Seated in rows of $3$, $2$ students are left over; in rows of $5$, $3$ are left over; in rows of $7$, $2$ are left over. How many students does the school have?'
+            answer: '1073'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The conditions are $x \equiv 2 \pmod 3$, $x \equiv 3 \pmod 5$, $x \equiv 2 \pmod 7$. The first two give $x \equiv 8 \pmod{15}$, and $x = 8 + 15m \equiv 2 \pmod 7$ gives $m \equiv 1 \pmod 7$, so $x \equiv 23 \pmod{105}$. The only number in that class between $1000$ and $1100$ is $23 + 105 \cdot 10 = 1073$.'
+          - problem: 'Does the system $x \equiv 1 \pmod 4$, $x \equiv 2 \pmod 6$ have an integer solution?'
+            answer: 'no'
+            answer_contract: {"kind":"label","options":[["yes","it does","has a solution","it has a solution","there is a solution","yes, it does"],["no","it does not","no solution","it does not have a solution","there is no solution","no, it does not","no, there is no solution"]]}
+            solution_sketch: 'The first congruence says $x = 4k + 1$, so $x$ is odd. The second says $x = 6j + 2$, so $x$ is even. No integer is both, so the system has no solution; this is why the Chinese remainder theorem needs coprime moduli.'
+        constraints: '2-3 congruences, moduli pairwise coprime with product <= 120 (one verdict item may use moduli that are not coprime to show why the hypothesis is needed); solve iteratively (substitution), always verify'
     diagnostic_exemplar:
-      problem: 'Solve the system $x \equiv 1 \pmod 3$, $x \equiv 2 \pmod 5$, $x \equiv 0 \pmod 4$: give the smallest positive solution.'
+      problem: 'Find the smallest positive solution of the system $x \equiv 1 \pmod 3$, $x \equiv 2 \pmod 5$, $x \equiv 0 \pmod 4$.'
       answer: '52'
       solution_sketch: '$x \equiv 0 \pmod 4$ with $x \equiv 2 \pmod 5$ gives $x \equiv 12 \pmod{20}$; of $12, 32, 52$, only $52 \equiv 1 \pmod 3$. Unique mod $60$.'
     anki_seeds:
@@ -519,83 +787,161 @@ topics:
       - id: kp1
         name: "Fermat's little theorem: reducing huge exponents mod p"
         key_prerequisites: [modular-arithmetic, prime-factorization]
+        try_first:
+          problem: 'What is the remainder when $3^{10}$ is divided by $11$?'
+          answer_contract: {"kind":"exact"}
+          answer: '1'
+          reveal: 'It is $1$, since $3^5 = 243 = 22 \cdot 11 + 1$. This is no accident: for a prime $p$ that does not divide $a$, $a^{p-1} \equiv 1 \pmod p$, and this lets us shrink huge exponents.'
+        step_check:
+          step: 'Reduce the exponent: $200 = 12 \cdot 16 + 8$'
+          question: 'Why can the exponent $200$ be replaced by the remainder $8$ in $5^{200} \bmod 13$?'
+          options:
+            - 'Because exponents are always reduced modulo the base $5$ itself'
+            - 'Because dividing the exponent by $12$ also divides the power by $12$'
+            - 'Because the exponent is reduced modulo the modulus $13$, like the base'
+            - 'Because $5^{12} \equiv 1$, each block of $12$ factors drops out'
+          answer: 'Because $5^{12} \equiv 1$, each block of $12$ factors drops out'
+          why: '$5^{200} = (5^{12})^{16} \cdot 5^8 \equiv 1^{16} \cdot 5^8 \pmod{13}$, so only the remainder $200 - 192 = 8$ of the exponent matters.'
         exemplars:
-          - problem: 'Compute $2^{100} \bmod 7$.'
-            answer: "2"
-            solution_sketch: 'By Fermat, $2^6 \equiv 1 \pmod 7$. $100 = 6 \cdot 16 + 4$, so $2^{100} \equiv 2^4 = 16 \equiv 2$.'
+          - problem: 'Find the remainder when $2^{100}$ is divided by $7$.'
+            answer: '2'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'By Fermat, $2^6 \equiv 1 \pmod 7$. Since $100 = 6 \cdot 16 + 4$, we get $2^{100} \equiv 2^4 = 16 \equiv 2 \pmod 7$, so the remainder is $2$.'
           - problem: 'Compute $3^{53} \bmod 11$.'
-            answer: "5"
-            solution_sketch: 'By Fermat, $3^{10} \equiv 1 \pmod{11}$, and $53 = 10 \cdot 5 + 3$, so $3^{53} \equiv 3^3 = 27 = 2 \cdot 11 + 5 \equiv 5$.'
-          - problem: "Find the least nonnegative residue of $4^{129}$ modulo $17$."
-            answer: "4"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "We evaluate $4^{129}\\pmod{17}$. Step 1 (Fermat's little theorem): since 17 is prime and 17 does not divide 4, $4^{16}\\equiv1\\pmod{17}$. Step 2 (reduce the exponent modulo p-1): $129 = 16\\cdot8 + 1$, so $4^{129}\\equiv4^1\\pmod{17}$. The least nonnegative residue is 4."
-          - problem: "Find the remainder when $8^{333}$ is divided by $19$."
-            answer: "18"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "We evaluate $8^{333}\\pmod{19}$. Step 1 (Fermat's little theorem): since 19 is prime and 19 does not divide 8, $8^{18}\\equiv1\\pmod{19}$. Step 2 (reduce the exponent modulo p-1): $333 = 18\\cdot18 + 9$, so $8^{333}\\equiv8^9\\pmod{19}$. Step 3 (repeated squaring): $8^2\\equiv7$, $8^4\\equiv11$, $8^8\\equiv7$; thus $8^9=8^8\\cdot8\\equiv7\\cdot8=56\\equiv18\\pmod{19}$. The remainder is 18."
-          - problem: "A device changes state on a $17$-hour cycle. Its state after $6^{430}$ hours is the remainder of $6^{430}$ modulo $17$. Find the remainder."
-            answer: "9"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "We evaluate $6^{430}\\pmod{17}$. Step 1 (Fermat's little theorem): since 17 is prime and 17 does not divide 6, $6^{16}\\equiv1\\pmod{17}$. Step 2 (reduce the exponent modulo p-1): $430 = 16\\cdot26 + 14$, so $6^{430}\\equiv6^{14}\\pmod{17}$. Step 3 (repeated squaring): $6^2\\equiv2$, $6^4\\equiv4$, $6^8\\equiv16$; then $6^{14}=6^8\\cdot6^4\\cdot6^2\\equiv16\\cdot4\\cdot2=128\\equiv9\\pmod{17}$. The remainder is 9."
-          - problem: "For the prime $13$, an exponent $E$ satisfies $2^E \\equiv 6 \\pmod{13}$ and $50 \\le E \\le 1000$. Find the smallest such exponent $E$."
-            answer: "53"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "We need the smallest $E$ with $50 \\le E \\le 1000$ and $2^E \\equiv 6 \\pmod{13}$. Step 1 (Fermat's little theorem/order check): since 13 is prime, $2^{12}\\equiv1\\pmod{13}$; checking powers gives $2^5\\equiv6\\pmod{13}$, and the period for base 2 is exactly 12. Step 2 (reduce exponent condition): therefore $2^E\\equiv2^5$ if and only if $E\\equiv5\\pmod{12}$. Step 3 (smallest in range): the eligible exponents are $5,17,29,41,53,\\ldots$. The first one at least 50 is 53. The smallest such exponent is 53."
-        constraints: "prime moduli <= 23, base not divisible by p, exponents 50-1000; reduce the exponent mod p-1; the item must test THIS KP: Fermat's little theorem: reducing huge exponents mod p"
+            answer: '5'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Fermat gives $3^{10} \equiv 1 \pmod{11}$, and $53 = 10 \cdot 5 + 3$, so $3^{53} \equiv 3^3 = 27 \pmod{11}$. Since $27 = 2 \cdot 11 + 5$, the remainder is $5$.'
+          - problem: 'Find the least nonnegative residue of $4^{129}$ modulo $17$.'
+            answer: '4'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Since $17$ is prime and does not divide $4$, Fermat gives $4^{16} \equiv 1 \pmod{17}$. Now $129 = 16 \cdot 8 + 1$, so $4^{129} \equiv 4^1 = 4 \pmod{17}$.'
+          - problem: 'Find the remainder when $8^{333}$ is divided by $19$.'
+            answer: '18'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Fermat gives $8^{18} \equiv 1 \pmod{19}$, and $333 = 18 \cdot 18 + 9$, so $8^{333} \equiv 8^9$. Squaring repeatedly, $8^2 \equiv 7$, $8^4 \equiv 11$, $8^8 \equiv 7$, so $8^9 \equiv 7 \cdot 8 = 56 \equiv 18 \pmod{19}$.'
+          - problem: 'A token on a ring of $13$ squares numbered $0$ to $12$ starts on square $0$ and moves forward $5^{150}$ squares. On which square does it stop?'
+            answer: '12'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The square is the remainder of $5^{150}$ on division by $13$. By Fermat $5^{12} \equiv 1$, and $150 = 12 \cdot 12 + 6$, so $5^{150} \equiv 5^6$. Since $5^2 = 25 \equiv -1$, we get $5^6 \equiv (-1)^3 = -1 \equiv 12 \pmod{13}$.'
+          - problem: 'A device repeats a $17$-hour cycle, so its position in the cycle after $h$ hours is the remainder of $h$ on division by $17$. Where in the cycle is it after $6^{430}$ hours?'
+            answer: '9'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'We need $6^{430} \bmod 17$. By Fermat $6^{16} \equiv 1$, and $430 = 16 \cdot 26 + 14$, so $6^{430} \equiv 6^{14}$. Squaring gives $6^2 \equiv 2$, $6^4 \equiv 4$, $6^8 \equiv 16$, so $6^{14} = 6^8 \cdot 6^4 \cdot 6^2 \equiv 16 \cdot 4 \cdot 2 = 128 \equiv 9 \pmod{17}$.'
+          - problem: 'Find the smallest exponent $E \ge 50$ for which $2^E \equiv 6 \pmod{13}$.'
+            answer: '53'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'By Fermat $2^{12} \equiv 1 \pmod{13}$, and checking small powers gives $2^5 = 32 \equiv 6$. The powers of $2$ repeat with period $12$, so $2^E \equiv 6$ exactly when $E \equiv 5 \pmod{12}$. The exponents $5, 17, 29, 41, 53, \dots$ include $53$ as the first one that is at least $50$.'
+          - problem: 'Sam finds $3^{100} \bmod 7$ by writing $3^{100} \equiv 3^{100 \bmod 7} = 3^2 = 9 \equiv 2$. What is the correct remainder of $3^{100}$ on division by $7$?'
+            answer: '4'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Sam reduced the exponent modulo $7$, but Fermat reduces it modulo $p - 1 = 6$. Since $100 = 6 \cdot 16 + 4$, $3^{100} \equiv 3^4 = 81 = 11 \cdot 7 + 4$, so the correct remainder is $4$.'
+          - problem: 'Is $7^{12} \equiv 1 \pmod{13}$?'
+            answer: 'yes'
+            answer_contract: {"kind":"label","options":[["yes","it is","true","yes it is","it is true","yes, it is"],["no","it is not","false","no it is not","it is false","no, it is not"]]}
+            solution_sketch: 'The number $13$ is prime and does not divide $7$, so Fermat applies. The exponent $12 = 13 - 1$ is exactly the one the theorem names, so $7^{12} \equiv 1 \pmod{13}$ is true.'
+        constraints: 'prime moduli <= 23, base not divisible by p, exponents 50-1000; reduce the exponent mod p-1; one error-analysis item and one verdict item allowed; the item must test THIS KP: Fermat''s little theorem: reducing huge exponents mod p'
       - id: kp2
         name: "Euler's phi function"
         key_prerequisites: [prime-factorization]
+        step_check:
+          step: 'Only the multiples of each prime factor share a factor with $n$'
+          question: 'Why does $\varphi(100) = 100\left(1 - \frac12\right)\left(1 - \frac15\right)$ use only the primes $2$ and $5$?'
+          options:
+            - 'Only multiples of $2$ or $5$ share a factor with $100$, so only they are removed'
+            - 'The exponents in $100 = 2^2 \cdot 5^2$ tell how many numbers are removed per prime'
+            - 'Each prime factor of $100$ removes exactly one number from the list from $1$ to $100$'
+            - 'Every prime below $100$ must be used, and the primes $2$ and $5$ come first'
+          answer: 'Only multiples of $2$ or $5$ share a factor with $100$, so only they are removed'
+          why: 'Half of the numbers from $1$ to $100$ are multiples of $2$ and a fifth are multiples of $5$; removing both leaves $100 \cdot \frac12 \cdot \frac45 = 40$ numbers coprime to $100$.'
         exemplars:
           - problem: 'Compute $\varphi(10)$.'
-            answer: "4"
-            solution_sketch: 'The units mod $10$ are $1, 3, 7, 9$. Or $\varphi(10) = 10(1 - \tfrac12)(1 - \tfrac15) = 4$.'
+            answer: '4'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The numbers from $1$ to $10$ that are coprime to $10$ are $1, 3, 7, 9$, so $\varphi(10) = 4$. The product formula agrees: $10 \cdot \frac12 \cdot \frac45 = 4$.'
           - problem: 'Compute $\varphi(45)$.'
-            answer: "24"
-            solution_sketch: '$45 = 3^2 \cdot 5$, so $\varphi(45) = 45(1 - \tfrac13)(1 - \tfrac15) = 45 \cdot \tfrac23 \cdot \tfrac45 = 24$.'
+            answer: '24'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Factor $45 = 3^2 \cdot 5$. Then $\varphi(45) = 45 \left(1 - \frac13\right)\left(1 - \frac15\right) = 45 \cdot \frac23 \cdot \frac45 = 24$.'
           - problem: 'Compute $\varphi(100)$.'
-            answer: "40"
-            solution_sketch: '$100 = 2^2 \cdot 5^2$: $\varphi(100) = 100 \cdot \tfrac12 \cdot \tfrac45 = 40$.'
-          - problem: "Compute the value of Euler's totient function at 28."
-            answer: "12"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "For n = 28, factor 28 = 2^2 * 7. Step 1: prime factorization by trial division. Step 2: product formula for Euler's totient gives 28 * (1 - 1/2) * (1 - 1/7). Step 3: simplify 28 * 1/2 * 6/7 = 12. The value is 12."
-          - problem: "Compute the value of Euler's totient function at 175."
-            answer: "120"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "For n = 175, factor 175 = 5^2 * 7. Step 1: prime factorization. Step 2: product formula for Euler's totient gives 175 * (1 - 1/5) * (1 - 1/7). Step 3: simplify 175 * 4/5 * 6/7 = 120. The value is 120."
-          - problem: "A number has the form n = 2^3 * p with p an odd prime. Its totient is 24. Find p."
-            answer: "7"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Write n = 2^3 * p with p an odd prime. Step 1: apply prime factorization; since 8 and p are coprime, the totient of n is the totient of 8 times the totient of p. Step 2: use the product formula: the totient of 8 is 4 and the totient of p is p - 1, so the totient of n is 4(p - 1). Step 3: set 4(p - 1) = 24, giving p - 1 = 6, so p = 7. The value is 7."
-        constraints: "n <= 200 with at most two distinct prime factors; use the product formula"
+            answer: '40'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Factor $100 = 2^2 \cdot 5^2$, so the only primes that matter are $2$ and $5$. Then $\varphi(100) = 100 \cdot \frac12 \cdot \frac45 = 40$.'
+          - problem: 'Find $\varphi(28)$.'
+            answer: '12'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Factor $28 = 2^2 \cdot 7$, so the primes that matter are $2$ and $7$. Then $\varphi(28) = 28 \cdot \frac12 \cdot \frac67 = 12$.'
+          - problem: 'Find $\varphi(175)$.'
+            answer: '120'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Factor $175 = 5^2 \cdot 7$, so the primes that matter are $5$ and $7$. Then $\varphi(175) = 175 \cdot \frac45 \cdot \frac67 = 120$.'
+          - problem: 'The number $n = 2^3 p$, where $p$ is an odd prime, has $\varphi(n) = 24$. Find $p$.'
+            answer: '7'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Since $8$ and $p$ are coprime, $\varphi(n) = \varphi(8) \varphi(p) = 4(p - 1)$. Setting $4(p - 1) = 24$ gives $p - 1 = 6$, so $p = 7$.'
+          - problem: 'A pointer on a dial with $15$ marks, numbered $0$ to $14$, starts at mark $0$ and jumps forward $k$ marks at a time. For how many step sizes $k$ with $1 \le k \le 15$ does it eventually land on every mark?'
+            answer: '8'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The pointer visits every mark exactly when $\gcd(k, 15) = 1$. So we count the numbers from $1$ to $15$ coprime to $15 = 3 \cdot 5$, which is $\varphi(15) = 15 \cdot \frac23 \cdot \frac45 = 8$.'
+          - problem: 'How many of the numbers $1, 2, \dots, 50$ are coprime to $50$?'
+            answer: '20'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Since $50 = 2 \cdot 5^2$, a number is coprime to $50$ exactly when it is divisible by neither $2$ nor $5$. The count is $\varphi(50) = 50 \cdot \frac12 \cdot \frac45 = 20$.'
+        constraints: 'n <= 200 with at most two distinct prime factors; use the product formula; counting contexts must be exactly the count of numbers coprime to n'
       - id: kp3
         name: "Euler's theorem for composite moduli"
         key_prerequisites: [modular-arithmetic, prime-factorization]
+        step_check:
+          step: 'Apply Euler''s theorem: $9^{40} \equiv 1 \pmod{100}$'
+          question: 'Why does $9^{40} \equiv 1 \pmod{100}$ hold?'
+          options:
+            - 'Because $9^{40}$ is a multiple of $100$ whenever $9$ is odd'
+            - 'Because any exponent that is a multiple of $10$ gives the value $1$'
+            - 'Because $9$ and $100$ are coprime and $\varphi(100) = 40$'
+            - 'Because $40 = \varphi(100)$, so the theorem holds for every base'
+          answer: 'Because $9$ and $100$ are coprime and $\varphi(100) = 40$'
+          why: 'Euler: if $\gcd(a, n) = 1$ then $a^{\varphi(n)} \equiv 1 \pmod n$; here $\gcd(9, 100) = 1$ and $\varphi(100) = 40$.'
         exemplars:
-          - problem: 'Compute $3^{42} \bmod 100$ (the last two digits of $3^{42}$).'
-            answer: "9"
-            solution_sketch: '$\gcd(3, 100) = 1$ and $\varphi(100) = 40$, so $3^{40} \equiv 1 \pmod{100}$ and $3^{42} \equiv 3^2 = 9$ — last two digits $09$.'
+          - problem: 'Find the remainder when $3^{42}$ is divided by $100$.'
+            answer: '9'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Since $\gcd(3, 100) = 1$ and $\varphi(100) = 40$, Euler gives $3^{40} \equiv 1 \pmod{100}$. So $3^{42} \equiv 3^2 = 9$, and the remainder is $9$ (the last two digits are $09$).'
           - problem: 'Find the last two digits of $7^{42}$.'
-            answer: "49"
-            solution_sketch: '$7^{40} \equiv 1 \pmod{100}$, so $7^{42} \equiv 7^2 = 49$.'
-          - problem: "Compute $11^{43} \\bmod 100$."
-            answer: "31"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "First check coprimality with math.gcd(11, 100) = 1, so Euler's theorem applies with phi(100) = 40. Reduce the exponent: 43 = 40 + 3, so 11^43 is congruent to 11^3 modulo 100. Compute: 11^2 = 121 leaves remainder 21, and 21 * 11 = 231 leaves remainder 31; a check with pow(11, 43, 100) confirms 31. The answer is 31."
-          - problem: "Find the last two digits of $19^{45}$."
-            answer: "99"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Since math.gcd(19, 100) = 1 and phi(100) = 40, Euler's theorem gives 19^40 congruent to 1 modulo 100. Reduce the exponent: 45 = 40 + 5, so 19^45 is congruent to 19^5 modulo 100. Compute: 19^2 = 361 leaves 61, 61^2 = 3721 leaves 21, and 21 * 19 = 399 leaves 99; the check pow(19, 45, 100) = 99 agrees. The answer is 99."
-          - problem: "Find the last digit of $3^{101}$."
-            answer: "3"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Here math.gcd(3, 10) = 1 and phi(10) = 4, so Euler's theorem gives 3^4 congruent to 1 modulo 10. Write the exponent as 101 = 100 + 1 where 100 = 25 * 4 is a multiple of phi(10), so 3^101 is congruent to 3^1 modulo 10. The check pow(3, 101, 10) returns 3. The answer is 3."
-          - problem: "Determine the remainder when $9^{44}$ is divided by $100$."
-            answer: "61"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Because math.gcd(9, 100) = 1 and phi(100) = 40, Euler's theorem gives 9^40 congruent to 1 modulo 100. Reduce the exponent: 44 = 40 + 4, so 9^44 is congruent to 9^4 modulo 100. Compute: 9^2 = 81 and 81^2 = 6561 leaves remainder 61; the check pow(9, 44, 100) = 61 confirms it. The answer is 61."
-        constraints: "modulus 10 or 100; base coprime to the modulus; exponent within 5 of a multiple of phi"
+            answer: '49'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Since $\gcd(7, 100) = 1$ and $\varphi(100) = 40$, we have $7^{40} \equiv 1 \pmod{100}$. So $7^{42} \equiv 7^2 = 49$.'
+          - problem: 'Compute $11^{43} \bmod 100$.'
+            answer: '31'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Here $\gcd(11, 100) = 1$ and $\varphi(100) = 40$, so $11^{40} \equiv 1 \pmod{100}$. Then $11^{43} \equiv 11^3 = 1331 \equiv 31 \pmod{100}$.'
+          - problem: 'Find the last two digits of $19^{45}$.'
+            answer: '99'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Since $\gcd(19, 100) = 1$ and $\varphi(100) = 40$, $19^{45} \equiv 19^5 \pmod{100}$. Squaring, $19^2 = 361 \equiv 61$, $19^4 \equiv 61^2 = 3721 \equiv 21$, so $19^5 \equiv 21 \cdot 19 = 399 \equiv 99$.'
+          - problem: 'Find the last digit of $3^{101}$.'
+            answer: '3'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The last digit is the remainder modulo $10$. Since $\gcd(3, 10) = 1$ and $\varphi(10) = 4$, $3^4 \equiv 1 \pmod{10}$. As $101 = 4 \cdot 25 + 1$, $3^{101} \equiv 3^1 = 3$.'
+          - problem: 'Determine the remainder when $9^{44}$ is divided by $100$.'
+            answer: '61'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Since $\gcd(9, 100) = 1$ and $\varphi(100) = 40$, $9^{44} \equiv 9^4 \pmod{100}$. Now $9^2 = 81$ and $81^2 = 6561 \equiv 61$, so the remainder is $61$.'
+          - problem: 'Find the remainder when $5^{200}$ is divided by $18$.'
+            answer: '7'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Since $\gcd(5, 18) = 1$ and $\varphi(18) = 6$, $5^6 \equiv 1 \pmod{18}$. As $200 = 6 \cdot 33 + 2$, $5^{200} \equiv 5^2 = 25 \equiv 7 \pmod{18}$.'
+          - problem: 'A locker code is made of the last two digits of $19^{2043}$. What is the code?'
+            answer: '59'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'We need $19^{2043} \bmod 100$. Since $\gcd(19, 100) = 1$ and $\varphi(100) = 40$, and $2043 = 40 \cdot 51 + 3$, we get $19^{2043} \equiv 19^3 = 6859 \equiv 59 \pmod{100}$.'
+          - problem: 'A sequence starts with $1$, and every next term is $13$ times the term before it. What is the last digit of the $51$st term?'
+            answer: '9'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The $51$st term is $13^{50}$, and its last digit is its remainder modulo $10$. Since $\gcd(13, 10) = 1$ and $\varphi(10) = 4$, and $50 = 4 \cdot 12 + 2$, $13^{50} \equiv 13^2 = 169 \equiv 9 \pmod{10}$.'
+          - problem: 'Sam says that $10^{40} \equiv 1 \pmod{100}$ because $\varphi(100) = 40$. What is the remainder when $10^{40}$ is divided by $100$?'
+            answer: '0'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Euler''s theorem needs $\gcd(10, 100) = 1$, but here the gcd is $10$, so it does not apply. Since $10^2 = 100$, the number $10^{40}$ is a multiple of $100$, and the remainder is $0$.'
+        constraints: 'composite modulus (10, 100 or a small composite such as 18) with base coprime to it; exponent reduced with phi; contexts such as last digits and last two digits; one error item where the base is not coprime to the modulus'
     diagnostic_exemplar:
       problem: 'Find the last two digits of $3^{43}$.'
       answer: '27'
@@ -629,58 +975,97 @@ topics:
       - id: kp1
         name: "Key generation: n, phi(n), and the private exponent"
         key_prerequisites: [fermat-euler-theorems, linear-congruences]
+        step_check:
+          step: 'the inverse of $3$ modulo $20$'
+          question: 'Why is the private exponent $d$ the inverse of $e$ modulo $\varphi(n)$ and not modulo $n$?'
+          options:
+            - 'Because $n$ is public, so the inverse has to use a modulus that stays secret'
+            - 'Powers mod $n$ repeat with period $\varphi(n)$, so $d$ matters mod $\varphi(n)$'
+            - 'Because $\varphi(n)$ is smaller than $n$, so the arithmetic is easier by hand'
+            - 'Because $e$ and $n$ always share a common factor, so no inverse exists mod $n$ at all'
+          answer: 'Powers mod $n$ repeat with period $\varphi(n)$, so $d$ matters mod $\varphi(n)$'
+          why: 'By Euler, $m^{\varphi(n)} \equiv 1 \pmod n$, so $m^{ed} \equiv m$ holds as soon as $ed \equiv 1 \pmod{\varphi(n)}$.'
         exemplars:
-          - problem: 'RSA with $p = 3$, $q = 11$, $e = 3$. Compute $n$, $\varphi(n)$, and the private exponent $d$.'
-            answer: 'n = 33; phi = 20; d = 7'
-            answer_contract: {kind: multipart, parts: [{name: n, contract: {kind: exact}}, {name: phi, contract: {kind: exact}}, {name: d, contract: {kind: exact}}]}
-            solution_sketch: '$n = pq = 33$; $\varphi(n) = (p-1)(q-1) = 2 \cdot 10 = 20$; $d = e^{-1} \bmod 20$: $3 \cdot 7 = 21 \equiv 1 \pmod{20}$, so $d = 7$.'
-          - problem: 'RSA with $p = 5$, $q = 11$, $e = 3$. Find $d$.'
+          - problem: 'In an RSA system the primes are $p = 3$ and $q = 11$, and the public exponent is $e = 3$. Find the private exponent $d$ with $0 < d < \varphi(n)$.'
+            answer: '7'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Here $n = 33$ and $\varphi(n) = 2 \cdot 10 = 20$. The private exponent is the inverse of $3$ modulo $20$; since $3 \cdot 7 = 21 \equiv 1 \pmod{20}$, $d = 7$.'
+          - problem: 'Alice chooses the primes $5$ and $11$ and the public exponent $e = 3$. Which private exponent $d$ with $0 < d < \varphi(n)$ does she keep?'
             answer: '27'
-            solution_sketch: '$\varphi(55) = 4 \cdot 10 = 40$ and $3 \cdot 27 = 81 = 2 \cdot 40 + 1$, so $d = 27$.'
-          - problem: "RSA with $p = 5$, $q = 7$, $e = 5$. Compute $n$, $\\varphi(n)$, and the private exponent $d$."
-            answer: "n = 35; phi = 24; d = 5"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "n"}, {"contract": {"kind": "exact"}, "name": "phi"}, {"contract": {"kind": "exact"}, "name": "d"}]}
-            solution_sketch: "Step 1 (n = p q): $n = 5 \\cdot 7 = 35$. Step 2 (phi = (p-1)(q-1)): $\\varphi(n) = 4 \\cdot 6 = 24$. Step 3 (inverse by extended Euclid): solve $5d \\equiv 1 \\pmod{24}$; $5 \\cdot 5 = 25 \\equiv 1 \\pmod{24}$, so $d = 5$. The key is n = 35; phi = 24; d = 5."
-          - problem: "RSA with $p = 7$, $q = 11$, $e = 13$. Find $\\varphi(n)$ and the private exponent $d$."
-            answer: "phi = 60; d = 37"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "phi"}, {"contract": {"kind": "exact"}, "name": "d"}]}
-            solution_sketch: "Step 1 (phi = (p-1)(q-1)): $\\varphi(n) = 6 \\cdot 10 = 60$. Step 2 (inverse by extended Euclid): solve $13d \\equiv 1 \\pmod{60}$; $13 \\cdot 37 = 481 = 8 \\cdot 60 + 1$, so $d = 37$. The result is phi = 60; d = 37."
-          - problem: "RSA with $p = 11$, $q = 13$, $e = 7$. Find the private exponent $d$ as the least positive residue modulo $\\varphi(n)$."
-            answer: "103"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1 (phi = (p-1)(q-1)): $\\varphi(n) = 10 \\cdot 12 = 120$. Step 2 (inverse by extended Euclid): solve $7d \\equiv 1 \\pmod{120}$; $7 \\cdot 103 = 721 = 6 \\cdot 120 + 1$, so $d = 103$. The private exponent is 103."
-          - problem: "An RSA public key has $n = 91$ and $e = 5$. Find the private exponent $d$ as the least positive residue modulo $\\varphi(n)$."
-            answer: "29"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1 (factor n and phi = (p-1)(q-1)): $n = 91 = 7 \\cdot 13$, so $\\varphi(n) = 6 \\cdot 12 = 72$. Step 2 (inverse by extended Euclid): solve $5d \\equiv 1 \\pmod{72}$; $5 \\cdot 29 = 145 = 2 \\cdot 72 + 1$, so $d = 29$. The private exponent is 29."
-        constraints: "primes from {3,5,7,11,13}; e coprime to phi; d found via extended Euclid, stated as least positive residue"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Here $n = 55$ and $\varphi(n) = 4 \cdot 10 = 40$. We need $3d \equiv 1 \pmod{40}$, and $3 \cdot 27 = 81 = 2 \cdot 40 + 1$, so $d = 27$.'
+          - problem: 'An RSA key uses the primes $p = 5$ and $q = 7$ and the public exponent $e = 5$. Find the private exponent $d$ with $0 < d < \varphi(n)$.'
+            answer: '5'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Here $n = 35$ and $\varphi(n) = 4 \cdot 6 = 24$. We need $5d \equiv 1 \pmod{24}$, and $5 \cdot 5 = 25 \equiv 1 \pmod{24}$, so $d = 5$.'
+          - problem: 'Bob publishes the modulus $n = 77 = 7 \cdot 11$ and the exponent $e = 13$. Which private exponent $d$ with $0 < d < \varphi(n)$ does Bob keep?'
+            answer: '37'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Here $\varphi(77) = 6 \cdot 10 = 60$. We need $13d \equiv 1 \pmod{60}$, and $13 \cdot 37 = 481 = 8 \cdot 60 + 1$, so $d = 37$.'
+          - problem: 'An RSA key uses the primes $p = 11$ and $q = 13$ and the public exponent $e = 7$. Find the private exponent $d$ with $0 < d < \varphi(n)$.'
+            answer: '103'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Here $\varphi(n) = 10 \cdot 12 = 120$. We need $7d \equiv 1 \pmod{120}$, and $7 \cdot 103 = 721 = 6 \cdot 120 + 1$, so $d = 103$.'
+          - problem: 'Eve sees the public key $n = 91$, $e = 5$ and factors $91$. Which private exponent $d$ with $0 < d < \varphi(n)$ does she find?'
+            answer: '29'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Since $91 = 7 \cdot 13$, $\varphi(n) = 6 \cdot 12 = 72$. We need $5d \equiv 1 \pmod{72}$, and $5 \cdot 29 = 145 = 2 \cdot 72 + 1$, so $d = 29$.'
+          - problem: 'An RSA key uses the primes $p = 13$ and $q = 17$ and the public exponent $e = 5$. Find the private exponent $d$ with $0 < d < \varphi(n)$.'
+            answer: '77'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Here $\varphi(n) = 12 \cdot 16 = 192$. We need $5d \equiv 1 \pmod{192}$, and $5 \cdot 77 = 385 = 2 \cdot 192 + 1$, so $d = 77$.'
+          - problem: 'Can $e = 9$ be the public exponent of an RSA key built from the primes $7$ and $13$?'
+            answer: 'no'
+            answer_contract: {"kind":"label","options":[["yes","it can","can be used","yes it can","it can be used","yes, it can"],["no","it cannot","cannot be used","cannot","it cannot be used","no, it cannot","no, it cannot be used","e cannot be used"]]}
+            solution_sketch: 'Here $\varphi(n) = 6 \cdot 12 = 72$. A public exponent needs an inverse modulo $72$, so it must be coprime to $72$. But $\gcd(9, 72) = 9$, so $e = 9$ cannot be used.'
+        constraints: 'primes from {3,5,7,11,13,17}; e coprime to phi (one verdict item asks whether an e is allowed); d found via extended Euclid, asked as the unique d with 0 < d < phi(n)'
       - id: kp2
         name: "Encrypting and decrypting small messages"
         key_prerequisites: [fermat-euler-theorems, modular-arithmetic]
+        step_check:
+          step: 'Calculate $3^5 = 3^4 \times 3 = 11 \times 3 = 33$'
+          question: 'Why is $3^4 = 81$ replaced by $11$ before it is multiplied by $3$?'
+          options:
+            - 'Because $81$ is too large to be multiplied by any number at all'
+            - 'Because $81 - 11 = 70$ is a multiple of the exponent $5$, so the power is unchanged'
+            - 'Because a remainder is found only after the very last multiplication'
+            - 'Because $81 \equiv 11 \pmod{35}$, so the remainder carries over'
+          answer: 'Because $81 \equiv 11 \pmod{35}$, so the remainder carries over'
+          why: 'Replacing a number by its remainder modulo $35$ does not change any later remainder, and the smaller numbers are easier to multiply.'
         exemplars:
-          - problem: 'With public key $n = 33$, $e = 3$, encrypt the message $m = 4$.'
-            answer: "31"
-            solution_sketch: '$c = m^e \bmod n = 4^3 = 64 = 33 + 31 \equiv 31 \pmod{33}$.'
-          - problem: 'With $n = 33$, $d = 7$, decrypt the ciphertext $c = 8$.'
-            answer: "2"
-            solution_sketch: '$m = c^d \bmod n = 8^7 \bmod 33$. $8^2 = 64 \equiv 31 \equiv -2$; $8^4 \equiv 4$; $8^7 = 8^4 \cdot 8^2 \cdot 8 \equiv 4 \cdot (-2) \cdot 8 = -64 \equiv 2 \pmod{33}$. (Check: $2^3 = 8$.)'
-          - problem: "A public RSA key is n = 35, e = 5. Encrypt the message m = 3. Find the ciphertext."
-            answer: "33"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The ciphertext is c = m^e mod n = 3^5 mod 35. Step 1 (repeated squaring): 3^2 = 9 and 3^4 = 81 = 11 mod 35. Step 2 (multiply residues): 3^5 = 3^4 * 3 = 11 * 3 = 33 mod 35. The ciphertext is 33."
-          - problem: "With the private key n = 33, d = 7, decrypt the ciphertext c = 26. State the original message."
-            answer: "5"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The plaintext is m = c^d mod n = 26^7 mod 33. Step 1 (repeated squaring): 26^2 = 676 = 16 mod 33 and 26^4 = 16^2 = 256 = 25 mod 33. Step 2 (combine powers): 26^7 = 26^4 * 26^2 * 26 = 25 * 16 * 26 = 4 * 26 = 104 = 5 mod 33. The original message is 5."
-          - problem: "An RSA system has p = 5, q = 7, e = 5. Decrypt the ciphertext c = 33. State the message."
-            answer: "3"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The modulus is n = 35 and phi = (5 - 1)(7 - 1) = 24. Step 1 (modular inverse): d = 5^(-1) mod 24 = 5 because 5 * 5 = 25 = 1 mod 24. Step 2 (repeated squaring): 33 = -2 mod 35, so 33^5 = (-2)^5 = -32 = 3 mod 35. The decrypted message is 3."
-          - problem: "Use the RSA public key n = 33, e = 3 to encrypt the message m = 8. Determine the ciphertext."
-            answer: "17"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The ciphertext is c = m^e mod n = 8^3 mod 33. Step 1 (power): 8^2 = 64 = 31 = -2 mod 33. Step 2 (multiply): 8^3 = 8^2 * 8 = 31 * 8 = 248 = 248 - 231 = 17 mod 33. The ciphertext is 17."
-        constraints: "n <= 60, messages 2-20 coprime to n; exponentiation by repeated squaring; verify round-trip when feasible"
+          - problem: 'With the public key $n = 33$, $e = 3$, encrypt the message $m = 4$.'
+            answer: '31'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Encryption raises the message to the power $e$ modulo $n$, so $c = 4^3 = 64$. Since $64 = 33 + 31$, the ciphertext is $c = 31$.'
+          - problem: 'With $n = 33$ and the private exponent $d = 7$, decrypt the ciphertext $c = 8$.'
+            answer: '2'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The message is $m = 8^7 \bmod 33$. Now $8^2 = 64 \equiv -2$ and $8^4 \equiv 4$, so $8^7 = 8^4 \cdot 8^2 \cdot 8 \equiv 4 \cdot (-2) \cdot 8 = -64 \equiv 2 \pmod{33}$. Check: $2^3 = 8$.'
+          - problem: 'With the public key $n = 35$, $e = 5$, encrypt the message $m = 4$.'
+            answer: '9'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The ciphertext is $c = 4^5 \bmod 35$. Now $4^2 = 16$ and $4^4 = 256 = 7 \cdot 35 + 11$, so $4^5 \equiv 11 \cdot 4 = 44 \equiv 9 \pmod{35}$, and $c = 9$.'
+          - problem: 'With the private key $n = 33$, $d = 7$, decrypt the ciphertext $c = 26$.'
+            answer: '5'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The message is $26^7 \bmod 33$. Now $26^2 = 676 \equiv 16$ and $26^4 \equiv 16^2 = 256 \equiv 25$, so $26^7 = 26^4 \cdot 26^2 \cdot 26 \equiv 25 \cdot 16 \cdot 26 \equiv 4 \cdot 26 = 104 \equiv 5 \pmod{33}$.'
+          - problem: 'Bob builds an RSA key from the primes $p = 5$ and $q = 7$ with $e = 5$. He receives the ciphertext $c = 33$. What message did Alice send?'
+            answer: '3'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Here $n = 35$ and $\varphi(n) = 24$, so $d = 5^{-1} \bmod 24 = 5$ because $5 \cdot 5 = 25 \equiv 1$. Then $m = 33^5$ with $33 \equiv -2 \pmod{35}$, so $m \equiv (-2)^5 = -32 \equiv 3 \pmod{35}$.'
+          - problem: 'Alice encrypts the message $8$ with Bob''s public key $n = 33$, $e = 3$. What ciphertext does she send?'
+            answer: '17'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The ciphertext is $c = 8^3 \bmod 33$. Now $8^2 = 64 \equiv 31 \equiv -2$, so $8^3 \equiv -2 \cdot 8 = -16 \equiv 17 \pmod{33}$.'
+          - problem: 'Bob receives the ciphertext $c = 2$. His key is $n = 33$ with private exponent $d = 7$. What message was sent?'
+            answer: '29'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The message is $2^7 \bmod 33$. Since $2^7 = 128 = 3 \cdot 33 + 29$, the message is $29$.'
+          - problem: 'Bob encrypts the message $7$ with the public key $n = 15$, $e = 3$. Alice''s private exponent is $d = 3$. What message does Alice read after she decrypts?'
+            answer: '7'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The ciphertext is $7^3 = 343 \equiv 13 \pmod{15}$. Alice computes $13^3 = 2197 = 146 \cdot 15 + 7$, so she reads $7$, the original message.'
+        constraints: 'n <= 60, messages 2-29 below n; exponentiation by repeated squaring; encryption and decryption in contexts with named senders; verify round-trip when feasible'
     diagnostic_exemplar:
       problem: 'RSA with $p = 3$, $q = 11$, $e = 3$: encrypt $m = 2$, then state the private exponent $d$.'
       answer: 'c = 8; d = 7'

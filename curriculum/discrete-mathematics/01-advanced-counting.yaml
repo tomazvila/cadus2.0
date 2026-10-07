@@ -23,84 +23,145 @@ topics:
       - id: kp1
         name: "Two sets: |A u B| = |A| + |B| - |A n B|"
         key_prerequisites: [set-operations]
+        step_check:
+          step: 'Apply the inclusion-exclusion principle: $|A \cup B| = |A| + |B| - |A \cap B|$'
+          question: 'Why does the formula subtract $|A \cap B|$?'
+          options:
+            - 'Students in both sets are not in the union at all, so all copies go'
+            - 'Students in both sets are counted twice, so one copy must go'
+            - 'The two sets never overlap, so the overlap is taken off the total'
+            - 'Subtraction always follows addition when two sets are put together'
+          answer: 'Students in both sets are counted twice, so one copy must go'
+          why: 'A student in both sets is counted once in $|A|$ and once in $|B|$, so subtracting $|A \cap B|$ leaves each student counted exactly once.'
+        try_first:
+          problem: 'A street has $12$ houses with a garden and $9$ houses with a garage. Exactly $5$ houses have both. How many houses have a garden or a garage?'
+          answer_contract: {"kind":"exact"}
+          answer: '16'
+          reveal: 'The $5$ houses with both are in the garden count and in the garage count, so $12 + 9 = 21$ counts them twice. Subtract them once: $12 + 9 - 5 = 16$.'
         exemplars:
-          - problem: 'In a class, $25$ students take math, $18$ take physics, and $10$ take both. How many take at least one of the two?'
+          - problem: 'In a class, $25$ students take math, $18$ take physics, and $10$ take both. How many students take at least one of the two subjects?'
             answer: "33"
-            solution_sketch: '$|M \cup P| = 25 + 18 - 10 = 33$.'
-          - problem: 'How many integers in $\{1, \dots, 100\}$ are divisible by $2$ or by $5$?'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The $10$ students who take both subjects are counted in $25$ and again in $18$. Subtract them once: $25 + 18 - 10 = 33$ students take at least one subject.'
+          - problem: 'How many integers from $1$ to $100$ are divisible by $2$ or by $5$?'
             answer: "60"
-            solution_sketch: '$\lfloor 100/2 \rfloor + \lfloor 100/5 \rfloor - \lfloor 100/10 \rfloor = 50 + 20 - 10 = 60$.'
-          - problem: "A survey of a group finds that $42$ people like tea, $31$ like coffee, and $12$ like both. How many people like at least one of the two drinks?"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'There are $50$ multiples of $2$ and $20$ multiples of $5$. The $10$ multiples of $10$ are in both lists, so $50 + 20 - 10 = 60$.'
+          - problem: 'A survey finds that $42$ people like tea, $31$ like coffee, and $12$ like both. How many people like at least one of the two drinks?'
             answer: "61"
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Inclusion-exclusion rule for two sets: $|T \\cup C| = |T| + |C| - |T \\cap C|$. Substitute the survey numbers: $42 + 31 - 12$. Arithmetic step: $73 - 12 = 61$. The answer is 61."
-          - problem: "How many integers in $\\{1, \\dots, 150\\}$ are divisible by $3$ or by $7$?"
+            solution_sketch: 'The $12$ people who like both drinks are counted once in each group. Remove one copy of them: $42 + 31 - 12 = 61$ people like at least one drink.'
+          - problem: 'How many integers from $1$ to $150$ are divisible by $3$ or by $7$?'
             answer: "64"
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Inclusion-exclusion rule for divisibility: count multiples of $3$, add multiples of $7$, subtract multiples of $21$. Multiples of $3$: $\\lfloor 150/3 \\rfloor = 50$; multiples of $7$: $\\lfloor 150/7 \\rfloor = 21$; multiples of $21$: $\\lfloor 150/21 \\rfloor = 7$. Arithmetic step: $50 + 21 - 7 = 64$. The answer is 64."
-          - problem: "In a group, $80$ students play soccer, $65$ play basketball, and $110$ play at least one of the two sports. Find the number of students who play both sports."
+            solution_sketch: 'There are $50$ multiples of $3$ and $21$ multiples of $7$. A number divisible by both is a multiple of $21$, and there are $7$ of those, so $50 + 21 - 7 = 64$.'
+          - problem: 'In a group, $80$ students play soccer and $65$ play basketball. In all, $110$ students play at least one of the two sports. How many play both sports?'
             answer: "35"
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Inclusion-exclusion rule for two sets: $|S \\cup B| = |S| + |B| - |S \\cap B|$. Put the known values in the formula: $110 = 80 + 65 - |S \\cap B|$. Algebra step: $|S \\cap B| = 80 + 65 - 110 = 35$. The answer is 35."
-          - problem: "A set $A$ has $85$ elements, $A \\cup B$ has $135$ elements, and $A \\cap B$ has $20$ elements. Find $|B|$."
+            solution_sketch: 'Adding the two sport counts gives $80 + 65 = 145$, which is $35$ more than the $110$ students in the union. Those $35$ students are counted twice, so $35$ students play both sports.'
+          - problem: 'A set $A$ has $85$ elements, $A \cup B$ has $135$ elements, and $A \cap B$ has $20$ elements. How many elements does $B$ have?'
             answer: "70"
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Inclusion-exclusion rule for two sets: $|A \\cup B| = |A| + |B| - |A \\cap B|$. Rearrange for $|B|$: $|B| = |A \\cup B| - |A| + |A \\cap B|$. Substitute: $|B| = 135 - 85 + 20 = 70$. The answer is 70."
-        constraints: "two sets; counts <= 200; divisibility counts use floor(N/d)"
+            solution_sketch: 'Inclusion-exclusion gives $135 = 85 + |B| - 20$. So $|B| = 135 - 85 + 20 = 70$.'
+          - problem: 'Sam reasons that $28$ students play soccer and $22$ play basketball, so $28 + 22 = 50$ students play at least one of the two sports. Nine students play both. What is the correct number of students who play at least one sport?'
+            answer: "41"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Sam counts the $9$ students who play both sports twice. The correct number is $28 + 22 - 9 = 41$.'
+        constraints: "two sets; counts <= 200; divisibility counts use floor(N/d); contexts: overlap of two groups, a missing overlap, a missing set size"
       - id: kp2
         name: "Three sets"
         key_prerequisites: [set-operations, multiplication-principle]
+        step_check:
+          step: '$|A \cup B \cup C| = |A| + |B| + |C| - |A \cap B| - |A \cap C| - |B \cap C| + |A \cap B \cap C|$'
+          question: 'Why is $|A \cap B \cap C|$ added back at the end?'
+          options:
+            - 'People in all three sets were counted only once, so one more is due'
+            - 'The triple overlap lies inside the union, so it must be added to it'
+            - 'The pair terms removed each person in all three sets too often'
+            - 'The last term is added because the signs in the formula alternate'
+          answer: 'The pair terms removed each person in all three sets too often'
+          why: 'A person in all three sets is added $3$ times by the single terms and subtracted $3$ times by the pair terms, so the net count is $0$; the triple term makes it $1$.'
         exemplars:
-          - problem: 'How many integers in $\{1, \dots, 1000\}$ are divisible by $2$, $3$, or $5$?'
-            answer: "734"
-            solution_sketch: '$500 + 333 + 200 - 166 - 100 - 66 + 33 = 734$ (floors of $1000/d$ for $d = 2,3,5,6,10,15,30$).'
-          - problem: 'Among $100$ students: $40$ like tea, $35$ like coffee, $30$ like juice, $15$ tea and coffee, $10$ tea and juice, $12$ coffee and juice, $5$ all three. How many like at least one drink?'
+          - problem: 'Among $100$ students, $40$ like tea, $35$ like coffee, $30$ like juice, $15$ like tea and coffee, $10$ like tea and juice, $12$ like coffee and juice, and $5$ like all three. How many students like at least one of the three drinks?'
             answer: "73"
-            solution_sketch: '$40 + 35 + 30 - 15 - 10 - 12 + 5 = 73$.'
-          - problem: "How many integers in $\\{1, \\dots, 1000\\}$ are divisible by $2$, $3$, or $7$?"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Add the three single counts: $40 + 35 + 30 = 105$. Subtract the three pair overlaps, $15 + 10 + 12 = 37$, and add back the $5$ who like all three: $105 - 37 + 5 = 73$.'
+          - problem: 'How many integers from $1$ to $1000$ are divisible by $2$, $3$, or $5$?'
+            answer: "734"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The single counts are $500$, $333$ and $200$. The pair counts, for $6$, $10$ and $15$, are $166$, $100$ and $66$, and the count for $30$ is $33$. So $500 + 333 + 200 - 166 - 100 - 66 + 33 = 734$.'
+          - problem: 'How many integers from $1$ to $1000$ are divisible by $2$, $3$, or $7$?'
             answer: "714"
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The inclusion-exclusion count is 500 + 333 + 142 - 166 - 71 - 47 + 23. Start with the three single-set counts, subtract the three pairwise intersections, and add the triple intersection. The values are floor(1000/2)=500, floor(1000/3)=333, floor(1000/7)=142, floor(1000/6)=166, floor(1000/14)=71, floor(1000/21)=47, and floor(1000/42)=23. The number is 714."
-          - problem: "Among $100$ students: $45$ like tea, $40$ like coffee, $35$ like juice, $15$ like tea and coffee, $12$ like tea and juice, $10$ like coffee and juice, and $4$ like all three. How many students like at least one of the three drinks?"
+            solution_sketch: 'The single counts are $500$, $333$ and $142$. The pair counts, for $6$, $14$ and $21$, are $166$, $71$ and $47$, and the count for $42$ is $23$. So $500 + 333 + 142 - 166 - 71 - 47 + 23 = 714$.'
+          - problem: 'A survey asks $100$ people which of tea, coffee and juice they drink. There are $45$ tea drinkers, $40$ coffee drinkers and $35$ juice drinkers. Of them, $15$ drink tea and coffee, $12$ tea and juice, $10$ coffee and juice, and $4$ drink all three. How many of the people drink at least one of the three?'
             answer: "87"
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The inclusion-exclusion count is 45 + 40 + 35 - 15 - 12 - 10 + 4. Add the three single-drink counts, subtract the three pairwise overlaps, and add the triple overlap. Compute 120 - 37 + 4 = 87. The number is 87."
-          - problem: "A survey has $100$ people. The counts are $|A| = 50$, $|B| = 40$, $|C| = 30$, $|A \\cap B| = 20$, $|A \\cap C| = 15$, $|B \\cap C| = 10$, and $|A \\cup B \\cup C| = 90$. Find $|A \\cap B \\cap C|$."
+            solution_sketch: 'Add the singles: $45 + 40 + 35 = 120$. Subtract the pair overlaps $15 + 12 + 10 = 37$ and add back the $4$ who drink all three: $120 - 37 + 4 = 87$.'
+          - problem: 'In a survey of $100$ people, $50$ own a car, $40$ own a bike and $30$ own a scooter. There are $20$ who own a car and a bike, $15$ a car and a scooter, and $10$ a bike and a scooter. In all, $90$ people own at least one of the three. How many own all three?'
             answer: "15"
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The inclusion-exclusion equation is 90 = 50 + 40 + 30 - 20 - 15 - 10 + t. Combine the single-set counts and the pairwise intersections: 90 = 120 - 45 + t. Solve 90 = 75 + t, so t = 15. The number is 15."
-          - problem: "A company has $120$ employees. There are $70$ in team A, $60$ in team B, $50$ in team C, $30$ in teams A and B, $25$ in teams A and C, $20$ in teams B and C, and $10$ in all three teams. How many employees are in at least one of the three teams?"
+            solution_sketch: 'Inclusion-exclusion gives $90 = 50 + 40 + 30 - 20 - 15 - 10 + t$, where $t$ is the number who own all three. The right side is $75 + t$, so $t = 15$.'
+          - problem: 'A company has $120$ employees. There are $70$ in team A, $60$ in team B and $50$ in team C. Also, $30$ are in teams A and B, $25$ in teams A and C, $20$ in teams B and C, and $10$ in all three teams. How many employees are in at least one of the three teams?'
             answer: "115"
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The inclusion-exclusion count is 70 + 60 + 50 - 30 - 25 - 20 + 10. Add the single-team counts, subtract the pairwise overlaps, and add the triple overlap. Compute 180 - 75 + 10 = 115. The number is 115."
-        constraints: "three sets; alternate signs by intersection size; totals <= 1000"
+            solution_sketch: 'Add the team sizes: $70 + 60 + 50 = 180$. Subtract the pair overlaps $30 + 25 + 20 = 75$ and add back the $10$ in all three teams: $180 - 75 + 10 = 115$.'
+          - problem: 'Of $150$ households, $90$ have a dog, $70$ have a cat and $40$ have a bird. There are $30$ with a dog and a cat, $20$ with a dog and a bird, $15$ with a cat and a bird, and $8$ with all three pets. How many households have at least one of the three pets?'
+            answer: "143"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Add the three pet counts: $90 + 70 + 40 = 200$. Subtract the pair overlaps $30 + 20 + 15 = 65$ and add back the $8$ households with all three pets: $200 - 65 + 8 = 143$.'
+          - problem: 'Mia counts the students who study at least one of Spanish, French and German. The classes have $30$, $25$ and $20$ students, and the pair overlaps are $10$, $8$ and $6$. She computes $75 - 24 = 51$. Four students study all three languages. What is the correct number of students?'
+            answer: "55"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Mia leaves out the last term of the formula. The $4$ students in all three classes are added $3$ times and removed $3$ times, so they must be added back once: $51 + 4 = 55$.'
+        constraints: "three sets; alternate signs by intersection size; totals <= 1000; contexts: three groups with given overlaps, a missing triple overlap, a corrected count"
       - id: kp3
         name: "Counting the complement"
         key_prerequisites: [set-operations]
+        step_check:
+          step: 'Subtract this count from the total to find the numbers divisible by neither $4$ nor $5$'
+          question: 'Why is the count $20$ subtracted from the total $50$?'
+          options:
+            - 'The $20$ numbers have $4$ or $5$ as a divisor; the rest have neither'
+            - 'The $20$ numbers are divisible by both $4$ and $5$, so only those are removed'
+            - 'A number divisible by $4$ or $5$ is counted twice, so one copy is taken away'
+            - 'Dividing $50$ by $4$ and by $5$ leaves remainders, and $20$ is their sum'
+          answer: 'The $20$ numbers have $4$ or $5$ as a divisor; the rest have neither'
+          why: 'The union holds every number with at least one of the two properties. Everything else in the set has neither property, so the count is $50 - 20 = 30$.'
         exemplars:
-          - problem: 'How many integers in $\{1, \dots, 100\}$ are divisible by neither $2$ nor $3$?'
+          - problem: 'How many integers from $1$ to $100$ are divisible by neither $2$ nor $3$?'
             answer: "33"
-            solution_sketch: 'Divisible by $2$ or $3$: $50 + 33 - 16 = 67$. Complement: $100 - 67 = 33$.'
-          - problem: 'How many integers in $\{1, \dots, 60\}$ are coprime to $60$? (Hint: $60 = 2^2 \cdot 3 \cdot 5$; count numbers divisible by none of $2, 3, 5$.)'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Divisible by $2$ or $3$: $50 + 33 - 16 = 67$. The other numbers are divisible by neither, so $100 - 67 = 33$.'
+          - problem: 'How many integers from $1$ to $60$ are coprime to $60$?'
             answer: "16"
-            solution_sketch: 'By inclusion-exclusion, $60 - (30 + 20 + 12) + (10 + 6 + 4) - 2 = 16$; this equals $\varphi(60)$.'
-          - problem: "How many integers in {1, ..., 120} are divisible by neither 5 nor 7?"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Since $60 = 2^2 \cdot 3 \cdot 5$, a number is coprime to $60$ when $2$, $3$ and $5$ all fail to divide it. Inclusion-exclusion gives $60 - (30 + 20 + 12) + (10 + 6 + 4) - 2 = 16$.'
+          - problem: 'How many integers from $1$ to $120$ are divisible by neither $5$ nor $7$?'
             answer: "82"
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The full set is {1, ..., 120}, with 120 elements. Use inclusion-exclusion to count the union: multiples of 5 give 24, multiples of 7 give 17, and common multiples of 35 give 3, so the union has 24 + 17 - 3 = 38 elements. Then use the complement rule and subtract the union from the total: 120 - 38 = 82. The answer is 82."
-          - problem: "How many integers in {1, ..., 200} are divisible by neither 3 nor 5 nor 7?"
+            solution_sketch: 'There are $24$ multiples of $5$, $17$ of $7$ and $3$ of $35$, so $24 + 17 - 3 = 38$ numbers are divisible by $5$ or $7$. The rest number $120 - 38 = 82$.'
+          - problem: 'How many integers from $1$ to $200$ are divisible by none of $3$, $5$ and $7$?'
             answer: "92"
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The full set is {1, ..., 200}, with 200 elements. Use inclusion-exclusion for three sets: multiples of 3 give 66, of 5 give 40, of 7 give 28; pair overlaps are 13, 9, and 5, and the triple overlap is 1, so the union has 66 + 40 + 28 - 13 - 9 - 5 + 1 = 108 elements. Then use the complement rule and subtract the union from the total: 200 - 108 = 92. The answer is 92."
-          - problem: "How many positive integers less than 100 are divisible by neither 3 nor 4?"
+            solution_sketch: 'Inclusion-exclusion gives $66 + 40 + 28 - 13 - 9 - 5 + 1 = 108$ numbers divisible by at least one of them. The rest number $200 - 108 = 92$.'
+          - problem: 'How many positive integers less than $100$ are divisible by neither $3$ nor $4$?'
             answer: "50"
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The full set is {1, ..., 99}, with 99 elements. Use inclusion-exclusion: multiples of 3 give 33, multiples of 4 give 24, and common multiples of 12 give 8, so the union has 33 + 24 - 8 = 49 elements. Then use the complement rule and subtract the union from the total: 99 - 49 = 50. The answer is 50."
-          - problem: "A box contains balls numbered 1 through 150. How many balls have a number divisible by neither 6 nor 10?"
+            solution_sketch: 'The set is $1$ to $99$. There are $33$ multiples of $3$, $24$ of $4$ and $8$ of $12$, so $33 + 24 - 8 = 49$ numbers are divisible by $3$ or $4$. The rest number $99 - 49 = 50$.'
+          - problem: 'A box holds balls numbered $1$ to $150$. How many of the balls have a number divisible by neither $6$ nor $10$?'
             answer: "115"
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The full set is the numbers 1 through 150, with 150 elements. Use inclusion-exclusion: multiples of 6 give 25, multiples of 10 give 15, and common multiples of 30 give 5, so the union has 25 + 15 - 5 = 35 elements. Then use the complement rule and subtract the union from the total: 150 - 35 = 115. The answer is 115."
-        constraints: "phrase as 'neither...nor'; require the subtract-from-total step"
+            solution_sketch: 'There are $25$ multiples of $6$, $15$ of $10$ and $5$ of $30$, so $25 + 15 - 5 = 35$ balls have a number divisible by $6$ or $10$. The rest number $150 - 35 = 115$.'
+          - problem: 'A school has $120$ students. Of them, $70$ are in the band, $50$ are in the choir and $25$ are in both. How many students are in neither group?'
+            answer: "25"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'In band or choir there are $70 + 50 - 25 = 95$ students. The other students are in neither group: $120 - 95 = 25$.'
+          - problem: 'Of $200$ customers, $140$ bought bread, $90$ bought milk and $40$ bought neither. How many customers bought both?'
+            answer: "70"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The number who bought bread or milk is $200 - 40 = 160$. Adding the two counts gives $140 + 90 = 230$, which is $70$ too many, so $70$ customers bought both.'
+        constraints: "phrase as 'neither...nor' or 'coprime to'; require the subtract-from-total step; contexts: neither of two groups, a missing overlap from a neither count"
     diagnostic_exemplar:
       problem: 'How many integers in $\{1, \dots, 100\}$ are divisible by none of $2$, $3$, or $5$?'
       answer: '26'
@@ -131,57 +192,106 @@ topics:
       - id: kp1
         name: "Nonnegative integer solutions"
         key_prerequisites: [combinations]
+        step_check:
+          step: 'Apply the formula: $\binom{n + k - 1}{k - 1} = \binom{12 + 4 - 1}{4 - 1} = \binom{15}{3}$'
+          question: 'Why does the count use $\binom{15}{3}$, with $3$ at the bottom?'
+          options:
+            - 'There are $15$ balls in all, and $3$ of them are picked to go into the first box'
+            - 'The $4$ boxes are filled one at a time, so $\binom{15}{3}$ counts the order of filling'
+            - 'Each box first gets $3$ balls, and $15$ is the total number of balls then left over'
+            - 'A row of $15$ symbols holds $12$ stars and $3$ bars, and the bars mark the box limits'
+          answer: 'A row of $15$ symbols holds $12$ stars and $3$ bars, and the bars mark the box limits'
+          why: 'Each row of $12$ stars and $3$ bars is one distribution, because the bars cut the stars into $4$ groups. Choosing the $3$ bar places among $15$ gives $\binom{15}{3} = 455$.'
+        try_first:
+          problem: 'In how many ways can $4$ identical coins be put into $2$ distinct pockets?'
+          answer_contract: {"kind":"exact"}
+          answer: '5'
+          reveal: 'Write the coins as stars and use one bar to split them between the pockets. The bar can stand in any of $5$ places in the row of $5$ symbols, so there are $5$ ways.'
         exemplars:
           - problem: 'How many solutions in nonnegative integers does $x_1 + x_2 + x_3 = 10$ have?'
             answer: "66"
-            solution_sketch: 'Place $10$ stars and $2$ bars: $\binom{10 + 2}{2} = \binom{12}{2} = 66$.'
-          - problem: 'How many ways can $8$ identical candies be distributed among $3$ children (a child may get none)?'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Place $10$ stars and $2$ bars in a row of $12$ symbols. Choosing the bar places gives $\binom{12}{2} = 66$ solutions.'
+          - problem: 'How many ways can $8$ identical candies be shared among $3$ children if a child may receive none?'
             answer: "45"
-            solution_sketch: '$\binom{8 + 2}{2} = \binom{10}{2} = 45$.'
-          - problem: "How many solutions in nonnegative integers does the equation $x_1 + x_2 + x_3 + x_4 = 7$ have?"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Let $x_i$ be the number of candies of child $i$, so $x_1 + x_2 + x_3 = 8$ with $x_i \ge 0$. There are $\binom{10}{2} = 45$ solutions.'
+          - problem: 'How many solutions in nonnegative integers does $x_1 + x_2 + x_3 + x_4 = 7$ have?'
             answer: "120"
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Use stars and bars for nonnegative solutions. With 4 variables and total 7, the count is the binomial coefficient 10 choose 3. That binomial coefficient equals 120. The number of solutions is 120."
-          - problem: "How many ways can 5 identical balls be placed into 4 distinct boxes if boxes may be empty?"
+            solution_sketch: 'Place $7$ stars and $3$ bars in a row of $10$ symbols. The number of ways to choose the bar places is $\binom{10}{3} = 120$.'
+          - problem: 'How many ways can $5$ identical balls be placed in $4$ distinct boxes if a box may stay empty?'
             answer: "56"
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Use stars and bars because the balls are identical and boxes may be empty. With 5 objects and 4 boxes, the count is the binomial coefficient 8 choose 3. That value is 56. The number of distributions is 56."
-          - problem: "How many solutions in nonnegative integers does the equation $x_1 + x_2 + x_3 + x_4 + x_5 = 6$ have?"
+            solution_sketch: 'The balls are identical and the boxes are distinct, so only the number in each box matters. That gives $x_1 + x_2 + x_3 + x_4 = 5$, with $\binom{8}{3} = 56$ solutions.'
+          - problem: 'How many solutions in nonnegative integers does $x_1 + x_2 + x_3 + x_4 + x_5 = 6$ have?'
             answer: "210"
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Apply the stars and bars formula for nonnegative solutions. With 5 variables and total 6, the count is the binomial coefficient 10 choose 4. That value is 210. The number of solutions is 210."
-          - problem: "For a certain positive integer $n$, the equation $x_1 + x_2 + x_3 = n$ has 28 solutions in nonnegative integers. Find $n$."
+            solution_sketch: 'Place $6$ stars and $4$ bars in a row of $10$ symbols. The number of ways is $\binom{10}{4} = 210$.'
+          - problem: 'For which positive integer $n$ does $x_1 + x_2 + x_3 = n$ have exactly $28$ solutions in nonnegative integers?'
             answer: "6"
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Use stars and bars with 3 variables, so the count is the binomial coefficient (n+2) choose 2. The given count gives (n+2) choose 2 equal to 28. Testing n = 6 gives the binomial coefficient 8 choose 2 equal to 28. The value of n is 6."
-        constraints: "n <= 20 objects, k <= 5 variables; formula C(n+k-1, k-1)"
+            solution_sketch: 'The number of solutions is $\binom{n+2}{2}$, so $\binom{n+2}{2} = 28$. Since $\binom{8}{2} = 28$, we get $n + 2 = 8$ and $n = 6$.'
+          - problem: 'A florist puts $9$ identical roses into $3$ distinct vases, and a vase may stay empty. In how many ways can she do it?'
+            answer: "55"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Only the number of roses in each vase matters, so $x_1 + x_2 + x_3 = 9$ with $x_i \ge 0$. The count is $\binom{11}{2} = 55$.'
+          - problem: 'An ice cream shop has $4$ flavors. How many different selections of $6$ scoops are possible if flavors may repeat and only the number of scoops of each flavor matters?'
+            answer: "84"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Let $x_i$ be the number of scoops of flavor $i$, so $x_1 + x_2 + x_3 + x_4 = 6$ with $x_i \ge 0$. The count is $\binom{9}{3} = 84$.'
+        constraints: "n <= 20 objects, k <= 5 variables; formula C(n+k-1, k-1); equations, identical objects in distinct boxes, multiset choices, and an unknown n"
       - id: kp2
         name: "Positive solutions and lower bounds via substitution"
         key_prerequisites: [combinations]
+        step_check:
+          step: 'Transform the equation: $y_1 + y_2 + y_3 + y_4 = 20 - 4 \times 3 = 8$'
+          question: 'Why is $4 \times 3 = 12$ subtracted from $20$?'
+          options:
+            - 'Each $x_i$ is at most $3$, so $12$ is the largest total the variables allow'
+            - 'Each $x_i$ is at least $3$, so $12$ of the $20$ are used up first'
+            - 'The substitution adds $3$ to every variable, so $12$ must come off the total'
+            - 'Removing $12$ makes every variable positive, which stars and bars requires'
+          answer: 'Each $x_i$ is at least $3$, so $12$ of the $20$ are used up first'
+          why: 'Each $x_i$ is at least $3$, so $12$ units are fixed. Only the remaining $8$ are shared freely, and $y_i = x_i - 3 \ge 0$ counts that share.'
         exemplars:
           - problem: 'How many solutions in positive integers does $x_1 + x_2 + x_3 + x_4 = 10$ have?'
             answer: "84"
-            solution_sketch: 'Set $y_i = x_i - 1 \ge 0$: $y_1 + \dots + y_4 = 6$, giving $\binom{6 + 3}{3} = \binom{9}{3} = 84$.'
-          - problem: 'How many solutions in integers with each $x_i \ge 2$ does $x_1 + x_2 + x_3 = 15$ have?'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Set $y_i = x_i - 1 \ge 0$, so $y_1 + y_2 + y_3 + y_4 = 6$. The count is $\binom{9}{3} = 84$.'
+          - problem: 'How many solutions with every $x_i \ge 2$ does $x_1 + x_2 + x_3 = 15$ have?'
             answer: "55"
-            solution_sketch: '$y_i = x_i - 2$: $y_1 + y_2 + y_3 = 9$, so $\binom{9 + 2}{2} = \binom{11}{2} = 55$.'
-          - problem: "How many solutions in positive integers does x1 + x2 + x3 + x4 + x5 = 12 have?"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Set $y_i = x_i - 2 \ge 0$, so $y_1 + y_2 + y_3 = 9$. The count is $\binom{11}{2} = 55$.'
+          - problem: 'How many solutions in positive integers does $x_1 + x_2 + x_3 + x_4 + x_5 = 12$ have?'
             answer: "330"
             answer_contract: {"kind": "exact"}
-            solution_sketch: "First write the positive-integer equation x1 + x2 + x3 + x4 + x5 = 12. Substitution step: set yi = xi - 1, so each yi >= 0 and y1 + y2 + y3 + y4 + y5 = 7. Stars-and-bars rule: the number of nonnegative solutions is C(7 + 5 - 1, 5 - 1) = C(11,4). Combination evaluation step: C(11,4) = 330, so the number of solutions is 330."
-          - problem: "How many solutions in positive integers does x1 + x2 + x3 = 16 have?"
+            solution_sketch: 'Set $y_i = x_i - 1 \ge 0$, so the five new variables sum to $12 - 5 = 7$. The count is $\binom{11}{4} = 330$.'
+          - problem: 'A teacher hands out $13$ identical stickers to $3$ children so that each child gets at least $2$. In how many ways can she do it?'
+            answer: "36"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Give each child $2$ stickers first, which uses $6$ stickers. The other $7$ are shared freely, so the count is $\binom{9}{2} = 36$.'
+          - problem: 'How many solutions in positive integers does $x_1 + x_2 + x_3 = 16$ have?'
             answer: "105"
             answer_contract: {"kind": "exact"}
-            solution_sketch: "First write x1 + x2 + x3 = 16 with each xi >= 1. Substitution step: set yi = xi - 1, so each yi >= 0 and y1 + y2 + y3 = 13. Stars-and-bars rule: the number of nonnegative solutions is C(13 + 3 - 1, 3 - 1) = C(15,2). Combination evaluation step: C(15,2) = 105, so the number of solutions is 105."
-          - problem: "State the number of solutions in integers with each xi >= 3 for x1 + x2 + x3 = 20."
-            answer: "78"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "First write x1 + x2 + x3 = 20 with each xi >= 3. Substitution step: set yi = xi - 3, so each yi >= 0 and y1 + y2 + y3 = 11. Stars-and-bars rule: the number of nonnegative solutions is C(11 + 3 - 1, 3 - 1) = C(13,2). Combination evaluation step: C(13,2) = 78, so the number of solutions is 78."
-          - problem: "How many integer solutions does x1 + x2 + x3 + x4 = 18 have if x1 >= 1, x2 >= 2, x3 >= 3, and x4 >= 1?"
+            solution_sketch: 'Set $y_i = x_i - 1 \ge 0$, so $y_1 + y_2 + y_3 = 13$. The count is $\binom{15}{2} = 105$.'
+          - problem: 'How many integer solutions does $x_1 + x_2 + x_3 + x_4 = 18$ have if $x_1 \ge 1$, $x_2 \ge 2$, $x_3 \ge 3$ and $x_4 \ge 1$?'
             answer: "364"
             answer_contract: {"kind": "exact"}
-            solution_sketch: "First write x1 + x2 + x3 + x4 = 18 with x1 >= 1, x2 >= 2, x3 >= 3, and x4 >= 1. Substitution step: set y1 = x1 - 1, y2 = x2 - 2, y3 = x3 - 3, and y4 = x4 - 1, so each yi >= 0 and y1 + y2 + y3 + y4 = 18 - 7 = 11. Stars-and-bars rule: the number of nonnegative solutions is C(11 + 4 - 1, 4 - 1) = C(14,3). Combination evaluation step: C(14,3) = 364, so the number of solutions is 364."
-        constraints: "lower bounds 1-3 per variable; require the substitution step; remaining total >= 0"
+            solution_sketch: 'Subtract the lower bounds $1 + 2 + 3 + 1 = 7$ from $18$, which leaves $11$. The new variables are nonnegative, so the count is $\binom{14}{3} = 364$.'
+          - problem: 'A coach shares $19$ identical water bottles among $4$ teams so that every team gets at least $3$. In how many ways can the bottles be shared?'
+            answer: "120"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Give each team $3$ bottles first, which uses $12$ bottles. The other $7$ are shared freely, so the count is $\binom{10}{3} = 120$.'
+          - problem: 'How many solutions in nonnegative integers does $x_1 + x_2 + x_3 = 12$ have if $x_1 \ge 4$?'
+            answer: "45"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Only $x_1$ has a lower bound. Set $y_1 = x_1 - 4 \ge 0$, so $y_1 + x_2 + x_3 = 8$, and the count is $\binom{10}{2} = 45$.'
+          - problem: 'Tom counts the positive solutions of $x_1 + x_2 + x_3 = 9$ as $\binom{11}{2} = 55$. What is the correct number of positive solutions?'
+            answer: "28"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Tom used $9$ as the total although each variable is at least $1$. Setting $y_i = x_i - 1$ gives $y_1 + y_2 + y_3 = 6$, so the count is $\binom{8}{2} = 28$.'
+        constraints: "lower bounds 1-4 per variable; require the substitution step; remaining total >= 0; sharing problems where each receiver gets at least some items"
     diagnostic_exemplar:
       problem: 'How many ways can $12$ identical pencils be shared among $4$ students if every student must get at least one?'
       answer: "165"
@@ -212,57 +322,118 @@ topics:
       - id: kp1
         name: "Arrangements of words with repeated letters"
         key_prerequisites: [permutations]
+        step_check:
+          step: 'Divide the total factorial by the product of the factorials of the repeated letter groups'
+          question: 'Why divide $6!$ by $3! \, 2!$ for BANANA?'
+          options:
+            - 'The A''s and N''s must stay together, so those blocks are taken out of the count'
+            - 'Each repeated letter can stand in only one place, which cuts the count down'
+            - 'Swapping equal letters keeps the word, so each word is counted $12$ times'
+            - 'Dividing removes the words that have a repeated letter in the first place'
+          answer: 'Swapping equal letters keeps the word, so each word is counted $12$ times'
+          why: '$6! = 720$ treats all letters as different. Swapping the three A''s ($3!$ ways) and the two N''s ($2!$ ways) gives the same word, so each word appears $12$ times and $720/12 = 60$.'
+        try_first:
+          problem: 'In how many different orders can the letters of the word BOOK be written?'
+          answer_contract: {"kind":"exact"}
+          answer: '12'
+          reveal: 'If the letters were all different there would be $4! = 24$ orders. Swapping the two O''s does not change the word, so each word is counted twice and there are $24/2 = 12$ orders.'
         exemplars:
-          - problem: 'How many distinct arrangements does the word LEVEL have?'
+          - problem: 'How many different arrangements are there of the letters of the word LEVEL?'
             answer: "30"
-            solution_sketch: '$5$ letters with two L''s and two E''s: $5!/(2! \, 2!) = 120/4 = 30$.'
-          - problem: 'How many distinct arrangements does the word MISSISSIPPI have?'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The word has $5$ letters, with two L''s and two E''s. The number of arrangements is $5!/(2! \, 2!) = 120/4 = 30$.'
+          - problem: 'How many different arrangements are there of the letters of the word MISSISSIPPI?'
             answer: "34650"
-            solution_sketch: '$11!/(4! \, 4! \, 2!) = 39916800/1152 = 34650$ (four I''s, four S''s, two P''s).'
-          - problem: "How many distinct arrangements does the word BANANA have?"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The word has $11$ letters: four I''s, four S''s, two P''s and one M. The number of arrangements is $11!/(4! \, 4! \, 2!) = 39916800/1152 = 34650$.'
+          - problem: 'How many different arrangements are there of the letters of the word BANANA?'
             answer: "60"
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The word B A N A N A has 6 letters: A appears 3 times, N appears 2 times, and B appears once. The multiset permutation rule gives 6!/(3! 2! 1!) = 720/(6 * 2) = 60. The number of distinct arrangements is 60."
-          - problem: "How many distinct arrangements does the word SUCCESS have?"
+            solution_sketch: 'The word has $6$ letters: three A''s, two N''s and one B. The number of arrangements is $6!/(3! \, 2!) = 720/12 = 60$.'
+          - problem: 'How many different arrangements are there of the letters of the word SUCCESS?'
             answer: "420"
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The word S U C C E S S has 7 letters: S appears 3 times, C appears 2 times, and U and E each appear once. The multiset permutation rule gives 7!/(3! 2! 1! 1!) = 5040/(6 * 2) = 420. The number of distinct arrangements is 420."
-          - problem: "A string is formed from all the letters of STATISTICS, each used once. How many distinct strings can be formed?"
+            solution_sketch: 'The word has $7$ letters: three S''s, two C''s, one U and one E. The number of arrangements is $7!/(3! \, 2!) = 5040/12 = 420$.'
+          - problem: 'How many different strings can be made by rearranging all the letters of STATISTICS?'
             answer: "50400"
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The word S T A T I S T I C S has 10 letters: S appears 3 times, T appears 3 times, I appears 2 times, and A and C each appear once. The multiset permutation rule gives 10!/(3! 3! 2! 1! 1!) = 3628800/(6 * 6 * 2) = 50400. The number of distinct strings is 50400."
-          - problem: "How many distinct arrangements does the word BOOKKEEPER have?"
+            solution_sketch: 'The word has $10$ letters: three S''s, three T''s, two I''s, one A and one C. The number of strings is $10!/(3! \, 3! \, 2!) = 3628800/72 = 50400$.'
+          - problem: 'How many different arrangements are there of the letters of the word BOOKKEEPER?'
             answer: "151200"
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The word B O O K K E E P E R has 10 letters: E appears 3 times, O appears 2 times, K appears 2 times, and B, P, R each appear once. The multiset permutation rule gives 10!/(3! 2! 2! 1! 1! 1!) = 3628800/(6 * 2 * 2) = 151200. The number of distinct arrangements is 151200."
-        constraints: "words of length 5-11 with 2-3 repeated letter groups"
+            solution_sketch: 'The word has $10$ letters: three E''s, two O''s, two K''s, and one each of B, P and R. The number of arrangements is $10!/(3! \, 2! \, 2!) = 3628800/24 = 151200$.'
+          - problem: 'A shop hangs $9$ flags in a row: $4$ identical red flags, $3$ identical blue flags and $2$ identical green flags. How many different patterns of colors are possible?'
+            answer: "1260"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Flags of one color are interchangeable, so a pattern is an arrangement of $4$ R''s, $3$ B''s and $2$ G''s. The number of patterns is $9!/(4! \, 3! \, 2!) = 362880/288 = 1260$.'
+          - problem: 'How many different $7$-digit numbers can be made by arranging the digits $1, 1, 2, 2, 3, 3, 3$?'
+            answer: "210"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The digits $1$ and $2$ each repeat twice and the digit $3$ repeats three times. The count is $7!/(2! \, 2! \, 3!) = 5040/24 = 210$.'
+          - problem: 'How many arrangements of the letters of LEVEL begin with the letter L?'
+            answer: "12"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Put an L first. The other four letters are E, V, E, L, with E repeated twice. They can be arranged in $4!/2! = 12$ ways.'
+          - problem: 'Sam says that the letters of the word LETTER can be arranged in $6! = 720$ ways. What is the correct number of different arrangements?'
+            answer: "180"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Sam forgot that the two E''s and the two T''s can be swapped without changing the word. The correct number is $6!/(2! \, 2!) = 720/4 = 180$.'
+        constraints: "words of length 4-11 with 1-3 repeated letter groups; strings, flags and digits with repeated symbols; one restricted first position"
       - id: kp2
         name: "Lattice paths as multiset arrangements"
         key_prerequisites: [combinations]
+        step_check:
+          step: 'The number of distinct paths is the number of ways to arrange $3$ R''s and $2$ U''s in a sequence'
+          question: 'Why does each path match exactly one sequence of R''s and U''s?'
+          options:
+            - 'Any sequence of $5$ steps, right or up, reaches $(3,2)$, so every sequence is a path'
+            - 'The R steps and the U steps must alternate, so each path has only one sequence'
+            - 'A path may visit a point twice, so the sequence and the path need not match'
+            - 'The steps taken in order fix the route, and any $3$ R''s and $2$ U''s end at $(3,2)$'
+          answer: 'The steps taken in order fix the route, and any $3$ R''s and $2$ U''s end at $(3,2)$'
+          why: 'A path is fixed by its steps in order, and any order of $3$ R''s and $2$ U''s ends at $(3,2)$. So paths match arrangements one to one, and $\binom{5}{2} = 10$.'
         exemplars:
           - problem: 'How many lattice paths run from $(0,0)$ to $(4,3)$ using only unit steps right and up?'
             answer: "35"
-            solution_sketch: 'Each path is an arrangement of $4$ R''s and $3$ U''s: $\binom{7}{3} = 35$.'
-          - problem: 'How many lattice paths run from $(0,0)$ to $(5,5)$ using only right and up steps?'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Each path is an arrangement of $4$ R''s and $3$ U''s. The number of arrangements is $\binom{7}{3} = 35$.'
+          - problem: 'How many lattice paths run from $(0,0)$ to $(5,5)$ using only unit steps right and up?'
             answer: "252"
-            solution_sketch: '$\binom{10}{5} = 252$.'
-          - problem: "A robot moves on a grid. How many lattice paths run from (0,0) to (6,2) using only unit steps right and up?"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Each path has $5$ steps right and $5$ steps up, $10$ steps in all. Choosing which $5$ are right gives $\binom{10}{5} = 252$.'
+          - problem: 'How many lattice paths run from $(0,0)$ to $(6,2)$ using only unit steps right and up?'
             answer: "28"
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The path from (0,0) to (6,2) has 6 right steps and 2 up steps, so it is an arrangement of the multiset with six R's and two U's. By the multiset arrangement rule, the count is (6+2)!/(6!2!), which is the binomial coefficient C(8,2). Evaluate C(8,2) = 28, so the answer is 28."
-          - problem: "An editor lists all strings of 5 letters R and 3 letters U. How many different strings can be formed?"
+            solution_sketch: 'Each path has $6$ steps right and $2$ steps up, so it is an arrangement of six R''s and two U''s. The count is $\binom{8}{2} = 28$.'
+          - problem: 'How many different strings can be made by arranging $5$ letters R and $3$ letters U in a row?'
             answer: "56"
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The full object is the multiset with five R's and three U's. By the multiset arrangement rule, the count is (5+3)!/(5!3!) = C(8,3). Evaluate C(8,3) = 56, so the answer is 56."
-          - problem: "A courier starts at (1,1) and travels to (6,5) using only unit steps right and up. How many lattice paths can the courier take?"
+            solution_sketch: 'The string has $8$ places, and the $3$ U''s can take any $3$ of them. The count is $8!/(5! \, 3!) = \binom{8}{3} = 56$.'
+          - problem: 'A courier starts at $(1,1)$ and travels to $(6,5)$ using only unit steps right and up. How many different routes can the courier take?'
             answer: "126"
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The displacement is 5 right steps and 4 up steps, so each route is an arrangement of five R's and four U's. By the multiset arrangement rule, the count is (5+4)!/(5!4!) = C(9,4). Evaluate C(9,4) = 126, so the answer is 126."
-          - problem: "A game board is 8 columns wide and 2 rows tall. A token moves from (0,0) to (8,2) by unit steps right and up. How many shortest paths are there?"
+            solution_sketch: 'The courier takes $6 - 1 = 5$ steps right and $5 - 1 = 4$ steps up. The number of routes is $\binom{9}{4} = 126$.'
+          - problem: 'A game board is $8$ columns wide and $2$ rows tall. A token moves from $(0,0)$ to $(8,2)$ by unit steps right and up. How many shortest paths does it have?'
             answer: "45"
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The shortest path has 8 right steps and 2 up steps, so it is an arrangement of the multiset with eight R's and two U's. By the multiset arrangement rule, the count is (8+2)!/(8!2!) = C(10,2). Evaluate C(10,2) = 45, so the answer is 45."
-        constraints: "grid dimensions <= 8 x 8; answer C(m+n, n)"
+            solution_sketch: 'A shortest path has $8$ steps right and $2$ steps up. The number of paths is $\binom{10}{2} = 45$.'
+          - problem: 'A delivery driver must go $7$ blocks east and $4$ blocks north on a street grid, and never goes backward. How many different routes are there?'
+            answer: "330"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Every route is an arrangement of $7$ east steps and $4$ north steps, $11$ steps in all. The number of routes is $\binom{11}{4} = 330$.'
+          - problem: 'A coin is tossed $10$ times. In how many different sequences of heads and tails do exactly $3$ heads occur?'
+            answer: "120"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'A sequence is an arrangement of $3$ H''s and $7$ T''s. The $3$ heads can take any $3$ of the $10$ places, so the count is $\binom{10}{3} = 120$.'
+          - problem: 'How many lattice paths from $(0,0)$ to $(5,4)$, using only unit steps right and up, pass through the point $(2,2)$?'
+            answer: "60"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'There are $\binom{4}{2} = 6$ paths from $(0,0)$ to $(2,2)$ and $\binom{5}{2} = 10$ paths from $(2,2)$ to $(5,4)$. The paths multiply: $6 \cdot 10 = 60$.'
+          - problem: 'The number of lattice paths from $(0,0)$ to $(n,2)$ using only unit steps right and up is $36$. Find $n$.'
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The number of paths is $\binom{n+2}{2} = 36$. Since $\binom{9}{2} = 36$, we get $n + 2 = 9$ and $n = 7$.'
+        constraints: "grid dimensions <= 8 x 10; answer C(m+n, n); start points other than the origin, strings of two letters, coin sequences, one point to pass through, an unknown grid size"
     diagnostic_exemplar:
       problem: 'How many lattice paths run from $(0,0)$ to $(5,3)$ using only unit steps right and up?'
       answer: '56'
@@ -293,58 +464,96 @@ topics:
       - id: kp1
         name: "Small derangement numbers"
         key_prerequisites: [inclusion-exclusion, permutations]
+        try_first:
+          problem: 'Two people each put their own hat on a table, then each picks up one hat. In how many ways can both of them pick up a hat that is not their own?'
+          answer_contract: {"kind": "exact"}
+          answer: '1'
+          reveal: 'The only way is for the two people to swap hats, so there is $1$ way. An arrangement that leaves nobody in their own place is a derangement, and the number of them is written $D_n$.'
+        step_check:
+          step: 'is a derangement because neither element is in its original position'
+          question: 'Why is the arrangement $2, 1$ a derangement of $\{1, 2\}$?'
+          options:
+            - 'The list is different from the original order in some place'
+            - 'At least one number has moved away from its original position'
+            - 'No number sits in the position that matches its own value'
+            - 'The list is in decreasing order, so no number can stay put'
+          answer: 'No number sits in the position that matches its own value'
+          why: 'A derangement needs every number to leave its own position. The arrangement $3, 2, 1$ moves $1$ and $3$ but leaves $2$ in place.'
         exemplars:
-          - problem: "A derangement of a set with one element is a permutation that moves no element to its original place. How many such permutations exist?"
-            answer: "0"
+          - problem: 'A derangement of the numbers $1, 2, 3$ is an arrangement of them in a row in which no number is in the position that matches its value: $1$ is not first, $2$ is not second and $3$ is not third. How many derangements are there?'
+            answer: '2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The derangement number D_1 counts permutations of one object with no fixed point. By inclusion-exclusion, D_1 = 1! (1 - 1/1!) = 0. The answer is 0."
-          - problem: "How many derangements does a 2-element set have?"
-            answer: "1"
+            solution_sketch: 'List the six arrangements of $1, 2, 3$. Only $2, 3, 1$ and $3, 1, 2$ leave every number out of its own position, so there are $2$ derangements.'
+          - problem: 'How many derangements does a set with $1$ element have?'
+            answer: '0'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The derangement number D_2 counts permutations of two objects with no fixed point. By inclusion-exclusion, D_2 = 2! (1 - 1/1! + 1/2!) = 2 * (1/2) = 1. The answer is 1."
-          - problem: 'Compute $D_3$, the number of derangements of $3$ objects.'
-            answer: "2"
-            solution_sketch: 'Of the $6$ permutations of $\{1,2,3\}$, only $231$ and $312$ move every element. Or $D_3 = 3!(1 - 1 + \tfrac12 - \tfrac16) = 2$.'
-          - problem: 'Compute $D_4$.'
-            answer: "9"
-            solution_sketch: '$D_4 = 4!\left(1 - 1 + \tfrac12 - \tfrac16 + \tfrac1{24}\right) = 24 \cdot \tfrac{9}{24} = 9$.'
-          - problem: 'Compute $D_5$.'
-            answer: "44"
-            solution_sketch: '$D_5 = 5 \cdot D_4 - 1 = 44$ via $D_n = n D_{n-1} + (-1)^n$, or the alternating-sum formula.'
-          - problem: "Use the inclusion-exclusion formula for derangements. Compute the number of permutations of six objects that fix no object."
-            answer: "265"
+            solution_sketch: 'With one element, the only arrangement leaves that element in its own position. So no arrangement is a derangement, and the answer is $0$.'
+          - problem: 'Use the formula $D_n = n!\left(1 - \frac{1}{1!} + \frac{1}{2!} - \cdots + (-1)^n \frac{1}{n!}\right)$ to find $D_5$.'
+            answer: '44'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The derangement number D_6 counts permutations of six objects with no fixed point. By inclusion-exclusion, D_6 = 6! (1 - 1/1! + 1/2! - 1/3! + 1/4! - 1/5! + 1/6!). Compute 720 * (1 - 1 + 1/2 - 1/6 + 1/24 - 1/120 + 1/720) = 720 - 720 + 360 - 120 + 30 - 6 + 1 = 265. The answer is 265."
-        constraints: "n <= 6; use the inclusion-exclusion formula or the recurrence"
+            solution_sketch: 'Multiply $5! = 120$ by $1 - 1 + \tfrac12 - \tfrac16 + \tfrac1{24} - \tfrac1{120}$. Term by term this is $120 - 120 + 60 - 20 + 5 - 1 = 44$.'
+          - problem: 'Six friends hold a gift exchange. Each friend gives one gift to a different friend, and each friend receives exactly one gift. In how many ways can the gifts be assigned?'
+            answer: '265'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Each friend must give to someone else and receive from someone else, so the assignments are the derangements of six objects. Then $D_6 = 6! - 6 \cdot 5! + 15 \cdot 4! - 20 \cdot 3! + 15 \cdot 2! - 6 + 1 = 265$.'
+          - problem: 'Sam counts the derangements of four objects as $4! - 4 \cdot 3! = 0$: all arrangements, minus those that keep one chosen object in place. What is the correct number of derangements of four objects?'
+            answer: '9'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Sam subtracts an arrangement that keeps two objects in place twice. Inclusion-exclusion adds these back, giving $24 - 24 + 12 - 4 + 1 = 9$.'
+          - problem: 'Given $D_5 = 44$ and $D_6 = 265$, use the recurrence $D_n = (n-1)(D_{n-1} + D_{n-2})$ to find $D_7$.'
+            answer: '1854'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Put $n = 7$ in the recurrence. Then $D_7 = 6(265 + 44) = 6 \cdot 309 = 1854$.'
+          - problem: 'Four students are each handed one of four homework papers to grade, one paper per student. In how many ways can the papers be handed out so that nobody grades their own paper?'
+            answer: '9'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Handing out the papers is an arrangement of four objects, and nobody may keep their own paper. So the count is the derangement number $D_4 = 9$.'
+        constraints: "n <= 7; use listing, the inclusion-exclusion formula or the recurrence; bare counts and gift-exchange contexts"
       - id: kp2
         name: "Derangement applications and probability"
         key_prerequisites: [inclusion-exclusion, permutations]
+        step_check:
+          step: 'Calculate the total number of permutations'
+          question: 'Why does the probability use the total number $5! = 120$ of permutations?'
+          options:
+            - 'It is the number of hats, which turns a count into a plain rate'
+            - 'It is the number of equally likely ways to return the hats'
+            - 'It is the number of ways in which somebody gets their own hat'
+            - 'It is the number of derangements before any are removed'
+          answer: 'It is the number of equally likely ways to return the hats'
+          why: 'The probability is favorable ways divided by all equally likely ways, and every one of the $120$ returns is equally likely.'
         exemplars:
-          - problem: 'Four letters are stuffed randomly into four addressed envelopes, one per envelope. In how many ways does no letter reach its own envelope?'
-            answer: "9"
-            solution_sketch: 'This is $D_4 = 9$.'
-          - problem: 'With the four letters above, what is the probability that no letter reaches its own envelope? Give a fraction.'
-            answer: '$3/8$'
-            solution_sketch: '$D_4 / 4! = 9/24 = 3/8$.'
-          - problem: "Three letters are stuffed randomly into three addressed envelopes, one letter per envelope. How many ways result in no letter reaching its own envelope?"
-            answer: "2"
+          - problem: 'Four letters are put at random into four addressed envelopes, one letter in each envelope. What is the probability that no letter is in its own envelope?'
+            answer: '3/8'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The derangement count is D_3 = 3! - 3*2! + 3*1! - 1*0!. Inclusion-exclusion gives 6 - 6 + 3 - 1 = 2. The number of ways is 2."
-          - problem: "Three letters are stuffed randomly into three addressed envelopes, one letter per envelope. Find the probability that no letter reaches its own envelope, as a reduced fraction."
-            answer: "1/3"
+            solution_sketch: 'There are $4! = 24$ equally likely ways to fill the envelopes. Of these, $D_4 = 9$ put every letter in a wrong envelope, so the probability is $9/24 = 3/8$.'
+          - problem: 'Six people each put a name card into a bag, and then each person draws one card. In how many ways can every person draw a card with somebody else''s name?'
+            answer: '265'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "First find the derangement count D_3 = 2. The total number of assignments is 3! = 6. The probability is 2/6 = 1/3. The probability is 1/3."
-          - problem: "Five hats are returned randomly to five people, one hat per person. How many ways result in every person receiving a hat that is not their own?"
-            answer: "44"
+            solution_sketch: 'Each person draws exactly one card, so the draws are the arrangements of six cards. None may match its owner, so the count is $D_6 = 265$.'
+          - problem: 'Three letters are put at random into three addressed envelopes, one letter in each envelope. What is the probability that no letter is in its own envelope?'
+            answer: '1/3'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The derangement count is D_5 = 5! - 5*4! + 10*3! - 10*2! + 5*1! - 1*0!. Inclusion-exclusion gives 120 - 120 + 60 - 20 + 5 - 1 = 44. The number of ways is 44."
-          - problem: "Five hats are returned randomly to five people, one hat per person. Find the probability that every person receives a hat that is not their own, as a reduced fraction."
-            answer: "11/30"
+            solution_sketch: 'There are $3! = 6$ equally likely ways, and $D_3 = 2$ of them leave every letter out of its own envelope. The probability is $2/6 = 1/3$.'
+          - problem: 'Four letters are put at random into four addressed envelopes, one letter in each envelope. What is the probability that at least one letter is in its own envelope?'
+            answer: '5/8'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "First find the derangement count D_5 = 44. The total number of assignments is 5! = 120. The probability is 44/120 = 11/30. The probability is 11/30."
-        constraints: "hat-check / letters framing; n = 3-5; probabilities as reduced fractions"
+            solution_sketch: 'This event is the opposite of "no letter is in its own envelope", which has probability $9/24 = 3/8$. So the probability is $1 - 3/8 = 5/8$.'
+          - problem: 'Five hats are returned at random to five people, one hat to each person. What is the probability that nobody receives their own hat?'
+            answer: '11/30'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'There are $5! = 120$ equally likely ways to return the hats. Of these, $D_5 = 44$ give nobody their own hat, so the probability is $44/120 = 11/30$.'
+          - problem: 'Four students are each handed one of four graded quizzes at random, one quiz per student. In how many ways does exactly one student receive their own quiz?'
+            answer: '8'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Choose the one student who gets the right quiz in $4$ ways. The other three students must all get wrong quizzes, in $D_3 = 2$ ways, so there are $4 \cdot 2 = 8$ ways.'
+          - problem: 'Five letters are put at random into five addressed envelopes, one letter in each envelope. In how many of the $120$ equally likely ways does at least one letter reach its own envelope?'
+            answer: '76'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The ways in which no letter reaches its own envelope number $D_5 = 44$. The remaining ways are $120 - 44 = 76$.'
+        constraints: "hat-check, letter and name-card framings; n = 3-6; counts, probabilities and complements; probabilities as fractions"
     diagnostic_exemplar:
-      problem: 'Five letters are stuffed randomly into five addressed envelopes, one per envelope. What is the probability that no letter reaches its own envelope? Give a fraction in lowest terms.'
+      problem: 'Five letters are stuffed randomly into five addressed envelopes, one per envelope. What is the probability that no letter reaches its own envelope?'
       answer: '11/30'
       solution_sketch: '$D_5 = 44$ of $5! = 120$ arrangements: $44/120 = 11/30$.'
     anki_seeds:
@@ -376,59 +585,98 @@ topics:
       - id: kp1
         name: "Guarantee thresholds (generalized pigeonhole)"
         key_prerequisites: [pigeonhole-principle]
+        try_first:
+          problem: 'Seven cookies are shared among $3$ children in any way at all. What is the largest number $m$ for which some child must get at least $m$ cookies?'
+          answer_contract: {"kind": "exact"}
+          answer: '3'
+          reveal: 'Sharing $7$ cookies evenly would give $7/3$ per child, so some child gets more than $2$ and therefore at least $3$. The generalized pigeonhole principle says that $n$ objects in $k$ holes put at least $\lceil n/k \rceil$ objects in some hole.'
+        step_check:
+          step: 'Apply the formula $n = k(m-1) + 1$'
+          question: 'Why do $k(m-1) + 1$ cards guarantee $m$ cards of one suit?'
+          options:
+            - 'Every suit holds exactly $m-1$ cards after $k(m-1)$ cards, so a pair must follow'
+            - 'Splitting $k(m-1) + 1$ cards by $k$ suits always puts exactly $m$ cards in each suit'
+            - 'The last card always comes from the fullest suit, which then holds exactly $m$ cards'
+            - 'The first $k(m-1)$ cards can stop at $m-1$ per suit, and one more must make $m$'
+          answer: 'The first $k(m-1)$ cards can stop at $m-1$ per suit, and one more must make $m$'
+          why: 'With $k(m-1)$ cards, every suit can still hold only $m-1$ cards. The next card must go into a suit that then has $m$.'
         exemplars:
-          - problem: 'A drawer holds $10$ red and $10$ blue socks. How many socks must you pull out (in the dark) to guarantee a matching pair?'
-            answer: "3"
-            solution_sketch: 'Two colors are the pigeonholes; $3$ socks force two of the same color.'
-          - problem: 'How many people are needed to guarantee that at least $3$ of them share a birth month?'
-            answer: "25"
-            solution_sketch: 'With $12$ months, $2 \cdot 12 = 24$ people could pair off evenly; $25$ forces $\lceil 25/12 \rceil = 3$ in some month.'
-          - problem: "A standard deck has 4 suits. How many cards must you draw from the deck, without looking, to guarantee that at least 4 cards are from the same suit?"
-            answer: "13"
+          - problem: 'A bag holds many marbles in $5$ colors. How many marbles must you draw without looking to be sure that at least $3$ of them have the same color?'
+            answer: '11'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The four suits are the pigeonholes, so n = 4 and k = 4. A draw can have at most 3 cards per suit before 4 of one suit are forced, which is 4 * 3 = 12 cards total. The generalized pigeonhole threshold is n(k-1)+1 = 4(4-1)+1 = 13, so the answer is 13."
-          - problem: "How many people must be in a room to guarantee that at least 4 of them were born in the same month?"
-            answer: "37"
+            solution_sketch: 'If no color appears $3$ times, at most $2$ marbles of each of the $5$ colors can be drawn, which is $5 \cdot 2 = 10$ marbles. So the $11$th marble forces $3$ of one color.'
+          - problem: 'A standard deck has $4$ suits. How many cards must you draw without looking to be sure that at least $4$ of them are from the same suit?'
+            answer: '13'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The 12 months are the pigeonholes, so n = 12 and k = 4. If no month has 4 birthdays, each month can have at most 3 birthdays, for 12 * 3 = 36 people. The generalized pigeonhole threshold is n(k-1)+1 = 12(4-1)+1 = 37, so the answer is 37."
-          - problem: "A survey asks each person to name a favorite day of the week. How many people must be surveyed to guarantee that at least 3 people name the same day?"
-            answer: "15"
+            solution_sketch: 'A draw with at most $3$ cards of each suit has $4 \cdot 3 = 12$ cards. The $13$th card must be a fourth card of some suit, so the answer is $13$.'
+          - problem: 'How many people are needed to guarantee that at least $3$ of them were born in the same month?'
+            answer: '25'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The 7 days are the pigeonholes, so n = 7 and k = 3. If no day is named 3 times, each day can be named at most twice, for 7 * 2 = 14 people. The generalized pigeonhole threshold is n(k-1)+1 = 7(3-1)+1 = 15, so the answer is 15."
-          - problem: "A bag contains marbles of 5 different colors. How many marbles must you draw, without looking, to guarantee that at least 3 marbles have the same color?"
-            answer: "11"
+            solution_sketch: 'There are $12$ months, and $2 \cdot 12 = 24$ people can have at most $2$ in each month. The $25$th person forces $3$ in one month.'
+          - problem: 'A survey asks each person to name a favorite day of the week. How many people must be surveyed to be sure that at least $3$ people name the same day?'
+            answer: '15'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The 5 colors are the pigeonholes, so n = 5 and k = 3. A draw without 3 marbles of one color can have at most 2 marbles per color, which is 5 * 2 = 10 marbles. The generalized pigeonhole threshold is n(k-1)+1 = 5(3-1)+1 = 11, so the answer is 11."
-        constraints: "answer is n(k-1)+1 to guarantee k objects in one of n holes; everyday framings (socks, months, cards)"
+            solution_sketch: 'If no day is named $3$ times, each of the $7$ days is named at most twice, which is $14$ people. So $15$ people force a day named $3$ times.'
+          - problem: 'Thirty-one students each join exactly one of $4$ clubs. What is the largest number $m$ for which some club must have at least $m$ members, however the students choose?'
+            answer: '8'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Divide $31$ students among $4$ clubs to get $31/4 = 7.75$. Some club has more than $7$ members, so some club has at least $8$.'
+          - problem: 'A town has $1000$ people. What is the largest number $m$ for which at least $m$ of them must have a birthday in the same month?'
+            answer: '84'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Divide $1000$ people among $12$ months to get $1000/12 \approx 83.3$. Some month has more than $83$ birthdays, so some month has at least $84$.'
+          - problem: 'A box holds $10$ red balls and $2$ blue balls. How many balls must you draw without looking to be sure that at least $4$ of them are red?'
+            answer: '6'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'In the worst case you draw both blue balls and then $3$ red balls, which is $5$ balls with only $3$ red. The $6$th ball must be red, so $6$ balls are needed.'
+        constraints: "answer is k(m-1)+1 to guarantee m objects in one of k holes, or ceil(n/k) for the fullest hole; everyday framings (marbles, months, cards, clubs)"
       - id: kp2
         name: "Choosing the right pigeonholes"
         key_prerequisites: [pigeonhole-principle]
+        step_check:
+          step: 'Put the integers $1, \dots, 12$ into the six pairs that each add up to $13$'
+          question: 'Why do the six pairs $\{1,12\}, \{2,11\}, \dots, \{6,7\}$ force a sum of $13$ once $7$ integers are chosen?'
+          options:
+            - 'The integers $1$ to $12$ add up to $78 = 6 \cdot 13$, so seven of them reach $13$'
+            - 'Each pair holds one chosen integer with no sum of $13$, so a 7th completes a pair'
+            - 'Every integer has exactly one partner, so any two chosen integers are partners'
+            - 'Each integer lies in two of the pairs, so seven integers must meet some pair twice'
+          answer: 'Each pair holds one chosen integer with no sum of $13$, so a 7th completes a pair'
+          why: 'Six chosen integers can lie in six different pairs with no sum of $13$, for example $1, \dots, 6$. A 7th integer must share a pair with one of them.'
         exemplars:
-          - problem: "The integers 1 through 12 are split into the pairs {1,12}, {2,11}, {3,10}, {4,9}, {5,8}, {6,7}. Find the smallest number of integers that must be chosen from {1,2,...,12} to guarantee that two chosen integers sum to 13."
-            answer: "7"
+          - problem: 'Integers are chosen from $1, 2, \dots, 12$. What is the smallest number of integers you must choose to be sure that two of them add up to $13$?'
+            answer: '7'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1: The pigeonholes are the six pairs {1,12}, {2,11}, {3,10}, {4,9}, {5,8}, {6,7}. Step 2: Choosing one integer from each pair gives 6 integers with no two summing to 13. Step 3: By the pigeonhole principle, a 7th integer must complete one of the six pairs. The smallest number is 7."
-          - problem: "The integers 1 through 16 are split into the pairs {1,16}, {2,15}, {3,14}, {4,13}, {5,12}, {6,11}, {7,10}, {8,9}. Find the smallest number of integers that must be chosen from {1,2,...,16} to guarantee that two chosen integers sum to 17."
-            answer: "9"
+            solution_sketch: 'Put the integers into the six pairs $\{1,12\}, \{2,11\}, \{3,10\}, \{4,9\}, \{5,8\}, \{6,7\}$, each with sum $13$. Six integers can come one from each pair with no sum of $13$, but the $7$th integer must complete a pair.'
+          - problem: 'A drawer holds socks in $5$ colors. How many socks must you take out in the dark to be sure of a matching pair?'
+            answer: '6'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1: The pigeonholes are the eight pairs {1,16}, {2,15}, {3,14}, {4,13}, {5,12}, {6,11}, {7,10}, {8,9}. Step 2: Choosing one integer from each pair gives 8 integers with no two summing to 17. Step 3: The pigeonhole principle forces a 9th integer to complete one of the eight pairs. The smallest number is 9."
-          - problem: "A group of people is chosen. The 12 months are the pigeonholes. Find the smallest number of people that guarantees at least two people share a birth month."
-            answer: "13"
+            solution_sketch: 'The $5$ colors are the pigeonholes. Five socks can all have different colors, but the $6$th sock must match one of them.'
+          - problem: 'What is the smallest number of distinct integers you must choose to be sure that two of them have a difference divisible by $7$?'
+            answer: '8'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1: The pigeonholes are the 12 months. Step 2: With 12 people, one person can be placed in each month, so no shared month is forced. Step 3: The pigeonhole principle forces a shared month when a 13th person is added. The smallest number is 13."
-          - problem: "A drawer has socks in 5 colors. Find the smallest number of socks to draw in the dark to guarantee a matching pair of socks."
-            answer: "6"
+            solution_sketch: 'Sort integers by their remainder on division by $7$, so there are $7$ pigeonholes. Seven integers can have seven different remainders, but the $8$th shares a remainder with one of them, and then the difference is divisible by $7$.'
+          - problem: 'Integers are chosen from $1, 2, \dots, 20$. What is the smallest number of integers you must choose to be sure that two of them add up to $21$?'
+            answer: '11'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1: The pigeonholes are the 5 sock colors. Step 2: Drawing 5 socks can give one sock of each color, so no matching pair is forced. Step 3: By the pigeonhole principle, a 6th sock must match one of the 5 colors. The smallest number is 6."
-          - problem: "A drawer has socks in 7 colors. Find the smallest number of socks to draw in the dark to guarantee two socks of the same color."
-            answer: "8"
+            solution_sketch: 'The ten pairs $\{1,20\}, \{2,19\}, \dots, \{10,11\}$ each have sum $21$. Ten integers can come one from each pair with no sum of $21$, but the $11$th integer completes a pair.'
+          - problem: 'Points are placed in a square with side $2$ cm. What is the smallest number of points that guarantees that two of them are at most $\sqrt{2}$ cm apart?'
+            answer: '5'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1: The pigeonholes are the 7 colors. Step 2: Drawing 7 socks can give one sock of each color, so no color repeats. Step 3: The pigeonhole principle forces a repeated color on the 8th sock. The smallest number is 8."
-          - problem: "The integers 1 through 20 are split into the pairs {1,20}, {2,19}, {3,18}, {4,17}, {5,16}, {6,15}, {7,14}, {8,13}, {9,12}, {10,11}. Find the smallest number of integers that must be chosen from {1,2,...,20} to guarantee that two chosen integers sum to 21."
-            answer: "11"
+            solution_sketch: 'Cut the square into four squares of side $1$ cm. Two points in one small square are at most $\sqrt{2}$ cm apart, since that is its diagonal. The four corners of the big square show that $4$ points are not enough, so the answer is $5$.'
+          - problem: 'Integers are chosen from $1, 2, \dots, 10$. What is the smallest number of integers you must choose to be sure that one of them divides another?'
+            answer: '6'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1: The pigeonholes are the ten pairs {1,20}, {2,19}, {3,18}, {4,17}, {5,16}, {6,15}, {7,14}, {8,13}, {9,12}, {10,11}. Step 2: Choosing one integer from each pair gives 10 integers with no two summing to 21. Step 3: The pigeonhole principle forces a completed pair when an 11th integer is chosen. The smallest number is 11."
-        constraints: "the solver must name the pigeonholes explicitly; sets of size <= 20; the item must test THIS KP: Choosing the right pigeonholes"
+            solution_sketch: 'Write each integer as an odd number times a power of $2$. The $5$ odd parts $1, 3, 5, 7, 9$ are the pigeonholes, and two integers with the same odd part divide one another. Five integers such as $6, 7, 8, 9, 10$ have no such pair, so the answer is $6$.'
+          - problem: 'A box holds $8$ left gloves and $8$ right gloves, all mixed. How many gloves must you take out in the dark to be sure of having a left glove and a right glove?'
+            answer: '9'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'In the worst case you take out all $8$ gloves of one hand first. The $9$th glove must be of the other hand, so the answer is $9$.'
+          - problem: 'Sam says that $8$ integers from $1, 2, \dots, 16$ are enough to guarantee that two of them add up to $17$, because there are $8$ pairs with that sum. What is the correct smallest number of integers?'
+            answer: '9'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Eight integers can be chosen one from each of the eight pairs, for example $1, 2, \dots, 8$, and no two of them add up to $17$. A $9$th integer must complete a pair, so the answer is $9$.'
+        constraints: "the solver must find the pigeonholes (pairs, colors, remainders, squares, chains); integers <= 20; the item must test THIS KP: Choosing the right pigeonholes"
     diagnostic_exemplar:
       problem: 'Show that among any $6$ integers chosen from $\{1, 2, \dots, 10\}$, two of them sum to $11$.'
       answer: 'Partition $\{1, \dots, 10\}$ into the pairs $\{1,10\}, \{2,9\}, \{3,8\}, \{4,7\}, \{5,6\}$: $6$ numbers in $5$ pairs force two into one pair, and each pair sums to $11$.'
@@ -463,69 +711,106 @@ topics:
       - id: kp1
         name: "Counting one set two ways: symmetry and Pascal"
         key_prerequisites: [combinations]
+        try_first:
+          problem: 'A class of $6$ students must send $4$ of its members to a contest. In how many ways can the team of $4$ be chosen?'
+          answer_contract: {"kind": "exact"}
+          answer: '15'
+          reveal: 'Choosing the $4$ who go is the same as choosing the $2$ who stay home, so there are $\binom{6}{2} = 15$ ways. One set of choices counted from two sides gives two expressions that are equal.'
+        step_check:
+          step: 'Since the two cases are disjoint and exhaustive'
+          question: 'Why must the two cases be disjoint and exhaustive before their counts are added?'
+          options:
+            - 'Each $k$-subset then lies in exactly one case, so none is missed or counted twice'
+            - 'Both cases then contain the same number of subsets, so their counts can be added'
+            - 'Disjoint cases make each count a binomial coefficient, which the sum formula needs'
+            - 'The cases only need to be exhaustive, since a subset in both cases adds nothing'
+          answer: 'Each $k$-subset then lies in exactly one case, so none is missed or counted twice'
+          why: 'If a subset were in both cases it would be counted twice, and if it were in neither it would be missed. Then the sum would not equal the total.'
         exemplars:
-          - problem: "In the bijection S -> S^c for an n-set, a k-subset maps to an (n-k)-subset. For n = 8 and k = 3, how many image subsets are there?"
-            answer: "56"
+          - problem: 'A club has $8$ members. Choosing $3$ members for a committee is the same as choosing the $5$ members to leave off. How many different $3$-member committees can be formed?'
+            answer: '56'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The full object is the complement bijection between 3-subsets and 5-subsets of an 8-set. Step 1 (bijection): each 3-subset has exactly one 5-element complement. Step 2 (count): the number of 5-subsets of an 8-set is C(8,5) = 56. The answer is 56."
-          - problem: "In Pascal's identity, split k-subsets of an n-set by whether they contain a fixed element x. For n = 7 and k = 3, how many 3-subsets contain x?"
-            answer: "15"
+            solution_sketch: 'Each $3$-member committee matches exactly one group of $5$ members left off, so the two counts are equal. The number is $\binom{8}{3} = \binom{8}{5} = 56$.'
+          - problem: 'A club has $7$ members, and Ana is one of them. How many $3$-member committees include Ana?'
+            answer: '15'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The full object is the split of 3-subsets of a 7-set by a fixed element x. Step 1 (split): a 3-subset containing x is completed by choosing 2 elements from the other 6. Step 2 (count): C(6,2) = 15. The answer is 15."
-          - problem: "For Pascal's identity, split k-subsets of an n-set by whether they contain a fixed element x. For n = 7 and k = 3, how many 3-subsets avoid x?"
-            answer: "20"
+            solution_sketch: 'Once Ana is on the committee, the other $2$ members come from the remaining $6$ members. So there are $\binom{6}{2} = 15$ committees.'
+          - problem: 'A club has $7$ members, and Ana is one of them. How many $3$-member committees do not include Ana?'
+            answer: '20'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The full object is the split of 3-subsets of a 7-set by a fixed element x. Step 1 (split): a 3-subset avoiding x is a 3-subset of the other 6 elements. Step 2 (count): C(6,3) = 20. The answer is 20."
-          - problem: "A combinatorial proof of symmetry pairs each k-subset of an n-set with its complement. For n = 10 and k = 7, how many elements are in the complement of each such subset?"
-            answer: "3"
+            solution_sketch: 'Without Ana, all $3$ members come from the remaining $6$ members. So there are $\binom{6}{3} = 20$ committees.'
+          - problem: 'A pizza shop offers $10$ toppings. Choosing $7$ toppings for a pizza is the same as choosing the $3$ toppings to leave off. How many different $7$-topping pizzas are possible?'
+            answer: '120'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The full object is the complement bijection for symmetry. Step 1 (bijection): a k-subset maps to an (n-k)-subset. Step 2 (subtract): 10 - 7 = 3. The answer is 3."
-          - problem: "Claim: the complement map S -> S^c gives a bijection between k-subsets and (n-k)-subsets of an n-set. Step 1: Let S be the set of k-subsets. Step 2: Map each S to its complement. Step 3: The map is not injective because two different k-subsets can have the same complement. Step 4: Therefore the two counts are equal. Which step is the first step that is not valid?"
-            answer: "Step 3"
-            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
-            solution_sketch: "Step 1 correctly defines the set of k-subsets. Step 2 correctly defines the complement map. Step 3 is false: the complement map is injective, since equal complements imply equal subsets. Step 4 is the conclusion that follows after Step 3 is corrected. The answer is Step 3."
-          - problem: "In Pascal's identity proof, the containing and avoiding cases together count all k-subsets. For n = 9 and k = 4, how many 4-subsets are there in total?"
-            answer: "126"
+            solution_sketch: 'Each $7$-topping pizza matches exactly one set of $3$ toppings left off. So the number is $\binom{10}{3} = \binom{10}{7} = 120$.'
+          - problem: 'Maya proves that $\binom{n}{k} = \binom{n}{n-k}$ by matching each $k$-subset of an $n$-set with its complement. Step 1: Let $S$ be a $k$-subset of the $n$-set. Step 2: Match $S$ with its complement. Step 3: This matching is not one-to-one, because two different $k$-subsets can have the same complement. Step 4: So the two counts are equal. Which step is the first one that is not valid?'
+            answer: 'Step 3'
+            answer_contract: {"kind": "label", "options": [["Step 1", "1", "step one"], ["Step 2", "2", "step two"], ["Step 3", "3", "step three"], ["Step 4", "4", "step four"]]}
+            solution_sketch: 'Step 1 and Step 2 are fine. Step 3 is false, because two subsets with the same complement are equal, so the matching is one-to-one. Step 4 follows once Step 3 is corrected.'
+          - problem: 'A club has $9$ members, and Ana is one of them. Counting the $4$-member committees by whether they include Ana gives $\binom{8}{3}$ that include her and $\binom{8}{4}$ that do not. How many $4$-member committees are there in all?'
+            answer: '126'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The full object is the set of all 4-subsets of a 9-set. Step 1 (split): the containing and avoiding cases partition all 4-subsets. Step 2 (count): the total is C(9,4) = 126. The answer is 126."
-          - problem: "Write the full proof: for n >= 1 and 1 <= k <= n, C(n,k) = C(n-1,k-1) + C(n-1,k). Then compare with the solution."
-            answer: "See the solution."
+            solution_sketch: 'The two cases are disjoint and cover every committee, so the counts add. This gives $56 + 70 = 126$, which equals $\binom{9}{4}$.'
+          - problem: 'Pascal''s rule says that $\binom{10}{4} = \binom{9}{3} + \binom{9}{4}$. Given that $\binom{9}{3} = 84$ and $\binom{9}{4} = 126$, find $\binom{10}{4}$.'
+            answer: '210'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Pascal''s rule splits the $4$-subsets of a $10$-set by whether they contain a fixed element. Adding the two counts gives $84 + 126 = 210$.'
+          - problem: 'Write the full proof that $\binom{n}{k} = \binom{n-1}{k-1} + \binom{n-1}{k}$ for $1 \le k \le n$ by counting the $k$-subsets of an $n$-set in two ways.'
+            answer: 'C(n,k) = C(n-1,k-1) + C(n-1,k)'
             answer_contract: {"kind": "none"}
-            solution_sketch: "Step 1 (define set): Let X be an n-element set and fix an element x in X. Let S be the collection of all k-element subsets of X. Step 2 (count one way): By the definition of combinations, the size of S is C(n,k). Step 3 (split): Every k-subset either contains x or avoids x, and these two cases are disjoint and exhaustive. Step 4 (count containing): A k-subset containing x is formed by choosing the remaining k-1 elements from the other n-1 elements, giving C(n-1,k-1). Step 5 (count avoiding): A k-subset avoiding x is a k-subset of the other n-1 elements, giving C(n-1,k). Step 6 (conclude): Adding the two disjoint cases gives C(n,k) = C(n-1,k-1) + C(n-1,k). The proof is complete. See the solution."
+            solution_sketch: 'Let $X$ be an $n$-element set and fix an element $x$ in $X$. Count the $k$-subsets of $X$ by whether they contain $x$. Those containing $x$ are formed by choosing the other $k-1$ elements from the remaining $n-1$, giving $\binom{n-1}{k-1}$. Those not containing $x$ are $k$-subsets of the remaining $n-1$ elements, giving $\binom{n-1}{k}$. The two cases are disjoint and cover every $k$-subset, and the total is $\binom{n}{k}$, so the identity holds.'
         constraints: "proofs must identify one set counted two ways or an explicit bijection; no algebraic manipulation of factorials"
       - id: kp2
         name: "Committee-chair and subset-sum identities"
         key_prerequisites: [combinations, binomial-expansion]
+        step_check:
+          step: 'Both sides count the same set'
+          question: 'Why can the two counts of (committee, chair) pairs be set equal to each other?'
+          options:
+            - 'Both expressions are products, and a product of binomials is the same either way'
+            - 'Each side counts a different set, and the two sets happen to have equal size'
+            - 'The same set of pairs is counted twice, so both counts must equal its size'
+            - 'Choosing the chair first only reorders the factors, which never changes the product'
+          answer: 'The same set of pairs is counted twice, so both counts must equal its size'
+          why: 'A set has one size. If two different counting methods both cover exactly the same pairs, their results must be equal.'
         exemplars:
-          - problem: "In the in-out proof that the sum of C(n,k) over k equals two to the n, each element of an n-set independently chooses in or out. Give the factor that one element contributes to the product."
-            answer: "2"
+          - problem: 'A club has $9$ members. A $3$-member committee is chosen, and then one of its members is named chair. How many different (committee, chair) choices are there?'
+            answer: '252'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "By the in-out rule, one element has two choices: in or out. The choices are independent, so each element contributes a factor of two. The answer is 2."
-          - problem: "In the committee-chair proof of k*C(n,k)=n*C(n-1,k-1), choose the chair before the other members. Give the number of chair choices as a function of n."
-            answer: "n"
-            answer_contract: {"kind": "function", "vars": ["n"]}
-            solution_sketch: "By the chair-first rule, the chair is chosen from all n people in the n-set. After that, the remaining k-1 members are chosen from the other n-1 people. The answer is n."
-          - problem: "In the in-out proof that the number of 2-subsets of an n-set splits by whether they contain a fixed element, fix one element. Give the number of choices for the second element as a function of n."
-            answer: "n-1"
-            answer_contract: {"kind": "function", "vars": ["n"]}
-            solution_sketch: "By the in-out rule, a 2-subset that contains the fixed element needs one more element. That second element is chosen from the remaining n-1 elements. The answer is n-1."
-          - problem: "In the committee-chair proof of k*C(n,k)=n*C(n-1,k-1), choose the committee first. For n=9 and k=3, compute the number of (committee, chair) pairs counted by this side."
-            answer: "252"
+            solution_sketch: 'First choose the committee in $\binom{9}{3} = 84$ ways. Then name its chair in $3$ ways, so there are $84 \cdot 3 = 252$ choices.'
+          - problem: 'A club has $10$ members. The chair is chosen first, and then $3$ other members are chosen to join the chair on a $4$-member committee. How many different (committee, chair) choices are there?'
+            answer: '840'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "By the committee-first rule, first choose a 3-person committee from 9 people: C(9,3)=84. Then choose its chair: 3 choices. Multiply: 84 times 3 equals 252. The answer is 252."
-          - problem: "Claim: C(n,k)=C(n-1,k)+C(n-1,k-1) for 1<=k<=n. Step 1: count k-subsets of an n-set. Step 2: split them by whether they contain a fixed element x. Step 3: if they contain x, there are C(n-1,k) ways; if not, C(n-1,k-1) ways. Step 4: add the two cases. Which step is the first step that is not valid?"
-            answer: "Step 3"
-            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
-            solution_sketch: "Step 1 is not invalid: it correctly counts k-subsets. Step 2 is not invalid: it correctly splits by the fixed element. Step 4 is not invalid once Step 3 is corrected: it adds the two cases. Step 3 swaps the cases: a k-subset that contains x needs k-1 more elements, giving C(n-1,k-1) choices, while one that does not contain x gives C(n-1,k). The answer is Step 3."
-          - problem: "In the chair-first proof that the sum from k=0 to n of k*C(n,k) equals n times 2 to the power n-1, after choosing the chair, the line for the remaining choices is missing. Select the missing line."
-            answer: "2^(n-1)"
-            answer_contract: {"kind": "label", "options": [["2^(n-1)"], ["2^(n)"], ["C(n-1,k)"], ["n*2^(n-1)"]]}
-            solution_sketch: "By the chair-first rule, choose the chair in n ways. Each of the other n-1 people then independently chooses in or out, giving 2^(n-1) choices. Option 2^(n) forgets to remove the chair from the in-out choices. Option C(n-1,k) fixes the committee size instead of allowing every subset of the remaining people. Option n*2^(n-1) is the full sum, not the remaining factor. The answer is 2^(n-1)."
-          - problem: "Write the full proof: for all n >= 1, sum from k=1 to n of k*C(n,k) = n*2^(n-1). Then compare with the solution."
-            answer: "See the solution."
+            solution_sketch: 'Choose the chair in $10$ ways. Then choose the $3$ other members from the remaining $9$ people in $\binom{9}{3} = 84$ ways, so there are $10 \cdot 84 = 840$ choices.'
+          - problem: 'A set has $6$ elements. How many subsets does it have, counting the empty set and the whole set?'
+            answer: '64'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Each of the $6$ elements is either in the subset or out of it, independently. So there are $2^6 = 64$ subsets.'
+          - problem: 'A sundae can be made with any of $5$ optional toppings, and each topping is either added or left off. How many different sundaes are possible, including the plain one?'
+            answer: '32'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Each of the $5$ toppings has $2$ choices, and the choices are independent. So there are $2^5 = 32$ sundaes.'
+          - problem: 'Leo proves that $k\binom{n}{k} = n\binom{n-1}{k-1}$ by counting the pairs (committee of $k$ people, chair on it). Step 1: Choosing the committee first gives $\binom{n}{k}$ ways, and then the chair gives $k$ ways. Step 2: Choosing the chair first gives $n$ ways. Step 3: Then the other $k-1$ members are chosen from all $n$ people, in $\binom{n}{k-1}$ ways. Step 4: Both counts are of the same set, so the two sides are equal. Which step is the first one that is not valid?'
+            answer: 'Step 3'
+            answer_contract: {"kind": "label", "options": [["Step 1", "1", "step one"], ["Step 2", "2", "step two"], ["Step 3", "3", "step three"], ["Step 4", "4", "step four"]]}
+            solution_sketch: 'Step 1 and Step 2 are fine. In Step 3 the chair is already on the committee, so the other $k-1$ members come from the remaining $n-1$ people in $\binom{n-1}{k-1}$ ways. Step 4 follows once Step 3 is corrected.'
+          - problem: 'A club has $6$ members. In how many ways can a committee of any size, with at least one member, be formed and one of its members be named chair?'
+            answer: '192'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Choose the chair in $6$ ways. Each of the other $5$ members is in or out of the committee, giving $2^5 = 32$ choices, so there are $6 \cdot 32 = 192$ ways.'
+          - problem: 'A club has $8$ members, and Ana is one of them. A committee is formed with Ana as chair, and each of the other $7$ members is independently in or out. How many different committees are possible?'
+            answer: '128'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Ana is the chair, so only the other $7$ members decide whether they join. Each has $2$ choices, so there are $2^7 = 128$ committees.'
+          - problem: 'A club has $12$ members. All $792$ possible $5$-member committees are formed, and each names one of its members as chair. Every member is chair of the same number of these committees. How many committees does Ana chair?'
+            answer: '330'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Each of the $792$ committees has $5$ possible chairs, so there are $792 \cdot 5 = 3960$ (committee, chair) pairs. These are shared equally among $12$ members, so Ana chairs $3960 / 12 = 330$ committees.'
+          - problem: 'Write the full proof that $\sum_{k=1}^{n} k\binom{n}{k} = n \cdot 2^{n-1}$ by counting (committee, chair) pairs in two ways.'
+            answer: 'sum of k*C(n,k) = n*2^(n-1)'
             answer_contract: {"kind": "none"}
-            solution_sketch: "Step 1: Count the set of pairs (S, c) where S is a subset of an n-set and c is an element of S. Step 2: Count by choosing the chair first. Choose c in n ways; then each of the other n-1 elements is either in or out, giving n*2^(n-1) pairs. Step 3: Count by committee size. For a fixed size k, choose the k-subset in C(n,k) ways and choose its chair in k ways, giving k*C(n,k) pairs. Step 4: Sum over k from 1 to n to get sum from k=1 to n of k*C(n,k). Both counts count the same set, so the two expressions are equal. This proves the identity."
-        constraints: "identities provable by committee/chair or in-out arguments; n symbolic, no induction"
+            solution_sketch: 'Count the pairs (S, c) where S is a nonempty subset of an $n$-set and c is a member of S. Choosing the committee size $k$, the committee in $\binom{n}{k}$ ways and its chair in $k$ ways gives $k\binom{n}{k}$ pairs, so summing over $k$ gives the left side. Choosing the chair first in $n$ ways, each of the other $n-1$ people is in or out, giving $n \cdot 2^{n-1}$ pairs. Both counts are of the same set, so the sides are equal.'
+        constraints: "identities provable by committee/chair or in-out arguments; n symbolic or small; no induction"
     diagnostic_exemplar:
       problem: 'Give a combinatorial proof that $\binom{2n}{2} = 2\binom{n}{2} + n^2$.'
       answer: 'Split $2n$ people into two rooms of $n$. A pair from the $2n$ is either within room one, within room two ($\binom{n}{2}$ each), or split across rooms ($n \cdot n$). Total: $2\binom{n}{2} + n^2 = \binom{2n}{2}$.'

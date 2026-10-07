@@ -29,90 +29,162 @@ topics:
       - id: kp1
         name: Shifting the index of summation
         key_prerequisites: [differentiating-integrating-power-series]
+        step_check:
+          step: 'When $n = 3$, $k = n - 3 = 0$'
+          question: 'Why does the lower limit change from $n = 3$ to $k = 0$?'
+          options:
+            - 'Every shifted series must start at zero, whatever the original limit was'
+            - 'The first term has $n = 3$, and $k = n - 3$ turns that value into $0$'
+            - 'The new limit is the old limit plus $3$, because the shift removes $3$'
+          answer: 'The first term has $n = 3$, and $k = n - 3$ turns that value into $0$'
+          why: 'The limit is a value of $n$, so it must be rewritten with the same rule as the index. The first term $n = 3$ becomes $k = 3 - 3 = 0$.'
         exemplars:
-          - problem: "Consider the series $\\sum_{n=3}^{\\infty} n a_n x^{n-1}$. Put $k = n - 1$ to rewrite it in powers of $x^k$. Give the starting value of $k$ and the factor multiplying $a_{k+1}$ as start = ...; factor = ..."
-            answer: "start = 2; factor = k+1"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "start"}, {"contract": {"kind": "function", "vars": ["k"]}, "name": "factor"}]}
-            solution_sketch: "The full series is $\\sum_{n=3}^{\\infty} n a_n x^{n-1}$. Step 1: the shift is $k = n - 1$, so $n = k + 1$. Step 2: the lower limit $n = 3$ becomes $k = 2$, and the coefficient becomes $(k+1)a_{k+1}$. The shifted series is $\\sum_{k=2}^{\\infty} (k+1)a_{k+1}x^k$, so start = 2; factor = k+1."
-          - problem: "Consider the series $\\sum_{n=4}^{\\infty} n(n-1) a_n x^{n-2}$. Put $k = n - 2$ to rewrite it in powers of $x^k$. Give the starting value of $k$ and the factor multiplying $a_{k+2}$ as start = ...; factor = ..."
-            answer: "start = 2; factor = k^2+3k+2"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "start"}, {"contract": {"kind": "function", "vars": ["k"]}, "name": "factor"}]}
-            solution_sketch: "The full series is $\\sum_{n=4}^{\\infty} n(n-1) a_n x^{n-2}$. Step 1: the shift is $k = n - 2$, so $n = k + 2$. Step 2: the lower limit $n = 4$ becomes $k = 2$, and the coefficient becomes $(k+2)(k+1)a_{k+2}= (k^2+3k+2)a_{k+2}$. The shifted series is $\\sum_{k=2}^{\\infty} (k^2+3k+2)a_{k+2}x^k$, so start = 2; factor = k^2+3k+2."
-          - problem: "Combine the two series $\\sum_{k=2}^{\\infty} (k+1) a_{k+1} x^k$ and $-\\sum_{k=2}^{\\infty} a_{k+1} x^k$ into one series. Give the starting index and the factor multiplying $a_{k+1}$ as start = ...; factor = ..."
-            answer: "start = 2; factor = k"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "start"}, {"contract": {"kind": "function", "vars": ["k"]}, "name": "factor"}]}
-            solution_sketch: "The full combination is $\\sum_{k=2}^{\\infty} (k+1) a_{k+1} x^k - \\sum_{k=2}^{\\infty} a_{k+1} x^k$. Step 1: both series already run over $x^k$ and start at $k = 2$, so no shift is needed. Step 2: subtract the coefficients termwise: $(k+1)a_{k+1} - a_{k+1} = k a_{k+1}$. The combined series is $\\sum_{k=2}^{\\infty} k a_{k+1}x^k$, so start = 2; factor = k."
-          - problem: "Consider the series $\\sum_{n=1}^{\\infty} n a_n x^{n+2}$. Put $k = n + 2$ to rewrite it in powers of $x^k$. Give the starting value of $k$ and the factor multiplying $a_{k-2}$ as start = ...; factor = ..."
-            answer: "start = 3; factor = k-2"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "start"}, {"contract": {"kind": "function", "vars": ["k"]}, "name": "factor"}]}
-            solution_sketch: "The full series is $\\sum_{n=1}^{\\infty} n a_n x^{n+2}$. Step 1: the shift is $k = n + 2$, so $n = k - 2$. Step 2: the lower limit $n = 1$ becomes $k = 3$, and the coefficient becomes $(k-2)a_{k-2}$. The shifted series is $\\sum_{k=3}^{\\infty} (k-2)a_{k-2}x^k$, so start = 3; factor = k-2."
-          - problem: "Combine the two series $\\sum_{k=1}^{\\infty} (k+3) a_{k+3} x^k$ and $-2\\sum_{k=1}^{\\infty} a_k x^k$ into one series. Give the factor multiplying $a_{k+3}$ and the factor multiplying $a_k$ as coef3 = ...; coef0 = ..."
-            answer: "coef3 = k+3; coef0 = -2"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["k"]}, "name": "coef3"}, {"contract": {"kind": "exact"}, "name": "coef0"}]}
-            solution_sketch: "The full combination is $\\sum_{k=1}^{\\infty} (k+3) a_{k+3} x^k - 2\\sum_{k=1}^{\\infty} a_k x^k$. Step 1: both series run over $x^k$ and start at $k = 1$, so no shift is needed. Step 2: combine coefficients termwise: $(k+3)a_{k+3} - 2a_k$. The combined series is $\\sum_{k=1}^{\\infty} [(k+3)a_{k+3} - 2a_k]x^k$, so coef3 = k+3; coef0 = -2."
-          - problem: "Consider the series $\\sum_{n=5}^{\\infty} n^2 a_n x^{n-2}$. Put $k = n - 2$ to rewrite it in powers of $x^k$. Give the starting value of $k$ and the factor multiplying $a_{k+2}$ as start = ...; factor = ..."
-            answer: "start = 3; factor = k^2+4k+4"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "start"}, {"contract": {"kind": "function", "vars": ["k"]}, "name": "factor"}]}
-            solution_sketch: "The full series is $\\sum_{n=5}^{\\infty} n^2 a_n x^{n-2}$. Step 1: the shift is $k = n - 2$, so $n = k + 2$. Step 2: the lower limit $n = 5$ becomes $k = 3$, and the coefficient becomes $(k+2)^2 a_{k+2}= (k^2+4k+4)a_{k+2}$. The shifted series is $\\sum_{k=3}^{\\infty} (k^2+4k+4)a_{k+2}x^k$, so start = 3; factor = k^2+4k+4."
-        constraints: "index shifts by 1 or 2 only; coefficients stay symbolic a_n; when combining, series must already share the same starting index"
+          - problem: 'Substitute $k = n - 1$ in $\sum_{n=3}^{\infty} n\,a_n x^{n-1}$. The result has the form $\sum_{k=m}^{\infty} (k+1)\,a_{k+1}\,x^k$. What is the lower limit $m$?'
+            answer: '2'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The new index is $k = n - 1$, so the first term, $n = 3$, has $k = 3 - 1 = 2$. The coefficient $n\,a_n$ becomes $(k+1)\,a_{k+1}$ because $n = k + 1$. So the shifted series is $\sum_{k=2}^{\infty} (k+1)\,a_{k+1}\,x^k$ and the lower limit is $m = 2$.'
+          - problem: 'Put $k = n - 2$ in $\sum_{n=2}^{\infty} n(n-1)\,a_n x^{n-2}$. The result is $\sum_{k=0}^{\infty} c(k)\,a_{k+2}\,x^k$. Find $c(k)$.'
+            answer: '(k+2)(k+1)'
+            answer_contract: {"kind": "function", "vars": ["k"]}
+            solution_sketch: 'Since $k = n - 2$, we have $n = k + 2$ and $n - 1 = k + 1$. The coefficient $n(n-1)\,a_n$ therefore becomes $(k+2)(k+1)\,a_{k+2}$. The lower limit $n = 2$ becomes $k = 0$, so $c(k) = (k+2)(k+1)$.'
+          - problem: 'The series $\sum_{k=2}^{\infty} (k+1)\,a_{k+1}\,x^k$ and $\sum_{k=2}^{\infty} a_{k+1}\,x^k$ are subtracted. The difference is $\sum_{k=2}^{\infty} c(k)\,a_{k+1}\,x^k$. Find $c(k)$.'
+            answer: 'k'
+            answer_contract: {"kind": "function", "vars": ["k"]}
+            solution_sketch: 'Both series run over $x^k$ and start at $k = 2$, so they can be combined term by term. The coefficient of $a_{k+1}\,x^k$ is $(k+1) - 1$. This equals $k$, so $c(k) = k$.'
+          - problem: 'Put $k = n + 2$ in $\sum_{n=1}^{\infty} n\,a_n x^{n+2}$ to write the series in powers of $x^k$. What is the new lower limit of the sum?'
+            answer: '3'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The new index is $k = n + 2$, so $n = k - 2$. The first term, $n = 1$, has $k = 1 + 2 = 3$. The shifted series is $\sum_{k=3}^{\infty} (k-2)\,a_{k-2}\,x^k$, so the lower limit is $3$.'
+          - problem: 'Let $a_n = \dfrac{1}{n!}$. What is the coefficient of $x^3$ in $\sum_{n=1}^{\infty} n\,a_n x^{n-1}$?'
+            answer: '1/6'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The power $x^{n-1}$ equals $x^3$ when $n = 4$, so only the term with $n = 4$ gives $x^3$. Its coefficient is $4\,a_4 = 4 \cdot \frac{1}{24}$. This equals $\frac{1}{6}$.'
+          - problem: 'Let $a_n = \dfrac{1}{n!}$. What is the coefficient of $x^5$ in $\sum_{n=2}^{\infty} n(n-1)\,a_n x^{n-2}$?'
+            answer: '1/120'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The power $x^{n-2}$ equals $x^5$ when $n = 7$. The coefficient of that term is $7 \cdot 6 \cdot a_7 = \frac{42}{5040}$. This equals $\frac{1}{120}$.'
+          - problem: 'Let $a_n = n$. The series $\sum_{k=1}^{\infty} \left[(k+3)\,a_{k+3} - 2\,a_k\right] x^k$ was made by combining two shifted series. What is the coefficient of $x^2$?'
+            answer: '21'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Put $k = 2$ in the bracket. Then $(k+3)\,a_{k+3} = 5\,a_5 = 5 \cdot 5 = 25$ and $2\,a_k = 2\,a_2 = 4$. The coefficient is $25 - 4 = 21$.'
+          - problem: 'To solve $y'''' - xy = 0$ by power series we write $y = \sum_{n=0}^{\infty} a_n x^n$, so $xy = \sum_{n=0}^{\infty} a_n x^{n+1}$. Put $k = n + 1$ so that $xy = \sum_{k=m}^{\infty} a_{k-1}\,x^k$. What is $m$?'
+            answer: '1'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The sum for $xy$ starts at $n = 0$. With $k = n + 1$, the first term has $k = 0 + 1 = 1$. So $xy = \sum_{k=1}^{\infty} a_{k-1}\,x^k$ and $m = 1$.'
+          - problem: 'In solving $y'''''' = y$ by power series, the third derivative is $y'''''' = \sum_{n=3}^{\infty} n(n-1)(n-2)\,a_n x^{n-3}$. Let $a_n = \dfrac{1}{n!}$. What is the coefficient of $x^4$ in this series?'
+            answer: '1/24'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The power $x^{n-3}$ equals $x^4$ when $n = 7$. The coefficient is $7 \cdot 6 \cdot 5 \cdot a_7 = \frac{210}{5040}$. This equals $\frac{1}{24}$.'
+          - problem: 'Sam shifts $\sum_{n=4}^{\infty} n(n-1)\,a_n x^{n-2}$ with $k = n - 2$ and keeps the lower limit $4$, writing $\sum_{k=4}^{\infty} (k+2)(k+1)\,a_{k+2}\,x^k$. What lower limit is correct?'
+            answer: '2'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The lower limit must change with the index. The first term is $n = 4$, and $k = n - 2$ gives $k = 4 - 2 = 2$. Sam lost the terms $k = 2$ and $k = 3$ by keeping the old limit, so the correct limit is $2$.'
+        constraints: 'index shifts by 1, 2 or 3; coefficients stay symbolic a_n or are given as a_n = 1/n! or a_n = n; when combining, series must already share the same starting index'
       - id: kp2
         name: First-order equations by power series
         key_prerequisites: [power-series, standard-maclaurin-series]
+        step_check:
+          step: 'the coefficients must satisfy $(n+1) a_{n+1} - 3 a_n = 0$ for all $n$'
+          question: 'Why must every coefficient $(n+1)a_{n+1} - 3a_n$ equal zero?'
+          options:
+            - 'The series then converges for every value of $x$, and that is what we need'
+            - 'Putting $x = 0$ in the series makes every one of its coefficients vanish'
+            - 'A power series that is zero for all $x$ has every coefficient zero'
+          answer: 'A power series that is zero for all $x$ has every coefficient zero'
+          why: 'The powers $x^n$ are independent of each other. So a power series is zero for all $x$ only if each coefficient is zero.'
+        try_first:
+          problem: 'Suppose $y = a_0 + a_1x + a_2x^2 + \cdots$ satisfies $y'' = y$ and $y(0) = 1$. What is $a_3$?'
+          answer_contract: {"kind": "exact"}
+          answer: '1/6'
+          reveal: 'Matching coefficients of $x^n$ gives $(n+1)\,a_{n+1} = a_n$, so $a_n = \frac{1}{n!}$. The series is the Maclaurin series of $e^x$.'
         exemplars:
-          - problem: "Use the power series method to solve $y' = 3y$ with $y(0) = 2$. Give the closed-form solution $y(x)$."
-            answer: "2e^(3x)"
+          - problem: 'Solve $y'' = 3y$ with $y(0) = 2$ by the power series method. What is $y(x)$?'
+            answer: '2e^(3x)'
             answer_contract: {"kind": "function", "vars": ["x"]}
-            solution_sketch: "The equation is y' = 3y with y(0) = 2. Assume y = sum a_n x^n. Matching coefficients gives (n+1)a_{n+1} = 3a_n by the power series method. With a_0 = 2, the recurrence gives a_n = 2 * 3^n / n!. The series is 2 sum (3x)^n / n!, which is the Maclaurin series of 2e^(3x). The answer is 2e^(3x)."
-          - problem: "Use the power series method to solve $y' + 4y = 0$ with $y(0) = 5$. Give the closed-form solution $y(x)$."
-            answer: "5e^(-4x)"
+            solution_sketch: 'Matching coefficients of $x^n$ in $y'' = 3y$ gives $(n+1)\,a_{n+1} = 3\,a_n$. With $a_0 = 2$ this gives $a_n = \frac{2 \cdot 3^n}{n!}$. So $y = 2\sum_{n=0}^{\infty} \frac{(3x)^n}{n!}$, which is the Maclaurin series of $2e^{3x}$.'
+          - problem: 'Use the power series method to solve $y'' + 4y = 0$ with $y(0) = 5$. What is $y(x)$?'
+            answer: '5e^(-4x)'
             answer_contract: {"kind": "function", "vars": ["x"]}
-            solution_sketch: "Rewrite the equation as y' = -4y with y(0) = 5. Assume y = sum a_n x^n. Matching coefficients gives (n+1)a_{n+1} = -4a_n. With a_0 = 5, the recurrence gives a_n = 5 * (-4)^n / n!. The series is 5 sum (-4x)^n / n!, which is the Maclaurin series of 5e^(-4x). The answer is 5e^(-4x)."
-          - problem: "Use the power series method to solve $y' = -2xy$ with $y(0) = 3$. Give the closed-form solution $y(x)$."
-            answer: "3e^(-x^2)"
+            solution_sketch: 'Write the equation as $y'' = -4y$. Matching coefficients gives $(n+1)\,a_{n+1} = -4\,a_n$, so $a_n = \frac{5\,(-4)^n}{n!}$. The series is $5\sum_{n=0}^{\infty} \frac{(-4x)^n}{n!}$, which is the Maclaurin series of $5e^{-4x}$.'
+          - problem: 'Solve $y'' = -2xy$ with $y(0) = 3$ by the power series method. What is $y(x)$?'
+            answer: '3e^(-x^2)'
             answer_contract: {"kind": "function", "vars": ["x"]}
-            solution_sketch: "The equation is y' = -2xy with y(0) = 3. Assume y = sum a_n x^n. Then y' = sum (n+1)a_{n+1} x^n and -2xy = sum -2 a_{n-1} x^n. Matching coefficients gives (n+1)a_{n+1} = -2a_{n-1}. With a_0 = 3 and a_1 = 0, odd coefficients vanish. For even n = 2m, a_{2m} = 3(-1)^m / m!. This is the Maclaurin series of 3e^(-x^2). The answer is 3e^(-x^2)."
-          - problem: "For the equation $y' = 4y$ with $y(0) = 3$, use the power series method to find the coefficients $a_2$ and $a_3$. Give the answer as a2 = value; a3 = value."
-            answer: "a2 = 24; a3 = 32"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "a2"}, {"contract": {"kind": "exact"}, "name": "a3"}]}
-            solution_sketch: "The equation is y' = 4y with y(0) = 3. Assume y = sum a_n x^n. Matching coefficients gives (n+1)a_{n+1} = 4a_n. With a_0 = 3, the recurrence gives a_1 = 12, a_2 = 4 * 12 / 2 = 24, and a_3 = 4 * 24 / 3 = 32. The answer is a2 = 24; a3 = 32."
-          - problem: "For the equation $y' = 2xy$ with $y(0) = 1$, use the power series method to find the coefficients $a_4$ and $a_6$. Give the answer as a4 = value; a6 = value."
-            answer: "a4 = 1/2; a6 = 1/6"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "a4"}, {"contract": {"kind": "exact"}, "name": "a6"}]}
-            solution_sketch: "The equation is y' = 2xy with y(0) = 1. Assume y = sum a_n x^n. Then (n+1)a_{n+1} = 2a_{n-1}. With a_0 = 1 and a_1 = 0, odd coefficients vanish and a_2 = 1. Then a_4 = a_2/2 = 1/2 and a_6 = a_4/3 = 1/6. The answer is a4 = 1/2; a6 = 1/6."
-          - problem: "For the equation $y' = -3y$ with $y(0) = 2$, use the power series method to find the coefficients $a_2$ and $a_3$. Give the answer as a2 = value; a3 = value."
-            answer: "a2 = 9; a3 = -9"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "a2"}, {"contract": {"kind": "exact"}, "name": "a3"}]}
-            solution_sketch: "The equation is y' = -3y with y(0) = 2. Assume y = sum a_n x^n. Matching coefficients gives (n+1)a_{n+1} = -3a_n. With a_0 = 2, the recurrence gives a_1 = -6, a_2 = 9, and a_3 = -9. The answer is a2 = 9; a3 = -9."
-        constraints: "equations y' = cy or y' = cxy with small integer c; solutions must be recognizable standard Maclaurin series (e^{cx}, e^{x^2}-type)"
+            solution_sketch: 'The term $-2xy$ has coefficient $-2\,a_{n-1}$ at $x^n$, so $(n+1)\,a_{n+1} = -2\,a_{n-1}$. With $a_0 = 3$ and $a_1 = 0$, all odd coefficients vanish and $a_{2m} = \frac{3\,(-1)^m}{m!}$. This is the Maclaurin series of $3e^{-x^2}$.'
+          - problem: 'The solution of $y'' = 4y$ with $y(0) = 3$ is written as $y = \sum_{n=0}^{\infty} a_n x^n$. Use the recurrence to find $a_3$.'
+            answer: '32'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Matching coefficients gives $(n+1)\,a_{n+1} = 4\,a_n$. With $a_0 = 3$ we get $a_1 = 12$, then $a_2 = \frac{4 \cdot 12}{2} = 24$. Finally $a_3 = \frac{4 \cdot 24}{3} = 32$.'
+          - problem: 'The solution of $y'' = 2xy$ with $y(0) = 1$ is written as $y = \sum_{n=0}^{\infty} a_n x^n$. Use the recurrence to find $a_4$.'
+            answer: '1/2'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Matching coefficients of $x^n$ gives $(n+1)\,a_{n+1} = 2\,a_{n-1}$. With $a_0 = 1$ and $a_1 = 0$ we get $a_2 = 1$. For $n = 3$ the recurrence reads $4a_4 = 2a_2$, so $a_4 = \frac{1}{2}$.'
+          - problem: 'The solution of $y'' = -3y$ with $y(0) = 2$ is written as $y = \sum_{n=0}^{\infty} a_n x^n$. Use the recurrence to find $a_3$.'
+            answer: '-9'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Matching coefficients gives $(n+1)\,a_{n+1} = -3\,a_n$. With $a_0 = 2$ we get $a_1 = -6$, then $a_2 = \frac{-3 \cdot (-6)}{2} = 9$. Finally $a_3 = \frac{-3 \cdot 9}{3} = -9$.'
+          - problem: 'A bacteria population $P$, in thousands, satisfies $\dfrac{dP}{dt} = 2P$ with $P(0) = 3$, where $t$ is in hours. Write $P = \sum_{n=0}^{\infty} a_n t^n$ and find $a_4$.'
+            answer: '2'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Matching coefficients of $t^n$ gives $(n+1)\,a_{n+1} = 2\,a_n$. Starting from $a_0 = 3$: $a_1 = 6$, $a_2 = 6$, $a_3 = 4$. Then $a_4 = \frac{2 \cdot 4}{4} = 2$.'
+          - problem: 'The amount $A$ of a drug in the blood, in mg, satisfies $\dfrac{dA}{dt} = -2A$ with $A(0) = 10$, where $t$ is in hours. Use the power series method to find $A(t)$.'
+            answer: '10e^(-2t)'
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: 'Matching coefficients of $t^n$ gives $(n+1)\,a_{n+1} = -2\,a_n$, so $a_n = \frac{10\,(-2)^n}{n!}$. The series is $10\sum_{n=0}^{\infty} \frac{(-2t)^n}{n!}$. This is the Maclaurin series of $10e^{-2t}$.'
+          - problem: 'Solve $y'' = xy$ with $y(0) = 4$ by the power series method. What is $y(x)$?'
+            answer: '4e^(x^2/2)'
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: 'Matching coefficients gives $(n+1)\,a_{n+1} = a_{n-1}$, and $a_1 = 0$. So the odd coefficients vanish and $a_{2m} = \frac{4}{2^m\,m!}$. This is the Maclaurin series of $4e^{x^2/2}$.'
+          - problem: 'Sam solves $y'' = 3y$ with $y(0) = 1$ by power series. He finds $a_1 = 3$ and then writes $a_2 = 3a_1 = 9$. What is the correct value of $a_2$?'
+            answer: '9/2'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The recurrence is $(n+1)\,a_{n+1} = 3\,a_n$, so $a_{n+1}$ is $3\,a_n$ divided by $n + 1$. For $n = 1$ the divisor is $2$, so $a_2 = \frac{3 \cdot 3}{2} = \frac{9}{2}$. Sam forgot to divide by $2$.'
+        constraints: 'equations y'' = cy or y'' = cxy with small integer or simple rational c; solutions are standard Maclaurin series (e^{cx}, e^{x^2}-type); contexts are growth and decay'
       - id: kp3
         name: Deriving the recurrence for second-order equations
         key_prerequisites: [differentiating-integrating-power-series, ode-classification-verification]
+        step_check:
+          step: 'the coefficient of each $x^k$ must be zero'
+          question: 'Why must the coefficient of each power $x^k$ be zero here?'
+          options:
+            - 'The powers $x^k$ are independent, so zero for all $x$ forces zero coefficients'
+            - 'Each power $x^k$ is itself equal to zero at $x = 0$, so each coefficient must vanish too'
+            - 'Only the constant term can be nonzero here, because the right-hand side of the equation is zero'
+          answer: 'The powers $x^k$ are independent, so zero for all $x$ forces zero coefficients'
+          why: 'The functions $1, x, x^2, \ldots$ are independent. So a combination of them is zero for all $x$ only if every coefficient is zero.'
         exemplars:
-          - problem: "Let y = sum a_n x^n for the equation y'' + 4y = 0. Derive the recurrence and find the constant c in a_{k+2} = c a_k / ((k+2)(k+1))."
-            answer: "-4"
+          - problem: 'Substitute $y = \sum_{n=0}^{\infty} a_n x^n$ into $y'''' + 4y = 0$ and match the coefficients of $x^k$. Express $a_{k+2}$ in terms of $a_k$ and $k$.'
+            answer: '-4a_k/((k+2)(k+1))'
+            answer_contract: {"kind": "function", "vars": ["k", "a_k"]}
+            solution_sketch: 'Here $y'''' = \sum_{k=0}^{\infty} (k+2)(k+1)\,a_{k+2}\,x^k$. The coefficient of $x^k$ in the equation is $(k+2)(k+1)\,a_{k+2} + 4a_k = 0$. Solving gives $a_{k+2} = \frac{-4\,a_k}{(k+2)(k+1)}$.'
+          - problem: 'For $y'''' = 5y$ with $y = \sum_{n=0}^{\infty} a_n x^n$, matching the coefficients of $x^k$ gives a relation between $a_{k+2}$ and $a_k$. Express $a_{k+2}$ in terms of $a_k$ and $k$.'
+            answer: '5a_k/((k+2)(k+1))'
+            answer_contract: {"kind": "function", "vars": ["k", "a_k"]}
+            solution_sketch: 'Write the equation as $y'''' - 5y = 0$. The coefficient of $x^k$ is $(k+2)(k+1)\,a_{k+2} - 5a_k = 0$. So $a_{k+2} = \frac{5\,a_k}{(k+2)(k+1)}$.'
+          - problem: 'For $y'''' - xy = 0$ with $y = \sum_{n=0}^{\infty} a_n x^n$, matching the coefficients of $x^{k+1}$ gives a relation between $a_{k+3}$ and $a_k$. Express $a_{k+3}$ in terms of $a_k$ and $k$.'
+            answer: 'a_k/((k+3)(k+2))'
+            answer_contract: {"kind": "function", "vars": ["k", "a_k"]}
+            solution_sketch: 'The term $xy = \sum a_k x^{k+1}$ has coefficient $a_k$ at $x^{k+1}$, while $y''''$ has $(k+3)(k+2)\,a_{k+3}$ there. So $(k+3)(k+2)\,a_{k+3} - a_k = 0$. This gives $a_{k+3} = \frac{a_k}{(k+3)(k+2)}$.'
+          - problem: 'For $y'''' + xy = 0$ with $y = \sum_{n=0}^{\infty} a_n x^n$, matching the coefficients of $x^{k+1}$ gives a relation between $a_{k+3}$ and $a_k$. Express $a_{k+3}$ in terms of $a_k$ and $k$.'
+            answer: '-a_k/((k+3)(k+2))'
+            answer_contract: {"kind": "function", "vars": ["k", "a_k"]}
+            solution_sketch: 'The coefficient of $x^{k+1}$ is $(k+3)(k+2)\,a_{k+3} + a_k = 0$, because $xy$ contributes $a_k$. So $a_{k+3} = \frac{-a_k}{(k+3)(k+2)}$.'
+          - problem: 'A quantum-oscillator model leads to the equation $y'''' - 2xy'' + 6y = 0$ with $y(0) = 1$ and $y''(0) = 0$. Use the series method to find the coefficient $a_4$ in $y = \sum_{n=0}^{\infty} a_n x^n$.'
+            answer: '1/2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Write y = sum a_n x^n. Then y'' = sum (k+2)(k+1) a_{k+2} x^k by differentiating twice. Substitute into y'' + 4y = 0: (k+2)(k+1)a_{k+2} + 4a_k = 0. Solve for a_{k+2}: a_{k+2} = -4 a_k / ((k+2)(k+1)). The constant is c = -4."
-          - problem: "Use the power series method on y'' - xy = 0. Derive the recurrence and find the constant c in a_{k+3} = c a_k / ((k+3)(k+2))."
-            answer: "1"
+            solution_sketch: 'Matching the coefficients of $x^k$ gives $(k+2)(k+1)\,a_{k+2} - 2k\,a_k + 6a_k = 0$, so $a_{k+2} = \frac{2k - 6}{(k+2)(k+1)}\,a_k$. With $a_0 = 1$ we get $a_2 = -3$. Then $a_4 = \frac{4 - 6}{12} \cdot (-3) = \frac{1}{2}$.'
+          - problem: 'The displacement $y$ of a mass on a spring, in metres, satisfies $y'''' + 9y = 0$ with $y(0) = 2$ and $y''(0) = 0$, where $t$ is in seconds. Write $y = \sum_{n=0}^{\infty} a_n t^n$. What is $a_2$?'
+            answer: '-9'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Write y = sum a_n x^n. Then y'' = sum (k+2)(k+1) a_{k+2} x^k. The term xy = sum a_k x^{k+1} = sum a_{k-1} x^k for k>=1. Substitute into y'' - xy = 0: for k=0, 2a_2 = 0; for k>=1, (k+2)(k+1)a_{k+2} - a_{k-1} = 0. Let k = m-1: a_{m+2} = a_{m-1} / ((m+2)(m+1)). The constant is c = 1."
-          - problem: "For y'' + 9y = 0 with y = sum a_n x^n, derive the recurrence. Find the constant c in a_{k+2} = c a_k / ((k+2)(k+1))."
-            answer: "-9"
+            solution_sketch: 'The recurrence for $y'''' + 9y = 0$ is $(k+2)(k+1)\,a_{k+2} = -9\,a_k$. For $k = 0$ this gives $2a_2 = -9a_0$. With $a_0 = 2$ we get $a_2 = \frac{-9 \cdot 2}{2} = -9$.'
+          - problem: 'A rod balanced upright tips over by a small angle $\theta$, in degrees, that satisfies $\theta'''' = 6\theta$ with $\theta(0) = 1$ and $\theta''(0) = 0$, where $t$ is in seconds. Write $\theta = \sum_{n=0}^{\infty} a_n t^n$ and find $a_4$.'
+            answer: '3/2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Write y = sum a_n x^n. Then y'' = sum (k+2)(k+1) a_{k+2} x^k. Substitute into y'' + 9y = 0: (k+2)(k+1)a_{k+2} + 9a_k = 0. Solve for a_{k+2}: a_{k+2} = -9 a_k / ((k+2)(k+1)). The constant is c = -9."
-          - problem: "Let y = sum a_n x^n for y'' - 2y = 0. Derive the recurrence and find the constant c in a_{k+2} = c a_k / ((k+2)(k+1))."
-            answer: "2"
+            solution_sketch: 'The recurrence is $(k+2)(k+1)\,a_{k+2} = 6\,a_k$. With $a_0 = 1$ we get $a_2 = \frac{6}{2} = 3$. Then $a_4 = \frac{6 \cdot 3}{12} = \frac{3}{2}$.'
+          - problem: 'Sam writes the recurrence of $y'''' + 4y = 0$ as $(k+2)\,a_{k+2} = -4\,a_k$. With $a_0 = 1$ and $a_1 = 0$, what is the correct value of $a_4$?'
+            answer: '2/3'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Write y = sum a_n x^n. Then y'' = sum (k+2)(k+1) a_{k+2} x^k. Substitute into y'' - 2y = 0: (k+2)(k+1)a_{k+2} - 2a_k = 0. Solve for a_{k+2}: a_{k+2} = 2 a_k / ((k+2)(k+1)). The constant is c = 2."
-          - problem: "Use the power series method on y'' + xy = 0. Derive the recurrence and find the constant c in a_{k+3} = c a_k / ((k+3)(k+2))."
-            answer: "-1"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Write y = sum a_n x^n. Then y'' = sum (k+2)(k+1) a_{k+2} x^k. The term xy = sum a_k x^{k+1} = sum a_{k-1} x^k for k>=1. Substitute into y'' + xy = 0: for k=0, 2a_2 = 0; for k>=1, (k+2)(k+1)a_{k+2} + a_{k-1} = 0. Let k = m-1: a_{m+2} = -a_{m-1} / ((m+2)(m+1)). The constant is c = -1."
-          - problem: "For y'' - 3y = 0 with y = sum a_n x^n, derive the recurrence. Find the constant c in a_{k+2} = c a_k / ((k+2)(k+1))."
-            answer: "3"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Write y = sum a_n x^n. Then y'' = sum (k+2)(k+1) a_{k+2} x^k. Substitute into y'' - 3y = 0: (k+2)(k+1)a_{k+2} - 3a_k = 0. Solve for a_{k+2}: a_{k+2} = 3 a_k / ((k+2)(k+1)). The constant is c = 3."
-        constraints: "coefficients constant or a single factor x; derive the recurrence only, do not iterate it out"
+            solution_sketch: 'The correct recurrence is $(k+2)(k+1)\,a_{k+2} = -4\,a_k$, and Sam dropped the factor $k + 1$. With $a_0 = 1$ we get $a_2 = \frac{-4}{2} = -2$. Then $a_4 = \frac{-4 \cdot (-2)}{12} = \frac{2}{3}$.'
+        constraints: 'coefficients constant, a single factor x, or the form y'''' - 2xy'' + cy = 0; derive the recurrence and iterate at most to a_4'
     diagnostic_exemplar:
       problem: "Substitute $y = \\sum_{n=0}^{\\infty} a_n x^n$ into $y'' + y = 0$ and derive the recurrence relation for the coefficients."
       answer: '$a_{k+2} = -\dfrac{a_k}{(k+2)(k+1)}$'
@@ -151,90 +223,153 @@ topics:
       - id: kp1
         name: First terms from initial conditions
         key_prerequisites: [power-series-method]
+        step_check:
+          step: 'Given $y(0) = 1$, we have $a_0 = 1$'
+          question: 'Why does the condition $y(0) = 1$ give $a_0 = 1$?'
+          options:
+            - 'The coefficient $a_0$ is found from the recurrence and then set equal to $1$'
+            - 'The value $y(0)$ also forces every later coefficient $a_n$ to equal $1$'
+            - 'At $x = 0$ every term of the series except $a_0$ is equal to zero'
+          answer: 'At $x = 0$ every term of the series except $a_0$ is equal to zero'
+          why: 'Putting $x = 0$ in $y = a_0 + a_1x + a_2x^2 + \cdots$ leaves only $a_0$. So $a_0 = y(0)$.'
         exemplars:
-          - problem: "The equation y'' + y = 0 has a power-series solution about x = 0 with y(0) = 0 and y'(0) = 1. Find the first three nonzero terms and give their coefficients, in order, as a comma-separated list."
-            answer: "1, -1/6, 1/120"
-            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
-            solution_sketch: "Write the full series y = a0 + a1*x + a2*x^2 + a3*x^3 + a4*x^4 + a5*x^5 + ... . The two initial conditions give a0 = 0 and a1 = 1, which kills the even chain. Substituting the series into y'' + y = 0 and matching powers gives the recurrence in which each coefficient is minus the one two places back divided by (k+1)(k+2). Then a3 = -1/6 and a5 = 1/120, so the three nonzero terms are x, -x^3/6 and x^5/120. The coefficients in order are 1, -1/6, 1/120."
-          - problem: "A solution of y'' - 4y = 0 satisfies y(0) = 1 and y'(0) = 0. Find the first three nonzero terms of its power series about x = 0 and list their coefficients, in order, as a comma-separated list."
-            answer: "1, 2, 2/3"
-            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
-            solution_sketch: "Write the full series y = a0 + a1*x + a2*x^2 + a3*x^3 + a4*x^4 + ... . The initial conditions give a0 = 1 and a1 = 0, which kills the odd chain. Substituting into y'' - 4y = 0 with the power series method gives each coefficient equal to 4 times the one two places back divided by (k+1)(k+2). Then a2 = 4/2 = 2 and a4 = 4*2/12 = 2/3, so the three nonzero terms are 1, 2x^2 and 2x^4/3. The coefficients in order are 1, 2, 2/3."
-          - problem: "Take the initial-value problem y'' + y = 0 with y(0) = 1 and y'(0) = 1. Find the first three nonzero terms of the series solution and give their coefficients, in order, as a comma-separated list."
-            answer: "1, 1, -1/2"
-            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
-            solution_sketch: "The full series is y = a0 + a1*x + a2*x^2 + ... . The initial conditions give a0 = 1 and a1 = 1, so both coefficient chains are active. Substituting into y'' + y = 0 gives the recurrence a(k+2) = -a(k) divided by (k+1)(k+2). Then a2 = -1/2, so the three nonzero terms are 1, x and -x^2/2. The coefficients in order are 1, 1, -1/2."
-          - problem: "An initial-value problem reads y'' + 9y = 0, y(0) = 0, y'(0) = 2. Find the first three nonzero terms of the power-series solution about x = 0 and list their coefficients, in order, as a comma-separated list."
-            answer: "2, -3, 27/20"
-            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
-            solution_sketch: "The full series is y = a0 + a1*x + a2*x^2 + a3*x^3 + a4*x^4 + a5*x^5 + ... . The initial conditions give a0 = 0 and a1 = 2, which kills the even chain. Substituting into y'' + 9y = 0 gives each coefficient as -9 times the one two places back divided by (k+1)(k+2). Then a3 = -18/6 = -3 and a5 = -9*(-3)/20 = 27/20, so the three nonzero terms are 2x, -3x^3 and 27x^5/20. The coefficients in order are 2, -3, 27/20."
-          - problem: "A mass on a spring obeys y'' + 16y = 0 with y(0) = 3 and y'(0) = 0. Find the first three nonzero terms of the series solution and give their coefficients, in order, as a comma-separated list."
-            answer: "3, -24, 32"
-            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
-            solution_sketch: "The full series is y = a0 + a1*x + a2*x^2 + a3*x^3 + a4*x^4 + ... . The initial conditions give a0 = 3 and a1 = 0, so the odd chain is killed. Substituting into y'' + 16y = 0 gives each coefficient as -16 times the one two places back divided by (k+1)(k+2). Then a2 = -48/2 = -24 and a4 = -16*(-24)/12 = 32, so the three nonzero terms are 3, -24x^2 and 32x^4. The coefficients in order are 3, -24, 32."
-          - problem: "Start from y'' + 2y = 0 with y(0) = 1 and y'(0) = 0. Find the first three nonzero terms of its power-series solution and list their coefficients, in order, as a comma-separated list."
-            answer: "1, -1, 1/6"
-            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
-            solution_sketch: "The full series is y = a0 + a1*x + a2*x^2 + a3*x^3 + a4*x^4 + ... . The initial conditions give a0 = 1 and a1 = 0, so only the even chain survives. Substituting into y'' + 2y = 0 gives each coefficient as -2 times the one two places back divided by (k+1)(k+2). Then a2 = -2/2 = -1 and a4 = -2*(-1)/12 = 1/6, so the three nonzero terms are 1, -x^2 and x^4/6. The coefficients in order are 1, -1, 1/6."
-        constraints: "constant coefficients with small integer values; initial conditions kill one of the two coefficient chains or keep both chains short; ask for exactly the first three nonzero terms"
+          - problem: 'The initial-value problem $y'''' + 2y = 0$, $y(0) = 1$, $y''(0) = 0$ has a power-series solution about $x = 0$. Find its Taylor polynomial of degree $4$.'
+            answer: '1 - x^2 + x^4/6'
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: 'The conditions give $a_0 = y(0) = 1$ and $a_1 = y''(0) = 0$. The recurrence is $a_{k+2} = \frac{-2\,a_k}{(k+2)(k+1)}$, so $a_2 = -1$, $a_3 = 0$ and $a_4 = \frac{-2 \cdot (-1)}{12} = \frac{1}{6}$. The polynomial is $1 - x^2 + \frac{x^4}{6}$.'
+          - problem: 'Find the Taylor polynomial of degree $4$ about $x = 0$ of the solution of $y'''' - 4y = 0$ with $y(0) = 1$ and $y''(0) = 0$.'
+            answer: '1 + 2x^2 + 2x^4/3'
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: 'Here $a_0 = 1$ and $a_1 = 0$, so the odd coefficients are all zero. The recurrence is $a_{k+2} = \frac{4\,a_k}{(k+2)(k+1)}$, which gives $a_2 = 2$ and $a_4 = \frac{4 \cdot 2}{12} = \frac{2}{3}$. The polynomial is $1 + 2x^2 + \frac{2x^4}{3}$.'
+          - problem: 'A solution of $y'''' + y = 0$ satisfies $y(0) = 1$ and $y''(0) = 1$. Find its Taylor polynomial of degree $3$ about $x = 0$.'
+            answer: '1 + x - x^2/2 - x^3/6'
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: 'Here $a_0 = 1$ and $a_1 = 1$, so both chains of coefficients are active. The recurrence is $a_{k+2} = \frac{-a_k}{(k+2)(k+1)}$, so $a_2 = -\frac{1}{2}$ and $a_3 = -\frac{1}{6}$. The polynomial is $1 + x - \frac{x^2}{2} - \frac{x^3}{6}$.'
+          - problem: 'The initial-value problem $y'''' + 9y = 0$, $y(0) = 0$, $y''(0) = 2$ has a power-series solution about $x = 0$. Find its Taylor polynomial of degree $5$.'
+            answer: '2x - 3x^3 + 27x^5/20'
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: 'Here $a_0 = 0$ and $a_1 = 2$, so the even coefficients are all zero. The recurrence is $a_{k+2} = \frac{-9\,a_k}{(k+2)(k+1)}$, so $a_3 = \frac{-18}{6} = -3$ and $a_5 = \frac{-9 \cdot (-3)}{20} = \frac{27}{20}$. The polynomial is $2x - 3x^3 + \frac{27x^5}{20}$.'
+          - problem: 'A mass on a spring has displacement $y(t)$ metres at time $t$ seconds, where $y'''' + 16y = 0$, $y(0) = 3$ and $y''(0) = 0$. Find the Taylor polynomial of degree $4$ of $y(t)$ about $t = 0$.'
+            answer: '3 - 24t^2 + 32t^4'
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: 'Here $a_0 = 3$ and $a_1 = 0$. The recurrence is $a_{k+2} = \frac{-16\,a_k}{(k+2)(k+1)}$, so $a_2 = \frac{-48}{2} = -24$ and $a_4 = \frac{-16 \cdot (-24)}{12} = 32$. The polynomial is $3 - 24t^2 + 32t^4$.'
+          - problem: 'The solution of $y'''' + y = 0$ with $y(0) = 2$ and $y''(0) = -3$ is written as $y = \sum_{n=0}^{\infty} a_n x^n$. Find $a_3$.'
+            answer: '1/2'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Here $a_0 = 2$ and $a_1 = -3$. The recurrence $(k+2)(k+1)\,a_{k+2} = -a_k$ with $k = 1$ gives $6a_3 = -a_1 = 3$. So $a_3 = \frac{1}{2}$.'
+          - problem: 'For small swings, the angle $\theta(t)$ of a pendulum, in radians, satisfies $\theta'''' + 4\theta = 0$. The pendulum is released from rest at $\theta(0) = \frac{1}{2}$. Find the Taylor polynomial of degree $4$ of $\theta(t)$.'
+            answer: '1/2 - t^2 + t^4/3'
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: 'Released from rest means $\theta''(0) = 0$, so $a_0 = \frac{1}{2}$ and $a_1 = 0$. The recurrence is $a_{k+2} = \frac{-4\,a_k}{(k+2)(k+1)}$, so $a_2 = \frac{-4 \cdot \frac{1}{2}}{2} = -1$ and $a_4 = \frac{-4 \cdot (-1)}{12} = \frac{1}{3}$. The polynomial is $\frac{1}{2} - t^2 + \frac{t^4}{3}$.'
+          - problem: 'Sam solves $y'''' + 9y = 0$ with $y(0) = 1$ and $y''(0) = 0$ by power series and writes $a_2 = -9a_0 = -9$. What is the correct value of $a_2$?'
+            answer: '-9/2'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The recurrence is $(k+2)(k+1)\,a_{k+2} = -9\,a_k$. For $k = 0$ this reads $2a_2 = -9a_0$, so $a_2$ is $-9a_0$ divided by $2$. Hence $a_2 = -\frac{9}{2}$, and Sam forgot to divide.'
+        constraints: 'constant coefficients with small integer values; ask for a Taylor polynomial of low degree or for one coefficient'
       - id: kp2
         name: The two basic solutions
         key_prerequisites: [power-series-method, homogeneous-constant-coefficients]
+        step_check:
+          step: 'The recurrence relation generates odd terms'
+          question: 'Why does $y_2$ contain only odd powers of $x$?'
+          options:
+            - 'The recurrence links $a_n$ to $a_{n+2}$, so $a_0 = 0$ leaves no even coefficient'
+            - 'The equation has no solution at all that contains an even power of the variable $x$'
+            - 'The solution $y_2$ is defined as the derivative of $y_1$, and derivatives drop even powers'
+          answer: 'The recurrence links $a_n$ to $a_{n+2}$, so $a_0 = 0$ leaves no even coefficient'
+          why: 'The recurrence connects coefficients two places apart, so even and odd coefficients never mix. With $a_0 = 0$ the even chain is zero.'
         exemplars:
-          - problem: "For y'' - y = 0, find the first three nonzero terms of the even basic solution y1 and the odd basic solution y2."
-            answer: "y1 = 1 + x^2/2 + x^4/24; y2 = x + x^3/6 + x^5/120"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["x"]}, "name": "y1"}, {"contract": {"kind": "function", "vars": ["x"]}, "name": "y2"}]}
-            solution_sketch: "The recurrence from y'' - y = 0 is a_{n+2} = a_n/((n+2)(n+1)). For y1, a0=1 gives a2=1/2 and a4=1/24, so y1 = 1 + x^2/2 + x^4/24. For y2, a1=1 gives a3=1/6 and a5=1/120, so y2 = x + x^3/6 + x^5/120. The first three nonzero terms are y1 = 1 + x^2/2 + x^4/24; y2 = x + x^3/6 + x^5/120."
-          - problem: "For y'' - y = 0, find the even basic solution y1 and the odd basic solution y2 as combinations of e^x and e^(-x)."
-            answer: "y1 = (e^(x) + e^(-x))/2; y2 = (e^(x) - e^(-x))/2"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["x"]}, "name": "y1"}, {"contract": {"kind": "function", "vars": ["x"]}, "name": "y2"}]}
-            solution_sketch: "Use the Maclaurin series e^t = sum t^n/n!. Adding e^(x) and e^(-x) kills the odd powers, giving 2(1 + x^2/2 + x^4/24 + ...) = 2 cosh(x). Subtracting e^(-x) from e^(x) keeps the odd powers, giving 2(x + x^3/6 + x^5/120 + ...) = 2 sinh(x). Therefore y1 = (e^(x) + e^(-x))/2; y2 = (e^(x) - e^(-x))/2."
-          - problem: "For y'' + 2y = 0, find the first three nonzero terms of the even basic solution y1 and the odd basic solution y2."
-            answer: "y1 = 1 - x^2 + x^4/6; y2 = x - x^3/3 + x^5/30"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["x"]}, "name": "y1"}, {"contract": {"kind": "function", "vars": ["x"]}, "name": "y2"}]}
-            solution_sketch: "The recurrence from y'' + 2y = 0 is a_{n+2} = -2 a_n/((n+2)(n+1)). For y1, a0=1 gives a2=-1 and a4=1/6, so y1 = 1 - x^2 + x^4/6. For y2, a1=1 gives a3=-1/3 and a5=1/30, so y2 = x - x^3/3 + x^5/30. The first three nonzero terms are y1 = 1 - x^2 + x^4/6; y2 = x - x^3/3 + x^5/30."
-          - problem: "For y'' - 4y = 0, find the first three nonzero terms of the even basic solution y1 and the odd basic solution y2."
-            answer: "y1 = 1 + 2x^2 + 2x^4/3; y2 = x + 2x^3/3 + 2x^5/15"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["x"]}, "name": "y1"}, {"contract": {"kind": "function", "vars": ["x"]}, "name": "y2"}]}
-            solution_sketch: "The recurrence from y'' - 4y = 0 is a_{n+2} = 4 a_n/((n+2)(n+1)). For y1, a0=1 gives a2=2 and a4=2/3, so y1 = 1 + 2x^2 + 2x^4/3. For y2, a1=1 gives a3=2/3 and a5=2/15, so y2 = x + 2x^3/3 + 2x^5/15. The first three nonzero terms are y1 = 1 + 2x^2 + 2x^4/3; y2 = x + 2x^3/3 + 2x^5/15."
-          - problem: "For y'' + 5y = 0, find the first three nonzero terms of the even basic solution y1 and the odd basic solution y2."
-            answer: "y1 = 1 - 5x^2/2 + 25x^4/24; y2 = x - 5x^3/6 + 5x^5/24"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["x"]}, "name": "y1"}, {"contract": {"kind": "function", "vars": ["x"]}, "name": "y2"}]}
-            solution_sketch: "The recurrence from y'' + 5y = 0 is a_{n+2} = -5 a_n/((n+2)(n+1)). For y1, a0=1 gives a2=-5/2 and a4=25/24, so y1 = 1 - 5x^2/2 + 25x^4/24. For y2, a1=1 gives a3=-5/6 and a5=5/24, so y2 = x - 5x^3/6 + 5x^5/24. The first three nonzero terms are y1 = 1 - 5x^2/2 + 25x^4/24; y2 = x - 5x^3/6 + 5x^5/24."
-          - problem: "For y'' - 9y = 0, find the first three nonzero terms of the even basic solution y1 and the odd basic solution y2."
-            answer: "y1 = 1 + 9x^2/2 + 27x^4/8; y2 = x + 3x^3/2 + 27x^5/40"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["x"]}, "name": "y1"}, {"contract": {"kind": "function", "vars": ["x"]}, "name": "y2"}]}
-            solution_sketch: "The recurrence from y'' - 9y = 0 is a_{n+2} = 9 a_n/((n+2)(n+1)). For y1, a0=1 gives a2=9/2 and a4=27/8, so y1 = 1 + 9x^2/2 + 27x^4/8. For y2, a1=1 gives a3=3/2 and a5=27/40, so y2 = x + 3x^3/2 + 27x^5/40. The first three nonzero terms are y1 = 1 + 9x^2/2 + 27x^4/8; y2 = x + 3x^3/2 + 27x^5/40."
-        constraints: "constant-coefficient equations whose closed forms the learner can check against characteristic-equation solutions"
+          - problem: 'Let $y_1$ and $y_2$ be the solutions of $y'''' - 4y = 0$ with $y_1(0) = 1$, $y_1''(0) = 0$ and $y_2(0) = 0$, $y_2''(0) = 1$. Find the Taylor polynomial of degree $5$ of $y_2$.'
+            answer: 'x + 2x^3/3 + 2x^5/15'
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: 'For $y_2$ we have $a_0 = 0$ and $a_1 = 1$, so only odd powers appear. The recurrence is $a_{k+2} = \frac{4\,a_k}{(k+2)(k+1)}$, so $a_3 = \frac{4}{6} = \frac{2}{3}$ and $a_5 = \frac{4 \cdot 2/3}{20} = \frac{2}{15}$. The polynomial is $x + \frac{2x^3}{3} + \frac{2x^5}{15}$.'
+          - problem: 'Let $y_1$ be the solution of $y'''' - y = 0$ with $y_1(0) = 1$ and $y_1''(0) = 0$. Its series is $1 + \frac{x^2}{2!} + \frac{x^4}{4!} + \cdots$. Write $y_1$ using $e^x$ and $e^{-x}$.'
+            answer: '(e^x + e^(-x))/2'
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: 'Adding the series $e^x = \sum \frac{x^n}{n!}$ and $e^{-x} = \sum \frac{(-x)^n}{n!}$ cancels the odd powers and doubles the even ones. So $e^x + e^{-x} = 2\left(1 + \frac{x^2}{2!} + \frac{x^4}{4!} + \cdots\right)$. Therefore $y_1 = \frac{e^x + e^{-x}}{2}$.'
+          - problem: 'Let $y_2$ be the solution of $y'''' + 2y = 0$ with $y_2(0) = 0$ and $y_2''(0) = 1$. Find the Taylor polynomial of degree $5$ of $y_2$.'
+            answer: 'x - x^3/3 + x^5/30'
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: 'Here $a_0 = 0$ and $a_1 = 1$. The recurrence is $a_{k+2} = \frac{-2\,a_k}{(k+2)(k+1)}$, so $a_3 = \frac{-2}{6} = -\frac{1}{3}$ and $a_5 = \frac{-2 \cdot (-1/3)}{20} = \frac{1}{30}$. The polynomial is $x - \frac{x^3}{3} + \frac{x^5}{30}$.'
+          - problem: 'Let $y_1$ be the solution of $y'''' + 5y = 0$ with $y_1(0) = 1$ and $y_1''(0) = 0$. Find the Taylor polynomial of degree $4$ of $y_1$.'
+            answer: '1 - 5x^2/2 + 25x^4/24'
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: 'Here $a_0 = 1$ and $a_1 = 0$. The recurrence is $a_{k+2} = \frac{-5\,a_k}{(k+2)(k+1)}$, so $a_2 = -\frac{5}{2}$ and $a_4 = \frac{-5 \cdot (-5/2)}{12} = \frac{25}{24}$. The polynomial is $1 - \frac{5x^2}{2} + \frac{25x^4}{24}$.'
+          - problem: 'Every solution of $y'''' - 9y = 0$ has the form $a_0 y_1 + a_1 y_2$. For the solution with $y(0) = 2$ and $y''(0) = 3$, find the coefficient of $x^3$ in its power series.'
+            answer: '9/2'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The coefficient of $x^3$ comes from the odd solution, since $a_3$ depends only on $a_1$. The recurrence $(k+2)(k+1)\,a_{k+2} = 9\,a_k$ with $k = 1$ gives $6a_3 = 9a_1 = 27$. So $a_3 = \frac{9}{2}$.'
+          - problem: 'Let $y_1$ be the solution of $y'''' - 9y = 0$ with $y_1(0) = 1$ and $y_1''(0) = 0$. Its power series has the same coefficients as a hyperbolic function. Find $y_1(x)$ in closed form.'
+            answer: 'cosh(3x)'
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: 'The characteristic roots of $y'''' - 9y = 0$ are $r = \pm 3$, so the solutions are combinations of $e^{3x}$ and $e^{-3x}$. The conditions $y_1(0) = 1$ and $y_1''(0) = 0$ select $\frac{e^{3x} + e^{-3x}}{2}$. So $y_1 = \cosh 3x$, which has only even powers.'
+          - problem: 'A particle near an unstable equilibrium has position $x(t)$ metres, where $x'''' = 4x$, $x(0) = 0$ and $x''(0) = 3$ metres per second. Find the Taylor polynomial of degree $3$ of $x(t)$ about $t = 0$.'
+            answer: '3t + 2t^3'
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: 'The conditions give $a_0 = 0$ and $a_1 = 3$. The recurrence is $(k+2)(k+1)\,a_{k+2} = 4\,a_k$, so $6a_3 = 4a_1 = 12$ and $a_3 = 2$. The polynomial is $3t + 2t^3$.'
+          - problem: 'A mass on a spring is given a push from its rest position. Its displacement $y(t)$ metres satisfies $y'''' + 16y = 0$ with $y(0) = 0$ and $y''(0) = 8$ metres per second. Find the Taylor polynomial of degree $5$ of $y(t)$.'
+            answer: '8t - 64t^3/3 + 256t^5/15'
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: 'Here $a_0 = 0$ and $a_1 = 8$. The recurrence is $(k+2)(k+1)\,a_{k+2} = -16\,a_k$, so $a_3 = \frac{-16 \cdot 8}{6} = -\frac{64}{3}$ and $a_5 = \frac{-16 \cdot (-64/3)}{20} = \frac{256}{15}$. The polynomial is $8t - \frac{64t^3}{3} + \frac{256t^5}{15}$.'
+          - problem: 'Sam says that the odd solution $y_2$ of $y'''' - y = 0$ begins $y_2 = 1 + \frac{x^2}{2} + \cdots$. What is the correct Taylor polynomial of degree $5$ of $y_2$?'
+            answer: 'x + x^3/6 + x^5/120'
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: 'The odd solution has $y_2(0) = 0$ and $y_2''(0) = 1$, so $a_0 = 0$ and no even power appears. The recurrence is $a_{k+2} = \frac{a_k}{(k+2)(k+1)}$, so $a_3 = \frac{1}{6}$ and $a_5 = \frac{1}{120}$. The polynomial is $x + \frac{x^3}{6} + \frac{x^5}{120}$.'
+        constraints: 'constant-coefficient equations y'''' = ky or y'''' + ky = 0; ask for the Taylor polynomial of y1 or y2, one coefficient of a general solution, or a closed form the learner can check against the characteristic equation'
       - id: kp3
         name: Polynomial coefficients and the guaranteed radius
         key_prerequisites: [power-series-method, radius-of-convergence]
+        step_check:
+          step: 'Set $1 - x^2 = 0$ to find the singular points'
+          question: 'Why do we look for the singular points among the zeros of the coefficient of $y''''$?'
+          options:
+            - 'The coefficient of $y''''$ is the only coefficient that can contain the variable $x$ itself'
+            - 'Dividing by it gives standard form, and a zero there makes the coefficients blow up'
+            - 'A zero of that coefficient is a point where the solution itself must be equal to zero'
+          answer: 'Dividing by it gives standard form, and a zero there makes the coefficients blow up'
+          why: 'To reach $y'''' + p y'' + q y = 0$ we divide by the coefficient of $y''''$. At its zeros $p$ or $q$ fails, so the point is singular.'
         exemplars:
-          - problem: "For the Airy equation y'' = x y with y(0) = 1 and y'(0) = 0, the power-series solution about x = 0 has coefficients a_n in y = sum a_n x^n. Find the coefficient a_6."
-            answer: "1/180"
+          - problem: 'The equation $(1 + x^2)\,y'''' + y = 0$ is solved by a power series about $x = 0$. What radius of convergence does the theory guarantee for the series?'
+            answer: '1'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1 (power series method): write y = sum a_n x^n and substitute into y'' = x y. Step 2 (recurrence): match coefficients to get a_(k+2) = a_(k-1) / ((k+2)(k+1)). Step 3 (initial conditions): a_0 = 1 and a_1 = 0, so a_3 = 1/6, a_4 = 0 and a_5 = 0. Step 4 (target coefficient): a_6 = a_3 / (6*5) = 1/180. The coefficient is 1/180."
-          - problem: "The equation (1 + x^2) y'' + y = 0 is solved by a power series about x = 0. Find the guaranteed radius of convergence of that series."
-            answer: "1"
+            solution_sketch: 'The singular points are the zeros of the coefficient of $y''''$. The equation $1 + x^2 = 0$ gives $x = i$ and $x = -i$. Both are at distance $1$ from $0$, so the series converges at least for $|x| < 1$ and the guaranteed radius is $1$.'
+          - problem: 'The Airy equation $y'''' = xy$ appears in the study of light near the edge of a rainbow. Its solution with $y(0) = 1$ and $y''(0) = 0$ is $y = \sum_{n=0}^{\infty} a_n x^n$. Find $a_6$.'
+            answer: '1/180'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1 (ordinary point): x = 0 is ordinary because 1 + x^2 is nonzero at 0. Step 2 (singular points): set 1 + x^2 = 0 to get x = i and x = -i. Step 3 (guaranteed radius): the nearest singular points are at distance 1 from 0, so the guaranteed radius is at least 1. The guaranteed radius is 1."
-          - problem: "For the equation x^2 y'' + y = 0, determine how many finite singular points the equation has."
-            answer: "1"
+            solution_sketch: 'Matching the coefficients of $x^{k}$ gives $a_{k+2} = \frac{a_{k-1}}{(k+2)(k+1)}$. With $a_0 = 1$ and $a_1 = 0$ we get $a_2 = 0$ and $a_3 = \frac{1}{6}$. Then $a_6 = \frac{a_3}{6 \cdot 5} = \frac{1}{180}$.'
+          - problem: 'The equation $(x^2 + 4)\,y'''' + y = 0$ is solved by a power series about $x = 0$. What radius of convergence does the theory guarantee?'
+            answer: '2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1 (standard form): divide by x^2 to see the coefficient of y is 1/x^2. Step 2 (singular point): the coefficient blows up at x = 0, so x = 0 is the only finite singular point. The number of finite singular points is 1."
-          - problem: "For the equation (1 - x^2) y'' - 2 x y' + 2 y = 0 with y(0) = 1 and y'(0) = 0, the power-series solution about x = 0 has coefficients a_n. Find the coefficient a_4."
-            answer: "-1/3"
+            solution_sketch: 'Setting $x^2 + 4 = 0$ gives the singular points $x = 2i$ and $x = -2i$. Each is at distance $2$ from $x = 0$. So the guaranteed radius of convergence is $2$.'
+          - problem: 'Legendre''s equation with $n = 1$ reads $(1 - x^2)\,y'''' - 2x\,y'' + 2y = 0$. Its solution with $y(0) = 1$ and $y''(0) = 0$ is $y = \sum_{n=0}^{\infty} a_n x^n$. Find $a_4$.'
+            answer: '-1/3'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1 (power series method): write y = sum a_n x^n and substitute into the equation. Step 2 (recurrence): coefficient matching gives a_(k+2) = ((k-1)/(k+1)) a_k. Step 3 (initial conditions): a_0 = 1 and a_1 = 0, so a_2 = -1. Step 4 (target coefficient): a_4 = (1/3) a_2 = -1/3. The coefficient is -1/3."
-          - problem: "For the equation y'' + x^2 y = 0 with y(0) = 0 and y'(0) = 1, the power-series solution about x = 0 has coefficients a_n. Find the coefficient a_5."
-            answer: "-1/20"
+            solution_sketch: 'Matching the coefficients of $x^k$ gives $a_{k+2} = \frac{k-1}{k+1}\,a_k$. With $a_0 = 1$ and $a_1 = 0$ we get $a_2 = -1$. Then $a_4 = \frac{1}{3}\,a_2 = -\frac{1}{3}$.'
+          - problem: 'The solution of $y'''' + x^2 y = 0$ with $y(0) = 0$ and $y''(0) = 1$ is $y = \sum_{n=0}^{\infty} a_n x^n$. Find $a_5$.'
+            answer: '-1/20'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1 (power series method): write y = sum a_n x^n and substitute into y'' + x^2 y = 0. Step 2 (recurrence): coefficient matching gives a_(k+2) = -a_(k-2) / ((k+2)(k+1)). Step 3 (initial conditions): a_0 = 0 and a_1 = 1. Step 4 (target coefficient): for k = 3, a_5 = -a_1 / (5*4) = -1/20. The coefficient is -1/20."
-          - problem: "The equation (x^2 + 4) y'' + y = 0 is solved by a power series about x = 0. Find the guaranteed radius of convergence of that series."
-            answer: "2"
+            solution_sketch: 'The term $x^2 y$ gives $a_{k-2}$ at $x^k$, so $(k+2)(k+1)\,a_{k+2} = -a_{k-2}$. With $a_0 = 0$ and $a_1 = 1$, taking $k = 3$ gives $20a_5 = -a_1$. So $a_5 = -\frac{1}{20}$.'
+          - problem: 'A power series about $x = 0$ is used to solve $(x^2 - 4x + 13)\,y'''' + x\,y'' + y = 0$. What radius of convergence does the theory guarantee?'
+            answer: 'sqrt(13)'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1 (ordinary point): x = 0 is ordinary because x^2 + 4 is nonzero at 0. Step 2 (singular points): set x^2 + 4 = 0 to get x = 2i and x = -2i. Step 3 (guaranteed radius): the nearest singular points are at distance 2 from 0, so the guaranteed radius is at least 2. The guaranteed radius is 2."
-        constraints: "polynomial coefficients of degree at most 2; expansion about x = 0 only; radius questions use singular points at distance 1 or 2"
+            solution_sketch: 'The singular points solve $x^2 - 4x + 13 = 0$, so $x = 2 \pm 3i$. The distance from $0$ to $2 + 3i$ is $\sqrt{4 + 9} = \sqrt{13}$, and $2 - 3i$ is equally far. So the guaranteed radius is $\sqrt{13}$.'
+          - problem: 'Is $x = 0$ an ordinary point of $x^2 y'''' + y = 0$?'
+            answer: 'no'
+            answer_contract: {"kind": "label", "options": [["no", "it is not an ordinary point", "not an ordinary point", "singular point", "it is a singular point"], ["yes", "it is an ordinary point", "ordinary point"]]}
+            solution_sketch: 'Divide by $x^2$ to write $y'''' + \frac{1}{x^2}\,y = 0$. The coefficient $\frac{1}{x^2}$ is not defined at $x = 0$. So $x = 0$ is a singular point, and the answer is no.'
+          - problem: 'A model leads to $(1 + 4x^2)\,y'''' + y = 0$, which is solved by a power series about $x = 0$. What radius of convergence does the theory guarantee?'
+            answer: '1/2'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Setting $1 + 4x^2 = 0$ gives $x^2 = -\frac{1}{4}$, so the singular points are $x = \frac{i}{2}$ and $x = -\frac{i}{2}$. Both are at distance $\frac{1}{2}$ from $0$. So the guaranteed radius is $\frac{1}{2}$.'
+          - problem: 'Hermite''s equation for the quantum oscillator can be written $y'''' - 2x\,y'' + 2y = 0$. Its solution with $y(0) = 1$ and $y''(0) = 0$ is $y = \sum_{n=0}^{\infty} a_n x^n$. Find $a_4$.'
+            answer: '-1/6'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Matching the coefficients of $x^k$ gives $a_{k+2} = \frac{2k - 2}{(k+2)(k+1)}\,a_k$. With $a_0 = 1$ we get $a_2 = -1$. Then $a_4 = \frac{2}{12}\,a_2 = -\frac{1}{6}$.'
+          - problem: 'Sam says that a power series about $x = 0$ for $(x^2 + 9)\,y'''' + y = 0$ is guaranteed to converge for $|x| < 9$, because $9$ is the constant term. What radius is actually guaranteed?'
+            answer: '3'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The radius is the distance from $0$ to the nearest singular point, not a coefficient. Setting $x^2 + 9 = 0$ gives $x = 3i$ and $x = -3i$. Both are at distance $3$ from $0$, so the guaranteed radius is $3$.'
+        constraints: 'polynomial coefficients of degree at most 2; expansion about x = 0 only; radius questions use singular points at distance 1, 2, sqrt(13) or 1/2; at most one yes/no item on an ordinary point'
     diagnostic_exemplar:
       problem: 'Find the first three nonzero terms of the power-series solution of $y'''' = 2xy$ with $y(0) = 1$, $y''(0) = 0$.'
       answer: '$y = 1 + \dfrac{x^3}{3} + \dfrac{x^6}{45} + \cdots$'

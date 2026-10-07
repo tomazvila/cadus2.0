@@ -19,41 +19,104 @@ topics:
       - id: kp1
         name: "Terms, coefficients, and constants"
         key_prerequisites: [order-of-operations]
+        step_check:
+          step: 'so its coefficient is $-4$'
+          question: 'Why is the coefficient of $x$ equal to $-4$ and not $4$?'
+          options:
+            - 'The minus is an operation between terms, so the coefficient is $4$'
+            - 'The minus sign stays with $4x$, so it is part of the coefficient'
+            - 'The coefficient is the constant term of the expression, which is $-8$'
+          answer: 'The minus sign stays with $4x$, so it is part of the coefficient'
+          why: 'A term keeps the sign in front of it, so the coefficient of $-4x$ is $-4$.'
         exemplars:
           - problem: 'How many terms does $4x + 7 - 2y$ have?'
-            answer: "3"
-            solution_sketch: 'Terms are separated by $+$ and $-$: $4x$, $7$, $-2y$.'
+            answer: '3'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Terms are separated by $+$ and $-$ signs. The three terms are $4x$, $7$ and $-2y$, so the expression has 3 terms.'
           - problem: 'What is the coefficient of $y$ in $3x - 5y + 2$?'
-            answer: "-5"
-            solution_sketch: 'The term is $-5y$; the sign belongs to the coefficient.'
+            answer: '-5'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The term with $y$ is $-5y$. The sign belongs to the term, so the coefficient is $-5$.'
           - problem: 'What is the constant term of $2x^2 + 3x - 8$?'
-            answer: "-8"
-            solution_sketch: 'The constant term has no variable factor: $-8$.'
-          - problem: 'How many terms does $5x - 3y + 8$ have?'
-            answer: "3"
-            solution_sketch: 'Terms are separated by $+$ and $-$: $5x$, $-3y$, $8$.'
-        constraints: "two to four terms; integer coefficients from -9 to 9"
+            answer: '-8'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The constant term has no variable factor. The only such term is $-8$, with its sign.'
+          - problem: 'Sam reads the coefficient of $x$ in $9 - 4x + 2y$ as $4$. What is the correct coefficient?'
+            answer: '-4'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The term with $x$ is $-4x$, because the minus sign in front belongs to it. The coefficient is therefore $-4$.'
+          - problem: 'A plumber charges $45$ dollars for the call-out and $30$ dollars for each hour. The cost of a job of $h$ hours is $30h + 45$ dollars. What is the coefficient of $h$?'
+            answer: '30'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The coefficient is the number that multiplies $h$ in $30h$. Here that is the hourly charge, $30$.'
+          - problem: 'A phone plan costs $12$ dollars per month plus a one-time activation fee, so $12m + 25$ is the cost after $m$ months. What is the constant term?'
+            answer: '25'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The term $12m$ changes with the number of months. The term $25$ does not contain $m$, so it is the constant term, the one-time fee.'
+          - problem: 'What is the coefficient of $y$ in $7x + y - 3$?'
+            answer: '1'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The term $y$ means $1 \times y$. The coefficient is the unwritten factor $1$.'
+          - problem: 'How many terms does $3(x + 2) - 5y$ have?'
+            answer: '2'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The parentheses hold $x + 2$ as one factor of the first term. The terms are $3(x+2)$ and $-5y$, so there are 2 terms.'
+          - problem: 'How many terms does $5a^2 - 3ab + b - 9$ have?'
+            answer: '4'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Split at each outer $+$ or $-$ sign. The terms are $5a^2$, $-3ab$, $b$ and $-9$, which makes 4 terms.'
+        constraints: "two to four terms (a product of a number and a bracket counts as one term); integer coefficients from -9 to 9; contexts give a cost expression and ask for its coefficient or constant"
       - id: kp2
         name: "Identify like terms"
         key_prerequisites: [order-of-operations]
+        try_first:
+          problem: 'Are $3x^2$ and $5x$ like terms?'
+          answer_contract: {"kind":"label","options":[["no","not like terms","they are not like terms","not","no they are not"],["yes","like terms","they are like terms","yes they are"]]}
+          answer: 'no'
+          reveal: 'The letter is the same, but the powers differ: $x^2$ and $x$. Like terms need the same variable part, including every exponent.'
+        step_check:
+          step: 'The term $4a^2$ has that same variable and exponent'
+          question: 'Why is $4a^2$ like $7a^2$ although the coefficients differ?'
+          options:
+            - 'Only the letter $a$ must match, and the exponents may differ'
+            - 'The coefficients must have the same sign, and $4$ and $7$ do'
+            - 'Only the variable part must match, and both have $a^2$'
+          answer: 'Only the variable part must match, and both have $a^2$'
+          why: 'Like terms share the same variable part with the same exponents. The coefficients may be any numbers.'
         exemplars:
-          - problem: "In $5x + 3y - 2x + 7$, one other term is a like term of $5x$. Which term is it?"
-            answer: "-2x"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Like terms have the same variable part; $5x$ and $-2x$ both have $x$."
-          - problem: "Which of these terms is a like term of $4a^2$? Select the term that has the same variable part."
-            answer: "-3a^2"
-            answer_contract: {"kind": "label", "options": [["-3a^2"], ["4a"], ["7a"], ["-4a"]]}
-            solution_sketch: "Like terms have the same variable part, including the same exponent. The given term $4a^2$ has variable part $a^2$. Check each option: $4a$, $7a$, and $-4a$ all have variable part $a$, so their exponents do not match. The option $-3a^2$ has variable part $a^2$, so it is a like term. The like term is -3a^2."
-          - problem: "In $2xy + 5x + 3xy - 1$, collect the terms whose variable part is $xy$. Give their sum."
-            answer: "5xy"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The matching terms are $2xy$ and $3xy$; adding their coefficients gives $(2+3)xy=5xy$."
-          - problem: "A term must be like $-4x^2$. Choose $7x$, $7x^2$, or $7y^2$."
-            answer: "7x^2"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The variable and its exponent must both match: the required variable part is $x^2$."
-        constraints: "at most two variables; exponents <= 2"
+          - problem: 'In $5x + 3y - 2x + 7$, which term is like $5x$?'
+            answer: '-2x'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Like terms have the same variable part. Both $5x$ and $-2x$ have the part $x$, so $-2x$ is the like term.'
+          - problem: 'Which of $-3a^2$, $4a$, $7a$ and $-4a$ is like $4a^2$?'
+            answer: '-3a^2'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Like terms have the same variable part, including the exponent. The terms $4a$, $7a$ and $-4a$ have part $a$, while $-3a^2$ has part $a^2$.'
+          - problem: 'In $2xy + 5x + 3xy - 1$, which term is like $2xy$?'
+            answer: '3xy'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The variable part of $2xy$ is $xy$. Only $3xy$ has the same part, because $5x$ lacks the factor $y$.'
+          - problem: 'Are $6x^2y$ and $-2xy^2$ like terms?'
+            answer: 'no'
+            answer_contract: {"kind":"label","options":[["no","not like terms","they are not like terms","not","no they are not"],["yes","like terms","they are like terms","yes they are"]]}
+            solution_sketch: 'The first term has part $x^2y$ and the second has part $xy^2$. The exponents of $x$ and $y$ differ, so they are not like terms.'
+          - problem: 'A baker records trays baked as $5c + 3m + 2c$, where $c$ counts trays of cookies and $m$ counts trays of muffins. Which other term counts the same kind of tray as $5c$?'
+            answer: '2c'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Only trays of the same kind can be added. The term $2c$ counts cookie trays, like $5c$, so it combines with it. The term $3m$ counts muffins.'
+          - problem: 'In $3x + 8 - 5x - 2$, which term is like $8$?'
+            answer: '-2'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Constants have no variable part, so they are like terms with each other. The other constant is $-2$.'
+          - problem: 'A cafe records its daily profit in dollars as $12t + 5c - 4t + 7$, where $t$ counts teas and $c$ counts cakes. Which term is like $12t$?'
+            answer: '-4t'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Both $12t$ and $-4t$ contain only $t$ to the first power. The term $5c$ has a different letter and $7$ has none.'
+          - problem: 'Sam combines $7x^2 + 3x + 2x^2$ and says $3x$ is like $7x^2$ because both contain $x$. Which term is really like $7x^2$?'
+            answer: '2x^2'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The variable part of $7x^2$ is $x^2$, not just $x$. The term $2x^2$ has the same part, while $3x$ has part $x$.'
+        constraints: "at most two variables; exponents <= 2; constants are like terms of each other"
     diagnostic_exemplar:
       problem: 'In $6a - 4b + 2 - 9a$, which term is a like term of $6a$?'
       answer: '-9a'
@@ -83,41 +146,100 @@ topics:
       - id: kp1
         name: "Substitute one value into a linear expression"
         key_prerequisites: [order-of-operations]
+        try_first:
+          problem: 'If $n = 3$, what is the value of $5n$?'
+          answer_contract: {"kind":"exact"}
+          answer: '15'
+          reveal: 'A number written next to a letter means multiplication, so $5n$ is $5 \times 3 = 15$. It is not the number $53$.'
+        step_check:
+          step: 'Multiply first: $9\times4=36$'
+          question: 'Why is $9x - 5$ worked out as $36 - 5$ and not $9(4-5)$?'
+          options:
+            - 'The order does not change the value, so multiplying first is optional'
+            - 'The $5$ is next to the $4$, so $4-5$ is worked out first'
+            - 'Multiplication comes before subtraction, and $9x$ means $9$ times $x$'
+          answer: 'Multiplication comes before subtraction, and $9x$ means $9$ times $x$'
+          why: 'The $9$ multiplies only $x$. Multiplication is done before subtraction.'
         exemplars:
           - problem: 'Evaluate $3x + 5$ when $x = 4$.'
-            answer: "17"
-            solution_sketch: '$3(4) + 5 = 12 + 5 = 17$.'
+            answer: '17'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Replace $x$ with $4$ to get $3(4) + 5$. Multiplying first gives $12 + 5 = 17$.'
           - problem: 'Evaluate $2a - 7$ when $a = 10$.'
-            answer: "13"
-            solution_sketch: '$2(10) - 7 = 13$.'
+            answer: '13'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Replace $a$ with $10$ to get $2(10) - 7$. Then $20 - 7 = 13$.'
           - problem: 'Evaluate $10 - 2m$ when $m = 3$.'
-            answer: "4"
-            solution_sketch: '$10 - 2(3) = 4$.'
-          - problem: 'Evaluate $4x - 5$ when $x = 6$.'
-            answer: "19"
-            solution_sketch: '$4(6) - 5 = 19$.'
-        constraints: "one variable; positive integer inputs; coefficients <= 9"
+            answer: '4'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Replace $m$ with $3$ to get $10 - 2(3)$. Multiply first: $10 - 6 = 4$.'
+          - problem: 'A shop charges $4$ dollars per sandwich plus a $3$ dollar delivery fee, so $s$ sandwiches cost $4s + 3$ dollars. What is the cost of $6$ sandwiches?'
+            answer: '27'
+            answer_contract: {"kind":"unit","quantity":"dollar","unit":"dollar","allow_omitted":true}
+            solution_sketch: 'Replace $s$ with $6$ to get $4(6) + 3$. Multiplying first gives $24 + 3 = 27$ dollars.'
+          - problem: 'Sam evaluates $8 - 3x$ when $x = 5$ and gets $25$. What is the correct value?'
+            answer: '-7'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Sam subtracted first, which is wrong. Multiplication comes first: $8 - 3(5) = 8 - 15 = -7$.'
+          - problem: 'A group splits a bill of $b$ dollars equally among $4$ friends, and each friend also adds a $3$ dollar tip. Each pays $\frac{b}{4} + 3$ dollars. How much does each pay when $b = 84$?'
+            answer: '24'
+            answer_contract: {"kind":"unit","quantity":"dollar","unit":"dollar","allow_omitted":true}
+            solution_sketch: 'Replace $b$ with $84$. Dividing first gives $84 \div 4 = 21$, and adding the tip gives $21 + 3 = 24$ dollars.'
+          - problem: 'Evaluate $\frac{x}{3} - 2$ when $x = 18$.'
+            answer: '4'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Replace $x$ with $18$. Dividing first gives $18 \div 3 = 6$, and then $6 - 2 = 4$.'
+          - problem: 'Evaluate $\frac{3x + 1}{5}$ when $x = 3$.'
+            answer: '2'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The numerator is $3(3) + 1 = 10$. Dividing by $5$ gives $2$.'
+        constraints: "one variable; positive integer inputs; coefficients <= 9; contexts include sharing (division) and fees (multiplication)"
       - id: kp2
         name: "Two variables with whole-number inputs"
         key_prerequisites: [order-of-operations, multiplication-tables]
+        step_check:
+          step: 'Replace each variable with its own value'
+          question: 'Why do $m$ and $n$ in $7m-5n$ get different numbers?'
+          options:
+            - 'Each letter has its own value, and the problem gives that value'
+            - 'Only the first letter is replaced, and the second stays as a letter'
+            - 'Both letters take the same value, so $m$ and $n$ are replaced alike'
+          answer: 'Each letter has its own value, and the problem gives that value'
+          why: 'Each variable is replaced by the value given for that variable, and the same value is used at every occurrence of it.'
         exemplars:
-          - problem: "Evaluate $2ab$ when $a = 5$ and $b = 3$."
-            answer: "30"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "$2 \\times 5 \\times 3 = 30$."
-          - problem: "Evaluate $x + 3y$ when $x = 2$ and $y = 4$."
-            answer: "14"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "$2+3(4)=2+12=14$."
-          - problem: "A rectangle has width $a=4$ and length $b=7$. Evaluate $2(a+b)$."
-            answer: "22"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Add inside the parentheses first: $2(4+7)=2(11)=22$."
-          - problem: "For $p=9$ and $q=3$, find the value of $(p-q)/q$."
-            answer: "2"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The numerator is $9-3=6$; dividing by $q$ gives $6/3=2$."
-        constraints: "two variables; positive integer inputs <= 10"
+          - problem: 'Evaluate $x + 3y$ when $x = 2$ and $y = 4$.'
+            answer: '14'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Replace $x$ with $2$ and $y$ with $4$ to get $2 + 3(4)$. Then $2 + 12 = 14$.'
+          - problem: 'Evaluate $2ab$ when $a = 5$ and $b = 3$.'
+            answer: '30'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Adjacent factors mean multiplication, so $2ab$ is $2 \times 5 \times 3$. The product is $30$.'
+          - problem: 'The perimeter of a rectangle with width $w$ and length $l$ is $2(w + l)$. What is the perimeter when $w = 4$ cm and $l = 7$ cm?'
+            answer: '22'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"cm","allow_omitted":true}
+            solution_sketch: 'Add inside the parentheses first: $2(4 + 7) = 2(11)$. The perimeter is $22$ cm.'
+          - problem: 'Evaluate $\frac{p - q}{q}$ when $p = 9$ and $q = 3$.'
+            answer: '2'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The numerator is $9 - 3 = 6$. Dividing by $q = 3$ gives $2$.'
+          - problem: 'A car travels $d$ kilometres in $t$ hours, so its average speed is $\frac{d}{t}$ kilometres per hour. What is the speed when $d = 210$ and $t = 3$?'
+            answer: '70'
+            answer_contract: {"kind":"unit","quantity":"speed","unit":"km/h","allow_omitted":true}
+            solution_sketch: 'Replace $d$ with $210$ and $t$ with $3$. The speed is $210 \div 3 = 70$ km/h.'
+          - problem: 'A family buys $3$ adult tickets at $a$ dollars each and $2$ child tickets at $c$ dollars each, so the total is $3a + 2c$ dollars. What is the total when $a = 12$ and $c = 7$?'
+            answer: '50'
+            answer_contract: {"kind":"unit","quantity":"dollar","unit":"dollar","allow_omitted":true}
+            solution_sketch: 'Replace $a$ with $12$ and $c$ with $7$ to get $3(12) + 2(7)$. Then $36 + 14 = 50$ dollars.'
+          - problem: 'Sam evaluates $4x - y$ when $x = 3$ and $y = 5$ and writes $4(5) - 3 = 17$. What is the correct value?'
+            answer: '7'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Sam swapped the values. Replace $x$ with $3$ and $y$ with $5$ to get $4(3) - 5 = 12 - 5 = 7$.'
+          - problem: 'The mean of two test scores $a$ and $b$ is $\frac{a + b}{2}$. What is the mean when $a = 78$ and $b = 92$?'
+            answer: '85'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Add the scores first: $78 + 92 = 170$. Dividing by $2$ gives the mean $85$.'
+        constraints: "two variables; positive integer inputs <= 10 in drills, larger values in contexts; contexts include rates (division) and totals (multiplication)"
     diagnostic_exemplar:
       problem: 'Evaluate $2x + 3y$ when $x = 4$ and $y = 5$.'
       answer: '23'
@@ -148,66 +270,146 @@ topics:
       - id: kp1
         name: "Expressions with exponents"
         key_prerequisites: [substituting-values, integer-exponents-intro]
+        step_check:
+          step: 'Square the base first: $4^2=16$'
+          question: 'Why is $3x^2$ at $x=4$ equal to $3 \times 16$ and not $12^2$?'
+          options:
+            - 'The exponent $2$ applies only to $x$, so $4$ is squared first'
+            - 'The coefficient $3$ is part of the base, so the product $3x$ is squared'
+            - 'Powers are done last, so $3$ and $4$ are multiplied first'
+          answer: 'The exponent $2$ applies only to $x$, so $4$ is squared first'
+          why: 'An exponent applies only to the base directly before it. Here the base is $x$, not $3x$.'
         exemplars:
-          - problem: "Evaluate $x^2 + y$ when $x = 3$ and $y = 4$."
-            answer: "13"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "$3^2 + 4 = 9 + 4 = 13$."
-          - problem: "Evaluate $2a^2$ when $a = 3$."
-            answer: "18"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Exponent first: $2 \\times 9 = 18$."
-          - problem: "Evaluate $(a+b)^2$ for $a=2$ and $b=5$."
-            answer: "49"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The grouped base is $2+5=7$; its square is $7^2=49$."
-          - problem: "A square has side $s=6$. Evaluate $s^2-4s$, the numerical difference between its area and perimeter."
-            answer: "12"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The area value is $6^2=36$ and the perimeter value is $4(6)=24$; $36-24=12$."
-        constraints: "exponents <= 2; positive inputs"
+          - problem: 'Evaluate $x^2 + y$ when $x = 3$ and $y = 4$.'
+            answer: '13'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Square $x$ first: $3^2 = 9$. Then add $y$ to get $9 + 4 = 13$.'
+          - problem: 'Evaluate $2a^2$ when $a = 3$.'
+            answer: '18'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The exponent applies only to $a$, so square first: $3^2 = 9$. Then $2 \times 9 = 18$.'
+          - problem: 'Evaluate $(a + b)^2$ when $a = 2$ and $b = 5$.'
+            answer: '49'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The base is the whole group, $2 + 5 = 7$. Its square is $7^2 = 49$.'
+          - problem: 'A square tile has side $s$ metres. Its area minus its perimeter, taken as plain numbers, is $s^2 - 4s$. What is this difference when $s = 6$?'
+            answer: '12'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The area value is $6^2 = 36$ and the perimeter value is $4(6) = 24$. The difference is $36 - 24 = 12$.'
+          - problem: 'An object dropped from rest falls $5t^2$ metres in $t$ seconds. How far has it fallen after $4$ seconds?'
+            answer: '80'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"m","allow_omitted":true}
+            solution_sketch: 'Square the time first: $4^2 = 16$. Then multiply by $5$ to get $80$ metres.'
+          - problem: 'When $n$ people each shake hands once with everyone else, the number of handshakes is $\frac{n^2 - n}{2}$. How many handshakes are there when $n = 8$?'
+            answer: '28'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Evaluate the numerator first: $8^2 - 8 = 64 - 8 = 56$. Dividing by $2$ gives $28$ handshakes.'
+          - problem: 'Sam evaluates $3x^2$ when $x = 4$ and gets $12^2 = 144$. What is the correct value?'
+            answer: '48'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The exponent applies only to $x$. So $4^2 = 16$, and $3 \times 16 = 48$.'
+          - problem: 'Evaluate $\frac{x^2 + 8}{4}$ when $x = 4$.'
+            answer: '6'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The numerator is $4^2 + 8 = 16 + 8 = 24$. Dividing by $4$ gives $6$.'
+        constraints: "exponents <= 2; positive inputs; contexts include formulas with a square and with a division"
       - id: kp2
         name: "Negative inputs with order of operations"
         key_prerequisites: [integer-addition-subtraction, integer-multiplication-division]
+        try_first:
+          problem: 'What is the value of $x^2$ when $x = -5$?'
+          answer_contract: {"kind":"exact"}
+          answer: '25'
+          reveal: 'The base is $-5$, and $(-5)(-5) = 25$. A negative number squared is positive, so a negative input needs parentheses.'
+        step_check:
+          step: 'Subtracting a negative adds its opposite'
+          question: 'Why does $9-(-6)$ become $9+6$?'
+          options:
+            - 'Two minus signs side by side cancel, and the $6$ disappears'
+            - 'The two signs multiply to a minus, so the result is $9-6$'
+            - 'Taking away a negative is the same as adding its opposite'
+          answer: 'Taking away a negative is the same as adding its opposite'
+          why: 'Subtracting $-6$ is the same as adding $6$, so $9-(-6)=15$.'
         exemplars:
-          - problem: "Evaluate $x^2 - 3x$ when $x = -2$."
-            answer: "10"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "$(-2)^2 - 3(-2) = 4 + 6 = 10$."
-          - problem: "Evaluate $\\frac{a - b}{2}$ when $a = -3$ and $b = 9$."
-            answer: "-6"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "$\\frac{-3 - 9}{2} = -\\frac{12}{2} = -6$."
-          - problem: "For $x=-4$, evaluate $(-x)^2$."
-            answer: "16"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Negating the input gives $-(-4)=4$; then $4^2=16$."
-          - problem: "For $a=-3$, evaluate $-a^2$."
-            answer: "-9"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The exponent applies to $a$ before the leading minus: $-((-3)^2)=-9$."
-        constraints: "inputs in -9..9; watch sign of squared negatives"
+          - problem: 'Evaluate $x^2 - 3x$ when $x = -2$.'
+            answer: '10'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Substitute with parentheses: $(-2)^2 - 3(-2) = 4 + 6$. The value is $10$.'
+          - problem: 'Evaluate $\frac{a - b}{2}$ when $a = -3$ and $b = 9$.'
+            answer: '-6'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The numerator is $-3 - 9 = -12$. Dividing by $2$ gives $-6$.'
+          - problem: 'Evaluate $(-x)^2$ when $x = -4$.'
+            answer: '16'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The group $-x$ is $-(-4) = 4$. Squaring it gives $4^2 = 16$.'
+          - problem: 'Evaluate $-a^2$ when $a = -3$.'
+            answer: '-9'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The exponent applies to $a$ before the leading minus. So $(-3)^2 = 9$, and the result is $-9$.'
+          - problem: 'To convert a Celsius temperature $C$ to Fahrenheit, compute $\frac{9C}{5} + 32$. What is the Fahrenheit temperature when $C = -10$?'
+            answer: '14'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Multiply first: $9(-10) = -90$. Dividing by $5$ gives $-18$, and adding $32$ gives $14$.'
+          - problem: 'To convert a Fahrenheit temperature $F$ to Celsius, compute $\frac{5(F - 32)}{9}$. What is the Celsius temperature when $F = -4$?'
+            answer: '-20'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The bracket is $-4 - 32 = -36$. Then $5(-36) = -180$, and dividing by $9$ gives $-20$.'
+          - problem: 'Sam evaluates $-x^2 + 3x$ when $x = -2$ and writes $4 - 6 = -2$. What is the correct value?'
+            answer: '-10'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Square the input first: $(-2)^2 = 4$, and the outside minus makes it $-4$. Then $3(-2) = -6$, so the sum is $-10$.'
+          - problem: 'Evaluate $x^2 + 4x$ when $x = -5$.'
+            answer: '5'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Substitute with parentheses: $(-5)^2 + 4(-5) = 25 - 20$. The value is $5$.'
+        constraints: "inputs in -9..9 (temperature inputs down to -10); watch the sign of squared negatives; contexts include temperature conversions"
       - id: kp3
         name: "Multi-term expressions with negatives and exponents"
         key_prerequisites: [substituting-values, integer-exponents-intro]
+        step_check:
+          step: 'the outside minus makes the first term $-16$'
+          question: 'Why is the first term $-16$ and not $16$?'
+          options:
+            - 'The base is $-4$, and a negative base always gives a negative square'
+            - 'The square is worked out first, then the minus sign outside applies'
+            - 'The square of $-4$ is $16$, but the minus sign is dropped at the end'
+          answer: 'The square is worked out first, then the minus sign outside applies'
+          why: 'In $-x^2$ the exponent applies to $x$ only. The leading minus negates the result of the square.'
         exemplars:
-          - problem: "Evaluate $-x^2+5x+2$ for $x=-1$."
-            answer: "-4"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "$-(-1)^2+5(-1)+2=-1-5+2=-4$."
-          - problem: "Evaluate $2x^2-x+1$ for $x=-3$."
-            answer: "22"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "$2(-3)^2-(-3)+1=18+3+1=22$."
-          - problem: "A learner evaluated $(-x)^2+2x-3$ at $x=-2$ as $-11$. Find the correct value."
-            answer: "-3"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The grouped base is $-(-2)=2$, so its square is $4$. The three terms give $4-4-3=-3$."
-          - problem: "For $a=-2$ and $b=3$, evaluate $a^2-ab-b^2$."
-            answer: "1"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "$(-2)^2-(-2)(3)-3^2=4+6-9=1$."
-        constraints: "three terms; inputs in -9..9; distinguish -x^2 from (-x)^2"
+          - problem: 'Evaluate $2x^2 - x + 1$ when $x = -3$.'
+            answer: '22'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Substitute with parentheses: $2(-3)^2 - (-3) + 1 = 18 + 3 + 1$. The value is $22$.'
+          - problem: 'Evaluate $-x^2 + 5x + 2$ when $x = -1$.'
+            answer: '-4'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Substitute: $-(-1)^2 + 5(-1) + 2 = -1 - 5 + 2$. The value is $-4$.'
+          - problem: 'Sam evaluates $(-x)^2 + 2x - 3$ when $x = -2$ and gets $-11$. What is the correct value?'
+            answer: '-3'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The group $-x$ equals $2$, so its square is $4$. The three terms give $4 - 4 - 3 = -3$.'
+          - problem: 'Evaluate $a^2 - ab - b^2$ when $a = -2$ and $b = 3$.'
+            answer: '1'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Substitute: $(-2)^2 - (-2)(3) - 3^2 = 4 + 6 - 9$. The value is $1$.'
+          - problem: 'The height in metres of a ball above the ground $t$ seconds after a throw is $-5t^2 + 20t + 15$. How high is the ball after $3$ seconds?'
+            answer: '30'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"m","allow_omitted":true}
+            solution_sketch: 'Square first: $3^2 = 9$, and the minus makes $-45$. Then $20(3) = 60$, so $-45 + 60 + 15 = 30$ metres.'
+          - problem: 'The temperature in degrees Celsius $x$ hours after midnight is $\frac{x^2}{2} - 4x - 6$, and times before midnight are negative. What is the temperature at $x = -2$?'
+            answer: '4'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The square is $(-2)^2 = 4$, and half of it is $2$. The other terms give $-4(-2) = 8$, so $2 + 8 - 6 = 4$.'
+          - problem: 'Evaluate $3 - 2x - x^2$ when $x = -4$.'
+            answer: '-5'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Substitute: $3 - 2(-4) - (-4)^2 = 3 + 8 - 16$. The value is $-5$.'
+          - problem: 'Evaluate $x^2 - xy + y^2$ when $x = -3$ and $y = -2$.'
+            answer: '7'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The product $xy$ is $(-3)(-2) = 6$. So $9 - 6 + 4 = 7$.'
+        constraints: "three terms; inputs in -9..9; distinguish -x^2 from (-x)^2; contexts include a projectile height and a temperature model"
     diagnostic_exemplar:
       problem: 'Evaluate $3x^2 - 2x$ when $x = -2$.'
       answer: "16"
@@ -363,41 +565,104 @@ topics:
       - id: kp1
         name: "Expression from a table of values"
         key_prerequisites: [evaluating-expressions]
+        try_first:
+          problem: 'A table pairs $n = 1, 2, 3$ with the values $7, 10, 13$. What is the value at $n = 4$?'
+          answer_contract: {"kind":"exact"}
+          answer: '16'
+          reveal: 'Each step in $n$ adds $3$, so the next value is $13 + 3 = 16$. That constant step is the coefficient of $n$ in the rule.'
+        step_check:
+          step: 'so add $10-6=4$'
+          question: 'Why is $10-6$ added to $6n$?'
+          options:
+            - 'The first value $10$ is the constant, so $10$ is added to $6n$'
+            - 'The constant equals the step between values, so it is $6$'
+            - 'At $n=1$ the part $6n$ gives $6$, but the table shows $10$'
+          answer: 'At $n=1$ the part $6n$ gives $6$, but the table shows $10$'
+          why: 'The constant makes up the difference between $6n$ and the table at a known position. Here $10 - 6 = 4$ is missing.'
         exemplars:
-          - problem: "A table follows a linear rule and pairs $n = 1, 2, 3$ with $5, 8, 11$. Write the rule for the value at any position $n$."
-            answer: "3n + 2"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Values climb by $3$ each step, so $3n + c$; at $n = 1$, $3 + c = 5$ gives $c = 2$."
-          - problem: "A table follows a linear rule and has $(n,v)=(2,7),(4,13),(6,19)$. Write $v$ as an expression in $n$."
-            answer: "3n+1"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "A change of $2$ positions adds $6$, so each position adds $3$. At the first entry, $7-3(2)=1$; the rule is $3n+1$."
-          - problem: "A table starts with $(n,v)=(0,4)$ and each increase of $1$ in $n$ adds $5$ to $v$. Write the rule for $v$."
-            answer: "5n+4"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Each step contributes $5n$ from position zero, whose value is $4$. At position zero, the variable contribution vanishes, leaving the required first value $4$."
-          - problem: "A table follows a linear rule, lists $n:1,2,3$ and $v:9,11,13$, and a learner proposes $2n+9$. Correct the rule for every position."
-            answer: "2n+7"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The step is $2$, but position $1$ already includes one step. The constant is $9-2=7$, so the first value is $2(1)+7=9$."
-        constraints: "linear patterns with positive integer step; check against the first entry"
+          - problem: 'A table follows a linear rule and pairs $n = 1, 2, 3$ with $5, 8, 11$. What is the rule for the value at position $n$?'
+            answer: '3n + 2'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Each step adds $3$, so the rule starts with $3n$. At $n = 1$ this gives $3$, and the table shows $5$, so add $2$. The rule is $3n + 2$.'
+          - problem: 'A table follows a linear rule with $(n, v) = (2, 7), (4, 13), (6, 19)$. Write the rule for $v$ in terms of $n$.'
+            answer: '3n + 1'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'A change of $2$ in $n$ adds $6$, so each step adds $3$. At $n = 2$, $3n$ gives $6$ and the table shows $7$, so the constant is $1$. The rule is $3n + 1$.'
+          - problem: 'A table has $(n, v) = (0, 4)$, and each increase of $1$ in $n$ adds $5$ to $v$. Write the rule for $v$.'
+            answer: '5n + 4'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Each step adds $5$, so the rule has the part $5n$. At $n = 0$ that part is zero, so the constant is the value $4$. The rule is $5n + 4$.'
+          - problem: 'The values of a linear pattern at $n = 1, 2, 3$ are $9, 11, 13$. Sam writes the rule as $2n + 9$. What is the correct rule?'
+            answer: '2n + 7'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The step is $2$, but position $1$ already includes one step. The constant is $9 - 2 = 7$, and the rule $2n + 7$ gives $9$ at $n = 1$.'
+          - problem: 'A linear pattern pairs $n = 1, 2, 3$ with $20, 17, 14$. Write the value at position $n$.'
+            answer: '23 - 3n'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Each step subtracts $3$, so the rule has the part $-3n$. At $n = 1$ this gives $-3$, and the table shows $20$, so the constant is $23$. The rule is $23 - 3n$.'
+          - problem: 'A taxi fare table pairs $1, 2, 3$ kilometres with fares of $5, 7, 9$ dollars. Write the fare in dollars for $k$ kilometres.'
+            answer: '2k + 3'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Each extra kilometre adds $2$ dollars, so the rule has the part $2k$. At $k = 1$ this gives $2$, and the fare is $5$, so there is a fixed charge of $3$. The rule is $2k + 3$.'
+          - problem: 'A candle burns down at a steady rate. Its height is $28, 26, 24$ centimetres after $1, 2, 3$ hours. Write its height in centimetres after $t$ hours.'
+            answer: '30 - 2t'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The height drops $2$ centimetres each hour, so the rule has the part $-2t$. At $t = 1$ this gives $-2$ and the height is $28$, so the start is $30$. The rule is $30 - 2t$.'
+          - problem: 'A linear pattern has the values $14, 22, 30$ at $n = 3, 5, 7$. Write the value at position $n$.'
+            answer: '4n + 2'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'A change of $2$ in $n$ adds $8$, so each step adds $4$. At $n = 3$, $4n$ gives $12$ and the table shows $14$, so the constant is $2$. The rule is $4n + 2$.'
+          - problem: 'A table pairs $n = 2, 4, 6$ with the values $1, 2, 3$. Write the value at position $n$.'
+            answer: 'n/2'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Each value is half of its position, so the rule is $\frac{n}{2}$. A check at $n = 6$ gives $3$, as in the table.'
+        constraints: "linear patterns with an integer or half step; check against the first entry; contexts include fares and a candle"
       - id: kp2
         name: "Expression from a real-world rule"
         key_prerequisites: [translating-phrases-to-expressions]
+        step_check:
+          step: 'The distance charge is $2k$ euros'
+          question: 'Why is the distance charge $2k$ and not $2+k$?'
+          options:
+            - 'Each of the $k$ kilometres costs $2$ euros, so $2$ multiplies $k$'
+            - 'Each kilometre adds $2$, so the charges are added together as $2+k$'
+            - 'Kilometres and euros are different units, so they cannot be multiplied'
+          answer: 'Each of the $k$ kilometres costs $2$ euros, so $2$ multiplies $k$'
+          why: 'A rate per unit is multiplied by the number of units. The flat fee is added once.'
         exemplars:
-          - problem: 'A gym charges €20 to join plus €8 per month. Write an expression for the total cost after $m$ months.'
-            answer: "8m + 20"
-            solution_sketch: 'Fixed €20 plus €8 per month: $8m + 20$.'
-          - problem: 'A toothpick pattern uses $3$ toothpicks for $1$ triangle, $5$ for $2$, $7$ for $3$, adding $2$ per triangle. Write an expression for the toothpicks in $n$ triangles.'
-            answer: "2n + 1"
-            solution_sketch: 'Each additional triangle adds $2$ toothpicks. Starting from $3$ for one triangle gives $3+2(n-1)=2n+1$.'
-          - problem: 'A parking garage charges €5 to enter plus €3 per hour. Write an expression for the total cost after $h$ hours.'
-            answer: "3h + 5"
-            solution_sketch: 'The rate $3$ per hour is the coefficient; the flat $5$ is added once.'
-          - problem: 'A fence post pattern uses $4$ posts for $1$ section, $7$ for $2$, $10$ for $3$, adding $3$ per section. Write an expression for the posts in $n$ sections.'
-            answer: "3n + 1"
-            solution_sketch: 'Step $3$ per section; $3(1) + 1 = 4$ checks.'
-        constraints: "start value plus constant rate; single variable"
+          - problem: 'A gym charges a joining fee of $20$ euros and $8$ euros per month. Write an expression for the total cost in euros after $m$ months.'
+            answer: '8m + 20'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The monthly charge is $8$ times the number of months, so $8m$. The joining fee of $20$ is paid once, so the total is $8m + 20$.'
+          - problem: 'A toothpick pattern uses $3$ toothpicks for $1$ triangle, $5$ for $2$, and $7$ for $3$, adding $2$ per triangle. Write an expression for the toothpicks in $n$ triangles.'
+            answer: '2n + 1'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Each triangle adds $2$ toothpicks, but the first has $3$. Starting from $3$ and adding $2(n - 1)$ gives $3 + 2n - 2 = 2n + 1$.'
+          - problem: 'A parking garage charges $5$ euros to enter plus $3$ euros per hour. Write an expression for the total cost in euros after $h$ hours.'
+            answer: '3h + 5'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The hourly rate $3$ is multiplied by the hours, so $3h$. The entry fee of $5$ is paid once, so the total is $3h + 5$.'
+          - problem: 'A fence uses $4$ posts for $1$ section, $7$ for $2$ sections, and $10$ for $3$ sections, adding $3$ posts per section. Write an expression for the posts in $n$ sections.'
+            answer: '3n + 1'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Each section adds $3$ posts, so the rule has the part $3n$. One section needs $4$ posts, which is $3 + 1$, so the rule is $3n + 1$.'
+          - problem: 'A bill of $120$ dollars is shared equally among $n$ people. Write an expression for what each person pays in dollars.'
+            answer: '120/n'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Sharing equally means dividing the bill by the number of people. Each person pays $\frac{120}{n}$ dollars.'
+          - problem: 'A tank holds $500$ litres and drains at $20$ litres per minute. Write an expression for the litres left after $t$ minutes.'
+            answer: '500 - 20t'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The tank loses $20$ litres each minute, so $20t$ litres leave after $t$ minutes. The litres left are $500 - 20t$.'
+          - problem: 'A $60$ metre rope is cut into $n$ equal pieces. Write an expression for the length of each piece in metres.'
+            answer: '60/n'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Cutting into equal pieces means dividing the length by the number of pieces. Each piece is $\frac{60}{n}$ metres.'
+          - problem: 'A bike hire costs $6$ euros plus $4$ euros per hour. Sam writes the cost after $h$ hours as $10h$. What is the correct expression?'
+            answer: '4h + 6'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Sam added the fee to the rate, but the fee of $6$ is paid once. Only the rate of $4$ is multiplied by the hours, so the cost is $4h + 6$.'
+        constraints: "start value plus constant rate; single variable; contexts include sharing and cutting (division) and decreasing amounts"
     diagnostic_exemplar:
       problem: 'A table pairs $n = 1, 2, 3$ with $7$, $11$, $15$. Write an expression for the value at position $n$.'
       answer: '4n + 3'
@@ -425,44 +690,95 @@ topics:
         visuals: [{"kind":"geometry","figure":{"shape":"polygon","vertices":[{"x":"0","y":"0","label":"A"},{"x":"7","y":"0","label":"B"},{"x":"7","y":"4","label":"C"},{"x":"0","y":"4","label":"D"}],"right_angles":[0,1,2,3]},"caption":"Reference example: A reference rectangle has width 7 and height 4. Coordinates give the side lengths; this diagram is an independent example."}]
         name: "Geometry formulas"
         key_prerequisites: [evaluating-expressions]
+        step_check:
+          step: 'The area is $54$ square centimetres'
+          question: 'Why is the area written in square centimetres and not in centimetres?'
+          options:
+            - 'Division by $2$ changes the unit from centimetres to square centimetres'
+            - 'Area counts unit squares, and length times length gives a square unit'
+            - 'Any formula that contains a fraction gives its answer in square units'
+            - 'Square units are used whenever the result is larger than the inputs'
+          answer: 'Area counts unit squares, and length times length gives a square unit'
+          why: 'The product of two lengths counts squares of side one centimetre, so an area always carries a square unit.'
         exemplars:
-          - problem: "Use $A = lw$ to find the area when $l = 8$ and $w = 5$."
-            answer: "40"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "$A=lw=8(5)=40$."
-          - problem: "Use $P = 2l + 2w$ to find the perimeter when $l = 7$ and $w = 3$."
-            answer: "20"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "$2(7) + 2(3) = 14 + 6 = 20$."
-          - problem: "Use $A = \\frac{1}{2}bh$ to find the area when $b = 10$ and $h = 7$."
-            answer: "35"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "$A=bh/2=10(7)/2=35$."
-          - problem: "Use $A=(a+b)h/2$ to find the area of a trapezoid with parallel sides $a=5$, $b=9$ and height $h=4$."
-            answer: "28"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Average the parallel sides: $(5+9)/2=7$. Multiplying by the height gives $7(4)=28$."
+          - problem: 'Use $A = lw$ to find the area of a rectangle with $l = 8$ m and $w = 5$ m.'
+            answer: '40'
+            answer_contract: {"kind":"unit","quantity":"area","unit":"m^2","allow_omitted":true}
+            solution_sketch: 'Substitute $l=8$ and $w=5$ into $A=lw$ to get $A=8(5)$. Multiplying gives $40$, so the area is $40$ square metres.'
+          - problem: 'A farmer fences a rectangular field $30$ m long and $18$ m wide. Use $P = 2l + 2w$ to find the length of fence needed.'
+            answer: '96'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"m","allow_omitted":true}
+            solution_sketch: 'The fence runs once around the field, so use $P=2l+2w$ with $l=30$ and $w=18$. Then $P=2(30)+2(18)=60+36=96$ metres.'
+          - problem: 'Use $A = \frac{1}{2}bh$ to find the area when $b = 10$ and $h = 7$.'
+            answer: '35'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Substitute $b=10$ and $h=7$ into the formula. Then $A=\frac{1}{2}(10)(7)=\frac{1}{2}(70)=35$.'
+          - problem: 'A triangular sail has base $6$ m and height $5$ m. Use $A = \frac{1}{2}bh$ to find its area.'
+            answer: '15'
+            answer_contract: {"kind":"unit","quantity":"area","unit":"m^2","allow_omitted":true}
+            solution_sketch: 'Half the base times the height gives the area of a triangle. Here $A=\frac{1}{2}(6)(5)=15$ square metres.'
+          - problem: 'Use $A=(a+b)h/2$ to find the area of a trapezoid with parallel sides $a=5$, $b=9$ and height $h=4$.'
+            answer: '28'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Average the parallel sides: $(5+9)/2=7$. Multiplying by the height gives $7(4)=28$.'
+          - problem: 'A box is $6$ cm long, $5$ cm wide and $4$ cm high. Use $V = lwh$ to find its volume.'
+            answer: '120'
+            answer_contract: {"kind":"unit","quantity":"cubic_volume","unit":"cm^3","allow_omitted":true}
+            solution_sketch: 'Substitute the three edge lengths into $V=lwh$ to get $V=6(5)(4)$. Multiplying gives $120$ cubic centimetres.'
+          - problem: 'Mia uses $P = 2l + 2w$ with $l = 9$ and $w = 4$ and writes $P = 2\cdot 9 + 4 = 22$. What is the correct perimeter?'
+            answer: '26'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Mia doubled only the length. Both sides must be doubled, so $P=2(9)+2(4)=18+8=26$.'
+          - problem: 'Use $A = \pi r^2$ with $\pi \approx 3.14$ to find the area of a circle with radius $10$ cm.'
+            answer: '314'
+            answer_contract: {"kind":"unit","quantity":"area","unit":"cm^2","allow_omitted":true}
+            solution_sketch: 'Square the radius first: $10^2=100$. Then $A=3.14(100)=314$ square centimetres.'
         constraints: "whole-number inputs; area/perimeter formulas"
       - id: kp2
         name: "Rate and science formulas"
         key_prerequisites: [evaluating-expressions]
+        step_check:
+          step: 'Multiply: $42\times5=210$'
+          question: 'Why do we multiply the rate $42$ by the time $5$ in $d=rt$?'
+          options:
+            - 'The $5$ hours are shared among the $42$ km, so the two values are divided'
+            - 'The two inputs are added in every formula, and the unit is attached after'
+            - 'Each hour covers $42$ km, so $5$ hours cover $5$ lots of $42$ km'
+          answer: 'Each hour covers $42$ km, so $5$ hours cover $5$ lots of $42$ km'
+          why: 'Rate is distance per hour, so the distance of several hours is the rate repeated once for each hour.'
         exemplars:
-          - problem: "Use $d = rt$ to find the distance when $r = 55$ and $t = 3$."
-            answer: "165"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "$d=rt=55(3)=165$."
-          - problem: "Use $E = \\frac{1}{2}mv^2$ to find the kinetic energy in joules when $m = 6$ and $v = 4$."
-            answer: "48"
+          - problem: 'A car drives at $r = 55$ km/h for $t = 3$ hours. Use $d = rt$ to find the distance travelled.'
+            answer: '165'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"km","allow_omitted":true}
+            solution_sketch: 'Substitute $r=55$ and $t=3$ into $d=rt$. Then $d=55(3)=165$ kilometres.'
+          - problem: 'A train travels $d = 240$ km at a speed of $r = 60$ km/h. Use $t = \frac{d}{r}$ to find the time taken.'
+            answer: '4'
+            answer_contract: {"kind":"unit","quantity":"time","unit":"hour","allow_omitted":true}
+            solution_sketch: 'The formula $t=d/r$ divides the distance by the speed. Here $t=240/60=4$ hours.'
+          - problem: 'A $6$ kg trolley moves at $4$ m/s. Use $E = \frac{1}{2}mv^2$ to find its kinetic energy in joules.'
+            answer: '48'
             answer_contract: {"kind":"unit","quantity":"energy","unit":"joule","allow_omitted":true}
-            solution_sketch: "$\\frac{1}{2}(6) = 3$; $3 \\times 4^2 = 3 \\times 16 = 48$."
-          - problem: "Use $d=at^2/2$ with $a=4$ and $t=3$ to find distance from rest."
-            answer: "18"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Square the time first: $3^2=9$. Then $d=4(9)/2=18$."
-          - problem: "Use $F=9C/5+32$ with $C=10$ to calculate the temperature in degrees Fahrenheit."
-            answer: "50"
+            solution_sketch: 'Square the speed first: $4^2=16$. Then $E=\frac{1}{2}(6)(16)=3(16)=48$ joules.'
+          - problem: 'Use $d=at^2/2$ with $a=4$ and $t=3$ to find the distance travelled from rest.'
+            answer: '18'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Square the time first: $3^2=9$. Then $d=4(9)/2=18$.'
+          - problem: 'Use $F=9C/5+32$ to convert a temperature of $10$ degrees Celsius to degrees Fahrenheit.'
+            answer: '50'
             answer_contract: {"kind":"unit","quantity":"temperature","unit":"°F","allow_omitted":true}
-            solution_sketch: "The scaled temperature is $9(10)/5=18$; adding the offset gives $18+32=50$."
+            solution_sketch: 'The scaled temperature is $9(10)/5=18$. Adding the offset gives $18+32=50$ degrees Fahrenheit.'
+          - problem: 'A cyclist rides $d = 36$ km in $t = 3$ hours. Use $v = \frac{d}{t}$ to find the average speed.'
+            answer: '12'
+            answer_contract: {"kind":"unit","quantity":"speed","unit":"km/h","allow_omitted":true}
+            solution_sketch: 'Average speed is distance divided by time. Here $v=36/3=12$ kilometres per hour.'
+          - problem: 'A bank pays simple interest $I = Prt$. Find the interest in euros on $P = 500$ euros at $r = 0.04$ for $t = 3$ years.'
+            answer: '60'
+            answer_contract: {"kind":"unit","quantity":"euro","unit":"euro","allow_omitted":true}
+            solution_sketch: 'Multiply the three values: $I=500(0.04)(3)=20(3)=60$. The interest is $60$ euros.'
+          - problem: 'Leo uses $d=at^2/2$ with $a=8$ and $t=3$ and writes $d=(8\cdot3)^2/2=288$. What is the correct distance?'
+            answer: '36'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Leo squared the product $at$ instead of only $t$. The correct order is $3^2=9$, then $d=8(9)/2=36$.'
         constraints: "inputs chosen so fraction coefficients produce whole numbers"
     diagnostic_exemplar:
       problem: 'Use $E = \frac{1}{2}mv^2$ to find the kinetic energy in joules when $m = 4$ and $v = 5$.'
@@ -494,65 +810,130 @@ topics:
       - id: kp1
         name: "Combine like terms with positive coefficients"
         key_prerequisites: [parts-of-an-expression]
+        step_check:
+          step: 'Add the coefficients'
+          question: 'Why does $6c+3c$ become $9c$ and not $9c^2$?'
+          options:
+            - 'Adding terms also adds their exponents, so $c$ and $c$ give $c^2$'
+            - 'Six copies of $c$ plus three copies of $c$ make nine copies of $c$'
+            - 'Each added term multiplies the variable by itself, which gives $c^2$'
+          answer: 'Six copies of $c$ plus three copies of $c$ make nine copies of $c$'
+          why: 'Adding like terms counts copies of the same variable part, so only the coefficient changes.'
         exemplars:
-          - problem: "Simplify $3x + 5x$."
-            answer: "8x"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "$3x+5x=(3+5)x=8x$."
-          - problem: "Simplify $7a+2a+4a$."
-            answer: "13a"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "$7a+2a+4a=(7+2+4)a=13a$."
-          - problem: "A triangle has side lengths $2x$, $3x$, and $4x$. Express its perimeter as one term."
-            answer: "9x"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The perimeter is $2x+3x+4x=(2+3+4)x=9x$."
-          - problem: "A learner claims $4y+6y=10y^2$. Correct the simplified expression."
-            answer: "10y"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Like terms keep their common variable part: $(4+6)y=10y$, with no change to the exponent."
+          - problem: 'Simplify $3x + 5x$.'
+            answer: '8x'
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'Both terms have the variable part $x$, so they are like terms. Add the coefficients: $3+5=8$, so the sum is $8x$.'
+          - problem: 'Simplify $7a+2a+4a$.'
+            answer: '13a'
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'All three terms have the variable part $a$. Add the coefficients: $7+2+4=13$, so the sum is $13a$.'
+          - problem: 'A triangle has sides of length $2x$, $3x$ and $4x$. Find its perimeter.'
+            answer: '9x'
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'The perimeter is the sum of the three sides. Adding $2x+3x+4x$ gives $(2+3+4)x=9x$.'
+          - problem: 'Ana buys $7$ pens and Ben buys $4$ pens, all at $p$ euros each. Write an expression for what they spend together.'
+            answer: '11p'
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'Together they buy $7+4=11$ pens, each costing $p$ euros. The total is $7p+4p=11p$ euros.'
+          - problem: 'Tom writes $4y+6y=10y^2$. What is the correct simplified expression for $4y+6y$?'
+            answer: '10y'
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'Adding like terms adds the coefficients and leaves the variable part unchanged. So $4y+6y=(4+6)y=10y$, with no square.'
+          - problem: 'Simplify $5m+m+2m$.'
+            answer: '8m'
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'The term $m$ has coefficient $1$, so the coefficients are $5+1+2$. Their sum is $8$, giving $8m$.'
+          - problem: 'A rectangle is $5x$ cm long and $2x$ cm wide. Find its perimeter.'
+            answer: '14x'
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'Add the four sides: $5x+2x+5x+2x$. The coefficients add to $14$, so the perimeter is $14x$ centimetres.'
         constraints: "single variable; positive coefficients <= 9"
       - id: kp2
         name: "Negative coefficients and subtraction"
         key_prerequisites: [integer-addition-subtraction]
+        step_check:
+          step: 'Combine left to right'
+          question: 'Why is $5w-9w$ equal to $-4w$ rather than $4w$?'
+          options:
+            - 'Subtracting a smaller number from a larger one always gives a positive'
+            - 'The minus sign is dropped when both terms have the same variable'
+            - 'Taking away $9$ copies from $5$ copies leaves $4$ fewer than none'
+            - 'The larger coefficient always keeps the sign of the whole result'
+          answer: 'Taking away $9$ copies from $5$ copies leaves $4$ fewer than none'
+          why: 'Coefficients follow integer rules, so $5-9=-4$ and the variable part stays $w$.'
         exemplars:
-          - problem: "Simplify $8y - 3y$."
-            answer: "5y"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "$8y-3y=(8-3)y=5y$."
-          - problem: "Simplify $-3x-5x+2x$."
-            answer: "-6x"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The signed coefficients sum to $-3-5+2=-6$."
-          - problem: "A balance changes by $-7x$, then $+2x$, then $-x$. Write the net change as one term."
-            answer: "-6x"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Add the three signed changes: $(-7+2-1)x=-6x$."
-          - problem: "A learner claims $2x-8x=6x$. Correct the simplified expression."
-            answer: "-6x"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Subtracting the coefficients gives $2-8=-6$, so the remaining term is $-6x$."
+          - problem: 'Simplify $8y - 3y$.'
+            answer: '5y'
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'Both terms have the variable part $y$. Subtract the coefficients: $8-3=5$, so the result is $5y$.'
+          - problem: 'Simplify $-4x-5x+2x$.'
+            answer: '-7x'
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'All three terms have the variable part $x$, so add their signed coefficients. We get $-4-5+2=-7$, so the result is $-7x$.'
+          - problem: 'A balance changes by $-7x$, then by $+2x$, then by $-x$. Find the net change.'
+            answer: '-6x'
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'The net change is the sum of the three signed changes. The last coefficient is $-1$, so $-7+2-1=-6$ and the net change is $-6x$.'
+          - problem: 'Dee writes $5a-8a=3a$. What is the correct value of $5a-8a$?'
+            answer: '-3a'
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'Subtracting $8a$ from $5a$ gives $(5-8)a$. Since $5-8=-3$, the correct value is $-3a$, not $3a$.'
+          - problem: 'A stall starts the day with $12c$ cups, sells $4c$ cups in the morning and $5c$ cups in the afternoon. How many cups are left?'
+            answer: '3c'
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'Selling cups takes them away, so subtract: $12c-4c-5c=(12-4-5)c$. That leaves $3c$ cups.'
+          - problem: 'Simplify $-x-6x+2x$.'
+            answer: '-5x'
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'The term $-x$ has coefficient $-1$, so add $-1-6+2$. The sum is $-5$ and the result is $-5x$.'
+          - problem: 'During one day the temperature changes by $+6t$, $-9t$ and $-4t$ degrees. Find the total change.'
+            answer: '-7t'
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'Add the three signed changes: $6-9-4=-7$. The temperature falls overall, so the total change is $-7t$ degrees.'
         constraints: "results may be negative; single variable"
       - id: kp3
         name: "Multiple variable types and constants"
         key_prerequisites: [integer-addition-subtraction, parts-of-an-expression]
+        step_check:
+          step: 'Group the constants'
+          question: 'Why can the constants $3$ and $-8$ be combined with each other but not with the $m$-terms?'
+          options:
+            - 'Constants join whichever variable group has the smaller coefficient'
+            - 'Constants are negative here, so they join the groups with negative signs'
+            - 'Any two terms combine once their coefficients are added together'
+            - 'A constant has no variable part, so only another constant is like it'
+          answer: 'A constant has no variable part, so only another constant is like it'
+          why: 'Terms combine only when their variable parts match exactly, and a constant has none.'
         exemplars:
-          - problem: "Simplify $3x+2y+4+5x-y-7$."
-            answer: "8x+y-3"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Group by variable part: $(3+5)x+(2-1)y+(4-7)=8x+y-3$."
-          - problem: "Combine the three charges $2x+3y+1$, $x-y+4$, and $3x+2y-2$."
-            answer: "6x+4y+3"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The coefficients of $x$ sum to $2+1+3=6$, those of $y$ to $3-1+2=4$, and constants to $1+4-2=3$."
-          - problem: "Simplify $5x^2+3x-2+x^2-7x+6$."
-            answer: "6x^2-4x+4"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The $x^2$, $x$, and constant groups give $(5+1)x^2+(3-7)x+(-2+6)=6x^2-4x+4$."
-          - problem: "A learner combined $4x-2y+3-6x+5y-1$ into $x+2$. Correct the expression."
-            answer: "-2x+3y+2"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Different variable parts stay separate. The three sums are $(4-6)x$, $(-2+5)y$, and $3-1$."
+          - problem: 'Simplify $3x+2y+4+5x-y-7$.'
+            answer: '8x+y-3'
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'Group the terms by variable part: $(3+5)x+(2-1)y+(4-7)$. This simplifies to $8x+y-3$.'
+          - problem: 'Three boxes hold $2x+3y+1$, $x-y+4$ and $3x+2y-2$ marbles. How many marbles are there in all?'
+            answer: '6x+4y+3'
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'Add the three expressions. The coefficients of $x$ sum to $2+1+3=6$, those of $y$ to $3-1+2=4$, and the constants to $1+4-2=3$.'
+          - problem: 'Simplify $5x^2+3x-2+x^2-7x+6$.'
+            answer: '6x^2-4x+4'
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'Collect the $x^2$ terms, the $x$ terms and the constants: $(5+1)x^2+(3-7)x+(-2+6)=6x^2-4x+4$.'
+          - problem: 'Pam combines $4x-2y+3-6x+5y-1$ into $x+2$. What is the correct simplified expression?'
+            answer: '-2x+3y+2'
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'Different variable parts stay separate. The three sums are $(4-6)x=-2x$, $(-2+5)y=3y$ and $3-1=2$.'
+          - problem: 'A triangle has sides $2x+1$, $3x-2$ and $x+6$. Find its perimeter.'
+            answer: '6x+5'
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'The perimeter is the sum of the sides. The $x$ terms give $2+3+1=6$ and the constants give $1-2+6=5$, so the perimeter is $6x+5$.'
+          - problem: 'Ana spends $3n+2p$ euros on Monday and $4n+5p$ euros on Tuesday, then gets $6$ euros back. Write her total spending.'
+            answer: '7n+7p-6'
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'Add the two days: $(3+4)n+(2+5)p=7n+7p$. Subtracting the $6$ euros returned gives $7n+7p-6$.'
+          - problem: 'Simplify $2a^2+5a-3a^2-a+4$.'
+            answer: '-a^2+4a+4'
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'The $a^2$ terms give $2-3=-1$, so $-a^2$. The $a$ terms give $5-1=4$, and the constant is $4$, so the result is $-a^2+4a+4$.'
         constraints: "two variable types plus constants; keep unlike terms separate"
     diagnostic_exemplar:
       problem: 'Simplify $5x + 3 - 2x + 8$.'
@@ -583,65 +964,139 @@ topics:
       - id: kp1
         name: "Distribute a positive factor over a sum"
         key_prerequisites: [integer-multiplication-division]
+        step_check:
+          step: 'Multiply both terms by seven'
+          question: 'Why is $7$ multiplied by both $x$ and $11$ in $7(x+11)$?'
+          options:
+            - 'Only the first term needs the factor, since $11$ is already added'
+            - 'The factor $7$ links the two terms, so $x$ and $11$ are multiplied together'
+            - 'Seven groups of $x+11$ hold seven $x$ and seven $11$s in total'
+            - 'The factor $7$ is added to each term inside the brackets'
+          answer: 'Seven groups of $x+11$ hold seven $x$ and seven $11$s in total'
+          why: 'The bracket is one group, so seven of them contain seven copies of every term inside.'
         exemplars:
-          - problem: "Expand $3(x + 4)$."
-            answer: "3x + 12"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "$3(x+4)=3x+3(4)=3x+12$."
-          - problem: "A rectangle has height $4$ and width $2x+3$. Expand its area expression."
-            answer: "8x+12"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Multiply the height by both parts of the width: $4(2x+3)=4(2x)+4(3)=8x+12$."
-          - problem: "A learner writes $5(x+2)=5x+2$. Expand the left side correctly."
-            answer: "5x+10"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The outer factor multiplies both summands: $5x+5(2)=5x+10$."
-          - problem: "Expand $(x+6)2$."
-            answer: "2x+12"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Commutativity gives $2(x+6)$; distributing gives $2x+2(6)=2x+12$."
+          - problem: 'Expand $3(x + 4)$.'
+            answer: '3x+12'
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'The factor $3$ multiplies both terms in the bracket: $3(x+4)=3x+3(4)=3x+12$.'
+          - problem: 'A rectangle is $4$ m high and $2x+3$ m wide. Write its area without brackets.'
+            answer: '8x+12'
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'The area is the height times the width, $4(2x+3)$. Multiply the height by both parts of the width: $4(2x)+4(3)=8x+12$.'
+          - problem: 'Ravi writes $5(x+2)=5x+2$. What is the correct expansion of $5(x+2)$?'
+            answer: '5x+10'
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'The outer factor multiplies both terms inside the bracket, not only the first. So $5(x+2)=5x+5(2)=5x+10$.'
+          - problem: 'Expand $(x+6)\cdot2$.'
+            answer: '2x+12'
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'The order of the factors does not matter, so this equals $2(x+6)$. Distributing gives $2x+2(6)=2x+12$.'
+          - problem: 'Four friends each buy a ticket that costs $t$ euros and a snack that costs $3$ euros. Write their total cost without brackets.'
+            answer: '4t+12'
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'Each friend pays $t+3$ euros, and there are $4$ friends, so the total is $4(t+3)$. Distributing gives $4t+12$ euros.'
+          - problem: 'A rope of length $6x+10$ metres is cut into two equal pieces. Write the length of one piece as a sum of terms.'
+            answer: '3x+5'
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'Each piece is half of the rope, so its length is $\frac{1}{2}(6x+10)$. Halving both terms gives $3x+5$ metres.'
+          - problem: 'Expand $6(a+3b)$.'
+            answer: '6a+18b'
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'The factor $6$ multiplies both terms: $6(a)+6(3b)$. This gives $6a+18b$.'
         constraints: "positive factor; two-term binomial"
       - id: kp2
         name: "Negative multipliers and subtraction"
         key_prerequisites: [integer-multiplication-division]
+        step_check:
+          step: 'its product with $-6$ is $60$'
+          question: 'Why is the product $(-6)(-10)$ equal to $+60$ here?'
+          options:
+            - 'The two minus signs add up, so the product is $-6-10=-16$'
+            - 'Two negative factors multiply to give a positive product'
+            - 'A minus sign in front always turns the whole result positive'
+            - 'The minus sign of $-6$ is dropped after the first term'
+          answer: 'Two negative factors multiply to give a positive product'
+          why: 'A negative times a negative is positive, so the sign of the second term flips.'
         exemplars:
-          - problem: "Expand $-2(x - 5)$."
-            answer: "-2x + 10"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "$-2 \\cdot x = -2x$; $-2 \\cdot (-5) = +10$."
-          - problem: "Expand $-(3y + 7)$."
-            answer: "-3y - 7"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "$-(3y+7)=(-1)(3y)+(-1)(7)=-3y-7$."
-          - problem: "Expand $-3(2x+5)$."
-            answer: "-6x-15"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Both products are negative: $(-3)(2x)+(-3)(5)=-6x-15$."
-          - problem: "Correct the sign error in $-(4-x)=-4-x$ by expanding the left side."
-            answer: "x-4"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Multiplying $-x$ by $-1$ gives $+x$: $(-1)(4)+(-1)(-x)=-4+x$."
+          - problem: 'Expand $-2(x - 5)$.'
+            answer: '-2x+10'
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'Multiply both terms by $-2$. Then $-2\cdot x=-2x$ and $-2\cdot(-5)=+10$, so the result is $-2x+10$.'
+          - problem: 'Expand $-(3y + 7)$.'
+            answer: '-3y-7'
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'A leading minus means multiplication by $-1$: $(-1)(3y)+(-1)(7)=-3y-7$. Both signs inside the bracket reverse.'
+          - problem: 'Expand $-3(2x+5)$.'
+            answer: '-6x-15'
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'Both products are negative because the factor is negative. So $(-3)(2x)+(-3)(5)=-6x-15$.'
+          - problem: 'Kim writes $-(4-x)=-4-x$. What is the correct expansion of $-(4-x)$?'
+            answer: 'x-4'
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'Multiplying $-x$ by $-1$ gives $+x$, which Kim missed. So $(-1)(4)+(-1)(-x)=-4+x=x-4$.'
+          - problem: 'A customer''s balance changes by $-3$ euros for each of $n+4$ items bought. Write the change in the balance without brackets.'
+            answer: '-3n-12'
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'The total change is $-3(n+4)$. Multiplying both terms by $-3$ gives $-3n-12$ euros.'
+          - problem: 'A submarine changes its height by $-4$ m each minute for $t-3$ minutes. Write its total change in height without brackets.'
+            answer: '-4t+12'
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'The change is $-4(t-3)$. Multiplying gives $-4t$ and $(-4)(-3)=+12$, so the result is $-4t+12$ metres.'
+          - problem: 'Expand $-\frac{1}{2}(4x-6)$.'
+            answer: '-2x+3'
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'Multiply both terms by $-\frac{1}{2}$. Then $-\frac{1}{2}(4x)=-2x$ and $-\frac{1}{2}(-6)=+3$, so the result is $-2x+3$.'
+          - problem: 'Expand $-4(3-2y)$.'
+            answer: '8y-12'
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'Multiply both terms by $-4$: $(-4)(3)=-12$ and $(-4)(-2y)=+8y$. So the result is $8y-12$.'
         constraints: "negative factor or leading minus; watch both signs"
       - id: kp3
         name: "Distribute then combine like terms"
         key_prerequisites: [combining-like-terms]
+        step_check:
+          step: 'Distribute five to both inside terms'
+          question: 'Why must the $5$ be distributed before $5x$ and $3x$ are combined?'
+          options:
+            - 'Brackets must always be removed first, even when nothing can combine'
+            - 'The bracket is evaluated last, so the outside terms are added before it'
+            - 'Adding $5$ and $3$ first gives the same value as the original expression'
+            - 'Until $5$ multiplies both bracket terms, there is no $5x$ to combine'
+          answer: 'Until $5$ multiplies both bracket terms, there is no $5x$ to combine'
+          why: 'The $x$ inside the bracket becomes $5x$ only after the factor $5$ multiplies it.'
         exemplars:
-          - problem: "Expand and simplify $2(x + 3) + 4x$."
-            answer: "6x + 6"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "$2x + 6 + 4x = 6x + 6$."
-          - problem: "Expand and simplify $3(a - 2) - (a + 1)$."
-            answer: "2a - 7"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "$3a - 6 - a - 1 = 2a - 7$."
-          - problem: "Subtract the expression $2(x-5)$ from $3x+1$, then simplify."
-            answer: "x+11"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "$(3x+1)-2(x-5)=3x+1-2x+10=x+11$."
-          - problem: "A rectangle has length $2x+1$ and width $x+3$. Expand and simplify $2(2x+1)+2(x+3)$."
-            answer: "6x+8"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The two products give $4x+2+2x+6$; collecting like terms gives $6x+8$."
+          - problem: 'Expand and simplify $2(x + 3) + 4x$.'
+            answer: '6x+6'
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'Distribute first: $2x+6+4x$. Combining $2x+4x$ gives $6x+6$.'
+          - problem: 'Expand and simplify $3(a - 2) - (a + 1)$.'
+            answer: '2a-7'
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'Distribute: $3a-6-a-1$, where the leading minus reverses both signs of $a+1$. Combining gives $2a-7$.'
+          - problem: 'Subtract $2(x-5)$ from $3x+1$ and simplify.'
+            answer: 'x+11'
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'Write the difference as $(3x+1)-2(x-5)$. Distributing gives $3x+1-2x+10$, which simplifies to $x+11$.'
+          - problem: 'A rectangle has length $2x+1$ and width $x+3$. Find its perimeter.'
+            answer: '6x+8'
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'The perimeter is $2(2x+1)+2(x+3)$. The products give $4x+2+2x+6$, and collecting like terms gives $6x+8$.'
+          - problem: 'Three tickets cost $x+4$ euros each and two tickets cost $x-1$ euros each. Write the total cost in euros as a simplified expression.'
+            answer: '5x+10'
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'The total is $3(x+4)+2(x-1)$. Distributing gives $3x+12+2x-2$, which simplifies to $5x+10$.'
+          - problem: 'Expand and simplify $4(2y-1)-3(y-2)$.'
+            answer: '5y+2'
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'Distribute: $8y-4-3y+6$. Collecting like terms gives $5y+2$.'
+          - problem: 'Expand and simplify $\frac{1}{2}(8x+4)+3(x-1)$.'
+            answer: '7x-1'
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'The first product is $4x+2$ and the second is $3x-3$. Their sum is $7x-1$.'
+          - problem: 'Lena simplifies $6-2(x-3)$ as $4(x-3)=4x-12$. What is the correct simplified expression?'
+            answer: '-2x+12'
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'Lena subtracted $2$ from $6$ before multiplying, which breaks the order of operations. Distribute first: $6-2x+6=-2x+12$.'
         constraints: "combine after distributing; single variable"
     diagnostic_exemplar:
       problem: 'Expand and simplify $5 - 3(x - 2)$.'
@@ -859,23 +1314,25 @@ topics:
       - id: kp1
         name: "Verify a value by substitution"
         key_prerequisites: [substituting-values]
+        step_check:
+          step: 'Since $-11$ and $-9$ are unequal'
+          question: 'Why do the unequal values $-11$ and $-9$ show that $x=-4$ is not a solution?'
+          options:
+            - 'A solution must make the left side larger than the right side'
+            - 'A solution must make the left side equal to zero after substituting'
+            - 'A solution must make the two sides equal, and these two sides differ'
+            - 'A solution must make the left side negative, and $-11$ is too negative'
+          answer: 'A solution must make the two sides equal, and these two sides differ'
+          why: 'Substituting a solution leaves a true statement, so two unequal sides prove that the value fails.'
         exemplars:
-          - problem: 'Change the right side of $6x + 2 = -15$ so that $x = -2$ becomes a solution. What must the right side be?'
-            answer: "-10"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Substitute $x = -2$ into the left side: $6(-2) + 2 = -12 + 2 = -10$. So $x = -2$ solves $6x + 2 = -10$, and it does not solve the original equation with $-15$.'
           - problem: 'Is $x = -3$ a solution of $3x + 4 = -5$?'
             answer: 'yes'
-            answer_contract: {"kind":"label","options":[["yes","yes, it is","it is","is a solution","it is a solution","x = -3 is a solution","x=-3 is a solution"],["no","no, it is not","it is not","not a solution","is not a solution","it is not a solution","x = -3 is not a solution","x=-3 is not a solution"]]}
+            answer_contract: {"kind":"label","options":[["yes","yes, it is","it is","x=-3 is a solution","it is a solution","x = -3 is a solution","yes it is","yes, it is a solution"],["no","no, it is not","it is not","not a solution","is not a solution","it is not a solution","x = -3 is not a solution","no it is not"]]}
             solution_sketch: 'Substituting gives $3(-3)+4=-9+4=-5$ on the left. That equals the right side $-5$, so $x=-3$ is a solution.'
           - problem: 'Kai says $x = 4$ solves $-3x + 9 = 3$. Is Kai right?'
-            answer: "no"
-            answer_contract: {"kind":"label","options":[["no","kai is wrong","he is wrong","not a solution","no, -3","no, it gives -3","no, the left side is -3","no, kai is wrong"],["yes","kai is right","he is right","it is a solution","yes, kai is right","yes, it is"]]}
+            answer: 'no'
+            answer_contract: {"kind":"label","options":[["no","kai is wrong","he is wrong","not a solution","no, kai is wrong","kai is not right","no it isn't","no, kai is not right"],["yes","kai is right","he is right","it is a solution","yes, kai is right","yes, it is","kai is correct","yes, kai is correct"]]}
             solution_sketch: 'Substitute $x = 4$: the left side is $-3(4) + 9 = -12 + 9 = -3$, not $3$. So Kai is wrong; the solution is $x = 2$.'
-          - problem: 'For which number $c$ is $x = 2$ a solution of $4x - 1 = c$?'
-            answer: '7'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'A solution makes both sides equal, so substitute $x=2$ into the left side. This gives $4(2)-1=7$, therefore $c=7$.'
           - problem: '$x = 5$ is a solution of $ax - 7 = 8$. Find $a$.'
             answer: '3'
             answer_contract: {"kind":"exact"}
@@ -884,27 +1341,49 @@ topics:
             answer: '11'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'Substituting $x=-1$ gives $2(-1)+k=9$, so $-2+k=9$. Therefore $k=11$, and $2(-1)+11=9$ checks it.'
+          - problem: 'A gym charges $12$ euros to join plus $5$ euros per visit, so $5v+12=47$ describes a total of $47$ euros. Zoe says $v=6$ is the number of visits. What total does $v=6$ give?'
+            answer: '42'
+            answer_contract: {"kind":"unit","quantity":"euro","unit":"euro","allow_omitted":true}
+            solution_sketch: 'Substitute $v=6$ into the left side: $5(6)+12=30+12=42$. This is not $47$, so Zoe is wrong.'
+          - problem: 'The water in a tank is $90-6t$ litres after $t$ minutes. Mo says the tank is empty when $t=15$. How many litres does the formula give at $t=15$?'
+            answer: '0'
+            answer_contract: {"kind":"unit","quantity":"volume","unit":"litre","allow_omitted":true}
+            solution_sketch: 'Substitute $t=15$: $90-6(15)=90-90=0$. The formula gives $0$ litres, so the tank is empty and Mo is right.'
+          - problem: 'Replace the $-15$ in $6x + 2 = -15$ by a number so that $x = -2$ becomes a solution. Which number works?'
+            answer: '-10'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Substitute $x = -2$ into the left side: $6(-2) + 2 = -12 + 2 = -10$. So $x = -2$ solves $6x + 2 = -10$, and it does not solve the original equation with $-15$.'
         constraints: "one- or two-step equations; integer candidates in -9..9"
       - id: kp2
         name: "Pick the solution from candidates"
         key_prerequisites: [substituting-values]
+        step_check:
+          step: 'Only $x=6$ makes the sides equal'
+          question: 'Why is $x=6$ the solution of $8x-20=28$?'
+          options:
+            - 'Its $8x$ alone equals the right side $28$ before the $20$ is subtracted'
+            - 'Its left side is the one that equals the right side $28$'
+            - 'Its left side is a multiple of $4$, like the right side $28$'
+            - 'It gives the largest left side of the three candidates'
+          answer: 'Its left side is the one that equals the right side $28$'
+          why: 'A solution makes both sides equal, and only $x=6$ does so.'
         exemplars:
-          - problem: "Which of $x = 2$, $x = 3$, $x = 4$ solves $5x - 6 = 9$?"
-            answer: "3"
-            answer_contract: {"kind": "exact"}
+          - problem: 'Which of $x = 2$, $x = 3$, $x = 4$ solves $5x - 6 = 9$?'
+            answer: '3'
+            answer_contract: {"kind":"exact"}
             solution_sketch: 'The left sides are $5(2)-6=4$, $5(3)-6=9$ and $5(4)-6=14$. Only $x=3$ gives the right side $9$.'
-          - problem: "Test $x=-2$, $x=0$, and $x=2$ in $x^2+x=6$. Which candidate works?"
-            answer: "2"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The left sides are respectively $2$, $0$, and $6$, from squaring each candidate and adding it. Only $x=2$ gives $6$."
-          - problem: "A machine maps $x$ to $3(x-1)$. Which input $1$, $2$, or $4$ produces $9$?"
-            answer: "4"
-            answer_contract: {"kind": "exact"}
+          - problem: 'Test $x=-2$, $x=0$ and $x=2$ in $x^2+x=6$. Which candidate works?'
+            answer: '2'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The left sides are $2$, $0$ and $6$, found by squaring each candidate and adding it. Only $x=2$ gives $6$.'
+          - problem: 'A machine maps $x$ to $3(x-1)$. Which input $1$, $2$ or $4$ produces $9$?'
+            answer: '4'
+            answer_contract: {"kind":"exact"}
             solution_sketch: 'The outputs are $3(0)=0$, $3(1)=3$ and $3(3)=9$. Only input $4$ produces $9$.'
-          - problem: "Which of $-6$, $-3$, or $6$ solves $x/3=-2$?"
-            answer: "-6"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Dividing the candidates by $3$ gives $-2$, $-1$, and $2$. The first matches the right side."
+          - problem: 'Which of $-6$, $-3$ or $6$ solves $x/3=-2$?'
+            answer: '-6'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Dividing the candidates by $3$ gives $-2$, $-1$ and $2$. The first matches the right side, so the solution is $-6$.'
           - problem: 'Which of $-1$, $2$, $5$ is a solution of $3(x - 1) = 12$?'
             answer: '5'
             answer_contract: {"kind":"exact"}
@@ -913,6 +1392,14 @@ topics:
             answer: '-4'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'For $x=-4$ both sides equal $-3$. For $x=-1$ the sides are $3$ and $0$, and for $x=4$ they are $13$ and $5$, so only $x=-4$ works.'
+          - problem: 'A phone plan costs $15+2g$ euros for $g$ gigabytes. Which of $g=4$, $g=5$, $g=6$ gives a bill of $27$ euros?'
+            answer: '6'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The bills are $15+2(4)=23$, $15+2(5)=25$ and $15+2(6)=27$. Only $g=6$ gives $27$ euros.'
+          - problem: '$48$ euros are shared equally among $n$ people, so each person gets $48/n$ euros. Which of $n=4$, $n=6$, $n=8$ gives $6$ euros each?'
+            answer: '8'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The shares are $48/4=12$, $48/6=8$ and $48/8=6$ euros. Only $n=8$ gives $6$ euros each.'
         constraints: "three candidates; exactly one works"
     diagnostic_exemplar:
       problem: 'Which of $x = -2$, $x = 1$, $x = 3$ solves $4x - 5 = -1$?'
@@ -941,44 +1428,101 @@ topics:
       - id: kp1
         name: "Solve x + a = b"
         key_prerequisites: [integer-addition-subtraction]
+        step_check:
+          step: 'Subtract 23 from both sides'
+          question: 'Why does subtracting $23$ from both sides leave $x$ alone?'
+          options:
+            - 'It turns the equation into a subtraction fact about $x$'
+            - 'It undoes the $+23$, and both sides stay equal'
+            - 'The $23$ jumps across the equals sign and keeps its plus sign'
+            - 'Both sides must always lose the larger of the two numbers'
+          answer: 'It undoes the $+23$, and both sides stay equal'
+          why: 'The equation $x+23=-5$ stays balanced when both sides lose $23$, and $x+23-23$ is just $x$.'
+        try_first:
+          problem: 'A box holds some marbles. After $8$ more marbles are put in, the box holds $20$. How many marbles were in the box at first?'
+          answer_contract: {"kind":"exact"}
+          answer: '12'
+          reveal: 'You undid the adding by taking $8$ away from the total: $20-8=12$. The same move solves $x+8=20$.'
         exemplars:
-          - problem: "Solve $x + 7 = 12$."
-            answer: "5"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Subtract $7$: $x = 5$."
-          - problem: "A function table follows the rule output = input $+9$. The output is $4$ in one row. Find that row's input."
-            answer: "-5"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Write $x+9=4$ for the missing input. Subtract $9$: $x=-5$."
-          - problem: "Solve $x+(-6)=8$."
-            answer: "14"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Subtract the added number $-6$: $x=8-(-6)=14$."
-          - problem: "A learner solves $x+5=-2$ as $x=3$. Correct the solution."
-            answer: "-7"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Undo addition by subtracting $5$ from both sides: $x=-2-5=-7$."
+          - problem: 'Solve $x + 7 = 12$.'
+            answer: '5'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'To undo the addition of $7$, subtract $7$ from both sides. This leaves $x = 12 - 7 = 5$.'
+          - problem: 'Mia has some stickers. A friend gives her $9$ more, and now she has $24$. How many stickers did Mia have at first?'
+            answer: '15'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Mia''s stickers plus $9$ make $24$, so $x + 9 = 24$. Subtract $9$ from both sides: $x = 24 - 9 = 15$.'
+          - problem: 'Solve $x + 13 = 4$.'
+            answer: '-9'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Subtract $13$ from both sides: $x = 4 - 13$. The result is $x = -9$, a negative number.'
+          - problem: 'During the night the temperature rose by $6$ degrees and reached $-2$ °C. What was the temperature before it rose?'
+            answer: '-8'
+            answer_contract: {"kind":"unit","quantity":"temperature","unit":"°C","allow_omitted":true}
+            solution_sketch: 'The rise of $6$ gives $x + 6 = -2$. Subtract $6$ from both sides: $x = -2 - 6 = -8$.'
+          - problem: 'Sam solves $x + 5 = -2$ and writes $x = 3$. What is the correct value of $x$?'
+            answer: '-7'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'To undo $+5$, subtract $5$ from both sides, not from only one side. Then $x = -2 - 5 = -7$.'
+          - problem: 'A lift goes up $4$ floors and stops at floor $-1$. Which floor did it start from?'
+            answer: '-5'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The start floor $x$ and the $4$ floors up give $x + 4 = -1$. Subtract $4$: $x = -1 - 4 = -5$.'
+          - problem: 'Solve $x + (-6) = 8$.'
+            answer: '14'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Adding $-6$ is the same as subtracting $6$, so undo it by adding $6$. Then $x = 8 + 6 = 14$.'
+          - problem: 'A plank is joined end to end with a $45$ cm plank, and together they measure $120$ cm. How long is the first plank?'
+            answer: '75'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"cm","allow_omitted":true}
+            solution_sketch: 'The two lengths add up to the total, so $x + 45 = 120$. Subtract $45$: $x = 120 - 45 = 75$ cm.'
         constraints: "subtract to undo addition; integer solutions"
       - id: kp2
         name: "Solve x - a = b"
         key_prerequisites: [integer-addition-subtraction]
+        step_check:
+          step: 'Add 41 to both sides'
+          question: 'Why do we add $41$ to both sides of $x-41=-9$?'
+          options:
+            - 'The minus sign tells us to subtract $41$ from the other side too'
+            - 'Adding $41$ makes the number $-9$ positive, so $x$ is positive'
+            - 'Adding $41$ cancels the $-41$ and keeps both sides equal'
+            - 'Adding is always the first move in any equation we solve'
+          answer: 'Adding $41$ cancels the $-41$ and keeps both sides equal'
+          why: 'Since $x-41+41$ is just $x$, adding $41$ to both sides isolates $x$ and keeps the equation balanced.'
         exemplars:
-          - problem: "Solve $x - 6 = 10$."
-            answer: "16"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Add $6$: $x = 16$."
-          - problem: "After removing $7$ units from an unknown quantity, $-3$ remain. Solve $x-7=-3$."
-            answer: "4"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Restore the removed $7$: $x=-3+7=4$."
-          - problem: "A point starts at coordinate $x$ and moves $4$ units right to $9$. Find its starting coordinate."
-            answer: "5"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The movement gives $x-(-4)=9$. Add $-4$ to both sides: $x=5$."
-          - problem: "A learner solves $x-8=-5$ by subtracting $8$. Find the correct value of $x$."
-            answer: "3"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The inverse of subtracting $8$ is adding it: $x=-5+8=3$."
+          - problem: 'Solve $x - 6 = 10$.'
+            answer: '16'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'To undo the subtraction of $6$, add $6$ to both sides. This gives $x = 10 + 6 = 16$.'
+          - problem: 'Tom spent $12$ dollars at the fair and has $9$ dollars left. How much money did he have before the fair?'
+            answer: '21'
+            answer_contract: {"kind":"unit","quantity":"dollar","unit":"dollar","allow_omitted":true}
+            solution_sketch: 'Tom''s money minus the $12$ spent leaves $9$, so $x - 12 = 9$. Add $12$ to both sides: $x = 9 + 12 = 21$ dollars.'
+          - problem: 'Solve $x - 8 = -5$.'
+            answer: '3'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Add $8$ to both sides to undo the subtraction. Then $x = -5 + 8 = 3$.'
+          - problem: 'During the day the temperature fell by $9$ degrees and reached $-4$ °C. What was the temperature before the fall?'
+            answer: '5'
+            answer_contract: {"kind":"unit","quantity":"temperature","unit":"°C","allow_omitted":true}
+            solution_sketch: 'The fall of $9$ gives $x - 9 = -4$. Add $9$ to both sides: $x = -4 + 9 = 5$.'
+          - problem: 'Ana solves $x - 4 = 11$ and writes $x = 7$. What is the correct value of $x$?'
+            answer: '15'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The $4$ is subtracted from $x$, so it must be added to both sides, not taken away again. Then $x = 11 + 4 = 15$.'
+          - problem: 'A baker sold $35$ rolls and has $48$ rolls left. How many rolls did the baker have at the start?'
+            answer: '83'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The start amount minus the $35$ sold leaves $48$, so $x - 35 = 48$. Add $35$: $x = 48 + 35 = 83$.'
+          - problem: 'Solve $x - (-3) = 10$.'
+            answer: '7'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Subtracting $-3$ is the same as adding $3$, so $x + 3 = 10$. Subtract $3$ to get $x = 7$.'
+          - problem: 'A piece $15$ m long is cut off a rope, and $28$ m of rope remain. How long was the rope before it was cut?'
+            answer: '43'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"m","allow_omitted":true}
+            solution_sketch: 'The rope minus the $15$ m piece leaves $28$ m, so $x - 15 = 28$. Add $15$: $x = 28 + 15 = 43$ m.'
         constraints: "add to undo subtraction; integer solutions"
     diagnostic_exemplar:
       problem: 'Solve $x + 9 = 2$.'
@@ -1011,65 +1555,147 @@ topics:
       - id: kp1
         name: "Solve by dividing"
         key_prerequisites: [integer-multiplication-division]
+        step_check:
+          step: 'Divide both sides by nine'
+          question: 'Why do we divide both sides of $9x=-72$ by $9$?'
+          options:
+            - 'The $9$ is added to $x$, so it must be taken away from both sides'
+            - 'Subtracting $9$ from both sides would also leave $x$ alone'
+            - 'Dividing moves the $9$ to the right side and turns it into $-9$'
+            - 'Dividing by $9$ undoes the product $9\cdot x$, leaving $x$'
+          answer: 'Dividing by $9$ undoes the product $9\cdot x$, leaving $x$'
+          why: '$9x$ means $9$ times $x$, and dividing by $9$ cancels that factor; the same division on the right keeps the sides equal.'
         exemplars:
-          - problem: "Solve $3x = 21$."
-            answer: "7"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Divide by $3$: $x = 7$."
-          - problem: "Seven equal packets contain $42$ beads altogether. Solve $7x=42$ for the beads per packet."
-            answer: "6"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Divide the total into seven equal groups: $x=42/7=6$."
-          - problem: "For the function $f(x)=-3x$, find the input whose output is $18$."
-            answer: "-6"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Set $-3x=18$. Divide the output by the scale factor $-3$: $x=-6$."
-          - problem: "A learner claims $4x=20$ gives $x=16$. Find the correct solution."
-            answer: "5"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The $4$ is a factor of $x$; dividing gives $x=20/4=5$."
+          - problem: 'Solve $3x = 21$.'
+            answer: '7'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The $3$ multiplies $x$, so divide both sides by $3$. This gives $x = 21/3 = 7$.'
+          - problem: 'Seven equal packets hold $42$ beads altogether. How many beads are in one packet?'
+            answer: '6'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The $42$ beads are shared equally among $7$ packets, so $7x = 42$. Divide by $7$: $x = 6$.'
+          - problem: 'For $f(x) = -3x$, which input gives the output $18$?'
+            answer: '-6'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Set $-3x = 18$. Divide both sides by $-3$, which gives $x = -6$.'
+          - problem: 'A rectangle has area $54$ cm$^2$ and width $6$ cm. How long is the rectangle?'
+            answer: '9'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"cm","allow_omitted":true}
+            solution_sketch: 'Area is length times width, so $6x = 54$. Divide by $6$: $x = 9$ cm.'
+          - problem: 'Sam solves $4x = 20$ and writes $x = 80$. What is the correct value of $x$?'
+            answer: '5'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The $4$ multiplies $x$, so it is undone by dividing, not by multiplying. Then $x = 20/4 = 5$.'
+          - problem: 'Each ticket costs $8$ dollars. Ana pays $64$ dollars for tickets. How many tickets does she buy?'
+            answer: '8'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The number of tickets times $8$ equals the total, so $8x = 64$. Divide by $8$: $x = 8$ tickets.'
+          - problem: 'Four friends each pay the same amount, and together they pay $52$ dollars. How much does each friend pay?'
+            answer: '13'
+            answer_contract: {"kind":"unit","quantity":"dollar","unit":"dollar","allow_omitted":true}
+            solution_sketch: 'The total is four times one payment, so $4x = 52$. Divide by $4$: $x = 13$ dollars.'
+          - problem: 'A cyclist rides for $5$ hours at a steady speed and covers $85$ km. What is the speed?'
+            answer: '17'
+            answer_contract: {"kind":"unit","quantity":"speed","unit":"km/h","allow_omitted":true}
+            solution_sketch: 'Distance is speed times time, so $5x = 85$. Divide by $5$: $x = 17$ km/h.'
         constraints: "exact integer solutions; coefficients <= 9"
       - id: kp2
         name: "Solve division forms by multiplying"
         key_prerequisites: [integer-multiplication-division]
+        step_check:
+          step: 'Multiply both sides by the divisor $-8$'
+          question: 'Why multiply by $-8$ in $x/(-8)=-5$ instead of dividing?'
+          options:
+            - 'Multiplying by $-8$ cancels the division by $-8$ and leaves $x$'
+            - 'The $-8$ is subtracted from $x$, so it must be added back'
+            - 'A negative divisor means we must multiply by $8$ and flip the sign'
+            - 'Division on the left is always undone by division on the right'
+          answer: 'Multiplying by $-8$ cancels the division by $-8$ and leaves $x$'
+          why: 'Dividing by $-8$ and then multiplying by $-8$ returns $x$; here $(-5)(-8)=40$, and the check $40/(-8)=-5$ works.'
         exemplars:
-          - problem: "Solve $\\frac{x}{5} = 4$."
-            answer: "20"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Multiply by $5$: $x = 20$."
-          - problem: "A circuit maps input $x$ to $x/(-3)$ by reversing and reducing its signal. Its output is $6$. Recover the input."
-            answer: "-18"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Multiply the quotient $6$ by its divisor $-3$: $x=6(-3)=-18$."
-          - problem: "A table uses the rule output = input $/8$. One row has output $2$. Find its missing input."
-            answer: "16"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The row represents $x/8=2$. Multiply the output by $8$ to recover the input: $x=16$."
-          - problem: "Correct the solution $x=3$ offered for $x/4=12$."
-            answer: "48"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Multiplication reverses division by $4$: $x=4(12)=48$."
+          - problem: 'Solve $\frac{x}{5} = 4$.'
+            answer: '20'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The $x$ is divided by $5$, so multiply both sides by $5$. This gives $x = 4 \cdot 5 = 20$.'
+          - problem: 'A box of sweets is shared equally among $6$ children, and each child gets $4$ sweets. How many sweets were in the box?'
+            answer: '24'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'One share is $x/6 = 4$. Multiply both sides by $6$: $x = 4 \cdot 6 = 24$ sweets.'
+          - problem: 'Solve $\frac{x}{-3} = 6$.'
+            answer: '-18'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Multiply both sides by $-3$. Then $x = 6 \cdot (-3) = -18$.'
+          - problem: 'A machine divides its input by $8$, and its output is $2$. What was the input?'
+            answer: '16'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The machine gives $x/8 = 2$. Multiply the output by $8$ to get the input: $x = 16$.'
+          - problem: 'Lena solves $\frac{x}{4} = 12$ and writes $x = 3$. What is the correct value of $x$?'
+            answer: '48'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The $x$ is divided by $4$, so it is undone by multiplying, not dividing. Then $x = 12 \cdot 4 = 48$.'
+          - problem: 'Water in a tank is poured equally into $7$ buckets, and each bucket gets $3$ litres. How much water was in the tank?'
+            answer: '21'
+            answer_contract: {"kind":"unit","quantity":"volume","unit":"L","allow_omitted":true}
+            solution_sketch: 'One bucket holds $x/7 = 3$ litres. Multiply by $7$: $x = 3 \cdot 7 = 21$ litres.'
+          - problem: 'Solve $\frac{x}{-9} = -2$.'
+            answer: '18'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Multiply both sides by $-9$. Two negative factors give a positive product, so $x = (-2)(-9) = 18$.'
+          - problem: 'A ribbon is cut into $5$ equal pieces, and each piece is $12$ cm long. How long was the ribbon?'
+            answer: '60'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"cm","allow_omitted":true}
+            solution_sketch: 'One piece is $x/5 = 12$ cm. Multiply by $5$: $x = 12 \cdot 5 = 60$ cm.'
         constraints: "divisors from -9 to 9; integer solutions"
       - id: kp3
         name: "Mixed one-step equations, negative coefficients"
         key_prerequisites: [integer-multiplication-division, addition-subtraction-equations]
+        step_check:
+          step: 'Undo subtraction by adding nine to both sides'
+          question: 'In $y-9=-13$, why do we add $9$ to both sides?'
+          options:
+            - 'A negative number on the right always means we must add'
+            - 'Subtraction is undone by subtracting the same number on the other side'
+            - 'Adding $9$ cancels the $-9$ next to $y$ and keeps the sides equal'
+            - 'Adding $9$ makes the answer positive, which we want'
+          answer: 'Adding $9$ cancels the $-9$ next to $y$ and keeps the sides equal'
+          why: '$y-9+9$ is just $y$, so adding $9$ to both sides isolates $y$; the answer $-4$ is negative and still correct.'
         exemplars:
-          - problem: "Solve $-4x = -24$."
-            answer: "6"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Divide by $-4$: $x = 6$."
-          - problem: "Solve $x + 11 = 3$."
-            answer: "-8"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Subtract $11$: $x = -8$."
-          - problem: "Solve $x/(-5)=-3$."
-            answer: "15"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Multiply by the negative divisor: $x=(-5)(-3)=15$."
-          - problem: "A temperature falls by $8$ degrees and reaches $-2$. Solve $x-8=-2$ for its starting value."
-            answer: "6"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Undo the decrease by adding $8$: $x=-2+8=6$."
+          - problem: 'Solve $-4x = -24$.'
+            answer: '6'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Divide both sides by $-4$. A negative divided by a negative is positive, so $x = 6$.'
+          - problem: 'Solve $x + 11 = 3$.'
+            answer: '-8'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The $11$ is added to $x$, so subtract $11$ from both sides. This gives $x = 3 - 11 = -8$.'
+          - problem: 'The temperature fell by $5$ degrees and is now $-3$ °C. What was the temperature before it fell?'
+            answer: '2'
+            answer_contract: {"kind":"unit","quantity":"temperature","unit":"°C","allow_omitted":true}
+            solution_sketch: 'The fall of $5$ gives $x - 5 = -3$. Add $5$ to both sides: $x = -3 + 5 = 2$.'
+          - problem: 'Solve $\frac{x}{-5} = -3$.'
+            answer: '15'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The $x$ is divided by $-5$, so multiply both sides by $-5$. Then $x = (-3)(-5) = 15$.'
+          - problem: 'Omar solves $-3x = 33$ and writes $x = 11$. What is the correct value of $x$?'
+            answer: '-11'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Divide both sides by $-3$ and keep the sign: $x = 33/(-3) = -11$. A positive and a negative number give a negative quotient.'
+          - problem: 'A submarine dives at a steady rate. After $5$ minutes its depth has changed by $-45$ metres. By how many metres does its depth change each minute?'
+            answer: '-9'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"m","allow_omitted":true}
+            solution_sketch: 'Five equal changes make $-45$, so $5x = -45$. Divide by $5$: $x = -9$ metres each minute.'
+          - problem: 'Solve $x - 15 = -4$.'
+            answer: '11'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The $15$ is subtracted from $x$, so add $15$ to both sides. This gives $x = -4 + 15 = 11$.'
+          - problem: 'Six players on a team each score the same number of points, and the team total is $-54$ points. How many points does each player score?'
+            answer: '-9'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The total is six times one score, so $6x = -54$. Divide by $6$: $x = -9$ points.'
+          - problem: 'A school shares a box of pencils equally among $8$ classes, and each class gets $6$ pencils. How many pencils were in the box?'
+            answer: '48'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'One share is $x/8 = 6$ pencils. Multiply both sides by $8$: $x = 6 \cdot 8 = 48$ pencils.'
         constraints: "choose the correct inverse operation; integer solutions"
     diagnostic_exemplar:
       problem: 'Solve $-6x = 42$.'
@@ -1102,44 +1728,101 @@ topics:
       - id: kp1
         name: "Solve ax + b = c"
         key_prerequisites: [one-step-equations]
+        step_check:
+          step: 'Subtract seven from both sides'
+          question: 'Why do we subtract $7$ before dividing by $6$ in $6x+7=43$?'
+          options:
+            - 'Division always comes last, whatever the equation looks like'
+            - 'The $7$ is added to the term $6x$, so it goes first'
+            - 'The $7$ and the $6$ combine into $13$ on the left side'
+            - 'Smaller numbers are always removed before larger ones'
+          answer: 'The $7$ is added to the term $6x$, so it goes first'
+          why: '$6x+7$ is a product plus $7$; removing the $7$ leaves $6x=36$, and only then does dividing by $6$ leave $x$.'
+        try_first:
+          problem: 'You think of a number, multiply it by $3$ and add $2$. The result is $14$. What is your number?'
+          answer_contract: {"kind":"exact"}
+          answer: '4'
+          reveal: 'You undid the steps backwards: subtract $2$ to get $12$, then divide by $3$ to get $4$. This is how $3x+2=14$ is solved.'
         exemplars:
-          - problem: "Solve $2x + 3 = 11$."
-            answer: "4"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "$2x = 8$; $x = 4$."
-          - problem: "A function table uses $f(x)=4x-7$. Find the missing input in the row whose output is $9$."
-            answer: "4"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Add $7$ to $4x-7=9$: $4x=16$. Divide by $4$: $x=4$."
-          - problem: "A taxi fare is $3x+4$ euros and totals $25$ euros. Find $x$."
-            answer: "7"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Subtract the fixed fee: $3x=25-4=21$. Divide by $3$: $x=7$."
-          - problem: "A learner divides only $2x$ by $2$ in $2x+5=17$. Solve correctly."
-            answer: "6"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "First subtract $5$ from both sides, giving $2x=12$; then divide both sides by $2$, giving $x=6$."
+          - problem: 'Solve $2x + 3 = 11$.'
+            answer: '4'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Subtract $3$ from both sides: $2x = 8$. Then divide by $2$ to get $x = 4$.'
+          - problem: 'A taxi charges a fixed fee of $4$ dollars plus $3$ dollars per kilometre. A ride costs $25$ dollars. How long is the ride?'
+            answer: '7'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"km","allow_omitted":true}
+            solution_sketch: 'The cost is $3x + 4 = 25$. Subtract the fixed fee: $3x = 21$. Divide by $3$: $x = 7$ km.'
+          - problem: 'For $f(x) = 5x - 7$, which input gives the output $18$?'
+            answer: '5'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Set $5x - 7 = 18$. Add $7$ to get $5x = 25$, then divide by $5$ to get $x = 5$.'
+          - problem: 'Ravi buys $4$ notebooks at the same price and pays $2$ dollars for delivery. The total is $38$ dollars. What does one notebook cost?'
+            answer: '9'
+            answer_contract: {"kind":"unit","quantity":"dollar","unit":"dollar","allow_omitted":true}
+            solution_sketch: 'The total is $4x + 2 = 38$. Subtract the delivery fee: $4x = 36$. Divide by $4$: $x = 9$ dollars.'
+          - problem: 'Jo solves $2x + 5 = 17$ by dividing only $2x$ by $2$, and gets $x = 12$. What is the correct value of $x$?'
+            answer: '6'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'First subtract $5$ from both sides, which gives $2x = 12$. Then divide both sides by $2$, which gives $x = 6$.'
+          - problem: 'A gym charges a joining fee of $15$ euros and $12$ euros per month. Mia has paid $111$ euros in total. For how many months has she been a member?'
+            answer: '8'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The total is $12x + 15 = 111$. Subtract the joining fee: $12x = 96$. Divide by $12$: $x = 8$ months.'
+          - problem: 'Solve $5x - 9 = 36$.'
+            answer: '9'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Add $9$ to both sides: $5x = 45$. Divide by $5$ to get $x = 9$.'
+          - problem: 'A rectangle is $9$ cm long and its perimeter is $30$ cm. How wide is the rectangle?'
+            answer: '6'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"cm","allow_omitted":true}
+            solution_sketch: 'The perimeter is $2w + 18 = 30$. Subtract $18$: $2w = 12$. Divide by $2$: $w = 6$ cm.'
         constraints: "integer solutions; undo addition before multiplication"
       - id: kp2
         name: "Division form and negative coefficients"
         key_prerequisites: [integer-multiplication-division]
+        step_check:
+          step: 'Multiply both sides by $-5$'
+          question: 'After $\frac{x}{-5}=7$, why is $7$ multiplied by $-5$ and not divided?'
+          options:
+            - 'The $-5$ was subtracted from $x$ and must be added back'
+            - 'A negative sign means the product must come out positive'
+            - 'Both numbers sit in the same equation, so they are multiplied'
+            - 'Multiplying by $-5$ cancels the division and leaves $x$'
+          answer: 'Multiplying by $-5$ cancels the division and leaves $x$'
+          why: '$x$ was divided by $-5$, so multiplying by $-5$ undoes it; then $7\times(-5)=-35$, and the check $-35/(-5)+3=10$ works.'
         exemplars:
-          - problem: "Solve $\\frac{x}{3} + 2 = 6$."
-            answer: "12"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "$\\frac{x}{3} = 4$; $x = 12$."
-          - problem: "Solve $-2x + 5 = 13$."
-            answer: "-4"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "$-2x = 8$; $x = -4$."
-          - problem: "A machine divides its input by $-4$, then subtracts $3$. Its output is $2$. Find the input."
-            answer: "-20"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Undo subtraction first: $x/(-4)=5$. Multiply by $-4$: $x=-20$."
-          - problem: "Correct the claim that $7-3x=19$ has solution $4$."
-            answer: "-4"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Subtract $7$ to get $-3x=12$; division by $-3$ gives $x=-4$."
+          - problem: 'Solve $\frac{x}{3} + 2 = 6$.'
+            answer: '12'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Subtract $2$ from both sides: $x/3 = 4$. Multiply both sides by $3$: $x = 12$.'
+          - problem: 'Solve $-2x + 5 = 13$.'
+            answer: '-4'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Subtract $5$ from both sides: $-2x = 8$. Divide by $-2$: $x = -4$.'
+          - problem: 'A machine divides its input by $-4$ and then subtracts $3$. The output is $2$. What was the input?'
+            answer: '-20'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The machine gives $x/(-4) - 3 = 2$. Add $3$ to get $x/(-4) = 5$. Multiply by $-4$: $x = -20$.'
+          - problem: 'Pia solves $8 - 3x = 26$ and writes $x = 6$. What is the correct value of $x$?'
+            answer: '-6'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Subtract $8$ from both sides: $-3x = 18$. Divide by $-3$ and keep the sign: $x = -6$.'
+          - problem: 'A bill is split equally among $5$ friends. Each friend adds a $2$ dollar tip and then pays $11$ dollars in all. How large was the bill?'
+            answer: '45'
+            answer_contract: {"kind":"unit","quantity":"dollar","unit":"dollar","allow_omitted":true}
+            solution_sketch: 'Each friend pays $x/5 + 2 = 11$. Subtract the tip: $x/5 = 9$. Multiply by $5$: $x = 45$ dollars.'
+          - problem: 'A tank holds $90$ litres, and a tap removes $6$ litres each minute. After how many minutes are $48$ litres left?'
+            answer: '7'
+            answer_contract: {"kind":"unit","quantity":"time","unit":"min","allow_omitted":true}
+            solution_sketch: 'The amount left is $90 - 6t = 48$. Subtract $90$: $-6t = -42$. Divide by $-6$: $t = 7$ minutes.'
+          - problem: 'Solve $\frac{x}{-5} + 3 = 10$.'
+            answer: '-35'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Subtract $3$ from both sides: $x/(-5) = 7$. Multiply by $-5$: $x = -35$.'
+          - problem: 'At $6$ pm the temperature is $4$ °C and it falls $2$ degrees each hour. After how many hours is it $-8$ °C?'
+            answer: '6'
+            answer_contract: {"kind":"unit","quantity":"time","unit":"hour","allow_omitted":true}
+            solution_sketch: 'The temperature is $4 - 2t = -8$. Subtract $4$: $-2t = -12$. Divide by $-2$: $t = 6$ hours.'
         constraints: "integer solutions; watch sign when dividing by a negative"
     diagnostic_exemplar:
       problem: 'Solve $-3x + 7 = 19$.'
@@ -1168,44 +1851,101 @@ topics:
       - id: kp1
         name: "Collect the variable on one side"
         key_prerequisites: [two-step-equations, combining-like-terms]
+        step_check:
+          step: 'Subtract $6x$ from both sides'
+          question: 'Why subtract $6x$ rather than $12x$ from both sides of $12x+30=6x+78$?'
+          options:
+            - 'Only the term on the right side may ever be subtracted'
+            - 'Subtracting $12x$ would change the solution of the equation'
+            - 'It keeps the remaining term positive: $6x$, not $-6x$'
+            - 'The smaller term is always taken from the left side'
+          answer: 'It keeps the remaining term positive: $6x$, not $-6x$'
+          why: 'Either subtraction gives the same solution, but taking away $6x$ leaves $6x+30=78$ with a positive coefficient, which is easier to divide.'
+        try_first:
+          problem: 'For which number $x$ are $x + 10$ and $3x$ equal?'
+          answer_contract: {"kind":"exact"}
+          answer: '5'
+          reveal: 'Setting them equal gives $x+10=3x$, so $10=2x$ and $x=5$. Collecting the $x$ terms on one side is the idea of this lesson.'
         exemplars:
-          - problem: "Solve $5x + 3 = 2x + 18$."
-            answer: "5"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Subtract $2x$: $3x + 3 = 18$; $3x = 15$; $x = 5$."
-          - problem: "The lines $y=4x-7$ and $y=x+5$ intersect at one point. Find its $x$-coordinate."
-            answer: "4"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "At the intersection the outputs agree: $4x-7=x+5$. Thus $3x=12$ and $x=4$."
-          - problem: "Two lengths are $2x+8$ and $5x-1$. They are equal. Find $x$."
-            answer: "3"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Set $2x+8=5x-1$. Subtract $2x$ and add $1$: $9=3x$, so $x=3$."
-          - problem: "A learner cancels all variable terms in $6x+2=4x+10$. Find the solution."
-            answer: "4"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Subtracting $4x$ leaves $2x+2=10$; subtract $2$ and divide by $2$ to get $x=4$."
+          - problem: 'Solve $5x + 3 = 2x + 18$.'
+            answer: '5'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Subtract $2x$ from both sides: $3x + 3 = 18$. Subtract $3$: $3x = 15$. Divide by $3$: $x = 5$.'
+          - problem: 'One gym charges $24$ dollars to join and $6$ dollars per visit. A second gym has no joining fee and charges $10$ dollars per visit. After how many visits do the two gyms cost the same?'
+            answer: '6'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Set the costs equal: $6v + 24 = 10v$. Subtract $6v$: $24 = 4v$. Divide by $4$: $v = 6$ visits.'
+          - problem: 'The lines $y = 7x - 3$ and $y = 3x + 9$ intersect at one point. What is its $x$-coordinate?'
+            answer: '3'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'At the intersection the outputs are equal: $7x - 3 = 3x + 9$. Subtract $3x$ and add $3$: $4x = 12$, so $x = 3$.'
+          - problem: 'The two equal sides of an isosceles triangle measure $2x + 8$ cm and $5x - 1$ cm. How long is each of these sides?'
+            answer: '14'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"cm","allow_omitted":true}
+            solution_sketch: 'The sides are equal, so $2x + 8 = 5x - 1$. This gives $9 = 3x$ and $x = 3$. Each side is $2(3) + 8 = 14$ cm.'
+          - problem: 'Dev solves $6x + 2 = 4x + 10$ and writes $x = 8$. What is the correct value of $x$?'
+            answer: '4'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Subtract $4x$ from both sides: $2x + 2 = 10$. Subtract $2$: $2x = 8$. Divide by $2$: $x = 4$.'
+          - problem: 'A plant is $12$ cm tall and grows $3$ cm each week. A second plant is $30$ cm tall and grows $1$ cm each week. After how many weeks are the plants equally tall?'
+            answer: '9'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Set the heights equal: $12 + 3w = 30 + w$. Subtract $w$ and $12$: $2w = 18$. Divide by $2$: $w = 9$ weeks.'
+          - problem: 'Solve $7x - 5 = 4x + 16$.'
+            answer: '7'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Subtract $4x$ and add $5$: $3x = 21$. Divide by $3$: $x = 7$.'
+          - problem: 'Phone plan A costs $15$ dollars plus $2$ dollars per gigabyte. Plan B costs $3$ dollars plus $5$ dollars per gigabyte. For how many gigabytes do the plans cost the same?'
+            answer: '4'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Set the costs equal: $15 + 2g = 3 + 5g$. Subtract $2g$ and $3$: $12 = 3g$. Divide by $3$: $g = 4$ gigabytes.'
         constraints: "variable on both sides; integer solutions"
       - id: kp2
         name: "Negative coefficients and constants on both sides"
         key_prerequisites: [two-step-equations, combining-like-terms]
+        step_check:
+          step: 'Add $10t$ to both sides'
+          question: 'Why add $10t$ to both sides of $-4t+90=-10t+150$?'
+          options:
+            - 'It cancels the $-10t$ and leaves a positive $t$-term, $6t$'
+            - 'Both $t$-terms are negative, so they must be added together'
+            - 'It moves $-10t$ to the left side and keeps its sign'
+            - 'It makes the constants $90$ and $150$ equal'
+          answer: 'It cancels the $-10t$ and leaves a positive $t$-term, $6t$'
+          why: '$-4t+10t=6t$ and $-10t+10t=0$, so the $t$-terms end up on one side with a positive coefficient and the equation stays balanced.'
         exemplars:
-          - problem: "Solve $2 - 5x = 2x + 16$."
-            answer: "-2"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Add $5x$: $2 = 7x + 16$; $-14 = 7x$; $x = -2$."
-          - problem: "Find the $x$-coordinate where the graphs $y=-2x-9$ and $y=-5x+3$ meet."
-            answer: "4"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Equal outputs give $-2x-9=-5x+3$. Add $5x$, then add $9$: $3x=12$, so $x=4$."
-          - problem: "Two signed changes $7-4x$ and $-x-8$ are equal. Find $x$."
-            answer: "5"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Set $7-4x=-x-8$. Add $4x$: $7=3x-8$. Add $8$ and divide by $3$: $x=5$."
-          - problem: "Correct the sign error in solving $-6x+1=-2x-11$ as $x=-3$."
-            answer: "3"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Add $6x$ to both sides: $1=4x-11$. Thus $12=4x$ and $x=3$."
+          - problem: 'Solve $2 - 5x = 2x + 16$.'
+            answer: '-2'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Add $5x$ to both sides: $2 = 7x + 16$. Subtract $16$: $-14 = 7x$. Divide by $7$: $x = -2$.'
+          - problem: 'Find the $x$-coordinate where the graphs of $y = -2x - 9$ and $y = -5x + 3$ meet.'
+            answer: '4'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Equal outputs give $-2x - 9 = -5x + 3$. Add $5x$ and add $9$: $3x = 12$, so $x = 4$.'
+          - problem: 'Tank A holds $80$ litres and loses $2$ litres each minute. Tank B holds $98$ litres and loses $5$ litres each minute. After how many minutes do the tanks hold the same amount?'
+            answer: '6'
+            answer_contract: {"kind":"unit","quantity":"time","unit":"min","allow_omitted":true}
+            solution_sketch: 'Set the amounts equal: $80 - 2t = 98 - 5t$. Add $5t$ and subtract $80$: $3t = 18$. Divide by $3$: $t = 6$ minutes.'
+          - problem: 'For which value of $x$ are $7 - 4x$ and $-x - 8$ equal?'
+            answer: '5'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Set $7 - 4x = -x - 8$. Add $4x$: $7 = 3x - 8$. Add $8$: $15 = 3x$, so $x = 5$.'
+          - problem: 'Kim solves $-6x + 1 = -2x - 11$ and writes $x = -3$. What is the correct value of $x$?'
+            answer: '3'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Add $6x$ to both sides: $1 = 4x - 11$. Add $11$: $12 = 4x$. Divide by $4$: $x = 3$.'
+          - problem: 'A diver at a depth of $5$ m descends $3$ m each minute. A second diver at a depth of $21$ m rises $5$ m each minute. After how many minutes are they at the same depth?'
+            answer: '2'
+            answer_contract: {"kind":"unit","quantity":"time","unit":"min","allow_omitted":true}
+            solution_sketch: 'Set the depths equal: $5 + 3t = 21 - 5t$. Add $5t$ and subtract $5$: $8t = 16$. Divide by $8$: $t = 2$ minutes.'
+          - problem: 'Solve $-3x - 7 = 5x + 17$.'
+            answer: '-3'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Add $3x$ to both sides: $-7 = 8x + 17$. Subtract $17$: $-24 = 8x$. Divide by $8$: $x = -3$.'
+          - problem: 'A hot drink is at $80$ °C and cools $6$ degrees each minute. A cold drink is at $10$ °C and warms $4$ degrees each minute. After how many minutes do the drinks have the same temperature?'
+            answer: '7'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Set the temperatures equal: $80 - 6t = 10 + 4t$. Add $6t$ and subtract $10$: $70 = 10t$. Divide by $10$: $t = 7$ minutes.'
         constraints: "move the smaller variable term to avoid negative coefficients; integer solutions"
     diagnostic_exemplar:
       problem: 'Solve $5 - 2x = 3x - 10$.'
@@ -1234,44 +1974,88 @@ topics:
       - id: kp1
         name: "Distribute, then solve the two-step equation"
         key_prerequisites: [distributive-property, two-step-equations]
+        step_check:
+          step: 'Multiply both inside terms by nine'
+          question: 'Why must the $9$ multiply the $-2$ as well as the $x$?'
+          options:
+            - 'Only $x$ is multiplied, since $-2$ is a plain number'
+            - 'The $9$ multiplies the whole bracket, so every term in it'
+            - 'The $9$ is added to both terms, giving $x+9$ and $-2+9$'
+            - 'Multiplying both terms is a rule for equations, not for brackets'
+          answer: 'The $9$ multiplies the whole bracket, so every term in it'
+          why: 'The bracket $(x-2)$ is one quantity taken $9$ times, so $9(x-2)=9x-18$; at $x=7$ both sides equal $45$.'
         exemplars:
-          - problem: "Solve $2(x + 3) = 16$."
-            answer: "5"
+          - problem: 'Solve $3(x+4)=27$.'
+            answer: '5'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "$2x + 6 = 16$; $2x = 10$; $x = 5$."
-          - problem: "Three identical boxes each contain $2x-1$ counters, for $15$ counters total. Find $x$."
-            answer: "3"
+            solution_sketch: 'Distribute the $3$ to get $3x+12=27$. Subtract $12$ to get $3x=15$, then divide by $3$ to get $x=5$.'
+          - problem: 'A rectangle is $7$ cm wide and has a perimeter of $38$ cm. Find its length.'
+            answer: '12'
+            answer_contract: {"kind": "unit", "quantity": "length", "unit": "cm", "allow_omitted": true}
+            solution_sketch: 'The perimeter is $2(x+7)=38$, where $x$ is the length. Distribute to get $2x+14=38$, so $2x=24$ and the length is $12$ cm.'
+          - problem: 'Solve $6(x-3)=30$.'
+            answer: '8'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "$3(2x-1)=15$ distributes to $6x-3=15$. Add $3$, then divide by $6$: $x=3$."
-          - problem: "A rectangle of height $4$ and width $x+2$ has area $28$. Find $x$ by distributing."
-            answer: "5"
+            solution_sketch: 'Distribute the $6$ to both terms: $6x-18=30$. Add $18$ to get $6x=48$, then divide by $6$ to get $x=8$.'
+          - problem: 'Three friends each buy a ticket and a program that costs €4. Together they spend €45. How much does one ticket cost?'
+            answer: '11'
+            answer_contract: {"kind": "unit", "quantity": "euro", "unit": "euro", "allow_omitted": true}
+            solution_sketch: 'Each friend pays $x+4$ euros, so $3(x+4)=45$. This gives $3x+12=45$ and $3x=33$, so one ticket costs €11.'
+          - problem: 'Sam solves $5(x-2)=35$ by writing $5x-2=35$. What is the correct solution?'
+            answer: '9'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "$4(x+2)=28$ expands to $4x+8=28$. Then $4x=20$, so $x=5$."
-          - problem: "A learner writes $5(x-2)=15$ as $5x-2=15$. Solve the original equation."
-            answer: "5"
+            solution_sketch: 'The $5$ must multiply both terms in the bracket, so $5(x-2)=5x-10$. Then $5x-10=35$ gives $5x=45$ and $x=9$.'
+          - problem: 'Solve $4(2x+1)=60$.'
+            answer: '7'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Distribute to both terms: $5x-10=15$; then $5x=25$ and $x=5$."
+            solution_sketch: 'Distribute the $4$ to get $8x+4=60$. Subtract $4$ to get $8x=56$, then divide by $8$ to get $x=7$.'
+          - problem: 'Three identical boxes each hold $2x-1$ counters, and there are $15$ counters in all. Find $x$.'
+            answer: '3'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The total is $3(2x-1)=15$, which distributes to $6x-3=15$. Add $3$ to get $6x=18$, then divide by $6$ to get $x=3$.'
         constraints: "one set of parentheses; positive multiplier; integer solutions"
       - id: kp2
         name: "Negative multipliers and extra constant terms"
         key_prerequisites: [distributive-property, two-step-equations]
+        step_check:
+          step: 'Distribute the signed factor'
+          question: 'Why does $-9(x-3)$ become $-9x+27$ and not $-9x-27$?'
+          options:
+            - 'The minus in $x-3$ stays put, so $27$ is subtracted instead'
+            - 'A negative factor turns every term inside the bracket positive'
+            - 'A negative times a negative is positive: $-9\times(-3)=27$'
+            - 'The minus sign of $-9$ changes only the first term inside it'
+          answer: 'A negative times a negative is positive: $-9\times(-3)=27$'
+          why: 'The product of $-9$ and $-3$ is $+27$, so $-9(x-3)=-9x+27$; at $x=8$ this is $-45$, as in the check.'
         exemplars:
-          - problem: "Solve $-2(x - 4) = 10$."
-            answer: "-1"
+          - problem: 'Solve $-2(x-4)=10$.'
+            answer: '-1'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "$-2x + 8 = 10$; $-2x = 2$; $x = -1$."
-          - problem: "Solve $-3(2x+1)+5=14$."
-            answer: "-2"
+            solution_sketch: 'Distribute $-2$ to get $-2x+8=10$. Subtract $8$ to get $-2x=2$, then divide by $-2$ to get $x=-1$.'
+          - problem: 'Solve $-3(2x+1)+5=14$.'
+            answer: '-2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Distribute: $-6x-3+5=14$. Combine and subtract $2$: $-6x=12$; $x=-2$."
-          - problem: "A machine computes $7-2(x+4)$. Its output is $-9$. Find the input."
-            answer: "4"
+            solution_sketch: 'Distribute to get $-6x-3+5=14$, which combines to $-6x+2=14$. Then $-6x=12$ and $x=-2$.'
+          - problem: 'A machine takes an input $x$ and gives the output $7-2(x+4)$. The output is $-9$. What was the input?'
+            answer: '4'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "$7-2x-8=-9$ simplifies to $-2x-1=-9$. Thus $-2x=-8$ and $x=4$."
-          - problem: "Correct the expansion used to solve $-(3x-5)-2=12$ as $-3x-7=12$."
-            answer: "-3"
+            solution_sketch: 'Set $7-2(x+4)=-9$ and distribute: $7-2x-8=-9$, so $-2x-1=-9$. Then $-2x=-8$ and the input was $x=4$.'
+          - problem: 'A prepaid card holds €50. Four downloads that each cost €3 more than the standard fee leave €14 on the card. What is the standard fee?'
+            answer: '6'
+            answer_contract: {"kind": "unit", "quantity": "euro", "unit": "euro", "allow_omitted": true}
+            solution_sketch: 'One download costs $x+3$ euros, so $50-4(x+3)=14$. This gives $50-4x-12=14$, so $-4x=-24$ and the fee is €6.'
+          - problem: 'Sam solves $-(3x-5)-2=12$ and writes $-3x-7=12$. What is the correct solution?'
+            answer: '-3'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The leading minus changes both signs: $-3x+5-2=12$. Thus $-3x=9$, giving $x=-3$."
+            solution_sketch: 'The leading minus changes both signs inside: $-3x+5-2=12$. This is $-3x+3=12$, so $-3x=9$ and $x=-3$.'
+          - problem: 'Solve $10-4(x-3)=2$.'
+            answer: '5'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Distribute $-4$ to get $10-4x+12=2$, which combines to $22-4x=2$. Then $-4x=-20$ and $x=5$.'
+          - problem: 'Solve $-5(3-x)=-20$.'
+            answer: '-1'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Distribute $-5$ to get $-15+5x=-20$. Add $15$ to get $5x=-5$, so $x=-1$.'
         constraints: "watch signs when distributing a negative; integer solutions"
     diagnostic_exemplar:
       problem: 'Solve $-3(x - 2) = 18$.'
@@ -1302,65 +2086,131 @@ topics:
       - id: kp1
         name: "Combine like terms before solving"
         key_prerequisites: [combining-like-terms]
+        step_check:
+          step: 'Combine variable terms'
+          question: 'Why can $6x$ and $-2x$ be combined into $4x$?'
+          options:
+            - 'Both contain $x$, so their coefficients $6$ and $-2$ add'
+            - 'Both numbers are multiples of $2$, so the terms can be merged'
+            - 'The terms sit side by side, so their numbers are multiplied'
+            - 'Terms can be combined only when the result stays positive'
+          answer: 'Both contain $x$, so their coefficients $6$ and $-2$ add'
+          why: '$6x-2x=(6-2)x=4x$ because both terms count the same unknown; at $x=9$ both forms equal $36$.'
         exemplars:
-          - problem: "Solve $3x + 2x + 4 = 24$."
-            answer: "4"
+          - problem: 'Solve $3x+2x+4=24$.'
+            answer: '4'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "$5x + 4 = 24$; $5x = 20$; $x = 4$."
-          - problem: "For $f(x)=7x-3x-5$, find the input whose output is $11$."
-            answer: "4"
+            solution_sketch: 'Combine $3x+2x$ into $5x$ to get $5x+4=24$. Subtract $4$ to get $5x=20$, then divide by $5$ to get $x=4$.'
+          - problem: 'The function $f(x)=7x-3x-5$ has the output $15$. What is the input?'
+            answer: '5'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Combine the two input terms: $f(x)=4x-5$. Set $4x-5=11$, then solve $4x=16$, so $x=4$."
-          - problem: "The sides of a triangle are $x$, $2x+1$, and $3x-1$. Its perimeter is $36$. Find $x$."
-            answer: "6"
+            solution_sketch: 'Combine the two $x$-terms to get $f(x)=4x-5$. Set $4x-5=15$, so $4x=20$ and the input is $x=5$.'
+          - problem: 'The sides of a triangle are $x$, $2x+1$ and $3x-1$, and its perimeter is $42$. Find $x$.'
+            answer: '7'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Adding the three sides gives $x+2x+1+3x-1=36$, hence $6x=36$ and $x=6$."
-          - problem: "Correct the collection in $9+4x-6x=1$: a learner used $10x$. Find $x$."
-            answer: "4"
+            solution_sketch: 'Adding the three sides gives $x+2x+1+3x-1=42$, which combines to $6x=42$. So $x=7$.'
+          - problem: 'Sam solves $9+4x-6x=1$ and combines the $x$-terms to get $10x$. What is the correct solution?'
+            answer: '4'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The variable coefficient is $4-6=-2$. Thus $9-2x=1$, $-2x=-8$, and $x=4$."
+            solution_sketch: 'The coefficient of $x$ is $4-6=-2$, not $10$. So $9-2x=1$, which gives $-2x=-8$ and $x=4$.'
+          - problem: 'A taxi charges a €4 pick-up fee, €2 per kilometre and a night surcharge of €1 per kilometre. A night ride costs €22. How long was the ride?'
+            answer: '6'
+            answer_contract: {"kind": "unit", "quantity": "length", "unit": "km", "allow_omitted": true}
+            solution_sketch: 'Each kilometre costs $2+1=3$ euros, so $4+2k+k=22$ gives $3k+4=22$. Then $3k=18$ and the ride was $6$ km long.'
+          - problem: 'The four sides of a field measure $x$, $x+3$, $2x$ and $x+5$ metres. The fence around it is $48$ m long. Find $x$.'
+            answer: '8'
+            answer_contract: {"kind": "unit", "quantity": "length", "unit": "m", "allow_omitted": true}
+            solution_sketch: 'The fence is the sum of the sides: $x+x+3+2x+x+5=48$. This combines to $5x+8=48$, so $5x=40$ and $x=8$.'
+          - problem: 'Solve $10-x+4x-3=22$.'
+            answer: '5'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Combine $-x+4x$ into $3x$ and $10-3$ into $7$ to get $3x+7=22$. Then $3x=15$ and $x=5$.'
         constraints: "combine on one side; integer solutions"
       - id: kp2
         name: "Distribute and collect across both sides"
         key_prerequisites: [distribute-then-solve, variables-both-sides]
+        step_check:
+          step: 'Subtract $3x$ from both sides'
+          question: 'Why is $3x$ subtracted from both sides and not from the right side only?'
+          options:
+            - 'The $3x$ is on the right, so only that side changes'
+            - 'Subtracting $3x$ on the left is what removes the $4x$ there'
+            - 'Subtracting from one side only moves the term across'
+            - 'The same change on both sides keeps the equation balanced'
+          answer: 'The same change on both sides keeps the equation balanced'
+          why: 'The same operation on both sides keeps them equal: $4x-12=3x+7$ becomes $x-12=7$, and at $x=19$ both sides are $64$.'
         exemplars:
-          - problem: "Solve $3(2x - 1) = 4x + 9$."
-            answer: "6"
+          - problem: 'Solve $3(2x-1)=4x+9$.'
+            answer: '6'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "$6x - 3 = 4x + 9$; $2x = 12$; $x = 6$."
-          - problem: "Solve $5(x - 2) = 2(x + 4)$."
-            answer: "6"
+            solution_sketch: 'Distribute to get $6x-3=4x+9$. Subtract $4x$ to get $2x-3=9$, add $3$ to get $2x=12$, then $x=6$.'
+          - problem: 'Solve $5(x-2)=2(x+7)$.'
+            answer: '8'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "$5x - 10 = 2x + 8$; $3x = 18$; $x = 6$."
-          - problem: "A rectangle of height $3$ and width $x+1$ has the same area as one of height $2$ and width $x+4$. Find $x$."
-            answer: "5"
+            solution_sketch: 'Distribute both sides: $5x-10=2x+14$. Subtract $2x$ and add $10$ to get $3x=24$, so $x=8$.'
+          - problem: 'A rectangle of height $3$ and width $x+1$ has the same area as a rectangle of height $2$ and width $x+4$. Find $x$.'
+            answer: '5'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "$3(x+1)=2(x+4)$ expands to $3x+3=2x+8$. Subtracting $2x$ and $3$ gives $x=5$."
-          - problem: "Correct the claim that $2(x-3)=3-x$ has solution $2$."
-            answer: "3"
+            solution_sketch: 'The areas are equal, so $3(x+1)=2(x+4)$, which expands to $3x+3=2x+8$. Subtract $2x$ and $3$ to get $x=5$.'
+          - problem: 'Lena buys $3$ shirts and gets €2 off each shirt. Tom buys $2$ of the same shirts at full price and a €4 cap. They pay the same amount. What does one shirt cost at full price?'
+            answer: '10'
+            answer_contract: {"kind": "unit", "quantity": "euro", "unit": "euro", "allow_omitted": true}
+            solution_sketch: 'Lena pays $3(x-2)$ and Tom pays $2x+4$. From $3x-6=2x+4$ we get $x=10$, so a shirt costs €10.'
+          - problem: 'Sam says the solution of $2(x-3)=3-x$ is $2$. What is the correct solution?'
+            answer: '3'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Expand: $2x-6=3-x$. Add $x$ and $6$: $3x=9$, giving $x=3$."
+            solution_sketch: 'Expand to get $2x-6=3-x$. Add $x$ and $6$ to both sides to get $3x=9$, so $x=3$. Check: both sides equal $0$.'
+          - problem: 'Solve $4(x+1)-2=3(x-2)$.'
+            answer: '-8'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Distribute to get $4x+4-2=3x-6$, so $4x+2=3x-6$. Subtract $3x$ and $2$ to get $x=-8$.'
+          - problem: 'A square with side $x+1$ cm has the same perimeter as an equilateral triangle with side $x+5$ cm. Find $x$.'
+            answer: '11'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The square has perimeter $4(x+1)$ and the triangle has $3(x+5)$. From $4x+4=3x+15$ we get $x=11$; both perimeters are $48$ cm.'
         constraints: "parentheses on one or both sides; integer solutions"
       - id: kp3
         name: "Full pipeline: distribute, combine, collect, solve"
         key_prerequisites: [distribute-then-solve, variables-both-sides]
+        step_check:
+          step: 'Subtract $3x$ and add twelve'
+          question: 'Why is twelve added to both sides after $3x$ is subtracted?'
+          options:
+            - 'Adding twelve removes the $x$ from the left side'
+            - 'It cancels the $-12$, so $x$ stands alone on its side'
+            - 'Twelve is the number outside the bracket, so it is added'
+            - 'Adding twelve shows that the answer is a whole number'
+          answer: 'It cancels the $-12$, so $x$ stands alone on its side'
+          why: 'After $4x-12=3x-2$ and subtracting $3x$, the equation is $x-12=-2$; adding $12$ cancels the $-12$ and gives $x=10$.'
         exemplars:
-          - problem: "Solve $4x + 6 - x = 2(x + 5)$."
-            answer: "4"
+          - problem: 'Solve $4x+6-x=2(x+5)$.'
+            answer: '4'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "$3x + 6 = 2x + 10$; $x = 4$."
-          - problem: "Solve $2(3x-1)-x=3(x+2)+4$."
-            answer: "6"
+            solution_sketch: 'The left side combines to $3x+6$ and the right side expands to $2x+10$. Subtract $2x$ and $6$ to get $x=4$.'
+          - problem: 'Solve $2(3x-1)-x=3(x+2)+4$.'
+            answer: '6'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Expand and combine: $6x-2-x=3x+6+4$, so $5x-2=3x+10$. Collect: $2x=12$, hence $x=6$."
-          - problem: "Solve $2(x+3)+2x=3(x+2)+x/2$."
-            answer: "0"
+            solution_sketch: 'Expand and combine: $6x-2-x=3x+6+4$, so $5x-2=3x+10$. Collect to get $2x=12$, hence $x=6$.'
+          - problem: 'Solve $2(x+3)+2x=3(x+2)+\frac{x}{2}$.'
+            answer: '0'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Expand and combine to get $4x+6=7x/2+6$. Collect to obtain $x/2=0$, hence $x=0$."
-          - problem: "A learner loses a minus sign in $5-2(x-1)+3x=4(x+1)-3$. Solve correctly."
-            answer: "2"
+            solution_sketch: 'Expand and combine to get $4x+6=\frac{7x}{2}+6$. Subtract $6$ and $\frac{7x}{2}$ to obtain $\frac{x}{2}=0$, hence $x=0$.'
+          - problem: 'Sam expands $5-2(x-1)$ as $5-2x-2$ while solving $5-2(x-1)+3x=4(x+1)-3$. What is the correct solution?'
+            answer: '2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The sides simplify to $7+x$ and $4x+1$. Subtracting $x+1$ leaves $6=3x$, so $x=2$."
+            solution_sketch: 'The correct expansion is $5-2x+2$, so the left side is $x+7$ and the right side is $4x+1$. Then $6=3x$, so $x=2$.'
+          - problem: 'A small box holds $x$ pencils and a large box holds $3$ more. Mia has $2$ large boxes and $4$ loose pencils. Leo has $3$ small boxes and $2$ loose pencils. They have the same number of pencils. How many pencils does a small box hold?'
+            answer: '8'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Mia has $2(x+3)+4$ pencils and Leo has $3x+2$. From $2x+10=3x+2$ we get $x=8$; each of them has $26$ pencils.'
+          - problem: 'Solve $6-3(x-1)=2(x+4)-4x$.'
+            answer: '1'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The left side is $9-3x$ and the right side is $8-2x$. Add $3x$ and subtract $8$ to get $1=x$.'
+          - problem: 'A rectangle with width $x-1$ cm and length $2x+4$ cm has the same perimeter as a square with side $x+3$ cm. Find $x$.'
+            answer: '3'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The perimeters are equal, so $2(x-1)+2(2x+4)=4(x+3)$. This is $6x+6=4x+12$, so $2x=6$ and $x=3$.'
         constraints: "requires all three simplification moves; integer solutions"
     diagnostic_exemplar:
       problem: 'Solve $5x - 2(x - 3) = 2x + 11$.'
@@ -1779,60 +2629,97 @@ topics:
       - id: kp1
         name: "One-step rearrangements"
         key_prerequisites: [two-step-equations, evaluating-formulas]
+        try_first:
+          problem: 'A rectangle has area $A=bh$. If $A=35$ and $b=7$, what is $h$?'
+          answer_contract: {"kind": "exact"}
+          answer: '5'
+          reveal: 'You divided the area by the base, and the same move works with letters: dividing both sides of $A=bh$ by $b$ gives $h=A/b$. Rearranging a formula uses the steps of solving an equation.'
+        step_check:
+          step: 'Subtract the whole added term $40n$ from both sides'
+          question: 'Why is the whole term $40n$ subtracted, and not just $n$?'
+          options:
+            - 'Only $n$ is a letter, so subtracting $n$ is enough to isolate $x$'
+            - 'The $40$ is part of $x$, so the term $40n$ stays on the right'
+            - 'The added term is $40n$ as a whole, so all of it must go'
+            - 'Subtracting $40$ alone leaves $x+n$ on the right, which is simpler'
+          answer: 'The added term is $40n$ as a whole, so all of it must go'
+          why: '$x$ is added to the whole term $40n$, so removing $40n$ leaves $x$ alone: $m-40n=x$. Substituting back, $(m-40n)+40n=m$.'
         exemplars:
-          - problem: 'Solve $y = x + b$ for $x$.'
-            answer: "x = y - b"
-            answer_contract: {kind: exact}
+          - problem: 'Solve $y=x+b$ for $x$.'
+            answer: 'x = y - b'
+            answer_contract: {"kind": "exact"}
             solution_sketch: 'Subtract $b$ from both sides to get $y-b=x$. So $x=y-b$, and substituting back gives $(y-b)+b=y$.'
-          - problem: 'Solve $d = rt$ for $t$. Assume $r\ne0$.'
-            answer: "t = d/r"
-            answer_contract: {kind: exact}
+          - problem: 'Solve $d=rt$ for $t$. Assume $r\ne0$.'
+            answer: 't = d/r'
+            answer_contract: {"kind": "exact"}
             solution_sketch: 'Divide both sides by $r$, which is allowed because $r\ne0$. This gives $t=d/r$, and $r(d/r)=d$ checks it.'
-          - problem: 'Solve $p = q - r$ for $q$.'
-            answer: "q = p + r"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Add $r$ to both sides to undo the subtraction. This gives $q=p+r$, and $(p+r)-r=p$ checks it.'
-          - problem: 'Solve $A = bh$ for $h$. Assume $b\ne0$.'
-            answer: "h = A/b"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Divide both sides by $b$, which is allowed because $b\ne0$. This gives $h=A/b$, and $b(A/b)=A$ checks it.'
-          - problem: 'The perimeter of a square is $P = 4s$. Solve for $s$.'
+          - problem: 'The perimeter of a square with side $s$ is $P=4s$. Solve this formula for $s$.'
             answer: 's = P/4'
-            answer_contract: {"kind":"exact"}
+            answer_contract: {"kind": "exact"}
             solution_sketch: 'The side $s$ is multiplied by $4$, so divide both sides by $4$. This gives $s=P/4$; a square with perimeter $20$ has side $5$.'
-          - problem: 'Solve $v = \frac{d}{t}$ for $d$.'
+          - problem: 'Solve $p=q-r$ for $q$.'
+            answer: 'q = p + r'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Add $r$ to both sides to undo the subtraction. This gives $q=p+r$, and $(p+r)-r=p$ checks it.'
+          - problem: 'Speed is $v=\frac{d}{t}$, where $d$ is the distance and $t$ the time. Solve for $d$.'
             answer: 'd = vt'
-            answer_contract: {"kind":"exact"}
+            answer_contract: {"kind": "exact"}
             solution_sketch: 'Here $d$ is divided by $t$, so multiply both sides by $t$. This gives $d=vt$: speed times time is distance.'
+          - problem: '$n$ pens at the price $p$ each cost $C=np$ in total. Solve for $n$. Assume $p\ne0$.'
+            answer: 'n = C/p'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The count $n$ is multiplied by the price $p$, so divide both sides by $p$. This gives $n=C/p$: the total cost divided by the price is the number of pens.'
+          - problem: 'Solve $A=bh$ for $h$. Assume $b\ne0$.'
+            answer: 'h = A/b'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Divide both sides by $b$, which is allowed because $b\ne0$. This gives $h=A/b$, and $b(A/b)=A$ checks it.'
+          - problem: 'The average price of an item is $a=\frac{c}{n}$, where $c$ is the total cost of $n$ items. Solve for $c$.'
+            answer: 'c = an'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Here $c$ is divided by $n$, so multiply both sides by $n$. This gives $c=an$: average price times the count is total cost.'
         constraints: "one inverse operation; target variable appears once"
       - id: kp2
         name: "Two-step rearrangements"
         key_prerequisites: [two-step-equations, evaluating-formulas]
+        step_check:
+          step: 'Divide both sides by the nonzero coefficient fifty'
+          question: 'Why is $p-7q$ divided by $50$ and not reduced by $50$?'
+          options:
+            - 'The $50$ is added to $x$, so subtraction would undo it'
+            - 'The $50$ multiplies $x$, so division undoes it'
+            - 'Subtracting $50$ would also change the letters $p$ and $q$'
+            - 'Division is the only operation allowed on both sides'
+          answer: 'The $50$ multiplies $x$, so division undoes it'
+          why: '$50x$ means $50$ times $x$, so dividing by $50$ leaves $x=(p-7q)/50$. The $50$ is not added, so subtracting it would not isolate $x$.'
         exemplars:
-          - problem: 'Solve $C = 2\pi r$ for $r$.'
-            answer: "r = C/(2*pi)"
-            answer_contract: {kind: exact}
-            solution_sketch: 'The radius is multiplied by $2$ and by $\pi$, so divide both sides by $2\pi$. This gives $r=C/(2\pi)$.'
-          - problem: 'Solve $P = 2l + 2w$ for $l$.'
-            answer: "l = (P - 2w)/2"
-            answer_contract: {kind: exact}
+          - problem: 'Solve $P=2l+2w$ for $l$.'
+            answer: 'l = (P - 2w)/2'
+            answer_contract: {"kind": "exact"}
             solution_sketch: 'Subtract $2w$ from both sides: $P-2w=2l$. Divide by $2$ to get $l=(P-2w)/2$, which also equals $P/2-w$.'
-          - problem: 'Solve $V = lwh$ for $l$. Assume $wh\ne0$.'
-            answer: 'l = V/(wh)'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Here $l$ is multiplied by $w$ and by $h$, so divide both sides by $wh$. This gives $l=V/(wh)$, which can also be written $V/w/h$.'
-          - problem: 'Solve $y = mx + b$ for $x$. Assume $m\ne0$.'
-            answer: "x = (y - b)/m"
-            answer_contract: {"kind":"exact"}
+          - problem: 'The circumference of a circle with radius $r$ is $C=2\pi r$. Solve for $r$.'
+            answer: 'r = C/(2*pi)'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The radius is multiplied by $2$ and by $\pi$, so divide both sides by $2\pi$. This gives $r=C/(2\pi)$.'
+          - problem: 'Solve $y=mx+b$ for $x$. Assume $m\ne0$.'
+            answer: 'x = (y - b)/m'
+            answer_contract: {"kind": "exact"}
             solution_sketch: 'Subtract $b$ from both sides: $y-b=mx$. Divide by $m$, which is allowed because $m\ne0$, to get $x=(y-b)/m$.'
-          - problem: 'Solve $A = \frac{1}{2}bh$ for $h$. Assume $b\ne0$.'
+          - problem: 'A plumber charges a call-out fee $f$ plus $r$ per hour, so a job of $h$ hours costs $T=f+rh$. Solve for $h$. Assume $r\ne0$.'
+            answer: 'h = (T - f)/r'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Subtract the fee $f$ from both sides to get $T-f=rh$. Divide by $r$, which is allowed because $r\ne0$, to get $h=(T-f)/r$.'
+          - problem: 'The area of a triangle is $A=\frac{1}{2}bh$. Solve for $h$. Assume $b\ne0$.'
             answer: 'h = 2A/b'
-            answer_contract: {"kind":"exact"}
+            answer_contract: {"kind": "exact"}
             solution_sketch: 'Multiply both sides by $2$ to clear the half: $2A=bh$. Divide by $b$ to get $h=2A/b$.'
-          - problem: 'Solve $F = \frac{9}{5}C + 32$ for $C$.'
+          - problem: 'The Fahrenheit temperature is $F=\frac{9}{5}C+32$, where $C$ is the Celsius temperature. Solve for $C$.'
             answer: 'C = 5(F - 32)/9'
-            answer_contract: {"kind":"exact"}
+            answer_contract: {"kind": "exact"}
             solution_sketch: 'Subtract $32$ from both sides: $F-32=\frac{9}{5}C$. Multiply by $\frac{5}{9}$ to get $C=5(F-32)/9$.'
+          - problem: 'Solve $V=lwh$ for $l$. Assume $wh\ne0$.'
+            answer: 'l = V/(wh)'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Here $l$ is multiplied by $w$ and by $h$, so divide both sides by $wh$. This gives $l=V/(wh)$, because $wh\ne0$.'
         constraints: "two inverse operations; target variable appears once"
     diagnostic_exemplar:
       problem: 'Solve $v = u + at$ for $t$.'
@@ -1865,65 +2752,136 @@ topics:
       - id: kp1
         name: "Multi-term formulas"
         key_prerequisites: [multi-step-equations, rearranging-formulas]
+        step_check:
+          step: 'Divide by the nonzero coefficient $k$'
+          question: 'Why must $k$ be nonzero before dividing by $k$?'
+          options:
+            - 'A zero coefficient would make $F=ma+kx$ untrue'
+            - 'Only nonzero letters may appear in any formula or equation'
+            - 'If $k=0$, the sides change sign when divided'
+            - 'Dividing by $0$ is undefined, and $k=0$ removes $x$'
+          answer: 'Dividing by $0$ is undefined, and $k=0$ removes $x$'
+          why: 'If $k=0$ the term $kx$ vanishes and $F=ma$ no longer contains $x$, so $x$ cannot be found; division by $0$ is not allowed.'
         exemplars:
-          - problem: 'Solve $ax + b = c$ for $x$. Assume $a\ne0$.'
-            answer: "x = (c - b)/a"
-            answer_contract: {kind: exact}
-            solution_sketch: 'Subtract $b$, then divide by $a$. Division is valid because $a\ne0$.'
-          - problem: 'Solve $A = \frac{1}{2}bh$ for $h$. Assume $b\ne0$.'
-            answer: "h = 2A/b"
-            answer_contract: {kind: exact}
-            solution_sketch: 'Multiply by $2$, divide by $b$. Division is valid because $b\ne0$.'
-          - problem: 'Solve $px + q = r$ for $x$. Assume $p\ne0$.'
-            answer: "x = (r - q)/p"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Subtract $q$, then divide by $p$. Division is valid because $p\ne0$.'
-          - problem: 'Solve $V = \frac{1}{3}Bh$ for $B$. Assume $h\ne0$.'
-            answer: "B = 3V/h"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Multiply by $3$, divide by $h$. Division is valid because $h\ne0$.'
+          - problem: 'Solve $px+q=r$ for $x$. Assume $p\ne0$.'
+            answer: 'x = (r - q)/p'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Subtract $q$ from both sides to get $px=r-q$. Divide by $p$, which is allowed because $p\ne0$, to get $x=(r-q)/p$.'
+          - problem: 'The volume of a pyramid is $V=\frac{1}{3}Bh$, where $B$ is the area of the base. Solve for $B$. Assume $h\ne0$.'
+            answer: 'B = 3V/h'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Multiply both sides by $3$ to get $3V=Bh$. Divide by $h$, which is allowed because $h\ne0$, to get $B=3V/h$.'
+          - problem: 'The perimeter of a triangle with sides $a$, $b$ and $c$ is $P=a+b+c$. Solve for $c$.'
+            answer: 'c = P - a - b'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Subtract $a$ and $b$ from both sides. This gives $c=P-a-b$; for example, $P=12$, $a=3$ and $b=4$ give $c=5$.'
+          - problem: 'A car rental costs $C=f+rd$ for $d$ days, with a fixed fee $f$ and a daily rate $r$. Solve for $r$. Assume $d\ne0$.'
+            answer: 'r = (C - f)/d'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Subtract the fee $f$ from both sides to get $C-f=rd$. Divide by $d$, which is allowed because $d\ne0$, to get $r=(C-f)/d$.'
+          - problem: 'Sam solves $ax+b=c$ for $x$ and writes $x=c-\frac{b}{a}$. What is the correct formula? Assume $a\ne0$.'
+            answer: 'x = (c - b)/a'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Subtract $b$ from both sides first, then divide the whole result $c-b$ by $a$. This gives $x=(c-b)/a$; Sam divided only $b$ by $a$.'
+          - problem: 'The kinetic energy of a moving object is $K=\frac{1}{2}mv^2$. Solve for $m$. Assume $v\ne0$.'
+            answer: 'm = 2K/v^2'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Multiply both sides by $2$ to get $2K=mv^2$. Divide by $v^2$, which is allowed because $v\ne0$, to get $m=2K/v^2$.'
+          - problem: 'The simple interest on a deposit $p$ at the yearly rate $r$ after $t$ years is $i=prt$. Solve for $t$. Assume $pr\ne0$.'
+            answer: 't = i/(pr)'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The time $t$ is multiplied by $p$ and by $r$, so divide both sides by $pr$. This gives $t=i/(pr)$, because $pr\ne0$.'
         constraints: "target variable appears once; keep other letters symbolic"
       - id: kp2
         name: "Target variable in more than one term"
         key_prerequisites: [distributive-property]
+        try_first:
+          problem: 'If $2x+3x=20$, what is $x$?'
+          answer_contract: {"kind": "exact"}
+          answer: '4'
+          reveal: 'You combined $2x+3x$ into $5x$ and then divided by $5$. With letters, $ax+bx$ combines into $(a+b)x$ in the same way, and one division by $a+b$ solves for $x$.'
+        step_check:
+          step: 'Factor out the target'
+          question: 'Why is $y$ factored out of $2py+4qy$ before any division?'
+          options:
+            - 'Factoring puts $y$ in one place, so one division works'
+            - 'Dividing by $y$ first would also remove $p$ and $q$'
+            - 'Factoring makes both sides of the formula the same size'
+            - 'The terms $2py$ and $4qy$ must be added before dividing'
+          answer: 'Factoring puts $y$ in one place, so one division works'
+          why: 'Dividing term by term would leave $y$ in both pieces. Writing $y(2p+4q)$ puts $y$ in one place, so dividing by $2p+4q$ isolates it.'
         exemplars:
-          - problem: 'Solve $ax + bx = c$ for $x$. Assume $a+b\ne0$.'
-            answer: "x = c/(a + b)"
-            answer_contract: {kind: exact}
-            solution_sketch: 'Factor: $x(a + b) = c$; divide by $(a + b)$. Division is valid because $a+b\ne0$.'
-          - problem: 'Solve $x = \frac{y - 3}{2}$ for $y$.'
-            answer: "y = 2x + 3"
-            answer_contract: {kind: exact}
-            solution_sketch: '$2x = y - 3$; $y = 2x + 3$.'
-          - problem: 'Solve $mx - nx = k$ for $x$. Assume $m-n\ne0$.'
-            answer: "x = k/(m - n)"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Factor: $x(m - n) = k$; divide by $(m - n)$. Division is valid because $m-n\ne0$.'
-          - problem: 'Solve $y = \frac{x + 5}{3}$ for $x$.'
-            answer: "x = 3y - 5"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: '$3y = x + 5$; $x = 3y - 5$.'
+          - problem: 'Solve $ax+bx=c$ for $x$. Assume $a+b\ne0$.'
+            answer: 'x = c/(a + b)'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Factor out $x$: $x(a+b)=c$. Divide by $a+b$, which is allowed because $a+b\ne0$, to get $x=c/(a+b)$.'
+          - problem: 'Solve $x=\frac{y-3}{2}$ for $y$.'
+            answer: 'y = 2x + 3'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Multiply both sides by $2$ to get $2x=y-3$. Add $3$ to both sides to get $y=2x+3$.'
+          - problem: 'Solve $mx-nx=k$ for $x$. Assume $m-n\ne0$.'
+            answer: 'x = k/(m - n)'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Factor out $x$: $x(m-n)=k$. Divide by $m-n$, which is allowed because $m-n\ne0$, to get $x=k/(m-n)$.'
+          - problem: 'A shop sells pens at the price $p$ and pencils at the price $q$. The total cost of $n$ pens and $n$ pencils is $C=np+nq$. Solve for $n$. Assume $p+q\ne0$.'
+            answer: 'n = C/(p + q)'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Factor out $n$: $C=n(p+q)$. Divide by $p+q$, which is allowed because $p+q\ne0$, to get $n=C/(p+q)$.'
+          - problem: 'Two cyclists leave the same point and ride in opposite directions at the speeds $u$ and $v$. After the time $t$ they are $d=ut+vt$ apart. Solve for $t$. Assume $u+v\ne0$.'
+            answer: 't = d/(u + v)'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Factor out $t$: $d=t(u+v)$. Divide by $u+v$, which is allowed because $u+v\ne0$, to get $t=d/(u+v)$.'
+          - problem: 'Solve $y=\frac{x+5}{3}$ for $x$.'
+            answer: 'x = 3y - 5'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Multiply both sides by $3$ to get $3y=x+5$. Subtract $5$ from both sides to get $x=3y-5$.'
+          - problem: 'Solve $ax+b=cx+d$ for $x$. Assume $a-c\ne0$.'
+            answer: 'x = (d - b)/(a - c)'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Collect the $x$-terms on the left and the other terms on the right: $ax-cx=d-b$. Factor to get $x(a-c)=d-b$, then divide by $a-c$.'
         constraints: "may require factoring out the target variable"
       - id: kp3
         name: "Formulas requiring distribution or clearing a fraction"
         key_prerequisites: [distributive-property, rearranging-formulas]
+        step_check:
+          step: 'Multiply both sides by $3$'
+          question: 'Why is the outer factor $\frac{n}{3}$ removed before $p+2q$ is touched?'
+          options:
+            - 'The factor multiplies the whole group, so it comes off first'
+            - 'Letters outside a bracket are always moved before those inside'
+            - 'The group $p+2q$ cannot be changed while the $3$ is there'
+            - 'Subtracting $p$ first would make the sides unequal'
+          answer: 'The factor multiplies the whole group, so it comes off first'
+          why: 'The group $(p+2q)$ is multiplied by $\frac{n}{3}$ as a whole. Removing that outer factor leaves $p+2q$ alone, ready for the next two steps.'
         exemplars:
-          - problem: 'Solve $S = 2(l + w)$ for $w$.'
-            answer: "w = S/2 - l"
-            answer_contract: {kind: exact}
-            solution_sketch: 'Divide by $2$: $\frac{S}{2} = l + w$; subtract $l$.'
-          - problem: 'Solve $A = \frac{1}{2}h(a + b)$ for $a$. Assume $h\ne0$.'
-            answer: "a = 2A/h - b"
-            answer_contract: {kind: exact}
-            solution_sketch: 'Multiply by $2$: $2A = h(a + b)$; divide by $h$; subtract $b$. Division is valid because $h\ne0$.'
-          - problem: 'Solve $P = 2(a + b)$ for $b$.'
-            answer: "b = P/2 - a"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Divide by $2$: $\frac{P}{2} = a + b$; subtract $a$.'
-          - problem: 'Solve $T = \frac{1}{2}k(m + n)$ for $m$. Assume $k\ne0$.'
-            answer: "m = 2T/k - n"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Multiply by $2$: $2T = k(m + n)$; divide by $k$; subtract $n$. Division is valid because $k\ne0$.'
+          - problem: 'Solve $S=2(l+w)$ for $w$.'
+            answer: 'w = S/2 - l'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Divide both sides by $2$ to get $\frac{S}{2}=l+w$. Subtract $l$ from both sides to get $w=S/2-l$.'
+          - problem: 'The area of a trapezoid with parallel sides $a$ and $b$ and height $h$ is $A=\frac{1}{2}h(a+b)$. Solve for $a$. Assume $h\ne0$.'
+            answer: 'a = 2A/h - b'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Multiply by $2$ to get $2A=h(a+b)$. Divide by $h$, which is allowed because $h\ne0$, then subtract $b$ to get $a=2A/h-b$.'
+          - problem: 'Solve $y-k=m(x-h)$ for $x$. Assume $m\ne0$.'
+            answer: 'x = (y - k)/m + h'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Divide both sides by $m$, which is allowed because $m\ne0$, to get $\frac{y-k}{m}=x-h$. Add $h$ to get $x=(y-k)/m+h$.'
+          - problem: 'A savings account with the deposit $p$ grows to $A=p(1+rt)$ after the time $t$ at the rate $r$. Solve for $r$. Assume $pt\ne0$.'
+            answer: 'r = (A - p)/(pt)'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Divide by $p$ to get $\frac{A}{p}=1+rt$, then subtract $1$ to get $\frac{A}{p}-1=rt$. Divide by $t$ to get $r=(A-p)/(pt)$.'
+          - problem: 'Sam solves $T=\frac{1}{2}k(m+n)$ for $m$ and writes $m=\frac{2T}{k}+n$. What is the correct formula? Assume $k\ne0$.'
+            answer: 'm = 2T/k - n'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Multiply by $2$ and divide by $k$ to get $\frac{2T}{k}=m+n$. Then subtract $n$, not add it, to get $m=2T/k-n$.'
+          - problem: 'The sum of the first $n$ terms of a sequence is $S=\frac{n}{2}(a+l)$, where $a$ is the first term and $l$ the last. Solve for $l$. Assume $n\ne0$.'
+            answer: 'l = 2S/n - a'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Multiply by $2$ to get $2S=n(a+l)$. Divide by $n$, which is allowed because $n\ne0$, then subtract $a$ to get $l=2S/n-a$.'
+          - problem: 'The Celsius temperature is $C=\frac{5}{9}(F-32)$. Solve for $F$.'
+            answer: 'F = 9C/5 + 32'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Multiply both sides by $\frac{9}{5}$ to get $\frac{9C}{5}=F-32$. Add $32$ to get $F=9C/5+32$.'
         constraints: "undo an outer factor before reaching the target variable"
     diagnostic_exemplar:
       problem: 'Solve $ax - bx = c$ for $x$.'
@@ -2413,45 +3371,93 @@ topics:
       - id: kp1
         name: "Money and cost setups"
         key_prerequisites: [translating-sentences-to-equations]
+        step_check:
+          step: 'The equation is $6n+5=71$'
+          question: 'Why is the fee written as $+5$ and not multiplied by $n$?'
+          options:
+            - 'A fee is always written at the end of any equation'
+            - 'The fee is paid once; the price is paid per item'
+            - 'The fee is a discount, so it is added at the end'
+            - 'The fee is charged on each item, like the price'
+          answer: 'The fee is paid once; the price is paid per item'
+          why: 'A price per item is multiplied by the count, but a fee is paid once. With $n=11$: $6\times11+5=71$.'
         exemplars:
-          - problem: "Tickets cost €8 each and you spent €56. How many tickets did you buy?"
-            answer: "7"
+          - problem: 'A gym charges a €20 joining fee plus €15 per month. Mia has paid €110 in total. For how many months has she been a member?'
+            answer: '6'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "$8x = 56$; $x = 7$."
-          - problem: "A taxi charges a €3 base fare plus €2 per kilometre. The fare was €17. How many kilometres was the ride?"
-            answer: "7"
-            answer_contract: {"kind":"unit","quantity":"length","unit":"km","allow_omitted":true}
-            solution_sketch: "$2k + 3 = 17$; $2k = 14$; $k = 7$."
-          - problem: "You have €50 and buy notebooks at €6 each, leaving €8. How many notebooks did you buy?"
-            answer: "7"
+            solution_sketch: 'The cost is $15m+20=110$. Subtract $20$ to get $15m=90$, then divide by $15$ to get $m=6$ months.'
+          - problem: 'Tickets cost €8 each and you spent €56. How many tickets did you buy?'
+            answer: '7'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The spent amount is $50-8=42$ euros; $6n=42$ gives $n=7$."
-          - problem: "Notebooks cost €5 each. After a €4 coupon, the total is €26. How many notebooks were bought?"
-            answer: "6"
+            solution_sketch: 'The cost of $x$ tickets is $8x=56$. Divide both sides by $8$ to get $x=7$.'
+          - problem: 'A taxi charges a €3 base fare plus €2 per kilometre. The fare was €23. How many kilometres was the ride?'
+            answer: '10'
+            answer_contract: {"kind": "unit", "quantity": "length", "unit": "km", "allow_omitted": true}
+            solution_sketch: 'The fare is $2k+3=23$. Subtract $3$ to get $2k=20$, then divide by $2$ to get $k=10$, so the ride was $10$ km.'
+          - problem: 'You have €60 and buy notebooks at €7 each, which leaves you €4. How many notebooks did you buy?'
+            answer: '8'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The coupon gives $5n-4=26$. Add $4$ to get $5n=30$, then divide by $5$: $n=6$."
+            solution_sketch: 'The spent amount is $60-4=56$ euros, so $7n=56$. Divide by $7$ to get $n=8$.'
+          - problem: 'Notebooks cost €5 each. After a €4 coupon, the total is €41. How many notebooks were bought?'
+            answer: '9'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The coupon takes €4 off, so $5n-4=41$. Add $4$ to get $5n=45$, then divide by $5$ to get $n=9$.'
+          - problem: 'Four friends share the cost of a pizza equally, and each also buys a €3 drink. Each friend spends €10 in all. How much does the pizza cost?'
+            answer: '28'
+            answer_contract: {"kind": "unit", "quantity": "euro", "unit": "euro", "allow_omitted": true}
+            solution_sketch: 'Each friend pays $\frac{p}{4}+3=10$ euros. Subtract $3$ to get $\frac{p}{4}=7$, then multiply by $4$ to get $p=28$, so the pizza costs €28.'
+          - problem: 'A school buys $12$ identical calculators and pays a €15 delivery fee. The bill is €279. How much does one calculator cost?'
+            answer: '22'
+            answer_contract: {"kind": "unit", "quantity": "euro", "unit": "euro", "allow_omitted": true}
+            solution_sketch: 'The bill is $12c+15=279$. Subtract $15$ to get $12c=264$, then divide by $12$ to get $c=22$, so one calculator costs €22.'
         constraints: "unit price times quantity, possibly plus a fixed fee; whole-number answers"
       - id: kp2
         visuals: [{"kind":"geometry","figure":{"shape":"polygon","vertices":[{"x":"0","y":"0","label":"A"},{"x":"7","y":"0","label":"B"},{"x":"7","y":"4","label":"C"},{"x":"0","y":"4","label":"D"}],"right_angles":[0,1,2,3]},"caption":"Reference example: A reference rectangle has width 7 and height 4. Coordinates give the side lengths; this diagram is an independent example."}]
         name: "Perimeter and side-length setups"
         key_prerequisites: [multi-step-equations, translating-sentences-to-equations]
+        step_check:
+          step: 'Count two widths and two lengths'
+          question: 'Why does the equation contain both $2w$ and $2(w+4)$?'
+          options:
+            - 'The perimeter is twice the area, so every side is doubled'
+            - 'Every perimeter formula starts with a factor of $2$ in front'
+            - 'The two lengths are equal, so $2(w+4)$ also covers the widths'
+            - 'A rectangle has two of each side, and all four are added'
+          answer: 'A rectangle has two of each side, and all four are added'
+          why: 'The perimeter is the sum of all four sides: two widths $w$ and two lengths $w+4$. With $w=8$ this is $16+24=40$.'
         exemplars:
-          - problem: "A rectangle's length is $3$ more than its width and the perimeter is $26$. Find the width."
-            answer: "5"
+          - problem: 'A rectangle''s length is $3$ cm more than its width and its perimeter is $26$ cm. Find the width.'
+            answer: '5'
+            answer_contract: {"kind": "unit", "quantity": "length", "unit": "cm", "allow_omitted": true}
+            solution_sketch: 'With width $w$, the perimeter is $2w+2(w+3)=26$. This is $4w+6=26$, so $4w=20$ and the width is $5$ cm.'
+          - problem: 'A triangle has sides $x$, $x+2$ and $x+4$, and its perimeter is $30$. Find the shortest side.'
+            answer: '8'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "$2w + 2(w + 3) = 26$; $4w + 6 = 26$; $w = 5$."
-          - problem: "A triangle has sides $x$, $x + 2$, and $x + 4$, and its perimeter is $30$. Find the shortest side."
-            answer: "8"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "$3x + 6 = 30$; $3x = 24$; $x = 8$."
-          - problem: "An isosceles triangle has equal sides $2x$ cm and base $x+3$ cm. Its perimeter is $28$ cm. Find $x$ in cm."
-            answer: "5"
-            answer_contract: {"kind":"unit","quantity":"length","unit":"cm","allow_omitted":true}
-            solution_sketch: "Add the sides: $2x+2x+(x+3)=28$. Then $5x=25$, hence $x=5$ cm; the side lengths are $10,10,8$ cm."
-          - problem: "A square has side $x-2$ cm and perimeter $24$ cm. Find $x$ in cm."
-            answer: "8"
-            answer_contract: {"kind":"unit","quantity":"length","unit":"cm","allow_omitted":true}
-            solution_sketch: "$4(x-2)=24$ gives $x-2=6$, hence $x=8$ cm. Four sides of $6$ cm total $24$ cm."
+            solution_sketch: 'The perimeter is $x+(x+2)+(x+4)=30$, so $3x+6=30$ and $3x=24$. The shortest side is $x=8$.'
+          - problem: 'An isosceles triangle has two equal sides of $2x$ cm and a base of $x+3$ cm. Its perimeter is $33$ cm. Find $x$.'
+            answer: '6'
+            answer_contract: {"kind": "unit", "quantity": "length", "unit": "cm", "allow_omitted": true}
+            solution_sketch: 'Add the sides: $2x+2x+(x+3)=33$. This gives $5x+3=33$, so $5x=30$ and $x=6$; the sides are $12$, $12$ and $9$ cm.'
+          - problem: 'A square has the side $x-2$ cm and a perimeter of $28$ cm. Find $x$.'
+            answer: '9'
+            answer_contract: {"kind": "unit", "quantity": "length", "unit": "cm", "allow_omitted": true}
+            solution_sketch: 'The perimeter is $4(x-2)=28$, so $x-2=7$ and $x=9$. Four sides of $7$ cm give $28$ cm.'
+          - problem: 'A farmer has $60$ m of fencing for a rectangular pen whose length is twice its width. How long is the pen?'
+            answer: '20'
+            answer_contract: {"kind": "unit", "quantity": "length", "unit": "m", "allow_omitted": true}
+            solution_sketch: 'With width $w$ and length $2w$, the fence is $2w+2(2w)=60$. This gives $6w=60$, so $w=10$ and the length is $2w=20$ m.'
+          - problem: 'A rectangular pen uses a wall for one side, so only three sides need a fence. The length along the wall is $4$ m more than the width, and the fence is $40$ m long. Find the width.'
+            answer: '12'
+            answer_contract: {"kind": "unit", "quantity": "length", "unit": "m", "allow_omitted": true}
+            solution_sketch: 'The fence covers two widths and one length: $2w+(w+4)=40$. This gives $3w=36$, so the width is $12$ m.'
+          - problem: 'A rectangle''s length is $5$ cm more than its width and its perimeter is $50$ cm. Sam solves $w+(w+5)=50$. What is the correct width?'
+            answer: '10'
+            answer_contract: {"kind": "unit", "quantity": "length", "unit": "cm", "allow_omitted": true}
+            solution_sketch: 'Sam counted only one width and one length, but the perimeter has two of each: $2w+2(w+5)=50$. Then $4w+10=50$, so $w=10$ cm.'
+          - problem: 'A square with side $9$ cm and an equilateral triangle have the same perimeter. Find the side of the triangle.'
+            answer: '12'
+            answer_contract: {"kind": "unit", "quantity": "length", "unit": "cm", "allow_omitted": true}
+            solution_sketch: 'The square has perimeter $4\times9=36$ cm, so $3s=36$ for the triangle. Then $s=12$, and the triangle side is $12$ cm.'
         constraints: "express each side in terms of one variable; check units"
     diagnostic_exemplar:
       problem: 'The length of a rectangle is $5$ more than its width and the perimeter is $38$. Find the width.'

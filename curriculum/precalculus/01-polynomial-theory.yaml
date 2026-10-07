@@ -24,86 +24,145 @@ topics:
       - id: kp1
         name: Remainder theorem
         key_prerequisites: [polynomial-division, evaluating-expressions]
-        constraints: "cubic or lower, integer coefficients; divisor x - c with |c| <= 3"
+        step_check:
+          step: 'Substitute $c$ into the polynomial $p(x)$'
+          question: 'Why does the value $p(1)$ equal the remainder on division by $x-1$?'
+          options:
+            - 'The remainder is the constant term of $p(x)$, and $x=1$ reveals it'
+            - 'Write $p(x)=(x-1)q(x)+r$; at $x=1$ the product is $0$, leaving $r$'
+            - 'The quotient $q(x)$ always equals $1$ when the divisor is $x-1$'
+            - 'At $x=1$ every power of $x$ equals $0$, so only the remainder is left'
+          answer: 'Write $p(x)=(x-1)q(x)+r$; at $x=1$ the product is $0$, leaving $r$'
+          why: 'Division gives $p(x)=(x-1)q(x)+r$ with $r$ a constant. Putting $x=1$ makes the term $(x-1)q(x)$ zero, so $p(1)=r$.'
+        try_first:
+          problem: 'Find the remainder when $x^2 - 5x + 3$ is divided by $x - 1$.'
+          answer_contract: {"kind": "exact"}
+          answer: '-1'
+          reveal: 'Long division works, but there is a shortcut: the remainder is the value of the polynomial at $x = 1$, which is $1 - 5 + 3 = -1$. The remainder theorem says this holds for every polynomial and every divisor $x - c$.'
         exemplars:
-          - problem: 'Find the remainder when $p(x) = x^2 + 3x + 5$ is divided by $x - 2$.'
-            answer: "15"
-            solution_sketch: 'Remainder $= p(2) = 4 + 6 + 5 = 15$.'
-          - problem: 'Find the remainder when $p(x) = x^3 - 4x + 1$ is divided by $x + 1$.'
-            answer: "4"
-            solution_sketch: '$p(-1) = -1 + 4 + 1 = 4$.'
-          - problem: "Find the remainder when p(x) = x^3 - 2x^2 + 4x - 7 is divided by x - 3."
-            answer: "14"
+          - problem: 'Find the remainder when $x^2 + 3x + 5$ is divided by $x - 2$.'
+            answer: '15'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Remainder theorem: for divisor x - c, the remainder is p(c), so here p(3) must be found. Substitute: p(3) = 27 - 18 + 12 - 7. Simplify to 14. The remainder is 14."
-          - problem: "Find the remainder when p(x) = 2x^3 + x^2 - 5x + 1 is divided by x + 2."
-            answer: "-1"
+            solution_sketch: 'By the remainder theorem, the remainder equals the value of the polynomial at $x = 2$. That value is $4 + 6 + 5 = 15$, so the remainder is $15$.'
+          - problem: 'What is the remainder when $x^3 - 4x + 1$ is divided by $x + 1$?'
+            answer: '4'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Remainder theorem: divide by x + 2, so c = -2, and the remainder is p(-2). Compute p(-2) = 2(-8) + 4 + 10 + 1. This simplifies to -1. The remainder is -1."
-          - problem: "Find the remainder when p(x) = x^2 - 9 is divided by x - 1."
-            answer: "-8"
+            solution_sketch: 'The divisor $x + 1$ is $x - (-1)$, so $c = -1$ and the remainder is the value at $-1$. That value is $-1 + 4 + 1 = 4$.'
+          - problem: 'The height of a drone in metres, $t$ seconds after launch, is $h(t) = t^3 - 6t^2 + 10t + 3$. A pilot divides $h(t)$ by $t - 3$. What height does the remainder give?'
+            answer: '6'
+            answer_contract: {"kind": "unit", "quantity": "length", "unit": "m", "allow_omitted": true}
+            solution_sketch: 'The remainder on division by $t - 3$ is $h(3) = 27 - 54 + 30 + 3 = 6$. So the remainder is $6$, which is the height of the drone in metres after $3$ seconds.'
+          - problem: 'Find the remainder when $2x^3 + x^2 - 5x + 1$ is divided by $x + 2$.'
+            answer: '-1'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Remainder theorem: with divisor x - 1, the remainder equals p(1). Substitute: p(1) = 1^2 - 9 = 1 - 9. This is -8. The remainder is -8."
-          - problem: "Find the remainder when p(x) = -x^3 + 2x^2 - 3x + 8 is divided by x + 3."
-            answer: "62"
+            solution_sketch: 'Here $c = -2$, so the remainder is the value at $-2$. That value is $2(-8) + 4 + 10 + 1 = -1$.'
+          - problem: 'Sam finds the remainder when $x^3 + 2x^2 - 5$ is divided by $x - 2$ by calculating the value at $-2$, and gets $-5$. What is the correct remainder?'
+            answer: '11'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Remainder theorem: divisor x + 3 means c = -3, so the remainder is p(-3). Substitute: p(-3) = -(-27) + 2(9) - 3(-3) + 8. This becomes 27 + 18 + 9 + 8, which simplifies to 62. The remainder is 62."
+            solution_sketch: 'The divisor $x - 2$ has $c = 2$, not $c = -2$, so the value at $2$ is needed. That value is $8 + 8 - 5 = 11$, so the remainder is $11$.'
+          - problem: 'A polynomial $p$ has $p(-2) = 9$, $p(0) = -3$, $p(1) = 4$ and $p(3) = 11$. What is the remainder when $p(x)$ is divided by $x + 2$?'
+            answer: '9'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The divisor $x + 2$ is $x - (-2)$, so the remainder is the value of $p$ at $-2$. The table gives $p(-2) = 9$, so the remainder is $9$.'
+          - problem: 'A stall''s profit in dollars on $x$ boxes is $P(x) = -x^3 + 6x^2 + 2x + 10$. What profit does the remainder give when $P(x)$ is divided by $x - 4$?'
+            answer: '50'
+            answer_contract: {"kind": "unit", "quantity": "dollar", "unit": "dollar", "allow_omitted": true}
+            solution_sketch: 'The remainder is the value at $x = 4$. That value is $-64 + 96 + 8 + 10 = 50$, so the remainder is $50$ dollars, the profit on $4$ boxes.'
+          - problem: 'Find the remainder when $-x^3 + 2x^2 - 3x + 8$ is divided by $x + 3$.'
+            answer: '62'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Here $c = -3$, so the remainder is the value at $-3$. That value is $27 + 18 + 9 + 8 = 62$.'
+        constraints: "cubic or lower, integer coefficients; divisor x - c with |c| <= 3; remainders asked directly, from a table of values, or in a measured context"
       - id: kp2
         name: Factor theorem
         key_prerequisites: [polynomial-division]
-        constraints: "yes/no factor checks on cubics with integer coefficients; divisor x - c with |c| <= 3; decided by evaluating p(c), never by long division"
+        step_check:
+          step: 'Since $p(1) = 0$, $x - 1$ is a factor of the polynomial'
+          question: 'Why does $p(1)=0$ show that $x-1$ is a factor?'
+          options:
+            - 'It shows that $x=1$ is also a root of the quotient, so $x-1$ divides twice'
+            - 'It shows that the quotient $q(x)$ is equal to $0$, so $x-1$ is all that remains'
+            - 'The remainder on division by $x-1$ is $p(1)$, so $0$ means an exact division'
+            - 'It shows that the constant term of the polynomial must equal $1$ or $-1$'
+          answer: 'The remainder on division by $x-1$ is $p(1)$, so $0$ means an exact division'
+          why: 'The remainder on division by $x-1$ equals $p(1)$. If it is $0$, the division is exact, so $x-1$ divides the polynomial.'
         exemplars:
-          - problem: "Consider p(x) = x^3 - 2x^2 - 9. Exactly one of four candidate divisors of the form x - c is a factor of p(x). Which of the following is a factor of p(x)? Select the correct option."
-            answer: "x - 3"
-            answer_contract: {"kind": "label", "options": [["x - 3"], ["x + 3"], ["x - 1"], ["x + 1"]]}
-            solution_sketch: "Write the full polynomial p(x) = x^3 - 2x^2 - 9 and test each candidate with the factor theorem by evaluating p(c). The evaluation gives p(3) = 27 - 18 - 9 = 0, so x - 3 is a factor. Each wrong option fails the same test: x + 3 gives p(-3) = -54 (wrong sign of the root), x - 1 gives p(1) = -10 (tested c = 1 instead of c = 3), and x + 1 gives p(-1) = -10 (tested c = -1 instead of c = 3). The answer is x - 3."
-          - problem: "Consider p(x) = x^3 + 8. Exactly one of four candidate divisors of the form x - c is a factor of p(x). Which of the following is a factor of p(x)? Select the correct option."
-            answer: "x + 2"
-            answer_contract: {"kind": "label", "options": [["x + 2"], ["x - 2"], ["x + 1"], ["x - 1"]]}
-            solution_sketch: "Write p(x) = x^3 + 8 and apply the factor theorem, which decides a factor x - c by the value of p(c). The needed evaluation is p(-2) = (-2)^3 + 8 = -8 + 8 = 0, so x + 2 is a factor. Every wrong option fails: x - 2 gives p(2) = 16 (wrong sign of the root), x + 1 gives p(-1) = 7 (tested c = -1 instead of c = -2), and x - 1 gives p(1) = 9 (tested c = 1 instead of c = -2). The answer is x + 2."
-          - problem: "To decide whether x + 1 is a factor of p(x) = x^3 + 2x^2 - 5x + 1, the factor theorem evaluates the polynomial at c = -1. Find p(-1)."
-            answer: "7"
+          - problem: 'Is $x + 2$ a factor of $x^3 - 3x^2 + 5x - 6$?'
+            answer: 'no'
+            answer_contract: {"kind": "label", "options": [["yes", "yes it is", "yes, it is", "it is a factor", "is a factor", "a factor", "it is", "yes it is a factor"], ["no", "no it is not", "no, it is not", "it is not a factor", "is not a factor", "not a factor", "it is not", "no it is not a factor"]]}
+            solution_sketch: 'Write $x + 2$ as $x - (-2)$ and find the value of the polynomial at $-2$. That value is $-8 - 12 - 10 - 6 = -36$, which is not $0$, so $x + 2$ is not a factor.'
+          - problem: 'A tank holds $V(x) = x^3 - 6x^2 + 3x + 2$ litres, and its height must divide $V(x)$ exactly. Exactly one of $x - 1$, $x - 2$ and $x - 3$ can be the height. Which one?'
+            answer: 'x - 1'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Write the full object p(x) = x^3 + 2x^2 - 5x + 1 and note that the divisor x + 1 corresponds to c = -1. By the factor theorem, substitute c = -1 into the polynomial: p(-1) = (-1)^3 + 2(-1)^2 - 5(-1) + 1 = -1 + 2 + 5 + 1 = 7. Since p(-1) is not 0, x + 1 would not be a factor, but the requested test value is 7. The answer is 7."
-          - problem: "Exactly one of x - 1, x - 2, x - 3 is a factor of p(x) = x^3 - 6x^2 + 3x + 2. Test each candidate with the factor theorem by evaluating p(c). Give your answer as the value of c in that factor x - c."
-            answer: "1"
+            solution_sketch: 'Test each candidate by finding the value at $c$. At $1$ the value is $1 - 6 + 3 + 2 = 0$, while at $2$ it is $-8$ and at $3$ it is $-16$. So the height is $x - 1$.'
+          - problem: 'Exactly one of $x + 2$, $x - 2$, $x + 1$ and $x - 1$ is a factor of $x^3 + 8$. Which one?'
+            answer: 'x + 2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Write p(x) = x^3 - 6x^2 + 3x + 2 and evaluate p(c) for each listed candidate, as the factor theorem requires. First, p(1) = 1 - 6 + 3 + 2 = 0, so x - 1 is a factor. The other candidates fail the test: p(2) = 8 - 24 + 6 + 2 = -8 and p(3) = 27 - 54 + 9 + 2 = -16, so neither x - 2 nor x - 3 is a factor. The answer is 1."
-          - problem: "How many of the divisors x + 1, x - 2, x + 2 are factors of p(x) = x^3 - 3x - 2? Decide each one with the factor theorem and give the number of factors as your answer."
-            answer: "2"
+            solution_sketch: 'A factor $x - c$ needs the value $0$ at $c$. At $-2$ the value is $-8 + 8 = 0$, but at $2$ it is $16$, at $-1$ it is $7$ and at $1$ it is $9$. So the factor is $x + 2$.'
+          - problem: 'Which of $x + 1$, $x - 2$ and $x + 2$ are factors of $x^3 - 3x - 2$?'
+            answer: 'x + 1, x - 2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Write the full polynomial p(x) = x^3 - 3x - 2 and evaluate p(c) for each candidate divisor, as the factor theorem directs. The evaluations are p(-1) = -1 + 3 - 2 = 0, p(2) = 8 - 6 - 2 = 0, and p(-2) = -8 + 6 - 2 = -4. So x + 1 and x - 2 are factors while x + 2 is not, giving a count of 2. The answer is 2."
-          - problem: "Test every integer c with |c| <= 3 in p(x) = x^3 - 6x^2 + 11x - 6 to find all divisors x - c that are factors. Find the sum of all such values of c."
-            answer: "6"
+            solution_sketch: 'Find the value at $-1$, at $2$ and at $-2$. The values are $-1 + 3 - 2 = 0$, $8 - 6 - 2 = 0$ and $-8 + 6 - 2 = -4$. So $x + 1$ and $x - 2$ are factors, and $x + 2$ is not.'
+          - problem: 'Sam tests whether $x + 3$ is a factor of $x^3 + 2x^2 - 5x - 6$. He finds the value at $3$, gets $24$ and says it is not a factor. Is $x + 3$ a factor?'
+            answer: 'yes'
+            answer_contract: {"kind": "label", "options": [["yes", "yes it is", "yes, it is", "it is a factor", "is a factor", "a factor", "it is", "yes it is a factor"], ["no", "no it is not", "no, it is not", "it is not a factor", "is not a factor", "not a factor", "it is not", "no it is not a factor"]]}
+            solution_sketch: 'Sam used the wrong number, because $x + 3$ is $x - (-3)$ and needs the value at $-3$. That value is $-27 + 18 + 15 - 6 = 0$, so $x + 3$ is a factor.'
+          - problem: 'Find every integer $c$ with $|c| \le 3$ for which $x - c$ is a factor of $x^3 - 6x^2 + 11x - 6$.'
+            answer: '1, 2, 3'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Write p(x) = x^3 - 6x^2 + 11x - 6 and evaluate p(c) at all six candidates c = 1, 2, 3, -1, -2, -3, as the factor theorem requires. The values are p(1) = 0, p(2) = 0, p(3) = 0, and p(-1) = -24, p(-2) = -60, p(-3) = -120. So the divisors of the required form are x - 1, x - 2, and x - 3, corresponding to c = 1, 2, 3. Their sum is 1 + 2 + 3 = 6. The answer is 6."
+            solution_sketch: 'Find the value of the polynomial at each integer from $-3$ to $3$. It is $0$ at $1$, $2$ and $3$, and it is $-24$, $-60$ and $-120$ at $-1$, $-2$ and $-3$. So $c = 1, 2, 3$.'
+          - problem: 'A crate has volume $V(x) = x^3 - 2x^2 - 9$ cubic feet. A joiner wants one edge to have length $x - c$ with $c$ a whole number, so that $x - c$ divides $V(x)$. Exactly one of $x - 3$, $x + 3$, $x - 1$ and $x + 1$ works. Which one?'
+            answer: 'x - 3'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The value at $3$ is $27 - 18 - 9 = 0$, so $x - 3$ divides $V(x)$. The value at $-3$ is $-54$, at $1$ it is $-10$ and at $-1$ it is $-12$, so the other three fail.'
+        constraints: "yes/no and which-divisor factor checks on cubics with integer coefficients; divisor x - c with |c| <= 3; decided by evaluating p(c), never by long division"
       - id: kp3
         name: Solve for an unknown coefficient
         key_prerequisites: [evaluating-expressions]
-        constraints: "one unknown coefficient k or c in a quadratic or cubic; set p(c) = 0 and solve a linear equation; integer answers"
+        step_check:
+          step: 'Substitute $x = 3$ into the polynomial $p(x) = x^2 + kx - 12$ and set it equal to 0'
+          question: 'Why must the value $p(3)$ be set equal to $0$?'
+          options:
+            - 'Because $x-3$ is a factor, the remainder $p(3)$ must be $0$'
+            - 'Because every polynomial in $x$ has a value of $0$ at $x=3$'
+            - 'Because $k$ is always found by making the whole polynomial zero'
+            - 'Because the divisor $x-3$ has a leading coefficient of $0$'
+          answer: 'Because $x-3$ is a factor, the remainder $p(3)$ must be $0$'
+          why: 'A factor $x-3$ divides the polynomial with remainder $p(3)$. An exact division needs $p(3)=0$, and that equation holds $k$.'
         exemplars:
           - problem: 'Find $k$ so that $x - 1$ is a factor of $x^3 + kx - 4$.'
-            answer: "3"
-            solution_sketch: '$p(1) = 1 + k - 4 = 0$, so $k = 3$.'
+            answer: '3'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Because $x - 1$ is a factor, the value at $x = 1$ must be $0$. That gives $1 + k - 4 = 0$, so $k = 3$.'
           - problem: 'Find $c$ so that $x + 2$ is a factor of $x^2 + 5x + c$.'
-            answer: "6"
-            solution_sketch: '$p(-2) = 4 - 10 + c = 0$.'
-          - problem: "Find $k$ so that $x - 3$ is a factor of $x^2 + kx + 6$."
-            answer: "-5"
+            answer: '6'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "First write the polynomial as $p(x) = x^2 + kx + 6$. The factor theorem says $p(3) = 0$ because $x - 3$ is a factor. Evaluate: $p(3) = 9 + 3k + 6 = 15 + 3k$. Solve the linear equation $15 + 3k = 0$, which gives $3k = -15$ and $k = -5$. The value is -5."
-          - problem: "Find $k$ so that $x + 1$ is a factor of $x^3 + kx^2 - 2x + 5$."
-            answer: "-6"
+            solution_sketch: 'A factor $x + 2$ needs the value $0$ at $x = -2$. That gives $4 - 10 + c = 0$, so $c = 6$.'
+          - problem: 'Find $k$ so that $x - 3$ is a factor of $x^2 + kx + 6$.'
+            answer: '-5'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Let $p(x) = x^3 + kx^2 - 2x + 5$. Since $x + 1 = x - (-1)$ is a factor, the factor theorem gives $p(-1) = 0$. Evaluate: $(-1)^3 + k(-1)^2 - 2(-1) + 5 = -1 + k + 2 + 5 = k + 6$. Set $k + 6 = 0$ and solve to get $k = -6$. The value is -6."
-          - problem: "Find $c$ so that $x + 4$ is a factor of $x^2 - 3x + c$."
-            answer: "-28"
+            solution_sketch: 'A factor $x - 3$ needs the value $0$ at $x = 3$. That gives $9 + 3k + 6 = 0$, so $3k = -15$ and $k = -5$.'
+          - problem: 'A rectangular lawn has area $x^2 + kx - 30$ square metres and length $x + 6$ metres, where $x$ is in metres. Find $k$.'
+            answer: '1'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Let $p(x) = x^2 - 3x + c$. Because $x + 4 = x - (-4)$ is a factor, the factor theorem says $p(-4) = 0$. Substitute: $p(-4) = 16 + 12 + c = 28 + c$. Solve $28 + c = 0$, so $c = -28$. The value is -28."
-          - problem: "Find $c$ so that $x - 2$ is a factor of $x^3 - 4x^2 + cx + 6$."
-            answer: "1"
+            solution_sketch: 'The length divides the area exactly, so the area is $0$ at $x = -6$. That gives $36 - 6k - 30 = 0$, so $6k = 6$ and $k = 1$.'
+          - problem: 'When $x^2 + kx + 5$ is divided by $x - 2$, the remainder is $3$. Find $k$.'
+            answer: '-3'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Write $p(x) = x^3 - 4x^2 + cx + 6$. Since $x - 2$ is a factor, the factor theorem gives $p(2) = 0$. Evaluate: $8 - 16 + 2c + 6 = 2c - 2$. Set $2c - 2 = 0$, so $2c = 2$ and $c = 1$. The value is 1."
+            solution_sketch: 'The remainder is the value at $x = 2$, which is $4 + 2k + 5$. Setting $9 + 2k = 3$ gives $2k = -6$, so $k = -3$.'
+          - problem: 'Sam wants $x + 4$ to be a factor of $x^2 - 3x + c$. He sets the value at $4$ equal to $0$ and gets $c = -4$. What is the correct value of $c$?'
+            answer: '-28'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The factor $x + 4$ is $x - (-4)$, so the value at $-4$ must be $0$. That gives $16 + 12 + c = 0$, so $c = -28$.'
+          - problem: 'A box has height $x - 2$ cm and volume $V(x) = x^3 - 4x^2 + cx + 6$ cubic cm. The height divides the volume exactly. Find $c$.'
+            answer: '1'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The volume is $0$ at $x = 2$, which gives $8 - 16 + 2c + 6 = 0$. So $2c - 2 = 0$ and $c = 1$.'
+          - problem: 'Find $k$ so that $x + 1$ is a factor of $x^3 + kx^2 - 2x + 5$.'
+            answer: '-6'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'A factor $x + 1$ needs the value $0$ at $x = -1$. That gives $-1 + k + 2 + 5 = 0$, so $k + 6 = 0$ and $k = -6$.'
+        constraints: "one unknown coefficient k or c in a quadratic or cubic; set p(c) = 0 (or p(c) = the given remainder) and solve a linear equation; integer answers"
     diagnostic_exemplar:
       problem: 'Find $k$ so that $x - 2$ is a factor of $x^3 + kx - 10$.'
       answer: "1"
@@ -138,55 +197,136 @@ topics:
       - id: kp1
         name: List the possible rational roots
         key_prerequisites: [divisibility-rules]
-        constraints: "candidates ±(factor of constant)/(factor of leading coefficient); keep lists under 12 entries"
+        step_check:
+          step: 'Form all possible fractions'
+          question: 'Why do the possible roots have a factor of the constant term on top and a factor of the leading coefficient on the bottom?'
+          options:
+            - 'A root $p/q$ put into the equation forces $p$ to divide the constant and $q$ the leading coefficient'
+            - 'The constant term and the leading coefficient are the two roots of the polynomial'
+            - 'Every polynomial root is the constant term divided by the leading coefficient'
+            - 'Dividing by the leading coefficient makes the factors of the constant term the only integers that can be roots'
+          answer: 'A root $p/q$ put into the equation forces $p$ to divide the constant and $q$ the leading coefficient'
+          why: 'Put $x=p/q$ in lowest terms into the equation and multiply by $q^n$. Then $p$ divides the constant term and $q$ divides the leading coefficient.'
         exemplars:
           - problem: 'List all possible rational roots of $x^3 - 3x + 2$.'
-            answer: "-2, -1, 1, 2"
-            answer_contract: {kind: list, ordered: false, member: {kind: exact}}
-            solution_sketch: 'Possible rational roots are $\\pm$ (factors of 2) $= \\pm 1, \\pm 2$.'
+            answer: '-2, -1, 1, 2'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The leading coefficient is $1$, so every possible root is a factor of the constant term $2$. The factors of $2$ are $\pm 1$ and $\pm 2$.'
           - problem: 'List all possible rational roots of $2x^3 - x^2 + 2x - 1$.'
-            answer: "-1, -1/2, 1/2, 1"
-            answer_contract: {kind: list, ordered: false, member: {kind: exact}}
-            solution_sketch: 'Possible rational roots are $\\pm$ (factors of 1)/(factors of 2) $= \\pm 1, \\pm 1/2$.'
+            answer: '-1, -1/2, 1/2, 1'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The constant term $-1$ has factors $\pm 1$ and the leading coefficient $2$ has factors $\pm 1, \pm 2$. The fractions are $\pm 1$ and $\pm \frac{1}{2}$.'
+          - problem: 'The width $w$ of a planter, in metres, satisfies $2w^3 + 3w^2 - 8w + 3 = 0$. List all rational values of $w$ that the rational root theorem allows.'
+            answer: '-3, -3/2, -1, -1/2, 1/2, 1, 3/2, 3'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The constant term $3$ has factors $\pm 1, \pm 3$ and the leading coefficient $2$ has factors $\pm 1, \pm 2$. The fractions are $\pm 1, \pm 3, \pm \frac{1}{2}, \pm \frac{3}{2}$.'
+          - problem: 'Which of $\frac{1}{3}$, $3$, $-2$ and $\frac{2}{3}$ cannot be a rational root of $3x^3 - 4x^2 + 3x - 2$?'
+            answer: '3'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The numerator of a root must divide $2$ and the denominator must divide $3$. The number $3$ has numerator $3$, which does not divide $2$, so $3$ cannot be a root.'
+          - problem: 'Sam lists the possible rational roots of $2x^3 + x^2 - 3x + 5$ as the factors of $2$ divided by the factors of $5$. What is the correct list?'
+            answer: '-5, -5/2, -1, -1/2, 1/2, 1, 5/2, 5'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The factors of the constant term $5$ go on top and the factors of the leading coefficient $2$ go on the bottom. The list is $\pm 1, \pm 5, \pm \frac{1}{2}, \pm \frac{5}{2}$.'
+          - problem: 'List all possible rational roots of $x^4 - 5x^2 + 4$.'
+            answer: '-4, -2, -1, 1, 2, 4'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The leading coefficient is $1$, so every possible root is a factor of the constant term $4$. The factors of $4$ are $\pm 1, \pm 2, \pm 4$.'
+          - problem: 'The thickness $s$ of a metal plate, in centimetres, satisfies $s^3 - 5s^2 + 2s + 8 = 0$. List all rational values of $s$ that the rational root theorem allows.'
+            answer: '-8, -4, -2, -1, 1, 2, 4, 8'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The leading coefficient is $1$, so every possible value is a factor of the constant term $8$. The factors of $8$ are $\pm 1, \pm 2, \pm 4, \pm 8$.'
+        constraints: "candidates ±(factor of constant)/(factor of leading coefficient); keep lists to at most 8 entries"
       - id: kp2
         name: Test candidates to find a root
         key_prerequisites: [remainder-factor-theorems]
-        constraints: "cubics with integer coefficients and at least one root among ±1, ±2, ±3, ±1/2; test by evaluating p at candidates"
+        step_check:
+          step: 'List possible rational roots'
+          question: 'Why is it enough to test only the numbers in this list?'
+          options:
+            - 'Every number in the list is a root, so any one of them works'
+            - 'The list holds every whole number between the constant term and the leading coefficient'
+            - 'Every rational root must be on the list, so no other fraction can be a root'
+            - 'The list gives the points where the graph crosses the axis, so testing confirms them'
+          answer: 'Every rational root must be on the list, so no other fraction can be a root'
+          why: 'The theorem says any rational root appears in the list. A number outside the list cannot be a root, so the search stays finite.'
         exemplars:
-          - problem: 'Find one rational root of $x^3 - 6x^2 + 11x - 6$.'
-            answer: "1"
-            solution_sketch: '$p(1) = 1 - 6 + 11 - 6 = 0$; in fact $2$ and $3$ work too.'
+          - problem: 'Find the rational root of $x^3 - 2x^2 + 3x - 6$.'
+            answer: '2'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The possible roots are the factors of $6$. The value at $1$ is $-4$, and the value at $2$ is $8 - 8 + 6 - 6 = 0$, so the root is $2$.'
           - problem: 'Find the rational root of $2x^3 - x^2 + 2x - 1$.'
-            answer: "1/2"
-            solution_sketch: '$p(1/2) = \frac{1}{4} - \frac{1}{4} + 1 - 1 = 0$.'
-          - problem: "Find one rational root of x^3 - 2x^2 + 3x - 6."
-            answer: "2"
+            answer: '1/2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Write p(x) = x^3 - 2x^2 + 3x - 6. The rational root theorem lists candidate 2. Evaluate p(2) = 8 - 8 + 6 - 6 = 0. By the factor theorem, 2 is a root, so the rational root is 2."
-          - problem: "Find one rational root of x^3 + 2x^2 + 3x + 2."
-            answer: "-1"
+            solution_sketch: 'The possible roots are $\pm 1$ and $\pm \frac{1}{2}$. The value at $1$ is $2$, but the value at $\frac{1}{2}$ is $\frac{1}{4} - \frac{1}{4} + 1 - 1 = 0$, so the root is $\frac{1}{2}$.'
+          - problem: 'A box has length $x$ m, width $(x + 1)$ m and height $(x + 3)$ m, and its volume is $72$ cubic metres. Find $x$.'
+            answer: '3'
+            answer_contract: {"kind": "unit", "quantity": "length", "unit": "m", "allow_omitted": true}
+            solution_sketch: 'The volume gives $x(x + 1)(x + 3) = 72$, which is $x^3 + 4x^2 + 3x - 72 = 0$. The possible roots are the factors of $72$, and the value at $3$ is $27 + 36 + 9 - 72 = 0$, so $x = 3$.'
+          - problem: 'Find the rational root of $x^3 + 2x^2 + 3x + 2$.'
+            answer: '-1'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Write p(x) = x^3 + 2x^2 + 3x + 2. The rational root theorem lists candidate -1. Evaluate p(-1) = -1 + 2 - 3 + 2 = 0. By the factor theorem, -1 is a root, so the rational root is -1."
-          - problem: "Find the rational root of 2x^3 + x^2 + 2x + 1."
-            answer: "-1/2"
+            solution_sketch: 'The possible roots are $\pm 1$ and $\pm 2$. The value at $1$ is $8$, and the value at $-1$ is $-1 + 2 - 3 + 2 = 0$, so the root is $-1$.'
+          - problem: 'Find the rational root of $2x^3 + x^2 + 2x + 1$.'
+            answer: '-1/2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Write p(x) = 2x^3 + x^2 + 2x + 1. The rational root theorem lists candidate -1/2. Evaluate p(-1/2) = 2(-1/8) + 1/4 + 2(-1/2) + 1 = 0. By the factor theorem, -1/2 is a root, so the rational root is -1/2."
-          - problem: "Find the rational root of x^3 - 3x^2 + x - 3."
-            answer: "3"
+            solution_sketch: 'The possible roots are $\pm 1$ and $\pm \frac{1}{2}$. The value at $-\frac{1}{2}$ is $-\frac{1}{4} + \frac{1}{4} - 1 + 1 = 0$, so the root is $-\frac{1}{2}$.'
+          - problem: 'Find the rational root of $x^3 - 6x^2 + x - 6$.'
+            answer: '6'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Write p(x) = x^3 - 3x^2 + x - 3. The rational root theorem lists candidate 3. Evaluate p(3) = 27 - 27 + 3 - 3 = 0. By the factor theorem, 3 is a root, so the rational root is 3."
+            solution_sketch: 'The possible roots are the factors of $6$. The values at $1$, $2$ and $3$ are not $0$, and the value at $6$ is $216 - 216 + 6 - 6 = 0$, so the root is $6$.'
+          - problem: 'A company''s loss in thousands of dollars on $x$ hundred items is $L(x) = x^3 - 4x^2 + 3x - 12$. For how many hundred items does it break even, so that $L(x) = 0$?'
+            answer: '4'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The possible values are the factors of $12$. The values at $1$, $2$ and $3$ are not $0$, and the value at $4$ is $64 - 64 + 12 - 12 = 0$, so the company breaks even at $4$ hundred items.'
+        constraints: "cubics with integer coefficients and exactly one rational root among ±1, ±2, ±3, ±6, ±1/2, ... ; test by evaluating p at candidates"
       - id: kp3
         name: Factor completely after finding a root
         key_prerequisites: [polynomial-division, quadratic-equations-factoring]
-        constraints: "monic cubics with three distinct integer roots, |root| <= 5; divide out the found root, then factor the quadratic"
+        step_check:
+          step: 'Using polynomial division or synthetic division, we get $x^2 - x - 6$'
+          question: 'Why does dividing by $x-2$ leave no remainder?'
+          options:
+            - 'The divisor $x-2$ is always a factor of a monic cubic'
+            - 'Because $p(2)=0$, the remainder theorem gives remainder $0$'
+            - 'The remainder is the constant term $12$ divided by $2$, which is a whole number'
+            - 'Synthetic division never leaves a remainder when the divisor is linear'
+          answer: 'Because $p(2)=0$, the remainder theorem gives remainder $0$'
+          why: 'The remainder on division by $x-2$ is $p(2)$. The test showed $p(2)=0$, so the division is exact and the quotient is a quadratic.'
         exemplars:
           - problem: 'Solve $x^3 - 2x^2 - 5x + 6 = 0$.'
-            answer: "-2, 1, 3"
-            answer_contract: {kind: list, ordered: false, member: {kind: exact}}
-            solution_sketch: '$p(1) = 0$; dividing gives $x^2 - x - 6 = (x - 3)(x + 2)$.'
+            answer: '-2, 1, 3'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The value at $1$ is $0$, so $x - 1$ is a factor. Division leaves $x^2 - x - 6 = (x - 3)(x + 2)$, so the roots are $1$, $3$ and $-2$.'
           - problem: 'Solve $x^3 - 6x^2 + 11x - 6 = 0$.'
-            answer: "1, 2, 3"
-            answer_contract: {kind: list, ordered: false, member: {kind: exact}}
+            answer: '1, 2, 3'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The value at $1$ is $0$, so $x - 1$ is a factor. Division leaves $x^2 - 5x + 6 = (x - 2)(x - 3)$, so the roots are $1$, $2$ and $3$.'
+          - problem: 'Solve $x^3 + 2x^2 - 5x - 6 = 0$.'
+            answer: '-3, -1, 2'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The value at $-1$ is $-1 + 2 + 5 - 6 = 0$, so $x + 1$ is a factor. Division leaves $x^2 + x - 6 = (x + 3)(x - 2)$, so the roots are $-1$, $-3$ and $2$.'
+          - problem: 'Factor $x^3 - 7x + 6$.'
+            answer: '(x - 1)(x - 2)(x + 3)'
+            answer_contract: {"kind": "required_form", "form": "factored_polynomial"}
+            solution_sketch: 'The value at $1$ is $1 - 7 + 6 = 0$, so $x - 1$ is a factor. Division leaves $x^2 + x - 6 = (x - 2)(x + 3)$, which gives the full factorization.'
+          - problem: 'The volume of a box in cubic metres is $V(x) = x^3 + 9x^2 + 26x + 24$, where $x$ is in metres. Write $V(x)$ as the product of the three side lengths.'
+            answer: '(x + 2)(x + 3)(x + 4)'
+            answer_contract: {"kind": "required_form", "form": "factored_polynomial"}
+            solution_sketch: 'The value at $-2$ is $-8 + 36 - 52 + 24 = 0$, so $x + 2$ is a side. Division leaves $x^2 + 7x + 12 = (x + 3)(x + 4)$, so the sides are $x + 2$, $x + 3$ and $x + 4$.'
+          - problem: 'The height of a track section is $h(x) = x^3 - 4x^2 - 11x + 30$ metres, where $x$ is the distance in tens of metres. For $0 \le x \le 6$, at which values of $x$ is the track at ground level?'
+            answer: '2, 5'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The value at $2$ is $8 - 16 - 22 + 30 = 0$, so $x - 2$ is a factor. Division leaves $x^2 - 2x - 15 = (x - 5)(x + 3)$, so the zeros are $2$, $5$ and $-3$, and only $2$ and $5$ lie in the range.'
+          - problem: 'Sam finds that $x = 2$ is a root of $x^3 - 3x^2 - 10x + 24 = 0$ and divides to get $x^2 - x - 12 = (x - 4)(x + 3)$. He gives the solutions as $2, -4, 3$. What are the correct solutions?'
+            answer: '-3, 2, 4'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'A factor $x - 4$ gives the root $4$, not $-4$, and a factor $x + 3$ gives the root $-3$, not $3$. With the root $2$, the solutions are $-3$, $2$ and $4$.'
+          - problem: 'Solve $2x^3 - 3x^2 - 11x + 6 = 0$.'
+            answer: '-2, 1/2, 3'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The value at $3$ is $54 - 27 - 33 + 6 = 0$, so $x - 3$ is a factor. Division leaves $2x^2 + 3x - 2 = (2x - 1)(x + 2)$, so the roots are $3$, $\frac{1}{2}$ and $-2$.'
+        constraints: "monic cubics with three distinct integer roots, |root| <= 5, plus one with leading coefficient 2 and a rational root 1/2; divide out the found root, then factor the quadratic"
     diagnostic_exemplar:
       problem: 'Solve $x^3 - 4x^2 + x + 6 = 0$.'
       answer: "-1, 2, 3"
@@ -219,84 +359,149 @@ topics:
       - id: kp1
         name: Count roots with multiplicity
         key_prerequisites: [remainder-factor-theorems]
-        constraints: "factored polynomials of degree 3-5"
+        step_check:
+          step: 'Calculate the degree of the polynomial by adding the multiplicities'
+          question: 'Why is the degree of $(x-3)^2(x+4)^3$ equal to $2+3$?'
+          options:
+            - 'The degree is the number of distinct roots, and the sum only checks it'
+            - 'Each factor $(x-r)^m$ adds $m$ to the degree, and the degrees add in a product'
+            - 'The exponents multiply when the factors are multiplied, so the sum is a shortcut'
+            - 'Each root adds $1$ to the degree, whatever its multiplicity is'
+          answer: 'Each factor $(x-r)^m$ adds $m$ to the degree, and the degrees add in a product'
+          why: 'The factor $(x-3)^2$ has degree $2$ and $(x+4)^3$ has degree $3$. The degree of a product is the sum of the degrees, which is $5$.'
         exemplars:
-          - problem: "The polynomial p(x) = (x - 2)^3 (x + 1)^2 is fully factored. Find the multiplicity of the root x = 2."
-            answer: "3"
+          - problem: 'The polynomial $p(x) = (x - 2)^3 (x + 1)^2$ is in factored form. What is the multiplicity of the root $x = 2$?'
+            answer: '3'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Factor theorem: each factor x - r gives a root r. Multiplicity rule: the exponent on x - 2 is 3. The multiplicity is 3."
-          - problem: 'Counting multiplicity, how many roots does a degree-$7$ polynomial have (over the complex numbers)?'
-            answer: "7"
-          - problem: "The polynomial p(x) = (x + 4)(x - 1)^2 (x - 3)^2 is fully factored. Find the degree of p."
-            answer: "5"
+            solution_sketch: 'The multiplicity of a root is the exponent of its factor. The factor $x - 2$ has exponent $3$, so the multiplicity is $3$.'
+          - problem: 'Counting multiplicity, how many roots does a polynomial of degree $7$ have over the complex numbers?'
+            answer: '7'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Degree rule: the degree of a product of linear factors is the sum of the exponents. Multiplicity sum: 1 + 2 + 2 = 5. The degree is 5."
-          - problem: "The polynomial p(x) = (2x - 6)^4 (x + 5) is fully factored. Find the multiplicity of the root x = 3."
-            answer: "4"
+            solution_sketch: 'The fundamental theorem of algebra says a polynomial of degree $n$ has exactly $n$ complex roots when each root is counted with its multiplicity. So a polynomial of degree $7$ has $7$ roots.'
+          - problem: 'A polynomial $p(x) = (x + 4)(x - 1)^2 (x - 3)^2$ is in factored form. What is the degree of $p$?'
+            answer: '5'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Factor theorem: 2x - 6 = 2(x - 3), so x = 3 is a root. Multiplicity rule: the exponent on the factor x - 3 is 4. The multiplicity is 4."
-          - problem: "The polynomial p(x) = (x - 1)^2 (x + 2)^3 (x - 4) is fully factored. Find the multiplicity of the root x = -2."
-            answer: "3"
+            solution_sketch: 'The degree of a product of linear factors is the sum of the exponents. The exponents are $1$, $2$ and $2$, and $1 + 2 + 2 = 5$.'
+          - problem: 'A polynomial of degree $7$ with real coefficients has the real roots $x = 1$ with multiplicity $3$ and $x = -2$ with multiplicity $2$, and no other real roots. How many of its roots are not real, counting multiplicity?'
+            answer: '2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Factor theorem: x + 2 = x - (-2) gives the root -2. Multiplicity rule: the exponent on x + 2 is 3. The multiplicity is 3."
-          - problem: "The polynomial p(x) = (x - 5)^2 (x + 1)^3 (x - 2)^4 is fully factored. Find the smallest multiplicity among its roots."
-            answer: "2"
+            solution_sketch: 'All $7$ roots are complex when counted with multiplicity. The real roots use $3 + 2 = 5$ of them, so $7 - 5 = 2$ roots are not real.'
+          - problem: 'The polynomial $p(x) = (2x - 6)^4 (x + 5)$ is in factored form. What is the multiplicity of the root $x = 3$?'
+            answer: '4'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Multiplicity list: the exponents give multiplicities 2, 3, and 4. Smallest value rule: compare the numbers 2, 3, and 4. The smallest multiplicity is 2."
+            solution_sketch: 'Write $2x - 6 = 2(x - 3)$, so the factor $(2x - 6)^4$ contains $(x - 3)^4$. The root $x = 3$ therefore has multiplicity $4$.'
+          - problem: 'Sam says that $p(x) = (x - 5)^2 (x + 1)^3 (x - 2)^4$ has three roots, so its degree is $3$. What is the degree of $p$?'
+            answer: '9'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The polynomial has three different roots, but the degree adds the multiplicities. The sum is $2 + 3 + 4 = 9$, so the degree is $9$.'
+          - problem: 'A polynomial of degree $8$ with real coefficients has the real roots $x = -1$ with multiplicity $3$ and $x = 3$ with multiplicity $1$, and no other real roots. How many of its roots are not real, counting multiplicity?'
+            answer: '4'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'All $8$ roots are complex when counted with multiplicity. The real roots use $3 + 1 = 4$ of them, so $8 - 4 = 4$ roots are not real.'
+          - problem: 'What is the multiplicity of the root $x = -3$ of $p(x) = (x^2 - 9)(x + 3)$?'
+            answer: '2'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Factor $x^2 - 9 = (x - 3)(x + 3)$, so $p(x) = (x - 3)(x + 3)^2$. The factor $x + 3$ has exponent $2$, so the multiplicity is $2$.'
+        constraints: "factored polynomials of degree 3-5; degree and multiplicity from the exponents; non-real root counts from the degree"
       - id: kp2
         name: Crossing versus touching at a repeated root
         key_prerequisites: [quadratic-equations-factoring]
-        constraints: "odd multiplicity crosses the x-axis; even multiplicity touches and turns"
+        step_check:
+          step: 'Apply the rule: odd multiplicity crosses the $x$-axis, even multiplicity touches and turns'
+          question: 'Why does a factor $(x+1)^2$ make the graph touch the axis and turn around?'
+          options:
+            - 'A square makes the graph steeper, so it bounces off the axis'
+            - 'The square factor moves the zero off the axis, so the graph only comes close'
+            - 'The square counts the zero twice, so the graph crosses twice and ends on the same side'
+            - 'The square is never negative, so $p(x)$ keeps its sign on both sides of $x=-1$'
+          answer: 'The square is never negative, so $p(x)$ keeps its sign on both sides of $x=-1$'
+          why: 'Near $x=-1$ the factor $(x+1)^2$ is positive on both sides, so $p(x)$ does not change sign. The graph reaches the axis and turns back.'
+        try_first:
+          problem: 'Does the graph of $y = (x - 1)^2$ cross the $x$-axis at $x = 1$, or does it only touch the axis there?'
+          answer_contract: {"kind": "label", "options": [["cross", "crosses", "it crosses", "the graph crosses", "crosses the axis", "it crosses the axis", "the graph crosses the axis", "crosses the x-axis"], ["touch", "touches", "it touches", "only touches", "it only touches", "touches the axis", "it touches the axis", "the graph touches the axis"]]}
+          answer: 'touch'
+          reveal: 'The square $(x - 1)^2$ is never negative, so $y$ stays on one side of the axis and the graph only touches it at $x = 1$. A repeated factor with an even exponent does the same for every polynomial.'
         exemplars:
-          - problem: 'For $p(x) = (x - 1)^2 (x + 3)$, at which zero does the graph touch without crossing?'
-            answer: "x = 1"
-            solution_sketch: 'Even multiplicity touches; odd multiplicity crosses.'
-          - problem: "The polynomial is p(x) = (x + 2)^3. Find the multiplicity of the zero at x = -2."
-            answer: "3"
+          - problem: 'For $p(x) = (x - 1)^2 (x + 3)$, at which zero does the graph touch the $x$-axis without crossing it?'
+            answer: 'x = 1'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1: by the definition of multiplicity, the factor (x + 2) appears with exponent 3, so the zero x = -2 has multiplicity 3. Step 2: by the parity rule, an odd multiplicity means the graph crosses the x-axis at this zero, consistent with the repeated factor. The answer is 3."
-          - problem: "The polynomial is p(x) = (x + 1)^3 (x - 2)^2. Find the x-coordinate of the zero where the graph touches the x-axis without crossing."
-            answer: "2"
+            solution_sketch: 'The zero $x = 1$ has multiplicity $2$, which is even, so the graph touches the axis there. The zero $x = -3$ has multiplicity $1$, so the graph crosses there.'
+          - problem: 'The polynomial is $p(x) = (x + 1)^3 (x - 2)^2$. At which zero does the graph cross the $x$-axis?'
+            answer: 'x = -1'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1: the factors show zeros at x = -1 with multiplicity 3 and x = 2 with multiplicity 2. Step 2: by the parity rule, an odd multiplicity crosses and an even multiplicity touches without crossing. The touching zero is x = 2, so the answer is 2."
-          - problem: "The polynomial is p(x) = x^2 (x - 3)^3 (x + 1)^4. Find the sum of the x-coordinates of the zeros where the graph touches the x-axis without crossing."
-            answer: "-1"
+            solution_sketch: 'The zero $x = -1$ has multiplicity $3$, which is odd, so the graph crosses the axis there. The zero $x = 2$ has multiplicity $2$, so the graph only touches the axis there.'
+          - problem: 'The polynomial is $p(x) = x^2 (x - 3)^3 (x + 1)^4$. At which zeros does the graph touch the $x$-axis without crossing it?'
+            answer: '0, -1'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1: the factors show zeros at x = 0 with multiplicity 2, x = 3 with multiplicity 3, and x = -1 with multiplicity 4. Step 2: by the parity rule, even multiplicities touch without crossing, so the touching zeros are x = 0 and x = -1. Step 3: their sum is 0 + (-1) = -1, so the answer is -1."
-          - problem: "A polynomial p(x) has a zero at x = 5 where its graph touches the x-axis without crossing. Find the smallest possible multiplicity of this zero."
-            answer: "2"
+            solution_sketch: 'The multiplicities are $2$ at $x = 0$, $3$ at $x = 3$ and $4$ at $x = -1$. The even ones, at $0$ and $-1$, touch the axis, and the odd one at $3$ crosses it.'
+          - problem: 'Does the graph of $p(x) = (x - 2)^2 (x + 5)^3$ cross the $x$-axis or only touch it at $x = -5$?'
+            answer: 'cross'
+            answer_contract: {"kind": "label", "options": [["cross", "crosses", "it crosses", "the graph crosses", "crosses the axis", "it crosses the axis", "the graph crosses the axis", "crosses the x-axis"], ["touch", "touches", "it touches", "only touches", "it only touches", "touches the axis", "it touches the axis", "the graph touches the axis"]]}
+            solution_sketch: 'The factor $(x + 5)^3$ has the odd exponent $3$, so the zero $x = -5$ has odd multiplicity. A zero of odd multiplicity is a crossing, so the graph crosses the axis.'
+          - problem: 'The height of a drone in metres, $t$ seconds after launch, is $h(t) = t(t - 3)^2$. At what time after launch does the drone touch the ground and rise again?'
+            answer: '3'
+            answer_contract: {"kind": "unit", "quantity": "time", "unit": "s", "allow_omitted": true}
+            solution_sketch: 'The height is $0$ at $t = 0$ and $t = 3$. The factor $(t - 3)^2$ has even multiplicity, so the drone touches the ground at $t = 3$ and does not go below it.'
+          - problem: 'A polynomial has a zero at $x = 5$ where its graph touches the $x$-axis without crossing. What is the smallest possible multiplicity of this zero?'
+            answer: '2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1: by the parity rule, a zero where the graph touches the x-axis without crossing has an even multiplicity. Step 2: the smallest positive even integer is 2, so a double root is the least possibility. The answer is 2."
-          - problem: "The polynomial is p(x) = (x - 2)^2 (x + 5)^3. Find the x-coordinate of the zero where the graph crosses the x-axis."
-            answer: "-5"
+            solution_sketch: 'A zero where the graph touches without crossing has even multiplicity. The smallest positive even number is $2$, so a double zero is the least possible.'
+          - problem: 'Sam reads $p(x) = (x + 2)^2 (x - 5)^3$ and says the graph touches the $x$-axis at $x = 5$. At which zero does the graph really touch the axis?'
+            answer: 'x = -2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1: the factors show zeros at x = 2 with multiplicity 2 and x = -5 with multiplicity 3. Step 2: by the parity rule, an odd multiplicity crosses the x-axis while an even multiplicity only touches it. The crossing zero is x = -5, so the answer is -5."
+            solution_sketch: 'Sam confused the exponents. The factor $(x + 2)^2$ has the even exponent $2$, so the graph touches the axis at $x = -2$, while the odd exponent $3$ at $x = 5$ gives a crossing.'
+          - problem: 'A shop''s profit in thousands of dollars in month $m$ is $P(m) = (m - 2)^2 (m - 8)$. In which month does the profit reach $0$ and turn back without changing sign?'
+            answer: '2'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The profit is $0$ at $m = 2$ and $m = 8$. The factor $(m - 2)^2$ has even multiplicity, so the sign does not change at $m = 2$, while at $m = 8$ it does.'
+        constraints: "odd multiplicity crosses the x-axis; even multiplicity touches and turns"
       - id: kp3
         name: Build a polynomial from given roots
         key_prerequisites: [polynomial-multiplication]
-        constraints: "degree 3-4, leading coefficient 1, integer roots with at most one double root; expand only when the problem says to"
+        step_check:
+          step: 'Write each root as a factor: $(x - 1)^2$ and $(x + 3)$'
+          question: 'Why is the root $x=-3$ written as the factor $(x+3)$?'
+          options:
+            - 'Every root is written with a plus sign, so $-3$ and $3$ both give $(x+3)$'
+            - 'The constant term of the polynomial must be $+3$, so the factor is $x+3$'
+            - 'The factor $x+3$ is zero at $x=-3$, so the product is zero there'
+            - 'The factor takes the absolute value of the root to keep coefficients positive'
+          answer: 'The factor $x+3$ is zero at $x=-3$, so the product is zero there'
+          why: 'A product is zero when one factor is zero. The factor $x+3$ is zero exactly when $x=-3$, so it puts a root at $-3$.'
         exemplars:
-          - problem: 'Write a degree-$3$ polynomial with leading coefficient $1$, a double root at $x = 2$, and a root at $x = -5$. Expand it.'
-            answer: "x^3 + x^2 - 16x + 20"
-            solution_sketch: '$(x-2)^2(x+5) = (x^2 - 4x + 4)(x + 5) = x^3 + x^2 - 16x + 20$.'
-          - problem: 'Write, in factored form, a degree-$4$ polynomial with roots $0$, $3$ (double), and $-1$, leading coefficient $1$.'
-            answer: "x(x - 3)^2 (x + 1)"
-          - problem: "Write a degree-3 polynomial with leading coefficient 1, a double root at x = 3, and a simple root at x = -2. Give the expanded polynomial."
-            answer: "x^3 - 4x^2 - 3x + 18"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Start from the roots: a double root at 3 gives (x - 3)^2, and a simple root at -2 gives (x + 2), so the full object is (x - 3)^2 (x + 2). Expand the square by polynomial multiplication: (x - 3)^2 = x^2 - 6x + 9. Multiply by x + 2: (x^2 - 6x + 9)(x + 2) = x^3 - 4x^2 - 3x + 18. The expanded polynomial is x^3 - 4x^2 - 3x + 18."
-          - problem: "Write a degree-4 polynomial with leading coefficient 1, roots -1 and 4, and a double root at x = 2. Give the expanded polynomial."
-            answer: "x^4 - 7x^3 + 12x^2 + 4x - 16"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The roots give the factors: (x + 1), (x - 2)^2 for the double root, and (x - 4). The full object is (x + 1)(x - 2)^2 (x - 4). Expand (x - 2)^2 = x^2 - 4x + 4. Multiply (x + 1)(x - 4) = x^2 - 3x - 4, then multiply by x^2 - 4x + 4 to get x^4 - 7x^3 + 12x^2 + 4x - 16. The expanded polynomial is x^4 - 7x^3 + 12x^2 + 4x - 16."
-          - problem: "Write a degree-3 polynomial with leading coefficient 1 and roots 0, -3, and 2. Give the polynomial in factored form, without expanding."
-            answer: "x(x + 3)(x - 2)"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The roots 0, -3, and 2 give the factors x, (x + 3), and (x - 2). The leading coefficient is 1, so the full object is x(x + 3)(x - 2). This is already factored, so no expansion is needed. The polynomial in factored form is x(x + 3)(x - 2)."
-          - problem: "Write a degree-4 polynomial with leading coefficient 1 and roots 1, -1, 2, and -2. Give the expanded polynomial."
-            answer: "x^4 - 5x^2 + 4"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The four roots 1, -1, 2, and -2 give the factors (x - 1), (x + 1), (x - 2), and (x + 2). The full object is (x - 1)(x + 1)(x - 2)(x + 2). Pair the factors: (x - 1)(x + 1) = x^2 - 1 and (x - 2)(x + 2) = x^2 - 4. Multiply: (x^2 - 1)(x^2 - 4) = x^4 - 5x^2 + 4. The expanded polynomial is x^4 - 5x^2 + 4."
+          - problem: 'Write a polynomial of degree $3$ with leading coefficient $1$, a double root at $x = 2$ and a root at $x = -5$. Expand it.'
+            answer: 'x^3 + x^2 - 16x + 20'
+            answer_contract: {"kind": "required_form", "form": "expanded_polynomial"}
+            solution_sketch: 'The double root at $2$ gives $(x - 2)^2 = x^2 - 4x + 4$, and the root at $-5$ gives $(x + 5)$. Then $(x^2 - 4x + 4)(x + 5) = x^3 + x^2 - 16x + 20$.'
+          - problem: 'Write a polynomial of degree $4$ with leading coefficient $1$ and the roots $0$, $3$ (double) and $-1$. Give it in factored form.'
+            answer: 'x(x - 3)^2 (x + 1)'
+            answer_contract: {"kind": "required_form", "form": "factored_polynomial"}
+            solution_sketch: 'The root $0$ gives the factor $x$, the double root $3$ gives $(x - 3)^2$, and the root $-1$ gives $(x + 1)$. The product has degree $1 + 2 + 1 = 4$.'
+          - problem: 'A box has side lengths $x$, $x - 2$ and $x - 5$ metres. Write its volume as an expanded polynomial in $x$.'
+            answer: 'x^3 - 7x^2 + 10x'
+            answer_contract: {"kind": "required_form", "form": "expanded_polynomial"}
+            solution_sketch: 'The volume is the product $x(x - 2)(x - 5)$. First $(x - 2)(x - 5) = x^2 - 7x + 10$, and multiplying by $x$ gives $x^3 - 7x^2 + 10x$.'
+          - problem: 'Write a polynomial of degree $3$ with leading coefficient $1$, a double root at $x = 3$ and a root at $x = -2$. Expand it.'
+            answer: 'x^3 - 4x^2 - 3x + 18'
+            answer_contract: {"kind": "required_form", "form": "expanded_polynomial"}
+            solution_sketch: 'The double root $3$ gives $(x - 3)^2 = x^2 - 6x + 9$, and the root $-2$ gives $(x + 2)$. Then $(x^2 - 6x + 9)(x + 2) = x^3 - 4x^2 - 3x + 18$.'
+          - problem: 'The height of a track section, in metres, is a polynomial $h(x)$ of degree $3$ with leading coefficient $1$. The track touches ground level at $x = 2$ without crossing it, and crosses ground level at $x = -1$. Write $h(x)$ in factored form.'
+            answer: '(x - 2)^2 (x + 1)'
+            answer_contract: {"kind": "required_form", "form": "factored_polynomial"}
+            solution_sketch: 'A graph that touches the axis without crossing it has an even multiplicity, so the root $2$ is a double root. The root $-1$ is a crossing, so it is a simple root. That gives $(x - 2)^2 (x + 1)$.'
+          - problem: 'A polynomial of degree $3$ has the roots $1$, $2$ and $-3$ and passes through the point $(0, 12)$. Write it in factored form.'
+            answer: '2(x - 1)(x - 2)(x + 3)'
+            answer_contract: {"kind": "required_form", "form": "factored_polynomial"}
+            solution_sketch: 'The roots give $a(x - 1)(x - 2)(x + 3)$ with a constant $a$. At $x = 0$ the value is $a \cdot (-1)(-2)(3) = 6a$, and $6a = 12$ gives $a = 2$.'
+          - problem: 'Sam builds a polynomial with leading coefficient $1$, a double root at $x = 4$ and a root at $x = -1$, and writes $(x + 4)^2 (x - 1)$. What is the correct polynomial in factored form?'
+            answer: '(x - 4)^2 (x + 1)'
+            answer_contract: {"kind": "required_form", "form": "factored_polynomial"}
+            solution_sketch: 'A root $4$ gives the factor $x - 4$, not $x + 4$, and a root $-1$ gives $x + 1$, not $x - 1$. The polynomial is $(x - 4)^2 (x + 1)$.'
+          - problem: 'Write a polynomial of degree $4$ with leading coefficient $1$ and the roots $1$, $-1$, $2$ and $-2$. Expand it.'
+            answer: 'x^4 - 5x^2 + 4'
+            answer_contract: {"kind": "required_form", "form": "expanded_polynomial"}
+            solution_sketch: 'The roots give $(x - 1)(x + 1) = x^2 - 1$ and $(x - 2)(x + 2) = x^2 - 4$. Then $(x^2 - 1)(x^2 - 4) = x^4 - 5x^2 + 4$.'
+        constraints: "degree 3-4, leading coefficient 1 (one item with a constant factor fixed by a point), integer roots with at most one double root; expand only when the problem says to"
     diagnostic_exemplar:
       problem: 'Write the degree-$3$ polynomial with leading coefficient $1$ having a double root at $x = 1$ and a root at $x = -3$, expand it, and state at which zero its graph touches the $x$-axis without crossing.'
       answer: 'x^3 + x^2 - 5x + 3; the graph touches without crossing at x = 1 (even multiplicity)'
@@ -332,87 +537,152 @@ topics:
       - id: kp1
         name: End behavior from the leading term
         key_prerequisites: [quadratic-graphs-vertex]
-        constraints: "classify by degree parity and leading-coefficient sign"
+        step_check:
+          step: 'For large $|x|$ the term $-2x^3$ outweighs $x$ and $-7$, so $p(x)$ behaves like $-2x^3$'
+          question: 'Why can the terms $x$ and $-7$ be ignored when $|x|$ is very large?'
+          options:
+            - 'Constants and lower terms always cancel each other out for large $|x|$'
+            - 'They grow far more slowly than $x^3$, so the leading term sets $p(x)$'
+            - 'A polynomial always has the same ends as its smallest-degree term'
+            - 'Their values are below $1$ for large $|x|$, so they have no effect'
+          answer: 'They grow far more slowly than $x^3$, so the leading term sets $p(x)$'
+          why: 'For large $|x|$ the cube $x^3$ is far bigger than $x$ and $7$. So the sign and size of $p(x)$ follow $-2x^3$.'
         exemplars:
-          - problem: "Let p(x) = -2x^3 + x - 7. Far from the origin, the graph of p behaves in exactly one of four standard ways. Which class matches the graph of p?"
-            answer: "left up, right down"
-            answer_contract: {"kind": "label", "options": [["left up, right down"], ["left down, right up"], ["both ends up"], ["both ends down"]]}
-            solution_sketch: "Full object: p(x) = -2x^3 + x - 7. Step 1: the leading term is -2x^3, so the degree is 3, which is odd. Rule: an odd degree forces the two far ends in opposite directions, so the options both ends up and both ends down are wrong. Step 2: the leading coefficient -2 is negative. Rule: for an odd degree, a negative leading coefficient sends the end at negative x up and the end at positive x down. The wrong option left down, right up comes from reading the leading coefficient as positive. The answer is left up, right down."
-          - problem: "Let p(x) = x^4 - 5x^2. How many of the two far ends of the graph of p rise to +infinity? Give the number."
-            answer: "2"
+          - problem: 'Far from the origin, the graph of $p(x) = -2x^3 + x - 7$ does one of four things: it rises on both sides, it falls on both sides, it rises on the left and falls on the right, or it falls on the left and rises on the right. Which one?'
+            answer: 'left up, right down'
+            answer_contract: {"kind": "label", "options": [["left up, right down", "up on the left and down on the right", "rises on the left and falls on the right", "it rises on the left and falls on the right", "up left, down right", "rises left, falls right", "up on the left, down on the right", "the left end rises and the right end falls"], ["left down, right up", "down on the left and up on the right", "falls on the left and rises on the right", "it falls on the left and rises on the right", "down left, up right", "falls left, rises right", "down on the left, up on the right", "the left end falls and the right end rises"], ["both up", "up on both sides", "rises on both sides", "both ends up", "it rises on both sides", "both ends rise", "up on both ends", "both ends go up"], ["both down", "down on both sides", "falls on both sides", "both ends down", "it falls on both sides", "both ends fall", "down on both ends", "both ends go down"]]}
+            solution_sketch: 'The leading term is $-2x^3$, which has odd degree, so the two ends point in opposite directions. The coefficient $-2$ is negative, so the left end rises and the right end falls.'
+          - problem: 'Without expanding, find the leading term of $r(x) = (x^3 + 1)(x - 1)(2x + 5)$.'
+            answer: '2x^5'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Full object: p(x) = x^4 - 5x^2. Step 1: the leading term is x^4, so the degree is 4, which is even. Rule: an even degree makes the two far ends go in the same direction. Step 2: the leading coefficient 1 is positive. Rule: a positive leading coefficient with an even degree makes both far ends rise to +infinity. Both far ends rise, so the count is 2. The answer is 2."
-          - problem: "Let p(x) = 3x^5 - x^2 + 4. Determine whether p(x) goes to +infinity or to -infinity as x goes to +infinity. Give 1 if p(x) goes to +infinity and -1 if p(x) goes to -infinity."
-            answer: "1"
+            solution_sketch: 'The leading term of a product is the product of the leading terms. That is $x^3 \cdot x \cdot 2x = 2x^5$.'
+          - problem: 'The cost in dollars of making $x$ chairs is $C(x) = 0.01x^3 - 2x^2 + 100x + 500$. When $x$ is very large, which term of $C(x)$ decides the size of the cost?'
+            answer: '0.01x^3'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Full object: p(x) = 3x^5 - x^2 + 4. Step 1: the leading term is 3x^5, so the degree is 5, which is odd, and the leading coefficient 3 is positive. Rule: an odd degree makes the two far ends go in opposite directions, and a positive leading coefficient makes the end at positive x rise. Step 2: far from the origin, p(x) follows its leading term. Rule: the leading term dominates the growth, so p(x) goes to +infinity as x goes to +infinity, which is code 1. The answer is 1."
-          - problem: "Let p(x) = -x^6 + 2x^3 - 8. How many of the two far ends of the graph of p fall to -infinity? Give the number."
-            answer: "2"
+            solution_sketch: 'For very large $x$ the term with the highest power grows fastest. That term is $0.01x^3$, so it decides the size of the cost.'
+          - problem: 'Which of $f(x) = x^4 - 3x$, $g(x) = -x^3 + 2$ and $h(x) = 2x^5 - x$ falls on the left and rises on the right?'
+            answer: 'h'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Full object: p(x) = -x^6 + 2x^3 - 8. Step 1: the leading term is -x^6, so the degree is 6, which is even. Rule: an even degree makes the two far ends go in the same direction. Step 2: the leading coefficient -1 is negative. Rule: a negative leading coefficient with an even degree makes both far ends fall to -infinity. Both far ends fall, so the count is 2. The answer is 2."
-          - problem: "Let q(x) = 2x^4 - 9x + 1. Far from the origin, the graph of q behaves in exactly one of four standard ways. Which class matches the graph of q?"
-            answer: "both ends up"
-            answer_contract: {"kind": "label", "options": [["both ends up"], ["both ends down"], ["left up, right down"], ["left down, right up"]]}
-            solution_sketch: "Full object: q(x) = 2x^4 - 9x + 1. Step 1: the leading term is 2x^4, so the degree is 4, which is even. Rule: an even degree forces the two far ends in the same direction, so the options left up, right down and left down, right up are wrong. Step 2: the leading coefficient 2 is positive. Rule: a positive leading coefficient with an even degree makes both far ends rise. The wrong option both ends down comes from reading the leading coefficient as negative. The answer is both ends up."
-          - problem: "Let r(x) = (x^3 + 1)(x - 1)(2x + 5). Determine whether r(x) goes to +infinity or to -infinity as x goes to -infinity. Give 1 if r(x) goes to +infinity and -1 if r(x) goes to -infinity."
-            answer: "-1"
+            solution_sketch: 'A graph that falls on the left and rises on the right needs odd degree and a positive leading coefficient. Only $h$ has odd degree $5$ with the positive coefficient $2$.'
+          - problem: 'A company''s profit in thousands of dollars after $t$ years is modelled by $P(t) = -0.5t^4 + 8t^3 + 20$. According to the model, does the profit in the long run rise without bound or fall without bound?'
+            answer: 'falls'
+            answer_contract: {"kind": "label", "options": [["falls", "falls without bound", "it falls", "goes down", "decreases", "the profit falls", "it falls without bound", "it decreases"], ["rises", "rises without bound", "it rises", "goes up", "increases", "the profit rises", "it rises without bound", "it increases"]]}
+            solution_sketch: 'For large $t$ the leading term $-0.5t^4$ decides the sign. It is negative, so the profit falls without bound, even though the model starts with $20$ thousand dollars.'
+          - problem: 'A polynomial of degree $6$ has a graph that falls on both ends. Which of $-3$, $0$ and $2$ could be its leading coefficient?'
+            answer: '-3'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Full object: r(x) = (x^3 + 1)(x - 1)(2x + 5). Step 1: find the leading term by multiplying the leading terms of the factors: x^3 times x times 2x = 2x^5. Rule: the leading term of a product is the product of the leading terms. Step 2: the degree is 5, which is odd, and the leading coefficient 2 is positive. Rule: for an odd degree with a positive leading coefficient, the end at negative x goes down to -infinity, so the code is -1. The answer is -1."
+            solution_sketch: 'With even degree $6$ the graph falls on both ends only when the leading coefficient is negative. The number $0$ cannot be a leading coefficient, so the answer is $-3$.'
+          - problem: 'Sam reads the leading coefficient of $p(x) = 4 + 3x - 5x^2$ as $4$. What is the correct leading coefficient?'
+            answer: '-5'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The leading term is the term of highest degree, not the first term written. The highest power is $x^2$, so the leading coefficient is $-5$.'
+          - problem: 'Which of $f(x) = -x^4 + 5x$, $g(x) = x^3 - x$ and $k(x) = -3x^3 + 1$ rises on the left and falls on the right?'
+            answer: 'k'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'A graph that rises on the left and falls on the right needs odd degree and a negative leading coefficient. Only $k$ has odd degree $3$ with the negative coefficient $-3$.'
+        constraints: "classify by degree parity and leading-coefficient sign; leading term of a product"
       - id: kp2
         name: Sign of the polynomial between zeros
         key_prerequisites: [fundamental-theorem-algebra-multiplicity]
-        constraints: "factored cubics with integer zeros, at most one repeated factor; answer positive or negative, decided by one test point"
+        step_check:
+          step: 'Since $p(2) = -10 < 0$, $p(x)$ is negative on $(1, 4)$'
+          question: 'Why does a single test point decide the sign of $p$ on the whole interval $(1,4)$?'
+          options:
+            - 'The sign of $p$ at the midpoint is always the sign at both ends of it'
+            - 'A polynomial keeps the same value everywhere between two zeros'
+            - 'A polynomial changes sign only at a zero, and $(1,4)$ has none inside'
+            - 'Every interval between two zeros has the same sign as $p(0)$ has'
+          answer: 'A polynomial changes sign only at a zero, and $(1,4)$ has none inside'
+          why: 'A polynomial graph is unbroken, so it can switch sign only by passing through $0$. Inside $(1,4)$ there is no zero, so the sign of $p(2)$ holds everywhere there.'
         exemplars:
-          - problem: "For p(x) = x(x - 3)(x + 1), use one test point to determine the sign of p on the interval (0, 3), and give the value p(1). State the sign of p and the value of p(1)."
-            answer: "sign = negative; value = -4"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["positive"], ["negative"]]}, "name": "sign"}, {"contract": {"kind": "exact"}, "name": "value"}]}
-            solution_sketch: "Step 1 (zeros): p(x) = x(x - 3)(x + 1) has zeros at -1, 0, and 3, so the interval (0, 3) contains no zero and p keeps one sign there. Step 2 (test point): choose x = 1; then p(1) = (1)(-2)(2) = -4. Since -4 is below zero, the sign is negative. The option positive is wrong because the test value p(1) = -4 is not greater than zero. The answer is sign = negative; value = -4."
-          - problem: "For p(x) = (x - 2)^2 (x + 1), use one test point to determine the sign of p on the interval (-1, 2), and give the value p(0). State the sign of p and the value of p(0)."
-            answer: "sign = positive; value = 4"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["positive"], ["negative"]]}, "name": "sign"}, {"contract": {"kind": "exact"}, "name": "value"}]}
-            solution_sketch: "Step 1 (zeros and multiplicity): p(x) = (x - 2)^2 (x + 1) has a double zero at 2 and a simple zero at -1, so the interval (-1, 2) contains no zero. Step 2 (test point): choose x = 0; then p(0) = (-2)^2 (1) = 4. Since 4 is above zero, the sign is positive. The option negative is wrong because the square factor is never negative and the remaining factor is positive at x = 0. The answer is sign = positive; value = 4."
-          - problem: "For p(x) = (x + 2)(x - 1)(x - 4), use one test point to determine the sign of p on the interval (-2, 1), and give the value p(0). State the sign of p and the value of p(0)."
-            answer: "sign = positive; value = 8"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["positive"], ["negative"]]}, "name": "sign"}, {"contract": {"kind": "exact"}, "name": "value"}]}
-            solution_sketch: "Step 1 (zeros): p(x) = (x + 2)(x - 1)(x - 4) has simple zeros at -2, 1, and 4, so the interval (-2, 1) lies between two consecutive zeros. Step 2 (test point): choose x = 0; then p(0) = (2)(-1)(-4) = 8. Since 8 is above zero, the sign is positive. The option negative is wrong because the product of two negative factors and one positive factor is positive. The answer is sign = positive; value = 8."
-          - problem: "For p(x) = -x(x + 3)(x - 2), use one test point to determine the sign of p on the interval (-3, 0), and give the value p(-1). State the sign of p and the value of p(-1)."
-            answer: "sign = negative; value = -6"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["positive"], ["negative"]]}, "name": "sign"}, {"contract": {"kind": "exact"}, "name": "value"}]}
-            solution_sketch: "Step 1 (zeros): p(x) = -x(x + 3)(x - 2) has zeros at -3, 0, and 2 with a reflected leading term, so the interval (-3, 0) lies between two consecutive zeros. Step 2 (test point): choose x = -1; then p(-1) = (1)(2)(-3) = -6. Since -6 is below zero, the sign is negative. The option positive is wrong because the leading minus sign flips the product at the test point. The answer is sign = negative; value = -6."
-          - problem: "For p(x) = x(x - 2)(x + 4), build a full sign chart and find every interval on which p(x) > 0. Give the answer as an inequality in x."
-            answer: "-4 < x < 0 or x > 2"
+          - problem: 'Is $p(x) = x(x - 3)(x + 1)$ positive or negative on the interval $(0, 3)$?'
+            answer: 'negative'
+            answer_contract: {"kind": "label", "options": [["positive", "it is positive", "p is positive", "above the axis", "it is above the axis", "p(x) is positive", "positive on the interval", "p is positive on the interval"], ["negative", "it is negative", "p is negative", "below the axis", "it is below the axis", "p(x) is negative", "negative on the interval", "p is negative on the interval"]]}
+            solution_sketch: 'The zeros are $-1$, $0$ and $3$, so there is no zero inside $(0, 3)$. At the test point $x = 1$ the value is $(1)(-2)(2) = -4$, which is below zero, so $p$ is negative.'
+          - problem: 'Is $p(x) = (x - 2)^2 (x + 1)$ positive or negative on the interval $(-1, 2)$?'
+            answer: 'positive'
+            answer_contract: {"kind": "label", "options": [["positive", "it is positive", "p is positive", "above the axis", "it is above the axis", "p(x) is positive", "positive on the interval", "p is positive on the interval"], ["negative", "it is negative", "p is negative", "below the axis", "it is below the axis", "p(x) is negative", "negative on the interval", "p is negative on the interval"]]}
+            solution_sketch: 'The zeros are $-1$ and $2$, so there is no zero inside $(-1, 2)$. At the test point $x = 0$ the value is $(-2)^2(1) = 4$, which is above zero, so $p$ is positive.'
+          - problem: 'For $p(x) = x(x - 2)(x + 4)$, find every interval on which $p(x) > 0$.'
+            answer: '-4 < x < 0 or x > 2'
             answer_contract: {"kind": "inequality_union"}
-            solution_sketch: "Step 1 (zeros and sign chart): p(x) = x(x - 2)(x + 4) has simple zeros at -4, 0, and 2, which split the line into four intervals. Step 2 (test points): on (-4, 0) use x = -1 to get (-1)(-3)(3) = 9; on (2, infinity) use x = 3 to get (3)(1)(7) = 21. Both are above zero. On (-infinity, -4) use x = -5 to get (-5)(-7)(-1) = -35, and on (0, 2) use x = 1 to get (1)(-1)(5) = -5; both are below zero. The answer is -4 < x < 0 or x > 2."
-          - problem: "For p(x) = (x + 1)(x - 3)^2, use the multiplicity of each zero to find every interval on which p(x) < 0. Give the answer as an inequality in x."
-            answer: "x < -1"
+            solution_sketch: 'The zeros $-4$, $0$ and $2$ split the line into four intervals. The test points $x = -1$ and $x = 3$ give $9$ and $21$, which are positive, and $x = -5$ and $x = 1$ give $-35$ and $-5$, which are negative.'
+          - problem: 'A company''s profit in thousands of dollars in month $m$ is $P(m) = (m - 2)(m - 6)(m - 9)$ for $m > 0$. In which months does the company make a loss?'
+            answer: '0 < m < 2 or 6 < m < 9'
             answer_contract: {"kind": "inequality_union"}
-            solution_sketch: "Step 1 (zeros and multiplicity): p(x) = (x + 1)(x - 3)^2 has a simple zero at -1 and a double zero at 3, so the sign changes only at -1. Step 2 (test points): the factor (x - 3)^2 is never below zero, so p(x) is below zero exactly where x + 1 is below zero, that is x < -1. Check: at x = -2, p(-2) = (-1)(25) = -25, below zero; at x = 0, p(0) = (1)(9) = 9, above zero. The answer is x < -1."
+            solution_sketch: 'The zeros $2$, $6$ and $9$ split $m > 0$ into four intervals. A test point in each gives a sign: negative on $(0, 2)$, positive on $(2, 6)$, negative on $(6, 9)$ and positive after $9$.'
+          - problem: 'For $p(x) = (x + 1)(x - 3)^2$, find every interval on which $p(x) < 0$.'
+            answer: 'x < -1'
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: 'The factor $(x - 3)^2$ is never negative, so the sign of $p$ is the sign of $x + 1$ except at $x = 3$ where $p$ is $0$. That sign is negative exactly for $x < -1$.'
+          - problem: 'A section of a roller-coaster track has height $h(x) = (x + 1)(x - 2)(x - 4)$ metres above ground level. For which values of $x$ is the track below ground level?'
+            answer: 'x < -1 or 2 < x < 4'
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: 'The zeros $-1$, $2$ and $4$ split the line into four intervals. The value at $x = -2$ is $-24$ and the value at $x = 3$ is $-4$, both below zero, while at $x = 0$ it is $8$ and at $x = 5$ it is $18$.'
+          - problem: 'Sam solves $(x + 3)(x - 1)(x - 5) > 0$ and writes $-3 < x < 1$. He forgot a second interval. What is the full solution?'
+            answer: '-3 < x < 1 or x > 5'
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: 'The zeros are $-3$, $1$ and $5$. The product is positive on $(-3, 1)$, where the test point $0$ gives $15$, and also for $x > 5$, where the test point $6$ gives $45$.'
+          - problem: 'For $p(x) = (x + 2)(x - 1)(x - 4)$, find every interval on which $p(x) < 0$.'
+            answer: 'x < -2 or 1 < x < 4'
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: 'The zeros $-2$, $1$ and $4$ split the line into four intervals. The test points $x = -3$ and $x = 2$ give $-28$ and $-8$, which are negative, and $x = 0$ and $x = 5$ give $8$ and $28$, which are positive.'
+        constraints: "factored cubics with integer zeros, at most one repeated factor; sign on one interval from one test point, or every interval of a sign chart"
       - id: kp3
         name: Key graph features
         key_prerequisites: [fundamental-theorem-algebra-multiplicity]
-        constraints: "y-intercepts of factored polynomials (evaluate at 0); turning-point counts from the degree (at most n - 1)"
+        step_check:
+          step: 'To find the $y$-intercept, evaluate $p(0)$'
+          question: 'Why does $p(0)$ give the $y$-intercept of the graph?'
+          options:
+            - 'The $y$-intercept is where $p(x)=0$, and $x=0$ is the first value to try'
+            - 'Setting $x=0$ finds the zeros of the polynomial, which are its intercepts'
+            - 'The leading coefficient is the $y$-intercept, and $p(0)$ returns it'
+            - 'The graph meets the $y$-axis where $x=0$, and the height there is $p(0)$'
+          answer: 'The graph meets the $y$-axis where $x=0$, and the height there is $p(0)$'
+          why: 'Every point on the $y$-axis has $x=0$. So the graph meets that axis at the point $(0,p(0))$.'
         exemplars:
-          - problem: 'Find the $y$-intercept of $p(x) = (x - 1)^2 (x + 2)$.'
-            answer: "(0, 2)"
-            solution_sketch: '$p(0) = (-1)^2 (2) = 2$.'
-          - problem: 'What is the maximum number of turning points of a degree-$5$ polynomial?'
-            answer: "4"
-          - problem: "The polynomial $p(x) = (x + 2)^2 (x - 3)$ is given in factored form. Find the y-coordinate of the y-intercept of the graph of $p$."
-            answer: "-12"
+          - problem: 'Find the $y$-intercept of the graph of $p(x) = (x - 1)^2 (x + 2)$.'
+            answer: '(0, 2)'
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: 'The graph meets the $y$-axis where $x = 0$. The value there is $(-1)^2 (2) = 2$, so the $y$-intercept is $(0, 2)$.'
+          - problem: 'What is the greatest number of turning points that a polynomial of degree $5$ can have?'
+            answer: '4'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "For $p(x) = (x + 2)^2 (x - 3)$, the y-intercept rule sets $x = 0$ and keeps the factored form. Evaluate $p(0) = (0 + 2)^2 (0 - 3) = 4 \\cdot (-3) = -12$. The y-coordinate of the y-intercept is -12."
-          - problem: "The graph of $p(x) = (x + 5)(x - 11)(x - 17)(x - 24)$ is the graph of a polynomial. What is the maximum number of turning points of this graph?"
-            answer: "3"
+            solution_sketch: 'A polynomial of degree $n$ has at most $n - 1$ turning points. For degree $5$ that is $5 - 1 = 4$.'
+          - problem: 'Find the $y$-intercept of the graph of $p(x) = (x + 2)^2 (x - 3)$.'
+            answer: '(0, -12)'
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: 'The graph meets the $y$-axis where $x = 0$. The value there is $(2)^2 (-3) = -12$, so the $y$-intercept is $(0, -12)$.'
+          - problem: 'What is the greatest number of turning points of the graph of $p(x) = (x + 5)(x - 11)(x - 17)(x - 24)$?'
+            answer: '3'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "For $p(x) = (x + 5)(x - 11)(x - 17)(x - 24)$, the degree rule for products adds the degrees of the factors, so the degree is $1 + 1 + 1 + 1 = 4$. The turning-point rule says a degree-$n$ polynomial has at most $n - 1$ turning points, so $4 - 1 = 3$. The maximum number of turning points is 3."
-          - problem: "Let $p(x) = -2(x + 1)(x - 4)^2$. Find the y-intercept of the graph of $p$. Give the answer as (x, y)."
-            answer: "(0, -32)"
-            answer_contract: {"arity": 2, "kind": "coordinates"}
-            solution_sketch: "For $p(x) = -2(x + 1)(x - 4)^2$, the y-intercept rule sets $x = 0$ and keeps the leading coefficient. Evaluate $p(0) = -2(0 + 1)(0 - 4)^2 = -2 \\cdot 1 \\cdot 16 = -32$. The y-intercept is (0, -32)."
-          - problem: "For $p(x) = (x - 2)^2(x + 9)(x - 16)(x - 25)$, let $b$ be the y-coordinate of the y-intercept and let $t$ be the maximum number of turning points of the graph. Give the answer as b = value; t = value."
-            answer: "b = 14400; t = 4"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "b"}, {"contract": {"kind": "exact"}, "name": "t"}]}
-            solution_sketch: "The full result for $p(x) = (x - 2)^2(x + 9)(x - 16)(x - 25)$ is $b = 14400$ and $t = 4$. The y-intercept rule sets $x = 0$: $p(0) = (0 - 2)^2 (0 + 9)(0 - 16)(0 - 25) = 4 \\cdot 9 \\cdot 400 = 14400$. The degree rule for products gives $2 + 1 + 1 + 1 = 5$, and the turning-point rule gives at most $5 - 1 = 4$ turning points. The answers are b = 14400; t = 4."
+            solution_sketch: 'The four linear factors give degree $1 + 1 + 1 + 1 = 4$. A polynomial of degree $4$ has at most $4 - 1 = 3$ turning points.'
+          - problem: 'Find the $y$-intercept of the graph of $p(x) = -2(x + 1)(x - 4)^2$.'
+            answer: '(0, -32)'
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: 'The graph meets the $y$-axis where $x = 0$. The value there is $-2(1)(16) = -32$, so the $y$-intercept is $(0, -32)$.'
+          - problem: 'A section of a roller-coaster track has height $h(x) = (x + 1)(x - 2)(x - 5)$ metres, where $x$ is the distance in tens of metres from the start. How high is the track at the start?'
+            answer: '10'
+            answer_contract: {"kind": "unit", "quantity": "length", "unit": "m", "allow_omitted": true}
+            solution_sketch: 'The start is where $x = 0$. The height there is $(1)(-2)(-5) = 10$, so the track is $10$ m high at the start.'
+          - problem: 'A tank holds $V(t) = (t + 2)(t - 3)^2$ litres of water $t$ hours after its valve is opened. How much water is in the tank at the moment the valve is opened?'
+            answer: '18'
+            answer_contract: {"kind": "unit", "quantity": "volume", "unit": "L", "allow_omitted": true}
+            solution_sketch: 'The moment the valve is opened is $t = 0$. The volume there is $(2)(-3)^2 = 2 \cdot 9 = 18$, so the tank holds $18$ litres.'
+          - problem: 'A designer wants the graph of a polynomial to have $4$ turning points. What is the lowest degree the polynomial can have?'
+            answer: '5'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'A polynomial of degree $n$ has at most $n - 1$ turning points. Four turning points need $n - 1 \ge 4$, so $n \ge 5$ and the lowest degree is $5$.'
+          - problem: 'Sam says that a polynomial of degree $4$ can have at most $4$ turning points. What is the correct greatest number?'
+            answer: '3'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The greatest number of turning points is one less than the degree. For degree $4$ it is $4 - 1 = 3$, so Sam is one too high.'
+          - problem: 'Find the $y$-intercept of the graph of $p(x) = (x - 2)^2 (x + 9)(x - 16)(x - 25)$.'
+            answer: '(0, 14400)'
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: 'The graph meets the $y$-axis where $x = 0$. The value there is $(-2)^2 (9)(-16)(-25) = 4 \cdot 9 \cdot 400 = 14400$, so the $y$-intercept is $(0, 14400)$.'
+        constraints: "y-intercepts of factored polynomials (evaluate at 0); turning-point counts from the degree (at most n - 1)"
     diagnostic_exemplar:
       problem: 'For $p(x) = x(x + 3)(x - 1)$, describe the end behavior, and state whether $p$ is positive or negative on the interval $(-3, 0)$.'
       answer: 'as x → -∞, p(x) → -∞; as x → +∞, p(x) → +∞; p is positive on (-3, 0)'
@@ -452,87 +722,171 @@ topics:
       - id: kp1
         name: Quadratic inequalities
         key_prerequisites: [quadratic-equations-factoring, linear-inequalities]
-        constraints: "factorable quadratics with integer roots"
+        constraints: "factorable quadratics with integer roots; leading coefficient 1 or -1; areas, heights and profits read from a context"
+        step_check:
+          step: 'The parabola opens upward, so the expression is negative between the roots'
+          question: 'Why is $x^2-9<0$ true between $-3$ and $3$ and not outside?'
+          options:
+            - 'The expression is negative wherever $x$ itself is negative'
+            - 'An upward parabola lies below the axis between its roots'
+            - 'Every quadratic inequality has its answer between the roots'
+            - 'The roots $-3$ and $3$ make the expression negative'
+          answer: 'An upward parabola lies below the axis between its roots'
+          why: 'The graph of $x^2-9$ opens upward and crosses the axis at $-3$ and $3$, so only the stretch between those points is below the axis.'
         exemplars:
-          - problem: 'Solve $x^2 - 4 > 0$.'
+          - problem: 'Solve $x^2-4>0$.'
             answer: "x < -2 or x > 2"
-            answer_contract: {kind: inequality_union}
-            solution_sketch: 'Zeros $\pm 2$; the parabola opens up, so it is positive outside the roots.'
-          - problem: 'Solve $x^2 - 5x + 6 \le 0$.'
-            answer: "2 ≤ x ≤ 3"
-          - problem: "Find every x with x^2 - 9 <= 0. Give the answer as an inequality in x."
-            answer: "-3 <= x <= 3"
-            answer_contract: {"kind": "inequality_union"}
-            solution_sketch: "Step 1 factors the quadratic by the factoring rule: x^2 - 9 = (x - 3)(x + 3). Step 2 uses the upward parabola sign rule; the zeros -3 and 3 split the line, and the product is negative between them. The test x = 0 gives -9 <= 0, which is true, so both roots are included. The solution is -3 <= x <= 3."
-          - problem: "Solve the inequality x^2 + 2x - 8 > 0. Give the answer as an inequality in x."
+            answer_contract: {"kind":"inequality_union"}
+            solution_sketch: 'The zeros of $x^2-4=(x-2)(x+2)$ are $-2$ and $2$. The parabola opens upward, so the expression is positive outside the roots, which gives $x<-2$ or $x>2$.'
+          - problem: 'Solve $x^2-5x+6\le0$.'
+            answer: "2 <= x <= 3"
+            answer_contract: {"kind":"inequality_union"}
+            solution_sketch: 'The expression $x^2-5x+6=(x-2)(x-3)$ has zeros $2$ and $3$. The parabola opens upward, so it is at most zero between them, and the zeros count because of $\le$. The solution is $2\le x\le3$.'
+          - problem: 'A ball is thrown upward so that its height in metres after $t$ seconds is $h(t)=-5t^2+20t$. During which times is the ball more than $15$ m above the ground?'
+            answer: "1 < t < 3"
+            answer_contract: {"kind":"inequality_union"}
+            solution_sketch: 'The ball is above $15$ m when $-5t^2+20t-15>0$. Dividing by $-5$ flips the sign to $t^2-4t+3<0$, which is $(t-1)(t-3)<0$ and holds between the zeros, so $1<t<3$.'
+          - problem: 'Solve $x^2+2x-8>0$.'
             answer: "x < -4 or x > 2"
-            answer_contract: {"kind": "inequality_union"}
-            solution_sketch: "Step 1 factors using the factoring rule: x^2 + 2x - 8 = (x + 4)(x - 2). Step 2 uses the upward parabola sign rule; the zeros -4 and 2 split the line, and the sign is positive outside them. The test x = 0 gives -8 > 0 false. The solution is x < -4 or x > 2."
-          - problem: "Solve the inequality x^2 - 6x + 5 < 0. Give the answer as an inequality in x."
-            answer: "1 < x < 5"
-            answer_contract: {"kind": "inequality_union"}
-            solution_sketch: "Step 1 factors using the factoring rule: x^2 - 6x + 5 = (x - 1)(x - 5). Step 2 uses the upward parabola sign rule; the zeros 1 and 5 split the line, and the sign is negative between them. The test x = 3 gives -4 < 0 true. The solution is 1 < x < 5."
-          - problem: "Solve the inequality x^2 - x - 12 >= 0. Give the answer as an inequality in x."
+            answer_contract: {"kind":"inequality_union"}
+            solution_sketch: 'Factoring gives $(x+4)(x-2)>0$ with zeros $-4$ and $2$. The parabola opens upward, so the product is positive outside the zeros, and the strict sign excludes them. The solution is $x<-4$ or $x>2$.'
+          - problem: 'A rectangular plot is $x$ metres wide and $(x+4)$ metres long. Its area must be at most $21$ square metres. What widths $x$ are possible?'
+            answer: "0 < x <= 3"
+            answer_contract: {"kind":"inequality_union"}
+            solution_sketch: 'The area condition is $x(x+4)\le21$, which becomes $x^2+4x-21\le0$ and factors as $(x+7)(x-3)\le0$. This gives $-7\le x\le3$, but a width must be positive, so $0<x\le3$.'
+          - problem: 'Sam solves $x^2-9>0$ and writes $-3<x<3$. What is the correct solution?'
+            answer: "x < -3 or x > 3"
+            answer_contract: {"kind":"inequality_union"}
+            solution_sketch: 'The zeros are $-3$ and $3$. The parabola opens upward, so $x^2-9$ is positive outside the zeros, not between them. The correct solution is $x<-3$ or $x>3$.'
+          - problem: 'Solve $x^2-x-12\ge0$.'
             answer: "x <= -3 or x >= 4"
-            answer_contract: {"kind": "inequality_union"}
-            solution_sketch: "Step 1 factors using the factoring rule: x^2 - x - 12 = (x - 4)(x + 3). Step 2 uses the upward parabola sign rule; the zeros -3 and 4 split the line, and the sign is positive outside them. The test x = 0 gives -12 >= 0 false. The solution is x <= -3 or x >= 4."
+            answer_contract: {"kind":"inequality_union"}
+            solution_sketch: 'Factoring gives $(x-4)(x+3)\ge0$ with zeros $-3$ and $4$. The parabola opens upward, so the product is positive outside the zeros, and both zeros count because of $\ge$. The solution is $x\le-3$ or $x\ge4$.'
+          - problem: 'A stall makes a profit of $P(n)=-n^2+14n-24$ dollars when it sells $n$ cakes. For which numbers of cakes $n$ is the profit positive?'
+            answer: "2 < n < 12"
+            answer_contract: {"kind":"inequality_union"}
+            solution_sketch: 'The profit is positive when $-n^2+14n-24>0$, that is $n^2-14n+24<0$. This factors as $(n-2)(n-12)<0$, which holds between the zeros, so $2<n<12$.'
+          - problem: 'Solve $-x^2+2x+8\ge0$.'
+            answer: "-2 <= x <= 4"
+            answer_contract: {"kind":"inequality_union"}
+            solution_sketch: 'Multiplying by $-1$ flips the sign: $x^2-2x-8\le0$, which is $(x-4)(x+2)\le0$. This holds between the zeros and includes them, so $-2\le x\le4$.'
+          - problem: 'Solve $x^2-6x+5<0$.'
+            answer: "1 < x < 5"
+            answer_contract: {"kind":"inequality_union"}
+            solution_sketch: 'Factoring gives $(x-1)(x-5)<0$ with zeros $1$ and $5$. The product is negative between the zeros, and the strict sign excludes them. The solution is $1<x<5$.'
       - id: kp2
         name: Sign charts for factored cubics
         key_prerequisites: [polynomial-end-behavior-graphing]
-        constraints: "factored cubics with integer zeros, |zero| <= 4, at most one squared factor; solutions as inequality chains"
+        constraints: "factored cubics with integer zeros, |zero| <= 4, at most one squared factor; solutions as inequality chains; production and temperature contexts on a stated domain"
+        step_check:
+          step: 'Note that $(x - 2)^2$ is always non-negative'
+          question: 'Why does the sign of $(x+1)(x-2)^2$ not change at $x=2$?'
+          options:
+            - 'The factor $x+1$ cancels the change, since it is positive there'
+            - 'Every zero of a product keeps the sign on both sides of it'
+            - 'Squared factors are removed from the sign chart before testing'
+            - 'A square is never negative, so it cannot flip the sign'
+          answer: 'A square is never negative, so it cannot flip the sign'
+          why: 'Near $x=2$ the factor $(x-2)^2$ is positive on both sides, so the sign of the product is the sign of $x+1$ on both sides.'
+        try_first:
+          problem: 'Is $x=2$ a solution of $(x+1)(x-2)^2>0$?'
+          answer_contract: {"kind":"label","options":[["no","no, it is not","it is not","not a solution","it is not a solution"],["yes","yes, it is","it is","is a solution","it is a solution"]]}
+          answer: 'no'
+          reveal: 'At $x=2$ the product is $3\cdot0=0$, and $0$ is not greater than $0$. A squared factor is never negative, so away from its zero it leaves the sign of the other factors unchanged.'
         exemplars:
-          - problem: 'Solve $x(x - 3)(x + 2) < 0$.'
+          - problem: 'Solve $x(x-3)(x+2)<0$.'
             answer: "x < -2 or 0 < x < 3"
-            answer_contract: {kind: inequality_union}
-            solution_sketch: 'Sign chart over zeros $-2, 0, 3$: negative on $(-\infty, -2)$ and $(0, 3)$.'
-          - problem: 'Solve $(x - 1)^2 (x + 4) \ge 0$.'
-            answer: "x ≥ -4"
-            solution_sketch: 'The square factor never goes negative; sign follows $x + 4$, with equality allowed.'
-          - problem: "Solve the inequality x(x + 1)(x - 4) > 0."
+            answer_contract: {"kind":"inequality_union"}
+            solution_sketch: 'The zeros are $-2$, $0$ and $3$. The leading coefficient is positive, so the signs on the four intervals from the left are negative, positive, negative, positive. The product is negative for $x<-2$ and for $0<x<3$.'
+          - problem: 'Solve $(x-1)^2(x+4)\ge0$.'
+            answer: "x >= -4"
+            answer_contract: {"kind":"inequality_union"}
+            solution_sketch: 'The squared factor is never negative and is zero at $x=1$, which is allowed by $\ge$. The sign of the product is the sign of $x+4$ elsewhere, so the solution is $x\ge-4$.'
+          - problem: 'A company''s profit, in thousands of dollars, is $P(x)=(x-1)(x-3)(x-5)$ when it produces $x$ hundred units, for $0\le x\le6$. For which production levels is the profit positive?'
+            answer: "1 < x < 3 or 5 < x <= 6"
+            answer_contract: {"kind":"inequality_union"}
+            solution_sketch: 'The zeros are $1$, $3$ and $5$, and the product is negative for $x<1$, positive on $1<x<3$, negative on $3<x<5$ and positive for $x>5$. With the limit $x\le6$, the profit is positive for $1<x<3$ or $5<x\le6$.'
+          - problem: 'Solve $x(x+1)(x-4)>0$.'
             answer: "-1 < x < 0 or x > 4"
-            answer_contract: {"kind": "inequality_union"}
-            solution_sketch: "Step 1, zeros: the factored form x(x + 1)(x - 4) gives zeros -1, 0 and 4. Step 2, sign chart: the product is negative, positive, negative, positive on the four intervals split by these zeros. Step 3, read the strict inequality: only the positive parts count, so the answer is -1 < x < 0 or x > 4."
-          - problem: "Solve the inequality (x - 3)^2 (x + 1) < 0."
+            answer_contract: {"kind":"inequality_union"}
+            solution_sketch: 'The zeros are $-1$, $0$ and $4$. The product is negative, positive, negative, positive on the four intervals, so the strict inequality keeps $-1<x<0$ and $x>4$.'
+          - problem: 'Solve $(x-3)^2(x+1)<0$.'
             answer: "x < -1"
-            answer_contract: {"kind": "inequality_union"}
-            solution_sketch: "Step 1, zeros: the factors give zeros -1 and 3, and (x - 3)^2 is never negative. Step 2, sign chart: since the squared factor is positive except at x = 3, the sign of the product follows x + 1. Step 3, read the strict inequality: the product is negative exactly when x is less than -1, so the answer is x < -1."
-          - problem: "Solve the inequality x(x - 4)(x + 2) <= 0."
+            answer_contract: {"kind":"inequality_union"}
+            solution_sketch: 'The squared factor is positive except at $x=3$, where the product is $0$ and so fails the strict inequality. Elsewhere the sign is the sign of $x+1$, which is negative for $x<-1$.'
+          - problem: 'Sam solves $(x-2)^2(x+3)>0$ and writes $x>-3$. What is the correct solution?'
+            answer: "-3 < x < 2 or x > 2"
+            answer_contract: {"kind":"inequality_union"}
+            solution_sketch: 'At $x=2$ the squared factor is zero, so the product is $0$ and not greater than $0$. Everywhere else the sign is the sign of $x+3$, so the solution is $-3<x<2$ or $x>2$.'
+          - problem: 'Solve $x(x-4)(x+2)\le0$.'
             answer: "x <= -2 or 0 <= x <= 4"
-            answer_contract: {"kind": "inequality_union"}
-            solution_sketch: "Step 1, zeros: the factored form x(x - 4)(x + 2) gives zeros -2, 0 and 4. Step 2, sign chart: the product is negative left of -2 and between 0 and 4, and positive between -2 and 0 and right of 4. Step 3, the inequality allows equality, so the endpoints are kept and the answer is x <= -2 or 0 <= x <= 4."
-          - problem: "Solve the inequality -(x + 3)(x - 1)(x - 4) > 0."
+            answer_contract: {"kind":"inequality_union"}
+            solution_sketch: 'The zeros are $-2$, $0$ and $4$. The product is negative for $x<-2$ and for $0<x<4$, and the zeros count because of $\le$. The solution is $x\le-2$ or $0\le x\le4$.'
+          - problem: 'The temperature in a chamber, in degrees Celsius, is $T(t)=(t+1)(t-2)(t-4)$ for $0\le t\le5$ hours after the start. When is the temperature at or below freezing, that is $T(t)\le0$?'
+            answer: "2 <= t <= 4"
+            answer_contract: {"kind":"inequality_union"}
+            solution_sketch: 'The zeros are $-1$, $2$ and $4$. The product is negative on $2<t<4$ and zero at both ends, while $t=-1$ lies outside the allowed times. So $T(t)\le0$ for $2\le t\le4$.'
+          - problem: 'Solve $-(x+3)(x-1)(x-4)>0$.'
             answer: "x < -3 or 1 < x < 4"
-            answer_contract: {"kind": "inequality_union"}
-            solution_sketch: "Step 1, zeros: the factored form -(x + 3)(x - 1)(x - 4) gives zeros -3, 1 and 4. Step 2, sign chart: test one point in each interval, for example x = -4 gives 40, x = 0 gives -12, x = 2 gives 10 and x = 5 gives -32, so the expression is positive left of -3 and between 1 and 4. Step 3, read the strict inequality: the answer is x < -3 or 1 < x < 4."
+            answer_contract: {"kind":"inequality_union"}
+            solution_sketch: 'The zeros are $-3$, $1$ and $4$. The leading coefficient is negative, so the signs from the left are positive, negative, positive, negative. For example $x=0$ gives $-12$ and $x=2$ gives $10$, so the product is positive for $x<-3$ and $1<x<4$.'
       - id: kp3
         name: Strict versus inclusive boundaries
         key_prerequisites: [compound-inequalities]
-        constraints: "factorable quadratics; always ask for interval notation, mixing strict and inclusive cases; unions written with ∪"
+        constraints: "factorable quadratics; mix strict and inclusive cases; interval notation with unions written with ∪ in several items, contexts with a stated unknown"
+        step_check:
+          step: 'The inequality holds true in the interval (1, 3)'
+          question: 'Why are $1$ and $3$ left out of the answer $(1,3)$?'
+          options:
+            - 'At $x=1$ and $x=3$ the product is $0$, and $0<0$ is false'
+            - 'Endpoints are always left out of an answer written as an interval'
+            - 'The test values $0$ and $4$ lie outside the interval'
+            - 'The product is positive at $1$ and $3$, so they fail the test'
+          answer: 'At $x=1$ and $x=3$ the product is $0$, and $0<0$ is false'
+          why: 'The inequality is strict, so a zero of the product is not a solution; with $\le$ the round brackets would become square brackets.'
         exemplars:
-          - problem: 'Solve $x^2 \le 9$. Express the answer as an interval.'
+          - problem: 'Solve $x^2\le9$ and write the solution in interval notation.'
             answer: "[-3, 3]"
-          - problem: 'Solve $x^2 - 2x > 0$ in interval notation.'
+            answer_contract: {"kind":"inequality_union"}
+            solution_sketch: 'The inequality means $x^2-9\le0$, which is $(x-3)(x+3)\le0$ with zeros $-3$ and $3$. The product is at most zero between the zeros, and both zeros count because of $\le$. The solution is $[-3,3]$.'
+          - problem: 'Solve $x^2-2x>0$ and write the solution in interval notation.'
             answer: "(-∞, 0) ∪ (2, ∞)"
-            answer_contract: {kind: inequality_union}
-            solution_sketch: '$x(x - 2) > 0$: positive outside the roots; endpoints excluded.'
-          - problem: "Solve the inequality x^2 - x - 6 <= 0. Give the answer as an interval."
-            answer: "[-2, 3]"
-            answer_contract: {"kind": "inequality_union"}
-            solution_sketch: "The inequality is x^2 - x - 6 <= 0. Factoring the trinomial gives (x - 3)(x + 2) <= 0, so the boundary points are x = -2 and x = 3. Sign test: the parabola opens upward, so the product is negative between the roots, and both endpoints are included because the inequality is <=. The solution is [-2, 3]."
-          - problem: "Solve the inequality x^2 - 9x + 20 > 0. Give the answer as an inequality in x."
+            answer_contract: {"kind":"inequality_union"}
+            solution_sketch: 'Factoring gives $x(x-2)>0$ with zeros $0$ and $2$. The product is positive outside the zeros, and the strict sign excludes both. The solution is $(-\infty,0)\cup(2,\infty)$.'
+          - problem: 'A rectangle has perimeter $20$ m. One side is $x$ m, so the other side is $(10-x)$ m. For which values of $x$ is its area at least $21$ square metres?'
+            answer: "[3, 7]"
+            answer_contract: {"kind":"inequality_union"}
+            solution_sketch: 'The area condition is $x(10-x)\ge21$, which becomes $x^2-10x+21\le0$ and factors as $(x-3)(x-7)\le0$. The product is at most zero between the zeros, and both count, so $3\le x\le7$.'
+          - problem: 'Solve $x^2-9x+20>0$.'
             answer: "x < 4 or x > 5"
-            answer_contract: {"kind": "inequality_union"}
-            solution_sketch: "The inequality is x^2 - 9x + 20 > 0. Factoring gives (x - 4)(x - 5) > 0, so the boundary points are x = 4 and x = 5. Sign test: the parabola opens upward, so the product is positive outside the roots, and the strict inequality excludes both endpoints. The solution is x < 4 or x > 5."
-          - problem: "Solve the inequality -x^2 + 2x + 8 >= 0. Give the answer as an inequality in x."
-            answer: "-2 <= x <= 4"
-            answer_contract: {"kind": "inequality_union"}
-            solution_sketch: "The inequality is -x^2 + 2x + 8 >= 0. Multiply by -1 to get x^2 - 2x - 8 <= 0, which factors as (x - 4)(x + 2) <= 0; remember to flip the direction of the inequality. The boundary points are x = -2 and x = 4. Sign test: the original parabola opens downward, so it is nonnegative between the roots, and both endpoints are included because of the >= sign. The solution is -2 <= x <= 4."
-          - problem: "Solve the compound condition x^2 - 2x - 8 <= 0 and x > 0. Give the answer as an inequality in x."
-            answer: "0 < x <= 4"
-            answer_contract: {"kind": "inequality_union"}
-            solution_sketch: "The inequality is x^2 - 2x - 8 <= 0 with x > 0. Factoring gives (x - 4)(x + 2) <= 0, so the quadratic holds for -2 <= x <= 4. Intersecting with the condition x > 0 removes the part at and below 0, leaving one strict endpoint and one inclusive endpoint. The solution is 0 < x <= 4."
+            answer_contract: {"kind":"inequality_union"}
+            solution_sketch: 'Factoring gives $(x-4)(x-5)>0$ with zeros $4$ and $5$. The product is positive outside the zeros, and the strict sign excludes them. The solution is $x<4$ or $x>5$.'
+          - problem: 'Solve $-x^2+4x+5\ge0$ and write the solution in interval notation.'
+            answer: "[-1, 5]"
+            answer_contract: {"kind":"inequality_union"}
+            solution_sketch: 'Multiplying by $-1$ flips the sign: $x^2-4x-5\le0$, which is $(x-5)(x+1)\le0$. The product is at most zero between the zeros and includes them, so the solution is $[-1,5]$.'
+          - problem: 'Find all $x$ with $x^2-2x-8\le0$ and $x>0$.'
+            answer: "(0, 4]"
+            answer_contract: {"kind":"inequality_union"}
+            solution_sketch: 'The first inequality is $(x-4)(x+2)\le0$, which holds for $-2\le x\le4$. Joining it with $x>0$ keeps the strict end at $0$ and the included end at $4$, so the answer is $(0,4]$.'
+          - problem: 'Solve $x^2-6x+9>0$.'
+            answer: "x < 3 or x > 3"
+            answer_contract: {"kind":"inequality_union"}
+            solution_sketch: 'The left side is $(x-3)^2$, which is positive for every $x$ except its zero at $x=3$. The strict sign excludes $3$, so the solution is $x<3$ or $x>3$.'
+          - problem: 'Sam says the solution of $x^2-4x\le0$ is $(0,4)$. What is the correct solution?'
+            answer: "[0, 4]"
+            answer_contract: {"kind":"inequality_union"}
+            solution_sketch: 'Factoring gives $x(x-4)\le0$, which holds between the zeros $0$ and $4$. The sign $\le$ includes both zeros, so Sam needs square brackets: $[0,4]$.'
+          - problem: 'A model rocket''s height in metres $t$ seconds after launch is $h(t)=-5t^2+30t$. During which times is the rocket at least $40$ m high?'
+            answer: "[2, 4]"
+            answer_contract: {"kind":"inequality_union"}
+            solution_sketch: 'The condition is $-5t^2+30t\ge40$, which becomes $t^2-6t+8\le0$ after dividing by $-5$. This is $(t-2)(t-4)\le0$, so the rocket is at least $40$ m high for $2\le t\le4$, that is $[2,4]$.'
+          - problem: 'Solve $x^2\ge4x$.'
+            answer: "(-∞, 0] ∪ [4, ∞)"
+            answer_contract: {"kind":"inequality_union"}
+            solution_sketch: 'Moving $4x$ across gives $x^2-4x\ge0$, which is $x(x-4)\ge0$ with zeros $0$ and $4$. The product is positive outside the zeros and zero at them, so the solution is $(-\infty,0]\cup[4,\infty)$.'
     diagnostic_exemplar:
-      problem: 'Solve $x(x - 2)(x + 3) \ge 0$ in interval notation.'
+      problem: 'Solve $x(x - 2)(x + 3) \ge 0$.'
       answer: "[-3, 0] ∪ [2, ∞)"
       answer_contract: {kind: inequality_union}
       solution_sketch: 'Zeros $-3, 0, 2$; sign chart gives $+$ on $(-3, 0)$ and $(2, \infty)$; $\ge$ includes all three zeros.'

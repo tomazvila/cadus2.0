@@ -24,87 +24,159 @@ topics:
         weight: 0.3
     knowledge_points:
       - id: kp1
-        name: Powers of i and square roots of negatives
+        name: 'Powers of i and square roots of negatives'
         key_prerequisites: [square-roots]
-        constraints: "reduce i^n via i^4 = 1; radicands are perfect squares times -1"
+        constraints: 'reduce i^n via i^4 = 1; radicands are perfect squares times -1'
+        step_check:
+          step: 'Factor out $-1$: $\sqrt{-64} = \sqrt{64 \cdot (-1)}$'
+          question: 'Why can the square root of $-64$ be split off after factoring out $-1$?'
+          options:
+            - 'Because the root of a negative number is the root of its absolute value'
+            - 'Because $-64=64\cdot(-1)$, so $\sqrt{-64}=\sqrt{64}\cdot\sqrt{-1}$'
+            - 'Because $\sqrt{-64}$ equals $-\sqrt{64}$ once the sign moves outside'
+            - 'Because $\sqrt{-1}$ equals $1$, so the sign drops out of the radicand'
+          answer: 'Because $-64=64\cdot(-1)$, so $\sqrt{-64}=\sqrt{64}\cdot\sqrt{-1}$'
+          why: 'Since $-64=64\cdot(-1)$, the root splits into $\sqrt{64}=8$ and $\sqrt{-1}=i$, which gives $8i$.'
         exemplars:
           - problem: 'Simplify $\sqrt{-49}$.'
-            answer: "7i"
+            answer: '7i'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Write $-49$ as $49 \cdot (-1)$, so the radicand splits into a positive part and $-1$. Then $\sqrt{49}=7$ and $\sqrt{-1}=i$, so $\sqrt{-49}=7i$.'
           - problem: 'Simplify $i^{27}$.'
-            answer: "-i"
-            solution_sketch: '$27 = 4 \cdot 6 + 3$, so $i^{27} = i^3 = -i$.'
-          - problem: "Find sqrt(-81), and give the answer in a + bi form."
-            answer: "9i"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Write the radicand as -81 = 81 * (-1). The square root rule gives sqrt(81 * (-1)) = sqrt(81) * sqrt(-1) = 9i, using i = sqrt(-1). The answer is 9i."
-          - problem: "The powers of i repeat every four steps. Find i^46, and give the answer in a + bi form."
-            answer: "-1"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Use the cycle i^1 = i, i^2 = -1, i^3 = -i, and i^4 = 1. Since 46 = 4 * 11 + 2, reduce i^46 to i^2. Because i^2 = -1, the answer is -1."
-          - problem: "A square root expression is sqrt(-144). Give its simplified value in a + bi form."
-            answer: "12i"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Write -144 as 144 * (-1). The square root of 144 is 12 and sqrt(-1) is i, so sqrt(-144) = 12i. The answer is 12i."
-          - problem: "The powers of i cycle with period 4. Determine i^48, and give the answer in a + bi form."
-            answer: "1"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Use i^4 = 1 to reduce the exponent modulo 4. Since 48 = 4 * 12 + 0, i^48 = (i^4)^12 = 1. The answer is 1."
+            answer: '-i'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The powers of $i$ repeat in a cycle of length $4$. Since $27=4\cdot 6+3$, $i^{27}=i^3=-i$.'
+          - problem: 'What is the value of $i^{48}$?'
+            answer: '1'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The powers of $i$ repeat every four steps, and $48=4\cdot 12$. So $i^{48}=(i^4)^{12}=1$.'
+          - problem: 'A pointer starts at the number $1$. At every clock tick its value is multiplied by $i$. What is its value after $41$ ticks?'
+            answer: 'i'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'After $41$ ticks the value is $i^{41}$. Since $41=4\cdot 10+1$, the powers have cycled ten times and $i^{41}=i^1=i$.'
+          - problem: 'Simplify $\sqrt{-144}$.'
+            answer: '12i'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Write $-144$ as $144\cdot(-1)$. The square root of $144$ is $12$ and $\sqrt{-1}=i$, so $\sqrt{-144}=12i$.'
+          - problem: 'A phasor starts at $3$ and is multiplied by $i$ each time it passes through a filter. What is its value after $35$ passes?'
+            answer: '-3i'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'After $35$ passes the value is $3i^{35}$. Since $35=4\cdot 8+3$, $i^{35}=i^3=-i$, so the phasor is $-3i$.'
+          - problem: 'The equation $x^2 + 100 = 0$ has no real solutions. What are its solutions among the complex numbers?'
+            answer: '10i, -10i'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Rewrite the equation as $x^2=-100$, so $x=\pm\sqrt{-100}$. Since $\sqrt{-100}=10i$, the two solutions are $10i$ and $-10i$.'
+          - problem: 'Mia simplifies $\sqrt{-9}\cdot\sqrt{-4}$ as $\sqrt{36}=6$. What is the correct value?'
+            answer: '-6'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Mia joined the radicands, but that rule does not hold for negative numbers. Write $\sqrt{-9}=3i$ and $\sqrt{-4}=2i$, so the product is $6i^2=-6$.'
       - id: kp2
-        name: Add, subtract, and multiply
+        name: 'Add, subtract, and multiply'
         key_prerequisites: [combining-like-terms, polynomial-multiplication]
-        constraints: "operands a + bi with single-digit integer a, b; products FOIL with i² = -1; answers in a + bi form"
+        constraints: 'operands a + bi with single-digit integer a, b; products FOIL with i² = -1; answers in a + bi form'
+        step_check:
+          step: 'Subtract the imaginary parts: $5i - (-3i) = 8i$'
+          question: 'Why is the imaginary part $8i$ and not $2i$?'
+          options:
+            - 'Subtracting $3i$ from $5i$ leaves $2i$, so $8i$ is a slip'
+            - 'The imaginary parts are added, whatever the sign between brackets'
+            - 'Subtracting $-3i$ means adding $3i$, and $5i+3i=8i$'
+            - 'The sign of $5i$ changes because it follows a minus sign'
+          answer: 'Subtracting $-3i$ means adding $3i$, and $5i+3i=8i$'
+          why: 'Subtracting a negative term is the same as adding its positive: $5i+3i=8i$.'
         exemplars:
           - problem: 'Compute $(3 + 2i) + (1 - 5i)$.'
-            answer: "4 - 3i"
+            answer: '4 - 3i'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Add the real parts, $3+1=4$, and the imaginary parts, $2i-5i=-3i$. The sum is $4-3i$.'
           - problem: 'Compute $(2 + 3i)(4 - i)$.'
-            answer: "11 + 10i"
-            solution_sketch: '$8 - 2i + 12i - 3i^2 = 8 + 10i + 3$.'
-          - problem: "Compute (6 - 2i) - (4 + 7i). Give the answer in a + bi form."
-            answer: "2 - 9i"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Start with the complex numbers (6 - 2i) and (4 + 7i). Subtract the real parts: 6 - 4 = 2. Subtract the imaginary parts: -2 - 7 = -9. The result is 2 - 9i."
-          - problem: "Compute (5 - 2i)(3 + 4i) using FOIL. Give the answer in a + bi form."
-            answer: "23 + 14i"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Start with the product (5 - 2i)(3 + 4i). Apply FOIL: 5*3 + 5*4i - 2i*3 - 2i*4i. This gives 15 + 20i - 6i - 8 i*i. Since i*i = -1, the term -8 i*i becomes +8. Combine like terms: 15 + 8 = 23 and 20i - 6i = 14i. The result is 23 + 14i."
-          - problem: "Compute (4 + i)(2 - 3i). Give the answer in a + bi form."
-            answer: "11 - 10i"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Start with the product (4 + i)(2 - 3i). Apply FOIL: 4*2 + 4*(-3i) + i*2 + i*(-3i). This gives 8 - 12i + 2i - 3 i*i. Since i*i = -1, the term -3 i*i becomes +3. Combine like terms: 8 + 3 = 11 and -12i + 2i = -10i. The result is 11 - 10i."
-          - problem: "Compute (7 + 2i) + (-3 - 8i) - (1 - i). Give the answer in a + bi form."
-            answer: "3 - 5i"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Start with the expression (7 + 2i) + (-3 - 8i) - (1 - i). Distribute the subtraction: (7 + 2i) + (-3 - 8i) + (-1 + i). Combine the real parts: 7 - 3 - 1 = 3. Combine the imaginary parts: 2 - 8 + 1 = -5. The result is 3 - 5i."
+            answer: '11 + 10i'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Multiply each term: $8-2i+12i-3i^2$. Since $i^2=-1$ this is $8+10i+3$, which is $11+10i$.'
+          - problem: 'Compute $(6 - 2i) - (4 + 7i)$.'
+            answer: '2 - 9i'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Subtract the real parts: $6-4=2$. Subtract the imaginary parts: $-2-7=-9$, so the result is $2-9i$.'
+          - problem: 'Two components wired in series have impedances $4 + 3i$ ohms and $2 - 7i$ ohms. What is the total impedance in ohms?'
+            answer: '6 - 4i'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Impedances in series add. The real parts give $4+2=6$ and the imaginary parts give $3-7=-4$, so the total is $6-4i$ ohms.'
+          - problem: 'A current of $4 + i$ amperes flows through a component with impedance $2 - 3i$ ohms. The voltage across the component is the current times the impedance. What is the voltage in volts?'
+            answer: '11 - 10i'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Multiply the current by the impedance: $(4+i)(2-3i)=8-12i+2i-3i^2$. With $i^2=-1$ this is $11-10i$ volts.'
+          - problem: 'Compute $(5 - 2i)(3 + 4i)$.'
+            answer: '23 + 14i'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Expand: $15+20i-6i-8i^2$. Since $i^2=-1$, the last term is $+8$, so the result is $23+14i$.'
+          - problem: 'Compute $(7 + 2i) + (-3 - 8i) - (1 - i)$.'
+            answer: '3 - 5i'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Remove the brackets, changing the signs inside the last one: $7+2i-3-8i-1+i$. The real parts give $3$ and the imaginary parts give $-5i$.'
+          - problem: 'Jon multiplies $(2 + 3i)(2 - 3i)$ and gets $4 - 9i^2 = 4 - 9 = -5$. What is the correct product?'
+            answer: '13'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Jon forgot that $i^2=-1$ in the last step, so the term $-9i^2$ is $+9$. The correct product is $4+9=13$.'
+          - problem: 'Compute $(1 + i)^2$.'
+            answer: '2i'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Expand: $1+2i+i^2$. Since $i^2=-1$, the real parts cancel and the product is $2i$.'
       - id: kp3
-        name: Divide using the conjugate; complex roots of quadratics
+        name: 'Divide using the conjugate; complex roots of quadratics'
         key_prerequisites: [polynomial-multiplication, quadratic-formula]
-        constraints: "divisors a + bi with |a|, |b| <= 3; quadratics with integer coefficients and negative discriminant; answers in a + bi form with exact fractions"
+        constraints: 'divisors a + bi with |a|, |b| <= 3; quadratics with integer coefficients and negative discriminant; answers in a + bi form with exact fractions'
+        step_check:
+          step: 'Multiply numerator and denominator by the conjugate of the denominator'
+          question: 'Why multiply by the conjugate of the denominator rather than by the denominator itself?'
+          options:
+            - 'The conjugate is the reciprocal of the denominator, so the fraction becomes $1$'
+            - 'The conjugate has the same value as the denominator, so nothing changes'
+            - 'Multiplying by the conjugate makes the numerator real instead'
+            - 'A number times its conjugate is real, which removes $i$ from the denominator'
+          answer: 'A number times its conjugate is real, which removes $i$ from the denominator'
+          why: '$(a+bi)(a-bi)=a^2+b^2$ is a real number, so the new denominator has no $i$.'
+        try_first:
+          problem: 'Compute $(2 + i)(2 - i)$.'
+          answer_contract: {"kind":"exact"}
+          answer: '5'
+          reveal: 'The product is $4-i^2=4+1=5$, a real number. A number times its conjugate is always real, and that is how a denominator $a+bi$ can be cleared of $i$.'
         exemplars:
           - problem: 'Compute $\frac{3 + 2i}{1 - i}$.'
-            answer: "1/2 + (5/2)i"
-            solution_sketch: 'Multiply by $\frac{1+i}{1+i}$: $\frac{(3+2i)(1+i)}{2} = \frac{1 + 5i}{2}$.'
-          - problem: 'Solve $x^2 - 2x + 5 = 0$ and give the root whose imaginary part is positive.'
-            answer: "1 + 2i"
-            solution_sketch: '$x = \frac{2 \pm \sqrt{4 - 20}}{2} = 1 \pm 2i$; the root with positive imaginary part is $1 + 2i$.'
-          - problem: "Compute the quotient (5 + i)/(2 - 3i). Give the answer in the form a + bi."
-            answer: "7/13 + (17/13)i"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "First multiply numerator and denominator by the conjugate 2 + 3i, so the full object is ((5 + i)(2 + 3i))/((2 - 3i)(2 + 3i)). Second multiply polynomials: the numerator is 10 + 15i + 2i + 3i^2 = 7 + 17i and the denominator is 4 + 9 = 13. Third separate the real and imaginary parts as 7/13 + (17/13)i. The answer is 7/13 + (17/13)i."
-          - problem: "Solve x^2 + 6x + 13 = 0. Find the root with positive imaginary part and give it in the form a + bi."
-            answer: "-3 + 2i"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Use the quadratic formula with a = 1, b = 6, c = 13, so x = (-6 ± sqrt(36 - 52))/2 = (-6 ± sqrt(-16))/2. Since sqrt(-16) = 4i, the roots are -3 + 2i and -3 - 2i. The root with positive imaginary part is -3 + 2i. Thus the answer is -3 + 2i."
-          - problem: "Compute (2 + i)/(3 + 2i). Give the answer in the form a + bi."
-            answer: "8/13 - (1/13)i"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Multiply numerator and denominator by the conjugate 3 - 2i, so the full object is ((2 + i)(3 - 2i))/((3 + 2i)(3 - 2i)). Multiply polynomials: the numerator is 6 - 4i + 3i - 2i^2 = 8 - i, and the denominator is 9 + 4 = 13. Separating real and imaginary parts gives 8/13 - (1/13)i. The answer is 8/13 - (1/13)i."
-          - problem: "Solve x^2 - 4x + 13 = 0. Find the root with negative imaginary part and give it in the form a + bi."
-            answer: "2 - 3i"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Use the quadratic formula with a = 1, b = -4, c = 13, so x = (4 ± sqrt(16 - 52))/2 = (4 ± sqrt(-36))/2. Since sqrt(-36) = 6i, the roots are 2 + 3i and 2 - 3i. The root with negative imaginary part is 2 - 3i. Thus the answer is 2 - 3i."
+            answer: '1/2 + (5/2)i'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Multiply the top and bottom by the conjugate $1+i$. The top becomes $(3+2i)(1+i)=1+5i$ and the bottom becomes $2$, so the quotient is $\frac12+\frac52 i$.'
+          - problem: 'Solve $x^2 - 2x + 5 = 0$.'
+            answer: '1 + 2i, 1 - 2i'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'By the quadratic formula $x=\frac{2\pm\sqrt{4-20}}{2}=\frac{2\pm 4i}{2}$. So the solutions are $1+2i$ and $1-2i$.'
+          - problem: 'Compute $\frac{5 + i}{2 - 3i}$.'
+            answer: '7/13 + (17/13)i'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Multiply the top and bottom by the conjugate $2+3i$. The top is $10+15i+2i+3i^2=7+17i$ and the bottom is $4+9=13$, so the quotient is $\frac{7}{13}+\frac{17}{13}i$.'
+          - problem: 'A component with impedance $3 - i$ ohms has a voltage of $10 + 5i$ volts across it. Voltage equals current times impedance. What is the current in amperes?'
+            answer: '5/2 + (5/2)i'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The current is the voltage divided by the impedance, $\frac{10+5i}{3-i}$. Multiply by $\frac{3+i}{3+i}$: the top is $25+25i$ and the bottom is $10$, so the current is $\frac52+\frac52 i$ amperes.'
+          - problem: 'The height of a ball above a ledge is $h = -t^2 + 6t - 13$ metres, $t$ seconds after it is thrown. The ball never reaches the ledge, so $h = 0$ has no real solution. What are the complex solutions of $h = 0$?'
+            answer: '3 + 2i, 3 - 2i'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Multiply by $-1$ to get $t^2-6t+13=0$. The quadratic formula gives $t=\frac{6\pm\sqrt{36-52}}{2}=\frac{6\pm 4i}{2}$, so $t=3\pm 2i$.'
+          - problem: 'Compute $\frac{2 + i}{3 + 2i}$.'
+            answer: '8/13 - (1/13)i'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Multiply the top and bottom by the conjugate $3-2i$. The top is $6-4i+3i-2i^2=8-i$ and the bottom is $9+4=13$, so the quotient is $\frac{8}{13}-\frac{1}{13}i$.'
+          - problem: 'Solve $x^2 + 6x + 13 = 0$.'
+            answer: '-3 + 2i, -3 - 2i'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The quadratic formula gives $x=\frac{-6\pm\sqrt{36-52}}{2}=\frac{-6\pm 4i}{2}$. So the solutions are $-3+2i$ and $-3-2i$.'
+          - problem: 'Kim simplifies $\frac{6}{1 + i}$ and writes $3 + 3i$. What is the correct value?'
+            answer: '3 - 3i'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Kim multiplied the top and bottom by $1+i$, but the conjugate of $1+i$ is $1-i$. So $\frac{6(1-i)}{(1+i)(1-i)}=\frac{6-6i}{2}=3-3i$.'
     diagnostic_exemplar:
-      problem: 'Compute $\dfrac{2 + \sqrt{-9}}{1 + i}$, giving the answer in $a + bi$ form.'
+      problem: 'Compute $\dfrac{2 + \sqrt{-9}}{1 + i}$.'
       answer: '5/2 + (1/2)i'
+      answer_contract: {"kind":"exact"}
       solution_sketch: '$\sqrt{-9} = 3i$; multiply by $\frac{1-i}{1-i}$: $\frac{(2 + 3i)(1 - i)}{2} = \frac{5 + i}{2}$.'
     anki_seeds:
       - front: "i² = ?"
@@ -134,86 +206,146 @@ topics:
         weight: 0.3
     knowledge_points:
       - id: kp1
-        name: Plot and identify real and imaginary parts
+        name: 'Plot and identify real and imaginary parts'
         key_prerequisites: [coordinate-plane]
-        constraints: "a + bi with single-digit integer a, b covering all four quadrants; answers as ordered pairs (a, b)"
+        constraints: 'a + bi with single-digit integer a, b covering all four quadrants; answers as ordered pairs (a, b)'
+        step_check:
+          step: 'Plot the point with $x$-coordinate $-5$ and $y$-coordinate $3$'
+          question: 'Why does the imaginary part $3$ become the $y$-coordinate?'
+          options:
+            - 'The imaginary part is written second, so it is the $y$-value'
+            - 'Imaginary numbers are positive, so they go up the $y$-axis'
+            - 'The vertical axis shows imaginary parts, the horizontal axis real parts'
+            - 'The letter $i$ marks the $y$-axis, so the whole term $3i$ is used as $y$'
+          answer: 'The vertical axis shows imaginary parts, the horizontal axis real parts'
+          why: 'The complex plane puts real parts on the horizontal axis and imaginary parts on the vertical axis, so $-5+3i$ is the point $(-5, 3)$.'
         exemplars:
           - problem: 'Which ordered pair in the plane represents $3 - 2i$?'
-            answer: "(3, -2)"
-            solution_sketch: 'The real part is the $x$-coordinate and the imaginary part the $y$-coordinate, so $3 - 2i$ plots at $(3, -2)$, in Quadrant IV.'
-          - problem: 'Give the ordered pair (real part, imaginary part) of $-4 + 7i$.'
-            answer: "(-4, 7)"
-            solution_sketch: 'In $a + bi$ the real part is $a = -4$ and the imaginary part is $b = 7$.'
-          - problem: "The complex number $-6 - 5i$ is plotted in the complex plane. Give its coordinates as (real part, imaginary part)."
-            answer: "(-6, -5)"
-            answer_contract: {"arity": 2, "kind": "coordinates"}
-            solution_sketch: "The complex number $-6 - 5i$ has real part $-6$ and imaginary part $-5$. By the complex-plane rule, the point is (real, imaginary) = (-6, -5)."
-          - problem: "A complex number is represented by the expression $8 + 2i$. Give the ordered pair for its plot as (real part, imaginary part)."
-            answer: "(8, 2)"
-            answer_contract: {"arity": 2, "kind": "coordinates"}
-            solution_sketch: "The complex number $8 + 2i$ has real part $8$ and imaginary part $2$. By the real-imaginary coordinate rule, the point is (8, 2)."
-          - problem: "Plot the complex number $4 - 9i$. Give the point as (real part, imaginary part)."
-            answer: "(4, -9)"
-            answer_contract: {"arity": 2, "kind": "coordinates"}
-            solution_sketch: "In $4 - 9i$, the real part is $4$ and the imaginary part is $-9$. By the plot rule, the point is (4, -9)."
-          - problem: "The complex number $-2 + 6i$ is plotted. State its coordinates as (real part, imaginary part)."
-            answer: "(-2, 6)"
-            answer_contract: {"arity": 2, "kind": "coordinates"}
-            solution_sketch: "The complex number $-2 + 6i$ has real part $-2$ and imaginary part $6$. By the real-imaginary coordinate rule, the point is (-2, 6)."
+            answer: '(3, -2)'
+            answer_contract: {"kind":"coordinates","arity":2}
+            solution_sketch: 'The real part is the $x$-coordinate and the imaginary part is the $y$-coordinate. So $3-2i$ is the point $(3, -2)$, in the fourth quadrant.'
+          - problem: 'What are the coordinates of the point that represents $-4 + 7i$ in the complex plane?'
+            answer: '(-4, 7)'
+            answer_contract: {"kind":"coordinates","arity":2}
+            solution_sketch: 'In $a + bi$ the real part $a=-4$ is the $x$-coordinate and the imaginary part $b=7$ is the $y$-coordinate. So the point is $(-4, 7)$.'
+          - problem: 'The point $(5, -1)$ is plotted in the complex plane. Which complex number does it represent?'
+            answer: '5 - i'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The $x$-coordinate $5$ is the real part and the $y$-coordinate $-1$ is the imaginary part. So the point represents the complex number $5 - i$.'
+          - problem: 'A robot''s position relative to its dock is the complex number $-4 + 7i$. The real part is measured in metres east and the imaginary part in metres north. How many metres north of the dock is the robot?'
+            answer: '7'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"m","allow_omitted":true}
+            solution_sketch: 'The imaginary part is the northward coordinate. For $-4+7i$ it is $7$, so the robot is $7$ m north of the dock, and $4$ m west of it.'
+          - problem: 'A ship appears on a radar screen at the complex number $-6 - 5i$. The real axis points east and the imaginary axis points north. In which direction from the centre of the screen is the ship?'
+            answer: 'south-west'
+            answer_contract: {"kind":"label","options":[["south-west","southwest","south west","sw","to the south-west","in the south-west"],["north-east","northeast","north east","ne","to the north-east","in the north-east"],["north-west","northwest","north west","nw","to the north-west","in the north-west"],["south-east","southeast","south east","se","to the south-east","in the south-east"]]}
+            solution_sketch: 'The real part $-6$ is negative, so the ship is west of the centre. The imaginary part $-5$ is negative, so it is also south of the centre. The ship lies to the south-west.'
+          - problem: 'The complex number $4 - 9i$ is plotted in the complex plane. What are the coordinates of its point?'
+            answer: '(4, -9)'
+            answer_contract: {"kind":"coordinates","arity":2}
+            solution_sketch: 'The real part $4$ is the $x$-coordinate and the imaginary part $-9$ is the $y$-coordinate. So the point is $(4, -9)$.'
+          - problem: 'Which complex number is plotted at the point $(-2, 0)$?'
+            answer: '-2'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The point has $x$-coordinate $-2$ and $y$-coordinate $0$, so the real part is $-2$ and the imaginary part is $0$. The point lies on the real axis and represents $-2$.'
       - id: kp2
-        name: Modulus as distance from the origin
+        name: 'Modulus as distance from the origin'
         key_prerequisites: [pythagorean-theorem, distance-midpoint-formulas]
-        constraints: "prefer Pythagorean triples; include one radical answer"
+        constraints: 'prefer Pythagorean triples; include one radical answer'
+        step_check:
+          step: 'Square both parts: $a^2 = 25$, $b^2 = 144$'
+          question: 'Why are the real and imaginary parts squared and added before the root is taken?'
+          options:
+            - 'The modulus is the sum $a + b$, and squaring keeps it positive'
+            - '$a$ and $b$ are legs of a right triangle with hypotenuse $|z|$'
+            - 'Squaring removes the $i$, so only the real part is used in the root'
+            - 'The root and the squares cancel, so the modulus is just $a + b$, always'
+          answer: '$a$ and $b$ are legs of a right triangle with hypotenuse $|z|$'
+          why: 'The origin, $(a, 0)$ and $(a, b)$ form a right triangle, so the Pythagorean theorem gives the distance $\sqrt{a^2 + b^2}$.'
         exemplars:
-          - problem: 'Compute $|3 + 4i|$.'
-            answer: "5"
-            solution_sketch: '$\sqrt{9 + 16}$.'
-          - problem: 'Compute $|1 - i|$.'
-            answer: "√2"
-          - problem: 'Compute $|{-2} + 2\sqrt{3}\,i|$.'
-            answer: "4"
-            solution_sketch: '$\sqrt{4 + 12} = 4$.'
-          - problem: "Compute |5 - 12i|."
-            answer: "13"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The modulus is the distance from the origin, so |5 - 12i| = sqrt(5^2 + (-12)^2). By the Pythagorean theorem, 25 + 144 = 169. The square root is 13."
-          - problem: "Find the distance from the origin to the point (-8, 6) in the complex plane."
-            answer: "10"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The point (-8, 6) is the complex number -8 + 6i. Its modulus is the distance from the origin: sqrt((-8)^2 + 6^2). By the distance formula, 64 + 36 = 100, so the distance is 10."
-          - problem: "Compute |2 + 3i|."
-            answer: "sqrt(13)"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The modulus of 2 + 3i is the distance from the origin: sqrt(2^2 + 3^2). By the Pythagorean theorem, 4 + 9 = 13. The square root is sqrt(13)."
+          - problem: 'Find $|3 + 4i|$.'
+            answer: '5'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The modulus is the distance from the origin to the point $(3, 4)$. By the Pythagorean theorem it is $\sqrt{9 + 16} = \sqrt{25} = 5$.'
+          - problem: 'Find $|1 - i|$.'
+            answer: 'sqrt(2)'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The modulus is $\sqrt{1^2 + (-1)^2} = \sqrt{1 + 1}$. So $|1 - i| = \sqrt{2}$.'
+          - problem: 'Find $|{-2} + 2\sqrt{3}\,i|$.'
+            answer: '4'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The modulus is $\sqrt{(-2)^2 + (2\sqrt{3})^2} = \sqrt{4 + 12}$. That is $\sqrt{16} = 4$.'
+          - problem: 'A drone is $5$ m east and $12$ m south of its pilot. How far is the drone from the pilot?'
+            answer: '13'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"m","allow_omitted":true}
+            solution_sketch: 'Write the position as the complex number $5 - 12i$, with east real and north imaginary. Its modulus is $\sqrt{25 + 144} = \sqrt{169} = 13$, so the drone is $13$ m away.'
+          - problem: 'Find the distance from the origin to the point $(-8, 6)$ in the complex plane.'
+            answer: '10'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The point $(-8, 6)$ is the complex number $-8 + 6i$. Its distance from the origin is $\sqrt{(-8)^2 + 6^2} = \sqrt{64 + 36} = 10$.'
+          - problem: 'The magnitude of an impedance is the modulus of the complex number that describes it. What is the magnitude of an impedance of $1 + 6i$ ohms, to one decimal place?'
+            answer: '6.1'
+            answer_contract: {"kind":"approx","decimals":1}
+            solution_sketch: 'The magnitude is $|1 + 6i| = \sqrt{1 + 36} = \sqrt{37}$. This is about $6.1$ ohms to one decimal place.'
+          - problem: 'Find $|2 + 3i|$.'
+            answer: 'sqrt(13)'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The modulus of $2 + 3i$ is the distance from the origin, $\sqrt{2^2 + 3^2}$. By the Pythagorean theorem, $4 + 9 = 13$, so the modulus is $\sqrt{13}$.'
+          - problem: 'A complex number $z$ has real part $5$, a positive imaginary part and $|z| = 13$. What is $z$?'
+            answer: '5 + 12i'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Let $z = 5 + bi$ with $b > 0$. Then $25 + b^2 = 169$, so $b^2 = 144$ and $b = 12$. Hence $z = 5 + 12i$.'
       - id: kp3
-        name: Conjugates and the identity z·z̄ = |z|²
+        name: 'Conjugates and the identity z·z̄ = |z|²'
         key_prerequisites: [complex-numbers]
-        constraints: "z = a + bi with small integers; z·z̄ products come out to a² + b², a plain integer"
+        constraints: 'z = a + bi with small integers; z·z̄ products come out to a² + b², a plain integer'
+        step_check:
+          step: 'Apply the formula $z\bar{z} = a^2 + b^2$: $1^2 + (-2)^2 = 1 + 4$'
+          question: 'Why is $(-2)^2$ added to $1^2$ and not subtracted from it?'
+          options:
+            - 'Since $-(2i)^2 = -4i^2$ and $i^2 = -1$, the minus becomes plus'
+            - 'Squaring a negative number turns every sign in the product positive'
+            - 'The conjugate pair always gives a difference of squares, $a^2 - b^2$'
+            - 'The two imaginary terms $2i$ and $-2i$ add up to the term $4$'
+          answer: 'Since $-(2i)^2 = -4i^2$ and $i^2 = -1$, the minus becomes plus'
+          why: '$(a + bi)(a - bi) = a^2 - b^2 i^2$, and since $i^2 = -1$ this equals $a^2 + b^2$.'
         exemplars:
-          - problem: 'State the conjugate of $2 - 5i$.'
-            answer: "2 + 5i"
+          - problem: 'What is the conjugate of $2 - 5i$?'
+            answer: '2 + 5i'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The conjugate keeps the real part and flips the sign of the imaginary part. So the conjugate of $2 - 5i$ is $2 + 5i$.'
           - problem: 'Compute $(3 + 4i)(3 - 4i)$.'
-            answer: "25"
-            solution_sketch: '$z\bar{z} = |z|^2 = 9 + 16$.'
-          - problem: "State the conjugate of $-4 + 7i$."
-            answer: "-4 - 7i"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The conjugate rule keeps the real part and flips the sign of the imaginary part. For $-4 + 7i$ the real part is $-4$ and the imaginary part is $7$, so the conjugate is $-4 - 7i$."
-          - problem: "Compute $(5 + 12i)(5 - 12i)$."
-            answer: "169"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Use the identity $z\\bar{z} = a^2 + b^2$ for $z = a + bi$. With $a = 5$ and $b = 12$, this is $5^2 + 12^2 = 25 + 144 = 169$. The product is $169$."
-          - problem: "For $z = 7 + 2i$, find $|z|^2$."
-            answer: "53"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The modulus-squared identity gives $|z|^2 = a^2 + b^2$. With $a = 7$ and $b = 2$, this is $7^2 + 2^2 = 49 + 4 = 53$. So $|z|^2 = 53$."
-          - problem: "A complex number has the form $z = 3 + bi$ with $z\\bar{z} = 34$ and $b > 0$. Find $b$."
-            answer: "5"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Use the identity $z\\bar{z} = a^2 + b^2$. Here $a = 3$, so $9 + b^2 = 34$, which gives $b^2 = 25$. Since $b > 0$, $b = 5$."
+            answer: '25'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'A number times its conjugate is $a^2 + b^2$. So $(3 + 4i)(3 - 4i) = 9 - 16i^2 = 9 + 16 = 25$.'
+          - problem: 'What is the conjugate of $-4 + 7i$?'
+            answer: '-4 - 7i'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The conjugate rule keeps the real part and flips the sign of the imaginary part. For $-4 + 7i$ the real part is $-4$ and the imaginary part is $7$, so the conjugate is $-4 - 7i$.'
+          - problem: 'For $z = 7 + 2i$, find $|z|^2$.'
+            answer: '53'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The modulus-squared identity gives $|z|^2 = a^2 + b^2$. With $a = 7$ and $b = 2$, this is $49 + 4 = 53$.'
+          - problem: 'The power of a signal with complex amplitude $z$ is $z\bar{z}$. Find the power of a signal with amplitude $5 + 12i$.'
+            answer: '169'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The product of a number and its conjugate is $a^2 + b^2$. So the power is $5^2 + 12^2 = 25 + 144 = 169$.'
+          - problem: 'A complex number $z = 3 + bi$ has $z\bar{z} = 34$ and $b > 0$. Find $b$.'
+            answer: '5'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Use the identity $z\bar{z} = a^2 + b^2$. Here $a = 3$, so $9 + b^2 = 34$, which gives $b^2 = 25$. Since $b > 0$, $b = 5$.'
+          - problem: 'The point $(-3, 2)$ is reflected in the real axis of the complex plane. Which complex number is plotted at the image of the point?'
+            answer: '-3 - 2i'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Reflecting in the real axis keeps the $x$-coordinate and flips the sign of the $y$-coordinate. So $(-3, 2)$ goes to $(-3, -2)$, which is the conjugate $-3 - 2i$.'
+          - problem: 'What is the conjugate of $-6i$?'
+            answer: '6i'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The real part of $-6i$ is $0$, so only the sign of the imaginary part changes. The conjugate of $-6i$ is $6i$.'
     diagnostic_exemplar:
-      problem: 'Compute $(6 - 8i)(6 + 8i)$, and confirm that your value equals $|6 - 8i|^2$.'
+      problem: 'Compute $(6 - 8i)(6 + 8i)$.'
       answer: '100'
+      answer_contract: {"kind":"exact"}
       solution_sketch: '$z\bar z = 6^2 + 8^2 = 100$, and $|6 - 8i| = \sqrt{36 + 64} = 10$, whose square is $100$.'
     anki_seeds:
       - front: "|a + bi| = ?"
@@ -245,88 +377,150 @@ topics:
         weight: 0.3
     knowledge_points:
       - id: kp1
-        name: Nonreal roots come in conjugate pairs
+        name: 'Nonreal roots come in conjugate pairs'
         key_prerequisites: [complex-numbers, fundamental-theorem-algebra-multiplicity]
-        constraints: "polynomials always stated to have real coefficients; degrees 3-5; count arguments pair nonreal roots and use degree parity"
+        constraints: 'polynomials always stated to have real coefficients; degrees 3-5; count arguments pair nonreal roots and use degree parity'
+        step_check:
+          step: 'the conjugate of $2 + i$ must also be a root'
+          question: 'Why does a real polynomial with the root $2 + i$ also have the root $2 - i$?'
+          options:
+            - 'Every root of a polynomial has a partner with the same real part'
+            - 'The imaginary parts must cancel for the coefficients to be real'
+            - 'The conjugate of a root is a root for every polynomial'
+            - 'A degree-$4$ polynomial must have exactly two nonreal roots'
+          answer: 'The imaginary parts must cancel for the coefficients to be real'
+          why: 'With real coefficients, the imaginary parts of the powers of $2 + i$ can only cancel if the conjugate $2 - i$ is a root too.'
         exemplars:
           - problem: 'A cubic with real coefficients has roots $2$ and $1 + i$. What is its third root?'
-            answer: "1 - i"
-            solution_sketch: 'Real coefficients force nonreal roots into conjugate pairs.'
-          - problem: "A cubic polynomial with real coefficients has $5i$ as a root. Give the other nonreal root in the form a + bi."
-            answer: "0 - 5i"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The Conjugate Root Theorem says that a polynomial with real coefficients has nonreal roots in conjugate pairs. The conjugate of $5i$ is $-5i$, which is written as $0 - 5i$ in the form a + bi. So the other forced root is 0 - 5i."
+            answer: '1 - i'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The coefficients are real, so the nonreal root $1 + i$ must come with its conjugate. The third root is $1 - i$.'
+          - problem: 'A cubic polynomial with real coefficients has $5i$ as a root. What other nonreal root must it have?'
+            answer: '-5i'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Nonreal roots of a real polynomial come in conjugate pairs. The conjugate of $5i$ is $-5i$, so $-5i$ is also a root.'
           - problem: 'A degree-$5$ polynomial with real coefficients has $2i$ and $1 - i$ among its roots. How many real roots must it have?'
-            answer: "1"
-            solution_sketch: 'The conjugates $-2i$ and $1 + i$ are also roots: four nonreal roots, leaving exactly one real root.'
-          - problem: "A degree-$4$ polynomial with real coefficients has $3$, $-5$, and $1 + i$ among its roots. How many real roots must it have?"
-            answer: "2"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "By the Conjugate Root Theorem, $1 + i$ forces $1 - i$ to be a root. The given real roots are $3$ and $-5$, so there are two real roots. The degree is $4$, and $3$, $-5$, $1 + i$, $1 - i$ are four roots. Thus there are exactly 2 real roots."
-          - problem: "A cubic polynomial with real coefficients has $-1$ and $4 - 3i$ among its roots. Give its third root in the form a + bi."
-            answer: "4 + 3i"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The Conjugate Root Theorem forces the conjugate of $4 - 3i$ to also be a root. The conjugate is $4 + 3i$. A cubic has three roots, and $-1$ is the real root, so the third root is 4 + 3i."
-          - problem: "A degree-$4$ polynomial with real coefficients has $3i$ and $2 + i$ among its roots. How many real roots must it have?"
-            answer: "0"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The Conjugate Root Theorem forces the conjugates $-3i$ and $2 - i$ to also be roots. That gives four nonreal roots: $3i$, $-3i$, $2 + i$, $2 - i$. The polynomial has degree $4$, so these four roots fill it completely, leaving no room for a real root. Therefore the polynomial must have 0 real roots."
+            answer: '1'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The conjugates $-2i$ and $1 + i$ are also roots, so there are four nonreal roots. That leaves exactly $5 - 4 = 1$ real root.'
+          - problem: 'A degree-$4$ polynomial with real coefficients has $3$, $-5$ and $1 + i$ among its roots. How many real roots must it have?'
+            answer: '2'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The root $1 + i$ forces $1 - i$ to be a root. Together with $3$ and $-5$ these are four roots, so the polynomial has exactly $2$ real roots.'
+          - problem: 'A cubic polynomial with real coefficients has $-1$ and $4 - 3i$ among its roots. What is its third root?'
+            answer: '4 + 3i'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The conjugate of $4 - 3i$ must also be a root. A cubic has three roots, and $-1$ is the real one, so the third root is $4 + 3i$.'
+          - problem: 'A degree-$4$ polynomial with real coefficients has $3i$ and $2 + i$ among its roots. How many real roots must it have?'
+            answer: '0'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The conjugates $-3i$ and $2 - i$ are also roots. That gives four nonreal roots, which fill the degree $4$ completely, so there are $0$ real roots.'
+          - problem: 'Pia says that a cubic polynomial with real coefficients can have exactly the roots $1$, $2$ and $3 + i$. Is she right?'
+            answer: 'no'
+            answer_contract: {"kind":"label","options":[["no","no, she is not right","she is not right","she is wrong","not possible","not right","incorrect","impossible"],["yes","yes, she is right","she is right","she is correct","possible","right","correct","yes, pia is right"]]}
+            solution_sketch: 'The root $3 + i$ forces its conjugate $3 - i$ to be a root as well. A cubic would then have four roots, $1$, $2$, $3 + i$ and $3 - i$, which is too many.'
+          - problem: 'The characteristic equation of a damped system is a cubic with real coefficients. One root is $-1 + 2i$ and another is $-4$. What is the remaining root?'
+            answer: '-1 - 2i'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The conjugate of $-1 + 2i$ must also be a root. The three roots are $-4$, $-1 + 2i$ and $-1 - 2i$, so the remaining root is $-1 - 2i$.'
+          - problem: 'The graph of a cubic polynomial with real coefficients crosses the $x$-axis exactly once, at $x = 4$. The cubic also has the root $-2 + 5i$. What is its third root?'
+            answer: '-2 - 5i'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The graph crosses the axis once, so $4$ is the only real root. The nonreal root $-2 + 5i$ comes with its conjugate, so the third root is $-2 - 5i$.'
       - id: kp2
-        name: Build a real polynomial from a complex root
+        name: 'Build a real polynomial from a complex root'
         key_prerequisites: [complex-numbers, complex-plane-modulus-conjugate]
         constraints: 'use $z + \bar{z} = 2a$ and $z\bar{z} = a^2 + b^2$ for the quadratic factor; small integer $a$, $b$; monic answers'
+        step_check:
+          step: 'Compute the product of the roots: $z\bar{z} = 4^2 + 1^2 = 17$'
+          question: 'Why is the product of the roots $4^2 + 1^2$ and not $4^2 - 1^2$?'
+          options:
+            - 'Squares of both parts are always added, whatever the product is'
+            - 'The product of two conjugates is a difference of squares, $a^2 - b^2$'
+            - 'Since $(4 - i)(4 + i) = 16 - i^2$ and $i^2 = -1$, the sign flips'
+            - 'The product of the roots is the sum of the squares of their parts'
+          answer: 'Since $(4 - i)(4 + i) = 16 - i^2$ and $i^2 = -1$, the sign flips'
+          why: '$(4 - i)(4 + i) = 16 - i^2 = 16 + 1 = 17$, because $i^2 = -1$ turns the minus into a plus.'
         exemplars:
-          - problem: 'Write a monic quadratic with real coefficients having $3 + 2i$ as a root. Expand it.'
-            answer: "x^2 - 6x + 13"
-            solution_sketch: 'The roots are $3 \pm 2i$: sum $6$, product $9 + 4 = 13$, so $x^2 - 6x + 13$.'
-          - problem: 'Write a monic cubic with real coefficients whose roots include $1$ and $2 - i$. Expand it.'
-            answer: "x^3 - 5x^2 + 9x - 5"
-            solution_sketch: '$(x - 1)\left(x^2 - 4x + 5\right)$, since $2 \pm i$ give sum $4$ and product $5$.'
-          - problem: "Write a monic quadratic with real coefficients having -4 + i as a root. Give the expanded polynomial."
-            answer: "x^2 + 8x + 17"
-            answer_contract: {"kind": "function", "vars": ["x"]}
-            solution_sketch: "Conjugate root theorem: real coefficients force the conjugate -4 - i as the second root. Vieta: sum = (-4 + i) + (-4 - i) = -8, product = 16 + 1 = 17. The monic quadratic is x^2 + 8x + 17."
-          - problem: "Write a monic cubic with real coefficients whose roots include 3 and 5 + i. Give the expanded polynomial."
-            answer: "x^3 - 13x^2 + 56x - 78"
-            answer_contract: {"kind": "function", "vars": ["x"]}
-            solution_sketch: "Conjugate root theorem: 5 + i forces 5 - i. The complex pair gives x^2 - 10x + 26 because sum = 10 and product = 26. Multiply by (x - 3): x^3 - 13x^2 + 56x - 78."
-          - problem: "A monic quadratic with real coefficients has one root 3 - 4i and constant term 25. Find the coefficient of x."
-            answer: "-6"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Conjugate root theorem: the roots are 3 +/- 4i, so their sum is 6. For a monic quadratic the x coefficient is minus the sum, so it is -6. The constant term 9 + 16 = 25 agrees. The coefficient of x is -6."
-          - problem: "Write a monic quartic with real coefficients whose roots are 1, -2, and 2 + i. Give the expanded polynomial."
-            answer: "x^4 - 3x^3 - x^2 + 13x - 10"
-            answer_contract: {"kind": "function", "vars": ["x"]}
-            solution_sketch: "Conjugate root theorem: 2 + i gives 2 - i, so the complex factor is x^2 - 4x + 5. The real factors are x - 1 and x + 2, whose product is x^2 + x - 2. Multiply: x^4 - 3x^3 - x^2 + 13x - 10."
+          - problem: 'Find the monic quadratic with real coefficients that has $3 + 2i$ as a root, and expand it.'
+            answer: 'x^2 - 6x + 13'
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'The other root is the conjugate $3 - 2i$. The sum of the roots is $6$ and the product is $9 + 4 = 13$, so the quadratic is $x^2 - 6x + 13$.'
+          - problem: 'Find the monic cubic with real coefficients whose roots include $1$ and $2 - i$, and expand it.'
+            answer: 'x^3 - 5x^2 + 9x - 5'
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'The conjugate $2 + i$ is also a root. The pair gives $x^2 - 4x + 5$, because the sum is $4$ and the product is $5$. Then $(x - 1)(x^2 - 4x + 5) = x^3 - 5x^2 + 9x - 5$.'
+          - problem: 'Find the monic quadratic with real coefficients that has $-4 + i$ as a root, and expand it.'
+            answer: 'x^2 + 8x + 17'
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'The conjugate $-4 - i$ is the other root. Their sum is $-8$ and their product is $16 + 1 = 17$, so the quadratic is $x^2 + 8x + 17$.'
+          - problem: 'The characteristic polynomial of a spring system is a monic cubic with real coefficients. Its roots are $-2$ and $-1 + 3i$. Write the polynomial $p(x)$ in expanded form.'
+            answer: 'x^3 + 4x^2 + 14x + 20'
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'The conjugate $-1 - 3i$ is a root too, which gives the factor $x^2 + 2x + 10$. Then $(x + 2)(x^2 + 2x + 10) = x^3 + 4x^2 + 14x + 20$.'
+          - problem: 'A monic quadratic with real coefficients has $3 - 4i$ as a root. What is the coefficient of $x$?'
+            answer: '-6'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The roots are $3 \pm 4i$, so their sum is $6$. For a monic quadratic the coefficient of $x$ is minus the sum of the roots, which is $-6$.'
+          - problem: 'Find the monic quartic with real coefficients whose roots include $1$, $-2$ and $2 + i$, and expand it.'
+            answer: 'x^4 - 3x^3 - x^2 + 13x - 10'
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'The conjugate $2 - i$ is a root, so the complex factor is $x^2 - 4x + 5$. The real factors multiply to $(x - 1)(x + 2) = x^2 + x - 2$. Multiplying gives $x^4 - 3x^3 - x^2 + 13x - 10$.'
+          - problem: 'The characteristic polynomial of a damped oscillator is a monic quadratic with real coefficients and the root $-3 + 4i$. Write the polynomial $p(x)$ in expanded form.'
+            answer: 'x^2 + 6x + 25'
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'The other root is the conjugate $-3 - 4i$. Their sum is $-6$ and their product is $9 + 16 = 25$, so the polynomial is $x^2 + 6x + 25$.'
+          - problem: 'Tom builds a quadratic with the root $2 + 3i$ by multiplying $(x - 2 - 3i)(x - 2 + 3i)$ and gets $x^2 - 4x - 5$. What is the correct expanded polynomial?'
+            answer: 'x^2 - 4x + 13'
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'Tom made a sign slip: the product is $(x - 2)^2 - (3i)^2$, and $(3i)^2 = -9$. So the product is $x^2 - 4x + 4 + 9 = x^2 - 4x + 13$.'
       - id: kp3
-        name: Find the remaining roots
+        name: 'Find the remaining roots'
         key_prerequisites: [fundamental-theorem-algebra-multiplicity, complex-numbers]
-        constraints: "divide out the conjugate-pair quadratic; the remaining factor is linear or a factorable quadratic with integer roots"
+        constraints: 'divide out the conjugate-pair quadratic; the remaining factor is linear or a factorable quadratic with integer roots'
+        step_check:
+          step: 'Divide the polynomial by the quadratic factor'
+          question: 'Why can the polynomial be divided exactly by the quadratic factor $x^2 - 6x + 10$?'
+          options:
+            - 'The factor is built from two of its roots, so it is a factor'
+            - 'Every quadratic divides every cubic without a remainder'
+            - 'Dividing by a quadratic always leaves a linear quotient, so no remainder appears'
+            - 'The factor has real coefficients, which forces a zero remainder'
+          answer: 'The factor is built from two of its roots, so it is a factor'
+          why: 'The roots $3 - i$ and $3 + i$ both make $p(x)$ zero, so $(x - (3 - i))(x - (3 + i))$ is a factor and the division leaves no remainder.'
         exemplars:
-          - problem: "Given that $2 + i$ is a root of $p(x) = x^3 - 5x^2 + 9x - 5$, find the other roots. Give the answer as a set."
-            answer: "{2 - i, 1}"
-            answer_contract: {"kind": "set"}
-            solution_sketch: "The root 2 + i forces its conjugate 2 - i by the conjugate root theorem. The pair gives the factor x^2 - 4x + 5. Dividing p(x) by this factor leaves x - 1. Thus the other roots are {2 - i, 1}."
-          - problem: "Given that $3i$ is a root of $p(x) = x^4 + x^3 + 3x^2 + 9x - 54$, find all roots of $p$. Give the answer as a set."
-            answer: "{3i, -3i, 2, -3}"
-            answer_contract: {"kind": "set"}
-            solution_sketch: "The conjugate root theorem says the root 3i forces -3i. The pair gives the factor x^2 + 9. Dividing p(x) by x^2 + 9 leaves x^2 + x - 6, which factors as (x - 2)(x + 3). Thus all roots are {3i, -3i, 2, -3}."
-          - problem: "Given that $1 - 2i$ is a root of $p(x) = x^3 - 6x^2 + 13x - 20$, find the other roots. Give the answer as a set."
-            answer: "{1 + 2i, 4}"
-            answer_contract: {"kind": "set"}
-            solution_sketch: "The root 1 - 2i forces its conjugate 1 + 2i. The pair gives the factor x^2 - 2x + 5. Dividing p(x) by this factor leaves x - 4. Thus the other roots are {1 + 2i, 4}."
-          - problem: "Given that $2 + i$ is a root of $p(x) = x^4 - 6x^3 + 10x^2 + 2x - 15$, find all roots of $p$. Give the answer as a set."
-            answer: "{2 + i, 2 - i, 3, -1}"
-            answer_contract: {"kind": "set"}
-            solution_sketch: "The conjugate root theorem gives 2 - i as another root. The pair gives the factor x^2 - 4x + 5. Dividing p(x) by this factor leaves x^2 - 2x - 3, which factors as (x - 3)(x + 1). Thus all roots are {2 + i, 2 - i, 3, -1}."
-          - problem: "Given that $-4i$ is a root of $p(x) = x^4 + 4x^3 + 11x^2 + 64x - 80$, find all roots of $p$. Give the answer as a set."
-            answer: "{4i, -4i, 1, -5}"
-            answer_contract: {"kind": "set"}
-            solution_sketch: "The root -4i forces its conjugate 4i by the conjugate root theorem. The pair gives the factor x^2 + 16. Dividing p(x) by x^2 + 16 leaves x^2 + 4x - 5, which factors as (x + 5)(x - 1). Thus all roots are {4i, -4i, 1, -5}."
-          - problem: "Given that $2 - 3i$ is a root of $p(x) = x^4 - 4x^3 + 9x^2 + 16x - 52$, find all roots of $p$. Give the answer as a set."
-            answer: "{2 + 3i, 2 - 3i, 2, -2}"
-            answer_contract: {"kind": "set"}
-            solution_sketch: "The conjugate root theorem gives 2 + 3i as another root. The pair gives the factor x^2 - 4x + 13. Dividing p(x) by this factor leaves x^2 - 4, which factors as (x - 2)(x + 2). Thus all roots are {2 + 3i, 2 - 3i, 2, -2}."
+          - problem: 'Given that $2 + i$ is a root of $p(x) = x^3 - 5x^2 + 9x - 5$, find the other roots.'
+            answer: '2 - i, 1'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The root $2 + i$ forces its conjugate $2 - i$. The pair gives the factor $x^2 - 4x + 5$, and dividing $p(x)$ by it leaves $x - 1$. So the other roots are $2 - i$ and $1$.'
+          - problem: 'Given that $3i$ is a root of $p(x) = x^4 + x^3 + 3x^2 + 9x - 54$, find all the roots of $p$.'
+            answer: '3i, -3i, 2, -3'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The root $3i$ forces $-3i$. The pair gives the factor $x^2 + 9$, and dividing leaves $x^2 + x - 6 = (x - 2)(x + 3)$. So the roots are $3i$, $-3i$, $2$ and $-3$.'
+          - problem: 'Given that $1 - 2i$ is a root of $p(x) = x^3 - 6x^2 + 13x - 20$, find the other roots.'
+            answer: '1 + 2i, 4'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The root $1 - 2i$ forces its conjugate $1 + 2i$. The pair gives the factor $x^2 - 2x + 5$, and dividing $p(x)$ by it leaves $x - 4$. So the other roots are $1 + 2i$ and $4$.'
+          - problem: 'A system has the characteristic equation $s^3 + 4s^2 + 14s + 20 = 0$, and $s = -1 + 3i$ is a solution. Find the other solutions.'
+            answer: '-1 - 3i, -2'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The conjugate $-1 - 3i$ is also a solution. The pair gives the factor $s^2 + 2s + 10$, and dividing leaves $s + 2$. So the other solutions are $-1 - 3i$ and $-2$.'
+          - problem: 'The cubic $f(x) = x^3 - 5x^2 + 17x - 13$ has the root $2 + 3i$. At which value of $x$ does its graph cross the $x$-axis?'
+            answer: '1'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The conjugate $2 - 3i$ is a root, which gives the factor $x^2 - 4x + 13$. Dividing $f(x)$ by it leaves $x - 1$, so the graph crosses the axis at $x = 1$.'
+          - problem: 'Given that $2 + i$ is a root of $p(x) = x^4 - 6x^3 + 10x^2 + 2x - 15$, find all the roots of $p$.'
+            answer: '2 + i, 2 - i, 3, -1'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The conjugate $2 - i$ is also a root, and the pair gives the factor $x^2 - 4x + 5$. Dividing leaves $x^2 - 2x - 3 = (x - 3)(x + 1)$. So the roots are $2 + i$, $2 - i$, $3$ and $-1$.'
+          - problem: 'Given that $-4i$ is a root of $p(x) = x^4 + 4x^3 + 11x^2 + 64x - 80$, find all the roots of $p$.'
+            answer: '4i, -4i, 1, -5'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The root $-4i$ forces $4i$. The pair gives the factor $x^2 + 16$, and dividing leaves $x^2 + 4x - 5 = (x + 5)(x - 1)$. So the roots are $4i$, $-4i$, $1$ and $-5$.'
+          - problem: 'Given that $2 - 3i$ is a root of $p(x) = x^4 - 4x^3 + 9x^2 + 16x - 52$, find all the roots of $p$.'
+            answer: '2 + 3i, 2 - 3i, 2, -2'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The conjugate $2 + 3i$ is also a root, and the pair gives the factor $x^2 - 4x + 13$. Dividing leaves $x^2 - 4 = (x - 2)(x + 2)$. So the roots are $2 + 3i$, $2 - 3i$, $2$ and $-2$.'
     diagnostic_exemplar:
       problem: 'Given that $1 + 2i$ is a root of $p(x) = x^3 - 5x^2 + 11x - 15$, find the other roots.'
       answer: "1 - 2i and 3"
@@ -360,82 +554,167 @@ topics:
         weight: 0.3
     knowledge_points:
       - id: kp1
-        name: Rectangular to polar form
+        name: 'Rectangular to polar form'
         key_prerequisites: [complex-plane-modulus-conjugate, unit-circle]
-        constraints: "arguments limited to unit-circle angles; give θ in [0, 2π)"
+        constraints: 'arguments limited to unit-circle angles; θ in [0, 2π)'
+        step_check:
+          step: 'Since the point lies in Quadrant II, adjust the angle'
+          question: 'Why must the angle from the arctangent be adjusted for a point in Quadrant II?'
+          options:
+            - 'The arctangent gives degrees, which must be converted to radians'
+            - 'The arctangent only returns angles in Quadrants I and IV'
+            - 'The modulus changes sign in Quadrant II, so the angle must change too'
+            - 'Adding $\pi$ is needed whenever the real part is not zero'
+          answer: 'The arctangent only returns angles in Quadrants I and IV'
+          why: 'The arctangent of $\frac{b}{a}$ cannot tell $(a, b)$ from $(-a, -b)$, so its value lies in Quadrant I or IV and must be shifted by $\pi$ for Quadrant II.'
         exemplars:
-          - problem: 'Write $1 + i$ in polar form $r(\cos\theta + i\sin\theta)$.'
-            answer: "√2 (cos π/4 + i sin π/4)"
-          - problem: 'Write $1 - \sqrt{3}\,i$ in polar form with $\theta \in [0, 2\pi)$.'
-            answer: "2 (cos 5π/3 + i sin 5π/3)"
-            solution_sketch: '$r = \sqrt{1 + 3} = 2$; the point lies in Quadrant IV with reference angle $\pi/3$.'
-          - problem: "Write $-1 + i$ in polar form. Give the answer as (r, theta), with theta in [0, 2pi)."
-            answer: "(sqrt(2), 3pi/4)"
-            answer_contract: {"arity": 2, "kind": "coordinates"}
-            solution_sketch: "Modulus rule: $r = \\sqrt{(-1)^2 + 1^2} = \\sqrt{2}$. The point $(-1, 1)$ is in Quadrant II, so the argument is $\\pi - \\pi/4 = 3\\pi/4$. The answer is (sqrt(2), 3pi/4)."
-          - problem: "Write $-\\sqrt{3} - i$ in polar form. Give the answer as (r, theta), with theta in [0, 2pi)."
-            answer: "(2, 7pi/6)"
-            answer_contract: {"arity": 2, "kind": "coordinates"}
-            solution_sketch: "Modulus rule: $r = \\sqrt{3 + 1} = 2$. The point is in Quadrant III with reference angle $\\pi/6$, so the argument is $\\pi + \\pi/6 = 7\\pi/6$. The answer is (2, 7pi/6)."
-          - problem: "Write $2i$ in polar form. Give the answer as (r, theta), with theta in [0, 2pi)."
-            answer: "(2, pi/2)"
-            answer_contract: {"arity": 2, "kind": "coordinates"}
-            solution_sketch: "Modulus rule: $r = \\sqrt{0^2 + 2^2} = 2$. The point $(0, 2)$ lies on the positive imaginary axis, so the argument is $\\pi/2$. The answer is (2, pi/2)."
-          - problem: "Write $-3$ in polar form. Give the answer as (r, theta), with theta in [0, 2pi)."
-            answer: "(3, pi)"
-            answer_contract: {"arity": 2, "kind": "coordinates"}
-            solution_sketch: "Modulus rule: $r = \\sqrt{(-3)^2 + 0^2} = 3$. The point $(-3, 0)$ lies on the negative real axis, so the argument is $\\pi$. The answer is (3, pi)."
+          - problem: 'Write $1 + i$ in polar form, with $0 \le \theta < 2\pi$.'
+            answer: 'sqrt(2)(cos(pi/4) + i sin(pi/4))'
+            answer_contract: {"kind":"function","vars":["i"]}
+            solution_sketch: 'The modulus is $r = \sqrt{1 + 1} = \sqrt{2}$. The point $(1, 1)$ lies in the first quadrant on the line at $45^\circ$, so $\theta = \frac{\pi}{4}$.'
+          - problem: 'Write $1 - \sqrt{3}\,i$ in polar form, with $0 \le \theta < 2\pi$.'
+            answer: '2(cos(5pi/3) + i sin(5pi/3))'
+            answer_contract: {"kind":"function","vars":["i"]}
+            solution_sketch: 'The modulus is $r = \sqrt{1 + 3} = 2$. The point lies in Quadrant IV with reference angle $\frac{\pi}{3}$, so $\theta = 2\pi - \frac{\pi}{3} = \frac{5\pi}{3}$.'
+          - problem: 'Write $-1 + i$ in polar form, with $0 \le \theta < 2\pi$.'
+            answer: 'sqrt(2)(cos(3pi/4) + i sin(3pi/4))'
+            answer_contract: {"kind":"function","vars":["i"]}
+            solution_sketch: 'The modulus is $r = \sqrt{1 + 1} = \sqrt{2}$. The point $(-1, 1)$ is in Quadrant II with reference angle $\frac{\pi}{4}$, so $\theta = \pi - \frac{\pi}{4} = \frac{3\pi}{4}$.'
+          - problem: 'A ship is $2$ km west and $2$ km south of a lighthouse. Take east as the real axis and north as the imaginary axis. Write the ship''s position in polar form, with $0 \le \theta < 2\pi$.'
+            answer: '2sqrt(2)(cos(5pi/4) + i sin(5pi/4))'
+            answer_contract: {"kind":"function","vars":["i"]}
+            solution_sketch: 'The position is the complex number $-2 - 2i$. Its modulus is $\sqrt{4 + 4} = 2\sqrt{2}$, and the point is in Quadrant III with reference angle $\frac{\pi}{4}$, so $\theta = \pi + \frac{\pi}{4} = \frac{5\pi}{4}$.'
+          - problem: 'What is the argument $\theta$ of $-\sqrt{3} - i$, in radians with $0 \le \theta < 2\pi$?'
+            answer: '7pi/6'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The point $(-\sqrt{3}, -1)$ is in Quadrant III with reference angle $\frac{\pi}{6}$, because $\tan = \frac{1}{\sqrt{3}}$. So $\theta = \pi + \frac{\pi}{6} = \frac{7\pi}{6}$.'
+          - problem: 'A wind blows $3\sqrt{3}$ m/s towards the east and $3$ m/s towards the north. Write this velocity as a complex number in polar form, with east as the real axis and $0 \le \theta < 2\pi$.'
+            answer: '6(cos(pi/6) + i sin(pi/6))'
+            answer_contract: {"kind":"function","vars":["i"]}
+            solution_sketch: 'The velocity is the complex number $3\sqrt{3} + 3i$. Its modulus is $\sqrt{27 + 9} = 6$, and $\tan\theta = \frac{3}{3\sqrt{3}}$ gives $\theta = \frac{\pi}{6}$ in Quadrant I.'
+          - problem: 'Write $2i$ in polar form, with $0 \le \theta < 2\pi$.'
+            answer: '2(cos(pi/2) + i sin(pi/2))'
+            answer_contract: {"kind":"function","vars":["i"]}
+            solution_sketch: 'The modulus is $r = \sqrt{0 + 4} = 2$. The point $(0, 2)$ lies on the positive imaginary axis, so the angle is $\theta = \frac{\pi}{2}$.'
+          - problem: 'Write $-3$ in polar form, with $0 \le \theta < 2\pi$.'
+            answer: '3(cos(pi) + i sin(pi))'
+            answer_contract: {"kind":"function","vars":["i"]}
+            solution_sketch: 'The modulus is $r = \sqrt{9 + 0} = 3$. The point $(-3, 0)$ lies on the negative real axis, so the angle is $\theta = \pi$.'
+          - problem: 'The point $3 - 3i$ is plotted in the complex plane. What is its argument, in radians with $0 \le \theta < 2\pi$?'
+            answer: '7pi/4'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The point $(3, -3)$ is in Quadrant IV, on the line at $45^\circ$ below the real axis. So the angle is $2\pi - \frac{\pi}{4} = \frac{7\pi}{4}$.'
       - id: kp2
-        name: Polar to rectangular form
+        name: 'Polar to rectangular form'
         key_prerequisites: [unit-circle]
-        constraints: "r a small integer; θ a unit-circle angle; answers exact in a + bi form with radicals allowed"
+        constraints: 'r a small integer; θ a unit-circle angle; answers exact in a + bi form with radicals allowed'
+        step_check:
+          step: 'Calculate the real part'
+          question: 'Why is the real part $r\cos\theta$ and the imaginary part $r\sin\theta$?'
+          options:
+            - 'The point at angle $\theta$ on a circle of radius $r$ is $(r\cos\theta, r\sin\theta)$'
+            - 'Cosine comes first in the polar form, so cosine always gives the real part, by convention'
+            - 'The real part is the modulus and the imaginary part is the angle'
+            - 'Sine is only used here because the number contains the letter $i$ itself'
+          answer: 'The point at angle $\theta$ on a circle of radius $r$ is $(r\cos\theta, r\sin\theta)$'
+          why: 'The point at angle $\theta$ on the circle of radius $r$ has $x = r\cos\theta$ and $y = r\sin\theta$, and these are the real and imaginary parts.'
         exemplars:
           - problem: 'Convert $4\left(\cos\frac{\pi}{3} + i\sin\frac{\pi}{3}\right)$ to rectangular form.'
-            answer: "2 + 2√3 i"
-            solution_sketch: '$4 \cdot \frac{1}{2} + 4 \cdot \frac{\sqrt{3}}{2} i$.'
+            answer: '2 + 2sqrt(3)i'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Here $\cos\frac{\pi}{3} = \frac{1}{2}$ and $\sin\frac{\pi}{3} = \frac{\sqrt{3}}{2}$. Multiply both by $4$: the real part is $2$ and the imaginary part is $2\sqrt{3}$.'
           - problem: 'Convert $2\left(\cos\frac{3\pi}{4} + i\sin\frac{3\pi}{4}\right)$ to rectangular form.'
-            answer: "-√2 + √2 i"
-          - problem: "Convert $2\\left(\\cos\\frac{\\pi}{6} + i\\sin\\frac{\\pi}{6}\\right)$ to rectangular form. Give the answer in the form a + bi."
-            answer: "sqrt(3) + i"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Use the polar-to-rectangular rule x = r cos(theta), y = r sin(theta) on 2(cos(pi/6) + i sin(pi/6)). From the unit circle, cos(pi/6) = sqrt(3)/2 and sin(pi/6) = 1/2. Multiply by r = 2: x = sqrt(3) and y = 1. The rectangular form is sqrt(3) + i."
-          - problem: "Convert $3\\left(\\cos\\left(-\\frac{\\pi}{2}\\right) + i\\sin\\left(-\\frac{\\pi}{2}\\right)\\right)$ to rectangular form. Give the answer in the form a + bi."
-            answer: "0 - 3i"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Apply x = r cos(theta), y = r sin(theta) to 3(cos(-pi/2) + i sin(-pi/2)). The unit circle gives cos(-pi/2) = 0 and sin(-pi/2) = -1. With r = 3: x = 0 and y = -3. The rectangular form is 0 - 3i."
-          - problem: "Convert $4\\left(\\cos\\frac{4\\pi}{3} + i\\sin\\frac{4\\pi}{3}\\right)$ to rectangular form. Give the answer in the form a + bi."
-            answer: "-2 - 2sqrt(3) i"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Apply x = r cos(theta), y = r sin(theta) to 4(cos(4pi/3) + i sin(4pi/3)). The unit circle gives cos(4pi/3) = -1/2 and sin(4pi/3) = -sqrt(3)/2. With r = 4: x = -2 and y = -2sqrt(3). The rectangular form is -2 - 2sqrt(3) i."
-          - problem: "Convert $4\\left(\\cos 150^\\circ + i\\sin 150^\\circ\\right)$ to rectangular form. Give the answer in the form a + bi."
-            answer: "-2sqrt(3) + 2i"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Convert the degree angle with unit-circle values: cos(150 degrees) = -sqrt(3)/2 and sin(150 degrees) = 1/2. Apply x = r cos(theta), y = r sin(theta) with r = 4: x = -2sqrt(3) and y = 2. The rectangular form is -2sqrt(3) + 2i."
+            answer: '-sqrt(2) + sqrt(2)i'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Here $\cos\frac{3\pi}{4} = -\frac{\sqrt{2}}{2}$ and $\sin\frac{3\pi}{4} = \frac{\sqrt{2}}{2}$. Multiply both by $2$: the real part is $-\sqrt{2}$ and the imaginary part is $\sqrt{2}$.'
+          - problem: 'Convert $2\left(\cos\frac{\pi}{6} + i\sin\frac{\pi}{6}\right)$ to rectangular form.'
+            answer: 'sqrt(3) + i'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The real part is $x = r\cos\theta = 2 \cdot \frac{\sqrt{3}}{2} = \sqrt{3}$. The imaginary part is $y = r\sin\theta = 2 \cdot \frac{1}{2} = 1$. So the number is $\sqrt{3} + i$.'
+          - problem: 'A drone flies $8$ m in a direction $\frac{\pi}{6}$ radians north of east. Write its displacement as a complex number, with east as the real axis and north as the imaginary axis.'
+            answer: '4sqrt(3) + 4i'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The displacement is $8\left(\cos\frac{\pi}{6} + i\sin\frac{\pi}{6}\right)$. With $\cos\frac{\pi}{6} = \frac{\sqrt{3}}{2}$ and $\sin\frac{\pi}{6} = \frac{1}{2}$ this is $4\sqrt{3} + 4i$.'
+          - problem: 'Convert $4\left(\cos\frac{4\pi}{3} + i\sin\frac{4\pi}{3}\right)$ to rectangular form.'
+            answer: '-2 - 2sqrt(3)i'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The unit circle gives $\cos\frac{4\pi}{3} = -\frac{1}{2}$ and $\sin\frac{4\pi}{3} = -\frac{\sqrt{3}}{2}$. With $r = 4$ the real part is $-2$ and the imaginary part is $-2\sqrt{3}$.'
+          - problem: 'An alternating voltage has amplitude $6$ volts and phase angle $\frac{2\pi}{3}$. Write it in rectangular form as a complex number.'
+            answer: '-3 + 3sqrt(3)i'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The voltage is $6\left(\cos\frac{2\pi}{3} + i\sin\frac{2\pi}{3}\right)$. Since $\cos\frac{2\pi}{3} = -\frac{1}{2}$ and $\sin\frac{2\pi}{3} = \frac{\sqrt{3}}{2}$, it equals $-3 + 3\sqrt{3}i$.'
+          - problem: 'Convert $4\left(\cos 150^\circ + i\sin 150^\circ\right)$ to rectangular form.'
+            answer: '-2sqrt(3) + 2i'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The unit circle gives $\cos 150^\circ = -\frac{\sqrt{3}}{2}$ and $\sin 150^\circ = \frac{1}{2}$. With $r = 4$ the real part is $-2\sqrt{3}$ and the imaginary part is $2$.'
+          - problem: 'Convert $3\left(\cos\left(-\frac{\pi}{2}\right) + i\sin\left(-\frac{\pi}{2}\right)\right)$ to rectangular form.'
+            answer: '-3i'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The unit circle gives $\cos\left(-\frac{\pi}{2}\right) = 0$ and $\sin\left(-\frac{\pi}{2}\right) = -1$. With $r = 3$ the real part is $0$ and the imaginary part is $-3$, so the number is $-3i$.'
+          - problem: 'Lea converts $6\left(\cos\frac{5\pi}{6} + i\sin\frac{5\pi}{6}\right)$ and writes $-\frac{\sqrt{3}}{2} + \frac{1}{2}i$. What is the correct rectangular form?'
+            answer: '-3sqrt(3) + 3i'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Lea forgot the factor $r = 6$. Multiplying both parts by $6$ gives the real part $6 \cdot \left(-\frac{\sqrt{3}}{2}\right) = -3\sqrt{3}$ and the imaginary part $6 \cdot \frac{1}{2} = 3$.'
       - id: kp3
-        name: Powers via De Moivre
+        name: 'Powers via De Moivre'
         key_prerequisites: [complex-plane-modulus-conjugate, unit-circle]
-        constraints: "exponents 3-8; final answers in rectangular form"
+        constraints: 'exponents 3-8; final answers in rectangular form'
+        step_check:
+          step: 'Apply De Moivre''s theorem'
+          question: 'Why is the modulus raised to the power $4$ while the angle is multiplied by $4$?'
+          options:
+            - 'Raising to a power multiplies every part, so the modulus is multiplied by $4$ too'
+            - 'Exponents on a modulus and on an angle follow one rule: both add $4$'
+            - 'Moduli multiply and angles add, so four equal factors give $r^4$ and $4\theta$'
+            - 'The modulus is squared twice and the angle is doubled twice, giving $4$'
+          answer: 'Moduli multiply and angles add, so four equal factors give $r^4$ and $4\theta$'
+          why: 'Each factor contributes its modulus as a product and its angle as a sum, so $r\cdot r\cdot r\cdot r = r^4$ and $\theta+\theta+\theta+\theta = 4\theta$.'
+        try_first:
+          problem: 'Compute $\left(\cos\frac{\pi}{2} + i\sin\frac{\pi}{2}\right)^2$.'
+          answer_contract: {"kind":"exact"}
+          answer: '-1'
+          reveal: 'Since $\cos\frac{\pi}{2} + i\sin\frac{\pi}{2} = i$, the square is $i^2 = -1$, the number at angle $\pi = 2 \cdot \frac{\pi}{2}$. Raising to a power multiplies the angle, and this is De Moivre''s theorem.'
         exemplars:
           - problem: 'Use De Moivre''s theorem to compute $(1 + i)^8$.'
-            answer: "16"
-            solution_sketch: '$(\sqrt{2})^8 \operatorname{cis}(8 \cdot \frac{\pi}{4}) = 16 \operatorname{cis} 2\pi = 16$.'
+            answer: '16'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Write $1 + i = \sqrt{2}\left(\cos\frac{\pi}{4} + i\sin\frac{\pi}{4}\right)$. The eighth power has modulus $(\sqrt{2})^8 = 16$ and angle $8 \cdot \frac{\pi}{4} = 2\pi$, so the result is $16$.'
           - problem: 'Compute $\left(\cos\frac{\pi}{6} + i\sin\frac{\pi}{6}\right)^3$.'
-            answer: "i"
+            answer: 'i'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The modulus is $1$, so De Moivre''s theorem only triples the angle: $3 \cdot \frac{\pi}{6} = \frac{\pi}{2}$. Then $\cos\frac{\pi}{2} + i\sin\frac{\pi}{2} = i$.'
           - problem: 'Compute $(1 - \sqrt{3}\,i)^3$.'
-            answer: "-8"
-            solution_sketch: '$2^3 \operatorname{cis}(3 \cdot \frac{5\pi}{3}) = 8 \operatorname{cis} 5\pi = 8 \operatorname{cis} \pi = -8$.'
-          - problem: "Use De Moivre's theorem to compute $(1 - i)^4$. Give the answer in the form a + bi."
-            answer: "-4"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1: Write the base in polar form. The modulus of 1 - i is sqrt(2) and its argument is -pi/4, so 1 - i = sqrt(2)(cos(-pi/4) + i sin(-pi/4)). Step 2: Apply De Moivre's theorem. Raise the modulus to the fourth power and multiply the angle by 4: (sqrt(2))^4(cos(-pi) + i sin(-pi)) = 4(-1 + 0i). Step 3: Convert back to rectangular form. The final rectangular form is -4."
-          - problem: "Use De Moivre's theorem to compute $(\\sqrt{3} + i)^3$. Give the answer in the form a + bi."
-            answer: "8i"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1: Find the polar form. sqrt(3) + i has modulus 2 and argument pi/6, so it is 2(cos(pi/6) + i sin(pi/6)). Step 2: Use De Moivre's theorem to cube. The modulus becomes 2^3 = 8 and the argument becomes 3*pi/6 = pi/2: 8(cos(pi/2) + i sin(pi/2)). Step 3: Evaluate the sine and cosine. This is 8(0 + i), so the rectangular form is 8i."
-          - problem: "Use De Moivre's theorem to compute $(-1 + i)^5$. Give the answer in the form a + bi."
-            answer: "4 - 4i"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1: Write -1 + i in polar form. Its modulus is sqrt(2) and its argument is 3pi/4, so -1 + i = sqrt(2)(cos(3pi/4) + i sin(3pi/4)). Step 2: Apply De Moivre's theorem. The modulus becomes (sqrt(2))^5 = 4sqrt(2) and the argument becomes 5*3pi/4 = 15pi/4, which is coterminal with 7pi/4. Step 3: Convert to rectangular form. 4sqrt(2)(cos(7pi/4) + i sin(7pi/4)) = 4sqrt(2)(sqrt(2)/2 - i sqrt(2)/2) = 4 - 4i."
+            answer: '-8'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Write $1 - \sqrt{3}\,i = 2\left(\cos\frac{5\pi}{3} + i\sin\frac{5\pi}{3}\right)$. The cube has modulus $2^3 = 8$ and angle $5\pi$, which is the same as $\pi$, so the result is $-8$.'
+          - problem: 'A game character starts at the point $1$ in the complex plane. Each move multiplies its position by $1 + i$. Where is the character after $5$ moves?'
+            answer: '-4 - 4i'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'After $5$ moves the position is $(1 + i)^5$. The modulus is $(\sqrt{2})^5 = 4\sqrt{2}$ and the angle is $5 \cdot \frac{\pi}{4} = \frac{5\pi}{4}$, which gives $-4 - 4i$.'
+          - problem: 'Use De Moivre''s theorem to compute $(\sqrt{3} + i)^3$.'
+            answer: '8i'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Write $\sqrt{3} + i = 2\left(\cos\frac{\pi}{6} + i\sin\frac{\pi}{6}\right)$. The cube has modulus $2^3 = 8$ and angle $3 \cdot \frac{\pi}{6} = \frac{\pi}{2}$, so the result is $8i$.'
+          - problem: 'A spinner starts at the point $1$. Each tick multiplies its position by $\cos\frac{\pi}{6} + i\sin\frac{\pi}{6}$, which turns it through $\frac{\pi}{6}$ radians. Where is the spinner after $4$ ticks?'
+            answer: '-1/2 + (sqrt(3)/2)i'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'After $4$ ticks the position is $\left(\cos\frac{\pi}{6} + i\sin\frac{\pi}{6}\right)^4$, which has angle $4 \cdot \frac{\pi}{6} = \frac{2\pi}{3}$. So the spinner is at $-\frac{1}{2} + \frac{\sqrt{3}}{2}i$.'
+          - problem: 'Use De Moivre''s theorem to compute $(-1 + i)^5$.'
+            answer: '4 - 4i'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Write $-1 + i = \sqrt{2}\left(\cos\frac{3\pi}{4} + i\sin\frac{3\pi}{4}\right)$. The fifth power has modulus $4\sqrt{2}$ and angle $\frac{15\pi}{4}$, which is $\frac{7\pi}{4}$, so the result is $4 - 4i$.'
+          - problem: 'Max computes $(1 + i)^3$ as $1^3 + i^3 = 1 - i$. What is the correct value?'
+            answer: '-2 + 2i'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Max cannot cube the parts separately. By De Moivre, $(1 + i)^3$ has modulus $(\sqrt{2})^3 = 2\sqrt{2}$ and angle $\frac{3\pi}{4}$, so it equals $2\sqrt{2}\left(-\frac{\sqrt{2}}{2} + \frac{\sqrt{2}}{2}i\right) = -2 + 2i$.'
+          - problem: 'Use De Moivre''s theorem to compute $(1 - i)^4$.'
+            answer: '-4'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Write $1 - i = \sqrt{2}\left(\cos\left(-\frac{\pi}{4}\right) + i\sin\left(-\frac{\pi}{4}\right)\right)$. The fourth power has modulus $(\sqrt{2})^4 = 4$ and angle $-\pi$, so the result is $-4$.'
+          - problem: 'Find the modulus of $(3 + 4i)^4$.'
+            answer: '625'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The modulus of a power is the power of the modulus. Since $|3 + 4i| = 5$, the modulus of $(3 + 4i)^4$ is $5^4 = 625$.'
     diagnostic_exemplar:
       problem: 'Use De Moivre''s theorem to compute $(1 + i)^6$ in rectangular form.'
       answer: "-8i"
@@ -462,72 +741,142 @@ topics:
         weight: 0.3
     knowledge_points:
       - id: kp1
-        name: Square roots of a complex number
+        name: 'Square roots of a complex number'
         key_prerequisites: [complex-polar-form-de-moivre]
-        constraints: "moduli that are perfect squares; answers in rectangular form"
+        constraints: 'moduli that are perfect squares; answers in rectangular form'
+        step_check:
+          step: 'Halve the angle: $\frac{\pi}{2}$ and $\frac{\pi}{2} + \pi = \frac{3\pi}{2}$'
+          question: 'Why does the second square root add $\pi$ to the halved angle?'
+          options:
+            - 'Angle $3\pi$ also marks $-16$, and half of $3\pi$ is $\frac{3\pi}{2}$'
+            - 'The second root is always the first root turned through a quarter-turn'
+            - 'Halving the angle $\pi$ gives two answers, $\frac{\pi}{2}$ and its double'
+            - 'The modulus has two square roots, so the angle also gets a second value'
+          answer: 'Angle $3\pi$ also marks $-16$, and half of $3\pi$ is $\frac{3\pi}{2}$'
+          why: 'Adding $2\pi$ to the angle $\pi$ does not move $-16$, but after halving it adds $\pi$ and gives the second root.'
         exemplars:
-          - problem: "List both square roots of -9, beginning with the root whose imaginary part is positive. Give the answer as a comma-separated list."
-            answer: "3i, -3i"
-            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
-            solution_sketch: "The number -9 has modulus 9 and angle pi. The square-root rule gives modulus sqrt(9) = 3 and angles pi/2 and 3pi/2. The answer is 3i, -3i."
-          - problem: "List both square roots of -7 + 24i, beginning with the root whose real part is positive. Give the answer as a comma-separated list."
-            answer: "3 + 4i, -3 - 4i"
-            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
-            solution_sketch: "Write -7 + 24i in polar form; its modulus is 25, so each square root has modulus 5. One root is 3 + 4i because (3 + 4i)^2 = -7 + 24i, and the other is its negative. The answer is 3 + 4i, -3 - 4i."
-          - problem: "Find the square root of 7 - 24i whose imaginary part is negative. Give the answer in the form a + bi."
-            answer: "4 - 3i"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Write 7 - 24i in polar form; its modulus is 25, so each square root has modulus 5. Since (4 - 3i)^2 = 7 - 24i, the root with negative imaginary part is 4 - 3i. The answer is 4 - 3i."
-          - problem: "Find the square root of -16 whose imaginary part is positive. Give the answer in the form a + bi."
-            answer: "4i"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Write -16 in polar form: -16 has modulus 16 and angle pi. The square-root rule gives modulus sqrt(16) = 4 and angles pi/2 and 3pi/2. The answer is 4i."
-          - problem: "Find the square root of -7 - 24i whose real part is positive. Give the answer in the form a + bi."
-            answer: "3 - 4i"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Write -7 - 24i in polar form; its modulus is 25, so each square root has modulus 5. Since (3 - 4i)^2 = -7 - 24i, the root with positive real part is 3 - 4i. The answer is 3 - 4i."
-          - problem: "List both square roots of 119 - 120i, beginning with the root whose real part is positive. Give the answer as a comma-separated list."
-            answer: "12 - 5i, -12 + 5i"
-            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
-            solution_sketch: "Write 119 - 120i in polar form; its modulus is 169, so each square root has modulus 13. One root is 12 - 5i because (12 - 5i)^2 = 119 - 120i, and the other is its negative. The answer is 12 - 5i, -12 + 5i."
+          - problem: 'Find both square roots of $-9$.'
+            answer: '3i, -3i'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Write $-9$ in polar form: modulus $9$ and angle $\pi$. The roots have modulus $\sqrt{9} = 3$ and angles $\frac{\pi}{2}$ and $\frac{3\pi}{2}$, which gives $3i$ and $-3i$.'
+          - problem: 'Find both square roots of $-7 + 24i$.'
+            answer: '3 + 4i, -3 - 4i'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The modulus of $-7 + 24i$ is $25$, so each square root has modulus $5$. One root is $3 + 4i$, because $(3 + 4i)^2 = 9 - 16 + 24i = -7 + 24i$, and the other root is its negative $-3 - 4i$.'
+          - problem: 'Find both square roots of $7 - 24i$.'
+            answer: '4 - 3i, -4 + 3i'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The modulus of $7 - 24i$ is $25$, so each square root has modulus $5$. Since $(4 - 3i)^2 = 16 - 9 - 24i = 7 - 24i$, one root is $4 - 3i$ and the other is its negative $-4 + 3i$.'
+          - problem: 'A transformation of the complex plane multiplies every point by a number $z$. Applying it twice must multiply every point by $-16$, which scales it by $16$ and turns it through a half-turn. Which values of $z$ do this?'
+            answer: '4i, -4i'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Applying the transformation twice multiplies by $z^2$, so $z^2 = -16$. The number $-16$ has modulus $16$ and angle $\pi$, so $z = 4i$ or $z = -4i$.'
+          - problem: 'Find both square roots of $-7 - 24i$.'
+            answer: '3 - 4i, -3 + 4i'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The modulus of $-7 - 24i$ is $25$, so each square root has modulus $5$. Since $(3 - 4i)^2 = 9 - 16 - 24i = -7 - 24i$, one root is $3 - 4i$ and the other is its negative $-3 + 4i$.'
+          - problem: 'An engineer needs a complex gain $g$ such that applying it twice gives $g^2 = 8 + 6i$. Which values of $g$ work?'
+            answer: '3 + i, -3 - i'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The modulus of $8 + 6i$ is $10$, so $g$ has modulus $\sqrt{10}$. Since $(3 + i)^2 = 9 - 1 + 6i = 8 + 6i$, the gains are $3 + i$ and $-3 - i$.'
+          - problem: 'Find both square roots of $119 - 120i$.'
+            answer: '12 - 5i, -12 + 5i'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The modulus of $119 - 120i$ is $169$, so each square root has modulus $13$. Since $(12 - 5i)^2 = 144 - 25 - 120i = 119 - 120i$, one root is $12 - 5i$ and the other is $-12 + 5i$.'
       - id: kp2
-        name: Cube roots
+        name: 'Cube roots'
         key_prerequisites: [complex-polar-form-de-moivre, unit-circle]
-        constraints: "radicands ±8, ±27; spacing 2π/3 between roots"
+        constraints: 'radicands ±8, ±27, 64, 27i and -1; spacing 2π/3 between roots'
+        step_check:
+          step: 'Calculate the angles for each root'
+          question: 'Why is the full turn $2\pi$ added before the angle of $-8$ is divided by $3$?'
+          options:
+            - 'The angle $\pi$ is too small to divide by $3$, so a full turn is added first'
+            - 'Adding $2\pi$ leaves $-8$ in place, yet dividing by $3$ gives a new root'
+            - 'Adding $2\pi$ turns $-8$ into a new number, and the cube roots of that number are wanted'
+            - 'The full turn is added so that the modulus can also be divided by $3$'
+          answer: 'Adding $2\pi$ leaves $-8$ in place, yet dividing by $3$ gives a new root'
+          why: 'The angles $\pi$, $3\pi$ and $5\pi$ all describe $-8$, and dividing them by $3$ gives the three different root angles $\frac{\pi}{3}$, $\pi$ and $\frac{5\pi}{3}$.'
         exemplars:
           - problem: 'Find all cube roots of $8$.'
-            answer: "2, -1 + √3 i, -1 - √3 i"
-            solution_sketch: 'Roots $2\operatorname{cis}\frac{2\pi k}{3}$ for $k = 0, 1, 2$.'
+            answer: '2, -1 + sqrt(3)i, -1 - sqrt(3)i'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Write $8 = 8\left(\cos 0 + i\sin 0\right)$. The cube roots have modulus $2$ and angles $0$, $\frac{2\pi}{3}$ and $\frac{4\pi}{3}$, which are $2$, $-1 + \sqrt{3}i$ and $-1 - \sqrt{3}i$.'
           - problem: 'Find all cube roots of $-27$.'
-            answer: "3/2 + (3√3/2)i, -3, 3/2 - (3√3/2)i"
-            solution_sketch: '$-27 = 27\operatorname{cis}\pi$; roots $3\operatorname{cis}\frac{\pi + 2\pi k}{3}$.'
+            answer: '(3+3sqrt(3)i)/2, -3, (3-3sqrt(3)i)/2'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Write $-27 = 27\left(\cos\pi + i\sin\pi\right)$. The cube roots have modulus $3$ and angles $\frac{\pi}{3}$, $\pi$ and $\frac{5\pi}{3}$, which give $\frac{3}{2} + \frac{3\sqrt{3}}{2}i$, $-3$ and $\frac{3}{2} - \frac{3\sqrt{3}}{2}i$.'
+          - problem: 'Find all cube roots of $-1$.'
+            answer: '-1, (1+sqrt(3)i)/2, (1-sqrt(3)i)/2'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Write $-1 = 1\left(\cos\pi + i\sin\pi\right)$. The cube roots have modulus $1$ and angles $\frac{\pi}{3}$, $\pi$ and $\frac{5\pi}{3}$, which give $\frac{1}{2} + \frac{\sqrt{3}}{2}i$, $-1$ and $\frac{1}{2} - \frac{\sqrt{3}}{2}i$.'
+          - problem: 'Three lamps stand at equal spacing around a circular ring of radius $3$ m. In a complex plane with its origin at the centre of the ring, one lamp is at the point $3$. Where are the other two lamps?'
+            answer: '(-3+3sqrt(3)i)/2, (-3-3sqrt(3)i)/2'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The lamps are at the cube roots of $27$, which have modulus $3$ and angles $0$, $\frac{2\pi}{3}$ and $\frac{4\pi}{3}$. The other two lamps are at $-\frac{3}{2} + \frac{3\sqrt{3}}{2}i$ and $-\frac{3}{2} - \frac{3\sqrt{3}}{2}i$.'
+          - problem: 'Solve $z^3 = 64$.'
+            answer: '4, -2 + 2sqrt(3)i, -2 - 2sqrt(3)i'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Write $64 = 64\left(\cos 0 + i\sin 0\right)$. The solutions have modulus $4$ and angles $0$, $\frac{2\pi}{3}$ and $\frac{4\pi}{3}$, which give $4$, $-2 + 2\sqrt{3}i$ and $-2 - 2\sqrt{3}i$.'
+          - problem: 'A regular triangle is drawn in a circle of radius $4$ with its centre at the origin of the complex plane. One vertex is at $-4$. What are the other two vertices?'
+            answer: '2 + 2sqrt(3)i, 2 - 2sqrt(3)i'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The vertices are the cube roots of $-64$, which have modulus $4$ and angles $\frac{\pi}{3}$, $\pi$ and $\frac{5\pi}{3}$. The vertex at angle $\pi$ is $-4$, so the other two are $2 + 2\sqrt{3}i$ and $2 - 2\sqrt{3}i$.'
+          - problem: 'Find all cube roots of $27i$.'
+            answer: '(3sqrt(3)+3i)/2, (-3sqrt(3)+3i)/2, -3i'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Write $27i = 27\left(\cos\frac{\pi}{2} + i\sin\frac{\pi}{2}\right)$. The cube roots have modulus $3$ and angles $\frac{\pi}{6}$, $\frac{5\pi}{6}$ and $\frac{3\pi}{2}$, which give $\frac{3\sqrt{3}}{2} + \frac{3}{2}i$, $-\frac{3\sqrt{3}}{2} + \frac{3}{2}i$ and $-3i$.'
+          - problem: 'Rui finds that $-2$ is a cube root of $-8$ and stops. What are the other two cube roots of $-8$?'
+            answer: '1 + sqrt(3)i, 1 - sqrt(3)i'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'A nonzero number has three cube roots, equally spaced around a circle. The cube roots of $-8$ have modulus $2$ and angles $\frac{\pi}{3}$, $\pi$ and $\frac{5\pi}{3}$, so the others are $1 + \sqrt{3}i$ and $1 - \sqrt{3}i$.'
       - id: kp3
-        name: Fourth roots and roots of unity
+        name: 'Fourth roots and roots of unity'
         key_prerequisites: [complex-polar-form-de-moivre, unit-circle]
-        constraints: "radicands 1, 16, 81 (fourth roots land on the axes); root counts and spacing 2π/n for n <= 8"
+        constraints: 'radicands 1, 16, 81 and -4; root counts and spacing 2π/n for n <= 12'
+        step_check:
+          step: 'Find the angles for the four roots: $\frac{0 + 2\pi k}{4}$ for $k = 0, 1, 2, 3$'
+          question: 'Why does $k$ stop at $3$ and not continue to $4$?'
+          options:
+            - 'Larger values of $k$ give angles above $\pi$, which cannot belong to a root'
+            - 'For $k = 4$ the modulus doubles, so the number is no longer a root'
+            - 'The angle for $k = 4$ is $2\pi$, the same point as $k = 0$'
+            - 'The angle $2\pi$ is out of range for a root, so $k = 4$ is rejected'
+          answer: 'The angle for $k = 4$ is $2\pi$, the same point as $k = 0$'
+          why: 'For $k = 4$ the angle is $\frac{2\pi \cdot 4}{4} = 2\pi$, which is the point of $k = 0$ again, so the roots repeat from there.'
         exemplars:
           - problem: 'Find all fourth roots of $16$.'
-            answer: "2, 2i, -2, -2i"
-          - problem: "Find the angle in radians between consecutive sixth roots of unity."
-            answer: "pi/3"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The sixth roots of unity are the solutions of z^6 = 1. By De Moivre's theorem they are e^(2 pi i k/6) for k = 0 through 5, so there are six equally spaced roots. Consecutive roots k and k+1 have arguments differing by the spacing 2 pi / 6. Simplify the fraction: 2 pi / 6 = pi / 3. The angle between consecutive sixth roots of unity is pi/3."
-          - problem: "Give all fourth roots of 81 in the order k = 0, 1, 2, 3."
-            answer: "3, 3i, -3, -3i"
-            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
-            solution_sketch: "Write 81 in polar form as 81(cos(0) + i sin(0)). By De Moivre's theorem the fourth roots are z_k = 81^(1/4)(cos(2 pi k/4) + i sin(2 pi k/4)) = 3(cos(pi k/2) + i sin(pi k/2)). For k = 0, 1, 2, 3 these values are 3, 3i, -3, -3i. In order the roots are 3, 3i, -3, -3i."
-          - problem: "Find the angle between consecutive eighth roots of unity in radians."
-            answer: "pi/4"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The eighth roots of unity are e^(2 pi i k/8) for k = 0 through 7 by De Moivre's theorem. Consecutive roots differ by 2 pi / 8. Simplify this fraction: 2 pi / 8 = pi / 4. The angle is pi/4."
-          - problem: "Find the fourth root of 81 that lies on the positive imaginary axis. Give the answer in the form a + bi."
-            answer: "0 + 3i"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The fourth roots of 81 are 3, 3i, -3, -3i, found by De Moivre's theorem. The root on the positive imaginary axis has real part 0 and imaginary part 3. The root is 0 + 3i."
-          - problem: "Solve z^4 = 1 for all roots in the order k = 0, 1, 2, 3."
-            answer: "1, i, -1, -i"
-            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
-            solution_sketch: "The equation z^4 = 1 has the fourth roots of unity. By De Moivre's theorem they are e^(2 pi i k/4) for k = 0, 1, 2, 3. These values are 1, i, -1, -i. In order the roots are 1, i, -1, -i."
+            answer: '2, 2i, -2, -2i'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Write $16 = 16\left(\cos 0 + i\sin 0\right)$. The fourth roots have modulus $2$ and angles $0$, $\frac{\pi}{2}$, $\pi$ and $\frac{3\pi}{2}$, which are $2$, $2i$, $-2$ and $-2i$.'
+          - problem: 'The sixth roots of unity are the solutions of $z^6 = 1$. They are equally spaced around the unit circle. What is the angle between neighbouring roots, in radians?'
+            answer: 'pi/3'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The sixth roots of unity are $e^{2\pi i k/6}$ for $k = 0$ to $5$, so there are six equally spaced roots. Neighbouring roots differ by $\frac{2\pi}{6} = \frac{\pi}{3}$.'
+          - problem: 'Solve $z^4 = 81$.'
+            answer: '3, 3i, -3, -3i'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Write $81 = 81\left(\cos 0 + i\sin 0\right)$. The solutions have modulus $3$ and angles $\frac{2\pi k}{4}$ for $k = 0, 1, 2, 3$, which are $3$, $3i$, $-3$ and $-3i$.'
+          - problem: 'The $12$ marks of a clock face lie at equal spacing on a circle, at the twelfth roots of unity. What is the angle at the centre between neighbouring marks, in radians?'
+            answer: 'pi/6'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The twelve marks divide the full turn of $2\pi$ into twelve equal angles. Each angle is $\frac{2\pi}{12} = \frac{\pi}{6}$.'
+          - problem: 'Which fourth root of $81$ lies on the positive imaginary axis?'
+            answer: '3i'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The fourth roots of $81$ are $3$, $3i$, $-3$ and $-3i$, found by taking angles $\frac{2\pi k}{4}$. The root on the positive imaginary axis has real part $0$ and imaginary part $3$, so it is $3i$.'
+          - problem: 'Solve $z^4 = -4$.'
+            answer: '1 + i, -1 + i, -1 - i, 1 - i'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Write $-4 = 4\left(\cos\pi + i\sin\pi\right)$. The solutions have modulus $\sqrt{2}$ and angles $\frac{\pi}{4}$, $\frac{3\pi}{4}$, $\frac{5\pi}{4}$ and $\frac{7\pi}{4}$, which give $1 + i$, $-1 + i$, $-1 - i$ and $1 - i$.'
+          - problem: 'Eight lamps stand at equal spacing around a circular pond. In a complex plane with its origin at the centre of the pond, they are at the eighth roots of unity. What is the angle at the centre between neighbouring lamps, in radians?'
+            answer: 'pi/4'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The eight lamps divide the full turn of $2\pi$ into eight equal angles. Each angle is $\frac{2\pi}{8} = \frac{\pi}{4}$.'
+          - problem: 'Solve $z^4 = 1$.'
+            answer: '1, i, -1, -i'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The solutions are the fourth roots of unity, $e^{2\pi i k/4}$ for $k = 0, 1, 2, 3$. These are $1$, $i$, $-1$ and $-i$, four points equally spaced on the unit circle.'
     diagnostic_exemplar:
       problem: 'Find all cube roots of $27$.'
       answer: "3, -3/2 + (3√3/2)i, -3/2 - (3√3/2)i"

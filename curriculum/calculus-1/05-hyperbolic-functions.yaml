@@ -27,82 +27,165 @@ topics:
       - id: kp1
         name: Definitions and evaluation
         key_prerequisites: [natural-exponential-function]
+        step_check:
+          step: 'Since $e^{\ln 3} = 3$ and $e^{-\ln 3} = \frac{1}{3}$'
+          question: 'Why does $e^{-\ln 3}$ equal $\frac{1}{3}$?'
+          options:
+            - 'The $e$ and the minus sign cancel, which leaves only $\ln 3$ behind'
+            - 'A negative exponent makes the value negative, so it should be $-3$'
+            - 'A negative exponent means the reciprocal, so it is $\frac{1}{e^{\ln 3}}$'
+            - 'The logarithm of $3$ is $\frac{1}{3}$, so $\ln 3$ is replaced by that number'
+          answer: 'A negative exponent means the reciprocal, so it is $\frac{1}{e^{\ln 3}}$'
+          why: 'Since $e^{-a} = \frac{1}{e^{a}}$, we get $e^{-\ln 3} = \frac{1}{e^{\ln 3}} = \frac{1}{3}$.'
         exemplars:
-          - problem: 'Using $\cosh x = \frac{e^x + e^{-x}}{2}$, evaluate $\cosh 0$.'
-            answer: "1"
-            solution_sketch: '$\frac{e^0 + e^0}{2} = \frac{1 + 1}{2} = 1$; similarly $\sinh 0 = 0$.'
-          - problem: 'Write $\sinh 1 = \frac{e^1 - e^{-1}}{2}$ exactly in terms of $e$.'
-            answer: "(e - 1/e)/2"
-            solution_sketch: 'Substitute $x = 1$ into $\sinh x = \frac{e^x - e^{-x}}{2}$.'
+          - problem: 'The hyperbolic cosine is defined by $\cosh x = \frac{e^x + e^{-x}}{2}$. Evaluate $\cosh(\ln 4)$.'
+            answer: '17/8'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Replace $x$ by $\ln 4$ in the definition, so $e^{\ln 4} = 4$ and $e^{-\ln 4} = \frac{1}{4}$. Then $\cosh(\ln 4) = \frac{4 + \frac{1}{4}}{2} = \frac{17}{8}$.'
+          - problem: 'The hyperbolic sine is defined by $\sinh x = \frac{e^x - e^{-x}}{2}$. Write $\sinh 1$ in terms of $e$.'
+            answer: '(e - 1/e)/2'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Put $x = 1$ into the definition. This gives $\sinh 1 = \frac{e^1 - e^{-1}}{2} = \frac{1}{2}\left(e - \frac{1}{e}\right)$, and no simpler exact form exists.'
+          - problem: 'The hyperbolic tangent is defined by $\tanh x = \frac{e^x - e^{-x}}{e^x + e^{-x}}$. Evaluate $\tanh(\ln 5)$.'
+            answer: '12/13'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Here $e^{\ln 5} = 5$ and $e^{-\ln 5} = \frac{1}{5}$. Then $\tanh(\ln 5) = \frac{5 - \frac{1}{5}}{5 + \frac{1}{5}} = \frac{24/5}{26/5} = \frac{12}{13}$.'
+          - problem: 'A parachutist falls with speed $v(t) = 30\tanh t$ metres per second, where $t$ is the time in seconds after the jump. What is the speed after $\ln 3$ seconds?'
+            answer: '24'
+            answer_contract: {"kind": "unit", "quantity": "speed", "unit": "m/s", "allow_omitted": true}
+            solution_sketch: 'Put $t = \ln 3$, so $e^{t} = 3$ and $e^{-t} = \frac{1}{3}$. Then $\tanh(\ln 3) = \frac{3 - \frac{1}{3}}{3 + \frac{1}{3}} = \frac{4}{5}$, and the speed is $30 \cdot \frac{4}{5} = 24$ metres per second.'
+          - problem: 'Sam evaluates $\cosh(\ln 3)$ and writes $\frac{3 - \frac{1}{3}}{2} = \frac{4}{3}$. What is the correct value?'
+            answer: '5/3'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Sam subtracted the two exponentials, but the definition of $\cosh$ adds them. The correct value is $\cosh(\ln 3) = \frac{3 + \frac{1}{3}}{2} = \frac{5}{3}$.'
           - problem: 'Evaluate $\sinh(\ln 2)$ exactly.'
-            answer: "3/4"
-            solution_sketch: '$e^{\ln 2} = 2$ and $e^{-\ln 2} = \frac{1}{2}$, so $\sinh(\ln 2) = \frac{2 - \frac{1}{2}}{2} = \frac{3}{4}$.'
-          - problem: "Using tanh x = (e^x - e^{-x})/(e^x + e^{-x}), evaluate tanh(ln 5) exactly. Give the answer as a fraction."
-            answer: "12/13"
+            answer: '3/4'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Start with the definition tanh x = (e^x - e^{-x})/(e^x + e^{-x}). Since e^(ln 5) = 5 and e^(-ln 5) = 1/5, substitute to get (5 - 1/5)/(5 + 1/5). Simplify the numerator and denominator: (24/5)/(26/5) = 24/26 = 12/13. The exact value is 12/13."
-          - problem: "Using cosh x = (e^x + e^{-x})/2, evaluate cosh(-ln 4) exactly. Give the answer as a fraction."
-            answer: "17/8"
+            solution_sketch: 'Use $e^{\ln 2} = 2$ and $e^{-\ln 2} = \frac{1}{2}$. Then $\sinh(\ln 2) = \frac{2 - \frac{1}{2}}{2} = \frac{3}{4}$.'
+          - problem: 'The speed of the parachutist in the model $v(t) = 30\tanh t$ approaches $30$ metres per second as time passes. What fraction of this limiting speed has the parachutist reached after $\ln 3$ seconds?'
+            answer: '4/5'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Start with the definition cosh x = (e^x + e^{-x})/2. For x = -ln 4, e^x = 1/4 and e^{-x} = 4. Substitute: (1/4 + 4)/2 = (17/4)/2 = 17/8. The exact value is 17/8."
-          - problem: "Using sech x = 2/(e^x + e^{-x}), evaluate sech(ln 6) exactly. Give the answer as a fraction."
-            answer: "12/37"
+            solution_sketch: 'The fraction is the speed divided by the limiting speed, which is $\frac{30\tanh(\ln 3)}{30} = \tanh(\ln 3)$. With $e^{\ln 3} = 3$ this equals $\frac{3 - \frac{1}{3}}{3 + \frac{1}{3}} = \frac{4}{5}$.'
+          - problem: 'The hyperbolic secant is defined by $\operatorname{sech} x = \frac{2}{e^x + e^{-x}}$. Evaluate $\operatorname{sech}(\ln 6)$.'
+            answer: '12/37'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Start with the definition sech x = 2/(e^x + e^{-x}). Since e^(ln 6) = 6 and e^(-ln 6) = 1/6, the denominator is 6 + 1/6 = 37/6. Therefore sech(ln 6) = 2/(37/6) = 12/37. The exact value is 12/37."
-        constraints: "arguments 0, ±1, or ± ln k with k a small integer, so e^x collapses to exact values; state the e^x definitions in the stem until the anki cards have had time to stick"
+            solution_sketch: 'Here $e^{\ln 6} = 6$ and $e^{-\ln 6} = \frac{1}{6}$, so the denominator is $6 + \frac{1}{6} = \frac{37}{6}$. Then $\operatorname{sech}(\ln 6) = 2 \div \frac{37}{6} = \frac{12}{37}$.'
+          - problem: 'Using $\cosh x = \frac{e^x + e^{-x}}{2}$, evaluate $\cosh 0$.'
+            answer: '1'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Since $e^0 = 1$, the definition gives $\cosh 0 = \frac{1 + 1}{2}$. This equals $1$, the lowest value $\cosh$ ever takes.'
+        constraints: "arguments 0, ±1, or ± ln k with k a small integer, so e^x collapses to exact values; state the e^x definitions in the stem until the anki cards have had time to stick; contexts are a speed model v = c tanh t and a chain, with unit answers"
       - id: kp2
         name: The identity cosh^2 - sinh^2 = 1 and parity
         key_prerequisites: [natural-exponential-function, even-odd-functions]
+        step_check:
+          step: 'Choose the sign: since $x > 0$, $\sinh x > 0$, so take the positive root.'
+          question: 'Why does $x > 0$ make $\sinh x$ positive?'
+          options:
+            - 'Because $e^x > e^{-x}$ when $x > 0$, so the difference is positive'
+            - 'Because every hyperbolic function is positive for every value of $x$'
+            - 'Because a square root is always the positive one, whatever $x$ is'
+            - 'Because $\cosh x$ is positive, so $\sinh x$ has the same sign as it'
+          answer: 'Because $e^x > e^{-x}$ when $x > 0$, so the difference is positive'
+          why: 'In $\sinh x = \frac{e^x - e^{-x}}{2}$ the first term is larger than the second when $x > 0$, so the value is positive.'
+        try_first:
+          problem: 'Evaluate $\cosh^2(\ln 2) - \sinh^2(\ln 2)$.'
+          answer_contract: {"kind": "exact"}
+          answer: '1'
+          reveal: 'The two squares are $\frac{25}{16}$ and $\frac{9}{16}$, and their difference is $1$. This is no accident: $\cosh^2 x - \sinh^2 x = 1$ for every $x$.'
         exemplars:
-          - problem: 'Expand $\cosh^2 x - \sinh^2 x$ using the $e^x$ definitions and simplify.'
-            answer: "1"
-            solution_sketch: '$\frac{(e^x + e^{-x})^2 - (e^x - e^{-x})^2}{4} = \frac{4 e^x e^{-x}}{4} = 1$ — the hyperbolic analogue of $\sin^2 + \cos^2 = 1$, but with a minus sign.'
           - problem: 'Given $\cosh x = \frac{5}{4}$ with $x > 0$, find $\sinh x$.'
-            answer: "3/4"
-            solution_sketch: '$\sinh^2 x = \cosh^2 x - 1 = \frac{25}{16} - 1 = \frac{9}{16}$; $x > 0$ gives the positive root $\frac{3}{4}$.'
-          - problem: 'Simplify $\cosh(-x)$: is it $\cosh(x)$ or $-\cosh(x)$?'
-            answer: "cosh(x)"
-            answer_contract: {"kind": "function", "vars": ["x"]}
-            solution_sketch: 'Swapping $x \to -x$ swaps $e^x$ and $e^{-x}$, which leaves their sum unchanged: $\cosh$ is even (and $\sinh$, built on the difference, is odd).'
-          - problem: "Given $\\sinh x = \\frac{5}{12}$ with $x > 0$, find $\\cosh x$ as a fraction."
-            answer: "13/12"
+            answer: '3/4'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Object: the identity $\\cosh^2 x - \\sinh^2 x = 1$. Step 1 (substitute the given value): $\\cosh^2 x = 1 + \\sinh^2 x = 1 + \\frac{25}{144} = \\frac{169}{144}$. Step 2 (take the positive root): $\\cosh x$ is never negative for a real $x$, so $\\cosh x = \\frac{13}{12}$. The answer is 13/12."
-          - problem: "Let $f(x) = \\sinh(x)\\cosh(x)$. State the parity of $f$, and give $f(-\\ln 2)$ as a fraction."
-            answer: "verdict = odd; value = -15/16"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["even"], ["odd"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "value"}]}
-            solution_sketch: "Object: $f(x) = \\sinh(x)\\cosh(x)$. Step 1 (parity): $\\sinh$ is odd and $\\cosh$ is even, so $f(-x) = (-\\sinh x)\\cosh x = -f(x)$ and $f$ is odd; the wrong option even is the error of treating the even factor $\\cosh$ as making the product even. Step 2 (value): $\\cosh(\\ln 2) = \\frac{5}{4}$ and $\\sinh(\\ln 2) = \\frac{3}{4}$, so $f(-\\ln 2) = -\\frac{3}{4} \\cdot \\frac{5}{4} = -\\frac{15}{16}$. The answer is verdict = odd; value = -15/16."
-          - problem: "Given $\\cosh x - \\sinh x = \\frac{2}{3}$, find $\\cosh x + \\sinh x$ as a fraction."
-            answer: "3/2"
+            solution_sketch: 'The identity gives $\sinh^2 x = \cosh^2 x - 1 = \frac{25}{16} - 1 = \frac{9}{16}$. Since $x > 0$, $\sinh x$ is positive, so $\sinh x = \frac{3}{4}$.'
+          - problem: 'Substitute the definitions of $\cosh x$ and $\sinh x$ into $\cosh^2 x - \sinh^2 x$ and simplify.'
+            answer: '1'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Object: the identity $(\\cosh x - \\sinh x)(\\cosh x + \\sinh x) = \\cosh^2 x - \\sinh^2 x = 1$. Step 1 (apply the identity): the product of the two factors equals 1. Step 2 (solve for the needed factor): $\\cosh x + \\sinh x = \\frac{1}{2/3} = \\frac{3}{2}$. The answer is 3/2."
-        constraints: "identity values from the pairs (cosh, sinh) = (5/4, 3/4) or (13/12, 5/12); state x > 0 so the sign of sinh is determined; parity questions offer the two candidate answers"
+            solution_sketch: 'The difference of squares gives $\frac{(e^x + e^{-x})^2 - (e^x - e^{-x})^2}{4} = \frac{4e^x e^{-x}}{4}$. Since $e^x e^{-x} = 1$, the result is $1$.'
+          - problem: 'Is $\cosh$ an even function, an odd function, or neither?'
+            answer: 'even'
+            answer_contract: {"kind": "label", "options": [["even", "even function", "it is even"], ["odd", "odd function", "it is odd"], ["neither", "neither even nor odd", "it is neither"]]}
+            solution_sketch: 'Replacing $x$ by $-x$ swaps $e^x$ and $e^{-x}$, and the sum in $\cosh x$ does not change. So $\cosh(-x) = \cosh x$, and $\cosh$ is even.'
+          - problem: 'Given $\sinh x = \frac{5}{12}$ with $x > 0$, find $\cosh x$.'
+            answer: '13/12'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The identity gives $\cosh^2 x = 1 + \sinh^2 x = 1 + \frac{25}{144} = \frac{169}{144}$. The value of $\cosh x$ is never negative, so $\cosh x = \frac{13}{12}$.'
+          - problem: 'A chain hangs in the shape $y = \cosh x$, with $x$ and $y$ in metres. At a point to the right of the lowest point, $\sinh x = \frac{3}{4}$. How high above the ground is the chain at that point?'
+            answer: '5/4'
+            answer_contract: {"kind": "unit", "quantity": "length", "unit": "m", "allow_omitted": true}
+            solution_sketch: 'The height is $y = \cosh x$, and the identity gives $\cosh^2 x = 1 + \frac{9}{16} = \frac{25}{16}$. Since $\cosh x$ is positive, the height is $\frac{5}{4}$ metres.'
+          - problem: 'Let $f(x) = \sinh x \cosh x$. Find $f(-\ln 2)$.'
+            answer: '-15/16'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Since $\sinh$ is odd and $\cosh$ is even, $f(-\ln 2) = -\sinh(\ln 2)\cosh(\ln 2)$. With $\sinh(\ln 2) = \frac{3}{4}$ and $\cosh(\ln 2) = \frac{5}{4}$ this equals $-\frac{15}{16}$.'
+          - problem: 'Given $\cosh x - \sinh x = \frac{2}{3}$, find $\cosh x + \sinh x$.'
+            answer: '3/2'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The identity says $(\cosh x - \sinh x)(\cosh x + \sinh x) = \cosh^2 x - \sinh^2 x = 1$. So the second factor is the reciprocal of $\frac{2}{3}$, which is $\frac{3}{2}$.'
+          - problem: 'Is $f(x) = \sinh x \cosh x$ an even function, an odd function, or neither?'
+            answer: 'odd'
+            answer_contract: {"kind": "label", "options": [["even", "even function", "it is even"], ["odd", "odd function", "it is odd"], ["neither", "neither even nor odd", "it is neither"]]}
+            solution_sketch: 'Since $\sinh$ is odd and $\cosh$ is even, $f(-x) = (-\sinh x)(\cosh x) = -f(x)$. So $f$ is odd.'
+          - problem: 'A chain hangs in the shape $y = \cosh x$, with $x$ and $y$ in metres. At a point to the left of the lowest point, $\sinh x = -\frac{5}{12}$. How high above the ground is the chain there?'
+            answer: '13/12'
+            answer_contract: {"kind": "unit", "quantity": "length", "unit": "m", "allow_omitted": true}
+            solution_sketch: 'The identity gives $\cosh^2 x = 1 + \frac{25}{144} = \frac{169}{144}$, and the sign of $x$ does not matter because $\cosh$ is even. So the height is $\frac{13}{12}$ metres.'
+        constraints: "identity values from the pairs (cosh, sinh) = (5/4, 3/4) or (13/12, 5/12); state x > 0 so the sign of sinh is determined; parity questions are label items with the natural words as aliases"
       - id: kp3
         name: Graphs and the catenary
         key_prerequisites: [natural-exponential-function, graphs-of-exponential-functions]
+        step_check:
+          step: 'Halve: $\cosh(\ln 5)=\dfrac{26/5}{2}=\dfrac{13}{5}$'
+          question: 'Why is the sum $\frac{26}{5}$ divided by $2$?'
+          options:
+            - 'To turn the improper fraction $\frac{26}{5}$ into a smaller fraction that is easier to read'
+            - 'The definition of $\cosh$ has a $2$ in the denominator, so the sum is halved'
+            - 'Because $e^{\ln 5}$ appears twice and the amount must be shared out'
+            - 'Because the height of the chain is measured from the middle of it'
+          answer: 'The definition of $\cosh$ has a $2$ in the denominator, so the sum is halved'
+          why: 'The definition is $\cosh x = \frac{e^x + e^{-x}}{2}$, so the sum of the two exponentials is always divided by $2$.'
         exemplars:
-          - problem: 'The graph of $y = \cosh x$ is the catenary — the shape of a hanging chain. What is its minimum value, attained at $x = 0$?'
-            answer: "1"
-            solution_sketch: 'Both $e^x$ and $e^{-x}$ are positive and their product is $1$; the sum $\frac{e^x + e^{-x}}{2}$ is smallest when they are equal, at $x = 0$, giving $\cosh 0 = 1$.'
-          - problem: 'A chain hangs in the catenary shape $y = \cosh x$. Compute its height at $x = \ln 3$.'
-            answer: "5/3"
-            solution_sketch: '$\cosh(\ln 3) = \frac{3 + \frac{1}{3}}{2} = \frac{10/3}{2} = \frac{5}{3}$.'
-          - problem: 'For large $x$ the term $e^{-x}$ is negligible, so $\cosh x \approx \frac{e^x}{2}$. Using $e^3 \approx 20.09$, estimate $\cosh 3$ to one decimal place.'
-            answer: "10.0"
-            solution_sketch: '$\cosh 3 \approx \frac{20.09}{2} = 10.045 \approx 10.0$ (the exact value is $10.07$ — the discarded $e^{-3}/2$ is under $0.03$).'
-          - problem: "The curve y = sinh(x) is odd, so its height at a negative input is the negative of its height at the matching positive input. Compute the height at x = -ln(5) and give it as a fraction."
-            answer: "-12/5"
+          - problem: 'A chain hangs in the shape $y = \cosh x$, with $x$ and $y$ in metres. How high above the ground is the chain at $x = \ln 3$?'
+            answer: '5/3'
+            answer_contract: {"kind": "unit", "quantity": "length", "unit": "m", "allow_omitted": true}
+            solution_sketch: 'The height is $\cosh(\ln 3)$, and $e^{\ln 3} = 3$ and $e^{-\ln 3} = \frac{1}{3}$. So $\cosh(\ln 3) = \frac{3 + \frac{1}{3}}{2} = \frac{5}{3}$ metres.'
+          - problem: 'A chain hangs in the shape $y = \cosh x$, with $x$ and $y$ in metres. How close to the ground does the chain come?'
+            answer: '1'
+            answer_contract: {"kind": "unit", "quantity": "length", "unit": "m", "allow_omitted": true}
+            solution_sketch: 'Both $e^x$ and $e^{-x}$ are positive and their product is $1$, so their sum is smallest when they are equal, at $x = 0$. Then $\cosh 0 = 1$, so the chain comes within $1$ metre of the ground.'
+          - problem: 'A cable hangs in the shape $h(x) = 10\cosh\frac{x}{10}$ metres, where $x$ is the distance in metres along the ground from the point below its lowest part. How high is the cable at $x = 10\ln 2$?'
+            answer: '12.5'
+            answer_contract: {"kind": "unit", "quantity": "length", "unit": "m", "allow_omitted": true}
+            solution_sketch: 'At $x = 10\ln 2$ the argument is $\frac{x}{10} = \ln 2$, so $\cosh(\ln 2) = \frac{5}{4}$. The height is $10 \cdot \frac{5}{4} = 12.5$ metres.'
+          - problem: 'Find $\sinh(-\ln 5)$.'
+            answer: '-12/5'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The full object is y = sinh(x), with definition sinh(u) = (e^u - e^(-u))/2. Step 1: use the definition at u = -ln(5), so e^u = 1/5 and e^(-u) = 5. Step 2: subtract and halve, giving ((1/5) - 5)/2 = (-24/5)/2 = -12/5. The height is -12/5."
-          - problem: "The catenary y = cosh(x) is even, so its height at x = -ln(4) equals its height at x = ln(4). Find the height at x = -ln(4) as a fraction."
-            answer: "17/8"
+            solution_sketch: 'Here $e^{-\ln 5} = \frac{1}{5}$ and $e^{\ln 5} = 5$, so $\sinh(-\ln 5) = \frac{\frac{1}{5} - 5}{2} = -\frac{12}{5}$. This is the negative of $\sinh(\ln 5)$, as the odd symmetry requires.'
+          - problem: 'Use a calculator to find $\cosh 3$ to one decimal place.'
+            answer: '10.1'
+            answer_contract: {"kind": "approx", "decimals": 1}
+            solution_sketch: 'We have $e^3 \approx 20.0855$ and $e^{-3} \approx 0.0498$. So $\cosh 3 \approx \frac{20.0855 + 0.0498}{2} \approx 10.07$, which is $10.1$ to one decimal place.'
+          - problem: 'The cable $h(x) = 10\cosh\frac{x}{10}$ metres hangs between two poles at $x = -10\ln 2$ and $x = 10\ln 2$. How much higher is the cable at a pole than at its lowest point?'
+            answer: '2.5'
+            answer_contract: {"kind": "unit", "quantity": "length", "unit": "m", "allow_omitted": true}
+            solution_sketch: 'At a pole the height is $10\cosh(\ln 2) = 12.5$ metres, and at the lowest point $x = 0$ it is $10\cosh 0 = 10$ metres. The difference is $2.5$ metres.'
+          - problem: 'Use a calculator to find $\sinh 4$ to one decimal place.'
+            answer: '27.3'
+            answer_contract: {"kind": "approx", "decimals": 1}
+            solution_sketch: 'We have $e^4 \approx 54.598$ and $e^{-4} \approx 0.0183$. So $\sinh 4 \approx \frac{54.598 - 0.0183}{2} \approx 27.29$, which is $27.3$ to one decimal place.'
+          - problem: 'A cable hangs in the shape $h(x) = 8\cosh\frac{x}{8}$ metres, with $x$ measured in metres from the point below its lowest part. At what positive distance $x$ is the cable $10$ metres high? Find $x$ exactly.'
+            answer: '8 ln(2)'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The full object is y = cosh(x), and cosh is even, so cosh(-ln(4)) = cosh(ln(4)). Step 1: use the definition cosh(u) = (e^u + e^(-u))/2. Step 2: at u = ln(4), e^u = 4 and e^(-u) = 1/4, so cosh(ln(4)) = (4 + 1/4)/2 = (17/4)/2 = 17/8. The height is 17/8."
-          - problem: "For large positive x the term e^(-x) is negligible, so sinh(x) is about e^x/2. Give an estimate of sinh(4) to one decimal place, using e^4 about 54.60."
-            answer: "27.3"
-            answer_contract: {"decimals": 1, "kind": "approx"}
-            solution_sketch: "The full object is y = sinh(x). Step 1: for large x, e^(-x) is negligible, so use the estimate sinh(x) about e^x/2. Step 2: with e^4 about 54.60, compute sinh(4) about 54.60/2 = 27.30. Step 3: round to one decimal place, which gives 27.3. The estimate is 27.3."
-        constraints: "heights at ± ln k for exact fractions; large-x estimates supply the needed e-power and state the rounding; only y = cosh x and y = sinh x, no shifts or stretches"
+            solution_sketch: 'Setting $8\cosh\frac{x}{8} = 10$ gives $\cosh\frac{x}{8} = \frac{5}{4}$. Since $\cosh(\ln 2) = \frac{5}{4}$ and $x > 0$, we get $\frac{x}{8} = \ln 2$, so $x = 8\ln 2$.'
+          - problem: 'A cable hangs in the shape $h(x) = 4\cosh\frac{x}{4}$ metres. How many times as high is the cable at $x = 4\ln 3$ as at its lowest point?'
+            answer: '5/3'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The height at $x = 4\ln 3$ is $4\cosh(\ln 3) = 4 \cdot \frac{5}{3}$, and the lowest height is $4\cosh 0 = 4$. Dividing the two heights gives $\frac{5}{3}$.'
+          - problem: 'A chain hangs in the shape $y = \cosh x$, with $x$ and $y$ in metres. How high above the ground is the chain at $x = -\ln 4$?'
+            answer: '17/8'
+            answer_contract: {"kind": "unit", "quantity": "length", "unit": "m", "allow_omitted": true}
+            solution_sketch: 'Since $\cosh$ is even, the height at $x = -\ln 4$ equals the height at $x = \ln 4$. With $e^{\ln 4} = 4$ and $e^{-\ln 4} = \frac{1}{4}$, $\cosh(\ln 4) = \frac{4 + \frac{1}{4}}{2} = \frac{17}{8}$ metres.'
+        constraints: "heights at ± ln k for exact fractions; cable models a cosh(x/a) with the argument x = a ln k; calculator estimates state the rounding; no shifts, only y = cosh x, y = sinh x and the cable form a cosh(x/a)"
     diagnostic_exemplar:
       problem: 'Evaluate $\sinh(\ln 3)$ exactly from the definition $\sinh x = \frac{e^x - e^{-x}}{2}$, and confirm with $\cosh^2 x - \sinh^2 x = 1$ that $\cosh(\ln 3) = \frac{5}{3}$.'
       answer: '4/3'
@@ -140,71 +223,169 @@ topics:
       - id: kp1
         name: sinh' = cosh and cosh' = sinh
         key_prerequisites: [hyperbolic-functions, derivatives-natural-exp]
+        step_check:
+          step: 'the minus sign flips to a plus'
+          question: 'Why does the minus sign in $\sinh x$ turn into a plus after differentiating?'
+          options:
+            - 'Differentiating always changes every minus sign into a plus sign'
+            - 'The factor $\frac{1}{2}$ changes its sign when it is differentiated'
+            - 'The derivative of $e^x$ is $-e^{x}$, so the first term changes sign and the second does not'
+            - 'The derivative of $-e^{-x}$ is $+e^{-x}$, because of the inner minus sign'
+          answer: 'The derivative of $-e^{-x}$ is $+e^{-x}$, because of the inner minus sign'
+          why: 'The chain rule gives $\frac{d}{dx}e^{-x} = -e^{-x}$, and the minus sign in front turns that into $+e^{-x}$.'
+        try_first:
+          problem: 'A curve has the equation $y = \frac{e^x - e^{-x}}{2}$. Find its slope at $x = 0$.'
+          answer_contract: {"kind": "exact"}
+          answer: '1'
+          reveal: 'The slope at $x = 0$ is $\frac{e^0 + e^0}{2} = 1$, and this is the value of $\cosh 0$. In general, differentiating $\sinh x$ gives $\cosh x$.'
         exemplars:
-          - problem: 'Differentiate $\sinh x = \frac{e^x - e^{-x}}{2}$ term by term.'
-            answer: "cosh(x)"
-            answer_contract: {"kind": "function", "vars": ["x"]}
-            solution_sketch: '$\frac{e^x - (-e^{-x})}{2} = \frac{e^x + e^{-x}}{2} = \cosh x$.'
-          - problem: 'Differentiate $f(x) = \cosh x$.'
-            answer: "sinh(x)"
-            answer_contract: {"kind": "function", "vars": ["x"]}
-            solution_sketch: '$\frac{e^x + (-e^{-x})}{2} = \sinh x$ — note there is NO minus sign, unlike $\frac{d}{dx}\cos x = -\sin x$.'
           - problem: 'Differentiate $f(x) = 3\cosh x + x^2$.'
-            answer: "3sinh(x) + 2x"
+            answer: '3sinh(x) + 2x'
             answer_contract: {"kind": "function", "vars": ["x"]}
-          - problem: "Find the derivative of $f(x) = 5\\sinh x - 2\\cosh x + 7x^3$."
-            answer: "5cosh(x)-2sinh(x)+21x^2"
+            solution_sketch: 'The derivative of $\cosh x$ is $\sinh x$, so the constant multiple gives $3\sinh x$. The power rule gives $2x$ for $x^2$, so $f''(x) = 3\sinh x + 2x$.'
+          - problem: 'Differentiate $\frac{e^x - e^{-x}}{2}$ term by term.'
+            answer: 'cosh(x)'
             answer_contract: {"kind": "function", "vars": ["x"]}
-            solution_sketch: "The full object is f(x) = 5 sinh x - 2 cosh x + 7x^3. Use the sum rule to split the terms, then use sinh' = cosh and cosh' = sinh with constant multiples. The power rule gives the derivative of 7x^3 as 21x^2. So f'(x) = 5cosh(x)-2sinh(x)+21x^2."
-          - problem: "Find the derivative of $g(t) = 8\\cosh t + 3\\sinh t - 4t^2 + 9t$."
-            answer: "8sinh(t)+3cosh(t)-8t+9"
+            solution_sketch: 'The derivative of $e^x$ is $e^x$, and the derivative of $-e^{-x}$ is $+e^{-x}$. The sum is $\frac{e^x + e^{-x}}{2}$, which is $\cosh x$.'
+          - problem: 'Find the derivative of $f(x) = 5\sinh x - 2\cosh x + 7x^3$.'
+            answer: '5cosh(x) - 2sinh(x) + 21x^2'
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: 'Differentiate term by term. The rule $\sinh'' = \cosh$ gives $5\cosh x$, the rule $\cosh'' = \sinh$ gives $-2\sinh x$, and the power rule gives $21x^2$.'
+          - problem: 'Find the derivative of $g(t) = 8\cosh t + 3\sinh t - 4t^2 + 9t$.'
+            answer: '8sinh(t) + 3cosh(t) - 8t + 9'
             answer_contract: {"kind": "function", "vars": ["t"]}
-            solution_sketch: "The full object is g(t) = 8 cosh t + 3 sinh t - 4t^2 + 9t. Apply the sum rule and constant multiple rule term by term. The rule cosh' = sinh gives 8 sinh t, and sinh' = cosh gives 3 cosh t. The power rule gives -8t + 9. Thus g'(t) = 8sinh(t)+3cosh(t)-8t+9."
-          - problem: "Find the derivative of $f(x) = 4\\sinh x + 6\\cosh x - x$ by using the definitions $\\sinh x = (e^x - e^{-x})/2$ and $\\cosh x = (e^x + e^{-x})/2$."
-            answer: "4cosh(x)+6sinh(x)-1"
+            solution_sketch: 'The rule $\cosh'' = \sinh$ gives $8\sinh t$, and $\sinh'' = \cosh$ gives $3\cosh t$. The power rule gives $-8t + 9$ for the remaining terms.'
+          - problem: 'Sam differentiates $f(x) = \cosh x$ and writes $f''(x) = -\sinh x$. What is the correct derivative?'
+            answer: 'sinh(x)'
             answer_contract: {"kind": "function", "vars": ["x"]}
-            solution_sketch: "The full object is f(x) = 4 sinh x + 6 cosh x - x. Replace sinh and cosh by their e^x definitions: f(x) = 5e^x + e^(-x) - x. Differentiate term by term using the derivative of e^x and the derivative of e^(-x): f'(x) = 5e^x - e^(-x) - 1. Regroup as 4 cosh x + 6 sinh x - 1, so f'(x) = 4cosh(x)+6sinh(x)-1."
-        constraints: "linear combinations of sinh x, cosh x, and power terms; integer coefficients; occasionally ask for the derivation from the e^x definitions"
+            solution_sketch: 'Sam copied the rule for $\cos x$, whose derivative is $-\sin x$. For $\cosh x = \frac{e^x + e^{-x}}{2}$ the derivative is $\frac{e^x - e^{-x}}{2}$, which is $\sinh x$ with no minus sign.'
+          - problem: 'A chain hangs in the shape $y = 3\cosh x$, with $x$ and $y$ in metres. Find the slope of the chain at $x = \ln 2$.'
+            answer: '9/4'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The slope is $y'' = 3\sinh x$. At $x = \ln 2$ we have $\sinh(\ln 2) = \frac{3}{4}$, so the slope is $3 \cdot \frac{3}{4} = \frac{9}{4}$.'
+          - problem: 'A particle moves along a line with position $s(t) = 4\cosh t - 3t$ metres, where $t$ is in seconds. What is its velocity at $t = \ln 3$?'
+            answer: '7/3'
+            answer_contract: {"kind": "unit", "quantity": "speed", "unit": "m/s", "allow_omitted": true}
+            solution_sketch: 'The velocity is $s''(t) = 4\sinh t - 3$. At $t = \ln 3$ we have $\sinh(\ln 3) = \frac{4}{3}$, so the velocity is $\frac{16}{3} - 3 = \frac{7}{3}$ metres per second.'
+          - problem: 'Let $f(x) = 4\sinh x + 6\cosh x - x$. Find $f''(0)$.'
+            answer: '3'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The derivative is $f''(x) = 4\cosh x + 6\sinh x - 1$. At $x = 0$ we have $\cosh 0 = 1$ and $\sinh 0 = 0$, so $f''(0) = 4 + 0 - 1 = 3$.'
+          - problem: 'A particle moves along a line with position $s(t) = 4\cosh t - 3t$ metres, where $t$ is in seconds. At what time $t > 0$ is the particle momentarily at rest? Find $t$ exactly.'
+            answer: 'ln(2)'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The particle is at rest when the velocity $s''(t) = 4\sinh t - 3$ is zero, so $\sinh t = \frac{3}{4}$. Since $\sinh(\ln 2) = \frac{3}{4}$ and $\sinh$ is increasing, $t = \ln 2$.'
+        constraints: "linear combinations of sinh x, cosh x, and power terms; integer coefficients; occasionally ask for the derivation from the e^x definitions; contexts are slope of a chain and velocity of a particle"
       - id: kp2
         name: Chain rule with hyperbolic functions
         key_prerequisites: [chain-rule, hyperbolic-functions]
+        step_check:
+          step: 'Since $\cosh^2(2x) - \sinh^2(2x) = 1$, the numerator becomes $2$'
+          question: 'Why does the numerator reduce to $2$?'
+          options:
+            - 'The squares cancel because $\cosh(2x)$ and $\sinh(2x)$ are equal'
+            - 'The factor $2$ stays outside, and the bracket equals $1$ by the identity'
+            - 'The bracket is a difference of squares, which is always $0$, so only $2$ is left'
+            - 'The chain rule replaces the whole bracket by the inner derivative $2$'
+          answer: 'The factor $2$ stays outside, and the bracket equals $1$ by the identity'
+          why: 'The numerator is $2$ times $\cosh^2(2x) - \sinh^2(2x)$, and that bracket equals $1$ for every $x$.'
         exemplars:
           - problem: 'Differentiate $f(x) = \sinh(3x)$.'
-            answer: "3cosh(3x)"
+            answer: '3cosh(3x)'
             answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: 'The outer function is $\sinh$ and the inner function is $3x$. The chain rule gives $\cosh(3x)$ times the inner derivative $3$.'
           - problem: 'Differentiate $f(x) = \cosh(x^2)$.'
-            answer: "2x sinh(x^2)"
+            answer: '2x sinh(x^2)'
             answer_contract: {"kind": "function", "vars": ["x"]}
-            solution_sketch: 'Chain rule: $\sinh(x^2) \cdot 2x$.'
-          - problem: "Find the derivative of f(x) = cosh(6x)."
-            answer: "6sinh(6x)"
+            solution_sketch: 'The outer function is $\cosh$ and the inner function is $x^2$. The chain rule gives $\sinh(x^2)$ times the inner derivative $2x$.'
+          - problem: 'Sam writes $\frac{d}{dx}\sinh(5x) = \cosh(5x)$. What is the correct derivative?'
+            answer: '5cosh(5x)'
             answer_contract: {"kind": "function", "vars": ["x"]}
-            solution_sketch: "The function is f(x) = cosh(6x), an outer cosh with inner u = 6x. The chain rule gives f'(x) = sinh(u) times u', and u' = 6. Multiply the two rates to get 6sinh(6x). The derivative is 6sinh(6x)."
-          - problem: 'Using the quotient rule on $\tanh x = \frac{\sinh x}{\cosh x}$ and the identity $\cosh^2 x - \sinh^2 x = 1$, differentiate $\tanh x$.'
-            answer: "1/cosh(x)^2"
+            solution_sketch: 'Sam forgot the inner derivative. The chain rule multiplies $\cosh(5x)$ by the derivative of $5x$, which is $5$.'
+          - problem: 'Differentiate $f(x) = \sinh\frac{x}{5}$.'
+            answer: '(1/5)cosh(x/5)'
             answer_contract: {"kind": "function", "vars": ["x"]}
-            solution_sketch: '$\frac{\cosh^2 x - \sinh^2 x}{\cosh^2 x} = \frac{1}{\cosh^2 x}$.'
-          - problem: "Find the derivative of f(x) = sinh(x^2)."
-            answer: "2x cosh(x^2)"
+            solution_sketch: 'The inner function is $\frac{x}{5}$ and its derivative is $\frac{1}{5}$. So $f''(x) = \frac{1}{5}\cosh\frac{x}{5}$.'
+          - problem: 'Use the quotient rule on $\tanh x = \frac{\sinh x}{\cosh x}$ and the identity $\cosh^2 x - \sinh^2 x = 1$ to differentiate $\tanh x$.'
+            answer: '1/cosh(x)^2'
             answer_contract: {"kind": "function", "vars": ["x"]}
-            solution_sketch: "The function is f(x) = sinh(x^2), an outer sinh with inner u = x^2. The chain rule gives f'(x) = cosh(u) times u', and u' = 2x. Multiply the two rates to get 2x cosh(x^2). The derivative is 2x cosh(x^2)."
-          - problem: "Find the derivative of f(x) = tanh(4x)."
-            answer: "4/cosh(4x)^2"
+            solution_sketch: 'The quotient rule gives $\frac{\cosh x\cosh x - \sinh x\sinh x}{\cosh^2 x}$. The identity turns the numerator into $1$, so the derivative is $\frac{1}{\cosh^2 x}$.'
+          - problem: 'A cable hangs in the shape $h(x) = 10\cosh\frac{x}{10}$ metres, where $x$ is the distance in metres from the point below its lowest part. Find the slope of the cable at $x = 10\ln 2$.'
+            answer: '3/4'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The slope is $h''(x) = 10\cdot\frac{1}{10}\sinh\frac{x}{10} = \sinh\frac{x}{10}$. At $x = 10\ln 2$ this is $\sinh(\ln 2) = \frac{3}{4}$.'
+          - problem: 'Find the derivative of $f(x) = \sinh(x^2)$.'
+            answer: '2x cosh(x^2)'
             answer_contract: {"kind": "function", "vars": ["x"]}
-            solution_sketch: "Start with tanh(4x) = sinh(4x)/cosh(4x). The chain rule gives (sinh(4x))' = 4cosh(4x) and (cosh(4x))' = 4sinh(4x). The quotient rule gives f'(x) = (4cosh(4x)cosh(4x) - sinh(4x)4sinh(4x))/cosh(4x)^2. Use the identity cosh^2(4x) - sinh^2(4x) = 1 to reduce the numerator to 4. The derivative is 4/cosh(4x)^2."
-        constraints: "inner function bx or x^2; the tanh derivative always routed through the quotient rule plus the identity"
+            solution_sketch: 'The outer function is $\sinh$ and the inner function is $x^2$. The chain rule gives $\cosh(x^2)$ times $2x$.'
+          - problem: 'A particle moves along a line with position $s(t) = 6\sinh\frac{t}{2}$ metres, where $t$ is in seconds. What is its velocity at $t = 2\ln 3$?'
+            answer: '5'
+            answer_contract: {"kind": "unit", "quantity": "speed", "unit": "m/s", "allow_omitted": true}
+            solution_sketch: 'The velocity is $s''(t) = 6\cdot\frac{1}{2}\cosh\frac{t}{2} = 3\cosh\frac{t}{2}$. At $t = 2\ln 3$ this is $3\cosh(\ln 3) = 3\cdot\frac{5}{3} = 5$ metres per second.'
+          - problem: 'A cable hangs in the shape $h(x) = 20\cosh\frac{x}{20}$ metres. What is the slope of the cable at a point $20\ln 3$ metres to the right of its lowest point?'
+            answer: '4/3'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The slope is $h''(x) = \sinh\frac{x}{20}$. At $x = 20\ln 3$ this is $\sinh(\ln 3) = \frac{3 - \frac{1}{3}}{2} = \frac{4}{3}$.'
+          - problem: 'Find the derivative of $f(x) = \tanh(4x)$.'
+            answer: '4/cosh(4x)^2'
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: 'Write $\tanh(4x) = \frac{\sinh(4x)}{\cosh(4x)}$ and use the quotient rule with the inner derivative $4$. The numerator becomes $4\left(\cosh^2(4x) - \sinh^2(4x)\right) = 4$, so $f''(x) = \frac{4}{\cosh^2(4x)}$.'
+        constraints: "inner function bx, x/b or x^2; the tanh derivative always routed through the quotient rule plus the identity; contexts are cable slope and velocity"
       - id: kp3
         name: Products and the slope of the catenary
         key_prerequisites: [product-quotient-rules, hyperbolic-functions]
+        step_check:
+          step: 'Differentiate each factor on its own'
+          question: 'Why is the derivative of $x\cosh x$ not just $1\cdot\sinh x$?'
+          options:
+            - 'The factor $x$ has to be differentiated twice before the product is formed'
+            - 'The factor $\cosh x$ changes sign, so it has to be differentiated twice'
+            - 'Both factors change with $x$, so each change adds its own term'
+            - 'The derivative of a product is the product of the two derivatives'
+          answer: 'Both factors change with $x$, so each change adds its own term'
+          why: 'When both factors depend on $x$, the product rule adds one term for each factor, so $(uv)'' = u''v + uv''$.'
         exemplars:
           - problem: 'Differentiate $f(x) = x\sinh x$.'
-            answer: "sinh(x) + x cosh(x)"
+            answer: 'sinh(x) + x cosh(x)'
             answer_contract: {"kind": "function", "vars": ["x"]}
-            solution_sketch: 'Product rule: $1 \cdot \sinh x + x \cdot \cosh x$.'
-          - problem: 'A chain hangs as the catenary $y = \cosh x$. Find its slope at $x = \ln 2$.'
-            answer: "3/4"
-            solution_sketch: 'The slope is $y'' = \sinh x$; $\sinh(\ln 2) = \frac{2 - \frac{1}{2}}{2} = \frac{3}{4}$.'
-        constraints: "one power factor times sinh or cosh; slope evaluations at ± ln k so the answer is an exact fraction"
+            solution_sketch: 'The product rule gives $1\cdot\sinh x + x\cdot\cosh x$. Both factors change with $x$, so both terms appear.'
+          - problem: 'A chain hangs in the shape $y = \cosh x$, with $x$ and $y$ in metres. Find the slope of the chain at $x = \ln 2$.'
+            answer: '3/4'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The slope is $y'' = \sinh x$. At $x = \ln 2$ this is $\frac{2 - \frac{1}{2}}{2} = \frac{3}{4}$.'
+          - problem: 'Differentiate $f(x) = x^2\sinh x$.'
+            answer: '2x sinh(x) + x^2 cosh(x)'
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: 'The product rule gives $2x\cdot\sinh x + x^2\cdot\cosh x$. The first term differentiates $x^2$ and the second differentiates $\sinh x$.'
+          - problem: 'Sam differentiates $f(x) = x^3\cosh x$ and writes $f''(x) = 3x^2\sinh x$. What is the correct derivative?'
+            answer: '3x^2 cosh(x) + x^3 sinh(x)'
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: 'Sam mixed up the two parts. The product rule gives $3x^2\cdot\cosh x + x^3\cdot\sinh x$, where the power factor is differentiated in the first term and $\cosh x$ in the second.'
+          - problem: 'Differentiate $f(x) = e^x\sinh x$.'
+            answer: 'e^x sinh(x) + e^x cosh(x)'
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: 'The product rule gives $e^x\sinh x + e^x\cosh x$, because $e^x$ is its own derivative. The two terms add up to $e^{2x}$, which is another correct form.'
+          - problem: 'A chain hangs in the shape $y = \cosh x$, with $x$ and $y$ in metres. Find the slope of the chain at $x = -\ln 3$.'
+            answer: '-4/3'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The slope is $y'' = \sinh x$. At $x = -\ln 3$ this is $\frac{\frac{1}{3} - 3}{2} = -\frac{4}{3}$, so the chain slopes down to the right.'
+          - problem: 'Find the slope of the graph of $y = x\cosh x$ at $x = \ln 2$.'
+            answer: '5/4 + 3ln(2)/4'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The product rule gives $y'' = \cosh x + x\sinh x$. At $x = \ln 2$ this is $\frac{5}{4} + \frac{3}{4}\ln 2$.'
+          - problem: 'A chain hangs in the shape $y = \cosh x$, with $x$ and $y$ in metres. At what position $x > 0$ is the slope of the chain equal to $\frac{4}{3}$?'
+            answer: 'ln(3)'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The slope is $\sinh x$, so we need $\sinh x = \frac{4}{3}$. Since $\sinh(\ln 3) = \frac{4}{3}$ and $\sinh$ is increasing, $x = \ln 3$.'
+          - problem: 'Differentiate $f(x) = x^2\cosh(3x)$.'
+            answer: '2x cosh(3x) + 3x^2 sinh(3x)'
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: 'The product rule gives $2x\cosh(3x) + x^2\cdot\frac{d}{dx}\cosh(3x)$. The chain rule gives $\frac{d}{dx}\cosh(3x) = 3\sinh(3x)$, so the second term is $3x^2\sinh(3x)$.'
+          - problem: 'A particle moves along a line with position $s(t) = t\sinh t$ metres, where $t$ is in seconds. What is its velocity at $t = \ln 3$, in metres per second?'
+            answer: '4/3 + 5ln(3)/3'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The product rule gives $s''(t) = \sinh t + t\cosh t$. At $t = \ln 3$ this is $\frac{4}{3} + \frac{5}{3}\ln 3$ metres per second.'
+        constraints: "one power factor or e^x times sinh or cosh; slope evaluations at ± ln k so the answer is an exact value in ln k; contexts are chain slope and particle velocity"
     diagnostic_exemplar:
       problem: 'Differentiate $f(x) = x\cosh(2x)$.'
       answer: 'cosh(2x) + 2x sinh(2x)'

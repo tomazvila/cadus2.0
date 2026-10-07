@@ -15,60 +15,107 @@ topics:
         key: true
     knowledge_points:
       - id: kp1
-        name: "Spanning tree basics"
+        name: 'Spanning tree basics'
         key_prerequisites: [trees-characterizations]
+        step_check:
+          step: 'Use the formula for the number of edges in a spanning tree'
+          question: 'Why does every spanning tree of a connected graph on $n$ vertices have exactly $n - 1$ edges?'
+          options:
+            - 'A spanning tree keeps every edge of the graph except exactly one of them'
+            - 'It is connected with no cycle, and such a graph has $n - 1$ edges'
+            - 'Each vertex needs its own edge, so a tree has $n$ edges in all'
+            - 'A spanning tree keeps only the lightest $n - 1$ edges of the graph'
+          answer: 'It is connected with no cycle, and such a graph has $n - 1$ edges'
+          why: 'Connected means at least $n - 1$ edges are needed, and a cycle would make one edge spare, so a connected graph without a cycle has exactly $n - 1$.'
         exemplars:
           - problem: 'A connected graph has $12$ vertices. How many edges does each of its spanning trees have?'
             answer: "11"
-            solution_sketch: 'A spanning tree is a tree on all $12$ vertices: $n - 1 = 11$ edges.'
-          - problem: 'How many spanning trees does the cycle $C_4$ have?'
-            answer: "4"
-            solution_sketch: 'Deleting any one of the $4$ edges leaves a spanning path; a cycle on $n$ vertices has exactly $n$ spanning trees.'
-          - problem: "How many spanning trees does the cycle C6 have?"
-            answer: "6"
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Rule: edge deletion from a cycle. A spanning tree of a cycle on n vertices is obtained by deleting exactly one edge. The cycle C6 has 6 edges, and deleting any one of them leaves a spanning path. So the number of spanning trees is 6."
-          - problem: "A connected graph consists of a 5-cycle with one pendant edge attached at one vertex. How many spanning trees does it have?"
-            answer: "5"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Rule: forced tree edge plus cycle edge deletion. The pendant edge must be in every spanning tree, because deleting it isolates its leaf. The remaining 5-cycle needs exactly one edge deleted. There are 5 choices for that edge, so the number of spanning trees is 5."
-          - problem: "A connected graph consists of a 7-cycle with a pendant path of length 2 attached at one vertex. How many spanning trees does it have?"
-            answer: "7"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Rule: forced path edges plus cycle edge deletion. The two edges of the pendant path must be in every spanning tree, because deleting either one disconnects the leaf. The remaining 7-cycle needs exactly one edge deleted. There are 7 choices for that edge, so the number of spanning trees is 7."
-          - problem: "A connected graph consists of an 8-cycle with a pendant edge attached at each of two adjacent vertices. How many spanning trees does it have?"
+            solution_sketch: 'A spanning tree is a tree that contains all $12$ vertices. A tree on $12$ vertices has $12 - 1 = 11$ edges.'
+          - problem: 'A council wants to build as few roads as possible so that all $9$ villages of a district are joined, directly or through other villages, by road. How many roads must it build?'
             answer: "8"
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Rule: forced pendant edges plus cycle edge deletion. Both pendant edges must be in every spanning tree, because deleting either one isolates its leaf. The remaining 8-cycle needs exactly one edge deleted. There are 8 choices for that edge, so the number of spanning trees is 8."
-        constraints: "cycles and near-trees where spanning trees can be counted by edge deletion; <= 12 vertices"
-      - id: kp2
-        name: "Kruskal and Prim on small weighted graphs"
-        key_prerequisites: [trees-characterizations]
-        exemplars:
-          - problem: 'Vertices $A, B, C, D$; edge weights $AB = 1$, $BC = 2$, $CD = 3$, $AD = 4$, $AC = 5$. Find the total weight of a minimum spanning tree.'
+            solution_sketch: 'The villages are vertices and the roads are edges. The cheapest connected network has no cycle, so it is a spanning tree, and a tree on $9$ vertices has $9 - 1 = 8$ edges.'
+          - problem: 'How many spanning trees does the cycle $C_6$ have?'
             answer: "6"
-            solution_sketch: 'Kruskal: take $AB$ ($1$), $BC$ ($2$), $CD$ ($3$) — no cycles formed, all vertices covered. Weight $1 + 2 + 3 = 6$.'
-          - problem: "Vertices A, B, C, D have edge weights AB = 2, AC = 1, BC = 3, BD = 4, CD = 5. Find the total weight of a minimum spanning tree."
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'A spanning tree of a cycle is found by deleting exactly one edge. The cycle $C_6$ has $6$ edges and each deletion leaves a spanning path, so there are $6$ spanning trees.'
+          - problem: 'A connected graph consists of a $5$-cycle with one pendant edge attached at one vertex. How many spanning trees does it have?'
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The pendant edge lies in every spanning tree, because deleting it would cut off its leaf. The $5$-cycle needs exactly one edge deleted, with $5$ choices, so there are $5$ spanning trees.'
+          - problem: 'A network of computers is joined by exactly $14$ cables, and removing any one cable would cut some computer off from the others. How many computers are in the network?'
+            answer: "15"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The cables form a connected graph with no cycle, which is a tree. A tree with $14$ edges has $14 + 1 = 15$ vertices, so there are $15$ computers.'
+          - problem: 'A connected graph has $10$ vertices and $13$ edges. How many edges must be deleted to leave a spanning tree?'
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'A spanning tree on $10$ vertices keeps $10 - 1 = 9$ edges. The graph has $13$ edges, so $13 - 9 = 4$ edges must be deleted.'
+          - problem: 'A graph has $9$ vertices and $7$ edges. Does it have a spanning tree?'
+            answer: "no"
+            answer_contract: {"kind": "label", "options": [["yes", "yes it does", "yes, it does", "it does", "it has one", "yes it has one"], ["no", "no it does not", "no, it does not", "it does not", "it has none", "it has no spanning tree", "no spanning tree", "not"]]}
+            solution_sketch: 'A spanning tree on $9$ vertices has $9 - 1 = 8$ edges, and all of them are edges of the graph. The graph has only $7$ edges, which is fewer than $8$, so it is not connected and has no spanning tree.'
+          - problem: 'A connected graph consists of a $7$-cycle with a pendant path of two edges attached at one vertex. How many spanning trees does it have?'
             answer: "7"
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The graph is AB = 2, AC = 1, BC = 3, BD = 4, CD = 5. Kruskal sorts the edges as AC = 1, AB = 2, BC = 3, BD = 4, CD = 5. It takes AC and AB, skips BC because it closes a cycle, and takes BD to join D. The rule is Kruskal's algorithm with a cycle check. The total weight is 1 + 2 + 4 = 7."
-          - problem: "Vertices A, B, C, D, E have edge weights AB = 1, BC = 2, CD = 3, DE = 4, AC = 5, BD = 6, CE = 7. Find the total weight of a minimum spanning tree."
-            answer: "10"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The graph is AB = 1, BC = 2, CD = 3, DE = 4, AC = 5, BD = 6, CE = 7. Kruskal sorts the edges as AB = 1, BC = 2, CD = 3, DE = 4, AC = 5, BD = 6, CE = 7. It takes AB, BC, CD, DE; the edges AC, BD, CE are skipped because each closes a cycle. The rule is Kruskal's algorithm with a cycle check. The total weight is 1 + 2 + 3 + 4 = 10."
-          - problem: "Vertices A, B, C, D, E have edge weights AB = 3, BC = 1, CD = 5, DE = 2, AC = 4, BD = 6, CE = 7. Find the total weight of a minimum spanning tree."
-            answer: "11"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The graph is AB = 3, BC = 1, CD = 5, DE = 2, AC = 4, BD = 6, CE = 7. Kruskal sorts the edges as BC = 1, DE = 2, AB = 3, AC = 4, CD = 5, BD = 6, CE = 7. It takes BC, DE, AB; AC is skipped as a cycle; it takes CD to join the two components. The rule is Kruskal's algorithm with a cycle check. The total weight is 1 + 2 + 3 + 5 = 11."
-          - problem: "Vertices A, B, C, D, E have edge weights AC = 3, AB = 1, BC = 2, CD = 4, DE = 5, BD = 6, CE = 7. Find the total weight of a minimum spanning tree."
-            answer: "12"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The graph is AC = 3, AB = 1, BC = 2, CD = 4, DE = 5, BD = 6, CE = 7. Kruskal sorts the edges as AB = 1, BC = 2, AC = 3, CD = 4, DE = 5, BD = 6, CE = 7. It takes AB, BC, CD, DE; AC, BD, CE are skipped as cycles. The rule is Kruskal's algorithm with a cycle check. The total weight is 1 + 2 + 4 + 5 = 12."
-          - problem: "Vertices A, B, C, D have edge weights AB = 2, BC = 3, CD = 4, AC = 5, BD = 6. Find the total weight of a minimum spanning tree."
+            solution_sketch: 'Both edges of the pendant path lie in every spanning tree, because deleting either one would cut off the leaf. The $7$-cycle needs exactly one edge deleted, with $7$ choices, so there are $7$ spanning trees.'
+          - problem: 'Two triangles share exactly one vertex, like a bow tie. How many spanning trees does this graph have?'
             answer: "9"
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The graph is AB = 2, BC = 3, CD = 4, AC = 5, BD = 6. Kruskal sorts the edges as AB = 2, BC = 3, CD = 4, AC = 5, BD = 6. It takes AB, BC, CD; AC and BD are skipped because they close cycles. The rule is Kruskal's algorithm with a cycle check. The total weight is 2 + 3 + 4 = 9."
-        constraints: "4-6 vertices, 5-8 edges, distinct small integer weights so the MST is unique; ask for total weight and/or edge list"
+            solution_sketch: 'A spanning tree must delete exactly one edge from each triangle, because each triangle is a cycle. Each triangle gives $3$ choices, so there are $3 \cdot 3 = 9$ spanning trees.'
+          - problem: 'A connected graph consists of an $8$-cycle with a pendant edge attached at each of two adjacent vertices. How many spanning trees does it have?'
+            answer: "8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Both pendant edges lie in every spanning tree, because deleting either one would cut off its leaf. The $8$-cycle needs exactly one edge deleted, with $8$ choices, so there are $8$ spanning trees.'
+        constraints: 'cycles, near-trees and block graphs where spanning trees can be counted by edge deletion; edge counts of trees in contexts; <= 12 vertices'
+      - id: kp2
+        name: 'Kruskal and Prim on small weighted graphs'
+        key_prerequisites: [trees-characterizations]
+        step_check:
+          step: 'Sort the edges by weight'
+          question: 'Why does Kruskal''s algorithm start by sorting the edges from lightest to heaviest?'
+          options:
+            - 'So that the tree is built outward from the first vertex in the list'
+            - 'So that it can skip every edge that touches a vertex of degree one'
+            - 'So that it can always add the lightest edge that closes no cycle'
+            - 'So that the heaviest edge is certain to lie in the final tree'
+          answer: 'So that it can always add the lightest edge that closes no cycle'
+          why: 'Each time the algorithm takes the lightest remaining edge that closes no cycle, which is why the finished tree has least total weight.'
+        exemplars:
+          - problem: 'A weighted graph has vertices $A, B, C, D$ and edges with weights $AB = 2$, $AC = 1$, $BC = 3$, $BD = 4$, $CD = 5$. Find the total weight of a minimum spanning tree.'
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Kruskal sorts the edges by weight: $AC$ (1), $AB$ (2), $BC$ (3), $BD$ (4), $CD$ (5). It takes $AC$ (1); takes $AB$ (2); skips $BC$ (3) because it closes a cycle; takes $BD$ (4). The tree weight is 1 + 2 + 4 = 7.'
+          - problem: 'Five offices $A, B, C, D, E$ are to be joined by cables, directly or through other offices. The possible cable runs and their costs in dollars are $AB = 50$, $AC = 20$, $BC = 10$, $BD = 70$, $CD = 60$, $CE = 90$, $DE = 40$. What is the least total cost of a cable network that joins all five offices?'
+            answer: "130"
+            answer_contract: {"kind": "unit", "quantity": "dollar", "unit": "dollar", "allow_omitted": true}
+            solution_sketch: 'Kruskal sorts the edges by cost: $BC$ (10), $AC$ (20), $DE$ (40), $AB$ (50), $CD$ (60), $BD$ (70), $CE$ (90). It takes $BC$ (10); takes $AC$ (20); takes $DE$ (40); skips $AB$ (50) because it closes a cycle; takes $CD$ (60). The tree cost is 10 + 20 + 40 + 60 = 130 dollars.'
+          - problem: 'A weighted graph has vertices $A, B, C, D, E$ and edges with weights $AB = 1$, $BC = 2$, $CD = 3$, $DE = 4$, $AC = 5$, $BD = 6$, $CE = 7$. Find the total weight of a minimum spanning tree.'
+            answer: "10"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Kruskal sorts the edges by weight: $AB$ (1), $BC$ (2), $CD$ (3), $DE$ (4), $AC$ (5), $BD$ (6), $CE$ (7). It takes $AB$ (1); takes $BC$ (2); takes $CD$ (3); takes $DE$ (4). The tree weight is 1 + 2 + 3 + 4 = 10.'
+          - problem: 'A weighted graph has vertices $A, B, C, D, E, F$ and edges with weights $AB = 4$, $AC = 3$, $BC = 2$, $BD = 5$, $CD = 7$, $CE = 8$, $DE = 6$, $DF = 9$, $EF = 1$. Prim''s algorithm starts at $A$ and repeatedly adds the lightest edge that joins a new vertex to the tree. What is the weight of the third edge it adds?'
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Prim grows the tree from $A$. Its edges, in order, are $AC$ (3), $CB$ (2), $BD$ (5), $DE$ (6), $EF$ (1). The third edge added has weight 5.'
+          - problem: 'A school has six buildings $A, B, C, D, E, F$. Cable can be laid between some pairs of buildings, and the possible lengths in meters are $AB = 40$, $AC = 65$, $BC = 30$, $BD = 55$, $CD = 45$, $CE = 70$, $DE = 25$, $DF = 60$, $EF = 35$. What is the shortest total length of cable that connects all six buildings?'
+            answer: "175"
+            answer_contract: {"kind": "unit", "quantity": "length", "unit": "m", "allow_omitted": true}
+            solution_sketch: 'Kruskal sorts the edges by weight: $DE$ (25), $BC$ (30), $EF$ (35), $AB$ (40), $CD$ (45), $BD$ (55), $DF$ (60), $AC$ (65), $CE$ (70). It takes $DE$ (25); takes $BC$ (30); takes $EF$ (35); takes $AB$ (40); takes $CD$ (45). The tree weight is 25 + 30 + 35 + 40 + 45 = 175. The lengths are in meters.'
+          - problem: 'A weighted graph has vertices $A, B, C, D, E$ and edges with weights $AB = 3$, $AC = 8$, $BC = 2$, $BD = 6$, $CD = 9$, $CE = 4$, $DE = 7$. What is the weight of the heaviest edge in a minimum spanning tree?'
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Kruskal sorts the edges by weight: $BC$ (2), $AB$ (3), $CE$ (4), $BD$ (6), $DE$ (7), $AC$ (8), $CD$ (9). It takes $BC$ (2); takes $AB$ (3); takes $CE$ (4); takes $BD$ (6). The tree weight is 2 + 3 + 4 + 6 = 15. The tree edges have weights 2, 3, 4, 6, so the heaviest has weight 6.'
+          - problem: 'A weighted graph has vertices $A, B, C, D, E$ and edges with weights $AB = 1$, $BC = 2$, $AC = 3$, $CD = 4$, $DE = 5$, $BE = 6$. Sam adds the four lightest edges, $AB, BC, AC, CD$, and says they form a minimum spanning tree of weight $10$. What is the weight of a minimum spanning tree?'
+            answer: "12"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The edge $AC$ closes a cycle with $AB$ and $BC$, so Sam''s four edges do not form a tree. Kruskal sorts the edges by weight: $AB$ (1), $BC$ (2), $AC$ (3), $CD$ (4), $DE$ (5), $BE$ (6). It takes $AB$ (1); takes $BC$ (2); skips $AC$ (3) because it closes a cycle; takes $CD$ (4); takes $DE$ (5). The tree weight is 1 + 2 + 4 + 5 = 12.'
+          - problem: 'Four pumping stations $P, Q, R, S$ must be linked by pipes. The possible pipe lengths in kilometers are $PQ = 12$, $PR = 7$, $QR = 9$, $QS = 5$, $RS = 11$. What is the least total length of pipe that links all four stations?'
+            answer: "21"
+            answer_contract: {"kind": "unit", "quantity": "length", "unit": "km", "allow_omitted": true}
+            solution_sketch: 'Kruskal sorts the edges by weight: $QS$ (5), $PR$ (7), $QR$ (9), $RS$ (11), $PQ$ (12). It takes $QS$ (5); takes $PR$ (7); takes $QR$ (9). The tree weight is 5 + 7 + 9 = 21. The lengths are in kilometers.'
+        constraints: '4-6 vertices, 5-9 edges, distinct small integer weights so the MST is unique; ask for the total weight, the heaviest tree edge, or the weight of a named Prim step'
     diagnostic_exemplar:
       problem: 'Vertices $P, Q, R, S$; weights $PQ = 3$, $QR = 1$, $RS = 2$, $PS = 4$, $PR = 6$. What is the MST weight?'
       answer: "6"
@@ -94,43 +141,91 @@ topics:
         key: true
     knowledge_points:
       - id: kp1
-        name: "Running Dijkstra on a small weighted graph"
+        name: 'Running Dijkstra on a small weighted graph'
         key_prerequisites: [walks-paths-connectivity]
+        step_check:
+          step: 'Settle $R(3)$'
+          question: 'Why does Dijkstra''s algorithm settle $R$ (distance $3$) before $Q$ (distance $5$)?'
+          options:
+            - '$R$ comes later in the alphabet than $Q$, so it is always settled first'
+            - '$R$ is joined to the target $S$, and the algorithm must head for the target'
+            - '$R$ has fewer edges than $Q$, and fewer edges always mean a shorter route'
+            - '$R$ has the least distance found so far, and no other route can be cheaper'
+          answer: '$R$ has the least distance found so far, and no other route can be cheaper'
+          why: 'Every other route to $R$ must first leave the settled set through a vertex at distance at least $3$, so with nonnegative weights none can beat $3$.'
         exemplars:
-          - problem: 'Vertices $A, B, C, D$; weights $AB = 4$, $AC = 2$, $CB = 1$, $BD = 5$, $CD = 8$. Find the length of the shortest path from $A$ to $D$.'
+          - problem: 'A weighted graph has vertices $A, B, C, D$ and edges with weights $AB = 4$, $AC = 2$, $CB = 1$, $BD = 5$, $CD = 8$. Find the length of a shortest path from $A$ to $D$.'
             answer: "8"
-            solution_sketch: 'Dijkstra from $A$: settle $A(0)$, $C(2)$, then $B$ via $C$ ($2 + 1 = 3 < 4$), then $D$ via $B$ ($3 + 5 = 8 < 2 + 8 = 10$). Path $A\!-\!C\!-\!B\!-\!D$.'
-          - problem: 'Same graph: what is the distance from $A$ to $B$?'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Dijkstra from $A$ settles the vertices in the order $A$ (0), $C$ (2), $B$ (3), $D$ (8). The route to $B$ through $C$ costs 2 + 1 = 3, which beats the direct edge of 4. The route to $D$ through $B$ costs 3 + 5 = 8, which beats 2 + 8 = 10 through $C$, so the shortest path is A-C-B-D with length 8.'
+          - problem: 'A weighted graph has vertices $A, B, C, D$ and edges with weights $AB = 7$, $AC = 3$, $CD = 2$, $DB = 1$. What is the distance from $A$ to $B$?'
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The direct edge $AB$ costs 7. The path A-C-D-B costs 3 + 2 + 1 = 6, which is less, so the distance from $A$ to $B$ is 6.'
+          - problem: 'Six towns $A, B, C, D, E, F$ are joined by roads, and the road lengths in kilometers are $AB = 7$, $AC = 9$, $AF = 14$, $BC = 10$, $BD = 15$, $CD = 11$, $CF = 2$, $DE = 6$, $EF = 9$. What is the length of the shortest route from $A$ to $E$?'
+            answer: "20"
+            answer_contract: {"kind": "unit", "quantity": "length", "unit": "km", "allow_omitted": true}
+            solution_sketch: 'Dijkstra from $A$ settles the towns in the order $A$ (0), $B$ (7), $C$ (9), $F$ (11), $D$ (20), $E$ (20). The shortest route is A-C-F-E, of length 9 + 2 + 9 = 20 kilometers. The route through $B$ and $D$ is longer, at 7 + 15 + 6 = 28.'
+          - problem: 'Six towns $A, B, C, D, E, F$ are joined by roads, and the road lengths in kilometers are $AB = 7$, $AC = 9$, $AF = 14$, $BC = 10$, $BD = 15$, $CD = 11$, $CF = 2$, $DE = 6$, $EF = 9$. How many roads does the shortest route from $A$ to $E$ use?'
             answer: "3"
-            solution_sketch: 'The direct edge costs $4$; the path $A\!-\!C\!-\!B$ costs $2 + 1 = 3$.'
-        constraints: "4-6 vertices, nonnegative integer weights <= 9; the greedy settle order must matter (a direct edge beaten by a detour)"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The shortest route from $A$ to $E$ is A-C-F-E. It passes through 4 towns, so it uses 3 roads.'
+          - problem: 'A courier can drive straight from $A$ to $D$ on a road of 12 kilometers. Other roads link the towns in between, with lengths $AB = 5$, $BC = 3$, $CD = 2$, $AC = 9$. By how many kilometers is the shortest route from $A$ to $D$ shorter than the direct road?'
+            answer: "2"
+            answer_contract: {"kind": "unit", "quantity": "length", "unit": "km", "allow_omitted": true}
+            solution_sketch: 'The shortest route is A-B-C-D, of length 5 + 3 + 2 = 10 kilometers. The direct road is 12 kilometers, so the shortest route is shorter by 12 - 10 = 2 kilometers.'
+          - problem: 'A bus drives at $30$ km/h on every road between five stops $A, B, C, D, E$. The road lengths in kilometers are $AB = 10$, $AC = 4$, $CB = 3$, $BD = 5$, $CE = 9$, $DE = 2$. How long does the quickest trip from $A$ to $E$ take?'
+            answer: "26"
+            answer_contract: {"kind": "unit", "quantity": "time", "unit": "min", "allow_omitted": true}
+            solution_sketch: 'Dijkstra from $A$ gives the shortest distance to $E$ as 13 kilometers, along A-C-E. At 30 km/h the bus covers 0.5 kilometer each minute, so 13 kilometers take 13 / 0.5 = 26 minutes.'
+          - problem: 'A weighted graph has vertices $A, B, C, D, E$ and edges with weights $AB = 3$, $AC = 5$, $BC = 1$, $BD = 4$, $CE = 2$, $DE = 6$. What is the greatest distance from $A$ to any other vertex?'
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Dijkstra from $A$ settles the vertices in the order $A$ (0), $B$ (3), $C$ (4), $E$ (6), $D$ (7). The distances from $A$ are B: 3, C: 4, D: 7, E: 6, so the greatest is 7.'
+        constraints: '4-6 vertices, nonnegative integer weights <= 15; the greedy settle order must matter (a direct edge beaten by a detour); ask for one distance, the number of edges of the path, or the greatest distance'
       - id: kp2
-        name: "Why nonnegative weights matter; tracing distances"
+        name: 'Why nonnegative weights matter; tracing distances'
         key_prerequisites: [walks-paths-connectivity]
+        step_check:
+          step: 'Settle $C(2)$'
+          question: 'Why is the distance of $C$ final once $C$ is settled at $2$?'
+          options:
+            - 'The algorithm has already visited every vertex of the graph by then'
+            - 'The edge to $C$ is the lightest edge anywhere in the whole graph'
+            - 'Any other route costs at least $2$, since no weight is negative'
+            - 'A vertex next to the start can never be reached by a cheaper detour'
+          answer: 'Any other route costs at least $2$, since no weight is negative'
+          why: 'A detour passes through an unsettled vertex whose distance is already at least $2$, and adding nonnegative weights cannot lower that total.'
         exemplars:
-          - problem: 'Dijkstra settles $B$ at distance $2$ using the edge $AB = 2$. The graph also has $AC = 3$ and a negative edge $CB = -2$. What is the true distance from $A$ to $B$?'
+          - problem: 'In a directed graph the arcs are $A \to B$ with weight $2$, $A \to C$ with weight $3$, and $C \to B$ with weight $-2$. Dijkstra''s algorithm settles $B$ at distance $2$ using the arc $A \to B$. What is the true shortest distance from $A$ to $B$?'
             answer: "1"
-            solution_sketch: '$A\!-\!C\!-\!B$ costs $3 + (-2) = 1 < 2$: a negative edge shortens a path into an already-settled vertex, which is why Dijkstra requires nonnegative weights.'
-          - problem: 'Vertices $A, B, C, D$; weights $AB = 7$, $AC = 3$, $CD = 2$, $DB = 1$. Give the final distances from $A$ as the ordered triple $(d(B), d(C), d(D))$.'
-            answer: '$(6, 3, 5)$'
-            solution_sketch: 'Settle $A(0)$, $C(3)$, $D(3+2=5)$, then $B$ via $D$ ($5 + 1 = 6 < 7$).'
-          - problem: "Vertices A, B, C, D. Edge weights: A-B = 5, A-C = 2, C-B = 2, B-D = 4, C-D = 6. Run Dijkstra from A. Give the final distances as (d(B), d(C), d(D))."
-            answer: "(4, 2, 8)"
-            answer_contract: {"arity": 3, "kind": "coordinates"}
-            solution_sketch: "Full graph: A-B = 5, A-C = 2, C-B = 2, B-D = 4, C-D = 6. Dijkstra settles A at 0, then C at 2. Relaxing C-B gives B = min(5, 2+2) = 4. Settle B at 4, then relax B-D to get D = 4+4 = 8. The distance triple is (4, 2, 8)."
-          - problem: "A greedy run marks B with tentative distance 6, coming from edge AB = 6. The same graph contains AC = 7 together with a negative edge CB = -3. Find the actual shortest distance from A to B."
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The path $A \to C \to B$ costs 3 + (-2) = 1, which is less than 2. A negative arc can shorten a path into a vertex that was already settled, which is why Dijkstra''s algorithm needs nonnegative weights.'
+          - problem: 'A weighted graph has vertices $A, B, C, D$ and edges with weights $AB = 5$, $AC = 2$, $CB = 2$, $BD = 4$, $CD = 7$. What is the distance from $A$ to $D$?'
+            answer: "8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Dijkstra from $A$ settles $A$ (0), $C$ (2), $B$ (4), $D$ (8). Going through $C$ lowers the distance to $B$ from 5 to 2 + 2 = 4. Then $D$ is reached through $B$ at 4 + 4 = 8, which beats 2 + 7 = 9 through $C$, so the distance is 8.'
+          - problem: 'A data network has routers $A, B, C, D$, and the delays in milliseconds on its links are $AB = 10$, $AC = 2$, $CB = 3$, $BD = 1$, $CD = 7$. A message is sent from $A$ along the path with the least total delay. What is the delay at $D$?'
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Dijkstra from $A$ settles $A$ (0), $C$ (2), $B$ (5), $D$ (6). The best path to $D$ is A-C-B-D, with delay 2 + 3 + 1 = 6 milliseconds, which beats 2 + 7 = 9 through $C$ alone.'
+          - problem: 'A cargo plane flies from $A$ to $B$ either directly, using $6$ units of fuel, or through $C$. The leg $A \to C$ uses $7$ units, and the leg $C \to B$ gains $3$ units from a tailwind, so it counts as $-3$. Dijkstra''s algorithm settles $B$ at $6$ before looking at $C$. What is the least fuel the trip from $A$ to $B$ needs?'
             answer: "4"
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Full graph: AB has weight 6, AC has weight 7, and CB has weight -3. Greedy Dijkstra settles B at 6 using AB. The path A-C-B costs 7 + (-3) = 4, which is smaller, so the negative edge breaks the settle step. The true distance is 4."
-          - problem: "A network has nodes A, B, C, D. Link costs: A-B = 10, A-C = 2, C-B = 3, B-D = 1, C-D = 7. Starting at A, give the settled distances to B, C, and D as (d(B), d(C), d(D))."
-            answer: "(5, 2, 6)"
-            answer_contract: {"arity": 3, "kind": "coordinates"}
-            solution_sketch: "Full graph: A-B = 10, A-C = 2, C-B = 3, B-D = 1, C-D = 7. Settle A at 0, then C at 2. Relaxing C-B gives B = min(10, 2+3) = 5. Settle B, then D = min(2+7, 5+1) = 6. The settled distance triple is (5, 2, 6)."
-          - problem: "The greedy algorithm settles B at 3 through edge AB = 3. Another route is A to C with weight 4, then C to B with a negative weight -2. What is the shortest distance from A to B?"
-            answer: "2"
+            solution_sketch: 'The route through $C$ costs 7 + (-3) = 4 units, which is less than the 6 units of the direct leg. The greedy settle of $B$ at 6 was wrong because of the negative leg, so the least fuel is 4 units.'
+          - problem: 'A weighted graph has vertices $A, B, C, D$ and edges with weights $AB = 9$, $AC = 4$, $CB = 3$, $BD = 2$. Sam runs Dijkstra''s algorithm from $A$, takes the direct edge $AB$, and reports the distance from $A$ to $D$ as $11$. What is the correct distance?'
+            answer: "9"
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Full graph: AB has weight 3, AC has weight 4, and CB has weight -2. The greedy step settles B at 3 using AB. The path A-C-B costs 4 + (-2) = 2, which is shorter, so the negative edge breaks the greedy settle. The actual shortest distance is 2."
-        constraints: "ask for the distance triple, or for a small counterexample showing a negative edge breaks the greedy settle; graphs small enough to trace by hand"
+            solution_sketch: 'Sam did not settle $C$ first. The path A-C-B-D costs 4 + 3 + 2 = 9, which is less than 9 + 2 = 11, so the correct distance is 9.'
+          - problem: 'In a directed graph the arcs are $A \to B$ with weight $3$, $A \to C$ with weight $4$, and $C \to B$ with weight $-2$. Dijkstra''s algorithm run from $A$ settles $B$ at distance $3$. Is $3$ the true shortest distance from $A$ to $B$?'
+            answer: "no"
+            answer_contract: {"kind": "label", "options": [["yes", "yes it is", "yes, it is", "it is", "correct", "right"], ["no", "no it is not", "no, it is not", "it is not", "not correct", "incorrect", "wrong", "not the true distance"]]}
+            solution_sketch: 'The path $A \to C \to B$ costs 4 + (-2) = 2, which is less than 3. So 3 is too large and is not the true distance, because the negative arc breaks the greedy settle step.'
+          - problem: 'A weighted graph has vertices $A, B, C, D, E$ and edges with weights $AB = 6$, $AC = 1$, $CB = 2$, $BD = 3$, $CD = 7$, $DE = 4$, $BE = 9$. What is the distance from $A$ to $E$?'
+            answer: "10"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Dijkstra from $A$ settles $A$ (0), $C$ (1), $B$ (3), $D$ (6), $E$ (10). The route to $B$ through $C$ costs 1 + 2 = 3, which beats the direct edge of 6. Then $D$ costs 3 + 3 = 6 and $E$ costs 6 + 4 = 10, which beats 3 + 9 = 12, so the distance is 10.'
+        constraints: 'ask for one distance in a small graph, or for the true distance where a negative arc breaks the greedy settle; graphs small enough to trace by hand'
     diagnostic_exemplar:
       problem: 'Vertices $A, B, C, D$; weights $AB = 7$, $AC = 3$, $CD = 2$, $DB = 1$. What is the distance from $A$ to $B$?'
       answer: "6"
@@ -162,59 +257,108 @@ topics:
         key: true
     knowledge_points:
       - id: kp1
-        name: "Chromatic numbers of standard graphs"
+        name: 'Chromatic numbers of standard graphs'
         key_prerequisites: [graphs-intro, walks-paths-connectivity]
+        step_check:
+          step: 'Try two colors'
+          question: 'Why does the $5$-cycle need three colors although the $6$-cycle needs only two?'
+          options:
+            - 'The fifth vertex is adjacent to all the others, so it must receive a color of its own'
+            - 'Each color can be used at most twice, and five vertices then need three colors in all'
+            - 'Two colors must alternate, and with an odd number of vertices the last clashes with the first'
+            - 'A cycle on five vertices has more edges than any tree on five vertices, so it needs an extra color'
+          answer: 'Two colors must alternate, and with an odd number of vertices the last clashes with the first'
+          why: 'Alternating two colors works only if you can return to the start with the other color, which needs an even number of vertices.'
+        try_first:
+          problem: 'Three friends are all rivals of one another. They are split into teams so that no two rivals are on the same team. What is the fewest number of teams?'
+          answer_contract: {"kind": "exact"}
+          answer: '3'
+          reveal: 'Every two of the three are rivals, so each needs a team of their own and the answer is $3$. This least number of colors for a graph is its chromatic number, here $\chi(K_3) = 3$.'
         exemplars:
           - problem: 'Find $\chi(C_5)$, the chromatic number of the $5$-cycle.'
             answer: "3"
-            solution_sketch: 'Two colors force alternation, impossible around an odd cycle; three colors suffice (color $1,2,1,2,3$).'
-          - problem: 'Give $(\chi(C_6), \chi(K_5))$ as an ordered pair.'
-            answer: '$(2, 5)$'
-            solution_sketch: 'Even cycles alternate two colors; in $K_5$ all vertices are mutually adjacent, forcing five distinct colors.'
-          - problem: "The cycle $C_7$ is a ring of seven vertices. Find the chromatic number of $C_7$, and give both a coloring and a lower-bound argument."
-            answer: "3"
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The graph is $C_7$, an odd cycle. The lower bound uses the odd-cycle fact: two colors would alternate around the cycle and fail to close, so at least 3 colors are needed. A 3-coloring exists as 1,2,1,2,1,2,3 around the ring. So the chromatic number is 3."
-          - problem: "In the complete graph $K_6$, every two distinct vertices are joined by an edge. Find the chromatic number of $K_6$, and give both a coloring and a lower-bound argument."
+            solution_sketch: 'Two colors would have to alternate around the cycle, which is impossible when the number of vertices is odd. Three colors suffice, for example $1, 2, 1, 2, 3$ around the cycle, so $\chi(C_5) = 3$.'
+          - problem: 'In the complete graph $K_6$, every two of the six vertices are joined by an edge. What is the chromatic number of $K_6$?'
             answer: "6"
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The graph is $K_6$, a clique of size 6. The lower bound follows because every pair of vertices is adjacent, so no color can be reused at all, forcing at least 6 colors. Assign a different color to each of the six vertices to get a proper coloring. Thus the chromatic number is 6."
-          - problem: "The wheel $W_6$ consists of a hub joined to every vertex of a 5-cycle rim. Find the chromatic number of $W_6$, and give both a coloring and a lower-bound argument."
-            answer: "4"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The graph is $W_6$, with a 5-cycle rim and a hub adjacent to all rim vertices. The lower bound comes from the rim: a 5-cycle is an odd cycle, so it needs 3 colors, and the hub touches all rim vertices, so it needs a fourth color. A 4-coloring uses 1,2,1,2,3 on the rim and 4 on the hub. Therefore the chromatic number is 4."
-          - problem: "A tree $T$ has 8 vertices and is connected with no cycles. Find the chromatic number of $T$, and give both a coloring and a lower-bound argument."
+            solution_sketch: 'Every pair of vertices is adjacent, so no color can be used twice. That needs at least 6 colors, and giving each vertex its own color is a proper coloring, so $\chi(K_6) = 6$.'
+          - problem: 'A tree has $8$ vertices. What is its chromatic number?'
             answer: "2"
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The graph is a tree $T$ on 8 vertices. The lower bound is 2 because the tree has edges, so one color cannot work. A 2-coloring follows by bipartitioning the tree: place the root in color 1, its neighbors in color 2, and continue alternating by distance from the root. Hence the chromatic number is 2."
-        constraints: "cycles, complete graphs, trees, wheels with <= 8 vertices; require both a coloring and a lower-bound argument"
+            solution_sketch: 'A tree on $8$ vertices has $7$ edges, so one color is not enough. Give the root color 1, its neighbors color 2, and keep alternating with the distance from the root; the tree has no cycle, so no edge joins two vertices of the same color, and $\chi = 2$.'
+          - problem: 'The wheel $W_6$ has a hub joined to every vertex of a $5$-cycle, the rim. What is the chromatic number of $W_6$?'
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The rim is a 5-cycle, which is an odd cycle and needs 3 colors. The hub is adjacent to every rim vertex, so it needs a fourth color. Coloring the rim $1, 2, 1, 2, 3$ and the hub $4$ works, so $\chi(W_6) = 4$.'
+          - problem: 'A company places $10$ radio transmitters in a ring. Each transmitter interferes only with the two neighbors beside it in the ring, and transmitters that interfere must use different frequencies. What is the fewest number of frequencies needed?'
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The interference graph is a cycle on 10 vertices. An even cycle can be colored by alternating two colors, and one frequency is not enough because neighbors interfere, so 2 frequencies are needed.'
+          - problem: 'A complete graph has $28$ edges. What is its chromatic number?'
+            answer: "8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'A complete graph on $n$ vertices has $n(n-1)/2$ edges, and $8 \cdot 7 / 2 = 28$, so the graph is $K_8$. Every pair of its vertices is adjacent, so it needs 8 colors and $\chi = 8$.'
+          - problem: 'Nine guests sit around a round table, and each guest quarrels with exactly the two guests sitting beside them. The host splits the guests into groups so that no two guests who quarrel are in the same group. What is the fewest number of groups?'
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The quarrels form a cycle on 9 vertices, which is an odd cycle. Two groups would have to alternate around the table and fail at the closing seat, so at least 3 are needed. Three groups suffice, for example 1, 2, 1, 2, 1, 2, 1, 2, 3 around the table.'
+          - problem: 'Find $\chi(C_6)$, the chromatic number of the $6$-cycle.'
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'An even cycle can be colored by alternating two colors, $1, 2, 1, 2, 1, 2$. One color is not enough because adjacent vertices need different colors, so $\chi(C_6) = 2$.'
+          - problem: 'The complete bipartite graph $K_{3,4}$ has $3$ vertices on one side and $4$ on the other, and every vertex on one side is joined to every vertex on the other. What is its chromatic number?'
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Give color 1 to the 3 vertices on one side and color 2 to the 4 vertices on the other side. No edge joins two vertices on the same side, so this is proper, and one color is not enough, so $\chi = 2$.'
+        constraints: 'cycles, complete graphs, trees, wheels and complete bipartite graphs with <= 10 vertices; ask for the chromatic number'
       - id: kp2
-        name: "Scheduling via coloring; the Delta + 1 bound"
+        name: 'Scheduling via coloring; the Delta + 1 bound'
         key_prerequisites: [graphs-intro, walks-paths-connectivity]
+        step_check:
+          step: 'Find the largest clique'
+          question: 'Why is the size of a largest set of mutually conflicting exams a lower bound for the number of slots?'
+          options:
+            - 'Each slot may hold only as many exams as the clique has members'
+            - 'Exams that conflict in every pair must all be in different slots'
+            - 'The exams outside the clique can always use the same slot as one another'
+            - 'A slot holds at most one exam from each part of the schedule graph'
+          answer: 'Exams that conflict in every pair must all be in different slots'
+          why: 'Two exams in the same slot cannot conflict, so every member of a clique needs a slot of its own.'
         exemplars:
-          - problem: 'Exams $M, P, C, B$: conflicts $MP$, $MC$, $PC$, $CB$. What is the minimum number of exam slots (no student takes conflicting exams simultaneously)?'
+          - problem: 'Four exams $M, P, C, B$ have conflicts $MP$, $MC$, $PC$, $CB$, where a conflict means that some student takes both exams. What is the fewest number of exam slots so that no student has two exams in the same slot?'
             answer: "3"
-            solution_sketch: 'The conflict graph contains the triangle $MPC$, so $\ge 3$; color $M=1$, $P=2$, $C=3$, $B=1$. Slots $= \chi = 3$.'
-          - problem: 'A graph has maximum degree $\Delta = 4$. What upper bound does greedy coloring guarantee for $\chi$?'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The exams $M$, $P$, $C$ conflict in pairs, so they form a triangle and need 3 different slots. Put $B$ in the slot of $M$, since $B$ conflicts only with $C$, so 3 slots are enough and the fewest is 3.'
+          - problem: 'A graph has maximum degree $\Delta = 4$. Greedy coloring never needs more than how many colors?'
             answer: "5"
-            solution_sketch: 'Greedy always finds a free color among $\Delta + 1$, since a vertex has at most $\Delta$ colored neighbors.'
-          - problem: "A district schedules six committee meetings A, B, C, D, E, F. Two meetings clash when they share a member, and the clashes are AB, BC, CD, DE, EF, FA. Find the minimum number of time slots needed so that no two clashing meetings run at the same time."
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'When greedy coloring reaches a vertex, at most $\Delta = 4$ of its neighbors are colored, so at most 4 colors are blocked. A fifth color is always free, so 5 colors are always enough.'
+          - problem: 'A district schedules six committee meetings $A, B, C, D, E, F$. Two meetings clash when they share a member, and the clashes are $AB$, $BC$, $CD$, $DE$, $EF$, $FA$. What is the fewest number of time slots in which no two clashing meetings run together?'
             answer: "2"
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The clash graph has vertices A, B, C, D, E, F with the six listed edges, which form a cycle through all vertices. Lower bound: the edge AB joins two clashing meetings, so one slot cannot work and at least 2 slots are needed. Upper bound: assign slot 1 to A, C, E and slot 2 to B, D, F; then every listed clash joins meetings in different slots, so 2 slots suffice. Since 2 slots are enough and fewer fail, the minimum number of time slots is 2."
-          - problem: "Five exams P, Q, R, S, T have conflicts PQ, PR, PS, QR, QS, RS, RT, ST. What is the minimum number of exam slots so that no student sits conflicting exams at the same time?"
+            solution_sketch: 'The clash graph is a cycle on 6 vertices. Put $A, C, E$ in slot 1 and $B, D, F$ in slot 2, and every clash joins different slots. One slot cannot work because $AB$ clash, so the fewest is 2.'
+          - problem: 'Five exams $P, Q, R, S, T$ have conflicts $PQ$, $PR$, $PS$, $QR$, $QS$, $RS$, $RT$, $ST$. What is the fewest number of exam slots so that no student has two exams in the same slot?'
             answer: "4"
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Exams P, Q, R, S form a K4 because every pair among them conflicts, so at least 4 slots are needed. Upper bound: color P=1, Q=2, R=3, S=4, and T=1, which is proper because T conflicts only with R and S. The minimum number of slots is 4."
-          - problem: "A project has seven tasks A, B, C, D, E, F, G. Tasks cannot run in the same slot if they share a worker. The conflicts are AB, AC, BC, CD, DE, EF, FG, GA. What is the minimum number of time slots needed?"
+            solution_sketch: 'The exams $P, Q, R, S$ conflict in every pair, so they need 4 different slots. Exam $T$ conflicts only with $R$ and $S$, so it can share the slot of $P$, and 4 slots are enough.'
+          - problem: 'Every router in a network is linked to at most $7$ other routers, and linked routers must use different channels. How many channels are enough, whatever the layout of the network?'
+            answer: "8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Each router has at most 7 neighbors, so at most 7 channels are blocked when greedy coloring reaches it. An eighth channel is always free, so $\Delta + 1 = 8$ channels are enough.'
+          - problem: 'A project has seven tasks $A, B, C, D, E, F, G$. Two tasks cannot run in the same slot when they share a worker, and the conflicts are $AB$, $AC$, $BC$, $CD$, $DE$, $EF$, $FG$, $GA$. What is the fewest number of time slots needed?'
             answer: "3"
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The tasks A, B, C form a triangle because all three pairs conflict, so at least 3 slots are needed. Upper bound: the coloring A=1, B=2, C=3, D=1, E=2, F=3, G=2 is proper because each listed conflict joins different colors. Thus the minimum number of time slots is 3."
-          - problem: "Five exams A, B, C, D, E have conflicts AB, AC, AD, BC, BD, CD. What is the minimum number of exam slots so that no student sits conflicting exams at the same time?"
-            answer: "4"
+            solution_sketch: 'The tasks $A, B, C$ conflict in every pair, so they need 3 slots. The assignment $A=1, B=2, C=3, D=1, E=2, F=3, G=2$ gives different slots to every conflicting pair, so 3 slots are enough.'
+          - problem: 'Six exams $A, B, C, D, E, F$ have conflicts $AB$, $AC$, $AD$, $AE$, $BC$, $DE$, $EF$. Greedy coloring is guaranteed to use at most $\Delta + 1$ colors, where $\Delta$ is the largest number of conflicts any one exam has. What is this bound for these exams?'
+            answer: "5"
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The four exams A, B, C, D form a K4 because every pair among them conflicts, so at least 4 slots are needed. Upper bound: color A=1, B=2, C=3, D=4, and E=1, which is proper since E has no conflicts. The minimum number of slots is 4."
-        constraints: "conflict graphs with 4-7 items; lower bound from a clique, upper bound from an explicit coloring"
+            solution_sketch: 'Exam $A$ conflicts with $B, C, D, E$, which is 4 conflicts, and no other exam has more, so $\Delta = 4$. The bound $\Delta + 1$ is then 5.'
+          - problem: 'A conflict graph of exams has maximum degree $3$. Is it possible that it needs $5$ time slots?'
+            answer: "no"
+            answer_contract: {"kind": "label", "options": [["yes", "yes it is possible", "yes, it is possible", "it is possible", "possible"], ["no", "no it is not possible", "no, it is not possible", "it is not possible", "not possible", "impossible", "no it is not", "no, it is not"]]}
+            solution_sketch: 'Greedy coloring always works with $\Delta + 1 = 4$ colors, because each exam has at most 3 conflicts. So 4 slots are always enough, and 5 slots are never needed.'
+        constraints: 'conflict graphs with 4-7 items; the minimum number of slots, or the Delta + 1 bound for greedy coloring'
     diagnostic_exemplar:
       problem: 'Exams $M, P, C, S$ have conflicts $MP$, $PC$, $MC$, $CS$, $MS$. What is the minimum number of exam slots so that no student sits conflicting exams simultaneously?'
       answer: '3'
@@ -246,63 +390,115 @@ topics:
         key: false
     knowledge_points:
       - id: kp1
-        name: "v - e + f = 2"
+        name: 'v - e + f = 2'
         key_prerequisites: [trees-characterizations]
+        step_check:
+          step: 'Solve for $f$'
+          question: 'Why does $-4 + f = 2$ give $f = 2 + 4$?'
+          options:
+            - 'Adding $4$ to both sides keeps the equation balanced, with $f$ alone'
+            - 'Faces are counted as positive numbers, so the sign of $-4$ is dropped'
+            - 'Euler''s formula says that $f$ is always greater than $e$ by $2$'
+            - 'The minus sign moves to the other side of the equals sign as a plus'
+          answer: 'Adding $4$ to both sides keeps the equation balanced, with $f$ alone'
+          why: 'Adding $4$ to both sides cancels the $-4$ and gives $f = 6$; the sign does not "move", an equal amount is added on each side.'
         exemplars:
-          - problem: 'A connected planar graph is drawn with $8$ vertices and $12$ edges. How many faces (including the outer face) does the drawing have?'
+          - problem: 'A connected planar graph is drawn in the plane with $8$ vertices and $12$ edges. How many faces, including the outer face, does the drawing have?'
             answer: "6"
-            solution_sketch: '$f = 2 - v + e = 2 - 8 + 12 = 6$.'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Euler''s formula for a connected planar graph is $v - e + f = 2$. Substituting gives $8 - 12 + f = 2$, so $f = 2 - 8 + 12 = 6$.'
           - problem: 'A connected planar drawing has $10$ vertices and $7$ faces. How many edges does it have?'
             answer: "15"
-            solution_sketch: '$e = v + f - 2 = 10 + 7 - 2 = 15$.'
-          - problem: "A connected planar drawing has 11 edges and 5 faces. How many vertices does the graph have?"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Euler''s formula gives $v - e + f = 2$, so $e = v + f - 2$. Then $e = 10 + 7 - 2 = 15$.'
+          - problem: 'A connected planar drawing has $11$ edges and $5$ faces. How many vertices does the graph have?'
             answer: "8"
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Euler's formula for a connected planar graph is v - e + f = 2. Substitute e = 11 and f = 5: v - 11 + 5 = 2, so v = 8. The number of vertices is 8."
-          - problem: "A connected planar drawing has 12 vertices and 17 edges. How many faces (including the outer face) does the drawing have?"
+            solution_sketch: 'Euler''s formula gives $v - e + f = 2$, so $v = 2 + e - f$. Then $v = 2 + 11 - 5 = 8$.'
+          - problem: 'A road map joins $12$ towns by $20$ roads that do not cross, and every town can be reached from every other. Into how many regions, including the outside, do the roads divide the plane?'
+            answer: "10"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The towns are vertices, the roads are edges and the regions are faces of a connected planar graph. Euler''s formula gives $f = 2 - v + e = 2 - 12 + 20 = 10$.'
+          - problem: 'A convex polyhedron has $12$ vertices and $30$ edges. Drawn flat, its vertices and edges form a connected planar graph whose faces are the faces of the polyhedron. How many faces does the polyhedron have?'
+            answer: "20"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Euler''s formula gives $f = 2 - v + e = 2 - 12 + 30 = 20$. The polyhedron has 20 faces.'
+          - problem: 'A connected planar drawing has $9$ vertices and $8$ edges. How many faces does it have?'
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Euler''s formula gives $f = 2 - 9 + 8 = 1$. A connected graph with $9$ vertices and $8 = 9 - 1$ edges is a tree, which has only the outer face.'
+          - problem: 'Sam draws a connected planar graph with $6$ vertices and $10$ edges and counts $5$ faces, including the outer face. How many faces should the drawing have?'
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Euler''s formula gives $f = 2 - v + e = 2 - 6 + 10 = 6$. Sam''s count of 5 is one too small, probably because the outer face was left out.'
+          - problem: 'A polyhedron has $24$ vertices and $14$ faces. How many edges does it have?'
+            answer: "36"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The polyhedron drawn flat is a connected planar graph, so $v - e + f = 2$. Then $e = v + f - 2 = 24 + 14 - 2 = 36$.'
+          - problem: 'A planar embedding of a connected graph has $15$ vertices and $20$ edges. Determine the number of faces, including the outer face.'
             answer: "7"
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Euler's formula for a connected planar graph is v - e + f = 2. Substitute v = 12 and e = 17: 12 - 17 + f = 2, so f = 7. The number of faces is 7."
-          - problem: "A connected planar drawing has 6 vertices and 8 faces. How many edges does the drawing have?"
+            solution_sketch: 'Euler''s formula for a connected planar graph is $v - e + f = 2$. So $f = 2 - 15 + 20 = 7$, and the drawing has 7 faces.'
+        constraints: 'connected planar graphs; solve v - e + f = 2 for the missing quantity; values <= 30'
+      - id: kp2
+        name: 'Edge bounds and proving nonplanarity'
+        key_prerequisites: [trees-characterizations, degree-handshake]
+        step_check:
+          step: 'Since $15 > 10$, the graph cannot be planar'
+          question: 'Why does $15 > 10$ show that the graph cannot be planar?'
+          options:
+            - 'The graph has more edges than vertices, and planar graphs never do'
+            - 'Every planar graph has an odd number of edges, and 15 is too large'
+            - 'More edges than the bound allows cannot be drawn without a crossing'
+            - 'A planar graph on 7 vertices needs exactly 10 edges and no more or fewer'
+          answer: 'More edges than the bound allows cannot be drawn without a crossing'
+          why: 'Every simple planar graph of that kind has at most $10$ edges, so a graph with $15$ edges cannot be drawn in the plane without a crossing.'
+        exemplars:
+          - problem: 'What is the largest number of edges that a simple planar graph with $7$ vertices can have?'
+            answer: "15"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'A simple planar graph with $v \ge 3$ vertices has $e \le 3v - 6$ edges, and this bound is reached when every face is a triangle. For $v = 7$ the bound is $3 \cdot 7 - 6 = 15$.'
+          - problem: 'The complete graph $K_6$ has $15$ edges. By how many edges does it exceed the largest number of edges that a simple planar graph with $6$ vertices can have?'
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'A simple planar graph with $6$ vertices has at most $3 \cdot 6 - 6 = 12$ edges. The graph $K_6$ has $15$, which is $15 - 12 = 3$ more, so $K_6$ is not planar.'
+          - problem: 'A simple planar graph with $8$ vertices has no triangles. What is the largest number of edges it can have?'
             answer: "12"
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Euler's formula for a connected planar graph is v - e + f = 2. Substitute v = 6 and f = 8: 6 - e + 8 = 2, so e = 12. The number of edges is 12."
-          - problem: "A planar embedding of a connected graph has 15 vertices and 20 edges. Determine the number of faces (including the outer face)."
-            answer: "7"
+            solution_sketch: 'When there is no triangle, every face has at least 4 edges on its boundary, and the bound sharpens to $e \le 2v - 4$. For $v = 8$ this is $2 \cdot 8 - 4 = 12$.'
+          - problem: 'A planner draws a road map with $10$ junctions. Roads do not cross, at most one road joins any two junctions, and no three junctions are joined to one another in pairs. What is the largest number of roads the map can have?'
+            answer: "16"
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Euler's formula for a connected planar graph is v - e + f = 2. Substitute v = 15 and e = 20: 15 - 20 + f = 2, so f = 7. The number of faces is 7."
-        constraints: "connected planar graphs; solve v - e + f = 2 for the missing quantity; values <= 30"
-      - id: kp2
-        name: "Edge bounds and proving nonplanarity"
-        key_prerequisites: [trees-characterizations, degree-handshake]
-        exemplars:
-          - problem: 'Every simple connected planar graph with $v \ge 3$ satisfies $e \le 3v - 6$. Compute this bound for $K_5$ ($v = 5$), then compare it with the $10$ edges of $K_5$.'
-            answer: "9"
-            solution_sketch: '$3 \cdot 5 - 6 = 9$, and $K_5$ has $e = 10 > 9$, so $K_5$ is not planar.'
-          - problem: '$K_{3,3}$ has $9$ edges and $6$ vertices, and $9 \le 3 \cdot 6 - 6 = 12$, so that bound says nothing. $K_{3,3}$ is triangle-free, so the sharper bound $e \le 2v - 4$ applies: compute it for $v = 6$.'
-            answer: "8"
-            solution_sketch: 'Bipartite graphs have no $3$-cycles, so every face needs $\ge 4$ edges, giving $e \le 2v - 4 = 8$; since $9 > 8$, $K_{3,3}$ is not planar.'
-          - problem: "The complete graph K6 has 6 vertices, 15 edges, and contains cycles of length 3. Bound A is e <= 3v - 6. Bound B is e <= 2v - 4 and is available only when the graph has no cycle of length 3. State which bound applies to K6 and give its value."
-            answer: "which = A; bound = 12"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["A"], ["B"]]}, "name": "which"}, {"contract": {"kind": "exact"}, "name": "bound"}]}
-            solution_sketch: "The graph is K6 with v = 6 and e = 15, and it contains cycles of length 3. Step 1: Because a 3-cycle is present, the sharper bound for graphs without triangles is unavailable, so the general Euler bound e <= 3v - 6 applies. Step 2: Substitute v = 6 into e <= 3v - 6: 3(6) - 6 = 12. Step 3: The value of the applicable bound is 12. The answer is which = A; bound = 12."
-          - problem: "The complete bipartite graph K3,4 has 7 vertices and 12 edges. It has no cycle of length 3. Bound A is e <= 3v - 6. Bound B is e <= 2v - 4 and is available only when the graph has no cycle of length 3. State which bound applies to K3,4 and give its value."
-            answer: "which = B; bound = 10"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["A"], ["B"]]}, "name": "which"}, {"contract": {"kind": "exact"}, "name": "bound"}]}
-            solution_sketch: "The graph is K3,4 with v = 7 and e = 12, and it has no cycle of length 3. Step 1: Because no 3-cycle is present, the sharper bound for graphs without triangles applies: e <= 2v - 4. Step 2: Substitute v = 7 into e <= 2v - 4: 2(7) - 4 = 10. Step 3: The value of the applicable bound is 10. The answer is which = B; bound = 10."
-          - problem: "The complete bipartite graph K3,5 has 8 vertices and 15 edges. It has no cycle of length 3. Bound A is e <= 3v - 6. Bound B is e <= 2v - 4 and is available only when the graph has no cycle of length 3. Determine which bound applies to K3,5 and compute its value."
-            answer: "which = B; bound = 12"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["A"], ["B"]]}, "name": "which"}, {"contract": {"kind": "exact"}, "name": "bound"}]}
-            solution_sketch: "The graph is K3,5 with v = 8 and e = 15, and it has no cycle of length 3. Step 1: Because no 3-cycle is present, the sharper bound for graphs without triangles applies: e <= 2v - 4. Step 2: Substitute v = 8 into e <= 2v - 4: 2(8) - 4 = 12. Step 3: The value of the applicable bound is 12. The answer is which = B; bound = 12."
-          - problem: "The wheel graph W6 has a center vertex joined to each of 6 cycle vertices, so it has 7 vertices and 12 edges, and it contains cycles of length 3. Bound A is e <= 3v - 6. Bound B is e <= 2v - 4 and is available only when the graph has no cycle of length 3. State which bound applies to W6 and compute its value."
-            answer: "which = A; bound = 15"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["A"], ["B"]]}, "name": "which"}, {"contract": {"kind": "exact"}, "name": "bound"}]}
-            solution_sketch: "The graph is W6 with v = 7 and e = 12, and it contains cycles of length 3. Step 1: Because a 3-cycle is present, the sharper bound for graphs without triangles is unavailable, so the general Euler bound e <= 3v - 6 applies. Step 2: Substitute v = 7 into e <= 3v - 6: 3(7) - 6 = 15. Step 3: The value of the applicable bound is 15. The answer is which = A; bound = 15."
-        constraints: "apply e <= 3v-6 or e <= 2v-4 (triangle-free); state which bound applies and why, and compute its value; the item must test THIS KP: Edge bounds and proving nonplanarity"
+            solution_sketch: 'No three junctions are joined in pairs, so the graph has no triangles and $e \le 2v - 4$. For $v = 10$ this is $2 \cdot 10 - 4 = 16$ roads.'
+          - problem: 'A circuit board holds $9$ components. A wire joins two components, at most one wire joins any two, and no two wires may cross. What is the largest number of wires the board can have?'
+            answer: "21"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The wires form a simple planar graph on $9$ vertices, so $e \le 3v - 6$. For $v = 9$ this is $3 \cdot 9 - 6 = 21$, so the board can have 21 wires.'
+          - problem: 'The graph $K_{3,3}$ has $6$ vertices, $9$ edges and no triangles. Is $K_{3,3}$ planar?'
+            answer: "no"
+            answer_contract: {"kind": "label", "options": [["yes", "yes it is", "yes, it is", "it is", "it is planar", "planar", "yes it is planar", "yes, it is planar"], ["no", "no it is not", "no, it is not", "it is not", "it is not planar", "not planar", "nonplanar", "no, it is not planar"]]}
+            solution_sketch: 'With no triangles, a simple planar graph on 6 vertices has at most $2 \cdot 6 - 4 = 8$ edges. The graph $K_{3,3}$ has 9 edges, which is more than 8, so it is not planar.'
+          - problem: 'A simple connected planar graph has $8$ vertices, and every face, including the outer face, is bounded by exactly $3$ edges. How many faces does it have?'
+            answer: "12"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Each edge borders 2 faces and each face has 3 edges, so $3f = 2e$. Euler''s formula $v - e + f = 2$ then gives $e = 3v - 6 = 18$, so $f = 2 - 8 + 18 = 12$.'
+          - problem: 'Sam says that a simple planar graph with $6$ vertices has at most $2 \cdot 6 - 4 = 8$ edges. The graph may contain triangles. What is the largest number of edges it can have?'
+            answer: "12"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The bound $2v - 4$ holds only when the graph has no triangles. A graph that may contain triangles obeys $e \le 3v - 6 = 3 \cdot 6 - 6 = 12$, so the correct largest number is 12.'
+          - problem: 'The wheel with a hub joined to every vertex of a $6$-cycle has $7$ vertices and $12$ edges, and it contains triangles. Is it planar?'
+            answer: "yes"
+            answer_contract: {"kind": "label", "options": [["yes", "yes it is", "yes, it is", "it is", "it is planar", "planar", "yes it is planar", "yes, it is planar"], ["no", "no it is not", "no, it is not", "it is not", "it is not planar", "not planar", "nonplanar", "no, it is not planar"]]}
+            solution_sketch: 'The bound $3 \cdot 7 - 6 = 15$ allows 12 edges, so it does not rule the graph out. Draw the 6-cycle as a hexagon and put the hub inside it, joined to the 6 corners, and no edges cross.'
+          - problem: 'The complete bipartite graph $K_{3,4}$ has $7$ vertices, $12$ edges and no triangles. By how many edges does it exceed the largest number of edges that a simple planar graph with $7$ vertices and no triangles can have?'
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Without triangles, at most $2v - 4 = 2 \cdot 7 - 4 = 10$ edges are possible. The graph $K_{3,4}$ has $12$, which is 2 more, so it is not planar.'
+        constraints: 'apply e <= 3v-6 or e <= 2v-4 (triangle-free) to find a largest edge count, an excess over it, or a verdict; the item must test THIS KP: Edge bounds and proving nonplanarity'
     diagnostic_exemplar:
-      problem: 'A connected planar drawing of a simple graph has $9$ vertices and $14$ edges. Give (the number of faces of the drawing, the maximum number of edges the bound $e \le 3v - 6$ permits on $9$ vertices) as an ordered pair.'
-      answer: '$(7, 21)$'
-      solution_sketch: 'Euler: $f = 2 - v + e = 2 - 9 + 14 = 7$; bound: $3 \cdot 9 - 6 = 21$.'
+      problem: 'A connected planar drawing of a simple graph has $9$ vertices and $14$ edges. How many faces, including the outer face, does the drawing have?'
+      answer: '7'
+      solution_sketch: 'Euler: $f = 2 - v + e = 2 - 9 + 14 = 7$. The drawing has $7$ faces, including the outer face.'
     anki_seeds:
       - front: "Euler's formula for connected planar graphs"
         back: '$v - e + f = 2$ (faces include the unbounded outer face).'
@@ -330,45 +526,120 @@ topics:
         key: true
     knowledge_points:
       - id: kp1
-        name: "Recognizing bipartite graphs"
+        name: 'Recognizing bipartite graphs'
         key_prerequisites: [graph-coloring, walks-paths-connectivity]
+        step_check:
+          step: 'Color the vertices with two colors'
+          question: 'Why can a graph with an odd cycle not be split into two parts with all edges between the parts?'
+          options:
+            - 'Each part would need an even number of vertices, and an odd cycle has an odd number'
+            - 'An odd cycle has more edges than a bipartite graph is allowed to have'
+            - 'The vertices of an odd cycle all have odd degree and so cannot be separated'
+            - 'Alternating parts around an odd cycle makes the last vertex clash with the first'
+          answer: 'Alternating parts around an odd cycle makes the last vertex clash with the first'
+          why: 'Alternating parts around a cycle returns to the start in the same part only when the number of vertices is even.'
         exemplars:
-          - problem: 'Is $C_6$ bipartite? Is $C_5$?'
-            answer: 'c6 = yes; c5 = no'
-            answer_contract: {kind: multipart, parts: [{name: c6, contract: {"kind":"label","options":[["yes"],["no"]]}}, {name: c5, contract: {"kind":"label","options":[["yes"],["no"]]}}]}
-            solution_sketch: 'A graph is bipartite iff it has no odd cycle; even cycles $2$-color by alternation, odd cycles do not.'
+          - problem: 'Is the cycle $C_6$ bipartite?'
+            answer: "yes"
+            answer_contract: {"kind": "label", "options": [["yes", "yes it is", "yes, it is", "it is", "it is bipartite", "bipartite", "yes it is bipartite", "yes, it is bipartite"], ["no", "no it is not", "no, it is not", "it is not", "it is not bipartite", "not bipartite", "no it is not bipartite", "no, it is not bipartite"]]}
+            solution_sketch: 'Color the vertices around the cycle alternately with two colors, $1, 2, 1, 2, 1, 2$. Every edge joins different colors, so the two color classes are the two parts and $C_6$ is bipartite.'
           - problem: 'How many edges does the complete bipartite graph $K_{3,4}$ have?'
             answer: "12"
-            solution_sketch: 'Every one of the $3$ left vertices meets all $4$ right vertices: $3 \cdot 4 = 12$.'
-        constraints: "cycles, K_{m,n} with m,n <= 5, small ad hoc graphs; justification via odd cycles or an explicit 2-coloring"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Every one of the $3$ vertices on one side is joined to all $4$ vertices on the other side. So the number of edges is $3 \cdot 4 = 12$.'
+          - problem: 'A simple bipartite graph has $5$ vertices in one part and $7$ in the other. What is the largest number of edges it can have?'
+            answer: "35"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'No edge lies inside a part, and each edge joins one vertex of each part. At most every one of the $5$ vertices is joined to every one of the $7$, so at most $5 \cdot 7 = 35$ edges.'
+          - problem: 'A school dance has $6$ boys and $9$ girls. How many different pairs of one boy and one girl are possible?'
+            answer: "54"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Each pair is an edge between the $6$ boys and the $9$ girls, so the pairs are the edges of $K_{6,9}$. There are $6 \cdot 9 = 54$ of them.'
+          - problem: 'In a bipartite graph the left part has $6$ vertices, and each of them has degree $4$. The right part has $8$ vertices, which all have the same degree. What is that degree?'
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Every edge has exactly one end in the left part, so the number of edges is $6 \cdot 4 = 24$. The same $24$ edges end in the right part, so each of its $8$ vertices has degree $24 / 8 = 3$.'
+          - problem: 'A tournament has $5$ teams in group $X$ and $4$ teams in group $Y$. Every team in $X$ plays every team in $Y$ exactly once, and no two teams in the same group play each other. How many games are played?'
+            answer: "20"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The teams are vertices and the games are edges, and no edge lies inside a group, so the graph is bipartite. There are $5 \cdot 4 = 20$ games.'
+          - problem: 'The graph has vertices $1, 2, \dots, 6$ and edges $12$, $23$, $34$, $45$, $56$, $61$, $13$. What is the length of its shortest odd cycle?'
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The edges $12$, $23$ and $13$ form a triangle, which is a cycle of length 3. No cycle has length 1, so the shortest odd cycle has length 3.'
+          - problem: 'The graph has vertices $1, 2, \dots, 6$ and edges $12$, $23$, $34$, $45$, $56$, $61$, $13$. Is the graph bipartite?'
+            answer: "no"
+            answer_contract: {"kind": "label", "options": [["yes", "yes it is", "yes, it is", "it is", "it is bipartite", "bipartite", "yes it is bipartite", "yes, it is bipartite"], ["no", "no it is not", "no, it is not", "it is not", "it is not bipartite", "not bipartite", "no it is not bipartite", "no, it is not bipartite"]]}
+            solution_sketch: 'The graph contains the triangle $1, 2, 3$, which is an odd cycle. A bipartite graph has no odd cycle, because alternating two parts around an odd cycle fails, so the graph is not bipartite.'
+          - problem: 'The graph has vertices $1, 2, \dots, 7$ and edges $12$, $23$, $34$, $45$, $51$, $36$, $67$, $72$. What is the length of its shortest odd cycle?'
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'No three vertices are pairwise joined, so the graph has no triangle. The cycle $1, 2, 3, 4, 5$ has length 5, which is odd, and it is the shortest odd cycle, so the graph is not bipartite.'
+        constraints: 'cycles, K_{m,n} with m,n <= 9, small ad hoc graphs; edge and degree counts of bipartite graphs; at most two verdict items'
       - id: kp2
-        name: "Matchings and Hall's condition"
+        name: 'Matchings and Hall''s condition'
         key_prerequisites: [graph-coloring, walks-paths-connectivity]
+        step_check:
+          step: 'Hall''s condition holds for $S$'
+          question: 'Why does $|N(S)| = 4 \ge |S| = 3$ show that Hall''s condition holds for this set $S$?'
+          options:
+            - 'Four jobs exist in all, and every worker can do at least one of them'
+            - 'Hall''s condition asks that $S$ can do at least as many jobs as it has workers'
+            - 'The set $S$ has more workers than jobs, so no matching can use every job'
+            - 'The neighborhood has four jobs, which is the number of workers in the whole graph'
+          answer: 'Hall''s condition asks that $S$ can do at least as many jobs as it has workers'
+          why: 'Hall''s condition asks that each set of workers can do at least as many jobs as the set has workers, and $4 \ge 3$ meets this for $S$.'
+        try_first:
+          problem: 'Two workers can do only job $p$, and a third worker can do job $p$ or job $q$. Can all three workers be given different jobs?'
+          answer_contract: {"kind": "label", "options": [["yes", "yes they can", "yes, they can", "they can", "it is possible", "possible", "yes it is possible", "yes, it is possible"], ["no", "no they cannot", "no, they cannot", "they cannot", "it is not possible", "impossible", "no it is not possible", "no, it is not possible"]]}
+          answer: 'no'
+          reveal: 'Only two jobs, $p$ and $q$, are available to the three workers, so one worker must go without. Hall''s condition fails for this set of three workers, because they can do fewer jobs than there are workers.'
         exemplars:
           - problem: 'What is the size of a maximum matching in $K_{3,5}$?'
             answer: "3"
-            solution_sketch: 'A matching uses each left vertex at most once, so at most $3$ edges; pairing each left vertex with a distinct right vertex achieves it.'
-          - problem: "Four workers each take one task. Every worker is able to do task p, and every worker is also able to do task q. Find the size of a maximum matching."
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'A matching uses each left vertex at most once, so it has at most $3$ edges. Pairing the left vertices with $3$ different right vertices reaches this, so the maximum size is 3.'
+          - problem: 'Four workers can each do task $p$ or task $q$, and no other task. Each worker takes at most one task, and each task goes to at most one worker. What is the greatest number of tasks that can be assigned?'
             answer: "2"
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1: build the bipartite graph; the four workers form one side and the tasks p and q the other side, with an edge from each worker to p and to q. Step 2: apply Hall's condition; the set of all four workers has neighborhood {p, q} of size 2, which is less than 4, so no matching of size 3 or 4 exists. Step 3: a matching of size 2 does exist, for example worker A with task p and worker B with task q. Therefore the maximum matching size is 2."
-          - problem: "Students A, B, C, D can take projects: A: {p, q}, B: {q, r}, C: {r, s}, D: {s, p}. Find the size of a maximum matching."
+            solution_sketch: 'There are only two tasks, $p$ and $q$, and each goes to one worker, so at most 2 can be assigned. Giving $p$ to one worker and $q$ to another reaches 2.'
+          - problem: 'Four students $A, B, C, D$ can take projects as follows: $A$ takes $p$ or $q$, $B$ takes $q$ or $r$, $C$ takes $r$ or $s$, and $D$ takes $s$ or $p$. Each student takes one project and each project goes to one student. What is the greatest number of students who can get a project?'
             answer: "4"
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The bipartite graph has left side {A, B, C, D} and right side {p, q, r, s}. The edges are A-p, A-q, B-q, B-r, C-r, C-s, D-s, D-p. A perfect matching of size 4 is A-p, B-q, C-r, D-s, so Hall's condition is satisfied for this graph. Therefore the maximum matching size is 4."
-          - problem: "Servers S1, S2, S3 can handle only task t. Find the size of a maximum matching."
+            solution_sketch: 'The pairing $A$-$p$, $B$-$q$, $C$-$r$, $D$-$s$ gives every student a different project. So all 4 students get a project, which is the most possible.'
+          - problem: 'Three servers $S_1, S_2, S_3$ can each run only the job $t$. A job runs on one server at a time. What is the greatest number of servers that can be given a job at once?'
             answer: "1"
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The bipartite graph has left side {S1, S2, S3} and right side {t}. Every edge joins a server to the same task t. A matching can use at most one edge because task t can be matched once, and one edge does exist. Therefore the maximum matching size is 1."
-          - problem: "A bipartite graph has left vertices L1, L2, L3, L4 with neighborhoods: L1: {a}, L2: {b}, L3: {a, b}, L4: {c}. Find the size of a maximum matching."
+            solution_sketch: 'All three servers want the same job $t$, and $t$ goes to one server only. So at most 1 server gets a job, and giving $t$ to $S_1$ reaches 1.'
+          - problem: 'Four workers $L_1, L_2, L_3, L_4$ can do jobs as follows: $L_1\!: \{a\}$, $L_2\!: \{b\}$, $L_3\!: \{a, b\}$, $L_4\!: \{c\}$. What is the greatest number of workers who can be given different jobs?'
             answer: "3"
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The bipartite graph has left side {L1, L2, L3, L4} and right side {a, b, c}. The edges are L1-a, L2-b, L3-a, L3-b, L4-c. A matching of size 3 is L1-a, L2-b, L4-c. No matching of size 4 exists because the set {L1, L2, L3} has neighborhood {a, b} of size 2, so Hall's condition fails. Therefore the maximum matching size is 3."
-          - problem: "Employees E1, E2, E3, E4, E5 can do tasks: E1: {t1, t2}, E2: {t2, t3}, E3: {t3, t4}, E4: {t4, t5}, E5: {t5, t1}. Find the size of a maximum matching."
+            solution_sketch: 'The set $\{L_1, L_2, L_3\}$ can do only the jobs $a$ and $b$, so at most 2 of those three get a job. Adding $L_4$ with job $c$ gives 3, for example $L_1$-$a$, $L_2$-$b$, $L_4$-$c$.'
+          - problem: 'Workers $W_1, W_2, W_3, W_4$ can do jobs as follows: $W_1\!: \{a, b\}$, $W_2\!: \{a, c\}$, $W_3\!: \{b, d\}$, $W_4\!: \{c, d\}$. Can every worker be given a different job?'
+            answer: "yes"
+            answer_contract: {"kind": "label", "options": [["yes", "yes they can", "yes, they can", "they can", "it is possible", "possible", "yes it is possible", "yes, it is possible"], ["no", "no they cannot", "no, they cannot", "they cannot", "it is not possible", "impossible", "no it is not possible", "no, it is not possible"]]}
+            solution_sketch: 'The assignment $W_1$-$a$, $W_2$-$c$, $W_3$-$b$, $W_4$-$d$ gives the 4 workers 4 different jobs. So every worker can be given a different job.'
+          - problem: 'Workers $W_1, W_2, W_3, W_4$ can do jobs as follows: $W_1\!: \{a, b\}$, $W_2\!: \{b\}$, $W_3\!: \{b, c\}$, $W_4\!: \{b\}$. Can every worker be given a different job?'
+            answer: "no"
+            answer_contract: {"kind": "label", "options": [["yes", "yes they can", "yes, they can", "they can", "it is possible", "possible", "yes it is possible", "yes, it is possible"], ["no", "no they cannot", "no, they cannot", "they cannot", "it is not possible", "impossible", "no it is not possible", "no, it is not possible"]]}
+            solution_sketch: 'The workers $W_2, W_3, W_4$ can do only the jobs $b$ and $c$, which are 2 jobs for 3 workers. By Hall''s condition a matching of all 4 workers does not exist, so the answer is no.'
+          - problem: 'Workers $W_1, W_2, W_3, W_4$ can do jobs as follows: $W_1\!: \{a, b\}$, $W_2\!: \{b\}$, $W_3\!: \{b, c\}$, $W_4\!: \{b\}$. How many different jobs can the workers $W_2, W_3, W_4$ do between them?'
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The worker $W_2$ can do only $b$, $W_4$ can do only $b$, and $W_3$ can do $b$ or $c$. Together they can do the jobs $b$ and $c$, which is 2 jobs.'
+          - problem: 'Workers $W_1, W_2, W_3, W_4$ can do jobs as follows: $W_1\!: \{a, b\}$, $W_2\!: \{b\}$, $W_3\!: \{b, c\}$, $W_4\!: \{b\}$. What is the greatest number of these workers who can be given different jobs?'
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Three workers $W_2, W_3, W_4$ share only 2 jobs, so one of them goes without. Giving $W_1$ job $a$, $W_2$ job $b$ and $W_3$ job $c$ gives 3 workers different jobs, so the maximum is 3.'
+          - problem: 'Five employees $E_1, \dots, E_5$ can do tasks as follows: $E_1\!: \{t_1, t_2\}$, $E_2\!: \{t_2, t_3\}$, $E_3\!: \{t_3, t_4\}$, $E_4\!: \{t_4, t_5\}$, $E_5\!: \{t_5, t_1\}$. Each employee takes one task and each task goes to one employee. What is the greatest number of employees who can get a task?'
             answer: "5"
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The bipartite graph has left side {E1, E2, E3, E4, E5} and right side {t1, t2, t3, t4, t5}. The edges form a 10-cycle: E1-t1, E1-t2, E2-t2, E2-t3, E3-t3, E3-t4, E4-t4, E4-t5, E5-t5, E5-t1. A perfect matching of size 5 is E1-t1, E2-t2, E3-t3, E4-t4, E5-t5. Therefore the maximum matching size is 5."
-        constraints: "bipartite sides <= 5; either compute a maximum matching size or exhibit a violating set S"
+            solution_sketch: 'Give each employee $E_i$ the task $t_i$. This gives 5 employees 5 different tasks, so the greatest number is 5.'
+          - problem: 'At a dance there are $7$ men and $5$ women, and any man may dance with any woman. What is the greatest number of couples that can dance at the same time?'
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Each couple uses one man and one woman, so the number of couples is at most the number of women, which is 5. Pairing the 5 women with 5 different men reaches it.'
+        constraints: 'bipartite sides <= 7; compute a maximum matching size, a neighborhood size, or decide whether every worker can be matched'
     diagnostic_exemplar:
       problem: 'Workers $1, 2, 3, 4$ can do jobs: $W_1\!: \{a, b\}$, $W_2\!: \{b\}$, $W_3\!: \{b, c\}$, $W_4\!: \{b\}$. Can every worker get a distinct job? Verify with Hall''s condition.'
       answer: 'No'

@@ -23,83 +23,156 @@ topics:
       - id: kp1
         name: "Computing terms from a recurrence"
         key_prerequisites: [function-notation]
+        step_check:
+          step: 'Compute $b_2$ using the recurrence formula'
+          question: 'Why must $b_2$ be found before $b_3$?'
+          options:
+            - 'Each term is larger than the one before, so the order cannot change'
+            - 'Each term is built from earlier terms, so $b_2$ is needed first'
+            - 'The initial term $b_1$ is replaced by $b_2$ once $b_2$ is known'
+            - 'The question asks for an ordered triple, so the terms come in order'
+          answer: 'Each term is built from earlier terms, so $b_2$ is needed first'
+          why: 'The formula $b_n = 3b_{n-1} - 1$ takes the previous term as input, so $b_3$ cannot be found until $b_2 = 5$ is known.'
         exemplars:
-          - problem: 'Let $a_1 = 1$ and $a_n = 2a_{n-1} + 1$ for $n \ge 2$. Give $(a_2, a_3, a_4)$ as an ordered triple.'
-            answer: '$(3, 7, 15)$'
-            solution_sketch: 'Iterate: $2 \cdot 1 + 1 = 3$; $2 \cdot 3 + 1 = 7$; $2 \cdot 7 + 1 = 15$.'
-          - problem: 'The Fibonacci numbers satisfy $F_1 = F_2 = 1$, $F_n = F_{n-1} + F_{n-2}$. Compute $F_8$.'
-            answer: "21"
-            solution_sketch: '$1, 1, 2, 3, 5, 8, 13, 21$.'
-          - problem: "Let $a_1 = 2$ and $a_n = 3a_{n-1} - 1$ for $n \\ge 2$. Give $a_2, a_3, a_4$ as a comma-separated list."
-            answer: "5, 14, 41"
-            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
-            solution_sketch: "The full sequence begins with a1 = 2. Step 1: apply the recurrence to get a2 = 3*2 - 1 = 5. Step 2: apply it again to get a3 = 3*5 - 1 = 14. Step 3: apply it once more to get a4 = 3*14 - 1 = 41. The ordered list is 5, 14, 41."
-          - problem: "Let $b_1 = 1$, $b_2 = 2$, and $b_n = b_{n-1} + 2b_{n-2}$ for $n \\ge 3$. Give $b_3, b_4, b_5$ as a comma-separated list."
-            answer: "4, 8, 16"
-            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
-            solution_sketch: "The full sequence begins with b1 = 1 and b2 = 2. Step 1: use the recurrence to get b3 = b2 + 2b1 = 2 + 2 = 4. Step 2: get b4 = b3 + 2b2 = 4 + 4 = 8. Step 3: get b5 = b4 + 2b3 = 8 + 8 = 16. The ordered list is 4, 8, 16."
-          - problem: "Let $c_1 = 3$ and $c_n = 2c_{n-1} + 1$ for $n \\ge 2$. Give $c_2, c_3, c_4, c_5$ as a comma-separated list."
-            answer: "7, 15, 31, 63"
-            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
-            solution_sketch: "The full sequence begins with c1 = 3. Step 1: c2 = 2*3 + 1 = 7. Step 2: c3 = 2*7 + 1 = 15. Step 3: c4 = 2*15 + 1 = 31. Step 4: c5 = 2*31 + 1 = 63. The ordered list is 7, 15, 31, 63."
-          - problem: "Let $d_1 = 4$, $d_2 = 1$, and $d_n = d_{n-1} - d_{n-2}$ for $n \\ge 3$. Give $d_3, d_4, d_5, d_6, d_7$ as a comma-separated list."
-            answer: "-3, -4, -1, 3, 4"
-            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
-            solution_sketch: "The full sequence begins with d1 = 4 and d2 = 1. Step 1: d3 = d2 - d1 = 1 - 4 = -3. Step 2: d4 = d3 - d2 = -3 - 1 = -4. Step 3: d5 = d4 - d3 = -4 - (-3) = -1. Step 4: d6 = d5 - d4 = -1 - (-4) = 3. Step 5: d7 = d6 - d5 = 3 - (-1) = 4. The ordered list is -3, -4, -1, 3, 4."
+          - problem: 'Let $a_1 = 1$ and $a_n = 2a_{n-1} + 1$ for $n \ge 2$. Find $a_2$, $a_3$ and $a_4$.'
+            answer: '3, 7, 15'
+            answer_contract: {"kind":"list","member":{"kind":"exact"},"ordered":true}
+            solution_sketch: 'Each term is built from the term before it, so work forward one term at a time. First $a_2 = 2 \cdot 1 + 1 = 3$, then $a_3 = 2 \cdot 3 + 1 = 7$ and $a_4 = 2 \cdot 7 + 1 = 15$.'
+          - problem: 'The Fibonacci numbers satisfy $F_1 = F_2 = 1$ and $F_n = F_{n-1} + F_{n-2}$ for $n \ge 3$. Find $F_8$.'
+            answer: '21'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Each Fibonacci number is the sum of the two numbers before it. The list is $1, 1, 2, 3, 5, 8, 13, 21$, so $F_8 = 21$.'
+          - problem: 'Let $b_1 = 1$, $b_2 = 2$ and $b_n = b_{n-1} + 2b_{n-2}$ for $n \ge 3$. Find $b_3$, $b_4$ and $b_5$.'
+            answer: '4, 8, 16'
+            answer_contract: {"kind":"list","member":{"kind":"exact"},"ordered":true}
+            solution_sketch: 'This recurrence uses the two terms before the new one. So $b_3 = 2 + 2 \cdot 1 = 4$, $b_4 = 4 + 2 \cdot 2 = 8$ and $b_5 = 8 + 2 \cdot 4 = 16$.'
+          - problem: 'A lake holds $100$ fish at the start of year $0$. Each year the number of fish doubles and then $20$ fish are caught. Let $p_n$ be the number of fish after $n$ years. How many fish are in the lake after $3$ years?'
+            answer: '660'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Doubling and then removing $20$ fish gives $p_n = 2p_{n-1} - 20$ with $p_0 = 100$. Then $p_1 = 180$, $p_2 = 340$ and $p_3 = 660$.'
+          - problem: 'A patient takes $10$ mg of a drug every morning. During each day the body removes half of the drug that is present. Let $m_n$ be the amount of the drug in the body, in mg, just after the dose on day $n$, with $m_1 = 10$. How much of the drug is in the body just after the dose on day $4$?'
+            answer: '18.75'
+            answer_contract: {"kind":"unit","quantity":"mass","unit":"mg","allow_omitted":true}
+            solution_sketch: 'Half of the earlier amount remains and then $10$ mg is added, so $m_n = m_{n-1}/2 + 10$. This gives $m_2 = 15$, $m_3 = 17.5$ and $m_4 = 18.75$ mg.'
+          - problem: 'A sequence satisfies $a_n = 3a_{n-1} - 1$ for $n \ge 2$, and $a_4 = 41$. Find $a_3$.'
+            answer: '14'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The recurrence at $n = 4$ says $41 = 3a_3 - 1$. So $3a_3 = 42$, and dividing by $3$ gives $a_3 = 14$.'
+          - problem: 'Sam has $e_1 = 3$, $e_2 = 5$ and $e_n = 2e_{n-1} - e_{n-2}$ for $n \ge 3$, and finds $e_3 = 13$. What is the correct value of $e_3$?'
+            answer: '7'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Sam added $3$ to $2e_2$, but the recurrence subtracts $e_{n-2}$. The correct value is $e_3 = 2 \cdot 5 - 3 = 7$.'
+          - problem: 'Let $d_1 = 4$, $d_2 = 1$ and $d_n = d_{n-1} - d_{n-2}$ for $n \ge 3$. Find $d_3$, $d_4$, $d_5$, $d_6$ and $d_7$.'
+            answer: '-3, -4, -1, 3, 4'
+            answer_contract: {"kind":"list","member":{"kind":"exact"},"ordered":true}
+            solution_sketch: 'Subtract the term two places back from the term one place back each time. So $d_3 = 1 - 4 = -3$, $d_4 = -3 - 1 = -4$, $d_5 = -4 + 3 = -1$, $d_6 = -1 + 4 = 3$ and $d_7 = 3 + 1 = 4$.'
         constraints: "first- or second-order recurrences with integer coefficients; compute 3-5 terms"
       - id: kp2
         name: "Modeling counting problems with recurrences"
         key_prerequisites: [function-notation, multiplication-principle]
+        step_check:
+          step: 'the remaining $n-1$ flowers can be planted in $f_{n-1}$ ways'
+          question: 'Why does a white first flower leave exactly $f_{n-1}$ ways for the rest?'
+          options:
+            - 'White flowers are planted first, so the other flowers follow the same order'
+            - 'A white flower is counted once, so the others are counted $n-1$ times'
+            - 'The first flower has two colors, so the rest splits into two equal cases'
+            - 'White puts no limit on the next flower, so any valid bed of $n-1$ works'
+          answer: 'White puts no limit on the next flower, so any valid bed of $n-1$ works'
+          why: 'Only two red flowers side by side are forbidden, so after a white flower the other $n-1$ flowers form any valid bed, and there are $f_{n-1}$ of those.'
+        try_first:
+          problem: 'You climb a staircase taking $1$ or $2$ steps at a time. In how many ways can you climb $4$ stairs?'
+          answer_contract: {"kind":"exact"}
+          answer: '5'
+          reveal: 'The first move is $1$ step, leaving $3$ stairs in $3$ ways, or $2$ steps, leaving $2$ stairs in $2$ ways, so there are $3 + 2 = 5$ ways. Splitting by the first move is the idea of this lesson.'
         exemplars:
-          - problem: 'You climb a staircase taking $1$ or $2$ steps at a time. Let $c_n$ count the ways to climb $n$ stairs. Give a recurrence for $c_n$, then compute $c_5$.'
-            answer: "8"
-            solution_sketch: 'Condition on the first move ($1$ or $2$ steps): $c_n = c_{n-1} + c_{n-2}$ with $c_1 = 1$, $c_2 = 2$. Then $c_3 = 3$, $c_4 = 5$, $c_5 = 8$.'
-          - problem: 'The Tower of Hanoi with $n$ disks takes $H_n$ moves, where $H_1 = 1$. Explain why $H_n = 2H_{n-1} + 1$ and compute $H_4$.'
-            answer: "15"
-            solution_sketch: 'Move $n-1$ disks aside, move the largest, move $n-1$ back, so $H_n = 2H_{n-1} + 1$: $H_2 = 3$, $H_3 = 7$, $H_4 = 15$.'
-          - problem: "You climb a staircase taking 1, 2, or 3 steps at a time. Let c_n count the ways to climb n stairs, with c_0 = 1. Use a first-choice argument to give a recurrence for c_n. Compute c_5."
-            answer: "13"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The full recurrence is c_n = c_(n-1) + c_(n-2) + c_(n-3) for n at least 3, with c_0 = 1, c_1 = 1, and c_2 = 2. A first step of size 1, 2, or 3 leaves the remaining climb, so condition on the first choice. Direct enumeration gives c_3 = 4, c_4 = 7, and c_5 = 13. So c_5 = 13."
-          - problem: "A 2 by n rectangle is tiled by 1 by 2 dominoes. Let T_n count the tilings, with T_1 = 1 and T_2 = 2. Use a first-choice argument on the left column to find a recurrence for T_n. Compute T_7."
-            answer: "21"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The full recurrence is T_n = T_(n-1) + T_(n-2) for n at least 3, with T_1 = 1 and T_2 = 2. If the left column has a vertical domino, the rest is a 2 by n-1 board; if it has two horizontal dominoes, the rest is a 2 by n-2 board. Direct enumeration gives T_3 = 3, T_4 = 5, T_5 = 8, T_6 = 13, and T_7 = 21. So T_7 = 21."
-          - problem: "A message is built by concatenating blocks of length 2 and length 3. Let m_n count the sequences of blocks with total length n, with m_0 = 1. Condition on the first block to give a recurrence for m_n. Compute m_8."
-            answer: "4"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The full recurrence is m_n = m_(n-2) + m_(n-3) for n at least 3, with m_0 = 1, m_1 = 0, and m_2 = 1. A first block of length 2 or length 3 leaves the remaining length, so condition on the first block. Direct enumeration gives m_3 = 1, m_4 = 1, m_5 = 2, m_6 = 2, m_7 = 3, and m_8 = 4. So m_8 = 4."
-          - problem: "You climb a staircase taking 1 or 3 steps at a time. Let s_n count the ways to climb n stairs, with s_0 = 1. Use a first-choice argument to give a recurrence for s_n. Compute s_7."
-            answer: "9"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The full recurrence is s_n = s_(n-1) + s_(n-3) for n at least 3, with s_0 = 1, s_1 = 1, and s_2 = 1. A first step of 1 or 3 leaves the remaining climb, so condition on the first choice. Direct enumeration gives s_3 = 2, s_4 = 3, s_5 = 4, s_6 = 6, and s_7 = 9. So s_7 = 9."
+          - problem: 'You climb a staircase taking $1$ or $2$ steps at a time. By considering the first move, find a recurrence for the number $c_n$ of ways to climb $n$ stairs. How many ways are there to climb $5$ stairs?'
+            answer: '8'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'A first move of $1$ step leaves $n-1$ stairs and a first move of $2$ steps leaves $n-2$ stairs, so $c_n = c_{n-1} + c_{n-2}$. With $c_1 = 1$ and $c_2 = 2$ we get $c_3 = 3$, $c_4 = 5$ and $c_5 = 8$.'
+          - problem: 'In the Tower of Hanoi with $n$ disks, let $H_n$ be the least number of moves that transfers the tower. To transfer $n$ disks, move the top $n-1$ disks away, move the largest disk, and move the $n-1$ disks back on top of it. Use this to find a recurrence for $H_n$, and then find $H_4$.'
+            answer: '15'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The two transfers of $n-1$ disks and the move of the largest disk give $H_n = 2H_{n-1} + 1$ with $H_1 = 1$. Then $H_2 = 3$, $H_3 = 7$ and $H_4 = 15$.'
+          - problem: 'You climb a staircase taking $1$, $2$ or $3$ steps at a time. By considering the first step, find a recurrence for the number $c_n$ of ways to climb $n$ stairs, with $c_0 = 1$. How many ways are there to climb $5$ stairs?'
+            answer: '13'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The first step is $1$, $2$ or $3$ stairs, so $c_n = c_{n-1} + c_{n-2} + c_{n-3}$ for $n \ge 3$, with $c_0 = 1$, $c_1 = 1$ and $c_2 = 2$. Then $c_3 = 4$, $c_4 = 7$ and $c_5 = 13$.'
+          - problem: 'A $2 \times n$ strip is tiled with $1 \times 2$ dominoes. Let $T_n$ be the number of tilings. By considering the left end of the strip, find a recurrence for $T_n$. How many tilings are there of a $2 \times 7$ strip?'
+            answer: '21'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'A vertical domino at the left end leaves a $2 \times (n-1)$ strip, and two horizontal dominoes leave a $2 \times (n-2)$ strip. So $T_n = T_{n-1} + T_{n-2}$ with $T_1 = 1$ and $T_2 = 2$, which gives $T_3 = 3$, $T_4 = 5$, $T_5 = 8$, $T_6 = 13$ and $T_7 = 21$.'
+          - problem: 'A message is built by joining blocks of length $2$ and blocks of length $3$. Let $m_n$ be the number of block sequences with total length $n$, with $m_0 = 1$. By considering the first block, find a recurrence for $m_n$. How many block sequences have total length $8$?'
+            answer: '4'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The first block has length $2$ or $3$, so $m_n = m_{n-2} + m_{n-3}$ for $n \ge 3$, with $m_0 = 1$, $m_1 = 0$ and $m_2 = 1$. Then $m_3 = 1$, $m_4 = 1$, $m_5 = 2$, $m_6 = 2$, $m_7 = 3$ and $m_8 = 4$.'
+          - problem: 'You climb a staircase taking $1$ or $3$ steps at a time. By considering the first step, find a recurrence for the number $s_n$ of ways to climb $n$ stairs, with $s_0 = 1$. How many ways are there to climb $7$ stairs?'
+            answer: '9'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The first step is $1$ or $3$ stairs, so $s_n = s_{n-1} + s_{n-3}$ for $n \ge 3$, with $s_0 = s_1 = s_2 = 1$. Then $s_3 = 2$, $s_4 = 3$, $s_5 = 4$, $s_6 = 6$ and $s_7 = 9$.'
+          - problem: 'A ticket machine accepts $1$-dollar coins and $2$-dollar coins. In how many different orders can coins worth exactly $8$ dollars be inserted?'
+            answer: '34'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Let $w_n$ be the number of orders for $n$ dollars. The first coin is worth $1$ or $2$ dollars, so $w_n = w_{n-1} + w_{n-2}$ with $w_1 = 1$ and $w_2 = 2$. This gives $3, 5, 8, 13, 21$ and $w_8 = 34$.'
+          - problem: 'In the Tower of Hanoi with $n$ disks, the least number of moves satisfies $H_n = 2H_{n-1} + 1$ with $H_1 = 1$. A monk can make at most $500$ moves. What is the greatest number of disks he can transfer?'
+            answer: '8'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The values are $H_5 = 31$, $H_6 = 63$, $H_7 = 127$, $H_8 = 255$ and $H_9 = 511$. Since $255 \le 500 < 511$, the monk can transfer $8$ disks but not $9$.'
+          - problem: 'You climb a staircase taking $1$ or $4$ steps at a time, and $u_n$ is the number of ways to climb $n$ stairs. Which of these is the recurrence for $u_n$? (a) $u_n = u_{n-1} + u_{n-2}$ (b) $u_n = u_{n-1} + u_{n-4}$ (c) $u_n = u_{n-3} + u_{n-4}$'
+            answer: 'u_n = u_{n-1} + u_{n-4}'
+            answer_contract: {"kind":"label","options":[["u_n = u_{n-1} + u_{n-4}","(b)","b","u_n=u_{n-1}+u_{n-4}","u(n) = u(n-1) + u(n-4)"],["u_n = u_{n-1} + u_{n-2}","(a)","a"],["u_n = u_{n-3} + u_{n-4}","(c)","c"]]}
+            solution_sketch: 'The first step is $1$ or $4$ stairs, which leaves $n-1$ or $n-4$ stairs. So the recurrence is $u_n = u_{n-1} + u_{n-4}$, which is option (b).'
         constraints: "condition-on-the-first-choice arguments; verify small cases by direct enumeration"
       - id: kp3
         name: "Recurrences for strings with forbidden patterns"
         key_prerequisites: [function-notation, multiplication-principle]
+        step_check:
+          step: 'preceded by any valid string of length $n-2$'
+          question: 'Why can the part before a final $10$ be any valid string of length $n-2$?'
+          options:
+            - 'The $1$ in front of the last $0$ keeps two $0$s from touching'
+            - 'Strings of length $n-2$ are the only ones that end in $1$ or $0$'
+            - 'The final $10$ is counted as one symbol, so the rest has length $n-2$'
+            - 'The rule only covers the last two places, so earlier ones are free'
+          answer: 'The $1$ in front of the last $0$ keeps two $0$s from touching'
+          why: 'The $1$ separates the final $0$ from everything before it, so no pair of $0$s can form across the join and the first $n-2$ symbols only need to be valid on their own.'
         exemplars:
-          - problem: 'Let $b_n$ count bit strings of length $n$ with no two consecutive $0$s. State a recurrence for $b_n$, and give $(b_1, b_2)$ as an ordered pair.'
-            answer: '$(2, 3)$'
-            solution_sketch: 'A valid string ends in $1$ (preceded by any valid string of length $n-1$) or in $10$ (any valid string of length $n-2$), so $b_n = b_{n-1} + b_{n-2}$; directly, $b_1 = 2$ and $b_2 = 3$.'
-          - problem: 'With $b_n$ as above, compute $b_4$.'
-            answer: "8"
-            solution_sketch: '$b_3 = b_2 + b_1 = 5$, $b_4 = b_3 + b_2 = 8$. Direct check: of the $16$ strings of length $4$, exactly $8$ avoid $00$.'
-          - problem: "Let f(n) be the number of binary sequences of length n in which no two ones are adjacent. Group the valid sequences by their last symbol to obtain a recurrence for f(n), and then compute f(7)."
-            answer: "34"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The function f(n) gives the number of binary sequences of length n with no two adjacent ones. Step 1 (classify by the last symbol): a valid sequence ending in zero can follow any valid sequence of length n-1, giving f(n-1) options; a valid sequence ending in one must have a zero before it, so its first n-2 symbols form any valid sequence, giving f(n-2) options. Step 2 (recurrence): f(n) = f(n-1) + f(n-2) with f(1) = 2 and f(2) = 3. Step 3 (iterate): f(3) = 5, f(4) = 8, f(5) = 13, f(6) = 21, f(7) = 34. The answer is f(7) = 34."
-          - problem: "Let g(n) be the number of binary sequences of length n in which no zero comes immediately before a one. Group the valid sequences by their last symbol to obtain a recurrence for g(n), and then give (g(3), g(4)) as (x, y)."
-            answer: "(4, 5)"
-            answer_contract: {"arity": 2, "kind": "coordinates"}
-            solution_sketch: "The function g(n) gives the number of binary sequences of length n in which no zero is immediately followed by a one. Step 1 (classify by the last symbol): a valid sequence ending in zero can follow any valid sequence of length n-1, giving g(n-1) options; a valid sequence ending in one must have every earlier symbol equal to one as well, and exactly one sequence of that shape exists. Step 2 (recurrence): g(n) = g(n-1) + 1 with g(1) = 2. Step 3 (iterate): g(2) = 3, g(3) = 4, g(4) = 5. The ordered pair is (4, 5)."
-          - problem: "Let h(n) be the number of binary sequences of length n in which no one comes immediately before a zero. Group the valid sequences by their last symbol to obtain a recurrence for h(n), and then compute h(9)."
-            answer: "10"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The function h(n) gives the number of binary sequences of length n in which no one is immediately followed by a zero. Step 1 (classify by the last symbol): a valid sequence ending in one can follow any valid sequence of length n-1, giving h(n-1) options; a valid sequence ending in zero must have every earlier symbol equal to zero as well, and exactly one sequence of that shape exists. Step 2 (recurrence): h(n) = h(n-1) + 1 with h(1) = 2. Step 3 (iterate): h(2) = 3, h(3) = 4, h(4) = 5, h(5) = 6, h(6) = 7, h(7) = 8, h(8) = 9, h(9) = 10. The answer is h(9) = 10."
-          - problem: "Let w(n) be the number of binary sequences of length n in which no two zeros are adjacent. Group the valid sequences by their last symbol to obtain a recurrence for w(n), and determine the value of n for which w(n) equals 21."
-            answer: "6"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The function w(n) gives the number of binary sequences of length n with no two adjacent zeros. Step 1 (classify by the last symbol): a valid sequence ending in one can follow any valid sequence of length n-1, giving w(n-1) options; a valid sequence ending in zero must have a one before it, so its first n-2 symbols form any valid sequence, giving w(n-2) options. Step 2 (recurrence): w(n) = w(n-1) + w(n-2) with w(1) = 2 and w(2) = 3. Step 3 (iterate): w(3) = 5, w(4) = 8, w(5) = 13, w(6) = 21, w(7) = 34. The value w(6) equals 21, so the answer is 6."
+          - problem: 'How many bit strings of length $4$ contain no two consecutive $0$s?'
+            answer: '8'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Let $b_n$ count such strings. A valid string ends in $1$ (after any valid string of length $n-1$) or in $10$ (after any valid string of length $n-2$), so $b_n = b_{n-1} + b_{n-2}$. With $b_1 = 2$ and $b_2 = 3$ we get $b_3 = 5$ and $b_4 = 8$.'
+          - problem: 'Let $f(n)$ be the number of binary sequences of length $n$ in which no two $1$s are adjacent. By grouping the sequences by their last symbol, find a recurrence for $f(n)$. How many such sequences have length $7$?'
+            answer: '34'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'A sequence ending in $0$ follows any valid sequence of length $n-1$. A sequence ending in $1$ must have $0$ before it, so the first $n-2$ symbols form any valid sequence. Hence $f(n) = f(n-1) + f(n-2)$ with $f(1) = 2$ and $f(2) = 3$, which gives $5, 8, 13, 21$ and $f(7) = 34$.'
+          - problem: 'Let $g(n)$ be the number of binary sequences of length $n$ in which no $0$ comes immediately before a $1$. By grouping the sequences by their last symbol, find a recurrence for $g(n)$. Find $g(3)$ and $g(4)$.'
+            answer: '4, 5'
+            answer_contract: {"kind":"list","member":{"kind":"exact"},"ordered":true}
+            solution_sketch: 'A sequence ending in $0$ follows any valid sequence of length $n-1$. A sequence ending in $1$ must consist of $1$s only, which is one sequence. So $g(n) = g(n-1) + 1$ with $g(1) = 2$, giving $g(2) = 3$, $g(3) = 4$ and $g(4) = 5$.'
+          - problem: 'Let $h(n)$ be the number of binary sequences of length $n$ in which no $1$ comes immediately before a $0$. By grouping the sequences by their last symbol, find a recurrence for $h(n)$. How many such sequences have length $9$?'
+            answer: '10'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'A sequence ending in $1$ follows any valid sequence of length $n-1$. A sequence ending in $0$ must consist of $0$s only, which is one sequence. So $h(n) = h(n-1) + 1$ with $h(1) = 2$, and counting up gives $h(9) = 10$.'
+          - problem: 'Let $w(n)$ be the number of binary sequences of length $n$ in which no two $0$s are adjacent. By grouping the sequences by their last symbol, find a recurrence for $w(n)$. For which $n$ is $w(n) = 21$?'
+            answer: '6'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'A sequence ending in $1$ follows any valid sequence of length $n-1$, and one ending in $0$ has $1$ before it and any valid sequence of length $n-2$ before that. So $w(n) = w(n-1) + w(n-2)$ with $w(1) = 2$ and $w(2) = 3$. The values $5, 8, 13, 21$ show that $w(6) = 21$.'
+          - problem: 'A row of $8$ plots is planted with red or white flowers, and no two red flowers may be neighbors. In how many ways can the row be planted?'
+            answer: '55'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Let $r_n$ count the plantings of $n$ plots. A white first plot leaves $n-1$ free plots, and a red first plot forces a white second plot and leaves $n-2$ plots, so $r_n = r_{n-1} + r_{n-2}$ with $r_1 = 2$ and $r_2 = 3$. Counting up gives $5, 8, 13, 21, 34$ and $r_8 = 55$.'
+          - problem: 'How many strings of length $4$ over the digits $0$, $1$ and $2$ contain no two consecutive $0$s?'
+            answer: '60'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Let $t_n$ count these strings. A string ends in $1$ or $2$ after any valid string of length $n-1$, or ends in $10$ or $20$ after any valid string of length $n-2$, so $t_n = 2t_{n-1} + 2t_{n-2}$. With $t_1 = 3$ and $t_2 = 8$ we get $t_3 = 22$ and $t_4 = 60$.'
+          - problem: 'A drummer plays a pattern of $9$ beats. Each beat is a hit or a rest, and two rests never come one directly after the other. How many different patterns are possible?'
+            answer: '89'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Let $p_n$ count the patterns with $n$ beats. A pattern ends in a hit after any valid pattern of $n-1$ beats, or in a hit and then a rest after any valid pattern of $n-2$ beats, so $p_n = p_{n-1} + p_{n-2}$ with $p_1 = 2$ and $p_2 = 3$. Counting up gives $p_9 = 89$.'
+          - problem: 'Sam counts the bit strings of length $3$ with no two consecutive $0$s and finds $6$. What is the correct number?'
+            answer: '5'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Of the $8$ strings of length $3$, exactly three contain two consecutive $0$s: $000$, $001$ and $100$. So $8 - 3 = 5$ strings remain, and Sam counted one too many.'
         constraints: "binary strings, forbidden block of length 2; classify by the last character(s)"
     diagnostic_exemplar:
       problem: 'Let $b_n$ count bit strings of length $n$ with no two consecutive $1$s (classify by the last character to find a recurrence). Compute $b_5$.'
@@ -131,65 +204,114 @@ topics:
       - id: kp1
         name: "Unrolling arithmetic- and geometric-type recurrences"
         key_prerequisites: [recurrence-relations]
+        step_check:
+          step: 'Unroll the recurrence: $a_n = a_0 + dn = 1 + 4n$'
+          question: 'Why is $a_n = a_0 + dn$ the formula for $a_n = a_{n-1} + d$?'
+          options:
+            - 'The first term is $a_0$, and $d$ is a number that is added to $n$'
+            - 'Each of the $n$ steps from $a_0$ multiplies the term by $d$'
+            - 'Each of the $n$ steps from $a_0$ adds the same $d$ to the term'
+            - 'Only the last step adds $d$, and the other steps leave the term as it is'
+          answer: 'Each of the $n$ steps from $a_0$ adds the same $d$ to the term'
+          why: 'Going from $a_0$ to $a_n$ takes $n$ steps and each step adds $d$, so the total added is $n \cdot d$; here $a_n = 1 + 4n$.'
         exemplars:
-          - problem: 'Solve $a_n = a_{n-1} + 3$ with $a_0 = 2$: give a closed formula for $a_n$.'
-            answer: '3n + 2'
-            answer_contract: {kind: exact}
-            solution_sketch: 'Each step adds $3$, so after $n$ steps $a_n = 2 + 3n$. Verify: $a_0 = 2$, and $3n + 2 = (3(n-1) + 2) + 3$.'
-          - problem: "Solve a_n = a_{n-1} + 4 with a_0 = 1: give a closed formula in n for a_n."
-            answer: "4n+1"
-            answer_contract: {"kind": "function", "vars": ["n"]}
-            solution_sketch: "Unrolling step: a_1 = a_0 + 4 = 5, a_2 = 9, and after n steps a_n = 1 + 4n. Verification step: put n = 1 in 1 + 4n to get 5, which matches a_1 = a_0 + 4. The closed formula is a_n = 4n+1."
-          - problem: "Solve a_n = a_{n-1} - 2 with a_0 = 9: give a closed formula in n for a_n."
-            answer: "-2n+9"
-            answer_contract: {"kind": "function", "vars": ["n"]}
-            solution_sketch: "Unrolling step: each step subtracts 2, so after n steps a_n = 9 - 2n. Verification step: a_1 = 7 and -2(1)+9 = 7, so the recurrence holds. The closed formula is a_n = -2n+9."
-          - problem: "A sequence satisfies a_n = 2a_{n-1} with a_0 = 5. Find a_6."
-            answer: "320"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Unrolling step: a_1 = 10, a_2 = 20, a_3 = 40, a_4 = 80, a_5 = 160, a_6 = 320. Verification step: a_5 = 160 and 2a_5 = 320, which matches a_6. Thus a_6 = 320."
-          - problem: "A sequence satisfies a_n = 3a_{n-1} with a_0 = 2. Find a_5."
-            answer: "486"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Unrolling step: a_1 = 6, a_2 = 18, a_3 = 54, a_4 = 162, a_5 = 486. Verification step: a_4 = 162 and 3a_4 = 486, which matches a_5. Thus a_5 = 486."
-          - problem: "A sequence satisfies a_n = a_{n-1} + d with a_0 = 4. If a_5 = 19, find the integer d."
-            answer: "3"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Unrolling step: a_5 = a_0 + 5d = 4 + 5d. Equation step: 19 = 4 + 5d, so 5d = 15. Verification step: with d = 3, a_1 = 7, a_2 = 10, a_3 = 13, a_4 = 16, a_5 = 19. Thus d = 3."
+          - problem: 'Find a closed formula for $a_n$ when $a_n = a_{n-1} + 4$ and $a_0 = 1$.'
+            answer: '4n + 1'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Each step adds $4$, so after $n$ steps $a_n = 1 + 4n$. Check: $a_1 = 5$, which equals $a_0 + 4$.'
+          - problem: 'Find a closed formula for $a_n$ when $a_n = a_{n-1} - 2$ and $a_0 = 9$.'
+            answer: '-2n + 9'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Each step subtracts $2$, so after $n$ steps $a_n = 9 - 2n$. Check: $a_1 = 7$, which equals $a_0 - 2$.'
+          - problem: 'A sequence satisfies $a_n = 2a_{n-1}$ with $a_0 = 5$. Find $a_6$.'
+            answer: '320'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Each step doubles the term, so $a_n = 5 \cdot 2^n$. Then $a_6 = 5 \cdot 64 = 320$.'
+          - problem: 'A sequence satisfies $a_n = 3a_{n-1}$ with $a_0 = 2$. Find $a_5$.'
+            answer: '486'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Each step triples the term, so $a_n = 2 \cdot 3^n$. Then $a_5 = 2 \cdot 243 = 486$.'
+          - problem: 'A sequence satisfies $a_n = a_{n-1} + d$ with $a_0 = 4$ and $a_5 = 19$. Find $d$.'
+            answer: '3'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'After $5$ steps $a_5 = 4 + 5d$. So $19 = 4 + 5d$, which gives $5d = 15$ and $d = 3$.'
+          - problem: 'A gym charges a joining fee of $40$ dollars plus $25$ dollars for each month. Let $c_n$ be the total paid after $n$ months, so $c_0 = 40$. How many dollars have been paid after $12$ months?'
+            answer: '340'
+            answer_contract: {"kind":"unit","quantity":"dollar","unit":"dollar","allow_omitted":true}
+            solution_sketch: 'Each month adds $25$, so $c_n = c_{n-1} + 25$ and $c_n = 40 + 25n$. Then $c_{12} = 40 + 300 = 340$.'
+          - problem: 'A gym charges a joining fee of $40$ dollars plus $25$ dollars for each month. After how many months has a member paid a total of $690$ dollars?'
+            answer: '26'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The total after $n$ months is $40 + 25n$. Setting $40 + 25n = 690$ gives $25n = 650$, and dividing by $25$ gives $n = 26$.'
+          - problem: 'A culture holds $500$ bacteria at hour $0$, and the number of bacteria doubles every hour. How many bacteria are in the culture after $6$ hours?'
+            answer: '32000'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Each hour multiplies the number by $2$, so after $n$ hours there are $500 \cdot 2^n$. After $6$ hours there are $500 \cdot 64 = 32000$.'
+          - problem: 'A ball is dropped from a height of $243$ cm. After each bounce it rises to one third of its previous height. How high does it rise after the fourth bounce?'
+            answer: '3'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"cm","allow_omitted":true}
+            solution_sketch: 'Each bounce divides the height by $3$, so the height after $n$ bounces is $243/3^n$. After $4$ bounces it is $243/81 = 3$ cm.'
         constraints: "a_n = a_{n-1} + d or a_n = r a_{n-1}; integer parameters; always verify by substitution"
       - id: kp2
         name: "Telescoping variable-step recurrences"
         key_prerequisites: [recurrence-relations, summation-notation]
+        step_check:
+          step: 1
+          question: 'Why does unrolling $a_n = a_{n-1} + n$ leave the sum $1 + 2 + \cdots + n$?'
+          options:
+            - 'The recurrence adds $n$ only once, and all other terms come from $a_0$'
+            - 'Going back from $a_k$ to $a_{k-1}$ takes off $k$, from $k = n$ down to $1$'
+            - 'The terms $a_0, a_1, \dots, a_n$ are all added together to give the value $a_n$'
+            - 'Every step adds the same number $n$, so the total is $n$ times $n$'
+          answer: 'Going back from $a_k$ to $a_{k-1}$ takes off $k$, from $k = n$ down to $1$'
+          why: 'Each step back removes one added term, first $n$, then $n-1$, down to $1$, and those removed terms together make $a_n - a_0 = 1 + 2 + \cdots + n$.'
+        try_first:
+          problem: 'A sequence starts at $a_0 = 0$ and each term adds its own position number, so $a_n = a_{n-1} + n$. What is $a_4$?'
+          answer_contract: {"kind":"exact"}
+          answer: '10'
+          reveal: 'The terms are $1, 3, 6, 10$, because the amount added grows by $1$ each step. Adding $1 + 2 + 3 + 4$ is the idea of this lesson.'
         exemplars:
-          - problem: 'Solve $a_n = a_{n-1} + n$ with $a_0 = 0$.'
+          - problem: 'Find a closed formula for $a_n$ when $a_n = a_{n-1} + n$ and $a_0 = 0$.'
             answer: 'n(n+1)/2'
-            answer_contract: {kind: exact}
-            solution_sketch: 'Telescoping: $a_n = \sum_{k=1}^{n} k = n(n+1)/2$. Check $a_3 = 6$.'
-          - problem: 'Solve $a_n = a_{n-1} + (2n - 1)$ with $a_0 = 0$.'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Unrolling gives $a_n = 1 + 2 + \cdots + n$, the sum of the first $n$ whole numbers. This sum equals $n(n+1)/2$, and $a_3 = 6$ agrees.'
+          - problem: 'Find a closed formula for $a_n$ when $a_n = a_{n-1} + (2n - 1)$ and $a_0 = 0$.'
             answer: 'n^2'
-            answer_contract: {kind: exact}
-            solution_sketch: 'The sum of the first $n$ odd numbers is $n^2$; check $a_1 = 1$, $a_2 = 4$, $a_3 = 9$.'
-          - problem: "Solve a_n = a_{n-1} + 2n with a_0 = 0."
-            answer: "n(n+1)"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The recurrence gives a_n = sum from k=1 to n of 2k. Factor 2: 2 times the sum from k=1 to n of k. The triangular sum is n(n+1)/2, so a_n = 2 * n(n+1)/2 = n(n+1). The answer is n(n+1)."
-          - problem: "Solve a_n = a_{n-1} + (2n + 1) with a_0 = 0."
-            answer: "n(n+2)"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The recurrence gives a_n = sum from k=1 to n of (2k+1). Split into 2 times the sum of k plus the sum of 1. The first sum is n(n+1) and the second is n, so a_n = n(n+1) + n = n^2 + 2n = n(n+2). The answer is n(n+2)."
-          - problem: "A sequence satisfies a_n = a_{n-1} + 2^n with a_0 = 0. Find a_5."
-            answer: "62"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The recurrence gives a_5 = sum from k=1 to 5 of 2^k. This geometric sum is 2 + 4 + 8 + 16 + 32 = 62. The answer is 62."
-          - problem: "Solve a_n = a_{n-1} + 3n with a_0 = 0."
-            answer: "3n(n+1)/2"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The recurrence gives a_n = sum from k=1 to n of 3k. Factor 3: 3 times the sum from k=1 to n of k. The triangular sum is n(n+1)/2, so a_n = 3 * n(n+1)/2. The answer is 3n(n+1)/2."
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Unrolling gives the sum of the first $n$ odd numbers $1 + 3 + 5 + \cdots + (2n-1)$, which is $n^2$. Check: $a_1 = 1$, $a_2 = 4$ and $a_3 = 9$.'
+          - problem: 'Find a closed formula for $a_n$ when $a_n = a_{n-1} + 2n$ and $a_0 = 0$.'
+            answer: 'n(n+1)'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Unrolling gives $a_n = 2 + 4 + \cdots + 2n = 2(1 + 2 + \cdots + n)$. Since $1 + 2 + \cdots + n = n(n+1)/2$, we get $a_n = n(n+1)$.'
+          - problem: 'Find a closed formula for $a_n$ when $a_n = a_{n-1} + (2n + 1)$ and $a_0 = 0$.'
+            answer: 'n(n+2)'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Unrolling gives $a_n = \sum_{k=1}^{n} (2k + 1) = 2 \cdot n(n+1)/2 + n$. This equals $n^2 + 2n = n(n+2)$.'
+          - problem: 'A sequence satisfies $a_n = a_{n-1} + 2^n$ with $a_0 = 0$. Find $a_5$.'
+            answer: '62'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Unrolling gives $a_5 = 2 + 4 + 8 + 16 + 32$, a geometric sum with ratio $2$. The sum of $2^1$ to $2^5$ is $2^6 - 2 = 62$, so $a_5 = 62$.'
+          - problem: 'Find a closed formula for $a_n$ when $a_n = a_{n-1} + 3n$ and $a_0 = 0$.'
+            answer: '3n(n+1)/2'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Unrolling gives $a_n = 3 + 6 + \cdots + 3n = 3(1 + 2 + \cdots + n)$. This equals $3n(n+1)/2$.'
+          - problem: 'At a party, each person who arrives shakes hands with everyone already present. Let $h_n$ be the total number of handshakes after $n$ people have arrived, so $h_1 = 0$ and $h_n = h_{n-1} + (n-1)$. How many handshakes have taken place once $12$ people have arrived?'
+            answer: '66'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Unrolling gives $h_{12} = 1 + 2 + \cdots + 11$, the sum of the first $11$ whole numbers. This equals $11 \cdot 12/2 = 66$.'
+          - problem: 'A saver puts $10$ dollars in a box in week $1$, $20$ dollars in week $2$, $30$ dollars in week $3$, and so on, adding $10$ dollars more each week. Let $s_n$ be the total in the box after $n$ weeks, so $s_n = s_{n-1} + 10n$ and $s_0 = 0$. How many dollars are in the box after $12$ weeks?'
+            answer: '780'
+            answer_contract: {"kind":"unit","quantity":"dollar","unit":"dollar","allow_omitted":true}
+            solution_sketch: 'Unrolling gives $s_n = 10(1 + 2 + \cdots + n) = 5n(n+1)$. For $n = 12$ this is $5 \cdot 12 \cdot 13 = 780$.'
+          - problem: 'A saver puts $10$ dollars in a box in week $1$, $20$ dollars in week $2$, and so on, adding $10$ dollars more each week. The total after $n$ weeks is $s_n = s_{n-1} + 10n$ with $s_0 = 0$. After how many weeks does the total first exceed $1000$ dollars?'
+            answer: '14'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The total after $n$ weeks is $s_n = 5n(n+1)$. Since $s_{13} = 910$ and $s_{14} = 1050$, the total first exceeds $1000$ dollars after $14$ weeks.'
         constraints: "step depends linearly on n; solution is a known sum (triangular, odd numbers, geometric); the item must test THIS KP: Telescoping variable-step recurrences"
     diagnostic_exemplar:
-      problem: 'Solve $a_n = a_{n-1} + n$ with $a_0 = 1$: give a closed formula and check it at $n = 4$.'
-      answer: 'formula = n(n+1)/2 + 1; a4 = 11'
-      answer_contract: {kind: multipart, parts: [{name: formula, contract: {kind: exact}}, {name: a4, contract: {kind: exact}}]}
+      problem: 'Find a closed formula for $a_n$ when $a_n = a_{n-1} + n$ and $a_0 = 1$.'
+      answer: 'n(n+1)/2 + 1'
+      answer_contract: {kind: exact}
       solution_sketch: 'Telescoping adds $1 + 2 + \cdots + n$ to $a_0$; check: $1, 2, 4, 7, 11$.'
     anki_seeds:
       - front: "Closed form of $a_n = a_{n-1} + d$, $a_0 = c$"
@@ -229,60 +351,104 @@ topics:
       - id: kp1
         name: "Distinct characteristic roots"
         key_prerequisites: [recurrence-relations, quadratic-equations-factoring]
+        step_check:
+          step: 'The roots are $r = 1$ and $r = 2$'
+          question: 'Why does each root $r$ of the characteristic equation give a solution $r^n$ of the recurrence?'
+          options:
+            - 'Substituting $a_n = r^n$ and dividing by $r^{n-2}$ gives the equation'
+            - 'The roots are the first two terms, so the other terms are powers of them'
+            - 'A root $r$ makes $a_n$ equal to $r$ for every $n$, so the recurrence holds'
+            - 'The roots are the values of $n$ at which the recurrence is true'
+          answer: 'Substituting $a_n = r^n$ and dividing by $r^{n-2}$ gives the equation'
+          why: 'For $a_n = 3a_{n-1} - 2a_{n-2}$, putting $a_n = r^n$ and dividing by $r^{n-2}$ leaves $r^2 = 3r - 2$, so every root of that equation gives a solution.'
         exemplars:
-          - problem: "A sequence satisfies $a_n = a_{n-1} + 2a_{n-2}$ for $n \\ge 2$, with $a_0 = 2$ and $a_1 = 7$. Use the characteristic equation to solve the recurrence, then find $a_6$."
-            answer: "191"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1 (characteristic equation): $r^2 = r + 2$ factors over the integers as $(r-2)(r+1) = 0$, so the roots are $2$ and $-1$. Step 2 (initial conditions): the closed form $a_n = A \\cdot 2^n + B \\cdot (-1)^n$ with $a_0 = 2$ and $a_1 = 7$ gives $A + B = 2$ and $2A - B = 7$, so $A = 3$ and $B = -1$. Step 3 (verification of a later term): the recurrence gives $a_2 = 7 + 2 \\cdot 2 = 11$ and the closed form gives $3 \\cdot 4 - 1 = 11$, which verifies it. Step 4: $a_6 = 3 \\cdot 64 - 1 = 191$. The key is 191."
-          - problem: "For $n \\ge 2$ a sequence obeys $b_n = 5b_{n-1} - 6b_{n-2}$, with $b_0 = 1$ and $b_1 = 0$. Use the characteristic equation to solve the recurrence, then find $b_5$."
-            answer: "-390"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1 (characteristic equation): $r^2 - 5r + 6 = 0$ factors over the integers as $(r-2)(r-3) = 0$, so the roots are $2$ and $3$. Step 2 (initial conditions): the closed form $b_n = A \\cdot 2^n + B \\cdot 3^n$ with $b_0 = 1$ and $b_1 = 0$ gives $A + B = 1$ and $2A + 3B = 0$, so $A = 3$ and $B = -2$. Step 3 (verification of a later term): the recurrence gives $b_2 = 5 \\cdot 0 - 6 \\cdot 1 = -6$ and the closed form gives $12 - 18 = -6$, which verifies it. Step 4: $b_5 = 3 \\cdot 32 - 2 \\cdot 243 = -390$. The key is -390."
-          - problem: "The recurrence $c_n = 2c_{n-1} + 15c_{n-2}$ holds for $n \\ge 2$, with $c_0 = 2$ and $c_1 = 2$. Use the characteristic equation to solve the recurrence, then find $c_4$."
-            answer: "706"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1 (characteristic equation): $r^2 - 2r - 15 = 0$ factors over the integers as $(r-5)(r+3) = 0$, so the roots are $5$ and $-3$. Step 2 (initial conditions): the closed form $c_n = A \\cdot 5^n + B \\cdot (-3)^n$ with $c_0 = 2$ and $c_1 = 2$ gives $A + B = 2$ and $5A - 3B = 2$, so $A = 1$ and $B = 1$. Step 3 (verification of a later term): the recurrence gives $c_2 = 2 \\cdot 2 + 15 \\cdot 2 = 34$ and the closed form gives $25 + 9 = 34$, which verifies it. Step 4: $c_4 = 625 + 81 = 706$. The key is 706."
-          - problem: "A nature reserve records its deer population $p_n$, in hundreds, at year $n$. The counts satisfy $p_n = 2p_{n-1} + 3p_{n-2}$ for $n \\ge 2$, with $p_0 = 4$ and $p_1 = 4$. Use the characteristic equation to solve the recurrence, then find $p_5$."
-            answer: "484"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1 (characteristic equation): $r^2 - 2r - 3 = 0$ factors over the integers as $(r-3)(r+1) = 0$, so the roots are $3$ and $-1$. Step 2 (initial conditions): the closed form $p_n = A \\cdot 3^n + B \\cdot (-1)^n$ with $p_0 = 4$ and $p_1 = 4$ gives $A + B = 4$ and $3A - B = 4$, so $A = 2$ and $B = 2$. Step 3 (verification of a later term): the recurrence gives $p_2 = 2 \\cdot 4 + 3 \\cdot 4 = 20$ and the closed form gives $18 + 2 = 20$, which verifies it. Step 4: $p_5 = 2 \\cdot 243 - 2 = 484$. The key is 484."
-          - problem: "A sequence has $d_0 = 5$ and $d_1 = 9$, and for $n \\ge 2$ it obeys $d_n = 4d_{n-1} - 3d_{n-2}$. Use the characteristic equation to solve the recurrence, then find $d_6$."
-            answer: "1461"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1 (characteristic equation): $r^2 - 4r + 3 = 0$ factors over the integers as $(r-3)(r-1) = 0$, so the roots are $3$ and $1$. Step 2 (initial conditions): the closed form $d_n = A \\cdot 3^n + B \\cdot 1^n$ with $d_0 = 5$ and $d_1 = 9$ gives $A + B = 5$ and $3A + B = 9$, so $A = 2$ and $B = 3$. Step 3 (verification of a later term): the recurrence gives $d_2 = 4 \\cdot 9 - 3 \\cdot 5 = 21$ and the closed form gives $18 + 3 = 21$, which verifies it. Step 4: $d_6 = 2 \\cdot 729 + 3 = 1461$. The key is 1461."
-          - problem: "Let $f_n = 7f_{n-1} - 10f_{n-2}$ for $n \\ge 2$, with $f_0 = 3$ and $f_1 = 9$. Use the characteristic equation to solve the recurrence, then find $f_5$."
-            answer: "3189"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1 (characteristic equation): $r^2 - 7r + 10 = 0$ factors over the integers as $(r-5)(r-2) = 0$, so the roots are $5$ and $2$. Step 2 (initial conditions): the closed form $f_n = A \\cdot 5^n + B \\cdot 2^n$ with $f_0 = 3$ and $f_1 = 9$ gives $A + B = 3$ and $5A + 2B = 9$, so $A = 1$ and $B = 2$. Step 3 (verification of a later term): the recurrence gives $f_2 = 7 \\cdot 9 - 10 \\cdot 3 = 33$ and the closed form gives $25 + 8 = 33$, which verifies it. Step 4: $f_5 = 3125 + 2 \\cdot 32 = 3189$. The key is 3189."
+          - problem: 'A sequence satisfies $a_n = a_{n-1} + 2a_{n-2}$ for $n \ge 2$, with $a_0 = 2$ and $a_1 = 7$. Use the characteristic equation to solve the recurrence, and find $a_6$.'
+            answer: '191'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The characteristic equation $r^2 = r + 2$ factors as $(r-2)(r+1) = 0$, so $a_n = A \cdot 2^n + B(-1)^n$. The conditions $A + B = 2$ and $2A - B = 7$ give $A = 3$ and $B = -1$. Then $a_6 = 3 \cdot 64 - 1 = 191$.'
+          - problem: 'What are the roots of the characteristic equation of $c_n = 2c_{n-1} + 15c_{n-2}$?'
+            answer: '5, -3'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The characteristic equation is $r^2 = 2r + 15$, that is $r^2 - 2r - 15 = 0$. It factors as $(r-5)(r+3) = 0$, so the roots are $5$ and $-3$.'
+          - problem: 'For $n \ge 2$ a sequence satisfies $b_n = 5b_{n-1} - 6b_{n-2}$, with $b_0 = 1$ and $b_1 = 0$. Use the characteristic equation to solve the recurrence, and find $b_5$.'
+            answer: '-390'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The characteristic equation $r^2 - 5r + 6 = 0$ factors as $(r-2)(r-3) = 0$, so $b_n = A \cdot 2^n + B \cdot 3^n$. The conditions $A + B = 1$ and $2A + 3B = 0$ give $A = 3$ and $B = -2$. Then $b_5 = 3 \cdot 32 - 2 \cdot 243 = -390$.'
+          - problem: 'A nature reserve records its deer population $p_n$, in hundreds, in year $n$. The counts satisfy $p_n = 2p_{n-1} + 3p_{n-2}$ for $n \ge 2$, with $p_0 = 4$ and $p_1 = 4$. Use the characteristic equation to solve the recurrence, and find $p_5$.'
+            answer: '484'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The characteristic equation $r^2 - 2r - 3 = 0$ factors as $(r-3)(r+1) = 0$, so $p_n = A \cdot 3^n + B(-1)^n$. The conditions $A + B = 4$ and $3A - B = 4$ give $A = 2$ and $B = 2$. Then $p_5 = 2 \cdot 243 - 2 = 484$.'
+          - problem: 'Sam says the characteristic equation of $a_n = 5a_{n-1} - 6a_{n-2}$ has the roots $-2$ and $-3$. What are the correct roots?'
+            answer: '2, 3'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The equation is $r^2 = 5r - 6$, that is $r^2 - 5r + 6 = 0$. Sam ignored the signs, because $(r-2)(r-3) = 0$ gives the roots $2$ and $3$.'
+          - problem: 'The sequence with $a_n = a_{n-1} + 6a_{n-2}$, $a_0 = 1$ and $a_1 = 8$ has the form $a_n = A \cdot 3^n + B \cdot (-2)^n$. Find $B$.'
+            answer: '-1'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The conditions are $A + B = 1$ from $a_0 = 1$ and $3A - 2B = 8$ from $a_1 = 8$. Subtracting $3$ times the first equation from the second gives $-5B = 5$, so $B = -1$.'
+          - problem: 'A sequence has $d_0 = 5$ and $d_1 = 9$, and for $n \ge 2$ it satisfies $d_n = 4d_{n-1} - 3d_{n-2}$. Use the characteristic equation to solve the recurrence, and find $d_6$.'
+            answer: '1461'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The characteristic equation $r^2 - 4r + 3 = 0$ factors as $(r-3)(r-1) = 0$, so $d_n = A \cdot 3^n + B$. The conditions $A + B = 5$ and $3A + B = 9$ give $A = 2$ and $B = 3$. Then $d_6 = 2 \cdot 729 + 3 = 1461$.'
+          - problem: 'Does the sequence $a_n = 3 \cdot 2^n$ satisfy the recurrence $a_n = 5a_{n-1} - 6a_{n-2}$ for every $n \ge 2$?'
+            answer: 'yes'
+            answer_contract: {"kind":"label","options":[["yes","it does","it satisfies it","yes it does","yes, it does"],["no","it does not","it does not satisfy it","no it does not","no, it does not"]]}
+            solution_sketch: 'Since $2$ is a root of $r^2 - 5r + 6 = 0$, the sequence $2^n$ satisfies the recurrence, and so does any multiple. Directly, $5 \cdot 3 \cdot 2^{n-1} - 6 \cdot 3 \cdot 2^{n-2} = 3 \cdot 2^{n-2}(10 - 6) = 3 \cdot 2^n$.'
+          - problem: 'The deer population of a reserve, in hundreds, satisfies $p_n = 2p_{n-1} + 3p_{n-2}$ for $n \ge 2$, with $p_0 = 4$ and $p_1 = 4$, and the solution is $p_n = 2 \cdot 3^n + 2(-1)^n$. In which year does the population first exceed $100000$ deer?'
+            answer: '6'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The population in hundreds is $p_5 = 484$ and $p_6 = 1460$, so $p_5$ is $48400$ deer and $p_6$ is $146000$ deer. The population first exceeds $100000$ deer in year $6$.'
         constraints: "characteristic quadratic factors over the integers; initial conditions give small integer coefficients; require a verification of one later term"
       - id: kp2
         name: "Repeated roots"
         key_prerequisites: [recurrence-relations, perfect-square-trinomials]
+        step_check:
+          step: 1
+          question: 'Why does a repeated root need the factor $n$ in the general solution $(A + Bn)r^n$?'
+          options:
+            - 'The extra factor $n$ makes the sequence always grow faster than $r^n$'
+            - 'A repeated root counts as a single root, so $A$ and $B$ are not needed'
+            - 'A double root gives only $r^n$, so a second solution $nr^n$ is needed'
+            - 'The factor $n$ cancels the square in the characteristic polynomial'
+          answer: 'A double root gives only $r^n$, so a second solution $nr^n$ is needed'
+          why: 'A repeated root gives the solution $r^n$ only once, but $nr^n$ also satisfies the recurrence, and the two solutions together fit two initial conditions.'
         exemplars:
-          - problem: "Solve $a_n = 4a_{n-1} - 4a_{n-2}$ with $a_0 = 1$ and $a_1 = 4$. The general solution has the form $a_n = (A + Bn)r^n$. Find $A$ and $B$."
-            answer: "A = 1; B = 1"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "A"}, {"contract": {"kind": "exact"}, "name": "B"}]}
-            solution_sketch: "The full solution is $a_n = (1 + n)2^n$. Step 1: factor the characteristic polynomial $r^2 - 4r + 4$ as the perfect square $(r - 2)^2$, so the repeated root is $r = 2$. Step 2: a repeated root gives the form $a_n = (A + Bn)2^n$. Step 3: the initial condition $a_0 = 1$ gives $A = 1$. Step 4: $a_1 = 4$ gives $2(1 + B) = 4$, so $B = 1$. Thus A = 1; B = 1."
-          - problem: "Solve the recurrence $a_n = 6a_{n-1} - 9a_{n-2}$ with $a_0 = 2$ and $a_1 = 3$. The general solution has the form $a_n = (A + Bn)r^n$. Find $a_4$ and $a_5$."
-            answer: "a4 = -162; a5 = -729"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "a4"}, {"contract": {"kind": "exact"}, "name": "a5"}]}
-            solution_sketch: "The full solution is $a_n = (2 - n)3^n$. Step 1: factor the characteristic polynomial $r^2 - 6r + 9$ as the perfect square $(r - 3)^2$, so the repeated root is $r = 3$. Step 2: a repeated root gives the form $a_n = (A + Bn)3^n$. Step 3: $a_0 = 2$ gives $A = 2$, and $a_1 = 3$ gives $3(2 + B) = 3$, so $B = -1$. Step 4: evaluate $a_4 = (2 - 4)(81) = -162$ and $a_5 = (2 - 5)(243) = -729$. Thus a4 = -162; a5 = -729."
-          - problem: "A damped signal has sample values satisfying $a_n = -6a_{n-1} - 9a_{n-2}$ for $n >= 2$, with $a_0 = 2$ and $a_1 = 3$. Find $a_4$."
-            answer: "-810"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The full solution is $a_n = (2 - 3n)(-3)^n$, so $a_4 = -810$. Step 1: factor the characteristic polynomial $r^2 + 6r + 9$ as the perfect square $(r + 3)^2$, giving the repeated root $r = -3$. Step 2: a repeated root gives the form $a_n = (A + Bn)(-3)^n$. Step 3: $a_0 = 2$ gives $A = 2$, and $a_1 = 3$ gives $-3(2 + B) = 3$, so $B = -3$. Step 4: evaluate $a_4 = (2 - 12)(-3)^4 = (-10)(81) = -810$."
-          - problem: "A plant population is modeled by $a_n = 10a_{n-1} - 25a_{n-2}$ for $n >= 2$, with $a_0 = 2$ and $a_1 = 15$. The model has a closed form of the repeated-root type $a_n = (A + Bn)r^n$. Find $a_5$."
-            answer: "21875"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The full solution is $a_n = (2 + n)5^n$. Step 1: factor the characteristic polynomial $r^2 - 10r + 25$ as the perfect square $(r - 5)^2$, giving the repeated root $r = 5$. Step 2: a repeated root gives the form $a_n = (A + Bn)5^n$. Step 3: $a_0 = 2$ gives $A = 2$, and $a_1 = 15$ gives $5(2 + B) = 15$, so $B = 1$. Step 4: evaluate $a_5 = (2 + 5)(3125) = 21875$. The value of $a_5$ is 21875."
-          - problem: "The recurrence $a_n = -8a_{n-1} - 16a_{n-2}$ with $a_0 = 1$ and $a_1 = 12$ has a double characteristic root. State the repeated root $r$ and give the value of $a_3$."
-            answer: "r = -4; a3 = 704"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "r"}, {"contract": {"kind": "exact"}, "name": "a3"}]}
-            solution_sketch: "The full solution is $a_n = (1 - 4n)(-4)^n$. Step 1: factor the characteristic polynomial $r^2 + 8r + 16$ as the perfect square $(r + 4)^2$, giving the repeated root $r = -4$. Step 2: a repeated root gives the form $a_n = (A + Bn)(-4)^n$. Step 3: $a_0 = 1$ gives $A = 1$, and $a_1 = 12$ gives $-4(1 + B) = 12$, so $B = -4$. Step 4: evaluate $a_3 = (1 - 12)(-4)^3 = (-11)(-64) = 704$. Thus r = -4; a3 = 704."
-          - problem: "A sequence satisfies $a_n = 12a_{n-1} - 36a_{n-2}$ for $n >= 2$, with $a_0 = 5$ and $a_1 = 24$. Determine the smallest index $n >= 1$ for which $a_n = 0$."
-            answer: "5"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The full solution is $a_n = (5 - n)6^n$. Step 1: factor the characteristic polynomial $r^2 - 12r + 36$ as the perfect square $(r - 6)^2$, giving the repeated root $r = 6$. Step 2: a repeated root gives the form $a_n = (A + Bn)6^n$. Step 3: $a_0 = 5$ gives $A = 5$, and $a_1 = 24$ gives $6(5 + B) = 24$, so $B = -1$. Step 4: the factor $5 - n$ vanishes only at $n = 5$, and every earlier term is positive, so the smallest index with $a_n = 0$ is 5. The answer is 5."
+          - problem: 'A sequence satisfies $a_n = 4a_{n-1} - 4a_{n-2}$ for $n \ge 2$, with $a_0 = 1$ and $a_1 = 4$. Use the characteristic equation to solve the recurrence, and find $a_5$.'
+            answer: '192'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The characteristic polynomial $r^2 - 4r + 4 = (r-2)^2$ has the repeated root $2$, so $a_n = (A + Bn)2^n$. From $a_0 = 1$ we get $A = 1$, and from $a_1 = 4$ we get $2(1 + B) = 4$, so $B = 1$. Then $a_5 = 6 \cdot 32 = 192$.'
+          - problem: 'The recurrence $a_n = 8a_{n-1} - 16a_{n-2}$ with $a_0 = 3$ and $a_1 = 20$ has solutions of the form $a_n = (A + Bn)r^n$. Find $B$.'
+            answer: '2'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The characteristic polynomial $r^2 - 8r + 16 = (r-4)^2$ has the repeated root $r = 4$. The condition $a_0 = 3$ gives $A = 3$, and $a_1 = 20$ gives $4(3 + B) = 20$, so $B = 2$.'
+          - problem: 'Solve $a_n = 6a_{n-1} - 9a_{n-2}$ for $n \ge 2$ with $a_0 = 2$ and $a_1 = 3$, and find $a_5$.'
+            answer: '-729'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The characteristic polynomial $r^2 - 6r + 9 = (r-3)^2$ has the repeated root $3$, so $a_n = (A + Bn)3^n$. From $a_0 = 2$ we get $A = 2$, and from $a_1 = 3$ we get $3(2 + B) = 3$, so $B = -1$. Then $a_5 = (2 - 5) \cdot 243 = -729$.'
+          - problem: 'A damped signal has sample values satisfying $a_n = -6a_{n-1} - 9a_{n-2}$ for $n \ge 2$, with $a_0 = 2$ and $a_1 = 3$. Find $a_4$.'
+            answer: '-810'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The characteristic polynomial $r^2 + 6r + 9 = (r+3)^2$ has the repeated root $-3$, so $a_n = (A + Bn)(-3)^n$. From $a_0 = 2$ we get $A = 2$, and from $a_1 = 3$ we get $-3(2 + B) = 3$, so $B = -3$. Then $a_4 = (2 - 12) \cdot 81 = -810$.'
+          - problem: 'A plant population is modeled by $a_n = 10a_{n-1} - 25a_{n-2}$ for $n \ge 2$, with $a_0 = 2$ and $a_1 = 15$. Find $a_5$.'
+            answer: '21875'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The characteristic polynomial $r^2 - 10r + 25 = (r-5)^2$ has the repeated root $5$, so $a_n = (A + Bn)5^n$. From $a_0 = 2$ we get $A = 2$, and from $a_1 = 15$ we get $5(2 + B) = 15$, so $B = 1$. Then $a_5 = 7 \cdot 3125 = 21875$.'
+          - problem: 'What is the repeated root of the characteristic equation of $a_n = -8a_{n-1} - 16a_{n-2}$?'
+            answer: '-4'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The characteristic equation is $r^2 = -8r - 16$, that is $r^2 + 8r + 16 = 0$. This equals $(r+4)^2 = 0$, so the repeated root is $-4$.'
+          - problem: 'A sequence satisfies $a_n = -8a_{n-1} - 16a_{n-2}$ for $n \ge 2$, with $a_0 = 1$ and $a_1 = 12$. Find $a_3$.'
+            answer: '704'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The repeated root is $-4$, so $a_n = (A + Bn)(-4)^n$. From $a_0 = 1$ we get $A = 1$, and from $a_1 = 12$ we get $-4(1 + B) = 12$, so $B = -4$. Then $a_3 = (1 - 12)(-64) = 704$.'
+          - problem: 'A sequence satisfies $a_n = 12a_{n-1} - 36a_{n-2}$ for $n \ge 2$, with $a_0 = 5$ and $a_1 = 24$. For which $n \ge 1$ is $a_n = 0$?'
+            answer: '5'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The repeated root is $6$, so $a_n = (A + Bn)6^n$. From $a_0 = 5$ we get $A = 5$, and from $a_1 = 24$ we get $6(5 + B) = 24$, so $B = -1$. Then $a_n = (5 - n)6^n$ is $0$ only for $n = 5$.'
+          - problem: 'The output $y_n$ of a digital filter satisfies $y_n = 10y_{n-1} - 25y_{n-2}$ for $n \ge 2$, with $y_0 = 3$ and $y_1 = 20$. Find $y_4$.'
+            answer: '4375'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The characteristic polynomial $(r-5)^2$ has the repeated root $5$, so $y_n = (A + Bn)5^n$. From $y_0 = 3$ we get $A = 3$, and from $y_1 = 20$ we get $5(3 + B) = 20$, so $B = 1$. Then $y_4 = 7 \cdot 625 = 4375$.'
         constraints: "perfect-square characteristic polynomial; general solution (A + Bn) r^n"
     diagnostic_exemplar:
       problem: 'Solve $a_n = 4a_{n-1} - 4a_{n-2}$ with $a_0 = 1$, $a_1 = 6$.'
@@ -315,60 +481,109 @@ topics:
       - id: kp1
         name: "Constant forcing terms"
         key_prerequisites: [linear-homogeneous-recurrences]
+        step_check:
+          step: 'Find the particular solution $p$ by solving $p = 3p + 2$'
+          question: 'Why does the particular solution $p$ solve $p = 3p + 2$?'
+          options:
+            - 'The recurrence starts at $a_0 = p$, so the first term must equal $p$'
+            - 'The equation $p = 3p + 2$ is the characteristic equation, and $p$ is its root'
+            - 'A constant sequence has $a_n = a_{n-1} = p$, so $p$ must satisfy the rule'
+            - 'Every solution of the recurrence is constant, so $p$ is the same as $a_n$'
+          answer: 'A constant sequence has $a_n = a_{n-1} = p$, so $p$ must satisfy the rule'
+          why: 'A particular solution only has to satisfy the recurrence, and the simplest candidate is a constant, which turns $a_n$ and $a_{n-1}$ into the same $p$; the initial condition comes later, in $A$.'
+        try_first:
+          problem: 'A constant sequence $a_n = p$ satisfies $a_n = 3a_{n-1} - 8$ for every $n$. Find $p$.'
+          answer_contract: {"kind": "exact"}
+          answer: '4'
+          reveal: 'A constant sequence has $a_n = a_{n-1} = p$, so $p = 3p - 8$ and $p = 4$. This constant is the particular solution that the method builds on.'
         exemplars:
-          - problem: "Solve the recurrence a_n = 2a_{n-1} + 5 with a_0 = 4. Its general solution is a constant particular value p plus a homogeneous part A times 2^n. Give p and A in the form p = value and A = value."
-            answer: "p = -5; A = 9"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "p"}, {"contract": {"kind": "exact"}, "name": "A"}]}
-            solution_sketch: "The full recurrence is a_n = 2a_{n-1} + 5 with a_0 = 4. Particular-solution rule: a constant p must satisfy p = 2p + 5, so p = -5. Homogeneous-solution rule: the general solution is a_n = A times 2^n - 5. Initial-condition rule: a_0 = A - 5 = 4, so A = 9. Check: a_1 = 2(4) + 5 = 13 and 9(2) - 5 = 13, which agree. The values are p = -5; A = 9."
-          - problem: "A sequence follows the rule a_n = 4a_{n-1} - 6 and starts with a_0 = 5. Its closed form is a constant particular value p plus a homogeneous part A times 4^n. Find p and A in the form p = value and A = value."
-            answer: "p = 2; A = 3"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "p"}, {"contract": {"kind": "exact"}, "name": "A"}]}
-            solution_sketch: "The full recurrence is a_n = 4a_{n-1} - 6 with a_0 = 5. Particular-solution rule: a constant p must satisfy p = 4p - 6, so 3p = 6 and p = 2. Homogeneous-solution rule: the general solution is a_n = A times 4^n + 2. Initial-condition rule: a_0 = A + 2 = 5, so A = 3. Check: a_1 = 4(5) - 6 = 14 and 3(4) + 2 = 14, which agree. The values are p = 2; A = 3."
-          - problem: "A bank account opens with a_0 = 300 dollars. Each month the balance is multiplied by 3 and then a fee of 200 dollars is charged, so a_n = 3a_{n-1} - 200. The closed form of the balance is a constant particular value p plus a homogeneous part A times 3^n. Give p and A in the form p = value and A = value."
-            answer: "p = 100; A = 200"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "p"}, {"contract": {"kind": "exact"}, "name": "A"}]}
-            solution_sketch: "The full model is a_n = 3a_{n-1} - 200 with a_0 = 300. Particular-solution rule: a constant balance p must satisfy p = 3p - 200, so 2p = 200 and p = 100. Homogeneous-solution rule: the general solution is a_n = A times 3^n + 100. Initial-condition rule: a_0 = A + 100 = 300, so A = 200. Check: a_1 = 3(300) - 200 = 700 and 200(3) + 100 = 700, which agree. The values are p = 100; A = 200."
-          - problem: "Solve the recurrence a_n = 5a_{n-1} - 12 with a_0 = 5 by using a constant particular value p, and then compute a3. State p and a3 in the form p = value and a3 = value."
-            answer: "p = 3; a3 = 253"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "p"}, {"contract": {"kind": "exact"}, "name": "a3"}]}
-            solution_sketch: "The full recurrence is a_n = 5a_{n-1} - 12 with a_0 = 5. Particular-solution rule: a constant p must satisfy p = 5p - 12, so 4p = 12 and p = 3. Homogeneous-solution rule: the general solution is a_n = A times 5^n + 3. Initial-condition rule: a_0 = A + 3 = 5, so A = 2. Evaluation rule: a3 = 2 times 5^3 + 3 = 250 + 3 = 253. The values are p = 3; a3 = 253."
-          - problem: "A sequence obeys a_n = -2a_{n-1} + 12 and starts at a_0 = 9. Solve it with a constant particular value p, and then compute a4. Give p and a4 in the form p = value and a4 = value."
-            answer: "p = 4; a4 = 84"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "p"}, {"contract": {"kind": "exact"}, "name": "a4"}]}
-            solution_sketch: "The full recurrence is a_n = -2a_{n-1} + 12 with a_0 = 9. Particular-solution rule: a constant p must satisfy p = -2p + 12, so 3p = 12 and p = 4. Homogeneous-solution rule: the general solution is a_n = A times (-2)^n + 4. Initial-condition rule: a_0 = A + 4 = 9, so A = 5. Evaluation rule: a4 = 5 times (-2)^4 + 4 = 80 + 4 = 84. The values are p = 4; a4 = 84."
-          - problem: "The recurrence a_n = 3a_{n-1} + c has an unknown constant forcing term c and starts at a_0 = 8. Its closed form is known to be a_n = A times 3^n + 5. Find A and c in the form A = value and c = value."
-            answer: "A = 3; c = -10"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "A"}, {"contract": {"kind": "exact"}, "name": "c"}]}
-            solution_sketch: "The full setup is a_n = 3a_{n-1} + c with a_0 = 8 and closed form a_n = A times 3^n + 5. Particular-solution rule: the constant 5 is the particular value, so it must satisfy 5 = 3(5) + c, which gives c = -10. General-form rule: the full solution is a_n = A times 3^n + 5. Initial-condition rule: a_0 = A + 5 = 8, so A = 3. Check: a_1 = 3(8) - 10 = 14 and 3(3) + 5 = 14, which agree. The values are A = 3; c = -10."
-        constraints: "a_n = r a_{n-1} + c with r != 1; particular solution c/(1-r) must be an integer"
+          - problem: 'Solve the recurrence $a_n = 2a_{n-1} + 5$ with $a_0 = 4$. What is $a_8$?'
+            answer: '2299'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'A constant sequence $p$ satisfies $p = 2p + 5$, so $p = -5$. The general solution is $a_n = A \cdot 2^n - 5$, and $a_0 = A - 5 = 4$ gives $A = 9$. Then $a_8 = 9 \cdot 256 - 5 = 2299$.'
+          - problem: 'The recurrence $a_n = 3a_{n-1} + c$ starts at $a_0 = 8$, and its solution is $a_n = 3 \cdot 3^n + 5$. Find the constant $c$.'
+            answer: '-10'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The solution gives $a_1 = 3 \cdot 3 + 5 = 14$. The recurrence gives $a_1 = 3 \cdot 8 + c = 24 + c$. So $24 + c = 14$ and $c = -10$.'
+          - problem: 'A sequence satisfies $a_n = 4a_{n-1} - 6$ with $a_0 = 5$. Find $a_6$.'
+            answer: '12290'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'A constant $p$ with $p = 4p - 6$ has $3p = 6$, so $p = 2$. The solution is $a_n = A \cdot 4^n + 2$, and $a_0 = A + 2 = 5$ gives $A = 3$. Then $a_6 = 3 \cdot 4096 + 2 = 12290$.'
+          - problem: 'A culture has $300$ cells at hour $0$. Each hour the number of cells triples, and then $200$ cells are removed for testing. How many cells are there at hour $5$?'
+            answer: '48700'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The rule is $a_n = 3a_{n-1} - 200$ with $a_0 = 300$. A constant $p = 3p - 200$ gives $p = 100$, so $a_n = A \cdot 3^n + 100$ and $A = 200$. Then $a_5 = 200 \cdot 243 + 100 = 48700$.'
+          - problem: 'A pond holds $124$ fish. Each year half of the fish die, and then $30$ new fish are added. How many fish are in the pond after $4$ years?'
+            answer: '64'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The rule is $a_n = \tfrac{1}{2}a_{n-1} + 30$ with $a_0 = 124$. A constant $p = \tfrac{1}{2}p + 30$ gives $p = 60$, so $a_n = 64 \cdot (1/2)^n + 60$. Then $a_4 = 64/16 + 60 = 64$ fish.'
+          - problem: 'Sam looks for a constant solution of $a_n = 4a_{n-1} + 9$ and writes $p = 3$. What is the correct value of $p$?'
+            answer: '-3'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'A constant solution must satisfy $p = 4p + 9$. Moving terms gives $-3p = 9$, so $p = -3$. Sam lost the sign when moving $4p$ across.'
+          - problem: 'Solve $a_n = 5a_{n-1} - 12$ with $a_0 = 5$. What is $a_5$?'
+            answer: '6253'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'A constant $p = 5p - 12$ gives $4p = 12$ and $p = 3$. The solution is $a_n = A \cdot 5^n + 3$, and $a_0 = A + 3 = 5$ gives $A = 2$. Then $a_5 = 2 \cdot 3125 + 3 = 6253$.'
+          - problem: 'The fish population of a lake satisfies $a_n = \tfrac{1}{2}a_{n-1} + 30$. For which population $p$ does the number of fish stay the same from year to year?'
+            answer: '60'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The population stays the same when $a_n = a_{n-1} = p$. Then $p = \tfrac{1}{2}p + 30$, so $\tfrac{1}{2}p = 30$ and $p = 60$.'
+          - problem: 'A sequence obeys $a_n = -2a_{n-1} + 12$ with $a_0 = 9$. Find $a_6$.'
+            answer: '324'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'A constant $p = -2p + 12$ gives $3p = 12$ and $p = 4$. The solution is $a_n = A \cdot (-2)^n + 4$, and $a_0 = A + 4 = 9$ gives $A = 5$. Then $a_6 = 5 \cdot 64 + 4 = 324$.'
+        constraints: "a_n = r a_{n-1} + c with r != 1; contexts include growth and decay with a removal or addition; the constant solution is a rational number"
       - id: kp2
         name: "Linear forcing terms"
         key_prerequisites: [linear-homogeneous-recurrences]
+        step_check:
+          step: 'Equate coefficients: $a = 4a + 2$ and $b = -4a + 4b$'
+          question: 'Why may we equate the coefficients of $n$ and the constants on the two sides?'
+          options:
+            - 'The coefficient of $n$ must be zero, so the constants are the only terms left to match'
+            - 'The two sides agree for every $n$, so slopes and constants must match'
+            - 'Both sides are only compared at $n = 0$, where each coefficient is the whole value'
+            - 'The recurrence is homogeneous, so each power of $n$ has to cancel on its own side'
+          answer: 'The two sides agree for every $n$, so slopes and constants must match'
+          why: 'Two linear expressions in $n$ that are equal for all $n$ must have equal slopes and equal constants; that is why one equation gives $a$ and the other gives $b$.'
         exemplars:
-          - problem: 'Find a particular solution of $a_n = 3a_{n-1} + 4n$ (no initial condition needed).'
+          - problem: 'Find a particular solution of $a_n = 3a_{n-1} + 4n$ of the form $p_n = an + b$.'
             answer: '-2n - 3'
-            answer_contract: {kind: exact}
-            solution_sketch: '$an + b = 3(a(n-1) + b) + 4n$ gives $a = 3a + 4$ so $a = -2$, and $b = 3b - 3a$ so $2b = 3a = -6$, $b = -3$. Check at $n = 1$: $-5 = 3(-3) + 4$.'
-          - problem: "For the recurrence a_n = 2a_{n-1} + n with a_0 = 1, write the solution as a_n = A*2^n + Bn + C. Find A, B, and C. Give the answer as A = ...; B = ...; C = ...."
-            answer: "A = 3; B = -1; C = -2"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "A"}, {"contract": {"kind": "exact"}, "name": "B"}, {"contract": {"kind": "exact"}, "name": "C"}]}
-            solution_sketch: "The full solution is a_n = 3*2^n - n - 2. Step 1: Use undetermined coefficients with p_n = Bn + C. Substitute into a_n = 2a_{n-1} + n to get Bn + C = 2(B(n-1)+C) + n, which gives B = -1 and C = -2. Step 2: The homogeneous solution is A*2^n. Step 3: Apply a_0 = 1 to get A - 2 = 1, so A = 3. Therefore A = 3; B = -1; C = -2."
-          - problem: "Find a particular solution of a_n = 4a_{n-1} + 3n + 2."
-            answer: "-n - 2"
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The full particular solution is -n - 2. Step 1: Use undetermined coefficients and try p_n = Bn + C. Step 2: Substitute into the recurrence: Bn + C = 4(B(n-1)+C) + 3n + 2. Matching n-coefficients gives B = 4B + 3, so B = -1. Matching constants gives C = -4B + 4C + 2, so 3C = 4B - 2 = -6 and C = -2. Step 3: The particular solution is -n - 2, and substitution checks it."
-          - problem: "For the recurrence a_n = 4a_{n-1} + 3n + 2 with a_0 = 5, the solution has the form a_n = C*4^n - n - 2. Find C."
-            answer: "7"
+            solution_sketch: 'Substitute $p_n = an + b$ to get $an + b = 3(a(n-1) + b) + 4n$. Matching the coefficients of $n$ gives $a = 3a + 4$, so $a = -2$. Matching the constants gives $b = -3a + 3b$, so $2b = 3a = -6$ and $b = -3$. Hence $p_n = -2n - 3$.'
+          - problem: 'For $a_n = 2a_{n-1} + n$ with $a_0 = 1$, find $a_6$.'
+            answer: '184'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The full solution is a_n = 7*4^n - n - 2. Step 1: A particular solution is p_n = -n - 2 from undetermined coefficients. Step 2: The homogeneous part is C*4^n, so the general solution is a_n = C*4^n - n - 2. Step 3: Apply a_0 = 5: C - 2 = 5, so C = 7. The constant is 7."
-          - problem: "Which of these is a particular solution of a_n = 3a_{n-1} - 2n + 1?"
-            answer: "n+1"
-            answer_contract: {"kind": "label", "options": [["n+1"], ["-n+1"], ["n-1"], ["-n-1"]]}
-            solution_sketch: "The full particular solution is n+1. Step 1: Try p_n = Bn + C by undetermined coefficients. Step 2: Substitute: Bn + C = 3(B(n-1)+C) - 2n + 1. Matching n-terms gives B = 3B - 2, so B = 1. Matching constants gives C = -3B + 3C + 1, so C = 1. The particular solution is n+1. The option -n+1 has the wrong n-coefficient. The option n-1 has the wrong constant. The option -n-1 has both the wrong n-coefficient and the wrong constant. The correct option is n+1."
-          - problem: "For the recurrence a_n = 2a_{n-1} + 3n + 1 with a_0 = 4, find a_5 and a_6. Give the answer as a5 = ...; a6 = ...."
-            answer: "a5 = 330; a6 = 679"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "a5"}, {"contract": {"kind": "exact"}, "name": "a6"}]}
-            solution_sketch: "The full solution is a_n = 11*2^n - 3n - 7. Step 1: Use undetermined coefficients with p_n = Bn + C. Substitution into a_n = 2a_{n-1} + 3n + 1 gives Bn + C = 2(B(n-1)+C) + 3n + 1, so B = -3 and C = -7. Step 2: The homogeneous part is C0*2^n, so a_n = C0*2^n - 3n - 7. Step 3: Apply a_0 = 4: C0 - 7 = 4, so C0 = 11. Step 4: Compute a_5 = 11*32 - 15 - 7 = 330 and a_6 = 11*64 - 18 - 7 = 679. The answer is a5 = 330; a6 = 679."
+            solution_sketch: 'Try $p_n = an + b$: $a = 2a + 1$ gives $a = -1$, and $b = -2a + 2b$ gives $b = -2$. So $a_n = A \cdot 2^n - n - 2$, and $a_0 = A - 2 = 1$ gives $A = 3$. Then $a_6 = 3 \cdot 64 - 6 - 2 = 184$.'
+          - problem: 'Find a particular solution of $a_n = 4a_{n-1} + 3n + 2$.'
+            answer: '-n - 2'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Try $p_n = an + b$. Matching the coefficients of $n$ gives $a = 4a + 3$, so $a = -1$. Matching the constants gives $b = -4a + 4b + 2$, so $3b = 4a - 2 = -6$ and $b = -2$. Hence $p_n = -n - 2$.'
+          - problem: 'A colony has $5$ animals in week $0$. Each week the number of animals triples, and then $4n$ new animals arrive in week $n$. How many animals are there in week $4$?'
+            answer: '637'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The rule is $a_n = 3a_{n-1} + 4n$ with $a_0 = 5$. A particular solution is $-2n - 3$, so $a_n = A \cdot 3^n - 2n - 3$ and $a_0 = A - 3 = 5$ gives $A = 8$. Then $a_4 = 8 \cdot 81 - 8 - 3 = 637$.'
+          - problem: 'Is $p_n = n + 1$ a particular solution of $a_n = 3a_{n-1} - 2n + 1$?'
+            answer: 'yes'
+            answer_contract: {"kind": "label", "options": [["yes", "it is", "yes it is", "yes, it is", "it is a particular solution", "yes, it is a particular solution", "is a particular solution"], ["no", "it is not", "no it is not", "no, it is not", "it is not a particular solution", "no, it is not a particular solution", "not a particular solution", "not"]]}
+            solution_sketch: 'Substitute $p_{n-1} = n$ into the right side to get $3n - 2n + 1 = n + 1$. This equals $p_n$ for every $n$, so $p_n = n + 1$ is a particular solution.'
+          - problem: 'A tank holds $6$ litres at the end of day $0$. Each day half of the water drains away, and then $n$ litres are pumped in on day $n$. How much water does the tank hold at the end of day $4$?'
+            answer: '13/2'
+            answer_contract: {"kind": "unit", "quantity": "volume", "unit": "L", "allow_omitted": true}
+            solution_sketch: 'The rule is $a_n = \tfrac{1}{2}a_{n-1} + n$. Try $p_n = an + b$: $a = \tfrac{1}{2}a + 1$ gives $a = 2$, and $b = \tfrac{1}{2}(b - a)$ gives $b = -2$. So $a_n = A(1/2)^n + 2n - 2$ with $A = 8$, and $a_4 = 8/16 + 6 = 13/2$ litres.'
+          - problem: 'Sam finds the particular solution $p_n = 3n + 6$ for $a_n = 2a_{n-1} + 3n$. What is the correct particular solution?'
+            answer: '-3n - 6'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Try $p_n = an + b$. Matching the coefficients of $n$ gives $a = 2a + 3$, so $a = -3$. Matching the constants gives $b = -2a + 2b$, so $b = 2a = -6$. Sam lost both signs.'
+          - problem: 'For $a_n = 2a_{n-1} + 3n + 1$ with $a_0 = 4$, find $a_5$.'
+            answer: '330'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Try $p_n = an + b$: $a = 2a + 3$ gives $a = -3$, and $b = -2a + 2b + 1$ gives $b = -7$. So $a_n = A \cdot 2^n - 3n - 7$, and $a_0 = A - 7 = 4$ gives $A = 11$. Then $a_5 = 11 \cdot 32 - 15 - 7 = 330$.'
+          - problem: 'Is $p_n = n + 2$ a particular solution of $a_n = 2a_{n-1} - n + 3$?'
+            answer: 'no'
+            answer_contract: {"kind": "label", "options": [["yes", "it is", "yes it is", "yes, it is", "it is a particular solution", "yes, it is a particular solution", "is a particular solution"], ["no", "it is not", "no it is not", "no, it is not", "it is not a particular solution", "no, it is not a particular solution", "not a particular solution", "not"]]}
+            solution_sketch: 'Substitute $p_{n-1} = n + 1$ into the right side to get $2(n + 1) - n + 3 = n + 5$. This is not $n + 2$, so $p_n = n + 2$ is not a particular solution.'
         constraints: "forcing an + b with integer particular solutions; method of undetermined coefficients; verify by substitution; the item must test THIS KP: Linear forcing terms"
     diagnostic_exemplar:
       problem: 'Solve $a_n = 2a_{n-1} + n$ with $a_0 = 2$.'
@@ -404,57 +619,112 @@ topics:
       - id: kp1
         name: "From sequence to generating function"
         key_prerequisites: [geometric-series-finite-infinite]
+        step_check:
+          step: 'Write the generating function as a geometric series'
+          question: 'Why is $\sum_{n \ge 0} 3^n x^n$ the same as $\sum_{n \ge 0} (3x)^n$?'
+          options:
+            - 'Each term is $3$ times $x$ raised to $n$, so the $3$ is a fixed multiplier'
+            - 'The sum over $n$ lets us replace $3^n x^n$ by $3 \cdot x^n$ for every term'
+            - 'The exponents $3^n$ and $n$ add up, so the terms combine into $x^{3n}$'
+            - 'Because $3^n x^n = (3x)^n$, the series is geometric with ratio $3x$'
+          answer: 'Because $3^n x^n = (3x)^n$, the series is geometric with ratio $3x$'
+          why: 'A power of a product is the product of powers, so $3^n x^n = (3x)^n$; the geometric series formula then applies with ratio $r = 3x$.'
         exemplars:
-          - problem: 'What is the generating function of the constant sequence $1, 1, 1, \dots$?'
-            answer: '$1/(1 - x)$'
-            solution_sketch: 'The geometric series $\sum_{n \ge 0} x^n = 1/(1-x)$ as a formal power series.'
-          - problem: 'What is the generating function of $a_n = 2^n$, i.e. $1, 2, 4, 8, \dots$?'
-            answer: '$1/(1 - 2x)$'
-            solution_sketch: '$\sum_{n \ge 0} (2x)^n = 1/(1 - 2x)$.'
-          - problem: "A sequence has $a_n = 5^n$ for $n = 0, 1, 2, \\dots$, so it begins $1, 5, 25, 125, \\dots$. Give the generating function $A(x) = \\sum_{n \\ge 0} a_n x^n$ in closed form as a function of $x$."
-            answer: "1/(1-5x)"
-            answer_contract: {"kind": "function", "vars": ["x"]}
-            solution_sketch: "Definition step: the generating function is the formal sum $A(x) = \\sum_{n \\ge 0} 5^n x^n$, which expands as $1 + 5x + 25x^2 + 125x^3 + \\dots$. Geometric-series step: the summand is $(5x)^n$, so this is a geometric series in $5x$ and equals $1/(1 - 5x)$ as a formal power series. The generating function is 1/(1-5x)."
-          - problem: 'What is the generating function of the finite sequence $1, 1, 1$ (and $0$ afterwards)?'
-            answer: '$1 + x + x^2$'
-          - problem: "A finite sequence has terms 1, 1, 1, 1 and then 0 after that. Find its generating function."
-            answer: "1+x+x^2+x^3"
-            answer_contract: {"kind": "function", "vars": ["x"]}
-            solution_sketch: "Definition step: place each term at the corresponding power of x, so the terms 1, 1, 1, 1 give 1 + x + x^2 + x^3. Finiteness step: all later terms are 0, so the series stops at x^3. The generating function is 1+x+x^2+x^3."
-          - problem: "A finite sequence is 1, 0, 1, 0, 1 and then 0. Determine its generating function."
-            answer: "1+x^2+x^4"
-            answer_contract: {"kind": "function", "vars": ["x"]}
-            solution_sketch: "Definition step: the term at position k multiplies x^k, so the ones at positions 0, 2, and 4 give x^0 + x^2 + x^4. Zero-term step: the entries at positions 1 and 3 are 0 and add nothing. The generating function is 1+x^2+x^4."
-        constraints: "geometric sequences a^n and finite 0/1 sequences; formal power series, no convergence discussion"
+          - problem: 'Find the generating function of the sequence $a_n = 2^n$, that is $1, 2, 4, 8, \dots$.'
+            answer: '1/(1 - 2x)'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The generating function is $\sum_{n \ge 0} 2^n x^n = \sum_{n \ge 0} (2x)^n$. This is a geometric series with ratio $2x$. Its sum is $1/(1 - 2x)$.'
+          - problem: 'Find the generating function of the finite sequence $3, 0, 2, 5$, whose later terms are all $0$.'
+            answer: '3 + 2x^2 + 5x^3'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The term at position $k$ is the coefficient of $x^k$. The terms $3, 0, 2, 5$ give $3 + 0x + 2x^2 + 5x^3$. All later terms are $0$, so the series stops at $x^3$.'
+          - problem: 'A culture starts with $1$ cell, and the number of cells quadruples every hour. Let $a_n$ be the number of cells after $n$ hours. Find the generating function of $a_0, a_1, a_2, \dots$.'
+            answer: '1/(1 - 4x)'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The counts are $1, 4, 16, 64, \dots$, so $a_n = 4^n$. The generating function is $\sum_{n \ge 0} (4x)^n$, a geometric series with ratio $4x$. Its sum is $1/(1 - 4x)$.'
+          - problem: 'A ball is dropped from a height of $1$ metre, and each rebound reaches half the height of the one before. Let $a_n$ be the height of rebound $n$, with $a_0 = 1$. Find the generating function of $a_0, a_1, a_2, \dots$.'
+            answer: '1/(1 - x/2)'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The heights are $1, \tfrac{1}{2}, \tfrac{1}{4}, \dots$, so $a_n = (1/2)^n$. The generating function is $\sum_{n \ge 0} (x/2)^n$, a geometric series with ratio $x/2$. Its sum is $1/(1 - x/2)$, which equals $2/(2 - x)$.'
+          - problem: 'A sequence has generating function $1/(1 - 6x)$. What is $a_4$?'
+            answer: '1296'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Expand $1/(1 - 6x) = \sum_{n \ge 0} 6^n x^n$, so $a_n = 6^n$. Then $a_4 = 6^4 = 1296$.'
+          - problem: 'Sam says that the generating function of $a_n = 5^n$ is $1/(1 - x^5)$. What is the correct generating function?'
+            answer: '1/(1 - 5x)'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The terms are $5^n x^n = (5x)^n$, so the series is geometric with ratio $5x$. Its sum is $1/(1 - 5x)$. Sam put the $5$ as a power of $x$ instead of a multiplier of $x$.'
+          - problem: 'Find the generating function of the sequence $1, -1, 1, -1, \dots$.'
+            answer: '1/(1 + x)'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The terms are $a_n = (-1)^n$, so the series is $\sum_{n \ge 0} (-x)^n$. This is geometric with ratio $-x$. Its sum is $1/(1 - (-x)) = 1/(1 + x)$.'
+          - problem: 'Find the generating function of the sequence $0, 1, 2, 4, 8, \dots$, where $a_0 = 0$ and $a_n = 2^{n-1}$ for $n \ge 1$.'
+            answer: 'x/(1 - 2x)'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Every term sits one place later than in $1, 2, 4, 8, \dots$, so the series is $x$ times $\sum_{n \ge 0} (2x)^n$. That is $x \cdot 1/(1 - 2x) = x/(1 - 2x)$.'
+          - problem: 'Find the generating function of the finite sequence $1, 0, 1, 0, 1$, whose later terms are all $0$.'
+            answer: '1 + x^2 + x^4'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The ones are at positions $0$, $2$ and $4$, so they give $x^0 + x^2 + x^4$. The zeros at positions $1$ and $3$ add nothing. All later terms are $0$, so the series stops at $x^4$.'
+        constraints: "geometric sequences a^n with a rational, alternating and shifted geometric sequences, finite sequences; formal power series, no convergence discussion"
       - id: kp2
         name: "Products of generating functions count selections"
         key_prerequisites: [polynomial-multiplication, recurrence-relations]
+        step_check:
+          step: 'Multiply the two generating functions'
+          question: 'Why do we multiply the two generating functions instead of adding them?'
+          options:
+            - 'A selection takes one choice per factor, and exponents add, so products count totals'
+            - 'Adding the two factors would count only selections that use the first type of fruit'
+            - 'The coefficients of equal powers must be multiplied together, so factors cannot be added'
+            - 'Multiplying is shorter, and both ways always give the same final coefficients'
+          answer: 'A selection takes one choice per factor, and exponents add, so products count totals'
+          why: 'Choosing $i$ oranges and $j$ mangoes gives the term $x^i \cdot x^j = x^{i+j}$, so the product collects every pair of choices by its total size; addition would only list the choices separately.'
+        try_first:
+          problem: 'A bag holds at most $3$ red counters and at most $3$ blue counters. How many different bags hold exactly $5$ counters, where a bag is described by its number of red and blue counters?'
+          answer_contract: {"kind": "exact"}
+          answer: '2'
+          reveal: 'A bag with $r$ red and $b$ blue counters needs $r + b = 5$ with $r, b \le 3$, which gives $(2,3)$ and $(3,2)$. Multiplying generating functions does this pairing for you.'
         exemplars:
+          - problem: 'You may buy $0$ to $2$ apples and $0$ or $1$ banana. The coefficient of $x^k$ in the generating function counts the selections of $k$ fruits. Find the generating function and expand it.'
+            answer: '1 + 2x + 2x^2 + x^3'
+            answer_contract: {"kind": "required_form", "form": "expanded_polynomial"}
+            solution_sketch: 'Apples contribute $1 + x + x^2$ and bananas contribute $1 + x$. The generating function is the product $(1 + x + x^2)(1 + x)$. Multiplying out gives $1 + 2x + 2x^2 + x^3$.'
           - problem: 'The coefficient of $x^4$ in $(1 + x + x^2 + x^3 + x^4)^2$ counts the ways to write $4 = a + b$ with $0 \le a, b \le 4$. What is that coefficient?'
-            answer: "5"
-            solution_sketch: 'Each factor contributes an exponent $0$-$4$; the pairs are $(0,4), (1,3), (2,2), (3,1), (4,0)$.'
-          - problem: 'You may buy $0$-$2$ apples and $0$-$1$ bananas. Form the generating function whose $x^k$ coefficient counts fruit selections of size $k$, and give it fully expanded.'
-            answer: '$1 + 2x + 2x^2 + x^3$'
-            solution_sketch: 'The generating function is $(1 + x + x^2)(1 + x)$; multiplying out gives $1 + 2x + 2x^2 + x^3$ — e.g. selections of size $2$ are (2 apples) or (1 apple, 1 banana), coefficient $2$.'
-          - problem: "The coefficient of $x^3$ in $(1 + x + x^2 + x^3)(1 + x + x^2)$ counts the ways to choose $3$ items when the first type allows $0$ to $3$ and the second allows $0$ to $2$. What is that coefficient?"
-            answer: "3"
+            answer: '5'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The product is $(1 + x + x^2 + x^3)(1 + x + x^2)$. Step 1, polynomial multiplication: the exponent pairs adding to 3 are (1,2), (2,1), and (3,0). Step 2, count the pairs: there are three pairs, so the coefficient is 3."
-          - problem: "You may buy $0$ or $1$ apple, $0$ to $2$ bananas, and $0$ or $1$ cherry. The $x^k$ coefficient of the product counts selections of $k$ fruits. Give the fully expanded generating function."
-            answer: "1+3x+4x^2+3x^3+x^4"
+            solution_sketch: 'Each factor contributes an exponent from $0$ to $4$. The pairs with sum $4$ are $(0,4), (1,3), (2,2), (3,1), (4,0)$, which is $5$ pairs.'
+          - problem: 'The coefficient of $x^3$ in $(1 + x + x^2 + x^3)(1 + x + x^2)$ counts the ways to choose $3$ items when the first type allows $0$ to $3$ and the second allows $0$ to $2$. What is that coefficient?'
+            answer: '3'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The full product is $(1+x)(1+x+x^2)(1+x)$. Step 1, polynomial multiplication: $(1+x)(1+x+x^2)=1+2x+2x^2+x^3$. Step 2, polynomial multiplication again: $(1+2x+2x^2+x^3)(1+x)=1+3x+4x^2+3x^3+x^4$. The fully expanded generating function is 1+3x+4x^2+3x^3+x^4."
-          - problem: "The coefficient of $x^4$ in $(1 + x + x^2)^3$ counts the selections of $4$ items from three types, each allowing $0$ to $2$ items. What is that coefficient?"
-            answer: "6"
+            solution_sketch: 'The exponent pairs with sum $3$ are $(1,2)$, $(2,1)$ and $(3,0)$, because the second exponent is at most $2$. There are $3$ pairs, so the coefficient is $3$.'
+          - problem: 'A snack pack holds $0$ to $2$ crackers, $0$ or $1$ cheese slice, and $0$ to $3$ grapes. The coefficient of $x^k$ counts the packs with $k$ items. Find the generating function and expand it.'
+            answer: '1 + 3x + 5x^2 + 6x^3 + 5x^4 + 3x^5 + x^6'
+            answer_contract: {"kind": "required_form", "form": "expanded_polynomial"}
+            solution_sketch: 'The generating function is $(1 + x + x^2)(1 + x)(1 + x + x^2 + x^3)$. The first two factors give $1 + 2x + 2x^2 + x^3$. Multiplying by the third factor gives $1 + 3x + 5x^2 + 6x^3 + 5x^4 + 3x^5 + x^6$.'
+          - problem: 'A box holds $4$ items, each a muffin or a cookie, with at most $3$ cookies. How many different boxes are possible, where a box is described by its numbers of muffins and cookies?'
+            answer: '4'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The full generating function is $(1+x+x^2)^3$. Step 1, polynomial multiplication: the triples of exponents from 0 to 2 adding to 4 are (0,2,2), (1,1,2), (1,2,1), (2,0,2), (2,1,1), and (2,2,0). Step 2, count the triples: there are six triples, so the coefficient is 6."
-          - problem: "A snack pack may have $0$ to $2$ crackers, $0$ or $1$ cheese, and $0$ to $3$ grapes. The $x^k$ coefficient of the product counts packs with $k$ items. Give the fully expanded generating function."
-            answer: "1+3x+5x^2+6x^3+5x^4+3x^5+x^6"
+            solution_sketch: 'Muffins contribute $1 + x + x^2 + x^3 + x^4$ and cookies contribute $1 + x + x^2 + x^3$. The coefficient of $x^4$ counts the pairs (muffins, cookies) with sum $4$ and at most $3$ cookies. These are $(4,0), (3,1), (2,2), (1,3)$, so there are $4$ boxes.'
+          - problem: 'In how many ways can two dice show a total of $7$ when the dice are told apart?'
+            answer: '6'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The full product is $(1+x+x^2)(1+x)(1+x+x^2+x^3)$. Step 1, polynomial multiplication: $(1+x+x^2)(1+x)=1+2x+2x^2+x^3$. Step 2, polynomial multiplication again: $(1+2x+2x^2+x^3)(1+x+x^2+x^3)=1+3x+5x^2+6x^3+5x^4+3x^5+x^6$. The fully expanded generating function is 1+3x+5x^2+6x^3+5x^4+3x^5+x^6."
+            solution_sketch: 'Each die contributes $x + x^2 + x^3 + x^4 + x^5 + x^6$. The coefficient of $x^7$ in the square counts the pairs with total $7$. They are $(1,6), (2,5), (3,4), (4,3), (5,2), (6,1)$, so there are $6$ ways.'
+          - problem: 'Sam says the generating function for $0$ to $3$ apples and $0$ or $1$ banana is $(1 + x + x^2 + x^3) + (1 + x) = 2 + 2x + x^2 + x^3$. What is the correct generating function, expanded?'
+            answer: '1 + 2x + 2x^2 + 2x^3 + x^4'
+            answer_contract: {"kind": "required_form", "form": "expanded_polynomial"}
+            solution_sketch: 'A selection takes one choice from each type, and the exponents add, so the factors are multiplied and not added. The product is $(1 + x + x^2 + x^3)(1 + x) = 1 + 2x + 2x^2 + 2x^3 + x^4$.'
+          - problem: 'You may take $0$ or $1$ apple, $0$ to $2$ bananas, and $0$ or $1$ cherry. The coefficient of $x^k$ counts the selections of $k$ fruits. Find the generating function and expand it.'
+            answer: '1 + 3x + 4x^2 + 3x^3 + x^4'
+            answer_contract: {"kind": "required_form", "form": "expanded_polynomial"}
+            solution_sketch: 'The generating function is $(1 + x)(1 + x + x^2)(1 + x)$. The first two factors give $1 + 2x + 2x^2 + x^3$. Multiplying by $1 + x$ gives $1 + 3x + 4x^2 + 3x^3 + x^4$.'
+          - problem: 'The coefficient of $x^5$ in $(1 + x + x^2 + x^3)^3$ counts the selections of $5$ items from three types, each allowing $0$ to $3$ items. What is that coefficient?'
+            answer: '12'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The triples of exponents from $0$ to $3$ with sum $5$ are the arrangements of $(3,2,0)$, $(3,1,1)$ and $(2,2,1)$. There are $6$, $3$ and $3$ of them, so the coefficient is $12$.'
         constraints: "2-3 factors, all polynomial (finite choices); interpret one coefficient combinatorially"
     diagnostic_exemplar:
-      problem: 'You may buy $0$-$3$ apples and $0$-$2$ bananas. Form the generating function whose $x^k$ coefficient counts fruit selections of size $k$, and give it fully expanded.'
+      problem: 'You may buy $0$-$3$ apples and $0$-$2$ bananas. Form the generating function whose $x^k$ coefficient counts fruit selections of size $k$, and expand it.'
       answer: '$1 + 2x + 3x^2 + 3x^3 + 2x^4 + x^5$'
       solution_sketch: '$(1 + x + x^2 + x^3)(1 + x + x^2)$, expanded.'
     anki_seeds:
@@ -486,56 +756,112 @@ topics:
       - id: kp1
         name: "Geometric series and shifts"
         key_prerequisites: [generating-functions-intro]
+        step_check:
+          step: 'Expand the series'
+          question: 'Why does the series for $x/(1 - 3x)$ start $x + 3x^2 + 9x^3 + \dots$?'
+          options:
+            - 'The ratio $3$ is applied to $x$ once, so every power of $x$ gets only the factor $3$'
+            - '$1/(1 - 3x) = 1 + 3x + 9x^2 + \dots$, and the factor $x$ shifts each term up one power'
+            - 'The numerator $x$ replaces the first term of the series, so $1$ is dropped from it'
+            - 'The coefficients of $1/(1 - 3x)$ are $1, 3, 6, 9, \dots$, and $x$ adds one to every power'
+          answer: '$1/(1 - 3x) = 1 + 3x + 9x^2 + \dots$, and the factor $x$ shifts each term up one power'
+          why: 'Multiplying a series by $x$ raises every exponent by one and leaves the coefficients alone, so the powers of $3$ stay and each lands one place later.'
         exemplars:
           - problem: 'Find the coefficient of $x^4$ in $\dfrac{1}{1 - 2x}$.'
-            answer: "16"
-            solution_sketch: '$1/(1 - 2x) = \sum 2^n x^n$, so $[x^4] = 2^4 = 16$.'
+            answer: '16'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The geometric series gives $1/(1 - 2x) = \sum_{n \ge 0} 2^n x^n$. The coefficient of $x^4$ is the term with $n = 4$, which is $2^4 = 16$.'
           - problem: 'Find the coefficient of $x^5$ in $\dfrac{x^2}{1 - x}$.'
-            answer: "1"
-            solution_sketch: '$x^2/(1-x) = x^2 + x^3 + x^4 + \dots$; every coefficient from $x^2$ on is $1$.'
-          - problem: "Find the coefficient of $x^5$ in $\\dfrac{x^2}{1 - 3x}$."
-            answer: "27"
+            answer: '1'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Write $x^2/(1 - 3x) = x^2 \\sum_{n \\ge 0} (3x)^n = \\sum_{n \\ge 0} 3^n x^{n+2}$. The coefficient of $x^5$ needs $n + 2 = 5$, so $n = 3$. The geometric series rule gives $3^3 = 27$."
-          - problem: "Find the coefficient of $x^4$ in $\\dfrac{x}{1 + 2x}$."
-            answer: "-8"
+            solution_sketch: 'Write $x^2/(1 - x) = x^2 + x^3 + x^4 + \dots$. Every coefficient from $x^2$ onward is $1$, so the coefficient of $x^5$ is $1$.'
+          - problem: 'Find the coefficient of $x^5$ in $\dfrac{x^2}{1 - 3x}$.'
+            answer: '27'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Write $x/(1 + 2x) = x \\sum_{n \\ge 0} (-2x)^n = \\sum_{n \\ge 0} (-2)^n x^{n+1}$. The coefficient of $x^4$ needs $n + 1 = 4$, so $n = 3$. The geometric series rule gives $(-2)^3 = -8$."
-          - problem: "Find the coefficient of $x^3$ in $\\dfrac{1}{1 + 3x}$."
-            answer: "-27"
+            solution_sketch: 'Write $x^2/(1 - 3x) = x^2 \sum_{n \ge 0} (3x)^n = \sum_{n \ge 0} 3^n x^{n+2}$. The power $x^5$ needs $n + 2 = 5$, so $n = 3$. The coefficient is $3^3 = 27$.'
+          - problem: 'Find the coefficient of $x^4$ in $\dfrac{x}{1 + 2x}$.'
+            answer: '-8'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Write $1/(1 + 3x) = \\sum_{n \\ge 0} (-3x)^n = \\sum_{n \\ge 0} (-3)^n x^n$. The coefficient of $x^3$ is the $n = 3$ term. The geometric series rule gives $(-3)^3 = -27$."
-          - problem: "Find the coefficient of $x^6$ in $\\dfrac{x^3}{1 - 2x}$."
-            answer: "8"
+            solution_sketch: 'Write $x/(1 + 2x) = x \sum_{n \ge 0} (-2x)^n = \sum_{n \ge 0} (-2)^n x^{n+1}$. The power $x^4$ needs $n + 1 = 4$, so $n = 3$. The coefficient is $(-2)^3 = -8$.'
+          - problem: 'The number of cells in a culture in week $n$ is the coefficient of $x^n$ in $\dfrac{3x}{1 - 2x}$. How many cells are there in week $6$?'
+            answer: '96'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Write $x^3/(1 - 2x) = x^3 \\sum_{n \\ge 0} (2x)^n = \\sum_{n \\ge 0} 2^n x^{n+3}$. The coefficient of $x^6$ needs $n + 3 = 6$, so $n = 3$. The geometric series rule gives $2^3 = 8$."
+            solution_sketch: 'Write $3x/(1 - 2x) = \sum_{n \ge 0} 3 \cdot 2^n x^{n+1}$. Week $6$ needs $n + 1 = 6$, so $n = 5$. The number of cells is $3 \cdot 2^5 = 96$.'
+          - problem: 'A rope has length $1$ metre. The length of the piece kept after $n$ cuts is the coefficient of $x^n$ in $\dfrac{1}{1 - x/2}$. What is the length of the piece after $5$ cuts?'
+            answer: '1/32'
+            answer_contract: {"kind": "unit", "quantity": "length", "unit": "m", "allow_omitted": true}
+            solution_sketch: 'Write $1/(1 - x/2) = \sum_{n \ge 0} (1/2)^n x^n$, so each cut halves the length. After $5$ cuts the coefficient is $(1/2)^5 = 1/32$ metre.'
+          - problem: 'Find the coefficient of $x^3$ in $\dfrac{1}{1 + 3x}$.'
+            answer: '-27'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Write $1/(1 + 3x) = \sum_{n \ge 0} (-3x)^n = \sum_{n \ge 0} (-3)^n x^n$. The coefficient of $x^3$ is the term with $n = 3$, which is $(-3)^3 = -27$.'
+          - problem: 'Find the coefficient of $x^6$ in $\dfrac{x^3}{1 - 2x}$.'
+            answer: '8'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Write $x^3/(1 - 2x) = x^3 \sum_{n \ge 0} (2x)^n = \sum_{n \ge 0} 2^n x^{n+3}$. The power $x^6$ needs $n + 3 = 6$, so $n = 3$. The coefficient is $2^3 = 8$.'
+          - problem: 'The coefficient of $x^n$ in $\dfrac{1}{1 - 3x}$ is $729$. Find $n$.'
+            answer: '6'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The coefficient of $x^n$ in $1/(1 - 3x)$ is $3^n$. Since $3^6 = 729$, the value is $n = 6$.'
+          - problem: 'Sam says the coefficient of $x^3$ in $\dfrac{1}{1 + 2x}$ is $8$. What is the correct coefficient?'
+            answer: '-8'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Write $1/(1 + 2x) = \sum_{n \ge 0} (-2x)^n$, so the coefficient of $x^3$ is $(-2)^3 = -8$. Sam used the ratio $2$ and lost the minus sign.'
         constraints: "1/(1-ax) with |a| <= 3, multiplied by a monomial shift x^k, k <= 3"
       - id: kp2
         name: "Negative binomial series 1/(1-x)^k"
         key_prerequisites: [generating-functions-intro]
+        step_check:
+          step: 'Apply the formula'
+          question: 'Why is the coefficient of $x^n$ in $1/(1 - x)^k$ equal to $\binom{n + k - 1}{n}$?'
+          options:
+            - 'It is the number of subsets of size $n$ taken from $n + k$ distinct objects'
+            - 'Each of the $k$ factors adds $1$ to the exponent, so the count is $n$ choose $k$'
+            - 'It counts ways to split $n$ identical items among $k$ groups (stars and bars)'
+            - 'It is the $n$th term of the binomial expansion of $(1 - x)^k$ with the signs all removed'
+          answer: 'It counts ways to split $n$ identical items among $k$ groups (stars and bars)'
+          why: 'Each factor $1/(1 - x)$ lets one group take any number of items, so the coefficient of $x^n$ counts the ways to split $n$ items among $k$ groups, namely $\binom{n+k-1}{n}$.'
         exemplars:
           - problem: 'Find the coefficient of $x^3$ in $\dfrac{1}{(1 - x)^2}$.'
-            answer: "4"
-            solution_sketch: '$1/(1-x)^2 = \sum_{n \ge 0} (n + 1) x^n$, so $[x^3] = 4$.'
+            answer: '4'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The series is $1/(1 - x)^2 = \sum_{n \ge 0} (n + 1) x^n$. For $n = 3$ the coefficient is $3 + 1 = 4$.'
           - problem: 'Find the coefficient of $x^5$ in $\dfrac{1}{(1 - x)^3}$.'
-            answer: "21"
-            solution_sketch: '$[x^n] (1-x)^{-k} = \binom{n + k - 1}{n}$: here $\binom{7}{5} = 21$. (This matches stars and bars: solutions of $a + b + c = 5$.)'
-          - problem: "Find the coefficient of x^7 in 1/(1 - x)^2."
-            answer: "8"
+            answer: '21'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Use the negative binomial series: 1/(1 - x)^2 = sum over n of (n + 1) x^n. Compare x^7 with x^n to get n = 7. The coefficient is n + 1 = 8."
-          - problem: "Find the coefficient of x^4 in 1/(1 - x)^3."
-            answer: "15"
+            solution_sketch: 'The coefficient of $x^n$ in $1/(1 - x)^k$ is $\binom{n + k - 1}{n}$. Here $n = 5$ and $k = 3$, so it is $\binom{7}{5} = 21$.'
+          - problem: 'Find the coefficient of $x^7$ in $\dfrac{1}{(1 - x)^2}$.'
+            answer: '8'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Use the negative binomial series: 1/(1 - x)^3 = sum over n of C(n + 2, n) x^n. Here n = 4, so the coefficient is C(4 + 2, 4). Compute C(6, 4) = 15, so the coefficient is 15."
-          - problem: "The coefficient of x^6 in 1/(1 - x)^3 counts the nonnegative integer solutions of a + b + c = 6. Find that coefficient."
-            answer: "28"
+            solution_sketch: 'The series is $1/(1 - x)^2 = \sum_{n \ge 0} (n + 1) x^n$. For $n = 7$ the coefficient is $7 + 1 = 8$.'
+          - problem: 'Find the coefficient of $x^4$ in $\dfrac{1}{(1 - x)^3}$.'
+            answer: '15'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Use the negative binomial series: 1/(1 - x)^3 = sum over n of C(n + 2, n) x^n. The coefficient of x^6 is C(6 + 2, 6), which matches the stars-and-bars count. Compute C(8, 6) = 28, so the coefficient is 28."
-          - problem: "The coefficient of x^n in 1/(1 - x)^2 is 9. Find n."
-            answer: "8"
+            solution_sketch: 'The coefficient of $x^n$ in $1/(1 - x)^3$ is $\binom{n + 2}{n}$. For $n = 4$ it is $\binom{6}{4} = 15$.'
+          - problem: 'How many solutions in nonnegative integers does $a + b + c = 6$ have? It is the coefficient of $x^6$ in $\dfrac{1}{(1 - x)^3}$.'
+            answer: '28'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Use the negative binomial series: 1/(1 - x)^2 = sum over n of (n + 1) x^n. Thus the coefficient of x^n is n + 1, so solve n + 1 = 9. This gives n = 8."
+            solution_sketch: 'Each variable contributes $1/(1 - x)$, so the count is the coefficient of $x^6$ in $1/(1 - x)^3$. That is $\binom{8}{6} = 28$, which agrees with stars and bars.'
+          - problem: 'Sam says the coefficient of $x^5$ in $\dfrac{1}{(1 - x)^4}$ is $\binom{9}{5} = 126$. What is the correct coefficient?'
+            answer: '56'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The coefficient of $x^n$ in $1/(1 - x)^k$ is $\binom{n + k - 1}{n}$. For $n = 5$ and $k = 4$ this is $\binom{8}{5} = 56$. Sam used $n + k$ instead of $n + k - 1$.'
+          - problem: 'In how many ways can $5$ identical cookies be given to $3$ children if a child may receive none?'
+            answer: '21'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Let $c_1 + c_2 + c_3 = 5$ with each $c_i \ge 0$. The count is the coefficient of $x^5$ in $1/(1 - x)^3$, which is $\binom{7}{5} = 21$.'
+          - problem: 'A teacher gives out $4$ identical prizes among $4$ students. A student may receive several prizes or none. In how many ways can the prizes be given out?'
+            answer: '35'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'This counts the nonnegative solutions of $s_1 + s_2 + s_3 + s_4 = 4$. That is the coefficient of $x^4$ in $1/(1 - x)^4$, which is $\binom{7}{4} = 35$.'
+          - problem: 'In how many ways can $10$ identical sweets be shared among $3$ children if each child gets at least one sweet?'
+            answer: '36'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Give each child one sweet first, which leaves $7$ sweets to share freely. That is the coefficient of $x^7$ in $1/(1 - x)^3$, which is $\binom{9}{7} = 36$.'
+          - problem: 'The coefficient of $x^n$ in $\dfrac{1}{(1 - x)^2}$ is $9$. Find $n$.'
+            answer: '8'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The coefficient of $x^n$ in $1/(1 - x)^2$ is $n + 1$. Solving $n + 1 = 9$ gives $n = 8$.'
         constraints: "k = 2 or 3, n <= 8; formula C(n+k-1, n); connect to stars and bars"
     diagnostic_exemplar:
       problem: 'Find the coefficient of $x^4$ in $\dfrac{1}{(1 - x)^2}$.'

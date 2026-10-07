@@ -24,89 +24,160 @@ topics:
       - id: kp1
         name: Scalar fields and the axiom list
         key_prerequisites: [vectors-in-rn]
+        step_check:
+          step: 'computing each side separately'
+          question: 'Why do we compute the two sides of the axiom separately?'
+          options:
+            - 'The left side needs vector addition, but the right side needs no addition'
+            - 'The two sides are different vectors, so we measure how far apart they are'
+            - 'The axiom is an equation, so we find each side alone and then compare them'
+            - 'Only the right side can be computed, so the left side is defined to match it'
+          answer: 'The axiom is an equation, so we find each side alone and then compare them'
+          why: 'An axiom states that two expressions are equal, so the check is to evaluate both and see that the same vector comes out.'
         exemplars:
-          - problem: "The scalars of a vector space must form a field, meaning addition, subtraction, multiplication, and division by nonzero elements all stay inside the set. Take the sets of integers, rationals, reals, and complex numbers with their usual operations. How many of these four sets are fields?"
-            answer: "3"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "A field must be closed under addition, subtraction, multiplication, and division by nonzero elements (field requirements). The integers fail because 2 has no multiplicative inverse in the integers. The rationals, reals, and complex numbers each pass all four requirements, so the count is 3."
-          - problem: "The set of integers with its usual addition and multiplication is proposed as the scalar set of a vector space. Field membership is decided by one failing operation. State whether the integers form a field, and give the smallest positive integer that has no multiplicative inverse in the integers."
-            answer: "verdict = not; n = 2"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["field"], ["not"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "n"}]}
-            solution_sketch: "Check each field operation for the integers: sums, differences, and products of integers stay in the set, so those pass. Multiplicative inverses fail, since 1/2 is not an integer, and 2 is the smallest positive integer without an inverse in the set. Therefore the verdict is not, and the smallest such integer is 2."
-          - problem: "In R^2, the axiom c(u + v) = cu + cv is checked with c = 2, u = (1, -2), v = (0, 1), all entries integers. Compute the left-hand side c(u + v) and give the answer as (x, y)."
-            answer: "(2, -2)"
-            answer_contract: {"arity": 2, "kind": "coordinates"}
-            solution_sketch: "First add the vectors by componentwise addition: u + v = (1, -2) + (0, 1) = (1, -1). Then scale by the scalar: c(u + v) = 2 * (1, -1) = (2, -2). The left-hand side of the distributivity axiom equals (2, -2)."
-          - problem: "In R^2, the axiom c(du) = (cd)u is checked with c = -1, d = 2, u = (-1, 0), all entries integers. Compute the left-hand side c(du) and give the answer as (x, y)."
-            answer: "(2, 0)"
-            answer_contract: {"arity": 2, "kind": "coordinates"}
-            solution_sketch: "First scale the vector by the inner scalar: du = 2 * (-1, 0) = (-2, 0). Then apply the outer scalar: c(du) = -1 * (-2, 0) = (2, 0). The scalar associativity check gives (2, 0)."
-          - problem: "The nonnegative rational numbers with the usual addition and multiplication are proposed as the scalars of a vector space. Field membership is decided by one failing operation. Which field requirement fails for this set?"
-            answer: "additive inverses"
-            answer_contract: {"kind": "label", "options": [["closure under addition"], ["additive inverses"], ["multiplicative inverses"], ["commutativity of multiplication"]]}
-            solution_sketch: "Check each requirement. Sums of nonnegative rationals stay nonnegative, so closure under addition holds; each positive rational q has inverse 1/q, also nonnegative, so multiplicative inverses hold; products commute. The failing operation is additive inverses: for 1 there is no nonnegative w with 1 + w = 0. The wrong options fail as follows: closure under addition actually holds, multiplicative inverses actually hold, and commutativity of multiplication holds for all rationals. The correct answer is additive inverses."
-          - problem: "In R^2, the additive inverse axiom states that for each u there is a vector w with u + w = (0, 0). For u = (3, -1), find w and give the answer as (x, y)."
-            answer: "(-3, 1)"
-            answer_contract: {"arity": 2, "kind": "coordinates"}
-            solution_sketch: "The additive inverse axiom requires a vector w with u + w = (0, 0). Solve componentwise: 3 + x = 0 gives x = -3, and -1 + y = 0 gives y = 1. The required vector is (-3, 1)."
-        constraints: "field membership decided by one failing operation; axiom checks in R^2 with integer entries in -3..3"
+          - problem: 'Each of the sets $\mathbb{Z}$, $\mathbb{Q}$, $\mathbb{R}$ and $\mathbb{C}$, with the usual addition and multiplication, is a candidate for the scalars of a vector space. Which one of them is not a field?'
+            answer: 'the integers'
+            answer_contract: {"kind":"label","options":[["the integers","integers","Z","the integer numbers","the integers are not a field","Z is not a field","the set of integers","ℤ"],["the rationals","rationals","Q","the rational numbers"],["the reals","reals","R","the real numbers"],["the complex numbers","complex numbers","C","the complexes"]]}
+            solution_sketch: 'A field needs a multiplicative inverse for every nonzero element. In the integers the element $2$ has no inverse, because $1/2$ is not an integer, so the integers are not a field. The rationals, the reals and the complex numbers contain $1/a$ for every nonzero $a$ and pass the other requirements as well.'
+          - problem: 'In $\mathbb{R}^2$ take $c = 2$, $\mathbf{u} = (1, -2)$ and $\mathbf{v} = (0, 1)$. Compute $c(\mathbf{u} + \mathbf{v})$, the left side of the axiom $c(\mathbf{u} + \mathbf{v}) = c\mathbf{u} + c\mathbf{v}$.'
+            answer: '(2, -2)'
+            answer_contract: {"kind":"coordinates","arity":2}
+            solution_sketch: 'Add the vectors componentwise: $\mathbf{u} + \mathbf{v} = (1, -2) + (0, 1) = (1, -1)$. Then scale each entry by $2$, which gives $(2, -2)$.'
+          - problem: 'Two spice blends, measured in grams of salt, pepper and paprika, are $\mathbf{u} = (2, 1, 0)$ and $\mathbf{v} = (1, 3, 2)$. A cook mixes one portion of each blend and then prepares three batches of the mixture. How many grams of salt, pepper and paprika does she use in total?'
+            answer: '(9, 12, 6)'
+            answer_contract: {"kind":"coordinates","arity":3}
+            solution_sketch: 'One portion of the mixture is $\mathbf{u} + \mathbf{v} = (3, 4, 2)$. Three batches use $3(3, 4, 2) = (9, 12, 6)$ grams. The axiom $c(\mathbf{u} + \mathbf{v}) = c\mathbf{u} + c\mathbf{v}$ says that three batches of each blend, added together, give the same total.'
+          - problem: 'The integers modulo $5$, with addition and multiplication taken modulo $5$, form a field. Find the multiplicative inverse of $3$ in this field.'
+            answer: '2'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The inverse of $3$ is the element $w$ with $3w$ leaving remainder $1$ on division by $5$. Since $3 \cdot 2 = 6$ and $6 = 5 + 1$, the element $2$ works. No other element of the field fits, so the inverse is $2$.'
+          - problem: 'The nonnegative rational numbers, with the usual addition and multiplication, are proposed as the scalars of a vector space. Which field requirement fails for this set?'
+            answer: 'additive inverses'
+            answer_contract: {"kind":"label","options":[["additive inverses","additive inverse","negatives","existence of negatives","no additive inverses","the additive inverses","the additive inverse axiom"],["closure under addition","closure","closed under addition"],["multiplicative inverses","multiplicative inverse","reciprocals"],["commutativity of multiplication","commutativity","commutative law"]]}
+            solution_sketch: 'Sums of nonnegative rationals stay nonnegative, each positive rational $q$ has the inverse $1/q$, and products commute. The requirement that fails is additive inverses: for $1$ there is no nonnegative $w$ with $1 + w = 0$. Hence the answer is additive inverses.'
+          - problem: 'A crate is moved by the displacement $\mathbf{u} = (3, -1)$ metres. A first conveyor stretches every displacement by the factor $2$, and a second conveyor then stretches it by the factor $3$. What is the total displacement of the crate?'
+            answer: '(18, -6)'
+            answer_contract: {"kind":"coordinates","arity":2}
+            solution_sketch: 'The first conveyor gives $2\mathbf{u} = (6, -2)$ and the second gives $3(6, -2) = (18, -6)$. The axiom $c(d\mathbf{u}) = (cd)\mathbf{u}$ says the same result comes from the single factor $6$, since $6(3, -1) = (18, -6)$.'
+          - problem: 'In $\mathbb{R}^2$ the additive-inverse axiom says that every vector $\mathbf{u}$ has a vector $\mathbf{w}$ with $\mathbf{u} + \mathbf{w} = (0, 0)$. Find $\mathbf{w}$ for $\mathbf{u} = (3, -1)$.'
+            answer: '(-3, 1)'
+            answer_contract: {"kind":"coordinates","arity":2}
+            solution_sketch: 'Solve componentwise: $3 + x = 0$ gives $x = -3$, and $-1 + y = 0$ gives $y = 1$. The required vector is $(-3, 1)$.'
+          - problem: 'In $\mathbb{R}^2$ take $c = -1$, $d = 2$ and $\mathbf{u} = (-1, 0)$. Compute $c(d\mathbf{u})$, the left side of the axiom $c(d\mathbf{u}) = (cd)\mathbf{u}$.'
+            answer: '(2, 0)'
+            answer_contract: {"kind":"coordinates","arity":2}
+            solution_sketch: 'First scale by the inner scalar: $d\mathbf{u} = 2(-1, 0) = (-2, 0)$. Then apply the outer scalar: $c(d\mathbf{u}) = -1 \cdot (-2, 0) = (2, 0)$.'
+          - problem: 'A mixture of three ingredients has the quantities $\mathbf{u} = (6, 9, 12)$ grams. The mixture is divided into three equal portions. What are the quantities in one portion?'
+            answer: '(2, 3, 4)'
+            answer_contract: {"kind":"coordinates","arity":3}
+            solution_sketch: 'Dividing into three equal portions means multiplying by the scalar $1/3$, which exists because the scalars form a field. So one portion is $\tfrac13(6, 9, 12) = (2, 3, 4)$ grams.'
+        constraints: "field questions use Z, Q, R, C or the integers modulo 5; axiom checks in R^2 and R^3 with integer entries"
       - id: kp2
         name: Verifying and refuting the axioms in unfamiliar sets
         key_prerequisites: [subspace-test]
+        step_check:
+          step: 'pin it down with a concrete counterexample'
+          question: 'Why is one concrete vector enough to show that the identity axiom fails?'
+          options:
+            - 'An axiom must hold for every vector, so one vector where it fails breaks it'
+            - 'The axiom is only ever tested on one vector, so a single check settles it'
+            - 'A counterexample also proves that the other axioms hold, so no more tests are needed'
+            - 'The vector $(3, 5)$ is the only vector for which the axiom could fail'
+          answer: 'An axiom must hold for every vector, so one vector where it fails breaks it'
+          why: 'The axioms are demands for all vectors and all scalars, so one input that violates an axiom is a complete refutation.'
         exemplars:
-          - problem: "Let $V = \\mathbb{R}^2$ with the usual addition and the usual zero vector $(0, 0)$, but scalar multiplication $c \\odot (x, y) = (cx, 0)$. Check the axioms with concrete vectors. Which axiom fails?"
-            answer: "the axiom 1v = v"
-            answer_contract: {"kind": "label", "options": [["the axiom 1v = v"], ["the axiom c(u + w) = cu + cw"], ["the axiom u + w = w + u"], ["the axiom (u + w) + t = u + (w + t)"]]}
-            solution_sketch: "Step 1 (test the scalar distributive axiom): the option 'the axiom c(u + w) = cu + cw' holds, since c odot ((x, y) + (u, v)) = (c(x + u), 0) = (cx, 0) + (cu, 0); picking it is the error of testing only vectors with second coordinate 0. Step 2 (test the addition axioms): the options 'the axiom u + w = w + u' and 'the axiom (u + w) + t = u + (w + t)' both hold because the addition is the usual one; picking either is the error of confusing the modified scalar multiplication with the addition. Step 3 (identity axiom, concrete counterexample): 1 odot (2, 3) = (2, 0) which differs from (2, 3). The failing axiom is the axiom 1v = v."
-          - problem: "In $V = \\mathbb{R}^{>0}$ with $x \\oplus y = xy$ and $c \\odot x = x^c$, consider the axiom $c \\odot (x \\oplus y) = (c \\odot x) \\oplus (c \\odot y)$. Compute the left side and the right side with $c = 3$, $x = 2$, $y = 5$. Give the answer as left = value; right = value."
-            answer: "left = 1000; right = 1000"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "left"}, {"contract": {"kind": "exact"}, "name": "right"}]}
-            solution_sketch: "Full result: the left side and the right side both equal 1000, so the axiom holds for these values. Step 1 (definition of the operations on the left side): x plus y is 2 * 5 = 10, so c odot (x plus y) = 3 odot 10 = 10^3 = 1000. Step 2 (right side, exponent product rule): (c odot x) plus (c odot y) = 2^3 plus 5^3 = 8 plus 125 = 8 * 125 = 1000, since (xy)^c = x^c y^c. The two sides agree. The answer is left = 1000; right = 1000."
-          - problem: 'In the same space $V = \mathbb{R}^{>0}$ with $x \oplus y = xy$, which element plays the role of the zero vector?'
-            answer: "1"
-            solution_sketch: 'Need $x \oplus \mathbf{0} = x$ for all $x$: $x \cdot 1 = x$, so the number $1$ is the zero vector of $V$.'
-          - problem: "In $V = \\mathbb{R}^{>0}$ with $x \\oplus y = xy$ and $c \\odot x = x^c$, the additive inverse of $x$ is the element $y$ with $x \\oplus y$ equal to the zero vector. Find the additive inverse of $x$ as a function of $x$."
-            answer: "1/x"
-            answer_contract: {"kind": "function", "vars": ["x"]}
-            solution_sketch: "Step 1 (zero-vector axiom): the zero vector z satisfies x plus z = x, that is xz = x for every positive x, so z = 1. Step 2 (inverse axiom): the additive inverse y satisfies x plus y = 1, that is xy = 1, so y = 1/x. Step 3 (check): x * (1/x) = 1 for every positive x, as the inverse axiom requires. The additive inverse of x is 1/x."
-          - problem: "Let $V = \\mathbb{R}^2$ with the modified addition $(x, y) \\oplus (u, v) = (x + u, y + v + 1)$. The zero vector is the element $z$ with $(x, y) \\oplus z = (x, y)$ for every $(x, y)$. Find the zero vector of $V$ as (x, y)."
-            answer: "(0, -1)"
-            answer_contract: {"arity": 2, "kind": "coordinates"}
-            solution_sketch: "Step 1 (zero-vector axiom): write z = (a, b); the axiom v plus z = v gives (x + a, y + b + 1) = (x, y) for every (x, y). Step 2 (compare coordinates): x + a = x forces a = 0, and y + b + 1 = y forces b = -1. Step 3 (check): (x, y) plus (0, -1) = (x + 0, y - 1 + 1) = (x, y), as required. The zero vector of V is (0, -1)."
-          - problem: "Let $V = \\mathbb{R}^2$ with the modified addition $(x, y) \\oplus (u, v) = (x + u - 3, y + v + 2)$. Find the additive inverse of $(1, 1)$ in $V$ as (x, y)."
-            answer: "(5, -5)"
-            answer_contract: {"arity": 2, "kind": "coordinates"}
-            solution_sketch: "Step 1 (zero-vector axiom): z = (a, b) with (x + a - 3, y + b + 2) = (x, y) for all (x, y) gives a = 3 and b = -2, so the zero vector is (3, -2). Step 2 (inverse axiom): the inverse (p, q) of (1, 1) satisfies (1, 1) plus (p, q) = (3, -2), that is (p - 2, q + 3) = (3, -2). Step 3 (solve): p = 5 and q = -5. The additive inverse of (1, 1) is (5, -5)."
+          - problem: 'Let $V = \mathbb{R}^2$ with the usual addition but with the scalar multiplication $c \odot (x, y) = (cx, 0)$. Then $V$ is not a vector space. Which axiom fails?'
+            answer: 'the axiom 1v = v'
+            answer_contract: {"kind":"label","options":[["the axiom 1v = v","1v = v","1 times v equals v","identity axiom","the identity axiom","scalar identity","1·v = v","1 v = v"],["the distributive law c(u + w) = cu + cw","c(u + w) = cu + cw","distributive law","distributivity"],["commutativity of addition","u + w = w + u","commutative law","commutativity"],["associativity of addition","(u + w) + t = u + (w + t)","associative law","associativity"]]}
+            solution_sketch: 'The addition is the usual one, so commutativity and associativity of addition hold. The distributive law holds too, because $c \odot ((x, y) + (u, v)) = (c(x + u), 0) = (cx, 0) + (cu, 0)$. For the identity axiom, $1 \odot (2, 3) = (2, 0)$, which differs from $(2, 3)$, so the axiom $1\mathbf{v} = \mathbf{v}$ fails.'
+          - problem: 'Growth factors are positive numbers that combine by multiplication, so they form a vector space $V = \mathbb{R}^{>0}$ with $x \oplus y = xy$ and $c \odot x = x^c$. Two funds grow by the factors $3$ and $4$ per year, and both are held for $2$ years. What is the growth factor of the two funds held together over the two years, that is, $2 \odot (3 \oplus 4)$?'
+            answer: '144'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'First $3 \oplus 4 = 3 \cdot 4 = 12$, the yearly factor of the two funds together. Then $2 \odot 12 = 12^2 = 144$. The distributive axiom gives the same value from $3^2 \cdot 4^2 = 9 \cdot 16 = 144$.'
+          - problem: 'In $V = \mathbb{R}^{>0}$ with $x \oplus y = xy$ and $c \odot x = x^c$, which positive number is the zero vector?'
+            answer: '1'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The zero vector $\mathbf{z}$ must satisfy $x \oplus \mathbf{z} = x$ for every $x$. That means $x \cdot \mathbf{z} = x$, so $\mathbf{z} = 1$.'
+          - problem: 'Let $V = \mathbb{R}^2$ with the modified addition $(x, y) \oplus (u, v) = (x + u,\ y + v + 1)$. The zero vector is the element $\mathbf{z}$ with $(x, y) \oplus \mathbf{z} = (x, y)$ for every $(x, y)$. Find $\mathbf{z}$.'
+            answer: '(0, -1)'
+            answer_contract: {"kind":"coordinates","arity":2}
+            solution_sketch: 'Write $\mathbf{z} = (a, b)$. Then $(x + a,\ y + b + 1) = (x, y)$ for every $(x, y)$, so $a = 0$ and $b = -1$. Check: $(x, y) \oplus (0, -1) = (x, y - 1 + 1) = (x, y)$.'
+          - problem: 'In the vector space $V = \mathbb{R}^{>0}$ with $x \oplus y = xy$ and $c \odot x = x^c$, the additive inverse of $x$ is the element $y$ for which $x \oplus y$ is the zero vector, that is, no growth at all. A population grows by the factor $4$ in one year. By which factor must it change in the next year to return to its original size?'
+            answer: '1/4'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The zero vector of $V$ is $1$, so we need $4 \oplus y = 4y = 1$. Hence $y = 1/4$, a decrease to a quarter of the size. Dividing by $4$ undoes multiplying by $4$.'
+          - problem: 'Let $V = \mathbb{R}^2$ with the modified addition $(x, y) \oplus (u, v) = (x + u - 3,\ y + v + 2)$. Find the additive inverse of $(1, 1)$ in $V$.'
+            answer: '(5, -5)'
+            answer_contract: {"kind":"coordinates","arity":2}
+            solution_sketch: 'The zero vector $(a, b)$ satisfies $(x + a - 3,\ y + b + 2) = (x, y)$, so it is $(3, -2)$. The inverse $(p, q)$ of $(1, 1)$ satisfies $(1 + p - 3,\ 1 + q + 2) = (3, -2)$. Hence $p = 5$ and $q = -5$.'
+          - problem: 'In $V = \mathbb{R}^{>0}$ with $x \oplus y = xy$ and $c \odot x = x^c$, consider the axiom $c \odot (x \oplus y) = (c \odot x) \oplus (c \odot y)$. Compute the left side for $c = 3$, $x = 2$ and $y = 5$.'
+            answer: '1000'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'First $x \oplus y = 2 \cdot 5 = 10$. Then $c \odot 10 = 10^3 = 1000$. The right side gives $2^3 \cdot 5^3 = 8 \cdot 125 = 1000$ as well, so the axiom holds for these values.'
+          - problem: 'In $V = \mathbb{R}^{>0}$ with $x \oplus y = xy$ and $c \odot x = x^c$, consider the axiom $(c + d) \odot x = (c \odot x) \oplus (d \odot x)$. Compute the right side for $c = 2$, $d = 3$ and $x = 2$.'
+            answer: '32'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'We have $2 \odot 2 = 2^2 = 4$ and $3 \odot 2 = 2^3 = 8$. Their $\oplus$ sum is $4 \cdot 8 = 32$. The left side gives $5 \odot 2 = 2^5 = 32$ as well.'
+          - problem: 'In $V = \mathbb{R}^{>0}$ with $x \oplus y = xy$ and $c \odot x = x^c$, find the additive inverse of a general element $x$.'
+            answer: '1/x'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The zero vector is $1$, so the inverse $y$ of $x$ satisfies $x \oplus y = xy = 1$. Hence $y = 1/x$. Check: $x \cdot (1/x) = 1$ for every positive $x$.'
+          - problem: 'Let $V = \mathbb{R}^2$ with the usual addition and the scalar multiplication $c \odot (x, y) = (cx, y)$. Then $V$ is not a vector space. Which axiom fails?'
+            answer: 'the axiom (c + d)v = cv + dv'
+            answer_contract: {"kind":"label","options":[["the axiom 1v = v","1v = v","identity axiom","the identity axiom"],["the axiom c(u + w) = cu + cw","c(u + w) = cu + cw","distributive law over vectors","distributivity over vectors"],["the axiom (c + d)v = cv + dv","(c + d)v = cv + dv","distributive law over scalars","distributivity over scalars"],["the axiom c(dv) = (cd)v","c(dv) = (cd)v","compatibility of scalars","compatibility axiom"]]}
+            solution_sketch: 'We have $1 \odot (x, y) = (x, y)$, and $c \odot (d \odot (x, y)) = (cdx, y) = (cd) \odot (x, y)$. Also $c \odot ((x, y) + (u, v)) = (c(x + u), y + v)$ equals $c \odot (x, y) + c \odot (u, v)$. For the scalar sum, $(c + d) \odot (x, y) = ((c + d)x, y)$ but $c \odot (x, y) + d \odot (x, y) = ((c + d)x, 2y)$, which differs when $y \neq 0$, so $(c + d)v = cv + dv$ fails.'
         constraints: "modified operations on R^2 or R^>0 only; each failure pinned to one named axiom with a concrete counterexample"
       - id: kp3
         name: First consequences of the axioms
         key_prerequisites: [subspace-test]
+        step_check:
+          step: 'Distributivity of scalar addition over vectors'
+          question: 'Why can $a\mathbf{v} + (-a)\mathbf{v}$ be rewritten as $(a + (-a))\mathbf{v}$?'
+          options:
+            - 'Scalar multiplication is commutative, so the two scalars may be swapped past $\mathbf{v}$'
+            - 'Distributivity over scalar addition, read backwards, factors out the vector $\mathbf{v}$'
+            - 'Vector addition is associative, so the brackets around the two terms can be moved'
+            - 'The additive-inverse axiom says $(-a)\mathbf{v}$ cancels the term $a\mathbf{v}$ directly'
+          answer: 'Distributivity over scalar addition, read backwards, factors out the vector $\mathbf{v}$'
+          why: 'The law $(c + d)\mathbf{v} = c\mathbf{v} + d\mathbf{v}$ read from right to left collects two multiples of the same vector into one.'
         exemplars:
-          - problem: "Let V be R with the operations x ⊕ y = x + y - 1 and c ⊙ x = cx - c + 1. Find the zero vector of V."
-            answer: "1"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Let z be the zero vector of V. The identity axiom requires x ⊕ z = x for every real x, and the definition of ⊕ turns this into x + z - 1 = x, so z = 1. The scalar-zero axiom agrees, since 0 ⊙ x = 0·x - 0 + 1 = 1 for every x. Hence the zero vector of V is 1."
-          - problem: "Let V be R with the operations x ⊕ y = x + y + 3 and c ⊙ x = cx + 3c - 3. Find the additive inverse of 5 in V."
-            answer: "-11"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Let z be the zero vector of V. By the identity axiom x ⊕ z = x, so x + z + 3 = x and z = -3. The additive-inverse axiom says the inverse w of 5 satisfies 5 ⊕ w = z, that is 5 + w + 3 = -3. Solving gives w = -11, so the additive inverse of 5 in V is -11."
-          - problem: "In the complex numbers viewed as a real vector space, the axiom (-1)z = -z holds for every z. Let z = 4 - 7i. Compute (-1)z. Give the answer in the form a + bi."
-            answer: "-4+7i"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The axiom (-1)z = -z says that multiplying a vector by the scalar -1 gives its additive inverse. For z = 4 - 7i the additive inverse is found by negating the real part and the imaginary part, using the inverse axiom in the plane. Therefore (-1)z = -4+7i."
-          - problem: "Let V be R^2 with (a, b) ⊕ (c, d) = (a + c, b + d + 1) and t ⊙ (a, b) = (ta, tb + t - 1). Find the zero vector of V. Give the answer as (x, y)."
-            answer: "(0,-1)"
-            answer_contract: {"arity": 2, "kind": "coordinates"}
-            solution_sketch: "Let z = (p, q) be the zero vector of V. The identity axiom requires (a, b) ⊕ (p, q) = (a, b), and the definition of ⊕ gives (a + p, b + q + 1) = (a, b), so p = 0 and q = -1. The scalar-zero axiom agrees, since 0 ⊙ (a, b) = (0·a, 0·b + 0 - 1) = (0, -1). Hence the zero vector of V is (0,-1)."
-          - problem: "Let V be R^2 with (a, b) ⊕ (c, d) = (a + c, b + d + 1) and t ⊙ (a, b) = (ta, tb + t - 1). Find the additive inverse of (3, 4) in V. Give the answer as (x, y)."
-            answer: "(-3,-6)"
-            answer_contract: {"arity": 2, "kind": "coordinates"}
-            solution_sketch: "Let z = (p, q) be the zero vector of V. The identity axiom (a, b) ⊕ (p, q) = (a, b) gives (a + p, b + q + 1) = (a, b), so z = (0, -1). The additive-inverse axiom requires (3, 4) ⊕ (u, v) = (0, -1), which gives 3 + u = 0 and 4 + v + 1 = -1. Hence (u, v) = (-3,-6), the additive inverse of (3, 4)."
-          - problem: "In a vector space V, vectors u and v satisfy x + 2u = 3v. Solve for x in terms of u and v."
-            answer: "3v - 2u"
-            answer_contract: {"kind": "function", "vars": ["u", "v"]}
-            solution_sketch: "Start from the equation x + 2u = 3v. The additive-inverse axiom lets us add the inverse of 2u to both sides, giving x + 2u + (-2u) = 3v + (-2u). Associativity and the inverse axiom reduce the left side to x, and the right side is 3v - 2u. Hence x = 3v - 2u."
-        constraints: "two- or three-line axiom manipulations; each step must cite the axiom used"
+          - problem: 'Let $V$ be the set $\mathbb{R}$ with the operations $x \oplus y = x + y - 1$ and $c \odot x = cx - c + 1$. Find the zero vector of $V$.'
+            answer: '1'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The zero vector $z$ satisfies $x \oplus z = x$ for every $x$, so $x + z - 1 = x$ and $z = 1$. As a check, $0 \odot x = 0 - 0 + 1 = 1$, so the scalar $0$ turns every vector into the zero vector, as the axioms require.'
+          - problem: 'A robot arm moves its tool by the displacement $\mathbf{u} = (4, -7)$ millimetres. What displacement undoes this move?'
+            answer: '(-4, 7)'
+            answer_contract: {"kind":"coordinates","arity":2}
+            solution_sketch: 'The move that undoes $\mathbf{u}$ is the additive inverse of $\mathbf{u}$. It equals $(-1)\mathbf{u} = (-4, 7)$, because $\mathbf{u} + (-1)\mathbf{u} = (1 + (-1))\mathbf{u} = 0\mathbf{u} = \mathbf{0}$.'
+          - problem: 'Let $V$ be $\mathbb{R}$ with the operations $x \oplus y = x + y + 3$ and $c \odot x = cx + 3c - 3$. Find the additive inverse of $5$ in $V$.'
+            answer: '-11'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The zero vector $z$ satisfies $x + z + 3 = x$, so $z = -3$. The inverse $w$ of $5$ satisfies $5 \oplus w = z$, that is $5 + w + 3 = -3$. Solving gives $w = -11$.'
+          - problem: 'A depot holds a stock $\mathbf{x}$ of three materials, measured in tonnes. After three crates, each holding $\mathbf{u} = (1, 1, 0)$ tonnes, are added, the depot holds the same amount as two crates, each holding $\mathbf{v} = (3, 2, 1)$ tonnes. Solve $\mathbf{x} + 3\mathbf{u} = 2\mathbf{v}$ for the original stock $\mathbf{x}$.'
+            answer: '(3, 1, 2)'
+            answer_contract: {"kind":"coordinates","arity":3}
+            solution_sketch: 'Add the inverse of $3\mathbf{u}$ to both sides, which gives $\mathbf{x} = 2\mathbf{v} - 3\mathbf{u}$. Then $2\mathbf{v} = (6, 4, 2)$ and $3\mathbf{u} = (3, 3, 0)$, so $\mathbf{x} = (3, 1, 2)$ tonnes.'
+          - problem: 'Let $V$ be $\mathbb{R}^2$ with $(a, b) \oplus (c, d) = (a + c,\ b + d + 1)$ and $t \odot (a, b) = (ta,\ tb + t - 1)$. Find the zero vector of $V$.'
+            answer: '(0, -1)'
+            answer_contract: {"kind":"coordinates","arity":2}
+            solution_sketch: 'Write the zero vector as $(p, q)$. The identity axiom gives $(a + p,\ b + q + 1) = (a, b)$, so $p = 0$ and $q = -1$. As a check, $0 \odot (a, b) = (0, -1)$, the same vector.'
+          - problem: 'Let $V$ be $\mathbb{R}^2$ with $(a, b) \oplus (c, d) = (a + c,\ b + d + 1)$ and $t \odot (a, b) = (ta,\ tb + t - 1)$. Find the additive inverse of $(3, 4)$ in $V$.'
+            answer: '(-3, -6)'
+            answer_contract: {"kind":"coordinates","arity":2}
+            solution_sketch: 'The zero vector of $V$ is $(0, -1)$. The inverse $(u, v)$ of $(3, 4)$ satisfies $(3 + u,\ 4 + v + 1) = (0, -1)$. Hence $u = -3$ and $v = -6$.'
+          - problem: 'In a vector space, the vectors $\mathbf{u}$, $\mathbf{v}$ and $\mathbf{x}$ satisfy $\mathbf{x} + 2\mathbf{u} = 3\mathbf{v}$. Solve for $\mathbf{x}$ in terms of $\mathbf{u}$ and $\mathbf{v}$.'
+            answer: '3v - 2u'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Add the additive inverse of $2\mathbf{u}$ to both sides. Associativity and the inverse axiom reduce the left side to $\mathbf{x}$, and the right side becomes $3\mathbf{v} - 2\mathbf{u}$. Hence $\mathbf{x} = 3\mathbf{v} - 2\mathbf{u}$.'
+          - problem: 'The complex numbers form a vector space over $\mathbb{R}$, and in every vector space $(-1)\mathbf{z} = -\mathbf{z}$. Compute $(-1)z$ for $z = 4 - 7i$.'
+            answer: '-4+7i'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Multiplying by the scalar $-1$ gives the additive inverse. Negating the real part and the imaginary part of $4 - 7i$ gives $-4 + 7i$.'
+          - problem: 'Let $V$ be the set $\mathbb{R}$ with the operations $x \oplus y = x + y - 1$ and $c \odot x = cx - c + 1$. Compute $0 \odot 7$.'
+            answer: '1'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'By the definition, $0 \odot 7 = 0 \cdot 7 - 0 + 1 = 1$. This is the zero vector of $V$, in agreement with the general fact that $0\mathbf{v} = \mathbf{0}$.'
+        constraints: "axiom manipulations of two or three lines; modified operations on R or R^2; each step cites the axiom used"
     diagnostic_exemplar:
       problem: 'Let $V = \mathbb{R}^{>0}$ with $x \oplus y = xy$ and $c \odot x = x^c$. Identify the zero vector and the additive inverse of $x$, then verify the axiom $(c + d) \odot x = (c \odot x) \oplus (d \odot x)$.'
       answer: 'Zero vector $1$; the additive inverse of $x$ is $1/x$; and $(c + d) \odot x = x^{c+d} = x^c x^d = (c \odot x) \oplus (d \odot x)$'
@@ -146,89 +217,148 @@ topics:
       - id: kp1
         name: Vector arithmetic in P_n, matrix spaces, and function spaces
         key_prerequisites: [polynomial-addition-subtraction, matrix-addition-scalar-multiplication]
+        step_check:
+          step: 'combine coefficients power by power'
+          question: 'Why do we combine the coefficients power by power?'
+          options:
+            - 'The powers of $x$ must be added together before any coefficient is changed'
+            - 'Coefficients of different powers are always equal, so any pair can be combined'
+            - 'Different powers of $x$ are different directions, so only equal powers combine'
+            - 'The highest power of $x$ always cancels, so the lower powers are combined first'
+          answer: 'Different powers of $x$ are different directions, so only equal powers combine'
+          why: 'In $P_2$ the powers $1$, $x$ and $x^2$ play the role of coordinate directions, and vectors add direction by direction.'
         exemplars:
           - problem: 'In the polynomial space $P_2$, compute $2(x^2 + 3x) - 3(x - 1)$.'
-            answer: "2x^2 + 3x + 3"
-            solution_sketch: '$2x^2 + 6x - 3x + 3$: polynomials add and scale coefficient-wise, exactly like vectors.'
+            answer: '2x^2 + 3x + 3'
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'Distribute the scalars: $2(x^2 + 3x) = 2x^2 + 6x$ and $3(x - 1) = 3x - 3$. Subtract and combine like powers: $2x^2 + (6x - 3x) + 3 = 2x^2 + 3x + 3$.'
           - problem: 'In the matrix space $M_{2 \times 2}$, compute $2\begin{pmatrix}1&0\\2&1\end{pmatrix} - \begin{pmatrix}0&1\\1&0\end{pmatrix}$.'
-            answer: "[2,-1;3,2]"
-            answer_contract: {"cols":2,"kind":"matrix","rows":2}
-            solution_sketch: 'Entrywise: $(2 - 0, 0 - 1; 4 - 1, 2 - 0)$.'
-          - problem: "In the polynomial space $P_3$, compute $3(x^3 - x + 2) - 2(x^3 - 2x + 1)$. Give the result as a polynomial in $x$."
-            answer: "x^3 + x + 4"
-            answer_contract: {"kind": "function", "vars": ["x"]}
-            solution_sketch: "Distribute each scalar over its polynomial: $3(x^3 - x + 2) = 3x^3 - 3x + 6$ and $-2(x^3 - 2x + 1) = -2x^3 + 4x - 2$. Polynomials in $P_3$ add coefficient-wise, so combine like powers of $x$: $3x^3 - 2x^3 = x^3$, $-3x + 4x = x$, and $6 - 2 = 4$. The result is x^3 + x + 4."
-          - problem: "In the matrix space $M_{2 \\times 2}$, let $A = \\begin{pmatrix}1&3\\\\1&0\\end{pmatrix}$, $B = \\begin{pmatrix}0&-1\\\\1&2\\end{pmatrix}$, $C = \\begin{pmatrix}2&1\\\\-1&0\\end{pmatrix}$. Compute $A + 2B - C$. Give the matrix as [a,b;c,d]."
-            answer: "[-1,0;4,4]"
-            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
-            solution_sketch: "The space $M_{2 \\times 2}$ adds entrywise, so first scale: $2B = \\begin{pmatrix}0&-2\\\\2&4\\end{pmatrix}$. Then add entrywise: $A + 2B = \\begin{pmatrix}1&1\\\\3&4\\end{pmatrix}$. Subtract $C$ entrywise: $(1-2,\\,1-1;\\,3-(-1),\\,4-0) = \\begin{pmatrix}-1&0\\\\4&4\\end{pmatrix}$. The answer is [-1,0;4,4]."
-          - problem: "Let $V$ be the space of all real-valued functions with pointwise addition and scalar multiplication. For $f(x) = x^2 + x$ and $g(x) = x - 3$, compute $2f - g$ as a function of $x$. Give the answer as a polynomial in $x$."
-            answer: "2x^2 + x + 3"
-            answer_contract: {"kind": "function", "vars": ["x"]}
-            solution_sketch: "Scalar multiplication in a function space is pointwise: $2f(x) = 2x^2 + 2x$. Subtraction is also pointwise: $2f(x) - g(x) = 2x^2 + 2x - (x - 3)$. Collect terms: $2x^2 + (2x - x) + 3 = 2x^2 + x + 3$. The answer is 2x^2 + x + 3."
-          - problem: "In the polynomial space $P_3$, consider the combination $k(x^2 - 2x + 1) + (2x^2 - 4x + 2)$ with scalar $k$. Find the value of $k$ for which the result is the zero polynomial of $P_3$."
-            answer: "-2"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The zero polynomial of $P_3$ has every coefficient equal to $0$. Work coefficient-wise on $k(x^2 - 2x + 1) + (2x^2 - 4x + 2)$: the $x^2$ coefficient gives $k + 2 = 0$, the $x$ coefficient gives $-2k - 4 = 0$, and the constant gives $k + 2 = 0$; all three agree. The scalar is $k = -2$. The answer is -2."
-        constraints: "P_n with n <= 3 and 2x2 matrices; integer coefficients in -4..4"
+            answer: '[[2,-1],[3,2]]'
+            answer_contract: {"kind":"matrix","rows":2,"cols":2}
+            solution_sketch: 'Matrices in $M_{2 \times 2}$ combine entry by entry. The scalar multiple is $\begin{pmatrix}2&0\\4&2\end{pmatrix}$, and subtracting the second matrix gives $\begin{pmatrix}2&-1\\3&2\end{pmatrix}$.'
+          - problem: 'A shop records its weekly sales of two products in two stores as the matrix $S = \begin{pmatrix}4&2\\1&5\end{pmatrix}$, where rows are products and columns are stores. The forecast for a holiday week is three times $S$, less the returns matrix $R = \begin{pmatrix}1&0\\2&1\end{pmatrix}$. Find the forecast matrix $3S - R$.'
+            answer: '[[11,6],[1,14]]'
+            answer_contract: {"kind":"matrix","rows":2,"cols":2}
+            solution_sketch: 'Scale first: $3S = \begin{pmatrix}12&6\\3&15\end{pmatrix}$. Subtract $R$ entry by entry: $12 - 1 = 11$, $6 - 0 = 6$, $3 - 2 = 1$ and $15 - 1 = 14$. The forecast matrix is $\begin{pmatrix}11&6\\1&14\end{pmatrix}$.'
+          - problem: 'The monthly cost, in thousands of dollars, of running for $x$ hundred hours is $C_A(x) = x^2 + 3x + 2$ at plant A and $C_B(x) = 2x + 5$ at plant B. Plant A runs two shifts, so its cost is doubled. Find the total cost function $2C_A + C_B$.'
+            answer: '2x^2 + 8x + 9'
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'Doubling gives $2C_A(x) = 2x^2 + 6x + 4$. Adding $C_B(x) = 2x + 5$ and combining like powers gives $2x^2 + 8x + 9$.'
+          - problem: 'In the polynomial space $P_3$, compute $3(x^3 - x + 2) - 2(x^3 - 2x + 1)$.'
+            answer: 'x^3 + x + 4'
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'Distribute the scalars: $3(x^3 - x + 2) = 3x^3 - 3x + 6$ and $-2(x^3 - 2x + 1) = -2x^3 + 4x - 2$. Combine like powers: $3x^3 - 2x^3 = x^3$, $-3x + 4x = x$ and $6 - 2 = 4$.'
+          - problem: 'In the matrix space $M_{2 \times 2}$, let $A = \begin{pmatrix}1&3\\1&0\end{pmatrix}$, $B = \begin{pmatrix}0&-1\\1&2\end{pmatrix}$ and $C = \begin{pmatrix}2&1\\-1&0\end{pmatrix}$. Compute $A + 2B - C$.'
+            answer: '[[-1,0],[4,4]]'
+            answer_contract: {"kind":"matrix","rows":2,"cols":2}
+            solution_sketch: 'First $2B = \begin{pmatrix}0&-2\\2&4\end{pmatrix}$, so $A + 2B = \begin{pmatrix}1&1\\3&4\end{pmatrix}$. Subtracting $C$ entry by entry gives $\begin{pmatrix}-1&0\\4&4\end{pmatrix}$.'
+          - problem: 'Two plants have the cost functions $C_A(x) = x^2 + 4x + 6$ and $C_B(x) = x^2 + 2x + 2$, in thousands of dollars. What is the average of the two cost functions?'
+            answer: 'x^2 + 3x + 4'
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'The sum is $C_A + C_B = 2x^2 + 6x + 8$. The average is half of the sum, so we divide each coefficient by $2$ and get $x^2 + 3x + 4$.'
+          - problem: 'Let $V$ be the space of all real-valued functions with pointwise addition and scalar multiplication. For $f(x) = x^2 + x$ and $g(x) = x - 3$, compute $2f - g$.'
+            answer: '2x^2 + x + 3'
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'Operations in a function space act pointwise, so $(2f - g)(x) = 2(x^2 + x) - (x - 3)$. This equals $2x^2 + 2x - x + 3 = 2x^2 + x + 3$.'
+          - problem: 'In the polynomial space $P_3$, consider $k(x^2 - 2x + 1) + (2x^2 - 4x + 2)$ for a scalar $k$. Find the value of $k$ for which the result is the zero polynomial.'
+            answer: '-2'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The zero polynomial has every coefficient equal to $0$. The $x^2$ coefficient gives $k + 2 = 0$, the $x$ coefficient gives $-2k - 4 = 0$ and the constant gives $k + 2 = 0$. All three agree on $k = -2$.'
+        constraints: "P_n with n <= 3, 2x2 matrices and pointwise functions; integer coefficients in -6..6; contexts need a scalar multiple, a difference or an average"
       - id: kp2
         name: The subspace test in abstract spaces
         key_prerequisites: [vector-space-axioms]
+        step_check:
+          step: 'Then $(cp)(3) = c \cdot p(3) = c \cdot 0 = 0$'
+          question: 'Why does $(cp)(3)$ equal $c \cdot p(3)$?'
+          options:
+            - 'The scalar $c$ is substituted for $x$, so $cp$ at $3$ becomes $c$ times $3$'
+            - 'Evaluation at $3$ reverses the order of the product, so $c$ moves to the front'
+            - 'Every polynomial in $S$ is zero at $3$, so $c$ can be chosen freely'
+            - 'Polynomials are scaled value by value, so $cp$ at $3$ is $c$ times $p(3)$'
+          answer: 'Polynomials are scaled value by value, so $cp$ at $3$ is $c$ times $p(3)$'
+          why: 'The polynomial $cp$ is defined by $(cp)(x) = c \cdot p(x)$ for every $x$, and $x = 3$ is one such value.'
         exemplars:
-          - problem: "Let $W = \\{p \\in P_2 : p(1) = 0\\}$. The polynomials $p(x) = x^2 - x$ and $q(x) = 3x - 3$ both lie in $W$. Determine whether $W$ is a subspace of $P_2$, and give the value of $(p + q)(1)$."
-            answer: "verdict = yes; value = 0"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "value"}]}
-            solution_sketch: "Subspace test on $W = \\{p \\in P_2 : p(1) = 0\\}$: the zero polynomial has value $0$ at $1$, so $0 \\in W$. Closure under addition: $(p+q)(1) = p(1) + q(1) = 0 + 0 = 0$; closure under scalar multiplication: $(cp)(1) = c \\cdot 0 = 0$. The option no would require a concrete counterexample, but the condition $p(1) = 0$ is preserved by both operations. Hence verdict = yes and value = 0."
-          - problem: "Let $W$ be the set of polynomials in $P_2$ whose degree is exactly $2$. Take $p(x) = x^2 + 3$ and $q(x) = -x^2 + 2x$. Determine whether $W$ is a subspace of $P_2$, and give the degree of $p + q$."
-            answer: "verdict = no; value = 1"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "value"}]}
-            solution_sketch: "Subspace test on the set of degree-exactly-$2$ polynomials: the zero polynomial has no degree, so the zero vector is missing. Concrete counterexample to addition: $p = x^2 + 3$ and $q = -x^2 + 2x$ both have degree $2$, but $p + q = 2x + 3$ has degree $1$, so closure fails. The option yes ignores this closure failure. Therefore verdict = no and value = 1, the degree of $p + q$."
-          - problem: "Let $W$ be the set of symmetric $2 \\times 2$ matrices, and let $A = [1,2;2,3]$ and $B = [0,4;4,-1]$. Determine whether $W$ is a subspace of $M_{2 \\times 2}$, and give the entry in row 2, column 1 of $A + B$."
-            answer: "verdict = yes; value = 6"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "value"}]}
-            solution_sketch: "Subspace test on the symmetric matrices: the zero matrix is symmetric, and $(A+B)^T = A^T + B^T = A + B$ and $(cA)^T = cA^T = cA$, so both closure laws hold. Entry check: row 2, column 1 of $A + B$ is $2 + 4 = 6$, equal to the row 1, column 2 entry as symmetry forces. The option no overlooks the transpose identities. Hence verdict = yes and value = 6."
-          - problem: "Let $W = \\{p \\in P_2 : p(0) = 5\\}$. The polynomials $p(x) = 2x + 5$ and $q(x) = x^2 + 5$ both lie in $W$. Compute $(p + q)(0)$."
-            answer: "10"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The set $W = \\{p \\in P_2 : p(0) = 5\\}$ fails the zero-vector part of the subspace test, since the zero polynomial has value $0$ at $0$, not $5$. Concrete counterexample to addition: $p = 2x + 5$ and $q = x^2 + 5$ lie in $W$, and $(p+q)(0) = 5 + 5 = 10$, which is not $5$, so $p + q \\notin W$. The value of $(p + q)(0)$ is 10."
-          - problem: "Let $W$ be the set of $2 \\times 2$ matrices with determinant $0$, and let $A = [1,0;0,0]$ and $B = [0,0;0,2]$. Determine whether $W$ is a subspace of $M_{2 \\times 2}$, and give $\\det(A + B)$."
-            answer: "verdict = no; value = 2"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "value"}]}
-            solution_sketch: "Subspace test on the determinant-zero matrices: $A = [1,0;0,0]$ and $B = [0,0;0,2]$ each have determinant $0$, so both lie in $W$. But $A + B = [1,0;0,2]$ has determinant $2$, so addition is not closed. The option yes would wrongly assume that determinants add. Therefore verdict = no and value = 2."
-          - problem: "Let $W = \\{p \\in P_2 : p(0) = 2\\}$. The polynomials $p(x) = x^2 + 2$ and $q(x) = 4x + 2$ both lie in $W$. Give $(p + q)(0)$ and $(3p)(0)$."
-            answer: "add = 4; scale = 6"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "add"}, {"contract": {"kind": "exact"}, "name": "scale"}]}
-            solution_sketch: "Subspace test on $W = \\{p \\in P_2 : p(0) = 2\\}$: the zero polynomial has value $0$ at $0$, so the zero vector is not in $W$. Concrete counterexample to addition: $(p+q)(0) = 2 + 2 = 4 \\ne 2$. Concrete counterexample to scalar multiplication: $(3p)(0) = 3 \\cdot 2 = 6 \\ne 2$. Hence add = 4 and scale = 6."
-        constraints: "conditions on P_2 or 2x2 matrices; failures exhibited by one concrete counterexample"
+          - problem: 'Let $W$ be the set of polynomials $p$ in $P_2$ with $p(1) = 0$. Is $W$ a subspace of $P_2$?'
+            answer: 'yes'
+            answer_contract: {"kind":"label","options":[["yes","it is a subspace","subspace","it is","yes it is a subspace","yes, it is a subspace","W is a subspace","yes, it is"],["no","it is not a subspace","not a subspace","it is not","no it is not a subspace","no, it is not a subspace","W is not a subspace","no, it is not"]]}
+            solution_sketch: 'The zero polynomial has value $0$ at $1$, so it lies in $W$. If $p(1) = q(1) = 0$, then $(p + q)(1) = 0 + 0 = 0$ and $(cp)(1) = c \cdot 0 = 0$. Both closure laws hold, so $W$ is a subspace.'
+          - problem: 'A lab accepts a calibration curve $p$ in $P_2$ only when its reading at $x = 0$ is the reference value $2$. The curves $p(x) = x^2 + 2$ and $q(x) = 4x + 2$ are accepted. What reading does the combined curve $p + q$ give at $x = 0$?'
+            answer: '4'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Curves are added value by value, so $(p + q)(0) = p(0) + q(0) = 2 + 2 = 4$. The reading $4$ is not the reference value $2$, so the sum of two accepted curves is not accepted.'
+          - problem: 'Let $W$ be the set of polynomials in $P_2$ of degree exactly $2$. The polynomials $p(x) = x^2 + 3$ and $q(x) = -x^2 + 2x$ both belong to $W$. What is the degree of $p + q$?'
+            answer: '1'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The sum is $p + q = (x^2 + 3) + (-x^2 + 2x) = 2x + 3$. Its degree is $1$, so $p + q$ is not in $W$ and $W$ is not closed under addition.'
+          - problem: 'Let $W$ be the set of $2 \times 2$ matrices with determinant $0$. Is $W$ a subspace of $M_{2 \times 2}$?'
+            answer: 'no'
+            answer_contract: {"kind":"label","options":[["yes","it is a subspace","subspace","it is","yes it is a subspace","yes, it is a subspace","W is a subspace","yes, it is"],["no","it is not a subspace","not a subspace","it is not","no it is not a subspace","no, it is not a subspace","W is not a subspace","no, it is not"]]}
+            solution_sketch: 'The matrices $\begin{pmatrix}1&0\\0&0\end{pmatrix}$ and $\begin{pmatrix}0&0\\0&2\end{pmatrix}$ both have determinant $0$. Their sum is $\begin{pmatrix}1&0\\0&2\end{pmatrix}$, which has determinant $2$. So addition is not closed and $W$ is not a subspace.'
+          - problem: 'A tax schedule is a polynomial $T$ in $P_2$, where $T(x)$ is the tax on the income $x$ thousand dollars. A schedule is called balanced when $T(1) = 0$. The schedules $p(x) = x^2 - x$ and $q(x) = 3x - 3$ are balanced. What is $(2p - 5q)(1)$?'
+            answer: '0'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Combinations are evaluated value by value, so $(2p - 5q)(1) = 2p(1) - 5q(1) = 2 \cdot 0 - 5 \cdot 0 = 0$. The new schedule is balanced again, which shows that balanced schedules are closed under linear combinations.'
+          - problem: 'The matrices $A = \begin{pmatrix}1&2\\2&3\end{pmatrix}$ and $B = \begin{pmatrix}0&4\\4&-1\end{pmatrix}$ are symmetric. Compute $3A - B$.'
+            answer: '[[3,2],[2,10]]'
+            answer_contract: {"kind":"matrix","rows":2,"cols":2}
+            solution_sketch: 'First $3A = \begin{pmatrix}3&6\\6&9\end{pmatrix}$. Subtracting $B$ entry by entry gives $\begin{pmatrix}3&2\\2&10\end{pmatrix}$. The result is symmetric again, as the identity $(3A - B)^T = 3A^T - B^T$ predicts.'
+          - problem: 'Let $W$ be the set of polynomials $p$ in $P_2$ with $p(0) = 5$. The polynomials $p(x) = 2x + 5$ and $q(x) = x^2 + 5$ both belong to $W$. Compute $(p + q)(0)$.'
+            answer: '10'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'We have $(p + q)(0) = p(0) + q(0) = 5 + 5 = 10$. The value $10$ is not $5$, so $p + q$ is not in $W$ and $W$ is not a subspace. The zero polynomial also fails, since it has value $0$ at $0$.'
+          - problem: 'Let $A = \begin{pmatrix}1&1\\1&1\end{pmatrix}$ and $B = \begin{pmatrix}1&0\\0&0\end{pmatrix}$, two matrices of determinant $0$. Compute $\det(A + B)$.'
+            answer: '1'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The sum is $A + B = \begin{pmatrix}2&1\\1&1\end{pmatrix}$. Its determinant is $2 \cdot 1 - 1 \cdot 1 = 1$, not $0$. So the matrices of determinant $0$ are not closed under addition.'
+        constraints: "conditions on P_2 or 2x2 matrices; failures exhibited by one concrete counterexample; at most two verdict items"
       - id: kp3
         name: Linear combinations and span in abstract spaces
         key_prerequisites: [polynomial-addition-subtraction, vector-space-axioms]
+        step_check:
+          step: 'Match the $x$ coefficient'
+          question: 'Why does matching the $x$ coefficient give $c_2$ directly?'
+          options:
+            - 'The $x$ coefficient of the target is always the second unknown, whatever $p_1$ is'
+            - 'Only $p_2 = x + 2$ has an $x$ term, since $p_1 = x^2 + 1$ contains no $x$'
+            - 'The value of $c_1$ is not known yet, so it cannot affect the $x$ coefficient'
+            - 'Matching the $x$ coefficient is a fixed rule, and its order cannot be changed'
+          answer: 'Only $p_2 = x + 2$ has an $x$ term, since $p_1 = x^2 + 1$ contains no $x$'
+          why: 'The $x$ coefficient of $c_1 p_1 + c_2 p_2$ is $0 \cdot c_1 + 1 \cdot c_2$, so it equals $c_2$.'
         exemplars:
-          - problem: "In $P_2$, let $p_1 = x^2 + x$ and $p_2 = x - 2$. Write $w = -x^2 + 2x - 6$ as $c_1 p_1 + c_2 p_2$, matching one coefficient at a time. Find the coefficients $c_1$ and $c_2$."
-            answer: "c1 = -1; c2 = 3"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "c1"}, {"contract": {"kind": "exact"}, "name": "c2"}]}
-            solution_sketch: "Write the full combination $c_1(x^2 + x) + c_2(x - 2)$ and expand it to $c_1 x^2 + (c_1 + c_2)x - 2c_2$. By one-at-a-time coefficient matching, the $x^2$ term gives $c_1 = -1$. The $x$ term then gives $-1 + c_2 = 2$, so $c_2 = 3$. The constant checks: $-2 \\cdot 3 = -6$. The answer is c1 = -1; c2 = 3."
-          - problem: "Let $A = \\begin{pmatrix}1&0\\\\0&2\\end{pmatrix}$ and $B = \\begin{pmatrix}0&1\\\\1&0\\end{pmatrix}$, and let $M = \\begin{pmatrix}2&-3\\\\-3&4\\end{pmatrix}$. Find the coefficients $c_1$ and $c_2$ with $M = c_1 A + c_2 B$."
-            answer: "c1 = 2; c2 = -3"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "c1"}, {"contract": {"kind": "exact"}, "name": "c2"}]}
-            solution_sketch: "Write the full combination $c_1 A + c_2 B = \\begin{pmatrix} c_1 & c_2 \\\\ c_2 & 2c_1 \\end{pmatrix}$ and match entries one at a time. The $(1,1)$ entry gives $c_1 = 2$. The $(1,2)$ entry gives $c_2 = -3$. The $(2,2)$ entry checks: $2 \\cdot 2 = 4$. The answer is c1 = 2; c2 = -3."
-          - problem: "In the function space with objects $f_1 = e^{2x} + e^{x}$ and $f_2 = e^{x}$, write $w = 3e^{2x} + e^{x}$ as $c_1 f_1 + c_2 f_2$, matching the coefficient of $e^{2x}$ first. Find $c_1$ and $c_2$."
-            answer: "c1 = 3; c2 = -2"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "c1"}, {"contract": {"kind": "exact"}, "name": "c2"}]}
-            solution_sketch: "Write the full combination $c_1(e^{2x} + e^{x}) + c_2 e^{x}$, which collects to $c_1 e^{2x} + (c_1 + c_2)e^{x}$. Coefficient matching on $e^{2x}$ gives $c_1 = 3$. Coefficient matching on $e^{x}$ gives $3 + c_2 = 1$, so $c_2 = -2$. The answer is c1 = 3; c2 = -2."
-          - problem: "Inside $P_2$, take $p_1 = x + 1$ and $p_2 = x - 1$. Determine whether their span equals all of $P_2$, and give the largest degree that a polynomial in their span can have."
-            answer: "verdict = no; degree = 1"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "degree"}]}
-            solution_sketch: "Expand any combination: $c_1(x + 1) + c_2(x - 1) = (c_1 + c_2)x + (c_1 - c_2)$, a polynomial of degree at most 1. No combination can produce $x^2$, so the span is a proper subspace of $P_2$; the option yes ignores this missing $x^2$ direction. The largest degree that appears in the span is 1, reached for example by $(x+1) + (x-1) = 2x$. The answer is verdict = no; degree = 1."
-          - problem: "In $P_2$, let $p_1 = x^2$ and $p_2 = x + 2$. The polynomial $w = x^2 + kx + 4$ lies in the span of $p_1$ and $p_2$ for exactly one integer $k$. Find $k$."
-            answer: "2"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Set the full combination $c_1 x^2 + c_2(x + 2)$ equal to $x^2 + kx + 4$ and match coefficients one at a time. The $x^2$ coefficient gives $c_1 = 1$. The constant term gives $2c_2 = 4$, so $c_2 = 2$. The $x$ coefficient then gives $k = c_2 = 2$. The value of $k$ is 2."
-          - problem: "In $P_2$, let $p_1 = x^2 - x$ and $p_2 = x + 2$. Form the linear combination $-2p_1 + 3p_2$ and simplify it fully. Give the result as a polynomial $ax^2 + bx + c$."
-            answer: "-2x^2+5x+6"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Start from the full combination $-2(x^2 - x) + 3(x + 2)$ and distribute the scalars to get $-2x^2 + 2x + 3x + 6$. Combine like terms by polynomial addition: $-2x^2 + 5x + 6$. The answer is -2x^2+5x+6."
-        constraints: "2 spanning objects; coefficients found by matching one coefficient/entry at a time, all integers in -3..3"
+          - problem: 'In $P_2$, let $p_1 = x^2 + x$ and $p_2 = x - 2$. Find the scalars $c_1$ and $c_2$ such that $-x^2 + 2x - 6 = c_1 p_1 + c_2 p_2$.'
+            answer: '(-1, 3)'
+            answer_contract: {"kind":"coordinates","arity":2}
+            solution_sketch: 'Expand $c_1(x^2 + x) + c_2(x - 2) = c_1 x^2 + (c_1 + c_2)x - 2c_2$. The $x^2$ term gives $c_1 = -1$. The $x$ term then gives $-1 + c_2 = 2$, so $c_2 = 3$, and the constant term agrees: $-2 \cdot 3 = -6$.'
+          - problem: 'A firm builds quarterly budgets from two standard budgets, $B_1(x) = x^2 + 1$ and $B_2(x) = x + 3$, in thousands of dollars after $x$ quarters. A client''s budget is $4x^2 + 5x + 19$. Find the multipliers $c_1$ and $c_2$ with $4x^2 + 5x + 19 = c_1 B_1 + c_2 B_2$.'
+            answer: '(4, 5)'
+            answer_contract: {"kind":"coordinates","arity":2}
+            solution_sketch: 'Expanding gives $c_1 x^2 + c_2 x + (c_1 + 3c_2)$. The $x^2$ term gives $c_1 = 4$ and the $x$ term gives $c_2 = 5$. The constant term checks: $4 + 3 \cdot 5 = 19$.'
+          - problem: 'Let $A = \begin{pmatrix}1&0\\0&2\end{pmatrix}$, $B = \begin{pmatrix}0&1\\1&0\end{pmatrix}$ and $M = \begin{pmatrix}2&-3\\-3&4\end{pmatrix}$. Find $c_1$ and $c_2$ with $M = c_1 A + c_2 B$.'
+            answer: '(2, -3)'
+            answer_contract: {"kind":"coordinates","arity":2}
+            solution_sketch: 'The combination is $c_1 A + c_2 B = \begin{pmatrix}c_1&c_2\\c_2&2c_1\end{pmatrix}$. The $(1,1)$ entry gives $c_1 = 2$ and the $(1,2)$ entry gives $c_2 = -3$. The $(2,2)$ entry checks: $2 \cdot 2 = 4$.'
+          - problem: 'Do the polynomials $x + 1$ and $x - 1$ span $P_2$?'
+            answer: 'no'
+            answer_contract: {"kind":"label","options":[["yes","they span","they do span","span","yes, they span","yes they span","yes, they do"],["no","they do not span","they do not","do not span","no, they do not span","no they do not span","no, they do not"]]}
+            solution_sketch: 'Any combination is $c_1(x + 1) + c_2(x - 1) = (c_1 + c_2)x + (c_1 - c_2)$, a polynomial of degree at most $1$. No combination produces $x^2$, so the two polynomials do not span $P_2$.'
+          - problem: 'A caterer''s standard dish has the ingredient matrix $D = \begin{pmatrix}2&1\\3&4\end{pmatrix}$. The matrix for a tasting portion is $T = \begin{pmatrix}1&\frac{1}{2}\\\frac{3}{2}&2\end{pmatrix}$. By what scalar must $D$ be multiplied to give $T$?'
+            answer: '1/2'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'We need $T = cD$. The first entries give $2c = 1$, so $c = 1/2$. The other entries agree: $\tfrac12 \cdot 1 = \tfrac12$, $\tfrac12 \cdot 3 = \tfrac32$ and $\tfrac12 \cdot 4 = 2$.'
+          - problem: 'In $P_2$, let $p_1 = x^2$ and $p_2 = x + 2$. The polynomial $w = x^2 + kx + 4$ lies in the span of $p_1$ and $p_2$ for exactly one integer $k$. Find $k$.'
+            answer: '2'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Set $c_1 x^2 + c_2(x + 2) = x^2 + kx + 4$. The $x^2$ coefficient gives $c_1 = 1$ and the constant term gives $2c_2 = 4$, so $c_2 = 2$. The $x$ coefficient gives $k = c_2 = 2$.'
+          - problem: 'In the space of real functions, let $f_1 = e^{2x} + e^{x}$ and $f_2 = e^{x}$. Find $c_1$ and $c_2$ such that $3e^{2x} + e^{x} = c_1 f_1 + c_2 f_2$.'
+            answer: '(3, -2)'
+            answer_contract: {"kind":"coordinates","arity":2}
+            solution_sketch: 'Expand $c_1(e^{2x} + e^{x}) + c_2 e^{x} = c_1 e^{2x} + (c_1 + c_2)e^{x}$. Matching $e^{2x}$ gives $c_1 = 3$. Matching $e^{x}$ gives $3 + c_2 = 1$, so $c_2 = -2$.'
+          - problem: 'In $P_2$, let $p_1 = x^2 - x$ and $p_2 = x + 2$. Compute the linear combination $-2p_1 + 3p_2$.'
+            answer: '-2x^2 + 5x + 6'
+            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
+            solution_sketch: 'Distribute the scalars: $-2(x^2 - x) = -2x^2 + 2x$ and $3(x + 2) = 3x + 6$. Combine like powers: $-2x^2 + (2x + 3x) + 6 = -2x^2 + 5x + 6$.'
+        constraints: "2 spanning objects; coefficients found by matching one coefficient/entry at a time, with integer or simple fractional values in -4..5"
     diagnostic_exemplar:
       problem: 'Show that $W = \{p \in P_2 : p(1) = 0\}$ is a subspace of $P_2$, and write $x^2 + x - 2$ as a linear combination of $p_1 = x - 1$ and $p_2 = x^2 - 1$, both of which lie in $W$.'
       answer: 'W is a subspace (the zero polynomial satisfies p(1) = 0, and if p(1) = q(1) = 0 then (p + cq)(1) = 0); and x^2 + x - 2 = p_1 + p_2'
@@ -271,89 +401,147 @@ topics:
       - id: kp1
         name: Standard bases of polynomial and matrix spaces
         key_prerequisites: [polynomial-matrix-function-spaces, basis-dimension]
+        step_check:
+          step: 'Following the order $1, x, x^2$'
+          question: 'Why is the coordinate vector $(-1, 4, -3)$ rather than $(-3, 4, -1)$?'
+          options:
+            - 'Coordinates are listed from the highest power down to the constant term'
+            - 'Coordinates are sorted from the smallest coefficient to the largest one'
+            - 'The order does not matter, since both lists describe the same polynomial'
+            - 'Coordinates follow the basis order, so the constant term comes first'
+          answer: 'Coordinates follow the basis order, so the constant term comes first'
+          why: 'The coordinate list is read against the ordered basis $1, x, x^2$, so its first entry belongs to $1$ and its last entry to $x^2$.'
         exemplars:
           - problem: 'Find the coordinates of $2x^2 - x + 5$ relative to the basis $\{1, x, x^2\}$ of $P_2$.'
-            answer: "(5, -1, 2)"
-            solution_sketch: 'Read off the coefficients in basis order: constant $5$, then $-1$, then $2$.'
-          - problem: 'What is the dimension of $M_{2 \times 3}$?'
-            answer: "6"
-            solution_sketch: 'The six matrices with a single entry $1$ form a basis; dimension $= 2 \cdot 3$.'
-          - problem: "The standard basis of $P_3$ is $\\{1, x, x^2, x^3\\}$. Consider the polynomial $4x^3 - x + 2$. Find its coordinates relative to this basis, in the order $1, x, x^2, x^3$, as (a, b, c, d)."
-            answer: "(2, -1, 0, 4)"
-            answer_contract: {"arity": 4, "kind": "coordinates"}
-            solution_sketch: "Step 1 (coordinate definition): coordinates relative to the standard basis are the coefficients in basis order. Step 2 (read off coefficients): the constant term is 2, the coefficient of x is -1, the coefficient of x^2 is 0, and the coefficient of x^3 is 4. The coordinates of 4x^3 - x + 2 are (2, -1, 0, 4)."
-          - problem: "The standard basis of $M_{2 \\times 2}$ consists of the four matrices $E_{11}, E_{12}, E_{21}, E_{22}$, each with a single entry $1$. Consider the matrix $\\begin{bmatrix} 1 & 3 \\\\ 0 & -2 \\end{bmatrix}$. Give its coordinates relative to this basis, in the order $E_{11}, E_{12}, E_{21}, E_{22}$, as (a, b, c, d)."
-            answer: "(1, 3, 0, -2)"
-            answer_contract: {"arity": 4, "kind": "coordinates"}
-            solution_sketch: "Step 1 (coordinate definition): a matrix expands as a sum of scalar multiples of the basis matrices, and the scalars are the coordinates. Step 2 (match entries to basis matrices): the (1,1) entry gives coefficient 1, the (1,2) entry gives 3, the (2,1) entry gives 0, and the (2,2) entry gives -2. The coordinates are (1, 3, 0, -2)."
-          - problem: "The coordinates of a polynomial in $P_2$ relative to the standard basis $\\{1, x, x^2\\}$ are $(3, 0, -4)$. Find the polynomial, writing it in the form $a + bx + cx^2$."
-            answer: "3 - 4x^2"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1 (coordinate definition): coordinates $(c_1, c_2, c_3)$ relative to $\\{1, x, x^2\\}$ mean the polynomial is $c_1 + c_2 x + c_3 x^2$. Step 2 (substitute the coordinates): $3 + 0 \\cdot x + (-4) x^2 = 3 - 4x^2$. The polynomial is 3 - 4x^2."
-          - problem: "The standard basis of the polynomial space $P_n$ consists of the monomials $1, x, x^2, \\dots, x^n$. A certain space $P_n$ has a standard basis with 4 vectors. Find $n$."
-            answer: "3"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1 (standard basis of P_n): the standard basis is $\\{1, x, \\dots, x^n\\}$, which contains $n + 1$ monomials, so the dimension of $P_n$ is $n + 1$. Step 2 (solve): $n + 1 = 4$ gives $n = 3$. The answer is 3."
-        constraints: "P_n with n <= 3, matrix spaces up to 2x3; coordinates are the coefficients, integers in -5..5"
+            answer: '(5, -1, 2)'
+            answer_contract: {"kind":"coordinates","arity":3}
+            solution_sketch: 'Read off the coefficients in the order of the basis: the constant term is $5$, the coefficient of $x$ is $-1$ and the coefficient of $x^2$ is $2$. The coordinates are $(5, -1, 2)$.'
+          - problem: 'What is the dimension of the matrix space $M_{2 \times 3}$?'
+            answer: '6'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The standard basis has one matrix for each position, with a single entry $1$ in that position and $0$ elsewhere. A matrix with $2$ rows and $3$ columns has $2 \cdot 3 = 6$ positions, so the dimension is $6$.'
+          - problem: 'A graphing app stores every polynomial in $P_3$ as its list of coordinates relative to the basis $\{1, x, x^2, x^3\}$. Which list does it store for $4x^3 - x + 2$?'
+            answer: '(2, -1, 0, 4)'
+            answer_contract: {"kind":"coordinates","arity":4}
+            solution_sketch: 'The coordinates are the coefficients in the order $1, x, x^2, x^3$. The constant term is $2$, the coefficient of $x$ is $-1$, the coefficient of $x^2$ is $0$ because no such term appears, and the coefficient of $x^3$ is $4$.'
+          - problem: 'A file format stores each matrix with $4$ rows as a list of numbers, one number for each matrix of the standard basis, and every such matrix uses exactly $20$ numbers. How many columns do these matrices have?'
+            answer: '5'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The standard basis of a matrix space with $4$ rows and $m$ columns has $4m$ matrices. Setting $4m = 20$ and dividing by $4$ gives $m = 5$ columns.'
+          - problem: 'The standard basis of $M_{2 \times 2}$ consists of $E_{11}, E_{12}, E_{21}, E_{22}$, each with a single entry $1$ in the position named by its subscripts. Find the coordinates of $\begin{pmatrix}1&3\\0&-2\end{pmatrix}$ relative to this basis.'
+            answer: '(1, 3, 0, -2)'
+            answer_contract: {"kind":"coordinates","arity":4}
+            solution_sketch: 'The matrix equals $1E_{11} + 3E_{12} + 0E_{21} + (-2)E_{22}$, so each entry is the coordinate of the basis matrix with the same position. The coordinates are $(1, 3, 0, -2)$.'
+          - problem: 'The coordinates of a polynomial in $P_2$ relative to the basis $\{1, x, x^2\}$ are $(3, 0, -4)$. What is the polynomial?'
+            answer: '3 - 4x^2'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Coordinates $(c_1, c_2, c_3)$ mean the polynomial $c_1 + c_2 x + c_3 x^2$. Here that is $3 + 0 \cdot x + (-4)x^2 = 3 - 4x^2$.'
+          - problem: 'The standard basis of $P_n$ consists of the monomials $1, x, x^2, \dots, x^n$. A certain space $P_n$ has a standard basis with $4$ vectors. Find $n$.'
+            answer: '3'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The basis $\{1, x, \dots, x^n\}$ contains $n + 1$ monomials. Setting $n + 1 = 4$ gives $n = 3$.'
+          - problem: 'A sensor stores every polynomial of degree at most $7$ as its list of coordinates relative to the standard basis. How many numbers does one stored polynomial need?'
+            answer: '8'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The standard basis of $P_7$ is $1, x, \dots, x^7$, which has $7 + 1 = 8$ vectors. The coordinate list has one entry per basis vector, so it holds $8$ numbers.'
+        constraints: "P_n with n <= 7, matrix spaces up to 4 rows; coordinates are the coefficients, integers in -5..5; contexts count stored numbers"
       - id: kp2
         name: Nonstandard bases and independence in P_n
         key_prerequisites: [basis-dimension, polynomial-matrix-function-spaces]
+        step_check:
+          step: 'Match coefficients of each power'
+          question: 'Why does the equation force every coefficient to be zero?'
+          options:
+            - 'A polynomial is the zero polynomial only if the coefficient of every power is zero'
+            - 'The zero polynomial has the value $0$ for exactly one input, so all the unknowns vanish'
+            - 'Setting $x = 0$ in a polynomial equation always makes every coefficient vanish'
+            - 'The unknowns $a$, $b$ and $c$ are positive, so the sums of them cannot be zero'
+          answer: 'A polynomial is the zero polynomial only if the coefficient of every power is zero'
+          why: 'Two polynomials are equal exactly when their coefficients agree power by power, and here the right side has all coefficients equal to $0$.'
         exemplars:
-          - problem: 'Find the coordinates of $3 + x$ relative to the basis $B = \{1 + x, 1 - x\}$ of $P_1$.'
-            answer: "(2, 1)"
-            solution_sketch: '$a(1 + x) + b(1 - x) = (a + b) + (a - b)x$: solve $a + b = 3$, $a - b = 1$ to get $a = 2$, $b = 1$.'
-          - problem: "In P_1, consider B = {2 + x, 1 - 2x}. Find the coordinates of 7 + x relative to B. Give the answer as (a, b)."
-            answer: "(3, 1)"
-            answer_contract: {"arity": 2, "kind": "coordinates"}
-            solution_sketch: "Write 7 + x = a(2 + x) + b(1 - 2x). Expanding gives 7 + x = (2a + b) + (a - 2b)x. Match coefficients: 2a + b = 7 and a - 2b = 1. Solving gives a = 3 and b = 1. The coordinate vector is (3, 1)."
-          - problem: "In P_2, consider B = {x^2 + 1, x^2 + x, x^2 - x}. Find the coordinates of 2x^2 + 3x - 1 relative to B. Give the answer as (a, b, c)."
-            answer: "(-1, 3, 0)"
-            answer_contract: {"arity": 3, "kind": "coordinates"}
-            solution_sketch: "Write 2x^2 + 3x - 1 = a(x^2 + 1) + b(x^2 + x) + c(x^2 - x). Expanding gives (a + b + c)x^2 + (b - c)x + a. Match coefficients: a = -1, b - c = 3, and a + b + c = 2. Then b + c = 3, so b = 3 and c = 0. The coordinate vector is (-1, 3, 0)."
-          - problem: "In P_2, consider S = {x^2 + kx, 1 + x, x^2 - 4}. Find the value of k that makes S linearly dependent."
-            answer: "4"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Consider S = {x^2 + kx, 1 + x, x^2 - 4} and set a(x^2 + kx) + b(1 + x) + c(x^2 - 4) = 0. Equating coefficients gives b - 4c = 0, ak + b = 0, and a + c = 0. From a = -c and b = 4c, the middle equation becomes c(4 - k) = 0. A nontrivial relation needs c not zero, so k = 4. The value is 4."
-          - problem: "In P_2, consider S = {1 + x, 2 + 2x, 3 + 3x}. Find the dimension of its span."
-            answer: "1"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Write S = {1 + x, 2 + 2x, 3 + 3x} and observe that 2 + 2x = 2(1 + x) and 3 + 3x = 3(1 + x). Every linear combination is a multiple of 1 + x, so the span is the set of all c(1 + x). The nonzero polynomial 1 + x is a basis of this span, so the dimension is 1. The dimension is 1."
-          - problem: "In P_2, consider S = {x^2 + x, x^2 + 1, x}. Find the dimension of its span."
-            answer: "3"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Write S = {x^2 + x, x^2 + 1, x} and set a(x^2 + x) + b(x^2 + 1) + c x = 0. Matching coefficients gives a + b = 0 for x^2, a + c = 0 for x, and b = 0 for the constant term. Then b = 0, a = 0, and c = 0, so the three polynomials are independent by the linear independence rule. Three independent vectors in P_2 span a 3-dimensional space, so the dimension is 3. The dimension is 3."
-        constraints: "candidate sets of 2-3 polynomials in P_1 or P_2; coefficient matching yields a 2x2 or 3x3 linear system with integer solutions"
+          - problem: 'Find the coordinates of $3 + x$ relative to the basis $B = \{1 + x,\ 1 - x\}$ of $P_1$.'
+            answer: '(2, 1)'
+            answer_contract: {"kind":"coordinates","arity":2}
+            solution_sketch: 'Write $3 + x = a(1 + x) + b(1 - x) = (a + b) + (a - b)x$. Matching coefficients gives $a + b = 3$ and $a - b = 1$, so $a = 2$ and $b = 1$.'
+          - problem: 'A technician describes every linear trend $a + bx$ as a combination of two reference trends $r_1 = 1 + x$ and $r_2 = 1 - x$. Find the weights of $r_1$ and $r_2$ in the pure drift trend $x$.'
+            answer: '(1/2, -1/2)'
+            answer_contract: {"kind":"coordinates","arity":2}
+            solution_sketch: 'Write $x = a(1 + x) + b(1 - x) = (a + b) + (a - b)x$. Matching coefficients gives $a + b = 0$ and $a - b = 1$. Adding the two equations gives $2a = 1$, so $a = 1/2$ and $b = -1/2$.'
+          - problem: 'In $P_1$, consider $B = \{2 + x,\ 1 - 2x\}$. Find the coordinates of $7 + x$ relative to $B$.'
+            answer: '(3, 1)'
+            answer_contract: {"kind":"coordinates","arity":2}
+            solution_sketch: 'Write $7 + x = a(2 + x) + b(1 - 2x) = (2a + b) + (a - 2b)x$. Matching coefficients gives $2a + b = 7$ and $a - 2b = 1$. Solving gives $a = 3$ and $b = 1$.'
+          - problem: 'In $P_2$, consider $S = \{x^2 + kx,\ 1 + x,\ x^2 - 4\}$. Find the value of $k$ for which $S$ is linearly dependent.'
+            answer: '4'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Set $a(x^2 + kx) + b(1 + x) + c(x^2 - 4) = 0$. Matching coefficients gives $a + c = 0$, $ak + b = 0$ and $b - 4c = 0$. Then $a = -c$ and $b = 4c$, so $c(4 - k) = 0$. A nontrivial solution needs $c \neq 0$, so $k = 4$.'
+          - problem: 'Is $\{1 + x,\ 1 - x,\ 3\}$ a basis of $P_2$?'
+            answer: 'no'
+            answer_contract: {"kind":"label","options":[["yes","it is a basis","a basis","it is","yes it is a basis","yes, it is a basis","yes, it is"],["no","it is not a basis","not a basis","it is not","no it is not a basis","no, it is not a basis","no, it is not"]]}
+            solution_sketch: 'The dimension of $P_2$ is $3$, so a basis needs $3$ independent polynomials. But $3 = \tfrac32(1 + x) + \tfrac32(1 - x)$, so the third polynomial is a combination of the first two. The set is dependent and spans only the polynomials of degree at most $1$, so it is not a basis.'
+          - problem: 'A lab has three reference curves $1 + x$, $2 + 2x$ and $3 + 3x$, and every curve it can build is a linear combination of them. What is the dimension of the space of curves it can build?'
+            answer: '1'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'We have $2 + 2x = 2(1 + x)$ and $3 + 3x = 3(1 + x)$. Every combination is therefore a multiple of $1 + x$. The nonzero polynomial $1 + x$ is a basis of this space, so the dimension is $1$.'
+          - problem: 'In $P_2$, consider $B = \{x^2 + 1,\ x^2 + x,\ x^2 - x\}$. Find the coordinates of $2x^2 + 3x - 1$ relative to $B$.'
+            answer: '(-1, 3, 0)'
+            answer_contract: {"kind":"coordinates","arity":3}
+            solution_sketch: 'Write $2x^2 + 3x - 1 = a(x^2 + 1) + b(x^2 + x) + c(x^2 - x)$, which expands to $(a + b + c)x^2 + (b - c)x + a$. The constant term gives $a = -1$. Then $b - c = 3$ and $b + c = 3$, so $b = 3$ and $c = 0$.'
+          - problem: 'In $P_2$, consider $S = \{x^2 + x,\ x^2 + 1,\ x\}$. Find the dimension of its span.'
+            answer: '3'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Set $a(x^2 + x) + b(x^2 + 1) + cx = 0$. Matching coefficients gives $a + b = 0$, $a + c = 0$ and $b = 0$. Hence $b = 0$, $a = 0$ and $c = 0$, so the three polynomials are independent and span a space of dimension $3$.'
+        constraints: "candidate sets of 2-3 polynomials in P_1 or P_2; coefficient matching yields a 2x2 or 3x3 linear system with integer or simple fractional solutions"
       - id: kp3
         name: The base field matters
         key_prerequisites: [basis-dimension, simplifying-radicals]
+        step_check:
+          step: 'contradicting the fact that $\sqrt{3}$ is irrational'
+          question: 'Why does the equation $\sqrt{3} = -a/b$ lead to a contradiction?'
+          options:
+            - 'Dividing by $b$ is not allowed, because $b$ is a rational number'
+            - 'A quotient of rationals is rational, but $\sqrt{3}$ is not'
+            - 'The number $\sqrt{3}$ is larger than every rational number $-a/b$'
+            - 'The equation holds for $a = 0$ only, and then $b$ must vanish too'
+          answer: 'A quotient of rationals is rational, but $\sqrt{3}$ is not'
+          why: 'A quotient $-a/b$ of two rational numbers is rational, so it cannot equal the irrational number $\sqrt{3}$.'
         exemplars:
-          - problem: 'Find the coordinates of $4 - 3\sqrt{2}$ in the basis $\{1, \sqrt{2}\}$ of $\mathbb{Q}(\sqrt{2})$ over $\mathbb{Q}$.'
-            answer: "(4, -3)"
-            solution_sketch: '$4 - 3\sqrt{2} = 4 \cdot 1 + (-3)\sqrt{2}$: read off the rational coefficients.'
-          - problem: "Consider the field $Q(\\sqrt{5}) = \\{a + b\\sqrt{5} : a, b \\text{ rational}\\}$ as a vector space over $Q$, with basis $\\{1, \\sqrt{5}\\}$. Express $5 - 2\\sqrt{5}$ in this basis and give the answer as (a, b)."
-            answer: "(5, -2)"
-            answer_contract: {"arity": 2, "kind": "coordinates"}
-            solution_sketch: "Step 1 (definition of coordinates): write the full element as $5 - 2\\sqrt{5} = a \\cdot 1 + b \\cdot \\sqrt{5}$ with rational $a, b$. Step 2 (read off coefficients): since $1$ and $\\sqrt{5}$ are independent over $Q$ because $\\sqrt{5}$ is irrational, the coefficients are unique, so $a = 5$ and $b = -2$. The coordinates are (5, -2)."
-          - problem: "Regard $C$ as a vector space over $R$ with basis $\\{1, i\\}$. Express $4 + 7i$ in this basis and give the answer as (a, b)."
-            answer: "(4, 7)"
-            answer_contract: {"arity": 2, "kind": "coordinates"}
-            solution_sketch: "Step 1 (definition of coordinates): write the full element as $4 + 7i = a \\cdot 1 + b \\cdot i$ with real $a, b$. Step 2 (read off coefficients): $1$ and $i$ are independent over $R$ because $i$ is not a real number, so the coefficients are unique with $a = 4$ and $b = 7$. The coordinates are (4, 7)."
-          - problem: "Let $F = \\{a + b\\sqrt{2} : a, b \\text{ rational}\\}$, viewed as a vector space over the field of rational numbers. Find the dimension of $F$ over $Q$."
-            answer: "2"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1 (spanning): by its definition every element of $F$ is $a \\cdot 1 + b \\cdot \\sqrt{2}$, so the full set $F$ is spanned by $\\{1, \\sqrt{2}\\}$. Step 2 (independence): if $a + b\\sqrt{2} = 0$ with $b \\neq 0$, then $\\sqrt{2} = -a/b$ would be rational, a contradiction; and $1 \\neq 0$, so the set is independent. Step 3 (dimension): $\\{1, \\sqrt{2}\\}$ is a basis, so the dimension of $Q(\\sqrt{2})$ over $Q$ is 2."
-          - problem: "Consider the set of complex numbers as a vector space in two ways: first over the field of real numbers, then over the field of complex numbers. Determine both dimensions, giving the dimension over the reals first and then the dimension over the complexes."
-            answer: "overR = 2; overC = 1"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "overR"}, {"contract": {"kind": "exact"}, "name": "overC"}]}
-            solution_sketch: "Step 1 (spanning over R): every complex number $a + bi$ is a real linear combination $a \\cdot 1 + b \\cdot i$, so $\\{1, i\\}$ spans $C$ over $R$. Step 2 (independence over R): if $a + bi = 0$ with $a, b$ real, then $bi = -a$ forces $b = 0$ since $i$ is not real, and then $a = 0$; so the dimension of $C$ over $R$ is 2. Step 3 (over C): every complex number $z$ is $z \\cdot 1$, a single complex multiple of $1$, so $\\{1\\}$ is a basis and the dimension of $C$ over $C$ is 1. The full comparison is overR = 2; overC = 1."
-          - problem: "In the vector space $Q(\\sqrt{3})$ over $Q$ with basis $\\{1, \\sqrt{3}\\}$, a vector has coordinate pair $(2, -1)$. Find the vector, writing it in the form $a + b\\sqrt{3}$ with rational $a, b$."
-            answer: "2 - sqrt(3)"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1 (meaning of coordinates): the pair $(2, -1)$ in the basis $\\{1, \\sqrt{3}\\}$ means the full element $2 \\cdot 1 + (-1) \\cdot \\sqrt{3}$. Step 2 (simplify): $2 \\cdot 1 - 1 \\cdot \\sqrt{3}$ combines to a single field element. The vector is 2 - sqrt(3)."
-          - problem: "Work in the vector space $Q(\\sqrt{2})$ over $Q$ with basis $\\{1, \\sqrt{2}\\}$. Compute the product $(3 + \\sqrt{2})(1 - \\sqrt{2})$ inside the field and give its coordinates in the basis $\\{1, \\sqrt{2}\\}$ as (a, b)."
-            answer: "(1, -2)"
-            answer_contract: {"arity": 2, "kind": "coordinates"}
-            solution_sketch: "Step 1 (multiply in the field): expand the full product $(3 + \\sqrt{2})(1 - \\sqrt{2}) = 3 - 3\\sqrt{2} + \\sqrt{2} - 2$ using $\\sqrt{2} \\cdot \\sqrt{2} = 2$. Step 2 (collect terms): the rational part is $3 - 2 = 1$ and the $\\sqrt{2}$ part is $-3\\sqrt{2} + \\sqrt{2} = -2\\sqrt{2}$, giving $1 - 2\\sqrt{2}$. Step 3 (read off coordinates): in the basis $\\{1, \\sqrt{2}\\}$ the coefficients are unique because $\\sqrt{2}$ is irrational. The coordinates are (1, -2)."
+          - problem: 'The field $\mathbb{Q}(\sqrt{2}) = \{a + b\sqrt{2} : a, b \text{ rational}\}$ is a vector space over $\mathbb{Q}$ with the basis $\{1, \sqrt{2}\}$. Find the coordinates of $4 - 3\sqrt{2}$ relative to this basis.'
+            answer: '(4, -3)'
+            answer_contract: {"kind":"coordinates","arity":2}
+            solution_sketch: 'Write $4 - 3\sqrt{2} = 4 \cdot 1 + (-3)\sqrt{2}$. The coefficients are rational and unique, so the coordinates are $(4, -3)$.'
+          - problem: 'A computer algebra system stores every number $a + b\sqrt{2}$ with $a$ and $b$ rational as the pair $(a, b)$. What pair does it store for the product $(3 + \sqrt{2})(1 - \sqrt{2})$?'
+            answer: '(1, -2)'
+            answer_contract: {"kind":"coordinates","arity":2}
+            solution_sketch: 'Expand the product using $\sqrt{2} \cdot \sqrt{2} = 2$: $(3 + \sqrt{2})(1 - \sqrt{2}) = 3 - 3\sqrt{2} + \sqrt{2} - 2$. The rational part is $3 - 2 = 1$ and the $\sqrt{2}$ part is $-3 + 1 = -2$. The stored pair is $(1, -2)$.'
+          - problem: 'An engineer writes every complex impedance as $a + bi$ with $a$ and $b$ real, and treats the impedances as a vector space over $\mathbb{R}$ with the basis $\{1, i\}$. Find the coordinates of the impedance $4 + 7i$.'
+            answer: '(4, 7)'
+            answer_contract: {"kind":"coordinates","arity":2}
+            solution_sketch: 'Write $4 + 7i = 4 \cdot 1 + 7 \cdot i$. The numbers $1$ and $i$ are independent over $\mathbb{R}$, because $i$ is not a real number, so the coordinates $(4, 7)$ are unique.'
+          - problem: 'Let $F = \{a + b\sqrt{2} : a, b \text{ rational}\}$, regarded as a vector space over $\mathbb{Q}$. What is the dimension of $F$?'
+            answer: '2'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Every element of $F$ is $a \cdot 1 + b\sqrt{2}$, so $\{1, \sqrt{2}\}$ spans $F$. If $a + b\sqrt{2} = 0$ with $b \neq 0$, then $\sqrt{2} = -a/b$ would be rational, which is false. So the two numbers are independent, they form a basis, and the dimension is $2$.'
+          - problem: 'Mia says that $\{1, i\}$ is also a basis of $\mathbb{C}$ when $\mathbb{C}$ is regarded as a vector space over $\mathbb{C}$ itself, so the dimension is $2$. What is the correct dimension of $\mathbb{C}$ over $\mathbb{C}$?'
+            answer: '1'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Over $\mathbb{C}$ the scalar $i$ is allowed, so $i = i \cdot 1$ and the set $\{1, i\}$ is dependent. Every complex number $z$ equals $z \cdot 1$, so $\{1\}$ is a basis. The dimension is $1$.'
+          - problem: 'In $\mathbb{Q}(\sqrt{2})$, find the coordinates of $\dfrac{1}{1 + \sqrt{2}}$ relative to the basis $\{1, \sqrt{2}\}$ over $\mathbb{Q}$.'
+            answer: '(-1, 1)'
+            answer_contract: {"kind":"coordinates","arity":2}
+            solution_sketch: 'Multiply the numerator and the denominator by $1 - \sqrt{2}$: $\dfrac{1 - \sqrt{2}}{1 - 2} = \sqrt{2} - 1$. In the basis $\{1, \sqrt{2}\}$ this is $-1 \cdot 1 + 1 \cdot \sqrt{2}$, so the coordinates are $(-1, 1)$.'
+          - problem: 'In $\mathbb{Q}(\sqrt{3})$ with the basis $\{1, \sqrt{3}\}$ over $\mathbb{Q}$, a vector has the coordinates $(2, -1)$. Which number is the vector?'
+            answer: '2 - sqrt(3)'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The coordinates $(2, -1)$ mean $2 \cdot 1 + (-1)\sqrt{3}$. The vector is the number $2 - \sqrt{3}$.'
+          - problem: 'Consider $\mathbb{Q}(\sqrt{5}) = \{a + b\sqrt{5} : a, b \text{ rational}\}$ as a vector space over $\mathbb{Q}$ with the basis $\{1, \sqrt{5}\}$. Find the coordinates of $5 - 2\sqrt{5}$.'
+            answer: '(5, -2)'
+            answer_contract: {"kind":"coordinates","arity":2}
+            solution_sketch: 'Write $5 - 2\sqrt{5} = 5 \cdot 1 + (-2)\sqrt{5}$. The numbers $1$ and $\sqrt{5}$ are independent over $\mathbb{Q}$ because $\sqrt{5}$ is irrational, so the coordinates $(5, -2)$ are unique.'
+          - problem: 'A circuit simulator stores each complex number as a list of real numbers, one for each vector of a basis of $\mathbb{C}$ over $\mathbb{R}$. How long is the list?'
+            answer: '2'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The set $\{1, i\}$ is a basis of $\mathbb{C}$ over $\mathbb{R}$, because every $a + bi$ is a real combination of $1$ and $i$ and the two are independent. So each number needs $2$ real entries.'
         constraints: "fields limited to Q, Q(sqrt(d)) for d in {2, 3, 5}, R, C; independence arguments reduce to irrationality of sqrt(d) or to i not being real"
     diagnostic_exemplar:
       problem: 'Show that $\{1 + \sqrt{2},\ 1 - \sqrt{2}\}$ is a basis of $\mathbb{Q}(\sqrt{2})$ as a vector space over $\mathbb{Q}$, and find the coordinates of $4 - 3\sqrt{2}$ relative to it.'
@@ -395,88 +583,157 @@ topics:
       - id: kp1
         name: Linear functionals
         key_prerequisites: [linear-transformations]
+        step_check:
+          step: 'Both properties hold, so $f$ is a linear functional'
+          question: 'Why must both additivity and homogeneity be checked before $f$ is called a linear functional?'
+          options:
+            - 'The two properties are one statement, written once for sums and once for products'
+            - 'A map can pass one test and fail the other, so one test does not prove linearity'
+            - 'Homogeneity alone is enough, because a functional uses only the scalar operation'
+            - 'Additivity alone already forces homogeneity, but the book lists both for completeness'
+          answer: 'A map can pass one test and fail the other, so one test does not prove linearity'
+          why: 'A linear functional must respect both operations, and neither test replaces the other. For example, $f(x, y) = \sqrt[3]{x^3 + y^3}$ satisfies $f(cu) = c\,f(u)$ but not additivity, since $f(1, 0) + f(0, 1) = 2$ and $f(1, 1) = \sqrt[3]{2}$.'
         exemplars:
-          - problem: "State whether f(x, y) = 3x - 4y is a linear functional on R^2 and compute f(5, 2)."
-            answer: "verdict = valid; value = 7"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["valid"], ["invalid"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "value"}]}
-            solution_sketch: "The map f(x, y) = 3x - 4y is the object to test. Additivity holds because f((x,y)+(u,v)) = 3(x+u) - 4(y+v) = (3x-4y) + (3u-4v). Homogeneity holds because f(c(x,y)) = 3cx - 4cy = c(3x-4y). The option invalid is wrong because both linearity tests pass. Evaluate at the point: f(5,2) = 15 - 8 = 7. The result is verdict = valid; value = 7."
-          - problem: "State whether g(x, y) = xy is a linear functional on R^2 and compute g(2, 2)."
-            answer: "verdict = invalid; value = 4"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["valid"], ["invalid"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "value"}]}
-            solution_sketch: "The map g(x, y) = xy is the object to test. Test scaling with c = 2 at (1,1): g(2,2) = 4, while 2 g(1,1) = 2, so homogeneity fails. The option valid is wrong because the scaling test does not pass. The required point value is g(2,2) = 2*2 = 4. The result is verdict = invalid; value = 4."
-          - problem: "State whether E_3 is a linear functional on P_2 and compute E_3(x^2 - 2x)."
-            answer: "verdict = holds; value = 3"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["holds"], ["fails"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "value"}]}
-            solution_sketch: "The functional is E_3(p) = p(3). Evaluation is additive because (p+q)(3) = p(3)+q(3). It is homogeneous because (cp)(3) = c p(3). The option fails is wrong because both linearity tests hold. For p(x) = x^2 - 2x, E_3(p) = 9 - 6 = 3. The result is verdict = holds; value = 3."
-          - problem: "On R^3 define f(x, y, z) = 2x - y + 4z. Compute f(1, 2, 3)."
-            answer: "12"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The functional is f(x, y, z) = 2x - y + 4z. Substitute the point (1, 2, 3) into the formula: f(1,2,3) = 2*1 - 2 + 4*3. Compute 2 - 2 + 12 = 12. The answer is 12."
-          - problem: "For h(x, y, z) = xyz, compute h(2, 2, 2) - 2h(1, 1, 1)."
-            answer: "6"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The expression is the scaling defect for h(x, y, z) = xyz. First evaluate h(2,2,2) = 2*2*2 = 8. Next evaluate h(1,1,1) = 1, so 2h(1,1,1) = 2. Subtract: 8 - 2 = 6. The value is 6."
-          - problem: "On P_2 define C(p) as the coefficient of x^2 in p. Compute C(6x^2 + x - 2)."
-            answer: "6"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The functional is C(p) = coefficient of x^2 in p. For p(x) = 6x^2 + x - 2, read the coefficient of x^2 directly. The coefficient is 6. The answer is 6."
-        constraints: "functionals on R^2, R^3, or P_2; nonlinear counterexamples fail on one concrete scaling or sum"
+          - problem: 'The map $f(x, y) = 3x - 4y$ is a linear functional on $\mathbb{R}^2$. Find $f(5, 2)$.'
+            answer: '7'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'A linear functional is evaluated by substituting the input into its formula. Here $f(5, 2) = 3 \cdot 5 - 4 \cdot 2 = 15 - 8 = 7$.'
+          - problem: 'Is the map $g(x, y) = xy$ a linear functional on $\mathbb{R}^2$?'
+            answer: 'no'
+            answer_contract: {"kind":"label","options":[["no","it is not","not a linear functional","not linear","it is not a linear functional","g is not a linear functional","no, it is not","no, it is not a linear functional"],["yes","it is","linear functional","it is a linear functional","g is a linear functional","yes, it is","yes, it is a linear functional"]]}
+            solution_sketch: 'Homogeneity fails for $g$. For the vector $(1, 1)$ we have $g(2 \cdot (1, 1)) = g(2, 2) = 4$, but $2\,g(1, 1) = 2$. Since $4 \neq 2$, the map is not a linear functional.'
+          - problem: 'On the space $P_2$ of polynomials of degree at most $2$, let $E_3(p) = p(3)$. Is $E_3$ a linear functional on $P_2$?'
+            answer: 'yes'
+            answer_contract: {"kind":"label","options":[["yes","it is","linear functional","it is a linear functional","E_3 is a linear functional","yes, it is","yes, it is a linear functional","yes, E_3 is a linear functional"],["no","it is not","not a linear functional","not linear","it is not a linear functional","no, it is not","no, it is not a linear functional"]]}
+            solution_sketch: 'For two polynomials $p$ and $q$ we have $E_3(p + q) = (p + q)(3) = p(3) + q(3) = E_3(p) + E_3(q)$. For a scalar $c$ we have $E_3(cp) = c\,p(3) = c\,E_3(p)$. Both properties hold, so $E_3$ is a linear functional.'
+          - problem: 'On $P_2$ let $E_3(p) = p(3)$. Find $E_3(x^2 - 2x)$.'
+            answer: '3'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Substitute $x = 3$ into the polynomial. This gives $E_3(x^2 - 2x) = 3^2 - 2 \cdot 3 = 9 - 6 = 3$.'
+          - problem: 'A bakery charges $3$ euros for a loaf and $2$ euros for a roll. The cost of an order of $x$ loaves and $y$ rolls is the linear functional $C(x, y) = 3x + 2y$. What is the cost of an order of $5$ loaves and $4$ rolls?'
+            answer: '23'
+            answer_contract: {"kind":"unit","quantity":"euro","unit":"euro","allow_omitted":true}
+            solution_sketch: 'The cost is the value of the functional at $(5, 4)$. We get $C(5, 4) = 3 \cdot 5 + 2 \cdot 4 = 15 + 8 = 23$ euros.'
+          - problem: 'A taxi charges $2$ euros per kilometre and $5$ euros per hour of waiting, so a ride of $k$ kilometres with $h$ hours of waiting costs $F(k, h) = 2k + 5h$ euros. A ride with $3$ hours of waiting costs $31$ euros. How many kilometres was the ride?'
+            answer: '8'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"km","allow_omitted":true}
+            solution_sketch: 'The waiting part of the fare is $5 \cdot 3 = 15$ euros. The distance part is then $31 - 15 = 16$ euros. At $2$ euros per kilometre the ride was $16 / 2 = 8$ kilometres.'
+          - problem: 'A linear functional $f$ on $\mathbb{R}^2$ satisfies $f(1, 0) = 3$ and $f(0, 1) = -2$. Find $f(4, 5)$.'
+            answer: '2'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Write $(4, 5) = 4(1, 0) + 5(0, 1)$. Linearity gives $f(4, 5) = 4 f(1, 0) + 5 f(0, 1) = 4 \cdot 3 + 5 \cdot (-2) = 12 - 10 = 2$.'
+          - problem: 'On $P_2$ let $C(p)$ be the coefficient of $x^2$ in $p$. Find $C(6x^2 + x - 2)$.'
+            answer: '6'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The coefficient of $x^2$ in $6x^2 + x - 2$ is read off directly. So $C(6x^2 + x - 2) = 6$.'
+          - problem: 'On $\mathbb{R}^3$ define the linear functional $f(x, y, z) = 2x - y + 4z$. Find $f(1, 2, 3)$.'
+            answer: '12'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Substitute the three coordinates into the formula. Then $f(1, 2, 3) = 2 \cdot 1 - 2 + 4 \cdot 3 = 2 - 2 + 12 = 12$.'
+        constraints: 'functionals on R^2, R^3, or P_2 given by a formula; nonlinear counterexamples fail on one concrete scaling or sum; contexts with a cost or fare formula where one value is unknown'
       - id: kp2
         name: The dual basis
         key_prerequisites: [coordinates-relative-basis, linear-transformations]
+        try_first:
+          problem: 'A linear functional $f$ on $\mathbb{R}^2$ satisfies $f(2, 0) = 1$ and $f(0, 2) = 0$. What is $f(1, 0)$?'
+          answer_contract: {"kind":"exact"}
+          answer: '1/2'
+          reveal: 'Since $(1, 0) = \frac{1}{2}(2, 0)$, linearity gives $f(1, 0) = \frac{1}{2}$. A dual basis is built from exactly this kind of condition: value $1$ on one basis vector and value $0$ on the others.'
+        step_check:
+          step: 'the dual basis must satisfy $f_1(1,1) = 1$, $f_1(2,1) = 0$'
+          question: 'Why does the dual basis require $f_1(2,1) = 0$ and not $f_1(2,1) = 1$?'
+          options:
+            - 'Every functional must give $0$ on every basis vector except the very first one'
+            - 'A functional on $\mathbb{R}^2$ can take the value $1$ on only one vector of the plane'
+            - 'Each $f_i$ must give $1$ on its basis vector $b_i$ and $0$ on every other one'
+            - 'The value of $f_1$ on the second basis vector is always minus its value on the first'
+          answer: 'Each $f_i$ must give $1$ on its basis vector $b_i$ and $0$ on every other one'
+          why: 'The dual basis is defined by $f_i(b_j) = 1$ when $i = j$ and $0$ otherwise. So $f_1$ takes the value $1$ on $b_1 = (1, 1)$ and the value $0$ on $b_2 = (2, 1)$.'
         exemplars:
-          - problem: "Let $B = \\{(2, 0), (0, 2)\\}$ be a basis of $\\mathbb{R}^2$ and let $f_1, f_2$ be its dual basis, so $f_i(b_j) = 1$ if $i = j$ and $0$ otherwise. Find $f_1$ and $f_2$ as functions of $x$ and $y$."
-            answer: "f1 = x/2; f2 = y/2"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["x", "y"]}, "name": "f1"}, {"contract": {"kind": "function", "vars": ["x", "y"]}, "name": "f2"}]}
-            solution_sketch: "Dual basis definition: $f_1(2, 0) = 1$, $f_1(0, 2) = 0$, $f_2(2, 0) = 0$, $f_2(0, 2) = 1$. Write $f_1 = ax + by$: the 2x2 system $2a = 1$, $2b = 0$ gives $a = 1/2$, $b = 0$. Write $f_2 = cx + dy$: $2c = 0$, $2d = 1$ gives $c = 0$, $d = 1/2$. Check: $f_1(2, 0) = 1$ and $f_2(0, 2) = 1$. The dual basis is f1 = x/2; f2 = y/2."
-          - problem: "Let $B = \\{(2, 1), (1, 1)\\}$ be a basis of $\\mathbb{R}^2$ with dual basis $f_1, f_2$. Write $f_1(x, y) = ax + by$ and $f_2(x, y) = cx + dy$, solve the two 2x2 systems from $f_i(b_j)$, and give $f_1$ and $f_2$ as functions of $x$ and $y$."
-            answer: "f1 = x - y; f2 = -x + 2y"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["x", "y"]}, "name": "f1"}, {"contract": {"kind": "function", "vars": ["x", "y"]}, "name": "f2"}]}
-            solution_sketch: "Dual basis definition: $f_1(2, 1) = 1$, $f_1(1, 1) = 0$, $f_2(2, 1) = 0$, $f_2(1, 1) = 1$. For $f_1 = ax + by$ the system $2a + b = 1$, $a + b = 0$ gives $a = 1$, $b = -1$. For $f_2 = cx + dy$ the system $2c + d = 0$, $c + d = 1$ gives $c = -1$, $d = 2$. Check: $f_1(1, 1) = 0$ and $f_2(1, 1) = 1$. The dual basis is f1 = x - y; f2 = -x + 2y."
-          - problem: "For $B = \\{(2, 2), (1, 0)\\}$ in $\\mathbb{R}^2$, write the first dual basis vector as $f_1(x, y) = ax + by$ and impose $f_1(2, 2) = 1$, $f_1(1, 0) = 0$. Give the coefficient pair as (a, b)."
-            answer: "(0, 1/2)"
-            answer_contract: {"arity": 2, "kind": "coordinates"}
-            solution_sketch: "Dual basis definition: $f_1(2, 2) = 1$ and $f_1(1, 0) = 0$. Solving the 2x2 system for $f_1 = ax + by$: the equation $a + 0b = 0$ gives $a = 0$, and $2a + 2b = 1$ then gives $b = 1/2$. Check: $f_1(2, 2) = 2 \\cdot 1/2 = 1$. The coefficient pair is (0, 1/2)."
-          - problem: "Let $B = \\{(-2, 0), (2, 2)\\}$ be a basis of $\\mathbb{R}^2$ with dual basis $f_1, f_2$. Find $f_1$ and $f_2$, then evaluate both functionals at the point $(3, 1)$. Give the pair of values as (a, b)."
-            answer: "(-1, 1/2)"
-            answer_contract: {"arity": 2, "kind": "coordinates"}
-            solution_sketch: "Dual basis definition: $f_1(-2, 0) = 1$, $f_1(2, 2) = 0$, $f_2(-2, 0) = 0$, $f_2(2, 2) = 1$. Solving the 2x2 systems gives $f_1 = (-x + y)/2$ and $f_2 = y/2$. Evaluating at $(3, 1)$: $f_1(3, 1) = (-3 + 1)/2 = -1$ and $f_2(3, 1) = 1/2$. The pair of values is (-1, 1/2)."
-          - problem: "Let $B = \\{(-1, 1), (1, 1)\\}$ be a basis of $\\mathbb{R}^2$. Find its dual basis $f_1, f_2$ and give both functionals as functions of $x$ and $y$."
-            answer: "f1 = (y-x)/2; f2 = (x+y)/2"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["x", "y"]}, "name": "f1"}, {"contract": {"kind": "function", "vars": ["x", "y"]}, "name": "f2"}]}
-            solution_sketch: "Dual basis definition: $f_1(-1, 1) = 1$, $f_1(1, 1) = 0$, $f_2(-1, 1) = 0$, $f_2(1, 1) = 1$. For $f_1 = ax + by$ the system $-a + b = 1$, $a + b = 0$ gives $a = -1/2$, $b = 1/2$. For $f_2 = cx + dy$ the system $-c + d = 0$, $c + d = 1$ gives $c = d = 1/2$. Check: $f_1(1, 1) = 0$ and $f_2(1, 1) = 1$. The dual basis is f1 = (y-x)/2; f2 = (x+y)/2."
-          - problem: "A basis $B = \\{b_1, b_2\\}$ of $\\mathbb{R}^2$ has dual basis $f_1(x, y) = x + 2y$ and $f_2(x, y) = x + y$, where $f_i(b_j) = 1$ if $i = j$ and $0$ otherwise. Determine $b_1$ and $b_2$. Give the answer as (x1, y1, x2, y2), where $b_1 = (x1, y1)$ and $b_2 = (x2, y2)$."
-            answer: "(-1, 1, 2, -1)"
-            answer_contract: {"arity": 4, "kind": "coordinates"}
-            solution_sketch: "Dual basis definition: $f_1(b_1) = 1$, $f_2(b_1) = 0$, $f_1(b_2) = 0$, $f_2(b_2) = 1$. For $b_1 = (x1, y1)$ the system $x1 + 2y1 = 1$, $x1 + y1 = 0$ gives $y1 = 1$, $x1 = -1$. For $b_2 = (x2, y2)$ the system $x2 + 2y2 = 0$, $x2 + y2 = 1$ gives $y2 = -1$, $x2 = 2$. Check: $f_2(2, -1) = 2 - 1 = 1$. The basis, as one 4-tuple, is (-1, 1, 2, -1)."
-        constraints: "bases of R^2 with entries in -2..2; each dual vector found by a 2x2 solve with integer or half-integer coefficients"
+          - problem: 'The set $B = \{(3, 1), (2, 1)\}$ is a basis of $\mathbb{R}^2$. Find the first functional $f_1$ of its dual basis, that is, the linear functional with $f_1(3, 1) = 1$ and $f_1(2, 1) = 0$.'
+            answer: 'x - 2y'
+            answer_contract: {"kind":"function","vars":["x","y"]}
+            solution_sketch: 'Write $f_1(x, y) = ax + by$. The two conditions give $3a + b = 1$ and $2a + b = 0$. Subtracting gives $a = 1$, and then $b = -2$, so $f_1(x, y) = x - 2y$.'
+          - problem: 'Let $\{f_1, f_2\}$ be the dual basis of $B = \{(1, 1), (1, -1)\}$ in $\mathbb{R}^2$. Find $f_1(3, 1)$.'
+            answer: '2'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The functional $f_1$ gives the first coordinate of a vector relative to $B$. Since $(3, 1) = 2(1, 1) + 1(1, -1)$, we get $f_1(3, 1) = 2$.'
+          - problem: 'A basis $B = \{b_1, b_2\}$ of $\mathbb{R}^2$ has the dual basis $f_1(x, y) = x + 2y$ and $f_2(x, y) = x + y$. Find $b_1$.'
+            answer: '(-1, 1)'
+            answer_contract: {"kind":"coordinates","arity":2}
+            solution_sketch: 'The vector $b_1 = (x, y)$ must satisfy $f_1(b_1) = 1$ and $f_2(b_1) = 0$. So $x + 2y = 1$ and $x + y = 0$. Subtracting gives $y = 1$, and then $x = -1$, so $b_1 = (-1, 1)$.'
+          - problem: 'Two feeds contain protein and fibre in the amounts $(2, 1)$ and $(1, 1)$ per kilogram. A mixture of the two feeds has the nutrient content $(7, 4)$. How many kilograms of the first feed does it contain?'
+            answer: '3'
+            answer_contract: {"kind":"unit","quantity":"mass","unit":"kg","allow_omitted":true}
+            solution_sketch: 'Let the mixture hold $a$ kg of the first feed and $b$ kg of the second. Then $2a + b = 7$ and $a + b = 4$. Subtracting gives $a = 3$ and $b = 1$, so the mixture holds $3$ kg of the first feed.'
+          - problem: 'Sam says that the dual basis of $\{(2, 0), (0, 2)\}$ starts with $f_1(x, y) = 2x$, because the first basis vector is $(2, 0)$. What is the correct $f_1(x, y)$?'
+            answer: 'x/2'
+            answer_contract: {"kind":"function","vars":["x","y"]}
+            solution_sketch: 'The functional $f_1$ must satisfy $f_1(2, 0) = 1$ and $f_1(0, 2) = 0$. With $f_1(x, y) = ax + by$ we get $2a = 1$ and $2b = 0$. So $a = 1/2$ and $b = 0$, and $f_1(x, y) = x/2$.'
+          - problem: 'Two syrups contain sugar and acid in the amounts $(1, 2)$ and $(1, 1)$ per litre. A blend of the two syrups has the content $(6, 8)$. How many litres of the second syrup does it contain?'
+            answer: '4'
+            answer_contract: {"kind":"unit","quantity":"volume","unit":"L","allow_omitted":true}
+            solution_sketch: 'Let the blend hold $a$ litres of the first syrup and $b$ litres of the second. Then $a + b = 6$ and $2a + b = 8$. Subtracting gives $a = 2$, and then $b = 6 - 2 = 4$ litres of the second syrup.'
+          - problem: 'Let $B = \{(2, 2), (1, 0)\}$ be a basis of $\mathbb{R}^2$ with dual basis $\{f_1, f_2\}$. Find $f_2$.'
+            answer: 'x - y'
+            answer_contract: {"kind":"function","vars":["x","y"]}
+            solution_sketch: 'Write $f_2(x, y) = cx + dy$. The conditions $f_2(2, 2) = 0$ and $f_2(1, 0) = 1$ give $2c + 2d = 0$ and $c = 1$. So $d = -1$ and $f_2(x, y) = x - y$.'
+          - problem: 'Let $B = \{(-2, 0), (2, 2)\}$ be a basis of $\mathbb{R}^2$ with dual basis $\{f_1, f_2\}$. Find the two values $f_1(3, 1)$ and $f_2(3, 1)$.'
+            answer: '(-1, 1/2)'
+            answer_contract: {"kind":"coordinates","arity":2}
+            solution_sketch: 'These values are the coordinates of $(3, 1)$ relative to $B$. Write $(3, 1) = a(-2, 0) + b(2, 2)$, so $2b = 1$ and $-2a + 2b = 3$. Then $b = 1/2$ and $a = -1$, so the values are $-1$ and $1/2$.'
+        constraints: 'bases of R^2 with entries in -2..3; each dual vector found by a 2x2 solve with integer or half-integer coefficients; mixture contexts that need the coordinates of a vector in a basis'
       - id: kp3
         name: Dimension of the dual and coordinates of functionals
         key_prerequisites: [basis-dimension, linear-transformations]
+        step_check:
+          step: 'The coefficient of $e_i^*$ is $f(e_i)$'
+          question: 'Why is the coefficient of $e_i^*$ in $f$ equal to the value $f(e_i)$?'
+          options:
+            - 'Evaluating both sides at $e_i$ leaves one term, because $e_j^*(e_i) = 0$ when $j \neq i$'
+            - 'Each dual vector $e_i^*$ is defined to have the value $f(e_i)$ at every point of the space'
+            - 'The functional $f$ always equals the sum of its values on the basis vectors, with no dual basis needed'
+            - 'The coefficients of $f$ are the entries of the point at which $f$ is evaluated'
+          answer: 'Evaluating both sides at $e_i$ leaves one term, because $e_j^*(e_i) = 0$ when $j \neq i$'
+          why: 'Write $f = c_1 e_1^* + \cdots + c_n e_n^*$ and evaluate at $e_i$. Every term except $c_i e_i^*(e_i) = c_i$ vanishes, so $c_i = f(e_i)$.'
         exemplars:
-          - problem: 'What is $\dim (\mathbb{R}^3)^*$?'
-            answer: "3"
-            solution_sketch: 'The dual basis of any basis of $V$ is a basis of $V^*$, so $\dim V^* = \dim V$.'
-          - problem: 'What is the dimension of $P_2^*$, the dual space of $P_2$?'
-            answer: "3"
-            solution_sketch: '$\dim P_2^* = \dim P_2 = 3$.'
-          - problem: "Let $f(x, y) = 4x - 3y$ be a functional on $\\mathbb{R}^2$, and let $e_1^*, e_2^*$ be the dual basis of the standard basis. Give the coordinates of $f$ in the dual basis as (a, b)."
-            answer: "(4, -3)"
-            answer_contract: {"arity": 2, "kind": "coordinates"}
-            solution_sketch: "Coordinates of $f$ in the dual basis are its values on the basis vectors: $f = f(e_1) e_1^* + f(e_2) e_2^*$. Evaluate: $f(1, 0) = 4$ and $f(0, 1) = -3$. The coordinates of $f$ are (4, -3)."
-          - problem: "Let $f(x, y) = 2x + y$ on $\\mathbb{R}^2$ and let $B = \\{(1, 2), (3, 1)\\}$ with dual basis $b_1^*, b_2^*$. Give the coordinates of $f$ in the dual basis $B^*$ as (a, b)."
-            answer: "(4, 7)"
-            answer_contract: {"arity": 2, "kind": "coordinates"}
-            solution_sketch: "The dual-basis coordinates of $f$ are the values $f(b_1)$ and $f(b_2)$, since $f = f(b_1) b_1^* + f(b_2) b_2^*$. Compute $f(1, 2) = 2 \\cdot 1 + 2 = 4$ and $f(3, 1) = 2 \\cdot 3 + 1 = 7$. The coordinate pair is (4, 7)."
-          - problem: "Let $V = P_2$ with basis $B = \\{1, x, x^2\\}$, and define $f(p) = p(1) + p'(1)$ for every $p$ in $P_2$. Give the coordinates of $f$ in the dual basis $B^*$ as (a, b, c)."
-            answer: "(1, 2, 3)"
-            answer_contract: {"arity": 3, "kind": "coordinates"}
-            solution_sketch: "The coordinates of $f$ in $B^*$ are its values on the basis vectors: $f(1)$, $f(x)$, $f(x^2)$. Compute $f(1) = 1 + 0 = 1$, $f(x) = 1 + 1 = 2$, and $f(x^2) = 1 + 2 = 3$. The coordinates of $f$ are (1, 2, 3)."
-          - problem: "A functional $f$ on $\\mathbb{R}^2$ has coordinates $(5, -1)$ in the dual basis of $B = \\{(1, 1), (2, 0)\\}$. Find $f(3, 2)$."
-            answer: "19/2"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Write $f = 5 b_1^* - 1 b_2^*$, so $f(v) = 5c_1 - c_2$ where $(c_1, c_2)$ are the $B$-coordinates of $v$. Solve $c_1(1, 1) + c_2(2, 0) = (3, 2)$: from the second component $c_1 = 2$, then $2 + 2c_2 = 3$ gives $c_2 = 1/2$. Evaluate $f(3, 2) = 5 \\cdot 2 - 1/2 = 19/2$."
-        constraints: "dimensions <= 4; functional coordinates read off as values on the basis vectors"
+          - problem: 'What is the dimension of the dual space $(\mathbb{R}^3)^*$?'
+            answer: '3'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The dual space of a finite-dimensional space has the same dimension as the space. Since $\dim \mathbb{R}^3 = 3$, we get $\dim (\mathbb{R}^3)^* = 3$.'
+          - problem: 'Let $V$ be the space of all $2 \times 3$ matrices. What is the dimension of its dual space $V^*$?'
+            answer: '6'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The space $V$ has dimension $2 \cdot 3 = 6$, because a matrix has six free entries. The dual space has the same dimension, so $\dim V^* = 6$.'
+          - problem: 'Let $f(x, y) = 4x - 3y$ be a functional on $\mathbb{R}^2$, and let $e_1^*, e_2^*$ be the dual basis of the standard basis. Find the coordinates of $f$ relative to $e_1^*, e_2^*$.'
+            answer: '(4, -3)'
+            answer_contract: {"kind":"coordinates","arity":2}
+            solution_sketch: 'The coordinates of $f$ are its values on the standard basis vectors. We get $f(1, 0) = 4$ and $f(0, 1) = -3$, so $f = 4e_1^* - 3e_2^*$ and the coordinates are $(4, -3)$.'
+          - problem: 'Let $f(x, y) = 2x + y$ on $\mathbb{R}^2$, and let $b_1^*, b_2^*$ be the dual basis of $B = \{(1, 2), (3, 1)\}$. Find the coordinates of $f$ relative to $b_1^*, b_2^*$.'
+            answer: '(4, 7)'
+            answer_contract: {"kind":"coordinates","arity":2}
+            solution_sketch: 'The coordinates of $f$ are its values on the basis vectors. We get $f(1, 2) = 2 + 2 = 4$ and $f(3, 1) = 6 + 1 = 7$, so the coordinates are $(4, 7)$.'
+          - problem: 'On $P_2$ define the functional $f(p) = p(1) + p''(1)$. Find the coordinates of $f$ relative to the dual basis of $B = \{1, x, x^2\}$.'
+            answer: '(1, 2, 3)'
+            answer_contract: {"kind":"coordinates","arity":3}
+            solution_sketch: 'The coordinates of $f$ are its values on the basis polynomials. We get $f(1) = 1 + 0 = 1$, $f(x) = 1 + 1 = 2$ and $f(x^2) = 1 + 2 = 3$, so the coordinates are $(1, 2, 3)$.'
+          - problem: 'A functional $f$ on $\mathbb{R}^2$ has the coordinates $(5, -1)$ relative to the dual basis of $B = \{(1, 1), (2, 0)\}$. Find $f(3, 2)$.'
+            answer: '19/2'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Write $(3, 2) = a(1, 1) + b(2, 0)$, so $a = 2$ and $a + 2b = 3$ gives $b = 1/2$. Then $f(3, 2) = 5 \cdot 2 + (-1) \cdot (1/2) = 10 - 1/2 = 19/2$.'
+          - problem: 'A linear functional $f$ on $\mathbb{R}^2$ satisfies $f(1, 1) = 7$ and $f(1, -1) = 3$. Find $f(1, 0)$.'
+            answer: '5'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Write $(1, 0) = \frac{1}{2}(1, 1) + \frac{1}{2}(1, -1)$. Linearity gives $f(1, 0) = \frac{1}{2} \cdot 7 + \frac{1}{2} \cdot 3 = 5$.'
+          - problem: 'A shop''s daily revenue is the linear functional $R(x, y, z) = 2x + 3y + 5z$ euros of the numbers $x, y, z$ of apples, pears and plums sold. Find the coordinates of $R$ relative to the dual basis of the standard basis.'
+            answer: '(2, 3, 5)'
+            answer_contract: {"kind":"coordinates","arity":3}
+            solution_sketch: 'The coordinates of $R$ are its values on the standard basis vectors. They are $R(1, 0, 0) = 2$, $R(0, 1, 0) = 3$ and $R(0, 0, 1) = 5$, the price of one fruit of each kind.'
+          - problem: 'A pack $b_1$ holds $2$ apples and no pears, and a pack $b_2$ holds $2$ pears and no apples. The weight of a basket of $x$ apples and $y$ pears is a linear functional $w(x, y)$. One pack $b_1$ weighs $6$ kg and one pack $b_2$ weighs $4$ kg. How much does a basket of $1$ apple and $1$ pear weigh?'
+            answer: '5'
+            answer_contract: {"kind":"unit","quantity":"mass","unit":"kg","allow_omitted":true}
+            solution_sketch: 'One apple weighs $6 / 2 = 3$ kg and one pear weighs $4 / 2 = 2$ kg, because $(1, 0) = \frac{1}{2} b_1$ and $(0, 1) = \frac{1}{2} b_2$. A basket with one of each weighs $3 + 2 = 5$ kg.'
+        constraints: 'dimensions <= 6; functional coordinates read off as values on the basis vectors; contexts with prices and packs'
     diagnostic_exemplar:
       problem: 'Find the dual basis $\{f_1, f_2\}$ of $B = \{(1, 2), (1, 1)\}$ in $\mathbb{R}^2$, and write $f(x, y) = 3x + 5y$ in terms of it.'
       answer: 'f_1(x, y) = -x + y, f_2(x, y) = 2x - y; and f = 13 f_1 + 8 f_2'
@@ -515,89 +772,152 @@ topics:
       - id: kp1
         name: Computing the B-matrix of a map
         key_prerequisites: [linear-transformations, coordinates-relative-basis]
+        step_check:
+          step: 'Express $(2, 1)$ in the basis'
+          question: 'Why must $T(\mathbf{b}_1) = (2, 1)$ be rewritten in the basis $B$ before it becomes a column of $[T]_B$?'
+          options:
+            - 'Rewriting makes the matrix act on standard vectors, so that $[T]_B$ equals the standard matrix of $T$'
+            - 'The vector $(2, 1)$ is not in the plane until it is written with the basis vectors $b_1, b_2$'
+            - 'The columns of $[T]_B$ hold coordinates relative to $B$, not the standard coordinates $(2, 1)$'
+            - 'A matrix must contain only the entries $0$ and $1$ when the basis is not the standard basis'
+          answer: 'The columns of $[T]_B$ hold coordinates relative to $B$, not the standard coordinates $(2, 1)$'
+          why: 'The matrix $[T]_B$ takes $B$-coordinates in and gives $B$-coordinates out. So each column is the $B$-coordinate vector of an image, here $(1, 1)$ and not $(2, 1)$.'
         exemplars:
-          - problem: "Let T(x, y) = (x, -y) and B = {(1, 1), (1, -1)}. Give [T]_B as [a,b;c,d]."
-            answer: "[0,1;1,0]"
-            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
-            solution_sketch: "Use the column rule: column j is the B-coordinate vector of T of the j-th basis vector. Step 1: T(1, 1) = (1, -1) = 0(1, 1) + 1(1, -1), so column 1 is (0, 1). Step 2: T(1, -1) = (1, 1) = 1(1, 1) + 0(1, -1), so column 2 is (1, 0). The matrix is [0,1;1,0]."
-          - problem: "A map T sends (1, 0) to (3, 1) and (0, 1) to (1, 3). With B = {(1, 1), (1, -1)}, give [T]_B as [a,b;c,d]."
-            answer: "[4,0;0,2]"
-            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
-            solution_sketch: "Use the column rule: column j is the B-coordinate vector of T of the j-th basis vector. Step 1: T(1, 1) = T(1, 0) + T(0, 1) = (4, 4) = 4(1, 1) + 0(1, -1), so column 1 is (4, 0). Step 2: T(1, -1) = T(1, 0) - T(0, 1) = (2, -2) = 0(1, 1) + 2(1, -1), so column 2 is (0, 2). The matrix is [4,0;0,2]."
-          - problem: "Let T(x, y) = (x + y, x - y). With B = {(1, 1), (1, -1)}, give [T]_B as [a,b;c,d]."
-            answer: "[1,1;1,-1]"
-            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
-            solution_sketch: "Use the column rule: column j is the B-coordinate vector of T of the j-th basis vector. Step 1: T(1, 1) = (2, 0) = 1(1, 1) + 1(1, -1), so column 1 is (1, 1). Step 2: T(1, -1) = (0, 2) = 1(1, 1) - 1(1, -1), so column 2 is (1, -1). The matrix is [1,1;1,-1]."
-          - problem: "Let T(x, y) = (2x + y, x + 2y). With B = {(1, 0), (1, 1)}, give [T]_B as [a,b;c,d]."
-            answer: "[1,0;1,3]"
-            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
-            solution_sketch: "Use the column rule: column j is the B-coordinate vector of T of the j-th basis vector. Step 1: T(1, 0) = (2, 1) = 1(1, 0) + 1(1, 1), so column 1 is (1, 1). Step 2: T(1, 1) = (3, 3) = 0(1, 0) + 3(1, 1), so column 2 is (0, 3). The matrix is [1,0;1,3]."
-          - problem: "Let T(x, y) = (x - y, y). With B = {(1, 0), (1, 1)}, give [T]_B as [a,b;c,d]."
-            answer: "[1,-1;0,1]"
-            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
-            solution_sketch: "Use the column rule: column j is the B-coordinate vector of T of the j-th basis vector. Step 1: T(1, 0) = (1, 0) = 1(1, 0) + 0(1, 1), so column 1 is (1, 0). Step 2: T(1, 1) = (0, 1) = -1(1, 0) + 1(1, 1), so column 2 is (-1, 1). The matrix is [1,-1;0,1]."
-          - problem: "Let T(x, y) = (x + 2y, 2x + y). With B = {(1, 1), (1, -1)}, give [T]_B as [a,b;c,d]."
-            answer: "[3,0;0,-1]"
-            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
-            solution_sketch: "Use the column rule: column j is the B-coordinate vector of T of the j-th basis vector. Step 1: T(1, 1) = (3, 3) = 3(1, 1) + 0(1, -1), so column 1 is (3, 0). Step 2: T(1, -1) = (-1, 1) = 0(1, 1) - 1(1, -1), so column 2 is (0, -1). The matrix is [3,0;0,-1]."
-        constraints: "maps on R^2; bases {(1,1),(1,-1)} or with 0/1 entries; each T(b_j) has integer B-coordinates found by inspection or a 2x2 solve"
+          - problem: 'Let $T(x, y) = (x - y, y)$ and $B = \{(1, 0), (1, 1)\}$. Find the matrix of $T$ relative to $B$.'
+            answer: '[[1,-1],[0,1]]'
+            answer_contract: {"kind":"matrix","rows":2,"cols":2}
+            solution_sketch: 'We have $T(1, 0) = (1, 0) = 1\,b_1 + 0\,b_2$, so the first column is $(1, 0)$. We have $T(1, 1) = (0, 1) = -1\,b_1 + 1\,b_2$, so the second column is $(-1, 1)$. The matrix is $\begin{pmatrix} 1 & -1 \\ 0 & 1 \end{pmatrix}$.'
+          - problem: 'Let $T(x, y) = (2x + y, x + 2y)$ and $B = \{(1, 0), (1, 1)\}$. Find the matrix of $T$ relative to $B$.'
+            answer: '[[1,0],[1,3]]'
+            answer_contract: {"kind":"matrix","rows":2,"cols":2}
+            solution_sketch: 'We have $T(1, 0) = (2, 1) = 1\,b_1 + 1\,b_2$, so the first column is $(1, 1)$. We have $T(1, 1) = (3, 3) = 0\,b_1 + 3\,b_2$, so the second column is $(0, 3)$. The matrix is $\begin{pmatrix} 1 & 0 \\ 1 & 3 \end{pmatrix}$.'
+          - problem: 'Let $T(x, y) = (x + y, x - y)$ and $B = \{(1, 1), (1, -1)\}$. Find the matrix of $T$ relative to $B$.'
+            answer: '[[1,1],[1,-1]]'
+            answer_contract: {"kind":"matrix","rows":2,"cols":2}
+            solution_sketch: 'We have $T(1, 1) = (2, 0) = 1\,b_1 + 1\,b_2$, so the first column is $(1, 1)$. We have $T(1, -1) = (0, 2) = 1\,b_1 - 1\,b_2$, so the second column is $(1, -1)$. The matrix is $\begin{pmatrix} 1 & 1 \\ 1 & -1 \end{pmatrix}$.'
+          - problem: 'The reflection of the plane in the $x$-axis is $T(x, y) = (x, -y)$. Find the matrix of $T$ relative to the basis $B = \{(1, 1), (1, -1)\}$.'
+            answer: '[[0,1],[1,0]]'
+            answer_contract: {"kind":"matrix","rows":2,"cols":2}
+            solution_sketch: 'The reflection sends $(1, 1)$ to $(1, -1) = b_2$, so the first column is $(0, 1)$. It sends $(1, -1)$ to $(1, 1) = b_1$, so the second column is $(1, 0)$. The matrix is $\begin{pmatrix} 0 & 1 \\ 1 & 0 \end{pmatrix}$.'
+          - problem: 'The projection of the plane onto the line $y = x$ is $T(x, y) = \left(\frac{x + y}{2}, \frac{x + y}{2}\right)$. Find the matrix of $T$ relative to the basis $B = \{(1, 1), (1, -1)\}$.'
+            answer: '[[1,0],[0,0]]'
+            answer_contract: {"kind":"matrix","rows":2,"cols":2}
+            solution_sketch: 'The projection fixes $(1, 1) = b_1$, so the first column is $(1, 0)$. It sends $(1, -1)$ to $(0, 0)$, so the second column is $(0, 0)$. The matrix is $\begin{pmatrix} 1 & 0 \\ 0 & 0 \end{pmatrix}$.'
+          - problem: 'A linear map $T$ sends $(1, 0)$ to $(3, 1)$ and $(0, 1)$ to $(1, 3)$. Find the matrix of $T$ relative to $B = \{(1, 1), (1, -1)\}$.'
+            answer: '[[4,0],[0,2]]'
+            answer_contract: {"kind":"matrix","rows":2,"cols":2}
+            solution_sketch: 'We have $T(1, 1) = (4, 4) = 4\,b_1$ and $T(1, -1) = (2, -2) = 2\,b_2$. So the columns are $(4, 0)$ and $(0, 2)$, and the matrix is $\begin{pmatrix} 4 & 0 \\ 0 & 2 \end{pmatrix}$.'
+          - problem: 'The rotation of the plane by $90^\circ$ counterclockwise is $T(x, y) = (-y, x)$. Find the matrix of $T$ relative to the basis $B = \{(1, 1), (1, -1)\}$.'
+            answer: '[[0,1],[-1,0]]'
+            answer_contract: {"kind":"matrix","rows":2,"cols":2}
+            solution_sketch: 'We have $T(1, 1) = (-1, 1) = -b_2$, so the first column is $(0, -1)$. We have $T(1, -1) = (1, 1) = b_1$, so the second column is $(1, 0)$. The matrix is $\begin{pmatrix} 0 & 1 \\ -1 & 0 \end{pmatrix}$.'
+          - problem: 'A metal plate is stretched by the factor $3$ along the direction $(1, 1)$ and by the factor $2$ along the direction $(1, -1)$, so the stretch $T$ has the matrix $\begin{pmatrix} 3 & 0 \\ 0 & 2 \end{pmatrix}$ relative to $B = \{(1, 1), (1, -1)\}$. Where does $T$ send the point $(1, 0)$?'
+            answer: '(5/2, 1/2)'
+            answer_contract: {"kind":"coordinates","arity":2}
+            solution_sketch: 'Write $(1, 0) = \frac{1}{2}(1, 1) + \frac{1}{2}(1, -1)$. The stretch gives $T(1, 0) = \frac{3}{2}(1, 1) + \frac{2}{2}(1, -1) = \left(\frac{5}{2}, \frac{1}{2}\right)$.'
+        constraints: 'maps on R^2 given by a formula, a geometric description or the images of the standard basis; bases {(1,1),(1,-1)} or with 0/1 entries; each T(b_j) has B-coordinates found by inspection or a 2x2 solve'
       - id: kp2
         name: Two bases give similar matrices
         key_prerequisites: [change-of-basis, linear-transformations]
+        step_check:
+          step: 'Compute $[T]_B = P_B^{-1} A P_B$ as two products'
+          question: 'Why does the product $P_B^{-1} A P_B$ give the matrix of $T$ relative to $B$?'
+          options:
+            - 'The product is the only matrix with the same determinant as $A$, so it must represent the same map'
+            - 'First $P_B$ converts $B$-coordinates to standard ones, then $A$ applies $T$, then $P_B^{-1}$ converts back'
+            - 'First $P_B^{-1}$ converts $B$-coordinates to standard ones, then $A$ applies $T$, then $P_B$ converts back'
+            - 'Multiplying by $P_B$ on both sides scales every entry of $A$ by the determinant of $P_B$'
+          answer: 'First $P_B$ converts $B$-coordinates to standard ones, then $A$ applies $T$, then $P_B^{-1}$ converts back'
+          why: 'The matrix $P_B$ turns $B$-coordinates into standard coordinates. Then $A$ applies $T$ in standard coordinates, and $P_B^{-1}$ returns the result to $B$-coordinates.'
         exemplars:
-          - problem: "Let T be the linear map with standard matrix A = [2,3;1,4] and let B = {(1,1),(1,-1)}. Give the matrix [T]_B as [a,b;c,d]."
-            answer: "[5,-2;0,1]"
-            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
-            solution_sketch: "Change-of-basis matrix P_B = [1,1;1,-1] has inverse [1/2,1/2;1/2,-1/2]. First product A P_B = [2,3;1,4] [1,1;1,-1] = [5,-1;5,-3]. Second product P_B inverse times that gives [5,-2;0,1]. The matrix is [5,-2;0,1]."
-          - problem: "Let T have matrix M = [4,1;2,3] in the standard basis B = {(1,0),(0,1)}, and let C = {(1,0),(1,2)}. Give the matrix [T]_C as [a,b;c,d]."
-            answer: "[3,2;1,4]"
-            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
-            solution_sketch: "Change-of-basis matrix from C-coordinates to B-coordinates is P = [1,1;0,2], with inverse [1,-1/2;0,1/2]. First product M P = [4,1;2,3] [1,1;0,2] = [4,6;2,8]. Second product P inverse times that gives [3,2;1,4]. The matrix is [3,2;1,4]."
-          - problem: "Let T have standard matrix A = [1,3;2,1] and let B = {(1,1),(1,-1)}. Find the entry in the first row and second column of [T]_B as a fraction."
-            answer: "-1/2"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Change-of-basis matrix P_B = [1,1;1,-1] has inverse [1/2,1/2;1/2,-1/2]. Product A P_B = [1,3;2,1] [1,1;1,-1] = [4,-2;3,1]. Then P_B inverse times that product is [7/2,-1/2;1/2,-3/2]. The first row and second column entry is -1/2."
-          - problem: "Let T have matrix M = [3,1;2,4] in the standard basis B = {(1,0),(0,1)}, and let C = {(1,1),(1,-1)}. Give the matrix [T]_C as [a,b;c,d]."
-            answer: "[5,0;-1,2]"
-            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
-            solution_sketch: "Change-of-basis matrix from C-coordinates to B-coordinates is P_C = [1,1;1,-1], with inverse [1/2,1/2;1/2,-1/2]. First product M P_C = [3,1;2,4] [1,1;1,-1] = [4,2;6,-2]. Second product P_C inverse times that gives [5,0;-1,2]. The matrix is [5,0;-1,2]."
-          - problem: "Let T be the linear map with standard matrix A = [1,2;0,3] and let B = {(1,2),(1,0)}. Give the matrix [T]_B as [a,b;c,d]."
-            answer: "[3,0;2,1]"
-            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
-            solution_sketch: "Change-of-basis matrix P_B = [1,1;2,0], and its inverse is [0,1/2;1,-1/2]. First product A P_B = [1,2;0,3] [1,1;2,0] = [5,1;6,0]. Second product P_B inverse times that gives [3,0;2,1]. The matrix is [3,0;2,1]."
-          - problem: "The map T has standard matrix A = [2,0;1,3] and basis B = {(1,1),(0,1)}. Determine its matrix in basis B as [a,b;c,d]."
-            answer: "[2,0;2,3]"
-            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
-            solution_sketch: "Change-of-basis matrix P_B = [1,0;1,1], with inverse [1,0;-1,1]. First product A P_B = [2,0;1,3] [1,0;1,1] = [2,0;4,3]. Second product P_B inverse times that gives [2,0;2,3]. The matrix is [2,0;2,3]."
-        constraints: "2x2 with basis vectors from {(1,1),(1,-1),(1,0),(0,1),(1,2)}; P_B inverse has half-integer entries at worst; conjugation done as two matrix products"
+          - problem: 'Let $T$ be the linear map with standard matrix $A = \begin{pmatrix} 2 & 3 \\ 1 & 4 \end{pmatrix}$. Find the matrix of $T$ relative to $B = \{(1, 1), (1, -1)\}$.'
+            answer: '[[5,-2],[0,1]]'
+            answer_contract: {"kind":"matrix","rows":2,"cols":2}
+            solution_sketch: 'With $P_B = \begin{pmatrix} 1 & 1 \\ 1 & -1 \end{pmatrix}$ we compute $[T]_B = P_B^{-1} A P_B$. The product $A P_B$ is $\begin{pmatrix} 5 & -1 \\ 5 & -3 \end{pmatrix}$. Multiplying by $P_B^{-1}$ gives $\begin{pmatrix} 5 & -2 \\ 0 & 1 \end{pmatrix}$.'
+          - problem: 'Let $T$ have the matrix $\begin{pmatrix} 4 & 1 \\ 2 & 3 \end{pmatrix}$ in the standard basis. Find the matrix of $T$ relative to $C = \{(1, 0), (1, 2)\}$.'
+            answer: '[[3,2],[1,4]]'
+            answer_contract: {"kind":"matrix","rows":2,"cols":2}
+            solution_sketch: 'With $P_C = \begin{pmatrix} 1 & 1 \\ 0 & 2 \end{pmatrix}$ we compute $[T]_C = P_C^{-1} A P_C$. The product $A P_C$ is $\begin{pmatrix} 4 & 6 \\ 2 & 8 \end{pmatrix}$. Multiplying by $P_C^{-1}$ gives $\begin{pmatrix} 3 & 2 \\ 1 & 4 \end{pmatrix}$.'
+          - problem: 'Let $T$ have the standard matrix $A = \begin{pmatrix} 1 & 3 \\ 2 & 1 \end{pmatrix}$ and let $B = \{(1, 1), (1, -1)\}$. What is the entry in the first row and second column of $[T]_B$?'
+            answer: '-1/2'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'With $P_B = \begin{pmatrix} 1 & 1 \\ 1 & -1 \end{pmatrix}$ and $P_B^{-1} = \frac{1}{2}\begin{pmatrix} 1 & 1 \\ 1 & -1 \end{pmatrix}$ we find $[T]_B = \begin{pmatrix} 7/2 & -1/2 \\ 1/2 & -3/2 \end{pmatrix}$. The entry in the first row and second column is $-1/2$.'
+          - problem: 'Let $T$ have the matrix $\begin{pmatrix} 3 & 1 \\ 2 & 4 \end{pmatrix}$ in the standard basis. Find the matrix of $T$ relative to $C = \{(1, 1), (1, -1)\}$.'
+            answer: '[[5,0],[-1,2]]'
+            answer_contract: {"kind":"matrix","rows":2,"cols":2}
+            solution_sketch: 'With $P_C = \begin{pmatrix} 1 & 1 \\ 1 & -1 \end{pmatrix}$ we compute $[T]_C = P_C^{-1} A P_C$. The product $A P_C$ is $\begin{pmatrix} 4 & 2 \\ 6 & -2 \end{pmatrix}$. Multiplying by $P_C^{-1}$ gives $\begin{pmatrix} 5 & 0 \\ -1 & 2 \end{pmatrix}$.'
+          - problem: 'Each year the amounts $(x, y)$ of two chemicals in a tank are replaced by $(2x + y,\; x + 2y)$. Find the matrix of this update relative to the basis $B = \{(1, 1), (1, -1)\}$.'
+            answer: '[[3,0],[0,1]]'
+            answer_contract: {"kind":"matrix","rows":2,"cols":2}
+            solution_sketch: 'The update has the standard matrix $A = \begin{pmatrix} 2 & 1 \\ 1 & 2 \end{pmatrix}$. Then $A(1, 1) = (3, 3) = 3\,b_1$ and $A(1, -1) = (1, -1) = 1\,b_2$. So $[T]_B = \begin{pmatrix} 3 & 0 \\ 0 & 1 \end{pmatrix}$.'
+          - problem: 'Let $T$ be the linear map with standard matrix $A = \begin{pmatrix} 1 & 2 \\ 0 & 3 \end{pmatrix}$. Find the matrix of $T$ relative to $B = \{(1, 2), (1, 0)\}$.'
+            answer: '[[3,0],[2,1]]'
+            answer_contract: {"kind":"matrix","rows":2,"cols":2}
+            solution_sketch: 'With $P_B = \begin{pmatrix} 1 & 1 \\ 2 & 0 \end{pmatrix}$ we compute $[T]_B = P_B^{-1} A P_B$. The product $A P_B$ is $\begin{pmatrix} 5 & 1 \\ 6 & 0 \end{pmatrix}$. Multiplying by $P_B^{-1}$ gives $\begin{pmatrix} 3 & 0 \\ 2 & 1 \end{pmatrix}$.'
+          - problem: 'A population model changes the pair $(x, y)$ by the standard matrix $A = \begin{pmatrix} 2 & 1 \\ 0 & 3 \end{pmatrix}$. Find the matrix of the model relative to the basis $B = \{(1, 0), (1, 1)\}$.'
+            answer: '[[2,0],[0,3]]'
+            answer_contract: {"kind":"matrix","rows":2,"cols":2}
+            solution_sketch: 'We have $A(1, 0) = (2, 0) = 2\,b_1$ and $A(1, 1) = (3, 3) = 3\,b_2$. So the columns of $[T]_B$ are $(2, 0)$ and $(0, 3)$, and the matrix is $\begin{pmatrix} 2 & 0 \\ 0 & 3 \end{pmatrix}$.'
+          - problem: 'Could $\begin{pmatrix} 1 & 2 \\ 3 & 4 \end{pmatrix}$ and $\begin{pmatrix} 2 & 0 \\ 0 & 3 \end{pmatrix}$ be the matrices of one linear map relative to two different bases?'
+            answer: 'no'
+            answer_contract: {"kind":"label","options":[["no","they could not","they cannot","no they could not","not the same map","no, they could not","no, they cannot"],["yes","they could","they can","yes they could","the same map","yes, they could","yes, they can"]]}
+            solution_sketch: 'Matrices of one map in two bases are similar, so they have the same determinant. The first matrix has determinant $1 \cdot 4 - 2 \cdot 3 = -2$ and the second has determinant $2 \cdot 3 = 6$. Since $-2 \neq 6$, they cannot represent one map.'
+          - problem: 'A linear map $T$ has the matrix $\begin{pmatrix} 3 & 3 \\ 0 & 2 \end{pmatrix}$ relative to a basis $B$. What is the determinant of its matrix relative to another basis $C$?'
+            answer: '6'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Matrices of one map in different bases are similar, and similar matrices have equal determinants. So the answer is the determinant of the given matrix, $3 \cdot 2 - 3 \cdot 0 = 6$.'
+        constraints: '2x2 with basis vectors from {(1,1),(1,-1),(1,0),(0,1),(1,2)}; P_B inverse has half-integer entries at worst; conjugation done as two matrix products; one verdict on whether two matrices can represent one map (determinant test)'
       - id: kp3
         name: Matrices of maps on polynomial spaces
         key_prerequisites: [polynomial-matrix-function-spaces, linear-transformations]
+        step_check:
+          step: 'Subgoal: place these coordinate vectors as the columns of the matrix, in the order of the basis'
+          question: 'Why are the coordinate vectors placed as columns and not as rows?'
+          options:
+            - 'Column $j$ must hold the coordinates of the image of the $j$-th basis vector'
+            - 'Rows give the same matrix, because a matrix always equals its own transpose'
+            - 'Images must be in columns, because polynomials are always written as columns of coefficients'
+            - 'Columns are used so that the matrix is invertible whatever the map $T$ is'
+          answer: 'Column $j$ must hold the coordinates of the image of the $j$-th basis vector'
+          why: 'Multiplying the matrix by the coordinate vector of $b_j$ picks out column $j$. For this to give $T(b_j)$, column $j$ must hold the coordinates of $T(b_j)$.'
         exemplars:
           - problem: 'Let $T: P_1 \to P_1$ be the shift $T(p)(x) = p(x + 1)$. Find the matrix of $T$ relative to the basis $\{1, x\}$.'
-            answer: "[1,1;0,1]"
-            answer_contract: {"cols":2,"kind":"matrix","rows":2}
-            solution_sketch: '$T(1) = 1$ has coordinates $(1, 0)$; $T(x) = x + 1$ has coordinates $(1, 1)$. Place them as columns.'
-          - problem: 'Let $T: P_2 \to P_2$ be $T(p)(x) = p(2x)$. Find the matrix of $T$ relative to $\{1, x, x^2\}$.'
-            answer: "[1,0,0;0,2,0;0,0,4]"
-            answer_contract: {"cols":3,"kind":"matrix","rows":3}
-            solution_sketch: '$T(1) = 1$, $T(x) = 2x$, $T(x^2) = 4x^2$: each basis vector is just scaled, so the matrix is diagonal.'
-          - problem: 'The shift map $T(p)(x) = p(x + 1)$ on $P_1$ has matrix $\begin{pmatrix}1&1\\0&1\end{pmatrix}$ in the basis $\{1, x\}$. Use the matrix to compute $T(3 + 2x)$.'
-            answer: "5 + 2x"
-            solution_sketch: 'Coordinates $(3, 2)$ map to $\begin{pmatrix}1&1\\0&1\end{pmatrix}(3, 2) = (5, 2)$, i.e. $5 + 2x$. Check directly: $3 + 2(x + 1) = 5 + 2x$. The coordinate isomorphism $P_1 \cong \mathbb{R}^2$ turns the map into matrix arithmetic.'
-          - problem: "Let $T: P_1 \\to P_1$ be the shift $T(p)(x) = p(x - 1)$. Find the matrix of $T$ relative to the basis $\\{1, x\\}$. Give the matrix as [a,b;c,d]."
-            answer: "[1,-1;0,1]"
-            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
-            solution_sketch: "Apply the shift rule to each basis vector: $T(1) = 1$ has coordinates $(1, 0)$, and $T(x) = x - 1$ has coordinates $(-1, 1)$. Placing these coordinate vectors as the columns gives the matrix [1,-1;0,1]."
-          - problem: "Let $T: P_1 \\to P_1$ be the scaling $T(p)(x) = p(3x)$. Find the matrix of $T$ relative to the basis $\\{1, x\\}$. Give the matrix as [a,b;c,d]."
-            answer: "[1,0;0,3]"
-            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
-            solution_sketch: "Apply the scaling rule to each basis vector: $T(1) = 1$ has coordinates $(1, 0)$, and $T(x) = 3x$ has coordinates $(0, 3)$. Placing these coordinate vectors as the columns gives the matrix [1,0;0,3]."
-          - problem: "Let $T: P_1 \\to P_1$ be given on coefficients by $T(a_0 + a_1 x) = (a_0 + a_1) + (a_1 - a_0)x$. Find the matrix of $T$ relative to the basis $\\{1, x\\}$. Give the matrix as [a,b;c,d]."
-            answer: "[1,1;-1,1]"
-            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
-            solution_sketch: "Apply the coefficient formula to each basis vector: $T(1) = 1 - x$ has coordinates $(1, -1)$, and $T(x) = 1 + x$ has coordinates $(1, 1)$. Placing these coordinate vectors as the columns gives the matrix [1,1;-1,1]."
-        constraints: "maps on P_1 or P_2 built from shifts p(x+c), scalings p(cx), or coefficient formulas with c in -2..2; no calculus; images expressed in the monomial basis"
+            answer: '[[1,1],[0,1]]'
+            answer_contract: {"kind":"matrix","rows":2,"cols":2}
+            solution_sketch: 'We have $T(1) = 1$, with coordinates $(1, 0)$. We have $T(x) = x + 1$, with coordinates $(1, 1)$. These are the columns, so the matrix is $\begin{pmatrix} 1 & 1 \\ 0 & 1 \end{pmatrix}$.'
+          - problem: 'Let $T: P_2 \to P_2$ be given by $T(p)(x) = p(2x)$. Find the matrix of $T$ relative to $\{1, x, x^2\}$.'
+            answer: '[[1,0,0],[0,2,0],[0,0,4]]'
+            answer_contract: {"kind":"matrix","rows":3,"cols":3}
+            solution_sketch: 'We have $T(1) = 1$, $T(x) = 2x$ and $T(x^2) = 4x^2$. Their coordinate vectors $(1, 0, 0)$, $(0, 2, 0)$ and $(0, 0, 4)$ are the columns, so the matrix is $\begin{pmatrix} 1 & 0 & 0 \\ 0 & 2 & 0 \\ 0 & 0 & 4 \end{pmatrix}$.'
+          - problem: 'The shift map $T(p)(x) = p(x + 1)$ on $P_1$ has the matrix $\begin{pmatrix} 1 & 1 \\ 0 & 1 \end{pmatrix}$ relative to the basis $\{1, x\}$. Use the matrix to find $T(3 + 2x)$.'
+            answer: '5 + 2x'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The polynomial $3 + 2x$ has the coordinate vector $(3, 2)$. Multiplying gives $\begin{pmatrix} 1 & 1 \\ 0 & 1 \end{pmatrix}\begin{pmatrix} 3 \\ 2 \end{pmatrix} = \begin{pmatrix} 5 \\ 2 \end{pmatrix}$, so $T(3 + 2x) = 5 + 2x$.'
+          - problem: 'Let $T: P_1 \to P_1$ be the shift $T(p)(x) = p(x - 1)$. Find the matrix of $T$ relative to the basis $\{1, x\}$.'
+            answer: '[[1,-1],[0,1]]'
+            answer_contract: {"kind":"matrix","rows":2,"cols":2}
+            solution_sketch: 'We have $T(1) = 1$, with coordinates $(1, 0)$. We have $T(x) = x - 1$, with coordinates $(-1, 1)$. These are the columns, so the matrix is $\begin{pmatrix} 1 & -1 \\ 0 & 1 \end{pmatrix}$.'
+          - problem: 'Let $T: P_1 \to P_1$ be the map $T(p)(x) = p(3x)$. Find the matrix of $T$ relative to the basis $\{1, x\}$.'
+            answer: '[[1,0],[0,3]]'
+            answer_contract: {"kind":"matrix","rows":2,"cols":2}
+            solution_sketch: 'We have $T(1) = 1$, with coordinates $(1, 0)$. We have $T(x) = 3x$, with coordinates $(0, 3)$. These are the columns, so the matrix is $\begin{pmatrix} 1 & 0 \\ 0 & 3 \end{pmatrix}$.'
+          - problem: 'Let $T: P_1 \to P_1$ be given by $T(a_0 + a_1 x) = (a_0 + a_1) + (a_1 - a_0)x$. Find the matrix of $T$ relative to the basis $\{1, x\}$.'
+            answer: '[[1,1],[-1,1]]'
+            answer_contract: {"kind":"matrix","rows":2,"cols":2}
+            solution_sketch: 'We have $T(1) = 1 - x$, with coordinates $(1, -1)$. We have $T(x) = 1 + x$, with coordinates $(1, 1)$. These are the columns, so the matrix is $\begin{pmatrix} 1 & 1 \\ -1 & 1 \end{pmatrix}$.'
+          - problem: 'Let $T: P_2 \to P_2$ be the shift $T(p)(x) = p(x + 1)$. Find the matrix of $T$ relative to the basis $\{1, x, x^2\}$.'
+            answer: '[[1,1,1],[0,1,2],[0,0,1]]'
+            answer_contract: {"kind":"matrix","rows":3,"cols":3}
+            solution_sketch: 'We have $T(1) = 1$, $T(x) = 1 + x$ and $T(x^2) = 1 + 2x + x^2$. Their coordinate vectors $(1, 0, 0)$, $(1, 1, 0)$ and $(1, 2, 1)$ are the columns. The matrix is $\begin{pmatrix} 1 & 1 & 1 \\ 0 & 1 & 2 \\ 0 & 0 & 1 \end{pmatrix}$.'
+          - problem: 'A distance is modelled by $p(t) = a_0 + a_1 t$ with $t$ in hours. The clock is restarted $3$ hours later, so the new model is $q(t) = p(t + 3)$. Find the matrix of the map $T(p) = q$ relative to the basis $\{1, t\}$.'
+            answer: '[[1,3],[0,1]]'
+            answer_contract: {"kind":"matrix","rows":2,"cols":2}
+            solution_sketch: 'We have $T(1) = 1$, with coordinates $(1, 0)$. We have $T(t) = t + 3$, with coordinates $(3, 1)$. These are the columns, so the matrix is $\begin{pmatrix} 1 & 3 \\ 0 & 1 \end{pmatrix}$.'
+          - problem: 'A temperature is modelled by $p(x) = a_0 + a_1 x$ with $x$ in hours. Measuring $x$ in half-hours instead gives the new model $q(x) = p(x/2)$. Find the matrix of the map $T(p) = q$ relative to the basis $\{1, x\}$.'
+            answer: '[[1,0],[0,1/2]]'
+            answer_contract: {"kind":"matrix","rows":2,"cols":2}
+            solution_sketch: 'We have $T(1) = 1$, with coordinates $(1, 0)$. We have $T(x) = x/2$, with coordinates $(0, 1/2)$. These are the columns, so the matrix is $\begin{pmatrix} 1 & 0 \\ 0 & 1/2 \end{pmatrix}$.'
+        constraints: 'maps on P_1 or P_2 built from shifts p(x+c), scalings p(cx) or p(x/2), or coefficient formulas with c in -2..3; no calculus; images expressed in the monomial basis'
     diagnostic_exemplar:
       problem: 'Let $T : P_1 \to P_1$ be the shift $T(p)(x) = p(x + 2)$. Find the matrix of $T$ relative to the basis $\{1, x\}$, and use the matrix to compute $T(3 + 2x)$.'
       answer: '$\begin{pmatrix}1&2\\0&1\end{pmatrix}$; $T(3 + 2x) = 7 + 2x$'
@@ -637,88 +957,164 @@ topics:
       - id: kp1
         name: The inner-product axioms and non-dot examples
         key_prerequisites: [dot-product-properties, definite-integrals-ftc]
+        step_check:
+          step: 'Each term is a positive weight times a square'
+          question: 'Why is $3u_1^2 + 4u_2^2$ never negative?'
+          options:
+            - 'The weights $3$ and $4$ are positive, and a positive weight makes every product positive, whatever the factor'
+            - 'A square is at least $0$ and the weights $3$ and $4$ are positive, so no term is negative'
+            - 'Squaring a coordinate gives a positive number, even when that coordinate is $0$'
+            - 'The sum of two numbers is never negative, whatever the two numbers are'
+          answer: 'A square is at least $0$ and the weights $3$ and $4$ are positive, so no term is negative'
+          why: 'A square is at least $0$, and multiplying it by the positive weight $3$ or $4$ keeps it at least $0$. A sum of such terms is at least $0$ too.'
         exemplars:
-          - problem: 'On $P_2$ with $\langle f, g \rangle = \int_0^1 f(x)g(x)\,dx$, compute $\langle x, 2x + 1 \rangle$.'
-            answer: "7/6"
-            solution_sketch: '$\int_0^1 (2x^2 + x)\,dx = \frac{2}{3} + \frac{1}{2} = \frac{7}{6}$.'
-          - problem: "On $\\mathbb{R}^2$, let $\\langle \\mathbf{u}, \\mathbf{v} \\rangle = 2u_1v_1 + 3u_2v_2$. Decide whether this product satisfies all the inner-product axioms, and give the value of $\\langle (1,-2), (1,-2) \\rangle$."
-            answer: "verdict = valid; value = 14"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["valid"], ["invalid"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "value"}]}
-            solution_sketch: "Symmetry axiom: swapping $\\mathbf{u}$ and $\\mathbf{v}$ gives $2v_1u_1 + 3v_2u_2 = \\langle \\mathbf{u}, \\mathbf{v} \\rangle$, so symmetry holds. Linearity axiom: each term is a fixed weight times a coordinate product, so the product is linear in each argument. Positivity axiom: $\\langle \\mathbf{u}, \\mathbf{u} \\rangle = 2u_1^2 + 3u_2^2$ is a sum of positive multiples of squares and vanishes only at $\\mathbf{0}$; at $\\mathbf{u} = (1,-2)$ it equals $2 \\cdot 1 + 3 \\cdot 4 = 14$. The option 'invalid' would require a failed axiom, but all three hold. The answer is verdict = valid; value = 14."
-          - problem: "On $\\mathbb{R}^2$ consider the product $\\langle \\mathbf{u}, \\mathbf{v} \\rangle = u_1v_1 - u_2v_2$. Exactly one inner-product axiom fails. Name the failing axiom and give the value of $\\langle (0,1), (0,1) \\rangle$."
-            answer: "axiom = positivity; value = -1"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["symmetry"], ["linearity"], ["positivity"], ["none"]]}, "name": "axiom"}, {"contract": {"kind": "exact"}, "name": "value"}]}
-            solution_sketch: "Symmetry check: swapping $\\mathbf{u}$ and $\\mathbf{v}$ gives $v_1u_1 - v_2u_2$, which equals the original expression, so the option 'symmetry' is wrong. Linearity check: each term is linear in each coordinate, so the option 'linearity' is wrong. Positivity check: for $\\mathbf{v} = (0,1)$, $\\langle \\mathbf{v}, \\mathbf{v} \\rangle = 0 - 1 = -1 < 0$ while $\\mathbf{v} \\neq \\mathbf{0}$, so positivity fails; the option 'none' is wrong because a failure exists. The answer is axiom = positivity; value = -1."
-          - problem: "Let $\\langle f, g \\rangle = \\int_{-1}^{1} f(x)g(x)\\,dx$ on the space $P_2$ of polynomials of degree at most 2. Compute $\\langle 1 + x, x \\rangle$ and give the answer as a fraction."
-            answer: "2/3"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Full object: $\\langle 1+x, x \\rangle = \\int_{-1}^{1} (1+x)x\\,dx$. Step 1 uses linearity of the integral to split into $\\int_{-1}^{1} x\\,dx + \\int_{-1}^{1} x^2\\,dx$. Step 2 uses odd-even symmetry: $x$ is odd, so its integral over $[-1,1]$ is $0$; $x^2$ is even, giving $2/3$. The answer is 2/3."
-          - problem: "Take $\\langle f, g \\rangle = \\int_0^1 f(x)g(x)\\,dx$ for polynomials $f$ and $g$. Compute $\\langle x^2, x + 3 \\rangle$ and give the answer as a fraction."
-            answer: "5/4"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Full object: $\\langle x^2, x+3 \\rangle = \\int_0^1 x^2(x+3)\\,dx$. Step 1 expands the product to $\\int_0^1 (x^3 + 3x^2)\\,dx$. Step 2 applies the Fundamental Theorem of Calculus: $\\frac{1}{4} + 3 \\cdot \\frac{1}{3} = \\frac{1}{4} + 1 = \\frac{5}{4}$. The answer is 5/4."
-          - problem: "On $\\mathbb{R}^2$ let $\\langle \\mathbf{u}, \\mathbf{v} \\rangle = u_1v_1 + 4u_2v_1$. Compute $\\langle (1,1), (2,1) \\rangle$ and $\\langle (2,1), (1,1) \\rangle$, and give both values."
-            answer: "uv = 10; vu = 6"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "uv"}, {"contract": {"kind": "exact"}, "name": "vu"}]}
-            solution_sketch: "First value: $\\langle (1,1),(2,1) \\rangle = 1 \\cdot 2 + 4 \\cdot 1 \\cdot 2 = 10$. Second value: $\\langle (2,1),(1,1) \\rangle = 2 \\cdot 1 + 4 \\cdot 1 \\cdot 1 = 6$. The two values differ, which shows the symmetry axiom fails for this weighted product: the weight 4 multiplies $u_2v_1$ rather than $u_2v_2$. The answer is uv = 10; vu = 6."
-        constraints: "weighted inner products on R^2 with positive integer weights <= 4; failures pinned to one axiom with a concrete counterexample; integral inner products of polynomials of degree <= 2 over [0,1] or [-1,1]"
+          - problem: 'On $\mathbb{R}^2$ let $\langle \mathbf{u}, \mathbf{v} \rangle = 3u_1v_1 + 4u_2v_2$. Find $\langle (1, 2), (2, -1) \rangle$.'
+            answer: '-2'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Substitute $u = (1, 2)$ and $v = (2, -1)$ into the formula. Then $\langle u, v \rangle = 3 \cdot 1 \cdot 2 + 4 \cdot 2 \cdot (-1) = 6 - 8 = -2$.'
+          - problem: 'Is $\langle \mathbf{u}, \mathbf{v} \rangle = 2u_1v_1 + 3u_2v_2$ an inner product on $\mathbb{R}^2$?'
+            answer: 'yes'
+            answer_contract: {"kind":"label","options":[["yes","it is","it is an inner product","inner product","yes it is","yes, it is"],["no","it is not","not an inner product","it is not an inner product","no it is not","no, it is not"]]}
+            solution_sketch: 'The formula is symmetric, because $2u_1v_1 + 3u_2v_2 = 2v_1u_1 + 3v_2u_2$. It is linear in each argument. It is positive, because $\langle u, u \rangle = 2u_1^2 + 3u_2^2$ is zero only for $u = 0$. All three axioms hold.'
+          - problem: 'On $\mathbb{R}^2$ let $\langle \mathbf{u}, \mathbf{v} \rangle = u_1v_1 - u_2v_2$. This product is not an inner product. Which axiom fails: symmetry, linearity or positivity?'
+            answer: 'positivity'
+            answer_contract: {"kind":"label","options":[["positivity","positive-definiteness","positive definiteness","positive definite","positive","it fails positivity","positivity fails","the positivity axiom"],["symmetry","symmetric","it fails symmetry","symmetry fails"],["linearity","linear","it fails linearity","linearity fails"]]}
+            solution_sketch: 'The formula is symmetric and linear in each argument, because each term is a product of coordinates with a constant weight. Positivity fails: for $u = (0, 1)$ we get $\langle u, u \rangle = 0 - 1 = -1$. A negative value contradicts $\langle u, u \rangle > 0$ for $u \neq 0$.'
+          - problem: 'Let $\langle f, g \rangle = \int_{-1}^{1} f(x)g(x)\,dx$ on $P_2$. Find $\langle 1 + x, x \rangle$.'
+            answer: '2/3'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'We have $\langle 1 + x, x \rangle = \int_{-1}^{1} (x + x^2)\,dx$. The term $x$ integrates to $0$ over the symmetric interval, and $\int_{-1}^{1} x^2\,dx = 2/3$. So the value is $2/3$.'
+          - problem: 'Two signals $f(t) = t^2$ and $g(t) = t + 3$ volts last for one second. Their overlap is $\langle f, g \rangle = \int_0^1 f(t)g(t)\,dt$. Find $\langle f, g \rangle$.'
+            answer: '5/4'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'We have $\langle f, g \rangle = \int_0^1 t^2(t + 3)\,dt = \int_0^1 (t^3 + 3t^2)\,dt$. This equals $\frac{1}{4} + 1 = \frac{5}{4}$.'
+          - problem: 'On $\mathbb{R}^2$ let $\langle \mathbf{u}, \mathbf{v} \rangle = u_1v_1 + 4u_2v_1$. Ana finds that $\langle (1, 1), (2, 1) \rangle = 10$. What is $\langle (2, 1), (1, 1) \rangle$?'
+            answer: '6'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Substitute $u = (2, 1)$ and $v = (1, 1)$. Then $\langle u, v \rangle = 2 \cdot 1 + 4 \cdot 1 \cdot 1 = 6$. The two values $10$ and $6$ differ, so this product is not symmetric.'
+          - problem: 'On $\mathbb{R}^2$ let $\langle \mathbf{u}, \mathbf{v} \rangle = u_1v_1 + w\,u_2v_2$ with a constant $w$. For which $w$ is $\langle (1, 1), (1, 1) \rangle = 7$?'
+            answer: '6'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Substitute $u = v = (1, 1)$. Then $\langle u, u \rangle = 1 \cdot 1 + w \cdot 1 \cdot 1 = 1 + w$. Setting $1 + w = 7$ gives $w = 6$.'
+          - problem: 'On $\mathbb{R}^2$ let $\langle \mathbf{u}, \mathbf{v} \rangle = u_1v_1 - u_2v_2$. Find $\langle (0, 1), (0, 1) \rangle$.'
+            answer: '-1'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Substitute $u = v = (0, 1)$. Then $\langle u, u \rangle = 0 \cdot 0 - 1 \cdot 1 = -1$.'
+          - problem: 'On $P_2$ let $\langle f, g \rangle = \int_0^1 f(x)g(x)\,dx$. Find $\langle x, 2x + 1 \rangle$.'
+            answer: '7/6'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'We have $\langle x, 2x + 1 \rangle = \int_0^1 (2x^2 + x)\,dx = \frac{2}{3} + \frac{1}{2}$. This equals $\frac{7}{6}$.'
+          - problem: 'A coach compares two athletes with the rating vectors $\mathbf{u} = (2, 1)$ and $\mathbf{v} = (1, 2)$ of speed and endurance, using $\langle \mathbf{u}, \mathbf{v} \rangle = 3u_1v_1 + 4u_2v_2$. Find $\langle \mathbf{u}, \mathbf{v} \rangle$.'
+            answer: '14'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Speed counts with the weight $3$ and endurance with the weight $4$. Then $\langle u, v \rangle = 3 \cdot 2 \cdot 1 + 4 \cdot 1 \cdot 2 = 6 + 8 = 14$.'
+        constraints: 'weighted inner products on R^2 with positive integer weights <= 4; failures pinned to one axiom with a concrete counterexample; integral inner products of polynomials of degree <= 2 over [0,1] or [-1,1]'
       - id: kp2
         name: Norms, orthogonality, and Cauchy-Schwarz abstractly
         key_prerequisites: [definite-integrals-ftc, dot-product-properties]
+        step_check:
+          step: 'Since $\langle x, x^2 \rangle = 0$, the functions $x$ and $x^2$ are orthogonal'
+          question: 'Why does a zero value of the integral $\int_{-1}^{1} x^3\,dx$ mean that $x$ and $x^2$ are orthogonal?'
+          options:
+            - 'The graphs of $x$ and $x^2$ meet at a right angle at the origin, which the zero value confirms'
+            - 'A zero integral means that one of the two functions is the zero function on the interval'
+            - 'The norms of $x$ and $x^2$ are both equal to $0$, so the product of the norms is zero'
+            - 'Orthogonal is defined as having inner product $0$ in any inner-product space'
+          answer: 'Orthogonal is defined as having inner product $0$ in any inner-product space'
+          why: 'Orthogonality in an inner-product space means $\langle f, g \rangle = 0$. The word does not refer to angles between graphs, and the zero integral is exactly this condition.'
         exemplars:
-          - problem: 'With $\langle f, g \rangle = \int_0^1 f(x)g(x)\,dx$, compute $\|x\|$.'
-            answer: '$1/\sqrt{3}$'
-            solution_sketch: '$\|f\| = \sqrt{\langle f, f \rangle}$; $\int_0^1 x^2\,dx = \frac{1}{3}$, so $\|x\| = \frac{1}{\sqrt{3}}$.'
-          - problem: "Let $\\langle f, g \\rangle = \\int_{-1}^{1} f(x)g(x)\\,dx$ on the polynomials of degree at most 2. For $f = 1$ and $g = x$, decide whether $\\langle f, g \\rangle = 0$, which is the test for orthogonality. Give the verdict and the value of the integral."
-            answer: "verdict = orthogonal; inner = 0"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["orthogonal"], ["collinear"], ["oblique"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "inner"}]}
-            solution_sketch: "Orthogonality test: the pair is orthogonal exactly when its inner product is the zero integral. Compute the full object: $\\langle 1, x \\rangle = \\int_{-1}^{1} x\\,dx = \\frac{1}{2} - \\frac{1}{2} = 0$. The option collinear is wrong because $x$ is not a constant multiple of $1$; the option oblique is wrong because it would need a nonzero integral. So verdict = orthogonal; inner = 0."
-          - problem: "Let $\\langle f, g \\rangle = \\int_0^1 f(x)g(x)\\,dx$ on the polynomials of degree at most 2. For $f = 1$ and $g = x^2$, decide whether the Cauchy-Schwarz inequality $|\\langle f, g \\rangle| \\leq \\|f\\|\\,\\|g\\|$ is satisfied. Give the verdict and the product of the norms as a single square root."
-            answer: "verdict = holds; prod = sqrt(1/5)"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["holds"], ["fails"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "prod"}]}
-            solution_sketch: "Cauchy-Schwarz compares the absolute inner product with the product of the norms. Compute the full pair: $|\\langle 1, x^2 \\rangle| = \\int_0^1 x^2\\,dx = \\frac{1}{3}$. Norms: $\\|1\\| = 1$ and $\\|x^2\\| = \\sqrt{\\int_0^1 x^4\\,dx} = \\sqrt{1/5}$, so the product is $\\sqrt{1/5}$. Since $\\frac{1}{3} < \\sqrt{1/5}$, the inequality is satisfied; the verdict fails only if a learner forgets to square $g$ and computes its norm from $\\int_0^1 x^2\\,dx$. So verdict = holds; prod = sqrt(1/5)."
-          - problem: "On the polynomial space with inner product $\\langle f, g \\rangle = \\int_{-1}^{1} f(x)g(x)\\,dx$, compute the norm $\\|x^2\\|$. Give the answer as a single square root."
-            answer: "sqrt(2/5)"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Norm definition in an inner-product space: $\\|f\\| = \\sqrt{\\langle f, f \\rangle}$. Compute the full inner product: $\\langle x^2, x^2 \\rangle = \\int_{-1}^{1} x^4\\,dx = \\left[\\frac{x^5}{5}\\right]_{-1}^{1} = \\frac{1}{5} + \\frac{1}{5} = \\frac{2}{5}$. Taking the single square root of this small fraction gives the norm. The answer is sqrt(2/5)."
-          - problem: "With $\\langle f, g \\rangle = \\int_0^1 f(x)g(x)\\,dx$ on the polynomials of degree at most 2, the polynomial $f = x + c$ should be orthogonal to $g = 1$. Find the constant $c$ that achieves this."
-            answer: "-1/2"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Orthogonality condition: $\\langle x + c, 1 \\rangle = 0$. Compute the full integral: $\\int_0^1 (x + c)\\,dx = \\frac{1}{2} + c$. Set $\\frac{1}{2} + c = 0$ and solve the linear equation for the unknown constant. The solution is c = -1/2."
-          - problem: "Let $\\langle f, g \\rangle = \\int_{-1}^{1} f(x)g(x)\\,dx$. Take $f = x$ and $g = 2x$. Determine whether the Cauchy-Schwarz bound $\\|f\\|\\,\\|g\\|$ is attained for this pair. Give the verdict and the value of $\\langle f, g \\rangle$ as a fraction."
-            answer: "verdict = equality; inner = 4/3"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["equality"], ["strict"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "inner"}]}
-            solution_sketch: "Cauchy-Schwarz is attained with equality exactly when the two vectors are linearly dependent; here $g = 2x$ is twice $f$. Check by the full computation: $\\langle x, 2x \\rangle = 2\\int_{-1}^{1} x^2\\,dx = \\frac{4}{3}$ and $\\|x\\|\\,\\|2x\\| = \\sqrt{2/3} \\cdot 2\\sqrt{2/3} = \\frac{4}{3}$. Both sides coincide, so the verdict strict would be the error of assuming two distinct-looking polynomials always give a strict bound. So verdict = equality; inner = 4/3."
-        constraints: "polynomials of degree <= 2 over [0,1] or [-1,1]; norms are single square roots of small fractions; orthogonality decided by one integral"
+          - problem: 'With $\langle f, g \rangle = \int_0^1 f(x)g(x)\,dx$, find the norm $\|x\|$.'
+            answer: '1/sqrt(3)'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The norm is $\|x\| = \sqrt{\langle x, x \rangle} = \sqrt{\int_0^1 x^2\,dx}$. Since $\int_0^1 x^2\,dx = 1/3$, the norm is $\sqrt{1/3} = 1/\sqrt{3}$.'
+          - problem: 'Let $\langle f, g \rangle = \int_{-1}^{1} f(x)g(x)\,dx$ on $P_2$. Are the polynomials $1$ and $x$ orthogonal?'
+            answer: 'yes'
+            answer_contract: {"kind":"label","options":[["yes","they are","orthogonal","they are orthogonal","yes they are","yes, they are"],["no","they are not","not orthogonal","they are not orthogonal","no they are not","no, they are not"]]}
+            solution_sketch: 'Two vectors are orthogonal when their inner product is $0$. Here $\langle 1, x \rangle = \int_{-1}^{1} x\,dx = 0$, because $x$ is an odd function on a symmetric interval. So $1$ and $x$ are orthogonal.'
+          - problem: 'Let $\langle f, g \rangle = \int_0^1 f(x)g(x)\,dx$ on $P_2$. Are the polynomials $1$ and $x$ orthogonal?'
+            answer: 'no'
+            answer_contract: {"kind":"label","options":[["no","they are not","not orthogonal","they are not orthogonal","no they are not","no, they are not"],["yes","they are","orthogonal","they are orthogonal","yes they are","yes, they are"]]}
+            solution_sketch: 'Two vectors are orthogonal when their inner product is $0$. Here $\langle 1, x \rangle = \int_0^1 x\,dx = 1/2$, which is not $0$. So $1$ and $x$ are not orthogonal on this interval.'
+          - problem: 'With $\langle f, g \rangle = \int_{-1}^{1} f(x)g(x)\,dx$, find the norm $\|x^2\|$.'
+            answer: 'sqrt(2/5)'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The norm is $\|x^2\| = \sqrt{\int_{-1}^{1} x^4\,dx}$. We have $\int_{-1}^{1} x^4\,dx = 2/5$, so $\|x^2\| = \sqrt{2/5}$.'
+          - problem: 'With $\langle f, g \rangle = \int_0^1 f(x)g(x)\,dx$, for which constant $c$ is $x + c$ orthogonal to $1$?'
+            answer: '-1/2'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'We need $\langle x + c, 1 \rangle = \int_0^1 (x + c)\,dx = \frac{1}{2} + c = 0$. So $c = -1/2$.'
+          - problem: 'With $\langle f, g \rangle = \int_0^1 f(x)g(x)\,dx$, Sam computes $\|x^2\| = 1/5$. What is the correct value of $\|x^2\|$?'
+            answer: '1/sqrt(5)'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Sam forgot the square root. We have $\langle x^2, x^2 \rangle = \int_0^1 x^4\,dx = 1/5$, and the norm is the square root of this value. So $\|x^2\| = \sqrt{1/5} = 1/\sqrt{5}$.'
+          - problem: 'With $\langle f, g \rangle = \int_0^1 f(x)g(x)\,dx$, the Cauchy-Schwarz inequality gives $|\langle x, x^2 \rangle| \leq \|x\|\,\|x^2\|$. Find the value of $\|x\|\,\|x^2\|$.'
+            answer: '1/sqrt(15)'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'We have $\|x\| = \sqrt{1/3}$ and $\|x^2\| = \sqrt{1/5}$. The product is $\sqrt{1/15} = 1/\sqrt{15}$, which is about $0.258$ and lies above $\langle x, x^2 \rangle = 1/4$.'
+          - problem: 'A voltage signal $f(t) = 3t$ volts lasts for $2$ seconds. Its energy is $\|f\|^2 = \int_0^2 f(t)^2\,dt$. Find the energy.'
+            answer: '24'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'We have $\|f\|^2 = \int_0^2 9t^2\,dt = 3t^3 \Big|_0^2$. This equals $3 \cdot 8 = 24$.'
+          - problem: 'A ramp signal $f(t) = t$ volts lasts for $1$ second. A gain $k > 0$ multiplies the signal so that the energy $\int_0^1 (k f(t))^2\,dt$ equals $1$. Find $k$.'
+            answer: 'sqrt(3)'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'We have $\int_0^1 k^2 t^2\,dt = k^2/3$. Setting $k^2/3 = 1$ gives $k^2 = 3$, so $k = \sqrt{3}$ because $k > 0$.'
+          - problem: 'With $\langle f, g \rangle = \int_{-1}^{1} f(x)g(x)\,dx$, the Cauchy-Schwarz inequality compares $|\langle x, 2x \rangle|$ with $\|x\|\,\|2x\|$. Find the ratio $|\langle x, 2x \rangle| \big/ \left(\|x\|\,\|2x\|\right)$.'
+            answer: '1'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'We have $\langle x, 2x \rangle = \int_{-1}^{1} 2x^2\,dx = 4/3$, $\|x\|^2 = 2/3$ and $\|2x\|^2 = 8/3$. The product of the norms is $\sqrt{16/9} = 4/3$, so the ratio is $1$. The two sides are equal because $2x$ is a multiple of $x$.'
+        constraints: 'polynomials of degree <= 2 over [0,1] or [-1,1]; norms are single square roots of small fractions; orthogonality decided by one integral; signal-energy contexts'
       - id: kp3
         name: Gram-Schmidt with a general inner product
         key_prerequisites: [orthogonality-gram-schmidt, definite-integrals-ftc]
+        step_check:
+          step: 'subtract the projection of $x$ onto $v_1$'
+          question: 'Why is the projection of $x$ onto $v_1$ subtracted when $v_2$ is built?'
+          options:
+            - 'The subtraction makes $v_2$ the same length as $v_1$ in the inner product'
+            - 'The subtraction makes $v_2$ a multiple of $v_1$, which keeps the span of the basis the same'
+            - 'What remains is orthogonal to $v_1$, because the part of $x$ along $v_1$ has been removed'
+            - 'The projection is the part of $x$ that is not needed for the span of the two vectors'
+          answer: 'What remains is orthogonal to $v_1$, because the part of $x$ along $v_1$ has been removed'
+          why: 'The projection is the part of $x$ that points along $v_1$. Removing it leaves a vector with inner product $0$ with $v_1$.'
         exemplars:
-          - problem: "Let P1 be the space of polynomials of degree at most 1, with inner product <f, g> given by the integral from 0 to 1 of f(x)g(x) dx. Apply the Gram-Schmidt process to the basis 1, x, starting with v1 = 1. Find the second vector v2 and give it as a polynomial in x."
-            answer: "x - 1/2"
-            answer_contract: {"kind": "function", "vars": ["x"]}
-            solution_sketch: "The full Gram-Schmidt step is v2 = x - (<x, 1>/<1, 1>) times v1, where the projection coefficient is the ratio of two inner products. By the fundamental theorem of calculus, <x, 1> is the integral from 0 to 1 of x dx, which equals 1/2, and <1, 1> is the integral from 0 to 1 of 1 dx, which equals 1. So v2 = x - (1/2)(1). Verify orthogonality with one integral: the integral from 0 to 1 of (x - 1/2) dx equals 1/2 - 1/2 = 0. The second vector is x - 1/2."
-          - problem: "Let P2 be the space of polynomials of degree at most 2, with inner product <f, g> given by the integral from -1 to 1 of f(x)g(x) dx. Run Gram-Schmidt on the basis 1, x, x^2 with v1 = 1. Find the third vector v3 and give it as a polynomial in x."
-            answer: "x^2 - 1/3"
-            answer_contract: {"kind": "function", "vars": ["x"]}
-            solution_sketch: "The full Gram-Schmidt formula is v3 = x^2 - (<x^2, v1>/<v1, v1>) v1 - (<x^2, v2>/<v2, v2>) v2. First inner products by the fundamental theorem of calculus and odd symmetry: <x, 1> = 0, so v2 = x with no projection, and <x^2, x> = 0 as well. Next, <x^2, 1> is the integral from -1 to 1 of x^2 dx, which equals 2/3, and <1, 1> = 2. So v3 = x^2 - (2/3)/2 times 1 = x^2 - 1/3. Verify orthogonality with one integral: the integral from -1 to 1 of (x^2 - 1/3) dx equals 2/3 - 2/3 = 0. The third vector is x^2 - 1/3."
-          - problem: "Take P1 with inner product <f, g> given by the integral from -1 to 1 of f(x)g(x) dx. Apply Gram-Schmidt to the basis 1, x, and let v2 be the second vector of the output. Compute the inner product of v2 with itself, and give the answer as a fraction."
-            answer: "2/3"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The full object is the second Gram-Schmidt vector v2 = x - (<x, 1>/<1, 1>)(1), whose inner product with itself we must compute. Gram-Schmidt projection rule: the coefficient is <x, 1>/<1, 1>, and by odd symmetry <x, 1> is the integral from -1 to 1 of x dx, which equals 0, so v2 = x. Then <v2, v2> is the integral from -1 to 1 of x^2 dx, which the fundamental theorem of calculus evaluates as 2/3. Verify orthogonality of the output with one integral: the integral from -1 to 1 of x times 1 dx equals 0. The inner product of v2 with itself is 2/3."
-          - problem: "In P2, use the inner product <f, g> given by the integral from 0 to 1 of f(x)g(x) dx, and apply Gram-Schmidt to the basis 1, x, x^2. Let v2 be the second vector of the output. Compute the inner product of x^2 with v2, and give the answer as a fraction."
-            answer: "1/12"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The full object is the inner product <x^2, v2>, where v2 = x - (<x, 1>/<1, 1>)(1) is the second Gram-Schmidt vector. Gram-Schmidt step: <x, 1> is the integral from 0 to 1 of x dx, which equals 1/2, and <1, 1> = 1, so v2 = x - 1/2; the orthogonality check integral, from 0 to 1 of (x - 1/2) dx, equals 0. Then <x^2, v2> is the integral from 0 to 1 of x^2(x - 1/2) dx, that is of (x^3 - x^2/2) dx, which the fundamental theorem of calculus gives as 1/4 - 1/6 = 1/12. The inner product of x^2 with v2 is 1/12."
-          - problem: "Work in P2 with inner product <f, g> given by the integral from -1 to 1 of f(x)g(x) dx. Run Gram-Schmidt on the basis 1, x, x^2 and let v3 be the third vector of the output. Give the value of the inner product of v3 with itself as a fraction."
-            answer: "8/45"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The full object is <v3, v3>, where v3 = x^2 - (<x^2, 1>/<1, 1>)(1) - (<x^2, v2>/<v2, v2>) v2 is the third Gram-Schmidt vector. Gram-Schmidt with odd symmetry: <x, 1> = 0 gives v2 = x, and <x^2, x> = 0, while <x^2, 1> = 2/3 and <1, 1> = 2, so v3 = x^2 - 1/3. Then <v3, v3> is the integral from -1 to 1 of (x^2 - 1/3)^2 dx, that is of (x^4 - (2/3)x^2 + 1/9) dx, which the fundamental theorem of calculus evaluates as 2/5 - 4/9 + 2/9 = 8/45. Verify orthogonality of the output with one integral: the integral from -1 to 1 of (x^2 - 1/3) dx equals 0. The inner product of v3 with itself is 8/45."
-          - problem: "Equip P2 with the inner product <f, g> given by the integral from 0 to 1 of f(x)g(x) dx. Run the Gram-Schmidt process on the basis 1, x, x^2 in that order, starting from v1 = 1. Determine the third vector v3 and give it as a polynomial in x."
-            answer: "x^2 - x + 1/6"
-            answer_contract: {"kind": "function", "vars": ["x"]}
-            solution_sketch: "The full process gives v2 = x - (<x, 1>/<1, 1>)(1) and v3 = x^2 - (<x^2, 1>/<1, 1>)(1) - (<x^2, v2>/<v2, v2>) v2. Gram-Schmidt step for v2: <x, 1> = 1/2 and <1, 1> = 1 by the fundamental theorem of calculus, so v2 = x - 1/2. Step for v3: <x^2, 1> = 1/3, <x^2, v2> is the integral from 0 to 1 of (x^3 - x^2/2) dx, which equals 1/12, and <v2, v2> is the integral from 0 to 1 of (x - 1/2)^2 dx, which equals 1/12. So v3 = x^2 - (1/3)(1) - (1)(x - 1/2) = x^2 - x + 1/6. Verify orthogonality with one integral: the integral from 0 to 1 of (x^2 - x + 1/6)(x - 1/2) dx equals 0. The third vector is x^2 - x + 1/6."
-        constraints: "the sets {1, x} or {1, x, x^2}; intervals [0,1] or [-1,1]; projection coefficients are small fractions; verify orthogonality of the output by one integral"
+          - problem: 'Apply the Gram-Schmidt process to the basis $\{1, x\}$ of $P_1$ with $\langle f, g \rangle = \int_0^1 f(x)g(x)\,dx$, starting with $v_1 = 1$. Find $v_2$.'
+            answer: 'x - 1/2'
+            answer_contract: {"kind":"function","vars":["x"]}
+            solution_sketch: 'We have $\langle x, 1 \rangle = \int_0^1 x\,dx = 1/2$ and $\langle 1, 1 \rangle = 1$. So $v_2 = x - \frac{1/2}{1} \cdot 1 = x - 1/2$.'
+          - problem: 'Apply the Gram-Schmidt process to the basis $\{1, x, x^2\}$ of $P_2$ with $\langle f, g \rangle = \int_{-1}^{1} f(x)g(x)\,dx$, starting with $v_1 = 1$. Find $v_3$.'
+            answer: 'x^2 - 1/3'
+            answer_contract: {"kind":"function","vars":["x"]}
+            solution_sketch: 'Here $v_2 = x$, because $\langle x, 1 \rangle = 0$. We have $\langle x^2, 1 \rangle = 2/3$, $\langle 1, 1 \rangle = 2$ and $\langle x^2, x \rangle = 0$. So $v_3 = x^2 - \frac{2/3}{2} \cdot 1 = x^2 - 1/3$.'
+          - problem: 'Apply the Gram-Schmidt process to the basis $\{1, x\}$ of $P_1$ with $\langle f, g \rangle = \int_{-1}^{1} f(x)g(x)\,dx$, and let $v_2$ be the second vector. Find $\langle v_2, v_2 \rangle$.'
+            answer: '2/3'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Since $\langle x, 1 \rangle = \int_{-1}^{1} x\,dx = 0$, the second vector is $v_2 = x$. Then $\langle v_2, v_2 \rangle = \int_{-1}^{1} x^2\,dx = 2/3$.'
+          - problem: 'Apply the Gram-Schmidt process to the basis $\{1, x, x^2\}$ of $P_2$ with $\langle f, g \rangle = \int_0^1 f(x)g(x)\,dx$, and let $v_2$ be the second vector. Find $\langle x^2, v_2 \rangle$.'
+            answer: '1/12'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'We have $v_2 = x - 1/2$. Then $\langle x^2, v_2 \rangle = \int_0^1 x^2\left(x - \frac{1}{2}\right)dx = \frac{1}{4} - \frac{1}{6} = \frac{1}{12}$.'
+          - problem: 'Apply the Gram-Schmidt process to the basis $\{1, x, x^2\}$ of $P_2$ with $\langle f, g \rangle = \int_{-1}^{1} f(x)g(x)\,dx$, and let $v_3$ be the third vector. Find $\langle v_3, v_3 \rangle$.'
+            answer: '8/45'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'We have $v_3 = x^2 - 1/3$. Then $\langle v_3, v_3 \rangle = \int_{-1}^{1} \left(x^4 - \frac{2}{3}x^2 + \frac{1}{9}\right)dx = \frac{2}{5} - \frac{4}{9} + \frac{2}{9} = \frac{8}{45}$.'
+          - problem: 'Apply the Gram-Schmidt process to the basis $\{1, x, x^2\}$ of $P_2$ with $\langle f, g \rangle = \int_0^1 f(x)g(x)\,dx$, starting with $v_1 = 1$. Find $v_3$.'
+            answer: 'x^2 - x + 1/6'
+            answer_contract: {"kind":"function","vars":["x"]}
+            solution_sketch: 'We have $v_2 = x - 1/2$, $\langle x^2, 1 \rangle = 1/3$ and $\langle x^2, v_2 \rangle = 1/12$. Also $\langle v_2, v_2 \rangle = 1/12$. So $v_3 = x^2 - \frac{1}{3} - \left(x - \frac{1}{2}\right) = x^2 - x + \frac{1}{6}$.'
+          - problem: 'A voltage ramp is $f(t) = t$ volts for $0 \leq t \leq 2$ seconds, and $\langle f, g \rangle = \int_0^2 f(t)g(t)\,dt$. Subtract a multiple of the constant signal $1$ from $f$ so that the remainder is orthogonal to $1$. What is the remainder?'
+            answer: 't - 1'
+            answer_contract: {"kind":"function","vars":["t"]}
+            solution_sketch: 'We have $\langle t, 1 \rangle = \int_0^2 t\,dt = 2$ and $\langle 1, 1 \rangle = 2$. The multiple of $1$ to subtract is $2 / 2 = 1$, so the remainder is $t - 1$.'
+          - problem: 'A drift signal is $g(t) = t$ for $0 \leq t \leq 3$ hours, and $\langle f, h \rangle = \int_0^3 f(t)h(t)\,dt$. A constant offset $c$ is subtracted so that $g - c$ is orthogonal to the constant signal $1$. Find $c$.'
+            answer: '3/2'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'We need $\langle t - c, 1 \rangle = \int_0^3 (t - c)\,dt = \frac{9}{2} - 3c = 0$. So $c = \frac{9/2}{3} = \frac{3}{2}$.'
+          - problem: 'Apply the Gram-Schmidt process to the basis $\{1, x\}$ of $P_1$ with $\langle f, g \rangle = \int_{-1}^{1} f(x)g(x)\,dx$. Sam copies the answer $v_2 = x - 1/2$ from the interval $[0, 1]$. What is the correct $v_2$ here?'
+            answer: 'x'
+            answer_contract: {"kind":"function","vars":["x"]}
+            solution_sketch: 'On $[-1, 1]$ we have $\langle x, 1 \rangle = \int_{-1}^{1} x\,dx = 0$. So no multiple of $v_1 = 1$ is subtracted, and $v_2 = x$. The value $1/2$ belongs to $[0, 1]$ only.'
+        constraints: 'the sets {1, x} or {1, x, x^2}; intervals [0,1], [-1,1], [0,2] or [0,3]; projection coefficients are small fractions; verify orthogonality of the output by one integral'
     diagnostic_exemplar:
       problem: 'With $\langle f, g \rangle = \int_0^1 f(x)g(x)\,dx$ on $P_1$, apply Gram-Schmidt to $\{1, x\}$ and give the norm of the second vector you obtain.'
       answer: '$v_1 = 1$, $v_2 = x - \frac{1}{2}$; $\|v_2\| = \frac{1}{2\sqrt{3}}$'

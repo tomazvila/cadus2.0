@@ -24,83 +24,165 @@ topics:
       - id: kp1
         name: Vertical shifts
         key_prerequisites: [function-notation]
-        constraints: "parent functions x^2, x^3, sqrt(x); integer shifts 1-9; ask for the right-hand side alone, written as a bare expression in x"
+        constraints: "parent functions x^2, x^3, sqrt(x), |x| or a given polynomial; integer shifts; at least two word problems where a constant is added to or subtracted from a model"
+        step_check:
+          step: 'Add the shift to the parent function'
+          question: 'Why is $5$ added to the whole function $\sqrt{x}$ to move the graph up $5$ units?'
+          options:
+            - 'Adding $5$ to $x$ inside the root raises every point by $5$ units'
+            - 'Every output $y$ must rise by $5$, and adding $5$ does that'
+            - 'Adding $5$ stretches the graph until every point is $5$ units higher'
+            - 'The graph moves up by the amount that is added to the input $x$'
+          answer: 'Every output $y$ must rise by $5$, and adding $5$ does that'
+          why: 'Moving up $5$ units raises every $y$-value by $5$. Adding $5$ to the whole function does that and leaves each input unchanged.'
         exemplars:
-          - problem: 'The graph of $y = x^2$ is shifted up $3$ units. Give the right-hand side of the new equation $y = \ldots$'
-            answer: "x^2 + 3"
-          - problem: 'The graph of $y = x^3$ is shifted down $4$ units. Give the right-hand side of the new equation $y = \ldots$'
-            answer: "x^3 - 4"
-          - problem: "The graph of $y = x^2$ is shifted down $5$ units. Give the right-hand side of the new equation $y = \\ldots$"
-            answer: "x^2 - 5"
-            answer_contract: {"kind": "function", "vars": ["x"]}
-            solution_sketch: "Use the vertical shift rule y = f(x) + k with f(x) = x^2 and k = -5. This gives y = x^2 - 5. So the right-hand side is x^2 - 5."
-          - problem: "The graph of $y = x^3$ is shifted up $6$ units. Give the right-hand side of the new equation $y = \\ldots$"
-            answer: "x^3 + 6"
-            answer_contract: {"kind": "function", "vars": ["x"]}
-            solution_sketch: "Use the vertical shift rule y = f(x) + k with f(x) = x^3 and k = 6. This gives y = x^3 + 6. So the right-hand side is x^3 + 6."
-          - problem: "The graph of $y = \\sqrt{x}$ is shifted down $2$ units. Give the right-hand side of the new equation $y = \\ldots$"
-            answer: "sqrt(x) - 2"
-            answer_contract: {"kind": "function", "vars": ["x"]}
-            solution_sketch: "Use the vertical shift rule y = f(x) + k with f(x) = sqrt(x) and k = -2. This gives y = sqrt(x) - 2. So the right-hand side is sqrt(x) - 2."
-          - problem: "The graph of $y = \\sqrt{x}$ is shifted up $7$ units. Give the right-hand side of the new equation $y = \\ldots$"
-            answer: "sqrt(x) + 7"
-            answer_contract: {"kind": "function", "vars": ["x"]}
-            solution_sketch: "Use the vertical shift rule y = f(x) + k with f(x) = sqrt(x) and k = 7. This gives y = sqrt(x) + 7. So the right-hand side is sqrt(x) + 7."
+          - problem: 'The graph of $y = x^2$ is shifted up $3$ units. What is the equation of the new graph?'
+            answer: 'y = x^2 + 3'
+            answer_contract: {"kind": "polynomial_relation"}
+            solution_sketch: 'Moving a graph up $3$ units adds $3$ to every output. So the new equation is $y = x^2 + 3$.'
+          - problem: 'The graph of $y = \sqrt{x}$ is moved down $4$ units. What is the equation of the new graph?'
+            answer: 'y = sqrt(x) - 4'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Moving a graph down $4$ units subtracts $4$ from every output. So the new equation is $y = \sqrt{x} - 4$.'
+          - problem: 'A tunnel arch has the profile $y = 9 - x^2$, where $x$ and $y$ are in metres. The whole arch is raised by $2$ m. What is the equation of the raised arch?'
+            answer: 'y = 11 - x^2'
+            answer_contract: {"kind": "polynomial_relation"}
+            solution_sketch: 'Raising the arch by $2$ m adds $2$ to every height. So the new profile is $y = 9 - x^2 + 2 = 11 - x^2$.'
+          - problem: 'The point $(2, 5)$ lies on the graph of $y = f(x)$. What point lies on the graph of $y = f(x) - 3$?'
+            answer: '(2, 2)'
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: 'Subtracting $3$ lowers every output by $3$ and leaves the input alone. So $(2, 5)$ moves to $(2, 2)$.'
+          - problem: 'Sam moves the graph of $y = x^3$ down $4$ units and writes $y = x^3 + 4$. What is the correct equation?'
+            answer: 'y = x^3 - 4'
+            answer_contract: {"kind": "polynomial_relation"}
+            solution_sketch: 'Down means every output gets smaller, so $4$ is subtracted. Sam added $4$, which moves the graph up; the correct equation is $y = x^3 - 4$.'
+          - problem: 'A food truck''s daily profit in dollars from selling $x$ meals is $P(x) = 12x - 0.1x^2$. A new permit costs $40$ dollars each day. What is the new profit function $Q(x)$?'
+            answer: 'Q(x) = 12x - 0.1x^2 - 40'
+            answer_contract: {"kind": "polynomial_relation"}
+            solution_sketch: 'The permit lowers the profit by $40$ dollars for every number of meals. So $Q(x) = P(x) - 40 = 12x - 0.1x^2 - 40$.'
+          - problem: 'The graph of $y = f(x)$ is shifted down $5$ units, and the new graph is $y = x^3 - 2x - 5$. What is the equation of the original graph?'
+            answer: 'y = x^3 - 2x'
+            answer_contract: {"kind": "polynomial_relation"}
+            solution_sketch: 'The shift subtracted $5$ from $f(x)$, so adding $5$ undoes it. Then $f(x) = x^3 - 2x - 5 + 5 = x^3 - 2x$.'
+          - problem: 'The graph of $y = |x| - 6$ is the graph of $y = |x|$ moved in which direction, up or down?'
+            answer: 'down'
+            answer_contract: {"kind": "label", "options": [["down", "downward", "downwards", "moved down", "it is moved down", "shifted down", "it moves down", "moves down"], ["up", "upward", "upwards", "moved up", "it is moved up", "shifted up", "it moves up", "moves up"]]}
+            solution_sketch: 'The constant $-6$ is added to every output of $|x|$, so every output is smaller. Every point of $y = |x|$ moves down $6$ units.'
       - id: kp2
         name: Horizontal shifts
         key_prerequisites: [function-notation, quadratic-graphs-vertex]
-        constraints: "emphasize the sign flip: f(x - h) moves right h; ask for the right-hand side alone, with radicals written as sqrt(...)"
+        constraints: "emphasize the sign flip: f(x - h) moves right h; parent functions x^2, x^3, sqrt(x) or a given line; at least two word problems where one process starts later"
+        step_check:
+          step: 'Apply the horizontal shift by replacing $x$ with $x - h$'
+          question: 'Why does shifting right $3$ turn $x^3$ into $(x - 3)^3$ and not $(x + 3)^3$?'
+          options:
+            - 'Right is the positive direction, so $3$ is added to $x$ in the bracket'
+            - 'Subtracting $3$ from each output lowers every point by $3$ units'
+            - 'The old value at $x = 0$ now appears where $x - 3 = 0$, at $x = 3$'
+            - 'The exponent $3$ makes the sign flip, so $x + 3$ becomes $x - 3$'
+          answer: 'The old value at $x = 0$ now appears where $x - 3 = 0$, at $x = 3$'
+          why: 'The old value at $x = 0$ is now taken where $x - 3 = 0$, that is at $x = 3$. So every point moves $3$ units to the right.'
+        try_first:
+          problem: 'At which value of $x$ does $(x - 3)^2$ take its smallest value?'
+          answer_contract: {"kind": "exact"}
+          answer: '3'
+          reveal: 'A square is smallest when its bracket is zero, and $x - 3 = 0$ at $x = 3$. So the graph of $y = (x - 3)^2$ has its lowest point at $x = 3$: the graph of $y = x^2$ has moved right $3$ units, not left.'
         exemplars:
-          - problem: 'The graph of $y = x^2$ is shifted right $2$ units. Give the right-hand side of the new equation $y = \ldots$'
-            answer: "(x - 2)^2"
-            solution_sketch: 'Right $h$ means replace $x$ with $x - h$.'
-          - problem: 'The graph of $y = \sqrt{x}$ is shifted left $5$ units. Give the right-hand side of the new equation $y = \ldots$'
-            answer: "sqrt(x + 5)"
-          - problem: "The graph of $y = x^2$ is shifted right $3$ units. Give the right-hand side of the new equation $y = \\ldots$."
-            answer: "(x - 3)^2"
-            answer_contract: {"kind": "function", "vars": ["x"]}
-            solution_sketch: "Step 1: The original function is y = x^2. Step 2: The horizontal shift rule says a right shift of 3 units replaces x with x - 3. Step 3: Apply this replacement to get (x - 3)^2. The answer is (x - 3)^2."
-          - problem: "The graph of $y = \\sqrt{x}$ is shifted left $4$ units. Give the right-hand side of the new equation $y = \\ldots$."
-            answer: "sqrt(x + 4)"
-            answer_contract: {"kind": "function", "vars": ["x"]}
-            solution_sketch: "Step 1: The original function is y = sqrt(x). Step 2: The horizontal shift rule says a left shift of 4 units replaces x with x + 4. Step 3: Apply this replacement to get sqrt(x + 4). The answer is sqrt(x + 4)."
-          - problem: "The graph of $y = 2x + 1$ is shifted left $3$ units. Give the right-hand side of the new equation $y = \\ldots$."
-            answer: "2x + 7"
-            answer_contract: {"kind": "function", "vars": ["x"]}
-            solution_sketch: "Step 1: The original function is y = 2x + 1. Step 2: The horizontal shift rule says a left shift of 3 units replaces x with x + 3. Step 3: Apply this to get 2(x + 3) + 1, which simplifies to 2x + 7. The answer is 2x + 7."
-          - problem: "The graph of $y = f(x)$ is shifted left $6$ units to give $y = \\sqrt{x + 6}$. Give the right-hand side of $y = f(x)$."
-            answer: "sqrt(x)"
-            answer_contract: {"kind": "function", "vars": ["x"]}
-            solution_sketch: "Step 1: The shifted function is y = sqrt(x + 6). Step 2: A left shift of 6 units means the shifted input is x + 6, so f(x + 6) = sqrt(x + 6). Step 3: Replacing x + 6 by u gives f(u) = sqrt(u), so the original right-hand side is sqrt(x). The answer is sqrt(x)."
+          - problem: 'The graph of $y = x^2$ is shifted right $2$ units. What is the equation of the new graph?'
+            answer: 'y = (x - 2)^2'
+            answer_contract: {"kind": "polynomial_relation"}
+            solution_sketch: 'A shift right by $2$ units replaces $x$ with $x - 2$. So the new equation is $y = (x - 2)^2$.'
+          - problem: 'The graph of $y = \sqrt{x}$ is shifted left $5$ units. What is the equation of the new graph?'
+            answer: 'y = sqrt(x + 5)'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'A shift left by $5$ units replaces $x$ with $x + 5$. So the new equation is $y = \sqrt{x + 5}$.'
+          - problem: 'Sam moves the graph of $y = x^3$ left $4$ units and writes $y = (x - 4)^3$. What is the correct equation?'
+            answer: 'y = (x + 4)^3'
+            answer_contract: {"kind": "polynomial_relation"}
+            solution_sketch: 'The new graph must take at $x = -4$ the value the old graph took at $x = 0$, so the bracket is $x + 4$. Sam shifted the graph right; the correct equation is $y = (x + 4)^3$.'
+          - problem: 'A sensor records the signal $y = \sqrt{t}$, where $t$ is the time in seconds since it was switched on. A second sensor records the same signal but is switched on $5$ s later. What equation describes the second sensor?'
+            answer: 'y = sqrt(t - 5)'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The second sensor shows at time $t$ what the first showed $5$ s earlier, so $t$ is replaced by $t - 5$. The equation is $y = \sqrt{t - 5}$.'
+          - problem: 'The point $(2, 5)$ lies on the graph of $y = f(x)$. What point lies on the graph of $y = f(x - 4)$?'
+            answer: '(6, 5)'
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: 'The output $5$ now appears where $x - 4 = 2$, which is $x = 6$. So the point is $(6, 5)$.'
+          - problem: 'The graph of $y = f(x)$ is shifted right $2$ units, and the new graph is $y = (x - 2)^2 + 3(x - 2)$. What is the equation of the original graph?'
+            answer: 'y = x^2 + 3x'
+            answer_contract: {"kind": "polynomial_relation"}
+            solution_sketch: 'Shifting right by $2$ replaced each $x$ in $f(x)$ with $x - 2$. So $f(x)$ is the same expression with plain $x$, which is $x^2 + 3x$.'
+          - problem: 'The line $y = 2x + 1$ is shifted left $3$ units. What is the equation of the new line?'
+            answer: 'y = 2x + 7'
+            answer_contract: {"kind": "polynomial_relation"}
+            solution_sketch: 'A shift left by $3$ units replaces $x$ with $x + 3$. So $y = 2(x + 3) + 1 = 2x + 7$.'
+          - problem: 'A bus leaves the depot at time $t = 0$ h, and its distance from the depot is $y = 40t$ km. A second bus follows the same route at the same speed but leaves $2$ h later. What is the equation of the distance of the second bus?'
+            answer: 'y = 40t - 80'
+            answer_contract: {"kind": "polynomial_relation"}
+            solution_sketch: 'At time $t$ the second bus has driven for $t - 2$ hours, so $t$ is replaced by $t - 2$. Then $y = 40(t - 2) = 40t - 80$.'
+          - problem: 'The graph of $y = \sqrt{x - 6}$ is the graph of $y = \sqrt{x}$ moved in which direction, left or right?'
+            answer: 'right'
+            answer_contract: {"kind": "label", "options": [["right", "to the right", "moved right", "it is moved right", "rightward", "shifted right", "it moves right", "moves right"], ["left", "to the left", "moved left", "it is moved left", "leftward", "shifted left", "it moves left", "moves left"]]}
+            solution_sketch: 'The graph of $y = \sqrt{x - 6}$ starts where $x - 6 = 0$, at $x = 6$, while $y = \sqrt{x}$ starts at $x = 0$. So every point moves $6$ units to the right.'
       - id: kp3
         name: Combined shifts and locating the new vertex
         key_prerequisites: [quadratic-graphs-vertex]
-        constraints: "combine one horizontal and one vertical shift of x^2, x^3, or sqrt(x); integer shifts 1-9; vertex questions read (h, k) off vertex form and answer as an ordered pair"
+        constraints: "combine one horizontal and one vertical shift of x^2, x^3, or sqrt(x); integer shifts; vertex questions read (h, k) off vertex form; at least two word problems with a position on a grid"
+        step_check:
+          step: 'Identify the vertical shift: down $5$ means $k = -5$'
+          question: 'Why does a shift down $5$ add $-5$ outside the bracket, while a shift right $2$ puts $x - 2$ inside it?'
+          options:
+            - 'A shift down changes the input by $5$, and a shift right changes the output by $2$'
+            - 'Both numbers are subtracted, so each of them goes outside the bracket'
+            - 'The bracket holds the vertical shift and the outside holds the horizontal shift'
+            - 'Down changes each output by $-5$ (outside); right changes the input $x$ (inside)'
+          answer: 'Down changes each output by $-5$ (outside); right changes the input $x$ (inside)'
+          why: 'A vertical shift changes every output, so its constant is added after the bracket. A horizontal shift changes the input, so it appears inside the bracket as $x - h$.'
         exemplars:
-          - problem: 'The graph of $y = x^2$ is shifted left $1$ and up $4$. Give the right-hand side of the new equation $y = \ldots$'
-            answer: "(x + 1)^2 + 4"
-          - problem: 'State the vertex of $y = (x - 3)^2 + 2$.'
-            answer: "(3, 2)"
-            solution_sketch: 'The parent vertex $(0,0)$ moves right $3$, up $2$.'
-          - problem: "The graph of $y = x^3$ is shifted right $3$ and up $2$. Give the right-hand side of the new equation $y = \\ldots$."
-            answer: "(x - 3)^3 + 2"
-            answer_contract: {"kind": "function", "vars": ["x"]}
-            solution_sketch: "Start from the parent function $y = x^3$. Apply the horizontal shift rule: right $3$ replaces $x$ with $x - 3$. Apply the vertical shift rule: up $2$ adds $2$ outside the cubic. The right-hand side is (x - 3)^3 + 2."
-          - problem: "The graph of $y = \\sqrt{x}$ is shifted left $5$ and down $2$. Give the right-hand side of the new equation $y = \\ldots$."
-            answer: "sqrt(x + 5) - 2"
-            answer_contract: {"kind": "function", "vars": ["x"]}
-            solution_sketch: "Start from the parent function $y = \\sqrt{x}$. Apply the horizontal shift rule: left $5$ replaces $x$ with $x + 5$. Apply the vertical shift rule: down $2$ subtracts $2$ outside the square root. The right-hand side is sqrt(x + 5) - 2."
-          - problem: "The graph of $y = \\sqrt{x}$ is shifted right $2$ and down $3$. Find the x-intercept of the new graph."
-            answer: "11"
+          - problem: 'The graph of $y = x^2$ is shifted right $3$ units and up $4$ units. What is the equation of the new graph?'
+            answer: 'y = (x - 3)^2 + 4'
+            answer_contract: {"kind": "polynomial_relation"}
+            solution_sketch: 'Right $3$ replaces $x$ with $x - 3$, and up $4$ adds $4$ to every output. So the equation is $y = (x - 3)^2 + 4$.'
+          - problem: 'What is the vertex of $y = (x + 4)^2 - 1$?'
+            answer: '(-4, -1)'
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: 'The bracket $x + 4$ is zero at $x = -4$, and the outside constant is $-1$. So the vertex is $(-4, -1)$.'
+          - problem: 'The graph of $y = x^3$ is shifted right $3$ units and up $2$ units. What is the equation of the new graph?'
+            answer: 'y = (x - 3)^3 + 2'
+            answer_contract: {"kind": "polynomial_relation"}
+            solution_sketch: 'Right $3$ replaces $x$ with $x - 3$ inside the cube. Up $2$ adds $2$ outside it, so $y = (x - 3)^3 + 2$.'
+          - problem: 'The graph of $y = \sqrt{x}$ is shifted left $5$ units and down $2$ units. What is the equation of the new graph?'
+            answer: 'y = sqrt(x + 5) - 2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Apply the shift rules to the full parent object: right $2$ gives $y = \\sqrt{x - 2}$, and down $3$ gives $y = \\sqrt{x - 2} - 3$. At an x-intercept set $y = 0$ and solve $\\sqrt{x - 2} = 3$. Squaring both sides gives $x - 2 = 9$, so $x = 11$. The x-intercept is 11."
-          - problem: "The graph of $y = x^2$ is shifted right $5$ and down $9$. Find the smaller x-intercept of the new graph."
-            answer: "2"
+            solution_sketch: 'Left $5$ replaces $x$ with $x + 5$ inside the root. Down $2$ subtracts $2$ outside it, so $y = \sqrt{x + 5} - 2$.'
+          - problem: 'A parabolic arch has the profile $y = 4 - x^2$, where $x$ and $y$ are in metres. The arch is moved $6$ m to the right and stood on a $1$ m platform. What is the equation of the moved arch?'
+            answer: 'y = 5 - (x - 6)^2'
+            answer_contract: {"kind": "polynomial_relation"}
+            solution_sketch: 'Moving $6$ m right replaces $x$ with $x - 6$, and the platform adds $1$ to every height. So $y = 4 - (x - 6)^2 + 1 = 5 - (x - 6)^2$.'
+          - problem: 'The graph of $y = \sqrt{x}$ is shifted right $2$ units and down $3$ units. At which value of $x$ does the new graph cross the $x$-axis?'
+            answer: '11'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Apply the shift rules to the full parent object: right $5$ gives $y = (x - 5)^2$, and down $9$ gives $y = (x - 5)^2 - 9$, whose vertex is $(5, -9)$. Set $y = 0$ and solve $(x - 5)^2 = 9$, so $x - 5 = 3$ or $x - 5 = -3$. The intercepts are $x = 8$ and $x = 2$, and the smaller one is the answer. The smaller x-intercept is 2."
+            solution_sketch: 'The new equation is $y = \sqrt{x - 2} - 3$. Setting $y = 0$ gives $\sqrt{x - 2} = 3$, so $x - 2 = 9$ and $x = 11$.'
+          - problem: 'The graph of $y = x^2$ is shifted right $5$ units and down $9$ units. At which values of $x$ does the new graph cross the $x$-axis?'
+            answer: '2, 8'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The new equation is $y = (x - 5)^2 - 9$. Setting $y = 0$ gives $(x - 5)^2 = 9$, so $x - 5 = 3$ or $x - 5 = -3$, which gives $x = 8$ or $x = 2$.'
+          - problem: 'A shift moves the vertex of $y = x^2$ to the point $(-4, 7)$. What is the equation of the shifted graph?'
+            answer: 'y = (x + 4)^2 + 7'
+            answer_contract: {"kind": "polynomial_relation"}
+            solution_sketch: 'The vertex $(0, 0)$ moves $4$ units left and $7$ units up. So the equation is $y = (x + 4)^2 + 7$.'
+          - problem: 'The point $(1, 3)$ lies on the graph of $y = f(x)$. What point lies on the graph of $y = f(x + 2) - 4$?'
+            answer: '(-1, -1)'
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: 'The input must satisfy $x + 2 = 1$, so $x = -1$. The output is $3 - 4 = -1$, so the point is $(-1, -1)$.'
+          - problem: 'On a map grid, an old road follows $y = \sqrt{x}$, with $x$ and $y$ in kilometres east and north. A new road has the same shape but lies $3$ km further east and $2$ km further south. What is the equation of the new road?'
+            answer: 'y = sqrt(x - 3) - 2'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Moving $3$ km east replaces $x$ with $x - 3$, and moving $2$ km south subtracts $2$ from $y$. So the equation is $y = \sqrt{x - 3} - 2$.'
     diagnostic_exemplar:
-      problem: 'The graph of $y = x^2$ is shifted right $4$ and down $1$. Give the right-hand side of the new equation $y = \ldots$'
-      answer: "(x - 4)^2 - 1"
+      problem: 'The graph of $y = x^2$ is shifted right $4$ units and down $1$ unit. What is the equation of the new graph?'
+      answer: 'y = (x - 4)^2 - 1'
+      answer_contract: {"kind": "polynomial_relation"}
       solution_sketch: 'A horizontal shift acts inside with the opposite sign — right $4$ replaces $x$ by $x - 4$ — while a vertical shift acts outside with its own sign.'
     anki_seeds:
       - front: "The graph of f(x - h) moves the graph of f in which direction?"
@@ -127,81 +209,160 @@ topics:
       - id: kp1
         name: Vertical stretches and compressions
         key_prerequisites: [function-notation]
-        constraints: "stretch factors 2-5 or 1/2, 1/3; track a labeled point; ask for the right-hand side alone, written as a bare expression in x"
+        constraints: "stretch factors 2-5 or 1/2, 1/3, 1/4; track a labeled point in both directions; at least two word problems, one of them needing a division"
+        step_check:
+          step: 'Apply the vertical compression factor $\frac{1}{2}$ by multiplying the function by this factor'
+          question: 'Why does a vertical compression by $\frac{1}{2}$ multiply the whole function by $\frac{1}{2}$?'
+          options:
+            - 'Replacing $x$ with $\frac{x}{2}$ halves each height, so it gives the same graph'
+            - 'A factor below $1$ is added to the function, which lowers every point'
+            - 'Each point keeps its $x$ and its height is halved, so each $y$ is halved'
+            - 'The compression is horizontal, so the factor multiplies each $x$-value'
+          answer: 'Each point keeps its $x$ and its height is halved, so each $y$ is halved'
+          why: 'A vertical compression changes only the heights. Every output $y$ becomes $\frac{1}{2}y$, so the whole function is multiplied by $\frac{1}{2}$.'
         exemplars:
-          - problem: 'The graph of $y = x^2$ is stretched vertically by a factor of $3$. Give the right-hand side of the new equation $y = \ldots$'
-            answer: "3x^2"
-          - problem: 'The point $(2, 4)$ lies on $y = f(x)$. What point lies on $y = 3f(x)$?'
-            answer: "(2, 12)"
-          - problem: "The graph of y = x^2 passes through (2, 4). It is stretched vertically by a factor of 4. Find the new equation and give its right-hand side as a bare expression in x."
-            answer: "4x^2"
-            answer_contract: {"kind": "function", "vars": ["x"]}
-            solution_sketch: "Start with the full base equation y = x^2. By the vertical stretch rule, a stretch by factor 4 multiplies each output y-value by 4 while x stays the same, so the new equation is y = 4x^2. The right-hand side is 4x^2."
-          - problem: "The graph of y = sqrt(x) passes through (9, 3). It is compressed vertically by a factor of 1/3. Find the new equation and give its right-hand side as a bare expression in x."
-            answer: "sqrt(x)/3"
-            answer_contract: {"kind": "function", "vars": ["x"]}
-            solution_sketch: "Start with the full base equation y = sqrt(x). By the vertical compression rule, a compression by factor 1/3 multiplies each output y-value by 1/3, so the new equation is y = sqrt(x)/3. The right-hand side is sqrt(x)/3."
-          - problem: "The graph of y = abs(x) passes through (-2, 2). It is stretched vertically by a factor of 3. Find the new equation and give its right-hand side as a bare expression in x."
-            answer: "3abs(x)"
-            answer_contract: {"kind": "function", "vars": ["x"]}
-            solution_sketch: "Start with the full base equation y = abs(x). By the vertical stretch rule, a stretch by factor 3 multiplies each output y-value by 3 while x stays the same, so the new equation is y = 3abs(x). The right-hand side is 3abs(x)."
-          - problem: "The graph of y = x^2 is vertically stretched by an unknown factor k, and the stretched graph passes through (3, 45). Determine k and give the right-hand side of the new equation as a bare expression in x."
-            answer: "5x^2"
-            answer_contract: {"kind": "function", "vars": ["x"]}
-            solution_sketch: "Start with the full base equation y = x^2 and write the stretched equation as y = kx^2, since a vertical stretch multiplies the output by k. The point (3, 45) must lie on the stretched graph, so 45 = k times 3^2 = 9k, giving k = 5. The new equation is y = 5x^2, so the right-hand side is 5x^2."
+          - problem: 'The graph of $y = x^2$ is stretched vertically by a factor of $3$. What is the equation of the new graph?'
+            answer: 'y = 3x^2'
+            answer_contract: {"kind": "polynomial_relation"}
+            solution_sketch: 'A vertical stretch by a factor of $3$ multiplies every output by $3$ and leaves the inputs alone. So the new equation is $y = 3x^2$.'
+          - problem: 'The point $(2, 4)$ lies on the graph of $y = f(x)$. What point lies on the graph of $y = 3f(x)$?'
+            answer: '(2, 12)'
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: 'The input $2$ is unchanged, and the output $4$ is multiplied by $3$. So the point is $(2, 12)$.'
+          - problem: 'The graph of $y = x^3$ is compressed vertically by a factor of $\frac{1}{2}$. What is the equation of the new graph?'
+            answer: 'y = x^3/2'
+            answer_contract: {"kind": "polynomial_relation"}
+            solution_sketch: 'A vertical compression by a factor of $\frac{1}{2}$ multiplies every output by $\frac{1}{2}$. So the new equation is $y = \frac{1}{2}x^3$, which is $y = x^3/2$.'
+          - problem: 'The graph of $y = \sqrt{x}$ is compressed vertically by a factor of $\frac{1}{3}$. What is the equation of the new graph?'
+            answer: 'y = sqrt(x)/3'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Every output is multiplied by $\frac{1}{3}$, and the inputs stay the same. So the new equation is $y = \frac{\sqrt{x}}{3}$.'
+          - problem: 'The brightness of a lamp along a corridor is $y = 12x - x^2$ at distance $x$ metres from the start. A dimmer cuts the brightness at every point to a quarter of its value. What is the equation of the dimmed brightness?'
+            answer: 'y = 3x - x^2/4'
+            answer_contract: {"kind": "polynomial_relation"}
+            solution_sketch: 'A quarter of every brightness means every output is multiplied by $\frac{1}{4}$, which is a division by $4$. So $y = \frac{12x - x^2}{4} = 3x - \frac{x^2}{4}$.'
+          - problem: 'A designer makes a model of an arch with the profile $y = 4 - x^2$ three times as tall, with the same width. What is the equation of the taller arch?'
+            answer: 'y = 12 - 3x^2'
+            answer_contract: {"kind": "polynomial_relation"}
+            solution_sketch: 'The same width means the inputs stay the same, and three times as tall means every output is multiplied by $3$. So $y = 3(4 - x^2) = 12 - 3x^2$.'
+          - problem: 'The graph of $y = x^2$ is stretched vertically by some factor, and the new graph passes through $(3, 45)$. What is the equation of the new graph?'
+            answer: 'y = 5x^2'
+            answer_contract: {"kind": "polynomial_relation"}
+            solution_sketch: 'The new equation has the form $y = kx^2$. At $x = 3$ the output is $45 = 9k$, so $k = 5$ and the equation is $y = 5x^2$.'
+          - problem: 'The graph of $y = |x|$ is stretched vertically by a factor of $4$. What is the equation of the new graph?'
+            answer: 'y = 4|x|'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'A vertical stretch by a factor of $4$ multiplies every output by $4$. So the new equation is $y = 4|x|$.'
+          - problem: 'The point $(6, -9)$ lies on the graph of $y = 3f(x)$. What point lies on the graph of $y = f(x)$?'
+            answer: '(6, -3)'
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: 'The output $-9$ on $y = 3f(x)$ is three times the output of $f$. So $f(6) = -9 \div 3 = -3$, and the point is $(6, -3)$.'
       - id: kp2
         name: Reflections across the axes
         key_prerequisites: [function-notation]
-        constraints: "-f(x) reflects across the x-axis; f(-x) across the y-axis; ask for the right-hand side alone, with radicals written as sqrt(...)"
+        constraints: "-f(x) reflects across the x-axis; f(-x) across the y-axis; at least two word problems with a mirror image; radicals written as sqrt(...) in keys"
+        step_check:
+          step: 'Apply the reflection across the $x$-axis by changing the sign of the function'
+          question: 'Why does a reflection across the $x$-axis change the sign of the whole function?'
+          options:
+            - 'A point $(x, y)$ goes to $(-x, y)$, so each input changes sign'
+            - 'A point $(x, y)$ goes to $(x, -y)$, so each output changes sign'
+            - 'The $x$-axis is where $y = 0$, so all the outputs are set to zero'
+            - 'Only the first term changes sign, and the other terms stay as they are'
+          answer: 'A point $(x, y)$ goes to $(x, -y)$, so each output changes sign'
+          why: 'A reflection across the $x$-axis keeps each $x$ and flips the height of each point. So every output of the function changes sign.'
         exemplars:
-          - problem: 'The graph of $y = \sqrt{x}$ is reflected across the $y$-axis. Give the right-hand side of the new equation $y = \ldots$'
-            answer: "sqrt(-x)"
-            solution_sketch: 'Reflecting across the $y$-axis replaces $x$ with $-x$.'
-          - problem: 'The graph of $y = x^3 - x$ is reflected across the $x$-axis. Give the right-hand side of the new equation $y = \ldots$'
-            answer: "-x^3 + x"
-          - problem: "The graph of $y = x^2$ is reflected across the $x$-axis. Give the right-hand side of the new equation $y = \\ldots$"
-            answer: "-x^2"
-            answer_contract: {"kind": "function", "vars": ["x"]}
-            solution_sketch: "The original function is f(x) = x^2. Reflection across the x-axis uses the rule -f(x). Substituting gives -x^2. The answer is -x^2."
-          - problem: "The graph of $y = |x|$ is reflected across the $x$-axis. Give the right-hand side of the new equation $y = \\ldots$"
-            answer: "-abs(x)"
-            answer_contract: {"kind": "function", "vars": ["x"]}
-            solution_sketch: "The original function is f(x) = abs(x). Reflection across the x-axis uses the rule -f(x). Substituting gives -abs(x). The answer is -abs(x)."
-          - problem: "The graph of $y = 1/x$ is reflected across the $y$-axis. Give the right-hand side of the new equation $y = \\ldots$"
-            answer: "-1/x"
-            answer_contract: {"kind": "function", "vars": ["x"]}
-            solution_sketch: "The original function is f(x) = 1/x. Reflection across the y-axis uses the rule f(-x). Substituting -x for x gives 1/(-x), which simplifies to -1/x. The answer is -1/x."
-          - problem: "The graph of $y = x^4 + x^2$ is reflected across the $x$-axis. Give the right-hand side of the new equation $y = \\ldots$"
-            answer: "-x^4 - x^2"
-            answer_contract: {"kind": "function", "vars": ["x"]}
-            solution_sketch: "The original function is f(x) = x^4 + x^2. Reflection across the x-axis uses the rule -f(x). Substituting gives -(x^4 + x^2) = -x^4 - x^2. The answer is -x^4 - x^2."
+          - problem: 'The graph of $y = x^2$ is reflected across the $x$-axis. What is the equation of the new graph?'
+            answer: 'y = -x^2'
+            answer_contract: {"kind": "polynomial_relation"}
+            solution_sketch: 'A reflection across the $x$-axis changes the sign of every output. So the new equation is $y = -x^2$.'
+          - problem: 'The graph of $y = \sqrt{x}$ is reflected across the $y$-axis. What is the equation of the new graph?'
+            answer: 'y = sqrt(-x)'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'A reflection across the $y$-axis replaces $x$ with $-x$. So the new equation is $y = \sqrt{-x}$.'
+          - problem: 'The graph of $y = x^3 - x$ is reflected across the $x$-axis. What is the equation of the new graph?'
+            answer: 'y = -x^3 + x'
+            answer_contract: {"kind": "polynomial_relation"}
+            solution_sketch: 'The sign of the whole function changes, so $y = -(x^3 - x)$. Removing the bracket gives $y = -x^3 + x$.'
+          - problem: 'The graph of $y = x^3 + 2x^2$ is reflected across the $y$-axis. What is the equation of the new graph?'
+            answer: 'y = -x^3 + 2x^2'
+            answer_contract: {"kind": "polynomial_relation"}
+            solution_sketch: 'Every $x$ is replaced with $-x$, so $y = (-x)^3 + 2(-x)^2$. Since $(-x)^3 = -x^3$ and $(-x)^2 = x^2$, this is $y = -x^3 + 2x^2$.'
+          - problem: 'The point $(3, -2)$ lies on the graph of $y = f(x)$. What point lies on the graph of $y = -f(x)$?'
+            answer: '(3, 2)'
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: 'The graph $y = -f(x)$ is the reflection of $y = f(x)$ across the $x$-axis. So the input $3$ stays and the output $-2$ changes sign, giving $(3, 2)$.'
+          - problem: 'The point $(5, 4)$ lies on the graph of $y = f(x)$. What point lies on the graph of $y = f(-x)$?'
+            answer: '(-5, 4)'
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: 'The graph $y = f(-x)$ is the reflection of $y = f(x)$ across the $y$-axis. So the output $4$ stays and the input $5$ changes sign, giving $(-5, 4)$.'
+          - problem: 'The height of a hill above the road is $y = 8x - x^2$ metres at distance $x$ metres from the start. A pit of the same shape is dug in the ground: at each distance it goes as far below the road as the hill goes above it. If a height below the road is negative, what is the equation of the pit?'
+            answer: 'y = x^2 - 8x'
+            answer_contract: {"kind": "polynomial_relation"}
+            solution_sketch: 'The pit is the mirror image of the hill in the road, so every height changes sign. So $y = -(8x - x^2) = x^2 - 8x$.'
+          - problem: 'The right half of a symmetric vase has the profile $y = \sqrt{3x}$ for $x \ge 0$, where $x$ and $y$ are in centimetres. The left half is the mirror image of the right half in the $y$-axis. What is the equation of the left half?'
+            answer: 'y = sqrt(-3x)'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'A mirror image in the $y$-axis replaces $x$ with $-x$. So the left half is $y = \sqrt{3(-x)} = \sqrt{-3x}$, for $x \le 0$.'
+          - problem: 'Sam reflects the graph of $y = x^2 + 3x$ across the $x$-axis and writes $y = -x^2 + 3x$. What is the correct equation?'
+            answer: 'y = -x^2 - 3x'
+            answer_contract: {"kind": "polynomial_relation"}
+            solution_sketch: 'A reflection across the $x$-axis changes the sign of every term, not only the first. Sam left the term $3x$ alone; the correct equation is $y = -x^2 - 3x$.'
+          - problem: 'The graph of $y = -\sqrt{x}$ is the graph of $y = \sqrt{x}$ reflected across which axis?'
+            answer: 'x-axis'
+            answer_contract: {"kind": "label", "options": [["x-axis", "the x-axis", "x axis", "across the x-axis", "the x axis", "across the x axis", "reflected across the x-axis", "reflection across the x-axis"], ["y-axis", "the y-axis", "y axis", "across the y-axis", "the y axis", "across the y axis", "reflected across the y-axis", "reflection across the y-axis"]]}
+            solution_sketch: 'The outputs of $y = -\sqrt{x}$ are the negatives of the outputs of $y = \sqrt{x}$. Each point $(x, y)$ moves to $(x, -y)$, which is a reflection across the $x$-axis.'
       - id: kp3
         name: Combining stretch, reflection, and shift
         key_prerequisites: [function-transformations-shifts]
-        constraints: "compose a stretch (factor 2-5), at most one reflection, and one shift; either track a labeled point with integer coordinates or ask for the right-hand side with radicals as sqrt(...)"
+        constraints: "compose a stretch (factor 2-5), at most one reflection, and one shift; track a labeled point in either direction or write the equation; at least two word problems, one of them undoing a transformation"
+        step_check:
+          step: 'Apply the vertical stretch: multiply the y-coordinate by 3'
+          question: 'Why is the $y$-coordinate multiplied by $3$ before $4$ is subtracted, for $y = 3f(x) - 4$?'
+          options:
+            - 'The order of operations on a point does not matter, so any order gives the same point'
+            - 'Subtracting $4$ is done on the input $x$, so the $y$-value is not affected'
+            - 'Multiplying by $3$ moves the point up $3$ units, and then $4$ moves it down'
+            - 'The output of $f$ is first multiplied by $3$, and then $4$ is taken away'
+          answer: 'The output of $f$ is first multiplied by $3$, and then $4$ is taken away'
+          why: 'In $3f(x) - 4$ the multiplication applies to $f(x)$ before the subtraction. Doing the shift first would give a different point.'
         exemplars:
-          - problem: 'The point $(4, 2)$ lies on $y = f(x)$. What point lies on $y = -2f(x) + 3$?'
-            answer: "(4, -1)"
-            solution_sketch: '$-2 \cdot 2 + 3 = -1$; the $x$-coordinate is unchanged.'
-          - problem: 'Describe $y = -2(x - 1)^2$ as transformations of $y = x^2$.'
-            answer: "shift right 1, stretch vertically by 2, reflect across the x-axis"
-            answer_contract: {kind: label, options: [["shift right 1, stretch vertically by 2, reflect across the x-axis"], ["shift left 1, stretch vertically by 2, reflect across the x-axis"], ["shift right 1, compress vertically by 2, reflect across the x-axis"], ["shift right 1, stretch vertically by 2, reflect across the y-axis"]]}
-          - problem: "The point (2, 3) lies on y = f(x). What point lies on y = 4f(x) - 5? Give the answer as (x, y)."
-            answer: "(2, 7)"
-            answer_contract: {"arity": 2, "kind": "coordinates"}
-            solution_sketch: "Start from the transformation y = 4f(x) - 5 and the point (2, 3) on y = f(x). The vertical stretch rule multiplies the y-coordinate by 4: 4*3 = 12. The vertical shift rule subtracts 5: 12 - 5 = 7, and the x-coordinate stays 2. The image point is (2, 7)."
-          - problem: "The point (3, 4) lies on y = f(x). What point lies on y = -2f(x + 1) + 6? Give the answer as (x, y)."
-            answer: "(2, -2)"
-            answer_contract: {"arity": 2, "kind": "coordinates"}
-            solution_sketch: "Start from y = -2f(x + 1) + 6 and the point (3, 4) on y = f(x). The horizontal shift rule solves x + 1 = 3, so x = 2. The reflection and stretch rule multiplies the y-coordinate by -2: -2*4 = -8. The vertical shift rule adds 6: -8 + 6 = -2. The image point is (2, -2)."
-          - problem: "The graph of y = -3f(x - 2) + 5 comes from the graph of y = f(x), and it contains the point (4, -1). What point of y = f(x) gives the point (4, -1)? Give the answer as (x, y)."
-            answer: "(2, 2)"
-            answer_contract: {"arity": 2, "kind": "coordinates"}
-            solution_sketch: "Start from the transformed point (4, -1) on y = -3f(x - 2) + 5. The horizontal shift rule gives the original x: x - 2 = 4, so x = 2. The stretch and reflection rule divides by -3, and the shift rule subtracts 5: (-1 - 5)/(-3) = 2, so f(2) = 2. Undoing the transformations, the original point is (2, 2)."
-          - problem: "The point (1, 4) lies on y = f(x). The point (1, -16) lies on the graph of y = -a f(x) + 4, where a is a positive number. Find a."
-            answer: "5"
+          - problem: 'The point $(2, 3)$ lies on the graph of $y = f(x)$. What point lies on the graph of $y = 4f(x) - 5$?'
+            answer: '(2, 7)'
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: 'The input stays $2$. The output $3$ is multiplied by $4$ to give $12$, and then $5$ is subtracted, which gives $7$. So the point is $(2, 7)$.'
+          - problem: 'The point $(4, 2)$ lies on the graph of $y = f(x)$. What point lies on the graph of $y = -2f(x) + 3$?'
+            answer: '(4, -1)'
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: 'The input stays $4$. The output $2$ becomes $-2 \cdot 2 = -4$, and then $3$ is added, which gives $-1$. So the point is $(4, -1)$.'
+          - problem: 'The point $(3, 4)$ lies on the graph of $y = f(x)$. What point lies on the graph of $y = -2f(x + 1) + 6$?'
+            answer: '(2, -2)'
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: 'The input must satisfy $x + 1 = 3$, so $x = 2$. The output is $-2 \cdot 4 + 6 = -2$, so the point is $(2, -2)$.'
+          - problem: 'The transformation $y = -3f(x - 2) + 5$ moves a point of the graph of $y = f(x)$ to the point $(4, -1)$. Which point of the graph of $y = f(x)$ was moved there?'
+            answer: '(2, 2)'
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: 'A point $(a, b)$ of $y = f(x)$ moves to $(a + 2, -3b + 5)$. So $a + 2 = 4$ gives $a = 2$, and $-3b + 5 = -1$ gives $b = 2$.'
+          - problem: 'How is the graph of $y = -2(x - 1)^2$ obtained from the graph of $y = x^2$? (a) Shift left $1$, stretch vertically by $2$, reflect across the $x$-axis. (b) Shift right $1$, compress vertically by $2$, reflect across the $x$-axis. (c) Shift right $1$, stretch vertically by $2$, reflect across the $x$-axis. (d) Shift right $1$, stretch vertically by $2$, reflect across the $y$-axis.'
+            answer: 'c'
+            answer_contract: {"kind": "label", "options": [["c", "option c", "(c)", "shift right 1, stretch vertically by 2, reflect across the x-axis"], ["a", "option a", "(a)", "shift left 1, stretch vertically by 2, reflect across the x-axis"], ["b", "option b", "(b)", "shift right 1, compress vertically by 2, reflect across the x-axis"], ["d", "option d", "(d)", "shift right 1, stretch vertically by 2, reflect across the y-axis"]]}
+            solution_sketch: 'The bracket $(x - 1)$ shifts the graph right $1$, the factor $2$ in front stretches it vertically, and the minus sign reflects it across the $x$-axis. Only description (c) has all three.'
+          - problem: 'A designer starts from the curve $y = x^2$ for the profile of a ramp. She flips it upside down, makes it twice as steep (a vertical stretch by a factor of $2$) and raises it by $8$. What is the equation of the new curve?'
+            answer: 'y = -2x^2 + 8'
+            answer_contract: {"kind": "polynomial_relation"}
+            solution_sketch: 'Flipping upside down and stretching by $2$ turns $x^2$ into $-2x^2$. Raising by $8$ adds $8$ to every output, so $y = -2x^2 + 8$.'
+          - problem: 'A water sensor reports $g(t) = 4f(t) + 10$, where $f(t)$ is the true water level in centimetres at time $t$. The sensor reports $g(2) = 34$. What is the true level $f(2)$?'
+            answer: '6'
+            answer_contract: {"kind": "unit", "quantity": "length", "unit": "cm", "allow_omitted": true}
+            solution_sketch: 'The report is $4f(2) + 10 = 34$. Subtracting $10$ gives $4f(2) = 24$, and dividing by $4$ gives $f(2) = 6$ cm.'
+          - problem: 'The point $(1, 4)$ lies on the graph of $y = f(x)$. The point $(1, -16)$ lies on the graph of $y = -af(x) + 4$, where $a$ is a positive number. What is $a$?'
+            answer: '5'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Start from y = -a f(x) + 4 with f(1) = 4, and the image point (1, -16). The stretch and reflection rule substitutes: -a*4 + 4 = -16, so -4a = -20. The shift rule already added 4 on each side. Solve the equation: a = 5. The stretch factor is 5."
+            solution_sketch: 'At $x = 1$ the second graph gives $-a \cdot 4 + 4 = -16$. So $-4a = -20$, and $a = 5$.'
+          - problem: 'The graph of $y = \sqrt{x}$ is shifted left $2$ units, then reflected across the $x$-axis, and then shifted up $1$ unit. What is the equation of the new graph?'
+            answer: 'y = 1 - sqrt(x + 2)'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Left $2$ gives $y = \sqrt{x + 2}$. The reflection changes the sign to give $y = -\sqrt{x + 2}$, and up $1$ adds $1$, so $y = 1 - \sqrt{x + 2}$.'
     diagnostic_exemplar:
       problem: 'The point $(3, 5)$ lies on $y = f(x)$. What point lies on $y = -2f(x) + 1$?'
       answer: "(3, -9)"
@@ -233,60 +394,110 @@ topics:
       - id: kp1
         name: Test algebraically with f(-x)
         key_prerequisites: [function-notation, evaluating-expressions]
-        constraints: "polynomials only; include a 'neither' case; the item must test THIS KP: Test algebraically with f(-x)"
+        constraints: "polynomials only; include a 'neither' case; at most two classification items; the item must test THIS KP: Test algebraically with f(-x); two short contexts where an input is the negative of another"
+        step_check:
+          step: 'Simplify: $f(-x) = x^4 - 2x^2$'
+          question: 'Why does $(-x)^4 - 2(-x)^2$ simplify to $x^4 - 2x^2$ with no sign change?'
+          options:
+            - 'A minus sign inside a bracket is dropped whenever a power is applied to the bracket'
+            - 'The $-2$ in front cancels the minus sign that is inside the bracket $(-x)^2$'
+            - 'Even powers of $-x$ lose the sign, since $(-x)^4 = x^4$ and $(-x)^2 = x^2$'
+            - 'The terms are subtracted, so the two minus signs cancel and leave a plus'
+          answer: 'Even powers of $-x$ lose the sign, since $(-x)^4 = x^4$ and $(-x)^2 = x^2$'
+          why: 'A negative number to an even power is positive, so $(-x)^4 = x^4$ and $(-x)^2 = x^2$. Every term keeps its sign, so $f(-x) = f(x)$.'
+        try_first:
+          problem: 'For $f(x) = x^2$, find $f(-3) - f(3)$.'
+          answer_contract: {"kind": "exact"}
+          answer: '0'
+          reveal: 'Squaring removes the sign, so $f(-3) = f(3) = 9$ and the difference is $0$. A function with $f(-x) = f(x)$ for every $x$ is called even, and testing $f(-x)$ is how we decide.'
         exemplars:
-          - problem: "Determine the symmetry class of f(x) = x^4 + 5x^2 + 1 by testing algebraically with f(-x)."
-            answer: "even"
-            answer_contract: {"kind": "label", "options": [["even"], ["odd"], ["neither"], ["both"]]}
-            solution_sketch: "Substitute -x into f(x) = x^4 + 5x^2 + 1 using function notation: f(-x) = (-x)^4 + 5(-x)^2 + 1 = x^4 + 5x^2 + 1, which equals f(x). This confirms the graph is symmetric about the y-axis, so f is even. The option odd is the error of assuming each exponent forces a sign change; the option neither is the error of missing that f(-x) equals f(x); the option both is the error of claiming odd symmetry also applies. The correct classification is even."
-          - problem: "For h(x) = x^5 - 3x^3 + 2x, determine h(-x) as a polynomial in x."
-            answer: "-x^5+3x^3-2x"
-            answer_contract: {"kind": "function", "vars": ["x"]}
-            solution_sketch: "Substitute -x into h(x) = x^5 - 3x^3 + 2x using function notation: h(-x) = (-x)^5 - 3(-x)^3 + 2(-x). Simplify each term: (-x)^5 = -x^5, -3(-x)^3 = 3x^3, and 2(-x) = -2x. Combining these gives h(-x) = -x^5 + 3x^3 - 2x, which also equals -h(x), confirming odd symmetry. The polynomial for h(-x) is -x^5+3x^3-2x."
-          - problem: "For f(x) = x^2 + x, find f(-x) as a polynomial in x."
-            answer: "x^2-x"
-            answer_contract: {"kind": "function", "vars": ["x"]}
-            solution_sketch: "Substitute -x into f(x) = x^2 + x using function notation: f(-x) = (-x)^2 + (-x) = x^2 - x. Compare this to f(x) = x^2 + x and to -f(x) = -x^2 - x; f(-x) matches neither expression, so f is neither even nor odd. The polynomial for f(-x) is x^2-x."
-          - problem: "For f(x) = x^3 + kx^2 + 5x, find the value of k that makes f an odd function."
-            answer: "0"
+          - problem: 'Is $f(x) = x^4 + 5x^2 + 1$ even, odd, or neither?'
+            answer: 'even'
+            answer_contract: {"kind": "label", "options": [["even", "it is even", "an even function", "is even"], ["odd", "it is odd", "an odd function", "is odd"], ["neither", "neither even nor odd", "it is neither", "not even or odd", "it is neither even nor odd"]]}
+            solution_sketch: 'Substituting $-x$ gives $f(-x) = (-x)^4 + 5(-x)^2 + 1 = x^4 + 5x^2 + 1$, which equals $f(x)$. So $f$ is even, and its graph is symmetric about the $y$-axis.'
+          - problem: 'For $h(x) = x^5 - 3x^3 + 2x$, find $h(-x)$.'
+            answer: '-x^5 + 3x^3 - 2x'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Substitute -x into f(x) = x^3 + kx^2 + 5x using function notation: f(-x) = -x^3 + kx^2 - 5x. For f to be odd, f(-x) must equal -f(x) = -x^3 - kx^2 - 5x. Matching the x^2 coefficients gives k = -k, so k = 0. The value of k is 0."
-          - problem: "For f(x) = 2x^4 - 3x^3 + 7x^2 - x + 4, find the coefficient of x^3 in f(-x)."
-            answer: "3"
+            solution_sketch: 'Substitute $-x$ for $x$: $h(-x) = (-x)^5 - 3(-x)^3 + 2(-x)$. Odd powers keep the minus sign, so this is $-x^5 + 3x^3 - 2x$.'
+          - problem: 'Is $g(x) = x^2 + x$ even, odd, or neither?'
+            answer: 'neither'
+            answer_contract: {"kind": "label", "options": [["even", "it is even", "an even function", "is even"], ["odd", "it is odd", "an odd function", "is odd"], ["neither", "neither even nor odd", "it is neither", "not even or odd", "it is neither even nor odd"]]}
+            solution_sketch: 'Substituting $-x$ gives $g(-x) = x^2 - x$. This is not $g(x) = x^2 + x$, and it is not $-g(x) = -x^2 - x$ either. So $g$ is neither even nor odd.'
+          - problem: 'For $f(x) = x^3 - 4x$, simplify $f(-x) + f(x)$.'
+            answer: '0'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Substitute -x into f(x) = 2x^4 - 3x^3 + 7x^2 - x + 4 using function notation: f(-x) = 2x^4 + 3x^3 + 7x^2 + x + 4. The x^3 term in f(-x) is 3x^3, so its coefficient is 3. The coefficient is 3."
-          - problem: "For g(x) = x^4 - 2x^3 + x, compute g(-x) as a polynomial in x."
-            answer: "x^4+2x^3-x"
-            answer_contract: {"kind": "function", "vars": ["x"]}
-            solution_sketch: "Substitute -x into g(x) = x^4 - 2x^3 + x using function notation: g(-x) = (-x)^4 - 2(-x)^3 + (-x) = x^4 + 2x^3 - x. This result is neither g(x) = x^4 - 2x^3 + x nor -g(x) = -x^4 + 2x^3 - x, so g is neither even nor odd. The polynomial for g(-x) is x^4+2x^3-x."
+            solution_sketch: 'Substituting $-x$ gives $f(-x) = -x^3 + 4x$. Adding $f(x) = x^3 - 4x$ gives $0$, so $f(-x) = -f(x)$ and $f$ is odd.'
+          - problem: 'For $f(x) = 2x^4 - 3x^3 + 7x^2 - x + 4$, what is the coefficient of $x^3$ in $f(-x)$?'
+            answer: '3'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Substituting $-x$ gives $f(-x) = 2x^4 + 3x^3 + 7x^2 + x + 4$, because only the odd powers change sign. The term in $x^3$ is $3x^3$, so the coefficient is $3$.'
+          - problem: 'A shop''s weekly profit in dollars is $P(x) = -10x^4 + 80x^2 + 30$, where $x$ is the change in the price in dollars (negative for a price cut). What is the weekly profit after a price cut of $2$ dollars?'
+            answer: '190'
+            answer_contract: {"kind": "unit", "quantity": "dollar", "unit": "dollar", "allow_omitted": true}
+            solution_sketch: 'A cut of $2$ dollars means $x = -2$. Only even powers occur, so $P(-2) = P(2) = -160 + 320 + 30 = 190$ dollars.'
+          - problem: 'A slider on a rail is at the position $s(t) = t^3 - 9t$ centimetres from the centre mark at $t$ seconds after noon, where a negative $t$ means a time before noon. What is its position $2$ seconds before noon?'
+            answer: '10'
+            answer_contract: {"kind": "unit", "quantity": "length", "unit": "cm", "allow_omitted": true}
+            solution_sketch: 'Two seconds before noon means $t = -2$. Then $s(-2) = (-2)^3 - 9(-2) = -8 + 18 = 10$ cm.'
+          - problem: 'For $g(x) = x^4 - 2x^3 + x$, find $g(-x)$.'
+            answer: 'x^4 + 2x^3 - x'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Substitute $-x$ for $x$: $g(-x) = (-x)^4 - 2(-x)^3 + (-x) = x^4 + 2x^3 - x$. This is neither $g(x)$ nor $-g(x)$, so $g$ is neither even nor odd.'
+          - problem: 'For which value of $k$ is $f(x) = x^3 + kx^2 + 5x$ an odd function?'
+            answer: '0'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Substituting $-x$ gives $f(-x) = -x^3 + kx^2 - 5x$, and $-f(x) = -x^3 - kx^2 - 5x$. These agree only if $kx^2 = -kx^2$, so $k = 0$.'
       - id: kp2
         name: Symmetry and using known values
         key_prerequisites: [function-stretches-reflections]
-        constraints: "symmetry named as y-axis (even) or origin (odd); known-value questions give f(a) for a small integer a and ask for f(-a)"
+        constraints: "symmetry named as y-axis (even) or origin (odd); known-value questions give f(a) for a small integer a and ask for f(-a); at least two word problems with a time or a distance on either side of zero"
+        step_check:
+          step: 'Since $f$ is even, it satisfies $f(-x) = f(x)$'
+          question: 'Why does $f(3) = 5$ give $f(-3) = 5$ for an even function?'
+          options:
+            - 'The graph mirrors in the $y$-axis, so $3$ and $-3$ give the same output'
+            - 'Even means the output changes sign, so $f(-3)$ would be $-5$'
+            - 'Even functions have only positive outputs, so $f(-3)$ must equal $5$'
+            - 'Every function gives the same output for $3$ and $-3$, whatever its rule'
+          answer: 'The graph mirrors in the $y$-axis, so $3$ and $-3$ give the same output'
+          why: 'Even means the graph is a mirror image in the $y$-axis. Points at $x = 3$ and $x = -3$ are at the same height, so $f(-3) = f(3) = 5$.'
         exemplars:
-          - problem: 'If $f$ is odd and $f(2) = 7$, find $f(-2)$.'
-            answer: "-7"
-            solution_sketch: 'Odd means $f(-x) = -f(x)$.'
-          - problem: "The function $f(x) = x^4 - 5x^2 + 2$ is even, so its graph is symmetric about the y-axis. Find $f(-3)$."
-            answer: "38"
+          - problem: 'If $f$ is an odd function and $f(2) = 7$, what is $f(-2)$?'
+            answer: '-7'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1: Even-function definition: f(-x) = f(x), so for the object f(x) = x^4 - 5x^2 + 2 we get f(-3) = f(3). Step 2: Substitution rule: put x = 3 into f(x) = x^4 - 5x^2 + 2 and compute 3^4 - 5*3^2 + 2 = 81 - 45 + 2 = 38. Step 3: Combine the symmetry relation with the computed value: f(-3) = f(3) = 38. The value of f(-3) is 38."
-          - problem: "The function $f(x) = 2x^3 - 3x$ is odd, so its graph is symmetric about the origin. Find $f(-2)$."
-            answer: "-10"
+            solution_sketch: 'An odd function satisfies $f(-x) = -f(x)$. So $f(-2) = -f(2) = -7$.'
+          - problem: 'The function $f(x) = x^4 - 5x^2 + 2$ is even. Find $f(-3)$.'
+            answer: '38'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1: Odd-function definition: f(-x) = -f(x), so for the object f(x) = 2x^3 - 3x we get f(-2) = -f(2). Step 2: Substitution rule: put x = 2 into f(x) = 2x^3 - 3x and compute 2*2^3 - 3*2 = 16 - 6 = 10. Step 3: Apply the origin symmetry: f(-2) = -f(2) = -10. The value of f(-2) is -10."
-          - problem: "The odd function $g(x) = x^3 + kx$ satisfies $g(1) = 2$. Find $g(-3)$."
-            answer: "-30"
+            solution_sketch: 'An even function satisfies $f(-3) = f(3)$. Then $f(3) = 81 - 45 + 2 = 38$, so $f(-3) = 38$.'
+          - problem: 'The function $f(x) = 2x^3 - 3x$ is odd. Find $f(-2)$.'
+            answer: '-10'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1: Substitution rule: put x = 1 into the object g(x) = x^3 + kx to get 1^3 + k*1 = 1 + k. Step 2: Solve the linear equation 1 + k = 2 given by g(1) = 2, which gives k = 1. Step 3: Odd-function definition: g(-3) = -g(3), and g(3) = 3^3 + 1*3 = 27 + 3 = 30, so g(-3) = -30. The value of g(-3) is -30."
-          - problem: "The function $f(x) = 3x^4 - 2x^2 + 7$ is a polynomial. Which symmetry does its graph have? Select the correct option."
-            answer: "y-axis"
-            answer_contract: {"kind": "label", "options": [["y-axis"], ["origin"], ["x-axis"], ["no symmetry"]]}
-            solution_sketch: "Step 1: Substitution rule: compute f(-1) = 3*(-1)^4 - 2*(-1)^2 + 7 = 3 - 2 + 7 = 8 and f(1) = 3*1^4 - 2*1^2 + 7 = 8 for the object f(x) = 3x^4 - 2x^2 + 7. Step 2: Even-function test: f(-x) = 3x^4 - 2x^2 + 7 = f(x) for every x because all powers are even, so f is even and its graph has y-axis symmetry. Step 3: The option origin is the symmetry of an odd function, but here f(-1) = 8 while -f(1) = -8, which are different. The option x-axis is not the symmetry of the graph of a nonzero function. The option no symmetry is wrong because f(-x) equals f(x) after simplification. The correct choice is y-axis."
-          - problem: "The even function $h$ satisfies $h(-1) = 4t - 2$ and $h(1) = t + 13$ for a constant $t$. Find $t$."
-            answer: "5"
+            solution_sketch: 'An odd function satisfies $f(-2) = -f(2)$. Then $f(2) = 16 - 6 = 10$, so $f(-2) = -10$.'
+          - problem: 'The function $f(x) = 3x^4 - 2x^2 + 7$ is a polynomial. Is its graph symmetric about the $y$-axis, about the origin, about the $x$-axis, or none of these?'
+            answer: 'y-axis'
+            answer_contract: {"kind": "label", "options": [["y-axis", "the y-axis", "about the y-axis", "y axis", "symmetric about the y-axis", "the y axis", "about the y axis", "symmetric about the y axis"], ["origin", "the origin", "about the origin", "symmetric about the origin"], ["x-axis", "the x-axis", "about the x-axis", "x axis", "symmetric about the x-axis", "the x axis", "about the x axis", "symmetric about the x axis"], ["none", "none of these", "no symmetry", "none of them"]]}
+            solution_sketch: 'All the powers are even, so $f(-x) = 3x^4 - 2x^2 + 7 = f(x)$. So $f$ is even and its graph is symmetric about the $y$-axis.'
+          - problem: 'The odd function $g(x) = x^3 + kx$ satisfies $g(1) = 2$. Find $g(-3)$.'
+            answer: '-30'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1: Even-function definition: h(-1) = h(1), so the two given expressions 4t - 2 and t + 13 must be equal for the object h. Step 2: Solve the linear equation 4t - 2 = t + 13: subtract t to get 3t - 2 = 13, then add 2 to get 3t = 15, so t = 5. The value of t is 5."
+            solution_sketch: 'From $g(1) = 1 + k = 2$ we get $k = 1$, so $g(3) = 27 + 3 = 30$. An odd function has $g(-3) = -g(3) = -30$.'
+          - problem: 'The even function $h$ satisfies $h(-1) = 4t - 2$ and $h(1) = t + 13$ for a constant $t$. Find $t$.'
+            answer: '5'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'An even function has $h(-1) = h(1)$, so $4t - 2 = t + 13$. Then $3t = 15$ and $t = 5$.'
+          - problem: 'The difference between the temperature and the daily average is modelled by an odd function $D(t)$, where $t$ is the time in hours after noon (negative $t$ is before noon). At $3$ hours after noon the difference is $4$ degrees Celsius. What is the difference $3$ hours before noon?'
+            answer: '-4'
+            answer_contract: {"kind": "unit", "quantity": "temperature", "unit": "celsius", "allow_omitted": true}
+            solution_sketch: 'Three hours before noon is $t = -3$. For an odd function $D(-3) = -D(3) = -4$ degrees Celsius.'
+          - problem: 'The height of a suspension cable above the deck is an even function $h(x)$ of the distance $x$ from the central tower, in metres, with $x$ negative to the left. The cable is $12$ m above the deck at $30$ m to the right of the tower. How high is it $30$ m to the left of the tower?'
+            answer: '12'
+            answer_contract: {"kind": "unit", "quantity": "length", "unit": "m", "allow_omitted": true}
+            solution_sketch: 'Here $h(30) = 12$. An even function has $h(-30) = h(30)$, so the cable is $12$ m high on the left side too.'
+          - problem: 'The graph of an odd function passes through the point $(4, -3)$. What other point must lie on the graph?'
+            answer: '(-4, 3)'
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: 'An odd function satisfies $f(-x) = -f(x)$. So the input $4$ becomes $-4$ and the output $-3$ becomes $3$, giving $(-4, 3)$.'
     diagnostic_exemplar:
       problem: 'Is $f(x) = x^3 - 4x$ even, odd, or neither? Name the symmetry of its graph, and use that symmetry to find $f(-3)$ given that $f(3) = 15$.'
       answer: 'odd; its graph is symmetric about the origin; f(-3) = -15'
@@ -321,85 +532,173 @@ topics:
       - id: kp1
         name: Evaluate a piecewise function
         key_prerequisites: [function-notation]
-        constraints: "two or three linear/quadratic pieces; test inputs on both sides of each breakpoint"
+        constraints: "two or three linear/quadratic pieces; test inputs on both sides of each breakpoint and on it; at least two word problems with a rule that changes (one of them run backwards)"
+        step_check:
+          step: 'Compare the input with the breakpoint to choose the piece'
+          question: 'Why do we compare the input with the breakpoint before we substitute it?'
+          options:
+            - 'Each piece covers only some inputs, so the input picks the rule'
+            - 'The breakpoint is added to the input before it goes into the rule'
+            - 'Both pieces are evaluated, and the smaller result is the value'
+            - 'The input must be larger than the breakpoint for any rule to work'
+          answer: 'Each piece covers only some inputs, so the input picks the rule'
+          why: 'A piecewise function has a different rule on each part of its domain. Only the rule whose condition the input satisfies gives the value.'
+        try_first:
+          problem: 'A parking garage charges $3$ dollars per hour for a stay of up to $4$ hours and a flat $12$ dollars for a longer stay. What does a stay of $6$ hours cost?'
+          answer_contract: {"kind": "exact"}
+          answer: '12'
+          reveal: 'The price follows one rule for short stays and another rule for long stays, and the length of the stay decides which rule applies. A piecewise function writes both rules together with the inputs each one covers.'
         exemplars:
-          - problem: 'Let $f(x) = x + 2$ for $x < 0$ and $f(x) = x^2$ for $x \ge 0$. Find $f(-3)$ and $f(2)$.'
-            answer: "-1, 4"
-            answer_contract: {kind: list, ordered: true, member: {kind: exact}}
-          - problem: 'Let $f(x) = 2x$ for $x < 1$ and $f(x) = 5$ for $x \ge 1$. Find $f(1)$.'
-            answer: "5"
-            solution_sketch: '$x = 1$ satisfies $x \ge 1$, so use the second piece.'
-          - problem: "Let $f(x) = 3x - 2$ for $x < 1$ and $f(x) = x + 4$ for $x \\ge 1$. Find $f(-2)$."
-            answer: "-8"
+          - problem: 'Let $f(x) = \begin{cases} x + 2 & x < 0 \\ x^2 & x \ge 0 \end{cases}$. Find $f(-3)$.'
+            answer: '-1'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The full function is f(x)=3x-2 for x<1 and f(x)=x+4 for x>=1. Step 1: test the input against the breakpoint: -2 < 1, so use the first piece. Step 2: substitute x=-2 into 3x-2: 3(-2)-2 = -8. The value is -8."
-          - problem: "Let $f(x) = x^2 + 1$ for $x < 0$ and $f(x) = 2x + 3$ for $x \\ge 0$. Find $f(2)$."
-            answer: "7"
+            solution_sketch: 'Since $-3 < 0$, the first piece applies. So $f(-3) = -3 + 2 = -1$.'
+          - problem: 'Let $f(x) = \begin{cases} 2x & x < 1 \\ 5 & x \ge 1 \end{cases}$. Find $f(1)$.'
+            answer: '5'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The full function is f(x)=x^2+1 for x<0 and f(x)=2x+3 for x>=0. Step 1: compare the input to the breakpoint: 2 >= 0, so use the second piece. Step 2: substitute x=2 into 2x+3: 2(2)+3 = 7. The value is 7."
-          - problem: "Let $f(x) = x + 1$ for $x < -1$, $f(x) = x^2$ for $-1 \\le x < 2$, and $f(x) = 5 - x$ for $x \\ge 2$. Find $f(0)$."
-            answer: "0"
+            solution_sketch: 'The input $1$ satisfies $x \ge 1$, so the second piece applies. That piece is the constant $5$, so $f(1) = 5$.'
+          - problem: 'Let $f(x) = \begin{cases} 3x - 2 & x < 1 \\ x + 4 & x \ge 1 \end{cases}$. Find $f(-2)$.'
+            answer: '-8'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The full function has three pieces: x+1 for x<-1, x^2 for -1<=x<2, and 5-x for x>=2. Step 1: locate the interval that contains 0: -1 <= 0 < 2, so the middle piece applies. Step 2: evaluate x^2 at x=0: 0^2 = 0. The value is 0."
-          - problem: "A gym charges $25 for $x < 10$ visits and $25 + 3(x - 10)$ for $x \\ge 10$ visits. Find the charge in dollars for 14 visits."
-            answer: "37"
+            solution_sketch: 'Since $-2 < 1$, the first piece applies. So $f(-2) = 3(-2) - 2 = -8$.'
+          - problem: 'Let $f(x) = \begin{cases} x^2 + 1 & x < 0 \\ 2x + 3 & x \ge 0 \end{cases}$. Find $f(2)$.'
+            answer: '7'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The full rule is 25 for x<10 and 25+3(x-10) for x>=10. Step 1: test the input against the breakpoint: 14 >= 10, so use the second piece. Step 2: substitute x=14 into 25+3(x-10): 25+3(4) = 37. The charge is 37."
+            solution_sketch: 'Since $2 \ge 0$, the second piece applies. So $f(2) = 2(2) + 3 = 7$.'
+          - problem: 'Let $f(x) = \begin{cases} x + 1 & x < -1 \\ x^2 & -1 \le x < 2 \\ 5 - x & x \ge 2 \end{cases}$. Find $f(-1)$.'
+            answer: '1'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The input $-1$ is not less than $-1$, but it satisfies $-1 \le x < 2$. So the middle piece applies and $f(-1) = (-1)^2 = 1$.'
+          - problem: 'A gym charges $25$ dollars for a month with fewer than $10$ visits. With $10$ or more visits it charges $25$ dollars plus $3$ dollars for every visit after the tenth. What is the charge for $14$ visits?'
+            answer: '37'
+            answer_contract: {"kind": "unit", "quantity": "dollar", "unit": "dollar", "allow_omitted": true}
+            solution_sketch: 'Fourteen visits is more than $10$, so the second rule applies. There are $14 - 10 = 4$ visits after the tenth, so the charge is $25 + 3 \cdot 4 = 37$ dollars.'
+          - problem: 'A phone plan costs $20$ dollars a month for up to $5$ GB of data, and $4$ dollars more for every GB beyond $5$ GB. In one month Ana pays $44$ dollars. How many GB did she use?'
+            answer: '11'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Ana pays more than $20$ dollars, so she went beyond $5$ GB. The extra $44 - 20 = 24$ dollars buys $24 \div 4 = 6$ GB, so she used $5 + 6 = 11$ GB.'
+          - problem: 'Let $f(x) = \begin{cases} 2x + 1 & x < 3 \\ x^2 - 2 & x \ge 3 \end{cases}$. For which value of $x$ is $f(x) = 7$?'
+            answer: '3'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'On the first piece, $2x + 1 = 7$ gives $x = 3$, but that piece needs $x < 3$, so it is rejected. On the second piece, $x^2 - 2 = 7$ gives $x = 3$ or $x = -3$, and only $x = 3$ satisfies $x \ge 3$.'
+          - problem: 'A town charges tax of $10\%$ on the first $12000$ dollars of income and $20\%$ on every dollar above $12000$. How much tax is due on an income of $30000$ dollars?'
+            answer: '4800'
+            answer_contract: {"kind": "unit", "quantity": "dollar", "unit": "dollar", "allow_omitted": true}
+            solution_sketch: 'The first $12000$ dollars are taxed at $10\%$, which is $1200$ dollars. The other $30000 - 12000 = 18000$ dollars are taxed at $20\%$, which is $3600$ dollars, so the total is $4800$ dollars.'
       - id: kp2
         name: Absolute value as a piecewise rule
         key_prerequisites: [absolute-value, function-transformations-shifts]
-        constraints: "|x - a| with integer a; piecewise rewrites state both branches with the breakpoint; vertex questions on y = |x - a| + b with integer a, b"
+        constraints: "|x - a| with integer a; piecewise rewrites ask for one branch at a time and name the side of the breakpoint; vertex questions on y = |x - a| + b; two word problems with a distance or an error"
+        step_check:
+          step: 'Identify the breakpoint: $x = 4$'
+          question: 'Why is the breakpoint of $|x - 4|$ at $x = 4$?'
+          options:
+            - 'The graph of $y = |x - 4|$ crosses the $y$-axis at $x = 4$'
+            - 'The output $|x - 4|$ is largest at $x = 4$, where the graph turns'
+            - 'At $x = 4$ the absolute value of the inside equals the number $4$'
+            - 'The inside $x - 4$ is zero at $x = 4$ and changes sign there'
+          answer: 'The inside $x - 4$ is zero at $x = 4$ and changes sign there'
+          why: 'The inside of the bars is negative to the left of $x = 4$ and positive to the right. So the rule for $|x - 4|$ changes at $x = 4$.'
         exemplars:
-          - problem: 'State the vertex of $y = |x - 2| - 5$.'
-            answer: "(2, -5)"
-          - problem: "Write |x - 4| as a piecewise rule. Give the left branch expression for x < 4 and the right branch expression for x >= 4 as left = ...; right = ..."
-            answer: "left = 4 - x; right = x - 4"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["x"]}, "name": "left"}, {"contract": {"kind": "function", "vars": ["x"]}, "name": "right"}]}
-            solution_sketch: "Full piecewise rule: |x - 4| equals 4 - x for x < 4, and equals x - 4 for x >= 4. Step 1: set the inside x - 4 equal to 0 to find the breakpoint x = 4. Step 2: for x < 4 the inside is negative, so the absolute value negates it, giving 4 - x. Step 3: for x >= 4 the inside is nonnegative, so the absolute value keeps it, giving x - 4. The answer is left = 4 - x; right = x - 4."
-          - problem: "Write |x + 7| as a piecewise rule. Give the left branch expression for x < -7 and the right branch expression for x >= -7 as left = ...; right = ..."
-            answer: "left = -x - 7; right = x + 7"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["x"]}, "name": "left"}, {"contract": {"kind": "function", "vars": ["x"]}, "name": "right"}]}
-            solution_sketch: "Full piecewise rule: |x + 7| equals -x - 7 for x < -7, and equals x + 7 for x >= -7. Step 1: set the inside x + 7 equal to 0 to find the breakpoint x = -7. Step 2: for x < -7 the inside is negative, so the absolute value negates it, giving -x - 7. Step 3: for x >= -7 the inside is nonnegative, so the absolute value keeps it, giving x + 7. The answer is left = -x - 7; right = x + 7."
-          - problem: "The graph of y = |x - 8| + b has its vertex at (8, k) and passes through the point (12, 9). Find k."
-            answer: "5"
+          - problem: 'For $x < 4$, write $|x - 4|$ without absolute value bars.'
+            answer: '4 - x'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Full function: y = |x - 8| + b, with vertex (8, k) where k = b. Step 1: substitute the point (12, 9) into the equation: 9 = |12 - 8| + b. Step 2: compute the absolute value, |12 - 8| = 4, so 9 = 4 + b. Step 3: solve for b to get b = 5, so k = 5. The answer is 5."
-          - problem: "Use the piecewise rule for y = |x - 8| to solve y = 5 on each branch. Give the larger solution for x."
-            answer: "13"
+            solution_sketch: 'For $x < 4$ the inside $x - 4$ is negative. The absolute value changes its sign, so $|x - 4| = -(x - 4) = 4 - x$.'
+          - problem: 'For $x \ge -7$, write $|x + 7|$ without absolute value bars.'
+            answer: 'x + 7'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Full rule: y = |x - 8| equals x - 8 for x >= 8 and 8 - x for x < 8. Step 1: on the branch x >= 8, solve x - 8 = 5 to get x = 13, and 13 >= 8 so it is valid. Step 2: on the branch x < 8, solve 8 - x = 5 to get x = 3, and 3 < 8 so it is valid. Step 3: compare the two solutions, 13 and 3; the larger one is 13. The answer is 13."
-          - problem: "The graph of y = |x - 3| has two points whose y-coordinate is 5. Give the point with the smaller x-coordinate as (x, y)."
-            answer: "(-2, 5)"
-            answer_contract: {"arity": 2, "kind": "coordinates"}
-            solution_sketch: "Full rule: y = |x - 3| equals x - 3 for x >= 3 and 3 - x for x < 3. Step 1: on the branch x >= 3, solve x - 3 = 5 to get x = 8, giving the point (8, 5). Step 2: on the branch x < 3, solve 3 - x = 5 to get x = -2, giving the point (-2, 5). Step 3: compare the two x-values; -2 is smaller than 8, so the point with the smaller x-coordinate is (-2, 5). The answer is (-2, 5)."
+            solution_sketch: 'For $x \ge -7$ the inside $x + 7$ is zero or positive. The absolute value leaves it unchanged, so $|x + 7| = x + 7$.'
+          - problem: 'What is the vertex of $y = |x - 2| - 5$?'
+            answer: '(2, -5)'
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: 'The bars turn at the point where $x - 2 = 0$, which is $x = 2$. The constant $-5$ moves the graph down, so the vertex is $(2, -5)$.'
+          - problem: 'The graph of $y = |x|$ is shifted right $3$ units and down $6$ units. What is the equation of the new graph?'
+            answer: 'y = |x - 3| - 6'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Right $3$ replaces $x$ with $x - 3$ inside the bars, and down $6$ subtracts $6$ outside them. So the equation is $y = |x - 3| - 6$.'
+          - problem: 'A runner is at the position $x$ metres along a straight track, and a flag stands at the $30$ m mark. The distance from the runner to the flag is $|x - 30|$ metres. Before the runner reaches the flag, write this distance without absolute value bars.'
+            answer: '30 - x'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Before the flag the runner has $x < 30$, so $x - 30$ is negative. The distance is its opposite, $-(x - 30) = 30 - x$.'
+          - problem: 'A bolt should be $50$ mm long. If its actual length is $x$ mm, its length error is $|x - 50|$ mm. For which lengths is the error $0.4$ mm?'
+            answer: '49.6, 50.4'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The error is $0.4$ when $x - 50 = 0.4$ or when $50 - x = 0.4$. These give $x = 50.4$ and $x = 49.6$.'
+          - problem: 'The graph of $y = |x - 8| + b$ passes through the point $(12, 9)$. What is its vertex?'
+            answer: '(8, 5)'
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: 'At $x = 12$ we have $|12 - 8| = 4$, so $9 = 4 + b$ and $b = 5$. The vertex of $y = |x - 8| + 5$ is $(8, 5)$.'
+          - problem: 'Sam says the vertex of $y = |x + 4| + 1$ is $(4, 1)$. What is the correct vertex?'
+            answer: '(-4, 1)'
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: 'The bars turn where $x + 4 = 0$, which is $x = -4$, not $x = 4$. The constant $1$ moves the graph up, so the vertex is $(-4, 1)$.'
+          - problem: 'The graph of $y = |x - 3|$ is at height $5$ at two points. At which values of $x$?'
+            answer: '-2, 8'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'For $x \ge 3$ we solve $x - 3 = 5$, which gives $x = 8$. For $x < 3$ we solve $3 - x = 5$, which gives $x = -2$.'
+          - problem: 'The graph of $y = |x - 3| + b$ passes through the point $(7, 2)$. Where does it cross the $y$-axis?'
+            answer: '(0, 1)'
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: 'At $x = 7$ we have $|7 - 3| = 4$, so $2 = 4 + b$ and $b = -2$. At $x = 0$ the height is $|0 - 3| - 2 = 1$, so the point is $(0, 1)$.'
+          - problem: 'For $x < -7$, write $|x + 7|$ without absolute value bars.'
+            answer: '-x - 7'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'For $x < -7$ the inside $x + 7$ is negative. The absolute value changes its sign, so $|x + 7| = -(x + 7) = -x - 7$.'
+          - problem: 'For $x < 3$, write $|2x - 6|$ without absolute value bars.'
+            answer: '6 - 2x'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'For $x < 3$ the inside $2x - 6$ is negative. The absolute value changes its sign, so $|2x - 6| = -(2x - 6) = 6 - 2x$.'
       - id: kp3
         name: Where the pieces meet
         key_prerequisites: [graphing-linear-equations]
-        constraints: "two linear (or one linear, one quadratic) pieces with integer coefficients; breakpoint |x| <= 3; ask whether the pieces meet or for the size of the jump"
+        constraints: "two linear (or one linear, one quadratic or absolute value) pieces with integer coefficients; breakpoint |x| <= 6; ask for the size of the jump or for the unknown that closes it; two word problems with a change of rule"
+        step_check:
+          step: 'Compare the two pieces at the breakpoint'
+          question: 'Why do we compare the values of the two pieces at the breakpoint to decide whether the graph has a break?'
+          options:
+            - 'The graph can only break where the slopes of the pieces are different'
+            - 'The graph is joined only if both pieces give the same value there'
+            - 'The graph is joined when the two pieces have the same formula'
+            - 'A break always shows up at the origin, so the breakpoint does not matter'
+          answer: 'The graph is joined only if both pieces give the same value there'
+          why: 'The left piece ends at the breakpoint with one height and the right piece starts there with another. The graph has no break only if the two heights are equal.'
         exemplars:
-          - problem: 'Let $f(x) = 2x$ for $x < 1$ and $f(x) = x + 3$ for $x \ge 1$. Find the gap between the pieces at $x = 1$.'
-            answer: "2"
-            solution_sketch: 'Left piece approaches $2$; right piece gives $4$; gap $= 4 - 2 = 2$.'
-          - problem: "Let f(x) = x + 5 for x < a and f(x) = 3x + 9 for x >= a. The two pieces meet at the breakpoint. Find the value of a."
-            answer: "-2"
+          - problem: 'Let $f(x) = \begin{cases} 2x & x < 1 \\ x + 3 & x \ge 1 \end{cases}$. By how much is the right piece higher than the left piece at $x = 1$?'
+            answer: '2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Write both pieces first: the left piece is f(x) = x + 5 and the right piece is f(x) = 3x + 9. At the shared breakpoint a the pieces give the same value, so set a + 5 = 3a + 9. Subtracting a from both sides gives 5 = 2a + 9, so 2a = -4. The answer is a = -2."
-          - problem: "Let f(x) = 2x - c for x < 1 and f(x) = cx + 4 for x >= 1. Find the value of c that makes the two pieces meet at x = 1."
-            answer: "-1"
+            solution_sketch: 'At $x = 1$ the left piece gives $2 \cdot 1 = 2$ and the right piece gives $1 + 3 = 4$. The right piece is higher by $4 - 2 = 2$.'
+          - problem: 'Let $f(x) = \begin{cases} x + 5 & x < a \\ 3x + 9 & x \ge a \end{cases}$. For which value of $a$ do the two pieces meet at $x = a$?'
+            answer: '-2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Write both pieces first: the left piece is f(x) = 2x - c and the right piece is f(x) = cx + 4. At x = 1 the left piece gives 2 - c and the right piece gives c + 4. Meeting requires 2 - c = c + 4, so -2c = 2. The answer is -1."
-          - problem: "Let f(x) = 2x - c for x < 1 and f(x) = cx + 2 for x >= 1. The right piece is 8 units higher than the left piece at x = 1. Find the value of c."
-            answer: "4"
+            solution_sketch: 'The pieces meet when $a + 5 = 3a + 9$. Then $2a = -4$, so $a = -2$.'
+          - problem: 'Let $f(x) = \begin{cases} 2x - c & x < 1 \\ cx + 4 & x \ge 1 \end{cases}$. For which value of $c$ do the two pieces meet at $x = 1$?'
+            answer: '-1'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Write both pieces first: the left piece is f(x) = 2x - c and the right piece is f(x) = cx + 2. At x = 1 the left piece gives 2 - c and the right piece gives c + 2. The right piece being 8 units higher gives (c + 2) - (2 - c) = 8, so 2c = 8. The answer is 4."
-          - problem: "Let f(x) = x^2 - c for x < 2 and f(x) = cx + 1 for x >= 2. Find the value of c that makes the two pieces meet at x = 2."
-            answer: "1"
+            solution_sketch: 'At $x = 1$ the left piece gives $2 - c$ and the right piece gives $c + 4$. They meet when $2 - c = c + 4$, so $-2c = 2$ and $c = -1$.'
+          - problem: 'Let $f(x) = \begin{cases} 2x - c & x < 1 \\ cx + 2 & x \ge 1 \end{cases}$. At $x = 1$ the right piece is $8$ units higher than the left piece. What is $c$?'
+            answer: '4'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Write both pieces first: the left piece is f(x) = x^2 - c and the right piece is f(x) = cx + 1. At x = 2 the left piece gives 4 - c and the right piece gives 2c + 1. Meeting requires 4 - c = 2c + 1, so 3 = 3c. The answer is 1."
-          - problem: "Let f(x) = x + 1 for x < a and f(x) = 2x - 1 for x >= a. The gap between the pieces at x = a is 1. Find the value of a."
-            answer: "3"
+            solution_sketch: 'At $x = 1$ the left piece gives $2 - c$ and the right piece gives $c + 2$. The difference is $(c + 2) - (2 - c) = 2c$, and $2c = 8$ gives $c = 4$.'
+          - problem: 'Let $f(x) = \begin{cases} x^2 - c & x < 2 \\ cx + 1 & x \ge 2 \end{cases}$. For which value of $c$ do the two pieces meet at $x = 2$?'
+            answer: '1'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Write both pieces first: the left piece is f(x) = x + 1 and the right piece is f(x) = 2x - 1. At x = a the left piece gives a + 1 and the right piece gives 2a - 1, so the gap is (2a - 1) - (a + 1) = a - 2. Setting this gap equal to 1 gives a - 2 = 1. The answer is 3."
+            solution_sketch: 'At $x = 2$ the left piece gives $4 - c$ and the right piece gives $2c + 1$. They meet when $4 - c = 2c + 1$, so $3 = 3c$ and $c = 1$.'
+          - problem: 'Let $f(x) = \begin{cases} x + 1 & x < a \\ 2x - 1 & x \ge a \end{cases}$. At $x = a$ the right piece is $1$ unit higher than the left piece. What is $a$?'
+            answer: '3'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'At $x = a$ the left piece gives $a + 1$ and the right piece gives $2a - 1$. The difference is $(2a - 1) - (a + 1) = a - 2$, and $a - 2 = 1$ gives $a = 3$.'
+          - problem: 'A shop sells tiles at $5$ dollars each when a customer buys fewer than $10$ tiles, and at $4$ dollars each when a customer buys $10$ tiles or more. How many dollars cheaper is it to buy $10$ tiles than to buy $9$ tiles?'
+            answer: '5'
+            answer_contract: {"kind": "unit", "quantity": "dollar", "unit": "dollar", "allow_omitted": true}
+            solution_sketch: 'Nine tiles cost $9 \cdot 5 = 45$ dollars. Ten tiles cost $10 \cdot 4 = 40$ dollars, so $10$ tiles are $45 - 40 = 5$ dollars cheaper than $9$ tiles.'
+          - problem: 'A ramp has the height $y = 0.5x$ metres for $0 \le x < 6$ and the height $y = kx - 9$ metres for $x \ge 6$, where $x$ is the distance along the ground in metres. For which value of $k$ is there no step in the ramp at $x = 6$?'
+            answer: '2'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'At $x = 6$ the first piece gives $0.5 \cdot 6 = 3$. The second piece gives $6k - 9$, and there is no step when $6k - 9 = 3$, so $6k = 12$ and $k = 2$.'
+          - problem: 'Let $f(x) = \begin{cases} |x - 2| & x < 4 \\ 7 - x & x \ge 4 \end{cases}$. By how much is the right piece higher than the left piece at $x = 4$?'
+            answer: '1'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'At $x = 4$ the left piece gives $|4 - 2| = 2$ and the right piece gives $7 - 4 = 3$. The right piece is higher by $3 - 2 = 1$.'
     diagnostic_exemplar:
       problem: 'Let $f(x) = |x - 1|$ for $x < 3$ and $f(x) = 6 - x$ for $x \ge 3$. Find the gap between the two pieces at $x = 3$.'
       answer: '1'
@@ -429,56 +728,114 @@ topics:
       - id: kp1
         name: Average rate of change on an interval
         key_prerequisites: [slope, function-notation]
-        constraints: "(f(b) - f(a))/(b - a); polynomial functions, small integer endpoints"
+        constraints: "(f(b) - f(a))/(b - a); polynomial functions, small integer endpoints; speeds, costs and volumes read from a context; unknown endpoint"
+        step_check:
+          step: 'divide the difference in function values by the difference in endpoints'
+          question: 'Why is the change in $f$ divided by the change in $x$?'
+          options:
+            - 'The division makes the answer smaller, so it fits the graph'
+            - 'The width $b-a$ has to cancel the top number every time'
+            - 'It gives the change in $f$ for each one unit of $x$'
+            - 'The division turns the value $f(2)$ into the value $f(4)$'
+          answer: 'It gives the change in $f$ for each one unit of $x$'
+          why: 'The top, $12$, is the total change in $f$ over a width of $2$, so $\frac{12}{2}=6$ is the change in $f$ per unit of $x$.'
+        try_first:
+          problem: 'A sunflower is $12$ cm tall on day $2$ and $33$ cm tall on day $5$. By how many centimetres per day did it grow on average?'
+          answer_contract: {"kind":"exact"}
+          answer: '7'
+          reveal: 'It grew $33-12=21$ cm in $5-2=3$ days, which is $7$ cm for each day. The average rate of change is the change in the output divided by the change in the input.'
         exemplars:
-          - problem: 'Find the average rate of change of $f(x) = x^2$ on $[1, 3]$.'
+          - problem: 'Find the average rate of change of $f(x)=x^2$ on $[1,3]$.'
             answer: "4"
-            solution_sketch: '$\frac{f(3) - f(1)}{3 - 1} = \frac{9 - 1}{2} = 4$.'
-          - problem: 'Find the average rate of change of $f(x) = x^3$ on $[0, 2]$.'
-            answer: "4"
-          - problem: "Find the average rate of change of f(x) = x^2 on [2, 4]."
-            answer: "6"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "For f(x) = x^2 on [2, 4], use function notation to get f(4) = 16 and f(2) = 4. Apply the average rate of change formula: (16 - 4)/(4 - 2) = 12/2 = 6. The average rate of change is 6."
-          - problem: "Find the average rate of change of f(x) = x^3 on [1, 3]."
-            answer: "13"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "For f(x) = x^3 on [1, 3], use function notation to get f(3) = 27 and f(1) = 1. Apply the average rate of change formula: (27 - 1)/(3 - 1) = 26/2 = 13. The average rate of change is 13."
-          - problem: "The average rate of change of f(x) = x^2 on [2, b] is 7. Find b."
-            answer: "5"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "For f(x) = x^2 on [2, b], function notation gives f(b) = b^2 and f(2) = 4. The average rate of change formula gives (b^2 - 4)/(b - 2) = 7. Since b is not 2, simplify the left side to b + 2, so b + 2 = 7 and b = 5. The value of b is 5."
-          - problem: "A cart moves so that its distance in meters after t seconds is s(t) = 2t^2 + 1. Find its average velocity on the interval [1, 3]."
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The function values are $f(3)=9$ and $f(1)=1$. The change in $f$ is $8$ over a change in $x$ of $2$, so the average rate of change is $\frac{8}{2}=4$.'
+          - problem: 'Find the average rate of change of $f(x)=x^2-3x$ on $[1,4]$.'
+            answer: "2"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Here $f(4)=16-12=4$ and $f(1)=1-3=-2$. The change in $f$ is $6$ and the width of the interval is $3$, so the average rate of change is $\frac{6}{3}=2$.'
+          - problem: 'A cart moves so that its distance in metres after $t$ seconds is $s(t)=2t^2+1$. What is its average speed between $t=1$ and $t=3$?'
             answer: "8"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "For s(t) = 2t^2 + 1 on [1, 3], function notation gives s(3) = 19 and s(1) = 3. Apply the average rate of change formula for velocity: (19 - 3)/(3 - 1) = 16/2 = 8. The average velocity is 8."
+            answer_contract: {"kind":"unit","quantity":"speed","unit":"m/s","allow_omitted":true}
+            solution_sketch: 'The cart is at $s(3)=19$ m and at $s(1)=3$ m. It covers $16$ m in $2$ s, so its average speed is $\frac{16}{2}=8$ m/s.'
+          - problem: 'Find the average rate of change of $f(x)=x^3$ on $[-1,2]$.'
+            answer: "3"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The values are $f(2)=8$ and $f(-1)=-1$. The change in $f$ is $8-(-1)=9$ and the width is $2-(-1)=3$, so the average rate of change is $\frac{9}{3}=3$.'
+          - problem: 'A train is $120$ km from its depot at 2:00 pm and $270$ km from it at 4:30 pm. What is its average speed during this time?'
+            answer: "60"
+            answer_contract: {"kind":"unit","quantity":"speed","unit":"km/h","allow_omitted":true}
+            solution_sketch: 'The train travels $270-120=150$ km in $2.5$ hours. Distance divided by time gives $\frac{150}{2.5}=60$ km/h.'
+          - problem: 'Sam says the average rate of change of $f(x)=x^2$ on $[1,4]$ is $15$, because $f(4)-f(1)=16-1=15$. What is the correct value?'
+            answer: "5"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Sam forgot to divide by the width of the interval. The change in $f$ is $15$ and the width is $4-1=3$, so the correct value is $\frac{15}{3}=5$.'
+          - problem: 'The average rate of change of $f(x)=x^2$ on $[2,b]$ is $7$. Find $b$.'
+            answer: "5"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The average rate of change is $\frac{b^2-4}{b-2}=b+2$, because $b^2-4=(b-2)(b+2)$ and $b\neq 2$. Setting $b+2=7$ gives $b=5$.'
+          - problem: 'A workshop makes $n$ bicycles in a week at a cost of $C(n)=n^2+20n+100$ dollars. What is the average cost of each extra bicycle when output rises from $10$ to $20$ bicycles?'
+            answer: "50"
+            answer_contract: {"kind":"unit","quantity":"dollar","unit":"dollar","allow_omitted":true}
+            solution_sketch: 'The cost is $C(20)=900$ dollars and $C(10)=400$ dollars. The extra $500$ dollars buy $10$ more bicycles, so each extra bicycle costs $\frac{500}{10}=50$ dollars on average.'
+          - problem: 'A tank holds $V(t)=t^2-6t+40$ litres of water $t$ minutes after a valve opens. What is the average rate of change of the volume between $t=0$ and $t=4$?'
+            answer: "-2"
+            answer_contract: {"kind":"unit","quantity":"flow","unit":"L/min","allow_omitted":true}
+            solution_sketch: 'The volume is $V(4)=32$ litres at the end and $V(0)=40$ litres at the start. The change is $-8$ litres in $4$ minutes, so the rate is $\frac{-8}{4}=-2$ litres per minute. The negative sign means the tank is losing water.'
       - id: kp2
         name: Non-polynomial functions and fractional answers
         key_prerequisites: [slope]
-        constraints: "sqrt(x) or 1/x with endpoints chosen so f(a), f(b) are exact; answers as exact fractions"
+        constraints: "sqrt(x) or 1/x with endpoints chosen so f(a), f(b) are exact; answers as exact fractions; contexts with area and shared cost"
+        step_check:
+          step: 'Apply the formula'
+          question: 'Why is the denominator $16-4$ and not $4-2$?'
+          options:
+            - 'The bottom always uses the larger of the two outputs'
+            - 'Inputs go on the bottom and outputs go on the top'
+            - 'A square root is not allowed on the bottom of a fraction'
+            - 'The inputs and outputs swap places when $f$ is a root'
+          answer: 'Inputs go on the bottom and outputs go on the top'
+          why: 'The top $4-2$ is the change in $f$, and the bottom $16-4=12$ is the change in $x$ between the endpoints.'
         exemplars:
-          - problem: 'Find the average rate of change of $f(x) = \sqrt{x}$ on $[1, 9]$.'
+          - problem: 'Find the average rate of change of $f(x)=\sqrt{x}$ on $[1,9]$.'
             answer: "1/4"
-            solution_sketch: '$\frac{3 - 1}{9 - 1} = \frac{2}{8} = \frac{1}{4}$.'
-          - problem: 'Find the average rate of change of $f(x) = \frac{1}{x}$ on $[1, 4]$.'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The values are $f(9)=3$ and $f(1)=1$. The change in $f$ is $2$ over a width of $8$, so the average rate of change is $\frac{2}{8}=\frac{1}{4}$.'
+          - problem: 'Find the average rate of change of $f(x)=\frac{1}{x}$ on $[1,4]$.'
             answer: "-1/4"
-            solution_sketch: '$\frac{1/4 - 1}{4 - 1} = \frac{-3/4}{3} = -\frac{1}{4}$.'
-          - problem: "Find the average rate of change of f(x) = sqrt(x) on [9, 25], and give the answer as an exact fraction."
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The values are $f(4)=\frac14$ and $f(1)=1$. The change in $f$ is $\frac14-1=-\frac34$ over a width of $3$, so the average rate of change is $-\frac14$.'
+          - problem: 'Find the average rate of change of $f(x)=\sqrt{x}$ on $[9,25]$.'
             answer: "1/8"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Use the average rate of change rule (f(b)-f(a))/(b-a). Here f(x)=sqrt(x), a=9, b=25, so f(9)=3 and f(25)=5. Substitute: (5-3)/(25-9)=2/16=1/8. The average rate of change is 1/8."
-          - problem: "Find the average rate of change of f(x) = 1/x on [2, 6], and give the answer as an exact fraction."
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The values are $f(25)=5$ and $f(9)=3$. The change in $f$ is $2$ over a width of $16$, so the average rate of change is $\frac{2}{16}=\frac18$.'
+          - problem: 'A square garden has area $A$ square metres, so its side length is $s(A)=\sqrt{A}$ metres. What is the average rate of change of the side length when the area grows from $16$ to $64$ square metres?'
+            answer: "1/12"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The side is $s(64)=8$ m and $s(16)=4$ m, a growth of $4$ m. The area grows by $64-16=48$ square metres, so the rate is $\frac{4}{48}=\frac{1}{12}$ metre of side per square metre of area.'
+          - problem: 'A bill of $60$ dollars is split equally among $n$ people, so each person pays $c(n)=\frac{60}{n}$ dollars. What is the average rate of change of $c$ as the group grows from $2$ people to $6$ people?'
+            answer: "-5"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Each person pays $c(2)=30$ dollars in the small group and $c(6)=10$ dollars in the large one. The change is $-20$ dollars over $4$ more people, so the rate is $\frac{-20}{4}=-5$ dollars per extra person.'
+          - problem: 'Find the average rate of change of $f(x)=\frac{1}{x}$ on $[2,6]$.'
             answer: "-1/12"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Use the average rate of change rule (f(b)-f(a))/(b-a). Here f(x)=1/x, a=2, b=6, so f(2)=1/2 and f(6)=1/6. Substitute: (1/6-1/2)/(6-2)=(-1/3)/4=-1/12. The average rate of change is -1/12."
-          - problem: "The average rate of change of f(x) = 1/x on [b, 2] is -3/10. Find b, and give the answer as an exact fraction."
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The values are $f(6)=\frac16$ and $f(2)=\frac12$. The change in $f$ is $-\frac13$ over a width of $4$, so the average rate of change is $-\frac{1}{12}$.'
+          - problem: 'Sam finds that $f(3)-f(1)=\frac13-1=-\frac23$ for $f(x)=\frac1x$ and says this is the average rate of change on $[1,3]$. What is the correct value?'
+            answer: "-1/3"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Sam did not divide by the width $3-1=2$ of the interval. The correct value is $\frac{-2/3}{2}=-\frac13$.'
+          - problem: 'Find the average rate of change of $f(x)=\sqrt{x+1}$ on $[3,8]$.'
+            answer: "1/5"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The values are $f(8)=\sqrt9=3$ and $f(3)=\sqrt4=2$. The change in $f$ is $1$ over a width of $5$, so the average rate of change is $\frac15$.'
+          - problem: 'The average rate of change of $f(x)=\frac{1}{x}$ on $[b,2]$ is $-\frac{3}{10}$. Find $b$.'
             answer: "5/3"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Use the average rate of change rule (f(b)-f(a))/(b-a). For f(x)=1/x on [b,2], f(b)=1/b and f(2)=1/2, so (1/2-1/b)/(2-b) simplifies to -1/(2b). Set -1/(2b)=-3/10 and solve: 2b=10/3, so b=5/3. The value of b is 5/3."
-          - problem: "The average rate of change of f(x) = sqrt(x) on [1, b] is 2/5. Find b, and give the answer as an exact fraction."
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The rate is $\frac{\frac12-\frac1b}{2-b}=-\frac{1}{2b}$. Setting $-\frac{1}{2b}=-\frac{3}{10}$ gives $2b=\frac{10}{3}$, so $b=\frac53$.'
+          - problem: 'The average rate of change of $f(x)=\sqrt{x}$ on $[1,b]$ is $\frac25$. Find $b$.'
             answer: "9/4"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Use the average rate of change rule (f(b)-f(a))/(b-a). For f(x)=sqrt(x) on [1,b], f(1)=1 and f(b)=sqrt(b), so (sqrt(b)-1)/(b-1) simplifies to 1/(sqrt(b)+1). Set 1/(sqrt(b)+1)=2/5 and solve: sqrt(b)+1=5/2, so sqrt(b)=3/2 and b=9/4. The value of b is 9/4."
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The rate is $\frac{\sqrt b-1}{b-1}=\frac{1}{\sqrt b+1}$. Setting this equal to $\frac25$ gives $\sqrt b+1=\frac52$, so $\sqrt b=\frac32$ and $b=\frac94$.'
     diagnostic_exemplar:
       problem: 'Find the average rate of change of $f(x) = \sqrt{x}$ on $[4, 16]$.'
       answer: "1/6"

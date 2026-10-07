@@ -21,33 +21,111 @@ topics:
         key: true
     knowledge_points:
       - id: kp1
-        name: "Boolean operations and evaluation"
+        name: 'Boolean operations and evaluation'
         key_prerequisites: [truth-tables]
+        step_check:
+          step: 'Evaluate the AND under the bar'
+          question: 'Why must $1 \cdot 1$ be evaluated before the bar is applied?'
+          options:
+            - 'The bar changes each factor separately, so each factor is flipped first'
+            - 'AND is done before OR, so the bar waits until the end of the sum'
+            - 'The bar flips the whole product, so the product comes first'
+            - 'A bar over a product is always $0$, so the product is not needed'
+          answer: 'The bar flips the whole product, so the product comes first'
+          why: 'The bar acts on the value of everything under it, so $1\cdot1=1$ is found first and then flipped to $0$.'
         exemplars:
-          - problem: 'In Boolean algebra ($+$ is OR, juxtaposition is AND, $\bar{x}$ is NOT), evaluate $x\bar{y} + \bar{x}z$ at $x = 1$, $y = 0$, $z = 0$.'
-            answer: "1"
-            solution_sketch: '$x\bar{y} = 1 \cdot 1 = 1$; the sum is $1$ regardless of the second term.'
-          - problem: 'De Morgan''s laws say $\overline{x + y} = \bar{x}\,\bar{y}$ and $\overline{xy} = \bar{x} + \bar{y}$. Evaluate $\overline{x + y}$ at $x = 0$, $y = 0$.'
-            answer: "1"
-            solution_sketch: '$x + y = 0$, so $\overline{x + y} = 1$; De Morgan agrees, since $\bar{x}\,\bar{y} = 1 \cdot 1 = 1$.'
-        constraints: "2-3 variables; 0/1 evaluation, including a De Morgan check; notation: + for OR, product for AND, bar for NOT"
+          - problem: 'In Boolean algebra ($+$ is OR, juxtaposition is AND, $\bar{x}$ is NOT), evaluate $x\bar{y}+\bar{x}z$ at $x=1$, $y=0$, $z=0$.'
+            answer: '1'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Here $x\bar{y}=1\cdot\bar{0}=1\cdot1=1$. An OR with one input equal to $1$ is $1$, so the sum is $1$ whatever the second term is.'
+          - problem: 'A porch light is on ($L=1$) when it is dark and someone is near, or when the override switch is on. With $d$ for dark, $n$ for near and $o$ for override, each $1$ or $0$, the light is $L=dn+o$. What is $L$ when $d=1$, $n=0$ and $o=0$?'
+            answer: '0'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The product $dn=1\cdot0=0$ because someone must be near as well. The override is $0$, so $L=0+0=0$ and the light stays off.'
+          - problem: 'The expression $(x+y)\bar{z}$ can be evaluated at each of the eight assignments of $x$, $y$ and $z$. For how many of these assignments is its value $1$?'
+            answer: '3'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The factor $\bar{z}$ is $1$ only when $z=0$. Then $x+y$ must be $1$, which holds for $3$ of the $4$ pairs $(x,y)$, so $3$ assignments work.'
+          - problem: 'Sam evaluates $\overline{x+y}$ at $x=1$, $y=0$ by writing it as $\bar{x}+\bar{y}$, and gets $1$. What is the correct value of $\overline{x+y}$ at these inputs?'
+            answer: '0'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Sam kept the OR when the bar was moved inside, but De Morgan''s law turns the OR into an AND. Directly, $x+y=1+0=1$, so $\overline{x+y}=\bar{1}=0$, and the correct value is $0$.'
+          - problem: 'For how many of the four assignments of $x$ and $y$ is $\overline{x+y}$ equal to $1$?'
+            answer: '1'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The bar gives $1$ only when $x+y=0$. An OR is $0$ only when both inputs are $0$, so exactly $1$ assignment works, namely $x=y=0$.'
+          - problem: 'A vault alarm sounds when the door is open and the code was not entered, or when the tamper sensor trips. With $d$, $c$ and $t$ for door open, code entered and tamper, the alarm is $A=d\bar{c}+t$. For how many of the eight settings of $d$, $c$ and $t$ does the alarm sound?'
+            answer: '5'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The tamper sensor alone gives $4$ settings, those with $t=1$. With $t=0$ the alarm needs $d=1$ and $c=0$, which adds $1$ more setting, so $5$ settings sound the alarm.'
+          - problem: 'A greenhouse fan runs ($F=1$) when it is hot or humid, but not while the roof is open. With $h$ for hot, $u$ for humid and $r$ for roof open, $F=(h+u)\bar{r}$. What is $F$ when $h=0$, $u=1$ and $r=0$?'
+            answer: '1'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Here $h+u=0+1=1$ and $\bar{r}=\bar{0}=1$. The product is $1\cdot1=1$, so the fan runs.'
+          - problem: 'For how many of the four assignments of $x$ and $y$ is $\overline{xy}$ equal to $1$?'
+            answer: '3'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The bar gives $1$ unless $xy=1$. The product $xy$ is $1$ only at $x=y=1$, so the other $3$ assignments give $1$.'
+        constraints: '2-3 variables; 0/1 evaluation, including a De Morgan check and counts of true assignments; notation: + for OR, product for AND, bar for NOT'
       - id: kp2
-        name: "Simplifying with identities"
+        name: 'Simplifying with identities'
         key_prerequisites: [truth-tables, logical-equivalence]
+        step_check:
+          step: 'Simplify using the identity $1 + \bar{y} = 1$'
+          question: 'Why does $1 + \bar{y} = 1$ hold for both values of $y$?'
+          options:
+            - 'Adding $1$ and $\bar{y}$ gives $2$, and in Boolean algebra $2$ is read as $1$'
+            - 'The $\bar{y}$ cancels the $y$ in the expression and leaves only the $1$'
+            - 'It holds only when $y=0$, since then $\bar{y}=1$ and $1+1=1$'
+            - 'An OR is $1$ as soon as one input is $1$, and here one input is $1$'
+          answer: 'An OR is $1$ as soon as one input is $1$, and here one input is $1$'
+          why: 'OR is $1$ whenever one of its inputs is $1$, so the value of $\bar{y}$ does not matter.'
         exemplars:
-          - problem: 'Simplify $x + xy$.'
-            answer: '$x$'
-            solution_sketch: 'Absorption: $x + xy = x(1 + y) = x \cdot 1 = x$. Confirm on the four input rows.'
-          - problem: 'Simplify $xy + x\bar{y}$.'
-            answer: '$x$'
-            solution_sketch: 'Factor: $x(y + \bar{y}) = x \cdot 1 = x$.'
-          - problem: 'Simplify $(x + y)(x + \bar{y})$.'
-            answer: '$x$'
-            solution_sketch: 'Expand: $xx + x\bar{y} + xy + y\bar{y} = x + x(\bar{y} + y) + 0 = x$.'
-        constraints: "target is a single literal or two-term expression; laws: absorption, complement, distributive; verifiable by 4-row truth table"
+          - problem: 'Simplify $x+xy$.'
+            answer: 'x'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Factor out $x$ to get $x(1+y)$. Since $1+y=1$ for every $y$, the result is $x\cdot1=x$, which is the absorption law.'
+          - problem: 'Simplify $xy+x\bar{y}$.'
+            answer: 'x'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Factor out $x$ to get $x(y+\bar{y})$. By the complement law $y+\bar{y}=1$, so the result is $x$.'
+          - problem: 'A greenhouse fan is on when it is hot and the vent is closed, and also when it is hot and the vent is open, so $F=h\bar{v}+hv$. Simplify $F$.'
+            answer: 'h'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Factor out $h$ to get $h(\bar{v}+v)$. The complement law gives $\bar{v}+v=1$, so $F=h$. The fan depends only on the temperature.'
+          - problem: 'Simplify $x+\bar{x}y$.'
+            answer: 'x + y'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Use the distributive law: $x+\bar{x}y=(x+\bar{x})(x+y)$. Since $x+\bar{x}=1$, the result is $x+y$. A truth table agrees: both sides are $0$ only at $x=y=0$.'
+          - problem: 'Simplify $y(x+y)$.'
+            answer: 'y'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Expand to get $yx+yy$. Since $yy=y$, this is $xy+y=y(x+1)=y$, which is the absorption law.'
+          - problem: 'The expression $xy+x\bar{y}+\bar{x}y$ is evaluated at the four assignments of $x$ and $y$. For how many of them is its value $1$?'
+            answer: '3'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Each term is $1$ at exactly one assignment, namely $(1,1)$, $(1,0)$ and $(0,1)$. The assignment $(0,0)$ makes all three terms $0$, so $3$ assignments give $1$.'
+          - problem: 'Simplify $(x+y)(x+\bar{y})$.'
+            answer: 'x'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Expand to get $xx+x\bar{y}+yx+y\bar{y}$. Here $xx=x$ and $y\bar{y}=0$, so the sum is $x+x(\bar{y}+y)=x+x=x$.'
+          - problem: 'Sam simplifies $x+\bar{x}y$ and gets $x$. Is Sam right?'
+            answer: 'no'
+            answer_contract: {"kind":"label","options":[["yes","yes, sam is right","sam is right","yes, he is right","he is right"],["no","no, sam is not right","sam is not right","not right","sam is wrong","no, sam is wrong","he is not right","he is wrong"]]}
+            solution_sketch: 'At $x=0$ and $y=1$ the original expression is $0+1\cdot1=1$, but the answer $x$ of Sam is $0$. So Sam is not right; the correct result is $x+y$.'
+          - problem: 'Are $\overline{x+y}$ and $\bar{x}\bar{y}$ equal for every choice of $x$ and $y$?'
+            answer: 'yes'
+            answer_contract: {"kind":"label","options":[["yes","yes, they are equal","equal","they are equal","always","yes, always","yes, they are always equal","they are always equal"],["no","no, they are not equal","not equal","they are not equal","no, not equal","not always equal"]]}
+            solution_sketch: 'This is a De Morgan law. Both sides are $1$ only at $x=y=0$ and are $0$ at the other three assignments, so they always agree.'
+          - problem: 'A pump runs when the tank is low and the switch is on, and also whenever the tank is low, so $P=ts+t$. Simplify $P$.'
+            answer: 't'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Factor out $t$ to get $t(s+1)$. Since $s+1=1$, the result is $t$. The switch has no effect on the pump.'
+        constraints: 'target is a single literal or two-term expression; laws: absorption, complement, distributive; verifiable by 4-row truth table'
     diagnostic_exemplar:
       problem: 'Use De Morgan\''s laws and the Boolean identities to simplify $\overline{\bar{x} + \bar{y}} + xy$.'
-      answer: '$xy$'
+      answer: 'xy'
+      answer_contract: {"kind":"exact"}
       solution_sketch: 'De Morgan: $\overline{\bar{x} + \bar{y}} = xy$; then $xy + xy = xy$ by idempotence.'
     anki_seeds:
       - front: "Boolean absorption laws"
@@ -73,62 +151,120 @@ topics:
         key: true
     knowledge_points:
       - id: kp1
-        name: "Reading a DNF off a truth table"
+        name: 'Reading a DNF off a truth table'
         key_prerequisites: [boolean-algebra-basics]
+        try_first:
+          problem: 'A function $f(x,y)$ equals $1$ exactly when at least one of $x$ and $y$ is $0$. In how many of the four rows of its truth table is $f=1$?'
+          answer_contract: {"kind":"exact"}
+          answer: '3'
+          reveal: 'Only the row $(1,1)$ has no input equal to $0$, so the other $3$ rows have value $1$. The disjunctive normal form writes one minterm for each of these rows.'
+        step_check:
+          step: 'For $(1, 1, 0)$: $xy\bar{z}$'
+          question: 'Why does the minterm of the row $(1, 1, 0)$ contain $\bar{z}$ and not $z$?'
+          options:
+            - 'Every minterm ends with one complemented variable, whatever the row is'
+            - 'The minterm must be $1$ on its own row, and $\bar{z}=1$ when $z=0$'
+            - 'The complement goes on the variable that changes last in the row'
+            - 'The row has $z=0$, so the minterm is $0$ unless it contains $z$'
+          answer: 'The minterm must be $1$ on its own row, and $\bar{z}=1$ when $z=0$'
+          why: 'A product is $1$ only when every literal is $1$; with $z=0$ the literal that equals $1$ is $\bar{z}$.'
         exemplars:
-          - problem: "A Boolean function of x and y has value 1 exactly when the two inputs are different. Its disjunctive normal form writes one minterm for every truth table row where the value is 1. How many minterms does its disjunctive normal form have?"
-            answer: "2"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1 (truth table): the inputs differ in the rows (0,1) and (1,0) and agree in the rows (0,0) and (1,1), so the function has value 1 in exactly two rows. Step 2 (minterm rule): the rule of the KP writes one minterm per 1-row, giving the minterms x'y and xy'. The disjunctive normal form therefore has 2 minterms."
-          - problem: "A Boolean function of x, y and z has value 1 exactly when exactly two of the three inputs are 1. Truth table rows are numbered by the binary value of xyz with x as the leading bit, so the row (1,0,1) is row 5, and each row with value 1 gives one minterm. Give the row numbers whose minterms occur in the disjunctive normal form, in increasing order, separated by commas."
-            answer: "3, 5, 6"
-            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
-            solution_sketch: "Step 1 (truth table): the rows with exactly two inputs equal to 1 are (0,1,1), (1,0,1) and (1,1,0). Step 2 (row numbering): with x as the leading bit these rows have binary values 011, 101 and 110, that is rows 3, 5 and 6. Step 3 (minterm rule): the rule of the KP writes one minterm for each 1-row, so the minterms come from the rows 3, 5, 6."
-          - problem: "A Boolean function of x, y and z has value 1 whenever z is 0, and also when x is 1 and y is 0. Its disjunctive normal form writes one minterm for every truth table row with value 1. How many minterms does it have?"
-            answer: "5"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1 (truth table): z = 0 holds in the rows 0, 2, 4 and 6, and the extra condition x = 1, y = 0 holds in the rows 4 and 5, where row 4 is already counted. Step 2 (minterm rule): the 1-rows are therefore 0, 2, 4, 5 and 6, and the rule of the KP writes one minterm per 1-row. The number of minterms is 5."
-          - problem: "A Boolean function of x, y and z has value 1 exactly when x is 1 or z is 1, where the two may hold at the same time. Each 1-row gives one minterm, and each minterm on three variables uses three literals. Give the number of minterms m and the total number of literals L in the disjunctive normal form."
-            answer: "m = 6; L = 18"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "m"}, {"contract": {"kind": "exact"}, "name": "L"}]}
-            solution_sketch: "Step 1 (truth table): the condition x = 1 or z = 1 fails only in the rows (0,0,0) and (0,1,0), that is rows 0 and 2, so the 1-rows are 1, 3, 4, 5, 6 and 7 and m = 6. Step 2 (literal count): each minterm on three variables has three literals, so 6 minterms use 6 times 3 literals. The two counts are m = 6; L = 18."
-          - problem: "The Boolean expression x y' + y z', where x' means NOT x and z' means NOT z, is evaluated on all eight truth table rows of x, y and z, with x as the leading bit. The full disjunctive normal form writes one minterm for every row where the expression is 1. How many minterms does the full disjunctive normal form have?"
-            answer: "4"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1 (evaluate the expression): the term x y' is 1 only where x = 1 and y = 0, which gives rows 4 and 5, and the term y z' is 1 only where y = 1 and z = 0, which gives rows 2 and 6. Step 2 (truth table): the two terms never hold together because y cannot be both 0 and 1, so the 1-rows are 2, 4, 5 and 6. Step 3 (minterm rule): the rule of the KP writes one minterm per 1-row, so these four rows give four minterms. The number of minterms is 4."
-          - problem: "A Boolean function of x and y has value 1 exactly when at least one of the two inputs is 1. Each 1-row of its truth table gives one minterm. How many minterms does its disjunctive normal form have?"
-            answer: "3"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1 (truth table): the condition at least one input is 1 fails only at the row (0,0), so the 1-rows are (0,1), (1,0) and (1,1). Step 2 (minterm rule): the rule of the KP writes one minterm per 1-row, namely x'y, xy' and xy. The number of minterms is 3."
-        constraints: "2-3 variables; one minterm per satisfying row; count of minterms = count of 1-rows"
+          - problem: 'A function $f(x,y,z)$ equals $1$ exactly when $x=y$ and $z=0$. Its disjunctive normal form has one minterm for each row of the truth table where $f=1$. How many minterms does it have?'
+            answer: '2'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The condition holds for $(x,y,z)=(1,1,0)$ and $(0,0,0)$ only. These are $2$ rows, so the disjunctive normal form has $2$ minterms, namely $xy\bar{z}$ and $\bar{x}\bar{y}\bar{z}$.'
+          - problem: 'A function of $x$, $y$ and $z$ equals $1$ exactly when exactly two of the inputs are $1$. Number the rows of the truth table $0$ to $7$ by the binary value of $xyz$, with $x$ as the leading digit, so $(1,0,1)$ is row $5$. Which rows give the minterms of its disjunctive normal form?'
+            answer: '3, 5, 6'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The rows with exactly two inputs equal to $1$ are $(0,1,1)$, $(1,0,1)$ and $(1,1,0)$. Their binary values $011$, $101$ and $110$ are rows $3$, $5$ and $6$.'
+          - problem: 'A lock opens when exactly one of three keys is turned. Write $x$, $y$, $z$ for the keys, each $1$ when turned. How many minterms does the disjunctive normal form of the function "the lock opens" have?'
+            answer: '3'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The lock opens in the rows $(1,0,0)$, $(0,1,0)$ and $(0,0,1)$. Each of these $3$ rows gives one minterm, so the disjunctive normal form has $3$ minterms.'
+          - problem: 'The minterm $x\bar{y}z$ equals $1$ at exactly one row of the truth table of $x$, $y$ and $z$. The rows are numbered $0$ to $7$ by the binary value of $xyz$, with $x$ as the leading digit. Which row is it?'
+            answer: '5'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The minterm is $1$ only when $x=1$, $\bar{y}=1$ and $z=1$, that is $y=0$. The row is $(1,0,1)$, which is $101$ in binary, so it is row $5$.'
+          - problem: 'A committee of three members passes a motion when at least two of them vote yes. Write $x$, $y$, $z$ for the votes, each $1$ for yes. How many minterms does the disjunctive normal form of the function "the motion passes" have?'
+            answer: '4'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The motion passes when two members vote yes, in $3$ rows, or when all three vote yes, in $1$ row. That is $4$ rows, so the disjunctive normal form has $4$ minterms.'
+          - problem: 'The expression $x\bar{y}+y\bar{z}$ is evaluated at all eight rows of the truth table of $x$, $y$ and $z$. Its full disjunctive normal form has one minterm for each row where the value is $1$. How many minterms does it have?'
+            answer: '4'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The term $x\bar{y}$ is $1$ in the $2$ rows with $x=1$, $y=0$. The term $y\bar{z}$ is $1$ in the $2$ rows with $y=1$, $z=0$. The two sets do not overlap, so there are $4$ rows and $4$ minterms.'
+          - problem: 'Sam says that the function of $x$ and $y$ that equals $1$ when at least one input is $1$ has two minterms, $x$ and $y$. How many minterms does its full disjunctive normal form really have?'
+            answer: '3'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'A minterm must use every variable. The function is $1$ in the rows $(0,1)$, $(1,0)$ and $(1,1)$, so the full disjunctive normal form has $3$ minterms: $\bar{x}y$, $x\bar{y}$ and $xy$.'
+          - problem: 'A function of $w$, $x$, $y$ and $z$ equals $1$ exactly when $w=1$. How many minterms does its full disjunctive normal form have?'
+            answer: '8'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The function is $1$ for every setting of $x$, $y$ and $z$ when $w=1$. There are $2^3=8$ such settings, so the full disjunctive normal form has $8$ minterms.'
+          - problem: 'A function of four variables is $1$ in exactly $5$ rows of its truth table. Its full disjunctive normal form has one minterm for each of these rows, and each minterm uses one literal for each variable. How many literals does the full disjunctive normal form contain altogether?'
+            answer: '20'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'There are $5$ minterms. Each has $4$ literals, one for each of the $4$ variables, so the total is $5\cdot4=20$ literals.'
+          - problem: 'A function of $x$, $y$ and $z$ equals $1$ when $z=0$, and also when $x=1$ and $y=0$. How many minterms does its full disjunctive normal form have?'
+            answer: '5'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The condition $z=0$ holds in $4$ rows. The condition $x=1$, $y=0$ holds in $2$ rows, and one of them, $(1,0,0)$, is already counted. So there are $4+2-1=5$ rows with value $1$ and $5$ minterms.'
+        constraints: '2-4 variables; one minterm per satisfying row; count of minterms = count of 1-rows'
       - id: kp2
-        name: "Minterms, maxterms, and CNF"
+        name: 'Minterms, maxterms, and CNF'
         key_prerequisites: [boolean-algebra-basics]
+        step_check:
+          step: 'Each true row corresponds to one minterm in the DNF'
+          question: 'Why does each true row give exactly one minterm?'
+          options:
+            - 'A minterm is $1$ on one row only, so one covers each true row'
+            - 'A minterm is $1$ on every true row, so one minterm covers all of them'
+            - 'Each variable gives one minterm for every true row of the table'
+            - 'The rows with value $0$ also give minterms, one for each false row'
+          answer: 'A minterm is $1$ on one row only, so one covers each true row'
+          why: 'A minterm is $1$ on exactly one row, so the true rows need one minterm each, and the false rows need none.'
         exemplars:
-          - problem: 'How many minterms does the full DNF of a Boolean function on $3$ variables with exactly $5$ true rows contain?'
-            answer: "5"
-            solution_sketch: 'One minterm per row where the function is $1$.'
-          - problem: "For two variables x and y, a Boolean function g is 1 exactly when x = y = 1. Rows are numbered 0 to 3 in binary order (00, 01, 10, 11). Give the maxterm indices whose clauses form the full CNF of g, in increasing order, as a comma-separated list."
-            answer: "0, 1, 2"
-            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
-            solution_sketch: "The function g is true only on row 3, since x=y=1. Rows 0, 1, and 2 are the false rows. The full CNF uses one maxterm for each false row, so the maxterm indices are 0, 1, and 2. The answer is 0, 1, 2."
-          - problem: "A Boolean function f(x,y,z) is 1 exactly on rows 0, 2, 5, and 7 (rows numbered 0 to 7 in binary order). Give the minterm indices in its full DNF, in increasing order, as a comma-separated list."
-            answer: "0, 2, 5, 7"
-            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
-            solution_sketch: "A full DNF uses one minterm for each row where f is 1. The true rows are 0, 2, 5, and 7. Therefore the minterm indices are 0, 2, 5, and 7. The answer is 0, 2, 5, 7."
-          - problem: "A Boolean function on two variables is f = (NOT x AND NOT y) OR (x AND y). Rows are numbered 0 to 3 in binary order. Give its truth table as a comma-separated list of 4 output bits for rows 0 to 3."
-            answer: "1, 0, 0, 1"
-            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
-            solution_sketch: "Evaluate f row by row. Row 0 (x=0,y=0) matches NOT x AND NOT y, so f=1. Row 1 gives 0, row 2 gives 0, and row 3 matches x AND y, so f=1. The output list is 1, 0, 0, 1. The answer is 1, 0, 0, 1."
-          - problem: "A Boolean function on three variables has full CNF with maxterms M0, M2, M5, and M7. How many rows of its truth table have value 1?"
-            answer: "4"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "A full CNF on three variables has 8 rows. The maxterms listed are the false rows, and there are 4 of them. The number of true rows is 8 - 4. The answer is 4."
-          - problem: "A Boolean function on two variables is given in CNF by (x OR y) AND (NOT x OR y). Rows are numbered 0 to 3 in binary order. Give the minterm indices in its full DNF, in increasing order, as a comma-separated list."
-            answer: "1, 3"
-            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
-            solution_sketch: "Evaluate the CNF row by row. Row 0 makes x OR y false, so f=0. Row 1 gives true; row 2 gives false; row 3 gives true. The true rows are 1 and 3, so the minterm indices are 1 and 3. The answer is 1, 3."
-        constraints: "2-3 variables; translate between truth table, DNF, and simple CNF"
+          - problem: 'A function $g(x,y)$ equals $1$ exactly when $x=y=1$. Number the rows $0$ to $3$ by the binary value of $xy$. The full conjunctive normal form has one maxterm for each row where $g=0$. Which rows give its maxterms?'
+            answer: '0, 1, 2'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The function is $1$ only in row $3$, which is $(1,1)$. It is $0$ in rows $0$, $1$ and $2$, so these rows give the maxterms.'
+          - problem: 'A Boolean function of $3$ variables is $1$ in exactly $5$ of its $8$ rows. How many minterms does its full disjunctive normal form have?'
+            answer: '5'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The full disjunctive normal form has one minterm for each row where the function is $1$. There are $5$ such rows, so it has $5$ minterms.'
+          - problem: 'A function $f(x,y,z)$ equals $1$ exactly when the binary number $xyz$ is prime. The rows are numbered $0$ to $7$ by the value of $xyz$. Which rows give the maxterms of its full conjunctive normal form?'
+            answer: '0, 1, 4, 6'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The prime values are $2$, $3$, $5$ and $7$, so $f=1$ in these rows. The function is $0$ in rows $0$, $1$, $4$ and $6$, and these rows give the maxterms.'
+          - problem: 'A smoke alarm has four sensors, and its output is $1$ when at least one sensor is triggered. How many maxterms does the full conjunctive normal form of this function have?'
+            answer: '1'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The output is $0$ only when no sensor is triggered, which is $1$ row out of $16$. The full conjunctive normal form has one maxterm for each such row, so it has $1$ maxterm.'
+          - problem: 'A function on two variables is $f=\bar{x}\bar{y}+xy$. The rows of its truth table are taken in the order $(0,0)$, $(0,1)$, $(1,0)$, $(1,1)$. What is the output column of the truth table?'
+            answer: '1, 0, 0, 1'
+            answer_contract: {"kind":"list","member":{"kind":"exact"},"ordered":true}
+            solution_sketch: 'Row $(0,0)$ matches $\bar{x}\bar{y}$, so $f=1$. Rows $(0,1)$ and $(1,0)$ match neither term, so $f=0$. Row $(1,1)$ matches $xy$, so the column reads $1, 0, 0, 1$.'
+          - problem: 'The full conjunctive normal form of the alarm function of a house with three sensors has the maxterms $M_0$, $M_2$, $M_5$ and $M_7$, one for each row where the alarm is off. In how many of the $8$ rows of the truth table does the alarm sound?'
+            answer: '4'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The $4$ maxterms mean that the alarm is off in $4$ rows. The table has $8$ rows, so the alarm sounds in $8-4=4$ rows.'
+          - problem: 'A function on two variables is given by the conjunctive normal form $(x+y)(\bar{x}+y)$. Number the rows $0$ to $3$ by the binary value of $xy$. Which rows give the minterms of its full disjunctive normal form?'
+            answer: '1, 3'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The first clause is $0$ in row $0$ and the second clause is $0$ in row $2$. So the function is $1$ only in rows $1$ and $3$, which give the minterms.'
+          - problem: 'Is the expression $x\bar{y}z$ in disjunctive normal form, in conjunctive normal form, in both, or in neither?'
+            answer: 'both'
+            answer_contract: {"kind":"label","options":[["dnf","disjunctive normal form","it is dnf","dnf only","in dnf","it is in dnf"],["cnf","conjunctive normal form","it is cnf","cnf only","in cnf","it is in cnf"],["both","dnf and cnf","both dnf and cnf","it is both","in both","it is in both","both forms"],["neither","neither dnf nor cnf","it is neither","in neither","it is in neither","neither form"]]}
+            solution_sketch: 'It is a single product of literals, which is a disjunctive normal form with one term. It is also a product of three clauses with one literal each, which is a conjunctive normal form.'
+          - problem: 'A function of $4$ variables is $1$ in exactly $11$ of its $16$ rows. How many maxterms does its full conjunctive normal form have?'
+            answer: '5'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The full conjunctive normal form has one maxterm for each row where the function is $0$. There are $16-11=5$ such rows, so it has $5$ maxterms.'
+          - problem: 'Is the expression $(x+y)z+\bar{x}$ in disjunctive normal form, in conjunctive normal form, in both, or in neither?'
+            answer: 'neither'
+            answer_contract: {"kind":"label","options":[["dnf","disjunctive normal form","it is dnf","dnf only","in dnf","it is in dnf"],["cnf","conjunctive normal form","it is cnf","cnf only","in cnf","it is in cnf"],["both","dnf and cnf","both dnf and cnf","it is both","in both","it is in both","both forms"],["neither","neither dnf nor cnf","it is neither","in neither","it is in neither","neither form"]]}
+            solution_sketch: 'The term $(x+y)z$ is not a product of literals, so the sum is not a disjunctive normal form. The whole expression is a sum, not a product of clauses, so it is not a conjunctive normal form either.'
+        constraints: '2-4 variables; translate between truth table, DNF, and simple CNF'
     diagnostic_exemplar:
       problem: 'A function on $x, y, z$ equals $1$ exactly when exactly one of the inputs is $1$. Give its disjunctive normal form, and state how many clauses its full conjunctive normal form has.'
       answer: 'DNF: $x\bar{y}\bar{z} + \bar{x}y\bar{z} + \bar{x}\bar{y}z$; the full CNF has 5 clauses'
@@ -158,61 +294,99 @@ topics:
         key: false
     knowledge_points:
       - id: kp1
-        name: "Gate behavior"
+        name: 'Gate behavior'
         key_prerequisites: [boolean-algebra-basics]
+        step_check:
+          step: 'NOR negates OR: $\overline{0 + 1} = \bar{1} = 0$'
+          question: 'Why is the NOR output $0$ on the inputs $0, 1$?'
+          options:
+            - 'NOR gives the opposite of AND, and the AND of $0$ and $1$ is $0$'
+            - 'NOR is $1$ only when both inputs are $1$, and that does not happen here'
+            - 'NOR outputs the smaller input, and the smaller of $0$ and $1$ is $0$'
+            - 'The OR of the inputs is $1$, and NOR gives the opposite of OR'
+          answer: 'The OR of the inputs is $1$, and NOR gives the opposite of OR'
+          why: 'NOR is OR followed by NOT, so any input equal to $1$ makes the output $0$.'
         exemplars:
-          - problem: 'What is the output of a NAND gate on inputs $1, 1$?'
-            answer: "0"
-            solution_sketch: 'NAND negates AND: $\overline{1 \cdot 1} = \bar{1} = 0$; on any other input pair it outputs $1$.'
-          - problem: 'What is the output of an XOR gate on inputs $1, 0$, and on inputs $1, 1$?'
-            answer: 'first = 1; second = 0'
-            answer_contract: {kind: multipart, parts: [{name: first, contract: {kind: exact}}, {name: second, contract: {kind: exact}}]}
-            solution_sketch: 'On inputs $1, 0$ the XOR outputs $1$; on inputs $1, 1$ it outputs $0$ — XOR is $1$ exactly when the inputs differ.'
-          - problem: "Find the output of an AND gate for inputs 0 and 0, then for inputs 1 and 1, and give the results in order as a list."
-            answer: "0, 1"
-            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
-            solution_sketch: "The AND rule gives 1 only when both inputs are 1. For inputs 0 and 0 the output is 0. For inputs 1 and 1 the output is 1. The outputs in order are 0, 1."
-          - problem: "Find the output of an OR gate for inputs 0 and 0, then for inputs 0 and 1, and give the results in order as a list."
-            answer: "0, 1"
-            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
-            solution_sketch: "The OR rule gives 1 when at least one input is 1. For inputs 0 and 0 the output is 0. For inputs 0 and 1 the output is 1. The outputs in order are 0, 1."
-          - problem: "A NOT gate has one input. Find its output for input 0, then for input 1, and give the results in order as a list."
-            answer: "1, 0"
-            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
-            solution_sketch: "The NOT rule gives the opposite of its single input. For input 0 the output is 1. For input 1 the output is 0. The outputs in order are 1, 0."
-          - problem: "Find the output of a NOR gate for inputs 0 and 0, then for inputs 1 and 0, and give the results in order as a list."
-            answer: "1, 0"
-            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
-            solution_sketch: "The NOR rule is the opposite of OR. For inputs 0 and 0, OR is 0, so NOR is 1. For inputs 1 and 0, OR is 1, so NOR is 0. The outputs in order are 1, 0."
-        constraints: "gates AND, OR, NOT, NAND, NOR, XOR; single-gate evaluations"
+          - problem: 'What is the output of a NAND component whose two inputs are $1$ and $1$?'
+            answer: '0'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'A NAND component gives the opposite of AND. Here $1\cdot1=1$, so the output is $\bar{1}=0$.'
+          - problem: 'A NOR component has two inputs, each $0$ or $1$. For how many of the four input pairs is its output $1$?'
+            answer: '1'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'A NOR component gives the opposite of OR. The OR of two inputs is $0$ only for the pair $(0,0)$, so the output is $1$ for exactly $1$ pair.'
+          - problem: 'A staircase light is wired to an XOR component. Its inputs come from the switch at the bottom and the switch at the top of the stairs, and the light is on when the output is $1$. Both switches are set to $1$. Is the light on or off?'
+            answer: 'off'
+            answer_contract: {"kind":"label","options":[["on","it is on","the light is on","light is on","light on","on (1)"],["off","it is off","the light is off","light is off","light off","off (0)"]]}
+            solution_sketch: 'An XOR component outputs $1$ only when its two inputs differ. Both inputs are $1$, so the output is $0$ and the light is off.'
+          - problem: 'A fire alarm sounds when the output of a three-input OR component is $1$. The three inputs come from three smoke sensors. For how many of the eight combinations of sensor readings does the alarm sound?'
+            answer: '7'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The output of the OR component is $0$ only when all $3$ sensors read $0$, which is $1$ of the $8$ combinations. So the alarm sounds for the other $7$ combinations.'
+          - problem: 'Sam says that a NAND component with inputs $0$ and $1$ outputs $0$, because "NAND switches AND off". What is the correct output?'
+            answer: '1'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The AND of $0$ and $1$ is $0$. NAND gives the opposite of AND, so the output is $\bar{0}=1$.'
+          - problem: 'An XOR component has two inputs. For how many of the four input pairs is its output $1$?'
+            answer: '2'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The output is $1$ exactly when the two inputs differ. This happens for the pairs $(0,1)$ and $(1,0)$, so there are $2$ pairs.'
+          - problem: 'Both inputs of a NAND component are connected to the same wire, which carries $1$. What is the output?'
+            answer: '0'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The AND of $1$ and $1$ is $1$. NAND gives the opposite, so the output is $0$. A NAND component with joined inputs acts like a NOT component.'
+          - problem: 'A vault opens when the output of a three-input AND component is $1$. The inputs come from three key switches. For how many of the eight combinations of switch positions does the vault open?'
+            answer: '1'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The output of an AND component is $1$ only when all $3$ inputs are $1$. This is exactly $1$ of the $8$ combinations, so the vault opens for $1$ combination.'
+        constraints: 'gates AND, OR, NOT, NAND, NOR, XOR; single-gate evaluations'
       - id: kp2
-        name: "Circuits as expressions"
+        name: 'Circuits as expressions'
         key_prerequisites: [boolean-algebra-basics]
+        step_check:
+          step: 'Compute the final AND operation'
+          question: 'Why is the final output $0$, although $x$ OR $y$ is $1$?'
+          options:
+            - 'The OR output is replaced by the NOT output at the end of the circuit'
+            - 'AND outputs $0$ whenever one of the inputs it receives is $1$'
+            - 'The AND needs both inputs to be $1$, and NOT $x$ is $0$'
+            - 'AND gives the smaller input only when the first input is $0$'
+          answer: 'The AND needs both inputs to be $1$, and NOT $x$ is $0$'
+          why: 'An AND is $1$ only when both of its inputs are $1$, so one input of $0$ makes the output $0$.'
         exemplars:
-          - problem: 'A circuit computes (($x$ AND $y$) OR (NOT $z$)). What is its output at $x = 1$, $y = 0$, $z = 0$?'
-            answer: "1"
-            solution_sketch: '$xy = 0$, $\bar{z} = 1$, and $0 + 1 = 1$.'
-          - problem: "A circuit computes (x AND y) OR (y AND z). What is its output at x = 0, y = 1, z = 0?"
-            answer: "0"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "First, x AND y = 0 AND 1 = 0 by the AND rule. Next, y AND z = 1 AND 0 = 0 by the AND rule. Then the OR gate gives 0 OR 0 = 0 by the OR rule. The output is 0."
-          - problem: "A circuit computes ((x OR y) AND (NOT z)) AND y. What is its output at x = 1, y = 1, z = 0?"
-            answer: "1"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "First, x OR y = 1 OR 1 = 1 by the OR rule. Next, NOT z = NOT 0 = 1 by the NOT rule. Then the first AND gate gives 1 AND 1 = 1. Finally, the second AND gate gives 1 AND y = 1 AND 1 = 1. The output is 1."
-          - problem: "Using only AND, OR, NOT gates, find the least number of gates needed to compute the XOR of x and y."
-            answer: "4"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "First, XOR is true when exactly one input is 1. A standard AND-OR-NOT expression is (x OR y) AND NOT(x AND y). This uses one OR gate, one AND gate, one NOT gate, and a final AND gate, so 4 gates. No expression with three or fewer gates can match XOR. The least number of gates is 4."
-          - problem: "A logic expression is NOT((x AND y) OR z). How many gates does this expression use?"
-            answer: "3"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "First, x AND y uses one AND gate. Next, the OR with z adds one OR gate. Finally, the outer NOT adds one NOT gate. The expression uses 3 gates."
-          - problem: "A circuit computes ((x AND y) OR (NOT z)) AND (NOT y). How many gates does the circuit use?"
-            answer: "5"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "First, x AND y is one AND gate. Next, NOT z is one NOT gate. Then the OR gate combines those two signals, making three gates so far. Also NOT y is a fourth gate. Finally, the outer AND gate is the fifth gate. The circuit uses 5 gates."
-        constraints: "circuits of 2-5 gates on 2-3 inputs; evaluate at given inputs or translate circuit <-> expression"
+          - problem: 'A circuit computes ($x$ AND $y$) OR (NOT $z$). What is its output at $x=1$, $y=0$, $z=0$?'
+            answer: '1'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'First, $x$ AND $y$ is $1\cdot0=0$. Next, NOT $z$ is $\bar{0}=1$. The final OR of $0$ and $1$ is $1$.'
+          - problem: 'A circuit computes ($x$ AND $y$) OR ($y$ AND $z$). What is its output at $x=0$, $y=1$, $z=0$?'
+            answer: '0'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'First, $x$ AND $y$ is $0\cdot1=0$. Next, $y$ AND $z$ is $1\cdot0=0$. The final OR of $0$ and $0$ is $0$.'
+          - problem: 'A circuit computes NOT(($x$ AND $y$) OR $z$) using one component for each AND, OR and NOT. How many components does the circuit use?'
+            answer: '3'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The AND of $x$ and $y$ needs one component. The OR with $z$ needs a second. The outer NOT needs a third, so the circuit has $3$ components.'
+          - problem: 'A car buzzer circuit computes ($d$ AND $k$) OR ($h$ AND NOT $k$). Here $d$ means the door is open, $k$ means the key is in the ignition and $h$ means the headlights are on. Does it output $1$ or $0$ when $d=1$, $k=0$ and $h=0$?'
+            answer: '0'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'First, $d$ AND $k$ is $1\cdot0=0$. Next, NOT $k$ is $1$, and $h$ AND $1$ is $0\cdot1=0$. The final OR of $0$ and $0$ is $0$, so the buzzer is silent.'
+          - problem: 'A three-judge panel reaches a decision when at least two judges agree. The circuit ($x$ AND $y$) OR ($y$ AND $z$) OR ($x$ AND $z$) uses two-input AND and OR components. How many components does it use?'
+            answer: '5'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'There are $3$ AND components, one for each pair of judges. Combining $3$ signals with OR needs $2$ OR components. The total is $3+2=5$ components.'
+          - problem: 'A circuit computes (($x$ OR $y$) AND (NOT $z$)) AND $y$. For how many of the eight combinations of the inputs $x$, $y$ and $z$ is its output $1$?'
+            answer: '2'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The output is $1$ only when $y=1$ and $z=0$, because then $x$ OR $y$ is $1$ whatever $x$ is. The input $x$ is free, so there are $2$ combinations.'
+          - problem: 'Using only two-input AND components, two-input OR components and NOT components, what is the least number of components that can compute the XOR of $x$ and $y$?'
+            answer: '4'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The expression ($x$ OR $y$) AND NOT($x$ AND $y$) uses an OR, an AND, a NOT and a final AND, which is $4$ components. Fewer cannot work, because XOR is not monotone, so a NOT is needed, and a check of every circuit with $3$ or fewer components finds none that computes XOR.'
+          - problem: 'A circuit computes (($x$ OR $y$) AND (NOT $z$)) AND $y$. What is its output at $x=1$, $y=1$, $z=0$?'
+            answer: '1'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'First, $x$ OR $y$ is $1$ and NOT $z$ is $\bar{0}=1$. The first AND gives $1\cdot1=1$. The second AND with $y=1$ gives $1\cdot1=1$.'
+        constraints: 'circuits of 2-5 gates on 2-3 inputs; evaluate at given inputs or translate circuit <-> expression'
     diagnostic_exemplar:
       problem: 'Using only AND, OR, NOT gates, give an expression that computes XNOR of $x$ and $y$ (output $1$ exactly when $x = y$), and evaluate it at $x = 0$, $y = 0$.'
       answer: '$xy + \bar{x}\bar{y}$; output $1$ at $x = y = 0$.'
@@ -247,59 +421,114 @@ topics:
       - id: kp1
         name: "Witness-based verification"
         key_prerequisites: [function-notation]
+        step_check:
+          step: 'For $n \ge 1$, $3n + 7 \le 3n + 7n = 10n$'
+          question: 'Why may the constant $7$ be replaced by $7n$ in this bound?'
+          options:
+            - 'The constant $7$ is too small to matter, so it can simply be deleted'
+            - 'The value $7n$ is smaller than $7$ for every $n \ge 1$, so the bound gets tighter'
+            - 'For $n \ge 1$ we have $7 \le 7n$, so the replacement never lowers the right side'
+            - 'Taking $n_0 = 1$ makes every term of the sum equal to $n$'
+          answer: 'For $n \ge 1$ we have $7 \le 7n$, so the replacement never lowers the right side'
+          why: 'Replacing $7$ by the larger $7n$ keeps the inequality true, and $3n + 7n = 10n$ is a constant multiple of $n$.'
+        try_first:
+          problem: 'A program takes $3n$ steps on $n$ items. A second program takes $n^2$ steps. For which smallest whole number $n$ does the second program take more steps than the first?'
+          answer_contract: {"kind":"exact"}
+          answer: '4'
+          reveal: 'After the crossing point the quadratic count stays above the linear one for good. Big-O notation makes this exact: it asks for a constant $C$ and a starting size $n_0$ after which a bound holds for every larger input.'
         exemplars:
-          - problem: 'Show that $3n + 7$ is $O(n)$ by exhibiting constants $C$ and $n_0$.'
-            answer: 'C = 10; n0 = 1'
-            answer_contract: {kind: multipart, parts: [{name: C, contract: {kind: exact}}, {name: n0, contract: {kind: exact}}]}
-            solution_sketch: 'For $n \ge 1$, $3n + 7 \le 3n + 7n = 10n$, so $C = 10$, $n_0 = 1$ works. Bound the constant term by a multiple of $n$ once $n \ge 1$; any valid $(C, n_0)$ pair is accepted.'
-          - problem: "The function n^2 is claimed to be O(n). State the long-run behavior of the ratio n^2/n, and find the smallest integer n0 such that n^2 > 8n for all n >= n0."
-            answer: "ratio = unbounded; n0 = 9"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["bounded"], ["unbounded"]]}, "name": "ratio"}, {"contract": {"kind": "exact"}, "name": "n0"}]}
-            solution_sketch: "A function is O(n) only if the ratio f(n)/n stays bounded for large n. Here the ratio n^2/n equals n, which grows without limit, so the correct label is unbounded; the bounded option would require n to stay below some fixed constant, which is false. For positive n the inequality n^2 > 8n is equivalent to n > 8, and it fails at n = 8, so the smallest n0 such that n^2 > 8n for all n >= n0 is 9. Answer: ratio = unbounded; n0 = 9."
-          - problem: "The function 2n^2 + 5n + 1 is to be shown O(n^2). With C = 5, find the smallest integer n0 such that 2n^2 + 5n + 1 <= 5n^2 for all n >= n0."
-            answer: "2"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "We need 2n^2 + 5n + 1 <= 5n^2, which is equivalent to 0 <= 3n^2 - 5n - 1. At n = 1 the right side is 3 - 5 - 1 = -3, so n = 1 fails. At n = 2 it is 12 - 10 - 1 = 1, so n = 2 works, and the quadratic 3n^2 - 5n - 1 increases for n >= 1. Therefore the smallest integer n0 is 2. Answer: 2."
-          - problem: "The function 7n + 4ln(n) is claimed to be O(n). With n0 = 2, find the smallest integer C such that 7n + 4ln(n) <= Cn holds for every integer n >= 2."
-            answer: "9"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Divide the inequality by n: we need C at least 7 + 4ln(n)/n for every integer n >= 2. The ratio ln(n)/n increases up to n = e and decreases afterward, so over integers n >= 2 its largest value occurs at n = 3, giving 7 + 4ln(3)/3, which is about 8.47. At C = 8 the pair fails at n = 3, since 21 + 4ln(3) is about 25.39, which exceeds 24. Therefore the smallest integer C is 9. Answer: 9."
-          - problem: "The function 6n^2 + n is claimed to be O(n). State the long-run behavior of the ratio (6n^2 + n)/n, and find the smallest integer n0 such that 6n^2 + n > 100n for all n >= n0."
-            answer: "ratio = unbounded; n0 = 17"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["bounded"], ["unbounded"]]}, "name": "ratio"}, {"contract": {"kind": "exact"}, "name": "n0"}]}
-            solution_sketch: "A function is O(n) only if the ratio f(n)/n stays bounded for large n. Here (6n^2 + n)/n simplifies to 6n + 1, which grows without limit, so the correct label is unbounded; the bounded option would mean 6n + 1 stays below a fixed constant, which is false. For positive n the inequality 6n^2 + n > 100n reduces to 6n^2 > 99n, that is n > 16.5, and it fails at n = 16, so the smallest n0 such that the inequality holds for all n >= n0 is 17. Answer: ratio = unbounded; n0 = 17."
-          - problem: "A program performs 4n^2 + 3n + 6 steps on inputs of size n. With C = 6, find the smallest integer n0 such that 4n^2 + 3n + 6 <= 6n^2 for all n >= n0."
-            answer: "3"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "We need 4n^2 + 3n + 6 <= 6n^2, which is equivalent to 0 <= 2n^2 - 3n - 6. At n = 2 the right side is 8 - 6 - 6 = -4, so n = 2 fails. At n = 3 it is 18 - 9 - 6 = 3, so n = 3 works, and the quadratic 2n^2 - 3n - 6 increases for n >= 1. Therefore the smallest integer n0 is 3. Answer: 3."
-        constraints: "polynomials of degree <= 2 plus log terms; require explicit (C, n0) witnesses or an unboundedness argument"
+          - problem: 'To show that $3n+7$ is $O(n)$ we need constants $C$ and $n_0$ with $3n+7 \le Cn$ for all $n \ge n_0$. Take $n_0 = 1$. What is the smallest integer $C$ that works?'
+            answer: '10'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Divide by $n$: the condition is $C \ge 3 + 7/n$ for every $n \ge 1$. The right side is largest at $n = 1$, where it equals $10$, so $C = 10$ is the smallest integer that works.'
+          - problem: 'Is $6n^2 + n$ in $O(n)$?'
+            answer: 'no'
+            answer_contract: {"kind":"label","options":[["yes","it is","true","yes it is","yes, it is"],["no","it is not","false","not","no it is not","no, it is not"]]}
+            solution_sketch: 'Divide by $n$: $(6n^2 + n)/n = 6n + 1$. This grows without bound, so no constant $C$ gives $6n^2 + n \le Cn$ for all large $n$, and the function is not $O(n)$.'
+          - problem: 'A program performs $4n^2 + 3n + 6$ steps on $n$ items. To show the count is $O(n^2)$ we use $C = 6$ and need $4n^2 + 3n + 6 \le 6n^2$ for all $n \ge n_0$. What is the smallest integer $n_0$?'
+            answer: '3'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The condition is $0 \le 2n^2 - 3n - 6$. At $n = 2$ the right side is $8 - 6 - 6 = -4$, so $n = 2$ fails. At $n = 3$ it is $18 - 9 - 6 = 3$, and the quadratic keeps increasing, so $n_0 = 3$.'
+          - problem: 'Program A takes $100n$ steps on $n$ items and Program B takes $n^2$ steps. From which input size onward does B always take more steps than A?'
+            answer: '101'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'B takes more steps exactly when $n^2 > 100n$, which means $n > 100$. At $n = 100$ the two counts are equal, so B is ahead for every size from $101$ onward.'
+          - problem: 'To show that $2n^2 + 5n + 1$ is $O(n^2)$ we take $C = 5$. What is the smallest integer $n_0$ with $2n^2 + 5n + 1 \le 5n^2$ for all $n \ge n_0$?'
+            answer: '2'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The condition is $0 \le 3n^2 - 5n - 1$. At $n = 1$ the right side is $3 - 5 - 1 = -3$, so $n = 1$ fails. At $n = 2$ it is $12 - 10 - 1 = 1$, and the quadratic increases from there, so $n_0 = 2$.'
+          - problem: 'The function $7n + 4\ln n$ is claimed to be $O(n)$. With $n_0 = 2$, what is the smallest integer $C$ with $7n + 4\ln n \le Cn$ for every integer $n \ge 2$?'
+            answer: '9'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Divide by $n$: we need $C \ge 7 + 4\ln(n)/n$ for every integer $n \ge 2$. The ratio $\ln(n)/n$ is largest at $n = 3$ among the integers, giving about $8.46$, so $C = 8$ fails at $n = 3$ and $C = 9$ is the smallest integer that works.'
+          - problem: 'A routine takes $5n + 40$ milliseconds on $n$ records. Taking $n_0 = 1$, what is the smallest integer $C$ for which the time is at most $Cn$ milliseconds for every $n \ge n_0$?'
+            answer: '45'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'We need $C \ge 5 + 40/n$ for every $n \ge 1$. The right side is largest at $n = 1$, where it equals $45$, so the time is at most $45n$ milliseconds and $C = 45$.'
+          - problem: 'Sam tests the claim that $n^2$ is $O(n)$ with $C = 5$. The inequality $n^2 \le 5n$ holds for $n = 1, 2, 3, 4, 5$. For which smallest $n$ does it fail?'
+            answer: '6'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The inequality $n^2 \le 5n$ is equivalent to $n \le 5$. At $n = 6$ we get $36 > 30$, so it fails there, and it fails for every larger $n$ too. No choice of $C$ can repair this, because $n^2 > Cn$ once $n > C$.'
+          - problem: 'To show that $2n^2 + 30n$ is $O(n^2)$ with $n_0 = 1$, what is the smallest integer $C$ with $2n^2 + 30n \le Cn^2$ for all $n \ge 1$?'
+            answer: '32'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Divide by $n^2$: we need $C \ge 2 + 30/n$ for every $n \ge 1$. The right side is largest at $n = 1$, where it equals $32$, so $C = 32$ is the smallest integer that works.'
+          - problem: 'Is $5n + 9$ in $O(n^2)$?'
+            answer: 'yes'
+            answer_contract: {"kind":"label","options":[["yes","it is","true","yes it is","yes, it is"],["no","it is not","false","not","no it is not","no, it is not"]]}
+            solution_sketch: 'Divide by $n^2$: $(5n + 9)/n^2 = 5/n + 9/n^2$, which tends to $0$. So the ratio stays bounded, for example by $14$ when $n \ge 1$, and $5n + 9$ is $O(n^2)$.'
+        constraints: 'polynomials of degree <= 2 plus log terms; the learner finds a witness C or n0, or decides whether a ratio stays bounded'
       - id: kp2
         name: "Classifying by dominant term"
         key_prerequisites: [function-notation, logarithm-basics]
+        step_check:
+          step: 'The cubic term dominates the other terms'
+          question: 'Why does only the $n^3$ term decide the big-O class of $5n^3 + 2n + 1$?'
+          options:
+            - 'The terms $2n$ and $1$ are removed because their coefficients are small'
+            - 'The terms $2n$ and $1$ stay tiny next to $5n^3$ when $n$ is large'
+            - 'Every term of a sum is multiplied together to give the class, so $n^3$ remains'
+            - 'Big-O always keeps the term with the largest coefficient, which is $5n^3$'
+          answer: 'The terms $2n$ and $1$ stay tiny next to $5n^3$ when $n$ is large'
+          why: 'The ratio $(5n^3 + 2n + 1)/n^3$ tends to $5$, so the lower terms never change the growth rate.'
         exemplars:
-          - problem: 'Give the tightest simple big-O class of $5n^3 + 2n + 1$.'
-            answer: '$O(n^3)$'
-            solution_sketch: 'The cubic term dominates; constants are dropped.'
-          - problem: 'Which grows faster: $n \log n$ or $n^2$?'
-            answer: '$n^2$'
-            solution_sketch: '$n^2 / (n \log n) = n / \log n \to \infty$.'
-          - problem: "Consider the sum $7n^3 + 4n^2 + 9$. Find the coefficient of the dominant term."
-            answer: "7"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The full expression is $7n^3 + 4n^2 + 9$. Step 1 (dominant-term rule): compare the growth rates, and $n^3$ grows faster than $n^2$ and the constant. Step 2 (read the coefficient): the dominant term is $n^3$, whose coefficient is 7. The answer is 7."
-          - problem: "Consider the sum $4n^2 + 9n log n + 2$. Find the coefficient of the dominant term."
-            answer: "4"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The full expression is $4n^2 + 9n log n + 2$. Step 1 (dominant-term rule): $n^2$ grows faster than $n log n$ and the constant. Step 2 (read the coefficient): the dominant term is $n^2$, whose coefficient is 4. The answer is 4."
-          - problem: "Consider the sum $6n log n + 2n + 5$. Find the coefficient of the dominant term."
-            answer: "6"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The full expression is $6n log n + 2n + 5$. Step 1 (dominant-term rule): $n log n$ dominates $n$ and the constant. Step 2 (read the coefficient): the dominant term is $n log n$, whose coefficient is 6. The answer is 6."
-          - problem: "Consider the sum $3*2^n + n^3 + 7$. Find the coefficient of the dominant term."
-            answer: "3"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The full expression is $3*2^n + n^3 + 7$. Step 1 (dominant-term rule): the exponential term $2^n$ dominates the cubic term $n^3$ and the constant. Step 2 (read the coefficient): the dominant term is $2^n$, whose coefficient is 3. The answer is 3."
-        constraints: "sums of at most 3 terms drawn from constants, log n, n, n log n, n^2, n^3, 2^n"
+          - problem: 'Which is the tightest big-O bound for $5n^3 + 2n + 1$: $O(n)$, $O(n^2)$, $O(n^3)$ or $O(2^n)$?'
+            answer: 'cubic'
+            answer_contract: {"kind":"label","options":[["cubic","n^3","O(n^3)","n cubed"],["quadratic","n^2","O(n^2)"],["linear","n","O(n)"],["exponential","2^n","O(2^n)"]]}
+            solution_sketch: 'The cubic term dominates: the ratio $(5n^3 + 2n + 1)/n^3$ tends to $5$, a finite positive constant. So the function grows like $n^3$, and the tightest simple bound is the cubic one.'
+          - problem: 'Find $\lim_{n \to \infty} \dfrac{7n^3 + 4n^2 + 9}{n^3}$.'
+            answer: '7'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Divide each term by $n^3$ to get $7 + 4/n + 9/n^3$. The last two terms tend to $0$, so the limit is $7$, the coefficient of the dominant term.'
+          - problem: 'A program takes $T(n) = 2n^3 + 50n$ steps on $n$ items. As $n$ grows, the ratio $T(2n)/T(n)$ approaches which number?'
+            answer: '8'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'For large $n$ the cubic term dominates, so $T(n)$ behaves like $2n^3$. Then $T(2n)/T(n)$ behaves like $2(2n)^3/(2n^3) = 8$, so doubling the input makes the program about $8$ times slower.'
+          - problem: 'Find $\lim_{n \to \infty} \dfrac{4n^2 + 9n\log n + 2}{n^2}$.'
+            answer: '4'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Divide each term by $n^2$ to get $4 + 9\log(n)/n + 2/n^2$. Since $\log(n)/n$ tends to $0$, the last two terms vanish and the limit is $4$.'
+          - problem: 'Algorithm A takes $20n\log_2 n$ steps and Algorithm B takes $n^2$ steps on $n$ items. What is the smallest integer $n$ from which B takes more steps than A for every larger input?'
+            answer: '144'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'B takes more steps when $n^2 > 20n\log_2 n$, which means $n > 20\log_2 n$. At $n = 143$ we get $20\log_2 143 \approx 143.2$, which is more than $143$, so A is still ahead. At $n = 144$ we get about $143.4$, so B is ahead from $144$ onward.'
+          - problem: 'Find $\lim_{n \to \infty} \dfrac{3 \cdot 2^n + n^3 + 7}{2^n}$.'
+            answer: '3'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Divide each term by $2^n$ to get $3 + n^3/2^n + 7/2^n$. An exponential outgrows every power of $n$, so both extra terms tend to $0$ and the limit is $3$.'
+          - problem: 'Which function grows faster as $n$ becomes large: $n\log n$ or $n^2$?'
+            answer: 'n^2'
+            answer_contract: {"kind":"label","options":[["n^2","n squared","quadratic"],["n log n","nlogn","n*log(n)"]]}
+            solution_sketch: 'Compare the ratio $(n\log n)/n^2 = \log(n)/n$, which tends to $0$. So $n\log n$ is eventually far smaller than $n^2$, and $n^2$ grows faster.'
+          - problem: 'A script takes $T(n) = 3n + 2000$ milliseconds for $n$ records. The ratio $T(10n)/T(n)$ approaches which number as $n$ grows?'
+            answer: '10'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'For large $n$ the constant $2000$ is negligible, so $T(n)$ behaves like $3n$. Then $T(10n)/T(n)$ behaves like $30n/(3n) = 10$, so ten times as many records take about ten times as long.'
+          - problem: 'Maya says $n^2 + 1000n$ is $O(n)$ because $1000n$ is larger than $n^2$ when $n = 10$. For which smallest integer $n$ is $n^2$ larger than $1000n$?'
+            answer: '1001'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The inequality $n^2 > 1000n$ means $n > 1000$, so the smallest integer is $1001$. Beyond that point $n^2$ is the larger term and keeps growing faster, so the function is $O(n^2)$ and not $O(n)$.'
+        constraints: 'sums of at most 3 terms drawn from constants, log n, n, n log n, n^2, n^3, 2^n; learner finds a limit of a ratio, a crossing point or the dominant class'
     diagnostic_exemplar:
       problem: 'Show that $5n + 9$ is $O(n)$ by exhibiting constants $C$ and $n_0$, and verify the inequality.'
       answer: 'C = 14; n0 = 1'
@@ -334,45 +563,109 @@ topics:
       - id: kp1
         name: "Omega, Theta, and the standard hierarchy"
         key_prerequisites: [big-o-notation]
+        step_check:
+          step: '$n^2 \le n^2 + 4n \le 5n^2$ for every $n \ge 1$'
+          question: 'Why do the two bounds $n^2 \le n^2 + 4n$ and $n^2 + 4n \le 5n^2$ together show $\Theta(n^2)$?'
+          options:
+            - 'Together they show that $n^2 + 4n$ and $n^2$ are equal for large $n$'
+            - 'They only show $n^2$ is $O(n^2 + 4n)$, and the upper bound is not needed'
+            - 'Each bound alone already proves the Theta claim, so the pair is a double check'
+            - 'It lies between constant multiples of $n^2$, so the growth rate is the same'
+          answer: 'It lies between constant multiples of $n^2$, so the growth rate is the same'
+          why: '$\Theta$ needs both an upper and a lower bound by constant multiples of $g$, and this pair supplies exactly those.'
         exemplars:
-          - problem: "Let f(n) = n^2 + 4n and g(n) = n^2. State whether f is Theta(g), and give the smallest integer C with f(n) <= C g(n) for every n >= 1."
-            answer: "verdict = theta; c = 5"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["theta"], ["not"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "c"}]}
-            solution_sketch: "Write f(n) = n^2 + 4n and g(n) = n^2. Upper bound: f(n) <= C n^2 requires C >= 1 + 4/n, whose largest value occurs at n = 1, so the smallest integer is C = 5. Lower bound: n^2 <= n^2 + 4n for every n >= 1, so f is Omega(g) as well as O(g), which gives Theta(g). Both bounds hold, so verdict = theta; c = 5."
-          - problem: "Consider the five functions log n, n, n log n, n^2, and 2^n. Give the position of n log n when the five functions are ordered from slowest to fastest growth, where the slowest has position 1."
-            answer: "3"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "List the five functions: log n, n, n log n, n^2, 2^n. Apply the standard hierarchy: the logarithm grows slowest, then the linear term, then n log n, then the polynomial n^2, and the exponential 2^n grows fastest. The slowest-to-fastest order is log n, n, n log n, n^2, 2^n, so n log n sits in position 3. The answer is 3."
-          - problem: "How many of the functions log n, sqrt(n), n log n, n^2, and 2^n grow strictly slower than n^2 when n is large?"
-            answer: "3"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Compare each function with n^2 using the standard hierarchy. The functions log n, sqrt(n), and n log n all grow strictly slower than n^2, since roots and logarithmic factors stay below any positive power of n. The function n^2 itself is not strictly slower, and the exponential 2^n grows faster. So exactly 3 of the five functions grow strictly slower than n^2. The count is 3."
-          - problem: "Let f(n) = n^2 + sqrt(n) and g(n) = n^2. Determine whether f is Theta(g), and give the smallest integer C with f(n) <= C g(n) for every n >= 1."
-            answer: "verdict = theta; c = 2"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["theta"], ["not"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "c"}]}
-            solution_sketch: "Write f(n) = n^2 + sqrt(n) and g(n) = n^2. Upper bound: f(n)/n^2 = 1 + 1/n^(3/2) is largest at n = 1, where it equals 2, so the smallest integer C is 2. Lower bound: n^2 <= n^2 + sqrt(n) for every n >= 1, so f is Omega(g) as well as O(g), hence Theta(g). Both bounds hold, so verdict = theta; c = 2."
-          - problem: "Which of the functions below is in Theta(n^2) for large n?"
-            answer: "n^2 + 3n"
-            answer_contract: {"kind": "label", "options": [["n^2 + 3n"], ["n^3"], ["n log n"], ["2^n"]]}
-            solution_sketch: "The class Theta(n^2) needs both an O(n^2) upper bound and an Omega(n^2) lower bound. The option n^3 fails O(n^2) because cubics outgrow quadratics. The option n log n has the O bound but fails Omega(n^2), because (n log n)/n^2 tends to 0. The option 2^n fails O(n^2), since exponentials outgrow polynomials. For n^2 + 3n we have n^2 <= n^2 + 3n <= 4n^2 for every n >= 1, so both bounds hold. The correct option is n^2 + 3n."
-          - problem: "How many of the functions n, n log n, n^3, 2^n, and n factorial grow strictly faster than 2^n when n is large? Give the count."
-            answer: "1"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "List the five functions: n, n log n, n^3, 2^n, n!. By the standard hierarchy, n, n log n, and the polynomial n^3 all grow strictly slower than the exponential 2^n. The factorial n! outgrows every exponential, since n! = 1 * 2 * ... * n includes n factors each at least 2 in the tail. So only n! grows strictly faster than 2^n. The count is 1."
-        constraints: "order 3-5 functions from {log n, sqrt(n), n, n log n, n^2, n^3, 2^n, n!}; Theta claims need both O and Omega"
+          - problem: 'Is $n^2 + 4n$ in $\Theta(n^2)$?'
+            answer: 'yes'
+            answer_contract: {"kind":"label","options":[["yes","it is","true","yes it is","yes, it is"],["no","it is not","false","not","no it is not","no, it is not"]]}
+            solution_sketch: 'For every $n \ge 1$ we have $n^2 \le n^2 + 4n \le 5n^2$. The function is bounded above and below by constant multiples of $n^2$, so it is in $\Theta(n^2)$.'
+          - problem: 'Let $f(n) = n^2 + 4n$. What is the smallest integer $C$ with $f(n) \le Cn^2$ for every $n \ge 1$?'
+            answer: '5'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Divide by $n^2$: we need $C \ge 1 + 4/n$ for every $n \ge 1$. The right side is largest at $n = 1$, where it equals $5$, so $C = 5$.'
+          - problem: 'A brute-force attack tries all $2^n$ keys of an $n$-bit key. A cleverer attack examines $n^3$ candidates. From which key length $n$ onward does brute force always take more steps than the cleverer attack?'
+            answer: '10'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Compare $2^n$ with $n^3$. At $n = 9$ we get $512 < 729$, so the cleverer attack is still slower. At $n = 10$ we get $1024 > 1000$, and the exponential stays ahead from there, so the answer is $10$.'
+          - problem: 'Find $\lim_{n \to \infty} \dfrac{n^2 + 3n}{2n^2}$.'
+            answer: '1/2'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Divide the numerator and the denominator by $n^2$ to get $(1 + 3/n)/2$. The term $3/n$ tends to $0$, so the limit is $1/2$, a positive constant, which confirms $\Theta(n^2)$.'
+          - problem: 'Which of $n^2 + 3n$, $n^3$, $n\log n$ and $2^n$ is in $\Theta(n^2)$?'
+            answer: 'n^2 + 3n'
+            answer_contract: {"kind":"label","options":[["n^2 + 3n","n^2+3n"],["n^3","n cubed"],["n log n","n*log(n)"],["2^n","2**n"]]}
+            solution_sketch: 'A function in $\Theta(n^2)$ needs both bounds. The cubic $n^3$ fails the upper bound and $2^n$ also fails it, while $n\log n$ fails the lower bound. For $n^2 + 3n$ we have $n^2 \le n^2 + 3n \le 4n^2$ for $n \ge 1$, so it is the one.'
+          - problem: 'What is the smallest integer $n_0$ such that $n^2 - 10n \ge \frac{1}{2} n^2$ for all $n \ge n_0$?'
+            answer: '20'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The condition is $\frac{1}{2}n^2 \ge 10n$, which means $n \ge 20$. At $n = 19$ it fails because $180.5 < 190$, and from $n = 20$ onward it holds. So $n^2 - 10n$ is bounded below by $\frac{1}{2}n^2$ from $n_0 = 20$.'
+          - problem: 'Sorting $n$ items takes about $n\log_2 n$ steps. How many times as many steps does it take to sort $2048$ items as to sort $1024$ items?'
+            answer: '11/5'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'For $2048 = 2^{11}$ items the count is $2048 \cdot 11$. For $1024 = 2^{10}$ items it is $1024 \cdot 10$. The ratio is $2 \cdot 11/10 = 11/5 = 2.2$, slightly more than double.'
+          - problem: 'Let $f(n) = n^2 + \sqrt{n}$. What is the smallest integer $C$ with $f(n) \le Cn^2$ for every $n \ge 1$?'
+            answer: '2'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Divide by $n^2$: we need $C \ge 1 + 1/n^{3/2}$ for every $n \ge 1$. The right side is largest at $n = 1$, where it equals $2$, so $C = 2$.'
+          - problem: 'One method for ordering $n$ tasks tries every arrangement and takes $n!$ steps. Another method takes $2^n$ steps. From which $n$ onward does the first method always take more steps than the second?'
+            answer: '4'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Compare $n!$ with $2^n$. At $n = 3$ we get $6 < 8$, so the second method is still slower. At $n = 4$ we get $24 > 16$, and each step from $n$ to $n + 1$ multiplies $n!$ by $n + 1 \ge 5$ but $2^n$ only by $2$, so $n!$ stays ahead from $n = 4$ on.'
+          - problem: 'An exhaustive search takes $2^n$ steps for an $n$-bit key. By what factor does the work grow when the key is lengthened by $3$ bits?'
+            answer: '8'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The new work is $2^{n+3} = 2^3 \cdot 2^n$, so it is $8$ times the old work. Each extra bit doubles the number of keys, and three extra bits double it three times.'
+        constraints: 'compare 2-5 functions from {log n, sqrt(n), n, n log n, n^2, n^3, 2^n, n!}; Theta claims need both an O bound and an Omega bound; learner finds constants, limits, crossing points or ratios'
       - id: kp2
         name: "Logarithm bases and exponential gaps"
         key_prerequisites: [big-o-notation, logarithm-properties]
+        step_check:
+          step: 'Since $9$ is a constant, $3^{n+2}$ is in $O(3^n)$'
+          question: 'Why does the constant $9$ show that $3^{n+2}$ is in $O(3^n)$?'
+          options:
+            - 'Constants are ignored, so $9 \cdot 3^n$ is the same function as $3^n$'
+            - 'Some fixed constant works: $3^{n+2} \le C \cdot 3^n$ holds with $C = 9$'
+            - 'Because $9$ is smaller than $3^n$, the product $9 \cdot 3^n$ is smaller than $3^n$'
+            - 'The number $9$ equals $3^2$, and powers of the same base always cancel'
+          answer: 'Some fixed constant works: $3^{n+2} \le C \cdot 3^n$ holds with $C = 9$'
+          why: 'Big-O asks only for some fixed constant $C$ with $f(n) \le C \cdot g(n)$, and $C = 9$ does that for every $n$.'
         exemplars:
-          - problem: 'Are $\log_2 n$ and $\log_{10} n$ the same up to $\Theta$? Why?'
-            answer: 'Yes'
-            answer_contract: {"kind":"label","options":[["Yes"],["No"]]}
-            solution_sketch: 'Yes: $\log_2 n = \dfrac{\log_{10} n}{\log_{10} 2}$, a constant multiple. Change-of-base is multiplication by a constant, which Theta ignores.'
-          - problem: 'Is $2^{n+1}$ in $O(2^n)$? Is $2^{2n}$?'
-            answer: 'in_O = yes; four_n = no'
-            answer_contract: {kind: multipart, parts: [{name: in_O, contract: {"kind":"label","options":[["yes"],["no"]]}}, {name: four_n, contract: {"kind":"label","options":[["yes"],["no"]]}}]}
-            solution_sketch: '$2^{n+1} = 2 \\cdot 2^n$: yes, a constant multiple. $2^{2n} = 4^n$: no — the ratio $2^n$ is unbounded. A constant factor stays inside the class; an exponential factor does not.'
-        constraints: "additive vs multiplicative changes in exponents; change-of-base arguments"
+          - problem: 'Is $\log_2 n$ in $\Theta(\log_{10} n)$?'
+            answer: 'yes'
+            answer_contract: {"kind":"label","options":[["yes","it is","true","yes it is","yes, it is"],["no","it is not","false","not","no it is not","no, it is not"]]}
+            solution_sketch: 'By the change-of-base rule $\log_2 n = \log_{10} n / \log_{10} 2$. This is a constant multiple of $\log_{10} n$, and $\Theta$ ignores constant factors, so the answer is yes.'
+          - problem: 'The change-of-base rule gives $\log_2 n = c \log_{10} n$ for a constant $c$. Find $c$ to three decimal places.'
+            answer: '3.322'
+            answer_contract: {"kind":"approx","decimals":3}
+            solution_sketch: 'Here $c = 1/\log_{10} 2 = \log_2 10 \approx 3.3219$. Rounded to three decimal places this is $3.322$, so $\log_2 n$ is about $3.322$ times $\log_{10} n$.'
+          - problem: 'What is the smallest integer $C$ with $3^{n+2} \le C \cdot 3^n$ for all $n \ge 0$?'
+            answer: '9'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Write $3^{n+2} = 3^n \cdot 3^2 = 9 \cdot 3^n$. The ratio $3^{n+2}/3^n$ equals $9$ for every $n$, so $C = 9$ is the smallest value that works.'
+          - problem: 'Is $2^{2n}$ in $O(2^n)$?'
+            answer: 'no'
+            answer_contract: {"kind":"label","options":[["yes","it is","true","yes it is","yes, it is"],["no","it is not","false","not","no it is not","no, it is not"]]}
+            solution_sketch: 'Write $2^{2n} = 4^n$. The ratio $4^n/2^n = 2^n$ grows without bound, so no constant $C$ gives $2^{2n} \le C \cdot 2^n$ for all large $n$. The answer is no.'
+          - problem: 'Breaking an $n$-bit key by brute force takes $2^n$ trials. How many times as many trials does a $40$-bit key need as a $32$-bit key?'
+            answer: '256'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Divide the two counts: $2^{40}/2^{32} = 2^8 = 256$. Each extra bit doubles the work, and the longer key has $8$ extra bits.'
+          - problem: 'A program takes $4^n$ steps on an input of size $n$. By what factor does the number of steps grow when $n$ increases by $3$?'
+            answer: '64'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The new count is $4^{n+3} = 4^3 \cdot 4^n = 64 \cdot 4^n$. So the number of steps is multiplied by $64$.'
+          - problem: 'Program A takes $2^{n+3}$ steps and Program B takes $2^n$ steps on the same input of size $n$. How many times as many steps does A take?'
+            answer: '8'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'We have $2^{n+3} = 2^3 \cdot 2^n = 8 \cdot 2^n$, so A takes $8$ times as many steps as B. The factor is a constant, so A is still $O(2^n)$.'
+          - problem: 'Sam claims $2^{2n} = 2 \cdot 2^n$ for every $n$. By what number must $2^n$ be multiplied to obtain $2^{2n}$ when $n = 5$?'
+            answer: '32'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'At $n = 5$ we have $2^{2n} = 2^{10} = 1024$ and $2^n = 32$. The multiplier is $1024/32 = 32$, not $2$. In general the multiplier is $2^n$, which grows with $n$.'
+          - problem: 'The change-of-base rule gives $\log_3 n = c \log_9 n$ for a constant $c$. Find $c$.'
+            answer: '2'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Since $9 = 3^2$ we have $\log_9 n = \frac{1}{2}\log_3 n$. So $\log_3 n = 2\log_9 n$ and $c = 2$.'
+        constraints: 'shifts and multiples in exponents of 2^n, 3^n, 4^n; change of base between logarithms; learner decides membership in O or computes the constant factor'
     diagnostic_exemplar:
       problem: 'Is $2^{n+2}$ in $O(2^n)$? Is $4^n$? Justify both.'
       answer: '$2^{n+2} = 4 \cdot 2^n$: yes, a constant multiple. $4^n = 2^n \cdot 2^n$: no — the ratio $2^n$ is unbounded.'
@@ -413,89 +706,165 @@ topics:
       - id: kp1
         name: "Divide-and-conquer recurrences"
         key_prerequisites: [recurrence-relations]
+        step_check:
+          step: 'Compute $T(9)$: $T(9) = 3 \cdot T(3) + 9 = 3 \cdot 6 + 9 = 27$'
+          question: 'Why does the combining cost in $T(9)$ equal $9$ and not $3$?'
+          options:
+            - 'The combining cost uses the size of the subproblems, which is $3$'
+            - 'It is $f(n)$ with $n = 9$, the size of the problem being solved'
+            - 'The number $9$ is $3 \cdot 3$, one factor for each recursive call'
+            - 'The cost always equals the previous value $T(3) = 6$ plus $3$'
+          answer: 'It is $f(n)$ with $n = 9$, the size of the problem being solved'
+          why: 'In $T(n) = aT(n/b) + f(n)$ the term $f(n)$ is evaluated at the current size $n$, here $n = 9$.'
         exemplars:
-          - problem: 'Merge sort satisfies $T(n) = 2T(n/2) + n$ with $T(1) = 0$: solving two half-size instances plus $n$ steps of merging. Compute $T(8)$.'
+          - problem: 'Merge sort satisfies $T(n) = 2T(n/2) + n$ with $T(1) = 0$: it solves two half-size instances and then spends $n$ steps merging. Compute $T(8)$.'
             answer: '24'
-            solution_sketch: '$T(2) = 2 \cdot 0 + 2 = 2$; $T(4) = 2 \cdot 2 + 4 = 8$; $T(8) = 2 \cdot 8 + 8 = 24$. Each of the $\log_2 8 = 3$ levels of the recursion does $8$ units of work.'
-          - problem: 'Binary search satisfies $T(n) = T(n/2) + 1$ with $T(1) = 1$. Identify $a$, $b$, and $f(n)$ in the pattern $T(n) = a\,T(n/b) + f(n)$, and compute $T(16)$.'
-            answer: 'a = 1; b = 2; fn = 1; t16 = 5'
-            answer_contract: {kind: multipart, parts: [{name: a, contract: {kind: exact}}, {name: b, contract: {kind: exact}}, {name: fn, contract: {kind: exact}}, {name: t16, contract: {kind: exact}}]}
-            solution_sketch: 'One recursive call ($a = 1$) on half the input ($b = 2$) plus one comparison ($f(n) = 1$). Iterating: $T(2) = 2$, $T(4) = 3$, $T(8) = 4$, $T(16) = 5$ — one step per halving.'
-          - problem: "An algorithm solves a problem of size n by making 3 recursive calls on problems of size n/2 and then doing n units of combining work. Let T(1) = 1, and write the cost as T(n) = a T(n/b) + f(n). Give a, b, f(n), and T(8)."
-            answer: "a = 3; b = 2; f = n; t8 = 65"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "a"}, {"contract": {"kind": "exact"}, "name": "b"}, {"contract": {"kind": "function", "vars": ["n"]}, "name": "f"}, {"contract": {"kind": "exact"}, "name": "t8"}]}
-            solution_sketch: "The recurrence is T(n) = 3T(n/2) + n with T(1) = 1. The three calls on half-size inputs give a = 3 and b = 2, and the combining work n gives f(n) = n. Iterating the recurrence: T(2) = 3*1 + 2 = 5, T(4) = 3*5 + 4 = 19, T(8) = 3*19 + 8 = 65. Thus a = 3; b = 2; f = n; t8 = 65."
-          - problem: "A recursive routine splits a size n problem into 2 parts of size n/3 and spends n^2 steps to combine the results. Let T(1) = 2. Compute T(27)."
-            answer: "943"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The recurrence is T(n) = 2T(n/3) + n^2 with T(1) = 2. First level: T(3) = 2*2 + 9 = 13. Second level: T(9) = 2*13 + 81 = 107. Third level: T(27) = 2*107 + 729 = 943. The value is 943."
-          - problem: "A divide-and-conquer method makes 4 recursive calls on half-size inputs and spends n^2 steps to combine them. Let T(1) = 1. Compute T(8)."
-            answer: "256"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The recurrence is T(n) = 4T(n/2) + n^2 with T(1) = 1. First: T(2) = 4*1 + 4 = 8. Second: T(4) = 4*8 + 16 = 48. Third: T(8) = 4*48 + 64 = 256. The value is 256."
-          - problem: "A recursive procedure makes 2 calls on problems one third the size and does n units of work to combine them. Let T(1) = 0, and write the cost as T(n) = a T(n/b) + f(n). Give a, b, f(n), and T(27)."
-            answer: "a = 2; b = 3; f = n; t27 = 57"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "a"}, {"contract": {"kind": "exact"}, "name": "b"}, {"contract": {"kind": "function", "vars": ["n"]}, "name": "f"}, {"contract": {"kind": "exact"}, "name": "t27"}]}
-            solution_sketch: "The recurrence is T(n) = 2T(n/3) + n with T(1) = 0. The two calls on one-third-size inputs give a = 2 and b = 3, and the combining work n gives f(n) = n. Iterating: T(3) = 2*0 + 3 = 3, T(9) = 2*3 + 9 = 15, T(27) = 2*15 + 27 = 57. Thus a = 2; b = 3; f = n; t27 = 57."
-        constraints: "n a power of b; identify a, b, f(n) from a verbal description and iterate 3-4 levels by hand"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Work upward from $T(1) = 0$: $T(2) = 2 \cdot 0 + 2 = 2$, then $T(4) = 2 \cdot 2 + 4 = 8$, then $T(8) = 2 \cdot 8 + 8 = 24$. Each of the $\log_2 8 = 3$ levels does $8$ units of work.'
+          - problem: 'Binary search satisfies $T(n) = T(n/2) + 1$ with $T(1) = 1$: it makes one recursive call on half the range and one comparison. Compute $T(16)$.'
+            answer: '5'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Work upward: $T(2) = T(1) + 1 = 2$, $T(4) = 3$, $T(8) = 4$, $T(16) = 5$. Each halving adds one comparison, so $T(16) = 5$.'
+          - problem: 'An algorithm solves a problem of size $n$ by making $3$ recursive calls on problems of size $n/2$ and then doing $n$ units of combining work. If $T(1) = 1$, compute $T(8)$.'
+            answer: '65'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The recurrence is $T(n) = 3T(n/2) + n$. Then $T(2) = 3 \cdot 1 + 2 = 5$, $T(4) = 3 \cdot 5 + 4 = 19$, and $T(8) = 3 \cdot 19 + 8 = 65$.'
+          - problem: 'A recursive routine splits a problem of size $n$ into $2$ parts of size $n/3$ and spends $n^2$ steps to combine the results. If $T(1) = 2$, compute $T(27)$.'
+            answer: '943'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The recurrence is $T(n) = 2T(n/3) + n^2$. Then $T(3) = 2 \cdot 2 + 9 = 13$, $T(9) = 2 \cdot 13 + 81 = 107$, and $T(27) = 2 \cdot 107 + 729 = 943$.'
+          - problem: 'A divide-and-conquer method makes $4$ recursive calls on half-size inputs and spends $n^2$ steps to combine them. If $T(1) = 1$, compute $T(8)$.'
+            answer: '256'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The recurrence is $T(n) = 4T(n/2) + n^2$. Then $T(2) = 4 \cdot 1 + 4 = 8$, $T(4) = 4 \cdot 8 + 16 = 48$, and $T(8) = 4 \cdot 48 + 64 = 256$.'
+          - problem: 'A recursive procedure makes $2$ calls on problems one third the size and does $n$ units of work to combine them. If $T(1) = 0$, compute $T(27)$.'
+            answer: '57'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The recurrence is $T(n) = 2T(n/3) + n$. Then $T(3) = 2 \cdot 0 + 3 = 3$, $T(9) = 2 \cdot 3 + 9 = 15$, and $T(27) = 2 \cdot 15 + 27 = 57$.'
+          - problem: 'Ana evaluates $T(n) = 3T(n/2) + n$ with $T(1) = 1$ and writes $T(2) = 3 \cdot T(1) + 1 = 4$. What is the correct value of $T(2)$?'
+            answer: '5'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The combining work is $f(n) = n$, and here $n = 2$, so the work is $2$ and not $1$. Therefore $T(2) = 3 \cdot 1 + 2 = 5$.'
+          - problem: 'A problem of size $64$ is split into $3$ subproblems of half the size, and each of those is split the same way, three times in all. How many subproblems of size $8$ are there at that point?'
+            answer: '27'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Each split triples the number of subproblems and halves their size. After three splits there are $3^3 = 27$ subproblems, each of size $64/2^3 = 8$.'
+        constraints: 'n a power of b; the learner reads a, b and f(n) from a verbal description and iterates 3-4 levels by hand; writing the recurrence itself is not gradable'
       - id: kp2
         name: "The critical exponent and the three cases"
         key_prerequisites: [growth-of-functions, logarithm-properties]
+        step_check:
+          step: 'Since $f(n)$ grows faster than $n^{\log_b a}$, the root dominates (case 3)'
+          question: 'For $T(n) = 4T(n/2) + n^3$, why does $f(n) = n^3$ growing faster than $n^2$ put most of the work at the root?'
+          options:
+            - 'The root is solved first, so its work is always counted first'
+            - 'The combining work per call shrinks more slowly than the number of calls grows'
+            - 'The root has the largest problem, and larger problems always cost more'
+            - 'The cubic cost falls by $8$ per level, while the calls grow only by $4$'
+          answer: 'The cubic cost falls by $8$ per level, while the calls grow only by $4$'
+          why: 'Halving $n$ cuts the cubic cost by $8$ while the number of calls grows only by $4$, so the work per level falls and the root dominates.'
+        try_first:
+          problem: 'A divide-and-conquer algorithm has $T(n) = 4T(n/2) + n$. Starting with a problem of size $32$, how many combining steps are spent in total at the level reached after splitting three times?'
+          answer_contract: {"kind":"exact"}
+          answer: '256'
+          reveal: 'Three splits give $4^3 = 64$ subproblems of size $4$, so the level costs $64 \cdot 4 = 256$ steps. The number of subproblems grows faster than their cost shrinks, and that comparison is the idea of the Master Theorem.'
         exemplars:
-          - problem: "For the recurrence T(n) = 25T(n/5) + n^2, compute the critical exponent log_b a and determine the case number and the growth class of T(n) as a function of n."
-            answer: "case = 2; T = n^2*ln(n)"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "case"}, {"contract": {"kind": "function", "vars": ["n"]}, "name": "T"}]}
-            solution_sketch: "Read off a = 25, b = 5, and f(n) = n^2. Step 1 (logarithm property): log_5 25 = 2, so the critical exponent is 2. Step 2 (case comparison): f(n) = n^2 matches n^2, so this is case 2. Step 3 (Master Theorem case 2): every level does the same order of work and a log factor appears, T(n) = Theta(n^2 ln n). The answer is case = 2; T = n^2*ln(n)."
-          - problem: "Classify the recurrence T(n) = 27T(n/3) + n by finding the critical exponent and comparing f(n) with n^(log_b a). What case applies, and what is the growth class of T(n)?"
-            answer: "case = 1; T = n^3"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "case"}, {"contract": {"kind": "function", "vars": ["n"]}, "name": "T"}]}
-            solution_sketch: "Read off a = 27, b = 3, and f(n) = n. Step 1 (logarithm property): log_3 27 = 3, so the critical exponent is 3. Step 2 (case comparison): f(n) = n grows strictly slower than n^3, so the leaf work dominates: case 1. Step 3 (Master Theorem case 1): T(n) = Theta(n^(log_b a)) = Theta(n^3). The answer is case = 1; T = n^3."
-          - problem: "A divide-and-conquer algorithm solves 8 subproblems of size n/4 and spends n^3 time to split and combine each call, giving T(n) = 8T(n/4) + n^3. Determine the case number and the growth class of T(n)."
-            answer: "case = 3; T = n^3"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "case"}, {"contract": {"kind": "function", "vars": ["n"]}, "name": "T"}]}
-            solution_sketch: "Read off a = 8, b = 4, and f(n) = n^3. Step 1 (logarithm property): log_4 8 = 3/2, so the critical exponent is 3/2. Step 2 (case comparison): f(n) = n^3 grows strictly faster than n^(3/2), so the root work dominates: case 3, and the regularity condition holds automatically for a monomial. Step 3 (Master Theorem case 3): T(n) = Theta(f(n)) = Theta(n^3). The answer is case = 3; T = n^3."
-          - problem: "The recurrence T(n) = aT(n/2) + n^2 with a a positive integer falls into case 2 of the Master Theorem, so f(n) matches n^(log_b a). Find the value of a."
-            answer: "4"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Case 2 requires f(n) = n^(log_b a), so here n^2 = n^(log_2 a). Step 1 (logarithm property): log_2 a = 2, hence a = 2^2. Step 2: a = 4 is a small positive integer, so the recurrence T(n) = 4T(n/2) + n^2 is indeed balanced. The answer is 4."
-          - problem: "For T(n) = 64T(n/4) + n^3, find the critical exponent E = log_b a, the case number, and the growth class of T(n)."
-            answer: "E = 3; case = 2; T = n^3*ln(n)"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "E"}, {"contract": {"kind": "exact"}, "name": "case"}, {"contract": {"kind": "function", "vars": ["n"]}, "name": "T"}]}
-            solution_sketch: "Read off a = 64, b = 4, and f(n) = n^3. Step 1 (logarithm property): E = log_4 64 = 3 since 4^3 = 64. Step 2 (case comparison): f(n) = n^3 matches n^E = n^3, so case 2 holds. Step 3 (Master Theorem case 2): each of the log_4 n levels does Theta(n^3) work, so T(n) = Theta(n^3 ln n). The answer is E = 3; case = 2; T = n^3*ln(n)."
-          - problem: "An algorithm recurses on 4 subproblems of half the size and does sqrt(n) work to split each call, so T(n) = 4T(n/2) + sqrt(n). State the case number and the growth class of T(n)."
-            answer: "case = 1; T = n^2"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "case"}, {"contract": {"kind": "function", "vars": ["n"]}, "name": "T"}]}
-            solution_sketch: "Read off a = 4, b = 2, and f(n) = sqrt(n) = n^(1/2). Step 1 (logarithm property): log_2 4 = 2, so the critical exponent is 2. Step 2 (case comparison): n^(1/2) grows strictly slower than n^2, so the leaf work dominates: case 1. Step 3 (Master Theorem case 1): T(n) = Theta(n^2). The answer is case = 1; T = n^2."
-        constraints: "a, b small positive integers; f(n) a monomial so case comparison is by exponent and the case-3 regularity condition holds automatically; answers name the case and the Θ class"
+          - problem: 'Which case of the Master Theorem applies to $T(n) = 25T(n/5) + n^2$?'
+            answer: '2'
+            answer_contract: {"kind":"label","options":[["2","case 2","case two","two","balanced"],["1","case 1","case one","one","leaves dominate"],["3","case 3","case three","three","root dominates"]]}
+            solution_sketch: 'Here $a = 25$, $b = 5$ and $f(n) = n^2$. The critical exponent is $\log_5 25 = 2$, which equals the exponent of $f(n)$. The two match, so case 2 applies.'
+          - problem: 'Find the critical exponent $\log_b a$ for $T(n) = 27T(n/3) + n$.'
+            answer: '3'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Here $a = 27$ and $b = 3$, so the critical exponent is $\log_3 27 = 3$ because $3^3 = 27$.'
+          - problem: 'For $T(n) = 64T(n/4) + n^3$, find a function $g$ with $T(n) = \Theta(g(n))$.'
+            answer: 'n^3*ln(n)'
+            answer_contract: {"kind":"function","vars":["n"]}
+            solution_sketch: 'Here $a = 64$, $b = 4$ and $f(n) = n^3$, and $\log_4 64 = 3$. The work $n^3$ matches $n^3$, so every level does the same order of work. There are about $\log n$ levels, so $T(n) = \Theta(n^3 \log n)$.'
+          - problem: 'A divide-and-conquer algorithm splits a problem into $8$ subproblems of size $n/4$ and spends $n^3$ steps splitting and combining, so $T(n) = 8T(n/4) + n^3$. Find a function $g$ with $T(n) = \Theta(g(n))$.'
+            answer: 'n^3'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Here $\log_4 8 = 3/2$. The work $n^3$ grows faster than $n^{3/2}$, so the root dominates (case 3). The work at the root is $n^3$, so $T(n) = \Theta(n^3)$.'
+          - problem: 'The recurrence $T(n) = aT(n/2) + n^2$, with $a$ a positive integer, falls into case 2 of the Master Theorem. Find $a$.'
+            answer: '4'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Case 2 requires $n^2 = n^{\log_2 a}$, so $\log_2 a = 2$. Therefore $a = 2^2 = 4$.'
+          - problem: 'An algorithm recurses on $4$ subproblems of half the size and does $\sqrt{n}$ work to split each call, so $T(n) = 4T(n/2) + \sqrt{n}$. Find a function $g$ with $T(n) = \Theta(g(n))$.'
+            answer: 'n^2'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Here $\log_2 4 = 2$ and $f(n) = n^{1/2}$. Since $1/2 < 2$, the work $\sqrt{n}$ grows more slowly than $n^2$, so the leaves dominate (case 1) and $T(n) = \Theta(n^2)$.'
+          - problem: 'The recurrence $T(n) = 27T(n/3) + n$ describes a divide-and-conquer algorithm. Find a function $g$ with $T(n) = \Theta(g(n))$.'
+            answer: 'n^3'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Here $\log_3 27 = 3$ and $f(n) = n$ has exponent $1$. Since $1 < 3$, the work $n$ grows more slowly than $n^3$, so the leaves dominate (case 1) and $T(n) = \Theta(n^3)$.'
+          - problem: 'In the recursion tree of $T(n) = 4T(n/2) + n$ with $n = 64$, the splitting continues until the subproblems have size $1$. How many such subproblems (leaves) are there?'
+            answer: '4096'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Halving $64$ down to $1$ takes $6$ splits, and each split multiplies the number of subproblems by $4$. So there are $4^6 = 4096$ leaves, which equals $n^{\log_2 4} = 64^2$.'
+          - problem: 'For $T(n) = 2T(n/4) + n$, which part of the recursion tree does most of the work?'
+            answer: 'root'
+            answer_contract: {"kind":"label","options":[["root","the root","at the root","top level","the top level","case 3"],["leaves","the leaves","at the leaves","bottom level","the bottom level","case 1"],["all levels","every level","balanced","case 2"]]}
+            solution_sketch: 'Here $\log_4 2 = 1/2$, and $f(n) = n$ grows faster than $n^{1/2}$. So the work at the top dominates, which is case 3, and $T(n) = \Theta(n)$.'
+          - problem: 'Sam says the critical exponent of $T(n) = 8T(n/2) + n^2$ is $8/2 = 4$. What is the correct value of $\log_b a$?'
+            answer: '3'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The critical exponent is the logarithm $\log_b a = \log_2 8$, not the quotient $a/b$. Since $2^3 = 8$, it equals $3$.'
+        constraints: 'a, b small positive integers; f(n) a monomial so the case comparison is by exponent and the case-3 regularity condition holds automatically; the learner names the case, the critical exponent or a function g with T = Theta(g)'
       - id: kp3
         name: "Classifying classic algorithms"
         key_prerequisites: [growth-of-functions, logarithm-properties]
+        step_check:
+          step: 'Since $\log_2 2 = 1 = \deg f(n)$, case 2 of the Master Theorem applies'
+          question: 'Why does the equality of $\log_2 2$ and $\deg f(n)$ add a factor $\log n$ to give $\Theta(n \log n)$?'
+          options:
+            - 'The factor $\log n$ comes from the base of the logarithm in $\log_2 2$'
+            - 'The recursion makes $n$ calls, and each call adds a factor $\log n$'
+            - 'Each of the $\log_2 n$ levels does about $n$ work, so $n \log n$'
+            - 'Case 2 always multiplies the answer by $\log n$ whatever the recurrence'
+          answer: 'Each of the $\log_2 n$ levels does about $n$ work, so $n \log n$'
+          why: 'When the work per level stays the same, the total is that work times the number of levels, which is about $\log_2 n$.'
         exemplars:
-          - problem: "Karatsuba's algorithm for multiplying two n-digit numbers satisfies T(n) = 3T(n/2) + n. Use the Master Theorem to classify it. Which growth order does T(n) have?"
-            answer: "Theta(n^(log_2 3))"
-            answer_contract: {"kind": "label", "options": [["Theta(n^(log_2 3))"], ["Theta(n^2)"], ["Theta(n log n)"], ["Theta(n^(log_3 2))"]]}
-            solution_sketch: "Write the recurrence in full: T(n) = 3T(n/2) + n, so a = 3, b = 2, and f(n) = n. The critical exponent is log_b a = log_2 3, and since 3 > 2, we get log_2 3 > 1, the degree of the work term f(n) = n. By Master Theorem case 1 the leaves dominate, so T(n) = Theta(n^(log_2 3)). The wrong option Theta(n^2) assumes the schoolbook method with no saving; Theta(n log n) wrongly applies case 2; Theta(n^(log_3 2)) swaps the base and the argument of the logarithm. The growth order is Theta(n^(log_2 3))."
-          - problem: "Binary search on a sorted array of n keys satisfies T(n) = T(n/2) + 1. Use the Master Theorem to classify it. Which growth order does T(n) have?"
-            answer: "Theta(log n)"
-            answer_contract: {"kind": "label", "options": [["Theta(log n)"], ["Theta(n)"], ["Theta(n log n)"], ["Theta(1)"]]}
-            solution_sketch: "Write the recurrence in full: T(n) = T(n/2) + 1, so a = 1, b = 2, and f(n) = 1. The critical exponent is log_b a = log_2 1 = 0, and f(n) = 1 = n^0 has exactly that order, so Master Theorem case 2 applies with k = 0. Case 2 gives T(n) = Theta(n^0 log n) = Theta(log n). The wrong option Theta(n) treats each level as doing linear work; Theta(n log n) wrongly copies the merge sort answer; Theta(1) forgets the logarithmic number of levels. The growth order is Theta(log n)."
-          - problem: "Merge sort satisfies T(n) = 2T(n/2) + n. Use the Master Theorem to classify it. Give the critical exponent log_b a."
-            answer: "1"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Write the recurrence in full: T(n) = 2T(n/2) + n, so a = 2, b = 2, and f(n) = n. The critical exponent is log_b a = log_2 2 = 1, since 2^1 = 2, by the definition of the logarithm. The work term n has degree 1, so the exponent equals the degree and Master Theorem case 2 applies, giving Theta(n log n). The critical exponent is 1."
-          - problem: "Strassen's algorithm for matrix multiplication satisfies T(n) = 7T(n/2) + n^2. Use the Master Theorem to classify it. Give the case number."
-            answer: "1"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Write the recurrence in full: T(n) = 7T(n/2) + n^2, so a = 7, b = 2, and f(n) = n^2. The critical exponent is log_b a = log_2 7, and since 7 > 4 = 2^2, we get log_2 7 > 2, the degree of the work term. By Master Theorem case 1 the leaves dominate, so T(n) = Theta(n^(log_2 7)). The case number is 1."
-          - problem: "Naive matrix multiplication by block splitting satisfies T(n) = 8T(n/2) + n^2. Use the Master Theorem to classify it. Give the critical exponent log_b a."
-            answer: "3"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Write the recurrence in full: T(n) = 8T(n/2) + n^2, so a = 8, b = 2, and f(n) = n^2. The critical exponent is log_b a = log_2 8 = 3, since 2^3 = 8. The work term n^2 has degree 2, and 3 > 2, so Master Theorem case 1 applies and the leaves dominate. The critical exponent is 3."
-          - problem: "Quickselect with a good pivot satisfies T(n) = T(n/2) + n. Use the Master Theorem to classify it. Give the case number."
-            answer: "3"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Write the recurrence in full: T(n) = T(n/2) + n, so a = 1, b = 2, and f(n) = n. The critical exponent is log_b a = log_2 1 = 0, while the work term n has degree 1. Since 0 < 1 and a f(n/b) = n/2 stays at most half of f(n), Master Theorem case 3 applies and the root dominates, so T(n) = Theta(n). The case number is 3."
-        constraints: "named algorithms with their recurrences stated in the problem; irrational critical exponents stay as log_b a"
+          - problem: 'Karatsuba''s method for multiplying two $n$-digit numbers satisfies $T(n) = 3T(n/2) + n$. Which growth order does $T(n)$ have?'
+            answer: 'Θ(n^(log_2 3))'
+            answer_contract: {"kind":"label","options":[["Θ(n^(log_2 3))","n^(log_2 3)","n^1.585","Theta(n^(log_2 3))","Θ(n^1.585)","Theta(n^1.585)","n^(log2 3)","n^{\\log_2 3}"],["Θ(n^2)","n^2","Theta(n^2)"],["Θ(n log n)","n log n","Theta(n log n)"],["Θ(n^(log_3 2))","n^(log_3 2)","Theta(n^(log_3 2))"]]}
+            solution_sketch: 'Here $a = 3$, $b = 2$ and $f(n) = n$, so the critical exponent is $\log_2 3 \approx 1.585$. It is larger than the exponent $1$ of $f(n)$, so the leaves dominate (case 1) and $T(n) = \Theta(n^{\log_2 3})$. This beats the $n^2$ of the schoolbook method.'
+          - problem: 'Merge sort satisfies $T(n) = 2T(n/2) + n$. Find the critical exponent $\log_b a$.'
+            answer: '1'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Here $a = 2$ and $b = 2$, so $\log_2 2 = 1$ because $2^1 = 2$. The work term $n$ also has exponent $1$, which is the balanced case.'
+          - problem: 'Strassen''s algorithm for multiplying $n \times n$ matrices satisfies $T(n) = 7T(n/2) + n^2$. Find the critical exponent $\log_2 7$ to two decimal places.'
+            answer: '2.81'
+            answer_contract: {"kind":"approx","decimals":2}
+            solution_sketch: 'We need $x$ with $2^x = 7$. Since $2^2 = 4$ and $2^3 = 8$, the value lies between $2$ and $3$, and $\log_2 7 \approx 2.807$. To two decimal places this is $2.81$, which is above the exponent $2$ of $f(n)$, so the leaves dominate.'
+          - problem: 'Which case of the Master Theorem applies to Strassen''s recurrence $T(n) = 7T(n/2) + n^2$?'
+            answer: '1'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Here $a = 7$, $b = 2$ and $f(n) = n^2$, so the critical exponent is $\log_2 7 \approx 2.81$. It is larger than the exponent $2$ of $f(n)$, so the leaves dominate: case 1.'
+          - problem: 'Multiplying two $n \times n$ matrices by splitting each into eight half-size blocks gives $T(n) = 8T(n/2) + n^2$. By the Master Theorem, the ratio $T(2n)/T(n)$ approaches which number as $n$ grows?'
+            answer: '8'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Here $\log_2 8 = 3 > 2$, so the leaves dominate and $T(n) = \Theta(n^3)$. Doubling $n$ multiplies $n^3$ by $2^3 = 8$.'
+          - problem: 'Binary search on a sorted array of $n$ keys satisfies $T(n) = T(n/2) + 1$. Which growth order does $T(n)$ have?'
+            answer: 'Θ(log n)'
+            answer_contract: {"kind":"label","options":[["Θ(log n)","log n","logarithmic","Theta(log n)","O(log n)","log(n)","log_2 n","log2 n"],["Θ(n)","n","linear","Theta(n)"],["Θ(n log n)","n log n","Theta(n log n)"],["Θ(1)","constant","Theta(1)"]]}
+            solution_sketch: 'Here $a = 1$, $b = 2$ and $f(n) = 1 = n^0$, and $\log_2 1 = 0$. The two exponents match, so each level does constant work and there are about $\log_2 n$ levels. Therefore $T(n) = \Theta(\log n)$.'
+          - problem: 'Quickselect with a good pivot satisfies $T(n) = T(n/2) + n$. Find a function $g$ with $T(n) = \Theta(g(n))$.'
+            answer: 'n'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Here $\log_2 1 = 0$, while $f(n) = n$ has exponent $1$. The work at the root dominates (case 3): the sizes $n, n/2, n/4, \dots$ add up to at most $2n$. So $T(n) = \Theta(n)$.'
+          - problem: 'Karatsuba''s method satisfies $T(n) = 3T(n/2) + n$. As the number of digits $n$ grows, the ratio $T(2n)/T(n)$ approaches which number?'
+            answer: '3'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Since $T(n) = \Theta(n^{\log_2 3})$, doubling $n$ multiplies the time by $2^{\log_2 3} = 3$. The schoolbook method would multiply it by $4$.'
+          - problem: 'Sam says merge sort, with $T(n) = 2T(n/2) + n$, runs in $\Theta(n)$ time because the combining work is $n$. Find the correct function $g$ with $T(n) = \Theta(g(n))$.'
+            answer: 'n*ln(n)'
+            answer_contract: {"kind":"function","vars":["n"]}
+            solution_sketch: 'The critical exponent is $\log_2 2 = 1$, which equals the exponent of $f(n) = n$. So every level does about $n$ work, and there are about $\log_2 n$ levels. The total is $\Theta(n \log n)$, not $\Theta(n)$.'
+          - problem: 'Merge sort splits a list of $1024$ items in half again and again until single items remain. How many levels of splitting occur?'
+            answer: '10'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Each level halves the list size, and $1024 = 2^{10}$. So ten halvings reach size $1$, and the recursion has $10$ levels of splitting.'
+        constraints: 'named algorithms with their recurrences stated in the problem; irrational critical exponents are asked to two decimals or through a doubling factor'
     diagnostic_exemplar:
       problem: 'Use the Master Theorem: what is the growth order of $T(n) = 4T(n/2) + n$?'
       answer: '$\Theta(n^2)$: the critical exponent is $\log_2 4 = 2$ and $f(n) = n$ grows strictly slower than $n^2$, so the leaves dominate (case 1).'
@@ -539,65 +908,114 @@ topics:
       - id: kp1
         name: "Counting loop iterations exactly"
         key_prerequisites: [big-o-notation, summation-notation, arithmetic-series]
+        step_check:
+          step: 'the inner loop runs $j = 1$ to $i$'
+          question: 'Why is the total a sum $1 + 2 + 3 + 4$ and not $4 \cdot 4$?'
+          options:
+            - 'The inner loop makes $i$ passes, so its length grows with $i$'
+            - 'The sum $1 + 2 + 3 + 4$ is always smaller than a product, so it is chosen'
+            - 'Only the last value $i = 4$ counts, because the loop ends there'
+            - 'Each pass of the outer loop makes the same number of inner passes'
+          answer: 'The inner loop makes $i$ passes, so its length grows with $i$'
+          why: 'For $i = 1, 2, 3, 4$ the inner loop makes $1, 2, 3, 4$ passes, which add up to $10$; a product $4 \cdot 4$ would need every inner loop to run $4$ times.'
         exemplars:
-          - problem: 'A double loop runs $i = 1..n$ and, inside, $j = i..n$, doing one comparison per pass. Exactly how many comparisons does it make for $n = 10$?'
-            answer: "55"
-            solution_sketch: '$\sum_{i=1}^{n}(n - i + 1) = \sum_{k=1}^{n} k = n(n+1)/2 = 55$ at $n = 10$; the count is $O(n^2)$.'
-          - problem: 'A triple of nested loops each runs $1..n$ with one operation innermost. Exact count for $n = 5$?'
-            answer: "125"
-            solution_sketch: '$n^3 = 125$ operations.'
-          - problem: "A procedure has an outer loop i = 1..n and an inner loop j = 1..i; the inner body performs one comparison per pass. How many comparisons are made when n = 15?"
-            answer: "120"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The full count is the total of the inner lengths 1, 2, ..., n, one length for each i. Step 1: for a fixed i the inner loop j = 1..i makes i passes, so the count is 1 + 2 + ... + n. Step 2: the arithmetic-series formula gives n(n + 1)/2; with n = 15 that is 15*16/2 = 120. The count has big-O class O(n^2). The exact number of comparisons is 120."
-          - problem: "A procedure has an outer loop i = 1..n and an inner loop j = i..n; each inner pass performs two additions. How many additions are made when n = 13?"
-            answer: "182"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The full count is S = 2 times sum from i = 1 to n of (n - i + 1). Step 1: the inner loop has sum from i = 1 to n of (n - i + 1) = n(n + 1)/2 passes by the arithmetic-series formula. Step 2: multiply by 2 for the two additions per pass, so S = n(n + 1). Step 3: substitute n = 13 to get 13*14 = 182. The count has big-O class O(n^2). The exact number of additions is 182."
-          - problem: "A procedure has three nested loops: i = 1..n, j = 1..n, and k = i..n; the innermost body performs one operation. How many operations are made when n = 6?"
-            answer: "126"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The full count is S = sum from i = 1 to n of sum from j = 1 to n of sum from k = i to n of 1. Step 1: the j loop gives n choices, and the k loop gives n - i + 1 choices, so S = sum from i = 1 to n of n(n - i + 1). Step 2: factor n and use the arithmetic-series formula sum from m = 1 to n of m = n(n + 1)/2, giving S = n * n(n + 1)/2 = n^2(n + 1)/2. Step 3: substitute n = 6 to get 36*7/2 = 126. The count has big-O class O(n^3). The exact number of operations is 126."
-          - problem: "A procedure has a double loop with i = 1..n and j = 1..n; the innermost body performs one multiplication. How many multiplications are made when n = 14?"
-            answer: "196"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "The full count is S = sum from i = 1 to n of sum from j = 1 to n of 1. Step 1: the inner loop has n passes, so S = sum from i = 1 to n of n = n^2. Step 2: substitute n = 14 to get 196. The count has big-O class O(n^2). The exact number of multiplications is 196."
-        constraints: "1-3 nested loops with bounds n or i..n; exact count via sum formulas, naming the big-O class in the reasoning"
+          - problem: 'A program runs a loop $i = 1, \dots, n$ and inside it a loop $j = i, \dots, n$ that makes one comparison per pass. How many comparisons does it make for $n = 10$?'
+            answer: '55'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'For each $i$ the inner loop makes $n - i + 1$ passes, so the total is $10 + 9 + \dots + 1 = n(n+1)/2 = 55$. The count grows like $n^2$, so it is $O(n^2)$.'
+          - problem: 'Three nested loops each run from $1$ to $n$, and the innermost body makes one operation per pass. How many operations are made for $n = 5$?'
+            answer: '125'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Each of the three loops makes $n$ passes, so the total is $n \cdot n \cdot n = n^3$. For $n = 5$ this is $125$ operations, and the count is $O(n^3)$.'
+          - problem: 'A procedure has an outer loop $i = 1, \dots, n$ and an inner loop $j = 1, \dots, i$; the inner body makes one comparison per pass. How many comparisons are made when $n = 15$?'
+            answer: '120'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'For fixed $i$ the inner loop makes $i$ passes, so the total is $1 + 2 + \dots + n = n(n+1)/2$. For $n = 15$ this is $15 \cdot 16/2 = 120$, and the count is $O(n^2)$.'
+          - problem: 'A procedure has an outer loop $i = 1, \dots, n$ and an inner loop $j = i, \dots, n$; each inner pass performs two additions. How many additions are made when $n = 13$?'
+            answer: '182'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The inner loops make $n(n+1)/2$ passes in all, and each pass performs $2$ additions. So the total is $n(n+1) = 13 \cdot 14 = 182$ additions, and the count is $O(n^2)$.'
+          - problem: 'A procedure has three nested loops: $i = 1, \dots, n$, $j = 1, \dots, n$ and $k = i, \dots, n$; the innermost body performs one operation. How many operations are made when $n = 6$?'
+            answer: '126'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The $j$ loop makes $n$ passes and the $k$ loop makes $n - i + 1$ passes, so the total is $n \cdot n(n+1)/2 = n^2(n+1)/2$. For $n = 6$ this is $36 \cdot 7/2 = 126$, and the count is $O(n^3)$.'
+          - problem: 'Twelve players take part in a round-robin tournament, and every pair of players meets once. A program records the games with the loops $i = 1, \dots, 11$ and $j = i + 1, \dots, 12$, one game per pass. How many games are recorded?'
+            answer: '66'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'For each $i$ the inner loop makes $12 - i$ passes, so the total is $11 + 10 + \dots + 1 = 66$. This agrees with the number of pairs, $\binom{12}{2} = 66$.'
+          - problem: 'A program has an outer loop $i = 1, \dots, n$ and an inner loop $j = 1, \dots, i$ that makes one comparison per pass. In all it makes $210$ comparisons. What is $n$?'
+            answer: '20'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The total is $n(n+1)/2 = 210$, so $n(n+1) = 420$. Since $20 \cdot 21 = 420$, we get $n = 20$.'
+          - problem: 'Sam counts the passes of the loops $i = 1, \dots, n$ and $j = i, \dots, n$ for $n = 6$ as $6 \cdot 6 = 36$. How many passes are there?'
+            answer: '21'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The inner loop is shorter for larger $i$: it makes $6, 5, 4, 3, 2, 1$ passes. The total is $6 \cdot 7/2 = 21$, which is less than $36$ because the loop does not always run $6$ times.'
+          - problem: 'A double loop runs $i = 1, \dots, n$ and $j = 1, \dots, n$, and the innermost body performs one multiplication. How many multiplications are made when $n = 14$?'
+            answer: '196'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The inner loop makes $n$ passes for each of the $n$ values of $i$, so the total is $n^2$. For $n = 14$ this is $196$ multiplications.'
+        constraints: '1-3 nested loops with bounds n, i or i..n, or pair loops; the learner counts exactly with sum formulas, or inverts a count to find n; the big-O class appears in the reasoning'
       - id: kp2
         name: "Halving: binary search and logarithmic counts"
         key_prerequisites: [big-o-notation]
+        step_check:
+          step: 'Each halving removes one factor of $2$, so the number of halvings needed is $9$'
+          question: 'Why does writing $512 = 2^9$ tell us that nine halvings are needed?'
+          options:
+            - 'A list of $512$ items needs $512/9$ steps because $9$ is the exponent'
+            - 'Nine is the number of digits that $512$ has in base $2$ after one halving'
+            - 'Each halving divides by $2$, so after nine halvings $2^9$ has become $2^0 = 1$'
+            - 'Halving $512$ nine times gives $512 - 9 = 503$ items, which is then a single one'
+          answer: 'Each halving divides by $2$, so after nine halvings $2^9$ has become $2^0 = 1$'
+          why: 'Every halving lowers the exponent of $2$ by one, so the exponent $9$ counts the halvings that bring $2^9$ down to $1$.'
         exemplars:
-          - problem: 'Starting from $1024$, how many halvings reach $1$?'
-            answer: "10"
-            solution_sketch: '$1024 = 2^{10}$, and each halving removes one factor of $2$.'
-          - problem: 'Binary search on a sorted array of $10^6$ elements: at most how many comparisons (one per probe)?'
-            answer: "20"
-            solution_sketch: '$\lceil \log_2 10^6 \rceil = 20$ since $2^{19} = 524288 < 10^6 \le 2^{20} = 1048576$ — each probe halves the range, so the answer is the smallest integer $k$ with $2^{k} \ge 10^{6}$, which is exactly $\lceil \log_2 10^6 \rceil$.'
-          - problem: "A sorted array has $4096$ elements. Binary search halves the range at each probe. Find the maximum number of probes needed."
-            answer: "12"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Rule: binary search halves the range at each probe. The array size is 4096 = 2^12. The number of probes is the smallest integer k with 2^k >= 4096, so k = 12. The answer is 12."
-          - problem: "A list has $512$ entries. A linear search checks entries one by one until it finds the target. Find the maximum number of checks the linear search can make."
-            answer: "512"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Rule: linear search checks entries one by one. The list has 512 entries, so in the worst case every entry is checked once. The maximum number of checks is 512. The answer is 512."
-          - problem: "Start with the number $256$. Replace it by its half, repeatedly, until the value is $1$. Find how many halvings this takes."
-            answer: "8"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Rule: each halving removes one factor of 2. Start with 256, which is 2^8. After 8 halvings the value is 1. The answer is 8."
-          - problem: "A binary search on a sorted array uses at most $15$ probes. The array size is a power of $2$. Find the largest possible array size."
-            answer: "32768"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Rule: k probes can handle up to 2^k elements. With at most 15 probes, the largest power-of-two array size is 2^15. Since 2^15 = 32768, the answer is 32768."
-        constraints: "powers of 2 up to 2^20; answers are ceil(log2 N) — the smallest integer k with 2^k >= N; contrast with linear search N"
+          - problem: 'A sorted list of $4096$ names is searched by binary search: each step keeps half of the names still possible. How many steps does it take to leave a single name?'
+            answer: '12'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Each step halves the number of possible names. Since $4096 = 2^{12}$, it takes $12$ steps to reach $1$, and in general the count is $\lceil \log_2 N \rceil$.'
+          - problem: 'A sorted list holds $10^6$ names. Each step of a binary search keeps at most half of the names still possible, rounding up. How many steps are enough to reduce the list to a single name?'
+            answer: '20'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'We need the smallest integer $k$ with $2^k \ge 10^6$. Since $2^{19} = 524288 < 10^6$ and $2^{20} = 1048576 \ge 10^6$, we get $k = 20$.'
+          - problem: 'A list has $512$ entries. A linear search checks the entries one by one until it finds the target. What is the largest number of entries it has to check?'
+            answer: '512'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'In the worst case the target is the last entry, or is missing, so every entry is checked once. The largest number of checks is $512$, which is $\Theta(N)$ and not $\log_2 N$.'
+          - problem: 'Start with $256$ and replace it by its half again and again until the value is $1$. How many halvings does this take?'
+            answer: '8'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Each halving removes one factor of $2$. Since $256 = 2^8$, it takes $8$ halvings to reach $1$.'
+          - problem: 'A binary search leaves a single entry after at most $15$ halving steps. What is the largest array size for which $15$ steps are enough?'
+            answer: '32768'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'With $k$ steps the search handles at most $2^k$ entries. For $k = 15$ the largest size is $2^{15} = 32768$, and a list of $32769$ entries would need a $16$th step.'
+          - problem: 'A knockout tournament starts with $100$ teams. In each round every team plays one match and the winners advance; if the number of teams is odd, one team gets a bye. How many rounds are needed to leave a single champion?'
+            answer: '7'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The number of teams goes $100, 50, 25, 13, 7, 4, 2, 1$. Each round keeps half of the teams, rounded up, so $7$ rounds are needed. This matches $\lceil \log_2 100 \rceil = 7$.'
+          - problem: 'In a game of twenty questions each yes-or-no answer cuts the set of possible secret numbers in half. How many different secret numbers can be told apart with $20$ questions?'
+            answer: '1048576'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Each question doubles the number of cases that can be told apart, so $20$ questions separate $2^{20}$ cases. Since $2^{20} = 1048576$, that is the count.'
+          - problem: 'In the worst case a linear search of a list of $10^6$ names checks every name, while a binary search needs $20$ steps. How many times as many steps does the linear search need?'
+            answer: '50000'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The linear search needs $1000000$ checks and the binary search needs $20$ steps. The ratio is $1000000/20 = 50000$.'
+          - problem: 'Sam says a list of $1000$ names needs $1000/2 = 500$ halvings to reach a single name. What is the correct number of halvings, rounding each half up?'
+            answer: '10'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Each halving divides the number of names by $2$, so the count is a logarithm and not a quotient. Since $2^9 = 512 < 1000 \le 2^{10} = 1024$, ten halvings are needed.'
+        constraints: 'counts of halvings up to 2^20 (the smallest integer k with 2^k >= N, halves rounded up); contrasts with linear search N, tournament rounds and doubling counts'
     diagnostic_exemplar:
-      problem: 'Give (the exact number of comparisons when every pair among $10$ items is compared once, the number of halvings needed to get from $4096$ down to $1$) as an ordered pair.'
-      answer: '$(45, 12)$'
-      solution_sketch: '$\binom{10}{2} = 45$; $4096 = 2^{12}$ needs $12$ halvings.'
+      problem: 'Every pair among $10$ items is compared once. How many comparisons are made?'
+      answer: '45'
+      answer_contract: {"kind":"exact"}
+      solution_sketch: 'The number of pairs is $\binom{10}{2} = 10 \cdot 9/2 = 45$. So $45$ comparisons are made, and in general the count is $n(n-1)/2$, which is $\Theta(n^2)$.'
     anki_seeds:
       - front: "Comparisons made by all-pairs checking on $n$ items"
         back: '$\binom{n}{2} = n(n-1)/2$, which is $\Theta(n^2)$.'
         type: basic
-      - front: "Worst-case probes of binary search on $N$ sorted items"
-        back: '$\lceil \log_2 N \rceil$ — one probe per halving (about 20 for a million items).'
+      - front: "Halvings and worst-case probes of binary search on $N$ sorted items"
+        back: '$\lceil \log_2 N \rceil$ halvings reduce $N$ sorted items to one (about 20 for a million items); a binary search makes at most $\lfloor \log_2 N \rfloor + 1$ probes.'
         type: basic

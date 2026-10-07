@@ -24,90 +24,146 @@ topics:
       - id: kp1
         name: Recognizing orthogonal matrices
         key_prerequisites: [orthogonal-orthonormal-sets, transpose-symmetric-matrices]
+        step_check:
+          step: 'check each column has norm 1'
+          question: 'Why is a norm of $1$ for every column not enough to show that $Q$ is orthogonal?'
+          options:
+            - 'The columns must also be perpendicular to one another'
+            - 'The norm of each column changes once the other column is used'
+            - 'Orthogonal matrices need columns of norm larger than $1$'
+          answer: 'The columns must also be perpendicular to one another'
+          why: 'Orthonormal means unit length and mutually perpendicular, so the dot product of the columns must also be checked, as in the next step.'
         exemplars:
-          - problem: "Let $Q = \\frac{1}{5}\\begin{pmatrix}3&-4\\\\4&3\\end{pmatrix}$. Compute $Q^TQ$ and give the matrix as [a,b;c,d]."
-            answer: "[1,0;0,1]"
-            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
-            solution_sketch: "The matrix is $Q = \\frac{1}{5}\\begin{pmatrix}3&-4\\\\4&3\\end{pmatrix}$. Step 1 (definition of $Q^TQ$): the $(i,j)$ entry of $Q^TQ$ is the dot product of column $i$ with column $j$. Step 2 (dot products of the columns): the columns are $(3/5, 4/5)$ and $(-4/5, 3/5)$; the diagonal entries are the squared norms $(3/5)^2 + (4/5)^2 = 9/25 + 16/25 = 1$, and the off-diagonal dot product is $(3/5)(-4/5) + (4/5)(3/5) = -12/25 + 12/25 = 0$. Step 3 (assemble): $Q^TQ = \\begin{pmatrix}1&0\\\\0&1\\end{pmatrix}$, so $Q$ is orthogonal. The answer is [1,0;0,1]."
-          - problem: "Let $A = \\begin{pmatrix}1&1\\\\0&1\\end{pmatrix}$. Compute $A^TA$ and give the matrix as [a,b;c,d]."
-            answer: "[1,1;1,2]"
-            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
-            solution_sketch: "The matrix is $A = \\begin{pmatrix}1&1\\\\0&1\\end{pmatrix}$. Step 1 (transpose rule): $A^T = \\begin{pmatrix}1&0\\\\1&1\\end{pmatrix}$. Step 2 (matrix multiplication): the $(1,1)$ entry is $1\\cdot1 + 0\\cdot0 = 1$, the $(1,2)$ entry is $1\\cdot1 + 0\\cdot1 = 1$, the $(2,1)$ entry is $1\\cdot1 + 1\\cdot0 = 1$, and the $(2,2)$ entry is $1\\cdot1 + 1\\cdot1 = 2$. The off-diagonal entry $1$ shows the columns are not perpendicular, so $A$ is not orthogonal. The answer is [1,1;1,2]."
-          - problem: "Let $Q = \\begin{pmatrix}0&-1\\\\1&0\\end{pmatrix}$, a rotation by 90 degrees. Give the dot product of the two columns of $Q$."
-            answer: "0"
+          - problem: 'Is $Q=\frac{1}{5}\begin{pmatrix}3&-4\\4&3\end{pmatrix}$ an orthogonal matrix?'
+            answer: 'yes'
+            answer_contract: {"kind": "label", "options": [["yes", "it is", "it is orthogonal"], ["no", "it is not", "it is not orthogonal"]]}
+            solution_sketch: 'The columns of $Q$ are $(3/5,4/5)$ and $(-4/5,3/5)$. Each has norm $\sqrt{9/25+16/25}=1$, and their dot product is $-12/25+12/25=0$. The columns are orthonormal, so $Q^TQ=I$ and $Q$ is orthogonal.'
+          - problem: 'Compute $A^TA$ for $A=\begin{pmatrix}1&1\\0&1\end{pmatrix}$.'
+            answer: '[[1,1],[1,2]]'
+            answer_contract: {"kind": "matrix", "rows": 2, "cols": 2}
+            solution_sketch: 'The transpose is $A^T=\begin{pmatrix}1&0\\1&1\end{pmatrix}$. Multiplying row by column gives the entries $1,1,1,2$, so $A^TA=\begin{pmatrix}1&1\\1&2\end{pmatrix}$. The off-diagonal entry $1$ is not $0$, so the columns of $A$ are not perpendicular and $A$ is not orthogonal.'
+          - problem: 'Is $Q=\frac{1}{5}\begin{pmatrix}3&4\\4&3\end{pmatrix}$ an orthogonal matrix?'
+            answer: 'no'
+            answer_contract: {"kind": "label", "options": [["yes", "it is", "it is orthogonal"], ["no", "it is not", "it is not orthogonal"]]}
+            solution_sketch: 'Each column has norm $\sqrt{9/25+16/25}=1$, so the norms alone do not decide the question. The dot product of the columns is $(3/5)(4/5)+(4/5)(3/5)=24/25$, which is not $0$. The columns are not perpendicular, so $Q$ is not orthogonal.'
+          - problem: 'The matrix $Q=\frac{1}{5}\begin{pmatrix}4&a\\3&-4\end{pmatrix}$ is orthogonal. Find $a$.'
+            answer: '3'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The matrix is $Q = \\begin{pmatrix}0&-1\\\\1&0\\end{pmatrix}$. Step 1 (read the columns): the columns are $(0, 1)$ and $(-1, 0)$. Step 2 (dot product definition): $(0)(-1) + (1)(0) = 0 + 0 = 0$. A dot product of 0 confirms the columns are perpendicular, one of the two conditions for $Q$ to be orthogonal (both columns also have norm 1). The answer is 0."
-          - problem: "The matrix $Q = \\frac{1}{5}\\begin{pmatrix}4&a\\\\3&-4\\end{pmatrix}$ is orthogonal. Find the value of $a$."
-            answer: "3"
+            solution_sketch: 'The columns $(4/5,3/5)$ and $(a/5,-4/5)$ must be perpendicular, so $(4/5)(a/5)+(3/5)(-4/5)=0$. This gives $4a-12=0$, so $a=3$. The norm of the second column is then $\sqrt{9+16}/5=1$, so the condition on the norms holds as well.'
+          - problem: 'A program stretches the plane horizontally by the factor $2$ and shrinks it vertically by the factor $\frac12$, using the matrix $S=\begin{pmatrix}2&0\\0&\frac12\end{pmatrix}$. What is the length of the image of the vector $(1,0)$?'
+            answer: '2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The matrix is $Q = \\frac{1}{5}\\begin{pmatrix}4&a\\\\3&-4\\end{pmatrix}$ with columns $(4/5, 3/5)$ and $(a/5, -4/5)$. Step 1 (orthogonality criterion): the dot product of the two columns must be 0, so $(4/5)(a/5) + (3/5)(-4/5) = 0$. Step 2 (solve the linear equation): $(4a - 12)/25 = 0$ gives $4a = 12$, so $a = 3$; the norm condition $(a^2+16)/25 = 1$ then holds as well. The answer is 3."
-          - problem: "Let $Q = \\frac{1}{5}\\begin{pmatrix}3&4\\\\4&3\\end{pmatrix}$. Give the dot product of the two columns of $Q$ as a fraction."
-            answer: "24/25"
+            solution_sketch: 'The image of $(1,0)$ is the first column of $S$, which is $(2,0)$. Its length is $2$. An orthogonal matrix keeps every length, so this length of $2$ shows that $S$ is not orthogonal.'
+          - problem: 'The matrix $R=\begin{pmatrix}0&-1\\1&0\end{pmatrix}$ turns every point of the plane through $90^\circ$ counterclockwise. Find the dot product of the two columns of $R$.'
+            answer: '0'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The matrix is $Q = \\frac{1}{5}\\begin{pmatrix}3&4\\\\4&3\\end{pmatrix}$. Step 1 (read the columns): the columns are $(3/5, 4/5)$ and $(4/5, 3/5)$. Step 2 (dot product definition): $(3/5)(4/5) + (4/5)(3/5) = 12/25 + 12/25 = 24/25$. Since $24/25 \\neq 0$, the columns are not perpendicular and $Q$ is not orthogonal, even though each column has norm 1. The answer is 24/25."
-          - problem: "Let $Q = \\frac{1}{\\sqrt{2}}\\begin{pmatrix}1&1\\\\1&-1\\end{pmatrix}$. Give the norm of the second column of $Q$."
-            answer: "1"
+            solution_sketch: 'The columns of $R$ are $(0,1)$ and $(-1,0)$. Their dot product is $0\cdot(-1)+1\cdot 0=0$. The columns are perpendicular, and both have norm $1$, so $R$ is orthogonal.'
+          - problem: 'Find the norm of the second column of $Q=\frac{1}{\sqrt{2}}\begin{pmatrix}1&1\\1&-1\end{pmatrix}$.'
+            answer: '1'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The matrix is $Q = \\frac{1}{\\sqrt{2}}\\begin{pmatrix}1&1\\\\1&-1\\end{pmatrix}$. Step 1 (read the second column): it is $(1/\\sqrt{2}, -1/\\sqrt{2})$. Step 2 (norm definition): the norm is $\\sqrt{(1/\\sqrt{2})^2 + (-1/\\sqrt{2})^2} = \\sqrt{1/2 + 1/2} = \\sqrt{1} = 1$. The norm 1 confirms the second column is a unit vector, one of the two conditions for $Q$ to be orthogonal. The answer is 1."
-        constraints: "2x2 candidates; orthogonal cases built from 3-4-5 columns, rotations by multiples of 90 degrees, or 1/sqrt(2) entries"
+            solution_sketch: 'The second column is $(1/\sqrt2,-1/\sqrt2)$. Its norm is $\sqrt{1/2+1/2}=\sqrt1=1$. The column is a unit vector, which is one of the two conditions for $Q$ to be orthogonal.'
+          - problem: 'The matrix $Q=\frac13\begin{pmatrix}1&2&2\\2&1&b\\2&-2&1\end{pmatrix}$ is orthogonal. Find $b$.'
+            answer: '-2'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The third column $(2,b,1)/3$ must be perpendicular to the first column $(1,2,2)/3$. This gives $2+2b+2=0$, so $b=-2$. The second column $(2,1,-2)/3$ is also perpendicular to the first, since $2+2-4=0$.'
+        constraints: '2x2 candidates built from 3-4-5 columns, rotations by multiples of 90 degrees or 1/sqrt(2) entries; one 3x3 candidate with columns (1,2,2)/3, (2,1,-2)/3, (2,-2,1)/3; verdicts only yes or no'
       - id: kp2
         name: The inverse is the transpose
         key_prerequisites: [transpose-symmetric-matrices, matrix-inverses]
+        step_check:
+          step: 'use the rule $Q^{-1} = Q^T$'
+          question: 'Why does the equation $Q^TQ=I$ show that $Q^T$ is the inverse of $Q$?'
+          options:
+            - 'Transposing a matrix always gives its inverse, whatever the matrix is'
+            - 'The transpose has the same entries as $Q$, so it must undo $Q$'
+            - 'A matrix that multiplies $Q$ to give $I$ is the inverse of $Q$'
+          answer: 'A matrix that multiplies $Q$ to give $I$ is the inverse of $Q$'
+          why: 'The inverse of $Q$ is defined as the matrix whose product with $Q$ is $I$, so $Q^TQ=I$ makes $Q^T$ the inverse and no row reduction is needed.'
         exemplars:
-          - problem: "Let Q = 1/5[[3,-4],[4,3]]. Q is orthogonal. Find Q^{-1}. Give the answer as [a,b;c,d]."
-            answer: "[3/5,4/5;-4/5,3/5]"
-            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
-            solution_sketch: "The matrix is Q = 1/5[[3,-4],[4,3]]. The rule for an orthogonal matrix is Q^{-1} = Q^T. Transpose Q by swapping rows and columns and keep the factor 1/5: Q^T = [3/5,4/5;-4/5,3/5]. The answer is [3/5,4/5;-4/5,3/5]."
-          - problem: "Let Q = 1/5[[4,-3],[3,4]]. Q is orthogonal. Solve Qx = (1, 2) for x. Give the answer as (x, y)."
-            answer: "(2, 1)"
-            answer_contract: {"arity": 2, "kind": "coordinates"}
-            solution_sketch: "The matrix is Q = 1/5[[4,-3],[3,4]]. For an orthogonal matrix, x = Q^T b. Q^T = 1/5[[4,3],[-3,4]] and b = (1, 2), so x = 1/5(4*1 + 3*2, -3*1 + 4*2) = 1/5(10, 5) = (2, 1). The answer is (2, 1)."
-          - problem: "The matrix Q = [[0,-1],[1,0]] is a 90-degree rotation, so it is orthogonal. Find Q^{-1}. Give the answer as [a,b;c,d]."
-            answer: "[0,1;-1,0]"
-            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
-            solution_sketch: "The matrix is Q = [[0,-1],[1,0]]. For an orthogonal matrix, Q^{-1} = Q^T. Swap rows and columns: Q^T = [0,1;-1,0]. The answer is [0,1;-1,0]."
-          - problem: "Let Q = [[0,1],[-1,0]]. Solve Qx = (5, -2) for x. Give the answer as (x, y)."
-            answer: "(2, 5)"
-            answer_contract: {"arity": 2, "kind": "coordinates"}
-            solution_sketch: "The matrix is Q = [[0,1],[-1,0]]. For an orthogonal matrix, x = Q^T b. Q^T = [[0,-1],[1,0]] and b = (5, -2), so x = (0*5 + -1*-2, 1*5 + 0*-2) = (2, 5). The answer is (2, 5)."
-          - problem: "Let Q = 1/5[[-3,4],[4,3]]. Q is orthogonal. Find Q^{-1}. Give the answer as [a,b;c,d]."
-            answer: "[-3/5,4/5;4/5,3/5]"
-            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
-            solution_sketch: "The matrix is Q = 1/5[[-3,4],[4,3]]. For an orthogonal matrix, Q^{-1} = Q^T. Transpose Q by swapping rows and columns and keep the factor 1/5: Q^T = [-3/5,4/5;4/5,3/5]. The answer is [-3/5,4/5;4/5,3/5]."
-          - problem: "Let Q = 1/5[[3,4],[-4,3]]. Solve Qx = (3, 1) for x. Give the answer as (x, y)."
-            answer: "(1, 3)"
-            answer_contract: {"arity": 2, "kind": "coordinates"}
-            solution_sketch: "The matrix is Q = 1/5[[3,4],[-4,3]]. For an orthogonal matrix, x = Q^T b. Q^T = 1/5[[3,-4],[4,3]] and b = (3, 1), so x = 1/5(3*3 + -4*1, 4*3 + 3*1) = 1/5(5, 15) = (1, 3). The answer is (1, 3)."
-        constraints: "orthogonal Q with 3-4-5 or 90-degree-rotation columns; right-hand sides chosen so Q^T b has integer entries"
+          - problem: 'The matrix $Q=\frac15\begin{pmatrix}3&-4\\4&3\end{pmatrix}$ is orthogonal. Find $Q^{-1}$.'
+            answer: '[[3/5,4/5],[-4/5,3/5]]'
+            answer_contract: {"kind": "matrix", "rows": 2, "cols": 2}
+            solution_sketch: 'For an orthogonal matrix the inverse is the transpose, $Q^{-1}=Q^T$. Swap the rows and columns and keep the factor $\frac15$. This gives $Q^{-1}=\frac15\begin{pmatrix}3&4\\-4&3\end{pmatrix}$.'
+          - problem: 'A sensor reports the position $\mathbf b=(1,2)$ after the coordinates were turned by $Q=\frac15\begin{pmatrix}4&-3\\3&4\end{pmatrix}$, so that $Q\mathbf x=\mathbf b$. Find the original position $\mathbf x$.'
+            answer: '(2, 1)'
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: 'The matrix $Q$ is orthogonal, so $\mathbf x=Q^{-1}\mathbf b=Q^T\mathbf b$. With $Q^T=\frac15\begin{pmatrix}4&3\\-3&4\end{pmatrix}$ we get $\mathbf x=\frac15(4\cdot1+3\cdot2,\,-3\cdot1+4\cdot2)=\frac15(10,5)=(2,1)$.'
+          - problem: 'A drawing program turns the plane through $90^\circ$ counterclockwise with the matrix $Q=\begin{pmatrix}0&-1\\1&0\end{pmatrix}$. Which matrix undoes this turn?'
+            answer: '[[0,1],[-1,0]]'
+            answer_contract: {"kind": "matrix", "rows": 2, "cols": 2}
+            solution_sketch: 'Undoing the turn means applying $Q^{-1}$. The matrix $Q$ is orthogonal, so $Q^{-1}=Q^T$. Swapping rows and columns gives $\begin{pmatrix}0&1\\-1&0\end{pmatrix}$, which is the turn through $90^\circ$ clockwise.'
+          - problem: 'Let $Q=\begin{pmatrix}0&1\\-1&0\end{pmatrix}$. Solve $Q\mathbf x=(5,-2)$ for $\mathbf x$.'
+            answer: '(2, 5)'
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: 'The matrix $Q$ is orthogonal, so $\mathbf x=Q^T\mathbf b$ with $Q^T=\begin{pmatrix}0&-1\\1&0\end{pmatrix}$. Then $\mathbf x=(0\cdot5+(-1)(-2),\,1\cdot5+0\cdot(-2))=(2,5)$. Check: $Q(2,5)=(5,-2)$.'
+          - problem: 'The matrix $Q=\frac15\begin{pmatrix}-3&4\\4&3\end{pmatrix}$ is orthogonal. Find $Q^{-1}$.'
+            answer: '[[-3/5,4/5],[4/5,3/5]]'
+            answer_contract: {"kind": "matrix", "rows": 2, "cols": 2}
+            solution_sketch: 'The inverse of an orthogonal matrix is its transpose. This $Q$ is symmetric, so its transpose is $Q$ itself. Hence $Q^{-1}=Q=\frac15\begin{pmatrix}-3&4\\4&3\end{pmatrix}$.'
+          - problem: 'A ship''s position is turned about the origin by $Q=\frac1{13}\begin{pmatrix}5&-12\\12&5\end{pmatrix}$. After the turn the ship is at $(13,0)$. Where was it before the turn?'
+            answer: '(5, -12)'
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: 'If $\mathbf x$ is the old position, then $Q\mathbf x=(13,0)$, so $\mathbf x=Q^T(13,0)$ because $Q$ is orthogonal. With $Q^T=\frac1{13}\begin{pmatrix}5&12\\-12&5\end{pmatrix}$ this gives $\mathbf x=\frac1{13}(65,-156)=(5,-12)$.'
+          - problem: 'The matrix $Q=\frac13\begin{pmatrix}1&2&2\\2&1&-2\\2&-2&1\end{pmatrix}$ is orthogonal. Find the entry in row $1$, column $3$ of $Q^{-1}$.'
+            answer: '2/3'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The inverse of an orthogonal matrix is its transpose, so the entry of $Q^{-1}$ in row $1$, column $3$ is the entry of $Q$ in row $3$, column $1$. That entry is $2/3$.'
+          - problem: 'Let $Q=\frac15\begin{pmatrix}3&4\\-4&3\end{pmatrix}$. Solve $Q\mathbf x=(3,1)$ for $\mathbf x$.'
+            answer: '(1, 3)'
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: 'This $Q$ is orthogonal, so $\mathbf x=Q^T\mathbf b$ with $Q^T=\frac15\begin{pmatrix}3&-4\\4&3\end{pmatrix}$. Then $\mathbf x=\frac15(3\cdot3-4\cdot1,\,4\cdot3+3\cdot1)=\frac15(5,15)=(1,3)$.'
+        constraints: 'orthogonal Q with 3-4-5, 5-12-13 or 90-degree-rotation columns, plus one 3x3 case; right-hand sides chosen so Q^T b has integer entries'
       - id: kp3
         name: Orthogonal matrices preserve geometry
         key_prerequisites: [orthogonal-orthonormal-sets, linear-transformations]
+        try_first:
+          problem: 'A rod runs from the origin to the point $(5,12)$. It is turned about the origin through $30^\circ$. How long is the rod after the turn?'
+          answer_contract: {"kind": "exact"}
+          answer: '13'
+          reveal: 'A turn keeps lengths, because the matrix of a rotation is orthogonal and $\|Q\mathbf x\|=\|\mathbf x\|$. The rod keeps its length $\sqrt{5^2+12^2}=13$.'
+        step_check:
+          step: 'compare dot products'
+          question: 'Why must $Q\mathbf{x}\cdot Q\mathbf{y}$ equal $\mathbf{x}\cdot\mathbf{y}$ for an orthogonal $Q$?'
+          options:
+            - 'A square matrix can never change a dot product, whatever its entries are'
+            - 'The product $Q^TQ$ in the middle of $\mathbf{x}^TQ^TQ\mathbf{y}$ is $I$'
+            - 'The determinant of $Q$ is $\pm1$, and every dot product is a determinant'
+          answer: 'The product $Q^TQ$ in the middle of $\mathbf{x}^TQ^TQ\mathbf{y}$ is $I$'
+          why: 'Writing the dot product as a matrix product puts $Q^TQ$ in the middle, and $Q^TQ=I$ for an orthogonal matrix, so the dot product does not change.'
         exemplars:
-          - problem: "Let Q = [0,-1;1,0] be a rotation and let x = (2,3). What is ||Qx||^2?"
-            answer: "13"
+          - problem: 'The point $(3,4)$ is turned about the origin by $Q=\frac15\begin{pmatrix}3&-4\\4&3\end{pmatrix}$. How far from the origin is the image of the point?'
+            answer: '5'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "First compute Qx by matrix-vector multiplication: Qx = (0*2 + (-1)*3, 1*2 + 0*3) = (-3, 2). Then apply the squared norm formula: ||Qx||^2 = (-3)^2 + 2^2 = 13. Because Q is orthogonal, it preserves squared norms, so this also equals ||x||^2 = 2^2 + 3^2 = 13. The squared norm is 13."
-          - problem: "Let Q = [1,0;0,-1] be a reflection, x = (2,1) and y = (-3,2). What is the dot product (Qx) dot (Qy)?"
-            answer: "-4"
+            solution_sketch: 'The image is $Q(3,4)=\frac15(9-16,\,12+12)=(-7/5,\,24/5)$. Its distance from the origin is $\sqrt{49/25+576/25}=\sqrt{25}=5$. This equals the distance $\sqrt{3^2+4^2}=5$ of the original point, as it must for an orthogonal matrix.'
+          - problem: 'The reflection $Q=\begin{pmatrix}1&0\\0&-1\end{pmatrix}$ is applied to $\mathbf x=(2,1)$ and $\mathbf y=(-3,2)$. Find $(Q\mathbf x)\cdot(Q\mathbf y)$.'
+            answer: '-4'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "First compute the images by matrix-vector multiplication: Qx = (2, -1) and Qy = (-3, -2). Then apply the dot product formula: (Qx) dot (Qy) = 2*(-3) + (-1)*(-2) = -4. Because Q is orthogonal, dot products are preserved, so x dot y = 2*(-3) + 1*2 = -4. The dot product is -4."
-          - problem: "Let Q = [0,-1;-1,0] be a reflection. What is det Q?"
-            answer: "-1"
+            solution_sketch: 'The images are $Q\mathbf x=(2,-1)$ and $Q\mathbf y=(-3,-2)$. Their dot product is $2(-3)+(-1)(-2)=-4$. An orthogonal matrix keeps dot products, and indeed $\mathbf x\cdot\mathbf y=2(-3)+1\cdot2=-4$.'
+          - problem: 'Find $\det Q$ for the reflection $Q=\begin{pmatrix}0&-1\\-1&0\end{pmatrix}$.'
+            answer: '-1'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The given matrix is Q = [0,-1;-1,0]. Compute the determinant by the 2 by 2 formula: det Q = 0*0 - (-1)*(-1) = -1. For any orthogonal matrix the determinant is 1 or -1, and this reflection has -1. The determinant is -1."
-          - problem: "Let Q = [0,-1;1,0] and v = (3,-2). Compute Qv and give the result as (x, y)."
-            answer: "(2, 3)"
-            answer_contract: {"arity": 2, "kind": "coordinates"}
-            solution_sketch: "First multiply Q by v: Qv = (0*3 + (-1)*(-2), 1*3 + 0*(-2)) = (2, 3). The first coordinate is 2 and the second coordinate is 3. The image is (2, 3)."
-          - problem: "Let Q = [0,1;1,0] be a reflection and let v = (-1,3). What is ||Qv||^2?"
-            answer: "10"
+            solution_sketch: 'By the $2\times2$ formula, $\det Q=0\cdot0-(-1)(-1)=-1$. The determinant of an orthogonal matrix is $1$ or $-1$, and a reflection has determinant $-1$.'
+          - problem: 'Can a $3\times3$ orthogonal matrix have determinant $2$?'
+            answer: 'no'
+            answer_contract: {"kind": "label", "options": [["yes", "it can", "can"], ["no", "it cannot", "cannot", "it can not"]]}
+            solution_sketch: 'From $Q^TQ=I$ we get $(\det Q)^2=\det Q^T\det Q=\det I=1$. So $\det Q$ is $1$ or $-1$. A determinant of $2$ gives $2^2=4\ne1$, so no orthogonal matrix has determinant $2$.'
+          - problem: 'A metal rod runs from the origin to the point $(6,8)$. The rod is turned about the origin by an orthogonal matrix $Q$. How long is the rod after the turn?'
+            answer: '10'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "First compute Qv by matrix-vector multiplication: Qv = (0*(-1) + 1*3, 1*(-1) + 0*3) = (3, -1). Then apply the squared norm formula: ||Qv||^2 = 3^2 + (-1)^2 = 10. Because Q is orthogonal, it preserves squared norms, so this equals ||v||^2 = (-1)^2 + 3^2 = 10. The squared norm is 10."
-          - problem: "Let Q = [-1,0;0,-1] be a rotation, x = (3,1) and y = (-2,3). What is the dot product (Qx) dot (Qy)?"
-            answer: "-3"
+            solution_sketch: 'An orthogonal matrix keeps lengths, so the length of the rod does not change. The rod had length $\sqrt{6^2+8^2}=\sqrt{100}=10$, so it still has length $10$.'
+          - problem: 'On a map, two roads have direction vectors $\mathbf u=(1,2)$ and $\mathbf w=(3,-1)$. The map is turned by an orthogonal matrix $Q$. Find the dot product $(Q\mathbf u)\cdot(Q\mathbf w)$ of the new direction vectors.'
+            answer: '1'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "First compute the images by matrix-vector multiplication: Qx = (-3, -1) and Qy = (2, -3). Then apply the dot product formula: (Qx) dot (Qy) = (-3)*2 + (-1)*(-3) = -3. Because Q is orthogonal, dot products are preserved, so x dot y = 3*(-2) + 1*3 = -3. The dot product is -3."
-        constraints: "verifications on 2x2 rotations/reflections with integer test vectors in -3..3"
+            solution_sketch: 'An orthogonal matrix keeps dot products, so $(Q\mathbf u)\cdot(Q\mathbf w)=\mathbf u\cdot\mathbf w$. Then $\mathbf u\cdot\mathbf w=1\cdot3+2\cdot(-1)=1$. The two roads have the same dot product of $1$ after the turn.'
+          - problem: 'Let $Q=\begin{pmatrix}0&-1\\1&0\end{pmatrix}$ and $\mathbf v=(3,-2)$. Find $Q\mathbf v$.'
+            answer: '(2, 3)'
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: 'Multiply the rows of $Q$ by $\mathbf v$: the first entry is $0\cdot3+(-1)(-2)=2$ and the second is $1\cdot3+0\cdot(-2)=3$. So $Q\mathbf v=(2,3)$, and its length $\sqrt{13}$ equals the length of $\mathbf v$.'
+          - problem: 'The reflection $Q=\begin{pmatrix}0&1\\1&0\end{pmatrix}$ swaps the coordinates of a point. Find $\|Q\mathbf v\|^2$ for $\mathbf v=(-1,3)$.'
+            answer: '10'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The image is $Q\mathbf v=(3,-1)$, so $\|Q\mathbf v\|^2=3^2+(-1)^2=10$. The same value comes from $\|\mathbf v\|^2=(-1)^2+3^2=10$, because $Q$ is orthogonal.'
+        constraints: 'lengths, dot products and determinants of 2x2 rotations/reflections with integer test vectors, plus lengths and dot products under an unnamed orthogonal matrix'
     diagnostic_exemplar:
       problem: 'For $Q = \frac{1}{\sqrt{2}}\begin{pmatrix}1&-1\\1&1\end{pmatrix}$, verify that $Q$ is orthogonal, give $Q^{-1}$, and compute $\|Q\mathbf{x}\|$ for $\mathbf{x} = (3, 4)$.'
       answer: '$Q$ is orthogonal (its columns are orthonormal, so $Q^TQ = I$); $Q^{-1} = Q^T = \frac{1}{\sqrt{2}}\begin{pmatrix}1&1\\-1&1\end{pmatrix}$; $\|Q\mathbf{x}\| = \|\mathbf{x}\| = 5$'
@@ -151,90 +207,137 @@ topics:
       - id: kp1
         name: What the spectral theorem says
         key_prerequisites: [eigenvalues-eigenvectors, orthogonal-matrices]
+        step_check:
+          step: 'verify orthogonality with the dot product'
+          question: 'Why must the dot product of these two eigenvectors be $0$?'
+          options:
+            - 'Eigenvectors of any square matrix for different eigenvalues are orthogonal'
+            - 'Both eigenvalues are positive, and positive eigenvalues force a zero dot product'
+            - 'Eigenvectors of a symmetric matrix for different eigenvalues are orthogonal'
+          answer: 'Eigenvectors of a symmetric matrix for different eigenvalues are orthogonal'
+          why: 'The matrix is symmetric, and the spectral theorem says that eigenvectors of a symmetric matrix for different eigenvalues are perpendicular.'
         exemplars:
-          - problem: "For a real symmetric 2x2 matrix, what does the spectral theorem guarantee about its eigenvectors? Select the correct statement."
-            answer: "they can be chosen orthonormal"
-            answer_contract: {"kind": "label", "options": [["they can be chosen orthonormal"], ["they are all identical"], ["they are never orthogonal"], ["they are always complex"]]}
-            solution_sketch: "The spectral theorem guarantees an orthonormal eigenbasis, so the correct option is 'they can be chosen orthonormal'. The option 'they are all identical' is wrong because eigenvectors for different eigenvalues are independent. The option 'they are never orthogonal' is wrong because eigenvectors from different eigenvalues are orthogonal. The option 'they are always complex' is wrong because a real symmetric matrix has real eigenvalues. Final answer: they can be chosen orthonormal."
-          - problem: "For A = [4,2;2,1], find its eigenvalues and give the dot product of the eigenvectors (1,-2) and (2,1)."
-            answer: "lambda1 = 0; lambda2 = 5; dot = 0"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "lambda1"}, {"contract": {"kind": "exact"}, "name": "lambda2"}, {"contract": {"kind": "exact"}, "name": "dot"}]}
-            solution_sketch: "The matrix is A = [4,2;2,1]. Compute det(A - lambda I) = (4 - lambda)(1 - lambda) - 4 = lambda^2 - 5 lambda, so the eigenvalues are 0 and 5. The listed eigenvectors are (1,-2) and (2,1), and their dot product is (1)(2) + (-2)(1) = 0. Final answer: lambda1 = 0; lambda2 = 5; dot = 0."
-          - problem: "Which real matrices are orthogonally diagonalizable? Select the correct class."
-            answer: "symmetric matrices"
-            answer_contract: {"kind": "label", "options": [["symmetric matrices"], ["all square matrices"], ["invertible matrices"], ["triangular matrices"]]}
-            solution_sketch: "By the spectral theorem, exactly the real symmetric matrices are orthogonally diagonalizable, so the correct option is 'symmetric matrices'. The option 'all square matrices' is wrong because a non-symmetric matrix need not have an orthonormal eigenbasis. The option 'invertible matrices' is wrong because invertibility does not force orthogonal eigenvectors. The option 'triangular matrices' is wrong because a triangular matrix is generally not symmetric. Final answer: symmetric matrices."
-          - problem: "Find the eigenvalues of the symmetric matrix A = [5,3;3,5]. Give the answer as a list in increasing order."
-            answer: "2, 8"
-            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
-            solution_sketch: "The matrix is A = [5,3;3,5]. Compute det(A - lambda I) = (5 - lambda)^2 - 9 = lambda^2 - 10 lambda + 16. Factor: (lambda - 2)(lambda - 8), so the eigenvalues are 2 and 8. Final answer: 2, 8."
-          - problem: "For A = [6,4;4,6], the eigenvectors for the two eigenvalues are u = (1,-1) and v = (1,1). Find u dot v."
-            answer: "0"
+          - problem: 'Find the eigenvalues of the symmetric matrix $A=\begin{pmatrix}4&2\\2&4\end{pmatrix}$.'
+            answer: '2, 6'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The matrix is A = [6,4;4,6]. The dot product is (1)(1) + (-1)(1) = 0. Final answer: 0."
-          - problem: "Find an eigenvector for the eigenvalue 5 of the matrix A = [2,3;3,2]. Give it as (x, y)."
-            answer: "(1, 1)"
-            answer_contract: {"arity": 2, "kind": "coordinates"}
-            solution_sketch: "The matrix is A = [2,3;3,2]. For lambda = 5, solve (A - 5I)v = 0, which gives -3x + 3y = 0, so x = y. A simple eigenvector is (1, 1). Final answer: (1, 1)."
-        constraints: "2x2 symmetric matrices with integer eigenvalues; orthogonality verified by an explicit dot product"
+            solution_sketch: 'The characteristic equation is $(4-\lambda)^2-4=0$, so $4-\lambda=\pm2$. The eigenvalues are $\lambda=2$ and $\lambda=6$. Both are real, as the spectral theorem promises for a symmetric matrix.'
+          - problem: 'For $A=\begin{pmatrix}6&4\\4&6\end{pmatrix}$, the eigenvectors for the two eigenvalues are $\mathbf u=(1,-1)$ and $\mathbf v=(1,1)$. Find $\mathbf u\cdot\mathbf v$.'
+            answer: '0'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The dot product is $1\cdot1+(-1)\cdot1=0$. The eigenvectors belong to the eigenvalues $2$ and $10$, which are different. For a symmetric matrix, eigenvectors for different eigenvalues are always perpendicular.'
+          - problem: 'Which kind of real square matrix is guaranteed to have an orthonormal basis of eigenvectors: all square matrices, invertible matrices, triangular matrices or symmetric matrices?'
+            answer: 'symmetric matrices'
+            answer_contract: {"kind": "label", "options": [["symmetric matrices", "symmetric", "symmetric matrix", "the symmetric matrices"], ["all square matrices", "square matrices", "all matrices"], ["invertible matrices", "invertible"], ["triangular matrices", "triangular"]]}
+            solution_sketch: 'The spectral theorem says that a real matrix has an orthonormal basis of eigenvectors exactly when it is symmetric. A triangular matrix such as $\begin{pmatrix}1&1\\0&2\end{pmatrix}$ has no perpendicular eigenvectors, and it is invertible, so invertible and triangular matrices are not guaranteed. Only symmetric matrices are.'
+          - problem: 'Find the eigenvector of $A=\begin{pmatrix}2&3\\3&2\end{pmatrix}$ for the eigenvalue $5$ whose first entry is $1$.'
+            answer: '(1, 1)'
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: 'Solve $(A-5I)\mathbf v=\mathbf 0$. The first row gives $-3x+3y=0$, so $x=y$. Taking $x=1$ gives the eigenvector $(1,1)$.'
+          - problem: 'The matrix $B=\begin{pmatrix}1&2\\0&3\end{pmatrix}$ is not symmetric. Its eigenvector for the eigenvalue $1$ is $(1,0)$ and its eigenvector for the eigenvalue $3$ is $(1,1)$. Are these two eigenvectors perpendicular?'
+            answer: 'no'
+            answer_contract: {"kind": "label", "options": [["yes", "they are", "they are perpendicular"], ["no", "they are not", "they are not perpendicular", "not perpendicular"]]}
+            solution_sketch: 'The dot product is $1\cdot1+0\cdot1=1$, which is not $0$. So the eigenvectors are not perpendicular. This does not contradict the spectral theorem, which applies only to symmetric matrices.'
+          - problem: 'The stress in a thin steel plate is described by the symmetric matrix $S=\begin{pmatrix}7&2\\2&4\end{pmatrix}$ (in MPa). The principal stresses are the eigenvalues of $S$. Find them.'
+            answer: '3, 8'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The characteristic equation is $(7-\lambda)(4-\lambda)-4=\lambda^2-11\lambda+24=0$. It factors as $(\lambda-3)(\lambda-8)=0$. The principal stresses are $3$ MPa and $8$ MPa.'
+          - problem: 'Two equal masses are joined by springs so that the stiffness matrix of the system is $K=\begin{pmatrix}3&-1\\-1&3\end{pmatrix}$. The two vibration modes are along perpendicular eigenvectors of $K$, and the stiffness of each mode is its eigenvalue. Find the two stiffnesses.'
+            answer: '2, 4'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The characteristic equation is $(3-\lambda)^2-1=0$, so $3-\lambda=\pm1$. The eigenvalues are $\lambda=2$ and $\lambda=4$. These are the stiffnesses of the two modes.'
+        constraints: '2x2 symmetric matrices with integer eigenvalues; orthogonality verified by an explicit dot product; one non-symmetric counterexample; one multi-way classification of matrix types'
       - id: kp2
         name: Orthogonal diagonalization of a 2x2 symmetric matrix
         key_prerequisites: [diagonalization, orthogonal-matrices]
+        step_check:
+          step: 'each eigenvector has length $\sqrt{1^2+1^2}=\sqrt{2}$'
+          question: 'Why is each eigenvector divided by $\sqrt{2}$ before it goes into $Q$?'
+          options:
+            - 'Every column of an orthogonal matrix must be a unit vector'
+            - 'Dividing by $\sqrt{2}$ changes the eigenvalue the vector belongs to'
+            - 'The two eigenvectors must add up to a vector of length exactly $1$'
+          answer: 'Every column of an orthogonal matrix must be a unit vector'
+          why: 'The columns of $Q$ must be orthonormal, and $(1,1)$ has length $\sqrt{2}$, so dividing by $\sqrt{2}$ gives a unit vector in the same direction.'
         exemplars:
-          - problem: "Orthogonally diagonalize A = [[4,3],[3,4]]. Let Q have unit eigenvectors as columns, the first column for the smaller eigenvalue with positive top-left entry, and let D have the smaller eigenvalue first. Give the six entries as a, b, c, d, e, f, where Q = [[a,b],[c,d]] and D = [[e,0],[0,f]]."
-            answer: "a = sqrt(2)/2; b = sqrt(2)/2; c = -sqrt(2)/2; d = sqrt(2)/2; e = 1; f = 7"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "a"}, {"contract": {"kind": "exact"}, "name": "b"}, {"contract": {"kind": "exact"}, "name": "c"}, {"contract": {"kind": "exact"}, "name": "d"}, {"contract": {"kind": "exact"}, "name": "e"}, {"contract": {"kind": "exact"}, "name": "f"}]}
-            solution_sketch: "The matrix A = [[4,3],[3,4]] is symmetric, so the spectral theorem gives an orthogonal diagonalization. The eigenvalues are a-b = 1 and a+b = 7, so D = [[1,0],[0,7]]. The eigenvectors are (1,-1) for 1 and (1,1) for 7; normalizing by sqrt(2) gives Q = [[sqrt(2)/2, sqrt(2)/2],[-sqrt(2)/2, sqrt(2)/2]]. The answer is a = sqrt(2)/2; b = sqrt(2)/2; c = -sqrt(2)/2; d = sqrt(2)/2; e = 1; f = 7."
-          - problem: "Orthogonally diagonalize A = [[6,2],[2,6]]. Let Q have unit eigenvectors as columns, the first column for the smaller eigenvalue with positive top-left entry, and let D have the smaller eigenvalue first. Give the six entries as a, b, c, d, e, f, where Q = [[a,b],[c,d]] and D = [[e,0],[0,f]]."
-            answer: "a = sqrt(2)/2; b = sqrt(2)/2; c = -sqrt(2)/2; d = sqrt(2)/2; e = 4; f = 8"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "a"}, {"contract": {"kind": "exact"}, "name": "b"}, {"contract": {"kind": "exact"}, "name": "c"}, {"contract": {"kind": "exact"}, "name": "d"}, {"contract": {"kind": "exact"}, "name": "e"}, {"contract": {"kind": "exact"}, "name": "f"}]}
-            solution_sketch: "The matrix A = [[6,2],[2,6]] is symmetric, so the spectral theorem gives an orthogonal diagonalization. The eigenvalues are a-b = 4 and a+b = 8, so D = [[4,0],[0,8]]. The eigenvectors are (1,-1) for 4 and (1,1) for 8; normalizing by sqrt(2) gives Q = [[sqrt(2)/2, sqrt(2)/2],[-sqrt(2)/2, sqrt(2)/2]]. The answer is a = sqrt(2)/2; b = sqrt(2)/2; c = -sqrt(2)/2; d = sqrt(2)/2; e = 4; f = 8."
-          - problem: "Orthogonally diagonalize A = [[7,2],[2,7]]. Give the diagonal matrix D in A = Q D Q^T with the smaller eigenvalue first, as [a,b;c,d]."
-            answer: "[5,0;0,9]"
-            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
-            solution_sketch: "The symmetric matrix A = [[7,2],[2,7]] has eigenvalues 7-2=5 and 7+2=9. The spectral theorem gives an orthogonal diagonalization with D containing the eigenvalues on its diagonal. Ordering the smaller eigenvalue first gives D = [[5,0],[0,9]]. The answer is [5,0;0,9]."
-          - problem: "Orthogonally diagonalize A = [[8,5],[5,8]]. Give the two eigenvalues of A in increasing order as a list."
-            answer: "3, 13"
-            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
-            solution_sketch: "The matrix A = [[8,5],[5,8]] is symmetric. For a matrix [[a,b],[b,a]], the eigenvalues are a-b and a+b, so here they are 8-5=3 and 8+5=13. These eigenvalues form the diagonal of D in the orthogonal diagonalization. The answer is 3, 13."
-          - problem: "Orthogonally diagonalize A = [[9,4],[4,9]]. Give the four entries of the orthogonal matrix Q whose first column is the unit eigenvector for the smaller eigenvalue, with positive first entry, as q11, q12, q21, q22, where Q = [[q11,q12],[q21,q22]]."
-            answer: "q11 = sqrt(2)/2; q12 = sqrt(2)/2; q21 = -sqrt(2)/2; q22 = sqrt(2)/2"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "q11"}, {"contract": {"kind": "exact"}, "name": "q12"}, {"contract": {"kind": "exact"}, "name": "q21"}, {"contract": {"kind": "exact"}, "name": "q22"}]}
-            solution_sketch: "The symmetric matrix A = [[9,4],[4,9]] has eigenvalues 9-4=5 and 9+4=13. The unit eigenvector for the smaller eigenvalue 5 is (1,-1)/sqrt(2) = (sqrt(2)/2, -sqrt(2)/2), and for 13 it is (1,1)/sqrt(2) = (sqrt(2)/2, sqrt(2)/2). Thus Q = [[sqrt(2)/2, sqrt(2)/2],[-sqrt(2)/2, sqrt(2)/2]]. The answer is q11 = sqrt(2)/2; q12 = sqrt(2)/2; q21 = -sqrt(2)/2; q22 = sqrt(2)/2."
-          - problem: "For the symmetric matrix A = [[10,3],[3,10]], find the larger eigenvalue and its unit eigenvector with positive first entry. Give the eigenvalue and the vector as (x, y), using lam for the eigenvalue and v for the vector."
-            answer: "lam = 13; v = (sqrt(2)/2, sqrt(2)/2)"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "lam"}, {"contract": {"arity": 2, "kind": "coordinates"}, "name": "v"}]}
-            solution_sketch: "The symmetric matrix A = [[10,3],[3,10]] has eigenvalues 10-3=7 and 10+3=13. The larger eigenvalue is 13, and its eigenvector is (1,1). Normalizing gives (1,1)/sqrt(2) = (sqrt(2)/2, sqrt(2)/2). The answer is lam = 13; v = (sqrt(2)/2, sqrt(2)/2)."
-        constraints: "2x2 symmetric matrices of the form [[a, b], [b, a]] so eigenvectors are (1, 1) and (1, -1); eigenvalues integers"
+          - problem: 'Orthogonally diagonalize $A=\begin{pmatrix}7&2\\2&7\end{pmatrix}$, that is, write $A=QDQ^T$ with $Q$ orthogonal and $D$ diagonal with the eigenvalues in increasing order. Find $D$.'
+            answer: '[[5,0],[0,9]]'
+            answer_contract: {"kind": "matrix", "rows": 2, "cols": 2}
+            solution_sketch: 'The matrix has the form $\begin{pmatrix}a&b\\b&a\end{pmatrix}$, so its eigenvalues are $a-b=5$ and $a+b=9$. The diagonal matrix $D$ holds the eigenvalues, smaller one first. Hence $D=\begin{pmatrix}5&0\\0&9\end{pmatrix}$.'
+          - problem: 'The symmetric matrix $A=\begin{pmatrix}10&3\\3&10\end{pmatrix}$ has the eigenvalues $7$ and $13$. Find the unit eigenvector for $13$ whose entries are positive.'
+            answer: '(sqrt(2)/2, sqrt(2)/2)'
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: 'Solve $(A-13I)\mathbf v=\mathbf 0$: the first row gives $-3x+3y=0$, so $\mathbf v=(1,1)$. Its length is $\sqrt2$. Dividing by $\sqrt2$ gives the unit eigenvector $(\sqrt2/2,\sqrt2/2)$.'
+          - problem: 'Find the unit eigenvector of $A=\begin{pmatrix}9&4\\4&9\end{pmatrix}$ for its smaller eigenvalue, choosing the one with a positive first entry.'
+            answer: '(sqrt(2)/2, -sqrt(2)/2)'
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: 'The eigenvalues are $9-4=5$ and $9+4=13$, so the smaller one is $5$. Solving $(A-5I)\mathbf v=\mathbf 0$ gives $x+y=0$, so $\mathbf v=(1,-1)$. Dividing by its length $\sqrt2$ gives $(\sqrt2/2,-\sqrt2/2)$.'
+          - problem: 'Find the eigenvalues of $A=\begin{pmatrix}8&5\\5&8\end{pmatrix}$.'
+            answer: '3, 13'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'For a matrix $\begin{pmatrix}a&b\\b&a\end{pmatrix}$ the eigenvalues are $a-b$ and $a+b$. Here they are $8-5=3$ and $8+5=13$. These are the entries of $D$ in $A=QDQ^T$.'
+          - problem: 'A flat plate has the inertia matrix $J=\begin{pmatrix}6&2\\2&6\end{pmatrix}$ (in kg m$^2$). Its principal moments are the diagonal entries of $D$ when $J=QDQ^T$ is an orthogonal diagonalization. Find the principal moments.'
+            answer: '4, 8'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The principal moments are the eigenvalues of the symmetric matrix $J$. For $\begin{pmatrix}a&b\\b&a\end{pmatrix}$ they are $a-b=4$ and $a+b=8$. The principal moments are $4$ and $8$.'
+          - problem: 'The strain in a thin film is described by the symmetric matrix $E=\begin{pmatrix}5&-3\\-3&5\end{pmatrix}$. The film stretches most along the unit eigenvector of the larger eigenvalue. Find this unit eigenvector, choosing the one with a positive second entry.'
+            answer: '(-sqrt(2)/2, sqrt(2)/2)'
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: 'The eigenvalues are $5-3=2$ and $5+3=8$, so the larger one is $8$. Solving $(E-8I)\mathbf v=\mathbf 0$ gives $x+y=0$, so $\mathbf v=(-1,1)$ up to sign. Dividing by $\sqrt2$ gives $(-\sqrt2/2,\sqrt2/2)$.'
+          - problem: 'Let $A=\begin{pmatrix}4&1\\1&4\end{pmatrix}$ and $Q=\frac{1}{\sqrt2}\begin{pmatrix}1&1\\-1&1\end{pmatrix}$. Find $Q^TAQ$.'
+            answer: '[[3,0],[0,5]]'
+            answer_contract: {"kind": "matrix", "rows": 2, "cols": 2}
+            solution_sketch: 'The columns of $Q$ are unit eigenvectors of $A$ for the eigenvalues $3$ and $5$. So $Q^TAQ=D$ is the diagonal matrix of eigenvalues in that order. Direct multiplication confirms $Q^TAQ=\begin{pmatrix}3&0\\0&5\end{pmatrix}$.'
+          - problem: 'Dana orthogonally diagonalizes $A=\begin{pmatrix}6&2\\2&6\end{pmatrix}$ and writes $D=\begin{pmatrix}6&0\\0&2\end{pmatrix}$. What is the correct $D$, with the eigenvalues in increasing order?'
+            answer: '[[4,0],[0,8]]'
+            answer_contract: {"kind": "matrix", "rows": 2, "cols": 2}
+            solution_sketch: 'The diagonal entries of $D$ must be the eigenvalues of $A$, not the entries of $A$. The eigenvalues are $6-2=4$ and $6+2=8$. So $D=\begin{pmatrix}4&0\\0&8\end{pmatrix}$.'
+        constraints: '2x2 symmetric matrices of the form [[a, b], [b, a]] so eigenvectors are (1, 1) and (1, -1); eigenvalues integers; answers are D, Q^T A Q, a unit eigenvector or the eigenvalues'
       - id: kp3
         name: Using the factorization A = QDQ^T
         key_prerequisites: [diagonalization, orthogonal-matrices]
+        step_check:
+          step: 'cancel the inner pairs using $Q^TQ = I$'
+          question: 'Why do the inner factors cancel in $(QDQ^T)(QDQ^T)(QDQ^T)$?'
+          options:
+            - 'Each $D$ cancels with the $Q$ standing next to it because $D$ is diagonal'
+            - 'Each $Q^TQ$ that meets in the middle equals $I$ because $Q$ is orthogonal'
+            - 'Each $Q$ cancels with the $Q$ standing next to it because $Q$ is symmetric'
+          answer: 'Each $Q^TQ$ that meets in the middle equals $I$ because $Q$ is orthogonal'
+          why: 'Between two copies of $A$ the factors $Q^T$ and $Q$ meet, and $Q^TQ=I$, so they vanish and only $QD^3Q^T$ remains.'
         exemplars:
-          - problem: "A = QDQ^T with D = diag(2, 5). Find det A and the eigenvalues of A^2 in increasing order."
-            answer: "det = 10; eigs = 4, 25"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "det"}, {"contract": {"kind": "list", "member": {"kind": "exact"}, "ordered": true}, "name": "eigs"}]}
-            solution_sketch: "Since Q is orthogonal, det A = det D = 2*5 = 10. Also A^2 = QD^2Q^T, so its eigenvalues are the squares of the diagonal entries of D: 2^2 = 4 and 5^2 = 25. Thus det = 10; eigs = 4, 25."
-          - problem: "A = QDQ^T with D = diag(2, 3). Use A^3 = QD^3Q^T to find D^3 as [a,b;c,d]."
-            answer: "[8,0;0,27]"
-            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
-            solution_sketch: "For a diagonal matrix, cube each diagonal entry: 2^3 = 8 and 3^3 = 27. The factorization gives A^3 = QD^3Q^T, so D^3 holds the cubed eigenvalues. The answer is [8,0;0,27]."
-          - problem: "A = QDQ^T with D = diag(1, 4). Find det(A^2)."
-            answer: "16"
+          - problem: 'Let $A=QDQ^T$, where $Q$ is orthogonal and $D=\begin{pmatrix}2&0\\0&5\end{pmatrix}$. Find $\det A$.'
+            answer: '10'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Since Q is orthogonal, det A = det D = 1*4 = 4. Then det(A^2) = (det A)^2 = 4^2 = 16. The answer is 16."
-          - problem: "A = QDQ^T with D = diag(3, 4). Find the eigenvalues of A^{-1} in increasing order."
-            answer: "1/4, 1/3"
-            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
-            solution_sketch: "The inverse factorization is A^{-1} = QD^{-1}Q^T. The eigenvalues of A^{-1} are the reciprocals of the diagonal entries of D: 1/3 and 1/4. In increasing order they are 1/4 and 1/3. The answer is 1/4, 1/3."
-          - problem: "A = QDQ^T with D = diag(1, 5). Find trace(A^3)."
-            answer: "126"
+            solution_sketch: 'The determinant of a product is the product of the determinants, so $\det A=\det Q\cdot\det D\cdot\det Q^T=(\det Q)^2\det D$. For an orthogonal matrix $(\det Q)^2=1$. So $\det A=\det D=2\cdot5=10$.'
+          - problem: 'Let $A=QDQ^T$, where $Q$ is orthogonal and $D=\begin{pmatrix}2&0\\0&3\end{pmatrix}$. Find the eigenvalues of $A^3$.'
+            answer: '8, 27'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The power factorization is A^3 = QD^3Q^T, so the trace is the sum of the cubed eigenvalues. The diagonal entries of D are 1 and 5, so trace(A^3) = 1^3 + 5^3 = 1 + 125 = 126. The answer is 126."
-          - problem: "A = QDQ^T with D = diag(2, 4). Find det(A^{-1})."
-            answer: "1/8"
+            solution_sketch: 'Since $Q^TQ=I$, we have $A^3=QD^3Q^T$. So the eigenvalues of $A^3$ are the cubes of the diagonal entries of $D$. They are $2^3=8$ and $3^3=27$.'
+          - problem: 'Let $A=QDQ^T$, where $Q$ is orthogonal and $D=\begin{pmatrix}1&0\\0&4\end{pmatrix}$. Find $\det(A^2)$.'
+            answer: '16'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Since Q is orthogonal, det A = det D = 2*4 = 8. For an invertible matrix, det(A^{-1}) = 1/det A = 1/8. The answer is 1/8."
-        constraints: "D diagonal with small integer entries; answers obtained without multiplying out Q"
+            solution_sketch: 'The determinant of $A$ equals $\det D=1\cdot4=4$. Then the determinant of the square is the square of the determinant, so $\det(A^2)=(\det A)^2=4^2=16$.'
+          - problem: 'Let $A=QDQ^T$, where $Q$ is orthogonal and $D=\begin{pmatrix}3&0\\0&4\end{pmatrix}$. Find the eigenvalues of $A^{-1}$.'
+            answer: '1/4, 1/3'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The inverse is $A^{-1}=QD^{-1}Q^T$. So the eigenvalues of $A^{-1}$ are the reciprocals of the diagonal entries of $D$. They are $1/3$ and $1/4$.'
+          - problem: 'A symmetric matrix $A=QDQ^T$ with $D=\begin{pmatrix}2&0\\0&3\end{pmatrix}$ and $Q$ orthogonal changes the area of every region of the plane by the same factor. After the transformation $A$, a region has area $90\ \mathrm{m}^2$. What area did it have before?'
+            answer: '15'
+            answer_contract: {"kind": "unit", "quantity": "area", "unit": "m^2", "allow_omitted": true}
+            solution_sketch: 'The area is multiplied by $|\det A|=\det D=2\cdot3=6$. The area after the transformation is $90$, so the area before is $90\div6=15$ square metres.'
+          - problem: 'The transformation $A=QDQ^T$ with $D=\begin{pmatrix}2&0\\0&3\end{pmatrix}$ and $Q$ orthogonal is applied twice to a region of area $5\ \mathrm{cm}^2$. What is the area of the region at the end?'
+            answer: '180'
+            answer_contract: {"kind": "unit", "quantity": "area", "unit": "cm^2", "allow_omitted": true}
+            solution_sketch: 'One application multiplies areas by $\det A=\det D=6$. Two applications multiply by $6^2=36$. The final area is $36\cdot5=180$ square centimetres.'
+          - problem: 'Let $A=QDQ^T$, where $Q$ is orthogonal and $D=\begin{pmatrix}1&0\\0&5\end{pmatrix}$. Find the trace of $A^3$.'
+            answer: '126'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Since $A^3=QD^3Q^T$, the eigenvalues of $A^3$ are $1^3=1$ and $5^3=125$. The trace is the sum of the eigenvalues, so $\operatorname{tr}(A^3)=1+125=126$.'
+          - problem: 'Let $A=QDQ^T$, where $Q$ is orthogonal and $D=\begin{pmatrix}2&0\\0&4\end{pmatrix}$. Find $\det(A^{-1})$.'
+            answer: '1/8'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The determinant of $A$ is $\det D=2\cdot4=8$. For an invertible matrix $\det(A^{-1})=1/\det A$, so $\det(A^{-1})=1/8$.'
+        constraints: 'D diagonal with small integer entries; answers obtained without multiplying out Q; determinants also read as area factors'
     diagnostic_exemplar:
       problem: 'Orthogonally diagonalize $A = \begin{pmatrix}3&1\\1&3\end{pmatrix}$ as $A = QDQ^T$, then use the factorization to give $\det A$ and the eigenvalues of $A^2$.'
       answer: '$Q = \frac{1}{\sqrt{2}}\begin{pmatrix}1&1\\-1&1\end{pmatrix}$, $D = \begin{pmatrix}2&0\\0&4\end{pmatrix}$; $\det A = 8$; $A^2$ has eigenvalues $4$ and $16$'
@@ -270,89 +373,146 @@ topics:
       - id: kp1
         name: The matrix of a quadratic form
         key_prerequisites: [transpose-symmetric-matrices]
+        step_check:
+          step: 'split the cross term'
+          question: 'Why is the coefficient of $xy$ split between two equal off-diagonal entries?'
+          options:
+            - 'A symmetric matrix must have all entries equal, so the cross term is halved'
+            - 'Dividing the cross term by $2$ makes the diagonal entries match the squares'
+            - 'Both $A_{12}$ and $A_{21}$ give an $xy$ term, and the two terms add'
+          answer: 'Both $A_{12}$ and $A_{21}$ give an $xy$ term, and the two terms add'
+          why: 'In $\mathbf x^TA\mathbf x$ the entry $A_{12}$ contributes $A_{12}xy$ and $A_{21}$ contributes $A_{21}xy$, so the cross coefficient is $A_{12}+A_{21}=2A_{12}$.'
         exemplars:
-          - problem: 'Evaluate the quadratic form of $A = \begin{pmatrix}1&2\\2&3\end{pmatrix}$ at $\mathbf{x} = (1, 1)$.'
-            answer: "8"
-            solution_sketch: '$q(1, 1) = 1 + 2(2) + 3 = 8$ (the form is $x^2 + 4xy + 3y^2$).'
-          - problem: "Let q(x, y) = 4x^2 + 10xy + 7y^2. Find the symmetric matrix A with q(x, y) = x^T A x. Give A as [a,b;c,d]."
-            answer: "[4,5;5,7]"
-            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
-            solution_sketch: "Step 1: The full object is q(x, y) = 4x^2 + 10xy + 7y^2 and its symmetric matrix A. Step 2: The diagonal entries equal the x^2 and y^2 coefficients, so A_11 = 4 and A_22 = 7. Step 3: The xy coefficient is 2A_12, so A_12 = 10/2 = 5 and symmetry gives A_21 = 5. The symmetric matrix is [4,5;5,7]."
-          - problem: "For the symmetric matrix A = [5,2;2,-1], find the quadratic form q(x, y) = x^T A x. Give it as an expression in x and y."
-            answer: "5x^2+4xy-y^2"
-            answer_contract: {"kind": "function", "vars": ["x", "y"]}
-            solution_sketch: "Step 1: The full object is A = [5,2;2,-1] and its quadratic form q(x, y) = x^T A x. Step 2: For a symmetric 2 by 2 matrix, q(x, y) = A_11 x^2 + 2A_12 xy + A_22 y^2. Step 3: Substitute A_11 = 5, A_12 = 2, and A_22 = -1 to get q(x, y) = 5x^2 + 4xy - y^2. The quadratic form is 5x^2+4xy-y^2."
-          - problem: "Let q(x, y) = x^2 + 12xy + 3y^2. Find the (1,2)-entry of the symmetric matrix A with q(x, y) = x^T A x."
-            answer: "6"
+          - problem: 'Find the symmetric matrix $A$ for which $q(x,y)=4x^2+10xy+7y^2$ equals $\mathbf x^TA\mathbf x$.'
+            answer: '[[4,5],[5,7]]'
+            answer_contract: {"kind": "matrix", "rows": 2, "cols": 2}
+            solution_sketch: 'The diagonal entries of $A$ are the coefficients of $x^2$ and $y^2$, so $A_{11}=4$ and $A_{22}=7$. The cross term $10xy$ comes from two equal entries $A_{12}=A_{21}$, so each is $10/2=5$. Hence $A=\begin{pmatrix}4&5\\5&7\end{pmatrix}$.'
+          - problem: 'Let $A=\begin{pmatrix}1&2\\2&3\end{pmatrix}$. Find $\mathbf x^TA\mathbf x$ for $\mathbf x=(1,1)$.'
+            answer: '8'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1: The full object is q(x, y) = x^2 + 12xy + 3y^2 and its symmetric matrix A. Step 2: The xy coefficient is 2A_12, so A_12 = 12/2 = 6. That places 6 in the (1,2) position. The (1,2)-entry is 6."
-          - problem: "Let q(x, y) = 3x^2 - 4xy + 2y^2. Determine the symmetric matrix A such that q(x, y) = x^T A x. Give A as [a,b;c,d]."
-            answer: "[3,-2;-2,2]"
-            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
-            solution_sketch: "Step 1: The full object is q(x, y) = 3x^2 - 4xy + 2y^2 and its symmetric matrix A. Step 2: The diagonal entries are the coefficients of x^2 and y^2, so A_11 = 3 and A_22 = 2. Step 3: The xy coefficient is 2A_12, so A_12 = -4/2 = -2 and A_21 = -2. The symmetric matrix is [3,-2;-2,2]."
-          - problem: "Let A = [0,5;5,0]. Find the coefficient of xy in the quadratic form q(x, y) = x^T A x."
-            answer: "10"
+            solution_sketch: 'First $A\mathbf x=(1+2,\,2+3)=(3,5)$. Then $\mathbf x^TA\mathbf x=1\cdot3+1\cdot5=8$. This agrees with the polynomial $x^2+4xy+3y^2$ at $(1,1)$, which is $1+4+3=8$.'
+          - problem: 'For the symmetric matrix $A=\begin{pmatrix}5&2\\2&-1\end{pmatrix}$, write $\mathbf x^TA\mathbf x$ as a polynomial in $x$ and $y$.'
+            answer: '5x^2+4xy-y^2'
+            answer_contract: {"kind": "required_form", "form": "expanded_polynomial"}
+            solution_sketch: 'The squared terms have the diagonal entries as coefficients: $5x^2$ and $-y^2$. The cross term is $2A_{12}xy=2\cdot2\,xy=4xy$. So $\mathbf x^TA\mathbf x=5x^2+4xy-y^2$.'
+          - problem: 'The symmetric matrix $A$ satisfies $\mathbf x^TA\mathbf x=x^2+12xy+3y^2$. Find the entry $A_{12}$ in row $1$, column $2$.'
+            answer: '6'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1: The full object is A = [0,5;5,0] and q(x, y) = x^T A x. Step 2: The xy coefficient is 2A_12. Step 3: With A_12 = 5, the coefficient is 2(5) = 10. The coefficient of xy is 10."
-        constraints: "2 variables; integer coefficients with the xy coefficient even so A has integer entries"
+            solution_sketch: 'The cross term $12xy$ is the sum of the two equal contributions $A_{12}xy$ and $A_{21}xy$. So $2A_{12}=12$ and $A_{12}=6$.'
+          - problem: 'Find the symmetric matrix $A$ for which $q(x,y)=3x^2-4xy+2y^2$ equals $\mathbf x^TA\mathbf x$.'
+            answer: '[[3,-2],[-2,2]]'
+            answer_contract: {"kind": "matrix", "rows": 2, "cols": 2}
+            solution_sketch: 'The diagonal entries are the coefficients $3$ and $2$ of $x^2$ and $y^2$. The cross term $-4xy$ is split evenly, so $A_{12}=A_{21}=-4/2=-2$. Hence $A=\begin{pmatrix}3&-2\\-2&2\end{pmatrix}$.'
+          - problem: 'The potential energy of two coupled springs is $E(x,y)=2x^2-2xy+3y^2$ joules for the displacements $x$ and $y$. Find the symmetric matrix $A$ with $E=\mathbf x^TA\mathbf x$.'
+            answer: '[[2,-1],[-1,3]]'
+            answer_contract: {"kind": "matrix", "rows": 2, "cols": 2}
+            solution_sketch: 'The squared terms give the diagonal entries $2$ and $3$. The cross term $-2xy$ is shared by two equal entries, so each is $-2/2=-1$. Hence $A=\begin{pmatrix}2&-1\\-1&3\end{pmatrix}$.'
+          - problem: 'The elastic energy of a system is $E=\mathbf x^TK\mathbf x$ with $K=\begin{pmatrix}3&-1\\-1&3\end{pmatrix}$, where $\mathbf x=(x,y)$ is the displacement. Find $E$ when the displacement is $(2,1)$.'
+            answer: '11'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'First $K\mathbf x=(3\cdot2-1,\,-2+3\cdot1)=(5,1)$. Then $E=\mathbf x^TK\mathbf x=2\cdot5+1\cdot1=11$. Equivalently, the energy is the polynomial $E=3x^2-2xy+3y^2$, which equals $12-4+3=11$ at this displacement.'
+          - problem: 'The symmetric matrix $A$ of the quadratic form $q(x,y,z)=x^2+4y^2+9z^2+2xy-6xz+8yz$ is a $3\times3$ matrix. Find the entry $A_{23}$ in row $2$, column $3$.'
+            answer: '4'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The cross term $8yz$ comes from the two equal entries $A_{23}$ and $A_{32}$. So $2A_{23}=8$ and $A_{23}=4$.'
+          - problem: 'Let $A=\begin{pmatrix}0&5\\5&0\end{pmatrix}$. Find the coefficient of $xy$ in the polynomial $\mathbf x^TA\mathbf x$.'
+            answer: '10'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The product $\mathbf x^TA\mathbf x$ is $5xy+5yx=10xy$, because both off-diagonal entries are $5$. The coefficient of $xy$ is $2\cdot5=10$.'
+        constraints: '2 variables (one 3-variable case); integer coefficients with the xy coefficient even so A has integer entries'
       - id: kp2
         name: Classifying definiteness by eigenvalues
         key_prerequisites: [spectral-theorem-symmetric-matrices]
+        try_first:
+          problem: 'Is $x^2+4xy+y^2$ positive at every point $(x,y)$ other than $(0,0)$?'
+          answer_contract: {"kind": "label", "options": [["yes", "it is positive", "positive"], ["no", "it is not", "not positive"]]}
+          answer: 'no'
+          reveal: 'At $(1,-1)$ the value is $1-4+1=-2$, which is negative, so the form takes both signs. The signs of the eigenvalues of its matrix decide this in general.'
+        step_check:
+          step: 'both eigenvalues are negative'
+          question: 'Why do two negative eigenvalues make $q$ negative at every nonzero point?'
+          options:
+            - 'In principal-axis coordinates $q=\lambda_1u^2+\lambda_2v^2$ has no positive term, and at least one nonzero term'
+            - 'Negative eigenvalues make every entry of the vector $\mathbf x$ negative, and so the products with it negative too'
+            - 'The eigenvalues are the values of $q$ at the two standard basis vectors, and these are negative'
+          answer: 'In principal-axis coordinates $q=\lambda_1u^2+\lambda_2v^2$ has no positive term, and at least one nonzero term'
+          why: 'Each term $\lambda u^2$ is at most $0$, and for $(u,v)\neq(0,0)$ at least one square is positive, so the sum is below $0$.'
         exemplars:
-          - problem: "The symmetric matrix A = [3,1;1,3] defines a quadratic form q(x, y) = 3x^2 + 2xy + 3y^2. Give the smaller eigenvalue and the definiteness class."
-            answer: "verdict = positive; smaller = 2"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["positive"], ["negative"], ["indefinite"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "smaller"}]}
-            solution_sketch: "Step 1: For a 2x2 symmetric matrix, the eigenvalues solve lambda^2 - (trace) lambda + (determinant) = 0. Here trace = 6 and determinant = 8, so lambda^2 - 6 lambda + 8 = 0 gives eigenvalues 2 and 4 by factoring. Step 2: Both eigenvalues are positive, so the quadratic form is positive definite; the option negative is wrong because no eigenvalue is negative, and the option indefinite is wrong because the eigenvalues do not have opposite signs. The smaller eigenvalue is 2, so the answer is verdict = positive; smaller = 2."
-          - problem: "The symmetric matrix A = [2,3;3,2] defines a quadratic form q(x, y) = 2x^2 + 6xy + 2y^2. Give the larger eigenvalue and the definiteness class."
-            answer: "verdict = indefinite; larger = 5"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["positive"], ["negative"], ["indefinite"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "larger"}]}
-            solution_sketch: "Step 1: Compute the trace and determinant: trace = 4 and determinant = -5, so the characteristic equation is lambda^2 - 4 lambda - 5 = 0. Step 2: Factor to get (lambda - 5)(lambda + 1) = 0, so the eigenvalues are 5 and -1. Step 3: Since the eigenvalues have opposite signs, the form is indefinite; the option positive is wrong because one eigenvalue is negative, and the option negative is wrong because one eigenvalue is positive. The larger eigenvalue is 5, so the answer is verdict = indefinite; larger = 5."
-          - problem: "The symmetric matrix A = [-2,0;0,-5] defines a quadratic form q(x, y) = -2x^2 - 5y^2. Give the smaller eigenvalue and the definiteness class."
-            answer: "verdict = negative; smaller = -5"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["positive"], ["negative"], ["indefinite"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "smaller"}]}
-            solution_sketch: "Step 1: A diagonal matrix has its diagonal entries as eigenvalues, so the eigenvalues are -2 and -5. Step 2: Both eigenvalues are negative, so the quadratic form is negative definite; the option positive is wrong because both eigenvalues are negative, and the option indefinite is wrong because the eigenvalues do not have opposite signs. The smaller eigenvalue is -5, so the answer is verdict = negative; smaller = -5."
-          - problem: "The symmetric matrix A = [5,2;2,2] defines a quadratic form q(x, y) = 5x^2 + 4xy + 2y^2. Give the product of the eigenvalues and the definiteness class."
-            answer: "verdict = positive; product = 6"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["positive"], ["negative"], ["indefinite"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "product"}]}
-            solution_sketch: "Step 1: For a 2x2 symmetric matrix, the product of the eigenvalues equals the determinant. Here the determinant is 5*2 - 2*2 = 6. Step 2: The trace is 7, so the eigenvalues solve lambda^2 - 7 lambda + 6 = 0 and are 6 and 1 by factoring. Step 3: Both eigenvalues are positive, so the form is positive definite; the option negative is wrong because both eigenvalues are positive, and the option indefinite is wrong because the eigenvalues do not have opposite signs. The product is 6, so the answer is verdict = positive; product = 6."
-          - problem: "The symmetric matrix A = [3,0;0,-2] defines a quadratic form q(x, y) = 3x^2 - 2y^2. Give the class code: 1 for positive definite, -1 for negative definite, 0 for indefinite."
-            answer: "0"
+          - problem: 'Is the quadratic form $q(x,y)=3x^2+2xy+3y^2$ positive definite, negative definite or indefinite?'
+            answer: 'positive definite'
+            answer_contract: {"kind": "label", "options": [["positive definite", "positive", "it is positive definite", "positive-definite"], ["negative definite", "negative", "it is negative definite", "negative-definite"], ["indefinite", "it is indefinite"]]}
+            solution_sketch: 'The matrix of $q$ is $\begin{pmatrix}3&1\\1&3\end{pmatrix}$ with trace $6$ and determinant $8$. Its eigenvalues solve $\lambda^2-6\lambda+8=0$, so they are $2$ and $4$. Both are positive, so $q$ is positive definite.'
+          - problem: 'The form $q(x,y)=2x^2+6xy+2y^2$ has the symmetric matrix $A=\begin{pmatrix}2&3\\3&2\end{pmatrix}$. Find the eigenvalues of $A$.'
+            answer: '5, -1'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1: A diagonal matrix has its diagonal entries as eigenvalues, so the eigenvalues are 3 and -2. Step 2: Since the eigenvalues have opposite signs, the form is indefinite. Step 3: The code for indefinite is 0. The answer is 0."
-          - problem: "The symmetric matrix A = [-2,1;1,-2] defines a quadratic form q(x, y) = -2x^2 + 2xy - 2y^2. Give the class code: 1 for positive definite, -1 for negative definite, 0 for indefinite."
-            answer: "-1"
+            solution_sketch: 'The trace is $4$ and the determinant is $4-9=-5$, so $\lambda^2-4\lambda-5=0$. This factors as $(\lambda-5)(\lambda+1)=0$. The eigenvalues are $5$ and $-1$, which have opposite signs, so $q$ is indefinite.'
+          - problem: 'Find $q(1,-1)$ for the form $q(x,y)=2x^2+6xy+2y^2$.'
+            answer: '-2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1: Compute the trace and determinant: trace = -4 and determinant = 3, so the characteristic equation is lambda^2 + 4 lambda + 3 = 0. Step 2: Factor to get (lambda + 1)(lambda + 3) = 0, so the eigenvalues are -1 and -3. Step 3: Both eigenvalues are negative, so the form is negative definite. Step 4: The code for negative definite is -1. The answer is -1."
-        constraints: "2x2 symmetric matrices with integer eigenvalues given or easily computed; classes limited to positive definite, negative definite, indefinite"
+            solution_sketch: 'Substitute $x=1$ and $y=-1$: $q(1,-1)=2\cdot1+6\cdot(1)(-1)+2\cdot1=2-6+2=-2$. The value is negative, and $q(1,1)=10$ is positive, so $q$ takes both signs.'
+          - problem: 'What is the product of the two eigenvalues of $A=\begin{pmatrix}5&2\\2&2\end{pmatrix}$?'
+            answer: '6'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The product of the eigenvalues of a $2\times2$ matrix is its determinant, which is $5\cdot2-2\cdot2=6$. The trace is $7$, so the eigenvalues are $1$ and $6$. Both are positive, so the form $5x^2+4xy+2y^2$ is positive definite.'
+          - problem: 'The Hessian of a function $f$ at a critical point is $H=\begin{pmatrix}-2&1\\1&-2\end{pmatrix}$. Is the critical point a local maximum, a local minimum or a saddle point?'
+            answer: 'local maximum'
+            answer_contract: {"kind": "label", "options": [["local maximum", "maximum", "a local maximum", "max"], ["local minimum", "minimum", "a local minimum", "min"], ["saddle point", "saddle", "a saddle point"]]}
+            solution_sketch: 'The behavior of $f$ near the point is governed by the quadratic form $\mathbf x^TH\mathbf x$. The eigenvalues of $H$ solve $(-2-\lambda)^2-1=0$, so they are $-1$ and $-3$. Both are negative, so the form is negative definite and the critical point is a local maximum.'
+          - problem: 'Find the largest integer $k$ for which $q(x,y)=x^2+kxy+4y^2$ is positive definite.'
+            answer: '3'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The matrix is $\begin{pmatrix}1&k/2\\k/2&4\end{pmatrix}$. The form is positive definite when the trace is positive and the determinant $4-k^2/4$ is positive. This gives $k^2<16$, so $-4<k<4$, and the largest integer is $3$.'
+          - problem: 'The energy of a vibrating system is $E(x,y)=ax^2+4xy+5y^2$. The equilibrium is stable when $E>0$ for every displacement $(x,y)\neq(0,0)$. Find the smallest integer $a$ for which the equilibrium is stable.'
+            answer: '1'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The energy is positive for every nonzero displacement exactly when its matrix $\begin{pmatrix}a&2\\2&5\end{pmatrix}$ is positive definite. The determinant $5a-4$ must be positive, so $a>4/5$, and then the trace is positive too. The smallest integer is $1$.'
+        constraints: '2x2 symmetric matrices with integer eigenvalues given or easily computed; classes limited to positive definite, negative definite, indefinite; one Hessian item and two parameter items decided by trace and determinant'
       - id: kp3
         name: Principal axes remove the cross term
         key_prerequisites: [spectral-theorem-symmetric-matrices]
+        step_check:
+          step: 'both eigenvalues are positive, so $u^2 + 5v^2 = 1$ is an ellipse'
+          question: 'Why does $u^2+5v^2=1$ give an ellipse and not a hyperbola?'
+          options:
+            - 'The coefficient $5$ is larger than the coefficient $1$, which closes the curve'
+            - 'Both coefficients are positive, so $u$ and $v$ must stay in a bounded region'
+            - 'The equation has no cross term, and every equation of that kind gives an ellipse'
+          answer: 'Both coefficients are positive, so $u$ and $v$ must stay in a bounded region'
+          why: 'With positive coefficients each of $u^2$ and $5v^2$ is at most $1$, so the curve is closed, while opposite signs would give a hyperbola.'
         exemplars:
-          - problem: "The quadratic form q(x, y) = 2x^2 + 4xy + 5y^2 has a symmetric matrix A. In principal-axis coordinates u and v the cross term vanishes and q becomes lambda1*u^2 + lambda2*v^2 with lambda1 <= lambda2. Give this cross-term-free form in terms of u and v."
-            answer: "u^2+6v^2"
-            answer_contract: {"kind": "function", "vars": ["u", "v"]}
-            solution_sketch: "Write the symmetric matrix A = [[2,2],[2,5]]. The characteristic polynomial is lambda^2 - 7lambda + 6 = 0, which factors as (lambda - 1)(lambda - 6) = 0 by the spectral theorem. The eigenvalues are 1 and 6. In principal-axis coordinates the form is lambda1*u^2 + lambda2*v^2 with lambda1 <= lambda2, so the answer is u^2+6v^2."
-          - problem: "The quadratic form q(x, y) = x^2 + 3xy + y^2 has eigenvalues that are half-integers. In principal-axis coordinates the form is diagonal with the eigenvalues on the diagonal in increasing order. Give the diagonal matrix D as [a,b;c,d]."
-            answer: "[-1/2,0;0,5/2]"
-            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
-            solution_sketch: "The symmetric matrix is A = [[1,3/2],[3/2,1]]. Its characteristic polynomial is lambda^2 - 2lambda - 5/4 = 0, with roots lambda = (2 ± 3)/2 = 5/2 and -1/2. By the spectral theorem the principal-axis diagonal matrix puts the eigenvalues in increasing order, so the answer is [-1/2,0;0,5/2]."
-          - problem: "A physics problem uses the energy form E(x, y) = 3x^2 + 2xy + 3y^2. Write E in principal-axis coordinates u and v as lambda1*u^2 + lambda2*v^2 with lambda1 <= lambda2. Give the cross-term-free expression."
-            answer: "2u^2+4v^2"
-            answer_contract: {"kind": "function", "vars": ["u", "v"]}
-            solution_sketch: "The matrix is [[3,1],[1,3]]. The characteristic equation is (3 - lambda)^2 - 1 = 0, so lambda = 2 or lambda = 4. By the principal-axis theorem the form becomes lambda1*u^2 + lambda2*v^2 with lambda1 <= lambda2, which is 2u^2+4v^2."
-          - problem: "The cross-term-free form of q(x, y) = 4x^2 + 4xy + 7y^2 in principal-axis coordinates is lambda1*u^2 + lambda2*v^2. Find the eigenvalues in increasing order."
-            answer: "3, 8"
-            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
-            solution_sketch: "The matrix is [[4,2],[2,7]]. Its trace is 11 and determinant is 24, so the characteristic polynomial is lambda^2 - 11lambda + 24 = 0. This factors as (lambda - 3)(lambda - 8) = 0. The eigenvalues in increasing order are 3, 8."
-          - problem: "In principal-axis coordinates the quadratic form q(x, y) = x^2 + 4xy + y^2 becomes a sum of two square terms with coefficients that have opposite signs. Select the type of the form."
-            answer: "indefinite"
-            answer_contract: {"kind": "label", "options": [["positive definite"], ["negative definite"], ["indefinite"], ["positive semidefinite"]]}
-            solution_sketch: "The matrix is [[1,2],[2,1]]. Its eigenvalues are 3 and -1. The option positive definite is wrong because one eigenvalue is negative. The option negative definite is wrong because one eigenvalue is positive. The option positive semidefinite is wrong because the negative eigenvalue is not zero. Since the eigenvalues have opposite signs, the form is indefinite."
-          - problem: "For q(x, y) = 5x^2 + 8xy + 5y^2, the cross-term-free form in principal-axis coordinates is lambda1*u^2 + lambda2*v^2 with lambda1 <= lambda2. Find lambda2."
-            answer: "9"
+          - problem: 'Rotate the axes to remove the cross term of $q(x,y)=2x^2+4xy+5y^2$. Write $q$ in the new coordinates $u$ and $v$, with $u$ along the eigenvector for the smaller eigenvalue.'
+            answer: 'u^2+6v^2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "The matrix is [[5,4],[4,5]]. The characteristic polynomial is (5 - lambda)^2 - 16 = 0, so 5 - lambda = 4 or 5 - lambda = -4, giving lambda = 1 or lambda = 9. With lambda1 <= lambda2, lambda2 is the larger eigenvalue. Therefore lambda2 = 9."
-        constraints: "2x2 forms whose eigenvalues are integers or halves; conclusions stated in principal-axis coordinates, no explicit angle computations"
+            solution_sketch: 'The matrix of $q$ is $\begin{pmatrix}2&2\\2&5\end{pmatrix}$ with trace $7$ and determinant $6$. Its eigenvalues solve $\lambda^2-7\lambda+6=0$, so they are $1$ and $6$. In principal-axis coordinates $q=u^2+6v^2$.'
+          - problem: 'The matrix of the quadratic form $q(x,y)=x^2+3xy+y^2$ is $A=\begin{pmatrix}1&3/2\\3/2&1\end{pmatrix}$. In principal-axis coordinates the form has a diagonal matrix $D$. Find $D$ with the eigenvalues in increasing order.'
+            answer: '[[-1/2,0],[0,5/2]]'
+            answer_contract: {"kind": "matrix", "rows": 2, "cols": 2}
+            solution_sketch: 'The eigenvalues solve $(1-\lambda)^2-9/4=0$, so $1-\lambda=\pm3/2$. They are $\lambda=-1/2$ and $\lambda=5/2$. In increasing order, $D=\begin{pmatrix}-1/2&0\\0&5/2\end{pmatrix}$.'
+          - problem: 'The energy of a particle in a crystal is $E(x,y)=3x^2+2xy+3y^2$. Write $E$ in principal-axis coordinates $u$ and $v$, with $u$ along the eigenvector for the smaller eigenvalue.'
+            answer: '2u^2+4v^2'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The matrix is $\begin{pmatrix}3&1\\1&3\end{pmatrix}$, and $(3-\lambda)^2-1=0$ gives $\lambda=2$ and $\lambda=4$. The cross term vanishes in principal-axis coordinates. So $E=2u^2+4v^2$.'
+          - problem: 'Find the eigenvalues of the matrix of the quadratic form $q(x,y)=4x^2+4xy+7y^2$.'
+            answer: '3, 8'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The matrix is $\begin{pmatrix}4&2\\2&7\end{pmatrix}$ with trace $11$ and determinant $24$. So $\lambda^2-11\lambda+24=(\lambda-3)(\lambda-8)=0$, and the eigenvalues are $3$ and $8$.'
+          - problem: 'Is the curve $x^2+4xy+y^2=1$ an ellipse or a hyperbola?'
+            answer: 'hyperbola'
+            answer_contract: {"kind": "label", "options": [["ellipse", "an ellipse"], ["hyperbola", "a hyperbola"]]}
+            solution_sketch: 'The matrix $\begin{pmatrix}1&2\\2&1\end{pmatrix}$ has eigenvalues $1+2=3$ and $1-2=-1$. In principal-axis coordinates the curve is $3u^2-v^2=1$. The coefficients have opposite signs, so the curve is a hyperbola.'
+          - problem: 'What is the largest value of $q(x,y)=5x^2+8xy+5y^2$ on the circle $x^2+y^2=1$?'
+            answer: '9'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'In principal-axis coordinates $q=\lambda_1u^2+\lambda_2v^2$ and the circle is $u^2+v^2=1$. The largest value on the circle is the largest eigenvalue. The matrix $\begin{pmatrix}5&4\\4&5\end{pmatrix}$ has eigenvalues $1$ and $9$, so the largest value is $9$.'
+          - problem: 'The energy of a plate under a displacement $(x,y)$ is $E=3x^2+2xy+3y^2$ in joules. Among all displacements of length $1$ (so $x^2+y^2=1$), what is the smallest possible energy?'
+            answer: '2'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'On the circle $u^2+v^2=1$ the energy $\lambda_1u^2+\lambda_2v^2$ is smallest at the smallest eigenvalue. The eigenvalues of $\begin{pmatrix}3&1\\1&3\end{pmatrix}$ are $2$ and $4$. The smallest energy is $2$ joules.'
+          - problem: 'The curve $3x^2+2xy+3y^2=1$ is an ellipse. Find the length of its longer semi-axis.'
+            answer: '1/sqrt(2)'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'In principal-axis coordinates the curve is $2u^2+4v^2=1$. The semi-axes are $1/\sqrt2$ along the $u$ axis and $1/\sqrt4=1/2$ along the $v$ axis. The longer one is $1/\sqrt2$.'
+        constraints: '2x2 forms whose eigenvalues are integers or halves; conclusions stated in principal-axis coordinates, extreme values on the unit circle and semi-axes, no explicit angle computations'
     diagnostic_exemplar:
       problem: 'Write $q(x, y) = x^2 + 4xy + y^2$ as $\mathbf{x}^TA\mathbf{x}$ with $A$ symmetric, classify its definiteness, and give its cross-term-free form in principal-axis coordinates.'
       answer: '$A = \begin{pmatrix}1&2\\2&1\end{pmatrix}$; eigenvalues $3$ and $-1$, so $q$ is indefinite; in principal-axis coordinates $q = 3u^2 - v^2$'
@@ -389,89 +549,137 @@ topics:
       - id: kp1
         name: Singular values from A^T A
         key_prerequisites: [transpose-symmetric-matrices, spectral-theorem-symmetric-matrices]
+        step_check:
+          step: 'take square roots and order them decreasing'
+          question: 'Why are the singular values the square roots of the eigenvalues of $A^TA$?'
+          options:
+            - 'A unit eigenvector of $A^TA$ is stretched by exactly $\sqrt\lambda$ by $A$'
+            - 'Square roots make every eigenvalue positive, and singular values are positive'
+            - 'An eigenvalue of a matrix is always the square of one of its singular values'
+          answer: 'A unit eigenvector of $A^TA$ is stretched by exactly $\sqrt\lambda$ by $A$'
+          why: 'A singular value measures how much $A$ stretches a unit vector, and the squared stretch of the eigenvector $\mathbf v$ of $A^TA$ is its eigenvalue $\lambda$.'
         exemplars:
-          - problem: "Find the singular values of $A = \\begin{pmatrix}0&7\\\\3&0\\end{pmatrix}$ in decreasing order."
-            answer: "7, 3"
-            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
-            solution_sketch: "Form the Gram matrix: for $A = \\begin{pmatrix}0&7\\\\3&0\\end{pmatrix}$, the product $A^TA = \\begin{pmatrix}9&0\\\\0&49\\end{pmatrix}$. Rule: the eigenvalues of a diagonal matrix are its diagonal entries, so they are 49 and 9. Rule: each singular value is the square root of an eigenvalue of $A^TA$, listed in decreasing order, so sqrt(49) = 7 and sqrt(9) = 3. The singular values in decreasing order are 7, 3."
-          - problem: "The matrix $A = \\begin{pmatrix}3&3\\\\3&3\\end{pmatrix}$ has two identical columns. Determine its singular values in decreasing order."
-            answer: "6, 0"
-            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
-            solution_sketch: "For $A = \\begin{pmatrix}3&3\\\\3&3\\end{pmatrix}$, compute $A^TA = \\begin{pmatrix}18&18\\\\18&18\\end{pmatrix}$. Rule: solve the characteristic equation $\\lambda^2 - 36\\lambda = 0$, which gives eigenvalues 36 and 0. Rule: the singular values are the square roots of the eigenvalues, sqrt(36) = 6 and sqrt(0) = 0. In decreasing order the singular values are 6, 0."
-          - problem: "For the $3 \\times 2$ matrix $A = \\begin{pmatrix}1&1\\\\1&1\\\\1&-1\\end{pmatrix}$, find its singular values in decreasing order."
-            answer: "2, sqrt(2)"
-            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
-            solution_sketch: "For $A = \\begin{pmatrix}1&1\\\\1&1\\\\1&-1\\end{pmatrix}$, the columns have dot products giving $A^TA = \\begin{pmatrix}3&1\\\\1&3\\end{pmatrix}$. Rule: a matrix of the form [[a,b],[b,a]] has eigenvalues a+b and a-b, here 4 and 2. Rule: the singular values are the square roots of these eigenvalues, sqrt(4) = 2 and sqrt(2). The singular values in decreasing order are 2, sqrt(2)."
-          - problem: "Find the singular values of $A = \\begin{pmatrix}1&3\\\\3&1\\end{pmatrix}$ in decreasing order."
-            answer: "4, 2"
-            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
-            solution_sketch: "For $A = \\begin{pmatrix}1&3\\\\3&1\\end{pmatrix}$, compute $A^TA = \\begin{pmatrix}10&6\\\\6&10\\end{pmatrix}$. Rule: a matrix of the form [[a,b],[b,a]] has eigenvalues a+b and a-b, here 16 and 4. Rule: the singular values are the square roots of the eigenvalues, sqrt(16) = 4 and sqrt(4) = 2. The singular values in decreasing order are 4, 2."
-          - problem: "For $A = \\begin{pmatrix}2&4\\\\4&2\\end{pmatrix}$, find the largest singular value of $A$."
-            answer: "6"
+          - problem: 'Find the singular values of $A=\begin{pmatrix}0&7\\3&0\end{pmatrix}$.'
+            answer: '7, 3'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "For $A = \\begin{pmatrix}2&4\\\\4&2\\end{pmatrix}$, compute $A^TA = \\begin{pmatrix}20&16\\\\16&20\\end{pmatrix}$. Rule: a matrix of the form [[a,b],[b,a]] has eigenvalues a+b and a-b, here 36 and 4. Rule: the singular values are the square roots of the eigenvalues, namely 6 and 2. The largest singular value is 6."
-          - problem: "For $A = \\begin{pmatrix}2&1\\\\1&2\\end{pmatrix}$, determine the smallest singular value of $A$."
-            answer: "1"
+            solution_sketch: 'First $A^TA=\begin{pmatrix}9&0\\0&49\end{pmatrix}$, which is diagonal, so its eigenvalues are $49$ and $9$. The singular values are the square roots of these eigenvalues. They are $\sqrt{49}=7$ and $\sqrt9=3$.'
+          - problem: 'The matrix $A=\begin{pmatrix}3&3\\3&3\end{pmatrix}$ has two identical columns. Find its singular values.'
+            answer: '6, 0'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "For $A = \\begin{pmatrix}2&1\\\\1&2\\end{pmatrix}$, compute $A^TA = \\begin{pmatrix}5&4\\\\4&5\\end{pmatrix}$. Rule: a matrix of the form [[a,b],[b,a]] has eigenvalues a+b and a-b, here 9 and 1. Rule: the singular values are the square roots of the eigenvalues, namely 3 and 1. The smallest singular value is 1."
-        constraints: "A is 2x2 or 3x2 rigged so A^T A is diagonal or of the form [[a,b],[b,a]] with integer eigenvalues; singular values are integers or single square roots"
+            solution_sketch: 'First $A^TA=\begin{pmatrix}18&18\\18&18\end{pmatrix}$. Its characteristic equation is $\lambda^2-36\lambda=0$, so the eigenvalues are $36$ and $0$. The singular values are $\sqrt{36}=6$ and $\sqrt0=0$.'
+          - problem: 'Find the singular values of the $3\times2$ matrix $A=\begin{pmatrix}1&1\\1&1\\1&-1\end{pmatrix}$.'
+            answer: '2, sqrt(2)'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'First $A^TA=\begin{pmatrix}3&1\\1&3\end{pmatrix}$. A matrix of the form $\begin{pmatrix}a&b\\b&a\end{pmatrix}$ has eigenvalues $a+b=4$ and $a-b=2$. The singular values are $\sqrt4=2$ and $\sqrt2$.'
+          - problem: 'Find the singular values of $A=\begin{pmatrix}1&3\\3&1\end{pmatrix}$.'
+            answer: '4, 2'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'First $A^TA=\begin{pmatrix}10&6\\6&10\end{pmatrix}$, with eigenvalues $10+6=16$ and $10-6=4$. The singular values are $\sqrt{16}=4$ and $\sqrt4=2$.'
+          - problem: 'The matrix $A=\begin{pmatrix}2&4\\4&2\end{pmatrix}$ transforms vectors of the plane. By what largest factor can $A$ multiply the length of a vector?'
+            answer: '6'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The largest stretching factor of $A$ is its largest singular value. Here $A^TA=\begin{pmatrix}20&16\\16&20\end{pmatrix}$ has eigenvalues $36$ and $4$. The largest factor is $\sqrt{36}=6$.'
+          - problem: 'The matrix $A=\begin{pmatrix}2&1\\1&2\end{pmatrix}$ transforms vectors of the plane. What is the smallest factor by which $A$ multiplies the length of a nonzero vector?'
+            answer: '1'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The smallest stretching factor of this invertible $2\times2$ matrix is its smallest singular value. Here $A^TA=\begin{pmatrix}5&4\\4&5\end{pmatrix}$ has eigenvalues $9$ and $1$. The smallest factor is $\sqrt1=1$.'
+          - problem: 'The matrix $A=\begin{pmatrix}3&0\\4&5\end{pmatrix}$ sends the unit circle to an ellipse. Find the lengths of the two semi-axes of this ellipse.'
+            answer: '3*sqrt(5), sqrt(5)'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The semi-axes of the ellipse are the singular values of $A$. First $A^TA=\begin{pmatrix}25&20\\20&25\end{pmatrix}$, with eigenvalues $45$ and $5$. The semi-axes are $\sqrt{45}=3\sqrt5$ and $\sqrt5$.'
+        constraints: 'A is 2x2 or 3x2 rigged so A^T A is diagonal or of the form [[a,b],[b,a]] with integer eigenvalues, plus one A with A^T A = [[25,20],[20,25]]; singular values are integers or single square roots; stretch factors and semi-axes of an ellipse read as singular values'
       - id: kp2
         name: Assembling A = U Sigma V^T
         key_prerequisites: [spectral-theorem-symmetric-matrices]
+        step_check:
+          step: 'use $\mathbf{u}_i = A\mathbf{v}_i/\sigma_i$'
+          question: 'Why is $\mathbf{u}_i=A\mathbf{v}_i/\sigma_i$ a unit vector?'
+          options:
+            - 'Because $\mathbf{v}_i$ is a unit vector and $A$ always keeps the length of every vector'
+            - 'Because dividing by $\sigma_i$ makes every entry of the vector smaller than $1$'
+            - 'Because $\|A\mathbf{v}_i\|=\sigma_i$, so dividing by $\sigma_i$ gives length $1$'
+          answer: 'Because $\|A\mathbf{v}_i\|=\sigma_i$, so dividing by $\sigma_i$ gives length $1$'
+          why: 'The singular value $\sigma_i$ is exactly the length of $A\mathbf{v}_i$ for the unit vector $\mathbf{v}_i$, so the quotient has length $1$.'
         exemplars:
-          - problem: "For A = [0,2;1,0], an SVD has V = [0,1;1,0] and Sigma = [2,0;0,1]. Find U so that A = U Sigma V^T. Give the matrix as [a,b;c,d]."
-            answer: "[1,0;0,1]"
-            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
-            solution_sketch: "First compute A V = [[0,2],[1,0]] [[0,1],[1,0]] = [[2,0],[0,1]]. Since Sigma = diag(2,1), its inverse is diag(1/2,1). Then U = (A V) Sigma^{-1} = [[1,0],[0,1]]. Check U Sigma V^T = A. Thus U = [1,0;0,1]."
-          - problem: "For A = [1,1;-1,1], an SVD has V = [1,0;0,1] and Sigma = [sqrt(2),0;0,sqrt(2)]. Find the row 1, column 1 entry of U."
-            answer: "1/sqrt(2)"
+          - problem: 'The matrix $A=\begin{pmatrix}0&2\\1&0\end{pmatrix}$ has an SVD $A=U\Sigma V^T$ with $V=\begin{pmatrix}0&1\\1&0\end{pmatrix}$ and $\Sigma=\begin{pmatrix}2&0\\0&1\end{pmatrix}$. Find $U$.'
+            answer: '[[1,0],[0,1]]'
+            answer_contract: {"kind": "matrix", "rows": 2, "cols": 2}
+            solution_sketch: 'From $A=U\Sigma V^T$ we get $U=AV\Sigma^{-1}$. First $AV=\begin{pmatrix}2&0\\0&1\end{pmatrix}$, and $\Sigma^{-1}=\begin{pmatrix}1/2&0\\0&1\end{pmatrix}$. So $U=\begin{pmatrix}1&0\\0&1\end{pmatrix}$.'
+          - problem: 'The matrix $A=\begin{pmatrix}0&3\\4&0\end{pmatrix}$ has an SVD $A=U\Sigma V^T$ with $U=\begin{pmatrix}0&1\\1&0\end{pmatrix}$ and $V=I$. Find $\Sigma$.'
+            answer: '[[4,0],[0,3]]'
+            answer_contract: {"kind": "matrix", "rows": 2, "cols": 2}
+            solution_sketch: 'Multiply $A=U\Sigma V^T$ by $U^T$ on the left and by $V$ on the right to get $\Sigma=U^TAV$. Here $U^TA=\begin{pmatrix}4&0\\0&3\end{pmatrix}$ and $V=I$ leaves it unchanged. So $\Sigma=\begin{pmatrix}4&0\\0&3\end{pmatrix}$.'
+          - problem: 'A matrix has the SVD $A=U\Sigma V^T$ with $U=\begin{pmatrix}0&1\\1&0\end{pmatrix}$, $\Sigma=\begin{pmatrix}3&0\\0&2\end{pmatrix}$ and $V=I$. Find $A$.'
+            answer: '[[0,2],[3,0]]'
+            answer_contract: {"kind": "matrix", "rows": 2, "cols": 2}
+            solution_sketch: 'First $U\Sigma=\begin{pmatrix}0&2\\3&0\end{pmatrix}$, since $U$ swaps the rows of $\Sigma$. Then $V^T=I$ leaves the product unchanged. So $A=\begin{pmatrix}0&2\\3&0\end{pmatrix}$.'
+          - problem: 'A rubber sheet is deformed by $\mathbf x\mapsto A\mathbf x$, where $A=U\Sigma V^T$ with $U=I$, $\Sigma=\begin{pmatrix}2&0\\0&1\end{pmatrix}$ and $V^T=\begin{pmatrix}0&1\\1&0\end{pmatrix}$. Where does the point $(3,1)$ go?'
+            answer: '(2, 3)'
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: 'Apply the factors from right to left. First $V^T(3,1)=(1,3)$. Then $\Sigma$ doubles the first coordinate to give $(2,3)$, and $U=I$ changes nothing. So the point goes to $(2,3)$.'
+          - problem: 'The matrix $A=\begin{pmatrix}3&4\\4&-3\end{pmatrix}$ has an SVD $A=U\Sigma V^T$ with $V=I$ and $\Sigma=\begin{pmatrix}5&0\\0&5\end{pmatrix}$. Find $U$.'
+            answer: '[[3/5,4/5],[4/5,-3/5]]'
+            answer_contract: {"kind": "matrix", "rows": 2, "cols": 2}
+            solution_sketch: 'Since $A=U\Sigma V^T$ with $V=I$ and $\Sigma=5I$, we get $U=A\Sigma^{-1}=A/5$. Dividing every entry of $A$ by $5$ gives $U=\begin{pmatrix}3/5&4/5\\4/5&-3/5\end{pmatrix}$. Its columns are orthonormal, as they must be.'
+          - problem: 'The matrix $A=U\Sigma V^T$ has $\Sigma=\begin{pmatrix}4&0\\0&2\end{pmatrix}$. It maps the unit disk, which has area $\pi$, onto an ellipse. What is the area of the ellipse?'
+            answer: '8*pi'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "First note A^T A = 2I, so V = I and both singular values are sqrt(2). The first column of U is A v1 divided by sigma1, where v1 = (1,0). Compute A v1 = (1,-1), whose norm is sqrt(2). Thus u11 = 1/sqrt(2). The entry is 1/sqrt(2)."
-          - problem: "For A = [3,4;4,-3], an SVD has V = [1,0;0,1] and Sigma = [5,0;0,5]. Find U so that A = U Sigma V^T. Give the matrix as [a,b;c,d]."
-            answer: "[3/5,4/5;4/5,-3/5]"
-            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
-            solution_sketch: "First compute A^T A = [[25,0],[0,25]] = 25I. The singular values are 5 and 5, and V = I works. Then U = A V Sigma^{-1} = A (5I)^{-1} = A/5 = [[3/5,4/5],[4/5,-3/5]]. Check U Sigma V^T = A. Thus U = [3/5,4/5;4/5,-3/5]."
-          - problem: "For A = [0,3;4,0], an SVD has U = [0,1;1,0] and V = [1,0;0,1]. Find Sigma so that A = U Sigma V^T. Give the matrix as [a,b;c,d]."
-            answer: "[4,0;0,3]"
-            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
-            solution_sketch: "First compute U^T A V = Sigma. U^T = [[0,1],[1,0]], so U^T A = [[0,1],[1,0]] [[0,3],[4,0]] = [[4,0],[0,3]]. Since V = I, Sigma = [[4,0],[0,3]]. Check U Sigma V^T = A. Thus Sigma = [4,0;0,3]."
-          - problem: "For A = [3,0;0,-2], an SVD has U = [1,0;0,-1] and V = [1,0;0,1]. Find the matrix Sigma so that A = U Sigma V^T. Give the matrix as [a,b;c,d]."
-            answer: "[3,0;0,2]"
-            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
-            solution_sketch: "First rearrange A = U Sigma V^T: multiply by U^T on the left and by V on the right to get Sigma = U^T A V. Compute U^T A = [[1,0],[0,-1]] [[3,0],[0,-2]] = [[3,0],[0,2]]. Since V = I, Sigma = [[3,0],[0,2]]. Check U Sigma V^T = [[1,0],[0,-1]] [[3,0],[0,2]] = [[3,0],[0,-2]] = A. Thus Sigma = [3,0;0,2]."
-          - problem: "For A = [0,2;3,0], an SVD has V = [1,0;0,1] and Sigma = [3,0;0,2]. Find U so that A = U Sigma V^T. Give the matrix as [a,b;c,d]."
-            answer: "[0,1;1,0]"
-            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
-            solution_sketch: "First write Sigma = [[3,0],[0,2]] and V = I. Compute A V = [[0,2],[3,0]]. Since A = U Sigma V^T, U = A V Sigma^{-1}. Sigma^{-1} = [[1/3,0],[0,1/2]]. Multiply: U = [[0,2],[3,0]] [[1/3,0],[0,1/2]] = [[0,1],[1,0]]. Check U Sigma V^T = A. Thus U = [0,1;1,0]."
-        constraints: "2x2 matrices rigged so A^T A is diagonal or 2I; eigenvector normalizations limited to 1/sqrt(2); always verify U Sigma V^T = A"
+            solution_sketch: 'The factors $V^T$ and $U$ are orthogonal, so they only turn the disk. The factor $\Sigma$ stretches it into an ellipse with semi-axes $4$ and $2$. The area of this ellipse is $\pi\cdot4\cdot2=8\pi$.'
+          - problem: 'A matrix $A=U\Sigma V^T$ has $\sigma_1=6$. It maps the unit disk, which has area $\pi$, onto an ellipse of area $24\pi$. Find $\sigma_2$.'
+            answer: '4'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The ellipse has semi-axes $\sigma_1$ and $\sigma_2$, so its area is $\pi\sigma_1\sigma_2$. Then $\pi\cdot6\sigma_2=24\pi$. Dividing by $6\pi$ gives $\sigma_2=4$.'
+          - problem: 'The matrix $A=\begin{pmatrix}3&0\\0&-2\end{pmatrix}$ has an SVD $A=U\Sigma V^T$ with $U=\begin{pmatrix}1&0\\0&-1\end{pmatrix}$ and $V=I$. Find $\Sigma$.'
+            answer: '[[3,0],[0,2]]'
+            answer_contract: {"kind": "matrix", "rows": 2, "cols": 2}
+            solution_sketch: 'Use $\Sigma=U^TAV$. First $U^TA=\begin{pmatrix}3&0\\0&2\end{pmatrix}$, since $U^T$ changes the sign of the second row. Then $V=I$ changes nothing. The singular values are never negative, and here they are $3$ and $2$.'
+        constraints: '2x2 matrices rigged so A^T A is diagonal or 2I, so all matrix entries stay rational; U, Sigma, V or A is asked from the other factors; areas of ellipses as pi times sigma1 times sigma2; always verify U Sigma V^T = A'
       - id: kp3
         name: Reading rank and best rank-1 approximation off the SVD
         key_prerequisites: [null-column-space-rank, spectral-theorem-symmetric-matrices]
+        step_check:
+          step: 'Form the outer product'
+          question: 'Why does the outer product $\mathbf{u}_1\mathbf{v}_1^T$ have rank $1$?'
+          options:
+            - 'It has only one nonzero entry in each of its rows'
+            - 'Each column of it is a multiple of $\mathbf{u}_1$'
+            - 'Its columns are all equal to the vector $\mathbf{v}_1$'
+          answer: 'Each column of it is a multiple of $\mathbf{u}_1$'
+          why: 'The column $j$ of $\mathbf{u}_1\mathbf{v}_1^T$ is $(v_1)_j\,\mathbf{u}_1$, so all columns lie on one line and the rank is $1$.'
         exemplars:
-          - problem: 'A $3 \times 3$ matrix has singular values $3, 1, 0$. What is its rank?'
-            answer: "2"
-            solution_sketch: 'The rank equals the number of nonzero singular values.'
-          - problem: "A 2 x 2 matrix has first singular triple sigma1 = 2, u1 = (1, -1)/sqrt(2), v1 = (1, 1)/sqrt(2). Find its best rank-1 approximation sigma1 u1 v1^T. Give the matrix as [a,b;c,d]."
-            answer: "[1,1;-1,-1]"
-            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
-            solution_sketch: "Step 1, outer product rule: u1 v1^T = [[1/2, 1/2],[-1/2, -1/2]]. Step 2, multiply by sigma1 = 2 to get A1 = [[1, 1],[-1, -1]]. So the best rank-1 approximation is [1,1;-1,-1]."
-          - problem: "A 2 x 2 matrix has sigma1 = 2 and sigma2 = 0, with u1 = (1, 1)/sqrt(2) and v1 = (1, 1)/sqrt(2). Compute its best rank-1 approximation sigma1 u1 v1^T. Give the matrix as [a,b;c,d]."
-            answer: "[1,1;1,1]"
-            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
-            solution_sketch: "Step 1, outer product rule: u1 v1^T = [[1/2, 1/2],[1/2, 1/2]]. Step 2, multiply by sigma1 = 2 to get A1 = [[1, 1],[1, 1]]. Because sigma2 = 0 this approximation is exact, so the best rank-1 approximation is [1,1;1,1]."
-          - problem: "A 4 x 4 matrix has singular values 5, 3, 0, 0 in decreasing order. Determine the rank of the matrix."
-            answer: "2"
+          - problem: 'A $3\times3$ matrix has the singular values $3$, $1$ and $0$. What is its rank?'
+            answer: '2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1, rank rule: the rank equals the number of singular values that are not zero. Step 2, inspect the list 5, 3, 0, 0 and count the nonzero values 5 and 3. So the rank is 2."
-          - problem: "A 5 x 5 data matrix has singular values 6, 5, 2, 0, 0. The number of nonzero singular values equals the rank. Compute the rank of the matrix."
-            answer: "3"
+            solution_sketch: 'The rank of a matrix equals the number of its nonzero singular values. The list $3,1,0$ has two nonzero values. So the rank is $2$.'
+          - problem: 'A $2\times2$ matrix has the singular value $\sigma_1=2$ with $\mathbf u_1=\frac1{\sqrt2}(1,-1)$ and $\mathbf v_1=\frac1{\sqrt2}(1,1)$. Find its best rank-$1$ approximation $\sigma_1\mathbf u_1\mathbf v_1^T$.'
+            answer: '[[1,1],[-1,-1]]'
+            answer_contract: {"kind": "matrix", "rows": 2, "cols": 2}
+            solution_sketch: 'The outer product is $\mathbf u_1\mathbf v_1^T=\frac12\begin{pmatrix}1&1\\-1&-1\end{pmatrix}$. Multiplying by $\sigma_1=2$ gives $\begin{pmatrix}1&1\\-1&-1\end{pmatrix}$. This is the best rank-$1$ approximation.'
+          - problem: 'A grayscale picture of $100\times100$ pixels is stored as a matrix with $10000$ entries. Its rank-$3$ approximation $\sigma_1\mathbf u_1\mathbf v_1^T+\sigma_2\mathbf u_2\mathbf v_2^T+\sigma_3\mathbf u_3\mathbf v_3^T$ is stored as the three numbers $\sigma_i$ and the three pairs of vectors $\mathbf u_i,\mathbf v_i$, each with $100$ entries. How many numbers must be stored?'
+            answer: '603'
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Step 1, rank rule: for an SVD the rank is the number of nonzero singular values. Step 2, count the nonzero values in 6, 5, 2, 0, 0, which are 6, 5 and 2. So the rank is 3."
-          - problem: "A 2 x 2 matrix has sigma1 = 3 with u1 = (0, 1) and v1 = (1, 0). Find its best rank-1 approximation sigma1 u1 v1^T. Give the matrix as [a,b;c,d]."
-            answer: "[0,0;3,0]"
-            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
-            solution_sketch: "Step 1, outer product rule: u1 v1^T = [[0, 0],[1, 0]]. Step 2, multiply by sigma1 = 3 to get the best rank-1 approximation [[0, 0],[3, 0]]. So the best rank-1 approximation is [0,0;3,0]."
-        constraints: "SVD data given or carried over from kp2-scale computations; rank read off the sigma list; rank-1 term computed as an explicit outer product with entries in -3..3"
+            solution_sketch: 'Each of the three terms needs one number $\sigma_i$ and two vectors of $100$ entries, which is $1+100+100=201$ numbers. Three terms need $3\cdot201=603$ numbers. This is far fewer than the $10000$ entries of the full picture.'
+          - problem: 'A $6\times6$ matrix has the singular values $7$, $4$, $2$, $0$, $0$ and $0$. What is the dimension of its null space?'
+            answer: '3'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The rank is the number of nonzero singular values, which is $3$. By the rank-nullity theorem the null space has dimension $6-3=3$.'
+          - problem: 'A $2\times2$ matrix has the singular value $\sigma_1=3$ with $\mathbf u_1=(0,1)$ and $\mathbf v_1=(1,0)$. Find its best rank-$1$ approximation $\sigma_1\mathbf u_1\mathbf v_1^T$.'
+            answer: '[[0,0],[3,0]]'
+            answer_contract: {"kind": "matrix", "rows": 2, "cols": 2}
+            solution_sketch: 'The outer product is $\mathbf u_1\mathbf v_1^T=\begin{pmatrix}0\\1\end{pmatrix}\begin{pmatrix}1&0\end{pmatrix}=\begin{pmatrix}0&0\\1&0\end{pmatrix}$. Multiplying by $\sigma_1=3$ gives $\begin{pmatrix}0&0\\3&0\end{pmatrix}$.'
+          - problem: 'A $2\times2$ matrix $A$ has the singular values $5$ and $4$, and $A_1$ is its best rank-$1$ approximation. By what largest factor can $A-A_1$ multiply the length of a vector?'
+            answer: '4'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The difference $A-A_1$ keeps only the second singular piece $\sigma_2\mathbf u_2\mathbf v_2^T$. Its largest stretching factor is the remaining singular value $\sigma_2=4$.'
+          - problem: 'A $5\times5$ data matrix has the singular values $6$, $5$, $2$, $0$ and $0$. Find its rank.'
+            answer: '3'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The rank equals the number of nonzero singular values. The values $6$, $5$ and $2$ are nonzero, and the other two are $0$. So the rank is $3$.'
+          - problem: 'A $2\times2$ matrix has the singular value $\sigma_1=2$ and $\sigma_2=0$, with $\mathbf u_1=\mathbf v_1=\frac1{\sqrt2}(1,1)$. Find its best rank-$1$ approximation $\sigma_1\mathbf u_1\mathbf v_1^T$.'
+            answer: '[[1,1],[1,1]]'
+            answer_contract: {"kind": "matrix", "rows": 2, "cols": 2}
+            solution_sketch: 'The outer product is $\mathbf u_1\mathbf v_1^T=\frac12\begin{pmatrix}1&1\\1&1\end{pmatrix}$. Multiplying by $\sigma_1=2$ gives $\begin{pmatrix}1&1\\1&1\end{pmatrix}$. Since $\sigma_2=0$, this approximation equals the matrix itself.'
+        constraints: 'SVD data given or carried over from kp2-scale computations; rank and null-space dimension read off the sigma list; rank-1 term computed as an explicit outer product with entries in -3..3; storage count for a rank-k picture'
     diagnostic_exemplar:
       problem: 'For $A = \begin{pmatrix}0&4\\2&0\end{pmatrix}$, find the singular values, an SVD $A = U\Sigma V^T$, and the rank of $A$.'
       answer: '$\sigma_1 = 4$, $\sigma_2 = 2$; $U = I_2$, $\Sigma = \begin{pmatrix}4&0\\0&2\end{pmatrix}$, $V^T = \begin{pmatrix}0&1\\1&0\end{pmatrix}$; rank $2$'

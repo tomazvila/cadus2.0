@@ -4,10 +4,10 @@ module: "Reasoning & Proof"
 topics:
   - id: geometric-reasoning
     name: Inductive and Deductive Reasoning in Geometry
-    core: true                 # proof machinery: every proof-demanding geometry topic builds on it
+    core: true
     difficulty: 0.3
     drill: false
-    answer_kind: numeric       # flipped from multi-step: exemplars are single-answer (labels with contracts / numerals)
+    answer_kind: proof
     expected_time_secs: 90
     prerequisites:
       - id: angle-relationships
@@ -18,66 +18,134 @@ topics:
         key: false
     knowledge_points:
       - id: kp1
-        name: Conjectures from examples and counterexamples
+        name: 'Conjectures from examples and counterexamples'
         key_prerequisites: [angle-relationships]
+        step_check:
+          step: 'One pair of acute angles whose sum is not acute is enough to show the conjecture false.'
+          question: 'Why is one counterexample enough to show that a conjecture is false?'
+          options:
+            - 'The conjecture needs many failing cases, and one failure begins to outweigh the passes'
+            - 'A counterexample proves a different statement, and the conjecture follows from its converse'
+            - 'The conjecture claims the conclusion in every case, so one failing case contradicts it'
+            - 'Every conjecture fails once a measurement is rounded, and one pair is enough to show it'
+          answer: 'The conjecture claims the conclusion in every case, so one failing case contradicts it'
+          why: 'A conjecture says the conclusion holds in every case that meets the hypothesis, so one such case with a failed conclusion contradicts it. Passing cases never decide the matter, and rounding does not change the logic.'
         exemplars:
-          - problem: 'A student measures three pairs of vertical angles, finds each pair congruent, and concludes that vertical angles are always congruent. Is this inductive or deductive reasoning?'
-            answer: 'inductive'
-            answer_contract: {kind: label, options: [[inductive], [deductive]]}
-            solution_sketch: 'The conclusion generalizes from observed examples rather than following from accepted facts, so it is inductive.'
-          - problem: 'Conjecture: any two acute angles are complementary. Which pair of angle measures is a counterexample: $30^\circ$ and $40^\circ$, $30^\circ$ and $60^\circ$, $45^\circ$ and $45^\circ$, or $10^\circ$ and $80^\circ$?'
-            answer: '30 and 40'
-            answer_contract: {kind: label, options: [[30 and 40], [30 and 60], [45 and 45], [10 and 80]]}
-            solution_sketch: 'Both $30^\circ$ and $40^\circ$ are acute, but $30 + 40 = 70 \neq 90$: the hypothesis holds and the conclusion fails.'
-          - problem: 'Conjecture: the sum of two acute angles is always acute. Which pair of angle measures is a counterexample: $30^\circ$ and $20^\circ$, $40^\circ$ and $40^\circ$, $50^\circ$ and $30^\circ$, or $70^\circ$ and $80^\circ$?'
-            answer: '70 and 80'
-            answer_contract: {kind: label, options: [[30 and 20], [40 and 40], [50 and 30], [70 and 80]]}
-            solution_sketch: 'Both $70^\circ$ and $80^\circ$ are acute, but their sum $150^\circ$ is obtuse, not acute.'
-          - problem: 'A single example that shows a conjecture to be false is called what: a conjecture, a counterexample, a theorem, or a hypothesis?'
-            answer: 'counterexample'
-            answer_contract: {kind: label, options: [[conjecture], [counterexample], [theorem], [hypothesis]]}
-            solution_sketch: 'One example satisfying the hypothesis but violating the conclusion disproves the conjecture.'
-        constraints: "concrete geometric conjectures about angles, segments, or triangles; a counterexample must satisfy the hypothesis and violate the conclusion; no symbolic logic"
-      - id: kp2
-        name: Hypothesis and conclusion of an if-then statement
-        key_prerequisites: []
-        exemplars:
-          - problem: 'In the if-then form of "All right angles are congruent", what is the hypothesis: two angles are right angles, two angles are congruent, two angles are complementary, or two angles are vertical angles?'
-            answer: 'two angles are right angles'
-            answer_contract: {kind: label, options: [[two angles are right angles], [two angles are congruent], [two angles are complementary], [two angles are vertical angles]]}
-            solution_sketch: 'If-then form: "If two angles are right angles, then they are congruent"; the part after "if" is the hypothesis.'
-          - problem: 'What is the conclusion of "If a point $M$ is the midpoint of $\overline{AB}$, then $AM = MB$": $M$ is the midpoint of $\overline{AB}$, $AM = MB$, $AB = 2 \cdot AM$, or $M$ lies between $A$ and $B$?'
-            answer: 'AM = MB'
-            answer_contract: {kind: label, options: [[M is the midpoint of AB], [AM = MB], [AB = 2 x AM], [M lies between A and B]]}
-            solution_sketch: 'The conclusion is the part after "then": $AM = MB$.'
-          - problem: 'What is the conclusion of "If two angles are supplementary, then their measures sum to $180^\circ$": two angles are supplementary, their measures sum to $180^\circ$, two angles are congruent, or their measures sum to $90^\circ$?'
-            answer: 'their measures sum to 180 degrees'
-            answer_contract: {kind: label, options: [[two angles are supplementary], [their measures sum to 180 degrees], [two angles are congruent], [their measures sum to 90 degrees]]}
-            solution_sketch: 'The conclusion is the part after "then": the measures sum to $180^\circ$.'
-          - problem: 'Rewrite as an if-then statement: "Vertical angles are congruent." What is the hypothesis of the if-then form: two angles are congruent, two angles are vertical angles, two angles share a vertex, or two angles are supplementary?'
-            answer: 'two angles are vertical angles'
-            answer_contract: {kind: label, options: [[two angles are congruent], [two angles are vertical angles], [two angles share a vertex], [two angles are supplementary]]}
-            solution_sketch: 'If-then form: "If two angles are vertical angles, then they are congruent"; the part after "if" is the hypothesis.'
-        constraints: "statements about angles, segments, triangles, or parallel lines; ask for the if-then rewrite and the two parts"
-      - id: kp3
-        name: Converses and deduction with geometric statements
-        key_prerequisites: [angle-relationships]
-        exemplars:
-          - problem: 'What is the converse of "If two angles are vertical angles, then they are congruent": if two angles are congruent, then they are vertical angles; if two angles are vertical angles, then they are supplementary; if two angles are congruent, then they are right angles; or two vertical angles are never congruent?'
-            answer: 'if two angles are congruent, then they are vertical angles'
-            answer_contract: {kind: label, options: [['if two angles are congruent, then they are vertical angles'], ['if two angles are vertical angles, then they are supplementary'], ['if two angles are congruent, then they are right angles'], ['two vertical angles are never congruent']]}
-            solution_sketch: 'The converse swaps the hypothesis and the conclusion.'
-          - problem: 'Given the true statement "if $M$ is the midpoint of $\overline{AB}$, then $AM = MB$", and given that $M$ is the midpoint of $\overline{AB}$ with $AB = 14$, what is $AM$?'
-            answer: "7"
-            solution_sketch: 'The hypothesis holds, so the conclusion follows deductively: $AM = 14/2 = 7$.'
-          - problem: 'Is the converse of "If two angles are right angles, then they are congruent" true? Answer yes or no.'
+          - problem: 'A student measures the angles of three triangles drawn on paper and finds that the angles of each triangle add up to $180^\circ$. From this she concludes that the angles of every triangle add up to $180^\circ$. Is her reasoning inductive or deductive?'
+            answer_contract: {"kind":"label","options":[["inductive","inductive reasoning","it is inductive","inductive logic"],["deductive reasoning","deductive","it is deductive","deductive logic"]]}
+            answer: 'inductive reasoning'
+            solution_sketch: 'She generalizes from three observed cases to every triangle. A conclusion drawn from examples, not from accepted facts, is inductive reasoning, and three measurements do not prove it.'
+          - problem: 'The conjecture is: the sum of two acute angles is always acute. Angle $P$ measures $62^\circ$. What is the smallest whole-number measure of an acute angle $Q$ for which the pair $P$ and $Q$ is a counterexample?'
+            answer_contract: {"kind":"unit","quantity":"angle","unit":"°","allow_omitted":true}
+            answer: '28'
+            solution_sketch: 'A counterexample needs two acute angles whose sum is not acute, so the sum must be at least $90^\circ$. Then $62 + Q \ge 90$ gives $Q \ge 28$, and $28^\circ$ is acute, so $Q = 28$ with the sum exactly $90^\circ$.'
+          - problem: 'A landscaper checks one crossing of two straight garden paths and finds that all four angles are $90^\circ$. She conjectures that the four angles at every crossing of two paths are equal. At another crossing one angle measures $70^\circ$. What is the measure of the angle next to it along the same path?'
+            answer_contract: {"kind":"unit","quantity":"angle","unit":"°","allow_omitted":true}
+            answer: '110'
+            solution_sketch: 'Angles that form a straight line add up to $180^\circ$, so the neighbor of the $70^\circ$ angle measures $180 - 70 = 110$ degrees. Since $110 \ne 70$, the four angles are not equal at this crossing, so the conjecture is false.'
+          - problem: 'A student conjectures that the hypotenuse of every right triangle is longer than each of its legs. She draws a right triangle with legs of $5$ cm and $12$ cm. Is this triangle a counterexample to her conjecture?'
+            answer_contract: {"kind":"label","options":[["no","no, it is not a counterexample","it is not a counterexample","not a counterexample"],["yes","yes, it is a counterexample","it is a counterexample","counterexample"]]}
             answer: 'no'
-            answer_contract: {kind: label, options: [[yes], [no]]}
-            solution_sketch: 'The converse says congruent angles are right angles, but two $40^\circ$ angles are congruent without being right.'
-          - problem: 'Given the true statement "if two angles form a linear pair, then they are supplementary", and $\angle 1$ and $\angle 2$ form a linear pair with $m\angle 1 = 110^\circ$, what is $m\angle 2$, in degrees?'
-            answer: "70"
-            solution_sketch: 'The hypothesis holds, so the conclusion follows: $m\angle 2 = 180 - 110 = 70$.'
-        constraints: "converse formed by swapping hypothesis and conclusion; a false converse needs a counterexample; deductions stay one step, using stated geometric facts only; no truth tables"
+            solution_sketch: 'The triangle is a right triangle, so the hypothesis holds. Its hypotenuse is $\sqrt{5^2 + 12^2} = 13$ cm, which is longer than both legs, so the conclusion holds too and the triangle supports the conjecture instead of refuting it.'
+          - problem: 'A drafter knows that the angles of every triangle add up to $180^\circ$. A triangular roof plate has one angle of $90^\circ$ and another of $35^\circ$, so she concludes that the third angle is $55^\circ$. Is her reasoning inductive or deductive?'
+            answer_contract: {"kind":"label","options":[["deductive","deductive reasoning","it is deductive","deductive logic"],["inductive reasoning","inductive","it is inductive","inductive logic"]]}
+            answer: 'deductive reasoning'
+            solution_sketch: 'She applies a fact that is already accepted, the angle sum of a triangle, to one particular plate. A conclusion that follows from accepted facts is deductive reasoning, and the third angle is $180 - 90 - 35 = 55$ degrees.'
+          - problem: 'A fence builder conjectures that a triangular pen made with $30$ m of fencing always has all three sides shorter than $12$ m. She looks for a counterexample with sides of $13$ m and $9$ m along two walls. How long, in metres, must the third side be if she uses all the fencing?'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"m","allow_omitted":true}
+            answer: '8'
+            solution_sketch: 'The third side is $30 - 13 - 9 = 8$ m, and a triangle with sides $13$, $9$ and $8$ exists because $13 < 9 + 8$. The side of $13$ m is not shorter than $12$ m, so this pen is a counterexample.'
+          - problem: 'Write the full proof that the conjecture "the sum of two acute angles is always an acute angle" is false.'
+            answer_contract: {"kind":"none"}
+            answer: '70 and 80 degrees: sum is 150'
+            solution_sketch: 'A conjecture is false when one case meets its hypothesis and breaks its conclusion. 1. Take $\angle P$ with $m\angle P = 70^\circ$ and $\angle Q$ with $m\angle Q = 80^\circ$. 2. Each measure is less than $90^\circ$, so both angles are acute and the hypothesis holds. 3. The sum is $70 + 80 = 150$ degrees, which is greater than $90^\circ$, so the sum is obtuse and not acute. 4. The pair meets the hypothesis and breaks the conclusion, so it is a counterexample and the conjecture is false.'
+        constraints: 'concrete geometric conjectures about angles, segments, or triangles; a counterexample must satisfy the hypothesis and violate the conclusion; the last exemplar is a written counterexample proof; no symbolic logic'
+      - id: kp2
+        name: 'Hypothesis and conclusion of an if-then statement'
+        key_prerequisites: []
+        step_check:
+          step: 'The hypothesis is the part after "if", so for "All right angles are congruent" it is that two angles are right angles.'
+          question: 'Why is "two angles are congruent" not the hypothesis of "All right angles are congruent"?'
+          options:
+            - 'It is the claim the statement makes, so it is the conclusion that follows "then"'
+            - 'It repeats the word "angles" from the subject, and a hypothesis must name a different object'
+            - 'It is a fact that needs proof first, and a hypothesis must be a postulate'
+            - 'It has no number in it, and a hypothesis must give a measure of the angle'
+          answer: 'It is the claim the statement makes, so it is the conclusion that follows "then"'
+          why: 'The hypothesis is what is assumed, the right angles, and the conclusion is what follows, that they are congruent. A hypothesis does not have to be a postulate, to include a number, or to name a new object.'
+        exemplars:
+          - problem: 'What is the hypothesis of the statement "All right angles are congruent"?'
+            answer_contract: {"kind":"label","options":[["two angles are right angles","the angles are right angles","they are right angles","right angles"],["two angles are congruent","the angles are congruent","they are congruent","congruent angles"],["two angles are complementary","the angles are complementary","they are complementary","complementary angles"],["two angles are vertical angles","the angles are vertical angles","they are vertical angles","vertical angles"]]}
+            answer: 'two angles are right angles'
+            solution_sketch: 'In if-then form the statement reads: if two angles are right angles, then they are congruent. The hypothesis is the part after "if", so it is that two angles are right angles.'
+          - problem: 'The statement "If two angles form a linear pair, then their measures add up to $180^\circ$" is true. Angles $\angle 1$ and $\angle 2$ form a linear pair, with $m\angle 1 = (2x + 10)^\circ$ and $m\angle 2 = (3x - 5)^\circ$. What is $x$?'
+            answer_contract: {"kind":"exact"}
+            answer: '35'
+            solution_sketch: 'The hypothesis holds, so the conclusion gives $(2x + 10) + (3x - 5) = 180$. This simplifies to $5x + 5 = 180$, so $x = 35$, and the angles measure $80^\circ$ and $100^\circ$.'
+          - problem: 'A carpenter uses the rule "If a quadrilateral is a rectangle, then its diagonals are congruent" to check a rectangular shed door frame. One diagonal measures $2.6$ m. How long is the other diagonal, in metres?'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"m","allow_omitted":true}
+            answer: '2.6'
+            solution_sketch: 'The frame is a rectangle, so the hypothesis is met. The conclusion then says that the diagonals are congruent, so the other diagonal also measures $2.6$ m.'
+          - problem: 'What is the conclusion of the statement "If $M$ is the midpoint of $\overline{AB}$, then $AM = MB$"?'
+            answer_contract: {"kind":"label","options":[["AM equals MB","AM = MB","AM and MB have equal lengths","AM and MB are equal","AM is congruent to MB"],["M is the midpoint of AB","M is the midpoint of segment AB"],["M lies between A and B","M is between A and B"],["AM is longer than MB","AM is greater than MB"]]}
+            answer: 'AM = MB'
+            solution_sketch: 'The conclusion is the part after "then", which is $AM = MB$. The part "$M$ is the midpoint of $\overline{AB}$" is the hypothesis, and it is the given fact.'
+          - problem: 'The statement "If two angles are vertical angles, then they are congruent" is true. Two intersecting lines form vertical angles $\angle 1$ and $\angle 3$ with $m\angle 1 = (4x - 12)^\circ$ and $m\angle 3 = (x + 21)^\circ$. What is $m\angle 1$?'
+            answer_contract: {"kind":"unit","quantity":"angle","unit":"°","allow_omitted":true}
+            answer: '32'
+            solution_sketch: 'The angles are vertical, so they are congruent and $4x - 12 = x + 21$. This gives $3x = 33$ and $x = 11$, so $m\angle 1 = 4(11) - 12 = 32$ degrees, and $m\angle 3 = 11 + 21 = 32$ degrees agrees.'
+          - problem: 'A diagonal brace splits the $90^\circ$ corner of a shelf into two angles, and one of them measures $37^\circ$. By the rule "If two angles are complementary, then their measures add up to $90^\circ$", what is the measure of the other angle, in degrees?'
+            answer_contract: {"kind":"unit","quantity":"angle","unit":"°","allow_omitted":true}
+            answer: '53'
+            solution_sketch: 'The two angles are complementary, so their measures add up to $90^\circ$. The other angle measures $90 - 37 = 53$ degrees.'
+          - problem: 'Write the full proof that all right angles are congruent. Start by writing the statement in if-then form.'
+            answer_contract: {"kind":"none"}
+            answer: 'Both measure 90, so they are congruent'
+            solution_sketch: 'If-then form: if two angles are right angles, then they are congruent. Given: $\angle A$ and $\angle B$ are right angles. Prove: $\angle A \cong \angle B$. 1. $m\angle A = 90^\circ$ (definition of a right angle). 2. $m\angle B = 90^\circ$ (definition of a right angle). 3. $m\angle A = m\angle B$ (both equal $90^\circ$, substitution). 4. $\angle A \cong \angle B$ (definition of congruent angles).'
+        constraints: 'statements about angles, segments, triangles, or parallel lines; ask for the hypothesis or the conclusion of a statement and use the statement on given measures; the last exemplar is a written proof of a statement given in if-then form'
+      - id: kp3
+        name: 'Converses and deduction with geometric statements'
+        key_prerequisites: [angle-relationships]
+        step_check:
+          step: 'The converse of "If $p$, then $q$" swaps the two parts and reads "If $q$, then $p$".'
+          question: 'Why can a true statement have a false converse?'
+          options:
+            - 'The converse repeats the statement in other words, so it has the same truth in every case'
+            - 'The converse is true whenever the statement is true, so only a false statement has a false one'
+            - 'The converse is a theorem only if the statement was a postulate, and not otherwise'
+            - 'The converse claims something new, so a case can meet its hypothesis and break its conclusion'
+          answer: 'The converse claims something new, so a case can meet its hypothesis and break its conclusion'
+          why: 'Swapping the parts creates a different claim, so it needs its own check: vertical angles are always congruent, yet congruent angles are not always vertical. The converse does not say the same thing, and it does not depend on postulates.'
+        exemplars:
+          - problem: 'Is the converse of "If two angles are vertical angles, then they are congruent" true?'
+            answer_contract: {"kind":"label","options":[["no","no, it is false","it is false","false","not true"],["yes","yes, it is true","it is true","true"]]}
+            answer: 'no'
+            solution_sketch: 'The converse reads: if two angles are congruent, then they are vertical angles. It is false: the two $40^\circ$ base angles of an isosceles triangle are congruent, but they are not vertical angles.'
+          - problem: 'The statement "If a ray bisects an angle, then it divides the angle into two congruent angles" is true. Ray $\overrightarrow{BD}$ bisects $\angle ABC$, with $m\angle ABD = (3x + 4)^\circ$ and $m\angle DBC = (5x - 16)^\circ$. What is $m\angle ABC$?'
+            answer_contract: {"kind":"unit","quantity":"angle","unit":"°","allow_omitted":true}
+            answer: '68'
+            solution_sketch: 'The ray is a bisector, so the two angles are congruent and $3x + 4 = 5x - 16$. This gives $x = 10$, so each part measures $34^\circ$ and $m\angle ABC = 34 + 34 = 68$ degrees.'
+          - problem: 'A side road meets a straight highway and forms two angles that make a linear pair, because the statement "If two angles form a linear pair, then they are supplementary" is true. The angles measure $(4x + 14)^\circ$ and $(2x + 16)^\circ$. What is the measure of the smaller angle, in degrees?'
+            answer_contract: {"kind":"unit","quantity":"angle","unit":"°","allow_omitted":true}
+            answer: '66'
+            solution_sketch: 'The angles are supplementary, so $(4x + 14) + (2x + 16) = 180$ and $6x + 30 = 180$, which gives $x = 25$. The angles measure $4(25) + 14 = 114$ degrees and $2(25) + 16 = 66$ degrees, so the smaller one is $66$ degrees.'
+          - problem: 'Is the converse of "If two segments have equal lengths, then they are congruent" true?'
+            answer_contract: {"kind":"label","options":[["yes","yes, it is true","it is true","true"],["no","no, it is false","it is false","false","not true"]]}
+            answer: 'yes'
+            solution_sketch: 'The converse reads: if two segments are congruent, then they have equal lengths. This is true, because congruent segments are defined as segments of equal length.'
+          - problem: 'The statement "If a point is the midpoint of a segment, then it is equally far from the two endpoints" is true. Point $M$ is the midpoint of $\overline{AB}$, with $AM = 3x + 2$ and $MB = 5x - 10$. How long is $\overline{AB}$?'
+            answer_contract: {"kind":"exact"}
+            answer: '40'
+            solution_sketch: 'The midpoint is equally far from both endpoints, so $3x + 2 = 5x - 10$ and $x = 6$. Then $AM = MB = 20$, and $AB = 20 + 20 = 40$.'
+          - problem: 'Two braces on a fence make angles $\angle P$ and $\angle Q$. Each of them is supplementary to the $75^\circ$ angle $\angle R$ at a post. By the statement "If two angles are supplementary to the same angle, then they are congruent", what is the measure of $\angle Q$, in degrees?'
+            answer_contract: {"kind":"unit","quantity":"angle","unit":"°","allow_omitted":true}
+            answer: '105'
+            solution_sketch: 'The angle $\angle Q$ is supplementary to $\angle R$, so $m\angle Q = 180 - 75 = 105$ degrees. The angle $\angle P$ is also supplementary to $\angle R$, so it measures $105^\circ$ too, and the two braces are congruent.'
+          - problem: 'Write the full proof that the converse of "If two angles are vertical angles, then they are congruent" is false.'
+            answer_contract: {"kind":"none"}
+            answer: 'Two 40 degree angles, not vertical'
+            solution_sketch: 'The converse reads: if two angles are congruent, then they are vertical angles. A statement is false if one case meets its hypothesis and breaks its conclusion. 1. Draw isosceles triangle $ABC$ with base angles $m\angle B = m\angle C = 40^\circ$. 2. Then $\angle B \cong \angle C$, so the hypothesis holds. 3. Vertical angles are the opposite angles formed by two intersecting lines and share one vertex, but $\angle B$ and $\angle C$ have different vertices, so they are not vertical angles. 4. The conclusion fails, so this pair is a counterexample and the converse is false.'
+        constraints: 'converse formed by swapping hypothesis and conclusion; a false converse needs a counterexample; deductions use stated geometric facts only, often with measures given as expressions; the last exemplar is a written counterexample proof; no truth tables'
     diagnostic_exemplar:
       problem: 'Write the converse of "if two angles are vertical angles, then they are congruent", state whether the converse is true, and give a counterexample if it is false.'
       answer: 'Converse: if two angles are congruent, then they are vertical angles. It is false: two $40^\circ$ base angles of an isosceles triangle are congruent but not vertical.'
@@ -93,10 +161,10 @@ topics:
 
   - id: postulates-theorems-justifications
     name: Postulates, Theorems, and Justifications
-    core: true                 # the "reasons" vocabulary every proof step cites; gates all geometry proof topics
+    core: true
     difficulty: 0.34
     drill: false
-    answer_kind: numeric       # flipped from multi-step: single-answer content (labels with contracts / numerals)
+    answer_kind: proof
     expected_time_secs: 90
     prerequisites:
       - id: geometric-reasoning
@@ -107,76 +175,134 @@ topics:
         key: false
     knowledge_points:
       - id: kp1
-        name: Definitions, postulates, and theorems
+        name: 'Definitions, postulates, and theorems'
         key_prerequisites: []
+        step_check:
+          step: 'It is not; it can be derived from accepted facts.'
+          question: 'Why is "if two angles are vertical angles, then they are congruent" not a postulate?'
+          options:
+            - 'It contains the word "if", and a postulate cannot be written in if-then form'
+            - 'It is proved from earlier statements, so it is not accepted without proof'
+            - 'It is true only for one pair of angles, and a postulate must be true for all pairs'
+            - 'It talks about angles, and a postulate may talk only about points and lines'
+          answer: 'It is proved from earlier statements, so it is not accepted without proof'
+          why: 'A postulate is accepted without proof, but this statement follows from the facts that vertical angles have a common supplement. Postulates can be written as if-then statements, and they can be about angles.'
         exemplars:
-          - problem: "Consider the statement: through any two distinct points there passes exactly one line. Statements in geometry are either accepted as true without proof, proved from earlier statements, or they give the meaning of a term. Which category does this statement belong to?"
-            answer: "postulate"
-            answer_contract: {"kind": "label", "options": [["definition"], ["postulate"], ["theorem"], ["conjecture"]]}
-            solution_sketch: "The full statement is: through any two distinct points there passes exactly one line. A geometry course accepts it as true without any proof, so it is a postulate. The option definition is wrong because the statement does not state what any term means. The option theorem is wrong because no proof from earlier statements exists for it. The option conjecture is wrong because a course accepts it as an axiom rather than treating it as a guess to test. The answer is postulate."
-          - problem: "A text states: the midpoint of a segment is the point that separates the segment into two segments of equal length. Point M is the midpoint of segment AB, and AB = 36. Give the verdict for this statement as one word and give the length of AM."
-            answer: "verdict = definition; AM = 18"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["definition"], ["postulate"], ["theorem"], ["conjecture"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "AM"}]}
-            solution_sketch: "The full statement is: the midpoint of a segment is the point that separates the segment into two segments of equal length. It tells exactly what the term midpoint means and it works both ways, since M is the midpoint exactly when AM equals MB, so the verdict is definition. The option postulate is wrong because the statement is not accepted without proof; the option theorem is wrong because it is not proved from earlier statements; the option conjecture is wrong because it fixes a meaning rather than guessing a fact. Apply the reversible meaning: since M is the midpoint, AM = MB = 36/2 = 18. The answer is verdict = definition and AM = 18."
-          - problem: "A list has four statements. (1) The bisector of an angle is the ray that splits the angle into two congruent angles. (2) Through a point not on a given line there is exactly one line parallel to the given line. (3) If two angles are complementary to the same angle, then they are congruent. (4) Vertical angles are congruent. How many of the statements are theorems?"
-            answer: "2"
-            answer_contract: {"kind": "exact"}
-            solution_sketch: "Classify each statement by its source. Statement (1) gives the meaning of the term bisector, so it is a definition. Statement (2) is the parallel postulate, accepted as true without proof. Statement (3) is proved, since both angles equal 90 minus the measure of the shared angle, so it is a theorem. Statement (4) is proved from pairs of supplementary angles, so it is also a theorem. Counting the proved statements gives 2. The answer is 2."
-          - problem: "Consider the statement: if two angles are supplementary to the same angle, then they are congruent. Angle PQR and angle STU are both supplementary to angle XYZ, and the measure of angle PQR is 74 degrees. Give the verdict for the statement as one word and give the measure of angle STU in degrees."
-            answer: "verdict = theorem; STU = 74"
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["definition"], ["postulate"], ["theorem"], ["conjecture"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "STU"}]}
-            solution_sketch: "The full statement is: if two angles are supplementary to the same angle, then they are congruent. It follows from earlier facts, because each of the two angles equals 180 minus the measure of the shared angle, so a proof exists and the verdict is theorem. The option postulate is wrong because the statement is not merely accepted without proof. The option definition is wrong because it does not give the meaning of any term. The option conjecture is wrong because it is a proved fact, not a guess. Apply it: angle STU is congruent to angle PQR, so its measure is 74. The answer is verdict = theorem and STU = 74."
-        constraints: "classify standard geometry statements as definition, postulate, or theorem; include one reversible definition (midpoint, bisector, right angle) per set"
+          - problem: 'Is the statement "Through any two distinct points there is exactly one line" a definition, a postulate, or a theorem?'
+            answer_contract: {"kind":"label","options":[["postulate","it is a postulate","axiom","an assumption"],["definition","it is a definition"],["theorem","it is a theorem"],["conjecture","it is a conjecture"]]}
+            answer: 'postulate'
+            solution_sketch: 'The statement is not the meaning of a term, so it is not a definition. Nothing earlier proves it: it is accepted as true without proof, so it is a postulate.'
+          - problem: 'A surveyor places a stake $M$ on the boundary segment $\overline{AB}$ so that $M$ is the midpoint of the segment, which is defined as the point that splits the segment into two segments of equal length. Here $AM = (4x + 3)$ m and $MB = (6x - 9)$ m. How long is the boundary $\overline{AB}$, in metres?'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"m","allow_omitted":true}
+            answer: '54'
+            solution_sketch: 'The definition of midpoint gives $AM = MB$, so $4x + 3 = 6x - 9$ and $x = 6$. Then $AM = 27$ m and $MB = 27$ m, so the boundary is $AB = 27 + 27 = 54$ m.'
+          - problem: 'A surveyor''s handbook states that the angles of a triangle add up to $180^\circ$, and it proves this from the parallel postulate. Is that statement a definition, a postulate, or a theorem?'
+            answer_contract: {"kind":"label","options":[["theorem","it is a theorem","a proved statement"],["definition","it is a definition"],["postulate","it is a postulate","axiom"],["conjecture","it is a conjecture"]]}
+            answer: 'theorem'
+            solution_sketch: 'The statement is proved from a postulate and earlier results, so it is not accepted without proof. A statement that is proved from other statements is a theorem.'
+          - problem: 'The statement "If two angles are supplementary to the same angle, then they are congruent" is a theorem. Angles $\angle PQR$ and $\angle STU$ are both supplementary to $\angle XYZ$, and $m\angle XYZ = 106^\circ$. What is $m\angle STU$, in degrees?'
+            answer_contract: {"kind":"unit","quantity":"angle","unit":"°","allow_omitted":true}
+            answer: '74'
+            solution_sketch: 'Each of the two angles is supplementary to $\angle XYZ$, so each measures $180 - 106 = 74$ degrees. The theorem agrees: $\angle PQR \cong \angle STU$, so $m\angle STU = 74$.'
+          - problem: 'A roof truss has an apex angle of $78^\circ$. A vertical post bisects the apex angle, and a bisector is defined as the ray that splits an angle into two congruent angles. What angle does each rafter make with the post, in degrees?'
+            answer_contract: {"kind":"unit","quantity":"angle","unit":"°","allow_omitted":true}
+            answer: '39'
+            solution_sketch: 'By the definition of angle bisector, the post splits the apex angle into two congruent angles. Each of them measures $78 / 2 = 39$ degrees.'
+          - problem: 'Is the statement "A right angle is an angle that measures $90^\circ$" a definition, a postulate, or a theorem?'
+            answer_contract: {"kind":"label","options":[["definition","it is a definition"],["postulate","it is a postulate","axiom"],["theorem","it is a theorem"],["a conjecture","conjecture","it is a conjecture"]]}
+            answer: 'definition'
+            solution_sketch: 'The statement tells what the term "right angle" means, and it reads the same in both directions. A statement that gives the meaning of a term is a definition.'
+          - problem: 'Write the full proof that if two angles are supplementary to the same angle, then they are congruent. Let $\angle 1$ and $\angle 3$ both be supplementary to $\angle 2$.'
+            answer_contract: {"kind":"none"}
+            answer: 'The angles have equal measures'
+            solution_sketch: 'Given: $\angle 1$ and $\angle 2$ are supplementary, and $\angle 3$ and $\angle 2$ are supplementary. Prove: $\angle 1 \cong \angle 3$. 1. $m\angle 1 + m\angle 2 = 180^\circ$ and $m\angle 3 + m\angle 2 = 180^\circ$ (definition of supplementary angles). 2. $m\angle 1 + m\angle 2 = m\angle 3 + m\angle 2$ (substitution, both sums equal $180^\circ$). 3. $m\angle 1 = m\angle 3$ (subtraction property of equality). 4. $\angle 1 \cong \angle 3$ (definition of congruent angles). The statement is proved, so it is a theorem.'
+        constraints: 'classify standard geometry statements as definition, postulate, or theorem; include one reversible definition (midpoint, bisector, right angle) per set; the last exemplar is a written proof that a statement is a theorem'
       - id: kp2
-        name: Properties of equality and congruence as reasons
+        name: 'Properties of equality and congruence as reasons'
         key_prerequisites: [segment-angle-addition]
+        step_check:
+          step: 'Chaining equal quantities through a shared middle term is exactly the transitive property.'
+          question: 'Why does a chain "$a = b$ and $b = c$, so $a = c$" use the transitive property?'
+          options:
+            - 'The first equation is turned around, so the sides swap places in the new equation'
+            - 'Every quantity is equal to itself, so $b$ cancels out of the two equations'
+            - 'A number replaces a variable, so the equations become true statements about numbers'
+            - 'The shared quantity $b$ links the two equations, so $a$ and $c$ are equal'
+          answer: 'The shared quantity $b$ links the two equations, so $a$ and $c$ are equal'
+          why: 'Each equation shares $b$, so $a$ and $c$ are both equal to the same quantity and so equal to each other. Swapping sides is the symmetric property, equality with itself is the reflexive property, and replacing a quantity by an equal one is substitution.'
         exemplars:
-          - problem: 'Which property justifies: if $AB = CD$ and $CD = EF$, then $AB = EF$?'
-            answer: 'transitive property of equality'
-            answer_contract: {kind: label, options: [[reflexive property of equality], [symmetric property of equality], [transitive property of equality], [substitution property of equality]]}
-            solution_sketch: '$AB$ and $EF$ both equal the middle term $CD$, so the equality chains through $CD$ — the transitive property.'
-          - problem: 'Which property justifies: $\angle A \cong \angle A$?'
-            answer: 'reflexive property of congruence'
-            answer_contract: {kind: label, options: [[reflexive property of congruence], [symmetric property of congruence], [transitive property of congruence], [commutative property]]}
-            solution_sketch: 'A figure is always congruent to itself; the reflexive property states exactly that.'
-          - problem: 'Which property justifies the step from $m\angle 1 + 25 = 90$ to $m\angle 1 = 65$?'
-            answer: 'subtraction property of equality'
-            answer_contract: {kind: label, options: [[addition property of equality], [subtraction property of equality], [multiplication property of equality], [transitive property of equality]]}
-            solution_sketch: 'Subtracting the same amount ($25$) from both sides of a true equation is the subtraction property of equality.'
-          - problem: 'Which property justifies: if $AB = XY$, then $XY = AB$?'
+          - problem: 'In a proof, the statement $AB = XY$ is followed by the statement $XY = AB$. Which property of equality justifies the second statement?'
+            answer_contract: {"kind":"label","options":[["symmetric property of equality","symmetric property","symmetric","by the symmetric property of equality","the symmetric property of equality"],["reflexive property of equality","reflexive property","reflexive","by the reflexive property of equality","the reflexive property of equality"],["transitive property of equality","transitive property","transitive","by the transitive property of equality","the transitive property of equality"],["substitution property of equality","substitution property","substitution","by the substitution property of equality","the substitution property of equality"]]}
             answer: 'symmetric property of equality'
-            answer_contract: {kind: label, options: [[reflexive property of equality], [symmetric property of equality], [transitive property of equality], [substitution property of equality]]}
-            solution_sketch: 'Swapping the two sides of a true equality keeps it true — the symmetric property.'
-          - problem: 'Which property justifies replacing $AB$ with $CD$ in the equation $AB + BC = AC$ when $AB = CD$ is known?'
+            solution_sketch: 'The second statement is the first one with its two sides swapped. Swapping the two sides of an equation is allowed by the symmetric property of equality.'
+          - problem: 'A proof states that $m\angle 1 + m\angle 2 = 150^\circ$ and that $m\angle 2 = 2(m\angle 1) - 30^\circ$. After the substitution property replaces $m\angle 2$ in the first statement, what is $m\angle 1$, in degrees?'
+            answer_contract: {"kind":"unit","quantity":"angle","unit":"°","allow_omitted":true}
+            answer: '60'
+            solution_sketch: 'Substituting gives $m\angle 1 + 2(m\angle 1) - 30 = 150$, which is $3(m\angle 1) = 180$. So $m\angle 1 = 60$ degrees, and then $m\angle 2 = 2(60) - 30 = 90$ degrees.'
+          - problem: 'Posts $A$, $B$ and $C$ stand on a straight fence line with $B$ between $A$ and $C$. A surveyor writes $AC = AB + BC$ and measures $AB = 12.5$ m and $BC = 8.5$ m. By the substitution property, how long is the fence section $\overline{AC}$, in metres?'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"m","allow_omitted":true}
+            answer: '21'
+            solution_sketch: 'The segment addition postulate gives $AC = AB + BC$. Substituting the measured lengths gives $AC = 12.5 + 8.5 = 21$ m.'
+          - problem: 'A step of a proof changes $AB + BC = AC$ into $AB + 7 = AC$ because $BC = 7$ is known. Which property justifies the change?'
+            answer_contract: {"kind":"label","options":[["substitution property","substitution property of equality","substitution","by the substitution property","the substitution property"],["addition property of equality","addition property","addition","by the addition property of equality","the addition property of equality"],["subtraction property of equality","subtraction property","subtraction","by the subtraction property of equality","the subtraction property of equality"],["transitive property of equality","transitive property","transitive","by the transitive property of equality","the transitive property of equality"]]}
             answer: 'substitution property of equality'
-            answer_contract: {kind: label, options: [[reflexive property of equality], [symmetric property of equality], [transitive property of equality], [substitution property of equality]]}
-            solution_sketch: 'A quantity may replace its equal; putting $CD$ in place of $AB$ is the substitution property.'
-        constraints: "reasons drawn from reflexive, symmetric, transitive, substitution, and addition/subtraction properties; one algebraic step at most"
+            solution_sketch: 'The quantity $BC$ is replaced by the number $7$ that is known to be equal to it. Replacing a quantity with an equal quantity is the substitution property of equality.'
+          - problem: 'Three braces of a bridge truss meet the deck at angles $\angle X$, $\angle Y$ and $\angle Z$. Here $\angle X \cong \angle Y$ and $\angle Y \cong \angle Z$, and $m\angle X = (3x - 7)^\circ$ while $m\angle Z = (2x + 5)^\circ$. What is $m\angle Y$, in degrees?'
+            answer_contract: {"kind":"unit","quantity":"angle","unit":"°","allow_omitted":true}
+            answer: '29'
+            solution_sketch: 'The transitive property gives $\angle X \cong \angle Z$, so $3x - 7 = 2x + 5$ and $x = 12$. Then $m\angle X = 3(12) - 7 = 29$ and $m\angle Z = 2(12) + 5 = 29$, so $m\angle Y = 29$ degrees.'
+          - problem: 'A proof about $\angle P$ contains the statement $\angle P \cong \angle P$ with no earlier statement to support it. Which property justifies it?'
+            answer_contract: {"kind":"label","options":[["reflexive property of congruence","reflexive property","reflexive","by the reflexive property of congruence","the reflexive property of congruence"],["symmetric property of congruence","symmetric property","symmetric","by the symmetric property of congruence","the symmetric property of congruence"],["transitive property of congruence","transitive property","transitive","by the transitive property of congruence","the transitive property of congruence"],["definition of congruent angles","definition of congruence","definition of a congruent angles","definition of an congruent angles","by the definition of congruent angles","congruent angles","congruent angles definition"]]}
+            answer: 'reflexive property of congruence'
+            solution_sketch: 'Every angle is congruent to itself, and this needs no earlier statement. That fact is the reflexive property of congruence.'
+          - problem: 'Write the full proof of this statement. Points $A$, $B$, $C$ and $D$ lie on a line, with $B$ between $A$ and $C$ and $C$ between $B$ and $D$. Given $AB = CD$, prove that $AC = BD$.'
+            answer_contract: {"kind":"none"}
+            answer: 'AC = BD'
+            solution_sketch: '1. $AB = CD$ (given). 2. $BC = BC$ (reflexive property of equality). 3. $AB + BC = CD + BC$ (addition property of equality, statements 1 and 2). 4. $AB + BC = AC$ and $BC + CD = BD$ (segment addition postulate). 5. $AC = BD$ (substitution property, statements 3 and 4, with $CD + BC = BC + CD$).'
+        constraints: 'reasons drawn from reflexive, symmetric, transitive, substitution, and addition/subtraction properties; a numeric item may need one or two algebraic steps; the last exemplar is a written proof that uses these properties'
       - id: kp3
-        name: Choose the justification for a geometric step
+        name: 'Choose the justification for a geometric step'
         key_prerequisites: [segment-angle-addition, angle-relationships]
+        step_check:
+          step: 'By the angle addition postulate, the two smaller angles inside the large angle add up to its measure.'
+          question: 'Why does the angle addition postulate need the ray to lie inside the large angle?'
+          options:
+            - 'A ray inside the angle is a bisector, so the two parts are always congruent'
+            - 'A ray inside the angle forms a straight line, so the two parts add up to $180^\circ$'
+            - 'A ray inside splits the angle, so the two parts fill it with no gap or overlap'
+            - 'A ray inside the angle meets the sides, so the two parts are vertical angles'
+          answer: 'A ray inside splits the angle, so the two parts fill it with no gap or overlap'
+          why: 'Only a ray in the interior cuts the angle into two parts that together make up exactly the whole. The parts need not be congruent, they add up to $180^\circ$ only for a straight angle, and they are adjacent, not vertical.'
         exemplars:
-          - problem: '$M$ is the midpoint of $\overline{AB}$. What reason justifies the statement $AM = MB$?'
+          - problem: 'Point $M$ is the midpoint of $\overline{AB}$. Which reason justifies the statement $AM = MB$?'
+            answer_contract: {"kind":"label","options":[["definition of midpoint","the definition of midpoint","midpoint definition","definition of a midpoint","definition of an midpoint","by the definition of midpoint","midpoint"],["segment addition postulate","the segment addition postulate","by the segment addition postulate","segment addition"],["reflexive property","the reflexive property","by the reflexive property","reflexive"],["vertical angles theorem","the vertical angles theorem","by the vertical angles theorem","vertical angles"]]}
             answer: 'definition of midpoint'
-            answer_contract: {kind: label, options: [[definition of midpoint], [segment addition postulate], [reflexive property], [vertical angles theorem]]}
-            solution_sketch: 'A midpoint is defined as the point splitting the segment into two congruent pieces, so $AM = MB$ is exactly the definition of midpoint.'
-          - problem: 'Ray $\overrightarrow{OB}$ lies in the interior of $\angle AOC$. What reason justifies $m\angle AOB + m\angle BOC = m\angle AOC$?'
-            answer: 'angle addition postulate'
-            answer_contract: {kind: label, options: [[angle addition postulate], [linear pair postulate], [definition of angle bisector], [vertical angles theorem]]}
-            solution_sketch: 'Adding the two adjacent parts to get the whole angle is exactly what the angle addition postulate states.'
-          - problem: '$\angle 1$ and $\angle 2$ form a linear pair. What reason justifies $m\angle 1 + m\angle 2 = 180^\circ$?'
-            answer: 'linear pair postulate'
-            answer_contract: {kind: label, options: [[linear pair postulate], [angle addition postulate], [vertical angles theorem], [definition of congruent angles]]}
-            solution_sketch: 'The linear pair postulate says angles forming a linear pair are supplementary.'
-          - problem: 'Lines $m$ and $n$ intersect at point $P$, forming angles $\angle 1$ and $\angle 2$ that are vertical angles. What reason justifies $\angle 1 \cong \angle 2$?'
+            solution_sketch: 'A midpoint is defined as the point that splits a segment into two segments of equal length. So $AM = MB$ follows directly from the definition of midpoint.'
+          - problem: 'Ray $\overrightarrow{OB}$ lies inside $\angle AOC$, with $m\angle AOB = (2x + 5)^\circ$, $m\angle BOC = (3x + 10)^\circ$ and $m\angle AOC = 85^\circ$. Which value of $x$ follows from the angle addition postulate?'
+            answer_contract: {"kind":"exact"}
+            answer: '14'
+            solution_sketch: 'The angle addition postulate gives $m\angle AOB + m\angle BOC = m\angle AOC$, so $(2x + 5) + (3x + 10) = 85$. This simplifies to $5x + 15 = 85$, so $x = 14$.'
+          - problem: 'A support strut meets a straight beam and forms a linear pair of angles, $(7x - 4)^\circ$ and $(3x + 14)^\circ$. By the linear pair postulate, how large is the larger of the two angles, in degrees?'
+            answer_contract: {"kind":"unit","quantity":"angle","unit":"°","allow_omitted":true}
+            answer: '115'
+            solution_sketch: 'The linear pair postulate says the two angles add up to $180^\circ$, so $(7x - 4) + (3x + 14) = 180$ and $10x + 10 = 180$. Then $x = 17$, and the angles measure $7(17) - 4 = 115$ degrees and $3(17) + 14 = 65$ degrees, so the larger one is $115$ degrees.'
+          - problem: 'Two straight roads cross at a junction. Which reason justifies the statement that the two angles opposite each other at the crossing are congruent?'
+            answer_contract: {"kind":"label","options":[["vertical angles theorem","the vertical angles theorem","vertical angles are congruent","by the vertical angles theorem","vertical angles"],["linear pair postulate","the linear pair postulate","by the linear pair postulate","linear pair"],["angle addition postulate","the angle addition postulate","by the angle addition postulate","angle addition"],["definition of midpoint","the definition of midpoint","definition of a midpoint","definition of an midpoint","by the definition of midpoint","midpoint","midpoint definition"]]}
             answer: 'vertical angles theorem'
-            answer_contract: {kind: label, options: [[vertical angles theorem], [linear pair postulate], [angle addition postulate], [definition of midpoint]]}
-            solution_sketch: 'The vertical angles theorem states that vertical angles formed by intersecting lines are congruent.'
-          - problem: 'A ray bisects an angle, forming two half-angles. Which reason justifies the two half-angles being congruent?'
+            solution_sketch: 'Angles that are opposite each other at the crossing of two lines are vertical angles. The vertical angles theorem says that vertical angles are congruent.'
+          - problem: 'A water pipe runs from $A$ through $B$ to $C$ in a straight line, with $AB = (3x - 1)$ m, $BC = (2x + 6)$ m and $AC = 40$ m. By the segment addition postulate, how long is the section $\overline{AB}$, in metres?'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"m","allow_omitted":true}
+            answer: '20'
+            solution_sketch: 'The segment addition postulate gives $AB + BC = AC$, so $(3x - 1) + (2x + 6) = 40$ and $5x + 5 = 40$. Then $x = 7$, and $AB = 3(7) - 1 = 20$ m.'
+          - problem: 'In a proof, ray $\overrightarrow{BD}$ bisects $\angle ABC$. Which reason justifies the statement $\angle ABD \cong \angle DBC$?'
+            answer_contract: {"kind":"label","options":[["definition of angle bisector","the definition of angle bisector","angle bisector definition","definition of a angle bisector","definition of an angle bisector","by the definition of angle bisector","angle bisector"],["linear pair postulate","the linear pair postulate","by the linear pair postulate","linear pair"],["definition of complementary angles","the definition of complementary angles","definition of a complementary angles","definition of an complementary angles","by the definition of complementary angles","complementary angles","complementary angles definition"],["angle addition postulate","the angle addition postulate","by the angle addition postulate","angle addition"]]}
             answer: 'definition of angle bisector'
-            answer_contract: {kind: label, options: [[definition of angle bisector], [linear pair postulate], [vertical angles theorem], [angle addition postulate]]}
-            solution_sketch: 'A bisector is defined as the ray that splits the angle into two congruent angles.'
-        constraints: "each item is one proof step needing one named reason: definitions of midpoint/bisector/right angle, segment and angle addition postulates, linear pair postulate, vertical angles theorem"
+            solution_sketch: 'An angle bisector is defined as a ray that splits an angle into two congruent angles. So $\angle ABD \cong \angle DBC$ follows from the definition of angle bisector.'
+          - problem: 'Write the full proof of the vertical angles theorem. Lines $m$ and $n$ cross at a point, and $\angle 1$ and $\angle 3$ are opposite each other, with $\angle 2$ between them on one side.'
+            answer_contract: {"kind":"none"}
+            answer: 'Vertical angles are congruent'
+            solution_sketch: 'Given: lines $m$ and $n$ intersect, forming vertical angles $\angle 1$ and $\angle 3$, and $\angle 2$ lies between them on one side. Prove: $\angle 1 \cong \angle 3$. 1. $\angle 1$ and $\angle 2$ form a linear pair, and $\angle 2$ and $\angle 3$ form a linear pair (definition of a linear pair). 2. $m\angle 1 + m\angle 2 = 180^\circ$ and $m\angle 2 + m\angle 3 = 180^\circ$ (linear pair postulate). 3. $m\angle 1 + m\angle 2 = m\angle 2 + m\angle 3$ (substitution property). 4. $m\angle 1 = m\angle 3$ (subtraction property of equality). 5. $\angle 1 \cong \angle 3$ (definition of congruent angles).'
+        constraints: 'each item is one proof step needing one named reason or one value that the named postulate gives: definitions of midpoint/bisector/right angle, segment and angle addition postulates, linear pair postulate, vertical angles theorem; the last exemplar is a written proof'
     diagnostic_exemplar:
       problem: 'Give the reason that justifies each step: (1) $\overrightarrow{BD}$ bisects $\angle ABC$, so $\angle ABD \cong \angle DBC$; (2) $m\angle ABD = m\angle DBC$ and $m\angle DBC = 32^\circ$, so $m\angle ABD = 32^\circ$.'
       answer: '(1) Definition of angle bisector; (2) the transitive property of equality (or substitution).'
@@ -192,10 +318,10 @@ topics:
 
   - id: writing-geometric-proofs
     name: Writing Two-Column and Paragraph Proofs
-    core: true                 # the assembled proof-writing skill the four proof-demanding geometry topics gate on (flipped to decidable single-answer items)
+    core: true
     difficulty: 0.38
     drill: false
-    answer_kind: numeric
+    answer_kind: proof
     expected_time_secs: 180
     prerequisites:
       - id: postulates-theorems-justifications
@@ -203,73 +329,139 @@ topics:
         key: true
     knowledge_points:
       - id: kp1
-        name: Complete a partially written two-column proof
+        name: 'Complete a partially written two-column proof'
         key_prerequisites: [postulates-theorems-justifications]
+        step_check:
+          step: 'The definition of midpoint states a midpoint divides the segment into two equal parts.'
+          question: 'Why does the definition of midpoint justify the statement $AM = MB$?'
+          options:
+            - 'It says the midpoint splits the segment into equal parts'
+            - 'It says the two parts together make up the whole segment $AB$'
+            - 'It says the point $M$ lies on the line through $A$ and $B$'
+            - 'It says every segment has exactly one midpoint, so $M$ is unique'
+          answer: 'It says the midpoint splits the segment into equal parts'
+          why: 'Equal parts are exactly what the definition states. That the parts add up to the whole is the segment addition postulate, and the position or the uniqueness of $M$ does not give $AM = MB$.'
         exemplars:
-          - problem: 'A two-column proof reads — Statements: 1. $M$ is the midpoint of $\overline{AB}$; 2. $AM = MB$. Reasons: 1. Given; 2. (blank). Which reason completes step 2: the definition of midpoint, the definition of angle bisector, the segment addition postulate, or the symmetric property?'
-            answer: 'the definition of midpoint'
-            answer_contract: {kind: label, options: [['the definition of midpoint'], ['the definition of angle bisector'], ['the segment addition postulate'], ['the symmetric property']]}
-            solution_sketch: 'A midpoint is exactly the point that splits the segment into two equal parts, so $AM = MB$ is the definition of midpoint.'
-          - problem: 'A two-column proof that $m\angle 1 = m\angle 3$ reads — Statements: 1. $\angle 1$ and $\angle 2$ form a linear pair; $\angle 2$ and $\angle 3$ form a linear pair; 2. $m\angle 1 + m\angle 2 = 180^\circ$ and $m\angle 2 + m\angle 3 = 180^\circ$. Which reason completes step 2: the linear pair postulate, the definition of supplementary angles, the substitution property, or the symmetric property?'
-            answer: 'the linear pair postulate'
-            answer_contract: {kind: label, options: [['the linear pair postulate'], ['the definition of supplementary angles'], ['the substitution property'], ['the symmetric property']]}
-            solution_sketch: 'A linear pair of angles sums to $180^\circ$ by the linear pair postulate, which licenses both equations in step 2.'
-          - problem: 'A two-column proof continues — Statements: 2. $m\angle 1 + m\angle 2 = 180^\circ$ and $m\angle 2 + m\angle 3 = 180^\circ$; 3. $m\angle 1 + m\angle 2 = m\angle 2 + m\angle 3$. Which property justifies step 3: the substitution property, the subtraction property of equality, the addition property of equality, or the transitive property?'
-            answer: 'the substitution property'
-            answer_contract: {kind: label, options: [['the substitution property'], ['the subtraction property of equality'], ['the addition property of equality'], ['the transitive property']]}
-            solution_sketch: 'Both sums equal $180^\circ$, so $180^\circ$ is substituted for one sum in the other: the substitution property.'
-          - problem: 'A two-column proof continues — Statements: 3. $m\angle 1 + m\angle 2 = m\angle 2 + m\angle 3$; 4. $m\angle 1 = m\angle 3$. Which property justifies step 4: the subtraction property of equality, the addition property of equality, the substitution property, or the reflexive property?'
-            answer: 'the subtraction property of equality'
-            answer_contract: {kind: label, options: [['the subtraction property of equality'], ['the addition property of equality'], ['the substitution property'], ['the reflexive property']]}
-            solution_sketch: 'Subtracting the common term $m\angle 2$ from both sides of the equal sums leaves $m\angle 1 = m\angle 3$.'
-        constraints: "3-5 line proofs about segments and angles; single blanks answered by choosing the named reason via a label contract; reasons limited to given, definitions, addition postulates, linear pair postulate, properties of equality"
+          - problem: 'A two-column proof reads. Statements: 1. $\angle ABC$ is a right angle; 2. $m\angle ABC = 90^\circ$. Reasons: 1. Given; 2. (blank). Which reason completes step 2?'
+            answer_contract: {"kind":"label","options":[["definition of right angle","the definition of right angle","definition of a right angle","definition of an right angle","by the definition of right angle","right angle","right angle definition"],["definition of complementary angles","the definition of complementary angles","definition of a complementary angles","definition of an complementary angles","by the definition of complementary angles","complementary angles","complementary angles definition"],["angle addition postulate","the angle addition postulate","by the angle addition postulate","angle addition"],["linear pair postulate","the linear pair postulate","by the linear pair postulate","linear pair"]]}
+            answer: 'definition of right angle'
+            solution_sketch: 'Step 2 states the measure of a right angle. A right angle is defined as an angle that measures $90^\circ$, so the reason is the definition of right angle.'
+          - problem: 'A two-column proof reads. Statements: 1. $\angle 1$ and $\angle 2$ form a linear pair, and $m\angle 2 = 117^\circ$; 2. $m\angle 1 + m\angle 2 = 180^\circ$; 3. $m\angle 1 + 117^\circ = 180^\circ$; 4. $m\angle 1 = $ (blank). Reasons: 1. Given; 2. Linear pair postulate; 3. Substitution property; 4. Subtraction property of equality. What measure completes statement 4, in degrees?'
+            answer_contract: {"kind":"unit","quantity":"angle","unit":"°","allow_omitted":true}
+            answer: '63'
+            solution_sketch: 'Statement 3 is $m\angle 1 + 117 = 180$. The subtraction property of equality subtracts $117$ from both sides, so $m\angle 1 = 180 - 117 = 63$ degrees.'
+          - problem: 'A two-column proof reads. Statements: 1. Ray $\overrightarrow{BD}$ bisects $\angle ABC$; 2. $\angle ABD \cong \angle DBC$. Reasons: 1. Given; 2. (blank). Which reason completes step 2?'
+            answer_contract: {"kind":"label","options":[["definition of angle bisector","the definition of angle bisector","angle bisector definition","definition of a angle bisector","definition of an angle bisector","by the definition of angle bisector","angle bisector"],["angle addition postulate","the angle addition postulate","by the angle addition postulate","angle addition"],["definition of supplementary angles","the definition of supplementary angles","definition of a supplementary angles","definition of an supplementary angles","by the definition of supplementary angles","supplementary angles","supplementary angles definition"],["reflexive property","the reflexive property","by the reflexive property","reflexive"]]}
+            answer: 'definition of angle bisector'
+            solution_sketch: 'Step 2 says the two angles formed by the ray are congruent. An angle bisector is defined as a ray that splits an angle into two congruent angles, so the reason is the definition of angle bisector.'
+          - problem: 'A surveyor writes a two-column proof about a boundary $\overline{AB}$. Statements: 1. $M$ is the midpoint of $\overline{AB}$, with $AM = (3x + 4)$ m and $MB = (5x - 12)$ m; 2. $AM = MB$; 3. $3x + 4 = 5x - 12$; 4. $x = 8$; 5. $AB = $ (blank). Reasons: 1. Given; 2. Definition of midpoint; 3. Substitution; 4. Properties of equality; 5. Segment addition postulate and substitution. What length completes statement 5, in metres?'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"m","allow_omitted":true}
+            answer: '56'
+            solution_sketch: 'Statement 4 gives $x = 8$, so $AM = 3(8) + 4 = 28$ m and $MB = 5(8) - 12 = 28$ m. The segment addition postulate gives $AB = AM + MB = 28 + 28 = 56$ m.'
+          - problem: 'A two-column proof reads. Statements: 3. $m\angle 1 + m\angle 2 = m\angle 2 + m\angle 3$; 4. $m\angle 1 = m\angle 3$. Reasons: 3. Substitution property; 4. (blank). Which reason completes step 4?'
+            answer_contract: {"kind":"label","options":[["subtraction property of equality","the subtraction property of equality","subtraction property","by the subtraction property of equality","subtraction"],["addition property of equality","the addition property of equality","addition property","by the addition property of equality","addition"],["substitution property of equality","the substitution property of equality","by the substitution property of equality","substitution","substitution property"],["reflexive property","the reflexive property","by the reflexive property","reflexive"]]}
+            answer: 'subtraction property of equality'
+            solution_sketch: 'Step 4 comes from step 3 by taking away the same quantity, $m\angle 2$, from both sides. Taking the same amount from both sides is the subtraction property of equality.'
+          - problem: 'A door is hinged at $O$ and swings from the closed position along $\overrightarrow{OA}$ to the fully open position along $\overrightarrow{OC}$, with a stop along $\overrightarrow{OB}$ inside the angle. A two-column proof reads. Statements: 1. $m\angle AOC = 110^\circ$ and $m\angle AOB = 45^\circ$; 2. $m\angle AOB + m\angle BOC = m\angle AOC$; 3. $45^\circ + m\angle BOC = 110^\circ$; 4. $m\angle BOC = $ (blank). Reasons: 1. Given; 2. Angle addition postulate; 3. Substitution property; 4. Subtraction property of equality. What measure completes statement 4, in degrees?'
+            answer_contract: {"kind":"unit","quantity":"angle","unit":"°","allow_omitted":true}
+            answer: '65'
+            solution_sketch: 'Statement 3 is $45 + m\angle BOC = 110$. Subtracting $45$ from both sides gives $m\angle BOC = 110 - 45 = 65$ degrees.'
+          - problem: 'Write the full proof that $m\angle 1 = m\angle 3$, given that $\angle 1$ and $\angle 2$ form a linear pair and that $\angle 2$ and $\angle 3$ form a linear pair.'
+            answer_contract: {"kind":"none"}
+            answer: 'm angle 1 = m angle 3'
+            solution_sketch: '1. $\angle 1$ and $\angle 2$ form a linear pair; $\angle 2$ and $\angle 3$ form a linear pair (given). 2. $m\angle 1 + m\angle 2 = 180^\circ$ and $m\angle 2 + m\angle 3 = 180^\circ$ (linear pair postulate). 3. $m\angle 1 + m\angle 2 = m\angle 2 + m\angle 3$ (substitution property, both sums equal $180^\circ$). 4. $m\angle 1 = m\angle 3$ (subtraction property of equality).'
+        constraints: '3-5 line proofs about segments and angles; a blank is a reason chosen from named definitions, postulates and properties, or a measure that the next step produces; the last exemplar is a full written proof; reasons limited to given, definitions, addition postulates, linear pair postulate, properties of equality'
       - id: kp2
-        name: Justify the steps of a short two-column proof
+        name: 'Justify the steps of a short two-column proof'
         key_prerequisites: [postulates-theorems-justifications]
+        step_check:
+          step: 'Ask which named reason states that a midpoint splits the segment into equal parts.'
+          question: 'Why is the segment addition postulate the wrong reason for the statement $AB = BC$?'
+          options:
+            - 'It is a rule for angles only, and $AB$ and $BC$ are segments'
+            - 'It adds two parts to make a whole and never says the parts are equal'
+            - 'It puts $B$ between $A$ and $C$, which already makes the two parts equal'
+            - 'It was proved from the definition of midpoint, so it cannot come before it'
+          answer: 'It adds two parts to make a whole and never says the parts are equal'
+          why: 'The segment addition postulate gives $AB + BC = AC$ for a point between $A$ and $C$ and says nothing about equal parts. It applies to segments, and it is a postulate, not a theorem proved from the definition.'
         exemplars:
-          - problem: 'A two-column proof that $\angle 1 \cong \angle 3$ reads — Statements: 1. $\angle 1$ and $\angle 2$ are supplementary; $\angle 2$ and $\angle 3$ are supplementary (Given); 2. $m\angle 1 + m\angle 2 = 180^\circ$ and $m\angle 2 + m\angle 3 = 180^\circ$ (blank). Which reason completes step 2: the definition of supplementary angles, the linear pair postulate, the vertical angles theorem, or the symmetric property?'
-            answer: 'the definition of supplementary angles'
-            answer_contract: {kind: label, options: [['the definition of supplementary angles'], ['the linear pair postulate'], ['the vertical angles theorem'], ['the symmetric property']]}
-            solution_sketch: 'Supplementary angles sum to $180^\circ$ by the definition of supplementary angles — no position (linear pair) is claimed here.'
-          - problem: 'A two-column proof that $AC = 10$ reads — Statements: 1. $B$ is the midpoint of $\overline{AC}$; $AB = 5$ (Given); 2. $AB = BC$ (blank). Which reason completes step 2: the definition of midpoint, the segment addition postulate, the substitution property, or the addition property of equality?'
-            answer: 'the definition of midpoint'
-            answer_contract: {kind: label, options: [['the definition of midpoint'], ['the segment addition postulate'], ['the substitution property'], ['the addition property of equality']]}
-            solution_sketch: 'A midpoint divides the segment into two equal parts, so $AB = BC$ is the definition of midpoint.'
-          - problem: 'A two-column proof continues — Statements: 3. $BC = 5$ (substitution); 4. $AB + BC = AC$ (blank); 5. $AC = 5 + 5 = 10$. Which reason completes step 4: the segment addition postulate, the definition of midpoint, the subtraction property of equality, or the transitive property?'
-            answer: 'the segment addition postulate'
-            answer_contract: {kind: label, options: [['the segment addition postulate'], ['the definition of midpoint'], ['the subtraction property of equality'], ['the transitive property']]}
-            solution_sketch: 'Since $B$ lies on $\overline{AC}$, the two parts add to the whole: the segment addition postulate.'
-          - problem: 'A two-column proof of the congruent complements fact reads — Statements: 1. $\angle 1$ and $\angle 2$ are complementary; $\angle 3$ and $\angle 2$ are complementary (Given); 2. $m\angle 1 + m\angle 2 = 90^\circ$ and $m\angle 3 + m\angle 2 = 90^\circ$ (definition of complementary); 3. $m\angle 1 + m\angle 2 = m\angle 3 + m\angle 2$ (blank). Which reason completes step 3: the substitution property, the subtraction property of equality, the definition of congruent angles, or the reflexive property?'
-            answer: 'the substitution property'
-            answer_contract: {kind: label, options: [['the substitution property'], ['the subtraction property of equality'], ['the definition of congruent angles'], ['the reflexive property']]}
-            solution_sketch: 'Both sums equal $90^\circ$, so one $90^\circ$ replaces the other by the substitution property.'
-        constraints: "4-6 line proofs; the single blank reason is chosen via a label contract among named definitions, postulates, and properties; content limited to segment/angle addition, midpoints, bisectors, supplementary/complementary pairs, vertical angles"
+          - problem: 'A two-column proof that $\angle 1 \cong \angle 3$ reads. Statements: 1. $\angle 1$ and $\angle 2$ are supplementary; $\angle 2$ and $\angle 3$ are supplementary; 2. $m\angle 1 + m\angle 2 = 180^\circ$ and $m\angle 2 + m\angle 3 = 180^\circ$. Reasons: 1. Given; 2. (blank). Which reason completes step 2?'
+            answer_contract: {"kind":"label","options":[["definition of supplementary angles","the definition of supplementary angles","supplementary angles definition","definition of a supplementary angles","definition of an supplementary angles","by the definition of supplementary angles","supplementary angles"],["linear pair postulate","the linear pair postulate","by the linear pair postulate","linear pair"],["vertical angles theorem","the vertical angles theorem","by the vertical angles theorem","vertical angles"],["definition of a linear pair of angles","the definition of a linear pair of angles","definition of an linear pair of angles","by the definition of linear pair of angles","linear pair of angles","linear pair of angles definition"]]}
+            answer: 'definition of supplementary angles'
+            solution_sketch: 'Step 1 only says that the angles are supplementary, with no figure that shows a linear pair. Supplementary angles are defined as angles whose measures add up to $180^\circ$, so the reason is the definition of supplementary angles.'
+          - problem: 'A two-column proof about complementary angles reads. Statements: 1. $\angle 1$ and $\angle 2$ are complementary, with $m\angle 1 = (4x)^\circ$ and $m\angle 2 = (x + 10)^\circ$; 2. $m\angle 1 + m\angle 2 = 90^\circ$; 3. $4x + x + 10 = 90$; 4. $x = 16$; 5. $m\angle 1 = $ (blank). Reasons: 1. Given; 2. Definition of complementary angles; 3. Substitution property; 4. Properties of equality; 5. Substitution property. What measure completes statement 5, in degrees?'
+            answer_contract: {"kind":"unit","quantity":"angle","unit":"°","allow_omitted":true}
+            answer: '64'
+            solution_sketch: 'Statement 3 simplifies to $5x + 10 = 90$, so $x = 16$ as statement 4 says. Substituting into $m\angle 1 = 4x$ gives $4(16) = 64$ degrees, and $m\angle 2 = 16 + 10 = 26$ degrees completes $90^\circ$.'
+          - problem: 'A road leaves a straight canal bank at $P$ and forms a linear pair, $\angle 1 = (2x + 20)^\circ$ and $\angle 2 = (x + 10)^\circ$. A two-column proof reads. Statements: 1. $\angle 1$ and $\angle 2$ form a linear pair; 2. $(2x + 20) + (x + 10) = 180$; 3. $3x + 30 = 180$; 4. $x = 50$; 5. $m\angle 1 = $ (blank). Reasons: 1. Given; 2. Linear pair postulate; 3. Simplifying; 4. Properties of equality; 5. Substitution property. What measure completes statement 5, in degrees?'
+            answer_contract: {"kind":"unit","quantity":"angle","unit":"°","allow_omitted":true}
+            answer: '120'
+            solution_sketch: 'Statement 4 gives $x = 50$. Substituting into $m\angle 1 = 2x + 20$ gives $2(50) + 20 = 120$ degrees, and $m\angle 2 = 50 + 10 = 60$ degrees completes the linear pair.'
+          - problem: 'A pipeline is laid in a straight line from $A$ through $B$ to $C$. A two-column proof reads. Statements: 1. $B$ lies between $A$ and $C$; 2. $AB + BC = AC$. Reasons: 1. Given; 2. (blank). Which reason completes step 2?'
+            answer_contract: {"kind":"label","options":[["segment addition postulate","the segment addition postulate","by the segment addition postulate","segment addition"],["definition of midpoint","the definition of midpoint","definition of a midpoint","definition of an midpoint","by the definition of midpoint","midpoint","midpoint definition"],["substitution property","the substitution property","by the substitution property","substitution"],["addition property of equality","the addition property of equality","by the addition property of equality","addition","addition property"]]}
+            answer: 'segment addition postulate'
+            solution_sketch: 'Step 1 says that $B$ lies between $A$ and $C$, and step 2 adds the two parts to get the whole. The segment addition postulate states exactly this, and it does not need $B$ to be the midpoint.'
+          - problem: 'A two-column proof reads. Statements: 1. $\angle 1 \cong \angle 2$, with $m\angle 1 = (5x + 3)^\circ$ and $m\angle 2 = (7x - 9)^\circ$; 2. $m\angle 1 = m\angle 2$; 3. $5x + 3 = 7x - 9$; 4. $x = 6$; 5. $m\angle 2 = $ (blank). Reasons: 1. Given; 2. Definition of congruent angles; 3. Substitution property; 4. Properties of equality; 5. Substitution property. What measure completes statement 5, in degrees?'
+            answer_contract: {"kind":"unit","quantity":"angle","unit":"°","allow_omitted":true}
+            answer: '33'
+            solution_sketch: 'Statement 3 gives $12 = 2x$, so $x = 6$. Substituting into $m\angle 2 = 7x - 9$ gives $7(6) - 9 = 33$ degrees, and $m\angle 1 = 5(6) + 3 = 33$ degrees agrees.'
+          - problem: 'A two-column proof reads. Statements: 1. $\angle 1$ and $\angle 2$ are vertical angles; 2. $\angle 1 \cong \angle 2$. Reasons: 1. Given; 2. (blank). Which reason completes step 2?'
+            answer_contract: {"kind":"label","options":[["vertical angles theorem","the vertical angles theorem","vertical angles are congruent","by the vertical angles theorem","vertical angles"],["linear pair postulate","the linear pair postulate","by the linear pair postulate","linear pair"],["angle addition postulate","the angle addition postulate","by the angle addition postulate","angle addition"],["definition of supplementary angles","the definition of supplementary angles","definition of a supplementary angles","definition of an supplementary angles","by the definition of supplementary angles","supplementary angles","supplementary angles definition"]]}
+            answer: 'vertical angles theorem'
+            solution_sketch: 'Step 1 gives two angles that are opposite each other at the crossing of two lines. The vertical angles theorem says that such angles are congruent, so it is the reason for step 2.'
+          - problem: 'Write the full proof that $AC = 2 \cdot AB$, given that $B$ is the midpoint of $\overline{AC}$.'
+            answer_contract: {"kind":"none"}
+            answer: 'AC = 2 AB'
+            solution_sketch: '1. $B$ is the midpoint of $\overline{AC}$ (given). 2. $AB = BC$ (definition of midpoint). 3. $AB + BC = AC$ (segment addition postulate). 4. $AB + AB = AC$ (substitution property, statements 2 and 3). 5. $AC = 2 \cdot AB$ (statement 4, since $AB + AB = 2 \cdot AB$).'
+        constraints: '4-6 line proofs; the question gives the proof and asks for one reason, or for one value that a later statement reaches; content limited to segment/angle addition, midpoints, bisectors, supplementary/complementary pairs, vertical angles; the last exemplar is a full written proof'
       - id: kp3
-        name: Justify the reasoning in a paragraph proof
+        name: 'Justify the reasoning in a paragraph proof'
         key_prerequisites: [postulates-theorems-justifications]
+        step_check:
+          step: 'The linear pair postulate says a linear pair of angles is supplementary (sums to 180 degrees).'
+          question: 'Why can a paragraph proof write $m\angle 1 + m\angle 2 = 180^\circ$ for a linear pair?'
+          options:
+            - 'The two angles are opposite each other at the crossing of two lines'
+            - 'The two angles are congruent, so each of them must measure $90^\circ$'
+            - 'The two angles share a side and their other sides form a straight line'
+            - 'The two angles lie inside a larger angle that measures exactly $180^\circ$'
+          answer: 'The two angles share a side and their other sides form a straight line'
+          why: 'A linear pair fills a straight angle of $180^\circ$, which is what the postulate says. Opposite angles are vertical angles and are congruent, a linear pair need not be congruent, and the larger angle is not required to lie inside anything.'
         exemplars:
-          - problem: 'A paragraph proof of the vertical angles theorem begins: "$\angle 1$ and $\angle 2$ form a linear pair, as do $\angle 2$ and $\angle 3$, so $m\angle 1 + m\angle 2 = 180^\circ$ and $m\angle 2 + m\angle 3 = 180^\circ$." Which postulate supports that claim: the linear pair postulate, the vertical angles theorem, the angle addition postulate, or the definition of congruent angles?'
-            answer: 'the linear pair postulate'
-            answer_contract: {kind: label, options: [['the linear pair postulate'], ['the vertical angles theorem'], ['the angle addition postulate'], ['the definition of congruent angles']]}
-            solution_sketch: 'Angles forming a linear pair are supplementary by the linear pair postulate, so each pair sums to $180^\circ$.'
-          - problem: 'A paragraph proof continues: "...so each of $\angle 1$ and $\angle 3$ is supplementary to $\angle 2$..." and concludes "$\angle 1 \cong \angle 3$." Which definition lets the proof end by writing congruence rather than equality of measures: the definition of congruent angles, the definition of supplementary angles, the definition of vertical angles, or the definition of a linear pair?'
-            answer: 'the definition of congruent angles'
-            answer_contract: {kind: label, options: [['the definition of congruent angles'], ['the definition of supplementary angles'], ['the definition of vertical angles'], ['the definition of a linear pair']]}
-            solution_sketch: 'Equal measures correspond to congruent angles by the definition of congruent angles.'
-          - problem: 'A paragraph proof states: "Since $\overrightarrow{BD}$ bisects $\angle ABC$, $\angle ABD \cong \angle DBC$." Which definition justifies that claim: the definition of angle bisector, the definition of congruent angles, the angle addition postulate, or the definition of an adjacent angle?'
-            answer: 'the definition of angle bisector'
-            answer_contract: {kind: label, options: [['the definition of angle bisector'], ['the definition of congruent angles'], ['the angle addition postulate'], ['the definition of an adjacent angle']]}
-            solution_sketch: 'A bisector splits the angle into two congruent angles by the definition of angle bisector.'
-          - problem: 'A paragraph proof continues: "...and congruent angles have equal measures, so $m\angle ABD = m\angle DBC$." Which definition supports replacing congruence with equality of measures: the definition of congruent angles, the substitution property, the definition of angle bisector, or the symmetric property?'
-            answer: 'the definition of congruent angles'
-            answer_contract: {kind: label, options: [['the definition of congruent angles'], ['the substitution property'], ['the definition of angle bisector'], ['the symmetric property']]}
-            solution_sketch: 'By definition, congruent angles are angles with equal measures.'
-        constraints: "same content scope as kp2; single-blank reason questions answered via a label contract among named definitions, postulates, and properties"
+          - problem: 'A paragraph proof states: "Since $\overrightarrow{BD}$ bisects $\angle ABC$, we know that $\angle ABD \cong \angle DBC$." Which definition supports that sentence?'
+            answer_contract: {"kind":"label","options":[["definition of angle bisector","the definition of angle bisector","angle bisector definition","definition of a angle bisector","definition of an angle bisector","by the definition of angle bisector","angle bisector"],["definition of congruent angles","the definition of congruent angles","definition of a congruent angles","definition of an congruent angles","by the definition of congruent angles","congruent angles","congruent angles definition"],["angle addition postulate","the angle addition postulate","by the angle addition postulate","angle addition"],["definition of adjacent angles","the definition of adjacent angles","definition of a adjacent angles","definition of an adjacent angles","by the definition of adjacent angles","adjacent angles","adjacent angles definition"]]}
+            answer: 'definition of angle bisector'
+            solution_sketch: 'The sentence moves from a bisecting ray to two congruent angles. An angle bisector is defined as a ray that splits an angle into two congruent angles, so that definition supports the sentence.'
+          - problem: 'A paragraph proof reads: "Ray $\overrightarrow{BD}$ bisects $\angle ABC$, so $m\angle ABD = m\angle DBC$. Here $m\angle ABD = (4x + 2)^\circ$ and $m\angle DBC = (6x - 10)^\circ$, so $x = 6$. By the angle addition postulate, $m\angle ABC = m\angle ABD + m\angle DBC$." What measure does the proof find for $\angle ABC$, in degrees?'
+            answer_contract: {"kind":"unit","quantity":"angle","unit":"°","allow_omitted":true}
+            answer: '52'
+            solution_sketch: 'The equation $4x + 2 = 6x - 10$ gives $x = 6$. Each part measures $4(6) + 2 = 26$ degrees, so the angle addition postulate gives $m\angle ABC = 26 + 26 = 52$ degrees.'
+          - problem: 'A paragraph proof about a pipeline reads: "Point $B$ lies between $A$ and $C$, so $AB + BC = AC$ by the segment addition postulate. With $AB = (4x + 3)$ m, $BC = (3x - 1)$ m and $AC = 51$ m, we solve for $x$." How long is the section $\overline{AB}$, in metres?'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"m","allow_omitted":true}
+            answer: '31'
+            solution_sketch: 'The equation $(4x + 3) + (3x - 1) = 51$ gives $7x + 2 = 51$, so $x = 7$. Then $AB = 4(7) + 3 = 31$ m, and $BC = 3(7) - 1 = 20$ m completes the $51$ m.'
+          - problem: 'A paragraph proof continues: "...and congruent angles have equal measures, so $m\angle ABD = m\angle DBC$." Which definition supports replacing the congruence of the angles with the equality of their measures?'
+            answer_contract: {"kind":"label","options":[["definition of congruent angles","the definition of congruent angles","congruent angles definition","definition of a congruent angles","definition of an congruent angles","by the definition of congruent angles","congruent angles"],["substitution property","the substitution property","by the substitution property","substitution"],["definition of angle bisector","the definition of angle bisector","definition of a angle bisector","definition of an angle bisector","by the definition of angle bisector","angle bisector","angle bisector definition"],["definition of supplementary angles","the definition of supplementary angles","definition of a supplementary angles","definition of an supplementary angles","by the definition of supplementary angles","supplementary angles","supplementary angles definition"]]}
+            answer: 'definition of congruent angles'
+            solution_sketch: 'Two angles are congruent exactly when their measures are equal, so a congruence statement can be replaced by an equation of measures. This is the definition of congruent angles.'
+          - problem: 'A paragraph proof reads: "Both $\angle 1$ and $\angle 3$ are supplementary to $\angle 2$, so $\angle 1 \cong \angle 3$ and their measures are equal." Here $m\angle 1 = (5x + 8)^\circ$ and $m\angle 3 = (8x - 25)^\circ$. What is $m\angle 1$, in degrees?'
+            answer_contract: {"kind":"unit","quantity":"angle","unit":"°","allow_omitted":true}
+            answer: '63'
+            solution_sketch: 'Equal measures give $5x + 8 = 8x - 25$, so $3x = 33$ and $x = 11$. Then $m\angle 1 = 5(11) + 8 = 63$ degrees, and $m\angle 3 = 8(11) - 25 = 63$ degrees agrees.'
+          - problem: 'A paragraph proof about a ladder reads: "The ladder meets the straight ground and forms a linear pair of angles. By the linear pair postulate their measures add up to $180^\circ$." The angle on one side of the ladder is $115^\circ$. What is the angle on the other side, in degrees?'
+            answer_contract: {"kind":"unit","quantity":"angle","unit":"°","allow_omitted":true}
+            answer: '65'
+            solution_sketch: 'The two angles form a linear pair, so their measures add up to $180^\circ$. The other angle measures $180 - 115 = 65$ degrees.'
+          - problem: 'Write the full proof, as a paragraph, that $m\angle ABD = \frac{1}{2}\, m\angle ABC$, given that $\overrightarrow{BD}$ lies inside $\angle ABC$ and bisects it.'
+            answer_contract: {"kind":"none"}
+            answer: 'm angle ABD is half of m angle ABC'
+            solution_sketch: 'Because $\overrightarrow{BD}$ bisects $\angle ABC$, the definition of angle bisector gives $\angle ABD \cong \angle DBC$, and the definition of congruent angles turns this into $m\angle ABD = m\angle DBC$. Because $\overrightarrow{BD}$ lies inside $\angle ABC$, the angle addition postulate gives $m\angle ABD + m\angle DBC = m\angle ABC$. Substituting $m\angle ABD$ for $m\angle DBC$ gives $2 \cdot m\angle ABD = m\angle ABC$, and dividing both sides by $2$ gives $m\angle ABD = \frac{1}{2}\, m\angle ABC$.'
+        constraints: 'same content scope as kp2, with the proof written as sentences; one question names the definition or postulate behind a sentence, another asks for the value the paragraph reaches; the last exemplar is a full paragraph proof'
     diagnostic_exemplar:
-      problem: 'A two-column proof that $\angle 1 \cong \angle 2$ (vertical angles) reads — Statements: 1. $\angle 1$ and $\angle 2$ are vertical angles (Given); 2. $\angle 1$ and $\angle 3$ form a linear pair; $\angle 2$ and $\angle 3$ form a linear pair (blank). Which reason completes step 2: the definition of vertical angles, the linear pair postulate, the vertical angles theorem, or the substitution property?'
-      answer: 'the definition of vertical angles'
-      answer_contract: {kind: label, options: [['the definition of vertical angles'], ['the linear pair postulate'], ['the vertical angles theorem'], ['the substitution property']]}
-      solution_sketch: 'Vertical angles are defined by two intersecting lines whose opposite sides form the pairs; the linear pairs in step 2 come from the definition of vertical angles.'
+      problem: 'A two-column proof that vertical angles $\angle 1$ and $\angle 2$ are congruent reads. Statements: 1. $\angle 1$ and $\angle 3$ form a linear pair, and $\angle 2$ and $\angle 3$ form a linear pair; 2. $m\angle 1 + m\angle 3 = 180^\circ$ and $m\angle 2 + m\angle 3 = 180^\circ$. Reasons: 1. Given; 2. (blank). Which reason completes step 2?'
+      answer: 'linear pair postulate'
+      answer_contract: {"kind":"label","options":[["linear pair postulate","the linear pair postulate","linear pair","by the linear pair postulate"],["definition of vertical angles","the definition of vertical angles","definition of a vertical angles","definition of an vertical angles","by the definition of vertical angles","vertical angles","vertical angles definition"],["vertical angles theorem","the vertical angles theorem","by the vertical angles theorem"],["substitution property","the substitution property","by the substitution property","substitution"]]}
+      solution_sketch: 'Step 2 says that each linear pair has measures that add up to $180^\circ$. The linear pair postulate states exactly this, so it is the reason for step 2.'
     anki_seeds:
       - front: "The two columns of a two-column proof are..."
         back: "statements and reasons"
