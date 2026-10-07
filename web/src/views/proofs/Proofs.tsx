@@ -21,9 +21,9 @@ export const PHASE_LABEL: Record<ProofPhase, string> = {
   grading: 'Being checked',
   passed: 'Passed',
   revise: 'Needs revision',
-  reveal: 'Revisions used — solution ready',
-  rewrite: 'Rewrite without the solution',
-  unavailable: 'Not graded — submit again',
+  reveal: 'Revisions used, reference solution ready',
+  rewrite: 'Write again without the reference solution',
+  unavailable: 'Not graded, send again',
   closed: 'Closed',
 };
 
@@ -136,7 +136,7 @@ export function ChainCard({ api, call, chain, onChanged }: {
         <strong>{chain.topic_name ?? chain.topic ?? 'Proof'}</strong>
         {chain.kp ? <span className="muted">{` · ${chain.kp}`}</span> : null}
         <span className="chip">{PHASE_LABEL[chain.phase]}</span>
-        {unseen ? <span className="chip chip-accent">new verdict</span> : null}
+        {unseen ? <span className="chip chip-accent">new result</span> : null}
       </div>
       {chain.problem ? <MathBlock>{chain.problem}</MathBlock> : null}
       <ol className="proof-versions">
@@ -144,7 +144,7 @@ export function ChainCard({ api, call, chain, onChanged }: {
           <li key={version.id}>
             <div>
               <strong>{versionName(version, at)}</strong>
-              <span className="muted">{` — ${version.human_verdict ? `human check: ${version.human_verdict.replace('_', ' ')}` : STATUS_LABEL[version.status]}`}</span>
+              <span className="muted">{`: ${version.human_verdict ? `checked by a person: ${version.human_verdict.replace('_', ' ')}` : STATUS_LABEL[version.status]}`}</span>
             </div>
             {version.feedback ? <MathBlock className="proof-feedback">{version.feedback}</MathBlock> : null}
             {version.status === 'needs_revision' ? <FirstUnmet unmet={version.first_unmet ?? null} /> : null}
@@ -178,7 +178,7 @@ function NextStep({ api, call, chain, revealed, onReveal, onChanged }: {
 }) {
   if (chain.context === 'lesson') {
     return isOpen(chain)
-      ? <p className="muted">This proof belongs to a lesson: it comes first in your next session.</p>
+      ? <p className="muted">This proof belongs to a lesson: you return to it first next time.</p>
       : null;
   }
   if (chain.context !== 'review') return null;
@@ -189,7 +189,7 @@ function NextStep({ api, call, chain, revealed, onReveal, onChanged }: {
       if (revealed) {
         return (
           <button type="button" className="btn btn-primary" onClick={() => { onReveal(null); onChanged(); }}>
-            I have read it — rewrite the proof without it
+            Write my proof again without it
           </button>
         );
       }
@@ -197,7 +197,7 @@ function NextStep({ api, call, chain, revealed, onReveal, onChanged }: {
         <button type="button" className="btn" onClick={() => {
           void call(() => api.proofSeen(chain.head_id), (seen) => { onReveal(seen.chain.solution ?? null); });
         }}>
-          Show the solution once
+          Show the reference solution
         </button>
       );
     case 'revise':
@@ -216,7 +216,7 @@ function Revise({ api, call, chain, onChanged }: { api: ApiClient; call: Call; c
   const [busy, setBusy] = useState(false);
   return (
     <div className="proof-write">
-      {rewrite ? <p role="status">Rewrite the proof from memory, without the solution.</p> : <Obligations />}
+      {rewrite ? <p role="status">Write the proof again from memory, without the reference solution.</p> : <Obligations />}
       <textarea className="work-input proof-input" rows={8} aria-label="Your proof" value={text}
         disabled={busy} onChange={(e) => { setText(e.target.value); }} />
       <div className="actions">
@@ -225,7 +225,7 @@ function Revise({ api, call, chain, onChanged }: { api: ApiClient; call: Call; c
           void call(() => api.reviseProof(chain.head_id, text), () => { setBusy(false); onChanged(); },
             { onFail: () => { setBusy(false); } });
         }}>
-          {rewrite ? 'Submit the rewrite' : `Resubmit (${String(chain.revisions_left)} revision${chain.revisions_left === 1 ? '' : 's'} left)`}
+          {rewrite ? 'Send my new proof' : 'Revise and send again'}
         </button>
       </div>
     </div>

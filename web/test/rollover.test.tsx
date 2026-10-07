@@ -120,7 +120,7 @@ describe('the integrated item', () => {
 
   it('a submission hands the screen back once and grades nothing', async () => {
     const { api, onRolledOver, onGraded } = setup();
-    await click('Submit the whole task');
+    await click('Submit all my answers');
     expect(api.taskIntegratedAnswer).toHaveBeenCalledTimes(1);
     expect(onRolledOver).toHaveBeenCalledTimes(1);
     expect(onGraded).not.toHaveBeenCalled();

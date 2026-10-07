@@ -52,7 +52,7 @@ describe('your proofs', () => {
     const area = screen.getByLabelText('Your proof') as HTMLTextAreaElement;
     expect(area.value).toBe('n is even so n squared is even.');
     await act(async () => { fireEvent.change(area, { target: { value: 'Let n = 2k.' } }); });
-    await act(async () => { fireEvent.click(screen.getByRole('button', { name: /Resubmit/ })); });
+    await act(async () => { fireEvent.click(screen.getByRole('button', { name: /Revise and send again/ })); });
     expect(reviseProof).toHaveBeenCalledWith('job-1', 'Let n = 2k.');
     await waitFor(() => expect(screen.getByText('Revision 1')).toBeTruthy());
   });
@@ -75,9 +75,9 @@ describe('your proofs', () => {
       chains: [chain({ phase: 'reveal', head_id: 'job-3', revision: 2, revisions_left: 0 })],
     }));
     await show(api({ listProofs, proofSeen }));
-    await waitFor(() => expect(screen.getByText('Show the solution once')).toBeTruthy());
+    await waitFor(() => expect(screen.getByText('Show the reference solution')).toBeTruthy());
     expect(proofSeen).not.toHaveBeenCalled();
-    await act(async () => { fireEvent.click(screen.getByText('Show the solution once')); });
+    await act(async () => { fireEvent.click(screen.getByText('Show the reference solution')); });
     expect(proofSeen).toHaveBeenCalledWith('job-3');
     expect(screen.getByText(SOLUTION)).toBeTruthy();
   });
@@ -85,7 +85,7 @@ describe('your proofs', () => {
   it('points a lesson chain back at its lesson', async () => {
     const listProofs = vi.fn<ApiClient['listProofs']>(async () => ({ chains: [chain({ context: 'lesson' })] }));
     await show(api({ listProofs }));
-    await waitFor(() => expect(screen.getByText(/comes first in your next session/)).toBeTruthy());
+    await waitFor(() => expect(screen.getByText(/you return to it first next time/)).toBeTruthy());
     expect(screen.queryByLabelText('Your proof')).toBeNull();
   });
 

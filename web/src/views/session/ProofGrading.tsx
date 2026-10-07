@@ -41,14 +41,14 @@ export type ProofState =
 /** The learner-facing lines of each state. */
 export const PROOF_TEXT = {
   pending:
-    'Your proof is saved. A grader is checking it now, and the result appears here when it lands. You can continue meanwhile.',
-  slow: 'This check is taking longer than usual. Your proof is saved and will still be graded.',
-  failed: 'The automatic check could not grade this proof. It stays saved for a human review.',
+    'Being checked. This usually takes under a minute. Your proof is saved, and the result appears here. You can continue meanwhile.',
+  slow: 'The check is slow. Your proof is saved and will still be checked.',
+  failed: 'The automatic check could not grade this proof. Your proof is saved. A person will check it.',
   capped:
-    "Today's limit of automatic proof checks is reached. This proof stays saved for a human review.",
+    "The limit of automatic proof checks for today is reached. Your proof is saved. A person will check it.",
   pass: 'This proof counts toward your progress.',
   needs_revision:
-    'Revise the proof using the feedback below: open it from Your proofs on the dashboard. The solution opens once a revision passes.',
+    'Revise the proof with the feedback below. Open it from Your proofs on the dashboard. The reference solution shows after a revision passes.',
 } as const;
 
 const PENDING: ProofState = Object.freeze({ status: 'pending' });

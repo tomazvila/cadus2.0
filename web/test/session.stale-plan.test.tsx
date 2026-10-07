@@ -29,7 +29,7 @@ describe('stale session plan recovery', () => {
     await press('Continue →');
     expect(screen.queryByLabelText('Answer')).toBeNull();
     expect(document.querySelector('.problem-text')).toBeNull();
-    expect(screen.getByText('Preparing your session…')).toBeTruthy();
+    expect(screen.getByText('Getting your next problem…')).toBeTruthy();
     await act(async () => { pending.release(); });
     expect(screen.queryByLabelText('Answer')).toBeNull();
     await pressRetry();
@@ -68,7 +68,7 @@ describe('stale session plan recovery', () => {
     expect(taskTeach).toHaveBeenCalledTimes(1);
     expect(taskServe).toHaveBeenCalledWith('t-current');
     expect(screen.getByLabelText('Answer')).toBeTruthy();
-    expect(screen.queryByText('No instruction yet for this lesson')).toBeNull();
+    expect(screen.queryByText('This lesson is not ready yet')).toBeNull();
   });
 
   it('keeps a failed refresh retryable and never ends the session on that failure', async () => {
@@ -95,7 +95,7 @@ describe('stale session plan recovery', () => {
       taskServe: async () => { throw new ApiError(404, 'unknown_task'); },
       getPlan: async () => planOf(), sessionEnd,
     }) });
-    expect(screen.queryByText('Preparing your session…')).toBeNull();
+    expect(screen.queryByText('Getting your next problem…')).toBeNull();
     expect(screen.queryByLabelText('Answer')).toBeNull();
     expect(sessionEnd).not.toHaveBeenCalled();
     expect(toasts()).toHaveLength(0);

@@ -157,7 +157,7 @@ describe('the reads', () => {
     // failed generation stays at 2, so the next good read still paints.
     await act(async () => { held[2]!.reject(new ApiError(500, 'server_error', 'Down.')); });
     await act(async () => { held[1]!.reject(new ApiError(500, 'server_error', 'Down.')); });
-    expect(screen.getByText('You are all caught up — nice work.')).toBeTruthy();
+    expect(screen.getByText('You are all caught up. Nice work.')).toBeTruthy();
     expect(screen.queryByText('Could not load your dashboard.')).toBeNull();
   });
 
@@ -196,7 +196,7 @@ describe('the reads', () => {
 
   it('DEP-3: a refused export with no message toasts the generic line', async () => {
     await mount({ api: stubApi({ downloadExport: async () => { throw new Error(''); } }) });
-    await pressInMenu('Export my data (JSONL)');
+    await pressInMenu('Download my data');
 
     await waitFor(() => expect(toastStore.getSnapshot().length).toBe(1));
     expect(toastStore.getSnapshot()[0].message).toBe('Could not export your data.');

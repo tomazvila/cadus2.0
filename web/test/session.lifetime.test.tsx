@@ -107,7 +107,7 @@ describe('the plan edges', () => {
     await press('Continue →');
     expect(getPlan).toHaveBeenCalledTimes(2);
     expect(sessionEnd).toHaveBeenCalledTimes(1);
-    expect(screen.getByText('Session complete')).toBeTruthy();
+    expect(screen.getByText('Done for now')).toBeTruthy();
   });
 
   it('ends the session when the re-plan is empty', async () => {
@@ -118,7 +118,7 @@ describe('the plan edges', () => {
     await submitAnswer('3/4');
     await press('Continue →');
     expect(sessionEnd).toHaveBeenCalledTimes(1);
-    expect(screen.getByText('Session complete')).toBeTruthy();
+    expect(screen.getByText('Done for now')).toBeTruthy();
   });
 
   it('still ends the screen when the close fails: the work is saved, the summary is not', async () => {
@@ -130,13 +130,13 @@ describe('the plan edges', () => {
     });
     await submitAnswer('3/4');
     await press('Continue →');
-    expect(screen.getByText('Session complete')).toBeTruthy();
+    expect(screen.getByText('Done for now')).toBeTruthy();
     expect(screen.getByText('Your work is saved. The summary did not load.')).toBeTruthy();
   });
 
   it.each([
-    [{ course_complete: true }, 'Course complete. Enroll in your next course to keep going.'],
-    [{ frontier_blocked_until: '2026-09-05' }, 'New lessons are on a retry delay until 2026-09-05.'],
+    [{ course_complete: true }, 'Course complete. Join your next course to keep going.'],
+    [{ frontier_blocked_until: '2026-09-05' }, 'New lessons wait until 2026-09-05.'],
   ])('says which empty the plan is: %o', async (over, line) => {
     await mount({ plan: { ...planOf(), ...over } });
     expect(screen.getByText(line)).toBeTruthy();
@@ -145,7 +145,7 @@ describe('the plan edges', () => {
   it('says everything planned is done when the server closed every task', async () => {
     const done = { ...REVIEW, progress: { answered: 3, done: true } };
     await mount({ plan: planOf(done) });
-    expect(screen.getByText('Everything planned for this session is done. Nice work.')).toBeTruthy();
+    expect(screen.getByText('Everything planned for today is done. Nice work.')).toBeTruthy();
   });
 });
 

@@ -49,9 +49,9 @@ it('keeps expired integrated submissions on the demo screen', async () => {
     taskIntegratedAnswer: async () => { throw new ApiError(401, 'unauthorized', 'Expired'); },
   });
   const nav = await mount({ api, plan: planOf(MULTI), demo: true });
-  await press('Submit the whole task');
+  await press('Submit all my answers');
   expect(nav.onUnauthorized).not.toHaveBeenCalled();
-  expect(screen.getByText('The submission did not reach the service. Try again.')).toBeTruthy();
+  expect(screen.getByText('Your answers did not send. Try again.')).toBeTruthy();
 });
 
 it.each([
@@ -62,7 +62,7 @@ it.each([
     plan: planOf({ ...LESSON, topic }),
     api: stubApi({ taskTeach: async () => { throw new ApiError(409, 'no_instruction', 'Unavailable'); } }),
   });
-  expect(screen.getByText(new RegExp(`The worked example for ${label} is not written yet`))).toBeTruthy();
+  expect(screen.getByText(new RegExp(`The worked example for ${label} is not ready yet`))).toBeTruthy();
 });
 
 it('skips unavailable instruction once under two clicks in the same tick', async () => {
@@ -71,7 +71,7 @@ it('skips unavailable instruction once under two clicks in the same tick', async
     plan: planOf(LESSON, REVIEW),
     api: stubApi({ taskServe, taskTeach: async () => { throw new Error('no approved content'); } }),
   });
-  const skip = screen.getByRole('button', { name: 'Skip to the next task' });
+  const skip = screen.getByRole('button', { name: 'Skip this lesson for now' });
   await act(async () => { fireEvent.click(skip); fireEvent.click(skip); });
   expect(taskServe).toHaveBeenCalledExactlyOnceWith(REVIEW.task_id);
 });

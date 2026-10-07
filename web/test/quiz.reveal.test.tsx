@@ -114,7 +114,7 @@ describe('QUIZ-reveal: silence until the last answer', () => {
   it('names the way back to the session when the quiz was entered from one', async () => {
     await finishQuiz({ fromSession: true });
 
-    expect(screen.getByRole('button', { name: 'Continue session' })).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'Continue' })).toBeTruthy();
   });
 });
 
@@ -133,7 +133,7 @@ describe('QUIZ-timeout: the clock runs out', () => {
     expect(posted(taskAnswer)).toEqual([['q1', ''], ['q2', ''], ['q3', '']]);
     expect(screen.getByText('Quiz complete')).toBeTruthy();
     expect(toasts().map((t) => t.message)).toContain(QUIZ_TIMEOUT_MESSAGE);
-    expect(QUIZ_TIMEOUT_MESSAGE).toBe('Time’s up — grading your answers.');
+    expect(QUIZ_TIMEOUT_MESSAGE).toBe('Time is up. Your answers are being checked.');
   });
 
   it('QUIZ-timeout: never re-posts a problem_id already in flight', async () => {

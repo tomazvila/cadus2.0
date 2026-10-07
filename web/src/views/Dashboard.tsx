@@ -19,7 +19,7 @@
  *   W-C5 — QUIET SECONDARIES. Everything else sits under a native `<details>`. A native
  *   disclosure needs no ARIA, keeps its keyboard behavior, and prints open.
  *
- * DEP-3 — THE EXPORT. "Export my data (JSONL)" streams the full append-only event log
+ * DEP-3 — THE EXPORT. "Download my data" streams the full append-only event log
  * through `GET /api/export`. It goes through `fetch` with the HttpOnly session cookie and
  * carries NO token: no query parameter, no header, nothing in `localStorage` (SEC-cookie).
  *
@@ -111,8 +111,8 @@ export function etaDisplay(velocity: StatusResponse['velocity'], today: Date = n
 /** The tooltip of the ETA tile: the horizon rule, spelled out where it applies. */
 function etaTitle(velocity: StatusResponse['velocity']): string {
   return velocity.eta
-    ? 'Projected from your last 4 weeks of practice. It sharpens as you go.'
-    : 'No pace in the last 4 weeks yet, so there is nothing to project from.';
+    ? 'The day you finish the course if you keep the pace of the last 4 weeks. It gets more exact as you go.'
+    : 'There is no practice in the last 4 weeks yet, so no finish day can be shown.';
 }
 
 interface State {
@@ -189,7 +189,7 @@ export function Dashboard({
   const doEnroll = async (course: JourneyCourse): Promise<void> => {
     const res = await call(() => api.enroll(course.id));
     if (!res || !life.alive()) return;
-    toast(`Enrolled in ${course.name}. Take the placement to get started.`, { kind: 'success' });
+    toast(`Enrolled in ${course.name}. Answer the starting questions to get started.`, { kind: 'success' });
     reload();
   };
 
@@ -289,12 +289,12 @@ export function Dashboard({
         <div className="card onboard-card">
           <h2>Let&apos;s find where to start.</h2>
           <p className="muted">
-            A short placement — up to 40 questions, about 2 minutes. Stop at any time.
+            A few short questions: up to 40, about 2 minutes. You can stop at any time.
           </p>
           <button type="button" className="btn btn-primary btn-hero" onClick={onDiagnostic}>
-            Start placement <span aria-hidden="true">▸</span>
+            Start the questions <span aria-hidden="true">▸</span>
           </button>
-          <p className="muted onboard-foot">Nothing else to decide — we take it from here.</p>
+          <p className="muted onboard-foot">Nothing else to decide. We take it from here.</p>
         </div>
       </section>
     );
@@ -316,35 +316,35 @@ export function Dashboard({
         </div>
         <div className="stat-grid">
           <Stat value={`${num(status.xp.streak_days)}`} label="day streak" className="accent"
-            title="Consecutive days with at least one answered problem." />
+            title="Days in a row with at least one answered problem." />
           <Stat value={`${due}`} label="due now" className={due > 0 ? 'warn' : undefined}
-            title="Reviews scheduled for today. Skipping them lets the skill fade." />
+            title="Reviews to do today. If you skip them, you forget the skill." />
           <Stat value={`${num(status.nearly_due)}`} label="nearly due"
             title="Reviews that come due in the next few days." />
-          <Stat value={`${frontier}`} label="frontier"
-            title="New topics at the edge of what you know — ready to learn next." />
+          <Stat value={`${frontier}`} label="new topics"
+            title="New topics that are ready for you to learn next." />
           <Stat value={`${pct(status.velocity.course_progress)}%`} label="course"
             title="Share of the course's topics you have practiced." />
-          <Stat value={etaDisplay(status.velocity)} label="ETA" title={etaTitle(status.velocity)} />
+          <Stat value={etaDisplay(status.velocity)} label="finish by" title={etaTitle(status.velocity)} />
           {/* D-F2: the attempts nobody graded. The tile appears only when one waits,
               so a learner with none reads the same six tiles as before. The tooltip
               carries the H-2 explanation; the prose paragraph under the grid is gone. */}
           {ungraded > 0 ? (
             <Stat value={`${ungraded}`} label="not marked" className="warn"
-              title={`The checker could not read ${ungraded === 1 ? 'this answer' : 'these answers'} — usually a form it cannot grade, such as a missing unit. Nothing was scored for or against you, and a tutor can still mark ${ungraded === 1 ? 'it' : 'them'} by hand.`} />
+              title={`The checker could not read ${ungraded === 1 ? 'this answer' : 'these answers'}: usually a form it cannot read, such as a missing unit. Nothing was scored for or against you, and a person can still mark ${ungraded === 1 ? 'it' : 'them'} by hand.`} />
           ) : null}
         </div>
         {mastery ? (
           <div className="stat-grid mastery-grid">
             <Stat value={`${practiced}`} label="practiced"
               title="Topics where you have answered problems yourself." />
-            <Stat value={`${inferred}`} label="inferred from placement"
-              title="Credited by the placement without practice — one confirmation item locks them in." />
+            <Stat value={`${inferred}`} label="assumed from the starting questions"
+              title="Topics the starting questions showed you know, without practice. One more correct answer confirms each one." />
             <Stat
               value={`${toConfirm}`}
               label="to confirm"
               className={toConfirm > 0 ? 'accent' : undefined}
-              title="Inferred topics waiting for their first confirmation item."
+              title="Topics assumed known that still need one correct answer."
             />
           </div>
         ) : null}
@@ -382,7 +382,7 @@ export function Dashboard({
             Quiz now
           </button>
           <button type="button" className="btn" onClick={onDiagnostic}>
-            Re-run the placement
+            Answer the starting questions again
           </button>
           <button
             type="button"
@@ -398,17 +398,17 @@ export function Dashboard({
             disabled={busy.is('export')}
             onClick={() => busy.run('export', exportData)}
           >
-            Export my data (JSONL)
+            Download my data
           </button>
         </div>
         <p className="muted small more-caption">
-          Export my data downloads your full event log — the same data a re-import consumes.
+          Download my data saves a file with every answer you have given.
         </p>
       </details>
 
       {demo ? (
         <p className="demo-hint muted small">
-          Demo mode — every button works against canned data, with no backend.
+          Demo mode: every button works with example data.
         </p>
       ) : null}
     </section>

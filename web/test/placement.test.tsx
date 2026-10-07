@@ -55,7 +55,7 @@ describe('P3 and R15: the ground rules before probe 1', () => {
     const heads = Array.from(document.querySelectorAll('.intro-rules li strong'))
       .map((n) => n.textContent);
     expect(heads).toEqual([
-      'Don’t guess — skip instead.',
+      'Do not guess. Skip instead.',
       'No external resources.',
       'Answer honestly.',
     ]);
@@ -106,7 +106,7 @@ describe('P3 and R15: the ground rules before probe 1', () => {
     expect(diagAnswer).toHaveBeenCalledTimes(1);
     expect(diagAnswer).toHaveBeenCalledWith({ problem_id: 'd1', answer: '' });
     expect(document.querySelector('.feedback-skip .feedback-title')!.textContent).toBe('Skipped');
-    expect(skipButton().title).toBe('Records an honest skip (counts as incorrect — no guessing)');
+    expect(skipButton().title).toBe('Records an honest skip (counts as incorrect, so no guessing)');
   });
 
   it('P3: a blank Submit posts nothing and returns the focus to the field', async () => {
@@ -180,7 +180,7 @@ describe('DIAG-nosol: placement reveals nothing', () => {
 
     expect(screen.getByText(DIAG_NO_SOLUTIONS_NOTE)).toBeTruthy();
     expect(DIAG_NO_SOLUTIONS_NOTE)
-      .toBe('No solutions are shown during placement — just answer as best you can.');
+      .toBe('No solutions show during the starting questions. Answer as well as you can.');
 
     await answer('5');
     await tick(DIAG_BEAT_MS);

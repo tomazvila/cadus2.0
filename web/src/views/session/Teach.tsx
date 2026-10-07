@@ -95,7 +95,7 @@ export function Teach({ task, instruction, onContinue, onCheck }: TeachProps) {
             ) : null}
             {canPractise ? (
               <button ref={buttonRef} type="button" className="btn btn-primary" onClick={onContinue}>
-                I&apos;ve got it — practice ▸
+                Start practice ▸
               </button>
             ) : null}
           </>
@@ -110,7 +110,7 @@ function TeachHeader({ task, badge }: { task: PlanTask; badge: string }) {
   return (
     <div className="task-header">
       <div className="task-meta">
-        <Chip className="chip-lesson">{task.task_type === 'multi-step' ? 'application preparation' : 'lesson'}</Chip>
+        <Chip className="chip-lesson">{task.task_type === 'multi-step' ? 'getting ready for a mixed problem' : 'lesson'}</Chip>
         <span className="topic-name">{topic?.name || topic?.id || 'Lesson'}</span>
         {topic?.module ? <span className="topic-module">{topic.module}</span> : null}
       </div>
@@ -192,7 +192,7 @@ function TryResult({ reply }: { reply: TryReply | 'failed' }) {
   if (reply === 'failed') {
     return <p className="teach-note muted" role="status">Your attempt could not be checked. Read on.</p>;
   }
-  let verdict = 'Not this time — that is fine.';
+  let verdict = 'Not this time. That is fine.';
   if (reply.correct) verdict = 'You got it.';
   else if (reply.outcome === 'ungraded') verdict = 'That answer could not be checked automatically.';
   return (

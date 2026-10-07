@@ -43,7 +43,7 @@ function ReportDetails({ report, submitted, hideResult, close }: {
       onChange={(event) => report.setNote(event.target.value)} />
     <div role="status" aria-live="polite" aria-atomic="true">
       {report.busy && !report.receipt ? <p>Sending report...</p> : null}
-      {report.receipt ? <p>{report.receipt.status}: {hideResult ? 'Review details are withheld during this assessment.' : report.receipt.stage} (attempt {report.receipt.attempt} of {report.receipt.max_attempts})</p> : null}
+      {report.receipt ? <p>{report.receipt.status}: {hideResult ? 'Review details stay hidden until the quiz ends.' : report.receipt.stage} (attempt {report.receipt.attempt} of {report.receipt.max_attempts})</p> : null}
     </div>
     {report.error ? <p role="alert">{report.error}</p> : null}
     {report.receipt?.result && !hideResult ? <ReportResult result={report.receipt.result} /> : null}

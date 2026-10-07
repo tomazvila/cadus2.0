@@ -127,6 +127,6 @@ describe('the probe card', () => {
     await answer('5');
     await tick(DIAG_BEAT_MS);
     expect(diagFinish).toHaveBeenCalledTimes(1);
-    expect(screen.getByText('Placement complete')).toBeTruthy();
+    expect(screen.getByText('Starting questions done')).toBeTruthy();
   });
 });

@@ -88,7 +88,7 @@ describe('the boot tokens', () => {
     // The reply carries the account and sets the cookie, so no `/auth/me` follows it — the
     // second read raced the verification write in 1.0 and reported the learner unverified.
     expect(me).not.toHaveBeenCalled();
-    expect(messages()).toEqual(['Email verified — thanks!']);
+    expect(messages()).toEqual(['Email verified. Thanks!']);
     expect(toastStore.getSnapshot()[0].kind).toBe('info');
     // Verified and signed in: the shell shows the account, not the auth card.
     expect(screen.getByTitle('learner@example.com')).toBeTruthy();

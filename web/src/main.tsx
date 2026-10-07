@@ -106,7 +106,7 @@ export function stripBootTokens(pathname: string): void {
 async function spendVerifyToken(client: ApiClient, token: string): Promise<User | null> {
   try {
     const res = await client.verifyEmail(token);
-    toast('Email verified — thanks!', { kind: 'info' });
+    toast('Email verified. Thanks!', { kind: 'info' });
     return res.user;
   } catch (e) {
     const expired = e instanceof ApiError && e.code === 'invalid_token';

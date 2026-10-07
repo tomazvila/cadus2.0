@@ -51,9 +51,9 @@ describe('the dashboard', () => {
     expect(read('day streak')).toBe('3');
     expect(read('due now')).toBe('2');
     expect(read('nearly due')).toBe('1');
-    expect(read('frontier')).toBe('4');
+    expect(read('new topics')).toBe('4');
     expect(read('course')).toBe('18%');
-    expect(read('ETA')).toBe('2026-11-04');
+    expect(read('finish by')).toBe('2026-11-04');
     // 12 of 40 is 30 percent of the daily goal.
     expect(document.querySelector('.ring-label strong')!.textContent).toBe('30%');
   });
@@ -79,7 +79,7 @@ describe('the dashboard', () => {
   it('W-C2: exactly one primary button on an unplaced account', async () => {
     await mount({ api: stubApi({ getStatus: async () => status({ placed: false }) }) });
     expect(primaries().length).toBe(1);
-    expect(primaries()[0].textContent).toBe('Start placement ▸');
+    expect(primaries()[0].textContent).toBe('Start the questions ▸');
   });
 
   it('W-C2: exactly one primary button on an empty plan, with a next course', async () => {
@@ -108,7 +108,7 @@ describe('the dashboard', () => {
     const view = await mount({
       api: stubApi({ getStatus: async () => status({ ...EMPTY_PLAN, courses: ONE_COURSE }) }),
     });
-    expect(screen.getByText('You are all caught up — nice work.')).toBeTruthy();
+    expect(screen.getByText('You are all caught up. Nice work.')).toBeTruthy();
 
     // In the open, not inside the quiet disclosure: the learner must not open a menu to
     // find the one thing left to do.
@@ -128,7 +128,7 @@ describe('the dashboard', () => {
     });
     // One action only. A wall of buttons here asks the learner to plan the placement.
     expect(document.querySelectorAll('.view-dashboard button').length).toBe(1);
-    expect(await pressInTheOpen('Start placement', view.onDiagnostic))
+    expect(await pressInTheOpen('Start the questions', view.onDiagnostic))
       .toEqual({ insideDetails: false, calls: 1 });
   });
 
@@ -146,7 +146,7 @@ describe('the dashboard', () => {
     vi.stubGlobal('fetch', fetchMock);
 
     await mount({ api: stubApi({ downloadExport: realApi.downloadExport }) });
-    await pressInMenu('Export my data (JSONL)');
+    await pressInMenu('Download my data');
 
     await waitFor(() => expect(downloads.length).toBe(1));
     expect(fetchMock).toHaveBeenCalledTimes(1);
@@ -171,7 +171,7 @@ describe('the dashboard', () => {
       throw new ApiError(403, 'forbidden', 'The demo keeps no event log to export.');
     };
     await mount({ api: stubApi({ downloadExport: failing }) });
-    await pressInMenu('Export my data (JSONL)');
+    await pressInMenu('Download my data');
 
     await waitFor(() => expect(toastStore.getSnapshot().length).toBe(1));
     expect(toastStore.getSnapshot()[0].message).toBe('The demo keeps no event log to export.');
@@ -270,7 +270,7 @@ describe('the dashboard', () => {
     await waitFor(() => expect(getStatus.mock.calls.length).toBeGreaterThan(before));
     expect(enroll).toHaveBeenCalledWith('proofs');
     expect(toastStore.getSnapshot()[0].message)
-      .toBe('Enrolled in Proofs. Take the placement to get started.');
+      .toBe('Enrolled in Proofs. Answer the starting questions to get started.');
   });
 
   it('offers Try again when the status never arrives, and recovers on it', async () => {

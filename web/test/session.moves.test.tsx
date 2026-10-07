@@ -102,14 +102,14 @@ describe('the screens before the card', () => {
   it('waits with a labelled block, then paints a card that is not busy', async () => {
     const serve = held<ServedProblem>();
     await mount({ api: stubApi({ taskServe: () => serve.promise }) });
-    expect(screen.getByText('Preparing your session…')).toBeTruthy();
+    expect(screen.getByText('Getting your next problem…')).toBeTruthy();
     await act(async () => { serve.release(P(1)); });
     expect(section().getAttribute('aria-busy')).toBe('false');
   });
 
   it('says nothing is due for a plan with no task at all', async () => {
     await mount({ plan: planOf() });
-    expect(screen.getByText('Nothing is due right now — enjoy the break.')).toBeTruthy();
+    expect(screen.getByText('Nothing is due right now. Come back later.')).toBeTruthy();
   });
 
   it('marks the worked example busy once the learner asks to practise', async () => {
@@ -170,7 +170,7 @@ describe('the plan cursor', () => {
     await press('Continue →');
 
     // The next task starts with a loading screen and no question from the completed task.
-    expect(screen.getByText('Preparing your session…')).toBeTruthy();
+    expect(screen.getByText('Getting your next problem…')).toBeTruthy();
     expect(document.querySelector('.feedback')).toBeNull();
     expect(screen.queryByLabelText('Answer')).toBeNull();
     expect(screen.queryByRole('button', { name: 'Submit' })).toBeNull();
@@ -244,14 +244,14 @@ describe('the wrap-up', () => {
     const taskServe = vi.fn<ApiClient['taskServe']>(async () => P(1));
     await mount({ api: stubApi({ taskServe, sessionEnd: () => close.promise }) });
     await submitAnswer('3/4');
-    await press('End session');
+    await press('Stop for now');
 
-    expect(screen.getByText('Wrapping up…')).toBeTruthy();
+    expect(screen.getByText('Saving your work…')).toBeTruthy();
     await act(async () => { vi.advanceTimersByTime(5000); });
     expect(taskServe).toHaveBeenCalledTimes(1);
 
     await act(async () => { close.release(closed()); });
-    expect(screen.getByText('Session complete')).toBeTruthy();
+    expect(screen.getByText('Done for now')).toBeTruthy();
     // The three numbers of the receipt, and the focus on the one way out.
     expect(Array.from(document.querySelectorAll('.stat-value')).map((s) => s.textContent)).toEqual(['+10', '5', '3']);
     expect(document.activeElement).toBe(screen.getByRole('button', { name: 'Back to dashboard' }));

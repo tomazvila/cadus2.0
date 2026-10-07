@@ -66,7 +66,7 @@ export function PrimaryAction({
   const nextCourse = nextCourseOf(status.courses);
   return (
     <div className="primary-action">
-      <p className="caught-up">You are all caught up — nice work.</p>
+      <p className="caught-up">You are all caught up. Nice work.</p>
       {nextCourse ? (
         <>
           <button
@@ -93,7 +93,7 @@ export function PrimaryAction({
             Re-check where you are <span aria-hidden="true">▸</span>
           </button>
           <p className="muted primary-sub">
-            A short placement finds the next thing worth your time.
+            A few short questions find what to learn next.
           </p>
         </>
       )}

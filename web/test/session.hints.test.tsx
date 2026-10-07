@@ -10,7 +10,7 @@ import { HintButton, HintPanel } from '@/views/session/Hints';
 import type { ApiClient } from '@/api/types';
 import { P, answerInput, mount, stubApi } from './helpers/session';
 
-const NO_LADDER = /No hints are written for this one yet/;
+const NO_LADDER = /This problem has no hints yet/;
 
 describe('HintPanel', () => {
   it('numbers the hints in the order given', () => {
@@ -24,7 +24,7 @@ describe('HintPanel', () => {
     render(<HintPanel hints={[]} referenceLesson="Fractions" hintsAvailable taskType="review" />);
     const notes = [...document.querySelectorAll('.reference-lesson')].map((n) => n.textContent);
     expect(notes).toEqual([
-      'Still stuck? This is a review — re-study the lesson “Fractions”, then answer as best you can.',
+      'Still stuck? Read the lesson “Fractions” again, then answer as well as you can.',
     ]);
   });
 

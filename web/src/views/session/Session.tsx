@@ -450,7 +450,7 @@ export function Session({
   }
 
   if (phase === 'closing') {
-    return <section className="view-session"><LoadingBlock label="Wrapping up…" /></section>;
+    return <section className="view-session"><LoadingBlock label="Saving your work…" /></section>;
   }
 
   // No dead end: an empty plan offers the placement, and the wording says which empty it is.
@@ -466,7 +466,7 @@ export function Session({
   }
 
   if (!session.task) {
-    return <section className="view-session"><LoadingBlock label="Preparing your session…" /></section>;
+    return <section className="view-session"><LoadingBlock label="Getting your next problem…" /></section>;
   }
 
   // AUDIT FINDING (j): the lesson has no approved teach page. No practice is served
@@ -498,7 +498,7 @@ export function Session({
 
   if (integrated) {
     return <section className="view-session">
-      <p hidden={!session.task.integrated_assessment}>Delayed application assessment</p>
+      <p hidden={!session.task.integrated_assessment}>Delayed mixed problem</p>
       <button type="button" className="btn btn-ghost" onClick={onExit}>Exit</button>
       <Integrated key={session.task.task_id} api={api} reportApi={api} taskId={session.task.task_id}
         problem={integrated} onUnauthorized={demo ? undefined : onUnauthorized}
@@ -513,7 +513,7 @@ export function Session({
   }
 
   if (!problem) {
-    return <section className="view-session"><LoadingBlock label="Preparing your session…" /></section>;
+    return <section className="view-session"><LoadingBlock label="Getting your next problem…" /></section>;
   }
 
   // D-PR1: a written proof inside a lesson runs its own revision loop. The knowledge point

@@ -120,7 +120,7 @@ describe('the operator route and the topbar', () => {
     expect(view().querySelector('.view-review')).toBeNull();
     expect(window.location.pathname).toBe('/');
 
-    await person.click(screen.getByRole('button', { name: 'Done' }));
+    await person.click(screen.getByRole('button', { name: 'Back to dashboard' }));
     await waitFor(() => expect(view().querySelector('.view-dashboard')).not.toBeNull());
   });
 
@@ -143,7 +143,7 @@ describe('the operator route and the topbar', () => {
     await openMapFromBar(person);
 
     // Done gives the SESSION back: a second press did not wrap the map around itself.
-    await person.click(screen.getByRole('button', { name: 'Done' }));
+    await person.click(screen.getByRole('button', { name: 'Back to dashboard' }));
     await waitFor(() => expect(view().querySelector('.view-session')).not.toBeNull());
   });
 

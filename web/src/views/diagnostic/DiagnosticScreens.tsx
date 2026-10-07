@@ -9,14 +9,14 @@ import { Cross, Stat, Tick } from '@/components/primitives';
 import type { DiagAnswerResponse, DiagFinishResponse, DiagProbe } from '@/api/diag';
 
 /** The line a failed start leaves on the intro card. */
-export const DIAG_START_FAILED = 'The placement did not start. Try again in a moment.';
+export const DIAG_START_FAILED = 'The starting questions did not start. Try again in a moment.';
 
 /** The three ground rules, in order (P3). */
 const GROUND_RULES: readonly { head: string; body: string }[] = [
   {
-    head: 'Don’t guess — skip instead.',
-    body: 'If you cannot see how to start within a couple of minutes, press “Skip — I don’t'
-      + ' know”. A lucky guess places you too high and gets you over-challenged; an honest'
+    head: 'Do not guess. Skip instead.',
+    body: 'If you cannot see how to start within a couple of minutes, press “I do not know”.'
+      + ' A lucky guess places you too high and gets you over-challenged; an honest'
       + ' skip places you a little lower.',
   },
   {
@@ -26,14 +26,14 @@ const GROUND_RULES: readonly { head: string; body: string }[] = [
   },
   {
     head: 'Answer honestly.',
-    body: 'This is not a test you can fail — it only finds the right starting point.'
+    body: 'This is not a test you can fail. It only finds the right place to start.'
       + ' Overstating or understating what you know wastes your own time later.',
   },
 ];
 
 /** The name a probe shows: the record's name or id in 2.0, the bare string in 1.0. */
 export function topicName(t: DiagProbe['topic']): string {
-  return (t && typeof t === 'object' ? (t.name ?? t.id) : t) ?? 'Placement';
+  return (t && typeof t === 'object' ? (t.name ?? t.id) : t) ?? 'Topic';
 }
 
 export interface IntroCardProps {
@@ -52,7 +52,7 @@ export function IntroCard({ cardRef, startFailed, onBegin, onExit }: IntroCardPr
       <div className="card intro-card" tabIndex={-1} ref={cardRef}>
         <h2>Before we start</h2>
         <p className="muted">
-          This short placement finds where you should start. It takes a few minutes, and
+          This short set of questions finds where you should start. It takes a few minutes, and
           there is no way to fail it. Three ground rules keep it accurate:
         </p>
         <ul className="intro-rules">
@@ -66,7 +66,7 @@ export function IntroCard({ cardRef, startFailed, onBegin, onExit }: IntroCardPr
         {startFailed ? <p className="intro-error">{DIAG_START_FAILED}</p> : null}
         <div className="actions">
           <button type="button" className="btn btn-primary" onClick={onBegin}>
-            Begin placement
+            Start the questions
           </button>
           <button type="button" className="btn btn-ghost" onClick={onExit}>
             Not now
@@ -90,7 +90,7 @@ export function PlacementDone({ summary, homeRef, onExit }: PlacementDoneProps) 
     return (
       <section className="view-diagnostic">
         <div className="empty">
-          <p>Placement finished.</p>
+          <p>The starting questions are finished.</p>
           <button ref={homeRef} type="button" className="btn btn-primary" onClick={onExit}>
             Back to dashboard
           </button>
@@ -103,11 +103,11 @@ export function PlacementDone({ summary, homeRef, onExit }: PlacementDoneProps) 
   return (
     <section className="view-diagnostic">
       <div className="card summary-card">
-        <h2>Placement complete</h2>
+        <h2>Starting questions done</h2>
         <div className="stat-grid">
-          <Stat value={String(summary.placed.length)} label="topics placed" className="accent" />
-          <Stat value={String(summary.conditional.length)} label="conditional" />
-          <Stat value={String(frontier.length)} label="frontier topics" />
+          <Stat value={String(summary.placed.length)} label="topics you know" className="accent" />
+          <Stat value={String(summary.conditional.length)} label="topics to confirm" />
+          <Stat value={String(frontier.length)} label="topics to learn next" />
         </div>
         {frontier.length ? (
           <div className="frontier-block">

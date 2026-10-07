@@ -22,14 +22,14 @@ it('reveals only on request and hides originals for fresh practice while preserv
   expect(taskQuizResult).not.toHaveBeenCalled();
   await act(async () => { fireEvent.click(screen.getByText('Review results')); });
   expect(screen.getByText('Original worked solution')).toBeTruthy();
-  expect(screen.getByText('50% of graded answers correct · 5 XP')).toBeTruthy();
-  await act(async () => { fireEvent.click(screen.getByText('Done studying · Practice missed skills')); });
+  expect(screen.getByText('50% of marked answers right · 5 XP')).toBeTruthy();
+  await act(async () => { fireEvent.click(screen.getByText('Practice the skills you missed')); });
   expect(screen.queryByText('Original worked solution')).toBeNull();
   await act(async () => { fireEvent.click(screen.getByText('Start fresh practice')); });
   expect(screen.getByText('Fresh independent question')).toBeTruthy();
   fireEvent.change(screen.getByRole('textbox'), { target: { value: '47' } });
-  await act(async () => { fireEvent.click(screen.getByText('Submit practice answer')); });
-  expect(screen.getByText('Independent practice complete. The recorded quiz result is unchanged.')).toBeTruthy();
+  await act(async () => { fireEvent.click(screen.getByText('Submit answer')); });
+  expect(screen.getByText('Practice done. Your quiz result stays the same.')).toBeTruthy();
 });
 
 describe('practice recovery', () => {

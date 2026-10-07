@@ -19,12 +19,12 @@ const feedback = () => document.querySelector('.feedback')!;
 describe('Feedback', () => {
   it('separates a correct practice answer from an unsuccessful assessment', () => {
     render(<Feedback res={graded({ task_status: 'task_failed' })} hasNext={false} onContinue={vi.fn()} onEnd={vi.fn()} />);
-    expect(screen.getByText(/The original assessment still needs more practice/)).toBeTruthy();
+    expect(screen.getByText(/the lesson passes after two right in a row/)).toBeTruthy();
   });
   it('names a fresh-item block while preserving a retry action', () => {
     render(<Feedback res={graded({ feedback_practice: true, feedback_blocked: true })} hasNext onContinue={vi.fn()} onEnd={vi.fn()} />);
     expect(screen.getByRole('status').textContent).toContain('Your answer is saved');
-    expect(screen.getByRole('button', { name: 'Check for fresh practice →' })).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'Get a fresh problem →' })).toBeTruthy();
   });
   it('shows an inconclusive review separately from the last answer', () => {
     render(<Feedback res={graded({ task_status: 'task_inconclusive' })} hasNext={false} onContinue={vi.fn()} onEnd={vi.fn()} />);

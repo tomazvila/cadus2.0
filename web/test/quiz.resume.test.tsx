@@ -23,7 +23,7 @@ it('offers the recorded reveal when the first serve reports task_complete', asyn
   expect(taskQuizResult).not.toHaveBeenCalled();
   await press('Review results');
   expect(taskQuizResult).toHaveBeenCalledWith('t-quiz', false);
-  expect(screen.getByText('100% of graded answers correct · 10 XP')).toBeTruthy();
+  expect(screen.getByText('100% of marked answers right · 10 XP')).toBeTruthy();
 });
 
 it('resumes server-owned feedback practice without revealing the original answers', async () => {
@@ -32,7 +32,7 @@ it('resumes server-owned feedback practice without revealing the original answer
   }));
   const taskAnswer = vi.fn<ApiClient['taskAnswer']>();
   await mount({ api: stubApi({ taskServe, taskAnswer }) });
-  expect(screen.getByText('Independent practice')).toBeTruthy();
+  expect(screen.getByText('Practice on your own')).toBeTruthy();
   expect(screen.queryByRole('button', { name: 'Review results' })).toBeNull();
   expect(document.querySelector('.timer')).toBeNull();
   expect(taskAnswer).not.toHaveBeenCalled();

@@ -133,7 +133,7 @@ describe('NO-2BILL: one write per mount', () => {
     // The example is a lesson card, not a problem card: nothing here takes an answer.
     expect(screen.queryByLabelText('Answer')).toBeNull();
 
-    await press("I've got it — practice ▸");
+    await press("Start practice ▸");
 
     expect(taskServe).toHaveBeenCalledTimes(1);
     expect(taskTeach).toHaveBeenCalledTimes(1);
@@ -154,13 +154,13 @@ describe('NO-2BILL: one write per mount', () => {
     const taskServe = vi.fn<ApiClient['taskServe']>(async () => P(1));
     await mount({ plan: planOf(LESSON, REVIEW), api: stubApi({ taskTeach, taskServe }) });
 
-    await waitFor(() => expect(screen.getByText('No instruction yet for this lesson')).toBeTruthy());
+    await waitFor(() => expect(screen.getByText('This lesson is not ready yet')).toBeTruthy());
     // The whole point of the card: the learner never practises an untaught skill.
     expect(taskServe).not.toHaveBeenCalled();
     expect(screen.queryByLabelText('Answer')).toBeNull();
 
     // One control leads on, and it takes the NEXT task.
-    await press('Skip to the next task');
+    await press('Skip this lesson for now');
     await waitFor(() => expect(taskServe).toHaveBeenCalledTimes(1));
     expect(taskServe.mock.calls[0]).toEqual(['t-review']);
   });
@@ -171,7 +171,7 @@ describe('NO-2BILL: one write per mount', () => {
     ];
     const plan = { ...planOf(), blocked };
     await mount({ plan, api: stubApi({}) });
-    expect(screen.getByText('1 topic(s) wait on content that is not written yet.')).toBeTruthy();
+    expect(screen.getByText('1 topic(s) wait on lessons that are not ready yet.')).toBeTruthy();
   });
 });
 
@@ -243,7 +243,7 @@ describe('the exit paths', () => {
     expect(sessionEnd).not.toHaveBeenCalled();
   });
 
-  it('End session closes with no minutes argument and shows the summary', async () => {
+  it('Stop for now closes with no minutes argument and shows the summary', async () => {
     const sessionEnd = vi.fn<ApiClient['sessionEnd']>(async () => closed({
       xp_earned: 12,
       minutes: 8,
@@ -254,11 +254,11 @@ describe('the exit paths', () => {
     });
 
     await submitAnswer('3/4');
-    await press('End session');
+    await press('Stop for now');
 
     // NO ARGUMENTS: the service measures the session itself and that value prices the XP.
     expect(sessionEnd).toHaveBeenCalledWith();
-    expect(screen.getByText('Session complete')).toBeTruthy();
+    expect(screen.getByText('Done for now')).toBeTruthy();
     expect(screen.getByText(signed(12))).toBeTruthy();
     expect(screen.getByText('8')).toBeTruthy();
 
@@ -279,7 +279,7 @@ describe('the exit paths', () => {
     await press('Continue →');
 
     expect(sessionEnd).toHaveBeenCalledTimes(1);
-    expect(screen.getByText('Session complete')).toBeTruthy();
+    expect(screen.getByText('Done for now')).toBeTruthy();
   });
 
   it('a remediation asks the core for a fresh plan, and the core decides what is next', async () => {

@@ -59,7 +59,7 @@ function Row({ row, minSample }: { row: RetentionRow; minSample: number }) {
       <td>{p.independent_correct} of {p.independent}</td>
       <td>{rateText(row.assistance_dependence)}</td>
       <td className="muted small">
-        {p.assisted} with help · {p.repeated} repeated · {p.ungraded} ungraded
+        answered with a hint, not counted: {p.assisted} · repeated problems, not counted: {p.repeated} · not marked: {p.ungraded}
       </td>
     </tr>
   );
@@ -84,11 +84,11 @@ export function RetentionCard({ api, call }: RetentionCardProps) {
   if (!report) {
     return (
       <div className="retention-card">
-        <h3>Delayed retention</h3>
+        <h3>Still right days later</h3>
         {failed ? (
-          <p className="muted small">The retention report did not load.</p>
+          <p className="muted small">Your results did not load.</p>
         ) : (
-          <LoadingBlock label="Reading the retention report…" />
+          <LoadingBlock label="Loading your results…" />
         )}
       </div>
     );
@@ -97,18 +97,18 @@ export function RetentionCard({ api, call }: RetentionCardProps) {
   const { policy, retention, placement, integrated } = report;
   return (
     <div className="retention-card">
-      <h3>Delayed retention</h3>
+      <h3>Still right days later</h3>
       <p className="muted small">
-        What you still answered right days after the lesson, on items you never saw.
+        Problems from earlier lessons, asked again after a delay, when they were new to you. The rate is how many you answered right.
       </p>
       <table className="retention-table">
         <thead>
           <tr>
             <th scope="col">Delay</th>
-            <th scope="col">Answered right on your own</th>
-            <th scope="col">Independent answers</th>
-            <th scope="col">Used help</th>
-            <th scope="col">Provenance</th>
+            <th scope="col">Share right</th>
+            <th scope="col">Number right</th>
+            <th scope="col">Share answered with a hint</th>
+            <th scope="col">Not counted</th>
           </tr>
         </thead>
         <tbody>
@@ -119,18 +119,18 @@ export function RetentionCard({ api, call }: RetentionCardProps) {
         </tbody>
       </table>
       <p className="muted small">
-        Policy {policy.label} · digest {policy.digest} · probes at{' '}
-        {policy.probe_delays_days.join(', ')} days · a rate needs {policy.min_sample} answers.
+        {policy.calibrated ? '' : 'This measure is new and not yet checked against long-term results. '}
+        A rate needs {policy.min_sample} answers.
       </p>
       <p className="muted small">
-        Placement: {placement.failed_confirmation.length} topic(s) failed their confirmation,{' '}
-        {placement.awaiting_confirmation.length} still owe one.
+        Starting questions: {placement.failed_confirmation.length} topic(s) missed when asked again,{' '}
+        {placement.awaiting_confirmation.length} still to be asked again.
       </p>
       {integrated ? (
         <p className="muted small">
-          Integrated tasks: {integrated.served} served, {integrated.passed} passed,{' '}
+          Mixed problems: {integrated.served} given, {integrated.passed} passed,{' '}
           {integrated.failed} failed, {integrated.inconclusive} without a decision,{' '}
-          {integrated.open} open · pass rate {rateText(integrated.pass_rate)}.
+          {integrated.open} still open · pass rate {rateText(integrated.pass_rate)}.
         </p>
       ) : null}
     </div>

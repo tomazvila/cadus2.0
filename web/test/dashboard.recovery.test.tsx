@@ -22,7 +22,7 @@ it('says the retention read failed and shows the report after the toast retry', 
     .mockRejectedValueOnce(new ApiError(503, 'unavailable', 'Report temporarily unavailable.'))
     .mockReturnValueOnce(pending.promise);
   await mount({ api: stubApi({ getRetentionReport }) });
-  await screen.findByText('The retention report did not load.');
+  await screen.findByText('Your results did not load.');
   expect(toastStore.getSnapshot()[0].message).toBe('Report temporarily unavailable.');
   expect(screen.queryByRole('table')).toBeNull();
 
@@ -31,5 +31,5 @@ it('says the retention read failed and shows the report after the toast retry', 
   expect(getRetentionReport).toHaveBeenCalledTimes(2);
   expect(screen.getByRole('table')).toBeTruthy();
   expect(screen.getByRole('rowheader', { name: 'Every delay' })).toBeTruthy();
-  expect(screen.queryByText('The retention report did not load.')).toBeNull();
+  expect(screen.queryByText('Your results did not load.')).toBeNull();
 });

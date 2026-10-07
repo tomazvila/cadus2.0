@@ -290,17 +290,17 @@ describe('the fresh practice after a quiz with a Label problem', () => {
     await session.press('Start fresh practice');
     expect(labels()).toEqual(['Step 3', 'Step 1', 'Step 4', 'Step 2']);
     expect(screen.queryByRole('textbox')).toBeNull();
-    expect(screen.queryByRole('button', { name: 'Submit practice answer' })).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Submit answer' })).toBeNull();
     await tap('Step 1');
     expect(quiz.posted(taskAnswer)).toEqual([['q1', 'Step 1']]);
-    expect(screen.getByText(/Independent practice complete/)).toBeTruthy();
+    expect(screen.getByText(/Practice done/)).toBeTruthy();
   });
 
   it('shows the typed field for a problem with no choices key', async () => {
     show(quiz.stubApi({ taskQuizResult: async () => pending, taskServe: async () => quiz.Q(1) }));
     await session.press('Start fresh practice');
     expect(screen.getByRole('textbox')).toBeTruthy();
-    expect(screen.getByRole('button', { name: 'Submit practice answer' })).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'Submit answer' })).toBeTruthy();
     expect(screen.queryByRole('group', { name: 'Answer choices' })).toBeNull();
   });
 });

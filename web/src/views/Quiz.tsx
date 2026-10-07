@@ -113,7 +113,7 @@ const QUIZ_URGENT_SECS = 60;
 export const QUIZ_SILENCE_NOTE = 'No feedback until the end.';
 
 /** The line the time-out raises. It is the only mid-quiz message. */
-export const QUIZ_TIMEOUT_MESSAGE = 'Time’s up — grading your answers.';
+export const QUIZ_TIMEOUT_MESSAGE = 'Time is up. Your answers are being checked.';
 
 export interface QuizProps {
   api: ApiClient;
@@ -378,7 +378,7 @@ export function Quiz({
               number invented here would be a lie about a recorded attempt. */}
           <QuizResults api={api} taskId={task.task_id} onUnauthorized={onUnauthorized} resumePractice={resumePractice} />
           <button ref={doneRef} type="button" className="btn btn-primary" onClick={onDone}>
-            {fromSession ? 'Continue session' : 'Back to dashboard'}
+            {fromSession ? 'Continue' : 'Back to dashboard'}
           </button>
         </div>
       </section>

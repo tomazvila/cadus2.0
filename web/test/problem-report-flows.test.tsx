@@ -46,7 +46,7 @@ describe('reports across question flows', () => {
     expect(api.taskReport).toHaveBeenCalledWith(QUIZ.task_id, expect.objectContaining({ problem_id: 'q1', report_kind: 'served' }), expect.any(AbortSignal));
     expect(api.taskAnswer).not.toHaveBeenCalled();
     expect(screen.queryByText(/Secret/)).toBeNull();
-    expect(screen.getByText(/Review details are withheld/)).toBeTruthy();
+    expect(screen.getByText(/Review details stay hidden until the quiz ends/)).toBeTruthy();
   });
 
   it('reports each revealed quiz answer with its own problem identity', async () => {
@@ -79,7 +79,7 @@ describe('reports across question flows', () => {
     }), expect.any(AbortSignal));
     await click('Close report');
     fireEvent.change(screen.getByLabelText('Final answer'), { target: { value: '7' } });
-    await click('Submit the whole task');
+    await click('Submit all my answers');
     await click('Report submitted question');
     await click('Send report');
     expect(api.taskReport).toHaveBeenLastCalledWith('integrated', {
@@ -103,7 +103,7 @@ describe('reports across question flows', () => {
       diagFinish: vi.fn(),
     };
     render(<Diagnostic diag={diag} reportApi={api} demo onUnauthorized={vi.fn()} onExit={vi.fn()} />);
-    await act(async () => { fireEvent.click(screen.getByRole('button', { name: /Begin/ })); });
+    await act(async () => { fireEvent.click(screen.getByRole('button', { name: /Start the questions/ })); });
     await click('Report question');
     await click('Send report');
     expect(diag.diagAnswer).not.toHaveBeenCalled();

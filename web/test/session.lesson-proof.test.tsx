@@ -54,7 +54,7 @@ async function mountProof(api: Partial<ApiClient>, served: ServedProblem = proof
     plan: planOf(LESSON, REVIEW),
     api: stubApi({ taskTeach: async () => TEACHING, taskServe: async () => served, ...api }),
   });
-  await press("I've got it — practice ▸");
+  await press("Start practice ▸");
   return view;
 }
 
@@ -80,7 +80,7 @@ describe('a lesson proof', () => {
     // The draft: the obligations, an empty textarea, no solution.
     for (const line of PROOF_OBLIGATIONS) expect(screen.getByText(line)).toBeTruthy();
     expect(textarea().value).toBe('');
-    await write(DRAFT, 'Submit proof');
+    await write(DRAFT, 'Send my proof');
     expect(taskAnswer.mock.calls[0]).toEqual(['t-lesson', { problem_id: 'p1', answer: DRAFT }]);
 
     // The verdict lands (the wait and its checklist are the next test's) and is read
@@ -95,7 +95,7 @@ describe('a lesson proof', () => {
 
     // The revision goes to the same problem.
     landed = job({ id: 'job-2', status: 'pass' });
-    await write(`${DRAFT} Since n = 2k, n^2 = 2(2k^2).`, /Resubmit/);
+    await write(`${DRAFT} Since n = 2k, n^2 = 2(2k^2).`, /Revise and send again/);
     expect(taskAnswer.mock.calls[1]![1].problem_id).toBe('p1');
     await waitFor(() => expect(screen.getByText('Proof accepted')).toBeTruthy());
     expect(screen.getByText(SOLUTION)).toBeTruthy();
@@ -115,12 +115,12 @@ describe('a lesson proof', () => {
       plan: planOf(LESSON, REVIEW),
       api: stubApi({ taskTeach: async () => TEACHING, taskServe, getProofGrading }),
     });
-    await press("I've got it — practice ▸");
+    await press("Start practice ▸");
     expect(screen.getByText(LESSON_PROOF_TEXT.grading)).toBeTruthy();
-    expect(screen.queryByText('Continue with the next task')).toBeNull();
+    expect(screen.queryByText('Come back to this later')).toBeNull();
     await act(async () => { vi.advanceTimersByTime(PROOF_LEAVE_AFTER_MS); });
     expect(screen.getByText(LESSON_PROOF_TEXT.leave)).toBeTruthy();
-    await press('Continue with the next task');
+    await press('Come back to this later');
     expect(taskServe.mock.calls.at(-1)).toEqual(['t-review']);
   });
 
@@ -137,11 +137,11 @@ describe('a lesson proof', () => {
 
     await waitFor(() => expect(screen.getByText(SOLUTION)).toBeTruthy());
     expect(screen.getByText(LESSON_PROOF_TEXT.reveal)).toBeTruthy();
-    await press(/rewrite the proof without it/);
+    await press(/Write my proof again without it/);
     expect(screen.queryByText(SOLUTION)).toBeNull();
     expect(screen.getByText(LESSON_PROOF_TEXT.rewrite)).toBeTruthy();
     expect(textarea().value).toBe('');
-    await write('Let n = 2k; n^2 = 2(2k^2), which is even.', 'Submit the rewrite');
+    await write('Let n = 2k; n^2 = 2(2k^2), which is even.', 'Send my new proof');
     expect(screen.getByText(LESSON_PROOF_TEXT.assisted)).toBeTruthy();
     expect(screen.getByText('+6 XP')).toBeTruthy();
   });
@@ -151,13 +151,13 @@ describe('a lesson proof', () => {
     const proofSeen = vi.fn<ApiClient['proofSeen']>(async () => ({ job: job(), chain: chain() }));
     await mountProof({ proofSeen, proofDispute }, proofProblem({ phase: 'revise', job_id: 'job-1' }));
     await waitFor(() => expect(screen.getByText('Needs revision')).toBeTruthy());
-    await press('This grade is wrong');
+    await press('Ask a person to check this grade');
     await act(async () => {
       fireEvent.change(screen.getByLabelText('Why the grade is wrong (optional)'), { target: { value: 'Step 2 is fine.' } });
     });
-    await press('Send for a human check');
+    await press('Send to a person to check');
     expect(proofDispute).toHaveBeenCalledWith('job-1', 'Step 2 is fine.');
-    expect(screen.getByText(/Sent for a human check/)).toBeTruthy();
+    expect(screen.getByText(/Sent to a person to check/)).toBeTruthy();
   });
 });
 
@@ -174,14 +174,14 @@ describe('a lesson proof the grader could not grade', () => {
       plan: planOf(LESSON, REVIEW),
       api: stubApi({ taskTeach: async () => TEACHING, taskServe, proofSeen, proofDispute }),
     });
-    await press("I've got it — practice ▸");
+    await press("Start practice ▸");
     await waitFor(() => expect(screen.getByText(LESSON_PROOF_TEXT.unavailable)).toBeTruthy());
     expect(textarea().value).toBe(DRAFT);
-    expect(screen.getByRole('button', { name: 'Submit again' })).toBeTruthy();
-    await press('This grade is wrong');
-    await press('Send for a human check');
+    expect(screen.getByRole('button', { name: 'Send again' })).toBeTruthy();
+    await press('Ask a person to check this grade');
+    await press('Send to a person to check');
     expect(proofDispute).toHaveBeenCalledWith('job-1', undefined);
-    await press('Continue with the next task');
+    await press('Come back to this later');
     expect(taskServe.mock.calls.at(-1)).toEqual(['t-review']);
   });
 });
@@ -199,10 +199,10 @@ describe('a written answer', () => {
     for (const line of PROOF_OBLIGATIONS) expect(screen.queryByText(line)).toBeNull();
     expect(screen.getByText(LESSON_WRITTEN_TEXT.hint)).toBeTruthy();
     expect(screen.queryByLabelText('Your proof')).toBeNull();
-    expect(screen.queryByText('Submit proof')).toBeNull();
+    expect(screen.queryByText('Send my proof')).toBeNull();
     const area = screen.getByLabelText('Your answer') as HTMLTextAreaElement;
     await act(async () => { fireEvent.change(area, { target: { value: 'If n squared is odd, n is odd.' } }); });
-    await press('Submit answer');
+    await press('Send my answer');
     expect(taskAnswer.mock.calls[0]![1].answer).toBe('If n squared is odd, n is odd.');
     expect(screen.getByText('Checking your answer…')).toBeTruthy();
   });

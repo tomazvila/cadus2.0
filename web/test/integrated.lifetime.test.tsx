@@ -21,7 +21,7 @@ it.each([false, true])('ignores an answer settling after unmount (failure=%s)', 
   };
   const view = render(<Integrated api={api} problem={PROBLEM} taskId="late-answer"
     onGraded={onGraded} onUnauthorized={onUnauthorized} />);
-  await act(async () => { fireEvent.click(screen.getByRole('button', { name: 'Submit the whole task' })); });
+  await act(async () => { fireEvent.click(screen.getByRole('button', { name: 'Submit all my answers' })); });
   view.unmount();
   await act(async () => { receipt.release(gradeReply()); });
   expect(api.taskIntegratedAnswer).toHaveBeenCalledTimes(1);

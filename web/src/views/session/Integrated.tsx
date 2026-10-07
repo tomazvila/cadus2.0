@@ -76,7 +76,7 @@ function domainLabel(domain: string): string {
 /** The verdict word of one graded field. An ungraded field is NOT a wrong field. */
 function verdictOf(grade: IntegratedFieldGrade | undefined): string {
   if (!grade) return '';
-  if (grade.ungraded) return 'needs a human check';
+  if (grade.ungraded) return 'not marked yet';
   if (!grade.answered) return 'not answered';
   return grade.correct ? 'correct' : 'not correct';
 }
@@ -168,7 +168,7 @@ export function Integrated({ api, reportApi, taskId, problem, onGraded, onContin
       if (!life.alive()) return;
       if (error instanceof ApiError && error.code === SESSION_ROLLED_OVER) { handBack(); return; }
       if (error instanceof ApiError && error.sessionExpired) onUnauthorized?.();
-      setFailure('The submission did not reach the service. Try again.');
+      setFailure('Your answers did not send. Try again.');
       gate.enter('ready');
       return;
     }
@@ -186,7 +186,7 @@ export function Integrated({ api, reportApi, taskId, problem, onGraded, onContin
     } catch (error) {
       if (!life.alive()) return;
       if (error instanceof ApiError && error.code === SESSION_ROLLED_OVER) { handBack(); return; }
-      setFailure('The correction is saved. Reload this task to refresh its result.');
+      setFailure('The correction is saved. Reload this page to see the new result.');
     }
   };
 
@@ -272,8 +272,7 @@ export function Integrated({ api, reportApi, taskId, problem, onGraded, onContin
 
       <div className="integrated-reasoning">
         <label htmlFor="integrated-reasoning">
-          Your reasoning (optional). The service records it and never marks it right or
-          wrong.
+          Your reasoning (optional). It is saved and never marked right or wrong.
         </label>
         <textarea
           className="work-input"
@@ -291,7 +290,7 @@ export function Integrated({ api, reportApi, taskId, problem, onGraded, onContin
           disabled={busy}
           onClick={() => void submit()}
         >
-          Submit the whole task
+          Submit all my answers
         </button>
       ) : null}
 
@@ -319,7 +318,7 @@ export function Integrated({ api, reportApi, taskId, problem, onGraded, onContin
           {grade.method ? (
             <p className="integrated-method-verdict">
               Method: {grade.method.correct ? 'correct' : 'not correct'}
-              {grade.method.why ? ` — ${grade.method.why}` : ''}
+              {grade.method.why ? `: ${grade.method.why}` : ''}
             </p>
           ) : null}
           <p className="integrated-interpretation">{grade.interpretation}</p>
@@ -327,8 +326,7 @@ export function Integrated({ api, reportApi, taskId, problem, onGraded, onContin
           {onContinue ? <button ref={continueRef} type="button" className="btn btn-primary" onClick={onContinue}>Continue</button> : null}
           <h3>Your reasoning</h3>
           <p className="integrated-reasoning-note">
-            The service does not grade reasoning. It stands here beside the verdicts, and
-            it changes none of them.
+            Your reasoning is not marked. It changes none of the results above.
           </p>
           <p className="integrated-reasoning-text">
             {grade.reasoning.recorded ? grade.reasoning.note : 'You wrote no note.'}

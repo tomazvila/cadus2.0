@@ -64,7 +64,7 @@ export const DIAG_DEFAULT_CAP = 40;
 
 /** The promise the learner reads on probe 1 (DIAG-nosol). */
 export const DIAG_NO_SOLUTIONS_NOTE =
-  'No solutions are shown during placement — just answer as best you can.';
+  'No solutions show during the starting questions. Answer as well as you can.';
 
 export interface DiagnosticProps {
   /** The three placement calls. See `api/diag.ts` for why this is not on `ApiClient`. */
@@ -232,11 +232,11 @@ export function Diagnostic({ diag, reportApi, demo, onUnauthorized, onExit }: Di
   }
 
   if (phase === 'loading') {
-    return <section className="view-diagnostic"><LoadingBlock label="Starting the placement…" /></section>;
+    return <section className="view-diagnostic"><LoadingBlock label="Starting the questions…" /></section>;
   }
 
   if (phase === 'closing') {
-    return <section className="view-diagnostic"><LoadingBlock label="Working out your placement…" /></section>;
+    return <section className="view-diagnostic"><LoadingBlock label="Finding where you start…" /></section>;
   }
 
   // Every phase after `loading` has a probe on screen.
@@ -250,7 +250,7 @@ export function Diagnostic({ diag, reportApi, demo, onUnauthorized, onExit }: Di
     <section className="view-diagnostic" key={question.problem_id}>
       <div className="task-header">
         <div className="task-meta">
-          <Chip className="chip-accent">placement</Chip>
+          <Chip className="chip-accent">starting questions</Chip>
           <span className="topic-name">{topicName(question.topic)}</span>
         </div>
         <div className="task-right">
@@ -280,16 +280,16 @@ export function Diagnostic({ diag, reportApi, demo, onUnauthorized, onExit }: Di
           <button
             type="button"
             className={`btn btn-ghost${phase === 'submitting' ? ' is-busy' : ''}`}
-            title="Records an honest skip (counts as incorrect — no guessing)"
+            title="Records an honest skip (counts as incorrect, so no guessing)"
             disabled={locked}
             onClick={() => send('', true)}
           >
-            Skip — I don’t know
+            I do not know
           </button>
           <button
             type="button"
             className="btn btn-ghost btn-exit"
-            title="Leave the placement — it resumes exactly here next time"
+            title="Stop now. The questions start again here next time."
             onClick={onExit}
           >
             Save &amp; exit

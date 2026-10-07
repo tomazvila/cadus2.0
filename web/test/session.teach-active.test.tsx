@@ -10,7 +10,7 @@ import { act } from 'react';
 import { LESSON, P, TEACHING, answerInput, mount, planOf, press, stubApi } from './helpers/session';
 import type { ApiClient, TeachCheckResponse, TeachResponse } from '@/api/types';
 
-const PRACTISE = "I've got it — practice ▸";
+const PRACTISE = "Start practice ▸";
 
 const STEPS: TeachResponse = {
   ...TEACHING,
@@ -95,7 +95,7 @@ describe('active worked examples', () => {
 
     expect(taskTeachCheck).toHaveBeenCalledWith('t-lesson', { part: 'try_first', answer: 'no' });
     await waitFor(() => expect(screen.getByText(TRY_REPLY.reveal)).toBeTruthy());
-    expect(screen.getByText('Not this time — that is fine.')).toBeTruthy();
+    expect(screen.getByText('Not this time. That is fine.')).toBeTruthy();
     expect(screen.getByText(TEACHING.concept)).toBeTruthy();
     expect(screen.getByText('Both parts divide by 2.')).toBeTruthy();
 

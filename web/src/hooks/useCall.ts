@@ -38,7 +38,7 @@ import { ApiError } from '@/api';
 import { toast } from '@/app/toast';
 
 /** The line the learner sees when the session is gone. */
-export const SESSION_EXPIRED_MESSAGE = 'Your session has expired — please sign in again.';
+export const SESSION_EXPIRED_MESSAGE = 'Your sign-in has expired. Sign in again.';
 
 /** The line a foreign throw with no message falls back to. */
 export const GENERIC_FAILURE_MESSAGE = 'Something went wrong.';

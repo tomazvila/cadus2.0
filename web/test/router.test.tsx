@@ -88,7 +88,7 @@ async function openMapAndReturn(user: ReturnType<typeof userEvent.setup>): Promi
   await waitFor(() => expect(screen.getByLabelText(MAP_CANVAS_LABEL)).toBeTruthy());
   // The vendored renderer, reached through the real loader, drew the map.
   await waitFor(() => expect(instances.filter((i) => !i.destroyed)).toHaveLength(1));
-  await user.click(screen.getByRole('button', { name: 'Done' }));
+  await user.click(screen.getByRole('button', { name: 'Back to dashboard' }));
 }
 
 /** Open the quiet menu of the dashboard and press one of its buttons. */
@@ -203,11 +203,11 @@ describe('the router', () => {
     await waitFor(() => expect(screen.getByText('Continue studying')).toBeTruthy());
 
     // `More` is a native <summary>, not a button: the disclosure is the browser's.
-    await pressInMenu(user, 'Re-run the placement');
+    await pressInMenu(user, 'Answer the starting questions again');
     await waitFor(() => expect(view().querySelector('.view-diagnostic')).not.toBeNull());
     expect(view().querySelector('.intro-rules')!.querySelectorAll('li')).toHaveLength(3);
 
-    await user.click(screen.getByRole('button', { name: 'Begin placement' }));
+    await user.click(screen.getByRole('button', { name: 'Start the questions' }));
     await waitFor(() => expect(view().querySelector('.problem-text')).not.toBeNull());
     expect(view().textContent).toContain('Work out');
 
@@ -242,7 +242,7 @@ describe('the router', () => {
 
     // The quiz came from the session, so its end gives the SESSION back, not the dashboard.
     await finishQuiz(user);
-    await user.click(screen.getByRole('button', { name: 'Continue session' }));
+    await user.click(screen.getByRole('button', { name: 'Continue' }));
     await waitFor(() => expect(view().querySelector('.view-session')).not.toBeNull());
     expect(view().querySelector('.view-dashboard')).toBeNull();
   });
@@ -269,7 +269,7 @@ describe('the router', () => {
     await pressInMenu(user, 'Curriculum map');
     await waitFor(() => expect(screen.getByLabelText(MAP_CANVAS_LABEL)).toBeTruthy());
 
-    await user.click(screen.getByRole('button', { name: 'Done' }));
+    await user.click(screen.getByRole('button', { name: 'Back to dashboard' }));
     await waitFor(() => expect(view().querySelector('.view-dashboard')).not.toBeNull());
   });
 

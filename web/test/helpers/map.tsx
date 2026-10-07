@@ -119,7 +119,7 @@ export const label = (el: Element | null) =>
 
 /** Pick one scope in the select, and let the reply land. */
 export async function changeScope(value: string): Promise<void> {
-  const scope = screen.getByLabelText('Scope') as HTMLSelectElement;
+  const scope = screen.getByLabelText('Show topics from') as HTMLSelectElement;
   await act(async () => {
     scope.value = value;
     scope.dispatchEvent(new Event('change', { bubbles: true }));

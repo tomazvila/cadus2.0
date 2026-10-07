@@ -31,12 +31,12 @@ describe('integrated tasks in the production Session', () => {
     await mount({ api, plan: planOf({ ...MULTI, integrated_instruction_required: true }, delayed) });
     expect(screen.getByText('Combine work and capacity.')).toBeTruthy();
     expect(api.taskIntegrated).not.toHaveBeenCalled();
-    await click("I've got it — practice ▸");
+    await click("Start practice ▸");
     expect(api.taskIntegrated).toHaveBeenCalledExactlyOnceWith(MULTI.task_id);
-    await click('Submit the whole task');
+    await click('Submit all my answers');
     await click('Continue');
     expect(api.taskIntegrated).toHaveBeenLastCalledWith('delayed');
-    expect(screen.getByText('Delayed application assessment')).toBeTruthy();
+    expect(screen.getByText('Delayed mixed problem')).toBeTruthy();
     expect(api.taskTeach).toHaveBeenCalledTimes(1);
   });
 
@@ -73,7 +73,7 @@ describe('integrated tasks in the production Session', () => {
     const receipt = held<IntegratedGrade>();
     api.taskIntegratedAnswer = vi.fn(() => receipt.promise);
     await mount({ api, plan: planOf(MULTI, REVIEW) });
-    const submit = screen.getByRole('button', { name: 'Submit the whole task' });
+    const submit = screen.getByRole('button', { name: 'Submit all my answers' });
     await act(async () => { submit.click(); submit.click(); });
     expect(api.taskIntegratedAnswer).toHaveBeenCalledTimes(1);
     expect(api.taskServe).not.toHaveBeenCalled();
@@ -90,7 +90,7 @@ describe('integrated tasks in the production Session', () => {
   it('ends a one-task session once after the learner reads the receipt', async () => {
     const api = integratedApi();
     await mount({ api, plan: planOf(MULTI) });
-    await click('Submit the whole task');
+    await click('Submit all my answers');
     expect(api.sessionEnd).not.toHaveBeenCalled();
     await click('Continue');
     await waitFor(() => expect(api.sessionEnd).toHaveBeenCalledTimes(1));
@@ -104,11 +104,11 @@ describe('integrated tasks in the production Session', () => {
     await mount({ api, plan: planOf(MULTI) });
     const hintButton = screen.getAllByRole('button', { name: /^Hint/ })[0]!;
     await act(async () => { hintButton.click(); hintButton.click(); });
-    await click('Submit the whole task');
+    await click('Submit all my answers');
     expect(api.taskIntegratedHint).toHaveBeenCalledTimes(1);
     expect(api.taskIntegratedAnswer).not.toHaveBeenCalled();
     await act(async () => { hint.release({ field: 'work', index: 0, hint: 'Count the work.', hints_used: 1, hints_available: 2 }); });
-    await click('Submit the whole task');
+    await click('Submit all my answers');
     expect(api.taskIntegratedAnswer).toHaveBeenCalledWith(MULTI.task_id, expect.objectContaining({
       steps: expect.arrayContaining([expect.objectContaining({ id: 'work', hints_used: 1 })]),
     }));
@@ -123,7 +123,7 @@ describe('integrated tasks in the production Session', () => {
     await mount({ api, plan: planOf(MULTI) });
     await click('Hint (1/2)');
     expect(api.taskIntegratedHint).toHaveBeenCalledWith(MULTI.task_id, { field: 'work', index: 1 });
-    await click('Submit the whole task');
+    await click('Submit all my answers');
     expect(api.taskIntegratedAnswer).toHaveBeenCalledWith(MULTI.task_id, expect.objectContaining({
       steps: expect.arrayContaining([expect.objectContaining({ id: 'work', hints_used: 2 })]),
     }));
@@ -133,7 +133,7 @@ describe('integrated tasks in the production Session', () => {
     const api = integratedApi();
     api.taskIntegratedAnswer = vi.fn(async () => { throw new ApiError(401, 'unauthorized', 'Expired'); });
     const nav = await mount({ api, plan: planOf(MULTI) });
-    await click('Submit the whole task');
+    await click('Submit all my answers');
     expect(nav.onUnauthorized).toHaveBeenCalledTimes(1);
     expect(api.taskServe).not.toHaveBeenCalled();
   });

@@ -169,7 +169,7 @@ describe('what a move clears', () => {
     expect(screen.getByText('sign in')).toBeTruthy();
     expect(field('Password').value).toBe('');
     expect(toastStore.getSnapshot()).toEqual([
-      { id: 1, message: 'Password updated — sign in with your new password.', kind: 'info' },
+      { id: 1, message: 'Password updated. Sign in with your new password.', kind: 'info' },
     ]);
   });
 

@@ -120,21 +120,29 @@ describe('the retention card', () => {
     expect(seven[0]).toBe('50%');
     expect(seven[1]).toBe('1 of 2');
     expect(seven[2]).toBe('25%');
-    expect(seven[3]).toBe('1 with help · 1 repeated · 0 ungraded');
+    expect(seven[3]).toBe('answered with a hint, not counted: 1 · repeated problems, not counted: 1 · not marked: 0');
   });
 
   it('names the policy version, the placement error, and the integrated tasks', async () => {
     await load(report([row(7)]));
-    expect(screen.getByText(/v1 \(uncalibrated\)/)).toBeTruthy();
-    expect(screen.getByText(/abcdef0123456789/)).toBeTruthy();
-    expect(screen.getByText(/1 topic\(s\) failed their confirmation/)).toBeTruthy();
-    expect(screen.getByText(/3 served, 1 passed/)).toBeTruthy();
+    expect(screen.getByText(/This measure is new and not yet checked against long-term results\./)).toBeTruthy();
+    expect(screen.getByText(/1 topic\(s\) missed when asked again/)).toBeTruthy();
+    expect(screen.getByText(/3 given, 1 passed/)).toBeTruthy();
     expect(screen.getByText(/pass rate 50%/)).toBeTruthy();
   });
 
   it('leaves out the integrated line when the probes scope answers none', async () => {
     await load({ ...report([row(7)]), integrated: null });
     expect(screen.queryByText(/Integrated tasks/)).toBeNull();
-    expect(screen.getByText(/1 topic\(s\) failed their confirmation/)).toBeTruthy();
+    expect(screen.getByText(/1 topic\(s\) missed when asked again/)).toBeTruthy();
+  });
+
+  it('words the card in plain terms a learner can read', async () => {
+    await load(report([row(7)]));
+    expect(screen.getByRole('heading', { name: 'Still right days later' })).toBeTruthy();
+    expect(screen.getByText('Problems from earlier lessons, asked again after a delay, when they were new to you. The rate is how many you answered right.')).toBeTruthy();
+    expect(screen.getByText('Not counted')).toBeTruthy();
+    const text = document.querySelector('.retention-card')!.textContent ?? '';
+    for (const word of ['probe', 'digest', 'uncalibrated', 'Provenance', 'never saw']) expect(text).not.toContain(word);
   });
 });

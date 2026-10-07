@@ -30,18 +30,18 @@ export function QuizResults({ api, taskId, onUnauthorized, resumePractice = fals
   if (practicing) return <QuizPractice api={api} taskId={taskId} onUnauthorized={onUnauthorized} />;
   if (!result) return <button type="button" className="btn" disabled={phase === 'loading'} onClick={() => load(false)}>Review results</button>;
   return <div className="quiz-results">
-    <h3>Recorded quiz result</h3>
-    {result.inconclusive ? <p>Quiz verdict pending: some answers need review. No progress or XP awarded.</p> : <p>{Math.round(result.score * 100)}% of graded answers correct · {result.xp} XP</p>}
+    <h3>Your quiz result</h3>
+    {result.inconclusive ? <p>Some answers are not marked yet. No progress or XP is added until they are.</p> : <p>{Math.round(result.score * 100)}% of marked answers right · {result.xp} XP</p>}
     {result.answers.map((answer) => <article key={answer.problem_id} className="card">
       <MathBlock>{answer.text}</MathBlock>
       <p>Your answer: {answer.given_answer || '(blank)'}</p>
       {answer.proof_grading ? <QuizProofGrading api={api} field={answer.proof_grading} />
-        : <p>{answer.outcome === 'ungraded' ? `Needs review: ${answer.reason ?? 'No verdict'}` : answer.correct ? 'Correct' : 'Incorrect'}</p>}
+        : <p>{answer.outcome === 'ungraded' ? `Not marked yet: ${answer.reason ?? 'no result'}` : answer.correct ? 'Correct' : 'Not quite'}</p>}
       {answer.outcome !== 'ungraded' && answer.solution_sketch ? <MathBlock>{answer.solution_sketch}</MathBlock> : null}
       <QuestionReport api={api} onApplied={() => load(false)} context={{ task_id: taskId, problem_id: answer.problem_id,
         report_kind: 'attempt', problem_text: answer.text, answer: answer.given_answer, work: '' }} />
     </article>)}
-    {result.practice_available || result.practice_pending ? <button type="button" className="btn btn-primary" disabled={phase === 'loading'} onClick={() => load(true)}>Done studying · Practice missed skills</button> : null}
+    {result.practice_available || result.practice_pending ? <button type="button" className="btn btn-primary" disabled={phase === 'loading'} onClick={() => load(true)}>Practice the skills you missed</button> : null}
   </div>;
 }
 
@@ -77,19 +77,19 @@ function QuizPractice({ api, taskId, onUnauthorized }: Props) {
       gate.enter('ready');
     }, { onFail: () => gate.enter('ready') });
   };
-  if (finished) return <><p>Independent practice complete. The recorded quiz result is unchanged.</p><ProblemReport report={report} /></>;
+  if (finished) return <><p>Practice done. Your quiz result stays the same.</p><ProblemReport report={report} /></>;
   return <div className="quiz-practice">
-    <h3>Independent practice</h3>
-    <p>Untimed. Solve a fresh problem for each missed skill without the worked solution.</p>
+    <h3>Practice on your own</h3>
+    <p>No timer. Solve a fresh problem for each skill you missed. No solution is shown first.</p>
     {problem ? <div key={problem.problem_id}>
       <MathBlock>{problem.text}</MathBlock>
       <AnswerInput ref={answerRef} choices={problem.choices} disabled={phase === 'loading'} onSubmit={submit} />
       <QuestionReport api={api} hideResult context={{ task_id: taskId, problem_id: problem.problem_id,
         report_kind: 'served', problem_text: problem.text, answer: '', work: '' }} />
-      <TypedSubmit choices={problem.choices} busy={false} disabled={phase === 'loading'} onClick={submit}>Submit practice answer</TypedSubmit>
+      <TypedSubmit choices={problem.choices} busy={false} disabled={phase === 'loading'} onClick={submit}>Submit answer</TypedSubmit>
     </div> : <>
-      {feedback ? <div><p>{feedback.correct ? 'Correct' : feedback.outcome === 'ungraded' ? 'This answer needs review.' : 'Study the solution, then try a fresh problem.'}</p>{feedback.solution ? <MathBlock>{feedback.solution}</MathBlock> : null}</div> : null}
-      <button type="button" className="btn btn-primary" disabled={phase === 'loading'} onClick={serve}>{feedback ? 'Done studying · Next fresh problem' : 'Start fresh practice'}</button>
+      {feedback ? <div><p>{feedback.correct ? 'Correct' : feedback.outcome === 'ungraded' ? 'This answer is not marked yet.' : 'Read the solution, then try a fresh problem.'}</p>{feedback.solution ? <MathBlock>{feedback.solution}</MathBlock> : null}</div> : null}
+      <button type="button" className="btn btn-primary" disabled={phase === 'loading'} onClick={serve}>{feedback ? 'Next fresh problem' : 'Start fresh practice'}</button>
     </>}
     <ProblemReport report={report} />
   </div>;

@@ -22,7 +22,7 @@ import type { ApiErrorBody, JsonBody } from './types';
 const API = '/api';
 
 /** The message of a `fetch` that never reached the service. */
-export const NETWORK_MESSAGE = 'Network error — check your connection and try again.';
+export const NETWORK_MESSAGE = 'Network error. Check your connection and try again.';
 
 /**
  * One failed call.

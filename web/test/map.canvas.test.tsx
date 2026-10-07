@@ -203,7 +203,7 @@ describe('the resize and the fit', () => {
 
   it('fits the whole map from the Fit control', async () => {
     const view = await mountLoaded();
-    await act(async () => { screen.getByRole('button', { name: 'Fit' }).click(); });
+    await act(async () => { screen.getByRole('button', { name: 'Show all' }).click(); });
     expect(last().fits).toBe(1);
     view.unmount();
   });

@@ -220,7 +220,7 @@ describe('the recovery flows', () => {
     expect(await screen.findByRole('button', { name: 'Sign in' })).toBeTruthy();
     expect(resetPassword).toHaveBeenCalledWith('reset-token-7', 'hunter2hunter2');
     expect(toastStore.getSnapshot().map((t) => t.message)).toEqual([
-      'Password updated — sign in with your new password.',
+      'Password updated. Sign in with your new password.',
     ]);
   });
 
@@ -234,7 +234,7 @@ describe('the recovery flows', () => {
     press('Set new password');
 
     expect(await alertText()).toBe(
-      'That link is invalid or has expired — request a new one below.',
+      'That link is invalid or has expired. Request a new one below.',
     );
     expect(toastStore.getSnapshot()).toEqual([]);
   });
@@ -243,7 +243,7 @@ describe('the recovery flows', () => {
 describe('the message map', () => {
   it.each([
     ['invalid_credentials', 'Incorrect email or password.'],
-    ['invalid_token', 'That link is invalid or has expired — request a new one below.'],
+    ['invalid_token', 'That link is invalid or has expired. Request a new one below.'],
     ['rate_limited', 'Too many attempts. Please wait a minute, then try again.'],
   ])('maps %s to its own line', (code, line) => {
     expect(messageFor(new ApiError(401, code, 'raw server text'))).toBe(line);

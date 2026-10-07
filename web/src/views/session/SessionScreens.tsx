@@ -10,7 +10,7 @@ import { fmtClock, num, signed } from '@/lib/format';
 import type { PlanTask, ServedProblem, SessionEndResponse, SessionPlanResponse } from '@/api/types';
 
 /** The one sentence a lesson with no approved teach page says (audit finding j). */
-const NO_INSTRUCTION_MESSAGE = 'No instruction yet for this lesson';
+const NO_INSTRUCTION_MESSAGE = 'This lesson is not ready yet';
 
 export interface SummaryProps {
   summary: SessionEndResponse | null;
@@ -23,7 +23,7 @@ export function SessionSummary({ summary, homeRef, onExit }: SummaryProps) {
   return (
     <section className="view-session">
       <div className="card summary-card">
-        <h2>Session complete</h2>
+        <h2>Done for now</h2>
         {summary ? (
           <div className="stat-grid">
             <Stat value={signed(summary.xp_earned)} label="XP earned" className="accent" />
@@ -43,17 +43,17 @@ export function SessionSummary({ summary, homeRef, onExit }: SummaryProps) {
 
 /** The one line an empty plan says, and it says which empty it is. */
 export function emptyPlanMessage(plan: SessionPlanResponse, allDone: boolean): string {
-  if (plan.course_complete) return 'Course complete. Enroll in your next course to keep going.';
+  if (plan.course_complete) return 'Course complete. Join your next course to keep going.';
   // D-F5: the plan is empty because the content is not ready, and not because the
   // learner is done. The count says so rather than leaving a silent gap.
   if (!plan.tasks.length && plan.blocked.length) {
-    return `${num(plan.blocked.length)} topic(s) wait on content that is not written yet.`;
+    return `${num(plan.blocked.length)} topic(s) wait on lessons that are not ready yet.`;
   }
   if (plan.frontier_blocked_until) {
-    return `New lessons are on a retry delay until ${plan.frontier_blocked_until}.`;
+    return `New lessons wait until ${plan.frontier_blocked_until}.`;
   }
-  if (allDone) return 'Everything planned for this session is done. Nice work.';
-  return 'Nothing is due right now — enjoy the break.';
+  if (allDone) return 'Everything planned for today is done. Nice work.';
+  return 'Nothing is due right now. Come back later.';
 }
 
 export interface EmptyPlanProps {
@@ -69,7 +69,7 @@ export function EmptyPlan({ message, onDiagnostic, onExit }: EmptyPlanProps) {
       <div className="empty">
         <p>{message}</p>
         <button type="button" className="btn" onClick={onDiagnostic}>
-          Take the placement diagnostic
+          Take the starting questions
         </button>
         <button type="button" className="btn btn-primary" onClick={onExit}>
           Back to dashboard
@@ -98,12 +98,12 @@ export function NoInstruction({ task, onSkip, onExit }: NoInstructionProps) {
     <div className="card no-instruction-card">
       <h2>{NO_INSTRUCTION_MESSAGE}</h2>
       <p className="muted">
-        {`The worked example for ${topic?.name || topic?.id || 'this topic'} is not written yet. `}
-        The service does not serve practice it cannot teach first.
+        {`The worked example for ${topic?.name || topic?.id || 'this topic'} is not ready yet. `}
+        Practice starts after the lesson is ready.
       </p>
       <div className="actions">
         <button type="button" className="btn btn-primary" onClick={onSkip}>
-          Skip to the next task
+          Skip this lesson for now
         </button>
         <button type="button" className="btn btn-ghost" onClick={onExit}>
           Exit
@@ -136,7 +136,7 @@ export function reviewTopic(task: PlanTask): string | null {
  * no total shows the block's count, or none, and never a bare question number.
  */
 function progressOf(task: PlanTask, problem: ServedProblem): string {
-  if (problem.feedback_practice) return 'Independent practice';
+  if (problem.feedback_practice) return 'Practice on your own';
   if (problem.mixed_review) {
     return `${num(problem.mixed_review.position)} / ${num(problem.mixed_review.total)}`;
   }
@@ -170,7 +170,7 @@ export function ProblemHeader({ task, problem, elapsed, countdown, onExit }: Pro
         <button
           type="button"
           className="btn btn-ghost btn-exit"
-          title="Leave the session — your work is saved and unfinished tasks come back next time"
+          title="Your work is saved. An unfinished lesson comes back next time."
           onClick={onExit}
         >
           Exit

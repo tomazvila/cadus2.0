@@ -26,7 +26,7 @@ it('submits the chosen method and preserves the learner reasoning verbatim', asy
   const { api } = setup();
   fireEvent.click(screen.getByLabelText('Divide the person-minutes by the minutes of one nurse.'));
   fireEvent.change(screen.getByLabelText(/Your reasoning/), { target: { value: '  Count work, then divide.  ' } });
-  await click('Submit the whole task');
+  await click('Submit all my answers');
   expect(api.taskIntegratedAnswer).toHaveBeenCalledWith('integrated', expect.objectContaining({
     method: 'person-minutes', reasoning: '  Count work, then divide.  ',
   }));
@@ -37,7 +37,7 @@ it('shows a missing step receipt without inventing its verdict and labels blank 
   receipt.final.answered = false;
   receipt.final.correct = false;
   setup(receipt, { ...PROBLEM, method: null, final_ask: { prompt: 'How many nurses?', unit: null, hints_available: 0 } });
-  await click('Submit the whole task');
+  await click('Submit all my answers');
   expect(document.querySelector('.integrated-verdict-value')?.textContent).toBe('');
   expect(screen.getByText('not answered')).toBeTruthy();
   expect(screen.getByText('You wrote no note.')).toBeTruthy();
@@ -46,7 +46,7 @@ it('shows a missing step receipt without inventing its verdict and labels blank 
 
 it('shows an incorrect selected method even when the receipt supplies no explanation', async () => {
   setup(gradeReply({ method: { chosen: 'patients-per-hour', correct: false, why: null } }));
-  await click('Submit the whole task');
+  await click('Submit all my answers');
   expect(screen.getByText('Method: not correct')).toBeTruthy();
 });
 
@@ -69,11 +69,11 @@ it('keeps submission retryable after a service error and omits whitespace-only r
   const { api, onUnauthorized } = setup();
   vi.mocked(api.taskIntegratedAnswer).mockRejectedValueOnce(new ApiError(503, 'unavailable', 'Unavailable'));
   fireEvent.change(screen.getByLabelText(/Your reasoning/), { target: { value: '   ' } });
-  await click('Submit the whole task');
-  expect(screen.getByText('The submission did not reach the service. Try again.')).toBeTruthy();
-  await click('Submit the whole task');
+  await click('Submit all my answers');
+  expect(screen.getByText('Your answers did not send. Try again.')).toBeTruthy();
+  await click('Submit all my answers');
   expect(screen.getByText('Answers')).toBeTruthy();
   expect(onUnauthorized).not.toHaveBeenCalled();
   expect(vi.mocked(api.taskIntegratedAnswer).mock.calls[1]?.[1]).not.toHaveProperty('reasoning');
-  expect(screen.queryByText('The submission did not reach the service. Try again.')).toBeNull();
+  expect(screen.queryByText('Your answers did not send. Try again.')).toBeNull();
 });

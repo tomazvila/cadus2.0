@@ -32,13 +32,13 @@ describe('the status card', () => {
   it('warns on the due count only while something is due, and dashes an unknown ETA', async () => {
     const first = await mount();
     expect(stat('due now').className).toBe('stat warn');
-    expect(stat('ETA').querySelector('.stat-value')!.textContent).toBe('2026-11-04');
+    expect(stat('finish by').querySelector('.stat-value')!.textContent).toBe('2026-11-04');
     first.unmount();
     cleanup();
 
     await mount({ api: stubApi({ getStatus: async () => status({ due_reviews: 0, velocity: { ...status().velocity, eta: null } }) }) });
     expect(stat('due now').className).toBe('stat');
-    expect(stat('ETA').querySelector('.stat-value')!.textContent).toBe('—');
+    expect(stat('finish by').querySelector('.stat-value')!.textContent).toBe('—');
   });
 
   it('shows the not-marked tile only while an ungraded attempt waits, and explains it on hover', async () => {
@@ -58,7 +58,7 @@ describe('the status card', () => {
     const said = tile.getAttribute('title') ?? '';
     expect(said).toContain('could not read');
     expect(said).toContain('Nothing was scored');
-    expect(said).toContain('tutor can still mark them by hand');
+    expect(said).toContain('person can still mark them by hand');
   });
 
   it('dashes an ETA the observed pace cannot honestly carry', async () => {
@@ -130,7 +130,7 @@ describe('the primary action', () => {
     await userEvent.click(button('Start Proofs'));
     await waitFor(() => expect(getStatus).toHaveBeenCalledTimes(2));
     expect(toastStore.getSnapshot()).toEqual([
-      { id: 1, message: 'Enrolled in Proofs. Take the placement to get started.', kind: 'success' },
+      { id: 1, message: 'Enrolled in Proofs. Answer the starting questions to get started.', kind: 'success' },
     ]);
   });
 
@@ -166,7 +166,7 @@ describe('the quiet menu', () => {
     await userEvent.click(button('Quiz now'));
     expect(button('Quiz now').disabled).toBe(true);
     expect(button('Quiz now').className).toBe('btn is-busy');
-    expect(button('Export my data (JSONL)').disabled).toBe(false);
+    expect(button('Download my data').disabled).toBe(false);
     expect(button('Switch course').disabled).toBe(false);
     await act(async () => { start.release(await createDemoApi().sessionStart()); });
   });
@@ -177,7 +177,7 @@ describe('the quiet menu', () => {
     await userEvent.click(button('Switch course'));
     expect(button('Switch course').className).toBe('btn is-busy');
     expect(button('Switch course').disabled).toBe(true);
-    expect(button('Export my data (JSONL)').disabled).toBe(false);
+    expect(button('Download my data').disabled).toBe(false);
     // The picker names the current course as such, and offers it to nobody.
     const current = within(screen.getByRole('dialog')).getByRole('button', { name: 'Foundations · current' });
     expect(current.hasAttribute('disabled')).toBe(true);
@@ -196,12 +196,12 @@ describe('the quiet menu', () => {
     const download = held<void>();
     await mount({ api: stubApi({ downloadExport: () => download.promise }) });
     await openMenu();
-    await userEvent.click(button('Export my data (JSONL)'));
-    expect(button('Export my data (JSONL)').className).toBe('btn is-busy');
-    expect(button('Export my data (JSONL)').disabled).toBe(true);
+    await userEvent.click(button('Download my data'));
+    expect(button('Download my data').className).toBe('btn is-busy');
+    expect(button('Download my data').disabled).toBe(true);
     expect(button('Quiz now').disabled).toBe(false);
     await act(async () => { download.release(undefined); });
-    expect(button('Export my data (JSONL)').className).toBe('btn');
+    expect(button('Download my data').className).toBe('btn');
   });
 
   it('toasts the no-quiz line as information, and a bare export refusal as the generic line', async () => {
@@ -216,7 +216,7 @@ describe('the quiet menu', () => {
 
     await mount({ api: stubApi({ downloadExport: async () => { throw null; } }) });
     await openMenu();
-    await userEvent.click(button('Export my data (JSONL)'));
+    await userEvent.click(button('Download my data'));
     await waitFor(() => expect(toastStore.getSnapshot().map((t) => [t.message, t.kind])).toEqual([
       ['Could not export your data.', 'error'],
     ]));

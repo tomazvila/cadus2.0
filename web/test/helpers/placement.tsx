@@ -48,9 +48,9 @@ export async function mount(over: Partial<DiagnosticProps> = {}) {
 }
 
 export const answerInput = () => screen.getByLabelText('Answer') as HTMLInputElement;
-export const beginButton = () => screen.getByRole('button', { name: 'Begin placement' });
+export const beginButton = () => screen.getByRole('button', { name: 'Start the questions' });
 export const submitButton = () => screen.getByRole('button', { name: 'Submit' });
-export const skipButton = () => screen.getByRole('button', { name: 'Skip — I don’t know' });
+export const skipButton = () => screen.getByRole('button', { name: 'I do not know' });
 export const probeText = () => document.querySelector('.problem-text')!.textContent;
 export const progressCount = () => document.querySelector('.progress-count')!.textContent;
 export const toasts = () => toastStore.getSnapshot();

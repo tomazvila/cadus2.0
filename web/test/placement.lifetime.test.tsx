@@ -22,7 +22,7 @@ describe('the view lifetime', () => {
     const start = held<DiagStartResponse>();
     const view = await mount({ diag: stubDiag({ diagStart: () => start.promise }) });
     await begin();
-    expect(screen.getByText('Starting the placement…')).toBeTruthy();
+    expect(screen.getByText('Starting the questions…')).toBeTruthy();
 
     view.unmount();
     await act(async () => { start.release(START); });
@@ -88,7 +88,7 @@ describe('the payload shapes', () => {
     expect(progressCount()).toBe('Question 1 of up to 40');
   });
 
-  it('names a topic record by its id when it carries no name, and no topic as Placement', async () => {
+  it('names a topic record by its id when it carries no name, and no topic as Topic', async () => {
     await mount({
       diag: stubDiag({
         diagStart: async () => ({
@@ -102,10 +102,10 @@ describe('the payload shapes', () => {
     expect(submitButton()).toBeTruthy();
   });
 
-  it('names a probe with no topic at all as Placement', async () => {
+  it('names a probe with no topic at all as Topic', async () => {
     await mount({ diag: stubDiag({ diagStart: async () => ({ probe: probe({ topic: null }) }) }) });
     await begin();
-    expect(document.querySelector('.topic-name')!.textContent).toBe('Placement');
+    expect(document.querySelector('.topic-name')!.textContent).toBe('Topic');
   });
 
   it('renders no frontier block when the summary names no frontier', async () => {
@@ -117,7 +117,7 @@ describe('the payload shapes', () => {
     await answer('5');
     await act(async () => { await vi.advanceTimersByTimeAsync(750); });
 
-    expect(screen.getByText('Placement complete')).toBeTruthy();
+    expect(screen.getByText('Starting questions done')).toBeTruthy();
     expect(screen.queryByText('Start here')).toBeNull();
     expect(document.querySelector('.frontier-list')).toBeNull();
   });

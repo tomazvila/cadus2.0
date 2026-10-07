@@ -40,7 +40,7 @@ describe('committed report corrections', () => {
     expect(screen.queryByText('Not quite')).toBeNull();
     expect(screen.queryByText('nearly passable')).toBeNull();
     expect(screen.getByText('Grade corrected after verification.')).toBeTruthy();
-    await click('Continue with updated progress');
+    await click('Continue →');
     expect(navigation.onExit).toHaveBeenCalledTimes(1);
   });
 
@@ -56,7 +56,7 @@ describe('committed report corrections', () => {
     await click('Report submitted question');
     await click('Send report');
     expect(api.taskQuizResult).toHaveBeenCalledTimes(2);
-    expect(screen.getByText('100% of graded answers correct · 10 XP')).toBeTruthy();
+    expect(screen.getByText('100% of marked answers right · 10 XP')).toBeTruthy();
     expect(screen.getByText('Correct')).toBeTruthy();
   });
 
@@ -69,7 +69,7 @@ describe('committed report corrections', () => {
       diagAnswer: async () => ({ correct: false, next_probe: { problem_id: 'd2', text: 'Next placement question' } }),
       diagFinish: vi.fn(),
     }} />);
-    await click('Begin placement');
+    await click('Start the questions');
     fireEvent.change(screen.getByLabelText('Answer'), { target: { value: '3' } });
     await click('Submit');
     await click('Report submitted question');
@@ -87,7 +87,7 @@ describe('committed report corrections', () => {
     api.taskReport = vi.fn().mockResolvedValue(corrected);
     render(<Integrated api={api} reportApi={api} taskId="integrated" problem={PROBLEM} />);
     fireEvent.change(screen.getByLabelText('Step 2'), { target: { value: '240' } });
-    await click('Submit the whole task');
+    await click('Submit all my answers');
     await click('Report step 2');
     await click('Send report');
     expect(api.taskIntegratedAnswer).toHaveBeenCalledTimes(2);

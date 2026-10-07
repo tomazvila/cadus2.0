@@ -37,10 +37,10 @@ import type { ApiClient, GraphNode, GraphResponse, TopicStatus } from '@/api/typ
 
 /** The label of the canvas, which sends a screen reader to the list view. */
 export const MAP_CANVAS_LABEL =
-  'Curriculum map — a graph on a canvas. Use the List view for a screen-readable version.';
+  'Curriculum map, drawn as a picture. Use the List view to read it as text.';
 
 /** The line under an empty scope. */
-export const MAP_EMPTY = 'This scope holds no topics yet.';
+export const MAP_EMPTY = 'This part of the course has no topics yet.';
 
 /** One arrow press pans the camera by this many rendered pixels. */
 export const MAP_PAN_STEP = 60;
@@ -162,7 +162,7 @@ export function CurriculumMap({ api, demo, onUnauthorized, onExit }: CurriculumM
             on screen follows it through `load`. */}
         <select
           className="map-select"
-          aria-label="Scope"
+          aria-label="Show topics from"
           onChange={(e) => { changeScope(e.target.value); }}
         >
           <option value="">Your course</option>
@@ -171,7 +171,7 @@ export function CurriculumMap({ api, demo, onUnauthorized, onExit }: CurriculumM
               {course.current ? `${course.name} ·` : course.name}
             </option>
           ))}
-          <option value="all">Entire curriculum</option>
+          <option value="all">Every course</option>
         </select>
 
         <span className="map-spacer" />
@@ -179,10 +179,10 @@ export function CurriculumMap({ api, demo, onUnauthorized, onExit }: CurriculumM
         <button
           type="button"
           className="btn btn-ghost"
-          title="Fit the whole map (0)"
+          title="Zoom out to show the whole map (0)"
           onClick={() => handleRef.current?.fit()}
         >
-          Fit
+          Show all
         </button>
         <button
           type="button"
@@ -196,7 +196,7 @@ export function CurriculumMap({ api, demo, onUnauthorized, onExit }: CurriculumM
           {listMode ? 'Map view' : 'List view'}
         </button>
         <button type="button" className="btn btn-ghost" onClick={onExit}>
-          Done
+          Back to dashboard
         </button>
       </div>
 
@@ -230,7 +230,7 @@ export function CurriculumMap({ api, demo, onUnauthorized, onExit }: CurriculumM
           {nodes.length === 0 ? (
             <p className="muted map-empty">{MAP_EMPTY}</p>
           ) : (
-            <Suspense fallback={<LoadingBlock label="Loading the map renderer…" />}>
+            <Suspense fallback={<LoadingBlock label="Loading the map…" />}>
               {/* The key ties the instance's lifetime to the payload and to the retry
                   count: React unmounts the outgoing island — which destroys the instance —
                   before it mounts the replacement (F-38-1). */}
@@ -293,7 +293,7 @@ function MapList({ nodes }: { nodes: GraphNode[] }) {
                   {/* Everything the sighted reader gets from the detail panel. A row of
                       name alone makes the canvas's promise of a screen-readable version
                       false. */}
-                  <span className="muted small">{` — ${node.module} · ${abilityLine(node)}`}</span>
+                  <span className="muted small">{`: ${node.module} · ${abilityLine(node)}`}</span>
                 </li>
               ))}
             </ul>

@@ -66,7 +66,7 @@ describe('the map view — the accessible list view', () => {
       await user.tab();
       order.push(label(document.activeElement));
     }
-    expect(order).toEqual(['Scope', 'Fit', 'List view', 'Done', MAP_CANVAS_LABEL]);
+    expect(order).toEqual(['Show topics from', 'Show all', 'List view', 'Back to dashboard', MAP_CANVAS_LABEL]);
 
     // Back to the control, and open it with the keyboard.
     await user.tab({ shift: true });
@@ -96,7 +96,7 @@ describe('the map view — the accessible list view', () => {
     ]);
     expect(document.querySelectorAll('.map-list-group li')).toHaveLength(NODES.length);
     expect(document.querySelector('.map-list-group li')!.textContent)
-      .toBe('Fractions — Arithmetic · ability 10%');
+      .toBe('Fractions: Arithmetic · ability 10%');
     view.unmount();
   });
 
@@ -201,9 +201,9 @@ describe('the map view — the payload on screen', () => {
 
   it('lists the own course, every course with the current one marked, and the whole curriculum', async () => {
     const view = await mountLoaded();
-    const options = Array.from((screen.getByLabelText('Scope') as HTMLSelectElement).options);
+    const options = Array.from((screen.getByLabelText('Show topics from') as HTMLSelectElement).options);
     expect(options.map((o) => [o.value, o.textContent])).toEqual([
-      ['', 'Your course'], ['foundations', 'Foundations ·'], ['proofs', 'Proofs'], ['all', 'Entire curriculum'],
+      ['', 'Your course'], ['foundations', 'Foundations ·'], ['proofs', 'Proofs'], ['all', 'Every course'],
     ]);
     view.unmount();
   });
@@ -220,7 +220,7 @@ describe('the map view — the payload on screen', () => {
     const { importer } = deferredImport();
     resetCytoscapeLoader(importer);
     const view = await mount();
-    await act(async () => { screen.getByRole('button', { name: 'Fit' }).click(); });
+    await act(async () => { screen.getByRole('button', { name: 'Show all' }).click(); });
     await act(async () => { listButton().click(); });
     expect(document.querySelector('.map-list')).not.toBeNull();
     view.unmount();

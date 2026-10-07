@@ -129,7 +129,7 @@ describe('the check-email card', () => {
 
     press('Resend email');
     await waitFor(() => expect(messages()).toEqual([
-      'Could not resend right now — please try again shortly.',
+      'Could not resend right now. Try again soon.',
     ]));
     expect(toastStore.getSnapshot()[0].kind).toBe('info');
   });
@@ -167,7 +167,7 @@ describe('the message map, the rest of it', () => {
     );
     expect(messageFor(new ApiError(0, 'network', 'Offline.'))).toBe('Offline.');
     expect(messageFor({ code: 'network' })).toBe(
-      'Network error — check your connection and try again.',
+      'Network error. Check your connection and try again.',
     );
   });
 });

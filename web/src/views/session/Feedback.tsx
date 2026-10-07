@@ -27,6 +27,9 @@ import type { AnswerResponse, ApiClient, AttemptOutcome, ReworkResponse } from '
 import type { Lifetime } from '@/hooks/useLifetime';
 import { PROOF_TITLE, ProofResult, useProofGrading, useSeen, type ProofState } from './ProofGrading';
 
+/** The line under the actions: what "Stop for now" does. */
+const STOP_NOTE = 'Your work is saved. An unfinished lesson comes back next time.';
+
 /** The panel mood of each outcome. `ungraded` is neutral: it is not a miss (D-F2). */
 const MOOD: Record<AttemptOutcome, string> = {
   correct: 'correct',
@@ -118,7 +121,7 @@ export function Feedback({
       {/* Amendment K (note 114): a refused answer is also checked in the
           background; the model's one-line reason rides beside the solution. */}
       {res.equivalence?.status === 'pending' ? (
-        <p className="feedback-reason muted" role="status">Your answer is being checked. The verdict on this page updates when the check lands.</p>
+        <p className="feedback-reason muted" role="status">Your answer is being checked. This page updates when the check is done.</p>
       ) : null}
       {res.equivalence_reason ? <p className="feedback-reason muted">Checked: {res.equivalence_reason}</p> : null}
 
@@ -140,12 +143,13 @@ export function Feedback({
 
       <div className="actions">
         <button ref={continueRef} type="button" className="btn btn-primary" onClick={onContinue}>
-          {res.feedback_blocked ? 'Check for fresh practice →' : res.feedback_practice ? 'Done studying — try a fresh problem →' : hasNext ? 'Next problem →' : 'Continue →'}
+          {res.feedback_blocked ? 'Get a fresh problem →' : res.feedback_practice ? 'Try a fresh problem →' : hasNext ? 'Next problem →' : 'Continue →'}
         </button>
         {/* The way out from here is always safe: the attempt already stands, and an
             unfinished task is re-served next time. */}
-        <button type="button" className="btn btn-ghost" onClick={onEnd}>End session</button>
+        <button type="button" className="btn btn-ghost" onClick={onEnd}>Stop for now</button>
       </div>
+      <p className="muted small">{STOP_NOTE}</p>
     </div>
   );
 }
@@ -172,9 +176,12 @@ function TaskStatusLines({ res }: { res: AnswerResponse }) {
   return (
     <>
       {res.feedback_blocked ? <p role="status">Fresh practice is unavailable for this skill. Your answer is saved.</p> : null}
-      {res.task_status === 'task_failed' && res.correct ? <p>This practice answer is correct. The original assessment still needs more practice.</p> : null}
+      {res.task_status === 'task_failed' && res.correct ? <p>Correct. Keep practising this skill: the lesson passes after two right in a row.</p> : null}
+      {res.task_status === 'task_failed' && !res.correct && res.feedback_practice ? (
+        <p role="status">The lesson did not pass this time. It comes back next time. Practice a fresh problem now.</p>
+      ) : null}
       {res.task_status === 'task_passed' ? (
-        <p role="status">Task complete. The next task is up when you continue.</p>
+        <p role="status">Lesson passed. The next one starts when you continue.</p>
       ) : null}
       {res.task_status === 'task_inconclusive' ? (
         <p className="feedback-reason">This review needs confirmation. A fresh question will check each uncertain skill.</p>
@@ -228,8 +235,9 @@ function CorrectedFeedback({ res, onContinue, onEnd, continueRef }: Pick<Feedbac
     <p role="status">Grade corrected after verification.</p>
     {res.solution ? <div className="solution"><div className="solution-label">Solution</div><MathBlock className="solution-text">{res.solution}</MathBlock></div> : null}
     <div className="actions">
-      <button ref={continueRef} type="button" className="btn btn-primary" onClick={onContinue}>Continue with updated progress</button>
-      <button type="button" className="btn btn-ghost" onClick={onEnd}>End session</button>
+      <button ref={continueRef} type="button" className="btn btn-primary" onClick={onContinue}>Continue →</button>
+      <button type="button" className="btn btn-ghost" onClick={onEnd}>Stop for now</button>
     </div>
+    <p className="muted small">{STOP_NOTE}</p>
   </div>;
 }

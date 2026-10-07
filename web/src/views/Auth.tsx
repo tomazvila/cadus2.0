@@ -27,7 +27,7 @@ export type AuthMode = 'login' | 'signup' | 'forgot' | 'reset' | 'check-email' |
 /** The shortest password the service accepts. Checked here to save a round trip. */
 const MIN_PASSWORD_LENGTH = 8;
 
-const TAGLINE = 'Practice, on cadence — learn by doing, one problem at a time.';
+const TAGLINE = 'Practice every day. Learn by doing, one problem at a time.';
 
 const MODE_TITLE: Record<AuthMode, string> = {
   login: 'sign in',
@@ -52,11 +52,11 @@ export function messageFor(err: AuthFailure | null): string {
     case 'weak_password':
       return err.message || 'Choose a stronger password (at least 8 characters).';
     case 'invalid_token':
-      return 'That link is invalid or has expired — request a new one below.';
+      return 'That link is invalid or has expired. Request a new one below.';
     case 'rate_limited':
       return 'Too many attempts. Please wait a minute, then try again.';
     case 'network':
-      return err.message || 'Network error — check your connection and try again.';
+      return err.message || 'Network error. Check your connection and try again.';
     default:
       return err?.message || 'Something went wrong. Please try again.';
   }
@@ -214,7 +214,7 @@ export function Auth({ api, mode: initialMode = 'login', token, onSignedIn }: Au
       try {
         // The reset card is on because a link carried a token, so the prop names one.
         await api.resetPassword(token!, password);
-        toast('Password updated — sign in with your new password.', { kind: 'info' });
+        toast('Password updated. Sign in with your new password.', { kind: 'info' });
         setPassword('');
         setMode('login');
       } catch (err) {
@@ -302,7 +302,7 @@ export function Auth({ api, mode: initialMode = 'login', token, onSignedIn }: Au
                   await api.resendVerification(sentTo!);
                   toast('Verification email re-sent.', { kind: 'success' });
                 } catch {
-                  toast('Could not resend right now — please try again shortly.', { kind: 'info' });
+                  toast('Could not resend right now. Try again soon.', { kind: 'info' });
                 }
               })
             }

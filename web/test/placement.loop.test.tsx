@@ -29,7 +29,7 @@ describe('the probe loop', () => {
     expect(document.querySelector('.problem-text')!.textContent).toContain('-7 + 12');
     expect(progressCount()).toBe('Question 1 of up to 40');
     expect(DIAG_DEFAULT_CAP).toBe(40);
-    expect(screen.getByText('placement')).toBeTruthy();
+    expect(screen.getByText("starting questions")).toBeTruthy();
   });
 
   it('reads the topic record as well as the bare 1.0 name', async () => {
@@ -114,12 +114,12 @@ describe('the placement commit', () => {
 
     // The commit takes seconds. The answered question left on screen — with its tick and a
     // live "Save & exit" — reads as "nothing happened", and the learner leaves mid-commit.
-    expect(screen.getByText('Working out your placement…')).toBeTruthy();
+    expect(screen.getByText('Finding where you start…')).toBeTruthy();
     expect(document.querySelector('.problem-card')).toBeNull();
     expect(document.querySelector('.feedback')).toBeNull();
 
     await act(async () => { release(SUMMARY); });
-    expect(screen.getByText('Placement complete')).toBeTruthy();
+    expect(screen.getByText('Starting questions done')).toBeTruthy();
   });
 
   it('renders the counts and the frontier list', async () => {
@@ -136,7 +136,7 @@ describe('the placement commit', () => {
     await tick(DIAG_BEAT_MS);
 
     expect(Array.from(document.querySelectorAll('.stat')).map((s) => s.textContent))
-      .toEqual(['3topics placed', '1conditional', '2frontier topics']);
+      .toEqual(['3topics you know', '1topics to confirm', '2topics to learn next']);
     expect(Array.from(document.querySelectorAll('.frontier-list li')).map((li) => li.textContent))
       .toEqual(['adding-fractions', 'powers']);
     expect(screen.getByText('Start here')).toBeTruthy();
@@ -149,7 +149,7 @@ describe('the placement commit', () => {
     });
     await tick(DIAG_BEAT_MS);
 
-    expect(screen.getByText('Placement finished.')).toBeTruthy();
+    expect(screen.getByText('The starting questions are finished.')).toBeTruthy();
     fireEvent.click(screen.getByRole('button', { name: 'Back to dashboard' }));
     expect(onExit).toHaveBeenCalledTimes(1);
   });
@@ -162,7 +162,7 @@ describe('the placement commit', () => {
     // Reading `.text` off `{"probe": null}` blanks the screen. Finishing is the honest
     // answer: there is nothing left to ask.
     expect(diagFinish).toHaveBeenCalledTimes(1);
-    expect(screen.getByText('Placement complete')).toBeTruthy();
+    expect(screen.getByText('Starting questions done')).toBeTruthy();
   });
 
   it('returns to the intro with a stated line when the route is absent', async () => {
@@ -175,7 +175,7 @@ describe('the placement commit', () => {
     await begin();
 
     expect(screen.getByText(DIAG_START_FAILED)).toBeTruthy();
-    expect(DIAG_START_FAILED).toBe('The placement did not start. Try again in a moment.');
+    expect(DIAG_START_FAILED).toBe('The starting questions did not start. Try again in a moment.');
     expect(beginButton()).toBeTruthy();
     await begin();
     expect(diagStart).toHaveBeenCalledTimes(2);

@@ -27,13 +27,13 @@ export function HintPanel({ hints, referenceLesson, hintsAvailable, taskType }: 
       ))}
       {referenceLesson ? (
         <div className="reference-lesson">
-          {`Still stuck? This is a review — re-study the lesson “${referenceLesson}”, then answer as best you can.`}
+          {`Still stuck? Read the lesson “${referenceLesson}” again, then answer as well as you can.`}
         </div>
       ) : null}
       {!hintsAvailable && taskType === 'review' ? (
         <div className="reference-lesson">
-          No hints are written for this one yet. If you are stuck, re-study the lesson, then answer
-          as best you can.
+          This problem has no hints yet. If you are stuck, read the lesson again, then answer
+          as well as you can.
         </div>
       ) : null}
     </div>

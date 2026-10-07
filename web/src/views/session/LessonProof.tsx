@@ -44,15 +44,15 @@ export const PROOF_LEAVE_AFTER_MS = 90_000;
 
 /** The learner-facing lines of the loop. */
 export const LESSON_PROOF_TEXT = {
-  grading: 'A grader is checking your proof. Meanwhile, check it against these obligations:',
-  leave: 'This check is taking a while. Your proof is saved: continue with the next task, and this revision comes first in your plan.',
-  pass: 'Proof accepted. Continue to close this part of the lesson.',
-  revise: 'Not yet. Fix the first unmet check below, then resubmit the proof.',
-  reveal: 'You used both revisions. Read the solution once. Then rewrite the proof without it.',
-  rewrite: 'Rewrite the proof from memory, without the solution.',
-  unavailable: 'The automatic check could not grade this draft. Submit it again, ask for a human check, or continue: this proof comes first in your next session.',
-  closed: 'This part of the lesson is closed.',
-  assisted: 'Closed with help: you read the solution, so it earns less XP and comes back for review sooner.',
+  grading: 'Being checked. This usually takes under a minute. Meanwhile, read your proof against this list:',
+  leave: 'The check is slow. Your proof is saved. Go on to the next problem. You return to this proof first next time.',
+  pass: 'Proof accepted. Continue to finish this part of the lesson.',
+  revise: 'Not yet. Fix the first point below, then send your proof again.',
+  reveal: 'You used both revisions. Read the reference solution once. Then write the proof again without it.',
+  rewrite: 'Write the proof again from memory, without the reference solution.',
+  unavailable: 'The automatic check could not grade this draft. Send it again, or ask a person to check it. You can also go on: you return to this proof first next time.',
+  closed: 'This part of the lesson is finished.',
+  assisted: 'Finished after you read the reference solution. It earns less XP and comes back for review sooner.',
 } as const;
 
 /**
@@ -60,15 +60,15 @@ export const LESSON_PROOF_TEXT = {
  * the same, so only the nouns and the hint change.
  */
 export const LESSON_WRITTEN_TEXT = {
-  grading: 'A grader is checking your answer. Meanwhile, read it once more against the question:',
-  leave: 'This check is taking a while. Your answer is saved: continue with the next task, and this revision comes first in your plan.',
-  pass: 'Answer accepted. Continue to close this part of the lesson.',
-  revise: 'Not yet. Fix the first unmet check below, then resubmit your answer.',
+  grading: 'Being checked. This usually takes under a minute. Meanwhile, read your answer once more against the question:',
+  leave: 'The check is slow. Your answer is saved. Go on to the next problem. You return to this answer first next time.',
+  pass: 'Answer accepted. Continue to finish this part of the lesson.',
+  revise: 'Not yet. Fix the first point below, then send your answer again.',
   reveal: 'You used both revisions. Read the reference answer once. Then write your answer without it.',
   rewrite: 'Write your answer again from memory, without the reference answer.',
-  unavailable: 'The automatic check could not grade this draft. Submit it again, ask for a human check, or continue: this answer comes first in your next session.',
-  closed: 'This part of the lesson is closed.',
-  assisted: 'Closed with help: you read the reference answer, so it earns less XP and comes back for review sooner.',
+  unavailable: 'The automatic check could not grade this draft. Send it again, or ask a person to check it. You can also go on: you return to this answer first next time.',
+  closed: 'This part of the lesson is finished.',
+  assisted: 'Finished after you read the reference answer. It earns less XP and comes back for review sooner.',
   hint: 'Answer in one or two complete sentences.',
 } as const;
 
@@ -214,7 +214,7 @@ function Body({ api, call, life, stage, written, busy, setStage, onSubmit, onClo
   const text = textOf(written);
   switch (stage.kind) {
     case 'loading':
-      return <p className="muted" role="status">{`Reading your ${written ? 'answer' : 'proof'}'s verdict…`}</p>;
+      return <p className="muted" role="status">{'Loading the result…'}</p>;
     case 'grading':
       return <Grading api={api} life={life} written={written} jobId={stage.jobId} onLanded={() => { setStage({ kind: 'loading', jobId: stage.jobId }); }} onLeave={onLeave} />;
     case 'write':
@@ -227,7 +227,7 @@ function Body({ api, call, life, stage, written, busy, setStage, onSubmit, onClo
           <div className="actions">
             <button type="button" className="btn btn-primary"
               onClick={() => { setStage({ kind: 'write', mode: 'rewrite', chain: null }); }}>
-              {written ? 'I have read it — write my answer without it' : 'I have read it — rewrite the proof without it'}
+              {written ? 'Write my answer again without it' : 'Write my proof again without it'}
             </button>
           </div>
         </div>
@@ -272,10 +272,10 @@ function Write({ stage, written, busy, onSubmit, onLeave }: {
   const text = textOf(written);
   const noun = written ? 'answer' : 'proof';
   const label = {
-    draft: `Submit ${noun}`,
-    revise: `Resubmit (revision ${String((stage.chain?.revision ?? 0) + 1)} of ${String(stage.chain?.cap ?? 2)})`,
-    retry: 'Submit again',
-    rewrite: 'Submit the rewrite',
+    draft: `Send my ${noun}`,
+    revise: 'Revise and send again',
+    retry: 'Send again',
+    rewrite: `Send my new ${noun}`,
   }[stage.mode];
   return (
     <div className="proof-write">
@@ -294,7 +294,7 @@ function Write({ stage, written, busy, onSubmit, onLeave }: {
           {label}
         </button>
         {stage.mode === 'retry' ? (
-          <button type="button" className="btn btn-ghost" onClick={onLeave}>Continue with the next task</button>
+          <button type="button" className="btn btn-ghost" onClick={onLeave}>Come back to this later</button>
         ) : null}
       </div>
     </div>
@@ -327,7 +327,7 @@ function Grading({ api, life, written, jobId, onLanded, onLeave }: {
         <>
           <p className="muted">{textOf(written).leave}</p>
           <div className="actions">
-            <button type="button" className="btn" onClick={onLeave}>Continue with the next task</button>
+            <button type="button" className="btn" onClick={onLeave}>Come back to this later</button>
           </div>
         </>
       ) : null}
@@ -437,9 +437,9 @@ export function Dispute({ api, call, jobId, disputed }: { api: ApiClient; call: 
   const [open, setOpen] = useState(false);
   const [note, setNote] = useState('');
   const [sent, setSent] = useState(disputed);
-  if (sent) return <p className="muted proof-disputed" role="status">Sent for a human check. The grade changes if the check disagrees.</p>;
+  if (sent) return <p className="muted proof-disputed" role="status">Sent to a person to check. The grade changes if they disagree.</p>;
   if (!open) {
-    return <button type="button" className="btn btn-ghost proof-dispute" onClick={() => { setOpen(true); }}>This grade is wrong</button>;
+    return <button type="button" className="btn btn-ghost proof-dispute" onClick={() => { setOpen(true); }}>Ask a person to check this grade</button>;
   }
   return (
     <div className="proof-dispute-form">
@@ -451,7 +451,7 @@ export function Dispute({ api, call, jobId, disputed }: { api: ApiClient; call: 
           const trimmed = note.trim();
           void call(() => api.proofDispute(jobId, trimmed ? trimmed : undefined), () => { setSent(true); });
         }}>
-          Send for a human check
+          Send to a person to check
         </button>
       </div>
     </div>

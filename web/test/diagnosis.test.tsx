@@ -145,7 +145,7 @@ describe('the async diagnosis panel', () => {
     await answerWrong();
 
     expect(panel()!.getAttribute('data-status')).toBe('pending');
-    for (const name of ['Next problem →', 'End session', 'Exit']) {
+    for (const name of ['Next problem →', 'Stop for now', 'Exit']) {
       expect((screen.getByRole('button', { name }) as HTMLButtonElement).disabled).toBe(false);
     }
     fireEvent.click(screen.getByRole('button', { name: 'Exit' }));

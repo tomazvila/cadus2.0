@@ -95,7 +95,7 @@ describe('the integrated task screen', () => {
     await type('Step 1', '1440');
     await type('Step 2', '220');
     await type('Final answer', '7');
-    await press('Submit the whole task');
+    await press('Submit all my answers');
     expect(api.taskIntegratedAnswer).toHaveBeenCalledWith(TASK, {
       method: null,
       steps: [
@@ -108,7 +108,7 @@ describe('the integrated task screen', () => {
 
   it('keeps the verdicts apart from the reasoning, and says the prose is not graded', async () => {
     mount();
-    await press('Submit the whole task');
+    await press('Submit all my answers');
     expect(screen.getByText('Answers')).toBeTruthy();
     expect(screen.getByText('1 of 2 steps, and the final answer is correct.')).toBeTruthy();
     expect(screen.getAllByText('correct').length).toBeGreaterThan(0);
@@ -117,7 +117,7 @@ describe('the integrated task screen', () => {
     expect(screen.getByText('7 nurses clear the window; 6 leave 12 patients unseen.')).toBeTruthy();
     expect(
       screen.getByText(
-        'The service does not grade reasoning. It stands here beside the verdicts, and it changes none of them.',
+        'Your reasoning is not marked. It changes none of the results above.',
       ),
     ).toBeTruthy();
     expect(screen.getByText('I counted the work first.')).toBeTruthy();
@@ -142,8 +142,8 @@ describe('the integrated task screen', () => {
       ),
     });
     mount(api);
-    await press('Submit the whole task');
-    expect(screen.getByText('needs a human check')).toBeTruthy();
+    await press('Submit all my answers');
+    expect(screen.getByText('not marked yet')).toBeTruthy();
   });
 
   it('reports a submission that did not reach the service and keeps the answers', async () => {
@@ -152,8 +152,8 @@ describe('the integrated task screen', () => {
     });
     mount(api);
     await type('Final answer', '7');
-    await press('Submit the whole task');
-    expect(screen.getByText('The submission did not reach the service. Try again.')).toBeTruthy();
+    await press('Submit all my answers');
+    expect(screen.getByText('Your answers did not send. Try again.')).toBeTruthy();
     expect(input('Final answer').value).toBe('7');
   });
 });
