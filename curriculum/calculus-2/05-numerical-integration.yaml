@@ -32,16 +32,6 @@ topics:
       - id: kp1
         name: The basic parabolic estimate (n = 2)
         key_prerequisites: [midpoint-trapezoid-sums]
-        step_check:
-          step: 'Substitute into the template'
-          question: 'Why is $f_1$ multiplied by $4$ while $f_0$ and $f_2$ are multiplied by $1$?'
-          options:
-            - 'The middle node always has the largest function value, so it needs the largest weight of all'
-            - 'The fitted parabola counts the middle value four times as much as each end value'
-            - 'The weights are chosen so that they add up to the number of subintervals, which is $2$ here'
-            - 'The middle node is four times as far from each endpoint as the endpoints are from each other'
-          answer: 'The fitted parabola counts the middle value four times as much as each end value'
-          why: 'The area under the parabola through the three points is $\frac{\Delta x}{3}(f_0 + 4f_1 + f_2)$, so the middle value counts four times as much as each end value.'
         exemplars:
           - problem: 'Use Simpson''s rule with $n = 2$, $\frac{\Delta x}{3}\left(f_0 + 4f_1 + f_2\right)$, to approximate $\int_1^3 \frac{1}{x}\,dx$.'
             answer: '10/9'
@@ -83,16 +73,6 @@ topics:
       - id: kp2
         name: The 1-4-2-4-1 pattern (n = 4 and tables)
         key_prerequisites: [midpoint-trapezoid-sums, estimating-integrals-from-tables]
-        step_check:
-          step: 'Write the coefficient pattern for $n = 4$'
-          question: 'Why does the middle node get the weight $2$ while the nodes next to it get the weight $4$?'
-          options:
-            - 'The weights alternate $4, 2, 4$ only because the table has an odd number of values'
-            - 'The nodes next to the middle are the ones with the larger function values'
-            - 'The middle node ends one parabola and starts the next, so it is counted twice'
-            - 'The middle node lies halfway across the interval, so it is given half the weight $4$'
-          answer: 'The middle node ends one parabola and starts the next, so it is counted twice'
-          why: 'With $n = 4$ there are two parabolas. Each end node of a parabola has weight $1$, so the shared middle node gets $1 + 1 = 2$, while the two odd nodes are the middles of their parabolas and get $4$.'
         exemplars:
           - problem: 'A table gives $f(0) = 2$, $f(1) = 5$, $f(2) = 4$, $f(3) = 7$, $f(4) = 2$. Use Simpson''s rule with $n = 4$ to estimate $\int_0^4 f(x)\,dx$.'
             answer: '20'
@@ -139,16 +119,6 @@ topics:
           answer_contract: {"kind": "exact"}
           answer: '4'
           reveal: 'The estimate is $\frac{1}{3}(0 + 4 \cdot 1 + 8) = 4$, and the exact value is $\int_0^2 x^3\,dx = 4$ too. Simpson''s rule fits a parabola, yet it is exact even for a cubic.'
-        step_check:
-          step: 'Simpson''s rule is exact for all polynomials of degree $\le 3$'
-          question: 'Why is Simpson''s rule with $n = 2$ exact for $x^3$, although it fits only a parabola?'
-          options:
-            - 'The cubic part of the error cancels because the nodes sit symmetrically'
-            - 'Every cubic is so close to a parabola that the error is rounded away to zero'
-            - 'The weight $4$ on the middle value is chosen so that the cubic is integrated exactly'
-            - 'The integral of $x^3$ over any interval that is symmetric about $0$ is zero'
-          answer: 'The cubic part of the error cancels because the nodes sit symmetrically'
-          why: 'The nodes sit symmetrically about the midpoint, so the part of the error that comes from the cubic term has equal and opposite pieces on the two halves and cancels.'
         exemplars:
           - problem: 'The trapezoid rule with $n = 4$ gives $2.75$ for $\int_0^2 x^2\,dx = \frac{8}{3}$. What is the size of its error?'
             answer: '1/12'
@@ -227,16 +197,6 @@ topics:
           answer_contract: {"kind": "exact"}
           answer: '1/6'
           reveal: 'The error is $\frac12 - \frac13 = \frac16$. The bound $\frac{K(b-a)^3}{12n^2}$ with $K = 2$, $b - a = 1$ and $n = 1$ is also $\frac{2}{12} = \frac16$, so for a parabola the bound is the error itself.'
-        step_check:
-          step: 'its largest absolute value sits at the right endpoint'
-          question: 'Why is $K$ found at the right endpoint $x = 4$?'
-          options:
-            - 'The right endpoint is always where the second derivative is largest'
-            - 'The function $6x$ is increasing, so it is largest at $x = 4$'
-            - 'The error of the trapezoid rule is always greatest at the right endpoint'
-            - 'The integral of $x^3$ is largest at the right endpoint of the interval'
-          answer: 'The function $6x$ is increasing, so it is largest at $x = 4$'
-          why: 'Since $6x$ increases on $[0,4]$, its largest absolute value is $6 \cdot 4 = 24$ at the right endpoint. For a decreasing function the largest value would sit at the left endpoint.'
         exemplars:
           - problem: 'For $\int_0^2 x^3\,dx$ we have $f''''(x) = 6x$, so $K = \max_{[0,2]}|f''''| = 12$. Compute the trapezoid error bound $\frac{K(b-a)^3}{12n^2}$ for $n = 4$.'
             answer: '1/2'
@@ -282,16 +242,6 @@ topics:
       - id: kp2
         name: The Simpson error bound
         key_prerequisites: [simpsons-rule, higher-order-derivatives]
-        step_check:
-          step: 'its largest value on $[1,2]$ occurs at the left endpoint $x = 1$'
-          question: 'Why is $K$ found at the left endpoint $x = 1$?'
-          options:
-            - 'The fourth derivative is positive, so only its value at $x = 1$ is needed'
-            - 'The left endpoint is the node where Simpson''s rule has the largest error of all'
-            - 'The function $\frac{120}{x^6}$ decreases, so $x = 1$ gives its largest value'
-            - 'The factor $(b-a)^5$ is equal to $1$ only when the left endpoint is used here'
-          answer: 'The function $\frac{120}{x^6}$ decreases, so $x = 1$ gives its largest value'
-          why: 'Because $\frac{120}{x^6}$ is decreasing for $x > 0$, its largest value on $[1,2]$ is at $x = 1$, which gives $K = 120$.'
         exemplars:
           - problem: 'For $\int_1^2 \frac{1}{x}\,dx$, $f^{(4)}(x) = \frac{24}{x^5}$ has maximum $K = 24$ at $x = 1$. Compute the Simpson error bound $\frac{K(b-a)^5}{180n^4}$ for $n = 4$.'
             answer: '1/1920'
@@ -341,16 +291,6 @@ topics:
       - id: kp3
         name: Choosing n for a target accuracy
         key_prerequisites: [simpsons-rule, midpoint-trapezoid-sums]
-        step_check:
-          step: 'Subgoal: find the smallest $n$ clearing that threshold'
-          question: 'Why is $n = 5$ not enough here?'
-          options:
-            - 'Only $n^2 \ge 853.3$ works, and $5^2 = 25$ falls short of it'
-            - 'The bound with $n = 5$ is larger than $K$, so it cannot be below $0.01$'
-            - 'The target $0.01$ needs $n$ to be at least $100$ whatever the bound is'
-            - 'Only $n^4 \ge 853.3$ works, and $5^4 = 625$ falls short of it'
-          answer: 'Only $n^4 \ge 853.3$ works, and $5^4 = 625$ falls short of it'
-          why: 'The bound is at most $0.01$ only when $n^4 \ge 853.3$. Since $5^4 = 625$ is below this threshold and $6^4 = 1296$ is above it, $n = 6$ is the first value that works.'
         exemplars:
           - problem: 'For an integral on $[0, 1]$ with $K = \max|f''''| = 2$, find the smallest integer $n$ so that the trapezoid bound $\frac{K(b-a)^3}{12n^2}$ is at most $0.01$.'
             answer: '5'

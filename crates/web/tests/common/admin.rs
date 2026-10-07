@@ -106,6 +106,7 @@ pub fn graph() -> Curriculum {
             problem: "Compute $7 - 2$.".to_string(),
             answer: "5".to_string(),
             solution_sketch: None,
+            visual: None,
         }],
     );
     point.name = "The first point".to_string();

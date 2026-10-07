@@ -177,6 +177,34 @@ pub struct Exemplar {
     pub answer: String,
     #[serde(default)]
     pub solution_sketch: Option<String>,
+    /// The figure this item shows: a 0-based index into the knowledge point's
+    /// `visuals` list. An item with no index shows no figure. In YAML,
+    /// `visual: 0` names the first figure; `visual: false` states "no figure".
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "visual_index"
+    )]
+    pub visual: Option<usize>,
+}
+
+/// Read `visual:` as an index, or as `false` for "no figure".
+fn visual_index<'de, D: serde::Deserializer<'de>>(
+    deserializer: D,
+) -> Result<Option<usize>, D::Error> {
+    #[derive(Deserialize)]
+    #[serde(untagged)]
+    enum Raw {
+        Index(usize),
+        Flag(bool),
+    }
+    match Option::<Raw>::deserialize(deserializer)? {
+        None | Some(Raw::Flag(false)) => Ok(None),
+        Some(Raw::Index(index)) => Ok(Some(index)),
+        Some(Raw::Flag(true)) => Err(serde::de::Error::custom(
+            "`visual: true` names no figure; write the index of the figure, or `false`",
+        )),
+    }
 }
 
 impl Exemplar {
@@ -261,10 +289,6 @@ pub struct KnowledgePoint {
     /// with no visual.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub visuals: Vec<crate::visual::VisualSpec>,
-    /// A self-explanation question on one step of the teach page's worked
-    /// example (NEW IN 2.0, [`super::active`]). Absent from the canonical dump.
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub step_check: Option<super::active::StepCheck>,
     /// A motivating problem attempted before the worked example (NEW IN 2.0,
     /// [`super::active`]). Absent from the canonical dump.
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -272,11 +296,8 @@ pub struct KnowledgePoint {
 }
 
 impl KnowledgePoint {
-    /// Validate the optional active-example blocks (`step_check`, `try_first`).
+    /// Validate the optional active-example block (`try_first`).
     pub fn validate_active_example(&self) -> Result<(), String> {
-        if let Some(check) = &self.step_check {
-            check.validate()?;
-        }
         if let Some(first) = &self.try_first {
             first.validate(
                 self.exemplars

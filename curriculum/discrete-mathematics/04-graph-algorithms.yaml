@@ -17,16 +17,6 @@ topics:
       - id: kp1
         name: 'Spanning tree basics'
         key_prerequisites: [trees-characterizations]
-        step_check:
-          step: 'Use the formula for the number of edges in a spanning tree'
-          question: 'Why does every spanning tree of a connected graph on $n$ vertices have exactly $n - 1$ edges?'
-          options:
-            - 'A spanning tree keeps every edge of the graph except exactly one of them'
-            - 'It is connected with no cycle, and such a graph has $n - 1$ edges'
-            - 'Each vertex needs its own edge, so a tree has $n$ edges in all'
-            - 'A spanning tree keeps only the lightest $n - 1$ edges of the graph'
-          answer: 'It is connected with no cycle, and such a graph has $n - 1$ edges'
-          why: 'Connected means at least $n - 1$ edges are needed, and a cycle would make one edge spare, so a connected graph without a cycle has exactly $n - 1$.'
         exemplars:
           - problem: 'A connected graph has $12$ vertices. How many edges does each of its spanning trees have?'
             answer: "11"
@@ -72,16 +62,6 @@ topics:
       - id: kp2
         name: 'Kruskal and Prim on small weighted graphs'
         key_prerequisites: [trees-characterizations]
-        step_check:
-          step: 'Sort the edges by weight'
-          question: 'Why does Kruskal''s algorithm start by sorting the edges from lightest to heaviest?'
-          options:
-            - 'So that the tree is built outward from the first vertex in the list'
-            - 'So that it can skip every edge that touches a vertex of degree one'
-            - 'So that it can always add the lightest edge that closes no cycle'
-            - 'So that the heaviest edge is certain to lie in the final tree'
-          answer: 'So that it can always add the lightest edge that closes no cycle'
-          why: 'Each time the algorithm takes the lightest remaining edge that closes no cycle, which is why the finished tree has least total weight.'
         exemplars:
           - problem: 'A weighted graph has vertices $A, B, C, D$ and edges with weights $AB = 2$, $AC = 1$, $BC = 3$, $BD = 4$, $CD = 5$. Find the total weight of a minimum spanning tree.'
             answer: "7"
@@ -143,16 +123,6 @@ topics:
       - id: kp1
         name: 'Running Dijkstra on a small weighted graph'
         key_prerequisites: [walks-paths-connectivity]
-        step_check:
-          step: 'Settle $R(3)$'
-          question: 'Why does Dijkstra''s algorithm settle $R$ (distance $3$) before $Q$ (distance $5$)?'
-          options:
-            - '$R$ comes later in the alphabet than $Q$, so it is always settled first'
-            - '$R$ is joined to the target $S$, and the algorithm must head for the target'
-            - '$R$ has fewer edges than $Q$, and fewer edges always mean a shorter route'
-            - '$R$ has the least distance found so far, and no other route can be cheaper'
-          answer: '$R$ has the least distance found so far, and no other route can be cheaper'
-          why: 'Every other route to $R$ must first leave the settled set through a vertex at distance at least $3$, so with nonnegative weights none can beat $3$.'
         exemplars:
           - problem: 'A weighted graph has vertices $A, B, C, D$ and edges with weights $AB = 4$, $AC = 2$, $CB = 1$, $BD = 5$, $CD = 8$. Find the length of a shortest path from $A$ to $D$.'
             answer: "8"
@@ -186,16 +156,6 @@ topics:
       - id: kp2
         name: 'Why nonnegative weights matter; tracing distances'
         key_prerequisites: [walks-paths-connectivity]
-        step_check:
-          step: 'Settle $C(2)$'
-          question: 'Why is the distance of $C$ final once $C$ is settled at $2$?'
-          options:
-            - 'The algorithm has already visited every vertex of the graph by then'
-            - 'The edge to $C$ is the lightest edge anywhere in the whole graph'
-            - 'Any other route costs at least $2$, since no weight is negative'
-            - 'A vertex next to the start can never be reached by a cheaper detour'
-          answer: 'Any other route costs at least $2$, since no weight is negative'
-          why: 'A detour passes through an unsettled vertex whose distance is already at least $2$, and adding nonnegative weights cannot lower that total.'
         exemplars:
           - problem: 'In a directed graph the arcs are $A \to B$ with weight $2$, $A \to C$ with weight $3$, and $C \to B$ with weight $-2$. Dijkstra''s algorithm settles $B$ at distance $2$ using the arc $A \to B$. What is the true shortest distance from $A$ to $B$?'
             answer: "1"
@@ -259,16 +219,6 @@ topics:
       - id: kp1
         name: 'Chromatic numbers of standard graphs'
         key_prerequisites: [graphs-intro, walks-paths-connectivity]
-        step_check:
-          step: 'Try two colors'
-          question: 'Why does the $5$-cycle need three colors although the $6$-cycle needs only two?'
-          options:
-            - 'The fifth vertex is adjacent to all the others, so it must receive a color of its own'
-            - 'Each color can be used at most twice, and five vertices then need three colors in all'
-            - 'Two colors must alternate, and with an odd number of vertices the last clashes with the first'
-            - 'A cycle on five vertices has more edges than any tree on five vertices, so it needs an extra color'
-          answer: 'Two colors must alternate, and with an odd number of vertices the last clashes with the first'
-          why: 'Alternating two colors works only if you can return to the start with the other color, which needs an even number of vertices.'
         try_first:
           problem: 'Three friends are all rivals of one another. They are split into teams so that no two rivals are on the same team. What is the fewest number of teams?'
           answer_contract: {"kind": "exact"}
@@ -315,16 +265,6 @@ topics:
       - id: kp2
         name: 'Scheduling via coloring; the Delta + 1 bound'
         key_prerequisites: [graphs-intro, walks-paths-connectivity]
-        step_check:
-          step: 'Find the largest clique'
-          question: 'Why is the size of a largest set of mutually conflicting exams a lower bound for the number of slots?'
-          options:
-            - 'Each slot may hold only as many exams as the clique has members'
-            - 'Exams that conflict in every pair must all be in different slots'
-            - 'The exams outside the clique can always use the same slot as one another'
-            - 'A slot holds at most one exam from each part of the schedule graph'
-          answer: 'Exams that conflict in every pair must all be in different slots'
-          why: 'Two exams in the same slot cannot conflict, so every member of a clique needs a slot of its own.'
         exemplars:
           - problem: 'Four exams $M, P, C, B$ have conflicts $MP$, $MC$, $PC$, $CB$, where a conflict means that some student takes both exams. What is the fewest number of exam slots so that no student has two exams in the same slot?'
             answer: "3"
@@ -392,16 +332,6 @@ topics:
       - id: kp1
         name: 'v - e + f = 2'
         key_prerequisites: [trees-characterizations]
-        step_check:
-          step: 'Solve for $f$'
-          question: 'Why does $-4 + f = 2$ give $f = 2 + 4$?'
-          options:
-            - 'Adding $4$ to both sides keeps the equation balanced, with $f$ alone'
-            - 'Faces are counted as positive numbers, so the sign of $-4$ is dropped'
-            - 'Euler''s formula says that $f$ is always greater than $e$ by $2$'
-            - 'The minus sign moves to the other side of the equals sign as a plus'
-          answer: 'Adding $4$ to both sides keeps the equation balanced, with $f$ alone'
-          why: 'Adding $4$ to both sides cancels the $-4$ and gives $f = 6$; the sign does not "move", an equal amount is added on each side.'
         exemplars:
           - problem: 'A connected planar graph is drawn in the plane with $8$ vertices and $12$ edges. How many faces, including the outer face, does the drawing have?'
             answer: "6"
@@ -443,16 +373,6 @@ topics:
       - id: kp2
         name: 'Edge bounds and proving nonplanarity'
         key_prerequisites: [trees-characterizations, degree-handshake]
-        step_check:
-          step: 'Since $15 > 10$, the graph cannot be planar'
-          question: 'Why does $15 > 10$ show that the graph cannot be planar?'
-          options:
-            - 'The graph has more edges than vertices, and planar graphs never do'
-            - 'Every planar graph has an odd number of edges, and 15 is too large'
-            - 'More edges than the bound allows cannot be drawn without a crossing'
-            - 'A planar graph on 7 vertices needs exactly 10 edges and no more or fewer'
-          answer: 'More edges than the bound allows cannot be drawn without a crossing'
-          why: 'Every simple planar graph of that kind has at most $10$ edges, so a graph with $15$ edges cannot be drawn in the plane without a crossing.'
         exemplars:
           - problem: 'What is the largest number of edges that a simple planar graph with $7$ vertices can have?'
             answer: "15"
@@ -528,16 +448,6 @@ topics:
       - id: kp1
         name: 'Recognizing bipartite graphs'
         key_prerequisites: [graph-coloring, walks-paths-connectivity]
-        step_check:
-          step: 'Color the vertices with two colors'
-          question: 'Why can a graph with an odd cycle not be split into two parts with all edges between the parts?'
-          options:
-            - 'Each part would need an even number of vertices, and an odd cycle has an odd number'
-            - 'An odd cycle has more edges than a bipartite graph is allowed to have'
-            - 'The vertices of an odd cycle all have odd degree and so cannot be separated'
-            - 'Alternating parts around an odd cycle makes the last vertex clash with the first'
-          answer: 'Alternating parts around an odd cycle makes the last vertex clash with the first'
-          why: 'Alternating parts around a cycle returns to the start in the same part only when the number of vertices is even.'
         exemplars:
           - problem: 'Is the cycle $C_6$ bipartite?'
             answer: "yes"
@@ -579,16 +489,6 @@ topics:
       - id: kp2
         name: 'Matchings and Hall''s condition'
         key_prerequisites: [graph-coloring, walks-paths-connectivity]
-        step_check:
-          step: 'Hall''s condition holds for $S$'
-          question: 'Why does $|N(S)| = 4 \ge |S| = 3$ show that Hall''s condition holds for this set $S$?'
-          options:
-            - 'Four jobs exist in all, and every worker can do at least one of them'
-            - 'Hall''s condition asks that $S$ can do at least as many jobs as it has workers'
-            - 'The set $S$ has more workers than jobs, so no matching can use every job'
-            - 'The neighborhood has four jobs, which is the number of workers in the whole graph'
-          answer: 'Hall''s condition asks that $S$ can do at least as many jobs as it has workers'
-          why: 'Hall''s condition asks that each set of workers can do at least as many jobs as the set has workers, and $4 \ge 3$ meets this for $S$.'
         try_first:
           problem: 'Two workers can do only job $p$, and a third worker can do job $p$ or job $q$. Can all three workers be given different jobs?'
           answer_contract: {"kind": "label", "options": [["yes", "yes they can", "yes, they can", "they can", "it is possible", "possible", "yes it is possible", "yes, it is possible"], ["no", "no they cannot", "no, they cannot", "they cannot", "it is not possible", "impossible", "no it is not possible", "no, it is not possible"]]}

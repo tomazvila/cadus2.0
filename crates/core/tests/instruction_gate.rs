@@ -148,6 +148,7 @@ fn a_rung_that_names_an_answer_the_exemplar_problem_shows_is_still_rejected() {
         problem: "What is 49 divided by 7?".to_owned(),
         answer: "7".to_owned(),
         solution_sketch: None,
+        visual: None,
     }];
     let body = r#"{"hints": ["Count in sevens; the answer is 7."]}"#;
 

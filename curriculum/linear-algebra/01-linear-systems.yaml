@@ -19,15 +19,6 @@ topics:
       - id: kp1
         name: From system to augmented matrix
         key_prerequisites: [systems-elimination]
-        step_check:
-          step: 'has no $z$ term, so its $z$-coefficient is $0$'
-          question: 'Why is the $z$-coefficient of $x - y = 1$ written as $0$ in its row?'
-          options:
-            - 'A missing variable means the equation is false, so its row is filled with zeros'
-            - 'Each row needs a $z$ entry, and $0z$ adds nothing to the equation'
-            - 'The constant $1$ is moved into the $z$ column to keep every row the same length'
-          answer: 'Each row needs a $z$ entry, and $0z$ adds nothing to the equation'
-          why: 'Every row must have one entry per variable, and writing $x - y + 0z = 1$ keeps the equation unchanged.'
         exemplars:
           - problem: 'Write the augmented matrix of the system $x + 2y = 5$, $3x + 4y = 11$.'
             answer: '[[1,2,5],[3,4,11]]'
@@ -65,15 +56,6 @@ topics:
       - id: kp2
         name: From augmented matrix to system
         key_prerequisites: [systems-elimination]
-        step_check:
-          step: 'giving $0x + 4y - 2z = 8$'
-          question: 'Why does the row with entries $0, 4, -2$ and constant $8$ give an equation with no $x$ term?'
-          options:
-            - 'A zero in the first column means the equation has already been solved for $x$'
-            - 'The first entry only labels the row, so it is not a part of the equation itself'
-            - 'The first entry is the $x$ coefficient, and $0 \cdot x = 0$, so $x$ drops out'
-          answer: 'The first entry is the $x$ coefficient, and $0 \cdot x = 0$, so $x$ drops out'
-          why: 'Each column belongs to one variable, so a $0$ in the $x$ column means the equation does not contain $x$.'
         exemplars:
           - problem: 'The augmented matrix $\begin{pmatrix}2&-1&5\\1&3&-4\end{pmatrix}$ stands for a system in $x$ and $y$. Write its second equation.'
             answer: 'x + 3y = -4'
@@ -111,15 +93,6 @@ topics:
       - id: kp3
         name: Setting up augmented matrices from word problems
         key_prerequisites: [systems-elimination]
-        step_check:
-          step: 'adults bring in $9a$ euros and children $6c$ euros'
-          question: 'Why does the money sentence give the equation $9a + 6c = 285$ and not $a + c = 285$?'
-          options:
-            - 'Each kind brings in its price times its number, so prices multiply $a$ and $c$'
-            - 'The total of $285$ is a count of tickets, so it replaces the total of $40$ tickets'
-            - 'Every equation of a system must have coefficients larger than $1$ on its variables'
-          answer: 'Each kind brings in its price times its number, so prices multiply $a$ and $c$'
-          why: 'The money from adult tickets is $9$ euros times $a$, and from child tickets $6$ euros times $c$, so the prices are the coefficients.'
         exemplars:
           - problem: 'Adult tickets cost €8 and child tickets cost €5. In total $30$ tickets were sold for €195. Write the augmented matrix for the numbers $a$ and $c$ of adult and child tickets.'
             answer: '[[1,1,30],[8,5,195]]'
@@ -178,15 +151,6 @@ topics:
       - id: kp1
         name: Row replacement
         key_prerequisites: [augmented-matrix-representation, systems-elimination]
-        step_check:
-          step: 'Subtract 3 times each entry of row 1 from the matching entry of row 2'
-          question: 'Why must every entry of row 2 be changed, and not only the first one?'
-          options:
-            - 'The other entries must change too, so that each row keeps the same sum as before'
-            - 'Row 1 changes as well, so every column of the matrix is affected by the operation'
-            - 'The whole row is replaced, so each entry gets the same multiple of row 1 added'
-          answer: 'The whole row is replaced, so each entry gets the same multiple of row 1 added'
-          why: 'The operation adds a multiple of the whole of row 1 to row 2, so each entry of row 2 changes, and the system stays equivalent.'
         exemplars:
           - problem: 'Apply $R_2 \to R_2 - 2R_1$ to the augmented matrix $\begin{pmatrix}1&2&5\\2&3&8\end{pmatrix}$.'
             answer: '[[1,2,5],[0,-1,-2]]'
@@ -228,15 +192,6 @@ topics:
       - id: kp2
         name: Swaps and scaling
         key_prerequisites: [augmented-matrix-representation]
-        step_check:
-          step: 'multiply row 2 by its reciprocal $\frac{1}{3}$'
-          question: 'Why is row 2 scaled by $\frac{1}{3}$ and not by $3$?'
-          options:
-            - 'The leading entry $3$ times $\frac{1}{3}$ is $1$, but $3 \cdot 3$ is $9$'
-            - 'Dividing a row by a number always turns the other entries of that row into zeros'
-            - 'Multiplying by $3$ is not allowed, since a row may only be scaled by a fraction'
-          answer: 'The leading entry $3$ times $\frac{1}{3}$ is $1$, but $3 \cdot 3$ is $9$'
-          why: 'The aim is a leading entry of $1$, and only the reciprocal of the leading entry turns it into $1$.'
         exemplars:
           - problem: 'Apply $R_2 \to \frac{1}{2}R_2$ to the augmented matrix $\begin{pmatrix}1&0&3\\0&2&8\end{pmatrix}$.'
             answer: '[[1,0,3],[0,1,4]]'
@@ -278,15 +233,6 @@ topics:
       - id: kp3
         name: Identifying operations and why they are safe
         key_prerequisites: [augmented-matrix-representation, systems-elimination]
-        step_check:
-          step: 'its inverse is $R_2 \to R_2 + 2R_1$'
-          question: 'Why does having an inverse operation show that the solution set stays the same?'
-          options:
-            - 'An inverse operation makes the new matrix equal to the old matrix in every entry'
-            - 'The inverse undoes the step, so a solution of the new system solves the old one'
-            - 'Having an inverse means the operation changes only one row of the matrix at a time'
-          answer: 'The inverse undoes the step, so a solution of the new system solves the old one'
-          why: 'A solution of the old system stays a solution after the step, and the inverse step shows the reverse, so no solution is gained or lost.'
         try_first:
           problem: 'The pair $(x, y) = (3, 2)$ solves $x + y = 5$ and $x - y = 1$. The second equation is replaced by the sum of the two equations. Is $(3, 2)$ still a solution of the new system?'
           answer_contract: {"kind":"label","options":[["yes","it is","it is still a solution"],["no","it is not","it is no longer a solution"]]}
@@ -361,15 +307,6 @@ topics:
       - id: kp1
         name: Triangular 2x2 systems
         key_prerequisites: [systems-substitution]
-        step_check:
-          step: 'so the value of $y$ is known with no work'
-          question: 'Why does the solution start with the bottom equation?'
-          options:
-            - 'It is the last equation written, and the last equation is always the most reliable'
-            - 'It has the largest coefficients, so it is the easiest equation to solve first'
-            - 'It has only one unknown, so it gives that value without any other value'
-          answer: 'It has only one unknown, so it gives that value without any other value'
-          why: 'The bottom equation contains one unknown, so it can be solved at once, and then the other equations lose one unknown each.'
         try_first:
           problem: 'Two numbers $x$ and $y$ satisfy $x + 2y = 11$ and $y = 4$. What is $x$?'
           answer_contract: {"kind":"exact"}
@@ -412,15 +349,6 @@ topics:
       - id: kp2
         name: Triangular 3x3 systems
         key_prerequisites: [systems-substitution, multi-step-equations]
-        step_check:
-          step: 'Substitute $z = 2$'
-          question: 'Why can the middle equation be solved once $z = 2$ is known?'
-          options:
-            - 'It has only $y$ and $z$, so only $y$ is left once $z$ is replaced by $2$'
-            - 'The value $z = 2$ makes the middle equation equal to zero on its left side'
-            - 'It is solved for $y$ by dividing the constant by the value of $z$'
-          answer: 'It has only $y$ and $z$, so only $y$ is left once $z$ is replaced by $2$'
-          why: 'The middle equation has two unknowns, so one known value leaves a one-unknown equation, as in the first step.'
         exemplars:
           - problem: 'Solve the system $x + y + z = 6$, $y + 2z = 8$, $z = 3$.'
             answer: '(1, 2, 3)'
@@ -458,15 +386,6 @@ topics:
       - id: kp3
         name: Back substitution from echelon matrices
         key_prerequisites: [systems-substitution, multi-step-equations]
-        step_check:
-          step: 'it involves only $z$, so it is the starting point'
-          question: 'Why is the bottom row of the matrix the place to start?'
-          options:
-            - 'It has the largest constant, so it gives the largest unknown first'
-            - 'Two zeros leave only the $z$ unknown, so the row can be solved by itself'
-            - 'It is the last equation, so the other two rows follow from it as consequences'
-          answer: 'Two zeros leave only the $z$ unknown, so the row can be solved by itself'
-          why: 'The zeros leave only the $z$ column, so the bottom row is a one-unknown equation, and each higher row then has one new unknown.'
         exemplars:
           - problem: 'Solve the system with augmented matrix $\begin{pmatrix}1&1&1&6\\0&2&1&7\\0&0&3&9\end{pmatrix}$.'
             answer: '(1, 2, 3)'
@@ -526,15 +445,6 @@ topics:
       - id: kp1
         name: Recognizing echelon form
         key_prerequisites: [elementary-row-operations]
-        step_check:
-          step: 'the second leading entry is strictly to the right of the first'
-          question: 'Why must each leading entry lie strictly to the right of the leading entry above it?'
-          options:
-            - 'The leading entries must be in different columns so that the matrix has the same number of rows as columns'
-            - 'Each leading entry removes its unknown from the rows below, so the rows can be solved from the bottom up'
-            - 'A leading entry to the left would be smaller, and the entries of a matrix must grow along the rows'
-          answer: 'Each leading entry removes its unknown from the rows below, so the rows can be solved from the bottom up'
-          why: 'When the leading entries step to the right, each row has fewer unknowns than the row above, which makes back substitution possible.'
         exemplars:
           - problem: 'Is $\begin{pmatrix}1&2&3\\0&1&4\end{pmatrix}$ in echelon form?'
             answer: 'yes'
@@ -568,15 +478,6 @@ topics:
       - id: kp2
         name: REF versus RREF
         key_prerequisites: [elementary-row-operations]
-        step_check:
-          step: 'but the entry above it in the first row is $3$, which is nonzero'
-          question: 'Why must the entry above a pivot be zero in reduced row echelon form?'
-          options:
-            - 'So that the matrix has the same number of pivots as it has columns'
-            - 'So that every row of the matrix begins with the digit $1$ in its first place'
-            - 'So that each pivot unknown appears in one equation only and can be read off'
-          answer: 'So that each pivot unknown appears in one equation only and can be read off'
-          why: 'With zeros above and below each pivot, every pivot row states the value of its unknown without the other unknowns.'
         exemplars:
           - problem: 'Is $\begin{pmatrix}1&0&2\\0&1&3\end{pmatrix}$ in reduced row echelon form?'
             answer: 'yes'
@@ -614,15 +515,6 @@ topics:
       - id: kp3
         name: Pivot positions and finishing the reduction
         key_prerequisites: [elementary-row-operations]
-        step_check:
-          step: 'Clear it with $R_1 \to R_1 - 3R_2$'
-          question: 'Why is $3$ times row 2 subtracted from row 1?'
-          options:
-            - 'The entry above the pivot is $3$, so $3 - 3 \cdot 1 = 0$ clears it'
-            - 'The last entry of row 1 is $5$, so the multiple is taken from the constants column'
-            - 'Any multiple of row 2 clears the entry, and $3$ is only the smallest one that works'
-          answer: 'The entry above the pivot is $3$, so $3 - 3 \cdot 1 = 0$ clears it'
-          why: 'The pivot of row 2 is $1$, so subtracting $3$ times row 2 changes the entry $3$ above it to $0$ and leaves the pivot column otherwise unchanged.'
         exemplars:
           - problem: 'Bring $\begin{pmatrix}1&2&4\\0&1&3\end{pmatrix}$ to reduced row echelon form.'
             answer: '[[1,0,-2],[0,1,3]]'
@@ -694,16 +586,6 @@ topics:
       - id: kp1
         name: Reducing a matrix to RREF
         key_prerequisites: [elementary-row-operations, echelon-form-recognition]
-        step_check:
-          step: 'Clear below the first pivot: replace $R_2$ with $R_2 - 3R_1$'
-          question: 'Why does the step use $R_2 - 3R_1$?'
-          options:
-            - 'The number $3$ makes the new second row equal to the first row, so one row is lost'
-            - 'The number $3$ scales the pivot of row 2 so that it becomes a leading $1$ at once'
-            - 'The number $3$ is the entry under the pivot, so that entry becomes zero'
-            - 'The number $3$ is the count of columns, so every row is reduced in the same way'
-          answer: 'The number $3$ is the entry under the pivot, so that entry becomes zero'
-          why: 'Subtracting $3$ times the pivot row cancels the $3$ under the pivot, and a row operation keeps the solutions of the system.'
         exemplars:
           - problem: 'Reduce the matrix $\begin{pmatrix}1&3&7\\2&7&17\end{pmatrix}$ to reduced row echelon form.'
             answer: '[[1,0,-2],[0,1,3]]'
@@ -741,16 +623,6 @@ topics:
       - id: kp2
         name: Solving 2x2 systems by row reduction
         key_prerequisites: [elementary-row-operations, back-substitution-triangular-systems]
-        step_check:
-          step: 'Read off the last variable'
-          question: 'Why does the second row give $y$ directly?'
-          options:
-            - 'After the elimination its $x$-entry is $0$, so the row has only $y$ left'
-            - 'The second row holds the larger numbers, so it is the easiest one to solve'
-            - 'The row was multiplied by $2$, and this multiplication removes the unknown $x$'
-            - 'The unknown $y$ is always moved into the second row by a row operation'
-          answer: 'After the elimination its $x$-entry is $0$, so the row has only $y$ left'
-          why: 'The elimination made the $x$-entry of row 2 zero, so row 2 reads $y = 3$ and no other unknown remains.'
         exemplars:
           - problem: 'Solve the system by row reduction: $x + 2y = 5$, $3x + 4y = 11$.'
             answer: '(1, 2)'
@@ -788,16 +660,6 @@ topics:
       - id: kp3
         name: Solving 3x3 systems by row reduction
         key_prerequisites: [elementary-row-operations, back-substitution-triangular-systems]
-        step_check:
-          step: 'Eliminate $x$ from $R_3$: compute $R_3 - R_1$'
-          question: 'Why is $R_1$ subtracted from $R_3$ here?'
-          options:
-            - 'The subtraction makes the right side of the new row equal to $0$'
-            - 'Both rows have $x$-coefficient $1$, so the $x$ terms cancel'
-            - 'Subtracting always removes the variable $z$ from the row below'
-            - 'Row 1 must be subtracted from every other row, whatever its entries'
-          answer: 'Both rows have $x$-coefficient $1$, so the $x$ terms cancel'
-          why: 'The new row has no $x$ term, so rows 2 and 3 form a smaller system in $y$ and $z$ only.'
         exemplars:
           - problem: 'Solve the system: $x + 2y + z = 1$, $2x - y + 3z = 8$, $x + y + 2z = 3$.'
             answer: '(2, -1, 1)'
@@ -858,16 +720,6 @@ topics:
       - id: kp1
         name: Detecting inconsistency
         key_prerequisites: [row-reduction-echelon-forms]
-        step_check:
-          step: 'Subtract 3 times the first equation from the second'
-          question: 'Why is $3$ times the first equation subtracted?'
-          options:
-            - 'The multiple $3$ matches both coefficients, so the $x$ and $y$ terms cancel'
-            - 'The multiple $3$ is the right side of the first equation, so the constants cancel'
-            - 'Any multiple would do, because the result is always the same equation in the end'
-            - 'The multiple $3$ is the number of equations, so the system is reduced one step'
-          answer: 'The multiple $3$ matches both coefficients, so the $x$ and $y$ terms cancel'
-          why: 'The left side of the second equation is $3$ times the left side of the first, so only the constants are left to compare.'
         try_first:
           problem: 'Can two numbers $x$ and $y$ satisfy both $x + y = 2$ and $x + y = 7$ at the same time?'
           answer_contract: {"kind":"label","options":[["no","they cannot","it is not possible"],["yes","they can","it is possible"]]}
@@ -914,16 +766,6 @@ topics:
       - id: kp2
         name: Detecting infinitely many solutions
         key_prerequisites: [row-reduction-echelon-forms]
-        step_check:
-          step: 'the second row is an exact multiple of the first, so it carries no new information'
-          question: 'Why does a row that is a multiple of another row lead to infinitely many solutions?'
-          options:
-            - 'It reduces the system to $0 = 0$, which is false for every pair $(x, y)$ of numbers'
-            - 'Two equations always give two solutions, one for each row of the augmented matrix'
-            - 'It adds no condition, so one equation in two unknowns is left and one is free'
-            - 'It doubles every solution of the first row, so the number of solutions doubles in all'
-          answer: 'It adds no condition, so one equation in two unknowns is left and one is free'
-          why: 'A system with one equation and two unknowns has one free variable, so every value of that variable gives a solution.'
         exemplars:
           - problem: 'How many solutions does the system $x + 2y = 3$, $3x + 6y = 9$ have?'
             answer: 'infinitely many'
@@ -965,16 +807,6 @@ topics:
       - id: kp3
         name: Consistency with a parameter
         key_prerequisites: [row-reduction-echelon-forms]
-        step_check:
-          step: 'Subtract the doubled first equation from the second'
-          question: 'Why is the first equation doubled before it is subtracted?'
-          options:
-            - 'Doubling makes the constant on the right equal to $6$ in both equations'
-            - 'Doubling removes the unknown $h$ from the first equation, so $h$ is gone'
-            - 'The first equation has to be larger than the second before a subtraction'
-            - 'Both equations then have $2x$, so the $x$ terms cancel and $y$ is left'
-          answer: 'Both equations then have $2x$, so the $x$ terms cancel and $y$ is left'
-          why: 'After the $x$ terms cancel, the result is an equation in $y$ alone, and the coefficient $h - 8$ decides what happens.'
         exemplars:
           - problem: 'For which value of $h$ is the system $x + 2y = 3$, $2x + 4y = h$ consistent?'
             answer: '6'
@@ -1050,16 +882,6 @@ topics:
       - id: kp1
         name: Pivot and free variables
         key_prerequisites: [row-reduction-echelon-forms]
-        step_check:
-          step: 'The pivot columns are 1 and 3, so $x_1$ and $x_3$ are the basic variables'
-          question: 'Why are $x_1$ and $x_3$ the basic variables?'
-          options:
-            - 'They are the variables with the largest coefficients in the matrix'
-            - 'Each of their columns holds the first nonzero entry of a nonzero row'
-            - 'They come first in the list, and the first variables are always basic'
-            - 'Their columns hold only zeros, so their values are fixed at $0$'
-          answer: 'Each of their columns holds the first nonzero entry of a nonzero row'
-          why: 'A column with a pivot is solved for in terms of the later variables, and a column without a pivot leaves a free choice.'
         exemplars:
           - problem: 'A $3 \times 5$ coefficient matrix has $3$ pivots. How many free variables does $A\mathbf{x} = \mathbf{0}$ have?'
             answer: '2'
@@ -1097,16 +919,6 @@ topics:
       - id: kp2
         name: Parametric descriptions with one free variable
         key_prerequisites: [row-reduction-echelon-forms]
-        step_check:
-          step: 'Solve the second equation for $y$'
-          question: 'Why is the second equation solved before the first?'
-          options:
-            - 'The second equation is shorter, so it must always be solved first'
-            - 'The first equation cannot be used once the variable $z$ is named'
-            - 'It has only $y$ and $z$, so after $z = t$ it gives $y$ at once'
-            - 'Solving for $y$ first makes the parameter $t$ disappear from the answer'
-          answer: 'It has only $y$ and $z$, so after $z = t$ it gives $y$ at once'
-          why: 'Once $y$ is known in terms of $t$, the first equation has only $x$ left to find.'
         exemplars:
           - problem: 'Find all solutions $(x, y)$ of $x + 2y = 4$ by setting $y = t$.'
             answer: '(4 - 2t, t)'
@@ -1140,16 +952,6 @@ topics:
       - id: kp3
         name: General solutions with two free variables
         key_prerequisites: [row-reduction-echelon-forms, consistency-of-linear-systems]
-        step_check:
-          step: 'Solve row 1 for the pivot variable'
-          question: 'Why is $x_1$ not given a parameter of its own?'
-          options:
-            - 'Row 1 fixes $x_1$ once $x_2$ and $x_4$ are chosen, so it depends on $s$ and $t$'
-            - 'Only the first variable of a system is never free, whatever the matrix'
-            - 'A parameter is needed only for a row that has a nonzero constant'
-            - 'Parameters are named for the pivot variables, and the free variables are then solved for'
-          answer: 'Row 1 fixes $x_1$ once $x_2$ and $x_4$ are chosen, so it depends on $s$ and $t$'
-          why: 'The free variables carry the parameters, and each pivot variable is a formula in those parameters.'
         exemplars:
           - problem: 'Find all solutions $(x, y, z)$ of $x + 2y - z = 3$, taking $y = s$ and $z = t$.'
             answer: '(3 - 2s + t, s, t)'
@@ -1212,16 +1014,6 @@ topics:
       - id: kp1
         name: Computing Ax for square matrices
         key_prerequisites: [computing-dot-products]
-        step_check:
-          step: 'First entry (row 1)'
-          question: 'Why is the first entry of $A\mathbf{x}$ computed from row 1 only?'
-          options:
-            - 'Row 1 is the only row that contains the first variable of the system'
-            - 'The first entry is the sum of the first row of $A$ and the vector $\mathbf{x}$'
-            - 'The rows are used in turn, and the order of the rows does not matter'
-            - 'Entry $i$ of the product uses row $i$ of $A$, so row 1 gives entry 1'
-          answer: 'Entry $i$ of the product uses row $i$ of $A$, so row 1 gives entry 1'
-          why: 'Each row of $A$ produces exactly one entry of $A\mathbf{x}$, in the same order as the rows.'
         exemplars:
           - problem: 'Compute $A\mathbf{x}$ for $A = \begin{pmatrix}1&2\\3&4\end{pmatrix}$ and $\mathbf{x} = (5, 6)$.'
             answer: '(17, 39)'
@@ -1255,16 +1047,6 @@ topics:
       - id: kp2
         name: Rectangular matrix-vector products
         key_prerequisites: [computing-dot-products]
-        step_check:
-          step: 'Check the sizes'
-          question: 'Why must $\mathbf{x}$ have as many entries as $A$ has columns?'
-          options:
-            - 'The result has one entry for each column of $A$, so the two counts must agree here'
-            - 'Each row of $A$ is paired with $\mathbf{x}$ entry by entry, so the lengths agree'
-            - 'A product is defined only when the matrix is square, so the sizes must match here'
-            - 'The vector must be shorter than the rows so that no entry is paired twice over'
-          answer: 'Each row of $A$ is paired with $\mathbf{x}$ entry by entry, so the lengths agree'
-          why: 'A dot product pairs the entries one by one, so a row with $2$ entries needs a vector with $2$ entries.'
         exemplars:
           - problem: 'Compute $A\mathbf{x}$ for $A = \begin{pmatrix}2&0&1\\1&1&0\end{pmatrix}$ and $\mathbf{x} = (1, 2, 3)$.'
             answer: '(5, 3)'
@@ -1306,16 +1088,6 @@ topics:
       - id: kp3
         name: Ax as a combination of columns
         key_prerequisites: [computing-dot-products, vector-arithmetic]
-        step_check:
-          step: 'Scale each column'
-          question: 'Why is the first column scaled by $4$ and the second by $2$?'
-          options:
-            - 'The weights are the entries of $\mathbf{x}$, taken in order'
-            - 'The weights are the entries of the first row of $A$, taken in order'
-            - 'The weights are chosen so that the two columns get the same length'
-            - 'The weights are the sums of the entries in each column of $A$'
-          answer: 'The weights are the entries of $\mathbf{x}$, taken in order'
-          why: 'The product $A\mathbf{x}$ is the combination of the columns of $A$ whose weights are the entries of $\mathbf{x}$.'
         try_first:
           problem: 'A scoop of powder P holds $4$ g of protein and a scoop of powder Q holds $1$ g of protein. How many grams of protein are in $2$ scoops of P and $3$ scoops of Q?'
           answer_contract: {"kind":"exact"}
@@ -1388,16 +1160,6 @@ topics:
       - id: kp1
         name: Systems as Ax = b and as vector equations
         key_prerequisites: [computing-matrix-vector-products, row-reduction-echelon-forms]
-        step_check:
-          step: 'the equation reads $x\mathbf{a}_1 + y\mathbf{a}_2 = \mathbf{b}$'
-          question: 'Why does $A\mathbf{x} = \mathbf{b}$ turn into $x\mathbf{a}_1 + y\mathbf{a}_2 = \mathbf{b}$?'
-          options:
-            - 'The product $A\mathbf{x}$ adds the rows of $A$, each one scaled by an entry of $\mathbf{x}$'
-            - 'The product $A\mathbf{x}$ adds the columns of $A$, each scaled by an entry of $\mathbf{x}$'
-            - 'The product $A\mathbf{x}$ multiplies the columns of $A$ together, entry by entry'
-            - 'The unknowns $x$ and $y$ are moved from the right side to the left side'
-          answer: 'The product $A\mathbf{x}$ adds the columns of $A$, each scaled by an entry of $\mathbf{x}$'
-          why: 'Each unknown multiplies one column of $A$, so $A\mathbf{x}$ is the sum of the columns scaled by $x$ and $y$. Setting this sum equal to $\mathbf{b}$ gives the vector equation.'
         exemplars:
           - problem: 'Write the system $2x + 3y = 7$, $x - y = 1$ as a matrix equation $A\mathbf{x} = \mathbf{b}$. What is the coefficient matrix $A$?'
             answer: '[[2,3],[1,-1]]'
@@ -1436,16 +1198,6 @@ topics:
           answer_contract: {"kind":"label","options":[["yes","it is","yes, it is"],["no","it is not"]]}
           answer: 'no'
           reveal: 'Every combination $c_1(1, 0, 0) + c_2(0, 1, 0)$ has third component $0$, so $(1, 1, 1)$ cannot be reached. A vector is in the span only when all of its components can match at once.'
-        step_check:
-          step: 'Check the third component with these values'
-          question: 'Why must the third component be checked after $c_1$ and $c_2$ come from the first two?'
-          options:
-            - 'The third component decides which of the two vectors gets the larger coefficient'
-            - 'The first two components are not enough to compute both $c_1$ and $c_2$'
-            - 'Two coefficients are already fixed, so the third equation must hold as well'
-            - 'The check is optional, because two equations always have a solution'
-          answer: 'Two coefficients are already fixed, so the third equation must hold as well'
-          why: 'Three components give three equations for only two unknowns. If the third equation fails for the forced values of $c_1$ and $c_2$, the vector is not in the span.'
         exemplars:
           - problem: 'Find the scalars $c_1$ and $c_2$ for which $c_1(1, 0, 1) + c_2(0, 1, 1) = (1, 2, 3)$.'
             answer: '(1, 2)'
@@ -1479,16 +1231,6 @@ topics:
       - id: kp3
         name: Solving Ax = b by row reduction
         key_prerequisites: [computing-matrix-vector-products, row-reduction-echelon-forms]
-        step_check:
-          step: 'replace $R_2$ with $R_2 - 3R_1$'
-          question: 'Why does the row operation $R_2 - 3R_1$ use the multiplier $3$?'
-          options:
-            - 'It makes the first entry of row 2 zero, since $3 - 3 \cdot 1 = 0$'
-            - 'It makes the second entry of row 2 equal to zero, below the second pivot'
-            - 'It is the number of rows of the augmented matrix, used as a fixed multiplier'
-            - 'It is the last number on the right side of the system, taken from $\mathbf{b}$'
-          answer: 'It makes the first entry of row 2 zero, since $3 - 3 \cdot 1 = 0$'
-          why: 'The first entry of row 2 is $3$ and the pivot in row 1 is $1$. Subtracting $3$ times row 1 turns that entry into $0$, which leaves an equation with one unknown.'
         exemplars:
           - problem: 'Solve $A\mathbf{x} = \mathbf{b}$ for $A = \begin{pmatrix}1&1\\1&-1\end{pmatrix}$ and $\mathbf{b} = (4, 2)$.'
             answer: '(3, 1)'
@@ -1549,16 +1291,6 @@ topics:
       - id: kp1
         name: The trivial solution
         key_prerequisites: [solution-sets-free-variables]
-        step_check:
-          step: 'the system is consistent no matter what'
-          question: 'Why is a homogeneous system consistent for every choice of coefficients?'
-          options:
-            - 'Every equation is a multiple of the first equation, so only one is needed'
-            - 'There are always more unknowns than equations, so a solution must always exist'
-            - 'Setting all unknowns to $0$ makes each left side $0$, equal to the right side'
-            - 'The equations always cancel when they are added, and that leaves a solution'
-          answer: 'Setting all unknowns to $0$ makes each left side $0$, equal to the right side'
-          why: 'Each left side is a sum of coefficients times the unknowns. With all unknowns equal to $0$ every left side is $0$, and every right side is $0$ too, so the zero vector always satisfies the system.'
         exemplars:
           - problem: 'Solve the homogeneous system $2x + y = 0$, $x - 3y = 0$.'
             answer: '(0, 0)'
@@ -1597,16 +1329,6 @@ topics:
           answer_contract: {"kind":"label","options":[["yes","it is","yes, it is"],["no","it is not"]]}
           answer: 'yes'
           reveal: 'Tripling a solution of a homogeneous system triples every left side $0$, which is still $0$. So one nonzero solution brings a whole line of solutions, and the parameter $t$ names them all.'
-        step_check:
-          step: 'Choose $z = t$'
-          question: 'Why can the free variable $z$ be given any value, called $t$?'
-          options:
-            - 'The other variables are fixed by $z$, so one value of $z$ gives only one solution'
-            - 'No equation of the system involves $z$, so its value does not matter'
-            - 'The value of $z$ is always $0$, and $t$ is only another name for $0$'
-            - 'Every choice of $z$ allows $x$ and $y$ to be found, so each $t$ gives a solution'
-          answer: 'Every choice of $z$ allows $x$ and $y$ to be found, so each $t$ gives a solution'
-          why: 'The two equations fix $x$ and $y$ once $z$ is chosen. Because the right sides are $0$, every choice of $z$ works, and so the solutions form the family $t(-1, 1, 1)$.'
         exemplars:
           - problem: 'Find all solutions of $x + 2y = 0$, $2x + 4y = 0$, taking $y = t$.'
             answer: '(-2t, t)'
@@ -1644,16 +1366,6 @@ topics:
       - id: kp3
         name: When nontrivial solutions exist
         key_prerequisites: [solution-sets-free-variables, matrix-vector-equations]
-        step_check:
-          step: 'the row reduction can produce at most $4$ pivots'
-          question: 'Why can a system with $4$ equations have at most $4$ pivots?'
-          options:
-            - 'A pivot can only stand in one of the first $4$ columns, however many unknowns there are'
-            - 'Each pivot lies in its own row, and the coefficient matrix has only $4$ rows'
-            - 'The number of pivots is always equal to the number of unknowns, which is $6$'
-            - 'Each equation must have two pivots for the row reduction to work'
-          answer: 'Each pivot lies in its own row, and the coefficient matrix has only $4$ rows'
-          why: 'A row has at most one pivot, and each pivot is in a different column. So the number of pivots cannot be larger than the number of rows, which equals the number of equations.'
         exemplars:
           - problem: 'A homogeneous system has $4$ equations and $7$ unknowns, and its coefficient matrix has $4$ pivots. How many free variables does the system have?'
             answer: '3'
@@ -1721,16 +1433,6 @@ topics:
           answer_contract: {"kind":"exact"}
           answer: '3'
           reveal: 'Each point gives one equation in $a$ and $b$: the point $(0, 2)$ gives $b = 2$, and the point $(1, 5)$ gives $a + b = 5$. Two points make two equations for the two unknowns, which is a linear system.'
-        step_check:
-          step: 'Subtract the first equation from the second'
-          question: 'Why does subtracting $a + b = 1$ from $3a + b = 7$ leave an equation with only $a$?'
-          options:
-            - 'The subtraction removes the right-hand sides $1$ and $7$ from both of the two equations'
-            - 'Both equations have $b$ with the same coefficient, so $b$ cancels in the difference'
-            - 'The subtraction always removes the unknown that is written second in each equation'
-            - 'The two points have the same height, so the $b$ terms are equal in size'
-          answer: 'Both equations have $b$ with the same coefficient, so $b$ cancels in the difference'
-          why: 'Every equation $y = ax + b$ has $b$ with coefficient $1$, so $b - b = 0$ in the difference. That leaves $2a = 6$, an equation in $a$ alone.'
         exemplars:
           - problem: 'Find the equation of the line $y = ax + b$ through $(1, 3)$ and $(2, 5)$.'
             answer: 'y = 2x + 1'
@@ -1768,16 +1470,6 @@ topics:
       - id: kp2
         name: Parabolas through three points
         key_prerequisites: [row-reduction-echelon-forms, quadratic-graphs-vertex]
-        step_check:
-          step: 'From $(0, 2)$: $a(0)^2 + b(0) + c = 2$, so $c = 2$'
-          question: 'Why does the point $(0, 2)$ give the value of $c$ at once?'
-          options:
-            - 'At $x = 0$ the terms $ax^2$ and $bx$ are both zero, and only $c$ is left'
-            - 'The point $(0, 2)$ is the vertex, and the height of the vertex is equal to $c$'
-            - 'Any point with $y = 2$ gives $c = 2$, whatever its $x$-coordinate is'
-            - 'The $x$-coordinate $0$ is the coefficient of $c$ in the equation'
-          answer: 'At $x = 0$ the terms $ax^2$ and $bx$ are both zero, and only $c$ is left'
-          why: 'When $x = 0$ both $ax^2$ and $bx$ vanish, so the equation reduces to $y = c$. The height at $x = 0$ is $c$ for every parabola, not only when that point is the vertex.'
         exemplars:
           - problem: 'Find the equation of the parabola $y = ax^2 + bx + c$ through $(0, 1)$, $(1, 2)$ and $(2, 5)$.'
             answer: 'y = x^2 + 1'
@@ -1815,16 +1507,6 @@ topics:
       - id: kp3
         name: Fitting from mixed conditions
         key_prerequisites: [row-reduction-echelon-forms, quadratic-graphs-vertex]
-        step_check:
-          step: 'add the equations $a + b = 3$ and $a - b = 1$ to get $2a = 4$'
-          question: 'Why does adding $a + b = 3$ and $a - b = 1$ leave an equation with only $a$?'
-          options:
-            - 'Adding always removes whichever unknown is written second in the equations'
-            - 'The right-hand sides $3$ and $1$ cancel each other when they are added'
-            - 'The terms $b$ and $-b$ are opposites, so they add to zero'
-            - 'The second equation has coefficient zero for $a$, so only $b$ changes'
-          answer: 'The terms $b$ and $-b$ are opposites, so they add to zero'
-          why: 'The unknown $b$ has coefficients $1$ and $-1$, so the sum has no $b$ term and leaves $2a = 4$. This is the reason to add here and to subtract when the coefficients are equal.'
         exemplars:
           - problem: 'Find $y = ax^2 + bx + c$ with $y(0) = 1$, $y(1) = 0$ and $y(-1) = 4$.'
             answer: 'y = x^2 - 2x + 1'
@@ -1888,16 +1570,6 @@ topics:
       - id: kp1
         name: Network flow
         key_prerequisites: [solution-sets-free-variables]
-        step_check:
-          step: 'write a conservation equation for each junction'
-          question: 'Why does each junction give an equation that sets the flow in equal to the flow out?'
-          options:
-            - 'Every road at a junction must carry exactly the same flow as the others'
-            - 'Cars do not pile up or vanish at a junction, so what enters must leave'
-            - 'The flows that enter must be larger than the flows that leave, so traffic keeps moving'
-            - 'The unknown flows are always whole numbers, and an equal sign keeps them whole'
-          answer: 'Cars do not pile up or vanish at a junction, so what enters must leave'
-          why: 'A junction stores nothing, so the total flow in equals the total flow out. Each junction therefore gives one linear equation in the unknown flows.'
         exemplars:
           - problem: 'At junction $A$, $120$ cars per hour enter and split into the flows $x_1$ and $x_2$. At junction $B$, the flow $x_1$ and $40$ more cars per hour enter, and $90$ cars per hour leave. Find $x_1$ and $x_2$.'
             answer: '(50, 70)'
@@ -1931,16 +1603,6 @@ topics:
       - id: kp2
         name: Word problems with three unknowns
         key_prerequisites: [row-reduction-echelon-forms, systems-word-problems]
-        step_check:
-          step: 'Substitute $s = 2c$ into the count equation'
-          question: 'Why is the relationship $s = 2c$ substituted into the count equation?'
-          options:
-            - 'The relationship is the only one of the three equations that is actually true'
-            - 'The substitution makes the total number of tickets sold equal to exactly $25$'
-            - 'The count equation must always be used before the value equation is used'
-            - 'It replaces $s$ by an expression in $c$, so the equation has fewer unknowns'
-          answer: 'It replaces $s$ by an expression in $c$, so the equation has fewer unknowns'
-          why: 'Each substitution removes one unknown. After $s = 2c$ the count equation has only $a$ and $c$, which leads to a single equation in $c$.'
         exemplars:
           - problem: 'A cinema sells adult tickets for $9$ euros, student tickets for $6$ euros and child tickets for $3$ euros. It sold $18$ tickets for $102$ euros, and twice as many student tickets as child tickets. How many adult, student and child tickets did it sell?'
             answer: '(3, 10, 5)'
@@ -1978,16 +1640,6 @@ topics:
       - id: kp3
         name: Mixture and allocation problems
         key_prerequisites: [row-reduction-echelon-forms, systems-word-problems]
-        step_check:
-          step: 'the acid must be $0.48 \times 15 = 7.2$ L'
-          question: 'Why is the amount of pure acid found as $48\%$ of $15$ L?'
-          options:
-            - 'The final mixture has $15$ L, and $48\%$ of this volume is acid'
-            - 'Each of the three solutions contributes $48\%$ of its own volume'
-            - 'The $48\%$ applies to the $60\%$ solution only, as the strongest one'
-            - 'The acid amount is $48\%$ of the volume of any one ingredient'
-          answer: 'The final mixture has $15$ L, and $48\%$ of this volume is acid'
-          why: 'The concentration $48\%$ describes the whole mixture. The pure acid in $15$ L of the mixture is $0.48 \times 15 = 7.2$ L, and the three ingredients must supply exactly this amount.'
         exemplars:
           - problem: 'A chemist needs $12$ L of a $35\%$ acid solution. The chemist mixes $10\%$, $30\%$ and $50\%$ acid solutions, and uses twice as much of the $50\%$ solution as of the $10\%$ solution. How many liters of the $10\%$, $30\%$ and $50\%$ solutions are used?'
             answer: '(3, 3, 6)'

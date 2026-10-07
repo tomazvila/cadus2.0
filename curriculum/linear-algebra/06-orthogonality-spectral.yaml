@@ -24,15 +24,6 @@ topics:
       - id: kp1
         name: Recognizing orthogonal matrices
         key_prerequisites: [orthogonal-orthonormal-sets, transpose-symmetric-matrices]
-        step_check:
-          step: 'check each column has norm 1'
-          question: 'Why is a norm of $1$ for every column not enough to show that $Q$ is orthogonal?'
-          options:
-            - 'The columns must also be perpendicular to one another'
-            - 'The norm of each column changes once the other column is used'
-            - 'Orthogonal matrices need columns of norm larger than $1$'
-          answer: 'The columns must also be perpendicular to one another'
-          why: 'Orthonormal means unit length and mutually perpendicular, so the dot product of the columns must also be checked, as in the next step.'
         exemplars:
           - problem: 'Is $Q=\frac{1}{5}\begin{pmatrix}3&-4\\4&3\end{pmatrix}$ an orthogonal matrix?'
             answer: 'yes'
@@ -70,15 +61,6 @@ topics:
       - id: kp2
         name: The inverse is the transpose
         key_prerequisites: [transpose-symmetric-matrices, matrix-inverses]
-        step_check:
-          step: 'use the rule $Q^{-1} = Q^T$'
-          question: 'Why does the equation $Q^TQ=I$ show that $Q^T$ is the inverse of $Q$?'
-          options:
-            - 'Transposing a matrix always gives its inverse, whatever the matrix is'
-            - 'The transpose has the same entries as $Q$, so it must undo $Q$'
-            - 'A matrix that multiplies $Q$ to give $I$ is the inverse of $Q$'
-          answer: 'A matrix that multiplies $Q$ to give $I$ is the inverse of $Q$'
-          why: 'The inverse of $Q$ is defined as the matrix whose product with $Q$ is $I$, so $Q^TQ=I$ makes $Q^T$ the inverse and no row reduction is needed.'
         exemplars:
           - problem: 'The matrix $Q=\frac15\begin{pmatrix}3&-4\\4&3\end{pmatrix}$ is orthogonal. Find $Q^{-1}$.'
             answer: '[[3/5,4/5],[-4/5,3/5]]'
@@ -121,15 +103,6 @@ topics:
           answer_contract: {"kind": "exact"}
           answer: '13'
           reveal: 'A turn keeps lengths, because the matrix of a rotation is orthogonal and $\|Q\mathbf x\|=\|\mathbf x\|$. The rod keeps its length $\sqrt{5^2+12^2}=13$.'
-        step_check:
-          step: 'compare dot products'
-          question: 'Why must $Q\mathbf{x}\cdot Q\mathbf{y}$ equal $\mathbf{x}\cdot\mathbf{y}$ for an orthogonal $Q$?'
-          options:
-            - 'A square matrix can never change a dot product, whatever its entries are'
-            - 'The product $Q^TQ$ in the middle of $\mathbf{x}^TQ^TQ\mathbf{y}$ is $I$'
-            - 'The determinant of $Q$ is $\pm1$, and every dot product is a determinant'
-          answer: 'The product $Q^TQ$ in the middle of $\mathbf{x}^TQ^TQ\mathbf{y}$ is $I$'
-          why: 'Writing the dot product as a matrix product puts $Q^TQ$ in the middle, and $Q^TQ=I$ for an orthogonal matrix, so the dot product does not change.'
         exemplars:
           - problem: 'The point $(3,4)$ is turned about the origin by $Q=\frac15\begin{pmatrix}3&-4\\4&3\end{pmatrix}$. How far from the origin is the image of the point?'
             answer: '5'
@@ -207,15 +180,6 @@ topics:
       - id: kp1
         name: What the spectral theorem says
         key_prerequisites: [eigenvalues-eigenvectors, orthogonal-matrices]
-        step_check:
-          step: 'verify orthogonality with the dot product'
-          question: 'Why must the dot product of these two eigenvectors be $0$?'
-          options:
-            - 'Eigenvectors of any square matrix for different eigenvalues are orthogonal'
-            - 'Both eigenvalues are positive, and positive eigenvalues force a zero dot product'
-            - 'Eigenvectors of a symmetric matrix for different eigenvalues are orthogonal'
-          answer: 'Eigenvectors of a symmetric matrix for different eigenvalues are orthogonal'
-          why: 'The matrix is symmetric, and the spectral theorem says that eigenvectors of a symmetric matrix for different eigenvalues are perpendicular.'
         exemplars:
           - problem: 'Find the eigenvalues of the symmetric matrix $A=\begin{pmatrix}4&2\\2&4\end{pmatrix}$.'
             answer: '2, 6'
@@ -249,15 +213,6 @@ topics:
       - id: kp2
         name: Orthogonal diagonalization of a 2x2 symmetric matrix
         key_prerequisites: [diagonalization, orthogonal-matrices]
-        step_check:
-          step: 'each eigenvector has length $\sqrt{1^2+1^2}=\sqrt{2}$'
-          question: 'Why is each eigenvector divided by $\sqrt{2}$ before it goes into $Q$?'
-          options:
-            - 'Every column of an orthogonal matrix must be a unit vector'
-            - 'Dividing by $\sqrt{2}$ changes the eigenvalue the vector belongs to'
-            - 'The two eigenvectors must add up to a vector of length exactly $1$'
-          answer: 'Every column of an orthogonal matrix must be a unit vector'
-          why: 'The columns of $Q$ must be orthonormal, and $(1,1)$ has length $\sqrt{2}$, so dividing by $\sqrt{2}$ gives a unit vector in the same direction.'
         exemplars:
           - problem: 'Orthogonally diagonalize $A=\begin{pmatrix}7&2\\2&7\end{pmatrix}$, that is, write $A=QDQ^T$ with $Q$ orthogonal and $D$ diagonal with the eigenvalues in increasing order. Find $D$.'
             answer: '[[5,0],[0,9]]'
@@ -295,15 +250,6 @@ topics:
       - id: kp3
         name: Using the factorization A = QDQ^T
         key_prerequisites: [diagonalization, orthogonal-matrices]
-        step_check:
-          step: 'cancel the inner pairs using $Q^TQ = I$'
-          question: 'Why do the inner factors cancel in $(QDQ^T)(QDQ^T)(QDQ^T)$?'
-          options:
-            - 'Each $D$ cancels with the $Q$ standing next to it because $D$ is diagonal'
-            - 'Each $Q^TQ$ that meets in the middle equals $I$ because $Q$ is orthogonal'
-            - 'Each $Q$ cancels with the $Q$ standing next to it because $Q$ is symmetric'
-          answer: 'Each $Q^TQ$ that meets in the middle equals $I$ because $Q$ is orthogonal'
-          why: 'Between two copies of $A$ the factors $Q^T$ and $Q$ meet, and $Q^TQ=I$, so they vanish and only $QD^3Q^T$ remains.'
         exemplars:
           - problem: 'Let $A=QDQ^T$, where $Q$ is orthogonal and $D=\begin{pmatrix}2&0\\0&5\end{pmatrix}$. Find $\det A$.'
             answer: '10'
@@ -373,15 +319,6 @@ topics:
       - id: kp1
         name: The matrix of a quadratic form
         key_prerequisites: [transpose-symmetric-matrices]
-        step_check:
-          step: 'split the cross term'
-          question: 'Why is the coefficient of $xy$ split between two equal off-diagonal entries?'
-          options:
-            - 'A symmetric matrix must have all entries equal, so the cross term is halved'
-            - 'Dividing the cross term by $2$ makes the diagonal entries match the squares'
-            - 'Both $A_{12}$ and $A_{21}$ give an $xy$ term, and the two terms add'
-          answer: 'Both $A_{12}$ and $A_{21}$ give an $xy$ term, and the two terms add'
-          why: 'In $\mathbf x^TA\mathbf x$ the entry $A_{12}$ contributes $A_{12}xy$ and $A_{21}$ contributes $A_{21}xy$, so the cross coefficient is $A_{12}+A_{21}=2A_{12}$.'
         exemplars:
           - problem: 'Find the symmetric matrix $A$ for which $q(x,y)=4x^2+10xy+7y^2$ equals $\mathbf x^TA\mathbf x$.'
             answer: '[[4,5],[5,7]]'
@@ -428,15 +365,6 @@ topics:
           answer_contract: {"kind": "label", "options": [["yes", "it is positive", "positive"], ["no", "it is not", "not positive"]]}
           answer: 'no'
           reveal: 'At $(1,-1)$ the value is $1-4+1=-2$, which is negative, so the form takes both signs. The signs of the eigenvalues of its matrix decide this in general.'
-        step_check:
-          step: 'both eigenvalues are negative'
-          question: 'Why do two negative eigenvalues make $q$ negative at every nonzero point?'
-          options:
-            - 'In principal-axis coordinates $q=\lambda_1u^2+\lambda_2v^2$ has no positive term, and at least one nonzero term'
-            - 'Negative eigenvalues make every entry of the vector $\mathbf x$ negative, and so the products with it negative too'
-            - 'The eigenvalues are the values of $q$ at the two standard basis vectors, and these are negative'
-          answer: 'In principal-axis coordinates $q=\lambda_1u^2+\lambda_2v^2$ has no positive term, and at least one nonzero term'
-          why: 'Each term $\lambda u^2$ is at most $0$, and for $(u,v)\neq(0,0)$ at least one square is positive, so the sum is below $0$.'
         exemplars:
           - problem: 'Is the quadratic form $q(x,y)=3x^2+2xy+3y^2$ positive definite, negative definite or indefinite?'
             answer: 'positive definite'
@@ -470,15 +398,6 @@ topics:
       - id: kp3
         name: Principal axes remove the cross term
         key_prerequisites: [spectral-theorem-symmetric-matrices]
-        step_check:
-          step: 'both eigenvalues are positive, so $u^2 + 5v^2 = 1$ is an ellipse'
-          question: 'Why does $u^2+5v^2=1$ give an ellipse and not a hyperbola?'
-          options:
-            - 'The coefficient $5$ is larger than the coefficient $1$, which closes the curve'
-            - 'Both coefficients are positive, so $u$ and $v$ must stay in a bounded region'
-            - 'The equation has no cross term, and every equation of that kind gives an ellipse'
-          answer: 'Both coefficients are positive, so $u$ and $v$ must stay in a bounded region'
-          why: 'With positive coefficients each of $u^2$ and $5v^2$ is at most $1$, so the curve is closed, while opposite signs would give a hyperbola.'
         exemplars:
           - problem: 'Rotate the axes to remove the cross term of $q(x,y)=2x^2+4xy+5y^2$. Write $q$ in the new coordinates $u$ and $v$, with $u$ along the eigenvector for the smaller eigenvalue.'
             answer: 'u^2+6v^2'
@@ -549,15 +468,6 @@ topics:
       - id: kp1
         name: Singular values from A^T A
         key_prerequisites: [transpose-symmetric-matrices, spectral-theorem-symmetric-matrices]
-        step_check:
-          step: 'take square roots and order them decreasing'
-          question: 'Why are the singular values the square roots of the eigenvalues of $A^TA$?'
-          options:
-            - 'A unit eigenvector of $A^TA$ is stretched by exactly $\sqrt\lambda$ by $A$'
-            - 'Square roots make every eigenvalue positive, and singular values are positive'
-            - 'An eigenvalue of a matrix is always the square of one of its singular values'
-          answer: 'A unit eigenvector of $A^TA$ is stretched by exactly $\sqrt\lambda$ by $A$'
-          why: 'A singular value measures how much $A$ stretches a unit vector, and the squared stretch of the eigenvector $\mathbf v$ of $A^TA$ is its eigenvalue $\lambda$.'
         exemplars:
           - problem: 'Find the singular values of $A=\begin{pmatrix}0&7\\3&0\end{pmatrix}$.'
             answer: '7, 3'
@@ -591,15 +501,6 @@ topics:
       - id: kp2
         name: Assembling A = U Sigma V^T
         key_prerequisites: [spectral-theorem-symmetric-matrices]
-        step_check:
-          step: 'use $\mathbf{u}_i = A\mathbf{v}_i/\sigma_i$'
-          question: 'Why is $\mathbf{u}_i=A\mathbf{v}_i/\sigma_i$ a unit vector?'
-          options:
-            - 'Because $\mathbf{v}_i$ is a unit vector and $A$ always keeps the length of every vector'
-            - 'Because dividing by $\sigma_i$ makes every entry of the vector smaller than $1$'
-            - 'Because $\|A\mathbf{v}_i\|=\sigma_i$, so dividing by $\sigma_i$ gives length $1$'
-          answer: 'Because $\|A\mathbf{v}_i\|=\sigma_i$, so dividing by $\sigma_i$ gives length $1$'
-          why: 'The singular value $\sigma_i$ is exactly the length of $A\mathbf{v}_i$ for the unit vector $\mathbf{v}_i$, so the quotient has length $1$.'
         exemplars:
           - problem: 'The matrix $A=\begin{pmatrix}0&2\\1&0\end{pmatrix}$ has an SVD $A=U\Sigma V^T$ with $V=\begin{pmatrix}0&1\\1&0\end{pmatrix}$ and $\Sigma=\begin{pmatrix}2&0\\0&1\end{pmatrix}$. Find $U$.'
             answer: '[[1,0],[0,1]]'
@@ -637,15 +538,6 @@ topics:
       - id: kp3
         name: Reading rank and best rank-1 approximation off the SVD
         key_prerequisites: [null-column-space-rank, spectral-theorem-symmetric-matrices]
-        step_check:
-          step: 'Form the outer product'
-          question: 'Why does the outer product $\mathbf{u}_1\mathbf{v}_1^T$ have rank $1$?'
-          options:
-            - 'It has only one nonzero entry in each of its rows'
-            - 'Each column of it is a multiple of $\mathbf{u}_1$'
-            - 'Its columns are all equal to the vector $\mathbf{v}_1$'
-          answer: 'Each column of it is a multiple of $\mathbf{u}_1$'
-          why: 'The column $j$ of $\mathbf{u}_1\mathbf{v}_1^T$ is $(v_1)_j\,\mathbf{u}_1$, so all columns lie on one line and the rank is $1$.'
         exemplars:
           - problem: 'A $3\times3$ matrix has the singular values $3$, $1$ and $0$. What is its rank?'
             answer: '2'

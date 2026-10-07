@@ -11,14 +11,14 @@
 //!
 //! This module is the missing check. It reads the curriculum and a
 //! [`ContentIndex`] — the approved documents of the store — and answers, per
-//! knowledge point, which of the seven readiness conditions hold.
+//! knowledge point, which of the six readiness conditions hold.
 //!
 //! # The two halves, and why they are separate
 //!
 //! [`ReadinessIndex`] holds the CURRICULUM half: which exemplars the answer
 //! grammar decides, which one the audit holds out of practice, whether every
-//! practice exemplar carries a solution sketch, whether the topic needs a
-//! visual, and the prerequisite topics. The half costs one pass over every
+//! practice exemplar carries a solution sketch, and the
+//! prerequisite topics. The half costs one pass over every
 //! exemplar answer, so a process builds it ONCE, at boot, beside the arena.
 //!
 //! [`ReadinessIndex::resolve`] adds the STORE half — the approved documents and
@@ -34,7 +34,6 @@ mod facts;
 mod prereq;
 mod report;
 mod resolve;
-mod visual;
 
 use std::collections::BTreeMap;
 use std::fmt;
@@ -43,7 +42,6 @@ pub use facts::{KpFacts, ReadinessIndex};
 pub use prereq::{CoverageCounts, DiagnosticState, FloorEvidence, PrereqCoverage, TopicCoverage};
 pub use report::{CourseReport, ReadinessReport, TopicReport};
 pub use resolve::{ReadinessGate, ReadinessSet};
-pub use visual::{VISUAL_WORDS, visual_needed};
 
 /// The `content_store.kind` of a problem template (A1).
 ///
@@ -157,19 +155,16 @@ pub enum Blocker {
     Solutions,
     /// One prerequisite topic has no practicable knowledge point.
     Prerequisites,
-    /// The topic needs a visual and no visual exists.
-    Visual,
 }
 
 /// The wire values of [`Blocker`], in declaration order.
-pub const BLOCKERS: [&str; 7] = [
+pub const BLOCKERS: [&str; 6] = [
     "teachable",
     "practicable",
     "assessable",
     "hints",
     "solutions",
     "prerequisites",
-    "visual",
 ];
 
 impl Blocker {
@@ -183,13 +178,12 @@ impl Blocker {
             Self::Hints => "hints",
             Self::Solutions => "solutions",
             Self::Prerequisites => "prerequisites",
-            Self::Visual => "visual",
         }
     }
 
     /// Every blocker, in declaration order.
     #[must_use]
-    pub const fn every() -> [Self; 7] {
+    pub const fn every() -> [Self; 6] {
         [
             Self::Teachable,
             Self::Practicable,
@@ -197,7 +191,6 @@ impl Blocker {
             Self::Hints,
             Self::Solutions,
             Self::Prerequisites,
-            Self::Visual,
         ]
     }
 }
@@ -212,7 +205,7 @@ impl fmt::Display for Blocker {
 ///
 /// Every field is a fact about ONE knowledge point at ONE moment. Nothing here
 /// is a policy: [`crate::selector`] reads the three serve conditions and the
-/// worker report prints all seven.
+/// worker report prints all six.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Readiness {
     /// The serving key `"<topic>/<kp>"`.
@@ -229,12 +222,7 @@ pub struct Readiness {
     pub solutions: bool,
     /// Every prerequisite topic has at least one practicable knowledge point.
     pub prerequisites_ok: bool,
-    /// The topic id or its text names a visual (see [`visual_needed`]).
-    pub visual_needed: bool,
-    /// A visual exists: the author wrote at least one
-    /// [`crate::visual::VisualSpec`] that passes its own check (unit f9).
-    pub visual_present: bool,
-    /// The authored visuals the check refuses. Each one counts as absent.
+    /// The authored visuals the check refuses.
     pub broken_visuals: usize,
     /// The decidable exemplars of the knowledge point.
     pub decidable_exemplars: usize,
@@ -296,9 +284,6 @@ impl Readiness {
         if !self.prerequisites_ok {
             out.push(Blocker::Prerequisites);
         }
-        if self.visual_needed && !self.visual_present {
-            out.push(Blocker::Visual);
-        }
         out
     }
 
@@ -342,8 +327,6 @@ mod lesson_gate_tests {
             hints: true,
             solutions: true,
             prerequisites_ok: true,
-            visual_needed: false,
-            visual_present: false,
             broken_visuals: 0,
             decidable_exemplars: decidable,
             authored_exemplars: decidable,

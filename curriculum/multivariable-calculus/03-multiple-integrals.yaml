@@ -20,16 +20,6 @@ topics:
       - id: kp1
         name: "Partial (inner) integration"
         key_prerequisites: [definite-integrals-ftc]
-        step_check:
-          step: 'so $y$ is the variable and $x$ is a constant'
-          question: 'Why is $x$ treated as a constant when we integrate $\int_0^2 (3x^2 y + y^2)\, dy$?'
-          options:
-            - 'Because $x$ appears in only one of the two terms, so it is too small to affect the integration'
-            - 'Because the limits $0$ and $2$ are numbers, and every other letter then has to be a number too'
-            - 'Because the integral is over $y$ alone, so $x$ does not change while $y$ runs from $0$ to $2$'
-            - 'Because $x$ comes first in the alphabet, so it is the variable that is always held fixed first'
-          answer: 'Because the integral is over $y$ alone, so $x$ does not change while $y$ runs from $0$ to $2$'
-          why: 'The differential $dy$ says that $y$ is the only variable that moves along the integration. Every $x$ is held at one fixed value, so it is a coefficient like $3$ or $5$.'
         try_first:
           problem: 'Let $x = 5$. Evaluate $\int_0^2 x\, dy$.'
           answer_contract: {"kind": "exact"}
@@ -72,16 +62,6 @@ topics:
       - id: kp2
         name: "Iterated integrals over rectangles"
         key_prerequisites: [definite-integrals-ftc, functions-several-variables]
-        step_check:
-          step: 'The inner integral has collapsed to a function of $x$ alone'
-          question: 'Why does the inner integral leave a function of $x$ alone?'
-          options:
-            - 'Because $x$ is the larger variable, so it is the only one that is allowed to remain in a result'
-            - 'Because the limits of the inner integral are numbers, so after substituting them no $y$ is left'
-            - 'Because the integral in $y$ is cancelled by the integral in $x$ before any limits are substituted'
-            - 'Because the outer limits $0$ and $3$ replace every $y$ in the integrand before we start'
-          answer: 'Because the limits of the inner integral are numbers, so after substituting them no $y$ is left'
-          why: 'The inner limits $0$ and $2$ are numbers, so substituting them removes $y$ completely. What remains depends on $x$ only, and the outer integral can then be done as a one-variable integral.'
         exemplars:
           - problem: 'Evaluate $\int_0^2 \int_0^1 x y^2 \, dy \, dx$.'
             answer: '2/3'
@@ -119,16 +99,6 @@ topics:
       - id: kp3
         name: "Fubini's theorem and separable products"
         key_prerequisites: [definite-integrals-ftc, functions-several-variables]
-        step_check:
-          step: 'the integrand $3x^2y^2$ is a product of a function of $x$ alone and a function of $y$ alone'
-          question: 'Why does the double integral split into a product of two single integrals here?'
-          options:
-            - 'Every double integral splits into two single integrals, so the product form of the integrand does not matter'
-            - 'The integrand has the same power in $x$ and $y$, so each variable can be integrated on its own'
-            - 'The region is a square, so the integral over $x$ must equal the integral over $y$ and they multiply'
-            - 'The integrand is an $x$-part times a $y$-part and $R$ is a rectangle, so the limits are independent'
-          answer: 'The integrand is an $x$-part times a $y$-part and $R$ is a rectangle, so the limits are independent'
-          why: 'When $f = g(x)h(y)$ and $R = [a, b] \times [c, d]$, the inner integral pulls $g(x)$ out as a constant. What is left is the product of two ordinary integrals, but a sum such as $x + y$ does not split this way.'
         exemplars:
           - problem: 'Evaluate $\iint_R 6x^2 y \, dA$, where $R = [0,1] \times [0,2]$.'
             answer: '4'
@@ -197,16 +167,6 @@ topics:
       - id: kp1
         name: "Type I descriptions (vertical slices)"
         key_prerequisites: [area-between-curves]
-        step_check:
-          step: 'so the line $y = 2 - x$ is the upper curve and $y = x^2$ is the lower curve'
-          question: 'Why does the test value $x = 0$ settle which curve is on top for the whole region?'
-          options:
-            - 'The point $x = 0$ is the centre of the region, so the curve that is higher there is the steeper one'
-            - 'The curve with the larger $y$ at $x = 0$ is the upper curve for every pair of curves and every $x$'
-            - 'The test value $x = 0$ is where the two curves cross, so it shows which curve is on top'
-            - 'The curves cross only at the two corners, so one curve stays above the other between them'
-          answer: 'The curves cross only at the two corners, so one curve stays above the other between them'
-          why: 'Between two crossing points the difference of the two curves cannot change sign. So one test value is enough: the line is at height $2$ and the parabola at $0$ when $x = 0$, and the line stays above.'
         exemplars:
           - problem: 'The region $R$ is bounded by the curves $y = x^2$ and $y = 2x$. Describe $R$ as a type I region, $a \le x \le b$ and $g(x) \le y \le h(x)$. Find $a$, $b$, $g$ and $h$.'
             answer: 'a = 0; b = 2; g = x^2; h = 2x'
@@ -248,16 +208,6 @@ topics:
       - id: kp2
         name: "Type II descriptions (horizontal slices)"
         key_prerequisites: [area-between-curves]
-        step_check:
-          step: 'the line $x = \frac{y}{2}$ is the left edge and the parabola $x = \sqrt{y}$ is the right edge'
-          question: 'Why is the line the left edge and the parabola the right edge of the region?'
-          options:
-            - 'The parabola has a larger slope than the line, so it is always the edge that lies further to the right'
-            - 'For every $y$ from $0$ to $4$ the line gives the smaller $x$ and the parabola gives the larger $x$'
-            - 'The line is listed first in the problem, so it is the left edge and the second curve is the right edge'
-            - 'The lower of the two curves in the $xy$-plane is always the left edge of a horizontal slice'
-          answer: 'For every $y$ from $0$ to $4$ the line gives the smaller $x$ and the parabola gives the larger $x$'
-          why: 'A horizontal slice at height $y$ runs from the smaller $x$ to the larger $x$. For $0 \le y \le 4$ we have $\frac{y}{2} \le \sqrt{y}$, so the line bounds the slice on the left. At $y = 1$ the slice runs from $0.5$ to $1$.'
         exemplars:
           - problem: 'The region $R$ lies in the first quadrant. It is bounded by the parabola $y = x^2$, the line $y = 4$ and the $y$-axis. Describe $R$ as a type II region, $c \le y \le d$ and $p(y) \le x \le q(y)$. Find $c$, $d$, $p$ and $q$.'
             answer: 'c = 0; d = 4; p = 0; q = sqrt(y)'
@@ -299,16 +249,6 @@ topics:
       - id: kp3
         name: "Reading the region from an iterated integral"
         key_prerequisites: [area-between-curves]
-        step_check:
-          step: 'for each fixed $y$, the variable $x$ runs from $x = y/2$ up to $x = 2$'
-          question: 'Why may the lower limit $y/2$ of the inner integral contain the outer variable $y$?'
-          options:
-            - 'Only a lower limit may contain a variable, so the upper limit of an inner integral has to be a number'
-            - 'The inner integral is done last, so $y$ is already known and $y/2$ is replaced by a number'
-            - 'The inner integral covers one slice at a fixed $y$, and where it starts depends on $y$'
-            - 'The lower limit is always smaller than $2$, so it cannot be mixed up with the variable $x$'
-          answer: 'The inner integral covers one slice at a fixed $y$, and where it starts depends on $y$'
-          why: 'The outer integral picks one value of $y$, and the inner integral then runs along that horizontal slice. The slice starts at $y/2$ and ends at $2$, so at $y = 1$ it runs from $0.5$ to $2$.'
         exemplars:
           - problem: 'The integral $\int_0^3 \int_x^3 f(x,y)\,dy\,dx$ is taken over a triangle. Reverse the order of integration, so that it has the form $\int_c^d \int_{p(y)}^{q(y)} f(x,y)\,dx\,dy$. Find $c$, $d$, $p$ and $q$.'
             answer: 'c = 0; d = 3; p = 0; q = y'
@@ -381,16 +321,6 @@ topics:
       - id: kp1
         name: "General regions (type I and type II)"
         key_prerequisites: [iterated-integrals-rectangles, describing-planar-regions]
-        step_check:
-          step: 'On $0 \le x \le 2$ the line is above the parabola'
-          question: 'Why is the line, and not the parabola, the upper limit of the inner integral?'
-          options:
-            - 'The inner integral always ends on the line, because a straight line is simpler than a parabola'
-            - 'The line has the larger $y$ for every $x$ here, and the inner integral runs up to it'
-            - 'The line is the boundary that is reached first when $x$ grows from $0$ to $2$'
-            - 'The integrand is $x$, so the limit that is a multiple of $x$ has to be the upper one'
-          answer: 'The line has the larger $y$ for every $x$ here, and the inner integral runs up to it'
-          why: 'The inner integral adds up $f$ from the lower curve to the upper curve for each fixed $x$. At $x = 1$ the line is at $y = 2$ and the parabola is at $y = 1$, so the line is the upper limit.'
         exemplars:
           - problem: 'Evaluate $\iint_D x \, dA$, where $D$ is the region bounded by $y = x^2$ and $y = x$.'
             answer: '1/12'
@@ -432,16 +362,6 @@ topics:
       - id: kp2
         name: "Volumes and harder regions"
         key_prerequisites: [iterated-integrals-rectangles, describing-planar-regions]
-        step_check:
-          step: 'for each fixed $x$ in $[0,1]$, $y$ runs from $0$ up to the line $y = 1 - x$'
-          question: 'Why does $y$ run only up to $1 - x$, and not up to $1$, for every $x$?'
-          options:
-            - 'The plane $z = 2x + y$ falls to the height zero at $y = 1 - x$, so the solid ends there'
-            - 'The variable $y$ has to stop at one minus the outer variable in every double integral'
-            - 'The number $1 - x$ is the volume that is still left after the strip at $x$ is taken'
-            - 'The triangle is cut off by the line $x + y = 1$, so its top edge falls as $x$ grows'
-          answer: 'The triangle is cut off by the line $x + y = 1$, so its top edge falls as $x$ grows'
-          why: 'The region is the triangle $x + y \le 1$, so at $x = 0.5$ the strip stops at $y = 0.5$ and at $x = 1$ it has length $0$. The limit comes from the shape of the base region, not from the surface.'
         exemplars:
           - problem: 'Find the volume under the plane $z = x + y$ and above the triangle $x \ge 0$, $y \ge 0$, $x + y \le 1$.'
             answer: '1/3'
@@ -483,16 +403,6 @@ topics:
       - id: kp3
         name: "Reversing the order of integration"
         key_prerequisites: [iterated-integrals-rectangles, describing-planar-regions, integration-substitution]
-        step_check:
-          step: 'so $e^{x^2}$ is a constant'
-          question: 'Why can $e^{x^2}$ be treated as a constant in the inner integral after the swap?'
-          options:
-            - 'The number $e$ is a constant, so any power of $e$ is a constant for every variable'
-            - 'The swap turns $x$ into a number, because the outer variable is always fixed at the value $0$'
-            - 'The integral is now over $y$, and $e^{x^2}$ has no $y$ in it, so it is fixed on each slice'
-            - 'The function $e^{x^2}$ has no antiderivative, so it cannot take part in the integration'
-          answer: 'The integral is now over $y$, and $e^{x^2}$ has no $y$ in it, so it is fixed on each slice'
-          why: 'Along a slice of fixed $x$, only $y$ changes, and $e^{x^2}$ has no $y$ in it. So $\int_0^{2x} e^{x^2}\,dy = 2x\,e^{x^2}$, and the factor $2x$ is exactly what the substitution $u = x^2$ needs.'
         try_first:
           problem: 'Evaluate $\int_0^1 \int_y^1 6x\,dx\,dy$ by integrating with respect to $y$ first.'
           answer_contract: {"kind": "exact"}
@@ -563,16 +473,6 @@ topics:
       - id: kp1
         name: "Average value over rectangles"
         key_prerequisites: [double-integrals, average-value-function]
-        step_check:
-          step: 'Divide by the area'
-          question: 'Why do we divide the double integral by the area of the rectangle?'
-          options:
-            - 'Dividing by the area cancels the units of $x$ and $y$, so the answer has no units left'
-            - 'The area tells us how many times the function $f$ has to be repeated over the whole rectangle $R$'
-            - 'The integral totals $f$ over all of $R$, so dividing by the area gives the value per unit area'
-            - 'Dividing by the area undoes the second integration, which leaves only the first integral'
-          answer: 'The integral totals $f$ over all of $R$, so dividing by the area gives the value per unit area'
-          why: 'The double integral is the total of $f$ over the whole rectangle. The average is that total shared out evenly, so we divide by the area: $\frac{18}{6} = 3$.'
         try_first:
           problem: 'A rectangular plate measures $2$ m by $3$ m. Its total mass of $18$ kg is spread over the plate. How many kilograms is that per square metre?'
           answer_contract: {"kind": "exact"}
@@ -619,16 +519,6 @@ topics:
       - id: kp2
         name: "Average value over general regions"
         key_prerequisites: [double-integrals, average-value-function]
-        step_check:
-          step: 'so I need the area and the double integral'
-          question: 'Why does this method need the area of the triangle as well as the double integral?'
-          options:
-            - 'The area is needed to find the limits of the double integral, which cannot be written without it'
-            - 'The integral is a total over the region, so the average is that total divided by its size'
-            - 'The area of a triangle is the same as its average value, so the integral is only a check'
-            - 'The integral is only defined once it is multiplied by the area of the region it is taken over'
-          answer: 'The integral is a total over the region, so the average is that total divided by its size'
-          why: 'The double integral adds up $f$ over the whole triangle, so a larger triangle gives a larger total. Dividing by the area removes the effect of size and leaves the average. Here both numbers are $\frac{9}{2}$, so the average is $1$.'
         exemplars:
           - problem: 'Find the average value of $f(x, y) = x$ over the triangle with vertices $(0,0)$, $(2,0)$ and $(2,2)$.'
             answer: '4/3'
@@ -702,16 +592,6 @@ topics:
       - id: kp1
         name: "Mass of a lamina"
         key_prerequisites: [double-integrals]
-        step_check:
-          step: 'treating $x$ as a constant'
-          question: 'Why is $x$ treated as a constant while integrating in $y$?'
-          options:
-            - '$x$ is always smaller than $y$ on the rectangle, so it changes less'
-            - 'The inner integral adds up along one strip, where $x$ stays fixed'
-            - 'The density does not depend on $x$ once the region is chosen'
-            - 'The mass needs only the variable that has the larger limit'
-          answer: 'The inner integral adds up along one strip, where $x$ stays fixed'
-          why: 'Along a strip of fixed $x$ only $y$ varies, so $x^2$ is a constant factor in that integral; the outer integral then adds up the strips.'
         exemplars:
           - problem: 'Find the mass of the lamina occupying the rectangle $0 \le x \le 1$, $0 \le y \le 2$ with density $\rho(x,y) = 3x + y$.'
             answer: '5'
@@ -749,16 +629,6 @@ topics:
       - id: kp2
         name: "Moments about the axes"
         key_prerequisites: [double-integrals]
-        step_check:
-          step: 'it factors out and the rectangle lets each integral split into a product'
-          question: 'Why does each moment integral split into a product of two one-variable integrals here?'
-          options:
-            - 'Every double integral over any region is a product of two single ones'
-            - 'The variables $x$ and $y$ are always independent in a double integral'
-            - 'The density is constant and the region is a rectangle with fixed limits'
-            - 'A moment is defined as mass times distance, so it always multiplies two numbers'
-          answer: 'The density is constant and the region is a rectangle with fixed limits'
-          why: 'With $\rho = 1$ the integrand $x$ depends on $x$ alone, and the limits of $x$ and $y$ are constants, so $\iint x\,dA = \int x\,dx \cdot \int dy$.'
         exemplars:
           - problem: 'A lamina occupies the rectangle $0 \le x \le 3$, $0 \le y \le 2$ and has constant density $\rho = 1$. Find its moment $M_y$ about the $y$-axis.'
             answer: '9'
@@ -800,16 +670,6 @@ topics:
       - id: kp3
         name: "Center of mass and centroids"
         key_prerequisites: [double-integrals]
-        step_check:
-          step: 'the centroid lies on the $y$-axis'
-          question: 'Why does the symmetry of this region make $\bar x = 0$?'
-          options:
-            - 'The region touches the $x$-axis, and every such region has $\bar x = 0$'
-            - 'The area is $36$, and a centroid always lies at the middle of the area'
-            - 'The curve $y = 9 - x^2$ passes through the point where $x = 0$'
-            - 'The region is a mirror image across the $y$-axis, so its moments cancel'
-          answer: 'The region is a mirror image across the $y$-axis, so its moments cancel'
-          why: 'For each point at $x = a$ the region has a mirror point at $x = -a$, so $\iint x\,dA = 0$ and $\bar x = 0$ with no integration.'
         try_first:
           problem: 'A uniform plate occupies the square $0 \le x \le 2$, $0 \le y \le 2$. What is the $x$-coordinate of its centre of mass?'
           answer_contract: {"kind":"exact"}
@@ -886,16 +746,6 @@ topics:
       - id: kp1
         name: "Converting and evaluating over disks"
         key_prerequisites: [double-integrals, polar-coordinates]
-        step_check:
-          step: 'the polar area element: $dA = r\,dr\,d\theta$'
-          question: 'Why does the extra factor $r$ appear in $dA = r\,dr\,d\theta$?'
-          options:
-            - 'A small patch has sides $dr$ and $r\,d\theta$, so its area is $r\,dr\,d\theta$'
-            - 'The integrand $x^2+y^2$ equals $r^2$, and one power of $r$ moves to $dA$'
-            - 'The angle $\theta$ is measured in radians, so $d\theta$ must be rescaled by $r$'
-            - 'The factor $r$ makes the limits of $r$ run from $0$ to the radius'
-          answer: 'A small patch has sides $dr$ and $r\,d\theta$, so its area is $r\,dr\,d\theta$'
-          why: 'A patch at distance $r$ from the origin is nearly a rectangle of width $dr$ and length $r\,d\theta$ (arc length), so $dA = r\,dr\,d\theta$.'
         try_first:
           problem: 'Sam wants the area of the unit disk, so he evaluates $\int_0^{2\pi}\int_0^1 1\,dr\,d\theta$. Is this integral equal to the area of the unit disk?'
           answer_contract: {"kind":"label","options":[["yes","it is","correct"],["no","it is not","incorrect"]]}
@@ -938,16 +788,6 @@ topics:
       - id: kp2
         name: "Areas and volumes via polar"
         key_prerequisites: [double-integrals, polar-coordinates, polar-area]
-        step_check:
-          step: 'the curve is traced once as $\theta$ runs from $0$ to $2\pi$'
-          question: 'Why does $\theta$ run only from $0$ to $2\pi$ in this area integral?'
-          options:
-            - 'The angle $2\pi$ is the largest angle that the area formula $\tfrac12 r^2$ allows'
-            - 'The cosine has period $2\pi$, so the integral of the cosine terms must vanish'
-            - 'One full turn of $\theta$ draws the cardioid once; a second turn counts it twice'
-            - 'Every polar area integral always has the limits $0$ and $2\pi$'
-          answer: 'One full turn of $\theta$ draws the cardioid once; a second turn counts it twice'
-          why: 'The point $(r(\theta), \theta)$ goes once round the curve as $\theta$ goes once round the circle, so the area is counted once.'
         exemplars:
           - problem: 'Find the area enclosed by the cardioid $r = 2 + 2\sin\theta$.'
             answer: '6*pi'
@@ -1015,16 +855,6 @@ topics:
       - id: kp1
         name: "The surface-area formula and planes"
         key_prerequisites: [double-integrals, partial-derivatives]
-        step_check:
-          step: 'pull it out of the integral'
-          question: 'Why can $\sqrt{14}$ be pulled out of the integral?'
-          options:
-            - 'Every square root can be moved out of an integral sign freely'
-            - 'The area of the base is a constant, so everything else moves out'
-            - 'For a plane $f_x$ and $f_y$ are constants, so the factor is constant'
-            - 'The surface is tilted, and a tilt always multiplies the area by $\sqrt{14}$'
-          answer: 'For a plane $f_x$ and $f_y$ are constants, so the factor is constant'
-          why: 'Here $f_x = 2$ and $f_y = 3$ at every point, so $\sqrt{1+f_x^2+f_y^2} = \sqrt{14}$ everywhere and the integral reduces to $\sqrt{14}$ times the base area.'
         try_first:
           problem: 'The part of the plane $z = x$ lies over the square $0 \le x \le 1$, $0 \le y \le 1$. Is the area of this part greater than $1$?'
           answer_contract: {"kind":"label","options":[["yes","it is","correct"],["no","it is not","incorrect"]]}
@@ -1067,16 +897,6 @@ topics:
       - id: kp2
         name: "Curved surfaces via polar coordinates"
         key_prerequisites: [double-integrals, partial-derivatives, double-integrals-polar]
-        step_check:
-          step: 'so $du = 8r\,dr$ and $r\,dr = \frac{du}{8}$'
-          question: 'Why does the substitution $u = 1 + 4r^2$ work in this integral?'
-          options:
-            - 'It makes the limits of $r$ run from $0$ to $1$'
-            - 'The factor $r\,dr$ in the integrand is a constant multiple of $du$'
-            - 'Every integral with a square root needs the substitution $u = 1 + 4r^2$'
-            - 'It removes the angle $\theta$ from the integral'
-          answer: 'The factor $r\,dr$ in the integrand is a constant multiple of $du$'
-          why: 'The extra $r$ from the polar area element is exactly what $du = 8r\,dr$ needs, so the integrand becomes $\tfrac18\sqrt{u}\,du$, which is a power of $u$.'
         exemplars:
           - problem: 'Find the area of the part of the paraboloid $z = x^2 + y^2$ that lies below the plane $z = 1$.'
             answer: 'pi*(5*sqrt(5) - 1)/6'
@@ -1142,16 +962,6 @@ topics:
       - id: kp1
         name: "Triple integrals over boxes"
         key_prerequisites: [double-integrals]
-        step_check:
-          step: 'the triple integral factors into three single integrals'
-          question: 'Why can $xyz$ over a box be split into a product of three single integrals?'
-          options:
-            - 'The integrand is a product of one-variable functions with constant limits'
-            - 'Every triple integral equals the product of its three limits of integration'
-            - 'The variables $x$, $y$ and $z$ do not change inside a box'
-            - 'A box has equal sides, so the three integrals are equal'
-          answer: 'The integrand is a product of one-variable functions with constant limits'
-          why: 'Each factor depends on one variable only, and the limits of that variable do not depend on the others, so the integral separates into $\int x\,dx\cdot\int y\,dy\cdot\int z\,dz$.'
         exemplars:
           - problem: 'Evaluate $\iiint_B xyz\,dV$, where $B$ is the box $0 \le x \le 1$, $0 \le y \le 2$, $0 \le z \le 3$.'
             answer: '9/2'
@@ -1189,16 +999,6 @@ topics:
       - id: kp2
         name: "General solids: tetrahedra and volume"
         key_prerequisites: [double-integrals]
-        step_check:
-          step: 'the trace in the $xy$-plane gives $0 \le y \le 2-x$'
-          question: 'Why does $y$ run from $0$ to $2-x$ in the middle integral?'
-          options:
-            - 'The plane $x+y+z=2$ meets the axis where $y = 2$, so $y$ must stop there for all $x$'
-            - 'The plane meets the floor on $x+y=2$, so for fixed $x$ the solid ends at $y=2-x$'
-            - 'The inner integral has already used up $x$, and $2-x$ is what remains for $y$'
-            - 'Every tetrahedron has middle limits that decrease as $x$ grows'
-          answer: 'The plane meets the floor on $x+y=2$, so for fixed $x$ the solid ends at $y=2-x$'
-          why: 'The shadow of the solid on the $xy$-plane is the triangle $x \ge 0$, $y \ge 0$, $x+y \le 2$; for a fixed $x$ the point of that triangle with the largest $y$ has $y = 2 - x$.'
         try_first:
           problem: 'The tetrahedron is bounded by the coordinate planes and the plane $x + y + z = 1$. When $x = \tfrac14$, what is the largest value of $y$ at a point of the tetrahedron?'
           answer_contract: {"kind":"exact"}
@@ -1241,16 +1041,6 @@ topics:
       - id: kp3
         name: "Solids bounded by curved surfaces"
         key_prerequisites: [double-integrals]
-        step_check:
-          step: 'the $z$-bounds are the surfaces $0$ and $x + y^2$'
-          question: 'Why are $0$ and $x + y^2$ the limits of the inner integral in $z$?'
-          options:
-            - 'Because the integrand is $z$, so $z$ must be integrated first'
-            - 'The limits of $x$ and $y$ are $0$ and $1$, so the limits of $z$ must also come from them'
-            - 'For each $(x,y)$ the solid runs in $z$ from $0$ up to the surface $x + y^2$'
-            - 'The surface $x + y^2$ is always the lower limit for the inner variable'
-          answer: 'For each $(x,y)$ the solid runs in $z$ from $0$ up to the surface $x + y^2$'
-          why: 'A vertical line through the point $(x,y)$ of the base enters the solid at $z = 0$ and leaves it at $z = x + y^2$, so those are the limits of the inner integral.'
         exemplars:
           - problem: 'Find the volume of the solid bounded below by the plane $z = 0$ and above by the plane $z = y$, over the region of the $xy$-plane enclosed by the parabola $y = 1 - x^2$ and the $x$-axis.'
             answer: '8/15'
@@ -1316,16 +1106,6 @@ topics:
       - id: kp1
         name: "Mass with variable density"
         key_prerequisites: [triple-integrals, double-integral-applications]
-        step_check:
-          step: 'Split the sum into two integrals'
-          question: 'Why can the mass integral of $3x + y$ be split into two separate integrals?'
-          options:
-            - 'Each variable must be integrated alone, so $x$ and $y$ cannot stay together'
-            - 'A sum integrates to the sum of its integrals, over the same box'
-            - 'The density $3x + y$ is a product, so each factor needs its own integral'
-            - 'The box has three sides, so every integral breaks into three parts'
-          answer: 'A sum integrates to the sum of its integrals, over the same box'
-          why: 'An integral is linear: the integral of a sum over the box equals the sum of the integrals of the terms over that same box.'
         exemplars:
           - problem: 'Find the mass of the box $[0,1] \times [0,2] \times [0,3]$ with density $\rho(x,y,z) = 2z$.'
             answer: '18'
@@ -1367,16 +1147,6 @@ topics:
       - id: kp2
         name: "Center of mass and average value"
         key_prerequisites: [triple-integrals, double-integral-applications]
-        step_check:
-          step: 'Divide moment by mass'
-          question: 'Why do we divide the moment $M_{xy}$ by the mass to get $\bar{z}$?'
-          options:
-            - 'The mass has units that must cancel the units of the moment, whatever the shape'
-            - 'The center of mass is always the midpoint of the box, and the division finds it'
-            - 'The moment sums height times mass, so dividing by mass gives the mean height'
-            - 'The moment counts each point twice, so dividing by the mass removes the extra count'
-          answer: 'The moment sums height times mass, so dividing by mass gives the mean height'
-          why: 'The moment adds up every height weighted by the mass at that height. Dividing by the total mass turns this sum into a weighted average height.'
         try_first:
           problem: 'A room is the box $0 \le x \le 4$, $0 \le y \le 2$, $0 \le z \le 3$, with lengths in metres. The temperature at the point $(x,y,z)$ is $T = 2x$ degrees Celsius. What is the average temperature in the room?'
           answer_contract: {"kind":"exact"}
@@ -1454,16 +1224,6 @@ topics:
       - id: kp1
         name: "Setting up cylindrical integrals"
         key_prerequisites: [triple-integrals, double-integrals-polar]
-        step_check:
-          step: 'the integrand picks up an extra factor of $r$'
-          question: 'Why does the integrand pick up an extra factor of $r$?'
-          options:
-            - 'Because $x^2 + y^2 = r^2$, and one more $r$ is needed to reach $r^3$'
-            - 'Because a small piece of the base disk at radius $r$ has area about $r\,dr\,d\theta$'
-            - 'Because the height $z$ is measured from the axis of the cylinder, so it scales with $r$'
-            - 'Because $\theta$ is an angle in radians, and every radian adds a factor $r$'
-          answer: 'Because a small piece of the base disk at radius $r$ has area about $r\,dr\,d\theta$'
-          why: 'A small piece of the disk between $r$ and $r + dr$ and between $\theta$ and $\theta + d\theta$ is nearly a rectangle with sides $dr$ and $r\,d\theta$, so $dV = r\,dz\,dr\,d\theta$.'
         try_first:
           problem: 'A solid cylinder has radius $1$ and height $1$, so its volume is $\pi$. Evaluate $\int_0^{2\pi}\int_0^{1}\int_0^{1} 1\,dz\,dr\,d\theta$.'
           answer_contract: {"kind":"exact"}
@@ -1506,16 +1266,6 @@ topics:
       - id: kp2
         name: "Evaluating cylindrical integrals"
         key_prerequisites: [triple-integrals, double-integrals-polar]
-        step_check:
-          step: 'Since $r$ is constant in $z$'
-          question: 'Why can $r$ be taken outside the integral in $z$?'
-          options:
-            - 'Because $r$ is always smaller than $z$ everywhere inside the cylinder'
-            - 'Because the $z$ integral is done last, after $r$ is already fixed by it'
-            - 'Because $r$ does not depend on $z$, so it acts as a constant there'
-            - 'Because $r$ is always $1$ on the boundary of the solid cylinder'
-          answer: 'Because $r$ does not depend on $z$, so it acts as a constant there'
-          why: 'When we integrate in $z$, the variables $r$ and $\theta$ are held fixed, so $r$ is a constant factor and comes outside the $z$ integral.'
         exemplars:
           - problem: 'Use cylindrical coordinates to evaluate $\iiint_E z\,dV$, where $E$ is the cylinder $x^2 + y^2 \le 1$, $0 \le z \le 2$.'
             answer: '2pi'
@@ -1561,16 +1311,6 @@ topics:
       - id: kp3
         name: "Volumes of rotationally symmetric solids"
         key_prerequisites: [triple-integrals, double-integrals-polar]
-        step_check:
-          step: 'Setting $z = 0$ gives $x^2 + y^2 = 16$'
-          question: 'Why does setting $z = 0$ give the outer radius of the solid?'
-          options:
-            - 'The solid ends on the $xy$-plane, so its base is where the paraboloid meets $z = 0$'
-            - 'The paraboloid is highest where $z = 0$, so the base of the solid is widest there'
-            - 'The plane $z = 0$ is the axis of the cylinder, so the radius is measured on that plane'
-            - 'Setting $z = 0$ removes $\theta$, which leaves only the radius to find'
-          answer: 'The solid ends on the $xy$-plane, so its base is where the paraboloid meets $z = 0$'
-          why: 'The solid lies above the $xy$-plane, so it stops where the paraboloid reaches $z = 0$. The circle of that intersection is the edge of the base, and its radius is the largest $r$.'
         exemplars:
           - problem: 'Find the volume of the solid under the paraboloid $z = 9 - x^2 - y^2$ and above the $xy$-plane.'
             answer: '81pi/2'
@@ -1646,16 +1386,6 @@ topics:
       - id: kp1
         name: "Spherical coordinates: conversion and set-up"
         key_prerequisites: [triple-integrals-cylindrical]
-        step_check:
-          step: 'Compute $z$'
-          question: 'Why does $z = \rho\cos\varphi$ not involve $\theta$?'
-          options:
-            - 'Because $\theta$ is measured in the $xy$-plane, where every point has $z = 0$'
-            - 'Because $\theta$ is always $0$ or $\pi/2$ when we compute the height $z$'
-            - 'Because $\theta$ only turns the point about the $z$-axis, so $z$ stays fixed'
-            - 'Because the factor $\sin\varphi$ already contains all the dependence on $\theta$'
-          answer: 'Because $\theta$ only turns the point about the $z$-axis, so $z$ stays fixed'
-          why: 'Turning a point about the $z$-axis changes $\theta$ but not the height of the point. So $z$ depends only on $\rho$ and $\varphi$.'
         exemplars:
           - problem: 'Convert the spherical point $(\rho, \varphi, \theta) = \left(2, \frac{\pi}{3}, 0\right)$ to rectangular coordinates.'
             answer: '(sqrt(3), 0, 1)'
@@ -1701,16 +1431,6 @@ topics:
       - id: kp2
         name: "Evaluating spherical integrals"
         key_prerequisites: [triple-integrals-cylindrical]
-        step_check:
-          step: 'Combine the powers of $\rho$'
-          question: 'Why is the $\rho$-part of the integrand $\rho^3$?'
-          options:
-            - 'Because $z = \rho\cos\varphi$ is cubed when the three variables are separated'
-            - 'Because spherical coordinates have three variables, so $\rho$ is cubed'
-            - 'Because the radius of the half-ball is cubed to match the volume of the ball'
-            - 'Because $z$ gives $\rho$ and $dV$ gives $\rho^2$, so the product is $\rho^3$'
-          answer: 'Because $z$ gives $\rho$ and $dV$ gives $\rho^2$, so the product is $\rho^3$'
-          why: 'The integrand $z = \rho\cos\varphi$ contributes one factor $\rho$ and the volume element contributes $\rho^2$, so the $\rho$-part is $\rho^3$.'
         exemplars:
           - problem: 'Use spherical coordinates to find the volume of the ball of radius $3$.'
             answer: '36pi'
@@ -1756,16 +1476,6 @@ topics:
       - id: kp3
         name: "Jacobians and choosing a coordinate system"
         key_prerequisites: [triple-integrals-cylindrical, partial-derivatives-trig-exp, determinants-2x2]
-        step_check:
-          step: 'spherical coordinates $(\rho, \varphi, \theta)$ match the boundaries exactly'
-          question: 'Why do spherical coordinates suit a region bounded by a cone and a sphere at the origin?'
-          options:
-            - 'Spherical coordinates are always the easiest system for any solid in space'
-            - 'The sphere is $\rho = $ constant and the cone is $\varphi = $ constant, so the limits are constants'
-            - 'A cone and a sphere both have circular cross-sections, which fixes the value of $\theta$'
-            - 'The factor $\rho^2\sin\varphi$ is simpler to integrate than the factor $r$ of cylindrical coordinates'
-          answer: 'The sphere is $\rho = $ constant and the cone is $\varphi = $ constant, so the limits are constants'
-          why: 'A sphere centered at the origin is a surface of constant $\rho$ and a cone about the $z$-axis is a surface of constant $\varphi$. The limits of the integral are then plain numbers.'
         exemplars:
           - problem: 'Compute the Jacobian $\frac{\partial(x, y)}{\partial(r, \theta)}$ for the polar map $x = r\cos\theta$, $y = r\sin\theta$.'
             answer: 'r'
@@ -1841,16 +1551,6 @@ topics:
       - id: kp1
         name: "Computing Jacobians of transformations"
         key_prerequisites: [double-integrals, partial-derivatives-trig-exp, determinants-2x2]
-        step_check:
-          step: 'take the determinant'
-          question: 'Why does the determinant of the matrix of partial derivatives give the factor by which the map scales areas?'
-          options:
-            - 'The determinant adds the four partial derivatives, and the sum is the total change'
-            - 'The columns are edges of a small image square, and the determinant is its area'
-            - 'The determinant is the slope of the map, and slopes always measure how areas change'
-            - 'The matrix is symmetric, so its determinant is unchanged by the order of $u$ and $v$'
-          answer: 'The columns are edges of a small image square, and the determinant is its area'
-          why: 'A small square in the $uv$-plane maps to a nearly straight parallelogram whose edges are the columns $(x_u, y_u)$ and $(x_v, y_v)$ times the side lengths. The area of that parallelogram is the determinant.'
         try_first:
           problem: 'The map $x = 2u$, $y = 3v$ sends the square $0 \le u \le 1$, $0 \le v \le 1$ onto a rectangle in the $xy$-plane. What is the area of that rectangle?'
           answer_contract: {"kind":"exact"}
@@ -1901,16 +1601,6 @@ topics:
       - id: kp2
         name: "Transforming double integrals"
         key_prerequisites: [double-integrals, determinants-2x2]
-        step_check:
-          step: 'Replace $dA$ with $|J|\,du\,dv$'
-          question: 'Why must $dA$ be replaced by $|J|\,du\,dv$ and not just by $du\,dv$?'
-          options:
-            - 'The factor $|J|$ only keeps the answer positive and never changes its size'
-            - 'The factor $|J|$ is needed only when the region $R$ is a parallelogram or square'
-            - 'The map scales areas by $|J|$, so a $du\,dv$ piece covers $|J|$ times more area'
-            - 'The integrand $x + y$ has to be multiplied by a constant whenever it is changed'
-          answer: 'The map scales areas by $|J|$, so a $du\,dv$ piece covers $|J|$ times more area'
-          why: 'A small rectangle of area $du\,dv$ in the $uv$-plane maps to a piece of area $|J|\,du\,dv$ in the $xy$-plane. Without the factor the integral would count the wrong amount of area.'
         exemplars:
           - problem: 'Evaluate $\iint_R (x + y)\,dA$, where $R$ is the parallelogram with vertices $(0,0)$, $(2,1)$, $(3,3)$ and $(1,2)$, using $x = 2u + v$, $y = u + 2v$.'
             answer: '9'
@@ -1948,16 +1638,6 @@ topics:
       - id: kp3
         name: "Choosing a transformation"
         key_prerequisites: [double-integrals, partial-derivatives-trig-exp, determinants-2x2]
-        step_check:
-          step: 'match each boundary to a constant'
-          question: 'Why do we choose $u = xy$ and $v = y/x$ for this region?'
-          options:
-            - 'Each boundary becomes a constant value of $u$ or $v$, so the limits are numbers'
-            - 'The functions $xy$ and $y/x$ are the only ones whose Jacobian is a simple constant'
-            - 'They are chosen so that the integrand of the area, $1$, becomes a product of $u$ and $v$'
-            - 'Any two new variables work equally well, because the Jacobian corrects the region'
-          answer: 'Each boundary becomes a constant value of $u$ or $v$, so the limits are numbers'
-          why: 'The curves $xy = 2$ and $xy = 6$ are $u = 2$ and $u = 6$, and the lines $y = x$ and $y = 3x$ are $v = 1$ and $v = 3$. The region becomes a rectangle with constant limits.'
         exemplars:
           - problem: 'Find the area of the region in the first quadrant bounded by $xy = 1$, $xy = 4$, $y = x$ and $y = 4x$, using $u = xy$, $v = y/x$.'
             answer: '3ln(2)'

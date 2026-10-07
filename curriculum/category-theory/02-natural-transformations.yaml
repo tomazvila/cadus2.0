@@ -27,15 +27,6 @@ topics:
         name: Components and their types
         key_prerequisites: [functors]
         constraints: "Require components and their types. The closed answer must encode the categorical construction, essential proof equations, or a countermodel to an invalid argument. Preserve exactly one full-proof exemplar."
-        step_check:
-          step: 'There are two objects, so there are two components'
-          question: 'Why does $\alpha$ consist of exactly two functions in this example?'
-          options:
-            - 'One function is needed for each element of $F2$, and $F2$ has exactly two elements'
-            - 'One function per object of $\mathcal{C}$, and $\mathcal{C}$ has two objects'
-            - 'One function is needed for each functor, and there are two functors, $F$ and $G$'
-          answer: 'One function per object of $\mathcal{C}$, and $\mathcal{C}$ has two objects'
-          why: 'A natural transformation attaches one morphism $\alpha_X\colon FX\to GX$ to each object $X$ of the source category, so the objects of $\mathcal{C}$ are counted.'
         try_first:
           problem: 'A category $\mathcal{C}$ has four objects and twelve morphisms in all. A natural transformation between two functors from $\mathcal{C}$ to $\mathbf{Set}$ is built from how many functions?'
           answer_contract: {"kind": "exact"}
@@ -82,15 +73,6 @@ topics:
         name: Writing and reading the square
         key_prerequisites: [commutative-diagrams]
         constraints: "Require writing and reading the square. The closed answer must encode the categorical construction, essential proof equations, or a countermodel to an invalid argument. Preserve exactly one full-proof exemplar."
-        step_check:
-          step: 'across then down is $Gf\circ\alpha_A$'
-          question: 'Why is the path that goes across then down written $Gf\circ\alpha_A$, with $\alpha_A$ on the right?'
-          options:
-            - 'A functor image is always written first, before any component of $\alpha$'
-            - 'The component $\alpha_A$ is the larger map, so larger maps stand on the right'
-            - 'Maps are written right to left, so the map applied first stands on the right'
-          answer: 'Maps are written right to left, so the map applied first stands on the right'
-          why: 'In $Gf\circ\alpha_A$ the map $\alpha_A$ is applied first, taking $FA$ to $GA$, and then $Gf$ takes $GA$ to $GB$.'
         exemplars:
           - problem: 'Let $t\colon F\Rightarrow G$ be a natural transformation between functors $F,G\colon C\to D$, and let $f\colon A\to B$ be a morphism in $C$. The naturality square at $f$ has the corners $F(A)$ top-left, $G(A)$ top-right, $F(B)$ bottom-left, $G(B)$ bottom-right. Its top edge is the component $t_A\colon F(A)\to G(A)$, its left edge is $Ff$ and its right edge is $Gf$. Which morphism runs along the bottom edge?'
             answer: 't_B'
@@ -124,15 +106,6 @@ topics:
         name: Checking a square elementwise in Set
         key_prerequisites: [diagram-chasing]
         constraints: "Require the learner to use checking a square elementwise in set. Closed items must construct the relevant maps, test categorical laws, or supply the essential proof steps. A supplied characterization followed only by counting or evaluation is insufficient. Preserve one full-proof exemplar."
-        step_check:
-          step: 'take a general element $(x,y)\in X\times X$'
-          question: 'Why is the square checked on a general element rather than on one chosen pair?'
-          options:
-            - 'One pair shows agreement there only, but every pair must agree'
-            - 'A chosen pair is not allowed because set elements have no names'
-            - 'A general element makes each leg give a single number only'
-          answer: 'One pair shows agreement there only, but every pair must agree'
-          why: 'Two functions are equal only if they agree on every element of the source, so the legs must be compared on an arbitrary $(x,y)$.'
         exemplars:
           - problem: 'Let $P(X)=X\times X$ with $P(f)=f\times f$, and let $\pi_X\colon P(X)\to X$ be given by $\pi_X(x,y)=x$. Take $f\colon\{1,2,3\}\to\{5,7\}$ with $f(1)=5$, $f(2)=7$, $f(3)=5$. The two legs of the naturality square of $\pi$ at $f$, namely $f\circ\pi_X$ and $\pi_Y\circ P(f)$, send the pair $(2,3)$ to the same element of $\{5,7\}$. Which element?'
             answer: '7'
@@ -209,15 +182,6 @@ topics:
         name: First examples in Set
         key_prerequisites: [naturality-square]
         constraints: "Require the learner to use first examples in set. Closed items must construct the relevant maps, test categorical laws, or supply the essential proof steps. A supplied characterization followed only by counting or evaluation is insufficient. Preserve one full-proof exemplar."
-        step_check:
-          step: 'Compute the left leg'
-          question: 'Why is the left leg computed as $(f\times f)(a,a)$?'
-          options:
-            - 'Because $f\times f$ is the component $\delta_B$ of the transformation'
-            - 'Because $G(f)$ applies $f$ to the first coordinate of a pair only'
-            - 'Because $G(f)=f\times f$ acts on both coordinates of $(a,a)$'
-          answer: 'Because $G(f)=f\times f$ acts on both coordinates of $(a,a)$'
-          why: 'The left leg is $G(f)$ applied to $\delta_A(a)=(a,a)$, and $G(f)=f\times f$ sends $(a,a)$ to $(f(a),f(a))$.'
         exemplars:
           - problem: 'Let $\mathrm{Id}$ be the identity functor on $\mathbf{Set}$ and let $G(X)=X\times X$ with $G(f)=f\times f$. The maps $\delta_X(x)=(x,x)$ form a natural transformation $\delta\colon\mathrm{Id}\Rightarrow G$. Take $f\colon\{1,2,3\}\to\{4,5\}$ with $f(1)=4$, $f(2)=5$, $f(3)=4$. The two legs of the naturality square at $f$ send $3$ to the same pair. What is it?'
             answer: '(4, 4)'
@@ -255,15 +219,6 @@ topics:
         name: Natural transformations between hom-functors
         key_prerequisites: [hom-functors]
         constraints: "Require the learner to use natural transformations between hom-functors. Closed items must construct the relevant maps, test categorical laws, or supply the essential proof steps. A supplied characterization followed only by counting or evaluation is insufficient. Preserve one full-proof exemplar."
-        step_check:
-          step: 'associativity is the only ingredient used'
-          question: 'Why does the square for $f^*$ commute for every $t$, $g$ and $f$?'
-          options:
-            - 'Both sides are one composite bracketed in two ways, and associativity equates them'
-            - 'Every function $t$ preserves the composite $g\circ f$, so $t$ passes through the bracket'
-            - 'The map $f^*$ is a bijection, and bijections commute with every post-composition'
-          answer: 'Both sides are one composite bracketed in two ways, and associativity equates them'
-          why: 'The two sides are $t\circ(g\circ f)$ and $(t\circ g)\circ f$, which are equal by associativity of composition.'
         exemplars:
           - problem: 'In $\mathbf{Set}$ let $f\colon A\to B$ with $A=\{1,2\}$, $B=\{a,b,c\}$, $f(1)=b$, $f(2)=c$. Pre-composition with $f$ sends a function $g\colon B\to X$ to $g\circ f\colon A\to X$. Take $X=\{0,1\}$ and $g(a)=1$, $g(b)=0$, $g(c)=1$. What is the value of $g\circ f$ at $2$?'
             answer: '1'
@@ -301,15 +256,6 @@ topics:
         name: Identities and degenerate cases
         key_prerequisites: [discrete-indiscrete-categories]
         constraints: "Require the learner to use identities and degenerate cases. Closed items must construct the relevant maps, test categorical laws, or supply the essential proof steps. A supplied characterization followed only by counting or evaluation is insufficient. Preserve one full-proof exemplar."
-        step_check:
-          step: 'any two parallel morphisms $FA\to GB$ must be equal'
-          question: 'Why must the two legs of each naturality square be equal here?'
-          options:
-            - 'They are both composites of the same two morphisms, so they must be equal'
-            - 'They are parallel morphisms into a preorder, so there is at most one of them'
-            - 'The functors preserve identities, and that makes every square in a preorder commute'
-          answer: 'They are parallel morphisms into a preorder, so there is at most one of them'
-          why: 'A preorder has at most one morphism between two objects, so two parallel morphisms $FA\to GB$ are the same morphism.'
         try_first:
           problem: 'Let $\mathcal{C}$ be the category with objects $A,B$ and one non-identity morphism $u\colon A\to B$, and let $D$ be the chain $0<1<2$, with a morphism from $x$ to $y$ exactly when $x\le y$. Let $F,G\colon\mathcal{C}\to D$ be the functors with $F(A)=0$, $F(B)=1$, $G(A)=1$, $G(B)=2$. How many natural transformations $F\Rightarrow G$ are there?'
           answer_contract: {"kind": "exact"}
@@ -399,15 +345,6 @@ topics:
         name: Verifying a naturality square in algebra
         key_prerequisites: [natural-transformations, commutator-subgroup]
         constraints: "Require verifying a naturality square in algebra. The closed answer must encode the categorical construction, essential proof equations, or a countermodel to an invalid argument. Preserve exactly one full-proof exemplar."
-        step_check:
-          step: 'because $f$ is a group homomorphism'
-          question: 'Why do the two legs of the square agree at every $x$?'
-          options:
-            - 'Any function between the underlying sets sends inverses to inverses'
-            - 'Inversion is its own inverse, so it commutes with every function'
-            - 'A group homomorphism preserves inverses, so $f(x^{-1})=f(x)^{-1}$'
-          answer: 'A group homomorphism preserves inverses, so $f(x^{-1})=f(x)^{-1}$'
-          why: 'The legs are $f(x^{-1})$ and $f(x)^{-1}$, and a homomorphism satisfies $f(x^{-1})=f(x)^{-1}$; a bare function would not.'
         exemplars:
           - problem: 'Let $U\colon\mathbf{Mon}\to\mathbf{Set}$ be the forgetful functor on monoids, and for each monoid $M$ let $s_M\colon UM\to UM$ send $x$ to $x\cdot x$, the square of $x$. Take $M=N=\mathbb{Z}/5$ as an additive monoid, so the square of $x$ is $x+x \bmod 5$, and let $f\colon M\to N$ be the homomorphism $f(x)=2x \bmod 5$. Chase $x=2$ around the naturality square for $s$ at $f$. What common value do both legs give in $\mathbb{Z}/5$?'
             answer: '3'
@@ -449,15 +386,6 @@ topics:
         name: Naturality is closed under composition
         key_prerequisites: [diagram-chasing]
         constraints: "Require naturality is closed under composition. The closed answer must encode the categorical construction, essential proof equations, or a countermodel to an invalid argument. Preserve exactly one full-proof exemplar."
-        step_check:
-          step: 'Its square says $Hf\circ\psi_A=\psi_B\circ Gf$'
-          question: 'Why can $Hf\circ\psi_A$ be replaced by $\psi_B\circ Gf$ in this step?'
-          options:
-            - 'Functoriality of $H$ turns the factor $Hf$ into $Gf$ before the composition'
-            - 'Naturality of $\psi$ at $f$ is the equation $Hf\circ\psi_A=\psi_B\circ Gf$'
-            - 'Associativity lets the factors $\psi_A$ and $Gf$ trade places in the composite'
-          answer: 'Naturality of $\psi$ at $f$ is the equation $Hf\circ\psi_A=\psi_B\circ Gf$'
-          why: 'The naturality square of $\psi\colon G\Rightarrow H$ at $f$ states that going across then down equals going down then across, which is this equation.'
         exemplars:
           - problem: 'Let $\alpha\colon F\Rightarrow G$ and $\beta\colon G\Rightarrow H$ be natural transformations between functors $\mathcal{C}\to\mathcal{D}$, and let $f\colon A\to B$ be a morphism of $\mathcal{C}$. Using the naturality of $\beta$ at $f$ once, and nothing else, which composite is equal to $Hf\circ\beta_A\circ\alpha_A$?'
             answer: 'β_B∘Gf∘α_A'
@@ -495,15 +423,6 @@ topics:
         name: Recognizing when a family is NOT natural
         key_prerequisites: [natural-transformations]
         constraints: "Require the learner to use recognizing when a family is not natural. Closed items must construct the relevant maps, test categorical laws, or supply the essential proof steps. A supplied characterization followed only by counting or evaluation is insufficient. Preserve one full-proof exemplar."
-        step_check:
-          step: 'These element-selecting maps are enough to expose the failure'
-          question: 'Why is it enough to test the square at maps $1\to A$ that select one element?'
-          options:
-            - 'One failing square at a single map already shows the family is not natural'
-            - 'Natural transformations are determined by their values on one-point sets only'
-            - 'Element-selecting maps are the only maps allowed between two sets'
-          answer: 'One failing square at a single map already shows the family is not natural'
-          why: 'Naturality requires every square to commute, so a single map at which the legs differ is a counterexample.'
         exemplars:
           - problem: 'A family of functions $\alpha_A\colon A\to A$ is the identity on every set except the set $\{0,1\}$, where it swaps $0$ and $1$. It is claimed to be a natural transformation from the identity functor on $\mathbf{Set}$ to itself. Let $1=\{*\}$. What is the least number of elements a set $A$ can have so that the naturality square at some map $1\to A$ fails?'
             answer: '2'
@@ -573,15 +492,6 @@ topics:
         name: Componentwise iso implies natural inverse
         key_prerequisites: [natural-transformations]
         constraints: "Require componentwise iso implies natural inverse. The closed answer must encode the categorical construction, essential proof equations, or a countermodel to an invalid argument. Preserve exactly one full-proof exemplar."
-        step_check:
-          step: 'cancel $\theta_X$ on the right'
-          question: 'Why does composing with $\theta_X^{-1}$ on the right remove $\theta_X$ from $Gf\circ\theta_X$?'
-          options:
-            - 'Because $Gf$ and $\theta_X^{-1}$ are inverse maps, so their composite vanishes'
-            - 'Since $\theta_X\circ\theta_X^{-1}=\mathrm{id}_{GX}$, $Gf$ is unchanged'
-            - 'Because $\theta_X^{-1}$ is natural by definition, it moves past $Gf$ freely'
-          answer: 'Since $\theta_X\circ\theta_X^{-1}=\mathrm{id}_{GX}$, $Gf$ is unchanged'
-          why: 'Since $\theta_X$ is an isomorphism, $\theta_X\circ\theta_X^{-1}=\mathrm{id}_{GX}$, so $(Gf\circ\theta_X)\circ\theta_X^{-1}=Gf$; no inverse of $Gf$ is needed.'
         exemplars:
           - problem: 'Let $\mathcal{C}$ be the category with objects $A,B$ and one non-identity morphism $u\colon A\to B$. Let $F,G\colon\mathcal{C}\to\mathbf{Set}$ be functors with all four object sets equal to $\{0,1,2\}$, and let $\alpha\colon F\Rightarrow G$ be a natural isomorphism with $\alpha_A$ given by $0\mapsto 1$, $1\mapsto 2$, $2\mapsto 0$ and $\alpha_B$ given by $0\mapsto 2$, $1\mapsto 0$, $2\mapsto 1$. The map $F(u)$ sends $0\mapsto 1$, $1\mapsto 2$, $2\mapsto 0$ and $G(u)$ sends $0\mapsto 2$, $1\mapsto 0$, $2\mapsto 1$. Let $\beta_X=\alpha_X^{-1}$. The two legs of the naturality square of $\beta$ at $u$ send $1\in G(A)$ to the same element of $F(B)$. Which element?'
             answer: '1'
@@ -623,15 +533,6 @@ topics:
         name: Natural isomorphisms in practice
         key_prerequisites: [naturality-proofs]
         constraints: "Require the learner to use natural isomorphisms in practice. Closed items must construct the relevant maps, test categorical laws, or supply the essential proof steps. A supplied characterization followed only by counting or evaluation is insufficient. Preserve one full-proof exemplar."
-        step_check:
-          step: 'so every component $s_{A,B}$ is a bijection'
-          question: 'Why is a bijective component $s_{A,B}$ not enough to conclude that $s$ is a natural isomorphism?'
-          options:
-            - 'A natural isomorphism needs every component to be an identity map of its set'
-            - 'Bijections are not isomorphisms in the category $\mathbf{Set}$ in general'
-            - 'The squares must also commute for every pair $(f,g)$ in $\mathbf{Set}$'
-          answer: 'The squares must also commute for every pair $(f,g)$ in $\mathbf{Set}$'
-          why: 'A natural isomorphism is a natural transformation whose components are isomorphisms, so both the bijections and the commuting squares are needed.'
         exemplars:
           - problem: 'In $\mathbf{Set}$ let $f\colon A\to A^\prime$ with $A=\{0,1\}$, $A^\prime=\{5,7\}$, $f(0)=5$, $f(1)=7$, and $g\colon B\to B^\prime$ with $B=\{0,1,2\}$, $B^\prime=\{2,4\}$, $g(0)=2$, $g(1)=4$, $g(2)=4$. The swap maps $s_{A,B}(a,b)=(b,a)$ form a natural isomorphism, so the legs $s_{A^\prime,B^\prime}\circ(f\times g)$ and $(g\times f)\circ s_{A,B}$ agree. Which pair do both give on the element $(1,2)$?'
             answer: '(4, 7)'
@@ -709,16 +610,6 @@ topics:
           answer_contract: {"kind": "exact"}
           answer: '2'
           reveal: '$S(u)$ applies $u$ to each entry, so $S(u)(0,1)=(u(0),u(1))=(2,0)$ and the sum is $2$. Left whiskering works the same way: a functor applied to a component arrow acts on the elements through the arrow.'
-        step_check:
-          step: 'Since $K$ preserves composition'
-          question: 'Why can $K(Qf\circ\alpha_A)$ be rewritten as $K(Qf)\circ K(\alpha_A)$?'
-          options:
-            - 'Naturality of $\alpha$ lets any functor pass through a composite of arrows'
-            - 'A functor sends a composite of two arrows to the composite of their images'
-            - 'Every functor sends an arrow $f$ to $f$ itself, so the composite is unchanged'
-            - 'The arrows $Qf$ and $\alpha_A$ commute, so $K$ may be split over them'
-          answer: 'A functor sends a composite of two arrows to the composite of their images'
-          why: 'Preserving composition is part of the definition of a functor; it is what turns the square for $\alpha$ into the square for $K\alpha$.'
         exemplars:
           - problem: 'Let $\alpha\colon F\Rightarrow G$ be a natural transformation between functors $\mathbf{Set}\to\mathbf{Set}$. For $X=\{1,2,3\}$ with $FX=GX=X$, the component $\alpha_X$ has $\alpha_X(1)=2$, $\alpha_X(2)=3$ and $\alpha_X(3)=1$. Let $H\colon\mathbf{Set}\to\mathbf{Set}$ be the functor with $H(Y)=Y\times Y$ and $H(u)=u\times u$. Find $(H\alpha)_X(2,3)$.'
             answer: '(3,1)'
@@ -756,16 +647,6 @@ topics:
         name: Whiskering on the right by a functor
         key_prerequisites: [natural-transformations]
         constraints: "Right whiskering re-indexes components; never apply a functor to $\\alpha_A$ here."
-        step_check:
-          step: 'Since $Lf\colon LX\to LX''$ is a morphism in $\mathcal{A}$'
-          question: 'Why can naturality of $\eta$ be applied at the arrow $Lf$ in this step?'
-          options:
-            - '$L$ is a functor, so it makes $\eta$ natural at the arrow $f$ of the category $\mathcal{X}$'
-            - 'The arrow $f$ lies in $\mathcal{X}$, where $\eta$ has a naturality square at each arrow'
-            - '$Lf$ is an arrow of $\mathcal{A}$, where $\eta$ has a naturality square at every arrow'
-            - 'Naturality of $\eta$ is only needed at identity arrows, and $Lf$ is an identity arrow'
-          answer: '$Lf$ is an arrow of $\mathcal{A}$, where $\eta$ has a naturality square at every arrow'
-          why: 'The transformation $\eta$ is natural for the arrows of its own source category $\mathcal{A}$; the functor $L$ delivers the arrow $Lf$ into that category.'
         exemplars:
           - problem: 'Let $\mathcal{C}$ be the discrete category with objects $c_1,c_2$, and let $F,G\colon\mathcal{C}\to\mathbf{Set}$ with $F(c_1)=\{0,1\}\times\{0,1\}$, $G(c_1)=\{0,1\}$, $F(c_2)=\{5,6,7\}\times\{5,6,7\}$, $G(c_2)=\{5,6,7\}$. Let $\alpha\colon F\Rightarrow G$ have components $\alpha_{c_1}(x,y)=x$ and $\alpha_{c_2}(x,y)=y$. Let $\mathcal{B}$ be the discrete category with objects $b,b''$, and let $K\colon\mathcal{B}\to\mathcal{C}$ send $b\mapsto c_1$ and $b''\mapsto c_2$. Find $(\alpha K)_{b''}(6,5)$.'
             answer: '5'
@@ -807,16 +688,6 @@ topics:
         name: Compatibility of the two whiskerings
         key_prerequisites: [functor-composition-identity]
         constraints: "Derive the compatibility of left and right whiskering by evaluating at an object: apply the outer functor to the component at the substituted object. Closed items may construct the categorical object or diagnose assertions whose validity the learner must determine; the unmarked item asks for a full proof. Candidate claims must not be endorsed or explained by the stem."
-        step_check:
-          step: 'By definition of right whiskering'
-          question: 'Why is the component of $(Q\beta)P$ at $A$ the component of $Q\beta$ at the object $PA$?'
-          options:
-            - 'Right whiskering applies $P$ to the component, so the result is $P(Q\beta_A)$ itself'
-            - 'The functor $Q$ is applied last, so the index $A$ is left unchanged by $P$'
-            - 'The object $PA$ is used only because $P$ is always the identity on objects'
-            - 'Right whiskering by $P$ re-indexes: the component at $A$ is the one at $PA$'
-          answer: 'Right whiskering by $P$ re-indexes: the component at $A$ is the one at $PA$'
-          why: 'A transformation by a functor $P$ on the right only changes which object indexes the component; no functor is applied to the component itself.'
         exemplars:
           - problem: 'Let $\mathcal{C}$ be the discrete category with objects $c_1,c_2$. Let $F,G\colon\mathcal{C}\to\mathbf{Set}$ send both objects to $\{0,1,2\}$, and let $\alpha\colon F\Rightarrow G$ have $\alpha_{c_1}(x)=x$ and $\alpha_{c_2}(x)=(x+1)\bmod3$. Let $\mathcal{B}$ be the one-object category with object $\bullet$, let $K\colon\mathcal{B}\to\mathcal{C}$ send $\bullet\mapsto c_2$, and let $H\colon\mathbf{Set}\to\mathbf{Set}$ send $Y$ to $Y\times Y$ and $u$ to $u\times u$. Find $\big(H(\alpha K)\big)_\bullet(0,2)$.'
             answer: '(1,0)'
@@ -889,16 +760,6 @@ topics:
         name: Vertical composition
         key_prerequisites: [naturality-proofs]
         constraints: "Require the learner to use vertical composition. Closed items must construct the relevant maps, test categorical laws, or supply the essential proof steps. A supplied characterization followed only by counting or evaluation is insufficient. Preserve one full-proof exemplar."
-        step_check:
-          step: 'Composing the first with $\beta_Y$ on the left and the second with $\alpha_X$ on the right'
-          question: 'Why is the first square composed with $\beta_Y$ and the second with $\alpha_X$?'
-          options:
-            - 'Each square must be made longer before it can describe a natural transformation of $F$'
-            - 'Composition with $\beta_Y$ and $\alpha_X$ turns all the arrows of the squares into identities'
-            - 'Both squares then contain $\beta_Y\circ Gf\circ\alpha_X$, so they chain together'
-            - 'The squares have no common arrow, so one square is moved into the place of the other'
-          answer: 'Both squares then contain $\beta_Y\circ Gf\circ\alpha_X$, so they chain together'
-          why: 'The first square gives $\beta_Y\circ Gf\circ\alpha_X=\beta_Y\circ\alpha_Y\circ Ff$ and the second gives $Hf\circ\beta_X\circ\alpha_X=\beta_Y\circ Gf\circ\alpha_X$. The common middle term links them, so $Hf\circ\beta_X\circ\alpha_X=\beta_Y\circ\alpha_Y\circ Ff$.'
         exemplars:
           - problem: 'Let $\mathcal{A}$ be the category with objects $a,b$ and one non-identity arrow $u\colon a\to b$. Let $F,G,H\colon\mathcal{A}\to\mathbf{Set}$ send both objects to $\{0,1,2\}$, with $F(u)$, $G(u)$, $H(u)$ the functions $0\mapsto1,1\mapsto2,2\mapsto0$; $0\mapsto2,1\mapsto0,2\mapsto1$; and $0\mapsto1,1\mapsto0,2\mapsto2$ respectively. Let $\alpha\colon F\Rightarrow G$ and $\beta\colon G\Rightarrow H$ be natural transformations with $\alpha_a$ given by $0\mapsto0,1\mapsto2,2\mapsto1$ and $\beta_a$ given by $0\mapsto2,1\mapsto1,2\mapsto0$. Find $(\beta\cdot\alpha)_b(1)$.'
             answer: '2'
@@ -932,16 +793,6 @@ topics:
         name: Horizontal composition
         key_prerequisites: [whiskering]
         constraints: "Require the learner to use horizontal composition. Closed items must construct the relevant maps, test categorical laws, or supply the essential proof steps. A supplied characterization followed only by counting or evaluation is insufficient. Preserve one full-proof exemplar."
-        step_check:
-          step: 'the naturality square of $\beta$ at the morphism $\alpha_A\colon SA\to TA$'
-          question: 'Why can the naturality square of $\beta$ be taken at the arrow $\alpha_A$?'
-          options:
-            - '$\alpha_A$ is an arrow of $\mathcal{E}$, and $\beta$ is natural at such arrows'
-            - '$\alpha_A$ is an arrow of $\mathcal{D}$, where $\beta$ is natural'
-            - '$\beta$ is natural at every arrow of $\mathcal{C}$, and $\alpha_A$ is one'
-            - '$\alpha$ is natural, so its components are arrows where $\beta$ is natural'
-          answer: '$\alpha_A$ is an arrow of $\mathcal{D}$, where $\beta$ is natural'
-          why: 'Naturality of $\beta\colon U\Rightarrow V$ is a square for each arrow of $\mathcal{D}$, and the component $\alpha_A$ is such an arrow.'
         exemplars:
           - problem: 'Let $S$ be the functor $\mathbf{Set}\to\mathbf{Set}$ with $S(Y)=Y\times Y$ and $S(u)=u\times u$, and let $\mathrm{Id}$ be the identity functor. Let $\alpha\colon\mathrm{Id}\Rightarrow S$ be the diagonal, $\alpha_Y(y)=(y,y)$, and let $\beta\colon S\Rightarrow\mathrm{Id}$ be the first projection, $\beta_Y(y,z)=y$. Find the component of the horizontal composite $\beta*\alpha\colon S\Rightarrow S$ at $X=\{3,5\}$ on the element $(3,5)$.'
             answer: '(3,3)'
@@ -983,16 +834,6 @@ topics:
         name: The interchange law
         key_prerequisites: [naturality-proofs]
         constraints: "Require the learner to use the interchange law. Closed items must construct the relevant maps, test categorical laws, or supply the essential proof steps. A supplied characterization followed only by counting or evaluation is insufficient. Preserve one full-proof exemplar."
-        step_check:
-          step: 'This is exactly the naturality square of $\tau\colon T\Rightarrow T''$'
-          question: 'Why is it the naturality of $\tau$, and not of $\tau''$, that equates the two expansions?'
-          options:
-            - 'The factors $\tau''_{S''''X}$ already agree, so the square of $\tau''$ would change nothing'
-            - 'Naturality of $\tau''$ is always the square used in an interchange law'
-            - 'The factor $\tau_{S''X}$ is the only factor that appears on both sides'
-            - 'The factors that differ are $\tau_{S''''X}$ and $T''(\sigma''_X)$, both from $\tau$'
-          answer: 'The factors that differ are $\tau_{S''''X}$ and $T''(\sigma''_X)$, both from $\tau$'
-          why: 'Both expansions share the factors $\tau''_{S''''X}$ and $T(\sigma_X)$; only the middle pair differs, and exchanging it is the square of $\tau$ at $\sigma''_X$.'
         exemplars:
           - problem: 'Use the one-object category $\mathbf{1}$: a functor from $\mathbf{1}$ to $\mathbf{Set}$ is a set, and a natural transformation is a function. Let $F=F''=F''''$ be the set $\{0,1,2\}$, let $\alpha\colon F\to F''$ be the function $0\mapsto1,1\mapsto2,2\mapsto0$, and let $\alpha''\colon F''\to F''''$ be the function $0\mapsto0,1\mapsto2,2\mapsto1$. On $\mathbf{Set}$ let $G=G''=G''''=S$ with $S(Y)=Y\times Y$, let $\beta\colon G\Rightarrow G''$ be the identity transformation and let $\beta''\colon G''\Rightarrow G''''$ be the swap. Find the value of $(\beta''\cdot\beta)*(\alpha''\cdot\alpha)$ at the element $(1,2)$.'
             answer: '(0,1)'
@@ -1064,16 +905,6 @@ topics:
         name: The category of functors and natural transformations
         key_prerequisites: [vertical-horizontal-composition]
         constraints: "Require the learner to use the category of functors and natural transformations. Closed items must construct the relevant maps, test categorical laws, or supply the essential proof steps. A supplied characterization followed only by counting or evaluation is insufficient. Preserve one full-proof exemplar."
-        step_check:
-          step: 'using naturality of $\alpha$'
-          question: 'Why may $\alpha_B\circ Ff$ be replaced by $Gf\circ\alpha_A$ in this step?'
-          options:
-            - 'Every composite of two components with a functor image is equal to the other order'
-            - 'The functors $F$ and $G$ are equal on arrows, so $Ff=Gf$ and the order is irrelevant'
-            - 'Composition in $\mathbf{Set}$ is commutative, so any two composites are equal'
-            - 'Naturality of $\alpha$ at the arrow $f$ says these two composites are equal'
-          answer: 'Naturality of $\alpha$ at the arrow $f$ says these two composites are equal'
-          why: 'The naturality square of $\alpha$ at $f$ is the equation $\alpha_B\circ Ff=Gf\circ\alpha_A$; this is how the componentwise composite of natural transformations is again natural.'
         exemplars:
           - problem: 'Let $\mathcal{C}$ be the discrete category with objects $a,b,c$, and let $\mathcal{D}$ be the category of the poset $0\le1$, with objects $0$ and $1$ and one arrow from $x$ to $y$ exactly when $x\le y$. In the functor category $[\mathcal{C},\mathcal{D}]$ the objects are the functors from $\mathcal{C}$ to $\mathcal{D}$ and the morphisms are the natural transformations. How many morphisms does $[\mathcal{C},\mathcal{D}]$ have?'
             answer: '27'
@@ -1111,16 +942,6 @@ topics:
         name: Isomorphisms in a functor category
         key_prerequisites: [natural-transformations]
         constraints: "Require isomorphisms in a functor category. The closed answer must encode the categorical construction, essential proof equations, or a countermodel to an invalid argument. Preserve exactly one full-proof exemplar."
-        step_check:
-          step: 'Apply $\theta_B^{-1}$ on the left'
-          question: 'Why do we compose the naturality square with $\theta_B^{-1}$ on the left and $\theta_A^{-1}$ on the right?'
-          options:
-            - 'This makes the square commute, because the original square does not commute at all'
-            - 'This turns $Pf$ and $Qf$ into identity arrows, which are always natural'
-            - 'This cancels $\theta_A$ and $\theta_B$ and leaves the square of the inverse'
-            - 'The inverses are needed because every natural transformation is invertible'
-          answer: 'This cancels $\theta_A$ and $\theta_B$ and leaves the square of the inverse'
-          why: 'Multiplying $Qf\circ\theta_A=\theta_B\circ Pf$ by the two inverses gives $\theta_B^{-1}\circ Qf=Pf\circ\theta_A^{-1}$, which is naturality of the inverse family.'
         exemplars:
           - problem: 'Let $\mathcal{C}$ be the category with objects $X,Y$ and one non-identity arrow $f\colon X\to Y$. Let $F,G\colon\mathcal{C}\to\mathbf{Set}$ send both objects to $\{0,1\}$, with $F(f)$ the constant function $0$ and $G(f)$ the constant function $1$. Let $\alpha\colon F\Rightarrow G$ be a natural transformation with $\alpha_X(0)=1$ and $\alpha_X(1)=0$, and suppose $\alpha$ is an isomorphism in $[\mathcal{C},\mathbf{Set}]$. Find $\alpha_Y(1)$.'
             answer: '0'
@@ -1163,16 +984,6 @@ topics:
           answer_contract: {"kind": "exact"}
           answer: '2'
           reveal: 'The commuting functions are the identity and the swap itself, so there are $2$. A functor from the one-object category of $\mathbb{Z}/2$ to $\mathbf{Set}$ is such an action, and its natural transformations are exactly the functions that commute with the action.'
-        step_check:
-          step: 'for the morphism $g$ the square $Y(g)\circ\alpha_\ast=\alpha_\ast\circ X(g)$ must commute'
-          question: 'Why does this square say that $\alpha_\ast(g\cdot x)=g\cdot\alpha_\ast(x)$?'
-          options:
-            - 'Here $X(g)$ and $Y(g)$ are the identity maps, so the square holds anyway'
-            - 'At $x$, the two sides read $g\cdot\alpha_\ast(x)$ and $\alpha_\ast(g\cdot x)$'
-            - 'The square needs the action of $g$ only on the target set $Y\ast$ of $\alpha_\ast$'
-            - 'The function $\alpha_\ast$ must be a bijection, which makes both sides equal'
-          answer: 'At $x$, the two sides read $g\cdot\alpha_\ast(x)$ and $\alpha_\ast(g\cdot x)$'
-          why: 'Evaluating the square at $x$ gives $Y(g)(\alpha_\ast(x))=\alpha_\ast(X(g)(x))$, which is the equation $g\cdot\alpha_\ast(x)=\alpha_\ast(g\cdot x)$.'
         exemplars:
           - problem: 'Let $\mathbf{2}$ be the category with objects $0,1$ and one non-identity arrow $a\colon0\to1$. Let $F,G\colon\mathbf{2}\to\mathbf{Set}$ be the functors with $F(0)=\{m,n\}$, $F(1)=\{1,2,3\}$, where $F(a)$ sends $m\mapsto1$ and $n\mapsto2$, and $G(0)=\{u,v\}$, $G(1)=\{x,y\}$ where $G(a)$ sends both $u$ and $v$ to $x$. A natural transformation from $F$ to $G$ is a pair of functions making the square commute. How many natural transformations from $F$ to $G$ are there?'
             answer: '8'
@@ -1241,16 +1052,6 @@ topics:
         name: Definition via natural isomorphisms
         key_prerequisites: [natural-isomorphisms]
         constraints: "Require definition via natural isomorphisms. The closed answer must encode the categorical construction, essential proof equations, or a countermodel to an invalid argument. Preserve exactly one full-proof exemplar."
-        step_check:
-          step: 'Whiskering $\eta''$ by $G$ and $F$'
-          question: 'Why must $\eta''$ be whiskered by $G$ on the left and by $F$ on the right?'
-          options:
-            - 'The transformation $\eta''$ is defined on $\mathcal{A}$, so $G$ and $F$ are needed to move it'
-            - 'The target $GF$ of $\eta$ must become $G(KH)F$, so $G$ and $F$ surround $\eta''$'
-            - 'Whiskering $\eta''$ makes $GF$ equal to $GKHF$, so no isomorphism is needed'
-            - 'The functors $G$ and $F$ reverse the direction of $\eta''$, giving $1_{\mathcal{A}}\Rightarrow GF$'
-          answer: 'The target $GF$ of $\eta$ must become $G(KH)F$, so $G$ and $F$ surround $\eta''$'
-          why: 'The transformation $\eta''\colon 1_{\mathcal{B}}\Rightarrow KH$ lives on $\mathcal{B}$, and $GF$ is $G1_{\mathcal{B}}F$, so wrapping $\eta''$ in $G$ and $F$ gives an isomorphism from $GF$ to $G(KH)F$.'
         exemplars:
           - problem: 'Let $\mathcal{C}$ be the category with three objects $0,1,2$ and exactly one arrow from each object to each object (the identities included). Let $\mathcal{D}$ be the category with one object $*$ and only its identity arrow. Let $F\colon\mathcal{C}\to\mathcal{D}$ be the unique functor and let $G\colon\mathcal{D}\to\mathcal{C}$ be the functor sending $*$ to $1$. What is the object $GF(2)$?'
             answer: '1'
@@ -1292,16 +1093,6 @@ topics:
         name: The fully faithful + essentially surjective test
         key_prerequisites: [full-faithful-functors]
         constraints: "Require the fully faithful + essentially surjective test. The closed answer must encode the categorical construction, essential proof equations, or a countermodel to an invalid argument. Preserve exactly one full-proof exemplar."
-        step_check:
-          step: 'Since $\alpha_Y$ is an isomorphism'
-          question: 'Why does $\alpha_Y$ being an isomorphism let us solve for $f$ in $HF(f)\circ\alpha_X=\alpha_Y\circ f$?'
-          options:
-            - 'Then $\alpha_Y$ commutes with $f$, so the two composites can be interchanged'
-            - 'Then $HF(f)$ is also an isomorphism, so it can be cancelled from both sides'
-            - 'Then $\alpha_X$ is the identity, and $f$ is therefore equal to $HF(f)$'
-            - 'Then $\alpha_Y^{-1}$ exists, and composing with it on the left isolates $f$'
-          answer: 'Then $\alpha_Y^{-1}$ exists, and composing with it on the left isolates $f$'
-          why: 'Composing $HF(f)\circ\alpha_X=\alpha_Y\circ f$ with $\alpha_Y^{-1}$ on the left gives $f=\alpha_Y^{-1}\circ HF(f)\circ\alpha_X$, so $f$ is determined by $HF(f)$.'
         exemplars:
           - problem: 'Let $\mathcal{C}$ be the poset $0<1<2$ and $\mathcal{D}$ the poset $0<1<2<3$, each viewed as a category with one arrow $x\to y$ exactly when $x\le y$. Let $F\colon\mathcal{C}\to\mathcal{D}$ be the inclusion. In a poset category two objects are isomorphic only if they are equal. How many objects of $\mathcal{D}$ are isomorphic to an object in the image of $F$?'
             answer: '3'
@@ -1344,16 +1135,6 @@ topics:
           answer_contract: {"kind": "exact"}
           answer: '1'
           reveal: 'An isomorphism of categories is a bijection on objects, so $\mathcal{C}$ has exactly $1$ object. An equivalence only needs every object of $\mathcal{D}$ to be isomorphic to an image, so it can start from a category with many objects.'
-        step_check:
-          step: 'Distinct matrices give distinct linear maps'
-          question: 'Why do distinct matrices always give distinct linear maps?'
-          options:
-            - 'Matrices of different sizes always define linear maps with different domains'
-            - 'A linear map is defined by its value on a single vector of the space'
-            - 'The columns of the matrix are the images of the standard basis vectors'
-            - 'A linear map ignores the entries of its matrix that lie below the diagonal'
-          answer: 'The columns of the matrix are the images of the standard basis vectors'
-          why: 'The $j$th column of the matrix is the image of the $j$th standard basis vector, so the matrix can be read back from the map, and different matrices give different maps.'
         exemplars:
           - problem: 'Let $\mathcal{C}$ be the category with four objects and exactly one arrow from each object to each object, and let $\mathcal{D}$ be the category with one object and only its identity. Let $F\colon\mathcal{C}\to\mathcal{D}$ be the unique functor. A quasi-inverse of $F$ is a functor $G\colon\mathcal{D}\to\mathcal{C}$ with natural isomorphisms $1_{\mathcal{C}}\cong GF$ and $FG\cong1_{\mathcal{D}}$. How many quasi-inverses does $F$ have?'
             answer: '4'

@@ -54,6 +54,7 @@ fn exemplars(policy: &FiniteObjectiveDomain) -> Vec<Exemplar> {
             answer: variant.answer.clone(),
             answer_contract: None,
             solution_sketch: None,
+            visual: None,
         })
         .collect()
 }

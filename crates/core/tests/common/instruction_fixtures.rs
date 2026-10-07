@@ -13,6 +13,7 @@ pub fn exemplars() -> Vec<Exemplar> {
         problem: "Compute $7^2$.".to_owned(),
         answer: "49".to_owned(),
         solution_sketch: None,
+        visual: None,
     }]
 }
 

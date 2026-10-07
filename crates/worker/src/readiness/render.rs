@@ -282,8 +282,6 @@ fn readiness_json(readiness: &Readiness) -> Value {
         "hints": readiness.hints,
         "solutions": readiness.solutions,
         "prerequisites_ok": readiness.prerequisites_ok,
-        "visual_needed": readiness.visual_needed,
-        "visual_present": readiness.visual_present,
         "decidable_exemplars": readiness.decidable_exemplars,
         "approved_templates": readiness.approved_templates,
         "practice_items": readiness.practice_items,

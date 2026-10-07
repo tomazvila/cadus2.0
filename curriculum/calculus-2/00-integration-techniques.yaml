@@ -24,15 +24,6 @@ topics:
       - id: kp1
         name: Polynomial times exponential or trig
         key_prerequisites: [antiderivatives, derivatives-exp-log]
-        step_check:
-          step: 'Choose $u = x$ (the polynomial)'
-          question: 'Why is $u = x$ the better choice here?'
-          options:
-            - 'The longer factor in the integrand should always be chosen as $u$ in a parts integral'
-            - 'Differentiating $x$ gives $1$, so the new integral is simpler than the old one'
-            - 'The factor that is easiest to integrate should always be chosen as $u$, as a general rule'
-          answer: 'Differentiating $x$ gives $1$, so the new integral is simpler than the old one'
-          why: 'The formula replaces $\int u\,dv$ by $\int v\,du$. Differentiating $x$ removes the polynomial, so the leftover integral is a basic one.'
         exemplars:
           - problem: 'Evaluate $\int x e^x \, dx$.'
             answer: '(x - 1)*e^x + C'
@@ -70,15 +61,6 @@ topics:
       - id: kp2
         name: Choosing u and dv (LIATE)
         key_prerequisites: [antiderivatives, product-rule]
-        step_check:
-          step: 'LIATE puts Algebraic before Exponential'
-          question: 'Why does LIATE put Algebraic before Exponential when choosing $u$?'
-          options:
-            - 'Exponential factors are always harder to integrate than powers of $x$, so they come last'
-            - 'A power of $x$ becomes simpler when integrated, but an exponential never does, so $x$ is first'
-            - 'A power of $x$ becomes simpler when differentiated, but an exponential never does'
-          answer: 'A power of $x$ becomes simpler when differentiated, but an exponential never does'
-          why: 'The factor chosen as $u$ is differentiated, the other is integrated. Differentiating $x$ gives $1$, while $e^{2x}$ keeps its form either way.'
         exemplars:
           - problem: 'Evaluate $\int x e^{-x} \, dx$.'
             answer: '-(x + 1)*e^(-x) + C'
@@ -120,15 +102,6 @@ topics:
       - id: kp3
         name: Logarithmic and inverse-trig integrands
         key_prerequisites: [derivatives-exp-log, integration-substitution]
-        step_check:
-          step: 'set $u = \arcsin x$ and $dv = dx$'
-          question: 'Why is $u = \arcsin x$, with $dv = dx$, the right choice here?'
-          options:
-            - 'We cannot integrate $\arcsin x$ directly, but its derivative is an algebraic function'
-            - 'The derivative of $\arcsin x$ is $\frac{1}{x}$, so the new integral is a simple logarithm'
-            - 'The factor $dx$ has no antiderivative, so it must be placed in $u$ instead of $dv$'
-          answer: 'We cannot integrate $\arcsin x$ directly, but its derivative is an algebraic function'
-          why: 'We only know the derivative $\frac{1}{\sqrt{1-x^2}}$ of $\arcsin x$, not an antiderivative. Putting it in $u$ turns it into an algebraic function.'
         try_first:
           problem: 'Evaluate $\int_1^{e^2} \ln x \, dx$.'
           answer_contract: {"kind": "exact"}
@@ -202,15 +175,6 @@ topics:
       - id: kp1
         name: Definite integrals by parts
         key_prerequisites: [integration-by-parts-single, definite-integrals-ftc]
-        step_check:
-          step: 'Evaluate the boundary term'
-          question: 'Why is the boundary term $[uv]_a^b$ worked out at both limits and subtracted?'
-          options:
-            - 'It is a constant of integration, so it is added to the answer without any change'
-            - 'The limits are only needed for the leftover integral and not for this term'
-            - 'It is the change in $uv$ from $a$ to $b$, so it is a number and not a function'
-          answer: 'It is the change in $uv$ from $a$ to $b$, so it is a number and not a function'
-          why: 'The parts formula gives $uv$ as an antiderivative piece. Over $[a, b]$ the integral uses its change, $uv$ at $b$ minus $uv$ at $a$.'
         exemplars:
           - problem: 'Evaluate $\int_0^{\pi} x\sin x \, dx$.'
             answer: 'pi'
@@ -252,15 +216,6 @@ topics:
       - id: kp2
         name: Repeated integration by parts
         key_prerequisites: [integration-by-parts-single]
-        step_check:
-          step: 'Set up the second application'
-          question: 'Why is a second application of parts needed after the first one?'
-          options:
-            - 'The new integral $\int x e^{2x}\,dx$ still has a polynomial factor, so it is not basic'
-            - 'The first application always leaves an integral that is equal to the original integral'
-            - 'The formula needs two applications whenever the polynomial has any coefficient that is not $1$'
-          answer: 'The new integral $\int x e^{2x}\,dx$ still has a polynomial factor, so it is not basic'
-          why: 'Each application lowers the degree of the polynomial by one. After one application $x$ is left, and a second application removes it.'
         exemplars:
           - problem: 'Evaluate $\int x^2 e^x \, dx$.'
             answer: '(x^2 - 2x + 2)*e^x + C'
@@ -302,15 +257,6 @@ topics:
       - id: kp3
         name: Boomerang integrals (the integral reappears)
         key_prerequisites: [integration-by-parts-single]
-        step_check:
-          step: 'the original integral has reappeared'
-          question: 'Why does it help that the original integral has reappeared?'
-          options:
-            - 'It shows that the integral cannot be found, so the method has failed here'
-            - 'The result is an equation with $I$ on both sides, so we can solve for $I$'
-            - 'It means the leftover integral is $0$, so $I$ is just the boundary term here'
-          answer: 'The result is an equation with $I$ on both sides, so we can solve for $I$'
-          why: 'The equation $I = (\text{known terms}) - \frac{1}{4}I$ is linear in $I$. Moving the $I$ terms to one side gives the value of $I$.'
         try_first:
           problem: 'Evaluate $\int_0^{\pi/2} e^x \sin x \, dx$.'
           answer_contract: {"kind": "exact"}
@@ -379,15 +325,6 @@ topics:
       - id: kp1
         name: Tabular method for polynomial times exponential
         key_prerequisites: [integration-by-parts]
-        step_check:
-          step: 'Multiply diagonally with alternating signs'
-          question: 'Why do the signs in the table alternate $+, -, +, -$?'
-          options:
-            - 'The signs alternate because the derivatives of $x^3$ change their sign each time'
-            - 'Each further use of parts subtracts the new leftover integral, so signs flip'
-            - 'The signs alternate so that the last term of the table always has a plus sign'
-          answer: 'Each further use of parts subtracts the new leftover integral, so signs flip'
-          why: 'The parts formula is $\int u\,dv = uv - \int v\,du$, so each leftover integral enters with a minus sign. Repeating it flips the sign each time.'
         exemplars:
           - problem: 'Use the tabular method to evaluate $\int x^3 e^x \, dx$.'
             answer: '(x^3 - 3x^2 + 6x - 6)*e^x + C'
@@ -429,15 +366,6 @@ topics:
       - id: kp2
         name: Tabular method for polynomial times trig
         key_prerequisites: [integration-by-parts]
-        step_check:
-          step: 'differentiate repeatedly until you hit $0$'
-          question: 'Why can the table stop once the derivative column reaches $0$?'
-          options:
-            - 'The integral column would run out of trig functions at that row'
-            - 'The sine and cosine functions repeat after four rows, so the table must close'
-            - 'Every further row would multiply by $0$, so the leftover integral is $0$'
-          answer: 'Every further row would multiply by $0$, so the leftover integral is $0$'
-          why: 'The last leftover integral has the derivative $0$ as its $du$, so it equals $0$. No more terms are needed and the answer is exact.'
         exemplars:
           - problem: 'Use the tabular method to evaluate $\int x^3 \cos x \, dx$.'
             answer: '(x^3 - 6x) sin x + (3x^2 - 6) cos x'
@@ -508,15 +436,6 @@ topics:
       - id: kp1
         name: One factor ready for substitution
         key_prerequisites: [integration-substitution, derivatives-trig]
-        step_check:
-          step: 'and $\cos x$ is the derivative of $\sin x$'
-          question: 'Why does $u = \sin x$ work for the integrand $\sin^3 x\cos x$?'
-          options:
-            - 'The integrand contains the highest power of $\sin x$, and that choice always works'
-            - 'The substitution turns $\sin^3 x$ into $u^3$, and $\cos x\,dx$ is just $du$'
-            - 'The substitution removes $\cos x$ from the integrand, so that only $dx$ is left'
-          answer: 'The substitution turns $\sin^3 x$ into $u^3$, and $\cos x\,dx$ is just $du$'
-          why: 'A substitution works when the rest of the integrand is $du$. Here $du = \cos x\,dx$ uses the leftover factor, and $\int u^3\,du$ is a power rule.'
         exemplars:
           - problem: 'Evaluate $\int \sin^2 x \cos x \, dx$.'
             answer: 'sin(x)^3/3 + C'
@@ -554,15 +473,6 @@ topics:
       - id: kp2
         name: Splitting off one factor from an odd power
         key_prerequisites: [trig-identities-basic, integration-substitution]
-        step_check:
-          step: 'replace $\cos^2 x$ using $\cos^2 x = 1 - \sin^2 x$'
-          question: 'Why is $\cos^2 x$ rewritten with $\cos^2 x = 1 - \sin^2 x$ here?'
-          options:
-            - 'The substitution $u = \sin x$ needs all other factors written with $\sin x$'
-            - 'The identity makes the integrand shorter, and a shorter integrand is always easier'
-            - 'The identity turns $\cos^2 x$ into a constant, so the integral becomes a power rule'
-          answer: 'The substitution $u = \sin x$ needs all other factors written with $\sin x$'
-          why: 'After $\cos x\,dx$ is set aside as $du$, all that remains must be a function of $u = \sin x$. The identity does exactly that for the even power.'
         try_first:
           problem: 'Evaluate $\int_0^{\pi/2} \cos^3 x \, dx$.'
           answer_contract: {"kind": "exact"}
@@ -640,16 +550,6 @@ topics:
       - id: kp1
         name: The basic tan, cot, sec, and csc integrals
         key_prerequisites: [integration-substitution, derivatives-trig]
-        step_check:
-          step: 'multiply and divide by $\sec 4x + \tan 4x$'
-          question: 'Why do we multiply and divide by $\sec 4x + \tan 4x$ in this step?'
-          options:
-            - 'It turns $\sec 4x$ into a sine, which is then easy to integrate directly'
-            - 'The numerator becomes a constant multiple of the derivative of the denominator'
-            - 'Multiplying by a fraction equal to $1$ lowers the power of the whole integrand'
-            - 'It removes the factor $4$ from the argument, so no rescaling is needed'
-          answer: 'The numerator becomes a constant multiple of the derivative of the denominator'
-          why: 'The numerator $\sec 4x(\sec 4x + \tan 4x)$ is $\frac{1}{4}$ of the derivative of the denominator. So with $u$ equal to the denominator, the integral is $\frac{1}{4}\int \frac{du}{u}$.'
         try_first:
           problem: 'Let $F(x) = \ln|\sec x + \tan x|$. Find $F''(\pi/3)$.'
           answer_contract: {"kind": "exact"}
@@ -704,16 +604,6 @@ topics:
       - id: kp2
         name: Powers via sec^2 = 1 + tan^2
         key_prerequisites: [trig-integrals-odd-powers, derivatives-trig]
-        step_check:
-          step: 'split $\sec^4 x = \sec^2 x \cdot \sec^2 x$'
-          question: 'Why does the rewrite keep one factor of $\sec^2 x$ untouched?'
-          options:
-            - 'The identity $\sec^2 x = 1 + \tan^2 x$ can be used on one factor only'
-            - 'Keeping it makes the power of $\sec x$ even, so no substitution is needed'
-            - 'Replacing both factors would change the value of the integral'
-            - 'It is needed as $du$, because the derivative of $\tan x$ is $\sec^2 x$'
-          answer: 'It is needed as $du$, because the derivative of $\tan x$ is $\sec^2 x$'
-          why: 'With $u = \tan x$ we get $du = \sec^2 x\,dx$, so one factor $\sec^2 x$ must stay beside $dx$. The other factor becomes $1 + u^2$.'
         exemplars:
           - problem: 'Evaluate $\int \tan^2 x\,dx$.'
             answer: 'tan(x) - x + C'
@@ -755,16 +645,6 @@ topics:
       - id: kp3
         name: Products of tangents and secants
         key_prerequisites: [integration-substitution, derivatives-trig]
-        step_check:
-          step: 'the power of tangent is odd, so peel off one factor of $\sec x \tan x$ and let $u = \sec x$'
-          question: 'Why does an odd power of $\tan x$ lead to the substitution $u = \sec x$?'
-          options:
-            - 'The factor $\sec x \tan x\,dx$ is exactly $du$, and the tangents left are even'
-            - 'Odd powers of $\tan x$ always integrate straight to a power of $\sec x$ with no work'
-            - 'The substitution $u = \sec x$ removes every factor $\tan x$ from the integrand at once'
-            - 'The derivative of $\sec x$ is $\sec^2 x$, which is already in the integrand'
-          answer: 'The factor $\sec x \tan x\,dx$ is exactly $du$, and the tangents left are even'
-          why: 'The derivative of $\sec x$ is $\sec x \tan x$, so that factor becomes $du$. The even power of tangent left over is rewritten with $\tan^2 x = \sec^2 x - 1$, giving a polynomial in $u$.'
         exemplars:
           - problem: 'Evaluate $\int \tan^3 x \sec x\,dx$ for $0 < x < \frac{\pi}{2}$.'
             answer: 'sec(x)^3/3 - sec(x) + C'
@@ -849,16 +729,6 @@ topics:
       - id: kp1
         name: Even powers via half-angle identities
         key_prerequisites: [double-half-angle-identities, integration-substitution]
-        step_check:
-          step: 'the integrand is an even power of cosine'
-          question: 'Why does an even power of cosine call for a half-angle identity?'
-          options:
-            - 'Even powers of cosine are always equal to $1$ on every interval of integration'
-            - 'The half-angle identity gives the integral of $\cos^2 x$ directly, with no further steps'
-            - 'Splitting off one cosine leaves a lone cosine that cannot be written with sines'
-            - 'A substitution $u = \cos x$ works only when the power of cosine is an even number'
-          answer: 'Splitting off one cosine leaves a lone cosine that cannot be written with sines'
-          why: 'With $\cos^2 x$ the leftover factor is a single $\cos x$, which sine cannot replace. The identity $\cos^2 x = \frac{1 + \cos 2x}{2}$ lowers the power, and the new terms are easy to integrate.'
         exemplars:
           - problem: 'Evaluate $\int \sin^2 x\,dx$.'
             answer: 'x/2 - sin(2x)/4 + C'
@@ -900,16 +770,6 @@ topics:
       - id: kp2
         name: Products sin(mx) cos(nx) via product-to-sum
         key_prerequisites: [product-to-sum-identities, sum-difference-identities, trig-identities-basic]
-        step_check:
-          step: 'Compute $A+B=6x$ and $A-B=2x$'
-          question: 'Why does the identity need both the sum $A+B$ and the difference $A-B$?'
-          options:
-            - 'The identity writes the product as a sum of one sine of each angle'
-            - 'The two angles are the limits of integration, and both must be used'
-            - 'Each factor of the product is replaced by one of these two angles'
-            - 'The sum and the difference are two ways to check the same answer'
-          answer: 'The identity writes the product as a sum of one sine of each angle'
-          why: 'The product $\sin A\cos B$ equals $\frac{1}{2}[\sin(A+B) + \sin(A-B)]$. So both angles appear, and each term has a single frequency that we can integrate.'
         exemplars:
           - problem: 'Evaluate $\int \sin 3x \cos x\,dx$.'
             answer: '-cos(4x)/8 - cos(2x)/4 + C'
@@ -951,16 +811,6 @@ topics:
       - id: kp3
         name: General strategy for sin^m x cos^n x
         key_prerequisites: [trig-integrals-odd-powers, double-half-angle-identities, trig-identities-basic]
-        step_check:
-          step: 'here $m = 3$ is odd, so the substitution route applies'
-          question: 'Why does an odd power of sine allow the substitution route?'
-          options:
-            - 'Odd powers of sine always integrate to a power of cosine with no extra work'
-            - 'One sine splits off as $du$, and the even power of sines left becomes cosines'
-            - 'The odd power can be lowered by a half-angle identity to a single first power of sine'
-            - 'Only an odd power makes $u = \cos x$ equal to a constant on the interval'
-          answer: 'One sine splits off as $du$, and the even power of sines left becomes cosines'
-          why: 'Splitting off one $\sin x$ leaves an even power of sine, which is a power of $\sin^2 x = 1 - \cos^2 x$. With $u = \cos x$ we have $du = -\sin x\,dx$, so everything is a polynomial in $u$.'
         exemplars:
           - problem: 'Evaluate $\int \sin^5 x\,dx$.'
             answer: '-cos(x) + 2cos(x)^3/3 - cos(x)^5/5 + C'
@@ -1030,16 +880,6 @@ topics:
       - id: kp1
         name: Arctangent forms
         key_prerequisites: [completing-the-square, derivatives-inverse-trig]
-        step_check:
-          step: 'take half of the $x$-coefficient, $-8/2 = -4$, and square it to get $16$'
-          question: 'Why do we square half of the coefficient of $x$ in this step?'
-          options:
-            - 'Adding $16$ makes $x^2 - 8x + 16$ a perfect square, namely $(x - 4)^2$'
-            - 'The square $16$ is the number that makes the whole denominator equal to zero'
-            - 'Squaring the coefficient $-8$ is how the integrand gets its constant factor'
-            - 'A square is always positive, so the denominator can never reach zero'
-          answer: 'Adding $16$ makes $x^2 - 8x + 16$ a perfect square, namely $(x - 4)^2$'
-          why: 'The first two terms $x^2 - 8x$ and the number $16$ form $(x - 4)^2$. To keep the value the same, we then subtract $16$ again, which turns the denominator into $(x - 4)^2 + 4$.'
         exemplars:
           - problem: 'Evaluate $\int \frac{dx}{x^2 + 2x + 5}$.'
             answer: 'atan((x+1)/2)/2 + C'
@@ -1081,16 +921,6 @@ topics:
       - id: kp2
         name: Arcsine forms
         key_prerequisites: [completing-the-square, derivatives-inverse-trig]
-        step_check:
-          step: 'group the $x$ terms, $5 - 4x - x^2 = 5 - (x^2 + 4x)$'
-          question: 'Why do we factor out a minus sign before completing the square?'
-          options:
-            - 'The root of a negative number is not real, so the sign must go outside the bracket'
-            - 'A minus sign in front lets the arcsine rule be applied to the constant term'
-            - 'The coefficient of $x^2$ must be $1$ inside the bracket to complete the square'
-            - 'Factoring out a minus sign makes the whole quadratic positive for every value of $x$'
-          answer: 'The coefficient of $x^2$ must be $1$ inside the bracket to complete the square'
-          why: 'The rule for completing the square half-and-squares the $x$-coefficient of a bracket that starts with $x^2$. After $-x^2 - 4x = -(x^2 + 4x)$ the bracket can be completed as $(x+2)^2 - 4$.'
         exemplars:
           - problem: 'Evaluate $\int \frac{dx}{\sqrt{24 - 2x - x^2}}$.'
             answer: 'asin((x+1)/5) + C'
@@ -1132,16 +962,6 @@ topics:
       - id: kp3
         name: Linear numerators (split into log + arctan)
         key_prerequisites: [completing-the-square, integration-substitution]
-        step_check:
-          step: 'write $4x+1 = 2(2x+4)+c$'
-          question: 'Why do we write the numerator using the derivative $2x + 4$ of the denominator?'
-          options:
-            - 'It makes the numerator a constant, so that no integral of a fraction remains at all'
-            - 'The multiple of $2x + 4$ integrates to a logarithm, by $u = $ the denominator'
-            - 'The derivative of the denominator is always the only correct numerator to use here'
-            - 'It shows that the denominator factors into two different linear factors over the reals'
-          answer: 'The multiple of $2x + 4$ integrates to a logarithm, by $u = $ the denominator'
-          why: 'A term $\frac{k(2x+4)}{x^2+4x+13}$ has the form $k\frac{u''}{u}$, so it integrates to $k\ln(x^2+4x+13)$. The leftover constant $c$ gives an arctangent after completing the square.'
         exemplars:
           - problem: 'Evaluate $\int \frac{2x + 3}{x^2 + 2x + 5}\,dx$.'
             answer: 'ln(x^2+2x+5) + atan((x+1)/2)/2 + C'
@@ -1211,16 +1031,6 @@ topics:
       - id: kp1
         name: The pattern a^2 - x^2 (x = a sin theta)
         key_prerequisites: [trigonometric-integrals, right-triangle-trig]
-        step_check:
-          step: 'set $x = 3\sin\theta$'
-          question: 'Why is $x = 3\sin\theta$ the right substitution for $\sqrt{9 - x^2}$?'
-          options:
-            - 'Because $\sin\theta$ is the derivative of $x$, so $dx$ is replaced exactly'
-            - 'Because $9 - x^2 = 9\cos^2\theta$, so the square root becomes $3\cos\theta$'
-            - 'Because $x$ must stay between $0$ and $1$, which is the range of $\sin\theta$'
-            - 'Because $9 - x^2$ equals $9\sin^2\theta$, so the root is $3\sin\theta$'
-          answer: 'Because $9 - x^2 = 9\cos^2\theta$, so the square root becomes $3\cos\theta$'
-          why: 'Since $9 - 9\sin^2\theta = 9\cos^2\theta$, the root has no radical left. The integral then becomes a trigonometric integral in $\theta$.'
         try_first:
           problem: 'Find $\int_0^3 \sqrt{9 - x^2}\,dx$. Hint: draw the graph of $y = \sqrt{9 - x^2}$.'
           answer_contract: {"kind": "exact"}
@@ -1267,16 +1077,6 @@ topics:
       - id: kp2
         name: The pattern a^2 + x^2 (x = a tan theta)
         key_prerequisites: [trigonometric-integrals, integration-substitution]
-        step_check:
-          step: '$4 + x^2 = 4 + 4\tan^2\theta = 4\sec^2\theta$'
-          question: 'Why does $4 + 4\tan^2\theta$ equal $4\sec^2\theta$?'
-          options:
-            - 'Because $1 + \tan^2\theta = \sec^2\theta$, after factoring out $4$'
-            - 'Because $\tan^2\theta$ and $\sec^2\theta$ are equal for every angle'
-            - 'Because the factor $4$ is the derivative of $\tan^2\theta$ here'
-            - 'Because we square both sides of $x = 2\tan\theta$ to get $\sec$'
-          answer: 'Because $1 + \tan^2\theta = \sec^2\theta$, after factoring out $4$'
-          why: 'Factoring gives $4(1 + \tan^2\theta)$, and the Pythagorean identity $1 + \tan^2\theta = \sec^2\theta$ turns this into $4\sec^2\theta$. This is why $x = a\tan\theta$ suits $a^2 + x^2$.'
         exemplars:
           - problem: 'Evaluate $\int \frac{dx}{(1 + x^2)^{3/2}}$.'
             answer: 'x/sqrt(1+x^2) + C'
@@ -1322,16 +1122,6 @@ topics:
       - id: kp3
         name: The pattern x^2 - a^2 and completed squares
         key_prerequisites: [trigonometric-integrals, completing-the-square-integrands]
-        step_check:
-          step: 'with $\theta \in [0, \pi/2)$, where $\tan\theta \ge 0$'
-          question: 'Why is $\theta$ restricted to $[0, \pi/2)$ in this substitution?'
-          options:
-            - 'Because the substitution only works for angles whose sine is a positive number'
-            - 'Because $\sec\theta$ is not defined at any angle outside this whole interval'
-            - 'So that $\sqrt{\tan^2\theta}$ equals $\tan\theta$ and not $-\tan\theta$'
-            - 'Because the formula for the integral of $\sec\theta$ is valid only for such angles'
-          answer: 'So that $\sqrt{\tan^2\theta}$ equals $\tan\theta$ and not $-\tan\theta$'
-          why: 'The root of $9\tan^2\theta$ is $3|\tan\theta|$. On $[0, \pi/2)$ the tangent is not negative, so the root is $3\tan\theta$, which matches the root of $x^2 - 9$ for $x > 3$.'
         exemplars:
           - problem: 'Evaluate $\int \frac{dx}{\sqrt{x^2 - 4}}$ for $x > 2$.'
             answer: 'ln(x+sqrt(x^2-4)) + C'
@@ -1415,16 +1205,6 @@ topics:
           answer_contract: {"kind": "exact"}
           answer: '2'
           reveal: '$\frac{1}{x - 1} - \frac{1}{x + 1} = \frac{(x + 1) - (x - 1)}{(x - 1)(x + 1)} = \frac{2}{(x - 1)(x + 1)}$. A partial fraction decomposition runs this addition backwards: it splits one fraction into simpler ones.'
-        step_check:
-          step: 'the $B$ term vanishes'
-          question: 'Why does the $B$ term vanish when $x = -2$ is put into $5x + 11 = A(x + 3) + B(x + 2)$?'
-          options:
-            - 'The constant $B$ is always $0$ until the value of $A$ is found'
-            - 'The factor $x + 2$ multiplies $B$ and is $0$ at $x = -2$'
-            - 'Both sides of the equation become $0$ at the root $x = -2$'
-            - 'The factor $x + 3$ equals $0$ and removes every term at once'
-          answer: 'The factor $x + 2$ multiplies $B$ and is $0$ at $x = -2$'
-          why: 'The term $B(x + 2)$ contains the factor $x + 2$, which is $0$ at $x = -2$. What remains is $A(x + 3)$, so $A$ can be read off alone.'
         exemplars:
           - problem: 'Find the constants $A$ and $B$ for which $\frac{3x + 5}{(x + 1)(x + 3)} = \frac{A}{x + 1} + \frac{B}{x + 3}$.'
             answer: 'A = 1; B = 2'
@@ -1466,16 +1246,6 @@ topics:
       - id: kp2
         name: Integrating distinct linear factors
         key_prerequisites: [rational-expressions, integration-substitution]
-        step_check:
-          step: 'multiply both sides by $(x-1)(x+2)$'
-          question: 'Why do we multiply both sides by $(x-1)(x+2)$?'
-          options:
-            - 'To make the numerator of the fraction equal to $1$ on both sides'
-            - 'To cancel the constants $A$ and $B$ from both sides of it'
-            - 'To clear the denominators and leave polynomials only'
-            - 'To find the two roots of the denominator without solving'
-          answer: 'To clear the denominators and leave polynomials only'
-          why: 'Multiplying by the full denominator removes every fraction. We are left with $2x + 7 = A(x + 2) + B(x - 1)$, which holds for every $x$, so we may substitute the roots.'
         exemplars:
           - problem: 'Find $\int \frac{5x - 4}{(x - 2)(x + 1)}\,dx$ for $x > 2$.'
             answer: '2 ln(x - 2) + 3 ln(x + 1)'
@@ -1513,16 +1283,6 @@ topics:
       - id: kp3
         name: Definite integrals with partial fractions
         key_prerequisites: [integration-substitution, definite-integrals-ftc]
-        step_check:
-          step: 'Subtract and combine'
-          question: 'Why is the value at the lower bound subtracted from the value at the upper bound?'
-          options:
-            - 'The two logarithms always have opposite signs, so one is subtracted'
-            - 'The lower bound is smaller, so it is removed to avoid double counting'
-            - 'The constant $C$ appears twice, and subtracting makes it cancel out'
-            - 'The integral equals $F(b) - F(a)$ for an antiderivative $F$'
-          answer: 'The integral equals $F(b) - F(a)$ for an antiderivative $F$'
-          why: 'By the Fundamental Theorem of Calculus, $\int_a^b f\,dx = F(b) - F(a)$. Here $F = \ln\frac{x + 2}{x + 3}$, so we subtract its value at $0$ from its value at $1$.'
         exemplars:
           - problem: 'Evaluate $\int_{0}^{1} \frac{1}{(x + 1)(x + 2)}\,dx$ to three decimal places.'
             answer: '0.288'
@@ -1596,16 +1356,6 @@ topics:
           answer_contract: {"kind": "exact"}
           answer: '4'
           reveal: '$\frac{1}{x + 1} + \frac{3}{(x + 1)^2} = \frac{(x + 1) + 3}{(x + 1)^2} = \frac{x + 4}{(x + 1)^2}$. A fraction over $(x + 1)^2$ with a numerator of degree $1$ comes from two terms, one for each power of $x + 1$.'
-        step_check:
-          step: 'linear and repeated'
-          question: 'Why does the repeated factor $(x + 2)^2$ need two terms, $\frac{A}{x + 2}$ and $\frac{B}{(x + 2)^2}$?'
-          options:
-            - 'The factor $(x + 2)^2$ has two roots, so each root needs its own separate term'
-            - 'Each power of the factor must be integrated by a different rule, one per term'
-            - 'A lone $\frac{B}{(x + 2)^2}$ has a constant numerator, but $3x + 5$ does not'
-            - 'The term $\frac{A}{x + 2}$ is needed to produce the logarithm in the answer'
-          answer: 'A lone $\frac{B}{(x + 2)^2}$ has a constant numerator, but $3x + 5$ does not'
-          why: 'A single term $\frac{B}{(x + 2)^2}$ has a constant numerator, so it cannot match $3x + 5$. Including $\frac{A}{x + 2}$ as well gives the numerator $A(x + 2) + B$, which has degree $1$.'
         exemplars:
           - problem: 'Find $\int \frac{2x + 3}{(x + 1)^2}\,dx$ for $x > -1$.'
             answer: '2 ln(x + 1) - 1/(x + 1)'
@@ -1647,16 +1397,6 @@ topics:
       - id: kp2
         name: Improper fractions (divide first)
         key_prerequisites: [polynomial-division, partial-fractions-linear-factors]
-        step_check:
-          step: 'Divide first'
-          question: 'Why must $x^3$ be divided by $x^2 - 1$ before partial fractions are used?'
-          options:
-            - 'Division removes the logarithms, so the power rule alone finishes the integral'
-            - 'Partial fractions need a numerator of lower degree than the denominator'
-            - 'Partial fractions are never allowed when the numerator contains the term $x^3$'
-            - 'The division is needed only because the denominator $x^2 - 1$ can be factored'
-          answer: 'Partial fractions need a numerator of lower degree than the denominator'
-          why: 'Terms such as $\frac{A}{x - 1}$ have a constant numerator, so they can only add up to a fraction whose numerator has lower degree than its denominator. Division first leaves such a remainder.'
         exemplars:
           - problem: 'Evaluate $\int_0^2 \frac{4x^2 + 6x + 3}{x^2 + 3x + 2}\,dx$ to four decimal places.'
             answer: '4.2466'
@@ -1694,16 +1434,6 @@ topics:
       - id: kp3
         name: Irreducible quadratic factors
         key_prerequisites: [partial-fractions-linear-factors, integration-substitution]
-        step_check:
-          step: 'since $x^2+4$ is irreducible'
-          question: 'Why is the numerator over $x^2 + 4$ written as $Bx + C$ and not as a constant?'
-          options:
-            - 'Because $x^2 + 4$ has two real roots, one root for $B$ and one root for $C$'
-            - 'Because $C$ is needed to produce the logarithm in the final answer'
-            - 'Because $Bx + C$ is always the derivative of the quadratic $x^2 + 4$'
-            - 'Because an unfactorable quadratic can have a numerator of degree $1$'
-          answer: 'Because an unfactorable quadratic can have a numerator of degree $1$'
-          why: 'A quadratic factor with no real roots cannot be split into linear factors. The numerator over it may have degree $1$, one less than the quadratic, so it is written $Bx + C$.'
         exemplars:
           - problem: 'Evaluate $\int_1^2 \frac{dx}{x(x^2 + 1)}$ to four decimal places.'
             answer: '0.2350'
@@ -1789,16 +1519,6 @@ topics:
           answer_contract: {"kind": "exact"}
           answer: '1'
           reveal: 'At $x = \frac{\pi}{2}$ we have $t = \tan\frac{\pi}{4} = 1$. The substitution $t = \tan(x/2)$ turns every limit $x = c$ into $t = \tan(c/2)$, and it turns a trigonometric integrand into a rational function of $t$.'
-        step_check:
-          step: 'Form the $t$-integral'
-          question: 'Why does the integral reduce to the simple $\int dt$ in this step?'
-          options:
-            - 'The factors $1 + t^2$ and $2$ in $dx$ cancel those in the denominator'
-            - 'The value of $\cos x$ is replaced by $0$ whenever $t$ is used in it'
-            - 'Because $\tan(x/2)$ is the derivative of $x$ taken with respect to $t$'
-            - 'Because the integral of $\frac{1}{1 + \cos x}$ is always a plain constant'
-          answer: 'The factors $1 + t^2$ and $2$ in $dx$ cancel those in the denominator'
-          why: 'The numerator $\frac{2\,dt}{1 + t^2}$ and the denominator $\frac{2}{1 + t^2}$ have the same factors, so they cancel and only $dt$ remains.'
         exemplars:
           - problem: 'Find $\int \frac{dx}{1 + \sin x}$ for $-\frac{\pi}{2} < x < \frac{\pi}{2}$.'
             answer: '-2/(1 + tan(x/2))'
@@ -1856,16 +1576,6 @@ topics:
       - id: kp2
         name: Rational functions of sin and cos
         key_prerequisites: [partial-fractions-linear-factors, trigonometric-integrals]
-        step_check:
-          step: 'Integrate the arctan pattern'
-          question: 'Why does $\int \frac{2\,dt}{3 + t^2}$ lead to an arctangent with $\sqrt{3}$ inside?'
-          options:
-            - 'The numerator $2$ is the derivative of the denominator $3 + t^2$, so a logarithm appears'
-            - 'The $t^2$ term must be integrated by parts before $3$ is used'
-            - 'It matches $\frac{1}{a}\arctan\frac{t}{a}$ for $a^2 = 3$, so $a = \sqrt{3}$'
-            - 'The number $3$ is the upper limit that appears in the answer'
-          answer: 'It matches $\frac{1}{a}\arctan\frac{t}{a}$ for $a^2 = 3$, so $a = \sqrt{3}$'
-          why: 'The denominator has the form $a^2 + t^2$ with $a^2 = 3$, so $a = \sqrt{3}$. The standard pattern then gives $\frac{1}{a}\arctan\frac{t}{a}$, multiplied here by the numerator $2$.'
         exemplars:
           - problem: 'Find $\int \frac{dx}{4 + 3\cos x}$ for $-\pi < x < \pi$.'
             answer: '(2/sqrt(7)) atan(tan(x/2)/sqrt(7))'
@@ -1942,16 +1652,6 @@ topics:
           answer_contract: {"kind": "exact"}
           answer: '9/10'
           reveal: 'The value is $\left[-\frac{1}{x}\right]_1^{10} = 1 - \frac{1}{10} = \frac{9}{10}$. With an upper limit $b$ in place of $10$ the value is $1 - \frac{1}{b}$, and an improper integral is defined as the limit of such values as $b$ grows.'
-        step_check:
-          step: 'as $b\to\infty$ the term $\frac{1}{2b^2}\to 0$'
-          question: 'Why does $\frac{1}{2b^2}$ tend to $0$ as $b \to \infty$?'
-          options:
-            - 'Because $b$ stands for the infinite endpoint, and any fraction containing $b$ equals $0$'
-            - 'Because the lower limit $2$ cancels the term when it is subtracted'
-            - 'Because the denominator $2b^2$ grows without bound while the numerator stays $1$'
-            - 'Because the power rule makes every term with a negative exponent vanish'
-          answer: 'Because the denominator $2b^2$ grows without bound while the numerator stays $1$'
-          why: 'The numerator stays at $1$ while $2b^2$ becomes arbitrarily large, so the fraction gets as close to $0$ as we like. That leaves $\frac{1}{8}$ as the limit.'
         exemplars:
           - problem: 'Evaluate $\int_1^{\infty} \frac{dx}{x^2}$.'
             answer: '1'
@@ -1997,16 +1697,6 @@ topics:
       - id: kp2
         name: Exponential and arctangent integrands
         key_prerequisites: [definite-integrals-ftc, antiderivatives]
-        step_check:
-          step: 'an antiderivative is $-\tfrac{1}{3}e^{-3x}$'
-          question: 'Why does the antiderivative of $e^{-3x}$ carry the factor $-\tfrac{1}{3}$?'
-          options:
-            - 'Differentiating gives a factor $-3$, so we divide by $-3$'
-            - 'The lower limit $0$ makes the sign negative, and $3$ is the limit'
-            - 'The factor $\tfrac{1}{3}$ is the final value of the improper integral'
-            - 'The exponent must be lowered by $1$ and divided by the new exponent'
-          answer: 'Differentiating gives a factor $-3$, so we divide by $-3$'
-          why: 'By the chain rule, $\frac{d}{dx}e^{-3x} = -3e^{-3x}$. To undo the factor $-3$, the antiderivative needs the factor $-\tfrac{1}{3}$ in front of $e^{-3x}$.'
         exemplars:
           - problem: 'Evaluate $\int_0^{\infty} e^{-2x}\,dx$.'
             answer: '1/2'
@@ -2048,16 +1738,6 @@ topics:
       - id: kp3
         name: Doubly infinite intervals and divergence by oscillation
         key_prerequisites: [definite-integrals-ftc, limits-at-infinity-rational]
-        step_check:
-          step: 'Split at zero'
-          question: 'Why must each half of the doubly infinite integral converge on its own?'
-          options:
-            - 'Because the integrand is only defined on one side of zero'
-            - 'Because the integral converges only if both halves have finite limits'
-            - 'Because the two limits $a \to -\infty$ and $b \to \infty$ must be equal'
-            - 'Because the point $0$ is always where the antiderivative changes sign'
-          answer: 'Because the integral converges only if both halves have finite limits'
-          why: 'The integral is defined as the sum of two limits. If either limit is infinite or does not exist, the sum has no meaning, so both halves must converge.'
         exemplars:
           - problem: 'Evaluate $\int_{-\infty}^{\infty} \frac{dx}{1 + x^2}$.'
             answer: 'pi'
@@ -2124,16 +1804,6 @@ topics:
       - id: kp1
         name: 'Vertical asymptote at an endpoint'
         key_prerequisites: [definite-integrals-ftc, one-sided-limits]
-        step_check:
-          step: 'since the trouble is at the lower endpoint'
-          question: 'Why is it the lower limit $0$, and not the upper limit $1$, that is replaced by $a$?'
-          options:
-            - 'An improper integral always replaces its lower limit by a variable'
-            - 'The integrand is undefined at $x=0$, the lower limit'
-            - 'The antiderivative $x^{2/3}$ is not defined at the upper limit $1$'
-            - 'Replacing the lower limit gives a simpler antiderivative to find'
-          answer: 'The integrand is undefined at $x=0$, the lower limit'
-          why: 'The integrand $x^{-1/3}$ is undefined at $0$, so the integral is defined by a limit as $a\to0^+$; at the upper limit $1$ everything is finite.'
         try_first:
           problem: 'Evaluate $\int_0^1 \frac{dx}{x^{4/5}}$.'
           answer_contract: {"kind":"exact"}
@@ -2176,16 +1846,6 @@ topics:
       - id: kp2
         name: 'Asymptotes at the upper endpoint'
         key_prerequisites: [definite-integrals-ftc, one-sided-limits]
-        step_check:
-          step: 'the integrand is undefined at $x=4$'
-          question: 'Why is the limit taken as $t\to4^-$ rather than $t\to4^+$?'
-          options:
-            - 'The limit from the right would give a negative value'
-            - 'Limits are always taken from the left in improper integrals'
-            - 'Only values $t<4$ lie inside the interval $[0,4]$'
-            - 'The antiderivative is only defined for $t>4$'
-          answer: 'Only values $t<4$ lie inside the interval $[0,4]$'
-          why: 'The integral runs over $[0,4]$, so $t$ must approach $4$ from inside the interval, that is from the left.'
         exemplars:
           - problem: 'Evaluate $\int_0^1 \frac{dx}{\sqrt{1-x}}$.'
             answer: '2'
@@ -2223,16 +1883,6 @@ topics:
       - id: kp3
         name: 'Interior discontinuities (split the integral)'
         key_prerequisites: [definite-integrals-ftc, one-sided-limits]
-        step_check:
-          step: 'so the FTC cannot be used on $[0,4]$ directly'
-          question: 'Why can the Fundamental Theorem of Calculus not be applied on $[0,4]$ directly?'
-          options:
-            - 'The integrand is undefined at $x=2$, inside the interval'
-            - 'The antiderivative $3(x-2)^{1/3}$ is not a polynomial function'
-            - 'The interval $[0,4]$ is too long for the theorem to hold true'
-            - 'The integrand takes negative values on part of the interval'
-          answer: 'The integrand is undefined at $x=2$, inside the interval'
-          why: 'The theorem needs a continuous integrand on the whole interval; with a break at $x=2$ the shortcut gives wrong values, for example a negative area for a positive function.'
         exemplars:
           - problem: 'Evaluate $\int_{-1}^{8} \frac{dx}{x^{2/3}}$.'
             answer: '9'
@@ -2297,16 +1947,6 @@ topics:
       - id: kp1
         name: 'The p-test at infinity and at zero'
         key_prerequisites: [improper-integrals-infinite-limits, improper-integrals-discontinuous]
-        step_check:
-          step: 'the term $x^{1-p}$ tends to $0$ exactly when $1-p<0$'
-          question: 'Why does $x^{1-p}$ tend to $0$ as $x\to\infty$ only when $1-p<0$?'
-          options:
-            - 'A negative power of $x$ shrinks as $x$ grows large'
-            - 'A positive power of $x$ shrinks as $x$ grows large'
-            - 'Every power of $x$ tends to $0$ when $x$ gets large'
-            - 'The exponent $1-p$ must be an integer for the limit to exist'
-          answer: 'A negative power of $x$ shrinks as $x$ grows large'
-          why: 'For $x>1$ the power $x^{k}$ with $k<0$ equals $1/x^{|k|}$, which tends to $0$; with $k>0$ it grows without bound.'
         exemplars:
           - problem: 'For which values of $p$ does $\int_1^{\infty} \frac{dx}{x^p}$ converge?'
             answer: 'p > 1'
@@ -2348,16 +1988,6 @@ topics:
       - id: kp2
         name: 'Substitution and partial fractions in improper integrals'
         key_prerequisites: [integration-substitution, partial-fractions-linear-factors]
-        step_check:
-          step: 'since $\frac{b}{b+2}\to 1$ as $b\to\infty$'
-          question: 'Why does $\tfrac12\ln\frac{b}{b+2}$ tend to $0$ as $b\to\infty$?'
-          options:
-            - 'The factor $\tfrac12$ is small, so the whole expression becomes small'
-            - 'The logarithm of a large quantity is always close to $0$'
-            - 'The fraction inside tends to $1$, and the logarithm of $1$ is $0$'
-            - 'The numerator $b$ is smaller than the denominator $b+2$'
-          answer: 'The fraction inside tends to $1$, and the logarithm of $1$ is $0$'
-          why: 'As $b$ grows, $\frac{b}{b+2}$ gets as close to $1$ as we like, and $\ln$ is continuous with $\ln1=0$.'
         exemplars:
           - problem: 'Evaluate $\int_0^{\infty} x e^{-x^2}\,dx$.'
             answer: '1/2'
@@ -2395,16 +2025,6 @@ topics:
       - id: kp3
         name: 'The direct comparison test'
         key_prerequisites: [improper-integrals-infinite-limits]
-        step_check:
-          step: 'taking reciprocals'
-          question: 'Why does taking reciprocals turn $x^4+2\ge x^4$ into $\frac{1}{x^4+2}\le\frac{1}{x^4}$?'
-          options:
-            - 'Taking reciprocals never changes the direction of an inequality'
-            - 'A larger positive denominator gives a smaller fraction'
-            - 'The $2$ is dropped, which makes the fraction itself smaller'
-            - 'Squaring both sides turns the inequality around'
-          answer: 'A larger positive denominator gives a smaller fraction'
-          why: 'For positive numbers, a larger denominator means a smaller fraction, so the order of the two sides reverses.'
         exemplars:
           - problem: 'Does $\int_1^{\infty} \frac{dx}{x^3+4}$ converge or diverge?'
             answer: 'converges'
@@ -2478,16 +2098,6 @@ topics:
       - id: kp1
         name: 'Recognizing the right technique'
         key_prerequisites: [integration-by-parts, partial-fractions-integration, trigonometric-substitution]
-        step_check:
-          step: 'the derivative of the inside function $x^3$ is $3x^2$, which is present up to the constant $3$'
-          question: 'Why does the factor $x^2$ in $\int x^2e^{x^3}\,dx$ point to substitution?'
-          options:
-            - 'A power of $x$ times an exponential always needs parts'
-            - 'The exponent $x^3$ is too complicated for any other technique'
-            - 'The integrand is a rational function with a factored denominator'
-            - 'It is a multiple of the derivative of the inside function $x^3$'
-          answer: 'It is a multiple of the derivative of the inside function $x^3$'
-          why: 'Since $\frac{d}{dx}x^3=3x^2$, substituting $u=x^3$ turns $x^2\,dx$ into $\frac13\,du$ and the integral becomes $\frac13\int e^u\,du$.'
         exemplars:
           - problem: 'Evaluate $\int x e^{x^2}\,dx$.'
             answer: 'e^(x^2)/2'
@@ -2541,16 +2151,6 @@ topics:
       - id: kp2
         name: 'Substitution before another technique'
         key_prerequisites: [integration-by-parts, trigonometric-substitution]
-        step_check:
-          step: 'what remains is a product'
-          question: 'Why is integration by parts the right second step after substituting $t=\sqrt{x}$?'
-          options:
-            - 'The integral now holds a trigonometric function, which always needs parts'
-            - 'A product $t\cos t$ remains, and no further substitution fits it'
-            - 'Parts is the only technique that can remove a square root'
-            - 'The substitution made the integrand longer, so parts must undo it'
-          answer: 'A product $t\cos t$ remains, and no further substitution fits it'
-          why: 'The factor $t$ is not the derivative of anything inside $\cos t$, so parts, which differentiates $t$ away, is the way to finish.'
         exemplars:
           - problem: 'Evaluate $\int e^{\sqrt{x}}\,dx$.'
             answer: '2*(sqrt(x) - 1)*e^(sqrt(x))'
@@ -2588,16 +2188,6 @@ topics:
       - id: kp3
         name: 'Combining parts with other techniques'
         key_prerequisites: [integration-by-parts, partial-fractions-integration]
-        step_check:
-          step: 'the fraction is improper'
-          question: 'Why must $\frac{2x^2}{x^2+4}$ be rewritten before it is integrated?'
-          options:
-            - 'Top and bottom have the same degree, so no direct rule fits'
-            - 'Its denominator is irreducible, so only a substitution can follow'
-            - 'A fraction with $x^2$ on top always calls for another round of parts'
-            - 'The constant $2$ in the numerator must be moved out of the integral'
-          answer: 'Top and bottom have the same degree, so no direct rule fits'
-          why: 'Dividing gives $\frac{2x^2}{x^2+4}=2-\frac{8}{x^2+4}$, a constant plus an arctangent pattern, and both pieces are easy to integrate.'
         exemplars:
           - problem: 'Evaluate $\int \ln(x^2+1)\,dx$.'
             answer: 'x*ln(x^2+1) - 2*x + 2*atan(x)'

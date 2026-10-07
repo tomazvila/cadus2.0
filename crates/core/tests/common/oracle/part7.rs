@@ -245,7 +245,7 @@ fn either_side(pair: &Pair, rule: fn(&str) -> bool) -> bool {
 type RefusalRule = (fn(&Pair) -> bool, &'static str);
 
 /// The refusal rules of 1.0, each with the reason it names, in order.
-fn refusal_rules() -> [RefusalRule; 8] {
+fn refusal_rules() -> [RefusalRule; 9] {
     [
         (
             |pair| either_side(pair, nineteen_zero_reads_a_power_tower),
@@ -272,6 +272,10 @@ fn refusal_rules() -> [RefusalRule; 8] {
             "the 1.0 namespace reads a bare `e` as a free symbol (spec 3.1)",
         ),
         (
+            a_glued_list_of_wholes,
+            "2.0 reads a glued group of three digits as a list item (courses rewrite 2026-10-07)",
+        ),
+        (
             a_spaced_times_x,
             "2.0 reads a spaced `x` as the times sign (review 1, finding 18)",
         ),
@@ -290,6 +294,19 @@ pub const FUNCTION_NAMES: [&str; 17] = [
     "sqrt", "sin", "cos", "tan", "sec", "csc", "cot", "asin", "acos", "atan", "sinh", "cosh",
     "tanh", "exp", "ln", "log", "abs",
 ];
+
+/// Whether the learner writes the key's list of whole numbers with no space after
+/// the commas.
+///
+/// The key `153, 315, 351` is three whole numbers. 2.0 reads the learner text
+/// `153,315,351` as that list, because the list then has the key's count. 1.0 reads
+/// the same text as the one number 153315351 and marks it wrong. The pair is a
+/// documented divergence where 2.0 is right.
+pub fn a_glued_list_of_wholes(pair: &Pair) -> bool {
+    pair.expected.contains(", ")
+        && !pair.learner.contains(", ")
+        && cadus_core::answer::whole_number_list(&pair.expected, &pair.learner).is_some()
+}
 
 /// Whether one side writes a times sign as the spaced letter `x` (or `X`).
 ///

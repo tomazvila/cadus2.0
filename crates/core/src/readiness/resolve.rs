@@ -189,11 +189,9 @@ fn one_readiness<C: ContentIndex + ?Sized>(facts: &KpFacts, content: &C) -> Read
         hints: content.has_approved(&facts.kp_key, KIND_HINT_LADDER),
         solutions: facts.solutions,
         prerequisites_ok: true,
-        visual_needed: facts.visual_needed,
         // Unit f9 gives the renderer, so an authored visual that passes
         // `VisualSpec::validate` is a present visual. A visual the check refuses
         // counts as absent, and the knowledge point stays blocked.
-        visual_present: facts.valid_visuals > 0,
         broken_visuals: facts.broken_visuals,
         decidable_exemplars: facts.decidable.len(),
         authored_exemplars: facts.authored,

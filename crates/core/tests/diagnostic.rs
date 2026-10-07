@@ -62,6 +62,7 @@ fn with_exemplar(mut topic: Topic) -> Topic {
         problem: format!("probe {}", topic.id.as_str()),
         answer: "7".to_owned(),
         solution_sketch: None,
+        visual: None,
     });
     topic
 }

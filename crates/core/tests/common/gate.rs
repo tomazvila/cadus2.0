@@ -79,6 +79,7 @@ pub fn exemplars(answers: &[&str]) -> Vec<Exemplar> {
             problem: "Compute $7^2$.".to_string(),
             answer: (*answer).to_string(),
             solution_sketch: None,
+            visual: None,
         })
         .collect()
 }

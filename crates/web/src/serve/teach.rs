@@ -1,6 +1,6 @@
 //! `POST /api/task/{task_id}/teach`: approved preparation for lessons and integrated application.
 
-use super::choices::{label_choices, shuffled};
+use super::choices::label_choices;
 use super::*;
 
 /// The authored teach page of a lesson's current knowledge point (`api.py:1064-1103`).
@@ -55,42 +55,26 @@ pub async fn teach(
             "steps": page.worked_example.steps,
         },
     });
-    // The active-example blocks (step 5a). Each carries what the learner needs
-    // to act and nothing that grades the act: `answer`, `why` and `reveal` stay
-    // on the server until the check route (Hard Rule 1).
-    if let Some(point) = lesson.point(graph) {
-        if let Some(check) = &point.step_check {
-            match check.step.resolve(&page.worked_example.steps) {
-                Some(index) => {
-                    reply["step_check"] = json!({
-                        "step": index + 1,
-                        "question": check.question,
-                        "options": shuffled(&check.options, &format!("{task_id}/{}", lesson.key)),
-                    });
-                }
-                None => tracing::warn!(
-                    key = %lesson.key,
-                    "step_check names a step the approved teach page does not have; served without it"
-                ),
-            }
+    // The try-first block carries what the learner needs to act and nothing
+    // that grades the act: `answer` and `reveal` stay on the server until the
+    // check route (Hard Rule 1).
+    if let Some(point) = lesson.point(graph)
+        && let Some(first) = &point.try_first
+    {
+        let mut block = json!({"problem": first.problem});
+        if let Some(choices) = label_choices(Some(&first.answer_contract), &task_id) {
+            block["choices"] = json!(choices);
         }
-        if let Some(first) = &point.try_first {
-            let mut block = json!({"problem": first.problem});
-            if let Some(choices) = label_choices(Some(&first.answer_contract), &task_id) {
-                block["choices"] = json!(choices);
-            }
-            reply["try_first"] = block;
-        }
+        reply["try_first"] = block;
     }
     Ok(Json(reply))
 }
 
 /// `POST /api/task/{task_id}/teach/check`: grade one active-example act.
 ///
-/// The body is `{"part": "step_check", "choice": "..."}` or
-/// `{"part": "try_first", "answer": "..."}`. The reply carries the verdict and
-/// the material the teach payload withheld: the correct option and `why`, or
-/// the authored answer and `reveal`.
+/// The body is `{"part": "try_first", "answer": "..."}`. The reply carries the
+/// verdict and the material the teach payload withheld: the authored answer
+/// and `reveal`. Any other `part` is refused; `step_check` is `400`.
 ///
 /// The route writes nothing: no event, no D-S6 row, no XP. The acts are
 /// formative, so the fold, the lesson pass rule, and the schedule never see
@@ -104,10 +88,7 @@ pub async fn teach_check(
     let graph = &content.curriculum;
 
     let Open {
-        mut tx,
-        scratch,
-        plan,
-        ..
+        tx, scratch, plan, ..
     } = open(&state, content, user_id, now, false).await?;
     let task = find(&plan, &task_id)?;
     let (TaskType::Lesson, Some(topic)) = (task.task_type, task.topic.clone()) else {
@@ -116,24 +97,6 @@ pub async fn teach_check(
     let lesson = lesson_point(&scratch, task, graph, &topic, &task_id)?;
     let point = lesson.point(graph).ok_or_else(no_active_example)?;
     let reply = match act {
-        TeachAct::StepCheck(choice) => {
-            let check = point.step_check.as_ref().ok_or_else(no_active_example)?;
-            // The step must still resolve on the page the learner was shown.
-            let page = teach_page(&state, content, &mut tx, &lesson.key).await?;
-            check
-                .step
-                .resolve(&page.worked_example.steps)
-                .ok_or_else(no_active_example)?;
-            if !check.offers(&choice) {
-                return Err(invalid_act("choice is not one of the step_check options."));
-            }
-            json!({
-                "part": "step_check",
-                "correct": check.is_correct(&choice),
-                "answer": check.answer,
-                "why": check.why,
-            })
-        }
         TeachAct::TryFirst(answer) => {
             let first = point.try_first.as_ref().ok_or_else(no_active_example)?;
             let expected = cadus_core::pool::PoolAnswer {
@@ -226,8 +189,6 @@ async fn teach_page(
 
 /// One learner act on an active example.
 enum TeachAct {
-    /// The option the learner picked.
-    StepCheck(String),
     /// The learner's attempt at the try-first problem.
     TryFirst(String),
 }
@@ -243,15 +204,16 @@ fn teach_act(body: Option<&Value>) -> Result<TeachAct, ApiError> {
         .and_then(|value| value.get("part"))
         .and_then(Value::as_str)
     {
-        Some("step_check") => text("choice")
-            .filter(|choice| !choice.trim().is_empty())
-            .map(TeachAct::StepCheck)
-            .ok_or_else(|| invalid_act("step_check requires a choice.")),
+        Some("step_check") => Err(ApiError::new(
+            StatusCode::BAD_REQUEST,
+            INVALID_REQUEST,
+            "Lessons no longer have step questions; part must be try_first.",
+        )),
         Some("try_first") => text("answer")
             .filter(|answer| answer.chars().count() <= cadus_core::answer::MAX_ANSWER_CHARS)
             .map(TeachAct::TryFirst)
             .ok_or_else(|| invalid_act("try_first requires an answer.")),
-        _ => Err(invalid_act("part must be step_check or try_first.")),
+        _ => Err(invalid_act("part must be try_first.")),
     }
 }
 

@@ -392,6 +392,7 @@ mod tests {
             problem: "Compute $7^2$.".to_owned(),
             answer: "49".to_owned(),
             solution_sketch: None,
+            visual: None,
         }];
         ExemplarSource::new(KP, &exemplars)
             .fill(KP, 1, 0)

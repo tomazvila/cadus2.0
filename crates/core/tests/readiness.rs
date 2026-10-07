@@ -12,7 +12,7 @@ use cadus_core::curriculum::{Curriculum, Exemplar, KnowledgePoint};
 use cadus_core::instruction::{KIND_HINT_LADDER, KIND_TEACH};
 use cadus_core::readiness::{
     Blocker, ContentIndex, EmptyContent, KIND_TEMPLATE, MapContent, ReadinessGate, ReadinessIndex,
-    ReadinessReport, visual_needed,
+    ReadinessReport,
 };
 
 use common::{graph, knowledge_point, plain_topic};
@@ -24,6 +24,7 @@ fn exemplar(problem: &str, answer: &str, sketch: bool) -> Exemplar {
         problem: problem.to_owned(),
         answer: answer.to_owned(),
         solution_sketch: sketch.then(|| format!("work {problem}")),
+        visual: None,
     }
 }
 
@@ -217,19 +218,6 @@ fn a_prerequisite_with_no_practicable_point_blocks_its_dependents() {
 }
 
 #[test]
-fn the_visual_heuristic_reads_the_topic_text() {
-    let index = ReadinessIndex::build(&tree());
-    let set = index.resolve(&stocked(3));
-    let graphing = set.get("bar-graph/kp1").expect("the fixture names it");
-    assert!(graphing.visual_needed && !graphing.visual_present);
-    assert!(graphing.blockers().contains(&Blocker::Visual));
-    let add = set.get("add/kp1").expect("the fixture names it");
-    assert!(!add.visual_needed);
-    assert!(!add.blockers().contains(&Blocker::Visual));
-    assert!(visual_needed("bar-graph"));
-}
-
-#[test]
 fn the_gate_answers_the_selector_and_ignores_a_key_it_does_not_hold() {
     let index = ReadinessIndex::build(&tree());
     let set = index.resolve(&stocked(0));
@@ -265,7 +253,6 @@ fn the_report_counts_the_course_the_topics_and_the_blockers() {
     let histogram = report.histogram();
     assert_eq!(histogram.get(&Blocker::Practicable), Some(&3));
     assert_eq!(histogram.get(&Blocker::Assessable), Some(&2));
-    assert_eq!(histogram.get(&Blocker::Visual), Some(&1));
     assert_eq!(histogram.get(&Blocker::Teachable), None);
     let topic = course
         .topic_reports
@@ -311,6 +298,7 @@ fn none_exemplar(problem: &str, answer: &str) -> Exemplar {
         problem: problem.to_owned(),
         answer: answer.to_owned(),
         solution_sketch: Some(format!("the worked solution of {problem}")),
+        visual: None,
     }
 }
 

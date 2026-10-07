@@ -31,15 +31,6 @@ topics:
       - id: kp1
         name: The data and the typing discipline
         key_prerequisites: [category-definition]
-        step_check:
-          step: 'the codomain of $Ff$ is $\mathcal{P}(B)$ and the domain of $Fg$ is $\mathcal{P}(B)$'
-          question: 'Why is the composite $Fg\circ Ff$ defined?'
-          options:
-            - '$Ff$ and $Fg$ are both functions between power sets, so any two of them can be composed'
-            - '$Ff$ ends in the set where $Fg$ starts, because $f$ ends at $B$ and $g$ starts at $B$'
-            - '$F$ preserves composition, so $Fg\circ Ff$ is defined for every pair of morphisms'
-          answer: '$Ff$ ends in the set where $Fg$ starts, because $f$ ends at $B$ and $g$ starts at $B$'
-          why: 'The typing rule gives $Ff\colon FA\to FB$ and $Fg\colon FB\to FC$, so the middle object $FB$ is shared and the composite exists.'
         constraints: 'Categories are given in text: posets as an order relation, small categories as a list of morphisms. Items ask for the typing of Ff, counts of possible maps, or whether a functor exists.'
         exemplars:
           - problem: 'Let $\mathbf{C}$ be the poset $0<1<2$ viewed as a category, with one morphism $a\to b$ when $a\le b$. Let $\mathbf{D}$ be the set $\{1,2,\dots,12\}$ ordered by divisibility, with one morphism $m\to n$ when $m$ divides $n$. A functor $F\colon\mathbf{C}\to\mathbf{D}$ has $F(0)=2$, $F(1)=4$ and $F(2)=12$. What are the domain and codomain of $F(f)$ for the morphism $f\colon 1\to 2$?'
@@ -86,15 +77,6 @@ topics:
           answer_contract: {"kind": "exact"}
           answer: '1'
           reveal: 'The morphism $8$ is $4$ followed by $4$, so the composition law gives $F(8)=F(4)+F(4)=5+5=10$, which is $1$ modulo $9$. The functor must turn composition in the source into composition in the target.'
-        step_check:
-          step: 'The two sides agree on every list (and both send $[\,]$ to $[\,]$), so $F(g\circ f)=Fg\circ Ff$'
-          question: 'Why does agreement on every list show that $F(g\circ f)$ and $Fg\circ Ff$ are equal?'
-          options:
-            - 'Both sides are built from the same letters, so they are equal by definition of a functor'
-            - 'A check on one typical list is enough, because every other list behaves in the same way'
-            - 'Two functions with one domain and codomain are equal when they agree at every input'
-          answer: 'Two functions with one domain and codomain are equal when they agree at every input'
-          why: 'Both $F(g\circ f)$ and $Fg\circ Ff$ are functions from $A^{*}$ to $C^{*}$, and a function is determined by its values at all inputs.'
         constraints: 'Functors are given by explicit tables or rules on small finite sets or on one-object categories. Items compute images from the two laws, spot a law that fails, or give a verdict about a proposed rule. Preserve exactly one full-proof exemplar.'
         exemplars:
           - problem: 'A category has objects $A$, $B$, $C$ and morphisms $f\colon A\to B$, $g\colon B\to C$ and $h\colon A\to C$, together with the identities, and $h=g\circ f$. A functor $F$ to $\mathbf{Set}$ has $F(A)=\{1,2\}$, $F(B)=\{3,4\}$, $F(C)=\{5,6\}$, with $F(f)$ sending $1$ to $3$ and $2$ to $4$, and $F(g)$ sending $3$ to $5$ and $4$ to $6$. What is $F(h)(1)$?'
@@ -140,15 +122,6 @@ topics:
       - id: kp3
         name: Recognizing assignments that are not functors
         key_prerequisites: [examples-of-categories, abelian-groups]
-        step_check:
-          step: 'Compare with the required identity: $\mathrm{id}_{F(A)}(1,2)=(1,2)$, and $(2,1)\neq(1,2)$ in $A\times A$'
-          question: 'Why is one explicit pair enough to show that $F$ is not a functor?'
-          options:
-            - 'A law must hold for every morphism and element, so a single failure breaks the law'
-            - 'A functor must send every pair to itself, so any swap of coordinates is forbidden'
-            - 'The identity law is the only law of a functor, so one failed check settles the matter'
-          answer: 'A law must hold for every morphism and element, so a single failure breaks the law'
-          why: 'Each functor law is a statement about all morphisms, so one morphism where it fails is a complete counterexample.'
         constraints: 'Proposed assignments are given by explicit rules on small categories, one-object categories or groups. Items locate the failing step, compute the value a law forces, or classify which laws fail. Preserve exactly one full-proof exemplar.'
         exemplars:
           - problem: 'Sam claims that the preimage assignment is a functor from $\mathbf{Set}$ to $\mathbf{Set}$. Step 1: send each set $A$ to its power set $\mathcal{P}(A)$. Step 2: send each function $f\colon A\to B$ to the preimage map, which takes a subset of $B$ to its preimage, a subset of $A$. Step 3: this gives a map from $\mathcal{P}(A)$ to $\mathcal{P}(B)$, as a functor requires. Step 4: identities and composites are preserved. Which step is the first that is not valid, and why?'
@@ -231,15 +204,6 @@ topics:
           answer_contract: {"kind": "exact"}
           answer: '2'
           reveal: 'The morphism $4$ is $1$ composed with itself four times, so $F(4)=4\cdot F(1)=12$, which is $2$ modulo $10$. In a one-object category the value on a generator decides the whole functor.'
-        step_check:
-          step: 'Writing $e_P$ and $e_Q$ for the monoid units, this reads $F(e_P) = e_Q$'
-          question: 'Why must a functor $BP\to BQ$ send the unit $e_P$ to the unit $e_Q$?'
-          options:
-            - 'The identity law says a functor sends each identity morphism to an identity morphism'
-            - 'The composition law already forces it, because $e_P e_P=e_P$ makes $F(e_P)$ the unit'
-            - 'Any function between two monoids sends the unit of the first to the unit of the second'
-          answer: 'The identity law says a functor sends each identity morphism to an identity morphism'
-          why: 'In $BP$ the identity morphism of the single object is $e_P$, and the identity law requires its image to be the identity morphism $e_Q$ of $BQ$.'
         constraints: 'Functors between one-object categories whose arrows form a small cyclic group or monoid. Items compute images from the two laws, count the functors, or decide whether a given map is a functor. Preserve exactly one full-proof exemplar.'
         exemplars:
           - problem: 'A functor $F\colon B(\mathbb{Z}/3)\to B(\mathbb{Z}/6)$ between one-object categories, in which composition is addition modulo the stated number, sends the morphism $1$ to the morphism $2$. What does $F$ send the morphism $2$ to?'
@@ -285,15 +249,6 @@ topics:
       - id: kp2
         name: Functoriality of parametrized constructions
         key_prerequisites: [function-composition-inverse]
-        step_check:
-          step: 'Since this holds for every element, $A\times 1_X=1_{A\times X}$'
-          question: 'Why does checking an arbitrary pair $(a,x)$ prove that $A\times 1_X$ equals $1_{A\times X}$?'
-          options:
-            - 'A product of two identities is an identity, by the definition of the product of sets'
-            - 'The pair $(a,x)$ is fixed by $1_X$, and a function with one fixed point is the identity'
-            - 'Two functions on the same set are equal when they give the same value at every element'
-          answer: 'Two functions on the same set are equal when they give the same value at every element'
-          why: 'Because $(a,x)$ was arbitrary, $A\times 1_X$ and $1_{A\times X}$ agree at every element of $A\times X$, so they are the same function.'
         constraints: 'Constructions are given by an explicit rule on objects and on functions between small finite sets. Items compute with the arrow part, count, or decide whether a proposed rule is a functor. Preserve exactly one full-proof exemplar.'
         exemplars:
           - problem: 'Fix $A=\{0,1\}$ and let $F(X)=A\times X$ and $F(f)(a,x)=(a,f(x))$ for a function $f\colon X\to Y$. Let $f\colon\{1,2,3\}\to\{4,5\}$ have $f(1)=4$, $f(2)=5$, $f(3)=4$, and let $g\colon\{4,5\}\to\{6,7\}$ have $g(4)=7$, $g(5)=6$. What is $F(g\circ f)(1,3)$?'
@@ -335,15 +290,6 @@ topics:
       - id: kp3
         name: Functors preserve isomorphisms and commuting diagrams
         key_prerequisites: [functor-definition-laws]
-        step_check:
-          step: 'By the composition law $F(g\circ f)=Fg\circ Ff$, and by the identity law $F(1_A)=1_{FA}$'
-          question: 'Why does applying $F$ to the equation $g\circ f=1_A$ give $Fg\circ Ff=1_{FA}$?'
-          options:
-            - '$F$ is injective on morphisms, so the two sides of the equation stay equal'
-            - '$F$ turns a composite into a composite of images and an identity into an identity'
-            - '$F$ sends the inverse $g$ of $f$ to the inverse of $Ff$ by the definition of a functor'
-          answer: '$F$ turns a composite into a composite of images and an identity into an identity'
-          why: 'The composition law rewrites $F(g\circ f)$ as $Fg\circ Ff$, and the identity law rewrites $F(1_A)$ as $1_{FA}$; no injectivity is used.'
         constraints: 'Isomorphisms and commuting diagrams are given fully in text with explicit images on small categories, one-object categories and sets. Items compute what the two laws force, count functors, or decide a verdict with the deciding fact. Preserve exactly one full-proof exemplar.'
         exemplars:
           - problem: 'In $B(\mathbb{Z}/7)$ composition is addition modulo $7$, so the morphism $4$ is the inverse of the morphism $3$. A functor $F\colon B(\mathbb{Z}/7)\to B(\mathbb{Z}/7)$ sends $3$ to $2$. What does $F$ send $4$ to?'
@@ -425,15 +371,6 @@ topics:
       - id: kp1
         name: Composites and identity functors
         key_prerequisites: [functors]
-        step_check:
-          step: 'where the second equality uses the identity law for $P$ and the third uses the identity law for $Q$'
-          question: 'Why do both identity laws appear in the chain $(QP)(1_A)=Q(P1_A)=Q(1_{PA})=1_{Q(PA)}$?'
-          options:
-            - '$Q$ is applied twice in the chain, so the identity law of $Q$ is used twice in a row'
-            - 'The identity laws of $P$ and $Q$ are the same law, so one of them could replace the other'
-            - '$P$ turns $1_A$ into an identity, and $Q$ turns that identity into an identity again'
-          answer: '$P$ turns $1_A$ into an identity, and $Q$ turns that identity into an identity again'
-          why: 'The first law handles the inner functor $P$ and the second handles the outer functor $Q$, so each functor is used once.'
         constraints: 'Functors between small posets and one-object categories, given by explicit tables of images. Items compute composites and identity functors on objects and morphisms, count functors, or decide whether a composite is an identity functor. Preserve exactly one full-proof exemplar.'
         exemplars:
           - problem: 'Let $P$ be the poset $0<1<2$ viewed as a category. Functors $F\colon P\to P$ and $G\colon P\to P$ are given by $F(0)=1$, $F(1)=2$, $F(2)=2$ and $G(0)=0$, $G(1)=1$, $G(2)=1$. What is $(G\circ F)(0)$?'
@@ -479,15 +416,6 @@ topics:
       - id: kp2
         name: The category Cat and isomorphisms of categories
         key_prerequisites: [category-definition]
-        step_check:
-          step: 'equality on the nose, not just a natural isomorphism'
-          question: 'Why must $RS$ equal $1_{\mathcal{A}}$ exactly, rather than only up to a natural isomorphism, for $S$ to be an isomorphism in $\mathbf{Cat}$?'
-          options:
-            - 'Natural isomorphism is only defined for functors between categories that have finite sets of objects'
-            - 'The identities of $\mathbf{Cat}$ are the identity functors, so inverse composites must equal them'
-            - 'Equality is easier to check than a natural isomorphism, so mathematicians choose it by convention'
-          answer: 'The identities of $\mathbf{Cat}$ are the identity functors, so inverse composites must equal them'
-          why: 'In $\mathbf{Cat}$ the morphisms are functors, so an inverse must compose to the identity morphism of $\mathbf{Cat}$, which is the identity functor.'
         constraints: 'Small categories are given in text: discrete and indiscrete categories on a few objects, one-object categories, and posets. Items compute inverse functors, count functors or isomorphisms, or decide whether a functor is an isomorphism of categories. Preserve exactly one full-proof exemplar.'
         exemplars:
           - problem: 'Let $\mathbf{C}$ and $\mathbf{D}$ be the indiscrete categories on the objects $0,1,2$, with exactly one morphism between any two objects. The functor $F\colon\mathbf{C}\to\mathbf{D}$ sends the objects $0,1,2$ to $1,2,0$. It is an isomorphism of categories. What does its inverse functor $G\colon\mathbf{D}\to\mathbf{C}$ send the object $0$ to?'
@@ -533,15 +461,6 @@ topics:
       - id: kp3
         name: Endofunctors and their iterates
         key_prerequisites: [composition-associativity-identity]
-        step_check:
-          step: 'since $L$ is an endofunctor, so is $L^2$'
-          question: 'Why is $L^2=L\circ L$ again an endofunctor?'
-          options:
-            - 'A composite of two functors is a functor, and $L^2$ is $L$ composed with $L$'
-            - '$L^2$ has the same object part as $L$, so it inherits the two laws from $L$ unchanged'
-            - 'Applying $L$ twice doubles every list, and doubling keeps both laws true'
-          answer: 'A composite of two functors is a functor, and $L^2$ is $L$ composed with $L$'
-          why: 'The composite of functors preserves identities and composition, because each law passes through the inner functor and then the outer one.'
         constraints: 'Endofunctors of Set, of small posets and of one-object categories are given by explicit rules. Items compute iterates on elements and sizes, solve for the exponent or the starting size, or decide whether two composites agree. Preserve exactly one full-proof exemplar.'
         exemplars:
           - problem: 'Let $T$ be an endofunctor of a category $\mathbf{C}$, with $T^0$ the identity functor and $T^{j+1}=T\circ T^j$. The composite $T^3\circ T^0\circ T^5$ equals $T^k$ for exactly one exponent $k$. What is $k$?'
@@ -628,15 +547,6 @@ topics:
       - id: kp1
         name: Forgetful functors
         key_prerequisites: [functors]
-        step_check:
-          step: 'Applying $U$ just returns that function, and composing the underlying maps gives $(Ug\circ Uf)(\ell)=g(f(\ell))$ as well'
-          question: 'Why does $U(g\circ f)$ equal $Ug\circ Uf$ for this forgetful functor?'
-          options:
-            - '$U$ keeps the monoid structure of the composite, so the two sides are isomorphic monoids with one product'
-            - '$U$ changes no function, so both sides are the same function sending $\ell$ to $g(f(\ell))$'
-            - '$U$ is a bijection on homomorphisms, so it preserves every equation between composites'
-          answer: '$U$ changes no function, so both sides are the same function sending $\ell$ to $g(f(\ell))$'
-          why: 'The morphism part of $U$ is the identity on underlying functions, so $U$ of a composite is that composite function, which is also $Ug\circ Uf$.'
         constraints: 'Forgetful functors are described on small concrete objects: cyclic groups, residue monoids, small topological spaces, chains and word monoids. Items compute the underlying function of a morphism or composite, count which functions lift, or decide a verdict. Preserve exactly one full-proof exemplar.'
         exemplars:
           - problem: 'Let $U\colon\mathbf{Grp}\to\mathbf{Set}$ be the forgetful functor, and let $f\colon\mathbb{Z}/3\to\mathbb{Z}/6$ be the group homomorphism with $f(1)=2$. What is $U(f)(2)$?'
@@ -686,15 +596,6 @@ topics:
       - id: kp2
         name: Free functors
         key_prerequisites: [monoids]
-        step_check:
-          step: 'The map $1_X^*$ applies $1_X$ letterwise, so $1_X^*(w)=w=1_{X^*}(w)$'
-          question: 'Why does applying $1_X$ letterwise leave every word $w$ unchanged?'
-          options:
-            - 'The identity function sends each letter to itself, so every letter of $w$ stays as it was'
-            - 'The empty word is the unit, so applying anything to it leaves a word the same as before'
-            - 'Concatenation is associative, so regrouping the letters of $w$ cannot change it in any way'
-          answer: 'The identity function sends each letter to itself, so every letter of $w$ stays as it was'
-          why: 'Letterwise application replaces each letter $x$ by $1_X(x)=x$, so the word is rebuilt from the same letters in the same order.'
         constraints: 'Free functors on small sets: free monoids as words, free pointed sets, and free vector spaces over the rationals. Items compute the induced map on a word or a vector, count preimages or merged terms, or decide whether the induced map is injective. Preserve exactly one full-proof exemplar.'
         exemplars:
           - problem: 'Let $F\colon\mathbf{Set}\to\mathbf{Mon}$ be the free monoid functor, which sends a function $f$ to the homomorphism $F(f)$ that applies $f$ to each letter of a word. Let $f\colon\{a,b,c\}\to\{x,y\}$ have $f(a)=x$, $f(b)=y$, $f(c)=x$. How many times does the letter $x$ occur in the word $F(f)(abcab)$?'
@@ -736,15 +637,6 @@ topics:
       - id: kp3
         name: Constant and diagonal functors
         key_prerequisites: [functors]
-        step_check:
-          step: 'Then $\Delta_A(g\circ f)=1_A$, while $\Delta_A(g)\circ\Delta_A(f)=1_A\circ 1_A=1_A$'
-          question: 'Why is $\Delta_A(g\circ f)$ equal to $1_A$?'
-          options:
-            - 'The composite $g\circ f$ is an identity morphism of $\mathcal{C}$, so its image is an identity'
-            - '$\Delta_A$ sends objects to $A$, and the composition law then forces the identity of $A$'
-            - 'Every morphism of $\mathcal{C}$, even $g\circ f$, is sent to $1_A$ by the definition'
-          answer: 'Every morphism of $\mathcal{C}$, even $g\circ f$, is sent to $1_A$ by the definition'
-          why: 'The constant functor sends every morphism to $1_A$, so the composite $g\circ f$ is sent to $1_A$ just like $f$ and $g$.'
         constraints: 'Constant and diagonal functors on small posets, on the one-object category B(Z/n) and on Set. Items compute images of morphisms, count morphisms or functors, or decide whether a rule is a functor. Preserve exactly one full-proof exemplar.'
         exemplars:
           - problem: 'Let $\mathbf{C}$ be the poset category $0<1<2$, and let $\Delta_X\colon\mathbf{C}\to\mathbf{Set}$ be the constant functor with value the set $X=\{5,6,7\}$. The functor $\Delta_X$ sends the morphism $0\to 2$ to a function from $X$ to $X$. What does this function send $6$ to?'
@@ -823,16 +715,6 @@ topics:
         name: Contravariant = functor on the opposite category
         key_prerequisites: [duality-opposite-categories]
         constraints: 'Require contravariant = functor on the opposite category. Every set, function and category is given in the text; answers are values, counts, sets or verdicts. The last exemplar asks for the written proof.'
-        step_check:
-          step: 'Subgoal: compute $P^{-1}(f)$ on subsets'
-          question: 'Why does $P^{-1}(f)$ send subsets of $Y$ to subsets of $X$, against the direction of $f\colon X\to Y$?'
-          options:
-            - 'Because $f$ is not injective, so the induced map has to go backwards to stay defined'
-            - 'Because every contravariant functor must swap the names of source and target'
-            - 'Because $f^{-1}[T]$ starts from a subset $T$ of $Y$ and collects points of $X$'
-            - 'Because $f^{-1}$ is an inverse function, and inverses always point backwards'
-          answer: 'Because $f^{-1}[T]$ starts from a subset $T$ of $Y$ and collects points of $X$'
-          why: 'The preimage $f^{-1}[T]=\{x\in X: f(x)\in T\}$ is read off from a subset of the target, so it lands in the source; $f$ need not be injective or invertible for this to make sense.'
         try_first:
           problem: 'Let $f\colon\{1,2\}\to\{p,q,r\}$ be given by $f(1)=r$ and $f(2)=p$. A function $\psi\colon\{p,q,r\}\to\{0,1\}$ has $\psi(p)=0$, $\psi(q)=1$, $\psi(r)=1$. Use $\psi$ and $f$ to build a function from $\{1,2\}$ to $\{0,1\}$. What is its value at $1$?'
           answer_contract: {"kind":"exact"}
@@ -883,16 +765,6 @@ topics:
         name: Composing variances
         key_prerequisites: [functors]
         constraints: 'Require composing variances. Functors are given by explicit rules on small categories or concrete sets; answers are verdicts, values or counts. The last exemplar asks for the written proof.'
-        step_check:
-          step: 'Since $F$ is contravariant, $F(h\circ k)=Fk\circ Fh$'
-          question: 'Why does $F(Gg\circ Gf)$ equal $F(Gf)\circ F(Gg)$ rather than $F(Gg)\circ F(Gf)$?'
-          options:
-            - 'Because $G$ is covariant, so it has already swapped $Gg$ and $Gf$ once'
-            - 'Because $F$ is contravariant, so it reverses the order of the composite'
-            - 'Because composition of morphisms becomes commutative once $F$ is applied'
-            - 'Because $F$ sends $Gg$ and $Gf$ to one morphism, so the order is lost'
-          answer: 'Because $F$ is contravariant, so it reverses the order of the composite'
-          why: 'A contravariant functor satisfies $F(h\circ k)=Fk\circ Fh$ for every composable pair; the covariant $G$ has kept the order $Gg\circ Gf$, so $F$ is the only reversal here.'
         exemplars:
           - problem: 'Let $F\colon\mathcal C\to\mathcal D$ be a covariant functor and $G\colon\mathcal D\to\mathcal E$ a contravariant functor. Is the composite $G\circ F$ covariant or contravariant?'
             answer: 'contravariant'
@@ -930,16 +802,6 @@ topics:
         name: Reading off variance in examples
         key_prerequisites: [functors]
         constraints: 'Require reading off variance in examples. Every functor is given by its action on objects and arrows; answers are verdicts, values or sets. The last exemplar asks for the written proof.'
-        step_check:
-          step: 'Subgoal: check the direction on morphisms'
-          question: 'Why does the preimage map $f^{-1}$ go from $\mathcal{P}(Y)$ to $\mathcal{P}(X)$ and not the other way?'
-          options:
-            - 'Because $f^{-1}$ exists only for a bijection $f$, and that flips its direction'
-            - 'Because the power set of $Y$ is always larger than the power set of $X$'
-            - 'Because the name of a functor decides the direction of the maps it makes'
-            - 'Because a preimage $f^{-1}(S)$ takes a subset $S$ of $Y$ back into $X$'
-          answer: 'Because a preimage $f^{-1}(S)$ takes a subset $S$ of $Y$ back into $X$'
-          why: 'A preimage is defined from a subset of the target $Y$ and consists of points of $X$, so the induced map is $\mathcal P(Y)\to\mathcal P(X)$; a direct image would go the other way.'
         exemplars:
           - problem: 'Fix a set $T$. The assignment $X\mapsto\mathrm{Hom}(T,X)$ sends a function $f\colon A\to B$ to postcomposition with $f$, that is $\varphi\mapsto f\circ\varphi$. Is this functor covariant or contravariant?'
             answer: 'covariant'
@@ -1008,16 +870,6 @@ topics:
         name: Definitions via the action on hom-sets
         key_prerequisites: [functors]
         constraints: 'Require definitions via the action on hom-sets. Every category and functor is given in the text; answers are counts or a verdict on full and faithful. The last exemplar asks for the written proof.'
-        step_check:
-          step: 'Use that a composite of surjections is surjective'
-          question: 'Why does fullness of both $F$ and $G$ make $(GF)_{A,B}$ reach every morphism $h$?'
-          options:
-            - 'Fullness of $F$ alone already gives an $f$ with $G(Ff)=h$ for every morphism $h$'
-            - 'Faithfulness of $G$ then forces the lifted morphism $g$ to equal $Ff$ in $\mathcal D$'
-            - 'Both functors send identities to identities, so every morphism $h$ appears'
-            - 'Each $h$ is $G(g)$ for some $g$, and each such $g$ is $F(f)$ for some $f$'
-          answer: 'Each $h$ is $G(g)$ for some $g$, and each such $g$ is $F(f)$ for some $f$'
-          why: 'Surjectivity of $G_{FA,FB}$ lifts $h$ to $g$, and surjectivity of $F_{A,B}$ lifts $g$ to $f$; then $(GF)f=h$. Faithfulness plays no part in fullness.'
         try_first:
           problem: 'Let $\mathbf B(\mathbb Z_2)$ be the category with one object $*$ and morphisms $0,1$, composed by addition mod $2$. A functor $F$ to $\mathbf{Set}$ sends $*$ to $\{x,y\}$, the morphism $0$ to the identity of $\{x,y\}$ and the morphism $1$ to the function that swaps $x$ and $y$. How many functions $\{x,y\}\to\{x,y\}$ are there?'
           answer_contract: {"kind":"exact"}
@@ -1060,16 +912,6 @@ topics:
         name: Examples that separate the notions
         key_prerequisites: [functions-injective-surjective]
         constraints: 'Require examples that separate the notions. Every category and functor is given in the text; answers are counts or a verdict on full and faithful. The last exemplar asks for the written proof.'
-        step_check:
-          step: 'Fullness — a witness against it'
-          question: 'Why does the function $\chi_{\mathbb Q}$ show that $U\colon\mathbf{Top}\to\mathbf{Set}$ is not full?'
-          options:
-            - 'It is a discontinuous function $\mathbb R\to\mathbb R$, so no morphism maps to it'
-            - 'It is a continuous map that $U$ sends to two different functions'
-            - 'It is a morphism of $\mathbf{Top}$ that $U$ sends to something that is no function'
-            - 'It is a function that $U$ sends to the identity, so $U$ collapses many maps'
-          answer: 'It is a discontinuous function $\mathbb R\to\mathbb R$, so no morphism maps to it'
-          why: 'Fullness needs every function $UX\to UY$ to come from a morphism, so one function that is not continuous breaks it; the same $U$ is faithful because a continuous map is determined by its values.'
         exemplars:
           - problem: 'Let $U\colon\mathbf{Grp}\to\mathbf{Set}$ send a group to its underlying set and a homomorphism to the same function. Is $U$ full, faithful, both, or neither?'
             answer: 'faithful, not full'
@@ -1107,16 +949,6 @@ topics:
         name: Fully faithful functors reflect isomorphisms
         key_prerequisites: [functors]
         constraints: 'Require fully faithful functors reflect isomorphisms. Every category and functor is given in the text; answers are verdicts, values or counts. The last exemplar asks for the written proof.'
-        step_check:
-          step: 'Since $F$ is faithful, the equality $F(h\circ f)=F(1_A)$ forces $h\circ f=1_A$'
-          question: 'Why does the equation $F(h\circ f)=F(1_A)$ let us conclude $h\circ f=1_A$?'
-          options:
-            - 'Because $F$ is full, so $1_A$ is the only morphism that $F$ can reach here'
-            - 'Because $F$ preserves composition, so $F(h\circ f)=Fh\circ Ff$ settles it'
-            - 'Because $F$ is injective on each hom-set, equal images give equal morphisms'
-            - 'Because $Ff$ is invertible, so $f$ has to be its own inverse in $\mathcal C$'
-          answer: 'Because $F$ is injective on each hom-set, equal images give equal morphisms'
-          why: 'Both $h\circ f$ and $1_A$ go from $A$ to $A$, and faithfulness says $F_{A,A}$ is injective on such pairs. Fullness was used earlier, to find $h$.'
         exemplars:
           - problem: 'Let $\mathcal C$ be the chain $0<1$ and let $\mathcal D$ be the category with objects $0,1$ in which there is exactly one morphism from each object to each object. The functor $F$ is the identity on objects and sends each morphism of $\mathcal C$ to the morphism of $\mathcal D$ with the same ends. In $\mathcal D$ the morphism $F(0\to 1)$ is an isomorphism, with inverse the morphism $1\to 0$. Is $0\to 1$ an isomorphism in $\mathcal C$?'
             answer: 'no'
@@ -1182,16 +1014,6 @@ topics:
         name: Subcategories and full subcategories
         key_prerequisites: [category-definition]
         constraints: 'Require subcategories and full subcategories. Every category is given in the text as a poset, a monoid or a concrete category; answers are counts, values or verdicts. The last exemplar asks for the written proof.'
-        step_check:
-          step: 'Check composition: let $f:A\to B$ and $g:B\to C$ be injective'
-          question: 'Why must $g\circ f$ be shown to be injective before $\mathcal D$ counts as a subcategory?'
-          options:
-            - 'Because a subcategory needs every function between its objects, injective or not'
-            - 'Because the composite of two chosen morphisms has to be a chosen morphism again'
-            - 'Because the identities of a subcategory are defined as composites of chosen morphisms'
-            - 'Because composition in $\mathbf{Set}$ is defined only for injective functions'
-          answer: 'Because the composite of two chosen morphisms has to be a chosen morphism again'
-          why: 'A subcategory must be closed under composition, so every composite of chosen morphisms must itself be chosen; composition in $\mathbf{Set}$ is defined for all functions.'
         exemplars:
           - problem: 'Let $P$ be the poset $a<b<c$ viewed as a category with exactly one morphism $x\to y$ whenever $x\le y$. Let $\mathcal D$ keep all three objects and, besides the identities, only the morphisms $a\to b$ and $b\to c$. How many morphisms must be added to $\mathcal D$ so that it is a subcategory of $P$?'
             answer: '1'
@@ -1233,16 +1055,6 @@ topics:
         name: Full versus non-full examples
         key_prerequisites: [full-faithful-functors]
         constraints: 'Require full versus non-full examples. Every category is given in the text; answers are counts, values or verdicts. The last exemplar asks for the written proof.'
-        step_check:
-          step: 'Subgoal: show $\phi$ preserves inverses'
-          question: 'Why does $\phi(a)\,\phi(a^{-1})=e$ show that $\phi(a^{-1})$ is the inverse of $\phi(a)$?'
-          options:
-            - 'Because $\phi$ is a monoid homomorphism and these preserve every element'
-            - 'Because inverses are unique only when the group is commutative'
-            - 'Because any element with product $e$ with $\phi(a)$ is its inverse'
-            - 'Because $\phi(e)=e$ makes $\phi$ equal to the identity on inverses'
-          answer: 'Because any element with product $e$ with $\phi(a)$ is its inverse'
-          why: 'In a group an element with product $e$ on one side is the inverse, and inverses are unique; so a monoid homomorphism between groups automatically preserves inverses.'
         exemplars:
           - problem: 'Let $\mathcal D$ be the subcategory of $\mathbf{Set}$ whose objects are all sets and whose morphisms are only the surjective functions. Is $\mathcal D$ a full subcategory of $\mathbf{Set}$?'
             answer: 'no'
@@ -1284,16 +1096,6 @@ topics:
         name: A full subcategory is determined by its objects
         key_prerequisites: [full-faithful-functors]
         constraints: 'Require a full subcategory is determined by its objects. Every category is given in the text; answers are counts, values or verdicts. The last exemplar asks for the written proof.'
-        step_check:
-          step: 'The two subcategories share the same object class, yet their hom-sets differ'
-          question: 'Why does this show that a general subcategory is not determined by its objects?'
-          options:
-            - 'Because a subcategory with fewer morphisms always has fewer objects than the other one'
-            - 'Because two different subcategories share objects, so the objects cannot tell them apart'
-            - 'Because the hom-sets of any subcategory can be chosen freely, with no closure rule at all'
-            - 'Because a subcategory is a full subcategory only when it has all the objects of $\mathcal C$'
-          answer: 'Because two different subcategories share objects, so the objects cannot tell them apart'
-          why: 'If the objects fixed the subcategory, equal objects would give equal subcategories; here $\mathcal D_1\neq\mathcal D_2$, so the hom-sets carry extra information.'
         exemplars:
           - problem: 'Let $\mathcal C$ be the poset category with objects $a,b,c,d$ and the order $a<b<d$ and $a<c<d$, with one morphism $x\to y$ when $x\le y$. How many morphisms does the full subcategory on the objects $a$ and $d$ have, counting the identities?'
             answer: '3'
@@ -1363,16 +1165,6 @@ topics:
       - id: kp1
         name: The product category and its projections
         key_prerequisites: [category-definition]
-        step_check:
-          step: 'Define composition and identities componentwise'
-          question: 'Why can the composite $(f'',g'')\circ(f,g)$ be defined as $(f''\circ f,\,g''\circ g)$?'
-          options:
-            - 'The product category takes composition from $\mathcal{A}$ and copies the second morphism from $\mathcal{B}$'
-            - 'The target of $f$ is the source of $f''$ and the target of $g$ is the source of $g''$'
-            - 'Composing pairs must be commutative, so the two coordinates may be swapped'
-            - 'Any two pairs of morphisms compose, whatever their sources and targets are'
-          answer: 'The target of $f$ is the source of $f''$ and the target of $g$ is the source of $g''$'
-          why: 'The pair $(f,g)$ ends where $(f'',g'')$ starts exactly when both coordinates match, so each coordinate composes in its own category.'
         exemplars:
           - problem: 'Let $\mathcal{A}$ be the chain $0<1<2$ and let $\mathcal{B}$ be the chain $a<b$, each viewed as a category with one morphism $x\to y$ when $x\le y$. How many morphisms does the product category $\mathcal{A}\times\mathcal{B}$ have?'
             answer: '18'
@@ -1418,16 +1210,6 @@ topics:
       - id: kp2
         name: Functors out of a product are bifunctors
         key_prerequisites: [functors]
-        step_check:
-          step: 'So $(F(f,1)\circ F(1,g))(x,y)=(f(x),g(y))$'
-          question: 'Why does $F(1,g)$ followed by $F(f,1)$ send $(x,y)$ to $(f(x),g(y))$?'
-          options:
-            - 'Each of the two maps changes both coordinates, and the extra changes cancel out at the end'
-            - 'The map $F(f,1)$ must act first, because the first variable is always the first one to change'
-            - 'The map $F(1,g)$ changes only the second coordinate, then $F(f,1)$ changes only the first'
-            - 'The value $g(y)$ is computed first, and then $f$ is applied to the whole pair of values'
-          answer: 'The map $F(1,g)$ changes only the second coordinate, then $F(f,1)$ changes only the first'
-          why: 'The map $1_X\times g$ leaves $x$ alone and changes $y$ to $g(y)$, and then $f\times1_{Y''}$ changes $x$ to $f(x)$ and leaves $g(y)$ alone.'
         try_first:
           problem: 'A rectangle is $2$ m wide and $3$ m long. It is widened to $4$ m and then lengthened to $5$ m. What is its area at the end?'
           answer_contract: {"kind":"unit","quantity":"area","unit":"m^2","allow_omitted":true}
@@ -1509,16 +1291,6 @@ topics:
       - id: kp1
         name: The covariant hom-functor
         key_prerequisites: [functors]
-        step_check:
-          step: '$(g\circ f)_*(h)=(g\circ f)\circ h=g\circ(f\circ h)=g_*(f_*(h))$'
-          question: 'Why is $(g\circ f)\circ h$ equal to $g\circ(f\circ h)$?'
-          options:
-            - 'Composition is commutative, so $h$ and $f$ can be exchanged inside the brackets'
-            - 'Associativity is an axiom of every category, so the brackets can be moved'
-            - 'The morphism $h$ is an identity here, so it does not change the composite'
-            - 'Functors preserve composition, and $g_*$ and $f_*$ are functors'
-          answer: 'Associativity is an axiom of every category, so the brackets can be moved'
-          why: 'A category requires $(g\circ f)\circ h=g\circ(f\circ h)$ for every composable triple, and this is exactly the composition law $(g\circ f)_*=g_*\circ f_*$.'
         try_first:
           problem: 'How many functions are there from a one-element set to a set with $7$ elements?'
           answer_contract: {"kind": "exact"}
@@ -1565,16 +1337,6 @@ topics:
       - id: kp2
         name: The contravariant hom-functor
         key_prerequisites: [covariant-contravariant-functors]
-        step_check:
-          step: 'Note the direction: $f$ goes $X\to Y$, but $f^*$ goes the other way'
-          question: 'Why does $f^*$ go from $\mathrm{Hom}(Y,\{0,1\})$ to $\mathrm{Hom}(X,\{0,1\})$?'
-          options:
-            - 'Every functor reverses the direction of the maps that it is given, so $f^*$ runs backwards'
-            - 'The set $Y$ is smaller than the set $X$ here, so the maps have to run from $Y$ to $X$'
-            - 'Composing $f$ with $h\colon X\to\{0,1\}$ gives $f\circ h$ in $\mathrm{Hom}(Y,\{0,1\})$'
-            - 'Composing $h\colon Y\to\{0,1\}$ with $f$ gives $h\circ f$, a function out of $X$'
-          answer: 'Composing $h\colon Y\to\{0,1\}$ with $f$ gives $h\circ f$, a function out of $X$'
-          why: 'Only $h\circ f$ is defined for $h$ with source $Y$, and its source is $X$; the composite $f\circ h$ would need the target of $h$ to be $X$.'
         exemplars:
           - problem: 'In $\mathbf{Set}$ let $X=\{1,2,3\}$, $Y=\{a,b\}$ and $f\colon X\to Y$ with $f(1)=a$, $f(2)=a$, $f(3)=b$. The functor $\mathrm{Hom}(-,\{0,1\})$ sends $f$ to $f^*\colon\mathrm{Hom}(Y,\{0,1\})\to\mathrm{Hom}(X,\{0,1\})$. Let $\chi\colon Y\to\{0,1\}$ be given by $\chi(a)=1$, $\chi(b)=0$. Which elements of $X$ does $f^*(\chi)$ send to $1$?'
             answer: '1, 2'
@@ -1612,16 +1374,6 @@ topics:
       - id: kp3
         name: The two-variable hom-bifunctor
         key_prerequisites: [product-categories]
-        step_check:
-          step: 'the composite in $\mathcal C^{op}\times\mathcal C$ is $(u\circ u'',\,v''\circ v)$'
-          question: 'Why is the first component of the composite $u\circ u''$ and not $u''\circ u$?'
-          options:
-            - 'Composition in the first factor is commutative, so either order gives the same morphism here'
-            - 'The first component is written in the reverse of the order of the second one, whatever the types'
-            - 'As $u\colon X''\to X$ and $u''\colon X''''\to X''$ are morphisms of $\mathcal C$, only $u\circ u''$ composes'
-            - 'The order $u\circ u''$ is a writing convention that keeps the composite apart from the second component'
-          answer: 'As $u\colon X''\to X$ and $u''\colon X''''\to X''$ are morphisms of $\mathcal C$, only $u\circ u''$ composes'
-          why: 'In $\mathcal C^{op}$ the arrows of the first factor run backwards, so the composite of $u$ then $u''$ in the product is $u\circ u''$ in $\mathcal C$, from $X''''$ to $X$.'
         exemplars:
           - problem: 'In $\mathbf{Set}$ let $A''=\{0,1\}$, $A=\{0,1,2\}$, $B=\{0,1\}$ and $B''=\{0,1,2\}$. Let $f\colon A''\to A$ be given by $f(0)=2$, $f(1)=0$, let $g\colon B\to B''$ be given by $g(0)=1$, $g(1)=2$, and let $h\colon A\to B$ be given by $h(0)=0$, $h(1)=1$, $h(2)=1$. The hom-functor sends $(f,g)$ to a function $\mathrm{Hom}(A,B)\to\mathrm{Hom}(A'',B'')$. What are the values at $0$ and at $1$ of the image of $h$?'
             answer: '(2, 1)'
@@ -1701,16 +1453,6 @@ topics:
       - id: kp1
         name: The construction and its composition law
         key_prerequisites: [functors]
-        step_check:
-          step: 'By functoriality of $F$, $(a''\circ a)\times(a''\circ a)=(a''\times a'')\circ(a\times a)$'
-          question: 'Why does $F$ turn $a''\circ a$ into $F(a'')\circ F(a)$?'
-          options:
-            - 'A functor preserves identities, and an identity can be inserted anywhere inside a composite of maps'
-            - 'The functor $F$ is the identity on morphisms, so the composite stays exactly the same as before'
-            - 'A functor preserves composition: $F(a''\circ a)=F(a'')\circ F(a)$ for composable $a,a''$'
-            - 'The square condition of the comma category already says that this holds, so no law is needed'
-          answer: 'A functor preserves composition: $F(a''\circ a)=F(a'')\circ F(a)$ for composable $a,a''$'
-          why: 'Preserving composition is one of the two functor laws, and here it gives $F(a''\circ a)=(a''\times a'')\circ(a\times a)$ for $F(X)=X\times X$.'
         exemplars:
           - problem: 'Let $\mathcal{C}$ be the chain $0<1<2$, with one morphism $x\to y$ when $x\le y$. Let $\mathcal{A}$ be the discrete category, which has only identity morphisms, with objects $p,q$, and let $\mathcal{B}$ be the discrete category with objects $u,v$. The functors $F\colon\mathcal{A}\to\mathcal{C}$ and $G\colon\mathcal{B}\to\mathcal{C}$ are given by $F(p)=0$, $F(q)=2$, $G(u)=1$, $G(v)=2$. How many objects does the comma category $(F\downarrow G)$ have?'
             answer: '3'
@@ -1760,16 +1502,6 @@ topics:
       - id: kp2
         name: Slices, coslices, and arrow categories as comma categories
         key_prerequisites: [slice-categories]
-        step_check:
-          step: 'A morphism $(X,*,h)\to(X'',*,h'')$ is a pair $(a,1_*)$'
-          question: 'Why is the second component of every morphism in this slice the identity $1_*$?'
-          options:
-            - 'Both components of every comma morphism have to be identities'
-            - 'The category $\mathbf{1}$ has only one morphism, the identity of its object $*$'
-            - 'The functor $S$ sends every morphism of $\mathbf{Set}$ to the identity of $S$ by definition'
-            - 'A slice only allows maps that leave the base set unchanged, which is a convention'
-          answer: 'The category $\mathbf{1}$ has only one morphism, the identity of its object $*$'
-          why: 'A morphism of the comma category has a second component in the source of $S$, which is $\mathbf{1}$, and the only morphism there is $1_*$.'
         exemplars:
           - problem: 'The slice category $\mathcal{C}/c$ has the morphisms $X\to c$ of $\mathcal{C}$ as objects, and it is the comma category $(1_{\mathcal{C}}\downarrow c)$. Let $\mathcal{C}$ be $\{1,2,\dots,12\}$ ordered by divisibility, with one morphism $a\to b$ when $a$ divides $b$. How many objects does the slice $\mathcal{C}/12$ have?'
             answer: '6'
@@ -1815,16 +1547,6 @@ topics:
       - id: kp3
         name: Universal arrows as initial objects of a comma category
         key_prerequisites: [initial-terminal-objects]
-        step_check:
-          step: 'a linear map is determined by its values on a basis'
-          question: 'Why do the equations $T(e_x)=\bar f(e_x)$ for every $x$ give $T=\bar f$?'
-          options:
-            - 'Two functions that agree at a single element of their domain are equal'
-            - 'The map $\bar f$ was defined as the only function from $k^{(X)}$ to the space $V$'
-            - 'Two maps that agree on the objects of the comma category are equal by definition'
-            - 'Linear maps that agree on a basis agree on every linear combination of it'
-          answer: 'Linear maps that agree on a basis agree on every linear combination of it'
-          why: 'Every vector of $k^{(X)}$ is a finite combination of the $e_x$, and a linear map respects combinations, so the values on the basis fix the whole map.'
         try_first:
           problem: 'A grocer packs eggs in cartons of $12$. What is the smallest number of cartons that holds $30$ eggs?'
           answer_contract: {"kind": "exact"}

@@ -78,6 +78,7 @@ fn lint_run(root: &Path, exemplars: bool) -> Vec<Finding> {
     lint.check_mastery_floor_forms(&catalog);
     if exemplars {
         rules::check_exemplars(&mut lint);
+        rules::check_visuals(&mut lint);
     }
     // A cycle or a duplicate id makes the derived graph ill-defined, so the
     // reachability rule is skipped entirely then (spec section 5, rule 16).

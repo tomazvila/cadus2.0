@@ -23,16 +23,6 @@ topics:
       - id: kp1
         name: When composites are defined; computing them
         key_prerequisites: [computing-compositions]
-        step_check:
-          step: 'Apply $g$ to the result: $g(3x - 2) = (3x - 2)^3$'
-          question: 'Why is $3x-2$ put into $g$ when we compute $(g \circ f)(x)$?'
-          options:
-            - 'The composite always writes the left function inside the right function, whatever acts first'
-            - 'In $g \circ f$ the function $f$ acts first, so its output is the input of $g$'
-            - 'In $g \circ f$ the function $g$ acts first, so its output is the input of $f$, giving $f(g(x))$'
-            - 'The input $x$ is replaced by $g(x)$ before $f$ is applied to the result, giving $f(g(x))$'
-          answer: 'In $g \circ f$ the function $f$ acts first, so its output is the input of $g$'
-          why: '$(g \circ f)(x)$ means $g(f(x))$, so $f$ acts on $x$ first and its value $3x-2$ is the input of $g$, which gives $(3x-2)^3$.'
         exemplars:
           - problem: 'Let $f(x)=2x+1$ and $g(x)=x^2$ on $\mathbb Z$. Find $(g \circ f)(x)$.'
             answer: '4x^2+4x+1'
@@ -78,16 +68,6 @@ topics:
       - id: kp2
         name: Associativity of composition
         key_prerequisites: [function-composition]
-        step_check:
-          step: 'Both $(h \circ g) \circ f$ and $h \circ (g \circ f)$ yield the same result, $2x + 2$'
-          question: 'Why do the two bracketings give the same function?'
-          options:
-            - 'Composition of functions is commutative, so the order of $f$, $g$, $h$ does not matter'
-            - 'Both bracketings use the same three functions, so the formulas must agree by definition'
-            - 'Both apply $f$, then $g$, then $h$ to each $x$; the brackets only group the work'
-            - 'Brackets decide which function is applied first, and either choice gives $2x+2$ by luck'
-          answer: 'Both apply $f$, then $g$, then $h$ to each $x$; the brackets only group the work'
-          why: 'Both bracketings apply $f$, then $g$, then $h$ to each $x$, so each gives $h(g(f(x)))=2x+2$; the brackets only group the work, while swapping the order of the functions would give a different function.'
         exemplars:
           - problem: 'Let $f(x)=2x$, $g(x)=x-1$ and $h(x)=x+3$ on $\mathbb Z$. Find $(h \circ g) \circ f$ as a function of $x$.'
             answer: '2x+2'
@@ -129,16 +109,6 @@ topics:
       - id: kp3
         name: Identities as two-sided units
         key_prerequisites: [function-composition-inverse]
-        step_check:
-          step: '$1_Y(g(x)) = g(x)$ since $1_Y$ is the identity function on $Y$'
-          question: 'Why does the left unit law use $1_Y$ and not $1_X$ for $g\colon X \to Y$?'
-          options:
-            - 'The identity must be written on the left, whatever its object is'
-            - 'The arrow $1_X$ acts on elements of $X$, so it cannot be applied to $g(x)$ in $Y$'
-            - 'Both $1_X$ and $1_Y$ are identities, so either one gives the same composite'
-            - '$g(x)$ lies in $Y$, so the arrow applied after $g$ must have domain $Y$'
-          answer: '$g(x)$ lies in $Y$, so the arrow applied after $g$ must have domain $Y$'
-          why: 'The composite $1_Y \circ g$ applies $g$ first, so the value $g(x)$ in $Y$ is the input of the next arrow, which must start at $Y$; this is why the identity on $Y$ stands on the left and the identity on $X$ stands on the right.'
         exemplars:
           - problem: 'In a category, $A$, $B$ and $C$ are three different objects and $f\colon A\to B$ is an arrow. Which of the identity arrows $1_A$, $1_B$, $1_C$ satisfies $f \circ e=f$ when $e$ is that identity?'
             answer: '1_A'
@@ -228,16 +198,6 @@ topics:
       - id: kp1
         name: The data and axioms, read off in Set
         key_prerequisites: [composition-associativity-identity]
-        step_check:
-          step: 'the unit laws say $1_B\circ f=f=f\circ 1_A$'
-          question: 'Why does the unit law put $1_B$ on the left of $f$ and $1_A$ on the right?'
-          options:
-            - 'The identity of the larger set goes on the left and the identity of the smaller set goes on the right'
-            - 'Left and right are interchangeable, because $1_A$ and $1_B$ are both identity functions'
-            - 'The identity on the codomain can follow $f$, and the identity on the domain can precede $f$'
-            - 'Whichever identity is written first is the one that is composed first, whatever its set'
-          answer: 'The identity on the codomain can follow $f$, and the identity on the domain can precede $f$'
-          why: 'For $f\colon A\to B$ the composite $1_B \circ f$ applies $f$ first and then $1_B$ on $B$, while $f \circ 1_A$ applies $1_A$ on $A$ first; the other placements would not even be composable when $A \neq B$.'
         exemplars:
           - problem: 'In $\mathbf{Set}$, let $A=\{0,1\}$, $B=\{0,1,2\}$, $C=\{0,1\}$, and let $f\colon A\to B$ and $g\colon B\to C$ be given by $f(0)=2$, $f(1)=0$ and $g(0)=1$, $g(1)=0$, $g(2)=0$. Find $(g \circ f)(1)$.'
             answer: '1'
@@ -279,16 +239,6 @@ topics:
       - id: kp2
         name: A monoid as a one-object category
         key_prerequisites: [monoids]
-        step_check:
-          step: 'Let the identity morphism $1_*$ be the unit element $e$ of $M$'
-          question: 'Why must the identity morphism of $BM$ be the unit element $e$ of $M$?'
-          options:
-            - 'The element $e$ is the first element of $M$, and the first arrow is always the identity morphism'
-            - 'Composing with $e$ leaves every element unchanged, which is what an identity morphism does'
-            - 'The unit $e$ is the only element whose composite with itself is defined in $BM$, so it is chosen'
-            - 'An identity morphism must be an inverse of every element, and $e$ is that inverse for all of $M$'
-          answer: 'Composing with $e$ leaves every element unchanged, which is what an identity morphism does'
-          why: 'The unit law of a category says $1_* \circ m=m=m \circ 1_*$, and in $BM$ this reads $1_* \cdot m=m=m \cdot 1_*$, which is exactly the property of the unit $e$ of $M$; the monoid needs no inverses.'
         exemplars:
           - problem: 'The additive monoid $\mathbb Z_6$ is regarded as a one-object category $B\mathbb Z_6$ whose arrows are $0,1,\dots,5$ and whose composite of arrows $m$ and $n$ is $(m+n) \bmod 6$. Find $5 \circ 4$.'
             answer: '3'
@@ -330,16 +280,6 @@ topics:
       - id: kp3
         name: Recognizing non-examples (composition must be total)
         key_prerequisites: [relations-equivalence]
-        step_check:
-          step: 'the identity morphism $n \to n$ exists since $n$ divides itself'
-          question: 'Why does the identity arrow exist at every object $n$ in the divisibility structure?'
-          options:
-            - 'The identity arrow exists because composition is total in this structure, so all composites exist'
-            - 'The identity arrow at $n$ exists because $n$ divides $1$, the identity number, in every case'
-            - 'Identity arrows are added to every structure, whatever the rule for arrows is, so none can fail'
-            - 'Every positive number divides itself, so the arrow $n \to n$ is there for each $n$'
-          answer: 'Every positive number divides itself, so the arrow $n \to n$ is there for each $n$'
-          why: 'The arrows of this structure are given by the rule that $n$ divides $m$, and $n$ divides $n$ for every $n$, so each object has the loop $n \to n$ that serves as its identity.'
         exemplars:
           - problem: 'The objects are $0,1,2,3,4$, and there is exactly one arrow $a \to b$ whenever $|a-b| \le 1$, and no other arrows. Is this a category?'
             answer: 'no'
@@ -389,16 +329,6 @@ topics:
       - id: kp4
         name: A preorder as a thin category
         key_prerequisites: [partial-orders]
-        step_check:
-          step: 'Any two parallel paths in the category are equal because each hom-set has at most one element'
-          question: 'Why are any two parallel paths in a thin category equal?'
-          options:
-            - 'Parallel paths have the same objects, and the only arrow between two objects is unique'
-            - 'Parallel paths always pass through the same intermediate objects, so they use the same arrows'
-            - 'Composition in a thin category is commutative, so the order of arrows does not matter at all'
-            - 'Every path equals the identity arrow, because a thin category has so few arrows in it overall'
-          answer: 'Parallel paths have the same objects, and the only arrow between two objects is unique'
-          why: 'Two parallel paths start at the same object and end at the same object, so both composites lie in one hom-set; that hom-set has at most one arrow, so the composites are the same arrow.'
         exemplars:
           - problem: 'Regard the divisibility order on $\{1,2,3,6\}$ as a category, with one arrow $a \to b$ whenever $a$ divides $b$. How many morphisms does it have?'
             answer: '9'
@@ -489,16 +419,6 @@ topics:
       - id: kp1
         name: Reading off and counting in concrete examples
         key_prerequisites: [partial-orders]
-        step_check:
-          step: 'Identify all pairs $(x, y)$ where $x \subseteq y$'
-          question: 'Why does each pair $(x,y)$ with $x \subseteq y$ give exactly one morphism, identities included?'
-          options:
-            - 'Each pair gives one arrow for $x \subseteq y$ and a second arrow for $y \subseteq x$, so two arrows'
-            - 'There is one arrow $x \to y$ exactly when $x \le y$, and $x \le x$ gives the identity'
-            - 'Only pairs with $x \ne y$ give arrows, because the identities are counted separately afterwards'
-            - 'The number of arrows from $x$ to $y$ is the number of elements in $y \setminus x$ plus one'
-          answer: 'There is one arrow $x \to y$ exactly when $x \le y$, and $x \le x$ gives the identity'
-          why: 'By the definition of the category of a poset, each relation $x \le y$ is exactly one arrow, and reflexivity $x \le x$ makes the identity at each object one of the counted pairs.'
         exemplars:
           - problem: 'Regard the divisibility order on the divisors $\{1,2,3,4,6,12\}$ of $12$ as a category, with one arrow $a \to b$ whenever $a$ divides $b$. How many morphisms does it have?'
             answer: '18'
@@ -544,16 +464,6 @@ topics:
       - id: kp2
         name: Isomorphisms in these categories
         key_prerequisites: [category-definition]
-        step_check:
-          step: 'Since $f$ and $g$ are functions, $g \circ f = 1_n$ implies that $f$ is injective'
-          question: 'Why does $g \circ f = 1_n$ force $f$ to be injective?'
-          options:
-            - 'Because $g \circ f$ is an identity, so $f$ must also be an identity function'
-            - 'Because $g \circ f$ is a bijection, so both $f$ and $g$ are bijections'
-            - 'Because $g$ is surjective, so every value of $f$ is hit by some input'
-            - 'Because $g$ undoes $f$, so two inputs with equal $f$-values would be equal'
-          answer: 'Because $g$ undoes $f$, so two inputs with equal $f$-values would be equal'
-          why: 'If $f(x)=f(y)$ then $x=g(f(x))=g(f(y))=y$, so $f$ is injective; the identity $1_n$ does not make $f$ an identity, and $g \circ f=1_n$ alone gives only injectivity of $f$.'
         exemplars:
           - problem: 'In the category of the poset $0<1<2$ there is one arrow $x \to y$ whenever $x \le y$. Is the arrow $0 \to 1$ an isomorphism?'
             answer: 'no'
@@ -595,16 +505,6 @@ topics:
       - id: kp3
         name: The two dictionaries, read in both directions
         key_prerequisites: [category-definition]
-        step_check:
-          step: 'Any two morphisms $g,h\in G$ have the same source and target $*$, so $g\circ h$ is defined and again lies in $G$'
-          question: 'Why is composition a binary operation on all of $G=\mathrm{Hom}(*,*)$?'
-          options:
-            - 'Composition is defined by the group product, so it is a binary operation by definition'
-            - 'The identity $1_*$ can be composed with every pair of arrows in $G$'
-            - 'Every arrow starts and ends at the single object $*$, so every pair is composable'
-            - 'The hom-set $G$ is closed under inverses, so any two arrows can be composed'
-          answer: 'Every arrow starts and ends at the single object $*$, so every pair is composable'
-          why: 'A composite $g \circ h$ needs the target of $h$ to be the source of $g$, and with one object this always holds, so any two arrows of $G$ compose to an arrow of $G$.'
         exemplars:
           - problem: 'Let $M=(\mathbb Z_{10},+)$ and let $BM$ be the one-object category with arrows $0,1,\dots,9$, where the composite of the arrows $m$ and $n$ is the monoid product. Find the composite of $7$ and $8$.'
             answer: '5'
@@ -690,16 +590,6 @@ topics:
       - id: kp1
         name: The discrete category on a set
         key_prerequisites: [category-definition]
-        step_check:
-          step: 'Since there is exactly one identity morphism for each object, the total number of morphisms is $|S| = 3$'
-          question: 'Why does the number of morphisms of $\mathrm{disc}(S)$ equal the number of objects?'
-          options:
-            - 'Each object has one morphism to every object, so the count is the number of objects'
-            - 'Each pair of different objects has no morphism, so the identities are not counted'
-            - 'Every morphism is an identity, and each object has exactly one identity'
-            - 'The morphisms are the objects themselves, so the count cannot be anything else'
-          answer: 'Every morphism is an identity, and each object has exactly one identity'
-          why: 'Between different objects there are no morphisms, and an object has only its identity as an endomorphism, so morphisms and objects match one to one and there are $|S|=3$ morphisms.'
         exemplars:
           - problem: 'The discrete category on $S=\{x,y,z\}$ has the elements of $S$ as objects and only identity arrows. How many morphisms does it have?'
             answer: '3'
@@ -754,16 +644,6 @@ topics:
           answer_contract: {"kind": "exact"}
           answer: '36'
           reveal: 'Each of the $6$ towns has one road to each of the $6$ towns, so there are $6 \cdot 6=36$ roads. A category with exactly one arrow between every ordered pair of objects is called indiscrete.'
-        step_check:
-          step: 'Since $\mathrm{Hom}(x,z)=\{*\}$ has exactly one element, there is only one possible value'
-          question: 'Why is the composite $g\circ f$ forced in $\mathrm{indisc}(S)$?'
-          options:
-            - 'The composite is an arrow from $x$ to $z$, and there is only one such arrow'
-            - 'The composite of two arrows is always the identity arrow of the source object $x$'
-            - 'Composition is defined as the arrow $f$ followed by the arrow $g$ as a pair'
-            - 'The composite is the arrow $y \to z$, since the first arrow can be dropped'
-          answer: 'The composite is an arrow from $x$ to $z$, and there is only one such arrow'
-          why: 'The composite $g \circ f$ must lie in $\mathrm{Hom}(x,z)$, and that set has a single element, so there is no choice; the same fact gives associativity and the unit laws.'
         exemplars:
           - problem: 'The indiscrete category on $S=\{0,1,2\}$ has exactly one arrow from each object to each object. How many morphisms does it have?'
             answer: '9'
@@ -809,16 +689,6 @@ topics:
       - id: kp3
         name: Shape categories for diagrams
         key_prerequisites: [commutative-diagrams]
-        step_check:
-          step: 'no non-identity arrow ends at $1$, so there are no composable pairs of non-identity arrows'
-          question: 'Why are there no composable pairs of non-identity arrows in the span $0\leftarrow 1\to 2$?'
-          options:
-            - 'The span has only two arrows, and two arrows can never be composed'
-            - 'Both non-identity arrows start at $1$, so no arrow ends where another one starts'
-            - 'Arrows that start at the same object are composed as a pair, not one after the other'
-            - 'The identities absorb every non-identity arrow when they are composed'
-          answer: 'Both non-identity arrows start at $1$, so no arrow ends where another one starts'
-          why: 'A composite $v \circ u$ needs the target of $u$ to be the source of $v$. Here $u$ and $v$ both start at $1$ and end at $0$ and $2$, which have no outgoing non-identity arrow, so there is nothing to compose.'
         exemplars:
           - problem: 'The arrow shape $\mathbf 2$ has two objects $0$, $1$ and one non-identity arrow $0 \to 1$. How many functors $\mathbf 2 \to \mathbf C$ are there when $\mathbf C$ is the poset category $0<1<2<3$?'
             answer: '10'
@@ -917,16 +787,6 @@ topics:
       - id: kp1
         name: Concrete categories of structured sets
         key_prerequisites: [category-definition]
-        step_check:
-          step: 'So $\mathrm{id}_X$ is continuous, hence a legal morphism'
-          question: 'Why is the identity map $\mathrm{id}_X$ a legal morphism of $\mathbf{Top}$?'
-          options:
-            - 'Every bijection is continuous, and $\mathrm{id}_X$ is a bijection'
-            - 'Each open $U$ has preimage $U$ itself, which is open in $X$'
-            - 'The space $X$ has only finitely many open sets to test'
-            - 'It sends every point to a different point of $X$'
-          answer: 'Each open $U$ has preimage $U$ itself, which is open in $X$'
-          why: 'A morphism of Top must have open preimages of open sets; for the identity the preimage of $U$ is $U$, so the test always passes. A bijection can fail continuity.'
         constraints: 'Concrete categories of structured sets (Mon, Grp, Poset, Top, Vect, Set) with small finite objects or explicit rules; each item tests that a function preserves the structure, or counts or evaluates morphisms of the category. Preserve exactly one full-proof exemplar.'
         exemplars:
           - problem: 'Let $\mathbb{Z}/4$ be the integers modulo $4$ under addition. In $\mathbf{Mon}$ a morphism is a function $f$ with $f(0)=0$ and $f(a+b)=f(a)+f(b)$ for all $a$ and $b$. Three functions from $\mathbb{Z}/4$ to itself, numbered $1$, $2$ and $3$, have values $(f(0),f(1),f(2),f(3))$ equal to $(0,2,0,2)$, $(0,1,1,3)$ and $(0,3,2,1)$ in turn. Which of them are morphisms of $\mathbf{Mon}$?'
@@ -972,16 +832,6 @@ topics:
       - id: kp2
         name: Small categories from data (monoids, groups, posets)
         key_prerequisites: [groups-intro]
-        step_check:
-          step: 'Composition: $v \circ u = w$'
-          question: 'Why is $w$ the only possible value of $v\circ u$ in this category?'
-          options:
-            - 'Composition always returns the identity of the middle object'
-            - 'The composite always picks the largest arrow in the whole poset'
-            - 'A poset has one arrow $0\to 2$ at most, and $w$ is that arrow'
-            - 'The arrows $u$ and $v$ must be equal before they can compose'
-          answer: 'A poset has one arrow $0\to 2$ at most, and $w$ is that arrow'
-          why: 'In a poset category the composite of $0\to 1$ and $1\to 2$ is an arrow $0\to 2$, and there is exactly one such arrow, so no other value is possible.'
         constraints: 'Small categories presented by explicit data: a group or monoid as a one-object category, a poset or divisibility order with at most 8 objects, or a finite category given by a list of morphisms and a few composition rules; every claim is checked directly against the category axioms. Preserve exactly one full-proof exemplar.'
         exemplars:
           - problem: 'Let $G=\mathbb{Z}/3$ be the integers modulo $3$ under addition, viewed as the category $BG$ with one object whose morphisms are the elements of $G$. How many morphisms does $BG$ have?'
@@ -1023,16 +873,6 @@ topics:
       - id: kp3
         name: Categories built from other categories
         key_prerequisites: [category-definition]
-        step_check:
-          step: '$f\circ 1_A = f = 1_B\circ f$'
-          question: 'Why is the pair $(1_A,1_B)$ a morphism from $f$ to $f$ in the arrow category?'
-          options:
-            - 'Both routes equal $f$, by the identity laws of $\mathcal{C}$'
-            - 'Its two components are the same arrow, so the square collapses'
-            - 'Every pair of morphisms of $\mathcal{C}$ gives a commuting square'
-            - 'The arrow $f$ is itself an identity morphism of $\mathcal{C}$'
-          answer: 'Both routes equal $f$, by the identity laws of $\mathcal{C}$'
-          why: 'A morphism of the arrow category must make the square commute; for the pair of identities the two routes are $f\circ 1_A$ and $1_B\circ f$, and both equal $f$.'
         constraints: 'Categories built from other categories (product, arrow category) where the factors are small posets, a divisibility order, or explicit maps in Set; every question is settled by the componentwise definition or the commuting-square condition. Preserve exactly one full-proof exemplar.'
         exemplars:
           - problem: 'Let $\mathbf{2}$ be the poset category with objects $0$ and $1$ and exactly one morphism $0\to1$ besides the two identities, so it has $3$ morphisms. The product category $\mathbf{2}\times\mathbf{2}$ has the pairs of objects as objects and the pairs of morphisms as morphisms. How many morphisms does $\mathbf{2}\times\mathbf{2}$ have?'
@@ -1109,16 +949,6 @@ topics:
       - id: kp1
         name: Definition of isomorphism via a two-sided inverse
         key_prerequisites: [category-definition]
-        step_check:
-          step: '$f(g(b)) = 1_B(b) = b$, so $b$ is in the image of $f$'
-          question: 'Why does $f(g(b)) = b$ show that $f$ is surjective?'
-          options:
-            - 'It shows that $g$ is injective, so $f$ must be onto'
-            - 'It shows that $f$ and $g$ are equal as functions'
-            - 'It shows $f(a_1)=f(a_2)$ forces $a_1=a_2$ for all $a_1,a_2$'
-            - 'It gives $g(b)$ in $A$, which $f$ sends to $b$'
-          answer: 'It gives $g(b)$ in $A$, which $f$ sends to $b$'
-          why: 'Surjective means every $b$ in $B$ has some preimage, and $g(b)$ is one; the equation $g(f(a))=a$ is what gives injectivity instead.'
         constraints: 'Isomorphisms as morphisms with a two-sided inverse, tested in small concrete categories: one-object categories from Z/n, finite functions in Set, linear maps in Vect, divisibility posets and short lists of morphisms with composition rules. Preserve exactly one full-proof exemplar.'
         exemplars:
           - problem: 'In the category with one object whose morphisms are $0,1,2,3$, composition is addition modulo $4$ and the identity is $0$. What is the inverse of the morphism $1$?'
@@ -1172,16 +1002,6 @@ topics:
       - id: kp2
         name: Isomorphism is coarser than equality
         key_prerequisites: [relations-equivalence]
-        step_check:
-          step: 'The inverse of $g \circ f$ is $f^{-1} \circ g^{-1}$'
-          question: 'Why does the inverse of $g\circ f$ use the order $f^{-1}\circ g^{-1}$?'
-          options:
-            - 'Only this order runs from $C$ back to $A$ and so can undo $g\circ f$'
-            - 'Inverses reverse the order of any two maps, whether or not they compose'
-            - 'Composition is commutative, so the order is a matter of taste'
-            - 'The map $f^{-1}$ is shorter to write than the map $g^{-1}$'
-          answer: 'Only this order runs from $C$ back to $A$ and so can undo $g\circ f$'
-          why: 'The map $g\circ f$ goes from $A$ to $C$, so its inverse must go from $C$ to $A$: first $g^{-1}\colon C\to B$, then $f^{-1}\colon B\to A$.'
         constraints: 'Isomorphic versus equal objects in Set, in a divisibility poset and in counting settings; each item is settled by exhibiting a bijection or by a cardinality or order argument. Preserve exactly one full-proof exemplar.'
         exemplars:
           - problem: 'In $\mathbf{Set}$ let $A=\{0,1\}$ and $B=\{a,b\}$. How many isomorphisms are there from $A$ to $B$?'
@@ -1223,16 +1043,6 @@ topics:
       - id: kp3
         name: Universal properties determine objects up to unique isomorphism
         key_prerequisites: [category-definition]
-        step_check:
-          step: 'there is only one morphism $T \to T$'
-          question: 'Why must the composite $f\circ g\colon T\to T$ be the identity?'
-          options:
-            - 'Any composite of two morphisms between two objects is an identity'
-            - 'The morphisms $f$ and $g$ were chosen to be identities'
-            - 'Only one morphism $T\to T$ exists, and the identity is one'
-            - 'The objects $T$ and $T''$ are equal, so $f$ is the identity'
-          answer: 'Only one morphism $T\to T$ exists, and the identity is one'
-          why: 'Terminality of $T$ gives exactly one morphism from $T$ to $T$; the identity is one, so the composite $f\circ g$ must be it.'
         constraints: 'Uniqueness of objects defined by a universal property, tested in Set, in a small preorder category and in divisibility posets; each item asks for the unique comparison map, a count of isomorphisms, or the objects that satisfy the property. Preserve exactly one full-proof exemplar.'
         exemplars:
           - problem: 'In $\mathbf{Set}$ the sets $\{*\}$ and $\{\#\}$ are both terminal objects. How many isomorphisms are there from $\{*\}$ to $\{\#\}$?'
@@ -1298,16 +1108,6 @@ topics:
       - id: kp1
         name: Reading a commuting triangle or square
         key_prerequisites: [category-definition]
-        step_check:
-          step: 'Identify the two paths from $X$ to $W$'
-          question: 'Why does commutativity compare the two paths from $X$ to $W$?'
-          options:
-            - 'They are the only two arrows of the square that have a composite'
-            - 'The two paths are always equal as arrows, whatever the arrows are'
-            - 'Both paths share a source and target; commuting says they agree'
-            - 'One path ends at $W$ while the other ends at $Y$ and $Z$'
-          answer: 'Both paths share a source and target; commuting says they agree'
-          why: 'A diagram commutes when any two paths with the same source and target have the same composite; here that is the single equation $r\circ p = s\circ q$.'
         constraints: 'Commuting triangles and squares read as equations between composites, in Set with small explicit maps, in a one-object category of numbers modulo n, in Vect with multiplication maps, and in a divisibility poset; every item is decided by computing or comparing the two composites. Preserve exactly one full-proof exemplar.'
         exemplars:
           - problem: 'In $\mathbf{Set}$ the triangle with $f\colon A\to B$, $g\colon B\to C$ and $h\colon A\to C$ commutes. Here $A=\{0,1,2\}$, $B=\{0,1\}$, $f(0)=1$, $f(1)=0$, $f(2)=1$, $g(0)=3$ and $g(1)=2$. What is $h(1)$?'
@@ -1349,16 +1149,6 @@ topics:
       - id: kp2
         name: Pasting diagrams
         key_prerequisites: [function-composition]
-        step_check:
-          step: 'Start with $\ell \circ (p \circ f)$'
-          question: 'Why does the proof start from the composite $\ell\circ(p\circ f)$?'
-          options:
-            - 'It is the middle edge, which both triangles share'
-            - 'It is an outer route, and each cell rewrites part of it'
-            - 'It is the only composite that can be written without brackets'
-            - 'It is an identity, so no cell is needed to rewrite it'
-          answer: 'It is an outer route, and each cell rewrites part of it'
-          why: 'To show two outer routes are equal, start from one and use each commuting cell to replace a piece by an equal piece, until the other route appears.'
         constraints: 'Pasting two commuting cells that share an edge, tested with explicit maps in Set, with numbers in a one-object category modulo 12, with multiplication maps in Vect, and with a counter-example in which only one cell commutes; each item is decided by replacing a composite cell by cell. Preserve exactly one full-proof exemplar.'
         exemplars:
           - problem: 'In $\mathbf{Set}$ two squares are placed side by side. The top row is $A\xrightarrow{f}B\xrightarrow{p}C$, the bottom row is $D\xrightarrow{q}E\xrightarrow{r}F$, and the vertical maps are $a\colon A\to D$, $b\colon B\to E$, $c\colon C\to F$. Both squares commute: $b\circ f=q\circ a$ and $c\circ p=r\circ b$. Here $A=\{0,1,2\}$, $B=\{0,1\}$, $C=\{0,1,2\}$, $f=(1,0,1)$ and $p=(1,2)$ as value lists, and $c(0)=1$, $c(1)=3$, $c(2)=2$. The maps $a$, $q$, $r$ are not given. What is $r(q(a(1)))$?'
@@ -1420,16 +1210,6 @@ topics:
       - id: kp1
         name: Proving equalities by chasing composites
         key_prerequisites: [commutative-diagrams]
-        step_check:
-          step: 'Use the second hypothesis $r \circ q = h \circ g$ to replace $r \circ q$'
-          question: 'Why may $r\circ q$ be replaced by $h\circ g$ inside $r\circ q\circ f$?'
-          options:
-            - 'Equal morphisms can stand for each other inside any composite'
-            - 'Composition is commutative, so $q$ and $r$ can be swapped'
-            - 'The morphism $f$ is an identity and drops out of the composite'
-            - 'The equation holds only after $f$ has been applied to both sides first'
-          answer: 'Equal morphisms can stand for each other inside any composite'
-          why: 'Equal morphisms can be substituted for each other inside a longer composite, and associativity lets the brackets move freely; no cancellation is used.'
         constraints: 'Chasing composites through commuting relations and cancellation laws, tested with explicit maps in Set, numbers in a one-object category modulo 12, multiplication maps in Vect, and a counter-example to cancelling on the wrong side; the two hypotheses are given and the unknown maps are not. Preserve exactly one full-proof exemplar.'
         exemplars:
           - problem: 'In $\mathbf{Set}$ let $f,p\colon A\to B$, $q,g\colon B\to D$ and $h,r\colon D\to E$ be maps with $q\circ f=g\circ p$ and $r\circ g=h\circ q$. Here $A=B=\{0,1\}$, $D=\{0,1,2,3\}$, $f=(1,0)$, $p=(0,1)$, $g=(2,3)$ and $h=(5,7,9,11)$ as value lists. The maps $q$ and $r$ are not given. What is $r(g(f(0)))$?'
@@ -1467,16 +1247,6 @@ topics:
       - id: kp2
         name: Uniqueness arguments via commuting constraints
         key_prerequisites: [commutative-diagrams]
-        step_check:
-          step: 'Since $u$ and $v$ both realize it, they must coincide'
-          question: 'Why does it follow that $u=v$?'
-          options:
-            - 'Any two morphisms into $P$ with equal projections to $A$ must be equal'
-            - 'The projections $\pi_1$ and $\pi_2$ are monomorphisms, so $u$ is cancelled'
-            - 'The object $X$ has only one morphism into any other object'
-            - 'Only one map into $P$ has these two composites, and both do'
-          answer: 'Only one map into $P$ has these two composites, and both do'
-          why: 'The product property says exactly one morphism has the prescribed pair of composites with the projections; $u$ and $v$ both have that pair, so each is that morphism.'
         constraints: 'Uniqueness of factorizations and of maps into a product, tested by counting factorizations through a map in Set, by a word problem, by monomorphism tests and by a small search for the least test object; every item is settled by cancellation or by the uniqueness clause of a universal property. Preserve exactly one full-proof exemplar.'
         exemplars:
           - problem: 'In $\mathbf{Set}$ let $m\colon P\to A$ be the injective map $m=(1,3,0)$ from $P=\{0,1,2\}$ to $A=\{0,1,2,3\}$, as a value list. Let $f\colon X\to A$ with $X=\{0,1\}$ be $f=(3,1)$. How many maps $u\colon X\to P$ satisfy $m\circ u=f$?'
@@ -1553,16 +1323,6 @@ topics:
           answer_contract: {"kind": "label", "options": [["yes", "it can", "they can", "possible", "yes it can", "they can be different", "yes they can"], ["no", "it cannot", "they cannot", "impossible", "no it cannot", "cannot", "they cannot be different"]]}
           answer: 'yes'
           reveal: 'Take $f(*)=1$ and $g(*)=2$: both composites send $*$ to $a$, yet $f\ne g$. A monomorphism is a map for which this can never happen.'
-        step_check:
-          step: 'Since $m$ is injective, $f(x) = g(x)$ for all $x$'
-          question: 'Why does injectivity of $m$ give $f(x)=g(x)$ from $m(f(x))=m(g(x))$?'
-          options:
-            - 'An injective map is also onto, so $f(x)$ and $g(x)$ are both forced to be the same element'
-            - 'The hypothesis $m\circ f=m\circ g$ already says that $f$ and $g$ are the same map'
-            - 'Different inputs give different outputs, so equal outputs mean equal inputs'
-            - 'Maps can be cancelled on the right of a composite, so $m$ drops out of both sides'
-          answer: 'Different inputs give different outputs, so equal outputs mean equal inputs'
-          why: 'Injectivity of $m$ says $m(a_1)=m(a_2)$ only when $a_1=a_2$, and here $a_1=f(x)$ and $a_2=g(x)$, so the equal outputs give $f(x)=g(x)$.'
         exemplars:
           - problem: 'In $\mathbf{Set}$, is the function $m\colon\{1,2,3\}\to\{a,b,c,d\}$ with $m(1)=a$, $m(2)=c$, $m(3)=d$ a monomorphism?'
             answer: 'yes'
@@ -1604,16 +1364,6 @@ topics:
         name: Epimorphisms as right-cancellable maps
         key_prerequisites: [functions-injective-surjective]
         constraints: "Right cancellation: decide whether a small function is epi, count the epis, find the values a map is not forced to agree on, and use the residue monoid and the ring example. The stem must not name the answer."
-        step_check:
-          step: 'ring maps send units to units and preserve inverses'
-          question: 'Why does $f(2)=g(2)$ force $f(\tfrac12)=g(\tfrac12)$?'
-          options:
-            - 'The element $\tfrac12$ is an integer, so $f$ and $g$ already agree on it, because they agree on $\mathbb{Z}$'
-            - 'Each map sends $\tfrac12$ to the inverse of its value at $2$, and these values agree'
-            - 'Ring maps are injective, so equal values at $2$ force equal values at $\tfrac12$ as well'
-            - 'The ring $\mathbb{Z}[\tfrac12]$ is generated by the element $2$ alone, so nothing more is needed'
-          answer: 'Each map sends $\tfrac12$ to the inverse of its value at $2$, and these values agree'
-          why: 'Since $2\cdot\tfrac12=1$, we get $f(\tfrac12)=f(2)^{-1}$ and $g(\tfrac12)=g(2)^{-1}$, and equal values at $2$ have equal inverses.'
         exemplars:
           - problem: 'In $\mathbf{Set}$, is the function $e\colon\{1,2,3\}\to\{a,b\}$ with $e(1)=a$, $e(2)=b$, $e(3)=a$ an epimorphism?'
             answer: 'yes'
@@ -1655,16 +1405,6 @@ topics:
         name: Iso implies mono and epi; the converse can fail
         key_prerequisites: [isomorphism-vs-equality]
         constraints: "Isomorphism gives mono and epi, and the converse fails: decide whether a morphism of a small category is an isomorphism, count morphisms that are mono and epi, and use inverses in concrete categories. The stem must not name the answer."
-        step_check:
-          step: 'Apply $f^{-1}$ on the right to get $c = d$'
-          question: 'Why is $f^{-1}$ applied on the right of $c\circ f=d\circ f$?'
-          options:
-            - 'Because $f^{-1}$ only acts as an inverse when it stands on the right of a composite'
-            - 'Because $c$ and $d$ are the only maps that may be followed by $f^{-1}$ in this argument'
-            - 'Because composing on the left would change the codomain of $c$ and $d$'
-            - 'Because $f$ is the rightmost factor on both sides, so $f\circ f^{-1}=1$ removes it'
-          answer: 'Because $f$ is the rightmost factor on both sides, so $f\circ f^{-1}=1$ removes it'
-          why: '$(c\circ f)\circ f^{-1}=c\circ(f\circ f^{-1})=c\circ 1=c$, and the same for $d$, so the equation $c\circ f=d\circ f$ becomes $c=d$.'
         exemplars:
           - problem: 'In the poset category on $0\le 1\le 2$ there is exactly one morphism $a\to b$ when $a\le b$. Is the morphism $f\colon 0\to 1$ an isomorphism?'
             answer: 'no'
@@ -1737,16 +1477,6 @@ topics:
         name: Definition and first examples
         key_prerequisites: [isomorphism-vs-equality]
         constraints: "Definition and first examples of groupoids: decide whether a small category is a groupoid, count its morphisms and isomorphisms, and invert a composite. Every category in a stem is given fully in the text."
-        step_check:
-          step: 'so $g^{-1}\colon y\to x$ is a morphism of $\mathcal{T}_G$'
-          question: 'Why must we check that $g^{-1}\colon y\to x$ is a morphism of $\mathcal{T}_G$ before calling it an inverse?'
-          options:
-            - 'An inverse must itself be an arrow of the category, which here means $g^{-1}y=x$'
-            - 'Every group element is automatically an arrow between every pair of objects'
-            - 'The identity arrow $1_y$ is defined to be $g^{-1}$, so it must be shown to exist'
-            - 'Composition in $\mathcal{T}_G$ is only defined for arrows that are inverse to each other'
-          answer: 'An inverse must itself be an arrow of the category, which here means $g^{-1}y=x$'
-          why: 'In $\mathcal{T}_G$ an arrow $y\to x$ is an element $h$ with $hy=x$, so $g^{-1}$ qualifies only after we check that $g^{-1}y=g^{-1}(gx)=x$.'
         exemplars:
           - problem: 'A category has one object and two morphisms, $1$ and $e$, where $1$ is the identity and $e\circ e=e$. Is it a groupoid?'
             answer: 'no'
@@ -1788,16 +1518,6 @@ topics:
         name: Automorphism groups and hom-set sizes
         key_prerequisites: [poset-monoid-categories]
         constraints: "Automorphism groups and hom-set sizes in a groupoid: count the morphisms from the automorphism group and the number of objects, divide a total among hom-sets, and transport an automorphism along an isomorphism. Every groupoid in a stem is given fully in the text."
-        step_check:
-          step: '$\Psi(\Phi(h))=(h\circ u^{-1})\circ u=h\circ(u^{-1}\circ u)=h\circ 1_p=h$'
-          question: 'Which axiom justifies the second equality, $(h\circ u^{-1})\circ u=h\circ(u^{-1}\circ u)$?'
-          options:
-            - 'Commutativity of composition, which lets us swap $u^{-1}$ and $u$'
-            - 'The inverse law $u^{-1}\circ u=1_p$, which removes the brackets'
-            - 'Associativity of composition, which only moves the brackets'
-            - 'The identity law $h\circ 1_p=h$, which absorbs the factor $u$'
-          answer: 'Associativity of composition, which only moves the brackets'
-          why: 'The two sides contain the same three arrows in the same order and differ only in brackets, so associativity applies; the inverse law and the identity law come in the later equalities.'
         exemplars:
           - problem: 'A groupoid has two objects $x$ and $y$. The group $\mathrm{Aut}(x)$ has 6 elements and there is at least one morphism $x\to y$. How many morphisms $x\to y$ are there?'
             answer: '6'
@@ -1839,16 +1559,6 @@ topics:
         name: Thin groupoids are equivalence relations
         key_prerequisites: [relations-equivalence]
         constraints: "Thin groupoids and equivalence relations: count the morphisms from the classes, find the class size or the number of components, and match the groupoid axioms with reflexivity, symmetry and transitivity. The stem must not name the answer."
-        step_check:
-          step: 'By composition, there exists an arrow $g \circ f: x \to z$'
-          question: 'Why does the arrow $g\circ f\colon x\to z$ show that $x\sim z$?'
-          options:
-            - 'Composing the arrows gives $1_x$, which is the arrow that defines $x\sim x$'
-            - 'Thinness forces $g\circ f$ to equal $f$, so $x\sim y$ carries over to $x\sim z$'
-            - 'Inverses exist, so $g\circ f$ must be a symmetric arrow of the groupoid'
-            - 'The relation holds whenever an arrow exists, and $g\circ f$ is such an arrow'
-          answer: 'The relation holds whenever an arrow exists, and $g\circ f$ is such an arrow'
-          why: 'By definition $x\sim z$ means there is an arrow $x\to z$, and composition of $f\colon x\to y$ with $g\colon y\to z$ supplies one.'
         exemplars:
           - problem: 'A thin groupoid has objects $0,1,\dots,7$. Besides identities, its morphisms are generated by arrows $0\to 1$, $2\to 3$, $3\to 4$ and $5\to 6$. Two objects are in the same component when there is a morphism between them. How many components does it have?'
             answer: '4'
@@ -1921,16 +1631,6 @@ topics:
         name: Split monos and split epis
         key_prerequisites: [mono-epi-iso]
         constraints: "Split monos and split epis in Set and small categories: count the sections or retractions of a given function, read off a value of a retraction, and decide whether a morphism of a small category splits. Every category in a stem is given fully in the text."
-        step_check:
-          step: 'for each $b \in B$, choose a preimage $s(b) \in f^{-1}(b)$'
-          question: 'Why must $s(b)$ be chosen from $f^{-1}(b)$?'
-          options:
-            - 'So that $s(b)$ is different for different $b$, since a section is injective by definition'
-            - 'So that $f(s(b))=b$ for every $b$, which is the equation $f\circ s=1_B$'
-            - 'So that $s\circ f=1_A$ holds at the elements that were chosen'
-            - 'So that $s$ is defined on all of $A$ rather than only on $B$'
-          answer: 'So that $f(s(b))=b$ for every $b$, which is the equation $f\circ s=1_B$'
-          why: 'A section must satisfy $f\circ s=1_B$, so $f(s(b))=b$; this holds exactly when $s(b)$ is an element of $A$ that $f$ sends to $b$.'
         exemplars:
           - problem: 'In $\mathbf{Set}$, a section of a function $f\colon A\to B$ is a function $s\colon B\to A$ with $f\circ s=1_B$. Let $f\colon\{1,2,3\}\to\{a,b\}$ be given by $f(1)=a$, $f(2)=b$, $f(3)=a$. How many sections does $f$ have?'
             answer: '2'
@@ -1972,16 +1672,6 @@ topics:
         name: When splitting plus cancellation gives an isomorphism
         key_prerequisites: [isomorphism-vs-equality]
         constraints: "When splitting plus cancellation gives an isomorphism: find what m\u2218r equals, count sections and split monos in small categories, and use the bijection that results. Every category in a stem is given fully in the text."
-        step_check:
-          step: '$r = r \circ 1 = r \circ (g \circ s) = (r \circ g) \circ s = 1 \circ s = s$'
-          question: 'Why can $r\circ 1$ be rewritten as $r\circ(g\circ s)$?'
-          options:
-            - 'Because $g\circ s=1$ is given, so $1$ can be replaced by $g\circ s$'
-            - 'Because $r\circ g=1$ is given, so the factor $g$ can be inserted next to $r$'
-            - 'Because composition is commutative, so $g\circ s$ equals $s\circ g$ here'
-            - 'Because $r$ and $s$ are inverse to each other by the definition of a section'
-          answer: 'Because $g\circ s=1$ is given, so $1$ can be replaced by $g\circ s$'
-          why: 'The hypothesis $g\circ s=1$ lets us swap the identity for $g\circ s$; the next equalities then use associativity and $r\circ g=1$.'
         exemplars:
           - problem: 'Let $m\colon A\to B$ and $r\colon B\to A$ be morphisms of a category with $r\circ m=1_A$, and suppose $m$ is an epimorphism. Which of $1_A$, $1_B$, $m$, $r$ is equal to $m\circ r$?'
             answer: '1_B'
@@ -2058,16 +1748,6 @@ topics:
         name: The image factorization in Set
         key_prerequisites: [mono-epi-iso]
         constraints: "The image factorization in Set: find the image, its size, the labelled surjection part, the inputs that the surjection identifies, and the elements outside the image. Every function in a stem is given fully by its values."
-        step_check:
-          step: 'Define the surjective part'
-          question: 'Why is this $e$ surjective, even though $f$ itself is not?'
-          options:
-            - 'Because $e$ is injective on $\{1,2,3\}$, and injective maps are always surjective'
-            - 'Its codomain is only the image $\{b,d\}$, and both elements are values of $e$'
-            - 'Because the inclusion $m$ that comes afterwards makes the composite surjective'
-            - 'Because $e$ sends $1$ and $3$ to the same element, which fills the codomain'
-          answer: 'Its codomain is only the image $\{b,d\}$, and both elements are values of $e$'
-          why: 'Shrinking the codomain from $\{a,b,c,d\}$ to the image $\{b,d\}$ removes exactly the elements $f$ never reaches, so every remaining element is a value.'
         exemplars:
           - problem: 'In $\mathbf{Set}$, every function factors as a surjection followed by an injection through its image. Let $f\colon\{1,2,3\}\to\{1,2,3,4\}$ be given by $f(1)=2$, $f(2)=4$, $f(3)=2$. What is the image of $f$, the middle set of this factorization?'
             answer: '2, 4'
@@ -2109,16 +1789,6 @@ topics:
         name: The diagonal fill-in
         key_prerequisites: [diagram-chasing]
         constraints: "The diagonal fill-in in a commuting square: compute a value of the diagonal in Set, count diagonals when a hypothesis fails, and name the cancellation property that gives uniqueness. Every square in a stem is given fully by its values."
-        step_check:
-          step: 'we can apply the mono property of $h$ (left-cancellable)'
-          question: 'Why does the mono property of $h$ make the diagonal unique?'
-          options:
-            - 'Two diagonals give $h\circ d=h\circ d_2$, and a monomorphism cancels on the left'
-            - 'A monomorphism is surjective, so $d$ is determined on every element of the codomain'
-            - 'Monomorphisms commute with all morphisms, so $d$ and $d_2$ may be swapped freely'
-            - 'The mono property of $h$ gives a diagonal, so a second one is redundant here'
-          answer: 'Two diagonals give $h\circ d=h\circ d_2$, and a monomorphism cancels on the left'
-          why: 'Both diagonals satisfy $h\circ d=f$, so they have equal composites with $h$, and left cancellation of the monomorphism $h$ gives $d=d_2$.'
         exemplars:
           - problem: 'In $\mathbf{Set}$ let $e\colon\{0,1,2\}\to\{0,1\}$ have $e(0)=0$, $e(1)=0$, $e(2)=1$, let $u\colon\{0,1,2\}\to\{0,1\}$ have $u(0)=1$, $u(1)=1$, $u(2)=0$, let $m\colon\{0,1\}\to\{4,7\}$ have $m(0)=4$, $m(1)=7$, and let $v\colon\{0,1\}\to\{4,7\}$ have $v(0)=7$, $v(1)=4$. Then $v\circ e=m\circ u$. The diagonal $d\colon\{0,1\}\to\{0,1\}$ satisfies $d\circ e=u$ and $m\circ d=v$. What is $d(1)$?'
             answer: '0'
@@ -2156,16 +1826,6 @@ topics:
         name: Subobjects as isomorphism classes of monomorphisms
         key_prerequisites: [isomorphism-vs-equality]
         constraints: "Subobjects as isomorphism classes of monomorphisms: decide whether two monomorphisms give the same subobject or are ordered, find the comparison map, and count subobjects of small sets and groups. Every map in a stem is given fully by its values."
-        step_check:
-          step: 'Therefore, $t$ is an injective group homomorphism'
-          question: 'Why does $m=m''\circ t$ with $m$ injective force $t$ to be injective?'
-          options:
-            - 'Every homomorphism into a subgroup is injective, so $t$ is injective automatically'
-            - 'Composing with the inclusion $m''$ makes $t$ surjective, and surjective maps are injective'
-            - 'If $t(x)=t(y)$ then $m(x)=m(y)$, so $x=y$ because $m$ is injective'
-            - 'The relation $m\le m''$ is defined to mean that $t$ is an isomorphism'
-          answer: 'If $t(x)=t(y)$ then $m(x)=m(y)$, so $x=y$ because $m$ is injective'
-          why: 'From $m=m''\circ t$, equal values $t(x)=t(y)$ give $m(x)=m''(t(x))=m''(t(y))=m(y)$, and injectivity of $m$ then gives $x=y$.'
         exemplars:
           - problem: 'In $\mathbf{Set}$ let $m\colon\{1,2\}\to\{1,2,3,4\}$ send $1\mapsto 1$ and $2\mapsto 2$, and let $m_2\colon\{3,4\}\to\{1,2,3,4\}$ send $3\mapsto 1$ and $4\mapsto 2$. Both are monomorphisms. Do $m$ and $m_2$ represent the same subobject of $\{1,2,3,4\}$?'
             answer: 'yes'
@@ -2244,16 +1904,6 @@ topics:
           answer_contract: {"kind":"label","options":[["yes","yes, there is","there is"],["no","no, there is not","there is not","none"]]}
           answer: "no"
           reveal: 'No: $2$ does not divide $3$ and $3$ does not divide $2$, so no number divides all five. A number with a morphism to every object, and only one, is an initial object, so this ordering has none.'
-        step_check:
-          step: 'there is exactly one morphism $0 \to n$ because $0 \le n$ is uniquely determined'
-          question: 'Why is there exactly one morphism $0\to n$ for each $n\in\mathbb{N}$?'
-          options:
-            - 'In every category there is exactly one morphism between any two objects of it'
-            - 'A poset category has at most one morphism between objects, and $0\le n$ gives one'
-            - 'The only morphisms in a poset category are identities, so $0\to n$ is the identity $1_0$'
-            - 'The object $0$ is initial in every category, so it has one morphism to each object'
-          answer: 'A poset category has at most one morphism between objects, and $0\le n$ gives one'
-          why: 'In a poset category the relation $a\le b$ gives exactly one morphism $a\to b$ and none otherwise, so an initial object is a least element.'
         exemplars:
           - problem: 'In the poset category on $\{1,2,3,4,6,12\}$ there is exactly one morphism $a\to b$ when $a$ divides $b$, and no other morphisms. Which object is initial?'
             answer: "1"
@@ -2295,16 +1945,6 @@ topics:
         name: Uniqueness up to unique isomorphism
         key_prerequisites: [isomorphism-vs-equality]
         constraints: 'Uniqueness of initial and terminal objects up to unique isomorphism, tested in Set, Grp and small finite categories or preorders stated in full; items ask for counts of morphisms or isomorphisms, the objects that qualify, or one equation, and one full-proof exemplar is kept.'
-        step_check:
-          step: 'The composite $v\circ u\colon \{b\}\to\{b\}$ and the identity $1_{\{b\}}$ are both arrows into the terminal object $\{b\}$'
-          question: 'Why does $v\circ u$ equal the identity $1_{\{b\}}$?'
-          options:
-            - 'The maps $u$ and $v$ were chosen so that they are inverse to each other by design'
-            - 'Both sets $\{a\}$ and $\{b\}$ have exactly one element, so they are the same set'
-            - 'Both are arrows from $\{b\}$ to the terminal object $\{b\}$, and there is only one'
-            - 'Composing two unique arrows always gives the identity arrow of the first object here'
-          answer: 'Both are arrows from $\{b\}$ to the terminal object $\{b\}$, and there is only one'
-          why: 'Terminality of $\{b\}$ leaves exactly one arrow from $\{b\}$ to $\{b\}$, so every composite from $\{b\}$ to itself is the identity; that $u$ and $v$ are inverse is the conclusion, not the reason.'
         exemplars:
           - problem: 'Let $T$ be a terminal object of a category. How many morphisms $T\to T$ are there?'
             answer: "1"
@@ -2342,16 +1982,6 @@ topics:
         name: Zero objects
         key_prerequisites: [isomorphism-vs-equality]
         constraints: 'Zero objects and zero morphisms in Grp, pointed sets, Set, posets and small finite categories stated in full; items ask for a counted morphism, the composite value at an element, or the object that qualifies, and one full-proof exemplar is kept.'
-        step_check:
-          step: 'The composite $(B\to 0)\circ f\colon A\to 0$ is an arrow into the terminal object $0$, so it must equal the unique arrow $A\to 0$'
-          question: 'Why must $(B\to 0)\circ f$ equal the unique arrow $A\to 0$?'
-          options:
-            - 'The morphism $f$ is itself a zero morphism, so it sends $A$ to $0$ already'
-            - 'Since $0$ is initial, there is only one arrow out of $0$ to any object'
-            - 'Every composite of two arrows is the identity arrow on its source object'
-            - 'It is an arrow from $A$ into the terminal object $0$, and only one exists'
-          answer: 'It is an arrow from $A$ into the terminal object $0$, and only one exists'
-          why: 'Terminality of $0$ gives exactly one arrow from $A$ to $0$, so every arrow from $A$ to $0$, this composite included, is that arrow; initiality of $0$ concerns arrows out of $0$.'
         exemplars:
           - problem: 'Which of the groups $\mathbb{Z}$, $\mathbb{Z}_2$, $S_3$ and the trivial group $\{e\}$ is a zero object of $\mathbf{Grp}$, that is, both an initial and a terminal object?'
             answer: "the trivial group"
@@ -2437,16 +2067,6 @@ topics:
         name: The opposite category
         key_prerequisites: [category-definition]
         constraints: 'The opposite category computed from finite categories, posets, monoids and Set stated in full; items ask for a count of morphisms, a composite value or a composite element, and one full-proof exemplar is kept.'
-        step_check:
-          step: 'set $\mathrm{Hom}_{\mathcal{C}^{op}}(X,Y)=\mathrm{Hom}_{\mathcal{C}}(Y,X)$'
-          question: 'Why does $\mathrm{Hom}_{\mathcal{C}^{op}}(B,A)$ contain $f$, although $f$ goes from $A$ to $B$ in $\mathcal{C}$?'
-          options:
-            - 'A morphism $B\to A$ of the opposite category is a morphism $A\to B$ of $\mathcal{C}$'
-            - 'In the opposite category every morphism is replaced by its inverse morphism, if it has one'
-            - 'The objects $A$ and $B$ swap their names when we pass to the opposite category'
-            - 'The morphism $f$ is a composite, and composites run backwards in the opposite category'
-          answer: 'A morphism $B\to A$ of the opposite category is a morphism $A\to B$ of $\mathcal{C}$'
-          why: 'The opposite category keeps the objects and reverses the direction of each morphism, so $\mathrm{Hom}_{\mathcal{C}^{op}}(B,A)$ is the set $\mathrm{Hom}_{\mathcal{C}}(A,B)$; no inverses are involved.'
         exemplars:
           - problem: 'A category $\mathcal{C}$ has objects $A$, $B$, $C$ and, besides the identities, exactly the morphisms $f\colon A\to B$, $g\colon B\to C$ and $g\circ f\colon A\to C$. How many morphisms from $C$ to $A$ does the opposite category $\mathcal{C}^{op}$ have?'
             answer: "1"
@@ -2484,16 +2104,6 @@ topics:
         name: The duality principle
         key_prerequisites: [category-definition]
         constraints: 'Duality applied to definitions: the dual notion of initial object, monomorphism and product, and its reading in small posets, Set^op and finite categories stated in full; items ask for the dual notion, the object that qualifies or a count of morphisms, and one full-proof exemplar is kept.'
-        step_check:
-          step: 'The conditions $p_1 \circ h = f$ and $p_2 \circ h = g$ become $k \circ i_1 = u$ and $k \circ i_2 = v$'
-          question: 'Why does $p_1\circ h=f$ become $k\circ i_1=u$ and not $i_1\circ k=u$?'
-          options:
-            - 'The letter order of a composite never changes, so only the names $p_1\to i_1$ and $h\to k$ change'
-            - 'Reversing arrows turns composition into addition of maps, and addition does not depend on order'
-            - 'A dual statement keeps every equation as it was and replaces only the objects by new ones'
-            - 'The map $k$ leaves $Q$ and $i_1$ enters $Q$, so $k$ is applied after $i_1$'
-          answer: 'The map $k$ leaves $Q$ and $i_1$ enters $Q$, so $k$ is applied after $i_1$'
-          why: 'Reversing every arrow also reverses the order of every composite, so the map that was applied last now comes first; $i_1\circ k$ would not even be defined.'
         exemplars:
           - problem: 'Reversing every arrow in a definition gives the dual notion. An initial object has exactly one morphism from itself to each object. Which notion is dual to an initial object?'
             answer: "terminal object"
@@ -2539,16 +2149,6 @@ topics:
         name: Using duality to halve the work
         key_prerequisites: [initial-terminal-objects]
         constraints: 'Using duality to transfer a known theorem, tested on epimorphisms and monomorphisms in Set and Set^op, sections and retractions, and unique isomorphisms; items ask for the translated statement, a count or a size, or the first invalid step of a duality argument, and one full-proof exemplar is kept.'
-        step_check:
-          step: 'the defining equation becomes $s^{op} \circ^{op} f^{op} = (f \circ s)^{op} = 1_B$'
-          question: 'Why does the equation $f\circ s=1_B$ say that $f^{op}$ has a retraction in $\mathcal{C}^{op}$?'
-          options:
-            - 'Because $s^{op}$ points the same way as $s$, the equation stays the same in $\mathcal{C}^{op}$'
-            - 'In $\mathcal{C}^{op}$ composition reverses, so $s^{op}$ after $f^{op}$ equals $1_B$'
-            - 'Because $f$ is monic, every equation about $f$ also holds in the opposite category'
-            - 'The identity $1_B$ turns into the identity $1_A$ when we pass to the opposite category'
-          answer: 'In $\mathcal{C}^{op}$ composition reverses, so $s^{op}$ after $f^{op}$ equals $1_B$'
-          why: 'In $\mathcal{C}^{op}$ the morphism $s^{op}\colon A\to B$ applied after $f^{op}\colon B\to A$ gives $(f\circ s)^{op}=1_B$, which is exactly a retraction equation; identities do not change.'
         exemplars:
           - problem: 'Let $f\colon A\to B$ and $g\colon B\to C$ be epimorphisms of a category $\mathcal{C}$. You know that a composite of two monomorphisms is a monomorphism, in every category. Apply this to $\mathcal{C}^{op}$, where $f$ and $g$ become monomorphisms. Which statement about $\mathcal{C}$ do you obtain?'
             answer: "g∘f is an epimorphism"
@@ -2625,16 +2225,6 @@ topics:
           answer_contract: {"kind":"exact"}
           answer: "2"
           reveal: 'The element $a$ must go to an element over $0$, which is only $u$, and $b$ must go to an element over $1$, which is $v$ or $w$, so there are $2$ maps. Maps with $g\circ h=f$ are exactly the morphisms $f\to g$ in the slice category over $\{0,1\}$.'
-        step_check:
-          step: 'it carries fiber $1$ into fiber $1$ and fiber $2$ into fiber $2$'
-          question: 'Why must a morphism $h\colon f\to g$ of the slice carry each fiber of $f$ into the fiber of $g$ over the same point?'
-          options:
-            - 'A slice morphism must be a bijection, so it keeps every point above its own place'
-            - 'Every function between two sets carries each fiber of one into a fiber of the other'
-            - 'The condition $g\circ h=f$ says that $h(x)$ lies over the same point as $x$'
-            - 'The target set has only the two points $1$ and $2$, so $h$ has nowhere else to go'
-          answer: 'The condition $g\circ h=f$ says that $h(x)$ lies over the same point as $x$'
-          why: 'If $g(h(x))=f(x)$, then $h(x)$ is sent by $g$ to the same point that $f$ sends $x$ to; no bijection is needed, and an arbitrary function need not respect fibers.'
         exemplars:
           - problem: 'In $\mathbf{Set}/\{0,1\}$ let $f\colon X\to\{0,1\}$ with $X=\{a,b,c\}$, $f(a)=0$, $f(b)=0$, $f(c)=1$, and let $g\colon Y\to\{0,1\}$ with $Y=\{u,v,w\}$, $g(u)=0$, $g(v)=1$, $g(w)=1$. How many morphisms from $f$ to $g$ are there?'
             answer: "2"
@@ -2680,16 +2270,6 @@ topics:
         name: Terminal objects in slices; coslices by duality
         key_prerequisites: [initial-terminal-objects]
         constraints: 'Terminal objects of slices and initial objects of coslices by duality, computed in Set and in a poset with every set and function stated in full; items ask for the value of the unique morphism, a count of morphisms or of objects, or the equation the identity forces, and one full-proof exemplar is kept.'
-        step_check:
-          step: 'Since $1_S$ is the identity, $1_S\circ h=h$, so the equation forces $h=f$'
-          question: 'Why does the equation $1_S\circ h=f$ leave exactly one choice for $h$?'
-          options:
-            - 'Composing with an identity changes nothing, so $h$ itself must be equal to $f$'
-            - 'Because $1_S$ is a bijection, the map $h$ must also be a bijection from $X$ to $S$'
-            - 'The set $S=\{0,1\}$ has two elements, so $h$ has just one remaining possible value'
-            - 'Every function from $X$ to $S$ is equal to $f$, whatever the object $f$ may be'
-          answer: 'Composing with an identity changes nothing, so $h$ itself must be equal to $f$'
-          why: 'Since $1_S\circ h=h$, the triangle condition reads $h=f$, so $f$ is the only candidate; other functions $X\to S$ exist but fail the condition.'
         exemplars:
           - problem: 'The identity $1_C$ is a terminal object of the slice category $\mathbf{Set}/C$. Let $C=\{1,2,3,4\}$ and let $f\colon\{1,2\}\to C$ have $f(1)=1$ and $f(2)=3$. What is $h(2)$ for the unique morphism $h\colon f\to 1_C$?'
             answer: "3"

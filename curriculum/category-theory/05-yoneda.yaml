@@ -36,16 +36,6 @@ topics:
           answer_contract: {"kind": "exact"}
           answer: '8'
           reveal: 'Each of the 3 elements of $R$ picks one of 2 images, so $\mathrm{Hom}(R,X)$ has $|X|^{|R|}$ elements. A functor is represented by $R$ when this count matches the size of its value at every $X$, and the match is natural.'
-        step_check:
-          step: 'A function $f\colon\{*\}\to X$ is determined entirely by the image of $*$'
-          question: 'Why does the fact that $f\colon\{*\}\to X$ is determined by the image of $*$ show that $\alpha_X$ is a bijection?'
-          options:
-            - 'The set $\{*\}$ has one element, so $\mathrm{Hom}(\{*\},X)$ has one element whatever $X$ is'
-            - 'Each $f$ picks one element of $X$, and each element of $X$ is picked by exactly one $f$'
-            - 'The rule $f\mapsto f(*)$ respects composition, and that alone makes it a bijection'
-            - 'Naturality in $X$ already forces every component $\alpha_X$ to be injective and surjective'
-          answer: 'Each $f$ picks one element of $X$, and each element of $X$ is picked by exactly one $f$'
-          why: 'The functions $\{*\}\to X$ correspond one to one with the elements of $X$, by $f\leftrightarrow f(*)$.'
         exemplars:
           - problem: 'The identity functor $\mathrm{Id}\colon\mathbf{Set}\to\mathbf{Set}$ is representable: there is a set $R$ and a natural isomorphism $\mathrm{Hom}(R,-)\cong\mathrm{Id}$. How many elements does $R$ have?'
             answer: '1'
@@ -83,16 +73,6 @@ topics:
         name: Recognizing representable functors
         key_prerequisites: [natural-isomorphisms, free-groups-presentations]
         constraints: "Recognize when a free object on one generator represents a forgetful functor from Mon, Grp or Ab. Establish unique extension of generator images and naturality in the target; distinguish additional relations that obstruct freeness. Closed items may construct the categorical object or diagnose assertions whose validity the learner must determine; the unmarked item asks for a full proof. Candidate claims must not be endorsed or explained by the stem."
-        step_check:
-          step: 'Given any $a\in UA$, define $\varphi\colon\mathbb Z\to A$ by $\varphi(n)=n\,a$'
-          question: 'Why is $\varphi(n)=n\,a$ a homomorphism from $\mathbb Z$ to $A$?'
-          options:
-            - 'Every function from $\mathbb Z$ to $A$ is a homomorphism as long as it is defined on all of $\mathbb Z$'
-            - 'The element $a$ was chosen to be the identity of $A$, so $\varphi$ sends sums to sums'
-            - 'In an abelian group $(m+n)a=ma+na$, so $\varphi$ sends the sum $m+n$ to the sum of the images'
-            - 'The group $A$ is finite, so the multiples $n\,a$ repeat and the map is automatically additive'
-          answer: 'In an abelian group $(m+n)a=ma+na$, so $\varphi$ sends the sum $m+n$ to the sum of the images'
-          why: 'The rule $(m+n)a=ma+na$ says that $\varphi(m+n)=\varphi(m)+\varphi(n)$, which is the homomorphism condition.'
         exemplars:
           - problem: 'The forgetful functor $U\colon\mathbf{Ab}\to\mathbf{Set}$ is represented by $\mathbb{Z}$: sending a homomorphism $\varphi\colon\mathbb{Z}\to A$ to $\varphi(1)$ is a bijection $\mathrm{Hom}(\mathbb{Z},A)\cong UA$ for every abelian group $A$. Under this bijection the element $3$ of $A=\mathbb{Z}/10$ corresponds to a homomorphism $\varphi\colon\mathbb{Z}\to\mathbb{Z}/10$. What is $\varphi(4)$?'
             answer: '2'
@@ -134,16 +114,6 @@ topics:
         name: Uniqueness of the representing object
         key_prerequisites: [universal-properties]
         constraints: "Recover comparison maps from identity components and derive their action by naturality. Prove inverse equations by evaluating the inverse natural transformations; use whole component tests to reject false uniqueness arguments."
-        step_check:
-          step: 'naturality of $\theta$ at $h$ applied to $1_C$'
-          question: 'Why do we apply naturality of $\theta$ to the identity $1_C$?'
-          options:
-            - 'Because $h=h\circ 1_C$, so each $\theta_X(h)$ comes from the single value $\theta_C(1_C)$'
-            - 'Because $1_C$ is the only morphism out of $C$ on which the transformation $\theta$ is defined at all'
-            - 'Because $\theta_C$ is an isomorphism only when the transformation is evaluated at an identity'
-            - 'Because identities commute with every morphism, which makes the naturality square commute'
-          answer: 'Because $h=h\circ 1_C$, so each $\theta_X(h)$ comes from the single value $\theta_C(1_C)$'
-          why: 'Since $h=h\circ 1_C$, naturality turns $\theta_X(h)$ into $h\circ\theta_C(1_C)$, so one value fixes the whole transformation.'
         exemplars:
           - problem: 'Let $\theta\colon\mathrm{Hom}(A,-)\Rightarrow\mathrm{Hom}(B,-)$ be a natural isomorphism of functors on $\mathbf{Set}$, where $A=\{1,2\}$ and $B=\{3,4\}$. The inverse $\theta^{-1}$ sends $1_B$ at the object $B$ to the function $f\colon A\to B$ with $f(1)=4$ and $f(2)=3$. The component $\theta_A$ sends $1_A$ to a function $g\colon B\to A$. What is $g(3)$?'
             answer: '2'
@@ -215,16 +185,6 @@ topics:
           answer_contract: {"kind": "exact"}
           answer: '1'
           reveal: 'Such a homomorphism must send $n$ to $3n$, and this formula does work. Exactly one homomorphism exists for each chosen value of $h(1)$, which is the universal element condition for $(\mathbb{N},1)$.'
-        step_check:
-          step: 'This is a monoid homomorphism since $h(n+k)=m^{n+k}=m^{n}\cdot m^{k}=h(n)\cdot h(k)$'
-          question: 'Why does the equation $h(n+k)=h(n)\cdot h(k)$ show that $h$ preserves the operation?'
-          options:
-            - 'It shows that $h$ is injective, which is what a monoid homomorphism has to be'
-            - 'It shows that $h(1)=m$, which is the condition that makes the element universal'
-            - 'It holds for every function between sets, so it needs no property of $M$'
-            - 'It sends the sum $n+k$ to the product of the images, as a homomorphism must'
-          answer: 'It sends the sum $n+k$ to the product of the images, as a homomorphism must'
-          why: 'A homomorphism sends the operation of $\mathbb N$ to the operation of $M$, and $h(n+k)=h(n)\cdot h(k)$ says exactly that.'
         exemplars:
           - problem: 'The additive monoid $\mathbb{N}$ with the element $1$ is a universal element of the forgetful functor $U\colon\mathbf{Mon}\to\mathbf{Set}$. Let $M$ be the monoid $\mathbb{Z}/6$ under addition. By universality there is exactly one monoid homomorphism $h\colon\mathbb{N}\to M$ with $h(1)=4$. What is $h(5)$?'
             answer: '2'
@@ -262,16 +222,6 @@ topics:
         name: Universal properties are universal elements
         key_prerequisites: [universal-properties]
         constraints: "Recover the representing object and universal tuple of projections/injections for the candidate-structure functor. Match its variance and exists-unique equation to the product or coproduct universal property."
-        step_check:
-          step: 'so the requirement is $\pi_i h=f_i$ for $i=1,2,3$'
-          question: 'Why does $F(h)(\pi_1,\pi_2,\pi_3)=(f_1,f_2,f_3)$ become $\pi_i h=f_i$ for each $i$?'
-          options:
-            - 'Because the projections $\pi_i$ are inverse to $h$, so $\pi_i h$ cancels to the identity'
-            - 'Because $F(h)$ composes every component with $h$, and triples are equal componentwise'
-            - 'Because $F$ is covariant, so $h$ acts after each $\pi_i$ and the maps $f_i$ stay unchanged'
-            - 'Because $h$ must be a bijection, and a bijection is determined by its three components'
-          answer: 'Because $F(h)$ composes every component with $h$, and triples are equal componentwise'
-          why: 'The action of $F(h)$ is $(\pi_1 h,\pi_2 h,\pi_3 h)$, and an equality of triples is an equality in each coordinate.'
         exemplars:
           - problem: 'In $\mathbf{Set}$ let $A=\{1,2\}$ and $B=\{3,4\}$, and let $F(X)=\mathrm{Hom}(X,A)\times\mathrm{Hom}(X,B)$. The functor $F$ has a universal element $u$ at an object $P$. Take $X=\{7\}$ with $f\colon X\to A$, $f(7)=2$, and $g\colon X\to B$, $g(7)=4$. Then $(f,g)$ is an element of $F(X)$, so there is a unique $h\colon X\to P$ with $F(h)(u)=(f,g)$. What is $h(7)$?'
             answer: '(2, 4)'
@@ -338,16 +288,6 @@ topics:
         name: The statement in both variances
         key_prerequisites: [representable-functors]
         constraints: "Recover Yoneda components in both variances from identity evaluation and naturality. Never supply the reconstruction formula before asking to use it; keep all arrow directions explicit."
-        step_check:
-          step: 'Here $Fh=\mathrm{Hom}(B,h)$ sends $u\colon B\to A$ to $h\circ u\colon B\to X$'
-          question: 'Why does $Fh$ send $u\colon B\to A$ to $h\circ u$ and not to $u\circ h$?'
-          options:
-            - 'Because composition of morphisms is commutative, so either order gives the same morphism'
-            - 'Because $u$ has to be applied last, as the outermost map in a composite of two maps'
-            - 'Because only $h\circ u$ is defined when $u\colon B\to A$ and $h\colon A\to X$'
-            - 'Because the source of $h$ is $B$, so $h$ can only be applied to morphisms that start at $B$'
-          answer: 'Because only $h\circ u$ is defined when $u\colon B\to A$ and $h\colon A\to X$'
-          why: 'The functor $\mathrm{Hom}(B,-)$ acts by post-composition, and $h\circ u$ is the only composite with $u\colon B\to A$ and $h\colon A\to X$.'
         exemplars:
           - problem: 'Let $\mathcal C$ be the category with two objects $0$ and $1$, their identities and one other morphism $f\colon 0\to 1$. Let $F\colon\mathcal C\to\mathbf{Set}$ be the functor with $F(0)=\{1,2\}$, $F(1)=\{3,4\}$, and $F(f)$ sending $1$ to $3$ and $2$ to $4$. The Yoneda lemma matches the element $u=1$ of $F(0)$ with a natural transformation $\alpha\colon\mathrm{Hom}(0,-)\Rightarrow F$. What is $\alpha_1(f)$?'
             answer: '3'
@@ -385,16 +325,6 @@ topics:
         name: Counting natural transformations out of a representable
         key_prerequisites: [hom-functors]
         constraints: "Count natural transformations by deriving the identity-evaluation parameter set and reconstruction, with no parameter set supplied in the stem. Distinguish covariant and contravariant representable directions."
-        step_check:
-          step: 'here $FA=\mathrm{Hom}(\{1,2,3,4\},\{1,2,3\})$'
-          question: 'Why is the set counted $\mathrm{Hom}(\{1,2,3,4\},\{1,2,3\})$ and not $\mathrm{Hom}(\{1,2,3\},\{1,2,3,4\})$?'
-          options:
-            - 'The lemma counts $FA$ with $F=\mathrm{Hom}(\{1,2,3,4\},-)$ and $A=\{1,2,3\}$, so the maps end in $A$'
-            - 'A natural transformation out of $\mathrm{Hom}(A,-)$ always goes against the direction of the maps in $F$'
-            - 'The number of functions is the same in both directions, so the choice is only a convention'
-            - 'The set $A$ is always the source of the functions in $FA$, whatever the functor $F$ is'
-          answer: 'The lemma counts $FA$ with $F=\mathrm{Hom}(\{1,2,3,4\},-)$ and $A=\{1,2,3\}$, so the maps end in $A$'
-          why: 'With $F=\mathrm{Hom}(B,-)$ we get $FA=\mathrm{Hom}(B,A)$, so the functions go from the set $B$ into the set $A$.'
         exemplars:
           - problem: 'In $\mathbf{Set}$, how many natural transformations are there from $\mathrm{Hom}(\{1,2,3,4\},-)$ to $\mathrm{Hom}(\{1,2\},-)$?'
             answer: '16'
@@ -432,16 +362,6 @@ topics:
         name: The one-object case — monoid and group actions
         key_prerequisites: [functor-categories]
         constraints: "Identify presheaves on a one-object category with right actions through precomposition. Recover equivariant maps from their identity value and distinguish regular-action transport from fixed-point conditions."
-        step_check:
-          step: 'Thus $\alpha$ is determined by $\alpha(0)$, and $\alpha(m)=\alpha(0)\cdot m$'
-          question: 'Why is $\alpha(m)=\alpha(0)\cdot m$ for every $m$?'
-          options:
-            - 'Because $\alpha$ is a group homomorphism from $M$ to $X$, so it preserves sums'
-            - 'Because every element of $X$ is fixed by every $m$, so the action does nothing at all'
-            - 'Because $\alpha(0)$ is defined to be the identity element of the set $X$ in advance'
-            - 'Because $m=0\cdot m$ in the regular action and $\alpha$ is equivariant'
-          answer: 'Because $m=0\cdot m$ in the regular action and $\alpha$ is equivariant'
-          why: 'In the regular action $m=0\cdot m$, and an equivariant map satisfies $\alpha(0\cdot m)=\alpha(0)\cdot m$.'
         exemplars:
           - problem: 'The group $\mathbb{Z}/2=\{e,t\}$ is regarded as a category with one object, with composition given by the group operation. Presheaves on it are the right $\mathbb{Z}/2$-sets, and the representable presheaf is $\mathbb{Z}/2$ acting on itself from the right. Let $X=\{1,2,3,4,5\}$ be the right $\mathbb{Z}/2$-set in which $t$ swaps $1$ and $2$ and fixes $3$, $4$ and $5$. How many equivariant maps are there from the representable presheaf to $X$?'
             answer: '5'
@@ -514,16 +434,6 @@ topics:
         name: Proof of the bijection
         key_prerequisites: [natural-transformations]
         constraints: "Verify both directions of the Yoneda bijection by identity evaluation and the naturality square applied to an identity. Construct missing components or proof paths instead of evaluating an explicitly supplied reconstruction formula."
-        step_check:
-          step: 'Apply that equation to $1_A$'
-          question: 'Why do we apply the naturality equation to the identity $1_A$?'
-          options:
-            - 'Because $1_A$ is the only element of $\mathrm{Hom}(A,A)$ on which $\alpha_A$ is defined'
-            - 'Because $h=h\circ 1_A$, so the equation turns $\alpha_X(h)$ into $(Fh)(\alpha_A(1_A))$'
-            - 'Because $F(1_A)=1_{FA}$, which makes the two sides of the equation equal'
-            - 'Because the identity commutes with $h$, so the naturality square can be skipped'
-          answer: 'Because $h=h\circ 1_A$, so the equation turns $\alpha_X(h)$ into $(Fh)(\alpha_A(1_A))$'
-          why: 'Since $h=h\circ 1_A$, the naturality equation at $1_A$ gives $\alpha_X(h)=(Fh)(\alpha_A(1_A))$.'
         exemplars:
           - problem: 'Let $\mathcal C$ have objects $1$ and $2$, their identities and one other morphism $s\colon 1\to 2$. Let $F\colon\mathcal C\to\mathbf{Set}$ have $F(1)=\{0,1,2\}$, $F(2)=\{0,1,\dots,6\}$ and $F(s)(x)=2x+1$. The element $u=2$ of $F(1)$ corresponds to a natural transformation $\Theta\colon\mathrm{Hom}(1,-)\Rightarrow F$. What is $\Theta_2(s)$?'
             answer: '5'
@@ -557,16 +467,6 @@ topics:
         name: Naturality of the Yoneda isomorphism
         key_prerequisites: [functor-categories]
         constraints: "Construct the induced maps in both naturality squares of the Yoneda bijection, keeping variance explicit. Grade their typed paths or reconstructed expressions, not only an evaluation after the routes are supplied."
-        step_check:
-          step: 'The composite $\phi\circ\alpha$ has components $(\phi\circ\alpha)_X=\phi_X\circ\alpha_X$'
-          question: 'Why does $(\phi\circ\alpha)_A(1_A)$ equal $\phi_A(\alpha_A(1_A))$?'
-          options:
-            - 'Because $\phi_A$ is applied to the identity $1_A$ first and $\alpha_A$ is applied afterwards'
-            - 'Because $\phi$ is natural, so it commutes with every transformation out of $\mathrm{Hom}(A,-)$'
-            - 'Because composites of natural transformations are formed one component at a time'
-            - 'Because $\Psi_{F''}$ is defined as evaluation at $1_A$, which forces this equality by definition'
-          answer: 'Because composites of natural transformations are formed one component at a time'
-          why: 'A composite of natural transformations is formed one component at a time, so its $A$-component is $\phi_A\circ\alpha_A$.'
         exemplars:
           - problem: 'In $\mathbf{Set}$ let $A=\{0,1\}$ and let $s\colon A\to A$ swap $0$ and $1$. Let $F=\mathrm{Hom}(A,-)$, let $F''=\mathrm{Hom}(A,-)\times\mathrm{Hom}(A,-)$, and let $\phi\colon F\Rightarrow F''$ be given by $\phi_X(h)=(h,h)$. Let $\alpha\colon\mathrm{Hom}(A,-)\Rightarrow F$ be the natural transformation with $\alpha_X(h)=s\circ h$. The composite $\phi\circ\alpha$ is a natural transformation $\mathrm{Hom}(A,-)\Rightarrow F''$, so $(\phi\circ\alpha)_A(1_A)$ is a pair of functions $A\to A$. What is the value at $0$ of the first function in this pair?'
             answer: '1'
@@ -604,16 +504,6 @@ topics:
         name: The contravariant form and its computational corollary
         key_prerequisites: [functor-categories]
         constraints: "Apply the contravariant form at a second presheaf: name the presheaf $G$ being substituted, read off the resulting hom-set, and when $G$ is a representable $\\mathrm{Hom}(-,A)$ say whether the bijection is an isomorphism of monoids."
-        step_check:
-          step: 'Check the monoid structure: $(g\circ f)_*=g_*\circ f_*$ and $(1_X)_*=1$'
-          question: 'Why do these two equations show that the bijection is an isomorphism of monoids?'
-          options:
-            - 'They say composites go to composites and identity to identity, as a monoid map must'
-            - 'They say each $f_*$ is a bijection, and a bijection between two monoids is an isomorphism'
-            - 'They say the monoid $\mathrm{End}(X)$ is commutative, which an isomorphism of monoids needs'
-            - 'They say the map $f\mapsto f_*$ is natural in $X$, and naturality makes it a monoid map'
-          answer: 'They say composites go to composites and identity to identity, as a monoid map must'
-          why: 'A monoid isomorphism is a bijection that preserves products and units, and the two equations state exactly that.'
         exemplars:
           - problem: 'Let $\mathcal C$ be the category with two objects $a$ and $b$, their identity morphisms, and four morphisms $f,g,h,k\colon a\to b$; there is no morphism $b\to a$ and there are no other morphisms. How many natural transformations are there from $\mathrm{Hom}(-,a)$ to $\mathrm{Hom}(-,b)$?'
             answer: '4'
@@ -690,16 +580,6 @@ topics:
           answer_contract: {"kind": "exact"}
           answer: '1'
           reveal: 'The only morphism from $A$ to $B$ is $f$, so $\mathrm{Hom}(A,B)=\{f\}$. The Yoneda embedding turns each object into the family of these hom-sets, one for every test object $X$.'
-        step_check:
-          step: '$\mathbf y(f)=f_*=f\circ(-)\colon\mathrm{Hom}(-,A)\Rightarrow\mathrm{Hom}(-,B)$, i.e. post-composition'
-          question: 'Why does $\mathbf y(f)$ send a morphism $h\colon X\to A$ to $f\circ h$ and not to $h\circ f$?'
-          options:
-            - 'The composites $f\circ h$ and $h\circ f$ are always equal, so the order is a mere convention'
-            - 'In general only $f\circ h$ is defined, since $h$ ends at $A$ where $f$ starts'
-            - 'The presheaf $\mathrm{Hom}(-,A)$ is contravariant, so all of its maps must run backwards'
-            - 'Putting $f$ on the left keeps the number of morphisms in each hom-set the same'
-          answer: 'In general only $f\circ h$ is defined, since $h$ ends at $A$ where $f$ starts'
-          why: 'The morphism $h\colon X\to A$ ends where $f\colon A\to B$ starts, so $f\circ h\colon X\to B$ is the composite that exists in general.'
         exemplars:
           - problem: 'Let $\mathcal C$ be the category with objects $A$ and $B$ and exactly three morphisms: $1_A$, $1_B$ and $f\colon A\to B$. The Yoneda embedding sends $f$ to the natural transformation $\mathbf y(f)\colon\mathrm{Hom}(-,A)\Rightarrow\mathrm{Hom}(-,B)$. Its component at $A$ sends the morphism $1_A$ to which morphism?'
             answer: 'f'
@@ -741,16 +621,6 @@ topics:
         name: 'Full faithfulness'
         key_prerequisites: [full-faithful-functors]
         constraints: 'Natural transformations between representables are recovered from the identity component and counted in small categories (Z/n as a one-object category, parallel morphisms, a divisibility poset). Verdict items name the morphism that exists or is missing; the proof item asks for full faithfulness.'
-        step_check:
-          step: 'set $u=\theta_C(1_C)\in\mathrm{Hom}(C,D)$'
-          question: 'Why is the single value $\theta_C(1_C)$ enough to determine every component of $\theta$?'
-          options:
-            - 'The identity $1_C$ is the only morphism out of $C$, so no other values exist'
-            - 'Every natural transformation sends $1_C$ to $1_D$, so $\theta$ is a trivial map'
-            - 'Naturality writes $h$ as $1_C\circ h$, so $\theta_X(h)=\theta_C(1_C)\circ h$'
-            - 'The identity is the smallest morphism, so $\theta$ is fixed by its smallest value there'
-          answer: 'Naturality writes $h$ as $1_C\circ h$, so $\theta_X(h)=\theta_C(1_C)\circ h$'
-          why: 'Every $h\colon X\to C$ equals $1_C\circ h$, so naturality gives $\theta_X(h)=\theta_C(1_C)\circ h=u\circ h$.'
         exemplars:
           - problem: 'The monoid $\mathbb Z/5$ under addition is a category with one object $*$, whose morphisms are $0,1,2,3,4$ and where composition is addition modulo $5$. A natural transformation $\theta\colon\mathrm{Hom}(-,*)\Rightarrow\mathrm{Hom}(-,*)$ has $\theta_*(0)=2$, where $0$ is the identity morphism. What is $\theta_*(3)$?'
             answer: '0'
@@ -792,16 +662,6 @@ topics:
         name: 'Objects are determined by their points'
         key_prerequisites: [full-faithful-functors]
         constraints: 'Objects are compared through their presheaves of points: sizes of hom-sets in a divisibility poset or a small poset, inverses of natural isomorphisms in Z/n, the sets Hom(X,A) in Set. Verdicts name the test object that separates two presheaves; the proof item asks for the iff statement.'
-        step_check:
-          step: 'there is a map $h\colon C\to D$ with $\mathbf{y}(h)=\alpha$'
-          question: 'Why does a morphism $h\colon C\to D$ with $\mathbf y(h)=\alpha$ exist?'
-          options:
-            - 'The embedding is faithful, so different morphisms give different natural transformations'
-            - 'Every natural transformation of presheaves is $\mathbf y$ of some morphism of $\mathcal C$'
-            - 'The map $\alpha$ is an isomorphism, so it is $\mathbf y$ of an identity morphism'
-            - 'Fullness: every natural transformation between representables comes from a morphism'
-          answer: 'Fullness: every natural transformation between representables comes from a morphism'
-          why: 'Fullness of $\mathbf y$ says that every natural transformation $\mathrm{Hom}(-,C)\Rightarrow\mathrm{Hom}(-,D)$ equals $\mathbf y(h)$ for some $h\colon C\to D$.'
         exemplars:
           - problem: 'Let $P$ be the poset of divisors of $6$, namely $\{1,2,3,6\}$, with one morphism $a\to b$ exactly when $a$ divides $b$. For which objects $X$ do the sets $\mathrm{Hom}(X,2)$ and $\mathrm{Hom}(X,3)$ have different numbers of elements?'
             answer: '2, 3'
@@ -884,16 +744,6 @@ topics:
           answer_contract: {"kind": "exact"}
           answer: '5'
           reveal: 'An object of $\int F$ is a pair $(C,x)$ with $x$ an element of $F(C)$, so every element of every set gives one object. Here that is $3+2=5$ objects.'
-        step_check:
-          step: 'Compute $Ff(0)=*$, so $f$ gives a morphism $(A,0)\to(B,*)$'
-          question: 'Why does $f$ give a morphism $(A,0)\to(B,*)$?'
-          options:
-            - 'Any morphism $A\to B$ links every element of $FA$ to every element of $FB$ in $\int F$'
-            - 'The condition $Ff(*)=0$ holds, so $f$ carries the element $*$ back to $0$'
-            - 'The arrow $f$ lies in $\mathcal C$, so it is a morphism whatever $F$ does'
-            - 'Since $Ff(0)=*$, the arrow $f$ carries the element $0$ to the element $*$'
-          answer: 'Since $Ff(0)=*$, the arrow $f$ carries the element $0$ to the element $*$'
-          why: 'A morphism $(A,0)\to(B,*)$ is an arrow $g\colon A\to B$ with $(Fg)(0)=*$, and $f$ meets this condition because $Ff(0)=*$.'
         exemplars:
           - problem: 'Let $\mathcal C$ have two objects $A$ and $B$ and exactly one non-identity morphism $f\colon A\to B$. Let $F\colon\mathcal C\to\mathbf{Set}$ be the functor with $F(A)=\{1,2\}$ and $F(B)=\{5,6\}$, where $Ff$ sends $1$ to $5$ and $2$ to $6$. How many morphisms does the category of elements $\int F$ have from $(A,2)$ to $(B,6)$?'
             answer: '1'
@@ -935,16 +785,6 @@ topics:
         name: 'Representability via an initial element'
         key_prerequisites: [universal-elements]
         constraints: 'Initial or terminal objects of the category of elements of small functors and presheaves (the poset 0<1, a three-arrow category, F(X)=X x X and X x X x X on Set). Items name the candidate or the object that breaks it; the verdict is a representability label. The proof item asks for the iff statement.'
-        step_check:
-          step: 'so $k(0)=a$ and $k(1)=b$'
-          question: 'Why is there only one morphism from $(2,u)$ to $(X,(a,b))$?'
-          options:
-            - 'The set $2$ has two elements, so at most two functions $2\to X$ exist'
-            - 'A morphism must satisfy $(Fk)(u)=(a,b)$, which fixes $k(0)$ and $k(1)$'
-            - 'Every object of $\int F$ has exactly one morphism to every other object'
-            - 'The sets $X$ and $2$ have equal size, so every function $k$ is a bijection'
-          answer: 'A morphism must satisfy $(Fk)(u)=(a,b)$, which fixes $k(0)$ and $k(1)$'
-          why: 'The condition $(Fk)(0,1)=(k0,k1)=(a,b)$ leaves no freedom, so the only possible $k$ is the function $h$ with $h(0)=a$ and $h(1)=b$.'
         exemplars:
           - problem: 'Let $\mathcal C$ be the poset $0<1$ viewed as a category, with one morphism $0\to 1$ besides the identities. Let $F\colon\mathcal C\to\mathbf{Set}$ have $F(0)=\{1\}$ and $F(1)=\{2\}$, where the morphism $0\to 1$ acts by $1\mapsto 2$. Which object of $\int F$ is initial?'
             answer: '(0, 1)'
@@ -1022,16 +862,6 @@ topics:
         name: 'Uniqueness of adjoints'
         key_prerequisites: [yoneda-lemma]
         constraints: 'Two constructions of one free object are compared through the unit-compatible isomorphism (free monoids on words, free abelian groups, posets with an adjoint pair such as pallets per trip and eggs per box). Items compute the comparison map or an adjoint value; the proof item asks for uniqueness and naturality.'
-        step_check:
-          step: 'is induced by a unique morphism $\varphi_X\colon FX\to F''X$'
-          question: 'Why is the natural isomorphism of representables induced by a morphism $\varphi_X$?'
-          options:
-            - 'Every natural isomorphism of functors is induced by a morphism of the source category'
-            - 'Both free groups have the same elements, so $\varphi_X$ is the identity map'
-            - 'Fullness: a natural transformation between representables comes from a morphism'
-            - 'Both bijections fix the generators, so $\varphi_X$ must be an identity morphism'
-          answer: 'Fullness: a natural transformation between representables comes from a morphism'
-          why: 'Fullness of the embedding turns the natural isomorphism of representables into one morphism, and faithfulness makes that morphism unique.'
         exemplars:
           - problem: 'Let $F$ and $F''$ both be left adjoint to the forgetful functor $\mathbf{Mon}\to\mathbf{Set}$. For $X=\{a,b\}$ the monoid $FX$ is the set of words in the letters $p,q$ with insertion $a\mapsto p$, $b\mapsto q$. The monoid $F''X$ is the set of words in the letters $r,s$ with insertion $a\mapsto s$, $b\mapsto r$. Let $\varphi\colon FX\to F''X$ be the unique isomorphism compatible with the insertions. Which of the words srr, rss, rrs and ssr is $\varphi(pqq)$?'
             answer: 'srr'
@@ -1069,16 +899,6 @@ topics:
         name: 'Cayley''s theorem as a shadow of Yoneda'
         key_prerequisites: [yoneda-embedding]
         constraints: 'The regular representation of small monoids and groups (Z/n, a two-element monoid with an absorbing element, groups of given order) is computed from left multiplication; items evaluate L_m, find orders and cycles, and test injectivity by evaluation at the unit. The proof item asks for the injective homomorphism M to End(M).'
-        step_check:
-          step: 'evaluating at $0$ gives $g=\lambda_g(0)=\lambda_h(0)=h$'
-          question: 'Why does the value of $\lambda_g$ at $0$ recover the element $g$?'
-          options:
-            - 'We have $\lambda_g(0)=g+0=g$, because $0$ is the unit for addition'
-            - 'We have $\lambda_g(0)=0$ for every $g$, so all the maps $\lambda_g$ agree there'
-            - 'The point $0$ is the only point at which each map $\lambda_g$ is defined'
-            - 'Evaluation at $0$ is a homomorphism, which forces the whole map to be injective'
-          answer: 'We have $\lambda_g(0)=g+0=g$, because $0$ is the unit for addition'
-          why: 'Left addition by $g$ sends the unit $0$ to $g+0=g$, so two maps $\lambda_g$ and $\lambda_h$ that agree at $0$ come from the same element.'
         exemplars:
           - problem: 'Regard $\mathbb Z/5$ under addition as a one-object category. The Yoneda embedding sends the morphism $2$ to the permutation $L_2\colon x\mapsto 2+x$ of $\mathbb Z/5$. What is $L_2(4)$?'
             answer: '1'

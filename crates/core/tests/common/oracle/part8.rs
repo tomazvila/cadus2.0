@@ -260,8 +260,8 @@ pub const GENERATOR_COUNTS: [(&str, usize); 47] = [
 pub const CLASS_COUNTS: [(&str, usize); 5] = [
     ("class 1 outside_grammar", 1051),
     ("class 2 prose_expected", 0),
-    ("class 3 comparable", 16291),
-    ("class 4 documented_divergence", 333),
+    ("class 3 comparable", 16290),
+    ("class 4 documented_divergence", 334),
     ("oracle_silent", 0),
 ];
 
@@ -303,7 +303,7 @@ pub const CLASS_COUNTS: [(&str, usize); 5] = [
 ///
 /// `crates/core/tests/answer_divergence.rs` and
 /// `crates/core/tests/answer_decimal.rs` pin one pair of each shape.
-pub const REASON_COUNTS: [(&str, usize); 17] = [
+pub const REASON_COUNTS: [(&str, usize); 18] = [
     // 1.0 reads `log` as `ln`, 2.0 reads base 10 (grader pass 3).
     (
         "1.0 reads `log` as the natural logarithm, 2.0 as base 10 (grader pass 3)",
@@ -337,6 +337,10 @@ pub const REASON_COUNTS: [(&str, usize); 17] = [
     (
         "the 1.0 namespace reads a bare `e` as a free symbol (spec 3.1)",
         46,
+    ),
+    (
+        "2.0 reads a glued group of three digits as a list item (courses rewrite 2026-10-07)",
+        1,
     ),
     (
         "2.0 reads a spaced `x` as the times sign (review 1, finding 18)",

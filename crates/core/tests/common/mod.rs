@@ -109,7 +109,6 @@ pub fn knowledge_point(id: &str, key_prerequisites: &[&str]) -> KnowledgePoint {
         exemplars: Vec::new(),
         constraints: None,
         finite_objective_domain: None,
-        step_check: None,
         try_first: None,
         visuals: Vec::new(),
     }
@@ -123,6 +122,7 @@ pub fn solved_exemplar(problem: &str, answer: &str) -> cadus_core::curriculum::E
         answer_contract: None,
         answer: answer.to_owned(),
         solution_sketch: Some("Add the parts.".to_owned()),
+        visual: None,
     }
 }
 

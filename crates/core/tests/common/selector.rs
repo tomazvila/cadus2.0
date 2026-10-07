@@ -32,6 +32,7 @@ pub fn kp(id: &str, key_prerequisites: &[&str]) -> KnowledgePoint {
         problem: "p".to_owned(),
         answer: "a".to_owned(),
         solution_sketch: None,
+        visual: None,
     }];
     point
 }

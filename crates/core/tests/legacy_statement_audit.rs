@@ -49,7 +49,8 @@ fn historical_classification_and_all_live_statements_have_a_closed_boundary() {
     );
     assert_eq!(
         sha256_hex(serde_json::to_string(&current).unwrap().as_bytes()),
-        "916232a646641adfdd8abb74a915dfdb830ac8583f97a7e35cdfb5fa6faeb12e"
+        // 2026-10-07, courses rewrite (95 thousands separators, three reworded items, mixed-number forms): hash re-pinned.
+        "0fa8bc2c9a0b93b15732e63ff01cf48371f78fe362daf843c50aae473c50ad7b"
     );
     let current_keys: BTreeSet<_> = current.iter().map(key).collect();
     assert_eq!(current_keys.len(), current.len());
@@ -154,7 +155,7 @@ fn historical_classification_and_all_live_statements_have_a_closed_boundary() {
                 live["problem"] == row["problem"] && live["answer"] == row["answer"]
             })
             .count(),
-        105 // 2026-10-07, courses rewrite (was 184)
+        104 // 2026-10-07, courses rewrite (was 184); 104 after the later thousands-separator pass
     );
     assert_eq!(
         counts,

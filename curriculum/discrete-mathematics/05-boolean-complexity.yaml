@@ -23,16 +23,6 @@ topics:
       - id: kp1
         name: 'Boolean operations and evaluation'
         key_prerequisites: [truth-tables]
-        step_check:
-          step: 'Evaluate the AND under the bar'
-          question: 'Why must $1 \cdot 1$ be evaluated before the bar is applied?'
-          options:
-            - 'The bar changes each factor separately, so each factor is flipped first'
-            - 'AND is done before OR, so the bar waits until the end of the sum'
-            - 'The bar flips the whole product, so the product comes first'
-            - 'A bar over a product is always $0$, so the product is not needed'
-          answer: 'The bar flips the whole product, so the product comes first'
-          why: 'The bar acts on the value of everything under it, so $1\cdot1=1$ is found first and then flipped to $0$.'
         exemplars:
           - problem: 'In Boolean algebra ($+$ is OR, juxtaposition is AND, $\bar{x}$ is NOT), evaluate $x\bar{y}+\bar{x}z$ at $x=1$, $y=0$, $z=0$.'
             answer: '1'
@@ -70,16 +60,6 @@ topics:
       - id: kp2
         name: 'Simplifying with identities'
         key_prerequisites: [truth-tables, logical-equivalence]
-        step_check:
-          step: 'Simplify using the identity $1 + \bar{y} = 1$'
-          question: 'Why does $1 + \bar{y} = 1$ hold for both values of $y$?'
-          options:
-            - 'Adding $1$ and $\bar{y}$ gives $2$, and in Boolean algebra $2$ is read as $1$'
-            - 'The $\bar{y}$ cancels the $y$ in the expression and leaves only the $1$'
-            - 'It holds only when $y=0$, since then $\bar{y}=1$ and $1+1=1$'
-            - 'An OR is $1$ as soon as one input is $1$, and here one input is $1$'
-          answer: 'An OR is $1$ as soon as one input is $1$, and here one input is $1$'
-          why: 'OR is $1$ whenever one of its inputs is $1$, so the value of $\bar{y}$ does not matter.'
         exemplars:
           - problem: 'Simplify $x+xy$.'
             answer: 'x'
@@ -158,16 +138,6 @@ topics:
           answer_contract: {"kind":"exact"}
           answer: '3'
           reveal: 'Only the row $(1,1)$ has no input equal to $0$, so the other $3$ rows have value $1$. The disjunctive normal form writes one minterm for each of these rows.'
-        step_check:
-          step: 'For $(1, 1, 0)$: $xy\bar{z}$'
-          question: 'Why does the minterm of the row $(1, 1, 0)$ contain $\bar{z}$ and not $z$?'
-          options:
-            - 'Every minterm ends with one complemented variable, whatever the row is'
-            - 'The minterm must be $1$ on its own row, and $\bar{z}=1$ when $z=0$'
-            - 'The complement goes on the variable that changes last in the row'
-            - 'The row has $z=0$, so the minterm is $0$ unless it contains $z$'
-          answer: 'The minterm must be $1$ on its own row, and $\bar{z}=1$ when $z=0$'
-          why: 'A product is $1$ only when every literal is $1$; with $z=0$ the literal that equals $1$ is $\bar{z}$.'
         exemplars:
           - problem: 'A function $f(x,y,z)$ equals $1$ exactly when $x=y$ and $z=0$. Its disjunctive normal form has one minterm for each row of the truth table where $f=1$. How many minterms does it have?'
             answer: '2'
@@ -213,16 +183,6 @@ topics:
       - id: kp2
         name: 'Minterms, maxterms, and CNF'
         key_prerequisites: [boolean-algebra-basics]
-        step_check:
-          step: 'Each true row corresponds to one minterm in the DNF'
-          question: 'Why does each true row give exactly one minterm?'
-          options:
-            - 'A minterm is $1$ on one row only, so one covers each true row'
-            - 'A minterm is $1$ on every true row, so one minterm covers all of them'
-            - 'Each variable gives one minterm for every true row of the table'
-            - 'The rows with value $0$ also give minterms, one for each false row'
-          answer: 'A minterm is $1$ on one row only, so one covers each true row'
-          why: 'A minterm is $1$ on exactly one row, so the true rows need one minterm each, and the false rows need none.'
         exemplars:
           - problem: 'A function $g(x,y)$ equals $1$ exactly when $x=y=1$. Number the rows $0$ to $3$ by the binary value of $xy$. The full conjunctive normal form has one maxterm for each row where $g=0$. Which rows give its maxterms?'
             answer: '0, 1, 2'
@@ -296,16 +256,6 @@ topics:
       - id: kp1
         name: 'Gate behavior'
         key_prerequisites: [boolean-algebra-basics]
-        step_check:
-          step: 'NOR negates OR: $\overline{0 + 1} = \bar{1} = 0$'
-          question: 'Why is the NOR output $0$ on the inputs $0, 1$?'
-          options:
-            - 'NOR gives the opposite of AND, and the AND of $0$ and $1$ is $0$'
-            - 'NOR is $1$ only when both inputs are $1$, and that does not happen here'
-            - 'NOR outputs the smaller input, and the smaller of $0$ and $1$ is $0$'
-            - 'The OR of the inputs is $1$, and NOR gives the opposite of OR'
-          answer: 'The OR of the inputs is $1$, and NOR gives the opposite of OR'
-          why: 'NOR is OR followed by NOT, so any input equal to $1$ makes the output $0$.'
         exemplars:
           - problem: 'What is the output of a NAND component whose two inputs are $1$ and $1$?'
             answer: '0'
@@ -343,16 +293,6 @@ topics:
       - id: kp2
         name: 'Circuits as expressions'
         key_prerequisites: [boolean-algebra-basics]
-        step_check:
-          step: 'Compute the final AND operation'
-          question: 'Why is the final output $0$, although $x$ OR $y$ is $1$?'
-          options:
-            - 'The OR output is replaced by the NOT output at the end of the circuit'
-            - 'AND outputs $0$ whenever one of the inputs it receives is $1$'
-            - 'The AND needs both inputs to be $1$, and NOT $x$ is $0$'
-            - 'AND gives the smaller input only when the first input is $0$'
-          answer: 'The AND needs both inputs to be $1$, and NOT $x$ is $0$'
-          why: 'An AND is $1$ only when both of its inputs are $1$, so one input of $0$ makes the output $0$.'
         exemplars:
           - problem: 'A circuit computes ($x$ AND $y$) OR (NOT $z$). What is its output at $x=1$, $y=0$, $z=0$?'
             answer: '1'
@@ -421,16 +361,6 @@ topics:
       - id: kp1
         name: "Witness-based verification"
         key_prerequisites: [function-notation]
-        step_check:
-          step: 'For $n \ge 1$, $3n + 7 \le 3n + 7n = 10n$'
-          question: 'Why may the constant $7$ be replaced by $7n$ in this bound?'
-          options:
-            - 'The constant $7$ is too small to matter, so it can simply be deleted'
-            - 'The value $7n$ is smaller than $7$ for every $n \ge 1$, so the bound gets tighter'
-            - 'For $n \ge 1$ we have $7 \le 7n$, so the replacement never lowers the right side'
-            - 'Taking $n_0 = 1$ makes every term of the sum equal to $n$'
-          answer: 'For $n \ge 1$ we have $7 \le 7n$, so the replacement never lowers the right side'
-          why: 'Replacing $7$ by the larger $7n$ keeps the inequality true, and $3n + 7n = 10n$ is a constant multiple of $n$.'
         try_first:
           problem: 'A program takes $3n$ steps on $n$ items. A second program takes $n^2$ steps. For which smallest whole number $n$ does the second program take more steps than the first?'
           answer_contract: {"kind":"exact"}
@@ -481,16 +411,6 @@ topics:
       - id: kp2
         name: "Classifying by dominant term"
         key_prerequisites: [function-notation, logarithm-basics]
-        step_check:
-          step: 'The cubic term dominates the other terms'
-          question: 'Why does only the $n^3$ term decide the big-O class of $5n^3 + 2n + 1$?'
-          options:
-            - 'The terms $2n$ and $1$ are removed because their coefficients are small'
-            - 'The terms $2n$ and $1$ stay tiny next to $5n^3$ when $n$ is large'
-            - 'Every term of a sum is multiplied together to give the class, so $n^3$ remains'
-            - 'Big-O always keeps the term with the largest coefficient, which is $5n^3$'
-          answer: 'The terms $2n$ and $1$ stay tiny next to $5n^3$ when $n$ is large'
-          why: 'The ratio $(5n^3 + 2n + 1)/n^3$ tends to $5$, so the lower terms never change the growth rate.'
         exemplars:
           - problem: 'Which is the tightest big-O bound for $5n^3 + 2n + 1$: $O(n)$, $O(n^2)$, $O(n^3)$ or $O(2^n)$?'
             answer: 'cubic'
@@ -563,16 +483,6 @@ topics:
       - id: kp1
         name: "Omega, Theta, and the standard hierarchy"
         key_prerequisites: [big-o-notation]
-        step_check:
-          step: '$n^2 \le n^2 + 4n \le 5n^2$ for every $n \ge 1$'
-          question: 'Why do the two bounds $n^2 \le n^2 + 4n$ and $n^2 + 4n \le 5n^2$ together show $\Theta(n^2)$?'
-          options:
-            - 'Together they show that $n^2 + 4n$ and $n^2$ are equal for large $n$'
-            - 'They only show $n^2$ is $O(n^2 + 4n)$, and the upper bound is not needed'
-            - 'Each bound alone already proves the Theta claim, so the pair is a double check'
-            - 'It lies between constant multiples of $n^2$, so the growth rate is the same'
-          answer: 'It lies between constant multiples of $n^2$, so the growth rate is the same'
-          why: '$\Theta$ needs both an upper and a lower bound by constant multiples of $g$, and this pair supplies exactly those.'
         exemplars:
           - problem: 'Is $n^2 + 4n$ in $\Theta(n^2)$?'
             answer: 'yes'
@@ -618,16 +528,6 @@ topics:
       - id: kp2
         name: "Logarithm bases and exponential gaps"
         key_prerequisites: [big-o-notation, logarithm-properties]
-        step_check:
-          step: 'Since $9$ is a constant, $3^{n+2}$ is in $O(3^n)$'
-          question: 'Why does the constant $9$ show that $3^{n+2}$ is in $O(3^n)$?'
-          options:
-            - 'Constants are ignored, so $9 \cdot 3^n$ is the same function as $3^n$'
-            - 'Some fixed constant works: $3^{n+2} \le C \cdot 3^n$ holds with $C = 9$'
-            - 'Because $9$ is smaller than $3^n$, the product $9 \cdot 3^n$ is smaller than $3^n$'
-            - 'The number $9$ equals $3^2$, and powers of the same base always cancel'
-          answer: 'Some fixed constant works: $3^{n+2} \le C \cdot 3^n$ holds with $C = 9$'
-          why: 'Big-O asks only for some fixed constant $C$ with $f(n) \le C \cdot g(n)$, and $C = 9$ does that for every $n$.'
         exemplars:
           - problem: 'Is $\log_2 n$ in $\Theta(\log_{10} n)$?'
             answer: 'yes'
@@ -706,16 +606,6 @@ topics:
       - id: kp1
         name: "Divide-and-conquer recurrences"
         key_prerequisites: [recurrence-relations]
-        step_check:
-          step: 'Compute $T(9)$: $T(9) = 3 \cdot T(3) + 9 = 3 \cdot 6 + 9 = 27$'
-          question: 'Why does the combining cost in $T(9)$ equal $9$ and not $3$?'
-          options:
-            - 'The combining cost uses the size of the subproblems, which is $3$'
-            - 'It is $f(n)$ with $n = 9$, the size of the problem being solved'
-            - 'The number $9$ is $3 \cdot 3$, one factor for each recursive call'
-            - 'The cost always equals the previous value $T(3) = 6$ plus $3$'
-          answer: 'It is $f(n)$ with $n = 9$, the size of the problem being solved'
-          why: 'In $T(n) = aT(n/b) + f(n)$ the term $f(n)$ is evaluated at the current size $n$, here $n = 9$.'
         exemplars:
           - problem: 'Merge sort satisfies $T(n) = 2T(n/2) + n$ with $T(1) = 0$: it solves two half-size instances and then spends $n$ steps merging. Compute $T(8)$.'
             answer: '24'
@@ -753,16 +643,6 @@ topics:
       - id: kp2
         name: "The critical exponent and the three cases"
         key_prerequisites: [growth-of-functions, logarithm-properties]
-        step_check:
-          step: 'Since $f(n)$ grows faster than $n^{\log_b a}$, the root dominates (case 3)'
-          question: 'For $T(n) = 4T(n/2) + n^3$, why does $f(n) = n^3$ growing faster than $n^2$ put most of the work at the root?'
-          options:
-            - 'The root is solved first, so its work is always counted first'
-            - 'The combining work per call shrinks more slowly than the number of calls grows'
-            - 'The root has the largest problem, and larger problems always cost more'
-            - 'The cubic cost falls by $8$ per level, while the calls grow only by $4$'
-          answer: 'The cubic cost falls by $8$ per level, while the calls grow only by $4$'
-          why: 'Halving $n$ cuts the cubic cost by $8$ while the number of calls grows only by $4$, so the work per level falls and the root dominates.'
         try_first:
           problem: 'A divide-and-conquer algorithm has $T(n) = 4T(n/2) + n$. Starting with a problem of size $32$, how many combining steps are spent in total at the level reached after splitting three times?'
           answer_contract: {"kind":"exact"}
@@ -813,16 +693,6 @@ topics:
       - id: kp3
         name: "Classifying classic algorithms"
         key_prerequisites: [growth-of-functions, logarithm-properties]
-        step_check:
-          step: 'Since $\log_2 2 = 1 = \deg f(n)$, case 2 of the Master Theorem applies'
-          question: 'Why does the equality of $\log_2 2$ and $\deg f(n)$ add a factor $\log n$ to give $\Theta(n \log n)$?'
-          options:
-            - 'The factor $\log n$ comes from the base of the logarithm in $\log_2 2$'
-            - 'The recursion makes $n$ calls, and each call adds a factor $\log n$'
-            - 'Each of the $\log_2 n$ levels does about $n$ work, so $n \log n$'
-            - 'Case 2 always multiplies the answer by $\log n$ whatever the recurrence'
-          answer: 'Each of the $\log_2 n$ levels does about $n$ work, so $n \log n$'
-          why: 'When the work per level stays the same, the total is that work times the number of levels, which is about $\log_2 n$.'
         exemplars:
           - problem: 'Karatsuba''s method for multiplying two $n$-digit numbers satisfies $T(n) = 3T(n/2) + n$. Which growth order does $T(n)$ have?'
             answer: 'Θ(n^(log_2 3))'
@@ -908,16 +778,6 @@ topics:
       - id: kp1
         name: "Counting loop iterations exactly"
         key_prerequisites: [big-o-notation, summation-notation, arithmetic-series]
-        step_check:
-          step: 'the inner loop runs $j = 1$ to $i$'
-          question: 'Why is the total a sum $1 + 2 + 3 + 4$ and not $4 \cdot 4$?'
-          options:
-            - 'The inner loop makes $i$ passes, so its length grows with $i$'
-            - 'The sum $1 + 2 + 3 + 4$ is always smaller than a product, so it is chosen'
-            - 'Only the last value $i = 4$ counts, because the loop ends there'
-            - 'Each pass of the outer loop makes the same number of inner passes'
-          answer: 'The inner loop makes $i$ passes, so its length grows with $i$'
-          why: 'For $i = 1, 2, 3, 4$ the inner loop makes $1, 2, 3, 4$ passes, which add up to $10$; a product $4 \cdot 4$ would need every inner loop to run $4$ times.'
         exemplars:
           - problem: 'A program runs a loop $i = 1, \dots, n$ and inside it a loop $j = i, \dots, n$ that makes one comparison per pass. How many comparisons does it make for $n = 10$?'
             answer: '55'
@@ -959,16 +819,6 @@ topics:
       - id: kp2
         name: "Halving: binary search and logarithmic counts"
         key_prerequisites: [big-o-notation]
-        step_check:
-          step: 'Each halving removes one factor of $2$, so the number of halvings needed is $9$'
-          question: 'Why does writing $512 = 2^9$ tell us that nine halvings are needed?'
-          options:
-            - 'A list of $512$ items needs $512/9$ steps because $9$ is the exponent'
-            - 'Nine is the number of digits that $512$ has in base $2$ after one halving'
-            - 'Each halving divides by $2$, so after nine halvings $2^9$ has become $2^0 = 1$'
-            - 'Halving $512$ nine times gives $512 - 9 = 503$ items, which is then a single one'
-          answer: 'Each halving divides by $2$, so after nine halvings $2^9$ has become $2^0 = 1$'
-          why: 'Every halving lowers the exponent of $2$ by one, so the exponent $9$ counts the halvings that bring $2^9$ down to $1$.'
         exemplars:
           - problem: 'A sorted list of $4096$ names is searched by binary search: each step keeps half of the names still possible. How many steps does it take to leave a single name?'
             answer: '12'

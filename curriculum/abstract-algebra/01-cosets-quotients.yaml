@@ -23,16 +23,6 @@ topics:
       - id: kp1
         name: "Computing cosets in abelian groups"
         key_prerequisites: [subgroups-subgroup-tests, equivalence-classes-partitions]
-        step_check:
-          step: 'adding $3$ to $H$ gives the same coset as $0 + H$'
-          question: 'Why does the list of cosets stop after $2 + H$?'
-          options:
-            - 'Adding $3$ or more to $H$ gives numbers above $11$, which are not in $\mathbb{Z}_{12}$'
-            - 'Adding $3$ to each element of $H$ just reshuffles $H$, so $3 + H = H$'
-            - 'Any subgroup has exactly one coset fewer than it has elements, here $4 - 1 = 3$'
-            - 'Only the first three elements of $\mathbb{Z}_{12}$ can be added to $H$ at all'
-          answer: 'Adding $3$ to each element of $H$ just reshuffles $H$, so $3 + H = H$'
-          why: 'Since $3$ is in $H$, adding $3$ permutes the elements of $H$, so $3 + H = H$. Every later element repeats one of the three cosets already found.'
         try_first:
           problem: 'In $\mathbb{Z}_6$ let $H = \{0, 3\}$. Add $2$ to each element of $H$ and reduce modulo $6$. What is the larger of the two numbers you get?'
           answer_contract: {"kind":"exact"}
@@ -79,16 +69,6 @@ topics:
       - id: kp2
         name: "Left vs right cosets in non-abelian groups"
         key_prerequisites: [subgroups-subgroup-tests, permutations-cycle-notation]
-        step_check:
-          step: '$se = s$'
-          question: 'Why is $s$ an element of the left coset $sH$?'
-          options:
-            - 'Because $s$ lies in $H$ itself, so every product $sh$ lands back in $H$'
-            - 'Because every left coset contains all the generators of the group $G$'
-            - 'Because $e$ is in $H$, so $se$ is an element of $sH$'
-            - 'Because $s$ is its own inverse, so $s$ must appear in each of its cosets'
-          answer: 'Because $e$ is in $H$, so $se$ is an element of $sH$'
-          why: 'The coset $sH$ is the set of all products $sh$ with $h$ in $H$. Taking $h = e$, which lies in every subgroup, gives $se = s$, so $s$ is in $sH$.'
         exemplars:
           - problem: 'In $S_3$ (composing right to left) let $H = \{e, (1\,2)\}$. How many elements do the left coset $(1\,3)H$ and the right coset $H(1\,3)$ have in common?'
             answer: '1'
@@ -130,16 +110,6 @@ topics:
       - id: kp3
         name: "Coset equality and the partition property"
         key_prerequisites: [equivalence-classes-partitions]
-        step_check:
-          step: 'Multiply both sides by $c^{-1}$ to get $c^{-1}d = h \in H$'
-          question: 'Why does multiplying $d = ch$ on the left by $c^{-1}$ give exactly $h$?'
-          options:
-            - 'Because $c^{-1}$ and $d$ commute, so the order of the product does not matter'
-            - 'Because $c^{-1}$ lies in $H$, so the product stays inside the subgroup $H$'
-            - 'Because multiplying by $c^{-1}$ divides $d$ by $c$ and leaves the remainder $h$'
-            - 'Because $c^{-1}(ch) = (c^{-1}c)h = eh = h$ by associativity and inverses'
-          answer: 'Because $c^{-1}(ch) = (c^{-1}c)h = eh = h$ by associativity and inverses'
-          why: 'Associativity lets us regroup $c^{-1}(ch)$ as $(c^{-1}c)h$, and $c^{-1}c = e$. No commuting is needed, and $c$ need not lie in $H$.'
         exemplars:
           - problem: 'In $\mathbb{Z}_{12}$ let $H = \{0, 4, 8\}$. Are the cosets $2 + H$ and $6 + H$ equal?'
             answer: 'yes'
@@ -209,16 +179,6 @@ topics:
       - id: kp1
         name: "Statement, proof idea, and the index"
         key_prerequisites: [cosets]
-        step_check:
-          step: '$[G:H] = |G|/|H|$'
-          question: 'Why does the index $[G:H]$ equal $|G|/|H|$?'
-          options:
-            - 'The index is defined as the number of elements of $G$ outside $H$'
-            - 'Each left coset has $|G|$ elements, and there are $|H|$ of them'
-            - 'The left cosets split $G$ into blocks with $|H|$ elements each'
-            - 'Every subgroup of $G$ has exactly $|G|/|H|$ elements in it'
-          answer: 'The left cosets split $G$ into blocks with $|H|$ elements each'
-          why: 'The left cosets of $H$ do not overlap, cover $G$, and each has $|H|$ elements. So $|G| = [G:H]\,|H|$, which gives $[G:H] = |G|/|H|$.'
         try_first:
           problem: 'The group $\mathbb{Z}_{12}$ has $12$ elements, and its subgroup $H = \{0, 4, 8\}$ splits it into cosets of equal size. How many cosets are there?'
           answer_contract: {"kind":"exact"}
@@ -261,16 +221,6 @@ topics:
       - id: kp2
         name: "Ruling out subgroup orders"
         key_prerequisites: [cosets]
-        step_check:
-          step: 'Since $9$ does not divide $30$'
-          question: 'Why does the fact that $9 \nmid 30$ rule out a subgroup of order $9$?'
-          options:
-            - 'Only prime numbers can be orders of subgroups, and $9$ is not a prime number at all'
-            - 'Every subgroup order must divide the group order, and $9$ does not divide $30$'
-            - 'The number $9$ is odd while $30$ is even, so the two orders can never match each other'
-            - 'A subgroup must have more than half as many elements as the whole group'
-          answer: 'Every subgroup order must divide the group order, and $9$ does not divide $30$'
-          why: 'By Lagrange''s theorem the order of a subgroup divides the order of the group. Since $9$ does not divide $30$, no group of order $30$ has a subgroup of order $9$.'
         exemplars:
           - problem: 'List all the integers that can be the order of a subgroup of a group of order $21$ according to Lagrange''s theorem.'
             answer: '1, 3, 7, 21'
@@ -304,16 +254,6 @@ topics:
       - id: kp3
         name: "The converse fails"
         key_prerequisites: [cosets]
-        step_check:
-          step: 'Identify a group of order $8$'
-          question: 'Why does one group where a divisor is not a subgroup order disprove the converse?'
-          options:
-            - 'The converse claims this for every group, so one failure is enough to refute it'
-            - 'The group has the largest possible order, which is what any counterexample needs'
-            - 'Lagrange''s theorem fails for that group, so it cannot hold for any other group either'
-            - 'A failure in one group forces the same failure in every other group of that order'
-          answer: 'The converse claims this for every group, so one failure is enough to refute it'
-          why: 'The converse says that every divisor of $|G|$ is the order of a subgroup of $G$, for every finite group $G$. One group where a divisor does not occur is enough to show that this is false.'
         exemplars:
           - problem: 'The alternating group $A_4$ has order $12$, and $6$ divides $12$. How many subgroups of order $6$ does $A_4$ have?'
             answer: '0'
@@ -386,16 +326,6 @@ topics:
       - id: kp1
         name: "Element orders divide the group order"
         key_prerequisites: [lagranges-theorem, cyclic-groups-generators]
-        step_check:
-          step: 'the order of any subgroup divides the order of the group'
-          question: 'Why can Lagrange''s theorem be applied to the cyclic subgroup $\langle g \rangle$?'
-          options:
-            - 'Because $\langle g \rangle$ contains every element of $G$, so it is all of $G$'
-            - 'Because $g$ has the same order as the group $G$, by the definition of order'
-            - 'Because $\langle g \rangle$ is abelian, and the theorem needs an abelian subgroup'
-            - 'Because $\langle g \rangle$ is a subgroup of the finite group $G$'
-          answer: 'Because $\langle g \rangle$ is a subgroup of the finite group $G$'
-          why: 'Lagrange''s theorem applies to every subgroup of a finite group, and $\langle g \rangle$ is a subgroup of $G$. Nothing more is needed: $\langle g \rangle$ need not be all of $G$, and $G$ need not be abelian.'
         exemplars:
           - problem: 'In the additive group $\mathbb{Z}_{20}$, find the order of the element $8$.'
             answer: '5'
@@ -437,16 +367,6 @@ topics:
       - id: kp2
         name: "Groups of prime order"
         key_prerequisites: [lagranges-theorem, cyclic-groups-generators]
-        step_check:
-          step: 'Since $g \neq e$, the order of $g$ must be $7$'
-          question: 'Why does $g \neq e$ force the order of $g$ to be $7$?'
-          options:
-            - 'The order of $g$ divides $7$, and order $1$ would mean $g = e$'
-            - 'Every non-identity element of a group has the same order as the group'
-            - 'The order of $g$ must be an odd number, and $7$ is the only odd divisor'
-            - 'Elements other than $e$ cannot have an order smaller than half of $7$'
-          answer: 'The order of $g$ divides $7$, and order $1$ would mean $g = e$'
-          why: 'The order of $g$ is a divisor of $7$, so it is $1$ or $7$. Order $1$ would mean $g = e$, so the order is $7$ and $\langle g \rangle$ is the whole group.'
         exemplars:
           - problem: 'How many subgroups does a group of order $13$ have?'
             answer: '2'
@@ -484,16 +404,6 @@ topics:
       - id: kp3
         name: "Fermat's little theorem and Euler's theorem, group-theoretically"
         key_prerequisites: [lagranges-theorem]
-        step_check:
-          step: 'Reduce the exponent: $23 = 4 \cdot 5 + 3$'
-          question: 'Why can the exponent $23$ be replaced by the remainder $3$?'
-          options:
-            - 'Because $5$ and $23$ are both odd, so only the remainder matters here'
-            - 'Because $5^4 \equiv 1$, so each block of four factors of $5$ is $1$'
-            - 'Because the exponent is always reduced modulo the modulus $12$ itself'
-            - 'Because $5^{23}$ is too large to compute, so a smaller exponent is used'
-          answer: 'Because $5^4 \equiv 1$, so each block of four factors of $5$ is $1$'
-          why: 'Lagrange''s theorem gives $5^4 \equiv 1 \pmod{12}$, so $5^{23} = (5^4)^5 \cdot 5^3 \equiv 5^3$. The exponent is reduced modulo $|U(12)| = 4$, not modulo $12$.'
         exemplars:
           - problem: 'Find the remainder when $3^{100}$ is divided by $7$.'
             answer: '4'
@@ -573,16 +483,6 @@ topics:
       - id: kp1
         name: "Definition and the conjugation test"
         key_prerequisites: [cosets]
-        step_check:
-          step: '$gng^{-1}$ will also be a product of two disjoint transpositions'
-          question: 'Why is $gng^{-1}$ again a product of two disjoint transpositions?'
-          options:
-            - 'Conjugation multiplies $n$ by $g$ on one side, and $g$ is also a double transposition'
-            - 'Conjugation renames the points in the cycles of $n$, so the cycle type is kept'
-            - 'Every permutation of $S_4$ is a product of two disjoint transpositions'
-            - 'Conjugation always returns $n$ itself, so nothing about $n$ can change at all'
-          answer: 'Conjugation renames the points in the cycles of $n$, so the cycle type is kept'
-          why: 'Conjugating by $g$ replaces each point $x$ in the cycles of $n$ by $g(x)$. The cycle structure is unchanged, so two disjoint transpositions stay two disjoint transpositions.'
         exemplars:
           - problem: 'In $S_3$ (composing right to left) conjugate the transposition $(1\,3)$ by $g = (1\,2)$, that is, form $g(1\,3)g^{-1} = (1\,2)(1\,3)(1\,2)$. What is the image of $2$ under this permutation?'
             answer: '3'
@@ -620,16 +520,6 @@ topics:
       - id: kp2
         name: "Testing normality in S_3, D_4, A_n"
         key_prerequisites: [cosets, even-odd-permutations]
-        step_check:
-          step: 'conjugating $(1\,3)$ by $(1\,2)$ relabels the moved points'
-          question: 'Why does conjugating $(1\,3)$ by $(1\,2)$ give a transposition again?'
-          options:
-            - 'The conjugating element $(1\,2)$ is itself a transposition, so the result is one too'
-            - 'Conjugation never changes which points a permutation moves, so $(1\,3)$ stays as it is'
-            - 'Conjugation renames the two points that $(1\,3)$ swaps, so it still swaps two'
-            - 'Conjugating by any element always returns the original permutation without change'
-          answer: 'Conjugation renames the two points that $(1\,3)$ swaps, so it still swaps two'
-          why: 'Conjugating by $g$ replaces each point $x$ in the cycles of the permutation by $g(x)$. A swap of two points becomes a swap of the two renamed points, here $(2\,3)$.'
         exemplars:
           - problem: 'Is the subgroup $H = \{e, (1\,3)\}$ normal in $S_3$? (Compose right to left.)'
             answer: 'no'
@@ -675,16 +565,6 @@ topics:
       - id: kp3
         name: "Index 2 forces normality"
         key_prerequisites: [cosets]
-        step_check:
-          step: '$[S_3 : K] = \frac{6}{2} = 3$'
-          question: 'Why is the index of $K$ in $S_3$ equal to $3$?'
-          options:
-            - 'The index equals the number of elements of $S_3$ that are not in $K$'
-            - 'The index equals the order of $K$ plus one, because $K$ has two elements'
-            - 'The index equals the number of subgroups of $S_3$ that contain $K$ itself'
-            - 'The index is $|S_3|$ divided by $|K|$, the number of left cosets'
-          answer: 'The index is $|S_3|$ divided by $|K|$, the number of left cosets'
-          why: 'The left cosets of $K$ do not overlap and each has $|K| = 2$ elements, so their number is $6 \div 2 = 3$. The index counts cosets, not elements or subgroups.'
         exemplars:
           - problem: 'In the dihedral group $D_6$ of order $12$, the rotation subgroup $R = \langle r \rangle$ has order $6$. Find the index $[D_6 : R]$.'
             answer: '2'
@@ -758,16 +638,6 @@ topics:
           answer_contract: {"kind": "exact"}
           answer: '3'
           reveal: 'The sum is $9\equiv3$, and $3$ and $3$ differ by $0\in H$, so both choices give the same coset $3+H$. Coset addition is well defined here because $H$ is normal.'
-        step_check:
-          step: 'Since $N$ is normal, $b^{-1}n_1b \in N$'
-          question: 'Why does the normality of $N$ show that $b^{-1}n_1b$ lies in $N$?'
-          options:
-            - 'Normality means that $b$ itself lies in $N$, so the product $b^{-1}n_1b$ stays in $N$'
-            - 'Normality means every conjugate $g^{-1}ng$ with $n\in N$ and $g\in G$ stays in $N$'
-            - 'Normality means that $N$ is abelian, so $b$ and $n_1$ commute and $b^{-1}n_1b=n_1$'
-            - 'Normality means that $N$ is finite, so conjugates of $n_1$ can only repeat elements'
-          answer: 'Normality means every conjugate $g^{-1}ng$ with $n\in N$ and $g\in G$ stays in $N$'
-          why: 'Normal means closed under conjugation by every element of $G$, and this is exactly what moves $n_1$ past $b$ in the proof; $N$ need not be abelian, and $b$ need not lie in $N$.'
         exemplars:
           - problem: 'Let $N$ be a subgroup of a group $G$. The product of cosets $(aN)(bN)=abN$ is well defined, that is, it does not depend on the representatives $a$ and $b$ chosen, exactly when one condition on $N$ holds. Which condition is it: $N$ is normal, $N$ is abelian, $N$ is cyclic, or $N$ is finite?'
             answer: 'normal'
@@ -805,16 +675,6 @@ topics:
       - id: kp2
         name: 'Computing in Z_n/H and Z/nZ'
         key_prerequisites: [normal-subgroups, lagranges-theorem]
-        step_check:
-          step: 'Test successive multiples of $4$ and check membership in $H$'
-          question: 'Why do we test whether the multiples of $4$ lie in $H$, instead of testing whether they equal $0$?'
-          options:
-            - 'The order of $4+H$ in the quotient equals the order of $4$ itself in the group $\mathbb{Z}_{18}$'
-            - 'Only multiples of $4$ that are multiples of $3$ can lie in $H$, because $|H|=3$ in this case'
-            - 'Because $4$ must first be shown to lie in $H$ before the coset $4+H$ is a coset at all'
-            - 'The identity of $\mathbb{Z}_{18}/H$ is the coset $H$, and $k(4+H)=H$ exactly when $4k\in H$'
-          answer: 'The identity of $\mathbb{Z}_{18}/H$ is the coset $H$, and $k(4+H)=H$ exactly when $4k\in H$'
-          why: 'A coset equals the identity coset exactly when its representative lies in $H$, so the order counts multiples landing in $H$, not only those equal to $0$; here $12\in H$ already at $k=3$.'
         exemplars:
           - problem: 'In $\mathbb{Z}_{20}$ let $H=\langle5\rangle$. What is the order of the element $4+H$ of the quotient group $\mathbb{Z}_{20}/H$?'
             answer: '5'
@@ -852,16 +712,6 @@ topics:
       - id: kp3
         name: 'Quotients of non-abelian groups'
         key_prerequisites: [normal-subgroups]
-        step_check:
-          step: 'Since $\mathbb{Z}_4$ has an element of order $4$, the quotient cannot be $\mathbb{Z}_4$'
-          question: 'Why does an element of order $4$ in $\mathbb{Z}_4$ show that the quotient is not $\mathbb{Z}_4$?'
-          options:
-            - 'Every group of order $4$ must contain an element of order $4$ to be a quotient of a dihedral group'
-            - 'The quotient is a quotient of a non-abelian group, so it can never be a cyclic group'
-            - 'The quotient has order $4$ but all its elements have order $1$ or $2$, so none generates it'
-            - 'A quotient always has a smaller order than $4$, so it cannot be a group of order $4$'
-          answer: 'The quotient has order $4$ but all its elements have order $1$ or $2$, so none generates it'
-          why: 'A cyclic group of order $4$ needs a generator of order $4$, but the three non-identity cosets all have order $2$; a quotient of a non-abelian group can be cyclic, as $S_3/A_3\cong\mathbb{Z}_2$ shows.'
         exemplars:
           - problem: 'The subgroup $A_3$ of the symmetric group $S_3$ is normal. Which group is the quotient $S_3/A_3$ isomorphic to: $\mathbb{Z}_2$, $\mathbb{Z}_3$, $\mathbb{Z}_6$, or $S_3$?'
             answer: 'Z2'
@@ -936,16 +786,6 @@ topics:
       - id: kp1
         name: 'The construction and componentwise operation'
         key_prerequisites: [cartesian-products, order-of-an-element]
-        step_check:
-          step: 'so the first coordinate wraps at $5$ and the second wraps at $8$'
-          question: 'Why does the first coordinate wrap at $5$ and the second at $8$?'
-          options:
-            - 'The smaller factor sets the modulus, so both coordinates wrap at the smaller number'
-            - 'The group has order $40$, so both coordinates would wrap at the same number, $40$'
-            - 'Each coordinate wraps at the size of the other factor, so the two moduli swap places'
-            - 'Each coordinate lives in its own factor, so it is reduced modulo that factor''s size'
-          answer: 'Each coordinate lives in its own factor, so it is reduced modulo that factor''s size'
-          why: 'The operation is componentwise, so $\mathbb{Z}_5$ and $\mathbb{Z}_8$ each keep their own arithmetic; the two coordinates never interact.'
         exemplars:
           - problem: 'In $\mathbb{Z}_4\times\mathbb{Z}_6$, compute $(3,5)+(2,4)$.'
             answer: '(1, 3)'
@@ -992,16 +832,6 @@ topics:
           answer_contract: {"kind": "exact"}
           answer: '6'
           reveal: 'The multiples $(1,1),(0,2),(1,0),(0,1),(1,2),(0,0)$ show that the order is $6$. The first coordinate is back at $0$ every $2$ steps, the second every $3$ steps, so both are back together after $\mathrm{lcm}(2,3)=6$ steps.'
-        step_check:
-          step: 'Compute the lcm of the orders'
-          question: 'Why is the order of $(a,b)$ the lcm of the two orders, and not their product?'
-          options:
-            - 'The lcm is always the smaller of the two orders, so it keeps the order of the pair as small as it can be'
-            - '$(a,b)^k$ is the identity exactly when $k$ is a multiple of both orders, and the lcm is the least one'
-            - 'The two coordinates are multiplied by different integers, so their orders add up instead of multiplying'
-            - 'The product of the two orders counts the elements of the group, so the lcm gives the order instead'
-          answer: '$(a,b)^k$ is the identity exactly when $k$ is a multiple of both orders, and the lcm is the least one'
-          why: 'Both coordinates must return to the identity at the same time $k$, so $k$ is a common multiple of the orders; the product is a common multiple too, but not the least one unless the orders are coprime.'
         exemplars:
           - problem: 'What is the order of the element $(1,2)$ in $\mathbb{Z}_8\times\mathbb{Z}_{12}$?'
             answer: '24'
@@ -1043,16 +873,6 @@ topics:
       - id: kp3
         name: 'When Z_m x Z_n is cyclic'
         key_prerequisites: [cyclic-groups-generators]
-        step_check:
-          step: 'since $\gcd(6,10) = 2 \neq 1$, the product $\mathbb{Z}_6 \times \mathbb{Z}_{10}$ is not cyclic'
-          question: 'Why does $\gcd(6,10)=2$ mean that $\mathbb{Z}_6\times\mathbb{Z}_{10}$ is not cyclic?'
-          options:
-            - 'A gcd that is not $1$ means that one of the two factors $\mathbb{Z}_6$ and $\mathbb{Z}_{10}$ is not cyclic'
-            - 'Elements of order $6$ and of order $10$ cannot both exist in the same product group'
-            - 'Every element has order at most $\mathrm{lcm}(6,10)=30$, which is less than the group order $60$'
-            - 'A product of cyclic groups is cyclic only when both factors have prime order here'
-          answer: 'Every element has order at most $\mathrm{lcm}(6,10)=30$, which is less than the group order $60$'
-          why: 'A cyclic group of order $60$ needs an element of order $60$, but orders in the product are at most $30$; both factors are cyclic, so the gcd test is about the product only.'
         exemplars:
           - problem: 'Is the group $\mathbb{Z}_8\times\mathbb{Z}_9$ cyclic?'
             answer: 'yes'
@@ -1121,16 +941,6 @@ topics:
       - id: kp1
         name: 'The product set HK and the counting formula |HK| = |H||K|/|H ∩ K|'
         key_prerequisites: [lagranges-theorem, normal-subgroups]
-        step_check:
-          step: 'identify $H \cap K$'
-          question: 'Why must we find $H\cap K$ before the formula for $|HK|$ can be used?'
-          options:
-            - 'Only the elements of $H\cap K$ can belong to $HK$, so the intersection is the part of $HK$ to be counted'
-            - 'The set $HK$ is a subgroup only when $H\cap K$ is non-empty, so this has to be checked before counting'
-            - 'Pairs $(h,k)$ and $(hx,x^{-1}k)$ with $x\in H\cap K$ share a product, so we divide by $|H\cap K|$'
-            - 'The intersection tells us whether $H$ and $K$ are normal, and the formula holds only for normal subgroups'
-          answer: 'Pairs $(h,k)$ and $(hx,x^{-1}k)$ with $x\in H\cap K$ share a product, so we divide by $|H\cap K|$'
-          why: 'Different pairs can give the same product $hk$, and exactly $|H\cap K|$ pairs give each product, so $|HK|=|H||K|/|H\cap K|$; the formula holds for any subgroups, normal or not.'
         exemplars:
           - problem: 'In $\mathbb{Z}_{12}$ let $H=\langle2\rangle$ and $K=\langle3\rangle$. How many elements does the set $H+K=\{h+k : h\in H,\ k\in K\}$ have?'
             answer: '12'
@@ -1176,16 +986,6 @@ topics:
       - id: kp2
         name: 'The recognition criterion: G is an internal direct product'
         key_prerequisites: [normal-subgroups, direct-products]
-        step_check:
-          step: 'Since $|H + K| = 4$ and $|\mathbb{Z}_8| = 8$, $HK \neq G$'
-          question: 'Why does $|H+K|=4$ show that $\mathbb{Z}_8$ is not the internal direct product of $H$ and $K$?'
-          options:
-            - 'Then $H+K$ is a proper subset of $\mathbb{Z}_8$, so some elements are not of the form $h+k$'
-            - 'Then $H+K$ has the same size as $H$, which shows that $H$ is not a normal subgroup of $\mathbb{Z}_8$'
-            - 'Then $H+K$ has fewer than $8$ elements, so it cannot be a subgroup of $\mathbb{Z}_8$ at all'
-            - 'Then $|H||K|$ differs from $|H+K|$, which always means that $K$ is not a normal subgroup of $\mathbb{Z}_8$'
-          answer: 'Then $H+K$ is a proper subset of $\mathbb{Z}_8$, so some elements are not of the form $h+k$'
-          why: 'The third condition says $H+K$ must be the whole group; with only $4$ of the $8$ elements it fails, and the other two conditions cannot repair it.'
         exemplars:
           - problem: 'Is $\mathbb{Z}_6$ the internal direct product of its subgroups $H=\langle2\rangle$ and $K=\langle3\rangle$?'
             answer: 'yes'
@@ -1227,16 +1027,6 @@ topics:
       - id: kp3
         name: 'Coprime-order applications'
         key_prerequisites: [lagranges-theorem, direct-products, normal-subgroups]
-        step_check:
-          step: '$|H \cap K|$ divides both $3$ and $7$ by Lagrange''s theorem'
-          question: 'Why does Lagrange''s theorem make $|H\cap K|$ divide both $3$ and $7$?'
-          options:
-            - 'The orders $3$ and $7$ are prime, so every subgroup of the group $G$ has order exactly $3$ or $7$'
-            - 'Lagrange''s theorem says that $|H\cap K|$ equals the product $|H||K|=21$ for normal subgroups of $G$'
-            - 'Both $H$ and $K$ are normal subgroups, and normal subgroups always have orders that divide each other'
-            - '$H\cap K$ is a subgroup of both $H$ and $K$, and a subgroup''s order divides the group''s order'
-          answer: '$H\cap K$ is a subgroup of both $H$ and $K$, and a subgroup''s order divides the group''s order'
-          why: 'The intersection sits inside $H$ and inside $K$ at once, so its order divides $|H|=3$ and $|K|=7$; the only common divisor is $1$.'
         exemplars:
           - problem: 'A group $G$ of order $15$ has a normal subgroup $H$ of order $3$ and a normal subgroup $K$ of order $5$. How many elements does $H\cap K$ have?'
             answer: '1'
@@ -1329,16 +1119,6 @@ topics:
           answer_contract: {"kind": "label", "options": [["yes", "it is", "true", "correct", "they agree", "they are equal", "equal"], ["no", "it is not", "false", "incorrect", "they differ", "they are different", "different"]]}
           answer: 'no'
           reveal: 'The two products are different $3$-cycles, so $(1\,2)$ and $(1\,3)$ do not commute. The commutator $a^{-1}b^{-1}ab$ measures this: it equals $e$ exactly when $ab=ba$.'
-        step_check:
-          step: 'Also, $r^{-1} = r^3$ and $s^{-1} = s$'
-          question: 'Why is $s^{-1}=s$ for a reflection $s$ in $D_4$?'
-          options:
-            - 'Every element of $D_4$ is its own inverse, because $D_4$ has order $8$ and is a power of $2$'
-            - 'A reflection done twice returns every point, so $s^2=e$ and $s$ is its own inverse'
-            - 'The reflection $s$ has order $4$, so its inverse $s^3$ is the same element as $s$ itself'
-            - 'A reflection commutes with every rotation, and commuting elements are always their own inverses'
-          answer: 'A reflection done twice returns every point, so $s^2=e$ and $s$ is its own inverse'
-          why: 'Reflecting twice restores the square, so $s^2=e$ and $s^{-1}=s$; rotations differ, since $r$ has order $4$ and $r^{-1}=r^3$.'
         exemplars:
           - problem: 'In $S_3$, with permutations composed from right to left, the commutator of $a$ and $b$ is $[a,b]=a^{-1}b^{-1}ab$. Where does the commutator $[(1\,2),(1\,3)]$ send the point $1$?'
             answer: '2'
@@ -1384,16 +1164,6 @@ topics:
       - id: kp2
         name: 'The commutator subgroup [G, G]'
         key_prerequisites: [normal-subgroups, abelian-groups]
-        step_check:
-          step: 'so $[D_4, D_4] = \{e, r^2\}$'
-          question: 'Why do the commutators $e$ and $r^2$ alone give $[D_4,D_4]=\{e,r^2\}$?'
-          options:
-            - 'Each commutator is $e$ or $r^2$, and a subgroup generated by two elements must have two elements'
-            - 'Every element of $D_4$ commutes with $r^2$, so every commutator of $D_4$ must be equal to $r^2$'
-            - 'The commutator subgroup is defined as the center of $D_4$, which is spanned by $e$ and $r^2$'
-            - '$\{e,r^2\}$ is a subgroup that contains every commutator, so it is the subgroup they generate'
-          answer: '$\{e,r^2\}$ is a subgroup that contains every commutator, so it is the subgroup they generate'
-          why: '$[G,G]$ is the smallest subgroup containing all commutators; $\{e,r^2\}$ is closed under products and inverses, so nothing more is needed (the center happens to be the same set here, but it is a different notion).'
         exemplars:
           - problem: 'The commutator subgroup $[G,G]$ is the subgroup generated by all commutators $[x,y]=x^{-1}y^{-1}xy$. How many elements does $[G,G]$ have when $G=\mathbb{Z}_{12}$?'
             answer: '1'
@@ -1435,16 +1205,6 @@ topics:
       - id: kp3
         name: 'Abelianization G/[G,G]'
         key_prerequisites: [quotient-groups, abelian-groups]
-        step_check:
-          step: 'so $a^{-1}b^{-1}ab \in N$'
-          question: 'Why does $abN=baN$ give $a^{-1}b^{-1}ab\in N$?'
-          options:
-            - 'Since $N$ contains $a$ and $b$, it contains every product of them, including $a^{-1}b^{-1}ab$ here'
-            - 'Cancelling $N$ from both sides of $abN=baN$ gives $ab=ba$, so the commutator is $e$ and lies in $N$'
-            - 'Cosets $xN$ and $yN$ are equal exactly when $y^{-1}x\in N$, and $(ba)^{-1}(ab)=a^{-1}b^{-1}ab$'
-            - 'Every normal subgroup contains all products $xy$ with $x,y\in G$, so it contains this one as well'
-          answer: 'Cosets $xN$ and $yN$ are equal exactly when $y^{-1}x\in N$, and $(ba)^{-1}(ab)=a^{-1}b^{-1}ab$'
-          why: 'Two cosets are the same exactly when the quotient of their representatives lies in $N$; this is what turns equality of cosets into membership of the commutator in $N$.'
         exemplars:
           - problem: 'What is the order of the abelianization $S_3/[S_3,S_3]$?'
             answer: '2'

@@ -73,6 +73,7 @@ fn exemplar(state: &State) -> Exemplar {
         answer_contract: state.contract.clone(),
         answer: state.answer.to_owned(),
         solution_sketch: Some("Count.".to_owned()),
+        visual: None,
     }
 }
 
@@ -136,6 +137,7 @@ fn the_examples_of_the_brief_hold() {
         answer_contract: Some(AnswerContract::Matrix { rows: 2, cols: 2 }),
         answer: "[3,-1;-5,2]".to_owned(),
         solution_sketch: None,
+        visual: None,
     };
     assert!(matrix.verdict_policy(AnswerKind::Numeric).is_ok());
     assert!(matrix.verdict_policy(AnswerKind::Proof).is_ok());
@@ -144,6 +146,7 @@ fn the_examples_of_the_brief_hold() {
         answer_contract: None,
         answer: "$(46, 54)$".to_owned(),
         solution_sketch: None,
+        visual: None,
     };
     assert!(pair.verdict_policy(AnswerKind::Numeric).is_ok());
     assert!(pair.verdict_policy(AnswerKind::Proof).is_err());

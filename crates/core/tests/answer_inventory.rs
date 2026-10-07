@@ -74,7 +74,8 @@ const HISTORICAL_SHAPE_COUNTS: [(&str, usize); 16] = [
 const HISTORICAL_DISTINCT_DECIDABLE: [(usize, usize); 4] = [(0, 115), (1, 53), (2, 583), (3, 58)];
 
 const LIVE_KNOWLEDGE_POINTS: usize = 809;
-const LIVE_EXEMPLARS: usize = 5_906;
+// 2026-10-07, courses rewrite (item-level figures, whole-number and mixed-number items): 5,907 exemplars (was 5,906).
+const LIVE_EXEMPLARS: usize = 5_907;
 const LIVE_WITHOUT_SKETCH: usize = 0;
 // 2026-10-07, courses rewrite: the 984 rewritten topics move every count below
 // (5,906 exemplars, was 3,828). The values come from the inventory dump of the
@@ -84,7 +85,7 @@ const LIVE_SHAPE_COUNTS: [(&str, usize); 16] = [
     ("decimal", 233),
     ("equation_or_inequality", 435),
     ("expression", 1_073),
-    ("fraction", 455),
+    ("fraction", 456),
     ("integer", 2_599),
     ("interval", 30),
     ("mixed_number", 21),
@@ -102,8 +103,8 @@ const LIVE_DISTINCT_DECIDABLE: [(usize, usize); 12] = [
     (1, 2),
     (2, 3),
     (3, 3),
-    (4, 69),
-    (5, 51),
+    (4, 68),
+    (5, 52),
     (6, 90),
     (7, 275),
     (8, 250),
@@ -112,7 +113,7 @@ const LIVE_DISTINCT_DECIDABLE: [(usize, usize); 12] = [
     (11, 1),
 ];
 const LIVE_VERDICT_COUNTS: [(&str, usize); 8] = [
-    ("decided", 5_519),
+    ("decided", 5_520),
     (
         "undecidable(a chained inequality needs one variable in the middle)",
         4,

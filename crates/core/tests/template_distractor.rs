@@ -76,6 +76,7 @@ fn exemplars() -> Vec<Exemplar> {
         problem: "Compute $8 + 5.5$.".to_owned(),
         answer: "13.5".to_owned(),
         solution_sketch: None,
+        visual: None,
     }]
 }
 

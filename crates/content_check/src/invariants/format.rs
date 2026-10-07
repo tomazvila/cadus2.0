@@ -132,6 +132,40 @@ pub fn d28(contract: &Value, answer: &str) -> Option<String> {
         .find_map(|((name, _), (_, value))| d28_text(&format!("the function part `{name}`"), value))
 }
 
+/// True if the text writes a number with a TeX thousands comma (`1{,}205`).
+///
+/// A learner who reads the problem and types the same spelling back splits one
+/// number into two in the answer, so no statement writes one: four digits are
+/// plain (`1205`) and five or more use a thin space (`12\,345`).
+fn has_tex_thousands(text: &str) -> bool {
+    let bytes = text.as_bytes();
+    let mut at = 0;
+    while let Some(found) = text[at..].find("{,}") {
+        let comma = at + found;
+        let before = &bytes[..comma];
+        let after = &bytes[comma + 3..];
+        let run = before
+            .iter()
+            .rev()
+            .take_while(|b| b.is_ascii_digit())
+            .count();
+        if run >= 1 && after.len() >= 3 && after[..3].iter().all(u8::is_ascii_digit) {
+            return true;
+        }
+        at = comma + 3;
+    }
+    false
+}
+
+/// D33 for the statement and the sketch of each item.
+fn d33(item: &Item) -> Option<String> {
+    let sketch = item.exemplar.solution_sketch.as_deref().unwrap_or("");
+    (has_tex_thousands(&item.exemplar.problem) || has_tex_thousands(sketch)).then(|| {
+        "D33: the statement or sketch writes a number with `{,}`; write `1205`, or `12\\,345` from five digits"
+            .to_owned()
+    })
+}
+
 fn new_item_findings(view: &KpView, item: &Item) -> Vec<Finding> {
     let i14 = (item.verdict && item.contract.is_null())
         .then(|| "the verdict exemplar has no explicit answer_contract".to_owned());
@@ -153,7 +187,7 @@ fn new_item_findings(view: &KpView, item: &Item) -> Vec<Finding> {
     .collect()
 }
 
-/// The findings of I12, I13, I14 (new items) and D28 (each item).
+/// The findings of I12, I13, I14 (new items), D28 and D33 (each item).
 pub fn check(view: &KpView) -> Vec<Finding> {
     view.items
         .iter()
@@ -165,6 +199,9 @@ pub fn check(view: &KpView) -> Vec<Finding> {
             };
             let d28 = d28(&item.contract, &item.exemplar.answer);
             found.extend(d28.map(|text| finding(view, "answer-format", "D28", Some(item), text)));
+            found.extend(
+                d33(item).map(|text| finding(view, "answer-format", "D33", Some(item), text)),
+            );
             found
         })
         .collect()

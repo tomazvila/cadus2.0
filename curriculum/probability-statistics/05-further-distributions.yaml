@@ -24,16 +24,6 @@ topics:
       - id: kp1
         name: "The Poisson probability formula"
         key_prerequisites: [discrete-random-variables, natural-exponential-function]   # L1: no logarithm appears in this topic; e^-lambda is the real dependency
-        step_check:
-          step: 'Multiply by $e^{-3}$'
-          question: 'Why does the calculation end by multiplying the fraction by $e^{-3}$?'
-          options:
-            - 'It is the probability that exactly one croissant is sold during that hour'
-            - 'It is the same factor for all counts, so the probabilities add to $1$'
-            - 'It turns the rate per hour into a probability for a single hour'
-            - 'It cancels the factorial in the denominator, so only $3^2$ remains'
-          answer: 'It is the same factor for all counts, so the probabilities add to $1$'
-          why: 'The factor $e^{-\lambda}$ does not depend on $k$. Multiplying every term $\lambda^k/k!$ by it makes the probabilities of all counts add to $1$.'
         exemplars:
           - problem: 'A bakery sells on average $3$ croissants per hour, and the number sold in an hour follows a Poisson distribution. Using $e^{-3} \approx 0.0498$, find the probability that exactly $2$ croissants are sold in an hour, to three decimal places.'
             answer: '0.224'
@@ -71,16 +61,6 @@ topics:
       - id: kp2
         name: "Mean and variance are both lambda"
         key_prerequisites: [discrete-random-variables]
-        step_check:
-          step: 'For a Poisson variable the variance equals the mean, so $\operatorname{Var}(X)=\lambda$'
-          question: 'Why can the variance of a Poisson variable be read straight from its mean?'
-          options:
-            - 'Every random variable has a variance that is equal to its own mean, whatever its type'
-            - 'Rare events show almost no spread, so the variance is the same as the mean'
-            - 'The variance of any count of events is the square of its mean'
-            - 'A Poisson variable has one parameter, $\lambda$, equal to its mean and variance'
-          answer: 'A Poisson variable has one parameter, $\lambda$, equal to its mean and variance'
-          why: 'The Poisson distribution has a single parameter $\lambda$, and both its mean and its variance equal $\lambda$. This is special to Poisson variables.'
         exemplars:
           - problem: 'The number of typing errors on a page follows a Poisson distribution with mean $4$. Find the variance of the number of errors.'
             answer: '4'
@@ -118,16 +98,6 @@ topics:
       - id: kp3
         name: "Complements and changing the window"
         key_prerequisites: [natural-exponential-function]                              # L1: kp3 is window-rescaling/complements — nothing binomial, no logs
-        step_check:
-          step: 'Take the complement'
-          question: 'Why is $P(X \ge 1)$ found as $1-P(X=0)$ instead of adding the probabilities of $1, 2, 3, \dots$ events?'
-          options:
-            - 'Because the formula only gives probabilities for one value of $k$ at a time'
-            - 'Because the complement changes the mean from $\lambda$ to $1-\lambda$'
-            - 'Because all outcomes add to $1$, so "at least one" is all except "none"'
-            - 'Because adding endlessly many terms never gives a finite answer'
-          answer: 'Because all outcomes add to $1$, so "at least one" is all except "none"'
-          why: 'The events "none" and "at least one" cover every outcome once, so their probabilities add to $1$. One term replaces an endless sum.'
         try_first:
           problem: 'A manuscript has on average $0.5$ typos per page, in a Poisson process. How many pages make the mean number of typos equal to $3$?'
           answer_contract: {"kind": "exact"}
@@ -203,16 +173,6 @@ topics:
       - id: kp1
         name: "Probability as area under a density"
         key_prerequisites: [uniform-distribution]
-        step_check:
-          step: 'Multiply the width by the height (density) to find the area'
-          question: 'Why does multiplying the width of the interval by the density give the probability?'
-          options:
-            - 'The density is itself the probability of each single point in the interval'
-            - 'Probabilities are always found by multiplying two numbers from the problem'
-            - 'The probability is the area of a rectangle whose sides are width and height'
-            - 'Multiplying width by height makes the answer smaller than $1$ in every problem'
-          answer: 'The probability is the area of a rectangle whose sides are width and height'
-          why: 'Probability is area under the density curve. When the density is constant, the region is a rectangle, and its area is width times height.'
         exemplars:
           - problem: 'A continuous random variable $X$ has constant density $f(x)=\frac{1}{8}$ on $[0,8]$ and $0$ elsewhere. Find $P(3 \le X \le 7)$.'
             answer: '1/2'
@@ -250,16 +210,6 @@ topics:
       - id: kp2
         name: "Triangular densities"
         key_prerequisites: [area-triangles-quadrilaterals, geometric-probability-models]
-        step_check:
-          step: 'Find the height at $x = 3$'
-          question: 'Why must the height of the triangle be found at $x = 3$?'
-          options:
-            - 'The right edge of the triangle is at $x = 3$, and its height there is $f(3)$'
-            - 'The density is largest at $x = 3$ in every problem of this kind'
-            - 'Heights of triangles are always measured at the middle of the interval, not at an end'
-            - 'The value $f(3)$ is the probability $P(X=3)$ of that single point'
-          answer: 'The right edge of the triangle is at $x = 3$, and its height there is $f(3)$'
-          why: 'The event $X \le 3$ is the region under the line from $0$ to $3$. Its right edge is at $x=3$, and the line has height $f(3)$ there.'
         exemplars:
           - problem: '$X$ has density $f(x)=\frac{x}{8}$ on $[0,4]$ and $0$ elsewhere. Find $P(X \le 2)$.'
             answer: '1/4'
@@ -293,16 +243,6 @@ topics:
       - id: kp3
         name: "The cumulative distribution function"
         key_prerequisites: [uniform-distribution]
-        step_check:
-          step: 'The probability between two values is the difference of the cdf values, $P(2<X\le5)=F(5)-F(2)$'
-          question: 'Why is $F(2)$ subtracted from $F(5)$?'
-          options:
-            - 'The smaller value is always subtracted so that the answer is positive'
-            - '$F(2)$ is the probability of the single value $2$, which must be removed'
-            - 'Subtracting turns a cumulative value into a density value, as in calculus'
-            - '$F(5)$ holds all probability up to $5$; removing $F(2)$ leaves the rest'
-          answer: '$F(5)$ holds all probability up to $5$; removing $F(2)$ leaves the rest'
-          why: '$F(5)=P(X\le5)$ includes everything up to $2$ as well. Removing $F(2)=P(X\le2)$ leaves exactly $P(2<X\le5)$.'
         exemplars:
           - problem: '$X$ is uniform on $[0,10]$ with cumulative distribution function $F(x)=\frac{x}{10}$ for $0 \le x \le 10$. Find $F(4)$.'
             answer: '2/5'
@@ -370,16 +310,6 @@ topics:
       - id: kp1
         name: "Survival probabilities and the cdf"
         key_prerequisites: [continuous-random-variables, common-natural-logarithms]
-        step_check:
-          step: 'The probability of surviving beyond time $t$ is $P(X>t)=e^{-\lambda t}$'
-          question: 'Why does the exponent contain the product $\lambda t$ and not the rate $\lambda$ alone?'
-          options:
-            - 'The product $\lambda t$ converts the rate into a percentage'
-            - 'Time $t$ is multiplied in only to make the exponent negative'
-            - 'Survival depends on the rate alone, and $t$ only fixes the units'
-            - 'Survival gets less likely with a higher rate and with more time'
-          answer: 'Survival gets less likely with a higher rate and with more time'
-          why: 'A higher rate $\lambda$ means events come sooner, and a longer time $t$ gives more chance for the first event. Both make survival less likely, so both appear in the exponent.'
         exemplars:
           - problem: 'The lifetime $X$ of a bulb, in hours, is exponential with rate $\lambda=0.5$ per hour. Using $e^{-1} \approx 0.3679$, find the probability that the bulb lasts more than $2$ hours, to four decimal places.'
             answer: '0.3679'
@@ -417,16 +347,6 @@ topics:
       - id: kp2
         name: "Mean and median"
         key_prerequisites: [continuous-random-variables, common-natural-logarithms]
-        step_check:
-          step: 'The mean of an exponential variable is $E[X]=\frac{1}{\lambda}$'
-          question: 'Why does a larger rate $\lambda$ give a smaller mean waiting time?'
-          options:
-            - 'A higher rate means events come more often, so the typical wait is shorter'
-            - 'A larger rate spreads the density over a longer range of times'
-            - 'The mean is the rate multiplied by a fixed number, so it grows with $\lambda$'
-            - 'The density at zero is $\lambda$, so a larger $\lambda$ moves the mean to the right'
-          answer: 'A higher rate means events come more often, so the typical wait is shorter'
-          why: 'If events arrive more often, the time to the next one is shorter on average. This is why the mean is $1/\lambda$ and falls as $\lambda$ rises.'
         exemplars:
           - problem: 'The time between arrivals at a bank is exponential with rate $0.25$ per minute. Find the mean time between arrivals.'
             answer: '4'
@@ -460,16 +380,6 @@ topics:
       - id: kp3
         name: "Memorylessness and the Poisson connection"
         key_prerequisites: [continuous-random-variables, poisson-distribution]
-        step_check:
-          step: 'by memorylessness those $8$ hours are irrelevant'
-          question: 'Why do the hours already survived not change the probability of lasting longer?'
-          options:
-            - 'The machine is replaced after the $8$ hours, so a brand new one starts again'
-            - 'Survival probabilities always ignore the first hours of any lifetime'
-            - 'An exponential lifetime has no memory, so a used part is as good as new'
-            - 'The rate $\lambda$ falls to zero once the machine has run for a while'
-          answer: 'An exponential lifetime has no memory, so a used part is as good as new'
-          why: 'For an exponential variable $P(X>s+t\mid X>s)=P(X>t)$. The chance of lasting $t$ more hours is the same at every age.'
         exemplars:
           - problem: 'A component''s lifetime is exponential with rate $0.5$ per hour, and it has already survived $5$ hours. Using $e^{-1.5} \approx 0.2231$, find the probability that it survives at least $3$ more hours, to four decimal places.'
             answer: '0.2231'
@@ -540,16 +450,6 @@ topics:
       - id: kp1
         name: "Reading a joint probability table"
         key_prerequisites: [discrete-random-variables, two-way-frequency-tables]
-        step_check:
-          step: 'Subtract the sum from 1 to find $d$'
-          question: 'Why is the sum of the known cells subtracted from $1$?'
-          options:
-            - 'All four cells together cover every outcome, so they must add to $1$'
-            - 'The missing cell is always the complement of the largest cell that is known'
-            - 'Subtracting from $1$ turns the sum of the cells into a percentage'
-            - 'Each cell of a joint table must be smaller than the cell above it, in every table'
-          answer: 'All four cells together cover every outcome, so they must add to $1$'
-          why: 'Every outcome of $(X,Y)$ falls in exactly one cell, so all cells add to $1$. The missing cell is what is left after the known ones.'
         exemplars:
           - problem: 'The random variables $X$ and $Y$ each take the values $0$ and $1$. Their joint probabilities are $P(0,0)=0.1$, $P(0,1)=0.4$, $P(1,0)=0.2$ and $P(1,1)=d$. Find $d$.'
             answer: '0.3'
@@ -583,16 +483,6 @@ topics:
       - id: kp2
         name: "Marginal distributions"
         key_prerequisites: [discrete-random-variables, two-way-frequency-tables]
-        step_check:
-          step: 'The marginal probability $P(X=0)$ is the sum of the row for $X=0$ over every value of $Y$'
-          question: 'Why are the cells added across all values of $Y$ to get $P(X=0)$?'
-          options:
-            - 'Marginals are averages of the cells, so the cells are added and divided by their number'
-            - 'Only the largest cell in the row counts as a case of $X=0$, the rest are ignored'
-            - 'Adding the cells makes the whole table add to $1$, as every table must'
-            - 'The event $X=0$ happens with each value of $Y$, and these cases do not overlap'
-          answer: 'The event $X=0$ happens with each value of $Y$, and these cases do not overlap'
-          why: 'The event $X=0$ is split into the cases $Y=0$, $Y=1$, and so on. The cases cannot happen together, so their probabilities add.'
         exemplars:
           - problem: 'The joint probabilities of $X$ and $Y$ are $P(0,0)=0.2$, $P(0,1)=0.3$, $P(1,0)=0.1$ and $P(1,1)=0.4$. Find the marginal probability $P(X=0)$.'
             answer: '0.5'
@@ -626,16 +516,6 @@ topics:
       - id: kp3
         name: "Independence and conditionals in joint form"
         key_prerequisites: [independent-events, two-way-frequency-tables]
-        step_check:
-          step: 'Independence means every joint cell is the product of its marginals'
-          question: 'Why is $0.3 \cdot 0.5$ the probability of both events when $X$ and $Y$ are independent?'
-          options:
-            - 'Independent events cannot happen together, so the product is the smallest possible value'
-            - 'Knowing $X=1$ leaves the chance of $Y=2$ unchanged, so the chances multiply'
-            - 'The product of two probabilities is always their average'
-            - 'Probabilities of two events are always multiplied, independent or not'
-          answer: 'Knowing $X=1$ leaves the chance of $Y=2$ unchanged, so the chances multiply'
-          why: 'If $X$ tells nothing about $Y$, then $P(Y=2\mid X=1)=P(Y=2)$. So $P(X=1,Y=2)=P(X=1)\,P(Y=2)$.'
         exemplars:
           - problem: '$X$ and $Y$ are independent, with $P(X=1)=0.3$ and $P(Y=2)=0.5$. Find $P(X=1 \text{ and } Y=2)$.'
             answer: '0.15'
@@ -703,16 +583,6 @@ topics:
       - id: kp1
         name: "The covariance identity"
         key_prerequisites: [variance-random-variables]
-        step_check:
-          step: 'Subtract the product of the means from the mean of the product: $E[XY]-E[X]E[Y]=7-2\cdot3=1$'
-          question: 'Why does the covariance subtract $E[X]E[Y]$ from $E[XY]$?'
-          options:
-            - 'It removes the mean of each variable so only the spread is left'
-            - 'It is what $E[XY]$ would be if $X$ and $Y$ were unrelated'
-            - 'It makes sure the covariance is never larger than $E[XY]$'
-            - 'It converts the product of the variables back to their own units'
-          answer: 'It is what $E[XY]$ would be if $X$ and $Y$ were unrelated'
-          why: 'If $X$ and $Y$ had no link, $E[XY]$ would equal $E[X]E[Y]$, so the difference measures how the variables move together.'
         exemplars:
           - problem: 'The random variables $X$ and $Y$ have $E[XY]=7$, $E[X]=2$ and $E[Y]=3$. Find $\operatorname{Cov}(X,Y)$.'
             answer: '1'
@@ -746,16 +616,6 @@ topics:
       - id: kp2
         name: "Covariance from a joint table"
         key_prerequisites: [joint-distributions, variance-random-variables]
-        step_check:
-          step: 'Only the outcome $(1,1)$ adds to $E[XY]$, because every other pair has a product of $0$'
-          question: 'Why do the outcomes $(0,0)$, $(0,1)$ and $(1,0)$ add nothing to $E[XY]$?'
-          options:
-            - 'In each of them $x=0$ or $y=0$, so the product $xy$ is $0$'
-            - 'Their probabilities are smaller than the probability of $(1,1)$'
-            - 'The covariance only counts outcomes where $X$ equals $Y$'
-            - 'Outcomes with a zero already enter through $E[X]$ and $E[Y]$'
-          answer: 'In each of them $x=0$ or $y=0$, so the product $xy$ is $0$'
-          why: 'Each term of $E[XY]$ is $xy\cdot P(x,y)$. When $x$ or $y$ is $0$ that term vanishes, so only $(1,1)$ remains.'
         try_first:
           problem: '$X$ and $Y$ each take only the values $0$ and $1$. The outcome $(X,Y)=(1,1)$ has probability $0.3$. What is $E[XY]$?'
           answer_contract: {"kind": "exact"}
@@ -802,16 +662,6 @@ topics:
       - id: kp3
         name: "Variance of a sum and correlation"
         key_prerequisites: [variance-random-variables, joint-distributions]
-        step_check:
-          step: 'Add twice the covariance: $\operatorname{Var}(X+Y)=4+9+2\cdot3=19$'
-          question: 'Why is the covariance counted twice in $\operatorname{Var}(X+Y)$?'
-          options:
-            - 'The covariance is added once for $X$ and once for $Y$ as a variance'
-            - 'Doubling is a convention that keeps the variance of a sum from being negative'
-            - 'Expanding $(X+Y)^2$ gives the cross term $XY$ twice'
-            - 'The sum $X+Y$ has twice the spread of either variable'
-          answer: 'Expanding $(X+Y)^2$ gives the cross term $XY$ twice'
-          why: 'In $(X+Y)^2=X^2+2XY+Y^2$ the cross term has the factor $2$, so the covariance enters as $2\operatorname{Cov}(X,Y)$.'
         exemplars:
           - problem: '$\operatorname{Var}(X)=4$, $\operatorname{Var}(Y)=9$ and $\operatorname{Cov}(X,Y)=3$. Find $\operatorname{Var}(X+Y)$.'
             answer: '19'

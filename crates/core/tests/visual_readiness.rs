@@ -1,16 +1,15 @@
 //! The visual half of the readiness audit (unit f9).
 //!
-//! Before unit f9 `Readiness::visual_present` was hardcoded `false`. These tests
-//! pin the real rule: an authored visual that passes its own check is a present
-//! visual, and a visual the check refuses stays absent. A refused figure never
-//! clears the blocker, so a broken picture never makes a knowledge point ready.
+//! An authored visual that passes its own check is counted valid, and a visual
+//! the check refuses is counted broken. Since the courses rewrite (2026-10-07)
+//! figures belong to items, so no visual blocker or visual flag remains.
 
 #![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 
 mod common;
 
 use cadus_core::curriculum::{Curriculum, KnowledgePoint, Topic};
-use cadus_core::readiness::{Blocker, EmptyContent, ReadinessIndex};
+use cadus_core::readiness::{EmptyContent, ReadinessIndex};
 use cadus_core::visual::{FractionFigure, NumberLineFigure, VisualSpec};
 
 use common::{graph, knowledge_point, plain_topic, solved_exemplar};
@@ -54,33 +53,27 @@ fn readiness_of(curriculum: &Curriculum, kp_key: &str) -> cadus_core::readiness:
 }
 
 #[test]
-fn an_authored_visual_that_passes_its_check_is_a_present_visual() {
+fn an_authored_visual_that_passes_its_check_is_not_broken() {
     let curriculum = graph(vec![topic_of(
         "add-whole-numbers",
         vec![kp_with_visuals("count-on", vec![good_line()])],
     )]);
     let readiness = readiness_of(&curriculum, "add-whole-numbers/count-on");
-    assert!(readiness.visual_needed);
-    assert!(readiness.visual_present);
     assert_eq!(readiness.broken_visuals, 0);
-    assert!(!readiness.blockers().contains(&Blocker::Visual));
 }
 
 #[test]
-fn an_authored_visual_that_fails_its_check_stays_absent_and_keeps_the_blocker() {
+fn an_authored_visual_that_fails_its_check_is_counted_broken() {
     let curriculum = graph(vec![topic_of(
         "add-whole-numbers",
         vec![kp_with_visuals("count-on", vec![broken_line()])],
     )]);
     let readiness = readiness_of(&curriculum, "add-whole-numbers/count-on");
-    assert!(readiness.visual_needed);
-    assert!(!readiness.visual_present);
     assert_eq!(readiness.broken_visuals, 1);
-    assert!(readiness.blockers().contains(&Blocker::Visual));
 }
 
 #[test]
-fn one_good_visual_beside_a_broken_one_clears_the_blocker_and_reports_the_break() {
+fn one_good_visual_beside_a_broken_one_reports_the_break() {
     let curriculum = graph(vec![topic_of(
         "add-whole-numbers",
         vec![kp_with_visuals(
@@ -93,34 +86,17 @@ fn one_good_visual_beside_a_broken_one_clears_the_blocker_and_reports_the_break(
         )],
     )]);
     let readiness = readiness_of(&curriculum, "add-whole-numbers/count-on");
-    assert!(readiness.visual_present);
     assert_eq!(readiness.broken_visuals, 1);
-    assert!(!readiness.blockers().contains(&Blocker::Visual));
 }
 
 #[test]
-fn a_knowledge_point_with_no_authored_visual_and_plain_text_needs_none() {
+fn a_knowledge_point_with_no_authored_visual_has_no_broken_one() {
     let curriculum = graph(vec![topic_of(
         "add-whole-numbers",
         vec![kp_with_visuals("count-on", Vec::new())],
     )]);
     let readiness = readiness_of(&curriculum, "add-whole-numbers/count-on");
-    assert!(!readiness.visual_needed);
-    assert!(!readiness.visual_present);
     assert_eq!(readiness.broken_visuals, 0);
-    assert!(!readiness.blockers().contains(&Blocker::Visual));
-}
-
-#[test]
-fn the_word_heuristic_still_reports_a_topic_that_names_a_picture_and_authors_none() {
-    let curriculum = graph(vec![topic_of(
-        "read-a-bar-graph",
-        vec![kp_with_visuals("read-one-bar", Vec::new())],
-    )]);
-    let readiness = readiness_of(&curriculum, "read-a-bar-graph/read-one-bar");
-    assert!(readiness.visual_needed);
-    assert!(!readiness.visual_present);
-    assert!(readiness.blockers().contains(&Blocker::Visual));
 }
 
 #[test]

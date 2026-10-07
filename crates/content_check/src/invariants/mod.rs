@@ -74,6 +74,7 @@ pub mod testkit {
             answer_contract: serde_json::from_value(contract.clone()).ok(),
             answer: answer.to_owned(),
             solution_sketch: sketch.map(str::to_owned),
+            visual: None,
         };
         Item::new(exemplar, contract, AnswerKind::Numeric)
     }

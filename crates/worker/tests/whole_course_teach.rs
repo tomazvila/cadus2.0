@@ -472,6 +472,7 @@ fn finite_teach_collision_allowance_matches_the_registered_teaching_roles() {
                 answer: "4".to_owned(),
                 answer_contract: None,
                 solution_sketch: None,
+                visual: None,
             }],
             finite,
         }

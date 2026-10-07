@@ -126,19 +126,19 @@ const INSTANTIATE_P95_BUDGET_NS: u128 = 5_000_000;
 /// 4. Record `n`, `n / 2000`, and the new bound in the paragraph above and in
 ///    `docs/reference/l1-budget.md` section 8.
 ///
-/// The measurement behind the literal below is 114,415, taken on the grader
-/// pass 3 tree (2026-10-07) in the release profile, three runs, one test
-/// thread. The previous literal, 107,680 on the M4 review 2 tree (commit
-/// cd59434), moved because grader pass 3 canonicalizes logarithm bases and
-/// samples the `function` contract on fallback domains, which adds 3.37
-/// allocations per instance to the canonical form. M4 review 2 findings 7 and
-/// 11 are the record of what a stale measurement costs.
+/// The measurement behind the literal below is 118,960, taken on the evening
+/// tree of 2026-10-07 (whole-number list reader, mixed-number form, per-item
+/// figures) in the release profile, one test thread; that is 59.48 per
+/// instance. The previous literal, 114,415 on the grader pass 3 tree of the
+/// same day, moved because the list reader tries the grouped-digit reading
+/// of each whole-number list, which adds 2.27 allocations per instance. M4
+/// review 2 findings 7 and 11 are the record of what a stale measurement costs.
 ///
 /// NOTE: FIXM4d changes the gate and the template source in the same fix wave.
 /// If the merged tree prints a different count, repeat the four steps above once
 /// after the merge, and re-run [`the_measured_sequence_is_pinned`] as well: a
 /// change that moves the drawn tuples moves those literals too.
-const ALLOCATION_BOUND: u64 = 114_987;
+const ALLOCATION_BOUND: u64 = 119_554;
 
 // ---------------------------------------------------------------------------
 // The counting allocator

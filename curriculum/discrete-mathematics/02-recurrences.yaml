@@ -23,16 +23,6 @@ topics:
       - id: kp1
         name: "Computing terms from a recurrence"
         key_prerequisites: [function-notation]
-        step_check:
-          step: 'Compute $b_2$ using the recurrence formula'
-          question: 'Why must $b_2$ be found before $b_3$?'
-          options:
-            - 'Each term is larger than the one before, so the order cannot change'
-            - 'Each term is built from earlier terms, so $b_2$ is needed first'
-            - 'The initial term $b_1$ is replaced by $b_2$ once $b_2$ is known'
-            - 'The question asks for an ordered triple, so the terms come in order'
-          answer: 'Each term is built from earlier terms, so $b_2$ is needed first'
-          why: 'The formula $b_n = 3b_{n-1} - 1$ takes the previous term as input, so $b_3$ cannot be found until $b_2 = 5$ is known.'
         exemplars:
           - problem: 'Let $a_1 = 1$ and $a_n = 2a_{n-1} + 1$ for $n \ge 2$. Find $a_2$, $a_3$ and $a_4$.'
             answer: '3, 7, 15'
@@ -70,16 +60,6 @@ topics:
       - id: kp2
         name: "Modeling counting problems with recurrences"
         key_prerequisites: [function-notation, multiplication-principle]
-        step_check:
-          step: 'the remaining $n-1$ flowers can be planted in $f_{n-1}$ ways'
-          question: 'Why does a white first flower leave exactly $f_{n-1}$ ways for the rest?'
-          options:
-            - 'White flowers are planted first, so the other flowers follow the same order'
-            - 'A white flower is counted once, so the others are counted $n-1$ times'
-            - 'The first flower has two colors, so the rest splits into two equal cases'
-            - 'White puts no limit on the next flower, so any valid bed of $n-1$ works'
-          answer: 'White puts no limit on the next flower, so any valid bed of $n-1$ works'
-          why: 'Only two red flowers side by side are forbidden, so after a white flower the other $n-1$ flowers form any valid bed, and there are $f_{n-1}$ of those.'
         try_first:
           problem: 'You climb a staircase taking $1$ or $2$ steps at a time. In how many ways can you climb $4$ stairs?'
           answer_contract: {"kind":"exact"}
@@ -126,16 +106,6 @@ topics:
       - id: kp3
         name: "Recurrences for strings with forbidden patterns"
         key_prerequisites: [function-notation, multiplication-principle]
-        step_check:
-          step: 'preceded by any valid string of length $n-2$'
-          question: 'Why can the part before a final $10$ be any valid string of length $n-2$?'
-          options:
-            - 'The $1$ in front of the last $0$ keeps two $0$s from touching'
-            - 'Strings of length $n-2$ are the only ones that end in $1$ or $0$'
-            - 'The final $10$ is counted as one symbol, so the rest has length $n-2$'
-            - 'The rule only covers the last two places, so earlier ones are free'
-          answer: 'The $1$ in front of the last $0$ keeps two $0$s from touching'
-          why: 'The $1$ separates the final $0$ from everything before it, so no pair of $0$s can form across the join and the first $n-2$ symbols only need to be valid on their own.'
         exemplars:
           - problem: 'How many bit strings of length $4$ contain no two consecutive $0$s?'
             answer: '8'
@@ -204,16 +174,6 @@ topics:
       - id: kp1
         name: "Unrolling arithmetic- and geometric-type recurrences"
         key_prerequisites: [recurrence-relations]
-        step_check:
-          step: 'Unroll the recurrence: $a_n = a_0 + dn = 1 + 4n$'
-          question: 'Why is $a_n = a_0 + dn$ the formula for $a_n = a_{n-1} + d$?'
-          options:
-            - 'The first term is $a_0$, and $d$ is a number that is added to $n$'
-            - 'Each of the $n$ steps from $a_0$ multiplies the term by $d$'
-            - 'Each of the $n$ steps from $a_0$ adds the same $d$ to the term'
-            - 'Only the last step adds $d$, and the other steps leave the term as it is'
-          answer: 'Each of the $n$ steps from $a_0$ adds the same $d$ to the term'
-          why: 'Going from $a_0$ to $a_n$ takes $n$ steps and each step adds $d$, so the total added is $n \cdot d$; here $a_n = 1 + 4n$.'
         exemplars:
           - problem: 'Find a closed formula for $a_n$ when $a_n = a_{n-1} + 4$ and $a_0 = 1$.'
             answer: '4n + 1'
@@ -255,16 +215,6 @@ topics:
       - id: kp2
         name: "Telescoping variable-step recurrences"
         key_prerequisites: [recurrence-relations, summation-notation]
-        step_check:
-          step: 1
-          question: 'Why does unrolling $a_n = a_{n-1} + n$ leave the sum $1 + 2 + \cdots + n$?'
-          options:
-            - 'The recurrence adds $n$ only once, and all other terms come from $a_0$'
-            - 'Going back from $a_k$ to $a_{k-1}$ takes off $k$, from $k = n$ down to $1$'
-            - 'The terms $a_0, a_1, \dots, a_n$ are all added together to give the value $a_n$'
-            - 'Every step adds the same number $n$, so the total is $n$ times $n$'
-          answer: 'Going back from $a_k$ to $a_{k-1}$ takes off $k$, from $k = n$ down to $1$'
-          why: 'Each step back removes one added term, first $n$, then $n-1$, down to $1$, and those removed terms together make $a_n - a_0 = 1 + 2 + \cdots + n$.'
         try_first:
           problem: 'A sequence starts at $a_0 = 0$ and each term adds its own position number, so $a_n = a_{n-1} + n$. What is $a_4$?'
           answer_contract: {"kind":"exact"}
@@ -351,16 +301,6 @@ topics:
       - id: kp1
         name: "Distinct characteristic roots"
         key_prerequisites: [recurrence-relations, quadratic-equations-factoring]
-        step_check:
-          step: 'The roots are $r = 1$ and $r = 2$'
-          question: 'Why does each root $r$ of the characteristic equation give a solution $r^n$ of the recurrence?'
-          options:
-            - 'Substituting $a_n = r^n$ and dividing by $r^{n-2}$ gives the equation'
-            - 'The roots are the first two terms, so the other terms are powers of them'
-            - 'A root $r$ makes $a_n$ equal to $r$ for every $n$, so the recurrence holds'
-            - 'The roots are the values of $n$ at which the recurrence is true'
-          answer: 'Substituting $a_n = r^n$ and dividing by $r^{n-2}$ gives the equation'
-          why: 'For $a_n = 3a_{n-1} - 2a_{n-2}$, putting $a_n = r^n$ and dividing by $r^{n-2}$ leaves $r^2 = 3r - 2$, so every root of that equation gives a solution.'
         exemplars:
           - problem: 'A sequence satisfies $a_n = a_{n-1} + 2a_{n-2}$ for $n \ge 2$, with $a_0 = 2$ and $a_1 = 7$. Use the characteristic equation to solve the recurrence, and find $a_6$.'
             answer: '191'
@@ -402,16 +342,6 @@ topics:
       - id: kp2
         name: "Repeated roots"
         key_prerequisites: [recurrence-relations, perfect-square-trinomials]
-        step_check:
-          step: 1
-          question: 'Why does a repeated root need the factor $n$ in the general solution $(A + Bn)r^n$?'
-          options:
-            - 'The extra factor $n$ makes the sequence always grow faster than $r^n$'
-            - 'A repeated root counts as a single root, so $A$ and $B$ are not needed'
-            - 'A double root gives only $r^n$, so a second solution $nr^n$ is needed'
-            - 'The factor $n$ cancels the square in the characteristic polynomial'
-          answer: 'A double root gives only $r^n$, so a second solution $nr^n$ is needed'
-          why: 'A repeated root gives the solution $r^n$ only once, but $nr^n$ also satisfies the recurrence, and the two solutions together fit two initial conditions.'
         exemplars:
           - problem: 'A sequence satisfies $a_n = 4a_{n-1} - 4a_{n-2}$ for $n \ge 2$, with $a_0 = 1$ and $a_1 = 4$. Use the characteristic equation to solve the recurrence, and find $a_5$.'
             answer: '192'
@@ -481,16 +411,6 @@ topics:
       - id: kp1
         name: "Constant forcing terms"
         key_prerequisites: [linear-homogeneous-recurrences]
-        step_check:
-          step: 'Find the particular solution $p$ by solving $p = 3p + 2$'
-          question: 'Why does the particular solution $p$ solve $p = 3p + 2$?'
-          options:
-            - 'The recurrence starts at $a_0 = p$, so the first term must equal $p$'
-            - 'The equation $p = 3p + 2$ is the characteristic equation, and $p$ is its root'
-            - 'A constant sequence has $a_n = a_{n-1} = p$, so $p$ must satisfy the rule'
-            - 'Every solution of the recurrence is constant, so $p$ is the same as $a_n$'
-          answer: 'A constant sequence has $a_n = a_{n-1} = p$, so $p$ must satisfy the rule'
-          why: 'A particular solution only has to satisfy the recurrence, and the simplest candidate is a constant, which turns $a_n$ and $a_{n-1}$ into the same $p$; the initial condition comes later, in $A$.'
         try_first:
           problem: 'A constant sequence $a_n = p$ satisfies $a_n = 3a_{n-1} - 8$ for every $n$. Find $p$.'
           answer_contract: {"kind": "exact"}
@@ -537,16 +457,6 @@ topics:
       - id: kp2
         name: "Linear forcing terms"
         key_prerequisites: [linear-homogeneous-recurrences]
-        step_check:
-          step: 'Equate coefficients: $a = 4a + 2$ and $b = -4a + 4b$'
-          question: 'Why may we equate the coefficients of $n$ and the constants on the two sides?'
-          options:
-            - 'The coefficient of $n$ must be zero, so the constants are the only terms left to match'
-            - 'The two sides agree for every $n$, so slopes and constants must match'
-            - 'Both sides are only compared at $n = 0$, where each coefficient is the whole value'
-            - 'The recurrence is homogeneous, so each power of $n$ has to cancel on its own side'
-          answer: 'The two sides agree for every $n$, so slopes and constants must match'
-          why: 'Two linear expressions in $n$ that are equal for all $n$ must have equal slopes and equal constants; that is why one equation gives $a$ and the other gives $b$.'
         exemplars:
           - problem: 'Find a particular solution of $a_n = 3a_{n-1} + 4n$ of the form $p_n = an + b$.'
             answer: '-2n - 3'
@@ -619,16 +529,6 @@ topics:
       - id: kp1
         name: "From sequence to generating function"
         key_prerequisites: [geometric-series-finite-infinite]
-        step_check:
-          step: 'Write the generating function as a geometric series'
-          question: 'Why is $\sum_{n \ge 0} 3^n x^n$ the same as $\sum_{n \ge 0} (3x)^n$?'
-          options:
-            - 'Each term is $3$ times $x$ raised to $n$, so the $3$ is a fixed multiplier'
-            - 'The sum over $n$ lets us replace $3^n x^n$ by $3 \cdot x^n$ for every term'
-            - 'The exponents $3^n$ and $n$ add up, so the terms combine into $x^{3n}$'
-            - 'Because $3^n x^n = (3x)^n$, the series is geometric with ratio $3x$'
-          answer: 'Because $3^n x^n = (3x)^n$, the series is geometric with ratio $3x$'
-          why: 'A power of a product is the product of powers, so $3^n x^n = (3x)^n$; the geometric series formula then applies with ratio $r = 3x$.'
         exemplars:
           - problem: 'Find the generating function of the sequence $a_n = 2^n$, that is $1, 2, 4, 8, \dots$.'
             answer: '1/(1 - 2x)'
@@ -670,16 +570,6 @@ topics:
       - id: kp2
         name: "Products of generating functions count selections"
         key_prerequisites: [polynomial-multiplication, recurrence-relations]
-        step_check:
-          step: 'Multiply the two generating functions'
-          question: 'Why do we multiply the two generating functions instead of adding them?'
-          options:
-            - 'A selection takes one choice per factor, and exponents add, so products count totals'
-            - 'Adding the two factors would count only selections that use the first type of fruit'
-            - 'The coefficients of equal powers must be multiplied together, so factors cannot be added'
-            - 'Multiplying is shorter, and both ways always give the same final coefficients'
-          answer: 'A selection takes one choice per factor, and exponents add, so products count totals'
-          why: 'Choosing $i$ oranges and $j$ mangoes gives the term $x^i \cdot x^j = x^{i+j}$, so the product collects every pair of choices by its total size; addition would only list the choices separately.'
         try_first:
           problem: 'A bag holds at most $3$ red counters and at most $3$ blue counters. How many different bags hold exactly $5$ counters, where a bag is described by its number of red and blue counters?'
           answer_contract: {"kind": "exact"}
@@ -756,16 +646,6 @@ topics:
       - id: kp1
         name: "Geometric series and shifts"
         key_prerequisites: [generating-functions-intro]
-        step_check:
-          step: 'Expand the series'
-          question: 'Why does the series for $x/(1 - 3x)$ start $x + 3x^2 + 9x^3 + \dots$?'
-          options:
-            - 'The ratio $3$ is applied to $x$ once, so every power of $x$ gets only the factor $3$'
-            - '$1/(1 - 3x) = 1 + 3x + 9x^2 + \dots$, and the factor $x$ shifts each term up one power'
-            - 'The numerator $x$ replaces the first term of the series, so $1$ is dropped from it'
-            - 'The coefficients of $1/(1 - 3x)$ are $1, 3, 6, 9, \dots$, and $x$ adds one to every power'
-          answer: '$1/(1 - 3x) = 1 + 3x + 9x^2 + \dots$, and the factor $x$ shifts each term up one power'
-          why: 'Multiplying a series by $x$ raises every exponent by one and leaves the coefficients alone, so the powers of $3$ stay and each lands one place later.'
         exemplars:
           - problem: 'Find the coefficient of $x^4$ in $\dfrac{1}{1 - 2x}$.'
             answer: '16'
@@ -811,16 +691,6 @@ topics:
       - id: kp2
         name: "Negative binomial series 1/(1-x)^k"
         key_prerequisites: [generating-functions-intro]
-        step_check:
-          step: 'Apply the formula'
-          question: 'Why is the coefficient of $x^n$ in $1/(1 - x)^k$ equal to $\binom{n + k - 1}{n}$?'
-          options:
-            - 'It is the number of subsets of size $n$ taken from $n + k$ distinct objects'
-            - 'Each of the $k$ factors adds $1$ to the exponent, so the count is $n$ choose $k$'
-            - 'It counts ways to split $n$ identical items among $k$ groups (stars and bars)'
-            - 'It is the $n$th term of the binomial expansion of $(1 - x)^k$ with the signs all removed'
-          answer: 'It counts ways to split $n$ identical items among $k$ groups (stars and bars)'
-          why: 'Each factor $1/(1 - x)$ lets one group take any number of items, so the coefficient of $x^n$ counts the ways to split $n$ items among $k$ groups, namely $\binom{n+k-1}{n}$.'
         exemplars:
           - problem: 'Find the coefficient of $x^3$ in $\dfrac{1}{(1 - x)^2}$.'
             answer: '4'

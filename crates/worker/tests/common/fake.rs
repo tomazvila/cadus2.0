@@ -196,6 +196,7 @@ pub fn squares_spec() -> AuthoringSpec {
             problem: "Compute $7^2$.".to_owned(),
             answer: "49".to_owned(),
             solution_sketch: None,
+            visual: None,
         }],
         finite: None,
     }
@@ -330,12 +331,14 @@ pub fn golden_spec() -> AuthoringSpec {
                 problem: "Compute $52 - 27$.".to_owned(),
                 answer: "25".to_owned(),
                 solution_sketch: Some("Borrow one ten, then subtract the ones column.".to_owned()),
+                visual: None,
             },
             Exemplar {
                 answer_contract: None,
                 problem: "Compute $81 - 46$.".to_owned(),
                 answer: "35".to_owned(),
                 solution_sketch: None,
+                visual: None,
             },
         ],
         finite: None,

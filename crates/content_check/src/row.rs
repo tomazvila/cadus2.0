@@ -29,6 +29,7 @@ fn new_item(entry: &Value, view: &KpView) -> Result<Item, Fail> {
         answer_contract,
         answer: text("answer").ok_or_else(|| bad("no `answer` text"))?,
         solution_sketch: text("solution_sketch"),
+        visual: None,
     };
     let mut item = Item::new(exemplar, contract, view.answer_kind);
     item.id = Some(id);

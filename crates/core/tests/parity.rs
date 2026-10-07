@@ -12,7 +12,7 @@ use cadus_core::curriculum::{
 use common::dump::tree;
 
 /// The semantic curriculum hash of the checked-in tree (spec section 3).
-const TREE_HASH: &str = "18bb96161dd204a44fb718e5c3d454b5a46867ea50d56c63256faad96f918575";
+const TREE_HASH: &str = "7941a813032b21837685bce863305e823351de1afd1f5e31ff4aac782ef2a560";
 
 /// The length of the dump in bytes, without the trailing newline.
 // 2026-10-06 (later): the units 00, 01, 03, 06 and 07 content pass moved the
@@ -21,10 +21,11 @@ const TREE_HASH: &str = "18bb96161dd204a44fb718e5c3d454b5a46867ea50d56c63256faad
 // curriculum hash, measured with `dump_curriculum curriculum`.
 // 2026-10-07, lettered-items pass: dump length 13,122,628 (was 13,180,744), measured with `dump_curriculum curriculum`; hash re-pinned.
 // 2026-10-07, written items (courses rewrite): dump length 13,154,791 (was 13,122,628), measured with `dump_curriculum curriculum`; hash re-pinned.
-const DUMP_LEN: usize = 13_154_791;
+// 2026-10-07, courses rewrite (step_check removal, item-level figures, whole-number and mixed-number items): dump length 13,135,507 (was 13,154,791), measured with `dump_curriculum curriculum`; hash re-pinned.
+const DUMP_LEN: usize = 13_135_509;
 
 /// The `counts` object of the dump, as the oracle writes it.
-const COUNTS: &str = "\"counts\":{\"anki_seeds\":2144,\"courses\":13,\"encompassing_edges\":3200,\"exemplars\":25165,\"knowledge_points\":3138,\"prereq_edges\":3281,\"topics\":1090,\"units\":88}";
+const COUNTS: &str = "\"counts\":{\"anki_seeds\":2144,\"courses\":13,\"encompassing_edges\":3200,\"exemplars\":25183,\"knowledge_points\":3138,\"prereq_edges\":3281,\"topics\":1090,\"units\":88}";
 
 // --------------------------------------------------------------------------- //
 // The hash and the shape of the dump

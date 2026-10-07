@@ -19,16 +19,6 @@ topics:
       - id: kp1
         name: Entrywise addition and subtraction
         key_prerequisites: [vector-arithmetic]
-        step_check:
-          step: 'Check the dimensions: both matrices are $2\times 3$, so entrywise subtraction is allowed'
-          question: 'Why must the dimensions of the two matrices be checked before subtracting entry by entry?'
-          options:
-            - 'The result takes the larger size of the two matrices when sizes differ'
-            - 'Each entry needs a partner in the same row and column'
-            - 'Subtraction is allowed only when both matrices are square matrices'
-            - 'Matrices of different sizes subtract by matching their last rows only'
-          answer: 'Each entry needs a partner in the same row and column'
-          why: 'Entrywise subtraction pairs each entry with the entry in the same row and column, so a missing partner makes the operation undefined.'
         exemplars:
           - problem: 'Compute $\begin{pmatrix}3&-1\\2&5\end{pmatrix} + \begin{pmatrix}1&4\\-2&0\end{pmatrix}$.'
             answer: '[[4,3],[0,5]]'
@@ -66,16 +56,6 @@ topics:
       - id: kp2
         name: Scalar multiples and combinations
         key_prerequisites: [vector-arithmetic]
-        step_check:
-          step: 'Goal: scale each matrix by its scalar, then subtract entrywise'
-          question: 'Why is each matrix scaled before the two matrices are subtracted?'
-          options:
-            - 'Matrices can be subtracted only after both are scaled by the same number'
-            - 'The two scalars are subtracted first, and the result scales the difference'
-            - 'Scaling is done last, because subtraction needs the original entries'
-            - 'Each scalar belongs to its own matrix, so it acts on that matrix first'
-          answer: 'Each scalar belongs to its own matrix, so it acts on that matrix first'
-          why: 'A scalar multiplies every entry of its own matrix, so the scaled matrices are found first and then combined entry by entry.'
         exemplars:
           - problem: 'Compute $3\begin{pmatrix}2&-1\\0&4\end{pmatrix}$.'
             answer: '[[6,-3],[0,12]]'
@@ -121,16 +101,6 @@ topics:
       - id: kp3
         name: Size compatibility and solving for a matrix
         key_prerequisites: [vector-arithmetic]
-        step_check:
-          step: 'subtract that matrix from both sides'
-          question: 'Why is the known matrix subtracted from both sides to find $X$?'
-          options:
-            - 'Subtracting undoes the addition of that matrix'
-            - 'Matrix equations can be solved only by subtracting, never by adding'
-            - 'Subtraction makes the known matrix the same size as $X$ again'
-            - 'The matrix on the left side must always be moved to change its sign'
-          answer: 'Subtracting undoes the addition of that matrix'
-          why: 'Subtracting the same matrix from both sides keeps the equation true and removes it from the side that holds $X$.'
         exemplars:
           - problem: 'Solve for $X$: $X + \begin{pmatrix}3&-1\\0&4\end{pmatrix} = \begin{pmatrix}5&2\\-3&4\end{pmatrix}$.'
             answer: '[[2,3],[-3,0]]'
@@ -199,16 +169,6 @@ topics:
       - id: kp1
         name: Multiplying 2x2 matrices
         key_prerequisites: [computing-dot-products, computing-matrix-vector-products]
-        step_check:
-          step: 'Top-right entry (row 1 with column 2)'
-          question: 'Why does the top-right entry of the product use row 1 of the left matrix and column 2 of the right matrix?'
-          options:
-            - 'Entries are found by multiplying the matrices position by position, so the two $(1,2)$ entries meet'
-            - 'Row 1 is always used first, and column 2 is the column that is left over'
-            - 'The top-right entry is the sum of the two entries in the top row of the right matrix'
-            - 'Entry $(i, j)$ pairs row $i$ of the left matrix with column $j$ of the right one'
-          answer: 'Entry $(i, j)$ pairs row $i$ of the left matrix with column $j$ of the right one'
-          why: 'The entry in row $i$ and column $j$ of a product is the dot product of row $i$ of the left matrix with column $j$ of the right matrix.'
         try_first:
           problem: 'On Saturday a bakery sold $12$ muffins at $3$ dollars each and $7$ cookies at $2$ dollars each. How many dollars did it take in?'
           answer_contract: {"kind":"unit","quantity":"dollar","unit":"dollar","allow_omitted":true}
@@ -255,16 +215,6 @@ topics:
       - id: kp2
         name: Rectangular products and sizes
         key_prerequisites: [computing-dot-products, computing-matrix-vector-products]
-        step_check:
-          step: 'The inner dimensions match ($3=3$), so $AB$ is defined and has size $2\times 2$'
-          question: 'Why does a product of a $2\times 3$ matrix and a $3\times 2$ matrix have size $2\times 2$?'
-          options:
-            - 'The two matrices multiply entry by entry, so the result keeps size $2\times 3$'
-            - 'The sizes are added, so the product has $2 + 3 = 5$ rows and $3 + 2 = 5$ columns'
-            - 'The inner $3$s must match, and the outer numbers give the size'
-            - 'The product takes the rows of the right matrix and the columns of the left one'
-          answer: 'The inner $3$s must match, and the outer numbers give the size'
-          why: 'Each entry of the product uses a row of the left matrix and a column of the right matrix, so the result has as many rows as the left matrix and as many columns as the right matrix.'
         exemplars:
           - problem: 'Compute $\begin{pmatrix}1&0&2\\0&1&1\end{pmatrix}\begin{pmatrix}1&2\\3&0\\1&1\end{pmatrix}$.'
             answer: '[[3,4],[4,1]]'
@@ -314,16 +264,6 @@ topics:
       - id: kp3
         name: Columns of a product
         key_prerequisites: [computing-matrix-vector-products]
-        step_check:
-          step: 'Subgoal: multiply $A$ by each column of $B$'
-          question: 'Why can each column of $AB$ be found from $A$ and a single column of $B$?'
-          options:
-            - 'Every column of $AB$ needs all of $B$, so the whole matrix is used each time'
-            - 'Column $j$ of $AB$ uses only column $j$ of $B$, dotted with each row of $A$'
-            - 'Each column of $AB$ is a column of $A$ scaled by the first entry of $B$'
-            - 'The columns of $AB$ are the columns of $B$ added together after $A$ scales them'
-          answer: 'Column $j$ of $AB$ uses only column $j$ of $B$, dotted with each row of $A$'
-          why: 'Entry $(i, j)$ of $AB$ is row $i$ of $A$ dotted with column $j$ of $B$, so the whole column $j$ of $AB$ is $A$ times column $j$ of $B$.'
         exemplars:
           - problem: 'For $A = \begin{pmatrix}1&1\\0&2\end{pmatrix}$ and $B = \begin{pmatrix}2&0\\1&3\end{pmatrix}$, compute $AB$ by multiplying $A$ by each column of $B$.'
             answer: '[[3,3],[2,6]]'
@@ -392,16 +332,6 @@ topics:
       - id: kp1
         name: The identity matrix
         key_prerequisites: [matrix-multiplication]
-        step_check:
-          step: 'Multiply $A$ on the right by $I_2$'
-          question: 'Why does multiplying $A$ by $I_2$ leave every entry of $A$ unchanged?'
-          options:
-            - 'The matrix $I_2$ is added to $A$ entry by entry, and zeros change nothing'
-            - 'The $1$s of $I_2$ multiply the matching entries of $A$ position by position'
-            - 'Each column of $I_2$ has a single $1$ and the other entry is $0$'
-            - 'This works only for symmetric matrices, which equal their own columns'
-          answer: 'Each column of $I_2$ has a single $1$ and the other entry is $0$'
-          why: 'Each entry of $AI_2$ is a dot product with a column of $I_2$, and a column with one $1$ picks out exactly one entry of the row of $A$.'
         exemplars:
           - problem: 'Write the identity matrix $I_3$.'
             answer: '[[1,0,0],[0,1,0],[0,0,1]]'
@@ -451,16 +381,6 @@ topics:
       - id: kp2
         name: The zero matrix
         key_prerequisites: [matrix-addition-scalar-multiplication, matrix-multiplication]
-        step_check:
-          step: 'every entry is unchanged, so $A+O=A$'
-          question: 'Why does adding the zero matrix to $A$ leave $A$ unchanged?'
-          options:
-            - 'Adding $0$ to an entry keeps that entry, and $O$ has only $0$ entries'
-            - 'Adding $O$ gives $O$, because anything added to zeros becomes zero'
-            - 'The zero matrix is the opposite of $A$, so each entry of the sum cancels'
-            - 'The entries of $O$ multiply those of $A$, and multiplying by zero changes nothing'
-          answer: 'Adding $0$ to an entry keeps that entry, and $O$ has only $0$ entries'
-          why: 'Matrix addition works entry by entry, and adding $0$ to a number gives the same number.'
         exemplars:
           - problem: 'Compute $A + O$ for $A = \begin{pmatrix}1&-2\\4&3\end{pmatrix}$ and $O$ the $2\times 2$ zero matrix.'
             answer: '[[1,-2],[4,3]]'
@@ -502,16 +422,6 @@ topics:
       - id: kp3
         name: Zero products from nonzero factors
         key_prerequisites: [matrix-multiplication]
-        step_check:
-          step: 'a zero product does not force either factor to be zero'
-          question: 'Why can two nonzero matrices have the zero matrix as their product?'
-          options:
-            - 'Matrix multiplication works entry by entry, so one zero entry makes a product entry zero'
-            - 'The product of two matrices of the same size is always the zero matrix'
-            - 'A nonzero matrix always has an inverse, and this inverse cancels the other factor'
-            - 'Zeros in one factor can meet nonzero entries of the other in every product entry'
-          answer: 'Zeros in one factor can meet nonzero entries of the other in every product entry'
-          why: 'Every entry of the product is a sum of products of entries, and the products can cancel or vanish even when neither matrix is zero.'
         try_first:
           problem: 'Let $A = \begin{pmatrix}1&0\\0&0\end{pmatrix}$ and $B = \begin{pmatrix}0&0\\0&1\end{pmatrix}$. Is $AB$ the zero matrix?'
           answer_contract: {"kind":"label","options":[["yes","it is the zero matrix","zero","zero matrix","the zero matrix","it is zero","equals zero","AB is zero"],["no","it is not the zero matrix","not zero","not the zero matrix","nonzero","it is not zero","not a zero matrix","AB is not zero"]]}
@@ -581,16 +491,6 @@ topics:
       - id: kp1
         name: Recognizing diagonal and triangular matrices
         key_prerequisites: [identity-zero-matrices]
-        step_check:
-          step: 'All entries above the diagonal are zero, so the matrix is lower triangular'
-          question: 'Why does a matrix with zeros above the main diagonal count as lower triangular?'
-          options:
-            - 'Upper triangular means that the zeros are above the diagonal'
-            - 'Its nonzero entries lie on the diagonal or below it'
-            - 'A matrix with zeros in some places is lower triangular'
-            - 'The nonzero entries lie above the diagonal, in the lower corner'
-          answer: 'Its nonzero entries lie on the diagonal or below it'
-          why: 'Lower triangular means all entries above the main diagonal are zero, so the nonzero entries sit on or below the diagonal.'
         exemplars:
           - problem: 'Classify the matrix $\begin{pmatrix}2&-1&4\\0&3&5\\0&0&-2\end{pmatrix}$ as diagonal, upper triangular, lower triangular, or none of these.'
             answer: 'upper triangular'
@@ -628,16 +528,6 @@ topics:
       - id: kp2
         name: Products of diagonal matrices
         key_prerequisites: [matrix-multiplication]
-        step_check:
-          step: 'Notice $\begin{pmatrix}4&0\\0&4\end{pmatrix}=4I$, so it acts like the scalar $4$'
-          question: 'Why does multiplying by $4I$ scale every entry of the other matrix by $4$?'
-          options:
-            - 'The matrix $4I$ is added to the other matrix, so each entry grows by $4$'
-            - 'The entries of $4I$ multiply the other matrix only along its main diagonal'
-            - 'Each row of $4I$ holds a single $4$, so each dot product is $4$ times one entry'
-            - 'The four entries of $4I$ multiply the four entries of the other matrix one by one'
-          answer: 'Each row of $4I$ holds a single $4$, so each dot product is $4$ times one entry'
-          why: 'In $(4I)A$, each row of $4I$ has one entry $4$ and zeros elsewhere, so each entry of the product is $4$ times the matching entry of $A$.'
         exemplars:
           - problem: 'Compute $\begin{pmatrix}2&0\\0&-3\end{pmatrix}\begin{pmatrix}5&0\\0&4\end{pmatrix}$.'
             answer: '[[10,0],[0,-12]]'
@@ -683,16 +573,6 @@ topics:
       - id: kp3
         name: Products of triangular matrices
         key_prerequisites: [matrix-multiplication]
-        step_check:
-          step: 'the products of the diagonal entries of $A$ and $B$'
-          question: 'Why is each diagonal entry of a product of two upper triangular matrices just a product of two diagonal entries?'
-          options:
-            - 'The other term in each diagonal dot product contains a zero from below the diagonal'
-            - 'The off-diagonal entries of both matrices are zero, so only the diagonal is multiplied'
-            - 'The diagonal entries are added instead of multiplied, since the matrices share the diagonal'
-            - 'Each diagonal dot product uses only one entry, because the rows are shorter'
-          answer: 'The other term in each diagonal dot product contains a zero from below the diagonal'
-          why: 'In a diagonal dot product, the extra term pairs an entry above the diagonal of one matrix with an entry below the diagonal of the other, and that entry is zero.'
         exemplars:
           - problem: 'Compute $\begin{pmatrix}1&3\\0&2\end{pmatrix}\begin{pmatrix}2&-1\\0&4\end{pmatrix}$.'
             answer: '[[2,11],[0,8]]'
@@ -768,16 +648,6 @@ topics:
       - id: kp1
         name: Combined matrix expressions
         key_prerequisites: [matrix-multiplication, matrix-addition-scalar-multiplication]
-        step_check:
-          step: 'simplify inside the parentheses'
-          question: 'Why is $B - C$ found before the multiplication by $A$?'
-          options:
-            - 'Subtraction always has to be done before multiplication, even without parentheses'
-            - 'Every matrix expression is worked from the left, so $B$ is combined with $C$ first'
-            - 'The parentheses make $B - C$ one matrix, and $A$ multiplies that whole matrix'
-            - 'Matrices with a minus sign inside cannot be multiplied until the sign is gone'
-          answer: 'The parentheses make $B - C$ one matrix, and $A$ multiplies that whole matrix'
-          why: 'The parentheses make $B - C$ a single matrix, and $A(B - C)$ means $A$ times that matrix, so the difference is formed first.'
         exemplars:
           - problem: 'Compute $A(B + C)$ for $A = \begin{pmatrix}1&1\\0&1\end{pmatrix}$, $B = \begin{pmatrix}1&0\\2&1\end{pmatrix}$, $C = \begin{pmatrix}0&2\\1&0\end{pmatrix}$.'
             answer: '[[4,3],[3,1]]'
@@ -824,16 +694,6 @@ topics:
           answer_contract: {"kind": "exact"}
           answer: '2'
           reveal: 'The two entries are $4$ and $2$, so the products $AB$ and $BA$ differ. Order matters in matrix multiplication, so a product of sums must be expanded with the factors kept in order.'
-        step_check:
-          step: 'so $AB \neq BA$: the order of multiplication matters'
-          question: 'Why can $AB + BA$ not be replaced by $2AB$?'
-          options:
-            - 'Doubling a matrix product is not allowed unless both of its factors are square'
-            - 'The products $AB$ and $BA$ are usually different, so they are not two copies'
-            - 'Matrix addition is only defined for two products that are equal to each other'
-            - 'The sum $AB + BA$ is always the zero matrix, so it can never equal $2AB$'
-          answer: 'The products $AB$ and $BA$ are usually different, so they are not two copies'
-          why: 'The entries of $AB$ and $BA$ are built from rows and columns in a different order, so the two products usually differ.'
         exemplars:
           - problem: 'Let $A = \begin{pmatrix}1&1\\0&1\end{pmatrix}$ and $B = \begin{pmatrix}1&0\\1&1\end{pmatrix}$. Compute $AB - BA$.'
             answer: '[[1,0],[0,-1]]'
@@ -871,16 +731,6 @@ topics:
       - id: kp3
         name: Sizes and definedness in expressions
         key_prerequisites: [matrix-multiplication, matrix-addition-scalar-multiplication]
-        step_check:
-          step: 'The inner sizes are the columns of $A$ and the rows of $B$'
-          question: 'Why must the inner sizes match before $AB$ can be formed?'
-          options:
-            - 'The product is found by adding $A$ and $B$ entry by entry, so the sizes must be equal'
-            - 'The rows of $A$ must equal the rows of $B$ so that the entries line up in place'
-            - 'The result is only a matrix when the outer sizes of the two factors are equal'
-            - 'An entry of $AB$ pairs a row of $A$ with a column of $B$, so both need equal length'
-          answer: 'An entry of $AB$ pairs a row of $A$ with a column of $B$, so both need equal length'
-          why: 'An entry of $AB$ is a sum of products of the entries of a row of $A$ and a column of $B$, so the row and the column need the same number of entries.'
         exemplars:
           - problem: 'Let $A$ be a $4 \times 2$ matrix and $B$ a $2 \times 3$ matrix. The product $AB$ is an $m \times n$ matrix. What is the pair $(m, n)$?'
             answer: '(4, 3)'
@@ -951,16 +801,6 @@ topics:
       - id: kp1
         name: Squares and cubes
         key_prerequisites: [matrix-multiplication]
-        step_check:
-          step: 'row 1 of the left times column 1 of the right'
-          question: 'Why is the top-left entry of $A^2$ built from row 1 and column 1 of $A$?'
-          options:
-            - 'Squaring a matrix squares each of its entries, so every entry stays in its own position'
-            - 'Entry $(i, j)$ of a product pairs row $i$ of the left factor with column $j$ of the right'
-            - 'The top-left entry of a power always comes from the top-left entry of the matrix alone'
-            - 'Each entry of $A^2$ is the sum of the entries of $A$ in the same row and in the same column'
-          answer: 'Entry $(i, j)$ of a product pairs row $i$ of the left factor with column $j$ of the right'
-          why: 'An entry of $A \cdot A$ is the sum of products along one row of the left factor and one column of the right factor, and for the top-left entry this is row 1 and column 1.'
         exemplars:
           - problem: 'Compute $A^2$ for $A = \begin{pmatrix}2&1\\1&0\end{pmatrix}$.'
             answer: '[[5,2],[2,1]]'
@@ -998,16 +838,6 @@ topics:
       - id: kp2
         name: Powers of diagonal matrices
         key_prerequisites: [diagonal-triangular-matrices, matrix-multiplication]
-        step_check:
-          step: 'Apply the rule to the first diagonal entry'
-          question: 'Why can each diagonal entry of $D$ be raised to the power on its own?'
-          options:
-            - 'The off-diagonal zeros are added to the diagonal in each product, so they change nothing'
-            - 'A diagonal matrix has one entry per row, so squaring the matrix squares each entry of the grid'
-            - 'Powers of a matrix are always found entry by entry, whether the matrix is diagonal or not'
-            - 'Each diagonal entry of $D \cdot D$ has only one nonzero term, the entry multiplied by itself'
-          answer: 'Each diagonal entry of $D \cdot D$ has only one nonzero term, the entry multiplied by itself'
-          why: 'In $D \cdot D$ every off-diagonal term contains a factor $0$, so only the product of a diagonal entry with itself is left on the diagonal.'
         exemplars:
           - problem: 'Compute $D^3$ for $D = \begin{pmatrix}2&0\\0&3\end{pmatrix}$.'
             answer: '[[8,0],[0,27]]'
@@ -1054,16 +884,6 @@ topics:
           answer_contract: {"kind": "exact"}
           answer: '40'
           reveal: 'Each extra factor of $A$ adds $4$ to the top-right entry, so $A^n$ has the top-right entry $4n$. Writing the first two or three powers and reading off the pattern is faster than multiplying ten times.'
-        step_check:
-          step: 'it grows by $2$ each time'
-          question: 'Why does the top-right entry of $A^n$ grow by $2$ with each extra factor of $A$?'
-          options:
-            - 'Each entry of $A$ is multiplied by $n$, so the entry $2$ becomes $2n$ and the diagonal becomes $n$'
-            - 'The top-right entry of $A$ is added to itself, and the other entries are squared each time'
-            - 'Each extra factor of $A$ adds $2$ to the top-right entry and leaves the other entries unchanged'
-            - 'The diagonal entries are $1$, so each extra factor can only add the entry $2$ of $A$ itself'
-          answer: 'Each extra factor of $A$ adds $2$ to the top-right entry and leaves the other entries unchanged'
-          why: 'In $A^n A$ the top-right entry is $1 \cdot 2 + 2n \cdot 1 = 2n + 2$, while the other three entries repeat, so the pattern is $A^n$ with top-right entry $2n$.'
         exemplars:
           - problem: 'Let $A = \begin{pmatrix}1&3\\0&1\end{pmatrix}$. What is the entry in row 1, column 2 of $A^{10}$?'
             answer: '30'
@@ -1132,16 +952,6 @@ topics:
       - id: kp1
         name: Computing transposes
         key_prerequisites: [matrix-addition-scalar-multiplication]
-        step_check:
-          step: 'so it becomes column 1 of $A^T$'
-          question: 'Why does row 1 of $A$ become column 1 of $A^T$ and not column 3?'
-          options:
-            - 'The rows are written in reverse order, so the first row is placed in the very last column'
-            - 'The entries are sorted by size, and the row with the smallest entries goes into column 1'
-            - 'The entry in row $i$, column $j$ moves to row $j$, column $i$, so row 1 fills column 1'
-            - 'The matrix is turned by a quarter turn, so the first row becomes the last column here'
-          answer: 'The entry in row $i$, column $j$ moves to row $j$, column $i$, so row 1 fills column 1'
-          why: 'An entry $(1, j)$ of $A$ moves to position $(j, 1)$ of $A^T$, so all of row 1 lands in column 1 in the same order.'
         exemplars:
           - problem: 'Compute $A^T$ for $A = \begin{pmatrix}1&2&3\\4&5&6\end{pmatrix}$.'
             answer: '[[1,4],[2,5],[3,6]]'
@@ -1179,16 +989,6 @@ topics:
       - id: kp2
         name: Transpose sizes and the double transpose
         key_prerequisites: [matrix-addition-scalar-multiplication]
-        step_check:
-          step: 'Transposing swaps the two counts'
-          question: 'Why does the transpose of a $2 \times 3$ matrix have $3$ rows?'
-          options:
-            - 'The $2$ rows of $A$ become $2$ columns, but the number of rows must stay equal to $3$'
-            - 'Each of the $3$ columns of $A$ becomes a row of $A^T$, so $A^T$ has $3$ rows'
-            - 'The entries of $A$ are added in pairs, so the new matrix has more rows than before'
-            - 'A transpose always makes the matrix have more rows than columns, whatever its size'
-          answer: 'Each of the $3$ columns of $A$ becomes a row of $A^T$, so $A^T$ has $3$ rows'
-          why: 'Every column of $A$ is turned into a row of $A^T$, so the number of rows of $A^T$ equals the number of columns of $A$.'
         exemplars:
           - problem: 'If $A$ is a $3 \times 4$ matrix, then $A^T$ is an $m \times n$ matrix. What is the pair $(m, n)$?'
             answer: '(4, 3)'
@@ -1234,16 +1034,6 @@ topics:
       - id: kp3
         name: Transpose of sums and scalar multiples
         key_prerequisites: [matrix-addition-scalar-multiplication]
-        step_check:
-          step: 'Transpose each matrix'
-          question: 'Why does the transpose of $A + B$ equal $A^T + B^T$?'
-          options:
-            - 'The entry $a_{ij} + b_{ij}$ moves to position $(j, i)$, and so do $a_{ij}$ and $b_{ij}$'
-            - 'The transpose reverses the order of the two terms of a sum, just as it does for a product of matrices'
-            - 'Both matrices are first squared, so the order in which they are added no longer matters here'
-            - 'The transpose changes the sign of every entry, so both sides are negated in the same way'
-          answer: 'The entry $a_{ij} + b_{ij}$ moves to position $(j, i)$, and so do $a_{ij}$ and $b_{ij}$'
-          why: 'Each entry of the sum is moved to the mirror position, and the same move takes $a_{ij}$ and $b_{ij}$, so the sum of the transposes has the same entries.'
         exemplars:
           - problem: 'Let $A = \begin{pmatrix}2&1\\0&3\end{pmatrix}$ and $B = \begin{pmatrix}1&4\\2&5\end{pmatrix}$. Compute $(A + B)^T$.'
             answer: '[[3,2],[5,8]]'
@@ -1308,16 +1098,6 @@ topics:
       - id: kp1
         name: Transpose of products
         key_prerequisites: [transpose-of-a-matrix, matrix-multiplication]
-        step_check:
-          step: 'keeping $B^T$ on the left'
-          question: 'Why does $(AB)^T$ equal $B^T A^T$ and not $A^T B^T$?'
-          options:
-            - 'Matrix products are commutative once both factors are transposed, so either order of them works'
-            - 'The transpose puts the factors in alphabetical order, with $B$ before $A$ in the final result'
-            - 'The transpose of a product is found by transposing only the left factor and leaving the right'
-            - 'Rows of $AB$ are rows of $A$ times $B$, so after transposing, $B^T$ must stand on the left'
-          answer: 'Rows of $AB$ are rows of $A$ times $B$, so after transposing, $B^T$ must stand on the left'
-          why: 'The same sum of products appears in both, but only the order $B^T A^T$ pairs the right rows and columns, and the sizes also match only in that order.'
         exemplars:
           - problem: 'Let $A = \begin{pmatrix}1&2\\0&1\end{pmatrix}$ and $B = \begin{pmatrix}1&0\\3&1\end{pmatrix}$. Compute $(AB)^T$.'
             answer: '[[7,3],[2,1]]'
@@ -1355,16 +1135,6 @@ topics:
       - id: kp2
         name: Symmetric matrices
         key_prerequisites: [transpose-of-a-matrix]
-        step_check:
-          step: 'its mirror position is row 3, column 2'
-          question: 'Why must the unknown $k$ be equal to the entry in row 3, column 2?'
-          options:
-            - 'Since $A = A^T$, the entry at $(2, 3)$ must equal its mirror entry at $(3, 2)$'
-            - 'The entries of each row of a symmetric matrix must add up to the same total'
-            - 'The unknown entry has to match the next entry in its own row to keep the pattern'
-            - 'Every entry of a symmetric matrix must be equal to the entry on the main diagonal'
-          answer: 'Since $A = A^T$, the entry at $(2, 3)$ must equal its mirror entry at $(3, 2)$'
-          why: 'Transposing moves the entry at $(2, 3)$ to $(3, 2)$, and $A = A^T$ means that nothing changes, so the two entries are equal.'
         exemplars:
           - problem: 'For which value of $k$ is the matrix $\begin{pmatrix}1&k\\3&2\end{pmatrix}$ symmetric?'
             answer: '3'
@@ -1410,16 +1180,6 @@ topics:
       - id: kp3
         name: Building symmetric matrices
         key_prerequisites: [transpose-of-a-matrix, matrix-operations]
-        step_check:
-          step: 'the off-diagonal entries are both $6$'
-          question: 'Why is $A + A^T$ always symmetric?'
-          options:
-            - 'The sum of a matrix and its transpose has only zeros off the main diagonal'
-            - 'The diagonal entries are doubled, and a matrix with doubled diagonal is symmetric'
-            - 'Entry $(i, j)$ is $a_{ij} + a_{ji}$, and entry $(j, i)$ is the same sum'
-            - 'A matrix and its transpose are equal, so the sum is just twice the original'
-          answer: 'Entry $(i, j)$ is $a_{ij} + a_{ji}$, and entry $(j, i)$ is the same sum'
-          why: 'The $(i, j)$ entry is $a_{ij} + a_{ji}$ and the $(j, i)$ entry is $a_{ji} + a_{ij}$, which is the same number, so the matrix equals its transpose.'
         exemplars:
           - problem: 'Compute $A + A^T$ for $A = \begin{pmatrix}1&4\\0&3\end{pmatrix}$.'
             answer: '[[2,4],[4,6]]'
@@ -1496,15 +1256,6 @@ topics:
           answer_contract: {"kind": "exact"}
           answer: '1/4'
           reveal: 'Undoing a multiplication by $4$ means multiplying by $\frac{1}{4}$. For a general matrix the undoing matrix is the inverse, and the $2 \times 2$ formula builds it.'
-        step_check:
-          step: 'Divide every entry by the determinant'
-          question: 'Why is every entry divided by $ad-bc$ in the last step of the formula?'
-          options:
-            - 'Each entry of $A$ was multiplied by $ad-bc$ when the diagonal entries were swapped'
-            - 'The swapped matrix times $A$ gives $(ad-bc)I$, so dividing gives $I$'
-            - 'Dividing makes the sum of the entries equal $1$, as for every inverse'
-          answer: 'The swapped matrix times $A$ gives $(ad-bc)I$, so dividing gives $I$'
-          why: 'Multiplying $A$ by the swapped matrix gives $(ad-bc)$ times the identity, so dividing the swapped matrix by $ad-bc$ gives a matrix whose product with $A$ is $I$.'
         exemplars:
           - problem: 'Find $A^{-1}$ for $A = \begin{pmatrix}2&1\\5&3\end{pmatrix}$.'
             answer: '[[3,-1],[-5,2]]'
@@ -1538,15 +1289,6 @@ topics:
       - id: kp2
         name: Fractional and diagonal inverses
         key_prerequisites: [matrix-multiplication, diagonal-triangular-matrices]
-        step_check:
-          step: 'multiply every entry by $\frac{1}{2}$'
-          question: 'Why does the inverse contain fractions although $A$ has only integer entries?'
-          options:
-            - 'Swapping the diagonal entries of an integer matrix always creates fractions'
-            - 'Fractions appear whenever a matrix has at least one negative entry'
-            - 'The determinant is $2$, and dividing odd entries by $2$ leaves halves'
-          answer: 'The determinant is $2$, and dividing odd entries by $2$ leaves halves'
-          why: 'The inverse is the swapped matrix divided by the determinant $2$, so any odd entry of the swapped matrix becomes a half.'
         exemplars:
           - problem: 'Find $A^{-1}$ for $A = \begin{pmatrix}1&2\\3&4\end{pmatrix}$.'
             answer: '[[-2,1],[3/2,-1/2]]'
@@ -1580,15 +1322,6 @@ topics:
       - id: kp3
         name: Singularity via the determinant condition
         key_prerequisites: [matrix-multiplication]
-        step_check:
-          step: 'set $24 - 4k = 0$'
-          question: 'Why does the value of $k$ that makes the determinant $0$ give the matrix with no inverse?'
-          options:
-            - 'The formula divides by $ad-bc$, so it fails exactly when $ad-bc=0$'
-            - 'A zero determinant means that every entry of the matrix must be zero'
-            - 'The determinant must be $0$ for the swapped matrix to exist at all'
-          answer: 'The formula divides by $ad-bc$, so it fails exactly when $ad-bc=0$'
-          why: 'The inverse is $\frac{1}{ad-bc}$ times the swapped matrix, and division by $0$ is impossible, so no inverse exists when $ad-bc=0$.'
         exemplars:
           - problem: 'For which value of $k$ is $\begin{pmatrix}1&k\\2&6\end{pmatrix}$ not invertible?'
             answer: '3'
@@ -1656,15 +1389,6 @@ topics:
       - id: kp1
         name: Gauss-Jordan inversion via [A | I]
         key_prerequisites: [matrix-inverse-2x2-formula, row-reduction-echelon-forms]
-        step_check:
-          step: 'multiply $R_2$ by $-1$'
-          question: 'Why does the reduction multiply $R_2$ by $-1$ before the entry above the second pivot is cleared?'
-          options:
-            - 'A pivot must equal $1$ so the left block can become the identity'
-            - 'A negative pivot would make the matrix singular, so its sign is changed'
-            - 'The right block must end with positive entries, so every negative is removed'
-          answer: 'A pivot must equal $1$ so the left block can become the identity'
-          why: 'The left block can reach $I$ only if every pivot equals $1$, so the $-1$ in the second pivot position is scaled to $1$ before the row above is cleared.'
         exemplars:
           - problem: 'Use the $[A \mid I]$ method to find $A^{-1}$ for $A = \begin{pmatrix}1&2\\1&3\end{pmatrix}$.'
             answer: '[[3,-2],[-1,1]]'
@@ -1707,15 +1431,6 @@ topics:
           answer_contract: {"kind": "exact"}
           answer: '3'
           reveal: 'The system is $A\mathbf{x} = \mathbf{b}$ with $A = \begin{pmatrix}1&1\\3&4\end{pmatrix}$, and one product $A^{-1}\mathbf{b}$ solves it. With $A^{-1} = \begin{pmatrix}4&-1\\-3&1\end{pmatrix}$ this gives $(4, 3)$.'
-        step_check:
-          step: 'left-multiplying $A\mathbf{x} = \mathbf{b}$ by $A^{-1}$'
-          question: 'Why does multiplying $A\mathbf{x} = \mathbf{b}$ on the left by $A^{-1}$ leave $\mathbf{x}$ alone on one side?'
-          options:
-            - '$A^{-1}$ is the transpose of $A$, so its product with $A$ is the identity'
-            - '$A^{-1}A = I$ and $I\mathbf{x} = \mathbf{x}$, so only $\mathbf{x}$ remains'
-            - '$A^{-1}$ cancels $A$ wherever it is written, so the side of the product is free'
-          answer: '$A^{-1}A = I$ and $I\mathbf{x} = \mathbf{x}$, so only $\mathbf{x}$ remains'
-          why: 'The product $A^{-1}A$ sits together as $I$, and $I\mathbf{x} = \mathbf{x}$, so the left side reduces to $\mathbf{x}$ while the right side becomes $A^{-1}\mathbf{b}$.'
         exemplars:
           - problem: 'Using $A = \begin{pmatrix}2&1\\5&3\end{pmatrix}$ and $A^{-1} = \begin{pmatrix}3&-1\\-5&2\end{pmatrix}$, solve $A\mathbf{x} = (4, 11)$.'
             answer: '(1, 2)'
@@ -1753,15 +1468,6 @@ topics:
       - id: kp3
         name: Non-invertibility and recovering A from its inverse
         key_prerequisites: [matrix-inverse-2x2-formula, row-reduction-echelon-forms]
-        step_check:
-          step: 'a zero row has appeared in the $A$-block'
-          question: 'Why does a zero row in the left block show that $A$ has no inverse?'
-          options:
-            - 'A zero row in the left block gives a zero row in the right block too, so no inverse can be read off'
-            - 'A zero row makes the determinant equal to $1$, which is not allowed'
-            - 'A zero row can never become a row of $I$, so the left block cannot reach $I$'
-          answer: 'A zero row can never become a row of $I$, so the left block cannot reach $I$'
-          why: 'The left block must be turned into $I$, and no row operation turns a zero row into a row of $I$, so the reduction cannot finish.'
         exemplars:
           - problem: 'If $A^{-1} = \begin{pmatrix}2&1\\1&1\end{pmatrix}$, find $A$.'
             answer: '[[1,-1],[-1,2]]'
@@ -1827,15 +1533,6 @@ topics:
       - id: kp1
         name: Linear matrix equations with addition and scalars
         key_prerequisites: [matrix-operations]
-        step_check:
-          step: 'divide by the scalar $2$'
-          question: 'Why does dividing by the scalar $2$ change every entry of the matrix?'
-          options:
-            - 'Scaling acts on each entry, so undoing the scaling divides each entry'
-            - 'Dividing a matrix by a scalar only changes the diagonal entries of it'
-            - 'The scalar $2$ must also be applied to the matrix $A$ on the other side'
-          answer: 'Scaling acts on each entry, so undoing the scaling divides each entry'
-          why: 'Multiplying a matrix by $2$ doubles every entry, so undoing it halves every entry.'
         exemplars:
           - problem: 'Solve $X + 2A = B$ for $X$, where $A = \begin{pmatrix}2&1\\0&3\end{pmatrix}$ and $B = \begin{pmatrix}7&5\\4&9\end{pmatrix}$.'
             answer: '[[3,3],[4,3]]'
@@ -1873,15 +1570,6 @@ topics:
       - id: kp2
         name: Solving AX = B with an inverse
         key_prerequisites: [matrix-inverses]
-        step_check:
-          step: 'left-multiply both sides of $AX = B$ by $A^{-1}$'
-          question: 'Why must $A^{-1}$ be written on the left of both sides?'
-          options:
-            - 'Inverse matrices are always written on the left of every matrix they meet'
-            - 'The factors $A^{-1}A$ must meet to give $I$, on both sides alike'
-            - 'Only the left side of an equation has a matrix that needs to be removed'
-          answer: 'The factors $A^{-1}A$ must meet to give $I$, on both sides alike'
-          why: 'In $A^{-1}(AX)$ the factors $A^{-1}A$ meet and give $I$, and doing the same product to both sides keeps the equation true.'
         exemplars:
           - problem: 'Let $A = \begin{pmatrix}2&1\\3&2\end{pmatrix}$ with $A^{-1} = \begin{pmatrix}2&-1\\-3&2\end{pmatrix}$. Solve $AX = \begin{pmatrix}4&1\\2&0\end{pmatrix}$ for $X$.'
             answer: '[[6,2],[-8,-3]]'
@@ -1924,15 +1612,6 @@ topics:
           answer_contract: {"kind": "label", "options": [["yes", "they are equal", "equal", "it is"], ["no", "they are not equal", "not equal", "it is not"]]}
           answer: 'no'
           reveal: 'Here $AB = \begin{pmatrix}2&1\\1&1\end{pmatrix}$ and $BA = \begin{pmatrix}1&1\\1&2\end{pmatrix}$, so the order of the factors matters. That is why $AX = B$ and $XA = B$ have different solutions.'
-        step_check:
-          step: 'multiply both sides by $A^{-1}$ on the right'
-          question: 'Why is $A^{-1}$ multiplied on the right here instead of on the left?'
-          options:
-            - 'Inverse matrices always multiply on the right, because they are written with an exponent'
-            - 'The products $A^{-1}B$ and $BA^{-1}$ are always equal, so either side would work'
-            - '$A$ stands to the right of $X$, and only $XAA^{-1}$ brings $A$ next to its inverse'
-          answer: '$A$ stands to the right of $X$, and only $XAA^{-1}$ brings $A$ next to its inverse'
-          why: 'In $XA$ the matrix $A$ is beside $X$ on the right, so $A^{-1}$ must be placed on the right to form $AA^{-1} = I$.'
         exemplars:
           - problem: 'Solve $XA = B$ for $X$, where $A = \begin{pmatrix}1&3\\0&1\end{pmatrix}$ with $A^{-1} = \begin{pmatrix}1&-3\\0&1\end{pmatrix}$ and $B = \begin{pmatrix}2&5\\1&2\end{pmatrix}$.'
             answer: '[[2,-1],[1,-1]]'
@@ -2006,15 +1685,6 @@ topics:
           answer_contract: {"kind": "exact"}
           answer: '3'
           reveal: 'The result is $\begin{pmatrix}1&0\\3&1\end{pmatrix}$, which is an elementary matrix. Multiplying any matrix on the left by it performs the same row operation.'
-        step_check:
-          step: 'only row 3 changes'
-          question: 'Why does the identity matrix change only in row 3 when $R_3 \to R_3 - 2R_1$ is applied to it?'
-          options:
-            - 'The multiplier $-2$ acts only on the last row of every matrix it meets'
-            - 'The operation replaces row 3 only, so rows 1 and 2 stay as they were'
-            - 'Row 1 is used in the formula, so row 1 has to be replaced as well'
-          answer: 'The operation replaces row 3 only, so rows 1 and 2 stay as they were'
-          why: 'The operation $R_3 \to R_3 - 2R_1$ only replaces row 3 with a combination of rows 3 and 1, so the other rows of $I$ stay.'
         exemplars:
           - problem: 'Write the $2 \times 2$ elementary matrix $E$ that performs $R_2 \to R_2 + 3R_1$.'
             answer: '[[1,0],[3,1]]'
@@ -2052,15 +1722,6 @@ topics:
       - id: kp2
         name: Invertibility criteria
         key_prerequisites: [matrix-inverses, row-reduction-echelon-forms]
-        step_check:
-          step: 'fewer than $3$ pivots'
-          question: 'Why does a matrix with fewer than $3$ pivots fail to be invertible?'
-          options:
-            - 'Pivots measure the size of the entries, and small entries cannot be inverted'
-            - 'Each missing pivot makes the determinant larger, which stops the inverse from existing'
-            - 'An invertible $3 \times 3$ matrix reduces to $I_3$, which has a pivot in every column'
-          answer: 'An invertible $3 \times 3$ matrix reduces to $I_3$, which has a pivot in every column'
-          why: 'A $3 \times 3$ matrix is invertible exactly when its reduced form is $I_3$, and $I_3$ has $3$ pivots, so fewer pivots rule out an inverse.'
         exemplars:
           - problem: 'For which value of $h$ does the matrix $\begin{pmatrix}1&3\\2&h\end{pmatrix}$ fail to be invertible?'
             answer: '6'
@@ -2102,15 +1763,6 @@ topics:
       - id: kp3
         name: Inverses of products and of elementary matrices
         key_prerequisites: [matrix-inverses]
-        step_check:
-          step: 'apply the product rule, reversing the order'
-          question: 'Why does the inverse of $EA$ reverse the order of the factors?'
-          options:
-            - 'Because $(EA)(A^{-1}E^{-1}) = E(AA^{-1})E^{-1} = I$, so each factor cancels'
-            - 'Because transposing a product reverses it, and an inverse is a kind of transpose'
-            - 'Because the factors of a product can always be written in any chosen order'
-          answer: 'Because $(EA)(A^{-1}E^{-1}) = E(AA^{-1})E^{-1} = I$, so each factor cancels'
-          why: 'In $(EA)(A^{-1}E^{-1})$ the factors $A$ and $A^{-1}$ meet and cancel, then $E$ and $E^{-1}$ cancel, which works only in the reversed order.'
         exemplars:
           - problem: 'Find the inverse of the elementary matrix $E = \begin{pmatrix}1&0\\-2&1\end{pmatrix}$.'
             answer: '[[1,0],[2,1]]'

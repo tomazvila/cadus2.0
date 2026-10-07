@@ -20,15 +20,6 @@ topics:
       - id: kp1
         name: "Gradients of two-variable functions"
         key_prerequisites: [partial-derivatives]
-        step_check:
-          step: 'so $2y^3$ contributes nothing'
-          question: 'Why does $2y^3$ contribute nothing to $f_x$?'
-          options:
-            - 'Because $y^3$ is small next to $5x^2$ near this point, so it is dropped'
-            - 'Because $y$ is held fixed, so $2y^3$ is a constant with derivative $0$'
-            - 'Because the derivative of any power of $y$ with respect to $x$ is $1$'
-          answer: 'Because $y$ is held fixed, so $2y^3$ is a constant with derivative $0$'
-          why: 'In $f_x$ only $x$ moves, so $y$ stays fixed and $2y^3$ is a constant. The derivative of a constant is $0$.'
         exemplars:
           - problem: 'Find the gradient of $f(x, y) = 3x^2 y + y^3$.'
             answer: '(6xy, 3x^2+3y^2)'
@@ -66,15 +57,6 @@ topics:
       - id: kp2
         name: "Gradients requiring the product, quotient, or chain rule"
         key_prerequisites: [partial-derivatives]
-        step_check:
-          step: 'so use the chain rule with inner function $x^2 + y^2$'
-          question: 'Why does $f_x$ need the chain rule here?'
-          options:
-            - 'Because the square root is applied to $x^2 + y^2$, so its inside derivative is needed'
-            - 'Because $y$ is treated as a constant, and the chain rule replaces the power rule for it'
-            - 'Because $x^2 + y^2$ is a sum of two terms, and every sum needs the chain rule'
-          answer: 'Because the square root is applied to $x^2 + y^2$, so its inside derivative is needed'
-          why: 'The square root has an inner function, $x^2 + y^2$. The chain rule multiplies the outer derivative by the derivative of that inner function, which is $2x$ for $f_x$.'
         exemplars:
           - problem: 'Find the gradient of $f(x, y) = \ln(x^2 + y^2)$.'
             answer: '(2x/(x^2+y^2), 2y/(x^2+y^2))'
@@ -116,15 +98,6 @@ topics:
       - id: kp3
         name: "Gradients in three variables"
         key_prerequisites: [partial-derivatives, vectors-in-rn]
-        step_check:
-          step: 'treat $x$ and $y$ as constants'
-          question: 'Why do we treat $x$ and $y$ as constants when we find $f_z$?'
-          options:
-            - 'Because $x$ and $y$ are both equal to $0$ at the point where we evaluate it'
-            - 'Because a gradient uses only one variable at a time, and the other two are discarded'
-            - 'Because $f_z$ measures the change when only $z$ moves, with $x$ and $y$ fixed'
-          answer: 'Because $f_z$ measures the change when only $z$ moves, with $x$ and $y$ fixed'
-          why: 'A partial derivative lets one variable move while the others stay fixed. For $f_z$ that variable is $z$.'
         exemplars:
           - problem: 'Let $f(x, y, z) = xyz$. Find $\nabla f(2, 1, 4)$.'
             answer: '(4, 8, 2)'
@@ -193,15 +166,6 @@ topics:
       - id: kp1
         name: "Directional derivatives"
         key_prerequisites: [computing-the-gradient, dot-product]
-        step_check:
-          step: 'normalize the direction vector'
-          question: 'Why must we normalize $\mathbf{v}$ before we take the dot product with the gradient?'
-          options:
-            - 'The rate is per unit of distance, so the direction must have length $1$'
-            - 'The dot product with $\nabla f$ is defined only for a vector that has length $1$'
-            - 'Dividing by the length turns the gradient into the unit vector that gives the rate'
-          answer: 'The rate is per unit of distance, so the direction must have length $1$'
-          why: 'The directional derivative is the rate of change per unit of distance moved. A direction vector of length $1$ makes the dot product give exactly that rate.'
         exemplars:
           - problem: 'Find the directional derivative of $f(x, y) = x^2 + y^2$ at $(1, 2)$ in the direction of $\mathbf{v} = \langle 3, 4 \rangle$.'
             answer: '22/5'
@@ -243,15 +207,6 @@ topics:
       - id: kp2
         name: "Steepest ascent and descent"
         key_prerequisites: [computing-the-gradient, dot-product]
-        step_check:
-          step: 'direction of steepest ascent'
-          question: 'Why does the gradient give the direction of steepest ascent?'
-          options:
-            - 'Because the gradient is the longest vector that is drawn from the given point'
-            - 'Because $|\nabla f| \cos\theta$ is largest when $\mathbf{u}$ is along $\nabla f$'
-            - 'Because the gradient always points toward the origin, where the height is greatest'
-          answer: 'Because $|\nabla f| \cos\theta$ is largest when $\mathbf{u}$ is along $\nabla f$'
-          why: 'The rate in a unit direction is $|\nabla f| \cos\theta$. It is largest when $\theta = 0$, that is when $\mathbf{u}$ points the same way as $\nabla f$.'
         exemplars:
           - problem: 'A hill has height $h(x, y) = x^2 + 2y^2$ metres at the point $(x, y)$, where $x$ and $y$ are measured in metres. A hiker stands at $(3, 1)$. Find the unit vector that points in the direction of steepest ascent.'
             answer: '(3/sqrt(13), 2/sqrt(13))'
@@ -289,15 +244,6 @@ topics:
       - id: kp3
         name: "Extreme and zero values of the directional derivative"
         key_prerequisites: [computing-the-gradient, dot-product]
-        step_check:
-          step: 'so $\mathbf{u}$ must be perpendicular to $\langle 1, 4 \rangle$'
-          question: 'Why must $\mathbf{u}$ be perpendicular to the gradient when the rate of change is zero?'
-          options:
-            - 'The rate is $|\nabla f| \sin\theta$, which is $0$ when $\theta = 90^\circ$'
-            - 'The rate is $0$ only when $\mathbf{u}$ points opposite to $\nabla f$, so the two cancel'
-            - 'Because $\nabla f \cdot \mathbf{u} = 0$ exactly when the two vectors are perpendicular'
-          answer: 'Because $\nabla f \cdot \mathbf{u} = 0$ exactly when the two vectors are perpendicular'
-          why: 'The directional derivative is the dot product $\nabla f \cdot \mathbf{u}$. A dot product is $0$ exactly when the two vectors are perpendicular.'
         try_first:
           problem: 'At a point $P$ the gradient of $f$ is $\langle 3, 4 \rangle$. Is there a direction in which $f$ increases at the rate $6$ per unit of distance?'
           answer_contract: {"kind":"label","options":[["yes","y","there is"],["no","n","there is no such direction","no direction","there is none"]]}
@@ -371,15 +317,6 @@ topics:
       - id: kp1
         name: "Normal and tangent vectors to level curves"
         key_prerequisites: [computing-the-gradient]
-        step_check:
-          step: 'since $\nabla f$ is perpendicular to the level curve'
-          question: 'Why is $\langle 10, 24\rangle$ a normal vector to the curve?'
-          options:
-            - 'It is the vector from the origin to the point $(5, 12)$, and every circle is perpendicular to its radius'
-            - 'Along a level curve $f$ is constant, so the gradient has no component along the curve'
-            - 'Its length is $26$, the radius of the circle, so it must point outward from the curve'
-          answer: 'Along a level curve $f$ is constant, so the gradient has no component along the curve'
-          why: 'Moving along a level curve does not change $f$, so the directional derivative along the curve is $0$. A gradient with zero dot product against the tangent is perpendicular to the curve.'
         exemplars:
           - problem: 'The circle $x^2 + y^2 = 25$ is a level curve of $f(x, y) = x^2 + y^2$. Find $\nabla f(3, 4)$, which is a vector normal to the circle at $(3, 4)$.'
             answer: '(6, 8)'
@@ -417,15 +354,6 @@ topics:
       - id: kp2
         name: "Tangent lines to level curves"
         key_prerequisites: [computing-the-gradient]
-        step_check:
-          step: 'Divide every term by $2$'
-          question: 'Why is it correct to divide every term of $10x + 24y = 338$ by $2$?'
-          options:
-            - 'Dividing by $2$ moves the line closer to the origin so that it still touches the circle'
-            - 'The normal vector $\langle 10, 24\rangle$ must be halved so that it matches the point'
-            - 'Dividing both sides by the same nonzero number leaves the line the same'
-          answer: 'Dividing both sides by the same nonzero number leaves the line the same'
-          why: 'Every term and both sides are divided by $2$, so the same points satisfy the new equation. It describes the same line with smaller coefficients.'
         exemplars:
           - problem: 'Find an equation of the tangent line to the circle $x^2 + y^2 = 25$ at the point $(3, 4)$.'
             answer: '3x + 4y = 25'
@@ -463,15 +391,6 @@ topics:
       - id: kp3
         name: "Reading contour maps"
         key_prerequisites: [computing-the-gradient, gradient-directional-derivatives]
-        step_check:
-          step: 'so the rate of change is small'
-          question: 'Why do widely spaced contours mean that $|\nabla f|$ is small?'
-          options:
-            - 'Between two contours $f$ changes by a fixed amount, spread over a longer distance'
-            - 'The contours are far from the origin, where the value of the gradient is always small'
-            - 'Widely spaced contours mean $f$ has a larger value on each of them'
-          answer: 'Between two contours $f$ changes by a fixed amount, spread over a longer distance'
-          why: 'The steps in $f$ between neighbouring contours are equal. A longer distance for the same step means a smaller rate of change, so a smaller $|\nabla f|$.'
         exemplars:
           - problem: 'On a contour map the lines are drawn every $10$ metres of height. Near a point $A$, two neighbouring lines are $40$ metres apart horizontally. Estimate the slope of the hill at $A$, in metres of height per horizontal metre.'
             answer: '1/4'
@@ -540,15 +459,6 @@ topics:
       - id: kp1
         name: "Normal vectors to surfaces via the gradient"
         key_prerequisites: [computing-the-gradient, gradients-and-level-curves]
-        step_check:
-          step: 'move everything to one side'
-          question: 'Why do we move $z$ to the other side before we take the gradient?'
-          options:
-            - 'The gradient is normal to a level surface $F = c$, so the graph must be in that form'
-            - 'Moving the terms makes the surface pass through the origin, where gradients are defined'
-            - 'Moving $z$ turns the surface into a plane, which is easier to differentiate'
-          answer: 'The gradient is normal to a level surface $F = c$, so the graph must be in that form'
-          why: 'The gradient rule applies to a surface of the form $F(x, y, z) = c$. Writing $z = x^2 + 3y^2$ as $F = x^2 + 3y^2 - z = 0$ puts it in that form.'
         exemplars:
           - problem: 'The sphere $x^2 + y^2 + z^2 = 21$ is the level surface $F = 21$ of $F(x, y, z) = x^2 + y^2 + z^2$. Find $\nabla F(2, 1, 4)$, a vector normal to the sphere at the point $(2, 1, 4)$.'
             answer: '(4, 2, 8)'
@@ -586,15 +496,6 @@ topics:
       - id: kp2
         name: "Tangent planes to level surfaces"
         key_prerequisites: [computing-the-gradient, gradients-and-level-curves, lines-planes-space]
-        step_check:
-          step: 'Divide the whole equation by $2$'
-          question: 'Why is it correct to divide the whole equation by $2$?'
-          options:
-            - 'Because the normal vector $\langle 2, 4, 10\rangle$ must be halved to be perpendicular to the surface'
-            - 'Dividing both sides by the same nonzero number keeps the same plane'
-            - 'The plane changes, but a smaller normal vector gives a closer fit to the surface'
-          answer: 'Dividing both sides by the same nonzero number keeps the same plane'
-          why: 'Both sides of the equation are divided by the same number, so the same points satisfy it. The plane is the same, with smaller coefficients.'
         exemplars:
           - problem: 'Find an equation of the tangent plane to the sphere $x^2 + y^2 + z^2 = 21$ at the point $(1, 2, 4)$.'
             answer: 'x + 2y + 4z = 21'
@@ -632,15 +533,6 @@ topics:
       - id: kp3
         name: "Normal lines"
         key_prerequisites: [computing-the-gradient, lines-planes-space]
-        step_check:
-          step: 'On the $xy$-plane $z=0$'
-          question: 'Why do we set the $z$-coordinate of the line equal to $0$?'
-          options:
-            - 'Because the gradient has $z$-component $0$ at the point $(2, 4, 1)$ on the surface'
-            - 'Because the parameter $t$ must equal $0$ at the point where a line meets a plane'
-            - 'Every point of the $xy$-plane has $z = 0$, so the meeting point has $z = 0$'
-          answer: 'Every point of the $xy$-plane has $z = 0$, so the meeting point has $z = 0$'
-          why: 'The $xy$-plane is the set of points with $z = 0$. The meeting point lies on the plane, so its $z$-coordinate is $0$, and that equation gives $t$.'
         exemplars:
           - problem: 'The normal line to the sphere $x^2 + y^2 + z^2 = 6$ at the point $(1, 1, 2)$ has the direction of $\nabla F(1, 1, 2)$, where $F(x, y, z) = x^2 + y^2 + z^2$. Find that vector.'
             answer: '(2, 2, 4)'
@@ -717,15 +609,6 @@ topics:
       - id: kp1
         name: "The definition and simple critical points"
         key_prerequisites: [computing-the-gradient]
-        step_check:
-          step: 'we need $f_x = 0$ and $f_y = 0$ simultaneously'
-          question: 'Why must both partial derivatives be zero at a critical point?'
-          options:
-            - 'Because one zero partial derivative already forces the other one to be zero'
-            - 'Because the surface is flat in the $x$-direction and in the $y$-direction'
-            - 'Because a critical point is where $f$ itself is zero in both variables'
-          answer: 'Because the surface is flat in the $x$-direction and in the $y$-direction'
-          why: 'At a critical point the gradient is the zero vector, so the slope is zero along $x$ and along $y$. A zero in one partial derivative says nothing about the other.'
         exemplars:
           - problem: 'Find the critical point of $f(x, y) = x^2 + y^2 - 4x + 6y$.'
             answer: '(2, -3)'
@@ -767,15 +650,6 @@ topics:
       - id: kp2
         name: "Critical points of quadratic functions"
         key_prerequisites: [computing-the-gradient, systems-substitution]
-        step_check:
-          step: 'The equations decouple, so each gives one coordinate'
-          question: 'Why does each equation give one coordinate on its own?'
-          options:
-            - 'Because the two equations are really the same equation written twice'
-            - 'Because the coordinates of a critical point are always equal to each other'
-            - 'Because $f_x$ contains only $x$ and $f_y$ contains only $y$'
-          answer: 'Because $f_x$ contains only $x$ and $f_y$ contains only $y$'
-          why: 'For $f_x = 2x - 6$ the only unknown is $x$, and for $f_y = 6y + 12$ the only unknown is $y$. So each equation is solved alone.'
         exemplars:
           - problem: 'Find the critical point of $f(x, y) = x^2 + 2y^2 - 4x + 4y$.'
             answer: '(2, -1)'
@@ -813,15 +687,6 @@ topics:
       - id: kp3
         name: "Systems requiring factoring or substitution"
         key_prerequisites: [computing-the-gradient, systems-substitution]
-        step_check:
-          step: 'Substitute $y = \frac{x^2}{2}$ into $y^2 = 2x$'
-          question: 'Why do we substitute $y = \frac{x^2}{2}$ into the second equation?'
-          options:
-            - 'It leaves one equation in $x$ alone, which we can factor and solve'
-            - 'It shows that $y$ must be zero at every critical point of the function'
-            - 'It turns the second equation into the first, so nothing new is found'
-          answer: 'It leaves one equation in $x$ alone, which we can factor and solve'
-          why: 'The two equations share two unknowns. Replacing $y$ by an expression in $x$ leaves one equation in $x$, and each solution $x$ then gives its own $y$.'
         exemplars:
           - problem: 'Find all critical points of $f(x, y) = x^3 - 3x + y^2$.'
             answer: '(1, 0), (-1, 0)'
@@ -887,15 +752,6 @@ topics:
       - id: kp1
         name: "Computing the discriminant D"
         key_prerequisites: [multivariable-critical-points, partial-derivatives]
-        step_check:
-          step: 'differentiate $f_x$ in $y$'
-          question: 'Why is the mixed partial $f_{xy}$ equal to $0$ here?'
-          options:
-            - 'Because a mixed partial is always zero when $f_{xx}$ is not zero'
-            - 'Because $f_{yy} = 2$ is a constant, so every second partial is zero'
-            - 'Because $f_x = 4x^3$ has no $y$ in it, so it is constant in $y$'
-          answer: 'Because $f_x = 4x^3$ has no $y$ in it, so it is constant in $y$'
-          why: 'The mixed partial is the derivative of $f_x = 4x^3$ with respect to $y$. A function with no $y$ in it is constant in $y$, so that derivative is zero.'
         exemplars:
           - problem: 'Find the discriminant $D = f_{xx} f_{yy} - f_{xy}^2$ of $f(x, y) = x^3 - 3x + y^2$.'
             answer: '12x'
@@ -933,15 +789,6 @@ topics:
       - id: kp2
         name: "The second-derivative test"
         key_prerequisites: [multivariable-critical-points, partial-derivatives]
-        step_check:
-          step: 'so $(2, 0)$ is a local minimum'
-          question: 'Why is $D > 0$ alone not enough to call $(2, 0)$ a minimum?'
-          options:
-            - 'Because $D > 0$ fits a maximum too; the sign of $f_{xx}$ decides'
-            - 'Because $D > 0$ only shows that the point is a saddle point of $f$'
-            - 'Because $D$ must also be larger than the value of $f$ at the point'
-          answer: 'Because $D > 0$ fits a maximum too; the sign of $f_{xx}$ decides'
-          why: 'When $D > 0$ the surface curves the same way in every direction. The sign of $f_{xx}$ tells whether that curve opens up (minimum) or down (maximum).'
         try_first:
           problem: 'Let $f(x, y) = x^2 - y^2$, so $f(0, 0) = 0$. Is $f(0, 0)$ the smallest value of $f$ among the points close to the origin?'
           answer_contract: {"kind": "label", "options": [["yes", "it is", "it is the smallest value"], ["no", "it is not", "it is not the smallest value"]]}
@@ -984,16 +831,6 @@ topics:
       - id: kp3
         name: "Complete find-and-classify problems"
         key_prerequisites: [multivariable-critical-points, partial-derivatives]
-        step_check:
-          step: 'so $(0, 0)$ is a saddle point'
-          question: 'Why is $(0, 0)$ a saddle point and not an extremum?'
-          options:
-            - 'Because $f(0, 0) = 0$ and a saddle point is where the function is zero'
-            - 'Because $f_{xx} = 0$ there, and a zero second derivative always means a saddle'
-            - 'Because $D$ is negative, so every nearby point has a smaller value of $f$'
-            - 'Because $D < 0$, so $f$ rises in one direction and falls in another'
-          answer: 'Because $D < 0$, so $f$ rises in one direction and falls in another'
-          why: 'A negative $D$ means the surface curves up in some directions and down in others. Such a point is neither a local minimum nor a local maximum.'
         exemplars:
           - problem: 'Find and classify the critical points of $f(x, y) = x^3 + y^3 - 3xy$. What is the value of $f$ at the local minimum?'
             answer: '-1'
@@ -1062,15 +899,6 @@ topics:
       - id: kp1
         name: "Linear objectives: extrema on the boundary"
         key_prerequisites: [multivariable-critical-points, closed-interval-method]
-        step_check:
-          step: 'so $f$ is constant along the entire hypotenuse'
-          question: 'Why is $f$ constant along the whole hypotenuse?'
-          options:
-            - 'Because $f$ is linear, and every linear function is constant on every edge'
-            - 'Because $f = 5 - (x + 2y)$ and $x + 2y = 4$ at every point of that edge'
-            - 'Because the hypotenuse is the longest edge, so $f$ stops changing on it'
-          answer: 'Because $f = 5 - (x + 2y)$ and $x + 2y = 4$ at every point of that edge'
-          why: 'The hypotenuse lies on the line $x + 2y = 4$. Substituting this into $f = 5 - (x + 2y)$ gives $f = 1$ at every point of the edge.'
         exemplars:
           - problem: 'Find the absolute maximum of $f(x, y) = 6 - x - y$ on the triangle with vertices $(0, 0)$, $(4, 0)$ and $(0, 4)$.'
             answer: '6'
@@ -1104,15 +932,6 @@ topics:
       - id: kp2
         name: "Disks: parametrized boundaries"
         key_prerequisites: [multivariable-local-extrema, closed-interval-method]
-        step_check:
-          step: 'on the circle $x^2 + y^2 = 9$ we have $y^2 = 9 - x^2$'
-          question: 'Why can we write $f$ with $x$ alone on the boundary?'
-          options:
-            - 'Because $y = 0$ at every point of the boundary circle'
-            - 'Because the boundary is a segment, and $y$ does not change on it'
-            - 'Because $x^2 + y^2 = 9$ on the circle, so $y^2$ is fixed by $x$'
-          answer: 'Because $x^2 + y^2 = 9$ on the circle, so $y^2$ is fixed by $x$'
-          why: 'Every point of the boundary satisfies $x^2 + y^2 = 9$, so $y^2 = 9 - x^2$. Replacing $y^2$ leaves a function of $x$ alone on $[-3, 3]$.'
         exemplars:
           - problem: 'Find the absolute maximum of $f(x, y) = x^2 + y^2 + 8x$ on the circle $x^2 + y^2 = 25$.'
             answer: '65'
@@ -1146,15 +965,6 @@ topics:
       - id: kp3
         name: "Interior critical points versus boundary candidates"
         key_prerequisites: [multivariable-local-extrema, closed-interval-method]
-        step_check:
-          step: 'The smallest value is $-5$ at $(2, 1)$'
-          question: 'Why is the absolute minimum $-5$ and not the edge value $-4$?'
-          options:
-            - 'Because $-5$ is smaller than every other candidate, interior or boundary'
-            - 'Because the interior critical point always gives the minimum on a rectangle'
-            - 'Because edge values do not count when an interior critical point exists'
-          answer: 'Because $-5$ is smaller than every other candidate, interior or boundary'
-          why: 'The absolute minimum is the smallest of all candidate values. The interior value $-5$ is below the edge values, which are at least $-4$.'
         exemplars:
           - problem: 'Find the absolute minimum of $f(x, y) = x^2 + y^2 - 2x - 2y$ on the square $0 \le x \le 2$, $0 \le y \le 2$.'
             answer: '-2'
@@ -1232,16 +1042,6 @@ topics:
       - id: kp1
         name: 'Distance problems'
         key_prerequisites: [multivariable-local-extrema]
-        step_check:
-          step: 'Minimizing $d^2$ also minimizes $d$'
-          question: 'Why may we minimize $d^2$ in place of the distance $d$?'
-          options:
-            - 'Squaring makes the plane equation much easier to solve for $z$'
-            - 'The square root is increasing, so $d$ and $d^2$ are smallest together'
-            - 'The squared distance is always smaller than $d$, so its minimum is a smaller number'
-            - 'The distance $d$ has no critical point, but $d^2$ does'
-          answer: 'The square root is increasing, so $d$ and $d^2$ are smallest together'
-          why: 'If $d^2$ is smallest at a point, then $d=\sqrt{d^2}$ is smallest there too, and $d^2$ has no square root to differentiate.'
         exemplars:
           - problem: 'Find the point on the plane $x+2y+3z=14$ closest to the origin.'
             answer: '(1, 2, 3)'
@@ -1279,16 +1079,6 @@ topics:
       - id: kp2
         name: 'Product and box problems'
         key_prerequisites: [multivariable-local-extrema]
-        step_check:
-          step: 'so $z = \dfrac{108}{xy}$'
-          question: 'Why can the height be written as $z=\dfrac{108}{xy}$ in this problem?'
-          options:
-            - 'The constraint fixes $z$ once $x$ and $y$ are chosen, so only two variables remain'
-            - 'The material is proportional to $z$, so $z$ must be isolated first'
-            - 'Partial derivatives can be taken only after every variable is replaced by a fraction'
-            - 'The volume is the quantity to be minimized, so it is rewritten in terms of $z$'
-          answer: 'The constraint fixes $z$ once $x$ and $y$ are chosen, so only two variables remain'
-          why: 'The volume must equal $108$, so $z=108/(xy)$ follows from $x$ and $y$, and the material becomes a function of two variables.'
         exemplars:
           - problem: 'Three positive numbers have sum $42$. Find the largest possible value of their product.'
             answer: '2744'
@@ -1322,16 +1112,6 @@ topics:
       - id: kp3
         name: 'Confirming the nature of the optimum'
         key_prerequisites: [multivariable-local-extrema]
-        step_check:
-          step: 'so $(8, 8)$ is a local maximum'
-          question: 'Why do $D>0$ and $P_{xx}<0$ together show a local maximum at $(8,8)$?'
-          options:
-            - '$D>0$ means the surface curves downward in every direction, and a negative $P_{xx}$ is a second check'
-            - 'A negative $P_{xx}$ alone shows a maximum, and $D$ only measures how steep it is'
-            - '$D>0$ shows a minimum, and the negative sign of $P_{xx}$ reverses it'
-            - '$D>0$ rules out a saddle, and $P_{xx}<0$ means the surface bends downward along $x$'
-          answer: '$D>0$ rules out a saddle, and $P_{xx}<0$ means the surface bends downward along $x$'
-          why: 'A positive $D$ means the surface bends the same way in all directions, and the sign of $P_{xx}$ tells which way: downward gives a maximum.'
         exemplars:
           - problem: 'The function $g(x,y)=x^2+y^2+(3-x-y)^2$ has a critical point at $(1,1)$. Find the discriminant $D=g_{xx}g_{yy}-g_{xy}^2$ there.'
             answer: '12'
@@ -1396,16 +1176,6 @@ topics:
       - id: kp1
         name: 'The Lagrange condition'
         key_prerequisites: [gradient-directional-derivatives, multivariable-critical-points]
-        step_check:
-          step: 'So either $y = x$ or $y = -x$'
-          question: 'Why does $(y-x)(1+2\lambda)=0$ lead to two cases, $y=x$ and $y=-x$?'
-          options:
-            - 'The two gradient equations describe the same line, so either sign works'
-            - 'A product is zero only when a factor is zero, giving $y=x$ or $y=-x$'
-            - 'The circle is symmetric, so every solution comes with a mirror image'
-            - 'A product that equals zero forces both factors to be zero together'
-          answer: 'A product is zero only when a factor is zero, giving $y=x$ or $y=-x$'
-          why: 'Either $y-x=0$ or $1+2\lambda=0$; in the second case $y=2\lambda x=-x$, so both cases must be solved with the constraint.'
         exemplars:
           - problem: 'Find the largest value of $f(x,y)=xy$ on the circle $x^2+y^2=18$.'
             answer: '9'
@@ -1443,16 +1213,6 @@ topics:
       - id: kp2
         name: 'Linear constraints'
         key_prerequisites: [gradient-directional-derivatives, systems-substitution]
-        step_check:
-          step: 'substitute into the second equation to get $x = 3y$'
-          question: 'Why can $\lambda$ be replaced by $y$ in the second equation?'
-          options:
-            - 'The multiplier $\lambda$ always equals the value of $y$ at the optimum'
-            - 'The replacement is allowed because $x$ and $y$ are both positive here'
-            - 'The constraint $x+3y=12$ turns $\lambda$ into one more variable'
-            - 'The first equation says $y=\lambda$, so then only $x$ and $y$ remain'
-          answer: 'The first equation says $y=\lambda$, so then only $x$ and $y$ remain'
-          why: 'From $y=\lambda$ and $x=3\lambda$ it follows that $x=3y$, which is the relation between the variables used in the constraint.'
         exemplars:
           - problem: 'Find the point with $x>0$ and $y>0$ on the line $x+y=10$ where the product $xy$ is largest.'
             answer: '(5, 5)'
@@ -1486,16 +1246,6 @@ topics:
       - id: kp3
         name: 'Circle constraints'
         key_prerequisites: [gradient-directional-derivatives, multivariable-critical-points]
-        step_check:
-          step: 'the maximum is $13$ at $(2,3)$'
-          question: 'Why is $(2,3)$ the maximum and $(-2,-3)$ the minimum?'
-          options:
-            - 'Positive coordinates give a maximum and negative ones give a minimum'
-            - 'The multiplier is positive at one point and negative at the other'
-            - 'Both are candidates, and the larger value of $f$ is the maximum'
-            - 'The point with the larger first coordinate is always the maximum'
-          answer: 'Both are candidates, and the larger value of $f$ is the maximum'
-          why: 'The Lagrange equations only find candidate points; comparing $f(2,3)=13$ with $f(-2,-3)=-13$ shows which is the maximum and which the minimum.'
         exemplars:
           - problem: 'Find the largest value of $f(x,y)=2x+3y$ on the circle $x^2+y^2=13$.'
             answer: '13'
@@ -1560,16 +1310,6 @@ topics:
       - id: kp1
         name: 'Three variables and applied problems'
         key_prerequisites: [lagrange-multipliers-single-constraint, multivariable-local-extrema]
-        step_check:
-          step: 'dividing the second equation by the first gives $y = \tfrac{3}{2}x$'
-          question: 'Why does dividing one equation by another remove $\lambda$?'
-          options:
-            - 'Dividing two equations always gives the numerical value of $\lambda$ directly'
-            - 'The left sides are equal, so the right sides must be equal too'
-            - 'The multiplier cancels because it is a common factor of the right sides'
-            - 'Division makes the constraint $2x+3y+6z=28$ hold automatically'
-          answer: 'The multiplier cancels because it is a common factor of the right sides'
-          why: 'The equations $2y=3\lambda$ and $2x=2\lambda$ both contain $\lambda$ once, so $y/x=3/2$ no longer depends on it.'
         exemplars:
           - problem: 'Use Lagrange multipliers to find the distance from the origin to the plane $x+2y+2z=12$.'
             answer: '4'
@@ -1603,16 +1343,6 @@ topics:
       - id: kp2
         name: 'Harder constraints and exceptional cases'
         key_prerequisites: [lagrange-multipliers-single-constraint, multivariable-local-extrema]
-        step_check:
-          step: 'either $x = 0$ or $y = \frac{\lambda}{9}$'
-          question: 'Why must the case $x=0$ be checked separately in this system?'
-          options:
-            - 'Dividing by $x$ would lose points where $x=0$, which can be extremes'
-            - 'The case $x=0$ is the only one that gives a valid point on the ellipse'
-            - 'The multiplier $\lambda$ is undefined unless $x$ is equal to zero'
-            - 'Every extreme point of $x^2y$ has $x=0$, so the other case is skipped'
-          answer: 'Dividing by $x$ would lose points where $x=0$, which can be extremes'
-          why: 'A product equal to zero has two cases, and dividing by $x$ would silently discard the points with $x=0$ and could lose a maximum or a minimum.'
         exemplars:
           - problem: 'Find the largest value of $f(x,y)=xy$ on the ellipse $\dfrac{x^2}{8}+\dfrac{y^2}{2}=1$.'
             answer: '2'
@@ -1655,16 +1385,6 @@ topics:
           answer_contract: {"kind":"exact"}
           answer: '5'
           reveal: 'The two constraints fix $x=1$ and $y=2$, so only $z$ is free, and $x^2+y^2+z^2=5+z^2$ is smallest at $z=0$. With two constraints, the gradient of $f$ is a combination $\lambda\nabla g+\mu\nabla h$ of both constraint gradients.'
-        step_check:
-          step: 'Substitute $y = 2x$ and $z = 2$ into the sphere'
-          question: 'Why are both $y=2x$ and $z=2$ put into the sphere equation?'
-          options:
-            - 'The sphere is the only constraint that contains the unknown $x$'
-            - 'Putting the values into the sphere removes the multiplier $\mu$'
-            - 'A point on the sphere needs only one of the two relations to hold, not both'
-            - 'Each candidate must satisfy both constraints at once, so both are used'
-          answer: 'Each candidate must satisfy both constraints at once, so both are used'
-          why: 'The circle is where the sphere and the plane meet, so a candidate satisfies the plane $z=2$ and the relation $y=2x$ and the sphere at once; that leaves one unknown.'
         exemplars:
           - problem: 'Find the largest value of $f(x,y,z)=x+y+z$ on the circle where the sphere $x^2+y^2+z^2=4$ meets the plane $z=1$.'
             answer: '1+sqrt(6)'

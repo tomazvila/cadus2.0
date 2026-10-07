@@ -1,21 +1,13 @@
-//! Mechanical authoring rules the loader cannot see: a step check whose step
-//! fragment stops mid-phrase, and a verdict exemplar that contradicts its
-//! knowledge point. Both slipped past review once (step 5b), so the whole tree
-//! is read here.
+//! Mechanical authoring rules the loader cannot see: a verdict exemplar that
+//! contradicts its knowledge point. One slipped past review once (step 5b), so
+//! the whole tree is read here.
 
 #![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 
 mod common;
 
 use cadus_core::answer::{AnswerContract, Canon, canonical_form};
-use cadus_core::curriculum::StepRef;
 use common::paths::tree;
-
-/// Words a step fragment cannot end on: the fragment would stop mid-phrase.
-const DANGLING: [&str; 24] = [
-    "a", "an", "the", "as", "of", "to", "and", "or", "by", "into", "with", "for", "from", "is",
-    "are", "then", "so", "that", "in", "on", "at", "gives", "get", "becomes",
-];
 
 /// The verdict family of one label key: `Some(false)` for "no solution",
 /// `Some(true)` for "every real number", `None` for anything else.
@@ -50,43 +42,6 @@ fn cancelled(problem: &str) -> Option<bool> {
     let (lhs, rhs) = body.split_once('=')?;
     let difference = canonical_form(&format!("({lhs}) - ({rhs})")).ok()?;
     matches!(difference, Canon::Rational(_)).then(|| Ok(difference) == canonical_form("0"))
-}
-
-#[test]
-fn every_step_check_names_a_whole_phrase_and_asks_a_question() {
-    let graph = tree();
-    let mut seen = 0;
-    for topic in graph.topics() {
-        for point in &topic.knowledge_points {
-            let Some(check) = &point.step_check else {
-                continue;
-            };
-            seen += 1;
-            let key = format!("{}/{}", topic.id, point.id);
-            if let StepRef::Text(fragment) = &check.step {
-                let trimmed = fragment.trim();
-                let last = trimmed
-                    .rsplit(char::is_whitespace)
-                    .next()
-                    .unwrap_or("")
-                    .to_lowercase();
-                assert!(
-                    !DANGLING.contains(&last.as_str()) && !trimmed.ends_with([',', ':', '(', '=']),
-                    "{key}: the step fragment {fragment:?} stops mid-phrase"
-                );
-                assert_eq!(
-                    trimmed.matches('$').count() % 2,
-                    0,
-                    "{key}: the step fragment {fragment:?} cuts a formula in half"
-                );
-            }
-            assert!(
-                check.question.trim_end().ends_with('?'),
-                "{key}: the step check question does not end with a question mark"
-            );
-        }
-    }
-    assert!(seen >= 100, "only {seen} step checks were read");
 }
 
 #[test]

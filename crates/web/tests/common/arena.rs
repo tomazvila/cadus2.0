@@ -45,7 +45,6 @@ pub fn kp(id: &str, exemplars: Vec<Exemplar>) -> KnowledgePoint {
         exemplars,
         constraints: None,
         finite_objective_domain: None,
-        step_check: None,
         try_first: None,
         visuals: Vec::new(),
     }
@@ -67,6 +66,7 @@ pub fn exemplar_with_solution(problem: &str, answer: &str, solution: &str) -> Ex
         problem: problem.to_string(),
         answer: answer.to_string(),
         solution_sketch: Some(solution.to_string()),
+        visual: None,
     }
 }
 

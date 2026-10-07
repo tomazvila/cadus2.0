@@ -53,7 +53,6 @@ pub fn topic(id: &str, prereq: Option<&str>) -> Topic {
             exemplars: Vec::new(),
             constraints: None,
             finite_objective_domain: None,
-            step_check: None,
             try_first: None,
             visuals: Vec::new(),
         }],
@@ -62,6 +61,7 @@ pub fn topic(id: &str, prereq: Option<&str>) -> Topic {
             problem: format!("probe for {id}: what is 3 + 4?"),
             answer: ANSWER.to_owned(),
             solution_sketch: Some(SKETCH.to_owned()),
+            visual: None,
         }),
         anki_seeds: Vec::new(),
     }

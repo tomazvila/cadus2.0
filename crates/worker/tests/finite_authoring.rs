@@ -53,12 +53,14 @@ fn spec() -> AuthoringSpec {
                 answer: value.to_string(),
                 answer_contract: None,
                 solution_sketch: None,
+                visual: None,
             })
             .chain(std::iter::once(Exemplar {
                 problem: "Reserved assessment secret.".to_owned(),
                 answer: "99".to_owned(),
                 answer_contract: None,
                 solution_sketch: None,
+                visual: None,
             }))
             .collect(),
         finite: Some(FiniteAuthoringPolicy::new("finite-index/kp1", &policy()).unwrap()),

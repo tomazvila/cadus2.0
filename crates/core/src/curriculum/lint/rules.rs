@@ -9,8 +9,10 @@ use super::super::model::{Catalog, Course, Topic};
 use super::{Lint, Table, node, py_list_repr, py_repr};
 
 mod exemplars;
+mod visuals;
 
 pub(super) use exemplars::check_exemplars;
+pub(super) use visuals::check_visuals;
 
 impl Lint<'_> {
     /// Rule 8, acyclicity: report one cycle and return its nodes.

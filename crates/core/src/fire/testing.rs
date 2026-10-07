@@ -30,7 +30,6 @@ pub(crate) fn knowledge_point(id: &str, keys: &[&str]) -> KnowledgePoint {
         exemplars: Vec::new(),
         constraints: None,
         finite_objective_domain: None,
-        step_check: None,
         try_first: None,
         visuals: Vec::new(),
     }
@@ -62,6 +61,7 @@ pub(crate) fn topic(id: &str, prereqs: &[(&str, f64, bool)]) -> Topic {
             problem: format!("probe {id}"),
             answer: "7".to_owned(),
             solution_sketch: None,
+            visual: None,
         }),
         anki_seeds: Vec::new(),
     }

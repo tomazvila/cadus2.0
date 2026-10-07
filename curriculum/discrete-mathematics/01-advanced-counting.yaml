@@ -23,16 +23,6 @@ topics:
       - id: kp1
         name: "Two sets: |A u B| = |A| + |B| - |A n B|"
         key_prerequisites: [set-operations]
-        step_check:
-          step: 'Apply the inclusion-exclusion principle: $|A \cup B| = |A| + |B| - |A \cap B|$'
-          question: 'Why does the formula subtract $|A \cap B|$?'
-          options:
-            - 'Students in both sets are not in the union at all, so all copies go'
-            - 'Students in both sets are counted twice, so one copy must go'
-            - 'The two sets never overlap, so the overlap is taken off the total'
-            - 'Subtraction always follows addition when two sets are put together'
-          answer: 'Students in both sets are counted twice, so one copy must go'
-          why: 'A student in both sets is counted once in $|A|$ and once in $|B|$, so subtracting $|A \cap B|$ leaves each student counted exactly once.'
         try_first:
           problem: 'A street has $12$ houses with a garden and $9$ houses with a garage. Exactly $5$ houses have both. How many houses have a garden or a garage?'
           answer_contract: {"kind":"exact"}
@@ -71,16 +61,6 @@ topics:
       - id: kp2
         name: "Three sets"
         key_prerequisites: [set-operations, multiplication-principle]
-        step_check:
-          step: '$|A \cup B \cup C| = |A| + |B| + |C| - |A \cap B| - |A \cap C| - |B \cap C| + |A \cap B \cap C|$'
-          question: 'Why is $|A \cap B \cap C|$ added back at the end?'
-          options:
-            - 'People in all three sets were counted only once, so one more is due'
-            - 'The triple overlap lies inside the union, so it must be added to it'
-            - 'The pair terms removed each person in all three sets too often'
-            - 'The last term is added because the signs in the formula alternate'
-          answer: 'The pair terms removed each person in all three sets too often'
-          why: 'A person in all three sets is added $3$ times by the single terms and subtracted $3$ times by the pair terms, so the net count is $0$; the triple term makes it $1$.'
         exemplars:
           - problem: 'Among $100$ students, $40$ like tea, $35$ like coffee, $30$ like juice, $15$ like tea and coffee, $10$ like tea and juice, $12$ like coffee and juice, and $5$ like all three. How many students like at least one of the three drinks?'
             answer: "73"
@@ -118,16 +98,6 @@ topics:
       - id: kp3
         name: "Counting the complement"
         key_prerequisites: [set-operations]
-        step_check:
-          step: 'Subtract this count from the total to find the numbers divisible by neither $4$ nor $5$'
-          question: 'Why is the count $20$ subtracted from the total $50$?'
-          options:
-            - 'The $20$ numbers have $4$ or $5$ as a divisor; the rest have neither'
-            - 'The $20$ numbers are divisible by both $4$ and $5$, so only those are removed'
-            - 'A number divisible by $4$ or $5$ is counted twice, so one copy is taken away'
-            - 'Dividing $50$ by $4$ and by $5$ leaves remainders, and $20$ is their sum'
-          answer: 'The $20$ numbers have $4$ or $5$ as a divisor; the rest have neither'
-          why: 'The union holds every number with at least one of the two properties. Everything else in the set has neither property, so the count is $50 - 20 = 30$.'
         exemplars:
           - problem: 'How many integers from $1$ to $100$ are divisible by neither $2$ nor $3$?'
             answer: "33"
@@ -192,16 +162,6 @@ topics:
       - id: kp1
         name: "Nonnegative integer solutions"
         key_prerequisites: [combinations]
-        step_check:
-          step: 'Apply the formula: $\binom{n + k - 1}{k - 1} = \binom{12 + 4 - 1}{4 - 1} = \binom{15}{3}$'
-          question: 'Why does the count use $\binom{15}{3}$, with $3$ at the bottom?'
-          options:
-            - 'There are $15$ balls in all, and $3$ of them are picked to go into the first box'
-            - 'The $4$ boxes are filled one at a time, so $\binom{15}{3}$ counts the order of filling'
-            - 'Each box first gets $3$ balls, and $15$ is the total number of balls then left over'
-            - 'A row of $15$ symbols holds $12$ stars and $3$ bars, and the bars mark the box limits'
-          answer: 'A row of $15$ symbols holds $12$ stars and $3$ bars, and the bars mark the box limits'
-          why: 'Each row of $12$ stars and $3$ bars is one distribution, because the bars cut the stars into $4$ groups. Choosing the $3$ bar places among $15$ gives $\binom{15}{3} = 455$.'
         try_first:
           problem: 'In how many ways can $4$ identical coins be put into $2$ distinct pockets?'
           answer_contract: {"kind":"exact"}
@@ -244,16 +204,6 @@ topics:
       - id: kp2
         name: "Positive solutions and lower bounds via substitution"
         key_prerequisites: [combinations]
-        step_check:
-          step: 'Transform the equation: $y_1 + y_2 + y_3 + y_4 = 20 - 4 \times 3 = 8$'
-          question: 'Why is $4 \times 3 = 12$ subtracted from $20$?'
-          options:
-            - 'Each $x_i$ is at most $3$, so $12$ is the largest total the variables allow'
-            - 'Each $x_i$ is at least $3$, so $12$ of the $20$ are used up first'
-            - 'The substitution adds $3$ to every variable, so $12$ must come off the total'
-            - 'Removing $12$ makes every variable positive, which stars and bars requires'
-          answer: 'Each $x_i$ is at least $3$, so $12$ of the $20$ are used up first'
-          why: 'Each $x_i$ is at least $3$, so $12$ units are fixed. Only the remaining $8$ are shared freely, and $y_i = x_i - 3 \ge 0$ counts that share.'
         exemplars:
           - problem: 'How many solutions in positive integers does $x_1 + x_2 + x_3 + x_4 = 10$ have?'
             answer: "84"
@@ -322,16 +272,6 @@ topics:
       - id: kp1
         name: "Arrangements of words with repeated letters"
         key_prerequisites: [permutations]
-        step_check:
-          step: 'Divide the total factorial by the product of the factorials of the repeated letter groups'
-          question: 'Why divide $6!$ by $3! \, 2!$ for BANANA?'
-          options:
-            - 'The A''s and N''s must stay together, so those blocks are taken out of the count'
-            - 'Each repeated letter can stand in only one place, which cuts the count down'
-            - 'Swapping equal letters keeps the word, so each word is counted $12$ times'
-            - 'Dividing removes the words that have a repeated letter in the first place'
-          answer: 'Swapping equal letters keeps the word, so each word is counted $12$ times'
-          why: '$6! = 720$ treats all letters as different. Swapping the three A''s ($3!$ ways) and the two N''s ($2!$ ways) gives the same word, so each word appears $12$ times and $720/12 = 60$.'
         try_first:
           problem: 'In how many different orders can the letters of the word BOOK be written?'
           answer_contract: {"kind":"exact"}
@@ -382,16 +322,6 @@ topics:
       - id: kp2
         name: "Lattice paths as multiset arrangements"
         key_prerequisites: [combinations]
-        step_check:
-          step: 'The number of distinct paths is the number of ways to arrange $3$ R''s and $2$ U''s in a sequence'
-          question: 'Why does each path match exactly one sequence of R''s and U''s?'
-          options:
-            - 'Any sequence of $5$ steps, right or up, reaches $(3,2)$, so every sequence is a path'
-            - 'The R steps and the U steps must alternate, so each path has only one sequence'
-            - 'A path may visit a point twice, so the sequence and the path need not match'
-            - 'The steps taken in order fix the route, and any $3$ R''s and $2$ U''s end at $(3,2)$'
-          answer: 'The steps taken in order fix the route, and any $3$ R''s and $2$ U''s end at $(3,2)$'
-          why: 'A path is fixed by its steps in order, and any order of $3$ R''s and $2$ U''s ends at $(3,2)$. So paths match arrangements one to one, and $\binom{5}{2} = 10$.'
         exemplars:
           - problem: 'How many lattice paths run from $(0,0)$ to $(4,3)$ using only unit steps right and up?'
             answer: "35"
@@ -469,16 +399,6 @@ topics:
           answer_contract: {"kind": "exact"}
           answer: '1'
           reveal: 'The only way is for the two people to swap hats, so there is $1$ way. An arrangement that leaves nobody in their own place is a derangement, and the number of them is written $D_n$.'
-        step_check:
-          step: 'is a derangement because neither element is in its original position'
-          question: 'Why is the arrangement $2, 1$ a derangement of $\{1, 2\}$?'
-          options:
-            - 'The list is different from the original order in some place'
-            - 'At least one number has moved away from its original position'
-            - 'No number sits in the position that matches its own value'
-            - 'The list is in decreasing order, so no number can stay put'
-          answer: 'No number sits in the position that matches its own value'
-          why: 'A derangement needs every number to leave its own position. The arrangement $3, 2, 1$ moves $1$ and $3$ but leaves $2$ in place.'
         exemplars:
           - problem: 'A derangement of the numbers $1, 2, 3$ is an arrangement of them in a row in which no number is in the position that matches its value: $1$ is not first, $2$ is not second and $3$ is not third. How many derangements are there?'
             answer: '2'
@@ -512,16 +432,6 @@ topics:
       - id: kp2
         name: "Derangement applications and probability"
         key_prerequisites: [inclusion-exclusion, permutations]
-        step_check:
-          step: 'Calculate the total number of permutations'
-          question: 'Why does the probability use the total number $5! = 120$ of permutations?'
-          options:
-            - 'It is the number of hats, which turns a count into a plain rate'
-            - 'It is the number of equally likely ways to return the hats'
-            - 'It is the number of ways in which somebody gets their own hat'
-            - 'It is the number of derangements before any are removed'
-          answer: 'It is the number of equally likely ways to return the hats'
-          why: 'The probability is favorable ways divided by all equally likely ways, and every one of the $120$ returns is equally likely.'
         exemplars:
           - problem: 'Four letters are put at random into four addressed envelopes, one letter in each envelope. What is the probability that no letter is in its own envelope?'
             answer: '3/8'
@@ -590,16 +500,6 @@ topics:
           answer_contract: {"kind": "exact"}
           answer: '3'
           reveal: 'Sharing $7$ cookies evenly would give $7/3$ per child, so some child gets more than $2$ and therefore at least $3$. The generalized pigeonhole principle says that $n$ objects in $k$ holes put at least $\lceil n/k \rceil$ objects in some hole.'
-        step_check:
-          step: 'Apply the formula $n = k(m-1) + 1$'
-          question: 'Why do $k(m-1) + 1$ cards guarantee $m$ cards of one suit?'
-          options:
-            - 'Every suit holds exactly $m-1$ cards after $k(m-1)$ cards, so a pair must follow'
-            - 'Splitting $k(m-1) + 1$ cards by $k$ suits always puts exactly $m$ cards in each suit'
-            - 'The last card always comes from the fullest suit, which then holds exactly $m$ cards'
-            - 'The first $k(m-1)$ cards can stop at $m-1$ per suit, and one more must make $m$'
-          answer: 'The first $k(m-1)$ cards can stop at $m-1$ per suit, and one more must make $m$'
-          why: 'With $k(m-1)$ cards, every suit can still hold only $m-1$ cards. The next card must go into a suit that then has $m$.'
         exemplars:
           - problem: 'A bag holds many marbles in $5$ colors. How many marbles must you draw without looking to be sure that at least $3$ of them have the same color?'
             answer: '11'
@@ -633,16 +533,6 @@ topics:
       - id: kp2
         name: "Choosing the right pigeonholes"
         key_prerequisites: [pigeonhole-principle]
-        step_check:
-          step: 'Put the integers $1, \dots, 12$ into the six pairs that each add up to $13$'
-          question: 'Why do the six pairs $\{1,12\}, \{2,11\}, \dots, \{6,7\}$ force a sum of $13$ once $7$ integers are chosen?'
-          options:
-            - 'The integers $1$ to $12$ add up to $78 = 6 \cdot 13$, so seven of them reach $13$'
-            - 'Each pair holds one chosen integer with no sum of $13$, so a 7th completes a pair'
-            - 'Every integer has exactly one partner, so any two chosen integers are partners'
-            - 'Each integer lies in two of the pairs, so seven integers must meet some pair twice'
-          answer: 'Each pair holds one chosen integer with no sum of $13$, so a 7th completes a pair'
-          why: 'Six chosen integers can lie in six different pairs with no sum of $13$, for example $1, \dots, 6$. A 7th integer must share a pair with one of them.'
         exemplars:
           - problem: 'Integers are chosen from $1, 2, \dots, 12$. What is the smallest number of integers you must choose to be sure that two of them add up to $13$?'
             answer: '7'
@@ -716,16 +606,6 @@ topics:
           answer_contract: {"kind": "exact"}
           answer: '15'
           reveal: 'Choosing the $4$ who go is the same as choosing the $2$ who stay home, so there are $\binom{6}{2} = 15$ ways. One set of choices counted from two sides gives two expressions that are equal.'
-        step_check:
-          step: 'Since the two cases are disjoint and exhaustive'
-          question: 'Why must the two cases be disjoint and exhaustive before their counts are added?'
-          options:
-            - 'Each $k$-subset then lies in exactly one case, so none is missed or counted twice'
-            - 'Both cases then contain the same number of subsets, so their counts can be added'
-            - 'Disjoint cases make each count a binomial coefficient, which the sum formula needs'
-            - 'The cases only need to be exhaustive, since a subset in both cases adds nothing'
-          answer: 'Each $k$-subset then lies in exactly one case, so none is missed or counted twice'
-          why: 'If a subset were in both cases it would be counted twice, and if it were in neither it would be missed. Then the sum would not equal the total.'
         exemplars:
           - problem: 'A club has $8$ members. Choosing $3$ members for a committee is the same as choosing the $5$ members to leave off. How many different $3$-member committees can be formed?'
             answer: '56'
@@ -763,16 +643,6 @@ topics:
       - id: kp2
         name: "Committee-chair and subset-sum identities"
         key_prerequisites: [combinations, binomial-expansion]
-        step_check:
-          step: 'Both sides count the same set'
-          question: 'Why can the two counts of (committee, chair) pairs be set equal to each other?'
-          options:
-            - 'Both expressions are products, and a product of binomials is the same either way'
-            - 'Each side counts a different set, and the two sets happen to have equal size'
-            - 'The same set of pairs is counted twice, so both counts must equal its size'
-            - 'Choosing the chair first only reorders the factors, which never changes the product'
-          answer: 'The same set of pairs is counted twice, so both counts must equal its size'
-          why: 'A set has one size. If two different counting methods both cover exactly the same pairs, their results must be equal.'
         exemplars:
           - problem: 'A club has $9$ members. A $3$-member committee is chosen, and then one of its members is named chair. How many different (committee, chair) choices are there?'
             answer: '252'

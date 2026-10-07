@@ -486,8 +486,7 @@ async fn the_view_carries_the_readiness_counts_per_course() {
                 "assessable",
                 "hints",
                 "solutions",
-                "prerequisites",
-                "visual"
+                "prerequisites"
             ])
         );
         let courses = readiness["courses"].as_array().unwrap();

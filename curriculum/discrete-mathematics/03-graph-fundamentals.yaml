@@ -28,15 +28,6 @@ topics:
           answer_contract: {"kind": "exact"}
           answer: '6'
           reveal: 'Each pair of friends is one message, so the count is the number of pairs, $\binom{4}{2} = 6$. The same count gives the number of edges of the complete graph $K_4$.'
-        step_check:
-          step: 'Use the combination formula to find the number of edges'
-          question: 'Why does $\binom{6}{2}$ give the number of edges of $K_6$?'
-          options:
-            - 'Each vertex is joined to $2$ others, so the choices are counted per vertex'
-            - 'An edge is an ordered choice of $2$ vertices, so the order is counted as well'
-            - 'An edge is one unordered pair of vertices, and every pair is an edge'
-          answer: 'An edge is one unordered pair of vertices, and every pair is an edge'
-          why: 'In $K_6$ every pair of the $6$ vertices is joined once, so the edges are the $2$-element subsets, and there are $\binom{6}{2} = 15$ of them.'
         exemplars:
           - problem: 'How many edges does the complete graph $K_5$ have?'
             answer: '10'
@@ -74,15 +65,6 @@ topics:
       - id: kp2
         name: "Adjacency matrices and lists"
         key_prerequisites: [set-notation]
-        step_check:
-          step: 'Each edge contributes two $1$s to the adjacency matrix'
-          question: 'Why does one edge of an undirected graph give two $1$s in the matrix?'
-          options:
-            - 'Both $(u,v)$ and $(v,u)$ are marked as adjacent for an undirected edge'
-            - 'One $1$ marks the edge itself and the other $1$ marks its weight in the graph'
-            - 'Each end of the edge is marked once on the diagonal of the adjacency matrix'
-          answer: 'Both $(u,v)$ and $(v,u)$ are marked as adjacent for an undirected edge'
-          why: 'Row $u$ shows that $v$ is a neighbor and row $v$ shows that $u$ is a neighbor, so every edge appears twice, symmetric about the diagonal.'
         exemplars:
           - problem: 'A simple undirected graph has $7$ edges. How many $1$s does its adjacency matrix contain?'
             answer: '14'
@@ -144,15 +126,6 @@ topics:
       - id: kp1
         name: "Degree sum equals twice the edge count"
         key_prerequisites: [graphs-intro]
-        step_check:
-          step: 'Apply the Handshake Lemma'
-          question: 'Why is the degree sum equal to $2|E|$ and not to $|E|$?'
-          options:
-            - 'Each edge is counted once from every vertex of the whole graph'
-            - 'Each edge adds $1$ to the degree of each of its two ends'
-            - 'Each vertex lies on two edges, so the degree sum doubles'
-          answer: 'Each edge adds $1$ to the degree of each of its two ends'
-          why: 'An edge $uv$ raises $\deg(u)$ by $1$ and $\deg(v)$ by $1$, so the degree sum counts every edge twice.'
         exemplars:
           - problem: 'A graph has degree sequence $3, 3, 2, 2, 2$. How many edges does it have?'
             answer: '6'
@@ -195,16 +168,6 @@ topics:
           answer_contract: {"kind": "label", "options": [["yes", "it is possible", "possible"], ["no", "it is not possible", "not possible", "impossible"]]}
           answer: 'no'
           reveal: 'The handshakes would have a total count of $7 \cdot 3 = 21$, but each handshake is counted twice, so the total must be even. A graph has an even number of vertices of odd degree.'
-        step_check:
-          step: 'Since the degree sum must be even'
-          question: 'Why must the degree sum of every graph be even?'
-          options:
-            - 'The sum has one term per vertex, so it always matches the vertex count'
-            - 'Every degree is even, so a sum of degrees is even'
-            - 'A graph with an odd number of vertices cannot have any edges'
-            - 'The sum equals $2|E|$, and twice a whole number is even'
-          answer: 'The sum equals $2|E|$, and twice a whole number is even'
-          why: 'The handshake lemma gives degree sum $= 2|E|$, which is even for every graph, so a degree list with an odd sum cannot come from a graph.'
         exemplars:
           - problem: 'Is there a graph with exactly five vertices in which every vertex has degree $3$?'
             answer: 'no'
@@ -271,15 +234,6 @@ topics:
           answer_contract: {"kind": "exact"}
           answer: '2'
           reveal: 'Going $A$ to $B$ to $C$, or $A$ to $D$ to $C$, uses $2$ roads, and no single road joins $A$ and $C$. The distance between two vertices is the number of edges on a shortest path.'
-        step_check:
-          step: 'Count the number of edges in this path'
-          question: 'Why does the distance count the edges of the path and not its vertices?'
-          options:
-            - 'The first vertex is the start of the route and is never counted as a vertex'
-            - 'A path with $k$ edges visits $k$ vertices, so both counts always agree'
-            - 'The distance counts steps taken, and $k$ steps visit $k + 1$ vertices'
-          answer: 'The distance counts steps taken, and $k$ steps visit $k + 1$ vertices'
-          why: 'Each edge is one step from a vertex to a neighbor, so a path from $1$ to $3$ with vertices $1, 2, 3$ has length $2$.'
         exemplars:
           - problem: 'In the cycle $C_6$ with vertices $1, 2, \dots, 6$ in order, what is the distance between vertices $1$ and $4$?'
             answer: '3'
@@ -321,15 +275,6 @@ topics:
       - id: kp2
         name: "Connected components and edge thresholds"
         key_prerequisites: [graphs-intro]
-        step_check:
-          step: 'Vertex $\{5\}$ (no edges)'
-          question: 'Why does vertex $5$ count as a component of its own?'
-          options:
-            - 'A vertex with no edges is counted with the component of the largest label'
-            - 'No path joins it to another vertex, so no other component contains it'
-            - 'Only a vertex with a larger label than all others starts a new component'
-          answer: 'No path joins it to another vertex, so no other component contains it'
-          why: 'A component is a largest set of vertices joined by paths, and vertex $5$ has no path to $1, 2, 3, 4$, so $\{5\}$ is a component with $1$ vertex.'
         exemplars:
           - problem: 'The graph on vertices $\{1, \dots, 6\}$ has edges $\{12, 23, 45\}$. How many connected components does it have?'
             answer: '3'
@@ -404,15 +349,6 @@ topics:
       - id: kp1
         name: "Non-isomorphism via basic invariants"
         key_prerequisites: [graphs-intro, degree-handshake]
-        step_check:
-          step: 1
-          question: 'Why can two graphs with different numbers of edges not be isomorphic?'
-          options:
-            - 'An isomorphism pairs the edges one to one, so edge counts are equal'
-            - 'An isomorphism may rename the vertices, and the edges change with them'
-            - 'The edges are fixed by the vertex labels, and the two labels differ'
-          answer: 'An isomorphism pairs the edges one to one, so edge counts are equal'
-          why: 'An isomorphism sends each edge of one graph to exactly one edge of the other, so $6$ edges and $8$ edges cannot be matched.'
         exemplars:
           - problem: 'Graph $G$ has $6$ vertices and $7$ edges, and graph $H$ has $6$ vertices and $8$ edges. Are $G$ and $H$ isomorphic?'
             answer: 'no'
@@ -446,16 +382,6 @@ topics:
       - id: kp2
         name: "Exhibiting an isomorphism"
         key_prerequisites: [graphs-intro, functions-injective-surjective]
-        step_check:
-          step: 'Verify that every edge in $G$ maps to an edge in $H$'
-          question: 'Why is it not enough to match vertices that have equal degrees?'
-          options:
-            - 'Equal degrees can only be matched when the two graphs use the same labels'
-            - 'Matching the degrees already fixes the edges, and the check only repeats it'
-            - 'Matched vertices must also keep their edges, and degrees alone miss that'
-            - 'Matching degrees is only needed for vertices that have no edges at all'
-          answer: 'Matched vertices must also keep their edges, and degrees alone miss that'
-          why: 'A bijection is an isomorphism only if $uv$ is an edge exactly when $f(u)f(v)$ is an edge, so every edge must be tested, as with $12 \to ca$, $13 \to cb$, $14 \to cd$.'
         exemplars:
           - problem: '$G$ has vertices $1, 2, 3, 4$ and edges $12, 13, 14$. $H$ has vertices $a, b, c, d$ and edges $ca, cb, cd$. Let $f$ be an isomorphism from $G$ to $H$. What is $f(1)$?'
             answer: 'c'
@@ -498,15 +424,6 @@ topics:
           answer_contract: {"kind": "label", "options": [["yes", "they are isomorphic", "isomorphic"], ["no", "they are not isomorphic", "not isomorphic", "nonisomorphic"]]}
           answer: 'no'
           reveal: 'The graph $G$ is in one piece, but $H$ has two pieces, and an isomorphism keeps the number of connected components. Equal degrees do not make two graphs isomorphic.'
-        step_check:
-          step: 1
-          question: 'Why can two graphs with the same degree sequence still fail to be isomorphic?'
-          options:
-            - 'The degree sequence changes whenever the vertices are renamed'
-            - 'The degrees do not show how vertices are joined, such as one piece or two'
-            - 'A degree sequence always has the same sum, so it never separates two graphs'
-          answer: 'The degrees do not show how vertices are joined, such as one piece or two'
-          why: 'A degree sequence lists how many neighbors each vertex has, but not which vertices they are, so $C_8$ and a triangle plus a $5$-cycle have the same list and different shapes.'
         exemplars:
           - problem: 'Graph $G$ is the $8$-cycle $1-2-3-4-5-6-7-8-1$. Graph $H$ has vertices $a, b, c, d, e, f, g, h$ and edges $ab, bc, ca, de, ef, fg, gh, hd$. Both graphs have $8$ vertices, $8$ edges, and every vertex of degree $2$. Are $G$ and $H$ isomorphic?'
             answer: 'no'
@@ -571,16 +488,6 @@ topics:
       - id: kp1
         name: 'Existence criteria from degree parity'
         key_prerequisites: [walks-paths-connectivity, degree-handshake]
-        step_check:
-          step: 'Since there are four vertices with odd degrees, which is more than two'
-          question: 'Why does a graph with four vertices of odd degree have no Euler trail?'
-          options:
-            - 'An Euler trail needs every vertex to have even degree, which these lack'
-            - 'Only the two ends of a trail can have odd degree, so four is too many'
-            - 'A graph with four odd vertices has an odd number of edges in total'
-            - 'An Euler trail must start and end at the same vertex, and these cannot'
-          answer: 'Only the two ends of a trail can have odd degree, so four is too many'
-          why: 'Every vertex that is not an end of the trail is entered and left in pairs of edges, so its degree is even; the two ends are the only places for odd degree.'
         try_first:
           problem: 'Is it possible to draw a triangle with corners $A, B, C$ by tracing each side exactly once without lifting the pencil, and to finish at the corner where you started?'
           answer_contract: {"kind": "label", "options": [["yes", "it is possible", "possible"], ["no", "it is not possible", "not possible", "impossible"]]}
@@ -619,16 +526,6 @@ topics:
       - id: kp2
         name: 'Bridges of Konigsberg and route problems'
         key_prerequisites: [walks-paths-connectivity, degree-handshake]
-        step_check:
-          step: 'Since all vertices have even degree'
-          question: 'Why does the connected graph with degrees $4, 4, 2, 2$ have an Euler circuit?'
-          options:
-            - 'Every vertex has degree at least $2$, so the walk can start anywhere'
-            - 'The degrees add up to $12$, which is divisible by $4$, so a circuit exists'
-            - 'Even degree lets the walk leave every vertex it enters, so it can close up'
-            - 'The two vertices of degree $4$ already form a cycle through every edge'
-          answer: 'Even degree lets the walk leave every vertex it enters, so it can close up'
-          why: 'At each vertex the edges pair up as arrive and leave, so a walk that enters a vertex can always leave it, and the walk ends only at its start.'
         exemplars:
           - problem: 'In the old town of Konigsberg, four districts were joined by seven bridges. Three districts had $3$ bridges each and one district had $5$ bridges. Could a person cross every bridge exactly once?'
             answer: 'no'
@@ -690,16 +587,6 @@ topics:
       - id: kp1
         name: 'Finding and counting Hamilton cycles'
         key_prerequisites: [walks-paths-connectivity]
-        step_check:
-          step: 'Divide by 2 to account for cycles that are the same but go in opposite directions'
-          question: 'Why is $5! = 120$ divided by $2$ in the count of Hamilton cycles of $K_6$?'
-          options:
-            - 'Half of the $120$ orders are not cycles, because they repeat a vertex'
-            - 'Each cycle can begin at two different vertices, so it is counted twice'
-            - 'The factor $2$ appears because $K_6$ has an even number of vertices'
-            - 'Each cycle appears twice in the $120$ orders, once in each direction'
-          answer: 'Each cycle appears twice in the $120$ orders, once in each direction'
-          why: 'Fixing the start removes rotations, but a cycle and its reverse give two different orders, so each cycle is counted twice.'
         try_first:
           problem: 'Four friends sit around a round table. Two seatings are the same if one is a rotation of the other, but a seating and its mirror image are different. How many different seatings are there?'
           answer_contract: {"kind": "exact"}
@@ -750,16 +637,6 @@ topics:
       - id: kp2
         name: 'Dirac''s sufficient condition'
         key_prerequisites: [walks-paths-connectivity]
-        step_check:
-          step: 'Since both conditions are satisfied'
-          question: 'Why does $n = 10$ with minimum degree $5$ show that a Hamilton cycle must exist?'
-          options:
-            - 'Dirac''s theorem proves that all such graphs, with degrees of at least $n/2$, have one'
-            - 'Degree $5$ at every vertex gives each vertex a cycle of length $5$, and these cycles join up'
-            - 'Five edges at each of $10$ vertices make the graph complete, so it has one'
-            - 'The graph has $25$ edges, and any graph with $25$ edges has a Hamilton cycle'
-          answer: 'Dirac''s theorem proves that all such graphs, with degrees of at least $n/2$, have one'
-          why: 'The theorem is a proved statement about all graphs with these two conditions, so no search for the cycle is needed.'
         exemplars:
           - problem: 'A graph has $8$ vertices and every vertex has degree at least $4$. Must it have a Hamilton cycle?'
             answer: 'yes'
@@ -835,16 +712,6 @@ topics:
       - id: kp1
         name: 'n vertices, n-1 edges, unique paths'
         key_prerequisites: [walks-paths-connectivity]
-        step_check:
-          step: 'Apply the formula for a forest'
-          question: 'Why does a forest with $25$ vertices and $4$ components have $21$ edges and not $24$?'
-          options:
-            - 'Four edges are removed because each of the components has to lose one leaf'
-            - 'The $4$ components are joined by $4$ extra edges that are then not counted'
-            - 'Each of the $4$ trees has one edge fewer than vertices, so $4$ are missing'
-            - 'A forest has $4$ times as many vertices as edges, so $25$ is cut down by $4$'
-          answer: 'Each of the $4$ trees has one edge fewer than vertices, so $4$ are missing'
-          why: 'A tree on $m$ vertices has $m-1$ edges, so adding over all $4$ components gives $25 - 4 = 21$ edges.'
         try_first:
           problem: 'A connected graph on $5$ vertices has no cycle. How many edges does it have?'
           answer_contract: {"kind": "exact"}
@@ -887,16 +754,6 @@ topics:
       - id: kp2
         name: 'Degree constraints and leaves'
         key_prerequisites: [walks-paths-connectivity, degree-handshake]
-        step_check:
-          step: 'Since the degree sum equals $2(n-1)$'
-          question: 'Why must the degrees of a tree on $5$ vertices add up to exactly $8$?'
-          options:
-            - 'A tree on $5$ vertices always has one vertex of degree $3$ and four leaves of degree $1$'
-            - 'Every vertex of a tree has degree at most $2$, so the sum is at most $10$'
-            - 'The sum of the degrees of a tree is always $5 + 3$, the vertices plus the leaves'
-            - 'Each of the $4$ edges adds $1$ to the degree of two vertices, giving $2 \times 4$'
-          answer: 'Each of the $4$ edges adds $1$ to the degree of two vertices, giving $2 \times 4$'
-          why: 'A tree on $5$ vertices has $4$ edges, and every edge is counted at both ends, so the degree sum is $2 \times 4 = 8$.'
         exemplars:
           - problem: 'A tree has $8$ vertices. What is the sum of the degrees of all its vertices?'
             answer: '14'

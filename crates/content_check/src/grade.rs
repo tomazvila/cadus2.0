@@ -3,7 +3,7 @@
 //! The verdict comes from `cadus_core::answer::check_contract` and from
 //! nothing else.
 
-use cadus_core::answer::{AnswerContract, Outcome, check_contract};
+use cadus_core::answer::{AnswerContract, Outcome, check_contract, format_hint};
 use serde_json::{Value, json};
 
 use crate::cli::{self, Request};
@@ -39,7 +39,15 @@ fn grade_doc(request: &Request) -> Result<Value, String> {
         .as_deref()
         .ok_or("`grade` needs a learner text (`--learner`, or `learner` in the batch line)")?;
     let contract = parse_contract(&request.contract)?;
-    let (verdict, reason, notation) = fields(check_contract(&request.expected, learner, contract));
+    let (verdict, reason, notation) =
+        fields(check_contract(&request.expected, learner, contract.clone()));
+    // A wrong answer with a notation hint (a mixed number written as a product,
+    // or in another form) carries the hint in `reason` and `notation: true`.
+    let hint = (verdict == "wrong")
+        .then(|| format_hint(&request.expected, learner, &contract))
+        .flatten();
+    let notation = notation || hint.is_some();
+    let reason = hint.map(Value::from).unwrap_or_else(|| json!(reason));
     Ok(
         json!({"schema": "cadus.grade.v1", "verdict": verdict, "reason": reason,
         "notation": notation}),

@@ -14,7 +14,7 @@ pub mod lint;
 pub mod load;
 pub mod model;
 
-pub use active::{StepCheck, StepRef, TryFirst};
+pub use active::TryFirst;
 pub use arena::{
     Curriculum, CurriculumError, EncLink, EncNode, KpIdx, LoadError, TopicIdx, load_curriculum,
 };

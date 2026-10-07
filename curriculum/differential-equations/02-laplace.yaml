@@ -20,16 +20,6 @@ topics:
       - id: kp1
         name: 'The definition and convergence'
         key_prerequisites: [improper-integrals]
-        step_check:
-          step: 'The integral converges if the exponent $(4-s)$ is negative'
-          question: 'Why does the integral converge only when the exponent $4-s$ is negative?'
-          options:
-            - 'Then the integrand is negative, and a negative area is always finite'
-            - 'Then $e^{(4-s)t}$ tends to $0$ as $t$ grows, so the upper limit adds nothing'
-            - 'Then the denominator $4-s$ is nonzero, and that alone makes the integral finite'
-            - 'Then $e^{(4-s)t}$ grows slowly enough for the area to settle at a total'
-          answer: 'Then $e^{(4-s)t}$ tends to $0$ as $t$ grows, so the upper limit adds nothing'
-          why: 'A negative exponent makes $e^{(4-s)t}$ tend to $0$, so the limit at the upper bound is $0$; a positive exponent makes the integrand grow and the integral diverge.'
         try_first:
           problem: 'For $s = 2$, what value does $e^{-2b}$ approach as $b \to \infty$?'
           answer_contract: {"kind":"exact"}
@@ -72,16 +62,6 @@ topics:
       - id: kp2
         name: 'Transforms needing integration by parts'
         key_prerequisites: [improper-integrals, integration-by-parts]
-        step_check:
-          step: 'Let $u = t$ and $dv = e^{-(s+3)t} dt$'
-          question: 'Why is $u = t$ the useful choice?'
-          options:
-            - 'The first factor of a product is always the one taken as $u$'
-            - 'The exponential cannot be integrated, so $t$ must take its place as $u$'
-            - 'Differentiating $t$ gives $1$, so the new integral has no factor $t$'
-            - 'Taking $u=t$ makes the boundary term equal $1$ at both limits'
-          answer: 'Differentiating $t$ gives $1$, so the new integral has no factor $t$'
-          why: 'Since $du = dt$, the remaining integral contains only the exponential, which is easy to integrate; the exponential is also easy to integrate for $dv$.'
         exemplars:
           - problem: 'Use integration by parts to find $\mathcal{L}\{t\}$.'
             answer: '1/s^2'
@@ -155,16 +135,6 @@ topics:
       - id: kp1
         name: 'The standard table'
         key_prerequisites: [laplace-transform-definition]
-        step_check:
-          step: 'Substitute $n = 2$ into the formula'
-          question: 'Why does the answer have $s^3$ in the denominator when $n = 2$?'
-          options:
-            - 'The table entry has $s^{n+1}$, one power of $s$ more than the power of $t$'
-            - 'The exponent of $s$ equals $n!$ plus one, and here $2!+1=3$ is the exponent'
-            - 'The exponent of $s$ stays the same as the power of $t$ in the original function'
-            - 'The $s$ is cubed because $e^{-st}$ is integrated once for each unit of the power'
-          answer: 'The table entry has $s^{n+1}$, one power of $s$ more than the power of $t$'
-          why: 'Each integration by parts divides by $s$ once more, so $t^n$ ends with $n+1$ powers of $s$ below; for $t^2$ that is $s^3$.'
         exemplars:
           - problem: 'Find $\mathcal{L}\{t^3\}$.'
             answer: '6/s^4'
@@ -202,16 +172,6 @@ topics:
       - id: kp2
         name: 'Linearity'
         key_prerequisites: [laplace-transform-definition]
-        step_check:
-          step: 'Multiply by 2'
-          question: 'Why is the factor $2$ simply multiplied after $\mathcal{L}\{t^3\}$ is found?'
-          options:
-            - 'The transform of a product is always the product of the two transforms'
-            - 'The factor $2$ changes the power of $t$, so $n$ becomes $6$'
-            - 'The factor $2$ is added to the exponent of $s$ in the denominator'
-            - 'A constant comes out of the integral, so the result is scaled by it'
-          answer: 'A constant comes out of the integral, so the result is scaled by it'
-          why: 'The transform is an integral, and a constant factor can be taken outside an integral, so $\mathcal{L}\{2f\} = 2\mathcal{L}\{f\}$.'
         try_first:
           problem: 'Suppose $\mathcal{L}\{f\}$ has the value $3$ at $s = 2$ and $\mathcal{L}\{g\}$ has the value $5$ there. What is the value of $\mathcal{L}\{f+g\}$ at $s = 2$?'
           answer_contract: {"kind":"exact"}
@@ -284,16 +244,6 @@ topics:
       - id: kp1
         name: 'The first shifting theorem'
         key_prerequisites: [laplace-table-linearity]
-        step_check:
-          step: 'Replace $s$ with $s - 4$ in $F(s)$'
-          question: 'Why is $s$ replaced by $s-4$ and not by $s+4$?'
-          options:
-            - 'The number $4$ changes sign whenever it moves into $F(s)$'
-            - 'Growth of $e^{4t}$ must be offset by adding $4$ to $s$'
-            - 'The factor $e^{4t}$ joins $e^{-st}$ to make $e^{-(s-4)t}$'
-            - 'The frequency $2$ of the sine fixes the sign of the shift'
-          answer: 'The factor $e^{4t}$ joins $e^{-st}$ to make $e^{-(s-4)t}$'
-          why: 'In the integral, $e^{-st}e^{4t} = e^{-(s-4)t}$, so the transform of $f$ is simply evaluated at $s-4$ instead of $s$.'
         try_first:
           problem: 'Combine the factors $e^{-st}$ and $e^{3t}$ as $e^{-(s-c)t}$. What is $c$?'
           answer_contract: {"kind":"exact"}
@@ -340,16 +290,6 @@ topics:
       - id: kp2
         name: 'Mixed transform fluency'
         key_prerequisites: [laplace-table-linearity]
-        step_check:
-          step: 'Apply the $s$-shift to the exponential term'
-          question: 'Why does the factor $e^{-2t}$ turn $\frac{3}{s}$ into $\frac{3}{s+2}$?'
-          options:
-            - 'The factor $e^{-2t}$ replaces $s$ by $s-2$ in the transform of $3$'
-            - 'The factor $e^{-2t}$ replaces $s$ by $s+2$ in the transform of $3$'
-            - 'The factor $e^{-2t}$ is multiplied into the numerator as $3\cdot(-2)$'
-            - 'The factor $e^{-2t}$ cancels the $s$, so only the constant $3$ stays'
-          answer: 'The factor $e^{-2t}$ replaces $s$ by $s+2$ in the transform of $3$'
-          why: 'Since $e^{-st}e^{-2t} = e^{-(s+2)t}$, every $s$ in the transform of $3$ becomes $s+2$.'
         exemplars:
           - problem: 'Find $\mathcal{L}\{5e^{2t} - 3\cos 4t\}$.'
             answer: '5/(s-2) - 3s/(s^2+16)'
@@ -414,16 +354,6 @@ topics:
       - id: kp1
         name: 'Direct table inversions'
         key_prerequisites: [laplace-table-linearity]
-        step_check:
-          step: 'Adjust for the scaling factor'
-          question: 'Why is $\frac{3}{s^4}$ rewritten as $\frac{1}{2}\cdot\frac{6}{s^4}$?'
-          options:
-            - 'The factor $\frac12$ halves the exponent of $s$ so it fits the table'
-            - 'The numerator $3$ must always be doubled before the table can be used'
-            - 'The $4$ in $s^4$ must be turned into $6$ to match the table'
-            - 'The $t^3$ entry needs $3! = 6$, and $\frac12\cdot 6 = 3$ restores it'
-          answer: 'The $t^3$ entry needs $3! = 6$, and $\frac12\cdot 6 = 3$ restores it'
-          why: 'The table needs the numerator $6 = 3!$, and multiplying by $\frac12$ gives back the numerator $3$ of the given fraction, so the inverse is $\frac12 t^3$.'
         exemplars:
           - problem: 'Find $\mathcal{L}^{-1}\left\{\dfrac{1}{s-5}\right\}$.'
             answer: 'e^(5t)'
@@ -461,16 +391,6 @@ topics:
       - id: kp2
         name: 'Fixing constants and splitting terms'
         key_prerequisites: [laplace-table-linearity]
-        step_check:
-          step: 'rewrite the term as $\frac{5}{4} \cdot \frac{4}{s^2 + 16}$'
-          question: 'Why is the factor $\frac54$ written in front?'
-          options:
-            - 'The numerator $5$ must be replaced by $4$ to match the table entry'
-            - 'The factor $\frac54$ is the frequency of the sine and appears inside it'
-            - 'The sine entry has numerator $4$; $\frac54\cdot 4 = 5$ keeps the value'
-            - 'The denominator $16$ must be divided by $4$ before the table is used'
-          answer: 'The sine entry has numerator $4$; $\frac54\cdot 4 = 5$ keeps the value'
-          why: 'The table entry has numerator $4$; the factor $\frac54$ makes the product equal the original numerator $5$, and it comes out of the inverse transform as a constant.'
         exemplars:
           - problem: 'Find $\mathcal{L}^{-1}\left\{\dfrac{4}{s^2+9}\right\}$.'
             answer: '(4/3)sin(3t)'
@@ -538,15 +458,6 @@ topics:
       - id: kp1
         name: Distinct linear factors
         key_prerequisites: [inverse-laplace-table, partial-fractions-integration]
-        step_check:
-          step: 'Multiply both sides by $(s - 3)(s + 1)$ to clear denominators'
-          question: 'Why do we multiply both sides by $(s - 3)(s + 1)$ at this step?'
-          options:
-            - 'It turns each term into a table entry that the inverse transform can then invert at once'
-            - 'It removes the fractions, so $A$ and $B$ follow from one polynomial identity'
-            - 'It makes the left side equal to $1$, so the constants $A$ and $B$ both cancel out of the sum'
-          answer: 'It removes the fractions, so $A$ and $B$ follow from one polynomial identity'
-          why: 'After clearing denominators we have $5 = A(s+1) + B(s-3)$, a polynomial identity that holds for every $s$. Choosing $s = 3$ and $s = -1$ then isolates $A$ and $B$.'
         exemplars:
           - problem: 'Find $\mathcal{L}^{-1}\left\{\dfrac{1}{s(s + 1)}\right\}$.'
             answer: '1 - e^(-t)'
@@ -592,15 +503,6 @@ topics:
       - id: kp2
         name: Completing the square and repeated factors
         key_prerequisites: [laplace-transform-basics, partial-fractions-integration]
-        step_check:
-          step: 'Rewrite the function: $\dfrac{1}{(s + 2)^2 + 9} = \dfrac{1}{3} \cdot \dfrac{3}{(s + 2)^2 + 9}$'
-          question: 'Why does this step write the fraction as one third times a fraction with $3$ on top?'
-          options:
-            - 'The factor $\frac13$ is what completes the square in the denominator of the fraction'
-            - 'Partial fractions always split a numerator into a product of two separate parts'
-            - 'The sine entry has $b = 3$ on top, so we supply that $3$ and divide by it'
-          answer: 'The sine entry has $b = 3$ on top, so we supply that $3$ and divide by it'
-          why: 'The entry $\frac{b}{(s+a)^2+b^2}$ needs $b = 3$ in the numerator. Multiplying by $3$ and by $\frac13$ changes nothing, and the $\frac13$ stays outside as a constant factor.'
         try_first:
           problem: 'What is the smallest value that $s^2 + 4s + 13$ takes for real $s$?'
           answer_contract: {"kind": "exact"}
@@ -678,15 +580,6 @@ topics:
       - id: kp1
         name: The derivative formulas
         key_prerequisites: [laplace-transform-basics]
-        step_check:
-          step: 'Identify the formula for the Laplace transform of the second derivative'
-          question: 'Why does the formula for $\mathcal{L}\{y''''\}$ contain the initial values $y(0)$ and $y''(0)$?'
-          options:
-            - 'Each integration brings in an arbitrary constant, and $y(0)$ and $y''(0)$ are those constants'
-            - 'Integration by parts, used twice, leaves boundary terms at $t = 0$ in the result'
-            - 'The integral runs to infinity, so the formula needs the limits of $y$ and $y''$ at $t \to \infty$'
-          answer: 'Integration by parts, used twice, leaves boundary terms at $t = 0$ in the result'
-          why: 'The transform of $y''''$ is an integral of $y''''e^{-st}$. Integrating by parts twice produces $s^2Y$ and the boundary terms $-s\,y(0) - y''(0)$ at $t = 0$.'
         try_first:
           problem: 'Let $y = e^{3t}$, so $y\'' = 3e^{3t}$. What is $\mathcal{L}\{y\''\}$ when $s = 5$?'
           answer_contract: {"kind": "exact"}
@@ -745,15 +638,6 @@ topics:
       - id: kp2
         name: From ODE to algebra
         key_prerequisites: [laplace-transform-basics]
-        step_check:
-          step: '$(s^2Y - s y(0) - y''(0)) - 3(sY - y(0)) + 2Y = 0$'
-          question: 'Why is the middle term written as $-3(sY - y(0))$ and not just $-3sY$?'
-          options:
-            - 'Each derivative has its own initial value, and $-3$ multiplies both parts'
-            - 'The factor $-3$ turns $Y$ into $-3Y$ and leaves the $s$ out of that term'
-            - 'The initial value is subtracted once only, from the highest derivative in it'
-          answer: 'Each derivative has its own initial value, and $-3$ multiplies both parts'
-          why: 'The term is $-3y''$, and $\mathcal{L}\{y''\} = sY - y(0)$. The constant $-3$ multiplies both parts, so $-3y(0)$ appears too.'
         exemplars:
           - problem: 'Transform the initial value problem $y'' + 2y = 0$, $y(0) = 3$, and solve for $Y(s)$.'
             answer: '3/(s + 2)'
@@ -833,15 +717,6 @@ topics:
       - id: kp1
         name: Homogeneous first-order IVPs
         key_prerequisites: [laplace-of-derivatives]
-        step_check:
-          step: 'Using the Laplace transform of the derivative and the initial condition $y(0) = 3$'
-          question: 'Why does the equation $sY(s) - 3 + 5Y(s) = 0$ contain the number $-3$?'
-          options:
-            - 'The number $3$ comes from the coefficient $5$ after the whole equation is divided by $s$'
-            - 'The derivative rule subtracts the initial value, and here $y(0) = 3$'
-            - 'Every transformed equation starts with $-3$ to balance the term $5Y(s)$ on its left side'
-          answer: 'The derivative rule subtracts the initial value, and here $y(0) = 3$'
-          why: 'The rule is $\mathcal{L}\{y''\} = sY(s) - y(0)$. With $y(0) = 3$ the transform of $y''$ is $sY(s) - 3$, and that is where $-3$ comes from.'
         exemplars:
           - problem: 'Solve $y'' + 3y = 0$, $y(0) = 2$ using the Laplace transform.'
             answer: '2e^(-3t)'
@@ -891,15 +766,6 @@ topics:
       - id: kp2
         name: First-order IVPs with forcing
         key_prerequisites: [laplace-of-derivatives, inverse-laplace-partial-fractions]
-        step_check:
-          step: 'Decompose the second term using partial fractions'
-          question: 'Why is the second term decomposed into partial fractions at this step?'
-          options:
-            - 'The fraction $\frac{5}{(s+3)(s-4)}$ has two factors, so no table entry inverts it whole'
-            - 'Partial fractions are needed only to make the initial condition $y(0) = 2$ disappear from it'
-            - 'The table inverts only fractions with a constant numerator, so the factor $5$ must be removed first'
-          answer: 'The fraction $\frac{5}{(s+3)(s-4)}$ has two factors, so no table entry inverts it whole'
-          why: 'The table inverts $\frac{1}{s-a}$, one factor at a time. Splitting $\frac{5}{(s+3)(s-4)}$ into $\frac{A}{s+3} + \frac{B}{s-4}$ gives terms that match the table.'
         exemplars:
           - problem: 'Solve $y'' - y = e^{2t}$, $y(0) = 0$ using the Laplace transform.'
             answer: 'e^(2t) - e^t'
@@ -979,15 +845,6 @@ topics:
       - id: kp1
         name: Second-order IVPs with real roots
         key_prerequisites: [laplace-first-order-ivp, inverse-laplace-partial-fractions]
-        step_check:
-          step: 'Factor the denominator: $s^2 - 4s + 3 = (s - 1)(s - 3)$'
-          question: 'Why do we factor the denominator $s^2 - 4s + 3$ at this step?'
-          options:
-            - 'Factoring is needed to cancel the numerator $2s - 9$ against the denominator'
-            - 'The factors $s - 1$ and $s - 3$ give partial fractions that match the table'
-            - 'The factors show which initial conditions $y(0)$ and $y''(0)$ are allowed here'
-          answer: 'The factors $s - 1$ and $s - 3$ give partial fractions that match the table'
-          why: 'The table inverts $\frac{1}{s-a}$. The factors $(s-1)(s-3)$ let us write $Y(s) = \frac{A}{s-1} + \frac{B}{s-3}$, and each term inverts at once.'
         exemplars:
           - problem: 'Solve $y'''' - y'' - 2y = 0$, $y(0) = 1$, $y''(0) = 0$ using the Laplace transform.'
             answer: 'e^(2t)/3 + 2e^(-t)/3'
@@ -1029,15 +886,6 @@ topics:
       - id: kp2
         name: Second-order IVPs with complex roots
         key_prerequisites: [laplace-first-order-ivp]
-        step_check:
-          step: 'Split the numerator to match the shift theorem'
-          question: 'Why is the numerator $2s + 5$ split into $2(s + 2)$ plus $1$?'
-          options:
-            - 'The part $s + 2$ matches the shifted cosine and the constant matches the shifted sine'
-            - 'The split makes the denominator $(s+2)^2 + 9$ factor into two real linear factors here'
-            - 'The split removes the initial conditions $y(0)$ and $y''(0)$ from the final answer there'
-          answer: 'The part $s + 2$ matches the shifted cosine and the constant matches the shifted sine'
-          why: 'With denominator $(s+2)^2 + 9$, the cosine entry needs $s + 2$ on top and the sine entry needs a constant. So $2s + 5 = 2(s+2) + 1$ gives one term of each kind.'
         exemplars:
           - problem: 'Solve $y'''' + y = 0$, $y(0) = 0$, $y''(0) = 1$ using the Laplace transform.'
             answer: 'sin(t)'
@@ -1083,15 +931,6 @@ topics:
       - id: kp3
         name: Constant forcing
         key_prerequisites: [laplace-first-order-ivp, inverse-laplace-partial-fractions]
-        step_check:
-          step: 'Solve for $A$, $B$, and $C$ using the cover-up method'
-          question: 'Why does the cover-up method find $A$ by setting $s = 0$?'
-          options:
-            - 'The value $s = 0$ is the initial time, so it gives the starting value here'
-            - 'Setting $s = 0$ makes every denominator equal to $1$ in the whole sum'
-            - 'At $s = 0$ the terms with $B$ and $C$ vanish, leaving only $A$ to find'
-          answer: 'At $s = 0$ the terms with $B$ and $C$ vanish, leaving only $A$ to find'
-          why: 'After clearing denominators, the terms with $B$ and $C$ both contain the factor $s$. Setting $s = 0$ makes them zero, so one constant remains.'
         exemplars:
           - problem: 'Solve $y'''' + 4y = 8$, $y(0) = 0$, $y''(0) = 0$ using the Laplace transform.'
             answer: '2 - 2cos(2t)'
@@ -1165,16 +1004,6 @@ topics:
       - id: kp1
         name: Rewriting piecewise functions with unit steps
         key_prerequisites: [laplace-transform-basics]
-        step_check:
-          step: 'This can be seen as adding $2(t - 5)$ to the constant $4$'
-          question: 'Why is the term $2(t-5)$ multiplied by $u_5(t)$ while the constant $4$ is not?'
-          options:
-            - 'Constants never need a step, while every linear term always needs a step'
-            - 'The constant $4$ holds always, but $2(t-5)$ must act only from $t=5$'
-            - 'The step makes the whole function equal $0$ before $t=5$, as the ramp does'
-            - 'A step is always attached to the term with the larger coefficient'
-          answer: 'The constant $4$ holds always, but $2(t-5)$ must act only from $t=5$'
-          why: 'The step $u_5(t)$ is $0$ before $t=5$ and $1$ after, so it switches the new term on at the breakpoint; the starting constant $4$ is present for all $t$.'
         exemplars:
           - problem: 'A signal is $0$ for $t<4$ and $6$ for $t\ge4$, so it can be written $f(t)=A\,u_c(t)$. At what time $c$ does the signal switch on?'
             answer: '4'
@@ -1220,16 +1049,6 @@ topics:
       - id: kp2
         name: The second shifting theorem
         key_prerequisites: [laplace-transform-basics]
-        step_check:
-          step: 'Multiply $F(s)$ by $e^{-cs}$ where $c = 4$'
-          question: 'Why does the delay of $4$ multiply the transform by $e^{-4s}$, and not replace $s$ by $s-4$?'
-          options:
-            - 'Replacing $s$ by $s-4$ is used only when the function $f(t)$ is a polynomial in $t$'
-            - 'The factor $e^{-4s}$ appears because $t^2$ has a factor $4$ in its transform'
-            - 'Delays shrink the transform, so a factor below $1$ is always the right choice'
-            - 'A delay of $4$ in $t$ gives $e^{-4s}$; the shift $s-4$ multiplies $f$ by $e^{4t}$'
-          answer: 'A delay of $4$ in $t$ gives $e^{-4s}$; the shift $s-4$ multiplies $f$ by $e^{4t}$'
-          why: 'Substituting $t-4$ in $f$ moves the graph right and gives $\int_4^\infty e^{-st}f(t-4)\,dt=e^{-4s}F(s)$; the shift $s\to s-4$ belongs to multiplying $f$ by $e^{4t}$.'
         exemplars:
           - problem: 'Find the Laplace transform of the unit step $u_4(t)$.'
             answer: 'e^(-4s)/s'
@@ -1271,16 +1090,6 @@ topics:
       - id: kp3
         name: Inverting exponentials
         key_prerequisites: [inverse-laplace-table]
-        step_check:
-          step: 'Multiply by $u_3(t)$ and replace $t$ with $(t - 3)$ in $\sin t$'
-          question: 'Why must $t$ be replaced by $t-3$ in $\sin t$, rather than only multiplying by $u_3(t)$?'
-          options:
-            - 'The delayed sine must start its cycle at $t=3$, where $\sin(t-3)=0$'
-            - 'Multiplying by $u_3(t)$ alone would change the frequency of the sine wave'
-            - 'The factor $e^{-3s}$ is only a constant and so it cannot move the sine'
-            - 'Replacing $t$ by $t-3$ makes the sine larger for every $t\ge3$'
-          answer: 'The delayed sine must start its cycle at $t=3$, where $\sin(t-3)=0$'
-          why: 'The factor $e^{-3s}$ means a delay of $3$, so the whole shape of $\sin t$ is moved to start at $t=3$; with $u_3(t)\sin t$ the sine would be cut off mid-cycle.'
         exemplars:
           - problem: 'Let $g(t)$ be the inverse Laplace transform of $\dfrac{e^{-3s}}{s^2}$. Find $g(5)$.'
             answer: '2'
@@ -1349,16 +1158,6 @@ topics:
       - id: kp1
         name: Computing convolutions
         key_prerequisites: [definite-integrals-ftc]
-        step_check:
-          step: 'Factor out $e^{3t}$'
-          question: 'Why can $e^{3t}$ be moved in front of the integral?'
-          options:
-            - 'It equals $1$ at $u=0$, which is the lower limit of the integral'
-            - 'Exponentials can always be moved outside of every integral sign'
-            - 'It has no $u$ in it, so inside the integral it is a constant'
-            - 'It is the larger of the two factors inside the integrand here'
-          answer: 'It has no $u$ in it, so inside the integral it is a constant'
-          why: 'The integral is taken over $u$ while $t$ is fixed, so $e^{3t}$ is a constant factor; $e^{-3u}$ depends on $u$ and has to stay inside.'
         exemplars:
           - problem: 'Compute the convolution $(1*t)(t)$.'
             answer: 't^2/2'
@@ -1400,16 +1199,6 @@ topics:
       - id: kp2
         name: The convolution theorem
         key_prerequisites: [inverse-laplace-partial-fractions]
-        step_check:
-          step: 'Identify the Laplace transforms of the individual functions'
-          question: 'Why does the solution start by transforming $e^{2t}$ and $\sin t$ separately?'
-          options:
-            - 'A convolution transforms into the sum of the two transforms'
-            - 'A convolution transforms into the product of the two transforms'
-            - 'A convolution cannot be integrated without using a table of transforms'
-            - 'A convolution transforms into the convolution of the two transforms'
-          answer: 'A convolution transforms into the product of the two transforms'
-          why: 'The convolution theorem says $\mathcal{L}\{f*g\}=F(s)G(s)$, so only the two separate transforms are needed and no integral is evaluated.'
         exemplars:
           - problem: 'Use the convolution theorem to find $\mathcal{L}\{1*t\}$.'
             answer: '1/s^3'
@@ -1479,16 +1268,6 @@ topics:
       - id: kp1
         name: The delta function and the sifting property
         key_prerequisites: [unit-step-piecewise-forcing]
-        step_check:
-          step: 'Check if $$c = 4$$ is within the integration interval'
-          question: 'Why must the solution check that $c=4$ lies inside the interval $[0,\infty)$?'
-          options:
-            - 'The delta function is defined only for positive values of $c$ in the integral'
-            - 'The sine function is not defined for values outside the interval of integration'
-            - 'The integral equals the length of the interval whenever $c$ is inside it'
-            - 'The delta reads off $f(c)$ only if $c$ is inside; else the integral is $0$'
-          answer: 'The delta reads off $f(c)$ only if $c$ is inside; else the integral is $0$'
-          why: 'The delta function is zero away from $t=c$, so the integral is $f(c)$ when $c$ is in the interval and $0$ when it is not.'
         try_first:
           problem: 'The delta function $\delta(t-3)$ is zero except at $t=3$, where it carries total area $1$. What value would you expect for $\int_0^{10}\delta(t-3)\,t\,dt$?'
           answer_contract: {"kind":"exact"}
@@ -1539,16 +1318,6 @@ topics:
       - id: kp2
         name: Impulse-forced initial value problems
         key_prerequisites: [laplace-ivp, unit-step-piecewise-forcing]
-        step_check:
-          step: 'Invert the Laplace transform using the second shifting theorem'
-          question: 'Why is the second shifting theorem needed to invert $e^{-2s}\left(\frac{1}{s+1}-\frac{1}{s+2}\right)$?'
-          options:
-            - 'The partial fractions have no inverse in the table of transforms here'
-            - 'The initial conditions are not zero, so a shift in $t$ is needed'
-            - 'The factor $e^{-2s}$ delays the response, so $t$ becomes $t-2$'
-            - 'The delta function must be integrated once before it can be inverted'
-          answer: 'The factor $e^{-2s}$ delays the response, so $t$ becomes $t-2$'
-          why: 'The factor $e^{-2s}$ means the impulse arrives at $t=2$, so the response starts then and equals the response to $\delta(t)$ with $t$ replaced by $t-2$.'
         exemplars:
           - problem: 'The system $y''+2y=\delta(t-1)$ has $y(0)=0$. Find $y(2)$.'
             answer: 'e^(-2)'
@@ -1590,16 +1359,6 @@ topics:
       - id: kp3
         name: Impulse response and the transfer function
         key_prerequisites: [laplace-ivp, laplace-convolution]
-        step_check:
-          step: 'Take the Laplace transform of the differential equation with $f(t) = \delta(t)$'
-          question: 'Why does the right-hand side become $1$ after the transform?'
-          options:
-            - 'The initial conditions are zero, which leaves the number $1$'
-            - 'By the sifting property $\mathcal{L}\{\delta(t)\}=e^{0}=1$'
-            - 'Every function $f(t)$ has the transform $1$ when taken at rest'
-            - 'The delta function equals $1$ at every time $t$ in the interval'
-          answer: 'By the sifting property $\mathcal{L}\{\delta(t)\}=e^{0}=1$'
-          why: 'The sifting property gives $\int_0^\infty e^{-st}\delta(t)\,dt=e^{0}=1$, so $Y(s)$ is the transfer function itself.'
         exemplars:
           - problem: 'Find the impulse response $h(t)$ of the system $y''''+5y''+6y=f(t)$, that is, the solution for $f=\delta(t)$ from rest.'
             answer: 'e^(-2t) - e^(-3t)'

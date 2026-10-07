@@ -23,16 +23,6 @@ topics:
       - id: kp1
         name: "Conjugacy class sizes via centralizers"
         key_prerequisites: [orbit-stabilizer-theorem, subgroups-subgroup-tests]
-        step_check:
-          step: 'Use the formula $|\text{class}| = [G : C(x)]$ to find the size of the conjugacy class'
-          question: 'Why does dividing $|G|$ by $|C(x)|$ give the number of conjugates of $x$?'
-          options:
-            - 'Each conjugate of $x$ has its own copy of $C(x)$, and these copies fill all of $G$'
-            - 'The centralizer $C(x)$ is the set of conjugates of $x$, so we divide to count them'
-            - 'Conjugating by $g$ or $h$ gives one result when they share a coset of $C(x)$'
-            - 'Dividing by $|C(x)|$ removes the identity and leaves only the nontrivial conjugates'
-          answer: 'Conjugating by $g$ or $h$ gives one result when they share a coset of $C(x)$'
-          why: 'The conjugates of $x$ correspond to the cosets of $C(x)$, so their number is the index $[G : C(x)] = |G|/|C(x)|$.'
         try_first:
           problem: 'A group of order $12$ has an element with exactly $4$ conjugates. How many elements of the group commute with it?'
           answer_contract: {"kind":"exact"}
@@ -83,16 +73,6 @@ topics:
       - id: kp2
         name: "Writing and verifying the class equation"
         key_prerequisites: [orbit-stabilizer-theorem, lagranges-theorem]
-        step_check:
-          step: '$\{e\}$ and $\{-e\}$ are singletons, so their sizes are 1'
-          question: 'Why does a class of size $1$ count toward $|Z(Q_8)|$ and not toward the sum over the nontrivial classes?'
-          options:
-            - 'A class of size $1$ means the element commutes with everything, so it is central'
-            - 'A class of size $1$ is too small to be a conjugacy class, so it is left out of the sum'
-            - 'The sum runs over the classes with an even number of elements, and $1$ is odd'
-            - 'The identity is the only element of its class, and the sum skips the identity only'
-          answer: 'A class of size $1$ means the element commutes with everything, so it is central'
-          why: 'A singleton class $\{x\}$ means $gxg^{-1} = x$ for all $g$, so $x$ lies in the center. Only the larger classes go into the sum.'
         exemplars:
           - problem: 'The conjugacy classes of a group $G$ of order $8$ have sizes $1, 1, 2, 2, 2$. How many elements does the center of $G$ have?'
             answer: '2'
@@ -130,16 +110,6 @@ topics:
       - id: kp3
         name: "p-groups have nontrivial center"
         key_prerequisites: [orbit-stabilizer-theorem, lagranges-theorem]
-        step_check:
-          step: 'so each $[G : C(x_i)]$ is a positive power of $p$'
-          question: 'Why is each nontrivial class size a positive power of $p$?'
-          options:
-            - 'The class sizes add up to $p^3$, so every single class size must equal $p^3$ itself'
-            - 'The class size is at least $p$ because every nontrivial class contains a full copy of $\langle x \rangle$'
-            - 'The class size equals $|G|/|Z(G)|$, and this quotient is always a power of $p$'
-            - 'It divides $p^3$ so it is a power of $p$, and it is not $1$ because the class is nontrivial'
-          answer: 'It divides $p^3$ so it is a power of $p$, and it is not $1$ because the class is nontrivial'
-          why: 'The divisors of $p^3$ are $1, p, p^2, p^3$. A nontrivial class has more than one element, so its size is one of $p, p^2, p^3$.'
         try_first:
           problem: 'Every conjugacy class of a group of order $343$ has size $1$ or a multiple of $7$. What is the least number of elements the center can have?'
           answer_contract: {"kind":"exact"}
@@ -219,16 +189,6 @@ topics:
       - id: kp1
         name: "Statement and scope"
         key_prerequisites: [order-of-an-element, lagranges-theorem]
-        step_check:
-          step: 'Cauchy''s theorem applies to each prime divisor of $|G|$'
-          question: 'Why does the list of guaranteed element orders contain primes only?'
-          options:
-            - 'Composite numbers never occur as element orders in a finite group'
-            - 'The theorem gives an element of order $p$ only when a prime $p$ divides $|G|$'
-            - 'Elements of composite order exist but cannot be found without more information'
-            - 'Only primes divide $|G|$, because $|G|$ has no composite divisors'
-          answer: 'The theorem gives an element of order $p$ only when a prime $p$ divides $|G|$'
-          why: 'Lagrange says orders divide $|G|$. Cauchy adds that for each prime $p$ dividing $|G|$ an element of order exactly $p$ exists, and it says nothing about composite orders.'
         exemplars:
           - problem: 'A group has order $42$. For which element orders does Cauchy''s theorem guarantee an element of that order?'
             answer: '2, 3, 7'
@@ -266,16 +226,6 @@ topics:
       - id: kp2
         name: "First applications"
         key_prerequisites: [class-equation, order-of-an-element]
-        step_check:
-          step: 'Since $|g| = p$, the subgroup $\langle g \rangle$ has exactly $p$ distinct elements'
-          question: 'Why does $\langle g \rangle$ have exactly $p$ elements?'
-          options:
-            - 'It contains $g$ and the identity, and Lagrange says a subgroup of a group of order $p$ has $p$ elements'
-            - 'Each of the $p$ prime factors of $|G|$ adds one element to the subgroup'
-            - 'The powers $g, g^2, \dots$ never repeat, so the subgroup is infinite unless it is cut off by $|G|$'
-            - 'The powers $g, g^2, \dots, g^p = e$ are distinct, and after $g^p$ the list repeats'
-          answer: 'The powers $g, g^2, \dots, g^p = e$ are distinct, and after $g^p$ the list repeats'
-          why: 'The order of $g$ is the least $k$ with $g^k = e$. The powers $g^1, \dots, g^p$ are distinct, and $g^{p+1} = g$ starts the list over.'
         exemplars:
           - problem: 'A group $G$ has order $60$, and by Cauchy''s theorem it has a subgroup $H$ of order $5$. What is the index $[G : H]$?'
             answer: '12'
@@ -317,16 +267,6 @@ topics:
       - id: kp3
         name: "The counting proof (McKay's argument)"
         key_prerequisites: [class-equation, group-actions]
-        step_check:
-          step: 'The product condition $y_1 y_2 \cdots y_p = e$ uniquely determines $y_p$'
-          question: 'Why is there only one choice of $y_p$ once $y_1, \dots, y_{p-1}$ are chosen?'
-          options:
-            - 'The last entry of a tuple must equal the first entry, so it is chosen already'
-            - 'Every group has one special element that makes any product equal the identity'
-            - 'The condition gives $y_p = (y_1 \cdots y_{p-1})^{-1}$, and an inverse is unique'
-            - 'The entry $y_p$ must be the identity, because all the other entries come before it'
-          answer: 'The condition gives $y_p = (y_1 \cdots y_{p-1})^{-1}$, and an inverse is unique'
-          why: 'From $y_1 \cdots y_{p-1} y_p = e$ we get $y_p = (y_1 \cdots y_{p-1})^{-1}$. An element has exactly one inverse, so $y_p$ is forced.'
         try_first:
           problem: 'How many triples $(a, b, c)$ with $a, b, c \in \mathbb{Z}_{10}$ satisfy $a + b + c = 0$ in $\mathbb{Z}_{10}$?'
           answer_contract: {"kind":"exact"}
@@ -399,16 +339,6 @@ topics:
       - id: kp1
         name: "Definition and first examples"
         key_prerequisites: [normal-subgroups, lagranges-theorem]
-        step_check:
-          step: 'Since $\mathbb{Z}_4$ is abelian, every subgroup is normal'
-          question: 'Why does being abelian make the subgroup $\{0, 2\}$ normal in $\mathbb{Z}_4$?'
-          options:
-            - 'A subgroup of order $2$ is always normal, whether or not the group is abelian'
-            - 'Abelian groups have no proper subgroups, so $\{0, 2\}$ is normal by default'
-            - 'The subgroup $\{0, 2\}$ contains the identity, and every such subgroup is normal'
-            - 'Conjugating $h$ by $g$ gives $ghg^{-1} = h$ because $g$ and $h$ commute'
-          answer: 'Conjugating $h$ by $g$ gives $ghg^{-1} = h$ because $g$ and $h$ commute'
-          why: 'In an abelian group $ghg^{-1} = hgg^{-1} = h$, so conjugation moves nothing and every subgroup equals each of its conjugates.'
         exemplars:
           - problem: 'How many subgroups of $\mathbb{Z}_{13}$ are neither trivial nor the whole group?'
             answer: '0'
@@ -458,16 +388,6 @@ topics:
       - id: kp2
         name: "The abelian simple groups are exactly Z_p"
         key_prerequisites: [normal-subgroups, consequences-of-lagrange]
-        step_check:
-          step: 'so it is enough to exhibit a single proper nontrivial subgroup'
-          question: 'Why is one proper nontrivial subgroup enough to show that $\mathbb{Z}_{15}$ is not simple?'
-          options:
-            - 'A group is simple when it has at most one proper subgroup of each order'
-            - 'Subgroups of abelian groups are normal, so it is a proper nontrivial normal one'
-            - 'Every group of composite order has exactly one proper nontrivial subgroup'
-            - 'A proper subgroup of an abelian group is cyclic, and all cyclic groups are simple'
-          answer: 'Subgroups of abelian groups are normal, so it is a proper nontrivial normal one'
-          why: 'In an abelian group every subgroup is normal. A proper nontrivial normal subgroup is exactly what the definition of simple forbids.'
         exemplars:
           - problem: 'Let $g$ generate a cyclic group of order $15$. What is the order of $g^5$?'
             answer: '3'
@@ -513,16 +433,6 @@ topics:
       - id: kp3
         name: "Refuting simplicity by exhibiting a normal subgroup"
         key_prerequisites: [normal-subgroups, lagranges-theorem]
-        step_check:
-          step: 'Since $[S_3 : A_3] = 2$, $A_3$ is normal in $S_3$'
-          question: 'Why is a subgroup of index $2$ always normal?'
-          options:
-            - 'The left cosets are $H$ and the rest, and so are the right ones, so $gH = Hg$'
-            - 'A subgroup of index $2$ is always abelian, and every abelian subgroup is normal'
-            - 'Both cosets have $|H|$ elements, and a subgroup whose cosets have equal size is normal'
-            - 'By Lagrange its order is $|G|/2$, so it is cyclic, and every cyclic subgroup is normal'
-          answer: 'The left cosets are $H$ and the rest, and so are the right ones, so $gH = Hg$'
-          why: 'With index $2$ there are only two left cosets and two right cosets. Each has $H$ as one coset and the rest of $G$ as the other, so left and right cosets agree.'
         try_first:
           problem: 'A group $G$ has order $14$ and $H$ is a subgroup of order $7$. How many left cosets does $H$ have in $G$?'
           answer_contract: {"kind":"exact"}
@@ -612,16 +522,6 @@ topics:
       - id: kp1
         name: "Sylow p-subgroups and existence"
         key_prerequisites: [cauchys-theorem, lagranges-theorem]
-        step_check:
-          step: 'A Sylow $5$-subgroup has order the full power of $5$ in $|G|$, which is $5^2 = 25$'
-          question: 'Why does a Sylow $5$-subgroup of a group of order $175$ have order $25$ and not $5$?'
-          options:
-            - 'Sylow subgroups are always the smallest subgroup of prime power order, so they use $5$ once'
-            - 'The order of a Sylow subgroup is the prime itself, and $25$ is a mistake from $175 = 7 \cdot 25$'
-            - 'The order must divide $175$, and $25$ is the largest divisor of $175$ that is not $175$'
-            - 'A Sylow $p$-subgroup takes the whole power $p^n$ of $p$ in $|G|$, and here $5^2$ divides $175$'
-          answer: 'A Sylow $p$-subgroup takes the whole power $p^n$ of $p$ in $|G|$, and here $5^2$ divides $175$'
-          why: 'Cauchy gives a subgroup of order $p$, but Sylow gives the largest one, of order $p^n$ where $p^n$ exactly divides $|G|$. Since $175 = 5^2 \cdot 7$, that order is $25$.'
         try_first:
           problem: 'A group has order $50$. What is the order of the largest subgroup of prime-power order that Sylow''s theorem guarantees?'
           answer_contract: {"kind":"exact"}
@@ -672,16 +572,6 @@ topics:
       - id: kp2
         name: "Counting Sylow subgroups: n_p | m and n_p = 1 mod p"
         key_prerequisites: [cauchys-theorem, lagranges-theorem]
-        step_check:
-          step: 'Identify the divisors of $4$'
-          question: 'Why must $n_5$ divide $4$ in a group of order $20$ and not just divide $20$?'
-          options:
-            - 'Because $n_5$ must be smaller than the order $5$ of a Sylow $5$-subgroup of the group'
-            - '$n_5$ is the index of a normalizer containing the Sylow subgroup, so it divides $20/5$'
-            - 'Because $4$ is the only divisor of $20$ that is not divisible by the prime $5$ itself'
-            - 'Because the Sylow subgroup has order $5$ and all other subgroups have order exactly $4$'
-          answer: '$n_5$ is the index of a normalizer containing the Sylow subgroup, so it divides $20/5$'
-          why: 'The number $n_5$ is the index of the normalizer of a Sylow $5$-subgroup $P$. The normalizer contains $P$, so its index divides $[G : P] = 20/5 = 4$.'
         exemplars:
           - problem: 'A group $G$ of order $12$ has a Sylow $3$-subgroup that is not normal. How many Sylow $3$-subgroups does $G$ have?'
             answer: '4'
@@ -723,16 +613,6 @@ topics:
       - id: kp3
         name: "Structural conclusions from Sylow counting"
         key_prerequisites: [cauchys-theorem, normal-subgroups]
-        step_check:
-          step: '$n_5 \mid 3$ and $n_5 \equiv 1 \pmod 5$ force $n_5 = 1$'
-          question: 'Why do these two conditions force $n_5 = 1$ in a group of order $15$?'
-          options:
-            - 'The group is small, so only one subgroup of order $5$ can fit inside it'
-            - 'Any divisor of $3$ is congruent to $1$ modulo $5$, and $1$ is the smallest one'
-            - 'The only divisor of $3$ that leaves remainder $1$ on division by $5$ is $1$'
-            - 'A subgroup of order $5$ is normal whenever $5$ is the largest prime dividing the order'
-          answer: 'The only divisor of $3$ that leaves remainder $1$ on division by $5$ is $1$'
-          why: 'The divisors of $3$ are $1$ and $3$. We have $1 \equiv 1$ but $3 \equiv 3 \pmod 5$, so $1$ is the only number that satisfies both conditions.'
         exemplars:
           - problem: 'For which primes $p$ must the Sylow $p$-subgroup of a group of order $15$ be normal?'
             answer: '3, 5'
@@ -812,16 +692,6 @@ topics:
       - id: kp1
         name: "Statement; listing the abelian groups of a given order"
         key_prerequisites: [direct-products, abelian-groups]
-        step_check:
-          step: 'combine one $2$-part with one $3$-part in every possible way'
-          question: 'Why do we multiply the number of $2$-parts by the number of $3$-parts to count the groups?'
-          options:
-            - 'The two counts are added, since a group is either a $2$-part or a $3$-part'
-            - 'Both the $2$-part and the $3$-part are fixed, so there is only one product'
-            - 'Each $2$-part pairs with each $3$-part, and each pair is a new group'
-            - 'Every $2$-part is isomorphic to every $3$-part, so the products coincide'
-          answer: 'Each $2$-part pairs with each $3$-part, and each pair is a new group'
-          why: 'A group of order $72$ is a product of one $2$-part and one $3$-part, chosen independently. Different choices give non-isomorphic groups, so the counts multiply.'
         try_first:
           problem: 'How many abelian groups of order $4$ are there, up to isomorphism?'
           answer_contract: {"kind":"exact"}
@@ -868,16 +738,6 @@ topics:
       - id: kp2
         name: "Elementary divisors and invariant factors"
         key_prerequisites: [direct-products]
-        step_check:
-          step: 'multiply down each column to build the invariant factors'
-          question: 'Why does the largest invariant factor take the largest power of every prime, as in $4 \cdot 9$?'
-          options:
-            - 'Each factor must be as small as possible, and $36$ is smaller than $4 \cdot 3 \cdot 9 \cdot 2$'
-            - 'Each factor must divide the next, so the biggest factor needs the highest power of each prime'
-            - 'Each prime power is used twice in a product, so the largest ones go in the biggest factor'
-            - 'The largest factor must be prime, and $4 \cdot 9$ is the closest product to a prime'
-          answer: 'Each factor must divide the next, so the biggest factor needs the highest power of each prime'
-          why: 'The invariant factors form a chain $d_1 \mid d_2 \mid \cdots$, so a prime power that occurs in $d_i$ must also occur in every later factor. The last factor holds the highest power of each prime.'
         exemplars:
           - problem: 'Write $\mathbb{Z}_6 \times \mathbb{Z}_4$ as $\mathbb{Z}_{d_1} \times \mathbb{Z}_{d_2}$ with $d_1$ dividing $d_2$. What are $d_1$ and $d_2$?'
             answer: '2, 12'
@@ -919,16 +779,6 @@ topics:
       - id: kp3
         name: "Identifying an abelian group by its element orders"
         key_prerequisites: [direct-products, isomorphism-invariants]
-        step_check:
-          step: 'List all possible abelian groups of order $12$'
-          question: 'Why must we list all abelian groups of order $12$ before comparing counts of elements?'
-          options:
-            - 'Every abelian group of order $12$ is on the list, so one match must be $G$'
-            - 'A count of elements is only meaningful after the group is written as a product'
-            - 'The list is a standard step, but the answer would not change if one group were left out'
-            - 'The element counts of the groups on the list are all different from each other'
-          answer: 'Every abelian group of order $12$ is on the list, so one match must be $G$'
-          why: 'The fundamental theorem says that $G$ is isomorphic to one group on the list. If exactly one group on the list has the given element counts, that group is $G$.'
         exemplars:
           - problem: 'An abelian group $G$ of order $16$ has exactly $3$ elements of order $2$ and exactly $4$ elements of order $4$. Which group is $G$, up to isomorphism?'
             answer: 'Z8xZ2'
@@ -1005,16 +855,6 @@ topics:
       - id: kp1
         name: "Aut(G) is a group under composition"
         key_prerequisites: [group-isomorphisms]
-        step_check:
-          step: '$\varphi$ is surjective exactly when $a$ generates $\mathbb{Z}_6$'
-          question: 'Why must an automorphism of $\mathbb{Z}_6$ send $1$ to a generator of $\mathbb{Z}_6$?'
-          options:
-            - 'A homomorphism must send a generator to another generator, whether or not it is onto'
-            - 'An automorphism is onto, and the image of the group is generated by $\varphi(1)$'
-            - 'The image of $1$ is the identity of $\mathbb{Z}_6$, which is a generator of the group'
-            - 'Every nonzero element of $\mathbb{Z}_6$ is a generator, so any choice of $a$ works'
-          answer: 'An automorphism is onto, and the image of the group is generated by $\varphi(1)$'
-          why: 'Every $\varphi(x)$ is a multiple of $\varphi(1) = a$, so the image is $\langle a \rangle$. For $\varphi$ to be onto, $\langle a \rangle$ must be all of $\mathbb{Z}_6$, which means $\gcd(a, 6) = 1$.'
         exemplars:
           - problem: 'Let $\varphi$ be an automorphism of $\mathbb{Z}_7$ with $\varphi(1) = 3$. What is $\varphi(4)$?'
             answer: '5'
@@ -1056,16 +896,6 @@ topics:
       - id: kp2
         name: "Aut(Z_n) ≅ U(n); the primitive-root theorem for U(p)"
         key_prerequisites: [group-isomorphisms, units-in-modular-rings]
-        step_check:
-          step: 'since $U(10)$ has an element of order $4$ equal to its size, it is cyclic'
-          question: 'Why does an element of order $4$ make a group of $4$ elements cyclic?'
-          options:
-            - 'Its powers are $4$ different elements, so they already fill the whole group'
-            - 'An element of order $4$ commutes with the other elements, and a commutative group is cyclic'
-            - 'The element of order $4$ is the identity of the group, and that makes the group cyclic'
-            - 'A group of $4$ elements has no proper subgroups, and so must be cyclic'
-          answer: 'Its powers are $4$ different elements, so they already fill the whole group'
-          why: 'If $g$ has order $4$, then $e, g, g^2, g^3$ are $4$ different elements of $U(10)$. The group has only $4$ elements, so $\langle g \rangle$ is the whole group.'
         exemplars:
           - problem: 'How many automorphisms does $\mathbb{Z}_{12}$ have?'
             answer: '4'
@@ -1107,16 +937,6 @@ topics:
       - id: kp3
         name: "Inner automorphisms and G/Z(G) ≅ Inn(G)"
         key_prerequisites: [first-isomorphism-theorem, quotient-groups, class-equation]
-        step_check:
-          step: 'Therefore $\ker \Phi = Z(G)$'
-          question: 'Why does conjugation by $g$ act as the identity exactly when $g$ lies in the center?'
-          options:
-            - 'Conjugation by $g$ fixes $g$ itself, so it is the identity map only when $g$ is central'
-            - 'The identity map is conjugation by the identity, and the center is the set of identities'
-            - 'The condition $gxg^{-1} = x$ for all $x$ says that $g$ commutes with every element'
-            - 'The kernel of any homomorphism out of $G$ is the center of $G$, by the first theorem'
-          answer: 'The condition $gxg^{-1} = x$ for all $x$ says that $g$ commutes with every element'
-          why: 'We have $c_g = \mathrm{id}$ when $gxg^{-1} = x$ for every $x$, which is $gx = xg$ for every $x$. These are exactly the elements of $Z(G)$.'
         exemplars:
           - problem: 'Let $G$ be a group with $|G| = 12$ and $|Z(G)| = 3$. How many inner automorphisms does $G$ have?'
             answer: '4'

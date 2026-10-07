@@ -232,3 +232,19 @@ fn a_written_item_has_a_sentence_key_of_160_characters() {
         ["I12: the reference sentence has `$` or a backslash"]
     );
 }
+
+#[test]
+fn a_tex_thousands_comma_in_a_statement_is_a_finding_for_any_item() {
+    for (problem, bad) in [
+        ("Order: $712$, $1{,}205$.", true),
+        ("Add $12{,}345$ and $7$.", true),
+        ("Order: $712$, $1205$, $12\\,345$.", false),
+        ("Write the set $\\{1,2,3\\}$ and $a_{i,j}$.", false),
+    ] {
+        let mut old = item(problem, "712", Value::Null, Some(SKETCH));
+        old.is_new = false;
+        let found = check(&view(vec![old]));
+        let hit = found.iter().any(|f| f.invariant.as_deref() == Some("D33"));
+        assert_eq!(hit, bad, "{problem}");
+    }
+}

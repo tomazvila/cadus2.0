@@ -268,6 +268,9 @@ fn exemplar_value(exemplar: &Exemplar) -> Value {
             .as_ref()
             .map_or(Value::Null, |body| text(body)),
     );
+    if let Some(index) = exemplar.visual {
+        map.insert("visual".to_owned(), count(index));
+    }
     Value::Object(map)
 }
 

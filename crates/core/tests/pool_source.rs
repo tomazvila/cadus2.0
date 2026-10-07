@@ -159,7 +159,6 @@ fn an_exemplar_source_reads_a_knowledge_point() {
         exemplars: exemplar_fixture(),
         constraints: None,
         finite_objective_domain: None,
-        step_check: None,
         try_first: None,
         visuals: Vec::new(),
     };

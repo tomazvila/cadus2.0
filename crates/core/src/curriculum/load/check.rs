@@ -349,7 +349,7 @@ impl<'a> Checker<'a> {
     }
 
     fn check_knowledge_point(&mut self, value: &Value) {
-        const FIELDS: [&str; 9] = [
+        const FIELDS: [&str; 8] = [
             "visuals",
             "id",
             "name",
@@ -357,7 +357,6 @@ impl<'a> Checker<'a> {
             "exemplars",
             "constraints",
             "finite_objective_domain",
-            "step_check",
             "try_first",
         ];
         let Some(map) = self.struct_map(value, "KnowledgePoint") else {
@@ -389,17 +388,24 @@ impl<'a> Checker<'a> {
                 Err(reason) => checker.report(&reason.to_string()),
             }
         });
-        self.field(map, "step_check", false, |checker, value| {
-            if let Err(reason) = crate::curriculum::StepCheck::deserialize(value.clone()) {
-                checker.report(&reason.to_string());
-            }
-        });
         self.field(map, "try_first", false, |checker, value| {
             if let Err(reason) = crate::curriculum::TryFirst::deserialize(value.clone()) {
                 checker.report(&reason.to_string());
             }
         });
         if let Ok(point) = crate::curriculum::KnowledgePoint::deserialize(value.clone()) {
+            for (at, exemplar) in point.exemplars.iter().enumerate() {
+                if let Some(index) = exemplar.visual
+                    && index >= point.visuals.len()
+                {
+                    let topic = self.topic.as_deref().unwrap_or("?");
+                    self.report(&format!(
+                        "topic {topic}, knowledge point {}: exemplar {at} names visual {index}, but the knowledge point has {} visual(s)",
+                        point.id,
+                        point.visuals.len()
+                    ));
+                }
+            }
             if let Err(reason) = point.validate_finite_objective_domain() {
                 self.report(&reason);
             }
@@ -415,7 +421,13 @@ impl<'a> Checker<'a> {
     }
 
     fn check_exemplar(&mut self, value: &Value) {
-        const FIELDS: [&str; 4] = ["problem", "answer", "solution_sketch", "answer_contract"];
+        const FIELDS: [&str; 5] = [
+            "problem",
+            "answer",
+            "solution_sketch",
+            "answer_contract",
+            "visual",
+        ];
         let Some(map) = self.struct_map(value, "Exemplar") else {
             return;
         };
@@ -437,6 +449,12 @@ impl<'a> Checker<'a> {
         self.field(map, "solution_sketch", false, |checker, value| {
             if !value.is_null() {
                 checker.check_string(value);
+            }
+        });
+        self.field(map, "visual", false, |checker, value| {
+            let is_index = value.is_null() || value.is_bool() || value.as_u64().is_some();
+            if !is_index {
+                checker.report("`visual` must be a whole number index or `false`");
             }
         });
         self.extras(map, &FIELDS);

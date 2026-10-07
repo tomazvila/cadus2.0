@@ -161,6 +161,15 @@ pub enum VisualError {
     },
 }
 
+/// The labels and values a figure names (see [`VisualSpec::item_terms`]).
+#[derive(Debug, Clone, Default, PartialEq, Eq)]
+pub struct ItemTerms {
+    /// Every label text, for example `A`, `5 cm` or `60°`.
+    pub labels: Vec<String>,
+    /// Every unlabelled value, as authored, for example `-3` or `3/4`.
+    pub values: Vec<String>,
+}
+
 /// One authored mathematical visual.
 ///
 /// The four families are the families the assignment names: a number line, a
@@ -225,6 +234,58 @@ impl VisualSpec {
             Self::Curve(figure) => figure.validate(),
             Self::SpecialTriangle(figure) => figure.validate(),
         }
+    }
+
+    /// What the figure names: the labels a reader sees and the values a reader
+    /// must read off. An item that shows the figure has to state the same facts.
+    ///
+    /// A labelled element yields its label only. An unlabelled number-line
+    /// point, interval end, ray end, circle radius or fraction count yields its
+    /// value. Axis bounds and plain coordinates yield nothing, because a figure
+    /// draws them for scale and the item need not repeat them.
+    #[must_use]
+    pub fn item_terms(&self) -> ItemTerms {
+        const VALUE_KEYS: [&str; 6] = ["at", "from", "to", "radius", "shaded", "parts"];
+        fn walk(value: &serde_json::Value, terms: &mut ItemTerms) {
+            match value {
+                serde_json::Value::Object(map) => {
+                    let label = map
+                        .get("label")
+                        .and_then(serde_json::Value::as_str)
+                        .map(str::trim)
+                        .filter(|text| !text.is_empty());
+                    if let Some(label) = label {
+                        terms.labels.push(label.to_owned());
+                    } else {
+                        for key in VALUE_KEYS {
+                            match map.get(key) {
+                                Some(serde_json::Value::String(text)) => {
+                                    terms.values.push(text.clone());
+                                }
+                                Some(serde_json::Value::Number(number)) => {
+                                    terms.values.push(number.to_string());
+                                }
+                                _ => {}
+                            }
+                        }
+                    }
+                    for child in map.values() {
+                        walk(child, terms);
+                    }
+                }
+                serde_json::Value::Array(items) => {
+                    for child in items {
+                        walk(child, terms);
+                    }
+                }
+                _ => {}
+            }
+        }
+        let mut terms = ItemTerms::default();
+        if let Ok(value) = serde_json::to_value(self) {
+            walk(&value, &mut terms);
+        }
+        terms
     }
 
     /// The accessible equivalent: the facts of the figure in words.

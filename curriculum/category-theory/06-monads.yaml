@@ -28,16 +28,6 @@ topics:
         name: The data and the types of the whiskered transformations
         key_prerequisites: [whiskering]
         constraints: "Give the type of each whiskered transformation and its component at an object before writing any law."
-        step_check:
-          step: 'left whiskering applies $S$ to the component'
-          question: 'Why is $(S\mu)_X$ equal to $S(\mu_X)$ and not to $\mu_{SX}$?'
-          options:
-            - 'Whiskering by $S$ on the left means $S$ is applied to the arrow $\mu_X$'
-            - 'Whiskering on the left moves the object from $X$ to $SX$ before $\mu$ acts'
-            - 'The two arrows are always equal, so either name may be used for it'
-            - 'Every component $\mu_X$ of a monad is an identity arrow, so $S$ does nothing'
-          answer: 'Whiskering by $S$ on the left means $S$ is applied to the arrow $\mu_X$'
-          why: 'In $S\mu$ the functor $S$ is composed after $\mu$, so it acts on each arrow $\mu_X$; the component $\mu_{SX}$ comes from $\mu S$, where $S$ is composed before $\mu$.'
         try_first:
           problem: 'The unit $\eta$ of a monad $(T,\eta,\mu)$ goes from $1_{\mathcal C}$ to $T$. Whiskering it on the left by $T$ gives $T\eta$. How many copies of $T$ does the target functor of $T\eta$ contain?'
           answer_contract: {"kind": "exact"}
@@ -76,16 +66,6 @@ topics:
         name: The three laws
         key_prerequisites: [natural-transformations]
         constraints: "Construct all three typed monad-law paths, and verify equality of both legs or recover missing lawful data. A single supplied leg followed by evaluation does not suffice."
-        step_check:
-          step: 'whiskering $m$ by $M$ gives $Mm\colon M^3\Rightarrow M^2$'
-          question: 'Why does $Mm$ have source $M^3$ and target $M^2$?'
-          options:
-            - 'Because $m$ is applied twice, once for each copy of $M$ in the source functor'
-            - 'Because $M$ is composed on the left of the source $M^2$ and the target $M$'
-            - 'Because whiskering by $M$ removes one copy of $M$ from each functor'
-            - 'Because $M$ is composed on both sides of $m$ at once, adding two copies'
-          answer: 'Because $M$ is composed on the left of the source $M^2$ and the target $M$'
-          why: 'Since $m\colon M^2\Rightarrow M$, composing $M$ on the left turns the source into $M\circ M^2=M^3$ and the target into $M\circ M=M^2$.'
         exemplars:
           - problem: 'The list monad on $\mathbf{Set}$ has $T(X)$ the set of finite lists over $X$, unit $\eta_X(x)=[x]$, and multiplication $\mu_X$ given by concatenation. For $w=[[[1]],[[2],[1,2]]]$ in $T^3(\mathbb N)$, what is $\mu_{\mathbb N}\big((T\mu)_{\mathbb N}(w)\big)$?'
             answer: '[1, 2, 1, 2]'
@@ -123,16 +103,6 @@ topics:
         name: First verifications
         key_prerequisites: [poset-monoid-categories]
         constraints: "Verify the data and laws of a monad in initial examples, including finite posets or closure operators. In a poset, check the existence of the unit and multiplication arrows before using thinness to prove the law equations. Closed items may construct the categorical object or diagnose assertions whose validity the learner must determine; the unmarked item asks for a full proof. Candidate claims must not be endorsed or explained by the stem."
-        step_check:
-          step: 'Both sides are maps $T^3X\to TX$, so compare them on the four kinds of element of $T^3X$'
-          question: 'Why are there exactly four kinds of element of $T^3X$ to compare?'
-          options:
-            - 'Four is the number of monad laws, with one kind of element for each law'
-            - 'Because $T^3X$ is built from three copies of $X$ and one single bottom'
-            - 'Each application of $T$ adds one bottom, besides the elements of $X$'
-            - 'Because a set $X$ can contribute only four different elements to $T^3X$'
-          answer: 'Each application of $T$ adds one bottom, besides the elements of $X$'
-          why: '$T^3X$ is $X$ with three new points adjoined, one by each $T$, so an element is either some $x\in X$ or one of the three bottoms.'
         exemplars:
           - problem: 'Regard the poset $\{0<1<2\}$ as a category, with exactly one morphism $a\to b$ when $a\le b$. Let $T$ send the objects $0,1,2$ to $1,1,2$. Is $T$ a monad on this category?'
             answer: 'yes'
@@ -207,16 +177,6 @@ topics:
         name: A monad is a monoid in endofunctors
         key_prerequisites: [monoids]
         constraints: "Translate the complete monoid-object data and laws into the strict monoidal category of endofunctors, with composition as tensor and the identity functor as tensor unit. Closed items may construct the categorical object or diagnose assertions whose validity the learner must determine; the unmarked item asks for a full proof. Candidate claims must not be endorsed or explained by the stem."
-        step_check:
-          step: 'Composition is strictly associative and strictly unital, so no associator or unitor cells appear'
-          question: 'Why do no associator or unitor cells appear in the laws of a monoid in the endofunctor category?'
-          options:
-            - 'Natural transformations between endofunctors always commute with composition'
-            - 'Functor composition is strict, so those cells are identity arrows'
-            - 'The multiplication $\mu$ already absorbs the associator into its definition'
-            - 'Every monoid in a monoidal category satisfies its laws without any cells'
-          answer: 'Functor composition is strict, so those cells are identity arrows'
-          why: '$(F\circ G)\circ H$ and $F\circ(G\circ H)$ are the same functor, and $1\circ F=F=F\circ 1$, so the associator and unitors are identity cells that can be left out.'
         try_first:
           problem: 'A monoid in $(\mathbf{Set},\times,\{*\})$ is a set $M$ with a product $m\colon M\times M\to M$. If $M$ has $5$ elements, how many elements does the source $M\times M$ of $m$ have?'
           answer_contract: {"kind": "exact"}
@@ -259,16 +219,6 @@ topics:
         name: Checking the laws on the power-set monad
         key_prerequisites: [natural-transformations]
         constraints: "Verify powerset naturality and monad laws by constructing and comparing both routes. Include a defective multiplication and general membership descriptions of the two associativity intermediates."
-        step_check:
-          step: 'take an arbitrary $S\in PA$'
-          question: 'Why is it enough to take an arbitrary $S\in PA$ instead of one particular subset?'
-          options:
-            - 'Any single subset behaves like all the others, by naturality'
-            - 'The empty subset is the only case in which the law could ever fail'
-            - 'The law is an equation, so it must hold at every element of $PA$'
-            - 'Checking one subset proves the law once that subset has two elements'
-          answer: 'The law is an equation, so it must hold at every element of $PA$'
-          why: '$\mu\circ P\eta=1_P$ says that two maps agree on every $S\in PA$; an arbitrary $S$ stands for all of them, while one chosen subset would test only one case.'
         exemplars:
           - problem: 'In the power-set monad on $\mathbf{Set}$ the multiplication $\mu_X$ sends a set of subsets to its union. For $\mathcal U=\{\{1,2\},\{2,3\},\{3,4\}\}$, what is $\mu_X(\mathcal U)$?'
             answer: '1, 2, 3, 4'
@@ -310,16 +260,6 @@ topics:
         name: Comonads by duality
         key_prerequisites: [functor-categories]
         constraints: "Derive comonad data and laws by reversing monad arrows and checking the types of whiskered transformations. Closed items may construct the categorical object or diagnose assertions whose validity the learner must determine; the unmarked item asks for a full proof. Candidate claims must not be endorsed or explained by the stem."
-        step_check:
-          step: 'so $W\delta,\delta W\colon W^2\Rightarrow W^3$'
-          question: 'Why do $W\delta$ and $\delta W$ both go from $W^2$ to $W^3$?'
-          options:
-            - 'Whiskering by $W$ replaces the source $W$ by $W^2$ and keeps the target'
-            - 'Because $\delta$ is applied twice, which doubles both $W$ and $W^2$'
-            - 'Because a comonad always has the same source for every whiskered arrow'
-            - 'Whiskering $\delta$ by $W$ adds one copy of $W$ to source and target'
-          answer: 'Whiskering $\delta$ by $W$ adds one copy of $W$ to source and target'
-          why: 'Composing $W$ on either side of $\delta\colon W\Rightarrow W^2$ turns the source $W$ into $W^2$ and the target $W^2$ into $W^3$, whichever side $W$ is placed on.'
         exemplars:
           - problem: 'A program carries a value together with a fixed setting from a set $E$, so it works in the comonad $W(X)=X\times E$ with counit $\varepsilon_X(x,e)=x$ and comultiplication $\delta_X(x,e)=((x,e),e)$. What is $\delta_X(4,7)$?'
             answer: '((4, 7), 7)'
@@ -391,16 +331,6 @@ topics:
         name: The maybe monad
         key_prerequisites: [monads]
         constraints: "Construct maybe Kleisli composites and recover or test multiplication using both unit laws and associativity. Every relevant branch, including inner and outer stars, must be accounted for."
-        step_check:
-          step: 'where $Tg$ applies $g$ and leaves any $*$ fixed'
-          question: 'Why does $Tg$ leave the extra point $*$ fixed?'
-          options:
-            - 'Because $g(*)$ is defined to be the first element of $\{x,y\}$'
-            - 'Because $\mu$ would otherwise have no extra point left to collapse afterwards'
-            - 'Because $T$ applies $g$ to ordinary elements and carries $*$ to itself'
-            - 'Because every Kleisli arrow must send $*$ to an ordinary element'
-          answer: 'Because $T$ applies $g$ to ordinary elements and carries $*$ to itself'
-          why: '$g$ is only defined on the ordinary elements of $A$, so the functor $T$ must send the extra point to the extra point; that is how "no value" propagates through a chain.'
         try_first:
           problem: 'A lookup $f$ gives the age of person $1$ as the number $30$, and gives no value for person $2$. A second lookup $g$ turns the age $30$ into the discount $3$. In the maybe monad, what is $(g\circ_T f)(1)$?'
           answer_contract: {"kind": "exact"}
@@ -439,16 +369,6 @@ topics:
         name: The list monad
         key_prerequisites: [functor-examples]
         constraints: "Construct list Kleisli substitution and compare the actual law routes, including empty words and a defective multiplication. Grade complete lists or intermediate structures instead of isolated flattening counts."
-        step_check:
-          step: 'apply $Tg$ entrywise'
-          question: 'Why is $Tg$ applied to each entry of the list instead of to the list as a whole?'
-          options:
-            - 'Because $T$ sends a function to the map that applies it to every entry'
-            - 'Because $g$ is a function on single letters, so a whole list is not an input'
-            - 'Because applying $g$ to the whole list would reverse the list'
-            - 'Because the flattening map $\mu$ cannot act on lists of length one'
-          answer: 'Because $T$ sends a function to the map that applies it to every entry'
-          why: 'By the definition of the list functor, $Tg$ applies $g$ to every entry; the result is a list of lists, which $\mu$ then flattens into one list.'
         exemplars:
           - problem: 'In the list monad on $\mathbf{Set}$, $\eta_A(a)=[a]$ and $\mu_A$ concatenates a list of lists. Let $f(1)=[4,5]$, $g(4)=[7,8]$ and $g(5)=[9]$. What is the list $(g\circ_T f)(1)$?'
             answer: '[7, 8, 9]'
@@ -486,16 +406,6 @@ topics:
         name: The writer monad over a monoid
         key_prerequisites: [monads]
         constraints: "Derive writer laws as monoid equations, recover missing unit data, and construct Kleisli composites from log-first pairs. Verify both whiskering orders and diagnose defective operations."
-        step_check:
-          step: 'using the identity law $m+0=m$'
-          question: 'Why does the right unit law reduce to the identity law $m+0=m$?'
-          options:
-            - 'Because $\mu$ always adds the first log to the value $a$'
-            - 'Because $\eta T$ puts the unit $0$ in the first log slot, before the pair $m$'
-            - 'Because $0$ is the only log that the monad is allowed to store'
-            - 'Because $T\eta$ puts the unit $0$ in the second log slot, next to $m$'
-          answer: 'Because $T\eta$ puts the unit $0$ in the second log slot, next to $m$'
-          why: '$T\eta(m,a)=(m,(0,a))$, so $\mu$ computes $m+0$; the other unit law places $0$ first and reduces to $0+m=m$.'
         exemplars:
           - problem: 'The writer monad over $(\mathbb N,+,0)$ has $T(A)=\mathbb N\times A$, written (log, value), with $\eta_A(a)=(0,a)$ and $\mu_A(m,(n,a))=(m+n,a)$. Let $f(1)=(3,2)$ and $g(2)=(5,7)$ be Kleisli arrows. What is $(g\circ_T f)(1)$?'
             answer: '(8, 7)'
@@ -571,16 +481,6 @@ topics:
         name: The Kleisli construction
         key_prerequisites: [monads]
         constraints: "Recover Kleisli hom-sets, unit identities and composites from the monad. In the powerset case construct the relation correspondence and its composition; do not give the hom-condition or composition formula before asking only for a count."
-        step_check:
-          step: 'set $g\circ_T f=\mu_C\circ Tg\circ f\colon A\to TC$'
-          question: 'Why does the Kleisli composite need the multiplication $\mu_C$?'
-          options:
-            - 'Because $\mu_C$ is the identity arrow of the whole Kleisli category'
-            - 'Because $Tg\circ f$ lands in $T(TC)$, and $\mu_C$ flattens it to $TC$'
-            - 'Because $g$ has to be applied to $A$ before $f$ can be used'
-            - 'Because composing two arrows in $\mathcal C$ always needs a unit arrow first'
-          answer: 'Because $Tg\circ f$ lands in $T(TC)$, and $\mu_C$ flattens it to $TC$'
-          why: '$f\colon A\to TB$ and $Tg\colon TB\to T(TC)$ compose to an arrow into $T(TC)$, so $\mu_C\colon T(TC)\to TC$ is needed to obtain an arrow $A\to TC$.'
         try_first:
           problem: 'Let $T$ be the maybe monad on $\mathbf{Set}$, $T(B)=B\cup\{\ast\}$. How many morphisms from $A=\{1,2,3\}$ to $B=\{u\}$ does its Kleisli category have?'
           answer_contract: {"kind": "exact"}
@@ -627,16 +527,6 @@ topics:
         name: The Kleisli laws come from the monad laws
         key_prerequisites: [monads]
         constraints: 'Prove Kleisli identity, composition and associativity laws by explicit definition substitution, functoriality, naturality and monad equations. Grade typed arrow paths through the exponent of $T$, concrete Kleisli computations in the list, power-set and writer monads, and audits of a derivation step by step.'
-        step_check:
-          step: 'Apply naturality of $\mu$ at $h$'
-          question: 'Why is naturality of $\mu$ at $h$ the tool that turns $Th\circ\mu_C$ into an expression with $\mu_{TD}$?'
-          options:
-            - 'Because $\mu$ is the unit of the monad, so it can be removed from any composite'
-            - 'Because naturality says that $\mu_C$ and $\mu_D$ are the same arrow'
-            - 'Because naturality is the associativity law written for the arrow $h$'
-            - 'Because a natural transformation commutes with $h$, so $h$ moves past $\mu$'
-          answer: 'Because a natural transformation commutes with $h$, so $h$ moves past $\mu$'
-          why: 'The naturality square of $\mu$ at $h\colon C\to TD$ says $Th\circ\mu_C=\mu_{TD}\circ T^2h$, which moves $h$ to the other side of the multiplication and brings in a second $\mu$.'
         exemplars:
           - problem: 'A search pipeline: query $1$ returns the documents $[2,3]$; each document returns its sections, $g(2)=[4]$ and $g(3)=[5,5]$; each section returns its paragraphs, $h(4)=[6,7]$ and $h(5)=[8]$. In the Kleisli category of the list monad, what is $\big((h\circ_T g)\circ_T f\big)(1)$, where $f(1)=[2,3]$?'
             answer: '[6, 7, 8, 8]'
@@ -721,16 +611,6 @@ topics:
           answer_contract: {"kind":"exact"}
           answer: '2'
           reveal: 'The unit law fixes $a(0)=0$ and $a(1)=1$, so only the value $a(*)$ is free, and it has 2 choices. An algebra of the maybe monad is therefore a set with one chosen point.'
-        step_check:
-          step: 'The unit $\eta_A\colon A\to A+1$ is the inclusion'
-          question: 'Why does the unit law force $a(i)=i$ for every $i$ in $A$?'
-          options:
-            - 'Because $a$ is a bijection from $TA$ onto $A$, so it must fix every single point of $A$'
-            - 'Because $\eta_A$ is the inclusion, $a\circ\eta_A$ is $a$ on $A$ and must be $1_A$'
-            - 'Because $\mu_A$ merges the two added points, so each point of $A$ goes to itself'
-            - 'Because the added point $*$ goes to $a(*)=2$, so all the other points must stay fixed'
-          answer: 'Because $\eta_A$ is the inclusion, $a\circ\eta_A$ is $a$ on $A$ and must be $1_A$'
-          why: 'Since $\eta_A$ is the inclusion of $A$ into $TA$, the composite $a\circ\eta_A$ is the restriction of $a$ to $A$. The unit law says this restriction is the identity.'
         constraints: "State the two laws $a\\circ\\eta_A=1_A$ and $a\\circ\\mu_A=a\\circ Ta$ and the morphism condition $f\\circ a=b\\circ Tf$ before any identification; the concrete monad is the maybe monad on $\\mathbf{Set}$, whose algebras are read off as pointed sets."
         exemplars:
           - problem: 'For the maybe monad $T$ on $\mathbf{Set}$, $TX=X+\{*\}$ is $X$ with one extra point $*$, the unit $\eta_X$ is the inclusion, $\mu_X$ sends both extra points of $T^2X$ to $*$, and $Tf$ fixes $*$. Let $A=\{1,3,9\}$. How many maps $a\colon TA\to A$ make $(A,a)$ a $T$-algebra?'
@@ -788,16 +668,6 @@ topics:
       - id: kp2
         name: Algebras recover familiar structures
         key_prerequisites: [natural-transformations, free-groups-presentations]
-        step_check:
-          step: 'generators evaluate to themselves'
-          question: 'Why does the unit law make every generator evaluate to itself?'
-          options:
-            - 'Because $a$ is a group homomorphism, so it sends each generator to itself'
-            - 'Because $\mu_A$ concatenates words, so a one-letter word is returned unchanged'
-            - 'Because $\eta_A$ sends $x$ to $[x]$, and $a\circ\eta_A=\mathrm{id}_A$'
-            - 'Because $A$ is a subset of $TA$, so every element of $A$ is a fixed point of $a$'
-          answer: 'Because $\eta_A$ sends $x$ to $[x]$, and $a\circ\eta_A=\mathrm{id}_A$'
-          why: 'The unit $\eta_A$ turns the generator $x$ into the one-letter word $[x]$, and $a\circ\eta_A=\mathrm{id}_A$ then says $a([x])=x$.'
         constraints: "Recover monoids from list-algebra laws and groups from free-group-algebra laws. Derive empty, binary, inverse and longer-word operations; test both sides of the algebra equation for a defective structure."
         exemplars:
           - problem: 'For the list monad $T$ on $\mathbf{Set}$, $TX=X^*$ is the set of finite lists, $\eta_X(x)=[x]$, and $\mu_X$ concatenates a list of lists. A $T$-algebra on the integers has $a([\,])=0$ and $a([x,y])=x+y$. What is $a([2,3,4])$?'
@@ -839,16 +709,6 @@ topics:
       - id: kp3
         name: The free-forgetful adjunction of the algebras
         key_prerequisites: [adjunctions]
-        step_check:
-          step: 'is the monad unit law'
-          question: 'Why does the unit law of the free algebra $(X^*,\mu_X)$ need no new proof?'
-          options:
-            - 'It is the monad unit law $\mu\circ\eta T=1_T$ taken at the object $X$'
-            - 'It follows from naturality of $\eta$, which holds for every functor $T$'
-            - 'It holds because every set $X^*$ is a free monoid under concatenation'
-            - 'It is the monad associativity law $\mu\circ\mu T=\mu\circ T\mu$ taken at $X$'
-          answer: 'It is the monad unit law $\mu\circ\eta T=1_T$ taken at the object $X$'
-          why: 'The algebra law $\mu_X\circ\eta_{X^*}=1_{X^*}$ is the component at $X$ of the monad unit law $\mu\circ\eta T=1_T$, so the monad axioms already prove it.'
         constraints: "Construct free algebra (TC,mu_C), match its laws to the monad laws, and recover the free-forgetful transpose maps. Do not supply the free object or hom-set bijection before asking only for an evaluation."
         exemplars:
           - problem: 'For the list monad $T$ on $\mathbf{Set}$, $TX=X^*$ is the set of finite lists, $\eta_X(x)=[x]$, and $\mu_X$ concatenates a list of lists. Let $(TC,\mu_C)$ be the free $T$-algebra on $C=\{x,y\}$, which is the set of all finite words in $x,y$ with concatenation. Let $\mathbb Z/2$ carry the $T$-algebra structure $a(w)=(\text{sum of the entries}) \bmod 2$. How many morphisms of $T$-algebras are there from $(TC,\mu_C)$ to $\mathbb Z/2$?'
@@ -935,16 +795,6 @@ topics:
           answer_contract: {"kind":"exact"}
           answer: '3'
           reveal: 'Here $F(2)=1$ and $G(1)=3$, so $GF(2)=3$. The composite $GF$ of the two adjoint functors is the monad that the adjunction induces.'
-        step_check:
-          step: 'This uses the first triangle identity $\varepsilon F\circ F\eta=1_F$'
-          question: 'Why does the left unit law $\mu\circ T\eta=1_T$ lead to the triangle identity $\varepsilon F\circ F\eta=1_F$?'
-          options:
-            - 'Because $\mu=U\varepsilon F$ is a counit, so it cancels the unit $\eta$ directly'
-            - 'Because $\eta$ is natural, so the composite $\mu\circ T\eta$ equals the identity at once'
-            - 'Because $T\eta=UF\eta$, so $U$ factors out and leaves $\varepsilon F\circ F\eta$ in it'
-            - 'Because the free group functor $F$ preserves composition, so it sends $\eta$ to $1_F$'
-          answer: 'Because $T\eta=UF\eta$, so $U$ factors out and leaves $\varepsilon F\circ F\eta$ in it'
-          why: 'Writing $\mu\circ T\eta=U\varepsilon F\circ UF\eta=U(\varepsilon F\circ F\eta)$ shows that the triangle identity $\varepsilon F\circ F\eta=1_F$ is what turns the composite into $1_T$.'
         constraints: "Construct GF, eta and G eps F from adjunction data; identify the counit object correctly and derive laws from naturality and triangles. Concrete values must require recovery of the induced structure."
         exemplars:
           - problem: 'In a poset regarded as a category there is exactly one arrow $x\to y$ when $x\le y$. $F\dashv G$ means that $F(p)\le q$ exactly when $p\le G(q)$, and then $T=GF$ is the induced monad. Let $P=\{0<1<2<3<4\}$ and $Q=\{0<1<2\}$. The functor $F\colon P\to Q$ has the values $F(0),\dots,F(4)=0,0,1,1,2$, and its right adjoint $G\colon Q\to P$ has the values $G(0),G(1),G(2)=1,3,4$. What is $T(2)$?'
@@ -982,16 +832,6 @@ topics:
       - id: kp2
         name: Every monad comes from an adjunction
         key_prerequisites: [monads]
-        step_check:
-          step: 'so $U_T(g)(a,n)=(b,m+n)$ where $g(a)=(b,m)$'
-          question: 'Why does $U_T(g)(a,n)$ add $n$ to the log $m$ of $g(a)$, instead of multiplying them?'
-          options:
-            - 'Because $\eta_B$ adds the log 0, so every later step must use addition as well'
-            - 'Because $\mu_B$ is the monad multiplication, and here it adds the logs'
-            - 'Because $\mathbb N$ has no multiplication that is compatible with the unit $(a,0)$'
-            - 'Because $g(a)$ already contains $n$, so the two logs are combined by addition'
-          answer: 'Because $\mu_B$ is the monad multiplication, and here it adds the logs'
-          why: '$U_T(g)=\mu_B\circ Tg$, and $\mu_B((b,m),n)=(b,m+n)$ by the definition of the monad, so the two logs add.'
         constraints: "Construct both resolution functors on objects and morphisms and verify their composite equals T. In Kleisli use a unit-law rewrite; in Eilenberg-Moore recover the free carrier, structure and arrow."
         exemplars:
           - problem: 'Let $T$ be the monad on $\mathbf{Set}$ with $TA=A\times\mathbb N$, $\eta_A(a)=(a,0)$ and $\mu_A((a,m),n)=(a,m+n)$. The arrows $A\to B$ of the Kleisli category are the functions $A\to TB$, with $F_T(f)=\eta_B\circ f$ and $U_T(g)=\mu_B\circ Tg$. Let $g\colon\{p\}\to T\{p\}$ be the Kleisli arrow with $g(p)=(p,3)$. $U_T(g)$ sends $(p,4)$ to a pair $(p,k)$. What is $k$?'
@@ -1065,16 +905,6 @@ topics:
       - id: kp1
         name: The comparison functor
         key_prerequisites: [kleisli-categories]
-        step_check:
-          step: 'using naturality of $\mu$ at $f\colon A\to TB$'
-          question: 'Why can $Tf$ be moved past $\mu_A$ in the computation of $K(f)\circ\mu_A$?'
-          options:
-            - 'Because $\mu$ is natural, so $Tf\circ\mu_A=\mu_{TB}\circ T^2f$ for $f\colon A\to TB$'
-            - 'Because $T$ is a functor, so $Tf$ commutes with every map out of the set $T^2A$'
-            - 'Because $f$ is a Kleisli arrow, so $Tf$ is the identity map on the set $TA$ here'
-            - 'Because the unit law says $\mu_A\circ T\eta_A=1$, so $\mu_A$ drops out of the formula'
-          answer: 'Because $\mu$ is natural, so $Tf\circ\mu_A=\mu_{TB}\circ T^2f$ for $f\colon A\to TB$'
-          why: 'Naturality of $\mu$ is the square $Tf\circ\mu_A=\mu_{TB}\circ T^2f$ for the map $f\colon A\to TB$. This is the only property of $\mu$ used to move $Tf$ across.'
         constraints: "Construct the comparison on objects and arrows as free-algebra extension. Verify its algebra-map, identity and composition equations by explicit substitutions and monad laws."
         exemplars:
           - problem: 'Let $T(X)=X\times\mathbb Z/4$ be the writer monad with $\eta(x)=(x,0)$ and $\mu((x,m),n)=(x,m+n)$. Let $f\colon\{p\}\to T\{p\}$ be the Kleisli arrow with $f(p)=(p,3)$. The comparison functor sends $f$ to $K(f)=\mu\circ Tf$. $K(f)(p,2)$ is a pair $(p,k)$ with $k$ in $\mathbb Z/4$. What is $k$?'
@@ -1112,16 +942,6 @@ topics:
       - id: kp2
         name: Kleisli as the free algebras
         key_prerequisites: [algebras-over-monads]
-        step_check:
-          step: 'Both equal the total sum of all entries'
-          question: 'Why do both sides of the morphism condition give the total sum of all entries?'
-          options:
-            - 'Because $\mu_X$ and $b$ are both defined as the identity on lists of numbers'
-            - 'Because every function from lists to $\mathbb N$ gives the same result on a list of lists'
-            - 'Because the map $\Psi(f)$ ignores the inner brackets and returns only the first sum'
-            - 'Because addition is associative, so summing the block sums gives the sum of everything'
-          answer: 'Because addition is associative, so summing the block sums gives the sum of everything'
-          why: 'Concatenating first and then summing, or summing each block first and then summing the block sums, both add every entry once. This works because addition is associative.'
         constraints: "Use the free-forgetful correspondence to reconstruct comparison morphisms and verify both extension/restriction round trips. Recover the essential image as free algebras, without supplying its carrier formula."
         exemplars:
           - problem: 'For the maybe monad $T$ on $\mathbf{Set}$, $TX=X+\{*\}$ is $X$ with one extra point $*$, the unit $\eta_X$ is the inclusion, $\mu_X$ sends both extra points of $T^2X$ to $*$, and $Tf$ fixes $*$. Let $(B,b)$ be the algebra with $B=\{0,1,2\}$, $b(*)=0$ and $b$ the identity on $B$. Let $A=\{5,6\}$ and $f\colon A\to B$ with $f(5)=1$, $f(6)=2$. The transpose of $f$ is the morphism $\varphi=b\circ Tf$ from the free algebra $(TA,\mu_A)$ to $(B,b)$. What is $\varphi(*)$?'
@@ -1163,16 +983,6 @@ topics:
       - id: kp3
         name: The extreme resolutions of a monad
         key_prerequisites: [adjunctions-give-monads]
-        step_check:
-          step: 'Both commutation conditions hold'
-          question: 'Why do the two equations $KF_T=F^T$ and $U^TK=U_T$ make $K$ a morphism of resolutions?'
-          options:
-            - 'A morphism of resolutions is any functor that sends the initial resolution to a resolution'
-            - 'These equations show that $K$ is an equivalence of categories, which is all that is needed'
-            - 'A morphism of resolutions commutes with the left adjoints and with the right adjoints'
-            - 'The two equations show that $F^T$ and $U_T$ are both identity functors in this case'
-          answer: 'A morphism of resolutions commutes with the left adjoints and with the right adjoints'
-          why: 'A morphism of resolutions is by definition a functor that commutes with the left adjoints and with the right adjoints, which is exactly what $KF_T=F^T$ and $U^TK=U_T$ say.'
         constraints: "Construct the canonical comparisons from the Kleisli resolution and into the Eilenberg-Moore resolution, with compatibility with both adjoints and their unit/counit data. Recover their composition as the free-algebra comparison."
         exemplars:
           - problem: 'A resolution of a monad $T$ is an adjunction $F\dashv G$ that induces $T$, and a morphism of resolutions is a functor that commutes with the left adjoints and with the right adjoints. Fix any resolution of $T$. How many morphisms of resolutions are there from the Kleisli resolution of $T$ to this resolution?'
@@ -1249,16 +1059,6 @@ topics:
         name: Definition
         key_prerequisites: [exponential-objects]
         constraints: 'Terminal objects, products and exponentials are tested through their universal properties in small posets and in Set. Items give the universal property, then ask for the exponential object, for the number of transposes of a given map, or for a size in a word problem that needs a power or a root.'
-        step_check:
-          step: 'set $B^A=\mathrm{Hom}_{\mathbf{Set}}(A,B)$, the set of all functions $A\to B$'
-          question: 'Why is $B^A$ taken to be the set of all functions $A\to B$?'
-          options:
-            - 'Any set with the same number of elements as $A$ would do, since evaluation needs one point per element of $A$'
-            - 'Each function must occur once, so every $f\colon X\times A\to B$ has exactly one transpose into $B^A$'
-            - 'Only injective functions are needed, because evaluation must never identify two different points of $A$'
-            - 'The set of functions is the only set for which the product $B^A\times A$ exists in the category $\mathbf{Set}$'
-          answer: 'Each function must occur once, so every $f\colon X\times A\to B$ has exactly one transpose into $B^A$'
-          why: 'Each function $A\to B$ must appear exactly once in $B^A$: a missing one leaves some $f$ without a transpose, and a repeated one gives some $f$ two transposes.'
         try_first:
           problem: 'How many different functions are there from a set with $3$ elements to a set with $2$ elements?'
           answer_contract: {"kind": "exact"}
@@ -1301,16 +1101,6 @@ topics:
         name: Set is cartesian closed
         key_prerequisites: [products-coproducts]
         constraints: 'Currying and uncurrying are computed in Set, in counting problems that need a power or a root, and in the contrast with Ab, where the functor taking X to X times A preserves no initial object. A verdict on Ab comes with the order of the group that breaks the adjunction.'
-        step_check:
-          step: 'In $\mathbf{Ab}$ the initial object is the zero group $0$, and a left adjoint preserves it'
-          question: 'Why would a cartesian closed structure on $\mathbf{Ab}$ force $0\times V\cong 0$ for every group $V$?'
-          options:
-            - 'Every product with the zero group is the zero group, in any category that has a zero object'
-            - 'The exponential $0^V$ would be the zero group, and exponentials always send the zero group to itself'
-            - 'The functor $-\times V$ would be a left adjoint, so it preserves the initial object'
-            - 'The functor $-\times V$ would be a right adjoint, and a right adjoint preserves the zero group'
-          answer: 'The functor $-\times V$ would be a left adjoint, so it preserves the initial object'
-          why: 'The functor $-\times V$ would have a right adjoint, so it would preserve the initial object $0$; but $0\times V\cong V$, which is not zero when $V\neq 0$.'
         exemplars:
           - problem: 'Let $X=\{1,2,3\}$, $A=\{0,1\}$ and let $f\colon X\times A\to\mathbb Z$ be given by $f(x,a)=x+10a$. Currying sends $f$ to its transpose $g\colon X\to\mathbb Z^A$, where $g(x)$ is the function $a\mapsto f(x,a)$. Find $g(3)(1)$.'
             answer: '13'
@@ -1356,16 +1146,6 @@ topics:
         name: The Curry-Howard-Lambek correspondence
         key_prerequisites: [adjunctions]
         constraints: 'Types are objects, terms are arrows, function types are exponentials, closed terms are global elements and application is evaluation. Items count terms in Set, evaluate applications, compute implication in a poset model, and decide whether a type has a closed term in a given model.'
-        step_check:
-          step: 'the open term $x:A,\,y:B \vdash x:A$ is the first projection $\pi_1 : A\times B \to A$'
-          question: 'Why is the open term $x:A,\,y:B\vdash x:A$ the first projection out of $A\times B$?'
-          options:
-            - 'The context is interpreted as the coproduct $A+B$, and the term picks its left summand'
-            - 'The term $x$ is closed, so it is a global element $1\to A$ followed by an inclusion into $A\times B$'
-            - 'The variable $y$ is unused, so the context loses $B$ and the term becomes the identity on $A$'
-            - 'The context $x:A,\,y:B$ is the product $A\times B$, and the term returns its $A$-variable'
-          answer: 'The context $x:A,\,y:B$ is the product $A\times B$, and the term returns its $A$-variable'
-          why: 'A context with two variables is interpreted as the product of their types, so a term that returns the first variable is the first projection; the unused $y$ still sits in the context.'
         exemplars:
           - problem: 'In the simply typed lambda calculus interpreted in $\mathbf{Set}$, a type is a set and the type $A\to B$ is the exponential $B^A$. Let $A$ have $2$ elements and $B$ have $4$ elements. How many closed terms of type $A\to B$ are there, that is, global elements $1\to B^A$?'
             answer: '16'
@@ -1440,16 +1220,6 @@ topics:
         name: The presheaf category and representables
         key_prerequisites: [functor-categories]
         constraints: 'Presheaves are functors from the opposite of a small category to Set, given by sets and restriction maps in small posets and two-object categories. Items compute representables, the direction of restriction maps, and counts of natural transformations out of a representable by the Yoneda lemma, including word problems about labelled days and functions on subsets.'
-        step_check:
-          step: 'a function $P(g)\colon P(Y)\to P(X)$ (note the direction reverses)'
-          question: 'Why does $P(g)$ go from $P(Y)$ to $P(X)$ although $g$ goes from $X$ to $Y$?'
-          options:
-            - 'A presheaf must send every arrow to its inverse function, and $g$ has an inverse from $Y$ to $X$'
-            - 'Natural transformations between presheaves run backwards, so the maps inside a presheaf run backwards too'
-            - 'A presheaf is a functor on $\mathcal C^{op}$, where the arrow $g$ becomes an arrow from $Y$ to $X$'
-            - 'The sets $P(X)$ and $P(Y)$ are listed in the order of the objects of $\mathcal C^{op}$ only by convention'
-          answer: 'A presheaf is a functor on $\mathcal C^{op}$, where the arrow $g$ becomes an arrow from $Y$ to $X$'
-          why: 'A presheaf is a functor $\mathcal C^{op}\to\mathbf{Set}$, and in $\mathcal C^{op}$ the arrow $g$ points from $Y$ to $X$, so $P(g)$ is a function from $P(Y)$ to $P(X)$.'
         exemplars:
           - problem: 'Let $\mathcal C$ be the category with objects $a,b,c$ and exactly one arrow $x\to y$ when $x\le y$, where the only relations between different objects are $a\le c$ and $b\le c$. The representable presheaf $y_c=\mathrm{Hom}(-,c)$ assigns the set $\mathrm{Hom}(x,c)$ to each object $x$. How many elements do the three sets $y_c(a)$, $y_c(b)$ and $y_c(c)$ have in all?'
             answer: '3'
@@ -1491,16 +1261,6 @@ topics:
         name: Completeness and density
         key_prerequisites: [limits-colimits]
         constraints: 'Limits and colimits of presheaves on a two-object category are computed pointwise from tables of restriction maps: products, coproducts and equalizers. Items also count natural transformations into a product by the Yoneda lemma, count the fibres of a restriction map in a labelling presheaf, and compute the colimit of representables indexed by the category of elements.'
-        step_check:
-          step: '$(P\sqcup Q)(C)=P(C)\sqcup Q(C)$, the disjoint union of sets'
-          question: 'Why is the value of the coproduct $P\sqcup Q$ at $C$ the disjoint union of the values $P(C)$ and $Q(C)$?'
-          options:
-            - 'A coproduct of presheaves is the union of their restriction maps, which forces a disjoint union at each object'
-            - 'Only the object $C$ matters, since a presheaf has no values on arrows other than the identity'
-            - 'The disjoint union is used because the sets $P(C)$ and $Q(C)$ are always disjoint from each other'
-            - 'Colimits of presheaves are computed object by object, since $\mathbf{Set}$ has all colimits'
-          answer: 'Colimits of presheaves are computed object by object, since $\mathbf{Set}$ has all colimits'
-          why: 'Colimits in a functor category into $\mathbf{Set}$ are computed objectwise, so the coproduct at $C$ is the coproduct in $\mathbf{Set}$, the disjoint union, with the restriction maps acting on each summand.'
         exemplars:
           - problem: 'Let $\mathcal C$ have objects $a,b$ and one non-identity arrow $a\to b$, so a presheaf on $\mathcal C$ is a function from its set at $b$ to its set at $a$. Let $P(b)=\{1,2,3\}$ and $P(a)=\{4,5\}$ with $1\mapsto4$, $2\mapsto4$, $3\mapsto5$, and let $Q(b)=\{u,v,t\}$ and $Q(a)=\{w\}$ with every element sent to $w$. How many elements does the product presheaf $P\times Q$ have at $b$?'
             answer: '9'
@@ -1575,16 +1335,6 @@ topics:
         name: The definition of an elementary topos
         key_prerequisites: [cartesian-closed-categories]
         constraints: 'The classifier axiom is tested through Hom(X, Omega) being in bijection with Sub(X): sizes of Omega in Set from subset counts, subobject counts in a chain and in the non-empty finite sets, and the failure of uniqueness for an Omega with three points. Verdicts on a category come with the subobject count that decides them.'
-        step_check:
-          step: 'So $S\hookrightarrow X$ is the pullback of $\mathrm{true}$ along $\chi_S$'
-          question: 'Why is $S\hookrightarrow X$ the pullback of $\mathrm{true}$ along $\chi_S$?'
-          options:
-            - 'The pullback of $\mathrm{true}$ along any map $X\to\Omega$ is the whole set $X$, and $S$ is a copy of it'
-            - 'A pullback in $\mathbf{Set}$ is the preimage of the point picked by $\mathrm{true}$, namely $S$'
-            - 'The map $\chi_S$ is defined to equal $\mathrm{true}$ on $S$, so no pullback has to be computed at all'
-            - 'The pullback is the image of $\chi_S$, which equals $S$ whenever $\Omega$ has exactly two points'
-          answer: 'A pullback in $\mathbf{Set}$ is the preimage of the point picked by $\mathrm{true}$, namely $S$'
-          why: 'A pullback in $\mathbf{Set}$ along $\mathrm{true}\colon 1\to\Omega$ is the preimage $\chi_S^{-1}(1)$ of the picked point, and by the definition of $\chi_S$ this preimage is exactly $S$.'
         try_first:
           problem: 'How many subsets, counting the empty set and the whole set, does a set with $3$ elements have?'
           answer_contract: {"kind": "exact"}
@@ -1631,16 +1381,6 @@ topics:
         name: Set and presheaf toposes
         key_prerequisites: [presheaves-intro]
         constraints: 'Characteristic maps are computed in Set, in G-sets and in presheaves on a two-object category, and subobjects of a G-set are counted as invariant subsets, including word problems about orbits of lamps and tiles. Items test the equivariance condition on the classifier and the count of sieves on an object.'
-        step_check:
-          step: 'Sieves on the unique object are the right ideals of $\mathbb{Z}/2$, namely $\emptyset$ and $\mathbb{Z}/2$'
-          question: 'Why are there only two sieves on the unique object of the one-object category $B\mathbb{Z}/2$?'
-          options:
-            - 'Sieves on the object correspond to subgroups, and the group $\mathbb{Z}/2$ has two subgroups'
-            - 'A sieve must be closed under inverses, and $\mathbb{Z}/2$ has only the identity and one other element'
-            - 'A non-empty sieve contains an invertible arrow, so it contains every arrow into the object'
-            - 'Each element of the group $\mathbb{Z}/2$ gives one sieve, and the group has two elements'
-          answer: 'A non-empty sieve contains an invertible arrow, so it contains every arrow into the object'
-          why: 'A sieve is closed under precomposition, and every arrow here is invertible, so a sieve with one arrow contains all arrows; the only sieves are the empty one and the full one.'
         exemplars:
           - problem: 'In $\mathbf{Set}$ let $X=\{1,2,\dots,12\}$ and let $S\subseteq X$ be the set of divisors of $12$. Let $\chi_S\colon X\to\Omega=\{0,1\}$ be the map for which $S\hookrightarrow X$ is the pullback of $\mathrm{true}\colon 1\to\Omega$, where $\mathrm{true}(*)=1$. How many elements of $X$ does $\chi_S$ send to $0$?'
             answer: '6'

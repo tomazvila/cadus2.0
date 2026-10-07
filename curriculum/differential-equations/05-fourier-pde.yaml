@@ -31,15 +31,6 @@ topics:
       - id: kp1
         name: 'Orthogonality on $[-\pi, \pi]$'
         key_prerequisites: [trigonometric-integrals]
-        step_check:
-          step: 'their integrals over the symmetric interval $[-\pi, \pi]$ are zero'
-          question: 'Why is the integral of each odd function over $[-\pi, \pi]$ equal to zero?'
-          options:
-            - 'Every sine function equals zero at both endpoints $-\pi$ and $\pi$'
-            - 'The area on $(0, \pi)$ cancels the equal and opposite area on $(-\pi, 0)$'
-            - 'The integral of a sine over any interval is zero when the frequency is even'
-          answer: 'The area on $(0, \pi)$ cancels the equal and opposite area on $(-\pi, 0)$'
-          why: 'For an odd function $g$, $g(-x) = -g(x)$, so the part of the area left of $0$ is the negative of the part right of $0$. The two parts add to zero.'
         exemplars:
           - problem: 'Compute $\int_{-\pi}^{\pi} \sin 2x \sin 3x\,dx$.'
             answer: '0'
@@ -81,15 +72,6 @@ topics:
       - id: kp2
         name: Computing Fourier coefficients
         key_prerequisites: [integration-by-parts, trigonometric-integrals]
-        step_check:
-          step: 'The second integral is zero'
-          question: 'Why is the second integral zero?'
-          options:
-            - 'The sine of every integer multiple of $\pi$ is zero, so the whole integral cancels'
-            - 'The cosine is an odd function, so it integrates to zero over the interval $(0, \pi)$'
-            - '$f(x) = 0$ on $(0, \pi)$, so the integrand is zero across that piece'
-          answer: '$f(x) = 0$ on $(0, \pi)$, so the integrand is zero across that piece'
-          why: 'On $(0, \pi)$ the function $f$ equals $0$, so $f(x)\cos nx = 0$ there. A zero integrand has integral $0$.'
         exemplars:
           - problem: 'The function $f$ equals $x$ on $(-\pi, 0)$ and $0$ on $(0, \pi)$. Find the Fourier coefficient $a_0 = \frac{1}{\pi}\int_{-\pi}^{\pi} f(x)\,dx$.'
             answer: '-pi/2'
@@ -127,15 +109,6 @@ topics:
       - id: kp3
         name: Convergence and the value at a jump
         key_prerequisites: [unit-circle, piecewise-absolute-value-graphs]
-        step_check:
-          step: 'Calculate the midpoint of the LHL and RHL'
-          question: 'Why do we calculate the midpoint of the two one-sided limits?'
-          options:
-            - 'At a jump the series converges to the average of the two limits'
-            - 'The series must pass through the larger of the two one-sided limits'
-            - 'The function value $f(0)$ is defined as the average of the two limits'
-          answer: 'At a jump the series converges to the average of the two limits'
-          why: 'A finite sum of continuous sines and cosines cannot jump, so the series splits the difference. It converges to $\frac{f(0^-) + f(0^+)}{2}$.'
         try_first:
           problem: 'A function equals $1$ on $(-\pi, 0)$ and $7$ on $(0, \pi)$, and repeats with period $2\pi$. What value do you expect its Fourier series to take at $x = 0$?'
           answer_contract: {"kind":"exact"}
@@ -213,15 +186,6 @@ topics:
       - id: kp1
         name: Even and odd shortcuts
         key_prerequisites: [even-odd-functions, fourier-series]
-        step_check:
-          step: 'the integral of an odd function over $(-\pi, \pi)$ is zero'
-          question: 'Why is the integral of an odd function over $(-\pi, \pi)$ equal to zero?'
-          options:
-            - 'The interval has length $2\pi$, which is one full period of the sine'
-            - 'The area on $(-\pi, 0)$ cancels the area on $(0, \pi)$'
-            - 'An odd function is zero at $x = 0$, so nothing is left to integrate'
-          answer: 'The area on $(-\pi, 0)$ cancels the area on $(0, \pi)$'
-          why: 'For an odd function $g$, $g(-x) = -g(x)$. The area left of $0$ cancels the area right of $0$, so the total is $0$.'
         exemplars:
           - problem: 'Which Fourier coefficients of $f(x) = x^4$ on $(-\pi, \pi)$ vanish, the $a_n$ or the $b_n$?'
             answer: 'b_n'
@@ -275,15 +239,6 @@ topics:
       - id: kp2
         name: "Half-range sine expansions on $[0, L]$"
         key_prerequisites: [fourier-series, integration-by-parts]
-        step_check:
-          step: 'Let $u = x$ and $dv = \sin(n\pi x) dx$'
-          question: 'Why do we choose $u = x$ and $dv = \sin(n\pi x)\,dx$ for the integration by parts?'
-          options:
-            - 'Differentiating $x$ gives $du = dx$, and the sine integrates easily'
-            - 'The rule requires $u$ to be the factor that has the larger exponent'
-            - 'Choosing $u = \sin(n\pi x)$ instead would make the integral diverge here'
-          answer: 'Differentiating $x$ gives $du = dx$, and the sine integrates easily'
-          why: 'Differentiating $x$ removes the variable factor, and $\sin(n\pi x)$ has the easy antiderivative $-\frac{\cos(n\pi x)}{n\pi}$. The new integral is then simple.'
         try_first:
           problem: 'Find the half-range sine coefficient $b_1$ of $f(x) = 3$ on $(0, \pi)$.'
           answer_contract: {"kind":"exact"}
@@ -334,15 +289,6 @@ topics:
       - id: kp3
         name: "Half-range cosine expansions on $[0, L]$"
         key_prerequisites: [fourier-series, integration-by-parts]
-        step_check:
-          step: 'because $\sin(n \pi) = 0$ and $\sin(0) = 0$'
-          question: 'Why does the boundary term vanish?'
-          options:
-            - 'The factor $2x$ is zero at both ends of the interval, $x=0$ and $x=1$'
-            - 'The cosine $\cos(n\pi x)$ equals $0$ at both ends of the interval'
-            - 'Any integer multiple of $\pi$ has sine $0$, and $\sin 0 = 0$'
-          answer: 'Any integer multiple of $\pi$ has sine $0$, and $\sin 0 = 0$'
-          why: 'The boundary term contains $\sin(n\pi x)$. At $x = 1$ it is $\sin(n\pi) = 0$ for every integer $n$, and at $x = 0$ it is $\sin 0 = 0$.'
         exemplars:
           - problem: 'The half-range cosine coefficient $a_0$ on $(0, 1)$ is $a_0 = 2\int_0^1 f(x)\,dx$. Find $a_0$ for $f(x) = 2x$.'
             answer: '2'
@@ -428,15 +374,6 @@ topics:
       - id: kp1
         name: "Separating $u(x,t) = X(x)T(t)$"
         key_prerequisites: [partial-derivatives, boundary-value-problems-intro]
-        step_check:
-          step: 'both must equal a constant $-\lambda$'
-          question: 'Why must both sides of $\frac{T''}{4T} = \frac{X''''}{X}$ equal the same constant?'
-          options:
-            - 'One side depends only on $t$ and the other only on $x$, so neither can change'
-            - 'The separation constant $-\lambda$ is defined as the value of $X''''/X$ at $x = 0$'
-            - 'The heat equation forces $T''$ and $X''''$ to be equal at every point'
-          answer: 'One side depends only on $t$ and the other only on $x$, so neither can change'
-          why: 'Changing $x$ alone changes only the right side, and changing $t$ alone changes only the left side. Since they stay equal, each side must be constant.'
         exemplars:
           - problem: 'Substituting $u(x,t) = X(x)T(t)$ into $u_t = 4u_{xx}$ gives $\frac{T''}{4T} = \frac{X''''}{X}$, and both sides equal a constant $-\lambda$. The equation for $T$ is then $T'' + c\lambda T = 0$. Find $c$.'
             answer: '4'
@@ -474,15 +411,6 @@ topics:
       - id: kp2
         name: Initial data that is already a sine combination
         key_prerequisites: [boundary-value-problems-intro, fourier-sine-cosine-series]
-        step_check:
-          step: '$\sin(\pi x) = \sin\left(\frac{2\pi x}{2}\right)$'
-          question: 'Why does $\sin(\pi x)$ count as the mode $n = 2$ on $(0, 2)$?'
-          options:
-            - 'The number $n$ is the coefficient of $x$ inside the sine, and here it is $1$'
-            - 'Every term after the first term of the initial data is called mode $2$'
-            - 'Modes are $\sin\frac{n\pi x}{L}$, and $L = 2$, $n = 2$ gives $\sin\pi x$'
-          answer: 'Modes are $\sin\frac{n\pi x}{L}$, and $L = 2$, $n = 2$ gives $\sin\pi x$'
-          why: 'On $(0, L)$ the modes are $\sin\frac{n\pi x}{L}$. With $L = 2$ and $n = 2$ this is $\sin\frac{2\pi x}{2} = \sin\pi x$.'
         try_first:
           problem: 'A rod on $(0, \pi)$ has ends held at $0$ and obeys $u_t = u_{xx}$. It starts at $u(x,0) = 3\sin x$. What is the temperature at the middle, $x = \frac{\pi}{2}$, at time $t = \ln 2$?'
           answer_contract: {"kind":"exact"}
@@ -529,15 +457,6 @@ topics:
       - id: kp3
         name: General initial data via sine series
         key_prerequisites: [fourier-sine-cosine-series]
-        step_check:
-          step: 'where $b_n$ are the Fourier sine coefficients of the initial data'
-          question: 'Why are the numbers $b_n$ the Fourier sine coefficients of the initial data?'
-          options:
-            - 'The exponential factors cancel the sine terms as time increases, so only $b_n$ remain'
-            - 'At $t = 0$ every exponential equals $1$, leaving the sine series of $u(x,0)$'
-            - 'Sine series are the only series that the heat equation allows at every time'
-          answer: 'At $t = 0$ every exponential equals $1$, leaving the sine series of $u(x,0)$'
-          why: 'Setting $t = 0$ makes every exponential factor $1$. Then $u(x,0) = \sum b_n\sin(n\pi x)$, so the $b_n$ are found by the sine-coefficient formula.'
         exemplars:
           - problem: 'A rod on $(0, 1)$ has its ends held at $0$ and obeys $u_t = u_{xx}$. It starts at $u(x,0) = 50x$. The solution has the form $u(x,t) = \sum b_n e^{-n^2\pi^2 t}\sin n\pi x$. Find $b_1$.'
             answer: '100/pi'

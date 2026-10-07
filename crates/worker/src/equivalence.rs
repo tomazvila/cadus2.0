@@ -207,6 +207,16 @@ pub async fn run_once(db: &Db, job: &EquivalenceJob) -> Result<Report, WorkerErr
         return Ok(quiet(Outcome::Failed, claimed.id));
     }
 
+    step(
+        db,
+        claimed.id,
+        &format!(
+            "Reading your answer: `{}`",
+            equivalence::clip(&payload.given_answer)
+        ),
+    )
+    .await;
+
     // The per-learner daily cap. The count reads the rows the learner wrote
     // today, this one included; past the cap the row settles `capped` and the
     // learner keeps the deterministic verdict.
@@ -235,6 +245,15 @@ pub async fn run_once(db: &Db, job: &EquivalenceJob) -> Result<Report, WorkerErr
         Ok(None) => None,
         Err(err) => return Err(err.into()),
     };
+    step(
+        db,
+        claimed.id,
+        &format!(
+            "Comparing it with the expected answer: `{}`",
+            equivalence::clip(&payload.expected)
+        ),
+    )
+    .await;
     let (attempts, verdict) = match verdict {
         Some(verdict) => (Vec::new(), Some(verdict)),
         None => {
@@ -260,12 +279,42 @@ pub async fn run_once(db: &Db, job: &EquivalenceJob) -> Result<Report, WorkerErr
     } else {
         Outcome::Refused
     };
+    // The last line is written before the row settles, so a poll that reads
+    // a settled row always reads the whole list.
+    step(db, claimed.id, &result_line(&payload, &verdict)).await;
     land(db, job, &claimed, &payload, &verdict).await?;
     Ok(Report {
         outcome,
         job_id: Some(claimed.id),
         attempts,
     })
+}
+
+/// Append one learner-facing line to the job. A failed write is logged and
+/// never stops the check: the lines are a courtesy, the verdict is the job.
+async fn step(db: &Db, id: Uuid, text: &str) {
+    if let Err(err) = equivalence::add_step(db.pool(), id, text).await {
+        tracing::warn!(job = %id, error = %err, "equivalence: a step did not write");
+    }
+}
+
+/// The closing line of a settled check.
+fn result_line(payload: &JobPayload, verdict: &Verdict) -> String {
+    let reason = equivalence::clip(&verdict.reason);
+    if !verdict.equivalent {
+        return format!("Result: not the same answer. {reason}");
+    }
+    let differed = equivalence::shorter_form(
+        &payload.expected,
+        payload.answer_contract.as_deref(),
+        &payload.given_answer,
+    )
+    .is_some();
+    if differed {
+        "Result: correct (the form differed from the standard form)".to_owned()
+    } else {
+        format!("Result: correct. {reason}")
+    }
 }
 
 /// Ask the model one question, and put the bill of the call in the ledger

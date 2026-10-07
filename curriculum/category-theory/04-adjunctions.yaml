@@ -32,16 +32,6 @@ topics:
           answer_contract: {"kind": "exact"}
           answer: '12'
           reveal: 'The word $aaaa$ is the product of four letters $a$, so $h(aaaa)=3+3+3+3=12$. A homomorphism out of a free monoid is fixed by its values on the letters, and this is the transpose idea of the lesson.'
-        step_check:
-          step: 'Check on a word: since $h$ is a homomorphism, $h(aba)=h(a)+h(b)+h(a)=4+1+4=9$'
-          question: 'Why does $h(aba)$ equal $h(a)+h(b)+h(a)$?'
-          options:
-            - 'Any function on words adds up the values of all the letters that it is given'
-            - 'A homomorphism turns the product of letters into the sum of their values'
-            - 'The word $aba$ has three letters, so its value is always $3\cdot h(a)$'
-            - 'Only the first letter matters, since the word $aba$ starts from the letter $a$'
-          answer: 'A homomorphism turns the product of letters into the sum of their values'
-          why: 'A homomorphism keeps the operation, and the operation of the free monoid is joining words, so $h(aba)$ is the sum $4+1+4=9$ of the values of its letters.'
         exemplars:
           - problem: 'Let $F\colon\mathbf{Set}\to\mathbf{Mon}$ send a set to the free monoid on it, and let $U\colon\mathbf{Mon}\to\mathbf{Set}$ be the underlying-set functor, so $F\dashv U$. Let $f\colon\{a,b\}\to U(\mathbb{N},+,0)$ be the function with $f(a)=4$ and $f(b)=5$, and let $\bar f\colon\{a,b\}^*\to(\mathbb{N},+,0)$ be its transpose. What is $\bar f(aab)$?'
             answer: '13'
@@ -83,15 +73,6 @@ topics:
         name: 'Recognizing an adjunction from a familiar bijection'
         key_prerequisites: [natural-isomorphisms]
         constraints: 'Recover the adjunction direction and the two hom-sets from the raw constructions. Test the correspondence, construct the missing adjoint, or use the bijection to compute a value or the size of a hom-set; items may name the adjoint pair but never say which side each functor is on.'
-        step_check:
-          step: 'So $F$ is the left adjoint and $U$ is the right adjoint'
-          question: 'Why is $F$, and not $U$, the left adjoint?'
-          options:
-            - '$F$ is the left adjoint because it was named first in the problem'
-            - '$F$ is the left adjoint because it adds structure, and that is the definition'
-            - '$F$ is the functor applied inside the hom-set on the left of the bijection'
-          answer: '$F$ is the functor applied inside the hom-set on the left of the bijection'
-          why: 'In $\mathrm{Hom}(FS,V)\cong\mathrm{Hom}(S,UV)$ the functor $F$ is applied to the first argument on the left, and that position is what makes a functor the left adjoint.'
         exemplars:
           - problem: 'Let $i\colon(\mathbb{Z},\le)\to(\mathbb{R},\le)$ be the inclusion of posets, each regarded as a category. For every integer $n$ and real number $x$ we have $n\le x$ if and only if $n\le\lfloor x\rfloor$. Since each hom-set in a poset has at most one element, this equivalence is a bijection $\mathrm{Hom}(i(n),x)\cong\mathrm{Hom}(n,\lfloor x\rfloor)$. Is $i$ the left adjoint or the right adjoint of the floor function?'
             answer: 'left'
@@ -133,16 +114,6 @@ topics:
         name: 'The data and the two naturality conditions'
         key_prerequisites: [hom-functors]
         constraints: 'Construct and test the two naturality squares of the hom-set bijection, with all changed object indices. Include pointwise bijections that fail naturality, and values computed on both sides of a square.'
-        step_check:
-          step: 'The two agree on every basis element, so $\Phi_{S'',V}(h\circ Fc)=\Phi_{S,V}(h)\circ c$'
-          question: 'Why does agreement at every basis element prove this equation?'
-          options:
-            - 'Two functions out of $S''$ are equal when they agree at every input'
-            - 'Both sides are linear maps, so agreement at one basis element is enough'
-            - 'The equation lives in a hom-set of vector spaces and not of plain functions'
-            - 'The left side equals the right side directly by the definition of $\Phi$'
-          answer: 'Two functions out of $S''$ are equal when they agree at every input'
-          why: 'Both sides are functions $S''\to UV$, and two functions with the same domain are equal exactly when they take the same value at every point of the domain.'
         exemplars:
           - problem: 'A robot has the instructions $a$ and $b$, and its programs are words in them. A homomorphism $h\colon\{a,b\}^*\to(\mathbb{N},+,0)$ gives the cost of a program, with $h(a)=8$ and $h(b)=7$. A relabeling $c\colon\{x,y\}\to\{a,b\}$ sends both $x$ and $y$ to $a$. Let $\Phi$ be the transpose of the free-monoid adjunction. What is $\Phi(h\circ Fc)(y)$?'
             answer: '8'
@@ -221,16 +192,6 @@ topics:
         name: 'Transposes and the unit'
         key_prerequisites: [natural-isomorphisms]
         constraints: 'Recover the unit and counit by transposing an identity. Derive their naturality using each variable of Phi separately; raw concrete data must leave the unit, the counit or the adjoint to the learner, in algebra and in word problems.'
-        step_check:
-          step: 'Take $h=1_{FC}\colon FC\to FC$, so $D=FC$'
-          question: 'Why is $D=FC$ in this step?'
-          options:
-            - 'The unit must land in $FC$, because $\eta_C$ is a map $C\to FC$ itself'
-            - 'Every transpose has $D=FC$, whatever the arrow $h$ in the hom-set is'
-            - 'Naturality forces $D$ to equal $FC$ before the arrow $h$ is chosen'
-            - 'The identity of $FC$ is an arrow $FC\to FC$, so its target is $FC$'
-          answer: 'The identity of $FC$ is an arrow $FC\to FC$, so its target is $FC$'
-          why: 'The transpose $\Phi_{C,D}$ is defined on arrows $FC\to D$, and the identity of $FC$ has target $FC$, so the unit is $\Phi_{C,FC}(1_{FC})\colon C\to GFC$.'
         exemplars:
           - problem: 'Let $\Delta\colon\mathbf{Set}\to\mathbf{Set}\times\mathbf{Set}$ be the diagonal functor, with right adjoint the product. The morphism $h\colon\Delta\{1,2,3\}\to(\{0,1\},\{5,6\})$ is the pair of functions $f,g$ with $f(1)=0$, $f(2)=1$, $f(3)=1$ and $g(1)=6$, $g(2)=5$, $g(3)=6$. What does the transpose of $h$ send $2$ to?'
             answer: '(1, 5)'
@@ -273,16 +234,6 @@ topics:
           answer_contract: {"kind": "exact"}
           answer: '3'
           reveal: 'Two buses seat only $24$ people, so $3$ buses are needed. This least number is the universal choice: every number of buses that carries $30$ people is at least $3$, which is the idea of a universal arrow.'
-        step_check:
-          step: 'since $\{a,b\}$ generates $FC$ as a monoid'
-          question: 'Why does agreement on $a$ and $b$ force $h''=h$ on every word?'
-          options:
-            - 'A homomorphism is fixed by its values on the letters, and a word is a product of letters'
-            - 'There is only one monoid homomorphism out of $FC$, so any two of them must agree on all words'
-            - 'The words $a$ and $b$ are the only elements of $FC$, so there is nothing else left to compare'
-            - 'Uniqueness follows from the existence of $h$, so no check on the other words is needed'
-          answer: 'A homomorphism is fixed by its values on the letters, and a word is a product of letters'
-          why: 'Each word is a product of letters, and a homomorphism sends a product to the product of the images, so its values on $a$ and $b$ decide its value on every word.'
         exemplars:
           - problem: 'Let $\mathcal C$ be the chain $0<1<2$ and $\mathcal D$ the chain $0<1<2<3$, regarded as categories, and let $G\colon\mathcal D\to\mathcal C$ be the order-preserving map with $G(0),G(1),G(2),G(3)=0,0,1,2$. A universal arrow from $1$ to $G$ is an arrow $1\to G(d)$ through which every arrow $1\to G(e)$ factors. Which object $d$ of $\mathcal D$ does it end at?'
             answer: '2'
@@ -328,16 +279,6 @@ topics:
         name: 'Uniqueness and composition of adjoints'
         key_prerequisites: [hom-set-adjunction-definition]
         constraints: 'Construct the composite and the comparison hom-set correspondences for composed or repeated adjoints, deriving the order from their variances. Uniqueness follows by Yoneda applied to the composite natural correspondence, not by evaluating one adjoint object; in posets, items evaluate the unique adjoint or the composite adjoint at an object.'
-        step_check:
-          step: 'since the Yoneda embedding is fully faithful'
-          question: 'Why does an isomorphism of the representable functors give an isomorphism $GD\cong G''D$?'
-          options:
-            - 'Representable functors are equal only when their objects are equal as sets'
-            - 'Any natural transformation between representable functors is an isomorphism'
-            - 'The Yoneda embedding is fully faithful, so it reflects isomorphisms'
-            - 'Hom-sets of the same size force the two objects to be isomorphic'
-          answer: 'The Yoneda embedding is fully faithful, so it reflects isomorphisms'
-          why: 'A fully faithful functor reflects isomorphisms, so a natural isomorphism between $\mathrm{Hom}(-,GD)$ and $\mathrm{Hom}(-,G''D)$ comes from an isomorphism $GD\cong G''D$.'
         exemplars:
           - problem: 'Eggs are packed $3$ to a box and boxes are packed $2$ to a crate. On the poset $(\mathbb{Z},\le)$ the functors $F(c)=2c$ (boxes in $c$ crates) and $H(b)=3b$ (eggs in $b$ boxes) have right adjoints $G$ and $K$, and the composite $HF$ has the right adjoint $GK$. How many full crates can be made from $20$ eggs?'
             answer: '3'
@@ -405,16 +346,6 @@ topics:
         name: 'Product, diagonal, coproduct adjoints'
         key_prerequisites: [products-coproducts]
         constraints: 'Derive coproduct left adjoint to diagonal and diagonal left adjoint to product from universal properties. Construct their units, evaluate transposes, and test false orientations using hom-sets, in Set, in divisibility posets and in word problems.'
-        step_check:
-          step: 'This correspondence is natural in $(A,B)$ and in $X$, so $+\dashv\Delta$'
-          question: 'Why does this natural correspondence prove that $+\dashv\Delta$?'
-          options:
-            - 'A bijection of the two hom-sets, with no naturality, already makes the functors adjoint'
-            - 'An adjunction is a hom-set bijection that is natural in both variables'
-            - 'Naturality is only needed to make the two coprojections unique'
-            - 'The coproduct is the left adjoint of every functor that it maps out of'
-          answer: 'An adjunction is a hom-set bijection that is natural in both variables'
-          why: 'The hom-set definition of $F\dashv G$ asks for bijections $\mathrm{Hom}(FC,D)\cong\mathrm{Hom}(C,GD)$ that are natural in $C$ and in $D$, and the coproduct correspondence has this form.'
         exemplars:
           - problem: 'In the divisibility category on $\{1,2,3,4,6,12\}$ there is one arrow $x\to y$ when $x$ divides $y$. The diagonal functor $\Delta$ sends $x$ to $(x,x)$ and has a right adjoint $R$. What is $R(4,6)$?'
             answer: '2'
@@ -461,16 +392,6 @@ topics:
           answer_contract: {"kind": "exact"}
           answer: '9'
           reveal: 'Each of the $2$ inputs can go to any of the $3$ outputs, so there are $3^2=9$ functions. The set of all functions from $A$ to $B$ is the exponential object $B^A$, and it has $|B|^{|A|}$ elements.'
-        step_check:
-          step: 'using the adjunction $(-\times A)\dashv(-)^A$'
-          question: 'Why does currying turn a map into $(B\times C)^A$ into a map out of $X\times A$?'
-          options:
-            - 'Currying only renames the objects, so no bijection of hom-sets is involved at all'
-            - 'The product is commutative, so $X\times A$ and $(B\times C)^A$ are then the same set'
-            - 'Every map into an exponential is just a projection onto its first factor'
-            - 'The adjunction gives $\mathrm{Hom}(X\times A,Y)\cong\mathrm{Hom}(X,Y^A)$'
-          answer: 'The adjunction gives $\mathrm{Hom}(X\times A,Y)\cong\mathrm{Hom}(X,Y^A)$'
-          why: 'The adjunction $(-\times A)\dashv(-)^A$ is the bijection $\mathrm{Hom}(X\times A,Y)\cong\mathrm{Hom}(X,Y^A)$, and here it is used with $Y=B\times C$.'
         exemplars:
           - problem: 'In $\mathbf{Set}$ let $X=\{1,2\}$, $A=\{0,1\}$ and $B=\{0,1,2\}$, and let $f\colon X\times A\to B$ send $(x,y)$ to the remainder of $2x+y$ on division by $3$. Let $g\colon X\to B^A$ be the transpose of $f$ under $(-\times A)\dashv(-)^A$. What is $g(2)(1)$?'
             answer: '2'
@@ -516,16 +437,6 @@ topics:
         name: 'A free-forgetful example'
         key_prerequisites: [adjunctions]
         constraints: 'Establish the free-monoid/forgetful correspondence: restriction determines a generator map, and each generator map has a unique homomorphic extension. Items count homomorphisms, find the generator images that give a prescribed value on a word, and use word problems with circular tracks; candidate claims must not be endorsed or explained by the stem.'
-        step_check:
-          step: 'no other homomorphism agrees with $f$ on $a$ and $b$'
-          question: 'Why is there only one homomorphism with $f(a)=2$ and $f(b)=3$ on the letters?'
-          options:
-            - 'Every word is a product of $a$ and $b$, and a homomorphism respects products'
-            - 'A monoid homomorphism is always the identity on any alphabet with two letters'
-            - 'The values $2$ and $3$ are both prime numbers, so no other homomorphism exists'
-            - 'Homomorphisms into $(\mathbb{N},+,0)$ must always be injective on words'
-          answer: 'Every word is a product of $a$ and $b$, and a homomorphism respects products'
-          why: 'Every word is a product of the letters $a$ and $b$, and a homomorphism sends a product to the product of the images, so the values $2$ and $3$ decide every value.'
         exemplars:
           - problem: 'The free monoid $X^*$ on a set $X$ consists of the words in the elements of $X$. How many monoid homomorphisms $\{a,b\}^*\to(\mathbb{Z}/3,+)$ are there?'
             answer: '9'
@@ -592,16 +503,6 @@ topics:
         name: 'Defining unit and counit'
         key_prerequisites: [adjunctions]
         constraints: 'Recover the unit and the counit as identity transposes in the free-monoid adjunction, leaving their component formulas to the learner. Evaluate them on words, on the empty word and on words of words, in algebra and in word problems.'
-        step_check:
-          step: '$\varepsilon_M$ multiplies the word out in $M$'
-          question: 'Why does $\varepsilon_M$ multiply the word out in $M$?'
-          options:
-            - 'It adds the letters of the word, because every counit is defined by addition in $\mathbb{Z}$'
-            - 'It forgets the letters and keeps only the length of the word, because $F$ is free'
-            - 'It is the homomorphism extending $1_{UM}$, so a word goes to the product of its letters'
-            - 'It sends the word to its first letter, since the identity of $UM$ fixes each letter'
-          answer: 'It is the homomorphism extending $1_{UM}$, so a word goes to the product of its letters'
-          why: 'The counit is the transpose of $1_{UM}$, so it is the homomorphism with $\varepsilon_M((m))=m$ on one-letter words, and a homomorphism sends a word to the product of the images of its letters.'
         exemplars:
           - problem: 'For the free-monoid adjunction $F\dashv U$ with $F(X)=X^*$, the unit $\eta_X\colon X\to UFX$ is the transpose of $1_{FX}$. For $X=\{c,d,e\}$, what is the length of the word $\eta_X(d)$?'
             answer: '1'
@@ -647,16 +548,6 @@ topics:
         name: 'Recovering the bijection from unit and counit'
         key_prerequisites: [natural-transformations]
         constraints: 'Reconstruct the two hom-set maps from unit and counit. Evaluate transposes and inverse transposes from the unit and the counit, in Set, in free-monoid and poset adjunctions and in word problems; test candidate unit-counit data by their composite; do not announce inversehood before asking.'
-        step_check:
-          step: 'using naturality in the second variable'
-          question: 'Why is it the second variable of $\Phi$ that gives $\Phi(h)=Gh\circ\eta_X$?'
-          options:
-            - 'The arrow $h$ acts on the source of $1_{FX}$, and the source is the second variable'
-            - 'The arrow $h$ acts on the target of $1_{FX}$, which is the second variable'
-            - 'Both variables always change together, so either one could be used'
-            - 'The unit $\eta_X$ is natural in $X$, and $X$ is the second variable'
-          answer: 'The arrow $h$ acts on the target of $1_{FX}$, which is the second variable'
-          why: 'The arrow $h\colon FX\to Y$ is composed after $1_{FX}$, so it changes the target $Y$ of the hom-set $\mathrm{Hom}(FX,-)$, and the target is the second variable of $\Phi$.'
         exemplars:
           - problem: 'In $\mathbf{Set}$ let $F(C)=C\times\{0,1\}$ and $G(D)=D^{\{0,1\}}$, with the unit $\eta_C(c)$ the function $j\mapsto(c,j)$. Let $h\colon C\times\{0,1\}\to D$ with $C=\{0,1\}$ have $h(0,0)=5$, $h(0,1)=6$, $h(1,0)=7$ and $h(1,1)=8$, and let $\Phi(h)\colon C\to D^{\{0,1\}}$ be its transpose. What is $\Phi(h)(1)(1)$?'
             answer: '8'
@@ -737,16 +628,6 @@ topics:
         name: Statement of the zig-zag identities
         key_prerequisites: [unit-counit]
         constraints: 'Triangle paths are evaluated on concrete elements of Set, the free monoid and string models; a modified unit or counit is tested for the element on which a triangle fails. One full-proof exemplar is kept.'
-        step_check:
-          step: 'multiply that word of one-letter words out inside $X^*$'
-          question: 'Why does multiplying out the word of one-letter words give back $w$?'
-          options:
-            - 'The counit keeps only the first letter of each one-letter word'
-            - 'Joining the one-letter words $(x_i)$ in order restores $w$'
-            - 'The unit $\eta_X$ is the identity map on the set $X$'
-            - 'Every word in $X^*$ becomes the empty word when multiplied out'
-          answer: 'Joining the one-letter words $(x_i)$ in order restores $w$'
-          why: 'The counit multiplies the word of one-letter words $(x_1)(x_2)\cdots(x_n)$ inside the monoid $X^*$, which gives $x_1x_2\cdots x_n=w$.'
         exemplars:
           - problem: 'In $\mathbf{Set}$ fix $A=\{0,1\}$. The functor $F(X)=X\times A$ is left adjoint to $G(Y)=Y^A$, the functions $A\to Y$, with unit $\eta_X(x)=(a\mapsto(x,a))$ and counit $\varepsilon_Y(f,a)=f(a)$. For $X=\mathbb{N}$, the map $F\eta_X$ sends $(x,a)$ to $(\eta_X(x),a)$. Which pair is $(\varepsilon_{FX}\circ F\eta_X)(3,1)$?'
             answer: '(3, 1)'
@@ -784,16 +665,6 @@ topics:
         name: Deriving a triangle identity from the transposes
         key_prerequisites: [unit-counit]
         constraints: 'Transposes Phi and its inverse are evaluated in the curried adjunction on Set; the learner finds the object at which a transpose formula is applied or the first failing step of a derivation. One full-proof exemplar is kept.'
-        step_check:
-          step: 'take $C=A$, $D=FA$, and $k=\eta_A$'
-          question: 'Why must $D$ be $FA$ when $k=\eta_A$ is substituted into the formula?'
-          options:
-            - 'Every counit component $\varepsilon_D$ has $D$ equal to the source $A$ of the map'
-            - 'The identity $1_{FA}$ forces every object in the formula to be $A$'
-            - 'The map $\eta_A$ has type $A\to GFA$, so it has the form $C\to GD$ with $D=FA$'
-            - 'The functor $F$ always sends the object $D$ back to the object $A$'
-          answer: 'The map $\eta_A$ has type $A\to GFA$, so it has the form $C\to GD$ with $D=FA$'
-          why: 'In $\Phi^{-1}(k)=\varepsilon_D\circ Fk$ the map $k$ has type $C\to GD$; for $k=\eta_A\colon A\to GFA$ this gives $C=A$ and $D=FA$.'
         exemplars:
           - problem: 'In $\mathbf{Set}$ fix $A=\{0,1\}$ and use the adjunction $-\times A\dashv(-)^A$, whose transpose sends $h\colon X\times A\to Y$ to $\Phi(h)(x)=(a\mapsto h(x,a))$. The unit is $\eta_X=\Phi(1_{FX})$, where $1_{FX}$ is the identity on $X\times A$. For $X=\mathbb{N}$, which pair is $\eta_X(7)(0)$?'
             answer: '(7, 0)'
@@ -836,16 +707,6 @@ topics:
           answer_contract: {"kind":"exact"}
           answer: '5'
           reveal: 'The two turns must add up to a multiple of $8$, so $3+b=8$ and $b=5$. For $\mathrm{Id}\dashv\mathrm{Id}$ on such a dial the unit and counit must satisfy exactly this condition.'
-        step_check:
-          step: 'using naturality of $\varepsilon$ and triangle 1'
-          question: 'Why does the computation of $\Psi\Phi(h)$ need triangle 1 at its last step?'
-          options:
-            - 'Naturality leaves $\varepsilon_{FX}\circ F\eta_X$, and triangle 1 makes it $1_{FX}$'
-            - 'Triangle 1 is what makes the map $\Phi$ a function between the two hom-sets here'
-            - 'Triangle 1 states that the arrow $h$ is natural in both of its two variables'
-            - 'Triangle 1 removes the arrow $h$ from the composite by cancelling it out of both sides'
-          answer: 'Naturality leaves $\varepsilon_{FX}\circ F\eta_X$, and triangle 1 makes it $1_{FX}$'
-          why: 'Naturality of $\varepsilon$ moves $h$ to the left and leaves $\varepsilon_{FX}\circ F\eta_X$, which equals $1_{FX}$ by triangle 1, so $\Psi\Phi(h)=h$.'
         exemplars:
           - problem: 'Let $\mathcal{C}$ be the one-object category of $(\mathbb{Z}/5,+)$, where composition of arrows is addition, and let $F=G=\mathrm{Id}$. The unit is the arrow $\eta=2$ and the counit is the arrow $\varepsilon=b$. For which $b\in\{0,1,2,3,4\}$ do $\eta$ and $\varepsilon$ satisfy both triangle identities?'
             answer: '3'
@@ -928,16 +789,6 @@ topics:
           answer_contract: {"kind":"exact"}
           answer: '9'
           reveal: 'There are $3\cdot3=9$ functions, since each of the $2$ elements has $3$ possible images. The adjunction shows that the same number counts the homomorphisms from the free group on $2$ generators to a group with $3$ elements.'
-        step_check:
-          step: 'since $\varepsilon_G$ hits every element, it is surjective'
-          question: 'Why does $\varepsilon_G$ hit every element of $G$?'
-          options:
-            - 'Every homomorphism out of a free group is onto its codomain group'
-            - 'The triangle identity $U\varepsilon\circ\eta U=1_U$ forces $\varepsilon_G$ to be onto'
-            - 'Every $g\in G$ is the image of the generator $[g]$ of $F(UG)$'
-            - 'The group $G$ is generated by its identity element alone'
-          answer: 'Every $g\in G$ is the image of the generator $[g]$ of $F(UG)$'
-          why: 'The counit sends the generator $[g]$ to $g$ for each $g\in UG$, so every element $g$ is an image and $\varepsilon_G$ is surjective.'
         exemplars:
           - problem: 'How many monoid homomorphisms are there from the free monoid on $\{a,b,c\}$ to a monoid with $4$ elements?'
             answer: '64'
@@ -971,16 +822,6 @@ topics:
         name: Free vector spaces
         key_prerequisites: [functor-examples]
         constraints: 'Free vector spaces are met through their dimension, linear maps fixed on a basis, the counit evaluated on a formal combination and its kernel, and one setting-up problem; no evaluation formula is supplied. One full-proof exemplar is kept.'
-        step_check:
-          step: 'Extending linearly: $T(\lambda_a e_a+\lambda_b e_b)=\lambda_a(1,2)+\lambda_b(3,0)=(\lambda_a+3\lambda_b,\,2\lambda_a)$'
-          question: 'Why is $T$ of a combination the same combination of $T(e_a)$ and $T(e_b)$?'
-          options:
-            - 'A linear map respects sums and scalars, so a basis fixes it'
-            - 'Every function on the two-element set $\{a,b\}$ is automatically linear'
-            - 'The vectors $e_a$ and $e_b$ are always sent to a standard basis'
-            - 'The formula holds because $T$ is injective on the free space'
-          answer: 'A linear map respects sums and scalars, so a basis fixes it'
-          why: 'Linearity gives $T(\lambda_a e_a+\lambda_b e_b)=\lambda_aT(e_a)+\lambda_bT(e_b)$, so the values on the basis fix the whole map $T$.'
         exemplars:
           - problem: 'A recipe is recorded by the number of grams of each of $6$ ingredients it uses, so recipes form the free real vector space on the set of the $6$ ingredients. What is the dimension of this space?'
             answer: '6'
@@ -1018,16 +859,6 @@ topics:
         name: A forgetful functor with adjoints on both sides
         key_prerequisites: [adjunctions]
         constraints: 'Left and right adjoints of forgetful functors are recovered from which maps are automatic: continuous maps out of a discrete space and into an indiscrete space, and functors out of a discrete category. Items ask for counts, a verdict or the side of the adjoint. One full-proof exemplar is kept.'
-        step_check:
-          step: 'since $\mathrm{disc}(S)$ has no non-identity arrows, there is nothing else to preserve'
-          question: 'Why does every function $S\to\mathrm{Ob}(\mathcal C)$ extend to a functor out of $\mathrm{disc}(S)$?'
-          options:
-            - 'Every function between sets of objects preserves composition automatically'
-            - 'Functors are determined by their action on objects in every category'
-            - 'The category $\mathcal C$ must also be discrete for this to work out'
-            - 'A functor preserves arrows, and $\mathrm{disc}(S)$ has only identities'
-          answer: 'A functor preserves arrows, and $\mathrm{disc}(S)$ has only identities'
-          why: 'A functor must send identities to identities and preserve composition; in $\mathrm{disc}(S)$ there is nothing else, so the object assignment alone defines a functor.'
         exemplars:
           - problem: 'The forgetful functor $U\colon\mathbf{Top}\to\mathbf{Set}$ has a left adjoint $L$, so that every function $X\to UY$ gives a continuous map $LX\to Y$ for every space $Y$. For a set $X$ with $3$ elements, how many open sets does the space $LX$ have?'
             answer: '8'
@@ -1103,16 +934,6 @@ topics:
           answer_contract: {"kind":"exact"}
           answer: '6'
           reveal: 'The largest such $n$ is $6$, because $3\cdot6=18\le20$ but $3\cdot7=21>20$. This is the value of the right adjoint of $n\mapsto3n$ at $20$, the greatest $n$ with $3n\le20$.'
-        step_check:
-          step: 'no naturality check is needed since each hom-set has at most one element'
-          question: 'Why is no naturality check needed for this adjunction of posets?'
-          options:
-            - 'Every monotone map between posets is automatically a natural transformation'
-            - 'The posets are totally ordered, so all arrows compose in only one way'
-            - 'A Galois connection is defined without any hom-sets, so naturality has no meaning'
-            - 'Each hom-set has at most one element, so every naturality square commutes'
-          answer: 'Each hom-set has at most one element, so every naturality square commutes'
-          why: 'In a thin category any two parallel arrows are equal, so every naturality square commutes and only the biconditional $f(n)\le m\iff n\le g(m)$ needs a check.'
         exemplars:
           - problem: 'On $(\mathbb{N},\le)$ the monotone map $f(n)=3n$ has a right adjoint $g$, with $3n\le m$ if and only if $n\le g(m)$ for all $n,m$. What is $g(10)$?'
             answer: '3'
@@ -1154,16 +975,6 @@ topics:
         name: Closure operators from the round trip
         key_prerequisites: [adjunctions]
         constraints: 'The round trip gf of a poset adjunction is evaluated on chains, rounding problems and subset posets, and its fixed points are counted; closure operators on a chain are counted. The proof step that needs the monotone map g is asked as a choice. One full-proof exemplar is kept.'
-        step_check:
-          step: 'Apply the monotone $g$ to the counit at $f(x)$'
-          question: 'Why does applying $g$ to the inequality $fg(f(x))\le f(x)$ keep the inequality?'
-          options:
-            - 'The map $g$ is an inverse of $f$, so it cancels both sides at once'
-            - 'The map $g$ is monotone, so it keeps the order of elements'
-            - 'Applying any function to both sides of an inequality keeps it true'
-            - 'The counit is really an equality, so applying $g$ changes nothing'
-          answer: 'The map $g$ is monotone, so it keeps the order of elements'
-          why: 'Monotonicity of $g$ turns $fg(f(x))\le f(x)$ into $gfgf(x)\le gf(x)$, which is $c(c(x))\le c(x)$; an arbitrary function need not keep an inequality.'
         exemplars:
           - problem: 'Let $P=\{0,1,2,3,4,5\}$ and $Q=\{0,1,2\}$ be chains, and let $f\colon P\to Q$ be the monotone map with values $0,0,1,1,2,2$ at $0,1,2,3,4,5$. It has a right adjoint $g$. What is $c(4)$ for the round trip $c=g\circ f$?'
             answer: '5'
@@ -1247,16 +1058,6 @@ topics:
           answer_contract: {"kind":"exact"}
           answer: '15'
           reveal: 'It is $15$, the nearest multiple of $5$ above $12$. A reflection assigns to each object the best approximation from inside the subcategory, here the least multiple of $5$ that lies above it.'
-        step_check:
-          step: 'since $D$ is torsion-free this forces $f(x)=0$'
-          question: 'Why does $n\,f(x)=0$ in a torsion-free group $D$ force $f(x)=0$?'
-          options:
-            - 'A homomorphism into a torsion-free group is always the zero map in that case'
-            - 'Dividing both sides by $n$ is always allowed in every abelian group'
-            - 'A torsion-free group has no nonzero $d$ with $nd=0$ for any $n\ge1$'
-            - 'The element $x$ already satisfies $f(x)=x$ inside the group $D$'
-          answer: 'A torsion-free group has no nonzero $d$ with $nd=0$ for any $n\ge1$'
-          why: 'In a torsion-free group $nd=0$ with $n\ge1$ only for $d=0$, so $n\,f(x)=0$ gives $f(x)=0$; this puts every torsion element of $C$ in $\ker f$.'
         exemplars:
           - problem: 'Let $\mathcal{C}$ be the chain $1<2<3<4$, with one arrow $x\to y$ when $x\le y$, and let $\mathcal{D}$ be its full subcategory on the objects $1,2,4$. The inclusion $\mathcal{D}\to\mathcal{C}$ has a left adjoint $L$. What is $L(3)$?'
             answer: '4'
@@ -1302,16 +1103,6 @@ topics:
         name: The counit of a reflection is an isomorphism
         key_prerequisites: [triangle-identities]
         constraints: 'The counit of a reflection is tested through its kernel on abelian groups, rounding problems, counting of arrows through a fully faithful functor, and an example where fullness fails; one item asks which hypothesis cancels the functor. One full-proof exemplar is kept.'
-        step_check:
-          step: 'faithfulness of $I$ lets us cancel $I$'
-          question: 'Why does faithfulness of $I$ let us cancel $I$ in $I(\epsilon_B\circ k)=I(1_B)$?'
-          options:
-            - 'Faithful means injective on hom-sets, so equal images give equal arrows'
-            - 'A faithful functor sends every morphism of the category to an identity'
-            - 'A faithful functor is a bijection on objects, so $I$ can be removed'
-            - 'The equation holds by naturality of the counit $\epsilon$ at the object $B$'
-          answer: 'Faithful means injective on hom-sets, so equal images give equal arrows'
-          why: 'Faithful means that $I$ is injective on each hom-set, so $I(\epsilon_B\circ k)=I(1_B)$ gives $\epsilon_B\circ k=1_B$ in $\mathcal{S}$.'
         exemplars:
           - problem: 'Let $L\colon\mathbf{Grp}\to\mathbf{Ab}$ be abelianization, left adjoint to the inclusion $i\colon\mathbf{Ab}\to\mathbf{Grp}$, which is fully faithful. For the abelian group $A=\mathbb{Z}/6$, how many elements does the kernel of the counit $\varepsilon_A\colon L(iA)\to A$ have?'
             answer: '1'
@@ -1349,16 +1140,6 @@ topics:
         name: Examples and the induced idempotent monad
         key_prerequisites: [full-faithful-functors, commutator-subgroup]
         constraints: 'Reflections into abelian groups and posets are computed through the order of the reflected group, the kernel of the unit and the number of classes; rounding problems carry the induced idempotent monad T=iL; one item gives a universal factorization and one a verdict on the unit. One full-proof exemplar is kept.'
-        step_check:
-          step: 'since $\varepsilon$ is a natural isomorphism, $\mu=i\varepsilon L$ is an isomorphism'
-          question: 'Why is the multiplication $\mu=i\varepsilon L$ of the induced monad an isomorphism?'
-          options:
-            - 'Every monad has an invertible multiplication, by the monad laws here'
-            - 'The unit $\eta$ is an isomorphism, and $\mu$ is the inverse of $\eta$'
-            - 'The functor $i$ is an isomorphism of categories, so $\mu$ is one too'
-            - 'The counit is an isomorphism, and $\mu$ is built from it'
-          answer: 'The counit is an isomorphism, and $\mu$ is built from it'
-          why: 'The multiplication $\mu=i\varepsilon L$ is the counit whiskered by $i$ and $L$; whiskering keeps an isomorphism an isomorphism, so $T^2\cong T$.'
         exemplars:
           - problem: 'The dihedral group $D_4$ of the square has the presentation $\langle r,s\mid r^4=1,\ s^2=1,\ srs=r^{-1}\rangle$. The abelian groups form a full subcategory of $\mathbf{Grp}$ with a reflector. How many elements does the reflection of $D_4$ have?'
             answer: '4'
@@ -1438,16 +1219,6 @@ topics:
           answer_contract: {"kind":"exact"}
           answer: '512'
           reveal: 'There are $8^3=512$ functions, which is also $2^3\cdot4^3=8\cdot64$, the number of pairs of a function $A\to X$ and a function $A\to Y$. A map into a product is the same thing as a pair of maps into the factors.'
-        step_check:
-          step: 'Being a right adjoint, $\mathrm{Hom}(A,-)$ preserves limits'
-          question: 'Why does being a right adjoint make $\mathrm{Hom}(A,-)$ preserve limits?'
-          options:
-            - 'Every functor into $\mathbf{Set}$ preserves limits, adjoint or not'
-            - 'Preserving products is the only property a right adjoint has'
-            - 'A right adjoint sends every limit cone to a colimit cocone'
-            - 'Its hom-set bijection and Yoneda give preservation of limits'
-          answer: 'Its hom-set bijection and Yoneda give preservation of limits'
-          why: 'A right adjoint $G$ has $\mathrm{Hom}(C,G\lim D)\cong\lim\mathrm{Hom}(C,GD)$ for every $C$, so Yoneda shows that $G$ carries limit cones to limit cones.'
         exemplars:
           - problem: 'In a category $\mathcal{C}$ with products, let $P=X\times Y\times Z$. There are $2$ morphisms $A\to X$, $3$ morphisms $A\to Y$ and $5$ morphisms $A\to Z$. How many morphisms $A\to P$ are there?'
             answer: '30'
@@ -1489,16 +1260,6 @@ topics:
         name: The proof via the adjunction isomorphism
         key_prerequisites: [adjunctions]
         constraints: 'Preservation by the forgetful functor from Grp is tested on products, equalizers and pullbacks of small groups, in word problems with multiplication and division, and the failure of coproducts is a verdict. One full-proof exemplar is kept.'
-        step_check:
-          step: 'By Yoneda the representing objects are isomorphic'
-          question: 'Why do naturally isomorphic hom-functors give isomorphic objects?'
-          options:
-            - 'Yoneda: an object is fixed up to isomorphism by its hom-functor'
-            - 'Naturally isomorphic functors take equal values on every object'
-            - 'Hom-sets of equal size force the two objects to be equal'
-            - 'The isomorphism holds because $F$ is a left adjoint, with no more argument'
-          answer: 'Yoneda: an object is fixed up to isomorphism by its hom-functor'
-          why: 'By the Yoneda lemma, a natural isomorphism $\mathrm{Hom}(X,-)\cong\mathrm{Hom}(Y,-)$ is induced by a unique isomorphism $Y\cong X$, so representing objects are isomorphic.'
         exemplars:
           - problem: 'The forgetful functor $U\colon\mathbf{Grp}\to\mathbf{Set}$ is a right adjoint, so it preserves products. Let $A$ have $6$ elements and $B$ have $7$ elements. How many elements does the underlying set $U(A\times B)$ have?'
             answer: '42'
@@ -1540,16 +1301,6 @@ topics:
         name: Left adjoints preserve colimits
         key_prerequisites: [limits-colimits]
         constraints: 'Left adjoints are met as free functors: coproducts of free vector spaces and discrete spaces are counted, the free monoid on the empty set is the initial object, a word problem uses addition and subtraction of dimensions, a verdict names a right adjoint that fails, and one item tests a false claim about products. One full-proof exemplar is kept.'
-        step_check:
-          step: 'A limit of a diagram in $\mathcal C^{op}$ is the same data as a colimit of the corresponding diagram in $\mathcal C$'
-          question: 'Why does preserving limits in $\mathcal C^{op}$ mean preserving colimits in $\mathcal C$?'
-          options:
-            - 'Every limit in $\mathcal C^{op}$ is also a limit in $\mathcal C$ itself'
-            - 'Reversing arrows turns cones into cocones, so limits become colimits'
-            - 'The functor $F$ is replaced by its inverse when arrows are reversed'
-            - 'Colimits and limits are the same construction in every category'
-          answer: 'Reversing arrows turns cones into cocones, so limits become colimits'
-          why: 'Reversing all arrows turns a cone over a diagram into a cocone, so a limit in $\mathcal C^{op}$ is a colimit in $\mathcal C$ and RAPL for $F^{op}$ says $F$ preserves colimits.'
         exemplars:
           - problem: 'The free vector space functor $F\colon\mathbf{Set}\to\mathbf{Vect}_\mathbb{R}$ is a left adjoint. Let $X$ have $4$ elements and $Y$ have $7$ elements. What is the dimension of $F(X+Y)$, where $X+Y$ is the disjoint union?'
             answer: '11'

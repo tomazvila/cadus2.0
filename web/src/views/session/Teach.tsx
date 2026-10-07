@@ -1,5 +1,5 @@
 /**
- * The worked example of a lesson (L4), with its optional active parts (step 5a).
+ * The worked example of a lesson (L4), with its optional try-first part (step 5a).
  *
  * PEDAGOGY: a lesson teaches BEFORE it practises. The learner reads this, then presses
  * "I've got it" — which SERVES the first problem. The serve happens on that press and not
@@ -7,19 +7,14 @@
  * bills the reading time as solve time, and this view mount would issue two writes
  * (NO-2BILL).
  *
- * ACTIVE PARTS. Reading is passive, so a page may carry two authored acts:
+ * TRY FIRST. Reading is passive, so a page may carry one authored act: a motivating problem
+ * shown BEFORE the worked example. The learner answers; any outcome is fine. The check reply
+ * brings the answer and a short reveal, then the worked example appears.
  *
- *  - `try_first`: a motivating problem shown BEFORE the worked example. The learner answers;
- *    any outcome is fine. The check reply brings the answer and a short reveal, then the
- *    worked example appears.
- *  - `step_check`: one step of the example is highlighted with a question and options. The
- *    learner must pick before the practice button appears; the check reply brings
- *    right/wrong and one sentence of why.
- *
- * The payload carries neither the answer nor the why (Hard Rule 1); `onCheck` posts the act
- * and the service grades it. The service records nothing for either act, so they never touch
+ * The payload carries neither the answer nor the reveal (Hard Rule 1); `onCheck` posts the
+ * attempt and the service grades it. The service records nothing for it, so it never touches
  * mastery, XP, the pass rule or the schedule. A failed check never strands the learner: the
- * page moves on as if the act had been answered.
+ * page moves on as if the attempt had been answered.
  */
 import { useEffect, useRef, useState } from 'react';
 import { AnswerInput, TypedSubmit } from '@/components/AnswerInput';
@@ -32,15 +27,13 @@ export interface TeachProps {
   task: PlanTask;
   instruction: TeachResponse;
   onContinue: () => void;
-  /** Post one active-example act. Absent, the active parts are skipped. */
+  /** Post one try-first attempt. Absent, the try-first part is skipped. */
   onCheck?: (body: TeachCheckRequest) => Promise<TeachCheckResponse>;
 }
 
 type Check = (body: TeachCheckRequest) => Promise<TeachCheckResponse>;
 type TryReply = Extract<TeachCheckResponse, { part: 'try_first' }>;
-type StepReply = Extract<TeachCheckResponse, { part: 'step_check' }>;
 type TryFirst = NonNullable<TeachResponse['try_first']>;
-type StepCheck = NonNullable<TeachResponse['step_check']>;
 
 /** The step list of the page. An older page sends one string. */
 function stepsOf(steps: string | string[]): string[] {
@@ -50,19 +43,17 @@ function stepsOf(steps: string | string[]): string[] {
 export function Teach({ task, instruction, onContinue, onCheck }: TeachProps) {
   const example = instruction.worked_example;
   const tryFirst = onCheck ? instruction.try_first : undefined;
-  const stepCheck = onCheck ? instruction.step_check : undefined;
 
   const [tried, setTried] = useState(false);
-  const [picked, setPicked] = useState(false);
   const buttonRef = useRef<HTMLButtonElement>(null);
 
   const showExample = !tryFirst || tried;
-  const canPractise = showExample && (!stepCheck || picked);
-  const active = Boolean(tryFirst || stepCheck);
+  const canPractise = showExample;
+  const active = Boolean(tryFirst);
 
   // Keyboard wayfinding without a scroll jump: a bare focus() on mount YANKS the browser
   // scroll to the button, pinning it against the topbar and cutting the lesson header off
-  // above. Arrive at the top of the lesson and focus in place instead. A page with an active
+  // above. Arrive at the top of the lesson and focus in place instead. A page with a try-first
   // part focuses its own control, and the button once it appears.
   useEffect(() => {
     if (!active) window.scrollTo(0, 0);
@@ -88,11 +79,8 @@ export function Teach({ task, instruction, onContinue, onCheck }: TeachProps) {
               <div className="teach-label">Example</div>
               <MathBlock className="teach-problem">{example.problem}</MathBlock>
               <div className="teach-label">Solution</div>
-              <StepList steps={stepsOf(example.steps)} checked={stepCheck?.step} />
+              <StepList steps={stepsOf(example.steps)} />
             </div>
-            {stepCheck && onCheck ? (
-              <StepCheckPanel stepCheck={stepCheck} onCheck={onCheck} onDone={() => setPicked(true)} />
-            ) : null}
             {canPractise ? (
               <button ref={buttonRef} type="button" className="btn btn-primary" onClick={onContinue}>
                 Start practice ▸
@@ -121,23 +109,16 @@ function TeachHeader({ task, badge }: { task: PlanTask; badge: string }) {
   );
 }
 
-/** The worked solution, one item per step, with the asked step marked. */
-function StepList({ steps, checked }: { steps: string[]; checked: number | undefined }) {
+/** The worked solution, one item per step. */
+function StepList({ steps }: { steps: string[] }) {
   return (
     <ol className="teach-steps">
-      {steps.map((step, index) => {
-        const marked = checked === index + 1;
-        return (
-          <li
-            // Steps are fixed for the life of the page, so the index is a stable key.
-            key={index}
-            className={`teach-step${marked ? ' is-checked' : ''}`}
-            aria-current={marked ? 'step' : undefined}
-          >
-            <MathBlock className="teach-step-text">{step}</MathBlock>
-          </li>
-        );
-      })}
+      {steps.map((step, index) => (
+        // Steps are fixed for the life of the page, so the index is a stable key.
+        <li key={index} className="teach-step">
+          <MathBlock className="teach-step-text">{step}</MathBlock>
+        </li>
+      ))}
     </ol>
   );
 }
@@ -203,69 +184,6 @@ function TryResult({ reply }: { reply: TryReply | 'failed' }) {
         <MathBlock as="span" className="teach-answer-text">{reply.answer}</MathBlock>
       </p>
       <MathBlock className="teach-reveal">{reply.reveal}</MathBlock>
-    </div>
-  );
-}
-
-/** The question on one step: one pick, then right/wrong and why. */
-function StepCheckPanel({ stepCheck, onCheck, onDone }: { stepCheck: StepCheck; onCheck: Check; onDone: () => void }) {
-  const [picked, setPicked] = useState<{ choice: string; reply: StepReply | null } | null>(null);
-  const [busy, setBusy] = useState(false);
-
-  const pick = async (choice: string) => {
-    if (busy || picked !== null) return;
-    setBusy(true);
-    try {
-      const got = await onCheck({ part: 'step_check', choice });
-      setPicked({ choice, reply: got.part === 'step_check' ? got : null });
-    } catch {
-      setPicked({ choice, reply: null });
-    } finally {
-      setBusy(false);
-      onDone();
-    }
-  };
-
-  const markOf = (option: string): string => {
-    if (!picked?.reply) return '';
-    if (picked.reply.answer === option) return ' is-right';
-    return picked.choice === option ? ' is-wrong' : '';
-  };
-
-  return (
-    <div className="teach-check" role="group" aria-label={`Question about step ${stepCheck.step}`}>
-      <div className="teach-label">{`Step ${stepCheck.step}`}</div>
-      <MathBlock className="teach-question">{stepCheck.question}</MathBlock>
-      <div className="choice-buttons">
-        {stepCheck.options.map((option, index) => {
-          const chosen = picked?.choice === option;
-          return (
-            <button
-              key={`${index}:${option}`}
-              type="button"
-              className={`btn choice-button${chosen ? ' is-selected' : ''}${markOf(option)}`}
-              aria-pressed={picked ? chosen : undefined}
-              disabled={busy || picked !== null}
-              onClick={() => { void pick(option); }}
-            >
-              <MathBlock as="span" className="choice-text">{option}</MathBlock>
-            </button>
-          );
-        })}
-      </div>
-      {picked ? <StepResult reply={picked.reply} /> : null}
-    </div>
-  );
-}
-
-function StepResult({ reply }: { reply: StepReply | null }) {
-  if (!reply) {
-    return <p className="teach-note muted" role="status">Your pick could not be checked. Carry on to practice.</p>;
-  }
-  return (
-    <div className="teach-result" role="status">
-      <p className={`teach-verdict ${reply.correct ? 'is-right' : 'is-other'}`}>{reply.correct ? 'Right.' : 'Not quite.'}</p>
-      <MathBlock className="teach-why">{reply.why}</MathBlock>
     </div>
   );
 }

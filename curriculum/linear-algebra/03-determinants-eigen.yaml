@@ -17,16 +17,6 @@ topics:
       - id: kp1
         name: The ad - bc formula
         key_prerequisites: [matrix-operations]
-        step_check:
-          step: 'Other diagonal product: $bc = (-3)(-5) = 15$'
-          question: 'Why is $bc$ equal to $+15$ although both $b$ and $c$ are written with minus signs?'
-          options:
-            - 'The minus signs are dropped, because $bc$ only measures a size'
-            - 'A negative times a negative is positive, so the two minus signs cancel'
-            - 'The formula $ad-bc$ already has one minus sign, so these two are ignored'
-            - 'Only one of the two entries keeps its sign, so $-3$ becomes $3$'
-          answer: 'A negative times a negative is positive, so the two minus signs cancel'
-          why: 'Two negative factors give a positive product, so $bc=15$ and $ad-bc=8-15=-7$; adding the two products instead would give the wrong value $23$.'
         exemplars:
           - problem: 'Compute $\det\begin{pmatrix}5&3\\2&4\end{pmatrix}$.'
             answer: '14'
@@ -69,16 +59,6 @@ topics:
           answer_contract: {"kind": "label", "options": [["yes", "it is invertible", "invertible", "it has an inverse"], ["no", "it is not invertible", "not invertible", "singular", "it has no inverse"]]}
           answer: 'no'
           reveal: 'Its determinant is $4\cdot3-6\cdot2=0$: row 1 is twice row 2, so the rows are proportional. A zero determinant is the test for a matrix that has no inverse.'
-        step_check:
-          step: 'because $\det = 0$, the matrix is singular and not invertible'
-          question: 'Why does a zero determinant mean that the matrix has no inverse?'
-          options:
-            - 'A zero determinant forces every entry of the matrix to be zero'
-            - 'A matrix with determinant $0$ always has a whole row of zeros in it, so it has no inverse'
-            - 'Only matrices with a negative determinant can have an inverse'
-            - 'The inverse formula divides by $ad-bc$, and one cannot divide by $0$'
-          answer: 'The inverse formula divides by $ad-bc$, and one cannot divide by $0$'
-          why: 'The inverse of $\begin{pmatrix}a&b\\c&d\end{pmatrix}$ is $\frac{1}{ad-bc}\begin{pmatrix}d&-b\\-c&a\end{pmatrix}$, which does not exist when $ad-bc=0$; the matrix $\begin{pmatrix}5&10\\3&6\end{pmatrix}$ has no row of zeros and is still singular.'
         exemplars:
           - problem: 'Is the matrix $\begin{pmatrix}3&1\\5&2\end{pmatrix}$ invertible?'
             answer: 'yes'
@@ -116,15 +96,6 @@ topics:
       - id: kp3
         name: Solving for an unknown entry
         key_prerequisites: [matrix-operations]
-        step_check:
-          step: 'the rule $ad-bc$ gives $\det = 3x - 8$'
-          question: 'Why does $x$ get the coefficient $3$ in $\det = 3x - 8$?'
-          options:
-            - 'The $x$ sits on the main diagonal, so it is multiplied by $d=3$ in $ad$'
-            - 'The $x$ sits on the other diagonal, so it is multiplied by $c=2$ in $bc$'
-            - 'The $x$ is multiplied by the entry next to it in its row, which is $4$'
-          answer: 'The $x$ sits on the main diagonal, so it is multiplied by $d=3$ in $ad$'
-          why: 'Here $a=x$ and $d=3$ are on the main diagonal, so $ad=3x$; the other diagonal gives $bc=4\cdot2=8$, which is subtracted, so $\det=3x-8$.'
         exemplars:
           - problem: 'Find $x$ so that $\det\begin{pmatrix}x&2\\3&4\end{pmatrix}=6$.'
             answer: '3'
@@ -188,16 +159,6 @@ topics:
       - id: kp1
         name: Minors and cofactors
         key_prerequisites: [determinants-2x2]
-        step_check:
-          step: 'Find the sign: $i+j = 2+3 = 5$, which is odd, so $(-1)^{5} = -1$'
-          question: 'Why does the odd sum $i+j=5$ give a minus sign?'
-          options:
-            - 'The sign is $(-1)^{i\cdot j}$, and $2\cdot3=6$ is even'
-            - 'The minus sign comes from the minus sign in $ad-bc$ of the minor'
-            - 'The sign is $(-1)^{i+j}$, and $-1$ to an odd power is $-1$'
-            - 'The sign is chosen so that the cofactor is smaller than the minor'
-          answer: 'The sign is $(-1)^{i+j}$, and $-1$ to an odd power is $-1$'
-          why: 'Position $(2,3)$ has $i+j=5$, an odd number, so the checkerboard sign is $-$ and the cofactor is the negative of the minor: $C_{23}=-5$.'
         exemplars:
           - problem: 'For $A=\begin{pmatrix}1&2&0\\3&1&2\\0&4&1\end{pmatrix}$, find the minor $M_{11}$.'
             answer: '-7'
@@ -231,16 +192,6 @@ topics:
       - id: kp2
         name: Triangular matrices and smart expansion
         key_prerequisites: [determinants-2x2]
-        step_check:
-          step: 'expand along column 2'
-          question: 'Why is column 2 the best line to expand along?'
-          options:
-            - 'It has the most zeros, and each zero entry makes its whole term vanish'
-            - 'It contains the largest entry, which makes the minors simplest to find'
-            - 'Only a column, never a row, may be used when a matrix has zero entries'
-            - 'It passes through the diagonal entry, and every expansion must pass through it'
-          answer: 'It has the most zeros, and each zero entry makes its whole term vanish'
-          why: 'Each zero entry $a_{ij}=0$ makes the term $a_{ij}C_{ij}$ vanish, so column 2 needs only one $2\times2$ minor instead of three; the determinant is $-12$ along any line.'
         exemplars:
           - problem: 'Compute $\det\begin{pmatrix}3&0&0\\5&2&0\\1&4&6\end{pmatrix}$.'
             answer: '36'
@@ -283,16 +234,6 @@ topics:
           answer_contract: {"kind": "exact"}
           answer: '17'
           reveal: 'Expand along row 1: $3\cdot(2\cdot4-1\cdot1)-1\cdot(1\cdot4-1\cdot0)+0=21-4=17$. Each entry of the row is multiplied by its minor with alternating signs $+,-,+$.'
-        step_check:
-          step: 'Note $M_{13}$ is multiplied by the zero entry $a_{13}=0$, so it contributes nothing'
-          question: 'Why does $M_{13}$ never have to be computed?'
-          options:
-            - 'The last term of a first-row expansion is always left out by rule'
-            - 'Its term is $0\cdot M_{13}$, which is $0$ whatever the minor is'
-            - 'The minor of a zero entry is always zero too, so it adds nothing'
-            - 'A zero in the row makes the whole determinant equal to zero'
-          answer: 'Its term is $0\cdot M_{13}$, which is $0$ whatever the minor is'
-          why: 'A product with a zero factor is zero, so $0\cdot M_{13}=0$ and $\det=2(4)-1(2)+0=6$; the minor itself need not be zero, since here $M_{13}=1\cdot1-3\cdot0=1$.'
         exemplars:
           - problem: 'Compute $\det\begin{pmatrix}1&2&0\\3&1&2\\0&4&1\end{pmatrix}$ by expanding along the first row.'
             answer: '-13'
@@ -370,15 +311,6 @@ topics:
           answer_contract: {"kind": "exact"}
           answer: '9'
           reveal: 'Tripling every entry triples each of the two rows, and each tripled row multiplies the determinant by $3$. The factor is $3\cdot3=9$, not $3$.'
-        step_check:
-          step: 'Here the scalar is $k = 2$ and the size is $n = 3$, so $\det(2A) = 2^{3} \det A$'
-          question: 'Why is the factor $2^3$ and not just $2$?'
-          options:
-            - 'Each of the three rows is doubled, and each one doubles the determinant'
-            - 'Each of the nine entries is doubled, and each entry doubles the determinant once'
-            - 'Only the first row is multiplied by $2$, so the determinant doubles just once'
-          answer: 'Each of the three rows is doubled, and each one doubles the determinant'
-          why: 'The determinant is multiplied by $2$ for each of the $3$ rows, which gives $2\cdot2\cdot2=8$ times $\det A=4$, so $\det(2A)=32$.'
         exemplars:
           - problem: 'Let $A$ and $B$ be $2\times2$ matrices with $\det A=3$ and $\det B=2$. Find $\det(AB)$.'
             answer: '6'
@@ -420,16 +352,6 @@ topics:
       - id: kp2
         name: Row operations and zero determinants
         key_prerequisites: [determinants]
-        step_check:
-          step: 'adding a multiple of one row to another leaves the determinant unchanged'
-          question: 'Why does the operation $R_2 \to R_2 - 2R_1$ leave the determinant unchanged?'
-          options:
-            - 'The first row of $B$ equals the first row of $A$, and that row alone fixes the determinant'
-            - 'It splits into $\det A$ plus a determinant with two proportional rows, which is $0$'
-            - 'The operation $R_2\to R_2-2R_1$ is undone later, because row 1 is added back'
-            - 'Row operations never change a determinant, so a row swap leaves it unchanged as well'
-          answer: 'It splits into $\det A$ plus a determinant with two proportional rows, which is $0$'
-          why: 'The determinant is linear in row 2, so $\det B=\det A-2\det\begin{pmatrix}2&1\\2&1\end{pmatrix}=1-0=1$, because a matrix with two equal rows has determinant $0$.'
         exemplars:
           - problem: 'Matrix $B$ is obtained from $A$ by swapping two rows, and $\det A=5$. Find $\det B$.'
             answer: '-5'
@@ -471,16 +393,6 @@ topics:
       - id: kp3
         name: "Cramer's rule for 2x2 systems"
         key_prerequisites: [determinants, row-reduction-echelon-forms]
-        step_check:
-          step: 'Since $D = 10 \neq 0$, divide'
-          question: 'Why does Cramer''s rule need $D\neq 0$?'
-          options:
-            - 'Only a positive $D$ gives a real solution, and a negative $D$ gives none at all'
-            - 'The numbers $D_x$ and $D_y$ would also be zero, so no answer could be found'
-            - 'Both answers divide by $D$, and a division by zero is impossible'
-            - 'The answers must be whole numbers, which needs $D$ to be nonzero'
-          answer: 'Both answers divide by $D$, and a division by zero is impossible'
-          why: 'The formulas are $x=D_x/D$ and $y=D_y/D$, and here $D=10$ gives $x=2$ and $y=3$; if $D=0$ the lines are parallel or the same line, so no single solution exists.'
         exemplars:
           - problem: 'Use Cramer''s rule to solve $2x+y=7$, $x+3y=6$.'
             answer: '(3, 1)'
@@ -548,16 +460,6 @@ topics:
       - id: kp1
         name: Tracking row operations
         key_prerequisites: [determinant-properties-cramers-rule]
-        step_check:
-          step: 'Start with $\det A = 3$ and multiply by $4$'
-          question: 'Why is the determinant multiplied by $4$ when only one row is scaled?'
-          options:
-            - 'The determinant is linear in each row, so the factor $4$ passes straight through'
-            - 'The factor $4$ is applied to every row of the matrix, so the determinant is multiplied by $4^2$'
-            - 'The determinant is the sum of the rows, and one row became $4$ times bigger'
-            - 'Scaling is a row operation like a replacement, so the factor $4$ is added'
-          answer: 'The determinant is linear in each row, so the factor $4$ passes straight through'
-          why: 'Each term of the determinant contains exactly one entry from the scaled row, so every term gets the factor $4$; with $\det A=3$ this gives $12$, and the replacement afterwards keeps it $12$.'
         exemplars:
           - problem: 'Matrix $B$ is obtained from $A$ by $R_1\to3R_1$, and $\det A=2$. Find $\det B$.'
             answer: '6'
@@ -595,16 +497,6 @@ topics:
       - id: kp2
         name: Computing determinants by elimination
         key_prerequisites: [determinant-properties-cramers-rule, row-reduction-echelon-forms]
-        step_check:
-          step: 'Since replacements do not change the determinant'
-          question: 'Why does the triangular matrix have the same determinant as the original matrix?'
-          options:
-            - 'The pivots $1$, $2$, $3$ already stand on the diagonal of the original matrix'
-            - 'Reducing a matrix to triangular form always turns its determinant into $1$'
-            - 'Each replacement keeps the determinant the same, so no step changed its value'
-            - 'Each replacement multiplies the determinant by its pivot, so the pivots multiply'
-          answer: 'Each replacement keeps the determinant the same, so no step changed its value'
-          why: 'Each of the three replacements keeps the determinant fixed, so the original has the value of the triangular matrix, $1\cdot2\cdot3=6$; the original diagonal $1,6,11$ would wrongly give $66$.'
         exemplars:
           - problem: 'Compute $\det\begin{pmatrix}1&2&1\\2&5&3\\1&3&4\end{pmatrix}$ by row reduction.'
             answer: '2'
@@ -646,16 +538,6 @@ topics:
       - id: kp3
         name: Factoring out common row factors
         key_prerequisites: [determinant-properties-cramers-rule]
-        step_check:
-          step: 'pulling the $2$ out of row 1 scales the determinant by $2$'
-          question: 'Why must the $2$ be multiplied back in front of the smaller determinant?'
-          options:
-            - 'Dividing a row by $2$ halves every other row of the matrix as well'
-            - 'The smaller matrix $M$ has a determinant twice as large as the determinant of $A$'
-            - 'Pulling out a factor changes the signs of all the other rows of $M$'
-            - 'Row 1 of $A$ is $2$ times row 1 of $M$, so the determinant is $2$ times as big'
-          answer: 'Row 1 of $A$ is $2$ times row 1 of $M$, so the determinant is $2$ times as big'
-          why: 'The determinant is linear in row 1, so $\det A=2\det M$; here $\det M=-14$ gives $\det A=-28$, and forgetting the $2$ would give $-14$.'
         exemplars:
           - problem: 'Compute $\det\begin{pmatrix}2&4\\1&3\end{pmatrix}$ by first factoring $2$ out of row 1.'
             answer: '2'
@@ -727,16 +609,6 @@ topics:
       - id: kp1
         name: Area of a parallelogram
         key_prerequisites: [determinants-2x2]
-        step_check:
-          step: 'Take the absolute value'
-          question: 'Why is the absolute value of the determinant taken to get the area?'
-          options:
-            - 'The absolute value halves the determinant to give one triangle area'
-            - 'The determinant can be negative, but an area is never negative'
-            - 'The absolute value rounds the determinant to a whole number'
-            - 'The determinant of two vectors is always negative, so it is removed'
-          answer: 'The determinant can be negative, but an area is never negative'
-          why: 'Swapping the two vectors changes the sign of the determinant but not the parallelogram, so the size of the determinant is the area.'
         try_first:
           problem: 'A parallelogram has corners at $(0,0)$, $(3,0)$, $(1,2)$ and $(4,2)$. Find its area.'
           answer_contract: {"kind":"exact"}
@@ -783,16 +655,6 @@ topics:
       - id: kp2
         name: Volume of a parallelepiped
         key_prerequisites: [determinants]
-        step_check:
-          step: 'the middle row $(0, 3, 0)$ has two zeros'
-          question: 'Why is the middle row a good row to expand along here?'
-          options:
-            - 'The middle row always holds the largest term of a determinant'
-            - 'Expanding along any other row would give a different determinant'
-            - 'Each zero removes a term, so only one $2\times 2$ minor is needed'
-            - 'A row with zeros always makes the volume smaller than other rows do'
-          answer: 'Each zero removes a term, so only one $2\times 2$ minor is needed'
-          why: 'Every row gives the same determinant, but a row with zeros has fewer nonzero terms, so there is less to compute.'
         exemplars:
           - problem: 'Find the volume of the parallelepiped spanned by $(1, 0, 1)$, $(0, 2, 0)$, $(1, 1, 3)$.'
             answer: '4'
@@ -838,22 +700,12 @@ topics:
       - id: kp3
         name: How linear maps scale area
         key_prerequisites: [determinants-2x2]
-        step_check:
-          step: 'take the absolute value'
-          question: 'Why is the area scale factor $|\det A| = 2$ and not $\det A = -2$?'
-          options:
-            - 'A scale factor for area cannot be negative; the sign records orientation'
-            - 'The minus sign means that the image has less area than the original region'
-            - 'Areas are always multiplied by the square root of the determinant'
-            - 'The determinant is the scale factor only when its size is above 2'
-          answer: 'A scale factor for area cannot be negative; the sign records orientation'
-          why: 'The size $|\det A|$ tells how much areas grow or shrink, and the sign of $\det A$ tells whether orientation is kept or reversed.'
         exemplars:
           - problem: 'The linear map $T$ has matrix $\begin{pmatrix}2&1\\0&3\end{pmatrix}$. A region has area $5$. What is the area of its image under $T$?'
             answer: '30'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The map $T$ multiplies every area by $|\det|$. Here $\det = 2\cdot 3 - 1\cdot 0 = 6$. The image area is $6\cdot 5 = 30$.'
-          - problem: 'A photo-editing tool applies the linear map with matrix $\begin{pmatrix}2&0\\0&3\end{pmatrix}$ to a picture. A logo in the picture covers $8$ square centimetres before the map is applied. What area does the logo cover afterward?'
+          - problem: 'A photo-editing tool applies the linear map with matrix $\begin{pmatrix}2&0\\0&3\end{pmatrix}$ to an image. A logo in the image covers $8$ square centimetres before the map is applied. What area does the logo cover afterward?'
             answer: '48'
             answer_contract: {"kind":"unit","quantity":"area","unit":"cm^2","allow_omitted":true}
             solution_sketch: 'The determinant is $2\cdot 3 = 6$, so the map multiplies every area by 6. The logo then covers $6\cdot 8 = 48$ square centimetres.'
@@ -918,16 +770,6 @@ topics:
       - id: kp1
         name: Setting up det(A - lambda I)
         key_prerequisites: [determinants-2x2, polynomial-multiplication]
-        step_check:
-          step: 'the determinant is $ad - bc$'
-          question: 'Why is the product $(1)(3)$ subtracted from $(4-\lambda)(2-\lambda)$?'
-          options:
-            - 'Subtracting $\lambda I$ turns every product in the determinant into a difference'
-            - 'The off-diagonal entries are always subtracted when a shift is applied'
-            - 'The determinant is the main-diagonal product minus the other-diagonal product'
-            - 'A characteristic polynomial must have a smaller constant term than $A$'
-          answer: 'The determinant is the main-diagonal product minus the other-diagonal product'
-          why: 'For $\begin{pmatrix}a&b\\c&d\end{pmatrix}$ the determinant is $ad - bc$, so the product of the off-diagonal entries is subtracted.'
         exemplars:
           - problem: 'Find the characteristic polynomial $\det(A - xI)$ of $A = \begin{pmatrix}2&5\\1&3\end{pmatrix}$.'
             answer: 'x^2 - 5x + 1'
@@ -969,16 +811,6 @@ topics:
       - id: kp2
         name: Eigenvalues as roots
         key_prerequisites: [determinants-2x2, quadratic-formula]
-        step_check:
-          step: 'Setting each factor to zero gives $\lambda = 6$ and $\lambda = -1$'
-          question: 'Why does setting each factor to zero give the eigenvalues?'
-          options:
-            - '$\lambda$ is an eigenvalue exactly when $\det(A - \lambda I) = 0$'
-            - 'Each factor of the polynomial is itself an eigenvector of $A$ here'
-            - 'The factors of the polynomial are the diagonal entries of $A$ here'
-            - 'A product of factors is zero only when its constant term is zero'
-          answer: '$\lambda$ is an eigenvalue exactly when $\det(A - \lambda I) = 0$'
-          why: 'The eigenvalues are the numbers that make $\det(A - \lambda I)$ equal to zero, and a product of factors is zero exactly when one factor is zero.'
         exemplars:
           - problem: 'Find the eigenvalues of $A = \begin{pmatrix}3&2\\1&4\end{pmatrix}$.'
             answer: '2, 5'
@@ -1016,16 +848,6 @@ topics:
       - id: kp3
         name: Trace, determinant, and triangular shortcuts
         key_prerequisites: [determinants-2x2]
-        step_check:
-          step: 'We need two numbers multiplying to $15$ and adding to $8$'
-          question: 'Why must the two numbers multiply to $15$ and add to $8$?'
-          options:
-            - 'The two numbers must be the diagonal entries of the matrix $A$, as for a triangular matrix'
-            - 'The trace and the determinant are always the sum and the product of entries'
-            - 'Any two numbers with sum $8$ give a factor of the whole polynomial, whatever their product'
-            - 'Expanding $(\lambda-p)(\lambda-q)$ gives constant $pq$ and $\lambda$ term $-(p+q)\lambda$'
-          answer: 'Expanding $(\lambda-p)(\lambda-q)$ gives constant $pq$ and $\lambda$ term $-(p+q)\lambda$'
-          why: 'Expanding $(\lambda - p)(\lambda - q)$ gives $\lambda^2 - (p+q)\lambda + pq$, so $pq = 15$ and $p + q = 8$.'
         exemplars:
           - problem: 'Find the eigenvalues of the triangular matrix $\begin{pmatrix}4&7\\0&-2\end{pmatrix}$.'
             answer: '-2, 4'
@@ -1094,16 +916,6 @@ topics:
       - id: kp1
         name: Verifying eigenvectors
         key_prerequisites: [characteristic-polynomial]
-        step_check:
-          step: 'the first coordinate forces $\lambda = 3$'
-          question: 'Why must the two coordinates give the same value of $\lambda$?'
-          options:
-            - 'The matrix has equal diagonal entries, which always forces equal ratios'
-            - 'Each coordinate of $A\mathbf{v}$ uses a different row, so ratios match'
-            - 'A vector is an eigenvector only if its own coordinates are all equal'
-            - 'One $\lambda$ multiplies the whole vector, so all coordinates agree'
-          answer: 'One $\lambda$ multiplies the whole vector, so all coordinates agree'
-          why: '$A\mathbf{v} = \lambda\mathbf{v}$ uses one scalar for all coordinates; if two coordinates give different ratios, $\mathbf{v}$ is not an eigenvector.'
         try_first:
           problem: 'The matrix $\begin{pmatrix}2&0\\0&3\end{pmatrix}$ sends the vector $(1, 0)$ to a multiple of itself. By what factor does it stretch $(1, 0)$?'
           answer_contract: {"kind":"exact"}
@@ -1150,16 +962,6 @@ topics:
       - id: kp2
         name: Solving (A - lambda I)v = 0
         key_prerequisites: [characteristic-polynomial, solution-sets-free-variables]
-        step_check:
-          step: 'the same equation, so the system reduces to $x + y = 0$'
-          question: 'Why do the two rows give the same equation?'
-          options:
-            - 'Every $2\times 2$ matrix has a second row equal to twice its first'
-            - 'Since $\lambda$ is an eigenvalue, $A - \lambda I$ has dependent rows'
-            - 'Subtracting $3I$ from any matrix always makes both of its rows identical'
-            - 'The rows agree only because $(1,-1)$ was chosen as the answer first'
-          answer: 'Since $\lambda$ is an eigenvalue, $A - \lambda I$ has dependent rows'
-          why: 'If the rows were independent, only $\mathbf{v} = \mathbf{0}$ would solve the system; an eigenvalue makes the rows dependent, so a nonzero solution exists.'
         exemplars:
           - problem: 'Let $A = \begin{pmatrix}4&1\\2&5\end{pmatrix}$. The number $6$ is an eigenvalue of $A$. Find the eigenvector of $A$ for $\lambda = 6$ whose first entry is $1$.'
             answer: '(1, 2)'
@@ -1197,16 +999,6 @@ topics:
       - id: kp3
         name: Eigenpairs one eigenvalue at a time
         key_prerequisites: [characteristic-polynomial, solution-sets-free-variables]
-        step_check:
-          step: 'Subtract $5$ from each diagonal entry'
-          question: 'Why is a new matrix $A - 5I$ formed for the second eigenvalue?'
-          options:
-            - 'The matrix $A$ itself changes after the first eigenvector has been found'
-            - 'The second eigenvalue must be subtracted from the first row of $A$ only'
-            - 'Each eigenvalue gives its own system $(A-\lambda I)\mathbf{v}=\mathbf{0}$'
-            - 'Using $A - 2I$ again would give the same eigenvector with the opposite sign'
-          answer: 'Each eigenvalue gives its own system $(A-\lambda I)\mathbf{v}=\mathbf{0}$'
-          why: 'The eigenvectors for $\lambda = 5$ solve $(A - 5I)\mathbf{v} = \mathbf{0}$, which differs from the system for $\lambda = 2$.'
         exemplars:
           - problem: 'The matrix $A = \begin{pmatrix}2&2\\1&3\end{pmatrix}$ has the eigenvalue $\lambda = 1$. Find an eigenvector for $\lambda = 1$ whose second entry is $1$.'
             answer: '(-2, 1)'
@@ -1270,16 +1062,6 @@ topics:
       - id: kp1
         name: Complete 2x2 eigenanalysis
         key_prerequisites: [characteristic-polynomial, finding-eigenvectors]
-        step_check:
-          step: 'Taking $x = 1$ gives the eigenvector $(1, -2)$'
-          question: 'Why is it enough to pick the single value $x = 1$?'
-          options:
-            - 'Scaling both sides of $A\mathbf{v} = \lambda\mathbf{v}$ keeps it true'
-            - 'Multiples of an eigenvector have the same length, so they all stay valid'
-            - 'Only whole-number multiples keep the same eigenvalue as $(1,-2)$'
-            - 'The matrix $A$ rescales every vector of the plane by one common factor'
-          answer: 'Scaling both sides of $A\mathbf{v} = \lambda\mathbf{v}$ keeps it true'
-          why: 'If $A\mathbf{v} = \lambda\mathbf{v}$, then $A(c\mathbf{v}) = \lambda(c\mathbf{v})$, so every nonzero multiple of $(1,-2)$ is an eigenvector for $\lambda = 1$.'
         exemplars:
           - problem: 'Let $A = \begin{pmatrix}1&2\\2&1\end{pmatrix}$. Find the eigenvector of $A$ for its larger eigenvalue whose first entry is $1$.'
             answer: '(1, 1)'
@@ -1321,16 +1103,6 @@ topics:
       - id: kp2
         name: Eigenanalysis of easy 3x3 matrices
         key_prerequisites: [characteristic-polynomial, finding-eigenvectors, determinants]
-        step_check:
-          step: 'so it is invertible and forces $x=y=0$'
-          question: 'Why does an invertible top block force $x=y=0$?'
-          options:
-            - 'Invertible blocks always have zero entries on the diagonal'
-            - 'The third row of zeros makes the first two unknowns vanish'
-            - 'The determinant $5$ is the value that $x$ and $y$ must equal'
-            - 'An invertible matrix sends only the zero vector to zero'
-          answer: 'An invertible matrix sends only the zero vector to zero'
-          why: 'The block times $(x, y)$ must be zero, and an invertible block does that only for $(x, y) = (0, 0)$; the third row puts no condition on $z$.'
         exemplars:
           - problem: 'Find the eigenvalues of $A = \begin{pmatrix}4&2&0\\0&-1&5\\0&0&3\end{pmatrix}$.'
             answer: '-1, 3, 4'
@@ -1376,16 +1148,6 @@ topics:
       - id: kp3
         name: Checking spectra with trace and determinant
         key_prerequisites: [characteristic-polynomial, determinants]
-        step_check:
-          step: 'Check: $3 + 4 = 7$ matches the trace'
-          question: 'Why must the sum of the eigenvalues equal the trace?'
-          options:
-            - 'The trace is defined as the sum of the roots of a polynomial'
-            - 'The $\lambda$ coefficient of the polynomial is minus the root sum'
-            - 'Eigenvalues are always equal to the diagonal entries of the matrix'
-            - 'The sum of the roots equals the trace only for symmetric matrices'
-          answer: 'The $\lambda$ coefficient of the polynomial is minus the root sum'
-          why: 'A quadratic with roots $\lambda_1, \lambda_2$ is $\lambda^2 - (\lambda_1 + \lambda_2)\lambda + \lambda_1\lambda_2$, so comparing coefficients gives sum $=$ trace and product $=$ determinant.'
         try_first:
           problem: 'A $2\times 2$ matrix has the eigenvalues $2$ and $6$, and one of its diagonal entries is $5$. What is the other diagonal entry?'
           answer_contract: {"kind":"exact"}
@@ -1458,16 +1220,6 @@ topics:
       - id: kp1
         name: 'Eigenspaces as null spaces'
         key_prerequisites: [eigenvalues-eigenvectors, basis-dimension, null-column-space-rank]
-        step_check:
-          step: 'which are the same equation, so the solution set is the single line $3x+2y=0$'
-          question: 'Why is the solution set a single line and not the whole plane?'
-          options:
-            - 'Both rows give the same equation, so one condition on $x$ and $y$ remains'
-            - 'Every eigenspace of a $2\times 2$ matrix is a line, whatever the matrix is, as the rank is always $1$'
-            - 'The two rows are different equations, so each row removes one dimension from the plane'
-            - 'Putting $x = 0$ in both rows leaves a whole line of free choices for $y$'
-          answer: 'Both rows give the same equation, so one condition on $x$ and $y$ remains'
-          why: 'The matrix $A-2I$ has rank $1$, so one equation holds and one variable is free; the eigenspace has dimension $2-1=1$. A scalar matrix would give the zero matrix and a whole plane.'
         exemplars:
           - problem: 'The matrix $A = \begin{pmatrix} 5 & 1 \\ 2 & 4 \end{pmatrix}$ has the eigenvalue $\lambda = 3$. Find the vector of the form $(1, y)$ in the eigenspace of $A$ for $\lambda = 3$.'
             answer: '(1, -2)'
@@ -1509,16 +1261,6 @@ topics:
       - id: kp2
         name: 'Algebraic vs geometric multiplicity'
         key_prerequisites: [eigenvalues-eigenvectors]
-        step_check:
-          step: 'The factor $(\lambda - 3)$ appears twice, so the algebraic multiplicity of $\lambda = 3$ is $2$'
-          question: 'Why is the algebraic multiplicity of $\lambda = 3$ equal to $2$?'
-          options:
-            - 'The eigenspace of $\lambda = 3$ is spanned by two independent eigenvectors of $A$'
-            - 'The matrix has two rows, and both rows of $A$ contain the diagonal entry $3$'
-            - 'The factor $(\lambda - 3)$ occurs twice in the characteristic polynomial'
-            - 'The eigenvalue $3$ appears twice when the eigenvectors of $A$ are listed'
-          answer: 'The factor $(\lambda - 3)$ occurs twice in the characteristic polynomial'
-          why: 'The algebraic multiplicity counts how often the factor occurs in $(\lambda-3)^2$. The dimension of the eigenspace, which is the geometric multiplicity, is a different count.'
         try_first:
           problem: 'The matrix $A = \begin{pmatrix} 7 & 1 \\ 0 & 7 \end{pmatrix}$ has the single eigenvalue $7$. How many linearly independent vectors $\mathbf{v}$ satisfy $A\mathbf{v} = 7\mathbf{v}$?'
           answer_contract: {"kind": "exact"}
@@ -1577,16 +1319,6 @@ topics:
       - id: kp3
         name: 'Multiplicities in 3x3 matrices'
         key_prerequisites: [eigenvalues-eigenvectors, basis-dimension, null-column-space-rank]
-        step_check:
-          step: 'The null space has dimension $3 - 1 = 2$'
-          question: 'Why is the dimension of the null space equal to $3 - 1$?'
-          options:
-            - 'The $3$ counts the eigenvalues, and the $1$ counts the one that repeats'
-            - 'The matrix has $3$ columns and one pivot, so $2$ columns are free'
-            - 'The $3$ counts the rows, and the $1$ counts the first row of zeros here'
-            - 'The eigenvalue $4$ is taken away once from the three diagonal entries'
-          answer: 'The matrix has $3$ columns and one pivot, so $2$ columns are free'
-          why: 'By the rank-nullity relation, dimension of the null space $=$ number of columns $-$ rank. Each free column gives one free variable and so one independent eigenvector.'
         exemplars:
           - problem: 'The matrix $A = \begin{pmatrix} 4 & 0 & 0 \\ 0 & 4 & 2 \\ 0 & 0 & 6 \end{pmatrix}$ has the eigenvalue $4$ with algebraic multiplicity $2$. What is the geometric multiplicity of $4$?'
             answer: '2'
@@ -1664,16 +1396,6 @@ topics:
       - id: kp1
         name: 'Conjugate eigenvalue pairs'
         key_prerequisites: [characteristic-polynomial, complex-numbers]
-        step_check:
-          step: 'Since $\Delta < 0$, there are no real roots and the eigenvalues form a conjugate pair'
-          question: 'Why do the two eigenvalues form a conjugate pair $a \pm bi$?'
-          options:
-            - 'The matrix is symmetric about its diagonal, which gives equal real parts'
-            - 'The eigenvalues must add to zero, so each is the negative of the other'
-            - 'The quadratic formula gives a plus root and a minus root for any quadratic'
-            - 'The polynomial has real coefficients, so its non-real roots pair up'
-          answer: 'The polynomial has real coefficients, so its non-real roots pair up'
-          why: 'A real quadratic with a negative discriminant has the roots $\frac{-p \pm \sqrt{\Delta}}{2}$ with $\sqrt{\Delta} = bi$, which differ only in the sign of the imaginary part. The sum of the eigenvalues is the trace, not zero.'
         exemplars:
           - problem: 'Find the eigenvalues of $A = \begin{pmatrix} 1 & -2 \\ 1 & 3 \end{pmatrix}$.'
             answer: '2 + i, 2 - i'
@@ -1715,16 +1437,6 @@ topics:
       - id: kp2
         name: 'Rotation-scaling interpretation'
         key_prerequisites: [characteristic-polynomial, complex-numbers, complex-plane-modulus-conjugate]
-        step_check:
-          step: 'because the matrix has the rotation-scaling form, every vector''s length is multiplied by exactly $|\lambda|$'
-          question: 'Why is the factor by which $A$ enlarges lengths equal to $|\lambda|$?'
-          options:
-            - 'Every real matrix multiplies each length by the modulus of its eigenvalues'
-            - 'It turns the plane, which keeps lengths, then enlarges it by $|\lambda|$'
-            - 'The conjugate eigenvalue cancels the imaginary part and leaves a pure stretch'
-            - 'The modulus $|\lambda|$ equals the determinant, and the determinant scales lengths'
-          answer: 'It turns the plane, which keeps lengths, then enlarges it by $|\lambda|$'
-          why: 'The form $\begin{pmatrix} a & -b \\ b & a \end{pmatrix}$ is a rotation times the factor $\sqrt{a^2+b^2} = |\lambda|$. The determinant is $|\lambda|^2$, so it scales areas, not lengths.'
         try_first:
           problem: 'Let $A = \begin{pmatrix} 3 & -4 \\ 4 & 3 \end{pmatrix}$. What is the length of the vector $A(1, 0)$?'
           answer_contract: {"kind": "exact"}
@@ -1743,7 +1455,7 @@ topics:
             answer: '3'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The enlargement factor is $\sqrt{4^2 + b^2} = 5$, so $16 + b^2 = 25$. Hence $b^2 = 9$ and $|b| = 3$.'
-          - problem: 'A graphics routine moves every point $(x, y)$ of a picture to $A(x, y)$ with $A = \begin{pmatrix} 1 & -2 \\ 2 & 1 \end{pmatrix}$. By what factor does the area of any shape in the picture change?'
+          - problem: 'A graphics routine moves every point $(x, y)$ of an image to $A(x, y)$ with $A = \begin{pmatrix} 1 & -2 \\ 2 & 1 \end{pmatrix}$. By what factor does the area of any shape in the image change?'
             answer: '5'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Areas are multiplied by $|\det A|$. Here $\det A = 1 \cdot 1 - (-2)(2) = 5$, which also equals $|1 + 2i|^2 = (\sqrt{5})^2$.'
@@ -1775,16 +1487,6 @@ topics:
       - id: kp3
         name: 'Complex eigenvectors'
         key_prerequisites: [characteristic-polynomial, complex-numbers]
-        step_check:
-          step: 'the first row gives $-ix - y = 0$, so $y = -ix$'
-          question: 'Why is one row of $A - \lambda I$ enough to find the eigenvector?'
-          options:
-            - 'The second row must be zero, because the eigenvalue is not a real number'
-            - 'The first row fixes $x$ and the second row only repeats the value of $y$'
-            - 'The two rows depend on each other, so they give one equation'
-            - 'The second row is the conjugate of the first row, so it is a different test'
-          answer: 'The two rows depend on each other, so they give one equation'
-          why: 'Since $\det(A - \lambda I) = 0$, one row of $A - \lambda I$ is a multiple of the other, so the system has one independent equation and one free variable. The second row gives the same relation between $x$ and $y$.'
         exemplars:
           - problem: 'Let $A = \begin{pmatrix} 0 & 1 \\ -1 & 0 \end{pmatrix}$. Find $z$ so that $(1, z)$ is an eigenvector of $A$ for the eigenvalue $\lambda = i$.'
             answer: 'i'
@@ -1861,16 +1563,6 @@ topics:
       - id: kp1
         name: 'The similarity relation'
         key_prerequisites: [matrix-inverses]
-        step_check:
-          step: 'Set up the similarity: we want $P^{-1}AP$'
-          question: 'Why does $P^{-1}$ stand on the left and $P$ on the right in $P^{-1}AP$?'
-          options:
-            - 'It converts with $P$, applies $A$, then converts back with $P^{-1}$'
-            - 'Matrices commute, so the order of $P^{-1}$, $A$ and $P$ does not matter at all'
-            - 'The inverse always goes on the left, because the left factor is the larger one'
-            - 'The inverse goes first so that the entries of $A$ stay unchanged in the product'
-          answer: 'It converts with $P$, applies $A$, then converts back with $P^{-1}$'
-          why: 'Read from the right, $P\mathbf{y}$ converts the coordinates, $A$ acts, and $P^{-1}$ converts back. Matrix products do not commute, so the order matters.'
         try_first:
           problem: 'Let $P = \begin{pmatrix} 1 & 1 \\ 0 & 1 \end{pmatrix}$ and $A = \begin{pmatrix} 2 & 0 \\ 0 & 3 \end{pmatrix}$. What is the entry in row 1, column 2 of $P^{-1}AP$?'
           answer_contract: {"kind": "exact"}
@@ -1913,16 +1605,6 @@ topics:
       - id: kp2
         name: 'Similarity invariants'
         key_prerequisites: [eigenvalues-eigenvectors, determinant-properties-cramers-rule]
-        step_check:
-          step: 'since trace is unchanged by cyclic reordering of a product'
-          question: 'Why is $\mathrm{tr}(P^{-1}AP)$ equal to $\mathrm{tr}(A)$?'
-          options:
-            - 'The diagonal entries of $P^{-1}AP$ are the same as those of $A$'
-            - 'The matrices $P^{-1}$ and $P$ cancel, because they stand beside each other'
-            - 'The trace of a product is the product of the traces, and $\mathrm{tr}(P^{-1})\,\mathrm{tr}(P) = 1$'
-            - 'Moving $P^{-1}$ to the end gives $\mathrm{tr}(APP^{-1}) = \mathrm{tr}(A)$'
-          answer: 'Moving $P^{-1}$ to the end gives $\mathrm{tr}(APP^{-1}) = \mathrm{tr}(A)$'
-          why: 'The trace is unchanged when the last factor moves to the front, so $\mathrm{tr}(P^{-1}(AP)) = \mathrm{tr}((AP)P^{-1}) = \mathrm{tr}(A)$. The diagonal entries themselves do change.'
         exemplars:
           - problem: 'The matrix $B$ is similar to $A = \begin{pmatrix} 3 & 1 \\ 0 & 5 \end{pmatrix}$. What is $\det B$?'
             answer: '15'
@@ -1964,16 +1646,6 @@ topics:
       - id: kp3
         name: 'Ruling out similarity'
         key_prerequisites: [eigenvalues-eigenvectors, determinant-properties-cramers-rule]
-        step_check:
-          step: 'The determinants agree, but that does not rescue similarity'
-          question: 'Why do equal determinants not show that two matrices are similar?'
-          options:
-            - 'Determinants are not similarity invariants, so they never help in a test'
-            - 'Only the trace can decide whether two matrices are similar to each other'
-            - 'One matching invariant is necessary but does not prove similarity'
-            - 'Two matrices with equal determinants are always different matrices overall'
-          answer: 'One matching invariant is necessary but does not prove similarity'
-          why: 'Similar matrices must agree in every invariant, so one mismatch rules out similarity. A match in one invariant leaves the question open.'
         exemplars:
           - problem: 'Can $A = \begin{pmatrix} 2 & 1 \\ 0 & 3 \end{pmatrix}$ be similar to $B = \begin{pmatrix} 1 & 0 \\ 0 & 6 \end{pmatrix}$?'
             answer: 'no'
@@ -2034,16 +1706,6 @@ topics:
       - id: kp1
         name: 'The distinct-eigenvalue guarantee'
         key_prerequisites: [eigenvalues-eigenvectors]
-        step_check:
-          step: 'its eigenvectors are linearly independent and form a basis of $\mathbb{R}^3$'
-          question: 'Why are eigenvectors for different eigenvalues linearly independent?'
-          options:
-            - 'They are always perpendicular, and perpendicular vectors are independent'
-            - 'Each has a different length, so none of them is a multiple of another'
-            - 'The diagonal entries differ, so the columns of the matrix are independent'
-            - 'A dependence would force two different eigenvalues to be equal'
-          answer: 'A dependence would force two different eigenvalues to be equal'
-          why: 'If one eigenvector were a combination of the others, applying $A$ and comparing would give an equation between different eigenvalues that cannot hold. Eigenvectors of a general matrix need not be perpendicular.'
         exemplars:
           - problem: 'Is $B = \begin{pmatrix} 2 & 1 & 5 \\ 0 & -3 & 4 \\ 0 & 0 & 6 \end{pmatrix}$ diagonalizable?'
             answer: 'yes'
@@ -2081,16 +1743,6 @@ topics:
       - id: kp2
         name: 'Repeated eigenvalues need enough eigenvectors'
         key_prerequisites: [eigenspaces-multiplicities]
-        step_check:
-          step: 'there are not enough independent eigenvectors to build a basis of $\mathbb{R}^2$'
-          question: 'Why does a single independent eigenvector make $A$ not diagonalizable?'
-          options:
-            - 'A repeated eigenvalue always rules out diagonal form, whatever the eigenspace is'
-            - 'Diagonal form needs a basis of eigenvectors, and the plane needs two'
-            - 'The eigenvalue $-1$ is negative, and diagonal entries have to be positive numbers'
-            - 'The zero below the diagonal blocks the diagonal form, as it is not symmetric'
-          answer: 'Diagonal form needs a basis of eigenvectors, and the plane needs two'
-          why: '$A = PDP^{-1}$ needs the columns of $P$ to be $2$ independent eigenvectors. A repeated eigenvalue is harmless when its eigenspace is large enough, as for the matrix $6I$.'
         exemplars:
           - problem: 'Is $A = \begin{pmatrix} 2 & 1 \\ 0 & 2 \end{pmatrix}$ diagonalizable?'
             answer: 'no'
@@ -2128,16 +1780,6 @@ topics:
       - id: kp3
         name: 'Counting eigenvectors in 3x3 matrices'
         key_prerequisites: [eigenspaces-multiplicities]
-        step_check:
-          step: 'the third row is a multiple of the second, so the rank is $1$'
-          question: 'Why does a rank of $1$ for $A - 3I$ give an eigenspace of dimension $2$?'
-          options:
-            - 'The null space has dimension equal to the size of the matrix minus the rank'
-            - 'The rank counts the independent eigenvectors, and the dimension is doubled'
-            - 'A rank of $1$ means one eigenvalue, and the other eigenvalue adds one more'
-            - 'The dimension of the eigenspace equals the algebraic multiplicity when the rank is $1$'
-          answer: 'The null space has dimension equal to the size of the matrix minus the rank'
-          why: 'By rank-nullity, $\dim\ker(A - 3I) = 3 - \operatorname{rank}(A - 3I) = 3 - 1 = 2$. A smaller rank leaves more free variables and so more independent eigenvectors.'
         exemplars:
           - problem: 'Is $A = \begin{pmatrix} 5 & 0 & 0 \\ 0 & 5 & 2 \\ 0 & 0 & 6 \end{pmatrix}$ diagonalizable?'
             answer: 'yes'
@@ -2214,16 +1856,6 @@ topics:
       - id: kp1
         name: 'Building P and D'
         key_prerequisites: [finding-eigenvectors, matrix-inverses]
-        step_check:
-          step: 'in the same order as the eigenvalues on $D$'
-          question: 'Why must the columns of $P$ follow the same order as the eigenvalues in $D$?'
-          options:
-            - 'Eigenvalues are listed by size, so the eigenvectors must be listed by length'
-            - 'The order matters only for the first column, and the others are free to move'
-            - 'Column $j$ of $P$ must be an eigenvector for the eigenvalue $d_j$'
-            - 'A different order would change the eigenvalues of the matrix $A$ itself'
-          answer: 'Column $j$ of $P$ must be an eigenvector for the eigenvalue $d_j$'
-          why: 'The equation $AP = PD$ says that column $j$ of $AP$ equals $d_j$ times column $j$ of $P$. So the $j$th column is an eigenvector for $d_j$, and a swap in $P$ needs the same swap in $D$.'
         exemplars:
           - problem: 'Diagonalize $A = \begin{pmatrix} 3 & 1 \\ 1 & 3 \end{pmatrix}$ as $A = PDP^{-1}$, with the larger eigenvalue first in $D$. What is $D$?'
             answer: '[[4,0],[0,2]]'
@@ -2265,16 +1897,6 @@ topics:
       - id: kp2
         name: 'Verifying by reassembly'
         key_prerequisites: [matrix-inverses, similar-matrices]
-        step_check:
-          step: 'reassemble $PDP^{-1}$ and see whether it lands back on $A$'
-          question: 'Why does $PDP^{-1}$ land back on $A$ when the columns of $P$ are eigenvectors of $A$?'
-          options:
-            - 'The matrices $P$ and $P^{-1}$ cancel, and $D$ is the same matrix as $A$'
-            - 'Eigenvectors give $AP = PD$, and $P^{-1}$ on the right leaves $A$'
-            - 'The eigenvectors have length one, so $P^{-1}$ is the same matrix as $P$'
-            - 'Diagonalizing only rewrites $A$ with the eigenvalues placed in order of size'
-          answer: 'Eigenvectors give $AP = PD$, and $P^{-1}$ on the right leaves $A$'
-          why: 'Column $j$ of $AP$ is $A$ times an eigenvector, which equals $d_j$ times that column, so $AP = PD$. Multiplying on the right by $P^{-1}$ gives $A = PDP^{-1}$; the inner factors do not cancel.'
         exemplars:
           - problem: 'Let $P = \begin{pmatrix} 1 & 1 \\ 1 & -1 \end{pmatrix}$ and $D = \begin{pmatrix} 3 & 0 \\ 0 & 1 \end{pmatrix}$. Compute $PDP^{-1}$.'
             answer: '[[2,1],[1,2]]'
@@ -2316,16 +1938,6 @@ topics:
       - id: kp3
         name: 'Powers via diagonalization'
         key_prerequisites: [matrix-inverses, diagonalizability-check, matrix-powers]
-        step_check:
-          step: 'use $A^4 = PD^4P^{-1}$, so we only need to power the diagonal matrix'
-          question: 'Why does $A^4$ equal $PD^4P^{-1}$ when $A = PDP^{-1}$?'
-          options:
-            - 'Each inner $P^{-1}P$ in the product is $I$, leaving $PD^4P^{-1}$'
-            - 'Powers of any matrix are found by raising each of its entries to that power'
-            - 'The matrices $P$ and $D$ commute, so the four copies of $D$ can be collected'
-            - 'The matrices $P$ and $P^{-1}$ are also raised to the fourth power in the result'
-          answer: 'Each inner $P^{-1}P$ in the product is $I$, leaving $PD^4P^{-1}$'
-          why: 'Writing $A^4 = (PDP^{-1})(PDP^{-1})(PDP^{-1})(PDP^{-1})$, each neighbouring pair $P^{-1}P$ equals $I$. Only $P$ at the start, $D^4$ and $P^{-1}$ at the end remain, and $D^4$ is found entry by entry.'
         try_first:
           problem: 'Let $A = PDP^{-1}$ with $P = \begin{pmatrix} 1 & 1 \\ 0 & 1 \end{pmatrix}$ and $D = \begin{pmatrix} 3 & 0 \\ 0 & 1 \end{pmatrix}$. What is the entry in row 1, column 1 of $A^{10}$?'
           answer_contract: {"kind": "exact"}

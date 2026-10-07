@@ -26,7 +26,7 @@ use super::*;
 /// old substring test claimed it did, and it excused five parse divergences that
 /// hold no identity (M2 review 2, findings 10 and 14). The narrowing keeps its
 /// literal pairs in `answer_divergence.rs` instead.
-pub const DOCUMENTED_REASONS: [&str; 17] = [
+pub const DOCUMENTED_REASONS: [&str; 18] = [
     // 1.0 reads `log` as `ln`; 2.0 reads base 10 (grader pass 3).
     "1.0 reads `log` as the natural logarithm, 2.0 as base 10 (grader pass 3)",
     // The two narrowings of the canonical rational form (FIXM2h). Both mark a
@@ -52,6 +52,9 @@ pub const DOCUMENTED_REASONS: [&str; 17] = [
     // Two rulings of the review rounds. Both are DIVERGENCES and not defects:
     // 2.0 reads a construct that 1.0 hands to SymPy as a symbol.
     "2.0 reads a spaced `x` as the times sign (review 1, finding 18)",
+    // 2.0 reads `153,315,351` as the three whole numbers of the key
+    // `153, 315, 351`; 1.0 reads one number with thousands commas.
+    "2.0 reads a glued group of three digits as a list item (courses rewrite 2026-10-07)",
     "the juxtaposed argument stops at a function name (review 3, finding 5)",
     // The two readings of ruling `D6-dec`. 2.0 reads a learner decimal as the
     // exact rounding of the authored value and marks the FORM; 1.0 had a float

@@ -23,16 +23,6 @@ topics:
       - id: kp1
         name: Writing systems in matrix form
         key_prerequisites: [matrix-operations]
-        step_check:
-          step: 'there is no $y$ term, so the coefficient for $y$ is $0$'
-          question: 'Why is the entry in the second row and second column of the matrix $0$?'
-          options:
-            - 'Every matrix needs a zero somewhere to keep its shape square'
-            - 'The second equation is shorter, so its last entry is left blank'
-            - 'The equation for $y''$ has no $y$ term on its right side'
-            - 'The left side $y''$ has no coefficient, so the entry is $0$'
-          answer: 'The equation for $y''$ has no $y$ term on its right side'
-          why: 'Each entry is the coefficient of one variable in one equation, and a missing variable has coefficient $0$.'
         exemplars:
           - problem: 'Write the system $x'' = 3x + 4y$, $y'' = 2x + y$ in matrix form $\mathbf{X}'' = A\mathbf{X}$. What is the matrix $A$?'
             answer: '[3,4;2,1]'
@@ -71,16 +61,6 @@ topics:
           answer_contract: {"kind": "exact"}
           answer: '4'
           reveal: 'The product $A\mathbf{v} = \binom{4}{4} = 4\mathbf{v}$, so the exponent must be $4$. A function $e^{kt}\mathbf{v}$ solves the system exactly when $A\mathbf{v} = k\mathbf{v}$.'
-        step_check:
-          step: 'Check if $A\mathbf{v} = 3\mathbf{v}$'
-          question: 'Why do we compare $A\mathbf{v}$ with $3\mathbf{v}$ to test the solution?'
-          options:
-            - 'Because the number $3$ has to be an entry of the matrix $A$'
-            - 'Because $\mathbf{X}'' = 3e^{3t}\mathbf{v}$ must equal $e^{3t}A\mathbf{v}$'
-            - 'Because $A\mathbf{v}$ must have the same length as $\mathbf{v}$ itself'
-            - 'Because the exponent $3$ must divide every entry of $\mathbf{v}$ exactly'
-          answer: 'Because $\mathbf{X}'' = 3e^{3t}\mathbf{v}$ must equal $e^{3t}A\mathbf{v}$'
-          why: 'Both sides carry the factor $e^{3t}$, so the equation $\mathbf{X}'' = A\mathbf{X}$ holds exactly when $A\mathbf{v} = 3\mathbf{v}$.'
         exemplars:
           - problem: 'Does $\mathbf{X} = e^{5t}\binom{2}{1}$ solve $\mathbf{X}'' = A\mathbf{X}$ with $A = \begin{pmatrix}4&2\\3&-1\end{pmatrix}$?'
             answer: 'yes'
@@ -145,16 +125,6 @@ topics:
       - id: kp1
         name: Reducing to one second-order equation
         key_prerequisites: [homogeneous-constant-coefficients]
-        step_check:
-          step: 'From the first equation, $y = x'' - 2x$'
-          question: 'Why do we solve the first equation for $y$ before we substitute?'
-          options:
-            - 'It shows that $y$ is always twice the derivative of $x$'
-            - 'It makes both equations equal, so one can be dropped'
-            - 'It lets us write $y$ and $y''$ in terms of $x$ alone'
-            - 'It removes the need for the second equation altogether'
-          answer: 'It lets us write $y$ and $y''$ in terms of $x$ alone'
-          why: 'After we replace $y$ and $y''$ by expressions in $x$, the second equation contains only $x$ and its derivatives.'
         exemplars:
           - problem: 'Eliminating $y$ from the system $x'' = y$, $y'' = -2x - 3y$ gives an equation $x'''' + p\,x'' + q\,x = 0$. Find $p$ and $q$.'
             answer: 'p = 3; q = 2'
@@ -192,16 +162,6 @@ topics:
       - id: kp2
         name: Completing the solution
         key_prerequisites: [homogeneous-constant-coefficients]
-        step_check:
-          step: 'Back-substitute to find $y$'
-          question: 'Why can we find $y$ from $x$ without solving a new differential equation?'
-          options:
-            - 'The functions $x$ and $y$ are always equal, so $y = x$'
-            - 'The second equation gives $y$ once $x$ is integrated twice'
-            - 'The same constants $c_1$ and $c_2$ make $y$ always zero'
-            - 'The first equation says $y = x''$, so we differentiate $x$'
-          answer: 'The first equation says $y = x''$, so we differentiate $x$'
-          why: 'The first equation links $y$ to $x$ and $x''$, so the solution for $x$ gives $y$ by differentiation, with the same constants.'
         exemplars:
           - problem: 'Solve the initial-value problem $x'' = y$, $y'' = 4x - 3y$, $x(0) = 1$, $y(0) = 6$.'
             answer: 'x = 2e^t - e^(-4t); y = 2e^t + 4e^(-4t)'
@@ -270,16 +230,6 @@ topics:
       - id: kp1
         name: Superposition
         key_prerequisites: [systems-matrix-form]
-        step_check:
-          step: '3A\mathbf{X}_1 + 2A\mathbf{X}_2 = A(3\mathbf{X}_1 + 2\mathbf{X}_2)'
-          question: 'Why can the constants $3$ and $2$ be moved outside $A$ and the derivative?'
-          options:
-            - 'The functions $\mathbf{X}_1$ and $\mathbf{X}_2$ are equal, so the constants add'
-            - 'The derivative and multiplication by $A$ are both linear operations'
-            - 'The constants $3$ and $2$ are eigenvalues of the matrix $A$'
-            - 'Any combination of two functions is a solution of every linear system'
-          answer: 'The derivative and multiplication by $A$ are both linear operations'
-          why: 'Both the derivative and the product with $A$ respect sums and constant multiples, so a combination of solutions of $\mathbf{X}'' = A\mathbf{X}$ is again a solution.'
         exemplars:
           - problem: 'The vector functions $\mathbf{X}_1 = e^{t}\binom{1}{0}$ and $\mathbf{X}_2 = e^{2t}\binom{1}{1}$ solve $\mathbf{X}'' = A\mathbf{X}$ with $A = \begin{pmatrix}1&1\\0&2\end{pmatrix}$. Is $3\mathbf{X}_1 - 2\mathbf{X}_2$ also a solution?'
             answer: 'yes'
@@ -313,16 +263,6 @@ topics:
       - id: kp2
         name: The Wronskian and fundamental sets
         key_prerequisites: [systems-matrix-form, determinants]
-        step_check:
-          step: 'the solutions form a fundamental set'
-          question: 'Why does a Wronskian that is never zero make $\mathbf{X}_1$ and $\mathbf{X}_2$ a fundamental set?'
-          options:
-            - 'Because a nonzero determinant means both solutions are positive functions'
-            - 'Because the determinant equals the sum of the two solutions'
-            - 'Because a nonzero Wronskian means the matrix $A$ is always invertible'
-            - 'Because the two solutions are then independent at every $t$'
-          answer: 'Because the two solutions are then independent at every $t$'
-          why: 'If $W$ is never zero the two column vectors are independent for every $t$, so no solution is missing from their combinations.'
         exemplars:
           - problem: 'Two solutions of a $2 \times 2$ system are $\mathbf{X}_1 = e^{2t}\binom{1}{2}$ and $\mathbf{X}_2 = e^{-3t}\binom{1}{-1}$. Find their Wronskian $W(t)$.'
             answer: '-3e^(-t)'
@@ -395,16 +335,6 @@ topics:
       - id: kp1
         name: The companion construction
         key_prerequisites: [systems-matrix-form, homogeneous-constant-coefficients]
-        step_check:
-          step: '$x_1'' = y'' = x_2$'
-          question: 'Why is $x_1''$ equal to $x_2$?'
-          options:
-            - 'Because $x_1 = y$, so $x_1''$ is $y''$, which is $x_2$'
-            - 'Because the original equation says the two variables are equal'
-            - 'Because $x_2$ was chosen to be the derivative of $x_1''$'
-            - 'Because both variables have the same coefficient in the equation'
-          answer: 'Because $x_1 = y$, so $x_1''$ is $y''$, which is $x_2$'
-          why: 'The names $x_1 = y$ and $x_2 = y''$ make the first row of the system true by definition: the derivative of $y$ is $y''$, which is $x_2$.'
         exemplars:
           - problem: 'Write $y'''' + 3y'' + 2y = 0$ as a first-order system $\mathbf{X}'' = A\mathbf{X}$ using $x_1 = y$ and $x_2 = y''$. What is $A$?'
             answer: '[0,1;-2,-3]'
@@ -442,16 +372,6 @@ topics:
       - id: kp2
         name: Eigenvalues are the characteristic roots
         key_prerequisites: [homogeneous-constant-coefficients, eigenvalues-eigenvectors]
-        step_check:
-          step: 'Set the determinant to zero'
-          question: 'Why do we set $\det(A - \lambda I)$ equal to zero?'
-          options:
-            - 'Because the determinant of every matrix is zero at its roots'
-            - 'Because the equation $y'''' + 5y'' + 6y = 0$ has a zero right side'
-            - 'Because $A - \lambda I$ must be singular for an eigenvalue'
-            - 'Because the eigenvalues of a matrix must add up to zero'
-          answer: 'Because $A - \lambda I$ must be singular for an eigenvalue'
-          why: 'An eigenvalue is a number $\lambda$ for which $(A - \lambda I)\mathbf{v} = \mathbf{0}$ has a nonzero solution, and that happens exactly when the determinant is zero.'
         exemplars:
           - problem: 'The equation $y'''' + 5y'' + 6y = 0$ is rewritten as $\mathbf{X}'' = A\mathbf{X}$ with $x_1 = y$ and $x_2 = y''$. Find the eigenvalues of $A$.'
             answer: '-2, -3'
@@ -523,16 +443,6 @@ topics:
       - id: kp1
         name: Eigenpairs give solutions
         key_prerequisites: [eigenvalues-eigenvectors, systems-matrix-form]
-        step_check:
-          step: 'Substitute into the solution formula'
-          question: 'Why does the function $\mathbf{X} = e^{\lambda t}\mathbf{v}$ solve $\mathbf{X}'' = A\mathbf{X}$ when $(\lambda, \mathbf{v})$ is an eigenpair?'
-          options:
-            - 'The exponential equals its own derivative, so the matrix $A$ has no effect on the solution'
-            - 'Its derivative is $\lambda e^{\lambda t}\mathbf{v}$, and $A\mathbf{v} = \lambda\mathbf{v}$ so the two sides match'
-            - 'The vector $\mathbf{v}$ is constant, so $\mathbf{X}''$ is zero and $A\mathbf{X}$ is zero as well, with no condition on $\lambda$'
-            - 'Any vector $\mathbf{v}$ works, because $\lambda$ is only a number that multiplies the whole solution'
-          answer: 'Its derivative is $\lambda e^{\lambda t}\mathbf{v}$, and $A\mathbf{v} = \lambda\mathbf{v}$ so the two sides match'
-          why: 'Differentiating gives $\lambda e^{\lambda t}\mathbf{v}$, and $A\mathbf{X} = e^{\lambda t}A\mathbf{v} = \lambda e^{\lambda t}\mathbf{v}$, so both sides agree.'
         try_first:
           problem: 'For $\mathbf{X}'' = \begin{pmatrix} 2 & 1 \\ 1 & 2 \end{pmatrix}\mathbf{X}$, one solution has the form $x(t) = e^{\lambda t}$, $y(t) = e^{\lambda t}$ for a constant $\lambda$. Find $\lambda$.'
           answer_contract: {"kind": "exact"}
@@ -579,16 +489,6 @@ topics:
       - id: kp2
         name: General solutions with distinct real eigenvalues
         key_prerequisites: [eigenvalues-eigenvectors, systems-matrix-form]
-        step_check:
-          step: 'Compute the characteristic equation'
-          question: 'Why do we set $\det(A - \lambda I) = 0$ to find the eigenvalues?'
-          options:
-            - 'Setting the determinant to zero makes the factor $e^{\lambda t}$ equal to $1$ at $t = 0$'
-            - 'Every number $\lambda$ gives an eigenvector, and the determinant only picks out the largest one of them'
-            - 'A nonzero $\mathbf{v}$ with $(A - \lambda I)\mathbf{v} = \mathbf{0}$ needs $A - \lambda I$ to be singular'
-            - 'The determinant of $A$ itself must be zero, because all the solutions of the system have to vanish in the end'
-          answer: 'A nonzero $\mathbf{v}$ with $(A - \lambda I)\mathbf{v} = \mathbf{0}$ needs $A - \lambda I$ to be singular'
-          why: 'An eigenvector is a nonzero solution of $(A - \lambda I)\mathbf{v} = \mathbf{0}$, and that needs $\det(A - \lambda I) = 0$.'
         exemplars:
           - problem: 'Find the eigenvalues of the coefficient matrix of the system $\mathbf{X}'' = A\mathbf{X}$, where $A = \begin{pmatrix} 4 & 1 \\ 2 & 3 \end{pmatrix}$.'
             answer: '2, 5'
@@ -626,16 +526,6 @@ topics:
       - id: kp3
         name: Initial value problems
         key_prerequisites: [eigenvalues-eigenvectors, systems-matrix-form]
-        step_check:
-          step: 'Apply the initial conditions to solve for $c_1$ and $c_2$'
-          question: 'Why can we put $t = 0$ into the general solution to find $c_1$ and $c_2$?'
-          options:
-            - 'At $t = 0$ every exponential is $1$, so $\mathbf{X}(0) = c_1\mathbf{v}_1 + c_2\mathbf{v}_2$'
-            - 'At $t = 0$ the eigenvalues are all zero, so only the eigenvectors are left in the solution'
-            - 'The constants change with time, so they have a fixed value only at the moment $t = 0$'
-            - 'At $t = 0$ the derivative is zero, so the matrix $A$ can be left out of the equation altogether'
-          answer: 'At $t = 0$ every exponential is $1$, so $\mathbf{X}(0) = c_1\mathbf{v}_1 + c_2\mathbf{v}_2$'
-          why: 'Since $e^{\lambda \cdot 0} = 1$, the initial condition becomes the linear system $c_1\mathbf{v}_1 + c_2\mathbf{v}_2 = \mathbf{X}(0)$.'
         exemplars:
           - problem: 'Solve $\mathbf{X}'' = \begin{pmatrix} 3 & 1 \\ 1 & 3 \end{pmatrix}\mathbf{X}$ with $\mathbf{X}(0) = \binom{4}{2}$. What is $x(t)$?'
             answer: '3e^(4t)+e^(2t)'
@@ -701,16 +591,6 @@ topics:
       - id: kp1
         name: Equilibria of linear systems
         key_prerequisites: [linear-systems-eigenvalues]
-        step_check:
-          step: 'The equilibrium condition is $A\mathbf{X} = \mathbf{0}$'
-          question: 'Why is an equilibrium of $\mathbf{X}'' = A\mathbf{X}$ a solution of $A\mathbf{X} = \mathbf{0}$?'
-          options:
-            - 'At an equilibrium the point does not move, so $\mathbf{X}'' = \mathbf{0}$ and $A\mathbf{X} = \mathbf{0}$'
-            - 'An equilibrium is a point where $\mathbf{X}$ itself is zero, so $A\mathbf{X}$ is zero as a consequence of that'
-            - 'At an equilibrium the matrix $A$ must be zero, because only then does the system stop changing'
-            - 'An equilibrium is a point where $\mathbf{X}''$ equals $\mathbf{X}$, so the two sides cancel out'
-          answer: 'At an equilibrium the point does not move, so $\mathbf{X}'' = \mathbf{0}$ and $A\mathbf{X} = \mathbf{0}$'
-          why: 'A constant solution has derivative $\mathbf{0}$, so the equation $\mathbf{X}'' = A\mathbf{X}$ reduces to $A\mathbf{X} = \mathbf{0}$.'
         exemplars:
           - problem: 'Find all equilibrium points of the system $\mathbf{X}'' = \begin{pmatrix} 3 & -1 \\ 2 & 4 \end{pmatrix}\mathbf{X}$.'
             answer: '(0, 0)'
@@ -748,16 +628,6 @@ topics:
       - id: kp2
         name: Classification from eigenvalues
         key_prerequisites: [linear-systems-eigenvalues]
-        step_check:
-          step: 'A saddle point is always unstable because trajectories diverge in at least one direction'
-          question: 'Why is a saddle point always unstable?'
-          options:
-            - 'Both eigenvalue terms grow with time, so every trajectory moves away from the origin for sure'
-            - 'The negative eigenvalue pushes every trajectory away from the origin as time goes on'
-            - 'A positive eigenvalue gives a growing term $e^{\lambda t}$, so some trajectories leave'
-            - 'Real eigenvalues always make the origin unstable, whatever signs the two eigenvalues have in the end'
-          answer: 'A positive eigenvalue gives a growing term $e^{\lambda t}$, so some trajectories leave'
-          why: 'Along the eigenvector of the positive eigenvalue the solution is $e^{\lambda t}\mathbf{v}$ with $\lambda > 0$, which moves away from the origin.'
         exemplars:
           - problem: 'A planar linear system has eigenvalues $-4$ and $-9$. Classify the equilibrium at the origin and say whether it is stable.'
             answer: 'stable node'
@@ -791,16 +661,6 @@ topics:
       - id: kp3
         name: The remaining cases
         key_prerequisites: [linear-systems-eigenvalues]
-        step_check:
-          step: 'Trajectories spiral inward toward the origin'
-          question: 'Why do trajectories spiral inward when the eigenvalues are $-1 \pm 3i$?'
-          options:
-            - 'The imaginary part $3$ pulls the point toward the origin, and the real part makes it turn'
-            - 'The factor $e^{-t}$ shrinks the solution, while $\cos 3t$ and $\sin 3t$ only turn it'
-            - 'The factor $e^{-t}$ turns the point around, while $\cos 3t$ and $\sin 3t$ shrink its size'
-            - 'Complex eigenvalues always give inward spirals, whatever the sign of their real part is'
-          answer: 'The factor $e^{-t}$ shrinks the solution, while $\cos 3t$ and $\sin 3t$ only turn it'
-          why: 'Solutions have the form $e^{-t}(\cos 3t, \sin 3t)$ up to constants: the exponential sets the distance and the trigonometric part sets the angle.'
         try_first:
           problem: 'A point moves according to $\mathbf{X}'' = \begin{pmatrix} 0 & 3 \\ -3 & 0 \end{pmatrix}\mathbf{X}$ and starts at $(5, 0)$. How far from the origin is the point at $t = 2$?'
           answer_contract: {"kind": "exact"}
@@ -877,16 +737,6 @@ topics:
       - id: kp1
         name: Classification from the matrix
         key_prerequisites: [equilibrium-classification-eigenvalues]
-        step_check:
-          step: 'Compute eigenvalues directly from $\lambda^2 - T\lambda + D = 0$'
-          question: 'Why do the eigenvalues of a $2 \times 2$ matrix satisfy $\lambda^2 - T\lambda + D = 0$?'
-          options:
-            - 'The eigenvalues are defined as the roots of a polynomial whose leading coefficient is the trace'
-            - 'Each eigenvalue equals the trace divided by two, so the polynomial is built from $T$ and $D$ directly'
-            - 'The determinant $D$ is the sum of the eigenvalues and the trace $T$ is their product, which fixes the polynomial'
-            - 'Expanding $\det(A - \lambda I)$ gives $\lambda^2 - (a + d)\lambda + (ad - bc)$, which uses $T$ and $D$'
-          answer: 'Expanding $\det(A - \lambda I)$ gives $\lambda^2 - (a + d)\lambda + (ad - bc)$, which uses $T$ and $D$'
-          why: 'Expanding $(a - \lambda)(d - \lambda) - bc$ gives $\lambda^2 - (a + d)\lambda + (ad - bc)$, which is $\lambda^2 - T\lambda + D$.'
         exemplars:
           - problem: 'Classify the origin of the system $\mathbf{X}'' = \begin{pmatrix} 0 & 1 \\ -2 & -3 \end{pmatrix}\mathbf{X}$ and say whether it is stable.'
             answer: 'stable node'
@@ -924,16 +774,6 @@ topics:
       - id: kp2
         name: The trace-determinant shortcut
         key_prerequisites: [equilibrium-classification-eigenvalues]
-        step_check:
-          step: 'the eigenvalues are real and distinct'
-          question: 'Why does $T^2 - 4D > 0$ mean that the eigenvalues are real and distinct?'
-          options:
-            - 'Because $T^2 - 4D$ is the sum of the two eigenvalues, and a positive sum means both are real'
-            - 'It is the discriminant of $\lambda^2 - T\lambda + D$, and a positive one gives two real roots'
-            - 'Because a positive value of $T^2 - 4D$ makes the trace positive, and a positive trace gives real roots'
-            - 'It is the size of the matrix, and a matrix of positive size cannot have complex eigenvalues'
-          answer: 'It is the discriminant of $\lambda^2 - T\lambda + D$, and a positive one gives two real roots'
-          why: 'By the quadratic formula the roots are $\tfrac{T \pm \sqrt{T^2 - 4D}}{2}$, which are two different real numbers when $T^2 - 4D > 0$.'
         try_first:
           problem: 'A $2 \times 2$ system has trace $5$ and determinant $6$. What is its larger eigenvalue?'
           answer_contract: {"kind": "exact"}
@@ -980,16 +820,6 @@ topics:
       - id: kp3
         name: Trajectory behavior
         key_prerequisites: [equilibrium-classification-eigenvalues]
-        step_check:
-          step: 'Evaluate $A\mathbf{X}$ at $(1, 0)$'
-          question: 'Why does $A\mathbf{X}$ at the point $(1, 0)$ show which way the point turns around the origin?'
-          options:
-            - 'Because $A\mathbf{X}$ is the position of the point after one turn, which shows the direction'
-            - 'Because $A\mathbf{X}$ equals the eigenvector there, and an eigenvector always points around the origin'
-            - 'Because $A\mathbf{X}$ equals $\mathbf{X}''$, the velocity, so it shows where the point starts to move'
-            - 'Because $A\mathbf{X}$ is the distance from the origin, and a larger distance means a turn to the left'
-          answer: 'Because $A\mathbf{X}$ equals $\mathbf{X}''$, the velocity, so it shows where the point starts to move'
-          why: 'The system says $\mathbf{X}'' = A\mathbf{X}$, so $A\mathbf{X}$ is the velocity at that point and its direction shows the way the point turns.'
         exemplars:
           - problem: 'A saddle point has eigenvalue $\lambda_1 = 2$ with eigenvector $\mathbf{v}_1 = (1, 3)$ and eigenvalue $\lambda_2 = -4$ with eigenvector $\mathbf{v}_2 = (2, -1)$. A trajectory has a nonzero $\mathbf{v}_1$ component. As $t \to \infty$ it approaches a line through the origin. What is the slope of that line?'
             answer: '3'
@@ -1059,16 +889,6 @@ topics:
       - id: kp1
         name: Complex eigenpairs
         key_prerequisites: [linear-systems-eigenvalues, complex-numbers]
-        step_check:
-          step: '$\sqrt{16 - 52} = \sqrt{-36} = 6i$'
-          question: 'Why does $\sqrt{-36}$ equal $6i$?'
-          options:
-            - 'The minus sign is dropped, and the $i$ only marks that the root is not exact'
-            - 'The symbol $i$ is defined as $\sqrt{36}$, so $6i$ means six copies of that root, nothing else'
-            - 'Since $-36 = 36\cdot(-1)$, $\sqrt{36} = 6$ and $\sqrt{-1} = i$, the root is $6i$'
-            - 'The square of $6i$ is $36$, so $6i$ squares back to the number under the root sign'
-          answer: 'Since $-36 = 36\cdot(-1)$, $\sqrt{36} = 6$ and $\sqrt{-1} = i$, the root is $6i$'
-          why: 'The square root of a product is the product of the square roots, and $\sqrt{-1} = i$, so $\sqrt{-36} = 6i$; check: $(6i)^2 = -36$.'
         try_first:
           problem: 'The rotation of the plane through $90^\circ$ about the origin sends each point $(x, y)$ to $(-y, x)$. Is there a nonzero vector that this rotation sends to a multiple of itself?'
           answer_contract: {"kind": "label", "options": [["no", "no it does not", "there is no such vector", "none"], ["yes", "yes there is", "there is such a vector"]]}
@@ -1111,16 +931,6 @@ topics:
       - id: kp2
         name: Real solutions via Euler's formula
         key_prerequisites: [linear-systems-eigenvalues, complex-numbers]
-        step_check:
-          step: 'The real and imaginary parts give two independent real solutions'
-          question: 'Why does each of the real part and the imaginary part of a complex solution solve the system?'
-          options:
-            - 'The matrix $A$ is real, so taking real or imaginary parts of both sides keeps the equation true'
-            - 'The imaginary part is always zero at the start, so only the real part has to solve the equation'
-            - 'Euler''s formula makes the real part and the imaginary part equal, so one solution gives both'
-            - 'Any piece of a complex solution solves the system, whatever the matrix $A$ is like in its entries'
-          answer: 'The matrix $A$ is real, so taking real or imaginary parts of both sides keeps the equation true'
-          why: 'Because $A$ has real entries, the real and imaginary parts of $\mathbf{X}'' = A\mathbf{X}$ give two separate equations, one for each part.'
         exemplars:
           - problem: 'The system $\mathbf{X}'' = \begin{pmatrix} 0 & 1 \\ -1 & 0 \end{pmatrix}\mathbf{X}$ has the eigenvalue $i$ with eigenvector $\binom{1}{i}$. Use Euler''s formula to write $e^{it}\binom{1}{i}$ as a real vector plus $i$ times a real vector. What is the second component of the real vector?'
             answer: '-sin(t)'
@@ -1158,16 +968,6 @@ topics:
       - id: kp3
         name: IVPs and spiral behavior
         key_prerequisites: [linear-systems-eigenvalues]
-        step_check:
-          step: 'Since the real part is positive, trajectories spiral away from the origin'
-          question: 'Why does a positive real part $\alpha$ make trajectories spiral away from the origin?'
-          options:
-            - 'The factor $e^{\alpha t}$ makes the point turn, while the sine and cosine make it move away'
-            - 'The solution contains $e^{\alpha t}$, which grows, while the sine and cosine only turn the point'
-            - 'A positive real part means the matrix is positive, so every entry of the solution must grow in size'
-            - 'The imaginary part is the one that grows, and the real part only sets how fast the point turns'
-          answer: 'The solution contains $e^{\alpha t}$, which grows, while the sine and cosine only turn the point'
-          why: 'Solutions have the form $e^{\alpha t}(\cos\beta t, \sin\beta t)$ up to constants: the exponential sets the distance, the trigonometric part sets the angle.'
         exemplars:
           - problem: 'Solve $\mathbf{X}'' = \begin{pmatrix} 1 & -3 \\ 3 & 1 \end{pmatrix}\mathbf{X}$ with $\mathbf{X}(0) = \binom{1}{0}$. What is $x(t)$?'
             answer: 'e^t cos(3t)'
@@ -1236,16 +1036,6 @@ topics:
       - id: kp1
         name: Detecting defective matrices
         key_prerequisites: [linear-systems-eigenvalues]
-        step_check:
-          step: 'This simplifies to $v_2 = 0$, with $v_1$ free'
-          question: 'Why is $v_1$ free in this step?'
-          options:
-            - 'The equation $v_2 = 0$ forces $v_1$ to equal $v_2$, so any common value works'
-            - '$v_1$ has coefficient $0$ in both rows of $A - 2I$, so no equation restricts it'
-            - 'Every component of an eigenvector may take any value when $\lambda$ is a double root'
-            - 'The row $(0, 0)$ of $A - 2I$ gives $0 = 0$, so both components are free'
-          answer: '$v_1$ has coefficient $0$ in both rows of $A - 2I$, so no equation restricts it'
-          why: 'The first column of $A - 2I$ is zero, so $v_1$ never appears in the equations. Only $v_2$ is restricted, and the eigenvectors form the single line spanned by $(1, 0)$.'
         exemplars:
           - problem: 'The matrix $A = \begin{pmatrix} 3 & 1 \\ 0 & 3 \end{pmatrix}$ has the double eigenvalue $3$. How many linearly independent eigenvectors does $A$ have?'
             answer: '1'
@@ -1283,16 +1073,6 @@ topics:
       - id: kp2
         name: Generalized eigenvectors and the second solution
         key_prerequisites: [linear-systems-eigenvalues]
-        step_check:
-          step: 'Solve $(A - \lambda I)\mathbf{w} = \mathbf{v}$'
-          question: 'Why is $\mathbf{w}$ found from $(A - \lambda I)\mathbf{w} = \mathbf{v}$ and not from $(A - \lambda I)\mathbf{w} = \mathbf{0}$?'
-          options:
-            - 'The right side $\mathbf{0}$ would force $\mathbf{w}$ to be the zero vector, which gives no solution'
-            - 'An eigenvector $\mathbf{v}$ must be used on the right side of every matrix equation here'
-            - 'The matrix $A - \lambda I$ is invertible, so it must be applied to a nonzero vector first'
-            - 'The guess $e^{\lambda t}(t\mathbf{v} + \mathbf{w})$ solves $\mathbf{X}'' = A\mathbf{X}$ only then'
-          answer: 'The guess $e^{\lambda t}(t\mathbf{v} + \mathbf{w})$ solves $\mathbf{X}'' = A\mathbf{X}$ only then'
-          why: 'The derivative of $e^{\lambda t}(t\mathbf{v} + \mathbf{w})$ contains the extra term $e^{\lambda t}\mathbf{v}$, and it matches $A\mathbf{w} - \lambda\mathbf{w}$ only if $(A - \lambda I)\mathbf{w} = \mathbf{v}$.'
         try_first:
           problem: 'The system $x'' = 2x + y$, $y'' = 2y$ has the starting values $x(0) = 0$ and $y(0) = 1$. Solve for $y(t)$ first, and then find $x(1)$.'
           answer_contract: {"kind": "exact"}
@@ -1339,16 +1119,6 @@ topics:
       - id: kp3
         name: IVPs and long-run behavior
         key_prerequisites: [linear-systems-eigenvalues, complex-eigenvalue-systems]
-        step_check:
-          step: 'This gives $c_1 = 1$ and $c_2 = 4$'
-          question: 'Why do $c_1$ and $c_2$ equal the two entries of the starting vector $\binom{1}{4}$?'
-          options:
-            - 'At $t = 0$ the factor $t$ vanishes and $e^{0} = 1$, leaving $c_1(1, 0) + c_2(0, 1)$'
-            - 'The constants $c_1$ and $c_2$ always equal the entries of the initial vector'
-            - 'The eigenvalue $2$ is positive, so the constants are the same as the entries'
-            - 'The vectors $(1, 0)$ and $(0, 1)$ are eigenvectors, so each constant is an eigenvalue'
-          answer: 'At $t = 0$ the factor $t$ vanishes and $e^{0} = 1$, leaving $c_1(1, 0) + c_2(0, 1)$'
-          why: 'At $t = 0$ the general solution becomes $c_1\mathbf{v}_1 + c_2\mathbf{v}_2$ with $\mathbf{v}_1 = (1, 0)$ and $\mathbf{v}_2 = (0, 1)$. That equals $(c_1, c_2)$, and for another matrix the constants would differ from the entries.'
         exemplars:
           - problem: 'Solve $\mathbf{X}'' = \begin{pmatrix} 4 & 1 \\ 0 & 4 \end{pmatrix}\mathbf{X}$ with $\mathbf{X}(0) = \binom{5}{-2}$. Find the first component $x(t)$ of the solution.'
             answer: '(5 - 2t)e^(4t)'
@@ -1421,16 +1191,6 @@ topics:
       - id: kp1
         name: Structure of solutions
         key_prerequisites: [linear-systems-eigenvalues]
-        step_check:
-          step: 'Since $\mathbf{X}_p$ is a constant vector, its derivative is the zero vector'
-          question: 'Why must a constant vector satisfy $A\mathbf{X}_p + \mathbf{b} = \mathbf{0}$ to be a solution?'
-          options:
-            - 'The system $\mathbf{X}'' = A\mathbf{X} + \mathbf{b}$ needs $\mathbf{X}''$ to equal $\mathbf{b}$ for every solution'
-            - 'A constant vector has zero derivative, so the right-hand side must also be zero'
-            - 'The matrix $A$ must be the zero matrix for a constant vector to be a solution'
-            - 'Only the forcing vector $\mathbf{b}$ matters, and $A\mathbf{X}_p$ is always zero'
-          answer: 'A constant vector has zero derivative, so the right-hand side must also be zero'
-          why: 'The left side of $\mathbf{X}'' = A\mathbf{X} + \mathbf{b}$ is $\mathbf{X}_p'' = \mathbf{0}$, so the right side $A\mathbf{X}_p + \mathbf{b}$ has to be $\mathbf{0}$ as well.'
         exemplars:
           - problem: 'Consider $\mathbf{X}'' = A\mathbf{X} + \mathbf{b}$ with $A = \begin{pmatrix} 2 & 1 \\ 1 & 3 \end{pmatrix}$ and $\mathbf{b} = \binom{-3}{-5}$. Substitute the vector $\mathbf{X}_p = \binom{2}{1}$ into the right-hand side. What is $A\mathbf{X}_p + \mathbf{b}$?'
             answer: '(2, 0)'
@@ -1468,16 +1228,6 @@ topics:
       - id: kp2
         name: Constant forcing
         key_prerequisites: [linear-systems-eigenvalues]
-        step_check:
-          step: 'Since $$\mathbf{X}_p$$ is constant, its derivative is $$\mathbf{0}$$'
-          question: 'Why does a zero derivative turn $\mathbf{X}'' = A\mathbf{X} + \mathbf{b}$ into $A\mathbf{X}_p = -\mathbf{b}$?'
-          options:
-            - 'The vector $\mathbf{b}$ is moved to the other side because $A$ and $\mathbf{b}$ always cancel out'
-            - 'The matrix $A$ is replaced by its inverse when the derivative of $\mathbf{X}_p$ vanishes here'
-            - 'The left side is $\mathbf{0}$, so $A\mathbf{X}_p = -\mathbf{b}$ once $\mathbf{b}$ moves over'
-            - 'A zero derivative means that $\mathbf{X}_p$ is zero, so $\mathbf{b}$ is the only term left over'
-          answer: 'The left side is $\mathbf{0}$, so $A\mathbf{X}_p = -\mathbf{b}$ once $\mathbf{b}$ moves over'
-          why: 'With $\mathbf{X}_p'' = \mathbf{0}$ the equation reads $\mathbf{0} = A\mathbf{X}_p + \mathbf{b}$, and subtracting $\mathbf{b}$ gives $A\mathbf{X}_p = -\mathbf{b}$.'
         try_first:
           problem: 'The equation $x'' = -2x + 8$ has a solution that does not change with time. What is its constant value?'
           answer_contract: {"kind": "exact"}
@@ -1520,16 +1270,6 @@ topics:
       - id: kp3
         name: Exponential forcing glimpse
         key_prerequisites: [linear-systems-eigenvalues, undetermined-coefficients]
-        step_check:
-          step: 'Substitute $\mathbf{X}_p = \mathbf{a}e^{4t}$ into the system to get $(A - 4I)\mathbf{a} = -\mathbf{v}$'
-          question: 'Why does the factor $e^{4t}$ disappear from the equation for $\mathbf{a}$?'
-          options:
-            - 'Every term carries $e^{4t}$, and $(\mathbf{a}e^{4t})'' = 4\mathbf{a}e^{4t}$, so it divides out'
-            - 'The exponential is never zero, so it may simply be removed from the left side only, as a rule'
-            - 'The eigenvalues of $A$ cancel $e^{4t}$ whenever the forcing has the same exponent as the guess'
-            - 'The derivative of $e^{4t}$ is $1$, so the exponential leaves no factor in the result at all'
-          answer: 'Every term carries $e^{4t}$, and $(\mathbf{a}e^{4t})'' = 4\mathbf{a}e^{4t}$, so it divides out'
-          why: 'The derivative of $\mathbf{a}e^{4t}$ is $4\mathbf{a}e^{4t}$, and $A\mathbf{a}e^{4t}$ and $\mathbf{v}e^{4t}$ also carry $e^{4t}$. Dividing every term by it leaves $4\mathbf{a} = A\mathbf{a} + \mathbf{v}$.'
         exemplars:
           - problem: 'For the system $\mathbf{X}'' = \begin{pmatrix} 2 & 1 \\ 1 & 2 \end{pmatrix}\mathbf{X} + \binom{0}{1} e^{4t}$, find the vector $\mathbf{a}$ for which $\mathbf{X}_p = \mathbf{a}e^{4t}$ is a particular solution.'
             answer: '(1/3, 2/3)'
@@ -1612,16 +1352,6 @@ topics:
       - id: kp1
         name: Equilibria of nonlinear systems
         key_prerequisites: [slope-fields-equilibria]
-        step_check:
-          step: '$x = 0$ or $1 - x^5 = 0 \Rightarrow x = 1$'
-          question: 'Why does $x(1 - x^5) = 0$ split into the two cases $x = 0$ and $1 - x^5 = 0$?'
-          options:
-            - 'Dividing both sides by $x$ is allowed, and it leaves the single equation $1 - x^5 = 0$'
-            - 'A product of factors is zero only when at least one of the factors is zero'
-            - 'Each factor of an equation must be set equal to its own constant, and zero is the simplest'
-            - 'The equation $x^6 = x$ has one solution for each power of $x$, namely $0$ and $1$'
-          answer: 'A product of factors is zero only when at least one of the factors is zero'
-          why: 'The product rule for zero gives one case for each factor. Dividing by $x$ would lose the solution $x = 0$.'
         exemplars:
           - problem: 'Find all equilibrium points of the system $x'' = y - x^2$, $y'' = x - y$.'
             answer: '(0, 0), (1, 1)'
@@ -1659,16 +1389,6 @@ topics:
       - id: kp2
         name: The Jacobian and classification at an equilibrium
         key_prerequisites: [phase-plane-stability, first-order-partial-derivatives]
-        step_check:
-          step: 'Since $D = -1 < 0$'
-          question: 'Why does $D = -1 < 0$ show that the equilibrium is a saddle?'
-          options:
-            - 'A negative determinant means the matrix has no inverse, so trajectories cannot enter the origin'
-            - 'The determinant equals the sum of the eigenvalues, so a negative sum gives a saddle'
-            - 'The determinant equals the product of the eigenvalues, so one is positive and one is negative'
-            - 'A negative determinant forces the eigenvalues to be complex with opposite imaginary parts'
-          answer: 'The determinant equals the product of the eigenvalues, so one is positive and one is negative'
-          why: 'The product $\lambda_1\lambda_2 = D$ is negative only if the eigenvalues have opposite signs, and that is the saddle case.'
         try_first:
           problem: 'The equation $x'' = x - x^2$ has the equilibrium $x = 1$. Near it, write $x = 1 + u$ and keep only the terms that are linear in $u$. Then $u'' = ku$. What is $k$?'
           answer_contract: {"kind": "exact"}
@@ -1715,16 +1435,6 @@ topics:
       - id: kp3
         name: Predator-prey and competing species
         key_prerequisites: [phase-plane-stability, equilibrium-classification-eigenvalues]
-        step_check:
-          step: 'Eigenvalues are $\lambda = \pm i\sqrt{8}$ (pure imaginary)'
-          question: 'Why do trace $0$ and determinant $8$ give purely imaginary eigenvalues?'
-          options:
-            - 'The characteristic equation is $\lambda^2 - T\lambda + D = 0$, which becomes $\lambda^2 = -8$'
-            - 'A trace of zero means each eigenvalue is zero, and the determinant adds the imaginary part now'
-            - 'The eigenvalues are the diagonal entries $0$ and $0$ of the matrix, and $8$ is their scale, too'
-            - 'A positive determinant always forces complex eigenvalues with a positive real part'
-          answer: 'The characteristic equation is $\lambda^2 - T\lambda + D = 0$, which becomes $\lambda^2 = -8$'
-          why: 'With $T = 0$ the equation $\lambda^2 - T\lambda + D = 0$ reduces to $\lambda^2 = -D = -8$, so $\lambda = \pm i\sqrt{8}$ with no real part.'
         exemplars:
           - problem: 'For the predator-prey system $x'' = x(4 - y)$, $y'' = y(x - 2)$ (prey $x$, predators $y$), find the equilibrium at which both species are present.'
             answer: '(2, 4)'

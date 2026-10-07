@@ -118,6 +118,7 @@ fn spec_of(answers: &[&str]) -> Vec<Exemplar> {
             problem: "p".to_string(),
             answer: (*answer).to_string(),
             solution_sketch: None,
+            visual: None,
         })
         .collect()
 }
