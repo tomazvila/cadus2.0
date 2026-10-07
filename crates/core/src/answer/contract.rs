@@ -7,6 +7,7 @@ mod form;
 pub mod function;
 mod list;
 mod lowest;
+mod multipart_natural;
 mod nested;
 mod notation;
 mod power;

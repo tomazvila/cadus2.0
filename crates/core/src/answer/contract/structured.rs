@@ -462,7 +462,7 @@ fn verdict_sentence<'a>(parts: &[AnswerPart], text: &'a str) -> Option<Vec<&'a s
 }
 
 /// Whether a comma sits between a digit and exactly three digits, as in "1,000".
-fn thousands_comma(text: &str) -> bool {
+pub(super) fn thousands_comma(text: &str) -> bool {
     let bytes = text.as_bytes();
     bytes.iter().enumerate().any(|(index, &byte)| {
         byte == b','
@@ -507,7 +507,7 @@ fn merge_into_list<'a>(parts: &[AnswerPart], text: &'a str, pieces: Vec<&'a str>
 }
 
 /// Split on commas at bracket depth zero.
-fn top_level_commas(text: &str) -> Vec<&str> {
+pub(super) fn top_level_commas(text: &str) -> Vec<&str> {
     let mut pieces = Vec::new();
     let (mut depth, mut start) = (0_i32, 0);
     for (index, ch) in text.char_indices() {

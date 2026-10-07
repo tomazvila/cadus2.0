@@ -32,14 +32,18 @@ fn named_parts_still_read_in_any_order() {
 }
 
 #[test]
+fn unnamed_parts_in_another_order_or_with_a_free_word_are_right() {
+    assert!(correct("composite, 6"));
+    assert!(correct("factors = 6, composite"));
+}
+
+#[test]
 fn unnamed_parts_that_are_wrong_or_misshapen_are_wrong() {
     assert!(!correct("6, prime"));
     assert!(!correct("5, composite"));
-    assert!(!correct("composite, 6"));
     assert!(!correct("6"));
     assert!(!correct("6, composite, 12"));
     assert!(!correct("2 x 6, 3 x 4, 1 x 12"));
-    assert!(!correct("factors = 6, composite"));
 }
 
 #[test]

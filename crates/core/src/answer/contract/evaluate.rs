@@ -601,6 +601,16 @@ fn parsed_or_recognized(
 }
 
 fn multipart(parts: &[AnswerPart], expected: &str, learner: &str) -> Outcome {
+    let strict = multipart_strict(parts, expected, learner);
+    if matches!(strict, Outcome::Decided(Verdict { correct: true, .. })) {
+        return strict;
+    }
+    let natural = named_parts(parts, expected)
+        .is_some_and(|keys| super::multipart_natural::correct(parts, &keys, learner));
+    if natural { decided(true) } else { strict }
+}
+
+fn multipart_strict(parts: &[AnswerPart], expected: &str, learner: &str) -> Outcome {
     let Some(expected) = named_parts(parts, expected) else {
         return refused_parts();
     };
