@@ -654,6 +654,14 @@ topics:
             answer: '3'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Since $h\colon C\to TD$, applying $T$ twice gives $T^2h\colon T^2C\to T^2(TD)=T^3D$. So $n=3$, because $T^2$ is applied to the target $TD$ of $h$. The arrow $\mu_{TD}\colon T^3D\to T^2D$ then continues from this target.'
+          - problem: 'A textbook proves that Kleisli composition is associative for arrows $f\colon A\to TB$, $g\colon B\to TC$, $h\colon C\to TD$. Step 1: $h\circ_T(g\circ_T f)=\mu_D\circ T(h)\circ\mu_C\circ T(g)\circ f$. Step 2: naturality of $\mu$ at $h$ rewrites this as $\mu_D\circ\mu_{TD}\circ T^2(h)\circ T(g)\circ f$. Step 3: the monad associativity law rewrites it as $\mu_D\circ T(\mu_D)\circ T^2(h)\circ T(g)\circ f$. Step 4: functoriality of $T$ identifies this with $(h\circ_T g)\circ_T f$. Does any step fail? If so, which is the first, and why?'
+            answer: 'No step fails: Step 2 is naturality of mu at h, Step 3 is the monad associativity law, and Step 4 is functoriality of T.'
+            answer_contract: {"kind": "written"}
+            solution_sketch: 'Step 2 is naturality of $\mu$ at $h\colon C\to TD$, which gives $Th\circ\mu_C=\mu_{TD}\circ T^2h$ with the multiplication at $TD$. Step 3 is the monad associativity law $\mu_D\circ\mu_{TD}=\mu_D\circ T\mu_D$. Step 4 uses functoriality of $T$ to repackage $T(\mu_D\circ Th\circ g)$. All four steps are justified, so no step fails.'
+          - problem: 'Sam derives the right identity law $f\circ_T\eta_A=f$ for $f\colon A\to TB$ as follows. Step 1: expansion gives $\mu_B\circ T(f)\circ\eta_A$. Step 2: naturality of $\eta$ at $f$ gives $\mu_B\circ\eta_{TB}\circ f$. Step 3: the adjacent pair is deleted by the monad equation $\mu_B\circ T(\eta_B)=1_{TB}$. Step 4: the remaining arrow is $f$. Does any step fail? If so, which is the first, and why?'
+            answer: 'Step 3: the adjacent pair is mu_B after eta_{TB}, which needs the law mu after eta T equals 1; the quoted equation has T(eta_B) instead.'
+            answer_contract: {"kind": "written"}
+            solution_sketch: 'Naturality of $\eta$ at $f$ gives $T(f)\circ\eta_A=\eta_{TB}\circ f$, so Step 2 is correct. The adjacent pair in Step 3 is $\mu_B\circ\eta_{TB}$, which is deleted by the monad equation $\mu\circ\eta T=1_T$. The equation quoted in Step 3 has $T(\eta_B)$ instead, so it does not apply. The first step that fails is Step 3.'
           - problem: 'Writing out $g\circ_T f=\mu_C\circ Tg\circ f$ uses one copy of $\mu$. After writing the Kleisli composite of a chain of five arrows $f_1,\dots,f_5$ as one expression in $\mu$, $T$ and the $f_i$, how many copies of $\mu$ does it contain?'
             answer: '4'
             answer_contract: {"kind": "exact"}

@@ -151,6 +151,10 @@ topics:
           why: 'Each functor law is a statement about all morphisms, so one morphism where it fails is a complete counterexample.'
         constraints: 'Proposed assignments are given by explicit rules on small categories, one-object categories or groups. Items locate the failing step, compute the value a law forces, or classify which laws fail. Preserve exactly one full-proof exemplar.'
         exemplars:
+          - problem: 'Sam claims that the preimage assignment is a functor from $\mathbf{Set}$ to $\mathbf{Set}$. Step 1: send each set $A$ to its power set $\mathcal{P}(A)$. Step 2: send each function $f\colon A\to B$ to the preimage map, which takes a subset of $B$ to its preimage, a subset of $A$. Step 3: this gives a map from $\mathcal{P}(A)$ to $\mathcal{P}(B)$, as a functor requires. Step 4: identities and composites are preserved. Which step is the first that is not valid, and why?'
+            answer: 'Step 3: the preimage map takes subsets of B to subsets of A, so it runs from P(B) to P(A), the opposite direction to the one a functor needs.'
+            answer_contract: {"kind": "written"}
+            solution_sketch: 'Step 1 and Step 2 describe the assignment correctly. In Step 3 the preimage map takes subsets of $B$ to subsets of $A$, so it runs from $\mathcal{P}(B)$ to $\mathcal{P}(A)$. This is the opposite direction to the one a functor needs, and Step 4 is not reached because the typing already fails.'
           - problem: 'The center assignment sends each group to its center and each homomorphism to the same map on centers. Let $\varphi\colon\mathbb{Z}/2\to S_3$ be the homomorphism that sends the element $1$ to the transposition $(1\,2)$. The center of $\mathbb{Z}/2$ is all of $\mathbb{Z}/2$, and the center of $S_3$ has only the identity. How many elements of the center of $\mathbb{Z}/2$ are sent outside the center of $S_3$?'
             answer: '1'
             answer_contract: {"kind": "exact"}
@@ -867,6 +871,10 @@ topics:
             answer: '2'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The preimage $f^{-1}[\{a\}]$ collects the points that $f$ sends to $a$. These are $1$ and $3$, so the set has $2$ elements.'
+          - problem: 'Claim: the preimage power-set assignment $P^{-1}$, with $P^{-1}(f)(T)=f^{-1}[T]$, satisfies $P^{-1}(g\circ f)=P^{-1}(f)\circ P^{-1}(g)$ for composable $f\colon A\to B$ and $g\colon B\to C$. A proof offers the following. Step 1: for a subset $T$ of $C$, a point $x$ of $A$ lies in $(g\circ f)^{-1}[T]$ exactly when $g(f(x))$ lies in $T$. Step 2: $g(f(x))$ lies in $T$ exactly when $f(x)$ lies in $g^{-1}[T]$. Step 3: that holds exactly when $f(x)$ lies in $T$, because $g$ sends every point of $B$ into $T$. Step 4: so $(g\circ f)^{-1}[T]=f^{-1}[g^{-1}[T]]$, which is the reversed law. Which step is the first that is not valid, and why?'
+            answer: 'Step 3: g need not send every point of B into T; the correct line is that f(x) lies in the preimage of T under g.'
+            answer_contract: {"kind": "written"}
+            solution_sketch: 'Step 1 unfolds the preimage correctly, and Step 2 is correct because $T$ is a subset of $C$. Step 3 is false, since $g$ need not send every point of $B$ into $T$. The correct line is that $f(x)$ lies in $g^{-1}[T]$, and Step 4 follows from that line.'
           - problem: 'Write the full proof that the preimage power-set assignment $P^{-1}\colon\mathbf{Set}^{op}\to\mathbf{Set}$, with $P^{-1}(f)(T)=f^{-1}[T]$, is a contravariant functor.'
             answer: 'P^-1 is a contravariant functor'
             answer_contract: {"kind":"none"}
