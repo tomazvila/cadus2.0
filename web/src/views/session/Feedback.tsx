@@ -19,11 +19,12 @@
  * reads "Checking your proof…" while the worker runs, then "Proof accepted" or "Needs
  * revision" with the grader's feedback, its checks, and the solution (`ProofGrading.tsx`).
  */
+import { useEffect, useState } from 'react';
 import { Chip, Cross, Question, Tick } from '@/components/primitives';
 import { MathBlock } from '@/components/MathBlock';
 import { signed } from '@/lib/format';
 import { isUngraded } from '@/api/types';
-import type { AnswerResponse, ApiClient, AttemptOutcome, ReworkResponse } from '@/api/types';
+import type { AnswerResponse, ApiClient, AttemptOutcome, EquivalencePoll, Remediation, ReworkResponse } from '@/api/types';
 import type { Lifetime } from '@/hooks/useLifetime';
 import { PROOF_TITLE, ProofResult, useProofGrading, useSeen, type ProofState } from './ProofGrading';
 
@@ -73,7 +74,12 @@ export interface FeedbackProps {
   revealTopic?: string | null;
 }
 
-export function Feedback({
+export function Feedback(props: FeedbackProps) {
+  if (props.res.equivalence?.status === 'pending') return <CheckingFeedback continueRef={props.continueRef} />;
+  return <GradedFeedback {...props} />;
+}
+
+function GradedFeedback({
   res,
   hasNext,
   onContinue,
@@ -87,6 +93,8 @@ export function Feedback({
   if (res.report_corrected) return <CorrectedFeedback res={res} onContinue={onRefresh ?? onContinue}
     onEnd={onEnd} continueRef={continueRef} />;
   const ungraded = isUngraded(res);
+  const accepted = res.equivalence?.status === 'accepted';
+  const rows = remediationLines(res.remediation);
   const head = headOf(res, ungraded ? proof ?? null : null);
   return (
     <div className={`feedback feedback-${head.mood}`}>
@@ -94,13 +102,11 @@ export function Feedback({
         <span className="feedback-mark">{head.mark}</span>
         <span className="feedback-title">{head.title}</span>
         {/* An ungraded attempt earned no tier and no XP, so neither chip appears. */}
-        {ungraded ? null : (
-          <Chip className="chip-quality">{String(res.work_quality).replace(/_/g, ' ')}</Chip>
-        )}
-        {res.xp != null ? <Chip className="chip-xp">{`${signed(res.xp)} XP`}</Chip> : null}
+        <HeadChips res={res} hidden={ungraded || accepted} />
       </div>
 
       {revealTopic ? <p className="feedback-topic muted">{`Topic: ${revealTopic}`}</p> : null}
+      {accepted ? <p role="status">Correct. Your progress is updated.</p> : null}
       <TaskStatusLines res={res} />
       {head.proof ? <ProofResult state={head.proof} /> : <Reason reason={res.reason} />}
 
@@ -120,26 +126,21 @@ export function Feedback({
 
       {/* Amendment K (note 114): a refused answer is also checked in the
           background; the model's one-line reason rides beside the solution. */}
-      {res.equivalence?.status === 'pending' ? (
-        <p className="feedback-reason muted" role="status">Your answer is being checked. This page updates when the check is done.</p>
-      ) : null}
       {res.equivalence_reason ? <p className="feedback-reason muted">Checked: {res.equivalence_reason}</p> : null}
 
       {res.re_solve ? <p className="re-solve muted">{res.re_solve}</p> : null}
 
-      {res.remediation.length ? (
+      {rows.length ? (
         <div>
           <div className="solution-label">Follow-up</div>
           <ul className="remediation">
-            {res.remediation.map((r, i) => (
-              <li key={`${r.kind}-${i}`}>{`${r.kind}: ${r.targets.join(', ')}`}</li>
-            ))}
+            {rows.map((text, i) => <li key={`${text}-${i}`}>{text}</li>)}
           </ul>
         </div>
       ) : null}
 
       {/* D-F4: no diagnosis fires on an ungraded attempt, so its slot stays empty. */}
-      {ungraded ? null : children}
+      {ungraded || res.equivalence?.status === 'accepted' ? null : children}
 
       <div className="actions">
         <button ref={continueRef} type="button" className="btn btn-primary" onClick={onContinue}>
@@ -150,6 +151,100 @@ export function Feedback({
         <button type="button" className="btn btn-ghost" onClick={onEnd}>Stop for now</button>
       </div>
       <p className="muted small">{STOP_NOTE}</p>
+    </div>
+  );
+}
+
+/** The quality and XP chips. An ungraded or re-graded reply earned no figures of its own. */
+function HeadChips({ res, hidden }: { res: AnswerResponse; hidden: boolean }) {
+  if (hidden) return null;
+  return (
+    <>
+      <Chip className="chip-quality">{String(res.work_quality).replace(/_/g, ' ')}</Chip>
+      {res.xp != null ? <Chip className="chip-xp">{`${signed(res.xp)} XP`}</Chip> : null}
+    </>
+  );
+}
+
+/** The learner text of each remediation kind the service can send. */
+const REMEDIATION_TEXT: Record<string, string> = {
+  lesson_fail: 'This lesson comes back next time',
+  repeat_fail: 'Practice this skill again',
+  quiz_miss: 'Review what the quiz missed',
+  confirm_failed: 'A fresh question will check this skill again',
+};
+
+/** The follow-up lines of one reply. A row with no text and no targets shows nothing. */
+export function remediationLines(rows: Remediation[]): string[] {
+  const lines: string[] = [];
+  for (const r of rows) {
+    const text = REMEDIATION_TEXT[r.kind] ?? (r.kind.startsWith('review_confirmation') ? 'A fresh question will confirm this skill' : '');
+    const targets = r.targets.join(', ');
+    const line = text && targets ? `${text}: ${targets}` : text || targets;
+    if (line) lines.push(line);
+  }
+  return lines;
+}
+
+/** The poll interval of a background equivalence check, in milliseconds. */
+export const EQUIVALENCE_POLL_MS = 3000;
+
+/**
+ * The reply once the background equivalence check lands.
+ *
+ * While the check is pending the reply stands as sent and the panel is neutral. The poll
+ * then replaces the whole reply with its final form, so no provisional field survives.
+ */
+export function settleEquivalence(res: AnswerResponse, poll: EquivalencePoll): AnswerResponse {
+  const v = poll.verdict;
+  if (v.status === 'pending') return res;
+  const equivalence = { ...(res.equivalence ?? {}), status: v.status };
+  if (v.status === 'accepted') {
+    const rest = { ...res };
+    delete rest.re_solve;
+    delete rest.equivalence_reason;
+    return { ...rest, outcome: 'correct', correct: true, error_tags: [], remediation: [], equivalence };
+  }
+  return { ...res, equivalence, ...(v.status === 'refused' && v.reason ? { equivalence_reason: v.reason } : {}) };
+}
+
+function useEquivalence(api: ApiClient, life: Lifetime, res: AnswerResponse): AnswerResponse {
+  const id = res.equivalence?.status === 'pending' ? res.equivalence.id ?? null : null;
+  const [landed, setLanded] = useState<{ id: string; res: AnswerResponse } | null>(null);
+  useEffect(() => {
+    if (id === null) return undefined;
+    let done = false;
+    let interval = 0;
+    const poll = async () => {
+      let job: EquivalencePoll;
+      try {
+        job = await api.getEquivalence(id);
+      } catch {
+        return;
+      }
+      if (done || !life.alive() || job.verdict.status === 'pending') return;
+      done = true;
+      life.clearTimer(interval);
+      setLanded({ id, res: settleEquivalence(res, job) });
+    };
+    void poll();
+    interval = life.setInterval(() => { void poll(); }, EQUIVALENCE_POLL_MS);
+    return () => { done = true; life.clearTimer(interval); };
+  }, [api, life, id, res]);
+  return id !== null && landed?.id === id ? landed.res : res;
+}
+
+/** The neutral panel of an answer whose background check has not landed. */
+function CheckingFeedback({ continueRef }: Pick<FeedbackProps, 'continueRef'>) {
+  return (
+    <div className="feedback feedback-pending" role="status">
+      <div className="feedback-head"><span className="feedback-title">Checking your answer…</span></div>
+      <div className="actions">
+        {/* aria-disabled, not disabled: a disabled button cannot take the focus the view gives it. */}
+        <button ref={continueRef} type="button" className="btn btn-primary" aria-disabled="true" onClick={(e) => e.preventDefault()}>
+          Waiting for the check…
+        </button>
+      </div>
     </div>
   );
 }
@@ -199,7 +294,13 @@ function Reason({ reason }: { reason: string | undefined }) {
 export function ProofAwareFeedback({ api, life, ...props }: FeedbackProps & { api: ApiClient; life: Lifetime }) {
   const proof = useProofGrading(api, life, props.res.proof_grading);
   useSeen(api, props.res.proof_grading, proof);
-  return <Feedback {...props} proof={proof} />;
+  const res = useEquivalence(api, life, props.res);
+  // The pending button takes no click, so the focus returns to the live one when it lands.
+  const wasPending = props.res.equivalence?.status === 'pending' && res.equivalence?.status !== 'pending';
+  useEffect(() => {
+    if (wasPending && props.continueRef && 'current' in props.continueRef) props.continueRef.current?.focus();
+  }, [wasPending, props.continueRef]);
+  return <Feedback {...props} res={res} proof={proof} />;
 }
 
 /**

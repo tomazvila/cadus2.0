@@ -78,8 +78,8 @@ describe('Feedback', () => {
       <Feedback
         res={graded({
           remediation: [
-            { kind: 'review', targets: ['fractions', 'decimals'] },
-            { kind: 'lesson', targets: ['ratios'] },
+            { kind: 'repeat_fail', targets: ['fractions', 'decimals'] },
+            { kind: 'quiz_miss', targets: ['ratios'] },
           ],
         })}
         hasNext
@@ -88,7 +88,7 @@ describe('Feedback', () => {
       />,
     );
     expect(Array.from(document.querySelectorAll('.remediation li')).map((li) => li.textContent))
-      .toEqual(['review: fractions, decimals', 'lesson: ratios']);
+      .toEqual(['Practice this skill again: fractions, decimals', 'Review what the quiz missed: ratios']);
   });
 });
 

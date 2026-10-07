@@ -292,13 +292,13 @@ describe('the exit paths', () => {
         taskAnswer: async () => graded({
           next: null,
           task_status: 'task_passed',
-          remediation: [{ kind: 'review', targets: ['fractions'] }],
+          remediation: [{ kind: 'repeat_fail', targets: ['fractions'] }],
         }),
       }),
     });
 
     await submitAnswer('3/4');
-    expect(screen.getByText('review: fractions')).toBeTruthy();
+    expect(screen.getByText('Practice this skill again: fractions')).toBeTruthy();
 
     await press('Continue →');
 
