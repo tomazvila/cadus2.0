@@ -7,6 +7,7 @@ mod form;
 pub mod function;
 mod list;
 mod lowest;
+mod mixed;
 mod multipart_natural;
 mod nested;
 mod notation;
@@ -21,6 +22,7 @@ mod setup;
 mod structured;
 mod triage;
 mod union;
+mod wholes;
 
 use std::collections::BTreeMap;
 
@@ -29,10 +31,11 @@ use serde::{Deserialize, Serialize};
 use super::{Canon, MAX_ANSWER_CHARS, Quantity, Undecidable, canonical_form};
 use structured::{label_value, multipart_values, tolerance_value, validate_shape};
 
-pub use evaluate::check_contract;
+pub use evaluate::{check_contract, format_hint};
 pub use form::NumericForm;
 pub use property::{PropertyArg, PropertyArgs, PropertyCheck};
 pub use triage::{TriageVerdict, triage_verdict};
+pub use wholes::rewrite as whole_number_list;
 
 /// A reviewed item's answer policy. Absence retains the historical policy.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]

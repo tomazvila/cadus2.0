@@ -249,6 +249,8 @@ export interface ServedProblem {
    * key: the answer is not in this payload (Hard Rule 1).
    */
   choices?: string[];
+  /** The answer contract of the item, when the service serves one. It only picks the input hint. */
+  answer_contract?: AnswerContractHint;
   /**
    * D-PR1: a written proof. Its solution waits for a pass or for the revision cap, so the
    * payload never carries one.
@@ -263,12 +265,6 @@ export interface TeachResponse {
   /** The service sends one entry per step; an older page may send one string. */
   worked_example: { problem: string; steps: string | string[] };
   /**
-   * A self-explanation question on one step (step 5a). `step` is 1-based. The payload
-   * carries the options and never the correct one (Hard Rule 1): the pick goes to
-   * `taskTeachCheck`, which returns the verdict and `why`.
-   */
-  step_check?: { step: number; question: string; options: string[] };
-  /**
    * A motivating problem attempted BEFORE the worked example (step 5a). No answer and no
    * reveal here: both arrive from `taskTeachCheck` after the attempt. `choices` follows the
    * `ServedProblem` rule.
@@ -277,17 +273,13 @@ export interface TeachResponse {
 }
 
 /** The body of `POST /api/task/{task_id}/teach/check`. */
-export type TeachCheckRequest =
-  | { part: 'step_check'; choice: string }
-  | { part: 'try_first'; answer: string };
+export type TeachCheckRequest = { part: 'try_first'; answer: string };
 
 /**
  * The reply of `POST /api/task/{task_id}/teach/check`. The service writes nothing for it:
  * no event, no XP, no mastery, no scheduling.
  */
-export type TeachCheckResponse =
-  | { part: 'step_check'; correct: boolean; answer: string; why: string }
-  | { part: 'try_first'; outcome: AttemptOutcome; correct: boolean; answer: string; reveal: string };
+export type TeachCheckResponse = { part: 'try_first'; outcome: AttemptOutcome; correct: boolean; answer: string; reveal: string };
 
 /** `POST /api/task/{task_id}/hint` — one rung of the authored ladder (L5). */
 export interface HintResponse {
@@ -353,6 +345,7 @@ export interface DiagProbe {
   text: string;
   /** The options of a top-level Label item, as on `ServedProblem`. Absent for each other item. */
   choices?: string[];
+  answer_contract?: AnswerContractHint;
 }
 
 /**
@@ -406,7 +399,17 @@ export interface DiagnosisJob {
  * answer, so both are optional. `next_unavailable` and `xp` are inserted only when they
  * apply.
  */
+/** The served shape of an answer contract: `{kind, form}`, as in `required_form` / `mixed_number`. */
+export interface AnswerContractHint {
+  kind: string;
+  form?: string;
+  /** Set on a list contract: whether the order of the members counts. */
+  ordered?: boolean;
+}
+
 export interface AnswerResponse {
+  /** The notation hint text of a wrong-form answer, when the grader sends one. */
+  notation?: string | boolean;
   /** Set after the report service confirms a committed grade correction. */
   report_corrected?: boolean;
   /** The next question confirms independent work after feedback. */
@@ -449,7 +452,16 @@ export interface AnswerResponse {
    * a cached EQUIVALENT verdict already graded it correct; `refused` = the
    * check kept the wrong verdict and `equivalence_reason` carries the why.
    */
-  equivalence?: { id?: string; status: 'pending' | 'accepted' | 'refused' | 'failed'; reason?: string; model?: string };
+  equivalence?: {
+    id?: string;
+    status: 'pending' | 'accepted' | 'refused' | 'failed';
+    reason?: string;
+    model?: string;
+    /** What the check has done so far, in order. Absent until the service sends it. */
+    steps?: EquivalenceStep[];
+    /** The standard form of an accepted answer whose form differed. */
+    accepted_form?: string;
+  };
   /** The model's one-line why of a refused equivalence verdict. */
   equivalence_reason?: string;
   /**
@@ -583,11 +595,22 @@ export interface ProofContinueResponse {
   xp?: number;
 }
 
+/** One learner-facing line of a background check. */
+export interface EquivalenceStep { text: string }
+
 /** The poll reply of one background equivalence check (Amendment K, note 114). */
 export interface EquivalencePoll {
   id: string;
   attempt_id: string;
-  verdict: { status: 'pending' | 'accepted' | 'refused' | 'failed'; reason?: string; model?: string };
+  verdict: {
+    status: 'pending' | 'accepted' | 'refused' | 'failed';
+    reason?: string;
+    model?: string;
+    steps?: EquivalenceStep[];
+    accepted_form?: string;
+    /** The XP the corrected attempt earned. */
+    xp?: number;
+  };
 }
 
 /**

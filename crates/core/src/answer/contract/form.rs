@@ -13,6 +13,8 @@ pub enum NumericForm {
     Integer,
     Decimal,
     ReducedFraction,
+    /// A whole number and a proper fraction in lowest terms: `4 2/5`.
+    MixedNumber,
     /// A greatest integer factor multiplying a primitive linear sum.
     FactoredLinear,
     /// A complete factorization over the integers: constants and monomials
@@ -85,6 +87,7 @@ pub(super) fn accepts(form: NumericForm, text: &str, expected: &str) -> bool {
             return super::lowest::with_key_denominator(&tree, expected);
         }
         NumericForm::Radical => return !holds_rational_power(&tree),
+        NumericForm::MixedNumber => return super::mixed::is_mixed_number(&tree),
         NumericForm::Integer
         | NumericForm::Decimal
         | NumericForm::ReducedFraction

@@ -416,7 +416,7 @@ export function Quiz({
         <MathBlock>{question.text}</MathBlock>
 
         {/* No hint control: a hint inside a quiz is `409 no_hints_in_quiz`. */}
-        <AnswerInput ref={answerRef} choices={question.choices} disabled={phase !== 'ready'} onSubmit={submit} />
+        <AnswerInput ref={answerRef} choices={question.choices} contract={question.answer_contract} disabled={phase !== 'ready'} onSubmit={submit} />
 
         {/* A tap on an answer button is the submit, so that question shows no Submit. */}
         <div className="actions">

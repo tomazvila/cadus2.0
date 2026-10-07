@@ -17,7 +17,26 @@
  * commit, so an Enter in the frame after mount submits once. Installed from a passive effect,
  * that first Enter reaches nothing and the learner's first submit is silently dropped.
  */
-import { useImperativeHandle, useRef, type Ref } from 'react';
+import { useEffect, useImperativeHandle, useRef, useState, type Ref } from 'react';
+import { AnswerPreview } from '@/components/AnswerPreview';
+import type { AnswerContractHint } from '@/api/types';
+
+/** The wait after the last keystroke before the preview redraws, in milliseconds. */
+export const PREVIEW_DEBOUNCE_MS = 150;
+
+/** The mixed-number template: whole, space, numerator, slash, denominator. The caret starts on the whole. */
+const MIXED_TEMPLATE = '  /';
+
+/** The hint under the input, from the served contract. At most three examples, no system words. */
+export function inputHint(contract: AnswerContractHint | undefined): string {
+  const form = contract?.form ?? '';
+  if (form === 'mixed_number') return 'Write a mixed number as 4 2/5: the whole number, a space, then the fraction.';
+  if (contract?.kind === 'list' && contract.ordered === true) {
+    return 'Separate the numbers with commas or <, for example 5136, 5316, 5361';
+  }
+  if (/fraction/.test(form) || /fraction/.test(contract?.kind ?? '')) return 'Write a fraction like 3/4.';
+  return 'answers like 3/4, 2x+1, sqrt(2) are fine';
+}
 
 /** The symbols a plain keyboard does not produce. `√(` carries its opening paren. */
 const MATH_SYMBOLS = ['∞', 'π', '√(', '^', '≤', '≥', '≠', '±', '×', '÷', '°', 'θ'] as const;
@@ -34,15 +53,17 @@ export interface AnswerFieldProps {
   onSubmit?: () => void;
   onHint?: (() => void) | undefined;
   disabled?: boolean;
+  /** The answer contract of the served problem, when it has one. */
+  contract?: AnswerContractHint | undefined;
   ref?: Ref<AnswerFieldHandle> | undefined;
 }
 
 /** Replace the selection with `text` and leave the caret after it. */
-function insertAtCursor(input: HTMLInputElement, text: string): void {
+function insertAtCursor(input: HTMLInputElement, text: string, caret = text.length): void {
   const start = input.selectionStart ?? input.value.length;
   const end = input.selectionEnd ?? start;
   input.value = input.value.slice(0, start) + text + input.value.slice(end);
-  const pos = start + text.length;
+  const pos = start + caret;
   input.setSelectionRange(pos, pos);
   input.focus();
 }
@@ -52,9 +73,18 @@ export function AnswerField({
   onSubmit,
   onHint,
   disabled = false,
+  contract,
   ref,
 }: AnswerFieldProps) {
   const inputRef = useRef<HTMLInputElement>(null);
+  const [shown, setShown] = useState('');
+  const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  // The preview follows the input through a debounce; it is never the source of the value.
+  const refresh = () => {
+    clearTimeout(timer.current);
+    timer.current = setTimeout(() => { setShown(inputRef.current?.value ?? ''); }, PREVIEW_DEBOUNCE_MS);
+  };
+  useEffect(() => () => { clearTimeout(timer.current); }, []);
 
   // NO `setDisabled` on the handle. `disabled` has exactly ONE owner — the prop. With both,
   // React never rewrites an unchanged prop, so an imperative `setDisabled(true)` survives a
@@ -65,7 +95,7 @@ export function AnswerField({
   // A view drives it from its phase instead: `disabled={phase !== 'ready'}`.
   useImperativeHandle(ref, () => ({
     value: () => inputRef.current?.value.trim() ?? '',
-    clear: () => { if (inputRef.current) inputRef.current.value = ''; },
+    clear: () => { if (inputRef.current) inputRef.current.value = ''; clearTimeout(timer.current); setShown(''); },
     focus: () => inputRef.current?.focus(),
   }));
 
@@ -83,6 +113,7 @@ export function AnswerField({
         spellCheck={false}
         defaultValue=""
         disabled={disabled}
+        onInput={refresh}
         onKeyDown={(e) => {
           const input = e.currentTarget;
           if (e.key === 'Enter') {
@@ -117,13 +148,24 @@ export function AnswerField({
             // position goes with it. The suppression is what makes the tap survive.
             onMouseDown={(e) => { e.preventDefault(); }}
             // The input is on screen for as long as the key beside it is.
-            onClick={() => { insertAtCursor(inputRef.current!, sym); }}
+            onClick={() => { insertAtCursor(inputRef.current!, sym); refresh(); }}
           >
             {sym}
           </button>
         ))}
+        <button
+          type="button"
+          className="sym-key"
+          aria-label="Insert mixed number"
+          onMouseDown={(e) => { e.preventDefault(); }}
+          // The caret goes to the start of the template: the whole number is typed first.
+          onClick={() => { insertAtCursor(inputRef.current!, MIXED_TEMPLATE, 0); refresh(); }}
+        >
+          a b/c
+        </button>
       </div>
-      <p className="field-hint">answers like 3/4, 2x+1, sqrt(2) are fine</p>
+      <AnswerPreview text={shown} />
+      <p className="field-hint">{inputHint(contract)}</p>
     </div>
   );
 }

@@ -27,15 +27,41 @@ pub(crate) fn label_choices(
     Some(choices)
 }
 
-/// `options` in an order fixed by `seed` alone.
+/// The hint-only projection of a contract: its `kind`, the `form` of a required form, and
+/// the `ordered` flag of a list.
 ///
-/// A step check's author often writes the correct option first; the shuffle
-/// keeps the position from naming it. One seed gives one order, so a reload
-/// shows the same page.
-pub(crate) fn shuffled(options: &[String], seed: &str) -> Vec<String> {
-    let mut items = options.to_vec();
-    shuffle(&mut items, seed_of(seed));
-    items
+/// The key, the options, the aliases and the parts never appear. The client reads
+/// it only to pick the input hint. `None` when the item has no contract.
+pub(crate) fn contract_hint(contract: Option<&AnswerContract>) -> Option<serde_json::Value> {
+    let contract = contract?;
+    let mut hint = serde_json::json!({ "kind": serde_json::to_value(contract).ok()?["kind"] });
+    if let AnswerContract::RequiredForm { form } = contract {
+        hint["form"] = serde_json::to_value(form).ok()?;
+    }
+    if let AnswerContract::List { ordered, .. } = contract {
+        hint["ordered"] = serde_json::Value::Bool(*ordered);
+    }
+    Some(hint)
+}
+
+/// The hint of an item: the hint of its contract, or, when it has no contract, an ordered
+/// list hint if the expected answer is two or more whole numbers separated by commas.
+///
+/// Only the shape of the key is read. The numbers never reach the payload.
+pub(crate) fn answer_hint(
+    contract: Option<&AnswerContract>,
+    answer: &str,
+) -> Option<serde_json::Value> {
+    if contract.is_some() {
+        return contract_hint(contract);
+    }
+    let is_whole = |part: &str| {
+        let part = part.trim();
+        !part.is_empty() && part.bytes().all(|byte| byte.is_ascii_digit())
+    };
+    let parts: Vec<&str> = answer.split(',').collect();
+    (parts.len() >= 2 && parts.iter().all(|part| is_whole(part)))
+        .then(|| serde_json::json!({ "kind": "list", "ordered": true }))
 }
 
 /// The first 8 bytes of SHA-256 of `problem_id`, as a big-endian integer.

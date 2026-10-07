@@ -278,10 +278,10 @@ describe('AnswerField: the handle and accessibility', () => {
     }
   });
 
-  it('renders the same twelve symbols, in the same order', () => {
+  it('renders the twelve symbols in order, then the mixed-number key', () => {
     const m = mount(<AnswerField />);
     expect(m.all('.sym-key').map((k) => k.textContent))
-      .toEqual(['∞', 'π', '√(', '^', '≤', '≥', '≠', '±', '×', '÷', '°', 'θ']);
+      .toEqual(['∞', 'π', '√(', '^', '≤', '≥', '≠', '±', '×', '÷', '°', 'θ', 'a b/c']);
   });
 
   it('gives every symbol key type="button", so it never submits a form', () => {

@@ -267,7 +267,7 @@ export function Diagnostic({ diag, reportApi, demo, onUnauthorized, onExit }: Di
       <div className="card problem-card">
         <MathBlock>{question.text}</MathBlock>
 
-        <AnswerInput ref={answerRef} choices={question.choices} disabled={locked} onSubmit={submitTyped} />
+        <AnswerInput ref={answerRef} choices={question.choices} contract={question.answer_contract} disabled={locked} onSubmit={submitTyped} />
 
         <div className="actions">
           {/* A tap on an answer button is the submit, so that probe shows no Submit. */}

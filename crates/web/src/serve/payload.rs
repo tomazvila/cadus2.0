@@ -3,7 +3,7 @@
 
 use super::*;
 
-use super::choices::label_choices;
+use super::choices::{answer_hint, label_choices};
 use cadus_core::answer::AnswerContract;
 
 /// Whole seconds from `started_at` to `now`, never below zero.
@@ -183,6 +183,9 @@ pub(super) fn serve_payload(
     if let Some(choices) = label_choices(contract, &served.problem_id) {
         payload["choices"] = json!(choices);
     }
+    if let Some(hint) = answer_hint(contract, &served.expected.answer) {
+        payload["answer_contract"] = hint;
+    }
     let visuals = visuals_of(graph, served, &served.problem_id);
     if !visuals.is_empty() {
         payload["visuals"] = json!(visuals);
@@ -190,12 +193,14 @@ pub(super) fn serve_payload(
     payload
 }
 
-/// The drawn figures of the knowledge point this problem serves (unit f9).
+/// The figure of the exemplar this problem serves (unit f9).
 ///
-/// The key stays OUT of the payload when the knowledge point authors no figure,
-/// so every problem of today keeps the shape 1.0 gives it. A figure the check
-/// refuses never reaches the learner: `render_all` drops it, and the readiness
-/// audit reports the knowledge point as one with no visual.
+/// A figure is opt-in per item: the served statement must equal an exemplar of
+/// the knowledge point, and that exemplar must carry `visual: <index>`. Any other
+/// problem, a templated statement included, shows no figure. The key stays OUT
+/// of the payload then. A figure the check refuses never reaches the learner:
+/// `render_all` drops it, and the readiness audit reports the knowledge point as
+/// one with no visual.
 fn visuals_of(
     graph: &Curriculum,
     served: &ServedProblem,
@@ -211,11 +216,19 @@ fn visuals_of(
     else {
         return Vec::new();
     };
-    topic
+    let Some(kp) = topic
         .knowledge_points
         .iter()
         .find(|kp| kp.id.as_str() == kp_id)
-        .map(|kp| cadus_core::visual::render_all(&kp.visuals, problem_id))
+    else {
+        return Vec::new();
+    };
+    kp.exemplars
+        .iter()
+        .find(|exemplar| exemplar.problem.trim() == served.text.trim())
+        .and_then(|exemplar| exemplar.visual)
+        .and_then(|index| kp.visuals.get(index))
+        .map(|spec| cadus_core::visual::render_all(std::slice::from_ref(spec), problem_id))
         .unwrap_or_default()
 }
 
@@ -312,7 +325,11 @@ mod tests {
             "knowledge_points": [{
                 "id": "plot",
                 "name": "Plot a point",
-                "exemplars": [{"problem": "Plot 3.", "answer": "3"}],
+                "exemplars": [
+                    {"problem": "Plot 3.", "answer": "3", "visual": 0},
+                    {"problem": "Plot 4.", "answer": "4"},
+                    {"problem": "Plot 5.", "answer": "5", "visual": 1},
+                ],
                 "visuals": [
                     {"kind": "number_line", "min": 0, "max": 5, "tick": 1,
                      "points": [{"at": 3}]},
@@ -326,6 +343,7 @@ mod tests {
     fn served_figure() -> ServedProblem {
         let mut problem = served(Some("figures"));
         problem.kp = Some("plot".to_string());
+        problem.text = "Plot 3.".to_string();
         problem
     }
 
@@ -354,6 +372,23 @@ mod tests {
             visuals[0]["text"],
             "A number line from 0 to 5 with a tick every 1. A filled point at 3."
         );
+    }
+
+    #[test]
+    fn an_item_that_names_no_figure_shows_none_even_when_the_knowledge_point_has_figures() {
+        let graph = arena_with_a_visual();
+        let mut unnamed = served_figure();
+        unnamed.text = "Plot 4.".to_string();
+        assert!(visuals_of(&graph, &unnamed, "p1").is_empty());
+
+        let mut templated = served_figure();
+        templated.text = "Plot 9.".to_string();
+        assert!(visuals_of(&graph, &templated, "p1").is_empty());
+
+        // The named figure fails its check, so the render drops it.
+        let mut broken = served_figure();
+        broken.text = "Plot 5.".to_string();
+        assert!(visuals_of(&graph, &broken, "p1").is_empty());
     }
 
     #[test]

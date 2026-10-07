@@ -83,7 +83,7 @@ function QuizPractice({ api, taskId, onUnauthorized }: Props) {
     <p>No timer. Solve a fresh problem for each skill you missed. No solution is shown first.</p>
     {problem ? <div key={problem.problem_id}>
       <MathBlock>{problem.text}</MathBlock>
-      <AnswerInput ref={answerRef} choices={problem.choices} disabled={phase === 'loading'} onSubmit={submit} />
+      <AnswerInput ref={answerRef} choices={problem.choices} contract={problem.answer_contract} disabled={phase === 'loading'} onSubmit={submit} />
       <QuestionReport api={api} hideResult context={{ task_id: taskId, problem_id: problem.problem_id,
         report_kind: 'served', problem_text: problem.text, answer: '', work: '' }} />
       <TypedSubmit choices={problem.choices} busy={false} disabled={phase === 'loading'} onClick={submit}>Submit answer</TypedSubmit>

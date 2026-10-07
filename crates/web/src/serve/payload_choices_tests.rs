@@ -24,13 +24,14 @@ fn served_with(contract: AnswerContract) -> ServedProblem {
     problem
 }
 
-/// The sorted key names of a payload.
+/// The sorted key names of a payload, without the `answer_contract` hint (its own test reads it).
 fn keys_of(payload: &Value) -> Vec<&str> {
     let mut keys: Vec<&str> = payload
         .as_object()
         .unwrap()
         .keys()
         .map(String::as_str)
+        .filter(|key| *key != "answer_contract")
         .collect();
     keys.sort_unstable();
     keys
@@ -122,4 +123,64 @@ fn a_self_check_item_shows_its_solution_and_no_choices() {
     let payload = serve_payload(&problem, &lesson, &graph(), 45, None);
     assert_eq!(payload["solution"], "Add the two numbers.");
     assert!(payload.get("choices").is_none());
+}
+
+#[test]
+fn a_required_form_item_carries_kind_and_form_and_no_key() {
+    let contract: AnswerContract =
+        serde_json::from_value(json!({"kind": "required_form", "form": "mixed_number"})).unwrap();
+    let mut problem = served_with(contract);
+    problem.expected.answer = "4 2/5".to_string();
+    let lesson = task(TaskType::Lesson, Some("addition"));
+    let payload = serve_payload(&problem, &lesson, &graph(), 45, None);
+    assert_eq!(
+        payload["answer_contract"],
+        json!({"kind": "required_form", "form": "mixed_number"})
+    );
+    assert!(!payload.to_string().contains("4 2/5"));
+    // A label item names its kind only: no options, no aliases.
+    let label = serve_payload(&served_with(steps()), &lesson, &graph(), 45, None);
+    assert_eq!(label["answer_contract"], json!({"kind": "label"}));
+    assert!(!label["answer_contract"].to_string().contains("Step"));
+}
+
+#[test]
+fn an_ordered_list_item_carries_kind_and_order_and_no_key() {
+    let contract: AnswerContract = serde_json::from_value(
+        json!({"kind": "list", "ordered": true, "member": {"kind": "exact"}}),
+    )
+    .unwrap();
+    let mut problem = served_with(contract);
+    problem.expected.answer = "89, 698, 712, 1205".to_string();
+    let lesson = task(TaskType::Lesson, Some("addition"));
+    let payload = serve_payload(&problem, &lesson, &graph(), 45, None);
+    assert_eq!(
+        payload["answer_contract"],
+        json!({"kind": "list", "ordered": true})
+    );
+    assert!(!payload.to_string().contains("698"));
+}
+
+#[test]
+fn an_item_without_a_contract_and_a_whole_number_list_answer_gets_the_ordered_hint() {
+    let mut problem = served(Some("addition"));
+    problem.expected.answer_contract = None;
+    problem.expected.answer = "89, 698, 712, 1205".to_string();
+    let lesson = task(TaskType::Lesson, Some("addition"));
+    let payload = serve_payload(&problem, &lesson, &graph(), 45, None);
+    assert_eq!(
+        payload["answer_contract"],
+        json!({"kind": "list", "ordered": true})
+    );
+    assert!(!payload.to_string().contains("698"));
+}
+
+#[test]
+fn an_item_without_a_contract_and_a_single_number_answer_gets_no_hint() {
+    let mut problem = served(Some("addition"));
+    problem.expected.answer_contract = None;
+    problem.expected.answer = "1205".to_string();
+    let lesson = task(TaskType::Lesson, Some("addition"));
+    let payload = serve_payload(&problem, &lesson, &graph(), 45, None);
+    assert!(payload.get("answer_contract").is_none());
 }

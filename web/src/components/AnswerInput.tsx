@@ -23,6 +23,7 @@
  */
 import { useImperativeHandle, useRef, useState, type ReactNode, type Ref } from 'react';
 import { AnswerField, type AnswerFieldHandle } from '@/components/AnswerField';
+import type { AnswerContractHint } from '@/api/types';
 import { ChoiceButtons } from '@/components/ChoiceButtons';
 
 /** True if the payload has one option or more. An absent key and `[]` give the typed field. */
@@ -39,14 +40,16 @@ export interface AnswerInputProps {
   locked?: boolean;
   onSubmit: () => void;
   onHint?: (() => void) | undefined;
+  /** The served answer contract: it picks the hint under the typed field. */
+  contract?: AnswerContractHint | undefined;
   ref?: Ref<AnswerFieldHandle> | undefined;
 }
 
-export function AnswerInput({ choices, disabled, locked = disabled, onSubmit, onHint, ref }: AnswerInputProps) {
+export function AnswerInput({ choices, disabled, locked = disabled, onSubmit, onHint, contract, ref }: AnswerInputProps) {
   if (hasChoices(choices)) {
     return <ChoiceInput choices={choices} locked={locked} onSubmit={onSubmit} ref={ref} />;
   }
-  return <AnswerField ref={ref} disabled={disabled} onSubmit={onSubmit} onHint={onHint} />;
+  return <AnswerField ref={ref} disabled={disabled} onSubmit={onSubmit} onHint={onHint} contract={contract} />;
 }
 
 /**

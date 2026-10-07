@@ -218,6 +218,8 @@ pub(super) fn grade(
     expected_text: &str,
     learner: &str,
 ) -> Outcome {
+    let wholes = super::wholes::rewrite(expected_text, learner);
+    let learner = wholes.as_deref().unwrap_or(learner);
     let learner = unlabeled_list(expected_text, learner);
     let spaced = spaced_list(expected_text, learner);
     let learner = spaced.as_str();

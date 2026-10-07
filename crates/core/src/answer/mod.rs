@@ -46,7 +46,7 @@ pub use canon::{Atom, Basis, Canon, Monomial, Poly, canon};
 pub use check::{Outcome, Verdict, canonical_form, check, notation_note, same_answer};
 pub use contract::{
     AnswerContract, AnswerPart, NumericForm, PropertyArg, PropertyArgs, PropertyCheck,
-    TriageVerdict, check_contract, triage_verdict,
+    TriageVerdict, check_contract, format_hint, triage_verdict, whole_number_list,
 };
 pub use natural::{count_answer, measured_answer, scientific, unit_phrases};
 pub use normalize::{MAX_ANSWER_CHARS, Normalized, normalize};

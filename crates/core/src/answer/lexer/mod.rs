@@ -54,13 +54,32 @@ const MAX_LEX_DEPTH: usize = 32;
 /// Every glyph is one [`Tok::Frac`] token of two digit runs, in every position.
 /// The parser decides whether a whole number in front of the token makes a mixed
 /// number (review round 2, findings #1, #2, #3, #5, #6, #7).
-const VULGAR_FRACTIONS: [(char, &str, &str); 5] = [
+const VULGAR_FRACTIONS: [(char, &str, &str); 15] = [
     ('½', "1", "2"),
     ('⅓', "1", "3"),
     ('⅔', "2", "3"),
     ('¼', "1", "4"),
     ('¾', "3", "4"),
+    ('⅕', "1", "5"),
+    ('⅖', "2", "5"),
+    ('⅗', "3", "5"),
+    ('⅘', "4", "5"),
+    ('⅙', "1", "6"),
+    ('⅚', "5", "6"),
+    ('⅛', "1", "8"),
+    ('⅜', "3", "8"),
+    ('⅝', "5", "8"),
+    ('⅞', "7", "8"),
 ];
+
+/// The vulgar glyph of a fraction, when the table holds one.
+#[must_use]
+pub fn vulgar_glyph(numerator: &str, denominator: &str) -> Option<char> {
+    VULGAR_FRACTIONS
+        .iter()
+        .find(|(_, top, bottom)| *top == numerator && *bottom == denominator)
+        .map(|(glyph, _, _)| *glyph)
+}
 
 /// The LaTeX words that are one product sign (1.0 `:96-97`).
 const PRODUCT_WORDS: [&str; 2] = ["\\cdot", "\\times"];
@@ -190,7 +209,35 @@ fn lex_run(chars: &[char], depth: usize, bars: bool) -> Result<Vec<Token>, Undec
     while let Some(c) = chars.get(lexer.at).copied() {
         lexer.step(c)?;
     }
-    Ok(lexer.tokens)
+    Ok(spoken_mixed_numbers(lexer.tokens))
+}
+
+/// Read `4 and 2/5` as the mixed number `4 2/5`: the word `and` between a number
+/// and a fraction of two numbers falls away, and the fraction keeps a space.
+fn spoken_mixed_numbers(tokens: Vec<Token>) -> Vec<Token> {
+    let mut out: Vec<Token> = Vec::with_capacity(tokens.len());
+    let mut at = 0;
+    while at < tokens.len() {
+        let word = matches!(&tokens[at].kind, Tok::Ident(name) if name == "and");
+        let after_number = matches!(out.last().map(|token| &token.kind), Some(Tok::Num(_)));
+        let fraction = matches!(
+            tokens
+                .get(at + 1..at + 4)
+                .map(|run| run.iter().map(|t| &t.kind).collect::<Vec<_>>())
+                .as_deref(),
+            Some([Tok::Num(_), Tok::Slash, Tok::Num(_)])
+        );
+        if word && after_number && fraction {
+            let mut next = tokens[at + 1].clone();
+            next.space_before = true;
+            out.push(next);
+            at += 2;
+        } else {
+            out.push(tokens[at].clone());
+            at += 1;
+        }
+    }
+    out
 }
 
 /// The reader state of one run: the cursor, the brace depth, and the tokens so far.
@@ -241,6 +288,11 @@ impl Lexer<'_> {
                 self.push(Tok::Percent, 1);
                 Ok(())
             }
+            '_' if self.mixed_separator() => {
+                self.space_before = true;
+                self.at += 1;
+                Ok(())
+            }
             '^' => self.caret(),
             '|' if self.bars => self.bar_pair(),
             c if c.is_ascii_digit() || c == '.' => self.number(),
@@ -250,6 +302,23 @@ impl Lexer<'_> {
             }
             c => self.glyph_or_symbol(c),
         }
+    }
+
+    /// Whether the `_` at the cursor separates the whole part and the fraction of
+    /// a mixed number: a number in front, then digits and a `/`, as in `4_2/5`.
+    fn mixed_separator(&self) -> bool {
+        if !matches!(
+            self.tokens.last().map(|token| &token.kind),
+            Some(Tok::Num(_))
+        ) {
+            return false;
+        }
+        let rest = self.chars.get(self.at + 1..).unwrap_or(&[]);
+        let digits = rest.iter().take_while(|c| c.is_ascii_digit()).count();
+        digits > 0
+            && rest
+                .get(digits..)
+                .is_some_and(|tail| tail.iter().find(|c| !c.is_whitespace()) == Some(&'/'))
     }
 
     /// Push one token of `width` characters, and clear the space flag.

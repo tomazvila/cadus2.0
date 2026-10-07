@@ -18,6 +18,16 @@ pub fn check_contract(expected: &str, learner: &str, contract: AnswerContract) -
     }
 }
 
+/// The notation hint of a wrong answer to a `mixed_number` item, or `None`.
+///
+/// The hint is for the learner who writes `4 * 2/5` (which means 4 times 2/5)
+/// or the right value in another form (`22/5`, `4.4`, `4 4/10`). The verdict of
+/// [`check_contract`] stays wrong.
+#[must_use]
+pub fn format_hint(expected: &str, learner: &str, contract: &AnswerContract) -> Option<String> {
+    super::mixed::hint(expected, learner, contract)
+}
+
 /// Note 115 (owner defect): a comma-separated list key compares as a multiset
 /// unless `ordered: true`. The served row of the defect carried no contract, so
 /// the key reached the `Exact` path and the bare comma list graded as one

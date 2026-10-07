@@ -575,6 +575,7 @@ export function Session({
         <AnswerInput
           ref={answerRef}
           choices={problem.choices}
+          contract={problem.answer_contract}
           disabled={locked && phase !== 'submitting'}
           locked={locked}
           onSubmit={() => submit()}
