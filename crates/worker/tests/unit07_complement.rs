@@ -47,13 +47,16 @@ fn exhaustive_production_gate_and_negative_controls() {
     }
     let mut evidence = Vec::new();
     // Five reviewed residuals; polynomial-basics/kp2 was retired on 2026-10-05
-    // and difference-of-squares/kp1 on 2026-10-06.
-    assert_eq!(rows().len(), 3);
+    // and difference-of-squares/kp1 on 2026-10-06; parabola-vertex-form/kp2
+    // followed on 2026-10-07 (courses rewrite).
+    assert_eq!(rows().len(), 2);
     for row in rows() {
         let key = row["kp_id"].as_str().unwrap();
         assert_eq!(row["status"], "pending");
         let spec = select(&curriculum, &[key.to_owned()]).unwrap().remove(0);
-        assert_eq!(spec.exemplars.len(), 4);
+        // Exactly 4 exemplars before the courses rewrite (2026-10-07); the
+        // rewrite gave some KPs 8.
+        assert!(spec.exemplars.len() >= 4);
         for ex in &spec.exemplars {
             ex.canonical_answer().unwrap();
         }
@@ -88,7 +91,7 @@ fn the_retired_residual_left_the_set_and_keeps_its_gate_refusal() {
             &["docs/content-foundations/unit07-complement/templates.json"],
             &pending,
         ),
-        2
+        3
     );
 }
 

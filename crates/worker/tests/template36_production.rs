@@ -90,12 +90,13 @@ fn exact_36_keys_pass_worker_gate_exhaustively() {
         .map(|v| v.as_str().unwrap().to_owned())
         .collect();
     // The reviewed scope holds 36 keys. Three templates were retired on
-    // 2026-10-05 after their knowledge points were rewritten; the retirement
+    // 2026-10-05 and four more on 2026-10-07 (courses rewrite) after their
+    // knowledge points were rewritten; the retirement
     // report keeps them, and they still get their recorded gate refusal.
     let retired = common::retired::keys("template36");
-    assert_eq!((expected.len(), retired.len()), (36, 3));
+    assert_eq!((expected.len(), retired.len()), (36, 7));
     assert!(retired.is_subset(&expected));
-    assert_eq!(rows.len(), 33);
+    assert_eq!(rows.len(), 29);
     let pending: BTreeSet<_> = rows
         .iter()
         .map(|r| r["kp_id"].as_str().unwrap().to_owned())
@@ -104,6 +105,7 @@ fn exact_36_keys_pass_worker_gate_exhaustively() {
     common::retired::assert_retired(
         "template36",
         &[
+            "docs/content-foundations/template36/expressions.json",
             "docs/content-foundations/template36/inequalities.json",
             "docs/content-foundations/template36/graphs.json",
         ],

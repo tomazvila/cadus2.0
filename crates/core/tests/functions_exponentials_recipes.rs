@@ -62,8 +62,14 @@ fn logarithm_conversion_labels_grade_aliases_and_reject_the_competing_equation()
             // neighbor); kp2 also asks for the two sides of the power form as a
             // multipart, which carries no choice.
             let AnswerContract::Label { options } = &contract else {
+                // The courses rewrite (2026-10-07) also asks for the missing
+                // number of a logarithmic form (`exact`), which carries no choice.
+                // Such an item still grades its own key correct.
                 assert!(
-                    matches!(contract, AnswerContract::Multipart { .. }),
+                    matches!(
+                        check_contract(&exemplar.answer, &exemplar.answer, contract.clone()),
+                        Outcome::Decided(v) if v.correct
+                    ),
                     "{}",
                     exemplar.problem
                 );

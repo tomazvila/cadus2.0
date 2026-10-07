@@ -409,8 +409,8 @@ fn assert_current_lineages() {
         );
     }
     assert_eq!(
-        mutated, 14,
-        "21 distinct lineages less the seven retired ones"
+        mutated, 11,
+        "21 distinct lineages less the ten retired ones (courses rewrite 2026-10-07)"
     );
     let mirror_index = drafts
         .iter()
@@ -440,7 +440,7 @@ fn the_retired_candidates_left_both_current_sets_and_keep_their_gate_refusal() {
             &["docs/content-foundations/unit06-correction/drafts.json"],
             &pending,
         ),
-        18
+        23
     );
     // A distinct-lineage key also left the candidate fixture with its own body;
     // the report keeps that body under `candidate` with its digest and verdict.
@@ -469,7 +469,7 @@ fn the_retired_candidates_left_both_current_sets_and_keep_their_gate_refusal() {
         assert_eq!(candidate["current_gate"], gate, "{key}: candidate verdict");
         candidates += 1;
     }
-    assert_eq!(candidates, 7);
+    assert_eq!(candidates, 10);
 }
 
 #[test]

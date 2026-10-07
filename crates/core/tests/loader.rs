@@ -52,7 +52,8 @@ fn loads_the_checked_in_curriculum_with_the_literal_counts() {
         .flat_map(|t| t.topic.knowledge_points.iter())
         .map(|kp| kp.exemplars.len())
         .sum();
-    assert_eq!(exemplars, 17430, "exemplars");
+    // 2026-10-07, courses rewrite: 25153 exemplars (was 17430).
+    assert_eq!(exemplars, 25153, "exemplars");
 
     let anki_seeds: usize = topics.iter().map(|t| t.topic.anki_seeds.len()).sum();
     assert_eq!(anki_seeds, 2144, "anki seeds");

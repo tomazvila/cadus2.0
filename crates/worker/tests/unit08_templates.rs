@@ -15,20 +15,20 @@ fn drafts() -> Vec<serde_json::Value> {
 #[test]
 fn all_pending_templates_exhaust_the_real_gate_and_avoid_authored_and_sibling_problems() {
     let rows = drafts();
-    assert_eq!(rows.len(), 75);
+    // 75 rows before the courses rewrite; 30 were retired on 2026-10-07.
+    assert_eq!(rows.len(), 45);
     let report = run_rows(&rows, "target/unit08/regression");
     // Reviewed domains: 75 ordinary twelve-case rows, one 24-case rate row,
     // eleven fresh same-base equations, and three eligible natural-exponential cases.
     // Three ordinary rows were retired on 2026-10-05 (75 rows, 938 - 36 instances).
+    // On 2026-10-07 (courses rewrite) 30 more rows were retired, including the
+    // same-base and natural-exponential finite-case rows.
+    const INSTANCES: u64 = 552; // 902 before the courses rewrite
     assert_report_with_instance_overrides(
         &report,
-        75,
-        902,
-        &[
-            ("percent-growth-decay-factors/kp3", 24),
-            ("exponential-equations-same-base/kp3", 11),
-            ("natural-exponential-function/kp2", 3),
-        ],
+        45,
+        INSTANCES,
+        &[("percent-growth-decay-factors/kp3", 24)],
     );
     for row in report["rows"].as_array().unwrap() {
         let key = row["kp_id"].as_str().unwrap();
@@ -86,7 +86,7 @@ fn all_pending_templates_exhaust_the_real_gate_and_avoid_authored_and_sibling_pr
 
 #[test]
 fn wrong_samples_small_spaces_and_wrong_contracts_are_rejected() {
-    assert_standard_negative(drafts(), "evaluating-functions/kp1");
+    assert_standard_negative(drafts(), "exponential-equations-same-base/kp1");
 }
 
 #[test]
@@ -151,6 +151,6 @@ fn the_retired_label_templates_left_the_set_and_keep_their_gate_refusal() {
     let sources: Vec<&str> = sources.iter().map(String::as_str).collect();
     assert_eq!(
         common::retired::assert_retired("functions-exponentials", &sources, &pending),
-        3
+        33
     );
 }

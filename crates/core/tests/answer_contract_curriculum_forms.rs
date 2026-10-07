@@ -64,21 +64,30 @@ fn same_base_power_tasks_reject_evaluated_numbers() {
 
 #[test]
 fn conversion_tasks_reject_equivalent_answers_in_the_input_notation() {
+    // Item index and the unchanged form of the input, per knowledge point.
+    // Re-pinned 2026-10-07 after the courses rewrite: the rewritten kp2 holds
+    // nine items, and the word problems and label items carry no notation to
+    // repeat, so the table names the items that convert or solve to a notation.
     for (kp, unchanged_form) in [
-        ("kp2", ["x > 2", "x <= -1", "[4, ∞)", "(-∞, 3]"]),
+        (
+            "kp2",
+            vec![(0, "x > 2"), (1, "x <= -1"), (3, "[4, ∞)"), (6, "(-∞, 3]")],
+        ),
         (
             "kp3",
-            [
-                "x < -2 or x > 4",
-                "x <= -2 or x > 3",
-                "(-∞, 1) ∪ [5, ∞)",
-                "x <= -5 or x > 4",
+            vec![
+                (0, "x < -2 or x > 4"),
+                (1, "x <= -2 or x > 3"),
+                (3, "(-∞, 1) ∪ [5, ∞)"),
+                (4, "x <= -5 or x > 4"),
+                (5, "x <= -1 or x >= 3"),
+                (6, "x < -3 or x >= 3"),
             ],
         ),
     ] {
         let items = exemplars("interval-notation", kp);
-        assert_eq!(items.len(), unchanged_form.len());
-        for (item, given) in items.iter().zip(unchanged_form) {
+        for (index, given) in unchanged_form {
+            let item = &items[index];
             let expected = item["answer"].as_str().unwrap();
             let contract: AnswerContract =
                 serde_json::from_value(item["answer_contract"].clone()).unwrap();

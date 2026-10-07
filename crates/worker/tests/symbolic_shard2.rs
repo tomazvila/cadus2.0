@@ -21,20 +21,22 @@ fn exact_reviewed_shard_passes_the_current_production_gate() {
 #[test]
 fn replacement_representations_and_answers_are_regression_pinned() {
     let source = curriculum_source("curriculum/foundations/03-expressions-equations.yaml");
+    // Re-pinned 2026-10-07 to the courses rewrite: each knowledge point keeps
+    // a representation that differs from the plain "Solve" item.
     for distinct_representation in [
-        "A function table follows the rule output = input $+9$.",
-        "A point starts at coordinate $x$ and moves $4$ units right",
-        "For the function $f(x)=-3x$",
-        "A table uses the rule output = input $/8$.",
-        "The lines $y=4x-7$ and $y=x+5$ intersect",
-        "where the graphs $y=-2x-9$ and $y=-5x+3$ meet",
+        "During the night the temperature rose by $6$ degrees and reached $-2$ °C.",
+        "During the day the temperature fell by $9$ degrees and reached $-4$ °C.",
+        "For $f(x) = -3x$, which input gives the output $18$?",
+        "A machine divides its input by $8$, and its output is $2$.",
+        "The lines $y = 7x - 3$ and $y = 3x + 9$ intersect at one point.",
+        "Find the $x$-coordinate where the graphs of $y = -2x - 9$ and $y = -5x + 3$ meet.",
     ] {
         assert!(source.contains(distinct_representation));
     }
-    assert_eq!(-5 + 9, 4);
-    assert_eq!(5 + 4, 9);
+    assert_eq!(-8 + 6, -2);
+    assert_eq!(5 - 9, -4);
     assert_eq!(-3 * -6, 18);
     assert_eq!(16 / 8, 2);
-    assert_eq!(4 * 4 - 7, 4 + 5);
+    assert_eq!(7 * 3 - 3, 3 * 3 + 9);
     assert_eq!(-2 * 4 - 9, -5 * 4 + 3);
 }

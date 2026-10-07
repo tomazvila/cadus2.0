@@ -565,9 +565,52 @@ mod tests {
     /// self-check answer of the last point.
     #[test]
     fn the_teach_only_last_point_completes_on_its_self_check_answer() {
-        let root = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../curriculum");
+        // The courses rewrite (2026-10-07) gave every real knowledge point a
+        // graded exemplar, so no point of the real tree is teach-only any more.
+        // The fixture is an inline one-topic curriculum whose last point holds
+        // only `kind: none` exemplars.
+        let root = std::env::temp_dir().join(format!("cadus-teach-only-{}", std::process::id()));
+        let course = root.join("calculus-1");
+        std::fs::create_dir_all(&course).expect("the fixture directory");
+        std::fs::write(
+            root.join("courses.yaml"),
+            "courses:\n  - id: calculus-1\n    name: Calculus 1\n    order: 1\n",
+        )
+        .expect("the fixture catalog");
+        std::fs::write(
+            course.join("00-unit.yaml"),
+            r#"unit: limits-continuity
+course: calculus-1
+module: "Limits"
+topics:
+  - id: limits-graphical-numerical
+    name: Limits Graphically and Numerically
+    core: true
+    difficulty: 0.45
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 90
+    prerequisites: []
+    knowledge_points:
+      - id: kp3
+        name: Recognize when a limit does not exist
+        key_prerequisites: []
+        exemplars:
+          - problem: 'Let $f(x) = \frac{|x|}{x}$. A table gives $f(-0.1) = -1$, $f(0.1) = 1$. What is $\lim_{x \to 0} f(x)$?'
+            answer: "DNE"
+            answer_contract: {kind: none}
+            solution_sketch: 'The sides disagree, so the limit does not exist.'
+          - problem: 'A table for $h$ near $x = 4$ gives $h(3.9) = 2$, $h(4.1) = 7$. What is $\lim_{x \to 4} h(x)$?'
+            answer: "DNE"
+            answer_contract: {kind: none}
+            solution_sketch: "DNE"
+        constraints: "the sides approach two different numbers"
+"#,
+        )
+        .expect("the fixture file");
         let (graph, _findings) =
-            cadus_core::curriculum::load_curriculum(&root).expect("the tree loads");
+            cadus_core::curriculum::load_curriculum(&root).expect("the fixture loads");
+        std::fs::remove_dir_all(&root).expect("the fixture is removed");
         let cfg = Config::default();
         // The shape of the staging learner: an ungraded self-check attempt on
         // the last knowledge point, unassisted, no feedback practice.
@@ -579,7 +622,7 @@ mod tests {
             reason: "the item has no deterministic answer contract".to_owned(),
         };
         attempt.correct = false;
-        // The readiness of the real tree: kp3 is the all-`none` point.
+        // The readiness of the fixture: kp3 is the all-`none` point.
         let index = cadus_core::readiness::ReadinessIndex::build(&graph);
         let ready = index.resolve(&cadus_core::readiness::EmptyContent);
         let moved = advance(

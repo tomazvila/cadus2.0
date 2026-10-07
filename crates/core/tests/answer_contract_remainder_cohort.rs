@@ -20,7 +20,17 @@ fn current_exemplar_by_reviewed_identity<'a>(raw: &'a RawCurriculum, row: &Value
         .iter()
         .find(|kp| kp.id.as_str() == row["kp_id"].as_str().unwrap())
         .unwrap();
-    &kp.exemplars[usize::try_from(row["exemplar_index"].as_u64().unwrap()).unwrap()]
+    let by_index = &kp.exemplars[usize::try_from(row["exemplar_index"].as_u64().unwrap()).unwrap()];
+    if by_index.answer == row["answer"].as_str().unwrap() {
+        return by_index;
+    }
+    // The courses rewrite (2026-10-07) reordered some exemplars, so the reviewed
+    // item may now sit at another index of the same knowledge point. Find it by
+    // its reviewed answer, which the rewrite kept.
+    kp.exemplars
+        .iter()
+        .find(|item| item.answer == row["answer"].as_str().unwrap())
+        .unwrap()
 }
 
 #[test]
@@ -82,7 +92,17 @@ fn polynomial_remainders_are_not_given_an_integer_divisor_contract() {
         for kp in &entry.topic.knowledge_points {
             for item in &kp.exemplars {
                 if item.answer.contains("remainder") {
-                    assert!(item.answer_contract.is_none());
+                    // The courses rewrite (2026-10-07) gives every exemplar a contract, so
+                    // these items carry `exact`. The rule that matters is that none carries
+                    // an integer-divisor contract.
+                    assert!(
+                        !matches!(
+                            item.answer_contract,
+                            Some(AnswerContract::QuotientRemainder { .. })
+                        ),
+                        "{}",
+                        item.problem
+                    );
                     *by_topic.entry(entry.topic.id.as_str()).or_insert(0) += 1;
                 }
             }
@@ -90,6 +110,6 @@ fn polynomial_remainders_are_not_given_an_integer_divisor_contract() {
     }
     assert_eq!(
         by_topic,
-        BTreeMap::from([("polynomial-division", 4), ("synthetic-division", 4)])
+        BTreeMap::from([("polynomial-division", 7), ("synthetic-division", 7)])
     );
 }

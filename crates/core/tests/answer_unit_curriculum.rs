@@ -20,6 +20,8 @@ fn item<'a>(node: &'a Value, question: &str) -> Option<&'a Value> {
 #[test]
 fn measured_outputs_keep_their_requested_unit_and_dimension() {
     let tree: Value = serde_json::from_str(&canonical_dump(common::events::tree())).unwrap();
+    // The courses rewrite (2026-10-07) reworded the temperature and tank questions;
+    // the pinned prompts are the rewritten ones.
     for (question, equivalent, wrong) in [
         (
             "Convert $2$ square metres to square centimetres.",
@@ -27,12 +29,12 @@ fn measured_outputs_keep_their_requested_unit_and_dimension() {
             "20000 m^2",
         ),
         (
-            "Use $F=9C/5+32$ with $C=10$ to calculate the temperature in degrees Fahrenheit.",
+            "Use $F=9C/5+32$ to convert a temperature of $10$ degrees Celsius to degrees Fahrenheit.",
             "10 degrees Celsius",
             "50 degrees Celsius",
         ),
         (
-            "A tank falls from $80$ L at minute $2$ to $50$ L at minute $5$. Give the signed rate in L/min.",
+            "A tank holds $80$ L at minute $2$ and $50$ L at minute $5$. What is the rate of change of its volume, in litres per minute?",
             "-600 L/hour",
             "-10 L",
         ),

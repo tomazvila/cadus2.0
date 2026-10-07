@@ -36,7 +36,10 @@ fn every_pending_digest_reproduces_through_the_worker_and_exact_exhaustive_walk(
     let drafts = rows("drafts.json");
     let stored = rows("stored-review.json");
     let proofs = rows("gate-evidence.json");
-    assert_eq!(drafts.len(), 64);
+    // 64 rows before the courses rewrite; 42 were retired on 2026-10-07
+    // because their knowledge points now carry mixed exemplar policies or
+    // exemplars that collide with the template instances.
+    assert_eq!(drafts.len(), 22);
     assert_eq!(drafts.len(), stored.len());
     assert_eq!(drafts.len(), proofs.len());
     let mut instances = 0;
@@ -71,8 +74,9 @@ fn every_pending_digest_reproduces_through_the_worker_and_exact_exhaustive_walk(
             .unwrap();
         instances += check_instances(&body, proof, topic);
     }
-    assert_eq!(keys.len(), 64);
-    assert_eq!(instances, 1409);
+    assert_eq!(keys.len(), 22);
+    // 1,409 before the courses rewrite; 480 after the 42 retirements of 2026-10-07.
+    assert_eq!(instances, 480);
 }
 
 fn check_instances(body: &str, proof: &Value, topic: &cadus_core::curriculum::Topic) -> usize {
@@ -159,7 +163,19 @@ fn all_owned_keys_are_either_pending_or_exactly_reported_blockers() {
         .iter()
         .map(|r| r["kp_key"].as_str().unwrap().to_owned())
         .collect();
-    let semantic_exclusions = BTreeSet::from(["factors-and-multiples/kp1".to_owned()]);
+    let mut semantic_exclusions = BTreeSet::from(["factors-and-multiples/kp1".to_owned()]);
+    // Rows retired by the courses rewrite on 2026-10-07 name that source.
+    let retired: Vec<Value> = serde_json::from_str(
+        &std::fs::read_to_string(root().join("docs/reports/unit00-retired-pending-digests.json"))
+            .unwrap(),
+    )
+    .unwrap();
+    for row in retired {
+        if row["superseded_by"] == "courses-rewrite 2026-10-07" {
+            assert!(semantic_exclusions.insert(row["kp_key"].as_str().unwrap().to_owned()));
+        }
+    }
+    assert_eq!(semantic_exclusions.len(), 43);
     assert_eq!(owned.len(), 81);
     assert_eq!(blocked.len(), 16);
     assert!(pending.is_disjoint(&blocked));

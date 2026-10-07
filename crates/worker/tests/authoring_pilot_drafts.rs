@@ -1,5 +1,6 @@
 //! Six zero-API-cost instruction drafts pass the production gates (C6, L4, L5).
 #![allow(clippy::unwrap_used)]
+mod common;
 use cadus_core::{curriculum::load_curriculum, instruction::ServedInstance};
 use cadus_worker::authoring::{cli::select, job::verify_kind, prompt::Kind};
 use serde_json::Value;
@@ -44,8 +45,8 @@ fn manual_template_spaces_reserve_the_worked_examples_and_pass_all_gates() {
         "../../../docs/content-pilot/arithmetic-instruction-drafts.json"
     ))
     .unwrap();
-    assert_eq!(drafts.len(), 3);
-    let expected_spaces = [62, 34, 65];
+    assert_eq!(drafts.len(), 2);
+    let expected_spaces = [62, 34];
     for (index, draft) in drafts.iter().enumerate() {
         let key = draft["kp_id"].as_str().unwrap().to_owned();
         let specs = select(&curriculum, std::slice::from_ref(&key)).unwrap();
@@ -71,4 +72,18 @@ fn manual_template_spaces_reserve_the_worked_examples_and_pass_all_gates() {
             verify_kind(kind, &specs[0], &instruction["arguments"], &instances).unwrap();
         }
     }
+}
+
+#[test]
+fn the_retired_pilot_template_left_the_set_and_keeps_its_gate_refusal() {
+    let source = "docs/content-pilot/arithmetic-template-drafts.json";
+    let pending = common::json_rows(&[source], None)
+        .iter()
+        .map(|row| row["kp_id"].as_str().unwrap().to_owned())
+        .collect();
+    // subtraction-facts/kp1 was retired on 2026-10-07 (courses rewrite).
+    assert_eq!(
+        common::retired::assert_retired("pilot-arithmetic", &[source], &pending),
+        1
+    );
 }

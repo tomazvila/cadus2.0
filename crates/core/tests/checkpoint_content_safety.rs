@@ -55,12 +55,21 @@ fn monic_prompts_do_not_use_a_scale_invariant_contract() {
     let unit = unit();
     for kp_id in ["kp1", "kp2"] {
         for exemplar in &kp(&unit, "writing-quadratics-from-roots", kp_id).exemplars {
+            // The courses rewrite (2026-10-07) also asks for "a quadratic equation
+            // whose roots are ...", where every nonzero multiple is a correct
+            // equation. Only a prompt that fixes the scale must refuse multiples.
+            let fixes_scale = exemplar.problem.contains("monic")
+                || exemplar.problem.contains("leading coefficient");
+            if !fixes_scale {
+                continue;
+            }
             assert!(
                 !matches!(
                     exemplar.answer_contract.as_ref(),
                     Some(AnswerContract::PolynomialRelation)
                 ),
-                "polynomial_relation accepts scalar multiples and cannot enforce monic form"
+                "polynomial_relation accepts scalar multiples and cannot enforce monic form: {}",
+                exemplar.problem
             );
         }
     }

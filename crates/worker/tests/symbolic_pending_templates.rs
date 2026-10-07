@@ -29,7 +29,6 @@ const REVIEWED_KEYS: &[&str] = &[
     "evaluating-expressions/kp3",
     "evaluating-formulas/kp1",
     "evaluating-formulas/kp2",
-    "graphing-from-a-table/kp1",
     "graphing-from-a-table/kp3",
     "graphing-linear-equations/kp1",
     "graphing-proportional-relationships/kp1",
@@ -91,7 +90,9 @@ fn only_independently_reviewed_keys_are_present() {
         .collect();
     let expected: BTreeSet<_> = REVIEWED_KEYS.iter().map(|key| (*key).to_owned()).collect();
     assert_eq!(actual, expected);
-    assert_eq!(actual.len(), 45);
+    // 45 reviewed keys; graphing-from-a-table/kp1 was retired on 2026-10-07
+    // (courses rewrite), so 44 remain.
+    assert_eq!(actual.len(), 44);
 }
 
 #[test]

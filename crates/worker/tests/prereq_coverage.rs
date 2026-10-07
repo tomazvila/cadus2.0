@@ -115,10 +115,12 @@ fn every_foundations_diagnostic_is_grammar_decidable() {
     let counts = coverage.counts("foundations");
 
     assert_eq!(counts.topics, 285);
-    // 45 diagnostic items are on `multi-step` or `proof` topics with no answer
-    // contract. `Exemplar::verdict_policy` gives no verdict for them.
-    assert_eq!(counts.diagnostic_decidable, 240);
-    assert_eq!(counts.diagnostic_undecidable, 45);
+    // 44 diagnostic items are on `multi-step` or `proof` topics with no answer
+    // contract. `Exemplar::verdict_policy` gives no verdict for them. Re-pinned
+    // 2026-10-07 after the courses rewrite: one more diagnostic item is
+    // decidable (241, was 240), so the undecidable count is 44 (was 45).
+    assert_eq!(counts.diagnostic_decidable, 241);
+    assert_eq!(counts.diagnostic_undecidable, 44);
     assert_eq!(counts.diagnostic_missing, 0);
 }
 

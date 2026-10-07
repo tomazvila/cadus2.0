@@ -85,27 +85,26 @@ fn dump_kp_gives_the_chain_rule_example_of_the_brief() {
         "curriculum/calculus-1/02-differentiation-rules.yaml"
     );
     // The golden row of this KP is applied (receipt commit 1b4fb581, 3 -> 6
-    // exemplars), so the shipped tree holds the applied base (lane 33h).
-    assert_eq!((&doc["V"], &doc["U"]), (&json!(6), &json!(0)));
+    // exemplars), so the shipped tree held the applied base (lane 33h). The
+    // courses rewrite (re-pinned 2026-10-07) replaced the exemplars: the KP
+    // now holds 9 of them, and only the third hash is the one of the golden row.
+    assert_eq!((&doc["V"], &doc["U"]), (&json!(9), &json!(0)));
     assert_eq!(
         column(&doc, "exemplars", "hash"),
         [
-            "86d2057cb791",
-            "5ad3b567ab04",
+            "df404003e21a",
+            "162078e620fd",
             "66538bb05c43",
-            "03d456790232",
-            "e0be73df2eb6",
-            "54ac167dfe6a"
+            "347677bb2617",
+            "53cc3ebd3a87",
+            "18595a7907ec",
+            "7c5beaf2f834",
+            "bce1fc4bb032",
+            "2184645d797a"
         ]
     );
-    assert_eq!(
-        column(&doc, "exemplars", "verdict"),
-        [true, true, true, true, true, true]
-    );
-    assert_eq!(
-        column(&doc, "exemplars", "status"),
-        ["keep", "keep", "keep", "keep", "keep", "keep"]
-    );
+    assert_eq!(column(&doc, "exemplars", "verdict"), [true; 9]);
+    assert_eq!(column(&doc, "exemplars", "status"), ["keep"; 9]);
     assert_eq!(doc["topic"]["answer_kind"], "expression");
 }
 
@@ -167,9 +166,13 @@ const REPORT_KP: [&str; 12] = [
     "findings",
 ];
 
+/// On the shipped tree every course passes since the courses rewrite
+/// (2026-10-07), so the failing course is a scratch tree: the chain-rule KP of
+/// the base commit with its 3 exemplars, below the floor of 6.
 #[test]
 fn report_of_one_course_fails_today_and_lists_each_kp_below_the_floor() {
-    let result = run(&["report", "--course", "precalculus", "--base", &curriculum()]);
+    let tree = chain_rule_tree("b5b_report_below_floor", &base_commit_exemplars());
+    let result = run(&["report", "--course", "calculus-1", "--base", &tree]);
     assert_eq!(result.exit, 1);
     let doc = result.doc;
     assert_keys(&doc, &REPORT);
@@ -182,7 +185,7 @@ fn report_of_one_course_fails_today_and_lists_each_kp_below_the_floor() {
     assert_eq!(doc["courses"].as_array().unwrap().len(), 1);
     assert_eq!(
         (&course["course"], &course["floor"]),
-        (&json!("precalculus"), &json!(6))
+        (&json!("calculus-1"), &json!(6))
     );
     assert_eq!(course["kps_no_teach_page"], Value::Null);
     let kps = doc["kps"].as_array().unwrap();
@@ -214,7 +217,15 @@ fn report_of_the_full_tree_has_3138_kps_and_runs_in_less_than_60_seconds() {
     let start = Instant::now();
     let result = run(&["report", "--all", "--base", &curriculum()]);
     assert!(start.elapsed().as_secs() < 60, "{:?}", start.elapsed());
-    assert_eq!(result.exit, 1);
+    // Every course passes since the courses rewrite (2026-10-07); before it
+    // one course failed and the exit code was 1.
+    assert_eq!(result.exit, 0, "{}", result.doc);
+    assert_eq!(result.doc["result"], "PASS");
+    assert!(
+        column(&result.doc, "courses", "result")
+            .iter()
+            .all(|result| *result == "PASS")
+    );
     assert_eq!(result.doc["kps"].as_array().unwrap().len(), 3138);
     assert_eq!(result.doc["courses"].as_array().unwrap().len(), 13);
     let count: u64 = column(&result.doc, "courses", "kps")
@@ -296,10 +307,6 @@ name: The chain rule\n        key_prerequisites: []\n        exemplars:\n",
 }
 
 /// The base exemplars of the chain-rule KP as tree entries.
-fn base_exemplars() -> Vec<Value> {
-    dump(CHAIN_RULE)["exemplars"].as_array().unwrap().clone()
-}
-
 /// The base-commit exemplars of the chain-rule KP, from the freeze pack
 /// (lane 33h). The campaign applied the golden rows to the shipped tree
 /// (applied/calculus-1/chain-rule__kp1.json, commit 1b4fb581, 3 -> 6
@@ -395,7 +402,10 @@ fn diff_permits_new_verdict_exemplars() {
 
 #[test]
 fn diff_reports_each_i16_breach() {
-    let base = base_exemplars();
+    // The diff base is the commit `BASE_REF`; its first exemplar is the kept one.
+    // The courses rewrite (2026-10-07) replaced the live exemplars, so the live
+    // tree is no longer the base.
+    let base = base_commit_exemplars();
     let exemplars = vec![
         base[0].clone(),
         exemplar(

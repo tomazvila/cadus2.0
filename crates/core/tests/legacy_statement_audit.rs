@@ -30,7 +30,8 @@ fn historical_classification_and_all_live_statements_have_a_closed_boundary() {
     // multi-step items, and the reviewed unit-contract pass updated existing keys.
     // The 2026-10-06 exponents-radicals and polynomials-quadratics rewrites add
     // 78 more multi-step items, all with a contract (1103).
-    assert_eq!(current.len(), 1103);
+    // 2026-10-07, courses rewrite: 1718 (was 1103).
+    assert_eq!(current.len(), 1718);
     assert_eq!(
         current
             .iter()
@@ -48,7 +49,7 @@ fn historical_classification_and_all_live_statements_have_a_closed_boundary() {
     );
     assert_eq!(
         sha256_hex(serde_json::to_string(&current).unwrap().as_bytes()),
-        "369fc66c6b903d74c3f942ec41ba84196eeec33eda5aa4708efd64f98cff7016"
+        "916232a646641adfdd8abb74a915dfdb830ac8583f97a7e35cdfb5fa6faeb12e"
     );
     let current_keys: BTreeSet<_> = current.iter().map(key).collect();
     assert_eq!(current_keys.len(), current.len());
@@ -66,28 +67,31 @@ fn historical_classification_and_all_live_statements_have_a_closed_boundary() {
             .validate_expected(row["answer"].as_str().unwrap())
             .unwrap();
     }
-    // 2026-10-06 (later): the units 00 to 07 content pass and the natural-answer
-    // grader move eleven live statements from `exact` to `multipart`.
+    // 2026-10-07, courses rewrite: the tallies below are the measurement of the
+    // rewritten tree (1,718 live statements).
     assert_eq!(
         contracts,
         BTreeMap::from([
-            ("approx".to_owned(), 11),
-            ("ascending_chain".to_owned(), 3),
-            ("coordinates".to_owned(), 180),
-            ("exact".to_owned(), 507),
-            ("inequality_union".to_owned(), 27),
-            ("label".to_owned(), 39),
-            ("list".to_owned(), 14),
-            ("multipart".to_owned(), 109),
-            ("polynomial_relation".to_owned(), 7),
-            ("property".to_owned(), 1),
+            ("approx".to_owned(), 28),
+            ("ascending_chain".to_owned(), 5),
+            ("coordinates".to_owned(), 123),
+            ("exact".to_owned(), 664),
+            ("function".to_owned(), 12),
+            ("inequality_union".to_owned(), 97),
+            ("label".to_owned(), 98),
+            ("list".to_owned(), 40),
+            ("multipart".to_owned(), 32),
+            ("polynomial_relation".to_owned(), 97),
+            ("property".to_owned(), 4),
             ("reduced_ratio".to_owned(), 13),
-            ("relation_setup".to_owned(), 6),
-            ("required_assignment".to_owned(), 4),
-            ("required_inequality_notation".to_owned(), 8),
-            ("required_simplest_radical".to_owned(), 4),
-            ("uncontracted".to_owned(), 45),
-            ("unit".to_owned(), 125),
+            ("relation_setup".to_owned(), 9),
+            ("required_assignment".to_owned(), 5),
+            ("required_form".to_owned(), 10),
+            ("required_inequality_notation".to_owned(), 23),
+            ("required_simplest_radical".to_owned(), 7),
+            ("required_single_power".to_owned(), 1),
+            ("uncontracted".to_owned(), 44),
+            ("unit".to_owned(), 406),
         ])
     );
 
@@ -127,7 +131,7 @@ fn historical_classification_and_all_live_statements_have_a_closed_boundary() {
     let reviewed_keys: BTreeSet<_> = reviewed.iter().map(key).collect();
     assert_eq!(reviewed_keys.len(), reviewed.len());
     assert!(reviewed_keys.is_subset(&current_keys));
-    assert_eq!(current_keys.difference(&reviewed_keys).count(), 561);
+    assert_eq!(current_keys.difference(&reviewed_keys).count(), 1176); // 2026-10-07, courses rewrite (was 561)
     assert!(
         current
             .iter()
@@ -140,7 +144,7 @@ fn historical_classification_and_all_live_statements_have_a_closed_boundary() {
             .filter(|row| row["answer_contract"].is_null())
             .filter(|row| reviewed_keys.contains(&key(row)))
             .count(),
-        45
+        44 // 2026-10-07, courses rewrite (was 45)
     );
     assert_eq!(
         reviewed
@@ -150,7 +154,7 @@ fn historical_classification_and_all_live_statements_have_a_closed_boundary() {
                 live["problem"] == row["problem"] && live["answer"] == row["answer"]
             })
             .count(),
-        184
+        105 // 2026-10-07, courses rewrite (was 184)
     );
     assert_eq!(
         counts,

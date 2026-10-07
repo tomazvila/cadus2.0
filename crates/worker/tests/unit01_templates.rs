@@ -12,12 +12,32 @@ const DIRECTORY: &str = "docs/content-foundations/fractions-decimals/templates";
 #[test]
 fn all_reviewed_templates_retain_their_domains_and_current_gate_verdicts() {
     let rows = directory_rows(DIRECTORY);
-    assert_eq!(rows.len(), 79);
+    // 79 rows before the courses rewrite; 8 were retired on 2026-10-07 and
+    // keep their gate refusal in the retirement report.
+    assert_eq!(rows.len(), 71);
+    let pending: std::collections::BTreeSet<String> = rows
+        .iter()
+        .map(|row| row["kp_id"].as_str().unwrap().to_owned())
+        .collect();
+    let sources: Vec<String> = common::retired::keys("unit01")
+        .iter()
+        .map(|key| {
+            format!(
+                "docs/content-foundations/fractions-decimals/templates/{}.json",
+                key.replace('/', "__")
+            )
+        })
+        .collect();
+    let sources: Vec<&str> = sources.iter().map(String::as_str).collect();
+    assert_eq!(
+        common::retired::assert_retired("unit01", &sources, &pending),
+        8
+    );
     assert_eq!(
         rows.iter()
             .map(|row| row["arguments"]["samples"].as_array().unwrap().len())
             .sum::<usize>(),
-        964
+        868 // 964 before the courses rewrite (2026-10-07)
     );
     let report = run_rows(&rows, "target/unit01/regression");
     const REPLACED: &[&str] = &[
@@ -56,7 +76,7 @@ fn all_reviewed_templates_retain_their_domains_and_current_gate_verdicts() {
             count
         })
         .sum();
-    assert_eq!(checked, 916);
+    assert_eq!(checked, 820); // 916 before the courses rewrite (2026-10-07)
     assert_template19_replacements(&rows, REPLACED);
 }
 

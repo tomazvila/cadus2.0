@@ -2,6 +2,7 @@
 #![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 use std::{collections::BTreeSet, path::PathBuf};
 
+mod common;
 use cadus_core::{
     answer::{AnswerContract, NumericForm, Outcome, check_contract},
     curriculum::load_curriculum,
@@ -57,7 +58,21 @@ fn pending_recipes_pass_production_and_export_exhaustive_instances() {
     let (curriculum, findings) = load_curriculum(&root().join("curriculum")).unwrap();
     assert!(findings.is_empty(), "{findings:?}");
     let drafts = drafts();
-    assert_eq!(drafts.len(), 23);
+    // 23 recipes before the courses rewrite; 7 were retired on 2026-10-07
+    // and keep their gate refusal in the retirement report.
+    assert_eq!(drafts.len(), 16);
+    let pending: BTreeSet<String> = drafts
+        .iter()
+        .map(|draft| draft["kp_id"].as_str().unwrap().to_owned())
+        .collect();
+    assert_eq!(
+        common::retired::assert_retired(
+            "unit04-residual",
+            &["docs/content-foundations/unit04-residual/drafts.json"],
+            &pending,
+        ),
+        7
+    );
     let mut keys = BTreeSet::new();
     let mut all_problems: BTreeSet<String> = curriculum
         .topics()
@@ -73,7 +88,9 @@ fn pending_recipes_pass_production_and_export_exhaustive_instances() {
         assert_eq!(draft["status"], "pending");
         assert_eq!(draft["kind"], "template");
         let spec = select(&curriculum, &[key.to_owned()]).unwrap().remove(0);
-        assert_eq!(spec.exemplars.len(), 4, "{key}");
+        // Exactly 4 exemplars before the courses rewrite (2026-10-07); the
+        // rewrite gave some KPs 7 or 8.
+        assert!(spec.exemplars.len() >= 4, "{key}");
         for exemplar in &spec.exemplars {
             assert!(exemplar.canonical_answer().is_ok(), "{key}");
             assert!(

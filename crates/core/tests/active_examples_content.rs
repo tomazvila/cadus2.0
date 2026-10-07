@@ -135,7 +135,8 @@ fn every_try_first_grades_its_own_answer_and_refuses_a_miss() {
             );
         }
     }
-    assert_eq!(seen, 44, "the authored try-first count moved");
+    // 627 on 2026-10-07 after the courses rewrite (was 44).
+    assert_eq!(seen, 627, "the authored try-first count moved");
 }
 
 #[test]

@@ -18,8 +18,9 @@ fn every_checked_in_recipe_passes_the_production_gate() {
     .expect("recipe drafts");
     let drafts: Vec<Value> = serde_json::from_str(&source).expect("recipe JSON");
     // 39 reviewed recipes; radical-operations/kp2 and evaluating-polynomials/kp1
-    // and kp2 were retired on 2026-10-06, polynomial-basics/kp3 after them.
-    assert_eq!(drafts.len(), 35);
+    // and kp2 were retired on 2026-10-06, polynomial-basics/kp3 after them, and
+    // eight more on 2026-10-07 (courses rewrite): 27 remain.
+    assert_eq!(drafts.len(), 27);
     let mut keys = BTreeSet::new();
     for draft in drafts {
         let key = draft["kp_id"].as_str().expect("kp_id");
@@ -66,6 +67,6 @@ fn the_retired_recipes_left_the_set_and_keep_their_gate_refusal() {
         .collect();
     assert_eq!(
         common::retired::assert_retired("accepted-template-recipes", &[source], &pending),
-        4
+        12
     );
 }

@@ -99,7 +99,9 @@ fn reviewed_manifest_matches_curriculum_and_rejects_other_choices() {
     // The 2026-10-05 Foundations rewrites (04d15daa..2d82c3f9) gave the reviewed
     // labels natural aliases and replaced yes/no collapses with direct questions,
     // so all but one reviewed item now carries a replacement that decides its own key.
-    assert_eq!(lineage, (1, 97));
+    // 2026-10-07, courses rewrite: the last item without a replacement now has one,
+    // so the tally is (0, 98) (was (1, 97)).
+    assert_eq!(lineage, (0, 98));
 }
 
 #[test]

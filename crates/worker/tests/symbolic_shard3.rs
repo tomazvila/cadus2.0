@@ -23,20 +23,21 @@ fn exact_reviewed_shard_passes_the_current_production_gate() {
 fn independent_representations_and_answers_are_pinned() {
     let source = curriculum_source("curriculum/foundations/03-expressions-equations.yaml");
     for representation in [
-        "A function table uses $f(x)=4x-7$.",
+        // Re-pinned 2026-10-07 to the courses rewrite wording.
+        "For $f(x) = 5x - 7$, which input gives the output $18$?",
         "A machine divides its input by $-4$",
-        "Three identical boxes each contain $2x-1$ counters",
-        "For $f(x)=7x-3x-5$",
+        "Three identical boxes each hold $2x-1$ counters",
+        "The function $f(x)=7x-3x-5$ has the output $15$.",
         "At which $x$-coordinates does the graph of $y = |x|$ meet the line $y = 5$?",
         "At which $x$-coordinates does the graph of $y = |x + 4|$ meet the line $y = 2$?",
         "At which $x$-coordinates does the graph of $y = |3x - 6|$ meet the line $y = 12$?",
     ] {
         assert!(source.contains(representation), "{representation}");
     }
-    assert_eq!(4 * 4 - 7, 9);
+    assert_eq!(5 * 5 - 7, 18);
     assert_eq!(-20 / -4 - 3, 2);
     assert_eq!(3 * (2 * 3 - 1), 15);
-    assert_eq!(7 * 4 - 3 * 4 - 5, 11);
+    assert_eq!(7 * 5 - 3 * 5 - 5, 15);
     assert_eq!([(-5_i32).abs(), 5_i32.abs()], [5, 5]);
     assert_eq!([(-6_i32 + 4).abs(), (-2_i32 + 4).abs()], [2, 2]);
     assert_eq!([(3 * -2_i32 - 6).abs(), (3 * 6_i32 - 6).abs()], [12, 12]);

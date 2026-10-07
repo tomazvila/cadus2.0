@@ -252,9 +252,11 @@ fn no_solution_radical_equations_name_a_negative_right_hand_side() {
             }
         }
     }
+    // The courses rewrite (2026-10-07) kept one authored unsolvable exemplar
+    // (`\sqrt{x+7}=-2`); the earlier second one was replaced by solvable items.
     assert_eq!(
-        checked, 2,
-        "expected exactly the two authored unsolvable exemplars"
+        checked, 1,
+        "expected exactly the one authored unsolvable exemplar"
     );
 }
 
@@ -306,6 +308,7 @@ fn mantissa_of(answer: &str) -> Option<f64> {
     if !answer.contains("10^") {
         return None; // not an "N x 10^E" shaped answer at all
     }
-    let head = answer.split(['x']).next()?.trim();
+    // The courses rewrite (2026-10-07) writes keys as `N*10^E`; older keys used `x`.
+    let head = answer.split(['x', '*']).next()?.trim();
     head.parse::<f64>().ok()
 }

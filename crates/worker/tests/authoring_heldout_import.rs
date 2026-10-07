@@ -7,8 +7,10 @@ use std::path::{Path, PathBuf};
 use cadus_store::test_support::TestDb;
 
 /// Unit manifest to its exact draft-row count, including practice templates.
+/// fractions-decimals was 119 before 2026-10-07 (courses rewrite retired 8
+/// templates, see docs/reports/unit01-retired-pending-templates.json).
 const UNITS: &[(&str, i64)] = &[
-    ("fractions-decimals", 119),
+    ("fractions-decimals", 111),
     ("integers-negatives", 28),
     ("rational-trig", 2),
 ];

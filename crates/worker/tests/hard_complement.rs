@@ -24,7 +24,9 @@ fn archived_rows_have_exact_canonical_replacements_and_current_gate_verdicts() {
         138
     );
     assert_eq!(report["checked"], rows.len(), "{report}");
-    assert_eq!(report["passed"], 4, "{report}");
+    // courses rewrite (2026-10-07): law-of-sines-cosines/kp1 now meets an authored
+    // exemplar with the same statement, so the gate refuses it; 3 of 6 pass.
+    assert_eq!(report["passed"], 3, "{report}");
     // Preserve these pending drafts as historical evidence. The restored finite
     // objectives cover single logarithms; the two sum-of-logs drafts must fail
     // closed instead of expanding the reviewed domains.
@@ -34,6 +36,7 @@ fn archived_rows_have_exact_canonical_replacements_and_current_gate_verdicts() {
             "common-natural-logarithms/kp1" | "common-natural-logarithms/kp2" => {
                 Some("finite-case-unknown:")
             }
+            "law-of-sines-cosines/kp1" => Some("authored/sibling collision:"),
             _ => None,
         };
         if let Some(prefix) = rejection {
@@ -49,7 +52,6 @@ fn archived_rows_have_exact_canonical_replacements_and_current_gate_verdicts() {
                 ("natural-exponential-function/kp1", 12),
                 ("sine-cosine-parent-graphs/kp1", 20),
                 ("sine-cosine-parent-graphs/kp2", 20),
-                ("law-of-sines-cosines/kp1", 16),
             ]
             .into_iter()
             .find(|(candidate, _)| *candidate == key)
@@ -58,52 +60,11 @@ fn archived_rows_have_exact_canonical_replacements_and_current_gate_verdicts() {
             assert_eq!(row["evidence"]["distinct_instances"], expected, "{key}");
             assert_eq!(row["evidence"]["instances_checked"], expected, "{key}");
             let cases = row["evidence"]["finite_cases"].as_array().unwrap();
-            if key == "law-of-sines-cosines/kp1" {
-                // All ordered pairs are reviewed rehearsal; single primitives stay teach-only.
-                let categories = ["sss", "sas", "two-angles-side", "ssa-opposite-pair"];
-                let expected_cases: std::collections::BTreeSet<_> = categories
-                    .iter()
-                    .flat_map(|first| {
-                        categories
-                            .iter()
-                            .map(move |second| format!("pair-{first}--{second}"))
-                    })
-                    .collect();
-                let actual_cases: std::collections::BTreeSet<_> = cases
-                    .iter()
-                    .map(|case| {
-                        assert_eq!(case["role"], "taught_rehearsal");
-                        case["case_id"].as_str().unwrap().to_owned()
-                    })
-                    .collect();
-                assert_eq!(actual_cases, expected_cases);
-                assert_eq!(cases.len(), 16);
-                let current = spec(key);
-                let policy = current.finite.as_ref().unwrap();
-                policy.validate(key).unwrap();
-                assert_eq!(policy.domain.cases.len(), 20);
-                assert_eq!(
-                    policy
-                        .domain
-                        .cases
-                        .iter()
-                        .filter(
-                            |case| case.role == cadus_core::curriculum::FiniteCaseRole::TeachOnly
-                        )
-                        .count(),
-                    4
-                );
-                assert_eq!(
-                    row["evidence"]["finite_policy_fingerprint"],
-                    policy.fingerprint
-                );
-            } else {
-                assert!(cases.is_empty(), "{key}: unexpected finite policy");
-                assert!(
-                    row["evidence"]["finite_policy_fingerprint"].is_null(),
-                    "{key}"
-                );
-            }
+            assert!(cases.is_empty(), "{key}: unexpected finite policy");
+            assert!(
+                row["evidence"]["finite_policy_fingerprint"].is_null(),
+                "{key}"
+            );
         }
     }
     assert_eq!(
@@ -114,7 +75,7 @@ fn archived_rows_have_exact_canonical_replacements_and_current_gate_verdicts() {
             .filter(|row| row["passed"] == true)
             .map(|row| row["evidence"]["instances_checked"].as_u64().unwrap())
             .sum::<u64>(),
-        68
+        52
     );
     assert_template19_replacements(&rows, &["law-of-sines-cosines/kp1"]);
 }

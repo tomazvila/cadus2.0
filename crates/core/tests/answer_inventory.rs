@@ -74,56 +74,62 @@ const HISTORICAL_SHAPE_COUNTS: [(&str, usize); 16] = [
 const HISTORICAL_DISTINCT_DECIDABLE: [(usize, usize); 4] = [(0, 115), (1, 53), (2, 583), (3, 58)];
 
 const LIVE_KNOWLEDGE_POINTS: usize = 809;
-const LIVE_EXEMPLARS: usize = 3_828;
+const LIVE_EXEMPLARS: usize = 5_906;
 const LIVE_WITHOUT_SKETCH: usize = 0;
-// 2026-10-06: the natural-answer and nth-root grader changes and the rewritten
-// exemplars in units 00, 01, 03, 06 and 07 move the shape, verdict and distinct
-// decidable counts below; the exemplar total is unchanged.
+// 2026-10-07, courses rewrite: the 984 rewritten topics move every count below
+// (5,906 exemplars, was 3,828). The values come from the inventory dump of the
+// merged tree.
 const LIVE_SHAPE_COUNTS: [(&str, usize); 16] = [
-    ("coordinates", 264),
-    ("decimal", 120),
-    ("equation_or_inequality", 451),
-    ("expression", 803),
-    ("fraction", 270),
-    ("integer", 1_378),
-    ("interval", 20),
+    ("coordinates", 222),
+    ("decimal", 233),
+    ("equation_or_inequality", 435),
+    ("expression", 1_073),
+    ("fraction", 455),
+    ("integer", 2_599),
+    ("interval", 30),
     ("mixed_number", 21),
-    ("ordered_list", 157),
+    ("ordered_list", 293),
     ("other", 12),
-    ("prose", 69),
-    ("quotient_remainder", 24),
-    ("radical", 164),
+    ("prose", 232),
+    ("quotient_remainder", 32),
+    ("radical", 208),
     ("rational_exponent", 14),
-    ("set", 8),
-    ("value_with_unit", 53),
+    ("set", 1),
+    ("value_with_unit", 46),
 ];
-const LIVE_DISTINCT_DECIDABLE: [(usize, usize); 10] = [
-    (0, 54),
+const LIVE_DISTINCT_DECIDABLE: [(usize, usize); 12] = [
+    (0, 11),
     (1, 2),
-    (2, 14),
-    (3, 8),
-    (4, 545),
-    (5, 19),
-    (6, 54),
-    (7, 58),
-    (8, 52),
-    (9, 3),
+    (2, 3),
+    (3, 3),
+    (4, 69),
+    (5, 51),
+    (6, 90),
+    (7, 275),
+    (8, 250),
+    (9, 45),
+    (10, 9),
+    (11, 1),
 ];
-const LIVE_VERDICT_COUNTS: [(&str, usize); 7] = [
-    ("decided", 3_502),
+const LIVE_VERDICT_COUNTS: [(&str, usize); 8] = [
+    ("decided", 5_519),
     (
         "undecidable(a chained inequality needs one variable in the middle)",
-        2,
+        4,
     ),
     // Grader pass 3: subscripts and `log_b` read, four rows now end in trailing text.
-    ("undecidable(a character outside the grammar)", 223),
+    ("undecidable(a character outside the grammar)", 52),
     (
         "undecidable(a disjunction requires finite scalar solutions)",
-        19,
+        36,
     ),
-    ("undecidable(a name that is not a function or variable)", 66),
-    ("undecidable(an inequality with no bare variable)", 4),
-    ("undecidable(trailing text after the answer)", 12),
+    (
+        "undecidable(a name that is not a function or variable)",
+        235,
+    ),
+    ("undecidable(a symbol where a value belongs)", 2),
+    ("undecidable(an inequality with no bare variable)", 12),
+    ("undecidable(trailing text after the answer)", 46),
 ];
 
 #[test]

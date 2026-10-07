@@ -105,7 +105,9 @@ fn discriminant_repeated_root_multiplicity_rejects_a_miscount() {
     assert!(findings.is_empty());
     // "How many real solutions does x^2 - 6x + 9 = 0 have?" disc = 0, one
     // REPEATED root, so the multiplicity-aware answer is "1", not "2".
-    let (item, kind) = exemplar(&curriculum, "discriminant", "kp2", 0);
+    // The courses rewrite (2026-10-07) moved this item from index 0 to index 3.
+    let (item, kind) = exemplar(&curriculum, "discriminant", "kp2", 3);
+    assert!(item.problem.contains("x^2 - 6x + 9 = 0"));
     assert_eq!(item.answer, "1");
     assert_marked_incorrect(
         grade(item, kind, "2"),

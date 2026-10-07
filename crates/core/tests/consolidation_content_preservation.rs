@@ -55,14 +55,22 @@ fn is_tautology(sketch: &str) -> bool {
     })
 }
 
+/// A plain, non-contextual prompt. The courses rewrite (2026-10-07) replaced the
+/// "Find" opening with textbook openings such as "Compute" and "Evaluate".
+fn is_plain_variant(problem: &str) -> bool {
+    ["Find", "Compute", "Evaluate", "Calculate", "Simplify"]
+        .iter()
+        .any(|opening| problem.starts_with(opening))
+}
+
 fn assert_context_and_variety(problems: &[String], word_prefix: &str) {
     assert!(
         problems.iter().any(|p| p.starts_with(word_prefix)),
         "expected word problem starting with {word_prefix:?}, got: {problems:?}"
     );
     assert!(
-        problems.iter().any(|p| p.contains("Find")),
-        "expected Find-variant, got: {problems:?}"
+        problems.iter().any(|p| is_plain_variant(p)),
+        "expected plain variant, got: {problems:?}"
     );
 }
 
@@ -97,9 +105,9 @@ fn contextual_mixed_practice_across_arithmetic_core() {
 
     // subtraction-facts kp1/kp2
     let p = kp_problems(&c, "subtraction-facts", "kp1");
-    assert!(p.iter().any(|p| p.starts_with("A basket has")));
+    assert!(p.iter().any(|p| p.starts_with("A basket holds")));
     assert!(p.iter().any(|p| p.starts_with("Evaluate")));
-    assert!(p.iter().any(|p| p.contains("Find")));
+    assert!(p.iter().any(|p| is_plain_variant(p)));
     let p = kp_problems(&c, "subtraction-facts", "kp2");
     assert_context_and_variety(&p, "A parking lot");
 
@@ -113,9 +121,9 @@ fn contextual_mixed_practice_across_arithmetic_core() {
     let p = kp_problems(&c, "division-facts", "kp1");
     assert!(
         p.iter()
-            .any(|p| p.contains("cookies") && p.contains("shared"))
+            .any(|p| p.contains("cookies") && p.contains("shares"))
     );
-    assert!(p.iter().any(|p| p.contains("Find")));
+    assert!(p.iter().any(|p| is_plain_variant(p)));
 
     // perfect-squares kp1
     let p = kp_problems(&c, "perfect-squares", "kp1");
@@ -128,23 +136,25 @@ fn contextual_mixed_practice_across_arithmetic_core() {
 fn multiplication_sketches_are_pedagogical_not_tautological() {
     let c = common::paths::tree();
     let sketches = kp_sketches(&c, "multiplication-tables", "kp1");
+    // Re-pinned 2026-10-07 to the courses rewrite sketches: a split, a doubling,
+    // ten-less-one and a power of ten.
 
     assert!(
         sketches
             .iter()
-            .any(|s| s.contains("6 \\times 7 = 6 \\times 5 + 6 \\times 2"))
+            .any(|s| s.contains("7 \\times 8 = 7 \\times 5 + 7 \\times 3"))
     );
     assert!(
         sketches
             .iter()
             .any(|s| s.contains("8 \\times 4 = 8 \\times 2 \\times 2"))
     );
+    assert!(sketches.iter().any(|s| s.contains("9 \\times 6 = 60 - 6")));
     assert!(
         sketches
             .iter()
-            .any(|s| s.contains("9 \\times 6 = 10 \\times 6 - 6"))
+            .any(|s| s.contains("Ten tens make one hundred"))
     );
-    assert!(sketches.iter().any(|s| s.contains("appends one zero")));
 
     for s in &sketches {
         assert!(!is_tautology(s), "tautology found: {s:?}");

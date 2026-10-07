@@ -33,13 +33,25 @@ def main():
             "OPENAI_MODEL": "operator-draft-v1",
             "CADUS_CURRICULUM": str(root / "curriculum"),
         })
-        command = [args.worker, "author", "--kind", "teach", "--kind", "hint_ladder",
-                   "--budget-usd", "5", "--request-reserve-usd", "0.50", "--concurrency", "4"]
+        base = [args.worker, "author", "--budget-usd", "5", "--request-reserve-usd", "0.50",
+                "--concurrency", "4"]
+        # A knowledge point whose template draft was retired still keeps its
+        # teach and hint-ladder drafts, so each kind list names only the keys
+        # that hold a draft of that kind.
+        runs = [(["teach", "hint_ladder"], dict.fromkeys(row["kp_id"] for row in rows))]
         if args.include_templates:
-            command.extend(["--kind", "template"])
-        for key in dict.fromkeys(row["kp_id"] for row in rows):
-            command.extend(["--kp", key])
-        return subprocess.run(command, env=environment, cwd=root, check=False).returncode
+            runs.append((["template"], dict.fromkeys(
+                row["kp_id"] for row in rows if row["kind"] == "template")))
+        for kinds, keys in runs:
+            command = list(base)
+            for kind in kinds:
+                command.extend(["--kind", kind])
+            for key in keys:
+                command.extend(["--kp", key])
+            code = subprocess.run(command, env=environment, cwd=root, check=False).returncode
+            if code != 0:
+                return code
+        return 0
     finally:
         server.shutdown()
         server.server_close()

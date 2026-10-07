@@ -456,8 +456,10 @@ fn every_shipped_knowledge_point_whose_exemplar_shows_its_answer_gates() {
     // by fifteen (131 -> 146, 910 -> 925 overall); the blind counts are unchanged.
     // 2026-10-06 (later): the units 00, 01, 03, 06 and 07 content pass removes one
     // more answer-revealing exemplar (925 -> 924 overall, 146 -> 145 in Foundations).
-    assert_eq!((exempted, blind), (924, 43));
-    assert_eq!((foundations_exempted, foundations_blind), (145, 12));
+    // 2026-10-07, courses rewrite: (1429, 12) overall (was (924, 43)).
+    assert_eq!((exempted, blind), (1429, 12));
+    // Foundations: (231, 5) (was (145, 12)).
+    assert_eq!((foundations_exempted, foundations_blind), (231, 5));
 }
 
 /// A sample that does not instantiate and a draw that does not evaluate

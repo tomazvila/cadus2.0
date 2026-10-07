@@ -133,7 +133,8 @@ fn retired_sources(
     let retired =
         read(root().join("docs/reports/whole-course-teach-retired-source-templates.json"));
     let retired = retired.as_array().expect("retired rows");
-    assert_eq!(retired.len(), 50);
+    // 50 before the courses rewrite; 156 more were retired on 2026-10-07.
+    assert_eq!(retired.len(), 206);
     let mut keys = BTreeSet::new();
     for row in retired {
         let kp = row["kp_key"].as_str().expect("retired kp");
@@ -297,10 +298,11 @@ fn source_evidence(
 ) -> (Sources, BTreeSet<String>) {
     let templates = read(directory.join("inputs/templates.json"));
     let templates = keyed(templates.as_array().expect("templates"), "template");
-    // 809 Foundations KPs: 759 selected source templates and 50 retired ones
+    // 809 Foundations KPs: 603 selected source templates and 206 retired ones
     // (15 on 2026-10-05, 34 exponent, radical and quadratic ones on 2026-10-06,
     // polynomial-basics/kp3 in the units 00 to 07 content pass).
-    assert_eq!(templates.len(), 759);
+    // 759 before the courses rewrite; 156 were retired on 2026-10-07.
+    assert_eq!(templates.len(), 603);
     let retired = retired_sources(specs, &templates);
     let mut sources = BTreeMap::new();
     let mut occupied = BTreeSet::new();

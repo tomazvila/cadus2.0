@@ -117,7 +117,10 @@ mod tests {
     #[test]
     fn catalog_is_exact_unique_and_gated() {
         let keys: BTreeSet<_> = hints().iter().map(|row| row.key.as_str()).collect();
-        assert_eq!(keys.len(), 649);
+        // 649 before the courses rewrite. 181 pinned ladders lost their
+        // objective, constraints or exemplars in the rewrite and were retired on 2026-10-07;
+        // their rows are in docs/reports/instruction-hints-retired-courses-rewrite.json.
+        assert_eq!(keys.len(), 468);
         assert_eq!(keys.len(), hints().len());
         for spec in specs() {
             let mut out = Proposals::default();
