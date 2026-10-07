@@ -492,12 +492,17 @@ same profile. They read this way:
   of the 20,000 events the fixture seeds. A learner ten times deeper would move
   those two rows and not the serve hand-off row.
 
-Benchmark A allocates 107,680 times for 2,000 iterations, which is 53.84 per
-instance. The bound is `ALLOCATION_BOUND = 108_218`, the measured count plus 0.5
-percent, rounded down: floor(107,680 x 1.005). The headroom is 538 allocations
-over the loop, which is 0.269 per iteration. The count is the same number in the
-debug profile and in the release profile, and five runs on this box gave the same
+Benchmark A allocates 114,415 times for 2,000 iterations, which is 57.21 per
+instance. The bound is `ALLOCATION_BOUND = 114_987`, the measured count plus 0.5
+percent, rounded down: floor(114,415 x 1.005). The headroom is 572 allocations
+over the loop, which is 0.286 per iteration. The count is the same number in the
+debug profile and in the release profile, and three runs on this box gave the same
 number, so it is a deterministic literal, unlike the timings in the table above.
+
+The count was measured on 2026-10-07 on the grader pass 3 tree. Grader pass 3
+canonicalizes logarithm bases and samples the `function` contract on fallback
+domains, which added 3.37 allocations per instance to the canonical form; the
+previous literal was 107,680 with the bound 108,218.
 
 The count was measured on 2026-08-27 on the merged M4 tree (commit cd59434).
 Before that measurement both this document and `crates/core/tests/bench_l1.rs`

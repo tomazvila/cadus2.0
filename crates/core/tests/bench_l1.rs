@@ -91,7 +91,7 @@ const INSTANTIATE_P95_BUDGET_NS: u128 = 5_000_000;
 ///
 /// The counting allocator counts one for every `alloc`, `alloc_zeroed`, and
 /// `realloc` of the measuring thread while the loop runs. The measured run
-/// allocates 107,680 times for 2,000 instantiations, which is 53.84 per
+/// allocates 114,415 times for 2,000 instantiations, which is 57.21 per
 /// instance:
 /// the drawn `BigRational` values, the rendered statement, the evaluated tree,
 /// the canonical form, the digest, and the two anti-repeat views. The count is
@@ -99,10 +99,10 @@ const INSTANTIATE_P95_BUDGET_NS: u128 = 5_000_000;
 /// bound binds in both.
 ///
 /// The bound is the measured count plus 0.5 percent, rounded down:
-/// floor(107,680 x 1.005) = 108,218. Per iteration the bound is 54.109
-/// allocations against the measured 53.84, so the headroom is 538 allocations
-/// over the loop, which is 0.269 per iteration. One added heap allocation per
-/// instance therefore moves the loop to 109,680 and fails this assertion. That
+/// floor(114,415 x 1.005) = 114,987. Per iteration the bound is 57.49
+/// allocations against the measured 57.21, so the headroom is 572 allocations
+/// over the loop, which is 0.286 per iteration. One added heap allocation per
+/// instance therefore moves the loop to 116,415 and fails this assertion. That
 /// is the regression spec section 10.1 asks this bound to catch and a timing
 /// bound on a shared runner never catches. The old bound of 110,000 held 1.2
 /// allocations of headroom per iteration and passed the same mutation (M4
@@ -126,16 +126,19 @@ const INSTANTIATE_P95_BUDGET_NS: u128 = 5_000_000;
 /// 4. Record `n`, `n / 2000`, and the new bound in the paragraph above and in
 ///    `docs/reference/l1-budget.md` section 8.
 ///
-/// The measurement behind the literal below is 107,680, taken on the M4 review 2
-/// tree (commit cd59434) in the release profile and in the debug profile, five
-/// runs, one test thread. M4 review 2 findings 7 and 11 are the record of what a
-/// stale measurement costs.
+/// The measurement behind the literal below is 114,415, taken on the grader
+/// pass 3 tree (2026-10-07) in the release profile, three runs, one test
+/// thread. The previous literal, 107,680 on the M4 review 2 tree (commit
+/// cd59434), moved because grader pass 3 canonicalizes logarithm bases and
+/// samples the `function` contract on fallback domains, which adds 3.37
+/// allocations per instance to the canonical form. M4 review 2 findings 7 and
+/// 11 are the record of what a stale measurement costs.
 ///
 /// NOTE: FIXM4d changes the gate and the template source in the same fix wave.
 /// If the merged tree prints a different count, repeat the four steps above once
 /// after the merge, and re-run [`the_measured_sequence_is_pinned`] as well: a
 /// change that moves the drawn tuples moves those literals too.
-const ALLOCATION_BOUND: u64 = 108_218;
+const ALLOCATION_BOUND: u64 = 114_987;
 
 // ---------------------------------------------------------------------------
 // The counting allocator
