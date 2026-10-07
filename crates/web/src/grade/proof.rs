@@ -60,7 +60,8 @@ pub async fn proof_continue(request: TaskWithBody) -> Result<Json<Value>, ApiErr
     };
     let topic = live.serving_topic().unwrap_or_default().to_owned();
     let kp = live.kp.clone().unwrap_or_default();
-    let head = store(&state, open_lesson_head(&mut *tx, &topic, &kp))
+    let key = proof_grading::lesson::item_key(&live.text);
+    let head = store(&state, open_lesson_head(&mut *tx, &topic, &kp, &key))
         .await?
         .filter(|head| chain::phase_of(head) == Phase::Passed)
         .ok_or_else(not_passed)?;
@@ -93,7 +94,15 @@ pub async fn proof_continue(request: TaskWithBody) -> Result<Json<Value>, ApiErr
         },
         assisted: false,
     };
-    let mut moved = proof_close(graph, &content.cfg, now, &close, &kp, &events);
+    // The point closes when EVERY written item's chain is closed; until then
+    // the lesson carries on and serves the next one (D-PR1).
+    let remain =
+        proof_grading::lesson::items_remain(&state, &mut tx, graph, &topic, &kp, &task_id).await?;
+    let mut moved = if remain {
+        Advance::carry_on()
+    } else {
+        proof_close(graph, &content.cfg, now, &close, &kp, &events)
+    };
     if matches!(
         moved.result.as_ref(),
         Some(Event::LessonResult(result)) if result.passed
@@ -232,7 +241,20 @@ pub(super) async fn revise_in_lesson(
         assisted: true,
     };
     let kp = served.kp.clone().unwrap_or_default();
-    let mut moved = proof_close(graph, &content.cfg, now, &close, &kp, events);
+    let remain = proof_grading::lesson::items_remain(
+        state,
+        &mut tx,
+        graph,
+        close.topic.as_str(),
+        &kp,
+        &task.task_id,
+    )
+    .await?;
+    let mut moved = if remain {
+        Advance::carry_on()
+    } else {
+        proof_close(graph, &content.cfg, now, &close, &kp, events)
+    };
     if matches!(
         moved.result.as_ref(),
         Some(Event::LessonResult(result)) if result.passed

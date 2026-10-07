@@ -188,6 +188,12 @@ impl Exemplar {
         )
     }
 
+    /// Whether the answer is a reference sentence that the model grader reads.
+    #[must_use]
+    pub fn is_written(&self) -> bool {
+        self.answer_contract == Some(crate::answer::AnswerContract::Written)
+    }
+
     /// The one definition of "this exemplar gives a verdict".
     ///
     /// A contract decides for each topic kind. With no contract, only the

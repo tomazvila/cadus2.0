@@ -58,7 +58,7 @@ fn kp_doc(view: &KpView, findings: &[Finding], store: Option<&Store>) -> Value {
         })
         .collect();
     let v = view.v();
-    json!({"kp": view.kp, "file": view.file, "V": v, "U": view.u(),
+    json!({"kp": view.kp, "file": view.file, "V": v, "U": view.u(), "W": view.w(),
         "T": store.map(|store| store.templates(&view.store_key)),
         "teach": store.map(|store| store.has_teach(&view.store_key)),
         "floor": view.floor, "goal": v >= view.floor, "serves": v >= HARD_FLOOR,
@@ -76,6 +76,7 @@ struct CourseSum {
     exemplars: usize,
     unmarked: usize,
     unmarked_p3: usize,
+    written: usize,
     label_items: usize,
     no_teach: usize,
     with_finding: usize,
@@ -92,6 +93,7 @@ impl CourseSum {
         self.below_4 += usize::from(v < HARD_FLOOR);
         self.exemplars += view.items.len();
         self.unmarked += view.u();
+        self.written += view.w();
         let p3 = |index: &usize| !view.items[*index].verdict && counts::is_p3(view, *index);
         self.unmarked_p3 += (0..view.items.len()).filter(p3).count();
         self.label_items += view
@@ -116,7 +118,7 @@ impl CourseSum {
         json!({"course": course, "result": result, "floor": self.floor, "kps": self.kps,
             "kps_at_goal": self.at_goal, "kps_v4_to_floor": self.v4_to_floor,
             "kps_below_4": self.below_4, "exemplars": self.exemplars,
-            "unmarked": self.unmarked, "unmarked_p3": self.unmarked_p3,
+            "unmarked": self.unmarked, "unmarked_p3": self.unmarked_p3, "written": self.written,
             "label_items": self.label_items,
             "kps_no_teach_page": db_read.then_some(self.no_teach),
             "breaches": self.breaches})

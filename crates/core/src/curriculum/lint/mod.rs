@@ -109,7 +109,11 @@ impl<'a> Lint<'a> {
                 .chain(topic.diagnostic_exemplar.iter());
             for exemplar in exemplars {
                 if let Some(contract) = &exemplar.answer_contract {
-                    if contract == &crate::answer::AnswerContract::None {
+                    if matches!(
+                        contract,
+                        crate::answer::AnswerContract::None
+                            | crate::answer::AnswerContract::Written
+                    ) {
                         continue;
                     }
                     if let Err(reason) = exemplar.canonical_answer() {

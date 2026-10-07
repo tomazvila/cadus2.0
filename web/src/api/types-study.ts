@@ -219,6 +219,11 @@ export interface ServedProblem {
    */
   quiz_elapsed_secs?: number;
   /**
+   * True on an item whose answer is a sentence (the contract `written`, D-PR1). It takes the
+   * proof loop with its screen worded for an answer. ABSENT on every other item.
+   */
+  written?: boolean;
+  /**
    * The drawn figures of this knowledge point (unit f9).
    *
    * The server renders the SVG and the text equivalent together

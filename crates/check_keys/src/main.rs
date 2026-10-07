@@ -84,6 +84,8 @@ enum Status {
     Passed(Option<String>),
     /// The item carries no deterministic answer: teach-only content.
     TeachOnly,
+    /// The item is a written answer for the model grader: no key check.
+    Written,
     /// The item failed; the reason is already on the failure list.
     Failed,
 }
@@ -94,6 +96,7 @@ enum Event {
     Checked,
     Failed,
     Skipped,
+    SkippedWritten,
 }
 
 /// The per-course counters, and the totals.
@@ -102,6 +105,7 @@ struct Counts {
     checked: usize,
     failed: usize,
     skipped: usize,
+    skipped_written: usize,
 }
 
 /// One approved template row of `content_store`.
@@ -206,13 +210,13 @@ fn main() -> ExitCode {
     }
     for (course, counts) in &per_course {
         println!(
-            "course {course}: checked={} failed={} skipped_teach_only={}",
-            counts.checked, counts.failed, counts.skipped
+            "course {course}: checked={} failed={} skipped_teach_only={} skipped_written={}",
+            counts.checked, counts.failed, counts.skipped, counts.skipped_written
         );
     }
     println!(
-        "checked={} failed={} skipped_teach_only={}",
-        totals.checked, totals.failed, totals.skipped
+        "checked={} failed={} skipped_teach_only={} skipped_written={}",
+        totals.checked, totals.failed, totals.skipped, totals.skipped_written
     );
     if totals.failed == 0 {
         ExitCode::SUCCESS
@@ -280,6 +284,10 @@ fn record_event(bucket: &mut Counts, totals: &mut Counts, event: Event) {
             bucket.skipped += 1;
             totals.skipped += 1;
         }
+        Event::SkippedWritten => {
+            bucket.skipped_written += 1;
+            totals.skipped_written += 1;
+        }
     }
 }
 
@@ -312,6 +320,11 @@ fn record(
             bucket_of(per_course, Some(&at.course)),
             totals,
             Event::Skipped,
+        ),
+        Status::Written => record_event(
+            bucket_of(per_course, Some(&at.course)),
+            totals,
+            Event::SkippedWritten,
         ),
         Status::Failed => {
             record_event(
@@ -438,6 +451,7 @@ fn check_answer(
     match policy::key_policy(answer, contract, kind) {
         KeyPolicy::Verdict => {}
         KeyPolicy::TeachOnly => return Status::TeachOnly,
+        KeyPolicy::Written => return Status::Written,
         KeyPolicy::BadKey(reason) => {
             failures.push(Failure {
                 at: at.clone(),

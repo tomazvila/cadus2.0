@@ -23,10 +23,20 @@ fn run(answer: &str, contract: Option<&AnswerContract>, kind: AnswerKind) -> (St
     let name = match status {
         Status::Passed(_) => "passed",
         Status::TeachOnly => "teach-only",
+        Status::Written => "written",
         Status::Failed => "failed",
     };
     let reasons = failures.into_iter().map(|failure| failure.reason).collect();
     (name.to_owned(), reasons)
+}
+
+#[test]
+fn a_written_item_is_skipped_as_written() {
+    let written = AnswerContract::Written;
+    assert_eq!(
+        run("Some x fails.", Some(&written), AnswerKind::Proof).0,
+        "written"
+    );
 }
 
 #[test]

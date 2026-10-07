@@ -66,6 +66,8 @@ async fn the_grader_sorts_the_fixture_proofs() {
                 rubric: Vec::new(),
                 given_answer: proof["text"].as_str().unwrap().to_owned(),
                 kp: None,
+                mode: None,
+                problem_hash: None,
             };
             cases.push((
                 proof["id"].as_str().unwrap().to_owned(),

@@ -9,7 +9,9 @@
 //! 3. the per-learner daily cap (20, Amendment K) settles the row `capped`;
 //! 4. ask the hosted model one forced-tool question ([`prompt`]), and put the
 //!    bill of every HTTP attempt in `model_call_log` (T6) before the settle;
-//! 5. CODE decides the verdict from the checks ([`prompt::verdict_of`]);
+//! 5. CODE decides the verdict from the checks ([`prompt::verdict_of`]; a
+//!    payload with `"mode": "written"` is a short answer, graded under three
+//!    checks that must all be met, [`prompt::written_verdict_of`]);
 //! 6. land it in ONE transaction: the FIRST verdict of a revision chain
 //!    appends a `regraded` event on the chain's root attempt and refolds the
 //!    learner model (later drafts stay on the chain: one problem, one
@@ -155,7 +157,12 @@ pub async fn grade(
         let call = client.call(&request).await;
         attempts.extend(call.attempts);
         match call.result {
-            Ok(arguments) => match prompt::grading_of(&arguments, &model, &payload.given_answer) {
+            Ok(arguments) => match prompt::grading_of(
+                prompt::Mode::of(payload),
+                &arguments,
+                &model,
+                &payload.given_answer,
+            ) {
                 Ok(grading) => return (attempts, Ok(grading)),
                 // The reply parsed but holds no usable grading: ask once more.
                 Err(reason) => last = reason,

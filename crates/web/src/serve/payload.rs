@@ -174,6 +174,11 @@ pub(super) fn serve_payload(
     {
         payload["solution"] = json!(solution);
     }
+    // A `written` item asks for a sentence: the client words its screen for
+    // an answer, not a proof (D-PR1). The key rides only on such an item.
+    if crate::proof_grading::is_written_item(served) {
+        payload["written"] = json!(true);
+    }
     let contract = served.expected.answer_contract.as_ref();
     if let Some(choices) = label_choices(contract, &served.problem_id) {
         payload["choices"] = json!(choices);

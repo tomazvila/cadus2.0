@@ -25,7 +25,7 @@ fn exemplars(view: &KpView) -> Vec<Value> {
 /// The `cadus.kp.v1` document of one view.
 pub fn doc(view: &KpView) -> Value {
     json!({"schema": "cadus.kp.v1", "kp": view.kp, "file": view.file, "topic": view.topic,
-        "kp_block": view.kp_block, "V": view.v(), "U": view.u(), "exemplars": exemplars(view)})
+        "kp_block": view.kp_block, "V": view.v(), "U": view.u(), "W": view.w(), "exemplars": exemplars(view)})
 }
 
 /// Run `dump-kp`. The command gives exit 0 when it ran.

@@ -1,5 +1,6 @@
 //! I2 (the count of verdict exemplars of the KP) and I4 (the exemplars with
-//! no verdict). The counts are for one KP. No course average exists here.
+//! no verdict). A `written` item is legal in any KP, in any count; it counts
+//! toward neither V nor U (it is W). The counts are for one KP. No course average exists here.
 
 use super::super::kp_view::{HARD_FLOOR, Item, KpView};
 use super::finding;
@@ -47,7 +48,7 @@ pub fn check(view: &KpView) -> Vec<Finding> {
         .items
         .iter()
         .enumerate()
-        .filter(|(index, item)| !item.verdict && !is_p3(view, *index))
+        .filter(|(index, item)| item.unmarked() && !is_p3(view, *index))
         .map(|(_, item)| {
             finding(
                 view,
@@ -119,6 +120,22 @@ mod tests {
         items.push(p3("Write the full proof: the sum is even."));
         proof.items = items;
         assert_eq!(invariants(&check(&proof)), ["I4"]);
+    }
+
+    #[test]
+    fn i4_permits_any_count_of_written_items_in_any_kp() {
+        let mut items: Vec<_> = (0..6).map(exact).collect();
+        for n in 0..3 {
+            items.push(item(
+                &format!("Write the negation of statement {n}."),
+                "Some x fails the condition.",
+                json!({"kind": "written"}),
+                None,
+            ));
+        }
+        let plain = view(items);
+        assert_eq!(check(&plain), []);
+        assert_eq!((plain.v(), plain.u(), plain.w()), (6, 0, 3));
     }
 
     #[test]

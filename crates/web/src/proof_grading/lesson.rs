@@ -2,22 +2,27 @@
 //!
 //! # The knowledge-point rule
 //!
-//! A knowledge point is PROOF-GATED when it authors a written-proof exemplar
-//! (an exemplar that gives no verdict and whose statement asks for a proof).
-//! Such a point closes when BOTH hold, in this order:
+//! A knowledge point is PROOF-GATED when it authors a written item: a
+//! written-proof exemplar (an exemplar that gives no verdict and whose
+//! statement asks for a proof) or an exemplar with the contract `written` (a
+//! sentence is the answer). A point can author several written items
+//! ([`written_items`]); each has its own chain, keyed by `(topic, kp,
+//! problem_hash)`. Such a point closes when BOTH hold, in this order:
 //!
 //! 1. its decided items pass the standing rule (`2consec|3of4`); a point with
-//!    no decided item (all-`none`) meets this at once;
-//! 2. the revision chain of its proof exemplar closes: on a model pass (a
+//!    no decided item (all written) meets this at once;
+//! 2. the revision chain of EVERY written item closes: on a model pass (a
 //!    normal close, full XP), or after the revision cap and one unaided
 //!    rewrite (an ASSISTED close: reduced XP and the halved FIRe credit of an
-//!    assisted pass, so the review comes early).
+//!    assisted pass, so the review comes early). The lesson serves the first
+//!    written item whose chain is not closed ([`due_item`]).
 //!
-//! The proof's drafts never enter the `2consec|3of4` sequence. A chain is one
-//! item with its own feedback loop: counting each needs-revision draft as a
-//! miss would fail the lesson for ordinary drafting, three drafts being three
-//! misses. The rule never closes a point the standing rule would not close,
-//! because the proof is an extra gate after the rule's own pass.
+//! The drafts of a written item never enter the `2consec|3of4` sequence. A
+//! chain is one item with its own feedback loop: counting each needs-revision
+//! draft as a miss would fail the lesson for ordinary drafting, three drafts
+//! being three misses. The rule never closes a point the standing rule would
+//! not close, because the written items are an extra control after the rule's
+//! own pass.
 //!
 //! A free explanation (a no-key item whose statement asks for no proof) keeps
 //! the note 84 (b) self-check completion.
@@ -34,6 +39,7 @@ use std::collections::BTreeMap;
 
 use cadus_core::curriculum::{Curriculum, Exemplar};
 use cadus_core::event::TaskType;
+use cadus_core::learner::problem_text_hash;
 use cadus_core::selector::{SessionPlan, Task};
 use cadus_store::proof_grading::{self, CONTEXT_LESSON, JobRow, NewJob};
 use serde_json::{Value, json};
@@ -64,18 +70,40 @@ pub const PROOF_BLANK: &str = "proof_blank";
 /// The display prose of a lesson the plan carries for its open revision.
 pub const CARRY_WHY: &str = "Finish the proof you are revising.";
 
-/// The written-proof exemplar of one knowledge point, when it authors one.
+/// The written items of one knowledge point, in authored order: every
+/// exemplar that gives no verdict and asks for a proof, and every exemplar
+/// with the contract `written`.
 #[must_use]
-pub fn proof_exemplar<'g>(graph: &'g Curriculum, topic: &str, kp: &str) -> Option<&'g Exemplar> {
-    let idx = graph.idx_of(topic)?;
-    let kind = graph.topic(idx)?.answer_kind;
+pub fn written_items<'g>(graph: &'g Curriculum, topic: &str, kp: &str) -> Vec<&'g Exemplar> {
+    let Some(idx) = graph.idx_of(topic) else {
+        return Vec::new();
+    };
+    let Some(kind) = graph.topic(idx).map(|found| found.answer_kind) else {
+        return Vec::new();
+    };
     graph
         .knowledge_points(idx)
         .iter()
-        .find(|point| point.id.as_str() == kp)?
-        .exemplars
-        .iter()
-        .find(|exemplar| exemplar.verdict_policy(kind).is_err() && is_proof_text(&exemplar.problem))
+        .find(|point| point.id.as_str() == kp)
+        .map(|point| {
+            point
+                .exemplars
+                .iter()
+                .filter(|exemplar| {
+                    exemplar.is_written()
+                        || (exemplar.verdict_policy(kind).is_err()
+                            && is_proof_text(&exemplar.problem))
+                })
+                .collect()
+        })
+        .unwrap_or_default()
+}
+
+/// The key of one written item inside its knowledge point: the
+/// `problem_text_hash` of its statement.
+#[must_use]
+pub fn item_key(problem: &str) -> String {
+    problem_text_hash(problem)
 }
 
 /// Whether every exemplar of one knowledge point gives no verdict.
@@ -157,7 +185,12 @@ pub async fn lesson_step(
     }
     let topic = served.serving_topic().unwrap_or_default();
     let kp = served.kp.as_deref().unwrap_or_default();
-    let head = store(state, proof_grading::open_lesson_head(&mut **tx, topic, kp)).await?;
+    let key = item_key(&served.text);
+    let head = store(
+        state,
+        proof_grading::open_lesson_head(&mut **tx, topic, kp, &key),
+    )
+    .await?;
     let Some(head) = head else {
         return Ok(LessonStep::first());
     };
@@ -196,20 +229,36 @@ pub async fn lesson_step(
     }
 }
 
-/// The written proof a lesson serves next at `(topic, kp)`, when one is due.
+/// The written item a lesson serves next at `(topic, kp)`, when one is due.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct DueItem {
     /// The statement.
     pub text: String,
-    /// The stored key (a placeholder such as "See the solution.").
+    /// The stored key (a placeholder such as "See the solution.", or the
+    /// reference sentence of a `written` item).
     pub answer: String,
     /// The reference solution.
     pub solution: Option<String>,
+    /// Whether the item has the contract `written`.
+    pub written: bool,
 }
 
-/// The proof a lesson owes at `(topic, kp)`: the open chain's own problem,
-/// else the point's proof exemplar when the point's decided items passed
-/// (the durable `proof_owed` row) or the point has none.
+impl DueItem {
+    /// The item of an authored exemplar.
+    fn of(exemplar: &Exemplar) -> Self {
+        Self {
+            text: exemplar.problem.clone(),
+            answer: exemplar.answer.clone(),
+            solution: exemplar.solution_sketch.clone(),
+            written: exemplar.is_written(),
+        }
+    }
+}
+
+/// The written item a lesson owes at `(topic, kp)` under `task_id`: the
+/// first written item whose chain is not closed. An item with an open chain
+/// serves its own problem; an item with no chain serves when the point's
+/// decided items passed (the durable `proof_owed` row) or the point has none.
 ///
 /// # Errors
 ///
@@ -220,31 +269,65 @@ pub async fn due_item(
     graph: &Curriculum,
     topic: &str,
     kp: &str,
+    task_id: &str,
 ) -> Result<Option<DueItem>, ApiError> {
-    let exemplar = proof_exemplar(graph, topic, kp);
-    let head = store(state, proof_grading::open_lesson_head(&mut **tx, topic, kp)).await?;
-    if let Some(head) = head {
-        let text = head.payload_str("problem").unwrap_or_default().to_owned();
-        let answer = exemplar.filter(|found| found.problem == text).map_or_else(
-            || "See the solution.".to_owned(),
-            |found| found.answer.clone(),
-        );
-        return Ok(Some(DueItem {
-            text,
-            answer,
-            solution: head.payload_str("reference").map(str::to_owned),
-        }));
-    }
-    let Some(exemplar) = exemplar else {
+    let items = written_items(graph, topic, kp);
+    if items.is_empty() {
         return Ok(None);
-    };
-    let due = kp_all_undecidable(graph, topic, kp)
-        || store(state, proof_grading::is_owed(&mut **tx, topic, kp)).await?;
-    Ok(due.then(|| DueItem {
-        text: exemplar.problem.clone(),
-        answer: exemplar.answer.clone(),
-        solution: exemplar.solution_sketch.clone(),
-    }))
+    }
+    let closed = store(
+        state,
+        proof_grading::closed_lesson_items(&mut **tx, topic, kp, task_id),
+    )
+    .await?;
+    let undecided = kp_all_undecidable(graph, topic, kp);
+    for exemplar in items {
+        let key = item_key(&exemplar.problem);
+        if closed.contains(&key) {
+            continue;
+        }
+        let head = store(
+            state,
+            proof_grading::open_lesson_head(&mut **tx, topic, kp, &key),
+        )
+        .await?;
+        if let Some(head) = head {
+            return Ok(Some(DueItem {
+                text: head.payload_str("problem").unwrap_or_default().to_owned(),
+                answer: exemplar.answer.clone(),
+                solution: head.payload_str("reference").map(str::to_owned),
+                written: exemplar.is_written(),
+            }));
+        }
+        if undecided || store(state, proof_grading::is_owed(&mut **tx, topic, kp, &key)).await? {
+            return Ok(Some(DueItem::of(exemplar)));
+        }
+    }
+    Ok(None)
+}
+
+/// Whether a written item of `(topic, kp)` still has a chain to close under
+/// `task_id`: the point's proof control stays shut until every one closed.
+///
+/// # Errors
+///
+/// Returns the store failure.
+pub async fn items_remain(
+    state: &AppState,
+    tx: &mut Transaction<'_, Postgres>,
+    graph: &Curriculum,
+    topic: &str,
+    kp: &str,
+    task_id: &str,
+) -> Result<bool, ApiError> {
+    let closed = store(
+        state,
+        proof_grading::closed_lesson_items(&mut **tx, topic, kp, task_id),
+    )
+    .await?;
+    Ok(written_items(graph, topic, kp)
+        .iter()
+        .any(|exemplar| !closed.contains(&item_key(&exemplar.problem))))
 }
 
 /// The `proof` field of a served written proof: the chain state the client
@@ -311,7 +394,12 @@ pub async fn stamp(
     }
     let topic = served.serving_topic().unwrap_or_default();
     let kp = served.kp.as_deref().unwrap_or_default();
-    let head = store(state, proof_grading::open_lesson_head(&mut **tx, topic, kp)).await?;
+    let key = item_key(&served.text);
+    let head = store(
+        state,
+        proof_grading::open_lesson_head(&mut **tx, topic, kp, &key),
+    )
+    .await?;
     payload["proof"] = proof_field(CONTEXT_LESSON, head.as_ref());
     Ok(())
 }
@@ -472,10 +560,21 @@ pub(crate) mod tests {
     /// The proof statement of the fixture.
     pub(crate) const PROOF: &str = "Write the full proof: the sum of two odd integers is even.";
 
+    /// The statement of the first `written` item of kp4.
+    pub(crate) const WRITTEN_A: &str =
+        "Write the contrapositive of: if n is even, n squared is even.";
+
+    /// The proof item between the two `written` items of kp4.
+    pub(crate) const PROOF_B: &str = "Prove that the product of two even integers is even.";
+
+    /// The last `written` item of kp4.
+    pub(crate) const WRITTEN_C: &str = "Write the negation of: every prime is odd.";
+
     /// `parity`: kp1 mixes a decided exemplar with a written proof, kp2 is
     /// one written proof alone, kp3 one free explanation alone.
     pub(crate) fn graph() -> Curriculum {
         let none = json!({"kind": "none"});
+        let written = json!({"kind": "written"});
         let topic = json!({
             "id": "parity", "name": "Parity", "difficulty": 0.3, "answer_kind": "numeric",
             "expected_time_secs": 30,
@@ -489,7 +588,14 @@ pub(crate) mod tests {
                      "answer": "See the solution.", "answer_contract": none}]},
                 {"id": "kp3", "name": "kp3", "exemplars": [
                     {"problem": "Explain why 0 is even.", "answer": "See the solution.",
-                     "answer_contract": none}]}
+                     "answer_contract": none}]},
+                {"id": "kp4", "name": "kp4", "exemplars": [
+                    {"problem": "Give 9.", "answer": "9"},
+                    {"problem": WRITTEN_A, "answer": "If n squared is odd, n is odd.",
+                     "answer_contract": written, "solution_sketch": "Swap and negate."},
+                    {"problem": PROOF_B, "answer": "See the solution.", "answer_contract": none},
+                    {"problem": WRITTEN_C, "answer": "Some prime is even.",
+                     "answer_contract": written}]}
             ]
         });
         let catalog: Catalog =
@@ -531,17 +637,30 @@ pub(crate) mod tests {
     #[test]
     fn the_proof_gate_reads_the_authored_exemplars() {
         let graph = graph();
-        assert_eq!(
-            proof_exemplar(&graph, "parity", "kp1").unwrap().problem,
-            PROOF
-        );
+        let kp1 = written_items(&graph, "parity", "kp1");
+        assert_eq!(kp1.len(), 1);
+        assert_eq!(kp1[0].problem, PROOF);
         assert!(!kp_all_undecidable(&graph, "parity", "kp1"));
-        assert!(proof_exemplar(&graph, "parity", "kp2").is_some());
+        assert_eq!(written_items(&graph, "parity", "kp2").len(), 1);
         assert!(kp_all_undecidable(&graph, "parity", "kp2"));
         assert!(
-            proof_exemplar(&graph, "parity", "kp3").is_none(),
+            written_items(&graph, "parity", "kp3").is_empty(),
             "an explanation is no proof"
         );
+    }
+
+    /// A point lists every proof item and every `written` item in authored
+    /// order, and the item key is the statement hash.
+    #[test]
+    fn a_point_lists_all_its_written_items_in_order() {
+        let graph = graph();
+        let items = written_items(&graph, "parity", "kp4");
+        let problems: Vec<&str> = items.iter().map(|item| item.problem.as_str()).collect();
+        assert_eq!(problems, [WRITTEN_A, PROOF_B, WRITTEN_C]);
+        assert!(items[0].is_written() && !items[1].is_written());
+        assert!(!kp_all_undecidable(&graph, "parity", "kp4"));
+        assert_eq!(item_key(WRITTEN_A), problem_text_hash(WRITTEN_A));
+        assert_ne!(item_key(WRITTEN_A), item_key(WRITTEN_C));
     }
 
     /// The carry puts the open lesson first at its point, and inserts the

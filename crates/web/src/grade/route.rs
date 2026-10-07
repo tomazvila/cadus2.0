@@ -310,6 +310,7 @@ pub async fn answer(request: TaskWithBody) -> Result<Json<Value>, ApiError> {
                     &mut *tx,
                     served.serving_topic().unwrap_or_default(),
                     served.kp.as_deref().unwrap_or_default(),
+                    &proof_grading::lesson::item_key(&served.text),
                 ),
             )
             .await?;
@@ -548,11 +549,15 @@ async fn advance_and_fold(
     }
     // D-PR1: the proof the held point owes outlives the D-S6 row.
     if let Some(kp) = moved.proof_due.as_deref() {
-        store(
-            state,
-            cadus_store::proof_grading::owe(&mut **tx, user_id, recorded.topic.as_str(), kp),
-        )
-        .await?;
+        let topic = recorded.topic.as_str();
+        for item in crate::proof_grading::lesson::written_items(&content.curriculum, topic, kp) {
+            let key = crate::proof_grading::lesson::item_key(&item.problem);
+            store(
+                state,
+                cadus_store::proof_grading::owe(&mut **tx, user_id, topic, kp, &key),
+            )
+            .await?;
+        }
     }
     // f19-retention: the attempt on a probe task is the delayed measurement, so it
     // writes its own event with the provenance (D-F11). A plain task writes none.

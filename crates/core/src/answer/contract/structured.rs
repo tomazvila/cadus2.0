@@ -336,6 +336,7 @@ pub(super) fn validate_parts(parts: &[AnswerPart]) -> Result<(), Undecidable> {
                 | AnswerContract::RequiredSimplestRadical
                 | AnswerContract::Multipart { .. }
                 | AnswerContract::None
+                | AnswerContract::Written
         ) {
             return Err(Undecidable::new(
                 "multipart parts require flat deterministic contracts",

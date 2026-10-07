@@ -95,3 +95,30 @@ fn the_exemplar_policy_survives_the_pool_document_round_trip() {
     assert_eq!(legacy.answer_contract, None);
     assert_eq!(legacy.to_body().unwrap(), old);
 }
+
+#[test]
+fn the_written_contract_reads_and_gives_no_verdict() {
+    let contract: AnswerContract =
+        serde_json::from_str(r#"{"kind":"written"}"#).unwrap_or(AnswerContract::None);
+    assert_eq!(contract, AnswerContract::Written);
+    assert_eq!(
+        serde_json::to_string(&contract).unwrap_or_default(),
+        r#"{"kind":"written"}"#
+    );
+    assert!(contract.validate().is_ok());
+    assert!(
+        contract
+            .validate_expected("Some x fails the condition.")
+            .is_err()
+    );
+    assert!(matches!(
+        check_contract("It is even.", "It is even.", contract),
+        Outcome::Undecidable(_)
+    ));
+    assert!(
+        serde_json::from_str::<AnswerContract>(
+            r#"{"kind":"multipart","parts":[{"name":"x","contract":{"kind":"written"}}]}"#
+        )
+        .is_err()
+    );
+}

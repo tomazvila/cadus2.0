@@ -316,7 +316,7 @@ pub const PUBLIC_FUNCTIONS: [(&str, bool, &str, bool, bool, bool); 11] = [
 /// therefore rewrote the authoritative event document with every C2 test green.
 /// `aw` is INSERT plus UPDATE: the two column lists of `users` in
 /// `0006_grants_rls.sql`. Neither list holds `id` or `is_admin`.
-pub const COLUMN_ACL_GRANTS: [(&str, &str, &str); 34] = [
+pub const COLUMN_ACL_GRANTS: [(&str, &str, &str); 35] = [
     // migration 0020: the exposure backfill can write the legacy cursor.
     // migration 0024: the input-column INSERT of an equivalence job.
     ("equivalence_jobs", "attempt_id", "cadus_app=a"),
@@ -348,10 +348,11 @@ pub const COLUMN_ACL_GRANTS: [(&str, &str, &str); 34] = [
     ("proof_grading_jobs", "rewrite", "cadus_app=a"),
     ("proof_grading_jobs", "seen_at", "cadus_app=w"),
     ("proof_grading_jobs", "user_id", "cadus_app=a"),
-    // migration 0028: narrows the table-wide INSERT of 0027 to the three
-    // columns `owe` writes (crates/store/src/proof_grading.rs). `created_at`
-    // keeps its DEFAULT and is never set by the app.
+    // migrations 0028 and 0029: narrow the table-wide INSERT of 0027 to the
+    // four columns `owe` writes (crates/store/src/proof_grading.rs).
+    // `created_at` keeps its DEFAULT and is never set by the app.
     ("proof_owed", "kp", "cadus_app=a"),
+    ("proof_owed", "problem_hash", "cadus_app=a"),
     ("proof_owed", "topic", "cadus_app=a"),
     ("proof_owed", "user_id", "cadus_app=a"),
     ("users", "created_at", "cadus_app=aw"),

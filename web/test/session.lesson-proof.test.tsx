@@ -7,7 +7,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { act, fireEvent, screen, waitFor } from '@testing-library/react';
 import { LESSON, REVIEW, TEACHING, P, graded, mount, planOf, press, stubApi } from './helpers/session';
-import { LESSON_PROOF_TEXT, PROOF_LEAVE_AFTER_MS, PROOF_OBLIGATIONS } from '@/views/session/LessonProof';
+import { LESSON_PROOF_TEXT, LESSON_WRITTEN_TEXT, PROOF_LEAVE_AFTER_MS, PROOF_OBLIGATIONS } from '@/views/session/LessonProof';
 import type {
   AnswerResponse, ApiClient, ProofChain, ProofField, ProofGradingPoll, ProofSeenResponse, ServedProblem,
 } from '@/api/types';
@@ -183,5 +183,27 @@ describe('a lesson proof the grader could not grade', () => {
     expect(proofDispute).toHaveBeenCalledWith('job-1', undefined);
     await press('Continue with the next task');
     expect(taskServe.mock.calls.at(-1)).toEqual(['t-review']);
+  });
+});
+
+describe('a written answer', () => {
+  it('words the loop for an answer, not a proof', async () => {
+    const taskAnswer = vi.fn<ApiClient['taskAnswer']>(async () => pending('job-1'));
+    const served = P(1, {
+      text: 'Write the contrapositive of: if n is even, n squared is even.',
+      total: null, written: true, proof: proof(),
+    });
+    await mountProof({ taskAnswer }, served);
+
+    // One sentence is the answer: no proof obligations, no proof wording.
+    for (const line of PROOF_OBLIGATIONS) expect(screen.queryByText(line)).toBeNull();
+    expect(screen.getByText(LESSON_WRITTEN_TEXT.hint)).toBeTruthy();
+    expect(screen.queryByLabelText('Your proof')).toBeNull();
+    expect(screen.queryByText('Submit proof')).toBeNull();
+    const area = screen.getByLabelText('Your answer') as HTMLTextAreaElement;
+    await act(async () => { fireEvent.change(area, { target: { value: 'If n squared is odd, n is odd.' } }); });
+    await press('Submit answer');
+    expect(taskAnswer.mock.calls[0]![1].answer).toBe('If n squared is odd, n is odd.');
+    expect(screen.getByText('Checking your answer…')).toBeTruthy();
   });
 });

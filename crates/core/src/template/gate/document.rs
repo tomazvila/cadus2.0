@@ -28,7 +28,10 @@ pub(super) fn check_document(doc: &TemplateDoc, spec: &GateSpec) -> Result<(), R
         contract
             .validate()
             .map_err(|reason| Rejection::new("answer-contract", reason.reason.to_owned()))?;
-        if contract == &crate::answer::AnswerContract::None {
+        if matches!(
+            contract,
+            crate::answer::AnswerContract::None | crate::answer::AnswerContract::Written
+        ) {
             return Err(Rejection::new(
                 "answer-contract",
                 "a template requires a deterministic answer contract".to_owned(),

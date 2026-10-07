@@ -309,6 +309,17 @@ changed each one with the whole gate green.
 | `public_functions_are_the_literal_list` | `pg_proc` for every function of schema `public`: name, `prosecdef`, `proconfig`, and the EXECUTE bits of `cadus_app`, `cadus_admin`, and PUBLIC. The old test matched the name prefix `auth_user_by_`, so a new SECURITY DEFINER helper was invisible. Every other function of the schema belongs to the `citext` extension. | #7, #4 |
 | `foreign_key_delete_actions_are_the_literal_list` | `pg_constraint.confdeltype` for every foreign key of schema `public`. `events_user_id_fkey` must stay `r` (RESTRICT): C2 says the event log outlives the account, and a flip to CASCADE erased a learner's whole history on one `DELETE FROM users`. | #8 |
 
+## `proof_owed`: the written items a lesson owes (D-PR1)
+
+Migration `0027_proof_owed.sql` adds `proof_owed`; `0028` narrows its INSERT grant, and
+`0029_proof_owed_item.sql` adds `problem_hash` (`problem_text_hash` of the item's
+statement). The table is under row-level security (`tenant_isolation` on `user_id`).
+`cadus_app` reads, inserts and deletes its own rows, and never updates them. Its INSERT
+grant names four columns: `user_id`, `topic`, `kp`, `problem_hash`. The primary key is
+`(user_id, topic, kp, problem_hash)`: a knowledge point owes one row for each of its written
+items, and the first draft of an item settles that item's row alone. A row of `0027` keeps
+the empty hash and stands for the only written item of its point.
+
 ## The `serving_pool` pop rule (D-O1, C6, A5)
 
 The pop is `cadus_store::pool::pop_with_ring_tx`. It reads at most 8 rows of one

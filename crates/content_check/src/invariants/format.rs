@@ -10,6 +10,7 @@ use crate::output::Finding;
 
 const ANSWER_CHARS: usize = 40;
 const LONG_ANSWER_CHARS: usize = 80;
+const WRITTEN_CHARS: usize = 160;
 const SKETCH_WORDS: usize = 12;
 
 /// The `name = value` fields of a `multipart` key, in key order.
@@ -44,6 +45,12 @@ fn i12(item: &Item) -> Option<String> {
                 plain_breach(&format!("the part `{name}`"), value, ANSWER_CHARS)
             })
         }),
+        Some("written") => {
+            plain_breach("the reference sentence", answer, WRITTEN_CHARS).or_else(|| {
+                let count = sentence_count(answer);
+                (count > 2).then(|| format!("the reference has {count} sentences (limit 2)"))
+            })
+        }
         _ => plain_breach("the answer", answer, ANSWER_CHARS),
     }
 }
@@ -82,7 +89,7 @@ fn i13(item: &Item) -> Option<String> {
     if sentence_count(sketch) < 2 && steps < 2 {
         return Some("the sketch has fewer than 2 sentences or `;` steps".to_owned());
     }
-    if matches!(item.kind(), Some("label" | "none")) {
+    if matches!(item.kind(), Some("label" | "none" | "written")) {
         return None;
     }
     digit_runs(&item.exemplar.answer)

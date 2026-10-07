@@ -338,7 +338,7 @@ pub(super) fn hold_for_proof(graph: &Curriculum, attempt: &Attempt, moved: Advan
     let Some(kp) = attempt.kp.as_ref().map(Slug::as_str) else {
         return moved;
     };
-    if crate::proof_grading::lesson::proof_exemplar(graph, attempt.topic.as_str(), kp).is_none() {
+    if crate::proof_grading::lesson::written_items(graph, attempt.topic.as_str(), kp).is_empty() {
         return moved;
     }
     Advance {

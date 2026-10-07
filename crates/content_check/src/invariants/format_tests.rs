@@ -209,3 +209,26 @@ fn d28_reads_each_function_part_and_each_item_of_the_tree() {
         ("answer-format", "CK5")
     );
 }
+
+#[test]
+fn a_written_item_has_a_sentence_key_of_160_characters() {
+    let contract = json!({"kind": "written"});
+    let key = "Every square is a rectangle, but a rectangle with unequal sides is not a square.";
+    assert_eq!(found_for(new_item(key, contract.clone(), Some(SKETCH))), []);
+    let long = format!("{}.", "a".repeat(160));
+    let found = found_for(new_item(&long, contract.clone(), Some(SKETCH)));
+    assert_eq!(
+        details(&found),
+        ["I12: the reference sentence has 161 characters (limit 160)"]
+    );
+    let found = found_for(new_item("One. Two. Three.", contract.clone(), Some(SKETCH)));
+    assert_eq!(
+        details(&found),
+        ["I12: the reference has 3 sentences (limit 2)"]
+    );
+    let found = found_for(new_item("It is $x$.", contract, Some(SKETCH)));
+    assert_eq!(
+        details(&found),
+        ["I12: the reference sentence has `$` or a backslash"]
+    );
+}

@@ -55,6 +55,28 @@ export const LESSON_PROOF_TEXT = {
   assisted: 'Closed with help: you read the solution, so it earns less XP and comes back for review sooner.',
 } as const;
 
+/**
+ * The lines of a `written` item: the answer is a sentence, not a proof (D-PR1). The loop is
+ * the same, so only the nouns and the hint change.
+ */
+export const LESSON_WRITTEN_TEXT = {
+  grading: 'A grader is checking your answer. Meanwhile, read it once more against the question:',
+  leave: 'This check is taking a while. Your answer is saved: continue with the next task, and this revision comes first in your plan.',
+  pass: 'Answer accepted. Continue to close this part of the lesson.',
+  revise: 'Not yet. Fix the first unmet check below, then resubmit your answer.',
+  reveal: 'You used both revisions. Read the reference answer once. Then write your answer without it.',
+  rewrite: 'Write your answer again from memory, without the reference answer.',
+  unavailable: 'The automatic check could not grade this draft. Submit it again, ask for a human check, or continue: this answer comes first in your next session.',
+  closed: 'This part of the lesson is closed.',
+  assisted: 'Closed with help: you read the reference answer, so it earns less XP and comes back for review sooner.',
+  hint: 'Answer in one or two complete sentences.',
+} as const;
+
+/** The lines of one item: a proof or a `written` answer. */
+function textOf(written: boolean): Record<keyof typeof LESSON_PROOF_TEXT, string> {
+  return written ? LESSON_WRITTEN_TEXT : LESSON_PROOF_TEXT;
+}
+
 /** What the screen shows. */
 type Stage =
   | { kind: 'write'; mode: 'draft' | 'revise' | 'rewrite' | 'retry'; chain: ProofChain | null }
@@ -97,6 +119,7 @@ export interface LessonProofProps {
 }
 
 export function LessonProof({ api, call, life, taskId, problem, onClosed, onLeave }: LessonProofProps) {
+  const written = problem.written === true;
   const [stage, setStage] = useState<Stage>(() => initialStage(problem));
   const [busy, setBusy] = useState(false);
 
@@ -161,6 +184,7 @@ export function LessonProof({ api, call, life, taskId, problem, onClosed, onLeav
         call={call}
         life={life}
         stage={stage}
+        written={written}
         busy={busy}
         setStage={setStage}
         onSubmit={submit}
@@ -177,6 +201,7 @@ interface BodyProps {
   call: Call;
   life: Lifetime;
   stage: Stage;
+  written: boolean;
   busy: boolean;
   setStage: (stage: Stage) => void;
   onSubmit: (text: string) => void;
@@ -185,33 +210,34 @@ interface BodyProps {
   onLeave: () => void;
 }
 
-function Body({ api, call, life, stage, busy, setStage, onSubmit, onClosePoint, onClosed, onLeave }: BodyProps) {
+function Body({ api, call, life, stage, written, busy, setStage, onSubmit, onClosePoint, onClosed, onLeave }: BodyProps) {
+  const text = textOf(written);
   switch (stage.kind) {
     case 'loading':
-      return <p className="muted" role="status">Reading your proof's verdict…</p>;
+      return <p className="muted" role="status">{`Reading your ${written ? 'answer' : 'proof'}'s verdict…`}</p>;
     case 'grading':
-      return <Grading api={api} life={life} jobId={stage.jobId} onLanded={() => { setStage({ kind: 'loading', jobId: stage.jobId }); }} onLeave={onLeave} />;
+      return <Grading api={api} life={life} written={written} jobId={stage.jobId} onLanded={() => { setStage({ kind: 'loading', jobId: stage.jobId }); }} onLeave={onLeave} />;
     case 'write':
-      return <Write stage={stage} busy={busy} onSubmit={onSubmit} onLeave={onLeave} />;
+      return <Write stage={stage} written={written} busy={busy} onSubmit={onSubmit} onLeave={onLeave} />;
     case 'reveal':
       return (
         <div className="proof-reveal">
-          <p role="status">{LESSON_PROOF_TEXT.reveal}</p>
+          <p role="status">{text.reveal}</p>
           <Solution text={stage.chain.solution!} />
           <div className="actions">
             <button type="button" className="btn btn-primary"
               onClick={() => { setStage({ kind: 'write', mode: 'rewrite', chain: null }); }}>
-              I have read it — rewrite the proof without it
+              {written ? 'I have read it — write my answer without it' : 'I have read it — rewrite the proof without it'}
             </button>
           </div>
         </div>
       );
     case 'verdict':
-      return <Verdict api={api} call={call} stage={stage} busy={busy} onSubmit={onSubmit} onClosePoint={onClosePoint} onLeave={onLeave} />;
+      return <Verdict api={api} call={call} stage={stage} written={written} busy={busy} onSubmit={onSubmit} onClosePoint={onClosePoint} onLeave={onLeave} />;
     case 'closed':
       return (
         <div className="proof-closed">
-          <p role="status">{stage.assisted ? LESSON_PROOF_TEXT.assisted : LESSON_PROOF_TEXT.closed}</p>
+          <p role="status">{stage.assisted ? text.assisted : text.closed}</p>
           {stage.xp != null ? <p className="chip chip-xp">{`+${String(stage.xp)} XP`}</p> : null}
           <div className="actions">
             <button type="button" className="btn btn-primary" onClick={() => { onClosed(stage.next, stage.nextUnavailable); }}>
@@ -223,8 +249,9 @@ function Body({ api, call, life, stage, busy, setStage, onSubmit, onClosePoint, 
   }
 }
 
-/** The obligations checklist. */
-export function Obligations() {
+/** The obligations checklist. A `written` answer gets one line instead. */
+export function Obligations({ written = false }: { written?: boolean }) {
+  if (written) return <p className="muted proof-hint">{LESSON_WRITTEN_TEXT.hint}</p>;
   return (
     <ul className="proof-obligations">
       {PROOF_OBLIGATIONS.map((line) => <li key={line}>{line}</li>)}
@@ -233,34 +260,37 @@ export function Obligations() {
 }
 
 /** The textarea of a draft, a revision, a retry or the unaided rewrite. */
-function Write({ stage, busy, onSubmit, onLeave }: {
+function Write({ stage, written, busy, onSubmit, onLeave }: {
   stage: Extract<Stage, { kind: 'write' }>;
+  written: boolean;
   busy: boolean;
   onSubmit: (text: string) => void;
   onLeave: () => void;
 }) {
   const prefill = stage.mode === 'revise' || stage.mode === 'retry' ? stage.chain?.draft ?? '' : '';
-  const [text, setText] = useState(prefill);
+  const [draft, setText] = useState(prefill);
+  const text = textOf(written);
+  const noun = written ? 'answer' : 'proof';
   const label = {
-    draft: 'Submit proof',
+    draft: `Submit ${noun}`,
     revise: `Resubmit (revision ${String((stage.chain?.revision ?? 0) + 1)} of ${String(stage.chain?.cap ?? 2)})`,
     retry: 'Submit again',
     rewrite: 'Submit the rewrite',
   }[stage.mode];
   return (
     <div className="proof-write">
-      {stage.mode === 'rewrite' ? <p role="status">{LESSON_PROOF_TEXT.rewrite}</p> : <Obligations />}
+      {stage.mode === 'rewrite' ? <p role="status">{text.rewrite}</p> : <Obligations written={written} />}
       <textarea
         className="work-input proof-input"
-        rows={10}
-        aria-label="Your proof"
-        placeholder="Write your proof…"
-        value={text}
+        rows={written ? 4 : 10}
+        aria-label={`Your ${noun}`}
+        placeholder={`Write your ${noun}…`}
+        value={draft}
         disabled={busy}
         onChange={(e) => { setText(e.target.value); }}
       />
       <div className="actions">
-        <button type="button" className="btn btn-primary" disabled={busy || !text.trim()} onClick={() => { onSubmit(text); }}>
+        <button type="button" className="btn btn-primary" disabled={busy || !draft.trim()} onClick={() => { onSubmit(draft); }}>
           {label}
         </button>
         {stage.mode === 'retry' ? (
@@ -272,9 +302,10 @@ function Write({ stage, busy, onSubmit, onLeave }: {
 }
 
 /** The wait: the obligations, the poll, and after 90 s the way out. */
-function Grading({ api, life, jobId, onLanded, onLeave }: {
+function Grading({ api, life, written, jobId, onLanded, onLeave }: {
   api: ApiClient;
   life: Lifetime;
+  written: boolean;
   jobId: string;
   onLanded: () => void;
   onLeave: () => void;
@@ -289,12 +320,12 @@ function Grading({ api, life, jobId, onLanded, onLeave }: {
   useEffect(() => { if (landed) onLanded(); }, [landed, onLanded]);
   return (
     <div className="proof-grading" aria-live="polite">
-      <p className="feedback-title">Checking your proof…</p>
-      <p role="status">{LESSON_PROOF_TEXT.grading}</p>
-      <Obligations />
+      <p className="feedback-title">{written ? 'Checking your answer…' : 'Checking your proof…'}</p>
+      <p role="status">{textOf(written).grading}</p>
+      <Obligations written={written} />
       {canLeave ? (
         <>
-          <p className="muted">{LESSON_PROOF_TEXT.leave}</p>
+          <p className="muted">{textOf(written).leave}</p>
           <div className="actions">
             <button type="button" className="btn" onClick={onLeave}>Continue with the next task</button>
           </div>
@@ -305,21 +336,23 @@ function Grading({ api, life, jobId, onLanded, onLeave }: {
 }
 
 /** The verdict of a settled head: pass, needs revision, or not gradeable. */
-function Verdict({ api, call, stage, busy, onSubmit, onClosePoint, onLeave }: {
+function Verdict({ api, call, stage, written, busy, onSubmit, onClosePoint, onLeave }: {
   api: ApiClient;
   call: Call;
   stage: Extract<Stage, { kind: 'verdict' }>;
+  written: boolean;
   busy: boolean;
   onSubmit: (text: string) => void;
   onClosePoint: () => void;
   onLeave: () => void;
 }) {
   const { chain, job } = stage;
+  const text = textOf(written);
   if (chain.phase === 'passed') {
     return (
       <div className="proof-verdict" data-verdict="pass">
-        <p className="feedback-title">Proof accepted</p>
-        <p role="status">{LESSON_PROOF_TEXT.pass}</p>
+        <p className="feedback-title">{written ? 'Answer accepted' : 'Proof accepted'}</p>
+        <p role="status">{text.pass}</p>
         {job.feedback ? <MathBlock className="proof-feedback">{job.feedback}</MathBlock> : null}
         <Checks checks={job.checks ?? []} />
         {chain.solution ? <Solution text={chain.solution} /> : null}
@@ -335,16 +368,16 @@ function Verdict({ api, call, stage, busy, onSubmit, onClosePoint, onLeave }: {
     // to a human check.
     return (
       <div className="proof-verdict" data-verdict="unavailable">
-        <p role="status">{LESSON_PROOF_TEXT.unavailable}</p>
+        <p role="status">{text.unavailable}</p>
         <Dispute api={api} call={call} jobId={chain.head_id} disputed={job.disputed === true} />
-        <Write stage={{ kind: 'write', mode: 'retry', chain }} busy={busy} onSubmit={onSubmit} onLeave={onLeave} />
+        <Write stage={{ kind: 'write', mode: 'retry', chain }} written={written} busy={busy} onSubmit={onSubmit} onLeave={onLeave} />
       </div>
     );
   }
   return (
     <div className="proof-verdict" data-verdict="needs_revision">
       <p className="feedback-title">Needs revision</p>
-      <p role="status">{LESSON_PROOF_TEXT.revise}</p>
+      <p role="status">{text.revise}</p>
       {chain.feedback ? <MathBlock className="proof-feedback">{chain.feedback}</MathBlock> : null}
       <FirstUnmet unmet={chain.first_unmet ?? null} />
       <details className="proof-all-checks">
@@ -352,7 +385,7 @@ function Verdict({ api, call, stage, busy, onSubmit, onClosePoint, onLeave }: {
         <Checks checks={job.checks ?? []} />
       </details>
       <Dispute api={api} call={call} jobId={chain.head_id} disputed={job.disputed === true} />
-      <Write stage={{ kind: 'write', mode: 'revise', chain }} busy={busy} onSubmit={onSubmit} onLeave={onLeave} />
+      <Write stage={{ kind: 'write', mode: 'revise', chain }} written={written} busy={busy} onSubmit={onSubmit} onLeave={onLeave} />
     </div>
   );
 }

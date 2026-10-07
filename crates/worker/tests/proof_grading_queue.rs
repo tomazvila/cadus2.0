@@ -8,7 +8,9 @@
 //! 3. an unparseable reply: the row returns to the queue, and fails on its
 //!    last claim; no correction;
 //! 4. the daily cap of 20: the row settles `capped` with no model call;
-//! 5. a human correction already standing: the pass settles, no second fold.
+//! 5. a human correction already standing: the pass settles, no second fold;
+//! 6. a `written` payload: the short-answer rubric and tool go to the model,
+//!    every check must be met, and a payload without `mode` stays a proof.
 //!
 //! Every expected value is a literal of the test that reads it.
 
@@ -487,6 +489,124 @@ async fn a_revision_after_a_verdict_folds_nothing() {
         assert_eq!(report.job_id, Some(revision));
         assert_eq!(row_of(db, revision).await.0, "done");
         assert_eq!(corrections(db, alice).await, 0);
+    })
+    .await;
+}
+
+/// The payload of one short written answer.
+fn written_payload(given: &str) -> Value {
+    json!({
+        "v": 1,
+        "task_id": "task-1",
+        "topic": "adding-two-digits",
+        "item_digest": "abc123def456",
+        "problem": "Write the contrapositive of: if n is even then n^2 is even.",
+        "reference": "If n^2 is not even, then n is not even.",
+        "given_answer": given,
+        "mode": "written",
+        "problem_hash": "0123456789abcdef"
+    })
+}
+
+/// The three checks of a short answer, every one met unless its id is in
+/// `unmet`.
+fn written_grading(unmet: &[&str]) -> String {
+    let checks: Vec<Value> = ["M1", "M2", "M3"]
+        .iter()
+        .map(|id| {
+            let met = !unmet.contains(id);
+            json!({"id": id, "text": format!("check {id}"), "minor": false, "met": met,
+                   "evidence": if met { "If n^2 is not even" } else { "not found" }})
+        })
+        .collect();
+    json!({"checks": checks, "feedback": "Your sentence keeps the direction of n is even."})
+        .to_string()
+}
+
+/// Enqueue one job with `payload` over the seeded attempt.
+async fn enqueue_with(db: &TestDb, user: Uuid, payload: Value) -> Uuid {
+    sqlx::query_scalar::<_, Uuid>(
+        "INSERT INTO proof_grading_jobs (user_id, attempt_id, payload) \
+         VALUES ($1, 'attempt-1', $2) RETURNING id",
+    )
+    .bind(user)
+    .bind(payload)
+    .fetch_one(&db.admin)
+    .await
+    .unwrap()
+}
+
+/// (6) A `written` payload asks the short-answer tool and passes when every
+/// check is met; one unmet check needs revision, and the fold follows.
+#[tokio::test]
+async fn a_written_answer_is_graded_under_three_checks() {
+    TestDb::with(|db| async move {
+        let db: &TestDb = db.as_ref();
+        let server = FakeModel::start(vec![
+            reply("grade_answer", &written_grading(&[]), None),
+            reply("grade_answer", &written_grading(&["M1"]), None),
+        ])
+        .await;
+        let alice = db.seed_user("written-pass@example.test").await;
+        seed_attempt(db, alice).await;
+        let id = enqueue_with(
+            db,
+            alice,
+            written_payload("If n^2 is not even then n is not even."),
+        )
+        .await;
+        let report = run_once(&common::handle(db), &job_of(&server))
+            .await
+            .unwrap();
+        assert_eq!(report.outcome, Outcome::Passed, "{report:?}");
+        let (status, result) = row_of(db, id).await;
+        assert_eq!(status, "done");
+        let result = result.unwrap();
+        assert_eq!(result["verdict"], json!("pass"));
+        assert_eq!(result["checks"].as_array().unwrap().len(), 3);
+        let sent = server.calls();
+        assert_eq!(
+            sent[0]["tool_choice"]["function"]["name"],
+            json!("grade_answer")
+        );
+        assert!(
+            server
+                .user_message(0)
+                .contains("Reference sentence:\nIf n^2 is not even, then n is not even.")
+        );
+
+        // A second learner: one unmet check sends the sentence back.
+        let bob = db.seed_user("written-fail@example.test").await;
+        seed_attempt(db, bob).await;
+        let id = enqueue_with(db, bob, written_payload("If n is even then n^2 is even.")).await;
+        let report = run_once(&common::handle(db), &job_of(&server))
+            .await
+            .unwrap();
+        assert_eq!(report.outcome, Outcome::NeedsRevision, "{report:?}");
+        let (_, result) = row_of(db, id).await;
+        assert_eq!(result.unwrap()["verdict"], json!("needs_revision"));
+        assert_eq!(corrections(db, bob).await, 1);
+    })
+    .await;
+}
+
+/// (6) A payload without `mode` is a proof: the proof tool is forced.
+#[tokio::test]
+async fn a_payload_without_mode_is_still_a_proof() {
+    TestDb::with(|db| async move {
+        let db: &TestDb = db.as_ref();
+        let server = FakeModel::start(vec![reply("grade_proof", &grading(&[]), None)]).await;
+        let alice = db.seed_user("proof-default@example.test").await;
+        seed_attempt(db, alice).await;
+        enqueue(db, alice).await;
+        let report = run_once(&common::handle(db), &job_of(&server))
+            .await
+            .unwrap();
+        assert_eq!(report.outcome, Outcome::Passed, "{report:?}");
+        assert_eq!(
+            server.calls()[0]["tool_choice"]["function"]["name"],
+            json!("grade_proof")
+        );
     })
     .await;
 }

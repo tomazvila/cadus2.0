@@ -409,7 +409,8 @@ fn grade_strict(expected: &Canon, text: &str, learner: &str, contract: &AnswerCo
         | AnswerContract::RelationSetup
         | AnswerContract::Function { .. }
         | AnswerContract::Property { .. }
-        | AnswerContract::None => {
+        | AnswerContract::None
+        | AnswerContract::Written => {
             unreachable!("the structured contracts decide before the learner answer canonicalizes")
         }
     }
@@ -535,7 +536,8 @@ fn structured_contract(
         | AnswerContract::Coordinates { .. }
         | AnswerContract::Set
         | AnswerContract::RequiredForm { .. }
-        | AnswerContract::None => return None,
+        | AnswerContract::None
+        | AnswerContract::Written => return None,
     };
     Some(outcome)
 }

@@ -14,13 +14,13 @@ pub enum TriageVerdict {
 /// The one triage rule over the whole contract enum, with no fallback.
 ///
 /// Every variant the grader decides is [`TriageVerdict::Grades`]; only
-/// [`AnswerContract::None`] is [`TriageVerdict::TeachOnly`] (V2, A3). The match
+/// [`AnswerContract::None`] and [`AnswerContract::Written`] are [`TriageVerdict::TeachOnly`] (V2, A3). The match
 /// names every variant, so a new contract cannot merge into the pool until it
 /// states its own triage.
 #[must_use]
 pub fn triage_verdict(contract: &AnswerContract) -> TriageVerdict {
     match contract {
-        AnswerContract::None => TriageVerdict::TeachOnly,
+        AnswerContract::None | AnswerContract::Written => TriageVerdict::TeachOnly,
         AnswerContract::Approx { .. }
         | AnswerContract::AscendingChain
         | AnswerContract::Coordinates { .. }
@@ -60,6 +60,10 @@ mod tests {
     fn triage_names_every_grading_contract_and_only_none_teaches() {
         assert_eq!(
             triage_verdict(&AnswerContract::None),
+            TriageVerdict::TeachOnly
+        );
+        assert_eq!(
+            triage_verdict(&AnswerContract::Written),
             TriageVerdict::TeachOnly
         );
         let graded = [

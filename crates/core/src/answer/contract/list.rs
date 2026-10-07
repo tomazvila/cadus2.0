@@ -7,6 +7,7 @@ pub(super) fn validate(ordered: bool, member: &AnswerContract) -> Result<(), Und
     if matches!(
         member,
         AnswerContract::None
+            | AnswerContract::Written
             | AnswerContract::RequiredAssignment
             | AnswerContract::RequiredSimplestRadical
             | AnswerContract::Multipart { .. }

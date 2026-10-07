@@ -136,6 +136,10 @@ pub enum AnswerContract {
     },
     /// The item has no deterministic assessment.
     None,
+    /// The item asks for a sentence. The authored answer is the reference
+    /// sentence; the model grader compares the learner's sentence with it,
+    /// so the contract gives no deterministic verdict.
+    Written,
 }
 
 /// The form a measured answer's magnitude must take (spec section 8.7).
@@ -242,6 +246,7 @@ enum ContractDoc {
         args: PropertyArgs,
     },
     None {},
+    Written {},
 }
 
 impl TryFrom<ContractDoc> for AnswerContract {
@@ -316,6 +321,7 @@ fn fieldless_contract(document: ContractDoc) -> AnswerContract {
             AnswerContract::RequiredNormalizedScientificNotation
         }
         ContractDoc::RequiredSimplestRadical {} => AnswerContract::RequiredSimplestRadical,
+        ContractDoc::Written {} => AnswerContract::Written,
         // `None {}` is the one document that stays. A document that gets no arm
         // here gives no verdict, which is the safe result.
         _ => AnswerContract::None,
@@ -399,6 +405,9 @@ impl AnswerContract {
         match self {
             Self::None => Err(Undecidable::new(
                 "the item has no deterministic answer contract",
+            )),
+            Self::Written => Err(Undecidable::new(
+                "a written item has no deterministic answer contract",
             )),
             Self::Label { options } => label_value(options, expected).ok_or_else(|| {
                 Undecidable::new("the authored answer is outside the choice vocabulary")

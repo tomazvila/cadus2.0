@@ -13,12 +13,17 @@ pub enum KeyPolicy {
     Verdict,
     /// The item has no deterministic checker: teach-only content, no failure.
     TeachOnly,
+    /// The item is a written answer: the model grader reads it, so no key check.
+    Written,
     /// The item has a checker, but the authored key does not validate.
     BadKey(String),
 }
 
 /// Decide the policy of one authored answer from the one verdict rule.
 pub fn key_policy(answer: &str, contract: Option<&AnswerContract>, kind: AnswerKind) -> KeyPolicy {
+    if contract == Some(&AnswerContract::Written) {
+        return KeyPolicy::Written;
+    }
     let item = Exemplar {
         problem: String::new(),
         answer_contract: contract.cloned(),
@@ -35,7 +40,7 @@ pub fn key_policy(answer: &str, contract: Option<&AnswerContract>, kind: AnswerK
 /// Whether a deterministic checker exists for this contract and topic kind.
 pub fn has_checker(contract: Option<&AnswerContract>, kind: AnswerKind) -> bool {
     match contract {
-        Some(contract) => contract != &AnswerContract::None,
+        Some(contract) => !matches!(contract, AnswerContract::None | AnswerContract::Written),
         None => matches!(kind, AnswerKind::Numeric | AnswerKind::Expression),
     }
 }
@@ -104,11 +109,24 @@ mod tests {
         );
     }
 
+    #[test]
+    fn a_written_item_has_no_key_check() {
+        let written = Some(AnswerContract::Written);
+        for kind in KINDS {
+            assert_eq!(
+                key_policy("Some x fails.", written.as_ref(), kind),
+                KeyPolicy::Written
+            );
+        }
+        assert!(!has_checker(written.as_ref(), AnswerKind::Numeric));
+    }
+
     /// The policy name of one decision, with no reason text.
     fn name(policy: &KeyPolicy) -> &'static str {
         match policy {
             KeyPolicy::Verdict => "verdict",
             KeyPolicy::TeachOnly => "teach-only",
+            KeyPolicy::Written => "written",
             KeyPolicy::BadKey(_) => "bad-key",
         }
     }

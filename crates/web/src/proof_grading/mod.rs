@@ -15,7 +15,9 @@
 //!    feedback, the per-check list, the chain the row belongs to, and the
 //!    reference solution once the chain allows it ([`chain`]).
 //! 3. **The lesson loop** ([`lesson`]). A written proof inside a lesson closes
-//!    its knowledge point on a PASS, not on the submission.
+//!    its knowledge point on a PASS, not on the submission. A `written` item
+//!    (a sentence as the answer) takes the same path with the payload `mode`
+//!    `written`; a point can author several written items, one chain each.
 //! 4. **The learner routes** ([`routes`]): the verdict seen, the dispute, the
 //!    proofs list, and the revision of a non-lesson chain.
 //!
@@ -33,7 +35,8 @@ use axum::extract::State;
 use cadus_core::answer::AnswerContract;
 use cadus_core::curriculum::AnswerKind;
 use cadus_store::proof_grading::{
-    self, CONTEXT_QUIZ, CONTEXT_REVIEW, CONTEXT_SELFCHECK, JobPayload, NewJob,
+    self, CONTEXT_QUIZ, CONTEXT_REVIEW, CONTEXT_SELFCHECK, JobPayload, MODE_PROOF, MODE_WRITTEN,
+    NewJob,
 };
 use serde_json::{Value, json};
 use sqlx::types::Uuid;
@@ -81,7 +84,7 @@ const PROOF_OPENINGS: [&str; 4] = [
 #[must_use]
 pub fn is_written_proof(served: &ServedProblem, kind: AnswerKind) -> bool {
     match served.expected.answer_contract {
-        Some(AnswerContract::None) => true,
+        Some(AnswerContract::None | AnswerContract::Written) => true,
         None => kind == AnswerKind::Proof,
         Some(_) => false,
     }
@@ -96,10 +99,21 @@ pub fn is_proof_text(text: &str) -> bool {
         .any(|opening| text.starts_with(opening))
 }
 
-/// Whether the served item is a written PROOF: no checkable key, and a
-/// statement that asks for a proof. A free explanation is not one.
+/// Whether the served item has the contract `written`: a sentence is the
+/// answer, and the model grader compares it with the reference sentence.
+#[must_use]
+pub fn is_written_item(served: &ServedProblem) -> bool {
+    served.expected.answer_contract == Some(AnswerContract::Written)
+}
+
+/// Whether the served item takes the revision chain: a written PROOF (no
+/// checkable key, and a statement that asks for a proof) or a `written`
+/// item. A free explanation is neither.
 #[must_use]
 pub fn is_proof_item(served: &ServedProblem) -> bool {
+    if is_written_item(served) {
+        return true;
+    }
     let no_key = match served.expected.answer_contract {
         Some(AnswerContract::None) => true,
         None => served.answer_kind.as_deref() == Some("proof"),
@@ -128,19 +142,32 @@ fn meaningful_key(answer: &str) -> Option<String> {
 /// The job payload of one served item and one learner text.
 #[must_use]
 pub fn payload(served: &ServedProblem, answer: &str) -> JobPayload {
+    let written = is_written_item(served);
     JobPayload {
         v: proof_grading::PAYLOAD_VERSION,
         task_id: served.task_id.clone(),
         topic: served.serving_topic().unwrap_or_default().to_owned(),
         item_digest: crate::equivalence::item_digest(served),
         problem: served.text.clone(),
-        reference: served.solution_sketch.clone(),
-        expected: meaningful_key(&served.expected.answer),
+        // A written item's reference is its sentence; the grader compares
+        // the learner's sentence with it. The sketch stays with the item.
+        reference: if written {
+            Some(served.expected.answer.clone())
+        } else {
+            served.solution_sketch.clone()
+        },
+        expected: if written {
+            None
+        } else {
+            meaningful_key(&served.expected.answer)
+        },
         // No curriculum item carries an authored rubric yet. When one does,
         // it goes here and replaces the derived checks.
         rubric: Vec::new(),
         given_answer: answer.to_owned(),
         kp: served.kp.clone(),
+        mode: Some(if written { MODE_WRITTEN } else { MODE_PROOF }.to_owned()),
+        problem_hash: Some(lesson::item_key(&served.text)),
     }
 }
 

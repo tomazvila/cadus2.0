@@ -572,6 +572,7 @@ async fn an_open_revision_carries_into_the_next_days_plan_first() {
         .bind(user)
         .bind(json!({"v": 1, "task_id": LESSON, "topic": "addition", "kp": "kp2",
                      "item_digest": "abc123def456", "problem": PROOF2, "reference": REF2,
+                     "problem_hash": cadus_core::learner::problem_text_hash(PROOF2),
                      "given_answer": DRAFT1}))
         .bind(json!({"v": 1, "verdict": "needs_revision", "model": "m",
                      "feedback": "Justify the last step.", "checks": []}))

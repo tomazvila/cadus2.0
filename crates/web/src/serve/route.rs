@@ -418,9 +418,15 @@ pub(crate) async fn install_next(
     // open chain's own problem, or the point's proof exemplar — and draws
     // nothing from the pool.
     if task.task_type == TaskType::Lesson && feedback.is_none() {
-        let due =
-            crate::proof_grading::lesson::due_item(state, tx, graph, &target.serve, &target.kp)
-                .await?;
+        let due = crate::proof_grading::lesson::due_item(
+            state,
+            tx,
+            graph,
+            &target.serve,
+            &target.kp,
+            &task.task_id,
+        )
+        .await?;
         if let Some(item) = due {
             let request = ProofServe {
                 task,
@@ -553,7 +559,11 @@ async fn install_proof(
         },
         expected_answer: cadus_core::pool::PoolAnswer {
             v: cadus_core::pool::POOL_ROW_VERSION,
-            answer_contract: Some(cadus_core::answer::AnswerContract::None),
+            answer_contract: Some(if item.written {
+                cadus_core::answer::AnswerContract::Written
+            } else {
+                cadus_core::answer::AnswerContract::None
+            }),
             answer: item.answer.clone(),
         },
         instance_hash: problem_text_hash(&item.text),

@@ -46,6 +46,7 @@ fn dump_kp_gives_the_chain_rule_example_of_the_brief() {
             "kp_block",
             "V",
             "U",
+            "W",
             "exemplars",
         ],
     );
@@ -146,7 +147,7 @@ fn the_file_field_comes_from_the_unit_header_not_from_a_name_pattern() {
 // ---- report ----
 
 const REPORT: [&str; 6] = ["schema", "base", "db_read", "result", "courses", "kps"];
-const REPORT_COURSE: [&str; 13] = [
+const REPORT_COURSE: [&str; 14] = [
     "course",
     "result",
     "floor",
@@ -157,12 +158,13 @@ const REPORT_COURSE: [&str; 13] = [
     "exemplars",
     "unmarked",
     "unmarked_p3",
+    "written",
     "label_items",
     "kps_no_teach_page",
     "breaches",
 ];
-const REPORT_KP: [&str; 12] = [
-    "kp", "file", "V", "U", "T", "teach", "floor", "goal", "serves", "proof_kp", "existing",
+const REPORT_KP: [&str; 13] = [
+    "kp", "file", "V", "U", "W", "T", "teach", "floor", "goal", "serves", "proof_kp", "existing",
     "findings",
 ];
 

@@ -29,6 +29,8 @@ pub struct Item {
     pub contract: Value,
     /// `verdict_policy` gives a verdict.
     pub verdict: bool,
+    /// The contract is `written`: a reference sentence for the model grader.
+    pub written: bool,
     /// The text of the I3 breach of a verdict exemplar, if there is one.
     pub grader: Option<String>,
     /// I12, I13 and I14 apply (a new or changed exemplar).
@@ -39,6 +41,7 @@ impl Item {
     /// Build an item. `contract` is the JSON form of `exemplar.answer_contract`.
     pub fn new(exemplar: Exemplar, contract: Value, kind: AnswerKind) -> Self {
         let verdict = exemplar.verdict_policy(kind).is_ok();
+        let written = exemplar.is_written();
         let grader = verdict
             .then(|| grader::probe(&exemplar, &contract, kind))
             .flatten();
@@ -49,6 +52,7 @@ impl Item {
             exemplar,
             contract,
             verdict,
+            written,
             grader,
             is_new: false,
         }
@@ -57,6 +61,11 @@ impl Item {
     fn of_tree(exemplar: &Exemplar, kind: AnswerKind) -> Self {
         let contract = serde_json::to_value(&exemplar.answer_contract).unwrap_or(Value::Null);
         Self::new(exemplar.clone(), contract, kind)
+    }
+
+    /// The exemplar gives no verdict and is not a written item (I4, U).
+    pub fn unmarked(&self) -> bool {
+        !self.verdict && !self.written
     }
 
     /// The `kind` text of the contract, if the exemplar has a contract.
@@ -98,9 +107,14 @@ impl KpView {
         hashes.len()
     }
 
-    /// U: the exemplars that give no verdict.
+    /// U: the exemplars that give no verdict and are not written items.
     pub fn u(&self) -> usize {
-        self.items.iter().filter(|item| !item.verdict).count()
+        self.items.iter().filter(|item| item.unmarked()).count()
+    }
+
+    /// W: the written items. They give no verdict and do not count toward V or U.
+    pub fn w(&self) -> usize {
+        self.items.iter().filter(|item| item.written).count()
     }
 
     /// The text of the I5 breach of the item at `index`, if there is one.

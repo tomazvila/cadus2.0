@@ -27,7 +27,12 @@ impl Projector<'_> {
             .iter()
             .chain(std::iter::once(&event.final_field))
         {
-            if field.outcome != AttemptOutcome::Correct || field.contract == AnswerContract::None {
+            if field.outcome != AttemptOutcome::Correct
+                || matches!(
+                    field.contract,
+                    AnswerContract::None | AnswerContract::Written
+                )
+            {
                 continue;
             }
             for skill in &field.skills {

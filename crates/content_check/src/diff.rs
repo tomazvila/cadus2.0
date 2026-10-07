@@ -81,7 +81,7 @@ fn item_of<'a>(items: &'a [Item], hash: &str) -> Option<&'a Item> {
 
 /// The I16 breach texts of one KP.
 fn i16_breaches(before: &[Item], after: &KpView, v_before: usize) -> Vec<String> {
-    let u_before = before.iter().filter(|item| !item.verdict).count();
+    let u_before = before.iter().filter(|item| item.unmarked()).count();
     let (v_after, u_after) = (after.v(), after.u());
     let old = hashes(before, false);
     let new_p3 = after.items.iter().enumerate().any(|(index, item)| {
@@ -138,7 +138,7 @@ pub fn run(args: &[String]) -> Outcome {
         .collect();
     let doc = json!({"schema": "cadus.diff.v1", "kp": after.kp,
         "V_before": v_before, "V_after": after.v(),
-        "U_before": before.iter().filter(|item| !item.verdict).count(), "U_after": after.u(),
+        "U_before": before.iter().filter(|item| item.unmarked()).count(), "U_after": after.u(),
         "exemplars_before": before.len(), "exemplars_after": after.items.len(),
         "kept": old.intersection(&now).collect::<Vec<_>>(),
         "removed": old.difference(&now).collect::<Vec<_>>(),

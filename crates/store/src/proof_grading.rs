@@ -43,6 +43,13 @@ pub const JOB_FAILED: &str = "failed";
 /// `proof_grading_jobs.status` of a job the per-learner daily cap refused.
 pub const JOB_CAPPED: &str = "capped";
 
+/// The `mode` of a payload that grades a written proof.
+pub const MODE_PROOF: &str = "proof";
+
+/// The `mode` of a payload that grades a written sentence: the learner's
+/// answer is compared with a reference sentence (D-PR1).
+pub const MODE_WRITTEN: &str = "written";
+
 /// The version of the [`JobPayload`] document.
 pub const PAYLOAD_VERSION: u32 = 1;
 
@@ -96,6 +103,14 @@ pub struct JobPayload {
     /// none.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub kp: Option<String>,
+    /// `"proof"` or `"written"` (a short answer). Rows written before the key
+    /// existed carry none and read as a proof.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub mode: Option<String>,
+    /// The hash of the problem text; a lesson chain is found by
+    /// `(topic, kp, problem_hash)`.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub problem_hash: Option<String>,
 }
 
 /// One graded check of a [`Grading`].
@@ -568,8 +583,9 @@ where
     Ok(rows.iter().map(row_of).collect::<Result<_, _>>()?)
 }
 
-/// The open lesson head of one knowledge point (`topic` is the serving
-/// topic of the payload), when one stands.
+/// The open lesson head of one written item of a knowledge point (`topic` is
+/// the serving topic of the payload, `problem_hash` the
+/// `problem_text_hash` of the item), when one stands.
 ///
 /// # Errors
 ///
@@ -578,6 +594,7 @@ pub async fn open_lesson_head<'e, E>(
     executor: E,
     topic: &str,
     kp: &str,
+    problem_hash: &str,
 ) -> Result<Option<JobRow>, StoreError>
 where
     E: PgExecutor<'e>,
@@ -588,16 +605,78 @@ where
         " FROM proof_grading_jobs j \
           WHERE j.closed_at IS NULL AND j.context = $1 \
             AND j.payload->>'topic' = $2 AND j.payload->>'kp' = $3 \
+            AND (j.payload->>'problem_hash' = $4 OR j.payload->>'problem_hash' IS NULL) \
             AND NOT EXISTS (SELECT 1 FROM proof_grading_jobs s WHERE s.revision_of = j.id) \
-          ORDER BY j.created_at DESC, j.id LIMIT 1"
+          ORDER BY j.created_at DESC, j.id"
     );
-    let row = sqlx::query(sql)
+    let rows = sqlx::query(sql)
         .bind(CONTEXT_LESSON)
         .bind(topic)
         .bind(kp)
-        .fetch_optional(executor)
+        .bind(problem_hash)
+        .fetch_all(executor)
         .await?;
-    Ok(row.as_ref().map(row_of).transpose()?)
+    // A chain opened before the key existed carries no hash: it belongs to
+    // the item whose statement hashes to the key.
+    for row in &rows {
+        let job = row_of(row)?;
+        let hash = job
+            .payload_str("problem_hash")
+            .map(str::to_owned)
+            .or_else(|| {
+                job.payload_str("problem")
+                    .map(cadus_core::learner::problem_text_hash)
+            });
+        if hash.as_deref() == Some(problem_hash) {
+            return Ok(Some(job));
+        }
+    }
+    Ok(None)
+}
+
+/// The `problem_hash` of every item of `(topic, kp)` whose lesson chain
+/// closed under `task_id`, oldest first. A chain closes on a pass the learner
+/// continued from, or on the unaided rewrite after the cap.
+///
+/// # Errors
+///
+/// Returns [`StoreError::Db`] when the statement fails.
+pub async fn closed_lesson_items<'e, E>(
+    executor: E,
+    topic: &str,
+    kp: &str,
+    task_id: &str,
+) -> Result<Vec<String>, StoreError>
+where
+    E: PgExecutor<'e>,
+{
+    let rows = sqlx::query_as::<_, (Option<String>, Option<String>)>(
+        "SELECT j.payload->>'problem_hash', j.payload->>'problem' \
+           FROM proof_grading_jobs j \
+          WHERE j.closed_at IS NOT NULL AND j.context = $1 \
+            AND j.payload->>'topic' = $2 AND j.payload->>'kp' = $3 \
+            AND j.payload->>'task_id' = $4 \
+          ORDER BY j.created_at",
+    )
+    .bind(CONTEXT_LESSON)
+    .bind(topic)
+    .bind(kp)
+    .bind(task_id)
+    .fetch_all(executor)
+    .await?;
+    // A chain opened before the key existed carries its statement instead.
+    let mut hashes: Vec<String> = Vec::new();
+    for (hash, problem) in rows {
+        let found = hash.or_else(|| {
+            problem
+                .as_deref()
+                .map(cadus_core::learner::problem_text_hash)
+        });
+        if let Some(found) = found.filter(|found| !hashes.contains(found)) {
+            hashes.push(found);
+        }
+    }
+    Ok(hashes)
 }
 
 /// The job that grades `attempt_id`, under the caller's tenant binding.
@@ -746,49 +825,66 @@ where
     Ok(id)
 }
 
-/// Record that the lesson owes the written proof of `(topic, kp)`: its
-/// decided items passed (D-PR1). A second record changes nothing.
+/// Record that the lesson owes the written item `problem_hash` of `(topic,
+/// kp)`: the decided items of the point passed (D-PR1). A second record
+/// changes nothing.
 ///
 /// # Errors
 ///
 /// Returns [`StoreError::Db`] when the statement fails.
-pub async fn owe<'e, E>(executor: E, user_id: Uuid, topic: &str, kp: &str) -> Result<(), StoreError>
+pub async fn owe<'e, E>(
+    executor: E,
+    user_id: Uuid,
+    topic: &str,
+    kp: &str,
+    problem_hash: &str,
+) -> Result<(), StoreError>
 where
     E: PgExecutor<'e>,
 {
     sqlx::query(
-        "INSERT INTO proof_owed (user_id, topic, kp) VALUES ($1, $2, $3) \
-         ON CONFLICT (user_id, topic, kp) DO NOTHING",
+        "INSERT INTO proof_owed (user_id, topic, kp, problem_hash) VALUES ($1, $2, $3, $4) \
+         ON CONFLICT (user_id, topic, kp, problem_hash) DO NOTHING",
     )
     .bind(user_id)
     .bind(topic)
     .bind(kp)
+    .bind(problem_hash)
     .execute(executor)
     .await?;
     Ok(())
 }
 
-/// Whether the lesson owes the written proof of `(topic, kp)`, under the
-/// caller's tenant binding.
+/// Whether the lesson owes the written item `problem_hash` of `(topic, kp)`,
+/// under the caller's tenant binding. A row of migration 0027 carries the
+/// empty hash and stands for the point's only item.
 ///
 /// # Errors
 ///
 /// Returns [`StoreError::Db`] when the statement fails.
-pub async fn is_owed<'e, E>(executor: E, topic: &str, kp: &str) -> Result<bool, StoreError>
+pub async fn is_owed<'e, E>(
+    executor: E,
+    topic: &str,
+    kp: &str,
+    problem_hash: &str,
+) -> Result<bool, StoreError>
 where
     E: PgExecutor<'e>,
 {
     let owed = sqlx::query_scalar::<_, bool>(
-        "SELECT EXISTS (SELECT 1 FROM proof_owed WHERE topic = $1 AND kp = $2)",
+        "SELECT EXISTS (SELECT 1 FROM proof_owed \
+          WHERE topic = $1 AND kp = $2 AND problem_hash IN ($3, ''))",
     )
     .bind(topic)
     .bind(kp)
+    .bind(problem_hash)
     .fetch_one(executor)
     .await?;
     Ok(owed)
 }
 
-/// Every owed proof of the caller's tenant as `(topic, kp)`, oldest first.
+/// Every knowledge point of the caller's tenant that owes a written item, as
+/// `(topic, kp)`, oldest first, once per point.
 ///
 /// # Errors
 ///
@@ -798,26 +894,33 @@ where
     E: PgExecutor<'e>,
 {
     let rows = sqlx::query_as::<_, (String, String)>(
-        "SELECT topic, kp FROM proof_owed ORDER BY created_at, topic, kp",
+        "SELECT topic, kp FROM proof_owed GROUP BY topic, kp \
+          ORDER BY min(created_at), topic, kp",
     )
     .fetch_all(executor)
     .await?;
     Ok(rows)
 }
 
-/// The owed proof of `(topic, kp)` is no longer owed: its first draft opened
-/// the revision chain.
+/// The owed item `problem_hash` of `(topic, kp)` is no longer owed: its first
+/// draft opened the revision chain.
 ///
 /// # Errors
 ///
 /// Returns [`StoreError::Db`] when the statement fails.
-pub async fn settle_owed<'e, E>(executor: E, topic: &str, kp: &str) -> Result<(), StoreError>
+pub async fn settle_owed<'e, E>(
+    executor: E,
+    topic: &str,
+    kp: &str,
+    problem_hash: &str,
+) -> Result<(), StoreError>
 where
     E: PgExecutor<'e>,
 {
-    sqlx::query("DELETE FROM proof_owed WHERE topic = $1 AND kp = $2")
+    sqlx::query("DELETE FROM proof_owed WHERE topic = $1 AND kp = $2 AND problem_hash IN ($3, '')")
         .bind(topic)
         .bind(kp)
+        .bind(problem_hash)
         .execute(executor)
         .await?;
     Ok(())
@@ -910,7 +1013,7 @@ where
 #[cfg(test)]
 mod tests {
     #![allow(clippy::unwrap_used)]
-    use super::{Check, Grading, JobPayload, VERDICT_PASS};
+    use super::{Check, Grading, JobPayload, MODE_WRITTEN, VERDICT_PASS};
 
     /// The result document round-trips through its JSON spelling.
     #[test]
@@ -944,5 +1047,29 @@ mod tests {
         .unwrap();
         assert!(payload.rubric.is_empty());
         assert_eq!(payload.reference, None);
+    }
+
+    /// A row written before the item key reads with no mode and no hash, and
+    /// a written payload keeps both new fields through JSON.
+    #[test]
+    fn the_mode_and_the_item_key_default_and_round_trip() {
+        let old: JobPayload = serde_json::from_value(serde_json::json!({
+            "v": 1, "task_id": "t", "topic": "x", "item_digest": "abc123def456",
+            "problem": "Prove it.", "given_answer": "Proof."
+        }))
+        .unwrap();
+        assert_eq!(old.mode, None);
+        assert_eq!(old.problem_hash, None);
+        let json = serde_json::to_value(&old).unwrap();
+        assert!(json.get("problem_hash").is_none());
+        let written = JobPayload {
+            mode: Some(MODE_WRITTEN.to_owned()),
+            problem_hash: Some("0123456789ab".to_owned()),
+            ..old
+        };
+        let json = serde_json::to_value(&written).unwrap();
+        assert_eq!(json["mode"], "written");
+        assert_eq!(json["problem_hash"], "0123456789ab");
+        assert_eq!(serde_json::from_value::<JobPayload>(json).unwrap(), written);
     }
 }
