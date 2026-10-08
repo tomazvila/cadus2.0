@@ -390,6 +390,9 @@ pub async fn answer(request: TaskWithBody) -> Result<Json<Value>, ApiError> {
     if let Some(text) = notation_text(&served.expected, &submitted.answer, kind, &grade) {
         body["notation"] = json!(text);
     }
+    if let Some(text) = feedback::checker_text(&served, &submitted.answer, &recorded) {
+        body["checker_text"] = json!(text);
+    }
     // A failed hand-off leaves a question of the block owed, even when this
     // review closed: the client re-serves, and the serve route finds it.
     if hand_on_failed {

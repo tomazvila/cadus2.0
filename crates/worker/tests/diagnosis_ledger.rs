@@ -31,7 +31,7 @@ use common::{
 };
 
 /// The arguments of one accepted diagnosis: the sign.
-const SIGN_ERROR: &str = "{\"error_tags\":[\"sign-error\"],\"prose\":\"Watch the sign.\"}";
+const SIGN_ERROR: &str = "{\"error_tags\":[\"sign-error\"],\"prose\":\"Watch the sign.\",\"misconception\":\"sign-slip\"}";
 
 /// A `200` reply that carries the sign-error diagnosis and this `usage` block,
 /// under this request id.

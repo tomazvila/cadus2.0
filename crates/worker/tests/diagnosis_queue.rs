@@ -271,7 +271,7 @@ async fn a_tag_outside_the_vocabulary_is_dropped_from_the_result() {
         let (_, id) = one_job(&db, "tags@example.test", &payload(None)).await;
         let server = FakeModel::start(vec![diagnosis_reply(
             "{\"error_tags\":[\"sign-error\",\"carelessness\",\"units\"],\
-             \"prose\":\"Watch the sign.\"}",
+             \"prose\":\"Watch the sign.\",\"misconception\":\"sign-slip\"}",
         )])
         .await;
 
@@ -309,9 +309,10 @@ async fn the_user_message_carries_the_attempt_and_not_the_verdict() {
         assert_eq!(sent.len(), 1);
         let user_text = server.user_message(0);
         for line in [
-            "Problem: Compute $8 - 5$.",
-            "Correct final answer (reference): 3",
-            "Learner's answer: '2'",
+            "Problem: Compute $5 - 8$.",
+            "Correct final answer (reference): -3",
+            "Learner's answer: '3'",
+            "Candidate misconceptions:\n- sign-slip:",
             "Learner's shown work: (none provided)",
             "The checker marked the answer wrong. If it is in fact correct, say so.",
         ] {
@@ -347,7 +348,7 @@ async fn a_finished_job_notifies_with_the_two_ids() {
     TestDb::with(|db| async move {
         let (user, id) = one_job(&db, "notify@example.test", &payload(None)).await;
         let server = FakeModel::start(vec![diagnosis_reply(
-            "{\"error_tags\":[\"units\"],\"prose\":\"Name the unit.\"}",
+            "{\"error_tags\":[\"units\"],\"prose\":\"Name the unit.\",\"misconception\":\"sign-slip\"}",
         )])
         .await;
 
@@ -441,7 +442,7 @@ async fn a_truncated_reply_finishes_the_job_inside_one_claim() {
         .to_string();
         let server = FakeModel::start(vec![
             (200, truncated),
-            diagnosis_reply("{\"error_tags\":[\"sign-error\"],\"prose\":\"Watch the sign.\"}"),
+            diagnosis_reply("{\"error_tags\":[\"sign-error\"],\"prose\":\"Watch the sign.\",\"misconception\":\"sign-slip\"}"),
         ])
         .await;
 
@@ -475,6 +476,91 @@ async fn a_four_hundred_spends_one_attempt_and_requeues_the_row() {
 
         assert_eq!(server.calls().len(), 1, "a 400 makes exactly one attempt");
         assert_eq!(row_of(&db.admin, id).await.1, 1);
+    })
+    .await;
+}
+
+/// Owner report 11: LaTeX survives the whole path. The model writes a single backslash in
+/// its JSON, the decoder reads `\f`, `\t`, `\n`, `\r` as control characters, and the stored
+/// prose holds `\frac`, `\times`, `\theta`, `\neq`, `\text` and `\right` again. The
+/// misconception is named, so its tag stays and the prose is the model's own.
+#[tokio::test]
+async fn latex_commands_survive_the_explanation_path() {
+    TestDb::with(|db| async move {
+        let mut item = payload(None);
+        item["problem"] = json!("Divide $\\frac{3}{4}$ by $\\frac{5}{8}$.");
+        item["expected"] = json!("6/5");
+        item["given_answer"] = json!("2");
+        let (_, id) = one_job(&db, "latex@example.test", &item).await;
+        let server = FakeModel::start(vec![diagnosis_reply(
+            "{\"error_tags\":[\"arithmetic-slip\"],\"misconception\":\"rounded-up\",\
+             \"prose\":\"$\\frac{3}{4} : \\frac{5}{8} = \\frac{6}{5}$, and $2 \\times \
+             \\frac{5}{8} \\neq \\frac{3}{4}$. At $\\theta = 0$ read $\\text{m}$ in \
+             $( x \\right)$.\"}",
+        )])
+        .await;
+
+        diagnose_to(&db, &server, 0, id, Outcome::Done, "done").await;
+
+        let (_, _, result) = row_of(&db.admin, id).await;
+        let result = result.unwrap();
+        assert_eq!(result["misconception"], json!("rounded-up"));
+        assert_eq!(result["error_tags"], json!(["arithmetic-slip"]));
+        let prose = result["prose"].as_str().unwrap();
+        for command in [
+            "\\frac{6}{5}",
+            "\\times",
+            "\\neq",
+            "\\theta",
+            "\\text{m}",
+            "\\right",
+        ] {
+            assert!(prose.contains(command), "{command} is lost in {prose:?}");
+        }
+        assert!(
+            !prose.contains(['\u{c}', '\t', '\n', '\r', '\u{8}']),
+            "a control character is left in {prose:?}"
+        );
+    })
+    .await;
+}
+
+/// A circular explanation and a diagnosis with no named misconception both store the
+/// neutral sentence and show no tag.
+#[tokio::test]
+async fn a_circular_or_unnamed_diagnosis_stores_the_neutral_sentence() {
+    TestDb::with(|db| async move {
+        let mut item = payload(None);
+        item["problem"] = json!("Divide $\\frac{3}{4}$ by $\\frac{5}{8}$.");
+        item["expected"] = json!("6/5");
+        item["given_answer"] = json!("5/6");
+        let (user, circular) = one_job(&db, "circular@example.test", &item).await;
+        let unnamed = enqueue(&db.admin, user, "task-2", &item).await;
+        let server = FakeModel::start(vec![
+            diagnosis_reply(
+                "{\"error_tags\":[\"wrong-method\"],\"misconception\":\"divided-wrong-way\",\
+                 \"prose\":\"You divided 3/4 by 5/8 incorrectly. The correct method is to \
+                 divide 3/4 by 5/8.\"}",
+            ),
+            diagnosis_reply(
+                "{\"error_tags\":[\"wrong-method\"],\"misconception\":\"none\",\
+                 \"prose\":\"You used the wrong method.\"}",
+            ),
+        ])
+        .await;
+
+        for id in [circular, unnamed] {
+            diagnose_to(&db, &server, 0, id, Outcome::Done, "done").await;
+            let result = row_of(&db.admin, id).await.2.unwrap();
+            assert_eq!(result["error_tags"], json!([]));
+            assert_eq!(result["misconception"], json!("none"));
+            assert!(
+                result["prose"]
+                    .as_str()
+                    .unwrap()
+                    .starts_with("The mistake could not be identified."),
+            );
+        }
     })
     .await;
 }

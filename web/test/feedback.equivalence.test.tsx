@@ -12,6 +12,7 @@ const pendingRes = () => graded({
   error_tags: ['sign_error'], re_solve: 'Try again.',
   remediation: [{ kind: 'lesson_fail', targets: [] }],
   equivalence: { id: 'e1', status: 'pending' },
+  checker_text: 'Expected 6/5 (1.2). You entered 2.',
 });
 const text = () => document.querySelector('.feedback')!.textContent!;
 
@@ -63,7 +64,8 @@ describe('pending equivalence check', () => {
       await act(async () => { await vi.advanceTimersByTimeAsync(EQUIVALENCE_POLL_MS + 10); });
       expect(document.querySelector('.feedback')!.className).toBe('feedback feedback-incorrect');
       expect(text()).toContain('Not quite');
-      expect(text()).toContain('Checked: Not the same value.');
+      expect(text()).toContain('Expected 6/5 (1.2). You entered 2.');
+      expect(text()).not.toContain('Not the same value');
       expect(text()).not.toContain('Checking your answer');
     } finally { vi.useRealTimers(); }
   });
@@ -123,7 +125,12 @@ describe('equivalence steps and final statuses', () => {
     try {
       await landAfterPoll({ status: 'refused', reason: 'Not the same value.' });
       expect(document.querySelector('.feedback')!.className).toBe('feedback feedback-incorrect');
-      expect(text()).toContain('Checked: Not the same value.');
+      expect(text()).toContain('Expected 6/5 (1.2). You entered 2.');
+      expect(text()).not.toContain('Not the same value');
+      expect(text()).not.toMatch(/learner|stored key|Checked:/);
+      // A red verdict carries no pass-level badge, even if the first pass tiered it so.
+      expect(document.querySelector('.chip-quality')).toBeNull();
+      expect(text()).not.toContain('nearly passable');
     } finally { vi.useRealTimers(); }
   });
 

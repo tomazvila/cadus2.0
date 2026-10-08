@@ -50,6 +50,9 @@
 //! re-solve instruction, all deterministic (A3, L2). Nothing in this file is on
 //! any learner's critical path.
 
+mod candidates;
+mod circular;
+mod latex;
 mod prompt;
 mod queue;
 
@@ -61,7 +64,13 @@ use cadus_store::diagnosis::{JOB_CAPPED, JOB_DONE, JOB_FAILED, JobPayload, PAYLO
 use serde_json::Value;
 use sqlx::types::Uuid;
 
-pub use prompt::{filter_tags, result_document, system_prompt, tool_spec, user_message};
+pub use candidates::{Candidate, candidates};
+pub use circular::is_circular;
+pub use latex::{Repaired, repair_latex};
+pub use prompt::{
+    NEUTRAL_PROSE, NO_MISCONCEPTION, filter_tags, misconception_names, result_document,
+    system_prompt, tool_spec, user_message,
+};
 pub use queue::{calls_this_session, claim, fail, sweep};
 
 use crate::WorkerError;
@@ -347,7 +356,8 @@ pub async fn run_once(db: &Db, job: &mut DiagnosisJob) -> Result<Report, WorkerE
     let (attempts, result) = call_model(db, &job.client, &claimed, &payload).await;
     let outcome = match result {
         Ok(arguments) => {
-            let document = result_document(&arguments, &job.client.config().model);
+            let names = misconception_names(&payload);
+            let document = result_document(&arguments, &job.client.config().model, &names);
             settle(db, &claimed, JOB_DONE, Some(&document)).await?;
             Outcome::Done
         }

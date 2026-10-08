@@ -1,6 +1,8 @@
 //! The gate of a hint ladder (L5, spec section 7 row R6).
 
-use crate::template::gate::{Rejection, contains_token, py_str};
+use crate::template::gate::{Rejection, py_str};
+
+use super::names_answer::names_answer;
 
 use super::body::{object, only_known};
 use super::{HINT_FIELDS, HintLadder, InstructionSpec};
@@ -80,7 +82,7 @@ fn check_no_answer(hints: &[String], spec: &InstructionSpec<'_>) -> Result<(), R
     let served = spec.served_answers();
     for (index, rung) in hints.iter().enumerate() {
         for answer in &served {
-            if contains_token(rung, answer) {
+            if names_answer(rung, answer) {
                 return Err(Rejection {
                     code: "hint-answer",
                     message: format!(

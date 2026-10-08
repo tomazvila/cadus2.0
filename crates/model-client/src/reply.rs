@@ -52,7 +52,7 @@ pub(crate) fn parse_reply(body: &Value, tool: &ToolSpec) -> Result<Value, ReplyP
     let problem = match arguments {
         None => "the reply carries no tool call and no content".to_owned(),
         // Shape 2: the arguments are cut off mid-JSON.
-        Some(raw) => match serde_json::from_str::<Value>(strip_fence(raw)) {
+        Some(raw) => match parse_arguments(strip_fence(raw)) {
             Err(err) => format!("the arguments of {} do not parse: {err}", tool.name),
             // Shape 3: they parse and miss a required field.
             Ok(parsed) => match missing_field(&parsed, &tool.parameters) {
@@ -66,6 +66,47 @@ pub(crate) fn parse_reply(body: &Value, tool: &ToolSpec) -> Result<Value, ReplyP
         return Err(ReplyProblem::Truncated(problem));
     }
     Err(ReplyProblem::Malformed(problem))
+}
+
+/// Parse the arguments, repairing invalid JSON escapes when the strict parse fails.
+///
+/// A model that writes `\div` or `\left` in a JSON string produces an escape JSON does not
+/// define. Each such backslash is doubled, so the LaTeX command survives and no retry is
+/// spent. Valid escapes, `\\` pairs included, are left as they are.
+fn parse_arguments(text: &str) -> Result<Value, serde_json::Error> {
+    serde_json::from_str::<Value>(text).or_else(|err| {
+        let (repaired, count) = double_invalid_escapes(text);
+        if count == 0 {
+            return Err(err);
+        }
+        tracing::warn!(count, "model reply: invalid JSON escapes were repaired");
+        serde_json::from_str(&repaired)
+    })
+}
+
+/// Double each backslash that does not start a JSON escape. Returns the text and the count.
+fn double_invalid_escapes(text: &str) -> (String, usize) {
+    let mut out = String::with_capacity(text.len() + 8);
+    let mut count = 0;
+    let mut chars = text.chars().peekable();
+    while let Some(ch) = chars.next() {
+        if ch != '\\' {
+            out.push(ch);
+            continue;
+        }
+        match chars.peek() {
+            Some(next) if "\"\\/bfnrtu".contains(*next) => {
+                out.push(ch);
+                out.push(*next);
+                chars.next();
+            }
+            _ => {
+                out.push_str("\\\\");
+                count += 1;
+            }
+        }
+    }
+    (out, count)
 }
 
 /// The first required field of the TOOL'S OWN schema that is absent or that
@@ -134,7 +175,20 @@ fn strip_fence(raw: &str) -> &str {
 mod tests {
     use serde_json::json;
 
-    use super::{ReplyProblem, missing_field, strip_fence};
+    use super::{ReplyProblem, missing_field, parse_arguments, strip_fence};
+
+    /// Invalid escapes are doubled and valid ones stay: `\\frac` is a backslash, `\div` and
+    /// `\left` survive, and `\neq` stays the valid newline escape for the later LaTeX repair.
+    #[test]
+    fn invalid_json_escapes_are_repaired() {
+        let raw = r#"{"p":"\\frac \div \left( \neq"}"#;
+        assert!(serde_json::from_str::<serde_json::Value>(raw).is_err());
+        let parsed = parse_arguments(raw).unwrap();
+        assert_eq!(parsed["p"], "\\frac \\div \\left( \neq");
+        let valid = r#"{"p":"a\\b"}"#;
+        assert_eq!(parse_arguments(valid).unwrap()["p"], "a\\b");
+        assert!(parse_arguments("{\"p\":").is_err());
+    }
 
     /// A fenced object loses its fence and a bare one is unchanged.
     #[test]

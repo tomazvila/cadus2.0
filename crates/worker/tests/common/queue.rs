@@ -28,10 +28,10 @@ pub fn payload(session: Option<&str>) -> Value {
         "task_id": "task-1",
         "topic": "subtracting-two-digits",
         "kp": "subtracting-two-digits/kp1",
-        "problem": "Compute $8 - 5$.",
-        "expected": "3",
+        "problem": "Compute $5 - 8$.",
+        "expected": "-3",
         "answer_kind": "numeric",
-        "given_answer": "2",
+        "given_answer": "3",
         "work": null
     })
 }

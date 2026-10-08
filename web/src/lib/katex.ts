@@ -25,6 +25,8 @@
  * `.innerHTML`. Model-authored markup is never parsed as HTML.
  */
 
+import { repairLatex } from './latex';
+
 export interface KatexDelimiter {
   left: string;
   right: string;
@@ -87,7 +89,12 @@ export function resetMathCache(): void {
  * visible. That is the degradation `throwOnError: false` asks for: the learner reads
  * `$\dfrac{1}{2}$` and works on, where a throw gives a blank problem.
  */
-export function renderMathToHtml(source: string): string {
+export function renderMathToHtml(raw: string): string {
+  // Model text can carry `\f` for `\frac` after a JSON decode. Restore the command first,
+  // and say so in the console, so a pipeline that damages LaTeX is seen.
+  const source = repairLatex(raw, ({ command }) => {
+    console.warn(`latex repaired: ${command}`);
+  });
   const hit = CACHE.get(source);
   if (hit !== undefined) return hit;
 

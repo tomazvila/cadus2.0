@@ -320,7 +320,7 @@ async fn a_ledger_write_that_fails_does_not_stop_the_pass() {
             &[SCHEMA, "GRANT SELECT, UPDATE ON diagnosis_jobs TO {role}"],
             move |db, handle| async move {
                 let server = FakeModel::start(vec![diagnosis_reply(
-                    "{\"error_tags\":[\"units\"],\"prose\":\"Name the unit.\"}",
+                    "{\"error_tags\":[\"units\"],\"prose\":\"Name the unit.\",\"misconception\":\"sign-slip\"}",
                 )])
                 .await;
                 let mut job = server.diagnosis_job(0);

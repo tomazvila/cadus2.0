@@ -119,15 +119,27 @@ fn mutants_doc(request: &Request) -> Result<Value, String> {
 fn plan(contract: &Value, key: &str) -> Plan {
     match contract["kind"].as_str() {
         Some("none") => Plan::of(Vec::new(), "no-rule"),
-        Some("function") => function_mutant(contract, key),
+        Some("function" | "function_form") => function_mutant(contract, key),
         Some("label") => label_others(contract, key),
         Some("set" | "list") => member_removed(key),
         Some("multipart") => part_mutants(contract, key),
         Some("exact") => plus_one(key, true),
+        Some("ordered_word") => word_mutants(key),
         Some("property") => property_near_miss(contract, key),
         Some("approx") if contract["tolerance"].is_string() => approx_tolerance(contract, key),
         _ => plus_one(key, false),
     }
+}
+
+/// `word-order`: other words that share the letters of the key, so the order of
+/// the factors decides the verdict (the key reversed, rotated, shortened).
+fn word_mutants(key: &str) -> Plan {
+    let mut candidates = cadus_core::answer::contract::word_mutants(key).into_iter();
+    let slot = candidates.next().map(|first| Slot {
+        rest: candidates.collect(),
+        ..Slot::new("word-order", first)
+    });
+    Plan::of(slot.into_iter().collect(), "no-word-mutant")
 }
 
 /// `property-near-miss` for a contract JSON with `"kind": "property"`.

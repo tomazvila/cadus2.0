@@ -71,6 +71,8 @@ async fn an_expression_answer_is_decided_incorrect() {
         // A decided miss still reveals the worked solution and the re-solve step.
         assert!(body["solution"].is_string(), "{body}");
         assert!(body["re_solve"].is_string(), "{body}");
+        // The checker line is built from the two answers, never from a model reason.
+        assert_eq!(body["checker_text"], "Expected 2*x. You entered 3*x.");
         holds_an_outcome(&body);
     })
     .await;
@@ -130,6 +132,7 @@ async fn an_ungraded_reply_reveals_no_solution_and_fires_no_diagnosis() {
         // no re-solve instruction leave the route.
         assert!(body.get("solution").is_none(), "{body}");
         assert!(body.get("re_solve").is_none(), "{body}");
+        assert!(body.get("checker_text").is_none(), "{body}");
         // D-F4: no model-assisted diagnosis on an ungraded attempt.
         assert_eq!(body["diagnosis"]["status"], "not_offered");
         // The lesson does not advance on an ungraded attempt.

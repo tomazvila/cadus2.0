@@ -5,7 +5,18 @@ use cadus_model_client::ToolSpec;
 use cadus_store::diagnosis::JobPayload;
 use serde_json::{Value, json};
 
+use super::candidates::{Candidate, candidates};
+use super::circular::is_circular;
+use super::latex::repair_latex;
 use super::{MODEL_ERROR_TAGS, RESULT_VERSION, TOOL_NAME};
+
+/// The sentence a diagnosis falls back to when no misconception is named, or the
+/// explanation argues in a circle.
+pub const NEUTRAL_PROSE: &str = "The mistake could not be identified. Study the worked solution, \
+then solve the problem again yourself.";
+
+/// The `misconception` value that means no candidate matched.
+pub const NO_MISCONCEPTION: &str = "none";
 
 /// Keep only the tags of [`MODEL_ERROR_TAGS`], in the order the model gave them.
 ///
@@ -45,8 +56,19 @@ rule (such as a required order or format) to justify the mark.\n\n\
 SHOWN WORK IS OPTIONAL, and its absence is NOT a defect. The interface labels the working \
 field 'optional'. Judge method only from work that IS shown. When no work is shown, judge on \
 the answer alone and do NOT tag 'incomplete' merely because the field is empty.\n\n\
-'error_tags' come ONLY from this controlled vocabulary: {}. Use [] when you cannot name the \
-error. Do not invent tags; a tag outside this list is dropped.\n\n\
+The user message lists CANDIDATE MISCONCEPTIONS that the server computed for this exact \
+answer. If one candidate explains the learner's answer, put its name in 'misconception' and \
+state that mistake in 'prose' in your own words. If none matches, put '{NO_MISCONCEPTION}' in \
+'misconception' and begin 'prose' with 'The mistake could not be identified.' Never invent a \
+misconception that is not in the list.\n\n\
+Never call a method wrong and then name the same operation on the same numbers as the correct \
+method. A 'correct method' must differ from the method you name as wrong, or you must leave it \
+out.\n\n\
+'error_tags' come ONLY from this controlled vocabulary: {}. Give tags only when you named a \
+misconception. Use [] when 'misconception' is '{NO_MISCONCEPTION}'. Do not invent tags; a tag \
+outside this list is dropped.\n\n\
+Write every LaTeX backslash twice inside the JSON strings (\\\\frac, \\\\times, \\\\theta), so \
+the text keeps its commands after the JSON is read.\n\n\
 'prose' is 1-3 sentences, brisk and encouraging. Praise the specific STRATEGY or process the \
 learner used, never raw ability. Put any math in $...$ LaTeX.\n\n\
 Mandatory unaided re-solve (pp. 427, 431): a miss is NOT the end of the task. In 'prose', have \
@@ -82,10 +104,34 @@ Do not compare the learner's answer with the example.",
 Answer kind: {}\n\
 Learner's answer: '{}'\n\
 Learner's shown work: {work}\n\
+{}\n\
 The checker marked the answer wrong. If it is in fact correct, say so.\n\
 Name the misconception and write the diagnosis via the {TOOL_NAME} tool.",
-        payload.problem, payload.answer_kind, payload.given_answer
+        payload.problem,
+        payload.answer_kind,
+        payload.given_answer,
+        candidate_lines(&candidates(payload))
     )
+}
+
+/// The candidate list of the user message.
+fn candidate_lines(list: &[Candidate]) -> String {
+    if list.is_empty() {
+        return format!(
+            "Candidate misconceptions: none. Put '{NO_MISCONCEPTION}' in 'misconception'."
+        );
+    }
+    let lines: Vec<String> = list
+        .iter()
+        .map(|c| format!("- {}: {}", c.name, c.sentence))
+        .collect();
+    format!("Candidate misconceptions:\n{}", lines.join("\n"))
+}
+
+/// The names the model may put in `misconception` for this payload.
+#[must_use]
+pub fn misconception_names(payload: &JobPayload) -> Vec<&'static str> {
+    candidates(payload).iter().map(|c| c.name).collect()
 }
 
 /// The forced tool of spec section 6.3, `additionalProperties: false`.
@@ -104,6 +150,7 @@ pub fn tool_spec() -> ToolSpec {
                     "items": {"type": "string", "enum": MODEL_ERROR_TAGS},
                 },
                 "prose": {"type": "string"},
+                "misconception": {"type": "string"},
                 "confidence": {"type": "string", "enum": ["high", "low"]},
             },
         }),
@@ -112,23 +159,48 @@ pub fn tool_spec() -> ToolSpec {
 
 /// Turn the model's arguments into the document `diagnosis_jobs.result` holds.
 ///
-/// A low-confidence diagnosis is STORED and its tags are NOT shown (spec section
-/// 6.3): `error_tags` goes out empty and the model's own list stays under
-/// `withheld_error_tags`, where an operator reads it and no learner does.
+/// `names` are the candidate misconceptions the server computed. Three rules apply:
+///
+/// - Error tags stay only when `misconception` names one candidate. With no named
+///   misconception the tags go to `withheld_error_tags`, the prose becomes
+///   [`NEUTRAL_PROSE`], and no learner reads a made-up cause.
+/// - An explanation that calls a method wrong and names the same method as correct is
+///   circular, and it gets the same fallback.
+/// - A low-confidence diagnosis is STORED and its tags are NOT shown (spec section
+///   6.3): `error_tags` goes out empty and the model's own list stays under
+///   `withheld_error_tags`, where an operator reads it and no learner does.
+///
+/// LaTeX commands that a JSON decode damaged are restored in the prose first.
 #[must_use]
-pub fn result_document(arguments: &Value, model_id: &str) -> Value {
+pub fn result_document(arguments: &Value, model_id: &str, names: &[&str]) -> Value {
     let tags = filter_tags(arguments.get("error_tags").unwrap_or(&Value::Null));
-    let low = arguments.get("confidence").and_then(Value::as_str) == Some("low");
-    let prose = arguments
-        .get("prose")
+    let mut low = arguments.get("confidence").and_then(Value::as_str) == Some("low");
+    let prose = repair_latex(
+        arguments
+            .get("prose")
+            .and_then(Value::as_str)
+            .unwrap_or_default(),
+    )
+    .text;
+    let claimed = arguments
+        .get("misconception")
         .and_then(Value::as_str)
-        .unwrap_or_default();
+        .map(str::trim)
+        .and_then(|claimed| names.iter().find(|name| name.eq_ignore_ascii_case(claimed)));
+    let named = claimed.is_some() && !is_circular(&prose);
+    let prose = if named {
+        prose
+    } else {
+        NEUTRAL_PROSE.to_owned()
+    };
+    low |= !named;
     let mut document = json!({
         "v": RESULT_VERSION,
         "error_tags": if low { Vec::new() } else { tags.clone() },
         "prose": prose,
         "model_id": model_id,
         "confidence": if low { "low" } else { "high" },
+        "misconception": if named { claimed.copied().unwrap_or(NO_MISCONCEPTION) } else { NO_MISCONCEPTION },
     });
     if low && let Some(map) = document.as_object_mut() {
         map.insert("withheld_error_tags".to_owned(), json!(tags));
@@ -138,7 +210,9 @@ pub fn result_document(arguments: &Value, model_id: &str) -> Value {
 
 #[cfg(test)]
 mod tests {
-    use super::{MODEL_ERROR_TAGS, filter_tags, result_document, system_prompt, user_message};
+    use super::{
+        MODEL_ERROR_TAGS, NEUTRAL_PROSE, filter_tags, result_document, system_prompt, user_message,
+    };
     use cadus_store::diagnosis::JobPayload;
     use serde_json::json;
 
@@ -222,8 +296,9 @@ mod tests {
     fn a_low_confidence_diagnosis_shows_no_tags() {
         let document = result_document(
             &json!({"error_tags": ["sign-error"], "prose": "Maybe the sign.",
-                    "confidence": "low"}),
+                    "misconception": "sign-slip", "confidence": "low"}),
             "deepseek/deepseek-v4-pro",
+            &["sign-slip"],
         );
         assert_eq!(document["error_tags"], json!([]));
         assert_eq!(document["withheld_error_tags"], json!(["sign-error"]));
@@ -235,12 +310,88 @@ mod tests {
     #[test]
     fn a_high_confidence_diagnosis_shows_the_filtered_tags() {
         let document = result_document(
-            &json!({"error_tags": ["sign-error", "made-up"], "prose": "Watch the sign."}),
+            &json!({"error_tags": ["sign-error", "made-up"], "prose": "Watch the sign.",
+                    "misconception": "sign-slip"}),
             "qwen3.6",
+            &["sign-slip"],
         );
         assert_eq!(document["v"], json!(1));
         assert_eq!(document["error_tags"], json!(["sign-error"]));
         assert_eq!(document["confidence"], json!("high"));
         assert_eq!(document.get("withheld_error_tags"), None);
+    }
+
+    /// Tags need a named misconception. With none named the tags are withheld and the
+    /// prose is the neutral sentence, so no learner reads a made-up cause.
+    #[test]
+    fn tags_need_a_named_misconception() {
+        let unnamed = result_document(
+            &json!({"error_tags": ["wrong-method"], "prose": "You used the wrong method.",
+                    "misconception": "none"}),
+            "m",
+            &["rounded-up"],
+        );
+        assert_eq!(unnamed["error_tags"], json!([]));
+        assert_eq!(unnamed["withheld_error_tags"], json!(["wrong-method"]));
+        assert_eq!(unnamed["prose"], json!(NEUTRAL_PROSE));
+        assert!(NEUTRAL_PROSE.starts_with("The mistake could not be identified."));
+        let missing = result_document(
+            &json!({"error_tags": ["wrong-method"], "prose": "x"}),
+            "m",
+            &["rounded-up"],
+        );
+        assert_eq!(missing["error_tags"], json!([]));
+        let named = result_document(
+            &json!({"error_tags": ["arithmetic-slip"], "prose": "You rounded 1.2 up to 2.",
+                    "misconception": "Rounded-Up"}),
+            "m",
+            &["rounded-up"],
+        );
+        assert_eq!(named["error_tags"], json!(["arithmetic-slip"]));
+        assert_eq!(named["misconception"], json!("rounded-up"));
+    }
+
+    /// The fault of owner report 11: a circular explanation never reaches the learner.
+    #[test]
+    fn a_circular_explanation_falls_back_to_the_neutral_sentence() {
+        let document = result_document(
+            &json!({"error_tags": ["wrong-method"],
+                    "prose": "You divided 3/4 by 5/8 incorrectly. The correct method is to divide 3/4 by 5/8.",
+                    "misconception": "divided-wrong-way"}),
+            "m",
+            &["divided-wrong-way"],
+        );
+        assert_eq!(document["prose"], json!(NEUTRAL_PROSE));
+        assert_eq!(document["error_tags"], json!([]));
+    }
+
+    /// The user message lists the candidates the server computed, or says there are none.
+    #[test]
+    fn the_user_message_lists_the_candidates() {
+        let mut item = payload(None);
+        item.problem = "Divide $\\frac{3}{4}$ by $\\frac{5}{8}$.".to_owned();
+        item.expected = "6/5".to_owned();
+        item.given_answer = "2".to_owned();
+        let message = user_message(&item);
+        assert!(message.contains("Candidate misconceptions:\n- rounded-up:"));
+        item.given_answer = "17".to_owned();
+        assert!(user_message(&item).contains("Candidate misconceptions: none."));
+        assert!(system_prompt().contains("\\\\frac"));
+        assert!(system_prompt().contains("The mistake could not be identified."));
+    }
+
+    /// Damaged LaTeX in the prose is restored before the document is stored.
+    #[test]
+    fn damaged_latex_in_the_prose_is_restored() {
+        let document = result_document(
+            &json!({"error_tags": [], "prose": "$\u{c}rac{6}{5}$ is not $2 \times 1$.",
+                    "misconception": "rounded-up"}),
+            "m",
+            &["rounded-up"],
+        );
+        assert_eq!(
+            document["prose"],
+            json!("$\\frac{6}{5}$ is not $2 \\times 1$.")
+        );
     }
 }

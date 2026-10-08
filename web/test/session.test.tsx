@@ -88,9 +88,8 @@ describe('the study loop', () => {
     expect(screen.getByText('Not quite')).toBeTruthy();
     expect(screen.getByText('sign-error')).toBeTruthy();
     expect(screen.getByText('Divide both parts by 2.')).toBeTruthy();
-    // Hard Rule 2: the structural verdict and the work quality are both shown, and neither
-    // is derived from the other.
-    expect(screen.getByText('passable')).toBeTruthy();
+    // The badge follows the final verdict: a red verdict carries no pass-level tier.
+    expect(screen.queryByText('passable')).toBeNull();
   });
 
   it('an empty answer posts nothing and returns the focus to the field', async () => {

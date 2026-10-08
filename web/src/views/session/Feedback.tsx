@@ -129,7 +129,7 @@ function GradedFeedback({
 
       {/* Amendment K (note 114): a refused answer is also checked in the
           background; the model's one-line reason rides beside the solution. */}
-      {res.equivalence_reason ? <p className="feedback-reason muted">Checked: {res.equivalence_reason}</p> : null}
+      {res.equivalence_reason ? <CheckerLine text={checkerLine(res)} /> : null}
 
       {res.re_solve ? <p className="re-solve muted">{res.re_solve}</p> : null}
 
@@ -178,14 +178,35 @@ function AcceptedLines({ res }: { res: AnswerResponse }) {
   );
 }
 
-/** The quality and XP chips. An ungraded or re-graded reply earned no figures of its own. */
+/**
+ * The learner line of a refused check: what the key was and what was entered.
+ *
+ * The service composes it from the stored key and the given answer (`checker_text`). The
+ * model's own reason is never shown: it speaks of "the learner" and "the stored key".
+ */
+export function checkerLine(res: AnswerResponse): string | null {
+  return typeof res.checker_text === 'string' && res.checker_text !== '' ? res.checker_text : null;
+}
+
+function CheckerLine({ text }: { text: string | null }) {
+  return text ? <p className="feedback-reason muted">{text}</p> : null;
+}
+
+/**
+ * The quality and XP chips.
+ *
+ * The quality chip belongs to a correct verdict. A red verdict never carries a pass-level
+ * badge, so it shows the XP figure alone, and the badge follows the final verdict when a
+ * background check flips the reply. An ungraded or re-graded reply earned no figures of its
+ * own.
+ */
 function HeadChips({ res, hidden, accepted }: { res: AnswerResponse; hidden: boolean; accepted: boolean }) {
   if (hidden) return null;
   // A corrected attempt shows the XP it earned and no quality chip left from the first pass.
   if (accepted) return res.xp != null ? <Chip className="chip-xp">{`${signed(res.xp)} XP`}</Chip> : null;
   return (
     <>
-      <Chip className="chip-quality">{String(res.work_quality).replace(/_/g, ' ')}</Chip>
+      {res.outcome === 'correct' ? <Chip className="chip-quality">{String(res.work_quality).replace(/_/g, ' ')}</Chip> : null}
       {res.xp != null ? <Chip className="chip-xp">{`${signed(res.xp)} XP`}</Chip> : null}
     </>
   );
