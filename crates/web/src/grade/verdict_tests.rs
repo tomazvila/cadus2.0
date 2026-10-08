@@ -104,7 +104,7 @@ fn the_other_unit_refusals_teach_their_own_form() {
             )
         );
     }
-    let grade = deterministic_grade("30°", "sin(30°)", AnswerKind::Expression);
+    let grade = deterministic_grade("30°", "sin(30° + 1)", AnswerKind::Expression);
     assert_eq!(
         grade.outcome.reason(),
         Some(
