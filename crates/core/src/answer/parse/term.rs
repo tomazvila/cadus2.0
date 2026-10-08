@@ -85,7 +85,8 @@ impl Parser<'_> {
     ///   `9 R2` is a quotient with a remainder (spec section 8.3), not `9*R*2`.
     ///   The rule reads through a leading sign, so `-2 3` is a slip too.
     /// - A number glued to a name is a label: `R2`, `H1`, `x2` name one thing. A
-    ///   space makes it a product, which is how `6 y 10**3` reads.
+    ///   space makes it a product, which is how `6 y 10**3` reads. A named
+    ///   constant is no label: `π3/4` and `pi3` are the constant times the number.
     /// - A space-grouped number is one value on a full match of the whole string
     ///   and nowhere else (the V4 table). After a factor, the second group of
     ///   `x/1 000` is not the factor 0, so the answer is undecidable (review
@@ -98,7 +99,7 @@ impl Parser<'_> {
         if previous.is_some_and(is_numeric_literal) {
             return Err(Undecidable::new("two numbers stand side by side"));
         }
-        if !token.space_before {
+        if !token.space_before && !matches!(previous, Some(Ast::Const(_))) {
             return Err(Undecidable::new(
                 "a number glued to a name reads as a label",
             ));

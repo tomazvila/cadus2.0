@@ -361,3 +361,20 @@ fn a_function_answer_that_is_not_one_formula_gets_the_frozen_guidance() {
         cadus_core::answer::Outcome::Undecidable(refusal) if format_guidance("x", "(1, 2)", refusal.reason) == TEXT
     ));
 }
+
+/// A learner text that could not be read never blames the problem; a contract
+/// or key fault still does.
+#[test]
+fn only_an_authoring_fault_says_the_problem_may_be_at_fault() {
+    let learner = format_guidance("3*pi/4", "x2", "a number glued to a name reads as a label");
+    assert!(
+        learner.starts_with("This answer could not be read."),
+        "{learner}"
+    );
+    assert!(!learner.contains("problem itself"), "{learner}");
+    let authored = format_guidance("3*pi/4", "1", "a label contract requires one to 32 choices");
+    assert!(
+        authored.contains("the problem itself may be at fault"),
+        "{authored}"
+    );
+}

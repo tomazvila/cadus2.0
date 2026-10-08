@@ -281,6 +281,11 @@ fn format_guidance(expected: &str, answer: &str, reason: &str) -> String {
         "a number too large for this property check" => {
             "That number is too large to check here. Give a smaller example.".to_string()
         }
+        // The learner's own text could not be read: the problem is not at fault.
+        "a number glued to a name reads as a label" => {
+            "This answer could not be read. Re-enter it as one value or a short expression, for example 2\u{3c0}/5."
+                .to_string()
+        }
         other => bucket_guidance(expected, other),
     }
 }
@@ -289,7 +294,7 @@ fn format_guidance(expected: &str, answer: &str, reason: &str) -> String {
 ///
 /// Three buckets cover the remainder. An answer that outruns a bound of the
 /// grammar reads as too much to mark; a reason that names an authored or
-/// contract fault is honest that the problem itself may be at fault; whatever
+/// contract fault (never the learner's own text) is honest that the problem itself may be at fault; whatever
 /// is left gets the same unreadable-answer prompt as a stray character.
 fn bucket_guidance(expected: &str, reason: &str) -> String {
     if reason.contains("bound")
@@ -309,7 +314,6 @@ fn bucket_guidance(expected: &str, reason: &str) -> String {
         || reason.contains("aliases")
         || reason.contains("part names")
         || reason.contains("multipart")
-        || reason.contains("label")
         || reason.contains("coordinates require")
         || reason.contains("quotient contract")
         || reason.contains("item has no deterministic")
