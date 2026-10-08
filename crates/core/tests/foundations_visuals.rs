@@ -32,14 +32,15 @@ fn every_manifest_figure_is_installed_valid_accessible_and_deterministic() {
     assert!(findings.is_empty(), "{findings:?}");
     let report = ReadinessIndex::build(&curriculum).resolve(&EmptyContent);
     // 2026-10-07, courses rewrite: the 97 knowledge-point figures became 95 (42
-    // knowledge-point figures and 53 item-level figures) in 51 knowledge points
+    // knowledge-point figures and 53 item-level figures) in 51 knowledge points;
+    // 2026-10-08, figures that make sense: 81 figures (42 + 39 item-level) in 50
     // (was 153 entries and 164 figures). The manifest is the dump of the tree.
-    assert_eq!(entries.len(), 51);
+    assert_eq!(entries.len(), 50);
     assert_eq!(
         cadus_core::curriculum::canonical_dump(&curriculum)
             .matches("\"visuals\"")
             .count(),
-        51
+        50
     );
     let mut count = 0;
     let mut broken: Vec<String> = Vec::new();
@@ -79,7 +80,7 @@ fn every_manifest_figure_is_installed_valid_accessible_and_deterministic() {
         }
     }
     assert_eq!(broken, Vec::<String>::new(), "figures that fail validation");
-    assert_eq!(count, 95);
+    assert_eq!(count, 81);
     assert_eq!(families.len(), 5);
 }
 

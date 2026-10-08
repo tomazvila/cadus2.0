@@ -44,7 +44,7 @@ pub use curve::{Asymptote, CurveFigure, CurveKind};
 pub use fraction::{FractionFigure, FractionShape};
 pub use geometry::{AngleMark, GeometryFigure, GeometryShape};
 pub use number_line::{MarkedInterval, MarkedPoint, MarkedRay, NumberLineFigure, RayDirection};
-pub use plane::{CoordinateFigure, LabeledPoint, Segment, ShadedHalfPlane};
+pub use plane::{CoordinateFigure, LabeledPoint, MIN_AXIS_SPAN, Segment, ShadedHalfPlane};
 pub use render::{RenderOptions, RenderedVisual, render, render_all};
 pub use scalar::Scalar;
 pub use special_triangle::{SpecialTriangleFigure, SpecialTriangleShape};
@@ -95,6 +95,12 @@ pub enum VisualError {
     #[error("the {axis} range does not ascend")]
     RangeNotAscending {
         /// The axis name: `x`, `y`, or `line`.
+        axis: &'static str,
+    },
+    /// One axis of a coordinate plane is shorter than [`MIN_AXIS_SPAN`] units.
+    #[error("the {axis} axis is shorter than {MIN_AXIS_SPAN} units")]
+    AxisTooShort {
+        /// The axis name.
         axis: &'static str,
     },
     /// One tick step is zero or negative.

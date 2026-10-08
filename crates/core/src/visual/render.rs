@@ -11,7 +11,10 @@ use std::fmt::Write as _;
 
 use serde::{Deserialize, Serialize};
 
-use super::{LabeledPoint, VisualError, VisualSpec};
+use num_rational::BigRational;
+
+use super::plane::exact_text;
+use super::{LabeledPoint, Scalar, VisualError, VisualSpec};
 
 mod figure;
 
@@ -61,7 +64,9 @@ impl RenderOptions {
 /// bytes, because a drawn but wrong picture teaches a wrong fact.
 pub fn render(spec: &VisualSpec, options: &RenderOptions) -> Result<String, VisualError> {
     spec.validate()?;
-    let body = match spec {
+    let (fitted, options) = fit_plane(spec, options)?;
+    let options = &options;
+    let body = match fitted.as_ref().unwrap_or(spec) {
         VisualSpec::NumberLine(figure) => number_line_body(figure, options)?,
         VisualSpec::Fraction(figure) => fraction_body(figure, options),
         VisualSpec::Coordinate(figure) => coordinate_body(figure, options)?,
@@ -70,6 +75,47 @@ pub fn render(spec: &VisualSpec, options: &RenderOptions) -> Result<String, Visu
         VisualSpec::SpecialTriangle(figure) => special_triangle_body(figure, options)?,
     };
     Ok(frame(spec, options, &body))
+}
+
+/// The tallest an untitled plane grows, as a multiple of its width.
+const MAX_PLANE_ASPECT: f64 = 2.0;
+
+/// The figure and the options of one render, with one scale on both axes.
+///
+/// An untitled coordinate plane is a plain grid: a square must look square and
+/// a slope must read as rise over run. The height follows from the y span at the
+/// length of one x unit. When that height is more than twice the width, the x
+/// range grows by whole ticks on both sides instead of squashing the y axis, so
+/// the point stays inside the range and the scale stays equal. A plane with an
+/// axis title is an applied graph and keeps one scale per axis.
+fn fit_plane(
+    spec: &VisualSpec,
+    options: &RenderOptions,
+) -> Result<(Option<VisualSpec>, RenderOptions), VisualError> {
+    let VisualSpec::Coordinate(figure) = spec else {
+        return Ok((None, options.clone()));
+    };
+    if figure.x_title.is_some() || figure.y_title.is_some() {
+        return Ok((None, options.clone()));
+    }
+    let width = inner_width(options);
+    let mut figure = figure.clone();
+    let y_span = figure.y_max.to_f64()? - figure.y_min.to_f64()?;
+    let x_span = figure.x_max.to_f64()? - figure.x_min.to_f64()?;
+    let mut x_span_used = x_span;
+    if y_span > MAX_PLANE_ASPECT * x_span {
+        let tick = figure.x_tick.to_f64()?;
+        let extra = (y_span / MAX_PLANE_ASPECT - x_span) / 2.0;
+        let steps = (extra / tick).ceil().max(0.0) as i64;
+        let grow = figure.x_tick.value()? * BigRational::from_integer(steps.into());
+        figure.x_min = Scalar::from(exact_text(&(figure.x_min.value()? - grow.clone())).as_str());
+        figure.x_max = Scalar::from(exact_text(&(figure.x_max.value()? + grow)).as_str());
+        x_span_used = x_span + 2.0 * steps as f64 * tick;
+    }
+    let height = (y_span * width / x_span_used).min(MAX_PLANE_ASPECT * width);
+    let mut fitted = options.clone();
+    fitted.height = (height + 2.0 * MARGIN).round() as i64;
+    Ok((Some(VisualSpec::Coordinate(figure)), fitted))
 }
 
 /// One drawn figure, as the API sends it to the browser.
@@ -237,4 +283,66 @@ pub(super) fn inner_width(options: &RenderOptions) -> f64 {
 /// The drawn height of one figure.
 pub(super) fn inner_height(options: &RenderOptions) -> f64 {
     (options.height as f64 - 2.0 * MARGIN).max(1.0)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::{RenderOptions, render};
+    use crate::visual::{CoordinateFigure, LabeledPoint, Segment, VisualSpec};
+
+    fn view_box(svg: &str) -> (f64, f64) {
+        let at = svg.find("viewBox=\"0 0 ").unwrap() + 13;
+        let mut parts = svg[at..].split(['"', ' ']);
+        let width = parts.next().unwrap().parse().unwrap();
+        let height = parts.next().unwrap().parse().unwrap();
+        (width, height)
+    }
+
+    fn plane(x_max: i64, y_max: i64) -> CoordinateFigure {
+        let mut figure = CoordinateFigure::square(5);
+        figure.x_min = 0_i64.into();
+        figure.y_min = 0_i64.into();
+        figure.x_max = x_max.into();
+        figure.y_max = y_max.into();
+        figure.segments = vec![Segment {
+            from: LabeledPoint::new(0_i64, 0_i64),
+            to: LabeledPoint::new(4_i64, 4_i64),
+            label: None,
+        }];
+        figure
+    }
+
+    #[test]
+    fn an_untitled_grid_uses_one_scale_on_both_axes() {
+        let svg = render(
+            &VisualSpec::Coordinate(plane(10, 5)),
+            &RenderOptions::default(),
+        )
+        .unwrap();
+        let (width, height) = view_box(&svg);
+        // 10 x units across 408 px and 5 y units down 204 px: 40.8 px per unit each way.
+        assert!((width - 480.0).abs() < 1e-9);
+        assert!((height - (204.0 + 72.0)).abs() < 1.0);
+    }
+
+    #[test]
+    fn a_tall_untitled_grid_widens_the_x_range_instead_of_squashing() {
+        let svg = render(
+            &VisualSpec::Coordinate(plane(4, 20)),
+            &RenderOptions::default(),
+        )
+        .unwrap();
+        let (_, height) = view_box(&svg);
+        assert!(height <= 2.0 * 408.0 + 72.0 + 1.0);
+        // The widened range draws x labels outside 0..4.
+        assert!(svg.contains(">-2<") && svg.contains(">6<"));
+    }
+
+    #[test]
+    fn a_titled_plane_keeps_the_default_height() {
+        let mut figure = plane(10, 5);
+        figure.x_title = Some("time (hours)".to_owned());
+        let svg = render(&VisualSpec::Coordinate(figure), &RenderOptions::default()).unwrap();
+        assert!((view_box(&svg).1 - 200.0).abs() < 1e-9);
+    }
 }

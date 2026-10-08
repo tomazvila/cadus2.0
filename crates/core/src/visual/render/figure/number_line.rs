@@ -107,6 +107,8 @@ fn draw_points(
             .filter(|t| !t.is_empty())
         {
             text_at(out, x, baseline - 24.0, "middle", label);
+        } else {
+            text_at(out, x, baseline - 24.0, "middle", &point.at.to_string());
         }
     }
     Ok(())
@@ -129,6 +131,7 @@ fn draw_rays(
         line_at(out, (origin, track), (edge, track), "cadus-visual-ray");
         arrowhead(out, edge, track, ray.direction);
         end_cap(out, origin, track, ray.filled);
+        text_at(out, origin, track - 10.0, "middle", &ray.from.to_string());
         if let Some(label) = label_of(ray.label.as_deref()) {
             text_at(out, origin.midpoint(edge), track - 8.0, "middle", label);
         }

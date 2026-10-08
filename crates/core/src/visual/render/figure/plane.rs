@@ -10,7 +10,24 @@ use crate::visual::{
     CoordinateFigure, LabeledPoint, PlaneAxes, Segment, ShadedHalfPlane, VisualError,
 };
 
-const LABELED_TICKS: i64 = 21;
+/// The most tick labels one axis prints.
+pub(super) const MAX_LABELS: i64 = 8;
+
+/// How many grid ticks one label spans, so that an axis of `ticks` ticks prints
+/// at most [`MAX_LABELS`] labels. The step comes from 1, 2, 5, 10, 20, 25, 50,
+/// 100 and so on; the grid lines stay at the figure's own tick.
+pub(super) fn label_every(ticks: i64) -> i64 {
+    let mut base = 1_i64;
+    loop {
+        for factor in [1, 2, 5] {
+            let every = base * factor;
+            if (ticks + every - 1) / every <= MAX_LABELS {
+                return every;
+            }
+        }
+        base *= 10;
+    }
+}
 
 pub(in crate::visual::render) fn coordinate_body(
     figure: &CoordinateFigure,
@@ -19,6 +36,28 @@ pub(in crate::visual::render) fn coordinate_body(
     let frame = GridFrame::new(figure, options)?;
     let mut out = String::new();
     frame.draw(&mut out);
+    if let Some(title) = figure
+        .x_title
+        .as_deref()
+        .map(str::trim)
+        .filter(|t| !t.is_empty())
+    {
+        text_at(
+            &mut out,
+            MARGIN + frame.width,
+            options.height as f64 - 5.0,
+            "end",
+            title,
+        );
+    }
+    if let Some(title) = figure
+        .y_title
+        .as_deref()
+        .map(str::trim)
+        .filter(|t| !t.is_empty())
+    {
+        text_at(&mut out, MARGIN, MARGIN - 14.0, "start", title);
+    }
     draw_regions(
         &mut out,
         &figure.shaded_half_planes,
@@ -198,7 +237,7 @@ pub(super) fn grid_and_axes(
         let value = x_step.mul_add(index as f64, x_min);
         let (x, _) = at(value, y_min);
         line_at(out, (x, MARGIN), (x, MARGIN + height), "cadus-visual-grid");
-        if x_ticks <= LABELED_TICKS {
+        if is_label(value, x_step, label_every(x_ticks)) {
             text_at(out, x, MARGIN + height + 16.0, "middle", &num_text(value));
         }
     }
@@ -206,11 +245,18 @@ pub(super) fn grid_and_axes(
         let value = y_step.mul_add(index as f64, y_min);
         let (_, y) = at(x_min, value);
         line_at(out, (MARGIN, y), (MARGIN + width, y), "cadus-visual-grid");
-        if y_ticks <= LABELED_TICKS {
+        if is_label(value, y_step, label_every(y_ticks)) {
             text_at(out, MARGIN - 8.0, y + 4.0, "end", &num_text(value));
         }
     }
     axes(out, bounds, width, height, at);
+}
+
+/// Whether the tick at `value` carries a label: the labels sit at the multiples
+/// of `every` ticks, counted from zero, so that zero and round values are named.
+fn is_label(value: f64, step: f64, every: i64) -> bool {
+    let at = value / (step * every as f64);
+    (at - at.round()).abs() < 1e-9
 }
 
 /// The two axes, drawn only where the plane holds zero.
@@ -305,4 +351,20 @@ fn extend_to_frame(
         dx.mul_add(t1, a.0),
         dy.mul_add(t1, a.1),
     )
+}
+
+#[cfg(test)]
+mod tests {
+    use super::{MAX_LABELS, label_every};
+
+    #[test]
+    fn no_axis_prints_more_than_eight_labels() {
+        for ticks in 2..=200 {
+            let every = label_every(ticks);
+            assert!((ticks + every - 1) / every <= MAX_LABELS, "{ticks} ticks");
+        }
+        assert_eq!(label_every(8), 1);
+        assert_eq!(label_every(14), 2);
+        assert_eq!(label_every(61), 10);
+    }
 }

@@ -230,9 +230,9 @@ fn the_coordinate_plane_draws_both_axes_only_when_it_holds_zero() {
 
     let mut shifted = CoordinateFigure::square(2);
     shifted.x_min = Scalar::from("1");
-    shifted.x_max = Scalar::from("4");
+    shifted.x_max = Scalar::from("5");
     shifted.y_min = Scalar::from("1");
-    shifted.y_max = Scalar::from("4");
+    shifted.y_max = Scalar::from("5");
     let away = render(&VisualSpec::Coordinate(shifted), &RenderOptions::default()).unwrap();
     assert_eq!(count(&away, "cadus-visual-axis"), 0);
 }

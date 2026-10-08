@@ -170,7 +170,17 @@ pub struct CoordinateFigure {
     /// The sentence that leads the accessible equivalent.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub caption: Option<String>,
+    /// The name and unit of the horizontal axis, for example `time (hours)`.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub x_title: Option<String>,
+    /// The name and unit of the vertical axis, for example `speed (km/h)`.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub y_title: Option<String>,
 }
+
+/// The least length of one drawn axis, in units. A shorter axis leaves a figure
+/// with a flat strip that shows no scale.
+pub const MIN_AXIS_SPAN: i64 = 4;
 
 impl CoordinateFigure {
     /// A square plane from `-half` to `half` on both axes, with a tick of one.
@@ -188,6 +198,8 @@ impl CoordinateFigure {
             segments: Vec::new(),
             shaded_half_planes: Vec::new(),
             caption: None,
+            x_title: None,
+            y_title: None,
         }
     }
 
@@ -199,6 +211,14 @@ impl CoordinateFigure {
     /// Whether the plane carries mathematical meaning.
     pub fn validate(&self) -> Result<(), VisualError> {
         self.ticks()?;
+        for (axis, min, max) in [
+            ("x", &self.x_min, &self.x_max),
+            ("y", &self.y_min, &self.y_max),
+        ] {
+            if max.value()? - min.value()? < BigRational::from_integer(MIN_AXIS_SPAN.into()) {
+                return Err(VisualError::AxisTooShort { axis });
+            }
+        }
         for point in &self.points {
             self.hold("a point", point)?;
         }
@@ -248,6 +268,12 @@ impl CoordinateFigure {
              The x ticks step by {} and the y ticks step by {}.",
             self.x_min, self.x_max, self.y_min, self.y_max, self.x_tick, self.y_tick
         );
+        if let Some(title) = label_of(self.x_title.as_deref()) {
+            out.push_str(&format!(" The x axis shows {title}."));
+        }
+        if let Some(title) = label_of(self.y_title.as_deref()) {
+            out.push_str(&format!(" The y axis shows {title}."));
+        }
         for point in &self.points {
             out.push_str(&format!(" A point at {}.", point.spoken()));
         }
@@ -333,6 +359,24 @@ mod tests {
                 "point ({x}, {y}) passed the range check"
             );
         }
+    }
+
+    #[test]
+    fn an_axis_shorter_than_four_units_is_refused_and_titles_are_read_out() {
+        let mut flat = CoordinateFigure::square(5);
+        flat.y_min = Scalar::from("0");
+        flat.y_max = Scalar::from("3");
+        assert!(matches!(
+            flat.validate(),
+            Err(VisualError::AxisTooShort { axis: "y" })
+        ));
+        flat.y_max = Scalar::from("4");
+        assert!(flat.validate().is_ok());
+        flat.x_title = Some("time (hours)".to_owned());
+        flat.y_title = Some("speed (km/h)".to_owned());
+        let text = flat.text_equivalent();
+        assert!(text.contains("The x axis shows time (hours)."));
+        assert!(text.contains("The y axis shows speed (km/h)."));
     }
 
     #[test]
