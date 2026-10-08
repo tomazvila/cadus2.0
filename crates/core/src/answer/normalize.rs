@@ -90,6 +90,7 @@ pub struct Normalized {
 /// strings; [`crate::answer::parse`] is the step that refuses it.
 #[must_use]
 pub fn normalize(text: &str) -> Normalized {
+    let text = &super::latex::prepare(text);
     Normalized {
         source: to_source(text),
         string_key: to_string_key(text),

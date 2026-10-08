@@ -7,6 +7,7 @@
  */
 import { Chip, Stat } from '@/components/primitives';
 import { fmtClock, num, signed } from '@/lib/format';
+import { setNotationOpen } from '@/lib/notation';
 import { taskKindText, taskReasonText } from '@/lib/stageCopy';
 import type { PlanTask, ServedProblem, SessionEndResponse, SessionPlanResponse } from '@/api/types';
 
@@ -168,9 +169,17 @@ export function ProblemHeader({ task, problem, elapsed, countdown, onExit }: Pro
         <span className={`timer${countdown && elapsed <= 3 ? ' urgent' : ''}`}>
           {fmtClock(elapsed)}
         </span>
+        <details className="header-more btn-exit">
+          <summary>More</summary>
+          <div className="header-more-items">
+            <button type="button" className="btn btn-ghost" onClick={() => { setNotationOpen(true); }}>
+              How to type answers
+            </button>
+          </div>
+        </details>
         <button
           type="button"
-          className="btn btn-ghost btn-exit"
+          className="btn btn-ghost"
           title="Your work is saved. An unfinished lesson comes back next time."
           onClick={onExit}
         >

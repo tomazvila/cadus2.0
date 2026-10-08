@@ -19,6 +19,7 @@
  */
 import { useEffect, useImperativeHandle, useRef, useState, type Ref } from 'react';
 import { AnswerPreview } from '@/components/AnswerPreview';
+import { registerInserter, setNotationOpen, useNotationOpen } from '@/lib/notation';
 import type { AnswerContractHint } from '@/api/types';
 
 /** The wait after the last keystroke before the preview redraws, in milliseconds. */
@@ -92,6 +93,13 @@ export function AnswerField({
     timer.current = setTimeout(() => { setShown(inputRef.current?.value ?? ''); }, PREVIEW_DEBOUNCE_MS);
   };
   useEffect(() => () => { clearTimeout(timer.current); }, []);
+  // A tap on a chip of the "How to type answers" panel writes into this field at the caret.
+  useEffect(() => registerInserter((text) => {
+    if (!inputRef.current || inputRef.current.disabled) return;
+    insertAtCursor(inputRef.current, text);
+    refresh();
+  }), []);
+  const helpOpen = useNotationOpen();
 
   // NO `setDisabled` on the handle. `disabled` has exactly ONE owner — the prop. With both,
   // React never rewrites an unchanged prop, so an imperative `setDisabled(true)` survives a
@@ -187,6 +195,17 @@ export function AnswerField({
           onClick={() => { insertAtCursor(inputRef.current!, `root(${rootIndex}, `); refresh(); }}
         >
           ⁿ√
+        </button>
+        <button
+          type="button"
+          className="sym-key"
+          aria-label="How to type answers"
+          aria-pressed={helpOpen}
+          title="How to type answers"
+          onMouseDown={(e) => { e.preventDefault(); }}
+          onClick={() => { setNotationOpen(!helpOpen); }}
+        >
+          ?
         </button>
       </div>
       <AnswerPreview text={shown} />

@@ -134,8 +134,8 @@ fn a_letter_outside_the_unit_position_keeps_its_variable_reading() {
 #[test]
 fn a_unit_glyph_inside_an_expression_is_refused() {
     assert_eq!(refusal("5 € + 3 €"), "a unit inside an expression");
-    assert_eq!(refusal("sin(30°)"), "a unit inside an expression");
-    assert_eq!(refusal("cos 70°"), "a unit inside an expression");
+    assert_eq!(refusal("sin(30° + 1)"), "a unit inside an expression");
+    assert_eq!(refusal("sin(30° x)"), "a unit inside an expression");
     assert_eq!(refusal("(30°, 45°)"), "a unit inside an expression");
     assert_eq!(refusal("°"), "a unit inside an expression");
     assert_eq!(refusal("$"), "a unit inside an expression");
@@ -280,7 +280,7 @@ fn a_unit_on_one_side_alone_gives_no_verdict() {
     // A glued one-letter unit is the product, so `5m` for `5 m` has no unit.
     assert_undecidable("5 m", "5m", N, "a unit is missing");
     // A unit inside an expression leaves the grammar (V2).
-    assert_undecidable("30°", "sin(30°)", N, "a unit inside an expression");
+    assert_undecidable("30°", "sin(30° + 1)", N, "a unit inside an expression");
     // The string rung still decides an equal spelling first (rung 2).
     assert_eq!(check("5 cm", "5 CM", N), decided(true, false));
 }

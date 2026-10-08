@@ -291,6 +291,11 @@ impl Work {
         {
             return Ok(angle);
         }
+        if let [argument] = arguments.as_slice()
+            && let Some(value) = self.exact_trig(name, argument)?
+        {
+            return Ok(value);
+        }
         if arguments.len() == 1 {
             if name == "sqrt"
                 && let Some(argument) = arguments.first()

@@ -15,6 +15,7 @@ use crate::answer::{Outcome, Rounding, Verdict, same_answer};
 /// Decide the authored policy with exact arithmetic and bounded input.
 #[must_use]
 pub fn check_contract(expected: &str, learner: &str, contract: AnswerContract) -> Outcome {
+    let learner = &crate::answer::latex::prepare(learner);
     if matches!(
         contract,
         AnswerContract::QuotientRemainder { .. } | AnswerContract::PolynomialDivision { .. }

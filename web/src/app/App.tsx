@@ -26,6 +26,7 @@ import type { ReactNode } from 'react';
 import { ErrorBoundary } from './ErrorBoundary';
 import { ToastHost } from './ToastHost';
 import { Topbar } from './Topbar';
+import { NotationPanel } from '@/components/NotationPanel';
 import { DialogProvider } from '@/components/Modal';
 import type { User } from '@/api/types';
 
@@ -77,6 +78,7 @@ export function App({
           )}
         </ErrorBoundary>
       </DialogProvider>
+      <NotationPanel />
       {/* Mounted for the life of the app: a toast raised after a view unmounts still lands. */}
       <ToastHost />
     </>

@@ -109,6 +109,7 @@ impl Outcome {
 /// deterministically becomes [`Outcome::Undecidable`].
 #[must_use]
 pub fn check(expected: &str, learner: &str, kind: AnswerKind) -> Outcome {
+    let learner = &super::latex::prepare(learner);
     // A list of whole numbers reads in every spelling of its separators.
     let listed = matches!(kind, AnswerKind::Numeric | AnswerKind::Expression)
         .then(|| super::whole_number_list(expected, learner))

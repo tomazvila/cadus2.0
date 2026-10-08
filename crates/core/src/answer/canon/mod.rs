@@ -112,6 +112,7 @@ mod quotient;
 mod read;
 mod root;
 mod sum;
+mod trig;
 
 use std::collections::{BTreeMap, BTreeSet};
 

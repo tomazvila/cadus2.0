@@ -94,7 +94,9 @@ pub fn in_grammar_rows() -> Vec<Row> {
     for line in text.lines() {
         let parsed: CorpusLine =
             serde_json::from_str(line).unwrap_or_else(|e| panic!("row {line}: {e}"));
-        if recovered.contains(&parsed.answer) {
+        // A degree angle inside a trigonometric call (`cos 70°`) is an angle in
+        // degrees in 2.0, and 1.0 reads the 70 as radians: no comparable verdict.
+        if recovered.contains(&parsed.answer) || parsed.answer.contains('°') {
             continue;
         }
         let kind = match parsed.answer_kind.as_str() {

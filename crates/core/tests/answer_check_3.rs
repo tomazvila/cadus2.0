@@ -425,7 +425,8 @@ fn every_answer_the_grammar_accepts_also_canonicalizes() {
         canonical,
         // Stabilize pass after grader pass 4 (2026-10-08): 3,285 to 3,293. The 8 rows are
         // `∞`, `-∞`, `infinite`, `3x^2 dx`, `4y^3 · dy/dx`, and `2y · dy/dx + 3x^2`.
-        3_293,
+        // LaTeX input pass: 3,293 to 3,294. The row is `cos 70°`, an angle in degrees.
+        3_294,
         "the first refusals are {:?}",
         refused.iter().take(5).collect::<Vec<_>>()
     );

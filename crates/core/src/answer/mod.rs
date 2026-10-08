@@ -35,6 +35,7 @@ pub mod canon;
 pub mod check;
 pub mod contract;
 pub mod evalf;
+mod latex;
 pub mod lexer;
 mod natural;
 pub mod normalize;

@@ -289,14 +289,14 @@ describe('AnswerField: the handle and accessibility', () => {
     expect(m.find('.sym-palette').getAttribute('role')).toBe('toolbar');
     expect(m.find('.sym-palette').getAttribute('aria-label')).toBe('Math symbols');
     for (const key of m.all('.sym-key')) {
-      expect(key.getAttribute('aria-label')).toMatch(/^Insert /);
+      expect(key.getAttribute('aria-label')).toMatch(/^(Insert |How to type answers)/);
     }
   });
 
-  it('renders the twelve symbols in order, then the mixed-number key', () => {
+  it('renders the twelve symbols in order, then the mixed-number key, the root key and the help key', () => {
     const m = mount(<AnswerField />);
     expect(m.all('.sym-key').map((k) => k.textContent))
-      .toEqual(['∞', 'π', '√(', '^', '≤', '≥', '≠', '±', '×', '÷', '°', 'θ', 'a b/c', 'ⁿ√']);
+      .toEqual(['∞', 'π', '√(', '^', '≤', '≥', '≠', '±', '×', '÷', '°', 'θ', 'a b/c', 'ⁿ√', '?']);
   });
 
   it('gives every symbol key type="button", so it never submits a form', () => {

@@ -162,8 +162,10 @@ fn the_corpus_splits_into_3285_parsed_and_207_undecidable_answers() {
     // 3,293 parsed and 207 to 199 refused. Four are the infinity symbol and the word
     // `infinite` (`∞`, `-∞`, `infinite`), three are a differential factor (`3x^2 dx`,
     // `4y^3 · dy/dx`, `2y · dy/dx + 3x^2`). Their rows moved to `recovered_2_0.jsonl`.
-    assert_eq!(parsed, 3_293, "answers inside the grammar");
-    assert_eq!(refused, 199, "answers outside the grammar");
+    // LaTeX input pass: `cos 70°` joins the grammar as an angle in degrees, 3,293 to 3,294
+    // parsed and 199 to 198 refused. Its row moved to `recovered_2_0.jsonl`.
+    assert_eq!(parsed, 3_294, "answers inside the grammar");
+    assert_eq!(refused, 198, "answers outside the grammar");
 }
 
 #[test]
@@ -198,7 +200,7 @@ fn the_undecidable_answers_are_exactly_the_committed_fixture() {
         missing.is_empty() && extra.is_empty(),
         "the residue moved: missing {missing:?}, extra {extra:?}"
     );
-    assert_eq!(committed.len(), 199);
+    assert_eq!(committed.len(), 198);
 }
 
 #[test]
@@ -218,15 +220,15 @@ fn the_recovered_answers_keep_their_identity_and_parse() {
         residue.is_disjoint(&keys),
         "a recovered row is still refused"
     );
-    // One row joined the residue: the value-with-unit production refuses
-    // `cos 70°`, a unit inside an expression (`answer_unit.rs`).
+    // `cos 70°` first joined the residue (a unit inside an expression). The degree
+    // angle of a trigonometric call reads it now, so it is a recovered row.
     let joined: Key = (
         "complementary-angle-trig".to_string(),
         "kp1".to_string(),
         0,
         "cos 70°".to_string(),
     );
-    assert!(residue.contains(&joined), "`cos 70°` is refused");
+    assert!(keys.contains(&joined), "`cos 70°` is recovered");
     assert_eq!(residue.len() + keys.len(), 265 + 1, "the 1.0 residue");
     let mut per_production: std::collections::BTreeMap<&str, usize> = Default::default();
     for row in &recovered {
@@ -242,6 +244,7 @@ fn the_recovered_answers_keep_their_identity_and_parse() {
         counts,
         [
             ("arc_function_name", 2),
+            ("degree_angle", 1),
             ("differential_factor", 3),
             ("infinity_symbol", 4),
             ("infinity_word", 1),
