@@ -48,7 +48,7 @@ topics:
             answer: '2, 3, 5, 7, 11'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The ring $\mathbb{Z}_n$ is a field exactly when $n$ is prime. The primes from $2$ to $12$ are $2, 3, 5, 7, 11$. Every other $n$ in the range is composite and gives a ring with zero divisors.'
-          - problem: 'Sam says that the equation $x^2 = 1$ has only the solutions $1$ and $7$ in $\mathbb{Z}_8$, because a product is $0$ only when a factor is $0$. List all solutions of $x^2 = 1$ in $\mathbb{Z}_8$.'
+          - problem: 'List all solutions of $x^2 = 1$ in $\mathbb{Z}_8$.'
             answer: '1, 3, 5, 7'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Write $x^2 - 1 = (x - 1)(x + 1) = 0$. In a field this forces $x = 1$ or $x = -1$, but $\mathbb{Z}_8$ has zero divisors. Testing the residues gives $3^2 = 9 = 1$, $5^2 = 25 = 1$ and $7^2 = 49 = 1$ besides $1^2 = 1$, so the solutions are $1, 3, 5, 7$.'
@@ -105,10 +105,10 @@ topics:
             answer: '3'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'In a ring of characteristic $12$, $n \cdot 1 = 0$ exactly when $12$ divides $n$. So we need $12 \mid 8k$, which means $3 \mid 2k$ and hence $3 \mid k$. The least such $k$ is $3$.'
-          - problem: 'Sam says that the characteristic of $\mathbb{Z}_4 \times \mathbb{Z}_{10}$ is $40$, because $4 \cdot 10 = 40$. What is the correct characteristic?'
+          - problem: 'What is the characteristic of $\mathbb{Z}_4 \times \mathbb{Z}_{10}$?'
             answer: '20'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'We have $k \cdot (1, 1) = 0$ exactly when $4 \mid k$ and $10 \mid k$, so $k$ must be a multiple of $\operatorname{lcm}(4, 10) = 20$. Sam used the product $40$, but $4$ and $10$ share the factor $2$, so the least common multiple is smaller. The characteristic is $20$.'
+            solution_sketch: 'We have $k \cdot (1, 1) = 0$ exactly when $4 \mid k$ and $10 \mid k$, so $k$ must be a multiple of $\operatorname{lcm}(4, 10) = 20$. The product is $40$, but $4$ and $10$ share the factor $2$, so the least common multiple is smaller. The characteristic is $20$.'
         constraints: 'characteristics of Z_n, Q, polynomial rings and products (lcm rule); counters with wrap-around as contexts'
       - id: kp3
         name: 'The Frobenius endomorphism in characteristic p'
@@ -142,7 +142,7 @@ topics:
             answer: 'x^5 + 1'
             answer_contract: {"kind": "required_form", "form": "expanded_polynomial"}
             solution_sketch: 'In $\mathbb{Z}_5[x]$ the characteristic is $5$, so the Frobenius rule gives $(x + 1)^5 = x^5 + 1^5$. Since $1^5 = 1$, the result is $x^5 + 1$. The binomial coefficients $5$ and $10$ all vanish modulo $5$.'
-          - problem: 'Sam says that in a commutative ring of characteristic $4$ one has $(a + b)^4 = a^4 + b^4$, just as in characteristic $2$. What is the coefficient of $a^2b^2$ in the correct expansion of $(a + b)^4$ in this ring?'
+          - problem: 'In a commutative ring of characteristic $4$, what is the coefficient of $a^2b^2$ in the expansion of $(a + b)^4$?'
             answer: '2'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The coefficient of $a^2b^2$ is $\binom{4}{2} = 6$, and $6 = 2$ modulo $4$. It is not $0$, so the rule fails. The rule needs a prime characteristic, because only then does $p$ divide every middle binomial coefficient.'
@@ -232,10 +232,10 @@ topics:
             answer: '24'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The condition for $(3, 5) \sim (c, 40)$ is $3 \cdot 40 = 5c$, so $5c = 120$. Dividing by $5$ gives $c = 24$. The mix $24 : 40$ is the mix $3 : 5$ scaled by $8$.'
-          - problem: 'Sam adds the fractions $(2, 3)$ and $(4, 5)$ as $(6, 8)$, adding numerators and denominators. Compute the sum correctly with $(a, b) + (c, d) = (ad + bc, bd)$.'
+          - problem: 'Add the fractions $(2, 3)$ and $(4, 5)$ with $(a, b) + (c, d) = (ad + bc, bd)$.'
             answer: '(22, 15)'
             answer_contract: {"kind": "coordinates", "arity": 2}
-            solution_sketch: 'The correct numerator is $ad + bc = 2 \cdot 5 + 3 \cdot 4 = 22$ and the denominator is $bd = 3 \cdot 5 = 15$. So the sum is $(22, 15)$. Sam''s pair $(6, 8)$ is not equivalent to it, since $6 \cdot 15 = 90$ and $8 \cdot 22 = 176$.'
+            solution_sketch: 'The numerator is $ad + bc = 2 \cdot 5 + 3 \cdot 4 = 22$ and the denominator is $bd = 3 \cdot 5 = 15$. So the sum is $(22, 15)$. The pair $(6, 8)$, found by adding numerators and denominators, is not equivalent to it, since $6 \cdot 15 = 90$ and $8 \cdot 22 = 176$.'
         constraints: 'the transitivity and denominator-closure arguments, each localizing exactly where the domain hypothesis is used; well-definedness of + or x checked on one representative change; speed and mixture records as contexts'
       - id: kp2
         name: 'Recognizing fields of fractions: Q, F(x), Q(√2)'
@@ -401,7 +401,7 @@ topics:
             answer: '2'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The number is the inverse of $9$ in $\mathbb{Z}_{17}$. Since $9 \cdot 2 = 18 = 1$, it is $2$. Indeed $2 \cdot 9m = 18m = m$.'
-          - problem: 'Sam solves $3x = 4$ in $\mathbb{Z}_7$ by dividing as in the real numbers and writes $x = \frac43$. What is the correct solution in $\mathbb{Z}_7$?'
+          - problem: 'Solve $3x = 4$ in $\mathbb{Z}_7$.'
             answer: '6'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'In $\mathbb{Z}_7$, dividing by $3$ means multiplying by $3^{-1} = 5$, since $3 \cdot 5 = 15 = 1$. Then $x = 4 \cdot 5 = 20 = 6$. Check: $3 \cdot 6 = 18 = 4$.'
@@ -446,7 +446,7 @@ topics:
             answer: '16'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Division by $4$ is multiplication by $4^{-1}$. Since $4 \cdot 5 = 20 = 1$ modulo $19$, we get $4^{-1} = 5$. So $\frac74 = 7 \cdot 5 = 35 = 16$. Check: $4 \cdot 16 = 64 = 3 \cdot 19 + 7$.'
-          - problem: 'Sam says that the inverse of $3$ in $\mathbb{Z}_{11}$ is $8$, because $3 + 8 = 0$. What is the correct multiplicative inverse?'
+          - problem: 'What is the multiplicative inverse of $3$ in $\mathbb{Z}_{11}$?'
             answer: '4'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The number $8$ is the additive inverse of $3$, not the multiplicative inverse, because $3 \cdot 8 = 24 = 2$. The multiplicative inverse satisfies $3x = 1$. Since $3 \cdot 4 = 12 = 1$, it is $4$.'
@@ -496,7 +496,7 @@ topics:
             answer: '3'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The quotient has $3^{\deg f}$ elements. Since $27 = 3^3$, we need $\deg f = 3$.'
-          - problem: 'Sam builds a field with $4$ elements as $\mathbb{Z}_4$. Find a nonzero element of $\mathbb{Z}_4$ that has no multiplicative inverse.'
+          - problem: 'Find a nonzero element of $\mathbb{Z}_4$ that has no multiplicative inverse.'
             answer: '2'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'In $\mathbb{Z}_4$ we have $2 \cdot 2 = 4 = 0$, so $2$ is a zero divisor and has no inverse. Hence $\mathbb{Z}_4$ is not a field. A field with $4$ elements is instead $\mathbb{Z}_2[x]/(x^2 + x + 1)$.'
@@ -580,10 +580,10 @@ topics:
             answer: 'x^3 - 3x^2 + 3x - 3'
             answer_contract: {"kind": "required_form", "form": "expanded_polynomial"}
             solution_sketch: 'From $x = e + 1$ we get $x - 1 = e$, and $e^3 = 2$. So $(x - 1)^3 = 2$, which is $x^3 - 3x^2 + 3x - 1 = 2$, that is $x^3 - 3x^2 + 3x - 3 = 0$.'
-          - problem: 'Sam says that $\sqrt2 + 1$ is a root of $x^2 - 3$, because squaring $x = \sqrt2 + 1$ gives $x^2 = 2 + 1$. Find the monic quadratic with rational coefficients that has $\sqrt2 + 1$ as a root.'
+          - problem: 'Find the monic quadratic with rational coefficients that has $\sqrt2 + 1$ as a root.'
             answer: 'x^2 - 2x - 1'
             answer_contract: {"kind": "required_form", "form": "expanded_polynomial"}
-            solution_sketch: 'Squaring $\sqrt2 + 1$ gives $2 + 2\sqrt2 + 1$, not $2 + 1$; Sam dropped the middle term. Isolate the radical first: $x - 1 = \sqrt2$. Then $(x - 1)^2 = 2$, which is $x^2 - 2x + 1 = 2$, that is $x^2 - 2x - 1 = 0$.'
+            solution_sketch: 'Squaring $\sqrt2 + 1$ gives $2 + 2\sqrt2 + 1$, not $2 + 1$, because of the middle term. Isolate the radical first: $x - 1 = \sqrt2$. Then $(x - 1)^2 = 2$, which is $x^2 - 2x + 1 = 2$, that is $x^2 - 2x - 1 = 0$.'
         constraints: 'find explicit annihilating polynomials of prescribed degree by isolating radicals and squaring or cubing; algebraic versus transcendental by name; square and cube roots as contexts'
       - id: kp2
         name: 'Finding minimal polynomials'
@@ -625,10 +625,10 @@ topics:
             answer: 'x^4 - 14x^2 + 9'
             answer_contract: {"kind": "required_form", "form": "expanded_polynomial"}
             solution_sketch: 'Write $x = \sqrt2 + \sqrt5$, so $x^2 = 7 + 2\sqrt{10}$ and $(x^2 - 7)^2 = 40$. This gives $x^4 - 14x^2 + 9 = 0$. This quartic has no rational root and no factorization into two rational quadratics, so it is irreducible and is the minimal polynomial.'
-          - problem: 'Sam finds the minimal polynomial of $1 + \sqrt3$ by writing $(x - 1)^2 = 3$ and then $x^2 = 4$, so he gives $x^2 - 4$. Find the correct minimal polynomial.'
+          - problem: 'Find the minimal polynomial of $1 + \sqrt3$ over $\mathbb{Q}$. Start from $(x - 1)^2 = 3$.'
             answer: 'x^2 - 2x - 2'
             answer_contract: {"kind": "required_form", "form": "expanded_polynomial"}
-            solution_sketch: 'Expanding $(x - 1)^2 = 3$ gives $x^2 - 2x + 1 = 3$, that is $x^2 - 2x - 2 = 0$. Sam dropped the term $-2x$. The roots $1 \pm \sqrt3$ are irrational, so $x^2 - 2x - 2$ is irreducible and is the minimal polynomial.'
+            solution_sketch: 'Expanding $(x - 1)^2 = 3$ gives $x^2 - 2x + 1 = 3$, that is $x^2 - 2x - 2 = 0$. The roots $1 \pm \sqrt3$ are irrational, so $x^2 - 2x - 2$ is irreducible and is the minimal polynomial.'
           - problem: 'Find the minimal polynomial of $\frac73$ over $\mathbb{Q}$.'
             answer: 'x - 7/3'
             answer_contract: {"kind": "required_form", "form": "expanded_polynomial"}
@@ -678,10 +678,10 @@ topics:
             answer: '2'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The side length is $s = \sqrt{12} = 2\sqrt3$, a root of $x^2 - 12$. This polynomial is irreducible over $\mathbb{Q}$ because $12$ is not a perfect square. So the degree is $2$.'
-          - problem: 'Sam says that $\sqrt[4]{2}$ has degree $2$ over $\mathbb{Q}$, because $(\sqrt[4]{2})^2 = \sqrt2$ and $\sqrt2$ has degree $2$. What is the correct degree?'
+          - problem: 'We have $(\sqrt[4]{2})^2 = \sqrt2$, and $\sqrt2$ has degree $2$ over $\mathbb{Q}$. What is the degree of $\sqrt[4]{2}$ over $\mathbb{Q}$?'
             answer: '4'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Sam found that $\sqrt[4]{2}$ is a root of $x^2 - \sqrt2$, but this polynomial does not have rational coefficients. Over $\mathbb{Q}$ the minimal polynomial is $x^4 - 2$, which is irreducible by Eisenstein''s criterion at $2$. So the degree is $4$.'
+            solution_sketch: 'The number $\sqrt[4]{2}$ is a root of $x^2 - \sqrt2$, but this polynomial does not have rational coefficients. Over $\mathbb{Q}$ the minimal polynomial is $x^4 - 2$, which is irreducible by Eisenstein''s criterion at $2$. So the degree is $4$.'
         constraints: 'degrees 1-4; base field always stated; towers of square roots and cube roots; geometry contexts'
     diagnostic_exemplar:
       problem: 'Find the minimal polynomial of $\sqrt{3} - 1$ over $\mathbb{Q}$.'
@@ -750,10 +750,10 @@ topics:
             answer: '1, alpha, alpha^2'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The minimal polynomial $x^3-2$ of $\alpha$ has degree $3$, so the basis has $3$ elements. The powers $1,\alpha,\alpha^2$ span, because $\alpha^3=2$ reduces every higher power.'
-          - problem: 'Sam claims that $\frac{1}{3+\sqrt2} = 3-\sqrt2$ in $\mathbb{Q}(\sqrt2)$. What is the correct value, written in the form $a+b\sqrt2$?'
+          - problem: 'What is $\frac{1}{3+\sqrt2}$ in $\mathbb{Q}(\sqrt2)$, written in the form $a+b\sqrt2$?'
             answer: '3/7 - sqrt(2)/7'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'Multiply the numerator and the denominator by $3-\sqrt2$. The denominator becomes $9-2=7$, not $1$, so the quotient is $\frac{3-\sqrt2}{7}$. Sam forgot to divide by $7$.'
+            solution_sketch: 'Multiply the numerator and the denominator by $3-\sqrt2$. The denominator becomes $9-2=7$, not $1$, so the quotient is $\frac{3-\sqrt2}{7}$. The quotient needs the division by $7$.'
           - problem: 'In $\mathbb{Q}(i)$, express $\frac{3 + i}{1 - i}$ in the form $a + bi$.'
             answer: '1 + 2i'
             answer_contract: {"kind":"exact"}
@@ -791,7 +791,7 @@ topics:
             answer: '4'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The number $\sqrt[4]{2}$ is a root of $x^4-2$, which is irreducible by Eisenstein at $2$. So the degree is $4$.'
-          - problem: 'Sam claims that $[\mathbb{Q}(\sqrt{12}):\mathbb{Q}] = 12$, because the number under the root sign is $12$. What is the correct degree?'
+          - problem: 'What is the degree $[\mathbb{Q}(\sqrt{12}):\mathbb{Q}]$?'
             answer: '2'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The number $\sqrt{12}=2\sqrt3$ is a root of $x^2-12$, which has degree $2$. The degree does not depend on the size of the number under the root sign, so it is $2$.'
@@ -799,7 +799,7 @@ topics:
             answer: '4'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'Squaring twice gives the polynomial $x^4-20x^2+16$ with root $\sqrt3+\sqrt7$. This polynomial is irreducible over $\mathbb{Q}$, so the degree is $4$.'
-          - problem: 'Priya adjoins a real root $\beta$ of the polynomial $x^3-3x+1$ to $\mathbb{Q}$. This polynomial has no rational root, so it is irreducible. What is the dimension of $\mathbb{Q}(\beta)$ as a vector space over $\mathbb{Q}$?'
+          - problem: 'Adjoin a real root $\beta$ of the polynomial $x^3-3x+1$ to $\mathbb{Q}$. This polynomial has no rational root, so it is irreducible. What is the dimension of $\mathbb{Q}(\beta)$ as a vector space over $\mathbb{Q}$?'
             answer: '3'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'A cubic with no rational root is irreducible, so it is the minimal polynomial of $\beta$. The dimension is its degree, $3$, with basis $1,\beta,\beta^2$.'
@@ -833,10 +833,10 @@ topics:
             answer: '6'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'By the tower law, $24 = [K:E]\cdot 4$. So $[K:E] = 24/4 = 6$.'
-          - problem: 'Sam claims that the field $\mathbb{Q}(\sqrt[3]{2})$ contains $\sqrt2$. Is Sam right?'
+          - problem: 'Does the field $\mathbb{Q}(\sqrt[3]{2})$ contain $\sqrt2$?'
             answer: 'no'
-            answer_contract: {"kind":"label","options":[["yes","sam is right","it does","contains"],["no","sam is wrong","it does not","does not contain"]]}
-            solution_sketch: 'If $\sqrt2\in\mathbb{Q}(\sqrt[3]{2})$, then $\mathbb{Q}(\sqrt2)$ is an intermediate field of degree $2$. By the tower law $2$ divides $[\mathbb{Q}(\sqrt[3]{2}):\mathbb{Q}]=3$, which is false. So Sam is wrong.'
+            answer_contract: {"kind":"label","options":[["yes","it does","contains"],["no","it does not","does not contain"]]}
+            solution_sketch: 'If $\sqrt2\in\mathbb{Q}(\sqrt[3]{2})$, then $\mathbb{Q}(\sqrt2)$ is an intermediate field of degree $2$. By the tower law $2$ divides $[\mathbb{Q}(\sqrt[3]{2}):\mathbb{Q}]=3$, which is false. So the field does not contain $\sqrt2$.'
           - problem: 'Fields satisfy $F\subseteq E\subseteq K$ with $[K:F] = 45$ and $[K:E] = 5$. Find $[E:F]$.'
             answer: '9'
             answer_contract: {"kind":"exact"}
@@ -845,7 +845,7 @@ topics:
             answer: 'yes'
             answer_contract: {"kind":"label","options":[["yes","it can","can"],["no","it cannot","it can not","cannot"]]}
             solution_sketch: 'By the tower law, $[E:F]$ divides $[K:F]=30$. Since $30 = 6\cdot 5$, the value $6$ is possible, with $[K:E] = 5$.'
-          - problem: 'Ana adjoins $\alpha=\sqrt[3]{2}$ to $\mathbb{Q}$ and then adjoins $\omega=e^{2\pi i/3}$ to $\mathbb{Q}(\alpha)$. She knows that $[\mathbb{Q}(\alpha):\mathbb{Q}]=3$ and $[\mathbb{Q}(\alpha,\omega):\mathbb{Q}(\alpha)]=2$. Find $[\mathbb{Q}(\alpha,\omega):\mathbb{Q}]$.'
+          - problem: 'Adjoin $\alpha=\sqrt[3]{2}$ to $\mathbb{Q}$ and then adjoin $\omega=e^{2\pi i/3}$ to $\mathbb{Q}(\alpha)$. We have $[\mathbb{Q}(\alpha):\mathbb{Q}]=3$ and $[\mathbb{Q}(\alpha,\omega):\mathbb{Q}(\alpha)]=2$. Find $[\mathbb{Q}(\alpha,\omega):\mathbb{Q}]$.'
             answer: '6'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The two steps form a tower. By the tower law, the total degree is $3\cdot 2 = 6$.'
@@ -916,7 +916,7 @@ topics:
             answer: 'no'
             answer_contract: {"kind":"label","options":[["yes","it is constructible","constructible","possible"],["no","it is not constructible","not constructible","impossible","not possible","it cannot be constructed","cannot be constructed"]]}
             solution_sketch: 'The degree $[\mathbb{Q}(\alpha):\mathbb{Q}]$ is $3$. A constructible number has degree a power of $2$ over $\mathbb{Q}$, and $3$ is not a power of $2$. So $\alpha$ is not constructible.'
-          - problem: 'Sam claims that every constructible number has degree $1$, $2$, $4$ or $8$ over $\mathbb{Q}$. What is the smallest degree of a constructible number that contradicts this claim?'
+          - problem: 'What is the smallest degree over $\mathbb{Q}$ of a constructible number whose degree is not $1$, $2$, $4$ or $8$?'
             answer: '16'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'Powers of $2$ continue past $8$ with $16$. A tower of four square-root steps, such as $\mathbb{Q}(\sqrt[16]{2})$ with $x^{16}-2$ irreducible, gives a constructible number of degree $16$.'
@@ -924,7 +924,7 @@ topics:
             answer: '32'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'Each step multiplies the degree by at most $2$. After five steps the largest possible degree is $2^5=32$.'
-          - problem: 'Sam argues that $\sqrt[3]{2}$ is constructible, because the degree $3 = 2 + 1$ is a sum of powers of $2$ and so is a power of $2$. List the powers of $2$ that lie between $1$ and $10$.'
+          - problem: 'The degree $3 = 2 + 1$ is a sum of powers of $2$. List the powers of $2$ that lie between $1$ and $10$.'
             answer: '1, 2, 4, 8'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The powers of $2$ are $1, 2, 4, 8, 16, \dots$, so those between $1$ and $10$ are $1, 2, 4, 8$. The number $3$ is not in this list, so the degree $3$ is not a power of $2$. Hence $\sqrt[3]{2}$ is not constructible.'
@@ -961,7 +961,7 @@ topics:
             answer: 'no'
             answer_contract: {"kind":"label","options":[["yes","it can","possible","it can be trisected"],["no","it cannot","it can not","impossible","not possible","it cannot be trisected","cannot be trisected"]]}
             solution_sketch: 'A trisection constructs $\cos20^\circ$, which has degree $3$ over $\mathbb{Q}$. The degree $3$ is not a power of $2$, so the angle cannot be trisected.'
-          - problem: 'Sam argues that $60^\circ$ can be trisected. Step 1: $\cos20^\circ$ is a root of $8x^3-6x-1$, which is irreducible over $\mathbb{Q}$. Step 2: so $[\mathbb{Q}(\cos20^\circ):\mathbb{Q}]=3$. Step 3: a constructible number has degree a power of $2$ over $\mathbb{Q}$. Step 4: since $3$ is not a power of $2$, $\cos20^\circ$ is constructible. Which step is wrong, and why?'
+          - problem: 'The argument below claims that $60^\circ$ can be trisected. Step 1: $\cos20^\circ$ is a root of $8x^3-6x-1$, which is irreducible over $\mathbb{Q}$. Step 2: so $[\mathbb{Q}(\cos20^\circ):\mathbb{Q}]=3$. Step 3: a constructible number has degree a power of $2$ over $\mathbb{Q}$. Step 4: since $3$ is not a power of $2$, $\cos20^\circ$ is constructible. Which step is wrong, and why?'
             answer: 'Step 4: a degree that is not a power of 2 shows that cos 20 degrees is not constructible, so the conclusion is reversed.'
             answer_contract: {"kind": "written"}
             solution_sketch: 'Steps 1 to 3 are correct. A constructible number has degree a power of $2$, so a degree of $3$ shows that $\cos20^\circ$ is not constructible. The conclusion of Step 4 is reversed, and the angle $60^\circ$ cannot be trisected.'
@@ -1006,10 +1006,10 @@ topics:
             answer: '4'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The degree is $\varphi(15)/2=8/2=4$. Since $4$ is a power of $2$, the regular $15$-gon is constructible.'
-          - problem: 'Sam argues that the circle can be squared, because the side $s$ of the square satisfies $s^2 = \pi$ and so $s$ is a square root with degree $2$ over $\mathbb{Q}$. Sam uses the polynomial $x^2 - c$ with root $s$. Find $c$.'
+          - problem: 'The side $s$ of a square with the area of the unit circle satisfies $s^2 = \pi$. The polynomial $x^2 - c$ has the root $s$. Find $c$.'
             answer: 'pi'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'From $s^2 = \pi$ we get $s^2 - \pi = 0$, so $c = \pi$. This polynomial has a coefficient that is not rational, because $\pi$ is transcendental. So $s$ has no degree over $\mathbb{Q}$, and Sam''s claim of degree $2$ is wrong.'
+            solution_sketch: 'From $s^2 = \pi$ we get $s^2 - \pi = 0$, so $c = \pi$. This polynomial has a coefficient that is not rational, because $\pi$ is transcendental. So $s$ has no degree over $\mathbb{Q}$, so the claim of degree $2$ is wrong.'
           - problem: 'The number $\cos(2\pi/17)$ has degree $\varphi(17)/2$ over $\mathbb{Q}$. Find $[\mathbb{Q}(\cos(2\pi/17)):\mathbb{Q}]$.'
             answer: '8'
             answer_contract: {"kind":"exact"}
@@ -1085,7 +1085,7 @@ topics:
             answer: 'no'
             answer_contract: {"kind":"label","options":[["yes","it is a field","field"],["no","it is not a field","not a field"]]}
             solution_sketch: 'The polynomial $x^2+1$ has the root $2$ in $\mathbb{Z}_5$, so it factors as $(x-2)(x-3)$. It is not irreducible, so the ideal is not maximal and the quotient is not a field.'
-          - problem: 'Marta wants a finite field with $16$ elements and builds it as $\mathbb{Z}_2[x]/\langle f\rangle$ with $f$ irreducible. What is the degree of $f$?'
+          - problem: 'A finite field with $16$ elements is built as $\mathbb{Z}_2[x]/\langle f\rangle$ with $f$ irreducible. What is the degree of $f$?'
             answer: '4'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The quotient has $2^{\deg f}$ elements. The equation $2^{\deg f}=16$ gives $\deg f=4$.'
@@ -1093,7 +1093,7 @@ topics:
             answer: '27'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'Every coset has a unique representative $a+bx+cx^2$ with $a,b,c\in\mathbb{Z}_3$. So the field has $3^3=27$ elements.'
-          - problem: 'Sam says that $x^2+1$ is irreducible over $\mathbb{Z}_2$ because $x^2+1$ has no real root. Find the roots of $x^2+1$ in $\mathbb{Z}_2$.'
+          - problem: 'Find the roots of $x^2+1$ in $\mathbb{Z}_2$.'
             answer: '1'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'Test the elements of $\mathbb{Z}_2$: $0^2+1=1$ and $1^2+1=2\equiv0$. So $1$ is a root and $x^2+1=(x+1)^2$ is reducible, even though it has no real root.'
@@ -1130,11 +1130,11 @@ topics:
             answer: '1'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'All four roots are rational, so the splitting field is $\mathbb{Q}$ itself. Its degree over $\mathbb{Q}$ is $1$.'
-          - problem: 'Mia wants all solutions of $z^6=1$ in the complex numbers. The solutions are $\pm1$ and $\pm\frac{1}{2}\pm\frac{\sqrt3}{2}i$. Find the degree over $\mathbb{Q}$ of the smallest field that contains all of them.'
+          - problem: 'The solutions of $z^6=1$ in the complex numbers are $\pm1$ and $\pm\frac{1}{2}\pm\frac{\sqrt3}{2}i$. Find the degree over $\mathbb{Q}$ of the smallest field that contains all of them.'
             answer: '2'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The solutions lie in $\mathbb{Q}(\sqrt3\,i)=\mathbb{Q}(\sqrt{-3})$. The number $\sqrt{-3}$ is a root of $x^2+3$, so the field has degree $2$.'
-          - problem: 'Sam says that the splitting field of $x^3-2$ over $\mathbb{Q}$ is $\mathbb{Q}(\sqrt[3]{2})$, of degree $3$. What is the degree of the splitting field?'
+          - problem: 'The field $\mathbb{Q}(\sqrt[3]{2})$ has degree $3$ over $\mathbb{Q}$. What is the degree of the splitting field of $x^3-2$ over $\mathbb{Q}$?'
             answer: '6'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The field $\mathbb{Q}(\sqrt[3]{2})$ is real, so it misses the roots $\sqrt[3]{2}\,\omega$ and $\sqrt[3]{2}\,\omega^2$. Adjoining $\omega$ adds degree $2$, so the degree is $3\cdot2=6$.'
@@ -1142,7 +1142,7 @@ topics:
             answer: '6'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The roots are $\sqrt[3]{5}$ times the cube roots of unity. The field $\mathbb{Q}(\sqrt[3]{5})$ has degree $3$ and is real, so $\omega$ adds degree $2$, and the total is $6$.'
-          - problem: 'Ali wants all solutions of $z^8=1$ in the complex numbers. Find the degree over $\mathbb{Q}$ of the smallest field that contains all of them.'
+          - problem: 'Consider all solutions of $z^8=1$ in the complex numbers. Find the degree over $\mathbb{Q}$ of the smallest field that contains all of them.'
             answer: '4'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The solutions are the powers of $\zeta=e^{2\pi i/8}=\frac{\sqrt2}{2}(1+i)$. The smallest field containing them is $\mathbb{Q}(\sqrt2,i)$, of degree $2\cdot2=4$.'
@@ -1179,7 +1179,7 @@ topics:
             answer: '8'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The splitting field is $\mathbb{Q}(\sqrt2,\sqrt3,\sqrt5)$. Each new square root is not in the field before it, so each step has degree $2$. The total is $2\cdot2\cdot2=8$.'
-          - problem: 'Sam says that the splitting field of $(x^2-2)(x^2-8)$ over $\mathbb{Q}$ has degree $4$, because each factor adds degree $2$. What is the correct degree?'
+          - problem: 'Each of the factors $x^2-2$ and $x^2-8$ has degree $2$. What is the degree over $\mathbb{Q}$ of the splitting field of $(x^2-2)(x^2-8)$?'
             answer: '2'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The roots of $x^2-8$ are $\pm2\sqrt2$, and they lie in $\mathbb{Q}(\sqrt2)$. So the second factor adds nothing, and the splitting field is $\mathbb{Q}(\sqrt2)$ of degree $2$.'
@@ -1187,7 +1187,7 @@ topics:
             answer: '4'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'All four solutions lie in $\mathbb{Q}(\sqrt2,\sqrt3)$. Conversely $\sqrt2+\sqrt3$ and $\sqrt3-\sqrt2$ give $\sqrt3$ and $\sqrt2$ by sums and differences. So the field has degree $4$.'
-          - problem: 'Lea wants all solutions of $x^6=8$ in the complex numbers. They are $\sqrt2$ times the sixth roots of unity. Find the degree over $\mathbb{Q}$ of the smallest field that contains all of them.'
+          - problem: 'Consider all solutions of $x^6=8$ in the complex numbers. They are $\sqrt2$ times the sixth roots of unity. Find the degree over $\mathbb{Q}$ of the smallest field that contains all of them.'
             answer: '4'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The field contains $\sqrt2$ and, by division, the sixth roots of unity, which need $\sqrt{-3}$. Since $\sqrt{-3}\notin\mathbb{Q}(\sqrt2)$, the degree is $2\cdot2=4$.'

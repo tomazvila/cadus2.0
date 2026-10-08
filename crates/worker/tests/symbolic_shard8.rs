@@ -26,7 +26,8 @@ fn repaired_families_pin_identifiability_variety_and_two_labels() {
     let source = curriculum_source("curriculum/foundations/03-expressions-equations.yaml");
     // Re-pinned 2026-10-07 to the courses rewrite wording for the error item.
     assert!(source.contains("table follows a linear rule"));
-    assert!(source.contains("Tom writes $4y+6y=10y^2$."));
+    // 2026-10-08, story framing removed: the error item is now a direct question.
+    assert!(source.contains("What is the simplified expression for $4y+6y$?"));
     // The reviewed "no" item of the yes/no family (rewritten in c8a84e32).
     assert!(source.contains("Are $4(x + 3)$ and $4x + 3$ equivalent?"));
     assert!(!source.contains("Complete the simplification $x+x+x+x$"));

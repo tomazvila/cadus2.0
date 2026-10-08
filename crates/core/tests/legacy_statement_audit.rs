@@ -50,7 +50,8 @@ fn historical_classification_and_all_live_statements_have_a_closed_boundary() {
     assert_eq!(
         sha256_hex(serde_json::to_string(&current).unwrap().as_bytes()),
         // 2026-10-07, courses rewrite (95 thousands separators, three reworded items, mixed-number forms): hash re-pinned.
-        "0fa8bc2c9a0b93b15732e63ff01cf48371f78fe362daf843c50aae473c50ad7b"
+        // 2026-10-08, story framing removed: hash re-pinned (was 0fa8bc22...ad7b).
+        "c1ea8818b4b35a0e9df6236d244a0be4d588b1546e2cf52307ae03061d1e013c"
     );
     let current_keys: BTreeSet<_> = current.iter().map(key).collect();
     assert_eq!(current_keys.len(), current.len());
@@ -76,10 +77,11 @@ fn historical_classification_and_all_live_statements_have_a_closed_boundary() {
             ("approx".to_owned(), 28),
             ("ascending_chain".to_owned(), 5),
             ("coordinates".to_owned(), 123),
-            ("exact".to_owned(), 664),
+            // 2026-10-08, story framing removed: exact 665 (was 664), label 97 (was 98).
+            ("exact".to_owned(), 665),
             ("function".to_owned(), 12),
             ("inequality_union".to_owned(), 97),
-            ("label".to_owned(), 98),
+            ("label".to_owned(), 97),
             ("list".to_owned(), 40),
             ("multipart".to_owned(), 32),
             ("polynomial_relation".to_owned(), 97),

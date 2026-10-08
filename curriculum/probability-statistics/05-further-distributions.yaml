@@ -53,10 +53,10 @@ topics:
             answer: '4/3'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The ratio is $P(X=3)/P(X=2)=\dfrac{4^3/3!}{4^2/2!}=\dfrac{4}{3}$. The factor $e^{-4}$ is the same in both and cancels, so the ratio is $\lambda/k=4/3$ for $k=3$.'
-          - problem: 'Sam says that for a Poisson variable with mean $1.5$, $P(X=2)=e^{-1.5}\cdot1.5^2=0.5020$ when $e^{-1.5} \approx 0.2231$. What is the correct value, to four decimal places?'
+          - problem: 'A Poisson variable has mean $1.5$. Using $e^{-1.5} \approx 0.2231$, what is $P(X=2)$, to four decimal places?'
             answer: '0.2510'
             answer_contract: {"kind": "approx", "decimals": 4}
-            solution_sketch: 'Sam left out the factor $1/k!$. The correct value is $e^{-1.5}\cdot1.5^2/2!=0.2231\cdot2.25/2=0.2510$.'
+            solution_sketch: 'The factor $1/k!$ is part of the formula. The value is $e^{-1.5}\cdot1.5^2/2!=0.2231\cdot2.25/2=0.2510$.'
         constraints: 'lambda in {1, 1.5, 2, 3}; k <= 5; the needed value of e^{-lambda} is always supplied in the problem and the answer agrees with the unrounded value at the stated number of decimals; includes rates found by dividing a count by a time and one exact-form item'
       - id: kp2
         name: "Mean and variance are both lambda"
@@ -128,10 +128,10 @@ topics:
             answer: '0.9933'
             answer_contract: {"kind": "approx", "decimals": 4}
             solution_sketch: 'Over $10$ hours the mean is $10\cdot0.5=5$. Then $P(X\ge1)=1-e^{-5}=1-0.0067=0.9933$.'
-          - problem: 'Mia says that a Poisson count with mean $0.5$ per page has $P(\text{no typos})=e^{-0.5}$ on a $6$-page chapter. Using $e^{-3} \approx 0.0498$, what is the correct probability of no typos, to four decimal places?'
+          - problem: 'A Poisson count has mean $0.5$ typos per page. Using $e^{-3} \approx 0.0498$, what is the probability of no typos on a $6$-page chapter, to four decimal places?'
             answer: '0.0498'
             answer_contract: {"kind": "approx", "decimals": 4}
-            solution_sketch: 'Mia used the mean for one page. Over $6$ pages the mean is $6\cdot0.5=3$, so $P(X=0)=e^{-3}\approx0.0498$.'
+            solution_sketch: 'The mean for one page is not enough. Over $6$ pages the mean is $6\cdot0.5=3$, so $P(X=0)=e^{-3}\approx0.0498$.'
           - problem: 'Cars pass a checkpoint as a Poisson process with an average of $1.5$ per minute. Using $e^{-3} \approx 0.0498$, find the probability that exactly $3$ cars pass in $2$ minutes, to three decimal places.'
             answer: '0.224'
             answer_contract: {"kind": "approx", "decimals": 3}
@@ -409,10 +409,10 @@ topics:
             answer: 'equally likely'
             answer_contract: {"kind": "label", "options": [["equally likely", "equal", "the same", "just as likely", "same", "same chance", "the same chance", "equal chance"], ["more likely", "more", "higher"], ["less likely", "less", "lower"]]}
             solution_sketch: 'An exponential lifetime is memoryless. The chance of lasting another $10$ hours does not depend on the $100$ hours already burned, so it is equal to that of a new lamp.'
-          - problem: 'Dan says that a component with an exponential lifetime of rate $0.2$ per hour, which has already survived $6$ hours, survives at least $5$ more hours with probability $e^{-0.2\cdot11}$. Using $e^{-1} \approx 0.3679$, what is the correct probability, to four decimal places?'
+          - problem: 'A component has an exponential lifetime of rate $0.2$ per hour and has already survived $6$ hours. Using $e^{-1} \approx 0.3679$, what is the probability that it survives at least $5$ more hours, to four decimal places?'
             answer: '0.3679'
             answer_contract: {"kind": "approx", "decimals": 4}
-            solution_sketch: 'Dan added the $6$ hours already survived to the $5$ more hours. By memorylessness only the $5$ more hours count, so $P=e^{-0.2\cdot5}=e^{-1}\approx0.3679$.'
+            solution_sketch: 'The $6$ hours already survived do not add to the $5$ more hours. By memorylessness only the $5$ more hours count, so $P=e^{-0.2\cdot5}=e^{-1}\approx0.3679$.'
         constraints: 'memoryless items state the past survival explicitly and expect it to be discarded; Poisson-connection items convert between a rate per hour and a mean wait in minutes, in both directions; one verdict item'
     diagnostic_exemplar:
       problem: 'A component''s lifetime is exponential with rate $\lambda = 0.25$ per hour, and it has already survived $6$ hours. Using $e^{-1} \approx 0.3679$, find the probability it survives at least $4$ more hours, to four decimal places.'
@@ -608,10 +608,10 @@ topics:
             answer: '3'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'From $\operatorname{Cov}(X,Y)=E[XY]-E[X]E[Y]$ we get $E[X]E[Y]=15-3=12$. Now divide this product by the known mean $E[X]=4$. So the mean of the orders is $E[Y]=12\div4=3$.'
-          - problem: 'For two random variables, $E[XY]=20$, $E[X]=5$ and $E[Y]=3$. Mia computes $\operatorname{Cov}(X,Y)=20-5-3=12$. What is the correct covariance?'
+          - problem: 'For two random variables, $E[XY]=20$, $E[X]=5$ and $E[Y]=3$. What is $\operatorname{Cov}(X,Y)$?'
             answer: '5'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Mia subtracted the two means one after the other, but the identity needs their product. The product is $5\cdot3=15$. So $\operatorname{Cov}(X,Y)=20-15=5$.'
+            solution_sketch: 'Subtracting the two means one after the other is wrong, because the identity needs their product. The product is $5\cdot3=15$. So $\operatorname{Cov}(X,Y)=20-15=5$.'
         constraints: 'moments given directly or hidden in a short context; the question asks for the covariance, for a missing moment, or for a mean; one Cov(X, X) = Var(X) item per set'
       - id: kp2
         name: "Covariance from a joint table"
@@ -654,10 +654,10 @@ topics:
             answer: '0.4'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'For $0/1$ variables $E[XY]$ is the probability of passing both. From the identity, $E[XY]=\operatorname{Cov}(X,Y)+E[X]E[Y]=0.1+0.6\cdot0.5=0.4$. So $0.4$ of the students pass both tests.'
-          - problem: '$X$ takes the values $-1$, $0$ and $1$, each with probability $\frac13$, and $Y=X^2$. Tom finds $\operatorname{Cov}(X,Y)=0$ and concludes that $X$ and $Y$ are independent. Is Tom right?'
+          - problem: '$X$ takes the values $-1$, $0$ and $1$, each with probability $\frac13$, and $Y=X^2$. Does $\operatorname{Cov}(X,Y)=0$ guarantee that $X$ and $Y$ are independent?'
             answer: 'no'
-            answer_contract: {"kind": "label", "options": [["yes", "Tom is right", "he is right", "right", "correct"], ["no", "Tom is wrong", "he is wrong", "not right", "incorrect", "wrong", "no, they are dependent"]]}
-            solution_sketch: 'Tom''s covariance is right: $E[X]=0$ and $E[XY]=E[X^3]=0$, so $\operatorname{Cov}(X,Y)=0$. But $Y$ is fixed once $X$ is known, so the variables are dependent. Zero covariance does not imply independence, so Tom is wrong.'
+            answer_contract: {"kind": "label", "options": [["yes", "they are independent", "independent"], ["no", "they are dependent", "dependent", "not independent", "no, they are dependent"]]}
+            solution_sketch: 'The covariance is $0$: $E[X]=0$ and $E[XY]=E[X^3]=0$, so $\operatorname{Cov}(X,Y)=0$. But $Y$ is fixed once $X$ is known, so the variables are dependent. Zero covariance does not imply independence, so it does not guarantee independence.'
         constraints: 'joint probabilities written out in the question; values 0/1 or 0..2 so E[XY] is a short sum; covariances in hundredths; include one independent-hence-zero case and one zero-covariance-but-dependent case'
       - id: kp3
         name: "Variance of a sum and correlation"
@@ -699,7 +699,7 @@ topics:
             answer: '-1'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The standard deviations are $2$ and $3$. So $\rho=\frac{-6}{2\cdot3}=-1$. A correlation of $-1$ means $Y$ is a decreasing linear function of $X$.'
-          - problem: 'For the hours of sleep $X$ and the number of mistakes $Y$ in a test, a teacher finds $\operatorname{Cov}(X,Y)=-3.2$. Do $X$ and $Y$ have a positive correlation, a negative correlation or no correlation?'
+          - problem: 'For the hours of sleep $X$ and the number of mistakes $Y$ in a test, $\operatorname{Cov}(X,Y)=-3.2$. Do $X$ and $Y$ have a positive correlation, a negative correlation or no correlation?'
             answer: 'negative'
             answer_contract: {"kind": "label", "options": [["positive", "positive correlation", "a positive correlation", "positively correlated", "they are positively correlated"], ["negative", "negative correlation", "a negative correlation", "negatively correlated", "they are negatively correlated"], ["no correlation", "none", "zero", "uncorrelated", "not correlated", "they are uncorrelated"]]}
             solution_sketch: 'The correlation has the same sign as the covariance, because the standard deviations are positive. The covariance $-3.2$ is negative, so the correlation is negative. More sleep goes with fewer mistakes.'

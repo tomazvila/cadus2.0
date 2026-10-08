@@ -41,15 +41,15 @@ topics:
             answer: '8'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Turning the dial is an action of $\mathbb{Z}_{12}$ on the positions, so two turns together act as one turn by the sum. The turns of $7$ and $8$ steps equal one turn of $15 \equiv 3$ steps, and $5+3 = 8$. The dial stops at position $8$.'
-          - problem: 'Sam says that the rule $g\cdot x = xg$ defines an action of the group $S_3$ on the set $S_3$, because $e\cdot x = x$ holds. Is Sam right?'
+          - problem: 'The rule $g\cdot x = xg$ satisfies $e\cdot x = x$. Does it define an action of the group $S_3$ on the set $S_3$?'
             answer: 'no'
-            answer_contract: {"kind": "label", "options": [["yes", "Sam is right", "it is an action", "it is a group action"], ["no", "Sam is wrong", "Sam is not right", "it is not an action", "not an action", "it does not define an action"]]}
-            solution_sketch: 'The rule gives $g\cdot(h\cdot x) = (xh)g = xhg$, while $(gh)\cdot x = x(gh) = xgh$. In the non-abelian group $S_3$ these differ for some $g$ and $h$, so the second axiom fails even though $e\cdot x = x$ holds. Sam is wrong; the rule $g\cdot x = xg^{-1}$ repairs it.'
-          - problem: 'Products of permutations are composed from right to left. Sam''s rule $g\cdot x = xg$ acts on the set $S_3$. Take $g=(1\,2)$, $h=(1\,3)$ and $x=e$. What is the image of $1$ under the permutation $g\cdot(h\cdot x)$?'
+            answer_contract: {"kind": "label", "options": [["yes", "it is an action", "it is a group action"], ["no", "it is not an action", "not an action", "it does not define an action"]]}
+            solution_sketch: 'The rule gives $g\cdot(h\cdot x) = (xh)g = xhg$, while $(gh)\cdot x = x(gh) = xgh$. In the non-abelian group $S_3$ these differ for some $g$ and $h$, so the second axiom fails even though $e\cdot x = x$ holds. So the rule is not an action; the rule $g\cdot x = xg^{-1}$ repairs it.'
+          - problem: 'Products of permutations are composed from right to left. The rule $g\cdot x = xg$ acts on the set $S_3$. Take $g=(1\,2)$, $h=(1\,3)$ and $x=e$. What is the image of $1$ under the permutation $g\cdot(h\cdot x)$?'
             answer: '2'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'With $x=e$ the rule gives $h\cdot e = h$ and then $g\cdot h = hg$. Composing from right to left, $(hg)(1) = h(g(1)) = h(2) = 2$, so the image of $1$ is $2$. The other side $(gh)\cdot e = gh$ sends $1$ to $g(h(1)) = g(3) = 3$, so the two sides differ.'
-          - problem: 'Sam''s rule $g\cdot x = xg$ acts on the set $S_3$. For how many ordered pairs $(g,h)$ of elements of $S_3$ does $g\cdot(h\cdot e)$ differ from $(gh)\cdot e$?'
+          - problem: 'The rule $g\cdot x = xg$ acts on the set $S_3$. For how many ordered pairs $(g,h)$ of elements of $S_3$ does $g\cdot(h\cdot e)$ differ from $(gh)\cdot e$?'
             answer: '18'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'We have $g\cdot(h\cdot e) = hg$ and $(gh)\cdot e = gh$, and these differ exactly when $g$ and $h$ do not commute. The identity commutes with all $6$ elements, each $3$-cycle with $3$, and each transposition with $2$, so $6+6+6 = 18$ of the $36$ ordered pairs commute and $18$ do not.'
@@ -243,10 +243,10 @@ topics:
             answer: '12'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'A permutation fixes the subset $\{1,2\}$ if it fixes both $1$ and $2$ or swaps them, which is $2$ choices. The other three points can be permuted in $3! = 6$ ways, so the stabilizer has $2\cdot 6 = 12$ elements.'
-          - problem: 'Sam says that in the action of $S_3$ on $\{1,2,3\}$ the stabilizer of $1$ has $3$ elements, because the set has $3$ points. How many elements does the stabilizer of $1$ really have?'
+          - problem: 'The set $\{1,2,3\}$ has $3$ points. How many elements does the stabilizer of $1$ have in the action of $S_3$ on $\{1,2,3\}$?'
             answer: '2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'A permutation fixes the point $1$ only if $\sigma(1)=1$, and then it permutes the other two points freely. That gives $2! = 2$ elements, namely $e$ and $(2\,3)$, so Sam is wrong.'
+            solution_sketch: 'A permutation fixes the point $1$ only if $\sigma(1)=1$, and then it permutes the other two points freely. That gives $2! = 2$ elements, namely $e$ and $(2\,3)$.'
           - problem: 'Five students sit at five desks. The group $S_5$ of all $120$ rearrangements acts on the students. How many of the rearrangements leave the student who sits at desk $1$ at that desk?'
             answer: '24'
             answer_contract: {"kind": "exact"}
@@ -349,10 +349,10 @@ topics:
             answer: '9'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The cosets of $\mathrm{Stab}(x)$ correspond one to one with the points of the orbit, so their number is $|G|/|\mathrm{Stab}(x)|$. Here that is $45/5 = 9$ cosets.'
-          - problem: 'A group $G$ of order $40$ acts on a set $X$, and the orbit of a point $x$ has $8$ points. Dana says that the stabilizer of $x$ has order $40-8 = 32$. Is Dana right?'
-            answer: 'no'
-            answer_contract: {"kind": "label", "options": [["yes", "Dana is right", "yes, Dana is right"], ["no", "Dana is wrong", "Dana is not right", "no, Dana is wrong"]]}
-            solution_sketch: 'The theorem is a product formula, $|G| = |\mathrm{Orb}(x)|\cdot|\mathrm{Stab}(x)|$, not a sum. So $40 = 8\cdot|\mathrm{Stab}(x)|$ and the stabilizer has order $5$, not $40-8=32$. Dana is wrong.'
+          - problem: 'A group $G$ of order $40$ acts on a set $X$, and the orbit of a point $x$ has $8$ points. What is the order of the stabilizer of $x$?'
+            answer: '5'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The theorem is a product formula, $|G| = |\mathrm{Orb}(x)|\cdot|\mathrm{Stab}(x)|$, not a sum. So $40 = 8\cdot|\mathrm{Stab}(x)|$ and the stabilizer has order $5$, not $40-8=32$.'
           - problem: 'A group $G$ of order $36$ acts on a set $X$, and the orbit of a point $x$ has $9$ points. What is the order of the stabilizer of $x$?'
             answer: '4'
             answer_contract: {"kind": "exact"}
@@ -406,7 +406,7 @@ topics:
             answer: '3'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The group acts transitively on the $20$ corners, so $60 = 20\cdot|\mathrm{Stab}|$. The stabilizer of a corner has order $60/20 = 3$.'
-          - problem: 'The rotation group of a regular tetrahedron has order $12$ and acts transitively on its $4$ vertices. Sam says that the stabilizer of a vertex has order $12-4 = 8$. What is the correct order of the stabilizer?'
+          - problem: 'The rotation group of a regular tetrahedron has order $12$ and acts transitively on its $4$ vertices. What is the order of the stabilizer of a vertex?'
             answer: '3'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The group acts transitively on the $4$ vertices, so $12 = 4\cdot|\mathrm{Stab}|$ and the stabilizer has order $12/4 = 3$, not $12-4=8$. The theorem is a product, so we divide.'
@@ -451,10 +451,10 @@ topics:
             answer: '120'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The class of $\sigma$ has $|S_6|/|C(\sigma)| = 720/6 = 120$ elements, because the centralizer is the group of the $6$ powers of $\sigma$. So $120$ rearrangements are conjugate to $\sigma$.'
-          - problem: 'Sam finds that the conjugacy class of $(1\,2)$ in $S_4$ has $6$ elements and concludes that its centralizer has order $6$. What is the correct order of the centralizer of $(1\,2)$?'
+          - problem: 'The conjugacy class of $(1\,2)$ in $S_4$ has $6$ elements. What is the order of the centralizer of $(1\,2)$?'
             answer: '4'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The theorem gives $24 = 6\cdot|C((1\,2))|$, so $|C((1\,2))| = 4$; Sam confused the class size with the centralizer order. The centralizer is $\{e,(1\,2),(3\,4),(1\,2)(3\,4)\}$.'
+            solution_sketch: 'The theorem gives $24 = 6\cdot|C((1\,2))|$, so $|C((1\,2))| = 4$. The centralizer order is not the class size. The centralizer is $\{e,(1\,2),(3\,4),(1\,2)(3\,4)\}$.'
           - problem: 'A group of order $21$ contains an element $x$ whose centralizer has order $3$. How many conjugates does $x$ have, counting $x$ itself?'
             answer: '7'
             answer_contract: {"kind": "exact"}
@@ -524,10 +524,10 @@ topics:
             answer: '10'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Burnside''s lemma divides the sum of the counts by the group order. The sum is $36+3+3+6+6+6 = 60$, so there are $60/6 = 10$ orbits.'
-          - problem: 'A group of order $4$ acts on the $2$-colorings of the corners of a square, and its four elements fix $16$, $2$, $4$ and $2$ colorings. Sam adds the four numbers and says that there are $24$ orbits. How many orbits are there?'
+          - problem: 'A group of order $4$ acts on the $2$-colorings of the corners of a square, and its four elements fix $16$, $2$, $4$ and $2$ colorings. The four numbers add up to $24$. How many orbits are there?'
             answer: '6'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Sam added the counts but forgot to divide by the order of the group. The sum is $16+2+4+2 = 24$, and Burnside''s lemma gives $24/4 = 6$ orbits.'
+            solution_sketch: 'Burnside''s lemma divides the sum by the order of the group. The sum is $16+2+4+2 = 24$, and Burnside''s lemma gives $24/4 = 6$ orbits.'
           - problem: 'Ten lamps stand in a ring and each is either on or off. Moving every lamp $4$ places around the ring is a rotation of the ring. How many of the $2^{10}$ on-off settings does this rotation leave unchanged?'
             answer: '4'
             answer_contract: {"kind": "exact"}
@@ -658,7 +658,7 @@ topics:
             answer: 'g^(-1)'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Multiplying $gx = gy$ on the left by $g^{-1}$ gives $(g^{-1}g)x = (g^{-1}g)y$, which is $x = y$. So $\lambda_g$ is injective, and the element used is $g^{-1}$.'
-          - problem: 'Sam wants to show that for $g\neq e$ the map $\lambda_g$ has no fixed point. Step 1: suppose $gx = x$ for some $x$. Step 2: multiply both sides on the right by $x^{-1}$. Step 3: this gives $g = x^{-1}$. Step 4: hence $g = e$, contradicting $g\neq e$. Step 5: so $\lambda_g$ has no fixed point. Which is the first step that is not valid, and why?'
+          - problem: 'The attempt below to show that for $g\neq e$ the map $\lambda_g$ has no fixed point has an error. Step 1: suppose $gx = x$ for some $x$. Step 2: multiply both sides on the right by $x^{-1}$. Step 3: this gives $g = x^{-1}$. Step 4: hence $g = e$, contradicting $g\neq e$. Step 5: so $\lambda_g$ has no fixed point. Which is the first step that is not valid, and why?'
             answer: 'Step 3: multiplying gx = x on the right by x^(-1) gives g = e directly, not g = x^(-1).'
             answer_contract: {"kind": "written"}
             solution_sketch: 'Steps 1 and 2 are legal: Step 1 supposes the opposite, and Step 2 multiplies by $x^{-1}$. Step 3 is false, since $gxx^{-1} = xx^{-1}$ gives $g=e$ directly, not $g=x^{-1}$. So Step 3 is the first invalid step.'
@@ -732,7 +732,7 @@ topics:
             answer: '3'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Adding $2$ modulo $6$ sends $0\to2\to4\to0$ and $1\to3\to5\to1$, so the image of $2$ is a product of two disjoint $3$-cycles. The order of a product of disjoint cycles is the least common multiple of the lengths, which is $3$.'
-          - problem: 'Sam asserts that for every $n$ with $2\le n\le 6$ the image of each nonzero element of $\mathbb{Z}_n$ under the left-regular representation has order $n$. What is the smallest $n$ for which Sam is wrong?'
+          - problem: 'What is the smallest $n$ with $2\le n\le 6$ for which the image of some nonzero element of $\mathbb{Z}_n$ under the left-regular representation does not have order $n$?'
             answer: '4'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'In $\mathbb{Z}_2$ and $\mathbb{Z}_3$ every nonzero element generates the group, so its image is an $n$-cycle of order $n$. In $\mathbb{Z}_4$ the image of $2$ is $(0\,2)(1\,3)$, which has order $2$, not $4$, so the smallest counterexample is $n=4$.'

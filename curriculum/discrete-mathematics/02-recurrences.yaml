@@ -48,10 +48,10 @@ topics:
             answer: '14'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The recurrence at $n = 4$ says $41 = 3a_3 - 1$. So $3a_3 = 42$, and dividing by $3$ gives $a_3 = 14$.'
-          - problem: 'Sam has $e_1 = 3$, $e_2 = 5$ and $e_n = 2e_{n-1} - e_{n-2}$ for $n \ge 3$, and finds $e_3 = 13$. What is the correct value of $e_3$?'
+          - problem: 'A sequence has $e_1 = 3$, $e_2 = 5$ and $e_n = 2e_{n-1} - e_{n-2}$ for $n \ge 3$. What is $e_3$?'
             answer: '7'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'Sam added $3$ to $2e_2$, but the recurrence subtracts $e_{n-2}$. The correct value is $e_3 = 2 \cdot 5 - 3 = 7$.'
+            solution_sketch: 'The recurrence subtracts $e_{n-2}$ and does not add it. The value is $e_3 = 2 \cdot 5 - 3 = 7$.'
           - problem: 'Let $d_1 = 4$, $d_2 = 1$ and $d_n = d_{n-1} - d_{n-2}$ for $n \ge 3$. Find $d_3$, $d_4$, $d_5$, $d_6$ and $d_7$.'
             answer: '-3, -4, -1, 3, 4'
             answer_contract: {"kind":"list","member":{"kind":"exact"},"ordered":true}
@@ -139,10 +139,10 @@ topics:
             answer: '89'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'Let $p_n$ count the patterns with $n$ beats. A pattern ends in a hit after any valid pattern of $n-1$ beats, or in a hit and then a rest after any valid pattern of $n-2$ beats, so $p_n = p_{n-1} + p_{n-2}$ with $p_1 = 2$ and $p_2 = 3$. Counting up gives $p_9 = 89$.'
-          - problem: 'Sam counts the bit strings of length $3$ with no two consecutive $0$s and finds $6$. What is the correct number?'
+          - problem: 'How many bit strings of length $3$ have no two consecutive $0$s?'
             answer: '5'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'Of the $8$ strings of length $3$, exactly three contain two consecutive $0$s: $000$, $001$ and $100$. So $8 - 3 = 5$ strings remain, and Sam counted one too many.'
+            solution_sketch: 'Of the $8$ strings of length $3$, exactly three contain two consecutive $0$s: $000$, $001$ and $100$. So $8 - 3 = 5$ strings remain.'
         constraints: "binary strings, forbidden block of length 2; classify by the last character(s)"
     diagnostic_exemplar:
       problem: 'Let $b_n$ count bit strings of length $n$ with no two consecutive $1$s (classify by the last character to find a recurrence). Compute $b_5$.'
@@ -318,10 +318,10 @@ topics:
             answer: '484'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The characteristic equation $r^2 - 2r - 3 = 0$ factors as $(r-3)(r+1) = 0$, so $p_n = A \cdot 3^n + B(-1)^n$. The conditions $A + B = 4$ and $3A - B = 4$ give $A = 2$ and $B = 2$. Then $p_5 = 2 \cdot 243 - 2 = 484$.'
-          - problem: 'Sam says the characteristic equation of $a_n = 5a_{n-1} - 6a_{n-2}$ has the roots $-2$ and $-3$. What are the correct roots?'
+          - problem: 'What are the roots of the characteristic equation of $a_n = 5a_{n-1} - 6a_{n-2}$?'
             answer: '2, 3'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'The equation is $r^2 = 5r - 6$, that is $r^2 - 5r + 6 = 0$. Sam ignored the signs, because $(r-2)(r-3) = 0$ gives the roots $2$ and $3$.'
+            solution_sketch: 'The equation is $r^2 = 5r - 6$, that is $r^2 - 5r + 6 = 0$. The signs matter, because $(r-2)(r-3) = 0$ gives the roots $2$ and $3$.'
           - problem: 'The sequence with $a_n = a_{n-1} + 6a_{n-2}$, $a_0 = 1$ and $a_1 = 8$ has the form $a_n = A \cdot 3^n + B \cdot (-2)^n$. Find $B$.'
             answer: '-1'
             answer_contract: {"kind":"exact"}
@@ -437,10 +437,10 @@ topics:
             answer: '64'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The rule is $a_n = \tfrac{1}{2}a_{n-1} + 30$ with $a_0 = 124$. A constant $p = \tfrac{1}{2}p + 30$ gives $p = 60$, so $a_n = 64 \cdot (1/2)^n + 60$. Then $a_4 = 64/16 + 60 = 64$ fish.'
-          - problem: 'Sam looks for a constant solution of $a_n = 4a_{n-1} + 9$ and writes $p = 3$. What is the correct value of $p$?'
+          - problem: 'What is the value of the constant solution $p$ of $a_n = 4a_{n-1} + 9$?'
             answer: '-3'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'A constant solution must satisfy $p = 4p + 9$. Moving terms gives $-3p = 9$, so $p = -3$. Sam lost the sign when moving $4p$ across.'
+            solution_sketch: 'A constant solution must satisfy $p = 4p + 9$. Moving terms gives $-3p = 9$, so $p = -3$. The sign of $4p$ changes when it moves across.'
           - problem: 'Solve $a_n = 5a_{n-1} - 12$ with $a_0 = 5$. What is $a_5$?'
             answer: '6253'
             answer_contract: {"kind": "exact"}
@@ -482,10 +482,10 @@ topics:
             answer: '13/2'
             answer_contract: {"kind": "unit", "quantity": "volume", "unit": "L", "allow_omitted": true}
             solution_sketch: 'The rule is $a_n = \tfrac{1}{2}a_{n-1} + n$. Try $p_n = an + b$: $a = \tfrac{1}{2}a + 1$ gives $a = 2$, and $b = \tfrac{1}{2}(b - a)$ gives $b = -2$. So $a_n = A(1/2)^n + 2n - 2$ with $A = 8$, and $a_4 = 8/16 + 6 = 13/2$ litres.'
-          - problem: 'Sam finds the particular solution $p_n = 3n + 6$ for $a_n = 2a_{n-1} + 3n$. What is the correct particular solution?'
+          - problem: 'What is the particular solution of $a_n = 2a_{n-1} + 3n$ of the form $p_n = an + b$?'
             answer: '-3n - 6'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Try $p_n = an + b$. Matching the coefficients of $n$ gives $a = 2a + 3$, so $a = -3$. Matching the constants gives $b = -2a + 2b$, so $b = 2a = -6$. Sam lost both signs.'
+            solution_sketch: 'Try $p_n = an + b$. Matching the coefficients of $n$ gives $a = 2a + 3$, so $a = -3$. Matching the constants gives $b = -2a + 2b$, so $b = 2a = -6$. Both values are negative.'
           - problem: 'For $a_n = 2a_{n-1} + 3n + 1$ with $a_0 = 4$, find $a_5$.'
             answer: '330'
             answer_contract: {"kind": "exact"}
@@ -550,10 +550,10 @@ topics:
             answer: '1296'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Expand $1/(1 - 6x) = \sum_{n \ge 0} 6^n x^n$, so $a_n = 6^n$. Then $a_4 = 6^4 = 1296$.'
-          - problem: 'Sam says that the generating function of $a_n = 5^n$ is $1/(1 - x^5)$. What is the correct generating function?'
+          - problem: 'What is the generating function of $a_n = 5^n$?'
             answer: '1/(1 - 5x)'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The terms are $5^n x^n = (5x)^n$, so the series is geometric with ratio $5x$. Its sum is $1/(1 - 5x)$. Sam put the $5$ as a power of $x$ instead of a multiplier of $x$.'
+            solution_sketch: 'The terms are $5^n x^n = (5x)^n$, so the series is geometric with ratio $5x$. Its sum is $1/(1 - 5x)$. The $5$ is a multiplier of $x$ and not a power of $x$.'
           - problem: 'Find the generating function of the sequence $1, -1, 1, -1, \dots$.'
             answer: '1/(1 + x)'
             answer_contract: {"kind": "exact"}
@@ -600,7 +600,7 @@ topics:
             answer: '6'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Each die contributes $x + x^2 + x^3 + x^4 + x^5 + x^6$. The coefficient of $x^7$ in the square counts the pairs with total $7$. They are $(1,6), (2,5), (3,4), (4,3), (5,2), (6,1)$, so there are $6$ ways.'
-          - problem: 'Sam says the generating function for $0$ to $3$ apples and $0$ or $1$ banana is $(1 + x + x^2 + x^3) + (1 + x) = 2 + 2x + x^2 + x^3$. What is the correct generating function, expanded?'
+          - problem: 'What is the generating function for $0$ to $3$ apples and $0$ or $1$ banana, expanded?'
             answer: '1 + 2x + 2x^2 + 2x^3 + x^4'
             answer_contract: {"kind": "required_form", "form": "expanded_polynomial"}
             solution_sketch: 'A selection takes one choice from each type, and the exponents add, so the factors are multiplied and not added. The product is $(1 + x + x^2 + x^3)(1 + x) = 1 + 2x + 2x^2 + 2x^3 + x^4$.'
@@ -683,10 +683,10 @@ topics:
             answer: '6'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The coefficient of $x^n$ in $1/(1 - 3x)$ is $3^n$. Since $3^6 = 729$, the value is $n = 6$.'
-          - problem: 'Sam says the coefficient of $x^3$ in $\dfrac{1}{1 + 2x}$ is $8$. What is the correct coefficient?'
+          - problem: 'What is the coefficient of $x^3$ in $\dfrac{1}{1 + 2x}$?'
             answer: '-8'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Write $1/(1 + 2x) = \sum_{n \ge 0} (-2x)^n$, so the coefficient of $x^3$ is $(-2)^3 = -8$. Sam used the ratio $2$ and lost the minus sign.'
+            solution_sketch: 'Write $1/(1 + 2x) = \sum_{n \ge 0} (-2x)^n$, so the coefficient of $x^3$ is $(-2)^3 = -8$. The ratio is $-2$, not $2$.'
         constraints: "1/(1-ax) with |a| <= 3, multiplied by a monomial shift x^k, k <= 3"
       - id: kp2
         name: "Negative binomial series 1/(1-x)^k"
@@ -712,10 +712,10 @@ topics:
             answer: '28'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Each variable contributes $1/(1 - x)$, so the count is the coefficient of $x^6$ in $1/(1 - x)^3$. That is $\binom{8}{6} = 28$, which agrees with stars and bars.'
-          - problem: 'Sam says the coefficient of $x^5$ in $\dfrac{1}{(1 - x)^4}$ is $\binom{9}{5} = 126$. What is the correct coefficient?'
+          - problem: 'What is the coefficient of $x^5$ in $\dfrac{1}{(1 - x)^4}$?'
             answer: '56'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The coefficient of $x^n$ in $1/(1 - x)^k$ is $\binom{n + k - 1}{n}$. For $n = 5$ and $k = 4$ this is $\binom{8}{5} = 56$. Sam used $n + k$ instead of $n + k - 1$.'
+            solution_sketch: 'The coefficient of $x^n$ in $1/(1 - x)^k$ is $\binom{n + k - 1}{n}$. For $n = 5$ and $k = 4$ this is $\binom{8}{5} = 56$. The top number is $n + k - 1$, not $n + k$.'
           - problem: 'In how many ways can $5$ identical cookies be given to $3$ children if a child may receive none?'
             answer: '21'
             answer_contract: {"kind": "exact"}

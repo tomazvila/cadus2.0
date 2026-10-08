@@ -49,10 +49,10 @@ topics:
             answer: '4'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The acceleration is the derivative of the velocity: $a(t) = 2t - 6$. At $t = 5$ this gives $a(5) = 10 - 6 = 4$.'
-          - problem: 'Sam finds the velocity of a particle with position $s(t) = t^2 - 4t + 3$ at $t = 2$ by computing $s(2) = -1$. What is the correct velocity at $t = 2$?'
+          - problem: 'A particle has position $s(t) = t^2 - 4t + 3$. What is its velocity at $t = 2$?'
             answer: '0'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'Sam found the position, not the velocity. The velocity is $v(t) = 2t - 4$, so $v(2) = 4 - 4 = 0$ and the particle is momentarily at rest.'
+            solution_sketch: 'The velocity is $v(t) = 2t - 4$, so $v(2) = 4 - 4 = 0$ and the particle is momentarily at rest.'
         constraints: "polynomial position functions with integer coefficients"
       - id: kp2
         name: At rest and direction of motion
@@ -82,10 +82,10 @@ topics:
             answer: '2, 6'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The lift is stopped when $v(t) = 0$. Since $v(t) = 3t^2 - 24t + 36 = 3(t - 2)(t - 6)$, the lift is stopped at $t = 2$ and $t = 6$.'
-          - problem: 'Ria says the particle with position $s(t) = t^3 - 6t^2 + 9t$ is at rest when $s(t) = 0$, so at $t = 0$ and $t = 3$. At what times is the particle really at rest?'
+          - problem: 'At what times is the particle with position $s(t) = t^3 - 6t^2 + 9t$ at rest?'
             answer: '1, 3'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'Ria solved $s(t) = 0$, which finds where the particle is at the origin. The particle is at rest when $v(t) = 3t^2 - 12t + 9 = 3(t - 1)(t - 3) = 0$, which gives $t = 1$ and $t = 3$.'
+            solution_sketch: 'The particle is at rest when $v(t) = 3t^2 - 12t + 9 = 3(t - 1)(t - 3) = 0$, which gives $t = 1$ and $t = 3$.'
           - problem: 'A particle has position $s(t) = 3t^3 - 36t^2 + 63t$ metres for $t \ge 0$. At what times is the particle at rest?'
             answer: '1, 7'
             answer_contract: {"kind":"exact"}
@@ -197,10 +197,10 @@ topics:
             answer: '24pi'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The radius is half the diameter, so $\frac{dr}{dt} = \frac{6}{2} = 3$. Then $\frac{dA}{dt} = 2\pi r\,\frac{dr}{dt} = 2\pi(4)(3) = 24\pi$.'
-          - problem: 'Dan wants to know how fast the area of a circle grows when $r = 6$ cm and $r$ grows at $3$ cm/s. He first puts $r = 6$ into $A = \pi r^2$, gets $A = 36\pi$, and differentiates that constant. What is the correct rate of growth of the area, in square centimetres per second?'
+          - problem: 'The radius $r$ of a circle grows at $3$ cm/s. What is the rate of growth of the area, in square centimetres per second, when $r = 6$ cm?'
             answer: '36pi'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'Dan differentiated a constant, so he got $0$. The correct way is to differentiate first: $\frac{dA}{dt} = 2\pi r\,\frac{dr}{dt}$. Then $2\pi(6)(3) = 36\pi$.'
+            solution_sketch: 'Differentiate $A = \pi r^2$ before the substitution: $\frac{dA}{dt} = 2\pi r\,\frac{dr}{dt}$. Then $2\pi(6)(3) = 36\pi$.'
         constraints: "give the geometric formula in the problem; integer rates and radii; answers as exact multiples of π with units"
       - id: kp2
         name: Growing spheres
@@ -230,10 +230,10 @@ topics:
             answer: '1/(5*pi)'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'From $V = \frac{4}{3}\pi r^3$ we get $\frac{dV}{dt} = 4\pi r^2\,\frac{dr}{dt}$. Then $20 = 4\pi(25)\frac{dr}{dt} = 100\pi\,\frac{dr}{dt}$, so $\frac{dr}{dt} = \frac{1}{5\pi}$.'
-          - problem: 'Maya differentiates $V = \frac{4}{3}\pi r^3$ as $\frac{dV}{dt} = 4\pi r^2$ and leaves out the rate of the radius. The radius of a sphere grows at $3$ cm/s. What is the correct rate of change of the volume, in cubic centimetres per second, when $r = 2$ cm?'
+          - problem: 'The radius of a sphere grows at $3$ cm/s. What is the rate of change of the volume $V = \frac{4}{3}\pi r^3$, in cubic centimetres per second, when $r = 2$ cm?'
             answer: '48pi'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'Maya forgot the chain-rule factor $\frac{dr}{dt}$. The correct derivative is $\frac{dV}{dt} = 4\pi r^2\,\frac{dr}{dt}$, which at $r = 2$ and $\frac{dr}{dt} = 3$ is $4\pi(4)(3) = 48\pi$.'
+            solution_sketch: 'The chain rule adds the factor $\frac{dr}{dt}$, so the derivative is $\frac{dV}{dt} = 4\pi r^2\,\frac{dr}{dt}$, which at $r = 2$ and $\frac{dr}{dt} = 3$ is $4\pi(4)(3) = 48\pi$.'
         constraints: "state the volume/surface formula; differentiate before substituting values"
       - id: kp3
         name: Filling tanks with constant cross-section
@@ -338,10 +338,10 @@ topics:
             answer: '25/2'
             answer_contract: {"kind":"unit","quantity":"speed","unit":"km/h","allow_omitted":true}
             solution_sketch: 'At that moment the distance is $5$ km, and $s\,s'' = x\,x'' + y\,y''$ gives $5(13) = 4v + 3(5)$. So $4v = 50$ and $v = \frac{25}{2}$ km/h.'
-          - problem: 'Pia says that a ladder whose base slides away from the wall at $2$ m/s has a top that slides down at $2$ m/s as well. The ladder is $17$ m long. At what rate is the height of the top changing when the base is $8$ m from the wall?'
+          - problem: 'A ladder $17$ m long has a base that slides away from the wall at $2$ m/s. At what rate is the height of the top changing when the base is $8$ m from the wall?'
             answer: '-16/15'
             answer_contract: {"kind":"unit","quantity":"speed","unit":"m/s","allow_omitted":true}
-            solution_sketch: 'The base and the top do not move at the same speed. With $x^2 + y^2 = 289$ and $x = 8$ we get $y = 15$, so $y'' = -\frac{x\,x''}{y} = -\frac{8 \cdot 2}{15} = -\frac{16}{15}$ m/s.'
+            solution_sketch: 'With $x^2 + y^2 = 289$ and $x = 8$ we get $y = 15$, so $y'' = -\frac{x\,x''}{y} = -\frac{8 \cdot 2}{15} = -\frac{16}{15}$ m/s.'
           - problem: 'A drone flies horizontally at a height of $60$ m at $8$ m/s. It passes directly above an observer on the ground. At what rate is the distance from the observer to the drone increasing when the drone is $80$ m from the point above the observer, measured along the ground?'
             answer: '32/5'
             answer_contract: {"kind":"unit","quantity":"speed","unit":"m/s","allow_omitted":true}
@@ -379,10 +379,10 @@ topics:
             answer: '2/(5*pi)'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'Since $r = h$, the volume is $V = \frac{\pi}{3}h^3$ and $\frac{dV}{dt} = \pi h^2\,\frac{dh}{dt}$. At $h = 5$ we get $10 = 25\pi\,\frac{dh}{dt}$, so $\frac{dh}{dt} = \frac{2}{5\pi}$.'
-          - problem: 'Omar differentiates $V = \frac{\pi}{3}r^2h$ for an inverted cone with $r = \frac{h}{2}$ as $\frac{dV}{dt} = \frac{\pi}{3}r^2\,\frac{dh}{dt}$, treating $r$ as constant. Water enters the cone at $9$ m$^3$/min. What is the correct rate, in metres per minute, at which the depth is rising when $h = 6$ m?'
+          - problem: 'Water enters an inverted cone with $r = \frac{h}{2}$ at $9$ m$^3$/min, and the volume is $V = \frac{\pi}{3}r^2h$. What is the rate, in metres per minute, at which the depth is rising when $h = 6$ m?'
             answer: '1/pi'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'The radius changes with the depth, so Omar must first write $V = \frac{\pi}{12}h^3$. Then $\frac{dV}{dt} = \frac{\pi}{4}h^2\,\frac{dh}{dt}$, and at $h = 6$ we get $9 = 9\pi\,\frac{dh}{dt}$, so $\frac{dh}{dt} = \frac{1}{\pi}$.'
+            solution_sketch: 'The radius changes with the depth, so first write $V = \frac{\pi}{12}h^3$. Then $\frac{dV}{dt} = \frac{\pi}{4}h^2\,\frac{dh}{dt}$, and at $h = 6$ we get $9 = 9\pi\,\frac{dh}{dt}$, so $\frac{dh}{dt} = \frac{1}{\pi}$.'
         constraints: "cone dimensions give a simple ratio r = kh; eliminate r via similar triangles before differentiating"
       - id: kp3
         name: Shadows and multi-quantity setups
@@ -490,10 +490,10 @@ topics:
             answer: '36pi + 36pi(r - 3)'
             answer_contract: {"kind":"function","vars":["r"]}
             solution_sketch: 'We have $V(3) = 36\pi$ and $V''(r) = 4\pi r^2$, so $V''(3) = 36\pi$. Therefore $L(r) = 36\pi + 36\pi(r - 3)$.'
-          - problem: 'Zoe finds the linearization of $f(x) = x^2$ at $a = 3$ by writing $L(x) = 9 + 2x(x - 3)$, keeping $x$ in the slope. What is the correct linearization?'
+          - problem: 'What is the linearization of $f(x) = x^2$ at $a = 3$?'
             answer: '9 + 6(x - 3)'
             answer_contract: {"kind":"function","vars":["x"]}
-            solution_sketch: 'Zoe used $f''(x)$ where the formula needs the number $f''(a)$. Here $f''(3) = 6$, so $L(x) = 9 + 6(x - 3)$, which is a line.'
+            solution_sketch: 'The formula needs the number $f''(a)$, not the function $f''(x)$. Here $f''(3) = 6$, so $L(x) = 9 + 6(x - 3)$, which is a line.'
         constraints: "base point where f and f' are exact and simple (perfect squares/cubes); the answer is the expression for L(x)"
       - id: kp2
         name: Approximate values with the linearization
@@ -633,10 +633,10 @@ topics:
             answer: '140'
             answer_contract: {"kind":"unit","quantity":"dollar","unit":"dollar","allow_omitted":true}
             solution_sketch: 'The differential is $dC = C''(q)\,dq = (q + 30)\,dq$. At $q = 40$ and $dq = 2$ it gives $dC = 70 \cdot 2 = 140$ dollars.'
-          - problem: 'Sam computes the differential of $y = x^4$ at $x = 2$ with $dx = 0.1$ as $4 \cdot 2^3 = 32$. What is the correct value of $dy$?'
+          - problem: 'What is the value of the differential $dy$ of $y = x^4$ at $x = 2$ with $dx = 0.1$?'
             answer: '3.2'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'Sam found the derivative but did not multiply by $dx$. The differential is $dy = 4x^3\,dx = 4 \cdot 8 \cdot 0.1 = 3.2$.'
+            solution_sketch: 'The differential is $dy = 4x^3\,dx = 4 \cdot 8 \cdot 0.1 = 3.2$.'
           - problem: 'For $y = x^2$ at $x = 5$, what change $dx$ makes the differential $dy$ equal to $0.5$?'
             answer: '0.05'
             answer_contract: {"kind":"exact"}
@@ -683,10 +683,10 @@ topics:
             answer: '20pi'
             answer_contract: {"kind":"unit","quantity":"cubic_volume","unit":"cm^3","allow_omitted":true}
             solution_sketch: 'With $h = 20$ fixed, the differential is $dV = 2\pi r h\,dr$. With $r = 5$ and $dr = 0.1$ it gives $dV = 2\pi \cdot 5 \cdot 20 \cdot 0.1 = 20\pi$ cubic centimetres.'
-          - problem: 'Sam estimates the possible error in the area of a circle of radius $8$ m, measured with error $0.05$ m, as $\pi \cdot 8^2 \cdot 0.05 = 3.2\pi$. What is the correct estimate?'
+          - problem: 'A circle has radius $8$ m, measured with error $0.05$ m. What is the estimate of the error in its area?'
             answer: '0.8pi'
             answer_contract: {"kind":"unit","quantity":"area","unit":"m^2","allow_omitted":true}
-            solution_sketch: 'Sam multiplied the area itself by $dr$, but the error is the differential $dA = 2\pi r\,dr$. With $r = 8$ and $dr = 0.05$ it gives $dA = 2\pi \cdot 8 \cdot 0.05 = 0.8\pi$ square metres.'
+            solution_sketch: 'The error is the differential $dA = 2\pi r\,dr$. With $r = 8$ and $dr = 0.05$ it gives $dA = 2\pi \cdot 8 \cdot 0.05 = 0.8\pi$ square metres.'
       - id: kp3
         name: Relative and percentage error
         key_prerequisites: [linearization, percentages]
@@ -728,7 +728,7 @@ topics:
             answer: '2%'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'Here $T$ is proportional to $L^{1/2}$, so $\frac{dT}{T} = \frac{1}{2}\,\frac{dL}{L}$. A $4\%$ error in $L$ gives $\frac{1}{2} \cdot 4\% = 2\%$ in $T$.'
-          - problem: 'Sam says that a $2\%$ error in the radius of a circle gives a $2\%$ error in its area $A = \pi r^2$. Estimate the correct percentage error in the area.'
+          - problem: 'The radius of a circle has a $2\%$ error. Estimate the percentage error in its area $A = \pi r^2$.'
             answer: '4%'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'For $A = \pi r^2$ we have $\frac{dA}{A} = 2\,\frac{dr}{r}$, so the percentage error doubles. A $2\%$ error in $r$ gives $2 \cdot 2\% = 4\%$ in $A$, not $2\%$.'
@@ -784,7 +784,7 @@ topics:
             answer: '17/9'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The derivative is $f''(x) = 3x^2 - 3$, so $f(2) = 1$ and $f''(2) = 9$. Then $x_1 = 2 - \frac{1}{9} = \frac{17}{9}$.'
-          - problem: 'Maya wants to estimate $\sqrt{10}$. She applies Newton''s method to $f(x) = x^2 - 10$, whose positive root is $\sqrt{10}$, with starting value $x_0 = 3$. What is her next estimate $x_1$?'
+          - problem: 'Apply Newton''s method to $f(x) = x^2 - 10$, whose positive root is $\sqrt{10}$, with starting value $x_0 = 3$. What is $x_1$?'
             answer: '19/6'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'Here $f''(x) = 2x$, so $f(3) = -1$ and $f''(3) = 6$. Then $x_1 = 3 - \frac{-1}{6} = 3 + \frac{1}{6} = \frac{19}{6}$.'
@@ -800,7 +800,7 @@ topics:
             answer: '5/4'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The derivative is $f''(x) = 3x^2 + 1$, so $f(1) = -1$ and $f''(1) = 4$. Then $x_1 = 1 - \frac{-1}{4} = \frac{5}{4}$.'
-          - problem: 'Sam applies one Newton step to $f(x) = x^2 - 5$ with $x_0 = 2$ and writes $x_1 = 2 - \frac{f''(2)}{f(2)} = 2 - \frac{4}{-1} = 6$. What is the correct $x_1$?'
+          - problem: 'Apply one Newton step to $f(x) = x^2 - 5$ with $x_0 = 2$. What is $x_1$?'
             answer: '9/4'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'Newton''s method divides the function value by the derivative, not the other way round. Here $f(2) = -1$ and $f''(2) = 4$, so $x_1 = 2 - \frac{-1}{4} = \frac{9}{4}$.'
@@ -833,7 +833,7 @@ topics:
             answer: '91/72'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'Since $f''(x) = 3x^2$, the first step gives $x_1 = 1 - \frac{-1}{3} = \frac{4}{3}$. Then $f(\frac{4}{3}) = \frac{10}{27}$ and $f''(\frac{4}{3}) = \frac{16}{3}$, so $x_2 = \frac{4}{3} - \frac{5}{72} = \frac{91}{72}$.'
-          - problem: 'To estimate $\sqrt{17}$, Maya applies Newton''s method twice to $f(x) = x^2 - 17$, starting at $x_0 = 4$. What is $x_2$, to four decimal places?'
+          - problem: 'Apply Newton''s method twice to $f(x) = x^2 - 17$, starting at $x_0 = 4$. What is $x_2$, to four decimal places?'
             answer: '4.1231'
             answer_contract: {"kind":"approx","decimals":4}
             solution_sketch: 'Since $f''(x) = 2x$, the first step gives $x_1 = 4 - \frac{-1}{8} = \frac{33}{8}$. The second step gives $x_2 = \frac{33}{8} - \frac{1/64}{33/4} = \frac{2177}{528} \approx 4.1231$.'
@@ -849,7 +849,7 @@ topics:
             answer: '7.071'
             answer_contract: {"kind":"approx","decimals":3}
             solution_sketch: 'Since $f''(s) = 2s$, the first step gives $s_1 = 7 - \frac{-1}{14} = \frac{99}{14} \approx 7.0714$. The second step gives $s_2 = s_1 - \frac{s_1^2 - 50}{2s_1} \approx 7.071$.'
-          - problem: 'Sam applies two Newton steps to $f(x) = x^2 - 5$ from $x_0 = 3$. He finds $x_1 = \frac{7}{3}$, then computes $x_2$ from $x_0$ again and gets $\frac{7}{3}$ a second time. What is the correct $x_2$?'
+          - problem: 'Apply two Newton steps to $f(x) = x^2 - 5$ from $x_0 = 3$. The first step gives $x_1 = \frac{7}{3}$. What is $x_2$?'
             answer: '47/21'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The second step must start from $x_1 = \frac{7}{3}$, not from $x_0$. Then $f(\frac{7}{3}) = \frac{4}{9}$ and $f''(\frac{7}{3}) = \frac{14}{3}$, so $x_2 = \frac{7}{3} - \frac{2}{21} = \frac{47}{21}$.'
@@ -890,11 +890,11 @@ topics:
             answer: '1'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The derivative is $f''(x) = 3x^2 - 3$. Setting $3x^2 - 3 = 0$ gives $x = \pm 1$, and only $x = 1$ lies in $0 < x < 2$.'
-          - problem: 'Sam says the tangent line to $y = x^2 - 3$ at $x_0 = 2$ meets the $x$-axis at $2 - \frac{f''(2)}{f(2)} = 2 - \frac{4}{1} = -2$. Where does the tangent line actually meet the axis?'
+          - problem: 'At which value of $x$ does the tangent line to $y = x^2 - 3$ at $x_0 = 2$ meet the $x$-axis?'
             answer: '7/4'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The $x$-intercept is $x_0 - \frac{f(x_0)}{f''(x_0)}$, with the function value on top. Here $f(2) = 1$ and $f''(2) = 4$, so the tangent meets the axis at $2 - \frac{1}{4} = \frac{7}{4}$.'
-          - problem: 'Jo wants to solve $x^3 = 5$ with Newton''s method. Starting at $x_0 = 0$ for $f(x) = x^3 - 5$ fails, so Jo starts at $x_0 = 1$ instead. What is $x_1$?'
+          - problem: 'Solve $x^3 = 5$ with Newton''s method for $f(x) = x^3 - 5$. The start $x_0 = 0$ fails, so start at $x_0 = 1$. What is $x_1$?'
             answer: '7/3'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'Since $f''(x) = 3x^2$, the start $x_0 = 0$ gives $f''(0) = 0$, so it fails. From $x_0 = 1$ we get $f(1) = -4$ and $f''(1) = 3$, so $x_1 = 1 - \frac{-4}{3} = \frac{7}{3}$.'
@@ -967,7 +967,7 @@ topics:
             answer: '2, 4'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The derivative is $P''(x) = -3x^2 + 18x - 24 = -3(x^2 - 6x + 8) = -3(x - 2)(x - 4)$. So $P''(x) = 0$ at $x = 2$ and $x = 4$.'
-          - problem: 'Sam looks for the critical points of $f(x) = x^3 - 3x$ by solving $f(x) = 0$, and gets $x = 0$ and $x = \pm\sqrt{3}$. What are the critical points of $f$?'
+          - problem: 'What are the critical points of $f(x) = x^3 - 3x$?'
             answer: '-1, 1'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'Critical points come from $f''(x) = 0$, not from $f(x) = 0$. Here $f''(x) = 3x^2 - 3 = 3(x - 1)(x + 1)$, so the critical points are $x = -1$ and $x = 1$.'
@@ -1008,7 +1008,7 @@ topics:
             answer: '4'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The derivative is $C''(x) = 0.5 - \frac{8}{x^2}$. Setting it to zero gives $x^2 = 16$, so $x = \pm 4$. Only $x = 4$ is in the domain $x > 0$, so the critical point is $x = 4$.'
-          - problem: 'Sam says that $f(x) = x + \frac{9}{x}$ has critical points at $x = -3$, $x = 3$ and $x = 0$, because $f''$ is undefined at $0$. What are the critical points of $f$?'
+          - problem: 'What are the critical points of $f(x) = x + \frac{9}{x}$?'
             answer: '-3, 3'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The derivative is $f''(x) = 1 - \frac{9}{x^2}$, which is zero at $x = \pm 3$. The point $x = 0$ is not in the domain of $f$, so it is not a critical point, and the critical points are $x = -3$ and $x = 3$.'
@@ -1057,7 +1057,7 @@ topics:
             answer: '16'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The derivative is $T''(t) = 3(t - 2)(t - 4)$, and its signs are $+, -, +$. So the local minimum is at $t = 4$, and $T(4) = 64 - 144 + 96 = 16$.'
-          - problem: 'Sam says $x = 1$ is the local maximum of $f(x) = x^3 - 3x$, because $f''(1) = 0$. Find the local maximum value of $f$.'
+          - problem: 'Find the local maximum value of $f(x) = x^3 - 3x$.'
             answer: '2'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The derivative is $f''(x) = 3(x - 1)(x + 1)$, and its signs are $+, -, +$. The change from $+$ to $-$ is at $x = -1$, so that is the local maximum, and $f(-1) = -1 + 3 = 2$. The point $x = 1$ is a local minimum.'
@@ -1135,7 +1135,7 @@ topics:
             answer: '30'
             answer_contract: {"kind":"unit","quantity":"length","unit":"m","allow_omitted":true}
             solution_sketch: 'The heights at the towers are $y(0) = y(60) = 12$, so Rolle''s theorem applies. The slope is $y'' = 0.02x - 0.6$, which is zero at $x = 30$ metres.'
-          - problem: 'Sam wants the number $c$ in $(1, 3)$ guaranteed by Rolle''s theorem for $f(x) = x^2 - 4x$ on $[1, 3]$. He solves $f(c) = 0$ and gets $c = 0$ or $c = 4$. What is the correct $c$?'
+          - problem: 'What is the number $c$ in $(1, 3)$ guaranteed by Rolle''s theorem for $f(x) = x^2 - 4x$ on $[1, 3]$?'
             answer: '2'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'Rolle''s theorem gives a point where the derivative, not the function, is zero. Here $f(1) = f(3) = -3$ and $f''(x) = 2x - 4$, so $f''(c) = 0$ gives $c = 2$.'
@@ -1172,10 +1172,10 @@ topics:
             answer: '3'
             answer_contract: {"kind":"unit","quantity":"time","unit":"h","allow_omitted":true}
             solution_sketch: 'The rate of change is $T''(t) = 3t^2 - 27$, so $t^2 = 9$ and $t = \pm 3$. Only $t = 3$ hours lies in $(0, 3\sqrt{3})$, because $3\sqrt{3} \approx 5.2$.'
-          - problem: 'Sam differentiates $f(x) = x^3 - 12x$ as $f''(x) = x^2 - 12$ and says $c = 2\sqrt{3}$ on $[0, 2\sqrt{3}]$. What is the correct $c$ in the open interval $(0, 2\sqrt{3})$?'
+          - problem: 'The function $f(x) = x^3 - 12x$ satisfies Rolle''s theorem on $[0, 2\sqrt{3}]$. What is the value of $c$ in the open interval $(0, 2\sqrt{3})$ with $f''(c) = 0$?'
             answer: '2'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'The power rule gives $f''(x) = 3x^2 - 12$, not $x^2 - 12$. Then $3x^2 = 12$ gives $x = \pm 2$, and only $x = 2$ lies in $(0, 2\sqrt{3})$. Sam''s value $2\sqrt{3}$ is an endpoint, not an interior point.'
+            solution_sketch: 'The power rule gives $f''(x) = 3x^2 - 12$. Then $3x^2 = 12$ gives $x = \pm 2$, and only $x = 2$ lies in $(0, 2\sqrt{3})$. The value $2\sqrt{3}$ is an endpoint, not an interior point.'
           - problem: 'Find all numbers $c$ in $(-2, 2)$ with $f''(c) = 0$ for $f(x) = x^3 - 4x$, which has the same value at both ends of $[-2, 2]$.'
             answer: '-2sqrt(3)/3, 2sqrt(3)/3'
             answer_contract: {"kind":"exact"}
@@ -1295,10 +1295,10 @@ topics:
             answer: '-2sqrt(3)/3, 2sqrt(3)/3'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The average slope is $\frac{2 - (-2)}{2 - (-2)} = 1$. Then $3c^2 - 3 = 1$ gives $c^2 = \frac{4}{3}$. Both roots $c = \pm\frac{2\sqrt{3}}{3}$ lie in $(-2, 2)$, so there are two such values.'
-          - problem: 'Sam applies the Mean Value Theorem to $f(x) = x^2$ on $[0, 6]$. He sets $f''(c) = f(6) - f(0) = 36$ and gets $c = 18$. What is the correct value of $c$?'
+          - problem: 'Apply the Mean Value Theorem to $f(x) = x^2$ on $[0, 6]$. What is the value of $c$?'
             answer: '3'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'Sam forgot to divide by the length of the interval. The average slope is $\frac{36 - 0}{6 - 0} = 6$, so $2c = 6$ and $c = 3$.'
+            solution_sketch: 'The average slope is $\frac{36 - 0}{6 - 0} = 6$, so $2c = 6$ and $c = 3$.'
       - id: kp2
         name: 'Check whether the MVT applies'
         key_prerequisites: [continuity, rolles-theorem]
@@ -1340,7 +1340,7 @@ topics:
             answer: '4'
             answer_contract: {"kind":"unit","quantity":"time","unit":"s","allow_omitted":true}
             solution_sketch: 'The function $|t - 4|$ is continuous. At $t = 4$ the left slope is $-1$ and the right slope is $1$, so the arm has a corner there and $h$ is not differentiable at $t = 4$. This time lies inside $(0, 7)$.'
-          - problem: 'Sam says the Mean Value Theorem applies to $f(x) = \frac{1}{x^2}$ on $[-1, 2]$ because $f$ is a smooth function. At which value of $x$ does a hypothesis fail?'
+          - problem: 'For $f(x) = \frac{1}{x^2}$ on $[-1, 2]$, at which value of $x$ does a hypothesis of the Mean Value Theorem fail?'
             answer: '0'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The denominator $x^2$ is zero at $x = 0$, so $f$ has no value there and is not continuous there. The point $0$ lies inside $(-1, 2)$, so the theorem does not apply. Smooth graphs can still have a gap.'
@@ -1385,10 +1385,10 @@ topics:
             answer: 'difference is constant'
             answer_contract: {"kind":"label","options":[["difference is constant","f - g is constant","the difference is constant","they differ by a constant","f and g differ by a constant","f - g = C","f = g + C"],["functions are equal","f = g","they are equal"],["difference is zero","f - g = 0","the difference is zero"],["sum is constant","f + g is constant","the sum is constant"]]}
             solution_sketch: 'Apply the Mean Value Theorem to $h = f - g$. Then $h''(c) = f''(c) - g''(c) = 0$ for every $c$, so $h(b) = h(a)$ for all points $a$ and $b$. So $f - g$ is constant, but the constant need not be $0$.'
-          - problem: 'Sam knows that $f(0) = 2$ and $f''(x) \leq 4$ for all $x$. He says $f(3) \leq 6$ because $2 + 4 = 6$. What is the correct upper bound for $f(3)$?'
+          - problem: 'Let $f(0) = 2$ and $f''(x) \leq 4$ for all $x$. What is the upper bound for $f(3)$?'
             answer: '14'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'Sam forgot to multiply the bound on the slope by the length of the interval. By the Mean Value Theorem $f(3) - f(0) = f''(c) \cdot 3 \leq 12$. So $f(3) \leq 2 + 12 = 14$.'
+            solution_sketch: 'By the Mean Value Theorem $f(3) - f(0) = f''(c) \cdot 3 \leq 12$. So $f(3) \leq 2 + 12 = 14$.'
     diagnostic_exemplar:
       problem: 'Suppose $f$ is differentiable with $f(2) = 5$ and $f''(x) \leq 3$ for all $x$. Using the Mean Value Theorem, what is the largest possible value of $f(6)$?'
       answer: "17"
@@ -1455,7 +1455,7 @@ topics:
             answer: '100'
             answer_contract: {"kind":"unit","quantity":"dollar","unit":"dollar","allow_omitted":true}
             solution_sketch: 'The derivative is $P''(x) = -4x + 40$, which is zero at $x = 10$. The graph of $P$ is a parabola that opens downward, so the largest profit is $P(10) = -200 + 400 - 100 = 100$ dollars.'
-          - problem: 'Sam says the absolute minimum value of $f(x) = x^2 - 4x + 9$ is $9$, because $f(0) = 9$. What is the correct absolute minimum value?'
+          - problem: 'What is the absolute minimum value of $f(x) = x^2 - 4x + 9$?'
             answer: '5'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'Complete the square: $f(x) = (x - 2)^2 + 5$. The least value is $5$, reached at $x = 2$. The value $f(0) = 9$ is only one value of $f$, not the least one.'
@@ -1501,10 +1501,10 @@ topics:
             answer: '-4'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The derivative $f''(x) = 2x - 10$ is zero at $x = 5$. Compare $f(0) = 21$, $f(5) = -4$ and $f(7) = 0$. The least of these is $-4$.'
-          - problem: 'Sam finds that $f(x) = x^2 - 6x + 4$ has $f''(3) = 0$, and says its absolute maximum on $[-1, 5]$ is $f(3) = -5$. What is the correct absolute maximum value on $[-1, 5]$?'
+          - problem: 'The function $f(x) = x^2 - 6x + 4$ has $f''(3) = 0$. What is the absolute maximum value of $f$ on $[-1, 5]$?'
             answer: '11'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'Sam found only the critical point, which here gives the minimum. Compare the endpoints too: $f(-1) = 11$, $f(3) = -5$ and $f(5) = -1$. The greatest value is $11$.'
+            solution_sketch: 'The critical point $x = 3$ here gives the minimum. Compare the endpoints too: $f(-1) = 11$, $f(3) = -5$ and $f(5) = -1$. The greatest value is $11$.'
       - id: kp3
         name: 'Closed-interval method with several critical points'
         key_prerequisites: [critical-points-extrema, evaluating-functions]
@@ -1542,10 +1542,10 @@ topics:
             answer: '32'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The critical points are $x = -1$, $0$ and $2$. Compare $f(-2) = 32$, $f(-1) = -5$, $f(0) = 0$, $f(2) = -32$ and $f(3) = 27$. The greatest of these is $32$, at the endpoint $x = -2$.'
-          - problem: 'Sam compares only the endpoint values $f(-3) = 9$ and $f(3) = -9$ and says the absolute maximum of $f(x) = x^3 - 12x$ on $[-3, 3]$ is $9$. What is the correct absolute maximum value?'
+          - problem: 'What is the absolute maximum value of $f(x) = x^3 - 12x$ on $[-3, 3]$?'
             answer: '16'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'Sam skipped the critical points. The derivative $f''(x) = 3x^2 - 12$ is zero at $x = -2$ and $x = 2$, and $f(-2) = 16$ is larger than $9$. Compare $f(-3) = 9$, $f(-2) = 16$, $f(2) = -16$ and $f(3) = -9$. The greatest value is $16$.'
+            solution_sketch: 'The endpoint values $f(-3) = 9$ and $f(3) = -9$ are not enough. The derivative $f''(x) = 3x^2 - 12$ is zero at $x = -2$ and $x = 2$, and $f(-2) = 16$ is larger than $9$. Compare $f(-3) = 9$, $f(-2) = 16$, $f(2) = -16$ and $f(3) = -9$. The greatest value is $16$.'
           - problem: 'At which value of $x$ does $f(x) = x^3 - 12x$ attain its absolute maximum on $[-3, 3]$?'
             answer: '-2'
             answer_contract: {"kind":"exact"}
@@ -1614,7 +1614,7 @@ topics:
             answer: '-2 < x < 0 or x > 2'
             answer_contract: {"kind":"inequality_union"}
             solution_sketch: 'The derivative is $f''(x) = 4x^3 - 16x = 4x(x - 2)(x + 2)$. The sign chart shows it is positive for $-2 < x < 0$ and for $x > 2$.'
-          - problem: 'Sam says $f(x) = x^3 - 3x^2$ is increasing for $0 < x < 2$, because $0$ and $2$ are the roots of $f''(x) = 3x(x - 2)$. For which values of $x$ is $f$ increasing?'
+          - problem: 'For which values of $x$ is $f(x) = x^3 - 3x^2$ increasing?'
             answer: 'x < 0 or x > 2'
             answer_contract: {"kind":"inequality_union"}
             solution_sketch: 'The derivative $f''(x) = 3x(x - 2)$ is a product of two factors with roots $0$ and $2$. It is negative between the roots and positive outside them. So $f$ is increasing for $x < 0$ or $x > 2$.'
@@ -1671,10 +1671,10 @@ topics:
             answer: '27'
             answer_contract: {"kind":"unit","quantity":"dollar","unit":"dollar","allow_omitted":true}
             solution_sketch: 'The derivative is $P''(x) = 6x^2 - 30x + 36 = 6(x - 2)(x - 3)$. It changes from negative to positive at $x = 3$, so the dip bottoms out there. The profit is $P(3) = 54 - 135 + 108 = 27$ dollars.'
-          - problem: 'Sam solves $f''(x) = 0$ for $f(x) = x^3 - 27x + 5$, gets $x = \pm 3$, and says the local maximum value is $3$. What is the correct value of the local maximum?'
+          - problem: 'What is the local maximum value of $f(x) = x^3 - 27x + 5$?'
             answer: '59'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'Sam reported a critical point instead of a value of $f$. The derivative $f''(x) = 3(x - 3)(x + 3)$ changes from positive to negative at $x = -3$. So the local maximum value is $f(-3) = -27 + 81 + 5 = 59$.'
+            solution_sketch: 'The answer is a value of $f$, not a critical point. The derivative $f''(x) = 3(x - 3)(x + 3)$ changes from positive to negative at $x = -3$. So the local maximum value is $f(-3) = -27 + 81 + 5 = 59$.'
       - id: kp3
         name: 'Monotonicity with products and exponentials'
         key_prerequisites: [product-quotient-rules, derivatives-exp-log]
@@ -1712,10 +1712,10 @@ topics:
             answer: '4'
             answer_contract: {"kind":"unit","quantity":"time","unit":"h","allow_omitted":true}
             solution_sketch: 'The product rule gives $R''(t) = 10e^{-t/4} - \frac{10t}{4}e^{-t/4} = 10e^{-t/4}\left(1 - \frac{t}{4}\right)$. Since $e^{-t/4} > 0$, $R''$ changes from positive to negative at $t = 4$. So the number of readers is greatest after $4$ hours.'
-          - problem: 'Sam differentiates $f(x) = xe^{-x}$ as $f''(x) = e^{-x}$ and says $f$ is increasing for every $x$. For which values of $x$ is $f$ increasing?'
+          - problem: 'For which values of $x$ is $f(x) = xe^{-x}$ increasing?'
             answer: 'x < 1'
             answer_contract: {"kind":"inequality_union"}
-            solution_sketch: 'Sam forgot the product rule. The correct derivative is $f''(x) = e^{-x} - xe^{-x} = e^{-x}(1 - x)$. Since $e^{-x} > 0$, $f''$ is positive exactly when $x < 1$.'
+            solution_sketch: 'By the product rule the derivative is $f''(x) = e^{-x} - xe^{-x} = e^{-x}(1 - x)$. Since $e^{-x} > 0$, $f''$ is positive exactly when $x < 1$.'
     diagnostic_exemplar:
       problem: 'Find the intervals of increase and decrease of $f(x) = x^2 e^{-x}$.'
       answer: "increasing on (0, 2); decreasing on (-∞, 0) and (2, ∞)"
@@ -1786,10 +1786,10 @@ topics:
             answer: 'yes'
             answer_contract: {"kind":"label","options":[["yes","it is","it is concave up","concave up"],["no","it is not","it is not concave up","not concave up"]]}
             solution_sketch: 'The second derivative is $f''''(x) = 12x^2 + 2$. A square is never negative, so $f''''(x) \geq 2$ is positive for every $x$. So the graph is concave up everywhere.'
-          - problem: 'Sam finds where $f(x) = x^3 - 12x$ is concave up by solving $f''(x) > 0$, and gets $x < -2$ or $x > 2$. For which values of $x$ is $f$ concave up?'
+          - problem: 'For which values of $x$ is $f(x) = x^3 - 12x$ concave up?'
             answer: 'x > 0'
             answer_contract: {"kind":"inequality_union"}
-            solution_sketch: 'Sam used the first derivative, which describes rising and falling. Concavity depends on the second derivative $f''''(x) = 6x$. It is positive for $x > 0$, so $f$ is concave up for $x > 0$.'
+            solution_sketch: 'The first derivative describes rising and falling. Concavity depends on the second derivative $f''''(x) = 6x$. It is positive for $x > 0$, so $f$ is concave up for $x > 0$.'
       - id: kp2
         name: 'Find inflection points (verify the sign change)'
         key_prerequisites: [higher-order-derivatives]
@@ -1835,10 +1835,10 @@ topics:
             answer: '0'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The second derivative is $f''''(x) = -\frac{2}{9}x^{-5/3}$, which is not defined at $x = 0$. It is positive for $x < 0$ and negative for $x > 0$, so concavity changes at $x = 0$. The graph passes through $(0, 0)$ there.'
-          - problem: 'Sam solves $f''(x) = 0$ for $f(x) = x^3 - 9x^2 + 2$, gets $x = 0$ and $x = 6$, and calls them inflection points. What is the $x$-coordinate of the inflection point?'
+          - problem: 'What is the $x$-coordinate of the inflection point of $f(x) = x^3 - 9x^2 + 2$?'
             answer: '3'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'Sam used the first derivative, which finds critical points. Inflection points come from the second derivative $f''''(x) = 6x - 18$. It changes sign at $x = 3$, so the inflection point is at $x = 3$.'
+            solution_sketch: 'Critical points come from the first derivative. Inflection points come from the second derivative $f''''(x) = 6x - 18$. It changes sign at $x = 3$, so the inflection point is at $x = 3$.'
       - id: kp3
         name: 'Concavity and the graph'
         key_prerequisites: [higher-order-derivatives, increasing-decreasing-intervals]
@@ -1876,10 +1876,10 @@ topics:
             answer: 'increases'
             answer_contract: {"kind":"label","options":[["increases","it increases","increase","goes up","rises","increasing","it goes up","it rises"],["decreases","it decreases","decrease","goes down","falls","decreasing","it goes down","it falls"]]}
             solution_sketch: 'The marginal cost is the slope $C''(x)$ of the cost graph. A graph that is concave up has a slope that is increasing. So the marginal cost increases as more items are made.'
-          - problem: 'Sam says the inflection points of $f(x) = x^3 - 3x^2 - 9x$ are at $x = -1$ and $x = 3$, where $f''(x) = 3(x - 3)(x + 1)$ is zero. What is the inflection point of the graph?'
+          - problem: 'What is the inflection point of the graph of $f(x) = x^3 - 3x^2 - 9x$?'
             answer: '(1, -11)'
             answer_contract: {"kind":"coordinates","arity":2}
-            solution_sketch: 'Sam used the zeros of $f''$, which are the critical points. The second derivative is $f''''(x) = 6x - 6$, which changes sign at $x = 1$. The height there is $f(1) = 1 - 3 - 9 = -11$, so the inflection point is $(1, -11)$.'
+            solution_sketch: 'The zeros of $f''$ are the critical points, not the inflection points. The second derivative is $f''''(x) = 6x - 6$, which changes sign at $x = 1$. The height there is $f(1) = 1 - 3 - 9 = -11$, so the inflection point is $(1, -11)$.'
           - problem: 'For which values of $x$ is $f(x) = x^3 - 6x^2 + 9x$ both increasing and concave down?'
             answer: 'x < 1'
             answer_contract: {"kind":"inequality_union"}
@@ -1942,7 +1942,7 @@ topics:
             answer: '36'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'Here $N''(t) = 3t^2 - 18t + 24 = 3(t - 2)(t - 4)$, so the critical points are $t = 2$ and $t = 4$. Since $N''''(t) = 6t - 18$, we have $N''''(2) = -6 < 0$, a local maximum, and $N''''(4) = 6 > 0$, a local minimum. The value at the local minimum is $N(4) = 64 - 144 + 96 + 20 = 36$ hundred fish.'
-          - problem: 'Sam says that $f(x) = x^3 - 12x$ has a local maximum at $x = 2$ because $f''''(2) = 12 > 0$. What is the correct local maximum value of $f$?'
+          - problem: 'What is the local maximum value of $f(x) = x^3 - 12x$?'
             answer: '16'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The critical points of $f$ are $x = -2$ and $x = 2$, and $f''''(x) = 6x$. A positive $f''''(2) = 12$ means the graph is concave up, so $x = 2$ is a local minimum, not a maximum. The local maximum is at $x = -2$, where $f''''(-2) = -12 < 0$, and $f(-2) = -8 + 24 = 16$.'
@@ -1979,10 +1979,10 @@ topics:
             answer: 'no'
             answer_contract: {"kind":"label","options":[["yes","it does","it is","yes it does","yes, it does","yes it is","yes, it is","it has"],["no","it does not","it is not","no it does not","no, it does not","no it is not","no, it is not","it doesn't"]]}
             solution_sketch: 'The second derivative test gives no answer, so we look at $W''(t) = 3(t - 5)^2$. This is positive on both sides of $t = 5$, so $W$ keeps rising and the sign of $W''$ does not change. There is no local minimum at $t = 5$, so the answer is no.'
-          - problem: 'Sam says that $f(x) = 5 - (x + 1)^4$ has no extremum at $x = -1$ because $f''''(-1) = 0$. What is the largest value of $f$?'
+          - problem: 'What is the largest value of $f(x) = 5 - (x + 1)^4$?'
             answer: '5'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'A zero second derivative only means the second derivative test fails, so Sam cannot draw a conclusion from it. Since $f''(x) = -4(x + 1)^3$ is positive for $x < -1$ and negative for $x > -1$, $x = -1$ is a local maximum. There $f(-1) = 5$, and $(x + 1)^4 \ge 0$ shows that no value of $f$ is larger.'
+            solution_sketch: 'A zero second derivative only means the second derivative test fails, so it gives no conclusion. Since $f''(x) = -4(x + 1)^3$ is positive for $x < -1$ and negative for $x > -1$, $x = -1$ is a local maximum. There $f(-1) = 5$, and $(x + 1)^4 \ge 0$ shows that no value of $f$ is larger.'
           - problem: 'The function $f(x) = x^6$ has a critical point at $x = 0$, and $f''''(0) = 0$. On which values of $x$ is $f$ decreasing?'
             answer: 'x < 0'
             answer_contract: {"kind":"inequality_union"}
@@ -2087,7 +2087,7 @@ topics:
             answer: '4'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The derivative is $f''(x) = 3x^2 - 3 = 3(x - 1)(x + 1)$, which is positive for $x < -1$ and negative between $-1$ and $1$. So the local maximum is at $x = -1$, where $f(-1) = -1 + 3 + 2 = 4$.'
-          - problem: 'Sam says that $f(x) = x^3 - 3x^2 + 2$ has a local minimum at $x = 0$ because $f''(0) = 0$. What is the correct local minimum value of $f$?'
+          - problem: 'What is the local minimum value of $f(x) = x^3 - 3x^2 + 2$?'
             answer: '-2'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The derivative is $f''(x) = 3x^2 - 6x = 3x(x - 2)$, which is positive for $x < 0$ and negative between $0$ and $2$. So $f$ has a local maximum at $x = 0$, not a minimum. The local minimum is at $x = 2$, where $f(2) = 8 - 12 + 2 = -2$.'
@@ -2131,10 +2131,10 @@ topics:
             answer: 'sqrt(6)/3'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The second derivative is $y'''' = 8 - 12x^2$, which is zero when $x^2 = \frac{2}{3}$, so $x = \pm\frac{\sqrt{6}}{3}$. The sign of $y''''$ is positive for $|x| < \frac{\sqrt{6}}{3}$ and negative outside, so the concavity changes at the positive value $\frac{\sqrt{6}}{3}$ centimetres.'
-          - problem: 'Sam says that the graph of $f(x) = x^4$ has an inflection point at $x = 0$ because $f''''(0) = 0$. Is Sam right?'
+          - problem: 'The second derivative of $f(x) = x^4$ is zero at $x = 0$. Is $x = 0$ an inflection point of the graph?'
             answer: 'no'
-            answer_contract: {"kind":"label","options":[["yes","he is right","yes he is","yes, he is","Sam is right","yes, Sam is right","he is","right"],["no","he is not right","no he is not","no, he is not","Sam is not right","no, Sam is not right","he is not","not right"]]}
-            solution_sketch: 'The second derivative is $f''''(x) = 12x^2$. It is zero at $x = 0$ but positive on both sides, so the concavity does not change. There is no inflection point at $x = 0$, so Sam is not right.'
+            answer_contract: {"kind":"label","options":[["yes","yes it is","it is","inflection point"],["no","no it is not","it is not","not an inflection point","no inflection point"]]}
+            solution_sketch: 'The second derivative is $f''''(x) = 12x^2$. It is zero at $x = 0$ but positive on both sides, so the concavity does not change. There is no inflection point at $x = 0$.'
           - problem: 'Find the local minimum value of $f(x) = x^4 - 5x^2 + 4$.'
             answer: '-9/4'
             answer_contract: {"kind":"exact"}
@@ -2183,7 +2183,7 @@ topics:
             answer: '2'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The zeros of $P''$ are $t = 2$ and $t = 6$. Since $(t - 6)^2$ is never negative, the sign of $P''$ is the sign of $t - 2$: negative before $t = 2$ and positive after. So the profit changes from falling to rising at $t = 2$ months, and nothing changes at $t = 6$.'
-          - problem: 'Sam is told that $f''(x) = x^2(x - 4)$, and says that $f$ has a local minimum at $x = 0$ because $f''(0) = 0$. At which value of $x$ does $f$ have a local minimum?'
+          - problem: 'Let $f''(x) = x^2(x - 4)$. At which value of $x$ does $f$ have a local minimum?'
             answer: '4'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The zeros of $f''$ are $x = 0$ and $x = 4$. Since $x^2 \ge 0$, the sign of $f''$ is the sign of $x - 4$, which is negative on both sides of $0$. So $f''$ does not change sign at $0$, and the sign changes from negative to positive only at $x = 4$, the local minimum.'
@@ -2250,10 +2250,10 @@ topics:
             answer: '72'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'Call the numbers $x$ and $12 - x$, so we minimize $f(x) = x^2 + (12 - x)^2 = 2x^2 - 24x + 144$. Then $f''(x) = 4x - 24 = 0$ gives $x = 6$, and $f''''(x) = 4 > 0$ shows a minimum. The smallest value is $36 + 36 = 72$.'
-          - problem: 'Sam picks $10$ and $20$ as two positive numbers with sum $30$ and says that their product $200$ is the largest possible. What is the largest possible product?'
+          - problem: 'Two positive numbers have sum $30$. What is the largest possible product?'
             answer: '225'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'Sam only tried one pair. With the numbers $x$ and $30 - x$ the product is $P(x) = 30x - x^2$, and $P''(x) = 30 - 2x = 0$ gives $x = 15$. Then $P(15) = 15 \cdot 15 = 225$, which is larger than $200$.'
+            solution_sketch: 'With the numbers $x$ and $30 - x$ the product is $P(x) = 30x - x^2$, and $P''(x) = 30 - 2x = 0$ gives $x = 15$. Then $P(15) = 15 \cdot 15 = 225$, which is larger than $200$.'
       - id: kp2
         name: Fencing and area problems
         key_prerequisites: [critical-points-extrema, area-triangles-quadrilaterals]
@@ -2286,7 +2286,7 @@ topics:
             answer: '120'
             answer_contract: {"kind":"unit","quantity":"length","unit":"m","allow_omitted":true}
             solution_sketch: 'Let the sides be $x$ and $\frac{900}{x}$ metres, so the fence length is $L(x) = 2x + \frac{1800}{x}$. Then $L''(x) = 2 - \frac{1800}{x^2} = 0$ gives $x = 30$, and $L''''(30) > 0$ shows a minimum. The playground is a $30$ m by $30$ m square, and the least fence is $120$ metres.'
-          - problem: 'Sam has $80$ m of fence for a rectangular pen against a wall, but he counts all four sides, and says that the largest area is $400$ square metres. What is the largest area of the pen?'
+          - problem: 'A rectangular pen has one side against a wall, and $80$ m of fence cover the other three sides. What is the largest area of the pen?'
             answer: '800'
             answer_contract: {"kind":"unit","quantity":"area","unit":"m^2","allow_omitted":true}
             solution_sketch: 'The wall replaces one side, so the fence covers only three sides. With each side that meets the wall of length $x$, the area is $A(x) = x(80 - 2x)$, and $A''(x) = 80 - 4x = 0$ gives $x = 20$. The area is $20 \cdot 40 = 800$ square metres.'
@@ -2331,7 +2331,7 @@ topics:
             answer: '120'
             answer_contract: {"kind":"unit","quantity":"dollar","unit":"dollar","allow_omitted":true}
             solution_sketch: 'Since $C''(x) = 3 - \frac{1200}{x^2}$, the only critical point with $x > 0$ is $x = 20$. The second derivative $C''''(x) = \frac{2400}{x^3}$ is positive for $x > 0$, so $x = 20$ gives the absolute minimum. The lowest cost is $C(20) = 60 + 60 = 120$ dollars per hour.'
-          - problem: 'Sam finds that the only critical point of $f(x) = x^3 - 3x$ on $[0, 3]$ is $x = 1$, and says that the absolute maximum is $f(1) = -2$. What is the absolute maximum value of $f$ on $[0, 3]$?'
+          - problem: 'What is the absolute maximum value of $f(x) = x^3 - 3x$ on $[0, 3]$?'
             answer: '18'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'A critical point is only a candidate, so we also compare the endpoint values. We have $f(0) = 0$, $f(1) = -2$ and $f(3) = 27 - 9 = 18$. The largest is $18$, at the endpoint $x = 3$, while $f(1) = -2$ is the absolute minimum.'
@@ -2399,10 +2399,10 @@ topics:
             answer: '5'
             answer_contract: {"kind":"unit","quantity":"length","unit":"m","allow_omitted":true}
             solution_sketch: 'The derivative is $S''(x) = 2x - \frac{2000}{x^2}$, which is zero when $x^3 = 1000$, so $x = 10$. The second derivative is positive, so this is a minimum. The height is $h = \frac{500}{10^2} = 5$ metres.'
-          - problem: 'Sam cuts squares of side $3$ cm from the corners of a $12$ cm by $12$ cm sheet and folds up the sides to make an open-top box. He says that this box has the greatest possible volume. The volume is $V = x(12 - 2x)^2$ for squares of side $x$ cm. What is the greatest volume of such a box?'
+          - problem: 'Squares of side $x$ cm are cut from the corners of a $12$ cm by $12$ cm sheet, and the sides are folded up to make an open-top box. The volume is $V = x(12 - 2x)^2$. What is the greatest volume of such a box?'
             answer: '128'
             answer_contract: {"kind":"unit","quantity":"cubic_volume","unit":"cm^3","allow_omitted":true}
-            solution_sketch: 'Differentiating gives $V''(x) = (12 - 2x)(12 - 6x)$, which is zero at $x = 6$ and at $x = 2$. The value $x = 6$ gives volume $0$, so the greatest volume is at $x = 2$, where $V(2) = 2 \cdot 8^2 = 128$ cubic centimetres. Sam''s box has volume $3 \cdot 6^2 = 108$, which is smaller.'
+            solution_sketch: 'Differentiating gives $V''(x) = (12 - 2x)(12 - 6x)$, which is zero at $x = 6$ and at $x = 2$. The value $x = 6$ gives volume $0$, so the greatest volume is at $x = 2$, where $V(2) = 2 \cdot 8^2 = 128$ cubic centimetres. A box with $x = 3$ has volume $3 \cdot 6^2 = 108$, which is smaller.'
       - id: kp2
         name: Cost and material problems
         key_prerequisites: [basic-optimization, volume-prisms-cylinders]
@@ -2435,10 +2435,10 @@ topics:
             answer: '50'
             answer_contract: {"kind":"unit","quantity":"length","unit":"m","allow_omitted":true}
             solution_sketch: 'Let each side that meets the river be $x$ metres, so the side along the river is $\frac{1250}{x}$. The fence length is $L(x) = 2x + \frac{1250}{x}$, and $L''(x) = 2 - \frac{1250}{x^2} = 0$ gives $x = 25$. The side along the river is $\frac{1250}{25} = 50$ metres.'
-          - problem: 'Sam says that the cheapest garden of area $150$ square metres is a square. The side facing the street costs $12$ dollars per metre, and each of the other three sides costs $6$ dollars per metre. What is the least total cost of the fence?'
+          - problem: 'A garden of area $150$ square metres has a fence on all four sides. The side facing the street costs $12$ dollars per metre, and each of the other three sides costs $6$ dollars per metre. What is the least total cost of the fence?'
             answer: '360'
             answer_contract: {"kind":"unit","quantity":"dollar","unit":"dollar","allow_omitted":true}
-            solution_sketch: 'Let the side facing the street be $x$ metres, so the sides that meet it are $\frac{150}{x}$ metres each. The cost is $12x + 6x + 12 \cdot \frac{150}{x} = 18x + \frac{1800}{x}$ dollars. Then $C''(x) = 18 - \frac{1800}{x^2} = 0$ gives $x = 10$, and $C(10) = 180 + 180 = 360$ dollars. The square would cost about $367$ dollars, so it is not the cheapest.'
+            solution_sketch: 'Let the side facing the street be $x$ metres, so the sides that meet it are $\frac{150}{x}$ metres each. The cost is $12x + 6x + 12 \cdot \frac{150}{x} = 18x + \frac{1800}{x}$ dollars. Then $C''(x) = 18 - \frac{1800}{x^2} = 0$ gives $x = 10$, and $C(10) = 180 + 180 = 360$ dollars. A square garden would cost about $367$ dollars, which is more.'
       - id: kp3
         name: Distance problems
         key_prerequisites: [basic-optimization, distance-midpoint-formulas]
@@ -2475,10 +2475,10 @@ topics:
             answer: 'sqrt(19)/2'
             answer_contract: {"kind":"unit","quantity":"length","unit":"km","allow_omitted":true}
             solution_sketch: 'A point of the curve is $(x, \sqrt{x})$, and its squared distance to the lighthouse is $d^2 = (x - 5)^2 + x = x^2 - 9x + 25$. Then $2x - 9 = 0$ gives $x = \frac{9}{2}$, and $d^2 = \frac{81}{4} - \frac{81}{2} + 25 = \frac{19}{4}$. The boat comes within $\frac{\sqrt{19}}{2}$ kilometres.'
-          - problem: 'Sam says that the point of the line $y = -2x + 5$ closest to the origin is its $x$-intercept $\left(\frac{5}{2}, 0\right)$. What is the closest point?'
+          - problem: 'What is the point of the line $y = -2x + 5$ closest to the origin?'
             answer: '(2, 1)'
             answer_contract: {"kind":"coordinates","arity":2}
-            solution_sketch: 'The point $\left(\frac{5}{2}, 0\right)$ is at distance $\frac{5}{2}$, but we can do better. A point of the line is $(x, 5 - 2x)$, with $d^2 = x^2 + (5 - 2x)^2 = 5x^2 - 20x + 25$. Then $10x - 20 = 0$ gives $x = 2$, and $y = 1$, with $d^2 = 5 < \frac{25}{4}$.'
+            solution_sketch: 'The $x$-intercept $\left(\frac{5}{2}, 0\right)$ is at distance $\frac{5}{2}$, but a closer point exists. A point of the line is $(x, 5 - 2x)$, with $d^2 = x^2 + (5 - 2x)^2 = 5x^2 - 20x + 25$. Then $10x - 20 = 0$ gives $x = 2$, and $y = 1$, with $d^2 = 5 < \frac{25}{4}$.'
     diagnostic_exemplar:
       problem: 'Find the point on the curve $y = \sqrt{x}$ closest to $(4, 0)$.'
       answer: '(7/2, √14/2)'
@@ -2540,10 +2540,10 @@ topics:
             answer: 'lower'
             answer_contract: {"kind":"label","options":[["lower","it lowers","lowers","lower the revenue","it lowers the revenue","decrease","decreases","it decreases"],["raise","it raises","raises","raise the revenue","it raises the revenue","increase","increases","it increases"]]}
             solution_sketch: 'The marginal revenue is $R''(x) = 600 - 4x$, which at $x = 200$ is $600 - 800 = -200$. A negative marginal revenue means that one more item lowers the revenue.'
-          - problem: 'Sam says the marginal cost at $x = 20$ for $C(x) = \frac{x^2}{4} + 20x + 400$ dollars is $C(20)/20 = 45$ dollars per item. What is the marginal cost at $x = 20$?'
+          - problem: 'The cost of $x$ items is $C(x) = \frac{x^2}{4} + 20x + 400$ dollars. What is the marginal cost at $x = 20$?'
             answer: '30'
             answer_contract: {"kind":"unit","quantity":"dollar","unit":"dollar","allow_omitted":true}
-            solution_sketch: 'Sam found the average cost, $C(20)/20 = 900/20 = 45$, not the marginal cost. The marginal cost is the derivative $C''(x) = \frac{x}{2} + 20$, and $C''(20) = 10 + 20 = 30$ dollars per item.'
+            solution_sketch: 'The average cost is $C(20)/20 = 900/20 = 45$, which is not the marginal cost. The marginal cost is the derivative $C''(x) = \frac{x}{2} + 20$, and $C''(20) = 10 + 20 = 30$ dollars per item.'
         constraints: 'quadratic cost and revenue; marginal value at a point, marginal function, average cost, direction of change; units in the question'
       - id: kp2
         name: 'Marginal value vs actual change'
@@ -2578,10 +2578,10 @@ topics:
             answer: '44'
             answer_contract: {"kind":"unit","quantity":"dollar","unit":"dollar","allow_omitted":true}
             solution_sketch: 'The marginal profit is $P''(x) = -0.06x + 50$. At $x = 100$ this is $-6 + 50 = 44$, so the 101st item adds about $44$ dollars of profit.'
-          - problem: 'Sam says the actual cost of the 26th item, $C(26) - C(25)$, equals the marginal cost $C''(25)$ exactly, where $C(x) = \frac{x^2}{25} + 10x + 250$ dollars. What is the actual cost of the 26th item?'
+          - problem: 'The cost of $x$ items is $C(x) = \frac{x^2}{25} + 10x + 250$ dollars. What is the actual cost of the 26th item, $C(26) - C(25)$?'
             answer: '12.04'
             answer_contract: {"kind":"unit","quantity":"dollar","unit":"dollar","allow_omitted":true}
-            solution_sketch: 'Sam used the slope at $x = 25$, which is $C''(25) = 12$. The actual cost is $C(26) - C(25) = \frac{676 - 625}{25} + 10 = 2.04 + 10 = 12.04$ dollars, so the two values are not equal.'
+            solution_sketch: 'The marginal cost $C''(25) = 12$ is a slope. The actual cost is $C(26) - C(25) = \frac{676 - 625}{25} + 10 = 2.04 + 10 = 12.04$ dollars, so the two values are not equal.'
           - problem: 'For $R(x) = 150x - \frac{x^2}{5}$ dollars, is the estimate $R''(30)$ of the revenue from the 31st unit too high or too low?'
             answer: 'too high'
             answer_contract: {"kind":"label","options":[["too high","high","it is too high","too large","overestimate","an overestimate"],["too low","low","it is too low","too small","underestimate","an underestimate"]]}
@@ -2619,10 +2619,10 @@ topics:
             answer: '40'
             answer_contract: {"kind":"unit","quantity":"dollar","unit":"dollar","allow_omitted":true}
             solution_sketch: 'The profit is $P(x) = -x^2 + 120x - 1200$, and $P''(x) = -2x + 120 = 0$ gives $x = 60$. The maximum profit is $P(60) = 2400$ dollars, so the profit per item is $2400 \div 60 = 40$ dollars.'
-          - problem: 'Sam wants the quantity that maximizes profit for $R(x) = 420x$ and $C(x) = 3x^2 + 60x + 900$ dollars. He sets $C''(x) = 0$ and gets $x = -10$. What is the correct quantity?'
+          - problem: 'What quantity maximizes profit for $R(x) = 420x$ and $C(x) = 3x^2 + 60x + 900$ dollars?'
             answer: '60'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'Sam looked for the smallest cost, but the best quantity is where the marginal revenue equals the marginal cost. Set $420 = 6x + 60$, so $6x = 360$ and $x = 60$.'
+            solution_sketch: 'The smallest cost is not the goal. The best quantity is where the marginal revenue equals the marginal cost. Set $420 = 6x + 60$, so $6x = 360$ and $x = 60$.'
           - problem: 'A bakery''s profit from $x$ cakes is $P(x) = -x^2 + 120x - 2000$ dollars. How many cakes maximize the profit, and what is the maximum profit?'
             answer: 'x = 60; P = 1600'
             answer_contract: {"kind":"multipart","parts":[{"contract":{"kind":"exact"},"name":"x"},{"contract":{"kind":"exact"},"name":"P"}]}
@@ -2700,10 +2700,10 @@ topics:
             answer: '1'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'At $x = 1$ the top is $\ln 1 = 0$ and the bottom is $0$, so the form is $\frac{0}{0}$. Differentiating gives $\frac{1/x}{1}$, which is $1$ at $x = 1$.'
-          - problem: 'Sam evaluates $\lim_{x \to 0} \frac{\sin(6x)}{3x}$ with L''Hôpital''s rule and gets $\frac{\cos(6x)}{3}$, so the limit is $\frac{1}{3}$. What is the correct limit?'
+          - problem: 'Use L''Hôpital''s rule to evaluate $\lim_{x \to 0} \frac{\sin(6x)}{3x}$.'
             answer: '2'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'Sam forgot the chain rule: the derivative of $\sin(6x)$ is $6\cos(6x)$, not $\cos(6x)$. So the new quotient is $\frac{6\cos(6x)}{3}$, which is $2$ at $x = 0$.'
+            solution_sketch: 'By the chain rule the derivative of $\sin(6x)$ is $6\cos(6x)$, not $\cos(6x)$. So the new quotient is $\frac{6\cos(6x)}{3}$, which is $2$ at $x = 0$.'
           - problem: 'Evaluate $\lim_{x \to 0} \frac{e^{2x} - 1 - 2x}{x^2}$.'
             answer: '2'
             answer_contract: {"kind":"exact"}
@@ -2737,7 +2737,7 @@ topics:
             answer: '1'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'Both the top and the bottom tend to $\infty$, so the form is $\frac{\infty}{\infty}$. Differentiating gives $\frac{1}{1 + 1/x}$, which tends to $1$.'
-          - problem: 'Sam says that $\lim_{x \to \infty} \frac{x}{e^x}$ is infinity, because $x$ grows without bound. What is the correct limit?'
+          - problem: 'What is the value of $\lim_{x \to \infty} \frac{x}{e^x}$?'
             answer: '0'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The top and the bottom both tend to $\infty$, so the form is $\frac{\infty}{\infty}$ and the growth of $x$ alone decides nothing. Differentiating gives $\frac{1}{e^x}$, which tends to $0$.'
@@ -2778,7 +2778,7 @@ topics:
             answer: 'no'
             answer_contract: {"kind":"label","options":[["no","it does not","does not apply","not directly","no, it does not apply","it does not apply directly"],["yes","it does","it applies","yes, it applies"]]}
             solution_sketch: 'The expression is a product with the form $0 \cdot (-\infty)$. The rule needs a quotient of the form $\frac{0}{0}$ or $\frac{\infty}{\infty}$, so the product must first be rewritten as a quotient.'
-          - problem: 'Sam uses L''Hôpital''s rule on $\lim_{x \to 2} \frac{x^2 + 1}{x + 1}$ and gets $\frac{2x}{1} = 4$. What is the correct limit?'
+          - problem: 'What is the value of $\lim_{x \to 2} \frac{x^2 + 1}{x + 1}$?'
             answer: '5/3'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'At $x = 2$ the quotient is $\frac{5}{3}$, which is not an indeterminate form, so the rule does not apply. The limit is found by substitution and equals $\frac{5}{3}$.'
@@ -2852,10 +2852,10 @@ topics:
             answer: '1/2'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The form is $\infty - \infty$, so combine into $\frac{x - 1 - \ln x}{(x - 1)\ln x}$, which has the form $\frac{0}{0}$. One application gives $\frac{x - 1}{x\ln x + x - 1}$ after simplifying, which is still $\frac{0}{0}$. A second gives $\frac{1}{\ln x + 2}$, which is $\frac{1}{2}$ at $x = 1$.'
-          - problem: 'Sam says that $\lim_{x \to \infty} \left(\sqrt{x^2 + 6x} - x\right)$ is $0$, because both terms are about equal to $x$. What is the correct limit?'
+          - problem: 'What is the value of $\lim_{x \to \infty} \left(\sqrt{x^2 + 6x} - x\right)$?'
             answer: '3'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'Sam cannot cancel two terms that both grow without bound. Multiplying by the conjugate gives $\frac{6x}{\sqrt{x^2 + 6x} + x} = \frac{6}{\sqrt{1 + 6/x} + 1}$, which tends to $\frac{6}{2} = 3$.'
+            solution_sketch: 'Two terms that both grow without bound cannot be cancelled. Multiplying by the conjugate gives $\frac{6x}{\sqrt{x^2 + 6x} + x} = \frac{6}{\sqrt{1 + 6/x} + 1}$, which tends to $\frac{6}{2} = 3$.'
         constraints: 'rewrite to a quotient (conjugate, common denominator or reciprocal) before any L''Hôpital step'
       - id: kp2
         name: '1^∞ forms via logarithms'
@@ -2898,7 +2898,7 @@ topics:
             answer: 'e^(-3)'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The form is $1^\infty$. Let $y = \left(1 - \frac{3}{n}\right)^n$, so $\ln y = \frac{\ln(1 - 3/n)}{1/n}$, which has the form $\frac{0}{0}$ and tends to $-3$. So $y \to e^{-3}$.'
-          - problem: 'Sam says that $\lim_{x \to \infty} \left(1 + \frac{6}{x}\right)^x$ is $1$, because the base tends to $1$ and $1$ to any power is $1$. What is the correct limit?'
+          - problem: 'What is the value of $\lim_{x \to \infty} \left(1 + \frac{6}{x}\right)^x$?'
             answer: 'e^6'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The base tends to $1$ while the exponent grows without bound, so this is the indeterminate form $1^\infty$ and the value is not forced to be $1$. Here $\ln y = \frac{\ln(1 + 6/x)}{1/x} \to 6$, so $y \to e^6$.'
@@ -2943,7 +2943,7 @@ topics:
             answer: '1'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The form is $\infty^0$. Let $y = (\ln x)^{1/x}$, so $\ln y = \frac{\ln(\ln x)}{x}$, which has the form $\frac{\infty}{\infty}$. L''Hôpital''s rule gives $\frac{1}{x\ln x}$, which tends to $0$, so $y \to e^0 = 1$.'
-          - problem: 'Sam says that $\lim_{x \to 0^+} x^x$ is $0$, because $0$ to any power is $0$. What is the correct limit?'
+          - problem: 'What is the value of $\lim_{x \to 0^+} x^x$?'
             answer: '1'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The base tends to $0$ and the exponent tends to $0$, so this is the indeterminate form $0^0$, and the rule that $0$ to a power is $0$ needs a positive exponent. Here $\ln y = x\ln x \to 0$, so $y \to e^0 = 1$.'

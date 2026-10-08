@@ -48,7 +48,8 @@ fn repaired_expression_families_avoid_degenerate_and_generic_cases() {
     assert!(source.contains("A balance changes by $-7x$"));
     // Re-pinned 2026-10-07 to the courses rewrite wording.
     assert!(source.contains("A rectangle is $4$ m high and $2x+3$ m wide."));
-    assert!(source.contains("Kim writes $-(4-x)=-4-x$."));
+    // 2026-10-08, story framing removed: the error item is now a direct question.
+    assert!(source.contains("What is the expansion of $-(4-x)$?"));
     assert!(source.contains("Express its perimeter in the form $ax+b$"));
 }
 

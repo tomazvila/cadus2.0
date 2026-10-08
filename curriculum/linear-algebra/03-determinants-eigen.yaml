@@ -30,10 +30,10 @@ topics:
             answer: '23'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Take $a=4$, $b=-5$, $c=3$ and $d=2$. Then $ad-bc=4\cdot2-(-5)\cdot3=8+15=23$.'
-          - problem: 'Sam computes $\det\begin{pmatrix}-3&6\\5&-2\end{pmatrix}$ as $(-3)(-2)+(6)(5)=36$. What is the correct value of the determinant?'
+          - problem: 'What is $\det\begin{pmatrix}-3&6\\5&-2\end{pmatrix}$?'
             answer: '-24'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Sam added the two products, but the formula subtracts them. The correct value is $ad-bc=(-3)(-2)-(6)(5)=6-30=-24$.'
+            solution_sketch: 'The formula subtracts the two products; it does not add them. The value is $ad-bc=(-3)(-2)-(6)(5)=6-30=-24$.'
           - problem: 'A garden bed is shaped like a parallelogram. Two of its sides are given by the vectors $(5,2)$ and $(3,-4)$, with lengths in metres. Find the area of the bed.'
             answer: '26'
             answer_contract: {"kind": "unit", "quantity": "area", "unit": "m^2", "allow_omitted": true}
@@ -172,10 +172,10 @@ topics:
             answer: '-2'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Delete row 2 and column 3 to leave $\begin{pmatrix}3&-1\\2&0\end{pmatrix}$, so $M_{23}=3\cdot0-(-1)\cdot2=2$. The sign is $(-1)^{2+3}=-1$, so $C_{23}=-2$.'
-          - problem: 'Sam writes $C_{32}=-1$ for the cofactor of $A=\begin{pmatrix}1&4&2\\0&3&-1\\2&5&1\end{pmatrix}$ in row 3 and column 2. What is the correct value of $C_{32}$?'
+          - problem: 'What is the cofactor $C_{32}$ of $A=\begin{pmatrix}1&4&2\\0&3&-1\\2&5&1\end{pmatrix}$, in row 3 and column 2?'
             answer: '1'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Delete row 3 and column 2 to leave $\begin{pmatrix}1&2\\0&-1\end{pmatrix}$, so $M_{32}=-1$. Sam stopped at the minor, but the sign $(-1)^{3+2}=-1$ is still needed, so $C_{32}=1$.'
+            solution_sketch: 'Delete row 3 and column 2 to leave $\begin{pmatrix}1&2\\0&-1\end{pmatrix}$, so $M_{32}=-1$. The minor is not yet the cofactor, because the sign $(-1)^{3+2}=-1$ is still needed. So $C_{32}=1$.'
           - problem: 'Let $A=\begin{pmatrix}2&-3&1\\4&1&-2\\-1&3&0\end{pmatrix}$. Find the cofactor $C_{31}$.'
             answer: '5'
             answer_contract: {"kind": "exact"}
@@ -344,10 +344,10 @@ topics:
             answer: '4'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Areas are multiplied by $\det(ST)=\det S\cdot\det T$. So $12=3\cdot\det T$, and $\det T=12\div3=4$.'
-          - problem: 'Sam says that $\det(2A)=2\det A$ for every matrix, and so gets $\det(2A)=-6$ for a $3\times3$ matrix $A$ with $\det A=-3$. What is the correct value of $\det(2A)$?'
+          - problem: 'What is $\det(2A)$ for a $3\times3$ matrix $A$ with $\det A=-3$?'
             answer: '-24'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'A $3\times3$ matrix has three rows, and doubling every entry doubles each of them. So $\det(2A)=2^3\det A=8\cdot(-3)=-24$, and Sam used the factor $2$ instead of $2^3$.'
+            solution_sketch: 'A $3\times3$ matrix has three rows, and doubling every entry doubles each of them. So $\det(2A)=2^3\det A=8\cdot(-3)=-24$, with the factor $2^3$ and not $2$.'
         constraints: 'sizes 2x2 or 3x3 stated; given determinants are small integers; area-factor contexts and one error-analysis item'
       - id: kp2
         name: Row operations and zero determinants
@@ -485,11 +485,11 @@ topics:
             answer: '-10'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The scaling by $-2$ turns $\det A=5$ into $-10$. The replacement adds a multiple of another row and changes nothing, so $\det B=-10$.'
-          - problem: 'Lena reduces a $3\times3$ matrix $A$ with $\det A=5$ to an upper triangular matrix $U$ in three steps: swap rows 1 and 2, then $R_2\to R_2-3R_1$, then $R_3\to4R_3$. Find $\det U$.'
+          - problem: 'A $3\times3$ matrix $A$ with $\det A=5$ is reduced to an upper triangular matrix $U$ in three steps: swap rows 1 and 2, then $R_2\to R_2-3R_1$, then $R_3\to4R_3$. Find $\det U$.'
             answer: '-20'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The swap gives $-5$, the replacement keeps $-5$, and the scaling by $4$ gives $-5\cdot4=-20$. So $\det U=-20$.'
-          - problem: 'Omar reduces a $3\times3$ matrix $A$ to $U$ in three steps: swap rows 1 and 3, then $R_2\to R_2-2R_1$, then $R_3\to4R_3$. He finds $\det U=-24$. What is $\det A$?'
+          - problem: 'A $3\times3$ matrix $A$ is reduced to $U$ in three steps: swap rows 1 and 3, then $R_2\to R_2-2R_1$, then $R_3\to4R_3$. Here $\det U=-24$. What is $\det A$?'
             answer: '6'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The three steps multiply the determinant by $-1$, by $1$ and by $4$, so $\det U=-4\det A$. Then $\det A=-24\div(-4)=6$.'
@@ -575,10 +575,10 @@ topics:
             answer: '7'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Pulling the factor $5$ out of row 2 gives $\det A=5\det M$. So $\det M=35\div5=7$.'
-          - problem: 'Sam factors $2$ out of row 1 of $\begin{pmatrix}2&6\\3&5\end{pmatrix}$ and writes $\det=\det\begin{pmatrix}1&3\\3&5\end{pmatrix}=-4$. What is the correct value of $\det\begin{pmatrix}2&6\\3&5\end{pmatrix}$?'
+          - problem: 'What is $\det\begin{pmatrix}2&6\\3&5\end{pmatrix}$? Factor $2$ out of row 1 first.'
             answer: '-8'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Pulling $2$ out of a row multiplies the determinant by $2$, so Sam must multiply back. The correct value is $2\det\begin{pmatrix}1&3\\3&5\end{pmatrix}=2(5-9)=-8$.'
+            solution_sketch: 'Pulling $2$ out of a row multiplies the determinant by $2$, so the factor must be multiplied back. The value is $2\det\begin{pmatrix}1&3\\3&5\end{pmatrix}=2(5-9)=-8$.'
         constraints: 'one row with an obvious common factor of 2 or 3, or a given multiple; one error-analysis item; volume and unit-conversion contexts'
     diagnostic_exemplar:
       problem: 'Compute $\det\begin{pmatrix}2&4&6\\1&3&2\\0&1&4\end{pmatrix}$ by first factoring $2$ out of row $1$ and then eliminating.'
@@ -643,10 +643,10 @@ topics:
             answer: '11/2'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'Put the two edge vectors $(1,4)$ and $(3,1)$ into a $2\times 2$ determinant. It is $1\cdot 1 - 4\cdot 3 = -11$. A triangle has half the parallelogram area, so the area is $|-11|/2 = 11/2$.'
-          - problem: 'Sam finds the area of the parallelogram spanned by $(2, 5)$ and $(4, 1)$ as $2\cdot 1 - 5\cdot 4 = -18$. What is the correct area?'
+          - problem: 'What is the area of the parallelogram spanned by $(2, 5)$ and $(4, 1)$?'
             answer: '18'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'Sam computed the determinant correctly, but an area is never negative. The area is the absolute value $|-18| = 18$.'
+            solution_sketch: 'The determinant is $2\cdot 1 - 5\cdot 4 = -18$, but an area is never negative. The area is the absolute value $|-18| = 18$.'
           - problem: 'Find the area of the triangle with vertices $(1, 2)$, $(3, 5)$ and $(5, 8)$.'
             answer: '0'
             answer_contract: {"kind":"exact"}
@@ -692,10 +692,10 @@ topics:
             answer: '0'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The third vector is twice the second minus the first, since $2(4, 5, 6) - (1, 2, 3) = (7, 8, 9)$. The three vectors lie in one plane, so the determinant is 0 and the solid is flat. The volume is 0.'
-          - problem: 'Mia finds the determinant of the matrix with rows $(1, 2, 0)$, $(3, 1, 0)$ and $(0, 0, 2)$ and reports the volume of the parallelepiped they span as $-10$. What is the correct volume?'
+          - problem: 'What is the volume of the parallelepiped spanned by the rows $(1, 2, 0)$, $(3, 1, 0)$ and $(0, 0, 2)$?'
             answer: '10'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'The determinant is $2\,(1\cdot 1 - 2\cdot 3) = -10$, so Mia computed it correctly. A volume cannot be negative, so the volume is the absolute value $|-10| = 10$.'
+            solution_sketch: 'The determinant is $2\,(1\cdot 1 - 2\cdot 3) = -10$. A volume cannot be negative, so the volume is the absolute value $|-10| = 10$.'
         constraints: '3x3 with entries in -3..4 and several zeros; volumes in 0..30; includes a flat solid'
       - id: kp3
         name: How linear maps scale area
@@ -803,7 +803,7 @@ topics:
             answer: '-1'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The determinant is $(4-x)(1-x) - 2b = x^2 - 5x + (4 - 2b)$. Matching the constant term with 6 gives $4 - 2b = 6$. So $-2b = 2$ and $b = -1$.'
-          - problem: 'Sam expands $\det(A - xI)$ for $A = \begin{pmatrix}3&2\\1&5\end{pmatrix}$ as $(3-x)(5-x) + 2$. What is the correct characteristic polynomial?'
+          - problem: 'What is the characteristic polynomial $\det(A - xI)$ for $A = \begin{pmatrix}3&2\\1&5\end{pmatrix}$, expanded?'
             answer: 'x^2 - 8x + 13'
             answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
             solution_sketch: 'The determinant subtracts the product of the off-diagonal entries, so the term is $-2\cdot 1 = -2$, not $+2$. Then $(3-x)(5-x) - 2 = 15 - 8x + x^2 - 2 = x^2 - 8x + 13$.'
@@ -840,10 +840,10 @@ topics:
             answer: '2'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'Because $4$ is an eigenvalue, $\det(A - 4I) = (a - 4)(3 - 4) - 2\cdot 1 = 0$. This simplifies to $-(a - 4) - 2 = 0$, so $a - 4 = -2$ and $a = 2$. As a check, the trace is 5 and the determinant is 4, giving the eigenvalues 1 and 4.'
-          - problem: 'Sam finds the characteristic polynomial $\lambda^2 - 6\lambda + 5$ of $A = \begin{pmatrix}2&1\\3&4\end{pmatrix}$ and then says the eigenvalues are $-1$ and $-5$. What are the correct eigenvalues?'
+          - problem: 'The characteristic polynomial of $A = \begin{pmatrix}2&1\\3&4\end{pmatrix}$ is $\lambda^2 - 6\lambda + 5$. What are the eigenvalues?'
             answer: '1, 5'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'The eigenvalues are the roots of $\lambda^2 - 6\lambda + 5 = (\lambda - 1)(\lambda - 5)$. Setting each factor to zero gives $\lambda = 1$ and $\lambda = 5$. Sam used the signs inside the factors instead of the roots.'
+            solution_sketch: 'The eigenvalues are the roots of $\lambda^2 - 6\lambda + 5 = (\lambda - 1)(\lambda - 5)$. Setting each factor to zero gives $\lambda = 1$ and $\lambda = 5$. The roots are the values that make each factor zero, not the numbers inside the factors.'
         constraints: '2x2 matrices whose spectra are integers in -4..6 or quadratic surds; setups with a missing entry'
       - id: kp3
         name: Trace, determinant, and triangular shortcuts
@@ -869,14 +869,14 @@ topics:
             answer: '-3, -2'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The characteristic polynomial is $\lambda^2 + 5\lambda + 6$. It factors as $(\lambda + 3)(\lambda + 2)$. The eigenvalues are -3 and -2, and both are negative, so the solutions decay.'
-          - problem: 'Priya says that the eigenvalues of $A = \begin{pmatrix}5&2\\1&4\end{pmatrix}$ are $3$ and $6$. Use the trace and the determinant of $A$ to decide whether Priya is right.'
+          - problem: 'Are $3$ and $6$ the eigenvalues of $A = \begin{pmatrix}5&2\\1&4\end{pmatrix}$? Use the trace and the determinant of $A$ to decide.'
             answer: 'yes'
-            answer_contract: {"kind":"label","options":[["yes","she is right","he is right","right","correct","yes he is right","yes she is right"],["no","she is wrong","he is wrong","wrong","incorrect","not right","no he is wrong","no she is wrong"]]}
-            solution_sketch: 'The trace of $A$ is $5 + 4 = 9$ and $3 + 6 = 9$. The determinant is $5\cdot 4 - 2\cdot 1 = 18$ and $3\cdot 6 = 18$. Both match, so Priya is right.'
-          - problem: 'Leo says that the eigenvalues of $A = \begin{pmatrix}1&4\\2&3\end{pmatrix}$ are $1$ and $3$. Use the trace and the determinant of $A$ to decide whether Leo is right.'
+            answer_contract: {"kind":"label","options":[["yes","they are","they are the eigenvalues","correct","right"],["no","they are not","they are not the eigenvalues","incorrect","wrong","not right"]]}
+            solution_sketch: 'The trace of $A$ is $5 + 4 = 9$ and $3 + 6 = 9$. The determinant is $5\cdot 4 - 2\cdot 1 = 18$ and $3\cdot 6 = 18$. Both match, so $3$ and $6$ are the eigenvalues.'
+          - problem: 'Are $1$ and $3$ the eigenvalues of $A = \begin{pmatrix}1&4\\2&3\end{pmatrix}$? Use the trace and the determinant of $A$ to decide.'
             answer: 'no'
-            answer_contract: {"kind":"label","options":[["yes","she is right","he is right","right","correct","yes he is right","yes she is right"],["no","she is wrong","he is wrong","wrong","incorrect","not right","no he is wrong","no she is wrong"]]}
-            solution_sketch: 'The trace of $A$ is $1 + 3 = 4$ and $1 + 3 = 4$, so the sums agree. The determinant is $1\cdot 3 - 4\cdot 2 = -5$, but $1\cdot 3 = 3$. The products differ, so Leo is wrong.'
+            answer_contract: {"kind":"label","options":[["yes","they are","they are the eigenvalues","correct","right"],["no","they are not","they are not the eigenvalues","incorrect","wrong","not right"]]}
+            solution_sketch: 'The trace of $A$ is $1 + 3 = 4$ and $1 + 3 = 4$, so the sums agree. The determinant is $1\cdot 3 - 4\cdot 2 = -5$, but $1\cdot 3 = 3$. The products differ, so $1$ and $3$ are not the eigenvalues.'
           - problem: 'The amounts of two chemicals satisfy $\frac{dx}{dt} = -3x + 5y$ and $\frac{dy}{dt} = 2y$. The solutions are combinations of $e^{\lambda t}$, where $\lambda$ is an eigenvalue of the coefficient matrix $\begin{pmatrix}-3&5\\0&2\end{pmatrix}$. Find the two values of $\lambda$.'
             answer: '-3, 2'
             answer_contract: {"kind":"exact"}
@@ -1158,10 +1158,10 @@ topics:
             answer: '2, 4'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The eigenvalues satisfy $\lambda_1 + \lambda_2 = 6$ and $\lambda_1\lambda_2 = 8$. The characteristic polynomial is $\lambda^2 - 6\lambda + 8 = (\lambda - 2)(\lambda - 4)$. The eigenvalues are 2 and 4.'
-          - problem: 'Maya says that the eigenvalues of $A = \begin{pmatrix}3&2\\2&3\end{pmatrix}$ are $1$ and $5$. Use the trace and the determinant of $A$ to decide whether Maya is right.'
+          - problem: 'Are $1$ and $5$ the eigenvalues of $A = \begin{pmatrix}3&2\\2&3\end{pmatrix}$? Use the trace and the determinant of $A$ to decide.'
             answer: 'yes'
-            answer_contract: {"kind":"label","options":[["yes","she is right","he is right","right","correct","yes he is right","yes she is right"],["no","she is wrong","he is wrong","wrong","incorrect","not right","no he is wrong","no she is wrong"]]}
-            solution_sketch: 'The trace of $A$ is $3 + 3 = 6$ and $1 + 5 = 6$. The determinant is $3\cdot 3 - 2\cdot 2 = 5$ and $1\cdot 5 = 5$. Both match, so Maya is right.'
+            answer_contract: {"kind":"label","options":[["yes","they are","they are the eigenvalues","correct","right"],["no","they are not","they are not the eigenvalues","incorrect","wrong","not right"]]}
+            solution_sketch: 'The trace of $A$ is $3 + 3 = 6$ and $1 + 5 = 6$. The determinant is $3\cdot 3 - 2\cdot 2 = 5$ and $1\cdot 5 = 5$. Both match, so $1$ and $5$ are the eigenvalues.'
           - problem: 'The eigenvalues of a $2\times 2$ matrix are $3$ and $7$. What is the determinant of the matrix?'
             answer: '21'
             answer_contract: {"kind":"exact"}
@@ -1178,10 +1178,10 @@ topics:
             answer: '12'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The determinant is the product of the eigenvalues, $4\cdot(-3) = -12$. Areas scale by the absolute value of the determinant. So the scale factor is 12.'
-          - problem: 'Tom says that the eigenvalues of $A = \begin{pmatrix}1&2\\3&4\end{pmatrix}$ are $-1$ and $2$. Use the trace and the determinant of $A$ to decide whether Tom is right.'
+          - problem: 'Are $-1$ and $2$ the eigenvalues of $A = \begin{pmatrix}1&2\\3&4\end{pmatrix}$? Use the trace and the determinant of $A$ to decide.'
             answer: 'no'
-            answer_contract: {"kind":"label","options":[["yes","she is right","he is right","right","correct","yes he is right","yes she is right"],["no","she is wrong","he is wrong","wrong","incorrect","not right","no he is wrong","no she is wrong"]]}
-            solution_sketch: 'The determinant of $A$ is $1\cdot 4 - 2\cdot 3 = -2$, and $(-1)\cdot 2 = -2$, so the products agree. The trace of $A$ is $1 + 4 = 5$, but $-1 + 2 = 1$. The sums differ, so Tom is wrong.'
+            answer_contract: {"kind":"label","options":[["yes","they are","they are the eigenvalues","correct","right"],["no","they are not","they are not the eigenvalues","incorrect","wrong","not right"]]}
+            solution_sketch: 'The determinant of $A$ is $1\cdot 4 - 2\cdot 3 = -2$, and $(-1)\cdot 2 = -2$, so the products agree. The trace of $A$ is $1 + 4 = 5$, but $-1 + 2 = 1$. The sums differ, so $-1$ and $2$ are not the eigenvalues.'
           - problem: 'A model of two growing populations has a $2\times 2$ coefficient matrix with trace $5$ and determinant $4$. Each population grows like $e^{\lambda t}$ for an eigenvalue $\lambda$ of the matrix. Find the growth rates $\lambda$.'
             answer: '1, 4'
             answer_contract: {"kind":"exact"}
@@ -1245,10 +1245,10 @@ topics:
             answer: '60000'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'A distribution that does not change satisfies $M\mathbf{v} = \mathbf{v}$, so it lies in the eigenspace of $\lambda = 1$. The equation $(M - I)\mathbf{v} = \mathbf{0}$ gives $0.1p = 0.2q$, so $p = 2q$. With $p + q = 90000$ we get $3q = 90000$, so $q = 30000$ and $p = 60000$.'
-          - problem: 'Sam wants a vector in the eigenspace of $A = \begin{pmatrix} 4 & 2 \\ 1 & 3 \end{pmatrix}$ for $\lambda = 2$. He writes $A - 2I = \begin{pmatrix} 2 & 2 \\ 1 & 1 \end{pmatrix}$ and says that $(1, 1)$ spans the eigenspace. What is the vector of the form $(1, y)$ in this eigenspace?'
+          - problem: 'For $A = \begin{pmatrix} 4 & 2 \\ 1 & 3 \end{pmatrix}$ and $\lambda = 2$ we have $A - 2I = \begin{pmatrix} 2 & 2 \\ 1 & 1 \end{pmatrix}$. What is the vector of the form $(1, y)$ in this eigenspace?'
             answer: '(1, -1)'
             answer_contract: {"kind": "coordinates", "arity": 2}
-            solution_sketch: 'Sam solved $x + y = 0$ with the wrong sign. The equation gives $y = -x$, so with $x = 1$ the vector is $(1, -1)$. Check: $A(1, -1) = (2, -2) = 2(1, -1)$, while $A(1, 1) = (6, 4)$ is not a multiple of $(1, 1)$.'
+            solution_sketch: 'The eigenspace equation is $x + y = 0$. It gives $y = -x$, so with $x = 1$ the vector is $(1, -1)$. Check: $A(1, -1) = (2, -2) = 2(1, -1)$, while $A(1, 1) = (6, 4)$ is not a multiple of $(1, 1)$.'
           - problem: 'A transformation of the plane sends each point $\mathbf{x}$ to $A\mathbf{x}$ with $A = \begin{pmatrix} 3 & 1 \\ 0 & 2 \end{pmatrix}$. Some direction is stretched by exactly the factor $2$, so each vector in that direction is sent to twice itself. Find the vector of the form $(x, 1)$ in that direction.'
             answer: '(-1, 1)'
             answer_contract: {"kind": "coordinates", "arity": 2}
@@ -1299,7 +1299,7 @@ topics:
             answer: '2'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Every vector satisfies $A\mathbf{v} = 2\mathbf{v}$, because $A - 2I$ is the zero matrix. So the whole plane is the eigenspace, and it contains $2$ independent vectors.'
-          - problem: 'Mia says that $A = \begin{pmatrix} 2 & 1 \\ 0 & 2 \end{pmatrix}$ has $2$ independent eigenvectors, because $2$ is a double root of its characteristic polynomial. How many independent eigenvectors does $A$ have?'
+          - problem: 'The number $2$ is a double root of the characteristic polynomial of $A = \begin{pmatrix} 2 & 1 \\ 0 & 2 \end{pmatrix}$. How many independent eigenvectors does $A$ have?'
             answer: '1'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The double root only gives the algebraic multiplicity. The matrix $A - 2I = \begin{pmatrix} 0 & 1 \\ 0 & 0 \end{pmatrix}$ has a null space spanned by $(1, 0)$, so $A$ has only $1$ independent eigenvector.'
@@ -1429,7 +1429,7 @@ topics:
             answer: 'yes'
             answer_contract: {"kind": "label", "options": [["yes", "they oscillate", "it oscillates"], ["no", "they do not oscillate", "it does not oscillate"]]}
             solution_sketch: 'The trace is $2$ and the determinant is $0 + 5 = 5$, so the discriminant is $4 - 20 = -16$, which is negative. The eigenvalues are $1 \pm 2i$, which are not real, so the populations oscillate.'
-          - problem: 'Sam finds the characteristic equation $\lambda^2 - 6\lambda + 10 = 0$ for $A = \begin{pmatrix} 4 & -2 \\ 1 & 2 \end{pmatrix}$ and says that the eigenvalues are $4$ and $2$. What are the eigenvalues of $A$?'
+          - problem: 'The characteristic equation of $A = \begin{pmatrix} 4 & -2 \\ 1 & 2 \end{pmatrix}$ is $\lambda^2 - 6\lambda + 10 = 0$. What are the eigenvalues of $A$?'
             answer: '3 + i, 3 - i'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The discriminant is $36 - 40 = -4$, which is negative, so the roots are not real. Hence $\lambda = \frac{6 \pm 2i}{2} = 3 \pm i$, and $4$ and $2$ would need a discriminant of $+4$.'
@@ -1520,10 +1520,10 @@ topics:
             answer: '-1 + i'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The second row of $A - \lambda I$ is $(1, 1 - i)$, so $x + (1 - i)y = 0$. With $y = 1$ we get $x = -(1 - i) = -1 + i$, so $z = -1 + i$.'
-          - problem: 'Dan finds that $(1, -i)$ is an eigenvector of $A = \begin{pmatrix} 0 & 2 \\ -2 & 0 \end{pmatrix}$ for the eigenvalue $\lambda = 2i$. Find $z$ so that $(1, z)$ is an eigenvector of $A$ for this eigenvalue.'
+          - problem: 'Find $z$ so that $(1, z)$ is an eigenvector of $A = \begin{pmatrix} 0 & 2 \\ -2 & 0 \end{pmatrix}$ for the eigenvalue $\lambda = 2i$.'
             answer: 'i'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The first row of $A - \lambda I$ is $(-2i, 2)$, so $-2ix + 2y = 0$ and $y = ix$. With $x = 1$ we get $z = i$, not $-i$, and the second row $-2 - 2i \cdot i = 0$ agrees.'
+            solution_sketch: 'The first row of $A - \lambda I$ is $(-2i, 2)$, so $-2ix + 2y = 0$ and $y = ix$. With $x = 1$ we get $z = i$, and the second row $-2 - 2i \cdot i = 0$ agrees.'
           - problem: 'Let $A = \begin{pmatrix} 2 & -1 \\ 1 & 2 \end{pmatrix}$. Is $(1, i)$ an eigenvector of $A$ for the eigenvalue $\lambda = 2 - i$?'
             answer: 'yes'
             answer_contract: {"kind": "label", "options": [["yes", "it is an eigenvector", "it is"], ["no", "it is not an eigenvector", "it is not"]]}
@@ -1592,15 +1592,15 @@ topics:
           - problem: 'Ana and Ben describe the same transformation of the plane in different coordinates. A point with Ben''s coordinates $\mathbf{y}$ has Ana''s coordinates $\mathbf{x} = P\mathbf{y}$, where $P = \begin{pmatrix} 1 & 2 \\ 0 & 1 \end{pmatrix}$. In Ana''s coordinates the transformation is $\mathbf{x} \mapsto A\mathbf{x}$ with $A = \begin{pmatrix} 1 & 0 \\ 0 & -1 \end{pmatrix}$. Find the matrix $B$ for which the transformation is $\mathbf{y} \mapsto B\mathbf{y}$ in Ben''s coordinates.'
             answer: '[[1,4],[0,-1]]'
             answer_contract: {"kind": "matrix", "rows": 2, "cols": 2}
-            solution_sketch: 'Ben''s vector $\mathbf{y}$ becomes $P\mathbf{y}$ for Ana, then $A$ acts, and $P^{-1}$ converts the result back. So $B = P^{-1}AP$, where $P^{-1} = \begin{pmatrix} 1 & -2 \\ 0 & 1 \end{pmatrix}$ and $AP = \begin{pmatrix} 1 & 2 \\ 0 & -1 \end{pmatrix}$, which gives $B = \begin{pmatrix} 1 & 4 \\ 0 & -1 \end{pmatrix}$.'
+            solution_sketch: 'A vector $\mathbf{y}$ in Ben''s coordinates becomes $P\mathbf{y}$ in Ana''s coordinates, then $A$ acts, and $P^{-1}$ maps the result back. So $B = P^{-1}AP$, where $P^{-1} = \begin{pmatrix} 1 & -2 \\ 0 & 1 \end{pmatrix}$ and $AP = \begin{pmatrix} 1 & 2 \\ 0 & -1 \end{pmatrix}$, which gives $B = \begin{pmatrix} 1 & 4 \\ 0 & -1 \end{pmatrix}$.'
           - problem: 'Ana and Ben describe the same transformation of the plane in different coordinates. A point with Ana''s coordinates $\mathbf{x}$ has Ben''s coordinates $\mathbf{y} = Q\mathbf{x}$, where $Q = \begin{pmatrix} 1 & 0 \\ 1 & 1 \end{pmatrix}$. In Ana''s coordinates the transformation is $\mathbf{x} \mapsto A\mathbf{x}$ with $A = \begin{pmatrix} 2 & 0 \\ 0 & 5 \end{pmatrix}$. Find the matrix $B$ for which the transformation is $\mathbf{y} \mapsto B\mathbf{y}$ in Ben''s coordinates.'
             answer: '[[2,0],[-3,5]]'
             answer_contract: {"kind": "matrix", "rows": 2, "cols": 2}
             solution_sketch: 'Here Ana''s vector is $\mathbf{x} = Q^{-1}\mathbf{y}$. So $B\mathbf{y} = Q(A(Q^{-1}\mathbf{y}))$ and $B = QAQ^{-1}$, with $Q^{-1} = \begin{pmatrix} 1 & 0 \\ -1 & 1 \end{pmatrix}$ and $QA = \begin{pmatrix} 2 & 0 \\ 2 & 5 \end{pmatrix}$. This gives $B = \begin{pmatrix} 2 & 0 \\ -3 & 5 \end{pmatrix}$.'
-          - problem: 'Sam says that for $A = \begin{pmatrix} 3 & 1 \\ 0 & 2 \end{pmatrix}$ and $P = \begin{pmatrix} 1 & 1 \\ 0 & 1 \end{pmatrix}$ the matrices $P^{-1}AP$ and $PAP^{-1}$ are equal. Is Sam right?'
+          - problem: 'For $A = \begin{pmatrix} 3 & 1 \\ 0 & 2 \end{pmatrix}$ and $P = \begin{pmatrix} 1 & 1 \\ 0 & 1 \end{pmatrix}$, are the matrices $P^{-1}AP$ and $PAP^{-1}$ equal?'
             answer: 'no'
-            answer_contract: {"kind": "label", "options": [["yes", "he is right", "right"], ["no", "he is wrong", "he is not right", "wrong", "not right"]]}
-            solution_sketch: 'We find $P^{-1}AP = \begin{pmatrix} 3 & 2 \\ 0 & 2 \end{pmatrix}$, but $PAP^{-1} = \begin{pmatrix} 3 & 0 \\ 0 & 2 \end{pmatrix}$. The matrices differ in the entry in row 1, column 2, so Sam is wrong.'
+            answer_contract: {"kind": "label", "options": [["yes", "they are equal", "equal"], ["no", "they are not equal", "not equal", "different"]]}
+            solution_sketch: 'We find $P^{-1}AP = \begin{pmatrix} 3 & 2 \\ 0 & 2 \end{pmatrix}$, but $PAP^{-1} = \begin{pmatrix} 3 & 0 \\ 0 & 2 \end{pmatrix}$. The matrices differ in the entry in row 1, column 2, so they are not equal.'
         constraints: '2x2 with P triangular with determinant 1 so the inverse is immediate'
       - id: kp2
         name: 'Similarity invariants'
@@ -1723,10 +1723,10 @@ topics:
             answer: '3'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The eigenvalues of a triangular matrix are its diagonal entries $a$ and $3$. They are equal only for $a = 3$, and then the distinct-eigenvalue test no longer applies.'
-          - problem: 'Anna says that the matrix $2I = \begin{pmatrix} 2 & 0 \\ 0 & 2 \end{pmatrix}$ is not diagonalizable, because it has only one distinct eigenvalue. Is Anna right?'
+          - problem: 'The matrix $J = \begin{pmatrix} 2 & 1 \\ 0 & 2 \end{pmatrix}$ has only one distinct eigenvalue. Is it diagonalizable?'
             answer: 'no'
-            answer_contract: {"kind": "label", "options": [["yes", "she is right", "right"], ["no", "she is wrong", "she is not right", "wrong", "not right"]]}
-            solution_sketch: 'The matrix $2I$ is already diagonal, so it is diagonalizable. Having fewer distinct eigenvalues than the size only means that the distinct-eigenvalue test cannot be used, and here $(1, 0)$ and $(0, 1)$ are two independent eigenvectors.'
+            answer_contract: {"kind": "label", "options": [["yes", "it is", "diagonalizable", "it is diagonalizable"], ["no", "it is not", "not diagonalizable", "it is not diagonalizable"]]}
+            solution_sketch: 'The only eigenvalue is $2$. Solving $(J - 2I)v = 0$ gives $v_2 = 0$, so every eigenvector is a multiple of $(1, 0)$. There is only $1$ independent eigenvector for a $2 \times 2$ matrix, so $J$ is not diagonalizable.'
           - problem: 'A $3 \times 3$ matrix is certainly diagonalizable when it has a certain number of different eigenvalues. What is the smallest such number?'
             answer: '3'
             answer_contract: {"kind": "exact"}
@@ -1910,9 +1910,9 @@ topics:
             answer: '[[5,-6],[0,2]]'
             answer_contract: {"kind": "matrix", "rows": 2, "cols": 2}
             solution_sketch: 'The inverse is $P^{-1} = \begin{pmatrix} 1 & -2 \\ 0 & 1 \end{pmatrix}$, and $PD = \begin{pmatrix} 5 & 4 \\ 0 & 2 \end{pmatrix}$. Then $PDP^{-1} = \begin{pmatrix} 5 & -6 \\ 0 & 2 \end{pmatrix}$.'
-          - problem: 'Ana claims that $A = PDP^{-1}$ for $A = \begin{pmatrix} 1 & 2 \\ 3 & 2 \end{pmatrix}$, $P = \begin{pmatrix} 2 & 1 \\ 3 & -1 \end{pmatrix}$ and $D = \begin{pmatrix} 4 & 0 \\ 0 & -1 \end{pmatrix}$. She checks the claim by comparing $AP$ with $PD$. Is Ana right?'
+          - problem: 'Is $A = PDP^{-1}$ for $A = \begin{pmatrix} 1 & 2 \\ 3 & 2 \end{pmatrix}$, $P = \begin{pmatrix} 2 & 1 \\ 3 & -1 \end{pmatrix}$ and $D = \begin{pmatrix} 4 & 0 \\ 0 & -1 \end{pmatrix}$? Compare $AP$ with $PD$ to decide.'
             answer: 'yes'
-            answer_contract: {"kind": "label", "options": [["yes", "she is right", "right"], ["no", "she is wrong", "she is not right", "wrong", "not right"]]}
+            answer_contract: {"kind": "label", "options": [["yes", "it is", "equal", "true"], ["no", "it is not", "not equal", "false"]]}
             solution_sketch: 'We compute $AP = \begin{pmatrix} 8 & -1 \\ 12 & 1 \end{pmatrix}$ and $PD = \begin{pmatrix} 8 & -1 \\ 12 & 1 \end{pmatrix}$, so $AP = PD$. The matrix $P$ has determinant $-5$, so it is invertible, and multiplying by $P^{-1}$ on the right gives $A = PDP^{-1}$.'
           - problem: 'Let $P = \begin{pmatrix} 3 & 1 \\ 1 & 1 \end{pmatrix}$ and $D = \begin{pmatrix} 4 & 0 \\ 0 & 2 \end{pmatrix}$. Compute $PDP^{-1}$.'
             answer: '[[5,-3],[1,1]]'
@@ -1922,10 +1922,10 @@ topics:
             answer: '3'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The determinant of $P$ is $1 - 2 = -1$, so $P^{-1} = \begin{pmatrix} -1 & 1 \\ 2 & -1 \end{pmatrix}$, and $PD = \begin{pmatrix} 6 & 3 \\ 12 & 3 \end{pmatrix}$. The entry in row 1, column 2 of the product is $6 \cdot 1 + 3 \cdot (-1) = 3$.'
-          - problem: 'Ben keeps $A = \begin{pmatrix} 1 & 2 \\ 3 & 2 \end{pmatrix}$ and $D = \begin{pmatrix} 4 & 0 \\ 0 & -1 \end{pmatrix}$, but he writes the same two eigenvectors of $A$ in the other order and claims that $A = PDP^{-1}$ for $P = \begin{pmatrix} 1 & 2 \\ -1 & 3 \end{pmatrix}$. Is Ben right?'
+          - problem: 'Keep $A = \begin{pmatrix} 1 & 2 \\ 3 & 2 \end{pmatrix}$ and $D = \begin{pmatrix} 4 & 0 \\ 0 & -1 \end{pmatrix}$, but write the same two eigenvectors of $A$ in the other order, as the columns of $P = \begin{pmatrix} 1 & 2 \\ -1 & 3 \end{pmatrix}$. Is $A = PDP^{-1}$?'
             answer: 'no'
-            answer_contract: {"kind": "label", "options": [["yes", "he is right", "right"], ["no", "he is wrong", "he is not right", "wrong", "not right"]]}
-            solution_sketch: 'We compute $AP = \begin{pmatrix} -1 & 8 \\ 1 & 12 \end{pmatrix}$, but $PD = \begin{pmatrix} 4 & -2 \\ -4 & -3 \end{pmatrix}$. The two matrices differ, because the first column of $P$ is an eigenvector for $-1$ while the first entry of $D$ is $4$, so Ben is wrong.'
+            answer_contract: {"kind": "label", "options": [["yes", "it is", "equal", "true"], ["no", "it is not", "not equal", "false"]]}
+            solution_sketch: 'We compute $AP = \begin{pmatrix} -1 & 8 \\ 1 & 12 \end{pmatrix}$, but $PD = \begin{pmatrix} 4 & -2 \\ -4 & -3 \end{pmatrix}$. The two matrices differ, because the first column of $P$ is an eigenvector for $-1$ while the first entry of $D$ is $4$, so $A \neq PDP^{-1}$.'
           - problem: 'A model of two populations has a direction $(1, 1)$ along which the populations grow by the factor $6$ each year, and a direction $(1, -1)$ along which they grow by the factor $2$ each year. Find the matrix $A$ that describes one year.'
             answer: '[[4,2],[2,4]]'
             answer_contract: {"kind": "matrix", "rows": 2, "cols": 2}

@@ -54,10 +54,10 @@ topics:
             answer: '300'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The population grew by $15000 - 12000 = 3000$ people over $10$ years. Dividing the total change by the number of years gives $\frac{3000}{10} = 300$ people per year.'
-          - problem: 'Sam finds the average rate of change of $f(x) = x^3 - x$ on $[1, 3]$ by working out $\frac{f(3)}{3}$, and gets $8$. What is the correct value?'
+          - problem: 'What is the average rate of change of $f(x) = x^3 - x$ on $[1, 3]$?'
             answer: '12'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'Sam used only one endpoint and one input. The correct value is $\frac{f(3) - f(1)}{3 - 1} = \frac{24 - 0}{2} = 12$.'
+            solution_sketch: 'The rate needs both endpoints. The value is $\frac{f(3) - f(1)}{3 - 1} = \frac{24 - 0}{2} = 12$.'
           - problem: 'The average rate of change of $f(x) = x^2$ on $[1, b]$ is $5$, where $b > 1$. Find $b$.'
             answer: '4'
             answer_contract: {"kind":"exact"}
@@ -213,10 +213,10 @@ topics:
             answer: 'h^2 - 2h + 1'
             answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
             solution_sketch: 'Substitute to get $(-1 + h)^2 = 1 - 2h + h^2$. In descending powers this is $h^2 - 2h + 1$.'
-          - problem: 'Sam says that for $f(x) = x^2$ we have $f(3 + h) = 9 + h^2$. What is the correct expanded form of $f(3 + h)$?'
+          - problem: 'For $f(x) = x^2$, what is the expanded form of $f(3 + h)$?'
             answer: 'h^2 + 6h + 9'
             answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
-            solution_sketch: 'Sam squared each term separately, but $(3 + h)^2$ has a middle term. The correct expression is $9 + 6h + h^2 = h^2 + 6h + 9$.'
+            solution_sketch: 'The square $(3 + h)^2$ has a middle term. The expression is $9 + 6h + h^2 = h^2 + 6h + 9$.'
         constraints: 'linear or quadratic f, or a position or area model; substitute a + h or x + h and expand fully'
       - id: kp2
         name: Simplify polynomial difference quotients
@@ -254,10 +254,10 @@ topics:
             answer: '6x + 3h + 1'
             answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
             solution_sketch: 'The numerator is $3(x + h)^2 + (x + h) - 3x^2 - x = 6xh + 3h^2 + h$. Dividing by $h$ gives $6x + 3h + 1$.'
-          - problem: 'Sam says that for $f(x) = x^2 + x$ the quotient $\frac{f(x + h) - f(x)}{h}$ simplifies to $h + 1$, because $(x + h)^2 = x^2 + h^2$. What is the correct simplification?'
+          - problem: 'For $f(x) = x^2 + x$, simplify the quotient $\frac{f(x + h) - f(x)}{h}$.'
             answer: '2x + h + 1'
             answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
-            solution_sketch: 'Sam left out the middle term of $(x + h)^2$. The numerator is $2xh + h^2 + h$, and dividing by $h$ gives $2x + h + 1$.'
+            solution_sketch: 'The square $(x + h)^2$ has the middle term $2xh$. The numerator is $2xh + h^2 + h$, and dividing by $h$ gives $2x + h + 1$.'
         constraints: 'linear, quadratic or cubic f, or a physical model; the h in the denominator must cancel completely'
       - id: kp3
         name: Difference quotients of rational functions
@@ -291,7 +291,7 @@ topics:
             answer: '-12/(w(w + h))'
             answer_contract: {"kind":"function","vars":["w","h"]}
             solution_sketch: 'The numerator is $\frac{12}{w + h} - \frac{12}{w} = \frac{-12h}{w(w + h)}$. Dividing by $h$ gives $-\frac{12}{w(w + h)}$, so the length shrinks as the width grows.'
-          - problem: 'Sam subtracts the denominators and writes $\frac{3}{x + h} - \frac{3}{x} = \frac{3}{h}$. What is the correct simplification of $\frac{f(x + h) - f(x)}{h}$ for $f(x) = \frac{3}{x}$?'
+          - problem: 'For $f(x) = \frac{3}{x}$, what is the simplification of $\frac{f(x + h) - f(x)}{h}$?'
             answer: '-3/(x(x + h))'
             answer_contract: {"kind":"function","vars":["x","h"]}
             solution_sketch: 'Fractions are subtracted over a common denominator, not by subtracting the denominators. The numerator is $\frac{3x - 3(x + h)}{x(x + h)} = \frac{-3h}{x(x + h)}$, and dividing by $h$ gives $-\frac{3}{x(x + h)}$.'
@@ -361,7 +361,7 @@ topics:
             answer: '-3'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'Since $f(-2) = 2$, the quotient is $\frac{(-2 + h)^2 + (-2 + h) - 2}{h} = \frac{-3h + h^2}{h} = -3 + h$. As $h$ approaches $0$, this approaches $-3$.'
-          - problem: 'Sam estimates $f''(3)$ for $f(x) = x^2$ by working out $\frac{f(3.1) - f(3)}{0.1} = 6.1$, and writes $f''(3) = 6.1$. What is the exact value of $f''(3)$?'
+          - problem: 'For $f(x) = x^2$, the quotient $\frac{f(3.1) - f(3)}{0.1}$ equals $6.1$. What is the exact value of $f''(3)$?'
             answer: '6'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The value $6.1$ is the average rate of change on $[3, 3.1]$, which is $6 + h$ with $h = 0.1$. The derivative is the limit as $h$ approaches $0$, which is $6$.'
@@ -513,10 +513,10 @@ topics:
             answer: '3x^2 - 1'
             answer_contract: {"kind":"function","vars":["x"]}
             solution_sketch: 'The numerator is $3x^2h + 3xh^2 + h^3 - h$, so the quotient is $3x^2 + 3xh + h^2 - 1$. As $h$ approaches $0$, this approaches $3x^2 - 1$.'
-          - problem: 'Sam uses the definition for $f(x) = 4x^2 + 3$ and gets the quotient $8x + 4h$. He then writes $f''(x) = 8x + 4h$. What is the correct $f''(x)$?'
+          - problem: 'For $f(x) = 4x^2 + 3$, the difference quotient is $8x + 4h$. What is $f''(x)$?'
             answer: '8x'
             answer_contract: {"kind":"function","vars":["x"]}
-            solution_sketch: 'Sam forgot the last step. As $h$ approaches $0$, the term $4h$ vanishes, so the derivative is $8x$, which no longer contains $h$.'
+            solution_sketch: 'The last step takes the limit. As $h$ approaches $0$, the term $4h$ vanishes, so the derivative is $8x$, which no longer contains $h$.'
         constraints: 'degree at most 3 with small integer coefficients, or a physical model; require the full limit computation, not a rule'
       - id: kp2
         name: Derive f'(x) for rational and radical functions
@@ -554,10 +554,10 @@ topics:
             answer: '1/(2sqrt(x + 1))'
             answer_contract: {"kind":"function","vars":["x"]}
             solution_sketch: 'Multiply the top and bottom by $\sqrt{x + h + 1} + \sqrt{x + 1}$ to get $\frac{1}{\sqrt{x + h + 1} + \sqrt{x + 1}}$. As $h$ approaches $0$, this approaches $\frac{1}{2\sqrt{x + 1}}$.'
-          - problem: 'Sam works out the limit definition for $f(x) = \frac{2}{x}$ and gets $\frac{2}{x^2}$. What is the correct $f''(x)$?'
+          - problem: 'Use the limit definition to find $f''(x)$ for $f(x) = \frac{2}{x}$.'
             answer: '-2/x^2'
             answer_contract: {"kind":"function","vars":["x"]}
-            solution_sketch: 'Sam lost the minus sign. The numerator is $\frac{2}{x + h} - \frac{2}{x} = \frac{-2h}{x(x + h)}$, so the limit is $-\frac{2}{x^2}$.'
+            solution_sketch: 'The numerator is $\frac{2}{x + h} - \frac{2}{x} = \frac{-2h}{x(x + h)}$, so the limit is $-\frac{2}{x^2}$.'
         constraints: 'f is c/x, 1/(x + c), sqrt(x) or sqrt(x + c); combine fractions or rationalize before letting h approach 0'
       - id: kp3
         name: Use the derived derivative function
@@ -675,10 +675,10 @@ topics:
             answer: '5'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The point $2$ lies halfway between $1$ and $3$, and the gap between them is $2$. The estimate is $\frac{g(3) - g(1)}{3 - 1} = \frac{12 - 2}{2} = 5$.'
-          - problem: 'Sam estimates $f''(1)$ from the table $f(0.9) = 0.81$, $f(1) = 1$, $f(1.1) = 1.21$ by computing $\frac{1.21 - 1}{0.1} = 2.1$. What estimate do the values on both sides, at $0.9$ and $1.1$, give?'
+          - problem: 'A table gives $f(0.9) = 0.81$, $f(1) = 1$ and $f(1.1) = 1.21$. What estimate of $f''(1)$ do the values on both sides, at $0.9$ and $1.1$, give?'
             answer: '2'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'Sam uses only one side of $1$. The estimate from both sides is $\frac{1.21 - 0.81}{1.1 - 0.9} = \frac{0.4}{0.2} = 2$.'
+            solution_sketch: 'The one-sided quotient $\frac{1.21 - 1}{0.1} = 2.1$ uses only one side of $1$. The estimate from both sides is $\frac{1.21 - 0.81}{1.1 - 0.9} = \frac{0.4}{0.2} = 2$.'
       - id: kp2
         name: Estimate the derivative from a graph
         key_prerequisites: [slope-from-a-graph, derivative-at-a-point]
@@ -708,10 +708,10 @@ topics:
             answer: '-10'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The rate at $t = 5$ is $V''(5)$, the slope of the tangent. The slope through $(3, 90)$ and $(7, 50)$ is $\frac{50 - 90}{7 - 3} = \frac{-40}{4} = -10$ litres per minute.'
-          - problem: 'Leo reads the tangent line to $y = f(x)$ at $x = 1$ through $(0, 1)$ and $(2, 5)$ and writes $f''(1) = \frac{2 - 0}{5 - 1} = \frac{1}{2}$. What is the correct value of $f''(1)$?'
+          - problem: 'The tangent line to $y = f(x)$ at $x = 1$ passes through $(0, 1)$ and $(2, 5)$. What is the value of $f''(1)$?'
             answer: '2'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'Leo divided the run by the rise. Slope is the rise divided by the run, so $f''(1) = \frac{5 - 1}{2 - 0} = \frac{4}{2} = 2$.'
+            solution_sketch: 'Slope is the rise divided by the run, so $f''(1) = \frac{5 - 1}{2 - 0} = \frac{4}{2} = 2$.'
       - id: kp3
         name: Sign and units of the derivative
         key_prerequisites: [derivative-at-a-point, average-instantaneous-rate]
@@ -803,10 +803,10 @@ topics:
             answer: 'y = 7x - 9'
             answer_contract: {"kind":"polynomial_relation"}
             solution_sketch: 'The slope is $f''(2) = 4 \cdot 2 - 1 = 7$, and the point is $(2, 5)$. Point-slope form gives $y - 5 = 7(x - 2)$, which is $y = 7x - 9$.'
-          - problem: 'Sam writes $y = 5(x - 2)$ as the tangent line to $f(x) = 2x^2 - 3x + 1$ at $x = 2$, where $f''(x) = 4x - 3$. What is the correct equation of the tangent line?'
+          - problem: 'Let $f(x) = 2x^2 - 3x + 1$, where $f''(x) = 4x - 3$. What is the equation of the tangent line at $x = 2$?'
             answer: 'y = 5x - 7'
             answer_contract: {"kind":"polynomial_relation"}
-            solution_sketch: 'The slope is $f''(2) = 5$, as Sam found. The line must pass through $(2, f(2)) = (2, 3)$, so $y - 3 = 5(x - 2)$, which is $y = 5x - 7$.'
+            solution_sketch: 'The slope is $f''(2) = 5$, . The line must pass through $(2, f(2)) = (2, 3)$, so $y - 3 = 5(x - 2)$, which is $y = 5x - 7$.'
           - problem: 'The derivative of $f(x) = x^2$ is $2x$. At what value of $x$ does the tangent line to the graph of $f$ at $x = 3$ cross the $x$-axis?'
             answer: '3/2'
             answer_contract: {"kind":"exact"}
@@ -890,10 +890,10 @@ topics:
             answer: 'y = -x + 3'
             answer_contract: {"kind":"polynomial_relation"}
             solution_sketch: 'The wall point is $(2, 1)$, and the tangent slope is $\frac{x}{2} = 1$ at $x = 2$. The normal slope is $-1$, so $y - 1 = -(x - 2)$, which is $y = -x + 3$.'
-          - problem: 'Ana says the normal line to $y = x^2$ at $x = 3$ has slope $-6$. What is the correct slope of the normal line?'
+          - problem: 'What is the slope of the normal line to $y = x^2$ at $x = 3$?'
             answer: '-1/6'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'The tangent slope at $x = 3$ is $2 \cdot 3 = 6$. Ana used the negative of $6$, but the normal slope is the negative reciprocal, $-\frac{1}{6}$.'
+            solution_sketch: 'The tangent slope at $x = 3$ is $2 \cdot 3 = 6$. The normal slope is the negative reciprocal, $-\frac{1}{6}$.'
     diagnostic_exemplar:
       problem: 'Find an equation of the normal line to $y = x^2$ at $x = 2$.'
       answer: 'y = -x/4 + 9/2'
@@ -1101,10 +1101,10 @@ topics:
             answer: '3x^2'
             answer_contract: {"kind":"function","vars":["x"]}
             solution_sketch: 'By the power rule, $\frac{dV}{dx} = 3x^{3-1}$. So $\frac{dV}{dx} = 3x^2$.'
-          - problem: 'Dev differentiates $f(x) = x^6$ and gets $f''(x) = x^5$. What is the correct derivative?'
+          - problem: 'Differentiate $f(x) = x^6$.'
             answer: '6x^5'
             answer_contract: {"kind":"function","vars":["x"]}
-            solution_sketch: 'Dev lowered the exponent but forgot the factor. The power rule multiplies by the old exponent $6$, so $f''(x) = 6x^5$.'
+            solution_sketch: 'The power rule multiplies by the old exponent $6$, so $f''(x) = 6x^5$.'
       - id: kp2
         name: Sums, constant multiples, and constants
         key_prerequisites: [derivative-definition, combining-like-terms]
@@ -1142,10 +1142,10 @@ topics:
             answer: '-4x + 120'
             answer_contract: {"kind":"function","vars":["x"]}
             solution_sketch: 'Differentiate each term. The term $-2x^2$ gives $-4x$, the term $120x$ gives $120$, and the constant $-300$ gives $0$. So $P''(x) = -4x + 120$.'
-          - problem: 'Lena differentiates $f(x) = 4x^3 + 5$ and gets $12x^2 + 5$. What is the correct derivative?'
+          - problem: 'Differentiate $f(x) = 4x^3 + 5$.'
             answer: '12x^2'
             answer_contract: {"kind":"function","vars":["x"]}
-            solution_sketch: 'The term $4x^3$ correctly gives $12x^2$. The constant $5$ does not stay: its derivative is $0$, so $f''(x) = 12x^2$.'
+            solution_sketch: 'The term $4x^3$ gives $12x^2$. The constant $5$ does not stay: its derivative is $0$, so $f''(x) = 12x^2$.'
           - problem: 'Differentiate $f(x) = (x + 2)(x - 3)$.'
             answer: '2x - 1'
             answer_contract: {"kind":"function","vars":["x"]}
@@ -1249,10 +1249,10 @@ topics:
             answer: '-15'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Write $P = 240V^{-1}$, so $\frac{dP}{dV} = -240V^{-2} = -\frac{240}{V^2}$. At $V = 4$ this is $-\frac{240}{16} = -15$. The pressure falls by $15$ kilopascals for each extra litre.'
-          - problem: 'Sam differentiates $f(x) = \frac{1}{x^2}$ and gets $\frac{2}{x^3}$. What is the correct derivative?'
+          - problem: 'Differentiate $f(x) = \frac{1}{x^2}$.'
             answer: '-2/x^3'
             answer_contract: {"kind": "function", "vars": ["x"]}
-            solution_sketch: 'Write $f(x) = x^{-2}$. The power rule gives $-2x^{-3}$, so the sign is negative. Sam dropped the minus sign, and the correct derivative is $-\frac{2}{x^3}$.'
+            solution_sketch: 'Write $f(x) = x^{-2}$. The power rule gives $-2x^{-3}$, so the sign is negative. The derivative is $-\frac{2}{x^3}$.'
           - problem: 'Find the slope of the curve $y = \frac{8}{x^2}$ at the point $(2, 2)$.'
             answer: '-2'
             answer_contract: {"kind": "exact"}
@@ -1298,7 +1298,7 @@ topics:
             answer: '1/12'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Write $y = x^{1/3}$, so $y'' = \frac{1}{3}x^{-2/3}$. At $x = 8$ we have $8^{2/3} = 4$, so the slope is $\frac{1}{3 \cdot 4} = \frac{1}{12}$.'
-          - problem: 'Mia differentiates $f(x) = x^{3/4}$ and writes $\frac{3}{4}x^{7/4}$. What is the correct derivative?'
+          - problem: 'Differentiate $f(x) = x^{3/4}$.'
             answer: '(3/4)x^(-1/4)'
             answer_contract: {"kind": "function", "vars": ["x"]}
             solution_sketch: 'The exponent must go down by one, not up. Since $\frac{3}{4} - 1 = -\frac{1}{4}$, the correct derivative is $\frac{3}{4}x^{-1/4}$.'
@@ -1344,10 +1344,10 @@ topics:
             answer: '6'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The area is $A = x \cdot x^{1/2} = x^{3/2}$. The power rule gives $A'' = \frac{3}{2}x^{1/2}$. At $x = 16$ this is $\frac{3}{2} \cdot 4 = 6$.'
-          - problem: 'Lee writes $\frac{x^2 + 6}{x} = x^2 + 6$ and differentiates to get $2x$. What is the correct derivative of $f(x) = \frac{x^2 + 6}{x}$?'
+          - problem: 'Differentiate $f(x) = \frac{x^2 + 6}{x}$.'
             answer: '1 - 6/x^2'
             answer_contract: {"kind": "function", "vars": ["x"]}
-            solution_sketch: 'Dividing by $x$ divides both terms, so $f(x) = x + 6x^{-1}$. The power rule gives $f''(x) = 1 - 6x^{-2} = 1 - \frac{6}{x^2}$. Lee divided only the first term and forgot the second.'
+            solution_sketch: 'Dividing by $x$ divides both terms, so $f(x) = x + 6x^{-1}$. The power rule gives $f''(x) = 1 - 6x^{-2} = 1 - \frac{6}{x^2}$. Both terms are divided by $x$.'
         constraints: "quotients and products that collapse into single powers or sums of powers; no quotient rule"
     diagnostic_exemplar:
       problem: 'Differentiate $f(x) = \frac{x^2 - 3}{\sqrt{x}}$ by rewriting it first.'
@@ -1417,10 +1417,10 @@ topics:
             answer: '34'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The area is the width times the length, so the product rule gives $A'' = 2(t^2 + 3) + (2t + 1)(2t)$. At $t = 2$ this is $2 \cdot 7 + 5 \cdot 4 = 14 + 20 = 34$.'
-          - problem: 'Ana differentiates $f(x) = x^2(x + 1)$ by multiplying the derivatives, $2x \cdot 1$, and gets $2x$. What is the correct derivative?'
+          - problem: 'Differentiate $f(x) = x^2(x + 1)$.'
             answer: '3x^2 + 2x'
             answer_contract: {"kind": "function", "vars": ["x"]}
-            solution_sketch: 'The product rule gives $2x(x + 1) + x^2 \cdot 1 = 2x^2 + 2x + x^2 = 3x^2 + 2x$. Expanding first gives $x^3 + x^2$, with the same derivative. Ana left out the term $x^2 \cdot 1$.'
+            solution_sketch: 'The product rule gives $2x(x + 1) + x^2 \cdot 1 = 2x^2 + 2x + x^2 = 3x^2 + 2x$. Expanding first gives $x^3 + x^2$, with the same derivative.'
         constraints: "two polynomial factors of degree ≤ 3; answers expandable for checking"
       - id: kp2
         name: Verify against expansion
@@ -1491,10 +1491,10 @@ topics:
             answer: '2'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The area is $A = \ell w$, so $A'' = \ell'' w + \ell w'' = (2)(5) + (8)(-1) = 10 - 8 = 2$. The area is growing at $2$ square metres per second.'
-          - problem: 'Tom says that $(fg)''(2) = f''(2)\,g''(2)$. For $f(2) = 4$, $f''(2) = 3$, $g(2) = 2$, and $g''(2) = 5$ he gets $15$. What is the correct value of $(fg)''(2)$?'
+          - problem: 'Let $f(2) = 4$, $f''(2) = 3$, $g(2) = 2$ and $g''(2) = 5$. What is the value of $(fg)''(2)$?'
             answer: '26'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The product rule gives $(fg)''(2) = f''(2)g(2) + f(2)g''(2) = (3)(2) + (4)(5) = 6 + 20 = 26$. Tom''s product $f''g''$ leaves out both values of $f$ and $g$.'
+            solution_sketch: 'The product rule gives $(fg)''(2) = f''(2)g(2) + f(2)g''(2) = (3)(2) + (4)(5) = 6 + 20 = 26$. The product $f''g''$ is not the derivative of $fg$.'
         constraints: "single-digit table values; one application of f'g + fg'"
     diagnostic_exemplar:
       problem: 'Differentiate $f(x) = x^3(x^2 + 1)$.'
@@ -1566,7 +1566,7 @@ topics:
             answer: '5'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The quotient rule gives $S''(t) = \frac{80(t + 4) - 80t}{(t + 4)^2} = \frac{320}{(t + 4)^2}$. At $t = 4$ this is $\frac{320}{64} = 5$ points per hour.'
-          - problem: 'Jo says that the derivative of $f(x) = \frac{x^2}{x + 1}$ is $\frac{2x}{1} = 2x$, from the derivatives of the top and the bottom. What is the correct derivative?'
+          - problem: 'Differentiate $f(x) = \frac{x^2}{x + 1}$.'
             answer: '(x^2 + 2x)/(x + 1)^2'
             answer_contract: {"kind": "function", "vars": ["x"]}
             solution_sketch: 'The quotient rule gives $\frac{2x(x + 1) - x^2 \cdot 1}{(x + 1)^2}$. The numerator is $2x^2 + 2x - x^2 = x^2 + 2x$. So $f''(x) = \frac{x^2 + 2x}{(x + 1)^2}$.'
@@ -1603,10 +1603,10 @@ topics:
             answer: '8x'
             answer_contract: {"kind": "function", "vars": ["x"]}
             solution_sketch: 'Divide each term by $x$: $f(x) = 4x^2 + 2$ for $x \neq 0$. The power rule gives $f''(x) = 8x$.'
-          - problem: 'Kim differentiates the top and the bottom of $f(x) = \frac{x^4}{x^2}$ separately and writes $\frac{4x^3}{2x} = 2x^2$. What is the correct derivative of $f$?'
+          - problem: 'Differentiate $f(x) = \frac{x^4}{x^2}$.'
             answer: '2x'
             answer_contract: {"kind": "function", "vars": ["x"]}
-            solution_sketch: 'Simplify first: $f(x) = x^2$ for $x \neq 0$. The derivative is $2x$. Kim''s method is not a rule: the derivative of a quotient is not the quotient of the derivatives.'
+            solution_sketch: 'Simplify first: $f(x) = x^2$ for $x \neq 0$. The derivative is $2x$. The derivative of a quotient is not the quotient of the derivatives.'
         constraints: "constant numerators or cancellable quotients; the student picks the shortcut"
       - id: kp3
         name: Quotient rule with table values
@@ -1640,7 +1640,7 @@ topics:
             answer: '3/40'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The quotient rule gives $\left(\frac{R}{N}\right)'' = \frac{R''N - RN''}{N^2} = \frac{9 \cdot 40 - 120 \cdot 2}{40^2}$. The numerator is $360 - 240 = 120$ and the denominator is $1600$. So the rate is $\frac{120}{1600} = \frac{3}{40}$.'
-          - problem: 'Raj says that $\left(\frac{f}{g}\right)''(1) = \frac{f''(1)}{g''(1)}$. For $f(1) = 6$, $f''(1) = 4$, $g(1) = 2$, and $g''(1) = 3$ he gets $\frac{4}{3}$. What is the correct value?'
+          - problem: 'Let $f(1) = 6$, $f''(1) = 4$, $g(1) = 2$ and $g''(1) = 3$. What is the value of $\left(\frac{f}{g}\right)''(1)$?'
             answer: '-5/2'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The quotient rule gives $\frac{f''g - fg''}{g^2} = \frac{4 \cdot 2 - 6 \cdot 3}{2^2}$. The numerator is $8 - 18 = -10$ and the denominator is $4$, so the value is $-\frac{5}{2}$.'
@@ -1747,10 +1747,10 @@ topics:
             answer: '(4x^2 + 12x + 18)/(4x + 6)^2'
             answer_contract: {"kind": "function", "vars": ["x"]}
             solution_sketch: 'The numerator $x^2 + 3x$ has derivative $2x + 3$, and the denominator has derivative $4$. The quotient rule gives $\frac{(2x + 3)(4x + 6) - 4(x^2 + 3x)}{(4x + 6)^2}$. The numerator simplifies to $4x^2 + 12x + 18$.'
-          - problem: 'Lena differentiates $g(x) = (x^2 + 1)(3x - 4)$ by multiplying the derivatives, $2x \cdot 3 = 6x$. What is the correct derivative?'
+          - problem: 'Differentiate $g(x) = (x^2 + 1)(3x - 4)$.'
             answer: '9x^2 - 8x + 3'
             answer_contract: {"kind": "function", "vars": ["x"]}
-            solution_sketch: 'The product rule gives $2x(3x - 4) + 3(x^2 + 1) = 6x^2 - 8x + 3x^2 + 3$. Collecting terms gives $9x^2 - 8x + 3$. Lena left out the terms that carry the other factor.'
+            solution_sketch: 'The product rule gives $2x(3x - 4) + 3(x^2 + 1) = 6x^2 - 8x + 3x^2 + 3$. Collecting terms gives $9x^2 - 8x + 3$.'
         constraints: "one product-inside-quotient and one simplify-after-product problem; integer coefficients"
       - id: kp3
         name: Tangent lines to product and quotient curves

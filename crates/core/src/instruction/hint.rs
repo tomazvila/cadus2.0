@@ -2,7 +2,7 @@
 
 use crate::template::gate::{Rejection, py_str};
 
-use super::names_answer::names_answer;
+use super::names_answer::names_any_answer;
 
 use super::body::{object, only_known};
 use super::{HINT_FIELDS, HintLadder, InstructionSpec};
@@ -81,18 +81,16 @@ the one before it, and a repeated rung leaves the learner exactly as stuck"
 fn check_no_answer(hints: &[String], spec: &InstructionSpec<'_>) -> Result<(), Rejection> {
     let served = spec.served_answers();
     for (index, rung) in hints.iter().enumerate() {
-        for answer in &served {
-            if names_answer(rung, answer) {
-                return Err(Rejection {
-                    code: "hint-answer",
-                    message: format!(
-                        "rung {index} reads {}, which names the answer {} this knowledge point \
+        if let Some(answer) = names_any_answer(rung, &served) {
+            return Err(Rejection {
+                code: "hint-answer",
+                message: format!(
+                    "rung {index} reads {}, which names the answer {} this knowledge point \
 serves — a hint is a question, never the final step (Hard Rule 3)",
-                        py_str(rung),
-                        py_str(answer)
-                    ),
-                });
-            }
+                    py_str(rung),
+                    py_str(answer)
+                ),
+            });
         }
     }
     Ok(())

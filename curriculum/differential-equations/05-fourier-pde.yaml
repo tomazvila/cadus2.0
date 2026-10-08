@@ -60,7 +60,7 @@ topics:
             answer: '6pi'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The product is $4\sin 2x\sin 5x + 6\sin^2 5x$. The first term integrates to $0$ by orthogonality, because the frequencies differ. The second term gives $6\pi$, so the receiver picks out only the $\sin 5x$ part of the signal and gets $6\pi$.'
-          - problem: 'Sam evaluates $\int_{-\pi}^{\pi} \sin 3x \cos 3x\,dx$ and writes $\pi$, because the two frequencies match. What is the correct value?'
+          - problem: 'What is the value of $\int_{-\pi}^{\pi} \sin 3x \cos 3x\,dx$?'
             answer: '0'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'Matching frequencies make the integral nonzero only for two sines or two cosines. Here $\sin 3x\cos 3x = \frac{1}{2}\sin 6x$, which is odd, so the integral is $0$. A sine and a cosine are always orthogonal on $[-\pi, \pi]$.'
@@ -101,7 +101,7 @@ topics:
             answer: '8/pi'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The coefficient is $b_1 = \frac{1}{\pi}\int_0^{\pi} 4\sin x\,dx = \frac{1}{\pi}\cdot 4\cdot 2$. The integral of $\sin x$ over $(0, \pi)$ is $2$, so $b_1 = \frac{8}{\pi}$.'
-          - problem: 'Sam computes the Fourier coefficient $a_2$ of $f(x) = x$ on $(-\pi, \pi)$ and gets $2$. What is the correct value?'
+          - problem: 'What is the Fourier coefficient $a_2$ of $f(x) = x$ on $(-\pi, \pi)$?'
             answer: '0'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The function $x$ is odd and $\cos 2x$ is even, so $x\cos 2x$ is odd. The integral of an odd function over $(-\pi, \pi)$ is $0$, so $a_2 = 0$.'
@@ -231,10 +231,10 @@ topics:
             answer: '8/pi'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'Since $f$ is even, the integral over $(-\pi, \pi)$ is twice the integral over $(0, \pi)$, which is $2\cdot 4 = 8$. Divide by $\pi$ to get $a_0 = \frac{8}{\pi}$.'
-          - problem: 'Sam says the Fourier coefficient $b_2$ of $f(x) = x^2$ on $(-\pi, \pi)$ equals $1$. What is the correct value?'
+          - problem: 'What is the Fourier coefficient $b_2$ of $f(x) = x^2$ on $(-\pi, \pi)$?'
             answer: '0'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'The function $x^2$ is even, so $x^2\sin 2x$ is odd. The integral of an odd function over $(-\pi, \pi)$ is $0$, so $b_2 = 0$. Sam found the value of $a_2$ instead.'
+            solution_sketch: 'The function $x^2$ is even, so $x^2\sin 2x$ is odd. The integral of an odd function over $(-\pi, \pi)$ is $0$, so $b_2 = 0$.'
         constraints: "f a power of x, |x|, or a product of one power and one sine/cosine — or an unspecified f known only to be even or odd, for half-interval rewrites of the coefficient formulas; justification must name even/odd parity"
       - id: kp2
         name: "Half-range sine expansions on $[0, L]$"
@@ -281,10 +281,10 @@ topics:
             answer: '3'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'For $f = 1$, $b_n = \frac{2(1 - (-1)^n)}{n\pi}$, so $b_1 = \frac{4}{\pi}$ and $b_3 = \frac{4}{3\pi}$. Divide: $\frac{4/\pi}{4/(3\pi)} = 3$.'
-          - problem: 'The half-range sine coefficients on $(0, L)$ are $b_n = \frac{2}{L}\int_0^L f(x)\sin\frac{n\pi x}{L}\,dx$. Dana finds $b_1$ for $f(x) = 1$ on $(0, \pi)$ but uses the factor $\frac{1}{\pi}$ in front of the integral. She gets $\frac{2}{\pi}$. What is the correct value?'
+          - problem: 'The half-range sine coefficients on $(0, L)$ are $b_n = \frac{2}{L}\int_0^L f(x)\sin\frac{n\pi x}{L}\,dx$. What is $b_1$ for $f(x) = 1$ on $(0, \pi)$?'
             answer: '4/pi'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'The factor in front must be $\frac{2}{L} = \frac{2}{\pi}$, not $\frac{1}{\pi}$. The integral $\int_0^{\pi}\sin x\,dx$ equals $2$, so $b_1 = \frac{2}{\pi}\cdot 2 = \frac{4}{\pi}$. Dana got half of this value.'
+            solution_sketch: 'The factor in front is $\frac{2}{L} = \frac{2}{\pi}$. The integral $\int_0^{\pi}\sin x\,dx$ equals $2$, so $b_1 = \frac{2}{\pi}\cdot 2 = \frac{4}{\pi}$.'
         constraints: "L in {1, 2, 4, pi}; f constant or linear; the general-L formula b_n = (2/L) integral of f sin(n pi x / L) must be quoted before use"
       - id: kp3
         name: "Half-range cosine expansions on $[0, L]$"
@@ -330,7 +330,7 @@ topics:
             answer: '80'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'Compute $a_0 = \frac{2}{\pi}\int_0^{\pi} 40\,dx = \frac{2}{\pi}\cdot 40\pi$. The factors of $\pi$ cancel, so $a_0 = 80$. The constant term of the series is $\frac{a_0}{2} = 40$, the average temperature.'
-          - problem: 'Sam computes $a_2 = 2\int_0^1 x\cos 2\pi x\,dx$ for $f(x) = x$ on $(0, 1)$ and gets $-\frac{1}{\pi^2}$. What is the correct value?'
+          - problem: 'What is the value of $a_2 = 2\int_0^1 x\cos 2\pi x\,dx$ for $f(x) = x$ on $(0, 1)$?'
             answer: '0'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'By parts, $\int_0^1 x\cos 2\pi x\,dx = \frac{\cos 2\pi - 1}{4\pi^2}$. Since $\cos 2\pi = 1$, this is $0$, so $a_2 = 0$. Only odd $n$ give nonzero coefficients here.'
@@ -403,7 +403,7 @@ topics:
             answer: '3/4'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'Compute $u_t = -3u$ and $u_{xx} = -4u$. Then $u_t = ku_{xx}$ gives $-3u = -4ku$. Divide by $-4u$ to get $k = \frac{3}{4}$.'
-          - problem: 'Sam separates $u_t = 5u_{xx}$ on $(0, \pi)$ with $u(0,t) = u(\pi,t) = 0$ and says the smallest eigenvalue of the $X$-problem is $5$. What is the correct value?'
+          - problem: 'Separate $u_t = 5u_{xx}$ on $(0, \pi)$ with $u(0,t) = u(\pi,t) = 0$. What is the smallest eigenvalue of the $X$-problem?'
             answer: '1'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The factor $5$ goes into the $T$ equation, $T'' + 5\lambda T = 0$. The $X$-problem is $X'''' + \lambda X = 0$ with $X(0) = X(\pi) = 0$, whose eigenvalues are $n^2$. The smallest is $1$.'
@@ -449,10 +449,10 @@ topics:
             answer: '0.087'
             answer_contract: {"kind":"approx","decimals":3}
             solution_sketch: 'The amplitude at time $t$ is $6e^{-8t}$. Set $6e^{-8t} = 3$, so $e^{-8t} = \frac{1}{2}$. Taking logarithms gives $t = \frac{\ln 2}{8}$, which is $0.087$ to three decimal places.'
-          - problem: 'Sam solves $u_t = 3u_{xx}$ on $(0, \pi)$ with $u(0,t) = u(\pi,t) = 0$ and $u(x,0) = \sin 2x$, and writes $u(x,t) = e^{-2t}\sin 2x$. What is the correct solution?'
+          - problem: 'Solve $u_t = 3u_{xx}$ on $(0, \pi)$ with $u(0,t) = u(\pi,t) = 0$ and $u(x,0) = \sin 2x$. What is $u(x,t)$?'
             answer: 'e^(-12t)sin(2x)'
             answer_contract: {"kind":"function","vars":["x","t"]}
-            solution_sketch: 'The decay rate of $\sin nx$ is $kn^2$, not $n$. With $k = 3$ and $n = 2$ the rate is $12$. So $u(x,t) = e^{-12t}\sin 2x$.'
+            solution_sketch: 'The decay rate of $\sin nx$ is $kn^2$. With $k = 3$ and $n = 2$ the rate is $12$. So $u(x,t) = e^{-12t}\sin 2x$.'
         constraints: "initial data a combination of at most two sine modes; k and L chosen so decay rates are clean multiples of 1 or pi^2"
       - id: kp3
         name: General initial data via sine series
@@ -490,10 +490,10 @@ topics:
             answer: '0.35'
             answer_contract: {"kind":"approx","decimals":2}
             solution_sketch: 'The mode $\sin x$ decays at rate $2\cdot 1^2 = 2$, so its coefficient is $2e^{-2t}$. Set $e^{-2t} = \frac{1}{2}$, so $t = \frac{\ln 2}{2}$. Numerically this is $0.35$ to two decimal places.'
-          - problem: 'Sam finds the coefficient $b_1$ for a rod on $(0, \pi)$ that starts at $u(x,0) = 5$. He computes $\int_0^{\pi} 5\sin x\,dx = 10$ and states $b_1 = 10$. What is the correct value?'
+          - problem: 'A rod on $(0, \pi)$ starts at $u(x,0) = 5$. The integral $\int_0^{\pi} 5\sin x\,dx$ equals $10$. What is the coefficient $b_1$?'
             answer: '20/pi'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'The sine coefficient has the factor $\frac{2}{\pi}$ in front of the integral. Sam stopped at the integral. So $b_1 = \frac{2}{\pi}\cdot 10 = \frac{20}{\pi}$.'
+            solution_sketch: 'The sine coefficient has the factor $\frac{2}{\pi}$ in front of the integral. So $b_1 = \frac{2}{\pi}\cdot 10 = \frac{20}{\pi}$.'
         constraints: "initial data constant or linear, whose sine coefficients were computed in fourier-sine-cosine-series; L in {1, pi}"
     diagnostic_exemplar:
       problem: 'Solve $u_t = u_{xx}$ on $(0, \pi)$ with $u(0,t) = u(\pi,t) = 0$ and initial temperature $u(x,0) = 50$.'

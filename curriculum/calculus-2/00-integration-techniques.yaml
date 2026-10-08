@@ -49,10 +49,10 @@ topics:
             answer: 'sin(t) - t*cos(t) + 2'
             answer_contract: {"kind": "function", "vars": ["t"]}
             solution_sketch: 'The position is the antiderivative of the velocity. Parts with $u = t$ and $dv = \sin t\,dt$ give $\int t\sin t\,dt = -t\cos t + \sin t + K$. The condition $s(0) = K = 2$ fixes the constant, so $s(t) = \sin t - t\cos t + 2$.'
-          - problem: 'Sam writes $\int x\sin x\,dx = x\cos x + \sin x + C$. What is the correct antiderivative?'
+          - problem: 'What is the antiderivative of $x\sin x$?'
             answer: '-x*cos(x) + sin(x) + C'
             answer_contract: {"kind": "function", "vars": ["x"], "up_to_constant": true}
-            solution_sketch: 'With $u = x$ and $dv = \sin x\,dx$ we get $v = -\cos x$, so the formula gives $-x\cos x + \int \cos x\,dx = -x\cos x + \sin x + C$. Sam lost the minus sign of $v$. Differentiating the wrong answer gives $2\cos x - x\sin x$, which is not the integrand.'
+            solution_sketch: 'With $u = x$ and $dv = \sin x\,dx$ we get $v = -\cos x$, so the formula gives $-x\cos x + \int \cos x\,dx = -x\cos x + \sin x + C$. The sign of $v$ is negative. Differentiating $x\cos x + \sin x$ gives $2\cos x - x\sin x$, which is not the integrand.'
           - problem: 'The speed of a cart is $v(t) = t\sin t$ metres per second for $0 \le t \le \pi$ seconds. What is its average speed over this time interval?'
             answer: '1'
             answer_contract: {"kind": "unit", "quantity": "speed", "unit": "m/s", "allow_omitted": true}
@@ -74,7 +74,7 @@ topics:
             answer: '-x*cos(3x)/3 + sin(3x)/9 + C'
             answer_contract: {"kind": "function", "vars": ["x"], "up_to_constant": true}
             solution_sketch: 'LIATE ranks the algebraic factor $x$ before the trig factor, so $u = x$ and $dv = \sin 3x\,dx$. Then $v = -\frac{\cos 3x}{3}$, and $\int x\sin 3x\,dx = -\frac{x\cos 3x}{3} + \frac{1}{3}\int \cos 3x\,dx = -\frac{x\cos 3x}{3} + \frac{\sin 3x}{9} + C$.'
-          - problem: 'Sam tries $\int x e^{x}\,dx$ with $u = e^{x}$ and $dv = x\,dx$. After applying the parts formula, is the new integral easier than the original one?'
+          - problem: 'In $\int x e^{x}\,dx$, take $u = e^{x}$ and $dv = x\,dx$. After applying the parts formula, is the new integral easier than the original one?'
             answer: 'no'
             answer_contract: {"kind": "label", "options": [["no", "it is harder", "harder", "not easier", "no it is not"], ["yes", "it is easier", "easier"]]}
             solution_sketch: 'With $u = e^x$ and $dv = x\,dx$ we get $du = e^x\,dx$ and $v = \frac{x^2}{2}$. The new integral is $\int \frac{x^2}{2}e^x\,dx$, which has a higher power of $x$ than the original. So the new integral is harder, and the choice $u = x$ is the right one.'
@@ -132,10 +132,10 @@ topics:
             answer: 'pi/4 - ln(2)/2'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'An antiderivative is $x\arctan x - \frac{1}{2}\ln(1+x^2)$. At $x = 1$ it equals $\frac{\pi}{4} - \frac{1}{2}\ln 2$, and at $x = 0$ it equals $0$. The value is $\frac{\pi}{4} - \frac{\ln 2}{2}$.'
-          - problem: 'Sam evaluates $\int x^3 \ln x\,dx$ and writes $\frac{x^4}{4}\ln x - \frac{x^4}{4} + C$. What is the correct antiderivative?'
+          - problem: 'What is the antiderivative of $x^3 \ln x$?'
             answer: 'x^4*ln(x)/4 - x^4/16 + C'
             answer_contract: {"kind": "function", "vars": ["x"], "up_to_constant": true}
-            solution_sketch: 'With $u = \ln x$ and $dv = x^3\,dx$ we get $v = \frac{x^4}{4}$, so $\int x^3\ln x\,dx = \frac{x^4}{4}\ln x - \frac{1}{4}\int x^3\,dx = \frac{x^4}{4}\ln x - \frac{x^4}{16} + C$. Sam forgot the factor $\frac{1}{4}$ in the leftover integral.'
+            solution_sketch: 'With $u = \ln x$ and $dv = x^3\,dx$ we get $v = \frac{x^4}{4}$, so $\int x^3\ln x\,dx = \frac{x^4}{4}\ln x - \frac{1}{4}\int x^3\,dx = \frac{x^4}{4}\ln x - \frac{x^4}{16} + C$. The leftover integral has the factor $\frac{1}{4}$.'
           - problem: 'A rectangle with base $e - 1$ has the same area as the region under $y = \ln x$ between $x = 1$ and $x = e$. How tall is the rectangle?'
             answer: '1/(e - 1)'
             answer_contract: {"kind": "exact"}
@@ -204,10 +204,10 @@ topics:
             answer: '(e^2 + 1)/2'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The average value is the integral divided by the length $2$. An antiderivative of $xe^x$ is $(x-1)e^x$, so $\int_0^2 xe^x\,dx = e^2 + 1$. The average is $\frac{e^2 + 1}{2}$ degrees.'
-          - problem: 'Sam evaluates $\int_0^{\pi} x\cos x\,dx$ and stops after finding $[x\sin x]_0^{\pi} = 0$. What is the correct value of the integral?'
+          - problem: 'What is the value of $\int_0^{\pi} x\cos x\,dx$?'
             answer: '-2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The parts formula gives $[x\sin x]_0^{\pi} - \int_0^{\pi}\sin x\,dx$. Sam stopped after the boundary term and left out the second part. The second part is $[-\cos x]_0^{\pi} = 2$, so the value is $0 - 2 = -2$.'
+            solution_sketch: 'The parts formula gives $[x\sin x]_0^{\pi} - \int_0^{\pi}\sin x\,dx$. The boundary term is not the whole value, because the second part must be subtracted. The second part is $[-\cos x]_0^{\pi} = 2$, so the value is $0 - 2 = -2$.'
           - problem: 'Find the area of the region bounded by $y = \ln x$, the $x$-axis and the lines $x = 1$ and $x = 3$.'
             answer: '3*ln(3) - 2'
             answer_contract: {"kind": "exact"}
@@ -249,10 +249,10 @@ topics:
             answer: 'pi - 4/pi'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The average is the integral divided by the length $\pi$. An antiderivative is $-t^2\cos t + 2t\sin t + 2\cos t$, so $\int_0^\pi t^2\sin t\,dt = (\pi^2 - 2) - 2 = \pi^2 - 4$. The average is $\frac{\pi^2 - 4}{\pi} = \pi - \frac{4}{\pi}$.'
-          - problem: 'Sam evaluates $\int x^2\cos x\,dx$ and writes $x^2\sin x + 2x\cos x + C$. What is the correct antiderivative?'
+          - problem: 'What is the antiderivative of $x^2\cos x$?'
             answer: 'x^2*sin(x) + 2x*cos(x) - 2*sin(x) + C'
             answer_contract: {"kind": "function", "vars": ["x"], "up_to_constant": true}
-            solution_sketch: 'Two applications give $x^2\sin x - 2\int x\sin x\,dx = x^2\sin x - 2(-x\cos x + \sin x)$. This equals $x^2\sin x + 2x\cos x - 2\sin x + C$. Sam stopped before the last term $-2\sin x$.'
+            solution_sketch: 'Two applications give $x^2\sin x - 2\int x\sin x\,dx = x^2\sin x - 2(-x\cos x + \sin x)$. This equals $x^2\sin x + 2x\cos x - 2\sin x + C$. The last term is $-2\sin x$.'
         constraints: "quadratic polynomial (or (ln x)^2) times e^{ax}, sin ax, or cos ax, in a bare integral, a definite integral or a context; exactly two applications of parts"
       - id: kp3
         name: Boomerang integrals (the integral reappears)
@@ -291,10 +291,10 @@ topics:
             answer: '-(e^pi + 1)/(2*pi)'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'An antiderivative is $\frac{e^t(\sin t + \cos t)}{2}$. At $t = \pi$ it equals $-\frac{e^\pi}{2}$, and at $t = 0$ it equals $\frac{1}{2}$, so the integral is $-\frac{e^\pi + 1}{2}$. Dividing by the length $\pi$ gives the average $-\frac{e^\pi + 1}{2\pi}$.'
-          - problem: 'Sam finds $\int e^{3x}\cos x\,dx$ and writes $\frac{e^{3x}(3\cos x + \sin x)}{9} + C$. What is the correct antiderivative?'
+          - problem: 'What is the antiderivative of $e^{3x}\cos x$?'
             answer: 'e^(3x)*(3*cos(x) + sin(x))/10 + C'
             answer_contract: {"kind": "function", "vars": ["x"], "up_to_constant": true}
-            solution_sketch: 'Two applications of parts give $I = \frac{e^{3x}\cos x}{3} + \frac{e^{3x}\sin x}{9} - \frac{I}{9}$. Collecting the $I$ terms gives $\frac{10}{9}I$, so Sam should divide by $10$, not by $9$. The result is $I = \frac{e^{3x}(3\cos x + \sin x)}{10} + C$.'
+            solution_sketch: 'Two applications of parts give $I = \frac{e^{3x}\cos x}{3} + \frac{e^{3x}\sin x}{9} - \frac{I}{9}$. Collecting the $I$ terms gives $\frac{10}{9}I$, so the divisor is $10$, not $9$. The result is $I = \frac{e^{3x}(3\cos x + \sin x)}{10} + C$.'
         constraints: "boomerang type limited to e^{ax} sin bx / e^{ax} cos bx with a in {-1, 1, 2, 3} and b in {1, 2}, in a bare integral, a definite integral or a context"
     diagnostic_exemplar:
       problem: 'Evaluate $\int_0^{\pi} e^x \sin x \, dx$.'
@@ -358,10 +358,10 @@ topics:
             answer: 'e^2 - 1'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The average speed is the distance divided by the time $2$. The antiderivative $(t^2 - 2t + 2)e^t$ gives the distance $2e^2 - 2$ over $[0, 2]$, because it equals $2e^2$ at $t = 2$ and $2$ at $t = 0$. The average speed is $\frac{2e^2 - 2}{2} = e^2 - 1$ metres per second.'
-          - problem: 'Sam uses a table for $\int x^2e^{2x}\,dx$ but writes every sign as plus, getting $\left(\frac{x^2}{2} + \frac{x}{2} + \frac{1}{4}\right)e^{2x} + C$. What is the correct antiderivative?'
+          - problem: 'Use a table to find the antiderivative of $x^2e^{2x}$.'
             answer: '(x^2/2 - x/2 + 1/4)*e^(2x) + C'
             answer_contract: {"kind": "function", "vars": ["x"], "up_to_constant": true}
-            solution_sketch: 'The derivative column is $x^2, 2x, 2, 0$ and the integral column is $\frac{e^{2x}}{2}, \frac{e^{2x}}{4}, \frac{e^{2x}}{8}$. The signs must alternate $+, -, +$, which gives $\left(\frac{x^2}{2} - \frac{x}{2} + \frac{1}{4}\right)e^{2x} + C$. Sam used $+$ for the middle term.'
+            solution_sketch: 'The derivative column is $x^2, 2x, 2, 0$ and the integral column is $\frac{e^{2x}}{2}, \frac{e^{2x}}{4}, \frac{e^{2x}}{8}$. The signs must alternate $+, -, +$, which gives $\left(\frac{x^2}{2} - \frac{x}{2} + \frac{1}{4}\right)e^{2x} + C$.'
         constraints: "polynomial of degree 2 or 3 times e^{ax} with a in {-1, 1, 2}, in a bare integral, a definite integral or a context; the derivative column must terminate at 0"
       - id: kp2
         name: Tabular method for polynomial times trig
@@ -399,10 +399,10 @@ topics:
             answer: '-2'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The average is the integral divided by the length $\pi$. The integral is $-2\pi$, so the average is $\frac{-2\pi}{\pi} = -2$. The negative sign shows that the negative part of the signal is larger than the positive part.'
-          - problem: 'Sam uses a table for $\int x^2\sin x\,dx$ and writes $-x^2\cos x - 2x\sin x - 2\cos x + C$. What is the correct antiderivative?'
+          - problem: 'Use a table to find the antiderivative of $x^2\sin x$.'
             answer: '-x^2*cos(x) + 2x*sin(x) + 2*cos(x) + C'
             answer_contract: {"kind": "function", "vars": ["x"], "up_to_constant": true}
-            solution_sketch: 'The derivative column is $x^2, 2x, 2, 0$ and the integral column is $-\cos x, -\sin x, \cos x$. The signs must alternate $+, -, +$, which gives $-x^2\cos x + 2x\sin x + 2\cos x + C$. Sam used $-$ for the middle term and the last term.'
+            solution_sketch: 'The derivative column is $x^2, 2x, 2, 0$ and the integral column is $-\cos x, -\sin x, \cos x$. The signs must alternate $+, -, +$, which gives $-x^2\cos x + 2x\sin x + 2\cos x + C$.'
         constraints: "polynomial of degree 2 or 3 times sin ax or cos ax with a in {1, 2}, in a bare integral, a definite integral or a context; coefficients stay small"
     diagnostic_exemplar:
       problem: 'Use the tabular method to evaluate $\int x^3 \sin x \, dx$.'
@@ -461,10 +461,10 @@ topics:
             answer: '1/4'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Let $u = \cos x$, so $du = -\sin x\,dx$. The limits become $u = 1$ and $u = 0$, so the integral is $-\int_1^0 u^3\,du = \int_0^1 u^3\,du = \frac{1}{4}$.'
-          - problem: 'Sam finds $\int \cos^4 x \sin x\,dx$ and writes $\frac{\cos^5 x}{5} + C$. What is the correct antiderivative?'
+          - problem: 'What is the antiderivative of $\cos^4 x \sin x$?'
             answer: '-cos(x)^5/5 + C'
             answer_contract: {"kind": "function", "vars": ["x"], "up_to_constant": true}
-            solution_sketch: 'Let $u = \cos x$, so $du = -\sin x\,dx$ and $\sin x\,dx = -du$. The integral becomes $-\int u^4\,du = -\frac{u^5}{5} + C$. Sam lost the minus sign. Differentiating $\frac{\cos^5 x}{5}$ gives $-\cos^4 x\sin x$, the opposite of the integrand.'
+            solution_sketch: 'Let $u = \cos x$, so $du = -\sin x\,dx$ and $\sin x\,dx = -du$. The integral becomes $-\int u^4\,du = -\frac{u^5}{5} + C$. The minus sign stays. Differentiating $\frac{\cos^5 x}{5}$ gives $-\cos^4 x\sin x$, the opposite of the integrand.'
           - problem: 'The strength of a signal is $f(t) = \sin^2 t\cos t$ for $0 \le t \le \frac{\pi}{2}$. What is its average strength over this interval?'
             answer: '2/(3*pi)'
             answer_contract: {"kind": "exact"}
@@ -511,7 +511,7 @@ topics:
             answer: '4/(3*pi)'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The average is the integral divided by the length $\frac{\pi}{2}$. The integral of $\sin^3 x$ over $[0, \frac{\pi}{2}]$ is $\frac{2}{3}$, because $-\cos x + \frac{\cos^3 x}{3}$ goes from $-\frac{2}{3}$ to $0$. The average is $\frac{2/3}{\pi/2} = \frac{4}{3\pi}$ metres.'
-          - problem: 'Sam evaluates $\int \sin^3 x\cos^2 x\,dx$ by writing $\sin^3 x = (1 + \cos^2 x)\sin x$ and gets $-\frac{\cos^3 x}{3} - \frac{\cos^5 x}{5} + C$. What is the correct antiderivative?'
+          - problem: 'What is the antiderivative of $\sin^3 x\cos^2 x$?'
             answer: 'cos(x)^5/5 - cos(x)^3/3 + C'
             answer_contract: {"kind": "function", "vars": ["x"], "up_to_constant": true}
             solution_sketch: 'The identity is $\sin^2 x = 1 - \cos^2 x$, not $1 + \cos^2 x$. So the integrand is $(1 - \cos^2 x)\cos^2 x\sin x$, and with $u = \cos x$ the integral is $-\int (u^2 - u^4)\,du = -\frac{u^3}{3} + \frac{u^5}{5} + C$. The result is $\frac{\cos^5 x}{5} - \frac{\cos^3 x}{3} + C$.'
@@ -592,10 +592,10 @@ topics:
             answer: '0.88'
             answer_contract: {"kind": "approx", "decimals": 2}
             solution_sketch: 'The distance is $\int_0^{\pi/4} \sec t\,dt = \ln(\sec t + \tan t)\Big|_0^{\pi/4} = \ln(\sqrt{2} + 1)$. This is about $0.8814$, so the drone travels about $0.88$ metres.'
-          - problem: 'Sam writes $\int \tan 3x\,dx = -\ln(\cos 3x) + C$. Differentiate to check this, then find the correct antiderivative for $0 < x < \frac{\pi}{6}$.'
+          - problem: 'Find the antiderivative of $\tan 3x$ for $0 < x < \frac{\pi}{6}$.'
             answer: '-ln(cos(3x))/3 + C'
             answer_contract: {"kind": "function", "vars": ["x"], "up_to_constant": true, "domain": {"x": ["1/10", "1/2"]}}
-            solution_sketch: 'Differentiating Sam''s answer gives $3\tan 3x$, which is $3$ times too large. With $u = 3x$ we have $dx = \frac{1}{3}\,du$, so the factor $\frac{1}{3}$ belongs in front of the logarithm. The correct antiderivative is $-\frac{1}{3}\ln(\cos 3x) + C$.'
+            solution_sketch: 'With $u = 3x$ we have $dx = \frac{1}{3}\,du$, so the factor $\frac{1}{3}$ belongs in front of the logarithm. The antiderivative is $-\frac{1}{3}\ln(\cos 3x) + C$. Differentiation confirms it: $\frac{d}{dx}\left[-\frac13\ln(\cos 3x)\right]=\tan 3x$.'
           - problem: 'Evaluate $\int_0^{\pi/8} \tan 2x\,dx$.'
             answer: 'ln(2)/4'
             answer_contract: {"kind": "exact"}
@@ -633,10 +633,10 @@ topics:
             answer: '4/pi - 1'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The average is the total $\int_0^{\pi/4} \tan^2 t\,dt = 1 - \frac{\pi}{4}$ divided by the length $\frac{\pi}{4}$. So the average is $\frac{4}{\pi}\left(1 - \frac{\pi}{4}\right) = \frac{4}{\pi} - 1$ watts.'
-          - problem: 'Sam says $\int \tan^4 x\,dx = \frac{\tan^5 x}{5} + C$. Find the correct antiderivative for $0 < x < \frac{\pi}{2}$.'
+          - problem: 'Find the antiderivative of $\tan^4 x$ for $0 < x < \frac{\pi}{2}$.'
             answer: 'tan(x)^3/3 - tan(x) + x + C'
             answer_contract: {"kind": "function", "vars": ["x"], "up_to_constant": true, "domain": {"x": ["1/10", "1"]}}
-            solution_sketch: 'Sam used the power rule as if $\tan x$ were the variable, but the derivative of $\tan x$ is not $1$. Write $\tan^4 x = \tan^2 x(\sec^2 x - 1)$ and split it. The first piece gives $\frac{\tan^3 x}{3}$, and the second piece gives $-\int \tan^2 x\,dx = -\tan x + x$.'
+            solution_sketch: 'The power rule does not apply to $\tan x$ as if it were the variable, because the derivative of $\tan x$ is not $1$. Write $\tan^4 x = \tan^2 x(\sec^2 x - 1)$ and split it. The first piece gives $\frac{\tan^3 x}{3}$, and the second piece gives $-\int \tan^2 x\,dx = -\tan x + x$.'
           - problem: 'Evaluate $\int \sec^6 x\,dx$.'
             answer: 'tan(x) + 2*tan(x)^3/3 + tan(x)^5/5 + C'
             answer_contract: {"kind": "function", "vars": ["x"], "up_to_constant": true, "domain": {"x": ["1/10", "1"]}}
@@ -674,7 +674,7 @@ topics:
             answer: '4/pi'
             answer_contract: {"kind": "unit", "quantity": "length", "unit": "m", "allow_omitted": true}
             solution_sketch: 'The integral of $h$ over the interval is $\frac{4}{3}$. The average is this integral divided by the length $\frac{\pi}{3}$ of the interval. So the average height is $\frac{4}{3} \cdot \frac{3}{\pi} = \frac{4}{\pi}$ metres.'
-          - problem: 'Sam finds $\int \tan x \sec^2 x\,dx = \frac{\tan^2 x}{2} + C$. Ana substitutes $u = \sec x$ and finds $\frac{\sec^2 x}{2} + C$. Can both answers be correct?'
+          - problem: 'The substitution $u = \tan x$ gives $\int \tan x \sec^2 x\,dx = \frac{\tan^2 x}{2} + C$. The substitution $u = \sec x$ gives $\frac{\sec^2 x}{2} + C$. Can both answers be correct?'
             answer: 'yes'
             answer_contract: {"kind": "label", "options": [["yes", "both can be correct", "both are correct", "it is possible", "yes, both are correct", "yes, both can be correct", "both correct"], ["no", "only one is correct", "they cannot both be correct", "no, only one is correct"]]}
             solution_sketch: 'The two answers differ by $\frac{\sec^2 x - \tan^2 x}{2} = \frac{1}{2}$, which is a constant. Two antiderivatives of the same function always differ by a constant, so both answers are correct.'
@@ -758,10 +758,10 @@ topics:
             answer: 'pi^2/2'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'By the disk method the volume is $\pi\int_0^{\pi} \sin^2 x\,dx$. The integral equals $\frac{\pi}{2}$, so the volume is $\pi \cdot \frac{\pi}{2} = \frac{\pi^2}{2}$ cubic units.'
-          - problem: 'Sam says $\int_0^{2\pi} \cos^2 x\,dx = 0$ because the cosine takes positive and negative values equally. What is the correct value?'
+          - problem: 'What is the value of $\int_0^{2\pi} \cos^2 x\,dx$?'
             answer: 'pi'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Sam forgot that $\cos^2 x$ is never negative, so the positive and negative parts do not cancel. Use $\cos^2 x = \frac{1 + \cos 2x}{2}$, so the integral is $\left[\frac{x}{2} + \frac{\sin 2x}{4}\right]_0^{2\pi} = \pi$.'
+            solution_sketch: 'The function $\cos^2 x$ is never negative, so the area does not cancel. Use $\cos^2 x = \frac{1 + \cos 2x}{2}$, so the integral is $\left[\frac{x}{2} + \frac{\sin 2x}{4}\right]_0^{2\pi} = \pi$.'
           - problem: 'The integral $\int_0^k \sin^2 x\,dx$ equals $\frac{\pi}{4}$, where $0 < k < \pi$. Find $k$.'
             answer: 'pi/2'
             answer_contract: {"kind": "exact"}
@@ -787,10 +787,10 @@ topics:
             answer: '1/2'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Since $\sin 3x\cos x = \frac{1}{2}[\sin 4x + \sin 2x]$, an antiderivative is $-\frac{\cos 4x}{8} - \frac{\cos 2x}{4}$. At $x = \frac{\pi}{2}$ it is $-\frac{1}{8} + \frac{1}{4} = \frac{1}{8}$, and at $x = 0$ it is $-\frac{3}{8}$. The difference is $\frac{1}{2}$.'
-          - problem: 'Sam writes $\sin 2x\cos 5x = \frac{1}{2}[\sin 7x + \sin 3x]$ and integrates. Find the correct antiderivative of $\sin 2x\cos 5x$.'
+          - problem: 'Find the antiderivative of $\sin 2x\cos 5x$.'
             answer: '-cos(7x)/14 + cos(3x)/6 + C'
             answer_contract: {"kind": "function", "vars": ["x"], "up_to_constant": true}
-            solution_sketch: 'With $A = 2x$ and $B = 5x$, the difference is $A - B = -3x$, and $\sin(-3x) = -\sin 3x$. So $\sin 2x\cos 5x = \frac{1}{2}[\sin 7x - \sin 3x]$. Integrating gives $-\frac{\cos 7x}{14} + \frac{\cos 3x}{6} + C$.'
+            solution_sketch: 'With $A = 2x$ and $B = 5x$, the product formula uses the difference $A - B = -3x$, and $\sin(-3x) = -\sin 3x$. So $\sin 2x\cos 5x = \frac{1}{2}[\sin 7x - \sin 3x]$. Integrating gives $-\frac{\cos 7x}{14} + \frac{\cos 3x}{6} + C$.'
           - problem: 'A particle moves along a line with velocity $v(t) = \sin 5t \cos 2t$ metres per second. Find its displacement from $t = 0$ to $t = \frac{\pi}{3}$ seconds.'
             answer: '31/84'
             answer_contract: {"kind": "unit", "quantity": "length", "unit": "m", "allow_omitted": true}
@@ -913,10 +913,10 @@ topics:
             answer: 'pi/4'
             answer_contract: {"kind": "unit", "quantity": "length", "unit": "m", "allow_omitted": true}
             solution_sketch: 'Complete the square: $t^2 - 4t + 13 = (t - 2)^2 + 9$. With $u = t - 2$ the bounds become $0$ and $3$, and the distance is $3 \cdot \frac{1}{3}\arctan\frac{u}{3}\Big|_0^3 = \arctan 1$. The robot moves $\frac{\pi}{4}$ metres.'
-          - problem: 'Sam completes the square as $x^2 + 6x + 13 = (x + 3)^2 + 13$ and finds $\int \frac{dx}{x^2 + 6x + 13} = \frac{1}{\sqrt{13}}\arctan\frac{x + 3}{\sqrt{13}} + C$. Find the correct antiderivative.'
+          - problem: 'Find the antiderivative of $\frac{1}{x^2 + 6x + 13}$.'
             answer: 'atan((x+3)/2)/2 + C'
             answer_contract: {"kind": "function", "vars": ["x"], "up_to_constant": true}
-            solution_sketch: 'Sam added $9$ but then forgot to take it away: $x^2 + 6x + 13 = (x + 3)^2 + 4$. With $u = x + 3$ and $a = 2$ the arctangent rule gives $\frac{1}{2}\arctan\frac{x + 3}{2} + C$.'
+            solution_sketch: 'Complete the square with care: $x^2 + 6x + 13 = (x + 3)^2 + 4$. With $u = x + 3$ and $a = 2$ the arctangent rule gives $\frac{1}{2}\arctan\frac{x + 3}{2} + C$.'
         constraints: 'irreducible quadratic denominators with integer centre and radius a in {1, 2, 3, 4}; indefinite and definite integrals, and measured or area contexts'
       - id: kp2
         name: Arcsine forms
@@ -954,10 +954,10 @@ topics:
             answer: 'pi/3'
             answer_contract: {"kind": "unit", "quantity": "length", "unit": "m", "allow_omitted": true}
             solution_sketch: 'Complete the square: $12t - t^2 - 27 = 9 - (t - 6)^2$. With $u = t - 6$ the bounds become $0$ and $\frac{3}{2}$, and the distance is $2\arcsin\frac{u}{3}\Big|_0^{3/2} = 2\arcsin\frac{1}{2}$. The sled moves $\frac{\pi}{3}$ metres.'
-          - problem: 'Sam completes the square as $8 - 2x - x^2 = 9 - (x - 1)^2$ and writes $\int \frac{dx}{\sqrt{8 - 2x - x^2}} = \arcsin\frac{x - 1}{3} + C$. Find the correct antiderivative.'
+          - problem: 'Find the antiderivative of $\frac{1}{\sqrt{8 - 2x - x^2}}$.'
             answer: 'asin((x+1)/3) + C'
             answer_contract: {"kind": "function", "vars": ["x"], "up_to_constant": true, "domain": {"x": ["-2", "1"]}}
-            solution_sketch: 'Check: $9 - (x - 1)^2 = 8 + 2x - x^2$, so Sam changed the sign of $2x$. Correctly, $8 - 2x - x^2 = 9 - (x + 1)^2$. With $u = x + 1$ and $a = 3$ the arcsine rule gives $\arcsin\frac{x + 1}{3} + C$.'
+            solution_sketch: 'The sign of $2x$ matters: $9 - (x - 1)^2 = 8 + 2x - x^2$ is a different expression. Here $8 - 2x - x^2 = 9 - (x + 1)^2$. With $u = x + 1$ and $a = 3$ the arcsine rule gives $\arcsin\frac{x + 1}{3} + C$.'
         constraints: 'quadratics with negative leading coefficient under a square root; completed square has integer centre and radius; indefinite integrals state no interval, definite integrals and contexts stay inside the interval where the root is real'
       - id: kp3
         name: Linear numerators (split into log + arctan)
@@ -991,10 +991,10 @@ topics:
             answer: '3*ln(2)/2 + pi/4'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Write $6x - 2 = 3(2x - 2) + 4$. The integral over $[1, 3]$ is $3\ln 2 + 4 \cdot \frac{1}{2} \cdot \frac{\pi}{4} = 3\ln 2 + \frac{\pi}{2}$. The average is this integral divided by the length $2$, so it is $\frac{3\ln 2}{2} + \frac{\pi}{4}$.'
-          - problem: 'Sam writes $4x + 7 = 2(2x - 2) + 3$ and integrates $\frac{4x + 7}{x^2 - 2x + 5}$ from this. Find the correct antiderivative.'
+          - problem: 'Find the antiderivative of $\frac{4x + 7}{x^2 - 2x + 5}$.'
             answer: '2ln(x^2-2x+5) + 11atan((x-1)/2)/2 + C'
             answer_contract: {"kind": "function", "vars": ["x"], "up_to_constant": true}
-            solution_sketch: 'Expanding Sam''s numerator gives $4x - 1$, not $4x + 7$. The correct split is $4x + 7 = 2(2x - 2) + 11$. So the integral is $2\ln(x^2 - 2x + 5) + 11 \cdot \frac{1}{2}\arctan\frac{x - 1}{2} + C$.'
+            solution_sketch: 'Split the numerator by the derivative $2x-2$ of the denominator: $4x + 7 = 2(2x - 2) + 11$. So the integral is $2\ln(x^2 - 2x + 5) + 11 \cdot \frac{1}{2}\arctan\frac{x - 1}{2} + C$.'
         constraints: 'numerator of degree 1 over an irreducible quadratic; write the numerator as (a multiple of the derivative of the denominator) + a constant, then split into a logarithm and an arctangent'
     diagnostic_exemplar:
       problem: 'Evaluate $\int \frac{2x + 6}{x^2 + 4x + 5} \, dx$.'
@@ -1069,10 +1069,10 @@ topics:
             answer: 'pi/2'
             answer_contract: {"kind": "unit", "quantity": "length", "unit": "m", "allow_omitted": true}
             solution_sketch: 'The integral $\int_0^2 \sqrt{4 - x^2}\,dx$ is $\pi$. The average is this integral divided by the length $2$ of the interval. So the average height is $\frac{\pi}{2}$ metres.'
-          - problem: 'Sam substitutes $x = \sin\theta$ in $\int_0^1 \sqrt{1 - x^2}\,dx$ and gets $\int_0^1 \cos\theta\,d\theta = \sin 1$. Find the correct value of the integral.'
+          - problem: 'Find the value of $\int_0^1 \sqrt{1 - x^2}\,dx$ with the substitution $x = \sin\theta$.'
             answer: 'pi/4'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Sam kept the old bounds, but they belong to $x$. When $x = \sin\theta$, the bounds $0$ and $1$ become $\theta = 0$ and $\theta = \frac{\pi}{2}$, and $dx = \cos\theta\,d\theta$ gives $\int_0^{\pi/2} \cos^2\theta\,d\theta = \frac{\pi}{4}$.'
+            solution_sketch: 'The old bounds belong to $x$. When $x = \sin\theta$, the bounds $0$ and $1$ become $\theta = 0$ and $\theta = \frac{\pi}{2}$, and $dx = \cos\theta\,d\theta$ gives $\int_0^{\pi/2} \cos^2\theta\,d\theta = \frac{\pi}{4}$.'
         constraints: 'a^2 - x^2 under a root or in a power, a in {1, 2, 3, 5}; substitute x = a sin(theta); indefinite integrals (state the interval where needed), definite integrals, and area contexts; the answer back-substitutes through a reference triangle'
       - id: kp2
         name: The pattern a^2 + x^2 (x = a tan theta)
@@ -1110,10 +1110,10 @@ topics:
             answer: '1/2'
             answer_contract: {"kind": "unit", "quantity": "length", "unit": "cm", "allow_omitted": true}
             solution_sketch: 'An antiderivative is $\frac{x}{\sqrt{1 + x^2}}$, so the integral over the interval is $\frac{\sqrt{3}}{2} - 0$. The average is this integral divided by the length $\sqrt{3}$ of the interval. So the average thickness is $\frac{1}{2}$ centimetre.'
-          - problem: 'Sam sets $x = 2\tan\theta$ in $\int \frac{dx}{(x^2 + 4)^{3/2}}$ and writes $dx = 2\sec\theta\,d\theta$. Find the correct antiderivative.'
+          - problem: 'Find the antiderivative of $\frac{1}{(x^2 + 4)^{3/2}}$ with the substitution $x = 2\tan\theta$.'
             answer: 'x/(4sqrt(x^2+4)) + C'
             answer_contract: {"kind": "function", "vars": ["x"], "up_to_constant": true}
-            solution_sketch: 'Sam differentiated incorrectly: the derivative of $\tan\theta$ is $\sec^2\theta$, so $dx = 2\sec^2\theta\,d\theta$. Then $(x^2 + 4)^{3/2} = 8\sec^3\theta$ and the integral is $\frac{1}{4}\int \cos\theta\,d\theta = \frac{\sin\theta}{4}$. The answer is $\frac{x}{4\sqrt{x^2 + 4}} + C$.'
+            solution_sketch: 'The derivative of $\tan\theta$ is $\sec^2\theta$, so $dx = 2\sec^2\theta\,d\theta$. Then $(x^2 + 4)^{3/2} = 8\sec^3\theta$ and the integral is $\frac{1}{4}\int \cos\theta\,d\theta = \frac{\sin\theta}{4}$. The answer is $\frac{x}{4\sqrt{x^2 + 4}} + C$.'
           - problem: 'A particle moves along a line with velocity $v(t) = \frac{1}{(t^2 + 9)^{3/2}}$ metres per second. How far does it move between $t = 0$ and $t = 3\sqrt{3}$ seconds?'
             answer: 'sqrt(3)/18'
             answer_contract: {"kind": "unit", "quantity": "length", "unit": "m", "allow_omitted": true}
@@ -1163,10 +1163,10 @@ topics:
             answer: '(3*sqrt(3) - pi)/3'
             answer_contract: {"kind": "unit", "quantity": "length", "unit": "m", "allow_omitted": true}
             solution_sketch: 'An antiderivative is $\sqrt{x^2 - 9} - 3\arccos\frac{3}{x}$. At $x = 6$ it is $3\sqrt{3} - 3 \cdot \frac{\pi}{3}$, and at $x = 3$ it is $0$. So the integral is $3\sqrt{3} - \pi$, and dividing by the length $3$ gives $\frac{3\sqrt{3} - \pi}{3}$ metres.'
-          - problem: 'Sam sets $x = 3\sec\theta$ in $\int_3^{3\sqrt{2}} \frac{\sqrt{x^2 - 9}}{x}\,dx$ and simplifies $\sqrt{x^2 - 9}$ as $3\sec\theta - 3$. Find the correct value of the integral.'
+          - problem: 'Find the value of $\int_3^{3\sqrt{2}} \frac{\sqrt{x^2 - 9}}{x}\,dx$ with the substitution $x = 3\sec\theta$.'
             answer: '3 - 3*pi/4'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Sam took the root of each term separately, but $\sqrt{9\sec^2\theta - 9} = 3\tan\theta$ by the identity $\sec^2\theta - 1 = \tan^2\theta$. The integrand becomes $3\tan^2\theta$, and the bounds are $\theta = 0$ and $\theta = \frac{\pi}{4}$. The value is $3\tan\theta - 3\theta$ there, which is $3 - \frac{3\pi}{4}$.'
+            solution_sketch: 'The root of a sum is not the sum of roots: $\sqrt{9\sec^2\theta - 9} = 3\tan\theta$ by the identity $\sec^2\theta - 1 = \tan^2\theta$. The integrand becomes $3\tan^2\theta$, and the bounds are $\theta = 0$ and $\theta = \frac{\pi}{4}$. The value is $3\tan\theta - 3\theta$ there, which is $3 - \frac{3\pi}{4}$.'
         constraints: 'sqrt(x^2 - a^2) with x = a sec(theta) on a stated domain x > a; completed squares with integer centre and radius reduce to this pattern or to a^2 + u^2; each interval or domain is stated so the root is real'
     diagnostic_exemplar:
       problem: 'Evaluate $\int \frac{dx}{(x^2 - 4x + 8)^{3/2}}$.'
@@ -1226,7 +1226,7 @@ topics:
             answer: 'A = 6; B = -5'
             answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "A"}, {"contract": {"kind": "exact"}, "name": "B"}]}
             solution_sketch: 'Clearing the denominators gives $x + 13 = A(x - 2) + B(x - 5)$. Setting $x = 5$ removes the $B$ term and leaves $A = 6$. Setting $x = 2$ removes the $A$ term and leaves $B = -5$. So $A = 6$ and $B = -5$.'
-          - problem: 'Sam splits $\frac{4x + 1}{(x - 1)(x + 2)}$ as $\frac{4}{x - 1} + \frac{1}{x + 2}$ by copying the coefficients of the numerator. Find the correct constants $A$ and $B$ in $\frac{4x + 1}{(x - 1)(x + 2)} = \frac{A}{x - 1} + \frac{B}{x + 2}$.'
+          - problem: 'Find the constants $A$ and $B$ in $\frac{4x + 1}{(x - 1)(x + 2)} = \frac{A}{x - 1} + \frac{B}{x + 2}$.'
             answer: 'A = 5/3; B = 7/3'
             answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "A"}, {"contract": {"kind": "exact"}, "name": "B"}]}
             solution_sketch: 'The numerator coefficients are not the constants $A$ and $B$. Clearing the denominators gives $4x + 1 = A(x + 2) + B(x - 1)$. Setting $x = 1$ gives $5 = 3A$, so $A = \frac{5}{3}$. Setting $x = -2$ gives $-7 = -3B$, so $B = \frac{7}{3}$.'
@@ -1234,7 +1234,7 @@ topics:
             answer: 'A = 1/3; B = -1/3'
             answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "A"}, {"contract": {"kind": "exact"}, "name": "B"}]}
             solution_sketch: 'Clearing the denominators gives $1 = A(5 - x) + B(2 - x)$. Setting $x = 2$ gives $1 = 3A$, so $A = \frac{1}{3}$. Setting $x = 5$ gives $1 = -3B$, so $B = -\frac{1}{3}$.'
-          - problem: 'Maya wants the sum $\frac{1}{1 \cdot 2} + \frac{1}{2 \cdot 3} + \frac{1}{3 \cdot 4} + \cdots + \frac{1}{99 \cdot 100}$. She notices that each term has the form $\frac{1}{n(n + 1)}$ and splits it into two fractions. Find the sum.'
+          - problem: 'Find the sum $\frac{1}{1 \cdot 2} + \frac{1}{2 \cdot 3} + \frac{1}{3 \cdot 4} + \cdots + \frac{1}{99 \cdot 100}$. Each term has the form $\frac{1}{n(n + 1)}$ and splits into two fractions.'
             answer: '99/100'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Splitting gives $\frac{1}{n(n + 1)} = \frac{1}{n} - \frac{1}{n + 1}$. In the sum, each $-\frac{1}{n + 1}$ cancels the next term $+\frac{1}{n + 1}$. Only the first and last pieces remain: $1 - \frac{1}{100} = \frac{99}{100}$.'
@@ -1275,10 +1275,10 @@ topics:
             answer: 'ln((3-x)/(2-x)) - ln(3/2)'
             answer_contract: {"kind": "function", "vars": ["x"], "domain": {"x": ["0.3", "1.7"]}}
             solution_sketch: 'Separating the variables gives $t = \int \frac{dx}{(2 - x)(3 - x)}$. Partial fractions give $\frac{1}{(2 - x)(3 - x)} = \frac{1}{2 - x} - \frac{1}{3 - x}$, so $t = -\ln(2 - x) + \ln(3 - x) + K$. Since $t = 0$ at $x = 0$, $K = -\ln\frac{3}{2}$, so $t = \ln\frac{3 - x}{2 - x} - \ln\frac{3}{2}$.'
-          - problem: 'Sam splits $\frac{1}{(x - 1)(x + 2)}$ as $\frac{1}{x - 1} + \frac{1}{x + 2}$ and integrates. What is the correct antiderivative for $x > 1$?'
+          - problem: 'What is the antiderivative of $\frac{1}{(x - 1)(x + 2)}$ for $x > 1$?'
             answer: '(1/3) ln(x-1) - (1/3) ln(x+2)'
             answer_contract: {"kind": "function", "vars": ["x"], "up_to_constant": true, "domain": {"x": ["1.5", "9"]}}
-            solution_sketch: 'Sam''s two fractions add to $\frac{2x + 1}{(x - 1)(x + 2)}$, not $\frac{1}{(x - 1)(x + 2)}$. The correct split is $\frac{1}{3}\cdot\frac{1}{x - 1} - \frac{1}{3}\cdot\frac{1}{x + 2}$, from $A = \frac{1}{3}$ at $x = 1$ and $B = -\frac{1}{3}$ at $x = -2$. So the antiderivative is $\frac{1}{3}\ln(x - 1) - \frac{1}{3}\ln(x + 2) + C$.'
+            solution_sketch: 'The fractions $\frac{1}{x - 1}$ and $\frac{1}{x + 2}$ add to $\frac{2x + 1}{(x - 1)(x + 2)}$, not $\frac{1}{(x - 1)(x + 2)}$. The correct split is $\frac{1}{3}\cdot\frac{1}{x - 1} - \frac{1}{3}\cdot\frac{1}{x + 2}$, from $A = \frac{1}{3}$ at $x = 1$ and $B = -\frac{1}{3}$ at $x = -2$. So the antiderivative is $\frac{1}{3}\ln(x - 1) - \frac{1}{3}\ln(x + 2) + C$.'
         constraints: "denominator = product of two distinct linear factors with integer roots; numerator degree <= 1"
       - id: kp3
         name: Definite integrals with partial fractions
@@ -1377,10 +1377,10 @@ topics:
             answer: '3 ln(x + 2) + 2/(x + 2)'
             answer_contract: {"kind": "function", "vars": ["x"], "up_to_constant": true, "domain": {"x": ["-1.6", "9.3"]}}
             solution_sketch: 'Write $\frac{3x + 4}{(x + 2)^2} = \frac{A}{x + 2} + \frac{B}{(x + 2)^2}$, so $3x + 4 = A(x + 2) + B$. Matching the $x$ coefficients gives $A = 3$, and setting $x = -2$ gives $B = -2$. Then $\int \frac{3}{x + 2}\,dx = 3\ln(x + 2)$ and $\int \frac{-2}{(x + 2)^2}\,dx = \frac{2}{x + 2}$, so the antiderivative is $3\ln(x + 2) + \frac{2}{x + 2} + C$.'
-          - problem: 'Sam writes $\frac{3x + 4}{(x - 1)^2} = \frac{3}{x - 1} + \frac{4}{(x - 1)^2}$ by copying the numerator coefficients. Find the correct constants $A$ and $B$ in $\frac{3x + 4}{(x - 1)^2} = \frac{A}{x - 1} + \frac{B}{(x - 1)^2}$.'
+          - problem: 'Find the constants $A$ and $B$ in $\frac{3x + 4}{(x - 1)^2} = \frac{A}{x - 1} + \frac{B}{(x - 1)^2}$.'
             answer: 'A = 3; B = 7'
             answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "A"}, {"contract": {"kind": "exact"}, "name": "B"}]}
-            solution_sketch: 'Write $\frac{3x + 4}{(x - 1)^2} = \frac{A}{x - 1} + \frac{B}{(x - 1)^2}$, so $3x + 4 = A(x - 1) + B$. Matching the $x$ coefficients gives $A = 3$, and setting $x = 1$ gives $B = 7$. So $A = 3$ and $B = 7$.'
+            solution_sketch: 'Write $3x + 4 = A(x - 1) + B$. Matching the $x$ coefficients gives $A = 3$, and setting $x = 1$ gives $B = 7$. So $A = 3$ and $B = 7$.'
           - problem: 'Find $\int \frac{2x + 1}{x(x + 1)^2}\,dx$ for $x > 0$.'
             answer: 'ln(x) - ln(x+1) - 1/(x+1)'
             answer_contract: {"kind": "function", "vars": ["x"], "up_to_constant": true, "domain": {"x": ["0.3", "9.3"]}}
@@ -1471,7 +1471,7 @@ topics:
             answer: '1.2417'
             answer_contract: {"kind": "approx", "decimals": 4}
             solution_sketch: 'The mass is the integral of the rate. Write $\frac{8}{t(t^2 + 4)} = \frac{2}{t} - \frac{2t}{t^2 + 4}$, with antiderivative $2\ln t - \ln(t^2 + 4)$. From $t = 1$ to $t = 3$ this gives $2\ln 3 - \ln 13 + \ln 5 = \ln\frac{45}{13}$, about 1.2417 kilograms.'
-          - problem: 'Sam tries $\frac{1}{x(x^2 + 1)} = \frac{A}{x} + \frac{B}{x^2 + 1}$ and finds no constants that work. Using the correct form $\frac{A}{x} + \frac{Bx + C}{x^2 + 1}$, find $A$, $B$ and $C$.'
+          - problem: 'Find $A$, $B$ and $C$ in $\frac{1}{x(x^2 + 1)} = \frac{A}{x} + \frac{Bx + C}{x^2 + 1}$.'
             answer: 'A = 1; B = -1; C = 0'
             answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "A"}, {"contract": {"kind": "exact"}, "name": "B"}, {"contract": {"kind": "exact"}, "name": "C"}]}
             solution_sketch: 'A constant over $x^2 + 1$ cannot supply the $x$ term, so the numerator must be $Bx + C$. Clearing the denominators gives $1 = A(x^2 + 1) + (Bx + C)x$. Setting $x = 0$ gives $A = 1$. Matching the $x^2$ coefficients gives $A + B = 0$, so $B = -1$, and matching the $x$ coefficients gives $C = 0$.'
@@ -1560,10 +1560,10 @@ topics:
             answer: 'sqrt(3) - 1'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'With $t = \tan(x/2)$ the integral becomes $\int \frac{dt}{t^2} = -\frac{1}{t}$. The limits change: $x = \frac{\pi}{3}$ gives $t = \tan\frac{\pi}{6} = \frac{1}{\sqrt{3}}$, and $x = \frac{\pi}{2}$ gives $t = 1$. So the value is $-1 + \sqrt{3} = \sqrt{3} - 1$.'
-          - problem: 'Sam substitutes $t = \tan(x/2)$ and writes $dx = \frac{dt}{1 + t^2}$. The correct substitution is $dx = h(t)\,dt$. Find $h(t)$.'
+          - problem: 'The substitution $t = \tan(x/2)$ gives $dx = h(t)\,dt$. Find $h(t)$.'
             answer: '2/(1+t^2)'
             answer_contract: {"kind": "function", "vars": ["t"]}
-            solution_sketch: 'From $t = \tan(x/2)$ we get $\frac{dt}{dx} = \frac{1}{2}\sec^2\frac{x}{2} = \frac{1 + t^2}{2}$. Sam dropped the factor $\frac{1}{2}$ from the chain rule. Solving for $dx$ gives $dx = \frac{2}{1 + t^2}\,dt$, so $h(t) = \frac{2}{1 + t^2}$.'
+            solution_sketch: 'From $t = \tan(x/2)$ we get $\frac{dt}{dx} = \frac{1}{2}\sec^2\frac{x}{2} = \frac{1 + t^2}{2}$. The chain rule gives the factor $\frac{1}{2}$. Solving for $dx$ gives $dx = \frac{2}{1 + t^2}\,dt$, so $h(t) = \frac{2}{1 + t^2}$.'
           - problem: 'Find $\int \frac{dx}{1 + \cos x}$ for $-\pi < x < \pi$.'
             answer: 'tan(x/2)'
             answer_contract: {"kind": "function", "vars": ["x"], "up_to_constant": true, "domain": {"x": ["-1.3", "1.4"]}}
@@ -1834,10 +1834,10 @@ topics:
             answer: '8'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The antiderivative is $\int x^{-3/4}\,dx=4x^{1/4}$. Then $\lim_{a\to0^+}\left[4x^{1/4}\right]_a^{16}=4\cdot2-0=8$. The integral converges to $8$.'
-          - problem: 'Sam evaluates $\int_0^1 x^{-1/3}\,dx$ by writing the antiderivative as $x^{2/3}$, and gets $1$. What is the correct value?'
+          - problem: 'What is the value of $\int_0^1 x^{-1/3}\,dx$?'
             answer: '3/2'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'Sam raised the exponent but did not divide by the new exponent $\frac23$. The correct antiderivative is $\frac32x^{2/3}$, and $\lim_{a\to0^+}\left[\frac32x^{2/3}\right]_a^1=\frac32$. The value is $\frac32$.'
+            solution_sketch: 'The antiderivative needs division by the new exponent $\frac23$. It is $\frac32x^{2/3}$, and $\lim_{a\to0^+}\left[\frac32x^{2/3}\right]_a^1=\frac32$. The value is $\frac32$.'
           - problem: 'Evaluate $\int_2^6 \frac{dx}{\sqrt{x-2}}$.'
             answer: '4'
             answer_contract: {"kind":"exact"}
@@ -1871,10 +1871,10 @@ topics:
             answer: '4*sqrt(2)'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The integrand is undefined at $x=9$, and an antiderivative is $-2\sqrt{9-x}$. Then $\lim_{b\to9^-}\left[-2\sqrt{9-x}\right]_1^b=0+2\sqrt{8}=4\sqrt{2}$. The integral converges to $4\sqrt{2}$.'
-          - problem: 'Sam evaluates $\int_0^2 \frac{dx}{\sqrt{2-x}}$ with the antiderivative $2\sqrt{2-x}$ and gets $-2\sqrt{2}$, which is negative although the integrand is positive. What is the correct value?'
+          - problem: 'What is the value of $\int_0^2 \frac{dx}{\sqrt{2-x}}$?'
             answer: '2*sqrt(2)'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'By the chain rule the derivative of $2\sqrt{2-x}$ is $-\frac{1}{\sqrt{2-x}}$, so the correct antiderivative is $-2\sqrt{2-x}$. Then $\lim_{b\to2^-}\left[-2\sqrt{2-x}\right]_0^b=0+2\sqrt2$. The value is $2\sqrt{2}$.'
+            solution_sketch: 'By the chain rule the derivative of $2\sqrt{2-x}$ is $-\frac{1}{\sqrt{2-x}}$, so the antiderivative is $-2\sqrt{2-x}$. Then $\lim_{b\to2^-}\left[-2\sqrt{2-x}\right]_0^b=0+2\sqrt2$. The value is $2\sqrt{2}$.'
           - problem: 'Evaluate $\int_0^1 \frac{dx}{(1-x)^{3/4}}$.'
             answer: '4'
             answer_contract: {"kind":"exact"}
@@ -1888,7 +1888,7 @@ topics:
             answer: '9'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The integrand is undefined at $x=0$, which lies inside the interval, so split there. Each piece uses $\int x^{-2/3}\,dx=3x^{1/3}$: on $[-1,0]$ the limit gives $3\cdot1=3$, and on $[0,8]$ it gives $3\cdot2=6$. The sum is $3+6=9$.'
-          - problem: 'Sam applies the Fundamental Theorem of Calculus directly to $\int_{-1}^{1} \frac{dx}{x^2}$ and gets $-2$. Does this integral converge or diverge?'
+          - problem: 'Applying the Fundamental Theorem of Calculus directly to $\int_{-1}^{1} \frac{dx}{x^2}$ gives $-2$. Does this integral converge or diverge?'
             answer: 'diverges'
             answer_contract: {"kind":"label","options":[["diverges","it diverges","divergent","diverge","does not converge","doesn't converge","diverges to infinity","infinite"],["converges","it converges","convergent","converge","finite","the integral converges","converges to a finite value","it is convergent"]]}
             solution_sketch: 'The integrand is undefined at $x=0$, inside the interval, so the Fundamental Theorem cannot be used across it. Split at $0$: $\int_0^1 x^{-2}\,dx=\lim_{a\to0^+}\left(\frac1a-1\right)$ is infinite. One divergent half makes the whole integral diverge, and the value $-2$ is meaningless for a positive integrand.'
@@ -1980,7 +1980,7 @@ topics:
             answer: '3/4'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The total is $\int_1^{\infty}20t^{-3}\,dt=\left[-10t^{-2}\right]_1^{\infty}=10$. By the end of day $2$ the amount is $\int_1^2 20t^{-3}\,dt=10-\frac{10}{4}=7.5$. The fraction is $7.5\div10=\frac34$.'
-          - problem: 'Sam checks $\int_0^1 \frac{dx}{x^2}$ with the rule that $\int_1^{\infty}\frac{dx}{x^p}$ converges when $p>1$, and decides that it converges. Is Sam right? Does the integral converge or diverge?'
+          - problem: 'Does the integral $\int_0^1 \frac{dx}{x^2}$ converge or diverge?'
             answer: 'diverges'
             answer_contract: {"kind":"label","options":[["diverges","it diverges","divergent","diverge","does not converge","doesn't converge","diverges to infinity","infinite"],["converges","it converges","convergent","converge","finite","the integral converges","converges to a finite value","it is convergent"]]}
             solution_sketch: 'The rule with $p>1$ belongs to the interval $[1,\infty)$. On $[0,1]$ the integral converges only for $p<1$, and here $p=2$. In fact $\int_a^1 x^{-2}\,dx=\frac1a-1$ grows without bound, so the integral diverges.'
@@ -2127,7 +2127,7 @@ topics:
             answer: 'trigonometric integrals'
             answer_contract: {"kind":"label","options":[["u-substitution","substitution","u substitution","u-sub"],["integration by parts","by parts","parts","integrate by parts"],["partial fractions","partial fraction","partial fraction decomposition"],["trigonometric substitution","trig substitution","trig sub","trigonometric sub"],["trigonometric integrals","trigonometric integral","trig integrals","trig integral","trig identities","trigonometric identities","trig identity","powers of trig functions"]]}
             solution_sketch: 'The integrand is a product of even powers of sine and cosine. No inner function has its derivative present, and there is no radical or fraction. Write $\sin x\cos x=\frac12\sin 2x$ and then a half-angle identity, which is the method of trigonometric integrals.'
-          - problem: 'Sam tries integration by parts on $\int_0^3 \frac{x}{x^2+9}\,dx$, and the integrals get harder at each step. What is the value of the integral?'
+          - problem: 'What is the value of $\int_0^3 \frac{x}{x^2+9}\,dx$?'
             answer: 'ln(2)/2'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The derivative of $x^2+9$ is $2x$, which is present up to the constant $2$, so substitution is the better technique. With $u=x^2+9$ the limits become $9$ and $18$, and $\frac12\int_9^{18}\frac{du}{u}=\frac12\ln\frac{18}{9}=\frac12\ln2$.'

@@ -48,7 +48,7 @@ topics:
             answer: '-6 R7'
             answer_contract: {"kind":"quotient_remainder","divisor":9}
             solution_sketch: 'The quotient is $\lfloor -47/9 \rfloor = -6$ because $9 \cdot (-6) = -54 \le -47 < -45 = 9 \cdot (-5)$. The remainder is $r = -47 - (-54) = 7$, and $0 \le 7 < 9$.'
-          - problem: 'Sam divides $-100$ by $7$ and writes $-100 = 7 \cdot (-14) + (-2)$. A remainder cannot be negative. What are the correct quotient and remainder, with $0 \le r < 7$?'
+          - problem: 'Divide $-100$ by $7$. What are the quotient and the remainder, with $0 \le r < 7$?'
             answer: '-15 R5'
             answer_contract: {"kind":"quotient_remainder","divisor":7}
             solution_sketch: 'The remainder must satisfy $0 \le r < 7$, so move down one more multiple of $7$. Then $7 \cdot (-15) = -105 \le -100$, so $q = -15$ and $r = -100 + 105 = 5$.'
@@ -184,10 +184,10 @@ topics:
             answer: '595'
             answer_contract: {"kind":"unit","quantity":"time","unit":"s","allow_omitted":true}
             solution_sketch: 'The bells ring together at the first time that is a multiple of both $85$ and $119$, which is $\mathrm{lcm}(85, 119)$. Now $119 = 1 \cdot 85 + 34$, $85 = 2 \cdot 34 + 17$, $34 = 2 \cdot 17 + 0$, so $\gcd = 17$ and $\mathrm{lcm} = 85 \cdot 119 / 17 = 595$. They next ring together after $595$ seconds.'
-          - problem: 'Sam says that $\mathrm{lcm}(34, 48) = 1632$. What is the correct value?'
+          - problem: 'What is $\mathrm{lcm}(34, 48)$?'
             answer: '816'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'Sam multiplied $34$ by $48$ and forgot to divide by the gcd. Now $48 = 1 \cdot 34 + 14$, $34 = 2 \cdot 14 + 6$, $14 = 2 \cdot 6 + 2$, $6 = 3 \cdot 2 + 0$, so $\gcd(34, 48) = 2$. The correct value is $1632 / 2 = 816$.'
+            solution_sketch: 'The product $34 \cdot 48 = 1632$ must be divided by the gcd. Now $48 = 1 \cdot 34 + 14$, $34 = 2 \cdot 14 + 6$, $14 = 2 \cdot 6 + 2$, $6 = 3 \cdot 2 + 0$, so $\gcd(34, 48) = 2$. The correct value is $1632 / 2 = 816$.'
           - problem: 'Two positive integers have greatest common divisor $12$ and least common multiple $720$. One of them is $48$. What is the other?'
             answer: '180'
             answer_contract: {"kind":"exact"}
@@ -298,10 +298,10 @@ topics:
             answer: '24'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The remainder $18$ means $90 = mq + 18$, so $m$ divides $90 - 18 = 72$, and $m > 18$ because the remainder is less than $m$. The divisors of $72$ are $1, 2, 3, 4, 6, 8, 9, 12, 18, 24, 36, 72$, and only $24$ lies in the range $18 < m \le 26$. Check: $90 = 24 \cdot 3 + 18$.'
-          - problem: 'Sam says that $-20 \bmod 6 = -2$, because $20 = 3 \cdot 6 + 2$. What is the correct least nonnegative residue of $-20$ modulo $6$?'
+          - problem: 'What is the least nonnegative residue of $-20$ modulo $6$?'
             answer: '4'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'Sam kept the negative sign on the remainder, but a residue must lie in $0$ to $5$. Adding $4 \cdot 6 = 24$ gives $-20 + 24 = 4$, and $-20 = 6 \cdot (-4) + 4$. So the residue is $4$.'
+            solution_sketch: 'A residue must lie in $0$ to $5$, so the value $-2$ is not a residue. Adding $4 \cdot 6 = 24$ gives $-20 + 24 = 4$, and $-20 = 6 \cdot (-4) + 4$. So the residue is $4$.'
         constraints: 'moduli 2-26; include negative arguments; answers are least nonnegative residues'
       - id: kp2
         name: 'Adding and multiplying residues'
@@ -331,10 +331,10 @@ topics:
             answer: '2'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The last digit is the remainder modulo $10$. Since $1234 \equiv 4$ and $5678 \equiv 8 \pmod{10}$, the product is congruent to $4 \cdot 8 = 32$. So the last digit is $2$.'
-          - problem: 'Maya reduces $19 \cdot 25$ modulo $7$ by adding the residues: $19 \equiv 5$ and $25 \equiv 4$, so she gets $5 + 4 = 9 \equiv 2$. What is the correct remainder of $19 \cdot 25$ on division by $7$?'
+          - problem: 'What is the remainder of $19 \cdot 25$ on division by $7$? Use $19 \equiv 5$ and $25 \equiv 4$.'
             answer: '6'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'Maya added the residues, but a product needs the product of the residues. So $19 \cdot 25 \equiv 5 \cdot 4 = 20 \pmod 7$, and $20 = 2 \cdot 7 + 6$. The correct remainder is $6$.'
+            solution_sketch: 'A product needs the product of the residues, not their sum. So $19 \cdot 25 \equiv 5 \cdot 4 = 20 \pmod 7$, and $20 = 2 \cdot 7 + 6$. The correct remainder is $6$.'
           - problem: 'Find the least nonnegative residue of $4 - 6 \cdot 9$ modulo $11$.'
             answer: '5'
             answer_contract: {"kind":"exact"}
@@ -437,7 +437,7 @@ topics:
             answer: '4'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'Here $\gcd(8, 12) = 4$ divides $20$, so the congruence is solvable. A solvable congruence has exactly $\gcd(8, 12) = 4$ solutions modulo $12$: they are $x = 1, 4, 7, 10$.'
-          - problem: 'Sam claims that $6x \equiv 9 \pmod{15}$ has no solution because $6$ does not divide $9$. How many solutions modulo $15$ does it actually have?'
+          - problem: 'How many solutions modulo $15$ does $6x \equiv 9 \pmod{15}$ have?'
             answer: '3'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The test is whether $\gcd(6, 15) = 3$ divides $9$, not whether $6$ does. Since $3$ divides $9$, the congruence is solvable with exactly $3$ solutions modulo $15$, namely $x = 4, 9, 14$.'
@@ -511,7 +511,7 @@ topics:
             answer: '3'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'Subtract $4$ from both sides: $3x \equiv -2 \equiv 9 \pmod{11}$. Since $\gcd(3, 11) = 1$ and $3 \cdot 4 = 12 \equiv 1$, the inverse of $3$ is $4$, so $x \equiv 4 \cdot 9 = 36 \equiv 3$. Check: $3 \cdot 3 + 4 = 13 \equiv 2 \pmod{11}$.'
-          - problem: 'Maya solves $3x \equiv 5 \pmod 7$ and writes $x \equiv 5/3$. A fraction is not a residue. What is the least nonnegative solution?'
+          - problem: 'What is the least nonnegative solution of $3x \equiv 5 \pmod 7$? A fraction is not a residue.'
             answer: '4'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'Division by $3$ means multiplication by the inverse of $3$ modulo $7$. Since $3 \cdot 5 = 15 \equiv 1$, the inverse is $5$, so $x \equiv 5 \cdot 5 = 25 \equiv 4 \pmod 7$. Check: $3 \cdot 4 = 12 \equiv 5 \pmod 7$.'
@@ -574,10 +574,10 @@ topics:
             answer: '27, 115'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'Write $x = 8k + 3$; then $8k + 3 \equiv 5 \pmod{11}$ gives $8k \equiv 2 \pmod{11}$. Since $8 \cdot 7 = 56 \equiv 1$, $k \equiv 14 \equiv 3 \pmod{11}$, so the first solution is $x = 27$. Solutions repeat every $88$, which gives $27$ and $115$; the next one, $203$, is above $200$.'
-          - problem: 'Sam claims that $x = 18$ solves both $x \equiv 2 \pmod 4$ and $x \equiv 3 \pmod 7$. What is the least positive solution of the system?'
+          - problem: 'What is the least positive solution of the system $x \equiv 2 \pmod 4$ and $x \equiv 3 \pmod 7$?'
             answer: '10'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'Sam checked only the first congruence: $18 = 2 \cdot 7 + 4$ leaves remainder $4$ on division by $7$, not $3$. Write $x = 7k + 3$, which gives $3, 10, 17, \dots$. Since $10 \equiv 2 \pmod 4$, the least positive solution is $10$.'
+            solution_sketch: 'The number $18$ fits only the first congruence: $18 = 2 \cdot 7 + 4$ leaves remainder $4$ on division by $7$, not $3$. Write $x = 7k + 3$, which gives $3, 10, 17, \dots$. Since $10 \equiv 2 \pmod 4$, the least positive solution is $10$.'
           - problem: 'How many integers $x$ with $1 \le x \le 500$ satisfy both $x \equiv 2 \pmod 7$ and $x \equiv 5 \pmod 9$?'
             answer: '8'
             answer_contract: {"kind":"exact"}
@@ -691,10 +691,10 @@ topics:
             answer: '53'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'By Fermat $2^{12} \equiv 1 \pmod{13}$, and checking small powers gives $2^5 = 32 \equiv 6$. The powers of $2$ repeat with period $12$, so $2^E \equiv 6$ exactly when $E \equiv 5 \pmod{12}$. The exponents $5, 17, 29, 41, 53, \dots$ include $53$ as the first one that is at least $50$.'
-          - problem: 'Sam finds $3^{100} \bmod 7$ by writing $3^{100} \equiv 3^{100 \bmod 7} = 3^2 = 9 \equiv 2$. What is the correct remainder of $3^{100}$ on division by $7$?'
+          - problem: 'What is the remainder of $3^{100}$ on division by $7$?'
             answer: '4'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'Sam reduced the exponent modulo $7$, but Fermat reduces it modulo $p - 1 = 6$. Since $100 = 6 \cdot 16 + 4$, $3^{100} \equiv 3^4 = 81 = 11 \cdot 7 + 4$, so the correct remainder is $4$.'
+            solution_sketch: 'Fermat reduces the exponent modulo $p - 1 = 6$, not modulo $7$. Since $100 = 6 \cdot 16 + 4$, $3^{100} \equiv 3^4 = 81 = 11 \cdot 7 + 4$, so the remainder is $4$.'
           - problem: 'Is $7^{12} \equiv 1 \pmod{13}$?'
             answer: 'yes'
             answer_contract: {"kind":"label","options":[["yes","it is","true","yes it is","it is true","yes, it is"],["no","it is not","false","no it is not","it is false","no, it is not"]]}
@@ -777,7 +777,7 @@ topics:
             answer: '9'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The $51$st term is $13^{50}$, and its last digit is its remainder modulo $10$. Since $\gcd(13, 10) = 1$ and $\varphi(10) = 4$, and $50 = 4 \cdot 12 + 2$, $13^{50} \equiv 13^2 = 169 \equiv 9 \pmod{10}$.'
-          - problem: 'Sam says that $10^{40} \equiv 1 \pmod{100}$ because $\varphi(100) = 40$. What is the remainder when $10^{40}$ is divided by $100$?'
+          - problem: 'What is the remainder when $10^{40}$ is divided by $100$? Note that $\varphi(100) = 40$.'
             answer: '0'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'Euler''s theorem needs $\gcd(10, 100) = 1$, but here the gcd is $10$, so it does not apply. Since $10^2 = 100$, the number $10^{40}$ is a multiple of $100$, and the remainder is $0$.'

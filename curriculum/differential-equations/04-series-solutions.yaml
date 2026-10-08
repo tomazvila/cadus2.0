@@ -66,10 +66,10 @@ topics:
             answer: '1/24'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The power $x^{n-3}$ equals $x^4$ when $n = 7$. The coefficient is $7 \cdot 6 \cdot 5 \cdot a_7 = \frac{210}{5040}$. This equals $\frac{1}{24}$.'
-          - problem: 'Sam shifts $\sum_{n=4}^{\infty} n(n-1)\,a_n x^{n-2}$ with $k = n - 2$ and keeps the lower limit $4$, writing $\sum_{k=4}^{\infty} (k+2)(k+1)\,a_{k+2}\,x^k$. What lower limit is correct?'
+          - problem: 'Shift $\sum_{n=4}^{\infty} n(n-1)\,a_n x^{n-2}$ with $k = n - 2$ to the form $\sum_{k=m}^{\infty} (k+2)(k+1)\,a_{k+2}\,x^k$. What is the lower limit $m$?'
             answer: '2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The lower limit must change with the index. The first term is $n = 4$, and $k = n - 2$ gives $k = 4 - 2 = 2$. Sam lost the terms $k = 2$ and $k = 3$ by keeping the old limit, so the correct limit is $2$.'
+            solution_sketch: 'The lower limit must change with the index. The first term is $n = 4$, and $k = n - 2$ gives $k = 4 - 2 = 2$. The old limit $4$ would lose the terms $k = 2$ and $k = 3$, so the limit is $2$.'
         constraints: 'index shifts by 1, 2 or 3; coefficients stay symbolic a_n or are given as a_n = 1/n! or a_n = n; when combining, series must already share the same starting index'
       - id: kp2
         name: First-order equations by power series
@@ -116,10 +116,10 @@ topics:
             answer: '4e^(x^2/2)'
             answer_contract: {"kind": "function", "vars": ["x"]}
             solution_sketch: 'Matching coefficients gives $(n+1)\,a_{n+1} = a_{n-1}$, and $a_1 = 0$. So the odd coefficients vanish and $a_{2m} = \frac{4}{2^m\,m!}$. This is the Maclaurin series of $4e^{x^2/2}$.'
-          - problem: 'Sam solves $y'' = 3y$ with $y(0) = 1$ by power series. He finds $a_1 = 3$ and then writes $a_2 = 3a_1 = 9$. What is the correct value of $a_2$?'
+          - problem: 'Solve $y'' = 3y$ with $y(0) = 1$ by power series. The first coefficient is $a_1 = 3$. What is the value of $a_2$?'
             answer: '9/2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The recurrence is $(n+1)\,a_{n+1} = 3\,a_n$, so $a_{n+1}$ is $3\,a_n$ divided by $n + 1$. For $n = 1$ the divisor is $2$, so $a_2 = \frac{3 \cdot 3}{2} = \frac{9}{2}$. Sam forgot to divide by $2$.'
+            solution_sketch: 'The recurrence is $(n+1)\,a_{n+1} = 3\,a_n$, so $a_{n+1}$ is $3\,a_n$ divided by $n + 1$. For $n = 1$ the divisor is $2$, so $a_2 = \frac{3 \cdot 3}{2} = \frac{9}{2}$. The divisor $2$ is part of the recurrence.'
         constraints: 'equations y'' = cy or y'' = cxy with small integer or simple rational c; solutions are standard Maclaurin series (e^{cx}, e^{x^2}-type); contexts are growth and decay'
       - id: kp3
         name: Deriving the recurrence for second-order equations
@@ -153,10 +153,10 @@ topics:
             answer: '3/2'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The recurrence is $(k+2)(k+1)\,a_{k+2} = 6\,a_k$. With $a_0 = 1$ we get $a_2 = \frac{6}{2} = 3$. Then $a_4 = \frac{6 \cdot 3}{12} = \frac{3}{2}$.'
-          - problem: 'Sam writes the recurrence of $y'''' + 4y = 0$ as $(k+2)\,a_{k+2} = -4\,a_k$. With $a_0 = 1$ and $a_1 = 0$, what is the correct value of $a_4$?'
+          - problem: 'Find the recurrence of $y'''' + 4y = 0$ for the coefficients $a_k$ of a power series. With $a_0 = 1$ and $a_1 = 0$, what is the value of $a_4$?'
             answer: '2/3'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The correct recurrence is $(k+2)(k+1)\,a_{k+2} = -4\,a_k$, and Sam dropped the factor $k + 1$. With $a_0 = 1$ we get $a_2 = \frac{-4}{2} = -2$. Then $a_4 = \frac{-4 \cdot (-2)}{12} = \frac{2}{3}$.'
+            solution_sketch: 'The recurrence is $(k+2)(k+1)\,a_{k+2} = -4\,a_k$. The factor $k + 1$ comes from the second derivative. With $a_0 = 1$ we get $a_2 = \frac{-4}{2} = -2$. Then $a_4 = \frac{-4 \cdot (-2)}{12} = \frac{2}{3}$.'
         constraints: 'coefficients constant, a single factor x, or the form y'''' - 2xy'' + cy = 0; derive the recurrence and iterate at most to a_4'
     diagnostic_exemplar:
       problem: "Substitute $y = \\sum_{n=0}^{\\infty} a_n x^n$ into $y'' + y = 0$ and derive the recurrence relation for the coefficients."
@@ -225,10 +225,10 @@ topics:
             answer: '1/2 - t^2 + t^4/3'
             answer_contract: {"kind": "function", "vars": ["t"]}
             solution_sketch: 'Released from rest means $\theta''(0) = 0$, so $a_0 = \frac{1}{2}$ and $a_1 = 0$. The recurrence is $a_{k+2} = \frac{-4\,a_k}{(k+2)(k+1)}$, so $a_2 = \frac{-4 \cdot \frac{1}{2}}{2} = -1$ and $a_4 = \frac{-4 \cdot (-1)}{12} = \frac{1}{3}$. The polynomial is $\frac{1}{2} - t^2 + \frac{t^4}{3}$.'
-          - problem: 'Sam solves $y'''' + 9y = 0$ with $y(0) = 1$ and $y''(0) = 0$ by power series and writes $a_2 = -9a_0 = -9$. What is the correct value of $a_2$?'
+          - problem: 'Solve $y'''' + 9y = 0$ with $y(0) = 1$ and $y''(0) = 0$ by power series. What is the value of $a_2$?'
             answer: '-9/2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The recurrence is $(k+2)(k+1)\,a_{k+2} = -9\,a_k$. For $k = 0$ this reads $2a_2 = -9a_0$, so $a_2$ is $-9a_0$ divided by $2$. Hence $a_2 = -\frac{9}{2}$, and Sam forgot to divide.'
+            solution_sketch: 'The recurrence is $(k+2)(k+1)\,a_{k+2} = -9\,a_k$. For $k = 0$ this reads $2a_2 = -9a_0$, so $a_2$ is $-9a_0$ divided by $2$. Hence $a_2 = -\frac{9}{2}$.'
         constraints: 'constant coefficients with small integer values; ask for a Taylor polynomial of low degree or for one coefficient'
       - id: kp2
         name: The two basic solutions
@@ -266,7 +266,7 @@ topics:
             answer: '8t - 64t^3/3 + 256t^5/15'
             answer_contract: {"kind": "function", "vars": ["t"]}
             solution_sketch: 'Here $a_0 = 0$ and $a_1 = 8$. The recurrence is $(k+2)(k+1)\,a_{k+2} = -16\,a_k$, so $a_3 = \frac{-16 \cdot 8}{6} = -\frac{64}{3}$ and $a_5 = \frac{-16 \cdot (-64/3)}{20} = \frac{256}{15}$. The polynomial is $8t - \frac{64t^3}{3} + \frac{256t^5}{15}$.'
-          - problem: 'Sam says that the odd solution $y_2$ of $y'''' - y = 0$ begins $y_2 = 1 + \frac{x^2}{2} + \cdots$. What is the correct Taylor polynomial of degree $5$ of $y_2$?'
+          - problem: 'The odd solution $y_2$ of $y'''' - y = 0$ has $y_2(0) = 0$ and $y_2''(0) = 1$. What is its Taylor polynomial of degree $5$?'
             answer: 'x + x^3/6 + x^5/120'
             answer_contract: {"kind": "function", "vars": ["x"]}
             solution_sketch: 'The odd solution has $y_2(0) = 0$ and $y_2''(0) = 1$, so $a_0 = 0$ and no even power appears. The recurrence is $a_{k+2} = \frac{a_k}{(k+2)(k+1)}$, so $a_3 = \frac{1}{6}$ and $a_5 = \frac{1}{120}$. The polynomial is $x + \frac{x^3}{6} + \frac{x^5}{120}$.'
@@ -311,7 +311,7 @@ topics:
             answer: '-1/6'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Matching the coefficients of $x^k$ gives $a_{k+2} = \frac{2k - 2}{(k+2)(k+1)}\,a_k$. With $a_0 = 1$ we get $a_2 = -1$. Then $a_4 = \frac{2}{12}\,a_2 = -\frac{1}{6}$.'
-          - problem: 'Sam says that a power series about $x = 0$ for $(x^2 + 9)\,y'''' + y = 0$ is guaranteed to converge for $|x| < 9$, because $9$ is the constant term. What radius is actually guaranteed?'
+          - problem: 'A power series about $x = 0$ solves $(x^2 + 9)\,y'''' + y = 0$. What radius of convergence does the theory guarantee?'
             answer: '3'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The radius is the distance from $0$ to the nearest singular point, not a coefficient. Setting $x^2 + 9 = 0$ gives $x = 3i$ and $x = -3i$. Both are at distance $3$ from $0$, so the guaranteed radius is $3$.'

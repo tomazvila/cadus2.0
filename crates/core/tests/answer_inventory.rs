@@ -84,14 +84,15 @@ const LIVE_SHAPE_COUNTS: [(&str, usize); 16] = [
     ("coordinates", 222),
     ("decimal", 233),
     ("equation_or_inequality", 435),
-    ("expression", 1_073),
+    // 2026-10-08, story framing removed (about 1,980 items, 7 duplicates renumbered): expression 1,074 (was 1,073).
+    ("expression", 1_074),
     ("fraction", 456),
-    ("integer", 2_599),
+    ("integer", 2_604),
     ("interval", 30),
     ("mixed_number", 21),
     ("ordered_list", 293),
     ("other", 12),
-    ("prose", 232),
+    ("prose", 226),
     ("quotient_remainder", 32),
     ("radical", 208),
     ("rational_exponent", 14),
@@ -103,17 +104,19 @@ const LIVE_DISTINCT_DECIDABLE: [(usize, usize); 12] = [
     (1, 2),
     (2, 3),
     (3, 3),
-    (4, 68),
+    // 2026-10-08, story framing removed: (4, 67) (was 68), (6, 88) (was 90), (7, 277) (was 275), (8, 251) (was 250).
+    (4, 67),
     (5, 52),
-    (6, 90),
-    (7, 275),
-    (8, 250),
+    (6, 88),
+    (7, 277),
+    (8, 251),
     (9, 45),
     (10, 9),
     (11, 1),
 ];
 const LIVE_VERDICT_COUNTS: [(&str, usize); 8] = [
-    ("decided", 5_520),
+    // 2026-10-08, story framing removed: decided 5,526 (was 5,520); "a name that is not a function or variable" 229 (was 235); integer 2,604 (was 2,599); prose 226 (was 232).
+    ("decided", 5_526),
     (
         "undecidable(a chained inequality needs one variable in the middle)",
         4,
@@ -126,7 +129,7 @@ const LIVE_VERDICT_COUNTS: [(&str, usize); 8] = [
     ),
     (
         "undecidable(a name that is not a function or variable)",
-        235,
+        229,
     ),
     ("undecidable(a symbol where a value belongs)", 2),
     ("undecidable(an inequality with no bare variable)", 12),

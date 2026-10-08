@@ -19,7 +19,7 @@
 
 use num_bigint::BigInt;
 use num_rational::BigRational;
-use num_traits::Zero;
+use num_traits::{Signed, Zero};
 
 use crate::answer::canon::canon;
 use crate::answer::parse::parse;
@@ -77,15 +77,69 @@ struct Tok {
     math: bool,
 }
 
-/// Whether the rung states the answer.
+/// Whether the rung states the answer, read alone.
+#[cfg(test)]
 pub(crate) fn names_answer(rung: &str, answer: &str) -> bool {
+    names_answer_in(rung, answer, &[answer], true)
+}
+
+/// The first served answer the rung states, or [`None`].
+///
+/// A rung that names two or more distinct answers of the set lists the choices
+/// and states none of them, so it names nothing.
+pub(crate) fn names_any_answer<'a>(rung: &str, answers: &[&'a str]) -> Option<&'a str> {
+    let mut seen: Vec<String> = Vec::new();
+    for answer in answers {
+        let key = choice_key(answer);
+        if !seen.contains(&key) && names_answer_in(rung, answer, answers, false) {
+            seen.push(key);
+        }
+    }
+    // A short answer written inside a longer named answer (`1` inside `(1, 3)`)
+    // is a part of that answer, not a second choice.
+    let separate = seen
+        .iter()
+        .filter(|key| {
+            !seen
+                .iter()
+                .any(|other| other != *key && other.contains(key.as_str()))
+        })
+        .count();
+    if separate >= 2 {
+        return None;
+    }
+    answers
+        .iter()
+        .find(|answer| names_answer_in(rung, answer, answers, true))
+        .copied()
+}
+
+/// The identity of a choice: the value of a number or a number word, else the
+/// lowercase text. `0` and `zero` are one choice.
+fn choice_key(answer: &str) -> String {
+    let answer = answer.trim();
+    parse_rational(answer)
+        .or_else(|| number_word(answer))
+        .map_or_else(|| answer.to_lowercase(), |value| value.to_string())
+}
+
+/// `refined` is false for the plain token match that counts the choices of an
+/// enumeration. `all` is every answer the knowledge point serves.
+fn names_answer_in(rung: &str, answer: &str, all: &[&str], refined: bool) -> bool {
     let answer = answer.trim();
     if answer.is_empty() {
         return false;
     }
     let toks = tokenize(rung);
     if let Some(value) = parse_rational(answer) {
-        return names_number(&toks, &value, answer.contains('/'));
+        let only = all
+            .iter()
+            .all(|other| parse_rational(other.trim()).is_some_and(|v| v == value));
+        let ctx = Ctx {
+            refined,
+            all_same: only,
+        };
+        return names_number(&toks, &value, answer.contains('/'), ctx);
     }
     let mut letters = answer.chars();
     if let (Some(only), None) = (letters.next(), letters.next())
@@ -93,25 +147,169 @@ pub(crate) fn names_answer(rung: &str, answer: &str) -> bool {
     {
         return names_letter(&toks, only);
     }
-    let wanted = without_articles(
-        tokenize(answer)
-            .into_iter()
-            .map(|tok| tok.kind)
-            .collect::<Vec<_>>(),
-    );
-    let have = without_articles(toks.iter().map(|tok| tok.kind.clone()).collect());
-    if has_run(&have, &wanted) {
-        return true;
+    if refined && VERDICTS.contains(&answer.to_lowercase().as_str()) {
+        return names_verdict(&toks, &answer.to_lowercase());
     }
     let is_phrase = answer
         .chars()
         .all(|c| c.is_alphabetic() || c == ' ' || c == '-' || c == '\'');
+    // Articles drop out of a phrase only: the `a` of `a_n` is a symbol.
+    let trim = |kinds: Vec<Kind>| {
+        if is_phrase {
+            without_articles(kinds)
+        } else {
+            kinds
+        }
+    };
+    let wanted = trim(tokenize(answer).into_iter().map(|tok| tok.kind).collect());
+    let have = trim(toks.iter().map(|tok| tok.kind.clone()).collect());
+    if has_run(&have, &wanted) {
+        return true;
+    }
     answer.chars().count() > LONG_EXPRESSION && !is_phrase && names_canonical(rung, answer)
+}
+
+/// The words that answer a yes or no item.
+const VERDICTS: [&str; 8] = [
+    "yes",
+    "no",
+    "true",
+    "false",
+    "right",
+    "wrong",
+    "correct",
+    "incorrect",
+];
+
+/// The largest whole number that names an answer only in result position.
+const SMALL_INTEGER: i64 = 12;
+
+#[derive(Clone, Copy)]
+struct Ctx {
+    refined: bool,
+    /// Every answer the knowledge point serves is the number asked for.
+    all_same: bool,
+}
+
+fn is_stop(tok: &Tok) -> bool {
+    matches!(tok.kind, Kind::Sym('.' | '?' | '!' | ';'))
+}
+
+fn word_of(tok: Option<&Tok>) -> Option<String> {
+    match tok.map(|t| &t.kind) {
+        Some(Kind::Word(w)) => Some(w.to_lowercase()),
+        _ => None,
+    }
+}
+
+/// Whether a verdict word stands as the verdict of the rung: it opens a
+/// sentence and a comma or a period follows, or it follows `answer is`, `so`,
+/// `therefore` or `the statement is` and closes its clause.
+fn names_verdict(toks: &[Tok], wanted: &str) -> bool {
+    toks.iter().enumerate().any(|(index, tok)| {
+        if word_of(Some(tok)).as_deref() != Some(wanted) {
+            return false;
+        }
+        let before = index.checked_sub(1).and_then(|i| toks.get(i));
+        let after = toks.get(index + 1);
+        let closes = after.is_none_or(|t| matches!(t.kind, Kind::Sym('.' | ',' | ';' | '!')));
+        let starts = before.is_none_or(is_stop);
+        if starts {
+            return closes;
+        }
+        let at = |back: usize| index.checked_sub(back).and_then(|i| toks.get(i));
+        let mut lead = at(1);
+        if lead.is_some_and(|t| t.kind == Kind::Sym(',')) {
+            lead = at(2);
+        }
+        let lead_word = word_of(lead);
+        let after_lead = if lead.is_some_and(|t| t.kind == Kind::Sym(',')) {
+            None
+        } else {
+            at(2)
+        };
+        let closes_clause = after.is_none_or(|t| matches!(t.kind, Kind::Sym(_)));
+        let linked = match lead_word.as_deref() {
+            Some("so" | "therefore") => true,
+            Some("is") => matches!(
+                word_of(after_lead).as_deref(),
+                Some("answer" | "statement" | "result")
+            ),
+            _ => false,
+        };
+        linked && closes_clause
+    })
+}
+
+/// Whether the number token at `index` ends an equation or a clause that
+/// states a result: `= n` in math with nothing but punctuation after it, or
+/// prose `is n`, `equals n`, `gives n`, `so n` at the end of a clause.
+/// An identity with a power on the left (`a^0 = 1`) states a general rule.
+fn result_position(toks: &[Tok], index: usize) -> bool {
+    let Some(tok) = toks.get(index) else {
+        return false;
+    };
+    let before = index.checked_sub(1).and_then(|i| toks.get(i));
+    let after = toks.get(index + 1);
+    let before_eq = before.is_some_and(|t| t.kind == Kind::Sym('='));
+    if tok.math && before_eq {
+        let ends = after.is_none_or(|t| {
+            !t.math || matches!(t.kind, Kind::Sym('.' | ',' | ';' | ':' | '!' | '?'))
+        });
+        return ends && !identity_left(toks, index - 1);
+    }
+    let ends = after.is_none_or(|t| matches!(t.kind, Kind::Sym('.' | ',' | ';' | ':' | '!' | '?')));
+    if !ends {
+        return false;
+    }
+    if before_eq {
+        return !identity_left(toks, index - 1);
+    }
+    matches!(
+        word_of(before).as_deref(),
+        Some("is" | "are" | "equals" | "gives" | "so" | "answer" | "result" | "value")
+    )
+}
+
+/// Whether the left side of the `=` at `eq` holds a power of a variable.
+fn identity_left(toks: &[Tok], eq: usize) -> bool {
+    let head = toks.get(..eq).unwrap_or(&[]);
+    let start = head
+        .iter()
+        .rposition(|t| !t.math || matches!(t.kind, Kind::Sym('=' | ',' | ';')))
+        .map_or(0, |at| at + 1);
+    let left = head.get(start..).unwrap_or(&[]);
+    left.windows(2).any(|pair| {
+        matches!(
+            (&pair[0].kind, &pair[1].kind),
+            (Kind::Word(_), Kind::Sym('^'))
+        )
+    })
+}
+
+/// Whether the token at `index` stands inside an `if` clause: an `if` opens
+/// the sentence part before it, with no comma and no `then` between.
+fn in_if_clause(toks: &[Tok], index: usize) -> bool {
+    let head = toks.get(..index).unwrap_or(&[]);
+    for tok in head.iter().rev() {
+        if is_stop(tok) || tok.kind == Kind::Sym(',') {
+            return false;
+        }
+        if let Kind::Word(w) = &tok.kind {
+            match w.to_lowercase().as_str() {
+                "if" => return true,
+                "then" => return false,
+                _ => {}
+            }
+        }
+    }
+    false
 }
 
 /// `fraction` is true for an answer written as `n/d`: only a written fraction
 /// of that value names it, because `1` does not state `4/4`.
-fn names_number(toks: &[Tok], wanted: &BigRational, fraction: bool) -> bool {
+fn names_number(toks: &[Tok], wanted: &BigRational, fraction: bool, ctx: Ctx) -> bool {
+    let small = wanted.is_integer() && wanted.numer().abs() <= BigInt::from(SMALL_INTEGER);
     for (index, tok) in toks.iter().enumerate() {
         let before = index.checked_sub(1).and_then(|i| toks.get(i));
         let after = toks.get(index + 1);
@@ -139,6 +337,15 @@ fn names_number(toks: &[Tok], wanted: &BigRational, fraction: bool) -> bool {
                     continue;
                 }
                 if value == wanted {
+                    if !ctx.refined {
+                        return true;
+                    }
+                    if in_if_clause(toks, index) && !ctx.all_same {
+                        continue;
+                    }
+                    if small && !result_position(toks, index) {
+                        continue;
+                    }
                     return true;
                 }
             }
@@ -150,6 +357,7 @@ fn names_number(toks: &[Tok], wanted: &BigRational, fraction: bool) -> bool {
                     && number_word_stands(before, after)
                     && declarative_clause(toks, index)
                     && number_word(word).is_some_and(|v| &v == wanted)
+                    && !(ctx.refined && in_if_clause(toks, index) && !ctx.all_same)
                 {
                     return true;
                 }
@@ -163,7 +371,7 @@ fn names_number(toks: &[Tok], wanted: &BigRational, fraction: bool) -> bool {
 /// Whether a number word follows a word that equates and closes its clause.
 /// `a power of ten,` and `two factor-count classes` count or measure a thing.
 fn number_word_stands(before: Option<&Tok>, after: Option<&Tok>) -> bool {
-    let closes = after.is_none_or(|t| matches!(t.kind, Kind::Sym(_)));
+    let closes = after.is_none_or(|t| matches!(t.kind, Kind::Sym(c) if c != '-'));
     let equates = before.is_some_and(|t| match &t.kind {
         Kind::Word(w) => matches!(
             w.to_lowercase().as_str(),
@@ -526,7 +734,7 @@ fn scan_digits(chars: &[char], mut at: usize) -> usize {
 
 #[cfg(test)]
 mod tests {
-    use super::names_answer;
+    use super::{names_answer, names_any_answer};
 
     fn refused(rung: &str, answer: &str) -> bool {
         names_answer(rung, answer)
@@ -578,7 +786,7 @@ mod tests {
     #[test]
     fn sentence_ending_number_is_refused() {
         assert!(refused("So the answer is 12.", "12"));
-        assert!(refused("It costs $12 in all.", "12"));
+        assert!(refused("It costs $15 in all.", "15"));
     }
 
     #[test]
@@ -652,6 +860,103 @@ mod tests {
         assert!(refused("so $x = \\frac{3}{6}$ here", "1/3 + 1/6 + 0 + 0"));
         assert!(refused("so $x = 2/4$ here", "1/3 + 1/6 + 0 + 0"));
         assert!(!refused("so $x = 3/4$ here", "1/3 + 1/6 + 0 + 0"));
+    }
+
+    fn refused_in(rung: &str, answers: &[&str]) -> bool {
+        names_any_answer(rung, answers).is_some()
+    }
+
+    #[test]
+    fn small_integer_in_a_method_or_condition_passes() {
+        assert!(!refused("Set each factor equal to $0$ and solve.", "0"));
+        assert!(!refused("Divide only when $a \\ne 0$.", "0"));
+        assert!(!refused("Recall that $a^0 = 1$ for $a \\ne 0$.", "1"));
+        assert!(!refused("So $g^{|U(n)|}=1$ by Lagrange.", "1"));
+        assert!(!refused(
+            "The order of $g$ is larger than $1$, so it equals $p$.",
+            "1"
+        ));
+        assert!(!refused("Take an element of order $2$ in the group.", "2"));
+        assert!(!refused(
+            "Compute $b-a$ and test whether it is in $H$.",
+            "1"
+        ));
+    }
+
+    #[test]
+    fn small_integer_in_result_position_is_refused() {
+        assert!(refused("So the limit is $0$.", "0"));
+        assert!(refused("Hence $x = 3$.", "3"));
+        assert!(refused("The value equals 5.", "5"));
+        assert!(refused("That gives $-1$.", "-1"));
+        assert!(refused("The answer is 12.", "12"));
+    }
+
+    #[test]
+    fn verdict_word_counts_only_in_verdict_position() {
+        assert!(!refused("There is no element with that property.", "no"));
+        assert!(!refused(
+            "If it is not in $H$, the cosets share no elements.",
+            "no"
+        ));
+        assert!(!refused(
+            "Check the right angle and the right-hand side.",
+            "right"
+        ));
+        assert!(!refused("Is the statement true or false?", "true"));
+        assert!(refused("So, yes.", "yes"));
+        assert!(refused("No, the cosets differ.", "no"));
+        assert!(refused("The answer is no.", "no"));
+        assert!(refused("Therefore false.", "false"));
+    }
+
+    #[test]
+    fn enumerated_choices_name_none() {
+        let labels = [
+            "absolutely convergent",
+            "conditionally convergent",
+            "diverges",
+        ];
+        assert!(!refused_in(
+            "Classify as absolutely convergent, conditionally convergent, or diverges.",
+            &labels
+        ));
+        assert!(refused_in("The series diverges.", &labels));
+        assert!(!refused_in("The result is 0 or 1.", &["0", "1"]));
+        assert!(refused_in("The result is 0.", &["0", "1"]));
+    }
+
+    #[test]
+    fn number_in_an_if_clause_counts_only_for_that_answer() {
+        assert!(refused_in("If the sum is 0.", &["0"]));
+        assert!(!refused_in("If the sum is 0.", &["0", "2"]));
+        assert!(!refused_in(
+            "If the discriminant is $0$ there is one root.",
+            &["2"]
+        ));
+        assert!(!refused_in(
+            "If the discriminant is $0$, count one root.",
+            &["0", "2"]
+        ));
+        assert!(refused_in("The result is $0$.", &["0", "2"]));
+    }
+
+    #[test]
+    fn yes_no_item_and_label_examples() {
+        assert!(!refused_in(
+            "Set each factor equal to $0$.",
+            &["0", "1", "2"]
+        ));
+        assert!(refused_in("So, yes.", &["yes"]));
+        assert!(!refused_in(
+            "A class of size $1$ lies in the center.",
+            &["1"]
+        ));
+    }
+
+    #[test]
+    fn an_answer_inside_a_longer_named_answer_is_not_a_second_choice() {
+        assert!(refused_in("The answer is (1, 3).", &["(1, 3)", "1", "no"]));
     }
 
     #[test]

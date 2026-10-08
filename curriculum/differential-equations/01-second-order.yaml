@@ -49,10 +49,10 @@ topics:
             answer: 'r^2+8r+12'
             answer_contract: {"kind": "function", "vars": ["r"]}
             solution_sketch: 'Move every term to the left side to get $y''''+8y''+12y=0$. Substituting $y=e^{rt}$ then gives the polynomial $r^2+8r+12$.'
-          - problem: 'Sam substitutes $y=e^{rx}$ into $y''''-4y=0$ and gets the polynomial $r^2-4r$. What is the correct polynomial?'
+          - problem: 'Substitute $y=e^{rx}$ into $y''''-4y=0$. What is the resulting polynomial in $r$?'
             answer: 'r^2-4'
             answer_contract: {"kind": "function", "vars": ["r"]}
-            solution_sketch: 'Sam used the factor $r$ for $y$, but $y=e^{rx}$ gives the factor $1$ for $y$. The equation has no $y''$ term, so the polynomial is $r^2-4$.'
+            solution_sketch: 'The function $y=e^{rx}$ gives the factor $1$ for $y$. The equation has no $y''$ term, so the polynomial is $r^2-4$.'
           - problem: 'What is the characteristic polynomial of $y''''+7y''=0$?'
             answer: 'r^2+7r'
             answer_contract: {"kind": "function", "vars": ["r"]}
@@ -382,7 +382,7 @@ topics:
             answer: '-5e^x'
             answer_contract: {"kind": "function", "vars": ["x"]}
             solution_sketch: 'Here $y_1''=3e^{3x}$ and $y_2''=-2e^{-2x}$. Then $W=e^{3x}(-2e^{-2x})-3e^{3x}e^{-2x}=-2e^x-3e^x=-5e^x$. So the Wronskian is $-5e^x$, which is never zero.'
-          - problem: 'Sam says that $\sin 2x$ and $2\sin x\cos x$ form a fundamental set for $y''''+4y=0$. What is the Wronskian of these two functions?'
+          - problem: 'What is the Wronskian of $\sin 2x$ and $2\sin x\cos x$?'
             answer: '0'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'By the double-angle formula $2\sin x\cos x=\sin 2x$, so the two functions are equal. Their Wronskian is $0$, so they are not a fundamental set.'
@@ -435,7 +435,7 @@ topics:
             answer: '-e^(-t)+2e^(-3t)'
             answer_contract: {"kind": "function", "vars": ["t"]}
             solution_sketch: 'Write $y=Ae^{-t}+Be^{-3t}$. The conditions give $A+B=1$ and $-A-3B=-5$, so $B=2$ and $A=-1$.'
-          - problem: 'A forced circuit obeys $y''''+4y=10$. Sam finds two solutions $y_1$ and $y_2$ and says that $y_1+y_2$ is also a solution. What does $y''''+4y$ equal for the sum $y_1+y_2$?'
+          - problem: 'A forced circuit obeys $y''''+4y=10$. Two functions $y_1$ and $y_2$ are solutions. What does $y''''+4y$ equal for the sum $y_1+y_2$?'
             answer: '20'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Each solution gives the value $10$ on the left side. Adding the two gives $10+10=20$, not $10$, so the sum is not a solution.'
@@ -655,10 +655,10 @@ topics:
             answer: '2'
             answer_contract: {"kind": "unit", "quantity": "length", "unit": "m", "allow_omitted": true}
             solution_sketch: 'The equation is x'''' + 5x'' + 6x = 12. A constant particular solution x = C gives 6C = 12, so C = 12/6 = 2. The roots of r^2 + 5r + 6 = 0 are -2 and -3, so the transient dies out and the cart settles 2 m from the equilibrium position.'
-          - problem: 'Sam solves $y''''-5y''+6y=6$ with $y(0)=6$ and $y''(0)=7$. He writes $y=c_1e^{2x}+c_2e^{3x}+1$ and then uses $c_1+c_2=6$ for the first condition. What is the correct solution?'
+          - problem: 'Solve $y''''-5y''+6y=6$ with $y(0)=6$ and $y''(0)=7$. What is $y(x)$?'
             answer: '8e^(2x) - 3e^(3x) + 1'
             answer_contract: {"kind": "function", "vars": ["x"]}
-            solution_sketch: 'The first condition is y(0) = c1 + c2 + 1 = 6, so c1 + c2 = 5 and not 6. The second condition y''(0) = 2c1 + 3c2 = 7. From c1 + c2 = 5 we get 2c1 + 2c2 = 10, and subtracting gives c2 = -3, so c1 = 8. The solution is y = 8e^(2x) - 3e^(3x) + 1.'
+            solution_sketch: 'The first condition is y(0) = c1 + c2 + 1 = 6, so c1 + c2 = 5. The second condition y''(0) = 2c1 + 3c2 = 7. From c1 + c2 = 5 we get 2c1 + 2c2 = 10, and subtracting gives c2 = -3, so c1 = 8. The solution is y = 8e^(2x) - 3e^(3x) + 1.'
           - problem: 'The function $y_p=-2$ is a particular solution of $y''''+2y''-3y=6$. Find the solution that satisfies $y(0)=1$ and $y''(0)=-13$.'
             answer: '-e^x + 4e^(-3x) - 2'
             answer_contract: {"kind": "function", "vars": ["x"]}
@@ -696,7 +696,7 @@ topics:
             answer: '2t^2 - 1'
             answer_contract: {"kind": "function", "vars": ["t"]}
             solution_sketch: 'The equation is x'''' + 4x = 8t^2. Try x = At^2 + Bt + C, so x'''' = 2A. Then 2A + 4At^2 + 4Bt + 4C = 8t^2 gives A = 2, B = 0 and 2A + 4C = 0, so C = -1. Hence x_p = 2t^2 - 1.'
-          - problem: 'Sam tries $y_p=Ax$ for $y''''+2y''-3y=9x+3$ and finds that no value of $A$ works. What particular solution is correct?'
+          - problem: 'What is a particular solution of $y''''+2y''-3y=9x+3$?'
             answer: '-3x - 3'
             answer_contract: {"kind": "function", "vars": ["x"]}
             solution_sketch: 'A trial Ax has no constant term, but y'' = A adds a constant to the left side, so the trial must be Ax + B. Then 2A - 3Ax - 3B = 9x + 3 gives -3A = 9, so A = -3, and 2A - 3B = 3 gives -6 - 3B = 3, so B = -3. Hence y = -3x - 3.'
@@ -725,10 +725,10 @@ topics:
             answer: '3e^(3x)'
             answer_contract: {"kind": "function", "vars": ["x"]}
             solution_sketch: 'The characteristic polynomial r^2 - r - 2 has the value 9 - 3 - 2 = 4 at r = 3. Trying y = Ae^(3x) gives 4Ae^(3x) = 12e^(3x), so A = 12/4 = 3. Hence y = 3e^(3x).'
-          - problem: 'Sam substitutes $y_p=Ae^{x}$ into $y''''+y''-6y=10e^{x}$ and gets $A=\tfrac52$. What is the correct particular solution?'
+          - problem: 'Substitute $y_p=Ae^{x}$ into $y''''+y''-6y=10e^{x}$. What is the particular solution?'
             answer: '-(5/2)e^x'
             answer_contract: {"kind": "function", "vars": ["x"]}
-            solution_sketch: 'The characteristic polynomial r^2 + r - 6 has the value 1 + 1 - 6 = -4 at r = 1. So -4Ae^x = 10e^x, and A = 10/(-4) = -5/2. Sam lost the minus sign, so the correct solution is y = -(5/2)e^x.'
+            solution_sketch: 'The characteristic polynomial r^2 + r - 6 has the value 1 + 1 - 6 = -4 at r = 1. So -4Ae^x = 10e^x, and A = 10/(-4) = -5/2. So the solution is y = -(5/2)e^x.'
           - problem: 'A mass of $1$ kg on a spring of constant $2$ N/m, with damping coefficient $3$ N·s/m, is driven by the force $F(t)=12e^{-3t}$ newtons. Using $mx''''+cx''+kx=F$, find a particular solution $x_p(t)$.'
             answer: '6e^(-3t)'
             answer_contract: {"kind": "function", "vars": ["t"]}
@@ -810,7 +810,7 @@ topics:
             answer: '5'
             answer_contract: {"kind": "unit", "quantity": "length", "unit": "m", "allow_omitted": true}
             solution_sketch: 'The equation is x'''' + 2x'' + 7x = 25 cos(2t). The steady motion is x_p = a cos(2t) + b sin(2t), and matching gives a = 3 and b = 4. The amplitude of 3 cos(2t) + 4 sin(2t) is sqrt(3^2 + 4^2) = 5 m.'
-          - problem: 'Sam tries $y_p=A\cos x$ alone for $y''''+2y''+2y=5\cos x$ and cannot match the equation. What particular solution is correct?'
+          - problem: 'What is a particular solution of $y''''+2y''+2y=5\cos x$?'
             answer: 'cos(x) + 2sin(x)'
             answer_contract: {"kind": "function", "vars": ["x"]}
             solution_sketch: 'The y'' term brings in sine terms, so the trial must be y = a cos x + b sin x. Then the cos x coefficient is a + 2b and the sin x coefficient is b - 2a. Matching 5 cos x gives a + 2b = 5 and b - 2a = 0, so b = 2a and 5a = 5. Hence y = cos x + 2 sin x.'
@@ -844,7 +844,7 @@ topics:
             answer: 'x e^(4x)'
             answer_contract: {"kind": "function", "vars": ["x"]}
             solution_sketch: 'The forcing e^(4x) solves the homogeneous equation, so try y = Axe^(4x). Then y'''' = A(8 + 16x)e^(4x), and y'''' - 16y = 8Ae^(4x). Matching 8e^(4x) gives A = 1, so y = xe^(4x).'
-          - problem: 'Sam tries $y_p=Ae^{3x}$ for $y''''-9y=12e^{3x}$ and gets the false equation $0=12e^{3x}$. What particular solution does undetermined coefficients give?'
+          - problem: 'What particular solution does undetermined coefficients give for $y''''-9y=12e^{3x}$?'
             answer: '2x e^(3x)'
             answer_contract: {"kind": "function", "vars": ["x"]}
             solution_sketch: 'The function e^(3x) solves the homogeneous equation, so the trial must be y = Axe^(3x). Then y'''' = A(6 + 9x)e^(3x), and y'''' - 9y = 6Ae^(3x). Matching 12e^(3x) gives A = 2, so y = 2xe^(3x).'
@@ -959,10 +959,10 @@ topics:
             answer: '-4sin(2t)'
             answer_contract: {"kind": "function", "vars": ["t"]}
             solution_sketch: 'The Wronskian is W = cos(2t)(2cos 2t) - sin(2t)(-2 sin 2t) = 2. Then u1'' = -x2 g/W = -sin(2t)(8)/2 = -4 sin(2t).'
-          - problem: 'Sam computes the Wronskian of $e^{x}$ and $e^{-x}$ as $y_1y_2''+y_1''y_2=0$ and says the functions are dependent. What is the correct value of $W=y_1y_2''-y_1''y_2$?'
+          - problem: 'What is the value of the Wronskian $W=y_1y_2''-y_1''y_2$ of $y_1=e^{x}$ and $y_2=e^{-x}$?'
             answer: '-2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The correct formula is W = y1 y2'' - y1'' y2. Here y1 = e^x, y2 = e^(-x), y1'' = e^x and y2'' = -e^(-x). So W = e^x(-e^(-x)) - e^x e^(-x) = -1 - 1 = -2, which is not zero, so the functions are independent.'
+            solution_sketch: 'The formula is W = y1 y2'' - y1'' y2. Here y1 = e^x, y2 = e^(-x), y1'' = e^x and y2'' = -e^(-x). So W = e^x(-e^(-x)) - e^x e^(-x) = -1 - 1 = -2, which is not zero, so the functions are independent.'
           - problem: 'For $y''''-3y''+2y=e^{3x}$, take $y_1=e^x$ and $y_2=e^{2x}$. Find $u_1''$ and $u_2''$.'
             answer: 'u1 = -e^(2x); u2 = e^x'
             answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["x"]}, "name": "u1"}, {"contract": {"kind": "function", "vars": ["x"]}, "name": "u2"}]}
@@ -992,7 +992,7 @@ topics:
             answer: '-cos(x) ln(sec(x) + tan(x))'
             answer_contract: {"kind": "function", "vars": ["x"]}
             solution_sketch: 'With W = 1, u1'' = -sin x tan x = cos x - sec x and u2'' = cos x tan x = sin x. Integrating gives u1 = sin x - ln(sec x + tan x) and u2 = -cos x. Then y_p = cos x u1 + sin x u2, and the sin x cos x terms cancel, leaving y_p = -cos x ln(sec x + tan x).'
-          - problem: 'Sam solves $y''''+4y=\sec(2x)$ on $(-\pi/4,\pi/4)$ with $u_1''=-y_2g$ and $u_2''=y_1g$, and forgets to divide by $W$. What is the correct particular solution when every constant of integration is taken to be zero?'
+          - problem: 'Solve $y''''+4y=\sec(2x)$ on $(-\pi/4,\pi/4)$ by variation of parameters. What is the particular solution when every constant of integration is taken to be zero?'
             answer: '(1/4)cos(2x) ln(cos(2x)) + (x/2)sin(2x)'
             answer_contract: {"kind": "function", "vars": ["x"]}
             solution_sketch: 'The Wronskian of cos(2x) and sin(2x) is W = 2, so u1'' = -sin(2x) sec(2x)/2 = -tan(2x)/2 and u2'' = cos(2x) sec(2x)/2 = 1/2. Integrating gives u1 = (1/4)ln(cos 2x) and u2 = x/2. So y_p = (1/4)cos(2x) ln(cos 2x) + (x/2)sin(2x).'
@@ -1103,10 +1103,10 @@ topics:
             answer: '3, -4'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Substituting y = x^r gives r(r-1) + 2r - 12 = 0, that is r^2 + r - 12 = 0. This factors as (r - 3)(r + 4) = 0, so r = 3 or r = -4.'
-          - problem: 'Sam substitutes $y=x^r$ into $x^2y''''+xy''-9y=0$ and writes $r^2+r-9=0$. What values of $r$ make $y=x^r$ a solution?'
+          - problem: 'Substitute $y=x^r$ into $x^2y''''+xy''-9y=0$. What values of $r$ make $y=x^r$ a solution?'
             answer: '3, -3'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The term x^2 y'''' gives r(r-1) and not r^2. So the equation is r(r-1) + r - 9 = 0, that is r^2 - 9 = 0. Hence r = 3 or r = -3.'
+            solution_sketch: 'The term x^2 y'''' gives r(r-1). So the equation is r(r-1) + r - 9 = 0, that is r^2 - 9 = 0. Hence r = 3 or r = -3.'
           - problem: 'In steady heat flow between two concentric spheres, the temperature $u(r)$ at radius $r$ satisfies $r^2u''''+2ru''=0$ for $r>0$. Find all values of $s$ for which $u=r^s$ is a solution.'
             answer: '0, -1'
             answer_contract: {"kind": "exact"}
@@ -1305,10 +1305,10 @@ topics:
             answer: '4cos(6t) + 2sin(6t)'
             answer_contract: {"kind": "function", "vars": ["t"]}
             solution_sketch: 'The general solution is $y = c_1\cos 6t + c_2\sin 6t$, so $y(0) = c_1 = 4$. Then $y''(0) = 6c_2 = 12$ gives $c_2 = 2$.'
-          - problem: 'Sam solves $x'''' + 25x = 0$ with $x(0) = 1$ and $x''(0) = 15$ and writes $x = \cos 5t + 15\sin 5t$. What is the correct solution?'
+          - problem: 'Solve $x'''' + 25x = 0$ with $x(0) = 1$ and $x''(0) = 15$. What is $x(t)$?'
             answer: 'cos(5t) + 3sin(5t)'
             answer_contract: {"kind": "function", "vars": ["t"]}
-            solution_sketch: 'Sam set $c_2$ equal to $x''(0)$, but $x''(0) = 5c_2$ because the derivative of $\sin 5t$ is $5\cos 5t$. So $5c_2 = 15$ gives $c_2 = 3$, and $x = \cos 5t + 3\sin 5t$.'
+            solution_sketch: 'The condition gives $x''(0) = 5c_2$ because the derivative of $\sin 5t$ is $5\cos 5t$. So $5c_2 = 15$ gives $c_2 = 3$, and $x = \cos 5t + 3\sin 5t$.'
           - problem: 'A $2$ kg mass on a spring with $k = 8$ N/m is released from $x(0) = 1$ m with the velocity $x''(0) = 4$ m/s. How far from equilibrium is the mass at $t = \pi/4$ seconds?'
             answer: '2'
             answer_contract: {"kind": "unit", "quantity": "length", "unit": "m", "allow_omitted": true}
@@ -1460,10 +1460,10 @@ topics:
             answer: 'e^(-2t) + 2e^(-4t)'
             answer_contract: {"kind": "function", "vars": ["t"]}
             solution_sketch: 'The characteristic equation $(r + 2)(r + 4) = 0$ gives $x = c_1 e^{-2t} + c_2 e^{-4t}$. The conditions give $c_1 + c_2 = 3$ and $-2c_1 - 4c_2 = -10$, so $c_1 = 1$ and $c_2 = 2$.'
-          - problem: 'Sam solves $x'''' + 6x'' + 9x = 0$ with $x(0) = 2$ and $x''(0) = 0$ and writes $x = 2e^{-3t}$. What is the correct solution?'
+          - problem: 'Solve $x'''' + 6x'' + 9x = 0$ with $x(0) = 2$ and $x''(0) = 0$. What is $x(t)$?'
             answer: '(2 + 6t)e^(-3t)'
             answer_contract: {"kind": "function", "vars": ["t"]}
-            solution_sketch: 'The double root $-3$ gives $x = (c_1 + c_2 t)e^{-3t}$ with $c_1 = 2$. Sam forgot that $x''(0) = c_2 - 3c_1 = 0$, so $c_2 = 6$ and $x = (2 + 6t)e^{-3t}$.'
+            solution_sketch: 'The double root $-3$ gives $x = (c_1 + c_2 t)e^{-3t}$ with $c_1 = 2$. The condition $x''(0) = c_2 - 3c_1 = 0$ gives $c_2 = 6$ and $x = (2 + 6t)e^{-3t}$.'
           - problem: 'A mass on a spring is struck at equilibrium and moves according to $x'''' + 3x'' + 2x = 0$ with $x(0) = 0$ and $x''(0) = 1$, where $x$ is in metres. What is the greatest displacement from equilibrium?'
             answer: '1/4'
             answer_contract: {"kind": "unit", "quantity": "length", "unit": "m", "allow_omitted": true}

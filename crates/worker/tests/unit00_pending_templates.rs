@@ -39,7 +39,8 @@ fn every_pending_digest_reproduces_through_the_worker_and_exact_exhaustive_walk(
     // 64 rows before the courses rewrite; 42 were retired on 2026-10-07
     // because their knowledge points now carry mixed exemplar policies or
     // exemplars that collide with the template instances.
-    assert_eq!(drafts.len(), 22);
+    // 2026-10-08, story framing removed: subtraction-with-borrowing/kp3 retired (21, was 22).
+    assert_eq!(drafts.len(), 21);
     assert_eq!(drafts.len(), stored.len());
     assert_eq!(drafts.len(), proofs.len());
     let mut instances = 0;
@@ -74,9 +75,10 @@ fn every_pending_digest_reproduces_through_the_worker_and_exact_exhaustive_walk(
             .unwrap();
         instances += check_instances(&body, proof, topic);
     }
-    assert_eq!(keys.len(), 22);
+    assert_eq!(keys.len(), 21);
     // 1,409 before the courses rewrite; 480 after the 42 retirements of 2026-10-07.
-    assert_eq!(instances, 480);
+    // 2026-10-08, story framing removed: 458 (was 480) after subtraction-with-borrowing/kp3 left the set.
+    assert_eq!(instances, 458);
 }
 
 fn check_instances(body: &str, proof: &Value, topic: &cadus_core::curriculum::Topic) -> usize {
@@ -175,7 +177,8 @@ fn all_owned_keys_are_either_pending_or_exactly_reported_blockers() {
             assert!(semantic_exclusions.insert(row["kp_key"].as_str().unwrap().to_owned()));
         }
     }
-    assert_eq!(semantic_exclusions.len(), 43);
+    // 2026-10-08: 44 (was 43), subtraction-with-borrowing/kp3 added.
+    assert_eq!(semantic_exclusions.len(), 44);
     assert_eq!(owned.len(), 81);
     assert_eq!(blocked.len(), 16);
     assert!(pending.is_disjoint(&blocked));

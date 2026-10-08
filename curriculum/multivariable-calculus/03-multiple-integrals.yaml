@@ -54,10 +54,10 @@ topics:
             answer: '6y^3'
             answer_contract: {"kind": "function", "vars": ["y"]}
             solution_sketch: 'Hold $y$ fixed. Factor out the constant $4y^3$: $4y^3\int_1^2 x\,dx = 4y^3\left[\frac{x^2}{2}\right]_1^2 = 4y^3\cdot\frac{3}{2} = 6y^3$.'
-          - problem: 'Sam evaluates $\int_0^2 6xy\,dy$ and writes $12y$. What is the correct value?'
+          - problem: 'Evaluate $\int_0^2 6xy\,dy$.'
             answer: '12x'
             answer_contract: {"kind": "function", "vars": ["x"]}
-            solution_sketch: 'Sam treated $y$ as the constant, but the differential is $dy$, so $x$ is the constant. Then $\int_0^2 6xy\,dy = 6x\left[\frac{y^2}{2}\right]_0^2 = 12x$.'
+            solution_sketch: 'The differential is $dy$, so $x$ is the constant. Then $\int_0^2 6xy\,dy = 6x\left[\frac{y^2}{2}\right]_0^2 = 12x$.'
         constraints: 'polynomial integrands; the variable that is not integrated survives as a parameter in the answer; one item divides a cross-section area by a length'
       - id: kp2
         name: "Iterated integrals over rectangles"
@@ -91,10 +91,10 @@ topics:
             answer: '24'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The inner integral is $3x + 9$. Then $\int_0^2 (3x + 9)\,dx = 6 + 18 = 24$.'
-          - problem: 'Sam evaluates $\int_0^1 \int_0^2 (x + y)\,dy\,dx$. He writes the inner integral as $x + 2$ and gets $\frac{5}{2}$. What is the correct value?'
+          - problem: 'Evaluate $\int_0^1 \int_0^2 (x + y)\,dy\,dx$.'
             answer: '3'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Sam forgot that $\int_0^2 x\,dy = 2x$, not $x$. The correct inner integral is $2x + 2$, and then $\int_0^1 (2x + 2)\,dx = 1 + 2 = 3$.'
+            solution_sketch: 'Note that $\int_0^2 x\,dy = 2x$, not $x$. The inner integral is $2x + 2$, and then $\int_0^1 (2x + 2)\,dx = 1 + 2 = 3$.'
         constraints: 'polynomial integrands; rectangle bounds are small integers; answers exact rationals; two items set the integral up from a density or a height over a rectangle'
       - id: kp3
         name: "Fubini's theorem and separable products"
@@ -196,7 +196,7 @@ topics:
             answer: 'a = -1; b = 2; g = x^2; h = x + 2'
             answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "a"}, {"contract": {"kind": "exact"}, "name": "b"}, {"contract": {"kind": "function", "vars": ["x"]}, "name": "g"}, {"contract": {"kind": "function", "vars": ["x"]}, "name": "h"}]}
             solution_sketch: 'Setting $x^2 = x + 2$ gives $(x - 2)(x + 1) = 0$, so $x = -1$ and $x = 2$. At $x = 0$ the line gives $2$ and the parabola gives $0$, so the line is on top. Hence $a = -1$, $b = 2$, $g = x^2$, $h = x + 2$.'
-          - problem: 'Sam describes the region between $y = x^2$ and $y = 2x$ as $0 \le x \le 2$ and $2x \le y \le x^2$. What is the correct upper boundary $h(x)$?'
+          - problem: 'The region between $y = x^2$ and $y = 2x$ is described as $0 \le x \le 2$ and $g(x) \le y \le h(x)$. What is the upper boundary $h(x)$?'
             answer: '2x'
             answer_contract: {"kind": "function", "vars": ["x"]}
             solution_sketch: 'At $x = 1$ the line $y = 2x$ gives $2$ and the parabola $y = x^2$ gives $1$. So the line is the upper curve, and the correct description is $x^2 \le y \le 2x$ with upper boundary $h(x) = 2x$.'
@@ -270,10 +270,10 @@ topics:
             answer: '4'
             answer_contract: {"kind": "unit", "quantity": "length", "unit": "m", "allow_omitted": true}
             solution_sketch: 'The plot is $0 \le x \le 6$ and $\frac{x}{2} \le y \le 3$. The condition $y \ge \frac{x}{2}$ gives $x \le 2y$, so at $y = 2$ the plot runs from $x = 0$ to $x = 4$. It is $4$ metres wide.'
-          - problem: 'Sam reverses the integral $\int_0^2 \int_x^2 f(x,y)\,dy\,dx$ and writes $\int_0^2 \int_y^2 f(x,y)\,dx\,dy$. Is Sam''s new integral taken over the same region as the original?'
+          - problem: 'The integral $\int_0^2 \int_x^2 f(x,y)\,dy\,dx$ is reversed to $\int_0^2 \int_y^2 f(x,y)\,dx\,dy$. Is the new integral taken over the same region as the original?'
             answer: 'no'
             answer_contract: {"kind": "label", "options": [["yes", "it is", "same region", "the same"], ["no", "it is not", "not the same", "different region"]]}
-            solution_sketch: 'The original region is $0 \le x \le 2$ and $x \le y \le 2$, so $x \le y$. Sam''s region is $0 \le y \le 2$ and $y \le x \le 2$, so $y \le x$. These are two different triangles, and the correct reversal is $\int_0^2 \int_0^y f\,dx\,dy$.'
+            solution_sketch: 'The original region is $0 \le x \le 2$ and $x \le y \le 2$, so $x \le y$. The new region is $0 \le y \le 2$ and $y \le x \le 2$, so $y \le x$. These are two different triangles, and the correct reversal is $\int_0^2 \int_0^y f\,dx\,dy$.'
           - problem: 'The integral $\int_0^4 \int_y^4 f(x,y)\,dx\,dy$ is taken over a triangle. Reverse the order of integration, so that it has the form $\int_a^b \int_{g(x)}^{h(x)} f(x,y)\,dy\,dx$. Find $a$, $b$, $g$ and $h$.'
             answer: 'a = 0; b = 4; g = 0; h = x'
             answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "a"}, {"contract": {"kind": "exact"}, "name": "b"}, {"contract": {"kind": "function", "vars": ["x"]}, "name": "g"}, {"contract": {"kind": "function", "vars": ["x"]}, "name": "h"}]}
@@ -548,7 +548,7 @@ topics:
             answer: '3'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The area is $\frac{1}{2}(6)(3) = 9$. The integral is $\int_0^6 \int_0^{3 - x/2} (x + y)\,dy\,dx = 27$. The average is $\frac{27}{9} = 3$.'
-          - problem: 'Sam finds the average value of $f(x, y) = x$ over the triangle with vertices $(0,0)$, $(3,0)$ and $(3,3)$. He computes $\iint x\,dA = 9$ correctly, then divides by the side length $3$ and gets $3$. What is the correct average value?'
+          - problem: 'Find the average value of $f(x, y) = x$ over the triangle with vertices $(0,0)$, $(3,0)$ and $(3,3)$.'
             answer: '2'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The average divides by the area, not by a side length. The triangle has area $\frac{1}{2}(3)(3) = \frac{9}{2}$. So the average is $\frac{9}{9/2} = 2$.'
@@ -662,7 +662,7 @@ topics:
             answer: '3'
             answer_contract: {"kind":"unit","quantity":"length","unit":"m","allow_omitted":true}
             solution_sketch: 'The distance is $\bar{y} = M_x/m$, because the moment equals mass times distance. So $\bar{y} = 15 \div 5 = 3$ metres.'
-          - problem: 'Sam wants the moment $M_x$ of the lamina on $0 \le x \le 2$, $0 \le y \le 1$ with density $\rho(x,y) = x$. He integrates $x\rho$ over the rectangle and gets $\tfrac{8}{3}$. What is the correct value of $M_x$?'
+          - problem: 'Find the moment $M_x$ of the lamina on $0 \le x \le 2$, $0 \le y \le 1$ with density $\rho(x,y) = x$.'
             answer: '1'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The moment about the $x$-axis weights the density by $y$, not $x$. So $M_x = \iint y\rho\,dA = \int_0^2 x\,dx \cdot \int_0^1 y\,dy = 2\cdot\tfrac12 = 1$.'
@@ -747,7 +747,7 @@ topics:
         name: "Converting and evaluating over disks"
         key_prerequisites: [double-integrals, polar-coordinates]
         try_first:
-          problem: 'Sam wants the area of the unit disk, so he evaluates $\int_0^{2\pi}\int_0^1 1\,dr\,d\theta$. Is this integral equal to the area of the unit disk?'
+          problem: 'Is $\int_0^{2\pi}\int_0^1 1\,dr\,d\theta$ equal to the area of the unit disk?'
           answer_contract: {"kind":"label","options":[["yes","it is","correct"],["no","it is not","incorrect"]]}
           answer: 'no'
           reveal: 'The integral equals $2\pi$, but the area of the unit disk is $\pi$. In polar coordinates the area element is $r\,dr\,d\theta$, so the integrand must carry the factor $r$.'
@@ -776,10 +776,10 @@ topics:
             answer: '64*pi'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The integrand is $r^6$, so the integral is $\int_0^{2\pi}\int_0^2 r^7\,dr\,d\theta$. The inner integral is $\tfrac{2^8}{8} = 32$, and multiplying by $2\pi$ gives $64\pi$.'
-          - problem: 'Sam evaluates $\iint_D (x^2 + y^2)\,dA$ over the disk $x^2 + y^2 \le 1$ as $\int_0^{2\pi}\int_0^1 r^2\,dr\,d\theta = \tfrac{2\pi}{3}$. What is the correct value of the integral?'
+          - problem: 'Evaluate $\iint_D (x^2 + y^2)\,dA$ over the disk $x^2 + y^2 \le 1$.'
             answer: 'pi/2'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'Sam left out the factor $r$ of the area element. The correct integral is $\int_0^{2\pi}\int_0^1 r^3\,dr\,d\theta = \tfrac14 \cdot 2\pi = \tfrac{\pi}{2}$.'
+            solution_sketch: 'The area element is $r\,dr\,d\theta$, so the integrand gets the extra factor $r$. The integral is $\int_0^{2\pi}\int_0^1 r^3\,dr\,d\theta = \tfrac14 \cdot 2\pi = \tfrac{\pi}{2}$.'
           - problem: 'Evaluate $\iint_D \sqrt{x^2 + y^2}\,dA$, where $D$ is the disk $x^2 + y^2 \le 9$.'
             answer: '18*pi'
             answer_contract: {"kind":"exact"}
@@ -889,7 +889,7 @@ topics:
             answer: '3*sqrt(14)'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'Here $f_x = 2$ and $f_y = -3$, so the factor is $\sqrt{14}$. The triangle has area $3$, so the area is $3\sqrt{14}$.'
-          - problem: 'Sam says that the part of the plane $z = x + y$ over the square $0 \le x \le 1$, $0 \le y \le 1$ has area $1$, because the square has area $1$. What is the correct area?'
+          - problem: 'What is the area of the part of the plane $z = x + y$ over the square $0 \le x \le 1$, $0 \le y \le 1$?'
             answer: 'sqrt(3)'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The plane is tilted, so its area is larger than its base. Here $f_x = f_y = 1$ and the factor is $\sqrt{3}$, so the area is $\sqrt{3} \cdot 1 = \sqrt{3}$.'
@@ -1127,10 +1127,10 @@ topics:
             answer: '2'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The mass of the first box is $\iiint (x+y)\,dV = 4 + 4 = 8$ kilograms. The second box has volume $2 \cdot 2 \cdot 1 = 4$ cubic metres, and mass equals density times volume. So $\rho_0 = 8 \div 4 = 2$.'
-          - problem: 'Sam wants the mass of the box $[0,1] \times [0,3] \times [0,1]$ with density $\rho = 2x + z$. He multiplies the volume $3$ by the density $2 \cdot 1 + 1 = 3$ at the far corner and gets $9$. What is the correct mass?'
+          - problem: 'Find the mass of the box $[0,1] \times [0,3] \times [0,1]$ with density $\rho = 2x + z$.'
             answer: '9/2'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'Sam used the density at one corner, but the density changes across the box, so the mass needs the triple integral. We get $\iiint (2x+z)\,dV = 2 \cdot \frac{1}{2} \cdot 3 + \frac{1}{2} \cdot 3 = 3 + \frac{3}{2} = \frac{9}{2}$.'
+            solution_sketch: 'The density changes across the box, so the mass needs the triple integral. We get $\iiint (2x+z)\,dV = 2 \cdot \frac{1}{2} \cdot 3 + \frac{1}{2} \cdot 3 = 3 + \frac{3}{2} = \frac{9}{2}$.'
           - problem: 'Find the mass of the box $[0,2] \times [0,1] \times [0,3]$ whose density is $\rho = x + 2y$.'
             answer: '12'
             answer_contract: {"kind":"exact"}
@@ -1250,10 +1250,10 @@ topics:
             answer: 'r + r^3'
             answer_contract: {"kind":"function","vars":["r"]}
             solution_sketch: 'The mass is the integral of the density with the volume element $dV = r\,dz\,dr\,d\theta$. So the integrand is $g = (1 + r^2) \cdot r = r + r^3$.'
-          - problem: 'Sam writes $\iiint_E z\,dV$ over the solid cylinder $x^2+y^2 \le 9$, $0 \le z \le 4$ as $\int_0^{2\pi}\int_0^{3}\int_0^{4} z\,dz\,dr\,d\theta$. What integrand should replace $z$?'
+          - problem: 'Write $\iiint_E z\,dV$ over the solid cylinder $x^2+y^2 \le 9$, $0 \le z \le 4$ as $\int_0^{2\pi}\int_0^{3}\int_0^{4} g\,dz\,dr\,d\theta$. What integrand $g$ replaces $z$?'
             answer: 'r*z'
             answer_contract: {"kind":"function","vars":["r","z"]}
-            solution_sketch: 'Sam left out the factor $r$ of the volume element $dV = r\,dz\,dr\,d\theta$. The correct integrand is $z \cdot r = rz$.'
+            solution_sketch: 'The volume element is $dV = r\,dz\,dr\,d\theta$, so the integrand gets the factor $r$. The integrand is $z \cdot r = rz$.'
           - problem: 'A grain silo is a cylinder of radius $3$ metres and height $5$ metres. Use cylindrical coordinates to find its volume.'
             answer: '45pi'
             answer_contract: {"kind":"unit","quantity":"cubic_volume","unit":"m^3","allow_omitted":true}
@@ -1303,10 +1303,10 @@ topics:
             answer: '324pi'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The density is constant, so it comes outside the integral. With $\rho = 2$ the integral is $2\int_0^{2\pi}\int_0^{3}\int_0^{4} r^3\,dz\,dr\,d\theta = 2 \cdot 4 \cdot \frac{81}{4} \cdot 2\pi = 324\pi$ kilogram square metres.'
-          - problem: 'Sam evaluates $\iiint_E z\,dV$ over the solid cylinder $x^2 + y^2 \le 9$, $0 \le z \le 2$ as $\int_0^{2\pi}\int_0^{3}\int_0^{2} z\,dz\,dr\,d\theta$ and gets $12\pi$. What is the correct value?'
+          - problem: 'Evaluate $\iiint_E z\,dV$ over the solid cylinder $x^2 + y^2 \le 9$, $0 \le z \le 2$.'
             answer: '18pi'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'Sam forgot the factor $r$ in $dV = r\,dz\,dr\,d\theta$. The correct integral is $\int_0^{2\pi}\int_0^{3}\int_0^{2} z\,r\,dz\,dr\,d\theta = 2 \cdot \frac{9}{2} \cdot 2\pi = 18\pi$.'
+            solution_sketch: 'The volume element is $dV = r\,dz\,dr\,d\theta$. The integral is $\int_0^{2\pi}\int_0^{3}\int_0^{2} z\,r\,dz\,dr\,d\theta = 2 \cdot \frac{9}{2} \cdot 2\pi = 18\pi$.'
         constraints: 'solids with rotational symmetry about the z-axis (cylinders, cones, paraboloids); dV = r dz dr dtheta; word problems give mass, average value or moment of inertia'
       - id: kp3
         name: "Volumes of rotationally symmetric solids"
@@ -1423,10 +1423,10 @@ topics:
             answer: 'pi/2'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The $xy$-plane is the surface $\varphi = \frac{\pi}{2}$, because there $z = \rho\cos\varphi = 0$. Points below the plane have $z < 0$, so $\cos\varphi < 0$ and $\varphi$ is larger than $\frac{\pi}{2}$, which gives $a = \frac{\pi}{2}$.'
-          - problem: 'Sam converts the spherical point $(\rho, \varphi, \theta) = \left(6, \frac{\pi}{6}, \frac{\pi}{3}\right)$ and writes $z = 6\sin\frac{\pi}{6} = 3$. What is the correct value of $z$?'
+          - problem: 'What is the value of $z$ for the spherical point $(\rho, \varphi, \theta) = \left(6, \frac{\pi}{6}, \frac{\pi}{3}\right)$?'
             answer: '3sqrt(3)'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'Sam used sine, but the height is $z = \rho\cos\varphi$. So $z = 6\cos\frac{\pi}{6} = 6 \cdot \frac{\sqrt{3}}{2} = 3\sqrt{3}$.'
+            solution_sketch: 'The height is $z = \rho\cos\varphi$. So $z = 6\cos\frac{\pi}{6} = 6 \cdot \frac{\sqrt{3}}{2} = 3\sqrt{3}$.'
         constraints: 'angles at standard unit-circle values; conversions both ways, balls, half-balls and cones as regions, one bound asked at a time; word problems use a radar or drone position'
       - id: kp2
         name: "Evaluating spherical integrals"
@@ -1577,10 +1577,10 @@ topics:
             answer: '2u^2 - 2v^2'
             answer_contract: {"kind":"function","vars":["u","v"]}
             solution_sketch: 'The partial derivatives are $x_u = 2u$, $x_v = 2v$, $y_u = v$ and $y_v = u$. The determinant is $(2u)(u) - (2v)(v) = 2u^2 - 2v^2$.'
-          - problem: 'Sam computes the Jacobian of $x = 3u + 4v$, $y = 2u + v$ as $3 \cdot 1 + 4 \cdot 2 = 11$. What is the correct value of the Jacobian?'
+          - problem: 'Find the Jacobian of $x = 3u + 4v$, $y = 2u + v$.'
             answer: '-5'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'Sam added the two products, but a determinant subtracts them: $x_u y_v - x_v y_u$. So the Jacobian is $3 \cdot 1 - 4 \cdot 2 = -5$.'
+            solution_sketch: 'A determinant subtracts the two products: $x_u y_v - x_v y_u$. So the Jacobian is $3 \cdot 1 - 4 \cdot 2 = -5$.'
           - problem: 'Compute the Jacobian $\frac{\partial(x, y)}{\partial(u, v)}$ for $x = u^2 - v$, $y = u + v^2$.'
             answer: '4uv + 1'
             answer_contract: {"kind":"function","vars":["u","v"]}
@@ -1610,10 +1610,10 @@ topics:
             answer: '(e - 1/e)/4'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'Solving gives $x = \frac{u+v}{2}$ and $y = \frac{v-u}{2}$, with $|J| = \frac{1}{2}$. The triangle becomes $0 \le v \le 1$, $-v \le u \le v$, so the integral is $\frac{1}{2}\int_0^1 v\left(e - e^{-1}\right)dv = \frac{1}{4}\left(e - \frac{1}{e}\right)$.'
-          - problem: 'Sam evaluates $\iint_R (x + 2y)\,dA$ over the rectangle with vertices $(0,0)$, $(2,0)$, $(2,3)$ and $(0,3)$, using $x = 2u$, $y = 3v$. He integrates $2u + 6v$ over the unit square and gets $4$. What is the correct value?'
+          - problem: 'Evaluate $\iint_R (x + 2y)\,dA$ over the rectangle with vertices $(0,0)$, $(2,0)$, $(2,3)$ and $(0,3)$, using $x = 2u$, $y = 3v$.'
             answer: '24'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'Sam left out the Jacobian. Here $J = 2 \cdot 3 = 6$, so the integral is $6\int_0^1\int_0^1 (2u + 6v)\,du\,dv = 6 \cdot 4 = 24$.'
+            solution_sketch: 'The integral needs the Jacobian. Here $J = 2 \cdot 3 = 6$, so the integral is $6\int_0^1\int_0^1 (2u + 6v)\,du\,dv = 6 \cdot 4 = 24$.'
           - problem: 'Evaluate $\iint_R (x + 2y)\,dA$, where $R$ is the parallelogram with vertices $(0,0)$, $(1,2)$, $(3,5)$ and $(2,3)$, using $x = u + 2v$, $y = 2u + 3v$.'
             answer: '13/2'
             answer_contract: {"kind":"exact"}

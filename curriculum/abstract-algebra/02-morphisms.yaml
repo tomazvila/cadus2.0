@@ -48,7 +48,7 @@ topics:
             answer: '5'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Division by $b$ is multiplication by $b^{-1}$, and an isomorphism sends inverses to inverses, so $\varphi(a/b) = \varphi(a) - \varphi(b)$. Here this is $3 - (-2) = 5$, so the quotient $a/b$ has logarithm $5$.'
-          - problem: 'Sam claims that $\varphi : \mathbb{Z}_5 \to \mathbb{Z}_5$, $\varphi(k) = k^2 \bmod 5$, is an isomorphism of the additive group $\mathbb{Z}_5$, because $(a+b)^2 = a^2 + b^2$ for all $a, b$. For $a = b = 1$, find $\varphi(a+b) - (\varphi(a) + \varphi(b))$ in $\mathbb{Z}_5$.'
+          - problem: 'Let $\varphi : \mathbb{Z}_5 \to \mathbb{Z}_5$ be given by $\varphi(k) = k^2 \bmod 5$ on the additive group $\mathbb{Z}_5$. For $a = b = 1$, find $\varphi(a+b) - (\varphi(a) + \varphi(b))$ in $\mathbb{Z}_5$.'
             answer: '2'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'We have $\varphi(1+1) = \varphi(2) = 4$ and $\varphi(1) + \varphi(1) = 1 + 1 = 2$. So the difference is $4 - 2 = 2$, which is not $0$. Hence $\varphi$ is not a homomorphism, because $(a+b)^2 = a^2 + 2ab + b^2$.'
@@ -93,10 +93,10 @@ topics:
             answer: 'yes'
             answer_contract: {"kind": "label", "options": [["yes", "yes, H is abelian", "it must be abelian", "H is abelian", "H must be abelian", "must be abelian", "yes, it must be abelian"], ["no", "no, H need not be abelian", "not necessarily", "H need not be abelian", "no, not necessarily"]]}
             solution_sketch: 'Let $\varphi : G \to H$ be an isomorphism and take $x, y \in H$. Because $\varphi$ is onto, $x = \varphi(a)$ and $y = \varphi(b)$ for some $a, b \in G$, and $xy = \varphi(ab) = \varphi(ba) = yx$ since $G$ is abelian. So $H$ is abelian, and the answer is yes.'
-          - problem: 'Sam tries to prove that $H$ is abelian when $\varphi : G \to H$ is an injective homomorphism and $G$ is abelian, by writing every $x$ in $H$ as $\varphi(a)$. Let $G = \mathbb{Z}_2$ and let $H = S_3$, which has $6$ elements, with $\varphi$ injective. How many elements of $H$ are not of the form $\varphi(a)$?'
+          - problem: 'A proof that $H$ is abelian when $\varphi : G \to H$ is an injective homomorphism and $G$ is abelian writes every $x$ in $H$ as $\varphi(a)$. Let $G = \mathbb{Z}_2$ and let $H = S_3$, which has $6$ elements, with $\varphi$ injective. How many elements of $H$ are not of the form $\varphi(a)$?'
             answer: '4'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'The group $\mathbb{Z}_2$ has $2$ elements and $\varphi$ is injective, so the image has $2$ elements. The other $6 - 2 = 4$ elements of $S_3$ are not of the form $\varphi(a)$. So Sam''s argument fails, because it needs $\varphi$ to be onto.'
+            solution_sketch: 'The group $\mathbb{Z}_2$ has $2$ elements and $\varphi$ is injective, so the image has $2$ elements. The other $6 - 2 = 4$ elements of $S_3$ are not of the form $\varphi(a)$. So that proof fails, because it needs $\varphi$ to be onto.'
           - problem: 'Write the full proof that if $\varphi : G \to H$ is an isomorphism and $G$ is cyclic, then $H$ is cyclic.'
             answer: 'A generator maps to a generator.'
             answer_contract: {"kind": "none"}
@@ -134,7 +134,7 @@ topics:
             answer: '3'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The map $x \mapsto kx$ is a homomorphism for every $k$, and it is an automorphism exactly when $\gcd(k, 9) = 1$. The values $k = 1$ and $k = 2$ are coprime to $9$, but $\gcd(3, 9) = 3$ and $3 \cdot 3 = 0 = 3 \cdot 0$, so the map is not injective. The smallest failing value is $k = 3$.'
-          - problem: 'Sam wants to show that the inverse of an isomorphism $\varphi : G \to H$ is an isomorphism. Step 1: $\varphi$ is bijective, so the inverse function $\varphi^{-1}$ exists. Step 2: for $h_1, h_2 \in H$ write $h_1 = \varphi(g_1)$ and $h_2 = \varphi(g_2)$. Step 3: $h_1 h_2 = \varphi(g_1 g_2)$, so $\varphi^{-1}(h_1 h_2) = g_1 g_2 = \varphi^{-1}(h_1)\varphi^{-1}(h_2)$. Step 4: also $\varphi^{-1}(h_1 h_2) = \varphi^{-1}(h_2)\varphi^{-1}(h_1)$, which equals $\varphi^{-1}(h_1)\varphi^{-1}(h_2)$ in every group. Which is the first step that is not valid, and why?'
+          - problem: 'The attempt below to show that the inverse of an isomorphism $\varphi : G \to H$ is an isomorphism has an error. Step 1: $\varphi$ is bijective, so the inverse function $\varphi^{-1}$ exists. Step 2: for $h_1, h_2 \in H$ write $h_1 = \varphi(g_1)$ and $h_2 = \varphi(g_2)$. Step 3: $h_1 h_2 = \varphi(g_1 g_2)$, so $\varphi^{-1}(h_1 h_2) = g_1 g_2 = \varphi^{-1}(h_1)\varphi^{-1}(h_2)$. Step 4: also $\varphi^{-1}(h_1 h_2) = \varphi^{-1}(h_2)\varphi^{-1}(h_1)$, which equals $\varphi^{-1}(h_1)\varphi^{-1}(h_2)$ in every group. Which is the first step that is not valid, and why?'
             answer: 'Step 4: the products with the factors in the two orders are different in a nonabelian group, so they are not equal in every group.'
             answer_contract: {"kind": "written"}
             solution_sketch: 'Steps 1, 2 and 3 are valid: the inverse function exists, preimages exist because $\varphi$ is onto, and the homomorphism law gives $\varphi^{-1}(h_1 h_2) = g_1 g_2$. Step 4 is false, because the two products $\varphi^{-1}(h_2)\varphi^{-1}(h_1)$ and $\varphi^{-1}(h_1)\varphi^{-1}(h_2)$ are different in a nonabelian group. The conclusion of Step 3 already finishes the proof.'
@@ -248,7 +248,7 @@ topics:
             answer: '4'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'A rotation reaches every position exactly when it generates the group of $12$ rotations. In $\mathbb{Z}_{12}$ the generators are the elements coprime to $12$, namely $1, 5, 7, 11$. So $4$ rotations, those by $30$, $150$, $210$ and $330$ degrees, have this property.'
-          - problem: 'Lena wonders whether the four symmetries of a rectangle that is not a square, which are the identity, the half-turn and two reflections, form a cyclic group. For each symmetry she counts how many times it must be applied in a row before the rectangle is first back in its starting position. What is the largest of these four counts?'
+          - problem: 'The four symmetries of a rectangle that is not a square are the identity, the half-turn and two reflections. For each symmetry, count how many times it must be applied in a row before the rectangle is first back in its starting position. What is the largest of these four counts?'
             answer: '2'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The half-turn and each reflection return the rectangle to its start after $2$ applications, and the identity after $1$. A cyclic group of order $4$ would need a symmetry that needs $4$ applications. The largest number is $2$, so the group of symmetries is not cyclic.'
@@ -383,10 +383,10 @@ topics:
             answer: '0'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The permutation $k$ is even, so it lies in the kernel. By the homomorphism law, $\varphi(gkg^{-1}) = \varphi(g) + \varphi(k) + \varphi(g^{-1}) = \varphi(g) + 0 - \varphi(g) = 0$, so the conjugate $gkg^{-1}$ is again in the kernel. This is why a kernel is a normal subgroup.'
-          - problem: 'Sam says that the sign homomorphism $S_3 \to \mathbb{Z}_2$ is injective, because its kernel contains the identity. How many elements does the kernel have?'
+          - problem: 'How many elements does the kernel of the sign homomorphism $S_3 \to \mathbb{Z}_2$ have?'
             answer: '3'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The kernel is the set of even permutations of $S_3$, which are the identity and the two $3$-cycles. So it has $3$ elements. A homomorphism is injective only when the kernel contains nothing but the identity, so Sam is wrong.'
+            solution_sketch: 'The kernel is the set of even permutations of $S_3$, which are the identity and the two $3$-cycles. So it has $3$ elements. A homomorphism is injective only when the kernel contains nothing but the identity, so the sign homomorphism is not injective.'
           - problem: 'A cipher on a $26$-letter alphabet numbered $0$ to $25$ replaces the letter $x$ by $13x \bmod 26$. How many letters are replaced by the letter $0$?'
             answer: '13'
             answer_contract: {"kind": "exact"}
@@ -497,7 +497,7 @@ topics:
             answer: '2'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'We need $3x = 6$ modulo $9$, which means that $x = 2$ modulo $3$. The elements of $\mathbb{Z}_9$ with this property are $2, 5, 8$, and they form one coset of $\ker\varphi = \{0, 3, 6\}$. The smallest is $x = 2$.'
-          - problem: 'Sam wants to show that $\bar\varphi(gK) = \varphi(g)$ is well defined, and he says that $gK = hK$ forces $g = h$. Let $\varphi : \mathbb{Z}_{12} \to \mathbb{Z}_4$ be $\varphi(x) = x \bmod 4$, with kernel $K = \{0, 4, 8\}$. Find the smallest $h$ greater than $1$ with $h + K = 1 + K$.'
+          - problem: 'Let $\varphi : \mathbb{Z}_{12} \to \mathbb{Z}_4$ be $\varphi(x) = x \bmod 4$, with kernel $K = \{0, 4, 8\}$. Find the smallest $h$ greater than $1$ with $h + K = 1 + K$.'
             answer: '5'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The coset $1 + K$ is $\{1, 5, 9\}$. The smallest element greater than $1$ is $5$, so $5 + K = 1 + K$ although $5 \ne 1$. So $gK = hK$ means only that $h^{-1}g$ lies in $K$.'
@@ -534,7 +534,7 @@ topics:
             answer: '5'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The image of $f$ is $\{0, 2, 4, 6, 8\}$, which is cyclic of order $5$ and generated by $2$. By the first isomorphism theorem, $\mathbb{Z}_{10}/\{0, 5\} \cong \mathbb{Z}_5$, so $m = 5$.'
-          - problem: 'Sam claims that $\mathbb{Z}_6/\{0, 3\}$ is isomorphic to $\mathbb{Z}_3$. He takes $f(x) = 2x$ on $\mathbb{Z}_6$, which has kernel $\{0, 3\}$, and he lists the image as $\{0, 2, 4, 6\}$. How many different elements does the image of $f$ have?'
+          - problem: 'The map $f(x) = 2x$ on $\mathbb{Z}_6$ has kernel $\{0, 3\}$. How many different elements does the image of $f$ have?'
             answer: '3'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'In $\mathbb{Z}_6$ the value $6$ equals $0$, so the image is $\{0, 2, 4\}$. It has $3$ elements, which agrees with $6/|\ker f| = 6/2 = 3$. So the quotient is isomorphic to $\mathbb{Z}_3$.'
@@ -575,7 +575,7 @@ topics:
             answer: '2'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The first isomorphism theorem gives $\mathbb{Z}_{12}/\ker\varphi \cong \mathbb{Z}_6$, so $|\ker\varphi| = 12/6 = 2$. Such a map exists, for example the reduction map $x \mapsto x \bmod 6$.'
-          - problem: 'Sam tries to prove that a surjective homomorphism $\mathbb{Z}_{10} \to \mathbb{Z}_4$ exists, and he says that a kernel of order $10/4$ is no obstruction. Find the largest $n$ with $n \le 4$ for which a surjective homomorphism $\mathbb{Z}_{10} \to \mathbb{Z}_n$ exists.'
+          - problem: 'Find the largest $n$ with $n \le 4$ for which a surjective homomorphism $\mathbb{Z}_{10} \to \mathbb{Z}_n$ exists.'
             answer: '2'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'A surjective homomorphism $\mathbb{Z}_{10} \to \mathbb{Z}_n$ has a kernel of order $10/n$, so $n$ must divide $10$. Among $1, 2, 3, 4$ only $1$ and $2$ divide $10$, so the largest is $2$. The value $n = 4$ fails because $10/4 = 2.5$ is not a whole number.'
@@ -647,7 +647,7 @@ topics:
             answer: '3'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Every element of $HN$ is a sum $9a + 12b$ with $a, b \in \mathbb{Z}$. These sums are exactly the multiples of $\gcd(9,12) = 3$, so $HN = 3\mathbb{Z}$ and $d = 3$.'
-          - problem: 'Sam says that for $H = 4\mathbb{Z}$ and $N = 6\mathbb{Z}$ in $(\mathbb{Z}, +)$ the intersection is $H \cap N = 24\mathbb{Z}$, because $4 \cdot 6 = 24$. What is the correct positive generator of $H \cap N$?'
+          - problem: 'For $H = 4\mathbb{Z}$ and $N = 6\mathbb{Z}$ in $(\mathbb{Z}, +)$, what is the positive generator of the intersection $H \cap N$?'
             answer: '12'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'An element of $H \cap N$ is a common multiple of $4$ and $6$, so the generator is $\operatorname{lcm}(4,6) = 12$ and not the product. The product $24$ is too large because $\gcd(4,6) \cdot \operatorname{lcm}(4,6) = 2 \cdot 12 = 24$ counts the common factor $2$ twice.'
@@ -709,10 +709,10 @@ topics:
             answer: '4'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The subgroups of $\mathbb{Z}_{24}$ that contain $8\mathbb{Z}/24\mathbb{Z}$ correspond to the subgroups $d\mathbb{Z}$ of $\mathbb{Z}$ that contain $8\mathbb{Z}$. This happens exactly when $d$ divides $8$. The divisors of $8$ are $1, 2, 4, 8$, so $4$ subgroups qualify.'
-          - problem: 'Sam says that $(\mathbb{Z}/20\mathbb{Z})\,/\,(5\mathbb{Z}/20\mathbb{Z})$ is isomorphic to $\mathbb{Z}_4$, because $5\mathbb{Z}/20\mathbb{Z}$ has $4$ elements. For which $m$ is the quotient isomorphic to $\mathbb{Z}_m$?'
+          - problem: 'The group $5\mathbb{Z}/20\mathbb{Z}$ has $4$ elements. For which $m$ is the quotient $(\mathbb{Z}/20\mathbb{Z})/(5\mathbb{Z}/20\mathbb{Z})$ isomorphic to $\mathbb{Z}_m$?'
             answer: '5'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The third isomorphism theorem cancels $20\mathbb{Z}$ and gives $(\mathbb{Z}/20\mathbb{Z})/(5\mathbb{Z}/20\mathbb{Z}) \cong \mathbb{Z}/5\mathbb{Z} \cong \mathbb{Z}_5$, so $m = 5$. Sam used the order $4$ of the subgroup instead of the order of the quotient, which is $20/4 = 5$.'
+            solution_sketch: 'The third isomorphism theorem cancels $20\mathbb{Z}$ and gives $(\mathbb{Z}/20\mathbb{Z})/(5\mathbb{Z}/20\mathbb{Z}) \cong \mathbb{Z}/5\mathbb{Z} \cong \mathbb{Z}_5$, so $m = 5$. The order of the quotient is $20/4 = 5$.'
           - problem: 'Let $N$ and $K$ be normal subgroups of a group $G$ with $N \subseteq K$. Suppose that $|G| = 60$, $|N| = 4$ and $|K| = 12$. How many elements does the group $(G/N)/(K/N)$ have?'
             answer: '5'
             answer_contract: {"kind":"exact"}
@@ -837,10 +837,10 @@ topics:
             answer: '5'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The matching is a homomorphism $\mathbb{Z}_5 \to \mathbb{Z}_{10}$ with $1 \mapsto t$, and the relation $5 \cdot 1 = 0$ requires $5t \equiv 0 \pmod{10}$. This holds exactly when $t$ is even, so $t \in \{0, 2, 4, 6, 8\}$ and there are $5$ values.'
-          - problem: 'Sam says that any element of $\mathbb{Z}_4$ can be the image of $1$ under a homomorphism $\mathbb{Z}_6 \to \mathbb{Z}_4$, so there are $4$ such homomorphisms. How many are there?'
+          - problem: 'How many homomorphisms $\mathbb{Z}_6 \to \mathbb{Z}_4$ are there?'
             answer: '2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The image $h$ of $1$ must satisfy $6h \equiv 0 \pmod 4$, which means $2h \equiv 0 \pmod 4$ and so $h$ is even. Thus $h \in \{0, 2\}$ and there are $2$ homomorphisms. Sam ignored the relation $6 \cdot 1 = 0$, which rules out $h = 1$ and $h = 3$.'
+            solution_sketch: 'The image $h$ of $1$ must satisfy $6h \equiv 0 \pmod 4$, which means $2h \equiv 0 \pmod 4$ and so $h$ is even. Thus $h \in \{0, 2\}$ and there are $2$ homomorphisms. The relation $6 \cdot 1 = 0$ rules out $h = 1$ and $h = 3$.'
           - problem: 'Does $1 \mapsto 5$ define a homomorphism from $\mathbb{Z}_8$ to $\mathbb{Z}_{12}$?'
             answer: 'no'
             answer_contract: {"kind": "label", "options": [["yes", "it does", "it is a homomorphism"], ["no", "it does not", "it is not a homomorphism", "not a homomorphism"]]}
@@ -882,7 +882,7 @@ topics:
             answer: '12'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'A link rule is a homomorphism $\mathbb{Z}_{24} \to \mathbb{Z}_{36}$ with $1 \mapsto a$, so $24a \equiv 0 \pmod{36}$. The number of valid $a$ is $\gcd(24, 36) = 12$. There are $12$ link rules.'
-          - problem: 'Sam says that the number of homomorphisms $\mathbb{Z}_{10} \to \mathbb{Z}_{25}$ is $\operatorname{lcm}(10, 25) = 50$. What is the correct number?'
+          - problem: 'How many homomorphisms $\mathbb{Z}_{10} \to \mathbb{Z}_{25}$ are there?'
             answer: '5'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The correct count is $\gcd(10, 25) = 5$, not the least common multiple. Directly, $10a \equiv 0 \pmod{25}$ means $2a \equiv 0 \pmod 5$, so $a$ is a multiple of $5$ and $a \in \{0, 5, 10, 15, 20\}$. That gives $5$ homomorphisms, and $50$ is larger than $|\mathbb{Z}_{25}|$.'
@@ -923,7 +923,7 @@ topics:
             answer: '2'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The placement is a homomorphism $\mathbb{Z}_6 \to \mathbb{Z}_{30}$, and different days land on different days exactly when it is injective. That requires $a$ to have order $6$, which means $\gcd(a, 30) = 5$. The values are $a = 5$ and $a = 25$, so there are $2$.'
-          - problem: 'Sam says that there are $12$ surjective homomorphisms $\mathbb{Z}_{24} \to \mathbb{Z}_{12}$, because any of the $12$ elements of $\mathbb{Z}_{12}$ can be the image of $1$. How many are there?'
+          - problem: 'How many surjective homomorphisms $\mathbb{Z}_{24} \to \mathbb{Z}_{12}$ are there?'
             answer: '4'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'All $12$ choices give homomorphisms, but the map is onto only when the image of $1$ generates $\mathbb{Z}_{12}$. The generators are the elements coprime to $12$, namely $1, 5, 7, 11$, so there are $\varphi(12) = 4$ surjective homomorphisms.'
@@ -1076,7 +1076,7 @@ topics:
             answer: '10'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The powers of $2$ modulo $11$ are $2, 4, 8, 5, 10, 9, 7, 3, 6, 1$, so $1$ appears first at the tenth power. Hence $2$ has order $10$ and generates $U(11)$, which is therefore cyclic.'
-          - problem: 'Sam says that $U(15)$ is cyclic because it has $8$ elements. What is the largest order of an element of $U(15)$?'
+          - problem: 'The group $U(15)$ has $8$ elements. What is the largest order of an element of $U(15)$?'
             answer: '4'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The group $U(15) = \{1, 2, 4, 7, 8, 11, 13, 14\}$ has order $8$, but a group of order $8$ is cyclic only if some element has order $8$. The powers of $2$ are $2, 4, 8, 1$, and the other elements have order at most $4$ as well, so the largest order is $4$. Hence $U(15)$ is not cyclic.'
@@ -1147,14 +1147,14 @@ topics:
             answer: '3'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Cancel $b^{-1}\,b$ to get $a\,a\,a^{-1}\,a\,b$. Cancel $a\,a^{-1}$ to get $a\,a\,b$. No adjacent pair cancels now, so the shortest equivalent program has $3$ instructions.'
-          - problem: 'In a cipher, Alice applies $w = x\,y\,x^{-1}$ twice in a row and then Bob applies $u = x\,y^{-1}\,x^{-1}$, where $x$ and $y$ are free generators. What is the length of the reduced word for the combined message $w\,w\,u$?'
+          - problem: 'In a cipher, the step $w = x\,y\,x^{-1}$ is applied twice in a row and then the step $u = x\,y^{-1}\,x^{-1}$, where $x$ and $y$ are free generators. What is the length of the reduced word for the combined message $w\,w\,u$?'
             answer: '3'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The product is $x\,y\,x^{-1}\,x\,y\,x^{-1}\,x\,y^{-1}\,x^{-1}$. Cancelling $x^{-1}\,x$ twice gives $x\,y\,y\,y^{-1}\,x^{-1}$, and cancelling $y\,y^{-1}$ gives $x\,y\,x^{-1}$. This word is reduced and has length $3$.'
-          - problem: 'Sam says that $a\,b\,a^{-1}\,b^{-1}$ equals $e$ in $F(\{a, b\})$, because the $a$''s and the $b$''s cancel in pairs. What is the length of the reduced word of $a\,b\,a^{-1}\,b^{-1}$?'
+          - problem: 'In $F(\{a, b\})$, what is the length of the reduced word of $a\,b\,a^{-1}\,b^{-1}$?'
             answer: '4'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Only an inverse pair that sits side by side can cancel. In $a\,b\,a^{-1}\,b^{-1}$ no letter stands next to its own inverse, so the word is already reduced and has length $4$. Sam cancelled letters that are not adjacent, which needs $ab = ba$.'
+            solution_sketch: 'Only an inverse pair that sits side by side can cancel. In $a\,b\,a^{-1}\,b^{-1}$ no letter stands next to its own inverse, so the word is already reduced and has length $4$. Letters that are not adjacent cancel only if $ab = ba$.'
         constraints: 'words of length <= 10 on at most 2 generators; the answer is a power of one generator, a length, or a verdict, because a word in two generators is not graded; F on 2 generators is non-abelian (ab and ba are distinct reduced words)'
       - id: kp2
         name: "The universal property: generators map freely"
@@ -1196,7 +1196,7 @@ topics:
             answer: '6'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'There are $4^k$ homomorphisms from the free group on $k$ generators to $\mathbb{Z}_4$. We need $4^k = 4096$, and $4^6 = 4096$, so $k = 6$.'
-          - problem: 'Sam says that there are $3 + 3 = 6$ homomorphisms from $F(\{a, b\})$ to $\mathbb{Z}_3$. What is the correct number?'
+          - problem: 'How many homomorphisms from $F(\{a, b\})$ to $\mathbb{Z}_3$ are there?'
             answer: '9'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The images of $a$ and $b$ are chosen independently, and each can be any of the $3$ elements of $\mathbb{Z}_3$. So the number is the product $3 \cdot 3 = 9$, not the sum.'

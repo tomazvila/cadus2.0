@@ -49,10 +49,10 @@ topics:
             answer: 'no'
             answer_contract: {"kind": "label", "options": [["yes", "it is", "true", "it is a functor", "functor"], ["no", "it is not", "false", "not a functor", "not"]]}
             solution_sketch: 'The morphism $0\to 1$ would have to go to a morphism $F(0)\to F(1)$, that is $3\to 2$ in $(\mathbb{N},\le)$. There is no such morphism, because $3$ is not less than or equal to $2$. One missing morphism is enough: the answer is no, even though $2\le 5$.'
-          - problem: 'A category has objects $A$, $B$, $C$ and morphisms $f\colon A\to B$, $g\colon B\to C$, $g\circ f\colon A\to C$, together with the identities. A functor $F$ to $\mathbf{Set}$ has $F(A)$ with $5$ elements, $F(B)$ with $2$ elements and $F(C)$ with $4$ elements. Sam says that $F(g\circ f)$ is a function from $F(B)$ to $F(C)$ and counts $4^2=16$ possible functions. How many functions are there with the correct domain and codomain?'
+          - problem: 'A category has objects $A$, $B$, $C$ and morphisms $f\colon A\to B$, $g\colon B\to C$, $g\circ f\colon A\to C$, together with the identities. A functor $F$ to $\mathbf{Set}$ has $F(A)$ with $5$ elements, $F(B)$ with $2$ elements and $F(C)$ with $4$ elements. How many functions are there from the domain to the codomain of $F(g\circ f)$?'
             answer: '1024'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The composite $g\circ f$ runs from $A$ to $C$, so $F(g\circ f)$ runs from $F(A)$ to $F(C)$. Sam used $F(B)$ as the domain by mistake. A function from a set of $5$ elements to a set of $4$ elements has $4$ choices for each of $5$ inputs, so there are $4^5=1024$.'
+            solution_sketch: 'The composite $g\circ f$ runs from $A$ to $C$, so $F(g\circ f)$ runs from $F(A)$ to $F(C)$, and $F(B)$ is not its domain. A function from a set of $5$ elements to a set of $4$ elements has $4$ choices for each of $5$ inputs, so there are $4^5=1024$.'
           - problem: 'How many functors are there from the poset category $0<1$ to the poset category $0<1<2$?'
             answer: '6'
             answer_contract: {"kind": "exact"}
@@ -95,7 +95,7 @@ topics:
             answer: '(0, 0)'
             answer_contract: {"kind": "coordinates", "arity": 2}
             solution_sketch: 'The rule gives $Q(1_X)(0,1)=(1_X(0),1_X(0))=(0,0)$. The identity law would require $Q(1_X)(0,1)=(0,1)$. The two differ, so $Q$ breaks the identity law.'
-          - problem: 'Let $F$ be the image functor on subsets, with $F(h)(S)=\{h(s):s\in S\}$. Take $f(x)=x+1$ and $g(x)=2x$ on the integers and $S=\{1,2\}$. Sam writes $F(g\circ f)=F(f)\circ F(g)$ and computes $F(f)(F(g)(S))=\{3,5\}$. What is the correct value of $F(g\circ f)(S)$?'
+          - problem: 'Let $F$ be the image functor on subsets, with $F(h)(S)=\{h(s):s\in S\}$. Take $f(x)=x+1$ and $g(x)=2x$ on the integers and $S=\{1,2\}$. What is the value of $F(g\circ f)(S)$?'
             answer: '4, 6'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The composition law has the order $F(g\circ f)=F(g)\circ F(f)$, with $f$ applied first. First $F(f)(S)=\{2,3\}$, then $F(g)$ doubles each element to give $\{4,6\}$. Directly, $(g\circ f)(1)=4$ and $(g\circ f)(2)=6$.'
@@ -124,7 +124,7 @@ topics:
         key_prerequisites: [examples-of-categories, abelian-groups]
         constraints: 'Proposed assignments are given by explicit rules on small categories, one-object categories or groups. Items locate the failing step, compute the value a law forces, or classify which laws fail. Preserve exactly one full-proof exemplar.'
         exemplars:
-          - problem: 'Sam claims that the preimage assignment is a functor from $\mathbf{Set}$ to $\mathbf{Set}$. Step 1: send each set $A$ to its power set $\mathcal{P}(A)$. Step 2: send each function $f\colon A\to B$ to the preimage map, which takes a subset of $B$ to its preimage, a subset of $A$. Step 3: this gives a map from $\mathcal{P}(A)$ to $\mathcal{P}(B)$, as a functor requires. Step 4: identities and composites are preserved. Which step is the first that is not valid, and why?'
+          - problem: 'The work below claims that the preimage assignment is a functor from $\mathbf{Set}$ to $\mathbf{Set}$. Step 1: send each set $A$ to its power set $\mathcal{P}(A)$. Step 2: send each function $f\colon A\to B$ to the preimage map, which takes a subset of $B$ to its preimage, a subset of $A$. Step 3: this gives a map from $\mathcal{P}(A)$ to $\mathcal{P}(B)$, as a functor requires. Step 4: identities and composites are preserved. Which step is the first that is not valid, and why?'
             answer: 'Step 3: the preimage map takes subsets of B to subsets of A, so it runs from P(B) to P(A), the opposite direction to the one a functor needs.'
             answer_contract: {"kind": "written"}
             solution_sketch: 'Step 1 and Step 2 describe the assignment correctly. In Step 3 the preimage map takes subsets of $B$ to subsets of $A$, so it runs from $\mathcal{P}(B)$ to $\mathcal{P}(A)$. This is the opposite direction to the one a functor needs, and Step 4 is not reached because the typing already fails.'
@@ -226,7 +226,7 @@ topics:
             answer: '11'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Advancing by $7$ hours is advancing by $1$ hour seven times, so the output advances $7\cdot 5=35$ hours. On a 12-hour clock $35=24+11$, so the reading is $11$.'
-          - problem: 'A functor $F\colon B(\mathbb{Z}/4)\to B(\mathbb{Z}/6)$ is decided by the image of the morphism $1$. Sam says that $F(1)$ can be any of the $6$ morphisms of $B(\mathbb{Z}/6)$, so there are $6$ functors. What is the correct number of functors?'
+          - problem: 'A functor $F\colon B(\mathbb{Z}/4)\to B(\mathbb{Z}/6)$ is decided by the image of the morphism $1$. The category $B(\mathbb{Z}/6)$ has $6$ morphisms. How many functors are there from $B(\mathbb{Z}/4)$ to $B(\mathbb{Z}/6)$?'
             answer: '2'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Going around the cycle in $B(\mathbb{Z}/4)$ four times gives the identity, so $4\cdot F(1)$ must be $0$ modulo $6$. This holds only for $F(1)=0$ and $F(1)=3$. So there are $2$ functors, not $6$.'
@@ -271,7 +271,7 @@ topics:
             answer: '5'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The rows are the elements of $\text{Teams}\times\text{Rounds}$, which has $\lvert\text{Teams}\rvert\cdot 9$ elements. So $\lvert\text{Teams}\rvert\cdot 9=45$. Dividing gives $45/9=5$ teams.'
-          - problem: 'On $\mathbf{Set}$, let $F(X)=X\times X$ and $F(f)(x,y)=(f(x),f(y))$. Take $f(1)=3$, $f(2)=4$, $g(3)=5$, $g(4)=6$. Sam checks composition with the formula $F(g\circ f)(x,y)=(g(f(x)),f(y))$ and gets $(5,4)$ at $(1,2)$. What is the correct value of $F(g\circ f)(1,2)$?'
+          - problem: 'On $\mathbf{Set}$, let $F(X)=X\times X$ and $F(f)(x,y)=(f(x),f(y))$. Take $f(1)=3$, $f(2)=4$, $g(3)=5$, $g(4)=6$. What is the value of $F(g\circ f)(1,2)$?'
             answer: '(5, 6)'
             answer_contract: {"kind": "coordinates", "arity": 2}
             solution_sketch: 'The function $F(g\circ f)$ applies $g\circ f$ to both coordinates. The second coordinate is $(g\circ f)(2)=g(4)=6$, not $f(2)=4$. So the correct value is $(5,6)$.'
@@ -296,7 +296,7 @@ topics:
             answer: '5'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'A functor sends an isomorphism to an isomorphism, and it sends the inverse to the inverse. The inverse of $2$ in $B(\mathbb{Z}/7)$ is $5$, because $2+5=7=0$. So $F(4)=5$.'
-          - problem: 'A category has objects $A$, $B$, $C$, $D$, morphisms $f\colon A\to B$, $g\colon B\to D$, $h\colon A\to C$, $k\colon C\to D$ and the identities, and $k\circ h=g\circ f$. A functor $F$ sends every object to the single object of $B(\mathbb{Z}/7)$, where composition is addition modulo $7$, with $F(f)=5$, $F(g)=6$, $F(h)=2$. Sam writes $F(k)=6+5+2=13=6$. What is the correct value of $F(k)$?'
+          - problem: 'A category has objects $A$, $B$, $C$, $D$, morphisms $f\colon A\to B$, $g\colon B\to D$, $h\colon A\to C$, $k\colon C\to D$ and the identities, and $k\circ h=g\circ f$. A functor $F$ sends every object to the single object of $B(\mathbb{Z}/7)$, where composition is addition modulo $7$, with $F(f)=5$, $F(g)=6$, $F(h)=2$. What is the value of $F(k)$?'
             answer: '2'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Applying $F$ to $k\circ h=g\circ f$ gives $F(k)+F(h)=F(g)+F(f)$ modulo $7$. So $F(k)+2=6+5=11=4$ modulo $7$. Subtracting, $F(k)=4-2=2$, not $13$.'
@@ -393,7 +393,7 @@ topics:
             answer: 'yes'
             answer_contract: {"kind": "label", "options": [["yes", "it is", "true", "it is a functor", "functor"], ["no", "it is not", "false", "not a functor", "not"]]}
             solution_sketch: 'A functor on $B(\mathbb{Z}/3)$ is decided by the image of $1$. The composite sends $1$ to $G(F(1))=G(2)=2+2=4=1$. So $G\circ F$ sends $1$ to $1$, and hence every morphism to itself, so it is the identity functor.'
-          - problem: 'Let $P$ be the poset $0<1<2$, let $F$ have $F(0)=1$, $F(1)=2$, $F(2)=2$, and let $I$ be the identity functor on $P$. Sam says $(I\circ F)(x)=x$ because $I$ is the identity. What is the correct value of $(I\circ F)(0)$?'
+          - problem: 'Let $P$ be the poset $0<1<2$, let $F$ have $F(0)=1$, $F(1)=2$, $F(2)=2$, and let $I$ be the identity functor on $P$. What is the value of $(I\circ F)(0)$?'
             answer: '1'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The composite applies $F$ first and then $I$, so $(I\circ F)(0)=I(F(0))=I(1)=1$. The functor $I$ fixes the value $F(0)$, not the input $0$. So $I\circ F=F$ and the value is $1$.'
@@ -434,7 +434,7 @@ topics:
             answer: 'no'
             answer_contract: {"kind": "label", "options": [["yes", "it is", "true", "it is a functor", "functor"], ["no", "it is not", "false", "not a functor", "not"]]}
             solution_sketch: 'The functor $F$ is a bijection on objects, but $\mathbf{D}$ has a morphism $0\to 1$ and $\mathbf{C}$ has none. An inverse functor would have to send $0\to 1$ to a morphism $0\to 1$ in $\mathbf{C}$. No such morphism exists, so $F$ is not an isomorphism.'
-          - problem: 'Let $\mathbf{C}$ and $\mathbf{D}$ be the indiscrete categories on the objects $0,1,2$. The functor $F\colon\mathbf{C}\to\mathbf{D}$ sends the objects $0,1,2$ to $2,0,1$. Sam says that its inverse $G$ is the same assignment $2,0,1$, because the inverse of a cycle is itself. What does the correct inverse functor send $0$ to?'
+          - problem: 'Let $\mathbf{C}$ and $\mathbf{D}$ be the indiscrete categories on the objects $0,1,2$. The functor $F\colon\mathbf{C}\to\mathbf{D}$ sends the objects $0,1,2$ to $2,0,1$. What does its inverse functor send $0$ to?'
             answer: '1'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The inverse $G$ must satisfy $F(G(0))=0$. Since $F(1)=0$, the inverse sends $0$ to $1$, not to $2$. In fact $G$ sends $0,1,2$ to $1,2,0$, which is not the same assignment as $F$.'
@@ -475,7 +475,7 @@ topics:
             answer: '3'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The map $P^2(f)$ takes the direct image of each member of $S$. We get $f[\{0,2\}]=\{0,1\}$, $f[\{2\}]=\{0\}$ and $f[\{0,1\}]=\{1\}$. These $3$ sets are different, so $P^2(f)(S)$ has $3$ elements.'
-          - problem: 'Let $T\colon\mathbf{Set}\to\mathbf{Set}$ have $T(X)=X\times X$. Sam claims that $T^n(\{0,1\})$ has $4^n$ elements for every $n\ge 1$. What is the smallest $n\ge 1$ for which the claim is false?'
+          - problem: 'Let $T\colon\mathbf{Set}\to\mathbf{Set}$ have $T(X)=X\times X$. The sets $T^n(\{0,1\})$ have $4$ elements for $n=1$. What is the smallest $n\ge 1$ for which $T^n(\{0,1\})$ does not have $4^n$ elements?'
             answer: '3'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Each application of $T$ squares the size, so $T^n(\{0,1\})$ has $2^{2^n}$ elements. For $n=1$ and $n=2$ this equals $4$ and $16$, which match $4^n$. For $n=3$ it is $256$, but $4^3=64$, so the smallest $n$ is $3$.'
@@ -569,7 +569,7 @@ topics:
             answer: '5'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'A monotone map to $\{0,1\}$ is $0$ up to some point and $1$ afterwards. The switch can happen before $0$, between two neighbours ($3$ places) or after $3$, giving $5$ maps. So $5$ of the $16$ functions lift.'
-          - problem: 'Let $U\colon\mathbf{Grp}\to\mathbf{Set}$ be the forgetful functor, let $f\colon\mathbb{Z}/3\to\mathbb{Z}/6$ have $f(n)=2n$, and let $g\colon\mathbb{Z}/6\to\mathbb{Z}/6$ have $g(n)=3n$. Sam says that $U(g\circ f)(2)$ is the sum $U(g)(2)+U(f)(2)=0+4=4$. What is the correct value of $U(g\circ f)(2)$?'
+          - problem: 'Let $U\colon\mathbf{Grp}\to\mathbf{Set}$ be the forgetful functor, let $f\colon\mathbb{Z}/3\to\mathbb{Z}/6$ have $f(n)=2n$, and let $g\colon\mathbb{Z}/6\to\mathbb{Z}/6$ have $g(n)=3n$. What is the value of $U(g\circ f)(2)$?'
             answer: '0'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The functor $U$ sends $g\circ f$ to the composite function, not to a sum. First $f(2)=4$, then $g(4)=12=6+6$, which is $0$ modulo $6$. So the correct value is $0$.'
@@ -655,7 +655,7 @@ topics:
             answer: '16'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'A functor chooses the images $a$ of $0\to 1$ and $b$ of $1\to 2$ freely in $\mathbb{Z}/4$. The image of $0\to 2$ is then forced to be $a+b$. So there are $4\cdot 4=16$ functors, and only the one with $a=b=0$ is constant.'
-          - problem: 'Let $\mathbf{C}$ be the poset category $1<2<3$ and $\Delta\colon\mathbf{C}\to\mathbf{C}\times\mathbf{C}$ the diagonal functor. Sam says $\Delta$ sends the morphism $1\to 3$ to the morphism from $(1,1)$ to $(3,2)$. What is the correct codomain of $\Delta(1\to 3)$?'
+          - problem: 'Let $\mathbf{C}$ be the poset category $1<2<3$ and $\Delta\colon\mathbf{C}\to\mathbf{C}\times\mathbf{C}$ the diagonal functor. What is the codomain of $\Delta(1\to 3)$?'
             answer: '(3, 3)'
             answer_contract: {"kind": "coordinates", "arity": 2}
             solution_sketch: 'The diagonal sends $f$ to $(f,f)$, so both coordinates use the same morphism $1\to 3$. The codomain has $3$ in both coordinates. It is $(3,3)$, not $(3,2)$.'
@@ -745,10 +745,10 @@ topics:
             answer: '3'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'Compute $\gcd(x,4)$ for $x=1,2,3,4,6,12$ and get $1,2,1,4,2,4$. The set of values is $\{1,2,4\}$, which has $3$ elements.'
-          - problem: 'Sam says: with $H(X)=\mathrm{Hom}(X,D)$ we have $H(g\circ f)(\varphi)=H(g)(H(f)(\varphi))$. Take $f\colon\{1,2\}\to\{p,q,r\}$ with $f(1)=q$, $f(2)=r$, and $g\colon\{p,q,r\}\to\{x,y\}$ with $g(p)=x$, $g(q)=y$, $g(r)=y$. Let $\varphi\colon\{x,y\}\to\{0,1\}$ have $\varphi(x)=1$, $\varphi(y)=0$. What is the correct value of $H(g\circ f)(\varphi)$ at $1$?'
+          - problem: 'With $H(X)=\mathrm{Hom}(X,D)$, take $f\colon\{1,2\}\to\{p,q,r\}$ with $f(1)=q$, $f(2)=r$, and $g\colon\{p,q,r\}\to\{x,y\}$ with $g(p)=x$, $g(q)=y$, $g(r)=y$. Let $\varphi\colon\{x,y\}\to\{0,1\}$ have $\varphi(x)=1$, $\varphi(y)=0$. What is the value of $H(g\circ f)(\varphi)$ at $1$?'
             answer: '0'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'Sam has the order wrong: $\varphi$ is a function on $\{x,y\}$, so $H(f)$ cannot be applied to it first. The correct value is $\varphi(g(f(1)))=\varphi(g(q))=\varphi(y)=0$, so $H(g\circ f)=H(f)\circ H(g)$.'
+            solution_sketch: 'The function $\varphi$ is defined on $\{x,y\}$, so $H(f)$ cannot be applied to it first. The value is $\varphi(g(f(1)))=\varphi(g(q))=\varphi(y)=0$, so $H(g\circ f)=H(f)\circ H(g)$.'
           - problem: 'Let $f\colon\{1,2,3\}\to\{a,b\}$ be given by $f(1)=a$, $f(2)=b$, $f(3)=a$. The contravariant power-set functor sends $f$ to the preimage map $T\mapsto f^{-1}[T]$ from $\mathcal P(\{a,b\})$ to $\mathcal P(\{1,2,3\})$. How many elements has $f^{-1}[\{a\}]$?'
             answer: '2'
             answer_contract: {"kind":"exact"}
@@ -778,7 +778,7 @@ topics:
             answer: '1'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'We get $FF(f)(\Phi)(\psi)=\Phi(\psi\circ f)$. Here $\psi\circ f$ has values $\psi(c)=0$ and $\psi(a)=1$, which differ, so $\Phi$ gives $1$.'
-          - problem: 'Let $F=G$ be the contravariant functor $X\mapsto\mathrm{Hom}(X,\{0,1\})$ on finite sets. Sam says that $FG(f)$ for a function $f\colon A\to B$ goes from $FG(B)$ to $FG(A)$, because $F$ and $G$ both reverse arrows. Let $A$ have $2$ elements and $B$ have $3$. How many elements has the source of $FG(f)$?'
+          - problem: 'Let $F=G$ be the contravariant functor $X\mapsto\mathrm{Hom}(X,\{0,1\})$ on finite sets. For a function $f\colon A\to B$, the map $FG(f)$ goes between $FG(A)$ and $FG(B)$. Let $A$ have $2$ elements and $B$ have $3$. How many elements has the source of $FG(f)$?'
             answer: '16'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'Two reversals give a map in the direction of $f$, so $FG(f)$ goes from $FG(A)$ to $FG(B)$. We have $|G(A)|=2^2=4$ and $|FG(A)|=2^4=16$.'
@@ -807,10 +807,10 @@ topics:
             answer: 'covariant'
             answer_contract: {"kind":"label","options":[["covariant","it is covariant","a covariant functor","covariant functor"],["contravariant","it is contravariant","a contravariant functor","contravariant functor"]]}
             solution_sketch: 'Postcomposition takes $\varphi\colon T\to A$ to $f\circ\varphi\colon T\to B$, so it goes from $\mathrm{Hom}(T,A)$ to $\mathrm{Hom}(T,B)$. It also keeps the order of composition, so it is covariant.'
-          - problem: 'Treat the symmetric group $S_3$ as a category with one object, where morphisms are permutations. Sam says that inversion $\iota(g)=g^{-1}$ is a covariant functor, so $\iota(g\circ f)=\iota(g)\circ\iota(f)$. Take $f=(1\,2)$ and $g=(2\,3)$, and compose right to left. What is the value of $\iota(g\circ f)$ at $1$?'
+          - problem: 'Treat the symmetric group $S_3$ as a category with one object, where morphisms are permutations. Take $f=(1\,2)$ and $g=(2\,3)$, and compose right to left. What is the value of $\iota(g\circ f)$ at $1$, where $\iota(h)=h^{-1}$ is the inversion?'
             answer: '2'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'We have $g\circ f$ with $1\mapsto 2\mapsto 3$, $3\mapsto 3\mapsto 2$ and $2\mapsto 1\mapsto 1$. Its inverse sends $1$ to $2$. Sam''s formula gives $3$ instead, so inversion reverses the order of composition.'
+            solution_sketch: 'We have $g\circ f$ with $1\mapsto 2\mapsto 3$, $3\mapsto 3\mapsto 2$ and $2\mapsto 1\mapsto 1$. Its inverse sends $1$ to $2$. The formula $\iota(g)\circ\iota(f)$ would give $3$ instead, so inversion reverses the order of composition.'
           - problem: 'For finite-dimensional vector spaces over $\mathbb Q$ let $D(V)=\mathrm{Hom}(V,\mathbb Q)$, and for a linear map $f$ let $D(f)(\lambda)=\lambda\circ f$. Take $f\colon\mathbb Q^2\to\mathbb Q^3$ with $f(x,y)=(x,\,y,\,2x+3y)$ and the functional $\lambda(x,y,z)=x+y+z$. What is the value of $D(f)(\lambda)$ at the vector $(0,1)$?'
             answer: '4'
             answer_contract: {"kind":"exact"}
@@ -823,7 +823,7 @@ topics:
             answer: '1, 4'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'A point $x$ lies in this set exactly when $g(f(x))=u$. This holds for $1$ and $4$, and fails for $2$ and $3$, so the set is $\{1,4\}$, which equals $f^{-1}[g^{-1}[\{u\}]]$.'
-          - problem: 'Sam says that the power-set assignment $X\mapsto\mathcal P(X)$ with preimage maps is covariant, because $\mathcal P(X)$ is built from $X$. Let $f\colon\{1,2\}\to\{a\}$ be the constant function. The assignment sends $f$ to $T\mapsto f^{-1}[T]$. Which elements lie in the image of $\{a\}$?'
+          - problem: 'Consider the power-set assignment $X\mapsto\mathcal P(X)$ with preimage maps. Let $f\colon\{1,2\}\to\{a\}$ be the constant function. The assignment sends $f$ to $T\mapsto f^{-1}[T]$. Which elements lie in the image of $\{a\}$?'
             answer: '1, 2'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'Both $1$ and $2$ are sent to $a$ by $f$, so $f^{-1}[\{a\}]=\{1,2\}$. The map goes from $\mathcal P(\{a\})$ to $\mathcal P(\{1,2\})$, against $f$, so the assignment is contravariant.'
@@ -896,7 +896,7 @@ topics:
             answer: '3'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'A morphism $a\to b$ of $\mathcal D$ between divisors is missed when $a\le b$ but $a\nmid b$. The pairs are $(2,3)$, $(3,4)$ and $(4,6)$, so there are $3$ of them and $F$ is not full.'
-          - problem: 'Sam says that $F\colon\mathbf B(\mathbb Z_6)\to\mathbf B(\mathbb Z_2)$, $k\mapsto k\bmod 2$, is faithful because every element of $\mathbb Z_2$ is hit. How many morphisms of $\mathbf B(\mathbb Z_6)$ does $F$ send to the morphism $0$?'
+          - problem: 'Let $F\colon\mathbf B(\mathbb Z_6)\to\mathbf B(\mathbb Z_2)$ be $k\mapsto k\bmod 2$. How many morphisms of $\mathbf B(\mathbb Z_6)$ does $F$ send to the morphism $0$?'
             answer: '3'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'Hitting every morphism is fullness, not faithfulness. The elements $0,2,4$ all go to $0$, so $3$ morphisms have the same image, and $F$ is not faithful.'
@@ -929,7 +929,7 @@ topics:
             answer: '8'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The inclusion is injective, so it is faithful. It reaches $4$ of the $12$ morphisms, so $12-4=8$ morphisms are missed, and it is not full.'
-          - problem: 'Sam says that the unique functor $F\colon\mathbf B(\mathbb Z_3)\to\mathbf 1$ is fully faithful, because $\mathbf 1$ has only one morphism and every morphism of $\mathbf 1$ is hit. For how many pairs of different morphisms of $\mathbf B(\mathbb Z_3)$ (order not counted) is the image the same?'
+          - problem: 'Let $F\colon\mathbf B(\mathbb Z_3)\to\mathbf 1$ be the unique functor. For how many pairs of different morphisms of $\mathbf B(\mathbb Z_3)$ (order not counted) is the image the same?'
             answer: '3'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'Being onto gives fullness only. All $3$ morphisms $0,1,2$ have the same image, so there are $3$ pairs with equal images, and $F$ is not faithful.'
@@ -1043,7 +1043,7 @@ topics:
             answer: '2'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'A subcategory must contain the identity, and $c_0$ by assumption. Since $c_0\circ c_0=c_0$, nothing more is forced, so there are $2$ morphisms.'
-          - problem: 'Sam wants the smallest subcategory of the category with one object, morphisms the integers and composition by addition, that contains the morphism $3$. Sam lists $0$ and $3$. What is the next morphism, after $3$, that Sam must add?'
+          - problem: 'Find the smallest subcategory of the category with one object, morphisms the integers and composition by addition, that contains the morphism $3$. It contains $0$ and $3$. What is the next morphism, after $3$, that must be added?'
             answer: '6'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The composite of $3$ with itself is $3+3=6$, so $6$ must be added. Closure forces all positive multiples of $3$, and $6$ is the first new one.'
@@ -1080,10 +1080,10 @@ topics:
             answer: '21'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'There are $3^3=27$ functions $X\to X$. Exactly $3!=6$ of them are bijections, so $27-6=21$ are omitted by the core.'
-          - problem: 'Sam says that $\mathbf{Grp}$ is not full in $\mathbf{Mon}$, because a monoid homomorphism between groups might fail to preserve inverses. Test this on $\phi\colon\mathbb Z_4\to\mathbb Z_4$ with $\phi(x)=3x$, which is a monoid homomorphism. What is $\phi(-1)$?'
+          - problem: 'A monoid homomorphism between groups might fail to preserve inverses. Test this on $\phi\colon\mathbb Z_4\to\mathbb Z_4$ with $\phi(x)=3x$, which is a monoid homomorphism. What is $\phi(-1)$?'
             answer: '1'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'We have $-1=3$ in $\mathbb Z_4$, so $\phi(-1)=3\cdot 3=9=1$. Also $\phi(1)=3$ has inverse $1$ in $\mathbb Z_4$, so the inverse is preserved, and the test does not support Sam.'
+            solution_sketch: 'We have $-1=3$ in $\mathbb Z_4$, so $\phi(-1)=3\cdot 3=9=1$. Also $\phi(1)=3$ has inverse $1$ in $\mathbb Z_4$, so the inverse is preserved in this test.'
           - problem: 'Let $\mathbf{Ab}$ be the subcategory of $\mathbf{Grp}$ whose objects are the abelian groups and whose morphisms are all group homomorphisms between them. How many group homomorphisms $\mathbb Z_3\to\mathbb Z_6$ are not morphisms of $\mathbf{Ab}$?'
             answer: '0'
             answer_contract: {"kind":"exact"}
@@ -1121,10 +1121,10 @@ topics:
             answer: '63'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The divisors of $12$ are $1,2,3,4,6,12$, which is $6$ objects. Each nonempty set of objects gives one full subcategory, so there are $2^6-1=63$.'
-          - problem: 'Sam says that a full subcategory is determined by how many objects it has. Let $\mathcal C$ be the chain $0<1<2$ with one morphism $x\to y$ when $x\le y$. How many different full subcategories of $\mathcal C$ have exactly $2$ objects?'
+          - problem: 'Let $\mathcal C$ be the chain $0<1<2$ with one morphism $x\to y$ when $x\le y$. How many different full subcategories of $\mathcal C$ have exactly $2$ objects?'
             answer: '3'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'A full subcategory is fixed by its set of objects, not by the size of the set. The sets $\{0,1\}$, $\{0,2\}$ and $\{1,2\}$ give $3$ different subcategories, which refutes Sam.'
+            solution_sketch: 'A full subcategory is fixed by its set of objects, not by the size of the set. The sets $\{0,1\}$, $\{0,2\}$ and $\{1,2\}$ give $3$ different subcategories.'
           - problem: 'Let $\mathbf B(\mathbb Z_6)$ be the one-object category whose morphisms are the elements of $\mathbb Z_6$, composed by addition. How many different subcategories of it contain its object?'
             answer: '4'
             answer_contract: {"kind":"exact"}
@@ -1194,10 +1194,10 @@ topics:
             answer: '(6, 10)'
             answer_contract: {"kind": "coordinates", "arity": 2}
             solution_sketch: 'The two projection equations force the first coordinate of $\langle F,G\rangle(5)$ to be $F(5)=6$ and the second to be $G(5)=10$. So $\langle F,G\rangle(5)=(6,10)$.'
-          - problem: 'With $F(n)=n+1$ and $G(n)=2n$ as above, Sam says that $\pi_2(\langle F,G\rangle(4))=F(4)=5$. What is the correct value of $\pi_2(\langle F,G\rangle(4))$?'
+          - problem: 'With $F(n)=n+1$ and $G(n)=2n$ as above, what is the value of $\pi_2(\langle F,G\rangle(4))$?'
             answer: '8'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The functor $\langle F,G\rangle$ satisfies $\pi_2\circ\langle F,G\rangle=G$, not $F$. So $\pi_2(\langle F,G\rangle(4))=G(4)=8$. Sam used the first coordinate instead of the second.'
+            solution_sketch: 'The functor $\langle F,G\rangle$ satisfies $\pi_2\circ\langle F,G\rangle=G$, not $F$. So $\pi_2(\langle F,G\rangle(4))=G(4)=8$. The value $F(4)=5$ belongs to the first coordinate.'
           - problem: 'A courier classes parcels by weight band $1<2<3$ and by speed $\text{standard}<\text{express}$. A parcel can be reclassified from (band, speed) to (band$''$, speed$''$) when the band does not drop and the speed does not get slower, and no change at all also counts. The classes and these reclassifications form the product of the two chains. From how many classes, the class itself counted, can a parcel be reclassified to the class (band $3$, express)?'
             answer: '6'
             answer_contract: {"kind": "exact"}
@@ -1236,10 +1236,10 @@ topics:
             answer: '24'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'A functor out of the product is a pair of partial actions that commute with each other, and addition modulo $12$ always commutes. A functor $B(\mathbb{Z}/4)\to B(\mathbb{Z}/12)$ is a value $x$ with $4x\equiv0$ modulo $12$, so $x\in\{0,3,6,9\}$ gives $4$ choices. A functor $B(\mathbb{Z}/6)\to B(\mathbb{Z}/12)$ is a value $y$ with $6y\equiv0$ modulo $12$, which gives $6$ choices. The count is $4\cdot 6=24$.'
-          - problem: 'Let $S_3$ be the group of permutations of three symbols, and let $B(S_3)$ be the one-object category whose morphisms are the permutations. A functor $B(\mathbb{Z}/2)\to B(S_3)$ is a choice of a permutation $a$ with $a\circ a=e$, so there are $4$ of them. Sam says that any two such functors, one for each factor, give a functor $B(\mathbb{Z}/2)\times B(\mathbb{Z}/2)\to B(S_3)$, and counts $4\cdot 4=16$. How many functors $B(\mathbb{Z}/2)\times B(\mathbb{Z}/2)\to B(S_3)$ are there?'
+          - problem: 'Let $S_3$ be the group of permutations of three symbols, and let $B(S_3)$ be the one-object category whose morphisms are the permutations. A functor $B(\mathbb{Z}/2)\to B(S_3)$ is a choice of a permutation $a$ with $a\circ a=e$, so there are $4$ of them. How many functors $B(\mathbb{Z}/2)\times B(\mathbb{Z}/2)\to B(S_3)$ are there?'
             answer: '10'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'A functor out of the product needs two partial actions $a$ and $b$ with $a\circ b=b\circ a$, because $(f,1)$ and $(1,g)$ commute in the product. The permutations with $a\circ a=e$ are the identity and the $3$ transpositions. A pair works when one of the two is the identity, which gives $4+4-1=7$ pairs, or when $a=b$ is a transposition, which adds $3$ pairs. Two different transpositions do not commute, so the total is $10$, not $16$.'
+            solution_sketch: 'A functor out of the product needs two partial actions $a$ and $b$ with $a\circ b=b\circ a$, because $(f,1)$ and $(1,g)$ commute in the product. The permutations with $a\circ a=e$ are the identity and the $3$ transpositions. A pair works when one of the two is the identity, which gives $4+4-1=7$ pairs, or when $a=b$ is a transposition, which adds $3$ pairs. Two different transpositions do not commute, so the total is $10$, not $4\cdot 4=16$.'
           - problem: 'Let $f\colon\{0,1\}\to\{0,1\}$ swap the two elements, and let $g\colon\{0,1,2\}\to\{0,1,2\}$ be given by $g(0)=2$, $g(1)=0$, $g(2)=1$. For the bifunctor $\times$ on $\mathbf{Set}$, what is $\big((f\times 1)\circ(1\times g)\big)(1,0)$, where $f\times1$ and $1\times g$ act on the first and on the second coordinate?'
             answer: '(0, 2)'
             answer_contract: {"kind": "coordinates", "arity": 2}
@@ -1317,10 +1317,10 @@ topics:
             answer: '4'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The ways to join are the functions from the set of pupils to the set of clubs, so their number is $3^n$ for $n$ pupils. From $3^n=81$ and $3^4=81$ we get $n=4$. The group has $4$ pupils.'
-          - problem: 'In $\mathbf{Set}$ let $A=\{0\}$ and $X=Y=Z=\{0,1,2\}$. Let $h(0)=1$, let $f\colon X\to Y$ be given by $f(0)=0$, $f(1)=2$, $f(2)=0$, and let $g\colon Y\to Z$ be given by $g(0)=1$, $g(1)=2$, $g(2)=1$. Sam says that $(g\circ f)_*(h)$ is $f\circ g\circ h$ and gets the value $0$ at $0$. What is the correct value of $(g\circ f)_*(h)$ at $0$?'
+          - problem: 'In $\mathbf{Set}$ let $A=\{0\}$ and $X=Y=Z=\{0,1,2\}$. Let $h(0)=1$, let $f\colon X\to Y$ be given by $f(0)=0$, $f(1)=2$, $f(2)=0$, and let $g\colon Y\to Z$ be given by $g(0)=1$, $g(1)=2$, $g(2)=1$. What is the value of $(g\circ f)_*(h)$ at $0$?'
             answer: '1'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The composition law gives $(g\circ f)_*(h)=(g\circ f)\circ h=g\circ f\circ h$, with $f$ applied first. At $0$ this is $g(f(h(0)))=g(f(1))=g(2)=1$. Sam applied $g$ first and got $f(g(1))=f(2)=0$.'
+            solution_sketch: 'The composition law gives $(g\circ f)_*(h)=(g\circ f)\circ h=g\circ f\circ h$, with $f$ applied first. At $0$ this is $g(f(h(0)))=g(f(1))=g(2)=1$. The other order gives $f(g(1))=f(2)=0$, which is a different composite.'
           - problem: 'In $\mathbf{Set}$ let $A=X=\{0,1,2\}$ and $Y=\{0,1\}$, and let $f\colon X\to Y$ be given by $f(0)=0$, $f(1)=1$, $f(2)=1$. How many functions $h\in\mathrm{Hom}(A,X)$ satisfy $f_*(h)=$ the constant function with value $1$?'
             answer: '8'
             answer_contract: {"kind": "exact"}
@@ -1350,10 +1350,10 @@ topics:
             answer: '6'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'A pattern is a function from the set of lamps to $\{\text{on},\text{off}\}$, so $n$ lamps give $2^n$ patterns. From $2^n=64$ and $2^6=64$ we get $n=6$. The hall has $6$ lamps.'
-          - problem: 'In $\mathbf{Set}$ let $X=\{1,2\}$, $Y=\{a,b,c\}$ and $f\colon X\to Y$ with $f(1)=f(2)=a$. The map $f^*\colon\mathrm{Hom}(Y,\{0,1\})\to\mathrm{Hom}(X,\{0,1\})$ is defined on $8$ functions. Sam says that $f^*$ sends these $8$ functions to $8$ different functions. How many different functions are the values of $f^*$?'
+          - problem: 'In $\mathbf{Set}$ let $X=\{1,2\}$, $Y=\{a,b,c\}$ and $f\colon X\to Y$ with $f(1)=f(2)=a$. The map $f^*\colon\mathrm{Hom}(Y,\{0,1\})\to\mathrm{Hom}(X,\{0,1\})$ is defined on $8$ functions. How many different functions are the values of $f^*$?'
             answer: '2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The function $f^*(\chi)=\chi\circ f$ takes the value $\chi(a)$ at both $1$ and $2$. So it depends only on $\chi(a)$, which is $0$ or $1$. The values of $f^*$ are the $2$ constant functions, so Sam is wrong.'
+            solution_sketch: 'The function $f^*(\chi)=\chi\circ f$ takes the value $\chi(a)$ at both $1$ and $2$. So it depends only on $\chi(a)$, which is $0$ or $1$. The values of $f^*$ are the $2$ constant functions, so the $8$ functions do not go to $8$ different functions.'
           - problem: 'Let $f\colon X\to Y$ and $g\colon Y\to Z$ be morphisms of $\mathcal{C}$, and let $h\colon Z\to B$ be a morphism. Which of the maps $f^*$ and $g^*$ is applied to $h$ first when $(g\circ f)^*(h)$ is computed as a composite of $f^*$ and $g^*$?'
             answer: 'g^*'
             answer_contract: {"kind": "label", "options": [["g^*", "g*", "g star", "g", "$g^*$", "g first"], ["f^*", "f*", "f star", "f", "$f^*$", "f first"]]}
@@ -1395,10 +1395,10 @@ topics:
             answer: 'f∘p'
             answer_contract: {"kind": "label", "options": [["f∘p", "f o p", "fp", "f p", "f after p"], ["p∘f", "p o f", "pf", "p f", "p after f"]]}
             solution_sketch: 'The composite $f\circ p$ means $p$ first and then $f$. The target of $p$ is $A''$, which is the source of $f$, so $f\circ p$ is defined. The composite $p\circ f$ would need the target $A$ of $f$ to be the source $A''''$ of $p$, which does not hold in general.'
-          - problem: 'Let $f$, $g$ and $h$ be functions from $\{0,1,2\}$ to itself, given by $f(0)=1$, $f(1)=2$, $f(2)=2$; $g(0)=0$, $g(1)=0$, $g(2)=1$; and $h(0)=2$, $h(1)=0$, $h(2)=1$. The image of $h$ under $\mathrm{Hom}(f,g)$ is $g\circ h\circ f$. Sam computes it as $f\circ h\circ g$ and gets the value $2$ at $0$. What is the correct value of $g\circ h\circ f$ at $0$?'
+          - problem: 'Let $f$, $g$ and $h$ be functions from $\{0,1,2\}$ to itself, given by $f(0)=1$, $f(1)=2$, $f(2)=2$; $g(0)=0$, $g(1)=0$, $g(2)=1$; and $h(0)=2$, $h(1)=0$, $h(2)=1$. The image of $h$ under $\mathrm{Hom}(f,g)$ is $g\circ h\circ f$. What is the value of $g\circ h\circ f$ at $0$?'
             answer: '0'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The functor sends $h$ to $g\circ h\circ f$, with $f$ applied first and $g$ last. At $0$ this is $g(h(f(0)))=g(h(1))=g(0)=0$. Sam applied the maps in the opposite order and got $f(h(g(0)))=f(h(0))=f(2)=2$.'
+            solution_sketch: 'The functor sends $h$ to $g\circ h\circ f$, with $f$ applied first and $g$ last. At $0$ this is $g(h(f(0)))=g(h(1))=g(0)=0$. The opposite order gives $f(h(g(0)))=f(h(0))=f(2)=2$, which is a different composite.'
           - problem: 'A teacher records the clubs of $3$ chosen pupils of a group, where each pupil of the group is assigned to one of $3$ clubs by a function $h$. For one fixed record, exactly $27$ assignments $h$ of the whole group give that record. How many pupils are in the group?'
             answer: '6'
             answer_contract: {"kind": "exact"}
@@ -1478,10 +1478,10 @@ topics:
             answer: '(0, 1)'
             answer_contract: {"kind": "coordinates", "arity": 2}
             solution_sketch: 'The condition $b\circ h=h''\circ a$ at $0$ reads $b(h(0))=b(1)=2=h''(a(0))$, and only $h''(0)=2$, so $a(0)=0$. At $1$ it reads $b(h(1))=b(0)=0=h''(a(1))$, and only $h''(1)=0$, so $a(1)=1$. So $(a(0),a(1))=(0,1)$.'
-          - problem: 'In the comma category $(1_{\mathbf{Set}}\downarrow1_{\mathbf{Set}})$ let $(a,b)\colon h\to h''$ and $(a'',b'')\colon h''\to h''''$ be morphisms, where all the sets are $\{0,1\}$. The function $a$ swaps $0$ and $1$, and $a''$ sends both $0$ and $1$ to $1$. Sam writes the first component of the composite $(a'',b'')\circ(a,b)$ as $a\circ a''$. What is the correct value of that first component at $0$?'
+          - problem: 'In the comma category $(1_{\mathbf{Set}}\downarrow1_{\mathbf{Set}})$ let $(a,b)\colon h\to h''$ and $(a'',b'')\colon h''\to h''''$ be morphisms, where all the sets are $\{0,1\}$. The function $a$ swaps $0$ and $1$, and $a''$ sends both $0$ and $1$ to $1$. What is the value at $0$ of the first component of the composite $(a'',b'')\circ(a,b)$?'
             answer: '1'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Composition in a comma category is componentwise, so the first component of $(a'',b'')\circ(a,b)$ is $a''\circ a$, with $a$ applied first. At $0$ this is $a''(a(0))=a''(1)=1$. Sam applied $a''$ first and got $a(a''(0))=a(1)=0$.'
+            solution_sketch: 'Composition in a comma category is componentwise, so the first component of $(a'',b'')\circ(a,b)$ is $a''\circ a$, with $a$ applied first. At $0$ this is $a''(a(0))=a''(1)=1$. The order $a\circ a''$ would give $a(a''(0))=a(1)=0$.'
           - problem: 'In $(1_{\mathbf{Set}}\downarrow1_{\mathbf{Set}})$ let $h\colon\{0,1\}\to\{0,1\}$ be the identity function, and let $h''\colon\{0,1\}\to\{0,1\}$ swap $0$ and $1$. Take $a$ and $b$ both equal to the identity function on $\{0,1\}$. Is $(a,b)$ a morphism from $h$ to $h''$?'
             answer: 'no'
             answer_contract: {"kind": "label", "options": [["yes", "there is one", "there is a morphism", "it is a morphism", "it is"], ["no", "there is none", "there is no morphism", "it is not a morphism", "it is not"]]}
@@ -1531,10 +1531,10 @@ topics:
             answer: '2'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The condition $b\circ h=h''$ gives $b(0)=h''(0)=0$ and $b(1)=h''(1)=1$. The element $2$ of $Y$ is not in the image of $h$, so $b(2)$ is free, with $2$ choices. So there are $2$ morphisms.'
-          - problem: 'Let $\mathcal{C}$ be $\{1,2,\dots,12\}$ ordered by divisibility. Sam counts the objects of the slice $\mathcal{C}/8$ as the morphisms $8\to X$ and finds $1$ object. How many objects does the slice $\mathcal{C}/8$ really have?'
+          - problem: 'Let $\mathcal{C}$ be $\{1,2,\dots,12\}$ ordered by divisibility. How many objects does the slice $\mathcal{C}/8$ have?'
             answer: '4'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The objects of the slice $\mathcal{C}/8$ are the morphisms $X\to8$, so $X$ divides $8$, and the divisors are $1,2,4,8$. Sam counted the morphisms $8\to X$, which belong to the coslice $8/\mathcal{C}$, and found only the object $8$. The slice has $4$ objects.'
+            solution_sketch: 'The objects of the slice $\mathcal{C}/8$ are the morphisms $X\to8$, so $X$ divides $8$, and the divisors are $1,2,4,8$. The morphisms $8\to X$ belong to the coslice $8/\mathcal{C}$ and give only the object $8$. The slice has $4$ objects.'
           - problem: 'Which of the slice $\mathcal{C}/c$, the coslice $c/\mathcal{C}$ and the arrow category of $\mathcal{C}$ is the comma category $(1_{\mathcal{C}}\downarrow1_{\mathcal{C}})$?'
             answer: 'arrow category'
             answer_contract: {"kind": "label", "options": [["arrow category", "the arrow category", "arrows", "arrow", "the category of arrows"], ["slice", "the slice", "slice category", "the slice category"], ["coslice", "the coslice", "coslice category", "the coslice category"]]}
@@ -1581,7 +1581,7 @@ topics:
             answer: 'yes'
             answer_contract: {"kind": "label", "options": [["yes", "it has one", "there is one", "it does"], ["no", "it has none", "there is none", "it does not", "it has no initial object"]]}
             solution_sketch: 'An object of $(2\downarrow G)$ needs a morphism $2\to G(d)$, so $2\le G(d)$. This holds only for $d=3$, so the comma category has exactly one object. A category with exactly one object has that object as its initial object, so the answer is yes.'
-          - problem: 'Let $G\colon(\mathbb{Z},\le)\to(\mathbb{Z},\le)$ be the functor $G(n)=3n$. Sam says that the initial object of $(7\downarrow G)$ has $n=2$, because $3\cdot2=6$ is the multiple of $3$ closest to $7$. Which $n$ underlies the initial object of $(7\downarrow G)$?'
+          - problem: 'Let $G\colon(\mathbb{Z},\le)\to(\mathbb{Z},\le)$ be the functor $G(n)=3n$. Which $n$ underlies the initial object of $(7\downarrow G)$?'
             answer: '3'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'An object of $(7\downarrow G)$ needs a morphism $7\to3n$, so $7\le3n$. For $n=2$ we have $6<7$, so there is no morphism and $n=2$ is not even an object. The least $n$ with $7\le3n$ is $3$, since $3\cdot3=9$.'

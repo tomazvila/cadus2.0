@@ -50,9 +50,9 @@ topics:
             answer: '[[5], [6, 7], [8]]'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Right whiskering gives $(\mu T)_A=\mu_{T(A)}$, which concatenates the outer two levels of $L$. The lists $[[5],[6,7]]$ and $[[8]]$ join into $[[5],[6,7],[8]]$.'
-          - problem: 'Sam claims that $T\mu$ and $\mu T$ are the same natural transformation, because both go from $T^3$ to $T^2$. Take the list monad and $L=[[[1],[2]],[[3]]]$. Is $(T\mu)_A(L)$ the same list as $(\mu T)_A(L)$?'
+          - problem: 'Both $T\mu$ and $\mu T$ go from $T^3$ to $T^2$. Take the list monad and $L=[[[1],[2]],[[3]]]$. Is $(T\mu)_A(L)$ the same list as $(\mu T)_A(L)$?'
             answer: 'no'
-            answer_contract: {"kind": "label", "options": [["no", "it is not", "not the same", "different", "they differ", "sam is wrong", "not equal", "they are not the same"], ["yes", "it is", "the same", "equal", "sam is right"]]}
+            answer_contract: {"kind": "label", "options": [["no", "it is not", "not the same", "different", "they differ", "not equal", "they are not the same"], ["yes", "it is", "the same", "equal", "they are the same"]]}
             solution_sketch: 'Here $(T\mu)_A(L)=T(\mu_A)(L)=[[1,2],[3]]$, because $T\mu$ concatenates inside each entry. But $(\mu T)_A(L)=\mu_{T(A)}(L)=[[1],[2],[3]]$. The two lists differ, so having equal types does not make two transformations equal and the answer is no.'
           - problem: 'In the list monad (with $T(f)$ applying $f$ to every entry and $\mu_A$ concatenating), what is $(T\mu)_A(L)$ for $L=[[[4],[5,6]],[[7,8],[9]]]$?'
             answer: '[[4, 5, 6], [7, 8, 9]]'
@@ -79,7 +79,7 @@ topics:
             answer: 'a = 1; b = 1; c = -2'
             answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "a"}, {"contract": {"kind": "exact"}, "name": "b"}, {"contract": {"kind": "exact"}, "name": "c"}]}
             solution_sketch: 'The law $\mu\circ T\eta=1_T$ gives $\mu((x,2),m)=(x,2a+bm+c)=(x,m)$, so $b=1$ and $2a+c=0$. The law $\mu\circ\eta T=1_T$ gives $\mu((x,m),2)=(x,am+2b+c)=(x,m)$, so $a=1$ and $2b+c=0$. Hence $a=1$, $b=1$ and $c=-2$.'
-          - problem: 'Sam proposes the multiplication $\mu((x,m),n)=(x,m-n)$ for $T(X)=X\times\mathbb Z$, with $T(f)(x,m)=(f(x),m)$. He tests associativity at $w=(((u,5),3),2)$ in $T^3(X)$. Let $l$ be the count in the second slot of $\mu(T\mu(w))$ and $r$ the count in the second slot of $\mu(\mu_{T(X)}(w))$. Find $l$ and $r$.'
+          - problem: 'Take the multiplication $\mu((x,m),n)=(x,m-n)$ for $T(X)=X\times\mathbb Z$, with $T(f)(x,m)=(f(x),m)$. Test associativity at $w=(((u,5),3),2)$ in $T^3(X)$. Let $l$ be the count in the second slot of $\mu(T\mu(w))$ and $r$ the count in the second slot of $\mu(\mu_{T(X)}(w))$. Find $l$ and $r$.'
             answer: 'l = 0; r = 4'
             answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "l"}, {"contract": {"kind": "exact"}, "name": "r"}]}
             solution_sketch: 'First $T\mu(w)=((u,5-3),2)=((u,2),2)$, and $\mu$ gives $(u,2-2)=(u,0)$, so the first count is $0$. Next $\mu_{T(X)}(w)=((u,5),3-2)=((u,5),1)$, and $\mu$ gives $(u,5-1)=(u,4)$, so the second count is $4$. The counts $0$ and $4$ differ, so this multiplication is not associative.'
@@ -244,7 +244,7 @@ topics:
             answer: '0, 1'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The map $P(Pf)$ applies $f$ to every element of every member, giving $\{\{0,1\},\{1,0\},\{1\}\}=\{\{0,1\},\{1\}\}$. Taking the union gives $\{0,1\}$. The other route, $Pf(\mu(\mathcal F))=Pf(\{1,2,3,4\})$, also gives $\{0,1\}$, as naturality of $\mu$ requires.'
-          - problem: 'Sam proposes to replace the multiplication of the power-set monad on the set $\{1,2\}$ by $\nu(\mathcal F)=\bigcup\mathcal F$ when $\mathcal F$ has exactly one member and $\nu(\mathcal F)=\varnothing$ otherwise. For which subset $S$ of $\{1,2\}$ does $\nu\big(P(\eta)(S)\big)$ differ from $S$?'
+          - problem: 'Replace the multiplication of the power-set monad on the set $\{1,2\}$ by $\nu(\mathcal F)=\bigcup\mathcal F$ when $\mathcal F$ has exactly one member and $\nu(\mathcal F)=\varnothing$ otherwise. For which subset $S$ of $\{1,2\}$ does $\nu\big(P(\eta)(S)\big)$ differ from $S$?'
             answer: '1, 2'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'For $S=\varnothing$ the family $P(\eta)(S)$ is empty, so $\nu$ gives $\varnothing=S$. For $S=\{1\}$ and $S=\{2\}$ the family has one member, so $\nu$ gives $S$ again. For $S=\{1,2\}$ the family $\{\{1\},\{2\}\}$ has two members, so $\nu$ gives $\varnothing$, and the unit law fails at $S=\{1,2\}$.'
@@ -281,7 +281,7 @@ topics:
             answer: '(((4, 7), 7), 7)'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'First $\delta_X(4,7)=((4,7),7)$. Then $(W\delta)_X=W(\delta_X)$ applies $\delta_X$ to the first slot and keeps the setting, giving $(\delta_X(4,7),7)=(((4,7),7),7)$.'
-          - problem: 'Take $E=\mathbb Z$ and $W(X)=X\times E$ with $\varepsilon_X(x,e)=x$. Sam changes the comultiplication to $\gamma_X(x,e)=((x,e),e+1)$ and checks the counit law $W\varepsilon\circ\gamma=1_W$ at $(5,2)$. What is $(W\varepsilon)_X\big(\gamma_X(5,2)\big)$?'
+          - problem: 'Take $E=\mathbb Z$ and $W(X)=X\times E$ with $\varepsilon_X(x,e)=x$. Change the comultiplication to $\gamma_X(x,e)=((x,e),e+1)$ and check the counit law $W\varepsilon\circ\gamma=1_W$ at $(5,2)$. What is $(W\varepsilon)_X\big(\gamma_X(5,2)\big)$?'
             answer: '(5, 3)'
             answer_contract: {"kind": "coordinates", "arity": 2}
             solution_sketch: 'First $\gamma_X(5,2)=((5,2),3)$. Then $(W\varepsilon)_X$ applies $\varepsilon_X$ to the first slot, giving $(\varepsilon_X(5,2),3)=(5,3)$. This is not $(5,2)$, so the counit law fails for $\gamma$.'
@@ -349,7 +349,7 @@ topics:
             answer: '2'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The law $\mu\circ T\eta=1_T$ sends the extra point adjoined by the outer $T$ to the extra point of $T(A)$. The law $\mu\circ\eta T=1_T$ does the same for the extra point of the inner $T$. So both extra points go to $\ast$, which is $2$ elements.'
-          - problem: 'Sam defines $\nu\colon T(T(A))\to T(A)$ for the maybe monad on $A=\{1,2\}$ by $\nu(a)=a$ for $a\in A$, $\nu(\ast_{\mathrm{in}})=\ast$ for the extra point of the inner $T$, and $\nu(\ast_{\mathrm{out}})=1$ for the extra point adjoined by the outer $T$. The map $T(\eta_A)$ sends the extra point $\ast$ of $T(A)$ to $\ast_{\mathrm{out}}$. What is $\nu\big(T(\eta_A)(\ast)\big)$?'
+          - problem: 'Define $\nu\colon T(T(A))\to T(A)$ for the maybe monad on $A=\{1,2\}$ by $\nu(a)=a$ for $a\in A$, $\nu(\ast_{\mathrm{in}})=\ast$ for the extra point of the inner $T$, and $\nu(\ast_{\mathrm{out}})=1$ for the extra point adjoined by the outer $T$. The map $T(\eta_A)$ sends the extra point $\ast$ of $T(A)$ to $\ast_{\mathrm{out}}$. What is $\nu\big(T(\eta_A)(\ast)\big)$?'
             answer: '1'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'We get $T(\eta_A)(\ast)=\ast_{\mathrm{out}}$, and $\nu(\ast_{\mathrm{out}})=1$. The unit law $\nu\circ T\eta=1_T$ would require the value $\ast$ at $\ast$, so it fails: the outer extra point must go to $\ast$, not to the ordinary point $1$.'
@@ -390,7 +390,7 @@ topics:
             answer: '[[1, 2, 3], [4, 5, 6]]'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The map $T\mu$ applies $\mu$ to each entry of $L$. The entry $[[1,2],[3]]$ becomes $[1,2,3]$ and the entry $[[4],[5,6]]$ becomes $[4,5,6]$. The result is $[[1,2,3],[4,5,6]]$.'
-          - problem: 'Sam proposes a multiplication $\nu$ for the list monad that concatenates all inner lists except the first, so $\nu([[1],[2,3],[4]])=[2,3,4]$. What is $\nu\big(T\eta([1,2,3])\big)$?'
+          - problem: 'Take a multiplication $\nu$ for the list monad that concatenates all inner lists except the first, so $\nu([[1],[2,3],[4]])=[2,3,4]$. What is $\nu\big(T\eta([1,2,3])\big)$?'
             answer: '[2, 3]'
             answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
             solution_sketch: 'The map $T\eta$ wraps every entry, so $T\eta([1,2,3])=[[1],[2],[3]]$. Then $\nu$ drops the first inner list and concatenates $[2]$ and $[3]$, giving $[2,3]$. This is not $[1,2,3]$, so the unit law fails for $\nu$.'
@@ -431,7 +431,7 @@ topics:
             answer: '30'
             answer_contract: {"kind": "unit", "quantity": "time", "unit": "s", "allow_omitted": true}
             solution_sketch: 'The total time is the sum of the times of the two steps, so $75=t_f+45$. Hence $t_f=75-45=30$ seconds.'
-          - problem: 'Sam proposes the multiplication $\nu(m,(n,a))=(m+n+1,a)$ for $T(A)=\mathbb N\times A$, with $\eta(a)=(0,a)$. What is the log of $\nu\big(T\eta(4,a)\big)$?'
+          - problem: 'Take the multiplication $\nu(m,(n,a))=(m+n+1,a)$ for $T(A)=\mathbb N\times A$, with $\eta(a)=(0,a)$. What is the log of $\nu\big(T\eta(4,a)\big)$?'
             answer: '5'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'First $T\eta(4,a)=(4,(0,a))$. Then $\nu$ gives the log $4+0+1=5$. The unit law would need the log $4$, so the unit law fails for $\nu$.'
@@ -548,7 +548,7 @@ topics:
             answer: 'No step fails: Step 2 is naturality of mu at h, Step 3 is the monad associativity law, and Step 4 is functoriality of T.'
             answer_contract: {"kind": "written"}
             solution_sketch: 'Step 2 is naturality of $\mu$ at $h\colon C\to TD$, which gives $Th\circ\mu_C=\mu_{TD}\circ T^2h$ with the multiplication at $TD$. Step 3 is the monad associativity law $\mu_D\circ\mu_{TD}=\mu_D\circ T\mu_D$. Step 4 uses functoriality of $T$ to repackage $T(\mu_D\circ Th\circ g)$. All four steps are justified, so no step fails.'
-          - problem: 'Sam derives the right identity law $f\circ_T\eta_A=f$ for $f\colon A\to TB$ as follows. Step 1: expansion gives $\mu_B\circ T(f)\circ\eta_A$. Step 2: naturality of $\eta$ at $f$ gives $\mu_B\circ\eta_{TB}\circ f$. Step 3: the adjacent pair is deleted by the monad equation $\mu_B\circ T(\eta_B)=1_{TB}$. Step 4: the remaining arrow is $f$. Does any step fail? If so, which is the first, and why?'
+          - problem: 'The work below derives the right identity law $f\circ_T\eta_A=f$ for $f\colon A\to TB$. Step 1: expansion gives $\mu_B\circ T(f)\circ\eta_A$. Step 2: naturality of $\eta$ at $f$ gives $\mu_B\circ\eta_{TB}\circ f$. Step 3: the adjacent pair is deleted by the monad equation $\mu_B\circ T(\eta_B)=1_{TB}$. Step 4: the remaining arrow is $f$. Does any step fail? If so, which is the first, and why?'
             answer: 'Step 3: the adjacent pair is mu_B after eta_{TB}, which needs the law mu after eta T equals 1; the quoted equation has T(eta_B) instead.'
             answer_contract: {"kind": "written"}
             solution_sketch: 'Naturality of $\eta$ at $f$ gives $T(f)\circ\eta_A=\eta_{TB}\circ f$, so Step 2 is correct. The adjacent pair in Step 3 is $\mu_B\circ\eta_{TB}$, which is deleted by the monad equation $\mu\circ\eta T=1_T$. The equation quoted in Step 3 has $T(\eta_B)$ instead, so it does not apply. The first step that fails is Step 3.'
@@ -637,10 +637,10 @@ topics:
             answer: '9'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'A rule is a morphism of $T$-algebras, so it must send the basepoint M to the basepoint G. The other two sizes, S and L, can each go to any of the 3 colours, which gives $3\times 3=9$ rules.'
-          - problem: 'Let $A=\{1,2,3\}$ with $a(*)=2$ and $B=\{5,7\}$ with $b(*)=7$ be $T$-algebras for the maybe monad. Sam defines $f\colon A\to B$ by $f(1)=5$, $f(2)=5$, $f(3)=7$ and says that $f$ is a morphism of $T$-algebras. If $f(1)$ and $f(3)$ stay as Sam wrote them, what value must $f(2)$ have?'
+          - problem: 'Let $A=\{1,2,3\}$ with $a(*)=2$ and $B=\{5,7\}$ with $b(*)=7$ be $T$-algebras for the maybe monad. Define $f\colon A\to B$ by $f(1)=5$, $f(3)=7$ and an unknown value $f(2)$, so that $f$ is a morphism of $T$-algebras. What value must $f(2)$ have?'
             answer: '7'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'The morphism law $f\circ a=b\circ Tf$ at the extra point reads $f(a(*))=b(*)$. Here $a(*)=2$ and $b(*)=7$, so $f(2)$ must be 7. Sam chose $f(2)=5$, which breaks the law.'
+            solution_sketch: 'The morphism law $f\circ a=b\circ Tf$ at the extra point reads $f(a(*))=b(*)$. Here $a(*)=2$ and $b(*)=7$, so $f(2)$ must be 7. The value $f(2)=5$ would break the law.'
           - problem: 'For the maybe monad $T$ on $\mathbf{Set}$, $TX=X+\{*\}$ is $X$ with one extra point $*$, the unit $\eta_X$ is the inclusion, $\mu_X$ sends both extra points of $T^2X$ to $*$, and $Tf$ fixes $*$. Let $A=\{1,3,9\}$. How many maps $a\colon TA\to A$ satisfy the associativity law $a\circ\mu_A=a\circ Ta$ but not the unit law $a\circ\eta_A=1_A$?'
             answer: '15'
             answer_contract: {"kind":"exact"}
@@ -698,7 +698,7 @@ topics:
             answer: '7'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The condition is $3+x\equiv 0 \pmod{10}$. The solution is $x=7$, because $a([3,7])=10 \bmod 10=0=a([\,])$. So 7 is the inverse of 3 in this algebra.'
-          - problem: 'Sam says that every algebra for the list monad is a group. What is the smallest number of elements of a set that carries a list-monad algebra which is not a group?'
+          - problem: 'Not every algebra for the list monad is a group. What is the smallest number of elements of a set that carries a list-monad algebra which is not a group?'
             answer: '2'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'A one-element set has only the trivial monoid, and it is a group. On $A=\{0,1\}$ take $a(w)=\max$ of the entries with $a([\,])=0$. This is a monoid in which 1 has no inverse, so the smallest size is 2.'
@@ -730,7 +730,7 @@ topics:
           - problem: 'Which law of the monad $T$, taken at the object $C$, is the equation $\mu_C\circ\mu_{TC}=\mu_C\circ T\mu_C$ that the free algebra $(TC,\mu_C)$ must satisfy?'
             answer: 'the associativity law'
             answer_contract: {"kind":"label","options":[["the unit law","unit law","unit","the monad unit law","monad unit law"],["the associativity law","associativity law","associativity","the monad associativity law","monad associativity","associative law"]]}
-            solution_sketch: 'The algebra law $\mu_C\circ\mu_{TC}=\mu_C\circ T\mu_C$ is exactly the monad associativity law $\mu\circ\mu T=\mu\circ T\mu$ at the object $C$. Naturality of $\eta$ does not involve $\mu$ at all, so Sam is wrong.'
+            solution_sketch: 'The algebra law $\mu_C\circ\mu_{TC}=\mu_C\circ T\mu_C$ is exactly the monad associativity law $\mu\circ\mu T=\mu\circ T\mu$ at the object $C$. Naturality of $\eta$ does not involve $\mu$ at all.'
           - problem: 'For the maybe monad $T$ on $\mathbf{Set}$, $TX=X+\{*\}$ is $X$ with one extra point $*$, the unit $\eta_X$ is the inclusion, $\mu_X$ sends both extra points of $T^2X$ to $*$, and $Tf$ fixes $*$. Let $A=\{x,y\}$ and let $B=\{0,1,2,3\}$ be a pointed set with basepoint 0. How many morphisms of $T$-algebras are there from the free algebra $A+\{*\}$ to $B$?'
             answer: '16'
             answer_contract: {"kind":"exact"}
@@ -838,7 +838,7 @@ topics:
             answer: '7'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'We have $U_T(g)(p,4)=\mu_B(Tg(p,4))=\mu_B((g(p),4))=\mu_B(((p,3),4))$. The multiplication adds the two logs, so the result is $(p,3+4)=(p,7)$ and $k=7$.'
-          - problem: 'Let $T$ be the monad on $\mathbf{Set}$ with $TA=A\times\mathbb N$, $\eta_A(a)=(a,0)$ and $\mu_A((a,m),n)=(a,m+n)$. The arrows $A\to B$ of the Kleisli category are the functions $A\to TB$, with $F_T(f)=\eta_B\circ f$ and $U_T(g)=\mu_B\circ Tg$. Let $f\colon\{1,2\}\to\{1,2\}$ swap the two elements. Sam says that $U_TF_T(f)(1,5)=(1,5)$, because $F_T$ and $U_T$ cancel each other. What is the correct value of $U_TF_T(f)(1,5)$?'
+          - problem: 'Let $T$ be the monad on $\mathbf{Set}$ with $TA=A\times\mathbb N$, $\eta_A(a)=(a,0)$ and $\mu_A((a,m),n)=(a,m+n)$. The arrows $A\to B$ of the Kleisli category are the functions $A\to TB$, with $F_T(f)=\eta_B\circ f$ and $U_T(g)=\mu_B\circ Tg$. Let $f\colon\{1,2\}\to\{1,2\}$ swap the two elements. What is the value of $U_TF_T(f)(1,5)$?'
             answer: '(2, 5)'
             answer_contract: {"kind":"coordinates","arity":2}
             solution_sketch: 'Compute $U_TF_T(f)(1,5)=\mu_B(T(\eta_B\circ f)(1,5))=\mu_B(((f(1),0),5))=(f(1),0+5)=(2,5)$. The functor $U_TF_T$ is $T$, not the identity, so it applies $f$ and keeps the log 5.'
@@ -934,7 +934,7 @@ topics:
           - problem: 'The comparison functor $K$ sends the Kleisli identity $\eta_A$ to $K(\eta_A)=\mu_A\circ T\eta_A$. Which law of the monad $T$ shows that $K(\eta_A)=1_{TA}$?'
             answer: 'the unit law'
             answer_contract: {"kind":"label","options":[["the unit law","unit law","unit","the monad unit law","monad unit law"],["the associativity law","associativity law","associativity","the monad associativity law","monad associativity","associative law"]]}
-            solution_sketch: 'The equation $\mu\circ T\eta=1_T$ is the monad unit law, taken at $A$. Associativity compares two maps out of $T^3A$ and says nothing about $\eta$, so Sam is wrong.'
+            solution_sketch: 'The equation $\mu\circ T\eta=1_T$ is the monad unit law, taken at $A$. Associativity compares two maps out of $T^3A$ and says nothing about $\eta$.'
           - problem: 'Write the full proof that for a monad $(T,\eta,\mu)$ on $\mathcal C$ the assignments $K(A)=(TA,\mu_A)$ and $K(f)=\mu_B\circ Tf$ define a functor from the Kleisli category $\mathcal C_T$ to the Eilenberg-Moore category $\mathcal C^T$. Then compare with the solution.'
             answer: 'See the solution.'
             answer_contract: {"kind":"none"}
@@ -952,7 +952,7 @@ topics:
             answer: '25'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'By the free-forgetful bijection, morphisms from $(TA,\mu_A)$ to $(TB,\mu_B)$ correspond to functions $A\to TB$. The set $TB$ has 5 elements, and each of the 2 elements of $A$ has 5 choices. So there are $5\times 5=25$ morphisms.'
-          - problem: 'For the maybe monad $T$ on $\mathbf{Set}$, $TX=X+\{*\}$ is $X$ with one extra point $*$, the unit $\eta_X$ is the inclusion, $\mu_X$ sends both extra points of $T^2X$ to $*$, and $Tf$ fixes $*$. Let $A=\{1,2,3\}$ and let $(B,b)$ be the pointed set $B=\{0,1\}$ with basepoint 0. Sam counts the morphisms of $T$-algebras from the free algebra $(TA,\mu_A)$ to $(B,b)$ as $2^4=16$, one for each function $TA\to B$. What is the correct number of morphisms?'
+          - problem: 'For the maybe monad $T$ on $\mathbf{Set}$, $TX=X+\{*\}$ is $X$ with one extra point $*$, the unit $\eta_X$ is the inclusion, $\mu_X$ sends both extra points of $T^2X$ to $*$, and $Tf$ fixes $*$. Let $A=\{1,2,3\}$ and let $(B,b)$ be the pointed set $B=\{0,1\}$ with basepoint 0. There are $2^4=16$ functions $TA\to B$. How many morphisms of $T$-algebras are there from the free algebra $(TA,\mu_A)$ to $(B,b)$?'
             answer: '8'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'A morphism of algebras must send $*$ to the basepoint 0, so only its values on $A$ are free. By the free-forgetful bijection these are the functions $A\to B$. There are $2\times 2\times 2=8$ of them, not 16.'
@@ -997,10 +997,10 @@ topics:
             answer: '5'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The structure map $U\varepsilon_d$ evaluates the word in the group. Here $2+5+4=11$, and $11 \bmod 6=5$, so the word goes to 5.'
-          - problem: 'Sam says that the comparison from the Kleisli resolution is forced on arrows because every right adjoint functor is faithful. Is that reason correct?'
+          - problem: 'The comparison from the Kleisli resolution is forced on arrows because every right adjoint functor is faithful. Is that reason correct?'
             answer: 'no'
             answer_contract: {"kind":"label","options":[["yes","it is correct","correct","yes it is","right"],["no","it is not correct","not correct","incorrect","wrong","no it is not"]]}
-            solution_sketch: 'A right adjoint need not be faithful. The functor $\mathrm{Ob}\colon\mathbf{Cat}\to\mathbf{Set}$ is right adjoint to the discrete-category functor, and it is not faithful, because it forgets the arrows. So Sam gives the wrong reason.'
+            solution_sketch: 'A right adjoint need not be faithful. The functor $\mathrm{Ob}\colon\mathbf{Cat}\to\mathbf{Set}$ is right adjoint to the discrete-category functor, and it is not faithful, because it forgets the arrows. So the reason is wrong.'
           - problem: 'Let $h\colon\mathbb Z/6\to\mathbb Z/3$ be the group homomorphism with $h(1)=1$. The comparison functor $R$ sends $h$ to the algebra morphism whose underlying function is $U(h)$, the same function on the underlying sets. What is $U(h)(5)$?'
             answer: '2'
             answer_contract: {"kind":"exact"}
@@ -1089,10 +1089,10 @@ topics:
             answer: '2'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The map $g$ must pick an element $e$ with $\mathrm{ev}(e,a)=a$ for both values of $a$. Both $e_2$ and $e_3$ do this, while $e_0$ and $e_1$ do not. So there are $2$ such maps $g$, and uniqueness of the transpose fails.'
-          - problem: 'Sam looks for the exponential $1^2$, with $B=1$ and $A=2$, in the chain $0\le1\le2\le3$, where $x\times y=\min(x,y)$ and $Z\to B^A$ exactly when $Z\times A\to B$. Sam says the answer is the top object $3$, because every object $Z$ seems to work. What is the correct value of $1^2$?'
+          - problem: 'Find the exponential $1^2$, with $B=1$ and $A=2$, in the chain $0\le1\le2\le3$, where $x\times y=\min(x,y)$ and $Z\to B^A$ exactly when $Z\times A\to B$. What is the value of $1^2$?'
             answer: '1'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The exponential $1^2$ is the largest $Z$ with $\min(Z,2)\le 1$. For $Z=2$ or $Z=3$ the minimum is $2$, which is not at most $1$, so $Z$ cannot exceed $1$. Hence $1^2=1$, and Sam used the case in which $A\le B$ by mistake.'
+            solution_sketch: 'The exponential $1^2$ is the largest $Z$ with $\min(Z,2)\le 1$. For $Z=2$ or $Z=3$ the minimum is $2$, which is not at most $1$, so $Z$ cannot exceed $1$. Hence $1^2=1$. The top object $3$ would be the answer only in the case $A\le B$.'
           - problem: 'Write the full proof that a category with a terminal object and all binary products is cartesian closed exactly when, for each object $A$, the functor taking $X$ to $X\times A$ has a right adjoint, and that then each exponential $B^A$ carries an evaluation map whose transpose exists and is unique.'
             answer: 'See the solution.'
             answer_contract: {"kind": "none"}
@@ -1130,7 +1130,7 @@ topics:
             answer: 'no'
             answer_contract: {"kind": "label", "options": [["no", "it is not", "not", "not cartesian closed", "it is not cartesian closed", "Ab is not cartesian closed"], ["yes", "it is", "cartesian closed", "it is cartesian closed", "Ab is cartesian closed"]]}
             solution_sketch: 'A left adjoint preserves the initial object. The functor $-\times\mathbb Z/2$ sends the initial object $0$ to $0\times\mathbb Z/2\cong\mathbb Z/2$, which is not initial, so it has no right adjoint and $\mathbf{Ab}$ is not cartesian closed.'
-          - problem: 'Sam transposes $f(x,a)=x^2-a$ and writes $g(3)=9$, treating $g(3)$ as a number. The value $g(3)$ is a function of $a$. What is the correct value of $g(3)(4)$?'
+          - problem: 'Transpose $f(x,a)=x^2-a$ to the function $g$ with $g(x)(a)=f(x,a)$. The value $g(3)$ is a function of $a$. What is the value of $g(3)(4)$?'
             answer: '5'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The transpose is defined by $g(x)(a)=f(x,a)$, so $g(3)$ is the function $a\mapsto 9-a$, not the number $9$. At $a=4$ it gives $g(3)(4)=9-4=5$.'
@@ -1175,7 +1175,7 @@ topics:
             answer: 'no'
             answer_contract: {"kind": "label", "options": [["no", "it is not", "not", "there is none", "no closed term", "there is no closed term", "it has no closed term"], ["yes", "it is", "there is", "there is one", "a closed term exists", "it has a closed term"]]}
             solution_sketch: 'A closed term would be an arrow from the terminal object $2$ to the object $1$. In the chain there is an arrow $2\to 1$ only if $2\le 1$, which is false, so there is no closed term in this model.'
-          - problem: 'Sam says that the open term $x\colon A,\,y\colon B\vdash x\colon A$ is interpreted as the second projection $\pi_2\colon A\times B\to B$. Which projection out of $A\times B$ interprets it?'
+          - problem: 'Which projection out of $A\times B$ interprets the open term $x\colon A,\,y\colon B\vdash x\colon A$?'
             answer: 'first projection'
             answer_contract: {"kind": "label", "options": [["first projection", "first", "pi1", "pi_1", "\u03c01", "the first projection", "\u03c0_1", "\\pi_1"], ["second projection", "second", "pi2", "pi_2", "\u03c02", "the second projection", "\u03c0_2", "\\pi_2"]]}
             solution_sketch: 'The context $x\colon A,\,y\colon B$ is the product $A\times B$, and the term returns its first variable $x$. So it is the first projection $\pi_1$, and the second projection would return $y$ instead.'
@@ -1241,7 +1241,7 @@ topics:
             answer: '4'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'By the Yoneda lemma, the number of natural transformations from $\mathrm{Hom}(-,\{1,2\})$ to $P$ is the size of $P(\{1,2\})$. This is the set of functions from a $2$-element set to $\{0,1\}$, which has $2^2=4$ elements.'
-          - problem: 'Sam defines a presheaf $P$ on the category with objects $X,Y$ and one non-identity arrow $f\colon X\to Y$ by taking $P(f)$ to be the function $P(X)\to P(Y)$ with $1\mapsto u$, where $P(X)=\{1\}$ and $P(Y)=\{u,v\}$. In a presheaf with these two sets, what is $P(f)(v)$?'
+          - problem: 'Let a presheaf $P$ on the category with objects $X,Y$ and one non-identity arrow $f\colon X\to Y$ have $P(X)=\{1\}$ and $P(Y)=\{u,v\}$. What is $P(f)(v)$?'
             answer: '1'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'A presheaf reverses arrows, so $P(f)$ is a function from $P(Y)=\{u,v\}$ to $P(X)=\{1\}$, not the other way round. The set $P(X)$ has only the element $1$, so $P(f)(v)=1$ and also $P(f)(u)=1$.'
@@ -1290,7 +1290,7 @@ topics:
             answer: '2'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The colimit is computed pointwise at $a$. The $5$ copies each contribute one point, because $\mathrm{Hom}(a,a)$ and $\mathrm{Hom}(a,b)$ have one element each. The arrows glue the copies at $w_1$, $u$ and $v$ into one point and those at $w_2$ and $t$ into another, leaving $2$ points, which is the size of $P(a)$.'
-          - problem: 'Let $\mathcal C$ have objects $a,b$ and one non-identity arrow $a\to b$. The presheaf $P$ has $P(b)=P(a)=\{0,1\}$ with restriction $0\mapsto1$, $1\mapsto0$, and $Q$ has $Q(b)=Q(a)=\{0,1\}$ with the identity as restriction. Sam says that the restriction of $P\times Q$ is the identity on pairs. To which element of $(P\times Q)(a)$ does the restriction send $(0,1)$?'
+          - problem: 'Let $\mathcal C$ have objects $a,b$ and one non-identity arrow $a\to b$. The presheaf $P$ has $P(b)=P(a)=\{0,1\}$ with restriction $0\mapsto1$, $1\mapsto0$, and $Q$ has $Q(b)=Q(a)=\{0,1\}$ with the identity as restriction. To which element of $(P\times Q)(a)$ does the restriction of $P\times Q$ send $(0,1)$?'
             answer: '(1, 1)'
             answer_contract: {"kind": "coordinates", "arity": 2}
             solution_sketch: 'The restriction of $P\times Q$ acts on each coordinate with the restriction of that presheaf. The first coordinate $0$ goes to $1$ in $P$, and the second coordinate $1$ stays $1$ in $Q$. So $(0,1)$ goes to $(1,1)$, not to itself.'
@@ -1345,7 +1345,7 @@ topics:
             answer: '2'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The set $\mathrm{Hom}(X,\Omega)$ has $|\Omega|^4$ elements, and it must have $16$ elements, the number of subobjects of $X$. Since $2^4=16$, the object $\Omega$ has $2$ elements.'
-          - problem: 'Sam says that $\Omega=\{0,1,2\}$ with $\mathrm{true}(*)=0$ is a subobject classifier in $\mathbf{Set}$, because every subset of every set is the pullback of $\mathrm{true}$ along some map. Take $X=\{*\}$ and the empty subset $S=\varnothing$. How many maps $\chi\colon X\to\Omega$ have $\varnothing$ as the pullback of $\mathrm{true}$ along $\chi$?'
+          - problem: 'Let $\Omega=\{0,1,2\}$ with $\mathrm{true}(*)=0$. Every subset of every set is the pullback of $\mathrm{true}$ along some map. Take $X=\{*\}$ and the empty subset $S=\varnothing$. How many maps $\chi\colon X\to\Omega$ have $\varnothing$ as the pullback of $\mathrm{true}$ along $\chi$?'
             answer: '2'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The pullback of $\mathrm{true}$ along $\chi$ is empty exactly when $\chi(*)$ is not $0$. Both $\chi(*)=1$ and $\chi(*)=2$ work, so there are $2$ classifying maps for $\varnothing$, and uniqueness of the characteristic map fails.'
@@ -1394,7 +1394,7 @@ topics:
             answer: '4'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'A subset closed under $g$ contains both or neither of $a$ and $b$, and may or may not contain $c$. That gives $2\cdot 2=4$ subsets: the empty set, $\{c\}$, $\{a,b\}$ and $X$, so $X$ has $4$ subobjects.'
-          - problem: 'Sam says that in the topos of $\mathbb Z/2$-sets the subobject classifier is $\Omega=\{0,1\}$ with the generator $g$ swapping $0$ and $1$ and with $\mathrm{true}$ picking $1$. A map from the one-point $\mathbb Z/2$-set to $\Omega$ is equivariant when its value is fixed by $g$. How many equivariant maps from the one-point set to the $\Omega$ that Sam describes are there?'
+          - problem: 'In the topos of $\mathbb Z/2$-sets, let $\Omega=\{0,1\}$ with the generator $g$ swapping $0$ and $1$ and with $\mathrm{true}$ picking $1$. A map from the one-point $\mathbb Z/2$-set to $\Omega$ is equivariant when its value is fixed by $g$. How many equivariant maps from the one-point set to this $\Omega$ are there?'
             answer: '0'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'An equivariant map from the one-point set picks a point of $\Omega$ fixed by $g$. The generator swaps $0$ and $1$, so neither point is fixed, and there are $0$ equivariant maps. In particular $\mathrm{true}$ cannot be equivariant, so this $\Omega$ is not the classifier.'

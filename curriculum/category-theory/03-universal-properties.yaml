@@ -49,10 +49,10 @@ topics:
             answer: "no"
             answer_contract: {"kind": "label", "options": [["yes", "it does", "it has one", "there is one"], ["no", "it does not", "none", "no initial object", "there is none"]]}
             solution_sketch: 'An initial object has exactly one morphism to every object, so it must divide every number in the list. The numbers $2$ and $3$ have no common divisor in the list, and neither divides the other. So no object is initial.'
-          - problem: 'Sam says that the empty set is a terminal object of $\mathbf{Set}$, because there is exactly one function from $\emptyset$ to every set. How many functions are there from $\{0,1\}$ to $\emptyset$?'
+          - problem: 'The empty set has exactly one function to every set. Is the empty set a terminal object of $\mathbf{Set}$? To decide, count the functions from $\{0,1\}$ to $\emptyset$. How many are there?'
             answer: "0"
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'A function from $\{0,1\}$ to $\emptyset$ would have to send $0$ to an element of $\emptyset$, and there is none, so there are $0$ such functions. A terminal object needs exactly one function from every set into it, so $\emptyset$ is not terminal. Sam described an initial object.'
+            solution_sketch: 'A function from $\{0,1\}$ to $\emptyset$ would have to send $0$ to an element of $\emptyset$, and there is none, so there are $0$ such functions. A terminal object needs exactly one function from every set into it, so $\emptyset$ is not terminal. The empty set is an initial object.'
           - problem: 'The objects of a category are the functions $f\colon A\to S$ into the set $S=\{1,2,3,4\}$. A morphism from $f\colon A\to S$ to $g\colon B\to S$ is a function $k\colon A\to B$ with $g\circ k=f$. The terminal object is a function $T\to S$. How many elements does $T$ have?'
             answer: "4"
             answer_contract: {"kind": "exact"}
@@ -86,10 +86,10 @@ topics:
             answer: "yes"
             answer_contract: {"kind": "label", "options": [["yes", "it is", "it does", "yes it is", "true"], ["no", "it is not", "it does not", "not", "false"]]}
             solution_sketch: 'An initial object has exactly one morphism to every object. For every set $X$ there is exactly one function from $\emptyset$ to $X$, the empty function. So the empty set is initial.'
-          - problem: 'Sam says that $m\colon\{0,1,2\}\to\{0,1\}$ with $m(0)=0$, $m(1)=1$ and $m(2)=1$ has the universal property that every function $h\colon\{*\}\to\{0,1\}$ factors uniquely through $m$, because a factor exists for each $h$. For $h(*)=1$, how many functions $u\colon\{*\}\to\{0,1,2\}$ satisfy $m\circ u=h$?'
+          - problem: 'Let $m\colon\{0,1,2\}\to\{0,1\}$ with $m(0)=0$, $m(1)=1$ and $m(2)=1$. A factor $u$ with $m\circ u=h$ exists for each function $h\colon\{*\}\to\{0,1\}$. For $h(*)=1$, how many functions $u\colon\{*\}\to\{0,1,2\}$ satisfy $m\circ u=h$?'
             answer: "2"
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The function $u$ must send $*$ to an element that $m$ sends to $1$. Both $1$ and $2$ qualify, so there are $2$ factors. A factor exists, but it is not unique, so Sam checked only the existence clause.'
+            solution_sketch: 'The function $u$ must send $*$ to an element that $m$ sends to $1$. Both $1$ and $2$ qualify, so there are $2$ factors. A factor exists, but it is not unique, so the universal property needs both the existence clause and the uniqueness clause.'
           - problem: 'The objects of a category are the divisors of $12$, with exactly one morphism from $m$ to $n$ when $m$ divides $n$. How many morphisms are there from the terminal object to the initial object?'
             answer: "0"
             answer_contract: {"kind": "exact"}
@@ -127,7 +127,7 @@ topics:
             answer: "6"
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The set $U$ has as many elements as $S$ has at a one-element set, which is the number of colors times the number of sizes. So $4\cdot(\text{sizes})=24$, and the number of sizes is $24/4=6$.'
-          - problem: 'Sam says that $S(X)=\mathrm{Hom}(X,\{0,1\})\sqcup\mathrm{Hom}(X,\{0,1\})$ (two disjoint copies) is represented by a four-element set $U$, because $S$ has $4$ elements at a one-point set and so does $\mathrm{Hom}(\text{point},U)$. For a two-element set $X$ there are $16$ maps from $X$ to $U$. How many elements does $S(X)$ have?'
+          - problem: 'Let $S(X)=\mathrm{Hom}(X,\{0,1\})\sqcup\mathrm{Hom}(X,\{0,1\})$ (two disjoint copies). At a one-point set $S$ has $4$ elements, and so does $\mathrm{Hom}(\text{point},U)$ for a four-element set $U$. For a two-element set $X$ there are $16$ maps from $X$ to $U$. How many elements does $S(X)$ have?'
             answer: "8"
             answer_contract: {"kind": "exact"}
             solution_sketch: 'There are $2^2=4$ maps from $X$ to $\{0,1\}$, so the two copies together give $4+4=8$ elements. Since $8\ne 16$, no natural bijection with $\mathrm{Hom}(X,U)$ exists, and matching sizes at one object is not enough.'
@@ -193,7 +193,7 @@ topics:
             answer: "6"
             answer_contract: {"kind": "exact"}
             solution_sketch: 'A product of $12$ and $18$ is an object that divides both and through which every other such object factors. The common divisors of $12$ and $18$ are $1,2,3,6$, and every one of them divides $6$. So the product is $6$, the greatest common divisor.'
-          - problem: 'Sam says that a map $h\colon X\to A\times B$ is determined by $\pi_1h$ alone. In $\mathbf{Set}$ let $A=\{0,1\}$, $B=\{5,6,7\}$ and $X=\{w\}$. How many maps $h\colon X\to A\times B$ satisfy $\pi_1h=f$, where $f(w)=1$?'
+          - problem: 'In $\mathbf{Set}$ let $A=\{0,1\}$, $B=\{5,6,7\}$ and $X=\{w\}$. How many maps $h\colon X\to A\times B$ satisfy $\pi_1h=f$, where $f(w)=1$?'
             answer: "3"
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The condition $\pi_1h=f$ fixes the first coordinate of $h(w)$ as $1$ but leaves the second coordinate free. There are $3$ choices in $B$, so there are $3$ maps. Both $\pi_1h$ and $\pi_2h$ are needed to fix $h$.'
@@ -234,10 +234,10 @@ topics:
             answer: "2"
             answer_contract: {"kind": "exact"}
             solution_sketch: 'A homomorphism out of the direct sum is forced by its values on the two injected copies. Write $(4,5)=\iota_1(4)+\iota_2(5)$. Then $\varphi(4,5)=\varphi\iota_1(4)+\varphi\iota_2(5)=f(4)+g(5)=12-10=2$.'
-          - problem: 'Sam says that, because the coproduct is dual to the product, the coproduct of a $3$-element set and a $4$-element set in $\mathbf{Set}$ has $3\cdot4=12$ elements. How many elements does it have?'
+          - problem: 'The coproduct is dual to the product. How many elements does the coproduct of a $3$-element set and a $4$-element set in $\mathbf{Set}$ have?'
             answer: "7"
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The coproduct in $\mathbf{Set}$ is the disjoint union, which keeps the elements of the two sets side by side. So it has $3+4=7$ elements. The product has $3\cdot4=12$ elements, and Sam mixed up the two constructions.'
+            solution_sketch: 'The coproduct in $\mathbf{Set}$ is the disjoint union, which keeps the elements of the two sets side by side. So it has $3+4=7$ elements. The product has $3\cdot4=12$ elements, which is the other construction.'
           - problem: 'The objects of a category are the divisors of $60$, with exactly one morphism from $m$ to $n$ when $m$ divides $n$. What is the coproduct of the objects $4$ and $10$?'
             answer: "20"
             answer_contract: {"kind": "exact"}
@@ -271,10 +271,10 @@ topics:
             answer: "4"
             answer_contract: {"kind": "exact"}
             solution_sketch: 'A coproduct of two subsets is the smallest subset that contains both. Here that is the union $\{1,2\}\cup\{2,3,4\}=\{1,2,3,4\}$, which has $4$ elements.'
-          - problem: 'Sam says that in the divisors of $36$, with exactly one morphism from $m$ to $n$ when $m$ divides $n$, the coproduct of $4$ and $9$ is their greatest common divisor, $1$. What is the coproduct of $4$ and $9$?'
+          - problem: 'In the divisors of $36$, with exactly one morphism from $m$ to $n$ when $m$ divides $n$, what is the coproduct of $4$ and $9$?'
             answer: "36"
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'A coproduct receives morphisms from both objects, so it is a common multiple, and it is the least one. Among the divisors of $36$ the only common multiple of $4$ and $9$ is $36$. Sam used the greatest common divisor, which gives the product and not the coproduct.'
+            solution_sketch: 'A coproduct receives morphisms from both objects, so it is a common multiple, and it is the least one. Among the divisors of $36$ the only common multiple of $4$ and $9$ is $36$. The greatest common divisor, $1$, gives the product and not the coproduct.'
           - problem: 'In $\mathbf{Set}$ let $A=\{0,1\}$ and $B=\{0,1,2\}$. The set $P''=\{1,2,3,4,5,6\}$ has maps $p\colon P''\to A$ and $q\colon P''\to B$ with $p=(0,0,0,1,1,1)$ and $q=(0,1,2,0,1,2)$ on the elements $1,\dots,6$, and $(P'',p,q)$ is a product of $A$ and $B$. The unique isomorphism $u\colon A\times B\to P''$ satisfies $pu=\pi_1$ and $qu=\pi_2$. What is $u(1,2)$?'
             answer: "6"
             answer_contract: {"kind": "exact"}
@@ -348,10 +348,10 @@ topics:
             answer: "3"
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The maps agree when $5x\equiv 2x$, that is when $3x\equiv 0\pmod{12}$. This holds for $x=0,4,8$, so the equalizer has $3$ elements.'
-          - problem: 'Sam finds the equalizer of $f(x)=x^2$ and $g(x)=3x-2$ in $\mathbf{Set}$, as functions $\mathbb{R}\to\mathbb{R}$, and writes $\{1\}$. What is the equalizer?'
+          - problem: 'What is the equalizer of $f(x)=x^2$ and $g(x)=3x-2$ in $\mathbf{Set}$, as functions $\mathbb{R}\to\mathbb{R}$?'
             answer: "1, 2"
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The equalizer is the set of $x$ with $x^2=3x-2$, so $x^2-3x+2=(x-1)(x-2)=0$. Sam found the root $1$ but missed the root $2$, so the equalizer is $\{1,2\}$.'
+            solution_sketch: 'The equalizer is the set of $x$ with $x^2=3x-2$, so $x^2-3x+2=(x-1)(x-2)=0$. The roots are $1$ and $2$, so the equalizer is $\{1,2\}$.'
           - problem: 'In $\mathbf{Set}$ let $f=(0,1,1)$ and $g=(0,1,0)$ be functions from $A=\{0,1,2\}$ to $\{0,1\}$, listing the values at $0,1,2$. Is the subset $\{0,2\}$ with its inclusion an equalizer of $f$ and $g$?'
             answer: "no"
             answer_contract: {"kind": "label", "options": [["yes", "it is", "it does", "yes it is", "true"], ["no", "it is not", "it does not", "not", "false"]]}
@@ -377,7 +377,7 @@ topics:
             answer: "yes"
             answer_contract: {"kind": "label", "options": [["yes", "it is", "it does", "yes it is", "true"], ["no", "it is not", "it does not", "not", "false"]]}
             solution_sketch: 'If $es=et$, the common composite equalizes $f$ and $g$, so it factors through $e$ in exactly one way. Both $s$ and $t$ are such factorizations, so $s=t$. Hence every equalizer is a monomorphism.'
-          - problem: 'Sam says that $e\colon\{1,2,3\}\to\{p,q\}$ with $e(1)=p$, $e(2)=q$ and $e(3)=q$ is the equalizer of some pair of maps out of $\{p,q\}$. Which two elements of $\{1,2,3\}$ show that Sam is wrong?'
+          - problem: 'Let $e\colon\{1,2,3\}\to\{p,q\}$ with $e(1)=p$, $e(2)=q$ and $e(3)=q$. Which two elements of $\{1,2,3\}$ show that $e$ is not the equalizer of any pair of maps out of $\{p,q\}$?'
             answer: "2, 3"
             answer_contract: {"kind": "exact"}
             solution_sketch: 'An equalizer is a monomorphism, so in $\mathbf{Set}$ it is injective. Here $e(2)=e(3)=q$ with $2\ne 3$, so $e$ is not injective. Hence $e$ is not the equalizer of any pair of maps.'
@@ -410,7 +410,7 @@ topics:
             answer: "4"
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The coequalizer in $\mathbf{Ab}$ is $\mathbb{Z}/\mathrm{im}(f-g)$. The difference is $(f-g)(x)=2x-6x=-4x$, whose image is $4\mathbb{Z}$. So the coequalizer is $\mathbb{Z}/4\mathbb{Z}$, and $n=4$.'
-          - problem: 'Sam computes the coequalizer of $f,g\colon\mathbb{Z}\to\mathbb{Z}$ with $f(x)=7x$ and $g(x)=x$ in $\mathbf{Ab}$ as $\mathbb{Z}/7\mathbb{Z}$, because the quotient kills the image of $f$. How many elements does the coequalizer have?'
+          - problem: 'Let $f,g\colon\mathbb{Z}\to\mathbb{Z}$ with $f(x)=7x$ and $g(x)=x$. How many elements does the coequalizer of $f$ and $g$ in $\mathbf{Ab}$ have?'
             answer: "6"
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The coequalizer in $\mathbf{Ab}$ is the quotient by the image of the difference $f-g$, not by the image of $f$. Here $(f-g)(x)=6x$, so the quotient is $\mathbb{Z}/6\mathbb{Z}$ with $6$ elements.'
@@ -496,10 +496,10 @@ topics:
             answer: "2"
             answer_contract: {"kind": "exact"}
             solution_sketch: 'In a poset the pullback of two morphisms into a common object is their greatest lower bound. The common divisors of $6$ and $10$ are $1$ and $2$, and the greatest is $2$. So the pullback is $2$, the greatest common divisor.'
-          - problem: 'Sam says that the pullback of $f\colon A\to C$ and $g\colon B\to C$ has $|A||B|/|C|$ elements. Here $A=\{1,2,3,4\}$, $B=\{5,6,7\}$ and $C=\{0,1\}$, with $f=(0,0,0,1)$ and $g=(1,0,1)$, listing the values in order. Sam gets $4\cdot 3/2=6$. How many elements does the pullback have?'
+          - problem: 'The pullback of $f\colon A\to C$ and $g\colon B\to C$ is needed. Here $A=\{1,2,3,4\}$, $B=\{5,6,7\}$ and $C=\{0,1\}$, with $f=(0,0,0,1)$ and $g=(1,0,1)$, listing the values in order. How many elements does the pullback have?'
             answer: "5"
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The pullback has one pair for each $a$ and $b$ with $f(a)=g(b)$. The value $0$ occurs $3$ times for $f$ and once for $g$, giving $3$ pairs, and the value $1$ occurs once for $f$ and twice for $g$, giving $2$ pairs. The total is $3+2=5$, and Sam''s formula only holds when the fibers are equal in size.'
+            solution_sketch: 'The pullback has one pair for each $a$ and $b$ with $f(a)=g(b)$. The value $0$ occurs $3$ times for $f$ and once for $g$, giving $3$ pairs, and the value $1$ occurs once for $f$ and twice for $g$, giving $2$ pairs. The total is $3+2=5$. The formula $|A||B|/|C|=6$ only holds when the fibers are equal in size.'
           - problem: 'Let $f\colon A\to C$ and $g\colon B\to C$ in $\mathbf{Set}$ with $A=\{5,6,7,8\}$, $B=\{5,6,7\}$ and $C=\{0,1\}$, where $f(5)=0$, $f(6)=1$, $f(7)=0$, $f(8)=1$ and $g(5)=1$, $g(6)=0$, $g(7)=0$. Let $X=\{0,1\}$ with $x_1\colon X\to A$ given by $x_1(0)=7$, $x_1(1)=6$ and $x_2\colon X\to B$ given by $x_2(0)=6$, $x_2(1)=5$, so that $fx_1=gx_2$. The universal property gives a unique $u\colon X\to A\times_C B$. What is $u(0)$?'
             answer: "(7, 6)"
             answer_contract: {"kind": "coordinates", "arity": 2}
@@ -533,10 +533,10 @@ topics:
             answer: "f∘π1 and g∘π2"
             answer_contract: {"kind": "label", "options": [["f∘π1 and g∘π2", "fπ1 and gπ2", "f pi1 and g pi2", "f p1 and g p2", "f∘pi1 and g∘pi2", "fπ1, gπ2"], ["f∘π2 and g∘π1", "fπ2 and gπ1", "f pi2 and g pi1", "f p2 and g p1", "f∘pi2 and g∘pi1", "fπ2, gπ1"], ["π1 and π2", "pi1 and pi2", "p1 and p2", "π1, π2"], ["f and g", "f, g"]]}
             solution_sketch: 'A map $A\times B\to C$ is built from the projections followed by $f$ or by $g$. The two maps are $f\pi_1$ and $g\pi_2$, because $\pi_1$ lands in $A$, where $f$ is defined, and $\pi_2$ lands in $B$, where $g$ is defined. The equalizer keeps the pairs on which they agree.'
-          - problem: 'Sam takes the pullback of $f\colon A\to C$ and $g\colon B\to C$ to be the equalizer of $f$ and $g$ themselves. Here $A=B=\{0,1,2\}$, $C=\{0,1\}$, $f=(0,0,1)$ and $g=(0,1,1)$, listing the values at $0,1,2$. Sam finds the equalizer $\{0,2\}$ with $2$ elements. How many elements does the pullback have?'
+          - problem: 'Let $A=B=\{0,1,2\}$, $C=\{0,1\}$, $f=(0,0,1)$ and $g=(0,1,1)$, listing the values at $0,1,2$, for the maps $f\colon A\to C$ and $g\colon B\to C$. How many elements does the pullback of $f$ and $g$ have?'
             answer: "4"
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The pullback is the set of pairs $(a,b)$ with $f(a)=g(b)$. The value $0$ gives $2$ choices of $a$ and $1$ choice of $b$, so $2$ pairs, and the value $1$ gives $1$ choice of $a$ and $2$ choices of $b$, so $2$ pairs. The pullback has $4$ elements, since the pairs do not require $a=b$.'
+            solution_sketch: 'The pullback is the set of pairs $(a,b)$ with $f(a)=g(b)$. The value $0$ gives $2$ choices of $a$ and $1$ choice of $b$, so $2$ pairs, and the value $1$ gives $1$ choice of $a$ and $2$ choices of $b$, so $2$ pairs. The pullback has $4$ elements, since the pairs do not require $a=b$. The equalizer $\{0,2\}$ of $f$ and $g$ has only $2$ elements.'
           - problem: 'Three students attend classes: students $1$ and $2$ are in class $x$ and student $3$ is in class $y$. Two teachers teach: teacher $1$ teaches class $x$ and teacher $2$ teaches class $y$. The product of the students and the teachers has $6$ pairs. How many pairs of a student and a teacher in the product have both people in the same class?'
             answer: "3"
             answer_contract: {"kind": "exact"}
@@ -574,7 +574,7 @@ topics:
             answer: "no"
             answer_contract: {"kind": "label", "options": [["yes", "it is", "it does", "yes it is", "true"], ["no", "it is not", "it does not", "not", "false"]]}
             solution_sketch: 'The pushout identifies $0\sim 2$ and $1\sim 2$, so its classes are $\{0,1,2\}$ and $\{3\}$, which gives only $2$ elements. The set $P$ has $3$ elements, and $w$ is hit by neither map. A map from $P$ to a two-element set may send $w$ anywhere, so the factorization is not unique.'
-          - problem: 'Sam says that the pushout of two injective maps $f\colon C\to A$ and $g\colon C\to B$ is just $A\sqcup B$, with no identifications. Here $|A|=4$, $|B|=3$ and $|C|=2$. How many elements does the pushout have?'
+          - problem: 'Let $f\colon C\to A$ and $g\colon C\to B$ be injective maps with $|A|=4$, $|B|=3$ and $|C|=2$. How many elements does the pushout of $f$ and $g$ have?'
             answer: "5"
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Each element $c$ of $C$ identifies $f(c)$ with $g(c)$, and these identifications involve different elements since $f$ and $g$ are injective. So $2$ pairs merge in $A\sqcup B$, which has $4+3=7$ elements, giving $7-2=5$.'
@@ -658,10 +658,10 @@ topics:
             answer: '9'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'A cone with apex $X$ is a pair of legs $\lambda_A\colon X\to A$ and $\lambda_B\colon X\to B$ with $h\circ\lambda_A=k\circ\lambda_B$. This condition holds separately at each of the $2$ points of $X$, and at each point there are $3$ compatible pairs $(a,b)$. So there are $3\cdot 3=9$ cones.'
-          - problem: 'Sam writes the naturality condition for the arrow $h\colon A\to C$ of a span as $\lambda_C\circ h=\lambda_A$. Here $A=\{1,2\}$, $C=\{0,1\}$, $h(1)=0$ and $h(2)=1$, and a cone over the span with a one-point apex $X$ has a leg $\lambda_A$ that sends the point of $X$ to $1$. With the correct naturality condition, what value does $\lambda_C$ take at the point of $X$?'
+          - problem: 'A span has an arrow $h\colon A\to C$ with $A=\{1,2\}$, $C=\{0,1\}$, $h(1)=0$ and $h(2)=1$. A cone over the span with a one-point apex $X$ has a leg $\lambda_A$ that sends the point of $X$ to $1$. What value does the leg $\lambda_C$ take at the point of $X$?'
             answer: '0'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Sam''s equation does not type-check, because $\lambda_C$ has domain $X$ while $h$ has codomain $C$. The correct condition is $h\circ\lambda_A=\lambda_C$. So $\lambda_C$ sends the point of $X$ to $h(1)=0$.'
+            solution_sketch: 'The naturality condition is $h\circ\lambda_A=\lambda_C$, because $\lambda_A$ has codomain $A$ and $h$ has domain $A$. The form $\lambda_C\circ h=\lambda_A$ does not type-check, because $\lambda_C$ has domain $X$ while $h$ has codomain $C$. So $\lambda_C$ sends the point of $X$ to $h(1)=0$.'
           - problem: 'Write the full proof that a cone over a diagram $D\colon\mathcal J\to\mathcal C$ with apex $X$ is exactly a natural transformation $\Delta_X\Rightarrow D$, and that for a cospan shape this unpacks to the leg equation $h\circ\lambda_A=k\circ\lambda_B$.'
             answer: 'See the solution.'
             answer_contract: {"kind": "none"}
@@ -683,10 +683,10 @@ topics:
             answer: '3'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The first leg condition says $h(x_1)=\delta_1(a)=y_1$, so there is $1$ choice. The second says $h(x_2)=\delta_2(b)=y_1$, so there is $1$ choice. The point $x_3$ lies on no leg, so $h(x_3)$ is any of the $3$ points of $Y$. That gives $1\cdot 1\cdot 3=3$ morphisms.'
-          - problem: 'Take the whole numbers from $1$ to $40$ as a category with one morphism $m\to n$ exactly when $m$ divides $n$. Sam says that the limit of the discrete diagram on $18$ and $30$ is the initial object of its category of cones, so he takes the cone with a morphism to every other cone, whose apex is $1$. What is the apex of the actual limit, the terminal cone?'
+          - problem: 'Take the whole numbers from $1$ to $40$ as a category with one morphism $m\to n$ exactly when $m$ divides $n$. A cone over the discrete diagram on $18$ and $30$ is an apex with a morphism to each of the two. What is the apex of the limit, the terminal cone?'
             answer: '6'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The cones over the diagram have the apexes $1$, $2$, $3$ and $6$, the common divisors of $18$ and $30$. A morphism of cones from $x$ to $y$ exists exactly when $x$ divides $y$. Sam''s apex $1$ sends a morphism out of itself to every cone, so it is initial. The limit is terminal, so it receives a morphism from every cone, and that apex is $6$.'
+            solution_sketch: 'The cones over the diagram have the apexes $1$, $2$, $3$ and $6$, the common divisors of $18$ and $30$. A morphism of cones from $x$ to $y$ exists exactly when $x$ divides $y$. The apex $1$ sends a morphism out of itself to every cone, so it is initial. The limit is terminal, so it receives a morphism from every cone, and that apex is $6$.'
           - problem: 'Two lamps blink every $6$ seconds and every $10$ seconds. Take the whole numbers from $1$ to $60$ as a category with one morphism $m\to n$ exactly when $m$ divides $n$. A cocone under the discrete diagram on $6$ and $10$ has a nadir $x$ that both $6$ and $10$ divide, and the colimit is the initial cocone. Find the nadir of the colimit. The two lamps blink together for the first time at that second.'
             answer: '30'
             answer_contract: {"kind": "exact"}
@@ -810,10 +810,10 @@ topics:
             answer: '5'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The limit of a parallel pair is the set of households on which $f$ and $g$ agree. Households $1$, $3$, $5$, $7$ and $8$ gave the same answer both times. Households $2$, $4$ and $6$ changed their answer. The limit has $5$ elements.'
-          - problem: 'Sam says that the limit of a span $D_1\leftarrow D_0\to D_2$ in $\mathbf{Set}$ is a product, so it has $|D_1|\cdot|D_2|$ elements. For a span with $|D_0|=5$, $|D_1|=2$ and $|D_2|=4$ Sam gets $8$. How many elements does the limit really have?'
+          - problem: 'Take a span $D_1\leftarrow D_0\to D_2$ in $\mathbf{Set}$ with $|D_0|=5$, $|D_1|=2$ and $|D_2|=4$. The product $|D_1|\cdot|D_2|$ is $8$. How many elements does the limit of the span have?'
             answer: '5'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Sam''s product formula is the limit of the discrete diagram on $D_1$ and $D_2$, not of a span. For a span, every cone is determined by its leg $\lambda_0$ into $D_0$, since the other two legs are $a\circ\lambda_0$ and $b\circ\lambda_0$. So the limit is $D_0$ itself and it has $5$ elements.'
+            solution_sketch: 'The product formula is the limit of the discrete diagram on $D_1$ and $D_2$, not of a span. For a span, every cone is determined by its leg $\lambda_0$ into $D_0$, since the other two legs are $a\circ\lambda_0$ and $b\circ\lambda_0$. So the limit is $D_0$ itself and it has $5$ elements.'
           - problem: 'Write the full proof that, for two parallel functions $f,g\colon A\to B$ in $\mathbf{Set}$, a limiting cone of the diagram consisting of $A$, $B$, $f$ and $g$ has the equalizer $\{a\in A: f(a)=g(a)\}$ as its apex.'
             answer: 'See the solution.'
             answer_contract: {"kind": "none"}
@@ -918,10 +918,10 @@ topics:
             answer: '0'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'A cocone under the empty diagram is just an object, and the colimit is the object that sends exactly one morphism to every object. The object $0$ satisfies $0\le x$ for every $x$, while $1$ and $2$ do not satisfy this for $x=0$. So the colimit of the empty diagram is $0$.'
-          - problem: 'Sam says that the limit of the empty diagram in $\mathbf{Set}$ is the empty set, because the empty diagram contains nothing. How many elements does the limit have?'
+          - problem: 'How many elements does the limit of the empty diagram in $\mathbf{Set}$ have?'
             answer: '1'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'A limit of the empty diagram must receive exactly one function from every set. The empty set receives no function at all from a nonempty set, so Sam''s choice fails. A one-point set receives exactly one function from every set, so the limit has $1$ element.'
+            solution_sketch: 'A limit of the empty diagram must receive exactly one function from every set. The empty set receives no function at all from a nonempty set, so the empty set is not the limit. A one-point set receives exactly one function from every set, so the limit has $1$ element.'
           - problem: 'Take the poset $0\le 1\le 2$ as a category with one morphism $x\to y$ exactly when $x\le y$. Is the object $2$ a limit of the empty diagram?'
             answer: 'yes'
             answer_contract: {"kind": "label", "options": [["no", "it is not", "it is not a limit", "not a limit", "it's not a limit", "it isn't a limit"], ["yes", "it is", "it is a limit", "a limit", "it's a limit"]]}
@@ -971,7 +971,7 @@ topics:
             answer: '4'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'A product of $8$ and $12$ is a common divisor of them that every other common divisor divides. The common divisors of $8$ and $12$ are $1$, $2$ and $4$, and all of them divide $4$. So the product is $4$, the greatest common divisor.'
-          - problem: 'Sam says that the poset $(\mathbb N,\le)$ is finitely complete, because $\min(m,n)$ is a product of $m$ and $n$ and the equalizers are trivial. Sam proposes $t=7$ as a terminal object. What is the smallest natural number $x$ that has no morphism $x\to 7$?'
+          - problem: 'In the poset $(\mathbb N,\le)$ the product of $m$ and $n$ is $\min(m,n)$ and the equalizers are trivial. Take $t=7$ as a candidate for a terminal object. What is the smallest natural number $x$ that has no morphism $x\to 7$?'
             answer: '8'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'There is a morphism $x\to 7$ exactly when $x\le 7$. So the smallest number with no morphism to $7$ is $8$. The same argument works for every proposed $t$, since $t+1$ has no morphism to $t$, so $(\mathbb N,\le)$ has no terminal object.'
@@ -1057,10 +1057,10 @@ topics:
             answer: '1, 3, 5, 6'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The limit of a parallel pair is the set of days on which the two maps agree. Days $1$ and $5$ are cold for both thermometers, and days $3$ and $6$ are warm for both. Day $2$ is warm for the first thermometer and cold for the second, and day $4$ is cold for the first and warm for the second. So the limit is $\{1,3,5,6\}$.'
-          - problem: 'Sam says that the limit of the cospan $A\xrightarrow{f}C\xleftarrow{g}B$ in $\mathbf{Set}$ with $A=\{0,1,2\}$, $B=\{0,1,2,3\}$ and $C=\{0,1\}$ is $A\times B$, so it has $12$ elements. The map $f$ sends every element of $A$ to $0$, and the map $g$ sends $0$, $1$ and $2$ to $0$ and sends $3$ to $1$. What is the number of elements of the limit?'
+          - problem: 'Let $A=\{0,1,2\}$, $B=\{0,1,2,3\}$ and $C=\{0,1\}$. The map $f\colon A\to C$ sends every element of $A$ to $0$, and the map $g\colon B\to C$ sends $0$, $1$ and $2$ to $0$ and sends $3$ to $1$. The product $A\times B$ has $12$ elements. What is the number of elements of the limit of the cospan $A\xrightarrow{f}C\xleftarrow{g}B$ in $\mathbf{Set}$?'
             answer: '9'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Sam forgot the compatibility condition $f(a)=g(b)$. Since $f(a)=0$ for every $a$, a pair $(a,b)$ is compatible exactly when $g(b)=0$, which holds for $b=0$, $b=1$ and $b=2$. That gives $3\cdot 3=9$ pairs, and the pairs with $b=3$ are excluded.'
+            solution_sketch: 'A pair $(a,b)$ must satisfy the compatibility condition $f(a)=g(b)$. Since $f(a)=0$ for every $a$, a pair $(a,b)$ is compatible exactly when $g(b)=0$, which holds for $b=0$, $b=1$ and $b=2$. That gives $3\cdot 3=9$ pairs, and the pairs with $b=3$ are excluded.'
           - problem: 'Write the full proof that, in $\mathbf{Set}$, the set of compatible families of a small diagram $D$, with the projection legs, is the limit of $D$.'
             answer: 'See the solution.'
             answer_contract: {"kind": "none"}
@@ -1074,10 +1074,10 @@ topics:
             answer: '4'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The conditions $\rho_A(h(2,4))=2$ and $\rho_B(h(2,4))=4$ must hold. The element $r\in Q$ with $\rho_A(r)=2$ and $\rho_B(r)=4$ is $r=4$, since $\rho_A(4)=2$ and $\rho_B(4)=4$. Because the legs of $Q$ determine each element, no other choice works, so $h(2,4)=4$.'
-          - problem: 'In $\mathbf{Set}$, let $A=B=\{0,1\}$. The cone $P$ has apex $\{0,1\}\times\{0,1\}$ with legs $p(a,b)=a$ and $q(a,b)=b$. The cone $Q$ has the same apex $\{0,1\}\times\{0,1\}$ with legs $\rho_A(x,y)=y$ and $\rho_B(x,y)=x$. Both are limits of the discrete diagram on $A$ and $B$. Sam says the identity map $P\to Q$ is an isomorphism of cones, because it is a bijection. Is Sam right?'
+          - problem: 'In $\mathbf{Set}$, let $A=B=\{0,1\}$. The cone $P$ has apex $\{0,1\}\times\{0,1\}$ with legs $p(a,b)=a$ and $q(a,b)=b$. The cone $Q$ has the same apex $\{0,1\}\times\{0,1\}$ with legs $\rho_A(x,y)=y$ and $\rho_B(x,y)=x$. Both are limits of the discrete diagram on $A$ and $B$. Is the identity map $P\to Q$ an isomorphism of cones?'
             answer: 'no'
-            answer_contract: {"kind": "label", "options": [["no", "Sam is wrong", "he is wrong", "not right", "it is not"], ["yes", "Sam is right", "he is right", "right", "it is"]]}
-            solution_sketch: 'A morphism of cones must satisfy $\rho_A\circ h=p$. For the identity and the element $(0,1)$ we get $\rho_A(0,1)=1$, but $p(0,1)=0$. So the identity does not commute with the legs, and Sam is wrong; the isomorphism of cones is the swap $(a,b)\mapsto(b,a)$.'
+            answer_contract: {"kind": "label", "options": [["no", "it is not", "not an isomorphism", "no it is not"], ["yes", "it is", "it is an isomorphism", "yes it is"]]}
+            solution_sketch: 'A morphism of cones must satisfy $\rho_A\circ h=p$. For the identity and the element $(0,1)$ we get $\rho_A(0,1)=1$, but $p(0,1)=0$. So the identity does not commute with the legs, and it is not a morphism of cones; the isomorphism of cones is the swap $(a,b)\mapsto(b,a)$.'
           - problem: 'In $\mathbf{Set}$, let $L=A\times B$ with $A=\{1,2,3\}$, $B=\{4,5\}$ and the projections $p\colon L\to A$ and $q\colon L\to B$. Let $X=\{0,1\}$. How many ordered pairs $(u,v)$ of functions $X\to L$ satisfy $p\circ u=p\circ v$ and $q\circ u=q\circ v$?'
             answer: '36'
             answer_contract: {"kind": "exact"}
@@ -1127,10 +1127,10 @@ topics:
             answer: '8'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The cocone condition at the element $2$ of $A$ says $h_B(f(2))=h_C(g(2))$, that is $h_B(q)=h_C(t)$. Since $h_C(t)=8$, we get $h_B(q)=8$. The value $h_B(p)=7$ is not needed here; it is fixed by $h_C(s)$ through the element $1$.'
-          - problem: 'Sam says that the colimit of a span $B\leftarrow A\to C$ in $\mathbf{Set}$ is the disjoint union $B\sqcup C$. Here $|B|=5$, $|C|=4$ and $|A|=3$, and both maps out of $A$ are injective with no element of $B$ or $C$ hit twice. How many elements does the colimit really have?'
+          - problem: 'Take a span $B\leftarrow A\to C$ in $\mathbf{Set}$ with $|B|=5$, $|C|=4$ and $|A|=3$, where both maps out of $A$ are injective with no element of $B$ or $C$ hit twice. How many elements does the colimit have?'
             answer: '6'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Sam forgot the relations $f(a)\sim g(a)$. The disjoint union has $5+4=9$ elements. Each of the $3$ elements of $A$ glues one element of $B$ to one element of $C$, and the maps are injective, so each gluing removes one element. The colimit has $9-3=6$ elements.'
+            solution_sketch: 'The colimit is the disjoint union with the relations $f(a)\sim g(a)$. The disjoint union has $5+4=9$ elements. Each of the $3$ elements of $A$ glues one element of $B$ to one element of $C$, and the maps are injective, so each gluing removes one element. The colimit has $9-3=6$ elements.'
           - problem: 'Address book $B$ lists the contacts Ann, Bo, Cy and Di, and address book $C$ lists Bo, Di, Eli, Fay and Gus. Let $A$ be the set of contacts that appear in both books, with its two inclusions into $B$ and $C$. How many elements does the colimit of the span $B\leftarrow A\to C$ in $\mathbf{Set}$ have?'
             answer: '7'
             answer_contract: {"kind": "exact"}
@@ -1206,7 +1206,7 @@ topics:
             answer: '0'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The uncurrying is $g(x,a)=\mathrm{ev}(h(x),a)=h(x)(a)$. Hence $g(1,1)=h(1)(1)$, and $h(1)$ sends $1$ to $0$. So $g(1,1)=0$.'
-          - problem: 'Sam says that for $g(u,0)=p$ and $g(u,1)=q$ there are two different functions $f\colon\{0,1\}\to\{p,q\}$ with $\mathrm{ev}(f,0)=p$ and $\mathrm{ev}(f,1)=q$, so the curry of $g$ at $u$ is not unique. How many such functions $f$ are there?'
+          - problem: 'Let $g(u,0)=p$ and $g(u,1)=q$. How many functions $f\colon\{0,1\}\to\{p,q\}$ are there with $\mathrm{ev}(f,0)=p$ and $\mathrm{ev}(f,1)=q$?'
             answer: '1'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'A function $f$ with $\mathrm{ev}(f,0)=f(0)=p$ and $f(1)=q$ has both of its values fixed. So there is exactly $1$ such function, and the curry of $g$ at $u$ is unique.'
@@ -1243,10 +1243,10 @@ topics:
             answer: '34'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'New batch $5$ is old batch $k(5)=10$. So it makes $g(10,4)=3\cdot10+4=34$ parts at setting $4$. This is $\hat g(k(5))(4)$, as naturality in $X$ says.'
-          - problem: 'Let $A=\{0\}$, $B=\mathbb Z$, $X=X''=\{1,2\}$ and $g(x,0)=10x$. Let $k\colon X''\to X$ swap $1$ and $2$. Sam computes $\widehat{g\circ(k\times 1_A)}(1)(0)$ as $\hat g(1)(0)=10$. What is the correct value?'
+          - problem: 'Let $A=\{0\}$, $B=\mathbb Z$, $X=X''=\{1,2\}$ and $g(x,0)=10x$. Let $k\colon X''\to X$ swap $1$ and $2$. What is the value of $\widehat{g\circ(k\times 1_A)}(1)(0)$?'
             answer: '20'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The curry of $g\circ(k\times 1_A)$ is $\hat g\circ k$, so the value at $1$ is $\hat g(k(1))(0)=\hat g(2)(0)=g(2,0)=20$. Sam forgot to apply $k$ before applying $\hat g$.'
+            solution_sketch: 'The curry of $g\circ(k\times 1_A)$ is $\hat g\circ k$, so the value at $1$ is $\hat g(k(1))(0)=\hat g(2)(0)=g(2,0)=20$. The value $\hat g(1)(0)=10$ leaves out the application of $k$ before $\hat g$.'
           - problem: 'Let $X=X''=\{1,2,3\}$, $A=\{0\}$, $B=\mathbb Z$ and $g(x,0)=x^2$. Let $k\colon X''\to X$ be given by $k(1)=2$, $k(2)=3$, $k(3)=1$. Is the curry of $g\circ(k\times 1_A)$ equal to the curry $\hat g$ of $g$?'
             answer: 'no'
             answer_contract: {"kind": "label", "options": [["yes", "yes, they are equal", "they are equal", "equal"], ["no", "no, they are not equal", "they are not equal", "not equal"]]}
@@ -1323,10 +1323,10 @@ topics:
             answer: '2'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The image diagram has objects $F(7)=3$ and $F(10)=5$, with limit $3$. The image of the cone with apex $c$ is a limit cone exactly when $F(c)=3$, which for $c\le7$ means $c=6$ or $c=7$. So there are $2$ such numbers, and the cone with apex $6$ shows that $F$ preserves but does not reflect this limit.'
-          - problem: 'Let $P=\{1,2,3,6\}$ with an arrow $a\to b$ when $a$ divides $b$, and let $T$ be the category with one object and only its identity arrow. Let $F\colon P\to T$ be the only functor. Let $D$ be the diagram with objects $2$ and $6$, and note that its cones in $P$ have apex $1$ or $2$. Sam says that $F$ reflects limits of $D$, because $F$ sends every cone over $D$ to a limit cone of $T$. Which apex gives the limit cone of $D$ in $P$?'
+          - problem: 'Let $P=\{1,2,3,6\}$ with an arrow $a\to b$ when $a$ divides $b$, and let $T$ be the category with one object and only its identity arrow. Let $F\colon P\to T$ be the only functor. Let $D$ be the diagram with objects $2$ and $6$, and note that its cones in $P$ have apex $1$ or $2$. The functor $F$ sends every cone over $D$ to a limit cone of $T$. Which apex gives the limit cone of $D$ in $P$?'
             answer: '2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'A cone over $D$ has an apex that divides both $2$ and $6$, so the apex is $1$ or $2$. The limit is the greatest such apex, which is $2$. The cone with apex $1$ has a limit image in $T$ but is not a limit cone, so Sam is wrong.'
+            solution_sketch: 'A cone over $D$ has an apex that divides both $2$ and $6$, so the apex is $1$ or $2$. The limit is the greatest such apex, which is $2$. The cone with apex $1$ has a limit image in $T$ but is not a limit cone, so $F$ does not reflect limits of $D$.'
           - problem: 'The forgetful functor $U\colon\mathbf{Grp}\to\mathbf{Set}$ preserves binary products. How many elements does $U(\mathbb Z_4\times\mathbb Z_6)$ have, where $\mathbb Z_4\times\mathbb Z_6$ is the product of the two groups?'
             answer: '24'
             answer_contract: {"kind": "exact"}
@@ -1515,10 +1515,10 @@ topics:
             answer: '6'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The limit is the set of $x$ with $f(x)=x$. Checking $x^3\bmod 10$ for $x=0,\dots,9$ gives the values $0,1,8,7,4,5,6,3,2,9$, which equal $x$ for $x=0,1,4,5,6,9$. So the limit has $6$ elements.'
-          - problem: 'In $\mathbf{Set}$ let $D$ be the diagram $X_1\xrightarrow{f}X_3\xleftarrow{g}X_2$ with $X_1=\{0,1,2\}$, $X_2=\{0,1\}$, $X_3=\{0,1\}$, $f(x)=x \bmod 2$ and $g(y)=y$. Sam builds the limit as the equalizer of two maps $X_1\times X_2\times X_3\rightrightarrows X_3\times X_3$ and takes both to be $(\pi_3,\pi_3)$, so every triple is in the equalizer, giving $12$ elements. How many elements does the limit of $D$ have?'
+          - problem: 'In $\mathbf{Set}$ let $D$ be the diagram $X_1\xrightarrow{f}X_3\xleftarrow{g}X_2$ with $X_1=\{0,1,2\}$, $X_2=\{0,1\}$, $X_3=\{0,1\}$, $f(x)=x \bmod 2$ and $g(y)=y$. The limit is the equalizer of two maps $X_1\times X_2\times X_3\rightrightarrows X_3\times X_3$, and the product has $12$ elements. How many elements does the limit of $D$ have?'
             answer: '3'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Sam''s two maps are equal, so they do not use the arrows $f$ and $g$. The correct second map is $(f\circ\pi_1,g\circ\pi_2)$, and a triple lies in the equalizer when $x_3=f(x_1)=g(x_2)$. The pairs $(x_1,x_2)$ with $f(x_1)=g(x_2)$ are $(0,0)$, $(1,1)$, $(2,0)$, so the limit has $3$ elements.'
+            solution_sketch: 'If both maps were $(\pi_3,\pi_3)$, they would be equal and would not use the arrows $f$ and $g$. The correct second map is $(f\circ\pi_1,g\circ\pi_2)$, and a triple lies in the equalizer when $x_3=f(x_1)=g(x_2)$. The pairs $(x_1,x_2)$ with $f(x_1)=g(x_2)$ are $(0,0)$, $(1,1)$, $(2,0)$, so the limit has $3$ elements.'
           - problem: 'The poset category $(\mathbb N,\le)$ has a product for any two objects, their minimum, and an equalizer for any two parallel arrows. Is it complete?'
             answer: 'no'
             answer_contract: {"kind": "label", "options": [["yes", "yes, it is complete", "it is complete", "complete"], ["no", "no, it is not complete", "it is not complete", "not complete"]]}
@@ -1544,10 +1544,10 @@ topics:
             answer: '2'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The pullback is the set of pairs $(x,y)$ with $(x,f(x))=(y,g(y))$, which forces $y=x$ and $f(x)=g(x)$. We have $x \bmod 3=\lfloor x/2\rfloor$ for $x=0$ (both $0$) and $x=5$ (both $2$), and for no other $x$. So the pullback has $2$ elements.'
-          - problem: 'In $\mathbf{Set}$ let $A=\{0,1,\dots,6\}$, $B=\{0,1,2\}$, $f(x)=x \bmod 3$ and $g(x)=0$. Sam says that the pullback of $f$ and $g$ themselves, with its first projection to $A$, is the equalizer of $f$ and $g$. How many elements does the equalizer of $f$ and $g$ have?'
+          - problem: 'In $\mathbf{Set}$ let $A=\{0,1,\dots,6\}$, $B=\{0,1,2\}$, $f(x)=x \bmod 3$ and $g(x)=0$. How many elements does the equalizer of $f$ and $g$ have?'
             answer: '3'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The equalizer is the set of $x$ with $f(x)=g(x)$, that is $x \bmod 3=0$, which gives $x=0,3,6$, so it has $3$ elements. Sam''s pullback is the set of pairs $(x,y)$ with $f(x)=g(y)$, which has $3\cdot7=21$ elements because $y$ is free. So Sam''s set is too large.'
+            solution_sketch: 'The equalizer is the set of $x$ with $f(x)=g(x)$, that is $x \bmod 3=0$, which gives $x=0,3,6$, so it has $3$ elements. The pullback of $f$ and $g$ is the set of pairs $(x,y)$ with $f(x)=g(y)$, which has $3\cdot7=21$ elements because $y$ is free. So the pullback is a different, larger set.'
           - problem: 'In the category of finite sets and all functions, is there a product of infinitely many two-element sets?'
             answer: 'no'
             answer_contract: {"kind": "label", "options": [["yes", "yes, there is a product", "there is a product", "it exists"], ["no", "no, there is none", "there is no product", "it does not exist", "there is none", "none"]]}

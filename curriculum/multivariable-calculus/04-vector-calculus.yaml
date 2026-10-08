@@ -48,10 +48,10 @@ topics:
             answer: '8'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'At the point $(6, y)$ the field is $(6, y)$, with magnitude $\sqrt{36 + y^2}$. Set $\sqrt{36 + y^2} = 10$ to get $y^2 = 64$. Since $y > 0$, we have $y = 8$.'
-          - problem: 'Sam evaluates $\mathbf{F}(x, y) = \langle x^2 - y,\; xy \rangle$ at $(2, -1)$ and writes $\langle 3, 2 \rangle$. What is the correct value of $\mathbf{F}(2, -1)$?'
+          - problem: 'Evaluate $\mathbf{F}(x, y) = \langle x^2 - y,\; xy \rangle$ at $(2, -1)$. What is $\mathbf{F}(2, -1)$?'
             answer: '(5, -2)'
             answer_contract: {"kind":"coordinates","arity":2}
-            solution_sketch: 'Put $x = 2$ and $y = -1$ into each component. The first is $2^2 - (-1) = 5$, and the second is $(2)(-1) = -2$. Sam subtracted $1$ instead of adding it and dropped the sign of the product, so the correct value is $(5, -2)$.'
+            solution_sketch: 'Put $x = 2$ and $y = -1$ into each component. The first is $2^2 - (-1) = 5$, and the second is $(2)(-1) = -2$. So the value is $(5, -2)$.'
           - problem: 'Find the point where the field $\mathbf{F}(x, y) = \langle x - 2,\; y + 3 \rangle$ is the zero vector.'
             answer: '(2, -3)'
             answer_contract: {"kind":"coordinates","arity":2}
@@ -109,10 +109,10 @@ topics:
             answer: '7'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'Integrating $f_x = 2x + y$ gives $x^2 + xy + g(y)$, and matching $f_y = x + 2y$ gives $g(y) = y^2$. So $f = x^2 + xy + y^2$, which is $0$ at the origin. Then $f(1, 2) = 1 + 2 + 4 = 7$.'
-          - problem: 'Sam finds a function whose gradient field is $\mathbf{F}(x, y) = \langle 2xy + 3,\; x^2 + 2y \rangle$ by integrating the first component and writes $f = x^2 y + 3x$. What is a correct function?'
+          - problem: 'What is a function $f$ whose gradient field is $\mathbf{F}(x, y) = \langle 2xy + 3,\; x^2 + 2y \rangle$?'
             answer: 'x^2 y + 3x + y^2'
             answer_contract: {"kind":"function","vars":["x","y"],"up_to_constant":true}
-            solution_sketch: 'Integrating $f_x$ in $x$ leaves an unknown function $g(y)$, which Sam dropped. Matching $f_y = x^2 + g''(y)$ with $x^2 + 2y$ gives $g(y) = y^2$. So $f = x^2 y + 3x + y^2$.'
+            solution_sketch: 'Integrating $f_x$ in $x$ gives $x^2 y + 3x$ plus an unknown function $g(y)$. Matching $f_y = x^2 + g''(y)$ with $x^2 + 2y$ gives $g(y) = y^2$. So $f = x^2 y + 3x + y^2$.'
         constraints: 'potentials are polynomials of degree at most 3; gradient fields are written as a bracketed list of components; is-it-a-gradient-field items use the mixed-partials test'
     diagnostic_exemplar:
       problem: 'Find the gradient field of $f(x, y) = x^3 y - y^2$ and evaluate it at $(1, 2)$.'
@@ -235,10 +235,10 @@ topics:
             answer: '25'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'On the circle of radius $5$ we have $x^2 + y^2 = 25$ at every point. A function with a constant value has that value as its average. So the average is $25$.'
-          - problem: 'Sam evaluates $\int_C y^2\, ds$ around the circle of radius $6$ centered at the origin and writes $\int_0^{2\pi} 36\sin^2 t\, dt = 36\pi$. What is the correct value?'
+          - problem: 'Evaluate $\int_C y^2\, ds$ around the circle of radius $6$ centered at the origin.'
             answer: '216pi'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'Sam left out the factor $ds = 6\,dt$. The correct integral is $\int_0^{2\pi} 36\sin^2 t \cdot 6\,dt = 216\pi$.'
+            solution_sketch: 'The arc-length factor is $ds = 6\,dt$. The integral is $\int_0^{2\pi} 36\sin^2 t \cdot 6\,dt = 216\pi$.'
           - problem: 'A thin circular wire of radius $2$ centimetres is centered at the origin. Its density at $(x, y)$ is $\rho = y^2$ grams per centimetre. Find its mass.'
             answer: '8pi'
             answer_contract: {"kind":"unit","quantity":"mass","unit":"g","allow_omitted":true}
@@ -351,10 +351,10 @@ topics:
             answer: '10'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'Parametrize the segment by $\mathbf{r}(t) = \langle 2t, 4t \rangle$ for $0 \le t \le 1$, so $\mathbf{r}''(t) = \langle 2, 4 \rangle$. Then $\mathbf{F} \cdot \mathbf{r}'' = 4t + 16t = 20t$. The integral is $\int_0^1 20t\,dt = 10$.'
-          - problem: 'Sam evaluates $\int_C \mathbf{F} \cdot d\mathbf{r}$ for $\mathbf{F} = \langle x^2,\; y \rangle$ along $\mathbf{r}(t) = \langle t,\; t^2 \rangle$, $0 \le t \le 1$, by integrating $t^2 + t^2$ and gets $\tfrac{2}{3}$. What is the correct value?'
+          - problem: 'Evaluate $\int_C \mathbf{F} \cdot d\mathbf{r}$ for $\mathbf{F} = \langle x^2,\; y \rangle$ along $\mathbf{r}(t) = \langle t,\; t^2 \rangle$, $0 \le t \le 1$.'
             answer: '5/6'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'Sam forgot that $\mathbf{r}''(t) = \langle 1, 2t \rangle$, so the second component must be multiplied by $2t$. The integrand is $t^2 + t^2 \cdot 2t = t^2 + 2t^3$. So the integral is $\tfrac{1}{3} + \tfrac{1}{2} = \tfrac{5}{6}$.'
+            solution_sketch: 'Here $\mathbf{r}''(t) = \langle 1, 2t \rangle$, so the second component is multiplied by $2t$. The integrand is $t^2 + t^2 \cdot 2t = t^2 + 2t^3$. So the integral is $\tfrac{1}{3} + \tfrac{1}{2} = \tfrac{5}{6}$.'
           - problem: 'A bead is pulled along the curve $\mathbf{r}(t) = \langle 2t,\; t^3 \rangle$, $0 \le t \le 1$, with distances in metres, by the force $\mathbf{F} = \langle y,\; 3x \rangle$ newtons. How much work, in joules, does the force do?'
             answer: '5'
             answer_contract: {"kind":"exact"}
@@ -446,10 +446,10 @@ topics:
             answer: '10'
             answer_contract: {"kind":"unit","quantity":"length","unit":"m","allow_omitted":true}
             solution_sketch: 'Moving a distance $d$ in the $x$-direction gives the displacement $\langle d, 0 \rangle$. The work is $\mathbf{F} \cdot \langle d, 0 \rangle = 4d$. Setting $4d = 40$ gives $d = 10$ metres.'
-          - problem: 'Sam finds the work done by $\mathbf{F} = \langle y,\; x \rangle$ on a particle moving along the straight segment from $(3, 4)$ to $(0, 0)$ and gets $12$. What is the correct value?'
+          - problem: 'Find the work done by $\mathbf{F} = \langle y,\; x \rangle$ on a particle moving along the straight segment from $(3, 4)$ to $(0, 0)$.'
             answer: '-12'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'Along the segment from $(0, 0)$ to $(3, 4)$ the work is $12$. Sam used the wrong direction. The particle travels from $(3, 4)$ to $(0, 0)$, so the sign flips and the work is $-12$.'
+            solution_sketch: 'Along the segment from $(0, 0)$ to $(3, 4)$ the work is $12$. The particle travels from $(3, 4)$ to $(0, 0)$, so the sign flips and the work is $-12$.'
         constraints: 'work = line integral of F; always state orientation; sign-flip questions use given integer values; constant forces use the dot product'
     diagnostic_exemplar:
       problem: 'Evaluate $\oint_C \mathbf{F} \cdot d\mathbf{r}$ for $\mathbf{F} = \langle y, -x \rangle$ around the circle of radius $3$ centred at the origin, traversed counterclockwise.'
@@ -525,10 +525,10 @@ topics:
             answer: '5/6'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The work is $\int_C x^2\,dx + y\,dy$. With $x = t$ and $y = t^2$ we have $dx = dt$ and $dy = 2t\,dt$. The integrand is $t^2 + 2t^3$, so the work is $\tfrac{1}{3} + \tfrac{1}{2} = \tfrac{5}{6}$ joules.'
-          - problem: 'Sam evaluates $\int_C (x + y)\, dx$ along the straight segment from $(0, 0)$ to $(2, 4)$ by writing $\int_0^1 6t\, dt = 3$. What is the correct value?'
+          - problem: 'Evaluate $\int_C (x + y)\, dx$ along the straight segment from $(0, 0)$ to $(2, 4)$.'
             answer: '6'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'Sam forgot that $dx = 2\,dt$ when $x = 2t$. The correct integral is $\int_0^1 6t \cdot 2\,dt = 6$.'
+            solution_sketch: 'When $x = 2t$, $dx = 2\,dt$. The integral is $\int_0^1 6t \cdot 2\,dt = 6$.'
         constraints: 'P dx + Q dy with polynomial P, Q; curves are segments, parabolas or arcs of simple graphs'
       - id: kp2
         name: 'Piecewise paths and path dependence'
@@ -615,7 +615,7 @@ topics:
             answer: '89/60'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'On the curve $\mathbf{F} = \langle t^2, t^3, t \rangle$ and $\mathbf{r}'' = \langle 1, 2t, 3t^2 \rangle$. The dot product is $t^2 + 2t^4 + 3t^3$. So the work is $\tfrac{1}{3} + \tfrac{2}{5} + \tfrac{3}{4} = \tfrac{89}{60}$ joules.'
-          - problem: 'Sam says that $\oint_C (x\, dy - y\, dx)$ is $0$ for the counterclockwise circle of radius $2$ centered at the origin, because the curve is closed. What is the correct value?'
+          - problem: 'What is the value of $\oint_C (x\, dy - y\, dx)$ for the counterclockwise circle of radius $2$ centered at the origin?'
             answer: '8pi'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'A closed curve does not force the integral to be zero. On the circle $x = 2\cos t$, $y = 2\sin t$ the integrand is $4\cos^2 t + 4\sin^2 t = 4$. So the integral is $\int_0^{2\pi} 4\,dt = 8\pi$.'
@@ -676,7 +676,7 @@ topics:
             answer: '-1'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Here $P_y=1$ and $Q_x=2$ at every point. So $P_y-Q_x=1-2=-1$.'
-          - problem: 'Sam tests $\mathbf{F}=\langle 2xy,\;x^2+y\rangle$ by comparing $P_x$ with $Q_y$. He finds $2y\neq 1$ and concludes that $\mathbf{F}$ is not conservative. What does the correct test, $P_y-Q_x$, give for this field?'
+          - problem: 'What does the test $P_y-Q_x$ give for the field $\mathbf{F}=\langle 2xy,\;x^2+y\rangle$?'
             answer: '0'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The correct test compares $P_y$ with $Q_x$. Here $P_y=2x$ and $Q_x=2x$, so $P_y-Q_x=0$ and the field is in fact conservative.'
@@ -925,7 +925,7 @@ topics:
             answer: '-1'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'We have $\operatorname{div}\mathbf{v}=k+2-1=k+1$. The fluid is incompressible when this is $0$, which gives $k=-1$.'
-          - problem: 'Sam says that $\mathbf{F}=\langle y^2,\;z^2,\;x^2\rangle$ has divergence $2y+2z+2x$. What is the correct divergence?'
+          - problem: 'What is the divergence of $\mathbf{F}=\langle y^2,\;z^2,\;x^2\rangle$?'
             answer: '0'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Each component must be differentiated with respect to its own variable. Here $\partial_x(y^2)=0$, $\partial_y(z^2)=0$ and $\partial_z(x^2)=0$, so $\operatorname{div}\mathbf{F}=0$.'
@@ -1070,7 +1070,7 @@ topics:
             answer: '(0, 0, 0)'
             answer_contract: {"kind": "coordinates", "arity": 3}
             solution_sketch: 'The first component is $\partial_y(x+y)-\partial_z(x+z)=1-1=0$. The second is $\partial_z(y+z)-\partial_x(x+y)=1-1=0$ and the third is $\partial_x(x+z)-\partial_y(y+z)=1-1=0$, so the curl is $\langle 0,0,0\rangle$.'
-          - problem: 'Sam finds that $P_y=Q_x$ for $\mathbf{F}=\langle yz,\;xz,\;x\rangle$ and concludes that $\mathbf{F}$ is conservative on $\mathbb{R}^3$. What is $\operatorname{curl}\mathbf{F}$?'
+          - problem: 'The field $\mathbf{F}=\langle yz,\;xz,\;x\rangle$ has $P_y=Q_x$. What is $\operatorname{curl}\mathbf{F}$?'
             answer: '(-x, y - 1, 0)'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The first component is $\partial_y(x)-\partial_z(xz)=0-x=-x$. The second is $\partial_z(yz)-\partial_x(x)=y-1$ and the third is $\partial_x(xz)-\partial_y(yz)=z-z=0$. The curl is not zero, so $\mathbf{F}$ is not conservative; in space all three pairs must be tested.'
@@ -1232,10 +1232,10 @@ topics:
             answer: '10'
             answer_contract: {"kind": "unit", "quantity": "area", "unit": "m^2", "allow_omitted": true}
             solution_sketch: 'The work is $\oint_C -2y\,dx + 3x\,dy = \iint_D 5\,dA = 5 \cdot \text{area}$, because $Q_x - P_y = 3 + 2 = 5$. So $5 \cdot \text{area} = 50$, and the area is $50 \div 5 = 10$ square metres.'
-          - problem: 'Sam evaluates $\oint_C 3y\,dx + x\,dy$ around the unit circle, traversed counterclockwise, as $\iint_D (3 - 1)\,dA = 2\pi$. What is the correct value?'
+          - problem: 'Evaluate $\oint_C 3y\,dx + x\,dy$ around the unit circle, traversed counterclockwise.'
             answer: '-2pi'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Green''s theorem uses $Q_x - P_y$, with $Q = x$ and $P = 3y$. So $Q_x - P_y = 1 - 3 = -2$, not $3 - 1 = 2$, and the integral is $-2 \cdot \pi = -2\pi$. Sam subtracted in the wrong order.'
+            solution_sketch: 'Green''s theorem uses $Q_x - P_y$, with $Q = x$ and $P = 3y$. So $Q_x - P_y = 1 - 3 = -2$, and the integral is $-2 \cdot \pi = -2\pi$.'
           - problem: 'Use Green''s theorem to evaluate $\oint_C (-y\,dx + x\,dy)$, where $C$ is the unit circle traversed clockwise.'
             answer: '-2pi'
             answer_contract: {"kind": "exact"}
@@ -1277,7 +1277,7 @@ topics:
             answer: '3'
             answer_contract: {"kind": "unit", "quantity": "length", "unit": "m", "allow_omitted": true}
             solution_sketch: 'The area of the pond is $\tfrac{1}{2}\int_0^{2\pi} 20\,dt = 20\pi$ square metres. Volume equals area times mean depth, so the mean depth is $60\pi \div 20\pi = 3$ metres.'
-          - problem: 'Sam uses $\oint_C (x\,dy - y\,dx)$ without the factor $\tfrac12$ for the ellipse $x = 2\cos t$, $y = 4\sin t$ and gets $16\pi$. What is the correct area?'
+          - problem: 'Find the area of the ellipse $x = 2\cos t$, $y = 4\sin t$ with the line integral $\oint_C (x\,dy - y\,dx)$.'
             answer: '8pi'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'For this ellipse $x\,dy - y\,dx = 8\,dt$, so the line integral is $16\pi$. The area formula has the factor $\tfrac{1}{2}$, so the area is $\tfrac{1}{2}\cdot 16\pi = 8\pi$.'
@@ -1349,7 +1349,7 @@ topics:
             answer: '5'
             answer_contract: {"kind": "unit", "quantity": "length", "unit": "m", "allow_omitted": true}
             solution_sketch: 'On a circle of radius $R$ we have $\mathbf{F}\cdot\mathbf{n} = R$, and the circle has length $2\pi R$. So the flux is $2\pi R^2$, and $2\pi R^2 = 50\pi$ gives $R^2 = 25$ and $R = 5$ metres.'
-          - problem: 'Sam finds the outward flux of $\mathbf{F} = \langle 0, 4y\rangle$ across the unit circle with the tangent vector $\langle -\sin t, \cos t\rangle$ in place of $\mathbf{n}$ and gets $0$. What is the correct outward flux?'
+          - problem: 'Find the outward flux of $\mathbf{F} = \langle 0, 4y\rangle$ across the unit circle.'
             answer: '4pi'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Flux needs the outward normal $\mathbf{n} = \langle\cos t, \sin t\rangle$, not the tangent vector. Then $\mathbf{F}\cdot\mathbf{n} = 4\sin^2 t$, and $\int_0^{2\pi} 4\sin^2 t\,dt = 4\pi$.'
@@ -1394,7 +1394,7 @@ topics:
             answer: 'negative'
             answer_contract: {"kind": "label", "options": [["positive", "it is positive", "net outflow", "greater than zero"], ["negative", "it is negative", "net inflow", "less than zero"], ["zero", "it is zero", "no net flow", "0"]]}
             solution_sketch: 'The divergence is $\operatorname{div}\mathbf{F} = -1 - 1 = -2$. So the flux is $-2$ times the area of the disk, which is $-2\pi$, a negative number: liquid flows in.'
-          - problem: 'Sam says the flux of $\mathbf{F} = \langle xy, xy\rangle$ out of the unit square $[0,1]\times[0,1]$ is $\iint_D (Q_x - P_y)\,dA = \iint_D (y - x)\,dA = 0$. What is the correct outward flux?'
+          - problem: 'What is the outward flux of $\mathbf{F} = \langle xy, xy\rangle$ out of the unit square $[0,1]\times[0,1]$?'
             answer: '1'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Flux uses the divergence $P_x + Q_y$, not $Q_x - P_y$. Here $P_x + Q_y = y + x$, and $\iint_D (x + y)\,dA = \tfrac12 + \tfrac12 = 1$.'
@@ -1477,10 +1477,10 @@ topics:
             answer: 'cylinder'
             answer_contract: {"kind": "label", "options": [["cylinder", "a cylinder", "circular cylinder"], ["sphere", "a sphere"], ["cone", "a cone"], ["plane", "a plane"]]}
             solution_sketch: 'The first two components satisfy $x^2 + y^2 = 4\cos^2 u + 4\sin^2 u = 4$ for every $v$. So every point is at distance $2$ from the $z$-axis, and $v$ is the free height of a cylinder.'
-          - problem: 'Sam parametrizes the cylinder $x^2 + y^2 = 16$ as $\mathbf{r}(\theta, z) = \langle 16\cos\theta, 16\sin\theta, z\rangle$. What are the correct $x$, $y$ and $z$ as functions of $\theta$ and $z$?'
+          - problem: 'Parametrize the cylinder $x^2 + y^2 = 16$. What are $x$, $y$ and $z$ as functions of $\theta$ and $z$?'
             answer: 'x = 4cos(theta); y = 4sin(theta); z = z'
             answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["theta", "z"]}, "name": "x"}, {"contract": {"kind": "function", "vars": ["theta", "z"]}, "name": "y"}, {"contract": {"kind": "function", "vars": ["theta", "z"]}, "name": "z"}]}
-            solution_sketch: 'The circle $x^2 + y^2 = 16$ has radius $4$, not $16$. So Sam should use $x = 4\cos\theta$ and $y = 4\sin\theta$, and $\mathbf{r}(\theta, z) = \langle 4\cos\theta, 4\sin\theta, z\rangle$.'
+            solution_sketch: 'The circle $x^2 + y^2 = 16$ has radius $4$, not $16$. So use $x = 4\cos\theta$ and $y = 4\sin\theta$, and $\mathbf{r}(\theta, z) = \langle 4\cos\theta, 4\sin\theta, z\rangle$.'
         constraints: "cylinders, spheres, and graphs; a parametrization is asked as a vector function of named parameters with the domain stated; items may evaluate a parametrization at given parameters"
       - id: kp2
         name: "Normal vectors r_u x r_v"
@@ -1526,10 +1526,10 @@ topics:
             answer: '(1, 0, 0)'
             answer_contract: {"kind": "coordinates", "arity": 3}
             solution_sketch: 'At $\phi = \pi/2$ and $\theta = 0$ we have $\mathbf{r}_\phi = \langle 0, 0, -1\rangle$ and $\mathbf{r}_\theta = \langle 0, 1, 0\rangle$. Their cross product is $\langle 0\cdot 0 - (-1)\cdot 1,\; (-1)\cdot 0 - 0\cdot 0,\; 0\rangle = \langle 1, 0, 0\rangle$, which points away from the center.'
-          - problem: 'Sam says $\mathbf{r}_u \times \mathbf{r}_v = \langle 2, 1, 1\rangle$ for the plane $\mathbf{r}(u, v) = \langle u, v, 2u + v\rangle$. What is the correct cross product?'
+          - problem: 'What is $\mathbf{r}_u \times \mathbf{r}_v$ for the plane $\mathbf{r}(u, v) = \langle u, v, 2u + v\rangle$?'
             answer: '(-2, -1, 1)'
             answer_contract: {"kind": "coordinates", "arity": 3}
-            solution_sketch: 'The tangent vectors are $\mathbf{r}_u = \langle 1, 0, 2\rangle$ and $\mathbf{r}_v = \langle 0, 1, 1\rangle$. Their cross product is $\langle 0\cdot 1 - 2\cdot 1,\; 2\cdot 0 - 1\cdot 1,\; 1\rangle = \langle -2, -1, 1\rangle$. Sam forgot the minus signs in the first two components.'
+            solution_sketch: 'The tangent vectors are $\mathbf{r}_u = \langle 1, 0, 2\rangle$ and $\mathbf{r}_v = \langle 0, 1, 1\rangle$. Their cross product is $\langle 0\cdot 1 - 2\cdot 1,\; 2\cdot 0 - 1\cdot 1,\; 1\rangle = \langle -2, -1, 1\rangle$.'
         constraints: "planes, cylinders and the unit sphere at a point; cross products have clean components; note the geometric direction of the normal and the effect of the order of the factors"
       - id: kp3
         name: "The surface-area element"
@@ -1571,7 +1571,7 @@ topics:
             answer: '240sqrt(6)'
             answer_contract: {"kind": "unit", "quantity": "dollar", "unit": "dollar", "allow_omitted": true}
             solution_sketch: 'We have $|\mathbf{r}_u \times \mathbf{r}_v| = |\langle -1, -2, 1\rangle| = \sqrt6$. The area is $\sqrt6 \cdot 4 \cdot 5 = 20\sqrt6$ square metres. At $12$ dollars per square metre the cost is $240\sqrt6$ dollars.'
-          - problem: 'Sam finds the lateral area of the cylinder $x^2 + y^2 = 9$, $0 \le z \le 4$ as $9 \cdot 2\pi \cdot 4 = 72\pi$. What is the correct area?'
+          - problem: 'Find the lateral area of the cylinder $x^2 + y^2 = 9$, $0 \le z \le 4$.'
             answer: '24pi'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'For $\mathbf{r}(\theta, z) = \langle 3\cos\theta, 3\sin\theta, z\rangle$ the factor $|\mathbf{r}_\theta \times \mathbf{r}_z|$ is $3$, the radius, not $9$. The area is $3 \cdot 2\pi \cdot 4 = 24\pi$.'
@@ -1638,10 +1638,10 @@ topics:
             answer: '1/2'
             answer_contract: {"kind": "unit", "quantity": "length", "unit": "m", "allow_omitted": true}
             solution_sketch: 'We know $\iint_S z\,dS = \pi$ for the upper unit hemisphere. The area of the dome is half the area of the unit sphere, $2\pi$. So the mean height is $\pi \div 2\pi = \tfrac12$ metre.'
-          - problem: 'Sam evaluates $\iint_S z\,dS$ over the upper unit hemisphere as $\iint_D \sqrt{1 - x^2 - y^2}\,dA$ over the unit disk, which gives $2\pi/3$. What is the correct value?'
+          - problem: 'Evaluate $\iint_S z\,dS$ over the upper unit hemisphere.'
             answer: 'pi'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Sam forgot the surface-area element. On the hemisphere $dS = dA/z$, so $z\,dS = dA$. The correct integral is $\iint_D 1\,dA = \pi$, the area of the unit disk.'
+            solution_sketch: 'On the hemisphere $dS = dA/z$, so $z\,dS = dA$. The integral is $\iint_D 1\,dA = \pi$, the area of the unit disk.'
         constraints: "planes over triangles/squares, hemispheres and cylinders; dS is constant or sin(phi); contexts are shell mass and mean height"
       - id: kp2
         name: "Flux integrals through closed and simple surfaces"
@@ -1683,7 +1683,7 @@ topics:
             answer: 'zero'
             answer_contract: {"kind": "label", "options": [["zero", "it is zero", "no flux", "0"], ["positive", "it is positive", "greater than zero"], ["negative", "it is negative", "less than zero"]]}
             solution_sketch: 'The upward normal of the disk is $\langle 0, 0, 1\rangle$, so $\mathbf{F}\cdot\mathbf{n} = 0$ at every point. The flux is $0$, because the air moves along the disk and not through it.'
-          - problem: 'Sam computes the outward flux of $\mathbf{F} = \langle x, y, z\rangle$ through the sphere $x^2 + y^2 + z^2 = 4$ as $4\pi$, using $\mathbf{F}\cdot\mathbf{n} = 1$ as for the unit sphere. What is the correct flux?'
+          - problem: 'Compute the outward flux of $\mathbf{F} = \langle x, y, z\rangle$ through the sphere $x^2 + y^2 + z^2 = 4$.'
             answer: '32pi'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'On this sphere $\mathbf{n} = \langle x, y, z\rangle/2$, so $\mathbf{F}\cdot\mathbf{n} = 4/2 = 2$, not $1$. The sphere has area $4\pi \cdot 4 = 16\pi$, so the flux is $2 \cdot 16\pi = 32\pi$.'
@@ -1728,7 +1728,7 @@ topics:
             answer: '5'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The upward normal is $\langle -1, -2, 1\rangle$, so $\mathbf{F}\cdot\mathbf{N} = c$. The flux is $c$ times the area of the rectangle, which is $6$. Then $6c = 30$, so $c = 5$.'
-          - problem: 'Sam finds the upward flux of $\mathbf{F} = \langle x, 0, 0\rangle$ through the part of the plane $z = x + y$ over the square $0 \le x \le 1$, $0 \le y \le 1$ with the normal $\langle 1, 1, 1\rangle$ and gets $\tfrac12$. What is the correct flux?'
+          - problem: 'Find the upward flux of $\mathbf{F} = \langle x, 0, 0\rangle$ through the part of the plane $z = x + y$ over the square $0 \le x \le 1$, $0 \le y \le 1$.'
             answer: '-1/2'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The upward normal is $\langle -g_x, -g_y, 1\rangle = \langle -1, -1, 1\rangle$, not $\langle 1, 1, 1\rangle$. So $\mathbf{F}\cdot\mathbf{N} = -x$, and the flux is $-\int_0^1\int_0^1 x\,dx\,dy = -\tfrac12$.'
@@ -1792,10 +1792,10 @@ topics:
             answer: '5'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The divergence is $k + k + k = 3k$. Setting $3k = 15$ and dividing both sides by $3$ gives $k = 5$.'
-          - problem: 'Sam computes the divergence of $\mathbf{F} = \langle xy,\, yz,\, zx \rangle$ and writes $\langle y,\, z,\, x \rangle$. What is the correct divergence?'
+          - problem: 'What is the divergence of $\mathbf{F} = \langle xy,\, yz,\, zx \rangle$?'
             answer: 'x + y + z'
             answer_contract: {"kind":"function","vars":["x","y","z"]}
-            solution_sketch: 'The three partial derivatives are $\partial_x(xy) = y$, $\partial_y(yz) = z$ and $\partial_z(zx) = x$. The divergence is a scalar, so Sam must add them: $\operatorname{div}\mathbf{F} = x + y + z$.'
+            solution_sketch: 'The three partial derivatives are $\partial_x(xy) = y$, $\partial_y(yz) = z$ and $\partial_z(zx) = x$. The divergence is a scalar, so add them: $\operatorname{div}\mathbf{F} = x + y + z$.'
           - problem: 'The velocity of water in a whirlpool is $\mathbf{F} = \langle -ay,\, ax,\, 0 \rangle$, where $a$ is a constant, and the $z$-component of its curl is $14$. Find $a$.'
             answer: '7'
             answer_contract: {"kind":"exact"}
@@ -1825,10 +1825,10 @@ topics:
             answer: '8'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The divergence is $c + 1 + 2 = c + 3$, a constant. The volume is $2 \cdot 3 \cdot 1 = 6$, so $6(c + 3) = 66$. Dividing by $6$ gives $c + 3 = 11$, so $c = 8$.'
-          - problem: 'Sam uses the divergence theorem for $\mathbf{F} = \langle x,\, y,\, z \rangle$ on the ball of radius $2$ and writes the flux as $3 \cdot 4\pi \cdot 2^2 = 48\pi$. What is the correct flux?'
+          - problem: 'Use the divergence theorem for $\mathbf{F} = \langle x,\, y,\, z \rangle$ on the ball of radius $2$. What is the flux?'
             answer: '32pi'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'Sam used the surface area $4\pi R^2$, but the divergence theorem integrates over the volume. The ball has volume $\frac{4}{3}\pi(2)^3 = \frac{32\pi}{3}$, so the flux is $3 \cdot \frac{32\pi}{3} = 32\pi$.'
+            solution_sketch: 'The divergence theorem integrates over the volume, not the surface. The ball has volume $\frac{4}{3}\pi(2)^3 = \frac{32\pi}{3}$, so the flux is $3 \cdot \frac{32\pi}{3} = 32\pi$.'
           - problem: 'Air moves with velocity $\mathbf{F} = \langle -2x,\, -2y,\, z \rangle$ near the unit sphere centered at the origin. Does the net flow of air leave the sphere or enter it?'
             answer: 'enters'
             answer_contract: {"kind":"label","options":[["enters","air enters","it enters","flows in","net inflow","the air enters","air flows in","the air flows in"],["leaves","air leaves","it leaves","flows out","net outflow","the air leaves","air flows out","the air flows out"]]}
@@ -1862,10 +1862,10 @@ topics:
             answer: '72pi'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The curl is $\langle 0, 0, 2 \rangle$ and the upward normal is $\langle 0, 0, 1 \rangle$, so the integrand is the constant $2$. The disk has area $36\pi$, so the flux is $72\pi$.'
-          - problem: 'Sam says the circulation of $\mathbf{F} = \langle -y,\, x,\, 0 \rangle$ around the unit circle, counterclockwise as seen from above, is $\pi$, because the disk has area $\pi$. What is the correct circulation?'
+          - problem: 'What is the circulation of $\mathbf{F} = \langle -y,\, x,\, 0 \rangle$ around the unit circle, counterclockwise as seen from above?'
             answer: '2pi'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'Sam forgot the curl. The curl is $\langle 0, 0, 2 \rangle$, so the circulation is $2$ times the area $\pi$, which is $2\pi$.'
+            solution_sketch: 'The circulation needs the curl. The curl is $\langle 0, 0, 2 \rangle$, so the circulation is $2$ times the area $\pi$, which is $2\pi$.'
           - problem: 'Let $C$ be the unit circle in the $xy$-plane, traveled counterclockwise as seen from above. Is the circulation of $\mathbf{F} = \langle y,\, -x,\, 0 \rangle$ around $C$ positive or negative?'
             answer: 'negative'
             answer_contract: {"kind":"label","options":[["negative","it is negative","less than zero","the circulation is negative","negative circulation","circulation is negative"],["positive","it is positive","greater than zero","the circulation is positive","positive circulation","circulation is positive"]]}
@@ -1928,7 +1928,7 @@ topics:
             answer: '4'
             answer_contract: {"kind":"unit","quantity":"length","unit":"m","allow_omitted":true}
             solution_sketch: 'With $\mathbf{r}(\theta, z) = \langle 2\cos\theta,\, 2\sin\theta,\, z \rangle$ we get $\mathbf{F}\cdot(\mathbf{r}_\theta \times \mathbf{r}_z) = 4z$. The rate is $\int_0^{h}\!\int_0^{2\pi} 4z\,d\theta\,dz = 4\pi h^2$. Setting $4\pi h^2 = 64\pi$ gives $h^2 = 16$, so $h = 4$ meters.'
-          - problem: 'Sam finds the outward flux of $\mathbf{F} = \langle xz,\, yz,\, 0 \rangle$ through the cylinder $x^2 + y^2 = 1$, $0 \le z \le 3$, by using $z = 3$ everywhere. He gets $3 \cdot 6\pi = 18\pi$. What is the correct flux?'
+          - problem: 'Find the outward flux of $\mathbf{F} = \langle xz,\, yz,\, 0 \rangle$ through the cylinder $x^2 + y^2 = 1$, $0 \le z \le 3$.'
             answer: '9pi'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'On the surface $\mathbf{F}\cdot\mathbf{n} = z$ varies from $0$ to $3$, so $z$ cannot be fixed at $3$. The flux is $\int_0^{2\pi}\!\int_0^{3} z\,dz\,d\theta = 2\pi \cdot \frac{9}{2} = 9\pi$.'
@@ -1965,7 +1965,7 @@ topics:
             answer: '3'
             answer_contract: {"kind":"unit","quantity":"length","unit":"m","allow_omitted":true}
             solution_sketch: 'As in the plane computation, $\mathbf{F}\cdot\mathbf{N} = 3$ on the panel, so the flux is $3\pi a^2$. Setting $3\pi a^2 = 27\pi$ gives $a^2 = 9$, so $a = 3$ meters.'
-          - problem: 'Sam writes the upward normal of $z = 1 - x^2 - y^2$ as $\langle g_x, g_y, 1 \rangle$ and finds that the upward flux of $\mathbf{F} = \langle x,\, y,\, 0 \rangle$ through the surface, $z \ge 0$, is $-\pi$. What is the correct flux?'
+          - problem: 'Find the upward flux of $\mathbf{F} = \langle x,\, y,\, 0 \rangle$ through the surface $z = 1 - x^2 - y^2$, $z \ge 0$.'
             answer: 'pi'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The upward normal is $\langle -g_x, -g_y, 1 \rangle = \langle 2x, 2y, 1 \rangle$, not $\langle g_x, g_y, 1 \rangle$. Then $\mathbf{F}\cdot\mathbf{N} = 2r^2$ and the flux is $\int_0^{2\pi}\!\int_0^1 2r^3\,dr\,d\theta = \pi$.'
@@ -1998,10 +1998,10 @@ topics:
             answer: '5'
             answer_contract: {"kind":"unit","quantity":"length","unit":"m","allow_omitted":true}
             solution_sketch: 'The lateral surface gives $\mathbf{F}\cdot\mathbf{n} = 1$ over area $2\pi h$, so $2\pi h$. The top gives $h$ over area $\pi$, so $\pi h$, and the bottom gives $0$. The total is $3\pi h$, and $3\pi h = 15\pi$ gives $h = 5$ meters.'
-          - problem: 'Sam adds only the lateral surface and the top disk for the field $\mathbf{F} = \langle x,\, y,\, z + 1 \rangle$ on the closed cylinder $x^2 + y^2 = 1$, $0 \le z \le 2$, and gets $7\pi$. What is the total outward flux through the whole closed surface?'
+          - problem: 'What is the total outward flux of $\mathbf{F} = \langle x,\, y,\, z + 1 \rangle$ through the whole closed cylinder surface $x^2 + y^2 = 1$, $0 \le z \le 2$, with lateral surface, top disk and bottom disk?'
             answer: '6pi'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'Sam forgot the bottom disk. Its normal is $\langle 0, 0, -1 \rangle$ and $\mathbf{F}\cdot\mathbf{n} = -(0 + 1) = -1$ over area $\pi$, which contributes $-\pi$. The lateral surface gives $4\pi$ and the top gives $3\pi$, so the total is $4\pi + 3\pi - \pi = 6\pi$.'
+            solution_sketch: 'The bottom disk counts. Its normal is $\langle 0, 0, -1 \rangle$ and $\mathbf{F}\cdot\mathbf{n} = -(0 + 1) = -1$ over area $\pi$, which contributes $-\pi$. The lateral surface gives $4\pi$ and the top gives $3\pi$, so the total is $4\pi + 3\pi - \pi = 6\pi$.'
         constraints: "closed cylinders and boxes assembled from 2-6 pieces; each piece is a flat cap, box face, or lateral surface whose contribution is a one-line integral; always state the outward normal of each piece"
     diagnostic_exemplar:
       problem: 'Find the total outward flux of $\mathbf{F} = \langle x,\; y,\; z^2 \rangle$ through the closed cylinder $x^2 + y^2 = 1$, $0 \le z \le 2$ (lateral surface plus both caps), computing each piece separately.'
@@ -2071,10 +2071,10 @@ topics:
             answer: '2'
             answer_contract: {"kind":"unit","quantity":"length","unit":"m","allow_omitted":true}
             solution_sketch: 'The $z$-component of the curl is $3r^2$, so the circulation is $\int_0^{2\pi}\!\int_0^a 3r^3\,dr\,d\theta = \frac{3\pi a^4}{2}$. Setting $\frac{3\pi a^4}{2} = 24\pi$ gives $a^4 = 16$, so $a = 2$ meters.'
-          - problem: 'Sam applies Stokes'' theorem to $\mathbf{F} = \langle -2y,\, x^2,\, 0 \rangle$ on the unit circle, counterclockwise as seen from above. He uses only $\partial_x F_y = 2x$ as the curl and gets $0$. What is the correct circulation?'
+          - problem: 'Apply Stokes'' theorem to $\mathbf{F} = \langle -2y,\, x^2,\, 0 \rangle$ on the unit circle, counterclockwise as seen from above. What is the circulation?'
             answer: '2pi'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'Sam left out the term $-\partial_y F_x = 2$. The $z$-component of the curl is $2x + 2$. Over the unit disk the $2x$ part integrates to $0$ and the constant $2$ gives $2 \cdot \pi = 2\pi$.'
+            solution_sketch: 'The $z$-component of the curl has two terms: $\partial_x F_y = 2x$ and $-\partial_y F_x = 2$. So it is $2x + 2$. Over the unit disk the $2x$ part integrates to $0$ and the constant $2$ gives $2 \cdot \pi = 2\pi$.'
         constraints: "curl F has a non-constant z-component (a polynomial like 3r^2, x, or 1 - 2y); C bounds a disk or square in the xy-plane; the double integral is a one-step polar or iterated computation"
       - id: kp2
         name: "Surface independence: choosing a convenient surface"
@@ -2108,7 +2108,7 @@ topics:
             answer: '6'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The curl is $\langle 0, -z, k + 1 \rangle$. On the flat disk of radius $2$ in the plane $z = 0$ it is $\langle 0, 0, k + 1 \rangle$, so the flux is $4\pi(k + 1)$. Setting $4\pi(k + 1) = 28\pi$ gives $k + 1 = 7$, so $k = 6$.'
-          - problem: 'Sam is asked for the flux of $\operatorname{curl}\mathbf{F}$ through the upper hemisphere $x^2 + y^2 + z^2 = 9$, $z \ge 0$, with upward normal, for $\mathbf{F} = \langle -y,\, x,\, xz \rangle$. He multiplies the $z$-component $2$ of the curl by the area $18\pi$ of the hemisphere and gets $36\pi$. What is the correct flux?'
+          - problem: 'Find the flux of $\operatorname{curl}\mathbf{F}$ through the upper hemisphere $x^2 + y^2 + z^2 = 9$, $z \ge 0$, with upward normal, for $\mathbf{F} = \langle -y,\, x,\, xz \rangle$.'
             answer: '18pi'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The flux depends only on the boundary circle $x^2 + y^2 = 9$, so the flat disk it spans gives the same value. On the disk the curl is $\langle 0, 0, 2 \rangle$ and the area is $9\pi$, so the flux is $2 \cdot 9\pi = 18\pi$.'
@@ -2137,10 +2137,10 @@ topics:
             answer: '5'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The flux equals the circulation around the unit circle, where $\mathbf{F}\cdot\mathbf{r}''(t) = c\sin^2 t + c\cos^2 t = c$. So the flux is $\int_0^{2\pi} c\,dt = 2\pi c$. Setting $2\pi c = 10\pi$ gives $c = 5$.'
-          - problem: 'Sam walks the unit circle clockwise as seen from above to find the flux of $\operatorname{curl}\mathbf{F}$ through the upper unit hemisphere, with upward normal, for $\mathbf{F} = \langle 2y,\, z,\, x \rangle$. He gets $2\pi$. What is the correct flux?'
+          - problem: 'Find the flux of $\operatorname{curl}\mathbf{F}$ through the upper unit hemisphere, with upward normal, for $\mathbf{F} = \langle 2y,\, z,\, x \rangle$.'
             answer: '-2pi'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'An upward normal needs the boundary counterclockwise as seen from above, so Sam''s direction reverses the sign. Along $\mathbf{r}(t) = \langle \cos t, \sin t, 0 \rangle$ we have $\mathbf{F}\cdot\mathbf{r}''(t) = 2\sin t \cdot (-\sin t)$, and $\int_0^{2\pi} -2\sin^2 t\,dt = -2\pi$.'
+            solution_sketch: 'An upward normal needs the boundary counterclockwise as seen from above. Along $\mathbf{r}(t) = \langle \cos t, \sin t, 0 \rangle$ we have $\mathbf{F}\cdot\mathbf{r}''(t) = 2\sin t \cdot (-\sin t)$, and $\int_0^{2\pi} -2\sin^2 t\,dt = -2\pi$.'
           - problem: 'Verify Stokes'' theorem for $\mathbf{F} = \langle z,\, 2x,\, y \rangle$ on the upper unit hemisphere with upward normal: compute both $\oint_C \mathbf{F} \cdot d\mathbf{r}$ around the unit circle and $\iint_S \operatorname{curl}\mathbf{F} \cdot d\mathbf{S}$, and confirm that they agree. What common value do the two sides have?'
             answer: '2pi'
             answer_contract: {"kind":"exact"}
@@ -2211,7 +2211,7 @@ topics:
             answer: '5'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The divergence is $2x + 2y + c$. Over the unit cube the integral is $1 + 1 + c = c + 2$. Setting $c + 2 = 7$ gives $c = 5$.'
-          - problem: 'Sam finds the outward flux of $\mathbf{F} = \langle x^2,\, y^2,\, z \rangle$ through the boundary of the box $[0,1] \times [0,1] \times [0,2]$. He evaluates $\operatorname{div}\mathbf{F} = 2x + 2y + 1$ at the origin and multiplies by the volume $2$, which gives $2$. What is the correct flux?'
+          - problem: 'Find the outward flux of $\mathbf{F} = \langle x^2,\, y^2,\, z \rangle$ through the boundary of the box $[0,1] \times [0,1] \times [0,2]$.'
             answer: '6'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The divergence is not constant, so its value at one point cannot replace the integral. Over the box, $\iiint (2x + 2y + 1)\,dV = 2 + 2 + 2 = 6$, because each term integrates over the box to $2$.'
@@ -2248,7 +2248,7 @@ topics:
             answer: '2'
             answer_contract: {"kind":"unit","quantity":"length","unit":"m","allow_omitted":true}
             solution_sketch: 'The divergence is $3\rho^2$, so the net rate is $4\pi\int_0^R 3\rho^4\,d\rho = \frac{12\pi R^5}{5}$. Setting $\frac{12\pi R^5}{5} = \frac{384\pi}{5}$ gives $R^5 = 32$, so $R = 2$ meters.'
-          - problem: 'Sam finds the outward flux of $\mathbf{F} = \langle x^3,\, y^3,\, z^3 \rangle$ through the sphere of radius $3$ by taking $\operatorname{div}\mathbf{F} = 3\rho^2$ at $\rho = 3$ and multiplying by the volume $36\pi$, which gives $972\pi$. What is the correct flux?'
+          - problem: 'Find the outward flux of $\mathbf{F} = \langle x^3,\, y^3,\, z^3 \rangle$ through the sphere of radius $3$.'
             answer: '2916pi/5'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The divergence $3\rho^2$ changes with $\rho$, so its boundary value cannot replace the integral. The flux is $4\pi\int_0^3 3\rho^4\,d\rho = \frac{12\pi \cdot 3^5}{5} = \frac{2916\pi}{5}$.'
@@ -2281,10 +2281,10 @@ topics:
             answer: '8'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The divergence is $c$, so the closed flux through the hemisphere and the floor disk is $c \cdot \frac{2\pi}{3}$. On the floor $\mathbf{F}\cdot\mathbf{n} = -cz = 0$, so the hemisphere carries all of it. Setting $\frac{2\pi c}{3} = \frac{16\pi}{3}$ gives $c = 8$.'
-          - problem: 'Sam closes the upper unit hemisphere with the disk $x^2 + y^2 \le 1$ in the plane $z = 0$ to find the upward flux of $\mathbf{F} = \langle 0,\, 0,\, z + 2 \rangle$ through the hemisphere. He finds the flux through the closed surface, $\frac{2\pi}{3}$, and stops. What is the upward flux through the hemisphere itself?'
+          - problem: 'The upper unit hemisphere is closed with the disk $x^2 + y^2 \le 1$ in the plane $z = 0$. The upward flux of $\mathbf{F} = \langle 0,\, 0,\, z + 2 \rangle$ through the closed surface is $\frac{2\pi}{3}$. What is the upward flux through the hemisphere itself?'
             answer: '8pi/3'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'Sam forgot to subtract the floor disk. On it $\mathbf{n} = \langle 0, 0, -1 \rangle$ and $\mathbf{F}\cdot\mathbf{n} = -2$ over area $\pi$, so the disk carries $-2\pi$. The hemisphere carries $\frac{2\pi}{3} - (-2\pi) = \frac{8\pi}{3}$.'
+            solution_sketch: 'Subtract the flux through the floor disk. On it $\mathbf{n} = \langle 0, 0, -1 \rangle$ and $\mathbf{F}\cdot\mathbf{n} = -2$ over area $\pi$, so the disk carries $-2\pi$. The hemisphere carries $\frac{2\pi}{3} - (-2\pi) = \frac{8\pi}{3}$.'
         constraints: "closing exemplars use paraboloids or hemispheres capped by a flat disk on which F . n is 0 or constant; divergence-free exemplars require citing the theorem, not integrating; answers small rational multiples of pi or 0"
     diagnostic_exemplar:
       problem: 'Find the upward flux of $\mathbf{F} = \langle y,\; -x,\; z \rangle$ through the paraboloid $z = 4 - x^2 - y^2$, $z \ge 0$, by closing the surface with the disk $x^2 + y^2 \le 4$ in the plane $z = 0$ and applying the divergence theorem.'

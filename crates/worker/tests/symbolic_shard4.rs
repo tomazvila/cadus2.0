@@ -26,7 +26,8 @@ fn varied_slope_representations_and_answers_are_pinned() {
         "A line passes through the grid points $(1,1)$ and $(3,4)$.",
         "two points listed in a table: $x=-2$, $y=1$",
         "A second point is $6$ units to the right of it and $3$ units higher.",
-        "Ben subtracts in the opposite order and gets $\\frac{3-9}{1-4}$",
+        // 2026-10-08, story framing removed: the item now says "The opposite order gives".
+        "The opposite order gives $\\frac{3-9}{1-4}$",
         "$4x+5y=20$",
     ] {
         assert!(source.contains(representation), "{representation}");

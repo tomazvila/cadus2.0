@@ -30,14 +30,14 @@ topics:
             answer: 'paradox'
             answer_contract: {"kind": "label", "options": [["proposition", "a proposition", "it is a proposition", "it's a proposition"], ["open sentence", "an open sentence", "it is an open sentence", "it's an open sentence", "open"], ["command", "a command", "it is a command", "it's a command"], ["paradox", "a paradox", "it is a paradox", "it's a paradox"]]}
             solution_sketch: 'Suppose the sentence is true. Then what it says holds, so it is false, which is a contradiction. Suppose it is false. Then what it says fails, so it is true, which is again a contradiction. No truth value fits, and the sentence has no variable and gives no order, so it is a paradox.'
-          - problem: 'A teacher writes four lines on the board: (a) Open your books at page $40$. (b) The sum of two odd numbers is even. (c) $x+3=10$. (d) What is $3\cdot4$? Which of the lines is a proposition?'
+          - problem: 'The board shows four lines: (a) Open your books at page $40$. (b) The sum of two odd numbers is even. (c) $x+3=10$. (d) What is $3\cdot4$? Which of the lines is a proposition?'
             answer: 'b'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Line (a) is a command and line (d) is a question, so neither is true or false. Line (c) contains the free variable $x$, so its truth depends on a value. Line (b) is a declarative claim, and it is true, because $(2a+1)+(2b+1)=2(a+b+1)$. So line (b) is the only proposition.'
-          - problem: 'Sam says that "$x+3=10$" is a proposition, because it is true when $x=7$. Ana replies that the sentence is false for other values. Which of $x=7$ and $x=10$ makes it false?'
+          - problem: 'The sentence "$x+3=10$" is true when $x=7$. Which of $x=7$ and $x=10$ makes it false?'
             answer: '10'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Put $x=10$ into the sentence. It becomes $10+3=10$, that is $13=10$, which is false. Put $x=7$ into it. It becomes $7+3=10$, which is true. So the truth value depends on $x$, the sentence is an open sentence, and the value $10$ shows Sam''s reasoning is incomplete.'
+            solution_sketch: 'Put $x=10$ into the sentence. It becomes $10+3=10$, that is $13=10$, which is false. Put $x=7$ into it. It becomes $7+3=10$, which is true. So the truth value depends on $x$, the sentence is an open sentence, and the value $10$ makes it false.'
           - problem: 'A worksheet has four lines: (a) Simplify $3x+2x$. (b) $3x+2x=5x$ for every real number $x$. (c) $3x+2x=10$. (d) Is $3x+2x=5x$? Which line is a proposition?'
             answer: 'b'
             answer_contract: {"kind": "exact"}
@@ -75,10 +75,10 @@ topics:
             answer: '0'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The two parts add up to $999+25=1024$ bytes. Also $2^{10}=1024$, because $2^5=32$ and $32\cdot32=1024$. So the difference is $0$ bytes, and the statement in the log is true.'
-          - problem: 'Sam says that $2+3\cdot4^2=100$. What is the correct value of the left side?'
+          - problem: 'What is the value of $2+3\cdot4^2$?'
             answer: '50'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Powers come before products, so $4^2=16$ first. Next $3\cdot16=48$, and then $2+48=50$. The left side is $50$, not $100$, so Sam''s statement is false.'
+            solution_sketch: 'Powers come before products, so $4^2=16$ first. Next $3\cdot16=48$, and then $2+48=50$. The value is $50$.'
         constraints: 'concrete arithmetic statements; the learner must compute the truth value'
       - id: kp3
         name: "Open sentences become propositions by substitution"
@@ -113,10 +113,10 @@ topics:
             answer: '4'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Divide $60$ by each value of $x$ and compare the result with $15$. For $x=3$ the share is $20$ and for $x=5$ it is $12$. For $x=4$ it is $60\div4=15$. So the sentence becomes true only for $x=4$.'
-          - problem: 'Sam substitutes $x=4$ in $x^2+x=22$ and says that the resulting proposition is true. What is the value of the left side?'
+          - problem: 'Put $x=4$ in $x^2+x=22$. What is the value of the left side?'
             answer: '20'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Substitute $x=4$ to get $4^2+4=22$. The left side is $16+4=20$. Since $20$ is not equal to $22$, the proposition is false, and Sam is wrong.'
+            solution_sketch: 'Substitute $x=4$ to get $4^2+4=22$. The left side is $16+4=20$. Since $20$ is not equal to $22$, the proposition is false.'
         constraints: 'one-variable open sentences; substitute a specific value and evaluate'
     diagnostic_exemplar:
       problem: 'Classify each as a proposition (with truth value), open sentence, or neither: (a) "$5 < 7$" (b) "$x + 2 = 9$" (c) "Study hard." (d) "$91$ is prime."'
@@ -175,10 +175,10 @@ topics:
             answer: 'p > 20'
             answer_contract: {"kind": "inequality_union"}
             solution_sketch: 'The statement says that the price satisfies $p\le20$. Mia finds an item for which this fails, so $p\le20$ is false. The negation of "at most $20$" is "more than $20$", so $p>20$.'
-          - problem: 'Sam writes the negation of $x>6$ as $x<6$. For which value of $x$ do both $x>6$ and Sam''s "negation" fail?'
+          - problem: 'The statement $x<6$ is offered as the negation of $x>6$. For which value of $x$ do both $x>6$ and $x<6$ fail?'
             answer: '6'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Put $x=6$ into both statements. Then $6>6$ is false, and $6<6$ is also false. So Sam''s statement is not a negation, because a negation is true whenever the original fails. The value is $6$.'
+            solution_sketch: 'Put $x=6$ into both statements. Then $6>6$ is false, and $6<6$ is also false. So $x<6$ is not a negation, because a negation is true whenever the original fails. The value is $6$.'
         constraints: 'single-proposition negations; no quantifiers'
       - id: kp2
         name: "Conjunction and disjunction"
@@ -242,10 +242,10 @@ topics:
             answer: 'no'
             answer_contract: {"kind": "label", "options": [["yes", "it does", "she does", "true", "it is free", "the book is free"], ["no", "it does not", "she does not", "false", "it is not free", "not free", "the book is not free"]]}
             solution_sketch: 'The rule is a disjunction of "lives in town" and "is a student". Both parts are false for Dana. A disjunction is false when both parts are false, so the book is not free for her.'
-          - problem: 'Sam reads "or" as "one or the other, but not both". For how many of the four rows of the truth table does Sam''s value of $P\lor Q$ differ from the correct value?'
+          - problem: 'The reading "$P\lor Q$ means one or the other, but not both" is the exclusive or. For how many of the four rows of the truth table does the exclusive or differ from $P\lor Q$?'
             answer: '1'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The two readings differ only when both parts are true. That happens in the row TT alone. In that row the correct value is true and Sam''s value is false. So they differ in $1$ row.'
+            solution_sketch: 'The two readings differ only when both parts are true. That happens in the row TT alone. In that row $P\lor Q$ is true and the exclusive or is false. So they differ in $1$ row.'
           - problem: 'A school has $40$ students. Of them, $25$ take French, $20$ take Spanish and $8$ take both. How many take French or Spanish?'
             answer: '37'
             answer_contract: {"kind": "exact"}
@@ -313,12 +313,12 @@ topics:
           - problem: 'A teacher promises: "If you score at least 90, you get an A." Four students: (a) Ana scores 95 and gets an A. (b) Ben scores 92 and gets a B. (c) Cy scores 80 and gets an A. (d) Dee scores 70 and gets a B. Which student breaks the promise?'
             answer: 'b'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The promise is broken only when the hypothesis is true and the conclusion is false. Ben scores $92$, which is at least $90$, but he does not get an A. Ana keeps the promise. Cy and Dee scored under $90$, so the promise says nothing about them.'
+            solution_sketch: 'The promise is broken only when the hypothesis is true and the conclusion is false. Ben scores $92$, which is at least $90$, but he does not get an A. Ana keeps the promise. Cy and Dee scored under $90$, so the promise makes no demand on them.'
           - problem: 'A shop says: "A customer gets a free bag if and only if the customer spends at least 50 dollars." Which customers contradict the rule? (a) A customer spends 60 dollars and gets a bag. (b) A customer spends 40 dollars and gets a bag. (c) A customer spends 50 dollars and gets no bag. (d) A customer spends 30 dollars and gets no bag.'
             answer: 'b, c'
             answer_contract: {"kind": "list", "ordered": false, "member": {"kind": "exact"}}
             solution_sketch: 'The rule is a biconditional, so the customer gets a bag exactly when the spending is at least $50$ dollars. Customer (b) spends only $40$ dollars but gets a bag. Customer (c) spends $50$ dollars and gets no bag. Customers (a) and (d) follow the rule.'
-          - problem: 'Sam says that "if $n$ is divisible by $4$, then $n$ is even" means the same as "if $n$ is even, then $n$ is divisible by $4$". Give an integer $n$ from $1$ to $10$ that shows the two statements differ.'
+          - problem: 'Give an integer $n$ from $1$ to $10$ for which "if $n$ is divisible by $4$, then $n$ is even" and "if $n$ is even, then $n$ is divisible by $4$" have different truth values.'
             answer: '2'
             answer_contract: {"kind": "property", "check": "multiple_of", "args": {"k": 2, "not_multiple_of": 4, "min": 1, "max": 10}}
             solution_sketch: 'The second statement fails for an even number that is not divisible by $4$. Take $n=2$. It is even, but $2$ is not divisible by $4$, so the second statement is false for $n=2$. The first statement is never false, since every multiple of $4$ is even. So $n=2$ shows the statements differ.'
@@ -347,7 +347,7 @@ topics:
             answer: 'b'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The words "together imply" mean that the pair $P$ and $Q$ is the hypothesis. So the hypothesis is $P\land Q$ and the conclusion is $R$. The formula is $(P\land Q)\to R$.'
-          - problem: 'Sam translates "$P$ holds exactly when $Q$ holds" as $P\to Q$. In how many of the four rows of the truth table does Sam''s formula have a different value from the correct translation?'
+          - problem: 'The statement "$P$ holds exactly when $Q$ holds" translates as $P\leftrightarrow Q$. In how many of the four rows of the truth table does $P\to Q$ have a different value from $P\leftrightarrow Q$?'
             answer: '1'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The correct translation is $P\leftrightarrow Q$. The two formulas differ only in the row where $P$ is false and $Q$ is true. There $P\to Q$ is true and $P\leftrightarrow Q$ is false. So they differ in $1$ row.'
@@ -384,7 +384,7 @@ topics:
             answer: 'c'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The sign $\leftrightarrow$ reads "if and only if". The right side is in parentheses and reads "it snows or the road is closed". So the sentence is "I am late if and only if it snows or the road is closed", which is sentence (c).'
-          - problem: 'Sam reads $\neg(P\land Q)$ as "not $P$ and not $Q$". In how many of the four rows of the truth table do the two statements have different values?'
+          - problem: 'In how many of the four rows of the truth table do $\neg(P\land Q)$ and "not $P$ and not $Q$" have different values?'
             answer: '2'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The statement $\neg(P\land Q)$ is true in the rows TF, FT and FF. The statement "not $P$ and not $Q$" is true in the row FF only. So they differ in the rows TF and FT, which is $2$ rows.'
@@ -454,7 +454,7 @@ topics:
             answer: '3'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The log line is written when "the door is open and the alarm is armed" is false. That conjunction is true in the state TT alone. So the log line is written in $4-1=3$ states.'
-          - problem: 'Sam says that $\neg(P\land Q)$ has the same truth table as $\neg P\land\neg Q$. In how many of the four rows do the two formulas have different values?'
+          - problem: 'In how many of the four rows do $\neg(P\land Q)$ and $\neg P\land\neg Q$ have different values?'
             answer: '2'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The formula $\neg(P\land Q)$ is true in the rows TF, FT and FF. The formula $\neg P\land\neg Q$ is true only in the row FF. They differ in the rows TF and FT, which is $2$ rows.'
@@ -491,10 +491,10 @@ topics:
             answer: '3'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The rule is a disjunction, so the door stays closed only when both the sensor and the button are inactive. That is $1$ of the $4$ combinations. So the door opens in $3$ combinations.'
-          - problem: 'Sam says that $P\lor Q$ is false in two of the four rows, because "or means one or the other". By how many rows does Sam''s count of false rows differ from the correct count?'
+          - problem: 'In how many of the four rows is $P\lor Q$ false?'
             answer: '1'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Sam counts the rows TT and FF as false. The row TT is true, because one true part is enough. So only FF is false, and Sam''s count of $2$ is too high by $1$.'
+            solution_sketch: 'The row FF is false. The row TT is true, because one true part is enough, and the rows TF and FT are true for the same reason. So only $1$ row is false.'
         constraints: 'single connective; emphasize the one false row of $\lor$'
       - id: kp3
         name: "Reading off individual rows"
@@ -528,7 +528,7 @@ topics:
             answer: '2'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Lamp 1 is on, because the back door is open and one open door is enough. Lamp 2 is off, because the front door is closed. Lamp 3 is on, because the front door is closed. So $2$ lamps are on.'
-          - problem: 'A teacher says: "If a student hands in the homework, the student gets a stamp." Which student breaks the rule? (a) A student hands in the homework and gets a stamp. (b) A student hands in the homework and gets no stamp. (c) A student hands in nothing and gets a stamp. (d) A student hands in nothing and gets no stamp.'
+          - problem: 'A rule reads: "If a student hands in the homework, the student gets a stamp." Which student breaks the rule? (a) A student hands in the homework and gets a stamp. (b) A student hands in the homework and gets no stamp. (c) A student hands in nothing and gets a stamp. (d) A student hands in nothing and gets no stamp.'
             answer: 'b'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The rule is a conditional, and a conditional is broken only when the hypothesis is true and the conclusion is false. That is a student who hands in the homework and gets no stamp. In cases (c) and (d) the hypothesis is false, so the rule says nothing.'
@@ -584,7 +584,7 @@ topics:
             answer: '7'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'By precedence the rule is $(A\land B)\lor(\neg C\land D)$. The part $A\land B$ is true in $4$ combinations and $\neg C\land D$ is true in $4$ combinations. The $1$ combination with $A$, $B$, $D$ true and $C$ false is in both. So the buzzer sounds in $4+4-1=7$ combinations.'
-          - problem: 'Sam reads $\neg P\land Q$ as $\neg(P\land Q)$. In how many of the four rows of the truth table do the two readings have different values?'
+          - problem: 'In how many of the four rows of the truth table do $\neg P\land Q$ and $\neg(P\land Q)$ have different values?'
             answer: '2'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The correct reading $(\neg P)\land Q$ is true only in the row FT. The reading $\neg(P\land Q)$ is true in the rows TF, FT and FF. They differ in the rows TF and FF, which is $2$ rows.'
@@ -625,7 +625,7 @@ topics:
             answer: 'c'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'In (a) the work is submitted, so $M\land\neg S$ is false and $C$ is false. In (b) and (d) $M$ is false and $C$ is false. In (c) $M$ is true and $\neg S$ is true, so $M\land\neg S$ is true. So only student (c) is flagged.'
-          - problem: 'Sam evaluates $\neg(P\lor Q)$ as $\neg P\lor\neg Q$. In how many of the four rows of the truth table do the two formulas have different values?'
+          - problem: 'In how many of the four rows of the truth table do $\neg(P\lor Q)$ and $\neg P\lor\neg Q$ have different values?'
             answer: '2'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The formula $\neg(P\lor Q)$ is true only in the row FF. The formula $\neg P\lor\neg Q$ is true in the rows TF, FT and FF. They differ in the rows TF and FT, which is $2$ rows.'
@@ -654,7 +654,7 @@ topics:
             answer: 'a'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Person (a) holds a ticket, so rule 1 admits the person. Rule 2 needs $A$ true, and $A$ is false for (a), so rule 2 refuses. Persons (b) and (d) are admitted by both rules, and person (c) is refused by both. So only (a) is admitted by rule 1 alone.'
-          - problem: 'Sam says that $P\land(Q\lor R)$ and $P\land Q\lor R$ are the same formula. In how many of the eight rows of the truth table do they have different values?'
+          - problem: 'In how many of the eight rows of the truth table do $P\land(Q\lor R)$ and $P\land Q\lor R$ have different values?'
             answer: '2'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'By precedence $P\land Q\lor R$ means $(P\land Q)\lor R$. The two formulas differ when $R$ is true and $P$ is false. Then the first is false and the second is true, for both values of $Q$. So they differ in $2$ rows.'
@@ -718,10 +718,10 @@ topics:
             answer: '3'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The statement is false for an integer exactly when the hypothesis is true and the conclusion is false. That means $n$ is a multiple of $3$ and odd. Between $1$ and $20$ these integers are $3$, $9$ and $15$, so the statement is false for $3$ integers. The even multiples $6$, $12$ and $18$ give a true conditional.'
-          - problem: 'Sam says that $P \leftrightarrow Q$ is true only in the row TT. Which other row of the table, numbering the rows 1 to 4 in the order TT, TF, FT, FF, shows that Sam is wrong?'
+          - problem: 'Number the rows of the truth table 1 to 4 in the order TT, TF, FT, FF. Which row other than row 1 makes $P \leftrightarrow Q$ true?'
             answer: '4'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'A biconditional is true whenever $P$ and $Q$ have the same truth value, and that includes the case where both are false. The row FF is row 4, and there $P \leftrightarrow Q$ is true. So Sam is wrong, because the biconditional is true in the rows 1 and 4.'
+            solution_sketch: 'A biconditional is true whenever $P$ and $Q$ have the same truth value, and that includes the case where both are false. The row FF is row 4, and there $P \leftrightarrow Q$ is true. So the biconditional is true in the rows 1 and 4.'
           - problem: 'For the real number $x = 0$, is the statement "$x > 3$ if and only if $x > 1$" true or false?'
             answer: 'true'
             answer_contract: {"kind": "label", "options": [["true", "T", "it is true", "yes"], ["false", "F", "it is false", "no"]]}
@@ -755,10 +755,10 @@ topics:
             answer: '2, 3'
             answer_contract: {"kind": "list", "ordered": false, "member": {"kind": "exact"}}
             solution_sketch: 'The column for $M \lor A$ is T, T, T, F and the column for $\neg(M \land A)$ is F, T, T, T. Both columns are T in the rows 2 and 3. So the visitor is admitted in the rows TF and FT, and refused in the rows TT and FF.'
-          - problem: 'Sam builds the truth table of $P \leftrightarrow \neg Q$, numbering the rows 1 to 4 in the order TT, TF, FT, FF, and writes the final column T, F, F, T. Which rows of the column are wrong?'
+          - problem: 'The final column T, F, F, T is given for the truth table of $P \leftrightarrow \neg Q$, with the rows 1 to 4 numbered in the order TT, TF, FT, FF. Which rows of the column are wrong?'
             answer: '1, 2, 3, 4'
             answer_contract: {"kind": "list", "ordered": false, "member": {"kind": "exact"}}
-            solution_sketch: 'The column for $\neg Q$ is F, T, F, T. Comparing it with the column for $P$, which is T, T, F, F, gives the agreement F, T, T, F for $P \leftrightarrow \neg Q$. Sam wrote T, F, F, T, which is the column for $P \leftrightarrow Q$, so every entry differs. The wrong rows are 1, 2, 3 and 4.'
+            solution_sketch: 'The column for $\neg Q$ is F, T, F, T. Comparing it with the column for $P$, which is T, T, F, F, gives the agreement F, T, T, F for $P \leftrightarrow \neg Q$. The given column T, F, F, T is the column for $P \leftrightarrow Q$, so every entry differs. The wrong rows are 1, 2, 3 and 4.'
         constraints: "two variables; build intermediate columns before the final column"
       - id: kp3
         name: "Three-variable tables and tautology spotting"
@@ -793,7 +793,7 @@ topics:
             answer: '5'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The alarm sounds when $A \land (D \lor W)$ is true. That needs $A$ true, and then $D \lor W$ is true in $3$ of the four combinations of $D$ and $W$. So the alarm sounds in $3$ rows and stays silent in the other $8 - 3 = 5$ rows.'
-          - problem: 'Sam builds the truth table of $P \lor (Q \land R)$ and finds that it is true in $6$ of the eight rows. Sam made a mistake. In how many rows is the formula really true?'
+          - problem: 'In how many of the eight rows of the truth table of $P \lor (Q \land R)$ is the formula true?'
             answer: '5'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'When $P$ is true, the formula is true in all $4$ rows. When $P$ is false, the formula is true only if $Q \land R$ is true, which is the single row FTT. So the formula is true in $4 + 1 = 5$ rows, not $6$.'
@@ -853,7 +853,7 @@ topics:
             answer: '5'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The conditional $P \to Q$ is false only for $P$ true and $Q$ false. In those rows TFT and TFF the outer conditional is true, because its hypothesis is false. In the other six rows $P \to Q$ is true, so the formula takes the value of $R$, which is true in three of them. That gives $2 + 3 = 5$ true rows.'
-          - problem: 'A teacher says: "If you pass the test, then you pass the test or you hand in the project." Let $T$ stand for "you pass the test" and $H$ for "you hand in the project". In how many of the four combinations of $T$ and $H$ is the teacher''s statement false?'
+          - problem: 'Consider the statement: "If you pass the test, then you pass the test or you hand in the project." Let $T$ stand for "you pass the test" and $H$ for "you hand in the project". In how many of the four combinations of $T$ and $H$ is the teacher''s statement false?'
             answer: '0'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The statement is $T \to (T \lor H)$. It is false only when $T$ is true and $T \lor H$ is false. But when $T$ is true, $T \lor H$ is true. So the statement is false in $0$ of the four combinations and is a tautology.'
@@ -861,10 +861,10 @@ topics:
             answer: '2'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The column for $P \lor Q$ is T, T, T, F and the column for $\neg(P \land Q)$ is F, T, T, T. Both are true in the rows TF and FT. So the formula is true in $2$ rows and false in the other two, and it is neither a tautology nor a contradiction.'
-          - problem: 'Sam claims that $P \to (P \land Q)$ is a tautology. Build the truth table, numbering the rows 1 to 4 in the order TT, TF, FT, FF. In which row does the formula fail?'
+          - problem: 'Build the truth table of $P \to (P \land Q)$, numbering the rows 1 to 4 in the order TT, TF, FT, FF. In which row does the formula fail?'
             answer: '2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The formula is a conditional, so it fails only where $P$ is true and $P \land Q$ is false. That needs $P$ true and $Q$ false, which is the row TF, row 2. In every other row the conditional is true, but one failing row is enough to show that Sam is wrong.'
+            solution_sketch: 'The formula is a conditional, so it fails only where $P$ is true and $P \land Q$ is false. That needs $P$ true and $Q$ false, which is the row TF, row 2. In every other row the conditional is true, so the formula is not a tautology.'
         constraints: "classify via a full truth table; tautology = all T, contradiction = all F, contingency = mixed"
       - id: kp2
         name: "Famous implication tautologies"
@@ -882,22 +882,22 @@ topics:
             answer: '4'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The hypothesis $(P \to Q) \land \neg Q$ is true only in the row FF. In that row the conclusion $\neg P$ is true. In the other three rows the hypothesis is false and the conditional is true. So the formula is true in all $4$ rows, which makes modus tollens valid.'
-          - problem: 'Ana argues: "If I study, I pass. I passed. So I studied." Writing $P$ for "I study" and $Q$ for "I pass", her argument has the form $((P \to Q) \land Q) \to P$. Is this formula a tautology?'
+          - problem: 'An argument reads: "If I study, I pass. I passed. So I studied." Writing $P$ for "I study" and $Q$ for "I pass", the argument has the form $((P \to Q) \land Q) \to P$. Is this formula a tautology?'
             answer: 'no'
             answer_contract: {"kind": "label", "options": [["yes", "yes, it is", "it is", "always valid", "valid"], ["no", "no, it is not", "it is not", "not valid", "invalid"]]}
-            solution_sketch: 'Try the row where $P$ is false and $Q$ is true. Then $P \to Q$ is true and $Q$ is true, so the hypothesis is true, but the conclusion $P$ is false. The conditional is false in that row, so the formula is not a tautology. Ana''s argument affirms the conclusion and is not valid.'
-          - problem: 'Sam claims that $(P \to Q) \to (Q \to P)$ is a tautology. Build the truth table, numbering the rows 1 to 4 in the order TT, TF, FT, FF. In which row does the formula fail?'
+            solution_sketch: 'Try the row where $P$ is false and $Q$ is true. Then $P \to Q$ is true and $Q$ is true, so the hypothesis is true, but the conclusion $P$ is false. The conditional is false in that row, so the formula is not a tautology. The argument affirms the conclusion and is not valid.'
+          - problem: 'Build the truth table of $(P \to Q) \to (Q \to P)$, numbering the rows 1 to 4 in the order TT, TF, FT, FF. In which row does the formula fail?'
             answer: '3'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The formula fails only where $P \to Q$ is true and $Q \to P$ is false. The conditional $Q \to P$ is false only for $Q$ true and $P$ false, which is the row FT. There $P \to Q$ is true, so the formula is false in row 3. Sam is wrong, because a conditional does not imply its converse.'
+            solution_sketch: 'The formula fails only where $P \to Q$ is true and $Q \to P$ is false. The conditional $Q \to P$ is false only for $Q$ true and $P$ false, which is the row FT. There $P \to Q$ is true, so the formula is false in row 3. The formula is not a tautology, because a conditional does not imply its converse.'
           - problem: 'Build the truth table of $(P \to Q) \to (P \land Q)$. In how many of the four rows is the formula true?'
             answer: '2'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The column for $P \to Q$ is T, F, T, T and the column for $P \land Q$ is T, F, F, F. The conditional is true where the hypothesis is false or the conclusion is true. That holds in the rows TT and TF, so the formula is true in $2$ rows.'
-          - problem: 'A manager says: "If the report is late, the client is unhappy. If the client is unhappy, we lose the contract. So if the report is late, we lose the contract." Write $L$, $U$ and $C$ for the three statements. In how many of the eight combinations of truth values for $L$, $U$ and $C$ is the formula $((L \to U) \land (U \to C)) \to (L \to C)$ false?'
+          - problem: 'Consider the argument: "If the report is late, the client is unhappy. If the client is unhappy, we lose the contract. So if the report is late, we lose the contract." Write $L$, $U$ and $C$ for the three statements. In how many of the eight combinations of truth values for $L$, $U$ and $C$ is the formula $((L \to U) \land (U \to C)) \to (L \to C)$ false?'
             answer: '0'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The conclusion $L \to C$ is false only when $L$ is true and $C$ is false. Then $L \to U$ forces $U$ to be true, and $U \to C$ forces $C$ to be true, which contradicts $C$ false. So the hypothesis fails in every such row, and the formula is false in $0$ rows. The manager''s reasoning is valid.'
+            solution_sketch: 'The conclusion $L \to C$ is false only when $L$ is true and $C$ is false. Then $L \to U$ forces $U$ to be true, and $U \to C$ forces $C$ to be true, which contradicts $C$ false. So the hypothesis fails in every such row, and the formula is false in $0$ rows. The argument is valid.'
         constraints: "verify tautologyhood of classic conditional forms by table"
       - id: kp3
         name: "Contradictions and satisfiability"
@@ -915,10 +915,10 @@ topics:
             answer: '3'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The statements $P \lor Q$, $\neg P$ and $\neg Q$ cannot all be true, as the clash of $P$ and $Q$ both being false shows. Any two of the three can be true together. The statement $R$ plays no part in the clash. So the smallest number is $3$.'
-          - problem: 'Ana says: "I will go, or Ben will go." Ben says: "Ana will not go." Carl says: "Ben will not go." Let $P$ stand for "Ana goes" and $Q$ for "Ben goes". For how many of the four combinations of $P$ and $Q$ can all three people be telling the truth?'
+          - problem: 'Speaker A says: "I will go, or Speaker B will go." Speaker B says: "Speaker A will not go." Speaker C says: "Speaker B will not go." Let $P$ stand for "Speaker A goes" and $Q$ for "Speaker B goes". For how many of the four combinations of $P$ and $Q$ can all three speakers be telling the truth?'
             answer: '0'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Ben speaks the truth only if $P$ is false, and Carl only if $Q$ is false. Then Ana''s statement $P \lor Q$ is false. So the three statements cannot all be true, and the number of combinations is $0$.'
+            solution_sketch: 'Speaker B speaks the truth only if $P$ is false, and Speaker C only if $Q$ is false. Then Speaker A''s statement $P \lor Q$ is false. So the three statements cannot all be true, and the number of combinations is $0$.'
           - problem: 'A cafe lunch deal includes coffee, $C$, or tea, $T$, but not both. The deal is the pair of statements $C \lor T$ and $\neg(C \land T)$. For how many of the four combinations of $C$ and $T$ are both statements true?'
             answer: '2'
             answer_contract: {"kind": "exact"}
@@ -991,10 +991,10 @@ topics:
             answer: 'it is not raining'
             answer_contract: {"kind": "label", "options": [["it is raining", "raining", "it rains", "rain"], ["it is not raining", "not raining", "no rain", "it is not raining today"]]}
             solution_sketch: 'The contrapositive says: if the roads are not icy, then it is not raining or the temperature is not below freezing. The roads are not icy, so at least one of the two conditions fails. The temperature is below freezing, so the condition that fails is the rain. It is not raining.'
-          - problem: 'Sam says that the contrapositive of "If $x > 0$, then $x^2 > 0$" is "If $x \le 0$, then $x^2 \le 0$". Find an integer $x$ that shows Sam''s statement is false.'
+          - problem: 'The statement "If $x \le 0$, then $x^2 \le 0$" is offered as the contrapositive of "If $x > 0$, then $x^2 > 0$". Find an integer $x$ for which the offered statement is false.'
             answer: '-1'
             answer_contract: {"kind": "property", "check": "integer_in_range", "args": {"max": -1}}
-            solution_sketch: 'Sam''s statement is false when $x \le 0$ and $x^2 > 0$. Any negative integer does this, for example $x = -1$, since $(-1)^2 = 1 > 0$. So Sam''s statement is false, and it is the inverse of the original, not its contrapositive. The contrapositive is "if $x^2 \le 0$, then $x \le 0$".'
+            solution_sketch: 'The offered statement is false when $x \le 0$ and $x^2 > 0$. Any negative integer does this, for example $x = -1$, since $(-1)^2 = 1 > 0$. So the offered statement is false, and it is the inverse of the original, not its contrapositive. The contrapositive is "if $x^2 \le 0$, then $x \le 0$".'
           - problem: 'The inverse of "If $x > 2$, then $x^2 > 4$" is "If $x \le 2$, then $x^2 \le 4$". Find an integer $x$ that shows this inverse is false.'
             answer: '-3'
             answer_contract: {"kind": "property", "check": "integer_in_range", "args": {"max": -3}}
@@ -1028,10 +1028,10 @@ topics:
             answer: '0'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The column for $\neg P$ is F, F, T, T over the rows TT, TF, FT, FF, and the column for $Q$ is T, F, T, F. So $\neg P \lor Q$ is T, F, T, T, which is the column for $P \to Q$. The tables differ in $0$ rows, so the two forms are equivalent.'
-          - problem: 'Sam says that the table of $\neg P \to \neg Q$ has the same column as the table of $P \to Q$, namely T, F, T, T, numbering the rows 1 to 4 in the order TT, TF, FT, FF. In which rows is Sam wrong?'
+          - problem: 'The column T, F, T, T is given for the table of $\neg P \to \neg Q$, which is the column of $P \to Q$. The rows are numbered 1 to 4 in the order TT, TF, FT, FF. In which rows is the given column wrong?'
             answer: '2, 3'
             answer_contract: {"kind": "list", "ordered": false, "member": {"kind": "exact"}}
-            solution_sketch: 'Check each row: $\neg P \to \neg Q$ is false only when $\neg P$ is true and $\neg Q$ is false, which means $P$ false and $Q$ true. That is the row FT, row 3, so the correct column is T, T, F, T. Sam''s column differs from it in the rows 2 and 3.'
+            solution_sketch: 'Check each row: $\neg P \to \neg Q$ is false only when $\neg P$ is true and $\neg Q$ is false, which means $P$ false and $Q$ true. That is the row FT, row 3, so the correct column is T, T, F, T. The given column differs from it in the rows 2 and 3.'
           - problem: 'Build the truth tables of $(P \to Q) \to R$ and of $P \to (Q \to R)$. In how many of the eight rows do the two tables differ?'
             answer: '2'
             answer_contract: {"kind": "exact"}
@@ -1065,10 +1065,10 @@ topics:
             answer: '3'
             answer_contract: {"kind": "property", "check": "integer_in_range", "args": {"min": 3, "max": 4}}
             solution_sketch: 'The direction "if $x < 3$ then $x < 5$" holds. The converse "if $x < 5$ then $x < 3$" fails when $x < 5$ and $x \ge 3$. The integers $3$ and $4$ do this, so $x = 3$ is a counterexample.'
-          - problem: 'Sam says that "$x = 2$ if and only if $|x| = 2$" is true for every real $x$, because $x = 2$ gives $|x| = 2$. Find a real number $x$ that shows Sam is wrong.'
+          - problem: 'Find a real number $x$ for which "$x = 2$ if and only if $|x| = 2$" is false.'
             answer: '-2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Sam only checked one direction. For the converse, take $x = -2$: then $|x| = 2$ is true, but $x = 2$ is false. So the biconditional fails at $x = -2$.'
+            solution_sketch: 'The direction from $x = 2$ to $|x| = 2$ holds. For the converse, take $x = -2$: then $|x| = 2$ is true, but $x = 2$ is false. So the biconditional fails at $x = -2$.'
           - problem: 'For how many integers $n$ from $1$ to $30$ is the statement "$n$ is divisible by $6$ if and only if $n$ is divisible by $3$" false?'
             answer: '5'
             answer_contract: {"kind": "exact"}
@@ -1106,7 +1106,7 @@ topics:
         name: "Sufficient conditions"
         key_prerequisites: [conditional-statements]
         exemplars:
-          - problem: 'Sam says that being a multiple of $3$ is a sufficient condition for being a multiple of $12$. What is the smallest positive integer $n$ that shows Sam is wrong?'
+          - problem: 'What is the smallest positive integer $n$ for which "if $n$ is a multiple of $3$, then $n$ is a multiple of $12$" is false?'
             answer: '3'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'A sufficient condition must guarantee the result, so "if $n$ is a multiple of $3$, then $n$ is a multiple of $12$" would have to hold for every $n$. It fails for $n = 3$, because $3$ is a multiple of $3$ but not of $12$. No smaller positive integer is a multiple of $3$, so the answer is $3$.'
@@ -1126,7 +1126,7 @@ topics:
             answer: '2'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The promise makes "the order is at least $40$ dollars" sufficient for free delivery. The orders of $40$ and $52$ dollars meet the condition, so free delivery is guaranteed for them. The orders of $35$ and $39$ dollars are below $40$, so nothing is guaranteed. That is $2$ orders.'
-          - problem: 'Sam says that "$x$ is a multiple of $4$" is sufficient for "$x$ is a multiple of $8$". What is the smallest positive integer $x$ that shows Sam is wrong?'
+          - problem: 'What is the smallest positive integer $x$ for which "if $x$ is a multiple of $4$, then $x$ is a multiple of $8$" is false?'
             answer: '4'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'A sufficient condition must work for every $x$. The number $4$ is a multiple of $4$, but $4$ is not a multiple of $8$. No smaller positive integer is a multiple of $4$, so $4$ is the smallest counterexample.'
@@ -1139,7 +1139,7 @@ topics:
         name: "Necessary conditions and only if"
         key_prerequisites: [conditional-statements]
         exemplars:
-          - problem: 'Sam says that being a multiple of $10$ is a necessary condition for being a multiple of $5$. What is the smallest positive integer that shows Sam is wrong?'
+          - problem: 'What is the smallest positive integer $n$ for which "if $n$ is a multiple of $5$, then $n$ is a multiple of $10$" is false?'
             answer: '5'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'A necessary condition must hold whenever the result holds, so "if $n$ is a multiple of $5$, then $n$ is a multiple of $10$" would have to be true. It fails for $n = 5$, which is a multiple of $5$ and not of $10$. No smaller positive integer is a multiple of $5$, so the answer is $5$.'
@@ -1159,10 +1159,10 @@ topics:
             answer: '2'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The height of at least $120$ cm is a necessary condition. A child below $120$ cm fails it, so that child cannot ride. The children of $118$ cm and $119$ cm fail it, which makes $2$ children. The others meet the necessary condition, but this does not guarantee that they can ride.'
-          - problem: 'Sam says that "$n$ is divisible by $6$ only if $n$ is divisible by $4$". What is the smallest positive integer $n$ that shows Sam is wrong?'
+          - problem: 'What is the smallest positive integer $n$ for which "$n$ is divisible by $6$ only if $n$ is divisible by $4$" is false?'
             answer: '6'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Sam''s statement means "if $n$ is divisible by $6$, then $n$ is divisible by $4$". To show it false, find a multiple of $6$ that is not a multiple of $4$. The first multiple of $6$ is $6$, and $6$ is not divisible by $4$. So $6$ is the smallest counterexample.'
+            solution_sketch: 'The statement means "if $n$ is divisible by $6$, then $n$ is divisible by $4$". To show it false, find a multiple of $6$ that is not a multiple of $4$. The first multiple of $6$ is $6$, and $6$ is not divisible by $4$. So $6$ is the smallest counterexample.'
           - problem: 'For how many integers $n$ from $1$ to $30$ is the statement "$n$ is divisible by $4$ only if $n$ is divisible by $6$" false?'
             answer: '5'
             answer_contract: {"kind": "exact"}
@@ -1176,11 +1176,11 @@ topics:
             answer: '4'
             answer_contract: {"kind": "exact"}
             solution_sketch: '"The picnic is on unless it rains" means "if it does not rain, then the picnic is on". The rule gives no certain answer for the days with rain. It does not rain on $6 - 2 = 4$ days, so the picnic is certainly on for $4$ days.'
-          - problem: 'Sam says that divisibility by $2$ is necessary and sufficient for divisibility by $6$. What is the smallest positive integer $n$ that shows Sam is wrong?'
+          - problem: 'What is the smallest positive integer $n$ for which "$n$ is divisible by $2$ if and only if $n$ is divisible by $6$" is false?'
             answer: '2'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'A necessary and sufficient condition works in both directions. Every multiple of $6$ is even, so one direction holds. The other direction fails for $n = 2$, which is even but not divisible by $6$. So $2$ is the smallest counterexample.'
-          - problem: 'A teacher says: "You pass unless your score is below $40$." Five students score $35$, $40$, $39$, $62$ and $41$. How many of the five students are sure to pass?'
+          - problem: 'A rule reads: "You pass unless your score is below $40$." Five students score $35$, $40$, $39$, $62$ and $41$. How many of the five students are sure to pass?'
             answer: '3'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The statement means "if your score is not below $40$, then you pass". The scores $40$, $62$ and $41$ are not below $40$, so those students are sure to pass. The scores $35$ and $39$ are below $40$, so the statement promises nothing for them. That is $3$ students.'
@@ -1259,14 +1259,14 @@ topics:
             answer: '2'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The formula simplifies to $P \land \neg Q$, because $\neg\neg P$ is $P$ and $\neg\neg\neg Q$ is $\neg Q$. This is true only when $P$ is true and $Q$ is false. That is the row TF, which is row 2.'
-          - problem: 'Mia says: "It is false that I do not have a ticket." Does Mia have a ticket?'
+          - problem: 'Consider the statement "It is false that I do not have a ticket." If the statement is true, does the speaker have a ticket?'
             answer: 'yes'
             answer_contract: {"kind": "label", "options": [["yes", "yes, she does", "she does", "she has a ticket"], ["no", "no, she does not", "she does not", "she has no ticket"]]}
-            solution_sketch: 'Let $P$ stand for "Mia has a ticket". Her statement says $\neg(\neg P)$ is true, because "it is false that" is a negation of "I do not have a ticket". Two negations cancel, so her statement says that $P$ is true. Mia has a ticket.'
-          - problem: 'Sam says that $\neg\neg(P \land Q)$ is equivalent to $\neg P \land \neg Q$. In how many of the four rows do the two tables differ?'
+            solution_sketch: 'Let $P$ stand for "the visitor has a ticket". The statement says $\neg(\neg P)$ is true, because "it is false that" is a negation of "I do not have a ticket". Two negations cancel, so the statement says that $P$ is true. The visitor has a ticket.'
+          - problem: 'In how many of the four rows do the tables of $\neg\neg(P \land Q)$ and $\neg P \land \neg Q$ differ?'
             answer: '2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The formula $\neg\neg(P \land Q)$ is the same as $P \land Q$, which is true only in the row TT. The formula $\neg P \land \neg Q$ is true only in the row FF. So the two tables differ in the rows TT and FF, which is $2$ rows, and Sam is wrong.'
+            solution_sketch: 'The formula $\neg\neg(P \land Q)$ is the same as $P \land Q$, which is true only in the row TT. The formula $\neg P \land \neg Q$ is true only in the row FF. So the two tables differ in the rows TT and FF, which is $2$ rows, so the two formulas are not equivalent.'
         constraints: "cancel paired negations"
       - id: kp2
         name: "De Morgan's laws"
@@ -1289,7 +1289,7 @@ topics:
             answer: 'The shop is not closed, or the bus is not late.'
             answer_contract: {"kind": "written"}
             solution_sketch: 'De Morgan''s law turns the negation of an "and" into an "or" of the two negations: $\neg(A \land B) \equiv \neg A \lor \neg B$. Here $A$ is "the shop is closed" and $B$ is "the bus is late". So at least one of the two parts fails.'
-          - problem: 'Sam says that $\neg(P \land Q)$ is equivalent to $\neg P \land \neg Q$. In how many of the four rows do the two tables differ?'
+          - problem: 'In how many of the four rows do the tables of $\neg(P \land Q)$ and $\neg P \land \neg Q$ differ?'
             answer: '2'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The formula $\neg(P \land Q)$ is F, T, T, T over the rows TT, TF, FT, FF. The formula $\neg P \land \neg Q$ is F, F, F, T. They differ in the rows TF and FT, which is $2$ rows. De Morgan''s law gives $\neg P \lor \neg Q$ instead, which is F, T, T, T.'
@@ -1305,10 +1305,10 @@ topics:
             answer: '4'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'A rider does not get the pass when "under $18$ or over $65$" is false. By De Morgan''s law that means "not under $18$ and not over $65$", which is an age from $18$ to $65$. The riders aged $18$, $30$, $45$ and $65$ fit this. That is $4$ riders.'
-          - problem: 'Sam says that the negation of "$x > 3$ and $x < 8$" is "$x \le 3$ and $x \ge 8$". What is the smallest nonnegative integer $x$ that shows Sam is wrong?'
+          - problem: 'What is the smallest nonnegative integer $x$ for which "$x \le 3$ and $x \ge 8$" has a different truth value from the negation of "$x > 3$ and $x < 8$"?'
             answer: '0'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'For $x = 0$ the statement "$x > 3$ and $x < 8$" is false, so its negation is true. Sam''s statement needs $x \le 3$ and $x \ge 8$ together, which no number satisfies, so it is false at $x = 0$. A negation must have the opposite value, so Sam is wrong. De Morgan''s law gives "$x \le 3$ or $x \ge 8$".'
+            solution_sketch: 'For $x = 0$ the statement "$x > 3$ and $x < 8$" is false, so its negation is true. The statement "$x \le 3$ and $x \ge 8$" needs $x \le 3$ and $x \ge 8$ together, which no number satisfies, so it is false at $x = 0$. A negation must have the opposite value, so it is not the negation. De Morgan''s law gives "$x \le 3$ or $x \ge 8$".'
           - problem: 'For how many integers $n$ from $1$ to $20$ is the statement "it is not true that $n$ is even or a multiple of $5$" true?'
             answer: '8'
             answer_contract: {"kind": "exact"}
@@ -1330,10 +1330,10 @@ topics:
             answer: '8'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Apply De Morgan''s law to the outer disjunction: $\neg(P \lor (Q \land R))$ becomes $\neg P \land \neg(Q \land R)$. Apply it again to the inner conjunction: $\neg(Q \land R)$ becomes $\neg Q \lor \neg R$. So the two formulas are equivalent and agree in all $8$ rows.'
-          - problem: 'Sam rewrites $\neg(P \lor (Q \land R))$ as $\neg P \lor (\neg Q \lor \neg R)$. In how many of the eight rows does Sam''s formula differ from the original?'
+          - problem: 'In how many of the eight rows do $\neg(P \lor (Q \land R))$ and $\neg P \lor (\neg Q \lor \neg R)$ have different values?'
             answer: '4'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The original formula is true only in the rows FTF, FFT and FFF. Sam''s formula $\neg P \lor \neg Q \lor \neg R$ is false only in the row TTT. So the two formulas agree in the rows FTF, FFT, FFF and TTT, and differ in the other $4$ rows. Sam changed the inner connective but not the outer one.'
+            solution_sketch: 'The original formula is true only in the rows FTF, FFT and FFF. The second formula $\neg P \lor \neg Q \lor \neg R$ is false only in the row TTT. So the two formulas agree in the rows FTF, FFT, FFF and TTT, and differ in the other $4$ rows. The second formula changes the inner connective but not the outer one.'
           - problem: 'A building admits a visitor who has a badge, or who has both an escort and a booking. For how many of the eight combinations of badge, escort and booking is a visitor not admitted?'
             answer: '3'
             answer_contract: {"kind": "exact"}
@@ -1354,10 +1354,10 @@ topics:
             answer: 'Not R, and (not P or not Q).'
             answer_contract: {"kind": "written"}
             solution_sketch: 'De Morgan''s law for "or" gives $\neg((P \land Q) \lor R) \equiv \neg(P \land Q) \land \neg R$. De Morgan''s law for "and" then gives $\neg(P \land Q) \equiv \neg P \lor \neg Q$. So the negation is $(\neg P \lor \neg Q) \land \neg R$.'
-          - problem: 'Sam writes $\neg((P \land Q) \lor R)$ as $(\neg P \lor \neg Q) \lor \neg R$. Is Sam''s formula logically equivalent to the original?'
+          - problem: 'Is $(\neg P \lor \neg Q) \lor \neg R$ logically equivalent to $\neg((P \land Q) \lor R)$?'
             answer: 'no'
             answer_contract: {"kind": "label", "options": [["no", "no, it is not", "it is not", "not equivalent", "false"], ["yes", "yes, it is", "it is", "equivalent", "true"]]}
-            solution_sketch: 'The correct result of De Morgan''s law is $(\neg P \lor \neg Q) \land \neg R$, with $\land$ in the outer place. Sam kept $\lor$ there. Take $P$ false, $Q$ false and $R$ true: the original formula is false, but Sam''s formula is true. So they are not equivalent.'
+            solution_sketch: 'The correct result of De Morgan''s law is $(\neg P \lor \neg Q) \land \neg R$, with $\land$ in the outer place. The given formula keeps $\lor$ there. Take $P$ false, $Q$ false and $R$ true: the original formula is false, but the given formula is true. So they are not equivalent.'
         constraints: "two nested De Morgan steps; all negations end on atomic variables"
     diagnostic_exemplar:
       problem: 'Push the negation all the way inward and simplify: $\neg(\neg P \land (Q \lor \neg R))$.'
@@ -1409,7 +1409,7 @@ topics:
             answer: '4'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Each member votes yes or no, so the truth table has $2^3 = 8$ rows. Exactly two yes votes occur in $3$ patterns, one for each member who votes no. Three yes votes occur in $1$ pattern. The motion passes in $3 + 1 = 4$ of the eight patterns.'
-          - problem: 'Sam wants to show that $(P \land Q) \lor R$ and $(P \lor R) \land (Q \lor R)$ are logically equivalent. He plans a truth table that lists every assignment of truth values to the variables. How many rows does his table need?'
+          - problem: 'A truth table lists every assignment of truth values to the variables, to show that $(P \land Q) \lor R$ and $(P \lor R) \land (Q \lor R)$ are logically equivalent. How many rows does the table need?'
             answer: '8'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Each of the three variables $P$, $Q$, $R$ has two possible truth values, and the choices are independent. So the table needs $2 \cdot 2 \cdot 2 = 8$ rows. Fewer rows would leave an assignment unchecked, and an unchecked assignment could be the one where the columns differ.'
@@ -1421,7 +1421,7 @@ topics:
             answer: '16'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Each switch has two positions, so the number of settings is $2^4 = 16$. This is the number of rows in the truth table of the two wirings. The wirings are equivalent only if they agree in all $16$ settings.'
-          - problem: 'Sam compares the truth tables of $P \to (Q \to R)$ and $(P \to Q) \to R$. In how many of the eight rows do the two columns differ?'
+          - problem: 'Compare the truth tables of $P \to (Q \to R)$ and $(P \to Q) \to R$. In how many of the eight rows do the two columns differ?'
             answer: '2'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The formula $P \to (Q \to R)$ is false only in the row $(T,T,F)$ for $(P,Q,R)$. The formula $(P \to Q) \to R$ is false when $P \to Q$ is true and $R$ is false, which gives the rows $(T,T,F)$, $(F,T,F)$ and $(F,F,F)$. The columns agree in the row $(T,T,F)$ and in the five rows where both are true, and they differ in the rows $(F,T,F)$ and $(F,F,F)$. So the columns differ in $2$ of the eight rows, and the formulas are not logically equivalent.'
@@ -1454,10 +1454,10 @@ topics:
             answer: '7'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The statement is false when $n$ is an odd prime and $n + 2$ is not prime. Test the odd primes in order: $3$ gives $5$, which is prime; $5$ gives $7$, which is prime; $7$ gives $9 = 3 \cdot 3$, which is not prime. The smallest counterexample is $n = 7$. The numbers $1$, $2$, $4$ and $6$ do not count, because for them the hypothesis is false and the conditional is true.'
-          - problem: 'Sam says that the negation of "if $x > 2$ then $x^2 > 9$" is "if $x > 2$ then $x^2 \le 9$". For which integer $x$ is the original statement actually false?'
+          - problem: 'For which integer $x$ is "if $x > 2$ then $x^2 > 9$" false?'
             answer: '3'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The negation of a conditional keeps the hypothesis and negates the conclusion, so the statement is false exactly when $x > 2$ and $x^2 \le 9$ are both true. Sam''s version is another conditional, which is not the negation. The condition $x > 2$ and $x^2 \le 9$ means $2 < x \le 3$, so the only integer is $x = 3$: then $3^2 = 9$, which is not greater than $9$.'
+            solution_sketch: 'The negation of a conditional keeps the hypothesis and negates the conclusion, so the statement is false exactly when $x > 2$ and $x^2 \le 9$ are both true. The condition $x > 2$ and $x^2 \le 9$ means $2 < x \le 3$, so the only integer is $x = 3$: then $3^2 = 9$, which is not greater than $9$.'
           - problem: 'A school rule says: "If a student is under 12, a parent must sign the form." Four students aged 10, 13, 9 and 15 handed in forms. A parent signed the forms of the students aged 10, 13 and 15 only. Which age shows that the rule was broken?'
             answer: '9'
             answer_contract: {"kind": "exact"}
@@ -1562,10 +1562,10 @@ topics:
             answer: '6'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'An even number divisible by $3$ is divisible by $6$. The multiples of $6$ from $1$ to $40$ are $6, 12, 18, 24, 30, 36$. The next multiple, $42$, is past $40$. So $6$ seats are in the discount section.'
-          - problem: 'Sam says that the predicate $P(x)$: "$x + 3 > 2x$" is true when $x = 4$, because $4 + 3 = 7$. What is the largest positive integer $x$ for which $P(x)$ is true?'
+          - problem: 'What is the largest positive integer $x$ for which the predicate $P(x)$: "$x + 3 > 2x$" is true?'
             answer: '2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Substitute $x = 4$: the statement becomes $4 + 3 > 2 \cdot 4$, that is $7 > 8$, which is false. So Sam''s claim is wrong. In general $x + 3 > 2x$ means $3 > x$, so the positive integers that work are $1$ and $2$, and the largest is $2$.'
+            solution_sketch: 'Substitute $x = 4$: the statement becomes $4 + 3 > 2 \cdot 4$, that is $7 > 8$, which is false, so $4$ is too large. In general $x + 3 > 2x$ means $3 > x$, so the positive integers that work are $1$ and $2$, and the largest is $2$.'
           - problem: 'Let $Q(n)$ be the predicate "$n^2 + n + 1$ is prime" over the positive integers. Is $Q(4)$ true?'
             answer: 'false'
             answer_contract: {"kind": "label", "options": [["true", "yes", "it is true"], ["false", "no", "it is false"]]}
@@ -1603,10 +1603,10 @@ topics:
             answer: '-2, 4'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Factor the left side: $x^2 - 2x - 8 = (x - 4)(x + 2)$. A product is zero only when a factor is zero, so $x = 4$ or $x = -2$. Both are integers, so both belong to the truth set $\{-2, 4\}$.'
-          - problem: 'Sam lists the truth set of "$x^2 > 4$" over $\{-3, -2, -1, 0, 1, 2, 3\}$ as $\{3\}$. What is the correct truth set?'
+          - problem: 'What is the truth set of "$x^2 > 4$" over $\{-3, -2, -1, 0, 1, 2, 3\}$?'
             answer: '-3, 3'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Test every element, not only the positive ones. For $x = 3$ and $x = -3$ the square is $9 > 4$. For $x = \pm 2$ the square is $4$, which is not greater than $4$, and for $x = -1, 0, 1$ it is even smaller. So $-3$ also belongs, and the truth set is $\{-3, 3\}$.'
+            solution_sketch: 'Test every element, not only the positive ones. For $x = 3$ and $x = -3$ the square is $9 > 4$. For $x = \pm 2$ the square is $4$, which is not greater than $4$, and for $x = -1, 0, 1$ it is even smaller. So $-3$ belongs with $3$, and the truth set is $\{-3, 3\}$.'
         constraints: "finite truth sets the learner can list; the domain must be stated"
       - id: kp3
         name: "Predicates with several variables"
@@ -1679,11 +1679,11 @@ topics:
             answer: '40'
             answer_contract: {"kind": "property", "check": "prime_counterexample", "args": {"expr": "n^2 + n + 41", "var": "n", "min": 1}}
             solution_sketch: 'One failure is enough to refute a universal statement. The values for $n = 1, \dots, 39$ are all prime, but at $n = 40$ the value is $40^2 + 40 + 41 = 1681 = 41^2$. This is not prime, so $n = 40$ is a counterexample. The number $n = 41$ works too, because $41^2 + 41 + 41 = 41 \cdot 43$.'
-          - problem: 'Sam claims that $2^n > n^2$ for every positive integer $n$. What is the smallest positive integer $n$ that shows Sam is wrong?'
+          - problem: 'What is the smallest positive integer $n$ for which $2^n > n^2$ is false?'
             answer: '2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Test $n$ in order. For $n = 1$ we get $2 > 1$, which is true. For $n = 2$ we get $2^2 = 4$ and $2^2 = 4$, and $4 > 4$ is false. So $n = 2$ is the smallest counterexample, and Sam is wrong. The value $n = 3$ also fails, since $8 < 9$.'
-          - problem: 'A teacher says that every student in the class scored at least 50 on the test. The scores are 72, 85, 64, 90 and 49. Which score is a counterexample to the teacher''s statement?'
+            solution_sketch: 'Test $n$ in order. For $n = 1$ we get $2 > 1$, which is true. For $n = 2$ we get $2^2 = 4$ and $2^2 = 4$, and $4 > 4$ is false. So $n = 2$ is the smallest counterexample. The value $n = 3$ also fails, since $8 < 9$.'
+          - problem: 'Every student in a class scored at least 50 on a test. The scores are 72, 85, 64, 90 and 49. Which score is a counterexample to the statement?'
             answer: '49'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The statement says that $\text{score} \ge 50$ holds for every student. The scores $72$, $85$, $64$ and $90$ are all at least $50$. The score $49$ is below $50$, so it is the counterexample and the statement is false.'
@@ -1691,7 +1691,7 @@ topics:
             answer: '5'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Check the squares in order: $1, 4, 9, 16, 25$ are all at most $30$. The next square is $6^2 = 36$, which is greater than $30$. So the statement is true for $N = 5$ and false for $N = 6$ and every larger $N$.'
-          - problem: 'A coach claims that every team can be split into pairs with nobody left over. The teams have 8, 12, 15 and 20 players. Which team size makes the claim false?'
+          - problem: 'The statement "every team can be split into pairs with nobody left over" is tested on teams with 8, 12, 15 and 20 players. Which team size makes the statement false?'
             answer: '15'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'A team splits into pairs with nobody left over exactly when its size is divisible by $2$. The sizes $8$, $12$ and $20$ are even. The size $15$ gives $15 = 7 \cdot 2 + 1$, so one player is left over. So $15$ is the counterexample.'
@@ -1720,10 +1720,10 @@ topics:
             answer: '105'
             answer_contract: {"kind": "property", "check": "multiple_of", "args": {"k": 7, "min": 100, "max": 110}}
             solution_sketch: 'We need a witness: a number $n$ with $100 \le n \le 110$ and $7 \mid n$. Since $7 \cdot 14 = 98$ is too small and $7 \cdot 15 = 105$ is in range, $105$ works. The next multiple, $7 \cdot 16 = 112$, is already too big, so $105$ is the only witness.'
-          - problem: 'Sam says there is no integer $n$ with $n^2 = 3n + 4$, because he tried $n = 1, 2, 3$ and none worked. What is the smallest positive integer witness he missed?'
+          - problem: 'No integer $n$ with $n^2 = 3n + 4$ is found among $n = 1, 2, 3$. What is the smallest positive integer $n$ with $n^2 = 3n + 4$?'
             answer: '4'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Sam''s search stopped too early. Try $n = 4$: $4^2 = 16$ and $3 \cdot 4 + 4 = 16$, so $n = 4$ is a witness. The equation $n^2 - 3n - 4 = (n - 4)(n + 1) = 0$ has the solutions $4$ and $-1$, so the only positive witness is $4$.'
+            solution_sketch: 'A search that stops at $3$ is too short. Try $n = 4$: $4^2 = 16$ and $3 \cdot 4 + 4 = 16$, so $n = 4$ is a witness. The equation $n^2 - 3n - 4 = (n - 4)(n + 1) = 0$ has the solutions $4$ and $-1$, so the only positive witness is $4$.'
           - problem: 'Three buses leave a station at 8:00. After that they leave every 4, 5 and 6 minutes. After how many minutes do all three leave together again for the first time?'
             answer: '60'
             answer_contract: {"kind": "exact"}
@@ -1753,7 +1753,7 @@ topics:
             answer: '12'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The statement has the shape $\exists x\,(R(x) \land C(x))$, so a witness must be both reserved and covered. The reserved spaces are $6, 12, 18$. The space $6$ is not covered, since $6 \le 10$. The space $12$ is reserved and covered, so the smallest witness is $12$.'
-          - problem: 'Over the integers from $1$ to $10$, let $P(x)$ mean "$x$ is a prime number" and $E(x)$ mean "$x$ is even". Ana writes $\exists x\,(P(x) \land E(x))$ for "some prime number is even". Which $x$ makes her formula true?'
+          - problem: 'Over the integers from $1$ to $10$, let $P(x)$ mean "$x$ is a prime number" and $E(x)$ mean "$x$ is even". The formula $\exists x\,(P(x) \land E(x))$ says "some prime number is even". Which $x$ makes this formula true?'
             answer: '2'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The formula is true when some $x$ has both $P(x)$ and $E(x)$ true, so $x$ is a prime number and is even. The only even prime number is $2$. So $x = 2$ is the witness.'
@@ -1761,10 +1761,10 @@ topics:
             answer: '8'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'An implication is false only when $A(x)$ is true and $B(x)$ is false, that is for an even $x$ with $x \le 4$. These are $x = 2$ and $x = 4$, so the implication is false for $2$ elements. It is true for the other $10 - 2 = 8$ elements, including every odd number, for which $A(x)$ is false.'
-          - problem: 'Sam writes $\exists x\,(P(x) \to Q(x))$ for "some prime is even", where $P(x)$ is "$x$ is prime" and $Q(x)$ is "$x$ is even", over $\{1, 2, \dots, 9\}$. What is the smallest $x$ that makes his implication true even though $x$ is not an even prime?'
+          - problem: 'Over $\{1, 2, \dots, 9\}$, let $P(x)$ be "$x$ is prime" and $Q(x)$ be "$x$ is even". The formula $\exists x\,(P(x) \to Q(x))$ is offered for "some prime is even". What is the smallest $x$ that makes the implication true even though $x$ is not an even prime?'
             answer: '1'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'An implication is true whenever its hypothesis is false. The number $1$ is not prime, so $P(1)$ is false and $P(1) \to Q(1)$ is true, although $1$ is not an even prime. So Sam''s formula would be true even in a domain with no even prime. The correct translation is $\exists x\,(P(x) \land Q(x))$.'
+            solution_sketch: 'An implication is true whenever its hypothesis is false. The number $1$ is not prime, so $P(1)$ is false and $P(1) \to Q(1)$ is true, although $1$ is not an even prime. So the formula would be true even in a domain with no even prime. The correct translation is $\exists x\,(P(x) \land Q(x))$.'
         constraints: "Translate complete single-quantifier sentences into formulas, choosing between guarded universal implications and existential conjunctions; test a translation on a stated domain by finding the counterexample or witness."
     diagnostic_exemplar:
       problem: 'Translate "some perfect square is odd" using quantifiers and give its truth value; then decide whether "for every $n \in \{2, 4, 6\}$, $n^2 + 1$ is prime" is true.'
@@ -1828,10 +1828,10 @@ topics:
             answer: '5/4'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The witness may depend on $x$, and the equation $xy = 1$ gives $y = \frac{1}{x}$. For $x = \frac{4}{5}$ this is $y = \frac{5}{4}$. Check: $\frac{4}{5} \cdot \frac{5}{4} = 1$.'
-          - problem: 'Sam says that $\exists y\ \forall x,\ x < y$ is true over the integers, because $y$ can be as large as we like. Which integer $x$ shows that $y = 50$ is not a witness?'
+          - problem: 'The statement $\exists y\ \forall x,\ x < y$ is about the integers. Which integer $x$ shows that $y = 50$ is not a witness?'
             answer: '50'
             answer_contract: {"kind": "property", "check": "integer_in_range", "args": {"min": 50}}
-            solution_sketch: 'A witness $y$ must satisfy $x < y$ for every integer $x$, all at once. For $y = 50$ the requirement fails at $x = 50$, since $50 < 50$ is false, and also at every larger integer. Whatever $y$ Sam picks, the integer $x = y$ breaks it, so the statement is false.'
+            solution_sketch: 'A witness $y$ must satisfy $x < y$ for every integer $x$, all at once. For $y = 50$ the requirement fails at $x = 50$, since $50 < 50$ is false, and also at every larger integer. Whatever $y$ is picked, the integer $x = y$ breaks it, so the statement is false.'
           - problem: 'A van holds at most 12 parcels. Each of 50 parcels must be on some van. What is the smallest number of vans that makes the statement "every parcel is on a van" possible?'
             answer: '5'
             answer_contract: {"kind": "exact"}
@@ -1849,10 +1849,10 @@ topics:
             answer: '17'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'For each $n > 1$ the witness $p$ may depend on $n$. We look for a prime that divides $289$. Since $17 \cdot 17 = 289$, the number $17$ divides $289$, and $17$ is prime. The number $289$ has no other prime divisor, so $17$ is the witness.'
-          - problem: 'Sam writes $\forall n\,\bigl((n > 1) \land \exists p\,(p \text{ prime} \land p \mid n)\bigr)$ for "every integer greater than $1$ has a prime divisor". Which integer $n$ shows that Sam''s formula is false?'
+          - problem: 'The formula $\forall n\,\bigl((n > 1) \land \exists p\,(p \text{ prime} \land p \mid n)\bigr)$ is offered for "every integer greater than $1$ has a prime divisor". Which integer $n$ shows that the formula is false?'
             answer: '1'
             answer_contract: {"kind": "property", "check": "integer_in_range", "args": {"max": 1}}
-            solution_sketch: 'With $\land$ the formula says that every integer $n$ satisfies both $n > 1$ and the divisor condition. The integer $n = 1$ fails the first part, since $1 > 1$ is false. So $n = 1$ shows that Sam''s formula is false, and so does every integer below $1$. The correct translation uses $\to$ after the condition $n > 1$.'
+            solution_sketch: 'With $\land$ the formula says that every integer $n$ satisfies both $n > 1$ and the divisor condition. The integer $n = 1$ fails the first part, since $1 > 1$ is false. So $n = 1$ shows that the formula is false, and so does every integer below $1$. The correct translation uses $\to$ after the condition $n > 1$.'
           - problem: 'For every positive integer $n$ there is a prime $p$ with $p > n$. What is the smallest such prime for $n = 90$?'
             answer: '97'
             answer_contract: {"kind": "exact"}
@@ -1957,10 +1957,10 @@ topics:
             answer: '41'
             answer_contract: {"kind": "property", "check": "prime_counterexample", "args": {"expr": "n^2 - n + 41", "var": "n", "min": 1}}
             solution_sketch: 'The negation is "for some positive integer $n$, $n^2 - n + 41$ is not prime", which is true when one positive integer $n$ gives a number that is not prime. For $n = 1, 2, \dots, 40$ the values are all prime. For $n = 41$ the value is $41^2 - 41 + 41 = 41^2 = 1681$, which is not prime. So $n = 41$ makes the negation true.'
-          - problem: 'A manager says: "Every one of our 8 stores sold more than 500 items today." The stores sold 620, 540, 480, 700, 510, 650, 800 and 560 items. Which number shows that the manager is wrong?'
+          - problem: 'The statement "Every one of our 8 stores sold more than 500 items today" is tested. The stores sold 620, 540, 480, 700, 510, 650, 800 and 560 items. Which number shows that the statement is false?'
             answer: '480'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The negation of "every store sold more than $500$" is "some store sold $500$ or fewer". So we look for a number that is at most $500$. The numbers $620, 540, 700, 510, 650, 800, 560$ are all above $500$. The number $480$ is not, so it shows that the manager is wrong.'
+            solution_sketch: 'The negation of "every store sold more than $500$" is "some store sold $500$ or fewer". So we look for a number that is at most $500$. The numbers $620, 540, 700, 510, 650, 800, 560$ are all above $500$. The number $480$ is not, so it shows that the statement is false.'
           - problem: 'Is the negation of $\forall x \in \mathbb{Z},\ x^2 + x \ge 0$ true?'
             answer: 'false'
             answer_contract: {"kind": "label", "options": [["true", "yes", "it is true"], ["false", "no", "it is false"]]}
@@ -1969,14 +1969,14 @@ topics:
             answer: '10'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The negation is "every $n$ in $\{1, 2, \dots, 10\}$ has $n^2 \le 90$", so it claims $n^2 \le 90$ for all $n$ from $1$ to $10$. We look for one $n$ where this fails. The squares $1, 4, \dots, 81$ are at most $90$, since $9^2 = 81$. But $10^2 = 100 > 90$, so $n = 10$ is the element that makes the negation false.'
-          - problem: 'Sam negates "every integer is even" as "every integer is odd". What is the smallest positive integer that makes the correct negation, "some integer is not even", true?'
+          - problem: 'The statement "every integer is odd" is offered as the negation of "every integer is even". What is the smallest positive integer that makes the correct negation, "some integer is not even", true?'
             answer: '1'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Sam changed the quantifier''s predicate but not the quantifier. The correct negation changes "every" to "some" and negates the predicate: "some integer is not even". It is true as soon as one odd integer exists. The smallest positive one is $1$, which is odd and so not even.'
-          - problem: 'A clerk says that every invoice total is a multiple of 5. The totals are 45, 120, 85, 135, 70 and 62. Which total shows that the clerk is wrong?'
+            solution_sketch: 'The offered statement changes the predicate but not the quantifier. The correct negation changes "every" to "some" and negates the predicate: "some integer is not even". It is true as soon as one odd integer exists. The smallest positive one is $1$, which is odd and so not even.'
+          - problem: 'The statement "every invoice total is a multiple of 5" is tested on the totals 45, 120, 85, 135, 70 and 62. Which total shows that the statement is false?'
             answer: '62'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The negation is "some invoice total is not a multiple of $5$". A multiple of $5$ ends in $0$ or $5$. The totals $45, 120, 85, 135, 70$ all end in $0$ or $5$. The total $62$ ends in $2$, so it is not a multiple of $5$ and shows that the clerk is wrong.'
+            solution_sketch: 'The negation is "some invoice total is not a multiple of $5$". A multiple of $5$ ends in $0$ or $5$. The totals $45, 120, 85, 135, 70$ all end in $0$ or $5$. The total $62$ ends in $2$, so it is not a multiple of $5$ and shows that the statement is false.'
         constraints: "push the negation inside a single quantifier and negate the predicate"
       - id: kp2
         name: "Negating conditionals and compounds"
@@ -2010,10 +2010,10 @@ topics:
             answer: '-2 <= x < 5'
             answer_contract: {"kind": "inequality_union"}
             solution_sketch: 'The negation of a disjunction is a conjunction of the negated parts. The negation of $x < -2$ is $x \ge -2$, and the negation of $x \ge 5$ is $x < 5$. Together they say $-2 \le x < 5$.'
-          - problem: 'Sam says the negation of "$x > 2$ and $x < 9$" is "$x \le 2$ and $x \ge 9$". What is the least positive integer $x$ that satisfies the correct negation?'
+          - problem: 'The statement "$x \le 2$ and $x \ge 9$" is offered as the negation of "$x > 2$ and $x < 9$". What is the least positive integer $x$ that satisfies the correct negation?'
             answer: '1'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The negation of a conjunction is a disjunction: $x \le 2$ or $x \ge 9$. Sam''s "and" cannot hold for any $x$, since no number is at most $2$ and at least $9$ at once. The least positive integer satisfying the correct negation is $x = 1$, because $1 \le 2$.'
+            solution_sketch: 'The negation of a conjunction is a disjunction: $x \le 2$ or $x \ge 9$. The offered "and" cannot hold for any $x$, since no number is at most $2$ and at least $9$ at once. The least positive integer satisfying the correct negation is $x = 1$, because $1 \le 2$.'
           - problem: 'A gym lets a visitor in if the visitor is over 16 or comes with a parent. The visitors are: 18 alone, 12 with a parent, 15 alone, 16 alone and 20 with a parent. What is the largest age among the visitors who are refused?'
             answer: '16'
             answer_contract: {"kind": "exact"}
@@ -2039,7 +2039,7 @@ topics:
             answer: '2'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The negation is "some ward has no nurse with at least $5$ years", that is, every nurse in that ward has fewer than $5$ years. Ward $1$ has a nurse with $7$ years, ward $3$ has one with $9$, and ward $4$ has one with exactly $5$. Ward $2$ has nurses with $3$, $4$ and $1$ years, all below $5$. So ward $2$ shows that the statement is false.'
-          - problem: 'Sam claims that the sequence $a_n = \frac{1}{n}$ converges to $1$, that is, $\forall \varepsilon > 0\ \exists N\ \forall n \ge N,\ |a_n - 1| < \varepsilon$. The negation is: for some $\varepsilon > 0$ and for every $N$ there is an $n \ge N$ with $|a_n - 1| \ge \varepsilon$. For $\varepsilon = \frac{1}{2}$ and $N = 5$, give an integer $n \ge 5$ with $|a_n - 1| \ge \frac{1}{2}$.'
+          - problem: 'Consider the claim that the sequence $a_n = \frac{1}{n}$ converges to $1$, that is, $\forall \varepsilon > 0\ \exists N\ \forall n \ge N,\ |a_n - 1| < \varepsilon$. The negation is: for some $\varepsilon > 0$ and for every $N$ there is an $n \ge N$ with $|a_n - 1| \ge \varepsilon$. For $\varepsilon = \frac{1}{2}$ and $N = 5$, give an integer $n \ge 5$ with $|a_n - 1| \ge \frac{1}{2}$.'
             answer: '5'
             answer_contract: {"kind": "property", "check": "integer_in_range", "args": {"min": 5}}
             solution_sketch: 'For $n \ge 5$ we have $|a_n - 1| = 1 - \frac{1}{n}$. For $n = 5$ this is $1 - \frac{1}{5} = \frac{4}{5}$, which is at least $\frac{1}{2}$. So $n = 5$ works, and so does every larger $n$, because $1 - \frac{1}{n}$ only grows. The same choice works for every $N$, which is why the negation holds.'
@@ -2088,23 +2088,23 @@ topics:
         name: "Refuting universal statements"
         key_prerequisites: [quantifiers]
         try_first:
-          problem: 'Priya says that every odd number greater than $1$ is prime. Is her statement true?'
+          problem: 'Is the statement "every odd number greater than $1$ is prime" true?'
           answer_contract: {"kind": "label", "options": [["yes", "true", "it is true", "yes, it is true"], ["no", "false", "it is false", "not true", "it is not true", "no, it is false"]]}
           answer: 'no'
           reveal: 'No: $9$ is odd and greater than $1$, but $9 = 3 \cdot 3$ is not prime. One failing example is enough to show that a statement about all numbers is false.'
         exemplars:
-          - problem: 'Maya claims that $x^2 > x$ for every real number $x$. Find an integer $x$ that shows she is wrong.'
+          - problem: 'Find an integer $x$ for which $x^2 > x$ is false.'
             answer: '0'
             answer_contract: {"kind": "property", "check": "integer_in_range", "args": {"min": 0, "max": 1}}
             solution_sketch: 'The claim says every real number satisfies $x^2 > x$, so one number with $x^2 \le x$ refutes it. Try $x = 0$: then $x^2 = 0$, and $0 > 0$ is false, so the claim fails at $0$. The integer $1$ also works, since $1^2 = 1$ and $1 > 1$ is false. Every other integer has $x^2 > x$, so $0$ and $1$ are the only integer counterexamples.'
-          - problem: 'Jo says: "If the number of rolls in an order is a multiple of $6$, the rolls can be shared equally among $4$ friends." What is the smallest positive number of rolls that shows Jo is wrong?'
+          - problem: 'What is the smallest positive number of rolls that is a multiple of $6$ and cannot be shared equally among $4$ friends?'
             answer: '6'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'A multiple of $6$ that cannot be shared equally among $4$ friends shows that Jo is wrong. The smallest positive multiple of $6$ is $6$, and $6 \div 4 = 1.5$ is not a whole number. So $6$ rolls cannot be shared equally, and no smaller positive order is a multiple of $6$. The smallest counterexample is $6$.'
-          - problem: 'A student claims that $2^n + 1$ is prime for every positive integer $n$. What is the smallest positive integer $n$ for which this is false?'
+            solution_sketch: 'We need a multiple of $6$ that cannot be shared equally among $4$ friends. The smallest positive multiple of $6$ is $6$, and $6 \div 4 = 1.5$ is not a whole number. So $6$ rolls cannot be shared equally, and no smaller positive order is a multiple of $6$. The smallest counterexample is $6$.'
+          - problem: 'What is the smallest positive integer $n$ for which $2^n + 1$ is not prime?'
             answer: '3'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Test $n = 1, 2, 3, \dots$ in order until the claim breaks. For $n = 1$ the value is $3$, and for $n = 2$ it is $5$; both are prime. For $n = 3$ the value is $2^3 + 1 = 9 = 3 \cdot 3$, which is not prime. So the smallest counterexample is $3$.'
+            solution_sketch: 'Test $n = 1, 2, 3, \dots$ in order until the value is not prime. For $n = 1$ the value is $3$, and for $n = 2$ it is $5$; both are prime. For $n = 3$ the value is $2^3 + 1 = 9 = 3 \cdot 3$, which is not prime. So the smallest such $n$ is $3$.'
           - problem: 'Is the statement "$(a + b)^2 = a^2 + b^2$ for all real numbers $a$ and $b$" true?'
             answer: 'no'
             answer_contract: {"kind": "label", "options": [["yes", "true", "it is true", "yes, it is true"], ["no", "false", "it is false", "not true", "no, it is false"]]}
@@ -2113,7 +2113,7 @@ topics:
             answer: '2'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The claim is false if one month has a number of days other than $30$ or $31$. February has $28$ days in a common year and $29$ in a leap year, so it breaks the claim. February is month number $2$. Every other month has $30$ or $31$ days, so $2$ is the only counterexample.'
-          - problem: 'Someone claims that $n! + 1$ is prime for every positive integer $n$. What is the smallest positive integer $n$ for which this is false?'
+          - problem: 'Consider the claim that $n! + 1$ is prime for every positive integer $n$. What is the smallest positive integer $n$ for which this claim is false?'
             answer: '4'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Test $n = 1, 2, 3, \dots$ for the value of $n! + 1$. We get $1! + 1 = 2$, $2! + 1 = 3$ and $3! + 1 = 7$, all prime. For $n = 4$ we get $4! + 1 = 24 + 1 = 25 = 5 \cdot 5$, which is not prime. So the smallest counterexample is $4$.'
@@ -2142,15 +2142,15 @@ topics:
             answer: '11'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Test the next prime after $7$, which is $11$. We get $2^{11} - 1 = 2047 = 23 \cdot 89$, so the value is not prime. The primes $2, 3, 5, 7$ all give prime values, and there is no prime between $7$ and $11$. So the smallest counterexample is $11$.'
-          - problem: 'Lena marks $n$ points on a circle and draws every chord between two of them, placing the points so that no three chords meet at one point inside the circle. For $n = 1, 2, 3, 4, 5$ the chords cut the disk into $1, 2, 4, 8, 16$ regions, so Lena expects $2^{n-1}$ regions for every $n$. How many regions are there for $n = 6$?'
+          - problem: 'Mark $n$ points on a circle and draw every chord between two of them, placing the points so that no three chords meet at one point inside the circle. For $n = 1, 2, 3, 4, 5$ the chords cut the disk into $1, 2, 4, 8, 16$ regions. How many regions are there for $n = 6$?'
             answer: '31'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The number of regions for $n$ points in this position is $1 + \binom{n}{2} + \binom{n}{4}$. For $n = 5$ this is $1 + 10 + 5 = 16$, which agrees with the pattern. For $n = 6$ it is $1 + 15 + 15 = 31$, not $2^5 = 32$. So Lena''s conjecture fails at $n = 6$, where there are $31$ regions.'
-          - problem: 'Ben computes $n^2 + n + 41$ for $n = 1, 2, \dots, 39$ and gets a prime every time. He concludes that $n^2 + n + 41$ is prime for every positive integer $n$. Is Ben''s conclusion justified?'
+            solution_sketch: 'The number of regions for $n$ points in this position is $1 + \binom{n}{2} + \binom{n}{4}$. For $n = 5$ this is $1 + 10 + 5 = 16$, which agrees with the pattern. For $n = 6$ it is $1 + 15 + 15 = 31$, not $2^5 = 32$. So the pattern $2^{n-1}$ fails at $n = 6$, where there are $31$ regions.'
+          - problem: 'The value of $n^2 + n + 41$ is a prime for each of $n = 1, 2, \dots, 39$. Does this show that $n^2 + n + 41$ is prime for every positive integer $n$?'
             answer: 'no'
             answer_contract: {"kind": "label", "options": [["yes", "justified", "it is justified", "yes, it is justified"], ["no", "not justified", "it is not justified", "unjustified", "no, it is not justified"]]}
-            solution_sketch: 'Testing finitely many cases never proves a statement about all positive integers. In fact, for $n = 40$ the value is $40^2 + 40 + 41 = 1681 = 41 \cdot 41$, which is not prime. So Ben''s conclusion is not justified, and the answer is no.'
-          - problem: 'At a party of $n$ people, everyone shakes hands once with everyone else. For $n = 2$ and $n = 3$ there are $1$ and $3$ handshakes, so Mia guesses that there are $2n - 3$ handshakes for every $n \ge 2$. What is the smallest $n$ for which her guess is wrong?'
+            solution_sketch: 'Testing finitely many cases never proves a statement about all positive integers. In fact, for $n = 40$ the value is $40^2 + 40 + 41 = 1681 = 41 \cdot 41$, which is not prime. So the test does not show it, and the answer is no.'
+          - problem: 'At a party of $n$ people, everyone shakes hands once with everyone else. For $n = 2$ and $n = 3$ there are $1$ and $3$ handshakes, which matches $2n - 3$. What is the smallest $n$ for which $2n - 3$ is not the number of handshakes?'
             answer: '4'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The true number of handshakes is $n(n-1)/2$, because each of the $n$ people shakes hands with $n - 1$ others and each handshake is counted twice. For $n = 2$ and $n = 3$ this gives $1$ and $3$, matching $2n - 3$. For $n = 4$ it gives $6$, but $2n - 3 = 5$. So the smallest counterexample is $4$.'
@@ -2166,7 +2166,7 @@ topics:
             answer: '41'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Write $n^2 - n + 41 = n(n - 1) + 41$. For $n = 1$ up to $40$ the values are all prime. For $n = 41$ the value is $41 \cdot 40 + 41 = 41 \cdot 41 = 1681$, which is not prime. So the smallest counterexample is $41$.'
-          - problem: 'Ana tests the conjecture "$n^2 - n$ is even for every integer $n$" for $n = 1, 2, 3, 4$ and finds that it holds each time. Is the conjecture true for every integer $n$?'
+          - problem: 'The conjecture "$n^2 - n$ is even for every integer $n$" holds for $n = 1, 2, 3, 4$. Is the conjecture true for every integer $n$?'
             answer: 'yes'
             answer_contract: {"kind": "label", "options": [["yes", "true", "it is true", "yes, it is true"], ["no", "false", "it is false", "not true", "it is not true", "no, it is false"]]}
             solution_sketch: 'Four tests prove nothing, so look for a reason. Write $n^2 - n = n(n - 1)$, a product of two consecutive integers. One of two consecutive integers is even, so the product is even for every integer $n$. The conjecture is true, and the answer is yes.'
@@ -2183,30 +2183,30 @@ topics:
             answer: '6'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The sign is wrong for a number of eggs that is a multiple of $6$ but not a multiple of $8$. The smallest positive multiple of $6$ is $6$. Since $6 \div 8$ is not a whole number, $6$ eggs leave eggs over after the boxes are filled. So the smallest counterexample is $6$.'
-          - problem: 'Mia wants to disprove "there is a natural number $n$ with $n^2 = 5$". She checks that $1^2 \ne 5$. Is this one check enough to disprove the statement?'
+          - problem: 'To disprove "there is a natural number $n$ with $n^2 = 5$", one check shows that $1^2 \ne 5$. Is this one check enough to disprove the statement?'
             answer: 'no'
             answer_contract: {"kind": "label", "options": [["yes", "it is enough", "enough", "yes, it is enough"], ["no", "it is not enough", "not enough", "no, it is not enough"]]}
-            solution_sketch: 'The statement says that some natural number has square $5$, so it is false only if every natural number fails. One failing value says nothing about the other values. Mia must show that $n^2 \ne 5$ for all $n$. The answer is no.'
-          - problem: 'Sam says that the statement "if $n$ is prime, then $n$ is odd" is true, because $3$, $5$ and $7$ are odd. Which prime number $n$ shows that Sam is wrong?'
+            solution_sketch: 'The statement says that some natural number has square $5$, so it is false only if every natural number fails. One failing value says nothing about the other values. We must show that $n^2 \ne 5$ for all $n$. The answer is no.'
+          - problem: 'The statement "if $n$ is prime, then $n$ is odd" holds for $3$, $5$ and $7$. Which prime number $n$ shows that the statement is false?'
             answer: '2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Checking examples that agree with an implication never proves it. One prime that is even refutes it. The number $2$ is prime and even, so it is not odd. Hence $2$ shows that Sam is wrong.'
+            solution_sketch: 'Checking examples that agree with an implication never proves it. One prime that is even refutes it. The number $2$ is prime and even, so it is not odd. Hence $2$ shows that the statement is false.'
           - problem: 'Find the smallest positive integer $n$ that disproves the statement: if $n$ is a perfect square, then $n$ is even.'
             answer: '1'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'We need a perfect square that is not even. The integer $1 = 1^2$ is a perfect square, and $1$ is odd. No smaller positive integer exists, so the smallest counterexample is $1$.'
-          - problem: 'A hall manager says: "Whenever a row has an even number of seats, the row can be split into two equal groups that each have an odd number of seats." What is the smallest even number of seats, at least $2$, that shows the manager is wrong?'
+          - problem: 'What is the smallest even number of seats, at least $2$, for which a row cannot be split into two equal groups that each have an odd number of seats?'
             answer: '4'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'A row of $2$ seats splits into $1$ and $1$, which are both odd, so $2$ does not break the claim. A row of $4$ seats splits into two equal groups of $2$, and $2$ is even, so no split into odd groups exists. Hence the smallest counterexample is $4$.'
+            solution_sketch: 'A row of $2$ seats splits into $1$ and $1$, which are both odd, so $2$ can be split into odd groups. A row of $4$ seats splits into two equal groups of $2$, and $2$ is even, so no split into odd groups exists. Hence the smallest counterexample is $4$.'
           - problem: 'To disprove the claim that there is a natural number $n$ with $n + 1 = 0$, what must be shown?'
             answer: 'For every n, n + 1 is not 0'
             answer_contract: {"kind": "label", "options": [["For every n, n + 1 is not 0", "every n fails", "every natural number fails", "n + 1 is not 0 for every n", "for all n, n + 1 is not 0"], ["There is an n with n + 1 not 0", "some n fails", "one n with n + 1 not 0"], ["The value n = 1 fails", "n = 1 fails"], ["The value n = 2 fails", "n = 2 fails"]]}
             solution_sketch: 'The claim says that some natural number $n$ has $n + 1 = 0$, so it is false only if no natural number does. We must show that $n + 1 \ne 0$ for every $n$. One failing value, such as $n = 1$ with $1 + 1 = 2$, says nothing about the other values. Here the proof is short, because $n \ge 0$ gives $n + 1 \\ge 1 > 0$.'
-          - problem: 'To prove that no positive integer $n$ has $n^2 = 5$, Tom checks $n = 1$ and $n = 2$ directly. Then he argues about all remaining positive integers at once. What is the smallest $n$ that his general argument must cover?'
+          - problem: 'To prove that no positive integer $n$ has $n^2 = 5$, the cases $n = 1$ and $n = 2$ are checked directly. Then a general argument covers all remaining positive integers at once. What is the smallest $n$ that the general argument must cover?'
             answer: '3'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Tom checks $1^2 = 1$ and $2^2 = 4$, and both differ from $5$. The remaining positive integers start at $3$, and for every $n \ge 3$ we have $n^2 \ge 9 > 5$. So the general argument covers all $n \ge 3$, and the smallest is $3$.'
+            solution_sketch: 'The checks give $1^2 = 1$ and $2^2 = 4$, and both differ from $5$. The remaining positive integers start at $3$, and for every $n \ge 3$ we have $n^2 \ge 9 > 5$. So the general argument covers all $n \ge 3$, and the smallest is $3$.'
         constraints: "match the disproof obligation to the negated form of the statement"
     diagnostic_exemplar:
       problem: 'Disprove: "for every positive integer $n$, $n^2 + n + 1$ is prime." Then state what would be needed to disprove the existential claim "$\exists n \in \mathbb{N},\ n^2 = 2$".'
@@ -2291,11 +2291,11 @@ topics:
             answer: 'denying the antecedent'
             answer_contract: {"kind": "label", "options": [["modus ponens"], ["modus tollens"], ["affirming the consequent"], ["denying the antecedent", "denying the hypothesis", "denial of the antecedent", "denying antecedent", "the fallacy of denying the antecedent", "inverse error"]]}
             solution_sketch: 'The second premise "not $P$" denies the antecedent $P$ of the conditional. Modus ponens affirms the antecedent, modus tollens denies the consequent, and affirming the consequent asserts $Q$. None of these matches. So the form is denying the antecedent.'
-          - problem: 'Priya reasons: "If $N$ is a multiple of $6$, then $N$ is even. Here $N$ is even. So $N$ is a multiple of $6$." Give a value of $N$ for which both premises are true but her conclusion is false.'
+          - problem: 'An argument reads: "If $N$ is a multiple of $6$, then $N$ is even. Here $N$ is even. So $N$ is a multiple of $6$." Give a value of $N$ for which both premises are true but the conclusion is false.'
             answer: '8'
             answer_contract: {"kind": "property", "check": "multiple_of", "args": {"k": 2, "not_multiple_of": 6}}
-            solution_sketch: 'We need an even number that is not a multiple of $6$. The number $8$ is even, and $8 \div 6$ is not a whole number. So with $N = 8$ both premises are true and the conclusion is false. Priya affirms the consequent, which is not a valid form.'
-          - problem: 'A worker reasons: "If the number of eggs is a multiple of $12$, it is a multiple of $4$. The number of eggs is a multiple of $4$, so it is a multiple of $12$." What is the smallest positive number of eggs for which both premises are true and the conclusion is false?'
+            solution_sketch: 'We need an even number that is not a multiple of $6$. The number $8$ is even, and $8 \div 6$ is not a whole number. So with $N = 8$ both premises are true and the conclusion is false. The argument affirms the consequent, which is not a valid form.'
+          - problem: 'The premises are: "If the number of eggs is a multiple of $12$, it is a multiple of $4$" and "The number of eggs is a multiple of $4$". What is the smallest positive number of eggs for which both premises are true and "it is a multiple of $12$" is false?'
             answer: '4'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'We need a positive multiple of $4$ that is not a multiple of $12$. The smallest positive multiple of $4$ is $4$, and $4$ is not a multiple of $12$. Both premises hold for $4$ eggs while the conclusion fails. So the answer is $4$.'
@@ -2417,14 +2417,14 @@ topics:
             answer: '2k + 2m + 2'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Add the two expressions: $a + b = (2k + 1) + (2m + 1) = 2k + 2m + 2$. This equals $2(k + m + 1)$, and $k + m + 1$ is an integer, so the sum is even. Since $a$ and $b$ were arbitrary odd integers, universal generalization gives the claim for all odd integers.'
-          - problem: 'Tessa checks that $n^2 + n$ is even for $n = 1, 2, 3$ and concludes that it is even for every integer $n$. Does this check prove the claim?'
+          - problem: 'The statement that $n^2 + n$ is even holds for $n = 1, 2, 3$. Does this check prove that $n^2 + n$ is even for every integer $n$?'
             answer: 'no'
             answer_contract: {"kind": "label", "options": [["yes", "it does", "yes, it does"], ["no", "it does not", "no, it does not"]]}
             solution_sketch: 'Universal generalization needs a proof for an arbitrary integer, not a check of a few cases. Three checks cannot cover all integers. A proof would write $n^2 + n = n(n+1)$ and note that one of $n$ and $n+1$ is even. So the check does not prove the claim, and the answer is no.'
-          - problem: 'Dev proves, for an arbitrary integer $n > 3$, that $n^2 > 2n$. Does it follow that some integer $n > 3$ has $n^2 > 2n$?'
+          - problem: 'A proof shows, for an arbitrary integer $n > 3$, that $n^2 > 2n$. Does it follow that some integer $n > 3$ has $n^2 > 2n$?'
             answer: 'yes'
             answer_contract: {"kind": "label", "options": [["yes", "it follows", "yes, it follows", "it does"], ["no", "it does not follow", "no, it does not follow", "it does not"]]}
-            solution_sketch: 'Dev has proved a statement for every integer $n > 3$. The set of integers greater than $3$ is not empty, since $4$ belongs to it. So the statement holds for $4$ in particular, because $16 > 8$, and existential generalization gives the claim. The answer is yes.'
+            solution_sketch: 'The proof covers a statement for every integer $n > 3$. The set of integers greater than $3$ is not empty, since $4$ belongs to it. So the statement holds for $4$ in particular, because $16 > 8$, and existential generalization gives the claim. The answer is yes.'
           - problem: 'To prove that the square of every even integer is divisible by $4$, let $n$ be an arbitrary even integer, so $n = 2k$ for an integer $k$. Write $n^2$ in terms of $k$.'
             answer: '4k^2'
             answer_contract: {"kind": "exact"}
@@ -2446,10 +2446,10 @@ topics:
             answer: '24'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Each of the $24$ members is a student at the school. By universal modus ponens, each of them has a library card. So all $24$ members are certain to have one.'
-          - problem: 'Raj argues: "Every multiple of $15$ is a multiple of $5$. $N$ is a multiple of $5$. So $N$ is a multiple of $15$." Give a value of $N$ that shows his conclusion does not follow.'
+          - problem: 'An argument reads: "Every multiple of $15$ is a multiple of $5$. $N$ is a multiple of $5$. So $N$ is a multiple of $15$." Give a value of $N$ for which both premises are true and the conclusion is false.'
             answer: '5'
             answer_contract: {"kind": "property", "check": "multiple_of", "args": {"k": 5, "not_multiple_of": 15}}
-            solution_sketch: 'We need a multiple of $5$ that is not a multiple of $15$. The number $5$ is a multiple of $5$, and $5 \div 15$ is not a whole number. So with $N = 5$ both premises are true and the conclusion is false. Raj affirms the consequent, which is a fallacy.'
+            solution_sketch: 'We need a multiple of $5$ that is not a multiple of $15$. The number $5$ is a multiple of $5$, and $5 \div 15$ is not a whole number. So with $N = 5$ both premises are true and the conclusion is false. The argument affirms the consequent, which is a fallacy.'
           - problem: 'Consider this argument. Premise 1: every multiple of $12$ is a multiple of $4$. Premise 2: $N$ is not a multiple of $12$. Conclusion: $N$ is not a multiple of $4$. Find the smallest positive integer $N$ for which both premises are true and the conclusion is false.'
             answer: '4'
             answer_contract: {"kind": "exact"}

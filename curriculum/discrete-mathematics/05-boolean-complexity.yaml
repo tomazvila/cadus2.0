@@ -36,10 +36,10 @@ topics:
             answer: '3'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The factor $\bar{z}$ is $1$ only when $z=0$. Then $x+y$ must be $1$, which holds for $3$ of the $4$ pairs $(x,y)$, so $3$ assignments work.'
-          - problem: 'Sam evaluates $\overline{x+y}$ at $x=1$, $y=0$ by writing it as $\bar{x}+\bar{y}$, and gets $1$. What is the correct value of $\overline{x+y}$ at these inputs?'
+          - problem: 'What is the value of $\overline{x+y}$ at $x=1$, $y=0$?'
             answer: '0'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'Sam kept the OR when the bar was moved inside, but De Morgan''s law turns the OR into an AND. Directly, $x+y=1+0=1$, so $\overline{x+y}=\bar{1}=0$, and the correct value is $0$.'
+            solution_sketch: 'When the bar moves inside, De Morgan''s law turns the OR into an AND, so $\bar{x}+\bar{y}$ is not equal to it. Directly, $x+y=1+0=1$, so $\overline{x+y}=\bar{1}=0$, and the correct value is $0$.'
           - problem: 'For how many of the four assignments of $x$ and $y$ is $\overline{x+y}$ equal to $1$?'
             answer: '1'
             answer_contract: {"kind":"exact"}
@@ -89,10 +89,10 @@ topics:
             answer: 'x'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'Expand to get $xx+x\bar{y}+yx+y\bar{y}$. Here $xx=x$ and $y\bar{y}=0$, so the sum is $x+x(\bar{y}+y)=x+x=x$.'
-          - problem: 'Sam simplifies $x+\bar{x}y$ and gets $x$. Is Sam right?'
-            answer: 'no'
-            answer_contract: {"kind":"label","options":[["yes","yes, sam is right","sam is right","yes, he is right","he is right"],["no","no, sam is not right","sam is not right","not right","sam is wrong","no, sam is wrong","he is not right","he is wrong"]]}
-            solution_sketch: 'At $x=0$ and $y=1$ the original expression is $0+1\cdot1=1$, but the answer $x$ of Sam is $0$. So Sam is not right; the correct result is $x+y$.'
+          - problem: 'Simplify $x(\bar{x}+y)$.'
+            answer: 'xy'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Expand to get $x\bar{x}+xy$. Since $x\bar{x}=0$, the result is $xy$. At $x=1$ and $y=1$ both the original expression and $xy$ are $1$.'
           - problem: 'Are $\overline{x+y}$ and $\bar{x}\bar{y}$ equal for every choice of $x$ and $y$?'
             answer: 'yes'
             answer_contract: {"kind":"label","options":[["yes","yes, they are equal","equal","they are equal","always","yes, always","yes, they are always equal","they are always equal"],["no","no, they are not equal","not equal","they are not equal","no, not equal","not always equal"]]}
@@ -163,7 +163,7 @@ topics:
             answer: '4'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The term $x\bar{y}$ is $1$ in the $2$ rows with $x=1$, $y=0$. The term $y\bar{z}$ is $1$ in the $2$ rows with $y=1$, $z=0$. The two sets do not overlap, so there are $4$ rows and $4$ minterms.'
-          - problem: 'Sam says that the function of $x$ and $y$ that equals $1$ when at least one input is $1$ has two minterms, $x$ and $y$. How many minterms does its full disjunctive normal form really have?'
+          - problem: 'How many minterms does the full disjunctive normal form of the function of $x$ and $y$ that equals $1$ when at least one input is $1$ have?'
             answer: '3'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'A minterm must use every variable. The function is $1$ in the rows $(0,1)$, $(1,0)$ and $(1,1)$, so the full disjunctive normal form has $3$ minterms: $\bar{x}y$, $x\bar{y}$ and $xy$.'
@@ -273,7 +273,7 @@ topics:
             answer: '7'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The output of the OR component is $0$ only when all $3$ sensors read $0$, which is $1$ of the $8$ combinations. So the alarm sounds for the other $7$ combinations.'
-          - problem: 'Sam says that a NAND component with inputs $0$ and $1$ outputs $0$, because "NAND switches AND off". What is the correct output?'
+          - problem: 'What is the output of a NAND component with inputs $0$ and $1$?'
             answer: '1'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The AND of $0$ and $1$ is $0$. NAND gives the opposite of AND, so the output is $\bar{0}=1$.'
@@ -395,7 +395,7 @@ topics:
             answer: '45'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'We need $C \ge 5 + 40/n$ for every $n \ge 1$. The right side is largest at $n = 1$, where it equals $45$, so the time is at most $45n$ milliseconds and $C = 45$.'
-          - problem: 'Sam tests the claim that $n^2$ is $O(n)$ with $C = 5$. The inequality $n^2 \le 5n$ holds for $n = 1, 2, 3, 4, 5$. For which smallest $n$ does it fail?'
+          - problem: 'Test the claim that $n^2$ is $O(n)$ with $C = 5$. The inequality $n^2 \le 5n$ holds for $n = 1, 2, 3, 4, 5$. For which smallest $n$ does it fail?'
             answer: '6'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The inequality $n^2 \le 5n$ is equivalent to $n \le 5$. At $n = 6$ we get $36 > 30$, so it fails there, and it fails for every larger $n$ too. No choice of $C$ can repair this, because $n^2 > Cn$ once $n > C$.'
@@ -444,7 +444,7 @@ topics:
             answer: '10'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'For large $n$ the constant $2000$ is negligible, so $T(n)$ behaves like $3n$. Then $T(10n)/T(n)$ behaves like $30n/(3n) = 10$, so ten times as many records take about ten times as long.'
-          - problem: 'Maya says $n^2 + 1000n$ is $O(n)$ because $1000n$ is larger than $n^2$ when $n = 10$. For which smallest integer $n$ is $n^2$ larger than $1000n$?'
+          - problem: 'The term $1000n$ is larger than $n^2$ when $n = 10$. For which smallest integer $n$ is $n^2$ larger than $1000n$?'
             answer: '1001'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The inequality $n^2 > 1000n$ means $n > 1000$, so the smallest integer is $1001$. Beyond that point $n^2$ is the larger term and keeps growing faster, so the function is $O(n^2)$ and not $O(n)$.'
@@ -557,7 +557,7 @@ topics:
             answer: '8'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'We have $2^{n+3} = 2^3 \cdot 2^n = 8 \cdot 2^n$, so A takes $8$ times as many steps as B. The factor is a constant, so A is still $O(2^n)$.'
-          - problem: 'Sam claims $2^{2n} = 2 \cdot 2^n$ for every $n$. By what number must $2^n$ be multiplied to obtain $2^{2n}$ when $n = 5$?'
+          - problem: 'By what number must $2^n$ be multiplied to obtain $2^{2n}$ when $n = 5$?'
             answer: '32'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'At $n = 5$ we have $2^{2n} = 2^{10} = 1024$ and $2^n = 32$. The multiplier is $1024/32 = 32$, not $2$. In general the multiplier is $2^n$, which grows with $n$.'
@@ -631,7 +631,7 @@ topics:
             answer: '57'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The recurrence is $T(n) = 2T(n/3) + n$. Then $T(3) = 2 \cdot 0 + 3 = 3$, $T(9) = 2 \cdot 3 + 9 = 15$, and $T(27) = 2 \cdot 15 + 27 = 57$.'
-          - problem: 'Ana evaluates $T(n) = 3T(n/2) + n$ with $T(1) = 1$ and writes $T(2) = 3 \cdot T(1) + 1 = 4$. What is the correct value of $T(2)$?'
+          - problem: 'Let $T(n) = 3T(n/2) + n$ with $T(1) = 1$. What is the value of $T(2)$?'
             answer: '5'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The combining work is $f(n) = n$, and here $n = 2$, so the work is $2$ and not $1$. Therefore $T(2) = 3 \cdot 1 + 2 = 5$.'
@@ -685,7 +685,7 @@ topics:
             answer: 'root'
             answer_contract: {"kind":"label","options":[["root","the root","at the root","top level","the top level","case 3"],["leaves","the leaves","at the leaves","bottom level","the bottom level","case 1"],["all levels","every level","balanced","case 2"]]}
             solution_sketch: 'Here $\log_4 2 = 1/2$, and $f(n) = n$ grows faster than $n^{1/2}$. So the work at the top dominates, which is case 3, and $T(n) = \Theta(n)$.'
-          - problem: 'Sam says the critical exponent of $T(n) = 8T(n/2) + n^2$ is $8/2 = 4$. What is the correct value of $\log_b a$?'
+          - problem: 'What is the critical exponent $\log_b a$ of $T(n) = 8T(n/2) + n^2$?'
             answer: '3'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The critical exponent is the logarithm $\log_b a = \log_2 8$, not the quotient $a/b$. Since $2^3 = 8$, it equals $3$.'
@@ -726,7 +726,7 @@ topics:
             answer: '3'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'Since $T(n) = \Theta(n^{\log_2 3})$, doubling $n$ multiplies the time by $2^{\log_2 3} = 3$. The schoolbook method would multiply it by $4$.'
-          - problem: 'Sam says merge sort, with $T(n) = 2T(n/2) + n$, runs in $\Theta(n)$ time because the combining work is $n$. Find the correct function $g$ with $T(n) = \Theta(g(n))$.'
+          - problem: 'Merge sort has $T(n) = 2T(n/2) + n$, and the combining work is $n$. Find a function $g$ with $T(n) = \Theta(g(n))$.'
             answer: 'n*ln(n)'
             answer_contract: {"kind":"function","vars":["n"]}
             solution_sketch: 'The critical exponent is $\log_2 2 = 1$, which equals the exponent of $f(n) = n$. So every level does about $n$ work, and there are about $\log_2 n$ levels. The total is $\Theta(n \log n)$, not $\Theta(n)$.'
@@ -807,7 +807,7 @@ topics:
             answer: '20'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The total is $n(n+1)/2 = 210$, so $n(n+1) = 420$. Since $20 \cdot 21 = 420$, we get $n = 20$.'
-          - problem: 'Sam counts the passes of the loops $i = 1, \dots, n$ and $j = i, \dots, n$ for $n = 6$ as $6 \cdot 6 = 36$. How many passes are there?'
+          - problem: 'How many passes do the loops $i = 1, \dots, n$ and $j = i, \dots, n$ make for $n = 6$?'
             answer: '21'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The inner loop is shorter for larger $i$: it makes $6, 5, 4, 3, 2, 1$ passes. The total is $6 \cdot 7/2 = 21$, which is less than $36$ because the loop does not always run $6$ times.'
@@ -852,7 +852,7 @@ topics:
             answer: '50000'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The linear search needs $1000000$ checks and the binary search needs $20$ steps. The ratio is $1000000/20 = 50000$.'
-          - problem: 'Sam says a list of $1000$ names needs $1000/2 = 500$ halvings to reach a single name. What is the correct number of halvings, rounding each half up?'
+          - problem: 'How many halvings does a list of $1000$ names need to reach a single name, rounding each half up?'
             answer: '10'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'Each halving divides the number of names by $2$, so the count is a logarithm and not a quotient. Since $2^9 = 512 < 1000 \le 2^{10} = 1024$, ten halvings are needed.'

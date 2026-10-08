@@ -57,7 +57,7 @@ topics:
             answer: '3'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'Add $13$ to each element of $H$ and reduce modulo $20$. This gives $13, 18, 23, 28$, which are $13, 18, 3, 8$ modulo $20$. The coset is $\{3, 8, 13, 18\}$, and its smallest element is $3$.'
-          - problem: 'Sam lists the coset $8 + H$ of $H = \{0, 5\}$ in $\mathbb{Z}_{10}$ as $\{8, 13\}$. What is the correct list of elements?'
+          - problem: 'The coset $8 + H$ of $H = \{0, 5\}$ in $\mathbb{Z}_{10}$ has the sums $8 + 0$ and $8 + 5$. What are the elements of the coset, written as residues modulo $10$?'
             answer: '3, 8'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The coset must be reduced modulo $10$, because $\mathbb{Z}_{10}$ has no element $13$. Now $8 + 0 = 8$ and $8 + 5 = 13$, which is $3$ modulo $10$. So the coset is $\{3, 8\}$.'
@@ -139,7 +139,7 @@ topics:
             answer: '3'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'We need $15 - x$ to lie in $H$, that is, to be a multiple of $6$ in $\mathbb{Z}_{18}$. For $x = 3$ we get $15 - 3 = 12$, which is in $H$. The other values $0, 1, 2, 4, 5$ leave differences $15, 14, 13, 11, 10$, none of which is in $H$. So $x = 3$.'
-          - problem: 'Sam says that in $\mathbb{Z}_{12}$ the cosets $3 + H$ and $9 + H$ of $H = \{0, 4, 8\}$ are equal because $3$ and $9$ are both odd. How many elements do these two cosets really have in common?'
+          - problem: 'In $\mathbb{Z}_{12}$ let $H = \{0, 4, 8\}$. The numbers $3$ and $9$ are both odd. How many elements do the cosets $3 + H$ and $9 + H$ have in common?'
             answer: '0'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'We have $9 - 3 = 6$, which is not in $H = \{0, 4, 8\}$, so the cosets are different. Explicitly $3 + H = \{3, 7, 11\}$ and $9 + H = \{9, 1, 5\}$. Different cosets are disjoint, so they have $0$ elements in common.'
@@ -213,10 +213,10 @@ topics:
             answer: '8'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'First $|H| = 48 \div 3 = 16$ by Lagrange''s theorem applied to $H$ in $G$. Then $|K| = 16 \div 2 = 8$ by the same theorem applied to $K$ in $H$.'
-          - problem: 'Sam says that a subgroup of a group of order $30$ can have exactly $4$ left cosets. Is Sam right?'
-            answer: 'no'
-            answer_contract: {"kind":"label","options":[["yes","he is","she is","Sam is right","right"],["no","he is not","she is not","Sam is wrong","wrong","not right"]]}
-            solution_sketch: 'The number of left cosets of $H$ is the index, and $30 = [G:H]\,|H|$ forces the index to divide $30$. Since $4$ does not divide $30$, no subgroup has exactly $4$ left cosets, and Sam is wrong.'
+          - problem: 'What is the smallest integer $n > 3$ that is not the number of left cosets of any subgroup of a group of order $30$?'
+            answer: '4'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The number of left cosets of $H$ is the index, and $30 = [G:H]\,|H|$ forces the index to divide $30$. Since $4$ does not divide $30$, no subgroup has exactly $4$ left cosets. The numbers $5$ and $6$ divide $30$, so $4$ is the smallest such $n$.'
         constraints: 'index computations and the counting argument; |G| <= 100; one tower of two subgroups; contexts: symmetry groups and clock arithmetic'
       - id: kp2
         name: "Ruling out subgroup orders"
@@ -351,10 +351,10 @@ topics:
             answer: '8'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'After $n$ steps the hand has moved $9n$ hours, and it shows the starting hour again when $9n$ is a multiple of $24$. This is the order of $9$ in $\mathbb{Z}_{24}$, which divides $24$. Since $9 \cdot 8 = 72 = 3 \cdot 24$ and no smaller $n$ works, the answer is $8$.'
-          - problem: 'Sam argues that every element other than $e$ of a group of order $12$ has order $12$, because Lagrange''s theorem says the order divides $12$. Find the order of the element $4$ in the additive group $\mathbb{Z}_{12}$.'
+          - problem: 'In a group of order $12$, Lagrange''s theorem says that the order of every element divides $12$. Find the order of the element $4$ in the additive group $\mathbb{Z}_{12}$.'
             answer: '3'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'The order of $4$ is the least positive $m$ with $4m \equiv 0 \pmod{12}$. Since $4 \cdot 3 = 12$, the order is $3$, not $12$. So Sam is wrong: Lagrange''s theorem says only that the order divides $12$.'
+            solution_sketch: 'The order of $4$ is the least positive $m$ with $4m \equiv 0 \pmod{12}$. Since $4 \cdot 3 = 12$, the order is $3$, not $12$. Lagrange''s theorem says only that the order divides $12$.'
           - problem: 'Find the order of the element $6$ in the additive group $\mathbb{Z}_{12}$.'
             answer: '2'
             answer_contract: {"kind":"exact"}
@@ -380,10 +380,10 @@ topics:
             answer: '23'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The order of $g$ divides $23$, and $23$ is prime, so it is $1$ or $23$. The move changes the state, so $g \ne e$ and the order is not $1$. So the lock first returns to its starting state after $23$ repeats.'
-          - problem: 'Sam claims that some group of order $47$ has a subgroup of order $5$. Is Sam right?'
-            answer: 'no'
-            answer_contract: {"kind":"label","options":[["yes","he is","she is","Sam is right","right"],["no","he is not","she is not","Sam is wrong","wrong","not right"]]}
-            solution_sketch: 'The order of a subgroup divides the order of the group. Since $47$ is prime, its only divisors are $1$ and $47$. The number $5$ is not among them, so Sam is wrong.'
+          - problem: 'How many subgroups of order $5$ does a group of order $47$ have?'
+            answer: '0'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'The order of a subgroup divides the order of the group. Since $47$ is prime, its only divisors are $1$ and $47$. The number $5$ is not among them, so there are $0$ such subgroups.'
           - problem: 'A group $G$ has order $19$ and $H$ is a subgroup with more than one element. What is the index $[G : H]$?'
             answer: '1'
             answer_contract: {"kind":"exact"}
@@ -392,7 +392,7 @@ topics:
             answer: '28'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'A group of prime order has only the trivial subgroup and itself. So every rotation other than the identity generates a subgroup with more than one element, and that subgroup is the whole group. There are $29 - 1 = 28$ such rotations.'
-          - problem: 'Sam says that every group of order $9$ has exactly two subgroups, just as a group of prime order does. How many subgroups does the group $\mathbb{Z}_9$ have?'
+          - problem: 'A group of prime order has exactly two subgroups. How many subgroups does the group $\mathbb{Z}_9$ have?'
             answer: '3'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The number $9$ is not prime, so the argument for prime orders does not apply. The group $\mathbb{Z}_9$ has the trivial subgroup, the subgroup $\{0, 3, 6\}$ of order $3$, and the whole group. That is $3$ subgroups.'
@@ -425,7 +425,7 @@ topics:
             answer: '12'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'After $50$ steps the register shows $5^{50} \bmod 13$. The group $U(13)$ has $12$ elements, so $5^{12} \equiv 1$. Since $50 = 12 \cdot 4 + 2$, we get $5^{50} \equiv 5^2 = 25 = 13 + 12$, so the register shows $12$.'
-          - problem: 'Sam computes the remainder of $2^{100}$ on division by $7$ by reducing the exponent modulo $7$: since $100 = 14 \cdot 7 + 2$, Sam says $2^{100} \equiv 2^2 = 4$. What is the correct remainder?'
+          - problem: 'What is the remainder of $2^{100}$ on division by $7$? Here $100 = 14 \cdot 7 + 2$.'
             answer: '2'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The exponent must be reduced modulo the order of the group $U(7)$, which is $6$, not modulo $7$. Since $100 = 6 \cdot 16 + 4$, we get $2^{100} \equiv 2^4 = 16$, and $16 = 2 \cdot 7 + 2$. So the correct remainder is $2$.'
@@ -504,7 +504,7 @@ topics:
             answer: 'yes'
             answer_contract: {"kind":"label","options":[["yes","it is normal","normal","it is"],["no","it is not normal","not normal","it is not"]]}
             solution_sketch: 'Every element of $D_4$ has the form $r^k$ or $r^k s$. Conjugating $r^2$ by $r^k$ gives $r^2$ again, and conjugating by $s$ gives $sr^2s^{-1} = r^{-2} = r^2$. Conjugation keeps $r^2$ inside $N$, and it keeps $e$, so $N$ is normal.'
-          - problem: 'Sam argues that every subgroup $N$ of an abelian group $G$ is normal, because for $n$ in $N$ and $g$ in $G$ the product $ng$ lies in $N$. Take $G = \mathbb{Z}_{12}$ with $N = \{0, 4, 8\}$, $g = 5$ and $n = 4$. Compute $g + n$ in $\mathbb{Z}_{12}$.'
+          - problem: 'Let $N$ be a subgroup of an abelian group $G$, with $n$ in $N$ and $g$ in $G$. Take $G = \mathbb{Z}_{12}$ with $N = \{0, 4, 8\}$, $g = 5$ and $n = 4$. Compute $g + n$ in $\mathbb{Z}_{12}$.'
             answer: '9'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'We have $5 + 4 = 9$ in $\mathbb{Z}_{12}$. The element $9$ is not in $N = \{0, 4, 8\}$, so $ng$ need not lie in $N$. The subgroup $N$ is still normal, because $g + n - g = n$ lies in $N$.'
@@ -574,7 +574,7 @@ topics:
             answer: '7'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The map $x \mapsto gx$ is a bijection from $H$ onto $gH$. So $gH$ has as many elements as $H$, which is $7$.'
-          - problem: 'Sam argues that $gH = Hg$ whenever the cosets $gH$ and $Hg$ have the same number of elements. In $S_3$ let $H = \{e, (1\,2)\}$ and $g = (1\,3)$. Both $gH$ and $Hg$ have $2$ elements. How many elements do $gH$ and $Hg$ have in common?'
+          - problem: 'In $S_3$ let $H = \{e, (1\,2)\}$ and $g = (1\,3)$. Both $gH$ and $Hg$ have $2$ elements. How many elements do $gH$ and $Hg$ have in common?'
             answer: '1'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'We have $gH = \{(1\,3), (1\,3)(1\,2)\}$ and $Hg = \{(1\,3), (1\,2)(1\,3)\}$. The two $3$-cycles $(1\,3)(1\,2)$ and $(1\,2)(1\,3)$ differ, so only $(1\,3)$ is common to both. So the cosets share $1$ element and are not equal.'
@@ -659,10 +659,10 @@ topics:
             answer: '2'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The first product is $xN=(1\,3)N$ and the second is $(1\,2)(1\,3)N$. These two cosets are equal only if $x^{-1}(1\,2)x$ lies in $N$, but $(1\,3)(1\,2)(1\,3)=(2\,3)$ is not in $N$. So the two products are $2$ different cosets, although the factors were equal cosets. Hence $N$ is not normal and the product is not well defined.'
-          - problem: 'Weekdays are numbered $0$ to $6$, and a day count $n$ stands for the coset $n+7\mathbb{Z}$. Ana adds $16$ days to the day count $3$, and Ben adds $16$ days to the day count $10$. They land on the same weekday. Which weekday number is it?'
+          - problem: 'Weekdays are numbered $0$ to $6$, and a day count $n$ stands for the coset $n+7\mathbb{Z}$. Adding $16$ days to the day count $3$ and adding $16$ days to the day count $10$ land on the same weekday. Which weekday number is it?'
             answer: '5'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The counts $3$ and $10$ differ by $7$, so they lie in the same coset of $7\mathbb{Z}$. Ana gets $3+16=19=2\cdot7+5$ and Ben gets $10+16=26=3\cdot7+5$. Both land on weekday number $5$, as the well-defined coset sum predicts.'
+            solution_sketch: 'The counts $3$ and $10$ differ by $7$, so they lie in the same coset of $7\mathbb{Z}$. The first count gives $3+16=19=2\cdot7+5$ and the second gives $10+16=26=3\cdot7+5$. Both land on weekday number $5$, as the well-defined coset sum predicts.'
           - problem: 'A $30$-day month is numbered by $\mathbb{Z}_{30}$. A calendar for a $5$-day working week treats two days as the same weekday when they differ by a multiple of $5$, that is, when they lie in the same coset of $H=\langle 5\rangle$. How many different weekdays does this calendar have?'
             answer: '5'
             answer_contract: {"kind": "exact"}
@@ -700,7 +700,7 @@ topics:
             answer: '8'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Here $H=\{0,8,16\}$. After $k$ rings the alarm has moved $3k$ hours, and it is back at its starting place when $3k\in H$. The multiples $3,6,\dots,21$ are not in $H$, but $3\cdot8=24=0$ is, so the order of $3+H$ is $8$.'
-          - problem: 'In $\mathbb{Z}_{12}$ the element $2$ has order $6$. Sam concludes that $2+H$ also has order $6$ in $\mathbb{Z}_{12}/H$, where $H=\langle3\rangle=\{0,3,6,9\}$. What is the correct order of $2+H$?'
+          - problem: 'In $\mathbb{Z}_{12}$ the element $2$ has order $6$. Let $H=\langle3\rangle=\{0,3,6,9\}$. What is the order of $2+H$ in $\mathbb{Z}_{12}/H$?'
             answer: '3'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'In the quotient the identity is the coset $H$, so the order of $2+H$ is the smallest $k>0$ with $2k\in H$. We have $2\notin H$ and $4\notin H$, but $2\cdot3=6\in H$. So the order is $3$, smaller than the order $6$ of the element $2$ in $\mathbb{Z}_{12}$.'
@@ -737,7 +737,7 @@ topics:
             answer: '3'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The quotient $A_4/V$ has order $12/4=3$, so the order of any coset divides $3$. The $3$-cycle $(1\,2\,3)$ is not in $V$, so its coset is not the identity coset. Hence the order of $(1\,2\,3)V$ is $3$.'
-          - problem: 'Sam finds the order of $S_4/V$ by subtracting: $24-4=20$, where $V$ is the normal Klein four-subgroup of $S_4$. What is the correct order of the quotient?'
+          - problem: 'Let $V$ be the normal Klein four-subgroup of $S_4$, so $|S_4|=24$ and $|V|=4$. What is the order of the quotient $S_4/V$?'
             answer: '6'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The elements of $S_4/V$ are cosets of $V$, and each coset has $4$ elements. The number of cosets is $24/4=6$, found by division and not by subtraction. So $S_4/V$ has order $6$.'
@@ -819,10 +819,10 @@ topics:
             answer: '7'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The states of the lock are the pairs of positions, so the number of states is the product of the numbers of positions. Hence the second wheel has $84/12=7$ positions.'
-          - problem: 'In $\mathbb{Z}_6\times\mathbb{Z}_8$ Sam computes $(5,7)+(4,6)$ and gets $(9,13)$. What is the correct sum?'
+          - problem: 'What is $(5,7)+(4,6)$ in $\mathbb{Z}_6\times\mathbb{Z}_8$?'
             answer: '(3, 5)'
             answer_contract: {"kind": "coordinates", "arity": 2}
-            solution_sketch: 'Sam forgot to reduce each component modulo its own factor. The first component is $9\equiv3\pmod 6$ and the second is $13\equiv5\pmod 8$. So the correct sum is $(3,5)$.'
+            solution_sketch: 'Each component is reduced modulo its own factor. The first component is $9\equiv3\pmod 6$ and the second is $13\equiv5\pmod 8$. So the sum is $(3,5)$.'
         constraints: '2-3 factors, each Z_n with n <= 12; componentwise arithmetic; group order as a product; dial and lock settings'
       - id: kp2
         name: 'Orders of elements: the lcm rule'
@@ -865,7 +865,7 @@ topics:
             answer: '28'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The first wheel returns to $0$ after $12/\gcd(9,12)=4$ ticks. The second wheel returns after $14/\gcd(4,14)=7$ ticks. Both are at $0$ together after $\mathrm{lcm}(4,7)=28$ ticks.'
-          - problem: 'Sam says that $(2,3)$ has order $3\cdot3=9$ in $\mathbb{Z}_6\times\mathbb{Z}_9$, because $2$ has order $3$ in $\mathbb{Z}_6$ and $3$ has order $3$ in $\mathbb{Z}_9$. What is the correct order of $(2,3)$?'
+          - problem: 'In $\mathbb{Z}_6\times\mathbb{Z}_9$ the element $2$ has order $3$ in $\mathbb{Z}_6$ and $3$ has order $3$ in $\mathbb{Z}_9$. What is the order of $(2,3)$?'
             answer: '3'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The order of a pair is the least common multiple of the component orders, not their product. Here $\mathrm{lcm}(3,3)=3$. Indeed $3\cdot(2,3)=(6,9)=(0,0)$, so the order is $3$.'
@@ -902,7 +902,7 @@ topics:
             answer: '30'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The settings are the multiples of $(1,1)$ in $\mathbb{Z}_6\times\mathbb{Z}_{10}$, so their number is the order of $(1,1)$. This order is $\mathrm{lcm}(6,10)=30$, which is only half of the $60$ possible settings, because $\gcd(6,10)=2$.'
-          - problem: 'Sam says that $\mathbb{Z}_4\times\mathbb{Z}_{10}$ is isomorphic to $\mathbb{Z}_{40}$ because the group has $40$ elements. What is the largest order of an element of $\mathbb{Z}_4\times\mathbb{Z}_{10}$?'
+          - problem: 'The group $\mathbb{Z}_4\times\mathbb{Z}_{10}$ has $40$ elements. What is the largest order of an element of $\mathbb{Z}_4\times\mathbb{Z}_{10}$?'
             answer: '20'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The largest order of an element is $\mathrm{lcm}(4,10)=20$, reached by $(1,1)$. This is less than $40$, so no element generates the group and it is not isomorphic to $\mathbb{Z}_{40}$.'
@@ -1007,10 +1007,10 @@ topics:
             answer: '5'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The subgroup $H=\langle5\rangle=\{0,5,10,15\}$ has $4$ elements. In an internal direct product $|G|=|H||K|$, so $|K|=20/4=5$. For example $K=\langle4\rangle$ has $5$ elements and meets $H$ only in $0$.'
-          - problem: 'Sam argues that $\mathbb{Z}_{20}$ is the internal direct product of $H=\langle4\rangle$ and $K=\langle10\rangle$, because $H\cap K=\{0\}$. How many elements does $H+K$ have?'
+          - problem: 'In $\mathbb{Z}_{20}$ let $H=\langle4\rangle$ and $K=\langle10\rangle$, with $H\cap K=\{0\}$. How many elements does $H+K$ have?'
             answer: '10'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Here $H=\{0,4,8,12,16\}$ and $K=\{0,10\}$, and they meet only in $0$, so $|H+K|=5\cdot2/1=10$. Since $H+K$ has only $10$ of the $20$ elements, it is not all of $\mathbb{Z}_{20}$. So the third condition fails, and Sam is wrong.'
+            solution_sketch: 'Here $H=\{0,4,8,12,16\}$ and $K=\{0,10\}$, and they meet only in $0$, so $|H+K|=5\cdot2/1=10$. Since $H+K$ has only $10$ of the $20$ elements, it is not all of $\mathbb{Z}_{20}$. So $\mathbb{Z}_{20}$ is not the internal direct product of $H$ and $K$.'
           - problem: 'In the group $\mathbb{Z}_{12}$ let $H=\langle3\rangle$ and $K=\langle4\rangle$. These subgroups are normal, $H\cap K=\{0\}$ and $H+K=\mathbb{Z}_{12}$. For $h=3$ in $H$ and $k=4$ in $K$, compute $h+k-h-k$ in $\mathbb{Z}_{12}$.'
             answer: '0'
             answer_contract: {"kind": "exact"}
@@ -1148,7 +1148,7 @@ topics:
             answer: 'abelian'
             answer_contract: {"kind": "label", "options": [["abelian", "G is abelian", "commutative"], ["cyclic", "G is cyclic"], ["trivial", "G is trivial"], ["simple", "G is simple"]]}
             solution_sketch: 'From $a^{-1}b^{-1}ab=e$ we get $b^{-1}ab=a$, so $ab=ba$, and this holds for every pair. So $G$ is abelian. It need not be cyclic, for example the Klein four-group, and it need not be trivial, for example $\mathbb{Z}_2$. Simplicity is unrelated to commutativity.'
-          - problem: 'In $S_3$ Sam argues that $[(1\,2),(1\,3)]=e$, because transpositions are their own inverses. What is the order of $[(1\,2),(1\,3)]$?'
+          - problem: 'In $S_3$, what is the order of $[(1\,2),(1\,3)]$?'
             answer: '3'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Being their own inverses only gives $[(1\,2),(1\,3)]=(1\,2)(1\,3)(1\,2)(1\,3)$, and this product is not $e$ because $(1\,2)$ and $(1\,3)$ do not commute. Tracing the points gives $1\to2$, $2\to3$, $3\to1$, a $3$-cycle. So the order is $3$.'

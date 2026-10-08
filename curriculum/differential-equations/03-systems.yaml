@@ -32,10 +32,10 @@ topics:
             answer: '[0,-1;1,2]'
             answer_contract: {"kind": "matrix", "rows": 2, "cols": 2}
             solution_sketch: 'The equation $x'' = -y$ has no $x$ term, so its first entry is $0$ and its second entry is $-1$. The equation $y'' = x + 2y$ gives $1$ and $2$. So $A$ has rows $(0, -1)$ and $(1, 2)$.'
-          - problem: 'Sam is given $y'' = 3x + 7y$ and $x'' = 5x - 2y$. With $\mathbf{X} = \binom{x}{y}$, Sam writes $A = \begin{pmatrix}3&7\\5&-2\end{pmatrix}$. What is the correct matrix $A$ in $\mathbf{X}'' = A\mathbf{X}$?'
+          - problem: 'A system is $y'' = 3x + 7y$ and $x'' = 5x - 2y$. With $\mathbf{X} = \binom{x}{y}$, what is the matrix $A$ in $\mathbf{X}'' = A\mathbf{X}$?'
             answer: '[5,-2;3,7]'
             answer_contract: {"kind": "matrix", "rows": 2, "cols": 2}
-            solution_sketch: 'The first row of $A$ must come from the equation for $x''$, because $x$ is the first entry of $\mathbf{X}$. That equation is $x'' = 5x - 2y$, so the first row is $(5, -2)$. The equation $y'' = 3x + 7y$ gives the second row $(3, 7)$. Sam listed the equations in the order they were written, not in the order of $x$ and $y$.'
+            solution_sketch: 'The first row of $A$ must come from the equation for $x''$, because $x$ is the first entry of $\mathbf{X}$. That equation is $x'' = 5x - 2y$, so the first row is $(5, -2)$. The equation $y'' = 3x + 7y$ gives the second row $(3, 7)$.'
           - problem: 'Tank A holds $200$ L of brine and tank B holds $100$ L. One pump moves $10$ L/min from A to B, and another moves $10$ L/min from B to A. Let $x$ and $y$ be the kilograms of salt in tanks A and B, so that $\mathbf{X}'' = A\mathbf{X}$ with $\mathbf{X} = \binom{x}{y}$. Find $A$.'
             answer: '[-1/20,1/10;1/20,-1/10]'
             answer_contract: {"kind": "matrix", "rows": 2, "cols": 2}
@@ -70,10 +70,10 @@ topics:
             answer: '7'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The derivative is $\mathbf{X}'' = k e^{kt}\mathbf{v}$, and $A\mathbf{X} = e^{kt}A\mathbf{v}$. The product $A\mathbf{v} = \binom{5 + 2}{2 + 5} = \binom{7}{7} = 7\mathbf{v}$. So the two sides agree exactly when $k = 7$.'
-          - problem: 'Ana says that $\mathbf{X} = e^{2t}\binom{1}{1}$ is a solution of $\mathbf{X}'' = A\mathbf{X}$ with $A = \begin{pmatrix}2&1\\1&2\end{pmatrix}$. Is she right?'
+          - problem: 'Does $\mathbf{X} = e^{2t}\binom{1}{1}$ solve $\mathbf{X}'' = A\mathbf{X}$ with $A = \begin{pmatrix}2&1\\1&2\end{pmatrix}$?'
             answer: 'no'
-            answer_contract: {"kind": "label", "options": [["yes", "she is right", "right", "correct", "she is correct"], ["no", "she is not right", "not right", "she is wrong", "wrong", "incorrect", "not correct"]]}
-            solution_sketch: 'The derivative is $\mathbf{X}'' = 2e^{2t}\binom{1}{1}$. The product $A\binom{1}{1} = \binom{3}{3} = 3\binom{1}{1}$, so $A\mathbf{X} = 3e^{2t}\binom{1}{1}$. The two sides differ, because the exponent rate is $2$ but the eigenvalue is $3$. Ana is not right.'
+            answer_contract: {"kind": "label", "options": [["yes", "it is a solution", "it does", "solves it", "solution", "true", "it is"], ["no", "it is not a solution", "it does not", "not a solution", "false", "it is not"]]}
+            solution_sketch: 'The derivative is $\mathbf{X}'' = 2e^{2t}\binom{1}{1}$. The product $A\binom{1}{1} = \binom{3}{3} = 3\binom{1}{1}$, so $A\mathbf{X} = 3e^{2t}\binom{1}{1}$. The two sides differ, because the exponent rate is $2$ but the eigenvalue is $3$. So $\mathbf{X}$ is not a solution.'
           - problem: 'The function $\mathbf{X} = e^{5t}\binom{2}{1}$ solves $\mathbf{X}'' = A\mathbf{X}$, where $A = \begin{pmatrix}a&2\\2&1\end{pmatrix}$. Find $a$.'
             answer: '4'
             answer_contract: {"kind": "exact"}
@@ -360,10 +360,10 @@ topics:
             answer: '[0,1;-4,-5]'
             answer_contract: {"kind": "matrix", "rows": 2, "cols": 2}
             solution_sketch: 'First divide the equation by $2$ to get $q'''' = -5q'' - 4q$. With $x_1 = q$ and $x_2 = q''$ we have $x_1'' = x_2$ and $x_2'' = -4x_1 - 5x_2$. The rows of $A$ are $(0, 1)$ and $(-4, -5)$.'
-          - problem: 'Sam rewrites $y'''' - 2y'' + 7y = 0$ with $x_1 = y$ and $x_2 = y''$ and gets $A = \begin{pmatrix}0&1\\7&-2\end{pmatrix}$. What is the correct matrix $A$ in $\mathbf{X}'' = A\mathbf{X}$?'
+          - problem: 'Rewrite $y'''' - 2y'' + 7y = 0$ with $x_1 = y$ and $x_2 = y''$. What is the matrix $A$ in $\mathbf{X}'' = A\mathbf{X}$?'
             answer: '[0,1;-7,2]'
             answer_contract: {"kind": "matrix", "rows": 2, "cols": 2}
-            solution_sketch: 'The equation gives $y'''' = 2y'' - 7y$, so $x_2'' = -7x_1 + 2x_2$. Sam wrote the coefficients $7$ and $-2$ with the signs they have on the left side, but they must be negated when $y''''$ is isolated. The correct rows are $(0, 1)$ and $(-7, 2)$.'
+            solution_sketch: 'The equation gives $y'''' = 2y'' - 7y$, so $x_2'' = -7x_1 + 2x_2$. The coefficients $7$ and $-2$ change sign when $y''''$ is isolated. The rows are $(0, 1)$ and $(-7, 2)$.'
           - problem: 'Write $y'''''' - 6y'''' + 11y'' - 6y = 0$ as a first-order system $\mathbf{X}'' = A\mathbf{X}$ using $x_1 = y$, $x_2 = y''$ and $x_3 = y''''$. What is $A$?'
             answer: '[0,1,0;0,0,1;6,-11,6]'
             answer_contract: {"kind": "matrix", "rows": 3, "cols": 3}
@@ -469,10 +469,10 @@ topics:
             answer: '0.69'
             answer_contract: {"kind": "approx", "decimals": 2}
             solution_sketch: 'Equal populations stay equal: if $x = y$ then $x'' = 3x$. So $x = y = 3e^{3t}$. Solving $3e^{3t} = 24$ gives $e^{3t} = 8$, so $t = \tfrac{\ln 8}{3} = \ln 2 \approx 0.69$ years.'
-          - problem: 'Sam says that the solution of $\mathbf{X}'' = \begin{pmatrix} 3 & -1 \\ 1 & 1 \end{pmatrix}\mathbf{X}$ with $\mathbf{X}(0) = \binom{2}{2}$ is $\mathbf{X} = 2e^{t}\binom{1}{1}$. Find the correct $x(t)$.'
+          - problem: 'Solve $\mathbf{X}'' = \begin{pmatrix} 3 & -1 \\ 1 & 1 \end{pmatrix}\mathbf{X}$ with $\mathbf{X}(0) = \binom{2}{2}$. Find $x(t)$.'
             answer: '2e^(2t)'
             answer_contract: {"kind": "function", "vars": ["t"]}
-            solution_sketch: 'Compute $A(1, 1) = (2, 2) = 2(1, 1)$, so $(1, 1)$ is an eigenvector with eigenvalue $2$. The exponent in the solution must be the eigenvalue times $t$, not $t$. Hence $\mathbf{X} = 2e^{2t}(1, 1)$ and $x(t) = 2e^{2t}$.'
+            solution_sketch: 'Compute $A(1, 1) = (2, 2) = 2(1, 1)$, so $(1, 1)$ is an eigenvector with eigenvalue $2$. The exponent in the solution is the eigenvalue times $t$. Hence $\mathbf{X} = 2e^{2t}(1, 1)$ and $x(t) = 2e^{2t}$.'
           - problem: 'One solution of the system $\mathbf{X}'' = \begin{pmatrix} 1 & 1 \\ 10 & 4 \end{pmatrix}\mathbf{X}$ has the form $x(t) = e^{6t}$, $y(t) = k\,e^{6t}$ for a whole number $k$. Find $k$.'
             answer: '5'
             answer_contract: {"kind": "exact"}
@@ -510,10 +510,10 @@ topics:
             answer: '0.139'
             answer_contract: {"kind": "approx", "decimals": 3}
             solution_sketch: 'The eigenvalues are $2$ and $5$, and for large $t$ the term with $e^{5t}$ dominates, so $r = 5$. Doubling means $e^{5T} = 2$. Hence $T = \tfrac{\ln 2}{5} \approx 0.139$ years.'
-          - problem: 'Sam finds that $5$ is an eigenvalue of $A = \begin{pmatrix} 4 & 1 \\ 2 & 3 \end{pmatrix}$ and writes the eigenvector as $(1, -1)$. What is the correct second entry of the eigenvector whose first entry is $1$?'
+          - problem: 'The number $5$ is an eigenvalue of $A = \begin{pmatrix} 4 & 1 \\ 2 & 3 \end{pmatrix}$. What is the second entry of the eigenvector whose first entry is $1$?'
             answer: '1'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Solve $(A - 5I)\mathbf{v} = \mathbf{0}$, where $A - 5I = [[-1, 1], [2, -2]]$. The first row gives $-v_1 + v_2 = 0$, so $v_2 = v_1$. With $v_1 = 1$ the second entry is $1$, and $(1, -1)$ fails the check because $A(1, -1) = (3, -1)$.'
+            solution_sketch: 'Solve $(A - 5I)\mathbf{v} = \mathbf{0}$, where $A - 5I = [[-1, 1], [2, -2]]$. The first row gives $-v_1 + v_2 = 0$, so $v_2 = v_1$. With $v_1 = 1$ the second entry is $1$.'
           - problem: 'The system $\mathbf{X}'' = \begin{pmatrix} 3 & 2 \\ 2 & 3 \end{pmatrix}\mathbf{X}$ has a general solution of the form $c_1 e^{\lambda_1 t}\binom{1}{1} + c_2 e^{\lambda_2 t}\binom{1}{-1}$. Find $\lambda_1$ and $\lambda_2$.'
             answer: '5, 1'
             answer_contract: {"kind": "exact"}
@@ -551,10 +551,10 @@ topics:
             answer: '0.77'
             answer_contract: {"kind": "approx", "decimals": 2}
             solution_sketch: 'The eigenpairs are $\lambda = 3$ with $(1, 1)$ and $\lambda = 1$ with $(1, -1)$, and the start gives $c_1 = 3$, $c_2 = 1$. Adding the two components, the second eigenvector term cancels, so $x + y = 6e^{3t}$. Solving $6e^{3t} = 60$ gives $t = \tfrac{\ln 10}{3} \approx 0.77$ years.'
-          - problem: 'Sam solves $\mathbf{X}'' = \begin{pmatrix} 2 & 3 \\ 3 & 2 \end{pmatrix}\mathbf{X}$ with $\mathbf{X}(0) = \binom{7}{3}$ and writes $\mathbf{X} = 2e^{5t}\binom{1}{1} + 5e^{-t}\binom{1}{-1}$. Find the correct $x(t)$.'
+          - problem: 'Solve $\mathbf{X}'' = \begin{pmatrix} 2 & 3 \\ 3 & 2 \end{pmatrix}\mathbf{X}$ with $\mathbf{X}(0) = \binom{7}{3}$. Find $x(t)$.'
             answer: '5e^(5t)+2e^(-t)'
             answer_contract: {"kind": "function", "vars": ["t"]}
-            solution_sketch: 'The eigenpairs are $\lambda = 5$ with $(1, 1)$ and $\lambda = -1$ with $(1, -1)$. The start gives $c_1 + c_2 = 7$ and $c_1 - c_2 = 3$, so $c_1 = 5$ and $c_2 = 2$. Sam swapped the two constants, so $x(t) = 5e^{5t} + 2e^{-t}$.'
+            solution_sketch: 'The eigenpairs are $\lambda = 5$ with $(1, 1)$ and $\lambda = -1$ with $(1, -1)$. The start gives $c_1 + c_2 = 7$ and $c_1 - c_2 = 3$, so $c_1 = 5$ and $c_2 = 2$. So $x(t) = 5e^{5t} + 2e^{-t}$.'
           - problem: 'Solve $x'' = y$, $y'' = 2x + y$ with $x(0) = 3$ and $y(0) = 0$. What is $x(t)$?'
             answer: 'e^(2t)+2e^(-t)'
             answer_contract: {"kind": "function", "vars": ["t"]}
@@ -620,10 +620,10 @@ topics:
             answer: '(0, 0)'
             answer_contract: {"arity": 2, "kind": "coordinates"}
             solution_sketch: 'Constant amounts need $-3x + y = 0$ and $2x - 2y = 0$. The second equation gives $y = x$, and then the first gives $-2x = 0$. So $x = y = 0$: the amounts stay constant only at the target levels.'
-          - problem: 'Sam says that the system $\mathbf{X}'' = \begin{pmatrix} 2 & -4 \\ 1 & -2 \end{pmatrix}\mathbf{X}$ has only the equilibrium $(0, 0)$. Find an equilibrium of the system with $x = 4$.'
+          - problem: 'Find an equilibrium of the system $\mathbf{X}'' = \begin{pmatrix} 2 & -4 \\ 1 & -2 \end{pmatrix}\mathbf{X}$ with $x = 4$.'
             answer: '(4, 2)'
             answer_contract: {"arity": 2, "kind": "coordinates"}
-            solution_sketch: 'The determinant is $2\cdot(-2) - (-4)\cdot 1 = 0$, so there are equilibria other than the origin. Both equations reduce to $x - 2y = 0$. For $x = 4$ this gives $y = 2$, so $(4, 2)$ is an equilibrium and Sam is wrong.'
+            solution_sketch: 'The determinant is $2\cdot(-2) - (-4)\cdot 1 = 0$, so there are equilibria other than the origin. Both equations reduce to $x - 2y = 0$. For $x = 4$ this gives $y = 2$, so $(4, 2)$ is an equilibrium.'
         constraints: "equilibria found by solving AX = 0; det A is nonzero in most exemplars, one has det A = 0, and one affine system X' = AX + b appears"
       - id: kp2
         name: Classification from eigenvalues
@@ -649,10 +649,10 @@ topics:
             answer: '1.39'
             answer_contract: {"kind": "approx", "decimals": 2}
             solution_sketch: 'The size of a swing is multiplied by $e^{-0.5t}$, because the real part of the eigenvalues is $-0.5$. The imaginary part $2$ only sets how fast the system turns. Solving $e^{-0.5t} = \tfrac12$ gives $t = \tfrac{\ln 2}{0.5} \approx 1.39$ hours.'
-          - problem: 'A linear system has eigenvalues $-2$ and $c$, where $c$ is real and not zero. Sam says that the origin is a saddle for every such $c$. For which values of $c$ is Sam right?'
+          - problem: 'A linear system has eigenvalues $-2$ and $c$, where $c$ is real and not zero. For which values of $c$ is the origin a saddle?'
             answer: 'c > 0'
             answer_contract: {"kind": "inequality_union"}
-            solution_sketch: 'A saddle needs one positive and one negative eigenvalue. The eigenvalue $-2$ is negative, so $c$ must be positive. For $c < 0$ both eigenvalues are negative and the origin is a stable node, so Sam is right only for $c > 0$.'
+            solution_sketch: 'A saddle needs one positive and one negative eigenvalue. The eigenvalue $-2$ is negative, so $c$ must be positive. For $c < 0$ both eigenvalues are negative and the origin is a stable node, so the origin is a saddle only for $c > 0$.'
           - problem: 'A linear system has eigenvalues $(a - 4) + 2i$ and $(a - 4) - 2i$, where $a$ is real. Find the value of $a$ for which the origin is a center.'
             answer: '4'
             answer_contract: {"kind": "exact"}
@@ -695,10 +695,10 @@ topics:
             answer: '2.09'
             answer_contract: {"kind": "approx", "decimals": 2}
             solution_sketch: 'The solutions contain $\cos 3t$ and $\sin 3t$, which repeat when $3t$ grows by $2\pi$. So one full cycle takes $t = \tfrac{2\pi}{3} \approx 2.09$ seconds.'
-          - problem: 'A solution of $\mathbf{X}'' = \begin{pmatrix} 0 & 5 \\ -5 & 0 \end{pmatrix}\mathbf{X}$ starts at $(4, 0)$. Sam says it tends to the origin, because the eigenvalues are complex. How far from the origin is the solution at $t = 3$?'
+          - problem: 'A solution of $\mathbf{X}'' = \begin{pmatrix} 0 & 5 \\ -5 & 0 \end{pmatrix}\mathbf{X}$ starts at $(4, 0)$. How far from the origin is the solution at $t = 3$?'
             answer: '4'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The eigenvalues are $\pm 5i$, so the solution is $(4\cos 5t, -4\sin 5t)$. Its distance from the origin is $\sqrt{16\cos^2 5t + 16\sin^2 5t} = 4$ at every time. So at $t = 3$ the distance is $4$, and Sam is wrong.'
+            solution_sketch: 'The eigenvalues are $\pm 5i$, so the solution is $(4\cos 5t, -4\sin 5t)$. Its distance from the origin is $\sqrt{16\cos^2 5t + 16\sin^2 5t} = 4$ at every time. So at $t = 3$ the distance is $4$.'
         constraints: "cover source/center/unstable spiral; stability verdict required each time"
     diagnostic_exemplar:
       problem: 'A $2 \times 2$ linear system $\mathbf{X}'' = A\mathbf{X}$ has eigenvalues $\lambda = 2 \pm 3i$. Classify the origin, state its stability, and explain why it is the only equilibrium.'
@@ -762,7 +762,7 @@ topics:
             answer: '0.69'
             answer_contract: {"kind": "approx", "decimals": 2}
             solution_sketch: 'The trace is $-4$ and the determinant is $3$, so $\lambda^2 + 4\lambda + 3 = 0$ and $\lambda = -1$ or $\lambda = -3$. Long after the dose the slower term $e^{-t}$ remains. So $e^{-T} = \tfrac12$ and $T = \ln 2 \approx 0.69$ hours.'
-          - problem: 'Sam says that the origin of $\mathbf{X}'' = \begin{pmatrix} 1 & 2 \\ 3 & 1 \end{pmatrix}\mathbf{X}$ is an unstable node, because both eigenvalues are positive. Find the eigenvalues of the matrix.'
+          - problem: 'Find the eigenvalues of the matrix of the system $\mathbf{X}'' = \begin{pmatrix} 1 & 2 \\ 3 & 1 \end{pmatrix}\mathbf{X}$.'
             answer: '1 + sqrt(6), 1 - sqrt(6)'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The trace is $T = 2$ and the determinant is $D = 1 - 6 = -5$. So $\lambda^2 - 2\lambda - 5 = 0$ and $\lambda = 1 \pm \sqrt{6}$. One eigenvalue is about $3.45$ and the other is about $-1.45$, so the origin is a saddle.'
@@ -812,10 +812,10 @@ topics:
             answer: '2'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The eigenvalues solve $\lambda^2 + 6\lambda + 8 = 0$, so $\lambda = -2$ or $\lambda = -4$. The term $e^{-4t}$ dies out faster than $e^{-2t}$. So the smaller decay rate is $r = 2$.'
-          - problem: 'Sam says that a system with trace $-4$ and determinant $5$ has a stable node, because the trace is negative. Find the eigenvalues of the system.'
+          - problem: 'A system has trace $-4$ and determinant $5$. Find its eigenvalues.'
             answer: '-2 + i, -2 - i'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The eigenvalues solve $\lambda^2 + 4\lambda + 5 = 0$. Here $T^2 - 4D = 16 - 20 = -4$, so $\lambda = \tfrac{-4 \pm 2i}{2} = -2 \pm i$. The eigenvalues are complex, so the origin is a stable spiral, not a node.'
+            solution_sketch: 'The eigenvalues solve $\lambda^2 + 4\lambda + 5 = 0$. Here $T^2 - 4D = 16 - 20 = -4$, so $\lambda = \tfrac{-4 \pm 2i}{2} = -2 \pm i$. The eigenvalues are complex, so the origin is a stable spiral.'
         constraints: "give only trace and determinant; classification must cite T^2 - 4D and the signs of T, D"
       - id: kp3
         name: Trajectory behavior
@@ -853,7 +853,7 @@ topics:
             answer: '-9'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'In matrix form $(x, v)'' = [[0, 1], [-9, 0]](x, v)$. At $(1, 0)$ the velocity vector is $(0, -9)$. So $v'' = -9$, and the spring pulls the mass back toward $x = 0$.'
-          - problem: 'A saddle point has eigenvalue $\lambda_1 = 5$ with eigenvector $\mathbf{v}_1 = (2, 1)$ and eigenvalue $\lambda_2 = -6$ with eigenvector $\mathbf{v}_2 = (1, -1)$. Sam says that a generic trajectory approaches the line of $\mathbf{v}_2$ as $t \to \infty$, because $6$ is larger than $5$. What is the slope of the line that it approaches?'
+          - problem: 'A saddle point has eigenvalue $\lambda_1 = 5$ with eigenvector $\mathbf{v}_1 = (2, 1)$ and eigenvalue $\lambda_2 = -6$ with eigenvector $\mathbf{v}_2 = (1, -1)$. A generic trajectory approaches a line as $t \to \infty$. What is the slope of that line?'
             answer: '1/2'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'A solution is $c_1 e^{5t}\mathbf{v}_1 + c_2 e^{-6t}\mathbf{v}_2$. As $t \to \infty$ the term $e^{-6t}$ tends to zero, because $-6$ is negative, and the term $e^{5t}$ grows. So the trajectory approaches the line through $(2, 1)$, which has slope $\tfrac12$.'
@@ -919,10 +919,10 @@ topics:
             answer: '9'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The characteristic equation is $(1 - \lambda)^2 + 4b = 0$, so $(\lambda - 1)^2 = -4b$. The eigenvalues $1 \pm 6i$ need $(\lambda - 1)^2 = -36$. So $4b = 36$ and $b = 9$.'
-          - problem: 'Sam says that the eigenvalues of $A = \begin{pmatrix} 2 & 4 \\ -9 & 2 \end{pmatrix}$ are $2 \pm 36i$. Find the correct eigenvalue with positive imaginary part.'
+          - problem: 'Find the eigenvalue with positive imaginary part of $A = \begin{pmatrix} 2 & 4 \\ -9 & 2 \end{pmatrix}$.'
             answer: '2 + 6i'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The characteristic equation is $(2 - \lambda)^2 + 36 = 0$, so $(\lambda - 2)^2 = -36$. Taking the square root gives $\lambda - 2 = \pm 6i$, not $\pm 36i$. The eigenvalue with positive imaginary part is $2 + 6i$.'
+            solution_sketch: 'The characteristic equation is $(2 - \lambda)^2 + 36 = 0$, so $(\lambda - 2)^2 = -36$. Taking the square root gives $\lambda - 2 = \pm 6i$. The eigenvalue with positive imaginary part is $2 + 6i$.'
           - problem: 'The matrix $A = \begin{pmatrix} 0 & 2 \\ -18 & 0 \end{pmatrix}$ has the eigenvalue $6i$. Find an eigenvector whose first entry is $1$. What is its second entry?'
             answer: '3i'
             answer_contract: {"kind": "exact"}
@@ -956,7 +956,7 @@ topics:
             answer: '3.91'
             answer_contract: {"kind": "approx", "decimals": 2}
             solution_sketch: 'The distance from the origin is $e^{-t}\sqrt{\cos^2 t + \sin^2 t} = e^{-t}$. Setting $e^{-t} = 0.02$ gives $t = \ln 50$. So $t \approx 3.91$ seconds.'
-          - problem: 'Sam says that the real part of $e^{(3+4i)t}\binom{1}{-i}$ has second component $-e^{3t}\sin 4t$. Find the correct second component.'
+          - problem: 'Find the second component of the real part of $e^{(3+4i)t}\binom{1}{-i}$.'
             answer: 'e^(3t) sin(4t)'
             answer_contract: {"kind": "function", "vars": ["t"]}
             solution_sketch: 'Euler''s formula gives $e^{(3+4i)t} = e^{3t}(\cos 4t + i\sin 4t)$. Multiplying by $-i$ gives $e^{3t}(-i\cos 4t + \sin 4t)$. The real part is $e^{3t}\sin 4t$, with a plus sign.'
@@ -993,10 +993,10 @@ topics:
             answer: '2.30'
             answer_contract: {"kind": "approx", "decimals": 2}
             solution_sketch: 'The solution is $e^{t}(\cos 3t, \sin 3t)$, so its distance from the origin is $e^{t}$. Ten times the start distance means $e^{t} = 10$. So $t = \ln 10 \approx 2.30$.'
-          - problem: 'Sam solves $\mathbf{X}'' = \begin{pmatrix} -1 & 1 \\ -1 & -1 \end{pmatrix}\mathbf{X}$ with $\mathbf{X}(0) = \binom{1}{0}$ and writes $x(t) = e^{t}\cos t$. Find the correct $x(t)$.'
+          - problem: 'Solve $\mathbf{X}'' = \begin{pmatrix} -1 & 1 \\ -1 & -1 \end{pmatrix}\mathbf{X}$ with $\mathbf{X}(0) = \binom{1}{0}$. Find $x(t)$.'
             answer: 'e^(-t) cos(t)'
             answer_contract: {"kind": "function", "vars": ["t"]}
-            solution_sketch: 'The eigenvalues are $-1 \pm i$, so the real part is $-1$ and the exponential factor is $e^{-t}$, not $e^{t}$. The real solution from $(1, i)$ is $e^{-t}(\cos t, -\sin t)$, which starts at $(1, 0)$. So $x(t) = e^{-t}\cos t$.'
+            solution_sketch: 'The eigenvalues are $-1 \pm i$, so the real part is $-1$ and the exponential factor is $e^{-t}$. The real solution from $(1, i)$ is $e^{-t}(\cos t, -\sin t)$, which starts at $(1, 0)$. So $x(t) = e^{-t}\cos t$.'
           - problem: 'The deviations $(x, y)$ in a chemical oscillator satisfy $\mathbf{X}'' = \begin{pmatrix} -1 & 3 \\ -3 & -1 \end{pmatrix}\mathbf{X}$, with $t$ in minutes. The deviations start at $(2, 0)$. How far from the origin are they after $2$ minutes? Round to two decimal places.'
             answer: '0.27'
             answer_contract: {"kind": "approx", "decimals": 2}

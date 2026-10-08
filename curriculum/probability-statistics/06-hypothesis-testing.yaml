@@ -596,10 +596,10 @@ topics:
             answer: '6'
             answer_contract: {"kind": "unit", "quantity": "volume", "unit": "ml", "allow_omitted": true}
             solution_sketch: 'The standard error is $s/\sqrt{n}$ with $\sqrt{25}=5$. So $s=1.2\cdot5=6$ ml.'
-          - problem: 'Sam estimates the standard error of the mean for a sample with $n=25$ and $s=10$ as $10/25=0.4$. What is the correct value?'
+          - problem: 'What is the standard error of the mean for a sample with $n=25$ and $s=10$?'
             answer: '2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Sam divided by $n$. The standard error divides by $\sqrt{n}$, so it is $10/\sqrt{25}=10/5=2$.'
+            solution_sketch: 'Dividing by $n$ is wrong. The standard error divides by $\sqrt{n}$, so it is $10/\sqrt{25}=10/5=2$.'
           - problem: 'Two samples both have standard deviation $s=20$. The first has $n=16$ and the second has $n=100$. How many times as large as the standard error of the second sample is the standard error of the first?'
             answer: '5/2'
             answer_contract: {"kind": "exact"}
@@ -737,10 +737,10 @@ topics:
             answer: '3'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Since $t=\frac{8-5}{\text{SE}}=3$, the standard error is $1$. Then $s/\sqrt{9}=1$, so $s=3$.'
-          - problem: 'A survey tests $H_0: \mu=100$ with $n=100$, $\bar{x}=97$ and $s=20$. Sam divides $\bar{x}-\mu_0$ by $s$ and gets $t=-0.15$. What is the correct t statistic?'
+          - problem: 'A survey tests $H_0: \mu=100$ with $n=100$, $\bar{x}=97$ and $s=20$. What is the $t$ statistic?'
             answer: '-1.5'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Sam used $s$ instead of the standard error. The standard error is $20/\sqrt{100}=2$, so $t=\frac{97-100}{2}=-1.5$.'
+            solution_sketch: 'The statistic divides by the standard error, not by $s$. The standard error is $20/\sqrt{100}=2$, so $t=\frac{97-100}{2}=-1.5$.'
           - problem: 'A claim says that the mean is $100$. A sample has $\bar{x}=104$ and $s=10$. How large must the sample be for the t statistic to equal $4$?'
             answer: '100'
             answer_contract: {"kind": "exact"}
@@ -774,7 +774,7 @@ topics:
             answer: '19.38'
             answer_contract: {"kind": "approx", "decimals": 3}
             solution_sketch: 'The test rejects when $\frac{|\bar{x}-\mu_0|}{s/\sqrt{n}}>t^*$. At the boundary $s=\frac{8\cdot5}{2.064}=19.380$, and any smaller $s$ gives a larger $t$.'
-          - problem: 'Ana tests $H_0: \mu=\mu_0$ two-sided at $\alpha=0.05$ and gets $t=2.05$ with $15$ degrees of freedom. She rejects $H_0$ because $2.05$ is above $2$. The table cutoff for $15$ degrees of freedom is $2.131$. By how much does $|t|$ fall short of the correct cutoff?'
+          - problem: 'A two-sided test of $H_0: \mu=\mu_0$ at $\alpha=0.05$ gives $t=2.05$ with $15$ degrees of freedom. The table cutoff for $15$ degrees of freedom is $2.131$. By how much does $|t|$ fall short of the cutoff?'
             answer: '0.081'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The cutoff $2$ is for a normal distribution, but $\sigma$ is estimated, so the t cutoff $2.131$ is needed. The shortfall is $2.131-2.05=0.081$, so $H_0$ is not rejected.'
@@ -874,10 +874,10 @@ topics:
             answer: 'one-sided'
             answer_contract: {"kind": "label", "options": [["one-sided", "one sided", "one-tailed", "one tailed"], ["two-sided", "two sided", "two-tailed", "two tailed"]]}
             solution_sketch: 'The school only cares about one direction, $\mu_1>\mu_2$. So the alternative is $H_1:\mu_1-\mu_2>0$, which is one-sided.'
-          - problem: 'Two independent samples have $s_1=6$ with $n_1=4$ and $s_2=8$ with $n_2=4$. Sam finds the standard error of the difference by adding the two standard errors, which gives $3+4=7$. What is the correct standard error?'
+          - problem: 'Two independent samples have $s_1=6$ with $n_1=4$ and $s_2=8$ with $n_2=4$. What is the standard error of the difference?'
             answer: '5'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Sam added standard errors, but the variances add. So $\text{SE}=\sqrt{\frac{36}{4}+\frac{64}{4}}=\sqrt{9+16}=5$.'
+            solution_sketch: 'Adding the standard errors is wrong, because the variances add. So $\text{SE}=\sqrt{\frac{36}{4}+\frac{64}{4}}=\sqrt{9+16}=5$.'
         constraints: 'hypotheses about mu1 - mu2 (or mu1 = mu2), never about x-bars; two label items (two-sided and one-sided) with different answers; s_i^2/n_i come out to integers or exact decimals whose sum is a perfect square, so the SE is exact'
       - id: kp2
         name: "The two-sample t statistic and conservative df"
@@ -1047,10 +1047,10 @@ topics:
             answer: '2.9'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The squared differences are $4$, $4$, $25$, $25$, $0$ and $0$, which add up to $58$. Dividing by $20$ gives $\chi^2=58/20=2.9$.'
-          - problem: 'A coin is tossed $40$ times and shows $30$ heads and $10$ tails. Mia adds only the squared differences, $(30-20)^2+(10-20)^2=200$. What is the correct chi-square statistic for a fair coin?'
+          - problem: 'A coin is tossed $40$ times and shows $30$ heads and $10$ tails. What is the chi-square statistic for a fair coin?'
             answer: '10'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Mia left out the division by the expected count $20$. Each term is $\frac{(O-E)^2}{E}=\frac{100}{20}=5$, so $\chi^2=5+5=10$.'
+            solution_sketch: 'Each squared difference must be divided by the expected count $20$. Each term is $\frac{(O-E)^2}{E}=\frac{100}{20}=5$, so $\chi^2=5+5=10$.'
           - problem: 'A lab sorts $50$ seeds into three classes, which under its model have probabilities $0.32$, $0.32$ and $0.36$. The observed counts are $18$, $22$ and $10$. Find the chi-square statistic to two decimal places.'
             answer: '6.06'
             answer_contract: {"kind": "approx", "decimals": 2}
@@ -1195,10 +1195,10 @@ topics:
             answer: '14'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The degrees of freedom of the slope test are $n-2$. So $n-2=12$, which gives $n=12+2=14$. The regression used $14$ data points.'
-          - problem: 'A regression on $n=18$ points gives $b=2.4$ and $\operatorname{SE}_b=0.6$. Ana computes the $t$ statistic as $0.6\div2.4=0.25$. What is the correct $t$ statistic?'
+          - problem: 'A regression on $n=18$ points gives $b=2.4$ and $\operatorname{SE}_b=0.6$. What is the $t$ statistic for the slope?'
             answer: '4'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Ana divided the standard error by the slope, but the $t$ statistic is the slope divided by its standard error. The correct value is $t=2.4\div0.6=4$. The slope lies far from zero, so $0.25$ could not be right.'
+            solution_sketch: 'Dividing the standard error by the slope is wrong, because the $t$ statistic is the slope divided by its standard error. The correct value is $t=2.4\div0.6=4$. The slope lies far from zero, so $0.25$ could not be right.'
         constraints: 'b / SE_b comes out to halves or whole numbers; one item asks for the degrees of freedom df = n - 2 on its own, one asks for n from df'
       - id: kp3
         name: "Test and confidence interval for the slope"

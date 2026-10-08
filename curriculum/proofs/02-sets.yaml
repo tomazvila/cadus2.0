@@ -44,10 +44,10 @@ topics:
             answer: '-3, -2, -1, 0, 1, 2, 3'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The condition $x^2 < 10$ holds exactly when $|x| < \sqrt{10}$, and $\sqrt{10}$ is a little more than $3$. The integers with $|x| \le 3$ qualify, since $3^2 = 9 < 10$, while $4^2 = 16$ does not. So the elements are $-3, -2, -1, 0, 1, 2, 3$.'
-          - problem: 'Sam writes the set $\{5, 10, 15, 20, 25\}$ as $\{5k : k \in \mathbb{Z}, 0 \le k \le 4\}$. Which element of Sam''s set is not in $\{5, 10, 15, 20, 25\}$?'
+          - problem: 'The set $\{5, 10, 15, 20, 25\}$ is written as $\{5k : k \in \mathbb{Z}, 0 \le k \le 4\}$. Which element of the second set is not in $\{5, 10, 15, 20, 25\}$?'
             answer: '0'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Sam''s formula with $k = 0, 1, 2, 3, 4$ gives $0, 5, 10, 15, 20$. The value $0$ comes from $k = 0$ and is not in the target set. Sam should use $1 \le k \le 5$ instead, which gives $5, 10, 15, 20, 25$.'
+            solution_sketch: 'The formula with $k = 0, 1, 2, 3, 4$ gives $0, 5, 10, 15, 20$. The value $0$ comes from $k = 0$ and is not in the target set. The range $1 \le k \le 5$ gives $5, 10, 15, 20, 25$ instead.'
           - problem: 'A raffle sells the tickets in the set $\{n \in \mathbb{Z} : 100 \le n \le 150 \text{ and } n \text{ is divisible by } 10\}$. How many tickets does it sell?'
             answer: '6'
             answer_contract: {"kind": "exact"}
@@ -77,10 +77,10 @@ topics:
             answer: '2/5'
             answer_contract: {"kind": "property", "check": "between", "args": {"low": "1/3", "high": "1/2"}}
             solution_sketch: 'A rational number is a ratio of two integers. Writing $\frac13 = \frac{2}{6}$ and $\frac12 = \frac{3}{6}$ shows a gap, and $\frac25 = 0.4$ lies in it because $0.333... < 0.4 < 0.5$.'
-          - problem: 'Sam says that $0.\overline{3}$, the decimal $0.333\dots$ that never ends, is irrational because its digits never stop. Is Sam right?'
-            answer: 'no'
-            answer_contract: {"kind": "label", "options": [["yes", "true", "correct", "Sam is right", "right"], ["no", "false", "incorrect", "Sam is wrong", "wrong", "not right"]]}
-            solution_sketch: 'A decimal that repeats a block of digits is rational. Here $0.\overline{3} = \frac13$, which is a ratio of the integers $1$ and $3$. So Sam is wrong: never ending is not the same as never repeating.'
+          - problem: 'Write $0.\overline{3}$, the decimal $0.333\dots$ that never ends, as a fraction in lowest terms.'
+            answer: '1/3'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'A decimal that repeats a block of digits is rational. Let $x = 0.\overline{3}$. Then $10x - x = 3$, so $9x = 3$ and $x = \frac13$, a ratio of the integers $1$ and $3$.'
           - problem: 'Which of the numbers $-6, \frac34, \sqrt{49}, 0.5, \pi$ are in $\mathbb{Q}$ but not in $\mathbb{Z}$?'
             answer: '0.5, 3/4'
             answer_contract: {"kind": "exact"}
@@ -110,10 +110,10 @@ topics:
             answer: '47'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The seat numbers are $2, 7, 12, \dots$, each $5$ more than the one before. The value $5k + 2 \le 50$ holds up to $k = 9$, which gives $47$. The next seat would be $52$, which is past $50$, so the largest is 47.'
-          - problem: 'Ben describes the multiples of $6$ as $\{k + 6 : k \in \mathbb{Z}\}$. Give an integer from $1$ to $5$ that is in Ben''s set although it is not a multiple of $6$.'
+          - problem: 'The set $\{k + 6 : k \in \mathbb{Z}\}$ is meant to describe the multiples of $6$. Give an integer from $1$ to $5$ that is in this set although it is not a multiple of $6$.'
             answer: '3'
             answer_contract: {"kind": "property", "check": "integer_in_range", "args": {"min": 1, "max": 5}}
-            solution_sketch: 'Every integer $n$ equals $k + 6$ for $k = n - 6$, so Ben''s set is all of $\mathbb{Z}$. The integer $3$ equals $-3 + 6$, so it is in Ben''s set, but $3$ is not a multiple of $6$. Ben should write $\{6k : k \in \mathbb{Z}\}$.'
+            solution_sketch: 'Every integer $n$ equals $k + 6$ for $k = n - 6$, so the set is all of $\mathbb{Z}$. The integer $3$ equals $-3 + 6$, so it is in the set, but $3$ is not a multiple of $6$. The correct description is $\{6k : k \in \mathbb{Z}\}$.'
           - problem: 'How many elements does $\{n \in \mathbb{Z} : n = 3k \text{ for some integer } k, 1 \le n \le 100\}$ have?'
             answer: '33'
             answer_contract: {"kind": "exact"}
@@ -178,10 +178,10 @@ topics:
             answer: '7'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'We want the number of lockers opened on at least one day, so we want the union. The union is $3, 7, 9, 12, 15, 18, 20$, with the shared lockers $7$ and $12$ counted once. That gives 7 lockers, not $5 + 4 = 9$.'
-          - problem: 'Sam says that $A = \{1, 3, 5\}$ and $B = \{3, 5, 7\}$ give $A \cup B$ with $3 + 3 = 6$ elements. How many elements does $A \cup B$ really have?'
+          - problem: 'Let $A = \{1, 3, 5\}$ and $B = \{3, 5, 7\}$. How many elements does $A \cup B$ have?'
             answer: '4'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Sam adds the sizes of the two sets and counts the shared elements $3$ and $5$ twice. The union is $\{1, 3, 5, 7\}$, because a set lists each element once. So $A \cup B$ has 4 elements.'
+            solution_sketch: 'Adding the sizes of the two sets would count the shared elements $3$ and $5$ twice. The union is $\{1, 3, 5, 7\}$, because a set lists each element once. So $A \cup B$ has 4 elements.'
           - problem: 'Let $A = \{2, 3, 5, 7\}$, $B = \{3, 5, 7, 11\}$ and $C = \{5, 7, 9\}$. Find $A \cap B \cap C$.'
             answer: '5, 7'
             answer_contract: {"kind": "exact"}
@@ -215,10 +215,10 @@ topics:
             answer: '10'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The tickets that stay form the set of all tickets minus the even ones. There are $20$ tickets, and exactly half of them, $10$, are even. So $20 - 10 = 10$ tickets stay.'
-          - problem: 'Sam computes $\{1, 2, 3, 4\} \setminus \{3, 4, 5\}$ and gets $\{1, 2, 5\}$. What is the correct set?'
+          - problem: 'What is $\{1, 2, 3, 4\} \setminus \{3, 4, 5\}$?'
             answer: '1, 2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Sam includes $5$, but $5$ is not in the first set, so it cannot be in the difference. The difference keeps only elements of $\{1, 2, 3, 4\}$ that are not in $\{3, 4, 5\}$. So the correct set is $1, 2$.'
+            solution_sketch: 'The element $5$ is not in the first set, so it cannot be in the difference. The difference keeps only elements of $\{1, 2, 3, 4\}$ that are not in $\{3, 4, 5\}$. So the set is $1, 2$.'
           - problem: 'Let $A = \{1, 2, 3, 4, 5, 6\}$, $B = \{3, 5\}$ and $C = \{1, 4\}$. Find $(A \setminus B) \setminus C$.'
             answer: '2, 6'
             answer_contract: {"kind": "exact"}
@@ -324,10 +324,10 @@ topics:
             answer: '43'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The multiples of $7$ from $1$ to $50$ are $7, 14, \dots, 49$, which is $50 \div 7$ rounded down, so 7 prize tickets. The tickets with no prize are the complement, so $50 - 7 = 43$.'
-          - problem: 'Dana says that for the universe $U = \{1, 2, \dots, 6\}$ and $A = \{1, 2\}$ the complement is $A^{c} = \{3, 4, 5\}$. What is the correct complement?'
+          - problem: 'For the universe $U = \{1, 2, \dots, 6\}$ and $A = \{1, 2\}$, what is the complement $A^{c}$?'
             answer: '3, 4, 5, 6'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Dana left out the element $6$ of the universe. The complement contains every element of $U$ outside $A$, so $3, 4, 5, 6$ all belong. Dana should compare with all six elements of $U$.'
+            solution_sketch: 'The complement contains every element of $U$ outside $A$. The universe has the six elements $1, \dots, 6$, so $3, 4, 5, 6$ all belong. The set is $3, 4, 5, 6$.'
           - problem: 'In a universe $U$ of consecutive integers starting at $1$, the set $A = \{2, 5, 7\}$ has complement $A^{c} = \{1, 3, 4, 6, 8\}$. List the elements of $U$.'
             answer: '1, 2, 3, 4, 5, 6, 7, 8'
             answer_contract: {"kind": "exact"}
@@ -407,10 +407,10 @@ topics:
             answer: '6'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The complement $A^{c} = \{4, 5, 6\}$ holds exactly the elements of $U$ outside $A$. Together $A$ and $A^{c}$ cover the whole universe. So $A \cup A^{c} = U$, which has 6 elements.'
-          - problem: 'Sam claims that $A \setminus B = A^{c} \cap B$. With $U = \{1, 2, \dots, 6\}$, $A = \{1, 2, 3\}$ and $B = \{3, 4\}$, Sam''s expression gives $\{4\}$. What is $A \setminus B$?'
+          - problem: 'Let $U = \{1, 2, \dots, 6\}$, $A = \{1, 2, 3\}$ and $B = \{3, 4\}$. The expression $A^{c} \cap B$ gives $\{4\}$. What is $A \setminus B$?'
             answer: '1, 2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Sam''s expression $A^{c} \cap B$ keeps the elements of $B$ outside $A$, which is the set $B \setminus A = \{4\}$. The set $A \setminus B$ keeps the elements of $A$ outside $B$. Removing $3$ from $A$ leaves $1, 2$.'
+            solution_sketch: 'The expression $A^{c} \cap B$ keeps the elements of $B$ outside $A$, which is the set $B \setminus A = \{4\}$. The set $A \setminus B$ keeps the elements of $A$ outside $B$. Removing $3$ from $A$ leaves $1, 2$.'
           - problem: 'Let $U = \{1, 2, \dots, 10\}$, $A = \{1, 2, \dots, 8\}$, $B = \{2, 4, 6\}$ and $C = \{6, 7, 8, 9\}$. Find $A \setminus (B \cup C)$.'
             answer: '1, 3, 5'
             answer_contract: {"kind": "exact"}
@@ -478,10 +478,10 @@ topics:
             answer: 'no'
             answer_contract: {"kind": "label", "options": [["yes", "true", "correct", "it is", "4 is an element"], ["no", "false", "incorrect", "it is not", "4 is not an element"]]}
             solution_sketch: 'The number $4$ is in $A$ and also in $B$. The symmetric difference keeps only elements that lie in exactly one set. So $4$ is not in $A \triangle B = \{1, 6, 7\}$.'
-          - problem: 'Sam computes $\{3, 6, 8\} \triangle \{6, 9\}$ and gets $\{3, 6, 8, 9\}$. Which element of Sam''s answer should not be there?'
-            answer: '6'
+          - problem: 'What is the symmetric difference $\{3, 6, 8\} \triangle \{6, 9\}$?'
+            answer: '3, 8, 9'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Sam has written the union of the two sets. The element $6$ is in both sets, so the symmetric difference excludes it. The correct set is $\{3, 8, 9\}$.'
+            solution_sketch: 'The union of the two sets is $\{3, 6, 8, 9\}$. The element $6$ is in both sets, so the symmetric difference excludes it. The set is $\{3, 8, 9\}$.'
         constraints: 'symmetric difference of small listed sets, a chain of two, solving for a missing set, and counts in a context'
       - id: kp2
         name: 'Two equivalent forms'
@@ -511,10 +511,10 @@ topics:
             answer: '3, 8, 21, 34'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'We want the elements of the union that are not in the intersection. The union is $3, 5, 8, 13, 21, 34$ and the intersection is $5, 13$. Removing $5$ and $13$ leaves $3, 8, 21, 34$.'
-          - problem: 'Sam claims that $A \triangle B = (A \setminus B) \cap (B \setminus A)$. For $A = \{1, 2, 3\}$ and $B = \{2, 3, 4\}$, how many elements of $A \triangle B$ are missing from Sam''s set?'
+          - problem: 'For $A = \{1, 2, 3\}$ and $B = \{2, 3, 4\}$, how many elements of $A \triangle B$ are missing from $(A \setminus B) \cap (B \setminus A)$?'
             answer: '2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Here $A \setminus B = \{1\}$ and $B \setminus A = \{4\}$, so Sam''s set $(A \setminus B) \cap (B \setminus A)$ is empty. The true set is $A \triangle B = \{1, 4\}$. Both of its $2$ elements are missing from Sam''s set.'
+            solution_sketch: 'Here $A \setminus B = \{1\}$ and $B \setminus A = \{4\}$, so $(A \setminus B) \cap (B \setminus A)$ is empty. The set $A \triangle B$ is $\{1, 4\}$. Both of its $2$ elements are missing from the empty set.'
         constraints: 'compute both standard forms on small sets, pick the correct rewrite among options, and count elements in exactly one set in contexts'
       - id: kp3
         name: 'Basic properties'
@@ -548,10 +548,10 @@ topics:
             answer: 'yes'
             answer_contract: {"kind": "label", "options": [["yes", "true", "correct", "it is true", "always true"], ["no", "false", "incorrect", "it is not true", "it is false"]]}
             solution_sketch: 'Take an element $x$ in $A$. It is in $B \triangle C$ exactly when it is in one of $B$, $C$, and it is in the right side exactly when it is in one of $A \cap B$, $A \cap C$, which is the same condition. An element outside $A$ is in neither side. So the sets are equal.'
-          - problem: 'Sam claims that $A \cup (B \triangle C) = (A \cup B) \triangle (A \cup C)$ for all sets. Test the claim with $A = \{1, 2\}$, $B = \{2, 3\}$ and $C = \{3, 4\}$. Which elements lie in $A \cup (B \triangle C)$ but not in $(A \cup B) \triangle (A \cup C)$?'
+          - problem: 'Test $A \cup (B \triangle C) = (A \cup B) \triangle (A \cup C)$ with $A = \{1, 2\}$, $B = \{2, 3\}$ and $C = \{3, 4\}$. Which elements lie in $A \cup (B \triangle C)$ but not in $(A \cup B) \triangle (A \cup C)$?'
             answer: '1, 2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'First $B \triangle C = \{2, 4\}$, so $A \cup (B \triangle C) = \{1, 2, 4\}$. Next $A \cup B = \{1, 2, 3\}$ and $A \cup C = \{1, 2, 3, 4\}$, so their symmetric difference is $\{4\}$. The elements $1, 2$ lie in the left set only, so Sam''s claim is false.'
+            solution_sketch: 'First $B \triangle C = \{2, 4\}$, so $A \cup (B \triangle C) = \{1, 2, 4\}$. Next $A \cup B = \{1, 2, 3\}$ and $A \cup C = \{1, 2, 3, 4\}$, so their symmetric difference is $\{4\}$. The elements $1, 2$ lie in the left set only, so the identity is false.'
           - problem: 'Two playlists have $6$ songs each, and $2$ songs are on both playlists. How many songs are on exactly one of the two playlists?'
             answer: '8'
             answer_contract: {"kind": "exact"}
@@ -615,10 +615,10 @@ topics:
             answer: '2, 4, 6, 8'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'We want $\text{art} \cap (\text{music} \cup \text{drama})$. The union of music and drama is $1, 2, \dots, 8$. The even numbers among these are $2, 4, 6, 8$, and $10$ is not in the union.'
-          - problem: 'Sam writes $A \setminus (B \cup C) = (A \setminus B) \cup (A \setminus C)$. For $A = \{1, 2, 3, 4\}$, $B = \{2\}$ and $C = \{3\}$, Sam''s right side is $\{1, 2, 3, 4\}$. What is $A \setminus (B \cup C)$?'
+          - problem: 'Let $A = \{1, 2, 3, 4\}$, $B = \{2\}$ and $C = \{3\}$. The set $(A \setminus B) \cup (A \setminus C)$ is $\{1, 2, 3, 4\}$. What is $A \setminus (B \cup C)$?'
             answer: '1, 4'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Sam''s right side keeps an element when it is missing from $B$ or missing from $C$. The correct left side removes elements that are in $B$ or in $C$. Here $B \cup C = \{2, 3\}$, so $A \setminus (B \cup C) = \{1, 4\}$.'
+            solution_sketch: 'The set $(A \setminus B) \cup (A \setminus C)$ keeps an element when it is missing from $B$ or missing from $C$. The set $A \setminus (B \cup C)$ removes elements that are in $B$ or in $C$. Here $B \cup C = \{2, 3\}$, so $A \setminus (B \cup C) = \{1, 4\}$.'
           - problem: 'Let $A = \{1, 2, 3, 4, 5\}$, $B = \{2, 3\}$ and $C = \{3, 4, 5\}$. Find $A \setminus (B \setminus C)$.'
             answer: '1, 3, 4, 5'
             answer_contract: {"kind": "exact"}
@@ -774,10 +774,10 @@ topics:
             answer: 'x < 5'
             answer_contract: {"kind": "inequality_union"}
             solution_sketch: 'The interval has no left endpoint, so $x$ has no lower bound. The round bracket at $5$ leaves $5$ out. So the set is $x < 5$.'
-          - problem: 'Maya writes the set $\{x \in \mathbb{R} : 1 < x \le 6\}$ as $[1, 6)$. What is the correct interval notation?'
+          - problem: 'Write the set $\{x \in \mathbb{R} : 1 < x \le 6\}$ in interval notation.'
             answer: '(1, 6]'
             answer_contract: {"kind": "inequality_union"}
-            solution_sketch: 'The condition $1 < x$ leaves $1$ out, so the left bracket is round. The condition $x \le 6$ puts $6$ in, so the right bracket is square. Maya swapped both brackets. The correct set is $(1, 6]$.'
+            solution_sketch: 'The condition $1 < x$ leaves $1$ out, so the left bracket is round. The condition $x \le 6$ puts $6$ in, so the right bracket is square. The set is $(1, 6]$.'
           - problem: 'A freezer must keep its temperature $T$, in degrees Celsius, at or below $-15$. Write the set of allowed temperatures in interval notation.'
             answer: '(-∞, -15]'
             answer_contract: {"kind": "inequality_union"}
@@ -861,10 +861,10 @@ topics:
             answer: '[10, 18) ∪ (24, 30]'
             answer_contract: {"kind": "inequality_union"}
             solution_sketch: 'The day''s temperatures are $[10, 30]$, and the allowed band $[18, 24]$ is removed. The band contains $18$ and $24$, so these two points are removed as well. What remains is $[10, 18) \cup (24, 30]$.'
-          - problem: 'Leo says the complement of $[-1, 3)$ in $\mathbb{R}$ is $(-\infty, -1] \cup (3, \infty)$. What is the correct complement?'
+          - problem: 'What is the complement of $[-1, 3)$ in $\mathbb{R}$?'
             answer: '(-∞, -1) ∪ [3, ∞)'
             answer_contract: {"kind": "inequality_union"}
-            solution_sketch: 'The interval $[-1, 3)$ contains $-1$, so $-1$ is not in the complement. It does not contain $3$, so $3$ is in the complement. Leo swapped both endpoints. The correct complement is $(-\infty, -1) \cup [3, \infty)$.'
+            solution_sketch: 'The interval $[-1, 3)$ contains $-1$, so $-1$ is not in the complement. It does not contain $3$, so $3$ is in the complement. The complement is $(-\infty, -1) \cup [3, \infty)$.'
         constraints: "complement or difference producing a union of at most two intervals"
     diagnostic_exemplar:
       problem: 'Write $\{x \in \mathbb{R} : 2 < x \le 7\}$ in interval notation, then compute $[1, 4] \cap (2, 6)$ and $\mathbb{R} \setminus [1, 4]$.'
@@ -922,10 +922,10 @@ topics:
             answer: '41'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Drink only is $45 - 21 = 24$ children, and snack only is $38 - 21 = 17$ children. The children who bought exactly one item are these two groups together. So $24 + 17 = 41$ children bought exactly one.'
-          - problem: 'Of $24$ students who play the violin, $9$ also play the flute. Sam says that $24 + 9 = 33$ students play the violin only. How many students play the violin only?'
+          - problem: 'Of $24$ students who play the violin, $9$ also play the flute. How many students play the violin only?'
             answer: '15'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The $9$ students who also play the flute are already among the $24$ violin players, so they must be taken away, not added. The number who play the violin only is $24 - 9 = 15$. Sam''s sum of $33$ is larger than the number of violin players.'
+            solution_sketch: 'The $9$ students who also play the flute are already among the $24$ violin players, so they must be taken away, not added. The number who play the violin only is $24 - 9 = 15$.'
           - problem: 'Of two sets, $A$ has $16$ elements and $B$ has $13$. Altogether $21$ elements lie in exactly one of the two sets. How many elements lie in both?'
             answer: '4'
             answer_contract: {"kind": "exact"}
@@ -964,10 +964,10 @@ topics:
             answer: '9'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Everyone owns at least one, so the union has all $80$ people. The rule gives $80 = 52 + 37 - |\text{both}|$. So $|\text{both}| = 89 - 80 = 9$.'
-          - problem: 'Dee''s class has $30$ students. Of them, $18$ play chess, $15$ play checkers and $6$ play both. Dee adds $18 + 15 = 33$ and gets more than the whole class. How many students play at least one of the two games?'
+          - problem: 'A class has $30$ students. Of them, $18$ play chess, $15$ play checkers and $6$ play both. The sum $18 + 15 = 33$ is more than the whole class. How many students play at least one of the two games?'
             answer: '27'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Dee counted the $6$ students who play both games twice, which is why her sum of $33$ is too large. The correct count is $18 + 15 - 6 = 27$. This is below the class size of $30$, as it must be.'
+            solution_sketch: 'The $6$ students who play both games are counted twice in the sum $33$, which is why it is too large. The correct count is $18 + 15 - 6 = 27$. This is below the class size of $30$, as it must be.'
           - problem: 'In a class of $30$ students, $20$ study French, $14$ study Spanish and $3$ study both languages. Is this possible?'
             answer: 'no'
             answer_contract: {"kind": "label", "options": [["yes", "it is", "true", "yes it is"], ["no", "it is not", "false", "no it is not"]]}
@@ -1060,10 +1060,10 @@ topics:
             answer: '14'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Check each station of the second line against the first line. Stations $6$, $12$ and $15$ are on the first line. Station $14$ is not, so it is the station where only the second line stops.'
-          - problem: 'Sam says that $\{3, 6, 9, 12\} \subseteq \{3, 6\}$ because both sets contain $3$ and $6$. What is the least element of $\{3, 6, 9, 12\}$ that is missing from $\{3, 6\}$?'
+          - problem: 'The statement $\{3, 6, 9, 12\} \subseteq \{3, 6\}$ is false. What is the least element of $\{3, 6, 9, 12\}$ that is missing from $\{3, 6\}$?'
             answer: '9'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Sam only looked at the elements that the sets share. For a subset claim, every element of $\{3, 6, 9, 12\}$ must be in $\{3, 6\}$. The elements $9$ and $12$ are missing, and the least of them is $9$.'
+            solution_sketch: 'For a subset statement, every element of $\{3, 6, 9, 12\}$ must be in $\{3, 6\}$. The sets share $3$ and $6$, but the elements $9$ and $12$ are missing, and the least of them is $9$.'
           - problem: 'Is $\varnothing \subseteq \{4, 7\}$?'
             answer: 'yes'
             answer_contract: {"kind": "label", "options": [["yes", "it is", "true", "yes it is"], ["no", "it is not", "false", "no it is not"]]}
@@ -1098,10 +1098,10 @@ topics:
             answer: '3'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The folder holds the file $4$, the subfolder $\{7\}$ and the file $9$ directly. The file $7$ is inside the subfolder, so it is not held directly by $F$. So $F$ holds $3$ items directly.'
-          - problem: 'Maya claims that $\{5\} \subseteq C$ for $C = \{0, \{5\}, \{6, 8\}, 4\}$, because $\{5\}$ is listed in $C$. Which number would have to be an element of $C$ for her claim to be true?'
+          - problem: 'For $C = \{0, \{5\}, \{6, 8\}, 4\}$, the statement $\{5\} \in C$ is true and $\{5\} \subseteq C$ is false. Which number would have to be an element of $C$ for $\{5\} \subseteq C$ to be true?'
             answer: '5'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Maya''s reason shows that $\{5\} \in C$, which is a different statement. For $\{5\} \subseteq C$, every element of $\{5\}$ must be an element of $C$. The only element of $\{5\}$ is $5$, and $5$ is not listed in $C$, so $5$ would have to be an element of $C$.'
+            solution_sketch: 'Here $\{5\} \in C$ says that $\{5\}$ is an element of $C$, which is a different statement. For $\{5\} \subseteq C$, every element of $\{5\}$ must be an element of $C$. The only element of $\{5\}$ is $5$, and $5$ is not listed in $C$, so $5$ would have to be an element of $C$.'
           - problem: 'A box $B$ holds the number $8$ and a smaller box with the numbers $1$ and $2$, so $B = \{8, \{1, 2\}\}$. How many numbers are elements of $B$ itself?'
             answer: '1'
             answer_contract: {"kind": "exact"}
@@ -1135,7 +1135,7 @@ topics:
             answer: '127'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The integers with $n^2 < 10$ are $-3, -2, -1, 0, 1, 2, 3$, so $A$ has $7$ elements. It has $2^7 = 128$ subsets. Leaving out $A$ itself gives $128 - 1 = 127$ proper subsets.'
-          - problem: 'Tess says that $\{1, 2, 3, 4, 5\}$ has $2^5 = 32$ proper subsets. How many proper subsets does it have?'
+          - problem: 'How many proper subsets does $\{1, 2, 3, 4, 5\}$ have?'
             answer: '31'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The number $2^5 = 32$ counts all subsets, including the set itself. A proper subset must differ from the set, so one subset is removed. That gives $32 - 1 = 31$ proper subsets.'
@@ -1205,10 +1205,10 @@ topics:
             answer: '4'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Picking $3$ sides to take is the same as picking the $1$ side to leave out. The menu has $4$ sides, so there are $4$ ways to leave one out. So there are $4$ different lunch deals.'
-          - problem: 'Lena lists the elements of $\mathcal{P}(\{a, b\})$ as $\{a\}$, $\{b\}$ and $\{a, b\}$. How many subsets did she leave out?'
+          - problem: 'The power set $\mathcal{P}(\{a, b\})$ contains $\{a\}$, $\{b\}$ and $\{a, b\}$. How many other elements does it contain?'
             answer: '1'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The set $\{a, b\}$ has $2^2 = 4$ subsets: $\varnothing$, $\{a\}$, $\{b\}$ and $\{a, b\}$. Lena lists $3$ of them. She left out the empty set, so $1$ subset is missing.'
+            solution_sketch: 'The set $\{a, b\}$ has $2^2 = 4$ subsets: $\varnothing$, $\{a\}$, $\{b\}$ and $\{a, b\}$. Three of them are named, and the fourth is the empty set. So $1$ subset is not named.'
         constraints: "enumerate all subsets of a set with at most 3 elements"
       - id: kp2
         name: "Counting subsets"
@@ -1247,10 +1247,10 @@ topics:
             answer: '31'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Put $a$ in the subset, then each of the other $5$ elements is in or out, which gives $2^5 = 32$ subsets. The whole set $S$ is one of them and is not proper. So $32 - 1 = 31$.'
-          - problem: 'Ben says a set with $5$ elements has $2 \cdot 5 = 10$ subsets. How many subsets does it have?'
+          - problem: 'How many subsets does a set with $5$ elements have?'
             answer: '32'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Each element is in or out, and the choices multiply, so there are $2^5$ subsets, not $2 \cdot 5$. Now $2^5 = 32$. Ben added the choices when he should have multiplied them.'
+            solution_sketch: 'Each element is in or out, and the choices multiply, so there are $2^5$ subsets, not $2 \cdot 5$. Now $2^5 = 32$.'
         constraints: "powers of two; optionally one fixed-element or proper-subset twist"
       - id: kp3
         name: "Membership in a power set"
@@ -1272,7 +1272,7 @@ topics:
             answer: '4'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The set $\{1, m\}$ is in the power set exactly when $m$ is one of $1$, $2$, $3$, $5$. So $m = 1$, $m = 2$ and $m = 3$ all work as members. The first positive integer that fails is $m = 4$.'
-          - problem: 'A lunch menu has the items $1$, $2$, $3$, $4$ and $5$. An order is a set of menu items. Mia''s order was recorded as $\{2, 4, 7\}$. Which item number shows that this is not a valid order?'
+          - problem: 'A lunch menu has the items $1$, $2$, $3$, $4$ and $5$. An order is a set of menu items. An order is recorded as $\{2, 4, 7\}$. Which item number shows that this is not a valid order?'
             answer: '7'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'A valid order is a subset of $\{1, 2, 3, 4, 5\}$, which means an element of the power set of the menu. Items $2$ and $4$ are on the menu, but item $7$ is not. So $7$ shows that $\{2, 4, 7\}$ is not a valid order.'
@@ -1339,10 +1339,10 @@ topics:
             answer: '5'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The union is $A \cup B = \{1, 2, 5\}$. The elements $1$ and $2$ are in $A$, but $5$ is not in $A$. So $5$ is the element that shows $A \cup B \not\subseteq A$.'
-          - problem: 'Sam says that $A \not\subseteq B$ means that every element of $A$ is outside $B$. Is Sam right?'
-            answer: 'no'
-            answer_contract: {"kind": "label", "options": [["yes", "it is", "true", "yes it is"], ["no", "it is not", "false", "no it is not"]]}
-            solution_sketch: 'The statement $A \subseteq B$ says every element of $A$ is in $B$. Its negation says that some element of $A$ is not in $B$, which is weaker than saying every element of $A$ is outside $B$. For example $\{1, 2\} \not\subseteq \{2, 3\}$, yet $2$ is in both sets. So Sam is not right.'
+          - problem: 'For $A = \{1, 2\}$ and $B = \{2, 3\}$, the statement $A \not\subseteq B$ is true. Which element of $A$ is not in $B$?'
+            answer: '1'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The statement $A \subseteq B$ says every element of $A$ is in $B$. Its negation $A \not\subseteq B$ says that some element of $A$ is not in $B$. Here $2$ is in both sets, and $1$ is in $A$ but not in $B$.'
           - problem: 'Suppose $A \subseteq B$, $|A| = 5$ and $|B| = 9$. How many elements does $B \setminus A$ have?'
             answer: '4'
             answer_contract: {"kind": "exact"}
@@ -1376,10 +1376,10 @@ topics:
             answer: '1'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The intersection is $A \cap B = \{2, 3\}$. The element $1$ is in $A$ but not in $A \cap B$. So $A \subseteq A \cap B$ fails because of $1$, and the two sets are not equal.'
-          - problem: 'Sam wants to prove $A \cap B = A$ and shows only that $A \cap B \subseteq A$. Is his proof complete?'
+          - problem: 'A proof of $A \cap B = A$ shows only that $A \cap B \subseteq A$. Is the proof complete?'
             answer: 'no'
             answer_contract: {"kind": "label", "options": [["yes", "it is", "true", "yes it is"], ["no", "it is not", "false", "no it is not"]]}
-            solution_sketch: 'To prove two sets equal, we must prove both inclusions. Sam proved $A \cap B \subseteq A$, which is true for all sets $A$ and $B$ and so says little about this claim. He still has to prove $A \subseteq A \cap B$. So his proof is not complete.'
+            solution_sketch: 'To prove two sets equal, we must prove both inclusions. The inclusion $A \cap B \subseteq A$ is true for all sets $A$ and $B$ and so says little about this claim. The inclusion $A \subseteq A \cap B$ is still to prove. So the proof is not complete.'
           - problem: 'How many subsets $A$ of $\{1, 2, 3, 4\}$ satisfy $A \cup \{1, 2, 3\} = \{1, 2, 3\}$?'
             answer: '8'
             answer_contract: {"kind": "exact"}
@@ -1426,7 +1426,7 @@ topics:
             answer: '1'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The set $\mathcal{P}(A \cup B) = \mathcal{P}(\{1, 2\})$ has $4$ elements: $\varnothing$, $\{1\}$, $\{2\}$ and $\{1, 2\}$. The set $\mathcal{P}(A) \cup \mathcal{P}(B)$ holds $\varnothing$, $\{1\}$ and $\{2\}$. Only $\{1, 2\}$ is missing, so the answer is $1$.'
-          - problem: 'Sam proves that $A \subseteq B$ implies $\mathcal{P}(A) \subseteq \mathcal{P}(B)$. Does his proof also prove that $\mathcal{P}(A) \subseteq \mathcal{P}(B)$ implies $A \subseteq B$?'
+          - problem: 'A proof shows that $A \subseteq B$ implies $\mathcal{P}(A) \subseteq \mathcal{P}(B)$. Does the same proof also show that $\mathcal{P}(A) \subseteq \mathcal{P}(B)$ implies $A \subseteq B$?'
             answer: 'no'
             answer_contract: {"kind": "label", "options": [["yes", "it is", "true", "yes it is"], ["no", "it is not", "false", "no it is not"]]}
             solution_sketch: 'A proof of "if $P$ then $Q$" does not prove "if $Q$ then $P$". The second implication needs its own argument, which starts from the fact that $A \in \mathcal{P}(A)$. So the first proof does not prove the second implication.'
@@ -1495,10 +1495,10 @@ topics:
             answer: '11'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'Two groups clash when their sets of hours share an element. Groups X and Y both have the hour $11$, while group Z shares no hour with either of them, so the clash is at $11$.'
-          - problem: 'Sam checks the family $A = \{1, 2\}$, $B = \{3, 4\}$, $C = \{2, 5\}$ like this: "$A$ and $B$ have nothing in common, and $B$ and $C$ have nothing in common, so the family is pairwise disjoint." Which element shows that Sam is wrong?'
+          - problem: 'This check of the family $A = \{1, 2\}$, $B = \{3, 4\}$, $C = \{2, 5\}$ reads: "$A$ and $B$ have nothing in common, and $B$ and $C$ have nothing in common, so the family is pairwise disjoint." Which element shows that this check is wrong?'
             answer: '2'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'Pairwise disjoint means that every two different sets of the family are disjoint, and Sam did not check the pair $A$ and $C$. That pair shares the element $2$, so the family is not pairwise disjoint.'
+            solution_sketch: 'Pairwise disjoint means that every two different sets of the family are disjoint, and the check does not include the pair $A$ and $C$. That pair shares the element $2$, so the family is not pairwise disjoint.'
           - problem: 'A chess club has the members with student numbers $\{4, 9, 16, 22\}$ and a drama club has the members $\{3, 8, 15, 20\}$. Can both clubs meet at the same time without any student having to be in two places?'
             answer: 'yes'
             answer_contract: {"kind":"label","options":[["yes","they can","both can meet","yes, they can"],["no","they cannot","no, they cannot"]]}
@@ -1533,10 +1533,10 @@ topics:
             answer: '5'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The union of the blocks must be all of $S$. The blocks together contain $1, 2, 3, 4, 6$, so the element $5$ lies in no block and is not covered.'
-          - problem: 'Sam says that $\{\{1, 2, 3\}, \{3, 4\}, \{5, 6\}\}$ is a partition of $\{1, 2, 3, 4, 5, 6\}$, because every element lies in some block. Which element shows that Sam is wrong?'
+          - problem: 'Every element of $\{1, 2, 3, 4, 5, 6\}$ lies in some block of $\{\{1, 2, 3\}, \{3, 4\}, \{5, 6\}\}$. Which element shows that this family is not a partition of the set?'
             answer: '3'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'Sam checked only that the blocks cover the set, and a partition also needs the blocks to be pairwise disjoint. The element $3$ lies in both $\{1, 2, 3\}$ and $\{3, 4\}$, so the blocks overlap.'
+            solution_sketch: 'The blocks cover the set, and a partition also needs the blocks to be pairwise disjoint. The element $3$ lies in both $\{1, 2, 3\}$ and $\{3, 4\}$, so the blocks overlap.'
           - problem: 'A teacher splits a class of $28$ pupils into project teams of $4$ pupils each, so that every pupil is in exactly one team. How many teams are there?'
             answer: '7'
             answer_contract: {"kind":"exact"}
@@ -1702,10 +1702,10 @@ topics:
             answer: '70'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'Since $A$ and $B$ are disjoint, no pair of $A \times B$ equals a pair of $B \times A$, because the first entries lie in different sets. So the union has $5 \cdot 7 + 7 \cdot 5 = 70$ elements.'
-          - problem: 'Sam counts the pairs of $A \times B$ for $|A| = 5$ and $|B| = 4$ by adding the sizes, and gets $9$. What is the correct number of pairs?'
+          - problem: 'How many pairs does $A \times B$ have for $|A| = 5$ and $|B| = 4$?'
             answer: '20'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'Adding the sizes counts the elements of $A$ and $B$ once each, but a pair uses one element from each set. Every element of $A$ is paired with every element of $B$, so there are $5 \cdot 4 = 20$ pairs.'
+            solution_sketch: 'Adding the sizes ($9$) counts the elements of $A$ and $B$ once each, but a pair uses one element from each set. Every element of $A$ is paired with every element of $B$, so there are $5 \cdot 4 = 20$ pairs.'
           - problem: 'Let $A$, $B$ and $C$ be sets with $|A| = 2$, $|B| = 5$ and $|C| = 3$. How many ordered triples $(a, b, c)$ with $a \in A$, $b \in B$ and $c \in C$ are there?'
             answer: '30'
             answer_contract: {"kind":"exact"}
@@ -1735,10 +1735,10 @@ topics:
             answer: '(2,1),(3,1),(5,1),(5,4)'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'Compare the first entry with the second entry for each of the six pairs of $A \times B$. The pairs $(2, 4)$ and $(3, 4)$ fail because $2 < 4$ and $3 < 4$, and the pairs $(2, 1), (3, 1), (5, 1), (5, 4)$ pass.'
-          - problem: 'Sam lists the pairs $(a, b) \in \{1, 2, 3\} \times \{1, 2, 3\}$ with $a + b = 4$ as $(1, 3)$ and $(3, 1)$. Which pair did Sam leave out?'
+          - problem: 'The pairs $(a, b) \in \{1, 2, 3\} \times \{1, 2, 3\}$ with $a + b = 4$ include $(1, 3)$ and $(3, 1)$. Which other pair has $a + b = 4$?'
             answer: '(2, 2)'
             answer_contract: {"kind":"coordinates","arity":2}
-            solution_sketch: 'The pairs with sum $4$ are $(1, 3)$, $(2, 2)$ and $(3, 1)$. Sam forgot that the two entries may be equal, so he left out $(2, 2)$.'
+            solution_sketch: 'The pairs with sum $4$ are $(1, 3)$, $(2, 2)$ and $(3, 1)$. The two entries of a pair may be equal, so $(2, 2)$ is the other pair.'
           - problem: 'A robot walks on a board whose squares are the pairs (column, row) with column and row from $1$ to $4$. It may only stand on a square whose row is twice its column. List the squares where the robot may stand.'
             answer: '(1,2),(2,4)'
             answer_contract: {"kind":"exact"}
@@ -1802,10 +1802,10 @@ topics:
             answer: '1, 2, 5, 6'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The market is open on a day exactly when the day lies in the union of the three sets. Collecting the days gives $1, 2$ from the first stall, $5$ as new from the second, and $6$ from the third, so the days are $1, 2, 5, 6$.'
-          - problem: 'Sam finds the intersection of $A_1 = \{2, 4, 6\}$, $A_2 = \{4, 6, 8\}$ and $A_3 = \{6, 8, 10\}$ as $\{4, 6, 8\}$. What is the correct intersection?'
+          - problem: 'What is the intersection of $A_1 = \{2, 4, 6\}$, $A_2 = \{4, 6, 8\}$ and $A_3 = \{6, 8, 10\}$?'
             answer: '6'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'Sam kept the elements that lie in two of the sets, but the intersection of a family needs the elements that lie in all of them. The element $4$ is missing from $A_3$ and $8$ is missing from $A_1$, so only $6$ is left.'
+            solution_sketch: 'The intersection of a family needs the elements that lie in all of its sets, not in two of them. The element $4$ is missing from $A_3$ and $8$ is missing from $A_1$, so only $6$ is left.'
           - problem: 'Let $A_2 = \{2, 7\}$, $A_3 = \{3, 7\}$ and $A_4 = \{4, 7\}$. Find $\bigcup_{i=2}^{4} A_i$.'
             answer: '2, 3, 4, 7'
             answer_contract: {"kind":"exact"}
@@ -1848,10 +1848,10 @@ topics:
             answer: '6'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'A number is in every $F_n$ when $2 - \tfrac{1}{n} \le x \le 7 + \tfrac{1}{n}$ for all $n$, which means $2 \le x \le 7$. The integers $2, 3, 4, 5, 6, 7$ lie in $[2, 7]$, so there are $6$ of them.'
-          - problem: 'Sam says that $\bigcap_{n \ge 1} \left(0, 1 + \tfrac{1}{n}\right) = (0, 1)$. Which number does Sam wrongly leave out?'
+          - problem: 'Which number lies in $\bigcap_{n \ge 1} \left(0, 1 + \tfrac{1}{n}\right)$ but not in $(0, 1)$?'
             answer: '1'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'The number $1$ satisfies $0 < 1 < 1 + \tfrac{1}{n}$ for every $n$, so it lies in every set of the family and hence in the intersection. Sam treated the right endpoints $1 + \tfrac{1}{n}$ as if the limit $1$ were excluded, but the correct intersection is $(0, 1]$.'
+            solution_sketch: 'The number $1$ satisfies $0 < 1 < 1 + \tfrac{1}{n}$ for every $n$, so it lies in every set of the family and hence in the intersection. The right endpoints $1 + \tfrac{1}{n}$ come down to $1$ but stay above it, so the intersection is $(0, 1]$.'
           - problem: 'For $n \ge 1$ let $D_n = \left[1, 6 + \tfrac{1}{n}\right]$. Find $\bigcap_{n \ge 1} D_n$.'
             answer: '[1, 6]'
             answer_contract: {"kind":"inequality_union"}
@@ -1889,10 +1889,10 @@ topics:
             answer: '0, 7, 8'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'An integer is outside the union when it lies in none of the sets. The union is $\{1, 2, 3, 4, 5, 6\}$, so the integers from $0$ to $8$ outside it are $0$, $7$ and $8$.'
-          - problem: 'Sam says that $1.5 \in \bigcap_{n \ge 1} \left(0, 1 + \tfrac{1}{n}\right)$, because $1.5 \in (0, 2)$. For which $n$ does Sam''s claim first fail?'
+          - problem: 'The number $1.5$ lies in $(0, 2)$, the set of $\bigcap_{n \ge 1} \left(0, 1 + \tfrac{1}{n}\right)$ for $n = 1$. For which $n$ does $1.5$ first fail to lie in $\left(0, 1 + \tfrac{1}{n}\right)$?'
             answer: '2'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'Sam checked only the first set, but the intersection needs every set. For $n = 2$ the set is $\left(0, 1.5\right)$, which does not contain $1.5$, so the claim first fails at $n = 2$.'
+            solution_sketch: 'The intersection needs every set, not only the first. For $n = 2$ the set is $\left(0, 1.5\right)$, which does not contain $1.5$, so $1.5$ first fails at $n = 2$.'
         constraints: 'decide membership in an indexed union (find a witness index) and in an indexed intersection (every index or one failing index); contexts with months and clubs'
     diagnostic_exemplar:
       problem: 'For $n \ge 1$ let $A_n = \left(0,\ 1 + \tfrac{1}{n}\right)$. Compute $\bigcup_{n \ge 1} A_n$ and $\bigcap_{n \ge 1} A_n$.'
@@ -1991,10 +1991,10 @@ topics:
             answer: '49'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The rod is accepted by batch $n$ when $50.02 < 50 + \tfrac{1}{n}$, that is when $\tfrac{1}{n} > 0.02$ and $n < 50$. The batches $1, 2, \dots, 49$ accept the rod, so there are $49$ batches.'
-          - problem: 'Sam claims that $1.25 \in \bigcap_{n \ge 1} \left(0, 1 + \tfrac{1}{n}\right)$, because $1.25 < 2$. For which $n$ does Sam''s claim first fail?'
+          - problem: 'The number $1.25$ lies in $(0, 2)$, the set of $\bigcap_{n \ge 1} \left(0, 1 + \tfrac{1}{n}\right)$ for $n = 1$. For which $n$ does $1.25$ first fail to lie in $\left(0, 1 + \tfrac{1}{n}\right)$?'
             answer: '4'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'Sam looked at the first set only, but the intersection needs every set. The number $1.25$ lies in $\left(0, 1 + \tfrac{1}{n}\right)$ when $\tfrac{1}{n} > 0.25$, that is for $n = 1, 2, 3$, and for $n = 4$ the right endpoint is $1.25$ itself, so the claim first fails at $n = 4$.'
+            solution_sketch: 'The intersection needs every set, not only the first. The number $1.25$ lies in $\left(0, 1 + \tfrac{1}{n}\right)$ when $\tfrac{1}{n} > 0.25$, that is for $n = 1, 2, 3$, and for $n = 4$ the right endpoint is $1.25$ itself, so $1.25$ first fails at $n = 4$.'
           - problem: 'Write the full proof that $\bigcap_{n=1}^{\infty} A_n = \{0\}$, where $A_n = \left[-\tfrac{1}{n}, \tfrac{1}{n}\right]$ is a closed interval of real numbers for each positive integer $n$.'
             answer: 'intersection of A_n is {0}'
             answer_contract: {"kind":"none"}
@@ -2100,7 +2100,7 @@ topics:
             answer: '1, 2, 3, 4, 5'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'We need $A \cup (B \cap C)$ with $A$ the hat set. The pupils with both gloves and a scarf are $B \cap C = \{4\}$, and adding the hat pupils $1, 2, 3, 5$ gives $\{1, 2, 3, 4, 5\}$.'
-          - problem: 'Sam says that $A \cup (B \cap C) = (A \cup B) \cap C$. Test this with $A = \{1\}$, $B = \{2\}$ and $C = \{2, 3\}$: which element of $A \cup (B \cap C)$ is missing from $(A \cup B) \cap C$?'
+          - problem: 'Test $A \cup (B \cap C) = (A \cup B) \cap C$ with $A = \{1\}$, $B = \{2\}$ and $C = \{2, 3\}$: which element of $A \cup (B \cap C)$ is missing from $(A \cup B) \cap C$?'
             answer: '1'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'We have $A \cup (B \cap C) = \{1\} \cup \{2\} = \{1, 2\}$ and $(A \cup B) \cap C = \{1, 2\} \cap \{2, 3\} = \{2\}$. The element $1$ is in the first set but not in the second, so the identity is false.'
@@ -2129,10 +2129,10 @@ topics:
             answer: 'no'
             answer_contract: {"kind":"label","options":[["yes","it is true","true","it holds","always","they do","it is","it is always true"],["no","it is false","false","not always","it does not hold","they do not","it is not","it is not always true"]]}
             solution_sketch: 'An element outside $A \cap B$ needs to be outside only one of the sets, while $A^c \cap B^c$ asks for both. For $U = \{1, 2\}$, $A = \{1\}$ and $B = \{2\}$ we get $(A \cap B)^c = \{1, 2\}$ but $A^c \cap B^c = \varnothing$.'
-          - problem: 'Sam claims that $(A \cup B)^c = A^c \cup B^c$. Test it with $U = \{1, 2, 3, 4\}$, $A = \{1, 2\}$ and $B = \{2, 3\}$: which elements of $A^c \cup B^c$ are not in $(A \cup B)^c$?'
+          - problem: 'Test $(A \cup B)^c = A^c \cup B^c$ with $U = \{1, 2, 3, 4\}$, $A = \{1, 2\}$ and $B = \{2, 3\}$: which elements of $A^c \cup B^c$ are not in $(A \cup B)^c$?'
             answer: '1, 3'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'We have $A^c = \{3, 4\}$ and $B^c = \{1, 4\}$, so $A^c \cup B^c = \{1, 3, 4\}$. Also $(A \cup B)^c = \{1, 2, 3\}^c = \{4\}$, so the elements $1$ and $3$ show that Sam is wrong; the correct law is $(A \cup B)^c = A^c \cap B^c$.'
+            solution_sketch: 'We have $A^c = \{3, 4\}$ and $B^c = \{1, 4\}$, so $A^c \cup B^c = \{1, 3, 4\}$. Also $(A \cup B)^c = \{1, 2, 3\}^c = \{4\}$, so the elements $1$ and $3$ show that the identity is false; the correct law is $(A \cup B)^c = A^c \cap B^c$.'
           - problem: 'The pupils numbered $1$ to $10$ are the universal set. The pupils $\{1, 2, 3, 4, 5\}$ walked to school and the pupils $\{5, 6, 7\}$ came by bus. Which pupils neither walked nor came by bus?'
             answer: '8, 9, 10'
             answer_contract: {"kind":"exact"}
@@ -2182,10 +2182,10 @@ topics:
             answer: '14'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The fiction books that are in French are $6$ of the $20$ fiction books. The books that are fiction but not French number $20 - 6 = 14$, which is $|A \setminus B| = |A| - |A \cap B|$.'
-          - problem: 'Sam claims that $A \setminus (B \cap C) = (A \setminus B) \cap (A \setminus C)$. Test it with $A = \{1, 2, 3\}$, $B = \{1, 2\}$ and $C = \{2, 3\}$: which elements of $A \setminus (B \cap C)$ are missing from $(A \setminus B) \cap (A \setminus C)$?'
+          - problem: 'Test $A \setminus (B \cap C) = (A \setminus B) \cap (A \setminus C)$ with $A = \{1, 2, 3\}$, $B = \{1, 2\}$ and $C = \{2, 3\}$: which elements of $A \setminus (B \cap C)$ are missing from $(A \setminus B) \cap (A \setminus C)$?'
             answer: '1, 3'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'We have $B \cap C = \{2\}$, so $A \setminus (B \cap C) = \{1, 3\}$. Also $A \setminus B = \{3\}$ and $A \setminus C = \{1\}$, so the intersection of these is empty and Sam is wrong; the correct law has a union, $A \setminus (B \cap C) = (A \setminus B) \cup (A \setminus C)$.'
+            solution_sketch: 'We have $B \cap C = \{2\}$, so $A \setminus (B \cap C) = \{1, 3\}$. Also $A \setminus B = \{3\}$ and $A \setminus C = \{1\}$, so the intersection of these is empty and the identity is false; the correct law has a union, $A \setminus (B \cap C) = (A \setminus B) \cup (A \setminus C)$.'
           - problem: 'Write the full proof that $A \setminus (B \cap C) = (A \setminus B) \cup (A \setminus C)$ for all sets $A$, $B$ and $C$.'
             answer: 'A-(B n C) = (A-B) u (A-C)'
             answer_contract: {"kind":"none"}

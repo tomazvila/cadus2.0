@@ -37,7 +37,7 @@ topics:
             answer: '13'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'We have $11 = 2 \cdot 5 + 1$ and $15 = 2 \cdot 7 + 1$, so $a = 5$ and $b = 7$. The total is $2(5 + 7 + 1) = 26$ hikers, which form $13$ pairs.'
-          - problem: 'Sam wants to prove that the sum of two odd integers is even. Sam writes $m = 2k + 1$ and $n = 2k + 1$, then $m + n = 4k + 2 = 2(2k + 1)$, so $m + n$ is even. Is this a correct proof for all odd integers $m$ and $n$?'
+          - problem: 'A proof that the sum of two odd integers is even writes $m = 2k + 1$ and $n = 2k + 1$, then $m + n = 4k + 2 = 2(2k + 1)$, so $m + n$ is even. Is this a correct proof for all odd integers $m$ and $n$?'
             answer: 'no'
             answer_contract: {"kind":"label","options":[["yes","the proof is correct","a correct proof","true","it is true","correct","it is correct","yes it is"],["no","not a correct proof","the proof is wrong","wrong","false","it is false","not true","incorrect"]]}
             solution_sketch: 'Using the same letter $k$ for both numbers forces $m = n$. The argument covers only equal odd integers such as $3 + 3$, and it says nothing about $3 + 5$. A correct proof writes $m = 2k + 1$ and $n = 2l + 1$ with two integers $k$ and $l$.'
@@ -70,7 +70,7 @@ topics:
             answer: 'yes'
             answer_contract: {"kind":"label","options":[["yes","it is true","true","the statement is true","correct","it is correct","yes it is"],["no","it is false","false","the statement is false","not true","incorrect","it is not correct"]]}
             solution_sketch: 'The statement is true. Since $c \le 0$, the number $-c$ is at least $0$, and multiplying $a \le b$ by $-c \ge 0$ keeps the direction, so $-ac \le -bc$. Multiplying by $-1$ reverses the inequality again and gives $ac \ge bc$.'
-          - problem: 'Sam claims that $a < b$ implies $a^2 < b^2$ for all real numbers $a$ and $b$. Take $b = 2$. Which integer $a$ shows that Sam is wrong?'
+          - problem: 'Take $b = 2$. Which integer $a$ makes the statement "$a < b$ implies $a^2 < b^2$" false?'
             answer: '-3'
             answer_contract: {"kind":"property","check":"integer_in_range","args":{"max":-2}}
             solution_sketch: 'We need $a < 2$ and $a^2 \ge 4$. For $a = -3$ we have $-3 < 2$, but $a^2 = 9$ and $b^2 = 4$, so $a^2 < b^2$ is false. Every integer $a \le -2$ works, and $a = -3$ is one of them.'
@@ -103,7 +103,7 @@ topics:
             answer: '15'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'We have $12 = 4 \cdot 3$, so $k = 3$, and $60 = 12 \cdot 5$, so $l = 5$. Then $kl = 15$, and indeed $c = 60 = 4 \cdot 15$.'
-          - problem: 'Sam claims that if $a \mid bc$ then $a \mid b$ or $a \mid c$, for all positive integers $a$, $b$ and $c$. Is the claim true?'
+          - problem: 'Is it true that if $a \mid bc$ then $a \mid b$ or $a \mid c$, for all positive integers $a$, $b$ and $c$?'
             answer: 'no'
             answer_contract: {"kind":"label","options":[["yes","the claim is true","true","it is true","correct","it is correct","yes it is"],["no","the claim is false","not true for all","false","it is false","not true","incorrect","it is not correct"]]}
             solution_sketch: 'The claim fails for $a = 6$, $b = 2$ and $c = 3$. Here $6 \mid bc = 6$, but $6 \nmid 2$ and $6 \nmid 3$.'
@@ -167,10 +167,10 @@ topics:
             answer: '-4'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'Here $a = 1$, $b = -6$ and $c = 10$, so $b^2 - 4ac = 36 - 40 = -4$. The discriminant is negative, so the equation has no real solution and the hypothesis is never true.'
-          - problem: 'Sam says that "for every integer $n$, if $2n = 1$ then $n > 10$" is false, because $n > 10$ is not true when $2n = 1$. Is Sam right?'
-            answer: 'no'
-            answer_contract: {"kind":"label","options":[["yes","Sam is right","true","it is true","correct","it is correct","yes it is"],["no","Sam is wrong","Sam is not right","wrong","false","it is false","not true","incorrect"]]}
-            solution_sketch: 'Sam is wrong. No integer $n$ satisfies $2n = 1$, since $2n$ is even and $1$ is odd. So the hypothesis is never true, and the statement is true vacuously.'
+          - problem: 'Is the statement "for every integer $n$, if $2n = 1$ then $n > 10$" true?'
+            answer: 'yes'
+            answer_contract: {"kind": "label", "options": [["yes", "it is", "true", "yes it is"], ["no", "it is not", "false", "no it is not"]]}
+            solution_sketch: 'No integer $n$ satisfies $2n = 1$, since $2n$ is even and $1$ is odd. So the hypothesis is never true, and the statement is true vacuously.'
           - problem: 'A quiz has $40$ questions. The rule says: if a student answers more than $40$ questions correctly, then the student wins a car. The quiz is taken by $25$ students. How many students can win a car by this rule?'
             answer: '0'
             answer_contract: {"kind":"exact"}
@@ -200,10 +200,10 @@ topics:
             answer: '-2'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The square $(x + 2)^2$ is least, namely $0$, when $x + 2 = 0$, that is, at $x = -2$. There the expression equals $1$, and it is larger for every other $x$.'
-          - problem: 'Sam says that "for every real $x$, if $x > 7$ then $x^2 > 40$" has a trivial proof, because $x^2$ is always large. What is the largest positive integer $x$ for which $x^2 > 40$ is false?'
+          - problem: 'What is the largest positive integer $x$ for which $x^2 > 40$ is false?'
             answer: '6'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'We have $6^2 = 36 \le 40$, but $7^2 = 49 > 40$ and larger integers give larger squares. So the conclusion is false for $x = 6$, and it is not true for every real $x$. A trivial proof is not available, and the proof must use the hypothesis $x > 7$.'
+            solution_sketch: 'We have $6^2 = 36 \le 40$, but $7^2 = 49 > 40$ and larger integers give larger squares. So the conclusion is false for $x = 6$, and it is not true for every real $x$. A proof of the statement "for every real $x$, if $x > 7$ then $x^2 > 40$" must use the hypothesis $x > 7$.'
           - problem: 'A shop gives every customer a receipt. The rule "if a customer spends more than $50$ euros, then the customer gets a receipt" is therefore true by a trivial proof. On a day with $120$ customers, of whom $45$ spend more than $50$ euros, how many customers get a receipt?'
             answer: '120'
             answer_contract: {"kind":"exact"}
@@ -229,7 +229,7 @@ topics:
             answer: '-8'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'Here $a = 1$, $b = -2$ and $c = 3$, so $b^2 - 4ac = 4 - 12 = -8$. The discriminant is negative, so no real $x$ satisfies the hypothesis.'
-          - problem: 'Sam says that "for every integer $n$, if $n$ is even then $n^2 + 1$ is odd" has a trivial proof, because $n^2 + 1$ is always odd. Which integer $n$ from $2$ to $9$ shows that the conclusion is not true for every integer?'
+          - problem: 'In the statement "for every integer $n$, if $n$ is even then $n^2 + 1$ is odd", which integer $n$ from $2$ to $9$ makes the conclusion "$n^2 + 1$ is odd" false?'
             answer: '3'
             answer_contract: {"kind":"property","check":"integer_in_range","args":{"min":2,"max":9,"not_multiple_of":2}}
             solution_sketch: 'For $n = 3$ we get $n^2 + 1 = 10$, which is even. The conclusion is false for every odd $n$, so it is not true for every integer. The proof must use the hypothesis that $n$ is even.'
@@ -292,10 +292,10 @@ topics:
             answer: 'yes'
             answer_contract: {"kind":"label","options":[["yes","always rational","it is always rational","true","it is true","correct","it is correct","yes it is"],["no","not always","sometimes not rational","false","it is false","not true","incorrect","it is not correct"]]}
             solution_sketch: 'The product of $\frac{a}{b}$ and $\frac{c}{d}$ is $\frac{ac}{bd}$. Here $ac$ and $bd$ are integers, and $bd \ne 0$ because $b \ne 0$ and $d \ne 0$. So the product is a quotient of integers with a nonzero denominator, and it is rational.'
-          - problem: 'Sam writes $\frac{a}{b} + \frac{c}{d} = \frac{a + c}{b + d}$. What value does Sam''s formula give for $\frac{1}{2} + \frac{1}{3}$?'
+          - problem: 'The formula $\frac{a}{b} + \frac{c}{d} = \frac{a + c}{b + d}$ is wrong. What value does its right side give for $\frac{1}{2} + \frac{1}{3}$?'
             answer: '2/5'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'Sam''s formula gives $\frac{1 + 1}{2 + 3} = \frac{2}{5}$. The true sum is $\frac{5}{6}$, and $\frac{2}{5} \ne \frac{5}{6}$, so the formula is wrong.'
+            solution_sketch: 'The right side gives $\frac{1 + 1}{2 + 3} = \frac{2}{5}$. The true sum is $\frac{5}{6}$, and $\frac{2}{5} \ne \frac{5}{6}$, so the formula is wrong.'
           - problem: 'A recipe uses $\frac{2}{3}$ cup of flour for the dough and $\frac{3}{4}$ cup for the topping. How many cups of flour does it use in all?'
             answer: '17/12'
             answer_contract: {"kind":"exact"}
@@ -321,10 +321,10 @@ topics:
             answer: '-1/12'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'We have $r - s = \frac{3 \cdot 6 - 4 \cdot 5}{4 \cdot 6} = \frac{18 - 20}{24} = \frac{-2}{24} = -\frac{1}{12}$. The numerator $-2$ is an integer and the denominator $24$ is not $0$.'
-          - problem: 'Sam writes $\frac{a}{b} - \frac{c}{d} = \frac{a - c}{b - d}$ to prove that the difference of two rationals is rational. What denominator does Sam''s formula give for $\frac{3}{5} - \frac{1}{5}$?'
+          - problem: 'What denominator does the right side of $\frac{a}{b} - \frac{c}{d} = \frac{a - c}{b - d}$ have for $\frac{3}{5} - \frac{1}{5}$?'
             answer: '0'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'Sam''s formula gives the denominator $b - d = 5 - 5 = 0$, so the formula breaks down for these fractions. The true difference is $\frac{2}{5}$. The correct formula has the denominator $bd$, which is never $0$.'
+            solution_sketch: 'The right side gives the denominator $b - d = 5 - 5 = 0$, so the formula breaks down for these fractions. The true difference is $\frac{2}{5}$. The correct formula has the denominator $bd$, which is never $0$.'
           - problem: 'Is the quotient $\frac{r}{s}$ of two rational numbers $r$ and $s$ always a rational number?'
             answer: 'no'
             answer_contract: {"kind":"label","options":[["yes","always rational","true","it is true","correct","it is correct","yes it is"],["no","not always","only if s is not zero","only when s is nonzero","false","it is false","not true","incorrect"]]}
@@ -358,10 +358,10 @@ topics:
             answer: '(s-r)/3'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'We compute $t - r = \frac{2r + s}{3} - r = \frac{2r + s - 3r}{3} = \frac{s - r}{3}$. Since $s - r > 0$, this is positive, so $r < t$.'
-          - problem: 'Sam says that no rational number lies strictly between $\frac{1}{1000}$ and $\frac{1}{1001}$, because the two numbers are too close together. Is Sam right?'
-            answer: 'no'
-            answer_contract: {"kind":"label","options":[["yes","Sam is right","true","it is true","correct","it is correct","yes it is"],["no","Sam is wrong","Sam is not right","wrong","false","it is false","not true","incorrect"]]}
-            solution_sketch: 'Sam is wrong. The average $\frac{1}{2}\left(\frac{1}{1000} + \frac{1}{1001}\right) = \frac{2001}{2002000}$ is rational, and it lies strictly between the two numbers. Between any two distinct rationals there is another rational.'
+          - problem: 'Give a rational number that lies strictly between $\frac{1}{1000}$ and $\frac{1}{1001}$.'
+            answer: '2001/2002000'
+            answer_contract: {"kind": "property", "check": "between", "args": {"low": "1/1001", "high": "1/1000"}}
+            solution_sketch: 'The average $\frac{1}{2}\left(\frac{1}{1000} + \frac{1}{1001}\right) = \frac{2001}{2002000}$ is rational, and it lies strictly between the two numbers. Between any two distinct rationals there is another rational.'
           - problem: 'Two runners finish a race in $12.4$ seconds and $12.5$ seconds. A judge records a time exactly halfway between the two times. What time does the judge record?'
             answer: '12.45'
             answer_contract: {"kind":"unit","quantity":"time","unit":"s","allow_omitted":true}
@@ -415,7 +415,7 @@ topics:
             answer: 'l-k'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'We have $c = (b + c) - b = al - ak = a(l - k)$. So $m = l - k$, which is an integer because $k$ and $l$ are integers.'
-          - problem: 'Sam claims that if $a \mid (b + c)$ then $a \mid b$ and $a \mid c$, for all integers $a$, $b$ and $c$. Is the claim true?'
+          - problem: 'Is it true that if $a \mid (b + c)$ then $a \mid b$ and $a \mid c$, for all integers $a$, $b$ and $c$?'
             answer: 'no'
             answer_contract: {"kind":"label","options":[["yes","the claim is true","true","it is true","correct","it is correct","yes it is"],["no","the claim is false","not true for all","false","it is false","not true","incorrect","it is not correct"]]}
             solution_sketch: 'The claim fails for $a = 5$, $b = 1$ and $c = 4$. Here $5 \mid (1 + 4) = 5$, but $5 \nmid 1$ and $5 \nmid 4$. The true statement runs the other way: if $a$ divides $b$ and $c$, then $a$ divides $b + c$.'
@@ -452,10 +452,10 @@ topics:
             answer: 'yes'
             answer_contract: {"kind":"label","options":[["yes","it is odd for every integer","true","it is true","correct","it is correct","yes it is"],["no","not always odd","it is even for some integers","false","it is false","not true","incorrect","it is not correct"]]}
             solution_sketch: 'We have $n^2 + n + 1 = n(n + 1) + 1$. The product $n(n + 1)$ of two consecutive integers is even, because one of them is even. So $n(n + 1) + 1$ is odd for every integer $n$.'
-          - problem: 'Sam claims that $n^2 + 3$ is odd for every integer $n$. What is the least integer $n$ greater than $1$ that shows Sam is wrong?'
+          - problem: 'What is the least integer $n$ greater than $1$ for which $n^2 + 3$ is not odd?'
             answer: '3'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'For $n = 2$ we get $n^2 + 3 = 7$, which is odd. For $n = 3$ we get $n^2 + 3 = 12$, which is even. So the least value that shows Sam is wrong is $n = 3$.'
+            solution_sketch: 'For $n = 2$ we get $n^2 + 3 = 7$, which is odd. For $n = 3$ we get $n^2 + 3 = 12$, which is even. So the least such value is $n = 3$.'
           - problem: 'At a party, each of $15$ guests shakes hands once with each of the other guests. A direct proof shows that $n(n - 1)$ is even for every integer $n$. How many handshakes take place?'
             answer: '105'
             answer_contract: {"kind":"exact"}
@@ -485,10 +485,10 @@ topics:
             answer: '40'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'For $n = 9$ we have $k = 4$, so $m = 2 \cdot 16 + 2 \cdot 4 = 40$. Indeed $n^2 = 81 = 2 \cdot 40 + 1$, which is odd.'
-          - problem: 'Sam proves that $n$ is even if and only if $n^2$ is even, by showing that if $n$ is even then $n^2$ is even. Which statement must Sam still prove?'
+          - problem: 'A proof that $n$ is even if and only if $n^2$ is even shows that if $n$ is even then $n^2$ is even. Which statement must still be proved?'
             answer: 'if n^2 is even then n is even'
             answer_contract: {"kind":"label","options":[["if n^2 is even then n is even","n^2 even implies n even","if the square is even then n is even","if n squared is even then n is even","if n squared is even, then n is even","if n^2 is even, then n is even","if n² is even then n is even"],["if n is even then n^2 is odd","n even implies n^2 odd","if n is even then the square is odd"],["if n is odd then n^2 is even","n odd implies n^2 even","if n is odd then the square is even"],["if n^2 is odd then n is even","n^2 odd implies n even","if the square is odd then n is even"]]}
-            solution_sketch: 'An "if and only if" statement needs both directions. Sam has proved "if $n$ is even then $n^2$ is even". The other direction is "if $n^2$ is even then $n$ is even". The other three statements are false: $n = 2$ is even and $n^2 = 4$ is even, not odd, and $n = 1$ is odd and $n^2 = 1$ is odd, which breaks both of the other two statements.'
+            solution_sketch: 'An "if and only if" statement needs both directions. The proof so far covers "if $n$ is even then $n^2$ is even". The other direction is "if $n^2$ is even then $n$ is even". The other three statements are false: $n = 2$ is even and $n^2 = 4$ is even, not odd, and $n = 1$ is odd and $n^2 = 1$ is odd, which breaks both of the other two statements.'
           - problem: 'Consider the statement "$ab$ is even if and only if $a$ and $b$ are both even". Take $a = 4$. What is the least integer $b$ greater than $2$ that shows the statement is false?'
             answer: '3'
             answer_contract: {"kind":"exact"}
@@ -540,7 +540,7 @@ topics:
         name: "Exhaustive cases on parity"
         key_prerequisites: [direct-proof]
         exemplars:
-          - problem: 'Sam proves that $n^2 + n$ is even for every integer $n$ by splitting into the cases $n = 2k$ and $n = 2k + 1$. In the second case he must write $n^2 + n$ in the form $2m$. Find $m$ in terms of $k$.'
+          - problem: 'To prove that $n^2 + n$ is even for every integer $n$, split into the cases $n = 2k$ and $n = 2k + 1$. In the second case, write $n^2 + n$ in the form $2m$. Find $m$ in terms of $k$.'
             answer: '2k^2+3k+1'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'For $n = 2k + 1$ we have $n^2 + n = n(n + 1) = (2k + 1)(2k + 2)$. Taking the factor $2$ out of the second factor gives $2(2k + 1)(k + 1) = 2(2k^2 + 3k + 1)$, so $m = 2k^2 + 3k + 1$.'
@@ -556,7 +556,7 @@ topics:
             answer: 'yes'
             answer_contract: {"kind": "label", "options": [["yes", "it is odd", "always odd", "true"], ["no", "it is not always odd", "not always", "false"]]}
             solution_sketch: 'If $n = 2k$, then $n^2 + n + 1 = 4k^2 + 2k + 1 = 2(2k^2 + k) + 1$, which is odd. If $n = 2k + 1$, then $n^2 + n + 1 = 4k^2 + 6k + 3 = 2(2k^2 + 3k + 1) + 1$, which is odd. The two cases cover every integer, so the answer is yes.'
-          - problem: 'Sam claims that $n^2 + 2n$ is even for every integer $n$. He proves the case $n = 2k$ and stops. Find an integer $n$ for which his claim is false.'
+          - problem: 'The claim "$n^2 + 2n$ is even for every integer $n$" is proved only for the case $n = 2k$. Find an integer $n$ for which the claim is false.'
             answer: '1'
             answer_contract: {"kind": "property", "check": "integer_in_range", "args": {"min": -1000, "max": 1000, "not_multiple_of": 2}}
             solution_sketch: 'For $n = 2k$ we get $n^2 + 2n = 4k^2 + 4k = 2(2k^2 + 2k)$, which is even, but this is only one of the two cases. For an odd $n$ such as $1$ we get $1 + 2 = 3$, which is odd, so every odd integer is a counterexample.'
@@ -594,10 +594,10 @@ topics:
             answer: 'no'
             answer_contract: {"kind": "label", "options": [["yes", "it is true", "always", "true"], ["no", "it is not true", "not always", "false"]]}
             solution_sketch: 'If $x < 0$, then $|x| = -x > 0 > x$, so the inequality holds. If $x \ge 0$, then $|x| = x$, so $|x| > x$ is false; for example $x = 0$ gives $0 > 0$. So the statement is not true for every real number.'
-          - problem: 'Ana claims that $|x| + |x - 2| > 2$ for every real number $x$. Find an integer $x$ for which her claim is false.'
+          - problem: 'Find an integer $x$ for which $|x| + |x - 2| > 2$ is false.'
             answer: '1'
             answer_contract: {"kind": "property", "check": "integer_in_range", "args": {"min": 0, "max": 2}}
-            solution_sketch: 'For $0 \le x \le 2$ we have $|x| = x$ and $|x - 2| = 2 - x$, so $|x| + |x - 2| = 2$, which is not greater than $2$. The integers $0$, $1$ and $2$ all lie in this range, so $x = 1$ is a counterexample to her claim.'
+            solution_sketch: 'For $0 \le x \le 2$ we have $|x| = x$ and $|x - 2| = 2 - x$, so $|x| + |x - 2| = 2$, which is not greater than $2$. The integers $0$, $1$ and $2$ all lie in this range, so $x = 1$ is a counterexample.'
           - problem: 'Solve $|2x + 1| = x + 4$.'
             answer: '-5/3, 3'
             answer_contract: {"kind": "exact"}
@@ -631,14 +631,14 @@ topics:
             answer: 'no'
             answer_contract: {"kind": "label", "options": [["yes", "it can", "it can be divisible", "possible"], ["no", "it cannot", "cannot", "not possible", "impossible", "never", "it is never divisible"]]}
             solution_sketch: 'By cases, $n^2$ leaves remainder $0$ if $3$ divides $n$ and remainder $1$ otherwise. Then $n^2 + 1$ leaves remainder $1$ or $2$, never $0$. So $n^2 + 1$ is never divisible by $3$.'
-          - problem: 'Sam claims that $n^2 - 1$ is divisible by $3$ for every integer $n$. He checks the cases $n = 3k + 1$ and $n = 3k + 2$ and both work. Find an integer $n$ for which his claim is false.'
+          - problem: 'The claim "$n^2 - 1$ is divisible by $3$ for every integer $n$" holds in the cases $n = 3k + 1$ and $n = 3k + 2$. Find an integer $n$ for which the claim is false.'
             answer: '3'
             answer_contract: {"kind": "property", "check": "multiple_of", "args": {"k": 3}}
-            solution_sketch: 'Sam left out the case $n = 3k$. Then $n^2 - 1 = 9k^2 - 1 = 3(3k^2 - 1) + 2$ leaves remainder $2$ on division by $3$. For example $n = 3$ gives $8$, which is not divisible by $3$.'
-          - problem: 'Ana proves a statement about every integer $n$ by splitting into cases according to the remainder of $n$ on division by $6$. How many cases does she need?'
+            solution_sketch: 'Consider the case $n = 3k$. Then $n^2 - 1 = 9k^2 - 1 = 3(3k^2 - 1) + 2$ leaves remainder $2$ on division by $3$. For example $n = 3$ gives $8$, which is not divisible by $3$.'
+          - problem: 'A proof of a statement about every integer $n$ splits into cases according to the remainder of $n$ on division by $6$. How many cases does it need?'
             answer: '6'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The possible remainders on division by $6$ are $0, 1, 2, 3, 4, 5$, and each integer has exactly one of them. So Ana needs $6$ cases, and fewer cases would leave some integers uncovered.'
+            solution_sketch: 'The possible remainders on division by $6$ are $0, 1, 2, 3, 4, 5$, and each integer has exactly one of them. So the proof needs $6$ cases, and fewer cases would leave some integers uncovered.'
           - problem: 'Write the full proof that $n^3 - n$ is divisible by $3$ for every integer $n$.'
             answer: '3 divides n^3 - n for every integer n'
             answer_contract: {"kind": "none"}
@@ -679,7 +679,7 @@ topics:
             answer: '15'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The prime sums are $2, 3, 5, 7, 11$. A sum of $2$ occurs in $1$ outcome, a sum of $3$ in $2$, a sum of $5$ in $4$, a sum of $7$ in $6$ and a sum of $11$ in $2$ outcomes. The total is $1 + 2 + 4 + 6 + 2 = 15$ outcomes.'
-          - problem: 'Sam checks $n = 1, 2, \ldots, 10$ and finds that $n^2 + n + 41$ is prime each time. He claims it is prime for every positive integer $n$. Find a positive integer $n$ for which his claim is false.'
+          - problem: 'The value of $n^2 + n + 41$ is prime for each of $n = 1, 2, \ldots, 10$. Find a positive integer $n$ for which $n^2 + n + 41$ is not prime.'
             answer: '40'
             answer_contract: {"kind": "property", "check": "prime_counterexample", "args": {"expr": "n^2+n+41", "var": "n", "min": 1}}
             solution_sketch: 'For $n = 40$ we get $40^2 + 40 + 41 = 1681 = 41 \cdot 41$, which is not prime. Checking ten cases cannot prove a claim for all positive integers, and this claim fails at $n = 40$.'
@@ -733,10 +733,10 @@ topics:
             answer: 'a+b'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Adding gives $x + y = 2a + 2b + 1 = 2(a + b) + 1$, so $k = a + b$. Exchanging $x$ and $y$ changes neither the hypothesis that $x + y$ is odd nor the sum, so assuming that $x$ is the even one loses nothing.'
-          - problem: 'Ana wants to prove that $xy$ is even whenever $x + y$ is odd, for integers $x$ and $y$. She assumes without loss of generality that $x$ is even and proves the claim for that case only. Is her proof complete?'
+          - problem: 'A proof that $xy$ is even whenever $x + y$ is odd, for integers $x$ and $y$, assumes without loss of generality that $x$ is even and proves the claim for that case only. Is the proof complete?'
             answer: 'yes'
             answer_contract: {"kind": "label", "options": [["yes", "it is complete", "complete", "her proof is complete"], ["no", "it is not complete", "incomplete", "not complete"]]}
-            solution_sketch: 'The hypothesis "$x + y$ is odd" and the conclusion "$xy$ is even" do not change when $x$ and $y$ are exchanged. So the case with $y$ even is the same proof with the names exchanged, and Ana''s proof is complete.'
+            solution_sketch: 'The hypothesis "$x + y$ is odd" and the conclusion "$xy$ is even" do not change when $x$ and $y$ are exchanged. So the case with $y$ even is the same proof with the names exchanged, and the proof is complete.'
           - problem: 'Write the full proof that $\max(x, y) = \dfrac{x + y + |x - y|}{2}$ for all real numbers $x$ and $y$, using the assumption $x \le y$ without loss of generality.'
             answer: 'max(x,y) = (x+y+|x-y|)/2 for real x, y'
             answer_contract: {"kind": "none"}
@@ -750,7 +750,7 @@ topics:
             answer: 'yes'
             answer_contract: {"kind": "label", "options": [["yes", "we may", "it is legitimate", "legitimate"], ["no", "we may not", "it is not legitimate", "not legitimate", "illegitimate"]]}
             solution_sketch: 'Exchanging $a$ and $b$ turns $a^2 + b^2 \ge 2ab$ into $b^2 + a^2 \ge 2ba$, which is the same statement. So a proof for $a \le b$ also covers $b < a$ after the names are exchanged, and the assumption is legitimate.'
-          - problem: 'Ana wants to prove "if $m$ is even and $n$ is odd, then $mn$ is even" for integers $m$ and $n$. She assumes without loss of generality that $m \le n$. Is her assumption legitimate?'
+          - problem: 'A proof of "if $m$ is even and $n$ is odd, then $mn$ is even" for integers $m$ and $n$ assumes without loss of generality that $m \le n$. Is this assumption legitimate?'
             answer: 'no'
             answer_contract: {"kind": "label", "options": [["yes", "we may", "it is legitimate", "legitimate"], ["no", "we may not", "it is not legitimate", "not legitimate", "illegitimate"]]}
             solution_sketch: 'The hypothesis gives $m$ and $n$ different roles: $m$ is even and $n$ is odd. Exchanging the names gives "$m$ is odd and $n$ is even", which is a different hypothesis. So the case $n < m$ is not the case $m \le n$ with new names, and the assumption discards cases instead of reducing them.'
@@ -762,7 +762,7 @@ topics:
             answer: '10'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The pairs with $a \le b$ are $(1,1)$, $(1,2)$, $(1,3)$, $(1,4)$, $(2,2)$, $(2,3)$, $(2,4)$, $(3,3)$, $(3,4)$, $(4,4)$. That is $4 + 3 + 2 + 1 = 10$ pairs. The other $6$ of the $16$ ordered pairs are exchanges of these.'
-          - problem: 'Sam wants to prove that $a - b \ge 0$ for all $a, b \in \{1, 2, 3\}$. He assumes without loss of generality that $a \ge b$ and proves the claim for that case. For how many of the nine ordered pairs $(a, b)$ is the claim false?'
+          - problem: 'A proof that $a - b \ge 0$ for all $a, b \in \{1, 2, 3\}$ assumes without loss of generality that $a \ge b$ and proves the claim for that case. For how many of the nine ordered pairs $(a, b)$ is the claim false?'
             answer: '3'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The statement is not unchanged when $a$ and $b$ are exchanged, because $a - b$ becomes $b - a$. So the assumption $a \ge b$ discards the pairs with $a < b$ instead of reducing them. The pairs $(1, 2)$, $(1, 3)$ and $(2, 3)$ have $a - b < 0$, so the claim is false for $3$ of the nine pairs.'
@@ -814,19 +814,19 @@ topics:
         name: "When the contrapositive is easier"
         key_prerequisites: [conditional-statements]
         exemplars:
-          - problem: 'To prove "if $n^3$ is even, then $n$ is even" by contraposition, Sam writes $n = 2k + 1$ for the hypothesis of the contrapositive. Write $n^3$ in the form $2m + 1$ and find $m$ in terms of $k$.'
+          - problem: 'To prove "if $n^3$ is even, then $n$ is even" by contraposition, the hypothesis of the contrapositive is written as $n = 2k + 1$. Write $n^3$ in the form $2m + 1$ and find $m$ in terms of $k$.'
             answer: '4k^3+6k^2+3k'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The contrapositive is "if $n$ is odd, then $n^3$ is odd". Expanding gives $(2k+1)^3 = 8k^3 + 12k^2 + 6k + 1 = 2(4k^3 + 6k^2 + 3k) + 1$. So $m = 4k^3 + 6k^2 + 3k$.'
-          - problem: 'Sam proves "if $5n + 4$ is odd, then $n$ is odd" by contraposition. He assumes that $n$ is even, so $n = 2k$. Write $5n + 4$ in the form $2m$ and find $m$ in terms of $k$.'
+          - problem: 'A proof of "if $5n + 4$ is odd, then $n$ is odd" by contraposition assumes that $n$ is even, so $n = 2k$. Write $5n + 4$ in the form $2m$ and find $m$ in terms of $k$.'
             answer: '5k+2'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'We have $5n + 4 = 5(2k) + 4 = 10k + 4 = 2(5k + 2)$, so $m = 5k + 2$ and $5n + 4$ is even. This proves the contrapositive "if $n$ is even, then $5n + 4$ is even".'
-          - problem: 'A box holds $3n + 2$ sweets, where $n$ is a whole number, and the sweets are shared equally between two children. Sam proves that if no sweet is left over, then $n$ is even, by showing that an odd $n$ always leaves a sweet over. How many sweets are left over when $n$ is odd?'
+          - problem: 'A box holds $3n + 2$ sweets, where $n$ is a whole number, and the sweets are shared equally between two children. A proof that if no sweet is left over, then $n$ is even, shows that an odd $n$ always leaves a sweet over. How many sweets are left over when $n$ is odd?'
             answer: '1'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'For an odd $n = 2k + 1$ we get $3n + 2 = 6k + 5 = 2(3k + 2) + 1$. Dividing by $2$ leaves remainder $1$, so $1$ sweet is left over. This proves the contrapositive: if $n$ is odd, the sweets cannot be shared equally.'
-          - problem: 'Sam believes that if $n^2$ is divisible by $4$, then $n$ is divisible by $4$. What is the smallest positive integer $n$ that shows Sam is wrong?'
+          - problem: 'What is the smallest positive integer $n$ for which "if $n^2$ is divisible by $4$, then $n$ is divisible by $4$" is false?'
             answer: '2'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'For $n = 2$ the square $4$ is divisible by $4$, but $2$ is not divisible by $4$, so the claim fails. For $n = 1$ the hypothesis is false, so $1$ is not a counterexample. Hence the smallest counterexample is $n = 2$.'
@@ -859,7 +859,7 @@ topics:
             answer: '3'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The four patterns are (even, even), (even, odd), (odd, even) and (odd, odd). The statement "$a$ is even or $b$ is even" is true in the first three and false only in (odd, odd). So it is true in $3$ patterns, and the proof must treat each of them.'
-          - problem: 'Ana claims that if $6$ divides $9b$, then $6$ divides $9$ or $6$ divides $b$. What is the smallest positive integer $b$ that shows her claim is false?'
+          - problem: 'What is the smallest positive integer $b$ for which "if $6$ divides $9b$, then $6$ divides $9$ or $6$ divides $b$" is false?'
             answer: '2'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'For $b = 2$ we get $9b = 18 = 6 \cdot 3$, so $6$ divides $9b$. But $6$ does not divide $9$ and $6$ does not divide $2$, so the claim is false. For $b = 1$ we get $9$, which $6$ does not divide, so $1$ is not a counterexample.'
@@ -884,11 +884,11 @@ topics:
         name: "Contrapositive with real numbers"
         key_prerequisites: [negating-statements]
         exemplars:
-          - problem: 'Sam proves "if $3x + 4$ is irrational, then $x$ is irrational" by contraposition. He assumes that $x$ is rational, so $x = p/q$ with integers $p$ and $q$ and $q \ne 0$. Write $3x + 4$ as a single fraction.'
+          - problem: 'A proof of "if $3x + 4$ is irrational, then $x$ is irrational" by contraposition assumes that $x$ is rational, so $x = p/q$ with integers $p$ and $q$ and $q \ne 0$. Write $3x + 4$ as a single fraction.'
             answer: '(3p+4q)/q'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'With $x = p/q$ we get $3x + 4 = 3p/q + 4q/q = (3p + 4q)/q$. The numerator $3p + 4q$ is an integer and $q \ne 0$, so $3x + 4$ is rational, which proves the contrapositive.'
-          - problem: 'Sam proves "if $x + y$ is irrational, then $x$ is irrational or $y$ is irrational" by contraposition. He assumes that $x$ and $y$ are both rational, so $x = p/q$ and $y = r/s$ with integers $p, q, r, s$ and $q, s \ne 0$. Write $x + y$ as a single fraction.'
+          - problem: 'A proof of "if $x + y$ is irrational, then $x$ is irrational or $y$ is irrational" by contraposition assumes that $x$ and $y$ are both rational, so $x = p/q$ and $y = r/s$ with integers $p, q, r, s$ and $q, s \ne 0$. Write $x + y$ as a single fraction.'
             answer: '(ps+qr)/(qs)'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Put both fractions over the common denominator $qs$. Then $\dfrac{p}{q} + \dfrac{r}{s} = \dfrac{ps}{qs} + \dfrac{qr}{qs} = \dfrac{ps + qr}{qs}$. This is a quotient of integers with $qs \ne 0$, so $x + y$ is rational.'
@@ -896,14 +896,14 @@ topics:
             answer: 'no'
             answer_contract: {"kind": "label", "options": [["yes", "it is true", "true", "always"], ["no", "it is not true", "false", "not always", "not true", "it is not"]]}
             solution_sketch: 'The number $x = \sqrt{2}$ is irrational, but $x^2 = 2$ is rational, so the statement is false. Its contrapositive "if $x$ is irrational, then $x^2$ is irrational" is false for the same reason.'
-          - problem: 'Ana proves that if $x^2 + 2x$ is irrational, then $x$ is irrational, by assuming that $x = p/q$ is rational. For $p = 2$ and $q = 3$, what is the value of $x^2 + 2x$?'
+          - problem: 'A proof that if $x^2 + 2x$ is irrational, then $x$ is irrational, assumes that $x = p/q$ is rational. For $p = 2$ and $q = 3$, what is the value of $x^2 + 2x$?'
             answer: '16/9'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'With $x = 2/3$ we get $x^2 + 2x = 4/9 + 4/3 = 4/9 + 12/9 = 16/9$. In general $x^2 + 2x = (p^2 + 2pq)/q^2$, which is $(4 + 12)/9 = 16/9$ here.'
-          - problem: 'The perimeter of a square is $4s$ if its side has length $s$. Sam proves that if the perimeter is irrational, then the side is irrational. A square has perimeter $18$ m. How long is its side?'
+          - problem: 'The perimeter of a square is $4s$ if its side has length $s$. A proof shows that if the perimeter is irrational, then the side is irrational. A square has perimeter $18$ m. How long is its side?'
             answer: '4.5'
             answer_contract: {"kind": "unit", "quantity": "length", "unit": "m", "allow_omitted": true}
-            solution_sketch: 'The side is the perimeter divided by $4$, so $s = 18 / 4 = 4.5$ m. Sam''s claim holds because a rational side $s = p/q$ gives the rational perimeter $4p/q$.'
+            solution_sketch: 'The side is the perimeter divided by $4$, so $s = 18 / 4 = 4.5$ m. The claim holds because a rational side $s = p/q$ gives the rational perimeter $4p/q$.'
           - problem: 'Two friends are $1.64$ m and $1.72$ m tall. The mean of two numbers $x$ and $y$ is $(x + y)/2$, and the statement "if the mean is irrational, then $x$ or $y$ is irrational" is proved by contraposition. What is the mean height of the two friends?'
             answer: '1.68'
             answer_contract: {"kind": "unit", "quantity": "length", "unit": "m", "allow_omitted": true}
@@ -947,14 +947,14 @@ topics:
         name: "The two-direction template"
         key_prerequisites: [conditional-statements]
         exemplars:
-          - problem: 'Sam proves "$n$ is even if and only if $n + 3$ is odd". For the direction "if $n + 3$ is odd, then $n$ is even" he writes $n + 3 = 2m + 1$ for an integer $m$. Express $n$ in terms of $m$.'
+          - problem: 'A proof of "$n$ is even if and only if $n + 3$ is odd" treats the direction "if $n + 3$ is odd, then $n$ is even" by writing $n + 3 = 2m + 1$ for an integer $m$. Express $n$ in terms of $m$.'
             answer: '2m-2'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Subtracting $3$ from both sides gives $n = 2m + 1 - 3 = 2m - 2 = 2(m - 1)$. Since $m - 1$ is an integer, $n$ is even, which proves this direction.'
-          - problem: 'Ana proves that if $n$ is odd, then $n^2$ is odd, and concludes that "$n$ is odd if and only if $n^2$ is odd". Is her proof complete?'
+          - problem: 'A proof shows that if $n$ is odd, then $n^2$ is odd, and concludes that "$n$ is odd if and only if $n^2$ is odd". Is the proof complete?'
             answer: 'no'
             answer_contract: {"kind": "label", "options": [["yes", "it is complete", "complete", "her proof is complete"], ["no", "it is not complete", "incomplete", "not complete"]]}
-            solution_sketch: 'A biconditional "$P$ if and only if $Q$" says both "$P$ implies $Q$" and "$Q$ implies $P$". Ana proved only the first implication. She also needs "if $n^2$ is odd, then $n$ is odd", so her proof is not complete.'
+            solution_sketch: 'A biconditional "$P$ if and only if $Q$" says both "$P$ implies $Q$" and "$Q$ implies $P$". The proof covers only the first implication. The proof also needs "if $n^2$ is odd, then $n$ is odd", so the proof is not complete.'
           - problem: 'Four statements $P$, $Q$, $R$ and $S$ are to be shown equivalent by proving the cycle $P \Rightarrow Q$, $Q \Rightarrow R$, $R \Rightarrow S$ and $S \Rightarrow P$. How many implications does this cycle contain?'
             answer: '4'
             answer_contract: {"kind": "exact"}
@@ -980,11 +980,11 @@ topics:
         name: "Contrapositive in one direction"
         key_prerequisites: [proof-by-contrapositive]
         exemplars:
-          - problem: 'To prove "$x$ is even if and only if $3x + 5$ is odd", Ana proves the direction "if $x$ is even, then $3x + 5$ is odd" directly with $x = 2a$. Write $3x + 5$ in the form $2k + 1$ and find $k$ in terms of $a$.'
+          - problem: 'To prove "$x$ is even if and only if $3x + 5$ is odd", the direction "if $x$ is even, then $3x + 5$ is odd" is proved directly with $x = 2a$. Write $3x + 5$ in the form $2k + 1$ and find $k$ in terms of $a$.'
             answer: '3a+2'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'We have $3x + 5 = 3(2a) + 5 = 6a + 5 = 2(3a + 2) + 1$, so $k = 3a + 2$ and $3x + 5$ is odd. This proves one direction of the biconditional.'
-          - problem: 'For the other direction, "if $3x + 5$ is odd, then $x$ is even", Ana proves the contrapositive and writes the hypothesis of the contrapositive as $x = 2m + 1$. Write $3x + 5$ in the form $2k$ and find $k$ in terms of $m$.'
+          - problem: 'For the other direction, "if $3x + 5$ is odd, then $x$ is even", prove the contrapositive and write its hypothesis as $x = 2m + 1$. Write $3x + 5$ in the form $2k$ and find $k$ in terms of $m$.'
             answer: '3m+4'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The contrapositive is "if $x$ is odd, then $3x + 5$ is even". With $x = 2m + 1$ we get $3x + 5 = 6m + 3 + 5 = 6m + 8 = 2(3m + 4)$. So $k = 3m + 4$.'
@@ -992,7 +992,7 @@ topics:
             answer: '43'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'For $x = 27$ the teacher has $3 \cdot 27 + 5 = 86$ stickers, and $27$ is odd, so the split works. Each box gets $86 / 2 = 43$ stickers.'
-          - problem: 'Sam claims that "$x$ is even if and only if $x^2 + 1$ is even". What is the smallest non-negative integer $x$ that shows his claim is false?'
+          - problem: 'What is the smallest non-negative integer $x$ for which "$x$ is even if and only if $x^2 + 1$ is even" is false?'
             answer: '0'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'For $x = 0$ the statement "$x$ is even" is true, but $x^2 + 1 = 1$ is odd, so "$x^2 + 1$ is even" is false. The two statements have different truth values at $x = 0$, so the biconditional fails there. In fact "$x$ is even" is equivalent to "$x^2 + 1$ is odd".'
@@ -1022,7 +1022,7 @@ topics:
           answer: '2'
           reveal: 'Dividing both sides by $x$ gives $x = 4$ and loses the solution $x = 0$. The chain $x^2 - 4x = 0 \iff x(x - 4) = 0$ keeps both solutions, because each link can be run backwards.'
         exemplars:
-          - problem: 'Sam solves $\sqrt{x + 6} = x$ by squaring both sides. He gets $x + 6 = x^2$, so $(x - 3)(x + 2) = 0$ and $x = 3$ or $x = -2$. Which of the two values is not a solution of the original equation?'
+          - problem: 'Squaring both sides of $\sqrt{x + 6} = x$ gives $x + 6 = x^2$, so $(x - 3)(x + 2) = 0$ and $x = 3$ or $x = -2$. Which of the two values is not a solution of the original equation?'
             answer: '-2'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Check $x = 3$: $\sqrt{3 + 6} = 3$, so it works. For $x = -2$ we get $\sqrt{4} = 2$, which is not $-2$, so $-2$ is not a solution. Squaring is only an implication, not an equivalence, because $x + 6 = x^2$ also holds when $\sqrt{x + 6} = -x$.'
@@ -1030,7 +1030,7 @@ topics:
             answer: 'no'
             answer_contract: {"kind": "label", "options": [["yes", "it is true", "true", "always"], ["no", "it is not true", "false", "not always", "not true", "it is not"]]}
             solution_sketch: 'If $x = 3$, then $x^2 = 9 = 3x$, so one direction holds. But $x = 0$ gives $0 = 0$, so $x^2 = 3x$ is true while $x = 3$ is false. The other direction fails, so the biconditional is false.'
-          - problem: 'Ana solves $(x - 2)(x + 1) = 4(x - 2)$ by dividing both sides by $x - 2$. She gets $x + 1 = 4$, so $x = 3$. Which solution did she lose?'
+          - problem: 'Dividing both sides of $(x - 2)(x + 1) = 4(x - 2)$ by $x - 2$ gives $x + 1 = 4$, so $x = 3$. Which solution is lost by the division?'
             answer: '2'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Dividing by $x - 2$ is only allowed when $x - 2 \ne 0$. For $x = 2$ both sides equal $0$, so $x = 2$ is a solution that the division removed. The correct chain is $(x - 2)(x + 1) - 4(x - 2) = 0 \iff (x - 2)(x - 3) = 0$, which gives $x = 2$ or $x = 3$.'
@@ -1038,7 +1038,7 @@ topics:
             answer: '5'
             answer_contract: {"kind": "unit", "quantity": "length", "unit": "m", "allow_omitted": true}
             solution_sketch: 'Every link is an equivalence, so both $-9$ and $5$ satisfy the equation $x(x + 4) = 45$. A width cannot be negative, so the garden is $5$ m wide. Check: $5 \cdot 9 = 45$.'
-          - problem: 'Sam thinks of a positive number $x$. The number plus its reciprocal is $5/2$. Which numbers could Sam be thinking of?'
+          - problem: 'A positive number $x$ plus its reciprocal is $5/2$. Which numbers can $x$ be?'
             answer: '1/2, 2'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Since $x \ne 0$, multiplying by $2x$ is reversible: $x + 1/x = 5/2 \iff 2x^2 + 2 = 5x \iff 2x^2 - 5x + 2 = 0 \iff (2x - 1)(x - 2) = 0$. So $x = 1/2$ or $x = 2$, and both are positive. Check: $1/2 + 2 = 5/2$ and $2 + 1/2 = 5/2$.'
@@ -1091,7 +1091,7 @@ topics:
             answer: 'yes'
             answer_contract: {"kind": "label", "options": [["yes", "yes it is", "it is", "yes it does", "it does", "yes it can", "correct", "true"], ["no", "no it is not", "it is not", "no it does not", "it does not", "no it cannot", "incorrect", "false"]]}
             solution_sketch: 'The negation of "for every $x$, $x^2 \ge 0$" is "there is an $x$ with $x^2 < 0$". A proof by contradiction assumes exactly this negation, so the opening is correct.'
-          - problem: 'A box holds ten cards numbered $1$ to $10$. The cards $2, 4, 5, 6, 8$ have a red back and the other five cards have a blue back. Ana says: "Every card with an even number has a red back." The negation of her claim says that some card has an even number and a blue back. Which card is that?'
+          - problem: 'A box holds ten cards numbered $1$ to $10$. The cards $2, 4, 5, 6, 8$ have a red back and the other five cards have a blue back. The statement "Every card with an even number has a red back" is false. Its negation says that some card has an even number and a blue back. Which card is that?'
             answer: '10'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The even cards are $2, 4, 6, 8, 10$ and the blue cards are $1, 3, 7, 9, 10$. Only card $10$ is both even and blue, so card $10$ is the card that the negation describes.'
@@ -1103,14 +1103,14 @@ topics:
             answer: '1'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'We expand $n^2 = 9k^2 + 12k + 4 = 3(3k^2 + 4k + 1) + 1$. So $n^2$ leaves remainder $1$ on division by $3$, which contradicts $3 \mid n^2$.'
-          - problem: 'Zoe wants to prove by contradiction that no integer $k$ satisfies $5k = 12$. She begins: "Suppose $k$ is an integer with $5k = 12$." What value would $k$ then have?'
+          - problem: 'To prove by contradiction that no integer $k$ satisfies $5k = 12$, begin with: "Suppose $k$ is an integer with $5k = 12$." What value would $k$ then have?'
             answer: '12/5'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Dividing both sides of $5k = 12$ by $5$ gives $k = 12/5$. This number is not an integer, so the assumption leads to a contradiction.'
-          - problem: 'Sam wants to prove "for every integer $n$, if $n^2$ is even then $n$ is even" by contradiction. He begins: "Suppose $n^2$ is even or $n$ is odd." Is this the correct assumption?'
+          - problem: 'To prove "for every integer $n$, if $n^2$ is even then $n$ is even" by contradiction, a proof begins: "Suppose $n^2$ is even or $n$ is odd." Is this the correct assumption?'
             answer: 'no'
             answer_contract: {"kind": "label", "options": [["yes", "yes it is", "it is", "yes it does", "it does", "yes it can", "correct", "true"], ["no", "no it is not", "it is not", "no it does not", "it does not", "no it cannot", "incorrect", "false"]]}
-            solution_sketch: 'The negation of "if $P$ then $Q$" is "$P$ and not $Q$". The correct assumption is that $n^2$ is even and $n$ is odd, so Sam''s "or" is wrong.'
+            solution_sketch: 'The negation of "if $P$ then $Q$" is "$P$ and not $Q$". The correct assumption is that $n^2$ is even and $n$ is odd, so the "or" is wrong.'
           - problem: 'Write the full proof that for all integers $a$ and $b$, $a^2 - 4b \neq 2$.'
             answer: 'a^2 - 4b != 2 for all integers'
             answer_contract: {"kind": "none"}
@@ -1120,30 +1120,30 @@ topics:
         name: "No-largest and no-smallest arguments"
         key_prerequisites: [direct-proof]
         exemplars:
-          - problem: 'Ana claims that $98$ is the largest even integer. Which even integer, built from $98$ by adding $2$, shows that she is wrong?'
+          - problem: 'Which even integer, built from $98$ by adding $2$, shows that $98$ is not the largest even integer?'
             answer: '100'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'If $98$ were the largest even integer, then $98 + 2 = 100$ would be an even integer larger than $98$. This is a contradiction, so Ana is wrong.'
+            solution_sketch: 'If $98$ were the largest even integer, then $98 + 2 = 100$ would be an even integer larger than $98$. This is a contradiction, so $98$ is not the largest even integer.'
           - problem: 'Does the set of positive real numbers have a smallest element?'
             answer: 'no'
             answer_contract: {"kind": "label", "options": [["yes", "yes it is", "it is", "yes it does", "it does", "yes it can", "correct", "true"], ["no", "no it is not", "it is not", "no it does not", "it does not", "no it cannot", "incorrect", "false"]]}
             solution_sketch: 'Suppose $s$ were the smallest positive real number. Then $s/2$ is a positive real number smaller than $s$, a contradiction. So the set has no smallest element.'
-          - problem: 'Kim has a piece of string $0.3$ m long and claims that it is the shortest piece of positive length that can exist. She cuts a new piece that is half as long. How long is the new piece?'
+          - problem: 'A piece of string $0.3$ m long is cut into a new piece that is half as long. How long is the new piece?'
             answer: '0.15'
             answer_contract: {"kind": "unit", "quantity": "length", "unit": "m", "allow_omitted": true}
-            solution_sketch: 'Half of $0.3$ m is $0.3 / 2 = 0.15$ m. This piece has positive length and is shorter than $0.3$ m, so Kim''s claim is false.'
-          - problem: 'Tom claims that $\frac{1}{8}$ is the smallest positive real number. Which positive real number, half as large, shows that he is wrong?'
+            solution_sketch: 'Half of $0.3$ m is $0.3 / 2 = 0.15$ m. This piece has positive length and is shorter than $0.3$ m, so $0.3$ m is not the shortest positive length.'
+          - problem: 'Which positive real number, half as large as $\frac{1}{8}$, shows that $\frac{1}{8}$ is not the smallest positive real number?'
             answer: '1/16'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Half of $\frac{1}{8}$ is $\frac{1}{16}$. The number $\frac{1}{16}$ is positive and smaller than $\frac{1}{8}$, so $\frac{1}{8}$ is not the smallest.'
-          - problem: 'Sam claims that there is no smallest positive integer. He argues: "If $m$ were the smallest positive integer, then $m/2$ would be a smaller positive integer." What is the smallest positive integer $m$ for which $m/2$ is not an integer?'
+          - problem: 'The argument "If $m$ were the smallest positive integer, then $m/2$ would be a smaller positive integer" is meant to show that there is no smallest positive integer. What is the smallest positive integer $m$ for which $m/2$ is not an integer?'
             answer: '1'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'For $m = 1$ the number $m/2 = 1/2$ is not an integer, so Sam''s construction fails at once. In fact $1$ is the smallest positive integer, so his claim is false.'
-          - problem: 'A measuring cup holds $6$ ml. Jo claims that $6$ ml is the smallest positive amount of water that anyone can measure. A new cup holds one third as much as the old one. How much water does it hold?'
+            solution_sketch: 'For $m = 1$ the number $m/2 = 1/2$ is not an integer, so the construction fails at once. In fact $1$ is the smallest positive integer, so there is a smallest positive integer.'
+          - problem: 'A measuring cup holds $6$ ml. A new cup holds one third as much as the old one. How much water does it hold?'
             answer: '2'
             answer_contract: {"kind": "unit", "quantity": "volume", "unit": "ml", "allow_omitted": true}
-            solution_sketch: 'One third of $6$ ml is $6 / 3 = 2$ ml. This is a positive amount smaller than $6$ ml, so Jo''s claim is false.'
+            solution_sketch: 'One third of $6$ ml is $6 / 3 = 2$ ml. This is a positive amount smaller than $6$ ml, so $6$ ml is not the smallest positive amount that can be measured.'
           - problem: 'Write the full proof that there is no smallest positive real number.'
             answer: 'No smallest positive real exists'
             answer_contract: {"kind": "none"}
@@ -1169,7 +1169,7 @@ topics:
             answer: '7/4'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The equation gives $s = \frac{5}{2} - \frac{3}{4} = \frac{10}{4} - \frac{3}{4} = \frac{7}{4}$. This is rational, which contradicts the assumption that $s$ is irrational. So a sum of a rational number and an irrational number cannot be rational.'
-          - problem: 'Sam tries to prove by contradiction that $6m + 10n = 8$ has no integer solutions, but he gets stuck. In fact, the equation does have integer solutions. Find $n$ when $m = 3$.'
+          - problem: 'A proof by contradiction that $6m + 10n = 8$ has no integer solutions cannot be finished, because the equation does have integer solutions. Find $n$ when $m = 3$.'
             answer: '-1'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'With $m = 3$ the equation becomes $18 + 10n = 8$, so $10n = -10$ and $n = -1$. The pair $m = 3$, $n = -1$ is a solution, so no contradiction can exist.'
@@ -1277,7 +1277,7 @@ topics:
             answer: '2'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The diagonal $d$ satisfies $d^2 = 1^2 + 1^2 = 2$. So $(p/q)^2 = 2$ and $p^2 = 2q^2$, which gives $c = 2$.'
-          - problem: 'Sam copies the proof for $\sqrt{3}$ to prove that $\sqrt{9}$ is irrational. From $p^2 = 9q^2$ he writes $p = 3k$ and gets $9k^2 = 9q^2$. Dividing by $9$ gives $q^2 = c\,k^2$. What is $c$?'
+          - problem: 'The proof for $\sqrt{3}$ is copied to prove that $\sqrt{9}$ is irrational. From $p^2 = 9q^2$ it writes $p = 3k$ and gets $9k^2 = 9q^2$. Dividing by $9$ gives $q^2 = c\,k^2$. What is $c$?'
             answer: '1'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Dividing $9k^2 = 9q^2$ by $9$ gives $q^2 = k^2$, so $c = 1$. No contradiction follows, and indeed $\sqrt{9} = 3$ is rational.'
@@ -1294,11 +1294,11 @@ topics:
         name: "Nonexistence and infinitude arguments"
         key_prerequisites: [negating-statements]
         exemplars:
-          - problem: 'A mathematician lists the primes $2, 3, 5$ and claims that this list is complete. She multiplies them and adds $1$. What number does she obtain?'
+          - problem: 'The primes $2, 3, 5$ are multiplied and $1$ is added. What number is obtained?'
             answer: '31'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'We have $2 \cdot 3 \cdot 5 + 1 = 30 + 1 = 31$. The number $31$ leaves remainder $1$ on division by each of $2$, $3$ and $5$, so a prime factor of $31$ is outside the list.'
-          - problem: 'Sam claims that the number $2 \cdot 3 \cdot 5 \cdot 7 \cdot 11 \cdot 13 + 1 = 30031$ is prime. What is its smallest prime factor?'
+          - problem: 'What is the smallest prime factor of $2 \cdot 3 \cdot 5 \cdot 7 \cdot 11 \cdot 13 + 1 = 30031$?'
             answer: '59'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'We find $30031 = 59 \cdot 509$, and no smaller prime divides it. So $30031$ is not prime. Euclid''s argument only needs a prime factor outside the list, and $59$ is one.'
@@ -1310,11 +1310,11 @@ topics:
             answer: '1'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Every power of $3$ is odd, so $3^q$ leaves remainder $1$ on division by $2$. But $2^p$ is even and leaves remainder $0$, so the equation is impossible.'
-          - problem: 'Tom claims that $\frac{1}{100}$ is the smallest positive rational number. Which positive rational number, half as large, shows that he is wrong?'
+          - problem: 'Which positive rational number, half as large as $\frac{1}{100}$, shows that $\frac{1}{100}$ is not the smallest positive rational number?'
             answer: '1/200'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Half of $\frac{1}{100}$ is $\frac{1}{200}$. This is a ratio of integers, it is positive, and it is smaller than $\frac{1}{100}$. So Tom is wrong.'
-          - problem: 'A student lists $2, 3, 5, 7$ as all the primes and forms $N = 2 \cdot 3 \cdot 5 \cdot 7 + 1 = 211$. How many of the four listed primes divide $211$?'
+            solution_sketch: 'Half of $\frac{1}{100}$ is $\frac{1}{200}$. This is a ratio of integers, it is positive, and it is smaller than $\frac{1}{100}$. So $\frac{1}{100}$ is not the smallest.'
+          - problem: 'Let $N = 2 \cdot 3 \cdot 5 \cdot 7 + 1 = 211$. How many of the four primes $2, 3, 5, 7$ divide $211$?'
             answer: '0'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The number $211$ leaves remainder $1$ on division by each of $2, 3, 5, 7$. So none of them divides it, and the count is $0$. A prime divisor of $211$ is therefore outside the list.'
@@ -1412,11 +1412,11 @@ topics:
             answer: 'yes'
             answer_contract: {"kind": "label", "options": [["yes", "yes it is", "it is", "yes it does", "it does", "yes it can", "correct", "true"], ["no", "no it is not", "it is not", "no it does not", "it does not", "no it cannot", "incorrect", "false"]]}
             solution_sketch: 'We have $5! = 120$, so the numbers are $122, 123, 124, 125$. They are divisible by $2, 3, 4, 5$ respectively, so each is composite.'
-          - problem: 'Sam claims that $n! + 1$ is prime for every integer $n \ge 2$. What is the smallest $n$ for which his claim fails?'
+          - problem: 'What is the smallest $n \ge 2$ for which $n! + 1$ is not prime?'
             answer: '4'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'We have $2! + 1 = 3$ and $3! + 1 = 7$, which are prime. But $4! + 1 = 25 = 5 \cdot 5$ is not prime. So the smallest $n$ with a failure is $4$.'
-          - problem: 'Mia wants a run of $10$ consecutive composite numbers. She takes $11! + 2, 11! + 3, \dots, 11! + 11$. What is the largest number in her run? (Use $11! = 39916800$.)'
+          - problem: 'The numbers $11! + 2, 11! + 3, \dots, 11! + 11$ form a run of $10$ consecutive composite numbers. What is the largest number in the run? (Use $11! = 39916800$.)'
             answer: '39916811'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The last number is $11! + 11 = 39916800 + 11 = 39916811$. It is divisible by $11$, because $11$ divides both $11!$ and $11$, and it is larger than $11$, so it is composite.'
@@ -1454,7 +1454,7 @@ topics:
             answer: 'no'
             answer_contract: {"kind": "label", "options": [["yes", "yes it is", "it is", "yes it does", "it does", "yes it can", "correct", "true"], ["no", "no it is not", "it is not", "no it does not", "it does not", "no it cannot", "incorrect", "false"]]}
             solution_sketch: 'The proof only shows that in each case a suitable pair exists. It never decides whether $t$ is rational, so it does not tell us which pair works. This is why the proof is nonconstructive.'
-          - problem: 'Sam claims that among any $7$ integers, two have a difference divisible by $7$. The integers $1, 2, 3, 4, 5, 6$ have different remainders on division by $7$. What is the smallest positive integer that could be added to them to show that Sam is wrong?'
+          - problem: 'The integers $1, 2, 3, 4, 5, 6$ have different remainders on division by $7$. What is the smallest positive integer that can be added to them so that no two of the seven integers have a difference divisible by $7$?'
             answer: '7'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The remainder of $7$ on division by $7$ is $0$, and the integers $1, \dots, 6$ have remainders $1, \dots, 6$. So the seven integers $1, \dots, 7$ have seven different remainders and no difference is divisible by $7$. The smaller candidates $1$ to $6$ repeat a remainder, so $7$ is the smallest.'
@@ -1511,10 +1511,10 @@ topics:
             answer: '7'
             answer_contract: {"kind": "unit", "quantity": "length", "unit": "m", "allow_omitted": true}
             solution_sketch: 'The point $x$ satisfies $x - 3 = 11 - x$, so $2x = 14$ and $x = 7$. Any two such points $x$ and $y$ satisfy $2x = 14 = 2y$, so $x = y$. The mark is $7$ m.'
-          - problem: 'Sam says that $x^2 = x$ has exactly one real solution, because $x = 0$ is a solution. What is the other real solution?'
+          - problem: 'The equation $x^2 = x$ has the solution $x = 0$. What is the other real solution?'
             answer: '1'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'We have $1^2 = 1$, so $x = 1$ is a second solution. Sam showed existence but never showed that two solutions must be equal.'
+            solution_sketch: 'We have $1^2 = 1$, so $x = 1$ is a second solution. The solution $x = 0$ alone does not show that the solution is unique.'
           - problem: 'The equation $(x - 2)(x^2 + 1) = 0$ has exactly one real solution. What is it?'
             answer: '2'
             answer_contract: {"kind": "exact"}
@@ -1552,10 +1552,10 @@ topics:
             answer: '0'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'We have $-7 < r - r'' < 7$. The only multiple of $7$ in this range is $0$, so $r - r'' = 0$.'
-          - problem: 'Sam allows the remainder to satisfy $0 \le r \le 5$ instead of $0 \le r < 5$. Then $10 = 5q + r$ has two representations. One has $q = 2$. What is $q$ in the other?'
+          - problem: 'Allow the remainder to satisfy $0 \le r \le 5$ instead of $0 \le r < 5$. Then $10 = 5q + r$ has two representations. One has $q = 2$. What is $q$ in the other?'
             answer: '1'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The choice $q = 2$ gives $r = 0$. The choice $q = 1$ gives $r = 5$, and $0 \le 5 \le 5$ is allowed by Sam''s rule. So the other representation has $q = 1$, and uniqueness fails.'
+            solution_sketch: 'The choice $q = 2$ gives $r = 0$. The choice $q = 1$ gives $r = 5$, and $0 \le 5 \le 5$ is allowed by this rule. So the other representation has $q = 1$, and uniqueness fails.'
           - problem: 'A teacher has $250$ sheets of paper. Each notebook uses $40$ sheets. After making as many full notebooks as possible, how many sheets are left?'
             answer: '10'
             answer_contract: {"kind": "exact"}
@@ -1594,10 +1594,10 @@ topics:
             answer: '13'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Adding the equations $x + y = 20$ and $x - y = 6$ gives $2x = 26$, so $x = 13$ and $y = 7$. The pair is determined by the equations, so it is unique.'
-          - problem: 'Sam says that $x^2 = 2x$ has exactly one real solution, because $x = 0$ is a solution. What is the other real solution?'
+          - problem: 'The equation $x^2 = 2x$ has the solution $x = 0$. What is the other real solution?'
             answer: '2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'We have $2^2 = 4 = 2 \cdot 2$, so $x = 2$ is a second solution. Sam showed existence only, and uniqueness fails.'
+            solution_sketch: 'We have $2^2 = 4 = 2 \cdot 2$, so $x = 2$ is a second solution. The solution $x = 0$ alone does not show that the solution is unique.'
           - problem: 'Does the equation $x^2 + 1 = 0$ have exactly one real solution?'
             answer: 'no'
             answer_contract: {"kind": "label", "options": [["yes", "yes it is", "it is", "yes it does", "it does", "yes it can", "correct", "true"], ["no", "no it is not", "it is not", "no it does not", "it does not", "no it cannot", "incorrect", "false"]]}
@@ -1647,10 +1647,10 @@ topics:
             answer: '11'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The next values $n = 6, 7, 8, 9, 10$ give $41, 53, 67, 83, 101$, and all of them are prime. For $n = 11$ we get $11^2 - 11 + 11 = 121 = 11 \cdot 11$, which is composite. So the claim fails first at $n = 11$. A single counterexample refutes a claim about all positive integers.'
-          - problem: 'Ana wants to prove that the sum of two odd integers is even. She checks $3 + 5 = 8$, $7 + 9 = 16$ and $11 + 13 = 24$ and writes that the claim is true for every pair of odd integers. Does her argument prove the claim?'
+          - problem: 'The checks $3 + 5 = 8$, $7 + 9 = 16$ and $11 + 13 = 24$ are followed by the statement that the sum is even for every pair of odd integers. Does this argument prove the claim that the sum of two odd integers is even?'
             answer: 'no'
             answer_contract: {"kind": "label", "options": [["yes", "it does", "it proves the claim", "it does prove it"], ["no", "it does not", "it does not prove", "not a proof"]]}
-            solution_sketch: 'Three checks cover three pairs out of infinitely many pairs, so they cannot prove a statement about every pair. A proof must take arbitrary odd integers $2j + 1$ and $2k + 1$ and show that the sum $2(j + k + 1)$ is even. Ana''s argument is therefore not a proof, although the claim itself is true.'
+            solution_sketch: 'Three checks cover three pairs out of infinitely many pairs, so they cannot prove a statement about every pair. A proof must take arbitrary odd integers $2j + 1$ and $2k + 1$ and show that the sum $2(j + k + 1)$ is even. The argument is therefore not a proof, although the claim itself is true.'
           - problem: 'A program creates identification numbers with the formula $n^2 + n + 41$ and is expected to produce a prime for every positive integer $n$. The tests pass for $n = 1, 2, \dots, 39$. For which positive integer $n$ does the first bad number appear?'
             answer: '40'
             answer_contract: {"kind": "exact"}
@@ -1663,7 +1663,7 @@ topics:
             answer: '9'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The next odd integer is $9$, and $9 = 3 \cdot 3$ is composite. So $9$ is the smallest counterexample. The three successful checks of $3$, $5$ and $7$ do not prove the claim.'
-          - problem: 'Ana wants to prove that the sum of two odd integers is even. She argues as follows. Let $a = 2j + 1$ and $b = 2k + 1$ be odd integers, where $j$ and $k$ are integers. Then $a + b = 2j + 2k + 2 = 2(j + k + 1)$, which is even. Does this argument prove that the sum of two odd integers is even?'
+          - problem: 'An argument for the claim that the sum of two odd integers is even runs as follows. Let $a = 2j + 1$ and $b = 2k + 1$ be odd integers, where $j$ and $k$ are integers. Then $a + b = 2j + 2k + 2 = 2(j + k + 1)$, which is even. Does this argument prove the claim?'
             answer: 'yes'
             answer_contract: {"kind": "label", "options": [["yes", "it does", "it proves the claim", "it does prove it"], ["no", "it does not", "it does not prove", "not a proof"]]}
             solution_sketch: 'The integers $a$ and $b$ are arbitrary odd integers, because $j$ and $k$ can be any integers. The sum equals $2(j + k + 1)$ with $j + k + 1$ an integer, so it is even by the definition of even. The argument covers every pair, so it is a proof.'
@@ -1671,7 +1671,7 @@ topics:
             answer: '3'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'For $n = 3$ we get $3^3 = 27$ and $3^3 = 27$, so the two sides are equal and the strict inequality is false. So $n = 3$ is the smallest positive integer for which the inequality fails.'
-          - problem: 'A student checks that $n^2 + n + 17$ is prime for $n = 1, 2, \dots, 15$ and concludes that it is prime for every positive integer $n$. Give a positive integer $n$ for which it is not prime.'
+          - problem: 'The value of $n^2 + n + 17$ is prime for $n = 1, 2, \dots, 15$. Give a positive integer $n$ for which it is not prime.'
             answer: '16'
             answer_contract: {"kind": "property", "check": "prime_counterexample", "args": {"expr": "n^2+n+17", "var": "n", "min": 1}}
             solution_sketch: 'For $n = 16$ we get $16^2 + 16 + 17 = 289 = 17 \cdot 17$, which is composite. The value $n = 17$ also works, because $17^2 + 17 + 17 = 323 = 17 \cdot 19$. One such value refutes the conclusion.'
@@ -1688,7 +1688,7 @@ topics:
             answer: '3'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The converse says that every multiple of $3$ is a multiple of $6$. The integer $3$ is a multiple of $3$, but $3$ is not divisible by $6$. So $3$ is the smallest counterexample, and proving the converse would not prove the original statement.'
-          - problem: 'A coach states the rule that every player on the football team has a signed permission form. In a class of $30$ students, all $11$ team members hold a form, and $18$ students hold a form in total. The coach concludes that every student with a form is on the team. How many students show that this conclusion is wrong?'
+          - problem: 'Every player on the football team has a signed permission form. In a class of $30$ students, all $11$ team members hold a form, and $18$ students hold a form in total. How many students hold a form and are not on the team?'
             answer: '7'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The students with a form who are not on the team number $18 - 11 = 7$. Each of these $7$ students holds a form and is not on the team. The rule ''team member implies form'' does not give the converse ''form implies team member''.'
@@ -1700,7 +1700,7 @@ topics:
             answer: '2'
             answer_contract: {"kind": "property", "check": "multiple_of", "args": {"k": 2, "min": 1, "max": 19, "not_multiple_of": 4}}
             solution_sketch: 'Take $n = 2$. Then $n^2 = 4$ is divisible by $4$, but $2$ is not divisible by $4$. The values $6, 10, 14, 18$ also work. So the converse fails, and a proof of the converse would not prove the original statement.'
-          - problem: 'Ava proves the statement ''if $n$ is odd, then $n^2$ is odd'' by proving the statement ''if $n^2$ is even, then $n$ is even''. Is this a valid way to prove the original statement?'
+          - problem: 'A proof of the statement ''if $n$ is odd, then $n^2$ is odd'' proves the statement ''if $n^2$ is even, then $n$ is even''. Is this a valid way to prove the original statement?'
             answer: 'yes'
             answer_contract: {"kind": "label", "options": [["yes", "it is valid", "valid", "it is correct", "correct", "it is a valid proof"], ["no", "it is not valid", "not valid", "invalid", "it is incorrect", "incorrect", "not a valid proof", "wrong"]]}
             solution_sketch: 'The statement ''if $n^2$ is even, then $n$ is even'' is the contrapositive of the original statement. A statement and its contrapositive are equivalent, so a proof of one is a proof of the other. The converse would not work, but the contrapositive does.'
@@ -1741,7 +1741,7 @@ topics:
             answer: '1'
             answer_contract: {"kind": "unit", "quantity": "length", "unit": "m", "allow_omitted": true}
             solution_sketch: 'The area gives $w(w + 4) = 5w$, so $w^2 - w = w(w - 1) = 0$ and $w = 0$ or $w = 1$. A width of $0$ is impossible, so the width is $1$ metre. Here we may divide by $w$, because $w > 0$ in the context.'
-          - problem: 'Maria thinks of a number $x$. She says that $x$ times $x - 7$ equals $4$ times $x - 7$. Which numbers could Maria have in mind?'
+          - problem: 'The number $x$ times $x - 7$ equals $4$ times $x - 7$. Which numbers can $x$ be?'
             answer: '4, 7'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The statement is $x(x-7) = 4(x-7)$. Move all terms to one side: $(x-7)(x-4) = 0$. So $x = 7$ or $x = 4$, and dividing by $x - 7$ would lose the solution $7$.'
@@ -1749,10 +1749,10 @@ topics:
             answer: 'no'
             answer_contract: {"kind": "label", "options": [["yes", "it is valid", "valid", "it is correct", "correct", "it is a valid proof"], ["no", "it is not valid", "not valid", "invalid", "it is incorrect", "incorrect", "not a valid proof", "wrong"]]}
             solution_sketch: 'Division by $x$ is illegal when $x = 0$, and $x = 0$ is a solution of $x^2 = 5x$. The correct way is $x(x - 5) = 0$, which gives $x = 0$ or $x = 5$. The student lost the solution $0$.'
-          - problem: 'A student solves $(m-3)^2 = 16$ by writing $m - 3 = 4$ or $m - 3 = -4$, so $m = 7$ or $m = -1$. Is this a valid way to find every solution of the equation?'
+          - problem: 'The equation $(m-3)^2 = 16$ is solved by writing $m - 3 = 4$ or $m - 3 = -4$, so $m = 7$ or $m = -1$. Is this a valid way to find every solution of the equation?'
             answer: 'yes'
             answer_contract: {"kind": "label", "options": [["yes", "it is valid", "valid", "it is correct", "correct", "it is a valid proof"], ["no", "it is not valid", "not valid", "invalid", "it is incorrect", "incorrect", "not a valid proof", "wrong"]]}
-            solution_sketch: 'The square root of $16$ has two branches, $4$ and $-4$, and the student keeps both of them. Each branch gives one solution, $m = 7$ and $m = -1$, and no solution is lost. So the method is valid.'
+            solution_sketch: 'The square root of $16$ has two branches, $4$ and $-4$, and both are kept. Each branch gives one solution, $m = 7$ and $m = -1$, and no solution is lost. So the method is valid.'
         constraints: "hidden division by zero or invalid root extraction; the learner names the exact illegal step"
     diagnostic_exemplar:
       problem: 'Identify the error in each argument: (a) "The sum of two even integers is even — indeed $4 + 6 = 10$." (b) "If $a = b$ then $a^2 = ab$, so $a^2 - b^2 = ab - b^2$, so $(a+b)(a-b) = b(a-b)$, hence $a + b = b$; taking $a = b = 1$ gives $2 = 1$."'
@@ -1853,7 +1853,7 @@ topics:
             answer: '6'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'We need the smallest $n$ with $2^n > 10n$. For $n = 5$ the views are $32$ and $50$, so the rival leads. For $n = 6$ the views are $64$ and $60$, so the first video leads. The answer is day $6$.'
-          - problem: 'Sam wants to prove that $2^n > n^2$ for every integer $n \ge 3$ by induction, with base case $n = 3$. Is the base case a true statement?'
+          - problem: 'A proof by induction that $2^n > n^2$ for every integer $n \ge 3$ has the base case $n = 3$. Is the base case a true statement?'
             answer: 'no'
             answer_contract: {"kind": "label", "options": [["yes", "it is true", "true", "it is a true statement", "the base case is true"], ["no", "it is not true", "not true", "false", "it is false", "the base case is false"]]}
             solution_sketch: 'At $n = 3$ we have $2^3 = 8$ and $3^2 = 9$. The statement $8 > 9$ is false, so the base case is false. The induction must start later, at $n = 5$.'
@@ -1878,7 +1878,7 @@ topics:
             answer: '(k + 1)(3k + 2)'
             answer_contract: {"kind": "required_form", "form": "factored_polynomial"}
             solution_sketch: 'Expand: $k(3k-1) + 2(3k+1) = 3k^2 - k + 6k + 2 = 3k^2 + 5k + 2$. This factors as $(k+1)(3k+2)$, because $(k+1)(3k+2) = 3k^2 + 5k + 2$. The factor $3k + 2 = 3(k+1) - 1$ matches the formula at $k + 1$.'
-          - problem: 'A student proves $\sum_{i=1}^{n}(3i+1) = \dfrac{n(3n+5)}{2}$ as follows. Base case: $n = 1$ gives $4 = 4$. Hypothesis: the formula holds for every positive integer $n$. Step: quote the formula for $n = k + 1$. Is this a valid proof by induction?'
+          - problem: 'A proof of $\sum_{i=1}^{n}(3i+1) = \dfrac{n(3n+5)}{2}$ runs as follows. Base case: $n = 1$ gives $4 = 4$. Hypothesis: the formula holds for every positive integer $n$. Step: quote the formula for $n = k + 1$. Is this a valid proof by induction?'
             answer: 'no'
             answer_contract: {"kind": "label", "options": [["yes", "it is valid", "valid", "it is correct", "correct", "it is a valid proof"], ["no", "it is not valid", "not valid", "invalid", "it is incorrect", "incorrect", "not a valid proof", "wrong"]]}
             solution_sketch: 'The hypothesis assumes the formula for every positive integer, which is the statement to be proved. The hypothesis must assume the formula only for one $k$ and then derive the case $k + 1$ by adding the term $3(k+1) + 1$. The argument is circular, so it is not a proof.'
@@ -1962,7 +1962,7 @@ topics:
             answer: '10'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'We solve $n(n+4) = 140$, which is $n^2 + 4n - 140 = (n - 10)(n + 14) = 0$. The positive solution is $n = 10$. Check: $10 \cdot 14 = 140$.'
-          - problem: 'In an induction proof of $\sum_{i=1}^{n}(2i-1) = n^2$, a student writes $S(k+1) = S(k) + (2k+1) = k^2 + 2k + 1 = (k+1)^2$. Is the inductive step correct?'
+          - problem: 'In an induction proof of $\sum_{i=1}^{n}(2i-1) = n^2$, the step reads $S(k+1) = S(k) + (2k+1) = k^2 + 2k + 1 = (k+1)^2$. Is the inductive step correct?'
             answer: 'yes'
             answer_contract: {"kind": "label", "options": [["yes", "it is valid", "valid", "it is correct", "correct", "it is a valid proof"], ["no", "it is not valid", "not valid", "invalid", "it is incorrect", "incorrect", "not a valid proof", "wrong"]]}
             solution_sketch: 'The term with index $k + 1$ is $2(k+1) - 1 = 2k + 1$, and $S(k) = k^2$ by the hypothesis. The sum $k^2 + 2k + 1$ equals $(k+1)^2$, which is the formula at $k + 1$. So the step is correct.'
@@ -1970,10 +1970,10 @@ topics:
             answer: '590'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The terms are $3i - 2$, so the first $20$ terms add up to $\dfrac{20 \cdot 59}{2} = 590$. Direct check: the last term is $58$, and the average of $1$ and $58$ is $29.5$, so the sum is $20 \cdot 29.5 = 590$.'
-          - problem: 'To prove that $\sum_{i=1}^{n}(3i-1) = \dfrac{n(3n+1)}{2}$ by induction, a student writes $S(k+1) = S(k) + (3k-1) = \dfrac{k(3k+1)}{2} + 3k - 1$ and continues from there. Is the inductive step correct?'
+          - problem: 'To prove that $\sum_{i=1}^{n}(3i-1) = \dfrac{n(3n+1)}{2}$ by induction, a step reads $S(k+1) = S(k) + (3k-1) = \dfrac{k(3k+1)}{2} + 3k - 1$ and continues from there. Is the inductive step correct?'
             answer: 'no'
             answer_contract: {"kind": "label", "options": [["yes", "it is valid", "valid", "it is correct", "correct", "it is a valid proof"], ["no", "it is not valid", "not valid", "invalid", "it is incorrect", "incorrect", "not a valid proof", "wrong"]]}
-            solution_sketch: 'The term with index $k + 1$ is $3(k+1) - 1 = 3k + 2$, but the student adds $3k - 1$, which is the term with index $k$. So the step starts from a wrong sum and is not correct. The correct step adds $3k + 2$ to $\dfrac{k(3k+1)}{2}$.'
+            solution_sketch: 'The term with index $k + 1$ is $3(k+1) - 1 = 3k + 2$, but the step adds $3k - 1$, which is the term with index $k$. So the step starts from a wrong sum and is not correct. The correct step adds $3k + 2$ to $\dfrac{k(3k+1)}{2}$.'
           - problem: 'Write the full proof that for every integer $n \ge 1$, $2 + 5 + 8 + \cdots + (3n-1) = \dfrac{n(3n+1)}{2}$.'
             answer: '2+5+...+(3n-1) = n(3n+1)/2'
             answer_contract: {"kind": "none"}
@@ -2011,10 +2011,10 @@ topics:
             answer: '36'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The left side is $1 + 8 + 27 = 36$. The right side is $\left(\dfrac{3 \cdot 4}{2}\right)^2 = 6^2 = 36$. So both sides equal $36$.'
-          - problem: 'A student checks that $1^2 + 2^2 + \cdots + n^2 = \dfrac{n(n+1)(2n+1)}{6}$ holds for $n = 1, 2, \dots, 10$ by direct computation and says that the formula is now proved for all $n \ge 1$. Is the student right?'
+          - problem: 'The formula $1^2 + 2^2 + \cdots + n^2 = \dfrac{n(n+1)(2n+1)}{6}$ holds for $n = 1, 2, \dots, 10$ by direct computation. Does this prove the formula for all $n \ge 1$?'
             answer: 'no'
             answer_contract: {"kind": "label", "options": [["yes", "the student is right", "it is proved", "right"], ["no", "the student is not right", "not proved", "not right", "wrong"]]}
-            solution_sketch: 'Ten checks cover ten values of $n$, and the formula claims infinitely many cases. A proof needs the base case and the inductive step for an arbitrary $k$. So the student is not right.'
+            solution_sketch: 'Ten checks cover ten values of $n$, and the formula claims infinitely many cases. A proof needs the base case and the inductive step for an arbitrary $k$. So the checks do not prove the formula.'
           - problem: 'Write the full proof that for every integer $n \ge 1$, $1^3 + 2^3 + \cdots + n^3 = \left(\dfrac{n(n+1)}{2}\right)^2$.'
             answer: 'sum of cubes = (n(n+1)/2)^2'
             answer_contract: {"kind": "none"}
@@ -2048,11 +2048,11 @@ topics:
             answer: 'k+2'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Write $\dfrac{5^{k+1}-1}{4} + 5^{k+1} = \dfrac{5^{k+1} - 1 + 4 \cdot 5^{k+1}}{4} = \dfrac{5 \cdot 5^{k+1} - 1}{4}$. Since $5 \cdot 5^{k+1} = 5^{k+2}$, the sum equals $\dfrac{5^{k+2}-1}{4}$. So $m = k + 2$.'
-          - problem: 'A student claims that $1 + 2 + 4 + \cdots + 2^n = 2^{n+1}$ for all $n \ge 0$ and checks that the induction step works. Find the smallest $n \ge 0$ for which the claim is false.'
+          - problem: 'The induction step works for $1 + 2 + 4 + \cdots + 2^n = 2^{n+1}$, which is stated for all $n \ge 0$. Find the smallest $n \ge 0$ for which the statement is false.'
             answer: '0'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'At $n = 0$ the left side is $1$ and the right side is $2^1 = 2$, so the claim is false for $n = 0$. The step works, because $2^{k+1} + 2^{k+1} = 2^{k+2}$, but without a true base case it proves nothing.'
-          - problem: 'A student proves $1 + 6 + 36 + \cdots + 6^n = \dfrac{6^{n+1}-1}{5}$ for every $n \ge 0$. The base case $n = 0$ gives $1 = 1$. For the step the student assumes the formula at $n = k$, adds $6^{k+1}$ to both sides, and writes $\dfrac{6^{k+1}-1}{5} + 6^{k+1} = \dfrac{6^{k+1} - 1 + 5 \cdot 6^{k+1}}{5} = \dfrac{6^{k+2} - 1}{5}$. Is the proof correct?'
+          - problem: 'A proof of $1 + 6 + 36 + \cdots + 6^n = \dfrac{6^{n+1}-1}{5}$ for every $n \ge 0$ has the base case $n = 0$, which gives $1 = 1$. For the step it assumes the formula at $n = k$, adds $6^{k+1}$ to both sides, and writes $\dfrac{6^{k+1}-1}{5} + 6^{k+1} = \dfrac{6^{k+1} - 1 + 5 \cdot 6^{k+1}}{5} = \dfrac{6^{k+2} - 1}{5}$. Is the proof correct?'
             answer: 'yes'
             answer_contract: {"kind": "label", "options": [["yes", "it is valid", "valid", "it is correct", "correct", "it is a valid proof"], ["no", "it is not valid", "not valid", "invalid", "it is incorrect", "incorrect", "not a valid proof", "wrong"]]}
             solution_sketch: 'The base case holds, because both sides equal $1$ at $n = 0$. The step adds the new term $6^{k+1}$ to the hypothesis, combines over the denominator $5$ and uses $6 \cdot 6^{k+1} = 6^{k+2}$, which is the formula at $k + 1$. So the proof is correct.'
@@ -2111,7 +2111,7 @@ topics:
             answer: '2k+2'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Expand: $(k+1)^2 + (k+1) = k^2 + 2k + 1 + k + 1 = k^2 + 3k + 2$. Subtract $k^2 + k$ to get $2k + 2 = 2(k+1)$, which is even.'
-          - problem: 'To prove $6 \mid n^2 + 5n$ by induction, a student writes $(k+1)^2 + 5(k+1) = (k^2 + 5k) + (2k + 6)$ and says that both terms are multiples of $6$ for every $k \ge 0$. Is the step correct?'
+          - problem: 'To prove $6 \mid n^2 + 5n$ by induction, a step writes $(k+1)^2 + 5(k+1) = (k^2 + 5k) + (2k + 6)$ and says that both terms are multiples of $6$ for every $k \ge 0$. Is the step correct?'
             answer: 'no'
             answer_contract: {"kind": "label", "options": [["yes", "it is valid", "valid", "it is correct", "correct", "it is a valid proof"], ["no", "it is not valid", "not valid", "invalid", "it is incorrect", "incorrect", "not a valid proof", "wrong"]]}
             solution_sketch: 'The identity is correct, but the term $2k + 6$ is not a multiple of $6$ for every $k$. For $k = 1$ it equals $8$. So the step does not prove the claim, and the claim itself fails at $n = 2$, where $n^2 + 5n = 14$.'
@@ -2148,7 +2148,7 @@ topics:
             answer: '66430'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'For $n = 6$ the file has $9^6 - 1 = 531441 - 1 = 531440$ bytes. Since $8$ divides $9^n - 1$, the packets are all full. The number of packets is $531440 \div 8 = 66430$.'
-          - problem: 'To prove $3 \mid 2^n - 1$ for every even $n \ge 0$, a student checks $n = 0$ and uses the identity $2^{k+2} - 1 = 4(2^k - 1) + 3$ to pass from $k$ to $k + 2$. Is this a valid proof?'
+          - problem: 'To prove $3 \mid 2^n - 1$ for every even $n \ge 0$, a proof checks $n = 0$ and uses the identity $2^{k+2} - 1 = 4(2^k - 1) + 3$ to pass from $k$ to $k + 2$. Is this a valid proof?'
             answer: 'yes'
             answer_contract: {"kind": "label", "options": [["yes", "it is valid", "valid", "it is correct", "correct", "it is a valid proof"], ["no", "it is not valid", "not valid", "invalid", "it is incorrect", "incorrect", "not a valid proof", "wrong"]]}
             solution_sketch: 'The base case $n = 0$ gives $2^0 - 1 = 0$, which is divisible by $3$. The identity shows that $3 \mid 2^k - 1$ implies $3 \mid 2^{k+2} - 1$. The proof reaches $n = 0, 2, 4, \dots$, which are all even $n \ge 0$.'
@@ -2238,10 +2238,10 @@ topics:
             answer: '4'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'We have $2^3 = 8$, which is less than $9$, and $2^4 = 16 \ge 9$. So the added $9$ is at most $2^k$ exactly when $k \ge 4$. The smallest such $k$ is $4$.'
-          - problem: 'Sam proves correctly that if $2k+1<2^k$ for some $k \ge 1$, then $2(k+1)+1<2^{k+1}$. He forgets to check a base case and concludes that $2n+1<2^n$ for every positive integer $n$. For how many positive integers $n$ is $2n+1<2^n$ false?'
+          - problem: 'A proof shows correctly that if $2k+1<2^k$ for some $k \ge 1$, then $2(k+1)+1<2^{k+1}$. It does not check a base case and concludes that $2n+1<2^n$ for every positive integer $n$. For how many positive integers $n$ is $2n+1<2^n$ false?'
             answer: '2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The inequality fails at $n=1$, where $3<2$ is false, and at $n=2$, where $5<4$ is false. It holds at $n=3$, where $7<8$, and from then on. So it is false for exactly $2$ positive integers, and a base case at $n=3$ is what Sam needed.'
+            solution_sketch: 'The inequality fails at $n=1$, where $3<2$ is false, and at $n=2$, where $5<4$ is false. It holds at $n=3$, where $7<8$, and from then on. So it is false for exactly $2$ positive integers, and a base case at $n=3$ is what the proof needs.'
           - problem: 'Is it true that $4n < 2^n$ for every integer $n \ge 4$?'
             answer: 'no'
             answer_contract: {"kind": "label", "options": [["yes", "it is true", "true", "it is", "yes it is true"], ["no", "it is not true", "not true", "false", "it is not", "it isn't", "no it is not true"]]}
@@ -2271,10 +2271,10 @@ topics:
             answer: '3'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Rewrite the condition as $2k^2 \ge k^2+2k+1$, that is $k^2-2k-1 \ge 0$. For $k=2$ this reads $-1 \ge 0$, which is false, and for $k=3$ it reads $2 \ge 0$, which is true. So the smallest value is $k=3$.'
-          - problem: 'Sam wants to prove $2^n>n^2$ for all $n \ge 1$. He checks $n=1$, where $2>1$, and shows correctly that $2^k>k^2$ implies $2^{k+1}>(k+1)^2$ whenever $k \ge 3$. He concludes that $2^n>n^2$ for every $n \ge 1$. What is the smallest positive integer $n$ for which his conclusion is false?'
+          - problem: 'A proof of $2^n>n^2$ for all $n \ge 1$ checks $n=1$, where $2>1$, and shows correctly that $2^k>k^2$ implies $2^{k+1}>(k+1)^2$ whenever $k \ge 3$. It concludes that $2^n>n^2$ for every $n \ge 1$. What is the smallest positive integer $n$ for which this conclusion is false?'
             answer: '2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'His step covers only $k \ge 3$, so it never links $n=1$ to $n=2$. We check $n=2$ directly: $2^2=4$ and $2^2=4$, and $4>4$ is false. So $n=2$ is the smallest value for which his conclusion is false.'
+            solution_sketch: 'The step covers only $k \ge 3$, so it never links $n=1$ to $n=2$. We check $n=2$ directly: $2^2=4$ and $2^2=4$, and $4>4$ is false. So $n=2$ is the smallest value for which the conclusion is false.'
           - problem: 'Is $n^2 < 3^n$ true for every positive integer $n$?'
             answer: 'yes'
             answer_contract: {"kind": "label", "options": [["yes", "it is true", "true", "it is", "yes it is true"], ["no", "it is not true", "not true", "false", "it is not", "it isn't", "no it is not true"]]}
@@ -2296,7 +2296,7 @@ topics:
             answer: '1 + (k+1)x + kx^2'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Multiply each term of the first factor by each term of the second: $(1+kx)(1+x) = 1 + x + kx + kx^2$. Collecting the terms in $x$ gives $1 + (k+1)x + kx^2$. The last term $kx^2$ is nonnegative, which is what finishes the step.'
-          - problem: 'Bernoulli''s inequality $(1+x)^n \ge 1+nx$ is stated for $x \ge -1$. Ana tries $x=-3$. What is the smallest positive integer $n$ for which the inequality is false when $x=-3$?'
+          - problem: 'Bernoulli''s inequality $(1+x)^n \ge 1+nx$ is stated for $x \ge -1$. What is the smallest positive integer $n$ for which the inequality is false when $x=-3$?'
             answer: '5'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'For $x=-3$ we compare $(-2)^n$ with $1-3n$. We get $-2 \ge -2$ at $n=1$, $4 \ge -5$ at $n=2$, $-8 \ge -8$ at $n=3$ and $16 \ge -11$ at $n=4$, and all are true. At $n=5$ we get $-32 \ge -14$, which is false, so $n=5$ is the smallest failure.'
@@ -2316,7 +2316,7 @@ topics:
             answer: '1500'
             answer_contract: {"kind":"unit","quantity":"dollar","unit":"dollar","allow_omitted":true}
             solution_sketch: 'Bernoulli''s inequality gives $(1+0.05)^{10} \ge 1+10\cdot 0.05 = 1.5$. Multiplying by $1000$ shows that the balance is at least $1500$ dollars. The true balance is about $1628.89$ dollars, so the bound is safe but not tight.'
-          - problem: 'Mia adds the fractions $1, \frac12, \frac13, \dots$ one after another. The bound $\sum_{i=1}^{2^n} \frac1i \ge 1+\frac n2$ holds for every $n \ge 1$. What is the smallest $n$ for which the bound guarantees that the sum of the first $2^n$ fractions is at least $5$?'
+          - problem: 'The fractions $1, \frac12, \frac13, \dots$ are added one after another. The bound $\sum_{i=1}^{2^n} \frac1i \ge 1+\frac n2$ holds for every $n \ge 1$. What is the smallest $n$ for which the bound guarantees that the sum of the first $2^n$ fractions is at least $5$?'
             answer: '8'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'We need $1+\frac n2 \ge 5$, that is $\frac n2 \ge 4$, so $n \ge 8$. For $n=7$ the bound gives only $4.5$. So the smallest value is $n=8$, which uses the first $2^8=256$ fractions.'
@@ -2377,10 +2377,10 @@ topics:
             answer: '3/4'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'At $n=2$ the product has the single factor $1-\frac14=\frac34$. The right side is $\frac{2+1}{2\cdot 2}=\frac34$. Both sides equal $\frac34$, so the base case holds.'
-          - problem: 'Sam guesses that $1^2+2^2+\dots+n^2=\frac{n^2(n+1)}{2}$ for every positive integer $n$. His formula is true for $n=1$. What is the smallest $n$ for which his formula is false?'
+          - problem: 'The formula $1^2+2^2+\dots+n^2=\frac{n^2(n+1)}{2}$ is true for $n=1$. What is the smallest $n$ for which it is false?'
             answer: '2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'At $n=1$ both sides equal $1$. At $n=2$ the left side is $1+4=5$, while Sam''s formula gives $\frac{4\cdot 3}{2}=6$. So $n=2$ is the smallest value for which it is false; one true base case does not prove a formula.'
+            solution_sketch: 'At $n=1$ both sides equal $1$. At $n=2$ the left side is $1+4=5$, while the formula gives $\frac{4\cdot 3}{2}=6$. So $n=2$ is the smallest value for which it is false; one true base case does not prove a formula.'
           - problem: 'Oranges are stacked in a triangular pyramid. Layer $i$ from the top is a triangle of $\frac{i(i+1)}{2}$ oranges. By induction, $\sum_{i=1}^{n}\frac{i(i+1)}{2}=\frac{n(n+1)(n+2)}{6}$. How many oranges are in a pyramid with $12$ layers?'
             answer: '364'
             answer_contract: {"kind": "exact"}
@@ -2414,7 +2414,7 @@ topics:
             answer: '16'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'A pizza with pepperoni is decided by the other $4$ toppings, and each of them is either on the pizza or off it. That gives $2^4=16$ choices. So $16$ pizzas include pepperoni, and the other $16$ do not, which makes $32=2^5$ in all.'
-          - problem: 'Sam says that a new line, crossing $3$ lines already drawn in general position, adds $3$ new regions. How many new regions does it really add?'
+          - problem: 'A new line crosses $3$ lines already drawn in general position. How many new regions does it add?'
             answer: '4'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The new line meets the $3$ old lines in $3$ different points, and these cut it into $4$ pieces. Each piece splits one old region in two, so the new line adds $4$ regions, not $3$.'
@@ -2435,7 +2435,7 @@ topics:
             answer: '7'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'We have $6!=720$ and $3^6=729$, so $6!>3^6$ is false, and the same holds for smaller $n$. For $n=7$ we get $7!=5040$ and $3^7=2187$, so the inequality is true. From then on each step multiplies $n!$ by $n+1 \ge 8$ and $3^n$ by only $3$, so $n_0=7$.'
-          - problem: 'Sam claims that $3^n>n^3$ for all $n \ge 1$. What is the smallest $n \ge 1$ for which the claim is false?'
+          - problem: 'What is the smallest $n \ge 1$ for which $3^n>n^3$ is false?'
             answer: '3'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'We have $3^1=3>1$ and $3^2=9>8$. At $n=3$ both sides equal $27$, and $27>27$ is false. So the claim first fails at $n=3$.'
@@ -2447,11 +2447,11 @@ topics:
             answer: '10'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'On day $9$ the chain letter has $512$ readers and the newspaper has $900$. On day $10$ the chain letter has $1024$ and the newspaper has $1000$. After that the letter gains $2^n \ge 1024$ readers a day against $100$ for the newspaper, so $n_0=10$.'
-          - problem: 'Sam checks that $n^2+n+41$ is prime for $n=1,2,\dots,10$ and concludes that it is prime for every positive integer $n$. Give a positive integer $n$ for which $n^2+n+41$ is not prime.'
+          - problem: 'The value of $n^2+n+41$ is prime for $n=1,2,\dots,10$. Give a positive integer $n$ for which $n^2+n+41$ is not prime.'
             answer: '40'
             answer_contract: {"kind": "property", "check": "prime_counterexample", "args": {"expr": "n^2+n+41", "var": "n", "min": 1}}
             solution_sketch: 'For $n=40$ we get $40^2+40+41=1681=41^2$, which is not prime. Checking many cases does not prove a statement for all $n$. A proof by induction needs a step that works for every $k$.'
-          - problem: 'Sam proves that $P(1)$ is true and that $P(k)$ implies $P(k+1)$ for every $k \ge 2$. Does this prove $P(n)$ for every positive integer $n$?'
+          - problem: 'A proof shows that $P(1)$ is true and that $P(k)$ implies $P(k+1)$ for every $k \ge 2$. Does this prove $P(n)$ for every positive integer $n$?'
             answer: 'no'
             answer_contract: {"kind": "label", "options": [["yes", "it does", "yes it does", "it proves it"], ["no", "it does not", "no it does not", "it doesn't", "not proved", "it does not prove it"]]}
             solution_sketch: 'The step is never shown for $k=1$, so nothing connects $P(1)$ to $P(2)$. The chain of implications starts at $P(2)$, which is not known to be true. So the proof is incomplete, and the answer is no.'
@@ -2514,10 +2514,10 @@ topics:
             answer: '3'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The recurrence for $u_n$ reaches back to $u_{n-3}$. The first term the recurrence produces is $u_4$, which needs $u_1$, $u_2$ and $u_3$. So at least $3$ base cases are needed.'
-          - problem: 'Sam studies the sequence $b_1=1$, $b_2=3$ and $b_n=b_{n-1}+2b_{n-2}$ for $n \ge 3$. He notices $b_1=2\cdot1-1$ and $b_2=2\cdot2-1$, and claims $b_n=2n-1$ for all $n$. For which smallest $n$ is $b_n \ne 2n-1$?'
+          - problem: 'Consider the sequence $b_1=1$, $b_2=3$ and $b_n=b_{n-1}+2b_{n-2}$ for $n \ge 3$. The formula $b_n=2n-1$ matches $b_1=2\cdot1-1$ and $b_2=2\cdot2-1$. For which smallest $n$ is $b_n \ne 2n-1$?'
             answer: '4'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The recurrence gives $b_3=3+2\cdot 1=5=2\cdot 3-1$, which agrees with Sam. Next $b_4=5+2\cdot 3=11$, but $2\cdot 4-1=7$. So $n=4$ is the smallest value where the formula fails.'
+            solution_sketch: 'The recurrence gives $b_3=3+2\cdot 1=5=2\cdot 3-1$, which agrees with the formula. Next $b_4=5+2\cdot 3=11$, but $2\cdot 4-1=7$. So $n=4$ is the smallest value where the formula fails.'
           - problem: 'A frog climbs a staircase by jumping $1$ step or $2$ steps at a time. Let $w_n$ be the number of ways to reach step $n$, so $w_1=1$ and $w_2=2$. The last jump to step $n$ starts from step $n-1$ or from step $n-2$. How many ways are there to reach step $8$?'
             answer: '34'
             answer_contract: {"kind": "exact"}
@@ -2543,7 +2543,7 @@ topics:
             answer: '11'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Split $462=2\cdot 231$, then $231=3\cdot 77$, then $77=7\cdot 11$. So $462=2\cdot 3\cdot 7\cdot 11$ is a product of primes. The largest prime factor is $11$.'
-          - problem: 'Sam splits $210=14\cdot 15$ and then writes each of the factors $14$ and $15$ as a product of primes. Multiplying the two results gives a prime factorization of $210$. How many primes does it contain, counting repeats?'
+          - problem: 'Split $210=14\cdot 15$ and write each of the factors $14$ and $15$ as a product of primes. Multiplying the two results gives a prime factorization of $210$. How many primes does it contain, counting repeats?'
             answer: '4'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'We have $14=2\cdot 7$ and $15=3\cdot 5$. So $210=2\cdot 7\cdot 3\cdot 5$, a product of $4$ primes. No prime repeats, so the count is $4$.'
@@ -2555,10 +2555,10 @@ topics:
             answer: 'no'
             answer_contract: {"kind": "label", "options": [["yes", "they can", "it can", "yes they can", "yes it can"], ["no", "they cannot", "it cannot", "no they cannot", "no it cannot", "they can not", "they can't", "no they can't"]]}
             solution_sketch: 'Equal rows would need $97=ab$ with $a \ge 2$ and $b \ge 2$. But $97$ is prime, since no prime up to $9$ divides it. So no such arrangement exists, and the answer is no.'
-          - problem: 'Sam claims that every composite number is a product of exactly two primes, which may be equal. Find the smallest composite number for which Sam is wrong.'
+          - problem: 'Find the smallest composite number that is not a product of exactly two primes, which may be equal.'
             answer: '8'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'We have $4=2\cdot 2$ and $6=2\cdot 3$, which agree with Sam, and $9=3\cdot 3$ is also fine. The number $8=2\cdot 2\cdot 2$ needs three primes, so Sam is wrong at $8$. Smaller composites are $4$ and $6$ only.'
+            solution_sketch: 'We have $4=2\cdot 2$, $6=2\cdot 3$ and $9=3\cdot 3$, which are products of two primes. The number $8=2\cdot 2\cdot 2$ needs three primes. The smaller composites are $4$ and $6$ only, so $8$ is the smallest.'
           - problem: 'The composite case of the proof splits $n=ab$ with $2 \le a<n$ and $2 \le b<n$. Give a value of $a$ that works for $n=1001$.'
             answer: '7'
             answer_contract: {"kind": "property", "check": "divisor_of", "args": {"k": 1001, "min": 2, "max": 1000}}
@@ -2588,7 +2588,7 @@ topics:
             answer: '41'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Apply the recurrence day by day: $p_3=2\cdot 3+1=7$, $p_4=2\cdot 7+3=17$ and $p_5=2\cdot 17+7=41$. So $p_5=41$, which is less than $4^5=1024$.'
-          - problem: 'Sam tries to show that the Fibonacci numbers satisfy $f_n<\left(\frac32\right)^n$ for every $n \ge 1$, where $f_1=f_2=1$ and $f_n=f_{n-1}+f_{n-2}$. What is the smallest $n$ for which this inequality is false?'
+          - problem: 'The Fibonacci numbers are $f_1=f_2=1$ and $f_n=f_{n-1}+f_{n-2}$. What is the smallest $n$ for which $f_n<\left(\frac32\right)^n$ is false?'
             answer: '11'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The terms are $f_{10}=55$ and $f_{11}=89$. We have $\left(\frac32\right)^{10}\approx 57.67>55$, so the inequality holds at $n=10$, and it holds for all smaller $n$ too. But $\left(\frac32\right)^{11}\approx 86.50<89$, so it fails first at $n=11$.'
@@ -2690,10 +2690,10 @@ topics:
             answer: '40'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'With $q=-|a|=-20$ we get $a-bq=-20-3\cdot(-20)=-20+60=40$. This number is not negative, so $40 \in S$ and the set is nonempty.'
-          - problem: 'Sam forgets the condition $a-bq \ge 0$ and defines $S=\{a-bq : q \in \mathbb Z\}$ for $a=7$ and $b=2$. He claims that well-ordering gives $S$ a least element. Give an element of $S$ that is less than $0$.'
+          - problem: 'Define $S=\{a-bq : q \in \mathbb Z\}$ for $a=7$ and $b=2$, without the condition $a-bq \ge 0$. Give an element of $S$ that is less than $0$.'
             answer: '-1'
             answer_contract: {"kind": "property", "check": "integer_in_range", "args": {"max": -1, "not_multiple_of": 2}}
-            solution_sketch: 'The elements of $S$ are the numbers $7-2q$, which are all odd. For $q=4$ we get $7-8=-1$, and larger $q$ give $-3$, $-5$ and so on. The set has no least element, so Sam''s claim fails without the condition.'
+            solution_sketch: 'The elements of $S$ are the numbers $7-2q$, which are all odd. For $q=4$ we get $7-8=-1$, and larger $q$ give $-3$, $-5$ and so on. The set has no least element, so well-ordering gives no least element without the condition.'
           - problem: 'A baker packs $8$ cookies in each box. With $150$ cookies, the baker fills as many boxes as possible. How many cookies are left over?'
             answer: '6'
             answer_contract: {"kind": "exact"}
@@ -2727,10 +2727,10 @@ topics:
             answer: 'm^2'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Expand $(m-1)^2=m^2-2m+1$. Adding $2m-1$ gives $m^2-2m+1+2m-1=m^2$. So the formula holds at $m$, which contradicts the choice of $m$.'
-          - problem: 'Sam proves that if $k^2+k$ is odd, then $(k+1)^2+(k+1)$ is odd, for every $k \ge 1$. He concludes that $n^2+n$ is odd for every positive integer $n$. For how many positive integers $n$ is $n^2+n$ actually odd?'
+          - problem: 'A proof shows that if $k^2+k$ is odd, then $(k+1)^2+(k+1)$ is odd, for every $k \ge 1$, and concludes that $n^2+n$ is odd for every positive integer $n$. For how many positive integers $n$ is $n^2+n$ actually odd?'
             answer: '0'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'We have $n^2+n=n(n+1)$, and one of two consecutive integers is even. So $n^2+n$ is even for every $n$, and it is odd for $0$ values of $n$. Sam''s step is correct, but the statement $P(1)$ is false, so the chain never starts.'
+            solution_sketch: 'We have $n^2+n=n(n+1)$, and one of two consecutive integers is even. So $n^2+n$ is even for every $n$, and it is odd for $0$ values of $n$. The step is correct, but the statement $P(1)$ is false, so the chain never starts.'
           - problem: 'Mia can reach rung $1$ of a ladder, and from any rung she can reach, she can step up to the next rung. Suppose some rung is out of her reach, and the lowest such rung is rung $30$. Which rung can she reach that would let her step up to rung $30$?'
             answer: '29'
             answer_contract: {"kind": "exact"}

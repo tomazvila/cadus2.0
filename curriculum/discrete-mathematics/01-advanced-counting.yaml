@@ -53,10 +53,10 @@ topics:
             answer: "70"
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Inclusion-exclusion gives $135 = 85 + |B| - 20$. So $|B| = 135 - 85 + 20 = 70$.'
-          - problem: 'Sam reasons that $28$ students play soccer and $22$ play basketball, so $28 + 22 = 50$ students play at least one of the two sports. Nine students play both. What is the correct number of students who play at least one sport?'
+          - problem: 'In a class, $28$ students play soccer and $22$ play basketball. Nine students play both. How many students play at least one of the two sports?'
             answer: "41"
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Sam counts the $9$ students who play both sports twice. The correct number is $28 + 22 - 9 = 41$.'
+            solution_sketch: 'The sum $28 + 22 = 50$ counts the $9$ students who play both sports twice. The number is $28 + 22 - 9 = 41$.'
         constraints: "two sets; counts <= 200; divisibility counts use floor(N/d); contexts: overlap of two groups, a missing overlap, a missing set size"
       - id: kp2
         name: "Three sets"
@@ -90,10 +90,10 @@ topics:
             answer: "143"
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Add the three pet counts: $90 + 70 + 40 = 200$. Subtract the pair overlaps $30 + 20 + 15 = 65$ and add back the $8$ households with all three pets: $200 - 65 + 8 = 143$.'
-          - problem: 'Mia counts the students who study at least one of Spanish, French and German. The classes have $30$, $25$ and $20$ students, and the pair overlaps are $10$, $8$ and $6$. She computes $75 - 24 = 51$. Four students study all three languages. What is the correct number of students?'
+          - problem: 'The Spanish, French and German classes have $30$, $25$ and $20$ students, and the pair overlaps are $10$, $8$ and $6$. Four students study all three languages. How many students study at least one of the three languages?'
             answer: "55"
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Mia leaves out the last term of the formula. The $4$ students in all three classes are added $3$ times and removed $3$ times, so they must be added back once: $51 + 4 = 55$.'
+            solution_sketch: 'The sum of the pairs gives $75 - 24 = 51$, which leaves out the last term of the formula. The $4$ students in all three classes are added $3$ times and removed $3$ times, so they must be added back once: $51 + 4 = 55$.'
         constraints: "three sets; alternate signs by intersection size; totals <= 1000; contexts: three groups with given overlaps, a missing triple overlap, a corrected count"
       - id: kp3
         name: "Counting the complement"
@@ -237,10 +237,10 @@ topics:
             answer: "45"
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Only $x_1$ has a lower bound. Set $y_1 = x_1 - 4 \ge 0$, so $y_1 + x_2 + x_3 = 8$, and the count is $\binom{10}{2} = 45$.'
-          - problem: 'Tom counts the positive solutions of $x_1 + x_2 + x_3 = 9$ as $\binom{11}{2} = 55$. What is the correct number of positive solutions?'
+          - problem: 'How many positive integer solutions does $x_1 + x_2 + x_3 = 9$ have?'
             answer: "28"
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Tom used $9$ as the total although each variable is at least $1$. Setting $y_i = x_i - 1$ gives $y_1 + y_2 + y_3 = 6$, so the count is $\binom{8}{2} = 28$.'
+            solution_sketch: 'Each variable is at least $1$, so the total $9$ cannot be used directly. Setting $y_i = x_i - 1$ gives $y_1 + y_2 + y_3 = 6$, so the count is $\binom{8}{2} = 28$.'
         constraints: "lower bounds 1-4 per variable; require the substitution step; remaining total >= 0; sharing problems where each receiver gets at least some items"
     diagnostic_exemplar:
       problem: 'How many ways can $12$ identical pencils be shared among $4$ students if every student must get at least one?'
@@ -314,10 +314,10 @@ topics:
             answer: "12"
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Put an L first. The other four letters are E, V, E, L, with E repeated twice. They can be arranged in $4!/2! = 12$ ways.'
-          - problem: 'Sam says that the letters of the word LETTER can be arranged in $6! = 720$ ways. What is the correct number of different arrangements?'
+          - problem: 'How many different arrangements do the letters of the word LETTER have?'
             answer: "180"
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Sam forgot that the two E''s and the two T''s can be swapped without changing the word. The correct number is $6!/(2! \, 2!) = 720/4 = 180$.'
+            solution_sketch: 'The two E''s and the two T''s can be swapped without changing the word. The number is $6!/(2! \, 2!) = 720/4 = 180$.'
         constraints: "words of length 4-11 with 1-3 repeated letter groups; strings, flags and digits with repeated symbols; one restricted first position"
       - id: kp2
         name: "Lattice paths as multiset arrangements"
@@ -416,10 +416,10 @@ topics:
             answer: '265'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Each friend must give to someone else and receive from someone else, so the assignments are the derangements of six objects. Then $D_6 = 6! - 6 \cdot 5! + 15 \cdot 4! - 20 \cdot 3! + 15 \cdot 2! - 6 + 1 = 265$.'
-          - problem: 'Sam counts the derangements of four objects as $4! - 4 \cdot 3! = 0$: all arrangements, minus those that keep one chosen object in place. What is the correct number of derangements of four objects?'
+          - problem: 'In how many ways can four objects be arranged in a row so that no object stays in its place?'
             answer: '9'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Sam subtracts an arrangement that keeps two objects in place twice. Inclusion-exclusion adds these back, giving $24 - 24 + 12 - 4 + 1 = 9$.'
+            solution_sketch: 'Subtracting $4 \cdot 3!$ removes an arrangement that keeps two objects in place twice. Inclusion-exclusion adds these back, giving $24 - 24 + 12 - 4 + 1 = 9$.'
           - problem: 'Given $D_5 = 44$ and $D_6 = 265$, use the recurrence $D_n = (n-1)(D_{n-1} + D_{n-2})$ to find $D_7$.'
             answer: '1854'
             answer_contract: {"kind": "exact"}
@@ -562,7 +562,7 @@ topics:
             answer: '9'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'In the worst case you take out all $8$ gloves of one hand first. The $9$th glove must be of the other hand, so the answer is $9$.'
-          - problem: 'Sam says that $8$ integers from $1, 2, \dots, 16$ are enough to guarantee that two of them add up to $17$, because there are $8$ pairs with that sum. What is the correct smallest number of integers?'
+          - problem: 'The integers $1, 2, \dots, 16$ form $8$ pairs with sum $17$. What is the smallest number of integers chosen from $1, 2, \dots, 16$ that guarantees two of them add up to $17$?'
             answer: '9'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Eight integers can be chosen one from each of the eight pairs, for example $1, 2, \dots, 8$, and no two of them add up to $17$. A $9$th integer must complete a pair, so the answer is $9$.'
@@ -623,10 +623,10 @@ topics:
             answer: '120'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Each $7$-topping pizza matches exactly one set of $3$ toppings left off. So the number is $\binom{10}{3} = \binom{10}{7} = 120$.'
-          - problem: 'Maya proves that $\binom{n}{k} = \binom{n}{n-k}$ by matching each $k$-subset of an $n$-set with its complement. She says that this matching is not one-to-one, because two different $k$-subsets can have the same complement. Test her claim with $n = 4$ and $k = 2$. How many $2$-subsets of $\{1, 2, 3, 4\}$ have the complement $\{3, 4\}$?'
+          - problem: 'A proof of $\binom{n}{k} = \binom{n}{n-k}$ matches each $k$-subset of an $n$-set with its complement. Test whether two different $k$-subsets can have the same complement, with $n = 4$ and $k = 2$. How many $2$-subsets of $\{1, 2, 3, 4\}$ have the complement $\{3, 4\}$?'
             answer: '1'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The complement of a subset is the set of the elements that it leaves out. Only the subset $\{1, 2\}$ leaves out exactly $\{3, 4\}$, so $1$ subset has this complement. So the matching is one-to-one and Maya is wrong.'
+            solution_sketch: 'The complement of a subset is the set of the elements that it leaves out. Only the subset $\{1, 2\}$ leaves out exactly $\{3, 4\}$, so $1$ subset has this complement. So the matching is one-to-one.'
           - problem: 'A club has $9$ members, and Ana is one of them. Counting the $4$-member committees by whether they include Ana gives $\binom{8}{3}$ that include her and $\binom{8}{4}$ that do not. How many $4$-member committees are there in all?'
             answer: '126'
             answer_contract: {"kind": "exact"}
@@ -660,7 +660,7 @@ topics:
             answer: '32'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Each of the $5$ toppings has $2$ choices, and the choices are independent. So there are $2^5 = 32$ sundaes.'
-          - problem: 'Leo proves that $k\binom{n}{k} = n\binom{n-1}{k-1}$ by counting the pairs (committee of $k$ people, chair on it). He chooses the chair first in $n$ ways. Then he says that the other $k-1$ members are chosen from all $n$ people, in $\binom{n}{k-1}$ ways. Find the correct number of ways to choose the other $k-1$ members when $n = 5$ and $k = 3$.'
+          - problem: 'A proof of $k\binom{n}{k} = n\binom{n-1}{k-1}$ counts the pairs (committee of $k$ people, chair on it) and chooses the chair first in $n$ ways. Find the number of ways to choose the other $k-1$ members when $n = 5$ and $k = 3$.'
             answer: '6'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The chair is already on the committee, so the other $k-1 = 2$ members come from the remaining $n-1 = 4$ people. This gives $\binom{4}{2} = 6$ ways, and not $\binom{5}{2} = 10$ ways.'

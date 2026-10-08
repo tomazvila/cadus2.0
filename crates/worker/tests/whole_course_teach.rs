@@ -134,7 +134,8 @@ fn retired_sources(
         read(root().join("docs/reports/whole-course-teach-retired-source-templates.json"));
     let retired = retired.as_array().expect("retired rows");
     // 50 before the courses rewrite; 156 more were retired on 2026-10-07.
-    assert_eq!(retired.len(), 206);
+    // 2026-10-08, story framing removed: subtraction-with-borrowing/kp3 retired (207, was 206).
+    assert_eq!(retired.len(), 207);
     let mut keys = BTreeSet::new();
     for row in retired {
         let kp = row["kp_key"].as_str().expect("retired kp");
@@ -302,7 +303,8 @@ fn source_evidence(
     // (15 on 2026-10-05, 34 exponent, radical and quadratic ones on 2026-10-06,
     // polynomial-basics/kp3 in the units 00 to 07 content pass).
     // 759 before the courses rewrite; 156 were retired on 2026-10-07.
-    assert_eq!(templates.len(), 603);
+    // 2026-10-08, story framing removed: 602 selected, 207 retired (was 603 and 206).
+    assert_eq!(templates.len(), 602);
     let retired = retired_sources(specs, &templates);
     let mut sources = BTreeMap::new();
     let mut occupied = BTreeSet::new();

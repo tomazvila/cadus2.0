@@ -41,10 +41,10 @@ topics:
             answer: '4'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The highest derivative is $\frac{d^4y}{dx^4}$, a fourth derivative. The constants $E$ and $I$ and the load $w(x)$ do not change the order, so the order is 4.'
-          - problem: 'Sam says that $(y'''')^5 + y = 0$ has order 5 because the largest exponent is 5. What is the correct order?'
+          - problem: 'What is the order of $(y'''')^5 + y = 0$?'
             answer: '2'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'The exponent 5 is a power, and a power does not set the order. The only derivative in the equation is $y''''$, a second derivative, so the correct order is 2.'
+            solution_sketch: 'The exponent 5 is a power, and a power does not set the order. The only derivative in the equation is $y''''$, a second derivative, so the order is 2.'
           - problem: 'The charge $q(t)$ on a capacitor in a circuit with inductance $L$, resistance $R$ and capacitance $C$ satisfies $L\,q'''' + R\,q'' + \frac{1}{C}q = E(t)$. What is the order of this equation?'
             answer: '2'
             answer_contract: {"kind":"exact"}
@@ -70,7 +70,7 @@ topics:
             answer: '3'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'Equations (1), (2) and (4) have $y$ and its derivatives to the first power with coefficients in $x$ alone. Equation (3) contains the product $y\,y''$ of the unknown and its derivative, so equation 3 is the nonlinear one.'
-          - problem: 'Sam says that $y'' + \sin(x)\,y = 0$ is not linear because it contains a sine. Is the equation linear or nonlinear?'
+          - problem: 'Is $y'' + \sin(x)\,y = 0$ linear or nonlinear?'
             answer: 'linear'
             answer_contract: {"kind":"label","options":[["linear","it is linear","is linear","a linear equation"],["nonlinear","non-linear","non linear","not linear","it is nonlinear","is not linear","a nonlinear equation"]]}
             solution_sketch: 'The sine has $x$ as its argument, so $\sin x$ is only a coefficient that depends on $x$. The unknown $y$ and its derivative $y''$ both appear to the first power, so the equation is linear.'
@@ -95,10 +95,10 @@ topics:
             answer: 'kp'
             answer_contract: {"kind":"function","vars":["k","p"]}
             solution_sketch: 'The rate of change of $p$ is proportional to $p$, so it equals a constant times $p$. Growth means $p$ increases, so with $k > 0$ the sign is plus and the equation is $\frac{dp}{dt} = kp$.'
-          - problem: 'A radioactive sample of mass $m$ decays at a rate proportional to $m$, with a positive constant $k$. Sam writes $\frac{dm}{dt} = km$. What is the correct right-hand side of the equation?'
+          - problem: 'A radioactive sample of mass $m$ decays at a rate proportional to $m$, with a positive constant $k$. What is the right-hand side of the equation for $\frac{dm}{dt}$?'
             answer: '-km'
             answer_contract: {"kind":"function","vars":["k","m"]}
-            solution_sketch: 'The rate is proportional to $m$, so it has the form $km$ up to a sign. Decay means $m$ decreases, so $\frac{dm}{dt}$ is negative and the correct right-hand side is $-km$.'
+            solution_sketch: 'The rate is proportional to $m$, so it has the form $km$ up to a sign. Decay means $m$ decreases, so $\frac{dm}{dt}$ is negative and the right-hand side is $-km$.'
           - problem: 'A cup at temperature $u$ cools in a room held at $20$ degrees. Its rate of change is proportional to the difference $u - 20$, with a positive constant $k$. Complete the differential equation $\frac{du}{dt} = \square$.'
             answer: '-k(u-20)'
             answer_contract: {"kind":"function","vars":["k","u"]}
@@ -194,10 +194,10 @@ topics:
             answer: '-18cos(3t) - 9sin(3t)'
             answer_contract: {"kind":"function","vars":["t"]}
             solution_sketch: 'Differentiate twice: $x'' = -6\sin 3t + 3\cos 3t$ and $x'''' = -18\cos 3t - 9\sin 3t$. Then $9x = 18\cos 3t + 9\sin 3t$, so $x'''' + 9x = 0$ for every $t$.'
-          - problem: 'Sam checks $y = e^{3x}$ in $y'' - 3y = 0$. He writes $y'' = e^{3x}$, gets $y'' - 3y = -2e^{3x}$, and says $y$ is not a solution. What is the correct value of $y'' - 3y$?'
+          - problem: 'Check $y = e^{3x}$ in $y'' - 3y = 0$. What is the value of $y'' - 3y$?'
             answer: '0'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'The chain rule gives $y'' = 3e^{3x}$, not $e^{3x}$. Then $y'' - 3y = 3e^{3x} - 3e^{3x} = 0$, so $y = e^{3x}$ is a solution.'
+            solution_sketch: 'The chain rule gives $y'' = 3e^{3x}$. Then $y'' - 3y = 3e^{3x} - 3e^{3x} = 0$, so $y = e^{3x}$ is a solution.'
         constraints: "candidate solutions built from e^{kx}, sin/cos of kx, and polynomials; verification always closes to an identity"
       - id: kp2
         name: Verifying implicit solutions
@@ -395,7 +395,7 @@ topics:
             answer: 'yes'
             answer_contract: {"kind":"label","options":[["yes","yes, it does","it does","yes it does","unique","it does guarantee","guaranteed","there is a unique solution"],["no","no, it does not","it does not","no it does not","not guaranteed","it does not guarantee","does not guarantee","no guarantee"]]}
             solution_sketch: 'Here $f_y = 1/\sqrt{y}$, which is continuous near $y = 1$, and $f$ is continuous there too. So the hypotheses hold at $(0, 1)$ and the solution is unique. Only the starting value $y = 0$ is a problem for this equation.'
-          - problem: 'Sam says that $y'' = y^2$ with $y(0) = 1$ has a solution for all $x$, because $y^2$ is continuous everywhere. What is the value of the actual solution at $x = \frac12$?'
+          - problem: 'What is the value at $x = \frac12$ of the solution of $y'' = y^2$ with $y(0) = 1$?'
             answer: '2'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'Separate variables: $-\frac1y = x + C$, and $y(0) = 1$ gives $C = -1$, so $y = \frac{1}{1 - x}$. At $x = \frac12$ this is $2$. The solution blows up at $x = 1$, so it does not exist for all $x$.'
@@ -645,7 +645,7 @@ topics:
             answer: 'increasing'
             answer_contract: {"kind":"label","options":[["increasing","it is increasing","increases","it increases","the solution increases","rising","going up","it goes up"],["decreasing","it is decreasing","decreases","it decreases","the solution decreases","falling","going down","it goes down"]]}
             solution_sketch: 'At $y = 1$ the slope is $y'' = 1(2 - 1) = 1$. The slope is positive, so the solution is increasing.'
-          - problem: 'Sam looks for the equilibrium solutions of $y'' = y^2 - 2y$ by dividing $y^2 - 2y = 0$ by $y$, and finds only $y = 2$. What are all the equilibrium solutions?'
+          - problem: 'What are all the equilibrium solutions of $y'' = y^2 - 2y$?'
             answer: '0, 2'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'Dividing by $y$ loses the solution $y = 0$. Factor instead: $y^2 - 2y = y(y - 2)$, which is zero at $y = 0$ and $y = 2$.'
@@ -682,7 +682,7 @@ topics:
             answer: '20'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The equilibria are $P = 0$, $P = 20$ and $P = 80$. For $0 < P < 20$ the slope is negative, so the population falls to $0$, while just above $20$ it is positive and the population grows. The threshold is the unstable equilibrium $20$.'
-          - problem: 'Mia checks $y'' = y^2 - 9$ at $y = 4$, finds $f(4) = 7 > 0$, and concludes that $y = 3$ is stable. Which equilibrium of this equation is actually stable?'
+          - problem: 'Which equilibrium of $y'' = y^2 - 9$ is stable?'
             answer: '-3'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The slope is positive for $y > 3$, so solutions above $3$ move away from it, and $y = 3$ is unstable. Between $-3$ and $3$ the slope is negative and below $-3$ it is positive, so $y = -3$ is the stable equilibrium.'
@@ -723,7 +723,7 @@ topics:
             answer: 'grows without bound'
             answer_contract: {"kind":"label","options":[["grows without bound","it grows without bound","increases without bound","goes to infinity","blows up","diverges","tends to infinity","approaches infinity"],["approaches an equilibrium","it approaches an equilibrium","settles down","converges","levels off","tends to an equilibrium","approaches 3","approaches 0"]]}
             solution_sketch: 'The equilibria are $0$ and $3$. For $y > 3$ the slope is positive, so the solution that starts at $4$ keeps increasing and never meets another equilibrium.'
-          - problem: 'Tom says that for $y'' = y(y - 3)$ with $y(0) = 1$ the solution increases, because $y(0) = 1$ is positive. Find $\lim_{t \to \infty} y(t)$.'
+          - problem: 'For $y'' = y(y - 3)$ with $y(0) = 1$, find $\lim_{t \to \infty} y(t)$.'
             answer: '0'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The sign of $y$ itself does not decide the direction. At $y = 1$ the slope is $1(1 - 3) = -2$, so the solution decreases toward the stable equilibrium $0$.'
@@ -796,10 +796,10 @@ topics:
             answer: '5'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The slope is the value of the right side at the point. Substituting $x = 1$ and $y = 2$ gives $1^2 + 2^2 = 5$.'
-          - problem: 'Lena uses one Euler step of size $h = 0.1$ for $y'' = 3y$ with $y(0) = 2$, and writes $y(0.1) \approx 2 + 0.1 \cdot 3 = 2.3$. What is the correct estimate?'
+          - problem: 'Use one Euler step of size $h = 0.1$ for $y'' = 3y$ with $y(0) = 2$. What is the estimate of $y(0.1)$?'
             answer: '2.6'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'Lena used the number $3$ as the slope, but the slope is $f(0, 2) = 3 \cdot 2 = 6$. The correct estimate is $2 + 0.1 \cdot 6 = 2.6$.'
+            solution_sketch: 'The slope is $f(0, 2) = 3 \cdot 2 = 6$. The estimate is $2 + 0.1 \cdot 6 = 2.6$.'
           - problem: 'The concentration $C$ of a drug (in mg/L) satisfies $\frac{dC}{dt} = 8 - 0.25C$ with $C(0) = 12$, where $t$ is in hours. Use one Euler step of half an hour to estimate $C(0.5)$.'
             answer: '14.5'
             answer_contract: {"kind":"exact"}
@@ -845,7 +845,7 @@ topics:
             answer: '1.25'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'At $x = 0$ the slope is $0$, so $y_1 = 1$. At $x = 0.5$ the slope is $0.5 \cdot 1 = 0.5$, so $y_2 = 1 + 0.5 \cdot 0.5 = 1.25$.'
-          - problem: 'Omar estimates $y(0.5)$ for $y'' = 2y$ with $y(0) = 1$ using one Euler step of size $0.5$, and gets $2$. Use two Euler steps of size $0.25$ instead. What is the estimate?'
+          - problem: 'Estimate $y(0.5)$ for $y'' = 2y$ with $y(0) = 1$. Use two Euler steps of size $0.25$. What is the estimate?'
             answer: '2.25'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The first step gives $y_1 = 1 + 0.25 \cdot 2 = 1.5$. The second step uses the new slope $2 \cdot 1.5 = 3$, so $y_2 = 1.5 + 0.25 \cdot 3 = 2.25$.'
@@ -1031,10 +1031,10 @@ topics:
             answer: '8sqrt(2x + 1)'
             answer_contract: {"kind":"function","vars":["x"]}
             solution_sketch: 'Separate: $\frac{dy}{y} = \frac{dx}{2x + 1}$, so $\ln|y| = \frac{1}{2}\ln(2x + 1) + C$. Exponentiating gives $y = K\sqrt{2x + 1}$, and $y(0) = 8$ gives $K = 8$.'
-          - problem: 'Dana integrates $\frac{dy}{y} = \frac{2}{x}\,dx$ and writes $y = 2x + C$. What is the correct solution of $\frac{dy}{dx} = \frac{2y}{x}$ for $x > 0$ with $y(1) = 4$?'
+          - problem: 'What is the solution of $\frac{dy}{dx} = \frac{2y}{x}$ for $x > 0$ with $y(1) = 4$?'
             answer: '4x^2'
             answer_contract: {"kind":"function","vars":["x"]}
-            solution_sketch: 'Integrating gives $\ln|y| = 2\ln x + C$, and Dana forgot to exponentiate. Exponentiating gives $y = Kx^2$, and $y(1) = 4$ gives $K = 4$. So $y = 4x^2$.'
+            solution_sketch: 'Integrating gives $\ln|y| = 2\ln x + C$. Exponentiating gives $y = Kx^2$, and $y(1) = 4$ gives $K = 4$. So $y = 4x^2$.'
           - problem: 'The amount $D$ of a drug in the body falls at a rate proportional to the amount: $\frac{dD}{dt} = -0.1D$, where $D$ is in mg and $t$ is in hours. The initial amount is $80$ mg. After how many hours, to one decimal place, does $10$ mg remain?'
             answer: '20.8'
             answer_contract: {"kind":"approx","decimals":1}
@@ -1095,7 +1095,7 @@ topics:
             answer: '100 - 100e^(-t/100)'
             answer_contract: {"kind":"function","vars":["t"]}
             solution_sketch: 'Salt enters at $0.2 \cdot 5 = 1$ kg/min and leaves at $\frac{S}{500} \cdot 5 = \frac{S}{100}$ kg/min, so $\frac{dS}{dt} = 1 - \frac{S}{100}$. Separating and using $S(0) = 0$ gives $S = 100 - 100e^{-t/100}$.'
-          - problem: 'Ravi solves $\frac{dy}{dx} = 6x^2y$ with $y(0) = 5$ and writes $y = e^{2x^3} + 5$. What is the correct solution?'
+          - problem: 'Solve $\frac{dy}{dx} = 6x^2y$ with $y(0) = 5$. What is $y(x)$?'
             answer: '5e^(2x^3)'
             answer_contract: {"kind":"function","vars":["x"]}
             solution_sketch: 'Separating gives $\ln|y| = 2x^3 + C$, so $y = Ke^{2x^3}$. The initial value multiplies the exponential and is not added to it. The condition $y(0) = 5$ gives $K = 5$.'
@@ -1116,10 +1116,10 @@ topics:
             answer: 'sqrt(25 - x^2)'
             answer_contract: {"kind":"function","vars":["x"]}
             solution_sketch: 'Separate: $y\,dy = -x\,dx$, so $y^2 = -x^2 + C$. The condition $y(0) = 5$ gives $C = 25$. The top of the ladder stays above the floor, so $y = \sqrt{25 - x^2}$.'
-          - problem: 'Sam solves $y\,y'' = x$ with $y(1) = -2$ and gets $y = \sqrt{x^2 + 3}$. What is the correct solution?'
+          - problem: 'Solve $y\,y'' = x$ with $y(1) = -2$. What is $y(x)$?'
             answer: '-sqrt(x^2 + 3)'
             answer_contract: {"kind":"function","vars":["x"]}
-            solution_sketch: 'Separating gives $y\,dy = x\,dx$, so $y^2 = x^2 + C$, and $y(1) = -2$ gives $C = 3$. Sam took the positive root, but $y(1) = -2$ is negative, so $y = -\sqrt{x^2 + 3}$.'
+            solution_sketch: 'Separating gives $y\,dy = x\,dx$, so $y^2 = x^2 + C$, and $y(1) = -2$ gives $C = 3$. Since $y(1) = -2$ is negative, $y = -\sqrt{x^2 + 3}$.'
           - problem: 'A car brakes so that its speed $v$ (in m/s) and the distance $x$ (in m) travelled since braking began satisfy $v\frac{dv}{dx} = -2$. The initial speed is $v(0) = 10$. Find $v$ as a function of $x$.'
             answer: 'sqrt(100 - 4x)'
             answer_contract: {"kind":"function","vars":["x"]}
@@ -1166,7 +1166,7 @@ topics:
             answer: 'x < 2'
             answer_contract: {"kind":"inequality_union"}
             solution_sketch: 'Separating gives $-\frac{1}{y} = x + C$, and $y(0) = \frac{1}{2}$ gives $C = -2$, so $y = \frac{1}{2 - x}$. The formula is defined and continuous through $x = 0$ only for $x < 2$.'
-          - problem: 'To solve $y'' = y^2 - 4$, Sam divides both sides by $y^2 - 4$. Which constant solutions does this step lose?'
+          - problem: 'To solve $y'' = y^2 - 4$, divide both sides by $y^2 - 4$. Which constant solutions does this step lose?'
             answer: '-2, 2'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'Dividing by $y^2 - 4$ is not allowed when $y^2 - 4 = 0$. That happens at $y = 2$ and $y = -2$, and both are constant solutions of the equation.'
@@ -1246,10 +1246,10 @@ topics:
             answer: 'e^x/x'
             answer_contract: {"kind": "function", "vars": ["x"]}
             solution_sketch: 'Divide every term by $x$ to get $y'' + \frac{2}{x}y = \frac{e^x}{x}$. The right side is $Q(x) = \frac{e^x}{x}$.'
-          - problem: 'Sam writes $xy'' + 3y = x^2$ for $x>0$ as $y'' + 3y = x^2$. What is the correct $P(x)$?'
+          - problem: 'Write $xy'' + 3y = x^2$ for $x>0$ in the form $y'' + P(x)y = f(x)$. What is $P(x)$?'
             answer: '3/x'
             answer_contract: {"kind": "function", "vars": ["x"]}
-            solution_sketch: 'Sam divided only the first term by $x$. Every term must be divided, so $y'' + \frac{3}{x}y = x$ and $P(x) = \frac{3}{x}$.'
+            solution_sketch: 'Divide every term by $x$, so $y'' + \frac{3}{x}y = x$ and $P(x) = \frac{3}{x}$.'
           - problem: 'A $400$-litre tank is full of brine. Brine with $0.5$ kg of salt per litre flows in at $20$ L/min, and the well-stirred mixture flows out at $20$ L/min. The salt mass $S$ (in kg) after $t$ minutes obeys $S'' = (\text{salt in per minute}) - (\text{salt out per minute})$. Write this equation as $S'' + PS = Q$. What is $P$?'
             answer: '1/20'
             answer_contract: {"kind": "exact"}
@@ -1291,10 +1291,10 @@ topics:
             answer: 'x^4'
             answer_contract: {"kind": "function", "vars": ["x"]}
             solution_sketch: 'Divide every term by $x$ to get $y'' + \frac{4}{x}y = x^2$. Then $\int \frac{4}{x}\,dx = 4\ln x$, so $\mu = x^4$.'
-          - problem: 'Sam finds the integrating factor of $y'' + 2xy = x$ as $e^{2x}$. What is the correct integrating factor?'
+          - problem: 'What is the integrating factor of $y'' + 2xy = x$?'
             answer: 'e^(x^2)'
             answer_contract: {"kind": "function", "vars": ["x"]}
-            solution_sketch: 'Sam did not integrate $P(x) = 2x$: the integral is $x^2$, not $2x$. So the correct integrating factor is $\mu = e^{x^2}$.'
+            solution_sketch: 'Integrate $P(x) = 2x$: the integral is $x^2$. So the integrating factor is $\mu = e^{x^2}$.'
           - problem: 'The salt mass $S$ (in kg) in a tank after $t$ minutes obeys $S'' = 3 - \frac{S}{50}$. Find the integrating factor $\mu = e^{\int P\,dt}$ for this equation.'
             answer: 'e^(t/50)'
             answer_contract: {"kind": "function", "vars": ["t"]}
@@ -1332,9 +1332,9 @@ topics:
             answer: '-3e^(-3x)'
             answer_contract: {"kind": "function", "vars": ["x"]}
             solution_sketch: 'The coefficient of $y$ is $-3$, and multiplying by $e^{-3x}$ gives $-3e^{-3x}$. This equals the derivative of $e^{-3x}$.'
-          - problem: 'Sam multiplies $y'' + 2y = x$ by $e^{x}$ and says the left side is now $(e^{x}y)''$. Is Sam right?'
+          - problem: 'Multiply $y'' + 2y = x$ by $e^{x}$. Is the left side then $(e^{x}y)''$?'
             answer: 'no'
-            answer_contract: {"kind": "label", "options": [["yes", "she is right", "he is right", "right", "correct", "it is"], ["no", "she is not right", "he is not right", "not right", "wrong", "incorrect", "it is not"]]}
+            answer_contract: {"kind": "label", "options": [["yes", "it is", "yes it is", "true", "correct"], ["no", "it is not", "no it is not", "false", "not correct", "incorrect"]]}
             solution_sketch: 'The product rule gives $(e^xy)'' = e^xy'' + e^xy$, but the multiplied left side is $e^xy'' + 2e^xy$. The factor must be $e^{2x}$, because the derivative of $\mu$ must equal $2\mu$.'
           - problem: 'The salt mass in a tank obeys $S'' + \frac{1}{50}S = 3$. Multiplying by $e^{t/50}$ makes the left side $e^{t/50}S'' + BS$. What is $B$?'
             answer: 'e^(t/50)/50'
@@ -1744,7 +1744,7 @@ topics:
             answer: 'tan(v)'
             answer_contract: {"kind": "function", "vars": ["v"]}
             solution_sketch: 'The right side becomes $v + \tan v$, and $y'' = v + x\frac{dv}{dx}$. Subtracting $v$ gives $x\frac{dv}{dx} = \tan v$.'
-          - problem: 'Sam substitutes $y = vx$ into $y'' = \frac{x+y}{x}$ but forgets the product rule, and gets $x\frac{dv}{dx} = 1 + v$. What is the correct value of $c$ in $x\frac{dv}{dx} = c$?'
+          - problem: 'Substitute $y = vx$ into $y'' = \frac{x+y}{x}$. What is the value of $c$ in $x\frac{dv}{dx} = c$?'
             answer: '1'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The product rule gives $y'' = v + x\frac{dv}{dx}$, and the right side is $1 + v$. Subtracting $v$ leaves $x\frac{dv}{dx} = 1$, so $c = 1$.'
@@ -1844,10 +1844,10 @@ topics:
             answer: '5'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'For an exact form, $M_y = N_x$. Here $M_y = a$ and $N_x = 5$. So $a = 5$.'
-          - problem: 'Sam says that $y\,dx + 2x\,dy = 0$ is exact because he finds $\dfrac{\partial N}{\partial x} = 1$. What is the correct value of $\dfrac{\partial N}{\partial x}$?'
+          - problem: 'For $y\,dx + 2x\,dy = 0$, what is the value of $\dfrac{\partial N}{\partial x}$?'
             answer: '2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Here $N = 2x$, so differentiating with respect to $x$ gives $N_x = 2$. Also $M = y$ gives $M_y = 1$. The two partial derivatives differ, so the equation is not exact. Sam dropped the factor $2$.'
+            solution_sketch: 'Here $N = 2x$, so differentiating with respect to $x$ gives $N_x = 2$. Also $M = y$ gives $M_y = 1$. The two partial derivatives differ, so the equation is not exact.'
           - problem: 'A force field has components $P = kye^x + 2x$ and $Q = 4e^x$, where $k$ is a constant. The work done along a path depends only on its ends exactly when $P\,dx + Q\,dy = 0$ is exact. Find $k$.'
             answer: '4'
             answer_contract: {"kind": "exact"}
@@ -1926,10 +1926,10 @@ topics:
             answer: '6 + 2pi/3'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The equation is exact with $F = y\sin x + x$. From $y(\pi/2) = 3$ we get $C = 3 + \pi/2$. At $x = \pi/6$ we have $\frac{y}{2} + \frac{\pi}{6} = 3 + \frac{\pi}{2}$, so $y = 6 + 2\pi/3$.'
-          - problem: 'Sam solves $(2xy + 3x^2)\,dx + (x^2 + 4y)\,dy = 0$ with $y(1) = 2$. He finds $F = x^2y + x^3 + 2y^2$ and then substitutes $x = 2$ and $y = 1$, getting $C = 14$. What is the correct value of $C$?'
+          - problem: 'Solve $(2xy + 3x^2)\,dx + (x^2 + 4y)\,dy = 0$ with $y(1) = 2$. A potential function is $F = x^2y + x^3 + 2y^2$. What is the value of $C$ in $F = C$?'
             answer: '11'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The initial condition $y(1) = 2$ means $x = 1$ and $y = 2$. Then $C = F(1, 2) = 2 + 1 + 8 = 11$. Sam swapped the two coordinates and got $F(2, 1) = 14$.'
+            solution_sketch: 'The initial condition $y(1) = 2$ means $x = 1$ and $y = 2$. Then $C = F(1, 2) = 2 + 1 + 8 = 11$.'
           - problem: 'The exact equation $(ye^x + 2x)\,dx + (e^x + 2y)\,dy = 0$ has solutions $F(x, y) = C$. Find $C$ for the solution with $y(0) = 1$.'
             answer: '2'
             answer_contract: {"kind": "exact"}
@@ -1995,10 +1995,10 @@ topics:
             answer: 'e^(3x)'
             answer_contract: {"kind": "function", "vars": ["x"]}
             solution_sketch: 'Here $M_y = 3$ and $N_x = 0$, and $N = 1$. So $\frac{M_y - N_x}{N} = 3$. Then $\mu = e^{\int 3\,dx} = e^{3x}$.'
-          - problem: 'Sam finds $\dfrac{M_y - N_x}{N} = \dfrac{3}{x}$ for $(4y + x)\,dx + x\,dy = 0$ and writes $\mu(x) = e^{3/x}$. What is the correct integrating factor?'
+          - problem: 'For $(4y + x)\,dx + x\,dy = 0$ the quotient $\dfrac{M_y - N_x}{N}$ equals $\dfrac{3}{x}$. What is the integrating factor $\mu(x)$?'
             answer: 'x^3'
             answer_contract: {"kind": "function", "vars": ["x"]}
-            solution_sketch: 'Here $M_y = 4$ and $N_x = 1$, so $\frac{M_y - N_x}{N} = \frac{3}{x}$. The integrating factor is $e^{\int p\,dx}$, so we integrate $\frac{3}{x}$ and do not use it as the exponent. Then $\mu = e^{3\ln x} = x^3$.'
+            solution_sketch: 'Here $M_y = 4$ and $N_x = 1$, so $\frac{M_y - N_x}{N} = \frac{3}{x}$. The integrating factor is $e^{\int p\,dx}$, so we integrate $\frac{3}{x}$. Then $\mu = e^{3\ln x} = x^3$.'
           - problem: 'In suitable units, the heat added to a gas is $\delta Q = dT + \dfrac{T}{V}\,dV$, which is not exact. Find an integrating factor $\mu(T)$, taking the constant of integration to be $0$.'
             answer: '1/T'
             answer_contract: {"kind": "function", "vars": ["T"]}
@@ -2044,7 +2044,7 @@ topics:
             answer: 'y^5'
             answer_contract: {"kind": "function", "vars": ["y"]}
             solution_sketch: 'Here $M_y = 2$ and $N_x = 12$, so $\frac{N_x - M_y}{M} = \frac{10}{2y} = \frac{5}{y}$. Then $\mu = e^{5\ln y} = y^5$.'
-          - problem: 'Sam finds $\dfrac{N_x - M_y}{M} = \dfrac{3}{2y}$ for $2y\,dx + (5x + y)\,dy = 0$ and writes $\mu(y) = e^{3/(2y)}$. What is the correct integrating factor?'
+          - problem: 'For $2y\,dx + (5x + y)\,dy = 0$ the quotient $\dfrac{N_x - M_y}{M}$ equals $\dfrac{3}{2y}$. What is the integrating factor $\mu(y)$?'
             answer: 'y^(3/2)'
             answer_contract: {"kind": "function", "vars": ["y"]}
             solution_sketch: 'Here $M_y = 2$ and $N_x = 5$, so $\frac{N_x - M_y}{M} = \frac{3}{2y}$. The integrating factor is $e^{\int p\,dy}$, so we integrate $\frac{3}{2y}$. This gives $\mu = e^{\frac{3}{2}\ln y} = y^{3/2}$.'
@@ -2182,10 +2182,10 @@ topics:
             answer: '2237.7'
             answer_contract: {"kind": "approx", "decimals": 1}
             solution_sketch: 'The solution is $P = 1500e^{0.04t}$. After $10$ years, $P = 1500e^{0.4}$. This is about $2237.7$.'
-          - problem: 'A culture triples every $6$ hours. Sam says that the growth constant is $k = \dfrac{6}{\ln 3}$. What is the correct value of $k$?'
+          - problem: 'A culture triples every $6$ hours. What is the growth constant $k$?'
             answer: 'ln(3)/6'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Tripling in $6$ hours means $e^{6k} = 3$, so $6k = \ln 3$. Hence $k = \frac{\ln 3}{6}$. Sam turned the fraction upside down.'
+            solution_sketch: 'Tripling in $6$ hours means $e^{6k} = 3$, so $6k = \ln 3$. Hence $k = \frac{\ln 3}{6}$.'
         constraints: "doubling times and half-lives are clean integers; express rate constants exactly with ln"
       - id: kp2
         name: Time-to-reach questions
@@ -2228,10 +2228,10 @@ topics:
             answer: '3.7'
             answer_contract: {"kind": "approx", "decimals": 1}
             solution_sketch: 'The solution is $P = P_0e^{0.3t}$. Tripling means $e^{0.3t} = 3$, so $t = \frac{\ln 3}{0.3}$. This is about $3.7$ hours.'
-          - problem: 'A substance has a half-life of $4$ hours. Sam says that only $\dfrac{1}{16}$ of it remains after $8$ hours. After how many hours does only $\dfrac{1}{16}$ of it remain?'
+          - problem: 'A substance has a half-life of $4$ hours. After how many hours does only $\dfrac{1}{16}$ of it remain?'
             answer: '16'
             answer_contract: {"kind": "unit", "quantity": "time", "unit": "h", "allow_omitted": true}
-            solution_sketch: 'The fraction $\frac{1}{16} = \left(\frac{1}{2}\right)^4$ means four half-lives. The time is $4 \cdot 4 = 16$ hours. Sam counted only two half-lives.'
+            solution_sketch: 'The fraction $\frac{1}{16} = \left(\frac{1}{2}\right)^4$ means four half-lives. The time is $4 \cdot 4 = 16$ hours.'
         constraints: "target ratios are powers of 2 (clean) or give single-log exact answers"
       - id: kp3
         name: "Determining $k$ and $P_0$ from data"
@@ -2269,10 +2269,10 @@ topics:
             answer: '320'
             answer_contract: {"kind": "unit", "quantity": "concentration", "unit": "mg/L", "allow_omitted": true}
             solution_sketch: 'From 1 pm to 4 pm the concentration falls by the factor $\frac{20}{160} = \frac{1}{8}$, which is three halvings in $3$ hours. So it halves every hour. At noon, one hour before 1 pm, it was $2 \cdot 160 = 320$.'
-          - problem: 'A colony has $50$ cells at time $0$ and $800$ cells after $2$ hours, growing exponentially. Sam divides $800$ by $50$ to get $16$ and says that the colony doubles every $\frac{16}{2} = 8$ hours. What is the correct doubling time, in hours?'
+          - problem: 'A colony has $50$ cells at time $0$ and $800$ cells after $2$ hours, growing exponentially. What is the doubling time, in hours?'
             answer: '0.5'
             answer_contract: {"kind": "unit", "quantity": "time", "unit": "h", "allow_omitted": true}
-            solution_sketch: 'The growth factor is $16 = 2^4$, so four doublings happen in $2$ hours. One doubling takes $\frac{2}{4} = 0.5$ hours. Sam divided $16$ by $2$ and did not count doublings.'
+            solution_sketch: 'The growth factor is $16 = 2^4$, so four doublings happen in $2$ hours. One doubling takes $\frac{2}{4} = 0.5$ hours.'
         constraints: "data ratios are powers of 2 so k and the half-life come out as clean multiples of ln 2"
     diagnostic_exemplar:
       problem: 'A population satisfies $P'' = kP$ with $P(2) = 500$ and $P(6) = 8000$. Find $k$ and $P(0)$ exactly.'
@@ -2338,10 +2338,10 @@ topics:
             answer: '25'
             answer_contract: {"kind": "unit", "quantity": "temperature", "unit": "\u00b0C", "allow_omitted": true}
             solution_sketch: 'In the solution $T = 25 + 65e^{-kt}$ the term $e^{-kt}$ tends to $0$ as $t$ grows. So $T$ tends to $25$, which is the room temperature.'
-          - problem: 'Sam models a cup of tea at $80^\circ$C in a room at $20^\circ$C as $T(t) = 80e^{-kt}$. Write the correct model for $T(t)$ in terms of $k$.'
+          - problem: 'A cup of tea at $80^\circ$C cools in a room at $20^\circ$C by Newton''s law with constant $k$. Write the model for $T(t)$ in terms of $k$.'
             answer: '20 + 60e^(-kt)'
             answer_contract: {"kind": "function", "vars": ["t", "k"]}
-            solution_sketch: 'Newton''s law gives $T = 20 + Ce^{-kt}$, where $20$ is the room temperature. At $t = 0$ we have $80 = 20 + C$, so $C = 60$. Sam''s model would fall to $0^\circ$C instead of $20^\circ$C.'
+            solution_sketch: 'Newton''s law gives $T = 20 + Ce^{-kt}$, where $20$ is the room temperature. At $t = 0$ we have $80 = 20 + C$, so $C = 60$.'
         constraints: "ambient temperatures and initial temperatures are integers; solution always in the form A + Ce^{-kt}"
       - id: kp2
         name: "Finding $k$ from data"
@@ -2379,7 +2379,7 @@ topics:
             answer: '32.5'
             answer_contract: {"kind": "unit", "quantity": "temperature", "unit": "\u00b0C", "allow_omitted": true}
             solution_sketch: 'The gap above the room falls from $100$ to $50$ in $8$ minutes, so it halves every $8$ minutes. In $24$ minutes it halves three times, to $\frac{100}{8} = 12.5$. The temperature is $20 + 12.5 = 32.5$.'
-          - problem: 'A cup of coffee at $90^\circ$C is at $55^\circ$C after $3$ minutes in a room at $20^\circ$C. Sam divides $90$ by $55$ and writes $k = \frac{1}{3}\ln\frac{90}{55}$. What is the correct cooling constant $k$, to four decimal places?'
+          - problem: 'A cup of coffee at $90^\circ$C is at $55^\circ$C after $3$ minutes in a room at $20^\circ$C. What is the cooling constant $k$, to four decimal places?'
             answer: '0.2310'
             answer_contract: {"kind": "approx", "decimals": 4}
             solution_sketch: 'Newton''s law compares the gaps above the room, not the temperatures. The gap falls from $70$ to $35$ in $3$ minutes, so it halves. Then $k = \frac{\ln 2}{3}$, which is about $0.2310$ per minute.'
@@ -2429,7 +2429,7 @@ topics:
             answer: '41.6'
             answer_contract: {"kind": "approx", "decimals": 1}
             solution_sketch: 'The solution is $T = 20 + 80e^{-0.05t}$. Setting $T = 30$ gives $e^{-0.05t} = \frac{10}{80} = \frac{1}{8}$, so $t = \frac{\ln 8}{0.05}$. This is about $41.6$ minutes.'
-          - problem: 'A cup at $100^\circ$C sits in a room at $20^\circ$C. The difference between the cup temperature and the room temperature halves every $5$ minutes. Sam says that the cup reaches $50^\circ$C after $5$ minutes, because $100$ halves to $50$. How long does it really take to reach $50^\circ$C, to one decimal place?'
+          - problem: 'A cup at $100^\circ$C sits in a room at $20^\circ$C. The difference between the cup temperature and the room temperature halves every $5$ minutes. How long does it take to reach $50^\circ$C, to one decimal place?'
             answer: '7.1'
             answer_contract: {"kind": "approx", "decimals": 1}
             solution_sketch: 'It is the difference above the room that halves, not the temperature. The difference is $80$ at the start and must fall to $50 - 20 = 30$. So $\left(\frac{1}{2}\right)^{t/5} = \frac{3}{8}$, which gives $t = 5\frac{\ln(8/3)}{\ln 2}$. This is about $7.1$ minutes.'
@@ -2494,10 +2494,10 @@ topics:
             answer: '6s - x/20'
             answer_contract: {"kind": "function", "vars": ["x", "s"]}
             solution_sketch: 'Salt enters at $s \cdot 6 = 6s$ g/min for any brine concentration $s$. It leaves at $6 \cdot \frac{x}{120} = \frac{x}{20}$ g/min. So $\frac{dx}{dt} = 6s - \frac{x}{20}$.'
-          - problem: 'Sam studies an $80$ L tank. Brine containing $3$ g/L of salt flows in at $4$ L/min, and the mixture leaves at $4$ L/min. Sam writes $\frac{dx}{dt} = 12 - 4x$ for the amount $x(t)$ of salt in grams. What is the correct differential equation?'
+          - problem: 'An $80$ L tank receives brine containing $3$ g/L of salt at $4$ L/min, and the mixture leaves at $4$ L/min. What is the differential equation for the amount $x(t)$ of salt in grams?'
             answer: '12 - x/20'
             answer_contract: {"kind": "function", "vars": ["x"]}
-            solution_sketch: 'Sam has the rate in right: $3 \cdot 4 = 12$ g/min. The rate out must use the concentration of the tank, $\frac{x}{80}$ g/L, so it is $4 \cdot \frac{x}{80} = \frac{x}{20}$ g/min, not $4x$. The correct equation is $\frac{dx}{dt} = 12 - \frac{x}{20}$.'
+            solution_sketch: 'The rate in is $3 \cdot 4 = 12$ g/min. The rate out must use the concentration of the tank, $\frac{x}{80}$ g/L, so it is $4 \cdot \frac{x}{80} = \frac{x}{20}$ g/min. The equation is $\frac{dx}{dt} = 12 - \frac{x}{20}$.'
         constraints: 'constant volume (equal flow rates); rate out = (outflow rate) x A/V; integer concentrations and flows; the answer is the right side of the balance equation, and a full equation with dx/dt in front is read too'
       - id: kp2
         name: Solving the model
@@ -2535,10 +2535,10 @@ topics:
             answer: '0.5 - 0.5e^(-t/50)'
             answer_contract: {"kind": "function", "vars": ["t"]}
             solution_sketch: 'The amount of salt satisfies $\frac{dA}{dt} = 0.5 \cdot 8 - 8 \cdot \frac{A}{400} = 4 - \frac{A}{50}$ with $A(0) = 0$, so $A = 200 - 200e^{-t/50}$. The concentration is the amount divided by the volume, $\frac{A}{400} = 0.5 - 0.5e^{-t/50}$.'
-          - problem: 'Sam solves $\frac{dA}{dt} = 8 - \frac{A}{20}$ with $A(0) = 40$ and gets $A(t) = 160 + 40e^{-t/20}$. What is the correct solution?'
+          - problem: 'Solve $\frac{dA}{dt} = 8 - \frac{A}{20}$ with $A(0) = 40$. What is $A(t)$?'
             answer: '160 - 120e^(-t/20)'
             answer_contract: {"kind": "function", "vars": ["t"]}
-            solution_sketch: 'The equilibrium is $160$, so $A = 160 + Ce^{-t/20}$. The constant $C$ is the starting gap, not the starting amount: $40 = 160 + C$ gives $C = -120$. So $A(t) = 160 - 120e^{-t/20}$, and Sam wrongly used $C = 40$.'
+            solution_sketch: 'The equilibrium is $160$, so $A = 160 + Ce^{-t/20}$. The constant $C$ is the starting gap, not the starting amount: $40 = 160 + C$ gives $C = -120$. So $A(t) = 160 - 120e^{-t/20}$.'
         constraints: 'solutions have the shape (limit) + C e^{-t/tau}; C fixed by the initial amount; contexts need the balance equation to be set up first'
       - id: kp3
         name: Long-run behavior and timing
@@ -2645,10 +2645,10 @@ topics:
             answer: 'decreases'
             answer_contract: {"kind": "label", "options": [["decreases", "it decreases", "the herd decreases", "it will decrease", "decrease", "decreasing", "falls", "shrinks"], ["increases", "it increases", "the herd increases", "it will increase", "increase", "increasing", "rises", "grows"]]}
             solution_sketch: 'At $P = 800$ the factor $1 - \frac{800}{500} = -0.6$ is negative, so $\frac{dP}{dt} < 0$. The herd is above the carrying capacity, so it decreases toward $500$.'
-          - problem: 'Sam reads $\frac{dP}{dt} = 0.3P\left(1 - \frac{P}{900}\right)$ and says the carrying capacity is $\frac{900}{0.3} = 3000$. What is the carrying capacity?'
+          - problem: 'What is the carrying capacity in $\frac{dP}{dt} = 0.3P\left(1 - \frac{P}{900}\right)$?'
             answer: '900'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The model has the form $rP\left(1 - \frac{P}{K}\right)$, and the number under $P$ in the bracket is $K$. Here $K = 900$, and the growth rate $r = 0.3$ plays no part in the carrying capacity. Sam divided by $r$ by mistake.'
+            solution_sketch: 'The model has the form $rP\left(1 - \frac{P}{K}\right)$, and the number under $P$ in the bracket is $K$. Here $K = 900$, and the growth rate $r = 0.3$ plays no part in the carrying capacity.'
         constraints: 'carrying capacity a round number; equilibria 0 (unstable) and K (stable); fastest growth at K/2; r and K read from the factored form or found by dividing coefficients of P and P^2'
       - id: kp2
         name: Solving via partial fractions
@@ -2682,10 +2682,10 @@ topics:
             answer: '1500/(1 + 49e^(-0.4t))'
             answer_contract: {"kind": "function", "vars": ["t"]}
             solution_sketch: 'The model is $\frac{dI}{dt} = 0.4I\left(1 - \frac{I}{1500}\right)$ with $I(0) = 30$. The solution has $C = \frac{1500 - 30}{30} = 49$. So $I(t) = \frac{1500}{1 + 49e^{-0.4t}}$.'
-          - problem: 'Sam solves $\frac{dP}{dt} = 2P\left(1 - \frac{P}{600}\right)$ with $P(0) = 200$ and writes $P(t) = \frac{600}{1 + 200e^{-2t}}$. What is the correct solution?'
+          - problem: 'Solve $\frac{dP}{dt} = 2P\left(1 - \frac{P}{600}\right)$ with $P(0) = 200$. What is $P(t)$?'
             answer: '600/(1 + 2e^(-2t))'
             answer_contract: {"kind": "function", "vars": ["t"]}
-            solution_sketch: 'The constant is $C = \frac{K - P_0}{P_0} = \frac{600 - 200}{200} = 2$, not $P_0 = 200$. Setting $t = 0$ in the formula above gives $\frac{600}{201}$, which is not $200$. The correct solution is $P = \frac{600}{1 + 2e^{-2t}}$.'
+            solution_sketch: 'The constant is $C = \frac{K - P_0}{P_0} = \frac{600 - 200}{200} = 2$. The solution is $P = \frac{600}{1 + 2e^{-2t}}$.'
         constraints: 'K and r integers or simple decimals; C = (K - P0)/P0 comes out an integer; the learner may have to set up the equation from the story'
       - id: kp3
         name: Reading the solution form
@@ -2719,10 +2719,10 @@ topics:
             answer: '6.8'
             answer_contract: {"kind": "approx", "decimals": 1}
             solution_sketch: 'Setting $\frac{1200}{1 + 5e^{-0.4t}} = 900$ gives $1 + 5e^{-0.4t} = \frac{4}{3}$, so $e^{-0.4t} = \frac{1}{15}$. Then $t = \frac{\ln 15}{0.4} \approx 6.8$ years.'
-          - problem: 'Sam reads $P(t) = \dfrac{3000}{1 + 19e^{-2t}}$ and says the initial population is $\dfrac{3000}{19}$. What is the initial population?'
+          - problem: 'A population is $P(t) = \dfrac{3000}{1 + 19e^{-2t}}$. What is the initial population?'
             answer: '150'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'At $t = 0$ the exponential is $e^0 = 1$, so the denominator is $1 + 19 = 20$, not $19$. Then $P(0) = \frac{3000}{20} = 150$.'
+            solution_sketch: 'At $t = 0$ the exponential is $e^0 = 1$, so the denominator is $1 + 19 = 20$. Then $P(0) = \frac{3000}{20} = 150$.'
         constraints: 'P0 and K read off directly; half-capacity time is a clean logarithm ln C; verdicts name the long-run behavior in words'
     diagnostic_exemplar:
       problem: 'Solve $P'' = 2P\left(1 - \dfrac{P}{600}\right)$ with $P(0) = 200$, and state the carrying capacity.'
@@ -2786,10 +2786,10 @@ topics:
             answer: '285.9'
             answer_contract: {"kind": "approx", "decimals": 1}
             solution_sketch: 'The equilibrium is $\frac{30}{0.2} = 150$, so $P = 150 + 50e^{0.2t}$. At $t = 5$ this is $150 + 50e \approx 285.9$ fish.'
-          - problem: 'Sam studies $\frac{dP}{dt} = 0.4P - 200$ and finds the equilibrium by dividing the growth rate by the harvest: $\frac{0.4}{200} = 0.002$. What is the equilibrium population?'
+          - problem: 'A population obeys $\frac{dP}{dt} = 0.4P - 200$. What is the equilibrium population?'
             answer: '500'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'At equilibrium $0.4P - 200 = 0$, so $0.4P = 200$. Dividing by $0.4$ gives $P = \frac{200}{0.4} = 500$. The harvest is divided by the growth rate, not the other way round.'
+            solution_sketch: 'At equilibrium $0.4P - 200 = 0$, so $0.4P = 200$. Dividing by $0.4$ gives $P = \frac{200}{0.4} = 500$. The harvest is divided by the growth rate.'
           - problem: 'A lake holds $150$ fish, and $\frac{dP}{dt} = 0.5P - 100$ for the population $P(t)$. Does the fish population grow without bound or die out?'
             answer: 'dies out'
             answer_contract: {"kind": "label", "options": [["dies out", "it dies out", "the population dies out", "it will die out", "goes extinct", "extinct", "declines to zero", "dies"], ["grows without bound", "it grows without bound", "grows", "increases without bound", "grows forever", "it grows", "it will grow", "grows without limit"]]}
@@ -2831,10 +2831,10 @@ topics:
             answer: '20 - 0.15A'
             answer_contract: {"kind": "function", "vars": ["A"]}
             solution_sketch: 'The pump adds $20$ mg per hour, a constant rate. The body removes $15\%$ of the amount present, which is $0.15A$ mg per hour. So $\frac{dA}{dt} = 20 - 0.15A$.'
-          - problem: 'Sam solves $\frac{dT}{dt} = 40 - 2T$ with $T(0) = 5$ and writes $T(t) = 40 - 35e^{-2t}$. What is the correct solution?'
+          - problem: 'Solve $\frac{dT}{dt} = 40 - 2T$ with $T(0) = 5$. What is $T(t)$?'
             answer: '20 - 15e^(-2t)'
             answer_contract: {"kind": "function", "vars": ["t"]}
-            solution_sketch: 'The equilibrium is $T = \frac{40}{2} = 20$, not $40$. So $T = 20 + Ce^{-2t}$, and $T(0) = 5$ gives $C = -15$. Thus $T(t) = 20 - 15e^{-2t}$.'
+            solution_sketch: 'The equilibrium is $T = \frac{40}{2} = 20$. So $T = 20 + Ce^{-2t}$, and $T(0) = 5$ gives $C = -15$. Thus $T(t) = 20 - 15e^{-2t}$.'
         constraints: 'all models are y'' = a - by with clean equilibrium a/b; emphasize the shared structure across contexts; some items ask for the model itself'
       - id: kp3
         name: Two-stage prediction problems
@@ -2872,10 +2872,10 @@ topics:
             answer: 't ln(5/4)/ln(2)'
             answer_contract: {"kind": "function", "vars": ["t"]}
             solution_sketch: 'The model is $A(s) = A_0 e^{-ks}$. A half-life of $t$ years gives $e^{-kt} = \frac{1}{2}$, so $k = \frac{\ln 2}{t}$. Reaching $0.8A_0$ needs $e^{-ks} = \frac{4}{5}$, so $s = \frac{\ln(5/4)}{k} = \frac{t \ln(5/4)}{\ln 2}$ years.'
-          - problem: 'A culture doubles in $3$ hours. Sam says it reaches $10$ times its initial size after $15$ hours, because $10$ is $5$ times $2$. How long does it really take? Round to one decimal place.'
+          - problem: 'A culture doubles in $3$ hours. How long does it take to reach $10$ times its initial size? Round to one decimal place.'
             answer: '10.0'
             answer_contract: {"kind": "approx", "decimals": 1}
-            solution_sketch: 'The model is $P = P_0 e^{kt}$. Doubling in $3$ hours gives $k = \frac{\ln 2}{3}$. Reaching $10P_0$ needs $e^{kt} = 10$, so $t = \frac{3 \ln 10}{\ln 2} \approx 10.0$ hours, well below Sam''s $15$ hours.'
+            solution_sketch: 'The model is $P = P_0 e^{kt}$. Doubling in $3$ hours gives $k = \frac{\ln 2}{3}$. Reaching $10P_0$ needs $e^{kt} = 10$, so $t = \frac{3 \ln 10}{\ln 2} \approx 10.0$ hours.'
         constraints: 'first stage determines k from one measurement; second stage inverts for a time; answers are logarithms, either in terms of the measured time t or rounded numbers'
     diagnostic_exemplar:
       problem: 'A fish population grows at relative rate $0.4$ per year but is harvested at a constant $200$ fish per year: $P'' = 0.4P - 200$. With $P(0) = 400$, when does the population die out?'
@@ -2937,10 +2937,10 @@ topics:
             answer: '-x/(2y)'
             answer_contract: {"kind": "function", "vars": ["x", "y"]}
             solution_sketch: 'Differentiating implicitly gives $2x + 4y\frac{dy}{dx} = 0$. The constant $C$ disappears. Solving, $\frac{dy}{dx} = -\frac{x}{2y}$.'
-          - problem: 'Sam says that $\frac{dy}{dx} = 4Cx^3$ is the differential equation of the family $y = Cx^4$. What is the differential equation of the family?'
+          - problem: 'What is the differential equation of the family $y = Cx^4$?'
             answer: '4y/x'
             answer_contract: {"kind": "function", "vars": ["x", "y"]}
-            solution_sketch: 'The equation $\frac{dy}{dx} = 4Cx^3$ still contains $C$, so it describes only one curve at a time. Replace $C$ by $\frac{y}{x^4}$ from the family equation. Then $\frac{dy}{dx} = 4 \cdot \frac{y}{x^4} \cdot x^3 = \frac{4y}{x}$.'
+            solution_sketch: 'Differentiating gives $\frac{dy}{dx} = 4Cx^3$, which still contains $C$. Replace $C$ by $\frac{y}{x^4}$ from the family equation. Then $\frac{dy}{dx} = 4 \cdot \frac{y}{x^4} \cdot x^3 = \frac{4y}{x}$.'
         constraints: 'one-parameter families; eliminate C between the equation and its derivative; the answer is the right side of the differential equation, and an equation with dy/dx in front is read too'
       - id: kp2
         name: The orthogonality condition
@@ -2983,10 +2983,10 @@ topics:
             answer: '4/3'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The isotherms satisfy $\frac{dy}{dx} = -\frac{x}{y}$, so at $(3, 4)$ their slope is $-\frac{3}{4}$. The flow line is perpendicular, so its slope is the negative reciprocal, $\frac{4}{3}$.'
-          - problem: 'The family $y = Cx^3$ satisfies $\frac{dy}{dx} = \frac{3y}{x}$. Sam writes the differential equation of the orthogonal trajectories as $\frac{dy}{dx} = -\frac{3y}{x}$. What is the correct differential equation?'
+          - problem: 'The family $y = Cx^3$ satisfies $\frac{dy}{dx} = \frac{3y}{x}$. What is the differential equation of the orthogonal trajectories?'
             answer: '-x/(3y)'
             answer_contract: {"kind": "function", "vars": ["x", "y"]}
-            solution_sketch: 'Sam only changed the sign. The negative reciprocal of $\frac{3y}{x}$ is $-\frac{x}{3y}$, so the orthogonal curves satisfy $\frac{dy}{dx} = -\frac{x}{3y}$. The reciprocal also turns $\frac{3y}{x}$ upside down.'
+            solution_sketch: 'The slope of an orthogonal curve is the negative reciprocal of the slope of the family. The negative reciprocal of $\frac{3y}{x}$ is $-\frac{x}{3y}$, so the orthogonal curves satisfy $\frac{dy}{dx} = -\frac{x}{3y}$.'
         constraints: 'the step is y'' -> -1/y'' followed by simplifying the right side; items also ask for the slope of the orthogonal trajectory at a point'
       - id: kp3
         name: Solving for the trajectories
@@ -3024,10 +3024,10 @@ topics:
             answer: 'sqrt(1 - 2x)'
             answer_contract: {"kind": "function", "vars": ["x"]}
             solution_sketch: 'The family satisfies $\frac{dy}{dx} = y$, so the orthogonal curves satisfy $\frac{dy}{dx} = -\frac{1}{y}$. Separating, $y\,dy = -dx$ gives $\frac{y^2}{2} = -x + c$. The point $(0, 1)$ gives $c = \frac{1}{2}$, so $y^2 = 1 - 2x$ and $y = \sqrt{1 - 2x}$.'
-          - problem: 'Sam finds the orthogonal trajectory of $y = Ax^2$ through $(2, 3)$. He separates $2y\,dy = -x\,dx$ but then integrates to $y^2 = -x^2 + C$. Find $y(x)$ for the correct trajectory.'
+          - problem: 'Find $y(x)$ for the orthogonal trajectory of $y = Ax^2$ through $(2, 3)$.'
             answer: 'sqrt((22 - x^2)/2)'
             answer_contract: {"kind": "function", "vars": ["x"]}
-            solution_sketch: 'The integral of $2y\,dy$ is $y^2$, and the integral of $-x\,dx$ is $-\frac{x^2}{2}$, so Sam lost the factor $\frac{1}{2}$. Hence $y^2 = -\frac{x^2}{2} + c$, that is $x^2 + 2y^2 = C$. The point $(2, 3)$ gives $C = 4 + 18 = 22$, so $y = \sqrt{\frac{22 - x^2}{2}}$.'
+            solution_sketch: 'The integral of $2y\,dy$ is $y^2$, and the integral of $-x\,dx$ is $-\frac{x^2}{2}$, so $y^2 = -\frac{x^2}{2} + c$. Hence $y^2 = -\frac{x^2}{2} + c$, that is $x^2 + 2y^2 = C$. The point $(2, 3)$ gives $C = 4 + 18 = 22$, so $y = \sqrt{\frac{22 - x^2}{2}}$.'
         constraints: 'trajectory ODEs are separable with power/log integrals; the answer is y as a function of x on the branch through the given point'
     diagnostic_exemplar:
       problem: "Find the orthogonal trajectories of the lines $y = Cx$."

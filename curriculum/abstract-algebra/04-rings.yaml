@@ -45,10 +45,10 @@ topics:
             answer: '4'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Test each element of $T$ against $x=2$ and $x=4$. Since $4\cdot2=8\equiv2$, $4\cdot4=16\equiv4$ and $4\cdot0=0$, the element $4$ acts as a multiplicative identity in $T$. The element $2$ fails because $2\cdot2=4\neq2$, so $T$ has unity $4$ even though $1\notin T$.'
-          - problem: 'Sam says that the odd integers, with the usual addition and multiplication, form a ring because the product of two odd integers is odd. Is Sam right?'
+          - problem: 'The product of two odd integers is odd. Do the odd integers, with the usual addition and multiplication, form a ring?'
             answer: 'no'
-            answer_contract: {"kind": "label", "options": [["yes", "sam is right", "sam is correct", "it is a ring", "ring"], ["no", "sam is wrong", "sam is not right", "sam is incorrect", "sam is mistaken", "it is not a ring", "not a ring", "the odd integers are not a ring"]]}
-            solution_sketch: 'A ring must be closed under addition as well as multiplication. Taking $3+5=8$ shows that a sum of two odd integers is even, so the sum leaves the set. The odd integers do not form a ring, and Sam checked only one of the two operations.'
+            answer_contract: {"kind": "label", "options": [["yes", "it is a ring", "ring", "they form a ring"], ["no", "it is not a ring", "not a ring", "the odd integers are not a ring", "they do not form a ring"]]}
+            solution_sketch: 'A ring must be closed under addition as well as multiplication. Taking $3+5=8$ shows that a sum of two odd integers is even, so the sum leaves the set. The odd integers do not form a ring, because closure holds for only one of the two operations.'
           - problem: 'The subset $\{0, 5\}$ of $\mathbb{Z}_{10}$ is a ring under addition and multiplication modulo $10$. Find its multiplicative identity.'
             answer: '5'
             answer_contract: {"kind": "exact"}
@@ -90,10 +90,10 @@ topics:
             answer: '3'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The pointer is back at the start when $8k$ is a multiple of $12$. Since $\gcd(8,12)=4$, the least positive $k$ is $12/4=3$. Check: $8\cdot3=24=2\cdot12$.'
-          - problem: 'Sam multiplies $(2 + 3\sqrt{2})(4 - \sqrt{2})$ in $\mathbb{Z}[\sqrt{2}]$ and gets $14 + 10\sqrt{2}$. What is the correct product?'
+          - problem: 'What is the product $(2 + 3\sqrt{2})(4 - \sqrt{2})$ in $\mathbb{Z}[\sqrt{2}]$?'
             answer: '2 + 10sqrt(2)'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Expanding gives $8-2\sqrt{2}+12\sqrt{2}-3(\sqrt{2})^2$. The last term is $-3\cdot2=-6$, not $+6$, which is where Sam went wrong. So the integer part is $8-6=2$ and the product is $2+10\sqrt{2}$.'
+            solution_sketch: 'Expanding gives $8-2\sqrt{2}+12\sqrt{2}-3(\sqrt{2})^2$. The last term is $-3\cdot2=-6$, not $+6$. So the integer part is $8-6=2$ and the product is $2+10\sqrt{2}$.'
           - problem: 'Days of the week are numbered $0$ to $6$, with $0$ for Sunday, and numbers are added modulo $7$. Today is day $5$. Which number is the day $100$ days from now?'
             answer: '0'
             answer_contract: {"kind": "exact"}
@@ -115,7 +115,7 @@ topics:
             answer: '7'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'By the rule $(-a)b=-(ab)$, the product is $-4$. In $\mathbb{Z}_{11}$ this is $-4+11=7$. So $(-a)\cdot b=7$.'
-          - problem: 'Sam computes $(-3)(-4)$ in $\mathbb{Z}_7$ as $-12$, which is $2$ in $\mathbb{Z}_7$. What is the correct value?'
+          - problem: 'What is $(-3)(-4)$ in $\mathbb{Z}_7$?'
             answer: '5'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'In any ring $(-a)(-b)=ab$, so the product is $3\cdot4=12$, not $-12$. Reducing, $12=7+5$. So the correct value is $5$.'
@@ -261,10 +261,10 @@ topics:
             answer: '0, 1, 5, 6'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The equation says $x(x-1)\equiv0\pmod{10}$. Testing the residues gives $5^2=25=5$ and $6^2=36=6$ in addition to $0$ and $1$. So the solutions are $0, 1, 5, 6$.'
-          - problem: 'Sam solves $x^2 = 1$ in $\mathbb{Z}_8$ as in the integers and finds only $x = 1$ and $x = 7$. Find all solutions.'
+          - problem: 'Find all solutions of $x^2 = 1$ in $\mathbb{Z}_8$.'
             answer: '1, 3, 5, 7'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Square each residue modulo $8$: $3^2=9=1$ and $5^2=25=1$ as well as $1^2=1$ and $7^2=49=1$. The residues $0, 2, 4, 6$ give $0$ or $4$. So the solutions are $1, 3, 5, 7$, and Sam missed two because $x^2-1=(x-1)(x+1)$ can be $0$ with both factors nonzero.'
+            solution_sketch: 'Square each residue modulo $8$: $3^2=9=1$ and $5^2=25=1$ as well as $1^2=1$ and $7^2=49=1$. The residues $0, 2, 4, 6$ give $0$ or $4$. So the solutions are $1, 3, 5, 7$, and $3$ and $5$ appear because $x^2-1=(x-1)(x+1)$ can be $0$ with both factors nonzero.'
           - problem: 'Solve $4x = 0$ in $\mathbb{Z}_{12}$.'
             answer: '0, 3, 6, 9'
             answer_contract: {"kind": "exact"}
@@ -491,10 +491,10 @@ topics:
             answer: '12'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The kernel consists of the integers sent to $0$, that is, the integers with remainder $0$ on division by $12$. These are the multiples of $12$, so $\ker\varphi=12\mathbb{Z}$. The least positive one is $12$.'
-          - problem: 'Sam claims that $\varphi : \mathbb{Z} \to \mathbb{Z}$ with $\varphi(x) = 2x$ is a ring homomorphism, because $\varphi(a+b) = 2a + 2b = \varphi(a) + \varphi(b)$. What is $\varphi(3 \cdot 4) - \varphi(3)\,\varphi(4)$?'
+          - problem: 'Let $\varphi : \mathbb{Z} \to \mathbb{Z}$ be given by $\varphi(x) = 2x$, so that $\varphi(a+b) = 2a + 2b = \varphi(a) + \varphi(b)$. What is $\varphi(3 \cdot 4) - \varphi(3)\,\varphi(4)$?'
             answer: '-24'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'We have $\varphi(3\cdot4)=\varphi(12)=24$ and $\varphi(3)\varphi(4)=6\cdot8=48$. The difference is $24-48=-24$, which is not $0$. So $\varphi$ preserves sums but not products, and Sam checked only addition.'
+            solution_sketch: 'We have $\varphi(3\cdot4)=\varphi(12)=24$ and $\varphi(3)\varphi(4)=6\cdot8=48$. The difference is $24-48=-24$, which is not $0$. So $\varphi$ preserves sums but not products.'
           - problem: 'Let $\varphi : \mathbb{Z}[x] \to \mathbb{Z}_5$ send a polynomial $p$ to $p(0) \bmod 5$. Find the least positive integer $c$ for which $x^2 + 3x + c$ lies in $\ker \varphi$.'
             answer: '5'
             answer_contract: {"kind": "exact"}
@@ -549,7 +549,7 @@ topics:
             answer: '48'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The warehouse sends $8\cdot90=720$ parts in total. Dividing by the lot size, $720/15=48$ lots. The total is a multiple of $15$ because $90$ is, which is the absorption property of the ideal $15\mathbb{Z}$.'
-          - problem: 'Sam claims that the constant polynomials form an ideal of $\mathbb{Z}[x]$, because a sum or product of constants is constant. Find the degree of the product of the constant $3$ with the polynomial $x$.'
+          - problem: 'A sum or product of constant polynomials is constant. Find the degree of the product of the constant $3$ with the polynomial $x$.'
             answer: '1'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The product is $3\cdot x=3x$, which has degree $1$ and is not a constant. So multiplying a constant by an element of $\mathbb{Z}[x]$ can leave the set, and the constants are a subring but not an ideal.'
@@ -594,7 +594,7 @@ topics:
             answer: '14'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The reachable positions are the combinations $28x+42y$, which form the ideal generated by $28$ and $42$. This ideal is $\gcd(28,42)\mathbb{Z}=14\mathbb{Z}$, so the smallest positive position is $14$ m, for example $14=2\cdot28-1\cdot42$.'
-          - problem: 'Sam says that the ideal of $\mathbb{Z}$ generated by $8$ and $12$ is $20\mathbb{Z}$, because $8 + 12 = 20$. For which positive integer $d$ is the ideal equal to $d\mathbb{Z}$?'
+          - problem: 'For which positive integer $d$ is the ideal equal to $d\mathbb{Z}$?'
             answer: '4'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The ideal contains every combination $8x+12y$, not only the sum, and $12-8=4$ is in it. Since $8x+12y=4(2x+3y)$, the ideal is $4\mathbb{Z}$. So $d=\gcd(8,12)=4$, and $20$ is only one element of it.'
@@ -821,7 +821,7 @@ topics:
             answer: '6x + 5'
             answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
             solution_sketch: 'Over the integers the product is $8x^2+22x+5$. Modulo $8$ the coefficient $8$ becomes $0$ and $22$ becomes $6$, which leaves $6x+5$.'
-          - problem: 'Sam multiplies $(2x+1)(3x+2)$ in $\mathbb{Z}_{6}[x]$ and says the product has degree $2$, because the degrees $1$ and $1$ add. What is the degree of the product?'
+          - problem: 'The polynomials $2x+1$ and $3x+2$ both have degree $1$. What is the degree of their product $(2x+1)(3x+2)$ in $\mathbb{Z}_{6}[x]$?'
             answer: '1'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'Over the integers the product is $6x^2+7x+2$. Modulo $6$ the $x^2$ term vanishes because $2\cdot 3\equiv 0$, which leaves $x+2$ of degree $1$.'
@@ -866,7 +866,7 @@ topics:
             answer: 'x^2 + x + 1'
             answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
             solution_sketch: 'Long division over $\mathbb{Z}_2$ gives quotient $x^3+x$ and remainder $x^2+x+1$. As a check, $(x^3+x+1)(x^3+x)\equiv x^6+x^3+x^2+x$ modulo $2$, and adding $x^2+x+1$ gives $x^6+x^3+1$ again.'
-          - problem: 'Lena divides $x^3+x+1$ by $x+1$ in $\mathbb{Z}_{2}[x]$ and reports the remainder $x$. What is the correct remainder?'
+          - problem: 'What is the remainder when $x^3+x+1$ is divided by $x+1$ in $\mathbb{Z}_{2}[x]$?'
             answer: '1'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The remainder on division by $x+1$ is the polynomial evaluated at $-1\equiv 1$. Since $1+1+1=3\equiv 1$ modulo $2$, the remainder is the constant $1$, never a multiple of $x$, because it must have degree below $1$.'
@@ -915,7 +915,7 @@ topics:
             answer: '-8'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'By the remainder theorem the remainder is the value at $3$. The terms are $27$, $-4\cdot 9=-36$, $2\cdot 3=6$ and $-5$, and $27-36+6-5=-8$.'
-          - problem: 'Ben says $x^2+x$ has degree $2$, so it has at most two roots in $\mathbb{Z}_{6}$. Find all of its roots in $\mathbb{Z}_{6}$.'
+          - problem: 'The polynomial $x^2+x$ has degree $2$. Find all of its roots in $\mathbb{Z}_{6}$.'
             answer: '0, 2, 3, 5'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'Test each residue: $0\cdot 1=0$, $2\cdot 3=6\equiv 0$, $3\cdot 4=12\equiv 0$ and $5\cdot 6=30\equiv 0$, while $1\cdot 2=2$ and $4\cdot 5=20\equiv 2$. So there are four roots, because $\mathbb{Z}_6$ has zero divisors.'
@@ -990,9 +990,9 @@ topics:
             answer: '2, 3'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'Test each residue: $0, 1, 2, 3, 4$ give $1, 2, 5, 10, 17$ and modulo $5$ these are $1, 2, 0, 0, 2$. So the roots are $2$ and $3$.'
-          - problem: 'Tara tests only $0$ and $1$ in $\mathbb{Z}_{5}$ and concludes that $x^2+1$ is irreducible over $\mathbb{Z}_{5}$. Is Tara right?'
-            answer: 'no'
-            answer_contract: {"kind":"label","options":[["no","she is wrong","tara is wrong","it is reducible","reducible"],["yes","she is right","tara is right","it is irreducible","irreducible"]]}
+          - problem: 'The polynomial $x^2+1$ has no root among $0$ and $1$ in $\mathbb{Z}_{5}$. What is the smallest $a$ in $\mathbb{Z}_{5}$ with $a^2+1=0$?'
+            answer: '2'
+            answer_contract: {"kind":"exact"}
             solution_sketch: 'A root test must try every element of $\mathbb{Z}_5$, not only $0$ and $1$. The value at $2$ is $2^2+1=5\equiv 0$, so $x^2+1$ has a root and is reducible.'
           - problem: 'Factor $x^2+1$ over $\mathbb{Z}_{5}$, with coefficients in $\{0,1,2,3,4\}$.'
             answer: '(x + 2)(x + 3)'
@@ -1047,10 +1047,10 @@ topics:
             answer: 'yes'
             answer_contract: {"kind":"label","options":[["yes","it is irreducible","irreducible"],["no","it is reducible","reducible"]]}
             solution_sketch: 'A rational root must be $1$ or $-1$, since both the constant term and the leading coefficient are $1$. The values are $1-1+1=1$ and $-1+1+1=1$, so there is no rational root, and a cubic with no rational root is irreducible over $\mathbb{Q}$.'
-          - problem: 'Kim lists only the divisors of $6$ as candidates for rational roots of $2x^3+x^2-7x-6$, and she finds the integer roots $2$ and $-1$. Find the third root.'
+          - problem: 'The polynomial $2x^3+x^2-7x-6$ has the integer roots $2$ and $-1$. Find the third root.'
             answer: '-3/2'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'The leading coefficient $2$ allows candidates with denominator $2$, which Kim left out. Dividing out $(x-2)(x+1)=x^2-x-2$ leaves $2x+3$, so the third root is $-\tfrac32$.'
+            solution_sketch: 'The leading coefficient $2$ allows candidates with denominator $2$. Dividing out $(x-2)(x+1)=x^2-x-2$ leaves $2x+3$, so the third root is $-\tfrac32$.'
           - problem: 'The volume of a box is $2x^3+x^2-7x-6$ cubic centimetres and its height is $x+1$ centimetres. What polynomial gives the area of its base in square centimetres?'
             answer: '2x^2 - x - 6'
             answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
@@ -1100,9 +1100,9 @@ topics:
             answer: '0'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The value at $0$ is $1$ and the value at $1$ is $3\equiv 1$ modulo $2$. Neither is $0$, so there are $0$ roots, and the cubic is irreducible over $\mathbb{Z}_2$.'
-          - problem: 'Sam reduces $x^3+2x^2+2$ modulo $3$, finds the root $2$, and concludes that $x^3+2x^2+2$ is reducible over $\mathbb{Q}$. Is Sam right?'
-            answer: 'no'
-            answer_contract: {"kind":"label","options":[["no","he is wrong","sam is wrong","it is irreducible","irreducible"],["yes","he is right","sam is right","it is reducible","reducible"]]}
+          - problem: 'The polynomial $x^3+2x^2+2$ has the root $2$ modulo $3$. How many rational roots does $x^3+2x^2+2$ have?'
+            answer: '0'
+            answer_contract: {"kind":"exact"}
             solution_sketch: 'A factorization over $\mathbb{Q}$ would give a rational root among $\pm 1, \pm 2$. The values are $5, 3, 18, 2$, none is zero, so the cubic is irreducible over $\mathbb{Q}$ even though its reduction modulo $3$ has the root $2$.'
           - problem: 'Expand $(x+1)^4+1$.'
             answer: 'x^4 + 4x^3 + 6x^2 + 4x + 2'
@@ -1168,7 +1168,7 @@ topics:
             answer: 'yes'
             answer_contract: {"kind":"label","options":[["yes","it is maximal","maximal"],["no","it is not maximal","not maximal"]]}
             solution_sketch: 'A finite integral domain is a field: multiplication by a nonzero element is injective, hence onto, so it hits $1$. Since $R/I$ is a field, $I$ is maximal.'
-          - problem: 'Sam claims that every prime ideal of a commutative ring with unity is maximal, because every integral domain is a field. In the integral domain $\mathbb{Z}$, find the smallest integer $n$ with $n > 1$ that has no multiplicative inverse in $\mathbb{Z}$.'
+          - problem: 'In the integral domain $\mathbb{Z}$, find the smallest integer $n$ with $n > 1$ that has no multiplicative inverse in $\mathbb{Z}$.'
             answer: '2'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'A multiplicative inverse of $n$ in $\mathbb{Z}$ is an integer $m$ with $nm = 1$. For $n = 2$ this needs $m = 1/2$, which is not an integer, so $2$ has no inverse. Hence $\mathbb{Z}$ is an integral domain that is not a field, and $\langle 0 \rangle$ is prime but not maximal.'
@@ -1184,7 +1184,7 @@ topics:
             answer: '4'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'A residue $a$ is a unit in $\mathbb{Z}_{12}$ exactly when $\gcd(a,12)=1$, which gives $1, 5, 7, 11$. There are $4$ units among the $11$ nonzero residues, so $12\mathbb{Z}$ is not maximal.'
-          - problem: 'Sam says that $6\mathbb{Z}$ is a prime ideal of $\mathbb{Z}$. Find the integer $a$ with $0<a<6$ for which $4a$ lies in $6\mathbb{Z}$; the pair $4$ and $a$ then shows that Sam is wrong.'
+          - problem: 'Find the integer $a$ with $0<a<6$ for which $4a$ lies in $6\mathbb{Z}$; the pair $4$ and $a$ then shows that $6\mathbb{Z}$ is not a prime ideal of $\mathbb{Z}$.'
             answer: '3'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'We need $4a$ to be a multiple of $6$, and among $1,\dots,5$ only $a=3$ works, since $4\cdot 3=12$. Neither $4$ nor $3$ is in $6\mathbb{Z}$ although their product is, so $6\mathbb{Z}$ is not prime.'
@@ -1209,9 +1209,9 @@ topics:
             answer: '5'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The ideal $\langle 5\rangle=\{0,5,10\}$ has $3$ elements. Each coset has $3$ elements, so the quotient has $15/3=5$ elements and is $\mathbb{Z}_5$.'
-          - problem: 'Sam says that $\langle 4\rangle$ is a maximal ideal of $\mathbb{Z}_{12}$. Is Sam right?'
+          - problem: 'Is $\langle 4\rangle$ a maximal ideal of $\mathbb{Z}_{12}$?'
             answer: 'no'
-            answer_contract: {"kind":"label","options":[["no","he is wrong","sam is wrong","not maximal"],["yes","he is right","sam is right","maximal"]]}
+            answer_contract: {"kind":"label","options":[["no","it is not maximal","not maximal"],["yes","it is maximal","maximal"]]}
             solution_sketch: 'The quotient $\mathbb{Z}_{12}/\langle 4\rangle$ is $\mathbb{Z}_4$, which is not a field because $2\cdot 2=0$. So $\langle 4\rangle$ is not maximal; the ideal $\langle 2\rangle$ lies strictly between it and the whole ring.'
           - problem: 'Find a nonzero zero divisor in the quotient ring $\mathbb{Z}_{12}/\langle 4\rangle$, writing its class as a residue between $0$ and $3$.'
             answer: '2'
@@ -1275,7 +1275,7 @@ topics:
             answer: 'x + 1'
             answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
             solution_sketch: 'In the quotient $x^2+x+1=0$, so $x^2+x=1$ modulo $2$. Hence $x(x+1)=1$, and the inverse of $x$ is $x+1$.'
-          - problem: 'Ana says that $\langle x^2+1\rangle$ is maximal in $\mathbb{Z}[x]$ because $x^2+1$ is irreducible. The ideal $\langle 3, x^2+1\rangle$ contains it. How many elements does $\mathbb{Z}[x]/\langle 3, x^2+1\rangle$ have?'
+          - problem: 'The polynomial $x^2+1$ is irreducible in $\mathbb{Z}[x]$. The ideal $\langle 3, x^2+1\rangle$ contains it. How many elements does $\mathbb{Z}[x]/\langle 3, x^2+1\rangle$ have?'
             answer: '9'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'Modulo $3$ the quotient is $\mathbb{F}_3[x]/\langle x^2+1\rangle$, whose classes are $a+bx$ with $a,b\in\mathbb{F}_3$. That gives $3\cdot 3=9$ elements and a field, so $\langle 3,x^2+1\rangle$ is maximal and lies strictly above $\langle x^2+1\rangle$.'
@@ -1355,10 +1355,10 @@ topics:
             answer: '9'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The remainder on division by $x+2$ is the value at $-2$. Compute $(-2)^3+3(-2)^2+5=-8+12+5=9$, a constant, whose degree $0$ is less than $\deg(x+2)=1$.'
-          - problem: 'Mia divides $5+4i$ by $1+3i$ in $\mathbb{Z}[i]$. The exact quotient is $1.7-1.1i$ and she rounds each part down to $q=1-2i$. What is the correct remainder, found with the Gaussian integer nearest to the exact quotient?'
+          - problem: 'In $\mathbb{Z}[i]$ the exact quotient of $5+4i$ by $1+3i$ is $1.7-1.1i$. Rounding each part down gives $q=1-2i$, which is not the nearest Gaussian integer. What is the remainder, found with the Gaussian integer nearest to the exact quotient?'
             answer: '-i'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'Her quotient leaves a remainder of norm $13$, which is not less than $N(1+3i)=10$. The nearest Gaussian integer to $1.7-1.1i$ is $q=2-i$, and $r=5+4i-(1+3i)(2-i)=5+4i-(5+5i)=-i$ with $N(r)=1$.'
+            solution_sketch: 'The quotient $1-2i$ leaves a remainder of norm $13$, which is not less than $N(1+3i)=10$. The nearest Gaussian integer to $1.7-1.1i$ is $q=2-i$, and $r=5+4i-(1+3i)(2-i)=5+4i-(5+5i)=-i$ with $N(r)=1$.'
           - problem: 'In $\mathbb{Z}$ with the absolute value as norm, write $-13=4q+r$ with $|r|<4$ and $|r|$ as small as possible. What is $r$?'
             answer: '-1'
             answer_contract: {"kind":"exact"}
@@ -1404,7 +1404,7 @@ topics:
             answer: '21'
             answer_contract: {"kind":"unit","quantity":"length","unit":"cm","allow_omitted":true}
             solution_sketch: 'The side must divide both $105$ and $63$, so it divides their gcd. By the Euclidean algorithm $105=1\cdot 63+42$, $63=1\cdot 42+21$ and $42=2\cdot 21$, so the gcd and the largest side is $21$ cm.'
-          - problem: 'Leo says that $\langle x^2-1,\ x^2-4\rangle$ in $\mathbb{Q}[x]$ is generated by $x^2-1$, because it comes first. Find the monic generator of the ideal.'
+          - problem: 'Find the monic generator of the ideal $\langle x^2-1,\ x^2-4\rangle$ in $\mathbb{Q}[x]$.'
             answer: '1'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The ideal contains $(x^2-1)-(x^2-4)=3$, a nonzero constant, which is a unit in $\mathbb{Q}[x]$. So the ideal is the whole ring, with monic generator $1$.'
@@ -1516,7 +1516,7 @@ topics:
             answer: '6'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'Solve $a^2+5b^2=9$ with integers. For $b=0$ we get $a=\pm3$, for $b=\pm1$ we get $a^2=4$ so $a=\pm2$, and $|b|\ge2$ is too large, which gives $2+4=6$ elements.'
-          - problem: 'Elena says that $5$ is irreducible in $\mathbb{Z}[i]$ because $5$ is a prime number. Find the factorization $5=(a+bi)(a-bi)$ with $a>b>0$, and give the factor $a+bi$.'
+          - problem: 'The number $5$ is a prime number. Find the factorization $5=(a+bi)(a-bi)$ with $a>b>0$, and give the factor $a+bi$.'
             answer: '2+i'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'Since $5=4+1=2^2+1^2$, we have $5=(2+i)(2-i)$, and neither factor is a unit because each has norm $5$. So $5$ is reducible in $\mathbb{Z}[i]$, and the factor with $a>b>0$ is $2+i$.'
@@ -1565,7 +1565,7 @@ topics:
             answer: '16'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'We need $a^2+b^2=65$. In $\mathbb{Z}[i]$ we have $65=5\cdot 13=(2+i)(2-i)(3+2i)(3-2i)$, and the points are $(\pm1,\pm8)$, $(\pm8,\pm1)$, $(\pm4,\pm7)$ and $(\pm7,\pm4)$, which gives $16$.'
-          - problem: 'Ravi factors $2$ as $(1+i)(1-i)$ in $\mathbb{Z}[i]$ and says that $2$ has two different irreducible factors. Up to multiplication by units, how many different irreducible factors does $2$ have?'
+          - problem: 'The number $2$ factors as $(1+i)(1-i)$ in $\mathbb{Z}[i]$. Up to multiplication by units, how many different irreducible factors does $2$ have?'
             answer: '1'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The factor $1-i=-i(1+i)$ is a unit multiple of $1+i$, so the two factors are associates. Hence $2=-i(1+i)^2$ has just $1$ irreducible factor up to units, repeated twice.'
@@ -1582,10 +1582,10 @@ topics:
             answer: '29'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'Substitute $a=3$ and $b=2$ into the formula $N=a^2+5b^2$. Then $N=3^2+5\cdot 2^2=9+20=29$, an ordinary integer.'
-          - problem: 'Pia says that $2$ and $1+\sqrt{-5}$ are associates in $\mathbb{Z}[\sqrt{-5}]$, that is, they differ by a unit. Associates have equal norms. What is the norm of $1+\sqrt{-5}$ with the norm $N(a+b\sqrt{-5})=a^2+5b^2$?'
+          - problem: 'In $\mathbb{Z}[\sqrt{-5}]$, two elements are associates if they differ by a unit. Associates have equal norms. What is the norm of $1+\sqrt{-5}$ with the norm $N(a+b\sqrt{-5})=a^2+5b^2$?'
             answer: '6'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'Here $a=1$ and $b=1$, so $N(1+\sqrt{-5})=1+5\cdot 1=6$. The norm of $2$ is $4$, which differs from $6$, so $2$ and $1+\sqrt{-5}$ are not associates and Pia is wrong.'
+            solution_sketch: 'Here $a=1$ and $b=1$, so $N(1+\sqrt{-5})=1+5\cdot 1=6$. The norm of $2$ is $4$, which differs from $6$, so $2$ and $1+\sqrt{-5}$ are not associates.'
           - problem: 'In $\mathbb{Z}[\sqrt{-5}]$ with the norm $N(a+b\sqrt{-5})=a^2+5b^2$, how many elements have norm $6$?'
             answer: '4'
             answer_contract: {"kind":"exact"}

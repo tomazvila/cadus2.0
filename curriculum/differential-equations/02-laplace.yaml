@@ -46,10 +46,10 @@ topics:
             answer: '1/(s+4)'
             answer_contract: {"kind":"function","vars":["s"]}
             solution_sketch: 'The definition gives $\int_0^{\infty} e^{-(s+4)t}\,dt$, which converges for $s > -4$. Its value is $\frac{1}{s+4}$.'
-          - problem: 'Sam says that $\int_0^{\infty} e^{-st} e^{6t}\,dt$ converges when $s = 4$, because $e^{-st}$ decays. Is Sam right?'
-            answer: 'no'
-            answer_contract: {"kind": "label", "options": [["yes", "yes, he is right", "he is right", "sam is right", "right", "it converges"], ["no", "sam is not right", "he is wrong", "wrong", "it diverges", "it does not converge", "not right", "incorrect"]]}
-            solution_sketch: 'At $s = 4$ the integrand is $e^{2t}$, which grows without bound, so the integral diverges. The integral converges only when $s > 6$.'
+          - problem: 'What is the smallest integer $s$ for which $\int_0^{\infty} e^{-st} e^{6t}\,dt$ converges?'
+            answer: '7'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The integrand is $e^{(6-s)t}$. It decays only when $6 - s < 0$, so the integral converges only when $s > 6$. The smallest integer with $s > 6$ is $7$.'
           - problem: 'The response of a circuit is $f(t) = e^{2t}$ for $t \ge 0$. What is the value at $s = 5$ of its Laplace transform?'
             answer: '1/3'
             answer_contract: {"kind":"exact"}
@@ -91,10 +91,10 @@ topics:
             answer: '1/16'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The transform is $\frac{1}{(s+3)^2}$ for $s > -3$. At $s = 1$ the value is $\frac{1}{16}$.'
-          - problem: 'Sam finds $\mathcal{L}\{te^{-2t}\}$ and writes $\frac{1}{(s-2)^2}$. What is the correct transform?'
+          - problem: 'What is $\mathcal{L}\{te^{-2t}\}$?'
             answer: '1/(s+2)^2'
             answer_contract: {"kind":"function","vars":["s"]}
-            solution_sketch: 'The integrand is $t e^{-(s+2)t}$, so $s$ is replaced by $s+2$ and not by $s-2$. Integration by parts then gives $\frac{1}{(s+2)^2}$.'
+            solution_sketch: 'The integrand is $t e^{-(s+2)t}$, so $s$ is replaced by $s+2$. Integration by parts then gives $\frac{1}{(s+2)^2}$.'
           - problem: 'A body starts from rest with constant acceleration $1\ \mathrm{m/s^2}$, so its distance is $f(t) = \tfrac{1}{2}t^2$ metres. Find the Laplace transform of $f$.'
             answer: '1/s^3'
             answer_contract: {"kind":"function","vars":["s"]}
@@ -160,7 +160,7 @@ topics:
             answer: '2/s^3'
             answer_contract: {"kind":"function","vars":["s"]}
             solution_sketch: 'The voltage matches the power entry $\frac{n!}{s^{n+1}}$ with $n = 2$. Since $2! = 2$, the transform is $\frac{2}{s^3}$.'
-          - problem: 'Sam says that $\mathcal{L}\{\cos 4t\} = \dfrac{4}{s^2+16}$. What is the correct transform?'
+          - problem: 'What is $\mathcal{L}\{\cos 4t\}$?'
             answer: 's/(s^2+16)'
             answer_contract: {"kind":"function","vars":["s"]}
             solution_sketch: 'The numerator $4$ belongs to the sine entry. The cosine entry has the numerator $s$, so $\mathcal{L}\{\cos 4t\} = \frac{s}{s^2+16}$.'
@@ -206,7 +206,7 @@ topics:
             answer: '1/(s^2+4) + s/(2(s^2+4))'
             answer_contract: {"kind":"function","vars":["s"]}
             solution_sketch: 'By linearity the factor $\frac12$ multiplies each transform. So $\frac12\cdot\frac{2}{s^2+4} + \frac12\cdot\frac{s}{s^2+4} = \frac{1}{s^2+4} + \frac{s}{2(s^2+4)}$.'
-          - problem: 'Sam says that $\mathcal{L}\{4\sin 2t\} = \dfrac{4}{s^2+4}$. What is the correct transform?'
+          - problem: 'What is $\mathcal{L}\{4\sin 2t\}$?'
             answer: '8/(s^2+4)'
             answer_contract: {"kind":"function","vars":["s"]}
             solution_sketch: 'The factor $4$ multiplies the whole transform of $\sin 2t$, which is $\frac{2}{s^2+4}$. So the transform is $\frac{8}{s^2+4}$.'
@@ -274,10 +274,10 @@ topics:
             answer: '6/(s+2)^4'
             answer_contract: {"kind":"function","vars":["s"]}
             solution_sketch: 'The transform of $t^3$ is $\frac{6}{s^4}$. The factor $e^{-2t}$ replaces $s$ by $s+2$, giving $\frac{6}{(s+2)^4}$.'
-          - problem: 'Sam finds $\mathcal{L}\{e^{5t}\cos 2t\}$ and writes $\dfrac{s+5}{(s+5)^2+4}$. What is the correct transform?'
+          - problem: 'What is $\mathcal{L}\{e^{5t}\cos 2t\}$?'
             answer: '(s-5)/((s-5)^2+4)'
             answer_contract: {"kind":"function","vars":["s"]}
-            solution_sketch: 'The factor $e^{5t}$ replaces $s$ by $s-5$, not by $s+5$. So $\frac{s}{s^2+4}$ becomes $\frac{s-5}{(s-5)^2+4}$.'
+            solution_sketch: 'The factor $e^{5t}$ replaces $s$ by $s-5$. So $\frac{s}{s^2+4}$ becomes $\frac{s-5}{(s-5)^2+4}$.'
           - problem: 'The function $f(t) = te^{2t}$ has a Laplace transform $F(s)$. What is $F(5)$?'
             answer: '1/9'
             answer_contract: {"kind":"exact"}
@@ -315,7 +315,7 @@ topics:
             answer: '3(s+1)/((s+1)^2+4) + 2/((s+1)^2+4)'
             answer_contract: {"kind":"function","vars":["s"]}
             solution_sketch: 'First transform $3\cos 2t + \sin 2t$ to get $\frac{3s}{s^2+4} + \frac{2}{s^2+4}$. Then the factor $e^{-t}$ replaces $s$ by $s+1$ in both terms.'
-          - problem: 'Sam finds $\mathcal{L}\{2e^{-3t} + 5\sin 2t\}$ and writes $\dfrac{2}{s+3} + \dfrac{5}{s^2+4}$. What is the correct transform?'
+          - problem: 'What is $\mathcal{L}\{2e^{-3t} + 5\sin 2t\}$?'
             answer: '2/(s+3) + 10/(s^2+4)'
             answer_contract: {"kind":"function","vars":["s"]}
             solution_sketch: 'The transform of $\sin 2t$ is $\frac{2}{s^2+4}$, and the factor $5$ multiplies all of it. So the second term is $\frac{10}{s^2+4}$.'
@@ -379,10 +379,10 @@ topics:
             answer: 't^3'
             answer_contract: {"kind":"function","vars":["t"]}
             solution_sketch: 'The power entry $\frac{n!}{s^{n+1}}$ with $n + 1 = 4$ gives $n = 3$, and $3! = 6$ matches the numerator. So $f(t) = t^3$.'
-          - problem: 'Sam inverts $\dfrac{1}{s+4}$ and writes $e^{4t}$. What is the correct inverse transform?'
+          - problem: 'What is the inverse Laplace transform of $\dfrac{1}{s+4}$?'
             answer: 'e^(-4t)'
             answer_contract: {"kind":"function","vars":["t"]}
-            solution_sketch: 'The denominator $s + 4$ means $s - a$ with $a = -4$. So the inverse transform is $e^{-4t}$, not $e^{4t}$.'
+            solution_sketch: 'The denominator $s + 4$ means $s - a$ with $a = -4$. So the inverse transform is $e^{-4t}$.'
           - problem: 'The Laplace transform of $f$ is $\dfrac{1}{s-2}$. What is $f(1)$?'
             answer: 'e^2'
             answer_contract: {"kind":"exact"}
@@ -416,7 +416,7 @@ topics:
             answer: '5sin(2t)'
             answer_contract: {"kind":"function","vars":["t"]}
             solution_sketch: 'The sine entry needs the numerator $2$. Write $\frac{10}{s^2+4} = 5\cdot\frac{2}{s^2+4}$, so $i(t) = 5\sin 2t$.'
-          - problem: 'Sam inverts $\dfrac{1}{s^2+9}$ and writes $\sin 3t$. What is the correct inverse transform?'
+          - problem: 'What is the inverse Laplace transform of $\dfrac{1}{s^2+9}$?'
             answer: '(1/3)sin(3t)'
             answer_contract: {"kind":"function","vars":["t"]}
             solution_sketch: 'The sine entry $\frac{3}{s^2+9}$ has the numerator $3$, so $\frac{1}{s^2+9} = \frac{1}{3}\cdot\frac{3}{s^2+9}$. The inverse transform is $\frac{1}{3}\sin 3t$.'
@@ -491,10 +491,10 @@ topics:
             answer: '2'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Split $C(s) = \frac{2}{s} - \frac{2}{s + 3}$ by the cover-up method. Inverting gives $c(t) = 2 - 2e^{-3t}$. The exponential term tends to $0$, so $c(t)$ approaches $2$.'
-          - problem: 'Sam writes $\dfrac{1}{(s-1)(s-4)} = \dfrac{1}{s-1} - \dfrac{1}{s-4}$ and inverts each term. What is the correct inverse Laplace transform of $\dfrac{1}{(s-1)(s-4)}$?'
+          - problem: 'What is the inverse Laplace transform of $\dfrac{1}{(s-1)(s-4)}$?'
             answer: 'e^(4t)/3 - e^t/3'
             answer_contract: {"kind": "function", "vars": ["t"]}
-            solution_sketch: 'Sam skipped the cover-up step. At $s = 1$ the constant is $A = \frac{1}{1 - 4} = -\frac{1}{3}$, and at $s = 4$ it is $B = \frac{1}{4 - 1} = \frac{1}{3}$. So the inverse transform is e^(4t)/3 - e^t/3, which is $\frac{1}{3}e^{4t} - \frac{1}{3}e^{t}$.'
+            solution_sketch: 'Use the cover-up step. At $s = 1$ the constant is $A = \frac{1}{1 - 4} = -\frac{1}{3}$, and at $s = 4$ it is $B = \frac{1}{4 - 1} = \frac{1}{3}$. So the inverse transform is e^(4t)/3 - e^t/3, which is $\frac{1}{3}e^{4t} - \frac{1}{3}e^{t}$.'
           - problem: 'In the partial fraction decomposition $\dfrac{7s+1}{(s-1)(s+3)} = \dfrac{A}{s-1} + \dfrac{B}{s+3}$, find $B$.'
             answer: '5'
             answer_contract: {"kind": "exact"}
@@ -545,10 +545,10 @@ topics:
             answer: 'e^(-2)'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The table entry for $1/s^2$ is $t$, and the shift $s \to s + 2$ multiplies it by $e^{-2t}$. So $i(t) = te^{-2t}$. At $t = 1$ this is $e^{-2}$.'
-          - problem: 'Maya inverts $\dfrac{1}{s^2 + 2s + 10}$ and writes $\dfrac{1}{3}\sin 3t$. What is the correct inverse Laplace transform?'
+          - problem: 'What is the inverse Laplace transform of $\dfrac{1}{s^2 + 2s + 10}$?'
             answer: 'e^(-t) sin(3t)/3'
             answer_contract: {"kind": "function", "vars": ["t"]}
-            solution_sketch: 'Maya forgot to complete the square. Since $s^2 + 2s + 10 = (s+1)^2 + 9$, the sine term needs the shift $a = 1$ and carries the factor $e^{-t}$. The correct inverse is e^(-t) sin(3t)/3.'
+            solution_sketch: 'Complete the square. Since $s^2 + 2s + 10 = (s+1)^2 + 9$, the sine term needs the shift $a = 1$ and carries the factor $e^{-t}$. The inverse is e^(-t) sin(3t)/3.'
         constraints: "irreducible quadratics complete to (s+a)^2 + b^2 with integer a, b; repeated linear factors to power 2 only"
     diagnostic_exemplar:
       problem: 'Compute $\mathcal{L}^{-1}\left\{\dfrac{s + 5}{s^2 + 4s + 13}\right\}$.'
@@ -618,10 +618,10 @@ topics:
             answer: 's Y - 8'
             answer_contract: {"kind": "function", "vars": ["s", "Y"]}
             solution_sketch: 'The rate of change is the first derivative, so use $\mathcal{L}\{y''\} = sY - y(0)$. Substitute $y(0) = 8$. The result is s Y - 8.'
-          - problem: 'Sam writes $\mathcal{L}\{y''\} = sY + 4$ for a function with $y(0) = 4$. What is the correct expression for $\mathcal{L}\{y''\}$ in terms of $Y$?'
+          - problem: 'A function has $y(0) = 4$. What is $\mathcal{L}\{y''\}$ in terms of $Y$?'
             answer: 's Y - 4'
             answer_contract: {"kind": "function", "vars": ["s", "Y"]}
-            solution_sketch: 'Sam added the initial value. The formula subtracts it: $\mathcal{L}\{y''\} = sY - y(0)$. With $y(0) = 4$ the correct expression is s Y - 4.'
+            solution_sketch: 'The formula is $\mathcal{L}\{y''\} = sY - y(0)$. With $y(0) = 4$ the expression is s Y - 4.'
           - problem: 'The function $y = e^{2t}$ has $Y(s) = \dfrac{1}{s-2}$. Use the formula for the transform of a derivative to find $\mathcal{L}\{y''\}$.'
             answer: '2/(s - 2)'
             answer_contract: {"kind": "function", "vars": ["s"]}
@@ -675,10 +675,10 @@ topics:
             answer: '3s/(s^2 + 16)'
             answer_contract: {"kind": "function", "vars": ["s"]}
             solution_sketch: 'Transform each term: $2(s^2Y - 3s - 0) + 32Y = 0$, so $(2s^2 + 32)Y = 6s$. Divide both sides by $2$ to get $(s^2 + 16)Y = 3s$. Hence $Y(s) = $ 3s/(s^2 + 16).'
-          - problem: 'Alex transforms $y'' + 3y = 6$, $y(0) = 4$ and writes $(s + 3)Y = \frac{6}{s} - 4$. What is the correct $Y(s)$?'
+          - problem: 'Transform $y'' + 3y = 6$, $y(0) = 4$. What is $Y(s)$?'
             answer: '(4s + 6)/(s(s + 3))'
             answer_contract: {"kind": "function", "vars": ["s"]}
-            solution_sketch: 'Transform each term with $\mathcal{L}\{y''\} = sY - y(0)$ and use the initial value. Collecting the $Y$ terms gives $(s + 3)Y = 4 + \frac{6}{s}$. Dividing by the coefficient of $Y$ gives (4s + 6)/(s(s + 3)). Alex subtracted the initial value on the right side, but it must be added there because the term $-y(0)$ on the left moves across.'
+            solution_sketch: 'Transform each term with $\mathcal{L}\{y''\} = sY - y(0)$ and use the initial value. Collecting the $Y$ terms gives $(s + 3)Y = 4 + \frac{6}{s}$. Dividing by the coefficient of $Y$ gives (4s + 6)/(s(s + 3)). The term $-y(0)$ on the left moves across and becomes $+4$ on the right side.'
           - problem: 'Transform the initial value problem $y'''' + 3y'' + 2y = 0$, $y(0) = 1$, $y''(0) = 2$, and solve for $Y(s)$.'
             answer: '(s + 5)/((s + 1)(s + 2))'
             answer_contract: {"kind": "function", "vars": ["s"]}
@@ -754,10 +754,10 @@ topics:
             answer: '6e^(4t)'
             answer_contract: {"kind": "function", "vars": ["t"]}
             solution_sketch: 'Transform the equation with the derivative formulas and the initial values. This gives $(s - 4)Y = 6$, so $Y(s) = \frac{6}{s - 4}$. This is already a table entry, so no partial fractions are needed. Inverting term by term gives 6e^(4t).'
-          - problem: 'Jo transforms $y'' - 3y = 0$, $y(0) = 4$ and writes $(s - 3)Y = -4$. What is the correct solution $y(t)$?'
+          - problem: 'Solve $y'' - 3y = 0$, $y(0) = 4$ with the Laplace transform. What is $y(t)$?'
             answer: '4e^(3t)'
             answer_contract: {"kind": "function", "vars": ["t"]}
-            solution_sketch: 'Transform the equation with the derivative formulas and the initial values. This gives $(s - 3)Y = 4$, so $Y(s) = \frac{4}{s - 3}$. This is already a table entry, so no partial fractions are needed. Inverting term by term gives 4e^(3t). Jo moved the initial value to the wrong side: $sY - 4 - 3Y = 0$ means $(s-3)Y = +4$.'
+            solution_sketch: 'Transform the equation with the derivative formulas and the initial values. This gives $(s - 3)Y = 4$, so $Y(s) = \frac{4}{s - 3}$. This is already a table entry, so no partial fractions are needed. Inverting term by term gives 4e^(3t). The step $sY - 4 - 3Y = 0$ means $(s-3)Y = +4$.'
           - problem: 'Solve $y'' + 2y = 0$, $y(0) = 7$ by the Laplace transform. What is $y(1)$?'
             answer: '7e^(-2)'
             answer_contract: {"kind": "exact"}
@@ -803,10 +803,10 @@ topics:
             answer: '100 - 100e^(-t/10)'
             answer_contract: {"kind": "function", "vars": ["t"]}
             solution_sketch: 'Transform the equation with the derivative formulas and the initial values. This gives $(s + \frac{1}{10})Y = \frac{10}{s}$, so $Y(s) = \frac{100}{s \left(10 s + 1\right)}$. Partial fractions give $Y(s) = - \frac{1000}{10 s + 1} + \frac{100}{s}$. Inverting term by term gives 100 - 100e^(-t/10). The inflow brings $5 \cdot 2 = 10$ kg per minute, and the outflow removes $\frac{5}{50}A = \frac{A}{10}$ kg per minute, so $A'' = 10 - \frac{A}{10}$.'
-          - problem: 'Lee solves $y'' + 2y = 6$, $y(0) = 0$ and writes $Y = \frac{6}{s + 2}$. What is the correct solution $y(t)$?'
+          - problem: 'Solve $y'' + 2y = 6$, $y(0) = 0$ with the Laplace transform. What is $y(t)$?'
             answer: '3 - 3e^(-2t)'
             answer_contract: {"kind": "function", "vars": ["t"]}
-            solution_sketch: 'Transform the equation with the derivative formulas and the initial values. This gives $(s + 2)Y = \frac{6}{s}$, so $Y(s) = \frac{6}{s \left(s + 2\right)}$. Partial fractions give $Y(s) = - \frac{3}{s + 2} + \frac{3}{s}$. Inverting term by term gives 3 - 3e^(-2t). Lee transformed the constant $6$ as $6$, but $\mathcal{L}\{6\} = \frac{6}{s}$.'
+            solution_sketch: 'Transform the equation with the derivative formulas and the initial values. This gives $(s + 2)Y = \frac{6}{s}$, so $Y(s) = \frac{6}{s \left(s + 2\right)}$. Partial fractions give $Y(s) = - \frac{3}{s + 2} + \frac{3}{s}$. Inverting term by term gives 3 - 3e^(-2t). The constant $6$ transforms to $\mathcal{L}\{6\} = \frac{6}{s}$.'
           - problem: 'Solve $y'' + 4y = 8$, $y(0) = 3$ by the Laplace transform. Which constant value does $y(t)$ approach as $t$ grows without bound?'
             answer: '2'
             answer_contract: {"kind": "exact"}
@@ -878,10 +878,10 @@ topics:
             answer: '2e^(-2t) - 2e^(-3t)'
             answer_contract: {"kind": "function", "vars": ["t"]}
             solution_sketch: 'Transform the equation with the derivative formulas and the initial values. This gives $(2 s^{2} + 10 s + 12)Y = 4$, so $Y(s) = \frac{2}{s^{2} + 5 s + 6}$. Partial fractions give $Y(s) = - \frac{2}{s + 3} + \frac{2}{s + 2}$. Inverting term by term gives 2e^(-2t) - 2e^(-3t). Newton''s law for the mass gives $2y'''' + 10y'' + 12y = 0$ with $y(0) = 0$ and $y''(0) = 2$.'
-          - problem: 'Ravi solves $y'''' - 3y'' - 4y = 0$, $y(0) = 2$, $y''(0) = 1$. He transforms the equation as $(s^2 - 3s - 4)Y = 2s + 1$. What is the correct solution $y(t)$?'
+          - problem: 'Solve $y'''' - 3y'' - 4y = 0$, $y(0) = 2$, $y''(0) = 1$ with the Laplace transform. What is $y(t)$?'
             answer: '3e^(4t)/5 + 7e^(-t)/5'
             answer_contract: {"kind": "function", "vars": ["t"]}
-            solution_sketch: 'Transform the equation with the derivative formulas and the initial values. This gives $(s^{2} - 3 s - 4)Y = 2 s - 5$, so $Y(s) = \frac{5 - 2 s}{- s^{2} + 3 s + 4}$. Partial fractions give $Y(s) = \frac{7}{5 \left(s + 1\right)} + \frac{3}{5 \left(s - 4\right)}$. Inverting term by term gives 3e^(4t)/5 + 7e^(-t)/5. Ravi left out the term $3y(0)$ from $-3(sY - y(0))$; the right side is $2s + 1 - 6 = 2s - 5$.'
+            solution_sketch: 'Transform the equation with the derivative formulas and the initial values. This gives $(s^{2} - 3 s - 4)Y = 2 s - 5$, so $Y(s) = \frac{5 - 2 s}{- s^{2} + 3 s + 4}$. Partial fractions give $Y(s) = \frac{7}{5 \left(s + 1\right)} + \frac{3}{5 \left(s - 4\right)}$. Inverting term by term gives 3e^(4t)/5 + 7e^(-t)/5. The term $3y(0)$ from $-3(sY - y(0))$ is part of the right side, which is $2s + 1 - 6 = 2s - 5$.'
         constraints: "characteristic roots distinct integers; homogeneous; verify y(0), y'(0) at the end"
       - id: kp2
         name: Second-order IVPs with complex roots
@@ -923,10 +923,10 @@ topics:
             answer: '2'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Transforming gives $(s^2 + 4)Y = 2s + 4$, so $y(t) = 2\cos 2t + 2\sin 2t$. At $t = \frac{\pi}{4}$ the cosine is $0$ and the sine is $1$. So $y\left(\frac{\pi}{4}\right) = 2$.'
-          - problem: 'Tia solves $y'''' + 16y = 0$, $y(0) = 3$, $y''(0) = 0$ and writes $y = 3\sin 4t$. What is the correct solution?'
+          - problem: 'Solve $y'''' + 16y = 0$, $y(0) = 3$, $y''(0) = 0$ with the Laplace transform. What is $y(t)$?'
             answer: '3cos(4t)'
             answer_contract: {"kind": "function", "vars": ["t"]}
-            solution_sketch: 'Transform the equation with the derivative formulas and the initial values. This gives $(s^{2} + 16)Y = 3 s$, so $Y(s) = \frac{3 s}{s^{2} + 16}$. The denominator $s^2 + 16$ is already a sum of squares, so match the cosine and sine entries directly: $Y(s) = \frac{3 s}{s^{2} + 16}$. Inverting term by term gives 3cos(4t). Tia used the sine entry, but $Y(s) = \frac{3s}{s^2 + 16}$ has $s$ in the numerator, which matches the cosine.'
+            solution_sketch: 'Transform the equation with the derivative formulas and the initial values. This gives $(s^{2} + 16)Y = 3 s$, so $Y(s) = \frac{3 s}{s^{2} + 16}$. The denominator $s^2 + 16$ is already a sum of squares, so match the cosine and sine entries directly: $Y(s) = \frac{3 s}{s^{2} + 16}$. Inverting term by term gives 3cos(4t). The function $Y(s) = \frac{3s}{s^2 + 16}$ has $s$ in the numerator, which matches the cosine.'
         constraints: "roots +/- bi or -a +/- bi with integer a, b; the completed square appears after transforming"
       - id: kp3
         name: Constant forcing
@@ -968,10 +968,10 @@ topics:
             answer: '3'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Transforming gives $(s^2 + 2s + 5)Y = \frac{15}{s}$, so $Y = \frac{3}{s} - \frac{3(s+2)}{(s+1)^2 + 4}$. The terms that come from the shifted sine and cosine contain $e^{-t}$ and tend to $0$. So $y(t)$ approaches $3$.'
-          - problem: 'Omar solves $y'''' + 9y = 27$, $y(0) = 0$, $y''(0) = 0$. He transforms the constant $27$ as $27$, gets $Y = \frac{27}{s^2 + 9}$ and writes $y = 9\sin 3t$. What is the correct solution $y(t)$?'
+          - problem: 'Solve $y'''' + 9y = 27$, $y(0) = 0$, $y''(0) = 0$ with the Laplace transform. What is $y(t)$?'
             answer: '3 - 3cos(3t)'
             answer_contract: {"kind": "function", "vars": ["t"]}
-            solution_sketch: 'Transform the equation with the derivative formulas and the initial values. This gives $(s^{2} + 9)Y = \frac{27}{s}$, so $Y(s) = \frac{27}{s \left(s^{2} + 9\right)}$. Partial fractions give $Y(s) = - \frac{3 s}{s^{2} + 9} + \frac{3}{s}$. Inverting term by term gives 3 - 3cos(3t). Omar transformed the constant $27$ as $27$, but $\mathcal{L}\{27\} = \frac{27}{s}$.'
+            solution_sketch: 'Transform the equation with the derivative formulas and the initial values. This gives $(s^{2} + 9)Y = \frac{27}{s}$, so $Y(s) = \frac{27}{s \left(s^{2} + 9\right)}$. Partial fractions give $Y(s) = - \frac{3 s}{s^{2} + 9} + \frac{3}{s}$. Inverting term by term gives 3 - 3cos(3t). The constant $27$ transforms to $\mathcal{L}\{27\} = \frac{27}{s}$.'
         constraints: "forcing a constant; characteristic roots integer or +/- bi; three-term partial fractions at most"
     diagnostic_exemplar:
       problem: 'Solve $y'''' + 2y'' + 5y = 5$, $y(0) = 0$, $y''(0) = 0$, using the Laplace transform.'
@@ -1033,10 +1033,10 @@ topics:
             answer: '8'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'At $t=4$ we have $t\ge3$, so $u_3(4)=1$. Then $P(4)=3+5\cdot1=8$ kilowatts.'
-          - problem: 'Sam writes the function that is $0$ for $t<5$ and $3(t-5)$ for $t\ge5$ as $3t\,u_5(t)$. What is the correct value of the function at $t=7$?'
+          - problem: 'A function is $0$ for $t<5$ and $3(t-5)$ for $t\ge5$. What is its value at $t=7$?'
             answer: '6'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'Sam did not shift $t$ inside the ramp, so his formula gives $21$ at $t=7$, which is wrong. The true function is $3(t-5)$ for $t\ge5$, so $f(7)=3\cdot2=6$.'
+            solution_sketch: 'The function is $3(t-5)$ for $t\ge5$, so $f(7)=3\cdot2=6$.'
           - problem: 'A function is $5$ for $t<2$ and equals $3-2t$ for $t\ge2$. It is written $f(t)=5+(at+b)\,u_2(t)$. Find $b$.'
             answer: '-2'
             answer_contract: {"kind":"exact"}
@@ -1191,10 +1191,10 @@ topics:
             answer: '9/2'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The convolution $(t*t)(t)$ equals $t^3/6$. At $t=3$ this is $27/6=9/2$.'
-          - problem: 'Sam says that $(1*t)(t)=1\cdot t=t$, because a convolution multiplies the two functions. What is the correct value of $(1*t)(4)$?'
+          - problem: 'What is the value of the convolution $(1*t)(4)$?'
             answer: '8'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'A convolution is an integral, not a product. The correct result is $(1*t)(t)=t^2/2$. At $t=4$ this is $16/2=8$, while Sam would get $4$.'
+            solution_sketch: 'A convolution is an integral, not a product. The result is $(1*t)(t)=t^2/2$. At $t=4$ this is $16/2=8$.'
         constraints: 'f, g among 1, t, e^{at}, sin bt; the integral must be elementary; an impulse-response context or a value at a stated time is allowed'
       - id: kp2
         name: The convolution theorem
@@ -1310,7 +1310,7 @@ topics:
             answer: '4'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'By the sifting property the integral equals $2c+1$. Setting $2c+1=9$ gives $2c=8$, so $c=4$.'
-          - problem: 'Sam says $\int_0^\infty\delta(t-2)\,(t+5)\,dt$ is infinite, because the delta function is infinite at $t=2$. What is the correct value of the integral?'
+          - problem: 'What is the value of $\int_0^\infty\delta(t-2)\,(t+5)\,dt$?'
             answer: '7'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The delta function is not a number at $t=2$. Its integral against $t+5$ is the value of $t+5$ at $t=2$, which is $7$.'
@@ -1392,7 +1392,7 @@ topics:
             answer: '2(e^(-1) - e^(-3))'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The impulse response is $h(t)=\frac12\left(e^{-t}-e^{-3t}\right)$. The response to $4\,\delta(t)$ is $4h(t)=2\left(e^{-t}-e^{-3t}\right)$, so $y(1)=2\left(e^{-1}-e^{-3}\right)$.'
-          - problem: 'Sam says the impulse response of $y''''+4y''+3y=f(t)$ is $h(t)=e^{-t}+e^{-3t}$. What is the correct value of $h(1)$?'
+          - problem: 'What is the value at $t=1$ of the impulse response $h(t)$ of $y''''+4y''+3y=f(t)$?'
             answer: '(e^(-1) - e^(-3))/2'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The transform is $H=\frac{1}{(s+1)(s+3)}=\frac12\left(\frac1{s+1}-\frac1{s+3}\right)$, so the terms have a minus sign and the factor $\frac12$. Hence $h(1)=\frac12\left(e^{-1}-e^{-3}\right)$.'

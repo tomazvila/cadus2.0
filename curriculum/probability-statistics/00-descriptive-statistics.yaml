@@ -49,10 +49,10 @@ topics:
             answer: '20'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'For $j=2,3,4,5$ the terms are $8, 6, 4, 2$. Their sum is $20$.'
-          - problem: 'Sam evaluates $\sum_{k=2}^{4} (k+3)$ and gets $2+3+4+3=12$. What is the correct value?'
+          - problem: 'What is the value of $\sum_{k=2}^{4} (k+3)$?'
             answer: '18'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Sam added $3$ only once. The term $k+3$ is needed for each of $k=2,3,4$, so the sum is $5+6+7=18$.'
+            solution_sketch: 'Adding $3$ only once is wrong. The term $k+3$ is needed for each of $k=2,3,4$, so the sum is $5+6+7=18$.'
         constraints: "index runs over at most 7 integers (it may start at 0 or above 1); summand is linear in the index, or k^2 or 2^n; some items are small contexts where the sum has to be set up"
       - id: kp2
         name: "Sums over data lists"
@@ -90,10 +90,10 @@ topics:
             answer: '13'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Subtract $3$ from each value and then square: $4, 0, 9$. The sum is $13$.'
-          - problem: 'Mia has the data $x_1=3$, $x_2=4$, $x_3=5$. She evaluates $\sum_{i=1}^{3} x_i^2$ as $(3+4+5)^2=144$. What is the correct value?'
+          - problem: 'The data are $x_1=3$, $x_2=4$, $x_3=5$. What is the value of $\sum_{i=1}^{3} x_i^2$?'
             answer: '50'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Mia squared the total, but the sigma squares each value before the addition. The correct sum is $9+16+25=50$.'
+            solution_sketch: 'Squaring the total is wrong, because the sigma squares each value before the addition. The correct sum is $9+16+25=50$.'
         constraints: "3-5 data values, small integers; sums of x_i, x_i^2 or (x_i - c)^2; a partial range of the index is allowed; contexts give the data as a list"
       - id: kp3
         name: "Linearity of sums"
@@ -144,10 +144,10 @@ topics:
             answer: '44'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Scale first: $3 \cdot 18 = 54$. Then subtract $2$ for each of the $5$ terms, which is $10$, to get $44$.'
-          - problem: 'Tom says that if $\sum_{i=1}^{4} x_i = 12$, then $\sum_{i=1}^{4} (x_i + 5) = 17$. What is the correct value?'
+          - problem: 'If $\sum_{i=1}^{4} x_i = 12$, what is $\sum_{i=1}^{4} (x_i + 5)$?'
             answer: '32'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Tom added $5$ only once, but each of the $4$ terms gains $5$. The correct value is $12 + 4 \cdot 5 = 32$.'
+            solution_sketch: 'Adding $5$ only once is wrong, because each of the $4$ terms gains $5$. The correct value is $12 + 4 \cdot 5 = 32$.'
         constraints: "given sum is a small integer; n between 4 and 10; one or two operations (scale, shift) per problem; contexts: pay raises, cut lengths; a missing sum can be asked from a given shifted or scaled sum"
     diagnostic_exemplar:
       problem: 'Given $\sum_{i=1}^{4} x_i = 10$, compute $\sum_{i=1}^{4} (2x_i + 3)$.'
@@ -211,7 +211,7 @@ topics:
             answer: '7'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The values greater than $4$ are $6$ and $8$. Their frequencies add up to $1+6=7$.'
-          - problem: 'Lena tallies the data $6, 2, 6, 3, 6, 2, 3, 6, 6$ and says the frequency of $6$ is $4$. What is the correct frequency of $6$?'
+          - problem: 'In the data $6, 2, 6, 3, 6, 2, 3, 6, 6$, what is the frequency of $6$?'
             answer: '5'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Count the sixes one by one: they are in positions $1, 3, 5, 8$ and $9$. So the correct frequency is $5$.'
@@ -257,10 +257,10 @@ topics:
             answer: '45%'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The relative frequency is $18/40=0.45$. Written as a percent, this is $45\%$.'
-          - problem: 'A table has frequencies $6$, $4$ and $8$. Raj says the relative frequency of the first category is $\frac{6}{12}$. What is the correct relative frequency?'
+          - problem: 'A table has frequencies $6$, $4$ and $8$. What is the relative frequency of the first category?'
             answer: '1/3'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Raj divided by $4+8=12$ and left out the first category. The total is $6+4+8=18$, so the correct value is $6/18=1/3$.'
+            solution_sketch: 'Dividing by $4+8=12$ leaves out the first category. The total is $6+4+8=18$, so the correct value is $6/18=1/3$.'
         constraints: "totals of 20, 25, 30, 40 or 50; fractions, decimals and percents may be asked in context; a count can be asked from a relative frequency"
       - id: kp3
         name: "Reading histograms"
@@ -294,10 +294,10 @@ topics:
             answer: '25%'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Only the $0$-$9$ bar lies below $10$, and its height is $5$. The share is $5/20=0.25$, which is $25\%$.'
-          - problem: 'A histogram has bars over $0$-$4$, $5$-$9$ and $10$-$14$ with heights $3, 7, 5$. Ben says $7$ values are at least $5$, the height of the tallest bar. What is the correct number?'
+          - problem: 'A histogram has bars over $0$-$4$, $5$-$9$ and $10$-$14$ with heights $3, 7, 5$. How many values are at least $5$?'
             answer: '12'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Values of at least $5$ lie in two bars, $5$-$9$ and $10$-$14$. Ben used only one of them; the correct count is $7+5=12$.'
+            solution_sketch: 'Values of at least $5$ lie in two bars, $5$-$9$ and $10$-$14$. Using only one of them is wrong; the correct count is $7+5=12$.'
         constraints: "3-5 equal-width intervals; bar heights are single-digit integers; describe the histogram in words; counts, fractions, percents and a missing bar height may be asked"
     diagnostic_exemplar:
       problem: 'For the data $4, 1, 4, 2, 4, 1, 2, 4$, what is the relative frequency of the value $4$?'
@@ -362,10 +362,10 @@ topics:
             answer: '2.4'
             answer_contract: {"kind": "approx", "decimals": 1}
             solution_sketch: 'The team scored $24$ goals in $10$ games. The mean is $24/10=2.4$ goals per game.'
-          - problem: 'A dot plot has $3, 1, 0, 2$ dots over the values $1, 2, 3, 4$. Ken says there are $4$ data values because the plot has four positions. How many data values are there?'
+          - problem: 'A dot plot has $3, 1, 0, 2$ dots over the values $1, 2, 3, 4$. How many data values are there?'
             answer: '6'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Ken counted the positions, but each dot is one data value. The number of values is $3+1+0+2=6$.'
+            solution_sketch: 'The plot has four positions, but each dot is one data value. The number of values is $3+1+0+2=6$.'
         constraints: "5-7 positions with 0-5 dots each; describe the plot in words; counts, fractions, the most common value, the total of the values and a mean may be asked"
       - id: kp2
         name: "Reading stem-and-leaf plots"
@@ -399,10 +399,10 @@ topics:
             answer: '21'
             answer_contract: {"kind": "unit", "quantity": "time", "unit": "second", "allow_omitted": true}
             solution_sketch: 'The fastest time is $51$ seconds and the slowest is $72$ seconds. The difference is $72-51=21$ seconds.'
-          - problem: 'Ana reads the row $5 \mid 2\ 6$ of a plot with stems in tens as the values $5.2$ and $5.6$. What values does the row stand for?'
+          - problem: 'What values does the row $5 \mid 2\ 6$ of a plot with stems in tens stand for?'
             answer: '52, 56'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Ana treated the leaf as a tenth, but here the stem is the tens digit. The row stands for $52$ and $56$.'
+            solution_sketch: 'The leaf is not a tenth here, because the stem is the tens digit. The row stands for $52$ and $56$.'
         constraints: "stems are tens digits (one item uses whole units and tenths, stated in the problem); 2-4 rows with 1-5 leaves each; leaves listed in increasing order"
       - id: kp3
         name: "Extracting features from a plot"
@@ -507,10 +507,10 @@ topics:
             answer: '45%'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The total is $9+6+5=20$ pets. Dogs are $9/20=0.45$ of them, which is $45\%$.'
-          - problem: 'In the bar graph of club members (Art $12$, Band $18$, Chess $6$), Dev says Band has $12$ times as many members as Chess. How many times as many members does Band have?'
+          - problem: 'In the bar graph of club members (Art $12$, Band $18$, Chess $6$), How many times as many members does Band have?'
             answer: '3'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Dev subtracted the bar heights, but the question asks for a multiple, which needs a division. We get $18 \div 6 = 3$ times as many.'
+            solution_sketch: 'Subtracting the bar heights is wrong, because the question asks for a multiple, which needs a division. We get $18 \div 6 = 3$ times as many.'
         constraints: "3-4 categories, single- or double-digit bar heights; totals divide cleanly for fraction questions; differences, multiples, fractions and percents may be asked"
       - id: kp2
         name: "Shape of a distribution"
@@ -578,10 +578,10 @@ topics:
             answer: '80%'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The drawn heights are $80-70=10$ and $88-70=18$. The second bar is $8/10=0.8$ taller, which is $80\%$, although the real profit rose only $10\%$.'
-          - problem: 'On a bar chart whose axis starts at $40$, the bars represent $52$ and $64$. Priya says the second bar is drawn $64/52$ times as tall as the first. How many times as tall is it drawn?'
+          - problem: 'On a bar chart whose axis starts at $40$, the bars represent $52$ and $64$. How many times as tall is it drawn?'
             answer: '2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Priya forgot to subtract the start of the axis. The drawn heights are $52-40=12$ and $64-40=24$, so the ratio is $2$.'
+            solution_sketch: 'The heights must be measured from the start of the axis. The drawn heights are $52-40=12$ and $64-40=24$, so the ratio is $2$.'
         constraints: "flaws limited to truncated axes, unequal intervals, or missing labels; one flaw per problem; ratios of drawn heights, percents and flaw verdicts may be asked"
     diagnostic_exemplar:
       problem: 'A histogram of commute times has bar heights $9, 6, 3, 1$ over $0$-$14$, $15$-$29$, $30$-$44$, $45$-$59$ minutes. How many commutes are $30$ minutes or longer?'
@@ -638,7 +638,7 @@ topics:
             answer: '14'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The temperatures add up to $12 + 18 + 9 + 17 = 56$. Dividing by the $4$ days gives a mean of $14$ degrees.'
-          - problem: 'Sam finds the mean of $3, 5, 5, 8, 9$ by picking the middle value, $5$. What is the correct mean?'
+          - problem: 'What is the mean of $3, 5, 5, 8, 9$?'
             answer: '6'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The middle value is the median, not the mean. The mean is the sum $3 + 5 + 5 + 8 + 9 = 30$ divided by $5$, which is $6$.'
@@ -713,7 +713,7 @@ topics:
             answer: '10'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Five tests with mean $8$ need a total of $5 \times 8 = 40$. Her four marks add up to $30$, so she needs $40 - 30 = 10$ on the fifth test.'
-          - problem: 'Lena says that if the mean of $6$ numbers is $9$, then their sum is $15$ because $6 + 9 = 15$. What is the correct sum?'
+          - problem: 'The mean of $6$ numbers is $9$. What is their sum?'
             answer: '54'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The sum is the mean times the count, not the mean plus the count. So the sum is $6 \times 9 = 54$.'
@@ -769,7 +769,7 @@ topics:
             answer: '6'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The median has the same number of values on each side. With $11$ values, five lie below and five lie above, so the median is in position $6$.'
-          - problem: 'Sam finds the median of $7, 1, 9, 4, 2$ by taking the middle number as written, $9$. What is the correct median?'
+          - problem: 'What is the median of $7, 1, 9, 4, 2$?'
             answer: '4'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The list must be sorted first: $1, 2, 4, 7, 9$. The middle value of the sorted list is $4$.'
@@ -807,7 +807,7 @@ topics:
             answer: '15.5'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'In order the six scores are $12, 14, 15, 16, 18, 20$. The middle pair is $15$ and $16$, so the median is $15.5$.'
-          - problem: 'Tom says the median of $2, 4, 7, 10$ is $7$ because it is the third value. What is the correct median?'
+          - problem: 'What is the median of $2, 4, 7, 10$?'
             answer: '5.5'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'With four values the median lies between the second and third values. So it is $(4 + 7) \div 2 = 5.5$.'
@@ -903,7 +903,7 @@ topics:
             answer: '2.8'
             answer_contract: {"kind": "unit", "quantity": "dollar", "unit": "dollar", "allow_omitted": true}
             solution_sketch: 'The apples cost $3 \times 2 = 6$ dollars and the pears cost $2 \times 4 = 8$ dollars. Together $14$ dollars buys $5$ kg, so the mean price is $14 \div 5 = 2.8$ dollars per kilogram.'
-          - problem: 'Sam says that when $10$ students average $6$ and $30$ students average $10$, the combined mean is $(6 + 10) \div 2 = 8$. What is the correct combined mean?'
+          - problem: '$10$ students average $6$ and $30$ students average $10$. What is the combined mean?'
             answer: '9'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The groups differ in size, so the larger group counts more. The totals are $60$ and $300$, giving $360$ marks for $40$ students, a mean of $9$.'
@@ -948,7 +948,7 @@ topics:
             answer: '8.5'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Coursework adds $0.7 \times 10 = 7$ and the exam adds $0.3 \times 5 = 1.5$. The course mark is $7 + 1.5 = 8.5$.'
-          - problem: 'Ben scored $10$ for homework, which counts $20\%$, and $5$ for the exam, which counts $80\%$. He says his course mark is the mean of $10$ and $5$, which is $7.5$. What is the correct course mark?'
+          - problem: 'A student scored $10$ for homework, which counts $20\%$, and $5$ for the exam, which counts $80\%$. What is the course mark?'
             answer: '6'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The weights differ, so the marks cannot be averaged equally. The course mark is $0.2 \times 10 + 0.8 \times 5 = 2 + 4 = 6$.'
@@ -1053,7 +1053,7 @@ topics:
             answer: '50'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The products are $6, 4, 24$ and $16$. Their sum is $6 + 4 + 24 + 16 = 50$.'
-          - problem: 'Sam thinks the values $1, 3$ and $6$ with the frequencies $5, 2$ and $3$ make only $3$ data values, because the table has $3$ rows. How many data values are there?'
+          - problem: 'The values $1, 3$ and $6$ have the frequencies $5, 2$ and $3$. How many data values are there?'
             answer: '10'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Each frequency counts data values, not the rows. So the number of data values is $5 + 2 + 3 = 10$.'
@@ -1090,7 +1090,7 @@ topics:
             answer: '6.08'
             answer_contract: {"kind": "approx", "decimals": 2}
             solution_sketch: 'The sizes add up to $15 + 30 + 28 = 73$. Dividing by $12$ pupils gives $6.0833\ldots$, which is $6.08$ to two decimal places.'
-          - problem: 'Sam finds the mean of the values $1, 3$ and $5$ with the frequencies $2, 5$ and $3$ as $(1 + 3 + 5) \div 3 = 3$. What is the correct mean?'
+          - problem: 'What is the mean of the values $1, 3$ and $5$ with the frequencies $2, 5$ and $3$?'
             answer: '3.2'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The frequencies must be used. The sum is $2 + 15 + 15 = 32$ over $10$ values, so the mean is $3.2$.'
@@ -1195,7 +1195,7 @@ topics:
             answer: '80, 85, 85'
             answer_contract: {"kind": "coordinates", "arity": 3}
             solution_sketch: 'The sum is $560$, so the mean is $560/7=80$. Sorted, the marks are $65, 70, 80, 85, 85, 85, 90$, so the median is the fourth mark, $85$. The mark $85$ occurs three times, so the mode is $85$.'
-          - problem: 'Sam says the median of $3, 9, 4, 7, 5$ is $4$, because $4$ is the middle number in the list. What is the correct median?'
+          - problem: 'What is the median of $3, 9, 4, 7, 5$?'
             answer: '5'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The median is the middle value of the sorted data, not of the list as written. Sorted, the data is $3, 4, 5, 7, 9$, so the median is $5$.'
@@ -1278,10 +1278,10 @@ topics:
             answer: '21.5'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The old total is $5\cdot 24=120$ years. Removing $34$ leaves $86$, and with $4$ players left the new mean is $86/4=21.5$ years.'
-          - problem: 'Four values have mean $10$. Sam adds the value $20$ and says the new mean is $(10+20)/2=15$. What is the correct new mean?'
+          - problem: 'Four values have mean $10$. The value $20$ is added. What is the new mean?'
             answer: '12'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The old total is $4\cdot 10=40$. Adding $20$ gives $60$, and the count is now $5$, so the new mean is $60/5=12$. Sam averaged the mean with the new value, which ignores that four values stand behind the old mean.'
+            solution_sketch: 'The old total is $4\cdot 10=40$. Adding $20$ gives $60$, and the count is now $5$, so the new mean is $60/5=12$. Averaging the old mean with the new value is wrong, because it ignores that four values stand behind the old mean.'
           - problem: 'A class of $20$ students has a mean mark of $60$. A new student who scored $81$ joins the class. What is the mean mark of the $21$ students?'
             answer: '61'
             answer_contract: {"kind": "exact"}
@@ -1341,7 +1341,7 @@ topics:
             answer: '185'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The old total is $1100$, so the old mean is $1100/5=220$. With the mansion the total is $2430$ over $6$ houses, so the new mean is $405$. The mean rises by $405-220=185$ thousand euros.'
-          - problem: 'Sam says that adding the value $100$ to the data $5, 6, 7, 8, 9$ leaves the median at $7$, because the median ignores large numbers. What is the new median?'
+          - problem: 'The value $100$ is added to the data $5, 6, 7, 8, 9$. What is the new median?'
             answer: '7.5'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The new sorted data is $5, 6, 7, 8, 9, 100$. With six values the median is the mean of the third and fourth, $(7+8)/2=7.5$. The median moves, but only a little.'
@@ -1411,10 +1411,10 @@ topics:
             answer: '1800'
             answer_contract: {"kind": "unit", "quantity": "euro", "unit": "euro", "allow_omitted": true}
             solution_sketch: 'The total monthly pay is $6\cdot 3000=18000$ euros. Without the owner it is $18000-9000=9000$ euros, so the mean for $5$ people is $9000/5=1800$ euros.'
-          - problem: 'The mean of $5$ values is $20$. Sam removes the value $12$ and says the new mean is $20-12=8$. What is the correct new mean?'
+          - problem: 'The mean of $5$ values is $20$. The value $12$ is removed. What is the new mean?'
             answer: '22'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The old total is $5\cdot 20=100$. Removing $12$ leaves $88$ over $4$ values, so the new mean is $88/4=22$. Sam subtracted the value from the mean, but a value must be taken from the total.'
+            solution_sketch: 'The old total is $5\cdot 20=100$. Removing $12$ leaves $88$ over $4$ values, so the new mean is $88/4=22$. Subtracting the value from the mean is wrong, because a value must be taken from the total.'
           - problem: 'The mean of $6$ values is $10$. One value is removed, and the mean of the other $5$ values is $8$. Which value was removed?'
             answer: '20'
             answer_contract: {"kind": "exact"}
@@ -1501,7 +1501,7 @@ topics:
             answer: '3/10'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'At the 30th percentile, $30\%$ of the babies weigh less. As a fraction, $30\%=30/100=3/10$.'
-          - problem: 'A mark is at the 90th percentile. A classmate says the student answered $90\%$ of the questions correctly. What does the 90th percentile say about the mark?'
+          - problem: 'A mark is at the 90th percentile. What does the 90th percentile say about the mark?'
             answer: 'higher than 90% of the marks'
             answer_contract: {"kind": "label", "options": [["90% of the answers correct", "90% correct", "90 percent correct", "a score of 90%", "the student answered 90% correctly"], ["lower than 90% of the marks", "lower than 90% of all marks", "it is lower than 90% of the marks"], ["higher than 90% of the marks", "higher than 90% of all marks", "higher than 90 percent of the marks", "it is higher than 90% of the marks", "higher than 90% of marks", "above 90% of the marks", "better than 90% of the marks", "90% of the marks are lower"], ["higher than 9% of the marks", "higher than 9 percent of the marks"]]}
             solution_sketch: 'A percentile compares a mark with the other marks. The 90th percentile means the mark is higher than $90\%$ of all marks. It does not say that $90\%$ of the answers were correct.'
@@ -1517,7 +1517,7 @@ topics:
             answer: '19/20'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'At the 95th percentile, $95\%$ of the scores lie below it. As a fraction, $95\%=95/100=19/20$.'
-          - problem: 'A mark is at the 25th percentile. A teacher says this means the student got $25\%$ of the questions right. What does the 25th percentile say about the mark?'
+          - problem: 'A mark is at the 25th percentile. What does the 25th percentile say about the mark?'
             answer: 'higher than 25% of the marks'
             answer_contract: {"kind": "label", "options": [["higher than 25% of the marks", "higher than 25% of all marks", "higher than 25 percent of the marks", "it is higher than 25% of the marks", "higher than 25% of marks", "above 25% of the marks", "better than 25% of the marks", "25% of the marks are lower"], ["25% of the answers correct", "25% correct", "25 percent correct", "a score of 25%", "the student answered 25% correctly"], ["lower than 25% of the marks", "lower than 25% of all marks", "it is lower than 25% of the marks"], ["higher than 2.5% of the marks", "higher than 2.5 percent of the marks"]]}
             solution_sketch: 'The 25th percentile compares the mark with the other marks. It means the mark is higher than $25\%$ of all marks, so $75\%$ of the marks are higher. It says nothing about the share of questions answered correctly.'
@@ -1627,7 +1627,7 @@ topics:
             answer: '13'
             answer_contract: {"kind": "unit", "quantity": "temperature", "unit": "°C", "allow_omitted": true}
             solution_sketch: 'The highest temperature is $8$ °C and the lowest is $-5$ °C. The range is $8-(-5)=13$ °C.'
-          - problem: 'Sam says the range of $8, 3, 11, 6$ is $11-8=3$, the largest value minus the first value in the list. What is the correct range?'
+          - problem: 'What is the range of $8, 3, 11, 6$?'
             answer: '8'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The range is the largest value minus the smallest value, not minus the first value in the list. Here that is $11-3=8$.'
@@ -1668,10 +1668,10 @@ topics:
             answer: '21'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The interquartile range is $Q_3-Q_1$, so $9=Q_3-12$. Adding $12$ to both sides gives $Q_3=21$.'
-          - problem: 'Sam says the interquartile range of $6, 8, 9, 12, 13, 15, 20$ is $20-6=14$. Leaving the median out of both halves, what is the correct interquartile range?'
+          - problem: 'Leaving the median out of both halves, what is the interquartile range of $6, 8, 9, 12, 13, 15, 20$?'
             answer: '7'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Sam found the range, not the interquartile range. The median is $12$, the lower half $6, 8, 9$ gives $Q_1=8$, and the upper half $13, 15, 20$ gives $Q_3=15$. So the interquartile range is $15-8=7$.'
+            solution_sketch: 'The range $20-6=14$ is not the interquartile range. The median is $12$, the lower half $6, 8, 9$ gives $Q_1=8$, and the upper half $13, 15, 20$ gives $Q_3=15$. So the interquartile range is $15-8=7$.'
         constraints: "7-9 values; the median is left out of both halves when the count is odd; quartiles land on a value or on a half; the data is sorted or unsorted; the question asks for Q1, Q3 or the IQR, or gives two of the three"
       - id: kp3
         name: "Five-number summary and the 1.5-IQR outlier fence"
@@ -1773,7 +1773,7 @@ topics:
             answer: '-4, -2, 1, 5'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The mean is 7. Subtract it from each value: 3 - 7 = -4, 5 - 7 = -2, 8 - 7 = 1, 12 - 7 = 5. The deviations are -4, -2, 1, 5.'
-          - problem: 'Sam works out the deviations of $1, 5, 9$ from their mean $5$ as $4, 0, 4$. What are the correct deviations?'
+          - problem: 'What are the deviations of $1, 5, 9$ from their mean $5$?'
             answer: '-4, 0, 4'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The deviation is the value minus the mean, so a value below the mean has a negative deviation. The correct deviations are $1 - 5 = -4$, $5 - 5 = 0$ and $9 - 5 = 4$.'
@@ -1810,7 +1810,7 @@ topics:
             answer: '58'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The mean is 8, so the deviations are -5, -2, 0, 2, 5. Their squares are 25, 4, 0, 4, 25, and the sum is 58.'
-          - problem: 'Lena adds the deviations of $1, 2, 9$ from their mean $4$ and gets $0$, so she says the data has no spread. What is the sum of the squared deviations?'
+          - problem: 'The deviations of $1, 2, 9$ from their mean $4$ add up to $0$. What is the sum of the squared deviations?'
             answer: '38'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'Deviations always add to $0$, so the sum says nothing about spread. The deviations are $-3, -2, 5$, their squares are $9, 4, 25$, and the sum is $38$.'
@@ -1918,7 +1918,7 @@ topics:
             answer: '144'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The variance is $\sigma^2 = 16$. The variance is the sum of squared deviations divided by $9$, so the sum is $16 \times 9 = 144$.'
-          - problem: 'Tom says that a population with variance $36$ has standard deviation $18$, because he halves $36$. What is the correct standard deviation?'
+          - problem: 'A population has variance $36$. What is its standard deviation?'
             answer: '6'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The standard deviation is the square root of the variance, not half of it. So $\sigma = \sqrt{36} = 6$.'

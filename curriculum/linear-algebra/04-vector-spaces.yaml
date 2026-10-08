@@ -602,10 +602,10 @@ topics:
             answer: '1'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Every vector in $S$ is a multiple of $(1, 2, 3)$, because $(2, 4, 6) = 2(1, 2, 3)$ and $(-1, -2, -3) = -1 \cdot (1, 2, 3)$. The span is therefore the line through $(1, 2, 3)$, which has dimension $1$, so $S$ is far from a basis of $\mathbb{R}^3$.'
-          - problem: 'Sam says that $\{(1, 2, 3), (4, 5, 6), (7, 8, 9)\}$ is a basis of $\mathbb{R}^3$, because none of the three vectors is a multiple of another. What is the dimension of the span of these three vectors?'
+          - problem: 'None of the vectors $(1, 2, 3)$, $(4, 5, 6)$, $(7, 8, 9)$ is a multiple of another. What is the dimension of the span of these three vectors?'
             answer: '2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Sam compared only pairs of vectors, but a dependence can involve all three. Here $(7, 8, 9) = 2(4, 5, 6) - (1, 2, 3)$, so the third vector lies in the span of the first two. The first two vectors are independent, so the span has dimension $2$ and the set is not a basis.'
+            solution_sketch: 'A dependence can involve all three vectors, not only a pair. Here $(7, 8, 9) = 2(4, 5, 6) - (1, 2, 3)$, so the third vector lies in the span of the first two. The first two vectors are independent, so the span has dimension $2$ and the set is not a basis.'
           - problem: 'A machine part has three adjustment screws. One turn of the first screw changes the part''s (length, width, height) by $(1, 2, 0)$ mm, one turn of the second changes it by $(0, 1, 1)$ mm and one turn of the third changes it by $(1, c, 1)$ mm, where $c$ depends on the part. Turns may be fractional or backwards. For which value of $c$ can the three screws not produce every change of (length, width, height)?'
             answer: '3'
             answer_contract: {"kind": "exact"}
@@ -680,7 +680,7 @@ topics:
             answer: '3'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Solve for $x = -y - z - w$. The variables $y$, $z$ and $w$ are free, so every solution is $y(-1, 1, 0, 0) + z(-1, 0, 1, 0) + w(-1, 0, 0, 1)$. These three vectors form a basis, so the dimension is $3$.'
-          - problem: 'Ana says that $\{(1, 2), (3, 4), (5, 6)\}$ spans a subspace of dimension $3$, because it has three vectors. What is the dimension of the span?'
+          - problem: 'What is the dimension of the span of $\{(1, 2), (3, 4), (5, 6)\}$?'
             answer: '2'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The three vectors lie in $\mathbb{R}^2$, and a subspace of $\mathbb{R}^2$ has dimension at most $2$. The vectors $(1, 2)$ and $(3, 4)$ are independent, since $1 \cdot 4 - 3 \cdot 2 = -2 \neq 0$, so the span is all of $\mathbb{R}^2$ and its dimension is $2$.'
@@ -916,10 +916,10 @@ topics:
             answer: '[[-2,1],[3/2,-1/2]]'
             answer_contract: {"kind": "matrix", "rows": 2, "cols": 2}
             solution_sketch: 'The matrix $P_B = \begin{pmatrix}1&2\\3&4\end{pmatrix}$ has determinant $4 - 6 = -2$. The $2 \times 2$ inverse formula gives $P_B^{-1} = \frac{1}{-2}\begin{pmatrix}4&-2\\-3&1\end{pmatrix} = \begin{pmatrix}-2&1\\3/2&-1/2\end{pmatrix}$.'
-          - problem: 'Sam says that $[\mathbf{x}]_B = (3, 2)$ for $\mathbf{x} = (9, 5)$ and $B = \{(2, 1), (1, 1)\}$. What are the correct coordinates?'
+          - problem: 'What are the coordinates $[\mathbf{x}]_B$ of $\mathbf{x} = (9, 5)$ in the basis $B = \{(2, 1), (1, 1)\}$?'
             answer: '(4, 1)'
             answer_contract: {"kind": "coordinates", "arity": 2}
-            solution_sketch: 'Sam''s coordinates give $3(2, 1) + 2(1, 1) = (8, 5)$, which is not $(9, 5)$. The matrix $P_B = \begin{pmatrix}2&1\\1&1\end{pmatrix}$ has determinant $1$ and $P_B^{-1} = \begin{pmatrix}1&-1\\-1&2\end{pmatrix}$, so $[\mathbf{x}]_B = (9 - 5,\ -9 + 10) = (4, 1)$.'
+            solution_sketch: 'The matrix $P_B = \begin{pmatrix}2&1\\1&1\end{pmatrix}$ has determinant $1$ and $P_B^{-1} = \begin{pmatrix}1&-1\\-1&2\end{pmatrix}$, so $[\mathbf{x}]_B = (9 - 5,\ -9 + 10) = (4, 1)$.'
           - problem: 'On a sheared grid the first axis step is $(2, 1)$ cm and the second axis step is $(1, 3)$ cm. A point lies at $(5, 10)$ cm. What are its grid coordinates?'
             answer: '(1, 3)'
             answer_contract: {"kind": "coordinates", "arity": 2}
@@ -1186,10 +1186,10 @@ topics:
             answer: '2'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The solution space of $A\mathbf{x} = \mathbf{0}$ is the null space of $A$. The $4$ nonzero rows give rank $4$, so the nullity is $6 - 4 = 2$.'
-          - problem: 'Sam says that a $3 \times 6$ matrix with $2$ pivots has nullity $1$, because $3 - 2 = 1$. What is the correct nullity?'
+          - problem: 'What is the nullity of a $3 \times 6$ matrix with $2$ pivots?'
             answer: '4'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Sam subtracted the pivots from the number of rows. The nullity counts the columns without a pivot, so it is the number of columns minus the rank: $6 - 2 = 4$.'
+            solution_sketch: 'The nullity counts the columns without a pivot, so it is the number of columns minus the rank: $6 - 2 = 4$.'
           - problem: 'A matrix has rank $3$ and nullity $2$. How many columns does it have?'
             answer: '5'
             answer_contract: {"kind": "exact"}
@@ -1273,10 +1273,10 @@ topics:
             answer: '2'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The solution space is the null space of $A$, and its dimension is the nullity. The rank is $4$, so the nullity is $6 - 4 = 2$.'
-          - problem: 'Sam says that a $4 \times 4$ matrix of rank $3$ has determinant $3$. What is the correct determinant?'
+          - problem: 'What is the determinant of a $4 \times 4$ matrix of rank $3$?'
             answer: '0'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Sam copied the rank into the determinant. Rank $3$ is less than $4$, so the matrix is not invertible, and its determinant is $0$.'
+            solution_sketch: 'The rank is not the determinant. Rank $3$ is less than $4$, so the matrix is not invertible, and its determinant is $0$.'
           - problem: 'A calibration model is a square system $A\mathbf{x} = \mathbf{0}$ of $7$ equations in $7$ unknowns. Its solutions form a $3$-dimensional space. What is $\det A$?'
             answer: '0'
             answer_contract: {"kind": "exact"}
@@ -1431,10 +1431,10 @@ topics:
             answer: '[[2,0],[0,3]]'
             answer_contract: {"kind": "matrix", "rows": 2, "cols": 2}
             solution_sketch: 'Since $[S][T] = \begin{pmatrix}2&0\\0&-3\end{pmatrix}$, we multiply both sides on the left by $[S]^{-1}$. The reflection undoes itself, so $[S]^{-1} = [S]$, and $[T] = [S]\begin{pmatrix}2&0\\0&-3\end{pmatrix} = \begin{pmatrix}2&0\\0&3\end{pmatrix}$.'
-          - problem: 'Sam finds the matrix of $S \circ T$ for the scaling $S$ with matrix $\begin{pmatrix}2&0\\0&3\end{pmatrix}$ and the rotation $T$ with matrix $\begin{pmatrix}0&-1\\1&0\end{pmatrix}$ by multiplying $[T][S]$, and gets $\begin{pmatrix}0&-3\\2&0\end{pmatrix}$. What is the correct matrix of $S \circ T$?'
+          - problem: 'What is the matrix of $S \circ T$ for the scaling $S$ with matrix $\begin{pmatrix}2&0\\0&3\end{pmatrix}$ and the rotation $T$ with matrix $\begin{pmatrix}0&-1\\1&0\end{pmatrix}$?'
             answer: '[[0,-2],[3,0]]'
             answer_contract: {"kind": "matrix", "rows": 2, "cols": 2}
-            solution_sketch: 'Sam multiplied in the wrong order. The map $T$ acts first, so its matrix goes on the right, and the matrix of $S \circ T$ is $[S][T]$. This product has rows $(0, -2)$ and $(3, 0)$.'
+            solution_sketch: 'The order of the factors matters. The map $T$ acts first, so its matrix goes on the right, and the matrix of $S \circ T$ is $[S][T]$. This product has rows $(0, -2)$ and $(3, 0)$.'
         constraints: 'compose two of: 90-degree rotations, axis reflections, integer scalings and shears; images of points; solving for one factor'
     diagnostic_exemplar:
       problem: '$S$ reflects $\mathbb{R}^2$ across the $x$-axis and $T$ rotates it by $90^\circ$ counterclockwise. Find the standard matrix of $S \circ T$ and compute $(S \circ T)(1, 2)$.'
@@ -1512,10 +1512,10 @@ topics:
             answer: 'yes'
             answer_contract: {"kind": "label", "options": [["yes", "it is in the kernel", "in the kernel"], ["no", "it is not in the kernel", "not in the kernel"]]}
             solution_sketch: 'The vector is in the kernel when $A(6, -3) = (0, 0)$. We compute $(1 \cdot 6 + 2 \cdot (-3),\ 3 \cdot 6 + 6 \cdot (-3)) = (0, 0)$, so the vector is in the kernel.'
-          - problem: 'Sam says that the kernel of $T(\mathbf{x}) = A\mathbf{x}$ with $A = \begin{pmatrix}2&1\\6&3\end{pmatrix}$ is spanned by $(2, 1)$, because $(2, 1)$ is the first row. Find the vector of the true kernel with $x = 1$.'
+          - problem: 'Find the vector $(x, y)$ with $x = 1$ in the kernel of $T(\mathbf{x}) = A\mathbf{x}$ with $A = \begin{pmatrix}2&1\\6&3\end{pmatrix}$.'
             answer: '(1, -2)'
             answer_contract: {"kind": "coordinates", "arity": 2}
-            solution_sketch: 'Sam used a row of $A$, but the kernel vectors $\mathbf{x}$ satisfy $A\mathbf{x} = \mathbf{0}$. The first row gives $2x + y = 0$, and the second row is $3$ times it. For $x = 1$ we get $y = -2$, so the vector is $(1, -2)$.'
+            solution_sketch: 'A row of $A$ is not in the kernel; the kernel vectors $\mathbf{x}$ satisfy $A\mathbf{x} = \mathbf{0}$. The first row gives $2x + y = 0$, and the second row is $3$ times it. For $x = 1$ we get $y = -2$, so the vector is $(1, -2)$.'
         constraints: '2x2 matrices with 1-dimensional kernels and one 3x3 matrix; integer kernel vectors with one coordinate fixed'
       - id: kp2
         name: Computing images
@@ -1594,7 +1594,7 @@ topics:
             answer: '7'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The image has dimension $3$ and the kernel has dimension $4$. Rank-nullity gives $n = 3 + 4 = 7$.'
-          - problem: 'Sam says that a linear map $T: \mathbb{R}^6 \to \mathbb{R}^6$ with $\dim \ker T = 2$ has $\dim \operatorname{im} T = 6$, because the codomain is $\mathbb{R}^6$. What is the correct value of $\dim \operatorname{im} T$?'
+          - problem: 'What is $\dim \operatorname{im} T$ for a linear map $T: \mathbb{R}^6 \to \mathbb{R}^6$ with $\dim \ker T = 2$?'
             answer: '4'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The image is not the whole codomain unless the kernel is trivial. Rank-nullity uses the dimension of the domain $\mathbb{R}^6$, so $\dim \operatorname{im} T = 6 - 2 = 4$.'
@@ -1681,10 +1681,10 @@ topics:
             answer: '1'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'We need $(4b, 2b) = (4, 2)$, so $b = 1$. The inputs $(2, 0)$ and $(0, 1)$ give the same output, so the model is not one-to-one.'
-          - problem: 'Sam says that $T(\mathbf{x}) = A\mathbf{x}$ with $A = \begin{pmatrix}1&2\\3&6\end{pmatrix}$ is one-to-one, because its first column is not zero. What is the dimension of the kernel of $T$?'
+          - problem: 'What is the dimension of the kernel of $T(\mathbf{x}) = A\mathbf{x}$ with $A = \begin{pmatrix}1&2\\3&6\end{pmatrix}$?'
             answer: '1'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Sam checked only one column. The second column is twice the first, so there is one pivot and column $2$ has none. The kernel has dimension $2 - 1 = 1$, so $T$ is not one-to-one.'
+            solution_sketch: 'One nonzero column is not enough to show that $T$ is one-to-one. The second column is twice the first, so there is one pivot and column $2$ has none. The kernel has dimension $2 - 1 = 1$, so $T$ is not one-to-one.'
         constraints: 'decide via kernel or pivot-in-every-column; sizes up to 3x3; at most two yes/no items'
       - id: kp2
         name: Onto means full column space
@@ -1722,10 +1722,10 @@ topics:
             answer: '2'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The standard matrix has columns $(1, 0, 1)$ and $(0, 1, 1)$. They are independent, so the image has dimension $2$. The reached points form a plane inside $\mathbb{R}^3$, so they do not fill space.'
-          - problem: 'Sam says that $T(\mathbf{x}) = A\mathbf{x}$ with $A = \begin{pmatrix}1&2&0\\0&0&1\end{pmatrix}$ is not onto, because $A$ has only $2$ pivots but $3$ columns. What is the dimension of the image of $T$?'
+          - problem: 'What is the dimension of the image of $T(\mathbf{x}) = A\mathbf{x}$ with $A = \begin{pmatrix}1&2&0\\0&0&1\end{pmatrix}$?'
             answer: '2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Sam compared the pivots with the columns, but onto needs a pivot in every row. Both rows have a pivot, so the rank is $2$. The image has dimension $2$, so it is all of $\mathbb{R}^2$ and $T$ is onto.'
+            solution_sketch: 'A map is onto when there is a pivot in every row, not in every column. Both rows have a pivot, so the rank is $2$. The image has dimension $2$, so it is all of $\mathbb{R}^2$ and $T$ is onto.'
         constraints: 'wide and tall matrices; onto iff pivot in every row; the dimension of the image compared with the codomain; at most two yes/no items'
       - id: kp3
         name: The square case
@@ -1763,10 +1763,10 @@ topics:
             answer: '8/3'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Two different pairs give the same output exactly when $T$ is not one-to-one, which means that $\det = 0$. We have $2 \cdot 4 - 3k = 8 - 3k$, so $3k = 8$ and $k = 8/3$.'
-          - problem: 'Sam says that $T(\mathbf{x}) = A\mathbf{x}$ with $A = \begin{pmatrix}2&4\\1&2\end{pmatrix}$ is onto but not one-to-one. What is the dimension of the image of $T$?'
+          - problem: 'What is the dimension of the image of $T(\mathbf{x}) = A\mathbf{x}$ with $A = \begin{pmatrix}2&4\\1&2\end{pmatrix}$?'
             answer: '1'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Sam forgot that a square matrix gives both properties or neither. The determinant is $2 \cdot 2 - 4 \cdot 1 = 0$, so $T$ is not onto either. The rank is $1$, so the image has dimension $1$.'
+            solution_sketch: 'A square matrix gives both properties or neither. The determinant is $2 \cdot 2 - 4 \cdot 1 = 0$, so $T$ is not onto either. The rank is $1$, so the image has dimension $1$.'
         constraints: 'square 2x2 decided by the determinant; both-or-neither; one 3x3 dimension item; at most two yes/no items'
     diagnostic_exemplar:
       problem: '$A = \begin{pmatrix}2&4&1\\0&0&3\end{pmatrix}$ defines $T : \mathbb{R}^3 \to \mathbb{R}^2$. Is $T$ one-to-one? Is it onto? Justify from the pivots.'
@@ -1814,10 +1814,10 @@ topics:
             answer: '2'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Walkways at a right angle have directions with dot product $0$. So $10k + 5(-4) = 10k - 20 = 0$, which gives $k = 2$.'
-          - problem: 'Sam says that the set $\{(4, 3), (-3, 4)\}$ is orthonormal because the dot product of its two vectors is $0$. What is the length of each vector in the set?'
+          - problem: 'The dot product of the two vectors of $\{(4, 3), (-3, 4)\}$ is $0$. What is the length of each vector in the set?'
             answer: '5'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Sam checked orthogonality only. Each vector has length $\sqrt{16 + 9} = \sqrt{25} = 5$, which is not $1$, so the set is orthogonal but not orthonormal.'
+            solution_sketch: 'The dot product shows orthogonality only. Each vector has length $\sqrt{16 + 9} = \sqrt{25} = 5$, which is not $1$, so the set is orthogonal but not orthonormal.'
           - problem: 'A game engine moves a character along two perpendicular tracks with directions $(1, 1)$ and $(-1, 1)$. The engine needs direction vectors of length $1$. What is the direction vector for the second track?'
             answer: '(-sqrt(2)/2, sqrt(2)/2)'
             answer_contract: {"kind": "coordinates", "arity": 2}
@@ -1851,7 +1851,7 @@ topics:
             answer: '13'
             answer_contract: {"kind": "unit", "quantity": "length", "unit": "km", "allow_omitted": true}
             solution_sketch: 'The three legs run in perpendicular directions, so the squares of their lengths add. The distance is $\sqrt{9 + 16 + 144} = \sqrt{169} = 13$ km.'
-          - problem: 'Ana says that $\{(1, 1, 0), (1, -1, 0), (0, 0, 0)\}$ is a basis of $\mathbb{R}^3$ because every pair of vectors has dot product $0$. Is Ana right?'
+          - problem: 'Every pair of vectors in $\{(1, 1, 0), (1, -1, 0), (0, 0, 0)\}$ has dot product $0$. Is the set a basis of $\mathbb{R}^3$?'
             answer: 'no'
             answer_contract: {"kind": "label", "options": [["yes", "yes, it is", "it is", "true", "correct"], ["no", "no, it is not", "it is not", "false", "incorrect"]]}
             solution_sketch: 'Every pair does have dot product $0$, but the set contains the zero vector. The span of the set has dimension $2$, not $3$, so the set is not a basis of $\mathbb{R}^3$.'
@@ -1909,10 +1909,10 @@ topics:
             answer: '3'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Here $\mathbf{x}\cdot\mathbf{v} = 3 + 20 + 4 = 27$ and $\mathbf{v}\cdot\mathbf{v} = 1 + 4 + 4 = 9$. The coefficient is $\frac{27}{9} = 3$.'
-          - problem: 'Sam expands $(6, 2)$ in the orthogonal basis $\{(1, 1), (1, -1)\}$ and reports the coordinates $(8, 4)$, the dot products with the basis vectors. What are the correct coordinates?'
+          - problem: 'What are the coordinates of $(6, 2)$ in the orthogonal basis $\{(1, 1), (1, -1)\}$?'
             answer: '(4, 2)'
             answer_contract: {"kind": "coordinates", "arity": 2}
-            solution_sketch: 'Sam forgot to divide by $\mathbf{v}\cdot\mathbf{v}$, which is $2$ for both basis vectors. The correct coordinates are $\frac{8}{2} = 4$ and $\frac{4}{2} = 2$.'
+            solution_sketch: 'Each dot product must be divided by $\mathbf{v}\cdot\mathbf{v}$, which is $2$ for both basis vectors. The dot products are $8$ and $4$, so the coordinates are $\frac{8}{2} = 4$ and $\frac{4}{2} = 2$.'
         constraints: "orthogonal bases only; coefficients are integers"
     diagnostic_exemplar:
       problem: 'Verify that $B = \{(2, 1), (-1, 2)\}$ is an orthogonal basis of $\mathbb{R}^2$, then use dot products to write $\mathbf{x} = (3, 4)$ in that basis.'
@@ -2042,10 +2042,10 @@ topics:
             answer: 'no'
             answer_contract: {"kind": "label", "options": [["yes", "yes, it is", "it is", "true", "correct"], ["no", "no, it is not", "it is not", "false", "incorrect"]]}
             solution_sketch: 'A vector lies in $\operatorname{Nul}(A)$ when its dot product with the row of $A$ is $0$. Here $2(3) + 4(-2) = -2$, which is not $0$, so the answer is no.'
-          - problem: 'Sam says that $\operatorname{Nul}(A)$ for $A = \begin{pmatrix} 2 & 3 \end{pmatrix}$ is the line spanned by $(2, 3)$, the row of $A$. What is the vector in $\operatorname{Nul}(A)$ whose first entry is $3$?'
+          - problem: 'What is the vector in $\operatorname{Nul}(A)$ whose first entry is $3$, for $A = \begin{pmatrix} 2 & 3 \end{pmatrix}$?'
             answer: '(3, -2)'
             answer_contract: {"kind": "coordinates", "arity": 2}
-            solution_sketch: 'Sam used the row itself, but the null space is orthogonal to the row. The equation $2x_1 + 3x_2 = 0$ with $x_1 = 3$ gives $x_2 = -2$, so the vector is $(3, -2)$.'
+            solution_sketch: 'The row itself is not in the null space, because the null space is orthogonal to the row. The equation $2x_1 + 3x_2 = 0$ with $x_1 = 3$ gives $x_2 = -2$, so the vector is $(3, -2)$.'
           - problem: 'Let $A = \begin{pmatrix} a & 2 & 0 \\ 1 & 1 & 1 \end{pmatrix}$. Find $a$ so that $(1, -2, 1)$ lies in $\operatorname{Nul}(A)$.'
             answer: '4'
             answer_contract: {"kind": "exact"}
@@ -2124,10 +2124,10 @@ topics:
             answer: '(0, 3, 0)'
             answer_contract: {"kind": "coordinates", "arity": 3}
             solution_sketch: 'The coefficients are $\frac{12}{2} = 6$ and $\frac{-4}{2} = -2$, so $\hat{\mathbf{x}} = 6(1, 0, 1) - 2(1, 0, -1) = (4, 0, 8)$. Then $\mathbf{x} - \hat{\mathbf{x}} = (0, 3, 0)$.'
-          - problem: 'Sam projects $(6, 2, 2)$ onto $W = \operatorname{span}\{(1, 1, 0), (1, -1, 0)\}$. He uses the dot products $8$ and $4$ directly as coefficients and gets $(12, 4, 0)$. What is the correct projection?'
+          - problem: 'What is the projection of $(6, 2, 2)$ onto $W = \operatorname{span}\{(1, 1, 0), (1, -1, 0)\}$?'
             answer: '(6, 2, 0)'
             answer_contract: {"kind": "coordinates", "arity": 3}
-            solution_sketch: 'Sam forgot to divide each dot product by $\mathbf{v}\cdot\mathbf{v}$, which is $2$ for both basis vectors. The coefficients are $\frac{8}{2} = 4$ and $\frac{4}{2} = 2$, so the projection is $4(1, 1, 0) + 2(1, -1, 0) = (6, 2, 0)$.'
+            solution_sketch: 'Each dot product ($8$ and $4$) must be divided by $\mathbf{v}\cdot\mathbf{v}$, which is $2$ for both basis vectors. The coefficients are $\frac{8}{2} = 4$ and $\frac{4}{2} = 2$, so the projection is $4(1, 1, 0) + 2(1, -1, 0) = (6, 2, 0)$.'
           - problem: 'Find the orthogonal projection of $(1, 2, 3, 4)$ onto $W = \operatorname{span}\{(1, 1, 0, 0), (0, 0, 1, 1)\}$ in $\mathbb{R}^4$.'
             answer: '(3/2, 3/2, 7/2, 7/2)'
             answer_contract: {"kind": "coordinates", "arity": 4}
@@ -2165,10 +2165,10 @@ topics:
             answer: '(18, -6)'
             answer_contract: {"kind": "coordinates", "arity": 2}
             solution_sketch: 'The part along the ramp is $\frac{-80}{10}(1, 3) = (-8, -24)$. The perpendicular part is $(10, -30) - (-8, -24) = (18, -6)$.'
-          - problem: 'Sam finds the part of $(4, 2)$ that is orthogonal to $W = \operatorname{span}\{(1, 1)\}$ by subtracting $(1, 1)$ from $(4, 2)$ and gets $(3, 1)$. What is the correct vector?'
+          - problem: 'What is the part of $(4, 2)$ that is orthogonal to $W = \operatorname{span}\{(1, 1)\}$?'
             answer: '(1, -1)'
             answer_contract: {"kind": "coordinates", "arity": 2}
-            solution_sketch: 'Sam subtracted the basis vector, but he must subtract the projection. The projection is $\frac{6}{2}(1, 1) = (3, 3)$, and $(4, 2) - (3, 3) = (1, -1)$.'
+            solution_sketch: 'The projection is subtracted, not the basis vector. The projection is $\frac{6}{2}(1, 1) = (3, 3)$, and $(4, 2) - (3, 3) = (1, -1)$.'
           - problem: 'Write $(10, 5)$ as $\hat{\mathbf{x}} + \mathbf{z}$ with $\hat{\mathbf{x}}$ in $\operatorname{span}\{(2, 1)\}$ and $\mathbf{z}$ orthogonal to $(2, 1)$. Find the number $k$ with $\hat{\mathbf{x}} = k(2, 1)$.'
             answer: '5'
             answer_contract: {"kind": "exact"}
@@ -2211,7 +2211,7 @@ topics:
             answer: '3'
             answer_contract: {"kind": "unit", "quantity": "length", "unit": "m", "allow_omitted": true}
             solution_sketch: 'The projection of $(3, 3, 0)$ onto the cable is $\frac{9}{9}(2, 1, 2) = (2, 1, 2)$. The residual is $(1, 2, -2)$, and its length is $\sqrt{1 + 4 + 4} = 3$ m.'
-          - problem: 'Sam says that the distance from $(3, 4)$ to the line $\operatorname{span}\{(1, 0)\}$ is $3$, the length of the projection. What is the distance?'
+          - problem: 'What is the distance from $(3, 4)$ to the line $\operatorname{span}\{(1, 0)\}$?'
             answer: '4'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The projection of $(3, 4)$ onto the line is $(3, 0)$, and the distance is the length of the residual. The residual is $(0, 4)$, so the distance is $4$.'
@@ -2290,10 +2290,10 @@ topics:
             answer: '(2, 1, -2)'
             answer_contract: {"kind": "coordinates", "arity": 3}
             solution_sketch: 'The coefficient is $\frac{(3, 3, 0)\cdot(1, 2, 2)}{(1, 2, 2)\cdot(1, 2, 2)} = \frac{9}{9} = 1$. So the new axis is $(3, 3, 0) - (1, 2, 2) = (2, 1, -2)$.'
-          - problem: 'Sam applies the Gram-Schmidt step to $\mathbf{x}_1 = (3, 1)$ and $\mathbf{x}_2 = (1, 2)$. He subtracts $\mathbf{x}_1$ itself instead of the projection and gets $(-2, 1)$. What is the correct $\mathbf{v}_2$?'
+          - problem: 'Apply the Gram-Schmidt step to $\mathbf{x}_1 = (3, 1)$ and $\mathbf{x}_2 = (1, 2)$. What is $\mathbf{v}_2$?'
             answer: '(-1/2, 3/2)'
             answer_contract: {"kind": "coordinates", "arity": 2}
-            solution_sketch: 'Sam should subtract the projection of $\mathbf{x}_2$ onto $\mathbf{x}_1$, not $\mathbf{x}_1$. The coefficient is $\frac{5}{10} = \frac{1}{2}$, so $\mathbf{v}_2 = (1, 2) - \frac{1}{2}(3, 1) = \left(-\frac{1}{2}, \frac{3}{2}\right)$.'
+            solution_sketch: 'The step subtracts the projection of $\mathbf{x}_2$ onto $\mathbf{x}_1$, not $\mathbf{x}_1$ itself. The coefficient is $\frac{5}{10} = \frac{1}{2}$, so $\mathbf{v}_2 = (1, 2) - \frac{1}{2}(3, 1) = \left(-\frac{1}{2}, \frac{3}{2}\right)$.'
           - problem: 'A Gram-Schmidt step takes $\mathbf{x}_1 = (2, 1)$ and $\mathbf{x}_2 = (1, 3)$ to $\mathbf{v}_1 = \mathbf{x}_1$ and $\mathbf{v}_2 = (-1, 2)$. Is the pair $\mathbf{v}_1, \mathbf{v}_2$ orthogonal?'
             answer: 'yes'
             answer_contract: {"kind": "label", "options": [["yes", "yes, it is", "it is", "true", "correct"], ["no", "no, it is not", "it is not", "false", "incorrect"]]}
@@ -2372,10 +2372,10 @@ topics:
             answer: '1/5'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The coefficient is $\frac{7}{25}$, so $\mathbf{v}_2 = (1, 1) - \frac{7}{25}(4, 3) = \left(-\frac{3}{25}, \frac{4}{25}\right)$. Its length is $\frac{\sqrt{9 + 16}}{25} = \frac{5}{25} = \frac{1}{5}$.'
-          - problem: 'Ana applies the Gram-Schmidt process to $(3, 4)$ and $(1, 2)$ and normalizes. She gets the orthonormal basis $\{(3/5, 4/5), (-4/5, 3/5)\}$. Is her answer correct?'
-            answer: 'yes'
-            answer_contract: {"kind": "label", "options": [["yes", "yes, it is", "it is", "true", "correct"], ["no", "no, it is not", "it is not", "false", "incorrect"]]}
-            solution_sketch: 'The first vector $(3, 4)$ has length $5$, which gives $\left(\frac{3}{5}, \frac{4}{5}\right)$. The second vector is $(1, 2) - \frac{11}{25}(3, 4) = \left(-\frac{8}{25}, \frac{6}{25}\right)$, and normalizing gives $\left(-\frac{4}{5}, \frac{3}{5}\right)$. So her answer is correct.'
+          - problem: 'Apply the Gram-Schmidt process to $(3, 4)$ and $(1, 2)$ and normalize. The first vector of the orthonormal basis is $(3/5, 4/5)$. What is the second vector?'
+            answer: '(-4/5, 3/5)'
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: 'The first vector $(3, 4)$ has length $5$, which gives $\left(\frac{3}{5}, \frac{4}{5}\right)$. The second vector is $(1, 2) - \frac{11}{25}(3, 4) = \left(-\frac{8}{25}, \frac{6}{25}\right)$, and normalizing gives $\left(-\frac{4}{5}, \frac{3}{5}\right)$. So the second vector is $\left(-\frac{4}{5}, \frac{3}{5}\right)$.'
         constraints: 'norms are 5, 13 or sqrt(2); rescale fraction vectors to integer directions before normalizing; ask for one vector of the basis at a time'
     diagnostic_exemplar:
       problem: 'Apply Gram-Schmidt to $\mathbf{x}_1 = (3, 4)$, $\mathbf{x}_2 = (1, 2)$, then normalize to an orthonormal basis of $\mathbb{R}^2$.'

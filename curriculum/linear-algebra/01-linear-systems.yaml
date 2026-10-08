@@ -85,10 +85,10 @@ topics:
             answer: '4'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The first row says $3x + 2y = 26$. With $x = 6$ this gives $18 + 2y = 26$, so $2y = 8$ and $y = 4$ rolls.'
-          - problem: 'Sam reads the second row of the augmented matrix $\begin{pmatrix}1&2&-1&4\\0&4&-2&8\end{pmatrix}$, a system in $x$, $y$, $z$, as $4x - 2y = 8$. What is the correct second equation?'
+          - problem: 'The augmented matrix $\begin{pmatrix}1&2&-1&4\\0&4&-2&8\end{pmatrix}$ stands for a system in $x$, $y$, $z$. What is the second equation?'
             answer: '4y - 2z = 8'
             answer_contract: {"kind":"polynomial_relation"}
-            solution_sketch: 'The second row is $(0, 4, -2, 8)$, so the $x$ column holds $0$, the $y$ column holds $4$ and the $z$ column holds $-2$. The equation is $4y - 2z = 8$, and Sam shifted every coefficient one variable to the left.'
+            solution_sketch: 'The second row is $(0, 4, -2, 8)$, so the $x$ column holds $0$, the $y$ column holds $4$ and the $z$ column holds $-2$. The equation is $4y - 2z = 8$. Each coefficient belongs to the variable of its own column.'
         constraints: "sizes up to 3x4; integer entries in -9..9; read single rows, the coefficient matrix, a whole system, and matrices from a context"
       - id: kp3
         name: Setting up augmented matrices from word problems
@@ -168,7 +168,7 @@ topics:
             answer: '[[1,1,30],[0,-3,-45]]'
             answer_contract: {"kind":"matrix","rows":2,"cols":3}
             solution_sketch: 'Row 2 changes entry by entry: $8 - 8(1) = 0$, $5 - 8(1) = -3$ and $195 - 8(30) = -45$. The new matrix has the rows $(1, 1, 30)$ and $(0, -3, -45)$.'
-          - problem: 'To solve $x + 2y = 4$, $3x + 5y = 9$, Maya subtracts $3$ times the first equation from the second. Which equation does she get in place of the second?'
+          - problem: 'To solve $x + 2y = 4$, $3x + 5y = 9$, subtract $3$ times the first equation from the second. Which equation replaces the second?'
             answer: '-y = -3'
             answer_contract: {"kind":"polynomial_relation"}
             solution_sketch: 'Subtracting $3(x + 2y) = 3(4)$ from $3x + 5y = 9$ gives $5y - 6y = 9 - 12$. The new second equation is $-y = -3$, which is the row $(0, -1, -3)$.'
@@ -180,10 +180,10 @@ topics:
             answer: '[[2,4,6],[0,1,2]]'
             answer_contract: {"kind":"matrix","rows":2,"cols":3}
             solution_sketch: 'Half of row 1 is $(1, 2, 3)$. Subtracting it from row 2 gives $(1 - 1, 3 - 2, 5 - 3) = (0, 1, 2)$, so the new matrix has the rows $(2, 4, 6)$ and $(0, 1, 2)$.'
-          - problem: 'Sam applies $R_2 \to R_2 - 2R_1$ to $\begin{pmatrix}1&3&4\\2&5&9\end{pmatrix}$ and writes the new second row as $(0, -1, 9)$. What is the correct second row?'
+          - problem: 'Apply $R_2 \to R_2 - 2R_1$ to $\begin{pmatrix}1&3&4\\2&5&9\end{pmatrix}$. What is the new second row?'
             answer: '(0, -1, 1)'
             answer_contract: {"kind":"coordinates","arity":3}
-            solution_sketch: 'Every entry of row 2 changes, including the last one: $9 - 2(4) = 1$. The correct second row is $(0, -1, 1)$, because $2 - 2(1) = 0$ and $5 - 2(3) = -1$ as well.'
+            solution_sketch: 'Every entry of row 2 changes, including the last one: $9 - 2(4) = 1$. The new second row is $(0, -1, 1)$, because $2 - 2(1) = 0$ and $5 - 2(3) = -1$ as well.'
           - problem: 'Apply $R_3 \to R_3 + 2R_1$ to the augmented matrix $\begin{pmatrix}1&2&0&1\\0&1&3&2\\-2&0&1&4\end{pmatrix}$.'
             answer: '[[1,2,0,1],[0,1,3,2],[0,4,1,6]]'
             answer_contract: {"kind":"matrix","rows":3,"cols":4}
@@ -209,7 +209,7 @@ topics:
             answer: '[[1,2,0,3],[0,1,-2,-3],[0,1,1,1]]'
             answer_contract: {"kind":"matrix","rows":3,"cols":4}
             solution_sketch: 'Multiply every entry of row 2 by $-\frac{1}{2}$: $(0, -2, 4, 6)$ becomes $(0, 1, -2, -3)$. Rows 1 and 3 stay the same.'
-          - problem: 'A student writes the system $2x + 4y = 10$, $x - y = 2$ as an augmented matrix and then divides the first equation by $2$. What is the new augmented matrix?'
+          - problem: 'The system $2x + 4y = 10$, $x - y = 2$ is written as an augmented matrix, and then the first equation is divided by $2$. What is the new augmented matrix?'
             answer: '[[1,2,5],[1,-1,2]]'
             answer_contract: {"kind":"matrix","rows":2,"cols":3}
             solution_sketch: 'The matrix of the system has the rows $(2, 4, 10)$ and $(1, -1, 2)$. Dividing the first equation by $2$ is the operation $R_1 \to \frac{1}{2}R_1$, which gives the row $(1, 2, 5)$ and leaves $(1, -1, 2)$.'
@@ -225,10 +225,10 @@ topics:
             answer: '[[0,3],[1,2]]'
             answer_contract: {"kind":"matrix","rows":2,"cols":2}
             solution_sketch: 'Scaling row 1 turns $(2, 4)$ into $(1, 2)$. Swapping rows 1 and 2 then gives the rows $(0, 3)$ and $(1, 2)$.'
-          - problem: 'Sam applies $R_2 \to \frac{1}{4}R_2$ to $\begin{pmatrix}1&3&2\\0&4&8\end{pmatrix}$ and gets $(0, 1, 8)$ for the second row. What is the correct second row?'
+          - problem: 'Apply $R_2 \to \frac{1}{4}R_2$ to $\begin{pmatrix}1&3&2\\0&4&8\end{pmatrix}$. What is the new second row?'
             answer: '(0, 1, 2)'
             answer_contract: {"kind":"coordinates","arity":3}
-            solution_sketch: 'Scaling multiplies every entry of row 2 by $\frac{1}{4}$, and Sam left the last entry unchanged. The correct row is $(0, 1, 2)$, because $\frac{1}{4}(8) = 2$.'
+            solution_sketch: 'Scaling multiplies every entry of row 2 by $\frac{1}{4}$, the last entry included. The new row is $(0, 1, 2)$, because $\frac{1}{4}(8) = 2$.'
         constraints: "scaling by the reciprocal of a leading entry; entries of the result may be fractions; include swaps, combined operations and contexts"
       - id: kp3
         name: Identifying operations and why they are safe
@@ -255,7 +255,7 @@ topics:
             answer: '2'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The new row 1 is $(1 + 2k, 1 + 3k)$, and it must equal $(5, 7)$. So $1 + 2k = 5$ gives $k = 2$, and $1 + 3(2) = 7$ agrees.'
-          - problem: 'Sam replaces the second row of the augmented matrix $\begin{pmatrix}1&2&3\\2&5&8\end{pmatrix}$ by $0 \cdot R_2$, which gives the new second row $(0, 0, 0)$. Does the new system have the same solutions as the old one?'
+          - problem: 'The second row of the augmented matrix $\begin{pmatrix}1&2&3\\2&5&8\end{pmatrix}$ is replaced by $0 \cdot R_2$, which gives the new second row $(0, 0, 0)$. Does the new system have the same solutions as the old one?'
             answer: 'no'
             answer_contract: {"kind":"label","options":[["yes","it does","same solutions","the same"],["no","it does not","different solutions","not the same"]]}
             solution_sketch: 'The old system $x + 2y = 3$, $2x + 5y = 8$ has the single solution $(-1, 2)$. The new second row says $0 = 0$, so the new system is only $x + 2y = 3$, which has infinitely many solutions. Multiplying a row by $0$ cannot be undone, so it is not an elementary operation.'
@@ -333,10 +333,10 @@ topics:
             answer: '5'
             answer_contract: {"kind":"unit","quantity":"euro","unit":"euro","allow_omitted":true}
             solution_sketch: 'The ride gives the equation $x + 4y = 13$, and $y = 2$. So $x + 8 = 13$ and the starting fee is $x = 5$ euros.'
-          - problem: 'Sam solves $2x + y = 9$, $3y = 6$. He finds $y = 2$ and then writes $x = 9 - 2 = 7$. What is the correct value of $x$?'
+          - problem: 'Solve $2x + y = 9$, $3y = 6$. What is the value of $x$?'
             answer: '7/2'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'Substituting $y = 2$ into $2x + y = 9$ gives $2x + 2 = 9$, so $2x = 7$ and $x = \frac{7}{2}$. Sam forgot that $x$ is multiplied by $2$, so $7$ must be divided by $2$.'
+            solution_sketch: 'Substituting $y = 2$ into $2x + y = 9$ gives $2x + 2 = 9$, so $2x = 7$ and $x = \frac{7}{2}$. Here $x$ is multiplied by $2$, so $7$ must be divided by $2$.'
           - problem: 'Solve the system $3x - y = 11$, $4y = -8$.'
             answer: '(3, -2)'
             answer_contract: {"kind":"coordinates","arity":2}
@@ -370,7 +370,7 @@ topics:
             answer: '30'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'Three times Cy''s stickers make $45$, so Cy has $45 \div 3 = 15$. Then Bea has $75 - 2(15) = 45$ stickers, and Alex has $90 - 45 - 15 = 30$.'
-          - problem: 'Sam solves $x + y + z = 9$, $y - z = 1$, $2z = 6$. He writes $z = 12$ and goes on from there. What is the correct value of $x$?'
+          - problem: 'Solve $x + y + z = 9$, $y - z = 1$, $2z = 6$. What is the value of $x$?'
             answer: '2'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The last equation gives $z = 6 \div 2 = 3$, and not $2 \cdot 6$. Then $y - 3 = 1$ gives $y = 4$, and $x + 4 + 3 = 9$ gives $x = 2$.'
@@ -415,7 +415,7 @@ topics:
             answer: '(1, 2, 1)'
             answer_contract: {"kind":"coordinates","arity":3}
             solution_sketch: 'The last row says $4z = 4$, so $z = 1$. The second row gives $3y + 2 = 8$, so $y = 2$, and the first row gives $2x + 2 - 1 = 3$, so $2x = 2$ and $x = 1$.'
-          - problem: 'Sam reads the last row of the augmented matrix $\begin{pmatrix}1&2&0&5\\0&3&1&7\\0&0&2&2\end{pmatrix}$ as $z = 4$ and goes on from there. What is the correct value of $x$?'
+          - problem: 'The augmented matrix $\begin{pmatrix}1&2&0&5\\0&3&1&7\\0&0&2&2\end{pmatrix}$ is in echelon form. What is the value of $x$ in its solution?'
             answer: '1'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The last row says $2z = 2$, so $z = 1$ and not $4$. The second row gives $3y + 1 = 7$, so $y = 2$, and the first row gives $x + 4 = 5$, so $x = 1$.'
@@ -470,7 +470,7 @@ topics:
             answer: '3'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The leading entry of a row is its first nonzero entry. Row 2 is $(0, 0, 5, 7)$, so its first nonzero entry is $5$, which is in column 3.'
-          - problem: 'Ravi reduces a system and reaches $\begin{pmatrix}1&2&1&4\\0&0&3&6\\0&2&1&5\end{pmatrix}$, which is not in echelon form. He swaps rows $2$ and $3$. What is the leading entry of the new row 2?'
+          - problem: 'The matrix $\begin{pmatrix}1&2&1&4\\0&0&3&6\\0&2&1&5\end{pmatrix}$ is not in echelon form. Swap rows $2$ and $3$. What is the leading entry of the new row 2?'
             answer: '2'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'After the swap, row 2 is $(0, 2, 1, 5)$ and row 3 is $(0, 0, 3, 6)$. The leading entries are now in columns 1, 2 and 3, so the matrix is in echelon form, and the leading entry of row 2 is $2$.'
@@ -483,7 +483,7 @@ topics:
             answer: 'yes'
             answer_contract: {"kind":"label","options":[["yes","it is","it is in reduced row echelon form","yes it is"],["no","it is not","it is not in reduced row echelon form","not in reduced row echelon form","no it is not"]]}
             solution_sketch: 'Both leading entries are $1$, and each is the only nonzero entry in its column: column 1 holds $(1, 0)$ and column 2 holds $(0, 1)$. The matrix is in echelon form with no zero row misplaced, so it is in reduced row echelon form.'
-          - problem: 'Sam says that $\begin{pmatrix}1&2&3\\0&1&4\end{pmatrix}$ is in reduced row echelon form because both leading entries are $1$. In which row and column does the matrix break the rules of reduced row echelon form?'
+          - problem: 'Both leading entries of $\begin{pmatrix}1&2&3\\0&1&4\end{pmatrix}$ are $1$, but the matrix is not in reduced row echelon form. In which row and column does the matrix break the rules of reduced row echelon form?'
             answer: '(1, 2)'
             answer_contract: {"kind":"coordinates","arity":2}
             solution_sketch: 'The leading entry of row 2 is the $1$ in column 2, and it must be the only nonzero entry in that column. Row 1 has a $2$ above it, so the entry in row 1, column 2 breaks the rule.'
@@ -499,7 +499,7 @@ topics:
             answer: 'no'
             answer_contract: {"kind":"label","options":[["yes","it is","it is in reduced row echelon form","yes it is"],["no","it is not","it is not in reduced row echelon form","not in reduced row echelon form","no it is not"]]}
             solution_sketch: 'The matrix is in echelon form with leading entries $1$ in columns 1 and 2, and the zero row is last. Column 2 holds the leading entry of row 2 and also a $5$ in row 1, so the leading entry is not alone in its column, and the matrix is not in reduced row echelon form.'
-          - problem: 'Ana row-reduces a system in $x$ and $y$ and reaches $\begin{pmatrix}1&0&3\\0&1&-2\end{pmatrix}$. What is the solution of the system?'
+          - problem: 'Row reduction of a system in $x$ and $y$ ends at $\begin{pmatrix}1&0&3\\0&1&-2\end{pmatrix}$. What is the solution of the system?'
             answer: '(3, -2)'
             answer_contract: {"kind":"coordinates","arity":2}
             solution_sketch: 'The matrix is in reduced row echelon form. Its first row says $x = 3$ and its second row says $y = -2$, so the solution is $(3, -2)$.'
@@ -611,7 +611,7 @@ topics:
             answer: '[[1,0,-6],[0,1,4]]'
             answer_contract: {"kind":"matrix","rows":2,"cols":3}
             solution_sketch: 'A zero in the first pivot position means the rows must be swapped before anything else. Swap $R_1$ and $R_2$: the matrix becomes $\begin{pmatrix}3&6&6\\0&2&8\end{pmatrix}$. Multiply $R_1$ by $\frac{1}{3}$: the matrix becomes $\begin{pmatrix}1&2&2\\0&2&8\end{pmatrix}$. Multiply $R_2$ by $\frac{1}{2}$: the matrix becomes $\begin{pmatrix}1&2&2\\0&1&4\end{pmatrix}$. Replace $R_1$ with $R_1 - 2R_2$: the matrix becomes $\begin{pmatrix}1&0&-6\\0&1&4\end{pmatrix}$. This matrix is in reduced row echelon form, so the answer is $\begin{pmatrix}1&0&-6\\0&1&4\end{pmatrix}$.'
-          - problem: 'At a cafe, one coffee and one muffin cost $5$ dollars together, and two coffees with three muffins cost $13$ dollars. With $c$ and $m$ for the two prices, Ana writes the system as the augmented matrix $\begin{pmatrix}1&1&5\\2&3&13\end{pmatrix}$. Reduce it to reduced row echelon form.'
+          - problem: 'At a cafe, one coffee and one muffin cost $5$ dollars together, and two coffees with three muffins cost $13$ dollars. With $c$ and $m$ for the two prices, the system is the augmented matrix $\begin{pmatrix}1&1&5\\2&3&13\end{pmatrix}$. Reduce it to reduced row echelon form.'
             answer: '[[1,0,2],[0,1,3]]'
             answer_contract: {"kind":"matrix","rows":2,"cols":3}
             solution_sketch: 'The columns stand for $c$, $m$ and the total cost. Replace $R_2$ with $R_2 - 2R_1$: the matrix becomes $\begin{pmatrix}1&1&5\\0&1&3\end{pmatrix}$. Replace $R_1$ with $R_1 - R_2$: the matrix becomes $\begin{pmatrix}1&0&2\\0&1&3\end{pmatrix}$. This matrix is in reduced row echelon form, so the answer is $\begin{pmatrix}1&0&2\\0&1&3\end{pmatrix}$. The last column now reads $c = 2$ and $m = 3$.'
@@ -1185,10 +1185,10 @@ topics:
             answer: '[[1,0,2],[0,1,-1],[3,1,0]]'
             answer_contract: {"kind":"matrix","rows":3,"cols":3}
             solution_sketch: 'Use the unknowns in the order $x, y, z$ and write a $0$ where a variable is missing from an equation. The rows of $A$ are $(1, 0, 2)$, $(0, 1, -1)$ and $(3, 1, 0)$.'
-          - problem: 'Sam writes the system $x + 4y = 3$, $2x + 5y = 6$ with the coefficient matrix $A = \begin{pmatrix}1&2\\4&5\end{pmatrix}$. What is the correct matrix $A$?'
+          - problem: 'What is the coefficient matrix $A$ of the system $x + 4y = 3$, $2x + 5y = 6$?'
             answer: '[[1,4],[2,5]]'
             answer_contract: {"kind":"matrix","rows":2,"cols":2}
-            solution_sketch: 'Each row of $A$ holds the coefficients of one equation. Sam wrote the coefficients by columns instead of by rows. The first equation gives the row $(1, 4)$ and the second gives the row $(2, 5)$.'
+            solution_sketch: 'Each row of $A$ holds the coefficients of one equation. The coefficients go in rows, not in columns. The first equation gives the row $(1, 4)$ and the second gives the row $(2, 5)$.'
         constraints: "integer coefficient vectors; combination coefficients in -7..7"
       - id: kp2
         name: Membership in a span via a system
@@ -1248,10 +1248,10 @@ topics:
             answer: '(1, 2)'
             answer_contract: {"kind":"coordinates","arity":2}
             solution_sketch: 'Let the fee be $f$ and the price per kilometer be $r$, so $f + 6r = 13$ and $f + 10r = 21$. Subtracting gives $4r = 8$, so $r = 2$. Then $f = 13 - 12 = 1$.'
-          - problem: 'Sam solves $3x + y = 11$, $2x - 2y = 10$ and gets $(4, 1)$. Find the correct solution of the system.'
+          - problem: 'Solve the system $3x + y = 11$, $2x - 2y = 10$.'
             answer: '(4, -1)'
             answer_contract: {"kind":"coordinates","arity":2}
-            solution_sketch: 'Substituting Sam''s pair into the first equation gives $12 + 1 = 13$, not $11$, so it is wrong. Divide the second equation by $2$ to get $x - y = 5$, so $x = y + 5$. Then $3(y + 5) + y = 11$ gives $4y = -4$, so $y = -1$ and $x = 4$.'
+            solution_sketch: 'Divide the second equation by $2$ to get $x - y = 5$, so $x = y + 5$. Then $3(y + 5) + y = 11$ gives $4y = -4$, so $y = -1$ and $x = 4$.'
           - problem: 'Solve the system $x + y + z = 2$, $2x - y + z = 7$, $x + 2y - z = -6$.'
             answer: '(1, -2, 3)'
             answer_contract: {"kind":"coordinates","arity":3}
@@ -1312,7 +1312,7 @@ topics:
             answer: '(0, 0)'
             answer_contract: {"kind":"coordinates","arity":2}
             solution_sketch: 'Both equations are homogeneous. Multiplying the first by $5$ gives $30I_1 + 5I_2 = 0$, and subtracting the second gives $29I_1 = 0$, so $I_1 = 0$ and then $I_2 = 0$. With no battery there is no current, so the solution is $(0, 0)$.'
-          - problem: 'Sam says that the system $2x + y = 0$, $4x + 2y = 0$ has no solution except $(0, 0)$. Find a solution with $x = 1$.'
+          - problem: 'The system $2x + y = 0$, $4x + 2y = 0$ has solutions other than $(0, 0)$. Find the solution with $x = 1$.'
             answer: '(1, -2)'
             answer_contract: {"kind":"coordinates","arity":2}
             solution_sketch: 'The second equation is twice the first, so the system has only one independent equation. The first equation gives $y = -2x$, so with $x = 1$ we get $y = -2$. Then $4(1) + 2(-2) = 0$ also holds, so $(1, -2)$ is a solution.'
@@ -1462,10 +1462,10 @@ topics:
             answer: '10'
             answer_contract: {"kind":"unit","quantity":"time","unit":"hour","allow_omitted":true}
             solution_sketch: 'The volume at $t$ hours after noon is $V = -10t + 100$, because the tank loses $30$ L in $3$ hours, which is $10$ L per hour. The tank is empty when $V = 0$, so $t = 100 / 10 = 10$ hours.'
-          - problem: 'Sam finds the line $y = ax + b$ through $(1, 3)$ and $(3, 7)$ and writes $y = 2x + 3$. Find the equation of the correct line.'
+          - problem: 'Find the equation of the line $y = ax + b$ through $(1, 3)$ and $(3, 7)$.'
             answer: 'y = 2x + 1'
             answer_contract: {"kind":"polynomial_relation"}
-            solution_sketch: 'Sam''s line gives $2(1) + 3 = 5$ at $x = 1$, not $3$, so it misses the first point. The points give $a + b = 3$ and $3a + b = 7$, so $2a = 4$ and $a = 2$. Then $b = 3 - 2 = 1$.'
+            solution_sketch: 'The points give $a + b = 3$ and $3a + b = 7$, so $2a = 4$ and $a = 2$. Then $b = 3 - 2 = 1$.'
         constraints: "integer sample points; a and b integers (rates and fees up to 100 in word problems)"
       - id: kp2
         name: Parabolas through three points
@@ -1495,10 +1495,10 @@ topics:
             answer: 'y = 2x^2 + 2x + 2'
             answer_contract: {"kind":"polynomial_relation"}
             solution_sketch: 'The point $(0, 2)$ gives $c = 2$. The other points give $a + b = 4$ and $4a + 2b = 12$, which is $2a + b = 6$. Subtracting gives $a = 2$, and then $b = 2$. The parabola is $y = 2x^2 + 2x + 2$.'
-          - problem: 'Sam fits $y = ax^2 + bx + c$ to the points $(0, 1)$, $(1, 3)$ and $(2, 7)$ and writes $y = x^2 + 2x + 1$. Find the equation of the correct parabola.'
+          - problem: 'Find the equation of the parabola $y = ax^2 + bx + c$ through the points $(0, 1)$, $(1, 3)$ and $(2, 7)$.'
             answer: 'y = x^2 + x + 1'
             answer_contract: {"kind":"polynomial_relation"}
-            solution_sketch: 'Sam''s formula gives $1 + 2 + 1 = 4$ at $x = 1$, not $3$. The correct system has $c = 1$, $a + b = 2$ and $4a + 2b = 6$, so $2a + b = 3$. Subtracting gives $a = 1$ and $b = 1$.'
+            solution_sketch: 'The system has $c = 1$, $a + b = 2$ and $4a + 2b = 6$, so $2a + b = 3$. Subtracting gives $a = 1$ and $b = 1$.'
           - problem: 'A parabola $y = ax^2 + bx + c$ passes through $(0, -3)$, $(1, 0)$ and $(3, 12)$. What is its equation?'
             answer: 'y = x^2 + 2x - 3'
             answer_contract: {"kind":"polynomial_relation"}
@@ -1616,10 +1616,10 @@ topics:
             answer: '(4, 8, 2)'
             answer_contract: {"kind":"coordinates","arity":3}
             solution_sketch: 'Let $q$, $d$ and $n$ be the numbers of quarters, dimes and nickels. Then $q + d + n = 14$, $25q + 10d + 5n = 190$ and $d = 2q$. Substituting $d = 2q$ and $n = 14 - 3q$ gives $25q + 20q + 70 - 15q = 190$, so $30q = 120$. Thus $q = 4$, $d = 8$ and $n = 2$.'
-          - problem: 'Three friends share $90$ euros. Bo gets half as much as Ana, and Cy gets $10$ euros more than Bo. How much does each of Ana, Bo and Cy get?'
+          - problem: 'Three friends share $90$ euros. Bo''s share is half of Ana''s share, and Cy''s share is $10$ euros more than Bo''s share. How much does each of Ana, Bo and Cy receive?'
             answer: '(40, 20, 30)'
             answer_contract: {"kind":"coordinates","arity":3}
-            solution_sketch: 'Let Ana get $a$ euros. Bo gets $a / 2$ and Cy gets $a / 2 + 10$, so $a + a/2 + a/2 + 10 = 90$. This gives $2a = 80$, so $a = 40$. Then Bo gets $20$ euros and Cy gets $30$ euros.'
+            solution_sketch: 'Let Ana''s share be $a$ euros. Bo''s share is $a / 2$ and Cy''s share is $a / 2 + 10$, so $a + a/2 + a/2 + 10 = 90$. This gives $2a = 80$, so $a = 40$. Then Bo''s share is $20$ euros and Cy''s share is $30$ euros.'
           - problem: 'Ana, Ben and Cara are siblings, and their ages add up to $30$. Ben is twice as old as Ana, and Cara is $6$ years older than Ana. How old are Ana, Ben and Cara?'
             answer: '(6, 12, 12)'
             answer_contract: {"kind":"coordinates","arity":3}

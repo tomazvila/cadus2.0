@@ -87,10 +87,10 @@ topics:
             answer: "6"
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Kruskal sorts the edges by weight: $BC$ (2), $AB$ (3), $CE$ (4), $BD$ (6), $DE$ (7), $AC$ (8), $CD$ (9). It takes $BC$ (2); takes $AB$ (3); takes $CE$ (4); takes $BD$ (6). The tree weight is 2 + 3 + 4 + 6 = 15. The tree edges have weights 2, 3, 4, 6, so the heaviest has weight 6.'
-          - problem: 'A weighted graph has vertices $A, B, C, D, E$ and edges with weights $AB = 1$, $BC = 2$, $AC = 3$, $CD = 4$, $DE = 5$, $BE = 6$. Sam adds the four lightest edges, $AB, BC, AC, CD$, and says they form a minimum spanning tree of weight $10$. What is the weight of a minimum spanning tree?'
+          - problem: 'A weighted graph has vertices $A, B, C, D, E$ and edges with weights $AB = 1$, $BC = 2$, $AC = 3$, $CD = 4$, $DE = 5$, $BE = 6$. The four lightest edges are $AB, BC, AC, CD$, with total weight $10$. What is the weight of a minimum spanning tree?'
             answer: "12"
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The edge $AC$ closes a cycle with $AB$ and $BC$, so Sam''s four edges do not form a tree. Kruskal sorts the edges by weight: $AB$ (1), $BC$ (2), $AC$ (3), $CD$ (4), $DE$ (5), $BE$ (6). It takes $AB$ (1); takes $BC$ (2); skips $AC$ (3) because it closes a cycle; takes $CD$ (4); takes $DE$ (5). The tree weight is 1 + 2 + 4 + 5 = 12.'
+            solution_sketch: 'The edge $AC$ closes a cycle with $AB$ and $BC$, so the four lightest edges do not form a tree. Kruskal sorts the edges by weight: $AB$ (1), $BC$ (2), $AC$ (3), $CD$ (4), $DE$ (5), $BE$ (6). It takes $AB$ (1); takes $BC$ (2); skips $AC$ (3) because it closes a cycle; takes $CD$ (4); takes $DE$ (5). The tree weight is 1 + 2 + 4 + 5 = 12.'
           - problem: 'Four pumping stations $P, Q, R, S$ must be linked by pipes. The possible pipe lengths in kilometers are $PQ = 12$, $PR = 7$, $QR = 9$, $QS = 5$, $RS = 11$. What is the least total length of pipe that links all four stations?'
             answer: "21"
             answer_contract: {"kind": "unit", "quantity": "length", "unit": "km", "allow_omitted": true}
@@ -173,10 +173,10 @@ topics:
             answer: "4"
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The route through $C$ costs 7 + (-3) = 4 units, which is less than the 6 units of the direct leg. The greedy settle of $B$ at 6 was wrong because of the negative leg, so the least fuel is 4 units.'
-          - problem: 'A weighted graph has vertices $A, B, C, D$ and edges with weights $AB = 9$, $AC = 4$, $CB = 3$, $BD = 2$. Sam runs Dijkstra''s algorithm from $A$, takes the direct edge $AB$, and reports the distance from $A$ to $D$ as $11$. What is the correct distance?'
+          - problem: 'A weighted graph has vertices $A, B, C, D$ and edges with weights $AB = 9$, $AC = 4$, $CB = 3$, $BD = 2$. What is the cost of the cheapest route from $A$ to $D$?'
             answer: "9"
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Sam did not settle $C$ first. The path A-C-B-D costs 4 + 3 + 2 = 9, which is less than 9 + 2 = 11, so the correct distance is 9.'
+            solution_sketch: 'Dijkstra''s algorithm settles $C$ before $B$. The path A-C-B-D costs 4 + 3 + 2 = 9, which is less than 9 + 2 = 11, so the distance is 9.'
           - problem: 'In a directed graph the arcs are $A \to B$ with weight $3$, $A \to C$ with weight $4$, and $C \to B$ with weight $-2$. Dijkstra''s algorithm run from $A$ settles $B$ at distance $3$. Is $3$ the true shortest distance from $A$ to $B$?'
             answer: "no"
             answer_contract: {"kind": "label", "options": [["yes", "yes it is", "yes, it is", "it is", "correct", "right"], ["no", "no it is not", "no, it is not", "it is not", "not correct", "incorrect", "wrong", "not the true distance"]]}
@@ -357,10 +357,10 @@ topics:
             answer: "1"
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Euler''s formula gives $f = 2 - 9 + 8 = 1$. A connected graph with $9$ vertices and $8 = 9 - 1$ edges is a tree, which has only the outer face.'
-          - problem: 'Sam draws a connected planar graph with $6$ vertices and $10$ edges and counts $5$ faces, including the outer face. How many faces should the drawing have?'
+          - problem: 'A connected planar graph is drawn with $6$ vertices and $10$ edges. How many faces does the drawing have, including the outer face?'
             answer: "6"
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Euler''s formula gives $f = 2 - v + e = 2 - 6 + 10 = 6$. Sam''s count of 5 is one too small, probably because the outer face was left out.'
+            solution_sketch: 'Euler''s formula gives $f = 2 - v + e = 2 - 6 + 10 = 6$. The outer face is one of the $6$ faces.'
           - problem: 'A polyhedron has $24$ vertices and $14$ faces. How many edges does it have?'
             answer: "36"
             answer_contract: {"kind": "exact"}
@@ -402,10 +402,10 @@ topics:
             answer: "12"
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Each edge borders 2 faces and each face has 3 edges, so $3f = 2e$. Euler''s formula $v - e + f = 2$ then gives $e = 3v - 6 = 18$, so $f = 2 - 8 + 18 = 12$.'
-          - problem: 'Sam says that a simple planar graph with $6$ vertices has at most $2 \cdot 6 - 4 = 8$ edges. The graph may contain triangles. What is the largest number of edges it can have?'
+          - problem: 'A simple planar graph has $6$ vertices and may contain triangles. What is the largest number of edges it can have?'
             answer: "12"
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The bound $2v - 4$ holds only when the graph has no triangles. A graph that may contain triangles obeys $e \le 3v - 6 = 3 \cdot 6 - 6 = 12$, so the correct largest number is 12.'
+            solution_sketch: 'The bound $2v - 4$ holds only when the graph has no triangles. A graph that may contain triangles obeys $e \le 3v - 6 = 3 \cdot 6 - 6 = 12$, so the largest number is 12.'
           - problem: 'The wheel with a hub joined to every vertex of a $6$-cycle has $7$ vertices and $12$ edges, and it contains triangles. Is it planar?'
             answer: "yes"
             answer_contract: {"kind": "label", "options": [["yes", "yes it is", "yes, it is", "it is", "it is planar", "planar", "yes it is planar", "yes, it is planar"], ["no", "no it is not", "no, it is not", "it is not", "it is not planar", "not planar", "nonplanar", "no, it is not planar"]]}
