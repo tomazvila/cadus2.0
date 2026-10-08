@@ -145,7 +145,7 @@ fn the_exact_contract_accepts_the_second_spellings() {
 }
 
 /// The texts that stay outside the grammar, with the reason of each.
-const REFUSED: [(&str, &str); 17] = [
+const REFUSED: [(&str, &str); 16] = [
     ("|x| + |y|", BAR_REFUSAL),
     ("|x", BAR_REFUSAL),
     ("x|", BAR_REFUSAL),
@@ -168,7 +168,6 @@ const REFUSED: [(&str, &str); 17] = [
     ),
     ("|1.2.3|", "a number with two points"),
     ("arctanh(x)", NAME_REFUSAL),
-    ("arcsec(x)", NAME_REFUSAL),
     ("Arctan(x)", NAME_REFUSAL),
 ];
 
@@ -179,7 +178,7 @@ fn each_other_shape_keeps_its_refusal() {
         assert_eq!(refusal.reason, reason, "{text}");
         assert!(canonical_form(text).is_err(), "{text}");
     }
-    for text in ["|x| + |y|", "|x", "||x||", "arctanh(x)", "arcsec(x)"] {
+    for text in ["|x| + |y|", "|x", "||x||", "arctanh(x)"] {
         let outcome = check_contract("x", text, AnswerContract::Exact);
         assert!(matches!(outcome, Outcome::Undecidable(_)), "{text}");
     }

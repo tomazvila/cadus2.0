@@ -182,35 +182,35 @@ pub fn print_report(report: &Report) {
 // The tests
 // ---------------------------------------------------------------------------
 /// The literal size of the generated set.
-pub const GENERATED_PAIRS: usize = 17_675;
+pub const GENERATED_PAIRS: usize = 17_662;
 
 /// The literal pair count of every generator, in name order.
 pub const GENERATOR_COUNTS: [(&str, usize); 47] = [
     ("algebraic_refactor", 65),
-    ("appended_junk", 1545),
+    ("appended_junk", 1544),
     ("ascii_to_unicode", 70),
     ("caret_power", 0),
-    ("case_flip", 727),
+    ("case_flip", 726),
     ("coarse_decimal", 92),
     ("comma_space_removed", 197),
     ("comma_thousands", 44),
     ("decimal_to_fraction", 105),
-    ("digit_transposition", 591),
-    ("dollar_wrapped", 1281),
+    ("digit_transposition", 590),
+    ("dollar_wrapped", 1280),
     ("dot_thousands", 44),
     ("equivalent_fraction", 165),
     ("explicit_multiplication", 350),
     ("figure_space_thousands", 44),
     ("fraction_to_decimal", 79),
-    ("identity", 1545),
-    ("implicit_multiplication", 262),
-    ("internal_spaces", 1057),
-    ("last_digit_bumped", 1502),
+    ("identity", 1544),
+    ("implicit_multiplication", 261),
+    ("internal_spaces", 1056),
+    ("last_digit_bumped", 1501),
     ("narrow_space_thousands", 44),
     ("nbsp_thousands", 44),
     ("over_thousand", 248),
     ("plus_spaced", 337),
-    ("product_reorder", 268),
+    ("product_reorder", 267),
     ("rewrite_apart", 50),
     ("rewrite_cancel", 78),
     ("rewrite_expand", 25),
@@ -219,18 +219,18 @@ pub const GENERATOR_COUNTS: [(&str, usize); 47] = [
     ("rewrite_together", 116),
     ("set_element_changed", 9),
     ("set_reordered", 11),
-    ("sign_flipped", 1542),
+    ("sign_flipped", 1541),
     ("significant_decimal", 248),
     ("space_thousands", 44),
-    ("star_power", 331),
+    ("star_power", 330),
     ("sum_reorder", 206),
     ("thin_space_thousands", 44),
     ("times_thousand", 292),
-    ("trailing_period", 1545),
+    ("trailing_period", 1544),
     ("trailing_zero", 400),
     ("tuple_swapped", 183),
     ("unicode_to_ascii", 44),
-    ("whitespace_padding", 1545),
+    ("whitespace_padding", 1544),
     ("wrong_exponent", 175),
     ("wrong_radicand", 37),
 ];
@@ -257,11 +257,18 @@ pub const GENERATOR_COUNTS: [(&str, usize); 47] = [
 /// Grader pass 3 reads `log` as base 10, so a pair with a bare `log` differs
 /// from 1.0 (which reads `log` as `ln`): class 1 is 1,051, class 3 is 16,291,
 /// class 4 is 333.
+///
+/// Stabilize pass after grader pass 4 (2026-10-08): the set holds 17,662 pairs. The 13 pairs
+/// of `12 m/s^2` left it, because the unit table now reads that answer as a quantity. The 8
+/// corpus rows that newly parse (`∞`, `-∞`, `infinite`, three differential products) add
+/// pairs, and 33 pairs leave class 1. Class 1 is 1,018, class 3 is 16,311, class 4 is 333.
+/// The `1/(2√x)` pair read by value leaves the radical narrowing (6 to 5), and two nested
+/// radical roundings move from the float-rung residue to the tagged rounding (151 to 153).
 pub const CLASS_COUNTS: [(&str, usize); 5] = [
-    ("class 1 outside_grammar", 1051),
+    ("class 1 outside_grammar", 1018),
     ("class 2 prose_expected", 0),
-    ("class 3 comparable", 16290),
-    ("class 4 documented_divergence", 334),
+    ("class 3 comparable", 16311),
+    ("class 4 documented_divergence", 333),
     ("oracle_silent", 0),
 ];
 
@@ -310,9 +317,9 @@ pub const REASON_COUNTS: [(&str, usize); 18] = [
         13,
     ),
     ("no polynomial GCD (V1 narrowing)", 6),
-    ("no radical rationalization (V1 narrowing)", 6),
-    ("no float tolerance rung (D6)", 5),
-    ("the exact rounding carries the notation tag (D6-dec)", 151),
+    ("no radical rationalization (V1 narrowing)", 5),
+    ("no float tolerance rung (D6)", 3),
+    ("the exact rounding carries the notation tag (D6-dec)", 153),
     ("an exact rounding 1.0 refused is correct (D6-dec)", 49),
     ("a transcendental identity is not simplified (V1)", 0),
     ("prose is not a value (V2)", 0),
@@ -385,7 +392,11 @@ pub fn probe_pair(expected: &str, learner: &str, shape: &str) -> Pair {
 /// The counts are `(rounded, wrong, undecidable)`. Every pair of the class is a
 /// pair 1.0 graded True inside its 1e-6 tolerance and 2.0 graded False before
 /// FIX-D6.
-pub const D6_SPLIT: (usize, usize, usize) = (151, 5, 84);
+///
+/// Stabilize pass after grader pass 4 (2026-10-08): the split is 153 / 3 / 84. Two of the
+/// three nested radicals (`√(2 + √2)/2` against its ten-digit decimal) now read by value,
+/// so they round like every other radical. One nested radical and the two fractions stay wrong.
+pub const D6_SPLIT: (usize, usize, usize) = (153, 3, 84);
 
 /// The refusals the rounding rule of `D6-dec` writes, and no other rung writes.
 ///

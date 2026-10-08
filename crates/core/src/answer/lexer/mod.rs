@@ -84,6 +84,18 @@ pub fn vulgar_glyph(numerator: &str, denominator: &str) -> Option<char> {
 /// The LaTeX words that are one product sign (1.0 `:96-97`).
 const PRODUCT_WORDS: [&str; 2] = ["\\cdot", "\\times"];
 
+/// The LaTeX font commands. Each one takes a braced body and changes the face
+/// of the body, never its value.
+const STYLE_WORDS: [&str; 7] = [
+    "\\mathbf",
+    "\\mathrm",
+    "\\mathit",
+    "\\mathbb",
+    "\\boldsymbol",
+    "\\textbf",
+    "\\operatorname",
+];
+
 /// The LaTeX words that carry no value and leave no token (1.0 `:99-100`).
 const DROPPED_WORDS: [&str; 2] = ["\\left", "\\right"];
 
@@ -154,6 +166,8 @@ pub enum Tok {
     Ge,
     /// `=`
     Eq,
+    /// `!`, the factorial sign after a number.
+    Bang,
 }
 
 /// A token and whether whitespace comes in front of it.
@@ -267,7 +281,7 @@ impl Lexer<'_> {
             }
             // A degree sign, a euro sign, and a dollar sign are unit tokens of
             // the value-with-unit production (D-F3). 1.0 deleted the degree sign.
-            '°' | '€' | '$' => {
+            '°' | '€' | '$' | 'Ω' => {
                 self.push(Tok::Unit(c.to_string()), 1);
                 Ok(())
             }
@@ -367,6 +381,16 @@ impl Lexer<'_> {
         {
             name = format!("{name}_{subscript}");
             width = next - self.at;
+            end = next;
+        }
+        // Primes glued to the name belong to it: `x'` and `f''`.
+        let primes = self.chars[end..]
+            .iter()
+            .take_while(|c| matches!(c, '\'' | '′'))
+            .count();
+        if primes > 0 && primes <= 3 {
+            name.push_str(&"'".repeat(primes));
+            width += primes;
         }
         self.push(Tok::Ident(name), width);
     }
@@ -417,6 +441,20 @@ impl Lexer<'_> {
         if let Some((body, next)) = read_braced_after(self.chars, at, "\\sqrt") {
             let kind = Tok::Sqrt(lex_run(body, self.depth + 1, self.bars)?);
             self.push(kind, next - at);
+            return Ok(());
+        }
+        if let Some((body, next)) = STYLE_WORDS
+            .iter()
+            .find_map(|word| read_braced_after(self.chars, at, word))
+        {
+            // A font command writes its body in another face: `\mathbf{i}` is `i`.
+            let mut inner = lex_run(body, self.depth + 1, self.bars)?;
+            if let Some(first) = inner.first_mut() {
+                first.space_before = self.space_before;
+                self.space_before = false;
+            }
+            self.tokens.extend(inner);
+            self.at = next;
             return Ok(());
         }
         if let Some(next) = PRODUCT_WORDS

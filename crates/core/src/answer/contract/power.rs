@@ -1,4 +1,4 @@
-//! Exact values written as one power of a numeric literal.
+//! Exact values written as one power of a numeric literal or of one variable.
 
 use num_integer::Integer;
 use num_traits::One;
@@ -38,11 +38,11 @@ fn read(text: &str) -> Result<Option<Power>, Undecidable> {
     let Ast::Pow(base, exponent) = &ast else {
         return Ok(None);
     };
-    if !literal(base) {
+    if !literal(base) && !matches!(base.as_ref(), Ast::Var(_)) {
         return Ok(None);
     }
     let base = canon(base)?;
-    if !matches!(base, Canon::Rational(_)) {
+    if !matches!(base, Canon::Rational(_) | Canon::Poly(_)) {
         return Ok(None);
     }
     Ok(Some(Power {
@@ -70,5 +70,5 @@ fn literal(ast: &Ast) -> bool {
 }
 
 fn refused() -> Undecidable {
-    Undecidable::new("a required single power needs one reduced numeric literal base")
+    Undecidable::new("a required single power needs one reduced numeric literal or variable base")
 }

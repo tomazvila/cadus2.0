@@ -63,7 +63,12 @@ fn polynomial_relations_compare_exact_equivalent_forms() {
 #[test]
 fn polynomial_relations_refuse_non_polynomial_and_ambiguous_inputs() {
     let policy = contract(r#"{"kind":"polynomial_relation"}"#);
-    for learner in ["x = 1 = 2", "sin(x) = 0", "x + 1", "0 = 0"] {
+    // A bare expression such as `x + 1` is no relation: it is wrong, not undecidable.
+    // Decision (grader pass 4): the spoken-sentence reader takes the text after `x =` as the
+    // value, so `x = 1 = 2` would read as the relation `1 = 2` and be wrong. A chain of two
+    // equalities names no one relation, so it stays ungraded; `0 = 0` and `sin(x) = 0` are
+    // refused by the relation reader.
+    for learner in ["x = 1 = 2", "sin(x) = 0", "0 = 0"] {
         assert!(matches!(
             check_contract("x = 1", learner, policy.clone()),
             Outcome::Undecidable(_)

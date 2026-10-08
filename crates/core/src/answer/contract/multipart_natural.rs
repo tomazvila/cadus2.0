@@ -29,12 +29,11 @@ pub(super) fn correct(parts: &[AnswerPart], keys: &[&str], learner: &str) -> boo
         return false;
     }
     pieces(parts, learner).iter().any(|pieces| {
-        let options: Vec<Vec<String>> = pieces.iter().map(|piece| readings(piece)).collect();
+        let options: Vec<Vec<String>> = pieces.iter().map(|piece| readings(piece, parts)).collect();
         // For each piece, the readings that fit each part.
         let fits = |piece: usize, part: usize| -> Vec<&String> {
             // A word that is another authored part name binds the piece to that part.
-            let named = prefix_name(pieces[piece])
-                .filter(|name| parts.iter().any(|other| other.name == *name));
+            let named = bound_name(pieces[piece], parts);
             if named.is_some_and(|name| name != parts[part].name) {
                 return Vec::new();
             }
@@ -114,11 +113,14 @@ fn pieces<'a>(parts: &[AnswerPart], text: &'a str) -> Vec<Vec<&'a str>> {
 }
 
 /// The texts one piece may stand for: the piece, the piece without a leading
-/// `word =` or `word:`, and each of those without a count noun.
-fn readings(piece: &str) -> Vec<String> {
+/// `word =` or `word:` or authored part name, and each of those without a count noun.
+fn readings(piece: &str, parts: &[AnswerPart]) -> Vec<String> {
     let mut texts = vec![piece.trim().to_owned()];
     if let Some(value) = strip_word_prefix(piece) {
         texts.push(value);
+    }
+    if let Some((_, value)) = lead_name(piece, parts) {
+        texts.push(value.to_owned());
     }
     let counted: Vec<String> = texts
         .iter()
@@ -132,7 +134,12 @@ fn readings(piece: &str) -> Vec<String> {
 fn strip_word_prefix(piece: &str) -> Option<String> {
     let at = piece.find(['=', ':'])?;
     let value = piece[at + 1..].trim();
-    prefix_name(piece).and_then(|_| (!value.is_empty()).then(|| value.to_owned()))
+    // A label with a digit (`11_percent`) names one thing, not a free word. If it is not an
+    // authored part name, it is a different part, and the value must not be read as the
+    // value of the authored one (grader pass 4, rule 2).
+    prefix_name(piece)
+        .filter(|name| !name.contains(|ch: char| ch.is_ascii_digit()))
+        .and_then(|_| (!value.is_empty()).then(|| value.to_owned()))
 }
 
 /// The word before a leading `=` or `:`, when it is one to three plain words
@@ -143,7 +150,103 @@ fn prefix_name(piece: &str) -> Option<&str> {
     let words = name.split_whitespace().count();
     let plain = name
         .chars()
-        .all(|ch| ch.is_alphabetic() || ch == '_' || ch == ' ');
+        .all(|ch| ch.is_alphanumeric() || ch == '_' || ch == ' ');
     (plain && (1..=3).contains(&words) && !value.is_empty() && !value.contains(['=', ':']))
         .then_some(name)
+}
+
+/// The authored part name a piece is bound to, by `name =`, `name:` or `name value`.
+fn bound_name<'p>(piece: &str, parts: &'p [AnswerPart]) -> Option<&'p str> {
+    if let Some((at, _)) = lead_name(piece, parts) {
+        return Some(parts[at].name.as_str());
+    }
+    let name = prefix_name(piece)?;
+    parts
+        .iter()
+        .find(|part| part.name == name)
+        .map(|part| part.name.as_str())
+}
+
+/// A piece that opens with an authored part name, as the part's position and the
+/// text after the name: `center (-4,1)`, `amplitude 3`, `g(x) = x^2`, `a: 5`.
+/// The longest name wins, and the name must end at a space, `=`, `:` or `(`.
+fn lead_name<'a>(piece: &'a str, parts: &[AnswerPart]) -> Option<(usize, &'a str)> {
+    let text = piece.trim();
+    let mut order: Vec<usize> = (0..parts.len()).collect();
+    order.sort_by_key(|&at| std::cmp::Reverse(parts[at].name.len()));
+    order.into_iter().find_map(|at| {
+        let name = parts[at].name.as_str();
+        let head = text.get(..name.len())?;
+        if !same_name(head, name) {
+            return None;
+        }
+        let rest = text.get(name.len()..)?;
+        let rest = match rest.chars().next()? {
+            '(' if call_end(rest).is_some_and(|end| rest[end..].trim_start().starts_with('=')) => {
+                &rest[call_end(rest)?..]
+            }
+            '(' | ' ' | '=' | ':' => rest,
+            _ => return None,
+        };
+        let rest = rest.trim();
+        let rest = rest.strip_prefix(['=', ':']).unwrap_or(rest).trim();
+        (!rest.is_empty()).then_some((at, rest))
+    })
+}
+
+/// Whether a written name is the authored part name, ignoring case and
+/// reading a hyphen or a space as the underscore (`x-intercept`, `x_intercept`).
+fn same_name(written: &str, name: &str) -> bool {
+    written.len() == name.len()
+        && written
+            .chars()
+            .zip(name.chars())
+            .all(|(a, b)| a.eq_ignore_ascii_case(&b) || (b == '_' && matches!(a, '-' | ' ')))
+}
+
+/// The offset just after the bracket pair that opens `text`.
+fn call_end(text: &str) -> Option<usize> {
+    let mut depth = 0_usize;
+    for (at, ch) in text.char_indices() {
+        match ch {
+            '(' => depth += 1,
+            ')' => {
+                depth = depth.checked_sub(1)?;
+                if depth == 0 {
+                    return Some(at + 1);
+                }
+            }
+            _ => {}
+        }
+    }
+    None
+}
+
+/// The values of a tuple answer to a multipart question: `(6, -17)` or
+/// `(a, b, c) = (1, 2, 3)`, read by position. The names before the `=` must be the
+/// authored names in the authored order.
+pub(super) fn tuple<'a>(parts: &[AnswerPart], text: &'a str) -> Option<Vec<&'a str>> {
+    let mut text = text.trim();
+    if let Some((names, values)) = text.split_once('=') {
+        let names: Vec<&str> = names
+            .trim()
+            .strip_prefix('(')?
+            .strip_suffix(')')?
+            .split(',')
+            .map(str::trim)
+            .collect();
+        if names.len() != parts.len()
+            || names
+                .iter()
+                .zip(parts)
+                .any(|(name, part)| *name != part.name)
+        {
+            return None;
+        }
+        text = values.trim();
+    }
+    let inner = text.strip_prefix('(')?.strip_suffix(')')?;
+    // One bracket pair must enclose the whole text: `(1, 2), (3, 4)` is not a tuple.
+    (call_end(text)? == text.len()).then_some(())?;
+    super::structured::ordered_parts(parts, inner)
 }

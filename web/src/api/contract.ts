@@ -54,6 +54,7 @@ import type {
   ReviewDocument,
   ReviewListResponse,
   UngradedListResponse,
+  OverturnsResponse,
 } from './types-review';
 import type {
   IntegratedGrade,
@@ -182,6 +183,7 @@ export interface ApiClient {
 
   // The recovery path of the third outcome (D-F2). Admin only, like the four above.
   listUngraded(): Promise<UngradedListResponse>;
+  listOverturns(): Promise<OverturnsResponse>;
   regradeUngraded(attemptId: string, outcome: 'correct' | 'incorrect'): Promise<RegradeResponse>;
 }
 
@@ -292,6 +294,7 @@ export const ROUTES: readonly RouteRow[] = [
 
   // f4-outcome: the recovery path of the third outcome (D-F2). Admin only.
   { method: 'GET', path: '/api/admin/ungraded', auth: 'S', via: 'method', client: 'listUngraded' },
+  { method: 'GET', path: '/api/admin/equivalence/overturns', auth: 'S', via: 'method', client: 'listOverturns' },
   { method: 'POST', path: '/api/admin/ungraded/{attempt_id}/regrade', auth: 'S', via: 'method', client: 'regradeUngraded' },
 ];
 

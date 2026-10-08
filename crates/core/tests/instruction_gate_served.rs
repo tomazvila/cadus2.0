@@ -375,8 +375,13 @@ fn stands_alone(text: &str, token: &str) -> bool {
 
 /// The give-away ladder of one answer: one rung, and it states the answer.
 fn give_away(answer: &str) -> String {
-    let rung = serde_json::to_string(&format!("The answer is {answer}."))
-        .expect("a string writes as JSON");
+    // A one-letter answer is a symbol: only an equation in math mode states it.
+    let text = if answer.chars().count() == 1 && answer.chars().all(char::is_alphabetic) {
+        format!("The answer is $x = {answer}$.")
+    } else {
+        format!("The answer is {answer}.")
+    };
+    let rung = serde_json::to_string(&text).expect("a string writes as JSON");
     format!(r#"{{"hints": [{rung}]}}"#)
 }
 

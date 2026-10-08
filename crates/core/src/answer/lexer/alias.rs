@@ -7,7 +7,9 @@
 use super::{Tok, Token};
 
 /// The `arc` spellings of the inverse functions, with the name that the grammar knows.
-const ARC_NAMES: [(&str, &str); 4] = [
+const ARC_NAMES: [(&str, &str); 6] = [
+    ("arcsec", "asec"),
+    ("arccsc", "acsc"),
     ("arctan", "atan"),
     ("arcsin", "asin"),
     ("arccos", "acos"),

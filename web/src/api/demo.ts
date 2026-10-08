@@ -469,6 +469,7 @@ export function createDemoApi(): ApiClient {
     revokeContent: async () => refuse(403, 'forbidden', DEMO_ADMIN_ONLY),
     // The recovery path of the third outcome is admin-only too (D-F2).
     listUngraded: async () => refuse(403, 'forbidden', DEMO_ADMIN_ONLY),
+    listOverturns: async () => refuse(403, 'forbidden', DEMO_ADMIN_ONLY),
     regradeUngraded: async () => refuse(403, 'forbidden', DEMO_ADMIN_ONLY),
   };
 }

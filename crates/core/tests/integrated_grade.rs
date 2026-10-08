@@ -167,12 +167,14 @@ fn an_opened_hint_marks_the_field_assisted() {
 
 #[test]
 fn an_answer_the_checker_cannot_read_is_ungraded_and_credits_nothing() {
+    // Grader pass 4 reads spoken numbers, so "plenty of kilometers" is the value 15. The unread
+    // answer here is a phrase with no number in it.
     let item = item();
     let result = grade(
         &item,
         &Submission {
             method: None,
-            steps: vec![response("fuel-rate", "about fifteen")],
+            steps: vec![response("fuel-rate", "plenty of kilometers")],
             final_answer: response("final", "0.120"),
             reasoning: None,
         },

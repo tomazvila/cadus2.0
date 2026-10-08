@@ -30,10 +30,10 @@ fn exact_values_keep_equivalence_and_refuse_learner_selected_rounding() {
 #[test]
 fn approximate_values_use_the_authored_precision_without_truncation() {
     let contract = AnswerContract::Approx { decimals: 2 };
-    for given in ["0.33", "0.3300", "33/100"] {
+    for given in ["0.33", "0.3300", "33/100", "1/3"] {
         assert!(verdict("1/3", given, contract.clone()));
     }
-    for given in ["0.3", "0.339", "0.33001", "1/3"] {
+    for given in ["0.3", "0.339", "0.33001"] {
         assert!(!verdict("1/3", given, contract.clone()));
     }
     assert!(verdict("-1/3", "-0.33", contract.clone()));

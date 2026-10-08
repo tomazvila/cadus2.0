@@ -73,9 +73,11 @@ fn a_sympy_name_gets_no_deterministic_verdict() {
         E,
         "a name that is not a function or variable",
     );
-    // 1.0: True. `oo` is SymPy's infinity. 2.0 has no infinity value.
-    assert_undecidable("∞", "oo", E, "a name that is not a function or variable");
-    assert_undecidable("-∞", "-oo", E, "a name that is not a function or variable");
+    // 1.0: True. `oo` is SymPy's infinity. 2.0 reads a whole answer `oo`, `∞`, or
+    // `infinity` as one value, with its sign (grader pass 4).
+    assert_eq!(check("∞", "oo", E), decided(true, false));
+    assert_eq!(check("-∞", "-oo", E), decided(true, false));
+    assert_eq!(check("∞", "-oo", E), decided(false, false));
 }
 
 #[test]
@@ -198,14 +200,9 @@ fn a_decimal_of_ten_significant_digits_is_the_value_it_rounds() {
     assert_eq!(check("8*sqrt(2)", "11.31370850", E), decided(true, true));
     // A radical over a divisor:
     assert_eq!(check("2√3/3", "1.154700538", E), decided(true, true));
-    // A nested radical. The canonical form of `sqrt(2 + sqrt(3))` is a
-    // polynomial over a `sqrt` call, because the radicand is not a rational, so
-    // the rounding rule does not read it and the pair keeps the wrong verdict.
-    // It is one of the 5 pairs of the residue.
-    assert_eq!(
-        check("√(2 + √3)/2", "0.9659258263", E),
-        decided(false, false)
-    );
+    // A nested radical. `sqrt(2 + sqrt(3))` denests into a sum of square roots,
+    // so the rounding rule reads it (grader pass 4).
+    assert_eq!(check("√(2 + √3)/2", "0.9659258263", E), decided(true, true));
     // A fraction is the other shape of the residue. 1.0: True, at 1e-6 on two
     // values 1e-6 apart. A fraction carries no digit count, so no rounding reads
     // it and 2.0 grades it wrong.

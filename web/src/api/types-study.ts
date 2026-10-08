@@ -464,6 +464,8 @@ export interface AnswerResponse {
   };
   /** The model's one-line why of a refused equivalence verdict. */
   equivalence_reason?: string;
+  /** The learner line of a refused check: "Expected 6/5 (1.2). You entered 2." */
+  checker_text?: string;
   /**
    * Amendment K point 6: the background grading of a written proof. Present (pending,
    * with the job id to poll) only on an ungraded written proof; `null` otherwise.

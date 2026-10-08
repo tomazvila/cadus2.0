@@ -423,7 +423,9 @@ fn every_answer_the_grammar_accepts_also_canonicalizes() {
     // corpus from 3,259 to 3,261 accepted answers. Every accepted answer canonicalizes.
     assert_eq!(
         canonical,
-        3_285,
+        // Stabilize pass after grader pass 4 (2026-10-08): 3,285 to 3,293. The 8 rows are
+        // `∞`, `-∞`, `infinite`, `3x^2 dx`, `4y^3 · dy/dx`, and `2y · dy/dx + 3x^2`.
+        3_293,
         "the first refusals are {:?}",
         refused.iter().take(5).collect::<Vec<_>>()
     );

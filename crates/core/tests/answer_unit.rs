@@ -113,13 +113,9 @@ fn a_letter_outside_the_unit_position_keeps_its_variable_reading() {
     );
     assert_eq!(ast("m"), v("m"));
     assert_eq!(ast("cm"), Ast::Mul(vec![v("c"), v("m")]));
-    assert_eq!(
-        ast("12 m/s^2"),
-        Ast::Div(
-            Box::new(Ast::Mul(vec![int(12), v("m")])),
-            Box::new(Ast::Pow(Box::new(v("s")), 2))
-        )
-    );
+    // Grader pass 4 (units) put the acceleration unit `m/s^2` into the table, so a
+    // spaced `12 m/s^2` is a measured value. The glued `m` and `s` above stay variables.
+    assert_eq!(ast("12 m/s^2"), quantity(int(12), "m/s^2"));
     // A spelling outside the table is no unit: `5 M/S` and `5 furlong`.
     assert_eq!(
         ast("5 M/S"),

@@ -234,10 +234,18 @@ pub(super) fn validate(check: PropertyCheck, args: &PropertyArgs) -> Result<(), 
 fn predicate(check: PropertyCheck, args: &PropertyArgs) -> Result<Predicate, Undecidable> {
     if args
         .keys()
-        .any(|name| !check.allowed().contains(&name.as_str()))
+        .any(|name| name != "unit" && !check.allowed().contains(&name.as_str()))
     {
         return Err(Undecidable::new(
             "property args: an argument this property check does not take",
+        ));
+    }
+    if let Some(unit) = args.get("unit")
+        && !matches!(unit, PropertyArg::Text(text)
+            if matches!(canonical_form(&format!("1 {text}")), Ok(Canon::Quantity { .. })))
+    {
+        return Err(Undecidable::new(
+            "property args: `unit` must name a unit, such as \"m\"",
         ));
     }
     let predicate = match check {
@@ -409,12 +417,50 @@ pub(super) fn grade(check: PropertyCheck, args: &PropertyArgs, learner: &str) ->
         Ok(value) => value,
         Err(reason) => return Outcome::Undecidable(reason),
     };
+    let value = match in_authored_unit(args, value) {
+        Ok(value) => value,
+        Err(reason) => return Outcome::Undecidable(reason),
+    };
     match decide(&predicate, &value) {
         Ok(correct) => Outcome::Decided(Verdict {
             correct,
             notation: false,
         }),
         Err(reason) => Outcome::Undecidable(reason),
+    }
+}
+
+/// The number of a learner answer that carries a unit.
+///
+/// The optional argument `unit` names the unit of the item (`"m"`): a learner
+/// answer in that unit, or in an equal unit of the same kind, reads as its
+/// number in the authored unit. Without `unit` the contract does not know which
+/// unit the item asks for, so a learner answer with a unit gives no verdict.
+fn in_authored_unit(args: &PropertyArgs, value: Canon) -> Result<Canon, Undecidable> {
+    let Canon::Quantity {
+        quantity,
+        value: base,
+    } = &value
+    else {
+        return Ok(value);
+    };
+    let Some(PropertyArg::Text(unit)) = args.get("unit") else {
+        return Err(Undecidable::new(
+            "this item asks for a number; write the answer without a unit",
+        ));
+    };
+    let refusal = || Undecidable::new("the unit of the answer does not match the item");
+    match canonical_form(&format!("1 {unit}"))? {
+        Canon::Quantity {
+            quantity: authored,
+            value: one,
+        } if authored == *quantity => match (base.as_ref(), one.as_ref()) {
+            (Canon::Rational(base), Canon::Rational(one)) if !one.is_zero() => {
+                Ok(Canon::Rational(base / one))
+            }
+            _ => Err(refusal()),
+        },
+        _ => Err(refusal()),
     }
 }
 

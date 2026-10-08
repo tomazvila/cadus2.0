@@ -206,8 +206,11 @@ fn defect_a_dyadic_author_domain_aliases_pi_keys() {
         (ODD_INTEGERS, "cos(pi x/2)", "0", Ungraded), // DEFECT
         (HALVES, "cos(pi x)", "0", Ungraded),        // DEFECT
         (HALVES, "sin(2 pi x)", "0", Ungraded),      // DEFECT
-        (ODD_INTEGERS, "x + 1", "(x^2-1)/(x-1)", Ungraded), // REPAIRED-DOMAIN: the D46 refusal covers each key
-        (X, "x + 1", "(x^2-1)/(x-1)", Correct),
+        // Grader pass 4 limited the D46 quarter-point refusal to keys that contain `pi`. The key
+        // `x + 1` is now graded, and the learner formula has no value at the sample point 1,
+        // where the key is finite, so the verdict is wrong (step 3 of the function grade).
+        (ODD_INTEGERS, "x + 1", "(x^2-1)/(x-1)", Wrong),
+        (X, "x + 1", "(x^2-1)/(x-1)", Wrong), // no value at x = 1
         (X, "sin(pi x)", "0", Wrong),
         (X, "cos(pi x)", "-1", Wrong),
         (X, "sin(2 pi x)", "0", Wrong),
@@ -264,9 +267,9 @@ fn equal_forms_are_correct() {
         ),
         (X, "e^(30x) + x - e^(30x)", "x", Correct),
         (X, "cosh(10x)^2 - sinh(10x)^2", "1", Wrong), // the KEY loses its digits: authoring rule
-        (X, "1", "x/x", Correct),
+        (X, "1", "x/x", Wrong),                       // no value at x = 0
         (X, "1/(x - 33/32)", "32/(32x - 33)", Correct), // a pole on a sample point: 7 points
-        (X, "sqrt(x - 1)", "(x-1)^(1/2)", Correct),     // 6 finite points
+        (X, "sqrt(x - 1)", "(x-1)^(1/2)", Correct),   // 6 finite points
         (X, "sqrt(x - 1)", "sqrt(abs(x - 1))", Correct), // the 2 other points do not count
         (X, "asin(x/2)", "pi/2 - acos(x/2)", Correct),
         (X, "x^(3/2)", "x sqrt(x)", Correct),
@@ -396,7 +399,8 @@ fn refusals_at_authoring_time() {
         r#"{"kind":"function","vars":["x","x"]}"#,
         r#"{"kind":"function","vars":["e"]}"#,
         r#"{"kind":"function","vars":["xy"]}"#,
-        r#"{"kind":"function","vars":["x","y","z","w"]}"#,
+        // Grader pass 4 raised the variable limit from three to four, so five is the first refusal.
+        r#"{"kind":"function","vars":["x","y","z","w","v"]}"#,
     ] {
         assert!(
             serde_json::from_str::<AnswerContract>(doc).is_err(),

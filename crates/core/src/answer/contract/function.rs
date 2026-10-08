@@ -43,7 +43,7 @@ const EXTRA_DOMAINS: [(f64, f64); 3] = [(0.05, 1.5), (2.25, 12.25), (-0.95, 0.95
 /// such as `+ x` is then wrong at a point where the key is large.
 const MAX_SCALE: f64 = 1e4;
 
-const BAD_VARS: &str = "a function contract requires one to three distinct variable names";
+const BAD_VARS: &str = "a function contract requires one to four distinct variable names";
 const BAD_DOMAIN: &str =
     "a function domain requires two exact rationals with low below high for a listed variable";
 const POINT_NEAR_ZERO: &str =
@@ -60,7 +60,7 @@ const QUARTER_POINTS: &str =
 /// The checked form of a `function` contract. `domain[i]` belongs to `vars[i]`.
 #[derive(Debug, Clone, PartialEq)]
 pub struct FunctionSpec {
-    /// One to three variable names.
+    /// One to four variable names.
     pub vars: Vec<String>,
     /// If true, a difference that is one constant is correct.
     pub up_to_constant: bool,
@@ -82,7 +82,7 @@ impl FunctionSpec {
         domain: &BTreeMap<String, (String, String)>,
     ) -> Result<Self, Undecidable> {
         let names: BTreeSet<&String> = vars.iter().collect();
-        let listed = (1..=3).contains(&vars.len())
+        let listed = (1..=4).contains(&vars.len())
             && names.len() == vars.len()
             && vars.iter().all(|name| one_variable(name));
         if !listed {
@@ -281,7 +281,12 @@ impl FunctionSpec {
 
 /// Whether the parser reads the name as one variable (`e` and `pi` are constants).
 fn one_variable(name: &str) -> bool {
-    matches!(parse(&normalize(name).source), Ok(Ast::Var(read)) if read == name)
+    // The parser reads the name with the name declared, so `rho` and `nT` are
+    // variables, while `xy` is still the product `x*y` and `sin` still a function.
+    crate::answer::parse::with_variables(
+        &[name.to_string()],
+        || matches!(parse(&normalize(name).source), Ok(Ast::Var(read)) if read == name),
+    )
 }
 
 fn interval(bounds: Option<&(String, String)>) -> Result<(f64, f64), Undecidable> {
@@ -309,6 +314,11 @@ fn rational(text: &str) -> Option<f64> {
 /// finite points, a constant that is not additive (D44), or an `abs` argument
 /// that keeps one sign on the default domain (D45).
 pub fn expected(spec: &FunctionSpec, expected: &str) -> Result<Canon, Undecidable> {
+    crate::answer::parse::with_variables(&spec.vars, || read_expected(spec, expected))
+}
+
+/// Read and validate an authored key with the item variables known to the parser.
+fn read_expected(spec: &FunctionSpec, expected: &str) -> Result<Canon, Undecidable> {
     let normalized = normalize(expected);
     if let Some(reason) = ambiguous_notation(&normalized.source) {
         return Err(Undecidable::new(reason));
@@ -325,7 +335,9 @@ pub fn expected(spec: &FunctionSpec, expected: &str) -> Result<Canon, Undecidabl
             "the authored function uses a name outside its variables",
         ));
     }
-    if spec.quarter_points() {
+    // A multiple of `pi` times a point on a quarter has one value at every point,
+    // so only a key with `pi` in it needs the refusal.
+    if spec.quarter_points() && normalized.source.contains("pi") {
         return Err(Undecidable::new(QUARTER_POINTS));
     }
     let spec = spec.for_key(formula);
@@ -362,6 +374,11 @@ fn ambiguous_notation(source: &str) -> Option<&'static str> {
 /// Grade a learner text against an authored key.
 #[must_use]
 pub fn check(spec: &FunctionSpec, expected: &str, learner: &str) -> Outcome {
+    crate::answer::parse::with_variables(&spec.vars, || read_pair(spec, expected, learner))
+}
+
+/// Parse and grade a pair with the item variables known to the parser.
+fn read_pair(spec: &FunctionSpec, expected: &str, learner: &str) -> Outcome {
     let trees = parse(&normalize(expected).source)
         .and_then(|key| parse(&normalize(learner).source).map(|answer| (key, answer)));
     match trees {
@@ -386,9 +403,38 @@ pub fn grade(expected: &Ast, learner: &Ast, spec: &FunctionSpec) -> Verdict {
     let same_form =
         matches!((canon(expected), canon(learner)), (Ok(key), Ok(answer)) if key == answer);
     Verdict {
-        correct: same_form || (spec.permits_each_name(learner) && agrees(expected, learner, &spec)),
+        correct: same_domain(expected, learner, &spec)
+            && (same_form || (spec.permits_each_name(learner) && agrees(expected, learner, &spec))),
         notation: false,
     }
+}
+
+/// The values that the domain probe gives each variable: both signs, the
+/// integers where a typical denominator or radicand vanishes, and the halves.
+const PROBE_VALUES: [f64; 15] = [
+    -4.0, -3.0, -2.5, -2.0, -1.5, -1.0, -0.5, 0.0, 0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 4.0,
+];
+
+/// Whether the learner has a value at each probe point where the key has one.
+/// Equal means equal on the natural domain of the key: `x + 1` and
+/// `(x^2 - 1)/(x - 1)` differ, because the learner has no value at 1. A learner
+/// that also has values where the key has none (`ln|x|` for `ln(x)`) is correct.
+/// The values come from the sample points.
+fn same_domain(expected: &Ast, learner: &Ast, spec: &FunctionSpec) -> bool {
+    (0..PROBE_VALUES.len()).all(|point| {
+        // A variable with a written domain keeps to it: the author said where
+        // the variable lives.
+        let mut env = spec.sample_point(point % SAMPLE_FRACTIONS.len(), 0.0);
+        for (index, name) in spec.vars.iter().enumerate() {
+            if spec.defaulted[index] {
+                env.insert(
+                    name.clone(),
+                    PROBE_VALUES[(point + 4 * index) % PROBE_VALUES.len()],
+                );
+            }
+        }
+        eval(expected, &env).is_none() || eval(learner, &env).is_some()
+    })
 }
 
 /// Whether the two formulas agree. With `up_to_constant` the rule must hold with

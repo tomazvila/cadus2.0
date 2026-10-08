@@ -262,7 +262,9 @@ fn grouped_with_unit(s: &str) -> Option<String> {
                 || c.is_ascii_digit()
                 || matches!(c, ' ' | '/' | '^' | '°' | '²' | '³')
         });
-    if !((currency && words.is_empty()) || unit_tail) {
+    // A grouped number with a decimal part (`1,205.50`) is one value as well.
+    let decimal = fraction.len() > 1 && words.is_empty();
+    if !((currency && words.is_empty()) || unit_tail || decimal) {
         return None;
     }
     let plain: String = number.chars().filter(|c| *c != ',').collect();

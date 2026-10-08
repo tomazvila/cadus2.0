@@ -319,15 +319,9 @@ fn a_short_letter_run_splits_into_single_letter_variables() {
 #[test]
 fn a_letter_run_the_grammar_does_not_own_stays_undecidable() {
     for text in [
-        // A differential.
-        "dx",
-        "3x^2 dx",
-        "dy/dx",
-        "2y · dy/dx",
         // A word, an upper-case label, and a name with a digit.
         "yes",
         "no",
-        "oo",
         "DNE",
         "$\\{HH, HT, TH, TT\\}$",
         "$sY(s) - y(0)$",
@@ -342,6 +336,21 @@ fn a_letter_run_the_grammar_does_not_own_stays_undecidable() {
             "{text:?} must stay undecidable"
         );
     }
+}
+
+#[test]
+fn a_differential_is_one_symbol_and_never_a_product() {
+    // Grader pass 4: `dx` is the symbol `dx`, which equals only itself.
+    for text in ["dx", "3x^2 dx", "dy/dx", "2y · dy/dx"] {
+        assert!(
+            parse(&normalize(text).source).is_ok(),
+            "{text:?} must parse"
+        );
+    }
+    assert_eq!(value("dy/dx"), value("dy / dx"));
+    assert_ne!(value("dy/dx"), value("dx/dy"));
+    assert_ne!(value("dx"), value("d*x"));
+    assert_ne!(value("dy/dx"), value("y/x"));
 }
 
 #[test]

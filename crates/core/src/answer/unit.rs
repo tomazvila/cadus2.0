@@ -50,6 +50,28 @@ pub enum Quantity {
     Concentration,
     /// An amount of substance per volume, in moles per liter.
     Molarity,
+    /// A power, in watts.
+    Power,
+    /// A force, in newtons.
+    Force,
+    /// An electric potential, in volts.
+    Voltage,
+    /// A pressure, in pascals.
+    Pressure,
+    /// An acceleration, in meters per second squared.
+    Acceleration,
+    /// A mass per volume of space, in grams per cubic centimeter.
+    Density,
+    /// A mass flow rate, in grams per second.
+    MassRate,
+    /// A dollar price per kilogram.
+    DollarPerMass,
+    /// An electric resistance, in ohms.
+    Resistance,
+    /// A volume of liquid per length, in milliliters per centimeter.
+    VolumePerLength,
+    /// A spring constant, in newtons per meter.
+    ForceConstant,
 }
 
 /// One unit of the table.
@@ -60,7 +82,7 @@ pub struct Unit {
     /// The kind the unit measures.
     pub quantity: Quantity,
     /// The count of base units in one of this unit, as a numerator and a denominator.
-    pub scale: (u32, u32),
+    pub scale: (u64, u64),
 }
 
 /// The Foundations units.
@@ -222,10 +244,94 @@ const UNITS: &[Unit] = &[
     unit("mol/l", Quantity::Molarity, (1, 1)),
     unit("mmol/L", Quantity::Molarity, (1, 1_000)),
     unit("mmol/l", Quantity::Molarity, (1, 1_000)),
+    unit("t", Quantity::Mass, (1_000_000, 1)),
+    unit("dm", Quantity::Length, (10, 1)),
+    unit("decimeter", Quantity::Length, (10, 1)),
+    unit("decimeters", Quantity::Length, (10, 1)),
+    unit("decimetre", Quantity::Length, (10, 1)),
+    unit("decimetres", Quantity::Length, (10, 1)),
+    unit("um", Quantity::Length, (1, 10_000)),
+    unit("µm", Quantity::Length, (1, 10_000)),
+    unit("μm", Quantity::Length, (1, 10_000)),
+    unit("cup", Quantity::Volume, (2_365_882_365, 10_000_000)),
+    unit("cups", Quantity::Volume, (2_365_882_365, 10_000_000)),
+    unit("gallon", Quantity::Volume, (3_785_411_784, 1_000_000)),
+    unit("gallons", Quantity::Volume, (3_785_411_784, 1_000_000)),
+    unit("megaliter", Quantity::Volume, (1_000_000_000, 1)),
+    unit("megaliters", Quantity::Volume, (1_000_000_000, 1)),
+    unit("megalitre", Quantity::Volume, (1_000_000_000, 1)),
+    unit("megalitres", Quantity::Volume, (1_000_000_000, 1)),
+    unit("kph", Quantity::Speed, (5, 18)),
+    unit("km/hour", Quantity::Speed, (5, 18)),
+    unit("km/day", Quantity::Speed, (5, 432)),
+    unit("cm/s", Quantity::Speed, (1, 100)),
+    unit("km^2", Quantity::Area, (10_000_000_000, 1)),
+    unit("mm^2", Quantity::Area, (1, 100)),
+    unit("dm^2", Quantity::Area, (100, 1)),
+    unit("mm^3", Quantity::CubicVolume, (1, 1_000)),
+    unit("dm^3", Quantity::CubicVolume, (1_000, 1)),
+    unit("N/m", Quantity::ForceConstant, (1, 1)),
+    unit("kN/m", Quantity::ForceConstant, (1_000, 1)),
+    unit("N/cm", Quantity::ForceConstant, (100, 1)),
+    unit("m^3/s", Quantity::Flow, (1_000_000, 1)),
+    unit("m^3/h", Quantity::Flow, (2_500, 9)),
+    unit("deg", Quantity::Angle, (1, 1)),
+    unit("C", Quantity::Temperature, (1, 1)),
+    unit("K", Quantity::Temperature, (1, 1)),
+    unit("kelvin", Quantity::Temperature, (1, 1)),
+    unit("Kelvin", Quantity::Temperature, (1, 1)),
+    unit("W", Quantity::Power, (1, 1)),
+    unit("watt", Quantity::Power, (1, 1)),
+    unit("watts", Quantity::Power, (1, 1)),
+    unit("kW", Quantity::Power, (1_000, 1)),
+    unit("kilowatt", Quantity::Power, (1_000, 1)),
+    unit("kilowatts", Quantity::Power, (1_000, 1)),
+    unit("MW", Quantity::Power, (1_000_000, 1)),
+    unit("N", Quantity::Force, (1, 1)),
+    unit("newton", Quantity::Force, (1, 1)),
+    unit("newtons", Quantity::Force, (1, 1)),
+    unit("kN", Quantity::Force, (1_000, 1)),
+    unit("kilonewton", Quantity::Force, (1_000, 1)),
+    unit("kilonewtons", Quantity::Force, (1_000, 1)),
+    unit("V", Quantity::Voltage, (1, 1)),
+    unit("volt", Quantity::Voltage, (1, 1)),
+    unit("volts", Quantity::Voltage, (1, 1)),
+    unit("kV", Quantity::Voltage, (1_000, 1)),
+    unit("mV", Quantity::Voltage, (1, 1_000)),
+    unit("Pa", Quantity::Pressure, (1, 1)),
+    unit("kPa", Quantity::Pressure, (1_000, 1)),
+    unit("MPa", Quantity::Pressure, (1_000_000, 1)),
+    unit("bar", Quantity::Pressure, (100_000, 1)),
+    unit("m/s^2", Quantity::Acceleration, (1, 1)),
+    unit("cm/s^2", Quantity::Acceleration, (1, 100)),
+    unit("km/h^2", Quantity::Acceleration, (1, 12_960)),
+    unit("g/cm^3", Quantity::Density, (1, 1)),
+    unit("kg/m^3", Quantity::Density, (1, 1_000)),
+    unit("kg/L", Quantity::Concentration, (1_000_000, 1)),
+    unit("kg/l", Quantity::Concentration, (1_000_000, 1)),
+    unit("g/s", Quantity::MassRate, (1, 1)),
+    unit("g/min", Quantity::MassRate, (1, 60)),
+    unit("g/h", Quantity::MassRate, (1, 3_600)),
+    unit("g/day", Quantity::MassRate, (1, 86_400)),
+    unit("mg/s", Quantity::MassRate, (1, 1_000)),
+    unit("mg/min", Quantity::MassRate, (1, 60_000)),
+    unit("mg/h", Quantity::MassRate, (1, 3_600_000)),
+    unit("kg/s", Quantity::MassRate, (1_000, 1)),
+    unit("kg/min", Quantity::MassRate, (50, 3)),
+    unit("kg/h", Quantity::MassRate, (5, 18)),
+    unit("kg/day", Quantity::MassRate, (5, 432)),
+    unit("$/kg", Quantity::DollarPerMass, (1, 1)),
+    unit("dollar/kg", Quantity::DollarPerMass, (1, 1)),
+    unit("dollars/kg", Quantity::DollarPerMass, (1, 1)),
+    unit("ohm", Quantity::Resistance, (1, 1)),
+    unit("ohms", Quantity::Resistance, (1, 1)),
+    unit("Ω", Quantity::Resistance, (1, 1)),
+    unit("L/km", Quantity::VolumePerLength, (1_000, 100_000)),
+    unit("l/km", Quantity::VolumePerLength, (1_000, 100_000)),
 ];
 
 /// Build one table entry.
-const fn unit(spelling: &'static str, quantity: Quantity, scale: (u32, u32)) -> Unit {
+const fn unit(spelling: &'static str, quantity: Quantity, scale: (u64, u64)) -> Unit {
     Unit {
         spelling,
         quantity,
@@ -251,6 +357,7 @@ impl Unit {
             "°F" | "F" | "fahrenheit" | "Fahrenheit" => {
                 BigRational::new(BigInt::from(-160), BigInt::from(9))
             }
+            "K" | "kelvin" | "Kelvin" => BigRational::new(BigInt::from(-5_463), BigInt::from(20)),
             _ => BigRational::from_integer(BigInt::from(0)),
         }
     }

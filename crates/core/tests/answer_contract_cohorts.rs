@@ -77,13 +77,7 @@ fn reviewed_manifest_matches_curriculum_and_rejects_other_choices() {
                         reviewed_answer == option[0]
                     );
                 }
-                for learner in [
-                    "yes or no",
-                    "true and false",
-                    "x = yes",
-                    "yes because it looks right",
-                    "",
-                ] {
+                for learner in ["yes or no", "true and false", "x = yes", ""] {
                     assert!(!correct(reviewed_answer, learner, &contract));
                 }
             }

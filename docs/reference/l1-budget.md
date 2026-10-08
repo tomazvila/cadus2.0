@@ -492,11 +492,16 @@ same profile. They read this way:
   of the 20,000 events the fixture seeds. A learner ten times deeper would move
   those two rows and not the serve hand-off row.
 
-Benchmark A allocates 118,960 times for 2,000 iterations, which is 59.48 per
-instance. The bound is `ALLOCATION_BOUND = 119_554`, the measured count plus 0.5
-percent, rounded down: floor(118,960 x 1.005). The headroom is 594 allocations
-over the loop, which is 0.297 per iteration. The count is a deterministic literal,
+Benchmark A allocates 122,560 times for 2,000 iterations, which is 61.28 per
+instance. The bound is `ALLOCATION_BOUND = 123_172`, the measured count plus 0.5
+percent, rounded down: floor(122,560 x 1.005). The headroom is 612 allocations
+over the loop, which is 0.306 per iteration. The count is a deterministic literal,
 unlike the timings in the table above.
+
+The count was measured on 2026-10-08 on the grader pass 4 tree. Pass 4 reads
+more spellings on every canonical form (named parts, product names, domain
+probes), which added 1.80 allocations per instance; the previous literal was
+118,960 with the bound 119,554.
 
 The count was measured on 2026-10-07 (evening) on the tree with the whole-number
 list reader, the mixed-number form and the per-item figures. The list reader

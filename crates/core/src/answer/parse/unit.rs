@@ -55,9 +55,12 @@ fn unit_split(tokens: &[Token], glued_single_letter: bool) -> Option<(&'static s
     let (last, head) = tokens.split_last()?;
     let unit = match &last.kind {
         Tok::Unit(glyph) => lookup(glyph)?,
-        // `5 F` and `5 J` are products outside a unit contract: `F` and `J` are
-        // variable names there.
-        Tok::Ident(name) if !glued_single_letter && matches!(name.as_str(), "F" | "J") => {
+        // `5 F` and `5 J` are products outside a unit contract: a lone capital
+        // and `t` are variable names there.
+        Tok::Ident(name)
+            if !glued_single_letter
+                && matches!(name.as_str(), "F" | "J" | "N" | "W" | "V" | "K" | "C" | "t") =>
+        {
             return None;
         }
         Tok::Ident(name) if spaced_or_long(name, last, glued_single_letter) => lookup(name)?,
@@ -119,19 +122,21 @@ fn temperature_unit(tokens: &[Token]) -> Option<(&'static str, &[Token])> {
     Some((unit.spelling, head))
 }
 
-/// Read a currency-per-mass suffix such as `€/kg`.
+/// Read a currency-per-mass suffix such as `€/kg` and `$/kg`.
 fn compound_currency_unit(tokens: &[Token]) -> Option<(&'static str, &[Token])> {
-    let (head, tail) = if matches!(tokens.first()?.kind, Tok::Unit(ref symbol) if symbol == "€")
-        && tokens.len() >= 4
-    {
+    let sign = |token: &Token| match &token.kind {
+        Tok::Unit(symbol) if symbol == "€" || symbol == "$" => Some(symbol.clone()),
+        _ => None,
+    };
+    let leading = tokens.first().and_then(sign).filter(|_| tokens.len() >= 4);
+    let (head, tail) = if leading.is_some() {
         let split = tokens.len().checked_sub(2)?;
         (&tokens[1..split], &tokens[split..])
     } else {
         let split = tokens.len().checked_sub(3)?;
-        let (head, tail) = tokens.split_at(split);
-        (head, tail)
+        tokens.split_at(split)
     };
-    let (slash, denominator) = match tail {
+    let (currency, denominator) = match tail {
         [
             Token {
                 kind: Tok::Slash, ..
@@ -140,7 +145,7 @@ fn compound_currency_unit(tokens: &[Token]) -> Option<(&'static str, &[Token])> 
                 kind: Tok::Ident(name),
                 ..
             },
-        ] => (true, name.as_str()),
+        ] => (leading?, name.as_str()),
         [
             currency,
             Token {
@@ -150,15 +155,13 @@ fn compound_currency_unit(tokens: &[Token]) -> Option<(&'static str, &[Token])> 
                 kind: Tok::Ident(name),
                 ..
             },
-        ] if matches!(currency.kind, Tok::Unit(ref symbol) if symbol == "€") => {
-            (true, name.as_str())
-        }
-        _ => (false, ""),
+        ] => (sign(currency)?, name.as_str()),
+        _ => return None,
     };
-    if !slash || denominator != "kg" {
+    if denominator != "kg" {
         return None;
     }
-    Some((lookup("€/kg")?.spelling, head))
+    Some((lookup(&format!("{currency}/kg"))?.spelling, head))
 }
 
 /// Read a currency sign in front of the number: `$5` and `€5`.
@@ -175,6 +178,9 @@ fn leading_currency(tokens: &[Token]) -> Option<(&'static str, &[Token])> {
 
 /// Read a compound unit of three tokens at the end: `km/h`, `m/s`, `cm^2`, `m^3`.
 fn compound_unit(tokens: &[Token], glued_single_letter: bool) -> Option<(&'static str, &[Token])> {
+    if let Some(found) = quotient_power_unit(tokens, glued_single_letter) {
+        return Some(found);
+    }
     let split = tokens.len().checked_sub(3)?;
     let (head, tail) = tokens.split_at(split);
     let [first, middle, last] = tail else {
@@ -194,6 +200,40 @@ fn compound_unit(tokens: &[Token], glued_single_letter: bool) -> Option<(&'stati
     Some((lookup(&spelling)?.spelling, head))
 }
 
+/// Read a unit of five tokens at the end: `m/s^2`, `g/cm^3`, and `m^3/s`.
+fn quotient_power_unit(
+    tokens: &[Token],
+    glued_single_letter: bool,
+) -> Option<(&'static str, &[Token])> {
+    let split = tokens.len().checked_sub(5)?;
+    let (head, tail) = tokens.split_at(split);
+    let [first, second, third, fourth, fifth] = tail else {
+        return None;
+    };
+    let spelling = match (
+        &first.kind,
+        &second.kind,
+        &third.kind,
+        &fourth.kind,
+        &fifth.kind,
+    ) {
+        (Tok::Ident(top), Tok::Slash, Tok::Ident(bottom), Tok::Pow, Tok::Num(power)) => {
+            format!("{top}/{bottom}^{power}")
+        }
+        (Tok::Ident(top), Tok::Pow, Tok::Num(power), Tok::Slash, Tok::Ident(bottom)) => {
+            format!("{top}^{power}/{bottom}")
+        }
+        _ => return None,
+    };
+    let Tok::Ident(top) = &first.kind else {
+        return None;
+    };
+    if !spaced_or_long(top, first, glued_single_letter) {
+        return None;
+    }
+    Some((lookup(&spelling)?.spelling, head))
+}
+
 /// Whether a unit spelled with letters takes its unit reading here.
 ///
 /// A one-letter spelling needs a space in front of it; a longer one does not.
@@ -202,7 +242,7 @@ fn spaced_or_long(name: &str, token: &Token, glued_single_letter: bool) -> bool 
 }
 
 /// Whether a tree is a number expression: literals, constants, roots, and
-/// arithmetic, with no variable and no function.
+/// arithmetic, with no variable and no function but the exponential.
 fn is_number_expression(value: &Ast) -> bool {
     match value {
         Ast::Integer(_)
@@ -214,6 +254,11 @@ fn is_number_expression(value: &Ast) -> bool {
         Ast::RationalPow { base, .. } => is_number_expression(base),
         Ast::Add(items) | Ast::Mul(items) => items.iter().all(is_number_expression),
         Ast::Div(left, right) => is_number_expression(left) && is_number_expression(right),
+        // `e^4` is the parser's `exp(4)`: a constant, so `e^4 - 1 m` is a quantity.
+        Ast::Func(name, arguments) => {
+            name == "exp"
+                && matches!(arguments.as_slice(), [argument] if is_number_expression(argument))
+        }
         _ => false,
     }
 }

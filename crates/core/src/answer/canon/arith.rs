@@ -3,10 +3,12 @@
 use num_bigint::BigInt;
 use num_integer::Integer;
 use num_rational::BigRational;
-use num_traits::{One, ToPrimitive, Zero};
+use num_traits::{One, Signed, ToPrimitive, Zero};
 
+use super::root::add_atom_root;
 use super::sum::{
-    bound_terms, extract_square, from_sum, insert_atom, is_one, one_poly, one_term, term,
+    atom_value, bound_terms, extract_square, from_sum, insert_atom, is_one, one_poly, one_term,
+    term,
 };
 use super::{Atom, Canon, MAX_BITS, Monomial, Poly, Undecidable, Work};
 
@@ -225,7 +227,33 @@ impl Work {
             let inner = inner.as_ref().clone();
             return self.add_root(monomial, coefficient, &inner, *index, exponent);
         }
+        if let Atom::Call(name, arguments) = atom
+            && name == "sqrt"
+            && let [Canon::Rational(value)] = arguments.as_slice()
+            && value.is_negative()
+        {
+            // The square of the root of a negative number is that number, so
+            // `(1 + sqrt(-5))(1 - sqrt(-5))` is 6.
+            let held = monomial.remove(atom).unwrap_or(0);
+            let total = held
+                .checked_add(exponent)
+                .ok_or_else(|| Undecidable::new("an exponent past the size bound"))?;
+            let (squares, rest) = total.div_mod_floor(&2);
+            let factor = self.rational_power(value, squares)?;
+            *coefficient = self.bounded(&*coefficient * factor)?;
+            if rest != 0 {
+                monomial.insert(atom.clone(), 1);
+            }
+            return Ok(());
+        }
         let Atom::Sqrt(radicand) = atom else {
+            let base = atom_value(atom.clone());
+            let rooted = monomial
+                .keys()
+                .any(|key| matches!(key, Atom::Root(inner, _) if inner.as_ref() == &base));
+            if rooted {
+                return add_atom_root(monomial, &base, atom, 1, exponent);
+            }
             return insert_atom(monomial, atom, exponent);
         };
         let (squares, rest) = exponent.div_mod_floor(&2);

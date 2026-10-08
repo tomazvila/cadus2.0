@@ -32,9 +32,42 @@ fn holds_div(node: &Ast) -> bool {
     }
 }
 
+/// Whether a decimal literal sits anywhere inside `node`.
+fn holds_decimal(node: &Ast) -> bool {
+    match node {
+        Ast::Decimal { .. } => true,
+        Ast::Neg(inner) | Ast::Pow(inner, _) | Ast::Sqrt(inner) => holds_decimal(inner),
+        Ast::RationalPow { base, .. } => holds_decimal(base),
+        Ast::Add(items) | Ast::Mul(items) => items.iter().any(holds_decimal),
+        Ast::Div(top, bottom) => holds_decimal(top) || holds_decimal(bottom),
+        Ast::Func(_, args) => args.iter().any(holds_decimal),
+        _ => false,
+    }
+}
+
 /// A rational expression in lowest terms, or an expression with no fraction.
+/// A decimal is not a fraction in lowest terms, so a decimal literal refuses.
 pub(super) fn simplified(tree: &Ast) -> bool {
+    if holds_decimal(tree) {
+        return false;
+    }
     match strip_neg(tree) {
+        Ast::Mul(items)
+            if items
+                .iter()
+                .any(|item| matches!(item, Ast::Fraction { .. })) =>
+        {
+            // A fraction coefficient times a variable part: `(3/5)x`.
+            let fractions = items
+                .iter()
+                .filter(|item| matches!(item, Ast::Fraction { .. }))
+                .count();
+            fractions == 1
+                && items.iter().all(|item| match item {
+                    Ast::Fraction { .. } => simplified(item),
+                    other => !holds_div(other),
+                })
+        }
         Ast::Fraction {
             numerator,
             denominator,
@@ -191,10 +224,14 @@ fn remainder(a: &[BigRational], b: &[BigRational]) -> Vec<BigRational> {
 }
 
 fn number_literal(node: &Ast) -> bool {
-    matches!(
-        strip_neg(node),
-        Ast::Integer(_) | Ast::Decimal { .. } | Ast::Fraction { .. }
-    )
+    match strip_neg(node) {
+        Ast::Integer(_) | Ast::Decimal { .. } => true,
+        Ast::Fraction {
+            numerator,
+            denominator,
+        } => denominator.is_positive() && numerator.gcd(denominator).is_one(),
+        _ => false,
+    }
 }
 
 /// `a(x - h)^2 + k`: the label of the learner (`y =`) is not part of the form.
@@ -301,11 +338,23 @@ fn ten_power(node: &Ast) -> Option<i64> {
     }
 }
 
-/// One factor written again and again: `5*5*5`, `x*x*x`.
-pub(super) fn repeated(tree: &Ast) -> bool {
+/// One factor written again and again: `5*5*5`, `x*x*x`. When the key is a
+/// product, the factor list must be the factor list of the key, in any order:
+/// `4*4` is not `2*2*2*2`.
+pub(super) fn repeated(tree: &Ast, expected: &str) -> bool {
     let Ast::Mul(factors) = tree else {
         return false;
     };
+    if let Ok(Ast::Mul(key_factors)) = parse(&normalize(expected).source) {
+        let mut rest: Vec<&Ast> = key_factors.iter().collect();
+        return factors.len() == rest.len()
+            && factors.iter().all(|factor| {
+                rest.iter()
+                    .position(|other| *other == factor)
+                    .map(|at| rest.swap_remove(at))
+                    .is_some()
+            });
+    }
     let atomic = |node: &Ast| {
         matches!(
             strip_neg(node),
@@ -326,6 +375,28 @@ pub(super) fn with_key_denominator(tree: &Ast, expected: &str) -> bool {
     }
 }
 
+/// Whether the text is `y` or a function label such as `f(x)`.
+fn is_line_label(text: &str) -> bool {
+    let label: String = text.chars().filter(|c| !c.is_whitespace()).collect();
+    let mut chars = label.chars();
+    label == "y"
+        || matches!(
+            (chars.next(), chars.next(), chars.next(), chars.next(), chars.next()),
+            (Some(name), Some('('), Some('x'), Some(')'), None) if name.is_alphabetic()
+        )
+}
+
+/// The text of an equation of a line, with a leading label `f(x) =` written as
+/// `y =`: both name the same line.
+pub(super) fn function_label_as_y(text: &str) -> String {
+    match text.split_once('=') {
+        Some((left, right)) if left.trim() != "y" && is_line_label(left) => {
+            format!("y = {right}")
+        }
+        _ => text.to_owned(),
+    }
+}
+
 /// The form of the text of an equation of a line.
 pub(super) fn line(form: NumericForm, text: &str) -> bool {
     let source = normalize(text).source;
@@ -336,13 +407,12 @@ pub(super) fn line(form: NumericForm, text: &str) -> bool {
         return false;
     }
     let side = |text: &str| parse(&normalize(text).source).ok();
+    let named = is_line_label(left);
     let (Some(left), Some(right)) = (side(left), side(right)) else {
         return false;
     };
     match form {
-        NumericForm::SlopeInterceptForm => {
-            left == Ast::Var("y".to_owned()) && slope_intercept_side(&right)
-        }
+        NumericForm::SlopeInterceptForm => named && slope_intercept_side(&right),
         NumericForm::StandardFormLine => standard_form(&left, &right),
         NumericForm::PointSlopeForm => point_slope(&left, &right),
         _ => false,
@@ -357,31 +427,65 @@ fn slope_intercept_side(right: &Ast) -> bool {
     };
     match terms.as_slice() {
         [only] => number_literal(only) || slope_term(only),
-        [first, second] => slope_term(first) && number_literal(second),
+        [first, second] => {
+            (slope_term(first) && number_literal(second))
+                || (number_literal(first) && slope_term(second))
+        }
         _ => false,
     }
 }
 
-/// A term `x`, `3x`, `-x`, `x/2`, `(3/4)x` with the variable `x`.
+/// A term `x`, `3x`, `-x`, `x/2`, `(3/4)x` with the variable `x`. Each
+/// coefficient is simplified: `4x/2` and `6/2` are not.
 fn slope_term(node: &Ast) -> bool {
     match strip_neg(node) {
         Ast::Var(name) => name == "x",
         Ast::Mul(factors) => {
             matches!(factors.as_slice(), [number, var] if number_literal(number) && matches!(var, Ast::Var(name) if name == "x"))
         }
-        Ast::Div(top, bottom) => number_literal(bottom) && slope_term(top),
+        Ast::Div(top, bottom) => {
+            let Ast::Integer(divisor) = strip_neg(bottom) else {
+                return false;
+            };
+            if divisor.is_one() || divisor.is_zero() {
+                return false;
+            }
+            match strip_neg(top) {
+                Ast::Var(name) => name == "x",
+                Ast::Mul(factors) => matches!(
+                    factors.as_slice(),
+                    [Ast::Integer(coefficient), Ast::Var(name)]
+                        if name == "x" && coefficient.gcd(divisor).is_one()
+                ),
+                _ => false,
+            }
+        }
         _ => false,
     }
 }
 
-/// The whole coefficient and the name of a term `3x`, `-y`, `x`.
+/// The value of a whole-number literal: `3`, or `3.0` with only zeros after the point.
+fn whole_literal(node: &Ast) -> Option<BigInt> {
+    match node {
+        Ast::Integer(value) => Some(value.clone()),
+        Ast::Decimal { mantissa, scale } => {
+            let power = BigInt::from(10).pow(*scale);
+            (mantissa % &power).is_zero().then(|| mantissa / power)
+        }
+        _ => None,
+    }
+}
+
+/// The whole coefficient and the name of a term `3x`, `x*3`, `-y`, `x`.
 fn integer_term(node: &Ast) -> Option<(BigInt, String)> {
     let negative = matches!(node, Ast::Neg(_));
     let core = strip_neg(node);
     let (coefficient, name) = match core {
         Ast::Var(name) => (BigInt::one(), name.clone()),
         Ast::Mul(factors) => match factors.as_slice() {
-            [Ast::Integer(value), Ast::Var(name)] => (value.clone(), name.clone()),
+            [number, Ast::Var(name)] | [Ast::Var(name), number] => {
+                (whole_literal(number)?, name.clone())
+            }
             _ => return None,
         },
         _ => return None,
@@ -389,14 +493,11 @@ fn integer_term(node: &Ast) -> Option<(BigInt, String)> {
     Some((if negative { -coefficient } else { coefficient }, name))
 }
 
+/// `Ax + By = C` with whole `A`, `B`, `C` in lowest terms and `A > 0` (`B > 0`
+/// when there is no `x` term). The terms may stand in either order.
 fn standard_form(left: &Ast, right: &Ast) -> bool {
-    let Ast::Integer(c) = strip_neg(right) else {
+    let Some(c) = whole_literal(strip_neg(right)) else {
         return false;
-    };
-    let c = if matches!(right, Ast::Neg(_)) {
-        -c
-    } else {
-        c.clone()
     };
     let terms: Vec<&Ast> = match left {
         Ast::Add(terms) => terms.iter().collect(),
@@ -407,18 +508,27 @@ fn standard_form(left: &Ast, right: &Ast) -> bool {
     let Some(parsed) = parsed else {
         return false;
     };
-    let names: Vec<&str> = parsed.iter().map(|(_, name)| name.as_str()).collect();
-    let ordered = matches!(names.as_slice(), ["x"] | ["y"] | ["x", "y"]);
-    let Some((first, _)) = parsed.first() else {
+    let mut names: Vec<&str> = parsed.iter().map(|(_, name)| name.as_str()).collect();
+    names.sort_unstable();
+    if !matches!(names.as_slice(), ["x"] | ["y"] | ["x", "y"]) {
         return false;
-    };
+    }
+    let leading = parsed
+        .iter()
+        .find(|(_, name)| name == "x")
+        .or_else(|| parsed.first());
     let gcd = parsed
         .iter()
         .fold(c.abs(), |acc, (coefficient, _)| acc.gcd(&coefficient.abs()));
-    ordered && first.is_positive() && gcd.is_one()
+    leading.is_some_and(|(first, _)| first.is_positive()) && gcd.is_one()
 }
 
 fn point_slope(left: &Ast, right: &Ast) -> bool {
+    point_slope_sides(left, right) || point_slope_sides(right, left)
+}
+
+/// `y - y1` on one side and `m(x - x1)` on the other.
+fn point_slope_sides(left: &Ast, right: &Ast) -> bool {
     let shifted = |node: &Ast, name: &str| match node {
         Ast::Var(var) => var == name,
         Ast::Add(items) => {

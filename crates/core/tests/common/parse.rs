@@ -136,19 +136,22 @@ pub fn value(text: &str) -> Canon {
 ///   production reads `7 L/min` and `18 degrees Celsius`, so
 ///   `value_with_unit` holds 12 and 0, and `prose_or_words` holds 3 and 164.
 ///   It still refuses `cos 70°`, a unit inside an expression.
+/// - Stabilize pass after grader pass 4 (2026-10-08): `expression_numeric` 228 to 232
+///   (`∞`, `-∞`), `expression_symbolic` 670 to 673 (`3x^2 dx`, `4y^3 · dy/dx`,
+///   `2y · dy/dx + 3x^2`), and `prose_or_words` 3 to 4 (`infinite`).
 pub const SHAPE_COUNTS: [(&str, usize, usize); 15] = [
     ("comma_list", 28, 15),
     ("decimal", 128, 0),
     ("equation", 1, 0),
-    ("expression_numeric", 228, 5),
-    ("expression_symbolic", 670, 16),
+    ("expression_numeric", 232, 1),
+    ("expression_symbolic", 673, 13),
     ("fraction", 350, 2),
     ("integer", 1622, 0),
     ("interval_ineq", 29, 5),
     ("mixed_number", 8, 0),
     ("ordered_tuple", 178, 0),
     ("other", 7, 0),
-    ("prose_or_words", 3, 164),
+    ("prose_or_words", 4, 163),
     ("quotient_remainder", 16, 0),
     ("set_or_list", 5, 0),
     ("value_with_unit", 12, 0),

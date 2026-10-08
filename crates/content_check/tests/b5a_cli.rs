@@ -24,7 +24,9 @@ fn grade_exact_fraction_against_decimal_is_correct() {
 
 #[test]
 fn grade_prose_learner_is_ungraded_with_a_reason() {
-    let result = grade(r#"{"kind":"exact"}"#, "3", "three");
+    // A bare number word ("three") reads as 3 since grader pass 4 (2026-10-08);
+    // a hedged sentence is still prose the grader cannot read.
+    let result = grade(r#"{"kind":"exact"}"#, "3", "maybe three or four");
     assert_eq!(result.exit, 0);
     let doc = result.doc();
     assert_eq!(doc["verdict"], "ungraded");
@@ -209,7 +211,7 @@ fn grade_batch_keeps_the_order_and_the_ids() {
     let lines = [
         json!({"id": "a", "contract": {"kind": "exact"}, "expected": "1/2", "learner": "0.5"}),
         json!({"id": "b", "contract": {"kind": "exact"}, "expected": "3", "learner": "4"}),
-        json!({"id": "c", "contract": {"kind": "exact"}, "expected": "3", "learner": "three"}),
+        json!({"id": "c", "contract": {"kind": "exact"}, "expected": "3", "learner": "maybe three or four"}),
     ]
     .map(|line| line.to_string());
     let result = run(&[

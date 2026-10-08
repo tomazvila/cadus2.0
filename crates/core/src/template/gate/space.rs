@@ -145,10 +145,19 @@ pub(super) fn check_samples(
             || crate::answer::check(&computed.text, &claimed, spec.answer_kind),
             |contract| crate::answer::check_contract(&computed.text, &claimed, contract),
         );
-        let agrees = matches!(
-            outcome,
-            Outcome::Decided(verdict) if verdict.correct
-        );
+        // A sample is an authored key: under a ratio contract it must be written
+        // as the key is, since a learner spelling such as `8/9` is not a key.
+        let key_reads = match &doc.answer_contract {
+            Some(contract @ crate::answer::AnswerContract::ReducedRatio) => {
+                contract.validate_expected(&claimed).is_ok()
+            }
+            _ => true,
+        };
+        let agrees = key_reads
+            && matches!(
+                outcome,
+                Outcome::Decided(verdict) if verdict.correct
+            );
         if !agrees {
             return Err(Rejection::new(
                 "sample-agreement",

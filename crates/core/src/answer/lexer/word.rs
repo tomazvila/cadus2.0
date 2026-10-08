@@ -46,14 +46,32 @@ pub(super) fn read_number(chars: &[char], at: usize) -> Result<(String, usize), 
 }
 
 /// Match `\frac{a}{b}` at `at` and return the two bodies and the index after it.
+///
+/// LaTeX reads one character for each argument that has no brace, so `\frac12`
+/// is `\frac{1}{2}` and `\frac1{2}` is the same fraction.
 pub(super) fn read_frac(chars: &[char], at: usize) -> Option<(&[char], &[char], usize)> {
-    let (numerator, after_first) = read_braced_after(chars, at, "\\frac")?;
-    if chars.get(after_first) != Some(&'{') {
-        return None;
+    let after_keyword = match_literal(chars, at, "\\frac")?;
+    let (numerator, after_first) = read_frac_argument(chars, after_keyword)?;
+    let (denominator, after_second) = read_frac_argument(chars, after_first)?;
+    Some((numerator, denominator, after_second))
+}
+
+/// Read one argument of `\frac` at `at`: a balanced brace body, or one letter or
+/// digit. The answer is the body and the index after the argument.
+fn read_frac_argument(chars: &[char], at: usize) -> Option<(&[char], usize)> {
+    let at = at
+        + chars[at.min(chars.len())..]
+            .iter()
+            .take_while(|c| c.is_whitespace())
+            .count();
+    if chars.get(at) == Some(&'{') {
+        let close = matching_delimiter(chars, at, '{', '}')?;
+        return Some((&chars[at + 1..close], close + 1));
     }
-    let close = matching_delimiter(chars, after_first, '{', '}')?;
-    let denominator = &chars[after_first + 1..close];
-    Some((numerator, denominator, close + 1))
+    chars
+        .get(at)
+        .filter(|c| c.is_ascii_alphanumeric())
+        .map(|_| (&chars[at..=at], at + 1))
 }
 
 /// Match `\sqrt[n]{a}` at `at` and return the index digits, the body, and the
@@ -171,6 +189,7 @@ pub(super) fn read_symbol(c: char, next: Option<char>) -> Result<(Tok, usize), U
         // The value label `x =` reaches the parser now (review finding #2). Every
         // other `=` is a relation, and the parser refuses it.
         ('=', _) => Tok::Eq,
+        ('!', next) if next != Some('=') => Tok::Bang,
         _ => return Err(Undecidable::new("a character outside the grammar")),
     };
     Ok((token, 1))
@@ -179,11 +198,17 @@ pub(super) fn read_symbol(c: char, next: Option<char>) -> Result<(Tok, usize), U
 /// Read the subscript that follows an `_` at `at - 1`: a braced body or one run
 /// of letters and digits. The answer is the subscript text and the index after it.
 ///
-/// A braced body holds letters, digits, `+`, and `-` only, so `a_{n-1}` is the
-/// name `a_n-1` and no other construct hides in a subscript.
+/// A braced or bracketed body holds letters, digits, `+`, and `-` only, so
+/// `a_{n-1}` and `a_(n-1)` are the name `a_n-1` and no other construct hides in
+/// a subscript.
 pub(super) fn read_subscript(chars: &[char], at: usize) -> Option<(String, usize)> {
-    if chars.get(at) == Some(&'{') {
-        let close = matching_delimiter(chars, at, '{', '}')?;
+    if matches!(chars.get(at), Some('{' | '(')) {
+        let (open, shut) = if chars.get(at) == Some(&'(') {
+            ('(', ')')
+        } else {
+            ('{', '}')
+        };
+        let close = matching_delimiter(chars, at, open, shut)?;
         let body: String = chars[at + 1..close]
             .iter()
             .filter(|c| !c.is_whitespace())

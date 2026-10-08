@@ -186,6 +186,20 @@ interface DisputedGrading {
 }
 
 /** `GET /api/admin/ungraded`. The list is oldest first. */
+/** One item of the overturn report: background checks that reversed a first-pass fail. */
+export interface OverturnItem {
+  item_digest: string;
+  topic: string;
+  checks: number;
+  overturned: number;
+  rate: number;
+}
+
+/** The operator report of items whose first pass the background check overturns. */
+export interface OverturnsResponse {
+  items: OverturnItem[];
+}
+
 export interface UngradedListResponse {
   items: UngradedAttempt[];
   /** The count of entries the recovery list keeps. */

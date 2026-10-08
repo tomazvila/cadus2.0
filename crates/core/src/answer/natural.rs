@@ -317,6 +317,8 @@ const UNIT_PHRASES: &[(&str, &str)] = &[
     ("cubic meter", "m^3"),
     ("sq cm", "cm^2"),
     ("sq m", "m^2"),
+    ("µm", "um"),
+    ("μm", "um"),
     ("secs", "s"),
     ("sec", "s"),
     ("hrs", "h"),
@@ -389,6 +391,8 @@ fn short_unit_word(word: &str) -> Option<&'static str> {
         "ml" | "millilitre" | "millilitres" | "milliliter" | "milliliters" => "mL",
         "mol" | "mole" | "moles" => "mol",
         "euro" | "euros" | "€" => "euro",
+        "dollar" | "dollars" | "$" => "dollar",
+        "day" | "days" => "day",
         "h" | "hr" | "hour" | "hours" => "h",
         "min" | "minute" | "minutes" => "min",
         "s" | "sec" | "second" | "seconds" => "s",
@@ -444,6 +448,19 @@ fn spoken_per(words: &mut Vec<String>) {
     };
     if at == 0 || at + 2 != words.len() {
         return;
+    }
+    // A price with its sign in front: `$2.8 per kg` reads `2.8 $/kg`.
+    if at == 1
+        && let Some(sign) = words[0].chars().next().filter(|c| matches!(c, '$' | '€'))
+        && let Some(bottom) = short_unit_word(&words[2])
+    {
+        let compound = format!("{sign}/{bottom}");
+        if super::unit::lookup(&compound).is_some() {
+            let number = words[0][sign.len_utf8()..].to_owned();
+            words.clear();
+            words.extend([number, compound]);
+            return;
+        }
     }
     let (Some(top), Some(bottom)) = (
         short_unit_word(&words[at - 1]),
@@ -714,6 +731,18 @@ fn strip_scale_word(problem: &str, text: &str) -> Option<String> {
 
 /// The words that mark an estimate in front of a number ("about 7.1").
 const HEDGE_WORDS: &[&str] = &["about", "approximately", "around", "roughly", "nearly"];
+
+/// The text after one leading estimate mark (`≈`, `~`, or a hedge word), or
+/// `None` when the text has none.
+pub(crate) fn strip_estimate_mark(text: &str) -> Option<&str> {
+    let text = text.trim_start();
+    for mark in ['≈', '~'] {
+        if let Some(rest) = text.strip_prefix(mark) {
+            return Some(rest.trim());
+        }
+    }
+    strip_hedge_word(text)
+}
 
 /// The text after one leading hedge word, or `None` when the text has none.
 fn strip_hedge_word(text: &str) -> Option<&str> {

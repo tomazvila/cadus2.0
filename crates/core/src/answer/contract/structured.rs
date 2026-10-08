@@ -57,17 +57,22 @@ pub(super) fn validate_shape(contract: &AnswerContract, value: &Canon) -> bool {
         AnswerContract::Approx { .. } => number(value),
         AnswerContract::Tolerance { .. } => matches!(value, Canon::Rational(_)),
         AnswerContract::RequiredForm { form } => match form {
-            NumericForm::FactoredLinear
-            | NumericForm::FactoredPolynomial
-            | NumericForm::ExpandedPolynomial
-            | NumericForm::StandardFormPolynomial => matches!(value, Canon::Poly(_)),
-            NumericForm::SimplestRadicalSum => {
+            // A constant is a polynomial of degree 0, so `-7` is an expanded polynomial.
+            NumericForm::ExpandedPolynomial | NumericForm::StandardFormPolynomial => {
+                matches!(value, Canon::Poly(_) | Canon::Rational(_))
+            }
+            NumericForm::FactoredLinear | NumericForm::FactoredPolynomial => {
+                matches!(value, Canon::Poly(_))
+            }
+            NumericForm::SimplestRadicalSum | NumericForm::SimplestRadical => {
                 matches!(value, Canon::Rational(_) | Canon::Radical(_))
             }
             NumericForm::RationalExponent
             | NumericForm::Radical
             | NumericForm::SimplifiedRational
             | NumericForm::VertexForm
+            | NumericForm::ExpandedLog
+            | NumericForm::CondensedLog
             | NumericForm::RepeatedMultiplication => true,
             _ => matches!(value, Canon::Rational(_)),
         },
@@ -75,7 +80,7 @@ pub(super) fn validate_shape(contract: &AnswerContract, value: &Canon) -> bool {
             matches!(value, Canon::Quantity { quantity: actual, .. } if actual == quantity)
         }
         AnswerContract::Coordinates { arity } => {
-            matches!(value, Canon::Tuple(items) if items.len() == usize::from(*arity) && items.iter().all(number))
+            matches!(value, Canon::Tuple(items) if items.len() == usize::from(*arity) && items.iter().all(|item| number(item) || imaginary(item)))
         }
         AnswerContract::Matrix { rows, cols } => matrix_shape(value, *rows, *cols),
         AnswerContract::QuotientRemainder { divisor } => quotient_shape(value, *divisor),
@@ -84,8 +89,20 @@ pub(super) fn validate_shape(contract: &AnswerContract, value: &Canon) -> bool {
     }
 }
 
+/// A complex number written with the unit `i`, such as `i` or `1 + 2i`.
+fn imaginary(value: &Canon) -> bool {
+    let Canon::Poly(terms) = value else {
+        return false;
+    };
+    terms.keys().all(|monomial| {
+        monomial
+            .keys()
+            .all(|atom| matches!(atom, crate::answer::Atom::Var(name) if name == "i"))
+    })
+}
+
 fn number(value: &Canon) -> bool {
-    matches!(value, Canon::Rational(_) | Canon::Radical(_))
+    crate::answer::rounding::is_rounding_number(value)
 }
 
 fn quotient_shape(value: &Canon, divisor: Option<u64>) -> bool {
@@ -99,6 +116,100 @@ fn quotient_shape(value: &Canon, divisor: Option<u64>) -> bool {
         && remainder.is_integer()
         && remainder >= &BigRational::zero()
         && divisor.is_none_or(|value| remainder < &BigRational::from_integer(BigInt::from(value)))
+}
+
+/// Whether a grid is the key times one nonzero rational. A zero key grid
+/// matches only itself.
+pub(super) fn scalar_multiple(expected: &Canon, value: &Canon) -> bool {
+    let entries = |grid: &Canon| -> Option<Vec<BigRational>> {
+        let Canon::List(rows) = grid else { return None };
+        let mut out = Vec::new();
+        for row in rows {
+            let Canon::List(cells) = row else { return None };
+            for cell in cells {
+                let Canon::Rational(number) = cell else {
+                    return None;
+                };
+                out.push(number.clone());
+            }
+        }
+        Some(out)
+    };
+    let (Some(key), Some(given)) = (entries(expected), entries(value)) else {
+        return false;
+    };
+    if key.len() != given.len() {
+        return false;
+    }
+    let Some(at) = key.iter().position(|entry| !entry.is_zero()) else {
+        return key == given;
+    };
+    if given[at].is_zero() {
+        return false;
+    }
+    let factor = &given[at] / &key[at];
+    key.iter().zip(&given).all(|(k, g)| &(k * &factor) == g)
+}
+
+/// The learner spelling of a grid as the bracketed rows `[[a, b], [c, d]]`.
+///
+/// Two more spellings read as the same grid: the LaTeX environments
+/// (`\begin{pmatrix}1&2\\3&4\end{pmatrix}`) and rows split by `;` or a new line
+/// with entries split by spaces or commas (`1 2; 3 4`). Any other text is
+/// returned unchanged.
+pub(super) fn matrix_spelling(text: &str) -> String {
+    let trimmed = text.trim().trim_matches('$').trim();
+    let row = |line: &str, parts: &[char]| {
+        let entries: Vec<&str> = line
+            .split(|ch: char| parts.contains(&ch))
+            .map(str::trim)
+            .filter(|entry| !entry.is_empty())
+            .collect();
+        format!("[{}]", entries.join(", "))
+    };
+    if let Some(start) = trimmed.find("\\begin{") {
+        let after = &trimmed[start + 7..];
+        let (Some(name_end), Some(end)) = (after.find('}'), trimmed.rfind("\\end{")) else {
+            return text.to_owned();
+        };
+        let body_start = start + 7 + name_end + 1;
+        if end < body_start {
+            return text.to_owned();
+        }
+        let rows: Vec<String> = trimmed[body_start..end]
+            .split("\\\\")
+            .filter(|line| !line.trim().is_empty())
+            .map(|line| row(line, &['&']))
+            .collect();
+        return format!("[{}]", rows.join(", "));
+    }
+    let wrapped = ["[]", "()"].iter().find_map(|pair| {
+        let (open, close) = (pair.chars().next()?, pair.chars().nth(1)?);
+        trimmed
+            .strip_prefix(open)
+            .and_then(|rest| rest.strip_suffix(close))
+    });
+    let inner = wrapped.unwrap_or(trimmed);
+    // Bare rows with commas (`1,2;3,4`) keep their refusal; only spaces split
+    // the entries of a row that has no brackets.
+    if inner.contains(['[', ']', '(', ')'])
+        || !inner.contains([';', '\n'])
+        || (wrapped.is_none() && inner.contains(','))
+    {
+        return text.to_owned();
+    }
+    let rows: Vec<String> = inner
+        .split([';', '\n'])
+        .filter(|line| !line.trim().is_empty())
+        .map(|line| {
+            if line.contains(',') {
+                row(line, &[','])
+            } else {
+                row(line, &[' ', '\t'])
+            }
+        })
+        .collect();
+    format!("[{}]", rows.join(", "))
 }
 
 /// The raw rows of a matrix answer: bracketed rows, or plain rows joined by `;`.
@@ -174,8 +285,9 @@ pub(super) fn matrix_value(rows: u8, cols: u8, text: &str) -> Result<Canon, Unde
 fn matrix_entry(text: &str) -> Result<Canon, Undecidable> {
     match canonical_form(text) {
         Ok(Canon::Rational(value)) => Ok(Canon::Rational(value)),
+        Ok(Canon::Radical(value)) => Ok(Canon::Radical(value)),
         _ => Err(Undecidable::new(
-            "a matrix entry must be an exact rational or decimal",
+            "a matrix entry must be an exact rational, decimal, or root",
         )),
     }
 }
@@ -187,7 +299,7 @@ fn matrix_shape(value: &Canon, rows: u8, cols: u8) -> bool {
     };
     grid.len() == usize::from(rows)
         && grid.iter().all(|row| {
-            matches!(row, Canon::List(entries) if entries.len() == usize::from(cols) && entries.iter().all(|entry| matches!(entry, Canon::Rational(_))))
+            matches!(row, Canon::List(entries) if entries.len() == usize::from(cols) && entries.iter().all(number))
         })
 }
 
@@ -211,28 +323,61 @@ pub(super) fn validate_labels(options: &[Vec<String>]) -> Result<(), Undecidable
                 "a choice requires one to eight explicit aliases",
             ));
         }
+        // A spelling that differs in case alone (`Q`, `q`) is one alias of one option.
+        let mut own = BTreeSet::new();
         for alias in option {
             let key = choice_key(alias);
-            if key.is_empty() || alias.chars().count() > 80 || !keys.insert(key) {
+            if key.is_empty() || alias.chars().count() > 80 {
                 return Err(Undecidable::new(
                     "choice aliases must be bounded, nonempty, and unique",
                 ));
             }
+            if own.contains(&key) {
+                continue;
+            }
+            if !keys.insert(key.clone()) {
+                return Err(Undecidable::new(
+                    "choice aliases must be bounded, nonempty, and unique",
+                ));
+            }
+            own.insert(key);
         }
     }
     Ok(())
 }
 
 pub(super) fn label_value(options: &[Vec<String>], text: &str) -> Option<Canon> {
+    // `cone, not a cylinder` names `cone`; `cone, not a cone` names nothing.
+    if let Some((head, tail)) = super::sentence::split_contrast(text)
+        && let Some(option) = label_option(options, head)
+    {
+        let at = options
+            .iter()
+            .position(|aliases| std::ptr::eq(aliases, option))?;
+        match super::sentence::contrast_names_other(options, at, tail) {
+            Some(true) => return option.first().map(|alias| Canon::Label(choice_key(alias))),
+            Some(false) => return None,
+            None => {}
+        }
+    }
+    label_option(options, text)
+        .and_then(|aliases| aliases.first())
+        .map(|alias| Canon::Label(choice_key(alias)))
+}
+
+fn label_option<'a>(options: &'a [Vec<String>], text: &str) -> Option<&'a Vec<String>> {
     let key = choice_key(text);
     let exact = options
         .iter()
         .find(|aliases| aliases.iter().any(|alias| choice_key(alias) == key));
+    if exact.is_none() && super::sentence::opening_is_spoiled(options, text) {
+        return None;
+    }
     exact
         .or_else(|| spoken_choice(options, text))
         .or_else(|| super::sentence::contained_choice(options, text).and_then(|at| options.get(at)))
-        .and_then(|aliases| aliases.first())
-        .map(|alias| Canon::Label(choice_key(alias)))
+        .or_else(|| super::sentence::loose_choice(options, text).and_then(|at| options.get(at)))
+        .or_else(|| super::sentence::leading_choice(options, text).and_then(|at| options.get(at)))
 }
 
 /// The one option a spoken answer names, under [`spoken_key`].
@@ -348,6 +493,19 @@ pub(super) fn validate_parts(parts: &[AnswerPart]) -> Result<(), Undecidable> {
 }
 
 pub(super) fn named_parts<'a>(parts: &[AnswerPart], text: &'a str) -> Option<Vec<&'a str>> {
+    named_parts_with(parts, text, false)
+}
+
+/// The parts of an authored key. A value may be an equation: `vertical = x = 1`.
+pub(super) fn named_key_parts<'a>(parts: &[AnswerPart], text: &'a str) -> Option<Vec<&'a str>> {
+    named_parts_with(parts, text, true)
+}
+
+fn named_parts_with<'a>(
+    parts: &[AnswerPart],
+    text: &'a str,
+    equation_values: bool,
+) -> Option<Vec<&'a str>> {
     // "a = 1; b = -3; c = 2" or, with every comma piece named, "a = 1, b = -3, c = 2".
     let pieces: Vec<&str> = if text.contains(';') {
         text.split(';').collect()
@@ -373,7 +531,8 @@ pub(super) fn named_parts<'a>(parts: &[AnswerPart], text: &'a str) -> Option<Vec
                 .find(|(name, _)| name.trim() == part.name)
                 .map(|(_, value)| value.trim())
                 .filter(|value| {
-                    matches!(part.contract, AnswerContract::Label { .. })
+                    equation_values
+                        || matches!(part.contract, AnswerContract::Label { .. })
                         || !matches!(canonical_form(value), Ok(Canon::Assign { .. }))
                 })
         })
@@ -434,7 +593,7 @@ fn verdict_sentence<'a>(parts: &[AnswerPart], text: &'a str) -> Option<Vec<&'a s
     {
         return None;
     }
-    let trimmed = text.trim();
+    let trimmed = strip_filler(text.trim());
     let mut aliases: Vec<&String> = options.iter().flatten().collect();
     aliases.sort_by_key(|alias| std::cmp::Reverse(alias.len()));
     aliases.into_iter().find_map(|alias| {
@@ -459,6 +618,25 @@ fn verdict_sentence<'a>(parts: &[AnswerPart], text: &'a str) -> Option<Vec<&'a s
         let value = by.unwrap_or(rest).trim();
         (!value.is_empty()).then(|| vec![head, value])
     })
+}
+
+/// The text without the words that lead a verdict sentence: "It overestimates".
+fn strip_filler(text: &str) -> &str {
+    for filler in [
+        "the estimate is ",
+        "the estimate ",
+        "it is ",
+        "it ",
+        "this is ",
+        "this ",
+    ] {
+        if let Some(head) = text.get(..filler.len())
+            && head.eq_ignore_ascii_case(filler)
+        {
+            return text[filler.len()..].trim_start();
+        }
+    }
+    text
 }
 
 /// Whether a comma sits between a digit and exactly three digits, as in "1,000".
@@ -526,7 +704,7 @@ pub(super) fn top_level_commas(text: &str) -> Vec<&str> {
 }
 
 pub(super) fn multipart_values(parts: &[AnswerPart], text: &str) -> Result<Canon, Undecidable> {
-    let values = named_parts(parts, text)
+    let values = named_key_parts(parts, text)
         .ok_or_else(|| Undecidable::new("each named answer part must occur exactly once"))?;
     parts
         .iter()

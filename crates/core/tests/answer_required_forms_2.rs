@@ -147,8 +147,8 @@ fn the_equation_of_a_line_in_each_named_form() {
     rows(
         "y = 4x - 5",
         "slope_intercept_form",
-        &["y = 4x - 5", "y=4x-5"],
-        &["4x - y = 5", "y = 4x - 6", "y = -5 + 4x"],
+        &["y = 4x - 5", "y=4x-5", "y = -5 + 4x"],
+        &["4x - y = 5", "y = 4x - 6"],
     );
     rows(
         "y = x/2 + 1",

@@ -48,6 +48,12 @@ pub enum NumericForm {
     SlopeInterceptForm,
     /// A line `y - y1 = m(x - x1)`.
     PointSlopeForm,
+    /// One reduced rational times one simplified square root: `9√2`, not `√162`.
+    SimplestRadical,
+    /// A logarithm with no product, quotient, root, or power inside: `3ln(x)`.
+    ExpandedLog,
+    /// One logarithm and nothing else: `ln(x^3)`.
+    CondensedLog,
 }
 
 impl NumericForm {
@@ -82,11 +88,14 @@ pub(super) fn accepts(form: NumericForm, text: &str, expected: &str) -> bool {
         NumericForm::SimplifiedRational => return super::lowest::simplified(&tree),
         NumericForm::VertexForm => return super::lowest::vertex(&tree),
         NumericForm::ExpandedPlaceValue => return super::lowest::place_value_sum(&tree),
-        NumericForm::RepeatedMultiplication => return super::lowest::repeated(&tree),
+        NumericForm::RepeatedMultiplication => return super::lowest::repeated(&tree, expected),
         NumericForm::FractionWithDenominator => {
             return super::lowest::with_key_denominator(&tree, expected);
         }
         NumericForm::Radical => return !holds_rational_power(&tree),
+        NumericForm::SimplestRadical => return super::radical::simplest(text).unwrap_or(false),
+        NumericForm::ExpandedLog => return super::logform::expanded(&tree),
+        NumericForm::CondensedLog => return super::logform::condensed(&tree),
         NumericForm::MixedNumber => return super::mixed::is_mixed_number(&tree),
         NumericForm::Integer
         | NumericForm::Decimal
@@ -230,6 +239,8 @@ fn sum_factors(node: &Ast, out: &mut Vec<Poly>) -> Option<()> {
                 .all(|monomial| monomial.values().all(|exponent| *exponent > 0))
                 .then_some(()),
             Canon::Poly(poly) => primitive(&poly).then(|| out.push(poly)),
+            // A call such as `sin(x)` is one factor that no sum splits.
+            Canon::Func(..) => Some(()),
             _ => None,
         },
     }

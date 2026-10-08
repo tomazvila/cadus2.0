@@ -48,6 +48,7 @@ import type {
   TeachCheckResponse,
   TeachResponse,
   UngradedListResponse,
+  OverturnsResponse,
 } from './types';
 import type {
   IntegratedGrade,
@@ -257,6 +258,7 @@ export const api: ApiClient = {
   revokeContent: (digest, reason) =>
     request<RevokeResponse>('POST', `/admin/content/${seg(digest)}/revoke`, { reason }),
   listUngraded: () => request<UngradedListResponse>('GET', '/admin/ungraded'),
+  listOverturns: () => request<OverturnsResponse>('GET', '/admin/equivalence/overturns'),
   regradeUngraded: (attemptId, outcome) =>
     request<RegradeResponse>('POST', `/admin/ungraded/${seg(attemptId)}/regrade`, { outcome }),
 };

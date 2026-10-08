@@ -35,6 +35,53 @@ use crate::answer::ast::Ast;
 const EXPONENT_BOUND: &str = "an exponent past the size bound";
 
 impl Work {
+    /// Denest `sqrt(a + b*sqrt(r))` into a sum of two square roots.
+    ///
+    /// The identity is `sqrt(a + b*sqrt(r)) = sqrt((a+d)/2) + sgn(b)*sqrt((a-d)/2)`
+    /// with `d = sqrt(a^2 - b^2*r)`. It holds for a positive `a` when `d` is a
+    /// rational, so `sqrt(2 + sqrt(3))` is `(sqrt(6) + sqrt(2))/2` and
+    /// `sqrt(3 - 2*sqrt(2))` is `sqrt(2) - 1`. Any other radicand returns `None`
+    /// and keeps its old form.
+    pub(super) fn denest_root(&mut self, argument: &Canon) -> Result<Option<Canon>, Undecidable> {
+        let Canon::Radical(parts) = argument else {
+            return Ok(None);
+        };
+        if parts.len() != 2 {
+            return Ok(None);
+        }
+        let mut rational = None;
+        let mut surd = None;
+        for (basis, coefficient) in parts {
+            if basis.pi != 0 || basis.e != 0 {
+                return Ok(None);
+            }
+            if basis.radicand.is_one() {
+                rational = Some(coefficient.clone());
+            } else {
+                surd = Some((basis.radicand.clone(), coefficient.clone()));
+            }
+        }
+        let (Some(a), Some((r, b))) = (rational, surd) else {
+            return Ok(None);
+        };
+        if !a.is_positive() {
+            return Ok(None);
+        }
+        let square = self.bounded(&a * &a - &b * &b * BigRational::from_integer(r))?;
+        let Some(d) = rational_square_root(&square) else {
+            return Ok(None);
+        };
+        let two = BigRational::from_integer(BigInt::from(2));
+        let big = self.rational_root(&((&a + &d) / &two), 1, 2)?;
+        let small = self.rational_root(&((&a - &d) / &two), 1, 2)?;
+        let small = if b.is_negative() {
+            self.multiply(&Canon::Rational(-BigRational::one()), &small)?
+        } else {
+            small
+        };
+        Ok(Some(self.add(&big, &small)?))
+    }
+
     /// Read `base^(p/q)`.
     pub(super) fn rational_exponent_power(
         &mut self,
@@ -91,13 +138,15 @@ impl Work {
     ) -> Result<Canon, Undecidable> {
         let mut monomial = Monomial::new();
         let mut coefficient = BigRational::one();
-        if denominator % 2 != 0
-            && let Some(factors) = plain_monomial(base)
+        if let Some(factors) = plain_monomial(base)
+            && (denominator % 2 != 0 || matches!(factors.as_slice(), [(_, k)] if k % 2 != 0))
         {
             // An odd root takes each power of a plain monomial on its own:
             // `(x^2)^(1/3)` and `x^(2/3)` are one value, and so is `cbrt(x^2)`.
-            // An even root keeps the monomial whole, because `sqrt(x^2)` is
-            // `|x|` and not `x`.
+            // An even root takes a monomial of one atom with an odd exponent
+            // too, since `sqrt(1/y)` and `1/sqrt(y)` have one domain. Any other
+            // even root keeps the monomial whole, because `sqrt(x^2)` is `|x|`
+            // and not `x`.
             for (atom, exponent) in factors {
                 let exponent = checked_product(exponent, numerator)?;
                 self.add_root(
@@ -255,7 +304,7 @@ impl Work {
 /// The whole part of the exponent is the truncation, and it stays on the atom.
 /// The rest becomes the root atom, so `x^(3/2)` is `x * x^(1/2)` and
 /// `x^(-3/2)` is `x^-1 * x^(-1/2)`.
-fn add_atom_root(
+pub(super) fn add_atom_root(
     monomial: &mut Monomial,
     base: &Canon,
     atom: &Atom,
@@ -263,7 +312,14 @@ fn add_atom_root(
     exponent: i64,
 ) -> Result<(), Undecidable> {
     let present = take_root(monomial, base);
+    // The whole power of the atom the monomial already holds joins the sum, so
+    // `sqrt(y)/y` and `1/sqrt(y)` are one value.
+    let held = monomial.remove(atom).unwrap_or(0);
     let (numerator, denominator) = exponent_sum(exponent, index, present)?;
+    let numerator = held
+        .checked_mul(denominator)
+        .and_then(|shifted| shifted.checked_add(numerator))
+        .ok_or_else(|| Undecidable::new(EXPONENT_BOUND))?;
     let whole = numerator / denominator;
     let part = numerator % denominator;
     if whole != 0 {
@@ -299,6 +355,17 @@ fn add_opaque_root(
         )?;
     }
     Ok(())
+}
+
+/// The non-negative rational square root of a rational, when one exists.
+fn rational_square_root(value: &BigRational) -> Option<BigRational> {
+    if value.is_negative() {
+        return None;
+    }
+    let top = value.numer().sqrt();
+    let bottom = value.denom().sqrt();
+    (&top * &top == *value.numer() && &bottom * &bottom == *value.denom())
+        .then(|| BigRational::new(top, bottom))
 }
 
 /// The atoms and exponents of a base that is one monomial with coefficient 1.

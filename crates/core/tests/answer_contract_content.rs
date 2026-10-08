@@ -154,6 +154,32 @@ fn a_reduced_ratio_template_writes_the_exact_ratio_notation() {
 }
 
 #[test]
+fn a_reduced_ratio_template_refuses_a_fraction_sample() {
+    let body = serde_json::json!({
+        "v": 1, "topic_id": "ratios", "answer_kind": "numeric",
+        "answer_contract": {"kind":"reduced_ratio"},
+        "statement": "Reduce {a}:40.",
+        "params": {"a":{"kind":"choice","values":[2,4,6,8,10,12,14,16,18,20,24,30]}},
+        "constraints": [], "answer_expr": "a/40",
+        "solution_sketch": "Divide both parts by their greatest common factor.",
+        "hints": ["Reduce both parts."], "distractors": [],
+        "samples": [
+            {"params":{"a":2},"expected":"1/20"},
+            {"params":{"a":30},"expected":"3/4"}
+        ]
+    });
+    let doc = from_body(&body.to_string()).unwrap();
+    let items = exemplars(&["1:20", "3:4"]);
+    let spec = GateSpec {
+        answer_kind: AnswerKind::Numeric,
+        exemplars: &items,
+        finite: None,
+    };
+    let refusal = gate(&doc, &spec).unwrap_err();
+    assert_eq!(refusal.code, "sample-agreement", "{refusal:?}");
+}
+
+#[test]
 fn a_sign_case_template_covers_all_three_discriminant_outcomes() {
     let body = serde_json::json!({
         "v": 1, "topic_id": "discriminant", "answer_kind": "numeric",

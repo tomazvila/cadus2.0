@@ -236,7 +236,10 @@ fn the_canonical_form_rationalizes_no_radical() {
     //
     // 1.0: True for every row, through `radsimp` inside `simplify`. The verdicts
     // come from the oracle on 2026-08-27.
-    assert_eq!(check("1/(2√x)", "sqrt(x)/(2*x)", E), decided(false, false));
+    // `sqrt(x)/x` and `1/sqrt(x)` are one value since the root of a plain atom
+    // merges with the whole power of that atom (grader pass 4). A root of a SUM
+    // stays one opaque atom, so the two rows below keep their verdict.
+    assert_eq!(check("1/(2√x)", "sqrt(x)/(2*x)", E), decided(true, false));
     assert_eq!(
         check("x/√(x^2 + 9)", "x*sqrt(x**2 + 9)/(x**2 + 9)", E),
         decided(false, false)

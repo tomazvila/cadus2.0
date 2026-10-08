@@ -154,14 +154,12 @@ fn a_constant_has_no_rounding_verdict() {
 }
 
 #[test]
-fn a_nested_radical_keeps_the_wrong_verdict() {
-    // `sqrt(2 + sqrt(3))` is a `Canon::Poly` over an `Atom::Call`, and not a
-    // `Canon::Radical`: the radicand is not a rational. The D6-dec rule reads a
-    // rational and a rational combination of square roots, so the pair falls
-    // through to the wrong verdict, which is the verdict 2.0 gave before the
-    // rule. The residue is recorded in `docs/reference/undecidable-answers.md`.
+fn a_nested_radical_reads_as_its_denested_sum() {
+    // `sqrt(2 + sqrt(3))` denests into `(sqrt(6) + sqrt(2))/2`, a rational
+    // combination of square roots, so the D6-dec rule reads it (grader pass 4).
+    assert_eq!(check("√(2 + √3)/2", "0.9659258263", E), decided(true, true));
     assert_eq!(
-        check("√(2 + √3)/2", "0.9659258263", E),
+        check("√(2 + √3)/2", "0.9659258264", E),
         decided(false, false)
     );
 }

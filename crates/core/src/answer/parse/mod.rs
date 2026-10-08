@@ -28,12 +28,16 @@ mod atom;
 mod build;
 mod disjunction;
 mod exponent;
+mod remainder;
+mod segment;
 mod term;
 mod unit;
 
 use num_bigint::BigInt;
 
 use build::{is_variable_name, make_quotient, simple_inequality};
+pub(crate) use remainder::with_negative_remainder;
+pub(crate) use segment::with_variables;
 
 use super::Undecidable;
 use super::ast::{Ast, IneqOp};
@@ -111,6 +115,9 @@ pub fn parse_with_functions(source: &str, extra: &[&str]) -> Result<Ast, Undecid
     if source.chars().count() > MAX_ANSWER_CHARS {
         return Err(Undecidable::new("the answer is longer than the input cap"));
     }
+    if let Some(infinity) = infinity_value(source) {
+        return Ok(infinity);
+    }
     let tokens = lex(source)?;
     if tokens.is_empty() {
         return Err(Undecidable::new("the answer is empty"));
@@ -129,6 +136,39 @@ pub fn parse_with_functions(source: &str, extra: &[&str]) -> Result<Ast, Undecid
         return Err(Undecidable::new("trailing text after the answer"));
     }
     Ok(ast)
+}
+
+/// Read a whole answer that is infinity: `oo`, `+oo`, `-infinity`, `infinite`,
+/// `negative infinity`. The value is the variable `∞`, so `-∞` and `∞` are two
+/// values and no arithmetic is read into either.
+fn infinity_value(source: &str) -> Option<Ast> {
+    let text = source.trim().to_lowercase();
+    let (negative, name) = if let Some(rest) = text.strip_prefix('-') {
+        (true, rest.trim())
+    } else if let Some(rest) = text.strip_prefix('+') {
+        (false, rest.trim())
+    } else if let Some(rest) = text
+        .strip_prefix("negative ")
+        .or_else(|| text.strip_prefix("minus "))
+    {
+        (true, rest.trim())
+    } else if let Some(rest) = text
+        .strip_prefix("positive ")
+        .or_else(|| text.strip_prefix("plus "))
+    {
+        (false, rest.trim())
+    } else {
+        (false, text.as_str())
+    };
+    if !matches!(name, "oo" | "inf" | "infinity" | "infinite") {
+        return None;
+    }
+    let value = Ast::Var("∞".to_string());
+    Some(if negative {
+        Ast::Neg(Box::new(value))
+    } else {
+        value
+    })
 }
 
 /// Parse a quantity with one-letter unit spellings enabled by a Unit contract.
@@ -371,12 +411,14 @@ impl Parser<'_> {
         if name == "remainder" {
             return true;
         }
-        if name != "R" && name != "r" {
+        if (name != "R" && name != "r") || segment::is_item_variable(name) {
+            // An item that names `r` as its variable never has a remainder mark.
             return false;
         }
         let before = self.at.checked_sub(1).and_then(|at| self.tokens.get(at));
         let after = match self.peek_at(1) {
-            Some(Tok::Minus) => self.peek_at(2),
+            Some(Tok::Minus) if remainder::allowed() => self.peek_at(2),
+            Some(Tok::Minus) => return false,
             other => other,
         };
         let is_number = |token: Option<&Tok>| matches!(token, Some(Tok::Num(_)));

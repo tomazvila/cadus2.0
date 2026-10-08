@@ -15,7 +15,7 @@ fn attempt(version: i64, explicit: bool) -> Event {
     let mut row = json!({
         "type":"attempt","v":version,"ts":"2026-07-14T12:02:00Z","session":"s1",
         "attempt_id":"legacy-ambiguous","task_id":"t1","topic":"absolute-value","task_type":"review",
-        "problem":{"text":"Find the value.","expected":"2"},"given_answer":"about two",
+        "problem":{"text":"Find the value.","expected":"2"},"given_answer":"plenty of room",
         "correct":false,"secs":5,"work_quality":"nearly_passable"
     });
     if explicit {
@@ -57,6 +57,7 @@ fn explicit_uncertainty_survives_v1_v2_normalization_serialization_and_every_rep
 }
 
 #[test]
+// Grader pass 4 reads spoken numbers, so the unread answer is a phrase with no number in it.
 fn an_ambiguous_v1_miss_keeps_its_observation_until_an_explicit_review_correction() {
     let original = attempt(1, false);
     let original_bytes = original.to_canonical_json().unwrap();

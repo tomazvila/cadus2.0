@@ -12,7 +12,7 @@ use cadus_core::answer::{
 };
 use cadus_core::curriculum::model::Exemplar;
 
-const BAD_VARS: &str = "a function contract requires one to three distinct variable names";
+const BAD_VARS: &str = "a function contract requires one to four distinct variable names";
 const BAD_DOMAIN: &str =
     "a function domain requires two exact rationals with low below high for a listed variable";
 
@@ -153,7 +153,7 @@ fn function_is_a_legal_multipart_part_and_ordered_list_member() {
 fn the_variable_list_refusals() {
     for vars in [
         &[][..],
-        &["x", "y", "z", "t"],
+        &["x", "y", "z", "t", "u"],
         &["x", "x"],
         &["x", "y", "x"],
         &["e"],

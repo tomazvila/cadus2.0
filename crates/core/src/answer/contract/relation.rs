@@ -5,7 +5,7 @@ use std::collections::BTreeMap;
 use num_traits::{Signed, Zero};
 
 use super::{Canon, Undecidable, canonical_form};
-use crate::answer::{Monomial, Poly, normalize};
+use crate::answer::{Atom, Monomial, Outcome, Poly, Verdict, normalize};
 
 #[derive(Clone, Copy)]
 enum Relation {
@@ -40,7 +40,7 @@ impl Relation {
 
 /// Read one polynomial relation and normalize it to `monic polynomial OP 0`.
 pub(super) fn read(text: &str) -> Result<Canon, Undecidable> {
-    let source = normalize(text).source;
+    let source = normalize(&hat_names(text)).source;
     let (left, relation, right) = split(&source)?;
     let mut polynomial = as_poly(canonical_form(left)?)?;
     for (monomial, coefficient) in as_poly(canonical_form(right)?)? {
@@ -48,6 +48,9 @@ pub(super) fn read(text: &str) -> Result<Canon, Undecidable> {
         *entry -= coefficient;
     }
     polynomial.retain(|_, coefficient| !coefficient.is_zero());
+    if matches!(relation, Relation::Eq) {
+        clear_denominators(&mut polynomial);
+    }
     let Some(first) = polynomial.values().next().cloned() else {
         return Err(refusal());
     };
@@ -64,6 +67,115 @@ pub(super) fn read(text: &str) -> Result<Canon, Undecidable> {
         Canon::Label(relation.label().to_owned()),
         Canon::Poly(polynomial),
     ]))
+}
+
+/// The verdict of a learner text against the authored relation `expected`.
+///
+/// A text with no comparison is an expression and not a relation, so it is wrong.
+/// A relation followed by `v = 0` for a variable the key does not hold (the trace
+/// `x + y = 3, z = 0` of the key `x + y = 3`) names the same relation in its plane.
+pub(super) fn grade_learner(learner: &str, expected: &Canon) -> Outcome {
+    let decided = |correct| {
+        Outcome::Decided(Verdict {
+            correct,
+            notation: false,
+        })
+    };
+    let refusal = match read(learner) {
+        Ok(value) => return decided(&value == expected),
+        Err(reason) => reason,
+    };
+    let source = normalize(learner).source;
+    if !source.contains(['<', '>', '=']) && canonical_form(&source).is_ok() {
+        return decided(false);
+    }
+    let parts: Vec<&str> = source.split(',').map(str::trim).collect();
+    if let [first, second] = parts.as_slice() {
+        for (main, plane) in [(first, second), (second, first)] {
+            if read(main).is_ok_and(|value| &value == expected) && is_free_plane(plane, expected) {
+                return decided(true);
+            }
+        }
+    }
+    Outcome::Undecidable(refusal)
+}
+
+/// Whether `text` reads `v = 0` for one variable `v` that the relation does not hold.
+fn is_free_plane(text: &str, expected: &Canon) -> bool {
+    let Some((name, zero)) = text.split_once('=') else {
+        return false;
+    };
+    let name = name.trim();
+    let single = name.chars().count() == 1 && name.chars().all(|ch| ch.is_ascii_alphabetic());
+    let Canon::Tuple(items) = expected else {
+        return false;
+    };
+    let held = items.iter().any(|item| {
+        matches!(item, Canon::Poly(poly) if poly.keys().any(|monomial| monomial.contains_key(&Atom::Var(name.to_owned()))))
+    });
+    single && !held && zero.trim() == "0"
+}
+
+/// The hat names of a regression line (`ŷ`, `yhat`, `y_hat`) written as one name
+/// `y_hat`, which the reader takes as one variable.
+fn hat_names(text: &str) -> String {
+    let chars: Vec<char> = text.chars().collect();
+    let mut out = String::new();
+    let mut at = 0;
+    while at < chars.len() {
+        let ch = chars[at];
+        let next = chars.get(at + 1).copied();
+        if ch == 'ŷ' {
+            out.push_str("y_hat");
+        } else if ch.is_ascii_alphabetic() && next == Some('\u{302}') {
+            out.push_str(&format!("{ch}_hat"));
+            at += 1;
+        } else if ch.is_ascii_alphabetic()
+            && !at
+                .checked_sub(1)
+                .is_some_and(|before| chars[before].is_alphanumeric())
+            && chars[at + 1..].starts_with(&['h', 'a', 't'])
+            && !chars
+                .get(at + 4)
+                .is_some_and(|after| after.is_alphanumeric())
+        {
+            out.push_str(&format!("{ch}_hat"));
+            at += 3;
+        } else {
+            out.push(ch);
+        }
+        at += 1;
+    }
+    out
+}
+
+/// Multiply an equation by the lowest power of each atom that leaves no negative
+/// exponent: `y - 1/x - 1 = 0` becomes `xy - 1 - x = 0`, so `y = 1/x + 1` and
+/// `xy = 1 + x` read the same. An inequality keeps its text, because a factor
+/// of unknown sign would flip it.
+fn clear_denominators(polynomial: &mut Poly) {
+    let mut shift: BTreeMap<crate::answer::Atom, i64> = BTreeMap::new();
+    for monomial in polynomial.keys() {
+        for (atom, power) in monomial {
+            if *power < 0 {
+                let entry = shift.entry(atom.clone()).or_insert(0);
+                *entry = (*entry).max(-power);
+            }
+        }
+    }
+    if shift.is_empty() {
+        return;
+    }
+    *polynomial = std::mem::take(polynomial)
+        .into_iter()
+        .map(|(mut monomial, coefficient)| {
+            for (atom, power) in &shift {
+                *monomial.entry(atom.clone()).or_insert(0) += power;
+            }
+            monomial.retain(|_, power| *power != 0);
+            (monomial, coefficient)
+        })
+        .collect();
 }
 
 /// Whether the highest-degree term of the relation, moved to the side the
@@ -114,6 +226,25 @@ fn as_poly(value: Canon) -> Result<Poly, Undecidable> {
             let mut polynomial = BTreeMap::new();
             if !number.is_zero() {
                 polynomial.insert(Monomial::new(), number);
+            }
+            Ok(polynomial)
+        }
+        // A constant with a root (`2*sqrt(2)`) is a polynomial of degree 0 whose
+        // coefficients carry the root as an atom.
+        Canon::Radical(parts) => {
+            let mut polynomial = BTreeMap::new();
+            for (basis, coefficient) in parts {
+                let mut monomial = Monomial::new();
+                if basis.radicand != 1.into() {
+                    monomial.insert(Atom::Sqrt(basis.radicand), 1);
+                }
+                if basis.pi != 0 {
+                    monomial.insert(Atom::Pi, basis.pi);
+                }
+                if basis.e != 0 {
+                    monomial.insert(Atom::E, basis.e);
+                }
+                polynomial.insert(monomial, coefficient);
             }
             Ok(polynomial)
         }

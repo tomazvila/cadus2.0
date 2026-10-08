@@ -46,10 +46,10 @@ const CORPUS_ANSWERS: usize = 3_492;
 /// bases, nth roots, name prefixes, natural units) moved 24 more pairs into
 /// the canonical path and decides all of them correct: 3,011 correct and 481
 /// undecidable.
-const CANONICALIZED_PAIRS: usize = 3_020;
+const CANONICALIZED_PAIRS: usize = 3_023;
 
 /// The count of re-spelled pairs the checker decides correct.
-const RESPELLED_CORRECT: usize = 3_011;
+const RESPELLED_CORRECT: usize = 3_013;
 
 /// The count of re-spelled pairs the checker decides wrong.
 ///
@@ -58,7 +58,7 @@ const RESPELLED_CORRECT: usize = 3_011;
 const RESPELLED_WRONG: usize = 0;
 
 /// The count of re-spelled pairs the checker refuses (V2).
-const RESPELLED_UNDECIDABLE: usize = 481;
+const RESPELLED_UNDECIDABLE: usize = 479;
 
 /// The p50 floor of the L2 half, in nanoseconds.
 ///

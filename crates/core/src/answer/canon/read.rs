@@ -174,6 +174,12 @@ impl Work {
     /// `check` is the step that compares the two labels (FIXM2b, review findings
     /// #2, #10, #16).
     fn labeled(&mut self, var: &str, value: &Ast) -> Result<Canon, Undecidable> {
+        // `x = 2x + 1` holds its own name: it is an equation, not a labeled value.
+        if crate::answer::evalf::free_vars(value).contains(var) {
+            return Err(Undecidable::new(
+                "the answer is an equation and the authored answer is a value",
+            ));
+        }
         let value = self.node(value)?;
         Ok(Canon::Assign {
             var: var.to_string(),
@@ -268,6 +274,23 @@ impl Work {
         if name == "ln" || name == "log" {
             return self.logarithm(name, &arguments);
         }
+        if name == "pow"
+            && let [Canon::Rational(base), exponent] = arguments.as_slice()
+            && base.is_positive()
+            && !base.is_one()
+        {
+            // `b^x` is `e^(x ln b)`, so `2^x` and `e^(x ln(2))` are one value and
+            // `4^x` is `2^(2x)`.
+            let (base, exponent) = (Canon::Rational(base.clone()), exponent.clone());
+            let log = self.natural_log(&base)?;
+            let argument = self.multiply(&exponent, &log)?;
+            return self.exponential(&argument);
+        }
+        if let [argument] = arguments.as_slice()
+            && let Some(angle) = self.inverse_trig(name, argument)?
+        {
+            return Ok(angle);
+        }
         if arguments.len() == 1 {
             if name == "sqrt"
                 && let Some(argument) = arguments.first()
@@ -276,6 +299,9 @@ impl Work {
                 // that is no rational takes the root law (D-F3).
                 let Canon::Rational(value) = argument else {
                     let argument = argument.clone();
+                    if let Some(denested) = self.denest_root(&argument)? {
+                        return Ok(denested);
+                    }
                     return self.root_power(&argument, 1, 2);
                 };
                 let value = value.clone();

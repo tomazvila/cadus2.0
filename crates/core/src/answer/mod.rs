@@ -30,6 +30,7 @@
 //! Every refusal is an [`Undecidable`] value. No stage panics, on any input.
 
 pub mod ast;
+mod bracket;
 pub mod canon;
 pub mod check;
 pub mod contract;

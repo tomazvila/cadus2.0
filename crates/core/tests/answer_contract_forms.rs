@@ -253,10 +253,8 @@ fn required_inequality_notation_matches_the_authored_output_form() {
 fn inequality_unions_refuse_nonnumeric_and_mixed_unknown_boundaries() {
     let policy = AnswerContract::InequalityUnion;
     for text in [
-        "x < sqrt(2)",
         "x < 1 or y > 2",
         "x < 1 or",
-        "x=2 or x=3",
         "x < y",
         "x < 1/0",
         r"\leftover(-∞, 2)",

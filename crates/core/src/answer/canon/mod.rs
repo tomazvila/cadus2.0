@@ -106,6 +106,7 @@
 //! of a whole sum runs through it.
 
 mod arith;
+mod inverse;
 mod log;
 mod quotient;
 mod read;

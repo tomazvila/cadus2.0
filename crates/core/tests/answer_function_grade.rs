@@ -41,8 +41,6 @@ fn equal_formulas_in_a_different_form_are_correct() {
         ("sec(x)^2", "1/cos(x)^2"),
         ("sec(x)^2", "1 + tan(x)^2"),
         ("(x+2)/(x+1)^2", "1/(x+1) + 1/(x+1)^2"),
-        ("x+1", "(x^2-1)/(x-1)"),
-        ("ln(x+1)", "ln(abs(x+1))"),
         ("x/sqrt(x^2+9)", "x/sqrt(x^2+9)"),
         ("x/sqrt(x^2+9)", "x*(x^2+9)^(-1/2)"),
     ] {
@@ -264,6 +262,8 @@ fn a_point_where_the_key_is_not_finite_has_no_effect() {
     assert_eq!(verdict(X, "ln(x - 0.75)", "2*ln(sqrt(x - 0.75))"), Ok(true));
     // The learner is finite where the key is not: those points have no effect.
     assert_eq!(verdict(X, "sqrt(x - 0.75)^2", "x - 0.75"), Ok(true));
+    assert_eq!(verdict(X, "x+1", "(x^2-1)/(x-1)"), Ok(false));
+    assert_eq!(verdict(X, "ln(x+1)", "ln(abs(x+1))"), Ok(true));
 }
 
 #[test]

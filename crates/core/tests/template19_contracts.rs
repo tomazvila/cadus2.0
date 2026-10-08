@@ -107,12 +107,16 @@ fn radical_sign_branch_keeps_empty_and_singleton_solution_sets() {
             "extraneous negative-root answer: {learner}"
         );
     }
-    for learner in ["{}", "{-1/2,1/2}", "{1/2,3}", "1/2", "(1/2)", "[1/2]"] {
+    for learner in ["{}", "{-1/2,1/2}", "{1/2,3}", "(1/2)", "[1/2]"] {
         assert!(
             !accepted("{1/2}", learner, &policy),
             "broadened or untyped answer: {learner}"
         );
     }
+    // Grader pass 4 (collections): a set accepts a bare member list, so the bare `1/2` is
+    // the singleton spelled without braces. It is the same answer, not a broader one.
+    assert!(accepted("{1/2}", "1/2", &policy));
+    assert!(!accepted("{}", "0", &policy));
     assert!(accepted("{}", "{ }", &policy));
     assert!(accepted("{1/2}", "{0.5}", &policy));
     for malformed in ["{", "}", "{,}", "{1,}", "{1"] {
@@ -137,15 +141,15 @@ fn triangle_signcase_computes_each_closed_choice_and_rejects_broad_labels() {
         bindings.insert("b".to_owned(), Scalar::Int(side).value());
         let answer = answer_for_contract(&ast, &bindings, Some(&policy)).unwrap();
         assert_eq!(answer.text, expected);
-        for wrong in [
-            "acute or right or obtuse",
-            "triangle",
-            "yes",
-            "25",
-            "right triangle",
-        ] {
+        for wrong in ["acute or right or obtuse", "triangle", "yes", "25"] {
             assert!(!accepted(expected, wrong, &policy));
         }
+        // Grader pass 4 (text): a label takes its own name with a trailing noun, so
+        // `right triangle` is the label `right`. It stays wrong for the other labels.
+        assert_eq!(
+            accepted(expected, "right triangle", &policy),
+            expected == "right"
+        );
         for other in ["acute", "right", "obtuse"] {
             assert_eq!(accepted(expected, other, &policy), expected == other);
         }

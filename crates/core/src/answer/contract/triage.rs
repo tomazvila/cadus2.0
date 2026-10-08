@@ -26,14 +26,17 @@ pub fn triage_verdict(contract: &AnswerContract) -> TriageVerdict {
         | AnswerContract::Coordinates { .. }
         | AnswerContract::Exact
         | AnswerContract::Function { .. }
+        | AnswerContract::FunctionForm { .. }
         | AnswerContract::InequalityUnion
         | AnswerContract::Label { .. }
         | AnswerContract::List { .. }
         | AnswerContract::Matrix { .. }
+        | AnswerContract::ScalarMultiple { .. }
         | AnswerContract::Multipart { .. }
         | AnswerContract::PolynomialDivision { .. }
         | AnswerContract::PolynomialRelation
         | AnswerContract::MonicPolynomialRelation
+        | AnswerContract::OrderedWord
         | AnswerContract::Property { .. }
         | AnswerContract::QuotientRemainder { .. }
         | AnswerContract::ReducedRatio

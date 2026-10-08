@@ -99,10 +99,9 @@ fn unit_contract_parsing_accepts_glued_units_without_changing_algebra() {
         canonical_form("8m").unwrap(),
         canonical_form("8 m").unwrap()
     );
-    assert!(matches!(
-        check_contract("8", "8m/s^2", policy.clone()),
-        Outcome::Undecidable(_)
-    ));
+    // Grader pass 4 (units) reads `m/s^2` as an acceleration, a different quantity from
+    // length, so the answer is wrong, like `8kg`.
+    check(&policy, "8", "8m/s^2", false);
     assert!(matches!(
         check_contract("8", "8 furlong", policy.clone()),
         Outcome::Undecidable(_)
@@ -195,7 +194,9 @@ fn closed_choices_accept_only_reviewed_aliases() {
     check(&policy, "yes", " TRUE ", true);
     check(&policy, "less than", "LESS   THAN", true);
     check(&policy, "less than", "<", true);
-    for learner in ["no", "yes, because", "yesterday", "true or false", "<"] {
+    // A leading verdict with an explanation names its option (grader pass 4).
+    check(&policy, "yes", "yes, because", true);
+    for learner in ["no", "yesterday", "true or false", "<"] {
         check(&policy, "yes", learner, false);
     }
     assert!(policy.validate_expected("sometimes").is_err());

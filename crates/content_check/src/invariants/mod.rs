@@ -1,6 +1,7 @@
 //! The invariants of content-spec 3.3 for one KP view, and the pack rules D27
 //! and D28. Each rule gives findings in the frozen form of `output::Finding`.
 
+pub mod countable;
 pub mod counts;
 pub mod duplicate;
 pub mod file_rule;
@@ -8,6 +9,7 @@ pub mod format;
 pub mod grader;
 pub mod label;
 pub mod r3;
+pub mod words;
 
 use super::kp_view::{Item, KpView};
 use crate::output::Finding;
@@ -45,7 +47,7 @@ pub fn finding(
     }
 }
 
-/// Each KP rule: I2 to I9, I11 to I14, D27, D28, R3 (D31). I12, I13 and I14 read only
+/// Each KP rule: I2 to I9, I11 to I14, D27, D28, D34, R3 (D31). I12, I13 and I14 read only
 /// the items with `is_new`. The file rule I10 and the database rule I15 are
 /// not KP rules; the subcommand runs them.
 pub fn check(view: &KpView) -> Vec<Finding> {
@@ -55,6 +57,8 @@ pub fn check(view: &KpView) -> Vec<Finding> {
     findings.extend(label::check(view));
     findings.extend(format::check(view));
     findings.extend(r3::check(view));
+    findings.extend(words::check(view));
+    findings.extend(countable::check(view));
     findings
 }
 

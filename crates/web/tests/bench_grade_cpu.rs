@@ -82,7 +82,7 @@ const RESPELLED_ROWS: usize = 2_792;
 /// grades correct instead of nearly passable. 2,411 since grader pass 3
 /// (2026-10-07: logarithm bases, nth roots, name prefixes, natural units):
 /// twenty more re-spelled rows grade correct instead of nearly passable.
-const CORRECT_GRADES: usize = 2_411;
+const CORRECT_GRADES: usize = 2_413;
 
 /// The count of grades that come back `poor`.
 ///
@@ -92,7 +92,7 @@ const POOR_GRADES: usize = 350;
 
 /// The count of grades that come back `nearly_passable`: 751 before grader
 /// pass 3, 731 after it (see [`CORRECT_GRADES`]).
-const NEARLY_PASSABLE_GRADES: usize = 731;
+const NEARLY_PASSABLE_GRADES: usize = 729;
 
 /// The count of grades that carry the `blank-answer` tag.
 const BLANK_TAGS: usize = 350;

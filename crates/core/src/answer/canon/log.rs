@@ -52,12 +52,15 @@ impl Work {
     }
 
     /// The natural logarithm of one canonical value.
-    fn natural_log(&mut self, argument: &Canon) -> Result<Canon, Undecidable> {
+    pub(super) fn natural_log(&mut self, argument: &Canon) -> Result<Canon, Undecidable> {
         self.spend(1)?;
         let opaque =
             |argument: &Canon| atom_value(Atom::Call("ln".to_string(), vec![argument.clone()]));
         let Canon::Rational(value) = argument else {
-            return Ok(opaque(argument));
+            return match self.log_of_root(argument) {
+                Some(result) => result,
+                None => Ok(opaque(argument)),
+            };
         };
         if !value.is_positive() {
             return Ok(opaque(argument));
@@ -86,6 +89,84 @@ impl Work {
                 ln_atom(prime)
             };
             let term = self.multiply(&scale, &log)?;
+            total = self.add(&total, &term)?;
+        }
+        Ok(total)
+    }
+}
+
+impl Work {
+    /// The logarithm of a positive rational times roots of positive rationals.
+    ///
+    /// `ln(c * p^(k/q)) = ln(c) + (k/q) * ln(p)`, so `ln(sqrt(3))` is `ln(3)/2` and
+    /// `ln(2/sqrt(3))` is `ln(2) - ln(3)/2`. A value with `pi`, `e`, a variable,
+    /// or a sum stays one opaque `ln` atom, so the function returns `None`.
+    fn log_of_root(&mut self, argument: &Canon) -> Option<Result<Canon, Undecidable>> {
+        let mut e_power = 0_i64;
+        let (coefficient, roots): (BigRational, Vec<(BigRational, BigRational)>) = match argument {
+            Canon::Radical(parts) if parts.len() == 1 => {
+                let (basis, coefficient) = parts.iter().next()?;
+                if basis.pi != 0 || !coefficient.is_positive() {
+                    return None;
+                }
+                // `ln(e^k) = k`: the power of `e` comes out as a whole number.
+                e_power = basis.e;
+                let radicand = BigRational::from_integer(basis.radicand.clone());
+                (
+                    coefficient.clone(),
+                    vec![(radicand, BigRational::new(BigInt::one(), BigInt::from(2)))],
+                )
+            }
+            Canon::Poly(sum) if sum.len() == 1 => {
+                let (monomial, coefficient) = sum.iter().next()?;
+                if !coefficient.is_positive() {
+                    return None;
+                }
+                let mut roots = Vec::new();
+                for (atom, exponent) in monomial {
+                    match atom {
+                        Atom::Root(inner, index) => {
+                            let Canon::Rational(base) = inner.as_ref() else {
+                                return None;
+                            };
+                            if !base.is_positive() {
+                                return None;
+                            }
+                            roots.push((
+                                base.clone(),
+                                BigRational::new(BigInt::from(*exponent), BigInt::from(*index)),
+                            ));
+                        }
+                        Atom::Sqrt(radicand) => roots.push((
+                            BigRational::from_integer(radicand.clone()),
+                            BigRational::new(BigInt::from(*exponent), BigInt::from(2)),
+                        )),
+                        _ => return None,
+                    }
+                }
+                if roots.is_empty() {
+                    return None;
+                }
+                (coefficient.clone(), roots)
+            }
+            _ => return None,
+        };
+        Some(self.log_of_roots(coefficient, &roots).and_then(|total| {
+            let shift = Canon::Rational(BigRational::from_integer(BigInt::from(e_power)));
+            self.add(&total, &shift)
+        }))
+    }
+
+    /// Add up `ln(coefficient)` and `exponent * ln(base)` for every root.
+    fn log_of_roots(
+        &mut self,
+        coefficient: BigRational,
+        roots: &[(BigRational, BigRational)],
+    ) -> Result<Canon, Undecidable> {
+        let mut total = self.natural_log(&Canon::Rational(coefficient))?;
+        for (base, exponent) in roots {
+            let log = self.natural_log(&Canon::Rational(base.clone()))?;
+            let term = self.multiply(&Canon::Rational(exponent.clone()), &log)?;
             total = self.add(&total, &term)?;
         }
         Ok(total)

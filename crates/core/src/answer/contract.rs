@@ -1,16 +1,20 @@
 //! Per-item acceptance rules (D-F1, C4, D6).
 
 mod assignment;
+mod collections;
 mod division;
 mod evaluate;
 mod form;
 pub mod function;
 mod list;
+mod logform;
 mod lowest;
 mod mixed;
 mod multipart_natural;
+mod named_key;
 mod nested;
 mod notation;
+mod phrase;
 mod power;
 mod prefix;
 pub mod property;
@@ -19,10 +23,14 @@ mod relation;
 mod scientific;
 mod sentence;
 mod setup;
+mod shape;
+mod spoken;
 mod structured;
 mod triage;
 mod union;
+mod vector_line;
 mod wholes;
+mod word;
 
 use std::collections::BTreeMap;
 
@@ -36,6 +44,7 @@ pub use form::NumericForm;
 pub use property::{PropertyArg, PropertyArgs, PropertyCheck};
 pub use triage::{TriageVerdict, triage_verdict};
 pub use wholes::rewrite as whole_number_list;
+pub use word::mutants as word_mutants;
 
 /// A reviewed item's answer policy. Absence retains the historical policy.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -80,6 +89,14 @@ pub enum AnswerContract {
         /// The count of columns of the grid.
         cols: u8,
     },
+    /// A grid of exact rational entries equal to the key times one nonzero
+    /// rational: any scalar multiple of an eigenvector or of a direction.
+    ScalarMultiple {
+        /// The count of rows of the grid.
+        rows: u8,
+        /// The count of columns of the grid.
+        cols: u8,
+    },
     /// An unordered set; order and repeated members have no effect.
     Set,
     /// An authored numeric notation requirement.
@@ -103,6 +120,9 @@ pub enum AnswerContract {
     ReducedRatio,
     /// A strictly ascending list of exact numbers joined by `<`.
     AscendingChain,
+    /// A product whose factors do not commute (a group word, a matrix product,
+    /// a product of cycles, a matrix size), compared factor by factor in order.
+    OrderedWord,
     /// A polynomial equality or inequality, compared after exact normalization.
     PolynomialRelation,
     /// A polynomial relation whose leading coefficient is 1 as the learner wrote it.
@@ -122,6 +142,16 @@ pub enum AnswerContract {
         /// If true, a difference that is one constant is correct (antiderivatives).
         #[serde(default, skip_serializing_if = "std::ops::Not::not")]
         up_to_constant: bool,
+        /// The sample interval of a variable, as two exact rationals `[low, high]`.
+        #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
+        domain: BTreeMap<String, (String, String)>,
+    },
+    /// A formula equal to the key at the sample points of `function`, which also
+    /// keeps the outer operation of the key (a product stays a product). For the
+    /// items "write as a product", "write as a sum", "write with one function".
+    FunctionForm {
+        /// One to three variable names.
+        vars: Vec<String>,
         /// The sample interval of a variable, as two exact rationals `[low, high]`.
         #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
         domain: BTreeMap<String, (String, String)>,
@@ -213,6 +243,10 @@ enum ContractDoc {
         rows: u8,
         cols: u8,
     },
+    ScalarMultiple {
+        rows: u8,
+        cols: u8,
+    },
     Set {},
     RequiredForm {
         form: NumericForm,
@@ -228,6 +262,7 @@ enum ContractDoc {
     RequiredSimplestRadical {},
     ReducedRatio {},
     AscendingChain {},
+    OrderedWord {},
     PolynomialRelation {},
     MonicPolynomialRelation {},
     RelationSetup {},
@@ -241,6 +276,11 @@ enum ContractDoc {
         vars: Vec<String>,
         #[serde(default)]
         up_to_constant: bool,
+        #[serde(default)]
+        domain: BTreeMap<String, (String, String)>,
+    },
+    FunctionForm {
+        vars: Vec<String>,
         #[serde(default)]
         domain: BTreeMap<String, (String, String)>,
     },
@@ -286,6 +326,7 @@ impl TryFrom<ContractDoc> for AnswerContract {
             ContractDoc::PolynomialDivision { divisor } => Self::PolynomialDivision { divisor },
             ContractDoc::Coordinates { arity } => Self::Coordinates { arity },
             ContractDoc::Matrix { rows, cols } => Self::Matrix { rows, cols },
+            ContractDoc::ScalarMultiple { rows, cols } => Self::ScalarMultiple { rows, cols },
             ContractDoc::RequiredForm { form } => Self::RequiredForm { form },
             ContractDoc::List { ordered, member } => Self::List { ordered, member },
             ContractDoc::Label { options } => Self::Label { options },
@@ -299,6 +340,7 @@ impl TryFrom<ContractDoc> for AnswerContract {
                 up_to_constant,
                 domain,
             },
+            ContractDoc::FunctionForm { vars, domain } => Self::FunctionForm { vars, domain },
             ContractDoc::Property { check, args } => Self::Property { check, args },
             document => fieldless_contract(document),
         };
@@ -315,6 +357,7 @@ fn fieldless_contract(document: ContractDoc) -> AnswerContract {
         ContractDoc::InequalityUnion {} => AnswerContract::InequalityUnion,
         ContractDoc::ReducedRatio {} => AnswerContract::ReducedRatio,
         ContractDoc::AscendingChain {} => AnswerContract::AscendingChain,
+        ContractDoc::OrderedWord {} => AnswerContract::OrderedWord,
         ContractDoc::PolynomialRelation {} => AnswerContract::PolynomialRelation,
         ContractDoc::MonicPolynomialRelation {} => AnswerContract::MonicPolynomialRelation,
         ContractDoc::RelationSetup {} => AnswerContract::RelationSetup,
@@ -346,7 +389,7 @@ impl AnswerContract {
             Self::QuotientRemainder { divisor: Some(0) } => Err(Undecidable::new(
                 "a quotient contract requires a positive divisor",
             )),
-            Self::Matrix { rows, cols }
+            Self::Matrix { rows, cols } | Self::ScalarMultiple { rows, cols }
                 if *rows == 0 || *cols == 0 || u32::from(*rows) * u32::from(*cols) > 64 =>
             {
                 Err(Undecidable::new(
@@ -374,6 +417,9 @@ impl AnswerContract {
                 up_to_constant,
                 domain,
             } => function::FunctionSpec::new(vars, *up_to_constant, domain).map(|_| ()),
+            Self::FunctionForm { vars, domain } => {
+                function::FunctionSpec::new(vars, false, domain).map(|_| ())
+            }
             Self::Property { check, args } => property::validate(*check, args),
             _ => Ok(()),
         }
@@ -419,12 +465,16 @@ impl AnswerContract {
             Self::Multipart { parts } => multipart_values(parts, expected),
             Self::List { ordered, member } => list::expected(*ordered, member, expected),
             Self::InequalityUnion | Self::RequiredInequalityNotation => union::read(expected),
-            Self::Matrix { rows, cols } => structured::matrix_value(*rows, *cols, expected),
+            Self::Matrix { rows, cols } | Self::ScalarMultiple { rows, cols } => {
+                structured::matrix_value(*rows, *cols, expected)
+            }
+            Self::Set => collections::set_key(expected),
             contract @ (Self::RequiredAssignment
             | Self::RequiredSinglePower
             | Self::RequiredNormalizedScientificNotation
             | Self::RequiredSimplestRadical) => required_syntax_expected(contract, expected),
             Self::ReducedRatio | Self::AscendingChain => notation::expected(self, expected),
+            Self::OrderedWord => word::expected(expected),
             Self::PolynomialRelation => relation::read(expected),
             Self::MonicPolynomialRelation => {
                 if relation::is_monic(expected) {
@@ -439,6 +489,8 @@ impl AnswerContract {
                 up_to_constant,
                 domain,
             } => function::FunctionSpec::new(vars, *up_to_constant, domain)
+                .and_then(|spec| function::expected(&spec, expected)),
+            Self::FunctionForm { vars, domain } => function::FunctionSpec::new(vars, false, domain)
                 .and_then(|spec| function::expected(&spec, expected)),
             Self::PolynomialDivision { divisor } => division::expected(divisor, expected),
             Self::Property { check, args } => property::expected(*check, args, expected),
@@ -488,8 +540,18 @@ impl AnswerContract {
             Self::RequiredForm { form } if !form::accepts(*form, expected, expected) => Err(
                 Undecidable::new("the authored answer does not match its required form"),
             ),
+            Self::Exact if phrase::class(expected).is_some() => {
+                phrase::expected(expected).ok_or_else(|| Undecidable::new("not a phrase"))
+            }
             _ => {
-                let value = canonical_form(expected)?;
+                let value = match canonical_form(expected) {
+                    Ok(value) => value,
+                    // `x ≠ 4` is the line without the point 4.
+                    Err(_) if matches!(self, Self::Exact) && union::excludes(expected) => {
+                        union::read(expected)?
+                    }
+                    Err(reason) => return Err(reason),
+                };
                 if validate_shape(self, &value) {
                     Ok(value)
                 } else {

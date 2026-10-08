@@ -414,10 +414,9 @@ fn the_two_rewrite_narrowings_need_the_recorded_sympy_evidence() {
     );
     // A radical the rewrite moves out of the denominator.
     let radical = probe_pair("1/(2√x)", "sqrt(x)/(2*x)", "expression_symbolic");
-    assert_eq!(
-        documented_reason(&radical, false, one_zero_says_yes),
-        Some("no radical rationalization (V1 narrowing)")
-    );
+    // Grader pass 4 (values) compares radicals by value, so the checker now takes this pair
+    // as equal (`1/(2√x)` is `√x/(2x)` for x > 0). The narrowing is gone, and no reason is left.
+    assert_eq!(documented_reason(&radical, false, one_zero_says_yes), None);
     // The SAME two answers, without the recorded evidence, keep no reason: the
     // predicate is not "the two canonical forms differ".
     let unrecorded = probe_pair("1/(2*sqrt(x))", "sqrt(x)/(2*x)", "expression_symbolic");

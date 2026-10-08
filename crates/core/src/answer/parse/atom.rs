@@ -42,6 +42,37 @@ fn make_root(radicand: Ast, index: i64) -> Ast {
     }
 }
 
+/// Whether the name is a differential: `d` and one lower-case letter, as in `dx`.
+///
+/// The differential is one symbol. It equals only itself, so `dy/dx` and `3x^2 dx`
+/// compare as written and `dx` never reads as the product of `d` and `x`.
+fn is_differential(name: &str) -> bool {
+    let mut letters = name.chars();
+    matches!(
+        (letters.next(), letters.next(), letters.next()),
+        (Some('d'), Some(second), None) if second.is_ascii_lowercase()
+    )
+}
+
+/// The value of `n!` for a whole number `n` from 0 to 20, as the integer it is.
+fn factorial(text: &str) -> Result<Ast, Undecidable> {
+    let count: u32 = text
+        .parse()
+        .ok()
+        .filter(|count| *count <= 20)
+        .ok_or_else(|| Undecidable::new("a factorial of a number outside 0 to 20"))?;
+    Ok(Ast::Integer((1..=count).map(BigInt::from).product()))
+}
+
+/// The plain inverse function that an inverse reciprocal function is built on.
+fn inverse_reciprocal(name: &str) -> Option<&'static str> {
+    match name {
+        "asec" => Some("acos"),
+        "acsc" => Some("asin"),
+        _ => None,
+    }
+}
+
 impl Parser<'_> {
     /// Parse a sign chain in front of a power.
     pub(super) fn parse_unary(&mut self) -> Result<Ast, Undecidable> {
@@ -65,6 +96,10 @@ impl Parser<'_> {
         if let Some((leading, last)) = self.peek_letter_run() {
             self.bump();
             return self.finish_letter_run(&leading, last);
+        }
+        if let Some(pieces) = self.peek_pieces() {
+            self.bump();
+            return self.finish_pieces(&pieces);
         }
         let base = self.parse_atom()?;
         let base = self.apply_percent(base)?;
@@ -115,7 +150,7 @@ impl Parser<'_> {
     }
 
     /// Read at most one power after an atom the parser already took.
-    fn apply_power(&mut self, base: Ast) -> Result<Ast, Undecidable> {
+    pub(super) fn apply_power(&mut self, base: Ast) -> Result<Ast, Undecidable> {
         if !self.eat(&Tok::Pow) {
             return Ok(base);
         }
@@ -168,6 +203,9 @@ impl Parser<'_> {
                 Tok::Num(text) => {
                     let text = text.clone();
                     parser.bump();
+                    if parser.eat(&Tok::Bang) {
+                        return factorial(&text);
+                    }
                     Ok(parse_number(&text))
                 }
                 Tok::Frac {
@@ -210,6 +248,19 @@ impl Parser<'_> {
                     let name = name.clone();
                     parser.bump();
                     parser.parse_root_call(&name)
+                }
+                Tok::Ident(word)
+                    if word == "not"
+                        && matches!(parser.peek_at(1), Some(Tok::Ident(next))
+                            if next.chars().count() == 1 && next.chars().all(|c| c.is_ascii_lowercase())) =>
+                {
+                    // `not x` is the complement `x'`.
+                    let Some(Tok::Ident(next)) = parser.peek_at(1) else {
+                        return Err(Undecidable::new("a symbol where a value belongs"));
+                    };
+                    let complement = format!("{next}'");
+                    parser.at += 2;
+                    Ok(Ast::Var(complement))
                 }
                 Tok::Ident(name) => {
                     let name = name.clone();
@@ -306,6 +357,21 @@ impl Parser<'_> {
         if self.is_function(name) {
             return self.parse_call(name);
         }
+        if matches!(name, "Theta" | "Omega") && self.peek() == Some(&Tok::LParen) {
+            // A growth rate such as `Theta(n^2)` is a call that the grammar keeps whole.
+            return self.parse_call(name);
+        }
+        if is_differential(name) {
+            return Ok(Ast::Var(name.to_string()));
+        }
+        if let Some(plain) = inverse_reciprocal(name) {
+            return self.parse_inverse_reciprocal(plain);
+        }
+        let stem = name.trim_end_matches('\'');
+        if stem.len() < name.len() && stem.chars().count() == 1 {
+            // `x'` is the complement of `x`, or the derivative mark of `x`: one name.
+            return Ok(Ast::Var(name.to_string()));
+        }
         if name.contains('_') {
             // A subscripted name such as `a_n` or `u_n-1` is one variable.
             return Ok(Ast::Var(name.to_string()));
@@ -313,7 +379,8 @@ impl Parser<'_> {
         if name == "pi" {
             return Ok(Ast::Const(Const::Pi));
         }
-        if name == "e" || name == "E" {
+        // Only the lower case `e` is the constant; `E` is a variable name.
+        if name == "e" {
             return Ok(Ast::Const(Const::E));
         }
         if GREEK_VARIABLES.contains(&name) {
@@ -322,9 +389,34 @@ impl Parser<'_> {
         if name.chars().count() == 1 {
             return Ok(Ast::Var(name.to_string()));
         }
+        if super::segment::is_item_variable(name) {
+            // The item names this variable (`rho`, `nT`), so it is one variable.
+            return Ok(Ast::Var(name.to_string()));
+        }
         Err(Undecidable::new(
             "a name that is not a function or variable",
         ))
+    }
+
+    /// Parse `arcsec(x)` as `acos(1/x)` and `arccsc(x)` as `asin(1/x)`.
+    ///
+    /// The caller took the name. The two identities hold on the principal
+    /// branches of the inverse functions, for every `x` where `arcsec` or `arccsc` exists.
+    fn parse_inverse_reciprocal(&mut self, plain: &str) -> Result<Ast, Undecidable> {
+        match self.parse_call(plain)? {
+            Ast::Func(name, args) if args.len() == 1 => {
+                let reciprocal = args
+                    .into_iter()
+                    .next()
+                    .map(|argument| make_quotient(Ast::Integer(BigInt::from(1)), argument))
+                    .transpose()?
+                    .unwrap_or(Ast::Integer(BigInt::from(1)));
+                Ok(Ast::Func(name, vec![reciprocal]))
+            }
+            _ => Err(Undecidable::new(
+                "a function call with the wrong count of arguments",
+            )),
+        }
     }
 
     /// Parse `log_b(x)`, `log_2 x`, or `log2(x)` as `log(x, base)`.
@@ -334,6 +426,8 @@ impl Parser<'_> {
                 base.parse::<BigInt>()
                     .map_err(|_| Undecidable::new("a logarithm base outside the grammar"))?,
             )
+        } else if base == "e" {
+            Ast::Const(Const::E)
         } else if base.chars().count() == 1 {
             Ast::Var(base.to_string())
         } else {
@@ -369,7 +463,7 @@ impl Parser<'_> {
     }
 
     /// Parse the argument of a whitelisted function, with or without brackets.
-    fn parse_call(&mut self, name: &str) -> Result<Ast, Undecidable> {
+    pub(super) fn parse_call(&mut self, name: &str) -> Result<Ast, Undecidable> {
         if self.eat(&Tok::LParen) {
             let args = self.parse_items(&Tok::RParen, "a function call with no closing bracket")?;
             let allowed = self.call_arity(name);

@@ -51,16 +51,15 @@ fn out_of_grammar_shapes_never_parse() {
     // `23 R14`, `x + 2 remainder 3`, and the lower-case `9 r2`/`23 r 14` left
     // the list with the quotient-and-remainder production of D-F3 (unit
     // f2-grammar), which `answer_remainder.rs` pins.
+    // `2y · dy/dx` left the list after grader pass 4: `dy/dx` as a factor is a
+    // differential (`recovered_2_0.jsonl`, production `differential_factor`).
     for text in [
         "n!",
         "3/0",
         "0/0",
-        "∞",
-        "-∞",
         "zoo",
         "-zoo",
         "6 ≤ ∫ ≤ 15",
-        "2y · dy/dx",
         "5 <= 7, so it holds",
         "",
         "   ",
@@ -159,8 +158,12 @@ fn the_corpus_splits_into_3285_parsed_and_207_undecidable_answers() {
             refused += 1;
         }
     }
-    assert_eq!(parsed, 3_285, "answers inside the grammar");
-    assert_eq!(refused, 207, "answers outside the grammar");
+    // Stabilize pass after grader pass 4 (2026-10-08): 8 rows join the grammar, 3,285 to
+    // 3,293 parsed and 207 to 199 refused. Four are the infinity symbol and the word
+    // `infinite` (`∞`, `-∞`, `infinite`), three are a differential factor (`3x^2 dx`,
+    // `4y^3 · dy/dx`, `2y · dy/dx + 3x^2`). Their rows moved to `recovered_2_0.jsonl`.
+    assert_eq!(parsed, 3_293, "answers inside the grammar");
+    assert_eq!(refused, 199, "answers outside the grammar");
 }
 
 #[test]
@@ -195,7 +198,7 @@ fn the_undecidable_answers_are_exactly_the_committed_fixture() {
         missing.is_empty() && extra.is_empty(),
         "the residue moved: missing {missing:?}, extra {extra:?}"
     );
-    assert_eq!(committed.len(), 207);
+    assert_eq!(committed.len(), 199);
 }
 
 #[test]
@@ -239,6 +242,9 @@ fn the_recovered_answers_keep_their_identity_and_parse() {
         counts,
         [
             ("arc_function_name", 2),
+            ("differential_factor", 3),
+            ("infinity_symbol", 4),
+            ("infinity_word", 1),
             ("quotient_remainder", 16),
             ("rational_exponent", 15),
             ("subscript_and_based_log", 11),
@@ -259,12 +265,13 @@ fn only_explicitly_recovered_rows_parse_from_the_prose_class() {
         .filter(|row| {
             matches!(
                 row.production.as_str(),
-                "arc_function_name" | "temperature_unit"
+                "arc_function_name" | "temperature_unit" | "infinity_word"
             )
         })
         .map(|row| row.answer)
         .collect();
-    assert_eq!(recovered_prose.len(), 3);
+    // Grader pass 4 adds the word `infinite` (continuity), so the set holds 4.
+    assert_eq!(recovered_prose.len(), 4);
     let parsed: BTreeSet<String> = corpus()
         .into_iter()
         .filter(|row| row.shape == "prose_or_words")

@@ -126,19 +126,19 @@ const INSTANTIATE_P95_BUDGET_NS: u128 = 5_000_000;
 /// 4. Record `n`, `n / 2000`, and the new bound in the paragraph above and in
 ///    `docs/reference/l1-budget.md` section 8.
 ///
-/// The measurement behind the literal below is 118,960, taken on the evening
-/// tree of 2026-10-07 (whole-number list reader, mixed-number form, per-item
-/// figures) in the release profile, one test thread; that is 59.48 per
-/// instance. The previous literal, 114,415 on the grader pass 3 tree of the
-/// same day, moved because the list reader tries the grouped-digit reading
-/// of each whole-number list, which adds 2.27 allocations per instance. M4
+/// The measurement behind the literal below is 122,560, taken on the grader
+/// pass 4 tree (2026-10-08) in the release profile, one test thread; that is
+/// 61.28 per instance. The previous literal, 118,960 on the evening tree of
+/// 2026-10-07, moved because pass 4 reads more spellings on every canonical
+/// form (named parts, product names, domain probes), which adds 1.80
+/// allocations per instance. M4
 /// review 2 findings 7 and 11 are the record of what a stale measurement costs.
 ///
 /// NOTE: FIXM4d changes the gate and the template source in the same fix wave.
 /// If the merged tree prints a different count, repeat the four steps above once
 /// after the merge, and re-run [`the_measured_sequence_is_pinned`] as well: a
 /// change that moves the drawn tuples moves those literals too.
-const ALLOCATION_BOUND: u64 = 119_554;
+const ALLOCATION_BOUND: u64 = 123_172;
 
 // ---------------------------------------------------------------------------
 // The counting allocator
