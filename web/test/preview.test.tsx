@@ -92,3 +92,28 @@ describe('the notation hint', () => {
     expect(notationHint({ ...base, error_tags: [] })).toBeNull();
   });
 });
+
+describe('indexed roots', () => {
+  it('reads root(n, a) and nthroot(n, a) as an indexed root', () => {
+    expect(sig('root(5,y)')).toBe('root5(y)');
+    expect(sig('root(5, y)')).toBe('root5(y)');
+    expect(sig('nthroot(3, 2x)')).toBe('root3(2 x)');
+    expect(sig('root(1, y)')).toBeNull();
+    expect(sig('root(y)')).toBeNull();
+  });
+  it('draws the index above the root sign', () => {
+    vi.useFakeTimers();
+    const m = mountRoot(<AnswerField />, roots);
+    const input = m.find<HTMLInputElement>('.answer-input');
+    input.value = 'root(5, y)';
+    act(() => { input.dispatchEvent(new Event('input', { bubbles: true })); vi.advanceTimersByTime(PREVIEW_DEBOUNCE_MS + 1); });
+    expect(m.find('.pv-sqrt sup').textContent).toBe('5');
+  });
+  it('shows an indexed example for a radical contract only', () => {
+    expect(inputHint({ kind: 'required_form', form: 'radical' })).toBe(
+      'answers like 3/4, 2x+1, sqrt(2) or root(5, y) are fine',
+    );
+    expect(inputHint({ kind: 'required_form', form: 'simplest_radical' })).toContain('root(5, y)');
+    expect(inputHint({ kind: 'exact' })).not.toContain('root');
+  });
+});

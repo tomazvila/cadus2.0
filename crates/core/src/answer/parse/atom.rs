@@ -14,7 +14,7 @@ pub(crate) const ROOT_CALL: &str = "root";
 
 /// Whether `name` is a spelling of a root written as a function call.
 fn is_root_call(name: &str) -> bool {
-    name == "root" || name == "cbrt"
+    name == "root" || name == "nthroot" || name == "cbrt"
 }
 
 /// Check the index of a root: a whole number from 2 to 9.

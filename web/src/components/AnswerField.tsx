@@ -35,11 +35,17 @@ export function inputHint(contract: AnswerContractHint | undefined): string {
     return 'Separate the numbers with commas or <, for example 5136, 5316, 5361';
   }
   if (/fraction/.test(form) || /fraction/.test(contract?.kind ?? '')) return 'Write a fraction like 3/4.';
+  if (form === 'radical' || form === 'simplest_radical') {
+    return 'answers like 3/4, 2x+1, sqrt(2) or root(5, y) are fine';
+  }
   return 'answers like 3/4, 2x+1, sqrt(2) are fine';
 }
 
 /** The symbols a plain keyboard does not produce. `√(` carries its opening paren. */
 const MATH_SYMBOLS = ['∞', 'π', '√(', '^', '≤', '≥', '≠', '±', '×', '÷', '°', 'θ'] as const;
+
+/** The root indexes the root key offers. Index 2 is the key `√(`. */
+const ROOT_INDEXES = [3, 4, 5, 6, 7, 8, 9] as const;
 
 export interface AnswerFieldHandle {
   /** The trimmed answer, read synchronously at submit time. */
@@ -78,6 +84,7 @@ export function AnswerField({
 }: AnswerFieldProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [shown, setShown] = useState('');
+  const [rootIndex, setRootIndex] = useState<number>(3);
   const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   // The preview follows the input through a debounce; it is never the source of the value.
   const refresh = () => {
@@ -162,6 +169,24 @@ export function AnswerField({
           onClick={() => { insertAtCursor(inputRef.current!, MIXED_TEMPLATE, 0); refresh(); }}
         >
           a b/c
+        </button>
+        <select
+          className="sym-select"
+          aria-label="Root index"
+          value={rootIndex}
+          onChange={(e) => { setRootIndex(Number(e.target.value)); }}
+        >
+          {ROOT_INDEXES.map((n) => <option key={n} value={n}>{n}</option>)}
+        </select>
+        <button
+          type="button"
+          className="sym-key"
+          aria-label="Insert indexed root"
+          onMouseDown={(e) => { e.preventDefault(); }}
+          // `root(5, ` with the chosen index: the caret lands inside the bracket, where the radicand goes.
+          onClick={() => { insertAtCursor(inputRef.current!, `root(${rootIndex}, `); refresh(); }}
+        >
+          ⁿ√
         </button>
       </div>
       <AnswerPreview text={shown} />

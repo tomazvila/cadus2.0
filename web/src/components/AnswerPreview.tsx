@@ -8,6 +8,7 @@ function Node({ n }: { n: PreviewNode }) {
     case 'frac': return <Frac n={<Node n={n.n} />} d={<Node n={n.d} />} />;
     case 'mixed': return <span className="pv-mixed"><span>{n.w}</span><Frac n={n.n} d={n.d} /></span>;
     case 'sqrt': return <span className="pv-sqrt">√<span className="pv-radicand"><Node n={n.x} /></span></span>;
+    case 'root': return <span className="pv-sqrt"><sup>{n.i}</sup>√<span className="pv-radicand"><Node n={n.x} /></span></span>;
     case 'pow': return <span><Node n={n.b} /><sup><Node n={n.e.t === 'paren' ? n.e.x : n.e} /></sup></span>;
     case 'paren': return <span>(<Node n={n.x} />)</span>;
     case 'seq': return <span className="pv-seq">{n.xs.map((x, i) => <Node key={i} n={x} />)}</span>;

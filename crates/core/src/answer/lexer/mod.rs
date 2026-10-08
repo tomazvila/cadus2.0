@@ -409,6 +409,14 @@ impl Lexer<'_> {
             );
             return Ok(());
         }
+        // A superscript digit glued to the root sign is the index: `⁵√y` is the fifth root.
+        if self.chars.get(self.at + 1) == Some(&'√')
+            && let Some(index) = superscript_digit(c).and_then(|d| d.to_digit(10))
+            && (2..=9).contains(&index)
+        {
+            self.push(Tok::IndexedRoot(i64::from(index)), 2);
+            return Ok(());
+        }
         if superscript_digit(c).is_some() {
             return self.superscripts();
         }

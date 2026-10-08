@@ -2,7 +2,7 @@
  * The live preview of a typed answer.
  *
  * A small pure parser for the grammar the app documents: numbers, fractions, mixed numbers,
- * + − × ÷, ^, sqrt and variables. It reads the text the way a learner means it. It does NOT
+ * + − × ÷, ^, sqrt, root(n, a) and variables. It reads the text the way a learner means it. It does NOT
  * grade, and it does not claim the grader reads the text the same way. When the text does not
  * parse, `parsePreview` returns null and the view shows the raw text.
  */
@@ -14,11 +14,12 @@ export type PreviewNode =
   | { t: 'frac'; n: PreviewNode; d: PreviewNode }
   | { t: 'mixed'; w: string; n: string; d: string }
   | { t: 'sqrt'; x: PreviewNode }
+  | { t: 'root'; i: string; x: PreviewNode }
   | { t: 'pow'; b: PreviewNode; e: PreviewNode }
   | { t: 'paren'; x: PreviewNode }
   | { t: 'seq'; xs: PreviewNode[] };
 
-type Tok = { k: 'num' | 'id' | 'op' | 'mix' | 'sqrt' | '(' | ')' | '/' | '^'; v: string };
+type Tok = { k: 'num' | 'id' | 'op' | 'mix' | 'sqrt' | 'root' | '(' | ')' | '/' | '^'; v: string };
 
 const OPS: Record<string, string> = {
   '+': '+', '-': '−', '−': '−', '*': '×', '×': '×', '÷': '÷',
@@ -30,6 +31,8 @@ class Unreadable extends Error {}
 /** The token of the word at the start of a run of letters, and its length. */
 function readWord(w: string): { tok: Tok; len: number } {
   if (w === 'and') return { tok: { k: 'mix', v: w }, len: 3 };
+  if (w.startsWith('nthroot')) return { tok: { k: 'root', v: 'root' }, len: 7 };
+  if (w.startsWith('root')) return { tok: { k: 'root', v: 'root' }, len: 4 };
   if (w.startsWith('sqrt')) return { tok: { k: 'sqrt', v: 'sqrt' }, len: 4 };
   const first = String.fromCodePoint(w.codePointAt(0)!);
   return { tok: { k: 'id', v: first }, len: first.length };
@@ -135,7 +138,23 @@ class Parser {
       const a = this.atom();
       return { t: 'sqrt', x: a.t === 'paren' ? a.x : a };
     }
+    if (t.k === 'root') return this.indexedRoot();
     throw new Unreadable();
+  }
+
+  /** `root(5, y)`: the bracket, a whole-number index from 2 to 9, a comma, the radicand, the bracket. */
+  private indexedRoot(): PreviewNode {
+    const open = this.peek();
+    const index = this.toks[this.pos + 1];
+    const comma = this.toks[this.pos + 2];
+    if (open?.k !== '(' || index?.k !== 'num' || !/^[2-9]$/.test(index.v) || comma?.k !== 'op' || comma.v !== ',') {
+      throw new Unreadable();
+    }
+    this.pos += 3;
+    const x = this.seq(true);
+    if (this.peek()?.k !== ')') throw new Unreadable();
+    this.pos += 1;
+    return { t: 'root', i: index.v, x };
   }
 }
 
@@ -158,6 +177,7 @@ export function signature(n: PreviewNode): string {
     case 'frac': return `frac(${signature(n.n)},${signature(n.d)})`;
     case 'mixed': return `mixed(${n.w},${n.n},${n.d})`;
     case 'sqrt': return `√${signature(n.x)}`;
+    case 'root': return `root${n.i}(${signature(n.x)})`;
     case 'pow': return `pow(${signature(n.b)},${signature(n.e)})`;
     case 'paren': return `(${signature(n.x)})`;
     case 'seq': return n.xs.map(signature).join(' ');

@@ -180,6 +180,21 @@ describe('AnswerField: the caret contract', () => {
     expect(input.selectionEnd).toBe(3);
   });
 
+  it('the root key inserts root(n, with the chosen index and the caret inside the bracket', () => {
+    const m = mount(<AnswerField />);
+    const input = m.find<HTMLInputElement>('.answer-input');
+    const select = m.find<HTMLSelectElement>('select[aria-label="Root index"]');
+    act(() => {
+      const setter = Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, 'value')!.set!;
+      setter.call(select, '5');
+      select.dispatchEvent(new Event('change', { bubbles: true }));
+    });
+    const key = m.all('.sym-key').find((k) => k.getAttribute('aria-label') === 'Insert indexed root')!;
+    act(() => { key.click(); });
+    expect(input.value).toBe('root(5, ');
+    expect(input.selectionStart).toBe(8);
+  });
+
   it('replaces the selection rather than inserting beside it', () => {
     const m = mount(<AnswerField />);
     const input = m.find<HTMLInputElement>('.answer-input');
@@ -281,7 +296,7 @@ describe('AnswerField: the handle and accessibility', () => {
   it('renders the twelve symbols in order, then the mixed-number key', () => {
     const m = mount(<AnswerField />);
     expect(m.all('.sym-key').map((k) => k.textContent))
-      .toEqual(['∞', 'π', '√(', '^', '≤', '≥', '≠', '±', '×', '÷', '°', 'θ', 'a b/c']);
+      .toEqual(['∞', 'π', '√(', '^', '≤', '≥', '≠', '±', '×', '÷', '°', 'θ', 'a b/c', 'ⁿ√']);
   });
 
   it('gives every symbol key type="button", so it never submits a form', () => {
