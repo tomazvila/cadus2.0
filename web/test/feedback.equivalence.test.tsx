@@ -1,6 +1,6 @@
 /** The feedback panel while the background equivalence check runs, and when it lands. */
 import { describe, expect, it, vi } from 'vitest';
-import { act, render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen } from '@testing-library/react';
 import { createDemoApi } from '@/api';
 import { createLifetime } from '@/hooks/useLifetime';
 import { EQUIVALENCE_POLL_MS, Feedback, ProofAwareFeedback } from '@/views/session/Feedback';
@@ -23,13 +23,14 @@ describe('pending equivalence check', () => {
     </Feedback>);
     expect(document.querySelector('.feedback')!.className).toBe('feedback feedback-pending');
     expect(text()).toContain('Checking your answer…');
-    for (const gone of ['Not quite', 'Correct', 'nearly passable', 'XP', 'Follow-up', 'lesson_fail', 'Working out', 'Stop for now', 'fresh problem', 'Next problem']) {
+    for (const gone of ['Not quite', 'Correct', 'nearly passable', 'XP', 'Follow-up', 'lesson_fail', 'Working out', 'fresh problem', 'Next problem', 'Waiting for the check']) {
       expect(text()).not.toContain(gone);
     }
     expect(document.querySelector('.feedback-mark')).toBeNull();
-    const btn = screen.getByRole('button', { name: 'Waiting for the check…' });
-    expect(btn.getAttribute('aria-disabled')).toBe('true');
-    expect(screen.getAllByRole('button')).toHaveLength(1);
+    const btn = screen.getByRole('button', { name: 'Mark wrong and continue →' });
+    expect(btn.hasAttribute('disabled')).toBe(false);
+    expect(btn.getAttribute('aria-disabled')).toBeNull();
+    expect(screen.getByRole('button', { name: 'Stop for now' })).toBeTruthy();
   });
 
   it('is replaced by the correct panel, with no stale chips, when the check lands', async () => {
@@ -48,7 +49,7 @@ describe('pending equivalence check', () => {
       expect(text()).toContain('Correct. Your progress is updated.');
       expect(document.querySelector('.chip-xp')).toBeNull();
       expect(document.querySelector('.chip-quality')).toBeNull();
-      for (const gone of ['Checking your answer', 'Waiting for the check', 'Not quite', 'XP', 'nearly passable', 'lesson_fail', 'Working out', 'Follow-up', 'Try again.']) {
+      for (const gone of ['Checking your answer', 'Mark wrong', 'Not quite', 'XP', 'nearly passable', 'lesson_fail', 'Working out', 'Follow-up', 'Try again.']) {
         expect(text()).not.toContain(gone);
       }
     } finally { vi.useRealTimers(); }
@@ -158,6 +159,66 @@ describe('equivalence steps and final statuses', () => {
       await act(async () => { await vi.advanceTimersByTimeAsync(EQUIVALENCE_POLL_MS + 10); });
       expect(getEquivalence.mock.calls.length).toBeGreaterThan(before);
     } finally { vi.useRealTimers(); }
+  });
+});
+
+describe('moving on while the check is pending', () => {
+  it('continues at once without a poll round-trip and blocks a second press', async () => {
+    vi.useFakeTimers();
+    try {
+      const getEquivalence = vi.fn(async (): Promise<EquivalencePoll> => ({ id: 'e1', attempt_id: 'a-1', verdict: { status: 'pending' } }));
+      const api: ApiClient = { ...createDemoApi(), getEquivalence };
+      const onContinue = vi.fn();
+      render(<ProofAwareFeedback api={api} life={createLifetime()} res={pendingRes()} hasNext onContinue={onContinue} onEnd={vi.fn()} />);
+      await act(async () => { await vi.advanceTimersByTimeAsync(0); });
+      const before = getEquivalence.mock.calls.length;
+      fireEvent.click(screen.getByRole('button', { name: 'Mark wrong and continue →' }));
+      expect(onContinue).toHaveBeenCalledTimes(1);
+      const busy = screen.getByRole('button', { name: 'Moving on…' });
+      expect(busy.hasAttribute('disabled')).toBe(false);
+      fireEvent.click(busy);
+      expect(onContinue).toHaveBeenCalledTimes(1);
+      expect(text()).not.toContain('Waiting for the check');
+      await act(async () => { await vi.advanceTimersByTimeAsync(EQUIVALENCE_POLL_MS * 3); });
+      expect(getEquivalence.mock.calls.length).toBe(before);
+    } finally { vi.useRealTimers(); }
+  });
+
+  it('ignores a late accepted result after the learner continued', async () => {
+    vi.useFakeTimers();
+    try {
+      let release: (p: EquivalencePoll) => void = () => undefined;
+      const getEquivalence = vi.fn(() => new Promise<EquivalencePoll>((r) => { release = r; }));
+      const api: ApiClient = { ...createDemoApi(), getEquivalence };
+      render(<ProofAwareFeedback api={api} life={createLifetime()} res={pendingRes()} hasNext onContinue={vi.fn()} onEnd={vi.fn()} />);
+      await act(async () => { await vi.advanceTimersByTimeAsync(0); });
+      fireEvent.click(screen.getByRole('button', { name: 'Mark wrong and continue →' }));
+      await act(async () => { release({ id: 'e1', attempt_id: 'a-1', verdict: { status: 'accepted' } }); await vi.advanceTimersByTimeAsync(0); });
+      expect(document.querySelector('.feedback-correct')).toBeNull();
+      expect(text()).not.toContain('Correct');
+    } finally { vi.useRealTimers(); }
+  });
+
+  it('stops the poll when the learner leaves the screen', async () => {
+    vi.useFakeTimers();
+    try {
+      const getEquivalence = vi.fn(async (): Promise<EquivalencePoll> => ({ id: 'e1', attempt_id: 'a-1', verdict: { status: 'pending' } }));
+      const api: ApiClient = { ...createDemoApi(), getEquivalence };
+      const view = render(<ProofAwareFeedback api={api} life={createLifetime()} res={pendingRes()} hasNext onContinue={vi.fn()} onEnd={vi.fn()} />);
+      await act(async () => { await vi.advanceTimersByTimeAsync(0); });
+      view.unmount();
+      const before = getEquivalence.mock.calls.length;
+      await act(async () => { await vi.advanceTimersByTimeAsync(EQUIVALENCE_POLL_MS * 3); });
+      expect(getEquivalence.mock.calls.length).toBe(before);
+    } finally { vi.useRealTimers(); }
+  });
+
+  it('keeps a correct first pass unchanged', () => {
+    const onContinue = vi.fn();
+    render(<ProofAwareFeedback api={createDemoApi()} life={createLifetime()} res={graded({ correct: true })} hasNext onContinue={onContinue} onEnd={vi.fn()} />);
+    expect(text()).not.toContain('Mark wrong');
+    fireEvent.click(screen.getByRole('button', { name: 'Next problem →' }));
+    expect(onContinue).toHaveBeenCalledTimes(1);
   });
 });
 

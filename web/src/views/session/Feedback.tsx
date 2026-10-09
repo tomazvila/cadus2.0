@@ -76,7 +76,7 @@ export interface FeedbackProps {
 
 export function Feedback(props: FeedbackProps) {
   const status = props.res.equivalence?.status;
-  if (status === 'pending') return <CheckingFeedback continueRef={props.continueRef} steps={props.res.equivalence?.steps} />;
+  if (status === 'pending') return <CheckingFeedback {...props} steps={props.res.equivalence?.steps} />;
   if (status === 'failed') return <UnfinishedFeedback {...props} />;
   return <GradedFeedback {...props} />;
 }
@@ -262,8 +262,9 @@ export function settleEquivalence(res: AnswerResponse, poll: EquivalencePoll): A
   return { ...res, equivalence, ...(v.status === 'refused' && v.reason ? { equivalence_reason: v.reason } : {}) };
 }
 
-function useEquivalence(api: ApiClient, life: Lifetime, res: AnswerResponse): AnswerResponse {
-  const id = res.equivalence?.status === 'pending' ? res.equivalence.id ?? null : null;
+/** `stopped` is true once the learner moved on or left: the poll ends and a late result is dropped. */
+function useEquivalence(api: ApiClient, life: Lifetime, res: AnswerResponse, stopped: boolean): AnswerResponse {
+  const id = !stopped && res.equivalence?.status === 'pending' ? res.equivalence.id ?? null : null;
   const [landed, setLanded] = useState<{ id: string; res: AnswerResponse } | null>(null);
   useEffect(() => {
     if (id === null) return undefined;
@@ -293,8 +294,20 @@ function useEquivalence(api: ApiClient, life: Lifetime, res: AnswerResponse): An
   return id !== null && landed?.id === id ? landed.res : res;
 }
 
-/** The neutral panel of an answer whose background check has not landed. */
-function CheckingFeedback({ continueRef, steps }: Pick<FeedbackProps, 'continueRef'> & { steps: EquivalenceStep[] | undefined }) {
+/**
+ * The neutral panel of an answer whose background check has not landed.
+ *
+ * The first pass already stored the attempt as wrong, so the learner may move on at once.
+ * The button is never disabled while the check runs. After one press it shows a busy label
+ * and takes no second press, so one click moves on once.
+ */
+function CheckingFeedback({ continueRef, steps, onContinue, onEnd }: Pick<FeedbackProps, 'continueRef' | 'onContinue' | 'onEnd'> & { steps: EquivalenceStep[] | undefined }) {
+  const [moving, setMoving] = useState(false);
+  const press = () => {
+    if (moving) return;
+    setMoving(true);
+    onContinue();
+  };
   return (
     <div className="feedback feedback-pending" role="status">
       <div className="feedback-head"><span className="feedback-title">Checking your answer…</span></div>
@@ -304,11 +317,12 @@ function CheckingFeedback({ continueRef, steps }: Pick<FeedbackProps, 'continueR
         </ol>
       ) : null}
       <div className="actions">
-        {/* aria-disabled, not disabled: a disabled button cannot take the focus the view gives it. */}
-        <button ref={continueRef} type="button" className="btn btn-primary" aria-disabled="true" onClick={(e) => e.preventDefault()}>
-          Waiting for the check…
+        <button ref={continueRef} type="button" className="btn btn-primary" aria-busy={moving} onClick={press}>
+          {moving ? 'Moving on…' : 'Mark wrong and continue →'}
         </button>
+        <button type="button" className="btn btn-ghost" onClick={onEnd}>Stop for now</button>
       </div>
+      <p className="muted small">{STOP_NOTE}</p>
     </div>
   );
 }
@@ -396,13 +410,18 @@ function Reason({ reason, shown = true }: { reason: string | undefined; shown?: 
 export function ProofAwareFeedback({ api, life, ...props }: FeedbackProps & { api: ApiClient; life: Lifetime }) {
   const proof = useProofGrading(api, life, props.res.proof_grading);
   useSeen(api, props.res.proof_grading, proof);
-  const res = useEquivalence(api, life, props.res);
-  // The pending button takes no click, so the focus returns to the live one when it lands.
+  const [stopped, setStopped] = useState(false);
+  const res = useEquivalence(api, life, props.res, stopped);
+  const { onContinue, onEnd } = props;
+  const leave = (go: () => void) => () => { setStopped(true); go(); };
+  // The focus returns to the live button when the check lands.
   const wasPending = props.res.equivalence?.status === 'pending' && res.equivalence?.status !== 'pending';
   useEffect(() => {
     if (wasPending && props.continueRef && 'current' in props.continueRef) props.continueRef.current?.focus();
   }, [wasPending, props.continueRef]);
-  return <Feedback {...props} res={res} proof={proof} />;
+  const pending = res.equivalence?.status === 'pending';
+  // Moving on from a pending panel ends the poll for good. Other panels have no poll to end.
+  return <Feedback {...props} res={res} proof={proof} onContinue={pending ? leave(onContinue) : onContinue} onEnd={pending ? leave(onEnd) : onEnd} />;
 }
 
 /**
