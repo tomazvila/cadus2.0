@@ -1,5 +1,5 @@
 /**
- * `AnswerField` and `WorkField` — the keyboard, caret and handle contract.
+ * `AnswerField` — the keyboard, caret and handle contract.
  *
  * The caret tests are the ones that matter. A controlled React input breaks all three by
  * default, because the caret jumps to the end on every re-render, and nothing about that edit
@@ -16,7 +16,6 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { AnswerField, type AnswerFieldHandle } from '@/components/AnswerField';
-import { WorkField, type WorkFieldHandle } from '@/components/WorkField';
 import { mountRoot } from './helpers/react';
 
 const roots: Array<() => void> = [];
@@ -310,81 +309,6 @@ describe('AnswerField: the handle and accessibility', () => {
 
 // ---------------------------------------------------------------------------
 // The working area.
-// ---------------------------------------------------------------------------
-
-describe('WorkField', () => {
-  it('Enter submits but Shift+Enter inserts a newline', () => {
-    const onSubmit = vi.fn();
-    const m = mount(<WorkField onSubmit={onSubmit} />);
-    const area = m.find('.work-input');
-
-    const plain = keydown(area, 'Enter');
-    expect(onSubmit).toHaveBeenCalledTimes(1);
-    expect(plain.defaultPrevented).toBe(true);
-
-    const shifted = keydown(area, 'Enter', { shiftKey: true });
-    expect(onSubmit).toHaveBeenCalledTimes(1);
-    expect(shifted.defaultPrevented).toBe(false);
-  });
-
-  it('leaves every other key to the textarea', () => {
-    const onSubmit = vi.fn();
-    const m = mount(<WorkField onSubmit={onSubmit} />);
-    const letter = keydown(m.find('.work-input'), 'a');
-    expect(onSubmit).not.toHaveBeenCalled();
-    expect(letter.defaultPrevented).toBe(false);
-  });
-
-  it('takes an Enter with nobody to tell', () => {
-    const m = mount(<WorkField />);
-    expect(() => keydown(m.find('.work-input'), 'Enter')).not.toThrow();
-  });
-
-  it('Enter is inert while the area is disabled or readOnly', () => {
-    const onSubmit = vi.fn();
-    const m = mount(<WorkField onSubmit={onSubmit} />);
-    const area = m.find<HTMLTextAreaElement>('.work-input');
-
-    area.disabled = true;
-    keydown(area, 'Enter');
-    area.disabled = false;
-    area.readOnly = true;
-    keydown(area, 'Enter');
-
-    expect(onSubmit).not.toHaveBeenCalled();
-  });
-
-  it('reads an empty working once the area is gone', () => {
-    const ref = createRef<WorkFieldHandle>();
-    const m = mount(<WorkField ref={ref} />);
-    const handle = ref.current!;
-    m.find<HTMLTextAreaElement>('.work-input').value = 'LCD';
-    m.unmount();
-    expect(handle.value()).toBe('');
-  });
-
-  it('starts collapsed inside a NATIVE <details>', () => {
-    const m = mount(<WorkField />);
-    const details = m.find<HTMLDetailsElement>('.work');
-
-    // `app.css` styles `.work summary`, and the native element carries the keyboard and
-    // screen-reader semantics for free.
-    expect(details.tagName).toBe('DETAILS');
-    expect(details.open).toBe(false);
-    expect(m.find('.work summary').textContent).toBe('Show working (optional)');
-    expect(m.find('.work-input').getAttribute('aria-label')).toBe('Working');
-  });
-
-  it('reads the trimmed working synchronously', () => {
-    const ref = createRef<WorkFieldHandle>();
-    const m = mount(<WorkField ref={ref} />);
-    m.find<HTMLTextAreaElement>('.work-input').value = '  LCD is 6  ';
-    expect(ref.current!.value()).toBe('LCD is 6');
-  });
-});
-
-// ---------------------------------------------------------------------------
-// The stylesheet rules these components depend on.
 // ---------------------------------------------------------------------------
 
 describe('the study-field stylesheet', () => {

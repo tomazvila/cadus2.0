@@ -224,7 +224,6 @@ export async function mountDrill(taskAnswer: ApiClient['taskAnswer']) {
 // ---------------------------------------------------------------------------
 
 export const answerInput = () => screen.getByLabelText('Answer') as HTMLInputElement;
-export const workInput = () => screen.getByLabelText('Working') as HTMLTextAreaElement;
 export const submitButton = () => screen.getByRole('button', { name: /^(Submit|Checking…)$/ });
 export const progressCount = () => document.querySelector('.progress-count')!.textContent;
 export const timer = () => document.querySelector('.timer')!;

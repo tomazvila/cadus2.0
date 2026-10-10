@@ -6,7 +6,7 @@
  * so that a change of one line in the view fails one test here.
  */
 import { describe, expect, it, vi } from 'vitest';
-import { act, fireEvent, screen } from '@testing-library/react';
+import { act, screen } from '@testing-library/react';
 import { ApiError } from '@/api';
 import { busy, failThenHold } from './helpers/api';
 import { held } from './helpers/held';
@@ -15,7 +15,6 @@ import { allowConsoleError } from './setup';
 import {
   DRILL, LESSON, REVIEW, REWORK, TEACHING, P, answerInput, closed, graded, mount, mountDrill,
   mountStrict, planOf, press, progressCount, stubApi, submitAnswer, submitButton, timer,
-  workInput,
 } from './helpers/session';
 import type {
   AnswerResponse, ApiClient, PlanTask, ServedProblem, SessionEndResponse, TaskAnswerResponse,
@@ -322,16 +321,6 @@ describe('the card', () => {
     expect(answerInput().disabled).toBe(false);
     await act(async () => { grade.release(graded()); });
     expect(screen.getByText('Correct')).toBeTruthy();
-  });
-
-  it('Enter in the working posts the answer', async () => {
-    const taskAnswer = vi.fn<ApiClient['taskAnswer']>(async () => graded());
-    await mount({ api: stubApi({ taskAnswer }) });
-    fireEvent.change(answerInput(), { target: { value: '3/4' } });
-    fireEvent.change(workInput(), { target: { value: 'halve both' } });
-    await act(async () => { fireEvent.keyDown(workInput(), { key: 'Enter' }); });
-    expect(taskAnswer).toHaveBeenCalledTimes(1);
-    expect(taskAnswer.mock.calls[0][1]).toEqual({ problem_id: 'p1', answer: '3/4', work: 'halve both' });
   });
 
   it('names the task in its chip, and shows no clock for a review', async () => {

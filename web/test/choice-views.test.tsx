@@ -48,8 +48,7 @@ describe('the session with a Label problem', () => {
   it('shows the buttons in the payload order, no typed field and no Submit button', async () => {
     await session.mount({ api: session.stubApi({ taskServe: async () => labelProblem() }) });
     expectButtonsOnly('Submit');
-    // The work field and the hint control stay.
-    expect(session.workInput()).toBeTruthy();
+    // The hint control stays.
     expect(screen.getByRole('button', { name: 'Hint' })).toBeTruthy();
   });
 
@@ -69,16 +68,6 @@ describe('the session with a Label problem', () => {
     await act(async () => { reply.release(session.graded()); });
     expect(screen.getByText('Correct')).toBeTruthy();
     expect(allDisabled()).toBe(true);
-  });
-
-  it('posts the working with the option text', async () => {
-    const taskAnswer = vi.fn<ApiClient['taskAnswer']>(async () => session.graded());
-    await session.mount({ api: session.stubApi({ taskServe: async () => labelProblem(), taskAnswer }) });
-    fireEvent.change(session.workInput(), { target: { value: 'Step 2 divides by zero' } });
-    await tap('Step 2');
-    expect(taskAnswer.mock.calls).toEqual([
-      ['t-review', { problem_id: 'p1', answer: 'Step 2', work: 'Step 2 divides by zero' }],
-    ]);
   });
 
   it('shows the buttons again for the re-solve of the same problem', async () => {

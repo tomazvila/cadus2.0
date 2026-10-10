@@ -37,9 +37,10 @@ function ReportDetails({ report, submitted, hideResult, close }: {
     {report.receipt ? <p>Report sent</p> : null}
     <MathBlock>{context.problem_text}</MathBlock>
     {submitted ? <p>Your submitted answer: <span>{context.answer || '(blank)'}</span></p> : <p>No answer submission is required to send a report.</p>}
-    <p className="muted">The review checks your answer, explains the grade, and corrects it when your answer is right.</p>
-    <label className="auth-label" htmlFor={noteId}>What should we check? (optional)</label>
-    {/* The shared work-field pattern, not a bare UA textarea: unstyled, the textarea
+    <p className="muted">A reviewer checks your answer, explains the grade, and corrects it when your answer is right.</p>
+    <label className="auth-label" htmlFor={noteId}>What do you think is wrong? (optional)</label>
+    <p className="field-hint">For example the answer you expected, or why your spelling of it is the same value. The reviewer answers this in the result.</p>
+    {/* A styled textarea, not a bare UA one: unstyled, the textarea
         flows inline with its label and the two overlap. */}
     <textarea id={noteId} className="work-input" maxLength={2000} rows={3} value={report.note} disabled={report.busy || report.noteLocked}
       onChange={(event) => report.setNote(event.target.value)} />

@@ -24,7 +24,7 @@ import { networkFailure } from './helpers/api';
 import { blurThenSubmitEmpty } from './helpers/field';
 import {
   REVIEW, REWORK, P, answerInput, graded, mount, planOf, press, progressCount, stubApi,
-  submitAnswer, submitButton, typeAnswer, workInput,
+  submitAnswer, submitButton, typeAnswer,
 } from './helpers/session';
 import type { AnswerResponse, ApiClient, PlanTask } from '@/api/types';
 
@@ -73,18 +73,17 @@ describe('the study loop', () => {
     expect(taskServe).not.toHaveBeenCalled();
   });
 
-  it('posts the answer and the working, then paints the verdict and the solution', async () => {
+  it('posts the answer, then paints the verdict and the solution', async () => {
     const taskAnswer = vi.fn<ApiClient['taskAnswer']>(async () => graded({ correct: false, next: null, error_tags: ['sign-error'], work_quality: 'passable' }));
     await mount({ api: stubApi({ taskAnswer }) });
 
     typeAnswer('3/4');
-    fireEvent.change(workInput(), { target: { value: 'divide by two' } });
     await act(async () => { fireEvent.click(submitButton()); });
 
     expect(taskAnswer).toHaveBeenCalledTimes(1);
     expect(taskAnswer.mock.calls[0]).toEqual([
       't-review',
-      { problem_id: 'p1', answer: '3/4', work: 'divide by two' },
+      { problem_id: 'p1', answer: '3/4' },
     ]);
     expect(screen.getByText('Not quite')).toBeTruthy();
     expect(screen.getByText('sign-error')).toBeTruthy();
@@ -129,7 +128,7 @@ describe('F-37-1c: the phase gate', () => {
     expect(answerInput().disabled).toBe(false);
     fireEvent.keyDown(answerInput(), { key: 'Enter' });
     fireEvent.keyDown(answerInput(), { key: 'Enter' });
-    fireEvent.keyDown(workInput(), { key: 'Enter' });
+    fireEvent.keyDown(answerInput(), { key: 'Enter' });
     fireEvent.click(submitButton());
     expect(taskAnswer).toHaveBeenCalledTimes(1);
 

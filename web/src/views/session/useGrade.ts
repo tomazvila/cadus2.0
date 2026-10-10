@@ -32,7 +32,6 @@ import { isQuizReceipt, isRework } from '@/api/types';
 import { releaseOnFail } from '@/hooks/screen';
 import { clearDraft } from '@/lib/notation';
 import type { AnswerFieldHandle } from '@/components/AnswerField';
-import type { WorkFieldHandle } from '@/components/WorkField';
 import type { Call } from '@/hooks/useCall';
 import type { Lifetime } from '@/hooks/useLifetime';
 import type { Gate } from '@/hooks/usePhase';
@@ -52,7 +51,6 @@ export interface GradeDeps {
   problemRef: RefObject<ServedProblem | null>;
   taskRef: RefObject<PlanTask | null>;
   answerRef: RefObject<AnswerFieldHandle | null>;
-  workRef: RefObject<WorkFieldHandle | null>;
   /** The problem the SERVICE ALREADY ANSWERED, whatever the answer said. */
   answeredForRef: RefObject<string | null>;
   /** The problem whose drill timeout already fired. */
@@ -75,7 +73,7 @@ export interface Grade {
 
 export function useGrade({
   api, call, gate, life, session,
-  problemRef, taskRef, answerRef, workRef, answeredForRef, timedOutForRef,
+  problemRef, taskRef, answerRef, answeredForRef, timedOutForRef,
   setResult, setRework, setElapsed, setHints, setReferenceLesson, onSubmitted,
   countdown, elapsed,
 }: GradeDeps): Grade {
@@ -97,12 +95,10 @@ export function useGrade({
     // grading window can never both post this `problem_id`.
     if (!gate.tryEnter('ready', 'submitting')) return;
 
-    const work = workRef.current!.value();
     void call(
       () => api.taskAnswer(task.task_id, {
         problem_id: current.problem_id,
         answer,
-        ...(work ? { work } : {}),
       }),
       (reply) => {
         // THE SERVICE ANSWERED THIS PROBLEM, whatever the reply says. The latch is set here,
@@ -136,7 +132,7 @@ export function useGrade({
           return;
         }
         onSubmitted?.({ task_id: task.task_id, problem_id: current.problem_id,
-          attempt_id: reply.attempt_id, problem_text: current.text, answer, work });
+          attempt_id: reply.attempt_id, problem_text: current.text, answer, work: '' });
         setResult(reply);
         setRework(null);
         // Hard Rule 3: the core scheduled it, so ask the core for a new plan when this task

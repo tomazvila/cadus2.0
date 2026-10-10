@@ -9,7 +9,6 @@ import { MathBlock } from '@/components/MathBlock';
 import { MathVisuals } from '@/components/MathVisual';
 import type { AnswerFieldHandle } from '@/components/AnswerField';
 import { AnswerInput, TypedSubmit } from '@/components/AnswerInput';
-import { WorkField, type WorkFieldHandle } from '@/components/WorkField';
 import { LoadingBlock } from '@/components/primitives';
 import { closeWith } from '@/hooks/screen';
 import { useCall } from '@/hooks/useCall';
@@ -110,7 +109,6 @@ export function Session({
   );
 
   const answerRef = useRef<AnswerFieldHandle>(null);
-  const workRef = useRef<WorkFieldHandle>(null);
   const continueRef = useRef<HTMLButtonElement>(null);
   const homeRef = useRef<HTMLButtonElement>(null);
   // Both are read SYNCHRONOUSLY by a submit, which cannot wait for a render, so every
@@ -374,7 +372,7 @@ export function Session({
 
   const { submit, requestHint } = useGrade({
     api, call, gate, life, session,
-    problemRef, taskRef, answerRef, workRef,
+    problemRef, taskRef, answerRef,
     answeredForRef: answeredFor, timedOutForRef: timedOutFor,
     setResult, setRework, setElapsed, setHints, setReferenceLesson,
     onSubmitted: report.remember,
@@ -589,7 +587,6 @@ export function Session({
           onSubmit={() => submit()}
           onHint={hintsAvailable ? requestHint : undefined}
         />
-        <WorkField ref={workRef} onSubmit={() => submit()} />
 
         {/* W-C5: one primary here, and the quiet controls beside it. */}
         {phase === 'feedback' ? null : (

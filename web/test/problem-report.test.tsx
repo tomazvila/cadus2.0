@@ -42,7 +42,7 @@ describe('submitted question reports', () => {
     const api = createDemoApi();
     api.taskReport = vi.fn().mockResolvedValue(completed);
     openReport(api);
-    fireEvent.change(screen.getByLabelText('What should we check? (optional)'), { target: { value: 'Factor pairs are valid.' } });
+    fireEvent.change(screen.getByLabelText('What do you think is wrong? (optional)'), { target: { value: 'Factor pairs are valid.' } });
     fireEvent.click(screen.getByRole('button', { name: 'Send report' }));
     await screen.findByText('The representation is valid.');
     expect(api.taskReport).toHaveBeenCalledWith('old-task', expect.objectContaining({
@@ -73,10 +73,10 @@ describe('submitted question reports', () => {
     openReport(api);
     fireEvent.click(screen.getByRole('button', { name: 'Send report' }));
     await screen.findByRole('button', { name: 'Retry report' });
-    expect((screen.getByLabelText('What should we check? (optional)') as HTMLTextAreaElement).disabled).toBe(false);
+    expect((screen.getByLabelText('What do you think is wrong? (optional)') as HTMLTextAreaElement).disabled).toBe(false);
     fireEvent.click(screen.getByRole('button', { name: 'Retry report' }));
     await screen.findByRole('alert');
-    expect((screen.getByLabelText('What should we check? (optional)') as HTMLTextAreaElement).disabled).toBe(true);
+    expect((screen.getByLabelText('What do you think is wrong? (optional)') as HTMLTextAreaElement).disabled).toBe(true);
     fireEvent.click(screen.getByRole('button', { name: 'Retry sending report' }));
     await screen.findByText('The representation is valid.');
     expect(post.mock.calls[0][1].request_id).not.toEqual(post.mock.calls[1][1].request_id);

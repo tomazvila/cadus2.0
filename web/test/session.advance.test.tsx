@@ -14,7 +14,7 @@ import { resetToasts } from '@/app/toast';
 import { signed } from '@/lib/format';
 import {
   LESSON, REVIEW, TEACHING, P, answerInput, clickNext, closed, graded, mount, planOf,
-  press, progressCount, stubApi, submitAnswer, submitThenWait, workInput, typeAnswer,
+  press, progressCount, stubApi, submitAnswer, submitThenWait, typeAnswer,
 } from './helpers/session';
 import { status as dashboardStatus } from './helpers/dashboard';
 import type {
@@ -105,17 +105,15 @@ describe('the advance', () => {
     await mount({ api: stubApi({ taskAnswer }) });
 
     typeAnswer('3/4');
-    fireEvent.change(workInput(), { target: { value: 'the working of problem one' } });
     await submitAnswer('3/4');
-    // A fresh subtree: both fields are new nodes, and both are empty.
+    // A fresh subtree: the field is a new node, and it is empty.
     expect(await clickNext()).toBe('2 / 3 · 1 left');
     expect(answerInput().value).toBe('');
-    expect(workInput().value).toBe('');
 
     await submitAnswer('1');
 
-    // The second post carries the second problem and NO working. Without the key the first
-    // problem's working posts here, into an append-only log.
+    // The second post carries the second problem only. Without the key the first problem's
+    // text would post here, into an append-only log.
     expect(taskAnswer.mock.calls[1]).toEqual(['t-review', { problem_id: 'p2', answer: '1' }]);
   });
 });
