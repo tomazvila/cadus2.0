@@ -119,6 +119,17 @@ pub(crate) async fn decide(
         }
     }
 
+    // A label item (yes or no, which of these) has a closed option list: the
+    // miss is the other option, and a model has nothing to work out about it.
+    // The pre-authored answer above still serves; no job follows (owner,
+    // 2026-10-10).
+    if matches!(
+        served.expected.answer_contract,
+        Some(cadus_core::answer::AnswerContract::Label { .. })
+    ) {
+        return Ok(json!({ "status": STATUS_NOT_OFFERED }));
+    }
+
     if !write {
         // The replay path. The job id of the first request stands in the D-S6
         // document, so a retried request names the same job and starts none.

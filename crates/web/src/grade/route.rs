@@ -138,12 +138,18 @@ pub async fn answer(request: TaskWithBody) -> Result<Json<Value>, ApiError> {
     // one example, and the exact predicate already decided the learner's own
     // object. A decided miss is final, and an unreadable answer stays
     // ungraded with its format guidance; neither goes to the model.
-    let property_item = matches!(
+    // A label item (yes or no, which of these) has a closed option list: a
+    // miss is the other option, and no reading of the answer can turn it into
+    // the right one, so the model is never asked (owner, 2026-10-10).
+    let closed_item = matches!(
         served.expected.answer_contract,
-        Some(cadus_core::answer::AnswerContract::Property { .. })
+        Some(
+            cadus_core::answer::AnswerContract::Property { .. }
+                | cadus_core::answer::AnswerContract::Label { .. }
+        )
     );
     let mut equivalence_hit = None;
-    if !verified_answer && !grade.correct && !written_proof && !property_item {
+    if !verified_answer && !grade.correct && !written_proof && !closed_item {
         match equivalence::lookup(&state, &mut tx, &served, &submitted.answer).await {
             Ok(Some(equivalence::Cached::Accepted(verdict))) => {
                 grade = Grade {
@@ -266,7 +272,7 @@ pub async fn answer(request: TaskWithBody) -> Result<Json<Value>, ApiError> {
     // Amendment K: on a wrong or unparseable answer with no cached verdict,
     // the background check is enqueued in the same transaction. A miss that
     // was flipped by the cache carries no job (the verdict is already here).
-    let equivalence_job = if grade.correct || written_proof || property_item {
+    let equivalence_job = if grade.correct || written_proof || closed_item {
         None
     } else {
         match equivalence_hit {
