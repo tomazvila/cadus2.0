@@ -31,12 +31,12 @@ export const Y_STEP = 120;
  * the canvas paints that state with — `--good` and the rest live in `tokens.css`, which is
  * the one home of the palette (TOKENS-hex).
  */
-export const STATES: ReadonlyArray<{ id: TopicStatus; label: string; token: string }> = [
-  { id: 'frontier', label: 'Ready to learn', token: '--accent' },
-  { id: 'learning', label: 'Learning', token: '--info' },
-  { id: 'placed', label: 'Placed', token: '--good' },
-  { id: 'floor', label: 'Assumed known', token: '--accent-2' },
-  { id: 'untouched', label: 'Not reached', token: '--muted' },
+export const STATES: ReadonlyArray<{ id: TopicStatus; label: string; token: string; shape: string }> = [
+  { id: 'frontier', label: 'Ready to learn', token: '--accent', shape: 'diamond' },
+  { id: 'learning', label: 'Learning', token: '--info', shape: 'round-rectangle' },
+  { id: 'placed', label: 'Shown by the starting questions', token: '--good', shape: 'ellipse' },
+  { id: 'floor', label: 'Known before you started', token: '--accent-2', shape: 'hexagon' },
+  { id: 'untouched', label: 'Not reached', token: '--muted', shape: 'ellipse' },
 ];
 
 /**

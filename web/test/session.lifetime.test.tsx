@@ -12,7 +12,7 @@ import { held } from './helpers/held';
 import { pressRetry } from './helpers/toasts';
 import {
   LESSON, REVIEW, REWORK, TEACHING, P, answerInput, closed, graded, leaveDuringReplan, mount,
-  mountStrict, planOf, press, progressCount, stubApi, submitAnswer, submitButton, timer, toasts,
+  mountStrict, planOf, press, progressCount, stubApi, submitAnswer, submitButton, toasts,
   typeAnswer,
 } from './helpers/session';
 import { allowConsoleError } from './setup';
@@ -165,7 +165,7 @@ describe('the gate under two events in one tick', () => {
 
     // ONE re-serve: the second click found the gate shut.
     expect(taskServe).toHaveBeenCalledTimes(2);
-    expect(progressCount()).toBe('2 / 3');
+    expect(progressCount()).toBe('2 / 3 · 1 left');
   });
 });
 
@@ -193,7 +193,7 @@ describe('the payload shapes', () => {
     expect(document.querySelector('.topic-name')!.textContent).toBe('Practice');
     expect(document.querySelector('.topic-module')).toBeNull();
     expect(progressCount()).toBe('Question 1');
-    expect(timer().textContent).toBe('0:00');
+    expect(document.querySelector('.timer')).toBeNull();
   });
 
   it('names a topic by its id when it carries no name, and no module without one', async () => {

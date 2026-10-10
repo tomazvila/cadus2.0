@@ -42,14 +42,16 @@ export interface AnswerInputProps {
   onHint?: (() => void) | undefined;
   /** The served answer contract: it picks the hint under the typed field. */
   contract?: AnswerContractHint | undefined;
+  /** The id of the served problem: the typed text is kept under it until a verdict. */
+  draftKey?: string | undefined;
   ref?: Ref<AnswerFieldHandle> | undefined;
 }
 
-export function AnswerInput({ choices, disabled, locked = disabled, onSubmit, onHint, contract, ref }: AnswerInputProps) {
+export function AnswerInput({ choices, disabled, locked = disabled, onSubmit, onHint, contract, draftKey, ref }: AnswerInputProps) {
   if (hasChoices(choices)) {
     return <ChoiceInput choices={choices} locked={locked} onSubmit={onSubmit} ref={ref} />;
   }
-  return <AnswerField ref={ref} disabled={disabled} onSubmit={onSubmit} onHint={onHint} contract={contract} />;
+  return <AnswerField ref={ref} disabled={disabled} onSubmit={onSubmit} onHint={onHint} contract={contract} draftKey={draftKey} />;
 }
 
 /**
@@ -71,9 +73,10 @@ export function TypedSubmit({ choices, busy, disabled, onClick, children }: {
       type="button"
       className={`btn btn-primary${busy ? ' is-busy' : ''}`}
       disabled={disabled}
+      aria-busy={busy ? true : undefined}
       onClick={onClick}
     >
-      {children}
+      {busy ? 'Checking…' : children}
     </button>
   );
 }

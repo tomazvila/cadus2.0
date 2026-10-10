@@ -82,7 +82,7 @@ describe('the payload shapes', () => {
         }),
       }),
     });
-    expect(screen.getByRole('heading', { name: '5 / 0 XP today' })).toBeTruthy();
+    expect(screen.getByRole('heading', { name: '5 / 0 points today' })).toBeTruthy();
     expect(document.querySelector('.ring-label strong')!.textContent).toBe('0%');
     expect(document.querySelector('.course-arc')).toBeNull();
     expect(screen.getByText('your course · 18% complete')).toBeTruthy();
@@ -99,7 +99,7 @@ describe('the reads', () => {
 
     // The first read fails, which paints Try again; the press starts the second read.
     await act(async () => { replies[0]!(status({ due_reviews: 9 })); });
-    expect(screen.getByRole('heading', { name: '12 / 40 XP today' })).toBeTruthy();
+    expect(screen.getByRole('heading', { name: '12 / 40 points today' })).toBeTruthy();
     expect(getStatus).toHaveBeenCalledTimes(1);
   });
 
@@ -110,7 +110,7 @@ describe('the reads', () => {
 
     // The first read fails: Try again is on screen, and a press starts read two.
     await act(async () => { held[0]!.reject(new ApiError(500, 'server_error', 'Down.')); });
-    expect(screen.getByText('Could not load your dashboard.')).toBeTruthy();
+    expect(screen.getByText('Could not load your dashboard. Check your connection, then press Try again.')).toBeTruthy();
     await userEvent.click(screen.getByRole('button', { name: 'Try again' }));
     expect(attempts()).toBe(2);
     // The Retry of the FIRST failure re-runs its request: that is read three, generation 0.
@@ -134,11 +134,11 @@ describe('the reads', () => {
     // card, and the failed generation stays at 1.
     await act(async () => { held[1]!.reject(new ApiError(500, 'server_error', 'Down.')); });
     await act(async () => { held[2]!.reject(new ApiError(500, 'server_error', 'Down.')); });
-    expect(screen.getByText('Could not load your dashboard.')).toBeTruthy();
+    expect(screen.getByText('Could not load your dashboard. Check your connection, then press Try again.')).toBeTruthy();
     // The next successful read still paints, so the failed generation did not run ahead.
     await userEvent.click(screen.getByRole('button', { name: 'Try again' }));
     await act(async () => { held[3]!.resolve(status()); });
-    expect(screen.getByRole('heading', { name: '12 / 40 XP today' })).toBeTruthy();
+    expect(screen.getByRole('heading', { name: '12 / 40 points today' })).toBeTruthy();
   });
 
   it('keeps the card when a stale read fails behind a newer failure', async () => {
@@ -158,7 +158,7 @@ describe('the reads', () => {
     await act(async () => { held[2]!.reject(new ApiError(500, 'server_error', 'Down.')); });
     await act(async () => { held[1]!.reject(new ApiError(500, 'server_error', 'Down.')); });
     expect(screen.getByText('You are all caught up. Nice work.')).toBeTruthy();
-    expect(screen.queryByText('Could not load your dashboard.')).toBeNull();
+    expect(screen.queryByText('Could not load your dashboard. Check your connection, then press Try again.')).toBeNull();
   });
 
   it('F-F2-2: a session start or a quiz read that lands after the screen left moves nothing', async () => {
@@ -167,7 +167,7 @@ describe('the reads', () => {
     const gate = new Promise<void>((r) => { release = r; });
     const sessionStart = vi.fn(async () => { await gate; return started; });
     const view = await mount({ api: stubApi({ sessionStart }) });
-    await pressInMenu('Quiz now');
+    await pressInMenu('Start a timed quiz');
     await userEvent.click(screen.getByRole('button', { name: 'Continue studying' }));
     expect(sessionStart).toHaveBeenCalledTimes(2);
 
@@ -185,7 +185,7 @@ describe('the reads', () => {
     const gate = new Promise<void>((r) => { release = r; });
     const getPlan = vi.fn(async () => { await gate; return plan; });
     const view = await mount({ api: stubApi({ getPlan }) });
-    await pressInMenu('Quiz now');
+    await pressInMenu('Start a timed quiz');
     await waitFor(() => expect(getPlan).toHaveBeenCalledTimes(1));
 
     view.unmount();
@@ -199,6 +199,6 @@ describe('the reads', () => {
     await pressInMenu('Download my data');
 
     await waitFor(() => expect(toastStore.getSnapshot().length).toBe(1));
-    expect(toastStore.getSnapshot()[0].message).toBe('Could not export your data.');
+    expect(toastStore.getSnapshot()[0].message).toBe('Could not export your data. Try again in a minute.');
   });
 });

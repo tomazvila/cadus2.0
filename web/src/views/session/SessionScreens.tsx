@@ -5,9 +5,9 @@
  * Each one is pure render over the props the loop hands it, so `Session.tsx` keeps the
  * four machines and none of the markup that surrounds them.
  */
+import '../../styles/fix-session.css';
 import { Chip, Stat } from '@/components/primitives';
 import { fmtClock, num, signed } from '@/lib/format';
-import { setNotationOpen } from '@/lib/notation';
 import { taskKindText, taskReasonText } from '@/lib/stageCopy';
 import type { PlanTask, ServedProblem, SessionEndResponse, SessionPlanResponse } from '@/api/types';
 
@@ -28,7 +28,7 @@ export function SessionSummary({ summary, homeRef, onExit }: SummaryProps) {
         <h2>Done for now</h2>
         {summary ? (
           <div className="stat-grid">
-            <Stat value={signed(summary.xp_earned)} label="XP earned" className="accent" />
+            <Stat value={signed(summary.xp_earned)} label="points earned" className="accent" />
             <Stat value={`${num(summary.minutes)}`} label="minutes" />
             <Stat value={`${num(summary.xp.streak_days)}`} label="day streak" />
           </div>
@@ -123,6 +123,8 @@ export interface ProblemHeaderProps {
   /** True while the clock counts down: a drill with a budget, and not a re-solve. */
   countdown: boolean;
   onExit: () => void;
+  /** True while a verdict panel is on screen. */
+  hideExit?: boolean;
 }
 
 /** The topic a graded review answer names in its feedback; null on every other task. */
@@ -137,13 +139,62 @@ export function reviewTopic(task: PlanTask): string | null {
  * is four, so a per-task count would mark the probe before the answer (D-F11). A review with
  * no total shows the block's count, or none, and never a bare question number.
  */
+function countOf(position: number, total: number): string {
+  const left = Math.max(0, num(total) - num(position));
+  return `${num(position)} / ${num(total)} · ${left === 0 ? 'last one' : `${num(left)} left`}`;
+}
+
 function progressOf(task: PlanTask, problem: ServedProblem): string {
   if (problem.feedback_practice) return 'Practice on your own';
   if (problem.mixed_review) {
-    return `${num(problem.mixed_review.position)} / ${num(problem.mixed_review.total)}`;
+    return countOf(problem.mixed_review.position, problem.mixed_review.total);
   }
-  if (problem.total != null) return `${num(problem.index)} / ${num(problem.total)}`;
-  return task.task_type === 'review' ? '' : `Question ${num(problem.index)}`;
+  if (problem.total != null) return countOf(problem.index, problem.total);
+  return task.task_type === 'review' ? 'Review' : `Question ${num(problem.index)}`;
+}
+
+export interface StudyHeaderProps {
+  /** The chip: what the learner is doing. */
+  kind: string;
+  chipClass: string;
+  /** The one `h1` of the screen. */
+  title: string;
+  module?: string | null | undefined;
+  progress?: string;
+  /** The clock, shown only for a countdown. */
+  clock?: { seconds: number; urgent: boolean } | null;
+  onExit?: (() => void) | undefined;
+  /** True while a verdict panel is on screen: it holds its own way out. */
+  hideExit?: boolean;
+  why?: string | null;
+}
+
+/** The header shared by a lesson problem and a mixed problem: chip, title, count, way out. */
+export function StudyHeader({
+  kind, chipClass, title, module, progress, clock, onExit, hideExit = false, why,
+}: StudyHeaderProps) {
+  return (
+    <div className="task-header">
+      <div className="task-meta">
+        <Chip className={chipClass}>{kind}</Chip>
+        <h1 className="h-screen topic-name">{title}</h1>
+        {module ? <span className="topic-module">{module}</span> : null}
+      </div>
+      <div className="task-right">
+        {progress ? <span className="progress-count">{progress}</span> : null}
+        {clock ? (
+          <span className={`timer${clock.urgent ? ' urgent' : ''}`}>{fmtClock(clock.seconds)}</span>
+        ) : null}
+        {onExit && !hideExit ? (
+          <span className="exit-group">
+            <button type="button" className="btn btn-ghost" onClick={onExit}>Save &amp; exit</button>
+            <span className="exit-note">Your work is saved.</span>
+          </span>
+        ) : null}
+      </div>
+      {why ? <div className="why-chip">{why}</div> : null}
+    </div>
+  );
 }
 
 /**
@@ -153,41 +204,23 @@ function progressOf(task: PlanTask, problem: ServedProblem): string {
  * problem needs is part of the review (interleaving, Math Academy Way ch. 19). The
  * feedback names the topic once the answer is graded.
  */
-export function ProblemHeader({ task, problem, elapsed, countdown, onExit }: ProblemHeaderProps) {
+export function ProblemHeader({ task, problem, elapsed, countdown, onExit, hideExit = false }: ProblemHeaderProps) {
   const topic = task.task_type === 'review' ? null : task.topic;
+  const title = task.task_type === 'review'
+    ? (problem.mixed_review ? 'Mixed review' : 'Review')
+    : topic?.name || topic?.id || 'Practice';
+  // The plan keeps `why` verbatim, the selector re-parses it; the learner reads the mapped text.
   return (
-    <div className="task-header">
-      <div className="task-meta">
-        <Chip className={`chip-${task.task_type}`}>{taskKindText(task.task_type, task.why)}</Chip>
-        {task.task_type === 'review'
-          ? <span className="topic-name">{problem.mixed_review ? 'Mixed review' : 'Review'}</span>
-          : <span className="topic-name">{topic?.name || topic?.id || 'Practice'}</span>}
-        {topic?.module ? <span className="topic-module">{topic.module}</span> : null}
-      </div>
-      <div className="task-right">
-        <span className="progress-count">{progressOf(task, problem)}</span>
-        <span className={`timer${countdown && elapsed <= 3 ? ' urgent' : ''}`}>
-          {fmtClock(elapsed)}
-        </span>
-        <details className="header-more btn-exit">
-          <summary>More</summary>
-          <div className="header-more-items">
-            <button type="button" className="btn btn-ghost" onClick={() => { setNotationOpen(true); }}>
-              How to type answers
-            </button>
-          </div>
-        </details>
-        <button
-          type="button"
-          className="btn btn-ghost"
-          title="Your work is saved. An unfinished lesson comes back next time."
-          onClick={onExit}
-        >
-          Exit
-        </button>
-      </div>
-      {/* The plan keeps `why` verbatim, the selector re-parses it; the learner reads the mapped text. */}
-      {taskReasonText(task.why) ? <div className="why-chip">{taskReasonText(task.why)}</div> : null}
-    </div>
+    <StudyHeader
+      kind={taskKindText(task.task_type, task.why)}
+      chipClass={`chip-${task.task_type}`}
+      title={title}
+      module={topic?.module}
+      progress={progressOf(task, problem)}
+      clock={countdown ? { seconds: elapsed, urgent: elapsed <= 3 } : null}
+      onExit={onExit}
+      hideExit={hideExit}
+      why={taskReasonText(task.why)}
+    />
   );
 }

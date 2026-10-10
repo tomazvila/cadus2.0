@@ -141,15 +141,15 @@ describe('the async diagnosis panel', () => {
   });
 
   it('DIAG-async: nothing in the panel disables the way forward', async () => {
-    const { onExit } = await mount();
+    await mount();
     await answerWrong();
 
     expect(panel()!.getAttribute('data-status')).toBe('pending');
-    for (const name of ['Next problem →', 'Stop for now', 'Exit']) {
+    for (const name of ['Next problem →', 'Stop for now']) {
       expect((screen.getByRole('button', { name }) as HTMLButtonElement).disabled).toBe(false);
     }
-    fireEvent.click(screen.getByRole('button', { name: 'Exit' }));
-    expect(onExit).toHaveBeenCalledTimes(1);
+    // The verdict panel holds its own way out, so the header exit is gone.
+    expect(screen.queryByRole('button', { name: 'Save & exit' })).toBeNull();
   });
 
   it('opens one connection for the whole session, at /api/diagnosis/stream', async () => {

@@ -287,16 +287,19 @@ describe('AnswerField: the handle and accessibility', () => {
     const m = mount(<AnswerField />);
     expect(m.find('.answer-input').getAttribute('aria-label')).toBe('Answer');
     expect(m.find('.sym-palette').getAttribute('role')).toBe('toolbar');
-    expect(m.find('.sym-palette').getAttribute('aria-label')).toBe('Math symbols');
+    expect(m.find('.sym-palette').getAttribute('aria-label')).toBe('Symbol keys. Use the arrow keys to move.');
     for (const key of m.all('.sym-key')) {
-      expect(key.getAttribute('aria-label')).toMatch(/^(Insert |How to type answers)/);
+      expect(key.getAttribute('aria-label')).toMatch(/^Insert /);
     }
+    expect(m.find('.sym-help').textContent).toBe('How to type answers');
   });
 
-  it('renders the twelve symbols in order, then the mixed-number key, the root key and the help key', () => {
+  it('keeps all keys in order behind More symbols when the problem has no contract', () => {
     const m = mount(<AnswerField />);
     expect(m.all('.sym-key').map((k) => k.textContent))
-      .toEqual(['∞', 'π', '√(', '^', '≤', '≥', '≠', '±', '×', '÷', '°', 'θ', 'a b/c', 'ⁿ√', '?']);
+      .toEqual(['∞', 'π', '√(', '^', '≤', '≥', '≠', '±', '×', '÷', '°', 'θ', 'a b/c', 'ⁿ√']);
+    expect(m.find('.sym-more summary').textContent).toBe('More symbols');
+    expect(m.find('.sym-more').hasAttribute('open')).toBe(false);
   });
 
   it('gives every symbol key type="button", so it never submits a form', () => {

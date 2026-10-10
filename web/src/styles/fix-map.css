@@ -1,0 +1,48 @@
+/* ---- the curriculum map: fixes (W7) ---- */
+.h-screen { font-size: 1.4rem; margin: 0; }
+
+/* The heading row: the way back at the left, the title, then the counts. */
+.map-head { align-items: center; justify-content: flex-start; flex-wrap: wrap; }
+.map-head .map-readout { margin-left: auto; }
+
+.map-zoom { min-width: 44px; padding-left: 0; padding-right: 0; font-size: 1.2rem; }
+
+/* One shape per state. The canvas draws the same shapes. */
+.legend-dot { width: 14px; height: 14px; flex: none; box-sizing: border-box; }
+.legend-dot.ld-frontier { border-radius: 0; clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%); }
+.legend-dot.ld-learning { border-radius: 4px; }
+.legend-dot.ld-placed { border-radius: 999px; }
+.legend-dot.ld-floor {
+  border-radius: 0; clip-path: polygon(25% 5%, 75% 5%, 100% 50%, 75% 95%, 25% 95%, 0 50%);
+}
+.legend-dot.ld-untouched {
+  border-radius: 999px; background: transparent; border: 2px solid var(--muted);
+}
+
+.map-find { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; margin-bottom: 0.8rem; }
+.map-find label { color: var(--muted); font-size: 0.9rem; }
+.map-find-input {
+  flex: 1 1 14rem; max-width: 24rem; min-height: 44px; padding: 0 0.7rem; font: inherit;
+  font-size: max(1rem, 16px);
+  background: var(--surface); color: var(--text);
+  border: 1px solid var(--border); border-radius: 10px;
+}
+.map-find-input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* The detail panel can grow with its neighbor lists, so it scrolls inside itself. */
+.map-panel { max-height: calc(100% - 2rem); overflow-y: auto; }
+.map-neighbors h3 { font-size: 0.85rem; margin: 0.6rem 0 0.2rem; color: var(--muted); }
+.map-neighbors ul { list-style: none; margin: 0; padding: 0; }
+.map-link {
+  appearance: none; background: transparent; border: 0; padding: 0 0.2rem; min-height: 44px;
+  font: inherit; color: var(--accent); text-align: left; cursor: pointer;
+  text-decoration: underline; display: inline-flex; align-items: center;
+}
+.map-link:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+@media (max-width: 600px) {
+  .map-head { flex-direction: row; align-items: center; gap: 0.4rem; }
+  .map-head .map-readout { margin-left: 0; flex: 1 1 100%; }
+  .map-find-input { max-width: none; }
+  .map-panel { max-height: 60%; }
+}

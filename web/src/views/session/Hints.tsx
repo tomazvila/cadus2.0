@@ -54,7 +54,7 @@ export function HintButton({ hidden, locked, onClick }: {
 }) {
   if (hidden) return null;
   return (
-    <button type="button" className="btn btn-ghost" disabled={locked} onClick={onClick}>
+    <button type="button" className="btn" disabled={locked} onClick={onClick}>
       Hint
     </button>
   );

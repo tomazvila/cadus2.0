@@ -62,11 +62,11 @@ describe('the map view — the accessible list view', () => {
 
     // Walk the tab order from the top of the document, exactly as a keyboard reader does.
     const order: string[] = [];
-    for (let i = 0; i < 5; i += 1) {
+    for (let i = 0; i < 8; i += 1) {
       await user.tab();
       order.push(label(document.activeElement));
     }
-    expect(order).toEqual(['Show topics from', 'Show all', 'List view', 'Back to dashboard', MAP_CANVAS_LABEL]);
+    expect(order).toEqual(['Back to dashboard', 'Show topics from', 'Show all', 'Zoom out', 'Zoom in', 'List view', '' /* the find field: `label()` reads no text off an input */, MAP_CANVAS_LABEL]);
 
     // Back to the control, and open it with the keyboard.
     await user.tab({ shift: true });
@@ -148,7 +148,8 @@ describe('the map view — the payload on screen', () => {
     expect(document.querySelector('.map-panel-state .legend-dot')!.className).toBe('legend-dot ld-frontier');
     // The ring is a class on the instance, not a React render, and the camera moves to it.
     expect(cy.classesOf('fractions')).toEqual(['pick', 'st-frontier']);
-    expect(cy.centered).toEqual(['fractions']);
+    // The opening frame of the learner's own unit centered first; then the tap.
+    expect(cy.centered).toEqual(['', 'fractions']);
 
     await act(async () => { cy.emit('tap', cy); });
     expect(document.querySelector('.map-panel')).toBeNull();

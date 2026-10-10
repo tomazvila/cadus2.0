@@ -136,7 +136,7 @@ describe('the session with a Label problem', () => {
     await session.mount({ api: session.stubApi({ taskServe: async () => labelProblem(), taskAnswer }) });
     await tap('Step 1');
     await session.press('Next problem →');
-    expect(session.progressCount()).toBe('2 / 3');
+    expect(session.progressCount()).toBe('2 / 3 · 1 left');
     expect(session.answerInput()).toBeTruthy();
     expect(screen.queryByRole('group', { name: 'Answer choices' })).toBeNull();
     expect(session.submitButton()).toBeTruthy();
@@ -182,7 +182,7 @@ describe('the session with a Label problem', () => {
 describe('the quiz with a Label question', () => {
   it('shows the buttons, no typed field and no Submit button', async () => {
     await quiz.mount({ api: quiz.stubApi({ taskServe: async () => quiz.Q(1, { choices: STEPS }) }) });
-    expectButtonsOnly('Submit answer');
+    expectButtonsOnly('Submit');
     // The promise of the quiz stays on the card.
     expect(screen.getByText('No feedback until the end.')).toBeTruthy();
   });
@@ -290,7 +290,7 @@ describe('the fresh practice after a quiz with a Label problem', () => {
     await session.press('Start fresh practice');
     expect(labels()).toEqual(['Step 3', 'Step 1', 'Step 4', 'Step 2']);
     expect(screen.queryByRole('textbox')).toBeNull();
-    expect(screen.queryByRole('button', { name: 'Submit answer' })).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Submit' })).toBeNull();
     await tap('Step 1');
     expect(quiz.posted(taskAnswer)).toEqual([['q1', 'Step 1']]);
     expect(screen.getByText(/Practice done/)).toBeTruthy();
@@ -300,7 +300,7 @@ describe('the fresh practice after a quiz with a Label problem', () => {
     show(quiz.stubApi({ taskQuizResult: async () => pending, taskServe: async () => quiz.Q(1) }));
     await session.press('Start fresh practice');
     expect(screen.getByRole('textbox')).toBeTruthy();
-    expect(screen.getByRole('button', { name: 'Submit answer' })).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'Submit' })).toBeTruthy();
     expect(screen.queryByRole('group', { name: 'Answer choices' })).toBeNull();
   });
 });

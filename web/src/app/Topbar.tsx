@@ -14,6 +14,7 @@
  * opposite.
  */
 import { createPortal } from 'react-dom';
+import '../styles/fix-shell.css';
 import { BrandMark } from '@/components/primitives';
 import type { User } from '@/api/types';
 
@@ -25,44 +26,73 @@ export interface TopbarProps {
   onHome: () => void;
   onMap: () => void;
   onLogout: () => void;
+  /** The name of the screen on: the brand marks the dashboard, the Map button the map. */
+  view?: string;
+  /** True while a lesson, quiz or placement is on screen: only the brand stays. */
+  focus?: boolean;
 }
 
-export function Topbar({ user, demo, onHome, onMap, onLogout }: TopbarProps) {
+export function Topbar({ user, demo, onHome, onMap, onLogout, view, focus = false }: TopbarProps) {
   const host = document.getElementById('topbar');
   if (!host) return null;
 
   // The quiet Map affordance — offered while signed in, and in demo.
   const mapLink = (
-    <button type="button" className="topbar-link" title="Curriculum map" onClick={onMap}>
+    <button
+      type="button"
+      className="topbar-link"
+      title="Curriculum map"
+      aria-current={view === 'map' ? 'page' : undefined}
+      onClick={onMap}
+    >
+      <svg className="topbar-glyph" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" focusable="false">
+        <path
+          d="M1.5 3.5 5.5 2l5 1.5 4-1.5v10.5l-4 1.5-5-1.5-4 1.5zM5.5 2v10.5M10.5 3.5V14"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.3"
+          strokeLinejoin="round"
+        />
+      </svg>
       Map
     </button>
   );
 
   return createPortal(
     <>
-      <button type="button" className="brand" title="Dashboard" onClick={onHome}>
+      <nav className="topbar-nav" aria-label="Main">
+      <button
+        type="button"
+        className="brand"
+        title="Dashboard"
+        aria-current={view === 'dashboard' ? 'page' : undefined}
+        onClick={onHome}
+      >
         <BrandMark id="brand-mark-top" />
         Cadus
       </button>
       {demo ? (
         <>
-          {mapLink}
+          {focus ? null : mapLink}
           <span className="demo-badge">DEMO</span>
         </>
       ) : user ? (
         <>
-          {mapLink}
+          {focus ? null : mapLink}
           <div className="topbar-user">
             {/* The address is mono, because it is an identifier, and it truncates rather
                 than pushing Log out off the bar on a narrow screen. `title` keeps the full
                 address reachable. */}
             <span className="user-email mono" title={user.email}>{user.email}</span>
-            <button type="button" className="btn btn-ghost logout-btn" onClick={onLogout}>
-              Log out
-            </button>
+            {focus ? null : (
+              <button type="button" className="btn btn-ghost logout-btn" onClick={onLogout}>
+                Log out
+              </button>
+            )}
           </div>
         </>
       ) : null}
+      </nav>
     </>,
     host,
   );

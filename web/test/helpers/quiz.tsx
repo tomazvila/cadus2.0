@@ -81,7 +81,7 @@ export async function mount(over: Partial<QuizProps> = {}) {
 }
 
 export const answerInput = () => screen.getByLabelText('Answer') as HTMLInputElement;
-export const submitButton = () => screen.getByRole('button', { name: 'Submit answer' });
+export const submitButton = () => screen.getByRole('button', { name: /^(Submit|Checking…)$/ });
 export const timer = () => document.querySelector('.timer');
 export const remaining = () => document.querySelector('.remaining');
 export const toasts = () => toastStore.getSnapshot();

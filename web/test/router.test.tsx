@@ -15,14 +15,13 @@
  * `$\frac{6}{8}$`, and three placement probes in `api/diag.ts`.
  */
 import { describe, expect, it, vi } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Root, adminOr } from '@/app/Root';
 import { createDemoApi } from '@/api';
 import { MAP_CANVAS_LABEL } from '@/views/map/Map';
 import { DIAG_DEFAULT_CAP } from '@/views/Diagnostic';
 import { USER, quizTask } from './helpers/fixtures';
-import { instances } from './mocks/cytoscape';
 import type { ApiClient, ServedProblem, User } from '@/api/types';
 
 /** Mount into the `<main>` the shell actually uses, so the topbar portal has its host. */
@@ -78,23 +77,14 @@ function serveQuiz(api: ApiClient, problem: Partial<ServedProblem> = {}): void {
 async function finishQuiz(user: ReturnType<typeof userEvent.setup>): Promise<void> {
   await user.click(view().querySelector('.answer-input')!);
   await user.keyboard('7');
-  await user.click(screen.getByRole('button', { name: 'Submit answer' }));
+  await user.click(screen.getByRole('button', { name: 'Submit' }));
   await waitFor(() => expect(screen.getByText('Quiz complete')).toBeTruthy());
-}
-
-/** Open the map from the topbar, then leave it through Done. */
-async function openMapAndReturn(user: ReturnType<typeof userEvent.setup>): Promise<void> {
-  await user.click(screen.getByRole('button', { name: 'Map' }));
-  await waitFor(() => expect(screen.getByLabelText(MAP_CANVAS_LABEL)).toBeTruthy());
-  // The vendored renderer, reached through the real loader, drew the map.
-  await waitFor(() => expect(instances.filter((i) => !i.destroyed)).toHaveLength(1));
-  await user.click(screen.getByRole('button', { name: 'Back to dashboard' }));
 }
 
 /** Open the quiet menu of the dashboard and press one of its buttons. */
 async function pressInMenu(user: ReturnType<typeof userEvent.setup>, name: string): Promise<void> {
   await user.click(view().querySelector('.more-menu summary')!);
-  await user.click(screen.getByRole('button', { name }));
+  await user.click(within(view().querySelector('.more-menu') as HTMLElement).getByRole('button', { name }));
 }
 
 describe('the router', () => {
@@ -129,7 +119,7 @@ describe('the router', () => {
 
     await user.click(screen.getByRole('button', { name: /practice/ }));
     await waitFor(() => expect(view().querySelector('.problem-card')).not.toBeNull());
-    await user.click(screen.getByRole('button', { name: 'Exit' }));
+    await user.click(screen.getByRole('button', { name: 'Save & exit' }));
     await waitFor(() => expect(view().querySelector('.view-dashboard')).not.toBeNull());
   });
 
@@ -142,14 +132,14 @@ describe('the router', () => {
     await reachDashboard(createDemoApi());
 
     await reachFirstProblem(user);
-    expect(view().querySelector('.progress-count')!.textContent).toBe('1 / 4');
+    expect(view().querySelector('.progress-count')!.textContent).toBe('1 / 4 · 3 left');
     const first = view().querySelector('.problem-text')!.textContent;
 
-    await user.click(screen.getByRole('button', { name: 'Exit' }));
+    await user.click(screen.getByRole('button', { name: 'Save & exit' }));
     await waitFor(() => expect(view().querySelector('.view-dashboard')).not.toBeNull());
 
     await reachFirstProblem(user);
-    expect(view().querySelector('.progress-count')!.textContent).toBe('1 / 4');
+    expect(view().querySelector('.progress-count')!.textContent).toBe('1 / 4 · 3 left');
     expect(view().querySelector('.problem-text')!.textContent).toBe(first);
   });
 
@@ -172,24 +162,7 @@ describe('the router', () => {
     await waitFor(() => expect(view().querySelector('.teach-card')).not.toBeNull());
     await user.click(screen.getByRole('button', { name: /practice/ }));
     await waitFor(() => expect(view().querySelector('.progress-count')).not.toBeNull());
-    expect(view().querySelector('.progress-count')!.textContent).toBe('2 / 4');
-  });
-
-  it('opens the map over the session and gives the session back', async () => {
-    // The topbar offers the map from every screen, so the map has to remember where it was
-    // opened from. Exiting to the dashboard instead would throw away the lesson underneath.
-    const user = userEvent.setup();
-    await reachDashboard(createDemoApi());
-    await reachFirstProblem(user);
-
-    await openMapAndReturn(user);
-    // The session comes back and remounts, so it teaches again before it practises. The
-    // dashboard would be the wrong answer: the lesson underneath would be gone.
-    await waitFor(() => expect(view().querySelector('.view-session')).not.toBeNull());
-    await waitFor(() => expect(view().querySelector('.teach-card')).not.toBeNull());
-    await user.click(screen.getByRole('button', { name: /practice/ }));
-    await waitFor(() => expect(view().querySelector('.progress-count')).not.toBeNull());
-    expect(view().querySelector('.progress-count')!.textContent).toBe('1 / 4');
+    expect(view().querySelector('.progress-count')!.textContent).toBe('2 / 4 · 2 left');
   });
 
   it('opens the placement and keeps ONE port across a re-render', async () => {
@@ -203,7 +176,7 @@ describe('the router', () => {
     await waitFor(() => expect(screen.getByText('Continue studying')).toBeTruthy());
 
     // `More` is a native <summary>, not a button: the disclosure is the browser's.
-    await pressInMenu(user, 'Answer the starting questions again');
+    await pressInMenu(user, 'Starting questions again');
     await waitFor(() => expect(view().querySelector('.view-diagnostic')).not.toBeNull());
     expect(view().querySelector('.intro-rules')!.querySelectorAll('li')).toHaveLength(3);
 
@@ -218,7 +191,7 @@ describe('the router', () => {
     await user.keyboard('5');
     await user.click(screen.getByRole('button', { name: 'Submit' }));
     // Probe 2 of 3, which a port rebuilt by that re-render could never reach.
-    await waitFor(() => expect(view().textContent).toContain('Simplify'));
+    await waitFor(() => expect(view().textContent).toContain('Simplify'), { timeout: 4000 });
     expect(DIAG_DEFAULT_CAP).toBe(40);
   });
 
@@ -255,7 +228,7 @@ describe('the router', () => {
 
     const user = userEvent.setup();
     await reachDashboard(api);
-    await pressInMenu(user, 'Quiz now');
+    await pressInMenu(user, 'Start a timed quiz');
     await waitFor(() => expect(view().querySelector('.view-quiz')).not.toBeNull());
 
     await finishQuiz(user);
@@ -266,7 +239,7 @@ describe('the router', () => {
   it('opens the map from the quiet menu and gives the dashboard back', async () => {
     const user = userEvent.setup();
     await reachDashboard(createDemoApi());
-    await pressInMenu(user, 'Curriculum map');
+    await pressInMenu(user, 'Map');
     await waitFor(() => expect(screen.getByLabelText(MAP_CANVAS_LABEL)).toBeTruthy());
 
     await user.click(screen.getByRole('button', { name: 'Back to dashboard' }));
@@ -280,8 +253,8 @@ describe('the router', () => {
     const user = userEvent.setup();
     render(<Root api={{ ...api, demo: false }} initialUser={USER} />, { container: view() });
     await waitFor(() => expect(screen.getByText('Continue studying')).toBeTruthy());
-    await user.click(screen.getByText('Continue studying'));
-    await waitFor(() => expect(view().querySelector('.view-session')).not.toBeNull());
+    await user.click(topbar().querySelector('.topbar-link')!);
+    await waitFor(() => expect(screen.getByLabelText(MAP_CANVAS_LABEL)).toBeTruthy());
 
     await user.click(topbar().querySelector('.logout-btn')!);
     await waitFor(() => expect(view().querySelector('.auth-view')).not.toBeNull());

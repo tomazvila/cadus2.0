@@ -46,6 +46,10 @@ export interface AppProps {
    * screen renders the failure card instead of itself.
    */
   routeKey?: string;
+  /** The learner screen on, for the top bar's current-page mark. */
+  view?: string;
+  /** True while a lesson, quiz or placement is on screen. */
+  focus?: boolean;
   /** The routed view. */
   children?: ReactNode;
 }
@@ -59,11 +63,21 @@ export function App({
   onMap = noop,
   onLogout = noop,
   routeKey,
+  view,
+  focus = false,
   children,
 }: AppProps) {
   return (
     <>
-      <Topbar user={user} demo={demo} onHome={onHome} onMap={onMap} onLogout={onLogout} />
+      <Topbar
+        user={user}
+        demo={demo}
+        onHome={onHome}
+        onMap={onMap}
+        onLogout={onLogout}
+        {...(view === undefined ? {} : { view })}
+        focus={focus}
+      />
       <DialogProvider>
         {/*
           The boundary resets BY KEY: a new route name builds a new boundary whose error is

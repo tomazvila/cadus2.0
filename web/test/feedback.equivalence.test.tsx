@@ -23,7 +23,7 @@ describe('pending equivalence check', () => {
     </Feedback>);
     expect(document.querySelector('.feedback')!.className).toBe('feedback feedback-pending');
     expect(text()).toContain('Checking your answer…');
-    for (const gone of ['Not quite', 'Correct', 'nearly passable', 'XP', 'Follow-up', 'lesson_fail', 'Working out', 'fresh problem', 'Next problem', 'Waiting for the check']) {
+    for (const gone of ['Not quite', 'Correct', 'nearly passable', 'points', 'Follow-up', 'lesson_fail', 'Working out', 'fresh problem', 'Next problem', 'Waiting for the check']) {
       expect(text()).not.toContain(gone);
     }
     expect(document.querySelector('.feedback-mark')).toBeNull();
@@ -46,10 +46,10 @@ describe('pending equivalence check', () => {
       await act(async () => { await vi.advanceTimersByTimeAsync(EQUIVALENCE_POLL_MS + 10); });
       expect(document.querySelector('.feedback')!.className).toBe('feedback feedback-correct');
       expect(text()).toContain('Correct');
-      expect(text()).toContain('Correct. Your progress is updated.');
+      expect(text()).toContain('Your first answer was marked wrong. It is now marked correct, and your progress is updated.');
       expect(document.querySelector('.chip-xp')).toBeNull();
       expect(document.querySelector('.chip-quality')).toBeNull();
-      for (const gone of ['Checking your answer', 'Mark wrong', 'Not quite', 'XP', 'nearly passable', 'lesson_fail', 'Working out', 'Follow-up', 'Try again.']) {
+      for (const gone of ['Checking your answer', 'Mark wrong', 'Not quite', 'points', 'nearly passable', 'lesson_fail', 'Working out', 'Follow-up', 'Try again.']) {
         expect(text()).not.toContain(gone);
       }
     } finally { vi.useRealTimers(); }
@@ -104,7 +104,7 @@ describe('equivalence steps and final statuses', () => {
       await landAfterPoll({ status: 'accepted', xp: 2, accepted_form: '3, 4' });
       expect(document.querySelector('.feedback')!.className).toBe('feedback feedback-correct');
       expect(text()).toContain('Accepted. Shorter form: `3, 4`.');
-      expect(document.querySelector('.chip-xp')!.textContent).toBe('+2 XP');
+      expect(document.querySelector('.chip-xp')!.textContent).toBe('+2 points');
       expect(screen.getByRole('button', { name: 'Continue →' })).toBeTruthy();
       for (const gone of ['Not quite', 'Follow-up', 'lesson_fail', 'Checking']) expect(text()).not.toContain(gone);
     } finally { vi.useRealTimers(); }

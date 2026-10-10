@@ -44,6 +44,10 @@ export interface CyStub extends CyLike {
   readonly styles: MapStyleRule[][];
   pans: Array<{ x: number; y: number }>;
   fits: number;
+  /** Every `cy.fit(collection)` call: the camera frames part of the map. */
+  focuses: number;
+  /** The selectors asked of `cy.nodes()`. */
+  selected: string[];
   centered: string[];
   /** Test affordance: fire a handler bound through `cy.on`. */
   emit: (event: string, target?: CyCollection | CyStub) => void;
@@ -101,6 +105,8 @@ export default function cytoscape(options: CytoscapeOptions): CyStub {
     styles: [options.style],
     pans: [],
     fits: 0,
+    focuses: 0,
+    selected: [],
     centered: [],
 
     zoom: (level?: number) => {
@@ -109,7 +115,13 @@ export default function cytoscape(options: CytoscapeOptions): CyStub {
     },
     minZoom: (v) => { cy.zoomBounds.min = v; return v; },
     maxZoom: (v) => { cy.zoomBounds.max = v; return v; },
-    fit: () => { cy.fits += 1; },
+    fit: (target) => { if (target) cy.focuses += 1; else cy.fits += 1; },
+    nodes: (selector) => {
+      cy.selected.push(selector);
+      const wanted = selector.split(',').map((c) => c.trim().replace(/^\./, ''));
+      const sets = [...classes.values()].filter((set) => wanted.some((w) => set.has(w)));
+      return element('', sets, sets.length > 0);
+    },
     center: (target) => { cy.centered.push(target.id()); },
     panBy: (delta) => { cy.pans.push(delta); },
     resize: () => { cy.resizes += 1; },

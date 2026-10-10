@@ -37,6 +37,7 @@ import { useLifetime } from '@/hooks/useLifetime';
 import { usePhase } from '@/hooks/usePhase';
 import { toast } from '@/app/toast';
 import { fmtClock, num } from '@/lib/format';
+import { taskKindText } from '@/lib/stageCopy';
 import { isQuizReceipt } from '@/api/types';
 import type { ApiClient, PlanTask, ServedProblem } from '@/api/types';
 
@@ -151,6 +152,7 @@ export function Quiz({
   const [remaining, setRemaining] = useState(0);
   const [left, setLeft] = useState<number | null>(null);
   const [resumePractice, setResumePractice] = useState(false);
+  const [emptyHint, setEmptyHint] = useState(false);
 
   const answerRef = useRef<AnswerFieldHandle>(null);
   const doneRef = useRef<HTMLButtonElement>(null);
@@ -316,7 +318,7 @@ export function Quiz({
     // THE gate (F-37-1c). Synchronous, before the first await, so the Submit button and an
     // Enter inside the grading window cannot both post this `problem_id`.
     if (!gate.tryEnter('ready', 'submitting')) return;
-    if (!answer) { gate.enter('ready'); field.focus(); return; }
+    if (!answer) { gate.enter('ready'); setEmptyHint(true); field.focus(); return; }
 
     void call(
       () => api.taskAnswer(task.task_id, { problem_id: current.problem_id, answer }),
@@ -397,7 +399,7 @@ export function Quiz({
     <section className="view-quiz" key={question.problem_id}>
       <div className="task-header">
         <div className="task-meta">
-          <Chip className="chip-quiz">quiz</Chip>
+          <Chip className="chip-quiz">{taskKindText('quiz', null)}</Chip>
           <span className="topic-name">Timed quiz</span>
         </div>
         <div className="task-right">
@@ -416,12 +418,13 @@ export function Quiz({
         <MathBlock>{question.text}</MathBlock>
 
         {/* No hint control: a hint inside a quiz is `409 no_hints_in_quiz`. */}
-        <AnswerInput ref={answerRef} choices={question.choices} contract={question.answer_contract} disabled={phase !== 'ready'} onSubmit={submit} />
+        <AnswerInput ref={answerRef} choices={question.choices} contract={question.answer_contract} disabled={phase !== 'ready'} draftKey={question.problem_id} onSubmit={submit} />
 
+        {emptyHint ? <p className="muted small" role="status">Type an answer, then press Submit.</p> : null}
         {/* A tap on an answer button is the submit, so that question shows no Submit. */}
         <div className="actions">
           <TypedSubmit choices={question.choices} busy={phase === 'submitting'} disabled={phase !== 'ready'} onClick={submit}>
-            Submit answer
+            Submit
           </TypedSubmit>
         </div>
 

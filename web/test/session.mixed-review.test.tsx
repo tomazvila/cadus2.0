@@ -63,7 +63,7 @@ describe('the mixed review block', () => {
     expect(taskServe).toHaveBeenCalledTimes(1);
     expect(taskServe.mock.calls[0]).toEqual(['t-review']);
     expect(topicName()).toBe('Mixed review');
-    expect(progressCount()).toBe('1 / 6');
+    expect(progressCount()).toBe('1 / 6 · 5 left');
     expect(screen.queryByText('Decimals')).toBeNull();
 
     await submitAnswer('1');
@@ -71,7 +71,7 @@ describe('the mixed review block', () => {
     expect(screen.getByText('Topic: Decimals')).toBeTruthy();
 
     // The grade handed on to the first review: shown at once, with no second serve.
-    expect(await clickNext()).toBe('2 / 6');
+    expect(await clickNext()).toBe('2 / 6 · 4 left');
     expect(taskServe).toHaveBeenCalledTimes(1);
     expect(screen.queryByText(/Topic:/)).toBeNull();
 
@@ -90,14 +90,14 @@ describe('the mixed review block', () => {
   it('a lone review keeps its own count', async () => {
     await mount();
     expect(topicName()).toBe('Review');
-    expect(progressCount()).toBe('1 / 3');
+    expect(progressCount()).toBe('1 / 3 · 2 left');
   });
 
   it('a review served with no total shows no count, so a one-question probe looks the same', async () => {
     // The service sends no per-task total for a review (D-F11).
     await mount({ api: stubApi({ taskServe: async () => P(1, { total: null }) }) });
     expect(topicName()).toBe('Review');
-    expect(progressCount()).toBe('');
+    expect(progressCount()).toBe('Review');
   });
 
   it('a drill served with no total still shows its question number', async () => {

@@ -5,7 +5,8 @@
  * another. This screen shows the scenario, the quantities, the method choice, every
  * intermediate step and the final question TOGETHER, because the learner has to carry one
  * situation through all of them. A screen that revealed one step at a time would turn the
- * task back into the drill it replaces.
+ * task back into the drill it replaces. The one exception is a problem with more than three
+ * steps: it shows one step at a time, and keeps every answer until the single submit.
  *
  * TWO PANELS, NEVER ONE. The reply splits what the service decided from what the learner
  * claimed:
@@ -29,7 +30,8 @@ import { ROLLED_OVER_MESSAGE, SESSION_ROLLED_OVER } from '@/hooks/useCall';
 import { usePhase } from '@/hooks/usePhase';
 import { useLifetime } from '@/hooks/useLifetime';
 import { MathBlock } from '@/components/MathBlock';
-import { Chip } from '@/components/primitives';
+import { taskKindText } from '@/lib/stageCopy';
+import { StudyHeader } from './SessionScreens';
 import { QuestionReport } from './ProblemReport';
 import type { ProblemReportApi, ReportApplied } from './useProblemReport';
 import type {
@@ -57,6 +59,8 @@ export interface IntegratedProps {
    * item cannot be sent again, so the view leaves it for the new session's plan.
    */
   onRolledOver?: () => void;
+  /** Leave for the dashboard. Absent, the header shows no exit. */
+  onExit?: () => void;
 }
 
 /** The answer text and the opened-hint count of one field. */
@@ -81,18 +85,44 @@ function verdictOf(grade: IntegratedFieldGrade | undefined): string {
   return grade.correct ? 'correct' : 'not correct';
 }
 
-/** One row of the verdict panel. */
+/** One row of the verdict list: the label, then the verdict in its own column. */
 function VerdictRow({ label, grade }: { label: string; grade: IntegratedFieldGrade | undefined }) {
   return (
-    <li className="integrated-verdict">
-      <span className="integrated-verdict-label">{label}</span>
-      <span className="integrated-verdict-value">{verdictOf(grade)}</span>
-      {grade?.assisted ? <span className="integrated-verdict-note">after a hint</span> : null}
-    </li>
+    <div className="integrated-verdict">
+      <dt className="integrated-verdict-label">{label}</dt>
+      <dd className="integrated-verdict-value">
+        {verdictOf(grade)}
+        {grade?.assisted ? <span className="integrated-verdict-note">after a hint</span> : null}
+      </dd>
+    </div>
   );
 }
 
-export function Integrated({ api, reportApi, taskId, problem, onGraded, onContinue, onUnauthorized, onRolledOver}: IntegratedProps) {
+/** Which steps show: all of them, or one at a time when the problem has many and is not graded. */
+function stepView(steps: IntegratedProblem['steps'], at: number, graded: boolean) {
+  const oneAtATime = steps.length > STEPS_AT_ONCE && !graded;
+  return {
+    oneAtATime,
+    shownSteps: oneAtATime ? steps.slice(at, at + 1) : steps,
+    onLastStep: !oneAtATime || at >= steps.length - 1,
+  };
+}
+
+/** The step counter and the two buttons that move between steps. */
+function Stepper({ at, total, onMove }: { at: number; total: number; onMove: (to: number) => void }) {
+  return (
+    <div className="integrated-stepper">
+      <span className="muted">{`Step ${at + 1} of ${total}`}</span>
+      {at > 0 ? <button type="button" className="btn btn-ghost" onClick={() => onMove(at - 1)}>Previous step</button> : null}
+      {at < total - 1 ? <button type="button" className="btn" onClick={() => onMove(at + 1)}>Next step</button> : null}
+    </div>
+  );
+}
+
+/** A problem with more steps than this shows one step at a time. */
+const STEPS_AT_ONCE = 3;
+
+export function Integrated({ api, reportApi, taskId, problem, onGraded, onContinue, onUnauthorized, onRolledOver, onExit }: IntegratedProps) {
   const [fields, setFields] = useState<Record<string, FieldState>>(() => Object.fromEntries(
     Object.entries(problem.hints_used ?? {}).map(([id, hintsUsed]) => [id, { ...emptyField, hintsUsed }]),
   ));
@@ -103,6 +133,9 @@ export function Integrated({ api, reportApi, taskId, problem, onGraded, onContin
   const life = useLifetime();
   const busy = phase === 'hinting' || phase === 'submitting';
   const [failure, setFailure] = useState<string | null>(null);
+  // The step on screen when the problem has many. Every answer stays in `fields`.
+  const [stepAt, setStepAt] = useState(0);
+  const { oneAtATime, shownSteps, onLastStep } = stepView(problem.steps, stepAt, grade !== null);
   const submittedBody = useRef<IntegratedSubmission | null>(null);
   const finalRef = useRef<HTMLInputElement>(null);
   const continueRef = useRef<HTMLButtonElement>(null);
@@ -209,7 +242,7 @@ export function Integrated({ api, reportApi, taskId, problem, onGraded, onContin
         {ask.hints_available > 0 ? (
           <button
             type="button"
-            className="btn btn-quiet"
+            className="btn btn-ghost"
             disabled={busy || grade !== null}
             onClick={() => void askHint(id)}
           >
@@ -223,25 +256,27 @@ export function Integrated({ api, reportApi, taskId, problem, onGraded, onContin
 
   return (
     <section className="integrated-task">
-      <div className="task-header">
-        <div className="task-meta">
-          <Chip className="chip-integrated">integrated</Chip>
-          <span className="topic-name">{problem.title}</span>
-          <span className="topic-module">{domainLabel(problem.domain)}</span>
-        </div>
-      </div>
+      <StudyHeader
+        kind={taskKindText('multi-step', null)}
+        chipClass="chip-multi-step"
+        title={problem.title}
+        module={domainLabel(problem.domain)}
+        onExit={onExit}
+      />
 
       <MathBlock className="problem-text integrated-scenario">{problem.scenario}</MathBlock>
 
-      <ul className="integrated-given">
+      <dl className="integrated-given">
         {problem.given.map((given) => (
-          <li key={given.label}>
-            <span className="integrated-given-label">{given.label}</span>
-            <span className="integrated-given-value">{given.value}</span>
-            {given.note ? <span className="integrated-given-note">{given.note}</span> : null}
-          </li>
+          <div key={given.label} className="integrated-given-row">
+            <dt className="integrated-given-label">{given.label}</dt>
+            <dd className="integrated-given-value">
+              {given.value}
+              {given.note ? <span className="integrated-given-note">{given.note}</span> : null}
+            </dd>
+          </div>
         ))}
-      </ul>
+      </dl>
 
       {problem.method ? (
         <fieldset className="integrated-method">
@@ -263,11 +298,15 @@ export function Integrated({ api, reportApi, taskId, problem, onGraded, onContin
       ) : null}
 
       <ol className="integrated-steps">
-        {problem.steps.map((step, index) => (
-          <li key={step.id}>{answerBox(step.id, step.ask, `Step ${index + 1}`)}</li>
-        ))}
+        {shownSteps.map((step) => {
+          const index = problem.steps.indexOf(step);
+          return <li key={step.id} value={index + 1}>{answerBox(step.id, step.ask, `Step ${index + 1}`)}</li>;
+        })}
       </ol>
 
+      {oneAtATime ? <Stepper at={stepAt} total={problem.steps.length} onMove={setStepAt} /> : null}
+
+      {onLastStep ? <>
       {answerBox(FINAL, problem.final_ask, 'Final answer')}
 
       <div className="integrated-reasoning">
@@ -282,8 +321,9 @@ export function Integrated({ api, reportApi, taskId, problem, onGraded, onContin
           onChange={(event) => setReasoning(event.target.value)}
         />
       </div>
+      </> : null}
 
-      {grade === null ? (
+      {grade === null && onLastStep ? (
         <button
           type="button"
           className={busy ? 'btn btn-primary is-busy' : 'btn btn-primary'}
@@ -294,8 +334,6 @@ export function Integrated({ api, reportApi, taskId, problem, onGraded, onContin
         </button>
       ) : null}
 
-      <IntegratedReports api={reportApi} taskId={taskId} problem={problem} grade={grade} field={field} reasoning={reasoning}
-        onApplied={() => { void refreshCorrectedGrade(); }} />
       {failure ? <p className="integrated-failure">{failure}</p> : null}
 
       {grade ? (
@@ -305,7 +343,7 @@ export function Integrated({ api, reportApi, taskId, problem, onGraded, onContin
             {grade.correct_steps} of {grade.total_steps} steps, and the final answer is{' '}
             {verdictOf(grade.final)}.
           </p>
-          <ul>
+          <dl className="integrated-verdicts">
             {problem.steps.map((step, index) => (
               <VerdictRow
                 key={step.id}
@@ -314,7 +352,7 @@ export function Integrated({ api, reportApi, taskId, problem, onGraded, onContin
               />
             ))}
             <VerdictRow label="Final answer" grade={grade.final} />
-          </ul>
+          </dl>
           {grade.method ? (
             <p className="integrated-method-verdict">
               Method: {grade.method.correct ? 'correct' : 'not correct'}
@@ -333,6 +371,9 @@ export function Integrated({ api, reportApi, taskId, problem, onGraded, onContin
           </p>
         </div>
       ) : null}
+
+      <IntegratedReports api={reportApi} taskId={taskId} problem={problem} grade={grade} field={field} reasoning={reasoning}
+        onApplied={() => { void refreshCorrectedGrade(); }} />
     </section>
   );
 }
@@ -343,15 +384,12 @@ function IntegratedReports({ api, taskId, problem, grade, field, reasoning, onAp
 }) {
   if (!api) return null;
   const submitted = grade !== null;
-  const reportField = (id: string, prompt: string, label?: string) => <QuestionReport
-    key={`${problem.item_digest}:${id}:${submitted}`} api={api} hideResult={!submitted} label={label} onApplied={onApplied} context={{
-      task_id: taskId, problem_id: problem.item_id, item_digest: problem.item_digest, field_id: id,
+  // One report for the whole question: it names the final answer, and the scenario carries the rest.
+  return <QuestionReport
+    key={`${problem.item_digest}:${FINAL}:${submitted}`} api={api} hideResult={!submitted} onApplied={onApplied} context={{
+      task_id: taskId, problem_id: problem.item_id, item_digest: problem.item_digest, field_id: FINAL,
       report_kind: submitted ? 'integrated' : 'served', submitted,
-      problem_text: [problem.scenario, prompt].join('\n'),
-      answer: submitted ? field(id).answer : '', work: reasoning,
+      problem_text: [problem.scenario, problem.final_ask.prompt].join('\n'),
+      answer: submitted ? field(FINAL).answer : '', work: reasoning,
     }} />;
-  return <>
-    {reportField(FINAL, problem.final_ask.prompt)}
-    {problem.steps.map((step, index) => reportField(step.id, step.ask.prompt, `Report step ${index + 1}`))}
-  </>;
 }

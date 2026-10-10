@@ -120,7 +120,7 @@ describe('the retention card', () => {
     expect(seven[0]).toBe('50%');
     expect(seven[1]).toBe('1 of 2');
     expect(seven[2]).toBe('25%');
-    expect(seven[3]).toBe('answered with a hint, not counted: 1 · repeated problems, not counted: 1 · not marked: 0');
+    expect(seven[3]).toBe('answered with a hint, not counted: 1 · repeated problems, not counted: 1');
   });
 
   it('names the policy version, the placement error, and the integrated tasks', async () => {
@@ -139,7 +139,7 @@ describe('the retention card', () => {
 
   it('words the card in plain terms a learner can read', async () => {
     await load(report([row(7)]));
-    expect(screen.getByRole('heading', { name: 'Still right days later' })).toBeTruthy();
+    expect(screen.getByRole('heading', { name: 'What you still remember after some days' })).toBeTruthy();
     expect(screen.getByText('Problems from earlier lessons, asked again after a delay, when they were new to you. The rate is how many you answered right.')).toBeTruthy();
     expect(screen.getByText('Not counted')).toBeTruthy();
     const text = document.querySelector('.retention-card')!.textContent ?? '';

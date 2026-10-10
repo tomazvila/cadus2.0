@@ -36,7 +36,7 @@ describe('the dashboard', () => {
     await act(async () => { release(status()); });
     await view;
 
-    expect(screen.getByRole('heading', { name: '12 / 40 XP today' })).toBeTruthy();
+    expect(screen.getByRole('heading', { name: '12 / 40 points today' })).toBeTruthy();
     expect(screen.getByText('Foundations · 18% complete')).toBeTruthy();
     expect(screen.queryByText('Loading your dashboard…')).toBeNull();
   });
@@ -50,10 +50,10 @@ describe('the dashboard', () => {
 
     expect(read('day streak')).toBe('3');
     expect(read('due now')).toBe('2');
-    expect(read('nearly due')).toBe('1');
+    expect(read('review soon')).toBe('1');
     expect(read('new topics')).toBe('4');
     expect(read('course')).toBe('18%');
-    expect(read('finish by')).toBe('2026-11-04');
+    expect(read('finish by')).toBe('Nov 4');
     // 12 of 40 is 30 percent of the daily goal.
     expect(document.querySelector('.ring-label strong')!.textContent).toBe('30%');
   });
@@ -98,8 +98,8 @@ describe('the dashboard', () => {
 
   it('W-C2: opening the quiet menu adds no second primary', async () => {
     await mount();
-    await userEvent.click(screen.getByText('More'));
-    expect(screen.getByRole('button', { name: 'Curriculum map' })).toBeTruthy();
+    await userEvent.click(screen.getByText(/^More/));
+    expect(screen.getByRole('button', { name: 'Map' })).toBeTruthy();
     expect(primaries().length).toBe(1);
   });
 
@@ -243,7 +243,7 @@ describe('the dashboard', () => {
       return { ...plan, tasks: [...plan.tasks, quizTask] };
     };
     const view = await mount({ api: stubApi({ getPlan }) });
-    await pressInMenu('Quiz now');
+    await pressInMenu('Start a timed quiz');
 
     await waitFor(() => expect(view.onQuiz).toHaveBeenCalledTimes(1));
     // The whole task: the quiz clock reads `time_budget_secs` of the task.
@@ -252,7 +252,7 @@ describe('the dashboard', () => {
 
   it('says so when no quiz is due, and goes nowhere', async () => {
     const view = await mount();
-    await pressInMenu('Quiz now');
+    await pressInMenu('Start a timed quiz');
 
     await waitFor(() => expect(toastStore.getSnapshot().length).toBe(1));
     expect(toastStore.getSnapshot()[0].message).toBe('No quiz is due right now.');
@@ -282,11 +282,11 @@ describe('the dashboard', () => {
     };
     await mount({ api: stubApi({ getStatus }) });
 
-    expect(screen.getByText('Could not load your dashboard.')).toBeTruthy();
+    expect(screen.getByText('Could not load your dashboard. Check your connection, then press Try again.')).toBeTruthy();
     await userEvent.click(screen.getByRole('button', { name: 'Try again' }));
 
-    expect(await screen.findByRole('heading', { name: '12 / 40 XP today' })).toBeTruthy();
-    expect(screen.queryByText('Could not load your dashboard.')).toBeNull();
+    expect(await screen.findByRole('heading', { name: '12 / 40 points today' })).toBeTruthy();
+    expect(screen.queryByText('Could not load your dashboard. Check your connection, then press Try again.')).toBeNull();
   });
 
   it('keeps the secondaries closed until the learner asks', async () => {

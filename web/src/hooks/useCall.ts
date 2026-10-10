@@ -41,7 +41,7 @@ import { toast } from '@/app/toast';
 export const SESSION_EXPIRED_MESSAGE = 'Your sign-in has expired. Sign in again.';
 
 /** The line a foreign throw with no message falls back to. */
-export const GENERIC_FAILURE_MESSAGE = 'Something went wrong.';
+export const GENERIC_FAILURE_MESSAGE = 'The request did not finish. Check your connection, then try again.';
 
 /** The code of a request for a session the day rollover closed. */
 export const SESSION_ROLLED_OVER = 'session_rolled_over';

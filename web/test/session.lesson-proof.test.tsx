@@ -104,7 +104,7 @@ describe('a lesson proof', () => {
     await press('Continue →');
     expect(taskProofContinue).toHaveBeenCalledWith('t-lesson');
     expect(screen.getByText(LESSON_PROOF_TEXT.closed)).toBeTruthy();
-    expect(screen.getByText('+12 XP')).toBeTruthy();
+    expect(screen.getByText('+12 points')).toBeTruthy();
   });
 
   it('offers to leave the proof for later after 90 seconds of grading', async () => {
@@ -143,7 +143,7 @@ describe('a lesson proof', () => {
     expect(textarea().value).toBe('');
     await write('Let n = 2k; n^2 = 2(2k^2), which is even.', 'Send my new proof');
     expect(screen.getByText(LESSON_PROOF_TEXT.assisted)).toBeTruthy();
-    expect(screen.getByText('+6 XP')).toBeTruthy();
+    expect(screen.getByText('+6 points')).toBeTruthy();
   });
 
   it('sends a disputed grade for a human check', async () => {

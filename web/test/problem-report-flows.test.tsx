@@ -59,7 +59,7 @@ describe('reports across question flows', () => {
     render(<QuizResults api={api} taskId="quiz" onUnauthorized={vi.fn()} />);
     await click('Review results');
     const second = within(screen.getAllByRole('article')[1]);
-    fireEvent.click(second.getByRole('button', { name: 'Report submitted question' }));
+    fireEvent.click(second.getByRole('button', { name: 'Report this question' }));
     await act(async () => { fireEvent.click(second.getByRole('button', { name: 'Send report' })); });
     expect(api.taskReport).toHaveBeenCalledWith('quiz', {
       problem_id: 'second', report_kind: 'attempt', request_id: expect.any(String),
@@ -80,18 +80,14 @@ describe('reports across question flows', () => {
     await click('Close report');
     fireEvent.change(screen.getByLabelText('Final answer'), { target: { value: '7' } });
     await click('Submit all my answers');
-    await click('Report submitted question');
+    await click('Report this question');
     await click('Send report');
     expect(api.taskReport).toHaveBeenLastCalledWith('integrated', {
       problem_id: PROBLEM.item_id, item_digest: PROBLEM.item_digest, field_id: 'final', report_kind: 'integrated', request_id: expect.any(String),
     }, expect.any(AbortSignal));
     expect(screen.getByText('Secret reviewed explanation')).toBeTruthy();
-    await click('Close report');
-    await click('Report step 1');
-    await click('Send report');
-    expect(api.taskReport).toHaveBeenLastCalledWith('integrated', expect.objectContaining({
-      field_id: PROBLEM.steps[0].id, report_kind: 'integrated',
-    }), expect.any(AbortSignal));
+    // One report for the whole question: no per-step report links.
+    expect(screen.queryByRole('button', { name: /^Report step/ })).toBeNull();
   });
 
   it('keeps a diagnostic report attached to the answered probe after the next probe arrives', async () => {
@@ -111,13 +107,13 @@ describe('reports across question flows', () => {
     await click('Close report');
     fireEvent.change(screen.getByLabelText('Answer'), { target: { value: '7' } });
     await click('Submit');
-    await click('Report submitted question');
+    await act(async () => { fireEvent.click(screen.getAllByRole('button', { name: 'Report this question' }).at(-1)!); });
     await click('Send report');
     await act(async () => { vi.advanceTimersByTime(DIAG_BEAT_MS); });
     expect(screen.queryByText('Next probe')).toBeNull();
     await click('Close report');
     await act(async () => { vi.advanceTimersByTime(DIAG_BEAT_MS); });
-    await click('Report submitted question');
+    await act(async () => { fireEvent.click(screen.getAllByRole('button', { name: 'Report this question' }).at(-1)!); });
     expect(screen.queryByRole('button', { name: 'Send report' })).toBeNull();
     expect(api.taskReport).toHaveBeenLastCalledWith('diag', expect.objectContaining({ problem_id: 'd1', report_kind: 'diagnostic' }), expect.any(AbortSignal));
     expect(screen.queryByText(/Secret/)).toBeNull();

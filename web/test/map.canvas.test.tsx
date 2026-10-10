@@ -140,8 +140,8 @@ describe('the keys and the scheme', () => {
     canvas().focus();
     await user.keyboard('{ArrowRight}{ArrowUp}+=-');
     expect(last().pans).toEqual([{ x: -60, y: 0 }, { x: 0, y: 60 }]);
-    // 1 × 1.25 × 1.25 × 0.8, on the instance's own zoom.
-    expect(last().zoom()).toBeCloseTo(1.25);
+    // The map opens at the readable zoom 1.25; then × 1.25 × 1.25 × 0.8, on the instance's own zoom.
+    expect(last().zoom()).toBeCloseTo(1.5625);
     loaded.unmount();
   });
 
@@ -231,7 +231,8 @@ describe('the payload shapes', () => {
     const cy = last();
     await act(async () => { cy.emit('tap', cy.getElementById('ghost')); });
     expect(document.querySelector('.map-panel')).toBeNull();
-    expect(cy.centered).toEqual([]);
+    // Only the opening frame of the learner's own unit centered the camera.
+    expect(cy.centered).toEqual(['']);
     view.unmount();
   });
 
@@ -300,13 +301,16 @@ describe('the payload shapes', () => {
           'arrow-scale': 0.6,
         },
       },
-      { selector: '.st-frontier', style: { 'background-color': '#f00' } },
-      { selector: '.st-learning', style: { 'background-color': '' } },
-      { selector: '.st-placed', style: { 'background-color': '' } },
-      { selector: '.st-floor', style: { 'background-color': '' } },
-      { selector: '.st-untouched', style: { 'background-color': '#888' } },
+      { selector: '.st-frontier', style: { 'background-color': '#f00', shape: 'diamond' } },
+      { selector: '.st-learning', style: { 'background-color': '', shape: 'round-rectangle' } },
+      { selector: '.st-placed', style: { 'background-color': '', shape: 'ellipse' } },
+      { selector: '.st-floor', style: { 'background-color': '', shape: 'hexagon' } },
+      { selector: '.st-untouched', style: { 'background-color': '#888', shape: 'ellipse' } },
       { selector: '.st-floor', style: { 'background-opacity': 0.45 } },
-      { selector: '.st-untouched', style: { 'background-opacity': 0.5 } },
+      {
+        selector: '.st-untouched',
+        style: { 'background-opacity': 0, 'border-width': 2, 'border-color': '#888' },
+      },
       { selector: '.st-frontier', style: { 'border-width': 2, 'border-color': '#f00' } },
       {
         selector: 'node.pick',

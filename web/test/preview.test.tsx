@@ -53,14 +53,16 @@ describe('the answer preview in the field', () => {
 });
 
 describe('the input hint by contract', () => {
-  it('names the mixed-number way, the fraction way, or the generic examples', () => {
+  it('names the mixed-number way, the fraction way, or the no hint for a plain number', () => {
     expect(inputHint({ kind: 'required_form', form: 'mixed_number' })).toBe(
       'Write a mixed number as 4 2/5: the whole number, a space, then the fraction.');
     expect(inputHint({ kind: 'required_form', form: 'reduced_fraction' })).toContain('3/4');
     expect(inputHint({ kind: 'list', ordered: true })).toBe(
       'Separate the numbers with commas or <, for example 5136, 5316, 5361');
-    expect(inputHint({ kind: 'list', ordered: false })).toBe('answers like 3/4, 2x+1, sqrt(2) are fine');
-    expect(inputHint(undefined)).toBe('answers like 3/4, 2x+1, sqrt(2) are fine');
+    expect(inputHint({ kind: 'list', ordered: false })).toBe('');
+    expect(inputHint(undefined)).toBe('');
+    expect(inputHint({ kind: 'exact', form: 'integer' })).toBe('');
+    expect(inputHint({ kind: 'exact', form: 'decimal' })).toBe('');
     const m = mountRoot(<AnswerField contract={{ kind: 'required_form', form: 'mixed_number' }} />, roots);
     expect(m.find('.field-hint').textContent).toContain('4 2/5');
   });

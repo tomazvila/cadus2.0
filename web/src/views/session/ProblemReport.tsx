@@ -33,7 +33,8 @@ function ReportDetails({ report, submitted, hideResult, close }: {
   const noteId = useId();
   const context = report.context!;
   return <>
-    <h3>{submitted ? 'Report this question or its grading' : 'Report this question'}</h3>
+    <h3>Report this question</h3>
+    {report.receipt ? <p>Report sent</p> : null}
     <MathBlock>{context.problem_text}</MathBlock>
     {submitted ? <p>Your submitted answer: <span>{context.answer || '(blank)'}</span></p> : <p>No answer submission is required to send a report.</p>}
     <p className="muted">The review checks your answer, explains the grade, and corrects it when your answer is right.</p>
@@ -64,7 +65,7 @@ export function ProblemReport({ report, hideResult = false, label }: {
   return <aside className="card problem-report" aria-label={submitted ? 'Report a submitted question' : 'Report a question'}>
     <button ref={trigger} type="button" className="btn btn-ghost" aria-expanded={report.open}
       aria-controls={panelId} onClick={report.open ? close : report.show}>
-      {label ?? (submitted ? 'Report submitted question' : 'Report this question')}
+      {label ?? 'Report this question'}
     </button>
     <div id={panelId} hidden={!report.open}>{report.open ?
       <ReportDetails report={report} submitted={submitted} hideResult={hideResult} close={close} /> : null}</div>

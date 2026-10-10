@@ -17,23 +17,32 @@ export interface CoursePickerProps {
 }
 
 export function CoursePicker({ courses, onDone }: CoursePickerProps) {
+  // The current course first, then the next three. The rest wait under "All courses".
+  const at = courses.findIndex((c) => c.current);
+  const head = at < 0 ? courses.slice(0, 4) : [courses[at]!, ...courses.slice(at + 1, at + 4)];
+  const rest = courses.filter((c) => !head.includes(c));
+  const button = (c: JourneyCourse) => (
+    <button
+      key={c.id}
+      type="button"
+      className="btn"
+      disabled={c.current}
+      onClick={() => onDone(c.id)}
+    >
+      {c.current ? `${c.name} · current` : c.name}
+    </button>
+  );
   return (
     <div className="modal picker" role="dialog" aria-modal="true" aria-labelledby="picker-h">
       <h2 id="picker-h">Switch course</h2>
       <p className="muted small">Your progress in every course is kept.</p>
-      <div className="picker-list">
-        {courses.map((c) => (
-          <button
-            key={c.id}
-            type="button"
-            className="btn"
-            disabled={c.current}
-            onClick={() => onDone(c.id)}
-          >
-            {c.current ? `${c.name} · current` : c.name}
-          </button>
-        ))}
-      </div>
+      <div className="picker-list">{head.map(button)}</div>
+      {rest.length ? (
+        <details className="picker-all">
+          <summary>All courses</summary>
+          <div className="picker-list">{rest.map(button)}</div>
+        </details>
+      ) : null}
       <div className="modal-actions">
         <button type="button" className="btn btn-ghost" onClick={() => onDone(null)}>
           Cancel

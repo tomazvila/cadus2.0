@@ -149,14 +149,14 @@ export async function openPicker() {
   const user = userEvent.setup();
   const enroll = vi.fn(createDemoApi().enroll);
   await mount({ api: stubApi({ enroll }) });
-  await user.click(screen.getByText('More'));
+  await user.click(screen.getByText(/^More/));
   await user.click(screen.getByRole('button', { name: 'Switch course' }));
   return { user, enroll };
 }
 
 /** Open the quiet menu and press one of its buttons. */
 export async function pressInMenu(name: string): Promise<void> {
-  await userEvent.click(screen.getByText('More'));
+  await userEvent.click(screen.getByText(/^More/));
   await userEvent.click(screen.getByRole('button', { name }));
 }
 

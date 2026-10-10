@@ -1,0 +1,29 @@
+/* The answer field: contextual keys, "More symbols", the help link and the busy Submit. */
+
+.sym-area { display: flex; flex-wrap: wrap; align-items: center; gap: 0.3rem 0.9rem; margin-top: 0.4rem; }
+.sym-area .sym-palette { margin-top: 0; }
+.sym-item { display: inline-flex; align-items: center; gap: 0.3rem; }
+.sym-more { flex: 1 1 100%; order: 2; }
+.sym-more summary {
+  display: inline-flex; align-items: center; min-height: 44px; cursor: pointer;
+  color: var(--muted); font-size: 0.9rem;
+}
+.sym-more summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+.sym-more[open] .sym-palette { margin-bottom: 0.3rem; }
+.sym-help { order: 1; min-height: 44px; font-size: 0.9rem; }
+.sym-area > .sym-palette { order: 0; }
+
+.field-note { min-height: 0; margin: 0.35rem 0.2rem 0; font-size: 0.85rem; color: var(--bad); }
+.field-note:empty { display: none; }
+
+.answer-input.is-short { max-width: 22rem; }
+
+/* The Submit button shows its words while a grade runs; the label stays readable. */
+.btn-primary.is-busy[aria-busy="true"] { color: var(--accent-ink); }
+.btn.is-busy[aria-busy="true"]::after { content: none; }
+
+@media (max-width: 480px) {
+  /* The palette items are grid cells on a phone; the root key keeps its select beside it. */
+  .sym-palette .sym-item { display: contents; }
+  .sym-palette .sym-select { grid-column: span 2; }
+}

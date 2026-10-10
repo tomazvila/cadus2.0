@@ -45,19 +45,19 @@ const REPORT_STAGE: Record<string, string> = {
   formalizer: 'Writing the problem as exact math',
   verification: 'Checking the math',
   critic: 'Looking for mistakes',
-  adjudicator: 'Settling the result',
-  regressions: 'Testing the result against older problems',
-  core_checks: 'Running the last checks',
+  adjudicator: 'Checking your report',
+  regressions: 'Checking your report',
+  core_checks: 'Checking your report',
 };
 
-/** The status line of a problem report. The attempt count reads as a count of checks. */
+/** The status line of a problem report. Only the end states name the count of checks. */
 export function reportStatusText(
   status: string, stage: string, attempt: number, maxAttempts: number,
 ): string {
   const tries = `check ${String(attempt)} of ${String(maxAttempts)}`;
   switch (status) {
     case 'queued': return `Your report is waiting to be checked (${tries}).`;
-    case 'running': return `${REPORT_STAGE[stage] ?? 'Checking your report'} (${tries}).`;
+    case 'running': return `${REPORT_STAGE[stage] ?? 'Checking your report'}.`;
     case 'completed': return `The check is finished (${tries}).`;
     case 'unresolved': return `The check could not settle this question (${tries}). You can send the report again.`;
     default: return `The check stopped before it finished (${tries}). You can send the report again.`;

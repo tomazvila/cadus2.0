@@ -184,7 +184,7 @@ function NextStep({ api, call, chain, revealed, onReveal, onChanged }: {
   if (chain.context !== 'review') return null;
   switch (chain.phase) {
     case 'grading':
-      return <p className="muted" role="status">Being checked. Reload this page in a minute.</p>;
+      return <GradingWait onChanged={onChanged} />;
     case 'reveal':
       if (revealed) {
         return (
@@ -207,6 +207,20 @@ function NextStep({ api, call, chain, revealed, onReveal, onChanged }: {
     default:
       return null;
   }
+}
+
+/** A proof under check: ask for the status every 10 s until the result is ready. */
+function GradingWait({ onChanged }: { onChanged: () => void }) {
+  useEffect(() => {
+    const timer = setInterval(onChanged, 10_000);
+    return () => { clearInterval(timer); };
+  }, [onChanged]);
+  return (
+    <div role="status">
+      <LoadingBlock label="Checking your proof…" />
+      <p className="muted">This page updates when the result is ready.</p>
+    </div>
+  );
 }
 
 /** The textarea of a review chain's next draft. */

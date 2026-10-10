@@ -143,10 +143,8 @@ describe('the drill countdown', () => {
     expect(taskAnswer).toHaveBeenCalledTimes(1);
     expect(taskAnswer.mock.calls[0][1]).toEqual({ problem_id: 'p1', answer: '3/4' });
     expect(screen.getByText('Make it stick')).toBeTruthy();
-    // The re-solve is untimed: the countdown was stopped and cleared, so the clock counts
-    // the re-solve up from zero and never turns urgent again.
-    expect(timer().textContent).toBe('0:05');
-    expect(timer().className).not.toContain('urgent');
+    // The re-solve is untimed: the countdown was stopped and cleared, and the clock is gone.
+    expect(document.querySelector('.timer')).toBeNull();
   });
 
   it('ends the countdown on ANY reply that hands the problem back', async () => {

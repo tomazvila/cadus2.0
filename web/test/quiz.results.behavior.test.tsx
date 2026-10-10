@@ -25,7 +25,7 @@ function doubleClick(name: string): void {
 
 async function answerPractice(value = '17'): Promise<void> {
   fireEvent.change(screen.getByRole('textbox'), { target: { value } });
-  await press('Submit answer');
+  await press('Submit');
 }
 
 it('renders ungraded answers separately, including blank answers and absent reasons', async () => {
@@ -39,10 +39,10 @@ it('renders ungraded answers separately, including blank answers and absent reas
   };
   show(stubApi({ taskQuizResult: async () => result }));
   await press('Review results');
-  expect(screen.getByText('Some answers are not marked yet. No progress or XP is added until they are.')).toBeTruthy();
+  expect(screen.getByText('Some answers are not marked yet. No progress or points are added until they are.')).toBeTruthy();
   expect(screen.getByText('Your answer: (blank)')).toBeTruthy();
   expect(screen.getByText('Not marked yet: Ambiguous notation')).toBeTruthy();
-  expect(screen.getByText('Not marked yet: no result')).toBeTruthy();
+  expect(screen.getByText('Not marked yet: the check did not finish. Your answer is saved.')).toBeTruthy();
   expect(within(screen.getByText('Confirmed answer').closest('article')!).getByText('Correct')).toBeTruthy();
   expect(screen.queryByText('Hidden solution')).toBeNull();
   expect(screen.queryByRole('button', { name: /Practice missed skills/ })).toBeNull();
@@ -56,7 +56,7 @@ it('reopens pending practice only when the server confirms it remains pending', 
   await press('Review results');
   await press('Practice the skills you missed');
   expect(taskQuizResult.mock.calls).toEqual([['recorded-quiz', false], ['recorded-quiz', true]]);
-  expect(screen.getByText('100% of marked answers right · 10 XP')).toBeTruthy();
+  expect(screen.getByText('100% of marked answers right · 10 points')).toBeTruthy();
   expect(screen.queryByRole('button', { name: 'Start fresh practice' })).toBeNull();
 });
 
@@ -99,7 +99,7 @@ it('keeps a failed answer editable, ignores whitespace, and gates a repeated sub
   await answerPractice('17');
   expect(screen.getByRole('textbox').hasAttribute('disabled')).toBe(false);
   expect((screen.getByRole('textbox') as HTMLInputElement).value).toBe('17');
-  doubleClick('Submit answer');
+  doubleClick('Submit');
   expect(taskAnswer.mock.calls).toEqual([
     ['recorded-quiz', { problem_id: 'q1', answer: '17' }],
     ['recorded-quiz', { problem_id: 'q1', answer: '17' }],

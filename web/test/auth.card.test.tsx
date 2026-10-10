@@ -30,7 +30,7 @@ describe('the fields', () => {
     expect(screen.getByText('New here?')).toBeTruthy();
 
     press('Create an account');
-    expect(field('Password').placeholder).toBe('Choose a password (8+ characters)');
+    expect(field('Password').placeholder).toBe('Choose a password');
     expect(field('Password').autocomplete).toBe('new-password');
     expect(screen.getByText('Already have an account?')).toBeTruthy();
   });
@@ -119,7 +119,7 @@ describe('the busy state', () => {
     type('Email', 'a@b.test');
     type('Password', 'hunter2hunter2');
     press('Sign in');
-    await waitFor(() => expect(screen.getByRole('button', { name: 'Sign in' }).hasAttribute('disabled')).toBe(true));
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Signing in…' }).hasAttribute('disabled')).toBe(true));
     reply.release({ user: USER });
     await waitFor(() => expect(screen.getByRole('button', { name: 'Sign in' }).hasAttribute('disabled')).toBe(false));
   });

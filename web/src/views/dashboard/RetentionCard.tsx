@@ -42,6 +42,16 @@ function rateText(rate: number | null): string {
   return rate === null ? 'no answer yet' : `${pct(rate)}%`;
 }
 
+/** The parts above zero, or "none" when every part is zero. */
+function notCounted(row: RetentionRow): string {
+  const p = row.provenance;
+  const parts: string[] = [];
+  if (p.assisted > 0) parts.push(`answered with a hint, not counted: ${p.assisted}`);
+  if (p.repeated > 0) parts.push(`repeated problems, not counted: ${p.repeated}`);
+  if (p.ungraded > 0) parts.push(`not marked: ${p.ungraded}`);
+  return parts.length ? parts.join(' · ') : 'none';
+}
+
 /** One row of the retention table. `minSample` is the count a rate needs. */
 function Row({ row, minSample }: { row: RetentionRow; minSample: number }) {
   const p = row.provenance;
@@ -58,9 +68,7 @@ function Row({ row, minSample }: { row: RetentionRow; minSample: number }) {
       </td>
       <td>{p.independent_correct} of {p.independent}</td>
       <td>{rateText(row.assistance_dependence)}</td>
-      <td className="muted small">
-        answered with a hint, not counted: {p.assisted} · repeated problems, not counted: {p.repeated} · not marked: {p.ungraded}
-      </td>
+      <td className="muted small">{notCounted(row)}</td>
     </tr>
   );
 }
@@ -84,9 +92,9 @@ export function RetentionCard({ api, call }: RetentionCardProps) {
   if (!report) {
     return (
       <div className="retention-card">
-        <h3>Still right days later</h3>
+        <h3>What you still remember after some days</h3>
         {failed ? (
-          <p className="muted small">Your results did not load.</p>
+          <p className="muted small">Your results did not load. Reload the page to try again.</p>
         ) : (
           <LoadingBlock label="Loading your results…" />
         )}
@@ -97,7 +105,7 @@ export function RetentionCard({ api, call }: RetentionCardProps) {
   const { policy, retention, placement, integrated } = report;
   return (
     <div className="retention-card">
-      <h3>Still right days later</h3>
+      <h3>What you still remember after some days</h3>
       <p className="muted small">
         Problems from earlier lessons, asked again after a delay, when they were new to you. The rate is how many you answered right.
       </p>

@@ -18,16 +18,16 @@ function Harness({ api }: { api: ApiClient }) {
 function openReport(api: ApiClient) {
   const view = render(<Harness api={api} />);
   fireEvent.click(screen.getByText('Record submission'));
-  fireEvent.click(screen.getByRole('button', { name: 'Report submitted question' }));
+  fireEvent.click(screen.getByRole('button', { name: 'Report this question' }));
   return view;
 }
 
 describe('submitted question reports', () => {
   it('has no report action before an attempt is recorded', () => {
     render(<Harness api={createDemoApi()} />);
-    expect(screen.queryByRole('button', { name: 'Report submitted question' })).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Report this question' })).toBeNull();
   });
-  it('names an unsubmitted screen "Report this question"', () => {
+  it('names the report button the same way before and after a submission', () => {
     const api = createDemoApi();
     const unsubmitted = { task_id: 'task', problem_id: 'step-1', report_kind: 'served' as const, problem_text: 'Worked example', answer: '', work: '' };
     function Served() {

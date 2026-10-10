@@ -357,7 +357,7 @@ export function createDemoApi(): ApiClient {
     taskHint: async (taskId, problemId) => {
       if (taskId !== DEMO_TASK_ID) refuse(404, 'unknown_task', 'The demo plans one task.');
       if (problemId !== DEMO_PROBLEMS[cursor].problem_id) {
-        refuse(404, 'unknown_problem', 'That problem is no longer live.');
+        refuse(404, 'unknown_problem', 'That problem changed. Press Retry to get a new one.');
       }
       hintCount = Math.min(hintCount + 1, DEMO_HINTS.length);
       return reply({ hint: DEMO_HINTS[hintCount - 1], hint_number: hintCount });
@@ -368,7 +368,7 @@ export function createDemoApi(): ApiClient {
       if (taskId !== DEMO_TASK_ID) refuse(404, 'unknown_task', 'The demo plans one task.');
       const problem = DEMO_PROBLEMS[cursor];
       if (body.problem_id !== problem.problem_id) {
-        refuse(404, 'unknown_problem', 'That problem is no longer live.');
+        refuse(404, 'unknown_problem', 'That problem changed. Press Retry to get a new one.');
       }
       const correct = norm(body.answer) === norm(problem.expected);
       const attempt = `${taskId}-${answered + 1}`;

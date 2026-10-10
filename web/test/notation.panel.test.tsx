@@ -13,7 +13,6 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { AnswerField, type AnswerFieldHandle } from '@/components/AnswerField';
 import { AnswerPreview } from '@/components/AnswerPreview';
 import { NotationPanel } from '@/components/NotationPanel';
-import { ProblemHeader } from '@/views/session/SessionScreens';
 import { NOTATION_SECTIONS, filterSections, resetNotationStore, setNotationOpen } from '@/lib/notation';
 import { parsePreview } from '@/lib/preview';
 import { mountRoot } from './helpers/react';
@@ -88,24 +87,11 @@ describe('the example rows', () => {
 });
 
 describe('the panel', () => {
-  it('is closed at first and opens from the ? key of the keypad', () => {
+  it('is closed at first and opens from the How to type answers link', () => {
     const { m } = mountAll();
     expect(m.container.querySelector('.notation-panel')).toBeNull();
-    act(() => { m.find<HTMLButtonElement>('button[aria-label="How to type answers"]').click(); });
+    act(() => { m.find<HTMLButtonElement>('.sym-help').click(); });
     expect(m.find('.notation-panel h2').textContent).toBe('How to type answers');
-  });
-
-  it('opens from the More menu of the problem header', () => {
-    const task = { task_type: 'practice', topic: { id: 't', name: 'T' }, why: '' } as never;
-    const problem = { problem_id: 'p', text: 'x' } as never;
-    const m = mountRoot(
-      <><ProblemHeader task={task} problem={problem} elapsed={0} countdown={false} onExit={() => {}} /><NotationPanel /></>,
-      roots,
-    );
-    expect(m.find('.header-more summary').textContent).toBe('More');
-    const entry = m.all('.header-more-items button').find((b) => b.textContent === 'How to type answers')!;
-    act(() => { entry.click(); });
-    expect(m.container.querySelector('.notation-panel')).not.toBeNull();
   });
 
   it('is a side panel on a wide viewport and marks the page so the problem stays usable', () => {

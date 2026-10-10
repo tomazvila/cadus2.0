@@ -94,8 +94,8 @@ async function main() {
   run.note(`practice problem ${first.position} · "${first.text}"`);
   await run.snap('lesson-practice');
   await checkMathRendered(run, '.problem-text', 'the problem statement');
-  if (first.position !== '1 / 4') {
-    run.fail(`the lesson opened at ${first.position}, not at 1 / 4`);
+  if (first.position !== '1 / 4 · 3 left') {
+    run.fail(`the lesson opened at ${first.position}, not at 1 / 4 · 3 left`);
   }
 
   // --- FAILURE 3: two serves in a row must serve the same problem -----------
@@ -103,7 +103,7 @@ async function main() {
   // FIRST, and before anything else touches the lesson. A backend that advances a cursor
   // per serve is out of step with the learner from the second call onward, and every step
   // after it then fails for a reason that hides this one.
-  await page.getByRole('button', { name: 'Exit', exact: true }).click();
+  await page.getByRole('button', { name: 'Save & exit', exact: true }).click();
   await page.waitForSelector('.view-dashboard .primary-action', { timeout: 25000 });
   run.note('left the lesson for the dashboard');
   const again = await intoLesson();
@@ -134,12 +134,12 @@ async function main() {
   await page.waitForSelector('.problem-card .answer-input', { timeout: 25000 });
   const second = await run.text('.progress-count');
   run.note(`continued to ${second}`);
-  if (second !== '2 / 4') run.fail(`the second problem reads ${second}, not 2 / 4`);
+  if (second !== '2 / 4 · 2 left') run.fail(`the second problem reads ${second}, not 2 / 4 · 2 left`);
 
   // --- the placement: three ground rules, and no solution, ever --------------
   await home();
   await page.locator('.more-menu summary').click();
-  const placement = page.getByRole('button', { name: 'Answer the starting questions again' });
+  const placement = page.getByRole('button', { name: 'Starting questions again' });
   await placement.waitFor({ state: 'visible', timeout: 10000 });
   await placement.click();
   await page.waitForSelector('.view-diagnostic .intro-card', { timeout: 25000 });

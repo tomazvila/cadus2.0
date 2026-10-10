@@ -10,8 +10,9 @@
  * Each toast carries `role="status"`. An actionable toast keeps its action button, because
  * F-36-1b gives it no timer to remove it.
  */
-import { useSyncExternalStore } from 'react';
+import { useEffect, useSyncExternalStore } from 'react';
 import { createPortal } from 'react-dom';
+import '../styles/fix-shell.css';
 import { dismissToast, fireToastAction, toastStore } from './toast';
 
 export function ToastHost() {
@@ -22,6 +23,12 @@ export function ToastHost() {
   );
 
   const host = document.getElementById('toasts');
+  // Errors sit under the sticky top bar, where the eye already is; success and info stay low.
+  const hasError = toasts.some((t) => t.kind === 'error');
+  useEffect(() => {
+    host?.classList.toggle('toasts-top', hasError);
+  }, [host, hasError]);
+
   if (!host) return null;
 
   return createPortal(

@@ -52,7 +52,7 @@ export const LESSON_PROOF_TEXT = {
   rewrite: 'Write the proof again from memory, without the reference solution.',
   unavailable: 'The automatic check could not grade this draft. Send it again, or ask a person to check it. You can also go on: you return to this proof first next time.',
   closed: 'This part of the lesson is finished.',
-  assisted: 'Finished after you read the reference solution. It earns less XP and comes back for review sooner.',
+  assisted: 'Finished after you read the reference solution. It earns fewer points and comes back for review sooner.',
 } as const;
 
 /**
@@ -68,7 +68,7 @@ export const LESSON_WRITTEN_TEXT = {
   rewrite: 'Write your answer again from memory, without the reference answer.',
   unavailable: 'The automatic check could not grade this draft. Send it again, or ask a person to check it. You can also go on: you return to this answer first next time.',
   closed: 'This part of the lesson is finished.',
-  assisted: 'Finished after you read the reference answer. It earns less XP and comes back for review sooner.',
+  assisted: 'Finished after you read the reference answer. It earns fewer points and comes back for review sooner.',
   hint: 'Answer in one or two complete sentences.',
 } as const;
 
@@ -238,7 +238,7 @@ function Body({ api, call, life, stage, written, busy, setStage, onSubmit, onClo
       return (
         <div className="proof-closed">
           <p role="status">{stage.assisted ? text.assisted : text.closed}</p>
-          {stage.xp != null ? <p className="chip chip-xp">{`+${String(stage.xp)} XP`}</p> : null}
+          {stage.xp != null ? <p className="chip chip-xp">{`+${String(stage.xp)} points`}</p> : null}
           <div className="actions">
             <button type="button" className="btn btn-primary" onClick={() => { onClosed(stage.next, stage.nextUnavailable); }}>
               Continue →

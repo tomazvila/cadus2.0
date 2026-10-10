@@ -34,7 +34,7 @@ describe('Feedback', () => {
     render(<Feedback res={graded({ work_quality: 'nearly_perfect' })} hasNext onContinue={vi.fn()} onEnd={vi.fn()} />);
     expect(feedback().className).toBe('feedback feedback-correct');
     expect(document.querySelector('.chip-quality')!.textContent).toBe('nearly perfect');
-    expect(document.querySelector('.chip-xp')!.textContent).toBe('+10 XP');
+    expect(document.querySelector('.chip-xp')!.textContent).toBe('+10 points');
   });
 
   it('classes a miss as incorrect, and chips no XP when the reply carries none', () => {

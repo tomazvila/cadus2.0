@@ -50,7 +50,7 @@ describe('what a fresh problem clears', () => {
 
     await submitAnswer('3/4');
     await press('Next problem →');
-    expect(progressCount()).toBe('2 / 3');
+    expect(progressCount()).toBe('2 / 3 · 1 left');
     expect(hints()).toBe(0);
     expect(document.querySelector('.reference-lesson')).toBeNull();
   });
@@ -83,7 +83,7 @@ describe('what a fresh problem clears', () => {
     expect(screen.getByText('Make it stick')).toBeTruthy();
     await submitAnswer('17/23');
     await press('Next problem →');
-    expect(progressCount()).toBe('2 / 3');
+    expect(progressCount()).toBe('2 / 3 · 1 left');
     expect(screen.queryByText('Make it stick')).toBeNull();
     expect(document.querySelector('.feedback')).toBeNull();
   });
@@ -93,7 +93,7 @@ describe('what a fresh problem clears', () => {
     await mount({ api: stubApi({ taskServe }) });
     await submitAnswer('3/4');
     await press('Next problem →');
-    expect(progressCount()).toBe('2 / 3');
+    expect(progressCount()).toBe('2 / 3 · 1 left');
     expect(taskServe).toHaveBeenCalledTimes(1);
   });
 });
@@ -123,7 +123,7 @@ describe('the screens before the card', () => {
     expect(screen.getByText('Worked example')).toBeTruthy();
     expect(section().getAttribute('aria-busy')).toBe('true');
     await act(async () => { serve.release(P(1)); });
-    expect(progressCount()).toBe('1 / 3');
+    expect(progressCount()).toBe('1 / 3 · 2 left');
   });
 
   it.each([
@@ -138,7 +138,7 @@ describe('the screens before the card', () => {
     await press(/practice/);
     await submitAnswer('3/4');
     await press('Next problem →');
-    expect(progressCount()).toBe('2 / 3');
+    expect(progressCount()).toBe('2 / 3 · 1 left');
     expect(taskTeach).toHaveBeenCalledTimes(1);
   });
 });
@@ -269,15 +269,15 @@ describe('the verdict waits for the learner', () => {
     await submitAnswer('1/2');
     // Nothing moves the learner off the verdict by itself.
     await act(async () => { vi.advanceTimersByTime(5000); });
-    expect(progressCount()).toBe('1 / 3');
+    expect(progressCount()).toBe('1 / 3 · 2 left');
     await press('Next problem →');
-    expect(progressCount()).toBe('2 / 3');
+    expect(progressCount()).toBe('2 / 3 · 1 left');
 
     await submitAnswer('2/2');
     await act(async () => { vi.advanceTimersByTime(5000); });
-    expect(progressCount()).toBe('2 / 3');
+    expect(progressCount()).toBe('2 / 3 · 1 left');
     await press('Next problem →');
-    expect(progressCount()).toBe('3 / 3');
+    expect(progressCount()).toBe('3 / 3 · last one');
   });
 
   it('never moves on a miss, and never for a verdict with no next problem', async () => {
@@ -289,7 +289,7 @@ describe('the verdict waits for the learner', () => {
     await mount({ api: stubApi({ taskAnswer, sessionEnd }) });
     await submitAnswer('3/4');
     await act(async () => { vi.advanceTimersByTime(5000); });
-    expect(progressCount()).toBe('1 / 3');
+    expect(progressCount()).toBe('1 / 3 · 2 left');
     expect(screen.getByText('Not quite')).toBeTruthy();
 
     // A correct answer with nothing in hand waits for the learner as well.
@@ -334,10 +334,11 @@ describe('the card', () => {
     expect(taskAnswer.mock.calls[0][1]).toEqual({ problem_id: 'p1', answer: '3/4', work: 'halve both' });
   });
 
-  it('names the task in its chip, and counts up quietly for a review', async () => {
+  it('names the task in its chip, and shows no clock for a review', async () => {
     await mount();
     expect(document.querySelector('.task-meta .chip')!.className).toBe('chip chip-review');
-    expect(timer().className).toBe('timer');
+    // A review is untimed: it shows no clock.
+    expect(document.querySelector('.timer')).toBeNull();
   });
 
   it('turns a drill clock urgent at three seconds, and not before', async () => {
@@ -355,20 +356,27 @@ describe('the card', () => {
 
   it('stops the clock on the verdict, and restarts it with the next problem', async () => {
     vi.useFakeTimers();
+    const drill = (n: number) => P(n, { countdown: true, time_budget_secs: 10 });
     // A miss, so nothing moves the clock on by itself.
-    await mount({ api: stubApi({ taskAnswer: async () => graded({ correct: false }) }) });
+    await mount({
+      plan: planOf(DRILL),
+      api: stubApi({
+        taskServe: async () => drill(1),
+        taskAnswer: async () => graded({ correct: false, next: drill(2) }),
+      }),
+    });
     await act(async () => { vi.advanceTimersByTime(2500); });
-    expect(timer().textContent).toBe('0:02');
+    expect(timer().textContent).toBe('0:08');
     await submitAnswer('3/4');
     await act(async () => { vi.advanceTimersByTime(3000); });
-    expect(timer().textContent).toBe('0:02');
+    expect(timer().textContent).toBe('0:08');
 
     // The next problem starts a fresh second: half of the old one does not carry over.
     await press('Next problem →');
     await act(async () => { vi.advanceTimersByTime(600); });
-    expect(timer().textContent).toBe('0:00');
+    expect(timer().textContent).toBe('0:10');
     await act(async () => { vi.advanceTimersByTime(400); });
-    expect(timer().textContent).toBe('0:01');
+    expect(timer().textContent).toBe('0:09');
   });
 
   it('hands the problem back after a quiz receipt, ready for the next post', async () => {
@@ -405,6 +413,6 @@ describe('the worked example', () => {
     button.dispatchEvent(new MouseEvent('click', { bubbles: true }));
     await act(async () => {});
     expect(taskServe).toHaveBeenCalledTimes(1);
-    expect(progressCount()).toBe('1 / 3');
+    expect(progressCount()).toBe('1 / 3 · 2 left');
   });
 });

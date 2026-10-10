@@ -80,14 +80,19 @@ export function buildStyle(tokens: MapTokens): MapStyleRule[] {
   for (const state of STATES) {
     style.push({
       selector: `.st-${state.id}`,
-      style: { 'background-color': tokens.state[state.id] },
+      // A shape per state as well as a color, so the state reads without color.
+      style: { 'background-color': tokens.state[state.id], shape: state.shape },
     });
   }
 
   style.push(
     // What the placement assumed, and what nothing has reached yet, both recede.
     { selector: '.st-floor', style: { 'background-opacity': 0.45 } },
-    { selector: '.st-untouched', style: { 'background-opacity': 0.5 } },
+    // Untouched is an empty outline: no fill, a 2px border.
+    {
+      selector: '.st-untouched',
+      style: { 'background-opacity': 0, 'border-width': 2, 'border-color': tokens.state.untouched },
+    },
     // What to study next is the one thing the map rings.
     {
       selector: '.st-frontier',

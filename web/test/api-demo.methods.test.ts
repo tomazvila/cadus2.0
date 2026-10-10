@@ -347,10 +347,10 @@ describe('the demo payloads, literally', () => {
     const demo = createDemoApi();
     expect(await refusal(demo.taskServe('other'))).toMatchObject({ message: 'The demo plans one task.' });
     expect(await refusal(demo.taskHint('demo-lesson', 'demo-p9'))).toMatchObject({
-      message: 'That problem is no longer live.',
+      message: 'That problem changed. Press Retry to get a new one.',
     });
     expect(await refusal(demo.taskAnswer('demo-lesson', { problem_id: 'demo-p9', answer: '1' }))).toMatchObject({
-      code: 'unknown_problem', message: 'That problem is no longer live.',
+      code: 'unknown_problem', message: 'That problem changed. Press Retry to get a new one.',
     });
     expect(await refusal(demo.getDiagnosis('j-9'))).toMatchObject({
       status: 404, code: 'unknown_diagnosis', message: 'The demo wrote no job j-9.',

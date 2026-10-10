@@ -30,6 +30,7 @@ export const MAP_RENDERER_FAILED = 'Could not load the map renderer.';
 
 /** Everything `<Map>` drives imperatively, instead of reaching for the instance. */
 export interface CyHandle {
+  /** Zoom out until the whole map shows. */
   fit: () => void;
   panBy: (delta: { x: number; y: number }) => void;
   zoomBy: (factor: number) => void;
@@ -54,6 +55,12 @@ interface Callbacks {
   onRetry: () => void;
 }
 
+/** The margin around the learner's own unit when the map opens, in screen pixels. */
+const FOCUS_PADDING = 60;
+
+/** The least zoom at which node labels draw: the 9 px font reaches the 11 px cull line. */
+const READABLE_ZOOM = 1.25;
+
 /** Where the island is: waiting on the library, drawn, or told the library is dead. */
 type Island = 'loading' | 'ready' | 'failed';
 
@@ -70,6 +77,8 @@ function CyCanvas({ nodes, edges, handleRef, onSelect, onRetry }: CyCanvasProps)
   // The write is in an effect, never during render, and it runs before any tap can land.
   const cb = useRef<Callbacks | null>(null);
   useEffect(() => { cb.current = { onSelect, onRetry }; });
+  // Frames the learner's own unit, once, the first time the canvas has a size.
+  const pendingFocus = useRef<(() => void) | null>(null);
 
   // ONE effect owns the instance, and the two listeners that serve it.
   //
@@ -111,6 +120,21 @@ function CyCanvas({ nodes, edges, handleRef, onSelect, onRetry }: CyCanvasProps)
         const fitZoom = cy.zoom();
         cy.minZoom(Math.max(fitZoom * 0.6, 0.02));
         cy.maxZoom(2.5);
+
+        // Open on the learner's own unit: the topics to study next and the ones in progress.
+        // A label shows from this zoom up (9 px font, culled under 11 px rendered).
+        const focus = () => {
+          const current = cy.nodes('.st-frontier, .st-learning');
+          if (current.empty()) return;
+          cy.fit(current, FOCUS_PADDING);
+          if (cy.zoom() < READABLE_ZOOM) {
+            cy.zoom(READABLE_ZOOM);
+            cy.center(current);
+          }
+        };
+        // A canvas that is hidden has no size yet: the resize observer frames it on show.
+        if (host.closest('[hidden]') === null) focus();
+        else pendingFocus.current = focus;
 
         cy.on('tap', 'node', (evt) => {
           cb.current!.onSelect(evt.target.id());
@@ -154,7 +178,12 @@ function CyCanvas({ nodes, edges, handleRef, onSelect, onRetry }: CyCanvasProps)
       // `hidden` in list mode, on the canvas the host sits in: a resize against a zero box
       // leaves the canvas blank on the way back, so skip it and let the mode switch resize
       // instead.
-      if (host.closest('[hidden]') === null) cyRef.current?.resize();
+      if (host.closest('[hidden]') === null) {
+        cyRef.current?.resize();
+        const frame = pendingFocus.current;
+        pendingFocus.current = null;
+        frame?.();
+      }
     });
     observer.observe(host);
 

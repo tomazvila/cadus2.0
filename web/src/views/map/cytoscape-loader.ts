@@ -53,7 +53,9 @@ export interface CyLike {
   zoom: (level?: number) => number;
   minZoom: (value: number) => number;
   maxZoom: (value: number) => number;
-  fit: () => void;
+  fit: (target?: CyCollection, padding?: number) => void;
+  /** The nodes that match a selector. */
+  nodes: (selector: string) => CyCollection;
   center: (target: CyCollection) => void;
   panBy: (delta: { x: number; y: number }) => void;
   /** Bind a handler to every element (`selector` absent) or to the ones it names. */

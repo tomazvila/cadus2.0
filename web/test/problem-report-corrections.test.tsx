@@ -32,7 +32,7 @@ describe('committed report corrections', () => {
     const api = stubApi({ taskAnswer: async () => graded({ correct: false, next: null }), taskReport: vi.fn(() => pending.promise) });
     const navigation = await mount({ api, plan: planOf(REVIEW) });
     await submitAnswer('3');
-    await click('Report submitted question');
+    await click('Report this question');
     await click('Send report');
     expect(screen.getByText('Not quite')).toBeTruthy();
     await act(async () => { pending.release(corrected); });
@@ -53,10 +53,10 @@ describe('committed report corrections', () => {
     api.taskReport = vi.fn().mockResolvedValue(corrected);
     render(<QuizResults api={api} taskId="quiz" onUnauthorized={vi.fn()} />);
     await click('Review results');
-    await click('Report submitted question');
+    await click('Report this question');
     await click('Send report');
     expect(api.taskQuizResult).toHaveBeenCalledTimes(2);
-    expect(screen.getByText('100% of marked answers right · 10 XP')).toBeTruthy();
+    expect(screen.getByText('100% of marked answers right · 10 points')).toBeTruthy();
     expect(screen.getByText('Correct')).toBeTruthy();
   });
 
@@ -72,7 +72,8 @@ describe('committed report corrections', () => {
     await click('Start the questions');
     fireEvent.change(screen.getByLabelText('Answer'), { target: { value: '3' } });
     await click('Submit');
-    await click('Report submitted question');
+    // The served question and the answered one both carry the label: the answered one is last.
+    await act(async () => { fireEvent.click(screen.getAllByRole('button', { name: 'Report this question' }).at(-1)!); });
     await click('Send report');
     expect(screen.getByText('Correct')).toBeTruthy();
     expect(screen.queryByText('Verified solution')).toBeNull();
@@ -88,7 +89,7 @@ describe('committed report corrections', () => {
     render(<Integrated api={api} reportApi={api} taskId="integrated" problem={PROBLEM} />);
     fireEvent.change(screen.getByLabelText('Step 2'), { target: { value: '240' } });
     await click('Submit all my answers');
-    await click('Report step 2');
+    await click('Report this question');
     await click('Send report');
     expect(api.taskIntegratedAnswer).toHaveBeenCalledTimes(2);
     const calls = vi.mocked(api.taskIntegratedAnswer).mock.calls;

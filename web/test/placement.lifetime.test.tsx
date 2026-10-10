@@ -115,7 +115,7 @@ describe('the payload shapes', () => {
     });
     await begin();
     await answer('5');
-    await act(async () => { await vi.advanceTimersByTimeAsync(750); });
+    await act(async () => { await vi.advanceTimersByTimeAsync(1500); });
 
     expect(screen.getByText('Starting questions done')).toBeTruthy();
     expect(screen.queryByText('Start here')).toBeNull();

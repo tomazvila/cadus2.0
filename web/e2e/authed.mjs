@@ -122,7 +122,7 @@ async function main() {
     await page.locator('.onboard-card .btn-hero').click();
   } else {
     await page.locator('.more-menu summary').click();
-    const placement = page.getByRole('button', { name: 'Answer the starting questions again' });
+    const placement = page.getByRole('button', { name: 'Starting questions again' });
     await placement.waitFor({ state: 'visible', timeout: 10000 });
     await placement.click();
   }

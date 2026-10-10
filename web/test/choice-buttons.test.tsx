@@ -256,8 +256,9 @@ describe('TypedSubmit', () => {
 
   it('shows the busy class and the disabled state', () => {
     render(<TypedSubmit choices={[]} busy disabled onClick={vi.fn()}>Submit</TypedSubmit>);
-    const button = screen.getByRole('button', { name: 'Submit' }) as HTMLButtonElement;
+    const button = screen.getByRole('button', { name: 'Checking…' }) as HTMLButtonElement;
     expect(button.className).toBe('btn btn-primary is-busy');
+    expect(button.getAttribute('aria-busy')).toBe('true');
     expect(button.disabled).toBe(true);
   });
 

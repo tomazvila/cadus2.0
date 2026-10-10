@@ -23,7 +23,7 @@ it('offers the recorded reveal when the first serve reports task_complete', asyn
   expect(taskQuizResult).not.toHaveBeenCalled();
   await press('Review results');
   expect(taskQuizResult).toHaveBeenCalledWith('t-quiz', false);
-  expect(screen.getByText('100% of marked answers right · 10 XP')).toBeTruthy();
+  expect(screen.getByText('100% of marked answers right · 10 points')).toBeTruthy();
 });
 
 it('resumes server-owned feedback practice without revealing the original answers', async () => {

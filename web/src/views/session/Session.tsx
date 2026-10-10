@@ -32,7 +32,7 @@ import { clockStart, isDrill, useSessionClock } from './useSessionClock';
 import {
   EmptyPlan, NoInstruction, ProblemHeader, SessionSummary, emptyPlanMessage, reviewTopic,
 } from './SessionScreens';
-import { Teach } from './Teach';
+import { Teach, WorkedFold } from './Teach';
 import { Integrated } from './Integrated';
 import { serveIntegrated } from './serveIntegrated';
 import { loadPlannedTask } from './loadPlannedTask';
@@ -93,6 +93,8 @@ export function Session({
   const [integrated, setIntegrated] = useState<IntegratedProblem | null>(null);
   const [problem, setProblem] = useState<ServedProblem | null>(null);
   const [teaching, setTeaching] = useState<TeachResponse | null>(null);
+  // The worked example of the lesson on screen, kept for the "Show the worked example" fold.
+  const [example, setExample] = useState<TeachResponse['worked_example'] | null>(null);
   const [hints, setHints] = useState<string[]>(NO_HINTS);
   const [referenceLesson, setReferenceLesson] = useState<string | null>(null);
   const [result, setResult] = useState<AnswerResponse | null>(null);
@@ -265,6 +267,7 @@ export function Session({
       // view needs no served problem to know a fresh lesson must teach.
       loadTask(() => api.taskTeach(task.task_id), (instruction) => {
         taughtKp.current = instruction.kp;
+        setExample(instruction.worked_example);
         setTeaching(instruction);
         gate.enter('teaching');
       }, () => {
@@ -499,8 +502,8 @@ export function Session({
   if (integrated) {
     return <section className="view-session">
       <p hidden={!session.task.integrated_assessment}>Delayed mixed problem</p>
-      <button type="button" className="btn btn-ghost" onClick={onExit}>Exit</button>
       <Integrated key={session.task.task_id} api={api} reportApi={api} taskId={session.task.task_id}
+        onExit={onExit}
         problem={integrated} onUnauthorized={demo ? undefined : onUnauthorized}
         onRolledOver={onRolledOver}
         onGraded={() => gate.enter('feedback')}
@@ -527,6 +530,7 @@ export function Session({
           elapsed={elapsed}
           countdown={countdown}
           onExit={onExit}
+          hideExit={result !== null}
         />
         <LessonProof
           key={problem.problem_id}
@@ -560,12 +564,15 @@ export function Session({
         elapsed={elapsed}
         countdown={countdown}
         onExit={onExit}
+        hideExit={result !== null}
       />
 
       <div className="card problem-card">
         <MathBlock>{problem.text}</MathBlock>
         {/* The figures of the knowledge point, each with its text equivalent (unit f9). */}
         <MathVisuals visuals={problem.visuals} />
+
+        <WorkedFold taskType={session.task.task_type} example={example} />
 
         <HintPanel hints={hints} referenceLesson={referenceLesson}
           hintsAvailable={hintsAvailable} taskType={session.task.task_type} />
@@ -576,6 +583,7 @@ export function Session({
           ref={answerRef}
           choices={problem.choices}
           contract={problem.answer_contract}
+          draftKey={problem.problem_id}
           disabled={locked && phase !== 'submitting'}
           locked={locked}
           onSubmit={() => submit()}
@@ -612,6 +620,7 @@ export function Session({
             onRefresh={onExit}
             continueRef={continueRef}
             revealTopic={reviewTopic(session.task)}
+            hintsUsed={hints.length}
           >
             {/* Keyed by the attempt, so a second grade of the same problem — the DD-3/P1
                 re-solve — never shows the first attempt's explanation. */}

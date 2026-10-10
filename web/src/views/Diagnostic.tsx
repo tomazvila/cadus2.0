@@ -57,7 +57,7 @@ export { DIAG_START_FAILED };
 type Phase = 'intro' | 'loading' | 'ready' | 'submitting' | 'feedback' | 'closing' | 'done';
 
 /** The post-answer beat, in milliseconds. The 1.0 literal (`diagnostic.js:144`). */
-export const DIAG_BEAT_MS = 750;
+export const DIAG_BEAT_MS = 1500;
 
 /** The probe cap when the service names none. */
 export const DIAG_DEFAULT_CAP = 40;
@@ -267,7 +267,7 @@ export function Diagnostic({ diag, reportApi, demo, onUnauthorized, onExit }: Di
       <div className="card problem-card">
         <MathBlock>{question.text}</MathBlock>
 
-        <AnswerInput ref={answerRef} choices={question.choices} contract={question.answer_contract} disabled={locked} onSubmit={submitTyped} />
+        <AnswerInput ref={answerRef} choices={question.choices} contract={question.answer_contract} disabled={locked} draftKey={question.problem_id} onSubmit={submitTyped} />
 
         <div className="actions">
           {/* A tap on an answer button is the submit, so that probe shows no Submit. */}
@@ -296,7 +296,9 @@ export function Diagnostic({ diag, reportApi, demo, onUnauthorized, onExit }: Di
           </button>
         </div>
 
-        {reportApi ? <QuestionReport key={`served:${question.problem_id}`} api={reportApi} hideResult context={{
+        <p className="muted small">Not sure? Press I do not know instead of guessing.</p>
+
+        {reportApi && !result ? <QuestionReport key={`served:${question.problem_id}`} api={reportApi} hideResult context={{
           task_id: 'diag', problem_id: question.problem_id, report_kind: 'served',
           problem_text: question.text, answer: '', work: '',
         }} /> : null}

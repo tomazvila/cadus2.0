@@ -34,15 +34,15 @@ describe('the advance', () => {
     await mount({ api: stubApi({ taskAnswer }) });
 
     await submitAnswer('3/4');
-    expect(progressCount()).toBe('1 / 3');
+    expect(progressCount()).toBe('1 / 3 · 2 left');
 
     // No timer moves the learner: long past the old 1400 ms window, the verdict stands.
     await act(async () => { vi.advanceTimersByTime(5000); });
     expect(screen.getByText('Correct')).toBeTruthy();
-    expect(progressCount()).toBe('1 / 3');
+    expect(progressCount()).toBe('1 / 3 · 2 left');
 
     // The learner takes Continue themselves.
-    expect(await clickNext()).toBe('2 / 3');
+    expect(await clickNext()).toBe('2 / 3 · 1 left');
     expect(screen.queryByText('Correct')).toBeNull();
     expect(answerInput().value).toBe('');
   });
@@ -54,7 +54,7 @@ describe('the advance', () => {
     await submitThenWait('3/4', 5000);
 
     expect(screen.getByText('Not quite')).toBeTruthy();
-    expect(progressCount()).toBe('1 / 3');
+    expect(progressCount()).toBe('1 / 3 · 2 left');
   });
 
   it('next_unavailable keeps the verdict and says the task is not over', async () => {
@@ -80,10 +80,10 @@ describe('the advance', () => {
     // The one click takes the one transition out of `feedback`; with no timer armed,
     // nothing can double-fire behind it.
     await submitThenWait('3/4', 600);
-    expect(await clickNext()).toBe('2 / 3');
+    expect(await clickNext()).toBe('2 / 3 · 1 left');
 
     await act(async () => { vi.advanceTimersByTime(5000); });
-    expect(progressCount()).toBe('2 / 3');
+    expect(progressCount()).toBe('2 / 3 · 1 left');
     expect(taskAnswer).toHaveBeenCalledTimes(1);
   });
 
@@ -93,7 +93,7 @@ describe('the advance', () => {
     await mount({ api: stubApi({ taskServe, taskAnswer }) });
 
     await submitAnswer('3/4');
-    expect(await clickNext()).toBe('2 / 3');
+    expect(await clickNext()).toBe('2 / 3 · 1 left');
 
     expect(taskServe).toHaveBeenCalledTimes(2);
     expect(taskServe.mock.calls[1]).toEqual(['t-review']);
@@ -108,7 +108,7 @@ describe('the advance', () => {
     fireEvent.change(workInput(), { target: { value: 'the working of problem one' } });
     await submitAnswer('3/4');
     // A fresh subtree: both fields are new nodes, and both are empty.
-    expect(await clickNext()).toBe('2 / 3');
+    expect(await clickNext()).toBe('2 / 3 · 1 left');
     expect(answerInput().value).toBe('');
     expect(workInput().value).toBe('');
 
@@ -237,7 +237,7 @@ describe('the exit paths', () => {
     const sessionEnd = vi.fn<ApiClient['sessionEnd']>(async () => closed({ minutes: 4 }));
     const { onExit } = await mount({ api: stubApi({ sessionEnd }) });
 
-    fireEvent.click(screen.getByRole('button', { name: 'Exit' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Save & exit' }));
 
     expect(onExit).toHaveBeenCalledTimes(1);
     expect(sessionEnd).not.toHaveBeenCalled();

@@ -26,7 +26,7 @@ describe('stage copy', () => {
   });
 
   it('writes the report status without stage ids', () => {
-    expect(reportStatusText('running', 'verification', 1, 3)).toBe('Checking the math (check 1 of 3).');
+    expect(reportStatusText('running', 'verification', 1, 3)).toBe('Checking the math.');
     expect(reportStatusText('failed', 'worker_interrupted', 2, 3)).not.toMatch(/worker_interrupted/);
     expect(reportStatusText('completed', 'completed', 1, 3)).toMatch(/finished/);
   });

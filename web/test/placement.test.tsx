@@ -217,7 +217,7 @@ describe('DIAG-750: the post-answer beat', () => {
     expect(diagFinish).not.toHaveBeenCalled();
     await tick(1);
     expect(diagFinish).toHaveBeenCalledTimes(1);
-    expect(DIAG_BEAT_MS).toBe(750);
+    expect(DIAG_BEAT_MS).toBe(1500);
   });
 
   it('DIAG-750: a re-render inside the beat arms no second timer', async () => {

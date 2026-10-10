@@ -134,12 +134,16 @@ describe('the operator route and the topbar', () => {
 
   it('keeps the map, and where it came from, when Map is pressed twice', async () => {
     const person = userEvent.setup();
-    render(<Root api={adminApi()} initialUser={USER} initialView={{ name: 'session' }} />, {
-      container: view(),
-    });
-    await waitFor(() => expect(view().querySelector('.view-session')).not.toBeNull());
+    render(
+      <Root
+        api={adminApi()}
+        initialUser={USER}
+        initialView={{ name: 'map', back: { name: 'session' } }}
+      />,
+      { container: view() },
+    );
+    await waitFor(() => expect(screen.getByLabelText(MAP_CANVAS_LABEL)).toBeTruthy());
 
-    await openMapFromBar(person);
     await openMapFromBar(person);
 
     // Done gives the SESSION back: a second press did not wrap the map around itself.

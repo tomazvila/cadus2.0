@@ -30,6 +30,7 @@ import { useEffect, type RefObject } from 'react';
 import type { SubmittedProblemContext } from '@/api/types-report';
 import { isQuizReceipt, isRework } from '@/api/types';
 import { releaseOnFail } from '@/hooks/screen';
+import { clearDraft } from '@/lib/notation';
 import type { AnswerFieldHandle } from '@/components/AnswerField';
 import type { WorkFieldHandle } from '@/components/WorkField';
 import type { Call } from '@/hooks/useCall';
@@ -89,8 +90,8 @@ export function useGrade({
 
     const answer = field.value();
     // A timed-out drill submits whatever is there, blank included — an honest miss.
-    // Otherwise an empty answer only refocuses.
-    if (!answer && !opts.timedOut) { field.focus(); return; }
+    // Otherwise an empty answer says what to do and refocuses.
+    if (!answer && !opts.timedOut) { field.remindEmpty?.(); field.focus(); return; }
 
     // THE GATE (F-37-1c). Synchronous, before the first await, so two events inside the
     // grading window can never both post this `problem_id`.
@@ -109,6 +110,8 @@ export function useGrade({
         // seconds to run out, and the auto-submit then posts a BLANK second attempt for a
         // `problem_id` the service already holds an attempt for.
         answeredForRef.current = current.problem_id;
+        // The service holds a verdict, so the kept draft of this problem has no use.
+        clearDraft(current.problem_id);
         if (isQuizReceipt(reply)) {
           // Unreachable by construction: a quiz task is handed to the quiz screen before it
           // is served, so this view posts no quiz answer. The branch exists because the

@@ -61,7 +61,7 @@ describe('the sign-in card', () => {
     type('Password', 'wrong-password');
     press('Sign in');
 
-    expect(await alertText()).toBe('Incorrect email or password.');
+    expect(await alertText()).toBe('The sign-in did not work. Check the email and password, then try again.');
     // The learner is still on the sign-in card, and nothing navigated.
     expect(screen.getByRole('button', { name: 'Sign in' })).toBeTruthy();
     expect(navigations).toEqual([]);
@@ -242,7 +242,7 @@ describe('the recovery flows', () => {
 
 describe('the message map', () => {
   it.each([
-    ['invalid_credentials', 'Incorrect email or password.'],
+    ['invalid_credentials', 'The sign-in did not work. Check the email and password, then try again.'],
     ['invalid_token', 'That link is invalid or has expired. Request a new one below.'],
     ['rate_limited', 'Too many attempts. Please wait a minute, then try again.'],
   ])('maps %s to its own line', (code, line) => {

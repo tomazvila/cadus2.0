@@ -35,17 +35,22 @@
  * WHAT THIS UNIT DOES NOT OWN. There is no router yet, so the four navigation callbacks
  * are props. The unit that adds URL routing (spec section 4.1) supplies the real ones.
  */
-import { Fragment, useEffect, useReducer } from 'react';
+import { useEffect, useReducer } from 'react';
 import { useDialogs } from '@/components/Modal';
-import { LoadingBlock, Ring, Stat } from '@/components/primitives';
+import { LoadingBlock, Ring } from '@/components/primitives';
 import { useBusy } from '@/hooks/useBusy';
 import { useCall } from '@/hooks/useCall';
 import { useLifetime } from '@/hooks/useLifetime';
 import { num, pct } from '@/lib/format';
 import { toast } from '@/app/toast';
 import { CoursePicker } from './dashboard/CoursePicker';
+import { CourseArc } from './dashboard/CourseArc';
+import { MainTiles } from './dashboard/MainTiles';
+import { MoreMenu } from './dashboard/MoreMenu';
+import { ProgressDetails } from './dashboard/ProgressDetails';
 import { PrimaryAction } from './dashboard/PrimaryAction';
 import { RetentionCard } from './dashboard/RetentionCard';
+import '../styles/fix-dashboard.css';
 import type { ApiClient, JourneyCourse, PlanTask, StatusResponse } from '@/api/types';
 
 export interface DashboardProps {
@@ -106,6 +111,20 @@ export function etaDisplay(velocity: StatusResponse['velocity'], today: Date = n
   if (!eta) return '—';
   const days = Math.round((Date.parse(`${eta}T00:00:00`) - today.getTime()) / 86_400_000);
   return Number.isFinite(days) && days >= 0 && days <= ETA_HORIZON_DAYS ? eta : '—';
+}
+
+/**
+ * The finish day as a learner reads it: "Nov 4". The year joins only when it is not the
+ * current one. A dash stays a dash.
+ */
+export function etaShort(eta: string, today: Date = new Date()): string {
+  if (eta === '—') return eta;
+  const day = new Date(`${eta}T00:00:00`);
+  if (Number.isNaN(day.getTime())) return eta;
+  const opts: Intl.DateTimeFormatOptions = day.getFullYear() === today.getFullYear()
+    ? { month: 'short', day: 'numeric' }
+    : { month: 'short', day: 'numeric', year: 'numeric' };
+  return day.toLocaleDateString('en-US', opts);
 }
 
 /** The tooltip of the ETA tile: the horizon rule, spelled out where it applies. */
@@ -221,7 +240,7 @@ export function Dashboard({
     try {
       await api.downloadExport();
     } catch (e) {
-      toast((e as { message?: string } | null)?.message || 'Could not export your data.');
+      toast((e as { message?: string } | null)?.message || 'Could not export your data. Try again in a minute.');
     }
   };
 
@@ -235,7 +254,7 @@ export function Dashboard({
     return (
       <section className="view-dashboard">
         <div className="empty">
-          <p>Could not load your dashboard.</p>
+          <p>Could not load your dashboard. Check your connection, then press Try again.</p>
           <button type="button" className="btn btn-primary" onClick={reload}>
             Try again
           </button>
@@ -256,35 +275,14 @@ export function Dashboard({
   const today = num(status.xp.today);
   const goal = num(status.xp.goal, 40);
   const fraction = goal ? today / goal : 0;
-  const due = num(status.due_reviews);
-  const frontier = num(status.frontier);
-  // D-F6 — HONEST PROGRESS. The bar reads `course_progress`, which counts the topics the
-  // learner PRACTICED. These three numbers say what stands behind it: a placement gives
-  // credit, not evidence, so an inferred topic waits for one confirmation item.
-  const mastery = status.mastery;
-  const practiced = num(mastery?.practiced);
-  const inferred = num(mastery?.inferred);
-  const toConfirm = mastery?.to_confirm?.length ?? 0;
-  const ungraded = num(status.ungraded);
 
-  const courseArc = courses.length ? (
-    <div className="course-arc">
-      {courses.map((c, i) => (
-        // A Fragment, not a wrapper span: `.course-arc` is a flex row with a gap, and a
-        // wrapper makes each pair ONE flex child. The gap then lands only before each
-        // separator, and a wrap breaks a course away from its own ▸.
-        <Fragment key={c.id}>
-          {i ? <span className="arc-sep" aria-hidden="true">▸</span> : null}
-          <span className={c.current ? 'arc-course arc-current' : 'arc-course'}>{c.name}</span>
-        </Fragment>
-      ))}
-    </div>
-  ) : null;
+  const courseArc = <CourseArc courses={courses} />;
 
   // W-C3, first shape: a learner with no placement gets ONE onboarding action.
   if (status.placed === false) {
     return (
       <section className="view-dashboard">
+        <h1 className="h-screen">Dashboard</h1>
         {courseArc}
         <div className="card onboard-card">
           <h2>Let&apos;s find where to start.</h2>
@@ -302,109 +300,53 @@ export function Dashboard({
 
   return (
     <section className="view-dashboard">
+      <h1 className="h-screen">Dashboard</h1>
       {courseArc}
 
       <div className="card status-card">
         <div className="status-head">
           <div>
-            <h2>{`${today} / ${goal} XP today`}</h2>
+            <h2>{`${today} / ${goal} points today`}</h2>
+            {today < goal ? <p className="muted">{`${goal - today} points to go`}</p> : null}
             <p className="muted">
               {`${status.course.name ?? 'your course'} · ${pct(status.velocity.course_progress)}% complete`}
             </p>
           </div>
           <Ring fraction={fraction} label={`${pct(fraction)}%`} sub="daily goal" />
         </div>
-        <div className="stat-grid">
-          <Stat value={`${num(status.xp.streak_days)}`} label="day streak" className="accent"
-            title="Days in a row with at least one answered problem." />
-          <Stat value={`${due}`} label="due now" className={due > 0 ? 'warn' : undefined}
-            title="Reviews to do today. If you skip them, you forget the skill." />
-          <Stat value={`${num(status.nearly_due)}`} label="nearly due"
-            title="Reviews that come due in the next few days." />
-          <Stat value={`${frontier}`} label="new topics"
-            title="New topics that are ready for you to learn next." />
-          <Stat value={`${pct(status.velocity.course_progress)}%`} label="course"
-            title="Share of the course's topics you have practiced." />
-          <Stat value={etaDisplay(status.velocity)} label="finish by" title={etaTitle(status.velocity)} />
-          {/* D-F2: the attempts nobody graded. The tile appears only when one waits,
-              so a learner with none reads the same six tiles as before. The tooltip
-              carries the H-2 explanation; the prose paragraph under the grid is gone. */}
-          {ungraded > 0 ? (
-            <Stat value={`${ungraded}`} label="not marked" className="warn"
-              title={`The checker could not read ${ungraded === 1 ? 'this answer' : 'these answers'}: usually a form it cannot read, such as a missing unit. Nothing was scored for or against you, and a person can still mark ${ungraded === 1 ? 'it' : 'them'} by hand.`} />
-          ) : null}
-        </div>
-        {mastery ? (
-          <div className="stat-grid mastery-grid">
-            <Stat value={`${practiced}`} label="practiced"
-              title="Topics where you have answered problems yourself." />
-            <Stat value={`${inferred}`} label="assumed from the starting questions"
-              title="Topics the starting questions showed you know, without practice. One more correct answer confirms each one." />
-            <Stat
-              value={`${toConfirm}`}
-              label="to confirm"
-              className={toConfirm > 0 ? 'accent' : undefined}
-              title="Topics assumed known that still need one correct answer."
-            />
-          </div>
-        ) : null}
-      </div>
 
-      {/* W-C2: one primary action, chosen by the state of the plan. */}
-      <PrimaryAction
-        status={status}
-        work={hasScheduledWork(status)}
-        busy={busy}
-        startSession={startSession}
-        enroll={doEnroll}
-        onDiagnostic={onDiagnostic}
-      />
+        {/* W-C2: one primary action, chosen by the state of the plan. */}
+        <PrimaryAction
+          status={status}
+          work={hasScheduledWork(status)}
+          busy={busy}
+          startSession={startSession}
+          enroll={doEnroll}
+          onDiagnostic={onDiagnostic}
+        />
+
+        <MainTiles
+          status={status}
+          finishBy={etaShort(etaDisplay(status.velocity))}
+          finishTitle={etaTitle(status.velocity)}
+        />
+        <ProgressDetails status={status} />
+      </div>
 
       {/* f19-retention: the delayed-probe report, loaded with the dashboard (D-F11). */}
       <RetentionCard api={api} call={call} />
 
       {/* W-C5: everything else is quiet, under a native disclosure. */}
-      <details className="more-menu">
-        <summary>More</summary>
-        <div className="more-actions">
-          <button type="button" className="btn" onClick={onMap}>
-            Curriculum map
-          </button>
-          <button type="button" className="btn" onClick={onProofs}>
-            Your proofs
-          </button>
-          <button
-            type="button"
-            className={busy.cls('quiz', 'btn')}
-            disabled={busy.is('quiz')}
-            onClick={() => busy.run('quiz', quizNow)}
-          >
-            Quiz now
-          </button>
-          <button type="button" className="btn" onClick={onDiagnostic}>
-            Answer the starting questions again
-          </button>
-          <button
-            type="button"
-            className={busy.cls('switch', 'btn')}
-            disabled={busy.is('switch') || courses.length < 2}
-            onClick={() => busy.run('switch', () => switchCourse(courses))}
-          >
-            Switch course
-          </button>
-          <button
-            type="button"
-            className={busy.cls('export', 'btn')}
-            disabled={busy.is('export')}
-            onClick={() => busy.run('export', exportData)}
-          >
-            Download my data
-          </button>
-        </div>
-        <p className="muted small more-caption">
-          Download my data saves a file with every answer you have given.
-        </p>
-      </details>
+      <MoreMenu
+        busy={busy}
+        courses={courses}
+        onMap={onMap}
+        onProofs={onProofs}
+        onDiagnostic={onDiagnostic}
+        quizNow={quizNow}
+        switchCourse={switchCourse}
+        exportData={exportData}
+      />
 
       {demo ? (
         <p className="demo-hint muted small">

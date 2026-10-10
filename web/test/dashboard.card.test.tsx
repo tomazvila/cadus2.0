@@ -32,7 +32,7 @@ describe('the status card', () => {
   it('warns on the due count only while something is due, and dashes an unknown ETA', async () => {
     const first = await mount();
     expect(stat('due now').className).toBe('stat warn');
-    expect(stat('finish by').querySelector('.stat-value')!.textContent).toBe('2026-11-04');
+    expect(stat('finish by').querySelector('.stat-value')!.textContent).toBe('Nov 4');
     first.unmount();
     cleanup();
 
@@ -97,13 +97,13 @@ describe('the primary action', () => {
   it('offers no next course after the last one, and none without a current one', async () => {
     const last = status().courses.map((c) => ({ ...c, current: c.id === 'proofs' }));
     const first = await mount({ api: stubApi({ getStatus: async () => status({ ...EMPTY_PLAN, courses: last }) }) });
-    expect(screen.queryByRole('button', { name: /^Start / })).toBeNull();
+    expect(screen.queryByRole('button', { name: /^Start (?!a timed)/ })).toBeNull();
     first.unmount();
     cleanup();
 
     const none = status().courses.map((c) => ({ ...c, current: false }));
     await mount({ api: stubApi({ getStatus: async () => status({ ...EMPTY_PLAN, courses: none }) }) });
-    expect(screen.queryByRole('button', { name: /^Start / })).toBeNull();
+    expect(screen.queryByRole('button', { name: /^Start (?!a timed)/ })).toBeNull();
   });
 
   it('marks the hero busy while the session starts, and while the enrolment posts', async () => {
@@ -156,16 +156,16 @@ describe('the primary action', () => {
 
 describe('the quiet menu', () => {
   async function openMenu() {
-    await userEvent.click(screen.getByText('More'));
+    await userEvent.click(screen.getByText(/^More/));
   }
 
   it('keys each control on its own, so one busy control leaves the others live', async () => {
     const start = held<SessionStartResponse>();
     await mount({ api: stubApi({ sessionStart: () => start.promise }) });
     await openMenu();
-    await userEvent.click(button('Quiz now'));
-    expect(button('Quiz now').disabled).toBe(true);
-    expect(button('Quiz now').className).toBe('btn is-busy');
+    await userEvent.click(button('Start a timed quiz'));
+    expect(button('Start a timed quiz').disabled).toBe(true);
+    expect(button('Start a timed quiz').className).toBe('btn is-busy');
     expect(button('Download my data').disabled).toBe(false);
     expect(button('Switch course').disabled).toBe(false);
     await act(async () => { start.release(await createDemoApi().sessionStart()); });
@@ -199,7 +199,7 @@ describe('the quiet menu', () => {
     await userEvent.click(button('Download my data'));
     expect(button('Download my data').className).toBe('btn is-busy');
     expect(button('Download my data').disabled).toBe(true);
-    expect(button('Quiz now').disabled).toBe(false);
+    expect(button('Start a timed quiz').disabled).toBe(false);
     await act(async () => { download.release(undefined); });
     expect(button('Download my data').className).toBe('btn');
   });
@@ -207,7 +207,7 @@ describe('the quiet menu', () => {
   it('toasts the no-quiz line as information, and a bare export refusal as the generic line', async () => {
     const first = await mount();
     await openMenu();
-    await userEvent.click(button('Quiz now'));
+    await userEvent.click(button('Start a timed quiz'));
     await waitFor(() => expect(toastStore.getSnapshot()).toEqual([
       { id: 1, message: 'No quiz is due right now.', kind: 'info' },
     ]));
@@ -218,7 +218,7 @@ describe('the quiet menu', () => {
     await openMenu();
     await userEvent.click(button('Download my data'));
     await waitFor(() => expect(toastStore.getSnapshot().map((t) => [t.message, t.kind])).toEqual([
-      ['Could not export your data.', 'error'],
+      ['Could not export your data. Try again in a minute.', 'error'],
     ]));
   });
 
@@ -226,7 +226,7 @@ describe('the quiet menu', () => {
     const plan = held<SessionPlanResponse>();
     const view = await mount({ api: stubApi({ getPlan: () => plan.promise }) });
     await openMenu();
-    await userEvent.click(button('Quiz now'));
+    await userEvent.click(button('Start a timed quiz'));
     view.unmount();
     await act(async () => { plan.release(await createDemoApi().getPlan()); });
     expect(view.onQuiz).not.toHaveBeenCalled();

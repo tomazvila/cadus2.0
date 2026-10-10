@@ -54,10 +54,10 @@ body {
 }
 
 h1, h2, h3 { line-height: 1.25; margin: 0 0 0.4rem; }
-h2 { font-size: 1.4rem; }
+h2 { font-size: var(--fs-5); }
 p { margin: 0.4rem 0; }
 .muted { color: var(--muted); }
-.small { font-size: 0.85rem; }
+.small { font-size: var(--fs-2); }
 
 /* ---- the topbar ---- */
 /* It PORTALS into the `#topbar` element index.html ships, so it is a sibling of the React
@@ -72,29 +72,32 @@ p { margin: 0.4rem 0; }
 .brand {
   display: inline-flex; align-items: center; gap: 0.5rem;
   background: none; border: 0; color: var(--text); cursor: pointer;
-  font-size: 1.05rem; font-weight: 650; padding: 0.2rem 0.3rem; border-radius: 8px;
+  font-size: var(--fs-3); font-weight: 650; padding: 0.55rem 0.7rem; min-height: 40px; border-radius: 8px;
 }
 @media (hover: hover) { .brand:hover { background: var(--surface-2); } }
 .brand:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .brand-mark { display: inline-flex; width: 1.15em; height: 1.15em; }
 .brand-mark svg { width: 100%; height: 100%; display: block; }
 .demo-badge {
-  font-size: 0.7rem; font-weight: 700; letter-spacing: 0.06em;
+  font-size: var(--fs-1); font-weight: 700; letter-spacing: 0.06em;
   color: var(--accent); border: 1px solid var(--accent); border-radius: 999px;
   padding: 0.1rem 0.5rem;
 }
 /* The signed-in cluster, pushed to the trailing edge. */
 .topbar-user { margin-left: auto; display: inline-flex; align-items: center; gap: 0.6rem; min-width: 0; }
 .user-email {
-  font-size: 0.82rem; color: var(--muted);
+  font-size: var(--fs-1); color: var(--muted);
   max-width: min(44vw, 240px); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
-.logout-btn { min-height: 34px; padding: 0.35rem 0.7rem; font-size: 0.85rem; }
+.logout-btn { min-height: 40px; padding: 0.35rem 0.7rem; font-size: var(--fs-2); }
 /* The quiet Map affordance: mono, hairline, no frame until it is hovered. */
 .topbar-link {
   background: none; border: 0; cursor: pointer;
-  font-family: var(--mono); font-size: 0.82rem; letter-spacing: 0.04em;
-  color: var(--muted); padding: 0.3rem 0.5rem; border-radius: 6px;
+  font: inherit; font-size: var(--fs-2);
+  color: var(--text); padding: 0.55rem 0.7rem; min-height: 40px; border-radius: 6px;
+}
+.topbar-link[aria-current="page"], .brand[aria-current="page"] {
+  color: var(--text); box-shadow: inset 0 -2px 0 var(--accent);
 }
 @media (hover: hover) { .topbar-link:hover { color: var(--accent); background: var(--surface-2); } }
 .topbar-link:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
@@ -105,11 +108,18 @@ p { margin: 0.4rem 0; }
   padding: 1.2rem max(1rem, env(safe-area-inset-right)) calc(4rem + env(safe-area-inset-bottom))
     max(1rem, env(safe-area-inset-left));
 }
+.card p { margin: 0.75rem 0; }
+.card p.muted.small { margin: 0.4rem 0; }
 .card {
   background: var(--surface); border: 1px solid var(--border);
   border-radius: var(--radius); box-shadow: var(--shadow);
   padding: 1.2rem; margin-bottom: 1rem;
 }
+
+/* A reading measure: prose never runs wider than 72 characters. Tables, grids, math
+   blocks and buttons are not in this list. */
+.card p, .teach-steps li, .teach-concept, .teach-note, .teach-problem, .feedback-text,
+.solution-text { max-width: 72ch; }
 
 /* ---- buttons ---- */
 /* `min-height: 44px` is the minimum target size of spec section 4.5. The ghost variant is
@@ -127,13 +137,13 @@ p { margin: 0.4rem 0; }
 .btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .btn-primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); font-weight: 650; }
 @media (hover: hover) { .btn-primary:hover { filter: brightness(1.08); background: var(--accent); } }
-.btn-ghost { border-color: transparent; background: transparent; color: var(--muted); }
+.btn-ghost { border: 1px solid var(--border); background: transparent; color: var(--muted); }
 @media (hover: hover) { .btn-ghost:hover { background: var(--surface-2); } }
 .btn:disabled { opacity: 0.65; cursor: default; }
 
 /* ---- chips ---- */
 .chip {
-  display: inline-flex; align-items: center; font-size: 0.72rem; font-weight: 650;
+  display: inline-flex; align-items: center; font-size: var(--fs-1); font-weight: 650;
   padding: 0.15rem 0.55rem; border-radius: 999px; background: var(--surface-2); color: var(--muted);
   text-transform: capitalize; letter-spacing: 0.01em;
 }
@@ -142,14 +152,14 @@ p { margin: 0.4rem 0; }
 .chip-bad { background: var(--bad-weak); color: var(--bad); }
 
 /* ---- stats and the progress ring ---- */
-.stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.6rem; margin-top: 1rem; }
+.stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-3); margin-top: var(--space-3); }
 /* D-F6: the three mastery numbers sit under the headline grid, quieter than it. */
 .mastery-grid { margin-top: 0.6rem; border-top: 1px solid var(--border); padding-top: 0.6rem; }
 .stat {
   background: var(--surface-2); border-radius: 10px; padding: 0.7rem 0.6rem; text-align: center;
 }
-.stat-value { font-size: 1.3rem; font-weight: 700; }
-.stat-label { font-size: 0.75rem; color: var(--muted); }
+.stat-value { font-size: var(--fs-5); font-weight: 700; }
+.stat-label { font-size: var(--fs-2); color: var(--muted); }
 .stat.accent .stat-value { color: var(--accent); }
 .stat.warn .stat-value { color: var(--warn); }
 
@@ -161,7 +171,7 @@ p { margin: 0.4rem 0; }
 /* `.ring-label strong` gives the number its size and its own line. A `<span>` here loses
    both, and the ring reads as one run of small text. The element type is load-bearing. */
 .ring-label strong { display: block; font-size: 1.25rem; }
-.ring-label span { font-size: 0.72rem; color: var(--muted); }
+.ring-label span { font-size: var(--fs-2); color: var(--muted); }
 
 /* ---- empty and loading ---- */
 .empty { text-align: center; padding: 3rem 1rem; }
@@ -193,11 +203,14 @@ p { margin: 0.4rem 0; }
 }
 .toast-info::before { background: var(--accent); }
 .toast-success::before { background: var(--good); }
-.toast-info { border-left-color: var(--accent); }
-.toast-success { border-left-color: var(--good); }
-.toast-msg { flex: 1; font-size: 0.92rem; }
+/* An error toast sits under the sticky topbar, where the eye already is. The container
+   moves only while an error is in it. */
+.toasts:has(.toast-error) { top: 60px; bottom: auto; }
+.toast-error .toast-msg::before { content: "\2715\00a0"; color: var(--bad); font-weight: 700; }
+.toast-success .toast-msg::before { content: "\2713\00a0"; color: var(--good); font-weight: 700; }
+.toast-msg { flex: 1; font-size: var(--fs-2); }
 .toast-action { background: none; border: 0; color: var(--accent); font: inherit; font-weight: 650; cursor: pointer; padding: 0.2rem 0.4rem; }
-.toast-close { background: none; border: 0; color: var(--muted); font-size: 1.2rem; line-height: 1; cursor: pointer; padding: 0 0.2rem; }
+.toast-close { background: none; border: 0; color: var(--muted); font-size: var(--fs-4); line-height: 1; cursor: pointer; padding: 0 0.2rem; }
 .toast-action:focus-visible, .toast-close:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 @keyframes rise { from { opacity: 0; transform: translateY(8px); } }
 
@@ -217,7 +230,7 @@ p { margin: 0.4rem 0; }
   /* `dvh` follows the iOS toolbar as it collapses; the `vh` line is the fallback. */
   max-height: calc(100vh - 2rem); max-height: calc(100dvh - 2rem); overflow-y: auto;
 }
-.modal h2 { margin: 0 0 0.3rem; font-size: 1.1rem; }
+.modal h2 { margin: 0 0 0.3rem; font-size: var(--fs-4); }
 .modal-actions { display: flex; gap: 0.5rem; justify-content: flex-end; margin-top: 0.7rem; }
 
 /* ---- the auth card ---- */
@@ -228,15 +241,15 @@ p { margin: 0.4rem 0; }
 .auth-card { width: min(92vw, 380px); gap: 0.55rem; }
 .auth-brand { display: inline-flex; align-items: center; gap: 0.55rem; }
 .auth-brand .brand-mark { width: 1.7rem; height: 1.7rem; }
-.brand-lg { font-size: 1.5rem; font-weight: 700; }
-.auth-tagline { margin: 0.1rem 0 0.4rem; font-size: 0.92rem; }
+.brand-lg { font-size: var(--fs-5); font-weight: 700; }
+.auth-tagline { margin: 0.1rem 0 0.4rem; font-size: var(--fs-2); }
 /* The mode line is the one instrument readout on this card: mono, accent, upper case. It
    tells the learner which of the seven screens they are on without a heading. */
 .auth-mode {
-  font-family: var(--mono); font-size: 0.72rem; text-transform: uppercase;
+  font-family: var(--mono); font-size: var(--fs-2); text-transform: uppercase;
   letter-spacing: 0.08em; color: var(--accent); margin: 0 0 0.3rem;
 }
-.auth-label { font-size: 0.78rem; font-weight: 600; color: var(--muted); margin-top: 0.15rem; }
+.auth-label { font-size: var(--fs-2); font-weight: 600; color: var(--muted); margin-top: 0.15rem; }
 .auth-input {
   width: 100%; font: inherit; color: var(--text);
   background: var(--surface); border: 1.5px solid var(--border); border-radius: 10px;
@@ -247,22 +260,27 @@ p { margin: 0.4rem 0; }
 .auth-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-weak); }
 .auth-input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .auth-submit { margin-top: 0.7rem; width: 100%; }
-.auth-toggle { margin: 0.6rem 0 0; font-size: 0.9rem; text-align: center; }
-.auth-help { margin: 0.1rem 0 0.6rem; font-size: 0.9rem; line-height: 1.5; }
-.auth-forgot { margin: 0.5rem 0 0; font-size: 0.85rem; text-align: right; }
-.auth-check-email-addr { margin: 0 0 0.4rem; font-size: 0.9rem; word-break: break-all; }
+.auth-toggle { margin: 0.6rem 0 0; font-size: var(--fs-2); text-align: center; }
+.auth-help { margin: 0.1rem 0 0.6rem; font-size: var(--fs-2); line-height: 1.5; }
+.auth-forgot { margin: 0.5rem 0 0; font-size: var(--fs-2); text-align: right; }
+.auth-check-email-addr { margin: 0 0 0.4rem; font-size: var(--fs-2); word-break: break-all; }
 /* The inline error of AUTH-inline. It is the whole visible difference between a mistyped
    password and a lost session, so it sits in the card and never in a toast. */
-.field-error { color: var(--bad); font-size: 0.85rem; }
+.field-error {
+  color: var(--bad); font-size: var(--fs-3); font-weight: 650; padding: 0.5rem 0.7rem;
+  background: var(--bad-weak); border: 1px solid var(--bad); border-radius: 8px;
+}
+.field-error::before { content: "\2715\00a0"; }
+.auth-input[aria-invalid="true"] { border-color: var(--bad); box-shadow: 0 0 0 3px var(--bad-weak); }
 .link-btn {
   background: none; border: 0; padding: 0; font: inherit; cursor: pointer;
   color: var(--accent); font-weight: 600;
+  text-decoration: underline; text-underline-offset: 0.2em;
 }
-@media (hover: hover) { .link-btn:hover { text-decoration: underline; } }
 .link-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
 .auth-divider {
   display: flex; align-items: center; gap: 0.6rem;
-  margin: 0.8rem 0 0.2rem; color: var(--muted); font-size: 0.8rem;
+  margin: 0.8rem 0 0.2rem; color: var(--muted); font-size: var(--fs-1);
 }
 .auth-divider::before, .auth-divider::after { content: ""; flex: 1; height: 1px; background: var(--border); }
 .oauth-btn { width: 100%; margin-top: 0.4rem; }
@@ -281,7 +299,7 @@ p { margin: 0.4rem 0; }
    the prose around it, so the rendered output has to be a DESCENDANT of the classed node. A
    wrapper between them loses the sizing and nothing reports it. A long expression scrolls
    inside the block instead of widening the study column. */
-.problem-text { font-size: 1.15rem; margin-bottom: 1rem; overflow-x: auto; }
+.problem-text { font-size: var(--fs-4); margin-bottom: 1rem; overflow-x: auto; }
 .problem-text .katex { font-size: 1.15em; }
 
 .answer-field { margin-bottom: 0.7rem; }
@@ -290,7 +308,8 @@ p { margin: 0.4rem 0; }
   background: var(--surface); border: 1.5px solid var(--border); border-radius: 10px;
   padding: 0.75rem 0.85rem;
 }
-.answer-input { font-size: 1.1rem; }
+.answer-input { font-size: var(--fs-4); }
+.answer-input.is-short { max-width: 22rem; }
 /* The accent border marks the focused field for a mouse user as well. It never writes
    `outline: none`: the focus ring below is the accessible one, and it stays. */
 .answer-input:focus, .work-input:focus {
@@ -299,7 +318,7 @@ p { margin: 0.4rem 0; }
 .answer-input:focus-visible, .work-input:focus-visible, .sym-key:focus-visible {
   outline: 2px solid var(--accent); outline-offset: 2px;
 }
-.field-hint { font-size: 0.8rem; color: var(--muted); margin: 0.35rem 0.2rem 0; }
+.field-hint { font-size: var(--fs-2); color: var(--muted); margin: 0.35rem 0.2rem 0; }
 
 /* The answer buttons of a Label item. Each button is one full-width row with the 44px minimum
    target height of spec section 4.5. A long option and its math wrap inside the button, so the
@@ -307,7 +326,7 @@ p { margin: 0.4rem 0; }
    than its content. The container gets the focus on a new problem; it shows no ring, because
    the focus ring belongs to the buttons. */
 .choice-input { margin-bottom: 0.7rem; outline: none; }
-.choice-buttons { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0.5rem; }
+.choice-buttons { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-2); }
 .choice-button {
   display: flex; width: 100%; min-width: 0; justify-content: flex-start; text-align: left;
   white-space: normal; overflow-wrap: anywhere;
@@ -323,22 +342,22 @@ p { margin: 0.4rem 0; }
 /* The palette is a `role="toolbar"` of twelve keys. Each key is a button, so it takes the
    44px minimum target height of spec section 4.5 — 1.0 shipped 26px keys, and a thumb on a
    phone hit the wrong symbol. */
-.sym-palette { display: flex; flex-wrap: wrap; gap: 0.3rem; margin-top: 0.4rem; }
+.sym-palette { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-2); }
 .sym-key {
-  min-height: 44px; min-width: 2.75rem; padding: 0.25rem 0.45rem; font-size: 1rem;
+  min-height: 44px; min-width: 2.75rem; padding: 0.25rem 0.45rem; font-size: var(--fs-3);
   line-height: 1; color: var(--text); background: var(--surface);
   border: 1px solid var(--border); border-radius: 6px; cursor: pointer;
 }
 @media (hover: hover) { .sym-key:hover { border-color: var(--accent); background: var(--accent-weak); } }
 .sym-select {
-  min-height: 44px; padding: 0.25rem 0.35rem; font-size: 1rem; color: var(--text);
+  min-height: 44px; padding: 0.25rem 0.35rem; font-size: var(--fs-3); color: var(--text);
   background: var(--surface); border: 1px solid var(--border); border-radius: 6px;
 }
 
 /* A native `<details>`: `.work summary` is styled here, and the element gives the disclosure
    keyboard and screen-reader semantics for free. */
 .work { margin-bottom: 0.8rem; }
-.work summary { cursor: pointer; color: var(--muted); font-size: 0.9rem; padding: 0.3rem 0; }
+.work summary { cursor: pointer; color: var(--muted); font-size: var(--fs-2); padding: 0.3rem 0; min-height: 44px; display: flex; align-items: center; }
 .work summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .work-input { margin-top: 0.5rem; resize: vertical; }
 
@@ -354,16 +373,16 @@ p { margin: 0.4rem 0; }
    `--border`, which is decorative contrast only — it carries no meaning a reader needs. */
 .course-arc {
   display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;
-  margin-bottom: 1rem; font-size: 0.9rem;
+  margin-bottom: 1rem; font-size: var(--fs-2);
 }
 .arc-course { color: var(--muted); }
 .arc-current { color: var(--accent); font-weight: 700; }
 .arc-sep { color: var(--border); }
 
-.btn-hero { font-size: 1.05rem; padding: 0.85rem 1.4rem; width: 100%; }
+.btn-hero { font-size: var(--fs-3); padding: 0.85rem 1.4rem; width: 100%; }
 .primary-action { margin: 1.1rem 0 0.5rem; display: grid; gap: 0.5rem; }
 .primary-sub { margin: 0; text-align: center; }
-.caught-up { font-size: 1.05rem; margin: 0; text-align: center; }
+.caught-up { font-size: var(--fs-3); margin: 0; text-align: center; }
 .onboard-card { text-align: center; }
 .onboard-card .btn-hero { margin: 1rem 0 0.4rem; }
 .onboard-foot { margin-top: 0.4rem; }
@@ -373,7 +392,7 @@ p { margin: 0.4rem 0; }
    triangle, which two engines draw at two sizes. */
 .more-menu { margin-top: 1.2rem; border-top: 1px solid var(--border); padding-top: 0.6rem; }
 .more-menu summary {
-  cursor: pointer; color: var(--muted); font-size: 0.9rem; list-style: none; padding: 0.3rem 0;
+  cursor: pointer; color: var(--muted); font-size: var(--fs-2); list-style: none; padding: 0.3rem 0;
 }
 .more-menu summary::-webkit-details-marker { display: none; }
 .more-menu summary::before { content: '⌄ '; }
@@ -386,12 +405,12 @@ p { margin: 0.4rem 0; }
 /* f19-retention: the delayed-probe card of the quiet disclosure (D-F11). The table
    scrolls sideways on a narrow screen rather than squeezing five columns. */
 .retention-card { margin-top: 1rem; border-top: 1px solid var(--border); padding-top: 0.8rem; }
-.retention-card h3 { margin: 0 0 0.2rem; font-size: 1rem; }
+.retention-card h3 { margin: 0 0 0.2rem; font-size: var(--fs-3); }
 .retention-card p { margin: 0.4rem 0 0; }
 .retention-card .btn { margin-top: 0.6rem; }
-.retention-table { width: 100%; margin-top: 0.6rem; border-collapse: collapse; font-size: 0.85rem; }
+.retention-table { width: 100%; margin-top: 0.6rem; border-collapse: collapse; font-size: var(--fs-2); }
 .retention-table th, .retention-table td { text-align: left; padding: 0.3rem 0.5rem 0.3rem 0; }
-.retention-table thead th { color: var(--muted); font-weight: 500; font-size: 0.75rem; }
+.retention-table thead th { color: var(--muted); font-weight: 500; font-size: var(--fs-2); }
 .retention-table tbody tr { border-top: 1px solid var(--border); }
 
 /* The course picker inside the modal. */
@@ -427,23 +446,23 @@ p { margin: 0.4rem 0; }
 
 /* ---- the study loop ---- */
 /* One dominant control per card (W-C5): Submit carries `.btn-primary`, Hint and Exit stay
-   ghost weight. `.actions` puts the primary LAST in the source order and first on screen,
-   so a keyboard reaches Hint before Submit while the eye meets Submit first. */
+   ghost weight. `.actions` puts the primary first in the source order, so a keyboard and the eye
+   both meet Submit first. */
 .task-header { margin-bottom: 0.8rem; }
 .task-meta { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
 .topic-name { font-weight: 650; }
-.topic-module { font-size: 0.8rem; color: var(--muted); }
+.topic-module { font-size: var(--fs-1); color: var(--muted); }
 .task-right {
   display: flex; align-items: center; gap: 0.8rem; margin-top: 0.35rem;
-  color: var(--muted); font-size: 0.9rem;
+  color: var(--muted); font-size: var(--fs-2);
 }
 .timer { font-weight: 600; color: var(--text); }
-/* The drill countdown turns red at three seconds. Color alone carries no meaning here —
+/* The drill countdown turns amber at three seconds. Red keeps one meaning, a wrong answer. Color alone carries no meaning here —
    the number beside it is the message. */
-.timer.urgent { color: var(--bad); }
+.timer.urgent { color: var(--warn); font-weight: 800; }
 .btn-exit { margin-left: auto; }
 .why-chip {
-  margin-top: 0.5rem; font-size: 0.82rem; color: var(--muted);
+  margin-top: 0.5rem; font-size: var(--fs-1); color: var(--muted);
   background: var(--surface-2); border-radius: 8px; padding: 0.35rem 0.6rem;
   display: inline-block;
 }
@@ -455,17 +474,16 @@ p { margin: 0.4rem 0; }
 
 .problem-card { padding: 1.3rem 1.2rem; }
 .actions { display: flex; gap: 0.5rem; flex-wrap: wrap; }
-.actions .btn-primary { order: 2; }
 .hint-list { margin-bottom: 0.8rem; }
 .hint {
   background: var(--accent-weak); border-radius: 10px; padding: 0.6rem 0.8rem;
-  margin-bottom: 0.5rem; font-size: 0.95rem;
+  margin-bottom: 0.5rem; font-size: var(--fs-3);
 }
 .hint-text { display: inline; }
 /* W-A4: one pointer, however many hints follow it. */
 .reference-lesson {
   margin-top: 0.6rem; padding: 0.6rem 0.8rem; border-radius: 8px;
-  background: var(--accent-weak); color: var(--muted); font-size: 0.92rem;
+  background: var(--accent-weak); color: var(--muted); font-size: var(--fs-2);
 }
 
 /* The verdict. `--good` and `--bad` fill the wash; the tick, the cross and the title carry
@@ -484,14 +502,14 @@ p { margin: 0.4rem 0; }
 .feedback-incorrect .feedback-mark { color: var(--bad); }
 .feedback-ungraded .feedback-mark { color: var(--muted); }
 .feedback-reason { margin: 0 0 0.5rem; }
-.feedback-title { font-weight: 700; font-size: 1.05rem; }
+.feedback-title { font-weight: 700; font-size: var(--fs-3); }
 .feedback-text { margin: 0.3rem 0 0.6rem; }
 .feedback .actions { margin-top: 0.8rem; }
 .error-tags { display: flex; flex-wrap: wrap; gap: 0.3rem; margin-bottom: 0.4rem; }
-.re-solve { font-size: 0.92rem; }
+.re-solve { font-size: var(--fs-2); }
 .solution { margin-top: 0.6rem; padding-top: 0.6rem; border-top: 1px dashed var(--border); }
 .solution-label {
-  font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;
+  font-size: var(--fs-2); font-weight: 700; letter-spacing: 0.02em;
   color: var(--muted); margin-bottom: 0.2rem;
 }
 .solution-text { overflow-x: auto; }
@@ -500,15 +518,15 @@ p { margin: 0.4rem 0; }
 /* Amendment K point 6: the background grading of a written proof. */
 .proof-feedback { margin: 0.2rem 0 0.6rem; overflow-x: auto; }
 .proof-checks { list-style: none; margin: 0.2rem 0 0; padding: 0; }
-.proof-checks li { padding: 0.35rem 0; border-bottom: 1px solid var(--border); font-size: 0.92rem; }
+.proof-checks li { padding: 0.35rem 0; border-bottom: 1px solid var(--border); font-size: var(--fs-2); }
 .proof-checks li:last-child { border-bottom: 0; }
 .proof-check-answer { font-weight: 700; }
 .proof-check-met .proof-check-answer { color: var(--good); }
 .proof-check-unmet .proof-check-answer { color: var(--bad); }
-.proof-check-evidence { margin-top: 0.15rem; font-size: 0.85rem; overflow-wrap: anywhere; }
+.proof-check-evidence { margin-top: 0.15rem; font-size: var(--fs-2); overflow-wrap: anywhere; }
 
 /* D-PR1: the proof revision loop. */
-.proof-obligations { margin: 0.4rem 0 0.6rem 1.1rem; padding: 0; font-size: 0.92rem; }
+.proof-obligations { margin: 0.4rem 0 0.6rem 1.1rem; padding: 0; font-size: var(--fs-2); }
 .proof-input { min-height: 10rem; }
 .proof-first-unmet { margin: 0.4rem 0; padding: 0.5rem 0.7rem; border: 1px solid var(--border); border-radius: 8px; }
 .proof-first-unmet .proof-check-text { margin: 0.1rem 0; }
@@ -516,47 +534,47 @@ p { margin: 0.4rem 0; }
 .proof-dispute { margin: 0.3rem 0; }
 .proof-dispute-form { margin: 0.4rem 0; }
 .proof-chains { display: grid; gap: 0.8rem; }
-.proof-group { font-size: 1rem; margin: 0.6rem 0 0; }
+.proof-group { font-size: var(--fs-3); margin: 0.6rem 0 0; }
 .proof-chain-head { display: flex; flex-wrap: wrap; gap: 0.4rem; align-items: baseline; margin-bottom: 0.4rem; }
 .proof-versions { margin: 0.4rem 0; padding-left: 1.1rem; }
 .proof-versions li { margin: 0.4rem 0; }
 .proof-answer { white-space: pre-wrap; overflow-wrap: anywhere; }
 .topic-proofs { margin-top: 0.8rem; }
-.topic-proofs h3 { font-size: 0.95rem; margin: 0 0 0.4rem; }
+.topic-proofs h3 { font-size: var(--fs-3); margin: 0 0 0.4rem; }
 
 /* The async diagnosis (A4). It lands seconds after the panel around it painted, so it sits
    at the bottom: nothing already on screen moves when the prose arrives. */
 .diagnosis { margin-top: 0.6rem; padding-top: 0.6rem; border-top: 1px dashed var(--border); }
-.diagnosis-note { margin: 0.2rem 0 0; font-size: 0.92rem; }
-.diagnosis-prose { margin-top: 0.2rem; font-size: 0.95rem; overflow-x: auto; }
+.diagnosis-note { margin: 0.2rem 0 0; font-size: var(--fs-2); }
+.diagnosis-prose { margin-top: 0.2rem; font-size: var(--fs-3); overflow-x: auto; }
 .summary-card { text-align: center; }
 .summary-card .stat-grid { margin: 1rem 0; }
 
 /* The lesson's worked example: taught before it is practised. */
 .teach-badge {
-  font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.05em;
+  font-size: var(--fs-1); text-transform: uppercase; letter-spacing: 0.05em;
   color: var(--accent); border: 1px solid var(--accent); border-radius: 999px;
   padding: 0.15rem 0.6rem;
 }
 /* `.teach-card` carries no frame of its own: the WORKED EXAMPLE badge above it is the
    signal that this is taught material — a colored side stripe was the slop tell the
    detector names first. */
-.teach-concept { font-size: 1.05rem; margin-bottom: 1rem; }
+.teach-concept { font-size: var(--fs-3); margin-bottom: 1rem; }
 .teach-example {
   background: var(--surface-2); border-radius: 10px; padding: 0.9rem 1.1rem;
   margin-bottom: 1.1rem;
 }
 .teach-label {
-  font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.05em;
+  font-size: var(--fs-2); letter-spacing: 0.02em;
   color: var(--muted); margin: 0.2rem 0 0.3rem;
 }
 .teach-problem { font-weight: 600; margin-bottom: 0.6rem; }
-.teach-steps { color: var(--muted); margin: 0; padding-left: 1.4rem; }
+.teach-steps { color: var(--text); margin: 0; padding-left: 1.6rem; list-style-position: outside; }
 .teach-step { padding: 0.15rem 0.35rem; border-radius: 6px; }
 /* The active parts of a worked example (step 5a): the try-first problem. */
 .teach-try { margin-bottom: 1.1rem; }
 .teach-try .btn-primary { margin-top: 0.5rem; }
-.teach-note { font-size: 0.92rem; margin: 0.2rem 0 0.5rem; }
+.teach-note { font-size: var(--fs-2); margin: 0.2rem 0 0.5rem; }
 .teach-result { margin-top: 0.6rem; }
 .teach-verdict { font-weight: 600; margin: 0 0 0.3rem; }
 .teach-verdict.is-right { color: var(--good); }
@@ -569,10 +587,10 @@ p { margin: 0.4rem 0; }
    between the first answer and the last (QUIZ-reveal). */
 .quiz-note {
   display: flex; align-items: center; justify-content: space-between; gap: 0.6rem;
-  margin-top: 0.8rem; font-size: 0.85rem;
+  margin-top: 0.8rem; font-size: var(--fs-2);
 }
 .remaining { font-weight: 650; color: var(--accent); }
-.quiz-recorded { font-size: 1.05rem; margin-bottom: 0.3rem; }
+.quiz-recorded { font-size: var(--fs-3); margin-bottom: 0.3rem; }
 
 /* ---- the placement diagnostic (S10) ---- */
 /* R15: the card takes focus on entry, so it carries no ring — the heading and the rules
@@ -586,7 +604,7 @@ p { margin: 0.4rem 0; }
 .intro-rules li { line-height: 1.5; }
 .intro-rules li::marker { color: var(--accent); }
 .intro-rules strong { color: var(--accent); }
-.intro-error { color: var(--bad); margin: 0.8rem 0 0; font-size: 0.92rem; }
+.intro-error { color: var(--bad); margin: 0.8rem 0 0; font-size: var(--fs-2); }
 .progress-bar {
   height: 6px; background: var(--surface-2); border-radius: 999px;
   overflow: hidden; margin-bottom: 1rem;
@@ -605,7 +623,7 @@ p { margin: 0.4rem 0; }
    one column is a smear (spec section 4.2). */
 .view:has(.view-map) { max-width: 1180px; }
 .map-head { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; }
-.map-readout { color: var(--muted); font-size: 0.85rem; }
+.map-readout { color: var(--muted); font-size: var(--fs-2); }
 .map-controls {
   display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; margin: 0.8rem 0;
 }
@@ -619,9 +637,9 @@ p { margin: 0.4rem 0; }
 .legend-chip {
   display: inline-flex; align-items: center; gap: 0.4rem;
   padding: 0.25rem 0.6rem; border-radius: 999px;
-  background: var(--surface-2); font-size: 0.85rem;
+  background: var(--surface-2); font-size: var(--fs-2);
 }
-.legend-dot { width: 10px; height: 10px; border-radius: 999px; background: var(--muted); }
+.legend-dot { width: 14px; height: 14px; border-radius: 999px; background: var(--muted); }
 /* One dot color per mastery state, and the same tokens `mapStyle.ts` paints the canvas
    with, so the legend and the canvas cannot drift apart. */
 .ld-frontier { background: var(--accent); }
@@ -647,8 +665,8 @@ p { margin: 0.4rem 0; }
   background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
   box-shadow: var(--shadow);
 }
-.map-panel h2 { font-size: 1.1rem; }
-.map-panel-id { color: var(--muted); font-size: 0.8rem; }
+.map-panel h2 { font-size: var(--fs-4); }
+.map-panel-id { color: var(--muted); font-size: var(--fs-1); }
 .map-panel-state { display: flex; align-items: center; gap: 0.4rem; }
 /* The screen-readable equivalent of the canvas. It replaces the canvas rather than sitting
    under it: a permanently-mounted list is 1,090 rows rebuilt on every render. */
@@ -669,7 +687,7 @@ p { margin: 0.4rem 0; }
 .view:has(.view-ops), .view:has(.view-review) { max-width: min(1400px, 96vw); }
 
 .admin-head { display: flex; align-items: baseline; gap: 0.8rem; margin-bottom: 0.9rem; }
-.admin-head h1 { margin: 0; font-size: 1.5rem; }
+.admin-head h1 { margin: 0; font-size: var(--fs-5); }
 /* The keyboard legend sits between the heading and the button, and the button stays right. */
 .review-keys { margin: 0; }
 .admin-head .btn { margin-left: auto; }
@@ -678,12 +696,12 @@ p { margin: 0.4rem 0; }
 /* A wide table scrolls INSIDE its own box. Without this the page scrolls sideways and the
    topbar goes with it. */
 .table-scroll { overflow-x: auto; }
-.admin-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+.admin-table { width: 100%; border-collapse: collapse; font-size: var(--fs-2); }
 .admin-table th, .admin-table td {
   text-align: left; padding: 0.45rem 0.6rem; border-bottom: 1px solid var(--border);
   vertical-align: top; white-space: nowrap;
 }
-.admin-table thead th { font-size: 0.78rem; color: var(--muted); font-weight: 600; }
+.admin-table thead th { font-size: var(--fs-2); color: var(--muted); font-weight: 600; }
 .admin-table tfoot th, .admin-table tfoot td { border-bottom: 0; font-weight: 650; }
 .admin-table .chip { margin-right: 0.3rem; }
 
@@ -696,7 +714,7 @@ p { margin: 0.4rem 0; }
 
 /* The refusal block. It is the whole screen when it shows, so it needs no frame of its
    own — `.empty` centers it — and it carries no accent: a refusal is not an error. */
-.admin-refused h2 { font-size: 1.2rem; }
+.admin-refused h2 { font-size: var(--fs-4); }
 .admin-refused p { max-width: 46ch; margin-left: auto; margin-right: auto; }
 
 /* ---- the gate notes (A6) ---- */
@@ -704,8 +722,8 @@ p { margin: 0.4rem 0; }
   border: 1px solid var(--border); border-radius: 10px;
   padding: 0.6rem 0.8rem; margin-top: 0.6rem;
 }
-.gate-head { margin: 0 0 0.2rem; font-size: 0.85rem; }
-.gate-line { margin: 0.2rem 0; font-size: 0.88rem; }
+.gate-head { margin: 0 0 0.2rem; font-size: var(--fs-2); }
+.gate-line { margin: 0.2rem 0; font-size: var(--fs-2); }
 /* Three states, three colors, and the sampled one is a warning on purpose: a sampled space
    is where a bad corner survives (spec section 3.2). */
 .gate-good { color: var(--good); }
@@ -716,7 +734,7 @@ p { margin: 0.4rem 0; }
 /* ---- the review screen ---- */
 /* The queue on the left, the document on the right. It collapses to one column below the
    width where a 320px queue plus a document is unreadable. */
-.review-layout { display: grid; grid-template-columns: minmax(260px, 340px) 1fr; gap: 1rem; }
+.review-layout { display: grid; grid-template-columns: minmax(260px, 340px) 1fr; gap: var(--space-3); }
 .review-queue {
   display: flex; flex-direction: column; gap: 0.8rem;
   max-height: 78vh; max-height: 78dvh; overflow-y: auto;
@@ -724,7 +742,7 @@ p { margin: 0.4rem 0; }
 .review-group { border: 1px solid var(--border); border-radius: var(--radius); padding: 0.6rem; }
 .review-group-head {
   display: flex; align-items: baseline; justify-content: space-between; gap: 0.5rem;
-  margin: 0 0 0.3rem; font-size: 0.9rem;
+  margin: 0 0 0.3rem; font-size: var(--fs-2);
 }
 .review-rows { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.35rem; }
 .review-row {
@@ -738,23 +756,23 @@ p { margin: 0.4rem 0; }
    by color alone. */
 .review-row.is-selected { border-color: var(--accent); background: var(--accent-weak); }
 .review-row-top { display: flex; flex-wrap: wrap; gap: 0.25rem; }
-.review-row-summary { font-size: 0.85rem; color: var(--muted); overflow-wrap: anywhere; }
+.review-row-summary { font-size: var(--fs-2); color: var(--muted); overflow-wrap: anywhere; }
 
 .review-pane { min-width: 0; }
 .review-actions { display: flex; gap: 0.5rem; margin-bottom: 0.8rem; }
-.review-doc-head { margin-bottom: 0.1rem; font-size: 1.15rem; }
+.review-doc-head { margin-bottom: 0.1rem; font-size: var(--fs-4); }
 .review-digest { margin: 0 0 0.5rem; overflow-wrap: anywhere; }
 .review-chips { display: flex; flex-wrap: wrap; gap: 0.3rem; margin: 0 0 0.6rem; }
-.review-reason-line { color: var(--bad); font-size: 0.9rem; }
+.review-reason-line { color: var(--bad); font-size: var(--fs-2); }
 /* The instances come first and are the largest thing on the pane. See ReviewDocument.tsx. */
 .instance-list { margin: 0.4rem 0 0; padding-left: 1.4rem; display: grid; gap: 0.5rem; }
 .instance {
   border-bottom: 1px solid var(--border); padding-bottom: 0.5rem;
 }
-.instance-text { font-size: 1rem; overflow-x: auto; }
-.instance-answer { font-size: 0.9rem; color: var(--good); overflow-x: auto; }
+.instance-text { font-size: var(--fs-3); overflow-x: auto; }
+.instance-answer { font-size: var(--fs-2); color: var(--good); overflow-x: auto; }
 .review-body { margin-top: 0.8rem; }
-.review-body summary { cursor: pointer; color: var(--muted); font-size: 0.9rem; min-height: 44px; }
+.review-body summary { cursor: pointer; color: var(--muted); font-size: var(--fs-2); min-height: 44px; }
 .review-body summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .review-body pre {
   margin: 0.4rem 0 0; padding: 0.6rem; overflow-x: auto;
@@ -780,7 +798,7 @@ p { margin: 0.4rem 0; }
 /* A finger, not a pointer: every quiet control grows to the 44px target of spec section
    4.5, and a press paints the surface, because `:hover` no longer does. */
 @media (pointer: coarse) {
-  .logout-btn, .topbar-link { min-height: 44px; }
+  .logout-btn, .topbar-link, .brand { min-height: 44px; }
   .toast-action, .toast-close {
     display: inline-flex; align-items: center; justify-content: center;
     min-height: 44px; min-width: 44px;
@@ -800,7 +818,7 @@ p { margin: 0.4rem 0; }
     padding-right: max(0.75rem, env(safe-area-inset-right));
   }
   .card, .problem-card { padding: 1rem; }
-  h2 { font-size: 1.3rem; }
+  h2 { font-size: var(--fs-5); }
 
   .topbar { gap: 0.4rem; padding-top: 0.6rem; padding-bottom: 0.6rem; }
   /* The address gives way: beside the brand, Map and Log out it truncated to two letters
@@ -810,13 +828,13 @@ p { margin: 0.4rem 0; }
   .ring svg { width: 96px; height: 96px; }
   /* The stats pick their column count from the width: three across on a wide phone, two
      on a narrow one. A fixed three split the ETA date over two lines at 390px. */
-  .stat-grid { gap: 0.4rem; grid-template-columns: repeat(auto-fit, minmax(112px, 1fr)); }
+  .stat-grid { gap: var(--space-2); grid-template-columns: repeat(auto-fit, minmax(112px, 1fr)); }
   .stat { padding: 0.6rem 0.4rem; }
-  .stat-value { font-size: 1.15rem; white-space: nowrap; }
+  .stat-value { font-size: var(--fs-4); white-space: nowrap; }
   /* The ring first, the numbers under it: a 120px ring beside a heading overflows here. */
   .status-head { flex-direction: column-reverse; align-items: flex-start; }
 
-  .problem-text { font-size: 1.08rem; }
+  .problem-text { font-size: var(--fs-4); }
   .task-right { flex-wrap: wrap; }
   .quiz-note { flex-direction: column; align-items: flex-start; gap: 0.2rem; }
 
@@ -840,7 +858,7 @@ p { margin: 0.4rem 0; }
   .map-panel { left: 0.5rem; right: 0.5rem; bottom: 0.5rem; max-width: none; padding: 0.7rem 0.8rem; }
 
   .admin-head { flex-wrap: wrap; }
-  .admin-head h1 { font-size: 1.3rem; }
+  .admin-head h1 { font-size: var(--fs-5); }
 }
 
 /* The narrowest phones: four columns of keys, three full rows. */
@@ -866,23 +884,23 @@ p { margin: 0.4rem 0; }
   position: fixed; inset: 0; z-index: -1;
   pointer-events: none;
   background:
-    linear-gradient(color-mix(in srgb, var(--bg) 86%, transparent),
-                    color-mix(in srgb, var(--bg) 86%, transparent)),
+    linear-gradient(color-mix(in srgb, var(--bg) 94%, transparent),
+                    color-mix(in srgb, var(--bg) 94%, transparent)),
     url("/eye-background.jpeg") center / cover fixed no-repeat;
 }
 
 /* ---- the reading scrim ----
    Muted prose that sits DIRECTLY on the dithered texture is illegible: the halftone
    grain is noise at exactly the size of small text. The content column therefore gets
-   a wash of its own background — 80% --bg, so the emblem still glows through the
+   a wash of its own background — 92% --bg, so the emblem still glows through the
    column's edges while every sentence inside reads against near-solid color. Wide
    screens keep wide gutters of bare texture; a phone is column, so the wash covers it. */
 .view {
-  background: color-mix(in srgb, var(--bg) 80%, transparent);
-  box-shadow: 0 0 0 max(1rem, env(safe-area-inset-left)) color-mix(in srgb, var(--bg) 80%, transparent);
+  background: color-mix(in srgb, var(--bg) 92%, transparent);
+  box-shadow: 0 0 0 max(1rem, env(safe-area-inset-left)) color-mix(in srgb, var(--bg) 92%, transparent);
 }
 @media (prefers-color-scheme: light) {
-  .view { background: color-mix(in srgb, var(--bg) 88%, transparent); }
+  .view { background: color-mix(in srgb, var(--bg) 94%, transparent); }
 }
 
 /* Strip every animation and transition when the reader asks for less motion (spec section
@@ -906,7 +924,7 @@ p { margin: 0.4rem 0; }
 .math-visuals { display: flex; flex-direction: column; gap: 0.75rem; margin: 0.75rem 0; }
 .math-visual { margin: 0; }
 .math-visual-frame svg { width: 100%; height: auto; max-width: 480px; }
-.math-visual-text { color: var(--muted); font-size: 0.92rem; margin-top: 0.25rem; }
+.math-visual-text { color: var(--muted); font-size: var(--fs-2); margin-top: 0.25rem; }
 .math-visual-text summary { cursor: pointer; }
 .cadus-visual-axis { stroke: var(--text); stroke-width: 2; }
 .cadus-visual-tick,
@@ -929,7 +947,7 @@ p { margin: 0.4rem 0; }
 .cadus-visual-right-angle { fill: none; stroke: var(--text); stroke-width: 1.5; }
 
 /* The live preview of a typed answer, and the notation hint of a wrong-form reply. */
-.answer-preview { margin: 0.4rem 0.2rem 0; font-size: 1.1rem; min-height: 1.6rem; }
+.answer-preview { margin: 0.4rem 0.2rem 0; font-size: var(--fs-4); min-height: 1.6rem; }
 .answer-preview .pv-op { margin: 0 0.25em; }
 .answer-preview .pv-raw { font-family: var(--mono, monospace); }
 .pv-frac { display: inline-flex; flex-direction: column; align-items: center; vertical-align: middle; margin: 0 0.15em; font-size: 0.9em; line-height: 1.1; }
@@ -937,21 +955,10 @@ p { margin: 0.4rem 0; }
 .pv-frac .pv-den { padding: 0 0.2em; }
 .pv-mixed { display: inline-flex; align-items: center; }
 .pv-radicand { border-top: 1px solid currentColor; padding: 0 0.1em; }
-.feedback-notation { font-weight: 600; margin: 0.5rem 0; padding: 0.5rem 0.7rem; border-left: 3px solid var(--accent); background: var(--accent-weak); }
+.feedback-notation { font-weight: 600; margin: 0.5rem 0; padding: 0.5rem 0.7rem; border: 1px solid var(--border); border-radius: 8px; background: var(--accent-weak); }
 
 .equivalence-steps { margin: 0.5rem 0; padding-left: 1.25rem; color: var(--muted, inherit); }
 .equivalence-steps li { margin: 0.2rem 0; }
-
-/* ---- the header menu of a problem ---- */
-.header-more { position: relative; }
-.header-more summary { cursor: pointer; list-style: none; padding: 0.3rem 0.5rem; min-height: 44px; display: flex; align-items: center; }
-.header-more summary::-webkit-details-marker { display: none; }
-.header-more summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-.header-more-items {
-  position: absolute; right: 0; top: 100%; z-index: 6; min-width: 12rem; padding: 0.4rem;
-  background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
-}
-.header-more-items .btn { width: 100%; }
 
 /* ---- "How to type answers" ---- */
 .notation-panel {
@@ -966,20 +973,32 @@ body.notation-open #view { margin-right: 420px; margin-left: 1rem; }
 .notation-head { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; }
 .notation-head h2 { margin: 0; }
 .notation-search {
-  width: 100%; min-height: 44px; margin: 0.4rem 0 0.6rem; padding: 0.4rem 0.6rem; font-size: 1rem;
+  width: 100%; min-height: 44px; margin: 0.4rem 0 0.6rem; padding: 0.4rem 0.6rem; font-size: var(--fs-3);
   color: var(--text); background: var(--bg); border: 1px solid var(--border); border-radius: 8px;
 }
 .notation-body { overflow-y: auto; flex: 1 1 auto; min-height: 0; }
-.notation-section h3 { font-size: 1rem; margin: 0.9rem 0 0.3rem; }
+.notation-section h3 { font-size: var(--fs-3); margin: 0.9rem 0 0.3rem; }
 .notation-rows { list-style: none; margin: 0; padding: 0; }
 .notation-row { display: grid; gap: 0.25rem; padding: 0.5rem 0; border-top: 1px solid var(--border); }
-.notation-want { font-size: 0.9rem; }
-.notation-rendered { font-size: 1.05rem; overflow-x: auto; max-width: 100%; }
+.notation-want { font-size: var(--fs-2); }
+.notation-rendered { font-size: var(--fs-3); overflow-x: auto; max-width: 100%; }
 .notation-chips { display: flex; flex-wrap: wrap; align-items: center; gap: 0.35rem; }
 .notation-chip {
-  min-height: 44px; padding: 0.2rem 0.55rem; font-size: 0.85rem; color: var(--text);
+  min-height: 44px; padding: 0.2rem 0.55rem; font-size: var(--fs-2); color: var(--text);
   background: var(--surface-2); border: 1px solid var(--border); border-radius: 6px; cursor: pointer;
   max-width: 100%; overflow-wrap: anywhere; text-align: left;
 }
 @media (hover: hover) { .notation-chip:hover { border-color: var(--accent); background: var(--accent-weak); } }
 .notation-chip:focus-visible, .notation-search:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* ---- every folded section shows the same open/closed mark ----
+   A flex summary drops the native triangle, so the mark comes back here: a stranger can
+   tell "Show the worked example" is a fold and not a label. */
+.work summary::before, .worked-fold summary::before, .sym-more summary::before,
+.progress-more summary::before, .picker-all summary::before, .map-list-group summary::before {
+  content: '▸'; display: inline-block; width: 1.1em; flex: 0 0 auto; color: var(--muted);
+}
+.work[open] > summary::before, .worked-fold[open] > summary::before, .sym-more[open] > summary::before,
+.progress-more[open] > summary::before, .picker-all[open] > summary::before, .map-list-group[open] > summary::before { content: '▾'; }
+.work summary::-webkit-details-marker, .worked-fold summary::-webkit-details-marker, .sym-more summary::-webkit-details-marker,
+.progress-more summary::-webkit-details-marker, .picker-all summary::-webkit-details-marker { display: none; }

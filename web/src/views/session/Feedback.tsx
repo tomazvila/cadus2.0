@@ -72,6 +72,8 @@ export interface FeedbackProps {
   proof?: ProofState | null;
   /** The topic a review question came from, named only once the answer is graded. */
   revealTopic?: string | null;
+  /** The hints the learner opened on this problem. A correct answer after a hint says so. */
+  hintsUsed?: number;
 }
 
 export function Feedback(props: FeedbackProps) {
@@ -91,20 +93,21 @@ function GradedFeedback({
   children,
   proof,
   revealTopic,
+  hintsUsed = 0,
 }: FeedbackProps) {
   if (res.report_corrected) return <CorrectedFeedback res={res} onContinue={onRefresh ?? onContinue}
     onEnd={onEnd} continueRef={continueRef} />;
   const ungraded = isUngraded(res);
   const accepted = res.equivalence?.status === 'accepted';
   const rows = remediationLines(res.remediation);
-  const head = headOf(res, ungraded ? proof ?? null : null);
+  const head = headOf(res, ungraded ? proof ?? null : null, hintsUsed);
   return (
     <div className={`feedback feedback-${head.mood}`}>
       <div className="feedback-head">
         <span className="feedback-mark">{head.mark}</span>
         <span className="feedback-title">{head.title}</span>
         {/* An ungraded attempt earned no tier and no XP, so neither chip appears. */}
-        <HeadChips res={res} hidden={ungraded} accepted={accepted} />
+        <HeadChips res={res} hidden={ungraded} accepted={accepted} afterHint={head.afterHint} />
       </div>
 
       {revealTopic ? <p className="feedback-topic muted">{`Topic: ${revealTopic}`}</p> : null}
@@ -116,6 +119,7 @@ function GradedFeedback({
       {/* Verbatim, never re-interpreted: the checker owns the vocabulary (trap T3). */}
       {res.error_tags.length ? (
         <div className="error-tags">
+          <span className="error-tags-label">Kind of mistake:</span>
           {res.error_tags.map((tag) => <Chip key={tag} className="chip-tag">{tag}</Chip>)}
         </div>
       ) : null}
@@ -153,9 +157,15 @@ function GradedFeedback({
             unfinished task is re-served next time. */}
         <button type="button" className="btn btn-ghost" onClick={onEnd}>Stop for now</button>
       </div>
-      <p className="muted small">{STOP_NOTE}</p>
+      <EnterNote />
+      {head.mood === 'correct' ? null : <p className="muted small">{STOP_NOTE}</p>}
     </div>
   );
+}
+
+/** The key that moves on. The Continue button holds the focus, so Enter presses it. */
+function EnterNote() {
+  return <p className="muted small enter-note">Press Enter to continue</p>;
 }
 
 /** The label of the forward button. A corrected attempt always reads "Continue". */
@@ -172,7 +182,7 @@ function AcceptedLines({ res }: { res: AnswerResponse }) {
   const form = res.equivalence.accepted_form;
   return (
     <>
-      <p role="status">Correct. Your progress is updated.</p>
+      <p role="status"><strong>Your first answer was marked wrong. It is now marked correct, and your progress is updated.</strong></p>
       {form ? <p role="status">{`Accepted. Shorter form: \`${form}\`.`}</p> : null}
     </>
   );
@@ -200,14 +210,14 @@ function CheckerLine({ text }: { text: string | null }) {
  * background check flips the reply. An ungraded or re-graded reply earned no figures of its
  * own.
  */
-function HeadChips({ res, hidden, accepted }: { res: AnswerResponse; hidden: boolean; accepted: boolean }) {
+function HeadChips({ res, hidden, accepted, afterHint }: { res: AnswerResponse; hidden: boolean; accepted: boolean; afterHint: boolean }) {
   if (hidden) return null;
   // A corrected attempt shows the XP it earned and no quality chip left from the first pass.
-  if (accepted) return res.xp != null ? <Chip className="chip-xp">{`${signed(res.xp)} XP`}</Chip> : null;
+  if (accepted) return res.xp != null ? <Chip className="chip-xp">{`${signed(res.xp)} points`}</Chip> : null;
   return (
     <>
-      {res.outcome === 'correct' ? <Chip className="chip-quality">{String(res.work_quality).replace(/_/g, ' ')}</Chip> : null}
-      {res.xp != null ? <Chip className="chip-xp">{`${signed(res.xp)} XP`}</Chip> : null}
+      {res.outcome === 'correct' && !afterHint ? <Chip className="chip-quality">{String(res.work_quality).replace(/_/g, ' ')}</Chip> : null}
+      {res.xp != null ? <Chip className="chip-xp">{`${signed(res.xp)} points`}</Chip> : null}
     </>
   );
 }
@@ -311,6 +321,7 @@ function CheckingFeedback({ continueRef, steps, onContinue, onEnd }: Pick<Feedba
   return (
     <div className="feedback feedback-pending" role="status">
       <div className="feedback-head"><span className="feedback-title">Checking your answer…</span></div>
+      <p>The check runs in the background. You can move on now.</p>
       {steps?.length ? (
         <ol className="equivalence-steps">
           {steps.map((step, i) => <li key={`${i}-${step.text}`}>{step.text}</li>)}
@@ -322,6 +333,7 @@ function CheckingFeedback({ continueRef, steps, onContinue, onEnd }: Pick<Feedba
         </button>
         <button type="button" className="btn btn-ghost" onClick={onEnd}>Stop for now</button>
       </div>
+      <EnterNote />
       <p className="muted small">{STOP_NOTE}</p>
     </div>
   );
@@ -344,6 +356,7 @@ function UnfinishedFeedback({ res, hasNext, onContinue, onEnd, continueRef }: Fe
         </button>
         <button type="button" className="btn btn-ghost" onClick={onEnd}>Stop for now</button>
       </div>
+      <EnterNote />
       <p className="muted small">{STOP_NOTE}</p>
     </div>
   );
@@ -355,14 +368,20 @@ function UnfinishedFeedback({ res, hasNext, onContinue, onEnd, continueRef }: Fe
  * A written proof under background grading speaks for itself: its state names the heading,
  * and a pass takes the correct mood. Every other reply reads its outcome.
  */
-function headOf(res: AnswerResponse, proof: ProofState | null) {
-  if (!proof) return { mood: MOOD[res.outcome], mark: MARK[res.outcome], title: TITLE[res.outcome], proof };
+function headOf(res: AnswerResponse, proof: ProofState | null, hintsUsed: number) {
+  // A correct answer after a hint never reads as a flawless one.
+  const afterHint = hintsUsed > 0 && res.outcome === 'correct';
+  if (!proof) {
+    const title = afterHint ? 'Correct, with a hint' : TITLE[res.outcome];
+    return { mood: MOOD[res.outcome], mark: MARK[res.outcome], title, proof, afterHint };
+  }
   const passed = proof.status === 'pass';
   return {
     mood: passed ? MOOD.correct : MOOD[res.outcome],
     mark: passed ? MARK.correct : MARK[res.outcome],
     title: PROOF_TITLE[proof.status],
     proof,
+    afterHint: false,
   };
 }
 
@@ -460,6 +479,6 @@ function CorrectedFeedback({ res, onContinue, onEnd, continueRef }: Pick<Feedbac
       <button ref={continueRef} type="button" className="btn btn-primary" onClick={onContinue}>Continue →</button>
       <button type="button" className="btn btn-ghost" onClick={onEnd}>Stop for now</button>
     </div>
-    <p className="muted small">{STOP_NOTE}</p>
+    <EnterNote />
   </div>;
 }

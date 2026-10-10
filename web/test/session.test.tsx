@@ -24,7 +24,7 @@ import { networkFailure } from './helpers/api';
 import { blurThenSubmitEmpty } from './helpers/field';
 import {
   REVIEW, REWORK, P, answerInput, graded, mount, planOf, press, progressCount, stubApi,
-  submitAnswer, submitButton, timer, typeAnswer, workInput,
+  submitAnswer, submitButton, typeAnswer, workInput,
 } from './helpers/session';
 import type { AnswerResponse, ApiClient, PlanTask } from '@/api/types';
 
@@ -38,8 +38,9 @@ describe('the study loop', () => {
     expect(screen.queryByText('Arithmetic')).toBeNull();
     expect(document.querySelector('.topic-name')!.textContent).toBe('Review');
     expect(screen.getByText('This is a skill to review so that you keep it.')).toBeTruthy();
-    expect(progressCount()).toBe('1 / 3');
-    expect(timer().textContent).toBe('0:00');
+    expect(progressCount()).toBe('1 / 3 · 2 left');
+    // An untimed lesson shows no clock.
+    expect(document.querySelector('.timer')).toBeNull();
     expect(document.querySelector('.problem-text')!.textContent).toContain('Simplify');
   });
 
@@ -247,7 +248,7 @@ describe('the hint ladder', () => {
     const primaries = document.querySelectorAll('.view-session .btn-primary');
     expect(primaries.length).toBe(1);
     expect(primaries[0].textContent).toBe('Submit');
-    expect(screen.getByRole('button', { name: 'Hint' }).className).toContain('btn-ghost');
-    expect(screen.getByRole('button', { name: 'Exit' }).className).toContain('btn-ghost');
+    expect(screen.getByRole('button', { name: 'Hint' }).className).toBe('btn');
+    expect(screen.getByRole('button', { name: 'Save & exit' }).className).toContain('btn-ghost');
   });
 });

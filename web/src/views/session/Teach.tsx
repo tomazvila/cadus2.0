@@ -21,6 +21,7 @@ import { AnswerInput, TypedSubmit } from '@/components/AnswerInput';
 import type { AnswerFieldHandle } from '@/components/AnswerField';
 import { MathBlock } from '@/components/MathBlock';
 import { Chip } from '@/components/primitives';
+import '../../styles/fix-session.css';
 import type { PlanTask, TeachCheckRequest, TeachCheckResponse, TeachResponse } from '@/api/types';
 
 export interface TeachProps {
@@ -75,12 +76,7 @@ export function Teach({ task, instruction, onContinue, onCheck }: TeachProps) {
             <div className="teach-concept">
               <MathBlock className="teach-concept-text">{instruction.concept}</MathBlock>
             </div>
-            <div className="teach-example">
-              <div className="teach-label">Example</div>
-              <MathBlock className="teach-problem">{example.problem}</MathBlock>
-              <div className="teach-label">Solution</div>
-              <StepList steps={stepsOf(example.steps)} />
-            </div>
+            <WorkedExample example={example} />
             {canPractise ? (
               <button ref={buttonRef} type="button" className="btn btn-primary" onClick={onContinue}>
                 Start practice ▸
@@ -93,13 +89,36 @@ export function Teach({ task, instruction, onContinue, onCheck }: TeachProps) {
   );
 }
 
+/** The worked example: its problem and its solution steps. */
+export function WorkedExample({ example }: { example: TeachResponse['worked_example'] }) {
+  return (
+    <div className="teach-example">
+      <div className="teach-label">Example</div>
+      <MathBlock className="teach-problem">{example.problem}</MathBlock>
+      <div className="teach-label">Solution</div>
+      <StepList steps={stepsOf(example.steps)} />
+    </div>
+  );
+}
+
+/** The closed fold above the answer field of a lesson problem: the example, one press away. */
+export function WorkedFold({ taskType, example }: { taskType: string; example: TeachResponse['worked_example'] | null }) {
+  if (taskType !== 'lesson' || !example) return null;
+  return (
+    <details className="worked-fold">
+      <summary>Show the worked example</summary>
+      <WorkedExample example={example} />
+    </details>
+  );
+}
+
 function TeachHeader({ task, badge }: { task: PlanTask; badge: string }) {
   const { topic } = task;
   return (
     <div className="task-header">
       <div className="task-meta">
         <Chip className="chip-lesson">{task.task_type === 'multi-step' ? 'getting ready for a mixed problem' : 'lesson'}</Chip>
-        <span className="topic-name">{topic?.name || topic?.id || 'Lesson'}</span>
+        <h1 className="h-screen topic-name">{topic?.name || topic?.id || 'Lesson'}</h1>
         {topic?.module ? <span className="topic-module">{topic.module}</span> : null}
       </div>
       <div className="task-right">

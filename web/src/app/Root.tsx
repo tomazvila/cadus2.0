@@ -39,7 +39,7 @@
  * screens sit inside the signed-in branch, so a signed-out visitor to either path is asked
  * to sign in and reaches no admin call at all.
  */
-import { useEffect, useState, type Dispatch, type SetStateAction } from 'react';
+import { useEffect, useRef, useState, type Dispatch, type SetStateAction } from 'react';
 import { App } from './App';
 import { adminRouteFor, type AdminRoute } from './routes';
 import { Auth } from '@/views/Auth';
@@ -129,6 +129,31 @@ export function Root({
   // so a port rebuilt on every render restarts the placement at probe 1 forever.
   const [placement] = useState<DiagnosticApi>(() => diag ?? resolveDiag(!!api.demo));
 
+  // Screens the app pushed onto the history, by id, so Back and Forward can restore them.
+  const pushedViews = useRef(new Map<number, View>());
+  const lastPushed = useRef<View | null>(null);
+
+  /**
+   * Every move off the dashboard is a history entry, so the browser Back button steps back
+   * inside the app. A reload lands on the dashboard; the lesson resumes from the plan.
+   */
+  useEffect(() => {
+    if (view.name === 'dashboard' || lastPushed.current === view) return;
+    lastPushed.current = view;
+    const id = pushedViews.current.size + 1;
+    pushedViews.current.set(id, view);
+    try {
+      window.history.pushState({ view: view.name, viewId: id }, '', window.location.pathname);
+    } catch {
+      /* a non-browser host, or a blocked history write */
+    }
+  }, [view]);
+
+  /** The tab title names the screen on. */
+  useEffect(() => {
+    document.title = `${titleFor(user ? adminOr(adminRouteFor(path), view) : 'auth')} - Cadus`;
+  }, [user, path, view]);
+
   /**
    * Back, Forward, and every other move the browser makes on its own.
    *
@@ -137,7 +162,14 @@ export function Root({
    * bar and leaves the dashboard on screen.
    */
   useEffect(() => {
-    const onPop = () => { setPath(window.location.pathname); };
+    const onPop = (e: PopStateEvent) => {
+      setPath(window.location.pathname);
+      // A learner screen the app pushed comes back by its id; any other entry is the dashboard.
+      const id = (e.state as { viewId?: number } | null)?.viewId;
+      const back = id === undefined ? undefined : pushedViews.current.get(id);
+      lastPushed.current = back ?? HOME;
+      setView(back ?? HOME);
+    };
     window.addEventListener('popstate', onPop);
     return () => { window.removeEventListener('popstate', onPop); };
   }, []);
@@ -231,6 +263,8 @@ export function Root({
       user={user}
       demo={api.demo}
       routeKey={screen}
+      view={route ? route : view.name}
+      focus={!route && (view.name === 'session' || view.name === 'quiz' || view.name === 'diagnostic')}
       onHome={goHome}
       // The map opens over whatever is on screen and gives that screen back on Done. It
       // LEAVES an operator path first: the two operator screens are not learner screens, so
@@ -320,6 +354,23 @@ function Screen({ api, route, view, placement, onUnauthorized, goHome, setView }
         />
       );
   }
+}
+
+
+const TITLES: Record<string, string> = {
+  auth: 'Sign in',
+  dashboard: 'Dashboard',
+  session: 'Lesson',
+  quiz: 'Quiz',
+  diagnostic: 'Starting questions',
+  proofs: 'Your proofs',
+  ops: 'Operator',
+  review: 'Review',
+};
+
+/** The tab title for a screen key; every map key reads "Map". */
+function titleFor(key: string): string {
+  return key.startsWith('map') ? 'Map' : (TITLES[key] ?? 'Dashboard');
 }
 
 /**

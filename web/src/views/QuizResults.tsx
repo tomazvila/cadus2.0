@@ -31,12 +31,12 @@ export function QuizResults({ api, taskId, onUnauthorized, resumePractice = fals
   if (!result) return <button type="button" className="btn" disabled={phase === 'loading'} onClick={() => load(false)}>Review results</button>;
   return <div className="quiz-results">
     <h3>Your quiz result</h3>
-    {result.inconclusive ? <p>Some answers are not marked yet. No progress or XP is added until they are.</p> : <p>{Math.round(result.score * 100)}% of marked answers right · {result.xp} XP</p>}
+    {result.inconclusive ? <p>Some answers are not marked yet. No progress or points are added until they are.</p> : <p>{Math.round(result.score * 100)}% of marked answers right · {result.xp} points</p>}
     {result.answers.map((answer) => <article key={answer.problem_id} className="card">
       <MathBlock>{answer.text}</MathBlock>
       <p>Your answer: {answer.given_answer || '(blank)'}</p>
       {answer.proof_grading ? <QuizProofGrading api={api} field={answer.proof_grading} />
-        : <p>{answer.outcome === 'ungraded' ? `Not marked yet: ${answer.reason ?? 'no result'}` : answer.correct ? 'Correct' : 'Not quite'}</p>}
+        : <p>{answer.outcome === 'ungraded' ? `Not marked yet: ${answer.reason ?? 'the check did not finish. Your answer is saved.'}` : answer.correct ? 'Correct' : 'Not quite'}</p>}
       {answer.outcome !== 'ungraded' && answer.solution_sketch ? <MathBlock>{answer.solution_sketch}</MathBlock> : null}
       <QuestionReport api={api} onApplied={() => load(false)} context={{ task_id: taskId, problem_id: answer.problem_id,
         report_kind: 'attempt', problem_text: answer.text, answer: answer.given_answer, work: '' }} />
@@ -83,10 +83,10 @@ function QuizPractice({ api, taskId, onUnauthorized }: Props) {
     <p>No timer. Solve a fresh problem for each skill you missed. No solution is shown first.</p>
     {problem ? <div key={problem.problem_id}>
       <MathBlock>{problem.text}</MathBlock>
-      <AnswerInput ref={answerRef} choices={problem.choices} contract={problem.answer_contract} disabled={phase === 'loading'} onSubmit={submit} />
+      <AnswerInput ref={answerRef} choices={problem.choices} contract={problem.answer_contract} disabled={phase === 'loading'} draftKey={problem.problem_id} onSubmit={submit} />
       <QuestionReport api={api} hideResult context={{ task_id: taskId, problem_id: problem.problem_id,
         report_kind: 'served', problem_text: problem.text, answer: '', work: '' }} />
-      <TypedSubmit choices={problem.choices} busy={false} disabled={phase === 'loading'} onClick={submit}>Submit answer</TypedSubmit>
+      <TypedSubmit choices={problem.choices} busy={false} disabled={phase === 'loading'} onClick={submit}>Submit</TypedSubmit>
     </div> : <>
       {feedback ? <div><p>{feedback.correct ? 'Correct' : feedback.outcome === 'ungraded' ? 'This answer is not marked yet.' : 'Read the solution, then try a fresh problem.'}</p>{feedback.solution ? <MathBlock>{feedback.solution}</MathBlock> : null}</div> : null}
       <button type="button" className="btn btn-primary" disabled={phase === 'loading'} onClick={serve}>{feedback ? 'Next fresh problem' : 'Start fresh practice'}</button>

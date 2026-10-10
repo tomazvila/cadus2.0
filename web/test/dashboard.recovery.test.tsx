@@ -9,11 +9,11 @@ import { held } from './helpers/held';
 it('shows zero confirmations without highlighting the count when all practiced work is confirmed', async () => {
   const mastery = { total: 11, practiced: 8, inferred: 3, to_confirm: [] };
   const view = await mount({ api: stubApi({ getStatus: async () => status({ mastery }) }) });
-  const tile = screen.getByText('to confirm').closest('.stat')!;
+  const tile = screen.getByText('to check again').closest('.stat')!;
   expect(within(tile as HTMLElement).getByText('0')).toBeTruthy();
   expect(tile.className).toBe('stat');
-  expect(view.container.querySelectorAll('.mastery-grid .stat')).toHaveLength(3);
-  expect(view.container.querySelector('.mastery-grid')?.textContent).toContain('8practiced');
+  expect(view.container.querySelectorAll('.progress-grid .stat')).toHaveLength(5);
+  expect(view.container.querySelector('.progress-grid')?.textContent).toContain('8practiced');
 });
 
 it('says the retention read failed and shows the report after the toast retry', async () => {
@@ -22,7 +22,7 @@ it('says the retention read failed and shows the report after the toast retry', 
     .mockRejectedValueOnce(new ApiError(503, 'unavailable', 'Report temporarily unavailable.'))
     .mockReturnValueOnce(pending.promise);
   await mount({ api: stubApi({ getRetentionReport }) });
-  await screen.findByText('Your results did not load.');
+  await screen.findByText('Your results did not load. Reload the page to try again.');
   expect(toastStore.getSnapshot()[0].message).toBe('Report temporarily unavailable.');
   expect(screen.queryByRole('table')).toBeNull();
 
@@ -31,5 +31,5 @@ it('says the retention read failed and shows the report after the toast retry', 
   expect(getRetentionReport).toHaveBeenCalledTimes(2);
   expect(screen.getByRole('table')).toBeTruthy();
   expect(screen.getByRole('rowheader', { name: 'Every delay' })).toBeTruthy();
-  expect(screen.queryByText('Your results did not load.')).toBeNull();
+  expect(screen.queryByText('Your results did not load. Reload the page to try again.')).toBeNull();
 });

@@ -58,6 +58,7 @@ export function Diagnosis({ store, field }: DiagnosisProps) {
         <>
           {state.error_tags.length ? (
             <div className="error-tags">
+              <span className="error-tags-label">Kind of mistake:</span>
               {state.error_tags.map((tag) => (
                 <Chip key={tag} className="chip-tag">{tag}</Chip>
               ))}

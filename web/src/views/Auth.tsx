@@ -27,7 +27,7 @@ export type AuthMode = 'login' | 'signup' | 'forgot' | 'reset' | 'check-email' |
 /** The shortest password the service accepts. Checked here to save a round trip. */
 const MIN_PASSWORD_LENGTH = 8;
 
-const TAGLINE = 'Practice every day. Learn by doing, one problem at a time.';
+const TAGLINE = 'Short daily practice with instant checking.';
 
 const MODE_TITLE: Record<AuthMode, string> = {
   login: 'sign in',
@@ -48,7 +48,7 @@ const MODE_TITLE: Record<AuthMode, string> = {
 export function messageFor(err: AuthFailure | null): string {
   switch (err?.code) {
     case 'invalid_credentials':
-      return 'Incorrect email or password.';
+      return 'The sign-in did not work. Check the email and password, then try again.';
     case 'weak_password':
       return err.message || 'Choose a stronger password (at least 8 characters).';
     case 'invalid_token':
@@ -231,14 +231,14 @@ export function Auth({ api, mode: initialMode = 'login', token, onSignedIn }: Au
         <span className="brand-lg">Cadus</span>
       </div>
       <p className="muted auth-tagline">{TAGLINE}</p>
-      <p className="auth-mode">{MODE_TITLE[mode]}</p>
+      <h1 className="auth-mode">{MODE_TITLE[mode]}</h1>
     </>
   );
 
   // Mounted once and only FILLED. `role="alert"` announces a CHANGE of content, so a node
   // that mounts together with its message announces nothing.
   const errorBox = (
-    <p className="field-error" role="alert" hidden={!error}>
+    <p className="field-error" id="auth-error" role="alert" hidden={!error}>
       {error}
     </p>
   );
@@ -276,6 +276,8 @@ export function Auth({ api, mode: initialMode = 'login', token, onSignedIn }: Au
         autoCorrect="off"
         spellCheck={false}
         required
+        aria-invalid={Boolean(error)}
+        aria-describedby="auth-error"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
       />
@@ -345,7 +347,7 @@ export function Auth({ api, mode: initialMode = 'login', token, onSignedIn }: Au
           {emailField}
           {errorBox}
           <button type="submit" className="btn btn-primary auth-submit" disabled={busy}>
-            Email me a reset link
+            {busy ? 'Sending…' : 'Email me a reset link'}
           </button>
           {backToSignIn}
         </form>
@@ -368,15 +370,18 @@ export function Auth({ api, mode: initialMode = 'login', token, onSignedIn }: Au
             type="password"
             className="auth-input"
             name="password"
-            placeholder="New password (8+ characters)"
+            placeholder="New password"
             autoComplete="new-password"
             required
+            aria-invalid={Boolean(error)}
+            aria-describedby="auth-error"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
+          <p className="field-hint">At least 8 characters.</p>
           {errorBox}
           <button type="submit" className="btn btn-primary auth-submit" disabled={busy}>
-            Set new password
+            {busy ? 'Saving…' : 'Set new password'}
           </button>
           {backToSignIn}
         </form>
@@ -397,15 +402,18 @@ export function Auth({ api, mode: initialMode = 'login', token, onSignedIn }: Au
           type="password"
           className="auth-input"
           name="password"
-          placeholder={isLogin ? 'Password' : 'Choose a password (8+ characters)'}
+          placeholder={isLogin ? 'Password' : 'Choose a password'}
           autoComplete={isLogin ? 'current-password' : 'new-password'}
           required
+          aria-invalid={Boolean(error)}
+          aria-describedby="auth-error"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
+        {isLogin ? null : <p className="field-hint">At least 8 characters.</p>}
         {errorBox}
         <button type="submit" className="btn btn-primary auth-submit" disabled={busy}>
-          {isLogin ? 'Sign in' : 'Create account'}
+          {busy ? (isLogin ? 'Signing in…' : 'Creating account…') : isLogin ? 'Sign in' : 'Create account'}
         </button>
 
         {isLogin ? (

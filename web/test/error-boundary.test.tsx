@@ -48,7 +48,7 @@ describe('ErrorBoundary', () => {
     );
 
     expect(screen.getByRole('alert').textContent)
-      .toContain('Something went wrong on this screen.');
+      .toContain('This screen stopped working. Your answers so far are saved.');
     expect(screen.getByText('the grade continuation threw')).toBeTruthy();
     expect(screen.getByRole('button', { name: 'Try again' })).toBeTruthy();
     expect(await axe(container, AXE_IN_JSDOM)).toHaveNoViolations();

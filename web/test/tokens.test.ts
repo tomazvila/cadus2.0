@@ -74,18 +74,18 @@ const TABLE: ReadonlyArray<readonly [string, string, string]> = [
   ['--surface', '#1f2335', '#ffffff'],
   ['--surface-2', '#24283b', '#d5d6db'],
   ['--text', '#c0caf5', '#24283b'],
-  ['--muted', '#7e88b4', '#6b7089'],
+  ['--muted', '#8d97c4', '#565c78'],
   ['--border', '#292e42', '#c4c8da'],
-  ['--accent', '#7aa2f7', '#2e7de9'],
+  ['--accent', '#7aa2f7', '#1d5fcf'],
   ['--accent-2', '#bb9af7', '#9854f1'],
   ['--accent-ink', '#1a1b26', '#ffffff'],
-  ['--accent-weak', 'rgba(122, 162, 247, 0.14)', 'rgba(46, 125, 233, 0.10)'],
-  ['--good', '#9ece6a', '#587539'],
-  ['--good-weak', 'rgba(158, 206, 106, 0.13)', 'rgba(88, 117, 57, 0.10)'],
-  ['--bad', '#f7768e', '#f52a65'],
-  ['--bad-weak', 'rgba(247, 118, 142, 0.13)', 'rgba(245, 42, 101, 0.10)'],
-  ['--warn', '#e0af68', '#8f5e15'],
-  ['--info', '#7dcfff', '#007197'],
+  ['--accent-weak', 'rgba(122, 162, 247, 0.14)', 'rgba(29, 95, 207, 0.10)'],
+  ['--good', '#9ece6a', '#4a6a2c'],
+  ['--good-weak', 'rgba(158, 206, 106, 0.13)', 'rgba(74, 106, 44, 0.10)'],
+  ['--bad', '#f7768e', '#c8103c'],
+  ['--bad-weak', 'rgba(247, 118, 142, 0.13)', 'rgba(200, 16, 60, 0.10)'],
+  ['--warn', '#e0af68', '#7f5210'],
+  ['--info', '#7dcfff', '#00638a'],
   ['--scrim', 'rgba(10, 12, 20, 0.55)', 'rgba(16, 24, 40, 0.35)'],
   ['--ring-bg', '#292e42', '#d5d6db'],
 ];
@@ -93,7 +93,11 @@ const TABLE: ReadonlyArray<readonly [string, string, string]> = [
 /** Defined in both themes, and not in the section 4.2 table. */
 const THEMED_EXTRAS = ['--shadow'];
 /** Defined once, because they do not change with the theme. */
-const GEOMETRY = ['--radius', '--maxw', '--mono'];
+const GEOMETRY = [
+  '--radius', '--maxw', '--mono',
+  '--space-1', '--space-2', '--space-3', '--space-4',
+  '--fs-1', '--fs-2', '--fs-3', '--fs-4', '--fs-5', '--fs-6',
+];
 
 describe('TOKENS-hex: the dark theme', () => {
   it('TOKENS-hex: the file carries exactly one media query, so the split is sound', () => {

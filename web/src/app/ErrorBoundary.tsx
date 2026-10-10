@@ -56,8 +56,11 @@ export class ErrorBoundary extends Component<Props, State> {
 
     return (
       <section className="empty" role="alert">
-        <p>Something went wrong on this screen.</p>
-        <p className="muted small">{error.message}</p>
+        <p>This screen stopped working. Your answers so far are saved. Press Try again. If it fails again, reload the page.</p>
+        <details className="muted small">
+          <summary>Technical detail</summary>
+          <p>{error.message}</p>
+        </details>
         <button
           type="button"
           className="btn btn-primary"

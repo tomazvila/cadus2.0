@@ -92,9 +92,12 @@ export function failOnceImporter() {
 export async function mount(
   over: Partial<CurriculumMapProps> = {},
   wrapper?: (p: { children: React.ReactNode }) => React.ReactElement,
+  keepStorage = false,
 ) {
   resetToasts();
   resetCytoscape();
+  // The view choice persists; every mount starts without one.
+  if (!keepStorage) window.localStorage.clear();
   const handlers = { onUnauthorized: vi.fn(), onExit: vi.fn() };
   const props = { api: stubApi(), demo: false, ...handlers, ...over };
   const tree = <CurriculumMap {...props} />;
