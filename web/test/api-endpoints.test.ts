@@ -100,6 +100,7 @@ describe('the curriculum and session routes', () => {
     const calls = record();
     await api.listModules();
     await api.enroll('proofs');
+    await api.reviewSoon('whole numbers');
     await api.sessionStart();
     await api.taskTeach('t 1');
     await api.taskQuizResult('q/1', true);
@@ -107,6 +108,7 @@ describe('the curriculum and session routes', () => {
     expect(calls()).toEqual([
       ['GET', '/api/modules', null],
       ['POST', '/api/enroll', '{"course":"proofs"}'],
+      ['POST', '/api/topics/whole%20numbers/review-soon', '{}'],
       ['POST', '/api/session/start', '{}'],
       ['POST', '/api/task/t%201/teach', '{}'],
       ['POST', '/api/task/q%2F1/quiz-result', '{"practice":true}'],

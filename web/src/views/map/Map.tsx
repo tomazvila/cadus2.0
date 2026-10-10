@@ -33,6 +33,7 @@ import { pct } from '@/lib/format';
 import '../../styles/fix-map.css';
 import { STATES, countByStatus } from './layout';
 import { TopicProofs } from '@/views/proofs/Proofs';
+import { ReviewSoon } from './ReviewSoon';
 import type { CyHandle } from './CyCanvas';
 import type { ApiClient, GraphEdge, GraphNode, GraphResponse, TopicStatus } from '@/api/types';
 
@@ -338,6 +339,9 @@ export function CurriculumMap({
             <p className="mono">{abilityLine(selected)}</p>
             <Neighbors title="Learn first" ids={before} nodes={nodes} onPick={pick} />
             <Neighbors title="Opens next" ids={after} nodes={nodes} onPick={pick} />
+            {selected.status === 'learning' ? (
+              <ReviewSoon key={`review-${selected.id}`} api={api} call={call} topic={selected.id} />
+            ) : null}
             {/* D-PR1: the revision chains of this topic, versions and verdicts. */}
             <TopicProofs key={selected.id} api={api} topic={selected.id} />
           </aside>

@@ -59,6 +59,7 @@ mod exposure_backfill;
 mod exposure_history;
 mod exposure_reconcile;
 mod fold;
+mod review_soon;
 mod view;
 
 use cadus_core::event::{Event, SchemaVersion};
@@ -78,6 +79,7 @@ pub use fold::{
     CachedModel, Projection, load_learner_model, load_session_view, project_and_save,
     project_current,
 };
+pub use review_soon::{latest_graded_topic, request_review_soon};
 pub use view::{QUIZ_HIGH_SCORE, SESSION_VIEW_VERSION, SessionView};
 
 use crate::StoreError;

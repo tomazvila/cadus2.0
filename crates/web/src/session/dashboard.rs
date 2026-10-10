@@ -10,17 +10,18 @@ use axum::http::{HeaderValue, StatusCode, header};
 use axum::response::{IntoResponse, Response};
 use cadus_core::config::Config;
 use cadus_core::curriculum::{Curriculum, TopicIdx};
-use cadus_core::event::TopicStatus;
+use cadus_core::event::{Timestamp, TopicStatus};
 use cadus_core::learner::{LearnerModel, TopicState};
 use cadus_core::selector::{
-    confirmations, course_scope, due_reviews, frontier, is_known, known_set, nearly_due,
-    quiz_is_due, schedule_drills,
+    SessionPlan, confirmations, course_scope, due_reviews, frontier, is_known, known_set,
+    nearly_due, quiz_is_due, schedule_drills,
 };
 use cadus_core::xp::{CourseCounts, course_counts};
-use cadus_store::state::{EventRow, load_raw_events};
+use cadus_store::state::{EventRow, latest_graded_topic, load_raw_events};
 use serde_json::{Map, Value, json};
 
 use super::EXPORT_MEDIA_TYPE;
+use super::plan::compose_plan;
 use super::store::{Ready, Reply, begin, json_of, reply_read, store, unknown_course};
 use crate::AppState;
 use crate::error::ApiError;
@@ -100,6 +101,49 @@ fn mastery_view(
     })
 }
 
+/// The `last_topic` and `last_active_at` values of the dashboard.
+///
+/// A topic the curriculum no longer holds gives a null name, and an instant outside the
+/// range `chrono` writes gives a null instant.
+fn last_studied(graph: &Curriculum, last: Option<(String, i64)>) -> (Value, Value) {
+    let Some((topic, at_us)) = last else {
+        return (Value::Null, Value::Null);
+    };
+    let name = graph
+        .idx_of(&topic)
+        .and_then(|idx| graph.topic(idx))
+        .map(|found| found.name.as_str());
+    let at = Timestamp::from_micros(at_us)
+        .to_wire_string()
+        .map_or(Value::Null, Value::String);
+    (json!({"id": topic, "name": name}), at)
+}
+
+/// The summed time budget and the first topic of a plan, for the dashboard.
+fn plan_preview(graph: &Curriculum, plan: &SessionPlan) -> Value {
+    let budgets: Vec<i64> = plan
+        .tasks
+        .iter()
+        .filter_map(|task| task.time_budget_secs)
+        .collect();
+    let total: Option<i64> = if budgets.is_empty() {
+        None
+    } else {
+        Some(budgets.iter().sum())
+    };
+    let first_topic = plan
+        .tasks
+        .first()
+        .and_then(|task| task.topic.as_deref())
+        .and_then(|id| {
+            graph
+                .idx_of(id)
+                .and_then(|idx| graph.topic(idx))
+                .map(|found| json!({"id": id, "name": found.name}))
+        });
+    json!({"budget_secs": total, "first_topic": first_topic})
+}
+
 /// Whether one topic state counts as placed on the dashboard.
 fn is_placed(topic: &TopicState) -> bool {
     matches!(topic.status, TopicStatus::Placed | TopicStatus::Learning)
@@ -154,9 +198,32 @@ pub async fn status(req: Ready) -> Reply {
     let drill_due =
         !schedule_drills(&model.topics, graph, t_us, Some(&view.last_drill_at)).is_empty();
 
+    let readiness = req.readiness(&mut tx).await?;
+    let session_open = view.current_session.is_some();
+    let preview_session = view.current_session.as_deref().unwrap_or("preview");
+    let plan = compose_plan(
+        &req.content,
+        &view,
+        &model,
+        preview_session,
+        req.now,
+        &readiness,
+    );
+    let last = req.store(latest_graded_topic(&mut tx, req.user_id)).await?;
+    let (last_topic, last_active_at) = last_studied(graph, last);
+
     let body = json!({
         "course": course_view(graph, course),
         "placed": placed,
+        // The latest graded answer: its topic as `{id, name}` and its instant.
+        // Both are null for a learner with no graded answer.
+        "last_topic": last_topic,
+        // True when a session is open, so "Continue studying" reopens unfinished work.
+        "session_open": session_open,
+        // What "Continue studying" brings: the summed time budget of the planned
+        // tasks, and the topic of the first one. Both are null for an empty plan.
+        "plan_preview": plan_preview(graph, &plan),
+        "last_active_at": last_active_at,
         "courses": journey(graph, course),
         // The F6 test-prep set lives on the `profiles` row, and no M5 unit
         // writes that row. The key stays on the wire with its "off" value.

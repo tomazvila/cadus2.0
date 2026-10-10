@@ -8,6 +8,7 @@ use serde_json::Value as Json;
 use sqlx::{Postgres, Transaction};
 use uuid::Uuid;
 
+use super::review_soon::apply_review_soon;
 use super::view::{SESSION_VIEW_VERSION, SessionView};
 use super::{EventRow, load_events, load_events_after};
 use crate::StoreError;
@@ -282,6 +283,18 @@ pub async fn project_current(
     user_id: Uuid,
     input: &ProjectionInput<'_>,
 ) -> Result<Projection, StoreError> {
+    let mut projection = project_base(tx, user_id, input).await?;
+    apply_review_soon(tx, user_id, &mut projection.model).await?;
+    Ok(projection)
+}
+
+/// The fold of [`project_current`] before the review-soon overlay. The saved
+/// model is this one: the overlay is a planning input and never a stored fact.
+async fn project_base(
+    tx: &mut Transaction<'_, Postgres>,
+    user_id: Uuid,
+    input: &ProjectionInput<'_>,
+) -> Result<Projection, StoreError> {
     let cached = load_learner_model(tx, user_id).await?;
     let config_hash = config_hash_of(input);
 
@@ -384,7 +397,7 @@ pub async fn project_and_save(
     input: &ProjectionInput<'_>,
     curriculum_hash: Option<&str>,
 ) -> Result<Projection, StoreError> {
-    let projection = project_current(tx, user_id, input).await?;
+    let mut projection = project_base(tx, user_id, input).await?;
     let config_hash = config_hash_of(input);
 
     sqlx::query!(
@@ -415,6 +428,7 @@ pub async fn project_and_save(
     .execute(&mut **tx)
     .await?;
 
+    apply_review_soon(tx, user_id, &mut projection.model).await?;
     Ok(projection)
 }
 

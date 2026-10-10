@@ -214,6 +214,10 @@ describe('the demo payloads, literally', () => {
     vi.useFakeTimers();
     expect(await settle(createDemoApi().getStatus())).toEqual({
       ungraded: 0,
+      last_topic: { id: 'whole-numbers', name: 'Whole numbers' },
+      last_active_at: '2026-08-29T16:30:00Z',
+      session_open: false,
+      plan_preview: { budget_secs: 1500, first_topic: { id: 'fractions', name: 'Fractions' } },
       ungraded_attempts: {},
       mastery: { to_confirm: ['whole-numbers'], total: 50, inferred: 6, practiced: 9 },
       nearly_due: 1,

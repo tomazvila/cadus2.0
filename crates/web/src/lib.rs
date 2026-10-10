@@ -239,6 +239,10 @@ pub fn create_app(state: AppState) -> Router {
         .route("/api/status", get(session::status))
         .route("/api/graph", get(session::graph))
         .route("/api/modules", get(session::modules))
+        .route(
+            "/api/topics/{topic_id}/review-soon",
+            post(session::review_soon),
+        )
         .route("/api/export", get(session::export))
         .route("/api/report/retention", get(report::retention))
         .route("/api/enroll", post(session::enroll))

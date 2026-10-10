@@ -24,6 +24,32 @@ function upNext(status: StatusResponse): string[] {
   return bits;
 }
 
+/** The calendar days from `then` to `now`, by the local date. Null for a date that does not parse. */
+function daysSince(then: string, now: Date): number | null {
+  const at = new Date(then);
+  if (Number.isNaN(at.getTime())) return null;
+  const day = (d: Date): number => Date.UTC(d.getFullYear(), d.getMonth(), d.getDate());
+  return Math.max(0, Math.round((day(now) - day(at)) / 86_400_000));
+}
+
+/** "Last studied: Fractions, 3 days ago." or an empty text before the first answer. */
+export function lastStudied(status: StatusResponse, now: Date = new Date()): string {
+  const topic = status.last_topic;
+  if (!topic || !status.last_active_at) return '';
+  const days = daysSince(status.last_active_at, now);
+  if (days === null) return '';
+  const when = days === 0 ? 'today' : days === 1 ? 'yesterday' : `${days} days ago`;
+  return `Last studied: ${topic.name ?? topic.id}, ${when}.`;
+}
+
+/** "About 25 minutes" from the summed task budgets, or an empty text when none carries one. */
+export function aboutMinutes(status: StatusResponse): string {
+  const secs = status.plan_preview?.budget_secs;
+  if (typeof secs !== 'number' || !(secs > 0)) return '';
+  const minutes = Math.ceil(secs / 60);
+  return `About ${minutes} ${minutes === 1 ? 'minute' : 'minutes'}`;
+}
+
 /** The course after the current one, or null on the last course. */
 function nextCourseOf(courses: JourneyCourse[]): JourneyCourse | null {
   const currentIndex = courses.findIndex((c) => c.current);
@@ -46,6 +72,13 @@ export function PrimaryAction({
 }: PrimaryActionProps) {
   if (work) {
     const bits = upNext(status);
+    const unfinished = status.session_open ? status.plan_preview?.first_topic : null;
+    const sub = [
+      unfinished ? `Unfinished: ${unfinished.name ?? unfinished.id}.` : '',
+      bits.length ? `Up next: ${bits.join(' · ')}.` : 'Practice is ready.',
+      lastStudied(status),
+    ].filter(Boolean).join(' ');
+    const minutes = aboutMinutes(status);
     return (
       <div className="primary-action">
         <button
@@ -56,9 +89,8 @@ export function PrimaryAction({
         >
           <span aria-hidden="true">▶</span> Continue studying
         </button>
-        <p className="muted primary-sub">
-          {bits.length ? `Up next: ${bits.join(' · ')}.` : 'Practice is ready.'}
-        </p>
+        <p className="muted primary-sub">{sub}</p>
+        {minutes ? <p className="muted primary-sub">{minutes}</p> : null}
       </div>
     );
   }

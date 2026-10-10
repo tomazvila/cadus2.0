@@ -247,6 +247,10 @@ export function createDemoApi(): ApiClient {
         // The demo grades every answer, so nothing waits for a human (D-F2).
         ungraded_attempts: {},
         ungraded: 0,
+        last_topic: { id: 'whole-numbers', name: 'Whole numbers' },
+        last_active_at: '2026-08-29T16:30:00Z',
+        session_open: false,
+        plan_preview: { budget_secs: 1500, first_topic: { id: 'fractions', name: 'Fractions' } },
       }),
 
     getGraph: (scope) =>
@@ -282,6 +286,8 @@ export function createDemoApi(): ApiClient {
 
     enroll: (course) =>
       reply({ enrolled: course, mastery_floor: ['whole-numbers'], floor_size: 1 }),
+
+    reviewSoon: (topicId) => reply({ topic: topicId, review_soon: true }),
 
     sessionStart: () => {
       open = 'demo-session';

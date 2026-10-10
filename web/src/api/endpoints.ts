@@ -42,6 +42,7 @@ import type {
   SessionResponse,
   SessionStartResponse,
   SignupResponse,
+  ReviewSoonResponse,
   StatusResponse,
   TaskAnswerResponse,
   QuizResultResponse,
@@ -112,6 +113,8 @@ export const api: ApiClient = {
     request<GraphResponse>('GET', scope ? `/graph?scope=${encodeURIComponent(scope)}` : '/graph'),
   listModules: () => request<ModulesResponse>('GET', '/modules'),
   enroll: (course) => request<EnrollResponse>('POST', '/enroll', { course }),
+  reviewSoon: (topicId) =>
+    request<ReviewSoonResponse>('POST', `/topics/${seg(topicId)}/review-soon`, {}),
 
   // --- The session and the study loop -------------------------------------
   sessionStart: () => request<SessionStartResponse>('POST', '/session/start', {}),

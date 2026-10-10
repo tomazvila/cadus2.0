@@ -208,6 +208,21 @@ export interface StatusResponse {
   ungraded: number;
   /** D-F6: the practiced, inferred and to-confirm counts behind the progress bar. */
   mastery?: MasteryCounts;
+  /** The topic of the latest graded answer. Null before the first one. */
+  last_topic?: { id: string; name: string | null } | null;
+  /** RFC 3339: when the latest graded answer was given. Null before the first one. */
+  last_active_at?: string | null;
+  /** True when a lesson was left open, so "Continue studying" brings it back. */
+  session_open?: boolean;
+  /** What "Continue studying" brings: the summed task budget and the first topic. */
+  plan_preview?: PlanPreview | null;
+}
+
+/** The size and the first topic of the plan the dashboard button starts. */
+export interface PlanPreview {
+  /** Seconds, or null when no planned task carries a budget. */
+  budget_secs: number | null;
+  first_topic: { id: string; name: string | null } | null;
 }
 
 /**
@@ -273,6 +288,12 @@ export interface EnrollResponse {
   /** Topic ids, sorted. */
   mastery_floor: string[];
   floor_size: number;
+}
+
+/** `POST /api/topics/{id}/review-soon`. */
+export interface ReviewSoonResponse {
+  topic: string;
+  review_soon: boolean;
 }
 
 // ---------------------------------------------------------------------------

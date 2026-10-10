@@ -15,6 +15,7 @@
 //! | `GET /api/graph` | no | none | no | read |
 //! | `GET /api/modules` | no | none | no | read |
 //! | `GET /api/export` | no | read all | no | no |
+//! | `POST /api/topics/{id}/review-soon` | yes | none | no | read |
 //! | `POST /api/enroll` | yes | append `enrolled` | clear | write |
 //! | `POST /api/session/start` | yes | append `session_start` | bind | write |
 //! | `POST /api/session/end` | yes | append `session_end` | clear | write |
@@ -57,6 +58,7 @@ use sqlx::types::chrono::{DateTime, NaiveDate, Utc};
 mod dashboard;
 mod lifecycle;
 mod plan;
+mod review_soon;
 mod rollover;
 mod store;
 
@@ -64,6 +66,7 @@ pub use dashboard::{GraphQuery, export, graph, modules, status};
 pub use lifecycle::{enroll, session_end, session_start};
 pub(crate) use plan::compose_plan;
 pub use plan::session_plan;
+pub use review_soon::review_soon;
 pub(crate) use rollover::Rollover;
 pub use rollover::{
     OpenSession, QUIZ_HOLD_DAYS, ROLLOVER_IDLE_US, SESSION_ROLLED_OVER, is_stale, rolled_over,

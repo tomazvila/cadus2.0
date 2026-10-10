@@ -25,6 +25,7 @@ import type {
   ReadyResponse,
   SessionResponse,
   SignupResponse,
+  ReviewSoonResponse,
   StatusResponse,
 } from './types';
 import type {
@@ -107,6 +108,8 @@ export interface ApiClient {
   getGraph(scope?: string): Promise<GraphResponse>;
   listModules(): Promise<ModulesResponse>;
   enroll(course: string): Promise<EnrollResponse>;
+  /** Bring the next review of a practiced topic forward. `409` before the first lesson. */
+  reviewSoon(topicId: string): Promise<ReviewSoonResponse>;
 
   // The session and the study loop.
   sessionStart(): Promise<SessionStartResponse>;
@@ -233,6 +236,7 @@ export const ROUTES: readonly RouteRow[] = [
   { method: 'GET', path: '/api/export', auth: 'S', via: 'method', client: 'downloadExport' },
   { method: 'GET', path: '/api/report/retention', auth: 'S', via: 'method', client: 'getRetentionReport' },
   { method: 'POST', path: '/api/enroll', auth: 'S', via: 'method', client: 'enroll' },
+  { method: 'POST', path: '/api/topics/{topic_id}/review-soon', auth: 'S', via: 'method', client: 'reviewSoon' },
   { method: 'POST', path: '/api/session/start', auth: 'S', via: 'method', client: 'sessionStart' },
   { method: 'POST', path: '/api/session/end', auth: 'S', via: 'method', client: 'sessionEnd' },
   { method: 'GET', path: '/api/session/plan', auth: 'S', via: 'method', client: 'getPlan' },
