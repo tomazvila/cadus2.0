@@ -965,11 +965,13 @@ p { margin: 0.4rem 0; }
   position: fixed; z-index: 20; background: var(--surface); color: var(--text);
   display: flex; flex-direction: column; padding: 1rem;
 }
+/* The side panel fills the free margin at the right of the centered column and never more,
+   so the problem and the answer box do not move when it opens. */
 .notation-side {
-  top: 0; right: 0; bottom: 0; width: 420px; border-left: 1px solid var(--border); padding-top: 4rem;
+  top: 0; right: 0; bottom: 0; width: min(420px, calc((100vw - var(--maxw)) / 2 - 1rem));
+  border-left: 1px solid var(--border); padding-top: 4rem;
 }
 .notation-sheet { inset: 0; padding-top: max(1rem, env(safe-area-inset-top)); padding-bottom: env(safe-area-inset-bottom); }
-body.notation-open #view { margin-right: 420px; margin-left: 1rem; }
 .notation-head { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; }
 .notation-head h2 { margin: 0; }
 .notation-search {

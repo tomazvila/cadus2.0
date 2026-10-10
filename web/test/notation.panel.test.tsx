@@ -24,13 +24,13 @@ function setWidth(px: number): void {
   Object.defineProperty(window, 'matchMedia', {
     configurable: true,
     value: (q: string) => ({
-      matches: px >= 1024 && q.includes('1024'),
+      matches: px >= 1400 && q.includes('1400'),
       addEventListener: () => {}, removeEventListener: () => {},
     }),
   });
 }
 
-beforeEach(() => { window.localStorage.clear(); resetNotationStore(); setWidth(1280); });
+beforeEach(() => { window.localStorage.clear(); resetNotationStore(); setWidth(1440); });
 afterEach(() => {
   roots.splice(0).forEach((fn) => { fn(); });
   act(() => { setNotationOpen(false); });
@@ -94,12 +94,19 @@ describe('the panel', () => {
     expect(m.find('.notation-panel h2').textContent).toBe('How to type answers');
   });
 
-  it('is a side panel on a wide viewport and marks the page so the problem stays usable', () => {
+  it('is a side panel on a wide viewport and leaves the page column alone', () => {
     act(() => { setNotationOpen(true); });
     const { m } = mountAll();
     expect(m.find('.notation-panel').classList.contains('notation-side')).toBe(true);
     expect(m.find('.notation-panel').getAttribute('role')).toBeNull();
-    expect(document.body.classList.contains('notation-open')).toBe(true);
+    expect(document.body.className).not.toContain('notation-open');
+  });
+
+  it('is a sheet, not a squeeze, on a laptop whose margin cannot hold the panel', () => {
+    setWidth(1280);
+    act(() => { setNotationOpen(true); });
+    const { m } = mountAll();
+    expect(m.find('.notation-panel').classList.contains('notation-sheet')).toBe(true);
   });
 
   it('is a full-screen sheet with a close button on a narrow viewport', () => {
@@ -109,7 +116,6 @@ describe('the panel', () => {
     const panel = m.find('.notation-panel');
     expect(panel.classList.contains('notation-sheet')).toBe(true);
     expect(panel.getAttribute('role')).toBe('dialog');
-    expect(document.body.classList.contains('notation-open')).toBe(false);
     const close = Array.from(panel.querySelectorAll('button')).find((b) => b.textContent === 'Close')!;
     act(() => { close.click(); });
     expect(m.container.querySelector('.notation-panel')).toBeNull();

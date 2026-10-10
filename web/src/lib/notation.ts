@@ -89,8 +89,10 @@ export function insertNotation(text: string): boolean {
   return true;
 }
 
-/** The panel sits beside the problem at this width and above it. Below, it is a full sheet. */
-export const WIDE_QUERY = '(min-width: 1024px)';
+/** At this width and above, the margin beside the 720px column holds the panel, so the problem
+ *  and the answer box stay exactly where they are. Below it, the panel is a full sheet over
+ *  the page: nothing on the page moves either way. */
+export const WIDE_QUERY = '(min-width: 1400px)';
 
 // ---- the symbol keys that one answer contract needs ----
 

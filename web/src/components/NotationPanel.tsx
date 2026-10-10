@@ -1,8 +1,9 @@
 /**
  * "How to type answers": the cheat sheet of spellings the answer field reads.
  *
- * At 1024 px and wider it is a panel beside the problem (the problem and the field stay
- * usable, the panel scrolls). Below that it is a full-screen sheet with a close button. The
+ * At 1400 px and wider it is a panel in the margin beside the problem: the problem and the
+ * field stay where they are and the panel scrolls. Below that it is a full-screen sheet with
+ * a close button. The page column never moves in either mode. The
  * open state lives in `lib/notation.ts`, so the panel stays open from one problem to the next.
  *
  * Each row shows the rendered form, the plain spelling and the LaTeX spelling. A tap on a
@@ -17,7 +18,7 @@ import {
 
 function isWide(): boolean {
   if (typeof window.matchMedia === 'function') return window.matchMedia(WIDE_QUERY).matches;
-  return window.innerWidth >= 1024;
+  return window.innerWidth >= 1400;
 }
 
 function useWide(): boolean {
@@ -67,11 +68,6 @@ export function NotationPanel() {
   const open = useNotationOpen();
   const wide = useWide();
   const [query, setQuery] = useState('');
-
-  useEffect(() => {
-    document.body.classList.toggle('notation-open', open && wide);
-    return () => { document.body.classList.remove('notation-open'); };
-  }, [open, wide]);
 
   useEffect(() => {
     if (!open || wide) return;
