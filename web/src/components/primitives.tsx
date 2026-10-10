@@ -35,7 +35,10 @@ export function BrandMark({ id }: { id?: string }) {
     <span className="brand-mark" aria-hidden="true">
       <svg viewBox="0 0 48 48" role="img" aria-hidden="true">
         <defs>
-          <linearGradient id={gradientId} x1="0" y1="0" x2="1" y2="0">
+          {/* userSpaceOnUse, not the default bounding box: each stroke is a vertical
+              line whose box has zero width, and a box-relative gradient on a zero-width
+              box renders nothing at all, so the mark was an empty space. */}
+          <linearGradient id={gradientId} gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="48" y2="0">
             <stop offset="0" style={{ stopColor: 'var(--accent)' }} />
             <stop offset="1" style={{ stopColor: 'var(--accent-2)' }} />
           </linearGradient>
