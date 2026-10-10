@@ -585,7 +585,6 @@ export function Session({
           disabled={locked && phase !== 'submitting'}
           locked={locked}
           onSubmit={() => submit()}
-          onHint={hintsAvailable ? requestHint : undefined}
         />
 
         {/* W-C5: one primary here, and the quiet controls beside it. */}

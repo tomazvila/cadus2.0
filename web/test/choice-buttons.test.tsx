@@ -158,15 +158,12 @@ describe('AnswerInput', () => {
     expect(screen.queryByRole('group', { name: 'Answer choices' })).toBeNull();
   });
 
-  it('gives the typed field its disabled rule, its Enter submit and its hint key', () => {
+  it('gives the typed field its disabled rule and its Enter submit', () => {
     const onSubmit = vi.fn();
-    const onHint = vi.fn();
-    const view = render(<AnswerInput choices={undefined} disabled={false} onSubmit={onSubmit} onHint={onHint} />);
-    fireEvent.keyDown(screen.getByLabelText('Answer'), { key: 'h' });
+    const view = render(<AnswerInput choices={undefined} disabled={false} onSubmit={onSubmit} />);
     fireEvent.keyDown(screen.getByLabelText('Answer'), { key: 'Enter' });
-    expect(onHint).toHaveBeenCalledTimes(1);
     expect(onSubmit).toHaveBeenCalledTimes(1);
-    view.rerender(<AnswerInput choices={undefined} disabled onSubmit={onSubmit} onHint={onHint} />);
+    view.rerender(<AnswerInput choices={undefined} disabled onSubmit={onSubmit} />);
     expect((screen.getByLabelText('Answer') as HTMLInputElement).disabled).toBe(true);
   });
 

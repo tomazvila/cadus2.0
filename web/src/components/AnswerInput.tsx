@@ -39,7 +39,6 @@ export interface AnswerInputProps {
   /** The disabled rule of the buttons: true in each phase that is not `ready`. */
   locked?: boolean;
   onSubmit: () => void;
-  onHint?: (() => void) | undefined;
   /** The served answer contract: it picks the hint under the typed field. */
   contract?: AnswerContractHint | undefined;
   /** The id of the served problem: the typed text is kept under it until a verdict. */
@@ -47,11 +46,11 @@ export interface AnswerInputProps {
   ref?: Ref<AnswerFieldHandle> | undefined;
 }
 
-export function AnswerInput({ choices, disabled, locked = disabled, onSubmit, onHint, contract, draftKey, ref }: AnswerInputProps) {
+export function AnswerInput({ choices, disabled, locked = disabled, onSubmit, contract, draftKey, ref }: AnswerInputProps) {
   if (hasChoices(choices)) {
     return <ChoiceInput choices={choices} locked={locked} onSubmit={onSubmit} ref={ref} />;
   }
-  return <AnswerField ref={ref} disabled={disabled} onSubmit={onSubmit} onHint={onHint} contract={contract} draftKey={draftKey} />;
+  return <AnswerField ref={ref} disabled={disabled} onSubmit={onSubmit} contract={contract} draftKey={draftKey} />;
 }
 
 /**

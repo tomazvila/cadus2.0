@@ -102,35 +102,12 @@ describe('AnswerField: the keyboard contract', () => {
     expect(m.find<HTMLInputElement>('.answer-input').disabled).toBe(true);
   });
 
-  it('H asks for a hint ONLY while the field is empty', () => {
-    const onHint = vi.fn();
-    const m = mount(<AnswerField onHint={onHint} />);
+  it('a letter is a letter: h lands in the field and asks for nothing', () => {
+    const m = mount(<AnswerField />);
     const input = m.find<HTMLInputElement>('.answer-input');
-
+    // "Write an inequality for the height h": the answer starts with h.
     const lower = keydown(input, 'h');
-    keydown(input, 'H');
-    expect(onHint).toHaveBeenCalledTimes(2);
-    // The keypress is spent on the hint, so no letter lands in the field.
-    expect(lower.defaultPrevented).toBe(true);
-
-    // Once the learner types an answer, `h` is a letter: `sqrt` contains one.
-    input.value = 'sq';
-    keydown(input, 'h');
-    expect(onHint).toHaveBeenCalledTimes(2);
-  });
-
-  it('H with a modifier belongs to the browser, not to the hint', () => {
-    const onHint = vi.fn();
-    const m = mount(<AnswerField onHint={onHint} />);
-    const input = m.find<HTMLInputElement>('.answer-input');
-
-    const ctrl = keydown(input, 'h', { ctrlKey: true });
-    keydown(input, 'h', { metaKey: true });
-    keydown(input, 'h', { altKey: true });
-
-    expect(onHint).not.toHaveBeenCalled();
-    // Ctrl+H opens the history in a browser. Swallowing it steals a reader's shortcut.
-    expect(ctrl.defaultPrevented).toBe(false);
+    expect(lower.defaultPrevented).toBe(false);
   });
 });
 

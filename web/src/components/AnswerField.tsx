@@ -64,7 +64,6 @@ export interface AnswerFieldHandle {
 export interface AnswerFieldProps {
   placeholder?: string;
   onSubmit?: () => void;
-  onHint?: (() => void) | undefined;
   disabled?: boolean;
   /** The answer contract of the served problem, when it has one. */
   contract?: AnswerContractHint | undefined;
@@ -93,7 +92,6 @@ function keyLabel(key: SymbolKey): { text: string; name: string } {
 export function AnswerField({
   placeholder = 'Your answer',
   onSubmit,
-  onHint,
   disabled = false,
   contract,
   draftKey,
@@ -244,13 +242,6 @@ export function AnswerField({
             if (input.disabled || input.readOnly) return;
             onSubmit?.();
             return;
-          }
-          if ((e.key === 'h' || e.key === 'H') && onHint) {
-            // Only while the field is empty: `sqrt` contains an h. A modifier means a browser
-            // or reader shortcut — Ctrl+H is the history — so leave those alone.
-            if (input.value !== '' || e.ctrlKey || e.metaKey || e.altKey) return;
-            e.preventDefault();
-            onHint();
           }
         }}
       />
