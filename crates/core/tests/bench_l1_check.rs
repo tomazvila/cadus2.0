@@ -45,11 +45,13 @@ const CORPUS_ANSWERS: usize = 3_492;
 /// 2,987 correct and 505 undecidable. Grader pass 3 (2026-10-07: logarithm
 /// bases, nth roots, name prefixes, natural units) moved 24 more pairs into
 /// the canonical path and decides all of them correct: 3,011 correct and 481
-/// undecidable.
-const CANONICALIZED_PAIRS: usize = 3_023;
+/// undecidable. The readers of 2026-10-09 (LaTeX spellings, the indexed root,
+/// the exact trig values) moved one more pair in, decided correct: 3,024
+/// canonicalized, 3,014 correct and 478 undecidable.
+const CANONICALIZED_PAIRS: usize = 3_024;
 
 /// The count of re-spelled pairs the checker decides correct.
-const RESPELLED_CORRECT: usize = 3_013;
+const RESPELLED_CORRECT: usize = 3_014;
 
 /// The count of re-spelled pairs the checker decides wrong.
 ///
@@ -58,7 +60,7 @@ const RESPELLED_CORRECT: usize = 3_013;
 const RESPELLED_WRONG: usize = 0;
 
 /// The count of re-spelled pairs the checker refuses (V2).
-const RESPELLED_UNDECIDABLE: usize = 479;
+const RESPELLED_UNDECIDABLE: usize = 478;
 
 /// The p50 floor of the L2 half, in nanoseconds.
 ///
