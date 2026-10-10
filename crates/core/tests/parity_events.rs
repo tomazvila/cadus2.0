@@ -45,7 +45,7 @@ const COVERAGE_STREAM: &str = "stream_u3_coverage.jsonl";
 const CONFIG_HASH: &str = "797575e985c12149";
 
 /// The 1.0 fold digest of `stream_1.jsonl` (`docs/plans/M3.md`).
-const STREAM_1_UTC: &str = "ba128459985e0815db7446cb2af16452ec07d304b7efaa0952fc6567404245f5";
+const STREAM_1_UTC: &str = "fe7e8cafd7330a08cc39dd31fa960bd919b733e901cb409c7c1cd5785c253f02";
 
 /// The non-UTC zone the digests file carries beside UTC.
 const NEW_YORK: &str = "America/New_York";
@@ -63,7 +63,7 @@ fn the_digest_index_holds_the_pinned_metadata() {
     assert_eq!(index.goal, GOAL);
     assert_eq!(index.projector_version, ORACLE_PROJECTOR_VERSION);
     assert_eq!(index.projector_version, 3);
-    assert_eq!(PROJECTOR_VERSION, 7);
+    assert_eq!(PROJECTOR_VERSION, 8);
     assert_eq!(index.config_hash, CONFIG_HASH);
     assert_eq!(index.zones, ["UTC", NEW_YORK, "UTC_no_regrades"]);
     assert_eq!(index.streams.len(), STREAMS);

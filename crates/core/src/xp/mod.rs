@@ -310,7 +310,34 @@ pub fn window_start(t_us: i64, zone: Tz, window_days: i64) -> Result<NaiveDate, 
         .unwrap_or(NaiveDate::MIN))
 }
 
+/// The number of local days a learner's history covers inside the trailing window.
+///
+/// It is `min(window_days, days from the first record to the day of t_us)`, both
+/// days included, and at least 1. With no record the full window counts.
+///
+/// # Errors
+///
+/// Returns [`TimeError::TimestampOutOfRange`] for an unrepresentable instant.
+pub fn days_covered(
+    first_record_us: Option<i64>,
+    t_us: i64,
+    zone: Tz,
+    window_days: i64,
+) -> Result<i64, TimeError> {
+    let Some(first_us) = first_record_us else {
+        return Ok(window_days.max(1));
+    };
+    let today = local_day_in(t_us, zone)?;
+    let first = local_day_in(first_us, zone)?;
+    let since_first = today.signed_duration_since(first).num_days() + 1;
+    Ok(since_first.clamp(1, window_days.max(1)))
+}
+
 /// The mean XP per day over the trailing window (`xp.py:197-208`).
+///
+/// Departure from 1.0: 1.0 divided by the full window, so a learner with three
+/// days of history read a pace nine times too slow. The divisor here is
+/// [`days_covered`], counted from the first record in `entries`.
 ///
 /// The total is a 1.0 `sum()`, so it goes through [`neumaier_sum`] (trap T1).
 ///
@@ -334,13 +361,19 @@ pub fn xp_per_day(
             inside.push(xp);
         }
     }
-    Ok(neumaier_sum(&inside) / window_days as f64)
+    let first = entries.iter().map(|&(ts_us, _)| ts_us).min();
+    let days = days_covered(first, t_us, zone, window_days)?;
+    Ok(neumaier_sum(&inside) / days as f64)
 }
 
 /// The distinct topics mastered per week over the trailing window
 /// (`xp.py:211-226`).
 ///
 /// Each completion is `(mastered_at, topic_id)`; a repeated topic counts once.
+///
+/// Departure from 1.0: 1.0 divided by the full window, so a learner with three
+/// days of history read a pace nine times too slow. The divisor here is
+/// [`days_covered`], counted from `first_record_us`, the learner's first XP record.
 ///
 /// # Errors
 ///
@@ -354,6 +387,7 @@ pub fn topics_per_week(
     t_us: i64,
     zone: Tz,
     window_days: i64,
+    first_record_us: Option<i64>,
 ) -> Result<f64, TimeError> {
     let start = window_start(t_us, zone, window_days)?;
     let mut seen: BTreeSet<&str> = BTreeSet::new();
@@ -362,6 +396,6 @@ pub fn topics_per_week(
             seen.insert(topic.as_str());
         }
     }
-    let weeks = window_days as f64 / 7.0;
+    let weeks = days_covered(first_record_us, t_us, zone, window_days)? as f64 / 7.0;
     Ok(seen.len() as f64 / weeks)
 }

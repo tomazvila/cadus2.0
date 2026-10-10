@@ -67,7 +67,8 @@ pub use regrade::apply_regrades;
 /// [`apply_regrades`], 3 to 4 for the third attempt outcome (D-F2). ANY change to the
 /// fold bumps this number, and a bump replays every model in full (D-O6).
 /// Version 7 indexes instructed application and delayed integrated assessments.
-pub const PROJECTOR_VERSION: i64 = 7;
+/// Version 8 divides the velocity by the days the history covers.
+pub const PROJECTOR_VERSION: i64 = 8;
 
 /// The neutral prior a placed topic's diagnostic answers fold onto (`projector.py:98`).
 pub const ABILITY_SEED_PRIOR: f64 = 0.5;

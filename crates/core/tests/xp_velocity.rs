@@ -144,7 +144,8 @@ fn compute_velocity_state_integration() {
     let graph = mini_curriculum();
     let states = mini_states(6);
     let ids = mini_ids_sorted();
-    let xp_entries = [(noon_us(2026, 7, 14), 280.0)];
+    // The first record is 40 days old, so the full 28-day divisor applies.
+    let xp_entries = [(noon_us(2026, 7, 14), 280.0), (noon_us(2026, 6, 4), 5.0)];
     let completions: Vec<(i64, String)> = (0..6)
         .map(|index| (noon_us(2026, 7, 12), ids[index].clone()))
         .collect();
@@ -173,7 +174,8 @@ fn compute_velocity_state_integration() {
 fn compute_velocity_state_without_a_course_has_no_progress_and_no_eta() {
     let graph = mini_curriculum();
     let states = mini_states(6);
-    let xp_entries = [(noon_us(2026, 7, 14), 280.0)];
+    // The first record is 40 days old, so the full 28-day divisor applies.
+    let xp_entries = [(noon_us(2026, 7, 14), 280.0), (noon_us(2026, 6, 4), 5.0)];
 
     let velocity = compute_velocity_state(&VelocityInput {
         states: &states,
@@ -329,8 +331,8 @@ fn an_unrepresentable_instant_is_an_error_on_every_path() {
     assert!(window_start(far, utc(), 28).is_err());
     assert!(xp_per_day(&bad, noon_us(2026, 7, 14), utc(), 28).is_err());
     assert!(xp_per_day(&good, far, utc(), 28).is_err());
-    assert!(topics_per_week(&bad_topics, noon_us(2026, 7, 14), utc(), 28).is_err());
-    assert!(topics_per_week(&[], far, utc(), 28).is_err());
+    assert!(topics_per_week(&bad_topics, noon_us(2026, 7, 14), utc(), 28, None).is_err());
+    assert!(topics_per_week(&[], far, utc(), 28, None).is_err());
 
     let graph = mini_curriculum();
     let states = mini_states(0);
@@ -362,4 +364,73 @@ fn an_unrepresentable_instant_is_an_error_on_every_path() {
         .is_err()
     );
     assert!(compute_velocity_state(&input).is_ok());
+}
+
+// --------------------------------------------------------------------------- //
+// The divisor is the days the history covers (departure from 1.0)
+// --------------------------------------------------------------------------- //
+
+#[test]
+fn a_learner_with_three_days_of_history_divides_by_three() {
+    // 1.0 divided by 28 here and read a pace nine times too slow.
+    let entries = [
+        (noon_us(2026, 7, 12), 100.0),
+        (noon_us(2026, 7, 13), 100.0),
+        (noon_us(2026, 7, 14), 100.0),
+    ];
+    let rate = xp_per_day(&entries, noon_us(2026, 7, 14), utc(), 28).unwrap();
+    assert_eq!(rate, 100.0);
+    let completions = [
+        (noon_us(2026, 7, 13), "a".to_owned()),
+        (noon_us(2026, 7, 14), "b".to_owned()),
+    ];
+    let topics = topics_per_week(
+        &completions,
+        noon_us(2026, 7, 14),
+        utc(),
+        28,
+        Some(noon_us(2026, 7, 12)),
+    )
+    .unwrap();
+    assert_approx(topics, 2.0 / (3.0 / 7.0), "two topics over three days");
+}
+
+#[test]
+fn a_learner_with_forty_days_of_history_keeps_the_28_day_divisor() {
+    let entries = [(noon_us(2026, 7, 14), 280.0), (noon_us(2026, 6, 4), 5.0)];
+    let rate = xp_per_day(&entries, noon_us(2026, 7, 14), utc(), 28).unwrap();
+    assert_eq!(rate, 10.0);
+}
+
+#[test]
+fn owner_scenario_sixty_two_percent_in_three_days_finishes_in_days_not_weeks() {
+    // Three days of practice, two thirds of the course done: the finish day is within
+    // about two days of today (the report read 16 days).
+    let graph = mini_curriculum();
+    let states = mini_states(8);
+    let ids = mini_ids_sorted();
+    let xp_entries = [
+        (noon_us(2026, 7, 12), 110.0),
+        (noon_us(2026, 7, 13), 110.0),
+        (noon_us(2026, 7, 14), 110.0),
+    ];
+    let completions: Vec<(i64, String)> = Vec::new();
+    let _ = &ids;
+    let velocity = compute_velocity_state(&VelocityInput {
+        states: &states,
+        graph: &graph,
+        course_id: Some("testcourse"),
+        xp_entries: &xp_entries,
+        completions: &completions,
+        total_xp: 330.0,
+        t_us: noon_us(2026, 7, 14),
+        zone: utc(),
+        window_days: 28,
+        cfg: &cfg(),
+    })
+    .unwrap();
+    assert_eq!(velocity.xp_per_day_28d, 110.0);
+    let eta = velocity.eta.unwrap();
+    let days = eta.signed_duration_since(on(2026, 7, 14)).num_days();
+    assert!((0..=2).contains(&days), "eta in {days} days");
 }

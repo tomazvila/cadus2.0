@@ -111,7 +111,7 @@ export function etaDisplay(velocity: StatusResponse['velocity'], today: Date = n
 /** The tooltip of the ETA tile: the horizon rule, spelled out where it applies. */
 function etaTitle(velocity: StatusResponse['velocity']): string {
   return velocity.eta
-    ? 'The day you finish the course if you keep the pace of the last 4 weeks. It gets more exact as you go.'
+    ? 'The day you finish the course if you keep your pace so far (the last 4 weeks at most). It gets more exact as you go.'
     : 'There is no practice in the last 4 weeks yet, so no finish day can be shown.';
 }
 

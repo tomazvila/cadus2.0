@@ -203,7 +203,14 @@ pub fn compute_velocity_state(input: &VelocityInput<'_>) -> Result<VelocityState
         ),
         None => None,
     };
-    let topics = topics_per_week(input.completions, input.t_us, input.zone, input.window_days)?;
+    let first_record_us = input.xp_entries.iter().map(|&(ts_us, _)| ts_us).min();
+    let topics = topics_per_week(
+        input.completions,
+        input.t_us,
+        input.zone,
+        input.window_days,
+        first_record_us,
+    )?;
     Ok(VelocityState {
         xp_per_day_28d: round_dp(rate, 4),
         topics_per_week_28d: round_dp(topics, 4),

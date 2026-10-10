@@ -44,9 +44,10 @@ const BOUNDARY_QUIZ_AT_THRESHOLD: &str =
 const BOUNDARY_PLACED_BALANCE_ZERO: &str =
     "627f5cbcdf457b104682534c1a7985e9010e3e0a191c22aee22de707974061d7";
 
-/// The 1.0 fold of `boundary/xp_window_cancelling_sum.jsonl` (finding #8).
+/// The fold of `boundary/xp_window_cancelling_sum.jsonl` (finding #8). The 1.0 digest was
+/// 5d0ef916...6de80; it moved when the velocity divisor became the days covered.
 const BOUNDARY_XP_CANCELLING_SUM: &str =
-    "5d0ef91630f930c9e56576952c2d158309255739e5d5fc55be041e2a0d76de80";
+    "74dbe4fa6b3320ffd2913bf818b220721eefbc86fa45af6a8f9d3eb3216bd97f";
 
 /// The 1.0 fold of `boundary/velocity_window_start_day.jsonl` (finding #14).
 const BOUNDARY_VELOCITY_WINDOW_START: &str =
@@ -123,12 +124,13 @@ fn the_velocity_window_total_is_compensated_at_the_xp_site() {
     // Trap T1 at `xp.py:207`: the window total is a CPython `sum()`, which is
     // compensated since 3.12. The three awards are `1e16`, `1.0`, `-1e16` on one
     // day, so the compensated total is 1.0 and the naive total is 0.0. The
-    // velocity then reads 1.0 / 28 = 0.0357 against a naive 0.0 (finding #8).
+    // velocity then reads 1.0 against a naive 0.0 (finding #8). 1.0 divided by 28
+    // (0.0357); the divisor is now the one day the history covers.
     let events = stream("boundary/xp_window_cancelling_sum.jsonl");
     assert_eq!(events.len(), 5);
     let model = fold(&events);
 
-    assert!((model.velocity.xp_per_day_28d - 0.0357).abs() < f64::EPSILON);
+    assert!((model.velocity.xp_per_day_28d - 1.0).abs() < f64::EPSILON);
     // The whole-log total is compensated too, and the per-day tally is the naive
     // `+=` of 1.0 — the two disagree on this stream, which is 1.0 behavior.
     assert_eq!(model.xp.total, 1);

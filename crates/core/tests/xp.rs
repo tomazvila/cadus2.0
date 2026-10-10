@@ -243,7 +243,14 @@ fn topics_per_week_over_window() {
         (noon_us(2026, 7, 10), "b".to_owned()),
         (noon_us(2026, 4, 1), "old".to_owned()),
     ];
-    let rate = topics_per_week(&completions, noon_us(2026, 7, 14), utc(), 28).unwrap();
+    let rate = topics_per_week(
+        &completions,
+        noon_us(2026, 7, 14),
+        utc(),
+        28,
+        Some(noon_us(2026, 6, 1)),
+    )
+    .unwrap();
     assert_approx(rate, 2.0 / 4.0, "two distinct topics over four weeks");
     assert_eq!(rate, 0.5);
 }

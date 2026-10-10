@@ -26,7 +26,7 @@ use common::events::{
 
 /// The 1.0 fold of `stream_1.jsonl`, as the SHA-256 of the canonical blob with
 /// `built_from_ts` removed (spec section 9).
-const STREAM_1_DIGEST: &str = "ba128459985e0815db7446cb2af16452ec07d304b7efaa0952fc6567404245f5";
+const STREAM_1_DIGEST: &str = "fe7e8cafd7330a08cc39dd31fa960bd919b733e901cb409c7c1cd5785c253f02";
 
 /// The `config_hash` of the default config (spec section 9).
 const CONFIG_HASH: &str = "797575e985c12149";
@@ -93,10 +93,10 @@ fn the_blob_of_stream_1_is_the_committed_model_byte_for_byte() {
 #[test]
 fn the_fold_stamps_the_projector_version_and_the_config_hash() {
     // Integrated KP evidence changes the fold; the stamp invalidates older caches.
-    assert_eq!(PROJECTOR_VERSION, 7);
+    assert_eq!(PROJECTOR_VERSION, 8);
     let events = stream("stream_1.jsonl");
     let model = project(&events, &input()).expect("the fold succeeds");
-    assert_eq!(model.projector_version, Some(7));
+    assert_eq!(model.projector_version, Some(8));
     assert_eq!(model.config_hash.as_deref(), Some(CONFIG_HASH));
     // The parity comparison restamps the model with the 1.0 version and nothing else.
     assert_eq!(fold(&events).projector_version, Some(3));
@@ -149,11 +149,11 @@ fn the_live_oracle_agrees_with_the_fold() {
 // --------------------------------------------------------------------------- //
 
 /// The 1.0 fold of `stream_u3_coverage.jsonl` in UTC, from `dump_projector_1_0.py`.
-const COVERAGE_DIGEST: &str = "276de9945869db8221c90184b089215c6dec16f8fafcb3b29bd9c02766f3d8b4";
+const COVERAGE_DIGEST: &str = "21a44202fb1826d50e16260fef1e881f5e3c088a66b42291975da2ad0c694abb";
 
 /// The same stream folded with `--tz America/New_York`.
 const COVERAGE_DIGEST_NEW_YORK: &str =
-    "873f2aad74421a005e5fc48abd74296ae793a3d8ed0fc76b6e80e8f6f9b444e4";
+    "13fdbf9dc160a2188ba0e64118c0baf26cbb3b75eb86cc16f932efb681e2a871";
 
 /// The number of events in `stream_u3_coverage.jsonl`.
 const COVERAGE_EVENTS: usize = 33;

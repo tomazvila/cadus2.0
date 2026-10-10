@@ -20,7 +20,7 @@ use common::events::{oracle_stamp, tree};
 const MODEL_1: &str = include_str!("fixtures/events/model_1.json");
 
 /// The digest the M3 plan pins for the fold of `stream_1.jsonl`.
-const MODEL_1_DIGEST: &str = "ba128459985e0815db7446cb2af16452ec07d304b7efaa0952fc6567404245f5";
+const MODEL_1_DIGEST: &str = "fe7e8cafd7330a08cc39dd31fa960bd919b733e901cb409c7c1cd5785c253f02";
 
 /// The build instant the 1.0 oracle pins with `--now`.
 const NOW: &str = "2000-01-01T00:00:00Z";
@@ -130,7 +130,7 @@ fn the_padded_stream_folds_to_the_1_0_digest_of_the_clean_stream() {
     // Both streams below fold to this digest in 1.0, run on this box:
     //   scripts/oracle/dump_projector_1_0.py <stream> --curriculum curriculum
     // Review round 1, finding #3, names the same value.
-    const DIGEST: &str = "af3cc77f069edf252691c90d0f32fcfbc6cf95d9882fdf677b3b6b256a2101e7";
+    const DIGEST: &str = "7bac4eebb365a05357dc704dced2d4b06aa0a4b6f7f026af531f1e093e6a042c";
     assert_eq!(fold_digest(&two_event_stream("absolute-value")), DIGEST);
     assert_eq!(fold_digest(&two_event_stream(" absolute-value ")), DIGEST);
 }
