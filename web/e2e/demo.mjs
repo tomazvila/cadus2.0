@@ -74,7 +74,7 @@ async function main() {
   if (rows !== 2) run.fail(`the accessible list holds ${rows} rows, not 2`);
   await run.snap('map-list');
 
-  await page.getByRole('button', { name: 'Done' }).click();
+  await page.getByRole('button', { name: 'Back to dashboard' }).click();
   await page.waitForSelector('.view-dashboard .primary-action', { timeout: 25000 });
 
   // --- a lesson: teach, then practise, and KaTeX must have run ---------------
@@ -103,7 +103,7 @@ async function main() {
   // FIRST, and before anything else touches the lesson. A backend that advances a cursor
   // per serve is out of step with the learner from the second call onward, and every step
   // after it then fails for a reason that hides this one.
-  await page.locator('.btn-exit').click();
+  await page.getByRole('button', { name: 'Exit', exact: true }).click();
   await page.waitForSelector('.view-dashboard .primary-action', { timeout: 25000 });
   run.note('left the lesson for the dashboard');
   const again = await intoLesson();
@@ -139,7 +139,7 @@ async function main() {
   // --- the placement: three ground rules, and no solution, ever --------------
   await home();
   await page.locator('.more-menu summary').click();
-  const placement = page.getByRole('button', { name: 'Re-run the placement' });
+  const placement = page.getByRole('button', { name: 'Answer the starting questions again' });
   await placement.waitFor({ state: 'visible', timeout: 10000 });
   await placement.click();
   await page.waitForSelector('.view-diagnostic .intro-card', { timeout: 25000 });
@@ -148,7 +148,7 @@ async function main() {
   if (groundRules !== 3) run.fail(`P3: the intro lists ${groundRules} ground rules, not 3`);
   await run.snap('placement-intro');
 
-  await page.getByRole('button', { name: 'Begin placement' }).click();
+  await page.getByRole('button', { name: 'Start the questions' }).click();
   await page.waitForSelector('.view-diagnostic .answer-input', { timeout: 25000 });
   run.note(`probe 1 · "${await run.text('.problem-text')}"`);
   await page.locator('.answer-input').fill('5');

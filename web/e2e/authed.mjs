@@ -104,7 +104,7 @@ async function main() {
   // The real curriculum is 1090 topics, and their layout runs on the main thread. Playwright
   // clicks only a STABLE element, so the control row has to settle first; the default
   // 30-second budget is not always enough for that layout on a loaded box.
-  await page.getByRole('button', { name: 'Done' }).click({ timeout: 90000 });
+  await page.getByRole('button', { name: 'Back to dashboard' }).click({ timeout: 90000 });
   // Wait for the dashboard's CONTENT, never for its shell. `GET /api/status` is a round
   // trip over the whole curriculum, and `.view-dashboard` matches the spinner too: a read
   // taken here decides which dashboard is on screen from an empty one. Two of the four
@@ -122,13 +122,13 @@ async function main() {
     await page.locator('.onboard-card .btn-hero').click();
   } else {
     await page.locator('.more-menu summary').click();
-    const placement = page.getByRole('button', { name: 'Re-run the placement' });
+    const placement = page.getByRole('button', { name: 'Answer the starting questions again' });
     await placement.waitFor({ state: 'visible', timeout: 10000 });
     await placement.click();
   }
   await page.waitForSelector('.view-diagnostic', { timeout: 25000 });
   run.note(onboard ? 'dashboard: onboarding (unplaced)' : 'dashboard: everyday (placed)');
-  await page.getByRole('button', { name: 'Begin placement' }).click();
+  await page.getByRole('button', { name: 'Start the questions' }).click();
   await page.waitForSelector('.view-diagnostic .intro-error, .view-diagnostic .answer-input', {
     timeout: 30000,
   });

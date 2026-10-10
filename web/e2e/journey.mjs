@@ -42,7 +42,7 @@ async function main() {
   const hint = await run.text('.integrated-hint');
   if (/1440|six workers|6 workers/i.test(hint)) run.fail(`hint revealed the answer: "${hint}"`);
   await fillApplication({ work: '1440', final: '6' });
-  await page.getByRole('button', { name: 'Submit the whole task' }).click();
+  await page.getByRole('button', { name: 'Submit all my answers' }).click();
   await page.waitForSelector('.integrated-result', { timeout: 25000 });
   if (!(await run.text('.integrated-score')).includes('2 of 2 steps')) {
     run.fail(`unexpected application feedback: "${await run.text('.integrated-score')}"`);
@@ -52,14 +52,14 @@ async function main() {
 
   await page.getByRole('button', { name: 'Continue' }).click();
   await page.waitForSelector('.integrated-task', { timeout: 25000 });
-  await page.waitForSelector('text=Delayed application assessment', { timeout: 25000 });
+  await page.waitForSelector('text=Delayed mixed problem', { timeout: 25000 });
   const delayedTitle = await run.text('.integrated-task .topic-name');
   if (delayedTitle === firstTitle) run.fail('the delayed assessment repeated the studied item');
   if ((await run.count('.teach-card')) !== 0) run.fail('the delayed assessment repeated instruction');
   run.note(`unseen delayed assessment · "${delayedTitle}" · no repeated instruction`);
   await checkMathRendered(run, '.integrated-scenario', 'the delayed assessment');
   await fillApplication({ work: '1440', final: '6' });
-  await page.getByRole('button', { name: 'Submit the whole task' }).click();
+  await page.getByRole('button', { name: 'Submit all my answers' }).click();
   await page.waitForSelector('.integrated-result', { timeout: 25000 });
   await run.snap('assessment-feedback');
 
@@ -74,13 +74,10 @@ async function main() {
   if (!report.includes('7 days later') || !report.includes('100%')) {
     run.fail(`the delayed result is absent from the retention report: "${report.slice(0, 180)}"`);
   }
-  // The card reads the probes scope; the integrated tally stays on the full report.
-  const integrated = await page.evaluate(async () => {
-    const res = await fetch('/api/report/retention', { credentials: 'same-origin' });
-    return (await res.json()).integrated;
-  });
-  if (!integrated || integrated.served !== 2 || integrated.passed !== 2) {
-    run.fail(`the integrated tally is wrong: ${JSON.stringify(integrated)}`);
+  // The fixture answers every scope with the full report, so the card shows the integrated
+  // tally line: two mixed problems given and two passed.
+  if (!/Mixed problems: 2 given, 2 passed/.test(report)) {
+    run.fail(`the integrated tally is wrong on the retention card: "${report.slice(0, 300)}"`);
   }
   run.note('retention report shows the 7-day independent result and integrated tally');
   await run.snap('retention-report');
