@@ -103,7 +103,7 @@ impl Budget {
             ));
         }
         self.reserved
-            .fetch_update(Ordering::SeqCst, Ordering::SeqCst, |spent| {
+            .try_update(Ordering::SeqCst, Ordering::SeqCst, |spent| {
                 spent
                     .checked_add(self.per_request)
                     .filter(|next| *next <= self.limit)
@@ -128,7 +128,7 @@ impl Budget {
             Ok(amount) => {
                 if self
                     .reported
-                    .fetch_update(Ordering::SeqCst, Ordering::SeqCst, |total| {
+                    .try_update(Ordering::SeqCst, Ordering::SeqCst, |total| {
                         total.checked_add(amount)
                     })
                     .is_err()
