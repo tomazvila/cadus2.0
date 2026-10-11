@@ -69,7 +69,7 @@ export const planOf = (...tasks: PlanTask[]): SessionPlanResponse => ({
   constraints: { lesson_ratio_ok: true, lesson_ratio: 0.5, throttle_ok: true, reviews: 1, lessons: 0 },
   course_complete: false,
   blocked: [],
-  frontier_blocked_until: null,
+  frontier_wait: null,
 });
 
 export const graded = (over: Partial<AnswerResponse> = {}): AnswerResponse => {
@@ -154,7 +154,6 @@ const nav = () => ({
   onUnauthorized: vi.fn(),
   onExit: vi.fn(),
   onQuiz: vi.fn(),
-  onDiagnostic: vi.fn(),
 });
 
 /** `plan: undefined` MEANS "read the plan yourself", so the key is honored, not defaulted. */

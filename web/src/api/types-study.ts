@@ -5,7 +5,7 @@
  * here.
  */
 import type { RenderedVisual } from '@/lib/visual';
-import type { Remediation, XpState } from './types';
+import type { FrontierWait, Remediation, XpState } from './types';
 
 // ---------------------------------------------------------------------------
 // The session and the study loop
@@ -107,8 +107,8 @@ export interface SessionPlanResponse {
   course_complete: boolean;
   /** The planned tasks the readiness rule stopped. */
   blocked: BlockedTask[];
-  /** RFC 3339, or null when nothing blocks the frontier. */
-  frontier_blocked_until: string | null;
+  /** Set when every open lesson waits in the retry wait. Null otherwise. */
+  frontier_wait: FrontierWait | null;
   /**
    * D-PR1: every open revision chain (lesson and review), oldest first. A lesson chain names
    * the plan task that carries it.

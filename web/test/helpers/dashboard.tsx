@@ -37,6 +37,7 @@ const STATUS: StatusResponse = {
   quiz_due: false,
   drill_due: false,
   frontier: 4,
+  frontier_wait: null,
   due_reviews: 2,
   nearly_due: 1,
   ungraded_attempts: {},

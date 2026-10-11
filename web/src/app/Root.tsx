@@ -324,7 +324,6 @@ function Screen({ api, route, view, placement, onUnauthorized, goHome, setView }
           {...common}
           onExit={goHome}
           onQuiz={(task) => { setView({ name: 'quiz', task, fromSession: true }); }}
-          onDiagnostic={openDiagnostic}
         />
       );
     case 'quiz':

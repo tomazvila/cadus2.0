@@ -53,6 +53,8 @@ pub struct SessionPlan {
     pub course_complete: bool,
     /// When the first retry-delayed frontier lesson reopens.
     pub frontier_blocked_until: Option<Timestamp>,
+    /// The lesson that reopens first at `frontier_blocked_until`.
+    pub frontier_blocked_topic: Option<String>,
     /// The planned tasks the readiness rule of D-F5 stopped, in serve order.
     pub blocked: Vec<BlockedTask>,
 }

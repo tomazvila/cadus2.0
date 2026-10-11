@@ -160,8 +160,9 @@ fn the_config_load_parses_the_rule_once() {
     // The gate reads the loaded rule, not the 1.0 default.
     assert!(!kp_passed(&[true, true], config.lesson.pass_rule()));
     assert!(kp_passed(&[true, true, true], config.lesson.pass_rule()));
-    // `fail_after` is 5 and the loaded rule has not passed at five answers.
-    assert!(kp_failed(&[true, true, false, true, true], &config));
+    // `fail_after` counts misses: one miss does not fail, five misses do.
+    assert!(!kp_failed(&[true, true, false, true, true], &config));
+    assert!(kp_failed(&[false, false, false, false, false], &config));
     // A rule that moves moves the config hash.
     assert_ne!(config.config_hash().unwrap(), "797575e985c12149");
 }

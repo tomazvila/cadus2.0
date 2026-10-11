@@ -59,8 +59,6 @@ export interface SessionProps {
   onExit: () => void;
   /** A quiz is not this loop: the quiz screen owns the whole-quiz clock (QUIZ-budget). */
   onQuiz: (task: PlanTask) => void;
-  /** The placement, offered when the plan is empty. */
-  onDiagnostic: () => void;
 }
 
 /** The drill rule, re-exported for the tests that pin it beside the loop. */
@@ -73,7 +71,6 @@ export function Session({
   onUnauthorized,
   onExit,
   onQuiz,
-  onDiagnostic,
 }: SessionProps) {
   const life = useLifetime();
   // The day rollover closed the session on screen (`409 session_rolled_over`): drop what is
@@ -454,13 +451,12 @@ export function Session({
     return <section className="view-session"><LoadingBlock label="Saving your work…" /></section>;
   }
 
-  // No dead end: an empty plan offers the placement, and the wording says which empty it is.
+  // No dead end: an empty plan offers the way home, and the wording says which empty it is.
   // A plan with no task to stand on: nothing open, or everything already finished.
   if (session.plan !== null && session.task === null) {
     return (
       <EmptyPlan
         message={emptyPlanMessage(session.plan, session.allDone)}
-        onDiagnostic={onDiagnostic}
         onExit={onExit}
       />
     );

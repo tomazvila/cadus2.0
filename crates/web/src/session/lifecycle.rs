@@ -137,7 +137,7 @@ pub async fn session_start(req: Ready) -> Reply {
 
     let model = projection.model;
     let course = projection.view.enrollment_stack.last().map(String::as_str);
-    let (frontier_count, due_count, _) = due_counts(
+    let (front, due_count, _) = due_counts(
         &model,
         req.graph(),
         &req.content.cfg,
@@ -148,7 +148,7 @@ pub async fn session_start(req: Ready) -> Reply {
         "session": session,
         "reopened": reopened,
         "xp": json_of(&model.xp),
-        "frontier": frontier_count,
+        "frontier": front.available,
         "due_reviews": due_count,
     });
     reply_committed(tx, body).await

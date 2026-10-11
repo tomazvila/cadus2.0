@@ -5,8 +5,8 @@ mod diagnostic;
 use std::collections::BTreeSet;
 
 use crate::event::{
-    Attempt, Enrolled, LessonResult, ProfileReset, QuizResult, RemediationTriggered, ReviewResult,
-    Slug, TaskServed, TopicStatus, WorkQuality,
+    Attempt, Enrolled, KpProgress, LessonResult, ProfileReset, QuizResult, RemediationTriggered,
+    ReviewResult, Slug, TaskServed, TopicStatus, WorkQuality,
 };
 use crate::fire::interval_for;
 use crate::learner::{
@@ -251,6 +251,51 @@ impl Projector<'_> {
         self.apply_fire_result(topic, event.passed, event.quality_tier, ts, event.assisted);
         if confirmation && event.passed {
             self.set_status(topic, TopicStatus::Learning);
+        }
+        if event.passed && !event.assisted {
+            self.pass_confirmed_kp(event, ts);
+        }
+    }
+
+    /// A passed confirmation item of a failed knowledge point passes that point.
+    ///
+    /// The task id ends with `-confirm-{kp}`. If the point is `FailedOnce` or
+    /// `FailedTwice`, mark it `Passed`. If every point of the topic is then
+    /// `Passed`, the topic is `Learning` and the first completion stands.
+    fn pass_confirmed_kp(&mut self, event: &ReviewResult, ts: i64) {
+        let Some((_, kp)) = event
+            .task_id
+            .as_deref()
+            .and_then(|task_id| task_id.rsplit_once("-confirm-"))
+        else {
+            return;
+        };
+        let topic = event.topic.as_str();
+        let graph = self.graph;
+        let Some(idx) = graph.idx_of(topic) else {
+            return;
+        };
+        let Some(state) = self.topics.get_mut(topic) else {
+            return;
+        };
+        if !matches!(
+            state.kp_progress.get(kp),
+            Some(KpProgress::FailedOnce | KpProgress::FailedTwice)
+        ) {
+            return;
+        }
+        state.kp_progress.insert(kp.to_owned(), KpProgress::Passed);
+        let all_passed = graph
+            .knowledge_points(idx)
+            .iter()
+            .all(|point| state.kp_progress.get(point.id.as_str()) == Some(&KpProgress::Passed));
+        if !all_passed {
+            return;
+        }
+        self.set_status(topic, TopicStatus::Learning);
+        if !self.learned_at.contains_key(topic) {
+            self.learned_at.insert(topic.to_owned(), ts);
+            self.completions.push((ts, topic.to_owned()));
         }
     }
 

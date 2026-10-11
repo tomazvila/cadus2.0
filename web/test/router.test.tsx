@@ -57,7 +57,7 @@ function serveQuiz(api: ApiClient, problem: Partial<ServedProblem> = {}): void {
     },
     course_complete: false,
     blocked: [],
-    frontier_blocked_until: null,
+    frontier_wait: null,
   });
   // The serve value is 120 seconds, and it is NOT the quiz clock.
   vi.spyOn(api, 'taskServe').mockResolvedValue({

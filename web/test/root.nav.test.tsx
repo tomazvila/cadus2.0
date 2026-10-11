@@ -28,6 +28,9 @@ describe('the shell navigation', () => {
 
     act(() => { history.back(); });
     await waitFor(() => expect(document.title).toBe('Dashboard - Cadus'));
+    // The dashboard loads its status after the title changes. Wait for it, so
+    // no reply lands after the test environment is gone.
+    await screen.findByRole('button', { name: /Continue studying/ });
   });
 
   it('hides Map and Log out while a lesson is on screen', async () => {

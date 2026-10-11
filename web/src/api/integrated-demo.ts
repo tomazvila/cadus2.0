@@ -191,7 +191,7 @@ export function createIntegratedDemoApi(): ApiClient {
       },
       course_complete: false,
       blocked: [],
-      frontier_blocked_until: null,
+      frontier_wait: null,
     }),
     taskTeach: async (taskId) => {
       requireKnown(taskId);

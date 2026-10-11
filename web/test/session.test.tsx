@@ -52,12 +52,11 @@ describe('the study loop', () => {
     expect(document.querySelector('.problem-text')).toBeTruthy();
   });
 
-  it('offers the placement when the plan is empty, so the screen is no dead end', async () => {
-    const { onDiagnostic, onExit } = await mount({ plan: planOf() });
+  it('offers only the way home when the plan is empty', async () => {
+    const { onExit } = await mount({ plan: planOf() });
 
     expect(screen.getByText('Nothing is due right now. Come back later.')).toBeTruthy();
-    fireEvent.click(screen.getByRole('button', { name: 'Take the starting questions' }));
-    expect(onDiagnostic).toHaveBeenCalledTimes(1);
+    expect(screen.queryByRole('button', { name: 'Take the starting questions' })).toBeNull();
     fireEvent.click(screen.getByRole('button', { name: 'Back to dashboard' }));
     expect(onExit).toHaveBeenCalledTimes(1);
   });

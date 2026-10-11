@@ -14,9 +14,9 @@ use std::collections::{BTreeMap, BTreeSet};
 
 use cadus_core::event::{TaskType, TopicStatus};
 use cadus_core::learner::TopicState;
-use cadus_core::selector::{compress, course_scope, due_reviews, order_lessons, review_mix};
+use cadus_core::selector::{compress, due_reviews, review_mix};
 use common::selector::{
-    LearnedSpec, Rng, cfg, compose_quiet, failed_lesson, fan, graph_of, id_set, ids, kp, learned,
+    LearnedSpec, Rng, cfg, compose_quiet, failed_lesson, fan, graph_of, ids, kp, learned,
     plan_kinds, pool_of, random_states, real_curriculum, star_states, states_of, topic,
 };
 use common::{T_US, days};
@@ -224,23 +224,6 @@ fn backlog_yields_at_least_one_lesson_per_three_reviews() {
     assert!(plan.constraints.throttle_ok);
     assert!(plan.constraints.lesson_ratio_ok);
     assert!(kinds.iter().filter(|kind| **kind == "lesson").count() >= 3);
-}
-
-#[test]
-fn order_lessons_prefers_knockout_mass() {
-    let graph = graph_of(
-        vec![
-            topic("root").build(),
-            topic("child").prereqs(&[("root", 0.3, false)]).build(),
-            topic("la").prereqs(&[("child", 0.9, true)]).build(),
-            topic("lb").prereqs(&[("root", 0.9, true)]).build(),
-        ],
-        &[],
-    );
-    let scope = course_scope(&graph, None);
-    let ordered = order_lessons(&ids(&["lb", "la"]), &graph, &id_set(&["child"]), &scope);
-    // `tests/test_selector.py:275`.
-    assert_eq!(ordered.first().map(String::as_str), Some("la"));
 }
 
 #[test]

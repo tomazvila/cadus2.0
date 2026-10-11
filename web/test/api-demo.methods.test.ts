@@ -213,6 +213,7 @@ describe('the demo payloads, literally', () => {
   it('answers the status of the frozen contract', async () => {
     vi.useFakeTimers();
     expect(await settle(createDemoApi().getStatus())).toEqual({
+      frontier_wait: null,
       ungraded: 0,
       last_topic: { id: 'whole-numbers', name: 'Whole numbers' },
       last_active_at: '2026-08-29T16:30:00Z',
@@ -279,7 +280,7 @@ describe('the demo payloads, literally', () => {
       constraints: { lesson_ratio_ok: true, lesson_ratio: 0.5, throttle_ok: true, reviews: 2, lessons: 1 },
       course_complete: false,
       blocked: [],
-      frontier_blocked_until: null,
+      frontier_wait: null,
     });
     expect((await settle(demo.sessionEnd())).session).toBe('demo-session');
   });

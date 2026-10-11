@@ -68,7 +68,8 @@ pub use regrade::apply_regrades;
 /// fold bumps this number, and a bump replays every model in full (D-O6).
 /// Version 7 indexes instructed application and delayed integrated assessments.
 /// Version 8 divides the velocity by the days the history covers.
-pub const PROJECTOR_VERSION: i64 = 8;
+/// Version 9 passes a failed knowledge point on a passed confirmation item.
+pub const PROJECTOR_VERSION: i64 = 9;
 
 /// The neutral prior a placed topic's diagnostic answers fold onto (`projector.py:98`).
 pub const ABILITY_SEED_PRIOR: f64 = 0.5;

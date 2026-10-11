@@ -11,7 +11,7 @@ use common::sessions::*;
 
 use std::collections::BTreeMap;
 
-use cadus_core::event::{Event, SchemaVersion, Timestamp, TopicStatus};
+use cadus_core::event::{Event, KpProgress, SchemaVersion, Timestamp, TopicStatus};
 use cadus_core::learner::{LearnerModel, TopicState};
 use cadus_web::state::WebState;
 use sqlx::types::chrono::Utc;
@@ -147,6 +147,7 @@ async fn status_reports_the_enrolled_course_and_the_counts() {
         assert_eq!(value["due_reviews"], 1);
         // `subtraction` is the only unmastered `c1` topic with no prerequisite.
         assert_eq!(value["frontier"], 1);
+        assert_eq!(value["frontier_wait"], Value::Null);
         assert_eq!(value["quiz_due"], false);
         assert_eq!(value["drill_due"], false);
         assert_eq!(value["xp"]["goal"], 40);
@@ -246,6 +247,56 @@ async fn modules_lists_the_enrolled_course_modules() {
 // --------------------------------------------------------------------------- //
 // The dashboard of a learner with no session, and the review that is nearly due
 // --------------------------------------------------------------------------- //
+
+/// A frontier whose every lesson waits in the retry delay counts no open
+/// lesson, and `frontier_wait` names the lesson that opens first and when.
+#[tokio::test]
+async fn status_names_the_waiting_lesson_when_every_open_lesson_waits() {
+    TestDb::with(|db| async move {
+        let app = app(&db);
+        let user = common::seed_learner(&db, "wait@example.com").await;
+        seed_open_session(&db, user).await;
+        seed_event(&db, user, 2, &enrolled_c1()).await;
+        // `addition` is learned, so `subtraction` is the whole frontier of
+        // `c1`; its one point failed a moment ago, so its lesson waits.
+        let mut topics: BTreeMap<String, TopicState> = BTreeMap::new();
+        topics.insert(
+            "addition".to_string(),
+            TopicState {
+                status: TopicStatus::Learning,
+                rep_num: 1.0,
+                memory_base: 1.0,
+                t0: Some(Timestamp::from_micros(BASE_US)),
+                interval_days: 400.0,
+                ability: 0.6,
+                ..TopicState::default()
+            },
+        );
+        let mut failed = TopicState {
+            t0: Some(Timestamp::from_micros(Utc::now().timestamp_micros())),
+            ..TopicState::default()
+        };
+        failed
+            .kp_progress
+            .insert("kp1".to_string(), KpProgress::FailedOnce);
+        topics.insert("subtraction".to_string(), failed);
+        let model = LearnerModel {
+            topics,
+            ..LearnerModel::default()
+        };
+        common::seed_cached_model(&db, user, &model, 2).await;
+
+        let value = get_json(&app, user, "/api/status").await;
+
+        assert_eq!(value["frontier"], 0, "{value}");
+        assert_eq!(
+            value["frontier_wait"]["topic"]["id"], "subtraction",
+            "{value}"
+        );
+        assert!(value["frontier_wait"]["until"].is_string(), "{value}");
+    })
+    .await;
+}
 
 /// A model whose one topic stands on the frontier is not placed: the
 /// placement check reads its false arm on a cached model. The fold drops a

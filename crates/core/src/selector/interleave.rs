@@ -1,10 +1,7 @@
-//! The module interleaving, the review throttle, the constraint report, and
-//! the task ids (`selector.py:1160-1228`, `selector.py:1484-1519`).
-
-use std::collections::BTreeMap;
+//! The review throttle, the constraint report, and the task ids
+//! (`selector.py:1190-1228`, `selector.py:1484-1519`).
 
 use crate::config::Config;
-use crate::curriculum::Curriculum;
 use crate::numeric::round_dp;
 
 use super::plan::Constraints;
@@ -18,71 +15,6 @@ pub enum SlotKind {
     Review,
     /// A frontier lesson.
     Lesson,
-}
-
-/// Reorder the importance-ranked lessons across their modules
-/// (`_arrange_lessons`, `selector.py:1160-1187`).
-///
-/// At each step it takes from a module other than the last one, preferring the
-/// module with the most lessons left; a tie prefers the module that appeared
-/// first. It falls back to a same-module lesson only when nothing else remains.
-#[must_use]
-pub fn arrange_lessons(lessons: &[String], graph: &Curriculum) -> Vec<String> {
-    let mut groups: BTreeMap<String, Vec<String>> = BTreeMap::new();
-    let mut module_order: Vec<String> = Vec::new();
-    for tid in lessons {
-        let module = graph
-            .idx_of(tid)
-            .map_or_else(String::new, |idx| graph.module_of(idx).to_owned());
-        if !groups.contains_key(&module) {
-            module_order.push(module.clone());
-        }
-        groups.entry(module).or_default().push(tid.clone());
-    }
-
-    let mut result: Vec<String> = Vec::with_capacity(lessons.len());
-    let mut last: Option<String> = None;
-    while let Some((module, lesson)) = take_next(&module_order, &mut groups, last.as_deref()) {
-        result.push(lesson);
-        last = Some(module);
-    }
-    result
-}
-
-/// Take the next lesson: from the fullest module other than `last`, or from
-/// `last` itself when nothing else remains. `None` once every group is empty.
-fn take_next(
-    module_order: &[String],
-    groups: &mut BTreeMap<String, Vec<String>>,
-    last: Option<&str>,
-) -> Option<(String, String)> {
-    let non_empty: Vec<&String> = module_order
-        .iter()
-        .filter(|module| groups.get(*module).is_some_and(|group| !group.is_empty()))
-        .collect();
-    let mut avail: Vec<&String> = non_empty
-        .iter()
-        .copied()
-        .filter(|module| Some(module.as_str()) != last)
-        .collect();
-    if avail.is_empty() {
-        avail = non_empty;
-    }
-    // Python `max` keeps the FIRST maximum of `(len(group), -order_index)`.
-    // Walking `avail` in module order makes `-order_index` descend, so a
-    // strict `>` on the length alone reproduces it.
-    let mut best: Option<&String> = None;
-    let mut best_len = 0_usize;
-    for module in avail {
-        let len = groups.get(module).map_or(0, Vec::len);
-        if best.is_none() || len > best_len {
-            best = Some(module);
-            best_len = len;
-        }
-    }
-    let module = best?;
-    let lesson = groups.get_mut(module).map(|group| group.remove(0));
-    lesson.map(|lesson| (module.clone(), lesson))
 }
 
 /// Interleave reviews and lessons (`_interleave`, `selector.py:1190-1219`).
@@ -184,24 +116,11 @@ pub fn assign_ids(tasks: &mut [Task], session_id: &str) {
 mod tests {
     use super::*;
     use crate::event::TaskType;
-    use crate::fire::testing::{ladder, topic};
 
     #[test]
-    fn the_sequence_alternates_modules_and_throttles_the_reviews() {
+    fn the_sequence_throttles_the_reviews() {
         let cfg = Config::default();
-        let tree = ladder(&[
-            ("f", &[], vec![topic("fa", &[])]),
-            (
-                "n",
-                &[],
-                vec![topic("na", &[]), topic("nb", &[]), topic("nc", &[])],
-            ),
-        ]);
         let lessons = ["fa", "na", "nb", "nc", "ghost"].map(str::to_owned);
-        assert_eq!(
-            arrange_lessons(&lessons, &tree),
-            ["na", "fa", "nb", "ghost", "nc"]
-        );
         let reviews = ["r0", "r1", "r2", "r3"].map(str::to_owned);
         let seq = interleave(&reviews, &lessons[..1], &cfg);
         let kinds: Vec<SlotKind> = seq.iter().map(|(kind, _)| *kind).collect();

@@ -1,6 +1,7 @@
 //! `compose_session`: the ordered session plan of PEDAGOGY 5
 //! (`selector.py:1235-1481`).
 
+use std::cmp::Ordering;
 use std::collections::{BTreeMap, BTreeSet};
 
 use crate::config::Config;
@@ -16,14 +17,14 @@ use super::context::SessionContext;
 use super::eligible::{gate_of, hold_lessons, hold_quiz, hold_topics};
 use super::frontier::Frontier;
 use super::gap_fill::is_course_complete;
-use super::interleave::{SlotKind, arrange_lessons, assign_ids, interleave};
+use super::interleave::{SlotKind, assign_ids, interleave};
 use super::mixed_review::joins_mixed_review;
 use super::multistep::{multistep_components, multistep_is_due, multistep_task, remediation_tasks};
 use super::plan::{BlockedTask, SessionPlan};
 use super::quiz::{QuizSampler, quiz_composer, quiz_is_due};
 use super::reserve::reserve_open_plan;
 use super::retention::retention_probe;
-use super::review::{due_reviews, nearly_due, order_lessons_with};
+use super::review::{due_reviews, nearly_due};
 use super::task::{
     Task, drill_task, knockout_count, lesson_task, probe_task, quiz_task, review_task,
 };
@@ -44,6 +45,21 @@ struct ReviewPlan {
     lessons: Vec<String>,
     /// The reviews served before their due date.
     nearly_served: BTreeSet<String>,
+}
+
+/// The lessons in course order: ascending load index, and an id with no index last by id.
+fn course_order(lessons: &[String], graph: &Curriculum) -> Vec<String> {
+    let mut keyed: Vec<(Option<usize>, &String)> = lessons
+        .iter()
+        .map(|tid| (graph.idx_of(tid).map(|idx| graph.load_index(idx)), tid))
+        .collect();
+    keyed.sort_by(|left, right| match (left.0, right.0) {
+        (Some(a), Some(b)) => a.cmp(&b).then_with(|| left.1.cmp(right.1)),
+        (Some(_), None) => Ordering::Less,
+        (None, Some(_)) => Ordering::Greater,
+        (None, None) => left.1.cmp(right.1),
+    });
+    keyed.into_iter().map(|(_, tid)| tid.clone()).collect()
 }
 
 impl ReviewPlan {
@@ -96,16 +112,7 @@ impl ReviewPlan {
                 .collect();
             nearly_served = nearly_knockers.iter().cloned().collect();
             review_topics.extend(nearly_knockers);
-            let review_targets: BTreeSet<String> =
-                due.iter().chain(nearly.iter()).cloned().collect();
-            let ranked = order_lessons_with(
-                &front.available,
-                graph,
-                &review_targets,
-                &front.course_topics,
-                cache,
-            );
-            lessons = arrange_lessons(&ranked, graph);
+            lessons = course_order(&front.available, graph);
         }
         Self {
             due,
@@ -492,6 +499,22 @@ mod tests {
             front.blocked_until,
             Some(T_US + cfg.lesson.retry_delay_days * 86_400_000_000)
         );
+        assert_eq!(front.blocked_topic.as_deref(), Some("lesson"));
+        // The report names the waiting lesson and the instant it opens.
+        let report = crate::selector::frontier_report(&blocked, &tree, &cfg, T_US, None);
+        assert_eq!(report.available, 0);
+        assert_eq!(
+            report.wait,
+            Some(crate::selector::FrontierWait {
+                topic: "lesson".to_owned(),
+                until_us: T_US + cfg.lesson.retry_delay_days * 86_400_000_000,
+            })
+        );
+        // Once the wait is over, the lesson is ready and no wait shows.
+        let later = T_US + cfg.lesson.retry_delay_days * 86_400_000_000;
+        let open = crate::selector::frontier_report(&blocked, &tree, &cfg, later, None);
+        assert_eq!(open.available, 1);
+        assert_eq!(open.wait, None);
     }
 
     #[test]

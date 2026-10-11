@@ -8,12 +8,11 @@ use cadus_core::event::{TaskType, Timestamp};
 use cadus_core::learner::LearnerModel;
 use cadus_core::readiness::{Blocker, ReadinessSet};
 use cadus_core::selector::{
-    BlockedTask, SeededSampler, SessionContext, SessionPlan, Task, compose_session,
+    BlockedTask, FrontierWait, SeededSampler, SessionContext, SessionPlan, Task, compose_session,
     gap_fill_chain_for_stack, is_course_complete, resolve_gap_fill_stack,
 };
 use cadus_store::state::SessionView;
 use serde_json::{Value, json};
-use sqlx::types::chrono::{DateTime, Utc};
 
 use super::store::{Ready, Reply, no_open_session, reply_read};
 use crate::state::{Content, WebState};
@@ -92,6 +91,15 @@ pub async fn session_plan(req: Ready) -> Reply {
         })
         .collect();
     let complete = is_course_complete(&model.topics, graph, &req.content.cfg, course, None);
+    // The lesson that opens first when every open lesson waits (the retry wait).
+    let wait = plan
+        .frontier_blocked_topic
+        .clone()
+        .zip(plan.frontier_blocked_until)
+        .map(|(topic, until)| FrontierWait {
+            topic,
+            until_us: until.micros(),
+        });
 
     let body = json!({
         "session": plan.session,
@@ -106,10 +114,7 @@ pub async fn session_plan(req: Ready) -> Reply {
         },
         "course_complete": complete,
         "blocked": plan.blocked.iter().map(blocked_json).collect::<Vec<Value>>(),
-        "frontier_blocked_until": plan
-            .frontier_blocked_until
-            .and_then(|stamp| DateTime::<Utc>::from_timestamp_micros(stamp.micros()))
-            .map(|stamp| stamp.to_rfc3339()),
+        "frontier_wait": super::dashboard::frontier_wait_json(graph, wait.as_ref()),
         "open_revisions": open_revisions,
     });
     reply_read(tx, body).await

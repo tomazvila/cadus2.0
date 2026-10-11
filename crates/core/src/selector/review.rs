@@ -162,40 +162,6 @@ pub fn importance(
     importance_with(tid, graph, review_targets, course_topics, &mut cache)
 }
 
-/// [`order_lessons`] over a shared weight memo.
-pub(super) fn order_lessons_with(
-    lessons: &[String],
-    graph: &Curriculum,
-    review_targets: &BTreeSet<String>,
-    course_topics: &TopicSet,
-    cache: &mut ReachCache<'_>,
-) -> Vec<String> {
-    let mut keyed: Vec<(f64, String)> = lessons
-        .iter()
-        .map(|tid| {
-            (
-                -importance_with(tid, graph, review_targets, course_topics, cache),
-                tid.clone(),
-            )
-        })
-        .collect();
-    keyed.sort_by(float_then_id);
-    keyed.into_iter().map(|(_, tid)| tid).collect()
-}
-
-/// The frontier lessons ordered by descending importance, id ascending on a tie
-/// (`order_lessons`, `selector.py:617-629`).
-#[must_use]
-pub fn order_lessons(
-    lessons: &[String],
-    graph: &Curriculum,
-    review_targets: &BTreeSet<String>,
-    course_topics: &TopicSet,
-) -> Vec<String> {
-    let mut cache = ReachCache::new(graph);
-    order_lessons_with(lessons, graph, review_targets, course_topics, &mut cache)
-}
-
 /// The review question mix: the topic's knowledge points, then its component
 /// skills, sorted (`review_mix`, `selector.py:637-647`).
 #[must_use]
@@ -271,10 +237,6 @@ mod tests {
         assert_eq!(
             importance("b", &tree, &targets, &scope),
             0.9 + 1.0 + CORE_BONUS
-        );
-        assert_eq!(
-            order_lessons(&["c".to_owned(), "b".to_owned()], &tree, &targets, &scope),
-            ["b", "c"]
         );
         assert_eq!(review_mix(&tree, "b"), ["kp1", "component:a"]);
         assert!(review_mix(&tree, "ghost").is_empty());

@@ -52,6 +52,17 @@ fn enrolled_course(events: &[Event]) -> Option<String> {
 }
 
 /// The 2.0 task row in the shape `selector_1_0.json` records.
+/// Sort the lesson rows by topic inside the slots the lesson rows hold.
+fn lessons_sorted(mut rows: Vec<TaskRow>) -> Vec<TaskRow> {
+    let slots: Vec<usize> = (0..rows.len()).filter(|i| rows[*i].0 == "lesson").collect();
+    let mut lessons: Vec<TaskRow> = slots.iter().map(|i| rows[*i].clone()).collect();
+    lessons.sort();
+    for (slot, row) in slots.into_iter().zip(lessons) {
+        rows[slot] = row;
+    }
+    rows
+}
+
 fn task_rows(plan_tasks: &[cadus_core::selector::Task]) -> Vec<TaskRow> {
     plan_tasks
         .iter()
@@ -154,9 +165,14 @@ fn compose_session_reproduces_the_1_0_plan_of_every_seeded_state() {
             .with_limit(Some(SELECTOR_N));
         let plan = compose_session(&model.topics, tree(), cfg, t_us, &mut sampler, &ctx);
 
-        let actual = task_rows(&plan.tasks);
+        // D-L3: the lessons follow the course order, and 1.0 ranked them by importance
+        // and alternated the modules. The lesson slots and every other row still match
+        // 1.0 exactly. Only the order of the lesson rows among the lesson slots differs,
+        // so both sides sort the lesson rows by topic before the comparison.
+        let actual = lessons_sorted(task_rows(&plan.tasks));
+        let expected = lessons_sorted(state.tasks.clone());
         assert_eq!(
-            actual, state.tasks,
+            actual, expected,
             "RUST BUG: {} (seed {}) composes a different session than 1.0.\n  \
              rust {actual:?}\n  1.0  {:?}\n\
              Do NOT change the oracle or the fixture. Fix the port.",

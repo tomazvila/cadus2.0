@@ -1,4 +1,4 @@
-//! Selector part 3: the module interleaving, the course completion, the open plan and the remediation queue.
+//! Selector part 3: the lesson order, the course completion, the open plan and the remediation queue.
 //!
 //! The selector of spec section 6, pinned against the ORDER assertions of the
 //! 1.0 suite (`tests/test_selector.py`, `tests/test_gap_fill.py`).
@@ -16,8 +16,8 @@ use cadus_core::curriculum::Curriculum;
 use cadus_core::event::{TaskType, Timestamp, TopicStatus};
 use cadus_core::learner::{PendingRemediation, QuizState, TopicState};
 use cadus_core::selector::{
-    REMEDIATION_QUIZ_MISS, SessionContext, SessionPlan, Task, arrange_lessons, due_reviews,
-    interleave, remediation_for_quiz_miss, remediation_for_repeat_fail,
+    REMEDIATION_QUIZ_MISS, SessionContext, SessionPlan, Task, due_reviews, interleave,
+    remediation_for_quiz_miss, remediation_for_repeat_fail,
 };
 use common::selector::{
     LearnedSpec, blocked_frontier, cfg, compose_quiet, compose_with, compose_with_remediation,
@@ -44,18 +44,20 @@ fn session_s1<'a>(
 // --------------------------------------------------------------------------- //
 
 #[test]
-fn no_two_consecutive_lessons_from_the_same_module() {
+fn lessons_come_in_course_order() {
+    // Three frontier lessons from two modules. The load order is b1, a1, z1. The id
+    // order is a1, b1, z1, and module alternation would give a1, z1, b1.
     let graph = graph_of(
         vec![
             topic("root").build(),
+            topic("b1").build(),
             topic("a1").build(),
-            topic("a2").build(),
             topic("z1").build(),
         ],
         &[
             ("root", "Numbers"),
+            ("b1", "Numbers"),
             ("a1", "Numbers"),
-            ("a2", "Numbers"),
             ("z1", "Fractions"),
         ],
     );
@@ -63,45 +65,17 @@ fn no_two_consecutive_lessons_from_the_same_module() {
         "root",
         LearnedSpec::new(0.9).status(TopicStatus::Floor).build(),
     )]);
-    for tid in ["a1", "a2", "z1"] {
+    for tid in ["a1", "b1", "z1"] {
         states.insert(tid.to_owned(), TopicState::default());
     }
     let plan = compose_quiet(&states, &graph);
-    let modules: Vec<&str> = plan
+    let lessons: Vec<&str> = plan
         .tasks
         .iter()
         .filter(|task| task.task_type == TaskType::Lesson)
         .filter_map(|task| task.topic.as_deref())
-        .map(|tid| graph.module_of(graph.idx_of(tid).unwrap()))
         .collect();
-    // `tests/test_selector.py:352-353`. The two Numbers lessons rank ahead of the
-    // Fractions one, so a selector that ignored the last module used would serve
-    // them back to back.
-    assert_eq!(modules, vec!["Numbers", "Fractions", "Numbers"]);
-}
-
-#[test]
-fn arrange_lessons_alternates_modules() {
-    let graph = graph_of(
-        vec![
-            topic("na").build(),
-            topic("nb").build(),
-            topic("nc").build(),
-            topic("fa").build(),
-        ],
-        &[
-            ("na", "Numbers"),
-            ("nb", "Numbers"),
-            ("nc", "Numbers"),
-            ("fa", "Fractions"),
-        ],
-    );
-    // Three Numbers lessons and one Fractions lesson: the biggest module leads,
-    // then the other module breaks the run.
-    assert_eq!(
-        arrange_lessons(&ids(&["na", "nb", "nc", "fa"]), &graph),
-        ids(&["na", "fa", "nb", "nc"])
-    );
+    assert_eq!(lessons, vec!["b1", "a1", "z1"]);
 }
 
 #[test]

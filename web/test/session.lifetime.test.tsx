@@ -16,6 +16,9 @@ import {
   typeAnswer,
 } from './helpers/session';
 import { allowConsoleError } from './setup';
+import { frontierWaitText } from '@/lib/reopen';
+
+const WAIT = { topic: { id: 'fractions', name: 'Fractions' }, until: '2099-09-05T18:04:00Z' };
 import type {
   ApiClient, HintResponse, ServedProblem, SessionPlanResponse, TaskAnswerResponse, TeachResponse,
 } from '@/api/types';
@@ -136,7 +139,7 @@ describe('the plan edges', () => {
 
   it.each([
     [{ course_complete: true }, 'Course complete. Join your next course to keep going.'],
-    [{ frontier_blocked_until: '2026-09-05' }, 'New lessons wait until 2026-09-05.'],
+    [{ frontier_wait: WAIT }, frontierWaitText(WAIT)],
   ])('says which empty the plan is: %o', async (over, line) => {
     await mount({ plan: { ...planOf(), ...over } });
     expect(screen.getByText(line)).toBeTruthy();

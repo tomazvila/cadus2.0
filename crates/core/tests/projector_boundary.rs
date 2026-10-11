@@ -269,15 +269,22 @@ fn kp_passed_is_two_at_the_tail_or_three_of_the_first_four() {
     assert!(!kp_passed(&[false, true, false, true, false], rule));
 }
 
-/// `lesson.fail_after` is 5: five answers that have not passed fail the
+/// `lesson.fail_after` is 5: five misses without a pass fail the
 /// knowledge point, and a passed sequence never fails.
 #[test]
-fn kp_failed_is_five_answers_without_a_pass() {
+fn kp_failed_is_five_misses_without_a_pass() {
     let cfg = Config::default();
     assert!(!kp_failed(&[false, false, false, false], &cfg));
     assert!(kp_failed(&[false, false, false, false, false], &cfg));
-    assert!(kp_failed(&[false, true, false, true, false], &cfg));
-    // Three of the first four is a pass, so five answers do not fail it.
+    // Three misses in five answers are not five misses.
+    assert!(!kp_failed(&[false, true, false, true, false], &cfg));
+    assert!(kp_failed(
+        &[
+            true, false, true, false, true, false, true, false, true, false
+        ],
+        &cfg
+    ));
+    // Three of the first four is a pass, so it does not fail.
     assert!(!kp_failed(&[true, true, false, true, false], &cfg));
 }
 

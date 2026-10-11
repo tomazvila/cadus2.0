@@ -8,6 +8,7 @@
 import '../../styles/fix-session.css';
 import { Chip, Stat } from '@/components/primitives';
 import { fmtClock, num, signed } from '@/lib/format';
+import { frontierWaitText } from '@/lib/reopen';
 import { taskKindText, taskReasonText } from '@/lib/stageCopy';
 import type { PlanTask, ServedProblem, SessionEndResponse, SessionPlanResponse } from '@/api/types';
 
@@ -51,28 +52,22 @@ export function emptyPlanMessage(plan: SessionPlanResponse, allDone: boolean): s
   if (!plan.tasks.length && plan.blocked.length) {
     return `${num(plan.blocked.length)} topic(s) wait on lessons that are not ready yet.`;
   }
-  if (plan.frontier_blocked_until) {
-    return `New lessons wait until ${plan.frontier_blocked_until}.`;
-  }
+  if (plan.frontier_wait) return frontierWaitText(plan.frontier_wait);
   if (allDone) return 'Everything planned for today is done. Nice work.';
   return 'Nothing is due right now. Come back later.';
 }
 
 export interface EmptyPlanProps {
   message: string;
-  onDiagnostic: () => void;
   onExit: () => void;
 }
 
-/** No dead end: an empty plan offers the placement and the way home. */
-export function EmptyPlan({ message, onDiagnostic, onExit }: EmptyPlanProps) {
+/** No dead end: an empty plan shows one button, the way home. The dashboard More menu has the placement. */
+export function EmptyPlan({ message, onExit }: EmptyPlanProps) {
   return (
     <section className="view-session">
       <div className="empty">
         <p>{message}</p>
-        <button type="button" className="btn" onClick={onDiagnostic}>
-          Take the starting questions
-        </button>
         <button type="button" className="btn btn-primary" onClick={onExit}>
           Back to dashboard
         </button>

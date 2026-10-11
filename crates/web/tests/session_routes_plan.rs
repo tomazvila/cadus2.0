@@ -263,8 +263,12 @@ async fn the_plan_reports_when_a_blocked_frontier_reopens() {
         common::seed_cached_model(&db, user, &model, 2).await;
 
         let plan = plan_of(&app, user).await;
+        assert_eq!(
+            plan["frontier_wait"]["topic"]["id"], "subtraction",
+            "the plan names no waiting lesson: {plan}"
+        );
         assert!(
-            plan["frontier_blocked_until"].is_string(),
+            plan["frontier_wait"]["until"].is_string(),
             "the plan names no reopening: {plan}"
         );
     })

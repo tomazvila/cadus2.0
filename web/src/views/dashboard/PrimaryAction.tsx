@@ -2,6 +2,7 @@
  * The one primary action of the dashboard (W-C2), chosen by the state of the plan.
  *
  *   work scheduled      "Continue studying", with the line that names the work;
+ *   nothing, lessons in the retry wait: the line names the lesson and the time it opens;
  *   nothing, next course "Start <course>", with the diagnostic beside it (W-C3);
  *   nothing, last course the diagnostic IS the primary action (W-C3).
  *
@@ -9,6 +10,7 @@
  * prose alone is the dead end W-C3 exists to forbid.
  */
 import { num } from '@/lib/format';
+import { frontierWaitText } from '@/lib/reopen';
 import type { Busy } from '@/hooks/useBusy';
 import type { JourneyCourse, StatusResponse } from '@/api/types';
 
@@ -98,7 +100,11 @@ export function PrimaryAction({
   const nextCourse = nextCourseOf(status.courses);
   return (
     <div className="primary-action">
-      <p className="caught-up">You are all caught up. Nice work.</p>
+      <p className="caught-up">
+        {status.frontier_wait
+          ? frontierWaitText(status.frontier_wait)
+          : 'You are all caught up. Nice work.'}
+      </p>
       {nextCourse ? (
         <>
           <button

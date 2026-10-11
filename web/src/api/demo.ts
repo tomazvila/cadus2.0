@@ -241,6 +241,7 @@ export function createDemoApi(): ApiClient {
         quiz_due: false,
         drill_due: false,
         frontier: 4,
+        frontier_wait: null,
         due_reviews: 2,
         nearly_due: 1,
         mastery: { practiced: 9, inferred: 6, total: 50, to_confirm: ['whole-numbers'] },
@@ -326,7 +327,7 @@ export function createDemoApi(): ApiClient {
         },
         course_complete: false,
         blocked: [],
-        frontier_blocked_until: null,
+        frontier_wait: null,
       }),
 
     // SERVE-idem: the SAME problem comes back until an answer commits it. `cursor` is read

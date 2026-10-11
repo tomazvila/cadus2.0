@@ -13,12 +13,13 @@ use cadus_core::curriculum::{Curriculum, TopicIdx};
 use cadus_core::event::{Timestamp, TopicStatus};
 use cadus_core::learner::{LearnerModel, TopicState};
 use cadus_core::selector::{
-    SessionPlan, confirmations, course_scope, due_reviews, frontier, is_known, known_set,
-    nearly_due, quiz_is_due, schedule_drills,
+    FrontierReport, FrontierWait, SessionPlan, confirmations, course_scope, due_reviews,
+    frontier_report, is_known, nearly_due, quiz_is_due, schedule_drills,
 };
 use cadus_core::xp::{CourseCounts, course_counts};
 use cadus_store::state::{EventRow, latest_graded_topic, load_raw_events};
 use serde_json::{Map, Value, json};
+use sqlx::types::chrono::{DateTime, Utc};
 
 use super::EXPORT_MEDIA_TYPE;
 use super::plan::compose_plan;
@@ -53,18 +54,20 @@ fn journey(graph: &Curriculum, course: Option<&str>) -> Value {
     )
 }
 
-/// The three dashboard counts (`due_counts`, `service.py:1382-1418`).
+/// The dashboard counts: the open frontier report, the due reviews, and the
+/// nearly-due reviews (`due_counts`, `service.py:1382-1418`).
+///
+/// The frontier report counts the lessons the plan serves now. A lesson in the
+/// retry wait is not one of them, so the dashboard and the plan agree.
 pub(super) fn due_counts(
     model: &LearnerModel,
     graph: &Curriculum,
     cfg: &Config,
     t_us: i64,
     course: Option<&str>,
-) -> (usize, usize, usize) {
+) -> (FrontierReport, usize, usize) {
     let states = &model.topics;
-    let scope = course_scope(graph, course);
-    let mastered = known_set(states, graph);
-    let open_frontier = frontier(graph, &mastered).intersect(&scope);
+    let report = frontier_report(states, graph, cfg, t_us, course);
     let no_test_prep: BTreeSet<String> = BTreeSet::new();
     let due = due_reviews(states, graph, cfg, t_us, &no_test_prep);
     let due_set: BTreeSet<&str> = due.iter().map(String::as_str).collect();
@@ -72,7 +75,22 @@ pub(super) fn due_counts(
         .into_iter()
         .filter(|id| !due_set.contains(id.as_str()))
         .count();
-    (open_frontier.indices().count(), due.len(), nearly)
+    (report, due.len(), nearly)
+}
+
+/// The `frontier_wait` of the status and the plan: the lesson that opens first
+/// and when, or null when a lesson is open now or the course has none left.
+pub(super) fn frontier_wait_json(graph: &Curriculum, wait: Option<&FrontierWait>) -> Value {
+    wait.map_or(Value::Null, |wait| {
+        let name = graph
+            .idx_of(&wait.topic)
+            .and_then(|idx| graph.topic(idx))
+            .map(|topic| topic.name.as_str());
+        json!({
+            "topic": {"id": wait.topic, "name": name},
+            "until": DateTime::<Utc>::from_timestamp_micros(wait.until_us).map(|at| at.to_rfc3339()),
+        })
+    })
 }
 
 /// The three honest mastery numbers of the dashboard (D-F6).
@@ -185,7 +203,7 @@ pub async fn status(req: Ready) -> Reply {
     let cfg = &req.content.cfg;
     let t_us = req.now.micros();
     let course = view.enrollment_stack.last().map(String::as_str);
-    let (frontier_count, due_count, nearly_count) = due_counts(&model, graph, cfg, t_us, course);
+    let (front, due_count, nearly_count) = due_counts(&model, graph, cfg, t_us, course);
     let placed = model.topics.values().any(is_placed) || view.has_diagnostic;
     let quiz_due = quiz_is_due(
         Some(&model.quiz),
@@ -234,7 +252,10 @@ pub async fn status(req: Ready) -> Reply {
         "pending_remediation": json_of(&model.pending_remediation),
         "quiz_due": quiz_due,
         "drill_due": drill_due,
-        "frontier": frontier_count,
+        // The lessons open now. When every open lesson waits, `frontier_wait`
+        // names the one that opens first and when.
+        "frontier": front.available,
+        "frontier_wait": frontier_wait_json(graph, front.wait.as_ref()),
         "due_reviews": due_count,
         "nearly_due": nearly_count,
         // D-F6: the progress bar reads `velocity.course_progress`, which counts

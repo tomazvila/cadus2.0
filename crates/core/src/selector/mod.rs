@@ -51,11 +51,12 @@ pub use compose::{compose_session, probe_position};
 pub use compress::{Compression, compress};
 pub use confirm::{CONFIRM_PROBLEMS, confirmations};
 pub use context::SessionContext;
+pub use frontier::{FrontierReport, FrontierWait, frontier_report};
 pub use gap_fill::{
     blocking_gap_ancestors, gap_course_for, gap_fill_chain_for_stack, is_course_complete,
     resolve_gap_fill_stack, serveable_gap_frontier,
 };
-pub use interleave::{SlotKind, arrange_lessons, assign_ids, interleave};
+pub use interleave::{SlotKind, assign_ids, interleave};
 pub use mixed_review::{
     ReviewSlot, joins_mixed_review, mixed_review_block, mixed_review_order, next_mixed_review,
 };
@@ -68,8 +69,7 @@ pub use quiz::{
 pub use reserve::{ValidityContext, reserve_open_plan, task_still_valid};
 pub use retention::retention_probe;
 pub use review::{
-    due_reviews, importance, in_retry_delay, nearly_due, order_lessons, retry_available_at,
-    review_mix,
+    due_reviews, importance, in_retry_delay, nearly_due, retry_available_at, review_mix,
 };
 pub use task::{Task, start_kp};
 pub use topic_set::{TopicSet, course_scope, frontier, known_set, practiced_set};

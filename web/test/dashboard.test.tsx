@@ -116,6 +116,22 @@ describe('the dashboard', () => {
       .toEqual({ insideDetails: false, calls: 1 });
   });
 
+  it('names the lesson in the retry wait and offers no Continue studying', async () => {
+    const until = new Date(Date.now() + 3 * 3_600_000).toISOString();
+    await mount({
+      api: stubApi({
+        getStatus: async () => status({
+          ...EMPTY_PLAN,
+          courses: ONE_COURSE,
+          frontier_wait: { topic: { id: 'fractions', name: 'Fractions' }, until },
+        }),
+      }),
+    });
+    expect(screen.getByText(/^Fractions opens again .*\. A lesson with too many misses waits one day\.$/)).toBeTruthy();
+    expect(screen.queryByText('You are all caught up. Nice work.')).toBeNull();
+    expect(screen.queryByRole('button', { name: /Continue studying/ })).toBeNull();
+  });
+
   it('W-C3: an empty plan with a next course still offers the diagnostic beside it', async () => {
     const view = await mount({ api: stubApi({ getStatus: async () => status(EMPTY_PLAN) }) });
     expect(await pressInTheOpen('Re-check where you are', view.onDiagnostic))

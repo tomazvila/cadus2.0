@@ -182,6 +182,13 @@ export interface Remediation {
   targets: string[];
 }
 
+/** The lesson the retry wait holds: a lesson with too many misses waits one day. */
+export interface FrontierWait {
+  topic: { id: string; name: string | null };
+  /** RFC 3339. */
+  until: string;
+}
+
 /** `GET /api/status` (`session.rs:425`). Every key is always present. */
 export interface StatusResponse {
   course: CourseRef;
@@ -196,6 +203,8 @@ export interface StatusResponse {
   quiz_due: boolean;
   drill_due: boolean;
   frontier: number;
+  /** Set when every open lesson waits in the retry wait. Null otherwise. */
+  frontier_wait: FrontierWait | null;
   due_reviews: number;
   nearly_due: number;
   /**

@@ -190,13 +190,14 @@ pub fn kp_passed(seq: &[bool], rule: &PassRule) -> bool {
     rule.passed(seq)
 }
 
-/// Whether a lesson knowledge point failed (`projector.py:870-872`).
+/// Whether a lesson knowledge point failed.
 ///
-/// A knowledge point fails when `lesson.fail_after` answers stand and
-/// [`kp_passed`] is still false.
+/// The rule counts misses. A knowledge point fails when the number of `false`
+/// entries in `seq` reaches `lesson.fail_after` and [`kp_passed`] is still false.
 #[must_use]
 pub fn kp_failed(seq: &[bool], cfg: &Config) -> bool {
-    i64::try_from(seq.len()).unwrap_or(i64::MAX) >= cfg.lesson.fail_after
+    let misses = seq.iter().filter(|correct| !**correct).count();
+    i64::try_from(misses).unwrap_or(i64::MAX) >= cfg.lesson.fail_after
         && !kp_passed(seq, cfg.lesson.pass_rule())
 }
 
@@ -245,6 +246,12 @@ mod tests {
         assert!(!kp_passed(&[true, false], rule));
         assert!(kp_failed(&[false, false, false, false, false], &cfg));
         assert!(!kp_failed(&[true, true], &cfg));
+        // Four misses among six answers do not fail; the fifth miss does.
+        assert!(!kp_failed(&[false, true, false, true, false, false], &cfg));
+        assert!(kp_failed(
+            &[false, true, false, true, false, false, false],
+            &cfg
+        ));
     }
 
     /// A label attempt is not pass evidence; a typed or legacy attempt is.
