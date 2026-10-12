@@ -137,8 +137,9 @@ fn transferred_teach_fixture_has_one_imported_canonical_row_per_key() {
     let sources: BTreeMap<String, String> =
         serde_json::from_str(include_str!("fixtures/heldout_transferred_teach.json")).unwrap();
     // 69 before the courses rewrite; 7 keys lost their template on 2026-10-07
-    // (reports/unit01-retired-pending-templates.json), so 62 remain.
-    assert_eq!(sources.len(), 62);
+    // (reports/unit01-retired-pending-templates.json), so 62 remained. The Foundations
+    // merge (2026-10-12) dropped fraction-word-problems/kp2: 61 remain.
+    assert_eq!(sources.len(), 61);
     let imports: Value = serde_json::from_str(
         &std::fs::read_to_string(
             root().join("docs/content-foundations/whole-course-teach/import-manifest.json"),

@@ -1,11 +1,10 @@
 //! U5 acceptance, part 2: the per-stream properties of the 20 committed
 //! streams, one test module per stream (R5, D4, C2).
 //!
-//! Every expectation is a LITERAL that the 1.0 oracle produced and this repository
-//! committed. A stream whose Rust digest differs from its 1.0 digest is a RUST
-//! BUG. The failure report names the stream, prints the first differing window
-//! of the two blobs, and -- with `CADUS_ORACLE_PYTHON` set -- bisects the stream
-//! to the event index after which the two models diverge.
+//! Every expectation is a LITERAL that this repository committed.
+//! Re-based 2026-10-12 after the Foundations merge (D-C1): the values pin the 2.0 fold on the merged graph, not 1.0.
+//! A stream whose Rust digest differs from its literal is a defect. The failure report
+//! names the stream and prints the first differing window of the two blobs.
 
 #![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 
@@ -71,15 +70,17 @@ fn check_pre_correction(number: usize) {
     );
 }
 
-/// `project_incremental` reproduces the 1.0 result at EVERY split of the stream.
+/// `project_incremental` reproduces the committed result at EVERY split of the stream.
 ///
 /// At most splits that means it equals the full replay. At the splits
-/// `incremental_1_0.json` records it does NOT, and that is 1.0 behavior rather
+/// `incremental_1_0.json` records it does NOT, and that is the 2.0 fold behavior rather
 /// than a defect: `project_incremental` seeds FIRe from the cached model, so a
 /// `regraded` event in the new half that supersedes a grade the prior half
 /// already folded never reaches FIRe (`projector.py:794-830`; 1.0 routes such a
 /// stream down the full-replay path instead). The port must diverge at the same
-/// splits and to the same model, so both sides are pinned against 1.0 literals.
+/// splits and to the same model, so both sides are pinned against the committed literals.
+///
+/// Re-based 2026-10-12 after the Foundations merge (D-C1): the values pin the 2.0 fold on the merged graph, not 1.0.
 fn check_incremental(number: usize) {
     let entry = row(number);
     let carry = incremental_row(number);
@@ -90,7 +91,7 @@ fn check_incremental(number: usize) {
     assert_eq!(
         blob_digest(&full_model).expect("the digest builds"),
         carry.full_digest,
-        "{}: the full replay is not the 1.0 full replay",
+        "{}: the full replay is not the committed full replay",
         entry.stream
     );
 

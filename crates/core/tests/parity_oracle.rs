@@ -14,7 +14,7 @@ use common::dump::{curriculum_root, fixture_arena};
 
 /// The semantic curriculum hash of the checked-in tree (spec section 3).
 // Regenerated for the expanded live tree; independently derived alongside parity.rs.
-const TREE_HASH: &str = "b34ac9ee2d93afa4051d30669617d44811ac85e5eceac720f74f1d81189d1548";
+const TREE_HASH: &str = "ed934ce6df51ce650c051a167dde79aaecaac7df1729fa20b4cc849441138a89";
 
 /// The length of the dump in bytes, without the trailing newline.
 // 2026-10-07, courses rewrite: dump length 13,180,744 (was 10,922,819) and a new
@@ -24,7 +24,8 @@ const TREE_HASH: &str = "b34ac9ee2d93afa4051d30669617d44811ac85e5eceac720f74f1d8
 // 2026-10-07, courses rewrite (step_check removal, item-level figures, whole-number and mixed-number items): dump length 13,135,507 (was 13,154,791), measured with `dump_curriculum curriculum`; hash re-pinned.
 // 2026-10-08, grader pass 4 (stabilize): dump length 13,135,569 (was 13,135,509), measured with `dump_curriculum curriculum` on the tree after the 01-fractions-decimals wording edit of 2026-10-08; hash re-pinned.
 // 2026-10-08, story framing removed (direct questions, duplicates renumbered, finite-domain variants reworded): dump length 13,005,675 (was 13,135,569), measured with `dump_curriculum curriculum`; hash re-pinned.
-const DUMP_LEN: usize = 13_002_620;
+// 2026-10-12, Foundations merge (D-C1): dump length 12,927,302 (was 13,002,620), measured with `dump_curriculum curriculum`; hash re-pinned (was b34ac9ee...1548).
+const DUMP_LEN: usize = 12_927_302;
 
 #[test]
 fn the_binary_writes_the_dump_and_the_hash() {

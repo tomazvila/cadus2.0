@@ -1,6 +1,9 @@
 //! U3 acceptance, part 1: the fixture fold, the coverage stream, the
 //! incremental resume, and the live 1.0 oracle (R5, D3, D4, C2).
 //!
+//! Re-based 2026-10-12 after the Foundations merge (D-C1): the digests pin the 2.0
+//! fold on the merged graph, not 1.0.
+//!
 //! Every expected value below is a LITERAL: a digest, a byte string, or a number that
 //! `docs/reference/projector-1.0-spec.md` sections 8 and 9 pin, or that the comment
 //! above it derives by hand from `config.yaml`. No expectation calls the code under
@@ -26,7 +29,7 @@ use common::events::{
 
 /// The 1.0 fold of `stream_1.jsonl`, as the SHA-256 of the canonical blob with
 /// `built_from_ts` removed (spec section 9).
-const STREAM_1_DIGEST: &str = "fe7e8cafd7330a08cc39dd31fa960bd919b733e901cb409c7c1cd5785c253f02";
+const STREAM_1_DIGEST: &str = "a97242182f4555a9f7d4201ce1a5517f0f2b1679b8d8d7e634dd6c324ad3fc3e";
 
 /// The `config_hash` of the default config (spec section 9).
 const CONFIG_HASH: &str = "797575e985c12149";
@@ -103,14 +106,17 @@ fn the_fold_stamps_the_projector_version_and_the_config_hash() {
 }
 
 #[test]
-fn the_fold_reaches_forty_seven_topics_through_propagation() {
+fn the_fold_reaches_forty_one_topics_through_propagation() {
     // Five topics are named explicitly; encompassing propagation reaches the rest
     // (spec section 9, "Stream #1 coverage").
     let model = fold(&stream("stream_1.jsonl"));
-    assert_eq!(model.topics.len(), 47);
+    // Re-based 2026-10-12 after the Foundations merge (D-C1): 41 topics (was 47).
+    assert_eq!(model.topics.len(), 41);
     // A `review_result` on an untouched topic writes FIRe state and leaves the status
     // untouched (spec section 4.4).
-    let state = &model.topics["absolute-value-inequalities"];
+    // Re-keyed 2026-10-12 after the Foundations merge (D-C1): the old topic
+    // `absolute-value-inequalities` left the tree.
+    let state = &model.topics["basic-absolute-value-inequalities"];
     assert_eq!(state.status, TopicStatus::Untouched);
     assert!(state.t0.is_some());
     // The mastery floor of `foundations` stamps `floor` on these three.
@@ -149,11 +155,11 @@ fn the_live_oracle_agrees_with_the_fold() {
 // --------------------------------------------------------------------------- //
 
 /// The 1.0 fold of `stream_u3_coverage.jsonl` in UTC, from `dump_projector_1_0.py`.
-const COVERAGE_DIGEST: &str = "21a44202fb1826d50e16260fef1e881f5e3c088a66b42291975da2ad0c694abb";
+const COVERAGE_DIGEST: &str = "58e82f8e4b82427bb6c0a5b3429eff570e956f297172a0410f05314a42ca7b95";
 
 /// The same stream folded with `--tz America/New_York`.
 const COVERAGE_DIGEST_NEW_YORK: &str =
-    "13fdbf9dc160a2188ba0e64118c0baf26cbb3b75eb86cc16f932efb681e2a871";
+    "9b774e62eed516e973a84e72bb3629b080aa9b25dc5ef4cefb42c1be7ad0b461";
 
 /// The number of events in `stream_u3_coverage.jsonl`.
 const COVERAGE_EVENTS: usize = 33;

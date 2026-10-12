@@ -37,7 +37,7 @@ pub(crate) fn verify_historical_archive(
     );
     let technical_value = read(directory.join(technical["path"].as_str().unwrap()));
     assert_eq!(technical_value["status"], "pending-ai-review");
-    assert_eq!(technical_value["rows"].as_array().unwrap().len(), 735);
+    assert_eq!(technical_value["rows"].as_array().unwrap().len(), 713);
     let expected_inputs: BTreeSet<_> = std::iter::once("inputs/templates.json".to_owned())
         .chain((1..=30).map(|part| format!("drafts/part-{part:02}.json")))
         .collect();
@@ -133,7 +133,8 @@ pub(crate) fn verify_historical_archive(
             );
         }
     }
-    assert_eq!(rows.len(), 735);
+    // 735 before the Foundations merge (2026-10-12); 713 after it.
+    assert_eq!(rows.len(), 713);
     let generated: BTreeMap<String, String> = technical_value["historical_row_sha256"]
         .as_object()
         .expect("generated historical bindings")

@@ -1,5 +1,5 @@
 //! `apply_integers_negatives_recipes.py` raised every one of
-//! `02-integers-negatives.yaml`'s 46 knowledge points to at least four
+//! `02-integers-negatives.yaml`'s 41 knowledge points (46 before the Foundations merge, 2026-10-12) to at least four
 //! decidable exemplars, each with a per-KP recipe encoding that KP's own
 //! authored constraint (never the coarse operator-only generator this
 //! curriculum's `foundations_drafts.py`/`apply_foundations_held_out_exemplars.py`
@@ -32,7 +32,7 @@ fn every_recipe_kp_is_practicable_assessable_and_has_solutions() {
     let readiness = ReadinessIndex::build(&curriculum);
     let keys: Vec<String> =
         serde_json::from_str(include_str!("fixtures/integers_negatives_recipes_kps.json")).unwrap();
-    assert_eq!(keys.len(), 46);
+    assert_eq!(keys.len(), 41);
 
     for key in keys {
         assert!(

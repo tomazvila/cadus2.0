@@ -15,8 +15,10 @@
 //!    expected time weighs a full 1.0, and a slower correct answer discounts
 //!    toward [`SLOW_WEIGHT_FLOOR`]. An incorrect answer always weighs 1.0.
 //! 3. [`apply_answer`] folds that weight into the running plus-minus tally. A
-//!    correct answer credits the topic AND every prerequisite ancestor; an
-//!    incorrect one debits the topic AND every post-requisite descendant. A leaf
+//!    correct answer credits the topic AND every prerequisite ancestor in full. An
+//!    incorrect one debits the topic in full and every post-requisite descendant
+//!    by [`MISS_DESCENDANT_SHARE`] of the weight, so one miss leaves the region
+//!    above it undetermined and a second miss in the branch settles it. A leaf
 //!    topic also passes `diag.sibling_credit` of the same signed weight to its
 //!    sibling leaves in its module, which is the only lateral signal a leaf emits.
 //! 4. [`next_probe`] asks the undetermined probe topic whose answer settles the
@@ -48,6 +50,15 @@ pub use probe::probe_set;
 /// separate constant, because the two answer different questions. This one ends
 /// the questioning; `conditional_max` flags a thin placement.
 pub const DETERMINED_THRESHOLD: f64 = 1.0;
+
+/// The share of a miss weight that each post-requisite descendant of the asked
+/// topic takes.
+///
+/// One miss is a question, and two misses in a branch are an answer. With a full
+/// share, one slip at a mid-level topic settled the whole course above it as
+/// "not known". With half, a descendant reaches [`DETERMINED_THRESHOLD`] only
+/// after a second miss in its branch, so the region keeps its probes.
+pub const MISS_DESCENDANT_SHARE: f64 = 0.5;
 
 /// The floor of the accuracy-time weight of a correct answer.
 pub const SLOW_WEIGHT_FLOOR: f64 = 0.3;
@@ -239,8 +250,9 @@ pub fn answer_weight(correct: bool, expected_time_secs: f64, actual_secs: f64) -
 /// Fold one weighted answer into the tally.
 ///
 /// A correct answer adds the weight to the topic and to every prerequisite
-/// ancestor. An incorrect one subtracts it from the topic and from every
-/// post-requisite descendant. A leaf topic also moves `diag.sibling_credit` of the
+/// ancestor, in full. An incorrect one subtracts it from the topic in full and
+/// subtracts [`MISS_DESCENDANT_SHARE`] of it from every post-requisite
+/// descendant. A leaf topic also moves `diag.sibling_credit` of the
 /// signed weight to its sibling leaves, so a missed leaf spreads negative evidence
 /// the same way a correct one spreads positive evidence.
 ///
@@ -257,19 +269,22 @@ pub fn apply_answer(
         return;
     };
     let delta = if correct { weight } else { -weight };
-    let mut affected: BTreeSet<String> = BTreeSet::new();
-    affected.insert(topic.to_owned());
-    let reach = if correct {
-        graph.ancestors(idx)
+    // The asked topic takes the full delta. A credit reaches each ancestor in
+    // full. A miss reaches each descendant at `MISS_DESCENDANT_SHARE`.
+    let mut affected: BTreeMap<String, f64> = BTreeMap::new();
+    affected.insert(topic.to_owned(), delta);
+    if correct {
+        for other in graph.ancestors(idx) {
+            affected.insert(graph.id_of(other).to_owned(), delta);
+        }
     } else {
-        graph.descendants(idx)
-    };
-    for other in reach {
-        affected.insert(graph.id_of(other).to_owned());
+        for other in graph.descendants(idx) {
+            affected.insert(graph.id_of(other).to_owned(), delta * MISS_DESCENDANT_SHARE);
+        }
     }
-    for id in affected {
+    for (id, change) in affected {
         if let Some(balance) = state.balances.get_mut(&id) {
-            *balance += delta;
+            *balance += change;
         }
     }
 

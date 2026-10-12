@@ -37,7 +37,7 @@ fn archived_families_keep_canonical_replacements_and_wrong_samples_fail() {
     let report = run_rows(&rows, "target/hard-residual/regression");
     // These two unchanged drafts are already represented by the canonical
     // template19 candidates and their recorded worked examples.
-    let replaced = ["logarithm-basics/kp1", "logarithm-basics/kp2"];
+    let replaced = ["logarithm-basics/kp1", "logarithm-basics/kp3"];
     assert_template19_replacements(&rows, &replaced);
     assert_report_with_authored_collisions(&report, rows.len(), None, &replaced);
     let (curriculum, findings) = load_curriculum(&root().join("curriculum")).unwrap();

@@ -69,20 +69,21 @@ const ARENA_MEMORY_FRESH: f64 = 0.95;
 /// gates.
 const ARENA_DUE_STRIDE: usize = 5;
 
-/// The count of topics the committed curriculum tree holds.
-const ARENA_TOPICS: usize = 1_090;
+/// The count of topics the committed curriculum tree holds (Foundations merge,
+/// 2026-10-12).
+const ARENA_TOPICS: usize = 1_064;
 
-/// The count of topics the fixture puts into the states map.
-const ARENA_LEARNED_TOPICS: usize = 364;
+/// The count of topics the fixture puts into the states map (2026-10-12).
+const ARENA_LEARNED_TOPICS: usize = 355;
 
-/// The count of tasks every composition returns.
-const ARENA_TASKS: usize = 116;
+/// The count of tasks every composition returns (2026-10-12).
+const ARENA_TASKS: usize = 109;
 
 /// The `task_id` of the first task of every composition.
-const ARENA_FIRST_TASK: &str = "s_2026-08-29a-review-adding-subtracting-rational-expressions";
+const ARENA_FIRST_TASK: &str = "s_2026-08-29a-review-angle-of-elevation-depression";
 
 /// The `task_id` of the last task of every composition.
-const ARENA_LAST_TASK: &str = "s_2026-08-29a-drill-subtracting-integers";
+const ARENA_LAST_TASK: &str = "s_2026-08-29a-drill-single-digit-addition";
 
 /// The committed curriculum tree.
 fn real_curriculum() -> Curriculum {

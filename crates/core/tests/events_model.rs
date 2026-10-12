@@ -1,6 +1,8 @@
 //! M3 U1, part 2: the slug whitespace rule, what the fold reports instead of a
 //! wrong model, and the learner-model wire shape.
 //!
+//! Re-based 2026-10-12 after the Foundations merge (D-C1): the values pin the 2.0 fold
+//! on the merged graph, not 1.0.
 //! Every expected value here is a LITERAL taken from a committed 1.0 oracle artifact
 //! or from the port specification. Nothing is re-derived from the code under test.
 //! `tests/fixtures/events/model_1.json` is the 1.0 fold of `stream_1.jsonl`. Its
@@ -20,7 +22,7 @@ use common::events::{oracle_stamp, tree};
 const MODEL_1: &str = include_str!("fixtures/events/model_1.json");
 
 /// The digest the M3 plan pins for the fold of `stream_1.jsonl`.
-const MODEL_1_DIGEST: &str = "fe7e8cafd7330a08cc39dd31fa960bd919b733e901cb409c7c1cd5785c253f02";
+const MODEL_1_DIGEST: &str = "a97242182f4555a9f7d4201ce1a5517f0f2b1679b8d8d7e634dd6c324ad3fc3e";
 
 /// The build instant the 1.0 oracle pins with `--now`.
 const NOW: &str = "2000-01-01T00:00:00Z";
@@ -47,9 +49,9 @@ fn two_event_stream(topic: &str) -> String {
 const OVERFLOW_STREAM: &str = concat!(
     r#"{"course":"foundations","ts":"2026-01-01T09:00:00Z","type":"enrolled","v":1}"#,
     "\n",
-    r#"{"assisted":false,"passed":true,"quality_tier":"perfect","topic":"absolute-value-inequalities","ts":"2060-01-01T09:00:00Z","type":"lesson_result","v":1,"xp":10.0}"#,
+    r#"{"assisted":false,"passed":true,"quality_tier":"perfect","topic":"absolute-value-equations","ts":"2060-01-01T09:00:00Z","type":"lesson_result","v":1,"xp":10.0}"#,
     "\n",
-    r#"{"assisted":false,"passed":true,"quality_tier":"perfect","task_id":"t-1","topic":"absolute-value-inequalities","ts":"2026-01-02T09:00:00Z","type":"review_result","v":1,"weighted_score":1.0,"xp":5.0}"#,
+    r#"{"assisted":false,"passed":true,"quality_tier":"perfect","task_id":"t-1","topic":"absolute-value-equations","ts":"2026-01-02T09:00:00Z","type":"review_result","v":1,"weighted_score":1.0,"xp":5.0}"#,
     "\n",
     r#"{"session":null,"ts":"2026-01-03T09:00:00Z","type":"session_start","v":1}"#,
 );
@@ -127,10 +129,9 @@ fn a_padded_topic_id_parses_to_the_real_topic() {
 
 #[test]
 fn the_padded_stream_folds_to_the_1_0_digest_of_the_clean_stream() {
-    // Both streams below fold to this digest in 1.0, run on this box:
-    //   scripts/oracle/dump_projector_1_0.py <stream> --curriculum curriculum
-    // Review round 1, finding #3, names the same value.
-    const DIGEST: &str = "7bac4eebb365a05357dc704dced2d4b06aa0a4b6f7f026af531f1e093e6a042c";
+    // Re-based 2026-10-12 after the Foundations merge (D-C1): the values pin the 2.0
+    // fold on the merged graph, not 1.0.
+    const DIGEST: &str = "540e6825a90d1fa4ce207b524d332710c1a7b707f8cc734552889af82d73ed2c";
     assert_eq!(fold_digest(&two_event_stream("absolute-value")), DIGEST);
     assert_eq!(fold_digest(&two_event_stream(" absolute-value ")), DIGEST);
 }
@@ -150,13 +151,13 @@ fn a_non_finite_decay_stops_the_fold() {
     assert_eq!(
         error,
         ProjectorError::NonFinite {
-            topic: "absolute-value-inequalities".to_owned(),
+            topic: "absolute-value-equations".to_owned(),
             event_index: 2,
         }
     );
     assert_eq!(
         error.to_string(),
-        "the decay of topic `absolute-value-inequalities` at event 2 is not a finite number"
+        "the decay of topic `absolute-value-equations` at event 2 is not a finite number"
     );
 }
 
@@ -221,7 +222,8 @@ fn the_oracle_model_round_trips_to_its_pinned_digest() {
     let model = LearnerModel::from_json(MODEL_1).unwrap();
     assert_eq!(model.parity_blob().unwrap(), MODEL_1.trim_end());
     assert_eq!(model.parity_digest().unwrap(), MODEL_1_DIGEST);
-    assert_eq!(model.topics.len(), 47);
+    // Re-based 2026-10-12 after the Foundations merge (D-C1): 41 topics (was 47).
+    assert_eq!(model.topics.len(), 41);
     assert_eq!(model.projector_version, Some(3));
     assert_eq!(model.config_hash.as_deref(), Some("797575e985c12149"));
 }
@@ -283,18 +285,24 @@ fn a_default_topic_state_holds_the_pinned_initial_values() {
 #[test]
 fn a_topic_state_from_the_oracle_model_reads_every_field() {
     let model = LearnerModel::from_json(MODEL_1).unwrap();
-    let state = model.topics.get("absolute-value-inequalities").unwrap();
+    // Re-based 2026-10-12 after the Foundations merge (D-C1): the old topic
+    // `absolute-value-inequalities` left the tree, so the test reads
+    // `basic-absolute-value-inequalities`, which is also untouched with FIRe state.
+    let state = model
+        .topics
+        .get("basic-absolute-value-inequalities")
+        .unwrap();
     // Spec section 4.4: a `review_result` on an untouched topic leaves it untouched
     // while writing `repNum`, `memoryBase`, and `t0`.
     assert_eq!(state.status, TopicStatus::Untouched);
-    assert_eq!(state.memory_base, 0.85);
-    assert_eq!(state.rep_num, 1.127_185_631_752_380_7);
+    assert_eq!(state.memory_base, 0.7);
+    assert_eq!(state.rep_num, 0.7);
     assert_eq!(
         state.t0,
-        Some(Timestamp::parse("2026-03-10T22:53:40Z").unwrap())
+        Some(Timestamp::parse("2026-03-02T19:29:49Z").unwrap())
     );
-    assert_eq!(state.last_problems.len(), 4);
-    assert_eq!(state.kp_progress.len(), 3);
+    assert_eq!(state.last_problems.len(), 0);
+    assert_eq!(state.kp_progress.len(), 0);
 }
 
 #[test]

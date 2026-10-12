@@ -8,7 +8,7 @@ import tempfile
 from pathlib import Path
 
 PARTS = tuple(range(1, 31))
-COUNT = 735
+COUNT = 713  # 735 before the Foundations merge (2026-10-12)
 
 
 class Refused(ValueError):
@@ -97,7 +97,7 @@ def evidence_rows(evidence):
     source_paths = ["inputs/templates.json", *part_paths("drafts")]
     rows = evidence.get("rows")
     if not isinstance(rows, list) or len(rows) != COUNT:
-        raise Refused("technical evidence must contain 735 rows")
+        raise Refused("technical evidence must contain 713 rows")
     technical = keyed(rows, "technical evidence")
     for key, row in technical.items():
         validate_technical_row(key, row)

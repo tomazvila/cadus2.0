@@ -19,7 +19,7 @@ fn kp_keys() -> Vec<String> {
 
 #[test]
 fn the_fixture_names_every_knowledge_point_of_the_unit() {
-    assert_eq!(kp_keys().len(), 102);
+    assert_eq!(kp_keys().len(), 94);
 }
 
 #[test]

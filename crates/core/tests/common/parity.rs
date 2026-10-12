@@ -221,8 +221,9 @@ pub fn report_mismatch(name: &str, tz: Option<&str>, actual: &str, expected: &st
         |at| format!("the models diverge after event index {at}"),
     );
     panic!(
-        "RUST BUG: {name} in {zone} does not reproduce the 1.0 fold.\n{}\n{index}\n\
-         Do NOT change the oracle or the fixture. Fix the port.",
+        "FOLD CHANGED: {name} in {zone} does not reproduce the committed fold.\n{}\n{index}\n\
+         The committed values were re-based 2026-10-12 after the Foundations merge (D-C1). \
+         A fold change that is intended re-bases them again; an unintended one is a bug.",
         first_difference(actual, expected)
     );
 }

@@ -1,5 +1,5 @@
 # Template19 production-gate recipes
-This importer-shaped catalog contains the exact 19 knowledge-point keys from the declined-import cohort. The 236 worked samples exhaust every satisfying parameter combination: 17 recipes have 12 instances and two have 16. Each sample retains the computed answer and each recipe supplies a rendered worked solution.
+This importer-shaped catalog contains the exact 17 knowledge-point keys that remain from the declined-import cohort of 19. The Foundations merge (2026-10-12) retired two recipes; `docs/reports/template19-retired-pending-templates.json` holds them. The 212 worked samples exhaust every satisfying parameter combination. Each sample retains the computed answer and each recipe supplies a rendered worked solution.
 
 ## Canonical sources
 `drafts.json` is the reviewed authoring input; `sources.json` maps it to the existing unit catalogs. After running an older unit generator, run `python3 scripts/authoring/sync_template19_recipes.py`. The `--check` mode and `test_template19_sources.py` reject drift without a database or model. Superseded unit06 review snapshots retain their original body and digest for historical evidence.

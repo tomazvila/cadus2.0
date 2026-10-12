@@ -41,11 +41,12 @@ fn loads_the_checked_in_curriculum_with_the_literal_counts() {
 
     let raw = RawCurriculum::from_parsed(parsed).expect("the catalog is present");
     let topics: Vec<_> = raw.topics().collect();
-    assert_eq!(topics.len(), 1090, "topics");
-    assert_eq!(raw.topic_count(), 1090, "topics");
+    assert_eq!(topics.len(), 1064, "topics");
+    assert_eq!(raw.topic_count(), 1064, "topics");
 
     let knowledge_points: usize = topics.iter().map(|t| t.topic.knowledge_points.len()).sum();
-    assert_eq!(knowledge_points, 3138, "knowledge points");
+    // Re-pinned 2026-10-12 after the Foundations merge (D-C1): 3113 (was 3138).
+    assert_eq!(knowledge_points, 3113, "knowledge points");
 
     let exemplars: usize = topics
         .iter()
@@ -56,7 +57,8 @@ fn loads_the_checked_in_curriculum_with_the_literal_counts() {
     // 2026-10-07, lettered-items pass: 25125 exemplars (was 25153).
     // 2026-10-07, written items (courses rewrite): 25165 exemplars (was 25125).
     // 2026-10-07, courses rewrite (item-level figures, whole-number and mixed-number items): 25183 exemplars (was 25165).
-    assert_eq!(exemplars, 25183, "exemplars");
+    // 2026-10-12, Foundations merge (D-C1): 25018 exemplars (was 25183).
+    assert_eq!(exemplars, 25018, "exemplars");
 
     let anki_seeds: usize = topics.iter().map(|t| t.topic.anki_seeds.len()).sum();
     assert_eq!(anki_seeds, 2144, "anki seeds");
@@ -113,7 +115,7 @@ fn the_load_index_counts_topics_in_load_order() {
     let topics: Vec<_> = raw.topics().collect();
 
     let indices: Vec<usize> = topics.iter().map(|t| t.load_index).collect();
-    assert_eq!(indices, (0..1090).collect::<Vec<usize>>());
+    assert_eq!(indices, (0..1064).collect::<Vec<usize>>());
 
     let named: Vec<&str> = topics.iter().take(3).map(|t| t.topic.id.as_str()).collect();
     assert_eq!(
@@ -124,7 +126,7 @@ fn the_load_index_counts_topics_in_load_order() {
             "multiplication-tables"
         ]
     );
-    let last: Vec<&str> = topics[1087..].iter().map(|t| t.topic.id.as_str()).collect();
+    let last: Vec<&str> = topics[1061..].iter().map(|t| t.topic.id.as_str()).collect();
     assert_eq!(
         last,
         vec![
@@ -325,6 +327,7 @@ fn the_checked_in_tree_writes_no_yaml_1_1_boolean() {
         }
     }
     // Spec section 3: `core: True 725, False 365` and `drill: True 22`.
-    assert_eq!(cores, 725, "core topics");
-    assert_eq!(drills, 22, "drill topics");
+    // Re-pinned 2026-10-12 after the Foundations merge (D-C1): 703 core topics, 16 drill topics.
+    assert_eq!(cores, 703, "core topics");
+    assert_eq!(drills, 16, "drill topics");
 }

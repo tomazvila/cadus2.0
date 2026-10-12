@@ -11,13 +11,13 @@ use std::process::{Command, Stdio};
 use serde_json::{Value, json};
 
 fn recipe() -> Value {
-    // The courses rewrite (2026-10-07) gave perfect-squares/kp1 exemplars with
+    // The courses rewrite (2026-10-07) gave whole-number-exponents/kp3 exemplars with
     // mixed answer policies (exact and unit), so the gate now requires an
     // explicit contract; the plain `a**2` fixture states `exact`.
     let mut arguments = common::good_arguments();
     arguments["answer_contract"] = json!({"kind": "exact"});
     json!({
-        "kp_id": "perfect-squares/kp1", "kind": "template",
+        "kp_id": "whole-number-exponents/kp3", "kind": "template",
         "arguments": arguments
     })
 }

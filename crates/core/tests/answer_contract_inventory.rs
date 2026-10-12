@@ -82,13 +82,16 @@ fn current_inventory_covers_every_exemplar_and_preserves_the_review_snapshot() {
             .lines()
             .map(|line| serde_json::from_str(line).unwrap())
             .collect();
-    assert_eq!(historical.len(), 1695);
+    // 2026-10-12, Foundations merge (D-C1): the snapshot holds 1642 rows and
+    // 311 existing contracts (was 1695 and 322). The 53 rows of dropped twin
+    // steps left it. The rows of moved steps carry their new topic and step ids.
+    assert_eq!(historical.len(), 1642);
     assert_eq!(
         historical
             .iter()
             .filter(|row| !row["existing_contract"].is_null())
             .count(),
-        322
+        311
     );
     assert!(
         historical
@@ -117,7 +120,7 @@ fn current_inventory_covers_every_exemplar_and_preserves_the_review_snapshot() {
             }
         }
     }
-    assert_eq!(rows.len(), 5907); // 2026-10-07, courses rewrite (was 3828; 5,906 before the figure and whole-number pass)
+    assert_eq!(rows.len(), 5742); // 2026-10-12, Foundations merge (D-C1): 5742 (was 5907); 2026-10-07, courses rewrite (was 3828; 5,906 before the figure and whole-number pass)
     // The pre-unit corpus had 2,084 authored contracts; 47 newly reviewed
     // measured-output KP exemplars brought the count to 2,131, and the
     // exponents-radicals and polynomials-quadratics rewrites (06: 63 -> 442,
@@ -128,7 +131,7 @@ fn current_inventory_covers_every_exemplar_and_preserves_the_review_snapshot() {
         rows.iter()
             .filter(|row| !row["existing_contract"].is_null())
             .count(),
-        5792
+        5627 // 2026-10-12, Foundations merge (D-C1): 5627 of 5742 (was 5792 of 5907)
     );
     assert!(rows.iter().all(|row| row["automatic_approval"] == false));
     let current_keys: BTreeSet<_> = rows.iter().map(identity).collect();

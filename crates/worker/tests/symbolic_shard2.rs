@@ -4,10 +4,10 @@ mod common;
 use common::symbolic::{curriculum_source, rows, verify_rows};
 
 const KEYS: &[&str] = &[
-    "addition-subtraction-equations/kp1",
-    "addition-subtraction-equations/kp2",
     "one-step-equations/kp1",
     "one-step-equations/kp2",
+    "one-step-equations/kp3",
+    "one-step-equations/kp4",
     "variables-both-sides/kp1",
     "variables-both-sides/kp2",
 ];

@@ -28,7 +28,7 @@ fn standard_form_request_remains_in_the_authored_answer() {
     let unit = unit();
     // "Write x^2 + 5 = 3x in the form ax^2 + bx + c = 0, and identify a, b
     // and c." The item asks for all three coefficients now, not b alone.
-    let exemplar = &kp(&unit, "applying-the-quadratic-formula", "kp1").exemplars[0];
+    let exemplar = &kp(&unit, "quadratic-formula", "kp1").exemplars[0];
     assert!(
         exemplar.problem.contains("in the form $ax^2 + bx + c = 0$"),
         "the prompt must ask for the standard form before the coefficients"

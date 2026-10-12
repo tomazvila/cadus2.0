@@ -16,17 +16,18 @@ fn drafts() -> Vec<serde_json::Value> {
 fn all_pending_templates_exhaust_the_real_gate_and_avoid_authored_and_sibling_problems() {
     let rows = drafts();
     // 75 rows before the courses rewrite; 30 were retired on 2026-10-07.
-    assert_eq!(rows.len(), 45);
+    // The Foundations merge (2026-10-12) dropped evaluating-logarithms/kp2: 44.
+    assert_eq!(rows.len(), 44);
     let report = run_rows(&rows, "target/unit08/regression");
     // Reviewed domains: 75 ordinary twelve-case rows, one 24-case rate row,
     // eleven fresh same-base equations, and three eligible natural-exponential cases.
     // Three ordinary rows were retired on 2026-10-05 (75 rows, 938 - 36 instances).
     // On 2026-10-07 (courses rewrite) 30 more rows were retired, including the
     // same-base and natural-exponential finite-case rows.
-    const INSTANCES: u64 = 552; // 902 before the courses rewrite
+    const INSTANCES: u64 = 540; // 902 before the courses rewrite; 552 before the Foundations merge (2026-10-12)
     assert_report_with_instance_overrides(
         &report,
-        45,
+        44,
         INSTANCES,
         &[("percent-growth-decay-factors/kp3", 24)],
     );
@@ -151,6 +152,8 @@ fn the_retired_label_templates_left_the_set_and_keep_their_gate_refusal() {
     let sources: Vec<&str> = sources.iter().map(String::as_str).collect();
     assert_eq!(
         common::retired::assert_retired("functions-exponentials", &sources, &pending),
-        33
+        // 33 before the Foundations merge (2026-10-12); the retired rows of two
+        // dropped steps left the report.
+        31
     );
 }

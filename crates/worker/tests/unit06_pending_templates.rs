@@ -23,6 +23,51 @@ const SUPERSEDED_CANONICAL_DIGESTS: [(&str, &str); 3] = [
     ("radical-equations-basic/kp3", "sha256:c1063117806e183a"),
 ];
 
+/// The inventory keys of the original 78 candidates that the Foundations merge
+/// (D-C1, 2026-10-12) dropped as twin steps. The archived inventory keeps its
+/// old keys; the current sets name the merged tree.
+const MERGE_DROPPED: [&str; 2] = [
+    "exponent-product-rule/kp2",
+    "radical-exponent-conversion/kp3",
+];
+
+/// The inventory keys that the merge moved, as (old key, current key). A moved
+/// step keeps its exemplars, so its candidate row keeps its body.
+const MERGE_MOVED: [(&str, &str); 9] = [
+    ("exponent-product-rule/kp3", "exponent-product-rule/kp4"),
+    ("exponent-quotient-rule/kp1", "exponent-product-rule/kp2"),
+    ("exponent-quotient-rule/kp2", "exponent-product-rule/kp3"),
+    ("exponent-quotient-rule/kp3", "exponent-product-rule/kp5"),
+    ("radical-exponent-conversion/kp1", "rational-exponents/kp1"),
+    ("radical-exponent-conversion/kp2", "rational-exponents/kp2"),
+    ("rational-exponents/kp1", "rational-exponents/kp3"),
+    ("rational-exponents/kp2", "rational-exponents/kp4"),
+    ("rational-exponents/kp3", "rational-exponents/kp5"),
+];
+
+/// The current key of an inventory key, or `None` for a dropped step.
+fn merged_key(original: &str) -> Option<String> {
+    if MERGE_DROPPED.contains(&original) {
+        return None;
+    }
+    Some(
+        MERGE_MOVED
+            .iter()
+            .find(|(old, _)| *old == original)
+            .map_or(original, |(_, current)| current)
+            .to_owned(),
+    )
+}
+
+/// The inventory key of a current key.
+fn original_key(current: &str) -> String {
+    MERGE_MOVED
+        .iter()
+        .find(|(_, new)| *new == current)
+        .map_or(current, |(old, _)| old)
+        .to_owned()
+}
+
 fn root() -> PathBuf {
     PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../..")
 }
@@ -281,9 +326,34 @@ fn validate_current_lineages(
     candidates: &[Value],
     manifest: &Value,
     retired: &BTreeSet<String>,
+    merged: bool,
 ) -> Result<(), String> {
+    let expected: BTreeSet<String> =
+        serde_json::from_value(manifest["all_kp_ids"].clone()).map_err(|e| e.to_string())?;
+    if expected.len() != 78 {
+        return Err("retired keys outside the original78KP inventory".to_owned());
+    }
+    // The current key of each inventory key; the archived replay uses the
+    // inventory keys as they are, the current sets use the merged tree.
+    let inventory: BTreeSet<String> = expected
+        .iter()
+        .filter_map(|key| {
+            if merged {
+                merged_key(key)
+            } else {
+                Some(key.clone())
+            }
+        })
+        .collect();
+    let original = |key: &str| {
+        if merged {
+            original_key(key)
+        } else {
+            key.to_owned()
+        }
+    };
     let index = |rows: &[Value]| -> Result<BTreeMap<String, Value>, String> {
-        if rows.len() + retired.len() != 78 {
+        if rows.len() + retired.len() != inventory.len() {
             return Err("expected78lineage rows less the retired ones".to_owned());
         }
         let mut found = BTreeMap::new();
@@ -300,12 +370,10 @@ fn validate_current_lineages(
     };
     let drafts = index(drafts)?;
     let candidates = index(candidates)?;
-    let expected: BTreeSet<String> =
-        serde_json::from_value(manifest["all_kp_ids"].clone()).map_err(|e| e.to_string())?;
-    if expected.len() != 78 || !retired.is_subset(&expected) {
+    if !retired.is_subset(&inventory) {
         return Err("retired keys outside the original78KP inventory".to_owned());
     }
-    let current: BTreeSet<String> = expected.difference(retired).cloned().collect();
+    let current: BTreeSet<String> = inventory.difference(retired).cloned().collect();
     if drafts.keys().cloned().collect::<BTreeSet<_>>() != current
         || candidates.keys().cloned().collect::<BTreeSet<_>>() != current
     {
@@ -317,14 +385,20 @@ fn validate_current_lineages(
     if distinct.len() != 21 || distinct.keys().any(|key| !expected.contains(key)) {
         return Err("expected21named distinct lineages".to_owned());
     }
+    // A row binds to its original hash under its inventory key.
+    let as_original = |row: &Value| {
+        let mut row = row.clone();
+        row["kp_id"] = Value::String(original(row["kp_id"].as_str().unwrap()));
+        row
+    };
     let mut mirrors = 0;
     for key in &current {
         let draft = &drafts[key];
         let candidate = &candidates[key];
-        if let Some(binding) = distinct.get(key) {
-            if current_evidence::hash_bytes(draft.to_string().as_bytes())
+        if let Some(binding) = distinct.get(&original(key)) {
+            if current_evidence::hash_bytes(as_original(draft).to_string().as_bytes())
                 != binding["draft_row_sha256"]
-                || current_evidence::hash_bytes(candidate.to_string().as_bytes())
+                || current_evidence::hash_bytes(as_original(candidate).to_string().as_bytes())
                     != binding["fixture_row_sha256"]
             {
                 return Err(format!("{key}: original distinct lineage row drift"));
@@ -338,9 +412,12 @@ fn validate_current_lineages(
     }
     let retired_mirrors = retired
         .iter()
-        .filter(|key| !distinct.contains_key(*key))
+        .filter(|key| !distinct.contains_key(&original(key)))
         .count();
-    if mirrors + retired_mirrors != 57 {
+    // 57 true mirrors in the original inventory; the merge dropped one of them
+    // (radical-exponent-conversion/kp3).
+    let expected_mirrors = if merged { 56 } else { 57 };
+    if mirrors + retired_mirrors != expected_mirrors {
         return Err("expected57true mirrors less the retired ones".to_owned());
     }
     Ok(())
@@ -370,47 +447,59 @@ fn assert_current_lineages() {
     // Replay the original two lineages from exact archived source bytes as well
     // as checking their current descendants; Git and the original checkout are unnecessary.
     let none = BTreeSet::new();
-    validate_current_lineages(&archived("drafts"), &archived("fixture"), &manifest, &none).unwrap();
+    validate_current_lineages(
+        &archived("drafts"),
+        &archived("fixture"),
+        &manifest,
+        &none,
+        false,
+    )
+    .unwrap();
     let drafts = read("drafts.json");
     let candidates = read("candidates.json");
     let retired = common::retired::keys("unit06-correction");
-    validate_current_lineages(&drafts, &candidates, &manifest, &retired).unwrap();
+    validate_current_lineages(&drafts, &candidates, &manifest, &retired, true).unwrap();
     // A retired key may not stay on one side, and the current rows may not
     // claim the full inventory while a retirement stands.
-    assert!(validate_current_lineages(&drafts, &candidates, &manifest, &none).is_err());
+    assert!(validate_current_lineages(&drafts, &candidates, &manifest, &none, true).is_err());
     // Mutate each named distinct lineage independently on both sides. A relaxed
     // exception must never allow a changed row to inherit its original binding.
     // A retired distinct lineage has no current row to mutate.
     let mut mutated = 0;
     for key in manifest["distinct_lineages"].as_object().unwrap().keys() {
-        if retired.contains(key) {
+        let Some(current_key) = merged_key(key) else {
+            continue;
+        };
+        if retired.contains(&current_key) {
             continue;
         }
         mutated += 1;
         let mut changed_drafts = drafts.clone();
         let row = changed_drafts
             .iter_mut()
-            .find(|row| row["kp_id"] == key.as_str())
+            .find(|row| row["kp_id"] == current_key.as_str())
             .unwrap();
         row["arguments"]["statement"] = json!("altered draft lineage negative control");
         assert!(
-            validate_current_lineages(&changed_drafts, &candidates, &manifest, &retired).is_err(),
+            validate_current_lineages(&changed_drafts, &candidates, &manifest, &retired, true)
+                .is_err(),
             "{key}: changed draft accepted"
         );
         let mut changed_candidates = candidates.clone();
         let row = changed_candidates
             .iter_mut()
-            .find(|row| row["kp_id"] == key.as_str())
+            .find(|row| row["kp_id"] == current_key.as_str())
             .unwrap();
         row["arguments"]["statement"] = json!("altered fixture lineage negative control");
         assert!(
-            validate_current_lineages(&drafts, &changed_candidates, &manifest, &retired).is_err(),
+            validate_current_lineages(&drafts, &changed_candidates, &manifest, &retired, true)
+                .is_err(),
             "{key}: changed fixture accepted"
         );
     }
     assert_eq!(
-        mutated, 11,
-        "21 distinct lineages less the ten retired ones (courses rewrite 2026-10-07)"
+        mutated, 10,
+        "21 distinct lineages less the ten retired ones (courses rewrite 2026-10-07) and the one dropped by the Foundations merge (2026-10-12)"
     );
     let mirror_index = drafts
         .iter()
@@ -418,13 +507,15 @@ fn assert_current_lineages() {
             !manifest["distinct_lineages"]
                 .as_object()
                 .unwrap()
-                .contains_key(row["kp_id"].as_str().unwrap())
+                .contains_key(&original_key(row["kp_id"].as_str().unwrap()))
         })
         .unwrap();
     let mut changed_mirror = drafts.clone();
     changed_mirror[mirror_index]["arguments"]["statement"] =
         json!("altered true mirror negative control");
-    assert!(validate_current_lineages(&changed_mirror, &candidates, &manifest, &retired).is_err());
+    assert!(
+        validate_current_lineages(&changed_mirror, &candidates, &manifest, &retired, true).is_err()
+    );
 }
 
 #[test]
@@ -440,7 +531,9 @@ fn the_retired_candidates_left_both_current_sets_and_keep_their_gate_refusal() {
             &["docs/content-foundations/unit06-correction/drafts.json"],
             &pending,
         ),
-        23
+        // 23 before the Foundations merge (2026-10-12), which dropped the retired
+        // row of radical-exponent-conversion/kp3.
+        22
     );
     // A distinct-lineage key also left the candidate fixture with its own body;
     // the report keeps that body under `candidate` with its digest and verdict.

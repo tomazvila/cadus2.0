@@ -466,11 +466,13 @@ fn every_shipped_knowledge_point_whose_exemplar_shows_its_answer_gates() {
     // 2026-10-07, written items (courses rewrite): (1407, 11) overall (was (1407, 12)).
     // 2026-10-07, courses rewrite (step_check removal, item-level figures, whole-number and mixed-number items): (1408, 12) overall (was (1407, 11)).
     // 2026-10-08, story framing removed: (1388, 12) (was (1408, 12)).
-    assert_eq!((exempted, blind), (1388, 12));
+    // 2026-10-12, Foundations merge (D-C1): (1381, 12) overall (was (1388, 12)).
+    assert_eq!((exempted, blind), (1381, 12));
     // Foundations: (231, 5) (was (145, 12)).
     // 2026-10-07, courses rewrite (later): (232, 6).
     // 2026-10-08, story framing removed: (222, 6) (was (232, 6)).
-    assert_eq!((foundations_exempted, foundations_blind), (222, 6));
+    // 2026-10-12, Foundations merge (D-C1): (215, 6) (was (222, 6)).
+    assert_eq!((foundations_exempted, foundations_blind), (215, 6));
 }
 
 /// A sample that does not instantiate and a draw that does not evaluate

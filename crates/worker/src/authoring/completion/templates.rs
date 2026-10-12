@@ -151,17 +151,12 @@ fn radical_recipe(key: &str) -> Option<Recipe> {
             answer_expr: "sqrt(a) / sqrt(2)",
             values: integers((1..=12).map(|value| 2 * value * value)),
         },
-        "radical-exponent-conversion/kp3" => Recipe {
-            statement: "Compute $({a})^{{1/2}}$.",
-            answer_expr: "a ** (1/2)",
-            values: squares(144),
-        },
-        "rational-exponents/kp1" => Recipe {
+        "rational-exponents/kp3" => Recipe {
             statement: "Compute $({a})^{{2/3}}$.",
             answer_expr: "a ** (2/3)",
             values: cubes(12),
         },
-        "rational-exponents/kp2" => Recipe {
+        "rational-exponents/kp4" => Recipe {
             statement: "Compute $({a})^{{-1/2}}$.",
             answer_expr: "a ** (-1/2)",
             values: squares(144),

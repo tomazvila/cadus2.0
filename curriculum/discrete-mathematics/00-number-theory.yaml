@@ -3,110 +3,161 @@ course: discrete-mathematics
 module: "Number Theory"
 topics:
   - id: division-algorithm
-    name: "Divisibility & the Division Algorithm"
+    name: Divisibility & the Division Algorithm
     core: true
     difficulty: 0.45
     drill: false
     answer_kind: numeric
     expected_time_secs: 90
     prerequisites:
-      - id: long-division
-        weight: 0.7
-        key: true
-      - id: divisibility-rules
-        weight: 0.5
-        key: false
-      - id: divisibility-parity-proofs
-        weight: 0.4
-        key: true
+    - id: long-division-one-digit
+      weight: 0.7
+      key: true
+    - id: divisibility-rules
+      weight: 0.5
+      key: false
+    - id: divisibility-parity-proofs
+      weight: 0.4
+      key: true
     knowledge_points:
-      - id: kp1
-        name: 'Quotient and remainder, including negative dividends'
-        key_prerequisites: [long-division]
-        exemplars:
-          - problem: 'Find the quotient $q$ and remainder $r$ with $0 \le r < 13$ when $100$ is divided by $13$.'
-            answer: '7 R9'
-            answer_contract: {"kind":"quotient_remainder","divisor":13}
-            solution_sketch: '$13 \cdot 7 = 91 \le 100 < 104 = 13 \cdot 8$, so the quotient is $7$. The remainder is $100 - 91 = 9$, and $0 \le 9 < 13$.'
-          - problem: 'Find $q$ and $r$ with $-27 = 6q + r$ and $0 \le r < 6$.'
-            answer: '-5 R3'
-            answer_contract: {"kind":"quotient_remainder","divisor":6}
-            solution_sketch: 'The remainder must not be negative, so take the largest multiple of $6$ that is at most $-27$. That multiple is $6 \cdot (-5) = -30$, so $q = -5$ and $r = -27 - (-30) = 3$. The choice $q = -4$ would give $r = -3$, which is not allowed.'
-          - problem: 'A bakery packs $250$ rolls into boxes of $14$. How many full boxes does it fill, and how many rolls are left over?'
-            answer: '17 R12'
-            answer_contract: {"kind":"quotient_remainder","divisor":14}
-            solution_sketch: 'The number of full boxes is the quotient of $250$ by $14$. Since $14 \cdot 17 = 238 \le 250 < 252 = 14 \cdot 18$, there are $17$ full boxes. The rolls left over number $250 - 238 = 12$.'
-          - problem: 'A baker fills $17$ boxes with $14$ rolls each and has $12$ rolls left over. How many rolls did the baker have to start with?'
-            answer: '250'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The full boxes hold $17 \cdot 14 = 238$ rolls. Adding the $12$ rolls left over gives $238 + 12 = 250$ rolls.'
-          - problem: 'A flight lasts $475$ minutes. How many whole hours is that, and how many minutes remain?'
-            answer: '7 R55'
-            answer_contract: {"kind":"quotient_remainder","divisor":60}
-            solution_sketch: 'An hour has $60$ minutes, so divide $475$ by $60$. Since $60 \cdot 7 = 420 \le 475 < 480 = 60 \cdot 8$, the flight lasts $7$ whole hours. The minutes that remain number $475 - 420 = 55$.'
-          - problem: 'Divide $-47$ by $9$: find $q$ and $r$ with $-47 = 9q + r$, where $0 \le r < 9$.'
-            answer: '-6 R7'
-            answer_contract: {"kind":"quotient_remainder","divisor":9}
-            solution_sketch: 'The quotient is $\lfloor -47/9 \rfloor = -6$ because $9 \cdot (-6) = -54 \le -47 < -45 = 9 \cdot (-5)$. The remainder is $r = -47 - (-54) = 7$, and $0 \le 7 < 9$.'
-          - problem: 'Divide $-100$ by $7$. What are the quotient and the remainder, with $0 \le r < 7$?'
-            answer: '-15 R5'
-            answer_contract: {"kind":"quotient_remainder","divisor":7}
-            solution_sketch: 'The remainder must satisfy $0 \le r < 7$, so move down one more multiple of $7$. Then $7 \cdot (-15) = -105 \le -100$, so $q = -15$ and $r = -100 + 105 = 5$.'
-          - problem: 'When an integer $n$ is divided by $7$, the quotient is $15$ and the remainder is $5$. What is $n$?'
-            answer: '110'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'By the division algorithm $n = 7 \cdot 15 + 5$. So $n = 105 + 5 = 110$.'
-        constraints: 'divisors 2-60; include negative dividends and contexts that need division and multiplication; remainder must satisfy 0 <= r < d'
-      - id: kp2
-        name: 'Residue classes as a case tool'
-        key_prerequisites: [divisibility-parity-proofs]
-        try_first:
-          problem: 'Can the square of a whole number leave remainder $2$ when divided by $6$?'
-          answer_contract: {"kind":"label","options":[["yes","it can","it is possible","possible","yes, it can"],["no","it cannot","never","it is not possible","not possible","impossible","no, it cannot"]]}
-          answer: 'no'
-          reveal: 'No: a whole number leaves one of the remainders $0$ to $5$ on division by $6$, and the squares of these residues leave $0, 1, 4, 3, 4, 1$. Sorting integers into residue classes turns infinitely many cases into six.'
-        exemplars:
-          - problem: 'What are the possible remainders when the square of an integer is divided by $3$?'
-            answer: '0, 1'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Every integer has the form $3k$, $3k+1$ or $3k+2$. The squares are $9k^2 = 3(3k^2)$, then $9k^2 + 6k + 1 = 3(3k^2 + 2k) + 1$, then $9k^2 + 12k + 4 = 3(3k^2 + 4k + 1) + 1$. These leave remainders $0$, $1$ and $1$, so only $0$ and $1$ occur.'
-          - problem: 'What are the possible remainders when the cube of an integer is divided by $8$?'
-            answer: '0, 1, 3, 5, 7'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'An integer leaves one of the remainders $0, 1, \dots, 7$ on division by $8$, and its cube leaves the same remainder as the cube of that residue. The cubes $0, 1, 8, 27, 64, 125, 216, 343$ leave $0, 1, 0, 3, 0, 5, 0, 7$ on division by $8$. The distinct remainders are $0, 1, 3, 5, 7$.'
-          - problem: 'Ravi arranges $n^2$ marbles, where $n$ is a whole number, into bags of $5$. What are the possible numbers of marbles left over?'
-            answer: '0, 1, 4'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The number left over is the remainder of $n^2$ on division by $5$. The residues $n = 0, 1, 2, 3, 4$ give $n^2 = 0, 1, 4, 9, 16$, which leave $0, 1, 4, 4, 1$. So the possible numbers left over are $0$, $1$ and $4$.'
-          - problem: 'What are the possible remainders when $n(n+1)$ is divided by $8$, for an integer $n$?'
-            answer: '0, 2, 4, 6'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The remainder depends only on $n$ modulo $8$. For $n = 0, 1, \dots, 7$ the product $n(n+1)$ is $0, 2, 6, 12, 20, 30, 42, 56$, which leaves $0, 2, 6, 4, 4, 6, 2, 0$ on division by $8$. The distinct remainders are $0, 2, 4, 6$.'
-          - problem: 'Can the square of an integer leave remainder $3$ when divided by $4$?'
-            answer: 'no'
-            answer_contract: {"kind":"label","options":[["yes","it can","it is possible","possible","yes, it can"],["no","it cannot","never","it is not possible","not possible","impossible","no, it cannot"]]}
-            solution_sketch: 'An even integer $2k$ has square $4k^2$, which leaves remainder zero. An odd integer $2k+1$ has square $4(k^2 + k) + 1$, which leaves remainder one. So the remainder never equals three, and the answer is no.'
-          - problem: 'What are the possible remainders when $n^2 + n + 1$ is divided by $8$, for an integer $n$?'
-            answer: '1, 3, 5, 7'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The remainder depends only on $n$ modulo $8$. For $n = 0, 1, \dots, 7$ the value $n^2 + n + 1$ is $1, 3, 7, 13, 21, 31, 43, 57$, which leaves $1, 3, 7, 5, 5, 7, 3, 1$ on division by $8$. The distinct remainders are $1, 3, 5, 7$.'
-          - problem: 'A square floor has $n$ tiles along each side, so it has $n^2$ tiles in all. The tiles are packed in crates of $4$. What are the possible numbers of tiles left over after all full crates are packed?'
-            answer: '0, 1'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The number left over is the remainder of $n^2$ on division by $4$. An even $n = 2k$ gives $4k^2$, which leaves $0$. An odd $n = 2k+1$ gives $4(k^2 + k) + 1$, which leaves $1$.'
-        constraints: 'moduli 3, 4, 5 or 8; answers are remainder sets as a comma list or a yes/no verdict; verify by checking each residue class'
+    - id: kp1
+      name: Quotient and remainder, including negative dividends
+      key_prerequisites:
+      - long-division-one-digit
+      exemplars:
+      - problem: Find the quotient $q$ and remainder $r$ with $0 \le r < 13$ when $100$ is divided by $13$.
+        answer: 7 R9
+        answer_contract:
+          kind: quotient_remainder
+          divisor: 13
+        solution_sketch: $13 \cdot 7 = 91 \le 100 < 104 = 13 \cdot 8$, so the quotient is $7$. The remainder is $100 - 91 = 9$, and $0 \le 9 < 13$.
+      - problem: Find $q$ and $r$ with $-27 = 6q + r$ and $0 \le r < 6$.
+        answer: -5 R3
+        answer_contract:
+          kind: quotient_remainder
+          divisor: 6
+        solution_sketch: The remainder must not be negative, so take the largest multiple of $6$ that is at most $-27$. That multiple is $6 \cdot (-5) = -30$, so $q = -5$ and $r = -27 - (-30) = 3$. The choice $q = -4$ would give $r = -3$, which is not allowed.
+      - problem: A bakery packs $250$ rolls into boxes of $14$. How many full boxes does it fill, and how many rolls are left over?
+        answer: 17 R12
+        answer_contract:
+          kind: quotient_remainder
+          divisor: 14
+        solution_sketch: The number of full boxes is the quotient of $250$ by $14$. Since $14 \cdot 17 = 238 \le 250 < 252 = 14 \cdot 18$, there are $17$ full boxes. The rolls left over number $250 - 238 = 12$.
+      - problem: A baker fills $17$ boxes with $14$ rolls each and has $12$ rolls left over. How many rolls did the baker have to start with?
+        answer: '250'
+        answer_contract:
+          kind: exact
+        solution_sketch: The full boxes hold $17 \cdot 14 = 238$ rolls. Adding the $12$ rolls left over gives $238 + 12 = 250$ rolls.
+      - problem: A flight lasts $475$ minutes. How many whole hours is that, and how many minutes remain?
+        answer: 7 R55
+        answer_contract:
+          kind: quotient_remainder
+          divisor: 60
+        solution_sketch: An hour has $60$ minutes, so divide $475$ by $60$. Since $60 \cdot 7 = 420 \le 475 < 480 = 60 \cdot 8$, the flight lasts $7$ whole hours. The minutes that remain number $475 - 420 = 55$.
+      - problem: 'Divide $-47$ by $9$: find $q$ and $r$ with $-47 = 9q + r$, where $0 \le r < 9$.'
+        answer: -6 R7
+        answer_contract:
+          kind: quotient_remainder
+          divisor: 9
+        solution_sketch: The quotient is $\lfloor -47/9 \rfloor = -6$ because $9 \cdot (-6) = -54 \le -47 < -45 = 9 \cdot (-5)$. The remainder is $r = -47 - (-54) = 7$, and $0 \le 7 < 9$.
+      - problem: Divide $-100$ by $7$. What are the quotient and the remainder, with $0 \le r < 7$?
+        answer: -15 R5
+        answer_contract:
+          kind: quotient_remainder
+          divisor: 7
+        solution_sketch: The remainder must satisfy $0 \le r < 7$, so move down one more multiple of $7$. Then $7 \cdot (-15) = -105 \le -100$, so $q = -15$ and $r = -100 + 105 = 5$.
+      - problem: When an integer $n$ is divided by $7$, the quotient is $15$ and the remainder is $5$. What is $n$?
+        answer: '110'
+        answer_contract:
+          kind: exact
+        solution_sketch: By the division algorithm $n = 7 \cdot 15 + 5$. So $n = 105 + 5 = 110$.
+      constraints: divisors 2-60; include negative dividends and contexts that need division and multiplication; remainder must satisfy 0 <= r < d
+    - id: kp2
+      name: Residue classes as a case tool
+      key_prerequisites:
+      - divisibility-parity-proofs
+      try_first:
+        problem: Can the square of a whole number leave remainder $2$ when divided by $6$?
+        answer_contract:
+          kind: label
+          options:
+          - - 'yes'
+            - it can
+            - it is possible
+            - possible
+            - yes, it can
+          - - 'no'
+            - it cannot
+            - never
+            - it is not possible
+            - not possible
+            - impossible
+            - no, it cannot
+        answer: 'no'
+        reveal: 'No: a whole number leaves one of the remainders $0$ to $5$ on division by $6$, and the squares of these residues leave $0, 1, 4, 3, 4, 1$. Sorting integers into residue classes turns infinitely many cases into six.'
+      exemplars:
+      - problem: What are the possible remainders when the square of an integer is divided by $3$?
+        answer: 0, 1
+        answer_contract:
+          kind: exact
+        solution_sketch: Every integer has the form $3k$, $3k+1$ or $3k+2$. The squares are $9k^2 = 3(3k^2)$, then $9k^2 + 6k + 1 = 3(3k^2 + 2k) + 1$, then $9k^2 + 12k + 4 = 3(3k^2 + 4k + 1) + 1$. These leave remainders $0$, $1$ and $1$, so only $0$ and $1$ occur.
+      - problem: What are the possible remainders when the cube of an integer is divided by $8$?
+        answer: 0, 1, 3, 5, 7
+        answer_contract:
+          kind: exact
+        solution_sketch: An integer leaves one of the remainders $0, 1, \dots, 7$ on division by $8$, and its cube leaves the same remainder as the cube of that residue. The cubes $0, 1, 8, 27, 64, 125, 216, 343$ leave $0, 1, 0, 3, 0, 5, 0, 7$ on division by $8$. The distinct remainders are $0, 1, 3, 5, 7$.
+      - problem: Ravi arranges $n^2$ marbles, where $n$ is a whole number, into bags of $5$. What are the possible numbers of marbles left over?
+        answer: 0, 1, 4
+        answer_contract:
+          kind: exact
+        solution_sketch: The number left over is the remainder of $n^2$ on division by $5$. The residues $n = 0, 1, 2, 3, 4$ give $n^2 = 0, 1, 4, 9, 16$, which leave $0, 1, 4, 4, 1$. So the possible numbers left over are $0$, $1$ and $4$.
+      - problem: What are the possible remainders when $n(n+1)$ is divided by $8$, for an integer $n$?
+        answer: 0, 2, 4, 6
+        answer_contract:
+          kind: exact
+        solution_sketch: The remainder depends only on $n$ modulo $8$. For $n = 0, 1, \dots, 7$ the product $n(n+1)$ is $0, 2, 6, 12, 20, 30, 42, 56$, which leaves $0, 2, 6, 4, 4, 6, 2, 0$ on division by $8$. The distinct remainders are $0, 2, 4, 6$.
+      - problem: Can the square of an integer leave remainder $3$ when divided by $4$?
+        answer: 'no'
+        answer_contract:
+          kind: label
+          options:
+          - - 'yes'
+            - it can
+            - it is possible
+            - possible
+            - yes, it can
+          - - 'no'
+            - it cannot
+            - never
+            - it is not possible
+            - not possible
+            - impossible
+            - no, it cannot
+        solution_sketch: An even integer $2k$ has square $4k^2$, which leaves remainder zero. An odd integer $2k+1$ has square $4(k^2 + k) + 1$, which leaves remainder one. So the remainder never equals three, and the answer is no.
+      - problem: What are the possible remainders when $n^2 + n + 1$ is divided by $8$, for an integer $n$?
+        answer: 1, 3, 5, 7
+        answer_contract:
+          kind: exact
+        solution_sketch: The remainder depends only on $n$ modulo $8$. For $n = 0, 1, \dots, 7$ the value $n^2 + n + 1$ is $1, 3, 7, 13, 21, 31, 43, 57$, which leaves $1, 3, 7, 5, 5, 7, 3, 1$ on division by $8$. The distinct remainders are $1, 3, 5, 7$.
+      - problem: A square floor has $n$ tiles along each side, so it has $n^2$ tiles in all. The tiles are packed in crates of $4$. What are the possible numbers of tiles left over after all full crates are packed?
+        answer: 0, 1
+        answer_contract:
+          kind: exact
+        solution_sketch: The number left over is the remainder of $n^2$ on division by $4$. An even $n = 2k$ gives $4k^2$, which leaves $0$. An odd $n = 2k+1$ gives $4(k^2 + k) + 1$, which leaves $1$.
+      constraints: moduli 3, 4, 5 or 8; answers are remainder sets as a comma list or a yes/no verdict; verify by checking each residue class
     diagnostic_exemplar:
-      problem: 'What are the possible remainders of a perfect square on division by $8$?'
-      answer: '0, 1, 4'
-      answer_contract: {"kind":"exact"}
+      problem: What are the possible remainders of a perfect square on division by $8$?
+      answer: 0, 1, 4
+      answer_contract:
+        kind: exact
       solution_sketch: 'Check $r = 0, \dots, 7$: $r^2 \bmod 8$ gives $0, 1, 4, 1, 0, 1, 4, 1$. So the possible remainders are $0$, $1$ and $4$.'
     anki_seeds:
-      - front: "Division algorithm: for integers $a$ and $d > 0$ there exist unique $q, r$ with..."
-        back: '$a = dq + r$ and $0 \le r < d$.'
-        type: basic
-      - front: "Possible remainders of a perfect square mod 4?"
-        back: "0 or 1 (never 2 or 3)."
-        type: basic
+    - front: 'Division algorithm: for integers $a$ and $d > 0$ there exist unique $q, r$ with...'
+      back: $a = dq + r$ and $0 \le r < d$.
+      type: basic
+    - front: Possible remainders of a perfect square mod 4?
+      back: 0 or 1 (never 2 or 3).
+      type: basic
 
   - id: euclidean-algorithm
     name: "Euclidean Algorithm & Bezout's Identity"

@@ -1,9 +1,9 @@
-//! U5 acceptance, part 3: the 1.0 `compose_session` plans of the 10 seeded
+//! U5 acceptance, part 3: the committed `compose_session` plans of the 10 seeded
 //! states, and the live oracle that re-derives them (R5, D4).
 //!
-//! `tests/fixtures/events/selector_1_0.json` holds the 1.0 plan of each seeded
-//! state (`scripts/oracle/dump_selector_1_0.py`). No expectation calls the code
-//! under test. A plan whose Rust rows differ from the 1.0 rows is a RUST BUG.
+//! `tests/fixtures/events/selector_1_0.json` holds the plan of each seeded state.
+//! No expectation calls the code under test.
+//! Re-based 2026-10-12 after the Foundations merge (D-C1): the values pin the 2.0 fold on the merged graph, not 1.0.
 
 #![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 
@@ -173,9 +173,9 @@ fn compose_session_reproduces_the_1_0_plan_of_every_seeded_state() {
         let expected = lessons_sorted(state.tasks.clone());
         assert_eq!(
             actual, expected,
-            "RUST BUG: {} (seed {}) composes a different session than 1.0.\n  \
-             rust {actual:?}\n  1.0  {:?}\n\
-             Do NOT change the oracle or the fixture. Fix the port.",
+            "{} (seed {}) composes a different session than the committed plan.\n  \
+             rust {actual:?}\n  committed  {:?}\n\
+             Re-based 2026-10-12 after the Foundations merge (D-C1): the values pin the 2.0 fold on the merged graph, not 1.0.",
             state.stream, state.seed, state.tasks
         );
     }

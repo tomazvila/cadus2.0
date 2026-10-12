@@ -43,12 +43,15 @@ fn document(row: &Value, curriculum: &Curriculum) -> Option<TemplateDoc> {
     serde_json::from_value(Value::Object(body)).ok()
 }
 
+/// Foundations merge (2026-10-12): the cohort holds 17 recipes and 212 samples. It held 19
+/// and 236 before the merge. The retired recipes are converting-to-vertex-form/kp3 (dropped
+/// twin step) and comparing-integers/kp2 (the template check refuses it in its new topic).
 #[test]
-fn exact_nineteen_have_exhaustive_material_instances_and_computed_samples() {
+fn exact_seventeen_have_exhaustive_material_instances_and_computed_samples() {
     let (curriculum, findings) = load_curriculum(&root().join("curriculum")).unwrap();
     assert!(findings.is_empty(), "{findings:?}");
     let rows = rows();
-    assert_eq!(rows.len(), 19);
+    assert_eq!(rows.len(), 17);
     let mut keys = BTreeSet::new();
     let mut total = 0;
     for row in rows {
@@ -122,7 +125,7 @@ fn exact_nineteen_have_exhaustive_material_instances_and_computed_samples() {
         assert!(answers.len() >= 2, "{key}: constant answer");
         total += statements.len();
     }
-    assert_eq!(total, 236);
+    assert_eq!(total, 212);
 }
 
 fn json_files(path: &Path, files: &mut Vec<PathBuf>) {
@@ -188,7 +191,7 @@ fn repaired_statements(
             );
         }
     }
-    assert_eq!(repaired.len(), 236);
+    assert_eq!(repaired.len(), 212);
     (repaired, identities)
 }
 
@@ -261,7 +264,7 @@ fn repaired_statements_do_not_collide_with_other_catalog_templates_or_exemplars(
     assert_no_authored_collisions(&curriculum, &repaired);
     let (seen, checked) = catalog_collision_coverage(&curriculum, &repaired, &identities);
     println!(
-        "template19 collision coverage: {} other distinct recipes, {checked} instances, 236 repaired instances",
+        "template19 collision coverage: {} other distinct recipes, {checked} instances, 212 repaired instances",
         seen
     );
     assert!(seen >= 700, "catalog coverage: {seen}");
@@ -278,7 +281,7 @@ fn exhaustive_review_packet_uses_the_real_rust_renderer() {
         .unwrap(),
     )
     .unwrap();
-    assert_eq!(worked.len(), 236);
+    assert_eq!(worked.len(), 212);
     for row in rows() {
         let doc = document(&row, &curriculum).unwrap();
         let compiled = Compiled::new(&doc).unwrap();

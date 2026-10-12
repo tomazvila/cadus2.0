@@ -40,7 +40,8 @@ fn every_pending_digest_reproduces_through_the_worker_and_exact_exhaustive_walk(
     // because their knowledge points now carry mixed exemplar policies or
     // exemplars that collide with the template instances.
     // 2026-10-08, story framing removed: subtraction-with-borrowing/kp3 retired (21, was 22).
-    assert_eq!(drafts.len(), 21);
+    // Foundations merge (2026-10-12): gcf-lcm/kp1 and kp2 were dropped twins: 19.
+    assert_eq!(drafts.len(), 19);
     assert_eq!(drafts.len(), stored.len());
     assert_eq!(drafts.len(), proofs.len());
     let mut instances = 0;
@@ -75,10 +76,11 @@ fn every_pending_digest_reproduces_through_the_worker_and_exact_exhaustive_walk(
             .unwrap();
         instances += check_instances(&body, proof, topic);
     }
-    assert_eq!(keys.len(), 21);
+    assert_eq!(keys.len(), 19);
     // 1,409 before the courses rewrite; 480 after the 42 retirements of 2026-10-07.
     // 2026-10-08, story framing removed: 458 (was 480) after subtraction-with-borrowing/kp3 left the set.
-    assert_eq!(instances, 458);
+    // Foundations merge (2026-10-12): 426 after gcf-lcm/kp1 and kp2 left the set.
+    assert_eq!(instances, 426);
 }
 
 fn check_instances(body: &str, proof: &Value, topic: &cadus_core::curriculum::Topic) -> usize {
@@ -179,7 +181,8 @@ fn all_owned_keys_are_either_pending_or_exactly_reported_blockers() {
     }
     // 2026-10-08: 44 (was 43), subtraction-with-borrowing/kp3 added.
     assert_eq!(semantic_exclusions.len(), 44);
-    assert_eq!(owned.len(), 81);
+    // 81 before the Foundations merge (2026-10-12).
+    assert_eq!(owned.len(), 79);
     assert_eq!(blocked.len(), 16);
     assert!(pending.is_disjoint(&blocked));
     assert!(pending.is_disjoint(&semantic_exclusions));

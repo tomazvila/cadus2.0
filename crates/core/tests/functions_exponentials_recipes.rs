@@ -19,7 +19,7 @@ fn recipe_keys() -> Vec<String> {
 #[test]
 fn every_functions_exponentials_kp_is_practicable_assessable_and_has_solutions() {
     let keys = recipe_keys();
-    assert_eq!(keys.len(), 92, "one entry per knowledge point of the unit");
+    assert_eq!(keys.len(), 90, "one entry per knowledge point of the unit");
     common::readiness::assert_kps_ready(&keys);
 }
 
@@ -55,7 +55,13 @@ fn logarithm_conversion_labels_grade_aliases_and_reject_the_competing_equation()
         .topic(curriculum.idx_of("logarithm-basics").unwrap())
         .unwrap();
     let mut checked = 0;
-    for kp in topic.knowledge_points.iter().take(2) {
+    // Foundations merge (2026-10-12): the two conversion steps are now kp1 and
+    // kp3; kp2 is the evaluating step moved in from evaluating-logarithms.
+    for kp in topic
+        .knowledge_points
+        .iter()
+        .filter(|kp| matches!(kp.id.as_str(), "kp1" | "kp3"))
+    {
         for exemplar in &kp.exemplars {
             let contract = exemplar.answer_contract.clone().unwrap();
             // kp1 converts with a two-way choice (the equation or its swapped

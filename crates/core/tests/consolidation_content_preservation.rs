@@ -125,8 +125,8 @@ fn contextual_mixed_practice_across_arithmetic_core() {
     );
     assert!(p.iter().any(|p| is_plain_variant(p)));
 
-    // perfect-squares kp1
-    let p = kp_problems(&c, "perfect-squares", "kp1");
+    // perfect-squares kp1 (now whole-number-exponents kp3, Foundations merge 2026-10-12)
+    let p = kp_problems(&c, "whole-number-exponents", "kp3");
     assert_context_and_variety(&p, "A square garden");
 }
 

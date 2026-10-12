@@ -14,7 +14,6 @@ use cadus_worker::authoring::{cli::select, job::verify_kind, prompt::Kind};
 use serde_json::Value;
 
 const REVIEWED_KEYS: &[&str] = &[
-    "absolute-value-equations/kp2",
     "consecutive-integer-problems/kp2",
     "constant-of-proportionality/kp3",
     "coordinate-plane/kp2",
@@ -41,14 +40,14 @@ const REVIEWED_KEYS: &[&str] = &[
     "money-geometry-problems/kp2",
     "multi-step-equations/kp2",
     "multi-step-equations/kp3",
-    "one-step-equations/kp3",
+    "one-step-equations/kp5",
     "plotting-points/kp2",
     "point-slope-form/kp2",
     "proportional-relationships/kp3",
     "reading-slope-intercept-equations/kp2",
     "slope-as-rate-of-change/kp1",
     "slope-as-rate-of-change/kp3",
-    "slope/kp2",
+    "slope/kp4",
     "slopes-of-parallel-perpendicular-lines/kp2",
     "solutions-of-two-variable-equations/kp2",
     "solutions-of-two-variable-equations/kp3",
@@ -91,8 +90,9 @@ fn only_independently_reviewed_keys_are_present() {
     let expected: BTreeSet<_> = REVIEWED_KEYS.iter().map(|key| (*key).to_owned()).collect();
     assert_eq!(actual, expected);
     // 45 reviewed keys; graphing-from-a-table/kp1 was retired on 2026-10-07
-    // (courses rewrite), so 44 remain.
-    assert_eq!(actual.len(), 44);
+    // (courses rewrite), so 44 remained. The Foundations merge (2026-10-12)
+    // dropped absolute-value-equations/kp2: 43 remain.
+    assert_eq!(actual.len(), 43);
 }
 
 #[test]
@@ -117,7 +117,7 @@ fn equivalent_algebra_cannot_certify_a_requested_output_form() {
     for excluded in [
         "combining-like-terms/kp1",
         "distributive-property/kp1",
-        "factoring-linear-expressions/kp1",
+        "factoring-gcf/kp1",
         "slope-intercept-form/kp1",
     ] {
         assert!(!REVIEWED_KEYS.contains(&excluded));
@@ -129,11 +129,11 @@ fn constant_inert_and_cross_topic_families_remain_excluded() {
     for excluded in [
         "checking-a-solution/kp2",
         "constant-of-proportionality/kp1",
-        "horizontal-vertical-slopes/kp1",
+        "slope/kp1",
         "parts-of-an-expression/kp1",
         "parts-of-an-expression/kp2",
         "systems-substitution/kp2",
-        "systems-elimination/kp3",
+        "systems-elimination/kp5",
     ] {
         assert!(!REVIEWED_KEYS.contains(&excluded));
     }

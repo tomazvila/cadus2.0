@@ -7,7 +7,6 @@ const KEYS: &[&str] = &[
     "slope-from-a-graph/kp3",
     "slope-from-two-points/kp1",
     "slope-from-two-points/kp2",
-    "slope-from-two-points/kp3",
     "x-y-intercepts/kp3",
 ];
 const PATHS: &[&str] = &["docs/content-foundations/symbolic-repair/shard4-templates.json"];

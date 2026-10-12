@@ -3,363 +3,372 @@ course: foundations
 module: "Exponents & Radicals"
 topics:
   - id: exponent-product-rule
-    name: "The Product Rule for Exponents"
-    core: true
-    difficulty: 0.30
-    drill: true
-    answer_kind: expression
-    expected_time_secs: 45
-    prerequisites:
-      - id: integer-exponents-intro
-        weight: 0.7
-        key: true
-      - id: integer-addition-subtraction
-        weight: 0.5
-        key: true
-      - id: evaluating-expressions
-        weight: 0.0
-    knowledge_points:
-      - id: kp1
-        name: "Multiply powers of the same base"
-        key_prerequisites: [integer-addition-subtraction]
-        try_first:
-          problem: 'Written out as single factors, $x^2 \cdot x^3$ is a product of how many factors of $x$?'
-          answer_contract: {"kind":"exact"}
-          answer: '5'
-          reveal: '$x^2 \cdot x^3 = (x \cdot x)(x \cdot x \cdot x)$, five factors of $x$, so it equals $x^5$. Multiplying powers of the same base adds the exponents.'
-        exemplars:
-          - problem: 'Simplify $x^3 \cdot x^4$.'
-            answer: "x^7"
-            solution_sketch: 'Add exponents: $3 + 4 = 7$.'
-          - problem: 'Simplify $a^5 \cdot a^2$.'
-            answer: "a^7"
-            solution_sketch: '$5 + 2 = 7$.'
-          - problem: 'Simplify $b^2 \cdot b^6$.'
-            answer: "b^8"
-            solution_sketch: '$2 + 6 = 8$.'
-          - problem: 'Simplify $p^5 \cdot p^4$.'
-            answer: "p^9"
-            solution_sketch: '$5 + 4 = 9$.'
-        constraints: "same base; positive integer exponents; add exponents"
-      - id: kp2
-        name: "Numeric bases left in exponent form"
-        key_prerequisites: [integer-exponents-intro]
-        exemplars:
-          - problem: 'Write $2^3 \cdot 2^4$ as a single power of $2$.'
-            answer: "2^7"
-            answer_contract: {"kind":"required_single_power"}
-            solution_sketch: '$3 + 4 = 7$.'
-          - problem: 'What single power of $5$ equals $5^2 \cdot 5^3$?'
-            answer: "5^5"
-            answer_contract: {"kind":"required_single_power"}
-            solution_sketch: '$2 + 3 = 5$.'
-          - problem: 'Simplify $3^4 \cdot 3^2$ and write the result as $3$ raised to one exponent.'
-            answer: "3^6"
-            answer_contract: {"kind":"required_single_power"}
-            solution_sketch: '$4 + 2 = 6$.'
-          - problem: 'A square array contains $7^3$ rows and $7^3$ columns. Express its number of entries as a single power of $7$.'
-            answer: "7^6"
-            answer_contract: {"kind":"required_single_power"}
-            solution_sketch: '$3 + 3 = 6$.'
-        constraints: "answer stays as a single power, not evaluated"
-      - id: kp3
-        name: "Three or more factors, including bare bases"
-        key_prerequisites: [integer-addition-subtraction]
-        exemplars:
-          - problem: 'Simplify $x \cdot x^3 \cdot x^2$.'
-            answer: "x^6"
-            solution_sketch: 'A bare $x$ is $x^1$; $1 + 3 + 2 = 6$.'
-          - problem: 'Simplify $y^2 \cdot y \cdot y^4$.'
-            answer: "y^7"
-            solution_sketch: '$2 + 1 + 4 = 7$.'
-          - problem: 'Simplify $a^3 \cdot a \cdot a^2$.'
-            answer: "a^6"
-            solution_sketch: 'A bare $a$ is $a^1$; $3 + 1 + 2 = 6$.'
-          - problem: 'Simplify $m \cdot m^4 \cdot m^3$.'
-            answer: "m^8"
-            solution_sketch: 'A bare $m$ is $m^1$; $1 + 4 + 3 = 8$.'
-        constraints: "treat a bare base as exponent 1"
-    diagnostic_exemplar:
-      problem: 'Simplify $x \cdot x^3 \cdot x^5$.'
-      answer: 'x^9'
-      solution_sketch: 'A bare base counts as exponent $1$: $1 + 3 + 5 = 9$.'
-    anki_seeds:
-      - front: "Product rule: a^m * a^n = ?"
-        back: "a^(m+n)"
-        type: basic
-
-  - id: exponent-quotient-rule
-    name: "The Quotient Rule for Exponents"
+    name: Multiplying and Dividing Powers
     core: true
     difficulty: 0.32
     drill: true
     answer_kind: expression
     expected_time_secs: 45
     prerequisites:
-      - id: integer-exponents-intro
-        weight: 0.7
-        key: true
-      - id: integer-addition-subtraction
-        weight: 0.5
-        key: true
-      - id: exponent-product-rule
-        weight: 0.3
+    - id: integer-exponents-intro
+      weight: 0.7
+      key: true
+    - id: integer-addition-subtraction
+      weight: 0.5
+      key: true
+    - id: evaluating-expressions
+      weight: 0.0
     knowledge_points:
-      - id: kp1
-        name: "Divide powers of the same base"
-        key_prerequisites: [integer-addition-subtraction]
-        try_first:
-          problem: 'Written out as single factors, $\frac{x^6}{x^2}$ is $\frac{x \cdot x \cdot x \cdot x \cdot x \cdot x}{x \cdot x}$. After cancelling, how many factors of $x$ are left on top?'
-          answer_contract: {"kind":"exact"}
-          answer: '4'
-          reveal: 'Each $x$ below cancels one $x$ above, so $6-2=4$ factors remain and $\frac{x^6}{x^2}=x^4$. Dividing powers of the same base subtracts the exponents.'
-        exemplars:
-          - problem: 'Simplify $\frac{x^8}{x^3}$.'
-            answer: "x^5"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The bases match, so subtract the exponents. Since $8 - 3 = 5$, the quotient is $x^5$.'
-          - problem: 'Simplify $\frac{y^6}{y^2}$.'
-            answer: "y^4"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Two factors of $y$ below cancel two above. So $6 - 2 = 4$ factors remain, giving $y^4$.'
-          - problem: 'A rectangle has an area of $x^{11}$ square units and a width of $x^4$ units. What is its length?'
-            answer: "x^7"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Length is area divided by width, so compute $x^{11}/x^4$. Subtracting exponents gives $11 - 4 = 7$, so the length is $x^7$ units.'
-          - problem: 'Simplify $\frac{a^9}{a^4}$.'
-            answer: "a^5"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The bases match, so subtract the exponents. Since $9 - 4 = 5$, the quotient is $a^5$.'
-          - problem: 'A tank holds $m^{12}$ litres of water. The water is poured into buckets that each hold $m^3$ litres. How many buckets can be filled?'
-            answer: "m^9"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The number of buckets is the total divided by one bucket, $m^{12}/m^3$. Subtracting exponents gives $12 - 3 = 9$, so $m^9$ buckets are filled.'
-          - problem: 'Simplify $\frac{b^7}{b^3}$.'
-            answer: "b^4"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Three factors of $b$ below cancel three above. So $7 - 3 = 4$ factors remain, giving $b^4$.'
-          - problem: 'Simplify $\frac{x^{12}}{x^4}$.'
-            answer: "x^8"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'A quotient of powers subtracts the exponents. Since $12 - 4 = 8$, the result is $x^8$.'
-        constraints: "same base; larger exponent on top; subtract exponents"
-      - id: kp2
-        name: "Numeric bases left in exponent form"
-        key_prerequisites: [integer-exponents-intro]
-        exemplars:
-          - problem: 'Write $\frac{3^5}{3^2}$ as a single power of $3$.'
-            answer: "3^3"
-            answer_contract: {"kind":"required_single_power"}
-            solution_sketch: 'The base stays $3$ and the exponents subtract. Since $5 - 2 = 3$, the quotient is $3^3$.'
-          - problem: 'Write $\frac{7^9}{7^5}$ as a single power of $7$.'
-            answer: "7^4"
-            answer_contract: {"kind":"required_single_power"}
-            solution_sketch: 'The base stays $7$ and the exponents subtract. Since $9 - 5 = 4$, the quotient is $7^4$.'
-          - problem: 'A hard drive holds $2^{40}$ bytes. A video file takes up $2^{28}$ bytes. How many such files fit on the drive?'
-            answer: "2^12"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The number of files is the capacity divided by one file, $2^{40}/2^{28}$. Since $40 - 28 = 12$, exactly $2^{12} = 4096$ files fit.'
-          - problem: 'What single power of $10$ equals $10^9 \div 10^4$?'
-            answer: "10^5"
-            answer_contract: {"kind":"required_single_power"}
-            solution_sketch: 'The base stays $10$ and the exponents subtract. Since $9 - 4 = 5$, the quotient is $10^5$.'
-          - problem: 'A city has about $10^6$ inhabitants and a village has about $10^3$. About how many times larger is the population of the city?'
-            answer: "10^3"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'How many times larger means divide: $10^6/10^3$. Since $6 - 3 = 3$, the city is about $10^3 = 1000$ times larger.'
-          - problem: 'A collection of $2^9$ stamps is split into packs of $2^6$ stamps. How many packs are there?'
-            answer: "2^3"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The number of packs is $2^9$ divided by $2^6$. Since $9 - 6 = 3$, there are $2^3 = 8$ packs.'
-          - problem: 'Write $\frac{6^8}{6^2}$ as a single power of $6$.'
-            answer: "6^6"
-            answer_contract: {"kind":"required_single_power"}
-            solution_sketch: 'The base stays $6$ and the exponents subtract, $8 - 2 = 6$, so the quotient is $6^6$.'
-        constraints: "answer stays as a single power, not evaluated"
-      - id: kp3
-        name: "Quotients that leave exponent 1, and bare bases"
-        key_prerequisites: [integer-addition-subtraction]
-        exemplars:
-          - problem: 'Simplify $\frac{y^5}{y^4}$.'
-            answer: "y"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Subtract the exponents: $5 - 4 = 1$. A first power is just the base, so the result is $y$.'
-          - problem: 'Simplify $\frac{x^6}{x}$.'
-            answer: "x^5"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'A bare $x$ is $x^1$. Subtract the exponents, $6 - 1 = 5$, to get $x^5$.'
-          - problem: 'A rectangle has an area of $p^7$ square units and a length of $p^6$ units. What is its width?'
-            answer: "p"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Width is area divided by length, $p^7/p^6$. Since $7 - 6 = 1$, the width is $p^1 = p$ units.'
-          - problem: 'Simplify $\frac{b^9}{b}$.'
-            answer: "b^8"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'A bare $b$ is $b^1$. Subtract the exponents, $9 - 1 = 8$, to get $b^8$.'
-          - problem: 'A jar of $k^{13}$ sweets is shared equally among $k$ children. How many sweets does each child get?'
-            answer: "k^12"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Sharing equally means dividing: $k^{13}/k$. The bare $k$ is $k^1$, and $13 - 1 = 12$, so each child gets $k^{12}$ sweets.'
-          - problem: 'Simplify $\frac{a^8}{a^7}$.'
-            answer: "a"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Subtracting the exponents gives $8 - 7 = 1$, so one factor of $a$ remains. The result is $a^1 = a$, and only $a^0$ would equal $1$.'
-          - problem: 'Simplify $\frac{m^{10}}{m}$.'
-            answer: "m^9"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'A bare $m$ is $m^1$. Subtract the exponents, $10 - 1 = 9$, to get $m^9$.'
-        constraints: "treat a bare base as exponent 1; keep results with positive exponents"
+    - id: kp1
+      name: Multiply powers of the same base
+      key_prerequisites:
+      - integer-addition-subtraction
+      try_first:
+        problem: Written out as single factors, $x^2 \cdot x^3$ is a product of how many factors of $x$?
+        answer_contract:
+          kind: exact
+        answer: '5'
+        reveal: $x^2 \cdot x^3 = (x \cdot x)(x \cdot x \cdot x)$, five factors of $x$, so it equals $x^5$. Multiplying powers of the same base adds the exponents.
+      exemplars:
+      - problem: Simplify $x^3 \cdot x^4$.
+        answer: x^7
+        solution_sketch: 'Add exponents: $3 + 4 = 7$.'
+      - problem: Simplify $a^5 \cdot a^2$.
+        answer: a^7
+        solution_sketch: $5 + 2 = 7$.
+      - problem: Simplify $b^2 \cdot b^6$.
+        answer: b^8
+        solution_sketch: $2 + 6 = 8$.
+      - problem: Simplify $p^5 \cdot p^4$.
+        answer: p^9
+        solution_sketch: $5 + 4 = 9$.
+      constraints: same base; positive integer exponents; add exponents
+    - id: kp2
+      name: Divide powers of the same base
+      key_prerequisites:
+      - integer-addition-subtraction
+      try_first:
+        problem: Written out as single factors, $\frac{x^6}{x^2}$ is $\frac{x \cdot x \cdot x \cdot x \cdot x \cdot x}{x \cdot x}$. After cancelling, how many factors of $x$ are left on top?
+        answer_contract:
+          kind: exact
+        answer: '4'
+        reveal: Each $x$ below cancels one $x$ above, so $6-2=4$ factors remain and $\frac{x^6}{x^2}=x^4$. Dividing powers of the same base subtracts the exponents.
+      exemplars:
+      - problem: Simplify $\frac{x^8}{x^3}$.
+        answer: x^5
+        answer_contract:
+          kind: exact
+        solution_sketch: The bases match, so subtract the exponents. Since $8 - 3 = 5$, the quotient is $x^5$.
+      - problem: Simplify $\frac{y^6}{y^2}$.
+        answer: y^4
+        answer_contract:
+          kind: exact
+        solution_sketch: Two factors of $y$ below cancel two above. So $6 - 2 = 4$ factors remain, giving $y^4$.
+      - problem: A rectangle has an area of $x^{11}$ square units and a width of $x^4$ units. What is its length?
+        answer: x^7
+        answer_contract:
+          kind: exact
+        solution_sketch: Length is area divided by width, so compute $x^{11}/x^4$. Subtracting exponents gives $11 - 4 = 7$, so the length is $x^7$ units.
+      - problem: Simplify $\frac{a^9}{a^4}$.
+        answer: a^5
+        answer_contract:
+          kind: exact
+        solution_sketch: The bases match, so subtract the exponents. Since $9 - 4 = 5$, the quotient is $a^5$.
+      - problem: A tank holds $m^{12}$ litres of water. The water is poured into buckets that each hold $m^3$ litres. How many buckets can be filled?
+        answer: m^9
+        answer_contract:
+          kind: exact
+        solution_sketch: The number of buckets is the total divided by one bucket, $m^{12}/m^3$. Subtracting exponents gives $12 - 3 = 9$, so $m^9$ buckets are filled.
+      - problem: Simplify $\frac{b^7}{b^3}$.
+        answer: b^4
+        answer_contract:
+          kind: exact
+        solution_sketch: Three factors of $b$ below cancel three above. So $7 - 3 = 4$ factors remain, giving $b^4$.
+      - problem: Simplify $\frac{x^{12}}{x^4}$.
+        answer: x^8
+        answer_contract:
+          kind: exact
+        solution_sketch: A quotient of powers subtracts the exponents. Since $12 - 4 = 8$, the result is $x^8$.
+      constraints: same base; larger exponent on top; subtract exponents
+    - id: kp3
+      name: Numeric bases left in exponent form
+      key_prerequisites:
+      - integer-exponents-intro
+      exemplars:
+      - problem: Write $\frac{3^5}{3^2}$ as a single power of $3$.
+        answer: 3^3
+        answer_contract:
+          kind: required_single_power
+        solution_sketch: The base stays $3$ and the exponents subtract. Since $5 - 2 = 3$, the quotient is $3^3$.
+      - problem: Write $\frac{7^9}{7^5}$ as a single power of $7$.
+        answer: 7^4
+        answer_contract:
+          kind: required_single_power
+        solution_sketch: The base stays $7$ and the exponents subtract. Since $9 - 5 = 4$, the quotient is $7^4$.
+      - problem: A hard drive holds $2^{40}$ bytes. A video file takes up $2^{28}$ bytes. How many such files fit on the drive?
+        answer: 2^12
+        answer_contract:
+          kind: exact
+        solution_sketch: The number of files is the capacity divided by one file, $2^{40}/2^{28}$. Since $40 - 28 = 12$, exactly $2^{12} = 4096$ files fit.
+      - problem: What single power of $10$ equals $10^9 \div 10^4$?
+        answer: 10^5
+        answer_contract:
+          kind: required_single_power
+        solution_sketch: The base stays $10$ and the exponents subtract. Since $9 - 4 = 5$, the quotient is $10^5$.
+      - problem: A city has about $10^6$ inhabitants and a village has about $10^3$. About how many times larger is the population of the city?
+        answer: 10^3
+        answer_contract:
+          kind: exact
+        solution_sketch: 'How many times larger means divide: $10^6/10^3$. Since $6 - 3 = 3$, the city is about $10^3 = 1000$ times larger.'
+      - problem: A collection of $2^9$ stamps is split into packs of $2^6$ stamps. How many packs are there?
+        answer: 2^3
+        answer_contract:
+          kind: exact
+        solution_sketch: The number of packs is $2^9$ divided by $2^6$. Since $9 - 6 = 3$, there are $2^3 = 8$ packs.
+      - problem: Write $\frac{6^8}{6^2}$ as a single power of $6$.
+        answer: 6^6
+        answer_contract:
+          kind: required_single_power
+        solution_sketch: The base stays $6$ and the exponents subtract, $8 - 2 = 6$, so the quotient is $6^6$.
+      constraints: answer stays as a single power, not evaluated
+    - id: kp4
+      name: Three or more factors, including bare bases
+      key_prerequisites:
+      - integer-addition-subtraction
+      exemplars:
+      - problem: Simplify $x \cdot x^3 \cdot x^2$.
+        answer: x^6
+        solution_sketch: A bare $x$ is $x^1$; $1 + 3 + 2 = 6$.
+      - problem: Simplify $y^2 \cdot y \cdot y^4$.
+        answer: y^7
+        solution_sketch: $2 + 1 + 4 = 7$.
+      - problem: Simplify $a^3 \cdot a \cdot a^2$.
+        answer: a^6
+        solution_sketch: A bare $a$ is $a^1$; $3 + 1 + 2 = 6$.
+      - problem: Simplify $m \cdot m^4 \cdot m^3$.
+        answer: m^8
+        solution_sketch: A bare $m$ is $m^1$; $1 + 4 + 3 = 8$.
+      constraints: treat a bare base as exponent 1
+    - id: kp5
+      name: Quotients that leave exponent 1, and bare bases
+      key_prerequisites:
+      - integer-addition-subtraction
+      exemplars:
+      - problem: Simplify $\frac{y^5}{y^4}$.
+        answer: "y"
+        answer_contract:
+          kind: exact
+        solution_sketch: 'Subtract the exponents: $5 - 4 = 1$. A first power is just the base, so the result is $y$.'
+      - problem: Simplify $\frac{x^6}{x}$.
+        answer: x^5
+        answer_contract:
+          kind: exact
+        solution_sketch: A bare $x$ is $x^1$. Subtract the exponents, $6 - 1 = 5$, to get $x^5$.
+      - problem: A rectangle has an area of $p^7$ square units and a length of $p^6$ units. What is its width?
+        answer: p
+        answer_contract:
+          kind: exact
+        solution_sketch: Width is area divided by length, $p^7/p^6$. Since $7 - 6 = 1$, the width is $p^1 = p$ units.
+      - problem: Simplify $\frac{b^9}{b}$.
+        answer: b^8
+        answer_contract:
+          kind: exact
+        solution_sketch: A bare $b$ is $b^1$. Subtract the exponents, $9 - 1 = 8$, to get $b^8$.
+      - problem: A jar of $k^{13}$ sweets is shared equally among $k$ children. How many sweets does each child get?
+        answer: k^12
+        answer_contract:
+          kind: exact
+        solution_sketch: 'Sharing equally means dividing: $k^{13}/k$. The bare $k$ is $k^1$, and $13 - 1 = 12$, so each child gets $k^{12}$ sweets.'
+      - problem: Simplify $\frac{a^8}{a^7}$.
+        answer: a
+        answer_contract:
+          kind: exact
+        solution_sketch: Subtracting the exponents gives $8 - 7 = 1$, so one factor of $a$ remains. The result is $a^1 = a$, and only $a^0$ would equal $1$.
+      - problem: Simplify $\frac{m^{10}}{m}$.
+        answer: m^9
+        answer_contract:
+          kind: exact
+        solution_sketch: A bare $m$ is $m^1$. Subtract the exponents, $10 - 1 = 9$, to get $m^9$.
+      constraints: treat a bare base as exponent 1; keep results with positive exponents
     diagnostic_exemplar:
-      problem: 'Simplify $\frac{x^7}{x}$.'
-      answer: 'x^6'
+      problem: Simplify $\frac{x^7}{x}$.
+      answer: x^6
       solution_sketch: 'The bare $x$ counts as exponent $1$: $7 - 1 = 6$.'
     anki_seeds:
-      - front: "Quotient rule: a^m / a^n = ?"
-        back: "a^(m-n)"
-        type: basic
+    - front: 'Product rule: a^m * a^n = ?'
+      back: a^(m+n)
+      type: basic
+    - front: 'Quotient rule: a^m / a^n = ?'
+      back: a^(m-n)
+      type: basic
 
   - id: exponent-product-quotient-rules
-    name: "Product and Quotient Rules for Exponents"
+    name: Mixed Exponent Rules with Coefficients
     core: true
     difficulty: 0.35
     drill: true
     answer_kind: expression
     expected_time_secs: 45
     prerequisites:
-      - id: exponent-product-rule
-        weight: 0.8
-        key: true
-      - id: exponent-quotient-rule
-        weight: 0.8
-        key: true
-      - id: integer-multiplication-division
-        weight: 0.5
-      - id: evaluating-expressions
-        weight: 0.0
+    - id: exponent-product-rule
+      weight: 0.7
+      key: true
+    - id: integer-multiplication-division
+      weight: 0.5
+    - id: evaluating-expressions
+      weight: 0.0
     knowledge_points:
-      - id: kp1
-        name: "Product and quotient rules together"
-        key_prerequisites: [exponent-product-rule, exponent-quotient-rule]
-        exemplars:
-          - problem: 'Simplify $\frac{x^5 \cdot x^2}{x^3}$.'
-            answer: "x^4"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The numerator is $x^{5+2} = x^7$. Dividing by $x^3$ gives $7 - 3 = 4$, so the result is $x^4$.'
-          - problem: 'Simplify $\frac{a^4 \cdot a^4}{a^6}$.'
-            answer: "a^2"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The numerator is $a^{4+4} = a^8$. Dividing by $a^6$ gives $8 - 6 = 2$, so the result is $a^2$.'
-          - problem: 'A box has a base of area $x^5$ square units and a height of $x^3$ units. Its contents are poured into cups that each hold $x^6$ cubic units. How many cups are filled?'
-            answer: "x^2"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The volume is base area times height, $x^5 \cdot x^3 = x^8$. Dividing by one cup gives $x^{8-6} = x^2$ cups.'
-          - problem: 'Simplify $\frac{b^6 \cdot b^3}{b^5}$.'
-            answer: "b^4"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The numerator is $b^{6+3} = b^9$. Dividing by $b^5$ gives $9 - 5 = 4$, so the result is $b^4$.'
-          - problem: 'A rectangle measures $y^7$ units by $y^3$ units. It is cut into $y^4$ identical tiles. What is the area of each tile?'
-            answer: "y^6"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The rectangle has area $y^7 \cdot y^3 = y^{10}$. Shared among $y^4$ tiles, each tile has area $y^{10-4} = y^6$ square units.'
-          - problem: 'Simplify $\frac{m^8 \cdot m}{m^5}$.'
-            answer: "m^4"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'A bare $m$ is $m^1$, so the numerator is $m^{8+1} = m^9$. Dividing by $m^5$ gives $9 - 5 = 4$, so the result is $m^4$.'
-          - problem: 'Simplify $\frac{n^{11}}{n^2 \cdot n^3}$.'
-            answer: "n^6"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The denominator is $n^{2+3} = n^5$. Dividing gives $11 - 5 = 6$, so the result is $n^6$.'
-          - problem: 'Simplify $\frac{x^4 \cdot x^6}{x^2}$.'
-            answer: "x^8"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The product adds the exponents, $4 + 6 = 10$, and the quotient subtracts, $10 - 2 = 8$, giving $x^8$.'
-        constraints: "one product and one quotient step per problem"
-      - id: kp2
-        name: "Coefficients with product/quotient rules"
-        key_prerequisites: [integer-multiplication-division]
-        exemplars:
-          - problem: 'Simplify $(3x^2)(4x^5)$.'
-            answer: "12x^7"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Multiply the coefficients: $3 \cdot 4 = 12$. Add the exponents: $2 + 5 = 7$, so the product is $12x^7$.'
-          - problem: 'Simplify $\frac{15a^7}{5a^4}$.'
-            answer: "3a^3"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Divide the coefficients: $\frac{15}{5} = 3$. Subtract the exponents: $7 - 4 = 3$, so the quotient is $3a^3$.'
-          - problem: 'A rectangle is $6x^4$ units long and $3x^2$ units wide. What is its area?'
-            answer: "18x^6"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Area is length times width, so multiply. The coefficients give $6 \cdot 3 = 18$ and the exponents give $4 + 2 = 6$, so the area is $18x^6$ square units.'
-          - problem: 'Simplify $\frac{24a^8}{6a^3}$.'
-            answer: "4a^5"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Divide the coefficients: $\frac{24}{6} = 4$. Subtract the exponents: $8 - 3 = 5$, so the quotient is $4a^5$.'
-          - problem: 'A rectangle has an area of $20x^9$ square units and a width of $4x^3$ units. What is its length?'
-            answer: "5x^6"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Length is area divided by width. The coefficients give $20 \div 4 = 5$ and the exponents give $9 - 3 = 6$, so the length is $5x^6$ units.'
-          - problem: 'Simplify $(2x^3)(5x^4)$.'
-            answer: "10x^7"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Multiply the coefficients: $2 \cdot 5 = 10$. Add the exponents: $3 + 4 = 7$, so the product is $10x^7$.'
-          - problem: 'A warehouse packs $36y^{10}$ cans equally into $9y^4$ crates. How many cans are in each crate?'
-            answer: "4y^6"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Packing equally means dividing. The coefficients give $36 \div 9 = 4$ and the exponents give $10 - 4 = 6$, so each crate holds $4y^6$ cans.'
-          - problem: 'Simplify $\frac{(6a^5)(2a^3)}{4a^2}$.'
-            answer: "3a^6"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The coefficient is $(6 \cdot 2)/4 = 3$. The exponent is $5 + 3 - 2 = 6$, so the result is $3a^6$.'
-          - problem: 'Simplify $\frac{12x^8}{3x^2}$.'
-            answer: "4x^6"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The coefficients divide, $12 \div 3 = 4$, and the exponents subtract, $8 - 2 = 6$, giving $4x^6$.'
-        constraints: "multiply/divide coefficients; apply exponent rule to variables"
-      - id: kp3
-        name: "Two variables at once"
-        key_prerequisites: [exponent-product-rule, exponent-quotient-rule]
-        exemplars:
-          - problem: 'Simplify $(x^2 y^3)(x^4 y)$.'
-            answer: "x^6 y^4"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Handle each base separately. For $x$, $2 + 4 = 6$; for $y$, $3 + 1 = 4$, so the product is $x^6y^4$.'
-          - problem: 'Simplify $\frac{a^5 b^3}{a^2 b}$.'
-            answer: "a^3 b^2"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Handle each base separately. For $a$, $5 - 2 = 3$; for $b$, $3 - 1 = 2$, so the quotient is $a^3b^2$.'
-          - problem: 'A rectangle has an area of $x^7 y^5$ square units and a width of $x^3 y^2$ units. What is its length?'
-            answer: "x^4 y^3"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Length is area divided by width. For $x$, $7 - 3 = 4$; for $y$, $5 - 2 = 3$, so the length is $x^4y^3$ units.'
-          - problem: 'Simplify $(x^3 y^2)(x^2 y^4)$.'
-            answer: "x^5 y^6"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Handle each base separately. For $x$, $3 + 2 = 5$; for $y$, $2 + 4 = 6$, so the product is $x^5y^6$.'
-          - problem: 'A box measures $a^2 b$ by $a b^3$ by $a^4 b^2$ units. What is its volume?'
-            answer: "a^7 b^6"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Volume is the product of the three dimensions. For $a$, $2 + 1 + 4 = 7$; for $b$, $1 + 3 + 2 = 6$, so the volume is $a^7b^6$ cubic units.'
-          - problem: 'Simplify $\frac{a^6 b^5}{a^3 b^2}$.'
-            answer: "a^3 b^3"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Handle each base separately. For $a$, $6 - 3 = 3$; for $b$, $5 - 2 = 3$, so the quotient is $a^3b^3$.'
-          - problem: 'Simplify $\frac{(x^4 y^2)(x^3 y^5)}{x^2 y^3}$.'
-            answer: "x^5 y^4"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Handle each base separately. For $x$, $4 + 3 - 2 = 5$; for $y$, $2 + 5 - 3 = 4$, so the result is $x^5y^4$.'
-          - problem: 'Simplify $\frac{p^6 q^4}{p^2 q}$.'
-            answer: "p^4 q^3"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Subtracting gives $6 - 2 = 4$ for $p$ and $4 - 1 = 3$ for $q$, so the result is $p^4q^3$.'
-        constraints: "apply the rules base by base"
+    - id: kp1
+      name: Product and quotient rules together
+      key_prerequisites:
+      - exponent-product-rule
+      exemplars:
+      - problem: Simplify $\frac{x^5 \cdot x^2}{x^3}$.
+        answer: x^4
+        answer_contract:
+          kind: exact
+        solution_sketch: The numerator is $x^{5+2} = x^7$. Dividing by $x^3$ gives $7 - 3 = 4$, so the result is $x^4$.
+      - problem: Simplify $\frac{a^4 \cdot a^4}{a^6}$.
+        answer: a^2
+        answer_contract:
+          kind: exact
+        solution_sketch: The numerator is $a^{4+4} = a^8$. Dividing by $a^6$ gives $8 - 6 = 2$, so the result is $a^2$.
+      - problem: A box has a base of area $x^5$ square units and a height of $x^3$ units. Its contents are poured into cups that each hold $x^6$ cubic units. How many cups are filled?
+        answer: x^2
+        answer_contract:
+          kind: exact
+        solution_sketch: The volume is base area times height, $x^5 \cdot x^3 = x^8$. Dividing by one cup gives $x^{8-6} = x^2$ cups.
+      - problem: Simplify $\frac{b^6 \cdot b^3}{b^5}$.
+        answer: b^4
+        answer_contract:
+          kind: exact
+        solution_sketch: The numerator is $b^{6+3} = b^9$. Dividing by $b^5$ gives $9 - 5 = 4$, so the result is $b^4$.
+      - problem: A rectangle measures $y^7$ units by $y^3$ units. It is cut into $y^4$ identical tiles. What is the area of each tile?
+        answer: y^6
+        answer_contract:
+          kind: exact
+        solution_sketch: The rectangle has area $y^7 \cdot y^3 = y^{10}$. Shared among $y^4$ tiles, each tile has area $y^{10-4} = y^6$ square units.
+      - problem: Simplify $\frac{m^8 \cdot m}{m^5}$.
+        answer: m^4
+        answer_contract:
+          kind: exact
+        solution_sketch: A bare $m$ is $m^1$, so the numerator is $m^{8+1} = m^9$. Dividing by $m^5$ gives $9 - 5 = 4$, so the result is $m^4$.
+      - problem: Simplify $\frac{n^{11}}{n^2 \cdot n^3}$.
+        answer: n^6
+        answer_contract:
+          kind: exact
+        solution_sketch: The denominator is $n^{2+3} = n^5$. Dividing gives $11 - 5 = 6$, so the result is $n^6$.
+      - problem: Simplify $\frac{x^4 \cdot x^6}{x^2}$.
+        answer: x^8
+        answer_contract:
+          kind: exact
+        solution_sketch: The product adds the exponents, $4 + 6 = 10$, and the quotient subtracts, $10 - 2 = 8$, giving $x^8$.
+      constraints: one product and one quotient step per problem
+    - id: kp2
+      name: Coefficients with product/quotient rules
+      key_prerequisites:
+      - integer-multiplication-division
+      exemplars:
+      - problem: Simplify $(3x^2)(4x^5)$.
+        answer: 12x^7
+        answer_contract:
+          kind: exact
+        solution_sketch: 'Multiply the coefficients: $3 \cdot 4 = 12$. Add the exponents: $2 + 5 = 7$, so the product is $12x^7$.'
+      - problem: Simplify $\frac{15a^7}{5a^4}$.
+        answer: 3a^3
+        answer_contract:
+          kind: exact
+        solution_sketch: 'Divide the coefficients: $\frac{15}{5} = 3$. Subtract the exponents: $7 - 4 = 3$, so the quotient is $3a^3$.'
+      - problem: A rectangle is $6x^4$ units long and $3x^2$ units wide. What is its area?
+        answer: 18x^6
+        answer_contract:
+          kind: exact
+        solution_sketch: Area is length times width, so multiply. The coefficients give $6 \cdot 3 = 18$ and the exponents give $4 + 2 = 6$, so the area is $18x^6$ square units.
+      - problem: Simplify $\frac{24a^8}{6a^3}$.
+        answer: 4a^5
+        answer_contract:
+          kind: exact
+        solution_sketch: 'Divide the coefficients: $\frac{24}{6} = 4$. Subtract the exponents: $8 - 3 = 5$, so the quotient is $4a^5$.'
+      - problem: A rectangle has an area of $20x^9$ square units and a width of $4x^3$ units. What is its length?
+        answer: 5x^6
+        answer_contract:
+          kind: exact
+        solution_sketch: Length is area divided by width. The coefficients give $20 \div 4 = 5$ and the exponents give $9 - 3 = 6$, so the length is $5x^6$ units.
+      - problem: Simplify $(2x^3)(5x^4)$.
+        answer: 10x^7
+        answer_contract:
+          kind: exact
+        solution_sketch: 'Multiply the coefficients: $2 \cdot 5 = 10$. Add the exponents: $3 + 4 = 7$, so the product is $10x^7$.'
+      - problem: A warehouse packs $36y^{10}$ cans equally into $9y^4$ crates. How many cans are in each crate?
+        answer: 4y^6
+        answer_contract:
+          kind: exact
+        solution_sketch: Packing equally means dividing. The coefficients give $36 \div 9 = 4$ and the exponents give $10 - 4 = 6$, so each crate holds $4y^6$ cans.
+      - problem: Simplify $\frac{(6a^5)(2a^3)}{4a^2}$.
+        answer: 3a^6
+        answer_contract:
+          kind: exact
+        solution_sketch: The coefficient is $(6 \cdot 2)/4 = 3$. The exponent is $5 + 3 - 2 = 6$, so the result is $3a^6$.
+      - problem: Simplify $\frac{12x^8}{3x^2}$.
+        answer: 4x^6
+        answer_contract:
+          kind: exact
+        solution_sketch: The coefficients divide, $12 \div 3 = 4$, and the exponents subtract, $8 - 2 = 6$, giving $4x^6$.
+      constraints: multiply/divide coefficients; apply exponent rule to variables
+    - id: kp3
+      name: Two variables at once
+      key_prerequisites:
+      - exponent-product-rule
+      exemplars:
+      - problem: Simplify $(x^2 y^3)(x^4 y)$.
+        answer: x^6 y^4
+        answer_contract:
+          kind: exact
+        solution_sketch: Handle each base separately. For $x$, $2 + 4 = 6$; for $y$, $3 + 1 = 4$, so the product is $x^6y^4$.
+      - problem: Simplify $\frac{a^5 b^3}{a^2 b}$.
+        answer: a^3 b^2
+        answer_contract:
+          kind: exact
+        solution_sketch: Handle each base separately. For $a$, $5 - 2 = 3$; for $b$, $3 - 1 = 2$, so the quotient is $a^3b^2$.
+      - problem: A rectangle has an area of $x^7 y^5$ square units and a width of $x^3 y^2$ units. What is its length?
+        answer: x^4 y^3
+        answer_contract:
+          kind: exact
+        solution_sketch: Length is area divided by width. For $x$, $7 - 3 = 4$; for $y$, $5 - 2 = 3$, so the length is $x^4y^3$ units.
+      - problem: Simplify $(x^3 y^2)(x^2 y^4)$.
+        answer: x^5 y^6
+        answer_contract:
+          kind: exact
+        solution_sketch: Handle each base separately. For $x$, $3 + 2 = 5$; for $y$, $2 + 4 = 6$, so the product is $x^5y^6$.
+      - problem: A box measures $a^2 b$ by $a b^3$ by $a^4 b^2$ units. What is its volume?
+        answer: a^7 b^6
+        answer_contract:
+          kind: exact
+        solution_sketch: Volume is the product of the three dimensions. For $a$, $2 + 1 + 4 = 7$; for $b$, $1 + 3 + 2 = 6$, so the volume is $a^7b^6$ cubic units.
+      - problem: Simplify $\frac{a^6 b^5}{a^3 b^2}$.
+        answer: a^3 b^3
+        answer_contract:
+          kind: exact
+        solution_sketch: Handle each base separately. For $a$, $6 - 3 = 3$; for $b$, $5 - 2 = 3$, so the quotient is $a^3b^3$.
+      - problem: Simplify $\frac{(x^4 y^2)(x^3 y^5)}{x^2 y^3}$.
+        answer: x^5 y^4
+        answer_contract:
+          kind: exact
+        solution_sketch: Handle each base separately. For $x$, $4 + 3 - 2 = 5$; for $y$, $2 + 5 - 3 = 4$, so the result is $x^5y^4$.
+      - problem: Simplify $\frac{p^6 q^4}{p^2 q}$.
+        answer: p^4 q^3
+        answer_contract:
+          kind: exact
+        solution_sketch: Subtracting gives $6 - 2 = 4$ for $p$ and $4 - 1 = 3$ for $q$, so the result is $p^4q^3$.
+      constraints: apply the rules base by base
     diagnostic_exemplar:
-      problem: 'Simplify $\frac{(2x^3y)(6xy^2)}{4x^2y}$.'
-      answer: '3x^2 y^2'
-      solution_sketch: '$\frac{12x^4y^3}{4x^2y} = 3x^2y^2$.'
+      problem: Simplify $\frac{(2x^3y)(6xy^2)}{4x^2y}$.
+      answer: 3x^2 y^2
+      solution_sketch: $\frac{12x^4y^3}{4x^2y} = 3x^2y^2$.
     anki_seeds:
-      - front: "Simplifying (3x^2)(4x^5): the coefficients are ___ and the exponents are ___"
-        back: "multiplied (3*4 = 12); added (2 + 5 = 7)"
-        type: basic
+    - front: 'Simplifying (3x^2)(4x^5): the coefficients are ___ and the exponents are ___'
+      back: multiplied (3*4 = 12); added (2 + 5 = 7)
+      type: basic
 
   - id: power-of-a-power-rule
     name: "Power of a Power"
@@ -2745,274 +2754,287 @@ topics:
         back: "the conjugate a - sqrt(b)"
         type: basic
 
-  - id: radical-exponent-conversion
-    name: "Converting Between Radical and Exponent Form"
-    core: true
-    difficulty: 0.48
-    drill: false
-    answer_kind: expression
-    expected_time_secs: 60
-    prerequisites:
-      - id: square-roots
-        weight: 0.6
-        key: true
-      - id: cube-roots
-        weight: 0.5
-        key: true
-      - id: integer-exponents-intro
-        weight: 0.3
-    knowledge_points:
-      - id: kp1
-        name: "Unit fractions: a^(1/n) is an nth root"
-        key_prerequisites: [square-roots, cube-roots]
-        try_first:
-          problem: 'Find $k$ if $x^{1/2} \cdot x^{1/2} = x^k$.'
-          answer_contract: {"kind":"exact"}
-          answer: '1'
-          reveal: 'Adding exponents gives $x^{1/2}\cdot x^{1/2}=x^1=x$. The positive number that multiplied by itself gives $x$ is $\sqrt{x}$, so $x^{1/2}=\sqrt{x}$.'
-        exemplars:
-          - problem: 'Write $\sqrt[4]{x}$ as a power of $x$ for $x > 0$.'
-            answer: "x^(1/4)"
-            answer_contract: {"kind":"required_form","form":"rational_exponent"}
-            solution_sketch: 'A root with index $4$ is the power with exponent $1/4$. So $\sqrt[4]{x} = x^{1/4}$.'
-          - problem: 'Write $x^{1/3}$ in radical form.'
-            answer: "root(3, x)"
-            answer_contract: {"kind":"required_form","form":"radical"}
-            solution_sketch: 'The denominator $3$ of the unit fractional exponent is the root index. So $x^{1/3}$ is the cube root of $x$, written $\sqrt[3]{x}$.'
-          - problem: 'A square has area $A$. Write its side length as a power of $A$.'
-            answer: "A^(1/2)"
-            answer_contract: {"kind":"required_form","form":"rational_exponent"}
-            solution_sketch: 'The side of a square is the square root of its area, $\sqrt{A}$. A square root is the power $1/2$, so the side length is $A^{1/2}$.'
-          - problem: 'A cube has volume $V$. Write its edge length as a power of $V$.'
-            answer: "V^(1/3)"
-            answer_contract: {"kind":"required_form","form":"rational_exponent"}
-            solution_sketch: 'The edge of a cube is the cube root of its volume, $\sqrt[3]{V}$. A cube root is the power $1/3$, so the edge length is $V^{1/3}$.'
-          - problem: 'Write $y^{1/5}$ in radical form for $y > 0$.'
-            answer: "root(5, y)"
-            answer_contract: {"kind":"required_form","form":"radical"}
-            solution_sketch: 'The denominator $5$ of the unit fractional exponent is the root index. So $y^{1/5}$ is the fifth root of $y$, written $\sqrt[5]{y}$.'
-          - problem: 'Write $\sqrt[6]{t}$ as a power of $t$ for $t > 0$.'
-            answer: "t^(1/6)"
-            answer_contract: {"kind":"required_form","form":"rational_exponent"}
-            solution_sketch: 'A root with index $6$ is the power with exponent $1/6$. So $\sqrt[6]{t} = t^{1/6}$.'
-          - problem: 'Write $5^{1/2}$ in radical form.'
-            answer: "sqrt(5)"
-            answer_contract: {"kind":"required_form","form":"radical"}
-            solution_sketch: 'An exponent of $1/2$ means a root with index $2$, the square root. So $5^{1/2} = \sqrt{5}$, and the index $2$ is not written.'
-        constraints: "a^(1/n) is the nth root of a"
-      - id: kp2
-        name: "General m/n form"
-        key_prerequisites: [cube-roots]
-        exemplars:
-          - problem: 'Write $\sqrt[5]{x^3}$ as a power of $x$ for $x > 0$.'
-            answer: "x^(3/5)"
-            answer_contract: {"kind":"required_form","form":"rational_exponent"}
-            solution_sketch: 'The power inside the root is $3$ and the root index is $5$. The power goes over the index, so $\sqrt[5]{x^3} = x^{3/5}$.'
-          - problem: 'Write $x^{3/4}$ in radical form for $x > 0$.'
-            answer: "root(4, x^3)"
-            answer_contract: {"kind":"required_form","form":"radical"}
-            solution_sketch: 'The numerator $3$ is the power inside the root and the denominator $4$ is the root index. So $x^{3/4} = \sqrt[4]{x^3}$.'
-          - problem: 'A cube has volume $V$. Write the area of one face as a power of $V$.'
-            answer: "V^(2/3)"
-            answer_contract: {"kind":"required_form","form":"rational_exponent"}
-            solution_sketch: 'The edge is $V^{1/3}$ and a face has area equal to the edge squared. So the face area is $(V^{1/3})^2 = V^{2/3}$.'
-          - problem: 'A square has area $A$. A cube has edges as long as the sides of the square. Write the volume of the cube as a power of $A$.'
-            answer: "A^(3/2)"
-            answer_contract: {"kind":"required_form","form":"rational_exponent"}
-            solution_sketch: 'The side of the square is $A^{1/2}$, and the volume of the cube is that length cubed. So the volume is $(A^{1/2})^3 = A^{3/2}$.'
-          - problem: 'Write $x^{2/5}$ in radical form for $x > 0$.'
-            answer: "root(5, x^2)"
-            answer_contract: {"kind":"required_form","form":"radical"}
-            solution_sketch: 'The numerator $2$ is the power inside the root and the denominator $5$ is the root index. So $x^{2/5}$ is the fifth root of $x^2$, written $\sqrt[5]{x^2}$.'
-          - problem: 'Write $\sqrt{x^5}$ as a power of $x$ for $x > 0$.'
-            answer: "x^(5/2)"
-            answer_contract: {"kind":"required_form","form":"rational_exponent"}
-            solution_sketch: 'The power inside the root is $5$ and a square root has index $2$. The power goes over the index, so $\sqrt{x^5} = x^{5/2}$.'
-          - problem: 'Write $\sqrt[4]{x^3}$ as a power of $x$ for $x > 0$.'
-            answer: "x^(3/4)"
-            answer_contract: {"kind":"required_form","form":"rational_exponent"}
-            solution_sketch: 'The power $3$ goes in the numerator and the index $4$ in the denominator, so $\sqrt[4]{x^3} = x^{3/4}$.'
-        constraints: "numerator is the power, denominator is the root index"
-      - id: kp3
-        name: "Evaluate unit fractional exponents"
-        key_prerequisites: [square-roots, cube-roots]
-        exemplars:
-          - problem: 'Evaluate $25^{1/2}$.'
-            answer: "5"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The exponent $1/2$ means the square root. Since $5^2 = 25$, the value is $5$.'
-          - problem: 'Evaluate $8^{1/3}$.'
-            answer: "2"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The exponent $1/3$ means the cube root. Since $2^3 = 8$, the value is $2$.'
-          - problem: 'The edge length of a cube with volume $V$ is $V^{1/3}$. Find the edge length of a cube with volume $512$ cm$^3$.'
-            answer: "8"
-            answer_contract: {"kind":"unit","quantity":"length","unit":"cm","allow_omitted":true}
-            solution_sketch: 'The edge length is $512^{1/3}$, the cube root of $512$. Since $8^3 = 512$, each edge is $8$ cm.'
-          - problem: 'The side of a square with area $A$ is $A^{1/2}$. Find the side length of a square field with area $3600$ m$^2$.'
-            answer: "60"
-            answer_contract: {"kind":"unit","quantity":"length","unit":"m","allow_omitted":true}
-            solution_sketch: 'The side length is $3600^{1/2}$, the square root of $3600$. Since $60^2 = 3600$, each side is $60$ m.'
-          - problem: 'What is $81^{1/4}$?'
-            answer: "3"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The exponent $1/4$ means the fourth root. Since $3^4 = 81$, the value is $3$.'
-          - problem: 'Find $1000^{1/3}$.'
-            answer: "10"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The exponent $1/3$ means the cube root. Since $10^3 = 1000$, the value is $10$.'
-          - problem: 'What is the value of $64^{1/2}$?'
-            answer: "8"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The exponent $1/2$ means the square root, not half of the number. Since $8^2 = 64$, the value is $8$.'
-          - problem: 'Evaluate $\left(\frac{16}{81}\right)^{1/4}$.'
-            answer: "2/3"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Take the fourth root of the numerator and of the denominator. Since $2^4 = 16$ and $3^4 = 81$, the value is $\frac{2}{3}$.'
-        constraints: "perfect powers; positive base"
-    diagnostic_exemplar:
-      problem: 'Write $\sqrt{x^3}$ as a power of $x$.'
-      answer: "x^(3/2)"
-      solution_sketch: 'Power $3$, root index $2$.'
-    anki_seeds:
-      - front: "a^(1/n) = ?"
-        back: "the nth root of a"
-        type: basic
-
   - id: rational-exponents
-    name: "Rational Exponents"
+    name: Radicals and Rational Exponents
     core: true
     difficulty: 0.55
     drill: false
     answer_kind: expression
     expected_time_secs: 90
     prerequisites:
-      - id: radical-exponent-conversion
-        weight: 0.8
-        key: true
-      - id: negative-zero-exponents
-        weight: 0.5
-        key: true
-      - id: power-rule-exponents
-        weight: 0.5
-      - id: simplifying-radicals
-        weight: 0.3
+    - id: square-roots
+      weight: 0.6
+      key: true
+    - id: cube-roots
+      weight: 0.5
+      key: true
+    - id: integer-exponents-intro
+      weight: 0.3
+    - id: negative-zero-exponents
+      weight: 0.5
+      key: true
+    - id: power-rule-exponents
+      weight: 0.5
+    - id: simplifying-radicals
+      weight: 0.3
     knowledge_points:
-      - id: kp1
-        name: "Evaluate a^(m/n)"
-        key_prerequisites: [radical-exponent-conversion]
-        exemplars:
-          - problem: 'Evaluate $8^{2/3}$.'
-            answer: "4"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Take the cube root first: $8^{1/3} = 2$. Then square it: $2^2 = 4$.'
-          - problem: 'What is $9^{3/2}$?'
-            answer: "27"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Take the square root first: $9^{1/2} = 3$. Then cube it: $3^3 = 27$.'
-          - problem: 'A bacteria population multiplies by $4$ every hour. By what factor does it grow in $1.5$ hours?'
-            answer: "8"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'In $1.5 = 3/2$ hours the growth factor is $4^{3/2}$. The square root of $4$ is $2$, and $2^3 = 8$.'
-          - problem: 'The value of an investment multiplies by $27$ every $3$ years. By what factor does it grow in $2$ years?'
-            answer: "9"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Each year the value multiplies by $27^{1/3} = 3$, so over $2$ years the factor is $27^{2/3}$. That is $3^2 = 9$.'
-          - problem: 'Evaluate $125^{2/3}$.'
-            answer: "25"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Take the cube root first: $125^{1/3} = 5$. Then square it: $5^2 = 25$.'
-          - problem: 'What is the value of $25^{3/2}$?'
-            answer: "125"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Take a root and a power. The square root of $25$ is $5$, and $5^3 = 125$.'
-          - problem: 'The area of one face of a cube with volume $V$ is $V^{2/3}$. Find the area of one face of a cube with volume $1000$ cm$^3$.'
-            answer: "100"
-            answer_contract: {"kind":"unit","quantity":"area","unit":"cm^2","allow_omitted":true}
-            solution_sketch: 'The face area is $1000^{2/3}$. The cube root of $1000$ is $10$, and $10^2 = 100$ square centimetres.'
-          - problem: 'Evaluate $\left(\frac{4}{9}\right)^{3/2}$.'
-            answer: "8/27"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Take the square root first: $\left(\frac{4}{9}\right)^{1/2} = \frac{2}{3}$. Then cube it: $\frac{2^3}{3^3} = \frac{8}{27}$.'
-        constraints: "take the root first, then the power; perfect powers only"
-      - id: kp2
-        name: "Negative rational exponents"
-        key_prerequisites: [negative-zero-exponents, radical-exponent-conversion]
-        exemplars:
-          - problem: 'Evaluate $4^{-1/2}$.'
-            answer: "1/2"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'A negative exponent gives a reciprocal: $4^{-1/2} = \frac{1}{4^{1/2}}$. Since $4^{1/2} = 2$, the value is $\frac{1}{2}$.'
-          - problem: 'Evaluate $27^{-2/3}$.'
-            answer: "1/9"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'A negative exponent gives a reciprocal: $\frac{1}{27^{2/3}}$. The cube root of $27$ is $3$ and $3^2 = 9$, so the value is $\frac{1}{9}$.'
-          - problem: 'A colony of cells multiplies by $9$ every hour. What fraction of its present size was it $30$ minutes ago?'
-            answer: "1/3"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Going back half an hour multiplies the size by $9^{-1/2}$. Since $9^{1/2} = 3$, the colony was $\frac{1}{3}$ of its present size.'
-          - problem: 'The amount of a radioactive substance is multiplied by $\frac{1}{64}$ every $3$ days. By what factor is it multiplied over $2$ days?'
-            answer: "1/16"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Over $2$ days the factor is $\left(\frac{1}{64}\right)^{2/3} = 64^{-2/3}$. The cube root of $64$ is $4$ and $4^2 = 16$, so the factor is $\frac{1}{16}$.'
-          - problem: 'What is $8^{-2/3}$?'
-            answer: "1/4"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'A negative exponent gives a reciprocal: $\frac{1}{8^{2/3}}$. The cube root of $8$ is $2$ and $2^2 = 4$, so the value is $\frac{1}{4}$.'
-          - problem: 'What is the value of $25^{-1/2}$?'
-            answer: "1/5"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'A negative exponent gives a reciprocal, not a negative number. Since $25^{1/2} = 5$, the value is $\frac{1}{5}$.'
-          - problem: 'Find $\left(\frac{1}{32}\right)^{-2/5}$.'
-            answer: "4"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The negative exponent flips the fraction: $\left(\frac{1}{32}\right)^{-2/5} = 32^{2/5}$. The fifth root of $32$ is $2$ and $2^2 = 4$.'
-        constraints: "negative exponent -> reciprocal, then evaluate"
-      - id: kp3
-        name: "Exponent laws with rational exponents"
-        key_prerequisites: [power-rule-exponents, radical-exponent-conversion]
-        exemplars:
-          - problem: 'Simplify $x^{1/2} \cdot x^{1/3}$ for $x > 0$.'
-            answer: "x^(5/6)"
-            answer_contract: {"kind":"required_form","form":"rational_exponent"}
-            solution_sketch: 'Multiplying powers of the same base adds the exponents. With a common denominator, $\frac{1}{2} + \frac{1}{3} = \frac{3}{6} + \frac{2}{6} = \frac{5}{6}$, so the product is $x^{5/6}$.'
-          - problem: 'Simplify $(x^{2/3})^3$ for $x > 0$.'
-            answer: "x^2"
-            answer_contract: {"kind":"required_form","form":"rational_exponent"}
-            solution_sketch: 'A power of a power multiplies the exponents. Since $\frac{2}{3} \cdot 3 = 2$, the result is $x^2$.'
-          - problem: 'A square has side length $x^{3/4}$ cm. Write its area, in cm$^2$, as a single power of $x$.'
-            answer: "x^(3/2)"
-            answer_contract: {"kind":"required_form","form":"rational_exponent"}
-            solution_sketch: 'The area is the side squared: $(x^{3/4})^2$. Multiplying the exponents gives $\frac{3}{4} \cdot 2 = \frac{3}{2}$, so the area is $x^{3/2}$ square centimetres.'
-          - problem: 'A rectangle has area $x^{5/6}$ m$^2$ and width $x^{1/2}$ m. Write its length, in metres, as a single power of $x$.'
-            answer: "x^(1/3)"
-            answer_contract: {"kind":"required_form","form":"rational_exponent"}
-            solution_sketch: 'The length is the area divided by the width, so subtract the exponents. That gives $\frac{5}{6} - \frac{3}{6} = \frac{2}{6} = \frac{1}{3}$, so the length is $x^{1/3}$ metres.'
-          - problem: 'Simplify $\frac{x^{3/2}}{x^{1/3}}$ for $x > 0$.'
-            answer: "x^(7/6)"
-            answer_contract: {"kind":"required_form","form":"rational_exponent"}
-            solution_sketch: 'Dividing powers of the same base subtracts the exponents. With a common denominator, $\frac{9}{6} - \frac{2}{6} = \frac{7}{6}$, so the quotient is $x^{7/6}$.'
-          - problem: 'Simplify $x^{1/4} \cdot x^{1/2}$ for $x > 0$.'
-            answer: "x^(3/4)"
-            answer_contract: {"kind":"required_form","form":"rational_exponent"}
-            solution_sketch: 'A product of powers adds the exponents. So the exponent is $\frac{1}{4} + \frac{2}{4} = \frac{3}{4}$ and the product is $x^{3/4}$.'
-          - problem: 'A cube has edge length $x^{2/3}$ cm. Write its volume, in cm$^3$, as a single power of $x$.'
-            answer: "x^2"
-            answer_contract: {"kind":"required_form","form":"rational_exponent"}
-            solution_sketch: 'The volume is the edge cubed: $(x^{2/3})^3$. Multiplying the exponents gives $\frac{2}{3} \cdot 3 = 2$, so the volume is $x^2$ cubic centimetres.'
-          - problem: 'Simplify $(x^{3/4})^4$ for $x > 0$.'
-            answer: "x^3"
-            answer_contract: {"kind":"required_form","form":"rational_exponent"}
-            solution_sketch: 'A power of a power multiplies the exponents. Since $\frac{3}{4} \cdot 4 = 3$, the result is $x^3$.'
-        constraints: "same product/quotient/power rules, fractional arithmetic"
+    - id: kp1
+      name: 'Unit fractions: a^(1/n) is an nth root'
+      key_prerequisites:
+      - square-roots
+      - cube-roots
+      try_first:
+        problem: Find $k$ if $x^{1/2} \cdot x^{1/2} = x^k$.
+        answer_contract:
+          kind: exact
+        answer: '1'
+        reveal: Adding exponents gives $x^{1/2}\cdot x^{1/2}=x^1=x$. The positive number that multiplied by itself gives $x$ is $\sqrt{x}$, so $x^{1/2}=\sqrt{x}$.
+      exemplars:
+      - problem: Write $\sqrt[4]{x}$ as a power of $x$ for $x > 0$.
+        answer: x^(1/4)
+        answer_contract:
+          kind: required_form
+          form: rational_exponent
+        solution_sketch: A root with index $4$ is the power with exponent $1/4$. So $\sqrt[4]{x} = x^{1/4}$.
+      - problem: Write $x^{1/3}$ in radical form.
+        answer: root(3, x)
+        answer_contract:
+          kind: required_form
+          form: radical
+        solution_sketch: The denominator $3$ of the unit fractional exponent is the root index. So $x^{1/3}$ is the cube root of $x$, written $\sqrt[3]{x}$.
+      - problem: A square has area $A$. Write its side length as a power of $A$.
+        answer: A^(1/2)
+        answer_contract:
+          kind: required_form
+          form: rational_exponent
+        solution_sketch: The side of a square is the square root of its area, $\sqrt{A}$. A square root is the power $1/2$, so the side length is $A^{1/2}$.
+      - problem: A cube has volume $V$. Write its edge length as a power of $V$.
+        answer: V^(1/3)
+        answer_contract:
+          kind: required_form
+          form: rational_exponent
+        solution_sketch: The edge of a cube is the cube root of its volume, $\sqrt[3]{V}$. A cube root is the power $1/3$, so the edge length is $V^{1/3}$.
+      - problem: Write $y^{1/5}$ in radical form for $y > 0$.
+        answer: root(5, y)
+        answer_contract:
+          kind: required_form
+          form: radical
+        solution_sketch: The denominator $5$ of the unit fractional exponent is the root index. So $y^{1/5}$ is the fifth root of $y$, written $\sqrt[5]{y}$.
+      - problem: Write $\sqrt[6]{t}$ as a power of $t$ for $t > 0$.
+        answer: t^(1/6)
+        answer_contract:
+          kind: required_form
+          form: rational_exponent
+        solution_sketch: A root with index $6$ is the power with exponent $1/6$. So $\sqrt[6]{t} = t^{1/6}$.
+      - problem: Write $5^{1/2}$ in radical form.
+        answer: sqrt(5)
+        answer_contract:
+          kind: required_form
+          form: radical
+        solution_sketch: An exponent of $1/2$ means a root with index $2$, the square root. So $5^{1/2} = \sqrt{5}$, and the index $2$ is not written.
+      constraints: a^(1/n) is the nth root of a
+    - id: kp2
+      name: General m/n form
+      key_prerequisites:
+      - cube-roots
+      exemplars:
+      - problem: Write $\sqrt[5]{x^3}$ as a power of $x$ for $x > 0$.
+        answer: x^(3/5)
+        answer_contract:
+          kind: required_form
+          form: rational_exponent
+        solution_sketch: The power inside the root is $3$ and the root index is $5$. The power goes over the index, so $\sqrt[5]{x^3} = x^{3/5}$.
+      - problem: Write $x^{3/4}$ in radical form for $x > 0$.
+        answer: root(4, x^3)
+        answer_contract:
+          kind: required_form
+          form: radical
+        solution_sketch: The numerator $3$ is the power inside the root and the denominator $4$ is the root index. So $x^{3/4} = \sqrt[4]{x^3}$.
+      - problem: A cube has volume $V$. Write the area of one face as a power of $V$.
+        answer: V^(2/3)
+        answer_contract:
+          kind: required_form
+          form: rational_exponent
+        solution_sketch: The edge is $V^{1/3}$ and a face has area equal to the edge squared. So the face area is $(V^{1/3})^2 = V^{2/3}$.
+      - problem: A square has area $A$. A cube has edges as long as the sides of the square. Write the volume of the cube as a power of $A$.
+        answer: A^(3/2)
+        answer_contract:
+          kind: required_form
+          form: rational_exponent
+        solution_sketch: The side of the square is $A^{1/2}$, and the volume of the cube is that length cubed. So the volume is $(A^{1/2})^3 = A^{3/2}$.
+      - problem: Write $x^{2/5}$ in radical form for $x > 0$.
+        answer: root(5, x^2)
+        answer_contract:
+          kind: required_form
+          form: radical
+        solution_sketch: The numerator $2$ is the power inside the root and the denominator $5$ is the root index. So $x^{2/5}$ is the fifth root of $x^2$, written $\sqrt[5]{x^2}$.
+      - problem: Write $\sqrt{x^5}$ as a power of $x$ for $x > 0$.
+        answer: x^(5/2)
+        answer_contract:
+          kind: required_form
+          form: rational_exponent
+        solution_sketch: The power inside the root is $5$ and a square root has index $2$. The power goes over the index, so $\sqrt{x^5} = x^{5/2}$.
+      - problem: Write $\sqrt[4]{x^3}$ as a power of $x$ for $x > 0$.
+        answer: x^(3/4)
+        answer_contract:
+          kind: required_form
+          form: rational_exponent
+        solution_sketch: The power $3$ goes in the numerator and the index $4$ in the denominator, so $\sqrt[4]{x^3} = x^{3/4}$.
+      constraints: numerator is the power, denominator is the root index
+    - id: kp3
+      name: Evaluate a^(m/n)
+      key_prerequisites: []
+      exemplars:
+      - problem: Evaluate $8^{2/3}$.
+        answer: '4'
+        answer_contract:
+          kind: exact
+        solution_sketch: 'Take the cube root first: $8^{1/3} = 2$. Then square it: $2^2 = 4$.'
+      - problem: What is $9^{3/2}$?
+        answer: '27'
+        answer_contract:
+          kind: exact
+        solution_sketch: 'Take the square root first: $9^{1/2} = 3$. Then cube it: $3^3 = 27$.'
+      - problem: A bacteria population multiplies by $4$ every hour. By what factor does it grow in $1.5$ hours?
+        answer: '8'
+        answer_contract:
+          kind: exact
+        solution_sketch: In $1.5 = 3/2$ hours the growth factor is $4^{3/2}$. The square root of $4$ is $2$, and $2^3 = 8$.
+      - problem: The value of an investment multiplies by $27$ every $3$ years. By what factor does it grow in $2$ years?
+        answer: '9'
+        answer_contract:
+          kind: exact
+        solution_sketch: Each year the value multiplies by $27^{1/3} = 3$, so over $2$ years the factor is $27^{2/3}$. That is $3^2 = 9$.
+      - problem: Evaluate $125^{2/3}$.
+        answer: '25'
+        answer_contract:
+          kind: exact
+        solution_sketch: 'Take the cube root first: $125^{1/3} = 5$. Then square it: $5^2 = 25$.'
+      - problem: What is the value of $25^{3/2}$?
+        answer: '125'
+        answer_contract:
+          kind: exact
+        solution_sketch: Take a root and a power. The square root of $25$ is $5$, and $5^3 = 125$.
+      - problem: The area of one face of a cube with volume $V$ is $V^{2/3}$. Find the area of one face of a cube with volume $1000$ cm$^3$.
+        answer: '100'
+        answer_contract:
+          kind: unit
+          quantity: area
+          unit: cm^2
+          allow_omitted: true
+        solution_sketch: The face area is $1000^{2/3}$. The cube root of $1000$ is $10$, and $10^2 = 100$ square centimetres.
+      - problem: Evaluate $\left(\frac{4}{9}\right)^{3/2}$.
+        answer: 8/27
+        answer_contract:
+          kind: exact
+        solution_sketch: 'Take the square root first: $\left(\frac{4}{9}\right)^{1/2} = \frac{2}{3}$. Then cube it: $\frac{2^3}{3^3} = \frac{8}{27}$.'
+      constraints: take the root first, then the power; perfect powers only
+    - id: kp4
+      name: Negative rational exponents
+      key_prerequisites:
+      - negative-zero-exponents
+      exemplars:
+      - problem: Evaluate $4^{-1/2}$.
+        answer: 1/2
+        answer_contract:
+          kind: exact
+        solution_sketch: 'A negative exponent gives a reciprocal: $4^{-1/2} = \frac{1}{4^{1/2}}$. Since $4^{1/2} = 2$, the value is $\frac{1}{2}$.'
+      - problem: Evaluate $27^{-2/3}$.
+        answer: 1/9
+        answer_contract:
+          kind: exact
+        solution_sketch: 'A negative exponent gives a reciprocal: $\frac{1}{27^{2/3}}$. The cube root of $27$ is $3$ and $3^2 = 9$, so the value is $\frac{1}{9}$.'
+      - problem: A colony of cells multiplies by $9$ every hour. What fraction of its present size was it $30$ minutes ago?
+        answer: 1/3
+        answer_contract:
+          kind: exact
+        solution_sketch: Going back half an hour multiplies the size by $9^{-1/2}$. Since $9^{1/2} = 3$, the colony was $\frac{1}{3}$ of its present size.
+      - problem: The amount of a radioactive substance is multiplied by $\frac{1}{64}$ every $3$ days. By what factor is it multiplied over $2$ days?
+        answer: 1/16
+        answer_contract:
+          kind: exact
+        solution_sketch: Over $2$ days the factor is $\left(\frac{1}{64}\right)^{2/3} = 64^{-2/3}$. The cube root of $64$ is $4$ and $4^2 = 16$, so the factor is $\frac{1}{16}$.
+      - problem: What is $8^{-2/3}$?
+        answer: 1/4
+        answer_contract:
+          kind: exact
+        solution_sketch: 'A negative exponent gives a reciprocal: $\frac{1}{8^{2/3}}$. The cube root of $8$ is $2$ and $2^2 = 4$, so the value is $\frac{1}{4}$.'
+      - problem: What is the value of $25^{-1/2}$?
+        answer: 1/5
+        answer_contract:
+          kind: exact
+        solution_sketch: A negative exponent gives a reciprocal, not a negative number. Since $25^{1/2} = 5$, the value is $\frac{1}{5}$.
+      - problem: Find $\left(\frac{1}{32}\right)^{-2/5}$.
+        answer: '4'
+        answer_contract:
+          kind: exact
+        solution_sketch: 'The negative exponent flips the fraction: $\left(\frac{1}{32}\right)^{-2/5} = 32^{2/5}$. The fifth root of $32$ is $2$ and $2^2 = 4$.'
+      constraints: negative exponent -> reciprocal, then evaluate
+    - id: kp5
+      name: Exponent laws with rational exponents
+      key_prerequisites:
+      - power-rule-exponents
+      exemplars:
+      - problem: Simplify $x^{1/2} \cdot x^{1/3}$ for $x > 0$.
+        answer: x^(5/6)
+        answer_contract:
+          kind: required_form
+          form: rational_exponent
+        solution_sketch: Multiplying powers of the same base adds the exponents. With a common denominator, $\frac{1}{2} + \frac{1}{3} = \frac{3}{6} + \frac{2}{6} = \frac{5}{6}$, so the product is $x^{5/6}$.
+      - problem: Simplify $(x^{2/3})^3$ for $x > 0$.
+        answer: x^2
+        answer_contract:
+          kind: required_form
+          form: rational_exponent
+        solution_sketch: A power of a power multiplies the exponents. Since $\frac{2}{3} \cdot 3 = 2$, the result is $x^2$.
+      - problem: A square has side length $x^{3/4}$ cm. Write its area, in cm$^2$, as a single power of $x$.
+        answer: x^(3/2)
+        answer_contract:
+          kind: required_form
+          form: rational_exponent
+        solution_sketch: 'The area is the side squared: $(x^{3/4})^2$. Multiplying the exponents gives $\frac{3}{4} \cdot 2 = \frac{3}{2}$, so the area is $x^{3/2}$ square centimetres.'
+      - problem: A rectangle has area $x^{5/6}$ m$^2$ and width $x^{1/2}$ m. Write its length, in metres, as a single power of $x$.
+        answer: x^(1/3)
+        answer_contract:
+          kind: required_form
+          form: rational_exponent
+        solution_sketch: The length is the area divided by the width, so subtract the exponents. That gives $\frac{5}{6} - \frac{3}{6} = \frac{2}{6} = \frac{1}{3}$, so the length is $x^{1/3}$ metres.
+      - problem: Simplify $\frac{x^{3/2}}{x^{1/3}}$ for $x > 0$.
+        answer: x^(7/6)
+        answer_contract:
+          kind: required_form
+          form: rational_exponent
+        solution_sketch: Dividing powers of the same base subtracts the exponents. With a common denominator, $\frac{9}{6} - \frac{2}{6} = \frac{7}{6}$, so the quotient is $x^{7/6}$.
+      - problem: Simplify $x^{1/4} \cdot x^{1/2}$ for $x > 0$.
+        answer: x^(3/4)
+        answer_contract:
+          kind: required_form
+          form: rational_exponent
+        solution_sketch: A product of powers adds the exponents. So the exponent is $\frac{1}{4} + \frac{2}{4} = \frac{3}{4}$ and the product is $x^{3/4}$.
+      - problem: A cube has edge length $x^{2/3}$ cm. Write its volume, in cm$^3$, as a single power of $x$.
+        answer: x^2
+        answer_contract:
+          kind: required_form
+          form: rational_exponent
+        solution_sketch: 'The volume is the edge cubed: $(x^{2/3})^3$. Multiplying the exponents gives $\frac{2}{3} \cdot 3 = 2$, so the volume is $x^2$ cubic centimetres.'
+      - problem: Simplify $(x^{3/4})^4$ for $x > 0$.
+        answer: x^3
+        answer_contract:
+          kind: required_form
+          form: rational_exponent
+        solution_sketch: A power of a power multiplies the exponents. Since $\frac{3}{4} \cdot 4 = 3$, the result is $x^3$.
+      constraints: same product/quotient/power rules, fractional arithmetic
     diagnostic_exemplar:
-      problem: 'Compute $27^{2/3} \cdot 27^{-1/3}$.'
+      problem: Compute $27^{2/3} \cdot 27^{-1/3}$.
       answer: '3'
       solution_sketch: 'Add the exponents: $27^{1/3} = 3$.'
     anki_seeds:
-      - front: "Meaning of a^(m/n):"
-        back: "the nth root of a, raised to the m power: (a^(1/n))^m"
-        type: basic
+    - front: a^(1/n) = ?
+      back: the nth root of a
+      type: basic
+    - front: 'Meaning of a^(m/n):'
+      back: 'the nth root of a, raised to the m power: (a^(1/n))^m'
+      type: basic
 
   - id: pythagorean-theorem
     name: "The Pythagorean Theorem"

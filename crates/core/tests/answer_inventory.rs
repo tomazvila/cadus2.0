@@ -73,26 +73,29 @@ const HISTORICAL_SHAPE_COUNTS: [(&str, usize); 16] = [
 /// Historical post-contract distribution of distinct decidable exemplars.
 const HISTORICAL_DISTINCT_DECIDABLE: [(usize, usize); 4] = [(0, 115), (1, 53), (2, 583), (3, 58)];
 
-const LIVE_KNOWLEDGE_POINTS: usize = 809;
+// 2026-10-12, Foundations merge (D-C1): every live count below pins the merged
+// tree: 784 knowledge points (was 809), 5,742 exemplars (was 5,907). The values
+// come from the inventory dump.
+const LIVE_KNOWLEDGE_POINTS: usize = 784;
 // 2026-10-07, courses rewrite (item-level figures, whole-number and mixed-number items): 5,907 exemplars (was 5,906).
-const LIVE_EXEMPLARS: usize = 5_907;
+const LIVE_EXEMPLARS: usize = 5_742;
 const LIVE_WITHOUT_SKETCH: usize = 0;
 // 2026-10-07, courses rewrite: the 984 rewritten topics move every count below
 // (5,906 exemplars, was 3,828). The values come from the inventory dump of the
 // merged tree.
 const LIVE_SHAPE_COUNTS: [(&str, usize); 16] = [
-    ("coordinates", 222),
-    ("decimal", 233),
-    ("equation_or_inequality", 435),
+    ("coordinates", 218),
+    ("decimal", 229),
+    ("equation_or_inequality", 433),
     // 2026-10-08, story framing removed (about 1,980 items, 7 duplicates renumbered): expression 1,074 (was 1,073).
-    ("expression", 1_074),
-    ("fraction", 456),
-    ("integer", 2_604),
+    ("expression", 1_035),
+    ("fraction", 453),
+    ("integer", 2_512),
     ("interval", 30),
     ("mixed_number", 21),
-    ("ordered_list", 293),
+    ("ordered_list", 276),
     ("other", 12),
-    ("prose", 226),
+    ("prose", 222),
     ("quotient_remainder", 32),
     ("radical", 208),
     ("rational_exponent", 14),
@@ -105,31 +108,31 @@ const LIVE_DISTINCT_DECIDABLE: [(usize, usize); 12] = [
     (2, 3),
     (3, 3),
     // 2026-10-08, story framing removed: (4, 67) (was 68), (6, 88) (was 90), (7, 277) (was 275), (8, 251) (was 250).
-    (4, 67),
-    (5, 52),
-    (6, 88),
-    (7, 277),
-    (8, 251),
-    (9, 45),
+    (4, 61),
+    (5, 50),
+    (6, 85),
+    (7, 271),
+    (8, 244),
+    (9, 44),
     (10, 9),
     (11, 1),
 ];
 const LIVE_VERDICT_COUNTS: [(&str, usize); 8] = [
     // 2026-10-08, story framing removed: decided 5,526 (was 5,520); "a name that is not a function or variable" 229 (was 235); integer 2,604 (was 2,599); prose 226 (was 232).
-    ("decided", 5_526),
+    ("decided", 5_367),
     (
         "undecidable(a chained inequality needs one variable in the middle)",
         4,
     ),
     // Grader pass 3: subscripts and `log_b` read, four rows now end in trailing text.
-    ("undecidable(a character outside the grammar)", 52),
+    ("undecidable(a character outside the grammar)", 50),
     (
         "undecidable(a disjunction requires finite scalar solutions)",
         36,
     ),
     (
         "undecidable(a name that is not a function or variable)",
-        229,
+        225,
     ),
     ("undecidable(a symbol where a value belongs)", 2),
     ("undecidable(an inequality with no bare variable)", 12),

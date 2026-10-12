@@ -187,11 +187,12 @@ export function Dashboard({
   useEffect(() => {
     void call(
       () => api.getStatus(),
-      // A reply after the view left writes state nobody renders.
-      (status) => { dispatch({ type: 'ok', gen, status }); },
-      { onFail: () => { dispatch({ type: 'fail', gen }); } },
+      // A reply after the view left writes state nobody renders, and a
+      // dispatch after unmount touches a window that may be gone.
+      (status) => { if (life.alive()) dispatch({ type: 'ok', gen, status }); },
+      { onFail: () => { if (life.alive()) dispatch({ type: 'fail', gen }); } },
     );
-  }, [api, call, gen]);
+  }, [api, call, gen, life]);
 
   // The moves below are plain functions, rebuilt per render, and read at event time.
   const reload = (): void => { dispatch({ type: 'reload' }); };

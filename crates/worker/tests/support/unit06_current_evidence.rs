@@ -141,14 +141,15 @@ pub fn current_receipt(root: &Path) -> Value {
     // 2026-10-05 and sixteen exponent, radical and Pythagoras candidates on
     // 2026-10-06, five more on 2026-10-07 (courses rewrite)
     // (docs/reports/unit06-correction-retired-pending-templates.json).
-    assert_eq!(rows.len(), 55);
+    // Foundations merge (2026-10-12): 54, after exponent-product-rule/kp2 was dropped.
+    assert_eq!(rows.len(), 54);
     let (curriculum, findings) = curriculum::load_curriculum(&root.join("curriculum")).unwrap();
     assert!(findings.is_empty(), "{findings:?}");
     let keys: Vec<String> = rows
         .iter()
         .map(|r| r["kp_id"].as_str().unwrap().to_owned())
         .collect();
-    assert_eq!(keys.iter().collect::<BTreeSet<_>>().len(), 55);
+    assert_eq!(keys.iter().collect::<BTreeSet<_>>().len(), 54);
     let specs = cli::select(&curriculum, &keys).unwrap();
     let mut authored = BTreeSet::new();
     for spec in &specs {

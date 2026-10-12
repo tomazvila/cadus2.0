@@ -135,7 +135,8 @@ fn retired_sources(
     let retired = retired.as_array().expect("retired rows");
     // 50 before the courses rewrite; 156 more were retired on 2026-10-07.
     // 2026-10-08, story framing removed: subtraction-with-borrowing/kp3 retired (207, was 206).
-    assert_eq!(retired.len(), 207);
+    // Foundations merge (2026-10-12): the retired rows of 9 dropped twin steps left the report and solutions-of-inequalities/kp2 joined it: 199.
+    assert_eq!(retired.len(), 199);
     let mut keys = BTreeSet::new();
     for row in retired {
         let kp = row["kp_key"].as_str().expect("retired kp");
@@ -189,14 +190,15 @@ fn manifests(directory: &Path) -> (Value, Value) {
     assert_eq!(
         manifest["counts"],
         serde_json::json!({
-            "accepted_pending_teach": 735, "canonical_kps": 809,
-            "missing_teach": 735, "rejected": 0, "residual": 0
+            "accepted_pending_teach": 713, "canonical_kps": 784,
+            "missing_teach": 713, "rejected": 0, "residual": 0
         })
     );
     assert_eq!(import["status"], "pending-ai-review");
     assert_eq!(import["schema_version"], 2);
     assert_eq!(import["kinds"], serde_json::json!(["teach"]));
-    assert_eq!(import["knowledge_points"], 735);
+    // 735 before the Foundations merge (2026-10-12); 713 after it.
+    assert_eq!(import["knowledge_points"], 713);
     assert_eq!(import["api_calls"], 0);
     assert_eq!(import["approved_by_this_tool"], 0);
     (manifest, import)
@@ -267,8 +269,8 @@ fn artifacts(directory: &Path) -> (BTreeMap<String, Value>, BTreeMap<String, Val
             "{kp}"
         );
     }
-    assert_eq!(drafts.len(), 735);
-    assert_eq!(reviews.len(), 735);
+    assert_eq!(drafts.len(), 713);
+    assert_eq!(reviews.len(), 713);
     assert_eq!(
         canonical_sha(&Value::Array(drafts.clone())),
         manifest["canonical_arrays"]["drafts_sha256"]
@@ -289,7 +291,7 @@ fn missing_ids(directory: &Path) -> BTreeSet<String> {
         .filter(|row| row["kind"] == "teach" && row["status"] == "skipped")
         .map(|row| row["kp_id"].as_str().expect("coverage KP").to_owned())
         .collect();
-    assert_eq!(missing.len(), 735);
+    assert_eq!(missing.len(), 713);
     missing
 }
 
@@ -304,7 +306,8 @@ fn source_evidence(
     // polynomial-basics/kp3 in the units 00 to 07 content pass).
     // 759 before the courses rewrite; 156 were retired on 2026-10-07.
     // 2026-10-08, story framing removed: 602 selected, 207 retired (was 603 and 206).
-    assert_eq!(templates.len(), 602);
+    // Foundations merge (2026-10-12): 784 KPs, 585 selected and 199 retired.
+    assert_eq!(templates.len(), 585);
     let retired = retired_sources(specs, &templates);
     let mut sources = BTreeMap::new();
     let mut occupied = BTreeSet::new();
@@ -534,7 +537,7 @@ fn finite_teach_collision_allowance_matches_the_registered_teaching_roles() {
 }
 
 #[test]
-fn all_735_pending_teach_pages_are_source_bound_and_production_gated() {
+fn all_713_pending_teach_pages_are_source_bound_and_production_gated() {
     let directory = directory();
     let (drafts, reviews) = artifacts(&directory);
     assert_eq!(
@@ -546,7 +549,7 @@ fn all_735_pending_teach_pages_are_source_bound_and_production_gated() {
         missing_ids(&directory)
     );
     let specs = specs();
-    assert_eq!(specs.len(), 809);
+    assert_eq!(specs.len(), 784);
     let (sources, occupied) = source_evidence(&directory, &specs);
     verify_pages(&drafts, &reviews, &specs, &sources, &occupied);
 }

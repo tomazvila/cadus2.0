@@ -215,7 +215,7 @@ fn report_of_one_course_fails_today_and_lists_each_kp_below_the_floor() {
 }
 
 #[test]
-fn report_of_the_full_tree_has_3138_kps_and_runs_in_less_than_60_seconds() {
+fn report_of_the_full_tree_has_3113_kps_and_runs_in_less_than_60_seconds() {
     let start = Instant::now();
     let result = run(&["report", "--all", "--base", &curriculum()]);
     assert!(start.elapsed().as_secs() < 60, "{:?}", start.elapsed());
@@ -228,13 +228,14 @@ fn report_of_the_full_tree_has_3138_kps_and_runs_in_less_than_60_seconds() {
             .iter()
             .all(|result| *result == "PASS")
     );
-    assert_eq!(result.doc["kps"].as_array().unwrap().len(), 3138);
+    // 3,138 steps before the Foundations merge (2026-10-12); 3,113 after it.
+    assert_eq!(result.doc["kps"].as_array().unwrap().len(), 3113);
     assert_eq!(result.doc["courses"].as_array().unwrap().len(), 13);
     let count: u64 = column(&result.doc, "courses", "kps")
         .iter()
         .map(|kps| kps.as_u64().unwrap())
         .sum();
-    assert_eq!(count, 3138);
+    assert_eq!(count, 3113);
     // Pack v2, D25: the two units whose file name is not the unit id.
     let files = column(&result.doc, "kps", "file");
     for file in [

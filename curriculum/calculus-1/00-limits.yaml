@@ -2248,145 +2248,283 @@ topics:
 
   - id: intermediate-value-theorem
     name: The Intermediate Value Theorem
-    core: false                # stated existence theorem; nothing builds on it (MAW p.391)
+    core: false
     difficulty: 0.62
     drill: false
     answer_kind: numeric
     expected_time_secs: 150
     prerequisites:
-      - id: continuity
-        weight: 0.8
-        key: true
-      - id: evaluating-functions
-        weight: 0.4
-      - id: evaluating-polynomials
-        weight: 0.3
+    - id: continuity
+      weight: 0.8
+      key: true
+    - id: evaluating-functions
+      weight: 0.4
     knowledge_points:
-      - id: kp1
-        name: Verify the hypotheses and conclude a root exists
-        key_prerequisites: [continuity, evaluating-functions]
-        exemplars:
-          - problem: 'Does the Intermediate Value Theorem guarantee that $f(x) = x^3 + x - 3$ has a root in the interval $(1, 2)$?'
-            answer: 'yes'
-            answer_contract: {"kind": "label", "options": [["yes", "it does", "yes, it does", "it guarantees a root", "the theorem guarantees a root", "yes, it guarantees a root", "guaranteed", "there is a root"], ["no", "it does not", "no, it does not", "it does not guarantee a root", "the theorem does not guarantee a root", "not guaranteed", "no, it does not guarantee a root", "there is no guarantee"]]}
-            solution_sketch: 'The polynomial $f$ is continuous on $[1, 2]$. We have $f(1) = -1 < 0$ and $f(2) = 7 > 0$, so $f$ changes sign, and the theorem guarantees a root in $(1, 2)$.'
-          - problem: 'To show that $f(x) = x^3 - 2x - 5$ has a root in $(2, 3)$ we need the sign of $f$ at both ends. Find $f(3)$.'
-            answer: '16'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'Substituting gives $f(3) = 27 - 6 - 5 = 16$. Since $f(2) = -1$ is negative and $f(3) = 16$ is positive, the theorem gives a root in $(2, 3)$.'
-          - problem: 'A start-up''s monthly profit in thousands of dollars is modelled by the continuous function $P(m) = m^2 - 8m + 6$, and $P(0) = 6$. To see whether the profit was exactly zero at some time between month $0$ and month $2$, find $P(2)$.'
-            answer: '-6'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'We have $P(2) = 4 - 16 + 6 = -6$. The profit is positive at month $0$ and negative at month $2$, so the Intermediate Value Theorem gives a time in between when it was exactly zero.'
-          - problem: 'Can the Intermediate Value Theorem, applied to the endpoint values, show that $p(x) = x^2 - 1$ has a root in the interval $(-2, 2)$?'
-            answer: 'no'
-            answer_contract: {"kind": "label", "options": [["yes", "it does", "yes, it does", "it guarantees a root", "the theorem guarantees a root", "yes, it guarantees a root", "guaranteed", "there is a root"], ["no", "it does not", "no, it does not", "it does not guarantee a root", "the theorem does not guarantee a root", "not guaranteed", "no, it does not guarantee a root", "there is no guarantee"]]}
-            solution_sketch: 'We have $p(-2) = 3$ and $p(2) = 3$, which have the same sign, so the theorem gives no conclusion. The roots $x = -1$ and $x = 1$ do exist, but this test does not detect them.'
-          - problem: 'A ball is thrown upward from a balcony. The model $h(t) = -5t^2 + 10t + 15$ gives its height in metres above the ground after $t$ seconds, and a negative value means that the ball would be below the ground. Find $h(4)$.'
-            answer: '-25'
-            answer_contract: {"kind": "unit", "quantity": "length", "unit": "m", "allow_omitted": true}
-            solution_sketch: 'We have $h(4) = -80 + 40 + 15 = -25$ metres. Since $h(2) = 15$ is positive and $h(4)$ is negative, the theorem gives a time between $2$ and $4$ seconds when the ball reaches the ground.'
-          - problem: 'The polynomial $p(x) = x^3 - 4x + 1$ is continuous. Find $p(1)$ to decide whether $p$ has a root in $(0, 1)$.'
-            answer: '-2'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'We have $p(1) = 1 - 4 + 1 = -2$, which is negative, and $p(0) = 1$ is positive. So the theorem gives a root of $p$ in $(0, 1)$.'
-          - problem: 'The function $f(x) = x^2 - 12$ has a root in $(n, n + 1)$ for exactly one whole number $n > 0$. Find $n$.'
-            answer: '3'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'We have $f(3) = 9 - 12 = -3$ and $f(4) = 16 - 12 = 4$. The sign changes between $3$ and $4$, so the root lies in $(3, 4)$ and $n = 3$.'
-        constraints: "cubic or quadratic with integer endpoint values; decide whether the endpoint values show a sign change; two contexts"
-      - id: kp2
-        name: Locate a root interval from values
-        key_prerequisites: [continuity, evaluating-functions]
-        exemplars:
-          - problem: 'A continuous function has $f(1) = -2$, $f(2) = 1$ and $f(3) = 4$. On which interval must $f$ have a root?'
-            answer: '1 < x < 2'
-            answer_contract: {"kind": "inequality_union"}
-            solution_sketch: 'The values $-2$ and $1$ have opposite signs, so the sign changes between $x = 1$ and $x = 2$. The theorem gives a root in $(1, 2)$.'
-          - problem: 'A continuous function has $f(0) = 3$ and $f(4) = -5$. On which interval does the Intermediate Value Theorem guarantee a root?'
-            answer: '0 < x < 4'
-            answer_contract: {"kind": "inequality_union"}
-            solution_sketch: 'The values $f(0) = 3$ and $f(4) = -5$ have opposite signs, so the theorem guarantees a root in $(0, 4)$.'
-          - problem: 'A continuous function has $f(0) = -1$, $f(1) = -3$, $f(2) = -4$, $f(3) = 2$ and $f(4) = 5$. On which interval must $f$ have a root?'
-            answer: '2 < x < 3'
-            answer_contract: {"kind": "inequality_union"}
-            solution_sketch: 'The first three values are negative and the last two are positive. The sign changes between $f(2) = -4$ and $f(3) = 2$, so there is a root in $(2, 3)$.'
-          - problem: 'The temperature $T(t)$ in degrees Celsius at an outdoor sensor is a continuous function of the hour $t$. At $t = 18, 19, 20, 21$ the readings are $6, 3, -1, -2$. During which hour did the temperature pass through $0$ degrees?'
-            answer: '19 < t < 20'
-            answer_contract: {"kind": "inequality_union"}
-            solution_sketch: 'The readings $6$ and $3$ are positive, and $-1$ and $-2$ are negative. The sign changes between $t = 19$ and $t = 20$, so the temperature was exactly $0$ at some time in that hour.'
-          - problem: 'The values of a continuous function are $f(-2) = 5$, $f(-1) = 2$, $f(0) = -1$ and $f(1) = -4$. On which interval must $f$ have a root?'
-            answer: '-1 < x < 0'
-            answer_contract: {"kind": "inequality_union"}
-            solution_sketch: 'The values $5$ and $2$ are positive and $-1$ and $-4$ are negative. The sign changes between $x = -1$ and $x = 0$, so there is a root in $(-1, 0)$.'
-          - problem: 'At the end of weeks $1, 2, 3, 4, 5$ the balance of an account in dollars is $120, 70, 25, -20, -60$, and the balance changes continuously. In which time interval, with $t$ in weeks, must the balance have been exactly zero?'
-            answer: '3 < t < 4'
-            answer_contract: {"kind": "inequality_union"}
-            solution_sketch: 'The balance is positive at weeks $1$, $2$ and $3$ and negative at weeks $4$ and $5$. It crosses zero between $t = 3$ and $t = 4$, so the balance was exactly zero at some time in $(3, 4)$.'
-          - problem: 'A continuous function has $f(1) = 3$, $f(2) = 5$, $f(3) = 8$ and $f(4) = 2$. Does the Intermediate Value Theorem guarantee a root of $f$ in $(1, 4)$?'
-            answer: 'no'
-            answer_contract: {"kind": "label", "options": [["yes", "it does", "yes, it does", "it guarantees a root", "the theorem guarantees a root", "yes, it guarantees a root", "guaranteed", "there is a root"], ["no", "it does not", "no, it does not", "it does not guarantee a root", "the theorem does not guarantee a root", "not guaranteed", "no, it does not guarantee a root", "there is no guarantee"]]}
-            solution_sketch: 'All four values are positive, so no pair of values has opposite signs. The theorem gives no root, although $f$ might still have one.'
-          - problem: 'A continuous function has $f(0) = 2$, $f(1) = -3$ and $f(2) = -4$. On which interval must $f$ have a root?'
-            answer: '0 < x < 1'
-            answer_contract: {"kind": "inequality_union"}
-            solution_sketch: 'The value $f(0) = 2$ is positive and $f(1) = -3$ is negative, so the sign changes between $x = 0$ and $x = 1$. The root lies in $(0, 1)$.'
-        constraints: "table of integer values with exactly one sign change; identify the bracketing interval; two contexts; one item where the signs do not change"
-      - id: kp3
-        name: Intermediate values other than zero, and why continuity is essential
-        key_prerequisites: [continuity]
-        try_first:
-          problem: 'A continuous function $f$ has $f(0) = 1$ and $f(2) = 9$. Must $f$ take the value $5$ somewhere in $(0, 2)$?'
-          answer_contract: {"kind": "label", "options": [["yes", "it must", "yes it must", "yes, it must", "it does"], ["no", "it need not", "not necessarily", "no it need not", "no, it need not"]]}
-          answer: 'yes'
-          reveal: 'The value $5$ lies between $f(0) = 1$ and $f(2) = 9$, and a continuous function cannot skip values. The theorem covers every value between the endpoint values, not only $0$.'
-        exemplars:
-          - problem: 'The function $f$ is continuous on $[1, 3]$ with $f(1) = 3$ and $f(3) = 9$. Must $f$ take the value $7$ somewhere in $(1, 3)$?'
-            answer: 'yes'
-            answer_contract: {"kind": "label", "options": [["yes", "it must", "yes it must", "yes, it must", "it does", "must"], ["no", "it need not", "not necessarily", "no it need not", "no, it need not", "it does not", "does not have to"]]}
-            solution_sketch: 'The value $7$ lies between $f(1) = 3$ and $f(3) = 9$. Since $f$ is continuous on $[1, 3]$, the theorem gives a number $c$ in $(1, 3)$ with $f(c) = 7$.'
-          - problem: 'A hiker''s elevation is a continuous function of time. It is $1200$ metres at 8:00 and $1800$ metres at 12:00. Give an elevation in metres that the hiker must have passed between 8:00 and 12:00.'
-            answer: '1500'
-            answer_contract: {"kind": "property", "check": "between", "args": {"low": "1200", "high": "1800"}}
-            solution_sketch: 'The elevation changes continuously from $1200$ to $1800$ metres, so by the Intermediate Value Theorem it takes every value between them. For example $1500$ metres lies between $1200$ and $1800$.'
-          - problem: 'A continuous function $f$ has $f(0) = -4$ and $f(6) = 20$. Give a value that $f$ must take somewhere in $(0, 6)$.'
-            answer: '10'
-            answer_contract: {"kind": "property", "check": "between", "args": {"low": "-4", "high": "20"}}
-            solution_sketch: 'The theorem says $f$ takes every value between $f(0) = -4$ and $f(6) = 20$. The value $10$ lies between them, so $f$ must take the value $10$.'
-          - problem: 'The function $g(x) = \frac{1}{x}$ has $g(-1) = -1$ and $g(1) = 1$, but $g$ has no zero in $(-1, 1)$. Which hypothesis of the Intermediate Value Theorem fails on $[-1, 1]$?'
-            answer: 'continuity'
-            answer_contract: {"kind": "label", "options": [["continuity", "continuous", "g is not continuous", "it is not continuous", "continuity fails", "g is discontinuous"], ["differentiability", "differentiable", "g is not differentiable", "it is not differentiable"], ["monotonicity", "monotonic", "g is not monotonic", "it is not monotonic"], ["boundedness", "bounded", "g is not bounded", "it is not bounded"]]}
-            solution_sketch: 'The theorem needs $g$ to be continuous on the whole closed interval $[-1, 1]$. The function $1/x$ is undefined at $x = 0$, which lies inside the interval, so the continuity hypothesis fails.'
-          - problem: 'For $g(x) = \frac{1}{x}$ on $[-1, 1]$, at which value of $x$ is continuity lost?'
-            answer: '0'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'The function $1/x$ is defined and continuous at every $x \neq 0$. At $x = 0$ it is undefined, so continuity is lost at $x = 0$.'
-          - problem: 'A furnace''s temperature after $t$ minutes is $T(t) = t^2 + 100$ degrees Celsius for $0 \leq t \leq 10$, so it rises from $100$ to $200$. At what time does it reach exactly $164$ degrees?'
-            answer: '8'
-            answer_contract: {"kind": "unit", "quantity": "time", "unit": "min", "allow_omitted": true}
-            solution_sketch: 'Since $164$ lies between $T(0) = 100$ and $T(10) = 200$ and $T$ is continuous, the temperature reaches $164$. Solving $t^2 + 100 = 164$ gives $t^2 = 64$, so $t = 8$ minutes.'
-          - problem: 'Let $f(x) = x^2 + 1$ on $[1, 2]$. Find the number $c$ in $(1, 2)$ for which $f(c) = 4$.'
-            answer: 'sqrt(3)'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'We have $f(1) = 2$ and $f(2) = 5$, and $4$ lies between them, so such a $c$ exists. Solving $c^2 + 1 = 4$ gives $c^2 = 3$, so $c = \sqrt{3}$, which lies in $(1, 2)$.'
-          - problem: 'The function $f(x) = x^3 + 2x$ is continuous on $[1, 2]$. What is the smallest whole number $N$ for which the Intermediate Value Theorem guarantees $f(c) = N$ for some $c$ in $(1, 2)$?'
-            answer: '4'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'We have $f(1) = 3$ and $f(2) = 12$. The theorem covers every value strictly between $3$ and $12$, and the smallest whole number there is $4$.'
-          - problem: 'The function $f$ is continuous on $[2, 5]$ with $f(2) = 1$ and $f(5) = 5$. Which whole numbers must $f$ take as a value somewhere in $(2, 5)$?'
-            answer: '2, 3, 4'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'Every value strictly between $f(2) = 1$ and $f(5) = 5$ is taken inside $(2, 5)$. The whole numbers strictly between $1$ and $5$ are $2$, $3$ and $4$.'
-        constraints: "one intermediate-value application with N not equal to 0 and one broken-hypothesis example; two contexts"
+    - id: kp1
+      name: Verify the hypotheses and conclude a root exists
+      key_prerequisites:
+      - continuity
+      - evaluating-functions
+      exemplars:
+      - problem: Does the Intermediate Value Theorem guarantee that $f(x) = x^3 + x - 3$ has a root in the interval $(1, 2)$?
+        answer: 'yes'
+        answer_contract:
+          kind: label
+          options:
+          - - 'yes'
+            - it does
+            - yes, it does
+            - it guarantees a root
+            - the theorem guarantees a root
+            - yes, it guarantees a root
+            - guaranteed
+            - there is a root
+          - - 'no'
+            - it does not
+            - no, it does not
+            - it does not guarantee a root
+            - the theorem does not guarantee a root
+            - not guaranteed
+            - no, it does not guarantee a root
+            - there is no guarantee
+        solution_sketch: The polynomial $f$ is continuous on $[1, 2]$. We have $f(1) = -1 < 0$ and $f(2) = 7 > 0$, so $f$ changes sign, and the theorem guarantees a root in $(1, 2)$.
+      - problem: To show that $f(x) = x^3 - 2x - 5$ has a root in $(2, 3)$ we need the sign of $f$ at both ends. Find $f(3)$.
+        answer: '16'
+        answer_contract:
+          kind: exact
+        solution_sketch: Substituting gives $f(3) = 27 - 6 - 5 = 16$. Since $f(2) = -1$ is negative and $f(3) = 16$ is positive, the theorem gives a root in $(2, 3)$.
+      - problem: A start-up's monthly profit in thousands of dollars is modelled by the continuous function $P(m) = m^2 - 8m + 6$, and $P(0) = 6$. To see whether the profit was exactly zero at some time between month $0$ and month $2$, find $P(2)$.
+        answer: '-6'
+        answer_contract:
+          kind: exact
+        solution_sketch: We have $P(2) = 4 - 16 + 6 = -6$. The profit is positive at month $0$ and negative at month $2$, so the Intermediate Value Theorem gives a time in between when it was exactly zero.
+      - problem: Can the Intermediate Value Theorem, applied to the endpoint values, show that $p(x) = x^2 - 1$ has a root in the interval $(-2, 2)$?
+        answer: 'no'
+        answer_contract:
+          kind: label
+          options:
+          - - 'yes'
+            - it does
+            - yes, it does
+            - it guarantees a root
+            - the theorem guarantees a root
+            - yes, it guarantees a root
+            - guaranteed
+            - there is a root
+          - - 'no'
+            - it does not
+            - no, it does not
+            - it does not guarantee a root
+            - the theorem does not guarantee a root
+            - not guaranteed
+            - no, it does not guarantee a root
+            - there is no guarantee
+        solution_sketch: We have $p(-2) = 3$ and $p(2) = 3$, which have the same sign, so the theorem gives no conclusion. The roots $x = -1$ and $x = 1$ do exist, but this test does not detect them.
+      - problem: A ball is thrown upward from a balcony. The model $h(t) = -5t^2 + 10t + 15$ gives its height in metres above the ground after $t$ seconds, and a negative value means that the ball would be below the ground. Find $h(4)$.
+        answer: '-25'
+        answer_contract:
+          kind: unit
+          quantity: length
+          unit: m
+          allow_omitted: true
+        solution_sketch: We have $h(4) = -80 + 40 + 15 = -25$ metres. Since $h(2) = 15$ is positive and $h(4)$ is negative, the theorem gives a time between $2$ and $4$ seconds when the ball reaches the ground.
+      - problem: The polynomial $p(x) = x^3 - 4x + 1$ is continuous. Find $p(1)$ to decide whether $p$ has a root in $(0, 1)$.
+        answer: '-2'
+        answer_contract:
+          kind: exact
+        solution_sketch: We have $p(1) = 1 - 4 + 1 = -2$, which is negative, and $p(0) = 1$ is positive. So the theorem gives a root of $p$ in $(0, 1)$.
+      - problem: The function $f(x) = x^2 - 12$ has a root in $(n, n + 1)$ for exactly one whole number $n > 0$. Find $n$.
+        answer: '3'
+        answer_contract:
+          kind: exact
+        solution_sketch: We have $f(3) = 9 - 12 = -3$ and $f(4) = 16 - 12 = 4$. The sign changes between $3$ and $4$, so the root lies in $(3, 4)$ and $n = 3$.
+      constraints: cubic or quadratic with integer endpoint values; decide whether the endpoint values show a sign change; two contexts
+    - id: kp2
+      name: Locate a root interval from values
+      key_prerequisites:
+      - continuity
+      - evaluating-functions
+      exemplars:
+      - problem: A continuous function has $f(1) = -2$, $f(2) = 1$ and $f(3) = 4$. On which interval must $f$ have a root?
+        answer: 1 < x < 2
+        answer_contract:
+          kind: inequality_union
+        solution_sketch: The values $-2$ and $1$ have opposite signs, so the sign changes between $x = 1$ and $x = 2$. The theorem gives a root in $(1, 2)$.
+      - problem: A continuous function has $f(0) = 3$ and $f(4) = -5$. On which interval does the Intermediate Value Theorem guarantee a root?
+        answer: 0 < x < 4
+        answer_contract:
+          kind: inequality_union
+        solution_sketch: The values $f(0) = 3$ and $f(4) = -5$ have opposite signs, so the theorem guarantees a root in $(0, 4)$.
+      - problem: A continuous function has $f(0) = -1$, $f(1) = -3$, $f(2) = -4$, $f(3) = 2$ and $f(4) = 5$. On which interval must $f$ have a root?
+        answer: 2 < x < 3
+        answer_contract:
+          kind: inequality_union
+        solution_sketch: The first three values are negative and the last two are positive. The sign changes between $f(2) = -4$ and $f(3) = 2$, so there is a root in $(2, 3)$.
+      - problem: The temperature $T(t)$ in degrees Celsius at an outdoor sensor is a continuous function of the hour $t$. At $t = 18, 19, 20, 21$ the readings are $6, 3, -1, -2$. During which hour did the temperature pass through $0$ degrees?
+        answer: 19 < t < 20
+        answer_contract:
+          kind: inequality_union
+        solution_sketch: The readings $6$ and $3$ are positive, and $-1$ and $-2$ are negative. The sign changes between $t = 19$ and $t = 20$, so the temperature was exactly $0$ at some time in that hour.
+      - problem: The values of a continuous function are $f(-2) = 5$, $f(-1) = 2$, $f(0) = -1$ and $f(1) = -4$. On which interval must $f$ have a root?
+        answer: -1 < x < 0
+        answer_contract:
+          kind: inequality_union
+        solution_sketch: The values $5$ and $2$ are positive and $-1$ and $-4$ are negative. The sign changes between $x = -1$ and $x = 0$, so there is a root in $(-1, 0)$.
+      - problem: At the end of weeks $1, 2, 3, 4, 5$ the balance of an account in dollars is $120, 70, 25, -20, -60$, and the balance changes continuously. In which time interval, with $t$ in weeks, must the balance have been exactly zero?
+        answer: 3 < t < 4
+        answer_contract:
+          kind: inequality_union
+        solution_sketch: The balance is positive at weeks $1$, $2$ and $3$ and negative at weeks $4$ and $5$. It crosses zero between $t = 3$ and $t = 4$, so the balance was exactly zero at some time in $(3, 4)$.
+      - problem: A continuous function has $f(1) = 3$, $f(2) = 5$, $f(3) = 8$ and $f(4) = 2$. Does the Intermediate Value Theorem guarantee a root of $f$ in $(1, 4)$?
+        answer: 'no'
+        answer_contract:
+          kind: label
+          options:
+          - - 'yes'
+            - it does
+            - yes, it does
+            - it guarantees a root
+            - the theorem guarantees a root
+            - yes, it guarantees a root
+            - guaranteed
+            - there is a root
+          - - 'no'
+            - it does not
+            - no, it does not
+            - it does not guarantee a root
+            - the theorem does not guarantee a root
+            - not guaranteed
+            - no, it does not guarantee a root
+            - there is no guarantee
+        solution_sketch: All four values are positive, so no pair of values has opposite signs. The theorem gives no root, although $f$ might still have one.
+      - problem: A continuous function has $f(0) = 2$, $f(1) = -3$ and $f(2) = -4$. On which interval must $f$ have a root?
+        answer: 0 < x < 1
+        answer_contract:
+          kind: inequality_union
+        solution_sketch: The value $f(0) = 2$ is positive and $f(1) = -3$ is negative, so the sign changes between $x = 0$ and $x = 1$. The root lies in $(0, 1)$.
+      constraints: table of integer values with exactly one sign change; identify the bracketing interval; two contexts; one item where the signs do not change
+    - id: kp3
+      name: Intermediate values other than zero, and why continuity is essential
+      key_prerequisites:
+      - continuity
+      try_first:
+        problem: A continuous function $f$ has $f(0) = 1$ and $f(2) = 9$. Must $f$ take the value $5$ somewhere in $(0, 2)$?
+        answer_contract:
+          kind: label
+          options:
+          - - 'yes'
+            - it must
+            - yes it must
+            - yes, it must
+            - it does
+          - - 'no'
+            - it need not
+            - not necessarily
+            - no it need not
+            - no, it need not
+        answer: 'yes'
+        reveal: The value $5$ lies between $f(0) = 1$ and $f(2) = 9$, and a continuous function cannot skip values. The theorem covers every value between the endpoint values, not only $0$.
+      exemplars:
+      - problem: The function $f$ is continuous on $[1, 3]$ with $f(1) = 3$ and $f(3) = 9$. Must $f$ take the value $7$ somewhere in $(1, 3)$?
+        answer: 'yes'
+        answer_contract:
+          kind: label
+          options:
+          - - 'yes'
+            - it must
+            - yes it must
+            - yes, it must
+            - it does
+            - must
+          - - 'no'
+            - it need not
+            - not necessarily
+            - no it need not
+            - no, it need not
+            - it does not
+            - does not have to
+        solution_sketch: The value $7$ lies between $f(1) = 3$ and $f(3) = 9$. Since $f$ is continuous on $[1, 3]$, the theorem gives a number $c$ in $(1, 3)$ with $f(c) = 7$.
+      - problem: A hiker's elevation is a continuous function of time. It is $1200$ metres at 8:00 and $1800$ metres at 12:00. Give an elevation in metres that the hiker must have passed between 8:00 and 12:00.
+        answer: '1500'
+        answer_contract:
+          kind: property
+          check: between
+          args:
+            low: '1200'
+            high: '1800'
+        solution_sketch: The elevation changes continuously from $1200$ to $1800$ metres, so by the Intermediate Value Theorem it takes every value between them. For example $1500$ metres lies between $1200$ and $1800$.
+      - problem: A continuous function $f$ has $f(0) = -4$ and $f(6) = 20$. Give a value that $f$ must take somewhere in $(0, 6)$.
+        answer: '10'
+        answer_contract:
+          kind: property
+          check: between
+          args:
+            low: '-4'
+            high: '20'
+        solution_sketch: The theorem says $f$ takes every value between $f(0) = -4$ and $f(6) = 20$. The value $10$ lies between them, so $f$ must take the value $10$.
+      - problem: The function $g(x) = \frac{1}{x}$ has $g(-1) = -1$ and $g(1) = 1$, but $g$ has no zero in $(-1, 1)$. Which hypothesis of the Intermediate Value Theorem fails on $[-1, 1]$?
+        answer: continuity
+        answer_contract:
+          kind: label
+          options:
+          - - continuity
+            - continuous
+            - g is not continuous
+            - it is not continuous
+            - continuity fails
+            - g is discontinuous
+          - - differentiability
+            - differentiable
+            - g is not differentiable
+            - it is not differentiable
+          - - monotonicity
+            - monotonic
+            - g is not monotonic
+            - it is not monotonic
+          - - boundedness
+            - bounded
+            - g is not bounded
+            - it is not bounded
+        solution_sketch: The theorem needs $g$ to be continuous on the whole closed interval $[-1, 1]$. The function $1/x$ is undefined at $x = 0$, which lies inside the interval, so the continuity hypothesis fails.
+      - problem: For $g(x) = \frac{1}{x}$ on $[-1, 1]$, at which value of $x$ is continuity lost?
+        answer: '0'
+        answer_contract:
+          kind: exact
+        solution_sketch: The function $1/x$ is defined and continuous at every $x \neq 0$. At $x = 0$ it is undefined, so continuity is lost at $x = 0$.
+      - problem: A furnace's temperature after $t$ minutes is $T(t) = t^2 + 100$ degrees Celsius for $0 \leq t \leq 10$, so it rises from $100$ to $200$. At what time does it reach exactly $164$ degrees?
+        answer: '8'
+        answer_contract:
+          kind: unit
+          quantity: time
+          unit: min
+          allow_omitted: true
+        solution_sketch: Since $164$ lies between $T(0) = 100$ and $T(10) = 200$ and $T$ is continuous, the temperature reaches $164$. Solving $t^2 + 100 = 164$ gives $t^2 = 64$, so $t = 8$ minutes.
+      - problem: Let $f(x) = x^2 + 1$ on $[1, 2]$. Find the number $c$ in $(1, 2)$ for which $f(c) = 4$.
+        answer: sqrt(3)
+        answer_contract:
+          kind: exact
+        solution_sketch: We have $f(1) = 2$ and $f(2) = 5$, and $4$ lies between them, so such a $c$ exists. Solving $c^2 + 1 = 4$ gives $c^2 = 3$, so $c = \sqrt{3}$, which lies in $(1, 2)$.
+      - problem: The function $f(x) = x^3 + 2x$ is continuous on $[1, 2]$. What is the smallest whole number $N$ for which the Intermediate Value Theorem guarantees $f(c) = N$ for some $c$ in $(1, 2)$?
+        answer: '4'
+        answer_contract:
+          kind: exact
+        solution_sketch: We have $f(1) = 3$ and $f(2) = 12$. The theorem covers every value strictly between $3$ and $12$, and the smallest whole number there is $4$.
+      - problem: The function $f$ is continuous on $[2, 5]$ with $f(2) = 1$ and $f(5) = 5$. Which whole numbers must $f$ take as a value somewhere in $(2, 5)$?
+        answer: 2, 3, 4
+        answer_contract:
+          kind: exact
+        solution_sketch: Every value strictly between $f(2) = 1$ and $f(5) = 5$ is taken inside $(2, 5)$. The whole numbers strictly between $1$ and $5$ are $2$, $3$ and $4$.
+      constraints: one intermediate-value application with N not equal to 0 and one broken-hypothesis example; two contexts
     diagnostic_exemplar:
-      problem: 'Use the Intermediate Value Theorem to show that $f(x) = x^3 + x$ takes the value $5$ somewhere in $(1, 2)$.'
-      answer: 'f is a polynomial, hence continuous on [1, 2], and f(1) = 2 < 5 < 10 = f(2), so the IVT gives some c in (1, 2) with f(c) = 5'
-      answer_contract: {kind: none}
-      solution_sketch: 'Apply the IVT with the intermediate value $N = 5$ lying between $f(1) = 2$ and $f(2) = 10$.'
+      problem: Use the Intermediate Value Theorem to show that $f(x) = x^3 + x$ takes the value $5$ somewhere in $(1, 2)$.
+      answer: f is a polynomial, hence continuous on [1, 2], and f(1) = 2 < 5 < 10 = f(2), so the IVT gives some c in (1, 2) with f(c) = 5
+      answer_contract:
+        kind: none
+      solution_sketch: Apply the IVT with the intermediate value $N = 5$ lying between $f(1) = 2$ and $f(2) = 10$.
     anki_seeds:
-      - front: "IVT: if f is continuous on [a, b] and N is between f(a) and f(b), then..."
-        back: "f(c) = N for some c in (a, b)"
-        type: basic
-      - front: "The IVT's two hypotheses are..."
-        back: "f continuous on the closed interval [a, b], and the target value N strictly between f(a) and f(b)"
-        type: basic
+    - front: 'IVT: if f is continuous on [a, b] and N is between f(a) and f(b), then...'
+      back: f(c) = N for some c in (a, b)
+      type: basic
+    - front: The IVT's two hypotheses are...
+      back: f continuous on the closed interval [a, b], and the target value N strictly between f(a) and f(b)
+      type: basic

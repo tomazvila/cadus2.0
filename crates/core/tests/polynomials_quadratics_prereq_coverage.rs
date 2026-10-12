@@ -28,20 +28,19 @@ fn unit_topic_ids() -> BTreeSet<String> {
 /// `Exemplar::verdict_policy` gives no verdict for such an item, because the
 /// grader has no checker for the `multi-step` kind. The test pins this list:
 /// if an author adds a contract to one of these items, remove its id here.
-const NO_VERDICT_DIAGNOSTICS: [&str; 8] = [
+/// Foundations merge (2026-10-12): the merged-away topics left this list.
+const NO_VERDICT_DIAGNOSTICS: [&str; 6] = [
     "quadratic-equations-factoring",
     "square-root-property",
     "completing-the-square",
     "completing-square-leading-coefficient",
-    "applying-the-quadratic-formula",
     "quadratic-formula",
-    "converting-to-vertex-form",
     "quadratic-applications",
 ];
 
 #[test]
-fn the_unit_names_thirty_five_distinct_topics() {
-    assert_eq!(unit_topic_ids().len(), 35);
+fn the_unit_names_twenty_nine_distinct_topics() {
+    assert_eq!(unit_topic_ids().len(), 29);
 }
 
 #[test]

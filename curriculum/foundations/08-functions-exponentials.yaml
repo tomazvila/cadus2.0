@@ -101,136 +101,260 @@ topics:
         type: basic
 
   - id: evaluating-functions
-    name: Evaluating Functions
+    name: Evaluating Functions and Formulas
     core: true
     difficulty: 0.4
     drill: false
     answer_kind: numeric
     expected_time_secs: 90
     prerequisites:
-      - id: evaluating-expressions
-        weight: 0.8
-        key: true
-      - id: integer-multiplication-division
-        weight: 0.4
-      - id: identifying-functions-vertical-line-test
-        weight: 0.3
+    - id: evaluating-expressions
+      weight: 0.8
+      key: true
+    - id: integer-multiplication-division
+      weight: 0.5
+    - id: identifying-functions-vertical-line-test
+      weight: 0.3
+    - id: polynomial-basics
+      weight: 0.4
+      key: true
     knowledge_points:
-      - id: kp1
-        name: Evaluate f(x) at a positive input
-        key_prerequisites: [evaluating-expressions]
-        constraints: 'linear, quadratic, factored and reciprocal rules; integer inputs 1-9; integer outputs; rules from everyday situations, including rules with a division'
-        exemplars:
-          - problem: 'If $f(x)=2x^2-7$, find $f(4)$.'
-            answer: '25'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Replace $x$ by $4$ to get $2\cdot4^2-7$. The square comes first: $4^2=16$, then $2\cdot16=32$ and $32-7=25$.'
-          - problem: 'If $f(x)=2x+3$, find $f(4)$.'
-            answer: '11'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Replace $x$ by $4$ to get $2(4)+3$. Then $8+3=11$.'
-          - problem: 'A plumber charges $C(h)=40+25h$ dollars for a job of $h$ hours. What does she charge for a job of $3$ hours?'
-            answer: '115'
-            answer_contract: {"kind":"unit","quantity":"dollar","unit":"dollar","allow_omitted":true}
-            solution_sketch: 'The input is $h=3$, so $C(3)=40+25\cdot3$. The product comes first, $75$, and then $40+75=115$ dollars.'
-          - problem: 'A trip of $120$ kilometres at a steady speed of $s$ kilometres per hour takes $t(s)=\dfrac{120}{s}$ hours. How long does the trip take at $40$ kilometres per hour?'
-            answer: '3'
-            answer_contract: {"kind":"unit","quantity":"time","unit":"h","allow_omitted":true}
-            solution_sketch: 'Put $s=40$ into the rule to get $t(40)=\frac{120}{40}$. A trip of $120$ km at $40$ km per hour takes $3$ hours.'
-          - problem: 'If $g(x)=x(x+3)$, find $g(2)$.'
-            answer: '10'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Replace $x$ by $2$ in both places to get $2(2+3)$. The second factor is $5$, so $g(2)=2\cdot5=10$.'
-          - problem: 'A bill of $360$ dollars is shared equally by $n$ friends, so each friend pays $c(n)=\dfrac{360}{n}$ dollars. How much does each friend pay when $n=8$?'
-            answer: '45'
-            answer_contract: {"kind":"unit","quantity":"dollar","unit":"dollar","allow_omitted":true}
-            solution_sketch: 'Put $n=8$ into the rule to get $c(8)=\frac{360}{8}$. Dividing $360$ by $8$ gives $45$ dollars for each friend.'
-          - problem: 'A machine follows the rule $f(x)=5x-1$. Its input is $6$. What is its output?'
-            answer: '29'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Multiply the input first: $5(6)=30$. Then subtract $1$ to get the output $29$.'
-          - problem: 'If $g(x)=x^2-1$, find $g(3)$.'
-            answer: '8'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Replace $x$ by $3$ to get $3^2-1=9-1$. The result is $8$.'
-      - id: kp2
-        name: Function values from a table
-        key_prerequisites: [identifying-functions-vertical-line-test]
-        constraints: 'tables of 3 input-output pairs with integer entries (or 3 rows from a situation); look up a value, add, subtract or multiply table values, compare them with a ratio, or evaluate f(f(a)) when an output is also an input'
-        exemplars:
-          - problem: 'A table gives $f(1)=6$, $f(2)=9$, $f(3)=15$. Find $f(1)+f(3)$.'
-            answer: '21'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Read $f(1)=6$ and $f(3)=15$ from the table. Their sum is $6+15=21$.'
-          - problem: 'A table gives $f(1)=5$, $f(2)=7$, $f(3)=9$. Find $2f(2)$.'
-            answer: '14'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The table gives $f(2)=7$, and $2f(2)$ means two times that output. So $2\cdot7=14$.'
-          - problem: 'A table gives the value $V(t)$ of a bike in dollars, $t$ years after it was bought: $V(0)=400$, $V(1)=320$, $V(2)=256$. How many dollars does the bike lose in its first two years?'
-            answer: '144'
-            answer_contract: {"kind":"unit","quantity":"dollar","unit":"dollar","allow_omitted":true}
-            solution_sketch: 'The bike is worth $V(0)=400$ at the start and $V(2)=256$ after two years. The loss is $400-256=144$ dollars.'
-          - problem: 'A table gives the number $N(h)$ of bacteria in a dish $h$ hours after the start: $N(0)=50$, $N(1)=150$, $N(2)=450$. How many times as many bacteria are in the dish after $2$ hours as at the start?'
-            answer: '9'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Read $N(2)=450$ and $N(0)=50$ from the table. The number of times is the quotient $\frac{450}{50}=9$, not the difference.'
-          - problem: 'The inputs of a table are $0$, $1$, $2$ and the matching outputs are $2$, $6$, $10$. Find $f(2)-f(0)$.'
-            answer: '8'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The table gives $f(2)=10$ and $f(0)=2$. The difference is $10-2=8$.'
-          - problem: 'A table lists the pairs $(x,f(x))$ as $(0,2)$, $(1,6)$, $(2,10)$. Find $f(f(0))$.'
-            answer: '10'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'First $f(0)=2$ from the table. Then $f(f(0))=f(2)$, and the table gives $f(2)=10$.'
-          - problem: 'A table gives the temperature $T(h)$ in degrees at hour $h$: $T(6)=12$, $T(12)=19$, $T(18)=17$. By how many degrees does the temperature rise from hour $6$ to hour $12$?'
-            answer: '7'
-            answer_contract: {"kind":"unit","quantity":"temperature","unit":"°C","allow_omitted":true}
-            solution_sketch: 'Read $T(6)=12$ and $T(12)=19$ from the table. The rise is $19-12=7$ degrees.'
-      - id: kp3
-        name: Evaluate at negative inputs
-        key_prerequisites: [evaluating-expressions, integer-multiplication-division]
-        constraints: 'linear, quadratic and reciprocal rules; integer inputs -1 to -5; integer outputs; rules from everyday situations where negative inputs mean times before a reference'
-        exemplars:
-          - problem: 'If $f(x)=x^2-2x$, find $f(-3)$.'
-            answer: '15'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Replace $x$ by $-3$ in brackets to get $(-3)^2-2(-3)$. The square is $9$ and $-2(-3)=6$, so $9+6=15$.'
-          - problem: 'If $h(x)=3x-5$, find $h(-2)$.'
-            answer: '-11'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Replace $x$ by $-2$ to get $3(-2)-5$. Then $-6-5=-11$.'
-          - problem: 'For $g(x)=x(x+3)$, find $g(-4)$.'
-            answer: '4'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'At $-4$ the two factors are $-4$ and $-4+3=-1$. Their product is $(-4)(-1)=4$.'
-          - problem: 'The temperature in degrees Celsius is modelled by $T(h)=2h-7$, where $h$ is the number of hours after midnight, so $h=-5$ means $5$ hours before midnight. What is the temperature at $h=-5$?'
-            answer: '-17'
-            answer_contract: {"kind":"unit","quantity":"temperature","unit":"°C","allow_omitted":true}
-            solution_sketch: 'Put $h=-5$ into the rule to get $2(-5)-7$. Then $-10-7=-17$ degrees.'
-          - problem: 'The value change of a stock is modelled by $v(n)=5n^2-3n$ dollars, where $n$ counts days from today and $n=-2$ is two days ago. Find $v(-2)$.'
-            answer: '26'
-            answer_contract: {"kind":"unit","quantity":"dollar","unit":"dollar","allow_omitted":true}
-            solution_sketch: 'Replace $n$ by $-2$ to get $5(-2)^2-3(-2)$. The square is $4$, so $5\cdot4=20$ and $-3(-2)=6$, and $20+6=26$.'
-          - problem: 'Evaluate $f(x)=x^2+6x$ at $x=-2$. What is the value of $f(-2)$?'
-            answer: '-8'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Keep the brackets, so the $-2$ is squared. The square is $(-2)^2=4$, and $4+6(-2)=4-12=-8$.'
-          - problem: 'For $f(x)=\dfrac{24}{x}$, find $f(-6)$.'
-            answer: '-4'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Replace $x$ by $-6$ to get $\frac{24}{-6}$. A positive number divided by a negative number is negative, so the value is $-4$.'
-          - problem: 'For $g(x)=x^2-3x+1$, find $g(-4)$.'
-            answer: '29'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Replace $x$ by $-4$ to get $(-4)^2-3(-4)+1$. That is $16+12+1=29$.'
+    - id: kp1
+      name: Evaluate f(x) at a positive input
+      key_prerequisites:
+      - evaluating-expressions
+      constraints: linear, quadratic, factored and reciprocal rules; integer inputs 1-9; integer outputs; rules from everyday situations, including rules with a division
+      exemplars:
+      - problem: If $f(x)=2x^2-7$, find $f(4)$.
+        answer: '25'
+        answer_contract:
+          kind: exact
+        solution_sketch: 'Replace $x$ by $4$ to get $2\cdot4^2-7$. The square comes first: $4^2=16$, then $2\cdot16=32$ and $32-7=25$.'
+      - problem: If $f(x)=2x+3$, find $f(4)$.
+        answer: '11'
+        answer_contract:
+          kind: exact
+        solution_sketch: Replace $x$ by $4$ to get $2(4)+3$. Then $8+3=11$.
+      - problem: A plumber charges $C(h)=40+25h$ dollars for a job of $h$ hours. What does she charge for a job of $3$ hours?
+        answer: '115'
+        answer_contract:
+          kind: unit
+          quantity: dollar
+          unit: dollar
+          allow_omitted: true
+        solution_sketch: The input is $h=3$, so $C(3)=40+25\cdot3$. The product comes first, $75$, and then $40+75=115$ dollars.
+      - problem: A trip of $120$ kilometres at a steady speed of $s$ kilometres per hour takes $t(s)=\dfrac{120}{s}$ hours. How long does the trip take at $40$ kilometres per hour?
+        answer: '3'
+        answer_contract:
+          kind: unit
+          quantity: time
+          unit: h
+          allow_omitted: true
+        solution_sketch: Put $s=40$ into the rule to get $t(40)=\frac{120}{40}$. A trip of $120$ km at $40$ km per hour takes $3$ hours.
+      - problem: If $g(x)=x(x+3)$, find $g(2)$.
+        answer: '10'
+        answer_contract:
+          kind: exact
+        solution_sketch: Replace $x$ by $2$ in both places to get $2(2+3)$. The second factor is $5$, so $g(2)=2\cdot5=10$.
+      - problem: A bill of $360$ dollars is shared equally by $n$ friends, so each friend pays $c(n)=\dfrac{360}{n}$ dollars. How much does each friend pay when $n=8$?
+        answer: '45'
+        answer_contract:
+          kind: unit
+          quantity: dollar
+          unit: dollar
+          allow_omitted: true
+        solution_sketch: Put $n=8$ into the rule to get $c(8)=\frac{360}{8}$. Dividing $360$ by $8$ gives $45$ dollars for each friend.
+      - problem: A machine follows the rule $f(x)=5x-1$. Its input is $6$. What is its output?
+        answer: '29'
+        answer_contract:
+          kind: exact
+        solution_sketch: 'Multiply the input first: $5(6)=30$. Then subtract $1$ to get the output $29$.'
+      - problem: If $g(x)=x^2-1$, find $g(3)$.
+        answer: '8'
+        answer_contract:
+          kind: exact
+        solution_sketch: Replace $x$ by $3$ to get $3^2-1=9-1$. The result is $8$.
+    - id: kp2
+      name: Function values from a table
+      key_prerequisites:
+      - identifying-functions-vertical-line-test
+      constraints: tables of 3 input-output pairs with integer entries (or 3 rows from a situation); look up a value, add, subtract or multiply table values, compare them with a ratio, or evaluate f(f(a)) when an output is also an input
+      exemplars:
+      - problem: A table gives $f(1)=6$, $f(2)=9$, $f(3)=15$. Find $f(1)+f(3)$.
+        answer: '21'
+        answer_contract:
+          kind: exact
+        solution_sketch: Read $f(1)=6$ and $f(3)=15$ from the table. Their sum is $6+15=21$.
+      - problem: A table gives $f(1)=5$, $f(2)=7$, $f(3)=9$. Find $2f(2)$.
+        answer: '14'
+        answer_contract:
+          kind: exact
+        solution_sketch: The table gives $f(2)=7$, and $2f(2)$ means two times that output. So $2\cdot7=14$.
+      - problem: 'A table gives the value $V(t)$ of a bike in dollars, $t$ years after it was bought: $V(0)=400$, $V(1)=320$, $V(2)=256$. How many dollars does the bike lose in its first two years?'
+        answer: '144'
+        answer_contract:
+          kind: unit
+          quantity: dollar
+          unit: dollar
+          allow_omitted: true
+        solution_sketch: The bike is worth $V(0)=400$ at the start and $V(2)=256$ after two years. The loss is $400-256=144$ dollars.
+      - problem: 'A table gives the number $N(h)$ of bacteria in a dish $h$ hours after the start: $N(0)=50$, $N(1)=150$, $N(2)=450$. How many times as many bacteria are in the dish after $2$ hours as at the start?'
+        answer: '9'
+        answer_contract:
+          kind: exact
+        solution_sketch: Read $N(2)=450$ and $N(0)=50$ from the table. The number of times is the quotient $\frac{450}{50}=9$, not the difference.
+      - problem: The inputs of a table are $0$, $1$, $2$ and the matching outputs are $2$, $6$, $10$. Find $f(2)-f(0)$.
+        answer: '8'
+        answer_contract:
+          kind: exact
+        solution_sketch: The table gives $f(2)=10$ and $f(0)=2$. The difference is $10-2=8$.
+      - problem: A table lists the pairs $(x,f(x))$ as $(0,2)$, $(1,6)$, $(2,10)$. Find $f(f(0))$.
+        answer: '10'
+        answer_contract:
+          kind: exact
+        solution_sketch: First $f(0)=2$ from the table. Then $f(f(0))=f(2)$, and the table gives $f(2)=10$.
+      - problem: 'A table gives the temperature $T(h)$ in degrees at hour $h$: $T(6)=12$, $T(12)=19$, $T(18)=17$. By how many degrees does the temperature rise from hour $6$ to hour $12$?'
+        answer: '7'
+        answer_contract:
+          kind: unit
+          quantity: temperature
+          unit: °C
+          allow_omitted: true
+        solution_sketch: Read $T(6)=12$ and $T(12)=19$ from the table. The rise is $19-12=7$ degrees.
+    - id: kp3
+      name: Evaluate at negative inputs
+      key_prerequisites:
+      - evaluating-expressions
+      - integer-multiplication-division
+      constraints: linear, quadratic and reciprocal rules; integer inputs -1 to -5; integer outputs; rules from everyday situations where negative inputs mean times before a reference
+      exemplars:
+      - problem: If $f(x)=x^2-2x$, find $f(-3)$.
+        answer: '15'
+        answer_contract:
+          kind: exact
+        solution_sketch: Replace $x$ by $-3$ in brackets to get $(-3)^2-2(-3)$. The square is $9$ and $-2(-3)=6$, so $9+6=15$.
+      - problem: If $h(x)=3x-5$, find $h(-2)$.
+        answer: '-11'
+        answer_contract:
+          kind: exact
+        solution_sketch: Replace $x$ by $-2$ to get $3(-2)-5$. Then $-6-5=-11$.
+      - problem: For $g(x)=x(x+3)$, find $g(-4)$.
+        answer: '4'
+        answer_contract:
+          kind: exact
+        solution_sketch: At $-4$ the two factors are $-4$ and $-4+3=-1$. Their product is $(-4)(-1)=4$.
+      - problem: The temperature in degrees Celsius is modelled by $T(h)=2h-7$, where $h$ is the number of hours after midnight, so $h=-5$ means $5$ hours before midnight. What is the temperature at $h=-5$?
+        answer: '-17'
+        answer_contract:
+          kind: unit
+          quantity: temperature
+          unit: °C
+          allow_omitted: true
+        solution_sketch: Put $h=-5$ into the rule to get $2(-5)-7$. Then $-10-7=-17$ degrees.
+      - problem: The value change of a stock is modelled by $v(n)=5n^2-3n$ dollars, where $n$ counts days from today and $n=-2$ is two days ago. Find $v(-2)$.
+        answer: '26'
+        answer_contract:
+          kind: unit
+          quantity: dollar
+          unit: dollar
+          allow_omitted: true
+        solution_sketch: Replace $n$ by $-2$ to get $5(-2)^2-3(-2)$. The square is $4$, so $5\cdot4=20$ and $-3(-2)=6$, and $20+6=26$.
+      - problem: Evaluate $f(x)=x^2+6x$ at $x=-2$. What is the value of $f(-2)$?
+        answer: '-8'
+        answer_contract:
+          kind: exact
+        solution_sketch: Keep the brackets, so the $-2$ is squared. The square is $(-2)^2=4$, and $4+6(-2)=4-12=-8$.
+      - problem: For $f(x)=\dfrac{24}{x}$, find $f(-6)$.
+        answer: '-4'
+        answer_contract:
+          kind: exact
+        solution_sketch: Replace $x$ by $-6$ to get $\frac{24}{-6}$. A positive number divided by a negative number is negative, so the value is $-4$.
+      - problem: For $g(x)=x^2-3x+1$, find $g(-4)$.
+        answer: '29'
+        answer_contract:
+          kind: exact
+        solution_sketch: Replace $x$ by $-4$ to get $(-4)^2-3(-4)+1$. That is $16+12+1=29$.
+    - id: kp4
+      name: Evaluate formula-style polynomials
+      key_prerequisites:
+      - evaluating-expressions
+      exemplars:
+      - problem: The height of a ball in metres $t$ seconds after it is thrown is $h = -5t^2 + 20t$. Find the height at $t = 1$.
+        answer: '15'
+        answer_contract:
+          kind: unit
+          quantity: length
+          unit: m
+          allow_omitted: true
+        solution_sketch: 'Substitute $t = 1$: $h = -5(1)^2 + 20(1)$. This is $-5 + 20 = 15$ metres.'
+      - problem: A polygon with $n$ sides has $D = \frac{1}{2}n^2 - \frac{3}{2}n$ diagonals. How many diagonals does a polygon with $12$ sides have?
+        answer: '54'
+        answer_contract:
+          kind: exact
+        solution_sketch: 'Substitute $n = 12$: $D = \frac{1}{2}(144) - \frac{3}{2}(12)$. This is $72 - 18 = 54$ diagonals.'
+      - problem: For $P = n^2 + 3n$, find $P$ when $n = 5$.
+        answer: '40'
+        answer_contract:
+          kind: exact
+        solution_sketch: 'Substitute $n = 5$: $P = 5^2 + 3(5)$. This is $25 + 15 = 40$.'
+      - problem: The height formula is $h = -5t^2 + 30t$. A reading of $200$ metres is given for $t = 4$. Is this reading too high or too low, and by how much?
+        answer: direction = high; by = 160
+        answer_contract:
+          kind: multipart
+          parts:
+          - name: direction
+            contract:
+              kind: label
+              options:
+              - - high
+                - too high
+                - it is too high
+                - too big
+                - an overestimate
+                - over
+              - - low
+                - too low
+                - it is too low
+                - too small
+                - an underestimate
+                - under
+          - name: by
+            contract:
+              kind: exact
+        solution_sketch: The correct height is $-5(16) + 30(4) = -80 + 120 = 40$ metres. The reading of $200$ is too high by $200 - 40 = 160$.
+      - problem: A factory's cost in dollars of making $n$ bikes in a day is $C = 2n^2 + 15n + 100$. Find the cost of making $10$ bikes.
+        answer: '450'
+        answer_contract:
+          kind: unit
+          quantity: dollar
+          unit: dollar
+          allow_omitted: true
+        solution_sketch: 'Substitute $n = 10$: $C = 2(100) + 15(10) + 100$. This is $200 + 150 + 100 = 450$ dollars.'
+      - problem: A box has a square base of side $x$ cm and height $x + 2$ cm, so its volume is $V = x^3 + 2x^2$ cubic centimetres. Find the volume when $x = 4$.
+        answer: '96'
+        answer_contract:
+          kind: unit
+          quantity: cubic_volume
+          unit: cm^3
+          allow_omitted: true
+        solution_sketch: 'Substitute $x = 4$: $V = 4^3 + 2(4)^2$. This is $64 + 32 = 96$ cubic centimetres.'
+      - problem: For $C = 2n^2 - n$, find $C$ when $n = 4$.
+        answer: '28'
+        answer_contract:
+          kind: exact
+        solution_sketch: 'Substitute $n = 4$: $C = 2(16) - 4$. This is $32 - 4 = 28$.'
+      constraints: single substitution; clean integer outputs
     diagnostic_exemplar:
-      problem: 'If $f(x) = x^2 - 4x$, find $f(-2)$.'
-      answer: "12"
-      solution_sketch: '$(-2)^2 - 4(-2) = 4 + 8 = 12$; the subtracted term turns positive.'
+      problem: If $f(x) = x^2 - 4x$, find $f(-2)$.
+      answer: '12'
+      solution_sketch: $(-2)^2 - 4(-2) = 4 + 8 = 12$; the subtracted term turns positive.
     anki_seeds:
-      - front: "f(4) means..."
-        back: "the output of f when the input is 4."
-        type: basic
+    - front: f(4) means...
+      back: the output of f when the input is 4.
+      type: basic
+    - front: At x = -2, x^2 evaluates to ___ but -x^2 evaluates to ___
+      back: 4; -4 (the square applies before the leading minus)
+      type: basic
 
   - id: function-notation
     name: Function Notation
@@ -942,140 +1066,6 @@ topics:
         back: "f(x) + g(x)"
         type: basic
 
-  - id: evaluating-composite-functions
-    name: Evaluating Composite Functions
-    core: true
-    difficulty: 0.55
-    drill: false
-    answer_kind: numeric
-    expected_time_secs: 90
-    prerequisites:
-      - id: function-notation
-        weight: 0.8
-        key: true
-      - id: evaluating-functions
-        weight: 0.5
-    knowledge_points:
-      - id: kp1
-        name: Numeric composition, inside first
-        key_prerequisites: [function-notation, evaluating-functions]
-        constraints: 'linear rules, a division rule or a unit-conversion rule; integer or simple fractional intermediate values; negative inputs allowed; some items come from a context'
-        exemplars:
-          - problem: 'If $f(x)=x+2$ and $g(x)=3x$, find $f(g(2))$.'
-            answer: '8'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'Work the inside function first: $g(2)=6$. Then apply $f$ to that output: $f(6)=6+2=8$.'
-          - problem: 'If $f(x)=2x$ and $g(x)=x-1$, find $g(f(3))$.'
-            answer: '5'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'The inside function is $f$, so the first step is $f(3)=2(3)=6$. Then apply $g$ to this result: $g(6)=6-1=5$.'
-          - problem: 'A machine first doubles a number and then adds $5$. The first stage is $g(x)=2x$ and the second stage is $f(x)=x+5$. What is the output for the input $3$?'
-            answer: '11'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'The first stage gives $g(3)=6$. The second stage works on this result: $f(6)=6+5=11$.'
-          - problem: 'A bakery packs loaves into boxes of $6$, so $x$ loaves fill $g(x)=\frac{x}{6}$ boxes. Shipping $b$ boxes costs $f(b)=12b+5$ dollars. What does it cost to ship $30$ loaves?'
-            answer: '65'
-            answer_contract: {"kind": "unit", "quantity": "dollar", "unit": "dollar", "allow_omitted": true}
-            solution_sketch: 'The loaves are packed first: $g(30)=30/6=5$ boxes. Shipping then costs $f(5)=12(5)+5=65$ dollars.'
-          - problem: 'Let $f(x)=x-7$ and $g(x)=3x+2$. Find $f(g(-2))$.'
-            answer: '-11'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'The inside function gives $g(-2)=3(-2)+2=-4$. Then apply $f$ to this negative result: $f(-4)=-4-7=-11$.'
-          - problem: 'A temperature of $F$ degrees Fahrenheit is $C(F)=\frac{5(F-32)}{9}$ degrees Celsius, and $C$ degrees Celsius is $K(C)=C+273$ kelvin. Find $K(C(95))$.'
-            answer: '308'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'Convert to Celsius first: $C(95)=5(63)/9=35$ degrees. Then convert this result to kelvin: $K(35)=35+273=308$.'
-          - problem: 'For $f(x)=x-3$ and $g(x)=4x$, what is the value of $f(g(5))$?'
-            answer: '17'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'Applying $f$ first gives $g(f(5))=g(2)=8$, which is the other order. The inside function is $g$: $g(5)=20$, and then $f(20)=17$.'
-          - problem: 'If $f(x)=2x-1$ and $g(x)=x+4$, find $f(g(3))$.'
-            answer: '13'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'The inside function gives $g(3)=3+4=7$. Then apply the outside function to this result: $f(7)=2(7)-1=13$.'
-      - id: kp2
-        name: Order matters numerically
-        key_prerequisites: [evaluating-functions]
-        constraints: 'one linear rule and one squaring rule, or two linear rules applied in both orders so the two answers differ; some items come from a context'
-        exemplars:
-          - problem: 'If $f(x)=x^2$ and $g(x)=x+1$, find $f(g(2))$.'
-            answer: '9'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'The inside function gives $g(2)=3$. Then apply the outside function $f$ to this result: $f(3)=3^2=9$.'
-          - problem: 'If $f(x)=x^2$ and $g(x)=x+1$, find $g(f(2))$.'
-            answer: '5'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'Now $f$ is the inside function, so $f(2)=4$ comes first. Then $g(4)=4+1=5$.'
-          - problem: 'Let $f(x)=x^2$ and $g(x)=x+1$. Find $f(g(3))-g(f(3))$.'
-            answer: '6'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'The first part is $f(g(3))=f(4)=16$ and the second part is $g(f(3))=g(9)=10$. The difference is $16-10=6$.'
-          - problem: 'A game squares your raw score and then adds a bonus of one point. With $f(x)=x^2$ and $g(x)=x+1$, what is the final score for a raw score of $4$?'
-            answer: '17'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'The raw score is squared first: $f(4)=16$. The bonus is added second, so the final score is $g(16)=17$.'
-          - problem: 'A coat costs $90$ dollars. The shop takes $20\%$ off, $f(x)=0.8x$, and then a voucher takes $10$ dollars off, $g(x)=x-10$. What does the customer pay?'
-            answer: '62'
-            answer_contract: {"kind": "unit", "quantity": "dollar", "unit": "dollar", "allow_omitted": true}
-            solution_sketch: 'The discount comes first: $f(90)=72$. The voucher comes second, so the price is $g(72)=62$ dollars.'
-          - problem: 'The coat costs $90$ dollars again, but the shop applies the $10$ dollar voucher $g(x)=x-10$ first and then the $20\%$ discount $f(x)=0.8x$. What does the customer pay now?'
-            answer: '64'
-            answer_contract: {"kind": "unit", "quantity": "dollar", "unit": "dollar", "allow_omitted": true}
-            solution_sketch: 'The voucher comes first: $g(90)=80$. The discount comes second, so the price is $f(80)=64$ dollars.'
-          - problem: 'For $f(x)=2x+3$ and $g(x)=x-1$, what is $f(g(4))-g(f(4))$?'
-            answer: '-1'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'The first part is $f(g(4))=f(3)=9$ and the second part is $g(f(4))=g(11)=10$. The difference is $9-10=-1$, so the two compositions are not equal.'
-          - problem: 'A sheet is cut by $g(x)=x-6$ centimetres and then split in half by $f(x)=\frac{x}{2}$. If the sheet is $10$ centimetres long, how long is each half?'
-            answer: '2'
-            answer_contract: {"kind": "unit", "quantity": "length", "unit": "cm", "allow_omitted": true}
-            solution_sketch: 'The cut comes first and gives $g(10)=4$ centimetres. Splitting this piece in half gives $f(4)=4/2=2$ centimetres.'
-      - id: kp3
-        name: Composition from tables
-        key_prerequisites: [function-notation]
-        constraints: 'tables or arrow lists supply only the values needed; inner value first, then outer; integer entries; some items come from a context'
-        exemplars:
-          - problem: 'Tables give $g(3)=2$, $f(1)=4$ and $f(2)=6$. Find $f(g(3))$.'
-            answer: '6'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'The inner lookup gives $g(3)=2$. Use $2$ as the input of $f$: $f(2)=6$. The entry $f(1)=4$ is not needed.'
-          - problem: 'Tables give $f(2)=3$, $g(3)=7$ and $g(2)=1$. Find $g(f(2))$.'
-            answer: '7'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'The inner lookup gives $f(2)=3$. Use $3$ as the input of $g$: $g(3)=7$. The entry $g(2)=1$ is not needed.'
-          - problem: 'Tables give $g(1)=4$, $f(1)=2$ and $f(4)=9$. What is the value of $f(g(1))$?'
-            answer: '9'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'The input of $f$ is not the original input $1$. The inner lookup gives $g(1)=4$, so the outer lookup must be $f(4)=9$.'
-          - problem: 'A table sends $5$ to $2$ under $f$ and $2$ to $8$ under $g$. It also sends $5$ to $3$ under $g$. Find $(g\circ f)(5)$.'
-            answer: '8'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'The composition $g\circ f$ applies $f$ first: $f(5)=2$. Then $g(2)=8$, so $(g\circ f)(5)=8$. The entry that sends $5$ to $3$ under $g$ is not used.'
-          - problem: 'The depot table $Z$ gives the delivery zone of a parcel: parcel $402$ is in zone $5$ and parcel $417$ is in zone $3$. The table $V$ gives the van of a zone: zone $3$ uses van $14$ and zone $5$ uses van $22$. What is the number of the van that carries parcel $402$?'
-            answer: '22'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'The zone comes first: $Z(402)=5$. Then the van for zone $5$ is $V(5)=22$, so van $22$ carries parcel $402$.'
-          - problem: 'Tables give $f(0)=2$, $f(2)=5$, $g(0)=4$, $g(2)=0$ and $g(5)=1$. Find $g(f(0))+f(g(2))$.'
-            answer: '2'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'First, $g(f(0))=g(2)=0$ because $f(0)=2$. Second, $f(g(2))=f(0)=2$ because $g(2)=0$. The sum is $0+2=2$.'
-          - problem: 'A school keeps two tables. The table $C$ gives the class of a student: student $7$ is in class $3$ and student $9$ is in class $4$. The table $R$ gives the room of a class: class $3$ uses room $12$ and class $4$ uses room $15$. What is the number of the room that student $9$ uses?'
-            answer: '15'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'The class comes first: $C(9)=4$. Then the room of class $4$ is $R(4)=15$, so student $9$ uses room $15$.'
-          - problem: 'Tables give $g(4)=1$ and $f(1)=-3$. Find $(f\circ g)(4)$.'
-            answer: '-3'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'The composition $f\circ g$ applies $g$ first: $g(4)=1$. Then $f(1)=-3$, so $(f\circ g)(4)=-3$.'
-    diagnostic_exemplar:
-      problem: 'If $f(x) = x^2$ and $g(x) = x + 3$, find $f(g(1)) - g(f(1))$.'
-      answer: "12"
-      solution_sketch: 'Inside first: $f(g(1)) = f(4) = 16$ and $g(f(1)) = g(1) = 4$.'
-    anki_seeds:
-      - front: "To evaluate f(g(a))..."
-        back: "compute g(a) first, then apply f to the result."
-        type: basic
-
   - id: function-composition
     name: Composition of Functions
     core: true
@@ -1084,128 +1074,285 @@ topics:
     answer_kind: expression
     expected_time_secs: 120
     prerequisites:
-      - id: evaluating-composite-functions
-        weight: 0.8
-        key: true
-      - id: polynomial-multiplication
-        weight: 0.4
-      - id: combining-like-terms
-        weight: 0.4
-      - id: function-operations
-        weight: 0.3
+    - id: function-notation
+      weight: 0.8
+      key: true
+    - id: evaluating-functions
+      weight: 0.5
+    - id: polynomial-multiplication
+      weight: 0.4
+    - id: combining-like-terms
+      weight: 0.4
+    - id: function-operations
+      weight: 0.3
     knowledge_points:
-      - id: kp1
-        name: Symbolic composition of linear functions
-        key_prerequisites: [evaluating-composite-functions]
-        exemplars:
-          - problem: 'If $f(x)=3x+2$ and $g(x)=x-4$, find $f(g(x))$.'
-            answer: '3x - 10'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The inner rule $g(x)=x-4$ becomes the whole input of $f$, so $f(g(x))=3(x-4)+2$. Distributing the $3$ gives $3x-12+2$, which simplifies to $3x-10$.'
-          - problem: 'If $f(x)=x+1$ and $g(x)=2x$, find $f(g(x))$.'
-            answer: '2x + 1'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Put $g(x)=2x$ in place of the input of $f$. This gives $f(g(x))=2x+1$, and no like terms are left to combine.'
-          - problem: 'If $f(x)=2x+5$ and $g(x)=3x-1$, find $f(g(x))$.'
-            answer: '6x + 3'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The whole rule $g(x)=3x-1$ goes into $f$, so $f(g(x))=2(3x-1)+5$. Distributing the $2$ gives $6x-2+5$, which simplifies to $6x+3$.'
-          - problem: 'A bakery packs $12$ rolls on each tray, so $x$ trays hold $r(x)=12x$ rolls. The butter needed for $r$ rolls is $b(r)=3r+20$ grams, which includes $20$ grams for greasing the pans. Write the butter needed for $x$ trays in terms of $x$.'
-            answer: '36x + 20'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The number of rolls $12x$ is the input of the butter rule, so the butter is $3(12x)+20$ grams. Multiplying gives $36x+20$ grams.'
-          - problem: 'A prize of $x$ dollars is shared equally among $4$ winners, so each receives $s(x)=\frac{x}{4}$ dollars. Each winner then adds $10$ dollars of their own, which is the rule $a(y)=y+10$. Write the final amount per winner in terms of $x$.'
-            answer: 'x/4 + 10'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The share $\frac{x}{4}$ is the input of $a$, so the final amount is $a(s(x))=\frac{x}{4}+10$. The division by $4$ happens before the $10$ dollars are added.'
-          - problem: 'For $f(x)=10-2x$ and $g(x)=x+3$, find $f(g(x))$.'
-            answer: '4 - 2x'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Replace the input of $f$ by $x+3$, which gives $f(g(x))=10-2(x+3)$. The product is $-2x-6$, so the result is $10-6-2x=4-2x$.'
-          - problem: 'For $f(x)=3x+1$ and $g(x)=x+2$, what is the rule of $f(g(x))$?'
-            answer: '3x + 7'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The $2$ is inside $g(x)$, so $3$ multiplies it. The composition is $3(x+2)+1=3x+6+1=3x+7$.'
-        constraints: "both rules linear with small integer coefficients, in plain form and in word problems with a multiplication or a division step; the answer is linear"
-      - id: kp2
-        name: Composition with squaring
-        key_prerequisites: [polynomial-multiplication]
-        exemplars:
-          - problem: 'If $f(x)=x^2$ and $g(x)=x+3$, find $f(g(x))$.'
-            answer: 'x^2 + 6x + 9'
-            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
-            solution_sketch: 'The whole inner rule goes inside the square, so $f(g(x))=(x+3)^2$. Multiplying the binomial by itself gives $x^2+3x+3x+9$, which combines to $x^2+6x+9$.'
-          - problem: 'If $f(x)=2x-1$ and $g(x)=x^2$, find $g(f(x))$.'
-            answer: '4x^2 - 4x + 1'
-            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
-            solution_sketch: 'Here $f$ acts first and $g$ squares its result, so $g(f(x))=(2x-1)^2$. Multiplying out gives $4x^2-2x-2x+1$, which combines to $4x^2-4x+1$.'
-          - problem: 'A square rug has side $s(x)=x-2$ metres, and its area is $A(s)=s^2$ square metres. Write the area of the rug in terms of $x$ and expand it.'
-            answer: 'x^2 - 4x + 4'
-            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
-            solution_sketch: 'The area uses the whole side length, so $A(s(x))=(x-2)^2=(x-2)(x-2)$. Expanding gives $x^2-2x-2x+4$, which combines to $x^2-4x+4$.'
-          - problem: 'If $f(x)=x^2+1$ and $g(x)=x-2$, find $f(g(x))$.'
-            answer: 'x^2 - 4x + 5'
-            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
-            solution_sketch: 'Replace the input of $f$ by $x-2$, so $f(g(x))=(x-2)^2+1$. The square is $x^2-4x+4$, and adding $1$ gives $x^2-4x+5$.'
-          - problem: 'For $f(x)=3x+1$ and $g(x)=x^2$, what is the rule of $g(f(x))$, expanded?'
-            answer: '9x^2 + 6x + 1'
-            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
-            solution_sketch: 'Square the whole output of $f$, not only the $x$. The rule is $(3x+1)^2$, whose terms are $9x^2$, $6x$ and $1$.'
-          - problem: 'A square patio has side $s(x)=4x+3$ metres and area $A(s)=s^2$ square metres. Expand $A(s(x))$.'
-            answer: '16x^2 + 24x + 9'
-            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
-            solution_sketch: 'The area is the square of the whole side, $(4x+3)^2$. The terms are $16x^2$, twice $12x$ which is $24x$, and $9$, giving $16x^2+24x+9$.'
-          - problem: 'If $f(x)=x+4$ and $g(x)=x^2-3$, find $g(f(x))$.'
-            answer: 'x^2 + 8x + 13'
-            answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
-            solution_sketch: 'The output of $f$ goes into $g$, so $g(f(x))=(x+4)^2-3$. The square is $x^2+8x+16$, and subtracting $3$ gives $x^2+8x+13$.'
-        constraints: "one rule is a squaring rule; both orders appear; expand the resulting trinomial; area contexts with a square side"
-      - id: kp3
-        name: Order matters (g(f(x)) vs f(g(x)))
-        key_prerequisites: [combining-like-terms]
-        try_first:
-          problem: 'For $f(x)=2x$ and $g(x)=x+3$, is $f(g(1))$ equal to $g(f(1))$?'
-          answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-          answer: 'no'
-          reveal: 'Here $f(g(1))=f(4)=8$ but $g(f(1))=g(2)=5$. Doing the two functions in the other order gives a different result, so $f(g(x))$ and $g(f(x))$ are usually different rules.'
-        exemplars:
-          - problem: 'If $f(x)=x-4$ and $g(x)=3x+1$, find $g(f(x))$.'
-            answer: '3x - 11'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Here $f$ acts first, so $g(f(x))=3(x-4)+1$. Distributing gives $3x-12+1$, which simplifies to $3x-11$.'
-          - problem: 'If $f(x)=x-4$ and $g(x)=3x+1$, find $f(g(x))$.'
-            answer: '3x - 3'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Now $g$ acts first, so $f(g(x))=(3x+1)-4$. This simplifies to $3x-3$, which differs from $g(f(x))=3x-11$.'
-          - problem: 'Is $f(g(x))$ the same function as $g(f(x))$ when $f(x)=x+6$ and $g(x)=2x$?'
-            answer: 'no'
-            answer_contract: {"kind":"label","options":[["yes","same","the same","they are the same","equal"],["no","not the same","different","they are different","not equal"]]}
-            solution_sketch: 'Compute both orders: $f(g(x))=2x+6$, but $g(f(x))=2(x+6)=2x+12$. The two rules differ, so the answer is no.'
-          - problem: 'A calibration pipeline first applies $f(x)=2x+3$ and then applies $g(x)=x-5$. Give the rule for the final reading in terms of $x$.'
-            answer: '2x - 2'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The second stage subtracts $5$ from the first-stage reading $2x+3$. This gives $(2x+3)-5=2x-2$.'
-          - problem: 'A restaurant bill is $x$ dollars. A tip of $6$ dollars is added, and then the total is shared equally among $3$ friends. How much does each friend pay, in terms of $x$?'
-            answer: '(x + 6)/3'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The tip is added first, giving $x+6$ dollars, and then that whole total is divided by $3$. Each friend pays $\frac{x+6}{3}$ dollars.'
-          - problem: 'Three friends share a bill of $x$ dollars equally, and then each friend adds $6$ dollars as a tip. How much does each friend pay in total, in terms of $x$?'
-            answer: 'x/3 + 6'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The share comes first, so each friend owes $\frac{x}{3}$ dollars. Each friend then adds $6$ dollars, so the total is $\frac{x}{3}+6$.'
-          - problem: 'For $f(x)=2x$ and $g(x)=5x$, do $f(g(x))$ and $g(f(x))$ give the same rule?'
-            answer: 'yes'
-            answer_contract: {"kind":"label","options":[["yes","same","the same","they are the same","equal"],["no","not the same","different","they are different","not equal"]]}
-            solution_sketch: 'Both orders multiply the input by $2$ and by $5$, so $f(g(x))=10x$ and $g(f(x))=10x$. The two rules are equal, so the answer is yes.'
-        constraints: "both rules linear; the same pair in both orders, and word problems where the order of two steps changes the result"
+    - id: kp1
+      name: Numeric composition, inside first
+      key_prerequisites:
+      - function-notation
+      - evaluating-functions
+      constraints: linear rules, a division rule or a unit-conversion rule; integer or simple fractional intermediate values; negative inputs allowed; some items come from a context
+      exemplars:
+      - problem: If $f(x)=x+2$ and $g(x)=3x$, find $f(g(2))$.
+        answer: '8'
+        answer_contract:
+          kind: exact
+        solution_sketch: 'Work the inside function first: $g(2)=6$. Then apply $f$ to that output: $f(6)=6+2=8$.'
+      - problem: If $f(x)=2x$ and $g(x)=x-1$, find $g(f(3))$.
+        answer: '5'
+        answer_contract:
+          kind: exact
+        solution_sketch: 'The inside function is $f$, so the first step is $f(3)=2(3)=6$. Then apply $g$ to this result: $g(6)=6-1=5$.'
+      - problem: A machine first doubles a number and then adds $5$. The first stage is $g(x)=2x$ and the second stage is $f(x)=x+5$. What is the output for the input $3$?
+        answer: '11'
+        answer_contract:
+          kind: exact
+        solution_sketch: 'The first stage gives $g(3)=6$. The second stage works on this result: $f(6)=6+5=11$.'
+      - problem: A bakery packs loaves into boxes of $6$, so $x$ loaves fill $g(x)=\frac{x}{6}$ boxes. Shipping $b$ boxes costs $f(b)=12b+5$ dollars. What does it cost to ship $30$ loaves?
+        answer: '65'
+        answer_contract:
+          kind: unit
+          quantity: dollar
+          unit: dollar
+          allow_omitted: true
+        solution_sketch: 'The loaves are packed first: $g(30)=30/6=5$ boxes. Shipping then costs $f(5)=12(5)+5=65$ dollars.'
+      - problem: Let $f(x)=x-7$ and $g(x)=3x+2$. Find $f(g(-2))$.
+        answer: '-11'
+        answer_contract:
+          kind: exact
+        solution_sketch: 'The inside function gives $g(-2)=3(-2)+2=-4$. Then apply $f$ to this negative result: $f(-4)=-4-7=-11$.'
+      - problem: A temperature of $F$ degrees Fahrenheit is $C(F)=\frac{5(F-32)}{9}$ degrees Celsius, and $C$ degrees Celsius is $K(C)=C+273$ kelvin. Find $K(C(95))$.
+        answer: '308'
+        answer_contract:
+          kind: exact
+        solution_sketch: 'Convert to Celsius first: $C(95)=5(63)/9=35$ degrees. Then convert this result to kelvin: $K(35)=35+273=308$.'
+      - problem: For $f(x)=x-3$ and $g(x)=4x$, what is the value of $f(g(5))$?
+        answer: '17'
+        answer_contract:
+          kind: exact
+        solution_sketch: 'Applying $f$ first gives $g(f(5))=g(2)=8$, which is the other order. The inside function is $g$: $g(5)=20$, and then $f(20)=17$.'
+      - problem: If $f(x)=2x-1$ and $g(x)=x+4$, find $f(g(3))$.
+        answer: '13'
+        answer_contract:
+          kind: exact
+        solution_sketch: 'The inside function gives $g(3)=3+4=7$. Then apply the outside function to this result: $f(7)=2(7)-1=13$.'
+    - id: kp2
+      name: Composition from tables
+      key_prerequisites:
+      - function-notation
+      constraints: tables or arrow lists supply only the values needed; inner value first, then outer; integer entries; some items come from a context
+      exemplars:
+      - problem: Tables give $g(3)=2$, $f(1)=4$ and $f(2)=6$. Find $f(g(3))$.
+        answer: '6'
+        answer_contract:
+          kind: exact
+        solution_sketch: 'The inner lookup gives $g(3)=2$. Use $2$ as the input of $f$: $f(2)=6$. The entry $f(1)=4$ is not needed.'
+      - problem: Tables give $f(2)=3$, $g(3)=7$ and $g(2)=1$. Find $g(f(2))$.
+        answer: '7'
+        answer_contract:
+          kind: exact
+        solution_sketch: 'The inner lookup gives $f(2)=3$. Use $3$ as the input of $g$: $g(3)=7$. The entry $g(2)=1$ is not needed.'
+      - problem: Tables give $g(1)=4$, $f(1)=2$ and $f(4)=9$. What is the value of $f(g(1))$?
+        answer: '9'
+        answer_contract:
+          kind: exact
+        solution_sketch: The input of $f$ is not the original input $1$. The inner lookup gives $g(1)=4$, so the outer lookup must be $f(4)=9$.
+      - problem: A table sends $5$ to $2$ under $f$ and $2$ to $8$ under $g$. It also sends $5$ to $3$ under $g$. Find $(g\circ f)(5)$.
+        answer: '8'
+        answer_contract:
+          kind: exact
+        solution_sketch: 'The composition $g\circ f$ applies $f$ first: $f(5)=2$. Then $g(2)=8$, so $(g\circ f)(5)=8$. The entry that sends $5$ to $3$ under $g$ is not used.'
+      - problem: 'The depot table $Z$ gives the delivery zone of a parcel: parcel $402$ is in zone $5$ and parcel $417$ is in zone $3$. The table $V$ gives the van of a zone: zone $3$ uses van $14$ and zone $5$ uses van $22$. What is the number of the van that carries parcel $402$?'
+        answer: '22'
+        answer_contract:
+          kind: exact
+        solution_sketch: 'The zone comes first: $Z(402)=5$. Then the van for zone $5$ is $V(5)=22$, so van $22$ carries parcel $402$.'
+      - problem: Tables give $f(0)=2$, $f(2)=5$, $g(0)=4$, $g(2)=0$ and $g(5)=1$. Find $g(f(0))+f(g(2))$.
+        answer: '2'
+        answer_contract:
+          kind: exact
+        solution_sketch: First, $g(f(0))=g(2)=0$ because $f(0)=2$. Second, $f(g(2))=f(0)=2$ because $g(2)=0$. The sum is $0+2=2$.
+      - problem: 'A school keeps two tables. The table $C$ gives the class of a student: student $7$ is in class $3$ and student $9$ is in class $4$. The table $R$ gives the room of a class: class $3$ uses room $12$ and class $4$ uses room $15$. What is the number of the room that student $9$ uses?'
+        answer: '15'
+        answer_contract:
+          kind: exact
+        solution_sketch: 'The class comes first: $C(9)=4$. Then the room of class $4$ is $R(4)=15$, so student $9$ uses room $15$.'
+      - problem: Tables give $g(4)=1$ and $f(1)=-3$. Find $(f\circ g)(4)$.
+        answer: '-3'
+        answer_contract:
+          kind: exact
+        solution_sketch: 'The composition $f\circ g$ applies $g$ first: $g(4)=1$. Then $f(1)=-3$, so $(f\circ g)(4)=-3$.'
+    - id: kp3
+      name: Symbolic composition of linear functions
+      key_prerequisites: []
+      exemplars:
+      - problem: If $f(x)=3x+2$ and $g(x)=x-4$, find $f(g(x))$.
+        answer: 3x - 10
+        answer_contract:
+          kind: exact
+        solution_sketch: The inner rule $g(x)=x-4$ becomes the whole input of $f$, so $f(g(x))=3(x-4)+2$. Distributing the $3$ gives $3x-12+2$, which simplifies to $3x-10$.
+      - problem: If $f(x)=x+1$ and $g(x)=2x$, find $f(g(x))$.
+        answer: 2x + 1
+        answer_contract:
+          kind: exact
+        solution_sketch: Put $g(x)=2x$ in place of the input of $f$. This gives $f(g(x))=2x+1$, and no like terms are left to combine.
+      - problem: If $f(x)=2x+5$ and $g(x)=3x-1$, find $f(g(x))$.
+        answer: 6x + 3
+        answer_contract:
+          kind: exact
+        solution_sketch: The whole rule $g(x)=3x-1$ goes into $f$, so $f(g(x))=2(3x-1)+5$. Distributing the $2$ gives $6x-2+5$, which simplifies to $6x+3$.
+      - problem: A bakery packs $12$ rolls on each tray, so $x$ trays hold $r(x)=12x$ rolls. The butter needed for $r$ rolls is $b(r)=3r+20$ grams, which includes $20$ grams for greasing the pans. Write the butter needed for $x$ trays in terms of $x$.
+        answer: 36x + 20
+        answer_contract:
+          kind: exact
+        solution_sketch: The number of rolls $12x$ is the input of the butter rule, so the butter is $3(12x)+20$ grams. Multiplying gives $36x+20$ grams.
+      - problem: A prize of $x$ dollars is shared equally among $4$ winners, so each receives $s(x)=\frac{x}{4}$ dollars. Each winner then adds $10$ dollars of their own, which is the rule $a(y)=y+10$. Write the final amount per winner in terms of $x$.
+        answer: x/4 + 10
+        answer_contract:
+          kind: exact
+        solution_sketch: The share $\frac{x}{4}$ is the input of $a$, so the final amount is $a(s(x))=\frac{x}{4}+10$. The division by $4$ happens before the $10$ dollars are added.
+      - problem: For $f(x)=10-2x$ and $g(x)=x+3$, find $f(g(x))$.
+        answer: 4 - 2x
+        answer_contract:
+          kind: exact
+        solution_sketch: Replace the input of $f$ by $x+3$, which gives $f(g(x))=10-2(x+3)$. The product is $-2x-6$, so the result is $10-6-2x=4-2x$.
+      - problem: For $f(x)=3x+1$ and $g(x)=x+2$, what is the rule of $f(g(x))$?
+        answer: 3x + 7
+        answer_contract:
+          kind: exact
+        solution_sketch: The $2$ is inside $g(x)$, so $3$ multiplies it. The composition is $3(x+2)+1=3x+6+1=3x+7$.
+      constraints: both rules linear with small integer coefficients, in plain form and in word problems with a multiplication or a division step; the answer is linear
+    - id: kp4
+      name: Composition with squaring
+      key_prerequisites:
+      - polynomial-multiplication
+      exemplars:
+      - problem: If $f(x)=x^2$ and $g(x)=x+3$, find $f(g(x))$.
+        answer: x^2 + 6x + 9
+        answer_contract:
+          kind: required_form
+          form: expanded_polynomial
+        solution_sketch: The whole inner rule goes inside the square, so $f(g(x))=(x+3)^2$. Multiplying the binomial by itself gives $x^2+3x+3x+9$, which combines to $x^2+6x+9$.
+      - problem: If $f(x)=2x-1$ and $g(x)=x^2$, find $g(f(x))$.
+        answer: 4x^2 - 4x + 1
+        answer_contract:
+          kind: required_form
+          form: expanded_polynomial
+        solution_sketch: Here $f$ acts first and $g$ squares its result, so $g(f(x))=(2x-1)^2$. Multiplying out gives $4x^2-2x-2x+1$, which combines to $4x^2-4x+1$.
+      - problem: A square rug has side $s(x)=x-2$ metres, and its area is $A(s)=s^2$ square metres. Write the area of the rug in terms of $x$ and expand it.
+        answer: x^2 - 4x + 4
+        answer_contract:
+          kind: required_form
+          form: expanded_polynomial
+        solution_sketch: The area uses the whole side length, so $A(s(x))=(x-2)^2=(x-2)(x-2)$. Expanding gives $x^2-2x-2x+4$, which combines to $x^2-4x+4$.
+      - problem: If $f(x)=x^2+1$ and $g(x)=x-2$, find $f(g(x))$.
+        answer: x^2 - 4x + 5
+        answer_contract:
+          kind: required_form
+          form: expanded_polynomial
+        solution_sketch: Replace the input of $f$ by $x-2$, so $f(g(x))=(x-2)^2+1$. The square is $x^2-4x+4$, and adding $1$ gives $x^2-4x+5$.
+      - problem: For $f(x)=3x+1$ and $g(x)=x^2$, what is the rule of $g(f(x))$, expanded?
+        answer: 9x^2 + 6x + 1
+        answer_contract:
+          kind: required_form
+          form: expanded_polynomial
+        solution_sketch: Square the whole output of $f$, not only the $x$. The rule is $(3x+1)^2$, whose terms are $9x^2$, $6x$ and $1$.
+      - problem: A square patio has side $s(x)=4x+3$ metres and area $A(s)=s^2$ square metres. Expand $A(s(x))$.
+        answer: 16x^2 + 24x + 9
+        answer_contract:
+          kind: required_form
+          form: expanded_polynomial
+        solution_sketch: The area is the square of the whole side, $(4x+3)^2$. The terms are $16x^2$, twice $12x$ which is $24x$, and $9$, giving $16x^2+24x+9$.
+      - problem: If $f(x)=x+4$ and $g(x)=x^2-3$, find $g(f(x))$.
+        answer: x^2 + 8x + 13
+        answer_contract:
+          kind: required_form
+          form: expanded_polynomial
+        solution_sketch: The output of $f$ goes into $g$, so $g(f(x))=(x+4)^2-3$. The square is $x^2+8x+16$, and subtracting $3$ gives $x^2+8x+13$.
+      constraints: one rule is a squaring rule; both orders appear; expand the resulting trinomial; area contexts with a square side
+    - id: kp5
+      name: Order matters (g(f(x)) vs f(g(x)))
+      key_prerequisites:
+      - combining-like-terms
+      try_first:
+        problem: For $f(x)=2x$ and $g(x)=x+3$, is $f(g(1))$ equal to $g(f(1))$?
+        answer_contract:
+          kind: label
+          options:
+          - - 'yes'
+          - - 'no'
+        answer: 'no'
+        reveal: Here $f(g(1))=f(4)=8$ but $g(f(1))=g(2)=5$. Doing the two functions in the other order gives a different result, so $f(g(x))$ and $g(f(x))$ are usually different rules.
+      exemplars:
+      - problem: If $f(x)=x-4$ and $g(x)=3x+1$, find $g(f(x))$.
+        answer: 3x - 11
+        answer_contract:
+          kind: exact
+        solution_sketch: Here $f$ acts first, so $g(f(x))=3(x-4)+1$. Distributing gives $3x-12+1$, which simplifies to $3x-11$.
+      - problem: If $f(x)=x-4$ and $g(x)=3x+1$, find $f(g(x))$.
+        answer: 3x - 3
+        answer_contract:
+          kind: exact
+        solution_sketch: Now $g$ acts first, so $f(g(x))=(3x+1)-4$. This simplifies to $3x-3$, which differs from $g(f(x))=3x-11$.
+      - problem: Is $f(g(x))$ the same function as $g(f(x))$ when $f(x)=x+6$ and $g(x)=2x$?
+        answer: 'no'
+        answer_contract:
+          kind: label
+          options:
+          - - 'yes'
+            - same
+            - the same
+            - they are the same
+            - equal
+          - - 'no'
+            - not the same
+            - different
+            - they are different
+            - not equal
+        solution_sketch: 'Compute both orders: $f(g(x))=2x+6$, but $g(f(x))=2(x+6)=2x+12$. The two rules differ, so the answer is no.'
+      - problem: A calibration pipeline first applies $f(x)=2x+3$ and then applies $g(x)=x-5$. Give the rule for the final reading in terms of $x$.
+        answer: 2x - 2
+        answer_contract:
+          kind: exact
+        solution_sketch: The second stage subtracts $5$ from the first-stage reading $2x+3$. This gives $(2x+3)-5=2x-2$.
+      - problem: A restaurant bill is $x$ dollars. A tip of $6$ dollars is added, and then the total is shared equally among $3$ friends. How much does each friend pay, in terms of $x$?
+        answer: (x + 6)/3
+        answer_contract:
+          kind: exact
+        solution_sketch: The tip is added first, giving $x+6$ dollars, and then that whole total is divided by $3$. Each friend pays $\frac{x+6}{3}$ dollars.
+      - problem: Three friends share a bill of $x$ dollars equally, and then each friend adds $6$ dollars as a tip. How much does each friend pay in total, in terms of $x$?
+        answer: x/3 + 6
+        answer_contract:
+          kind: exact
+        solution_sketch: The share comes first, so each friend owes $\frac{x}{3}$ dollars. Each friend then adds $6$ dollars, so the total is $\frac{x}{3}+6$.
+      - problem: For $f(x)=2x$ and $g(x)=5x$, do $f(g(x))$ and $g(f(x))$ give the same rule?
+        answer: 'yes'
+        answer_contract:
+          kind: label
+          options:
+          - - 'yes'
+            - same
+            - the same
+            - they are the same
+            - equal
+          - - 'no'
+            - not the same
+            - different
+            - they are different
+            - not equal
+        solution_sketch: Both orders multiply the input by $2$ and by $5$, so $f(g(x))=10x$ and $g(f(x))=10x$. The two rules are equal, so the answer is yes.
+      constraints: both rules linear; the same pair in both orders, and word problems where the order of two steps changes the result
     diagnostic_exemplar:
-      problem: 'If $f(x) = x + 2$ and $g(x) = x^2 - 3$, find $g(f(x))$.'
-      answer: "x^2 + 4x + 1"
+      problem: If $f(x) = x + 2$ and $g(x) = x^2 - 3$, find $g(f(x))$.
+      answer: x^2 + 4x + 1
       solution_sketch: 'Feed $f$ into $g$: $(x + 2)^2 - 3 = x^2 + 4x + 4 - 3$.'
     anki_seeds:
-      - front: "In general, f(g(x)) and g(f(x)) are..."
-        back: "different functions — composition is not commutative."
-        type: basic
+    - front: To evaluate f(g(a))...
+      back: compute g(a) first, then apply f to the result.
+      type: basic
+    - front: In general, f(g(x)) and g(f(x)) are...
+      back: different functions — composition is not commutative.
+      type: basic
 
   - id: one-to-one-functions
     name: One-to-One Functions
@@ -2564,280 +2711,313 @@ topics:
         back: "Rewrite both sides with base 3: 3^{2x} = 3^3."
         type: basic
 
-  - id: evaluating-logarithms
-    name: Evaluating Logarithms
-    core: true
-    difficulty: 0.55
-    drill: false
-    answer_kind: numeric
-    expected_time_secs: 90
-    prerequisites:
-      - id: exponential-equations-same-base
-        weight: 0.7
-        key: true
-      - id: integer-exponents-intro
-        weight: 0.4
-      - id: negative-zero-exponents
-        weight: 0.4
-    knowledge_points:
-      - id: kp1
-        name: The definition, applied to perfect powers
-        key_prerequisites: [exponential-equations-same-base]
-        try_first:
-          problem: 'A single cell divides in two every hour. After how many hours are there $16$ cells?'
-          answer_contract: {"kind":"exact"}
-          answer: '4'
-          reveal: 'Since $2^4=16$, it takes $4$ hours. The question "which exponent on $2$ gives $16$?" is exactly what $\log_2(16)$ asks.'
-        exemplars:
-          - problem: 'Evaluate $\log_2(32)$.'
-            answer: '5'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The value of $\log_2(32)$ is the exponent on $2$ that gives $32$. Since $2^5=32$, the value is $5$.'
-          - problem: 'Evaluate $\log_{10}(1000)$.'
-            answer: '3'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The logarithm asks which power of $10$ equals $1000$. Since $10^3=1000$, the value is $3$.'
-          - problem: 'A bacterium divides in two at regular intervals. Starting from one cell, after how many divisions are there $256$ cells?'
-            answer: '8'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'After $x$ divisions there are $2^x$ cells, so we need $x=\log_2(256)$. Since $2^8=256$, there are $256$ cells after $8$ divisions.'
-          - problem: 'The magnitude of an earthquake is the base-ten logarithm of the ratio of its measured amplitude to a reference amplitude. What is the magnitude of an earthquake whose amplitude is $10000$ times the reference?'
-            answer: '4'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The ratio is $10000$, so the magnitude is $\log_{10}(10000)$. Since $10^4=10000$, the magnitude is $4$.'
-          - problem: 'Evaluate $\log_7(49)$.'
-            answer: '2'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'We need the exponent $c$ with $7^c=49$. Since $7\cdot7=49$, we get $7^2=49$ and the value is $2$.'
-          - problem: 'How many times can $81$ be divided by $3$ before the result is $1$?'
-            answer: '4'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Each division by $3$ removes one factor of $3$ from $81$. Since $81=3^4$, there are $4$ divisions, which is $\log_3(81)=4$.'
-          - problem: 'What is the value of $\log_2(8)$?'
-            answer: '3'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'A logarithm is an exponent, not a quotient. Since $2^3=8$, the value of $\log_2(8)$ is $3$.'
-        constraints: 'bases 2, 3, 7, 10; integer answers 2..8, with contexts of doubling, division by a base and logarithmic scales'
-      - id: kp2
-        name: Logs of 1 and of the base
-        key_prerequisites: [integer-exponents-intro]
-        exemplars:
-          - problem: 'Evaluate $\log_9(9)$.'
-            answer: '1'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The exponent on $9$ that gives $9$ is $1$, because $9^1=9$. So $\log_9(9)=1$.'
-          - problem: 'Evaluate $\log_7(1)$.'
-            answer: '0'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Any nonzero base raised to the power $0$ is $1$, so $7^0=1$. Thus $\log_7(1)=0$.'
-          - problem: 'The magnitude of an earthquake is the base-ten logarithm of the ratio of its measured amplitude to a reference amplitude. What is the magnitude of an earthquake whose amplitude equals the reference amplitude?'
-            answer: '0'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The ratio of the amplitude to the reference is $1$, so the magnitude is $\log_{10}(1)$. Since $10^0=1$, the magnitude is $0$.'
-          - problem: 'The level of a sound in bels is the base-ten logarithm of the ratio of its intensity to the intensity of the quietest audible sound. What is the level of a sound that is $10$ times that intensity?'
-            answer: '1'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The intensity ratio is $10$, so the level is $\log_{10}(10)$. Since $10^1=10$, the level is $1$ bel.'
-          - problem: 'Find $x$ if $\log_{12}(x)=1$.'
-            answer: '12'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The equation says that $x$ is the number we get from the base $12$ raised to the power $1$. So $x=12^1=12$.'
-          - problem: 'Evaluate $\log_3(3)+\log_5(5)+\log_8(1)$.'
-            answer: '2'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Each logarithm of a number equal to its base is $1$, so the first two terms give $1+1=2$. The logarithm of $1$ is $0$, so the sum is $2$.'
-          - problem: 'What is the value of $\log_4(1)$?'
-            answer: '0'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The value is the exponent $c$ with $4^c=1$. Since $4^0=1$, the correct value is $0$.'
-          - problem: 'Find $x$ if $\log_{20}(x)=0$.'
-            answer: '1'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The equation says $20^0=x$. Any nonzero base to the power $0$ is $1$, so $x=1$.'
-        constraints: 'argument equal to 1 or to the base itself; answers are 0 or 1, or the unknown argument or a sum of such logs'
-      - id: kp3
-        name: Logs of fractions
-        key_prerequisites: [negative-zero-exponents]
-        exemplars:
-          - problem: 'Evaluate $\log_2\left(\frac{1}{16}\right)$.'
-            answer: '-4'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'We need the exponent $c$ with $2^c=\frac{1}{16}$. Since $16=2^4$, the reciprocal is $2^{-4}$, so the value is $-4$.'
-          - problem: 'Evaluate $\log_3\left(\frac{1}{27}\right)$.'
-            answer: '-3'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Since $27=3^3$, the reciprocal is $\frac{1}{27}=3^{-3}$. So the exponent on $3$, and the value of the logarithm, is $-3$.'
-          - problem: 'The pH of a solution is $-\log_{10}$ of its hydrogen-ion concentration in moles per litre. What is the pH of a solution with concentration $0.0001$?'
-            answer: '4'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Since $0.0001=\frac{1}{10000}=10^{-4}$, we get $\log_{10}(0.0001)=-4$. The pH is the negative of that, which is $4$.'
-          - problem: 'The level of a sound in bels is the base-ten logarithm of the ratio of its intensity to the intensity of the quietest audible sound. A very faint sound has $\frac{1}{1000}$ of that intensity. What is its level?'
-            answer: '-3'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The level is $\log_{10}\left(\frac{1}{1000}\right)$. Since $\frac{1}{1000}=10^{-3}$, the level is $-3$ bels, which is below the quietest audible sound.'
-          - problem: 'Evaluate $\log_{10}(0.01)$.'
-            answer: '-2'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'We write the decimal as a power of $10$: $0.01=\frac{1}{100}=10^{-2}$. So the exponent, and the value of the logarithm, is $-2$.'
-          - problem: 'Evaluate $\log_2\left(\frac{1}{2}\right)$.'
-            answer: '-1'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The reciprocal of $2$ is $2^{-1}$, so the exponent on $2$ that gives $\frac{1}{2}$ is $-1$. Thus $\log_2\left(\frac{1}{2}\right)=-1$.'
-          - problem: 'What is the value of $\log_2\left(\frac{1}{8}\right)$?'
-            answer: '-3'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The argument is $\frac{1}{8}$, not $8$. A reciprocal has a negative exponent, so $2^{-3}=\frac{1}{8}$ and the value is $-3$.'
-          - problem: 'Find $x$ if $\log_3(x)=-2$.'
-            answer: '1/9'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The equation says that $x$ is $3$ raised to the power $-2$. Since $3^{-2}=\frac{1}{3^2}=\frac{1}{9}$, we get $x=1/9$.'
-        constraints: 'arguments are unit fractions 1/b^k with k = 1-4 or decimals such as 0.01; answers are negative integers, or the unknown argument for a negative value'
-    diagnostic_exemplar:
-      problem: 'Evaluate $\log_5\left(\frac{1}{125}\right)$.'
-      answer: "-3"
-      solution_sketch: '$\frac{1}{125} = 5^{-3}$, and the log returns that exponent.'
-    anki_seeds:
-      - front: "log_b(y) = x means..."
-        back: "b^x = y."
-        type: basic
-      - front: "log_b(1) = {{c1::0}} for any valid base b."
-        back: "0"
-        type: cloze
-
   - id: logarithm-basics
-    name: Introduction to Logarithms
+    name: Evaluating and Converting Logarithms
     core: true
     difficulty: 0.6
     drill: false
-    # The point of this topic is rewriting one EQUATION as another ("3^4 = 81" <->
-    # "log_3(81) = 4"); SymPy cannot parse "=", so the tutor grades the form.
     answer_kind: multi-step
     expected_time_secs: 120
     prerequisites:
-      - id: evaluating-logarithms
-        weight: 0.8
-        key: true
-      - id: exponential-equations
-        weight: 0.4
-      - id: inverse-functions
-        weight: 0.0            # conceptual only: a log is the inverse of an exponential
+    - id: exponential-equations-same-base
+      weight: 0.7
+      key: true
+    - id: integer-exponents-intro
+      weight: 0.4
+    - id: negative-zero-exponents
+      weight: 0.4
+    - id: exponential-equations
+      weight: 0.4
+    - id: inverse-functions
+      weight: 0.0
     knowledge_points:
-      - id: kp1
-        name: Convert exponential form to logarithmic form
-        key_prerequisites: [evaluating-logarithms]
-        constraints: "bases 2, 3, 5, 7, 10 and exponents -3 to 5; the answer is the logarithmic equation or the missing number in it, not a value"
-        exemplars:
-          - problem: 'Rewrite $3^4 = 81$ in logarithmic form.'
-            answer: 'log_3(81) = 4'
-            answer_contract: {"kind": "label", "options": [["log_3(81) = 4", "log_3(81)=4", "\\log_{3}(81) = 4", "\\log_{3}(81)=4", "\\log_3(81) = 4", "\\log_3(81)=4", "log_3 81 = 4", "log_3 81=4"], ["log_81(3) = 4", "log_81(3)=4", "\\log_{81}(3) = 4", "\\log_{81}(3)=4"]]}
-            solution_sketch: 'The base stays the base, the exponent becomes the value of the logarithm, and the result becomes the argument. So $3^4=81$ says the same as $\log_3(81)=4$.'
-          - problem: 'Complete the logarithmic form of $10^{-2}=0.01$: $\log_{10}(0.01)=\square$.'
-            answer: '-2'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'The base is $10$ and the result is $0.01$, so the logarithm is the exponent of $10$ that gives $0.01$. That exponent is $-2$, so $\log_{10}(0.01)=-2$.'
-          - problem: 'A culture doubles every hour. After $h$ hours it is $2^h$ times its starting size, and it is now $32$ times its starting size. Write the equation for $h$ in logarithmic form.'
-            answer: 'log_2(32) = h'
-            answer_contract: {"kind": "label", "options": [["log_2(32) = h", "log_2(32)=h", "h = log_2(32)", "h=log_2(32)", "\\log_2(32) = h", "\\log_{2}(32) = h", "h = \\log_2(32)", "h = \\log_{2}(32)"], ["log_32(2) = h", "log_32(2)=h", "\\log_{32}(2) = h", "\\log_{32}(2)=h"]]}
-            solution_sketch: 'The size condition is $2^h=32$. The base $2$ stays the base and the exponent $h$ becomes the value, so $\log_2(32)=h$.'
-          - problem: 'Complete the logarithmic form of $7^0=1$: $\log_7(1)=\square$.'
-            answer: '0'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'The exponent that turns the base $7$ into the result $1$ is $0$. So $7^0=1$ says the same as $\log_7(1)=0$.'
-          - problem: 'The number of people who know a rumour triples every hour, so after $h$ hours it has grown $3^h$-fold. It has now grown $243$-fold. Then $h=\log_b(243)$ for which base $b$?'
-            answer: '3'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'The growth condition $3^h=243$ in logarithmic form is $h=\log_3(243)$. The base of the power stays the base of the logarithm, so $b=3$.'
-          - problem: 'Rewrite $2^6=64$ as a logarithm equation. What is the base of the logarithm?'
-            answer: '2'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'The base of the power stays the base of the logarithm. In $2^6=64$ the base is $2$, so the correct form is $\log_2(64)=6$.'
-          - problem: 'Complete the logarithmic form of $2^{-3}=\frac{1}{8}$: $\log_2\left(\frac{1}{8}\right)=\square$.'
-            answer: '-3'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'The exponent that turns the base $2$ into $\frac18$ is $-3$. So $\log_2\left(\frac18\right)=-3$, and a negative exponent gives a negative logarithm.'
-      - id: kp2
-        name: Convert logarithmic form to exponential form
-        key_prerequisites: [evaluating-logarithms]
-        constraints: "bases 2, 3, 5, 10 with integer logarithm values; the answer is the exponential equation, the missing exponent, or the argument"
-        exemplars:
-          - problem: 'Rewrite $\log_5(125) = 3$ in exponential form.'
-            answer: '5^3 = 125'
-            answer_contract: {"kind": "label", "options": [["5^3 = 125", "5^3=125", "5^{3} = 125", "5^{3}=125", "125 = 5^3", "125=5^3"], ["125^3 = 5", "125^3=5", "3^5 = 125", "3^5=125"]]}
-            solution_sketch: 'The base stays the base, the value of the logarithm becomes the exponent, and the argument becomes the result. So $\log_5(125)=3$ says the same as $5^3=125$.'
-          - problem: 'Complete the exponential form of $\log_{10}(0.001)=-3$: $10^{\square}=0.001$.'
-            answer: '-3'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'The value of the logarithm is the exponent of the base. So $\log_{10}(0.001)=-3$ says the same as $10^{-3}=0.001$.'
-          - problem: 'The magnitude of an earthquake is $M=\log_{10}A$, where $A$ is the amplitude of the ground motion in micrometres. An earthquake has magnitude $6$. What was its amplitude?'
-            answer: '1000000'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'The equation $\log_{10}A=6$ in exponential form is $10^6=A$. So the amplitude was $10^6=1000000$ micrometres.'
-          - problem: 'The pH of a solution is $-\log_{10}[\mathrm{H}^+]$, where $[\mathrm{H}^+]$ is the concentration of hydrogen ions in mol/L. A sample has pH $4$. What is its hydrogen ion concentration in mol/L?'
-            answer: '0.0001'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'A pH of $4$ means $\log_{10}[\mathrm{H}^+]=-4$. In exponential form $[\mathrm{H}^+]=10^{-4}=0.0001$ mol/L, a very small concentration.'
-          - problem: 'Write the table entry $\log_3(243)=5$ in exponential form.'
-            answer: '3^5 = 243'
-            answer_contract: {"kind": "label", "options": [["3^5 = 243", "3^5=243", "3^{5} = 243", "3^{5}=243", "243 = 3^5", "243=3^5"], ["243^5 = 3", "243^5=3", "5^3 = 243", "5^3=243"]]}
-            solution_sketch: 'The value of the logarithm is the exponent, not the argument. So $\log_3(243)=5$ says the same as $3^5=243$.'
-          - problem: 'Solve $\log_2(x)=7$.'
-            answer: '128'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'The base stays the base, so $\log_2(x)=7$ becomes the power equation $2^7=x$. Then $x=2^7=128$.'
-          - problem: 'Solve $\log_3(x)=-2$.'
-            answer: '1/9'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'In exponential form $\log_3(x)=-2$ is $3^{-2}=x$. So $x=\frac19$, because a negative exponent gives a reciprocal.'
-      - id: kp3
-        name: Fractional values and unknown bases
-        key_prerequisites: [evaluating-logarithms, exponential-equations]
-        constraints: "base and argument are powers of one small integer, so the value is a simple fraction; or solve for an unknown base from a square"
-        try_first:
-          problem: 'Which exponent $x$ makes $25^x=5$?'
-          answer_contract: {"kind": "exact"}
-          answer: '1/2'
-          reveal: 'A square root is a power of $\frac12$, and $\sqrt{25}=5$, so $25^{1/2}=5$. This is why $\log_{25}(5)=\frac12$: a logarithm can be a fraction.'
-        exemplars:
-          - problem: 'Evaluate $\log_4(2)$.'
-            answer: '1/2'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'Let the value be $c$, so $4^c=2$. Since $4^{1/2}=\sqrt4=2$, the value is $c=\frac12$.'
-          - problem: 'Find the base $b$ of the logarithm if $\log_b(49)=2$.'
-            answer: '7'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'In exponential form $\log_b(49)=2$ is $b^2=49$. A base must be positive, so $b=7$.'
-          - problem: 'Evaluate $\log_{27}(3)$.'
-            answer: '1/3'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'Let the value be $c$, so $27^c=3$. Since $27=3^3$, we get $3^{3c}=3^1$, so $3c=1$ and $c=\frac13$.'
-          - problem: 'A culture grows by the same factor every hour. After $3$ hours it has grown $64$-fold. By what factor does it grow each hour?'
-            answer: '4'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'If $b$ is the hourly factor, then $b^3=64$, which is $\log_b(64)=3$. Since $4^3=64$, the factor is $4$.'
-          - problem: 'A radioactive sample loses half of its mass every year. After how many years is $\frac{1}{32}$ of the sample left?'
-            answer: '5'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'After $n$ years the fraction left is $\left(\frac12\right)^n$, so $\left(\frac12\right)^n=\frac1{32}$. Since $2^5=32$, the sample reaches $\frac{1}{32}$ after $5$ years.'
-          - problem: 'What is $\log_{16}(2)$?'
-            answer: '1/4'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'Let the value be $c$, so $16^c=2$. Since $16=2^4$, we get $2^{4c}=2^1$, so $4c=1$ and $c=\frac14$.'
-          - problem: 'Solve $b^2=36$ for the base of $\log_b(36)=2$. What is the base $b$?'
-            answer: '6'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'Both $6$ and $-6$ solve $b^2=36$, but a logarithm base must be positive and not equal to $1$. So $b=6$.'
-          - problem: 'Evaluate $\log_9(3)$.'
-            answer: '1/2'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'Let the value be $c$, so $9^c=3$. Since $9^{1/2}=\sqrt9=3$, the value is $c=\frac12$.'
+    - id: kp1
+      name: Convert exponential form to logarithmic form
+      key_prerequisites: []
+      constraints: bases 2, 3, 5, 7, 10 and exponents -3 to 5; the answer is the logarithmic equation or the missing number in it, not a value
+      exemplars:
+      - problem: Rewrite $3^4 = 81$ in logarithmic form.
+        answer: log_3(81) = 4
+        answer_contract:
+          kind: label
+          options:
+          - - log_3(81) = 4
+            - log_3(81)=4
+            - \log_{3}(81) = 4
+            - \log_{3}(81)=4
+            - \log_3(81) = 4
+            - \log_3(81)=4
+            - log_3 81 = 4
+            - log_3 81=4
+          - - log_81(3) = 4
+            - log_81(3)=4
+            - \log_{81}(3) = 4
+            - \log_{81}(3)=4
+        solution_sketch: The base stays the base, the exponent becomes the value of the logarithm, and the result becomes the argument. So $3^4=81$ says the same as $\log_3(81)=4$.
+      - problem: 'Complete the logarithmic form of $10^{-2}=0.01$: $\log_{10}(0.01)=\square$.'
+        answer: '-2'
+        answer_contract:
+          kind: exact
+        solution_sketch: The base is $10$ and the result is $0.01$, so the logarithm is the exponent of $10$ that gives $0.01$. That exponent is $-2$, so $\log_{10}(0.01)=-2$.
+      - problem: A culture doubles every hour. After $h$ hours it is $2^h$ times its starting size, and it is now $32$ times its starting size. Write the equation for $h$ in logarithmic form.
+        answer: log_2(32) = h
+        answer_contract:
+          kind: label
+          options:
+          - - log_2(32) = h
+            - log_2(32)=h
+            - h = log_2(32)
+            - h=log_2(32)
+            - \log_2(32) = h
+            - \log_{2}(32) = h
+            - h = \log_2(32)
+            - h = \log_{2}(32)
+          - - log_32(2) = h
+            - log_32(2)=h
+            - \log_{32}(2) = h
+            - \log_{32}(2)=h
+        solution_sketch: The size condition is $2^h=32$. The base $2$ stays the base and the exponent $h$ becomes the value, so $\log_2(32)=h$.
+      - problem: 'Complete the logarithmic form of $7^0=1$: $\log_7(1)=\square$.'
+        answer: '0'
+        answer_contract:
+          kind: exact
+        solution_sketch: The exponent that turns the base $7$ into the result $1$ is $0$. So $7^0=1$ says the same as $\log_7(1)=0$.
+      - problem: The number of people who know a rumour triples every hour, so after $h$ hours it has grown $3^h$-fold. It has now grown $243$-fold. Then $h=\log_b(243)$ for which base $b$?
+        answer: '3'
+        answer_contract:
+          kind: exact
+        solution_sketch: The growth condition $3^h=243$ in logarithmic form is $h=\log_3(243)$. The base of the power stays the base of the logarithm, so $b=3$.
+      - problem: Rewrite $2^6=64$ as a logarithm equation. What is the base of the logarithm?
+        answer: '2'
+        answer_contract:
+          kind: exact
+        solution_sketch: The base of the power stays the base of the logarithm. In $2^6=64$ the base is $2$, so the correct form is $\log_2(64)=6$.
+      - problem: 'Complete the logarithmic form of $2^{-3}=\frac{1}{8}$: $\log_2\left(\frac{1}{8}\right)=\square$.'
+        answer: '-3'
+        answer_contract:
+          kind: exact
+        solution_sketch: The exponent that turns the base $2$ into $\frac18$ is $-3$. So $\log_2\left(\frac18\right)=-3$, and a negative exponent gives a negative logarithm.
+    - id: kp2
+      name: The definition, applied to perfect powers
+      key_prerequisites:
+      - exponential-equations-same-base
+      try_first:
+        problem: A single cell divides in two every hour. After how many hours are there $16$ cells?
+        answer_contract:
+          kind: exact
+        answer: '4'
+        reveal: Since $2^4=16$, it takes $4$ hours. The question "which exponent on $2$ gives $16$?" is exactly what $\log_2(16)$ asks.
+      exemplars:
+      - problem: Evaluate $\log_2(32)$.
+        answer: '5'
+        answer_contract:
+          kind: exact
+        solution_sketch: The value of $\log_2(32)$ is the exponent on $2$ that gives $32$. Since $2^5=32$, the value is $5$.
+      - problem: Evaluate $\log_{10}(1000)$.
+        answer: '3'
+        answer_contract:
+          kind: exact
+        solution_sketch: The logarithm asks which power of $10$ equals $1000$. Since $10^3=1000$, the value is $3$.
+      - problem: A bacterium divides in two at regular intervals. Starting from one cell, after how many divisions are there $256$ cells?
+        answer: '8'
+        answer_contract:
+          kind: exact
+        solution_sketch: After $x$ divisions there are $2^x$ cells, so we need $x=\log_2(256)$. Since $2^8=256$, there are $256$ cells after $8$ divisions.
+      - problem: The magnitude of an earthquake is the base-ten logarithm of the ratio of its measured amplitude to a reference amplitude. What is the magnitude of an earthquake whose amplitude is $10000$ times the reference?
+        answer: '4'
+        answer_contract:
+          kind: exact
+        solution_sketch: The ratio is $10000$, so the magnitude is $\log_{10}(10000)$. Since $10^4=10000$, the magnitude is $4$.
+      - problem: Evaluate $\log_7(49)$.
+        answer: '2'
+        answer_contract:
+          kind: exact
+        solution_sketch: We need the exponent $c$ with $7^c=49$. Since $7\cdot7=49$, we get $7^2=49$ and the value is $2$.
+      - problem: How many times can $81$ be divided by $3$ before the result is $1$?
+        answer: '4'
+        answer_contract:
+          kind: exact
+        solution_sketch: Each division by $3$ removes one factor of $3$ from $81$. Since $81=3^4$, there are $4$ divisions, which is $\log_3(81)=4$.
+      - problem: What is the value of $\log_2(8)$?
+        answer: '3'
+        answer_contract:
+          kind: exact
+        solution_sketch: A logarithm is an exponent, not a quotient. Since $2^3=8$, the value of $\log_2(8)$ is $3$.
+      constraints: bases 2, 3, 7, 10; integer answers 2..8, with contexts of doubling, division by a base and logarithmic scales
+    - id: kp3
+      name: Convert logarithmic form to exponential form
+      key_prerequisites: []
+      constraints: bases 2, 3, 5, 10 with integer logarithm values; the answer is the exponential equation, the missing exponent, or the argument
+      exemplars:
+      - problem: Rewrite $\log_5(125) = 3$ in exponential form.
+        answer: 5^3 = 125
+        answer_contract:
+          kind: label
+          options:
+          - - 5^3 = 125
+            - 5^3=125
+            - 5^{3} = 125
+            - 5^{3}=125
+            - 125 = 5^3
+            - 125=5^3
+          - - 125^3 = 5
+            - 125^3=5
+            - 3^5 = 125
+            - 3^5=125
+        solution_sketch: The base stays the base, the value of the logarithm becomes the exponent, and the argument becomes the result. So $\log_5(125)=3$ says the same as $5^3=125$.
+      - problem: 'Complete the exponential form of $\log_{10}(0.001)=-3$: $10^{\square}=0.001$.'
+        answer: '-3'
+        answer_contract:
+          kind: exact
+        solution_sketch: The value of the logarithm is the exponent of the base. So $\log_{10}(0.001)=-3$ says the same as $10^{-3}=0.001$.
+      - problem: The magnitude of an earthquake is $M=\log_{10}A$, where $A$ is the amplitude of the ground motion in micrometres. An earthquake has magnitude $6$. What was its amplitude?
+        answer: '1000000'
+        answer_contract:
+          kind: exact
+        solution_sketch: The equation $\log_{10}A=6$ in exponential form is $10^6=A$. So the amplitude was $10^6=1000000$ micrometres.
+      - problem: The pH of a solution is $-\log_{10}[\mathrm{H}^+]$, where $[\mathrm{H}^+]$ is the concentration of hydrogen ions in mol/L. A sample has pH $4$. What is its hydrogen ion concentration in mol/L?
+        answer: '0.0001'
+        answer_contract:
+          kind: exact
+        solution_sketch: A pH of $4$ means $\log_{10}[\mathrm{H}^+]=-4$. In exponential form $[\mathrm{H}^+]=10^{-4}=0.0001$ mol/L, a very small concentration.
+      - problem: Write the table entry $\log_3(243)=5$ in exponential form.
+        answer: 3^5 = 243
+        answer_contract:
+          kind: label
+          options:
+          - - 3^5 = 243
+            - 3^5=243
+            - 3^{5} = 243
+            - 3^{5}=243
+            - 243 = 3^5
+            - 243=3^5
+          - - 243^5 = 3
+            - 243^5=3
+            - 5^3 = 243
+            - 5^3=243
+        solution_sketch: The value of the logarithm is the exponent, not the argument. So $\log_3(243)=5$ says the same as $3^5=243$.
+      - problem: Solve $\log_2(x)=7$.
+        answer: '128'
+        answer_contract:
+          kind: exact
+        solution_sketch: The base stays the base, so $\log_2(x)=7$ becomes the power equation $2^7=x$. Then $x=2^7=128$.
+      - problem: Solve $\log_3(x)=-2$.
+        answer: 1/9
+        answer_contract:
+          kind: exact
+        solution_sketch: In exponential form $\log_3(x)=-2$ is $3^{-2}=x$. So $x=\frac19$, because a negative exponent gives a reciprocal.
+    - id: kp4
+      name: Logs of fractions
+      key_prerequisites:
+      - negative-zero-exponents
+      exemplars:
+      - problem: Evaluate $\log_2\left(\frac{1}{16}\right)$.
+        answer: '-4'
+        answer_contract:
+          kind: exact
+        solution_sketch: We need the exponent $c$ with $2^c=\frac{1}{16}$. Since $16=2^4$, the reciprocal is $2^{-4}$, so the value is $-4$.
+      - problem: Evaluate $\log_3\left(\frac{1}{27}\right)$.
+        answer: '-3'
+        answer_contract:
+          kind: exact
+        solution_sketch: Since $27=3^3$, the reciprocal is $\frac{1}{27}=3^{-3}$. So the exponent on $3$, and the value of the logarithm, is $-3$.
+      - problem: The pH of a solution is $-\log_{10}$ of its hydrogen-ion concentration in moles per litre. What is the pH of a solution with concentration $0.0001$?
+        answer: '4'
+        answer_contract:
+          kind: exact
+        solution_sketch: Since $0.0001=\frac{1}{10000}=10^{-4}$, we get $\log_{10}(0.0001)=-4$. The pH is the negative of that, which is $4$.
+      - problem: The level of a sound in bels is the base-ten logarithm of the ratio of its intensity to the intensity of the quietest audible sound. A very faint sound has $\frac{1}{1000}$ of that intensity. What is its level?
+        answer: '-3'
+        answer_contract:
+          kind: exact
+        solution_sketch: The level is $\log_{10}\left(\frac{1}{1000}\right)$. Since $\frac{1}{1000}=10^{-3}$, the level is $-3$ bels, which is below the quietest audible sound.
+      - problem: Evaluate $\log_{10}(0.01)$.
+        answer: '-2'
+        answer_contract:
+          kind: exact
+        solution_sketch: 'We write the decimal as a power of $10$: $0.01=\frac{1}{100}=10^{-2}$. So the exponent, and the value of the logarithm, is $-2$.'
+      - problem: Evaluate $\log_2\left(\frac{1}{2}\right)$.
+        answer: '-1'
+        answer_contract:
+          kind: exact
+        solution_sketch: The reciprocal of $2$ is $2^{-1}$, so the exponent on $2$ that gives $\frac{1}{2}$ is $-1$. Thus $\log_2\left(\frac{1}{2}\right)=-1$.
+      - problem: What is the value of $\log_2\left(\frac{1}{8}\right)$?
+        answer: '-3'
+        answer_contract:
+          kind: exact
+        solution_sketch: The argument is $\frac{1}{8}$, not $8$. A reciprocal has a negative exponent, so $2^{-3}=\frac{1}{8}$ and the value is $-3$.
+      - problem: Find $x$ if $\log_3(x)=-2$.
+        answer: 1/9
+        answer_contract:
+          kind: exact
+        solution_sketch: The equation says that $x$ is $3$ raised to the power $-2$. Since $3^{-2}=\frac{1}{3^2}=\frac{1}{9}$, we get $x=1/9$.
+      constraints: arguments are unit fractions 1/b^k with k = 1-4 or decimals such as 0.01; answers are negative integers, or the unknown argument for a negative value
+    - id: kp5
+      name: Fractional values and unknown bases
+      key_prerequisites:
+      - exponential-equations
+      constraints: base and argument are powers of one small integer, so the value is a simple fraction; or solve for an unknown base from a square
+      try_first:
+        problem: Which exponent $x$ makes $25^x=5$?
+        answer_contract:
+          kind: exact
+        answer: 1/2
+        reveal: 'A square root is a power of $\frac12$, and $\sqrt{25}=5$, so $25^{1/2}=5$. This is why $\log_{25}(5)=\frac12$: a logarithm can be a fraction.'
+      exemplars:
+      - problem: Evaluate $\log_4(2)$.
+        answer: 1/2
+        answer_contract:
+          kind: exact
+        solution_sketch: Let the value be $c$, so $4^c=2$. Since $4^{1/2}=\sqrt4=2$, the value is $c=\frac12$.
+      - problem: Find the base $b$ of the logarithm if $\log_b(49)=2$.
+        answer: '7'
+        answer_contract:
+          kind: exact
+        solution_sketch: In exponential form $\log_b(49)=2$ is $b^2=49$. A base must be positive, so $b=7$.
+      - problem: Evaluate $\log_{27}(3)$.
+        answer: 1/3
+        answer_contract:
+          kind: exact
+        solution_sketch: Let the value be $c$, so $27^c=3$. Since $27=3^3$, we get $3^{3c}=3^1$, so $3c=1$ and $c=\frac13$.
+      - problem: A culture grows by the same factor every hour. After $3$ hours it has grown $64$-fold. By what factor does it grow each hour?
+        answer: '4'
+        answer_contract:
+          kind: exact
+        solution_sketch: If $b$ is the hourly factor, then $b^3=64$, which is $\log_b(64)=3$. Since $4^3=64$, the factor is $4$.
+      - problem: A radioactive sample loses half of its mass every year. After how many years is $\frac{1}{32}$ of the sample left?
+        answer: '5'
+        answer_contract:
+          kind: exact
+        solution_sketch: After $n$ years the fraction left is $\left(\frac12\right)^n$, so $\left(\frac12\right)^n=\frac1{32}$. Since $2^5=32$, the sample reaches $\frac{1}{32}$ after $5$ years.
+      - problem: What is $\log_{16}(2)$?
+        answer: 1/4
+        answer_contract:
+          kind: exact
+        solution_sketch: Let the value be $c$, so $16^c=2$. Since $16=2^4$, we get $2^{4c}=2^1$, so $4c=1$ and $c=\frac14$.
+      - problem: Solve $b^2=36$ for the base of $\log_b(36)=2$. What is the base $b$?
+        answer: '6'
+        answer_contract:
+          kind: exact
+        solution_sketch: Both $6$ and $-6$ solve $b^2=36$, but a logarithm base must be positive and not equal to $1$. So $b=6$.
+      - problem: Evaluate $\log_9(3)$.
+        answer: 1/2
+        answer_contract:
+          kind: exact
+        solution_sketch: Let the value be $c$, so $9^c=3$. Since $9^{1/2}=\sqrt9=3$, the value is $c=\frac12$.
     diagnostic_exemplar:
-      problem: 'Find $b$ if $\log_b(81) = 4$.'
-      answer: "b = 3"
-      solution_sketch: 'In exponential form $b^4 = 81$, so $b = 3$.'
+      problem: Find $b$ if $\log_b(81) = 4$.
+      answer: b = 3
+      solution_sketch: In exponential form $b^4 = 81$, so $b = 3$.
     anki_seeds:
-      - front: "b^x = y in logarithmic form is..."
-        back: "log_b(y) = x."
-        type: basic
+    - front: log_b(y) = x means...
+      back: b^x = y.
+      type: basic
+    - front: log_b(1) = {{c1::0}} for any valid base b.
+      back: '0'
+      type: cloze
+    - front: b^x = y in logarithmic form is...
+      back: log_b(y) = x.
+      type: basic
 
   - id: common-natural-logarithms
     name: Common and Natural Logarithms
@@ -2847,141 +3027,405 @@ topics:
     answer_kind: numeric
     expected_time_secs: 90
     prerequisites:
-      - id: evaluating-logarithms
-        weight: 0.7
-        key: true
-      - id: logarithm-basics
-        weight: 0.5
-      - id: fraction-decimal-conversion
-        weight: 0.2
+    - id: logarithm-basics
+      weight: 0.7
+      key: true
+    - id: fraction-decimal-conversion
+      weight: 0.2
     knowledge_points:
-      - id: kp1
-        name: Common logarithms (base 10)
-        key_prerequisites: [evaluating-logarithms]
-        constraints: "arguments are integer powers of 10 from 10^-4 to 10^6"
-        finite_objective_domain: {"schema_version":1,"review_ref":"sha256:a23eb3f4580d6ca31f37d59d052fcfea533f068fb3b5ef1f69941ce89a769388","cases":[{"id":"common-neg4","role":"reserved_assessment","variants":[{"problem":"The scientific-notation form of $0.0001$ is $10^{-4}$. Determine $\\log(0.0001)$.","answer":"-4"},{"problem":"Find the common logarithm of $0.0001$. Give an exact integer.","answer":"-4","answer_contract":{"kind":"exact"}},{"problem":"Evaluate $\\log(0.0001)$.","answer":"-4","answer_contract":{"kind":"exact"}}]},{"id":"common-neg3","role":"reserved_assessment","variants":[{"problem":"Evaluate $\\log(0.001)$.","answer":"-3","answer_contract":{"kind":"exact"}},{"problem":"Find the common logarithm of $0.001$. Give an exact integer.","answer":"-3","answer_contract":{"kind":"exact"}}]},{"id":"common-neg2","role":"teach_only","variants":[{"problem":"Evaluate $\\log(0.01)$.","answer":"-2","answer_contract":{"kind":"exact"}},{"problem":"Find the common logarithm of $0.01$. Give an exact integer.","answer":"-2","answer_contract":{"kind":"exact"}}]},{"id":"common-neg1","role":"practice_fresh","variants":[{"problem":"Find the common logarithm of $0.1$. Give an exact integer.","answer":"-1","answer_contract":{"kind":"exact"}}]},{"id":"common-0","role":"practice_fresh","variants":[{"problem":"Find the common logarithm of $1$. Give an exact integer.","answer":"0","answer_contract":{"kind":"exact"}}]},{"id":"common-1","role":"practice_fresh","variants":[{"problem":"Find the common logarithm of $10$. Give an exact integer.","answer":"1","answer_contract":{"kind":"exact"}}]},{"id":"common-2","role":"reserved_assessment","variants":[{"problem":"Evaluate $\\log(100)$ (base $10$ understood).","answer":"2"},{"problem":"Find the common logarithm of $100$. Give an exact integer.","answer":"2","answer_contract":{"kind":"exact"}},{"problem":"Evaluate $\\log(100)$.","answer":"2","answer_contract":{"kind":"exact"}}]},{"id":"common-3","role":"practice_fresh","variants":[{"problem":"Find the common logarithm of $1000$. Give an exact integer.","answer":"3","answer_contract":{"kind":"exact"}},{"problem":"What is the value of $\\log(1000)$?","answer":"3","answer_contract":{"kind":"exact"}}]},{"id":"common-4","role":"reserved_assessment","variants":[{"problem":"An inverse base-ten table asks for the exponent paired with output $10000$. Give its common logarithm.","answer":"4"},{"problem":"Find the common logarithm of $10000$. Give an exact integer.","answer":"4","answer_contract":{"kind":"exact"}}]},{"id":"common-5","role":"practice_fresh","variants":[{"problem":"Find the common logarithm of $100000$. Give an exact integer.","answer":"5","answer_contract":{"kind":"exact"}}]},{"id":"common-6","role":"practice_fresh","variants":[{"problem":"Find the common logarithm of $1000000$. Give an exact integer.","answer":"6","answer_contract":{"kind":"exact"}}]},{"id":"ex-3","role":"practice_fresh","variants":[{"problem":"The pH of a solution is $-\\log[\\mathrm{H}^+]$, where $[\\mathrm{H}^+]$ is the concentration of hydrogen ions in mol/L. A cleaning fluid has $[\\mathrm{H}^+]=0.00001$ mol/L. What is its pH?","answer":"5","answer_contract":{"kind":"exact"}}]},{"id":"ex-4","role":"practice_fresh","variants":[{"problem":"The magnitude of an earthquake is $M=\\log A$, where $A$ is the amplitude of the ground motion in micrometres. An earthquake has amplitude $10000$ micrometres. What is its magnitude?","answer":"4","answer_contract":{"kind":"exact"}}]},{"id":"ex-5","role":"practice_fresh","variants":[{"problem":"The magnitude of an earthquake is $M=\\log A$, where $A$ is the amplitude of the ground motion. How many times larger is the amplitude of a magnitude $7$ earthquake than that of a magnitude $5$ earthquake?","answer":"100","answer_contract":{"kind":"exact"}}]},{"id":"ex-7","role":"practice_fresh","variants":[{"problem":"The sound level in decibels is $L=10\\log\\left(\\frac{I}{I_0}\\right)$, where $I_0$ is the quietest audible intensity. A jet engine has intensity $I=10^{12}\\,I_0$. What is its sound level in decibels?","answer":"120","answer_contract":{"kind":"exact"}}]}]}
-        exemplars:
-          - problem: 'Evaluate $\log(100)$.'
-            answer: '2'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'A logarithm with no base written has base $10$. Since $100=10^2$, the exponent is $2$, so $\log(100)=2$.'
-          - problem: 'Evaluate $\log(0.001)$.'
-            answer: '-3'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'First write $0.001=\frac1{1000}=10^{-3}$. The common logarithm is the exponent, so we find $\log(0.001)=-3$.'
-          - problem: 'The pH of a solution is $-\log[\mathrm{H}^+]$, where $[\mathrm{H}^+]$ is the concentration of hydrogen ions in mol/L. A cleaning fluid has $[\mathrm{H}^+]=0.00001$ mol/L. What is its pH?'
-            answer: '5'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'Since $0.00001=10^{-5}$, we get $\log[\mathrm{H}^+]=-5$. The pH is the negative of this value, so it is $-(-5)=5$.'
-          - problem: 'The magnitude of an earthquake is $M=\log A$, where $A$ is the amplitude of the ground motion in micrometres. An earthquake has amplitude $10000$ micrometres. What is its magnitude?'
-            answer: '4'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'Write $10000=10^4$. Then $M=\log(10^4)=4$, so the magnitude of this earthquake is $4$.'
-          - problem: 'The magnitude of an earthquake is $M=\log A$, where $A$ is the amplitude of the ground motion. How many times larger is the amplitude of a magnitude $7$ earthquake than that of a magnitude $5$ earthquake?'
-            answer: '100'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'Magnitude $7$ means $A=10^7$ and magnitude $5$ means $A=10^5$. The ratio is $10^7\div10^5=10^2=100$, so the larger amplitude is $100$ times as large.'
-          - problem: 'Evaluate $\log(0.0001)$.'
+    - id: kp1
+      name: Common logarithms (base 10)
+      key_prerequisites:
+      - logarithm-basics
+      constraints: arguments are integer powers of 10 from 10^-4 to 10^6
+      finite_objective_domain:
+        schema_version: 1
+        review_ref: sha256:a23eb3f4580d6ca31f37d59d052fcfea533f068fb3b5ef1f69941ce89a769388
+        cases:
+        - id: common-neg4
+          role: reserved_assessment
+          variants:
+          - problem: The scientific-notation form of $0.0001$ is $10^{-4}$. Determine $\log(0.0001)$.
             answer: '-4'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'First write $0.0001=\frac1{10000}=10^{-4}$. The common logarithm is the exponent, so we find $\log(0.0001)=-4$.'
-          - problem: 'The sound level in decibels is $L=10\log\left(\frac{I}{I_0}\right)$, where $I_0$ is the quietest audible intensity. A jet engine has intensity $I=10^{12}\,I_0$. What is its sound level in decibels?'
-            answer: '120'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'The ratio is $\frac{I}{I_0}=10^{12}$, so $\log(10^{12})=12$. Then $L=10\cdot12=120$ decibels for the jet engine.'
-          - problem: 'What is the value of $\log(1000)$?'
-            answer: '3'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'The common logarithm is the exponent of $10$, not a quotient. Since $1000=10^3$, the value is $\log(1000)=3$.'
-      - id: kp2
-        name: Natural logarithms (base e)
-        key_prerequisites: [evaluating-logarithms]
-        constraints: "arguments 1, e, e^k or 1/e^k with k = 1-5; exact integer answers only, never a decimal approximation"
-        finite_objective_domain: {"schema_version":1,"review_ref":"sha256:a23eb3f4580d6ca31f37d59d052fcfea533f068fb3b5ef1f69941ce89a769388","cases":[{"id":"natural-0","role":"taught_rehearsal","variants":[{"problem":"Evaluate $\\ln(1)$.","answer":"0","answer_contract":{"kind":"exact"}},{"problem":"Find the exact value of $\\ln(1)$.","answer":"0","answer_contract":{"kind":"exact"}},{"problem":"Find the exact value of $\\ln(e^{0})$.","answer":"0","answer_contract":{"kind":"exact"}},{"problem":"Find the value of $\\ln(1)$.","answer":"0","answer_contract":{"kind":"exact"}}]},{"id":"natural-1","role":"taught_rehearsal","variants":[{"problem":"Evaluate $\\ln(e)$.","answer":"1","answer_contract":{"kind":"exact"}},{"problem":"Find the exact value of $\\ln(e)$.","answer":"1","answer_contract":{"kind":"exact"}},{"problem":"Find the exact value of $\\ln(e^{1})$.","answer":"1","answer_contract":{"kind":"exact"}}]},{"id":"natural-2","role":"practice_fresh","variants":[{"problem":"Find the exact value of $\\ln(e^{2})$.","answer":"2","answer_contract":{"kind":"exact"}}]},{"id":"natural-3","role":"teach_only","variants":[{"problem":"Evaluate $\\ln(e^3)$.","answer":"3","answer_contract":{"kind":"exact"}},{"problem":"Find the exact value of $\\ln(e^{3})$.","answer":"3","answer_contract":{"kind":"exact"}}]},{"id":"natural-4","role":"reserved_assessment","variants":[{"problem":"Evaluate $\\ln(e^4)$.","answer":"4"},{"problem":"Find the exact value of $\\ln(e^{4})$.","answer":"4","answer_contract":{"kind":"exact"}}]},{"id":"natural-5","role":"reserved_assessment","variants":[{"problem":"The natural exponential maps $5$ to $e^5$. What output does its inverse $\\ln$ give for input $e^5$?","answer":"5"},{"problem":"Find the exact value of $\\ln(e^{5})$.","answer":"5","answer_contract":{"kind":"exact"}},{"problem":"Evaluate $\\ln\\left(e^5\\right)$.","answer":"5","answer_contract":{"kind":"exact"}}]},{"id":"ex-4","role":"practice_fresh","variants":[{"problem":"A bank balance grows continuously so that after $t$ years it is $e^t$ times the deposit. After how many years is the balance $e^7$ times the deposit?","answer":"7","answer_contract":{"kind":"exact"}}]},{"id":"ex-5","role":"practice_fresh","variants":[{"problem":"A drug decays in the body so that the fraction remaining after $t$ hours is $e^{-t}$. The fraction remaining is now $e^{-3}$. How many hours have passed?","answer":"3","answer_contract":{"kind":"exact"}}]},{"id":"ex-6","role":"practice_fresh","variants":[{"problem":"Evaluate $\\ln\\left(\\frac{1}{e^{2}}\\right)$.","answer":"-2","answer_contract":{"kind":"exact"}}]},{"id":"ex-8","role":"practice_fresh","variants":[{"problem":"Evaluate $\\ln\\left(\\frac{1}{e}\\right)$.","answer":"-1","answer_contract":{"kind":"exact"}}]}]}
-        exemplars:
-          - problem: 'Evaluate $\ln\left(e^5\right)$.'
-            answer: '5'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'The natural logarithm has base $e$. The exponent of $e$ that gives $e^5$ is $5$, so $\ln\left(e^5\right)=5$.'
-          - problem: 'Evaluate $\ln(1)$.'
-            answer: '0'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'The natural logarithm has base $e$. Since $e^0=1$, the exponent is $0$, so $\ln(1)=0$.'
-          - problem: 'Evaluate $\ln(e)$.'
-            answer: '1'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'The natural logarithm has base $e$. Since $e^1=e$, the exponent is $1$, so $\ln(e)=1$.'
-          - problem: 'A bank balance grows continuously so that after $t$ years it is $e^t$ times the deposit. After how many years is the balance $e^7$ times the deposit?'
-            answer: '7'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'We need $e^t=e^7$, so $t=\ln\left(e^7\right)$. The natural logarithm undoes the power, so $t=7$ years.'
-          - problem: 'A drug decays in the body so that the fraction remaining after $t$ hours is $e^{-t}$. The fraction remaining is now $e^{-3}$. How many hours have passed?'
-            answer: '3'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'We need $e^{-t}=e^{-3}$, so $-t=\ln\left(e^{-3}\right)=-3$. Hence $t=3$ hours have passed since the dose.'
-          - problem: 'Evaluate $\ln\left(\frac{1}{e^{2}}\right)$.'
+          - problem: Find the common logarithm of $0.0001$. Give an exact integer.
+            answer: '-4'
+            answer_contract:
+              kind: exact
+          - problem: Evaluate $\log(0.0001)$.
+            answer: '-4'
+            answer_contract:
+              kind: exact
+        - id: common-neg3
+          role: reserved_assessment
+          variants:
+          - problem: Evaluate $\log(0.001)$.
+            answer: '-3'
+            answer_contract:
+              kind: exact
+          - problem: Find the common logarithm of $0.001$. Give an exact integer.
+            answer: '-3'
+            answer_contract:
+              kind: exact
+        - id: common-neg2
+          role: teach_only
+          variants:
+          - problem: Evaluate $\log(0.01)$.
             answer: '-2'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'A reciprocal is a negative exponent, so $\frac1{e^2}=e^{-2}$. Then the natural logarithm returns that exponent, $\ln\left(e^{-2}\right)=-2$.'
-          - problem: 'Find the value of $\ln(1)$.'
-            answer: '0'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'The value $\ln(1)$ is the exponent of $e$ that gives $1$. Since $e^0=1$, the correct value is $0$.'
-          - problem: 'Evaluate $\ln\left(\frac{1}{e}\right)$.'
+            answer_contract:
+              kind: exact
+          - problem: Find the common logarithm of $0.01$. Give an exact integer.
+            answer: '-2'
+            answer_contract:
+              kind: exact
+        - id: common-neg1
+          role: practice_fresh
+          variants:
+          - problem: Find the common logarithm of $0.1$. Give an exact integer.
             answer: '-1'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'A reciprocal is a negative exponent, so $\frac1e=e^{-1}$. Then the natural logarithm returns that exponent, $\ln\left(e^{-1}\right)=-1$.'
-      - id: kp3
-        name: Estimating logs between integers
-        key_prerequisites: [evaluating-logarithms, logarithm-basics]
-        constraints: "argument strictly between two consecutive powers of the base; the problem asks for the two consecutive integers"
-        exemplars:
-          - problem: 'Between which two consecutive integers does $\log(500)$ lie?'
-            answer: '2, 3'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'Since $100<500<1000$, we have $10^2<500<10^3$. So $\log(500)$ lies between $2$ and $3$.'
-          - problem: 'Between which two consecutive integers does $\log_2(20)$ lie?'
-            answer: '4, 5'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'Since $16<20<32$, we have $2^4<20<2^5$. So $\log_2(20)$ lies between $4$ and $5$.'
-          - problem: 'The pH of a solution is $-\log[\mathrm{H}^+]$, where $[\mathrm{H}^+]$ is the concentration of hydrogen ions in mol/L. A solution has $[\mathrm{H}^+]=0.0004$ mol/L. Between which two consecutive integers does its pH lie?'
-            answer: '3, 4'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'Since $0.0001<0.0004<0.001$, we have $10^{-4}<0.0004<10^{-3}$. So $\log[\mathrm{H}^+]$ is between $-4$ and $-3$, and the pH lies between $3$ and $4$.'
-          - problem: 'The magnitude of an earthquake is $M=\log A$, where $A$ is the amplitude of the ground motion in micrometres. An earthquake has amplitude $2000000$ micrometres. Between which two consecutive integers does its magnitude lie?'
-            answer: '6, 7'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'Since $1000000<2000000<10000000$, we have $10^6<2000000<10^7$. So the magnitude lies between $6$ and $7$.'
-          - problem: 'Between which two consecutive integers does $\ln(50)$ lie? Use $e^3\approx20.09$ and $e^4\approx54.60$.'
-            answer: '3, 4'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'Since $20.09<50<54.60$, we have $e^3<50<e^4$. The natural logarithm keeps the order, so $\ln(50)$ lies between $3$ and $4$.'
-          - problem: 'Between which two consecutive integers does $\log(0.04)$ lie?'
-            answer: '-2, -1'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'Since $0.01<0.04<0.1$, we have $10^{-2}<0.04<10^{-1}$. So $\log(0.04)$ lies between $-2$ and $-1$.'
-          - problem: 'A culture starts with one cell and doubles every hour, so after $h$ hours it has $2^h$ cells. It reaches $1000$ cells when $h=\log_2(1000)$. Between which two consecutive whole numbers of hours does this happen?'
-            answer: '9, 10'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'Since $512<1000<1024$, we have $2^9<1000<2^{10}$. So $\log_2(1000)$ lies between $9$ and $10$ hours.'
-          - problem: 'Between which two consecutive integers does $\log_5(100)$ lie?'
-            answer: '2, 3'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'Since $25<100<125$, we have $5^2<100<5^3$. The logarithm is the exponent, so $\log_5(100)$ lies between $2$ and $3$, not between $25$ and $125$.'
+            answer_contract:
+              kind: exact
+        - id: common-0
+          role: practice_fresh
+          variants:
+          - problem: Find the common logarithm of $1$. Give an exact integer.
+            answer: '0'
+            answer_contract:
+              kind: exact
+        - id: common-1
+          role: practice_fresh
+          variants:
+          - problem: Find the common logarithm of $10$. Give an exact integer.
+            answer: '1'
+            answer_contract:
+              kind: exact
+        - id: common-2
+          role: reserved_assessment
+          variants:
+          - problem: Evaluate $\log(100)$ (base $10$ understood).
+            answer: '2'
+          - problem: Find the common logarithm of $100$. Give an exact integer.
+            answer: '2'
+            answer_contract:
+              kind: exact
+          - problem: Evaluate $\log(100)$.
+            answer: '2'
+            answer_contract:
+              kind: exact
+        - id: common-3
+          role: practice_fresh
+          variants:
+          - problem: Find the common logarithm of $1000$. Give an exact integer.
+            answer: '3'
+            answer_contract:
+              kind: exact
+          - problem: What is the value of $\log(1000)$?
+            answer: '3'
+            answer_contract:
+              kind: exact
+        - id: common-4
+          role: reserved_assessment
+          variants:
+          - problem: An inverse base-ten table asks for the exponent paired with output $10000$. Give its common logarithm.
+            answer: '4'
+          - problem: Find the common logarithm of $10000$. Give an exact integer.
+            answer: '4'
+            answer_contract:
+              kind: exact
+        - id: common-5
+          role: practice_fresh
+          variants:
+          - problem: Find the common logarithm of $100000$. Give an exact integer.
+            answer: '5'
+            answer_contract:
+              kind: exact
+        - id: common-6
+          role: practice_fresh
+          variants:
+          - problem: Find the common logarithm of $1000000$. Give an exact integer.
+            answer: '6'
+            answer_contract:
+              kind: exact
+        - id: ex-3
+          role: practice_fresh
+          variants:
+          - problem: The pH of a solution is $-\log[\mathrm{H}^+]$, where $[\mathrm{H}^+]$ is the concentration of hydrogen ions in mol/L. A cleaning fluid has $[\mathrm{H}^+]=0.00001$ mol/L. What is its pH?
+            answer: '5'
+            answer_contract:
+              kind: exact
+        - id: ex-4
+          role: practice_fresh
+          variants:
+          - problem: The magnitude of an earthquake is $M=\log A$, where $A$ is the amplitude of the ground motion in micrometres. An earthquake has amplitude $10000$ micrometres. What is its magnitude?
+            answer: '4'
+            answer_contract:
+              kind: exact
+        - id: ex-5
+          role: practice_fresh
+          variants:
+          - problem: The magnitude of an earthquake is $M=\log A$, where $A$ is the amplitude of the ground motion. How many times larger is the amplitude of a magnitude $7$ earthquake than that of a magnitude $5$ earthquake?
+            answer: '100'
+            answer_contract:
+              kind: exact
+        - id: ex-7
+          role: practice_fresh
+          variants:
+          - problem: The sound level in decibels is $L=10\log\left(\frac{I}{I_0}\right)$, where $I_0$ is the quietest audible intensity. A jet engine has intensity $I=10^{12}\,I_0$. What is its sound level in decibels?
+            answer: '120'
+            answer_contract:
+              kind: exact
+      exemplars:
+      - problem: Evaluate $\log(100)$.
+        answer: '2'
+        answer_contract:
+          kind: exact
+        solution_sketch: A logarithm with no base written has base $10$. Since $100=10^2$, the exponent is $2$, so $\log(100)=2$.
+      - problem: Evaluate $\log(0.001)$.
+        answer: '-3'
+        answer_contract:
+          kind: exact
+        solution_sketch: First write $0.001=\frac1{1000}=10^{-3}$. The common logarithm is the exponent, so we find $\log(0.001)=-3$.
+      - problem: The pH of a solution is $-\log[\mathrm{H}^+]$, where $[\mathrm{H}^+]$ is the concentration of hydrogen ions in mol/L. A cleaning fluid has $[\mathrm{H}^+]=0.00001$ mol/L. What is its pH?
+        answer: '5'
+        answer_contract:
+          kind: exact
+        solution_sketch: Since $0.00001=10^{-5}$, we get $\log[\mathrm{H}^+]=-5$. The pH is the negative of this value, so it is $-(-5)=5$.
+      - problem: The magnitude of an earthquake is $M=\log A$, where $A$ is the amplitude of the ground motion in micrometres. An earthquake has amplitude $10000$ micrometres. What is its magnitude?
+        answer: '4'
+        answer_contract:
+          kind: exact
+        solution_sketch: Write $10000=10^4$. Then $M=\log(10^4)=4$, so the magnitude of this earthquake is $4$.
+      - problem: The magnitude of an earthquake is $M=\log A$, where $A$ is the amplitude of the ground motion. How many times larger is the amplitude of a magnitude $7$ earthquake than that of a magnitude $5$ earthquake?
+        answer: '100'
+        answer_contract:
+          kind: exact
+        solution_sketch: Magnitude $7$ means $A=10^7$ and magnitude $5$ means $A=10^5$. The ratio is $10^7\div10^5=10^2=100$, so the larger amplitude is $100$ times as large.
+      - problem: Evaluate $\log(0.0001)$.
+        answer: '-4'
+        answer_contract:
+          kind: exact
+        solution_sketch: First write $0.0001=\frac1{10000}=10^{-4}$. The common logarithm is the exponent, so we find $\log(0.0001)=-4$.
+      - problem: The sound level in decibels is $L=10\log\left(\frac{I}{I_0}\right)$, where $I_0$ is the quietest audible intensity. A jet engine has intensity $I=10^{12}\,I_0$. What is its sound level in decibels?
+        answer: '120'
+        answer_contract:
+          kind: exact
+        solution_sketch: The ratio is $\frac{I}{I_0}=10^{12}$, so $\log(10^{12})=12$. Then $L=10\cdot12=120$ decibels for the jet engine.
+      - problem: What is the value of $\log(1000)$?
+        answer: '3'
+        answer_contract:
+          kind: exact
+        solution_sketch: The common logarithm is the exponent of $10$, not a quotient. Since $1000=10^3$, the value is $\log(1000)=3$.
+    - id: kp2
+      name: Natural logarithms (base e)
+      key_prerequisites:
+      - logarithm-basics
+      constraints: arguments 1, e, e^k or 1/e^k with k = 1-5; exact integer answers only, never a decimal approximation
+      finite_objective_domain:
+        schema_version: 1
+        review_ref: sha256:a23eb3f4580d6ca31f37d59d052fcfea533f068fb3b5ef1f69941ce89a769388
+        cases:
+        - id: natural-0
+          role: taught_rehearsal
+          variants:
+          - problem: Evaluate $\ln(1)$.
+            answer: '0'
+            answer_contract:
+              kind: exact
+          - problem: Find the exact value of $\ln(1)$.
+            answer: '0'
+            answer_contract:
+              kind: exact
+          - problem: Find the exact value of $\ln(e^{0})$.
+            answer: '0'
+            answer_contract:
+              kind: exact
+          - problem: Find the value of $\ln(1)$.
+            answer: '0'
+            answer_contract:
+              kind: exact
+        - id: natural-1
+          role: taught_rehearsal
+          variants:
+          - problem: Evaluate $\ln(e)$.
+            answer: '1'
+            answer_contract:
+              kind: exact
+          - problem: Find the exact value of $\ln(e)$.
+            answer: '1'
+            answer_contract:
+              kind: exact
+          - problem: Find the exact value of $\ln(e^{1})$.
+            answer: '1'
+            answer_contract:
+              kind: exact
+        - id: natural-2
+          role: practice_fresh
+          variants:
+          - problem: Find the exact value of $\ln(e^{2})$.
+            answer: '2'
+            answer_contract:
+              kind: exact
+        - id: natural-3
+          role: teach_only
+          variants:
+          - problem: Evaluate $\ln(e^3)$.
+            answer: '3'
+            answer_contract:
+              kind: exact
+          - problem: Find the exact value of $\ln(e^{3})$.
+            answer: '3'
+            answer_contract:
+              kind: exact
+        - id: natural-4
+          role: reserved_assessment
+          variants:
+          - problem: Evaluate $\ln(e^4)$.
+            answer: '4'
+          - problem: Find the exact value of $\ln(e^{4})$.
+            answer: '4'
+            answer_contract:
+              kind: exact
+        - id: natural-5
+          role: reserved_assessment
+          variants:
+          - problem: The natural exponential maps $5$ to $e^5$. What output does its inverse $\ln$ give for input $e^5$?
+            answer: '5'
+          - problem: Find the exact value of $\ln(e^{5})$.
+            answer: '5'
+            answer_contract:
+              kind: exact
+          - problem: Evaluate $\ln\left(e^5\right)$.
+            answer: '5'
+            answer_contract:
+              kind: exact
+        - id: ex-4
+          role: practice_fresh
+          variants:
+          - problem: A bank balance grows continuously so that after $t$ years it is $e^t$ times the deposit. After how many years is the balance $e^7$ times the deposit?
+            answer: '7'
+            answer_contract:
+              kind: exact
+        - id: ex-5
+          role: practice_fresh
+          variants:
+          - problem: A drug decays in the body so that the fraction remaining after $t$ hours is $e^{-t}$. The fraction remaining is now $e^{-3}$. How many hours have passed?
+            answer: '3'
+            answer_contract:
+              kind: exact
+        - id: ex-6
+          role: practice_fresh
+          variants:
+          - problem: Evaluate $\ln\left(\frac{1}{e^{2}}\right)$.
+            answer: '-2'
+            answer_contract:
+              kind: exact
+        - id: ex-8
+          role: practice_fresh
+          variants:
+          - problem: Evaluate $\ln\left(\frac{1}{e}\right)$.
+            answer: '-1'
+            answer_contract:
+              kind: exact
+      exemplars:
+      - problem: Evaluate $\ln\left(e^5\right)$.
+        answer: '5'
+        answer_contract:
+          kind: exact
+        solution_sketch: The natural logarithm has base $e$. The exponent of $e$ that gives $e^5$ is $5$, so $\ln\left(e^5\right)=5$.
+      - problem: Evaluate $\ln(1)$.
+        answer: '0'
+        answer_contract:
+          kind: exact
+        solution_sketch: The natural logarithm has base $e$. Since $e^0=1$, the exponent is $0$, so $\ln(1)=0$.
+      - problem: Evaluate $\ln(e)$.
+        answer: '1'
+        answer_contract:
+          kind: exact
+        solution_sketch: The natural logarithm has base $e$. Since $e^1=e$, the exponent is $1$, so $\ln(e)=1$.
+      - problem: A bank balance grows continuously so that after $t$ years it is $e^t$ times the deposit. After how many years is the balance $e^7$ times the deposit?
+        answer: '7'
+        answer_contract:
+          kind: exact
+        solution_sketch: We need $e^t=e^7$, so $t=\ln\left(e^7\right)$. The natural logarithm undoes the power, so $t=7$ years.
+      - problem: A drug decays in the body so that the fraction remaining after $t$ hours is $e^{-t}$. The fraction remaining is now $e^{-3}$. How many hours have passed?
+        answer: '3'
+        answer_contract:
+          kind: exact
+        solution_sketch: We need $e^{-t}=e^{-3}$, so $-t=\ln\left(e^{-3}\right)=-3$. Hence $t=3$ hours have passed since the dose.
+      - problem: Evaluate $\ln\left(\frac{1}{e^{2}}\right)$.
+        answer: '-2'
+        answer_contract:
+          kind: exact
+        solution_sketch: A reciprocal is a negative exponent, so $\frac1{e^2}=e^{-2}$. Then the natural logarithm returns that exponent, $\ln\left(e^{-2}\right)=-2$.
+      - problem: Find the value of $\ln(1)$.
+        answer: '0'
+        answer_contract:
+          kind: exact
+        solution_sketch: The value $\ln(1)$ is the exponent of $e$ that gives $1$. Since $e^0=1$, the correct value is $0$.
+      - problem: Evaluate $\ln\left(\frac{1}{e}\right)$.
+        answer: '-1'
+        answer_contract:
+          kind: exact
+        solution_sketch: A reciprocal is a negative exponent, so $\frac1e=e^{-1}$. Then the natural logarithm returns that exponent, $\ln\left(e^{-1}\right)=-1$.
+    - id: kp3
+      name: Estimating logs between integers
+      key_prerequisites:
+      - logarithm-basics
+      constraints: argument strictly between two consecutive powers of the base; the problem asks for the two consecutive integers
+      exemplars:
+      - problem: Between which two consecutive integers does $\log(500)$ lie?
+        answer: 2, 3
+        answer_contract:
+          kind: exact
+        solution_sketch: Since $100<500<1000$, we have $10^2<500<10^3$. So $\log(500)$ lies between $2$ and $3$.
+      - problem: Between which two consecutive integers does $\log_2(20)$ lie?
+        answer: 4, 5
+        answer_contract:
+          kind: exact
+        solution_sketch: Since $16<20<32$, we have $2^4<20<2^5$. So $\log_2(20)$ lies between $4$ and $5$.
+      - problem: The pH of a solution is $-\log[\mathrm{H}^+]$, where $[\mathrm{H}^+]$ is the concentration of hydrogen ions in mol/L. A solution has $[\mathrm{H}^+]=0.0004$ mol/L. Between which two consecutive integers does its pH lie?
+        answer: 3, 4
+        answer_contract:
+          kind: exact
+        solution_sketch: Since $0.0001<0.0004<0.001$, we have $10^{-4}<0.0004<10^{-3}$. So $\log[\mathrm{H}^+]$ is between $-4$ and $-3$, and the pH lies between $3$ and $4$.
+      - problem: The magnitude of an earthquake is $M=\log A$, where $A$ is the amplitude of the ground motion in micrometres. An earthquake has amplitude $2000000$ micrometres. Between which two consecutive integers does its magnitude lie?
+        answer: 6, 7
+        answer_contract:
+          kind: exact
+        solution_sketch: Since $1000000<2000000<10000000$, we have $10^6<2000000<10^7$. So the magnitude lies between $6$ and $7$.
+      - problem: Between which two consecutive integers does $\ln(50)$ lie? Use $e^3\approx20.09$ and $e^4\approx54.60$.
+        answer: 3, 4
+        answer_contract:
+          kind: exact
+        solution_sketch: Since $20.09<50<54.60$, we have $e^3<50<e^4$. The natural logarithm keeps the order, so $\ln(50)$ lies between $3$ and $4$.
+      - problem: Between which two consecutive integers does $\log(0.04)$ lie?
+        answer: -2, -1
+        answer_contract:
+          kind: exact
+        solution_sketch: Since $0.01<0.04<0.1$, we have $10^{-2}<0.04<10^{-1}$. So $\log(0.04)$ lies between $-2$ and $-1$.
+      - problem: A culture starts with one cell and doubles every hour, so after $h$ hours it has $2^h$ cells. It reaches $1000$ cells when $h=\log_2(1000)$. Between which two consecutive whole numbers of hours does this happen?
+        answer: 9, 10
+        answer_contract:
+          kind: exact
+        solution_sketch: Since $512<1000<1024$, we have $2^9<1000<2^{10}$. So $\log_2(1000)$ lies between $9$ and $10$ hours.
+      - problem: Between which two consecutive integers does $\log_5(100)$ lie?
+        answer: 2, 3
+        answer_contract:
+          kind: exact
+        solution_sketch: Since $25<100<125$, we have $5^2<100<5^3$. The logarithm is the exponent, so $\log_5(100)$ lies between $2$ and $3$, not between $25$ and $125$.
     diagnostic_exemplar:
-      problem: '$\ln(100)$ lies between two consecutive integers. Using $e^4 \approx 54.6$ and $e^5 \approx 148.4$, give the smaller one.'
-      answer: "4"
-      solution_sketch: '$e^4 \approx 54.6 < 100 < 148.4 \approx e^5$, so $\ln 100$ sits between $4$ and $5$.'
+      problem: $\ln(100)$ lies between two consecutive integers. Using $e^4 \approx 54.6$ and $e^5 \approx 148.4$, give the smaller one.
+      answer: '4'
+      solution_sketch: $e^4 \approx 54.6 < 100 < 148.4 \approx e^5$, so $\ln 100$ sits between $4$ and $5$.
     anki_seeds:
-      - front: "log x with no base written means..."
-        back: "log base 10 (the common logarithm)."
-        type: basic
-      - front: "ln x means..."
-        back: "log base e (the natural logarithm)."
-        type: basic
-      - front: "e ≈ ?"
-        back: "2.718"
-        type: basic
+    - front: log x with no base written means...
+      back: log base 10 (the common logarithm).
+      type: basic
+    - front: ln x means...
+      back: log base e (the natural logarithm).
+      type: basic
+    - front: e ≈ ?
+      back: '2.718'
+      type: basic
 
   - id: graphs-of-logarithmic-functions
     name: Graphs of Logarithmic Functions
@@ -3139,138 +3583,165 @@ topics:
     answer_kind: expression
     expected_time_secs: 120
     prerequisites:
-      - id: logarithm-basics
-        weight: 0.8
-        key: true
-      - id: exponent-product-quotient-rules
-        weight: 0.5
-        key: true
-      - id: evaluating-logarithms
-        weight: 0.4
+    - id: logarithm-basics
+      weight: 0.8
+      key: true
+    - id: exponent-product-quotient-rules
+      weight: 0.5
+      key: true
     knowledge_points:
-      - id: kp1
-        name: The product rule
-        key_prerequisites: [logarithm-basics, exponent-product-quotient-rules]
-        constraints: "numeric instances must combine to an exact power of the base"
-        try_first:
-          problem: 'You know $\log_2(4)=2$ and $\log_2(16)=4$. What is $\log_2(4\cdot16)$?'
-          answer_contract: {"kind": "exact"}
-          answer: '6'
-          reveal: 'The product is $4\cdot16=64=2^6$, so $\log_2(64)=6$, which is $2+4$. Multiplying the arguments adds the logarithms: this is the product rule.'
-        exemplars:
-          - problem: 'Evaluate $\log_2(8)+\log_2(4)$.'
-            answer: '5'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'The bases match, so multiply the arguments: $\log_2(8\cdot4)=\log_2(32)$. Since $2^5=32$, the value is $5$.'
-          - problem: 'Evaluate $\log_2(3)+\log_2\left(\frac{8}{3}\right)$.'
-            answer: '3'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'Multiply the arguments: $3\cdot\frac83=8$, so the sum is $\log_2(8)$. Since $2^3=8$, the value is $3$.'
-          - problem: 'Find $\log_{10}(4)+\log_{10}(25)$.'
-            answer: '2'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'Multiply the arguments: $4\cdot25=100$, so the sum is $\log_{10}(100)$. Since $10^2=100$, the value is $2$.'
-          - problem: 'A culture multiplies its cell count by $8$ in its first phase and by $16$ in its second phase. One doubling takes one hour. How many hours does the whole growth take?'
-            answer: '7'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'The total growth factor is $8\cdot16=128=2^7$. One doubling takes one hour, so the growth takes $\log_2(128)=7$ hours, which equals $3+4$.'
-          - problem: 'An amplifier stage multiplies the intensity of a sound by $20$, and a second stage multiplies it by $50$. The total gain is $10^n$. Find $n$.'
-            answer: '3'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'The total gain is $20\cdot50=1000=10^3$. So $n=\log_{10}(20)+\log_{10}(50)=\log_{10}(1000)=3$ by the product rule applied to both gains.'
-          - problem: 'What is $\log_6(2)+\log_6(18)$?'
-            answer: '2'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'Multiply the arguments: $2\cdot18=36$, so the sum is $\log_6(36)$. Since $6^2=36$, the value is $2$.'
-          - problem: 'Given $\log_5(a)=2$ and $\log_5(b)=3$, find $\log_5(ab)$.'
-            answer: '5'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'The product rule gives $\log_5(ab)=\log_5(a)+\log_5(b)$. So the value of the product logarithm is $2+3=5$.'
-          - problem: 'What is the value of $\log_3(9)+\log_3(27)$?'
-            answer: '5'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'A sum of logarithms multiplies the arguments. So $\log_3(9\cdot27)=\log_3(243)=5$, because $3^5=243$.'
-      - id: kp2
-        name: The quotient rule
-        key_prerequisites: [logarithm-basics, exponent-product-quotient-rules]
-        constraints: "symbolic expansion of log_b(x/y), or a numeric difference whose quotient is an exact power of the base"
-        exemplars:
-          - problem: 'Evaluate $\log_3(54)-\log_3(2)$.'
-            answer: '3'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'The bases match, so divide the arguments: $\log_3\left(\frac{54}{2}\right)=\log_3(27)$. Since $3^3=27$, the value is $3$.'
-          - problem: 'Evaluate $\log_2(5)-\log_2(40)$.'
-            answer: '-3'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'Divide in order: $\frac5{40}=\frac18$, so the difference is $\log_2\left(\frac18\right)$. Since $2^{-3}=\frac18$, the value is $-3$.'
-          - problem: 'The magnitude of an earthquake is $M=\log_{10}A$, where $A$ is the amplitude in micrometres. One earthquake has amplitude $2000000$ and another has amplitude $20000$. By how much do their magnitudes differ?'
-            answer: '2'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'The difference is $\log_{10}(2000000)-\log_{10}(20000)=\log_{10}\left(\frac{2000000}{20000}\right)=\log_{10}(100)$. Since $10^2=100$, the two magnitudes differ by $2$ units of the scale.'
-          - problem: 'Given $\log_4(m)=7$ and $\log_4(n)=3$, find $\log_4\left(\frac{m}{n}\right)$.'
-            answer: '4'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'The quotient rule gives $\log_4\left(\frac mn\right)=\log_4(m)-\log_4(n)$. So the value is $7-3=4$, a difference of the two given numbers.'
-          - problem: 'A culture grows steadily from $5$ cells to $160$ cells, doubling at regular intervals. How many doublings take place?'
-            answer: '5'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'The number of doublings is $\log_2(160)-\log_2(5)=\log_2\left(\frac{160}{5}\right)=\log_2(32)$. Since $2^5=32$, there are $5$ doublings.'
-          - problem: 'What is $\log_{12}(2)-\log_{12}(288)$?'
-            answer: '-2'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'Divide in order: $\frac2{288}=\frac1{144}$, so the difference is $\log_{12}\left(\frac1{144}\right)$. Since $12^{-2}=\frac1{144}$, the value is $-2$.'
-          - problem: 'What is the value of $\log_5(100)-\log_5(4)$?'
-            answer: '2'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'A difference of logarithms divides the arguments. So $\log_5\left(\frac{100}{4}\right)=\log_5(25)=2$, because $5^2=25$.'
-          - problem: 'Find the value of $\log_2(48)-\log_2(3)$.'
-            answer: '4'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'Divide the arguments: $\frac{48}3=16$, so the difference is $\log_2(16)$. Since $2^4=16$, the value is $4$.'
-      - id: kp3
-        name: Combine product and quotient rules
-        key_prerequisites: [logarithm-basics]
-        constraints: "at most three logarithms sharing one base; numeric instances evaluate to a small integer"
-        exemplars:
-          - problem: 'Evaluate $\log_5(10)+\log_5(5)-\log_5(2)$.'
-            answer: '2'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'Plus-signed arguments multiply and the minus-signed argument divides: $\log_5\left(\frac{10\cdot5}{2}\right)=\log_5(25)$. Since $5^2=25$, the value is $2$.'
-          - problem: 'Evaluate $\log_3(4)+\log_3(54)-\log_3(8)$.'
-            answer: '3'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'Combine into one logarithm: $\log_3\left(\frac{4\cdot54}{8}\right)=\log_3(27)$. Since $3^3=27$, the value of the whole expression is $3$.'
-          - problem: 'Given $\log_2(a)=5$, $\log_2(b)=3$ and $\log_2(c)=4$, find $\log_2\left(\frac{ab}{c}\right)$.'
-            answer: '4'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'By the product and quotient rules, $\log_2\left(\frac{ab}c\right)=\log_2(a)+\log_2(b)-\log_2(c)$. So the value is $5+3-4=4$.'
-          - problem: 'A signal is multiplied by $30$ and then by $100$. A filter then divides it by $3$. Overall the signal is multiplied by $10^n$. Find $n$.'
-            answer: '3'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'The overall factor is $\frac{30\cdot100}{3}=1000=10^3$. So $n=\log_{10}(30)+\log_{10}(100)-\log_{10}(3)=\log_{10}(1000)=3$ by the two rules.'
-          - problem: 'A culture multiplies its cell count by $12$ in the first phase and by $8$ in the second phase. Then only a third of the cells is kept. Overall the cell count is multiplied by $2^n$. Find $n$.'
-            answer: '5'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'The overall factor is $\frac{12\cdot8}{3}=32=2^5$. So $n=\log_2(12)+\log_2(8)-\log_2(3)=\log_2(32)=5$ by the two rules.'
-          - problem: 'What is the value of $\log_2(3)-\log_2(6)+\log_2(8)$?'
-            answer: '2'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'The last logarithm has a plus sign, so its argument $8$ belongs in the numerator. The correct argument is $\frac{3\cdot8}{6}=4$, and $\log_2(4)=2$.'
-          - problem: 'Find $\log_7(98)-\log_7(2)-\log_7(7)$.'
-            answer: '1'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'Both subtracted arguments divide: $\log_7\left(\frac{98}{2\cdot7}\right)=\log_7(7)$. Since $7^1=7$, the value of the whole expression is $1$.'
+    - id: kp1
+      name: The product rule
+      key_prerequisites:
+      - logarithm-basics
+      - exponent-product-quotient-rules
+      constraints: numeric instances must combine to an exact power of the base
+      try_first:
+        problem: You know $\log_2(4)=2$ and $\log_2(16)=4$. What is $\log_2(4\cdot16)$?
+        answer_contract:
+          kind: exact
+        answer: '6'
+        reveal: 'The product is $4\cdot16=64=2^6$, so $\log_2(64)=6$, which is $2+4$. Multiplying the arguments adds the logarithms: this is the product rule.'
+      exemplars:
+      - problem: Evaluate $\log_2(8)+\log_2(4)$.
+        answer: '5'
+        answer_contract:
+          kind: exact
+        solution_sketch: 'The bases match, so multiply the arguments: $\log_2(8\cdot4)=\log_2(32)$. Since $2^5=32$, the value is $5$.'
+      - problem: Evaluate $\log_2(3)+\log_2\left(\frac{8}{3}\right)$.
+        answer: '3'
+        answer_contract:
+          kind: exact
+        solution_sketch: 'Multiply the arguments: $3\cdot\frac83=8$, so the sum is $\log_2(8)$. Since $2^3=8$, the value is $3$.'
+      - problem: Find $\log_{10}(4)+\log_{10}(25)$.
+        answer: '2'
+        answer_contract:
+          kind: exact
+        solution_sketch: 'Multiply the arguments: $4\cdot25=100$, so the sum is $\log_{10}(100)$. Since $10^2=100$, the value is $2$.'
+      - problem: A culture multiplies its cell count by $8$ in its first phase and by $16$ in its second phase. One doubling takes one hour. How many hours does the whole growth take?
+        answer: '7'
+        answer_contract:
+          kind: exact
+        solution_sketch: The total growth factor is $8\cdot16=128=2^7$. One doubling takes one hour, so the growth takes $\log_2(128)=7$ hours, which equals $3+4$.
+      - problem: An amplifier stage multiplies the intensity of a sound by $20$, and a second stage multiplies it by $50$. The total gain is $10^n$. Find $n$.
+        answer: '3'
+        answer_contract:
+          kind: exact
+        solution_sketch: The total gain is $20\cdot50=1000=10^3$. So $n=\log_{10}(20)+\log_{10}(50)=\log_{10}(1000)=3$ by the product rule applied to both gains.
+      - problem: What is $\log_6(2)+\log_6(18)$?
+        answer: '2'
+        answer_contract:
+          kind: exact
+        solution_sketch: 'Multiply the arguments: $2\cdot18=36$, so the sum is $\log_6(36)$. Since $6^2=36$, the value is $2$.'
+      - problem: Given $\log_5(a)=2$ and $\log_5(b)=3$, find $\log_5(ab)$.
+        answer: '5'
+        answer_contract:
+          kind: exact
+        solution_sketch: The product rule gives $\log_5(ab)=\log_5(a)+\log_5(b)$. So the value of the product logarithm is $2+3=5$.
+      - problem: What is the value of $\log_3(9)+\log_3(27)$?
+        answer: '5'
+        answer_contract:
+          kind: exact
+        solution_sketch: A sum of logarithms multiplies the arguments. So $\log_3(9\cdot27)=\log_3(243)=5$, because $3^5=243$.
+    - id: kp2
+      name: The quotient rule
+      key_prerequisites:
+      - logarithm-basics
+      - exponent-product-quotient-rules
+      constraints: symbolic expansion of log_b(x/y), or a numeric difference whose quotient is an exact power of the base
+      exemplars:
+      - problem: Evaluate $\log_3(54)-\log_3(2)$.
+        answer: '3'
+        answer_contract:
+          kind: exact
+        solution_sketch: 'The bases match, so divide the arguments: $\log_3\left(\frac{54}{2}\right)=\log_3(27)$. Since $3^3=27$, the value is $3$.'
+      - problem: Evaluate $\log_2(5)-\log_2(40)$.
+        answer: '-3'
+        answer_contract:
+          kind: exact
+        solution_sketch: 'Divide in order: $\frac5{40}=\frac18$, so the difference is $\log_2\left(\frac18\right)$. Since $2^{-3}=\frac18$, the value is $-3$.'
+      - problem: The magnitude of an earthquake is $M=\log_{10}A$, where $A$ is the amplitude in micrometres. One earthquake has amplitude $2000000$ and another has amplitude $20000$. By how much do their magnitudes differ?
+        answer: '2'
+        answer_contract:
+          kind: exact
+        solution_sketch: The difference is $\log_{10}(2000000)-\log_{10}(20000)=\log_{10}\left(\frac{2000000}{20000}\right)=\log_{10}(100)$. Since $10^2=100$, the two magnitudes differ by $2$ units of the scale.
+      - problem: Given $\log_4(m)=7$ and $\log_4(n)=3$, find $\log_4\left(\frac{m}{n}\right)$.
+        answer: '4'
+        answer_contract:
+          kind: exact
+        solution_sketch: The quotient rule gives $\log_4\left(\frac mn\right)=\log_4(m)-\log_4(n)$. So the value is $7-3=4$, a difference of the two given numbers.
+      - problem: A culture grows steadily from $5$ cells to $160$ cells, doubling at regular intervals. How many doublings take place?
+        answer: '5'
+        answer_contract:
+          kind: exact
+        solution_sketch: The number of doublings is $\log_2(160)-\log_2(5)=\log_2\left(\frac{160}{5}\right)=\log_2(32)$. Since $2^5=32$, there are $5$ doublings.
+      - problem: What is $\log_{12}(2)-\log_{12}(288)$?
+        answer: '-2'
+        answer_contract:
+          kind: exact
+        solution_sketch: 'Divide in order: $\frac2{288}=\frac1{144}$, so the difference is $\log_{12}\left(\frac1{144}\right)$. Since $12^{-2}=\frac1{144}$, the value is $-2$.'
+      - problem: What is the value of $\log_5(100)-\log_5(4)$?
+        answer: '2'
+        answer_contract:
+          kind: exact
+        solution_sketch: A difference of logarithms divides the arguments. So $\log_5\left(\frac{100}{4}\right)=\log_5(25)=2$, because $5^2=25$.
+      - problem: Find the value of $\log_2(48)-\log_2(3)$.
+        answer: '4'
+        answer_contract:
+          kind: exact
+        solution_sketch: 'Divide the arguments: $\frac{48}3=16$, so the difference is $\log_2(16)$. Since $2^4=16$, the value is $4$.'
+    - id: kp3
+      name: Combine product and quotient rules
+      key_prerequisites:
+      - logarithm-basics
+      constraints: at most three logarithms sharing one base; numeric instances evaluate to a small integer
+      exemplars:
+      - problem: Evaluate $\log_5(10)+\log_5(5)-\log_5(2)$.
+        answer: '2'
+        answer_contract:
+          kind: exact
+        solution_sketch: 'Plus-signed arguments multiply and the minus-signed argument divides: $\log_5\left(\frac{10\cdot5}{2}\right)=\log_5(25)$. Since $5^2=25$, the value is $2$.'
+      - problem: Evaluate $\log_3(4)+\log_3(54)-\log_3(8)$.
+        answer: '3'
+        answer_contract:
+          kind: exact
+        solution_sketch: 'Combine into one logarithm: $\log_3\left(\frac{4\cdot54}{8}\right)=\log_3(27)$. Since $3^3=27$, the value of the whole expression is $3$.'
+      - problem: Given $\log_2(a)=5$, $\log_2(b)=3$ and $\log_2(c)=4$, find $\log_2\left(\frac{ab}{c}\right)$.
+        answer: '4'
+        answer_contract:
+          kind: exact
+        solution_sketch: By the product and quotient rules, $\log_2\left(\frac{ab}c\right)=\log_2(a)+\log_2(b)-\log_2(c)$. So the value is $5+3-4=4$.
+      - problem: A signal is multiplied by $30$ and then by $100$. A filter then divides it by $3$. Overall the signal is multiplied by $10^n$. Find $n$.
+        answer: '3'
+        answer_contract:
+          kind: exact
+        solution_sketch: The overall factor is $\frac{30\cdot100}{3}=1000=10^3$. So $n=\log_{10}(30)+\log_{10}(100)-\log_{10}(3)=\log_{10}(1000)=3$ by the two rules.
+      - problem: A culture multiplies its cell count by $12$ in the first phase and by $8$ in the second phase. Then only a third of the cells is kept. Overall the cell count is multiplied by $2^n$. Find $n$.
+        answer: '5'
+        answer_contract:
+          kind: exact
+        solution_sketch: The overall factor is $\frac{12\cdot8}{3}=32=2^5$. So $n=\log_2(12)+\log_2(8)-\log_2(3)=\log_2(32)=5$ by the two rules.
+      - problem: What is the value of $\log_2(3)-\log_2(6)+\log_2(8)$?
+        answer: '2'
+        answer_contract:
+          kind: exact
+        solution_sketch: The last logarithm has a plus sign, so its argument $8$ belongs in the numerator. The correct argument is $\frac{3\cdot8}{6}=4$, and $\log_2(4)=2$.
+      - problem: Find $\log_7(98)-\log_7(2)-\log_7(7)$.
+        answer: '1'
+        answer_contract:
+          kind: exact
+        solution_sketch: 'Both subtracted arguments divide: $\log_7\left(\frac{98}{2\cdot7}\right)=\log_7(7)$. Since $7^1=7$, the value of the whole expression is $1$.'
     diagnostic_exemplar:
-      problem: 'Evaluate $\log_2(12) + \log_2(8) - \log_2(3)$.'
-      answer: "5"
+      problem: Evaluate $\log_2(12) + \log_2(8) - \log_2(3)$.
+      answer: '5'
       solution_sketch: 'Combine into one log: $\log_2 \frac{12 \times 8}{3} = \log_2 32$.'
     anki_seeds:
-      - front: "log_b(xy) = ?"
-        back: "log_b(x) + log_b(y)"
-        type: basic
-      - front: "log_b(x/y) = ?"
-        back: "log_b(x) - log_b(y)"
-        type: basic
+    - front: log_b(xy) = ?
+      back: log_b(x) + log_b(y)
+      type: basic
+    - front: log_b(x/y) = ?
+      back: log_b(x) - log_b(y)
+      type: basic
 
   - id: log-power-rule
     name: The Power Rule for Logarithms
@@ -3280,125 +3751,134 @@ topics:
     answer_kind: expression
     expected_time_secs: 90
     prerequisites:
-      - id: logarithm-basics
-        weight: 0.8
-        key: true
-      - id: power-rule-exponents
-        weight: 0.5
-        key: true
+    - id: logarithm-basics
+      weight: 0.8
+      key: true
+    - id: power-rule-exponents
+      weight: 0.5
+      key: true
     knowledge_points:
-      - id: kp1
-        name: Expand with the power rule
-        key_prerequisites: [logarithm-basics, power-rule-exponents]
-        try_first:
-          problem: 'Given that $\log_2(4)=2$, what is the value of $\log_2(4^3)$?'
-          answer_contract: {"kind":"exact"}
-          answer: '6'
-          reveal: 'Since $4^3=64=2^6$, the logarithm is $6$, which is $3\times\log_2(4)=3\times2$. The exponent of the argument became a multiplier of the logarithm.'
-        exemplars:
-          - problem: 'Expand $\ln(x^3)$ for $x>0$.'
-            answer: '3*ln(x)'
-            answer_contract: {"kind":"function","vars":["x"]}
-            solution_sketch: 'The exponent $3$ of the argument moves in front of the logarithm as a multiplier. So $\ln(x^3)=3\ln(x)$.'
-          - problem: 'Expand $\ln(y^5)$ for $y>0$.'
-            answer: '5*ln(y)'
-            answer_contract: {"kind":"function","vars":["y"]}
-            solution_sketch: 'The power rule moves the exponent $5$ in front of the logarithm. So $\ln(y^5)=5\ln(y)$.'
-          - problem: 'A square has side $s>0$, so its area is $s^2$. Write the natural logarithm of the area in terms of $\ln(s)$.'
-            answer: '2*ln(s)'
-            answer_contract: {"kind":"function","vars":["s"]}
-            solution_sketch: 'The area is $s^2$, so the logarithm of the area is $\ln(s^2)$. The power rule moves the exponent $2$ to the front and gives $2\ln(s)$.'
-          - problem: 'For $x>0$, what is the expansion of $\ln(x^6)$?'
-            answer: '6*ln(x)'
-            answer_contract: {"kind":"function","vars":["x"]}
-            solution_sketch: 'The argument $x^6$ is six factors of $x$, so its logarithm is six equal terms. Their sum is $6\ln(x)$, and not $6+\ln(x)$.'
-          - problem: 'A colony multiplies by $2$ every hour, so after $t$ hours it is $2^t$ times its starting size. Write $\ln(2^t)$ in terms of $\ln(2)$.'
-            answer: 't*ln(2)'
-            answer_contract: {"kind":"function","vars":["t"]}
-            solution_sketch: 'The exponent of the argument is $t$, so the power rule moves $t$ in front. This gives $\ln(2^t)=t\ln(2)$, a multiple of the fixed number $\ln(2)$.'
-          - problem: 'A cube has side $a>0$, so its volume is $a^3$. Write the natural logarithm of the volume in terms of $\ln(a)$.'
-            answer: '3*ln(a)'
-            answer_contract: {"kind":"function","vars":["a"]}
-            solution_sketch: 'The volume is $a^3$, so its natural logarithm is $\ln(a^3)$. The power rule moves the exponent $3$ to the front and gives $3\ln(a)$.'
-          - problem: 'Expand $\ln(p^7)$ for $p>0$.'
-            answer: '7*ln(p)'
-            answer_contract: {"kind":"function","vars":["p"]}
-            solution_sketch: 'The exponent $7$ moves in front of the logarithm as a multiplier. So $\ln(p^7)=7\ln(p)$.'
-        constraints: "a power of one variable or of one measured quantity; natural logarithm; the exponent is an integer from 2 to 8 or the variable $t$; the answer is that exponent times the logarithm"
-      - id: kp2
-        name: Logs of powers of the base
-        key_prerequisites: [logarithm-basics]
-        exemplars:
-          - problem: 'Evaluate $\log_5(5^7)$.'
-            answer: '7'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The logarithm to base $5$ asks for the exponent on $5$ that gives $5^7$. That exponent is $7$.'
-          - problem: 'The pH of a solution is $-\log(h)$, where $h$ is the hydrogen-ion concentration in mol/L. Find the pH when $h=10^{-8}$.'
-            answer: '8'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Here $\log(10^{-8})=-8$, because the exponent on $10$ that gives $10^{-8}$ is $-8$. So the pH is $-(-8)=8$.'
-          - problem: 'A sound is $10^9$ times as intense as the quietest sound a person can hear. Its level in decibels is $10\log(10^9)$. Find the level.'
-            answer: '90'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Since $\log(10^9)=9$, the level is $10\times9=90$ decibels. The value $9$ is the exponent on $10$ that gives $10^9$.'
-          - problem: 'What is the value of $\log_2(2^5)$?'
-            answer: '5'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The logarithm to base $2$ is the exponent on $2$ that gives $2^5$. That exponent is $5$, and it is not the product $2\cdot5$.'
-          - problem: 'A mould sample doubles in size every hour. It is now $2^{10}$ times its starting size. For how many hours has it grown?'
-            answer: '10'
-            answer_contract: {"kind":"unit","quantity":"time","unit":"hour","allow_omitted":true}
-            solution_sketch: 'After $h$ hours the sample is $2^h$ times its starting size. Setting $2^h=2^{10}$ gives $h=10$ hours, which is $\log_2(2^{10})$.'
-          - problem: 'Evaluate $\log_4(64)$.'
-            answer: '3'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Write the argument as a power of the base: $64=4^3$. So the logarithm to base $4$ of $64$ is $3$.'
-          - problem: 'Evaluate $\log_6\left(\dfrac{1}{36}\right)$.'
-            answer: '-2'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Since $\frac{1}{36}=6^{-2}$, the exponent on $6$ that gives the argument is $-2$. So the value is $-2$.'
-        constraints: "the argument is an integer power of the base itself, a number that is such a power, or a reciprocal of one; the exponent is an integer from -6 to 10; the answer is that exponent"
-      - id: kp3
-        name: Condense with the power rule
-        key_prerequisites: [logarithm-basics]
-        exemplars:
-          - problem: 'Write $4\ln(x)$ as a single logarithm, for $x>0$.'
-            answer: 'ln(x^4)'
-            answer_contract: {"kind":"function","vars":["x"]}
-            solution_sketch: 'The power rule runs backwards here: the multiplier $4$ becomes the exponent of the argument. So $4\ln(x)=\ln(x^4)$.'
-          - problem: 'Find the value of $3\log_2(4)$.'
-            answer: '6'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The multiplier becomes an exponent, so $3\log_2(4)=\log_2(4^3)=\log_2(64)$. Since $64=2^6$, the value of the logarithm is $6$.'
-          - problem: 'For $x>0$, write $2\ln(x)$ as a single logarithm.'
-            answer: 'ln(x^2)'
-            answer_contract: {"kind":"function","vars":["x"]}
-            solution_sketch: 'The multiplier $2$ must become an exponent of the argument and not a factor. So $2\ln(x)=\ln(x^2)$, because $\ln(x^2)=\ln(x)+\ln(x)$.'
-          - problem: 'A square has side $w>0$. A table lists $2\ln(w)$ for it. Write this entry as the logarithm of one quantity.'
-            answer: 'ln(w^2)'
-            answer_contract: {"kind":"function","vars":["w"]}
-            solution_sketch: 'The multiplier $2$ becomes the exponent of the argument. So $2\ln(w)=\ln(w^2)$, the logarithm of the area of the square.'
-          - problem: 'An investment grows by the factor $g>0$ each year. A table lists $4\ln(g)$ for the end of year four. Write this entry as the logarithm of one quantity.'
-            answer: 'ln(g^4)'
-            answer_contract: {"kind":"function","vars":["g"]}
-            solution_sketch: 'The multiplier $4$ becomes the exponent of the argument. So $4\ln(g)=\ln(g^4)$, the logarithm of the growth factor over four years.'
-          - problem: 'Find the value of $4\log(1000)$.'
-            answer: '12'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Since $\log(1000)=3$, because $10^3=1000$, the value is $4\times3=12$. The power rule gives the same result: $\log(1000^4)=\log(10^{12})=12$.'
-          - problem: 'Write $6\ln(y)$ as a single logarithm, for $y>0$.'
-            answer: 'ln(y^6)'
-            answer_contract: {"kind":"function","vars":["y"]}
-            solution_sketch: 'The power rule runs backwards here: the multiplier $6$ becomes the exponent of the argument. So $6\ln(y)=\ln(y^6)$.'
-        constraints: "integer multipliers 2-6; natural logarithms, or a numerical argument that is a power of the base; the answer is one logarithm or its value"
+    - id: kp1
+      name: Expand with the power rule
+      key_prerequisites:
+      - logarithm-basics
+      - power-rule-exponents
+      try_first:
+        problem: Given that $\log_2(4)=2$, what is the value of $\log_2(4^3)$?
+        answer_contract:
+          kind: exact
+        answer: '6'
+        reveal: Since $4^3=64=2^6$, the logarithm is $6$, which is $3\times\log_2(4)=3\times2$. The exponent of the argument became a multiplier of the logarithm.
+      exemplars:
+      - problem: Expand $\ln(x^3)$ for $x>0$.
+        answer: 3*ln(x)
+        answer_contract:
+          kind: function
+          vars:
+          - x
+        solution_sketch: The exponent $3$ of the argument moves in front of the logarithm as a multiplier. So $\ln(x^3)=3\ln(x)$.
+      - problem: Expand $\ln(y^5)$ for $y>0$.
+        answer: 5*ln(y)
+        answer_contract:
+          kind: function
+          vars:
+          - "y"
+        solution_sketch: The power rule moves the exponent $5$ in front of the logarithm. So $\ln(y^5)=5\ln(y)$.
+      - problem: A square has side $s>0$, so its area is $s^2$. Write the natural logarithm of the area in terms of $\ln(s)$.
+        answer: 2*ln(s)
+        answer_contract:
+          kind: function
+          vars:
+          - s
+        solution_sketch: The area is $s^2$, so the logarithm of the area is $\ln(s^2)$. The power rule moves the exponent $2$ to the front and gives $2\ln(s)$.
+      - problem: For $x>0$, what is the expansion of $\ln(x^6)$?
+        answer: 6*ln(x)
+        answer_contract:
+          kind: function
+          vars:
+          - x
+        solution_sketch: The argument $x^6$ is six factors of $x$, so its logarithm is six equal terms. Their sum is $6\ln(x)$, and not $6+\ln(x)$.
+      - problem: A colony multiplies by $2$ every hour, so after $t$ hours it is $2^t$ times its starting size. Write $\ln(2^t)$ in terms of $\ln(2)$.
+        answer: t*ln(2)
+        answer_contract:
+          kind: function
+          vars:
+          - t
+        solution_sketch: The exponent of the argument is $t$, so the power rule moves $t$ in front. This gives $\ln(2^t)=t\ln(2)$, a multiple of the fixed number $\ln(2)$.
+      - problem: A cube has side $a>0$, so its volume is $a^3$. Write the natural logarithm of the volume in terms of $\ln(a)$.
+        answer: 3*ln(a)
+        answer_contract:
+          kind: function
+          vars:
+          - a
+        solution_sketch: The volume is $a^3$, so its natural logarithm is $\ln(a^3)$. The power rule moves the exponent $3$ to the front and gives $3\ln(a)$.
+      - problem: Expand $\ln(p^7)$ for $p>0$.
+        answer: 7*ln(p)
+        answer_contract:
+          kind: function
+          vars:
+          - p
+        solution_sketch: The exponent $7$ moves in front of the logarithm as a multiplier. So $\ln(p^7)=7\ln(p)$.
+      constraints: a power of one variable or of one measured quantity; natural logarithm; the exponent is an integer from 2 to 8 or the variable $t$; the answer is that exponent times the logarithm
+    - id: kp2
+      name: Condense with the power rule
+      key_prerequisites:
+      - logarithm-basics
+      exemplars:
+      - problem: Write $4\ln(x)$ as a single logarithm, for $x>0$.
+        answer: ln(x^4)
+        answer_contract:
+          kind: function
+          vars:
+          - x
+        solution_sketch: 'The power rule runs backwards here: the multiplier $4$ becomes the exponent of the argument. So $4\ln(x)=\ln(x^4)$.'
+      - problem: Find the value of $3\log_2(4)$.
+        answer: '6'
+        answer_contract:
+          kind: exact
+        solution_sketch: The multiplier becomes an exponent, so $3\log_2(4)=\log_2(4^3)=\log_2(64)$. Since $64=2^6$, the value of the logarithm is $6$.
+      - problem: For $x>0$, write $2\ln(x)$ as a single logarithm.
+        answer: ln(x^2)
+        answer_contract:
+          kind: function
+          vars:
+          - x
+        solution_sketch: The multiplier $2$ must become an exponent of the argument and not a factor. So $2\ln(x)=\ln(x^2)$, because $\ln(x^2)=\ln(x)+\ln(x)$.
+      - problem: A square has side $w>0$. A table lists $2\ln(w)$ for it. Write this entry as the logarithm of one quantity.
+        answer: ln(w^2)
+        answer_contract:
+          kind: function
+          vars:
+          - w
+        solution_sketch: The multiplier $2$ becomes the exponent of the argument. So $2\ln(w)=\ln(w^2)$, the logarithm of the area of the square.
+      - problem: An investment grows by the factor $g>0$ each year. A table lists $4\ln(g)$ for the end of year four. Write this entry as the logarithm of one quantity.
+        answer: ln(g^4)
+        answer_contract:
+          kind: function
+          vars:
+          - g
+        solution_sketch: The multiplier $4$ becomes the exponent of the argument. So $4\ln(g)=\ln(g^4)$, the logarithm of the growth factor over four years.
+      - problem: Find the value of $4\log(1000)$.
+        answer: '12'
+        answer_contract:
+          kind: exact
+        solution_sketch: 'Since $\log(1000)=3$, because $10^3=1000$, the value is $4\times3=12$. The power rule gives the same result: $\log(1000^4)=\log(10^{12})=12$.'
+      - problem: Write $6\ln(y)$ as a single logarithm, for $y>0$.
+        answer: ln(y^6)
+        answer_contract:
+          kind: function
+          vars:
+          - "y"
+        solution_sketch: 'The power rule runs backwards here: the multiplier $6$ becomes the exponent of the argument. So $6\ln(y)=\ln(y^6)$.'
+      constraints: integer multipliers 2-6; natural logarithms, or a numerical argument that is a power of the base; the answer is one logarithm or its value
     diagnostic_exemplar:
-      problem: 'Find the value of $5\log_3(9)$.'
-      answer: "10"
+      problem: Find the value of $5\log_3(9)$.
+      answer: '10'
       solution_sketch: 'The coefficient becomes an exponent: $\log_3(9^5) = \log_3(3^{10})$, so the value is $10$.'
     anki_seeds:
-      - front: "log_b(x^n) = ?"
-        back: "n·log_b(x)"
-        type: basic
+    - front: log_b(x^n) = ?
+      back: n·log_b(x)
+      type: basic
 
   - id: logarithm-properties
     name: Properties of Logarithms

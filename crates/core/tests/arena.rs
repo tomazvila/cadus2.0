@@ -27,22 +27,24 @@ use common::paths::{arena, tree};
 #[test]
 fn the_arena_holds_the_literal_edge_counts() {
     let curriculum = tree();
-    assert_eq!(curriculum.topic_count(), 1090, "topics");
-    assert_eq!(curriculum.prereq_edge_count(), 3281, "prerequisite edges");
-    assert_eq!(curriculum.dependent_edge_count(), 3281, "dependent edges");
+    // Re-pinned 2026-10-12 after the Foundations merge (D-C1): 1064 topics,
+    // 3236 prerequisite edges, 3237 declared encompassing edges.
+    assert_eq!(curriculum.topic_count(), 1064, "topics");
+    assert_eq!(curriculum.prereq_edge_count(), 3236, "prerequisite edges");
+    assert_eq!(curriculum.dependent_edge_count(), 3236, "dependent edges");
     assert_eq!(
         curriculum.enc_forward_count(),
-        3200,
-        "forward encompassing entries: 3282 declared edges less the 82 that stay at weight 0"
+        3155,
+        "forward encompassing entries: 3237 declared edges less the 82 that stay at weight 0"
     );
     assert_eq!(
         curriculum.enc_reverse_count(),
-        3282,
+        3237,
         "reverse encompassing entries: every declared edge, weight 0 included"
     );
     assert_eq!(
         curriculum.enc_node_count(),
-        1090,
+        1064,
         "the tree has no dangling encompassing target, so no phantom node"
     );
 }
@@ -50,17 +52,17 @@ fn the_arena_holds_the_literal_edge_counts() {
 #[test]
 fn the_prerequisite_and_dependent_directions_hold_the_same_edges() {
     let curriculum = tree();
-    let forward: usize = (0..1090)
+    let forward: usize = (0..1064)
         .map(|raw| curriculum.prerequisites(TopicIdx::from_u32(raw)).len())
         .sum();
-    let backward: usize = (0..1090)
+    let backward: usize = (0..1064)
         .map(|raw| curriculum.dependents(TopicIdx::from_u32(raw)).len())
         .sum();
     assert_eq!(
-        forward, 3281,
+        forward, 3236,
         "prerequisite edges walked one topic at a time"
     );
-    assert_eq!(backward, 3281, "dependent edges walked one topic at a time");
+    assert_eq!(backward, 3236, "dependent edges walked one topic at a time");
 }
 
 // --------------------------------------------------------------------------- //
@@ -71,28 +73,30 @@ fn the_prerequisite_and_dependent_directions_hold_the_same_edges() {
 fn topo_order_matches_the_spec_literals() {
     let curriculum = tree();
     let order = curriculum.topo_order();
-    assert_eq!(order.len(), 1090, "every topic is ordered");
+    // Re-pinned 2026-10-12 after the Foundations merge (D-C1): 1064 topics and
+    // a new first five.
+    assert_eq!(order.len(), 1064, "every topic is ordered");
 
     let names = ids(&curriculum, order);
     assert_eq!(
         &names[..5],
         [
             "single-digit-addition",
-            "subtraction-facts",
             "multiplication-tables",
+            "place-value",
+            "subtraction-facts",
             "division-facts",
-            "perfect-squares",
         ],
-        "the first five of spec section 3"
+        "the first five after the Foundations merge (2026-10-12)"
     );
     assert_eq!(
-        &names[1087..],
+        &names[1061..],
         [
             "cartesian-closed-categories",
             "presheaves-intro",
             "toposes-glimpse",
         ],
-        "the last three of spec section 3"
+        "the last three of spec section 3, unchanged by the Foundations merge"
     );
 }
 
@@ -119,7 +123,7 @@ fn interning_round_trips_and_carries_the_authored_course() {
     assert_eq!(curriculum.unit_of(first), "arithmetic-core");
 
     let last = idx(&curriculum, "toposes-glimpse");
-    assert_eq!(curriculum.load_index(last), 1089);
+    assert_eq!(curriculum.load_index(last), 1063);
     assert_eq!(curriculum.course_of(last), "category-theory");
     assert_eq!(curriculum.module_of(last), "Monads & Beyond");
     assert_eq!(curriculum.unit_of(last), "monads");
@@ -131,9 +135,11 @@ fn interning_round_trips_and_carries_the_authored_course() {
 #[test]
 fn topics_in_course_holds_the_authored_counts() {
     let curriculum = tree();
-    // The size of every course, from a 1.0 load.
+    // The size of every course. Foundations re-pinned 2026-10-12 after the
+    // Foundations merge (D-C1): 285 topics became 259. The other sizes come
+    // from a 1.0 load.
     let expected = [
-        ("foundations", 285),
+        ("foundations", 259),
         ("proofs", 92),
         ("geometry", 87),
         ("probability-statistics", 82),
@@ -166,7 +172,12 @@ fn a_knowledge_point_is_addressed_by_topic_and_position() {
         .iter()
         .map(|kp| kp.id.as_str())
         .collect();
-    assert_eq!(kp_ids, ["kp1", "kp2", "kp3"], "authored order");
+    // Re-pinned 2026-10-12 after the Foundations merge (D-C1): the topic holds 5 steps.
+    assert_eq!(
+        kp_ids,
+        ["kp1", "kp2", "kp3", "kp4", "kp5"],
+        "authored order"
+    );
 
     let second = curriculum
         .kp_idx_of(topic, "kp2")
@@ -197,7 +208,7 @@ fn ancestors_and_descendants_have_the_oracle_sizes() {
     let curriculum = tree();
     let quadratic = idx(&curriculum, "quadratic-formula");
     let ancestors = curriculum.ancestors(quadratic);
-    assert_eq!(ancestors.len(), 82, "ancestors of quadratic-formula");
+    assert_eq!(ancestors.len(), 69, "ancestors of quadratic-formula");
     assert_eq!(
         &ids(&curriculum, &ancestors)[..5],
         [
@@ -205,7 +216,7 @@ fn ancestors_and_descendants_have_the_oracle_sizes() {
             "subtraction-facts",
             "multiplication-tables",
             "division-facts",
-            "perfect-squares",
+            "place-value",
         ],
         "ancestors come back ascending by load index"
     );
@@ -213,7 +224,7 @@ fn ancestors_and_descendants_have_the_oracle_sizes() {
     let first = idx(&curriculum, "single-digit-addition");
     assert_eq!(
         curriculum.descendants(first).len(),
-        1076,
+        1057,
         "descendants of single-digit-addition"
     );
     assert!(
@@ -239,12 +250,14 @@ fn the_one_encompassings_extra_is_in_both_encompassing_maps() {
         [
             ("factoring-monic-trinomials", 0.8),
             ("factoring-by-grouping", 0.6),
+            ("special-products", 0.7),
             ("polynomial-multiplication", 0.5),
             ("factoring-gcf", 0.5),
+            ("square-roots", 0.4),
             ("integer-multiplication-division", 0.4),
             ("difference-of-squares", 0.3),
         ],
-        "the extra edge sits last, after the five prerequisite edges"
+        "the extra edge sits last, after the seven prerequisite edges (Foundations merge, 2026-10-12)"
     );
     assert_eq!(
         links(&curriculum, curriculum.enc_node(target), false),
@@ -268,7 +281,9 @@ fn the_one_encompassings_extra_is_in_both_encompassing_maps() {
         prerequisites,
         [
             "integer-multiplication-division",
+            "square-roots",
             "polynomial-multiplication",
+            "special-products",
             "factoring-gcf",
             "factoring-by-grouping",
             "factoring-monic-trinomials",
@@ -279,15 +294,13 @@ fn the_one_encompassings_extra_is_in_both_encompassing_maps() {
 
 #[test]
 fn encompassing_weight_matches_the_1_0_oracle() {
-    // The three values come from `g.encompassing_weight(a, b)` on the 1.0 loader
+    // Two values come from `g.encompassing_weight(a, b)` on the 1.0 loader
     // over this repository's `curriculum/`. Exact equality, per parity trap 9.
+    // Re-pinned 2026-10-12 after the Foundations merge (D-C1): the first value
+    // pins the 2.0 loader on the merged graph (0.12096, was 0.096768).
     let curriculum = tree();
     let pairs = [
-        (
-            "quadratic-formula",
-            "single-digit-addition",
-            0.096_768_000_000_000_02_f64,
-        ),
+        ("quadratic-formula", "single-digit-addition", 0.120_96_f64),
         (
             "adjoints-preserve-limits",
             "compound-inequalities",
@@ -348,15 +361,15 @@ fn mastery_floor_sizes_are_the_spec_literals() {
             .mastery_floor("proofs")
             .expect("proofs is a course")
             .len(),
-        7,
-        "proofs uses the list form"
+        6,
+        "proofs uses the list form: 7 names, 2 of them merged into one topic by the Foundations merge (2026-10-12)"
     );
     assert_eq!(
         curriculum
             .mastery_floor("geometry")
             .expect("geometry is a course")
             .len(),
-        285,
+        259,
         "geometry references foundations, so its floor is every foundations topic"
     );
     assert_eq!(curriculum.mastery_floor("no-such-course"), None);

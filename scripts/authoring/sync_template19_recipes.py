@@ -78,8 +78,8 @@ def synchronize(check=False):
     rows = json.loads((COHORT / "drafts.json").read_text())
     mappings = json.loads((COHORT / "sources.json").read_text())
     expected = {row["kp_id"]: row["arguments"] for row in rows}
-    if len(rows) != 19 or len(expected) != 19:
-        raise ValueError("the production-gate cohort requires exactly 19 unique keys")
+    if len(rows) != 17 or len(expected) != 17:
+        raise ValueError("the production-gate cohort requires exactly 17 unique keys (19 before the Foundations merge, 2026-10-12)")
     changes = synchronized_documents(mappings, expected)
     drift = []
     for path, document in changes.items():

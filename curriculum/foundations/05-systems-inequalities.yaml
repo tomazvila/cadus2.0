@@ -3,138 +3,360 @@ course: foundations
 module: "Systems & Inequalities"
 topics:
   - id: solutions-of-inequalities
-    name: "Solutions of Inequalities"
+    name: Inequality Statements and Solutions
     core: true
     difficulty: 0.32
     drill: false
     answer_kind: expression
     expected_time_secs: 50
     prerequisites:
-      - id: evaluating-expressions
-        weight: 0.6
-        key: true
-      - id: number-line-integers
-        weight: 0.4
-      - id: integer-addition-subtraction
-        weight: 0.3
+    - id: evaluating-expressions
+      weight: 0.6
+      key: true
+    - id: number-line-integers
+      weight: 0.8
+      key: true
+    - id: integer-addition-subtraction
+      weight: 0.3
     knowledge_points:
-      - id: kp1
-        name: "Inequality statements true or false"
-        key_prerequisites: [number-line-integers]
-        exemplars:
-          - problem: 'Is the statement $-4<-9$ true or false?'
-            answer: 'false'
-            answer_contract: {"kind":"label","options":[["true","yes","correct","it is true","holds"],["false","no","incorrect","it is false","not true","wrong"]]}
-            solution_sketch: 'On the number line $-4$ lies to the right of $-9$, so $-4$ is the greater number. A less-than sign needs the left number to be the smaller one, so the statement is false.'
-          - problem: 'At dawn the temperature was $-8$ degrees Celsius and at noon it was $-2$ degrees Celsius. What was the lower of the two temperatures?'
-            answer: '-8'
-            answer_contract: {"kind":"unit","quantity":"temperature","unit":"\u00b0C","allow_omitted":true}
-            solution_sketch: 'On the number line $-8$ lies to the left of $-2$. The number further left is the smaller one, so the lower temperature is $-8$ degrees Celsius.'
-          - problem: 'Which is the greater number, $-11$ or $-6$?'
-            answer: '-6'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'On the number line $-6$ lies to the right of $-11$. The number further right is the greater one, so $-6$ is greater than $-11$.'
-          - problem: 'A diver is at $-12$ m and a submarine is at $-20$ m, measured from the surface. Which one is deeper?'
-            answer: 'submarine'
-            answer_contract: {"kind":"label","options":[["submarine","the submarine"],["diver","the diver"]]}
-            solution_sketch: 'The reading $-20$ lies to the left of $-12$, so $-20$ is the smaller number. A smaller reading means further below the surface, so the submarine is deeper.'
-          - problem: 'Which is greater, $-15$ or $-3$?'
-            answer: '-3'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'On the number line $-3$ lies to the right of $-15$, so $-3$ is the greater number. The digits alone do not decide it, because the minus signs reverse the order.'
-          - problem: 'Give an integer $n$ with $-9<n<-6$.'
-            answer: '-7'
-            answer_contract: {"kind":"property","check":"integer_in_range","args":{"min":-8,"max":-7}}
-            solution_sketch: 'The integers between $-9$ and $-6$, not counting the two ends, are $-8$ and $-7$. Either one works, since $-9<-7<-6$.'
-          - problem: 'Which is the greater number, $-2.5$ or $-2.05$?'
-            answer: '-2.05'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'On the number line $-2.05$ lies closer to zero than $-2.5$, so it lies to the right. The number further right is the greater one, so $-2.05$ is greater.'
-        constraints: "integer comparisons; include negatives"
-      - id: kp2
-        name: "Test a value in an inequality"
-        key_prerequisites: [evaluating-expressions]
-        exemplars:
-          - problem: 'Is $x=3$ a solution of $2x+4\le11$?'
-            answer: 'yes'
-            answer_contract: {"kind":"label","options":[["yes","it is","true","correct","yes, it is","it is a solution"],["no","it is not","false","incorrect","no, it is not","it is not a solution","not a solution"]]}
-            solution_sketch: 'Substitute $x=3$ into the left side: $2(3)+4=10$. Since $10\le11$ is true, $x=3$ is a solution.'
-          - problem: 'Which of the numbers $2$, $4$ and $6$ is a solution of $3x-2>14$?'
-            answer: '6'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Substitute each number into $3x-2$. For $x=2$ the value is $4$, for $x=4$ it is $10$ and for $x=6$ it is $16$. Only $16>14$ is true, so the solution is $6$.'
-          - problem: 'A lift is allowed to carry at most $600$ kg and each crate weighs $85$ kg. Which is the greatest of these loads that the lift is allowed to carry: $6$, $7$ or $8$ crates?'
-            answer: '7'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Find the total weight of each load: $6\cdot85=510$, $7\cdot85=595$ and $8\cdot85=680$ kilograms. The loads of $6$ and $7$ crates are at most $600$ kg and $8$ crates are over the limit, so the greatest allowed number is $7$.'
-          - problem: 'What is the value of $7-x$ at $x=-2$?'
-            answer: '9'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Subtracting a negative number means adding its opposite, so $7-(-2)=7+2=9$. Since $9<8$ is false, $-2$ is not a solution of $7-x<8$.'
-          - problem: 'A ride requires riders to be at least $120$ cm tall. Mia is $118$ cm tall. Does she meet the requirement?'
-            answer: 'no'
-            answer_contract: {"kind":"label","options":[["yes","she does","true","correct","yes, she does"],["no","she does not","false","incorrect","no, she does not"]]}
-            solution_sketch: 'The requirement is $h\ge120$, where $h$ is the height in centimetres. For Mia $118\ge120$ is false, so she does not meet the requirement.'
-          - problem: 'Give a whole number that is a solution of $x+5<9$.'
-            answer: '2'
-            answer_contract: {"kind":"property","check":"integer_in_range","args":{"min":0,"max":3}}
-            solution_sketch: 'Substitute a whole number into $x+5$ and compare with $9$. For $x=2$ the value is $7$, and $7<9$ is true. The whole numbers $0$, $1$, $2$ and $3$ all work.'
-          - problem: 'Test the numbers $8$, $10$ and $12$ in $\frac{x}{4}\ge3$. Which one is a solution?'
-            answer: '12'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Divide each number by $4$: $8\div4=2$, $10\div4=2.5$ and $12\div4=3$. Only $12$ gives a value that is at least $3$, so $12$ is the solution.'
-        constraints: "substitute and compare; yes/no answers"
-      - id: kp3
-        name: "Boundary values and strictness"
-        key_prerequisites: [evaluating-expressions]
-        try_first:
-          problem: 'Is $x=2$ a solution of $x+3<5$?'
-          answer_contract: {"kind":"label","options":[["yes","it is","true","correct","yes, it is","it is a solution"],["no","it is not","false","incorrect","no, it is not","it is not a solution","not a solution"]]}
-          answer: 'no'
-          reveal: 'No: at $x=2$ the two sides are equal, since $2+3=5$, and a strict sign needs the left side to be smaller. Equal sides count only for $\le$ and $\ge$.'
-        exemplars:
-          - problem: 'What is the boundary value of $x+2\le6$?'
-            answer: '4'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The boundary is where the two sides are equal, so solve $x+2=6$ and get $x=4$. Because the sign is $\le$, the boundary $4$ is itself a solution.'
-          - problem: 'Is $x=-6$ a solution of $\frac{x}{3}\ge-2$?'
-            answer: 'yes'
-            answer_contract: {"kind":"label","options":[["yes","it is","true","correct","yes, it is","it is a solution"],["no","it is not","false","incorrect","no, it is not","it is not a solution","not a solution"]]}
-            solution_sketch: 'Substitute $x=-6$: $\frac{-6}{3}=-2$. The comparison $-2\ge-2$ is true because $\ge$ allows equal sides, so $x=-6$ is a solution.'
-          - problem: 'What is the greatest whole number that satisfies $2x<12$?'
-            answer: '5'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The boundary is $x=6$, and the strict sign $<$ leaves it out. So the greatest whole number that works is the one just below it, $5$.'
-          - problem: 'What is the greatest integer that satisfies $7-x\ge10$?'
-            answer: '-3'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Set $7-x=10$ to get the boundary $x=-3$. The sign $\ge$ includes it, and $7-(-3)=10$ makes the comparison true. The next integer, $-2$, gives $9\ge10$, which is false, so the greatest integer is $-3$.'
-          - problem: 'A bridge is only for vehicles lighter than $12$ tonnes. A truck weighs exactly $12$ tonnes. Is the truck allowed on the bridge?'
-            answer: 'no'
-            answer_contract: {"kind":"label","options":[["yes","it is","true","correct","yes, it is","it is allowed"],["no","it is not","false","incorrect","no, it is not","it is not allowed","not allowed"]]}
-            solution_sketch: 'Lighter than $12$ tonnes is the strict condition $w<12$. For the truck, $12<12$ is false, so the truck is not allowed.'
-          - problem: 'Tickets cost $4$ dollars each. Ana wants to spend less than $30$ dollars. What is the greatest number of tickets she can buy?'
-            answer: '7'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The cost of $t$ tickets is $4t$, and $4t<30$ gives $t<7.5$. The greatest whole number below $7.5$ is $7$, and $7$ tickets cost $28$ dollars.'
-          - problem: 'Pens cost $3$ dollars each and Ben has $20$ dollars. What is the greatest number of pens he can buy?'
-            answer: '6'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The cost of $p$ pens is $3p$, and $3p\le20$ gives $p\le6\frac{2}{3}$. The greatest whole number allowed is $6$, and $6$ pens cost $18$ dollars.'
-          - problem: 'What is the boundary value of $\frac{x}{3}>-2$?'
-            answer: '-6'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Solve the matching equation $\frac{x}{3}=-2$ by multiplying both sides by $3$, which gives $x=-6$. The strict sign $>$ leaves the boundary $-6$ out of the solutions.'
-        constraints: "contrast strict vs inclusive at the boundary"
+    - id: kp1
+      name: Write < or > between two integers
+      key_prerequisites:
+      - number-line-integers
+      exemplars:
+      - problem: Which symbol, $<$ or $>$, makes the statement $-8 \;\square\; -3$ true?
+        answer: <
+        answer_contract:
+          kind: label
+          options:
+          - - <
+            - less than
+            - is less than
+            - smaller
+            - -8 < -3
+            - -8<-3
+          - - '>'
+            - greater than
+            - is greater than
+            - larger
+        solution_sketch: On the number line $-8$ is to the left of $-3$. The integer on the left is smaller, so the true statement is $-8<-3$.
+      - problem: On a winter night Oslo is at $-11$ degrees and Bergen is at $-4$ degrees. What is the temperature of the colder city?
+        answer: '-11'
+        answer_contract:
+          kind: exact
+        solution_sketch: The colder city has the temperature farther left on the number line. The value $-11$ is left of $-4$, so the colder temperature is $-11$.
+      - problem: A submarine is at $-5$ metres and a diver is at $-11$ metres. Which symbol, $<$ or $>$, makes the statement $-5 \;\square\; -11$ true?
+        answer: '>'
+        answer_contract:
+          kind: label
+          options:
+          - - <
+            - less than
+            - is less than
+            - smaller
+          - - '>'
+            - greater than
+            - is greater than
+            - larger
+            - -5 > -11
+            - -5>-11
+        solution_sketch: The depth $-5$ is to the right of $-11$ on the number line. The integer on the right is greater, so the true statement is $-5>-11$.
+      - problem: What is the smallest integer greater than $-6$?
+        answer: '-5'
+        answer_contract:
+          kind: exact
+        solution_sketch: Greater than $-6$ means to the right of $-6$ on the number line. The first integer to the right is $-5$.
+      - problem: What is the greatest integer less than $-3$?
+        answer: '-4'
+        answer_contract:
+          kind: exact
+        solution_sketch: Less than $-3$ means to the left of $-3$ on the number line. The first integer to the left is $-4$.
+      - problem: A number $x$ lies to the left of $-5$ on the number line, and the distance between $x$ and $-5$ is $4$. What is $x$?
+        answer: '-9'
+        answer_contract:
+          kind: exact
+        solution_sketch: Lying to the left of $-5$ means $x$ is smaller than $-5$. Moving $4$ units left of $-5$ gives $-5-4=-9$.
+      - problem: List every integer $n$ with $-4<n<1$.
+        answer: -3, -2, -1, 0
+        answer_contract:
+          kind: exact
+        solution_sketch: The integers strictly between $-4$ and $1$ lie to the right of $-4$ and to the left of $1$. They are $-3$, $-2$, $-1$ and $0$.
+      - problem: In a golf game the lowest score wins. Ana scored $-7$ and Ben scored $-2$. What was the winning score?
+        answer: '-7'
+        answer_contract:
+          kind: exact
+        solution_sketch: The lowest score is the one farthest left on the number line. The value $-7$ is left of $-2$, so the winning score was $-7$.
+      - problem: Which is greater, $-9$ or $-2$?
+        answer: '-2'
+        answer_contract:
+          kind: exact
+        solution_sketch: On the number line $-2$ is to the right of $-9$, so $-2$ is greater.
+      constraints: integers from -12 to 12; include negative-negative pairs
+    - id: kp2
+      name: Judge and write inequality statements
+      key_prerequisites:
+      - number-line-integers
+      exemplars:
+      - problem: Write $3$, $-1$, $-4$ as a chain from least to greatest using $<$.
+        answer: -4 < -1 < 3
+        answer_contract:
+          kind: ascending_chain
+        solution_sketch: On the number line the order from left to right is $-4$, $-1$, $3$. Joining neighbors with $<$ gives $-4<-1<3$.
+      - problem: Is the statement $-7<-9$ true?
+        answer: 'No'
+        answer_contract:
+          kind: label
+          options:
+          - - 'yes'
+            - yes it is
+            - 'true'
+            - it is true
+            - correct
+          - - 'no'
+            - no it is not
+            - 'false'
+            - it is not true
+            - not true
+            - incorrect
+        solution_sketch: On the number line $-7$ is to the right of $-9$, so $-7>-9$. The statement $-7<-9$ is not true.
+      - problem: Arrange $-2$, $-8$, $-5$ in increasing order using $<$.
+        answer: -8 < -5 < -2
+        answer_contract:
+          kind: ascending_chain
+        solution_sketch: On the number line the increasing order is $-8$, $-5$, $-2$. Joining them with $<$ gives $-8<-5<-2$.
+      - problem: Is $-6<3$ a true statement?
+        answer: 'Yes'
+        answer_contract:
+          kind: label
+          options:
+          - - 'yes'
+            - yes it is
+            - 'true'
+            - it is true
+            - correct
+          - - 'no'
+            - no it is not
+            - 'false'
+            - it is not true
+            - not true
+            - incorrect
+        solution_sketch: On the number line $-6$ is to the left of $3$. The integer on the left is smaller, so $-6<3$ is true.
+      - problem: Arrange $4$, $-2$, $-7$ from greatest to least.
+        answer: 4, -2, -7
+        answer_contract:
+          kind: list
+          member:
+            kind: exact
+          ordered: true
+        solution_sketch: The greatest integer is the farthest right on the number line. Reading from right to left gives $4$, $-2$, $-7$.
+      - problem: At three weather stations the temperatures are $-3$, $5$ and $-10$ degrees. Write them from coldest to warmest using $<$.
+        answer: -10 < -3 < 5
+        answer_contract:
+          kind: ascending_chain
+        solution_sketch: The coldest temperature is the farthest left on the number line. The order is $-10$, $-3$, $5$, so the chain is $-10<-3<5$.
+      - problem: Three divers are at depths of $-14$, $-6$ and $-9$ metres. Write their positions from the highest to the lowest.
+        answer: -6, -9, -14
+        answer_contract:
+          kind: list
+          member:
+            kind: exact
+          ordered: true
+        solution_sketch: The highest position is the farthest right on the number line. Reading from right to left gives $-6$, $-9$, $-14$.
+      - problem: Put $-4$, $-8$ and $0$ in order from least to greatest.
+        answer: -8 < -4 < 0
+        answer_contract:
+          kind: ascending_chain
+        solution_sketch: On the number line $-8$ is farther left than $-4$. The chain is $-8<-4<0$.
+      - problem: Give an integer $n$ with $-9<n<-5$.
+        answer: '-7'
+        answer_contract:
+          kind: property
+          check: integer_in_range
+          args:
+            min: -8
+            max: -6
+        solution_sketch: The integers between $-9$ and $-5$ are $-8$, $-7$ and $-6$. Any one of them works, for example $-7$.
+      constraints: true/false judgments and chains of up to three integers
+    - id: kp3
+      name: Test a value in an inequality
+      key_prerequisites:
+      - evaluating-expressions
+      exemplars:
+      - problem: Is $x=3$ a solution of $2x+4\le11$?
+        answer: 'yes'
+        answer_contract:
+          kind: label
+          options:
+          - - 'yes'
+            - it is
+            - 'true'
+            - correct
+            - yes, it is
+            - it is a solution
+          - - 'no'
+            - it is not
+            - 'false'
+            - incorrect
+            - no, it is not
+            - it is not a solution
+            - not a solution
+        solution_sketch: 'Substitute $x=3$ into the left side: $2(3)+4=10$. Since $10\le11$ is true, $x=3$ is a solution.'
+      - problem: Which of the numbers $2$, $4$ and $6$ is a solution of $3x-2>14$?
+        answer: '6'
+        answer_contract:
+          kind: exact
+        solution_sketch: Substitute each number into $3x-2$. For $x=2$ the value is $4$, for $x=4$ it is $10$ and for $x=6$ it is $16$. Only $16>14$ is true, so the solution is $6$.
+      - problem: 'A lift is allowed to carry at most $600$ kg and each crate weighs $85$ kg. Which is the greatest of these loads that the lift is allowed to carry: $6$, $7$ or $8$ crates?'
+        answer: '7'
+        answer_contract:
+          kind: exact
+        solution_sketch: 'Find the total weight of each load: $6\cdot85=510$, $7\cdot85=595$ and $8\cdot85=680$ kilograms. The loads of $6$ and $7$ crates are at most $600$ kg and $8$ crates are over the limit, so the greatest allowed number is $7$.'
+      - problem: What is the value of $7-x$ at $x=-2$?
+        answer: '9'
+        answer_contract:
+          kind: exact
+        solution_sketch: Subtracting a negative number means adding its opposite, so $7-(-2)=7+2=9$. Since $9<8$ is false, $-2$ is not a solution of $7-x<8$.
+      - problem: A ride requires riders to be at least $120$ cm tall. Mia is $118$ cm tall. Does she meet the requirement?
+        answer: 'no'
+        answer_contract:
+          kind: label
+          options:
+          - - 'yes'
+            - she does
+            - 'true'
+            - correct
+            - yes, she does
+          - - 'no'
+            - she does not
+            - 'false'
+            - incorrect
+            - no, she does not
+        solution_sketch: The requirement is $h\ge120$, where $h$ is the height in centimetres. For Mia $118\ge120$ is false, so she does not meet the requirement.
+      - problem: Give a whole number that is a solution of $x+5<9$.
+        answer: '2'
+        answer_contract:
+          kind: property
+          check: integer_in_range
+          args:
+            min: 0
+            max: 3
+        solution_sketch: Substitute a whole number into $x+5$ and compare with $9$. For $x=2$ the value is $7$, and $7<9$ is true. The whole numbers $0$, $1$, $2$ and $3$ all work.
+      - problem: Test the numbers $8$, $10$ and $12$ in $\frac{x}{4}\ge3$. Which one is a solution?
+        answer: '12'
+        answer_contract:
+          kind: exact
+        solution_sketch: 'Divide each number by $4$: $8\div4=2$, $10\div4=2.5$ and $12\div4=3$. Only $12$ gives a value that is at least $3$, so $12$ is the solution.'
+      constraints: substitute and compare; yes/no answers
+    - id: kp4
+      name: Boundary values and strictness
+      key_prerequisites:
+      - evaluating-expressions
+      try_first:
+        problem: Is $x=2$ a solution of $x+3<5$?
+        answer_contract:
+          kind: label
+          options:
+          - - 'yes'
+            - it is
+            - 'true'
+            - correct
+            - yes, it is
+            - it is a solution
+          - - 'no'
+            - it is not
+            - 'false'
+            - incorrect
+            - no, it is not
+            - it is not a solution
+            - not a solution
+        answer: 'no'
+        reveal: 'No: at $x=2$ the two sides are equal, since $2+3=5$, and a strict sign needs the left side to be smaller. Equal sides count only for $\le$ and $\ge$.'
+      exemplars:
+      - problem: What is the boundary value of $x+2\le6$?
+        answer: '4'
+        answer_contract:
+          kind: exact
+        solution_sketch: The boundary is where the two sides are equal, so solve $x+2=6$ and get $x=4$. Because the sign is $\le$, the boundary $4$ is itself a solution.
+      - problem: Is $x=-6$ a solution of $\frac{x}{3}\ge-2$?
+        answer: 'yes'
+        answer_contract:
+          kind: label
+          options:
+          - - 'yes'
+            - it is
+            - 'true'
+            - correct
+            - yes, it is
+            - it is a solution
+          - - 'no'
+            - it is not
+            - 'false'
+            - incorrect
+            - no, it is not
+            - it is not a solution
+            - not a solution
+        solution_sketch: 'Substitute $x=-6$: $\frac{-6}{3}=-2$. The comparison $-2\ge-2$ is true because $\ge$ allows equal sides, so $x=-6$ is a solution.'
+      - problem: What is the greatest whole number that satisfies $2x<12$?
+        answer: '5'
+        answer_contract:
+          kind: exact
+        solution_sketch: The boundary is $x=6$, and the strict sign $<$ leaves it out. So the greatest whole number that works is the one just below it, $5$.
+      - problem: What is the greatest integer that satisfies $7-x\ge10$?
+        answer: '-3'
+        answer_contract:
+          kind: exact
+        solution_sketch: Set $7-x=10$ to get the boundary $x=-3$. The sign $\ge$ includes it, and $7-(-3)=10$ makes the comparison true. The next integer, $-2$, gives $9\ge10$, which is false, so the greatest integer is $-3$.
+      - problem: A bridge is only for vehicles lighter than $12$ tonnes. A truck weighs exactly $12$ tonnes. Is the truck allowed on the bridge?
+        answer: 'no'
+        answer_contract:
+          kind: label
+          options:
+          - - 'yes'
+            - it is
+            - 'true'
+            - correct
+            - yes, it is
+            - it is allowed
+          - - 'no'
+            - it is not
+            - 'false'
+            - incorrect
+            - no, it is not
+            - it is not allowed
+            - not allowed
+        solution_sketch: Lighter than $12$ tonnes is the strict condition $w<12$. For the truck, $12<12$ is false, so the truck is not allowed.
+      - problem: Tickets cost $4$ dollars each. Ana wants to spend less than $30$ dollars. What is the greatest number of tickets she can buy?
+        answer: '7'
+        answer_contract:
+          kind: exact
+        solution_sketch: The cost of $t$ tickets is $4t$, and $4t<30$ gives $t<7.5$. The greatest whole number below $7.5$ is $7$, and $7$ tickets cost $28$ dollars.
+      - problem: Pens cost $3$ dollars each and Ben has $20$ dollars. What is the greatest number of pens he can buy?
+        answer: '6'
+        answer_contract:
+          kind: exact
+        solution_sketch: The cost of $p$ pens is $3p$, and $3p\le20$ gives $p\le6\frac{2}{3}$. The greatest whole number allowed is $6$, and $6$ pens cost $18$ dollars.
+      - problem: What is the boundary value of $\frac{x}{3}>-2$?
+        answer: '-6'
+        answer_contract:
+          kind: exact
+        solution_sketch: Solve the matching equation $\frac{x}{3}=-2$ by multiplying both sides by $3$, which gives $x=-6$. The strict sign $>$ leaves the boundary $-6$ out of the solutions.
+      constraints: contrast strict vs inclusive at the boundary
     diagnostic_exemplar:
-      problem: 'Is $x = -2$ a solution of $3x + 1 \ge -5$?'
-      answer_contract: {kind: label, options: [[yes], [no]]}
-      answer: "yes"
-      solution_sketch: '$3(-2) + 1 = -5$, and $-5 \ge -5$ is true.'
+      problem: Is $x = -2$ a solution of $3x + 1 \ge -5$?
+      answer_contract:
+        kind: label
+        options:
+        - - 'yes'
+        - - 'no'
+      answer: 'yes'
+      solution_sketch: $3(-2) + 1 = -5$, and $-5 \ge -5$ is true.
     anki_seeds:
-      - front: "Of x < a and x <= a, which includes the boundary value a?"
-        back: "only x <= a (inclusive); < and > exclude the boundary"
-        type: basic
+    - front: The inequality symbol always opens toward the ___ number.
+      back: greater
+      type: basic
+    - front: Of x < a and x <= a, which includes the boundary value a?
+      back: only x <= a (inclusive); < and > exclude the boundary
+      type: basic
 
   - id: graphing-inequalities-number-line
     name: "Graphing Inequalities on a Number Line"
@@ -1532,143 +1754,6 @@ topics:
         back: "X < -a or X > a (an OR / disjunction)"
         type: basic
 
-  - id: absolute-value-inequalities
-    name: "Absolute Value Inequalities"
-    core: false
-    difficulty: 0.55
-    drill: false
-    answer_kind: multi-step
-    expected_time_secs: 110
-    prerequisites:
-      - id: basic-absolute-value-inequalities
-        weight: 0.7
-        key: true
-      - id: absolute-value-equations
-        weight: 0.5
-        key: true
-      - id: compound-inequalities
-        weight: 0.3
-    knowledge_points:
-      - id: kp1
-        name: "|linear| < a"
-        key_prerequisites: [basic-absolute-value-inequalities]
-        exemplars:
-          - problem: 'Solve $|x-3|<8$.'
-            answer: '(-5, 11)'
-            answer_contract: {"kind":"inequality_union"}
-            solution_sketch: 'The condition means $-8<x-3<8$. Adding $3$ to all three parts gives $-5<x<11$.'
-          - problem: 'Solve $|2x+1|\le 7$.'
-            answer: '[-4, 3]'
-            answer_contract: {"kind":"inequality_union"}
-            solution_sketch: 'The condition means $-7\le 2x+1\le 7$. Subtracting $1$ gives $-8\le 2x\le 6$, and dividing by $2$ gives $-4\le x\le 3$.'
-          - problem: 'A baker''s oven must stay within $12$ degrees of $180$ degrees. Which temperatures $T$ are allowed?'
-            answer: '[168, 192]'
-            answer_contract: {"kind":"inequality_union"}
-            solution_sketch: 'The difference between $T$ and $180$ is at most $12$, so $|T-180|\le 12$. Then $168\le T\le 192$.'
-          - problem: 'Solve $5>|3x-2|$.'
-            answer: '(-1, 7/3)'
-            answer_contract: {"kind":"inequality_union"}
-            solution_sketch: 'Read the inequality as $|3x-2|<5$, which means $-5<3x-2<5$. Adding $2$ gives $-3<3x<7$, so $-1<x<7/3$.'
-          - problem: 'A metal rod is accepted when its length $L$ differs from $50$ cm by less than $0.4$ cm. Which lengths are accepted?'
-            answer: '(49.6, 50.4)'
-            answer_contract: {"kind":"inequality_union"}
-            solution_sketch: 'The difference between $L$ and $50$ is less than $0.4$, so $|L-50|<0.4$. Then $-0.4<L-50<0.4$, which gives $49.6<L<50.4$.'
-          - problem: 'Solve $9\ge |4-x|$.'
-            answer: '[-5, 13]'
-            answer_contract: {"kind":"inequality_union"}
-            solution_sketch: 'Read the inequality as $|4-x|\le 9$, so $-9\le 4-x\le 9$. Subtracting $4$ gives $-13\le -x\le 5$, and dividing by $-1$ reverses the signs: $-5\le x\le 13$.'
-          - problem: 'A hiker stays within $2.5$ km of a hut at kilometre mark $12$ on a straight path. Which kilometre marks $k$ can the hiker be at?'
-            answer: '[9.5, 14.5]'
-            answer_contract: {"kind":"inequality_union"}
-            solution_sketch: 'The distance of the hiker from the hut is $|k-12|\le 2.5$. So $-2.5\le k-12\le 2.5$ and $9.5\le k\le 14.5$.'
-          - problem: 'Solve $|5-2x|<7$.'
-            answer: '(-1, 6)'
-            answer_contract: {"kind":"inequality_union"}
-            solution_sketch: 'The condition means $-7<5-2x<7$, so $-12<-2x<2$. Dividing by $-2$ reverses the signs and gives $-1<x<6$.'
-        constraints: "linear inside; bounded interval answers"
-      - id: kp2
-        name: "|linear| > a"
-        key_prerequisites: [basic-absolute-value-inequalities]
-        exemplars:
-          - problem: 'Solve $|2x+1|\ge 5$.'
-            answer: 'x <= -3 or x >= 2'
-            answer_contract: {"kind":"inequality_union"}
-            solution_sketch: 'Split into $2x+1\ge 5$ and $2x+1\le -5$. The first gives $x\ge 2$ and the second gives $x\le -3$.'
-          - problem: 'Solve $|x+4|>2$.'
-            answer: 'x < -6 or x > -2'
-            answer_contract: {"kind":"inequality_union"}
-            solution_sketch: 'Split into $x+4>2$ and $x+4<-2$. The first gives $x>-2$ and the second gives $x<-6$.'
-          - problem: 'A pump is out of tolerance when its pressure $p$ differs from $40$ kPa by at least $6$ kPa. For which pressures is the pump out of tolerance?'
-            answer: 'p <= 34 or p >= 46'
-            answer_contract: {"kind":"inequality_union"}
-            solution_sketch: 'The difference is $|p-40|\ge 6$, so $p-40\ge 6$ or $p-40\le -6$. Then $p\ge 46$ or $p\le 34$.'
-          - problem: 'Solve $|3-2x|>7$.'
-            answer: 'x < -2 or x > 5'
-            answer_contract: {"kind":"inequality_union"}
-            solution_sketch: 'Split into $3-2x>7$ and $3-2x<-7$. Dividing by $-2$ reverses each sign: $x<-2$ and $x>5$.'
-          - problem: 'A van must stay more than $3$ km away from a depot at kilometre mark $5$ of a straight road. Which kilometre marks $k$ are allowed?'
-            answer: 'k < 2 or k > 8'
-            answer_contract: {"kind":"inequality_union"}
-            solution_sketch: 'The distance from the depot is $|k-5|>3$. So $k-5>3$ or $k-5<-3$, which gives $k>8$ or $k<2$.'
-          - problem: 'Solve $|x/3-2|\ge 4$.'
-            answer: 'x <= -6 or x >= 18'
-            answer_contract: {"kind":"inequality_union"}
-            solution_sketch: 'Split into $x/3-2\ge 4$ and $x/3-2\le -4$. Adding $2$ and multiplying by $3$ gives $x\ge 18$ or $x\le -6$.'
-          - problem: 'Solve $|x-1|>4$.'
-            answer: 'x < -3 or x > 5'
-            answer_contract: {"kind":"inequality_union"}
-            solution_sketch: 'A distance greater than $4$ from $1$ gives $x-1>4$ or $x-1<-4$, so $x>5$ or $x<-3$.'
-          - problem: 'Is $x=0$ a solution of $|2x-3|>2$?'
-            answer: 'yes'
-            answer_contract: {"kind": "label", "options": [["yes", "it is", "yes it is", "it is a solution"], ["no", "it is not", "no it is not", "not a solution"]]}
-            solution_sketch: 'At $x=0$ the value is $|-3|=3$, and $3>2$. So $0$ is a solution.'
-        constraints: "two-ray answers; keep the union"
-      - id: kp3
-        name: "Isolate the absolute value first"
-        key_prerequisites: [absolute-value-equations]
-        exemplars:
-          - problem: 'Solve $2|x-4|+3\le 15$.'
-            answer: '[-2, 10]'
-            answer_contract: {"kind":"inequality_union"}
-            solution_sketch: 'Subtract $3$ and divide by $2$ to get $|x-4|\le 6$. Then $-6\le x-4\le 6$, so $-2\le x\le 10$.'
-          - problem: 'Solve $3|2x+1|-5<16$.'
-            answer: '(-4, 3)'
-            answer_contract: {"kind":"inequality_union"}
-            solution_sketch: 'Add $5$ and divide by $3$ to get $|2x+1|<7$. Then $-7<2x+1<7$, so $-4<x<3$.'
-          - problem: 'Solve $2|x+1|-3>5$.'
-            answer: 'x < -5 or x > 3'
-            answer_contract: {"kind":"inequality_union"}
-            solution_sketch: 'Add $3$ and divide by $2$ to get $|x+1|>4$. Then $x+1>4$ or $x+1<-4$, so $x>3$ or $x<-5$.'
-          - problem: 'A company pays $20+5|s-60|$ euros for a score $s$, where $60$ is the target score. For which scores is the pay below $50$ euros?'
-            answer: '(54, 66)'
-            answer_contract: {"kind":"inequality_union"}
-            solution_sketch: 'The condition is $20+5|s-60|<50$, so $|s-60|<6$. Then $-6<s-60<6$, which gives $54<s<66$ for the allowed scores.'
-          - problem: 'Solve $19\ge 4|x+2|+3$.'
-            answer: '[-6, 2]'
-            answer_contract: {"kind":"inequality_union"}
-            solution_sketch: 'Read the inequality as $4|x+2|+3\le 19$. Then $|x+2|\le 4$, so $-4\le x+2\le 4$ and $-6\le x\le 2$.'
-          - problem: 'Solve $10-2|x+3|\ge 2$.'
-            answer: '[-7, 1]'
-            answer_contract: {"kind":"inequality_union"}
-            solution_sketch: 'Subtract $10$ and divide by $-2$, which reverses the sign: $|x+3|\le 4$. Then $-4\le x+3\le 4$, so $-7\le x\le 1$.'
-          - problem: 'The cost per hour of a machine is $4|t-30|+8$ euros, where $t$ is the temperature in degrees Celsius. For which temperatures is the cost at least $40$ euros?'
-            answer: 't <= 22 or t >= 38'
-            answer_contract: {"kind":"inequality_union"}
-            solution_sketch: 'The condition is $4|t-30|+8\ge 40$, so $|t-30|\ge 8$. Then $t-30\ge 8$ or $t-30\le -8$, which gives $t\ge 38$ or $t\le 22$.'
-          - problem: 'Solve $5|3-x|-2<18$.'
-            answer: '(-1, 7)'
-            answer_contract: {"kind":"inequality_union"}
-            solution_sketch: 'Add $2$ and divide by $5$ to get $|3-x|<4$. Then $-4<3-x<4$, and dividing by $-1$ reverses the signs: $-1<x<7$.'
-        constraints: "isolate the absolute value before splitting into cases"
-    diagnostic_exemplar:
-      problem: 'Solve $2|x - 3| - 1 \le 7$.'
-      answer: '-1 <= x <= 7'
-      solution_sketch: '$2|x - 3| \le 8$; $|x - 3| \le 4$; $-4 \le x - 3 \le 4$.'
-    anki_seeds:
-      - front: "Before splitting an absolute value inequality into cases, first ___."
-        back: "isolate the absolute value expression on one side"
-        type: basic
-
   - id: graphing-linear-inequalities
     name: "Graphing Linear Inequalities"
     core: false
@@ -2305,271 +2390,302 @@ topics:
         back: "1 (or -1) — it avoids fractions"
         type: basic
 
-  - id: elimination-with-addition
-    name: "Elimination by Adding Equations"
-    core: true
-    difficulty: 0.48
-    drill: false
-    answer_kind: multi-step
-    expected_time_secs: 100
-    prerequisites:
-      - id: substitution-with-isolated-variable
-        weight: 0.4
-        key: true
-      - id: integer-addition-subtraction
-        weight: 0.5
-        key: true
-      - id: multi-step-equations
-        weight: 0.3
-    knowledge_points:
-      - id: kp1
-        name: "Add when coefficients are opposites"
-        key_prerequisites: [integer-addition-subtraction]
-        try_first:
-          problem: 'If $x+y=10$ and $x-y=4$, what is $x$?'
-          answer_contract: {"kind":"exact"}
-          answer: '7'
-          reveal: 'Adding the equations cancels $y$: $2x=14$, so $x=7$. When the coefficients of one variable are opposites, adding removes that variable at once.'
-        exemplars:
-          - problem: 'Solve the system $2x+y=17$, $3x-y=13$ by elimination.'
-            answer: '(6, 5)'
-            answer_contract: {"kind":"coordinates","arity":2}
-            solution_sketch: 'The $y$ coefficients $1$ and $-1$ are opposites, so add the equations: $5x=30$ and $x=6$. Then $y=17-12=5$. Check: $2(6)+5=17$ and $3(6)-5=13$.'
-          - problem: 'Solve the system $x+3y=13$, $-x+2y=2$ by elimination.'
-            answer: '(4, 3)'
-            answer_contract: {"kind":"coordinates","arity":2}
-            solution_sketch: 'The $x$ coefficients $1$ and $-1$ are opposites, so add the equations: $5y=15$ and $y=3$. Then $x=13-9=4$. Check: $4+3(3)=13$ and $-4+2(3)=2$.'
-          - problem: 'The sum of two numbers is $19$ and their difference is $5$. What is the larger number?'
-            answer: '12'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Let the numbers be $x$ and $y$, with $x+y=19$ and $x-y=5$. Adding the equations cancels $y$ and gives $2x=24$. The larger number is $12$ and the smaller is $7$.'
-          - problem: 'Solve the system $3x-2y=16$, $x+2y=0$ by elimination.'
-            answer: '(4, -2)'
-            answer_contract: {"kind":"coordinates","arity":2}
-            solution_sketch: 'The $y$ coefficients $-2$ and $2$ are opposites, so add the equations: $4x=16$ and $x=4$. Then $2y=-4$, so $y=-2$. Check: $3(4)-2(-2)=16$.'
-          - problem: 'A boat travels at $18$ km/h with the current and at $10$ km/h against it. What is the speed of the current?'
-            answer: '4'
-            answer_contract: {"kind":"unit","quantity":"speed","unit":"km/h","allow_omitted":true}
-            solution_sketch: 'Let $b$ be the speed of the boat in still water and $c$ the speed of the current. With the current the speeds add, so $b+c=18$, and against it $b-c=10$. Adding the equations cancels $c$ and gives $2b=28$, so $b=14$. Then $c=18-14=4$, so the current runs at $4$ km/h.'
-          - problem: 'Solve the system $-2x-y=1$, $2x+4y=8$ by elimination.'
-            answer: '(-2, 3)'
-            answer_contract: {"kind":"coordinates","arity":2}
-            solution_sketch: 'The $x$ coefficients $-2$ and $2$ are opposites, so add the equations: $3y=9$ and $y=3$. Then $-2x=1+3$, so $x=-2$. Check: $2(-2)+4(3)=8$.'
-          - problem: 'Solve the system $5x+2y=4$, $-5x+3y=-19$ by elimination.'
-            answer: '(2, -3)'
-            answer_contract: {"kind":"coordinates","arity":2}
-            solution_sketch: 'The $x$ coefficients $5$ and $-5$ are opposites, so add the equations: $5y=-15$ and $y=-3$. Then $5x=4+6=10$, so $x=2$. Check: $-5(2)+3(-3)=-19$.'
-        constraints: "coefficients already opposite; integer solutions"
-      - id: kp2
-        name: "Subtract when coefficients are equal"
-        key_prerequisites: [integer-addition-subtraction]
-        exemplars:
-          - problem: 'Solve the system $x+3y=19$, $x+y=9$ by elimination.'
-            answer: '(4, 5)'
-            answer_contract: {"kind":"coordinates","arity":2}
-            solution_sketch: 'The $x$ coefficients are equal, so subtract the second equation from the first: $2y=10$ and $y=5$. Then $x=9-5=4$. Check: $4+3(5)=19$ and $4+5=9$.'
-          - problem: 'Solve the system $4x+y=15$, $x+y=6$ by elimination.'
-            answer: '(3, 3)'
-            answer_contract: {"kind":"coordinates","arity":2}
-            solution_sketch: 'The $y$ coefficients are equal, so subtract the second equation from the first: $3x=9$ and $x=3$. Then $y=6-3=3$. Check: $4(3)+3=15$.'
-          - problem: 'Raj buys $1$ notebook and $4$ pens for $14$ dollars. Lea buys $1$ notebook and $2$ pens for $8$ dollars. How many dollars does one pen cost?'
-            answer: '3'
-            answer_contract: {"kind":"unit","quantity":"dollar","unit":"dollar","allow_omitted":true}
-            solution_sketch: 'Let a notebook cost $x$ and a pen $y$. Subtract Lea''s equation from Raj''s: $2y=6$, so $y=3$. A pen costs $3$ dollars and a notebook costs $8-6=2$ dollars.'
-          - problem: 'Solve the system $2x-3y=17$, $2x+y=5$ by elimination.'
-            answer: '(4, -3)'
-            answer_contract: {"kind":"coordinates","arity":2}
-            solution_sketch: 'The $x$ coefficients are equal, so subtract the second equation from the first: $-4y=12$ and $y=-3$. Then $2x=5+3=8$, so $x=4$. Check: $2(4)-3(-3)=17$.'
-          - problem: 'Three adult tickets and two child tickets cost $21$ dollars. Three adult tickets and one child ticket cost $18$ dollars. How many dollars does one adult ticket cost?'
-            answer: '5'
-            answer_contract: {"kind":"unit","quantity":"dollar","unit":"dollar","allow_omitted":true}
-            solution_sketch: 'Let an adult ticket cost $x$ and a child ticket $y$. Subtract the second equation from the first: $y=3$. Then $3x=18-3=15$, so an adult ticket costs $5$ dollars.'
-          - problem: 'Solve the system $-x+2y=4$, $3x+2y=12$ by elimination.'
-            answer: '(2, 3)'
-            answer_contract: {"kind":"coordinates","arity":2}
-            solution_sketch: 'The $y$ coefficients are equal, so subtract the first equation from the second: $4x=8$ and $x=2$. Then $2y=4+2=6$, so $y=3$. Check: $3(2)+2(3)=12$.'
-          - problem: 'Solve the system $5x+2y=11$, $5x-3y=-4$ by elimination.'
-            answer: '(1, 3)'
-            answer_contract: {"kind":"coordinates","arity":2}
-            solution_sketch: 'The $x$ coefficients are equal, so subtract the second equation from the first: $5y=15$ and $y=3$. Then $5x=11-6=5$, so $x=1$. Check: $5(1)-3(3)=-4$.'
-        constraints: "matching coefficients; subtract carefully"
-      - id: kp3
-        name: "Back-substitute and verify"
-        key_prerequisites: [multi-step-equations]
-        exemplars:
-          - problem: 'Solve the system $2x+y=13$, $x-y=8$ by elimination and check the answer.'
-            answer: '(7, -1)'
-            answer_contract: {"kind":"coordinates","arity":2}
-            solution_sketch: 'The $y$ coefficients are opposites, so add the equations: $3x=21$ and $x=7$. Then $y=7-8=-1$. Check: $2(7)+(-1)=13$ and $7-(-1)=8$.'
-          - problem: 'Solve the system $x+2y=-1$, $-x+3y=16$ by elimination and check the answer.'
-            answer: '(-7, 3)'
-            answer_contract: {"kind":"coordinates","arity":2}
-            solution_sketch: 'The $x$ coefficients are opposites, so add the equations: $5y=15$ and $y=3$. Then $x=-1-6=-7$. Check: $-7+2(3)=-1$ and $-(-7)+3(3)=16$.'
-          - problem: 'The sum of two numbers is $6$ and their difference is $20$. What is the smaller number?'
-            answer: '-7'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Let the numbers be $x$ and $y$, with $x+y=6$ and $x-y=20$. Adding the equations gives $2x=26$, so $x=13$. Then $y=6-13=-7$, the smaller number.'
-          - problem: 'Solve the system $3x-2y=4$, $x+2y=-12$ by elimination and check the answer.'
-            answer: '(-2, -5)'
-            answer_contract: {"kind":"coordinates","arity":2}
-            solution_sketch: 'The $y$ coefficients are opposites, so add the equations: $4x=-8$ and $x=-2$. Then $2y=-12+2=-10$, so $y=-5$. Check: $3(-2)-2(-5)=4$.'
-          - problem: 'Is $(4, 0)$ the solution of $2x+y=8$ and $x-y=1$?'
-            answer: 'no'
-            answer_contract: {"kind": "label", "options": [["yes", "it is", "it is the solution", "yes it is", "is the solution"], ["no", "it is not", "it is not the solution", "no it is not", "not the solution"]]}
-            solution_sketch: 'Check the pair in both equations. In the first, $2(4)+0=8$ holds, but in the second $4-0=4$, not $1$. The pair fails one equation, so it is not the solution. The solution is $(3, 2)$.'
-          - problem: 'The temperatures in two towns add up to $-3$ degrees Celsius and differ by $9$ degrees. What is the lower temperature?'
-            answer: '-6'
-            answer_contract: {"kind":"unit","quantity":"temperature","unit":"°C","allow_omitted":true}
-            solution_sketch: 'Let the warmer town be $x$ and the colder one $y$. Then $x+y=-3$ and $x-y=9$, so adding gives $2x=6$ and $x=3$. The lower temperature is $y=-3-3=-6$ degrees.'
-          - problem: 'Solve $3x+y=11$ and $2x-y=4$ by adding the equations. What is the value of $y$?'
-            answer: '2'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Adding gives $5x=15$, so $x=3$. Then $y$ comes from $3x+y=11$, which gives $9+y=11$. So $y=2$. Check the second equation: $2(3)-2=4$.'
-        constraints: "solutions may include negatives; verify in both equations"
-    diagnostic_exemplar:
-      problem: 'Solve by elimination: $3x + y = 5$ and $x + y = 7$.'
-      answer: '(-1, 8)'
-      solution_sketch: 'Subtract the equations: $2x = -2$, so $x = -1$ and $y = 8$.'
-    anki_seeds:
-      - front: "Eliminate a variable by adding when its coefficients are ___, or subtracting when they are ___."
-        back: "opposites; equal"
-        type: basic
-
   - id: systems-elimination
-    name: "Systems by Elimination"
+    name: Solving Systems by Elimination
     core: true
     difficulty: 0.52
     drill: false
     answer_kind: multi-step
     expected_time_secs: 130
     prerequisites:
-      - id: elimination-with-addition
-        weight: 0.7
-        key: true
-      - id: multi-step-equations
-        weight: 0.4
-        key: true
-      - id: integer-multiplication-division
-        weight: 0.4
-      - id: distributive-property
-        weight: 0.2
+    - id: substitution-with-isolated-variable
+      weight: 0.4
+      key: true
+    - id: integer-addition-subtraction
+      weight: 0.5
+      key: true
+    - id: multi-step-equations
+      weight: 0.4
+      key: true
+    - id: integer-multiplication-division
+      weight: 0.4
+    - id: distributive-property
+      weight: 0.2
     knowledge_points:
-      - id: kp1
-        name: "Scale one equation first"
-        key_prerequisites: [elimination-with-addition]
-        try_first:
-          problem: 'Multiply every term of $x+y=5$ by $2$. What is the right side of the new equation?'
-          answer_contract: {"kind":"exact"}
-          answer: '10'
-          reveal: 'Both sides are multiplied: $2x+2y=10$. The new equation has the same solutions, so scaling is allowed, and it can make coefficients opposite.'
-        exemplars:
-          - problem: 'Solve the system $2x+3y=29$, $x+2y=18$ by elimination.'
-            answer: '(4, 7)'
-            answer_contract: {"kind":"coordinates","arity":2}
-            solution_sketch: 'Multiply the second equation by $-2$ to get $-2x-4y=-36$. Adding it to the first gives $-y=-7$, so $y=7$. Then $x=18-14=4$. Check: $2(4)+3(7)=29$.'
-          - problem: 'Solve the system $3x-2y=23$, $x+y=11$ by elimination.'
-            answer: '(9, 2)'
-            answer_contract: {"kind":"coordinates","arity":2}
-            solution_sketch: 'Multiply the second equation by $2$ to get $2x+2y=22$. Adding it to the first gives $5x=45$, so $x=9$. Then $y=11-9=2$. Check: $3(9)-2(2)=23$.'
-          - problem: 'A zoo sells adult tickets and child tickets. A family with $2$ adults and $3$ children pays $38$ dollars. A group with $1$ adult and $2$ children pays $22$ dollars. How many dollars does one adult ticket cost?'
-            answer: '10'
-            answer_contract: {"kind":"unit","quantity":"dollar","unit":"dollar","allow_omitted":true}
-            solution_sketch: 'Let an adult ticket cost $x$ and a child ticket $y$. Multiply the second equation by $-2$ and add it to the first: $-y=-6$, so $y=6$. Then $x=22-12=10$ dollars.'
-          - problem: 'Solve the system $2x+y=9$, $3x-2y=31$ by elimination.'
-            answer: '(7, -5)'
-            answer_contract: {"kind":"coordinates","arity":2}
-            solution_sketch: 'Multiply the first equation by $2$ to get $4x+2y=18$. Adding it to the second gives $7x=49$, so $x=7$. Then $y=9-14=-5$. Check: $3(7)-2(-5)=31$.'
-          - problem: 'A farm has chickens and cows, $30$ animals in all. Together they have $80$ legs. How many cows are there?'
-            answer: '10'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Let $x$ be the chickens and $y$ the cows. Then $x+y=30$ and $2x+4y=80$. Multiply the first by $-2$ and add: $2y=20$, so there are $10$ cows and $20$ chickens.'
-          - problem: 'Solve the system $4x+3y=-2$, $2x-y=-6$ by elimination.'
-            answer: '(-2, 2)'
-            answer_contract: {"kind":"coordinates","arity":2}
-            solution_sketch: 'Multiply the second equation by $-2$ to get $-4x+2y=12$. Adding it to the first gives $5y=10$, so $y=2$. Then $2x=-6+2=-4$, so $x=-2$.'
-          - problem: 'Solve the system $3x+y=7$, $5x-2y=8$ by elimination.'
-            answer: '(2, 1)'
-            answer_contract: {"kind":"coordinates","arity":2}
-            solution_sketch: 'Multiply the first equation by $2$ to get $6x+2y=14$. Adding it to the second gives $11x=22$, so $x=2$. Then $y=7-6=1$. Check: $5(2)-2(1)=8$.'
-        constraints: "scale to create opposite coefficients; integer solutions"
-      - id: kp2
-        name: "Scale both equations"
-        key_prerequisites: [elimination-with-addition]
-        exemplars:
-          - problem: 'Solve the system $2x+3y=32$, $3x+2y=33$ by elimination.'
-            answer: '(7, 6)'
-            answer_contract: {"kind":"coordinates","arity":2}
-            solution_sketch: 'Multiply the first equation by $3$ and the second by $-2$, then add: $5y=30$, so $y=6$. Then $2x=32-18=14$, so $x=7$. Check: $3(7)+2(6)=33$.'
-          - problem: 'Solve the system $3x-4y=2$, $2x+3y=7$ by elimination.'
-            answer: '(2, 1)'
-            answer_contract: {"kind":"coordinates","arity":2}
-            solution_sketch: 'Multiply the first equation by $2$ and the second by $-3$, then add: $-17y=-17$, so $y=1$. Then $3x=2+4=6$, so $x=2$. Check: $2(2)+3(1)=7$.'
-          - problem: 'Mia buys $2$ kg of apples and $3$ kg of pears for $13$ dollars. Noor buys $3$ kg of apples and $2$ kg of pears for $12$ dollars. How many dollars does $1$ kg of pears cost?'
-            answer: '3'
-            answer_contract: {"kind":"unit","quantity":"dollar","unit":"dollar","allow_omitted":true}
-            solution_sketch: 'Let apples cost $x$ and pears $y$ dollars per kg. Multiply the equations by $3$ and $-2$ and add: $5y=15$, so $y=3$. Then $2x=13-9=4$, so apples cost $2$ dollars.'
-          - problem: 'Solve the system $4x+3y=-17$, $3x-2y=-17$ by elimination.'
-            answer: '(-5, 1)'
-            answer_contract: {"kind":"coordinates","arity":2}
-            solution_sketch: 'Multiply the first equation by $2$ and the second by $3$, then add: $17x=-85$, so $x=-5$. Then $3y=-17+20=3$, so $y=1$. Check: $3(-5)-2(1)=-17$.'
-          - problem: 'A school orders small and large boxes. Each small box holds $4$ pens and $3$ markers. Each large box holds $6$ pens and $5$ markers. The order has $44$ pens and $35$ markers in total. How many large boxes were ordered?'
-            answer: '4'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Let $x$ be the small boxes and $y$ the large boxes. Multiply the equations by $3$ and $-4$ and add: $-2y=-8$, so $y=4$. Then $4x=44-24=20$, so $x=5$.'
-          - problem: 'Solve the system $3(x+y)+2y=47$, $2x-3y=6$ by elimination.'
-            answer: '(9, 4)'
-            answer_contract: {"kind":"coordinates","arity":2}
-            solution_sketch: 'Expand the first equation to $3x+5y=47$. Multiply the equations by $3$ and $5$ and add: $19x=171$, so $x=9$. Then $3y=18-6=12$, so $y=4$.'
-          - problem: 'Solve the system $5x+2y=-11$, $3x+5y=1$ by elimination.'
-            answer: '(-3, 2)'
-            answer_contract: {"kind":"coordinates","arity":2}
-            solution_sketch: 'Multiply the first equation by $5$ and the second by $-2$, then add: $19x=-57$, so $x=-3$. Then $2y=-11+15=4$, so $y=2$. Check: $3(-3)+5(2)=1$.'
-        constraints: "scale both to match one variable; integer solutions"
-      - id: kp3
-        name: "Use a negative multiplier"
-        key_prerequisites: [integer-multiplication-division]
-        exemplars:
-          - problem: 'Solve the system $2x+5y=39$, $4x+3y=43$ by elimination.'
-            answer: '(7, 5)'
-            answer_contract: {"kind":"coordinates","arity":2}
-            solution_sketch: 'Multiply the first equation by $-2$, including its right side, to get $-4x-10y=-78$. Adding gives $-7y=-35$, so $y=5$. Then $2x=39-25=14$, so $x=7$.'
-          - problem: 'Solve the system $3x+2y=35$, $x+4y=35$ by elimination.'
-            answer: '(7, 7)'
-            answer_contract: {"kind":"coordinates","arity":2}
-            solution_sketch: 'Multiply the second equation by $-3$, including its right side, to get $-3x-12y=-105$. Adding gives $-10y=-70$, so $y=7$. Then $x=35-28=7$.'
-          - problem: 'Carlos buys $3$ cups of tea and $4$ cakes for $17$ dollars. Dee buys $1$ cup of tea and $2$ cakes for $7$ dollars. How many dollars does one cake cost?'
-            answer: '2'
-            answer_contract: {"kind":"unit","quantity":"dollar","unit":"dollar","allow_omitted":true}
-            solution_sketch: 'Let tea cost $x$ and a cake $y$. Multiply Dee''s equation by $-3$ to get $-3x-6y=-21$. Adding to Carlos''s equation gives $-2y=-4$, so a cake costs $2$ dollars.'
-          - problem: 'Solve the system $-2x+3y=29$, $-4x+y=23$ by elimination.'
-            answer: '(-4, 7)'
-            answer_contract: {"kind":"coordinates","arity":2}
-            solution_sketch: 'Multiply the first equation by $-2$ to get $4x-6y=-58$. Adding it to the second gives $-5y=-35$, so $y=7$. Then $-2x=29-21=8$, so $x=-4$.'
-          - problem: 'Packs of screws come in two sizes. Three big packs and five small packs hold $49$ screws. Two big packs and three small packs hold $32$ screws. How many screws are in one big pack?'
-            answer: '13'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Let a big pack hold $x$ screws and a small pack $y$. Multiply the equations by $2$ and $-3$ and add: $y=2$. Then $3x=49-10=39$, so a big pack holds $13$ screws.'
-          - problem: 'Solve the system $5x-2y=-9$, $3x-4y=-11$ by elimination.'
-            answer: '(-1, 2)'
-            answer_contract: {"kind":"coordinates","arity":2}
-            solution_sketch: 'Multiply the first equation by $-2$ to get $-10x+4y=18$. Adding the second gives $-7x=7$, so $x=-1$. Then $-2y=-9+5=-4$, so $y=2$.'
-          - problem: 'Solve the system $-3x+2y=-8$, $2x+y=3$ by elimination.'
-            answer: '(2, -1)'
-            answer_contract: {"kind":"coordinates","arity":2}
-            solution_sketch: 'Multiply the second equation by $-2$ to get $-4x-2y=-6$. Adding it to the first gives $-7x=-14$, so $x=2$. Then $y=3-4=-1$. Check: $-3(2)+2(-1)=-8$.'
-          - problem: 'Solve $3x+y=11$ and $x+2y=7$. Multiply the first equation by $-2$ and add the second equation. What is the value of $x$?'
-            answer: '3'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Multiply both sides, including the right side: $-6x-2y=-22$. Adding $x+2y=7$ gives $-5x=-15$, so $x=3$ and $y=2$.'
-        constraints: "negative multipliers turn subtraction into addition"
+    - id: kp1
+      name: Add when coefficients are opposites
+      key_prerequisites:
+      - integer-addition-subtraction
+      try_first:
+        problem: If $x+y=10$ and $x-y=4$, what is $x$?
+        answer_contract:
+          kind: exact
+        answer: '7'
+        reveal: 'Adding the equations cancels $y$: $2x=14$, so $x=7$. When the coefficients of one variable are opposites, adding removes that variable at once.'
+      exemplars:
+      - problem: Solve the system $2x+y=17$, $3x-y=13$ by elimination.
+        answer: (6, 5)
+        answer_contract:
+          kind: coordinates
+          arity: 2
+        solution_sketch: 'The $y$ coefficients $1$ and $-1$ are opposites, so add the equations: $5x=30$ and $x=6$. Then $y=17-12=5$. Check: $2(6)+5=17$ and $3(6)-5=13$.'
+      - problem: Solve the system $x+3y=13$, $-x+2y=2$ by elimination.
+        answer: (4, 3)
+        answer_contract:
+          kind: coordinates
+          arity: 2
+        solution_sketch: 'The $x$ coefficients $1$ and $-1$ are opposites, so add the equations: $5y=15$ and $y=3$. Then $x=13-9=4$. Check: $4+3(3)=13$ and $-4+2(3)=2$.'
+      - problem: The sum of two numbers is $19$ and their difference is $5$. What is the larger number?
+        answer: '12'
+        answer_contract:
+          kind: exact
+        solution_sketch: Let the numbers be $x$ and $y$, with $x+y=19$ and $x-y=5$. Adding the equations cancels $y$ and gives $2x=24$. The larger number is $12$ and the smaller is $7$.
+      - problem: Solve the system $3x-2y=16$, $x+2y=0$ by elimination.
+        answer: (4, -2)
+        answer_contract:
+          kind: coordinates
+          arity: 2
+        solution_sketch: 'The $y$ coefficients $-2$ and $2$ are opposites, so add the equations: $4x=16$ and $x=4$. Then $2y=-4$, so $y=-2$. Check: $3(4)-2(-2)=16$.'
+      - problem: A boat travels at $18$ km/h with the current and at $10$ km/h against it. What is the speed of the current?
+        answer: '4'
+        answer_contract:
+          kind: unit
+          quantity: speed
+          unit: km/h
+          allow_omitted: true
+        solution_sketch: Let $b$ be the speed of the boat in still water and $c$ the speed of the current. With the current the speeds add, so $b+c=18$, and against it $b-c=10$. Adding the equations cancels $c$ and gives $2b=28$, so $b=14$. Then $c=18-14=4$, so the current runs at $4$ km/h.
+      - problem: Solve the system $-2x-y=1$, $2x+4y=8$ by elimination.
+        answer: (-2, 3)
+        answer_contract:
+          kind: coordinates
+          arity: 2
+        solution_sketch: 'The $x$ coefficients $-2$ and $2$ are opposites, so add the equations: $3y=9$ and $y=3$. Then $-2x=1+3$, so $x=-2$. Check: $2(-2)+4(3)=8$.'
+      - problem: Solve the system $5x+2y=4$, $-5x+3y=-19$ by elimination.
+        answer: (2, -3)
+        answer_contract:
+          kind: coordinates
+          arity: 2
+        solution_sketch: 'The $x$ coefficients $5$ and $-5$ are opposites, so add the equations: $5y=-15$ and $y=-3$. Then $5x=4+6=10$, so $x=2$. Check: $-5(2)+3(-3)=-19$.'
+      constraints: coefficients already opposite; integer solutions
+    - id: kp2
+      name: Subtract when coefficients are equal
+      key_prerequisites:
+      - integer-addition-subtraction
+      exemplars:
+      - problem: Solve the system $x+3y=19$, $x+y=9$ by elimination.
+        answer: (4, 5)
+        answer_contract:
+          kind: coordinates
+          arity: 2
+        solution_sketch: 'The $x$ coefficients are equal, so subtract the second equation from the first: $2y=10$ and $y=5$. Then $x=9-5=4$. Check: $4+3(5)=19$ and $4+5=9$.'
+      - problem: Solve the system $4x+y=15$, $x+y=6$ by elimination.
+        answer: (3, 3)
+        answer_contract:
+          kind: coordinates
+          arity: 2
+        solution_sketch: 'The $y$ coefficients are equal, so subtract the second equation from the first: $3x=9$ and $x=3$. Then $y=6-3=3$. Check: $4(3)+3=15$.'
+      - problem: Raj buys $1$ notebook and $4$ pens for $14$ dollars. Lea buys $1$ notebook and $2$ pens for $8$ dollars. How many dollars does one pen cost?
+        answer: '3'
+        answer_contract:
+          kind: unit
+          quantity: dollar
+          unit: dollar
+          allow_omitted: true
+        solution_sketch: 'Let a notebook cost $x$ and a pen $y$. Subtract Lea''s equation from Raj''s: $2y=6$, so $y=3$. A pen costs $3$ dollars and a notebook costs $8-6=2$ dollars.'
+      - problem: Solve the system $2x-3y=17$, $2x+y=5$ by elimination.
+        answer: (4, -3)
+        answer_contract:
+          kind: coordinates
+          arity: 2
+        solution_sketch: 'The $x$ coefficients are equal, so subtract the second equation from the first: $-4y=12$ and $y=-3$. Then $2x=5+3=8$, so $x=4$. Check: $2(4)-3(-3)=17$.'
+      - problem: Three adult tickets and two child tickets cost $21$ dollars. Three adult tickets and one child ticket cost $18$ dollars. How many dollars does one adult ticket cost?
+        answer: '5'
+        answer_contract:
+          kind: unit
+          quantity: dollar
+          unit: dollar
+          allow_omitted: true
+        solution_sketch: 'Let an adult ticket cost $x$ and a child ticket $y$. Subtract the second equation from the first: $y=3$. Then $3x=18-3=15$, so an adult ticket costs $5$ dollars.'
+      - problem: Solve the system $-x+2y=4$, $3x+2y=12$ by elimination.
+        answer: (2, 3)
+        answer_contract:
+          kind: coordinates
+          arity: 2
+        solution_sketch: 'The $y$ coefficients are equal, so subtract the first equation from the second: $4x=8$ and $x=2$. Then $2y=4+2=6$, so $y=3$. Check: $3(2)+2(3)=12$.'
+      - problem: Solve the system $5x+2y=11$, $5x-3y=-4$ by elimination.
+        answer: (1, 3)
+        answer_contract:
+          kind: coordinates
+          arity: 2
+        solution_sketch: 'The $x$ coefficients are equal, so subtract the second equation from the first: $5y=15$ and $y=3$. Then $5x=11-6=5$, so $x=1$. Check: $5(1)-3(3)=-4$.'
+      constraints: matching coefficients; subtract carefully
+    - id: kp3
+      name: Scale one equation first
+      key_prerequisites: []
+      try_first:
+        problem: Multiply every term of $x+y=5$ by $2$. What is the right side of the new equation?
+        answer_contract:
+          kind: exact
+        answer: '10'
+        reveal: 'Both sides are multiplied: $2x+2y=10$. The new equation has the same solutions, so scaling is allowed, and it can make coefficients opposite.'
+      exemplars:
+      - problem: Solve the system $2x+3y=29$, $x+2y=18$ by elimination.
+        answer: (4, 7)
+        answer_contract:
+          kind: coordinates
+          arity: 2
+        solution_sketch: 'Multiply the second equation by $-2$ to get $-2x-4y=-36$. Adding it to the first gives $-y=-7$, so $y=7$. Then $x=18-14=4$. Check: $2(4)+3(7)=29$.'
+      - problem: Solve the system $3x-2y=23$, $x+y=11$ by elimination.
+        answer: (9, 2)
+        answer_contract:
+          kind: coordinates
+          arity: 2
+        solution_sketch: 'Multiply the second equation by $2$ to get $2x+2y=22$. Adding it to the first gives $5x=45$, so $x=9$. Then $y=11-9=2$. Check: $3(9)-2(2)=23$.'
+      - problem: A zoo sells adult tickets and child tickets. A family with $2$ adults and $3$ children pays $38$ dollars. A group with $1$ adult and $2$ children pays $22$ dollars. How many dollars does one adult ticket cost?
+        answer: '10'
+        answer_contract:
+          kind: unit
+          quantity: dollar
+          unit: dollar
+          allow_omitted: true
+        solution_sketch: 'Let an adult ticket cost $x$ and a child ticket $y$. Multiply the second equation by $-2$ and add it to the first: $-y=-6$, so $y=6$. Then $x=22-12=10$ dollars.'
+      - problem: Solve the system $2x+y=9$, $3x-2y=31$ by elimination.
+        answer: (7, -5)
+        answer_contract:
+          kind: coordinates
+          arity: 2
+        solution_sketch: 'Multiply the first equation by $2$ to get $4x+2y=18$. Adding it to the second gives $7x=49$, so $x=7$. Then $y=9-14=-5$. Check: $3(7)-2(-5)=31$.'
+      - problem: A farm has chickens and cows, $30$ animals in all. Together they have $80$ legs. How many cows are there?
+        answer: '10'
+        answer_contract:
+          kind: exact
+        solution_sketch: 'Let $x$ be the chickens and $y$ the cows. Then $x+y=30$ and $2x+4y=80$. Multiply the first by $-2$ and add: $2y=20$, so there are $10$ cows and $20$ chickens.'
+      - problem: Solve the system $4x+3y=-2$, $2x-y=-6$ by elimination.
+        answer: (-2, 2)
+        answer_contract:
+          kind: coordinates
+          arity: 2
+        solution_sketch: Multiply the second equation by $-2$ to get $-4x+2y=12$. Adding it to the first gives $5y=10$, so $y=2$. Then $2x=-6+2=-4$, so $x=-2$.
+      - problem: Solve the system $3x+y=7$, $5x-2y=8$ by elimination.
+        answer: (2, 1)
+        answer_contract:
+          kind: coordinates
+          arity: 2
+        solution_sketch: 'Multiply the first equation by $2$ to get $6x+2y=14$. Adding it to the second gives $11x=22$, so $x=2$. Then $y=7-6=1$. Check: $5(2)-2(1)=8$.'
+      constraints: scale to create opposite coefficients; integer solutions
+    - id: kp4
+      name: Scale both equations
+      key_prerequisites: []
+      exemplars:
+      - problem: Solve the system $2x+3y=32$, $3x+2y=33$ by elimination.
+        answer: (7, 6)
+        answer_contract:
+          kind: coordinates
+          arity: 2
+        solution_sketch: 'Multiply the first equation by $3$ and the second by $-2$, then add: $5y=30$, so $y=6$. Then $2x=32-18=14$, so $x=7$. Check: $3(7)+2(6)=33$.'
+      - problem: Solve the system $3x-4y=2$, $2x+3y=7$ by elimination.
+        answer: (2, 1)
+        answer_contract:
+          kind: coordinates
+          arity: 2
+        solution_sketch: 'Multiply the first equation by $2$ and the second by $-3$, then add: $-17y=-17$, so $y=1$. Then $3x=2+4=6$, so $x=2$. Check: $2(2)+3(1)=7$.'
+      - problem: Mia buys $2$ kg of apples and $3$ kg of pears for $13$ dollars. Noor buys $3$ kg of apples and $2$ kg of pears for $12$ dollars. How many dollars does $1$ kg of pears cost?
+        answer: '3'
+        answer_contract:
+          kind: unit
+          quantity: dollar
+          unit: dollar
+          allow_omitted: true
+        solution_sketch: 'Let apples cost $x$ and pears $y$ dollars per kg. Multiply the equations by $3$ and $-2$ and add: $5y=15$, so $y=3$. Then $2x=13-9=4$, so apples cost $2$ dollars.'
+      - problem: Solve the system $4x+3y=-17$, $3x-2y=-17$ by elimination.
+        answer: (-5, 1)
+        answer_contract:
+          kind: coordinates
+          arity: 2
+        solution_sketch: 'Multiply the first equation by $2$ and the second by $3$, then add: $17x=-85$, so $x=-5$. Then $3y=-17+20=3$, so $y=1$. Check: $3(-5)-2(1)=-17$.'
+      - problem: A school orders small and large boxes. Each small box holds $4$ pens and $3$ markers. Each large box holds $6$ pens and $5$ markers. The order has $44$ pens and $35$ markers in total. How many large boxes were ordered?
+        answer: '4'
+        answer_contract:
+          kind: exact
+        solution_sketch: 'Let $x$ be the small boxes and $y$ the large boxes. Multiply the equations by $3$ and $-4$ and add: $-2y=-8$, so $y=4$. Then $4x=44-24=20$, so $x=5$.'
+      - problem: Solve the system $3(x+y)+2y=47$, $2x-3y=6$ by elimination.
+        answer: (9, 4)
+        answer_contract:
+          kind: coordinates
+          arity: 2
+        solution_sketch: 'Expand the first equation to $3x+5y=47$. Multiply the equations by $3$ and $5$ and add: $19x=171$, so $x=9$. Then $3y=18-6=12$, so $y=4$.'
+      - problem: Solve the system $5x+2y=-11$, $3x+5y=1$ by elimination.
+        answer: (-3, 2)
+        answer_contract:
+          kind: coordinates
+          arity: 2
+        solution_sketch: 'Multiply the first equation by $5$ and the second by $-2$, then add: $19x=-57$, so $x=-3$. Then $2y=-11+15=4$, so $y=2$. Check: $3(-3)+5(2)=1$.'
+      constraints: scale both to match one variable; integer solutions
+    - id: kp5
+      name: Use a negative multiplier
+      key_prerequisites:
+      - integer-multiplication-division
+      exemplars:
+      - problem: Solve the system $2x+5y=39$, $4x+3y=43$ by elimination.
+        answer: (7, 5)
+        answer_contract:
+          kind: coordinates
+          arity: 2
+        solution_sketch: Multiply the first equation by $-2$, including its right side, to get $-4x-10y=-78$. Adding gives $-7y=-35$, so $y=5$. Then $2x=39-25=14$, so $x=7$.
+      - problem: Solve the system $3x+2y=35$, $x+4y=35$ by elimination.
+        answer: (7, 7)
+        answer_contract:
+          kind: coordinates
+          arity: 2
+        solution_sketch: Multiply the second equation by $-3$, including its right side, to get $-3x-12y=-105$. Adding gives $-10y=-70$, so $y=7$. Then $x=35-28=7$.
+      - problem: Carlos buys $3$ cups of tea and $4$ cakes for $17$ dollars. Dee buys $1$ cup of tea and $2$ cakes for $7$ dollars. How many dollars does one cake cost?
+        answer: '2'
+        answer_contract:
+          kind: unit
+          quantity: dollar
+          unit: dollar
+          allow_omitted: true
+        solution_sketch: Let tea cost $x$ and a cake $y$. Multiply Dee's equation by $-3$ to get $-3x-6y=-21$. Adding to Carlos's equation gives $-2y=-4$, so a cake costs $2$ dollars.
+      - problem: Solve the system $-2x+3y=29$, $-4x+y=23$ by elimination.
+        answer: (-4, 7)
+        answer_contract:
+          kind: coordinates
+          arity: 2
+        solution_sketch: Multiply the first equation by $-2$ to get $4x-6y=-58$. Adding it to the second gives $-5y=-35$, so $y=7$. Then $-2x=29-21=8$, so $x=-4$.
+      - problem: Packs of screws come in two sizes. Three big packs and five small packs hold $49$ screws. Two big packs and three small packs hold $32$ screws. How many screws are in one big pack?
+        answer: '13'
+        answer_contract:
+          kind: exact
+        solution_sketch: 'Let a big pack hold $x$ screws and a small pack $y$. Multiply the equations by $2$ and $-3$ and add: $y=2$. Then $3x=49-10=39$, so a big pack holds $13$ screws.'
+      - problem: Solve the system $5x-2y=-9$, $3x-4y=-11$ by elimination.
+        answer: (-1, 2)
+        answer_contract:
+          kind: coordinates
+          arity: 2
+        solution_sketch: Multiply the first equation by $-2$ to get $-10x+4y=18$. Adding the second gives $-7x=7$, so $x=-1$. Then $-2y=-9+5=-4$, so $y=2$.
+      - problem: Solve the system $-3x+2y=-8$, $2x+y=3$ by elimination.
+        answer: (2, -1)
+        answer_contract:
+          kind: coordinates
+          arity: 2
+        solution_sketch: 'Multiply the second equation by $-2$ to get $-4x-2y=-6$. Adding it to the first gives $-7x=-14$, so $x=2$. Then $y=3-4=-1$. Check: $-3(2)+2(-1)=-8$.'
+      - problem: Solve $3x+y=11$ and $x+2y=7$. Multiply the first equation by $-2$ and add the second equation. What is the value of $x$?
+        answer: '3'
+        answer_contract:
+          kind: exact
+        solution_sketch: 'Multiply both sides, including the right side: $-6x-2y=-22$. Adding $x+2y=7$ gives $-5x=-15$, so $x=3$ and $y=2$.'
+      constraints: negative multipliers turn subtraction into addition
     diagnostic_exemplar:
       problem: 'Solve the system by elimination: $3x + 2y = 12$ and $2x + 3y = 13$.'
-      answer: '(2, 3)'
+      answer: (2, 3)
       solution_sketch: 'Scale both: $9x + 6y = 36$ and $4x + 6y = 26$; subtract: $5x = 10$.'
     anki_seeds:
-      - front: "Elimination method for a system of equations:"
-        back: "scale one or both equations so a variable's coefficients are opposites, add to eliminate it, solve, then back-substitute"
-        type: basic
+    - front: Eliminate a variable by adding when its coefficients are ___, or subtracting when they are ___.
+      back: opposites; equal
+      type: basic
+    - front: 'Elimination method for a system of equations:'
+      back: scale one or both equations so a variable's coefficients are opposites, add to eliminate it, solve, then back-substitute
+      type: basic
 
   - id: systems-special-cases
     name: "Systems with No or Infinitely Many Solutions"

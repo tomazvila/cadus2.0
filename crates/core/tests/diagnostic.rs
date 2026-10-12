@@ -224,14 +224,38 @@ fn a_correct_answer_credits_the_topic_and_every_ancestor() {
 
 #[test]
 fn an_incorrect_answer_debits_the_topic_and_every_descendant() {
+    // A miss debits the asked topic in full and each descendant by half
+    // (`MISS_DESCENDANT_SHARE`).
     let graph = chain();
     let cfg = Config::default();
     let mut state = state_over(&["a", "b", "c", "d"]);
     apply_answer(&mut state, &graph, "b", false, 1.0, &cfg);
     assert_eq!(state.balances["a"], 0.0);
     assert_eq!(state.balances["b"], -1.0);
-    assert_eq!(state.balances["c"], -1.0);
+    assert_eq!(state.balances["c"], -0.5);
+    assert_eq!(state.balances["d"], -0.5);
+}
+
+#[test]
+fn one_miss_leaves_the_region_above_undetermined_and_a_second_settles_it() {
+    let graph = chain();
+    let cfg = Config::default();
+    let mut state = state_over(&["a", "b", "c", "d"]);
+    apply_answer(&mut state, &graph, "b", false, 1.0, &cfg);
+    assert_eq!(state.balances["c"], -0.5);
+    assert_eq!(state.balances["d"], -0.5);
+    let open = undetermined_set(&state);
+    assert!(open.contains("c"));
+    assert!(open.contains("d"));
+    // The diagnostic goes on: a probe is left, and the root `a` wins the tie
+    // on the lowest id while `c` and `d` stay open behind it.
+    let next = next_probe(&state, &graph, &cfg).expect("a probe is left");
+    assert!(next == "a" || next == "c" || next == "d");
+
+    apply_answer(&mut state, &graph, "c", false, 1.0, &cfg);
+    assert_eq!(state.balances["c"], -1.5);
     assert_eq!(state.balances["d"], -1.0);
+    assert!(!undetermined_set(&state).contains("d"));
 }
 
 #[test]

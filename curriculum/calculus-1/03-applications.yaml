@@ -2493,153 +2493,292 @@ topics:
 
   - id: marginal-analysis
     name: Marginal Cost and Revenue
-    core: false                # named economics application of the derivative
+    core: false
     difficulty: 0.55
     drill: false
     answer_kind: numeric
     expected_time_secs: 150
     prerequisites:
-      - id: derivative-power-rule
-        weight: 0.7
-        key: true
-      - id: average-instantaneous-rate
-        weight: 0.5
-        key: true
-      - id: evaluating-polynomials
-        weight: 0.3
+    - id: derivative-power-rule
+      weight: 0.7
+      key: true
+    - id: average-instantaneous-rate
+      weight: 0.5
+      key: true
+    - id: evaluating-functions
+      weight: 0.3
     knowledge_points:
-      - id: kp1
-        name: 'Marginal cost and revenue as derivatives'
-        key_prerequisites: [derivative-power-rule]
-        exemplars:
-          - problem: 'The cost of producing $x$ items is $C(x) = \frac{x^2}{10} + 40x + 1000$ dollars. Find the marginal cost at $x = 50$, in dollars per item.'
-            answer: '50'
-            answer_contract: {"kind":"unit","quantity":"dollar","unit":"dollar","allow_omitted":true}
-            solution_sketch: 'The marginal cost is the derivative $C''(x) = \frac{x}{5} + 40$. At $x = 50$ this is $10 + 40 = 50$, so the marginal cost is $50$ dollars per item.'
-          - problem: 'The revenue from selling $x$ items is $R(x) = 500x - \frac{x^2}{2}$ dollars. Find the marginal revenue at $x = 200$, in dollars per item.'
-            answer: '300'
-            answer_contract: {"kind":"unit","quantity":"dollar","unit":"dollar","allow_omitted":true}
-            solution_sketch: 'The marginal revenue is the derivative $R''(x) = 500 - x$. At $x = 200$ this is $500 - 200 = 300$, so the marginal revenue is $300$ dollars per item.'
-          - problem: 'The cost of making $x$ helmets is $C(x) = 3x^2 + 20x + 500$ dollars. Find the marginal cost function $C''(x)$.'
-            answer: '6x + 20'
-            answer_contract: {"kind":"function","vars":["x"]}
-            solution_sketch: 'Differentiate term by term: the derivative of $3x^2$ is $6x$, of $20x$ is $20$, and of the constant $500$ is $0$. So $C''(x) = 6x + 20$.'
-          - problem: 'A shop sells $x$ scarves a week at the price $p = 60 - 0.2x$ dollars each, so the revenue is $R(x) = xp$. Find the marginal revenue at $x = 100$, in dollars per scarf.'
-            answer: '20'
-            answer_contract: {"kind":"unit","quantity":"dollar","unit":"dollar","allow_omitted":true}
-            solution_sketch: 'The revenue is $R(x) = x(60 - 0.2x) = 60x - 0.2x^2$, so $R''(x) = 60 - 0.4x$. At $x = 100$ this is $60 - 40 = 20$ dollars per scarf.'
-          - problem: 'The cost of producing $x$ chairs is $C(x) = \frac{x^2}{10} + 40x + 1000$ dollars. What is the average cost per chair when $50$ chairs are produced?'
-            answer: '65'
-            answer_contract: {"kind":"unit","quantity":"dollar","unit":"dollar","allow_omitted":true}
-            solution_sketch: 'The average cost is the total cost divided by the number of chairs. The total cost is $C(50) = 250 + 2000 + 1000 = 3250$ dollars, and $3250 \div 50 = 65$ dollars per chair.'
-          - problem: 'The revenue from selling $x$ items is $R(x) = 80x - \frac{x^2}{4}$ dollars. At what production level $x$ is the marginal revenue $50$ dollars per item?'
-            answer: '60'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The marginal revenue is $R''(x) = 80 - \frac{x}{2}$. Set $80 - \frac{x}{2} = 50$, so $\frac{x}{2} = 30$ and $x = 60$ items.'
-          - problem: 'The revenue from selling $x$ items is $R(x) = 600x - 2x^2$ dollars. At $x = 200$, does selling one more item raise or lower the revenue?'
-            answer: 'lower'
-            answer_contract: {"kind":"label","options":[["lower","it lowers","lowers","lower the revenue","it lowers the revenue","decrease","decreases","it decreases"],["raise","it raises","raises","raise the revenue","it raises the revenue","increase","increases","it increases"]]}
-            solution_sketch: 'The marginal revenue is $R''(x) = 600 - 4x$, which at $x = 200$ is $600 - 800 = -200$. A negative marginal revenue means that one more item lowers the revenue.'
-          - problem: 'The cost of $x$ items is $C(x) = \frac{x^2}{4} + 20x + 400$ dollars. What is the marginal cost at $x = 20$?'
-            answer: '30'
-            answer_contract: {"kind":"unit","quantity":"dollar","unit":"dollar","allow_omitted":true}
-            solution_sketch: 'The average cost is $C(20)/20 = 900/20 = 45$, which is not the marginal cost. The marginal cost is the derivative $C''(x) = \frac{x}{2} + 20$, and $C''(20) = 10 + 20 = 30$ dollars per item.'
-        constraints: 'quadratic cost and revenue; marginal value at a point, marginal function, average cost, direction of change; units in the question'
-      - id: kp2
-        name: 'Marginal value vs actual change'
-        key_prerequisites: [derivative-power-rule, average-instantaneous-rate]
-        try_first:
-          problem: 'Let $C(x) = x^2 + 10x$. What is $C(11) - C(10)$?'
-          answer_contract: {"kind":"exact"}
-          answer: '31'
-          reveal: 'The slope of $C$ at $x = 10$ is $C''(10) = 30$, while the true step from $10$ to $11$ items is $31$. The two numbers are close but not equal, and this lesson explains why.'
-        exemplars:
-          - problem: 'The cost of producing $x$ items is $C(x) = \frac{x^2}{20} + 15x + 400$ dollars. Find the actual cost of the 41st item, $C(41) - C(40)$.'
-            answer: '19.05'
-            answer_contract: {"kind":"unit","quantity":"dollar","unit":"dollar","allow_omitted":true}
-            solution_sketch: 'Subtract the two costs: $C(41) - C(40) = \frac{1681 - 1600}{20} + 15 = 4.05 + 15 = 19.05$. The 41st item costs $19.05$ dollars, a little more than the marginal cost $C''(40) = 19$.'
-          - problem: 'The cost of making $x$ items is $C(x) = \frac{x^2}{2} + 5x + 100$ dollars. Is the actual cost of the 11th item, $C(11) - C(10)$, larger or smaller than the marginal cost $C''(10)$, and by how much?'
-            answer: 'verdict = larger; amount = 1/2'
-            answer_contract: {"kind":"multipart","parts":[{"contract":{"kind":"label","options":[["larger","it is larger","bigger","more"],["smaller","it is smaller","less"]]},"name":"verdict"},{"contract":{"kind":"exact"},"name":"amount"}]}
-            solution_sketch: 'The marginal cost is $C''(x) = x + 5$, so $C''(10) = 15$. The actual cost is $C(11) - C(10) = \frac{121 - 100}{2} + 5 = \frac{31}{2}$, which is larger by $\frac{31}{2} - 15 = \frac{1}{2}$ dollar.'
-          - problem: 'The revenue from selling $x$ units is $R(x) = 150x - \frac{x^2}{5}$ dollars. Use the marginal revenue $R''(30)$ to estimate the extra revenue from selling the 31st unit.'
-            answer: '138'
-            answer_contract: {"kind":"unit","quantity":"dollar","unit":"dollar","allow_omitted":true}
-            solution_sketch: 'The marginal revenue is $R''(x) = 150 - \frac{2x}{5}$. At $x = 30$ this is $150 - 12 = 138$, so the estimate for the 31st unit is $138$ dollars.'
-          - problem: 'The cost of producing $x$ items is $C(x) = \frac{x^2}{20} + 30x + 500$ dollars. A manager has $170$ dollars to spend on extra production beyond $x = 40$ items. Use the marginal cost at $x = 40$ to estimate how many more items this money pays for.'
-            answer: '5'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The marginal cost is $C''(x) = \frac{x}{10} + 30$, so $C''(40) = 34$ dollars per item. The money pays for $170 \div 34 = 5$ more items.'
-          - problem: 'The cost of making $x$ items is $C(x) = 0.01x^3 + 0.5x^2 + 20x + 100$ dollars. Find the actual cost of the 11th item, $C(11) - C(10)$.'
-            answer: '33.81'
-            answer_contract: {"kind":"unit","quantity":"dollar","unit":"dollar","allow_omitted":true}
-            solution_sketch: 'Compute the two costs: $C(11) = 13.31 + 60.5 + 220 + 100 = 393.81$ and $C(10) = 10 + 50 + 200 + 100 = 360$. The difference is $393.81 - 360 = 33.81$ dollars.'
-          - problem: 'The profit from selling $x$ items is $P(x) = -0.03x^2 + 50x - 200$ dollars. Use the marginal profit $P''(100)$ to estimate the extra profit from the 101st item.'
-            answer: '44'
-            answer_contract: {"kind":"unit","quantity":"dollar","unit":"dollar","allow_omitted":true}
-            solution_sketch: 'The marginal profit is $P''(x) = -0.06x + 50$. At $x = 100$ this is $-6 + 50 = 44$, so the 101st item adds about $44$ dollars of profit.'
-          - problem: 'The cost of $x$ items is $C(x) = \frac{x^2}{25} + 10x + 250$ dollars. What is the actual cost of the 26th item, $C(26) - C(25)$?'
-            answer: '12.04'
-            answer_contract: {"kind":"unit","quantity":"dollar","unit":"dollar","allow_omitted":true}
-            solution_sketch: 'The marginal cost $C''(25) = 12$ is a slope. The actual cost is $C(26) - C(25) = \frac{676 - 625}{25} + 10 = 2.04 + 10 = 12.04$ dollars, so the two values are not equal.'
-          - problem: 'For $R(x) = 150x - \frac{x^2}{5}$ dollars, is the estimate $R''(30)$ of the revenue from the 31st unit too high or too low?'
-            answer: 'too high'
-            answer_contract: {"kind":"label","options":[["too high","high","it is too high","too large","overestimate","an overestimate"],["too low","low","it is too low","too small","underestimate","an underestimate"]]}
-            solution_sketch: 'The estimate is $R''(30) = 138$. The actual revenue is $R(31) - R(30) = 150 - \frac{961 - 900}{5} = 137.8$, so the estimate of $138$ is too high.'
-        constraints: 'quadratic and cubic cost, revenue and profit; actual change C(a+1) - C(a) next to the marginal value; estimate and direction of the error; units in the question'
-      - id: kp3
-        name: 'Maximize profit with marginals'
-        key_prerequisites: [derivative-power-rule, evaluating-polynomials]
-        exemplars:
-          - problem: 'A firm sells each item at a fixed price, so its revenue is $R(x) = 240x$ dollars, and its cost is $C(x) = x^2 + 60x + 1500$ dollars. How many items maximize the profit $P = R - C$?'
-            answer: '90'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The profit is $P(x) = 240x - (x^2 + 60x + 1500) = -x^2 + 180x - 1500$. Set $P''(x) = -2x + 180 = 0$ to get $x = 90$; since $P''''(x) = -2 < 0$, this is a maximum.'
-          - problem: 'A company has revenue $R(x) = 180x$ and cost $C(x) = x^2 + 40x + 900$, both in dollars. What is the maximum profit $P = R - C$?'
-            answer: '4000'
-            answer_contract: {"kind":"unit","quantity":"dollar","unit":"dollar","allow_omitted":true}
-            solution_sketch: 'The profit is $P(x) = -x^2 + 140x - 900$, and $P''(x) = -2x + 140 = 0$ gives $x = 70$. The maximum profit is $P(70) = -4900 + 9800 - 900 = 4000$ dollars.'
-          - problem: 'A firm has revenue $R(x) = 500x$ and cost $C(x) = x^2 + 80x + 2000$, both in dollars. At what quantity $x$ is the marginal revenue equal to the marginal cost?'
-            answer: '210'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The marginal revenue is $R''(x) = 500$ and the marginal cost is $C''(x) = 2x + 80$. Set $500 = 2x + 80$, so $2x = 420$ and $x = 210$.'
-          - problem: 'The profit from selling $x$ lamps is $P(x) = -2x^2 + 200x - 1800$ dollars. What is the maximum profit?'
-            answer: '3200'
-            answer_contract: {"kind":"unit","quantity":"dollar","unit":"dollar","allow_omitted":true}
-            solution_sketch: 'Set $P''(x) = -4x + 200 = 0$, so $x = 50$ lamps. Since $P''''(x) = -4 < 0$ this is a maximum, and $P(50) = -5000 + 10000 - 1800 = 3200$ dollars.'
-          - problem: 'A theatre sells $x$ tickets at the price $p = 100 - 0.5x$ dollars each, and its cost is $C(x) = 20x + 500$ dollars. How many tickets should it sell to maximize its profit?'
-            answer: '80'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The revenue is $R(x) = xp = 100x - 0.5x^2$, so the profit is $P(x) = 80x - 0.5x^2 - 500$. Set $P''(x) = 80 - x = 0$ to get $x = 80$ tickets.'
-          - problem: 'A firm has revenue $R(x) = 300x$ and cost $C(x) = 2x^2 + 60x + 1200$, both in dollars, and it now makes $70$ items. To raise its profit, should it make more items or fewer?'
-            answer: 'fewer'
-            answer_contract: {"kind":"label","options":[["fewer","make fewer","fewer items","make fewer items","it should make fewer items","decrease","less"],["more","make more","more items","make more items","it should make more items","increase"]]}
-            solution_sketch: 'At $x = 70$ the marginal revenue is $R''(70) = 300$ and the marginal cost is $C''(70) = 4(70) + 60 = 340$. The next item costs more than it earns, so the firm should make fewer items.'
-          - problem: 'A firm has revenue $R(x) = 150x$ and cost $C(x) = x^2 + 30x + 1200$, both in dollars. What is the profit per item at the quantity that maximizes the profit?'
-            answer: '40'
-            answer_contract: {"kind":"unit","quantity":"dollar","unit":"dollar","allow_omitted":true}
-            solution_sketch: 'The profit is $P(x) = -x^2 + 120x - 1200$, and $P''(x) = -2x + 120 = 0$ gives $x = 60$. The maximum profit is $P(60) = 2400$ dollars, so the profit per item is $2400 \div 60 = 40$ dollars.'
-          - problem: 'What quantity maximizes profit for $R(x) = 420x$ and $C(x) = 3x^2 + 60x + 900$ dollars?'
-            answer: '60'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The smallest cost is not the goal. The best quantity is where the marginal revenue equals the marginal cost. Set $420 = 6x + 60$, so $6x = 360$ and $x = 60$.'
-          - problem: 'A bakery''s profit from $x$ cakes is $P(x) = -x^2 + 120x - 2000$ dollars. How many cakes maximize the profit, and what is the maximum profit?'
-            answer: 'x = 60; P = 1600'
-            answer_contract: {"kind":"multipart","parts":[{"contract":{"kind":"exact"},"name":"x"},{"contract":{"kind":"exact"},"name":"P"}]}
-            solution_sketch: 'Set $P''(x) = -2x + 120 = 0$, so $x = 60$ cakes. Since $P''''(x) = -2 < 0$ this is a maximum, and $P(60) = -3600 + 7200 - 2000 = 1600$ dollars.'
-        constraints: 'quadratic profit with an integer vertex; marginal revenue equal to marginal cost; direction decision; profit per item; units in the question'
+    - id: kp1
+      name: Marginal cost and revenue as derivatives
+      key_prerequisites:
+      - derivative-power-rule
+      exemplars:
+      - problem: The cost of producing $x$ items is $C(x) = \frac{x^2}{10} + 40x + 1000$ dollars. Find the marginal cost at $x = 50$, in dollars per item.
+        answer: '50'
+        answer_contract:
+          kind: unit
+          quantity: dollar
+          unit: dollar
+          allow_omitted: true
+        solution_sketch: The marginal cost is the derivative $C'(x) = \frac{x}{5} + 40$. At $x = 50$ this is $10 + 40 = 50$, so the marginal cost is $50$ dollars per item.
+      - problem: The revenue from selling $x$ items is $R(x) = 500x - \frac{x^2}{2}$ dollars. Find the marginal revenue at $x = 200$, in dollars per item.
+        answer: '300'
+        answer_contract:
+          kind: unit
+          quantity: dollar
+          unit: dollar
+          allow_omitted: true
+        solution_sketch: The marginal revenue is the derivative $R'(x) = 500 - x$. At $x = 200$ this is $500 - 200 = 300$, so the marginal revenue is $300$ dollars per item.
+      - problem: The cost of making $x$ helmets is $C(x) = 3x^2 + 20x + 500$ dollars. Find the marginal cost function $C'(x)$.
+        answer: 6x + 20
+        answer_contract:
+          kind: function
+          vars:
+          - x
+        solution_sketch: 'Differentiate term by term: the derivative of $3x^2$ is $6x$, of $20x$ is $20$, and of the constant $500$ is $0$. So $C''(x) = 6x + 20$.'
+      - problem: A shop sells $x$ scarves a week at the price $p = 60 - 0.2x$ dollars each, so the revenue is $R(x) = xp$. Find the marginal revenue at $x = 100$, in dollars per scarf.
+        answer: '20'
+        answer_contract:
+          kind: unit
+          quantity: dollar
+          unit: dollar
+          allow_omitted: true
+        solution_sketch: The revenue is $R(x) = x(60 - 0.2x) = 60x - 0.2x^2$, so $R'(x) = 60 - 0.4x$. At $x = 100$ this is $60 - 40 = 20$ dollars per scarf.
+      - problem: The cost of producing $x$ chairs is $C(x) = \frac{x^2}{10} + 40x + 1000$ dollars. What is the average cost per chair when $50$ chairs are produced?
+        answer: '65'
+        answer_contract:
+          kind: unit
+          quantity: dollar
+          unit: dollar
+          allow_omitted: true
+        solution_sketch: The average cost is the total cost divided by the number of chairs. The total cost is $C(50) = 250 + 2000 + 1000 = 3250$ dollars, and $3250 \div 50 = 65$ dollars per chair.
+      - problem: The revenue from selling $x$ items is $R(x) = 80x - \frac{x^2}{4}$ dollars. At what production level $x$ is the marginal revenue $50$ dollars per item?
+        answer: '60'
+        answer_contract:
+          kind: exact
+        solution_sketch: The marginal revenue is $R'(x) = 80 - \frac{x}{2}$. Set $80 - \frac{x}{2} = 50$, so $\frac{x}{2} = 30$ and $x = 60$ items.
+      - problem: The revenue from selling $x$ items is $R(x) = 600x - 2x^2$ dollars. At $x = 200$, does selling one more item raise or lower the revenue?
+        answer: lower
+        answer_contract:
+          kind: label
+          options:
+          - - lower
+            - it lowers
+            - lowers
+            - lower the revenue
+            - it lowers the revenue
+            - decrease
+            - decreases
+            - it decreases
+          - - raise
+            - it raises
+            - raises
+            - raise the revenue
+            - it raises the revenue
+            - increase
+            - increases
+            - it increases
+        solution_sketch: The marginal revenue is $R'(x) = 600 - 4x$, which at $x = 200$ is $600 - 800 = -200$. A negative marginal revenue means that one more item lowers the revenue.
+      - problem: The cost of $x$ items is $C(x) = \frac{x^2}{4} + 20x + 400$ dollars. What is the marginal cost at $x = 20$?
+        answer: '30'
+        answer_contract:
+          kind: unit
+          quantity: dollar
+          unit: dollar
+          allow_omitted: true
+        solution_sketch: The average cost is $C(20)/20 = 900/20 = 45$, which is not the marginal cost. The marginal cost is the derivative $C'(x) = \frac{x}{2} + 20$, and $C'(20) = 10 + 20 = 30$ dollars per item.
+      constraints: quadratic cost and revenue; marginal value at a point, marginal function, average cost, direction of change; units in the question
+    - id: kp2
+      name: Marginal value vs actual change
+      key_prerequisites:
+      - derivative-power-rule
+      - average-instantaneous-rate
+      try_first:
+        problem: Let $C(x) = x^2 + 10x$. What is $C(11) - C(10)$?
+        answer_contract:
+          kind: exact
+        answer: '31'
+        reveal: The slope of $C$ at $x = 10$ is $C'(10) = 30$, while the true step from $10$ to $11$ items is $31$. The two numbers are close but not equal, and this lesson explains why.
+      exemplars:
+      - problem: The cost of producing $x$ items is $C(x) = \frac{x^2}{20} + 15x + 400$ dollars. Find the actual cost of the 41st item, $C(41) - C(40)$.
+        answer: '19.05'
+        answer_contract:
+          kind: unit
+          quantity: dollar
+          unit: dollar
+          allow_omitted: true
+        solution_sketch: 'Subtract the two costs: $C(41) - C(40) = \frac{1681 - 1600}{20} + 15 = 4.05 + 15 = 19.05$. The 41st item costs $19.05$ dollars, a little more than the marginal cost $C''(40) = 19$.'
+      - problem: The cost of making $x$ items is $C(x) = \frac{x^2}{2} + 5x + 100$ dollars. Is the actual cost of the 11th item, $C(11) - C(10)$, larger or smaller than the marginal cost $C'(10)$, and by how much?
+        answer: verdict = larger; amount = 1/2
+        answer_contract:
+          kind: multipart
+          parts:
+          - contract:
+              kind: label
+              options:
+              - - larger
+                - it is larger
+                - bigger
+                - more
+              - - smaller
+                - it is smaller
+                - less
+            name: verdict
+          - contract:
+              kind: exact
+            name: amount
+        solution_sketch: The marginal cost is $C'(x) = x + 5$, so $C'(10) = 15$. The actual cost is $C(11) - C(10) = \frac{121 - 100}{2} + 5 = \frac{31}{2}$, which is larger by $\frac{31}{2} - 15 = \frac{1}{2}$ dollar.
+      - problem: The revenue from selling $x$ units is $R(x) = 150x - \frac{x^2}{5}$ dollars. Use the marginal revenue $R'(30)$ to estimate the extra revenue from selling the 31st unit.
+        answer: '138'
+        answer_contract:
+          kind: unit
+          quantity: dollar
+          unit: dollar
+          allow_omitted: true
+        solution_sketch: The marginal revenue is $R'(x) = 150 - \frac{2x}{5}$. At $x = 30$ this is $150 - 12 = 138$, so the estimate for the 31st unit is $138$ dollars.
+      - problem: The cost of producing $x$ items is $C(x) = \frac{x^2}{20} + 30x + 500$ dollars. A manager has $170$ dollars to spend on extra production beyond $x = 40$ items. Use the marginal cost at $x = 40$ to estimate how many more items this money pays for.
+        answer: '5'
+        answer_contract:
+          kind: exact
+        solution_sketch: The marginal cost is $C'(x) = \frac{x}{10} + 30$, so $C'(40) = 34$ dollars per item. The money pays for $170 \div 34 = 5$ more items.
+      - problem: The cost of making $x$ items is $C(x) = 0.01x^3 + 0.5x^2 + 20x + 100$ dollars. Find the actual cost of the 11th item, $C(11) - C(10)$.
+        answer: '33.81'
+        answer_contract:
+          kind: unit
+          quantity: dollar
+          unit: dollar
+          allow_omitted: true
+        solution_sketch: 'Compute the two costs: $C(11) = 13.31 + 60.5 + 220 + 100 = 393.81$ and $C(10) = 10 + 50 + 200 + 100 = 360$. The difference is $393.81 - 360 = 33.81$ dollars.'
+      - problem: The profit from selling $x$ items is $P(x) = -0.03x^2 + 50x - 200$ dollars. Use the marginal profit $P'(100)$ to estimate the extra profit from the 101st item.
+        answer: '44'
+        answer_contract:
+          kind: unit
+          quantity: dollar
+          unit: dollar
+          allow_omitted: true
+        solution_sketch: The marginal profit is $P'(x) = -0.06x + 50$. At $x = 100$ this is $-6 + 50 = 44$, so the 101st item adds about $44$ dollars of profit.
+      - problem: The cost of $x$ items is $C(x) = \frac{x^2}{25} + 10x + 250$ dollars. What is the actual cost of the 26th item, $C(26) - C(25)$?
+        answer: '12.04'
+        answer_contract:
+          kind: unit
+          quantity: dollar
+          unit: dollar
+          allow_omitted: true
+        solution_sketch: The marginal cost $C'(25) = 12$ is a slope. The actual cost is $C(26) - C(25) = \frac{676 - 625}{25} + 10 = 2.04 + 10 = 12.04$ dollars, so the two values are not equal.
+      - problem: For $R(x) = 150x - \frac{x^2}{5}$ dollars, is the estimate $R'(30)$ of the revenue from the 31st unit too high or too low?
+        answer: too high
+        answer_contract:
+          kind: label
+          options:
+          - - too high
+            - high
+            - it is too high
+            - too large
+            - overestimate
+            - an overestimate
+          - - too low
+            - low
+            - it is too low
+            - too small
+            - underestimate
+            - an underestimate
+        solution_sketch: The estimate is $R'(30) = 138$. The actual revenue is $R(31) - R(30) = 150 - \frac{961 - 900}{5} = 137.8$, so the estimate of $138$ is too high.
+      constraints: quadratic and cubic cost, revenue and profit; actual change C(a+1) - C(a) next to the marginal value; estimate and direction of the error; units in the question
+    - id: kp3
+      name: Maximize profit with marginals
+      key_prerequisites:
+      - derivative-power-rule
+      - evaluating-functions
+      exemplars:
+      - problem: A firm sells each item at a fixed price, so its revenue is $R(x) = 240x$ dollars, and its cost is $C(x) = x^2 + 60x + 1500$ dollars. How many items maximize the profit $P = R - C$?
+        answer: '90'
+        answer_contract:
+          kind: exact
+        solution_sketch: The profit is $P(x) = 240x - (x^2 + 60x + 1500) = -x^2 + 180x - 1500$. Set $P'(x) = -2x + 180 = 0$ to get $x = 90$; since $P''(x) = -2 < 0$, this is a maximum.
+      - problem: A company has revenue $R(x) = 180x$ and cost $C(x) = x^2 + 40x + 900$, both in dollars. What is the maximum profit $P = R - C$?
+        answer: '4000'
+        answer_contract:
+          kind: unit
+          quantity: dollar
+          unit: dollar
+          allow_omitted: true
+        solution_sketch: The profit is $P(x) = -x^2 + 140x - 900$, and $P'(x) = -2x + 140 = 0$ gives $x = 70$. The maximum profit is $P(70) = -4900 + 9800 - 900 = 4000$ dollars.
+      - problem: A firm has revenue $R(x) = 500x$ and cost $C(x) = x^2 + 80x + 2000$, both in dollars. At what quantity $x$ is the marginal revenue equal to the marginal cost?
+        answer: '210'
+        answer_contract:
+          kind: exact
+        solution_sketch: The marginal revenue is $R'(x) = 500$ and the marginal cost is $C'(x) = 2x + 80$. Set $500 = 2x + 80$, so $2x = 420$ and $x = 210$.
+      - problem: The profit from selling $x$ lamps is $P(x) = -2x^2 + 200x - 1800$ dollars. What is the maximum profit?
+        answer: '3200'
+        answer_contract:
+          kind: unit
+          quantity: dollar
+          unit: dollar
+          allow_omitted: true
+        solution_sketch: Set $P'(x) = -4x + 200 = 0$, so $x = 50$ lamps. Since $P''(x) = -4 < 0$ this is a maximum, and $P(50) = -5000 + 10000 - 1800 = 3200$ dollars.
+      - problem: A theatre sells $x$ tickets at the price $p = 100 - 0.5x$ dollars each, and its cost is $C(x) = 20x + 500$ dollars. How many tickets should it sell to maximize its profit?
+        answer: '80'
+        answer_contract:
+          kind: exact
+        solution_sketch: The revenue is $R(x) = xp = 100x - 0.5x^2$, so the profit is $P(x) = 80x - 0.5x^2 - 500$. Set $P'(x) = 80 - x = 0$ to get $x = 80$ tickets.
+      - problem: A firm has revenue $R(x) = 300x$ and cost $C(x) = 2x^2 + 60x + 1200$, both in dollars, and it now makes $70$ items. To raise its profit, should it make more items or fewer?
+        answer: fewer
+        answer_contract:
+          kind: label
+          options:
+          - - fewer
+            - make fewer
+            - fewer items
+            - make fewer items
+            - it should make fewer items
+            - decrease
+            - less
+          - - more
+            - make more
+            - more items
+            - make more items
+            - it should make more items
+            - increase
+        solution_sketch: At $x = 70$ the marginal revenue is $R'(70) = 300$ and the marginal cost is $C'(70) = 4(70) + 60 = 340$. The next item costs more than it earns, so the firm should make fewer items.
+      - problem: A firm has revenue $R(x) = 150x$ and cost $C(x) = x^2 + 30x + 1200$, both in dollars. What is the profit per item at the quantity that maximizes the profit?
+        answer: '40'
+        answer_contract:
+          kind: unit
+          quantity: dollar
+          unit: dollar
+          allow_omitted: true
+        solution_sketch: The profit is $P(x) = -x^2 + 120x - 1200$, and $P'(x) = -2x + 120 = 0$ gives $x = 60$. The maximum profit is $P(60) = 2400$ dollars, so the profit per item is $2400 \div 60 = 40$ dollars.
+      - problem: What quantity maximizes profit for $R(x) = 420x$ and $C(x) = 3x^2 + 60x + 900$ dollars?
+        answer: '60'
+        answer_contract:
+          kind: exact
+        solution_sketch: The smallest cost is not the goal. The best quantity is where the marginal revenue equals the marginal cost. Set $420 = 6x + 60$, so $6x = 360$ and $x = 60$.
+      - problem: A bakery's profit from $x$ cakes is $P(x) = -x^2 + 120x - 2000$ dollars. How many cakes maximize the profit, and what is the maximum profit?
+        answer: x = 60; P = 1600
+        answer_contract:
+          kind: multipart
+          parts:
+          - contract:
+              kind: exact
+            name: x
+          - contract:
+              kind: exact
+            name: P
+        solution_sketch: Set $P'(x) = -2x + 120 = 0$, so $x = 60$ cakes. Since $P''(x) = -2 < 0$ this is a maximum, and $P(60) = -3600 + 7200 - 2000 = 1600$ dollars.
+      constraints: quadratic profit with an integer vertex; marginal revenue equal to marginal cost; direction decision; profit per item; units in the question
     diagnostic_exemplar:
-      problem: 'Revenue is $R(x) = 120x$ and cost is $C(x) = x^2 + 20x + 800$, both in euros. How many items maximize the profit $P = R - C$, and what is the maximum profit?'
-      answer: "x = 50 items; maximum profit €1700"
-      answer_contract: {kind: none}
-      solution_sketch: '$P(x) = -x^2 + 100x - 800$; $P''(x) = -2x + 100 = 0$ at $x = 50$; $P(50) = 1700$.'
+      problem: Revenue is $R(x) = 120x$ and cost is $C(x) = x^2 + 20x + 800$, both in euros. How many items maximize the profit $P = R - C$, and what is the maximum profit?
+      answer: x = 50 items; maximum profit €1700
+      answer_contract:
+        kind: none
+      solution_sketch: $P(x) = -x^2 + 100x - 800$; $P'(x) = -2x + 100 = 0$ at $x = 50$; $P(50) = 1700$.
     anki_seeds:
-      - front: "Marginal cost is defined as..."
-        back: "C'(x) — the derivative of cost, approximating the cost of the next item"
-        type: basic
-      - front: "Profit is maximized (interior optimum) when marginal revenue ___ marginal cost."
-        back: "equals — P' = R' - C' = 0"
-        type: basic
+    - front: Marginal cost is defined as...
+      back: C'(x) — the derivative of cost, approximating the cost of the next item
+      type: basic
+    - front: Profit is maximized (interior optimum) when marginal revenue ___ marginal cost.
+      back: equals — P' = R' - C' = 0
+      type: basic
 
   - id: lhopitals-rule
     name: 'L''Hôpital''s Rule'

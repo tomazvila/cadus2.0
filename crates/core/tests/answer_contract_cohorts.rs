@@ -89,13 +89,15 @@ fn reviewed_manifest_matches_curriculum_and_rejects_other_choices() {
             other => panic!("unexpected reviewed policy: {other:?}"),
         }
     }
-    assert_eq!(counts, (71, 27));
+    // 2026-10-12, Foundations merge (D-C1): 2 label rows of dropped twin steps left the manifest.
+    assert_eq!(counts, (69, 27));
     // The 2026-10-05 Foundations rewrites (04d15daa..2d82c3f9) gave the reviewed
     // labels natural aliases and replaced yes/no collapses with direct questions,
     // so all but one reviewed item now carries a replacement that decides its own key.
     // 2026-10-07, courses rewrite: the last item without a replacement now has one,
     // so the tally is (0, 98) (was (1, 97)).
-    assert_eq!(lineage, (0, 98));
+    // 2026-10-12, Foundations merge (D-C1): (0, 96) after the 2 dropped rows.
+    assert_eq!(lineage, (0, 96));
 }
 
 #[test]

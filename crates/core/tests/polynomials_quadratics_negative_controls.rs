@@ -178,7 +178,7 @@ fn negative_discriminant_count_never_accepts_two_as_correct() {
     // REAL-root count "0", never a complex pair. A learner who counts the two
     // complex roots as if they were real answers "2"; that must never be
     // marked correct.
-    let (item, kind) = exemplar(&curriculum, "quadratic-formula", "kp3", 2);
+    let (item, kind) = exemplar(&curriculum, "quadratic-formula", "kp5", 2);
     assert!(item.problem.contains("How many real solutions"));
     assert_eq!(item.answer, "0");
     for wrong in ["2", "two"] {
@@ -189,7 +189,7 @@ fn negative_discriminant_count_never_accepts_two_as_correct() {
     }
     // "Solve x^2 + 2x + 5 = 0." reports the empty real solution set; a
     // count of two roots is never accepted in its place either.
-    let (item, kind) = exemplar(&curriculum, "quadratic-formula", "kp3", 1);
+    let (item, kind) = exemplar(&curriculum, "quadratic-formula", "kp5", 1);
     assert_eq!(item.answer, "no real solution");
     for wrong in ["2", "two"] {
         assert!(!matches!(
@@ -206,7 +206,7 @@ fn negative_discriminant_count_never_accepts_a_complex_number_as_correct() {
     // "Solve x^2 + 2x + 5 = 0." never accepts literal complex-number notation;
     // this file authors no complex-number answers anywhere, and a learner
     // who writes the roots directly must not be marked correct by accident.
-    let (item, kind) = exemplar(&curriculum, "quadratic-formula", "kp3", 1);
+    let (item, kind) = exemplar(&curriculum, "quadratic-formula", "kp5", 1);
     assert_eq!(item.answer, "no real solution");
     assert!(!matches!(
         grade(item, kind, "x = -1 + 2i or x = -1 - 2i"),

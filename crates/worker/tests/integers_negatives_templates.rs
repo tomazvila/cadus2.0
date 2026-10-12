@@ -30,7 +30,8 @@ fn every_reviewed_integer_template_passes_the_production_gate() {
     )))
     .unwrap();
     // 25 reviewed templates; fifteen were retired on 2026-10-07 (courses rewrite).
-    assert_eq!(dedicated.len(), 10);
+    // The Foundations merge (2026-10-12) retired solutions-of-inequalities/kp2: 9 remain.
+    assert_eq!(dedicated.len(), 9);
     let unit_keys: BTreeSet<String> = serde_json::from_str(include_str!(concat!(
         env!("CARGO_MANIFEST_DIR"),
         "/../core/tests/fixtures/integers_negatives_recipes_kps.json"
@@ -80,9 +81,11 @@ fn the_retired_integer_templates_left_the_set_and_keep_their_gate_refusal() {
         .filter(|row| row["kind"].as_str().is_none_or(|kind| kind == "template"))
         .map(|row| row["kp_id"].as_str().expect("kp_id").to_owned())
         .collect();
-    // 15 dedicated rows and 17 zero-api rows, retired on 2026-10-07.
+    // 15 dedicated rows and 17 zero-api rows, retired on 2026-10-07; the
+    // Foundations merge (2026-10-12) added exponent-notation/kp1 (dropped twin) and
+    // solutions-of-inequalities/kp2 (the gate refuses it after the merge).
     assert_eq!(
         common::retired::assert_retired("integers-negatives", &[dedicated, global], &pending),
-        32
+        34
     );
 }

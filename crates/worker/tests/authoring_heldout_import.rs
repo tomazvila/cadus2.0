@@ -9,8 +9,9 @@ use cadus_store::test_support::TestDb;
 /// Unit manifest to its exact draft-row count, including practice templates.
 /// fractions-decimals was 119 before 2026-10-07 (courses rewrite retired 8
 /// templates, see docs/reports/unit01-retired-pending-templates.json).
+/// It was 111 before the Foundations merge (2026-10-12) dropped one template.
 const UNITS: &[(&str, i64)] = &[
-    ("fractions-decimals", 111),
+    ("fractions-decimals", 110),
     ("integers-negatives", 28),
     ("rational-trig", 2),
 ];

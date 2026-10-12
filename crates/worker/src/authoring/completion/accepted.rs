@@ -103,7 +103,7 @@ mod tests {
     #[test]
     fn gcf_lcm_kp3_statement_makes_time_assumption_explicit() {
         // Statement must say both events start together and use 2*{a}.
-        let r = recipe("gcf-lcm/kp3");
+        let r = recipe("gcf-lcm/kp4");
         let statement = r["statement"].as_str().unwrap();
         let rendered = render(statement, &make_bindings(13)).unwrap();
         assert!(
@@ -126,7 +126,7 @@ mod tests {
     #[test]
     fn evaluating_polynomials_kp3_renders_negative_parameter() {
         // Renderer wraps negative values: x^2-(-6) at x=5 gives answer 31.
-        let r = recipe("evaluating-polynomials/kp3");
+        let r = recipe("evaluating-functions/kp4");
         let statement = r["statement"].as_str().unwrap();
         let rendered = render(statement, &make_bindings(-6)).unwrap();
         assert!(
@@ -156,7 +156,7 @@ mod tests {
             "synthetic-division/kp1",
             "synthetic-division/kp2",
             "evaluating-functions/kp1",
-            "function-composition/kp3",
+            "function-composition/kp5",
             "function-notation/kp2",
             "graphs-of-logarithmic-functions/kp1",
             "graphs-of-logarithmic-functions/kp2",

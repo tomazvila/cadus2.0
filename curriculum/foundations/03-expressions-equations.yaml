@@ -917,77 +917,6 @@ topics:
         back: "ab + ac"
         type: basic
 
-  - id: factoring-linear-expressions
-    name: "Factoring Linear Expressions"
-    core: false                # early GCF drill; factoring-gcf stays core
-    difficulty: 0.34
-    drill: false
-    answer_kind: expression
-    expected_time_secs: 70
-    prerequisites:
-      - id: distributive-property
-        weight: 0.7
-        key: true
-      - id: gcf-lcm
-        weight: 0.5
-        key: true
-    knowledge_points:
-      - id: kp1
-        name: "Factor out the GCF"
-        key_prerequisites: [distributive-property, gcf-lcm]
-        try_first:
-          problem: 'The expression $12x+20$ is equal to $k(3x+5)$. What number is $k$?'
-          answer_contract: {"kind":"exact"}
-          answer: '4'
-          reveal: 'Multiplying $4$ by $3x$ and by $5$ gives back $12x+20$, so $k=4$. Factoring runs distribution backwards: find the number every term shares and divide it out.'
-        exemplars:
-          - problem: "Factor $6x+9$ by its GCF and check by expanding."
-            answer: "3(2x+3)"
-            answer_contract: {"kind": "required_form", "form": "factored_linear"}
-            solution_sketch: "The integer GCF is $3$; divide both terms by it to get $2x$ and $3$. Expansion multiplies back to $6x+9$."
-          - problem: "A rectangle has area $8x+12$ and integer height equal to the GCF of the two coefficients. Factor its area and check."
-            answer: "4(2x+3)"
-            answer_contract: {"kind": "required_form", "form": "factored_linear"}
-            solution_sketch: "The GCF of $8$ and $12$ is $4$, giving width $2x+3$. Multiplying height by width returns $8x+12$."
-          - problem: 'Factor $10x+15$.'
-            answer: '5(2x+3)'
-            answer_contract: {"kind": "required_form", "form": "factored_linear"}
-            solution_sketch: 'Every term must be divided by the GCF $5$, and $15/5=3$, so the bracket is $2x+3$. Expanding $5(2x+3)$ gives back $10x+15$.'
-          - problem: "Factor the difference $14x-21$ by its GCF and expand to check."
-            answer: "7(2x-3)"
-            answer_contract: {"kind": "required_form", "form": "factored_linear"}
-            solution_sketch: "The GCF is $7$. Dividing gives $2x-3$, and distribution gives $14x-21$, including the negative constant."
-        constraints: "two terms; GCF between 2 and 9; verify by expanding"
-      - id: kp2
-        name: "Factor with negatives and two variables"
-        key_prerequisites: [distributive-property, gcf-lcm]
-        exemplars:
-          - problem: "Factor $-4x-8$ by extracting $-4$, then check."
-            answer: "-4(x+2)"
-            answer_contract: {"kind": "required_form", "form": "factored_linear"}
-            solution_sketch: "The quotients are $x$ and $2$. Expanding multiplies each by $-4$, restoring $-4x-8$."
-          - problem: "Factor $12x+18y$ by the GCF and check both terms."
-            answer: "6(2x+3y)"
-            answer_contract: {"kind": "required_form", "form": "factored_linear"}
-            solution_sketch: "The integer GCF is $6$; division yields $2x$ and $3y$. The products recover $12x$ and $18y$."
-          - problem: 'Factor $-3$ out of $-6x+9y$.'
-            answer: '-3(2x-3y)'
-            answer_contract: {"kind": "required_form", "form": "factored_linear"}
-            solution_sketch: 'Divide each term by $-3$: $-6x/(-3)=2x$ and $9y/(-3)=-3y$. So the result is $-3(2x-3y)$, and expanding restores $+9y$ because a negative times a negative is positive.'
-          - problem: "A learner writes $-8x-12y=-4(2x-3y)$. Correct the factorization and expand to check."
-            answer: "-4(2x+3y)"
-            answer_contract: {"kind": "required_form", "form": "factored_linear"}
-            solution_sketch: "Both original terms are negative; dividing each by $-4$ gives positive quotients $2x$ and $3y$. Distribution therefore restores both negative terms."
-        constraints: "GCF may be negative; expand to check both signs"
-    diagnostic_exemplar:
-      problem: 'Factor $9x + 15y$.'
-      answer: "3(3x + 5y)"
-      solution_sketch: 'The GCF of $9$ and $15$ is $3$: $3(3x + 5y)$.'
-    anki_seeds:
-      - front: "Factoring a linear expression is the reverse of..."
-        back: "distributing: pull the GCF out front and divide each term by it"
-        type: basic
-
   - id: equivalent-expressions
     name: "Identifying Equivalent Expressions"
     core: false                # recognition leaf; distributive/like-terms stay core
@@ -1160,251 +1089,314 @@ topics:
         back: "substituting it makes both sides equal"
         type: basic
 
-  - id: addition-subtraction-equations
-    name: "Addition and Subtraction Equations"
-    core: true
-    difficulty: 0.24
-    drill: true
-    answer_kind: numeric
-    expected_time_secs: 45
-    prerequisites:
-      - id: integer-addition-subtraction
-        weight: 0.7
-        key: true
-      - id: checking-a-solution
-        weight: 0.4
-        key: true
-    knowledge_points:
-      - id: kp1
-        name: "Solve x + a = b"
-        key_prerequisites: [integer-addition-subtraction]
-        try_first:
-          problem: 'A box holds some marbles. After $8$ more marbles are put in, the box holds $20$. How many marbles were in the box at first?'
-          answer_contract: {"kind":"exact"}
-          answer: '12'
-          reveal: 'You undid the adding by taking $8$ away from the total: $20-8=12$. The same move solves $x+8=20$.'
-        exemplars:
-          - problem: 'Solve $x + 7 = 12$.'
-            answer: '5'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'To undo the addition of $7$, subtract $7$ from both sides. This leaves $x = 12 - 7 = 5$.'
-          - problem: 'Mia has some stickers. A friend gives her $9$ more, and now she has $24$. How many stickers did Mia have at first?'
-            answer: '15'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Mia''s stickers plus $9$ make $24$, so $x + 9 = 24$. Subtract $9$ from both sides: $x = 24 - 9 = 15$.'
-          - problem: 'Solve $x + 13 = 4$.'
-            answer: '-9'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Subtract $13$ from both sides: $x = 4 - 13$. The result is $x = -9$, a negative number.'
-          - problem: 'During the night the temperature rose by $6$ degrees and reached $-2$ °C. What was the temperature before it rose?'
-            answer: '-8'
-            answer_contract: {"kind":"unit","quantity":"temperature","unit":"°C","allow_omitted":true}
-            solution_sketch: 'The rise of $6$ gives $x + 6 = -2$. Subtract $6$ from both sides: $x = -2 - 6 = -8$.'
-          - problem: 'What is the value of $x$ in $x + 5 = -2$?'
-            answer: '-7'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'To undo $+5$, subtract $5$ from both sides, not from only one side. Then $x = -2 - 5 = -7$.'
-          - problem: 'A lift goes up $4$ floors and stops at floor $-1$. Which floor did it start from?'
-            answer: '-5'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The start floor $x$ and the $4$ floors up give $x + 4 = -1$. Subtract $4$: $x = -1 - 4 = -5$.'
-          - problem: 'Solve $x + (-6) = 8$.'
-            answer: '14'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Adding $-6$ is the same as subtracting $6$, so undo it by adding $6$. Then $x = 8 + 6 = 14$.'
-          - problem: 'A plank is joined end to end with a $45$ cm plank, and together they measure $120$ cm. How long is the first plank?'
-            answer: '75'
-            answer_contract: {"kind":"unit","quantity":"length","unit":"cm","allow_omitted":true}
-            solution_sketch: 'The two lengths add up to the total, so $x + 45 = 120$. Subtract $45$: $x = 120 - 45 = 75$ cm.'
-        constraints: "subtract to undo addition; integer solutions"
-      - id: kp2
-        name: "Solve x - a = b"
-        key_prerequisites: [integer-addition-subtraction]
-        exemplars:
-          - problem: 'Solve $x - 6 = 10$.'
-            answer: '16'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'To undo the subtraction of $6$, add $6$ to both sides. This gives $x = 10 + 6 = 16$.'
-          - problem: 'Tom spent $12$ dollars at the fair and has $9$ dollars left. How much money did he have before the fair?'
-            answer: '21'
-            answer_contract: {"kind":"unit","quantity":"dollar","unit":"dollar","allow_omitted":true}
-            solution_sketch: 'Tom''s money minus the $12$ spent leaves $9$, so $x - 12 = 9$. Add $12$ to both sides: $x = 9 + 12 = 21$ dollars.'
-          - problem: 'Solve $x - 8 = -5$.'
-            answer: '3'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Add $8$ to both sides to undo the subtraction. Then $x = -5 + 8 = 3$.'
-          - problem: 'During the day the temperature fell by $9$ degrees and reached $-4$ °C. What was the temperature before the fall?'
-            answer: '5'
-            answer_contract: {"kind":"unit","quantity":"temperature","unit":"°C","allow_omitted":true}
-            solution_sketch: 'The fall of $9$ gives $x - 9 = -4$. Add $9$ to both sides: $x = -4 + 9 = 5$.'
-          - problem: 'What is the value of $x$ in $x - 4 = 11$?'
-            answer: '15'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The $4$ is subtracted from $x$, so it must be added to both sides, not taken away again. Then $x = 11 + 4 = 15$.'
-          - problem: 'A baker sold $35$ rolls and has $48$ rolls left. How many rolls did the baker have at the start?'
-            answer: '83'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The start amount minus the $35$ sold leaves $48$, so $x - 35 = 48$. Add $35$: $x = 48 + 35 = 83$.'
-          - problem: 'Solve $x - (-3) = 10$.'
-            answer: '7'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Subtracting $-3$ is the same as adding $3$, so $x + 3 = 10$. Subtract $3$ to get $x = 7$.'
-          - problem: 'A piece $15$ m long is cut off a rope, and $28$ m of rope remain. How long was the rope before it was cut?'
-            answer: '43'
-            answer_contract: {"kind":"unit","quantity":"length","unit":"m","allow_omitted":true}
-            solution_sketch: 'The rope minus the $15$ m piece leaves $28$ m, so $x - 15 = 28$. Add $15$: $x = 28 + 15 = 43$ m.'
-        constraints: "add to undo subtraction; integer solutions"
-    diagnostic_exemplar:
-      problem: 'Solve $x + 9 = 2$.'
-      answer: "-7"
-      solution_sketch: 'Subtract $9$: $x = -7$.'
-    anki_seeds:
-      - front: "To undo adding a number to the variable, ..."
-        back: "subtract that number from both sides (and vice versa)"
-        type: basic
-
   - id: one-step-equations
-    name: "One-Step Equations"
+    name: One-Step Equations
     core: true
     difficulty: 0.28
     drill: true
     answer_kind: numeric
     expected_time_secs: 45
     prerequisites:
-      - id: addition-subtraction-equations
-        weight: 0.7
-        key: true
-      - id: integer-multiplication-division
-        weight: 0.7
-        key: true
-      - id: checking-a-solution
-        weight: 0.3
-      - id: evaluating-expressions
-        weight: 0.0
+    - id: integer-addition-subtraction
+      weight: 0.7
+      key: true
+    - id: integer-multiplication-division
+      weight: 0.7
+      key: true
+    - id: checking-a-solution
+      weight: 0.4
+      key: true
+    - id: evaluating-expressions
+      weight: 0.0
     knowledge_points:
-      - id: kp1
-        name: "Solve by dividing"
-        key_prerequisites: [integer-multiplication-division]
-        exemplars:
-          - problem: 'Solve $3x = 21$.'
-            answer: '7'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The $3$ multiplies $x$, so divide both sides by $3$. This gives $x = 21/3 = 7$.'
-          - problem: 'Seven equal packets hold $42$ beads altogether. How many beads are in one packet?'
-            answer: '6'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The $42$ beads are shared equally among $7$ packets, so $7x = 42$. Divide by $7$: $x = 6$.'
-          - problem: 'For $f(x) = -3x$, which input gives the output $18$?'
-            answer: '-6'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Set $-3x = 18$. Divide both sides by $-3$, which gives $x = -6$.'
-          - problem: 'A rectangle has area $54$ cm$^2$ and width $6$ cm. How long is the rectangle?'
-            answer: '9'
-            answer_contract: {"kind":"unit","quantity":"length","unit":"cm","allow_omitted":true}
-            solution_sketch: 'Area is length times width, so $6x = 54$. Divide by $6$: $x = 9$ cm.'
-          - problem: 'What is the value of $x$ in $4x = 20$?'
-            answer: '5'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The $4$ multiplies $x$, so it is undone by dividing, not by multiplying. Then $x = 20/4 = 5$.'
-          - problem: 'Each ticket costs $8$ dollars. Ana pays $64$ dollars for tickets. How many tickets does she buy?'
-            answer: '8'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The number of tickets times $8$ equals the total, so $8x = 64$. Divide by $8$: $x = 8$ tickets.'
-          - problem: 'Four friends each pay the same amount, and together they pay $52$ dollars. How much does each friend pay?'
-            answer: '13'
-            answer_contract: {"kind":"unit","quantity":"dollar","unit":"dollar","allow_omitted":true}
-            solution_sketch: 'The total is four times one payment, so $4x = 52$. Divide by $4$: $x = 13$ dollars.'
-          - problem: 'A cyclist rides for $5$ hours at a steady speed and covers $85$ km. What is the speed?'
-            answer: '17'
-            answer_contract: {"kind":"unit","quantity":"speed","unit":"km/h","allow_omitted":true}
-            solution_sketch: 'Distance is speed times time, so $5x = 85$. Divide by $5$: $x = 17$ km/h.'
-        constraints: "exact integer solutions; coefficients <= 9"
-      - id: kp2
-        name: "Solve division forms by multiplying"
-        key_prerequisites: [integer-multiplication-division]
-        exemplars:
-          - problem: 'Solve $\frac{x}{5} = 4$.'
-            answer: '20'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The $x$ is divided by $5$, so multiply both sides by $5$. This gives $x = 4 \cdot 5 = 20$.'
-          - problem: 'A box of sweets is shared equally among $6$ children, and each child gets $4$ sweets. How many sweets were in the box?'
-            answer: '24'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'One share is $x/6 = 4$. Multiply both sides by $6$: $x = 4 \cdot 6 = 24$ sweets.'
-          - problem: 'Solve $\frac{x}{-3} = 6$.'
-            answer: '-18'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Multiply both sides by $-3$. Then $x = 6 \cdot (-3) = -18$.'
-          - problem: 'A machine divides its input by $8$, and its output is $2$. What was the input?'
-            answer: '16'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The machine gives $x/8 = 2$. Multiply the output by $8$ to get the input: $x = 16$.'
-          - problem: 'What is the value of $x$ in $\frac{x}{4} = 12$?'
-            answer: '48'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The $x$ is divided by $4$, so it is undone by multiplying, not dividing. Then $x = 12 \cdot 4 = 48$.'
-          - problem: 'Water in a tank is poured equally into $7$ buckets, and each bucket gets $3$ litres. How much water was in the tank?'
-            answer: '21'
-            answer_contract: {"kind":"unit","quantity":"volume","unit":"L","allow_omitted":true}
-            solution_sketch: 'One bucket holds $x/7 = 3$ litres. Multiply by $7$: $x = 3 \cdot 7 = 21$ litres.'
-          - problem: 'Solve $\frac{x}{-9} = -2$.'
-            answer: '18'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Multiply both sides by $-9$. Two negative factors give a positive product, so $x = (-2)(-9) = 18$.'
-          - problem: 'A ribbon is cut into $5$ equal pieces, and each piece is $12$ cm long. How long was the ribbon?'
-            answer: '60'
-            answer_contract: {"kind":"unit","quantity":"length","unit":"cm","allow_omitted":true}
-            solution_sketch: 'One piece is $x/5 = 12$ cm. Multiply by $5$: $x = 12 \cdot 5 = 60$ cm.'
-        constraints: "divisors from -9 to 9; integer solutions"
-      - id: kp3
-        name: "Mixed one-step equations, negative coefficients"
-        key_prerequisites: [integer-multiplication-division, addition-subtraction-equations]
-        exemplars:
-          - problem: 'Solve $-4x = -24$.'
-            answer: '6'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Divide both sides by $-4$. A negative divided by a negative is positive, so $x = 6$.'
-          - problem: 'Solve $x + 11 = 3$.'
-            answer: '-8'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The $11$ is added to $x$, so subtract $11$ from both sides. This gives $x = 3 - 11 = -8$.'
-          - problem: 'The temperature fell by $5$ degrees and is now $-3$ °C. What was the temperature before it fell?'
-            answer: '2'
-            answer_contract: {"kind":"unit","quantity":"temperature","unit":"°C","allow_omitted":true}
-            solution_sketch: 'The fall of $5$ gives $x - 5 = -3$. Add $5$ to both sides: $x = -3 + 5 = 2$.'
-          - problem: 'Solve $\frac{x}{-5} = -3$.'
-            answer: '15'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The $x$ is divided by $-5$, so multiply both sides by $-5$. Then $x = (-3)(-5) = 15$.'
-          - problem: 'What is the value of $x$ in $-3x = 33$?'
-            answer: '-11'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Divide both sides by $-3$ and keep the sign: $x = 33/(-3) = -11$. A positive and a negative number give a negative quotient.'
-          - problem: 'A submarine dives at a steady rate. After $5$ minutes its depth has changed by $-45$ metres. By how many metres does its depth change each minute?'
-            answer: '-9'
-            answer_contract: {"kind":"unit","quantity":"length","unit":"m","allow_omitted":true}
-            solution_sketch: 'Five equal changes make $-45$, so $5x = -45$. Divide by $5$: $x = -9$ metres each minute.'
-          - problem: 'Solve $x - 15 = -4$.'
-            answer: '11'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The $15$ is subtracted from $x$, so add $15$ to both sides. This gives $x = -4 + 15 = 11$.'
-          - problem: 'Six players on a team each score the same number of points, and the team total is $-54$ points. Points can be below zero in this game. How many points does each player score?'
-            answer: '-9'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The total is six times one score, so $6x = -54$. Divide by $6$: $x = -9$ points.'
-          - problem: 'A school shares a box of pencils equally among $8$ classes, and each class gets $6$ pencils. How many pencils were in the box?'
-            answer: '48'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'One share is $x/8 = 6$ pencils. Multiply both sides by $8$: $x = 6 \cdot 8 = 48$ pencils.'
-        constraints: "choose the correct inverse operation; integer solutions"
+    - id: kp1
+      name: Solve x + a = b
+      key_prerequisites:
+      - integer-addition-subtraction
+      try_first:
+        problem: A box holds some marbles. After $8$ more marbles are put in, the box holds $20$. How many marbles were in the box at first?
+        answer_contract:
+          kind: exact
+        answer: '12'
+        reveal: 'You undid the adding by taking $8$ away from the total: $20-8=12$. The same move solves $x+8=20$.'
+      exemplars:
+      - problem: Solve $x + 7 = 12$.
+        answer: '5'
+        answer_contract:
+          kind: exact
+        solution_sketch: To undo the addition of $7$, subtract $7$ from both sides. This leaves $x = 12 - 7 = 5$.
+      - problem: Mia has some stickers. A friend gives her $9$ more, and now she has $24$. How many stickers did Mia have at first?
+        answer: '15'
+        answer_contract:
+          kind: exact
+        solution_sketch: 'Mia''s stickers plus $9$ make $24$, so $x + 9 = 24$. Subtract $9$ from both sides: $x = 24 - 9 = 15$.'
+      - problem: Solve $x + 13 = 4$.
+        answer: '-9'
+        answer_contract:
+          kind: exact
+        solution_sketch: 'Subtract $13$ from both sides: $x = 4 - 13$. The result is $x = -9$, a negative number.'
+      - problem: During the night the temperature rose by $6$ degrees and reached $-2$ °C. What was the temperature before it rose?
+        answer: '-8'
+        answer_contract:
+          kind: unit
+          quantity: temperature
+          unit: °C
+          allow_omitted: true
+        solution_sketch: 'The rise of $6$ gives $x + 6 = -2$. Subtract $6$ from both sides: $x = -2 - 6 = -8$.'
+      - problem: What is the value of $x$ in $x + 5 = -2$?
+        answer: '-7'
+        answer_contract:
+          kind: exact
+        solution_sketch: To undo $+5$, subtract $5$ from both sides, not from only one side. Then $x = -2 - 5 = -7$.
+      - problem: A lift goes up $4$ floors and stops at floor $-1$. Which floor did it start from?
+        answer: '-5'
+        answer_contract:
+          kind: exact
+        solution_sketch: 'The start floor $x$ and the $4$ floors up give $x + 4 = -1$. Subtract $4$: $x = -1 - 4 = -5$.'
+      - problem: Solve $x + (-6) = 8$.
+        answer: '14'
+        answer_contract:
+          kind: exact
+        solution_sketch: Adding $-6$ is the same as subtracting $6$, so undo it by adding $6$. Then $x = 8 + 6 = 14$.
+      - problem: A plank is joined end to end with a $45$ cm plank, and together they measure $120$ cm. How long is the first plank?
+        answer: '75'
+        answer_contract:
+          kind: unit
+          quantity: length
+          unit: cm
+          allow_omitted: true
+        solution_sketch: 'The two lengths add up to the total, so $x + 45 = 120$. Subtract $45$: $x = 120 - 45 = 75$ cm.'
+      constraints: subtract to undo addition; integer solutions
+    - id: kp2
+      name: Solve x - a = b
+      key_prerequisites:
+      - integer-addition-subtraction
+      exemplars:
+      - problem: Solve $x - 6 = 10$.
+        answer: '16'
+        answer_contract:
+          kind: exact
+        solution_sketch: To undo the subtraction of $6$, add $6$ to both sides. This gives $x = 10 + 6 = 16$.
+      - problem: Tom spent $12$ dollars at the fair and has $9$ dollars left. How much money did he have before the fair?
+        answer: '21'
+        answer_contract:
+          kind: unit
+          quantity: dollar
+          unit: dollar
+          allow_omitted: true
+        solution_sketch: 'Tom''s money minus the $12$ spent leaves $9$, so $x - 12 = 9$. Add $12$ to both sides: $x = 9 + 12 = 21$ dollars.'
+      - problem: Solve $x - 8 = -5$.
+        answer: '3'
+        answer_contract:
+          kind: exact
+        solution_sketch: Add $8$ to both sides to undo the subtraction. Then $x = -5 + 8 = 3$.
+      - problem: During the day the temperature fell by $9$ degrees and reached $-4$ °C. What was the temperature before the fall?
+        answer: '5'
+        answer_contract:
+          kind: unit
+          quantity: temperature
+          unit: °C
+          allow_omitted: true
+        solution_sketch: 'The fall of $9$ gives $x - 9 = -4$. Add $9$ to both sides: $x = -4 + 9 = 5$.'
+      - problem: What is the value of $x$ in $x - 4 = 11$?
+        answer: '15'
+        answer_contract:
+          kind: exact
+        solution_sketch: The $4$ is subtracted from $x$, so it must be added to both sides, not taken away again. Then $x = 11 + 4 = 15$.
+      - problem: A baker sold $35$ rolls and has $48$ rolls left. How many rolls did the baker have at the start?
+        answer: '83'
+        answer_contract:
+          kind: exact
+        solution_sketch: 'The start amount minus the $35$ sold leaves $48$, so $x - 35 = 48$. Add $35$: $x = 48 + 35 = 83$.'
+      - problem: Solve $x - (-3) = 10$.
+        answer: '7'
+        answer_contract:
+          kind: exact
+        solution_sketch: Subtracting $-3$ is the same as adding $3$, so $x + 3 = 10$. Subtract $3$ to get $x = 7$.
+      - problem: A piece $15$ m long is cut off a rope, and $28$ m of rope remain. How long was the rope before it was cut?
+        answer: '43'
+        answer_contract:
+          kind: unit
+          quantity: length
+          unit: m
+          allow_omitted: true
+        solution_sketch: 'The rope minus the $15$ m piece leaves $28$ m, so $x - 15 = 28$. Add $15$: $x = 28 + 15 = 43$ m.'
+      constraints: add to undo subtraction; integer solutions
+    - id: kp3
+      name: Solve by dividing
+      key_prerequisites:
+      - integer-multiplication-division
+      exemplars:
+      - problem: Solve $3x = 21$.
+        answer: '7'
+        answer_contract:
+          kind: exact
+        solution_sketch: The $3$ multiplies $x$, so divide both sides by $3$. This gives $x = 21/3 = 7$.
+      - problem: Seven equal packets hold $42$ beads altogether. How many beads are in one packet?
+        answer: '6'
+        answer_contract:
+          kind: exact
+        solution_sketch: 'The $42$ beads are shared equally among $7$ packets, so $7x = 42$. Divide by $7$: $x = 6$.'
+      - problem: For $f(x) = -3x$, which input gives the output $18$?
+        answer: '-6'
+        answer_contract:
+          kind: exact
+        solution_sketch: Set $-3x = 18$. Divide both sides by $-3$, which gives $x = -6$.
+      - problem: A rectangle has area $54$ cm$^2$ and width $6$ cm. How long is the rectangle?
+        answer: '9'
+        answer_contract:
+          kind: unit
+          quantity: length
+          unit: cm
+          allow_omitted: true
+        solution_sketch: 'Area is length times width, so $6x = 54$. Divide by $6$: $x = 9$ cm.'
+      - problem: What is the value of $x$ in $4x = 20$?
+        answer: '5'
+        answer_contract:
+          kind: exact
+        solution_sketch: The $4$ multiplies $x$, so it is undone by dividing, not by multiplying. Then $x = 20/4 = 5$.
+      - problem: Each ticket costs $8$ dollars. Ana pays $64$ dollars for tickets. How many tickets does she buy?
+        answer: '8'
+        answer_contract:
+          kind: exact
+        solution_sketch: 'The number of tickets times $8$ equals the total, so $8x = 64$. Divide by $8$: $x = 8$ tickets.'
+      - problem: Four friends each pay the same amount, and together they pay $52$ dollars. How much does each friend pay?
+        answer: '13'
+        answer_contract:
+          kind: unit
+          quantity: dollar
+          unit: dollar
+          allow_omitted: true
+        solution_sketch: 'The total is four times one payment, so $4x = 52$. Divide by $4$: $x = 13$ dollars.'
+      - problem: A cyclist rides for $5$ hours at a steady speed and covers $85$ km. What is the speed?
+        answer: '17'
+        answer_contract:
+          kind: unit
+          quantity: speed
+          unit: km/h
+          allow_omitted: true
+        solution_sketch: 'Distance is speed times time, so $5x = 85$. Divide by $5$: $x = 17$ km/h.'
+      constraints: exact integer solutions; coefficients <= 9
+    - id: kp4
+      name: Solve division forms by multiplying
+      key_prerequisites:
+      - integer-multiplication-division
+      exemplars:
+      - problem: Solve $\frac{x}{5} = 4$.
+        answer: '20'
+        answer_contract:
+          kind: exact
+        solution_sketch: The $x$ is divided by $5$, so multiply both sides by $5$. This gives $x = 4 \cdot 5 = 20$.
+      - problem: A box of sweets is shared equally among $6$ children, and each child gets $4$ sweets. How many sweets were in the box?
+        answer: '24'
+        answer_contract:
+          kind: exact
+        solution_sketch: 'One share is $x/6 = 4$. Multiply both sides by $6$: $x = 4 \cdot 6 = 24$ sweets.'
+      - problem: Solve $\frac{x}{-3} = 6$.
+        answer: '-18'
+        answer_contract:
+          kind: exact
+        solution_sketch: Multiply both sides by $-3$. Then $x = 6 \cdot (-3) = -18$.
+      - problem: A machine divides its input by $8$, and its output is $2$. What was the input?
+        answer: '16'
+        answer_contract:
+          kind: exact
+        solution_sketch: 'The machine gives $x/8 = 2$. Multiply the output by $8$ to get the input: $x = 16$.'
+      - problem: What is the value of $x$ in $\frac{x}{4} = 12$?
+        answer: '48'
+        answer_contract:
+          kind: exact
+        solution_sketch: The $x$ is divided by $4$, so it is undone by multiplying, not dividing. Then $x = 12 \cdot 4 = 48$.
+      - problem: Water in a tank is poured equally into $7$ buckets, and each bucket gets $3$ litres. How much water was in the tank?
+        answer: '21'
+        answer_contract:
+          kind: unit
+          quantity: volume
+          unit: L
+          allow_omitted: true
+        solution_sketch: 'One bucket holds $x/7 = 3$ litres. Multiply by $7$: $x = 3 \cdot 7 = 21$ litres.'
+      - problem: Solve $\frac{x}{-9} = -2$.
+        answer: '18'
+        answer_contract:
+          kind: exact
+        solution_sketch: Multiply both sides by $-9$. Two negative factors give a positive product, so $x = (-2)(-9) = 18$.
+      - problem: A ribbon is cut into $5$ equal pieces, and each piece is $12$ cm long. How long was the ribbon?
+        answer: '60'
+        answer_contract:
+          kind: unit
+          quantity: length
+          unit: cm
+          allow_omitted: true
+        solution_sketch: 'One piece is $x/5 = 12$ cm. Multiply by $5$: $x = 12 \cdot 5 = 60$ cm.'
+      constraints: divisors from -9 to 9; integer solutions
+    - id: kp5
+      name: Mixed one-step equations, negative coefficients
+      key_prerequisites:
+      - integer-multiplication-division
+      exemplars:
+      - problem: Solve $-4x = -24$.
+        answer: '6'
+        answer_contract:
+          kind: exact
+        solution_sketch: Divide both sides by $-4$. A negative divided by a negative is positive, so $x = 6$.
+      - problem: Solve $x + 11 = 3$.
+        answer: '-8'
+        answer_contract:
+          kind: exact
+        solution_sketch: The $11$ is added to $x$, so subtract $11$ from both sides. This gives $x = 3 - 11 = -8$.
+      - problem: The temperature fell by $5$ degrees and is now $-3$ °C. What was the temperature before it fell?
+        answer: '2'
+        answer_contract:
+          kind: unit
+          quantity: temperature
+          unit: °C
+          allow_omitted: true
+        solution_sketch: 'The fall of $5$ gives $x - 5 = -3$. Add $5$ to both sides: $x = -3 + 5 = 2$.'
+      - problem: Solve $\frac{x}{-5} = -3$.
+        answer: '15'
+        answer_contract:
+          kind: exact
+        solution_sketch: The $x$ is divided by $-5$, so multiply both sides by $-5$. Then $x = (-3)(-5) = 15$.
+      - problem: What is the value of $x$ in $-3x = 33$?
+        answer: '-11'
+        answer_contract:
+          kind: exact
+        solution_sketch: 'Divide both sides by $-3$ and keep the sign: $x = 33/(-3) = -11$. A positive and a negative number give a negative quotient.'
+      - problem: A submarine dives at a steady rate. After $5$ minutes its depth has changed by $-45$ metres. By how many metres does its depth change each minute?
+        answer: '-9'
+        answer_contract:
+          kind: unit
+          quantity: length
+          unit: m
+          allow_omitted: true
+        solution_sketch: 'Five equal changes make $-45$, so $5x = -45$. Divide by $5$: $x = -9$ metres each minute.'
+      - problem: Solve $x - 15 = -4$.
+        answer: '11'
+        answer_contract:
+          kind: exact
+        solution_sketch: The $15$ is subtracted from $x$, so add $15$ to both sides. This gives $x = -4 + 15 = 11$.
+      - problem: Six players on a team each score the same number of points, and the team total is $-54$ points. Points can be below zero in this game. How many points does each player score?
+        answer: '-9'
+        answer_contract:
+          kind: exact
+        solution_sketch: 'The total is six times one score, so $6x = -54$. Divide by $6$: $x = -9$ points.'
+      - problem: A school shares a box of pencils equally among $8$ classes, and each class gets $6$ pencils. How many pencils were in the box?
+        answer: '48'
+        answer_contract:
+          kind: exact
+        solution_sketch: 'One share is $x/8 = 6$ pencils. Multiply both sides by $8$: $x = 6 \cdot 8 = 48$ pencils.'
+      constraints: choose the correct inverse operation; integer solutions
     diagnostic_exemplar:
-      problem: 'Solve $-6x = 42$.'
-      answer: "-7"
+      problem: Solve $-6x = 42$.
+      answer: '-7'
       solution_sketch: 'Divide by $-6$: $x = -7$.'
     anki_seeds:
-      - front: "To solve a one-step equation, apply the ... to both sides."
-        back: "inverse operation (undo what is done to the variable)"
-        type: basic
+    - front: To undo adding a number to the variable, ...
+      back: subtract that number from both sides (and vice versa)
+      type: basic
+    - front: To solve a one-step equation, apply the ... to both sides.
+      back: inverse operation (undo what is done to the variable)
+      type: basic
 
   - id: two-step-equations
     name: "Two-Step Equations"
@@ -2460,120 +2452,290 @@ topics:
         type: basic
 
   - id: absolute-value-equations
-    name: "Absolute Value Equations"
-    core: false                # terminal absolute-value solving branch
-    difficulty: 0.48
+    name: Absolute Value Equations and Inequalities
+    core: false
+    difficulty: 0.55
     drill: false
     answer_kind: multi-step
-    expected_time_secs: 100
+    expected_time_secs: 110
     prerequisites:
-      - id: basic-absolute-value-equations
-        weight: 0.7
-        key: true
-      - id: two-step-equations
-        weight: 0.6
-        key: true
-      - id: integer-addition-subtraction
-        weight: 0.3
+    - id: basic-absolute-value-equations
+      weight: 0.7
+      key: true
+    - id: two-step-equations
+      weight: 0.6
+      key: true
+    - id: integer-addition-subtraction
+      weight: 0.3
+    - id: basic-absolute-value-inequalities
+      weight: 0.7
+      key: true
+    - id: compound-inequalities
+      weight: 0.3
     knowledge_points:
-      - id: kp1
-        name: "Absolute value of a linear expression"
-        key_prerequisites: [two-step-equations, basic-absolute-value-equations]
-        exemplars:
-          - problem: 'Solve $|2x + 1| = 9$.'
-            answer: '-5, 4'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The inside is $9$ or $-9$. From $2x + 1 = 9$ we get $x = 4$, and from $2x + 1 = -9$ we get $x = -5$.'
-          - problem: 'At which $x$-coordinates does the graph of $y = |3x - 6|$ meet the line $y = 12$?'
-            answer: '-2, 6'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The graphs meet where $3x - 6 = 12$ or $3x - 6 = -12$. Solving gives $x = 6$ or $x = -2$.'
-          - problem: 'A sensor reports the size of an error, $|4x - 8|$, as $12$. What values of $x$ are possible?'
-            answer: "-1, 5"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The expression inside is either $12$ or $-12$. From $4x - 8 = 12$ we get $x = 5$, and from $4x - 8 = -12$ we get $x = -1$.'
-          - problem: 'Find every solution of $|5x + 5| = 15$.'
-            answer: '-4, 2'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The case $5x + 5 = 15$ gives $x = 2$. The negative case $5x + 5 = -15$ gives $5x = -20$, so $x = -4$.'
-          - problem: 'Solve $|2x - 3| = 7$.'
-            answer: '-2, 5'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The inside is $7$ or $-7$. From $2x - 3 = 7$ we get $x = 5$, and from $2x - 3 = -7$ we get $x = -2$.'
-          - problem: 'Solve $|3x + 2| = 4$.'
-            answer: '-2, 2/3'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'From $3x + 2 = 4$ we get $3x = 2$, so $x = 2/3$. From $3x + 2 = -4$ we get $3x = -6$, so $x = -2$.'
-        constraints: "split into two linear equations; integer solutions"
-      - id: kp2
-        name: "Isolate the absolute value first"
-        key_prerequisites: [two-step-equations, basic-absolute-value-equations]
-        exemplars:
-          - problem: 'Solve $|x + 2| - 3 = 4$.'
-            answer: '-9, 5'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Add $3$ to isolate the absolute value: $|x + 2| = 7$. The cases $x + 2 = 7$ and $x + 2 = -7$ give $x = 5$ and $x = -9$.'
-          - problem: 'Solve $2|x| = 10$.'
-            answer: '-5, 5'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Divide by $2$ to isolate the absolute value: $|x| = 5$. The solutions are $x = -5$ and $x = 5$.'
-          - problem: 'Solve $3|2x - 1| + 4 = 13$.'
-            answer: '-1, 2'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Subtract $4$ and divide by $3$: $|2x - 1| = 3$. Then $2x - 1 = 3$ gives $x = 2$ and $2x - 1 = -3$ gives $x = -1$.'
-          - problem: 'Solve $10 - 2|x + 3| = 2$.'
-            answer: '-7, 1'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Subtract $10$ and divide by $-2$: $|x + 3| = 4$. The cases $x + 3 = 4$ and $x + 3 = -4$ give $x = 1$ and $x = -7$.'
-          - problem: 'Solve $\frac{|x - 4|}{3} = 2$.'
-            answer: '-2, 10'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Multiply by $3$ to isolate the absolute value: $|x - 4| = 6$. The cases $x - 4 = 6$ and $x - 4 = -6$ give $x = 10$ and $x = -2$.'
-          - problem: 'Solve $4|x + 1| - 7 = 5$.'
-            answer: '-4, 2'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Add $7$ and divide by $4$: $|x + 1| = 3$. The cases $x + 1 = 3$ and $x + 1 = -3$ give $x = 2$ and $x = -4$.'
-        constraints: "isolate |..| before splitting into cases"
-      - id: kp3
-        name: "Recognize no-solution cases"
-        key_prerequisites: [basic-absolute-value-equations]
-        exemplars:
-          - problem: 'Solve $|x - 5| = -3$.'
-            answer: 'no solution'
-            answer_contract: {"kind":"label","options":[["no solution","none","no solutions","there is no solution","no real solution","no real solutions"],["all real numbers","every real number","infinitely many solutions","any real number","all reals","infinitely many","all real x","every number"]]}
-            solution_sketch: 'An absolute value is a distance, so it is never negative. No number makes $|x - 5|$ equal $-3$, so there is no solution.'
-          - problem: 'Solve $|2x| + 7 = 3$.'
-            answer: "no real solution"
-            answer_contract: {"kind":"label","options":[["no real solution","no solution","none","no solutions","there is no solution","no real solutions","no real number"],["all real numbers","every real number","infinitely many solutions","any real number"]]}
-            solution_sketch: 'Subtract $7$ to isolate the absolute value: $|2x| = -4$. An absolute value is never negative, so the equation has no solution.'
-          - problem: 'Solve $|x + 3| + 4 = 4$.'
-            answer: '-3'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Subtract $4$: $|x + 3| = 0$. Only zero has absolute value $0$, so $x + 3 = 0$ and the single solution is $x = -3$.'
-          - problem: 'Solve $5 - |x + 1| = 2$.'
-            answer: '-4, 2'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Subtract $5$ and multiply by $-1$: $|x + 1| = 3$, which is positive. The cases give $x = 2$ and $x = -4$.'
-          - problem: 'Give an integer value of $c$ for which $|x - 2| = c$ has no solution.'
-            answer: '-1'
-            answer_contract: {"kind":"property","check":"integer_in_range","args":{"max":-1}}
-            solution_sketch: 'An absolute value is never negative, so any negative $c$ works, such as $c = -1$. Other answers include $-2$ and $-10$; $c = 0$ gives the solution $x = 2$.'
-          - problem: 'Solve $|2x - 1| + 6 = 9$.'
-            answer: '-1, 2'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Subtract $6$: $|2x - 1| = 3$, which is positive, so there are two cases. They give $x = 2$ and $x = -1$.'
-        constraints: "isolated absolute value equals a negative number"
+    - id: kp1
+      name: Absolute value of a linear expression
+      key_prerequisites:
+      - two-step-equations
+      - basic-absolute-value-equations
+      exemplars:
+      - problem: Solve $|2x + 1| = 9$.
+        answer: -5, 4
+        answer_contract:
+          kind: exact
+        solution_sketch: The inside is $9$ or $-9$. From $2x + 1 = 9$ we get $x = 4$, and from $2x + 1 = -9$ we get $x = -5$.
+      - problem: At which $x$-coordinates does the graph of $y = |3x - 6|$ meet the line $y = 12$?
+        answer: -2, 6
+        answer_contract:
+          kind: exact
+        solution_sketch: The graphs meet where $3x - 6 = 12$ or $3x - 6 = -12$. Solving gives $x = 6$ or $x = -2$.
+      - problem: A sensor reports the size of an error, $|4x - 8|$, as $12$. What values of $x$ are possible?
+        answer: -1, 5
+        answer_contract:
+          kind: exact
+        solution_sketch: The expression inside is either $12$ or $-12$. From $4x - 8 = 12$ we get $x = 5$, and from $4x - 8 = -12$ we get $x = -1$.
+      - problem: Find every solution of $|5x + 5| = 15$.
+        answer: -4, 2
+        answer_contract:
+          kind: exact
+        solution_sketch: The case $5x + 5 = 15$ gives $x = 2$. The negative case $5x + 5 = -15$ gives $5x = -20$, so $x = -4$.
+      - problem: Solve $|2x - 3| = 7$.
+        answer: -2, 5
+        answer_contract:
+          kind: exact
+        solution_sketch: The inside is $7$ or $-7$. From $2x - 3 = 7$ we get $x = 5$, and from $2x - 3 = -7$ we get $x = -2$.
+      - problem: Solve $|3x + 2| = 4$.
+        answer: -2, 2/3
+        answer_contract:
+          kind: exact
+        solution_sketch: From $3x + 2 = 4$ we get $3x = 2$, so $x = 2/3$. From $3x + 2 = -4$ we get $3x = -6$, so $x = -2$.
+      constraints: split into two linear equations; integer solutions
+    - id: kp2
+      name: Recognize no-solution cases
+      key_prerequisites:
+      - basic-absolute-value-equations
+      exemplars:
+      - problem: Solve $|x - 5| = -3$.
+        answer: no solution
+        answer_contract:
+          kind: label
+          options:
+          - - no solution
+            - none
+            - no solutions
+            - there is no solution
+            - no real solution
+            - no real solutions
+          - - all real numbers
+            - every real number
+            - infinitely many solutions
+            - any real number
+            - all reals
+            - infinitely many
+            - all real x
+            - every number
+        solution_sketch: An absolute value is a distance, so it is never negative. No number makes $|x - 5|$ equal $-3$, so there is no solution.
+      - problem: Solve $|2x| + 7 = 3$.
+        answer: no real solution
+        answer_contract:
+          kind: label
+          options:
+          - - no real solution
+            - no solution
+            - none
+            - no solutions
+            - there is no solution
+            - no real solutions
+            - no real number
+          - - all real numbers
+            - every real number
+            - infinitely many solutions
+            - any real number
+        solution_sketch: 'Subtract $7$ to isolate the absolute value: $|2x| = -4$. An absolute value is never negative, so the equation has no solution.'
+      - problem: Solve $|x + 3| + 4 = 4$.
+        answer: '-3'
+        answer_contract:
+          kind: exact
+        solution_sketch: 'Subtract $4$: $|x + 3| = 0$. Only zero has absolute value $0$, so $x + 3 = 0$ and the single solution is $x = -3$.'
+      - problem: Solve $5 - |x + 1| = 2$.
+        answer: -4, 2
+        answer_contract:
+          kind: exact
+        solution_sketch: 'Subtract $5$ and multiply by $-1$: $|x + 1| = 3$, which is positive. The cases give $x = 2$ and $x = -4$.'
+      - problem: Give an integer value of $c$ for which $|x - 2| = c$ has no solution.
+        answer: '-1'
+        answer_contract:
+          kind: property
+          check: integer_in_range
+          args:
+            max: -1
+        solution_sketch: An absolute value is never negative, so any negative $c$ works, such as $c = -1$. Other answers include $-2$ and $-10$; $c = 0$ gives the solution $x = 2$.
+      - problem: Solve $|2x - 1| + 6 = 9$.
+        answer: -1, 2
+        answer_contract:
+          kind: exact
+        solution_sketch: 'Subtract $6$: $|2x - 1| = 3$, which is positive, so there are two cases. They give $x = 2$ and $x = -1$.'
+      constraints: isolated absolute value equals a negative number
+    - id: kp3
+      name: '|linear| < a'
+      key_prerequisites:
+      - basic-absolute-value-inequalities
+      exemplars:
+      - problem: Solve $|x-3|<8$.
+        answer: (-5, 11)
+        answer_contract:
+          kind: inequality_union
+        solution_sketch: The condition means $-8<x-3<8$. Adding $3$ to all three parts gives $-5<x<11$.
+      - problem: Solve $|2x+1|\le 7$.
+        answer: '[-4, 3]'
+        answer_contract:
+          kind: inequality_union
+        solution_sketch: The condition means $-7\le 2x+1\le 7$. Subtracting $1$ gives $-8\le 2x\le 6$, and dividing by $2$ gives $-4\le x\le 3$.
+      - problem: A baker's oven must stay within $12$ degrees of $180$ degrees. Which temperatures $T$ are allowed?
+        answer: '[168, 192]'
+        answer_contract:
+          kind: inequality_union
+        solution_sketch: The difference between $T$ and $180$ is at most $12$, so $|T-180|\le 12$. Then $168\le T\le 192$.
+      - problem: Solve $5>|3x-2|$.
+        answer: (-1, 7/3)
+        answer_contract:
+          kind: inequality_union
+        solution_sketch: Read the inequality as $|3x-2|<5$, which means $-5<3x-2<5$. Adding $2$ gives $-3<3x<7$, so $-1<x<7/3$.
+      - problem: A metal rod is accepted when its length $L$ differs from $50$ cm by less than $0.4$ cm. Which lengths are accepted?
+        answer: (49.6, 50.4)
+        answer_contract:
+          kind: inequality_union
+        solution_sketch: The difference between $L$ and $50$ is less than $0.4$, so $|L-50|<0.4$. Then $-0.4<L-50<0.4$, which gives $49.6<L<50.4$.
+      - problem: Solve $9\ge |4-x|$.
+        answer: '[-5, 13]'
+        answer_contract:
+          kind: inequality_union
+        solution_sketch: 'Read the inequality as $|4-x|\le 9$, so $-9\le 4-x\le 9$. Subtracting $4$ gives $-13\le -x\le 5$, and dividing by $-1$ reverses the signs: $-5\le x\le 13$.'
+      - problem: A hiker stays within $2.5$ km of a hut at kilometre mark $12$ on a straight path. Which kilometre marks $k$ can the hiker be at?
+        answer: '[9.5, 14.5]'
+        answer_contract:
+          kind: inequality_union
+        solution_sketch: The distance of the hiker from the hut is $|k-12|\le 2.5$. So $-2.5\le k-12\le 2.5$ and $9.5\le k\le 14.5$.
+      - problem: Solve $|5-2x|<7$.
+        answer: (-1, 6)
+        answer_contract:
+          kind: inequality_union
+        solution_sketch: The condition means $-7<5-2x<7$, so $-12<-2x<2$. Dividing by $-2$ reverses the signs and gives $-1<x<6$.
+      constraints: linear inside; bounded interval answers
+    - id: kp4
+      name: '|linear| > a'
+      key_prerequisites:
+      - basic-absolute-value-inequalities
+      exemplars:
+      - problem: Solve $|2x+1|\ge 5$.
+        answer: x <= -3 or x >= 2
+        answer_contract:
+          kind: inequality_union
+        solution_sketch: Split into $2x+1\ge 5$ and $2x+1\le -5$. The first gives $x\ge 2$ and the second gives $x\le -3$.
+      - problem: Solve $|x+4|>2$.
+        answer: x < -6 or x > -2
+        answer_contract:
+          kind: inequality_union
+        solution_sketch: Split into $x+4>2$ and $x+4<-2$. The first gives $x>-2$ and the second gives $x<-6$.
+      - problem: A pump is out of tolerance when its pressure $p$ differs from $40$ kPa by at least $6$ kPa. For which pressures is the pump out of tolerance?
+        answer: p <= 34 or p >= 46
+        answer_contract:
+          kind: inequality_union
+        solution_sketch: The difference is $|p-40|\ge 6$, so $p-40\ge 6$ or $p-40\le -6$. Then $p\ge 46$ or $p\le 34$.
+      - problem: Solve $|3-2x|>7$.
+        answer: x < -2 or x > 5
+        answer_contract:
+          kind: inequality_union
+        solution_sketch: 'Split into $3-2x>7$ and $3-2x<-7$. Dividing by $-2$ reverses each sign: $x<-2$ and $x>5$.'
+      - problem: A van must stay more than $3$ km away from a depot at kilometre mark $5$ of a straight road. Which kilometre marks $k$ are allowed?
+        answer: k < 2 or k > 8
+        answer_contract:
+          kind: inequality_union
+        solution_sketch: The distance from the depot is $|k-5|>3$. So $k-5>3$ or $k-5<-3$, which gives $k>8$ or $k<2$.
+      - problem: Solve $|x/3-2|\ge 4$.
+        answer: x <= -6 or x >= 18
+        answer_contract:
+          kind: inequality_union
+        solution_sketch: Split into $x/3-2\ge 4$ and $x/3-2\le -4$. Adding $2$ and multiplying by $3$ gives $x\ge 18$ or $x\le -6$.
+      - problem: Solve $|x-1|>4$.
+        answer: x < -3 or x > 5
+        answer_contract:
+          kind: inequality_union
+        solution_sketch: A distance greater than $4$ from $1$ gives $x-1>4$ or $x-1<-4$, so $x>5$ or $x<-3$.
+      - problem: Is $x=0$ a solution of $|2x-3|>2$?
+        answer: 'yes'
+        answer_contract:
+          kind: label
+          options:
+          - - 'yes'
+            - it is
+            - yes it is
+            - it is a solution
+          - - 'no'
+            - it is not
+            - no it is not
+            - not a solution
+        solution_sketch: At $x=0$ the value is $|-3|=3$, and $3>2$. So $0$ is a solution.
+      constraints: two-ray answers; keep the union
+    - id: kp5
+      name: Isolate the absolute value first
+      key_prerequisites: []
+      exemplars:
+      - problem: Solve $2|x-4|+3\le 15$.
+        answer: '[-2, 10]'
+        answer_contract:
+          kind: inequality_union
+        solution_sketch: Subtract $3$ and divide by $2$ to get $|x-4|\le 6$. Then $-6\le x-4\le 6$, so $-2\le x\le 10$.
+      - problem: Solve $3|2x+1|-5<16$.
+        answer: (-4, 3)
+        answer_contract:
+          kind: inequality_union
+        solution_sketch: Add $5$ and divide by $3$ to get $|2x+1|<7$. Then $-7<2x+1<7$, so $-4<x<3$.
+      - problem: Solve $2|x+1|-3>5$.
+        answer: x < -5 or x > 3
+        answer_contract:
+          kind: inequality_union
+        solution_sketch: Add $3$ and divide by $2$ to get $|x+1|>4$. Then $x+1>4$ or $x+1<-4$, so $x>3$ or $x<-5$.
+      - problem: A company pays $20+5|s-60|$ euros for a score $s$, where $60$ is the target score. For which scores is the pay below $50$ euros?
+        answer: (54, 66)
+        answer_contract:
+          kind: inequality_union
+        solution_sketch: The condition is $20+5|s-60|<50$, so $|s-60|<6$. Then $-6<s-60<6$, which gives $54<s<66$ for the allowed scores.
+      - problem: Solve $19\ge 4|x+2|+3$.
+        answer: '[-6, 2]'
+        answer_contract:
+          kind: inequality_union
+        solution_sketch: Read the inequality as $4|x+2|+3\le 19$. Then $|x+2|\le 4$, so $-4\le x+2\le 4$ and $-6\le x\le 2$.
+      - problem: Solve $10-2|x+3|\ge 2$.
+        answer: '[-7, 1]'
+        answer_contract:
+          kind: inequality_union
+        solution_sketch: 'Subtract $10$ and divide by $-2$, which reverses the sign: $|x+3|\le 4$. Then $-4\le x+3\le 4$, so $-7\le x\le 1$.'
+      - problem: The cost per hour of a machine is $4|t-30|+8$ euros, where $t$ is the temperature in degrees Celsius. For which temperatures is the cost at least $40$ euros?
+        answer: t <= 22 or t >= 38
+        answer_contract:
+          kind: inequality_union
+        solution_sketch: The condition is $4|t-30|+8\ge 40$, so $|t-30|\ge 8$. Then $t-30\ge 8$ or $t-30\le -8$, which gives $t\ge 38$ or $t\le 22$.
+      - problem: Solve $5|3-x|-2<18$.
+        answer: (-1, 7)
+        answer_contract:
+          kind: inequality_union
+        solution_sketch: 'Add $2$ and divide by $5$ to get $|3-x|<4$. Then $-4<3-x<4$, and dividing by $-1$ reverses the signs: $-1<x<7$.'
+      constraints: isolate the absolute value before splitting into cases
     diagnostic_exemplar:
-      problem: 'Solve $|3x - 1| - 2 = 6$.'
-      answer: 'x = 3 or x = -7/3'
-      solution_sketch: '$|3x - 1| = 8$; $3x - 1 = 8 \to x = 3$; $3x - 1 = -8 \to x = -\frac{7}{3}$.'
+      problem: Solve $2|x - 3| - 1 \le 7$.
+      answer: -1 <= x <= 7
+      solution_sketch: $2|x - 3| \le 8$; $|x - 3| \le 4$; $-4 \le x - 3 \le 4$.
     anki_seeds:
-      - front: "If |X| = a with a > 0, then X = ? "
-        back: "X = a or X = -a (isolate the absolute value first)"
-        type: basic
-      - front: "If |X| = a and a < 0, the equation has ..."
-        back: "no solution (absolute value is never negative)"
-        type: basic
+    - front: 'If |X| = a with a > 0, then X = ? '
+      back: X = a or X = -a (isolate the absolute value first)
+      type: basic
+    - front: If |X| = a and a < 0, the equation has ...
+      back: no solution (absolute value is never negative)
+      type: basic
+    - front: Before splitting an absolute value inequality into cases, first ___.
+      back: isolate the absolute value expression on one side
+      type: basic
 
   - id: translating-sentences-to-equations
     name: "Translating Sentences into Equations"

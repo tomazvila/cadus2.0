@@ -39,13 +39,16 @@ fn evaluated(key: &str) -> String {
 /// number; the in-context items of those KPs ask for a count and take `exact`.
 #[test]
 fn same_base_power_tasks_reject_evaluated_numbers() {
-    for topic in [
-        "exponent-product-rule",
-        "exponent-quotient-rule",
-        "power-of-a-power-rule",
+    // Re-keyed 2026-10-12 after the Foundations merge (D-C1). The quotient rule
+    // topic joined `exponent-product-rule`, and its single-power step is now
+    // kp3 there. The old product rule step kp2 was a dropped twin of it: superseded
+    // by the Foundations merge (2026-10-12).
+    for (topic, kp) in [
+        ("exponent-product-rule", "kp3"),
+        ("power-of-a-power-rule", "kp2"),
     ] {
         let mut strict = 0;
-        for item in exemplars(topic, "kp2") {
+        for item in exemplars(topic, kp) {
             let expected = item["answer"].as_str().unwrap();
             let contract: AnswerContract =
                 serde_json::from_value(item["answer_contract"].clone()).unwrap();

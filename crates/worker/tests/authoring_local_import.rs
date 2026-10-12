@@ -7,7 +7,8 @@ use std::path::{Path, PathBuf};
 use cadus_store::test_support::TestDb;
 
 /// The number of drafts the arithmetic-core manifest names.
-const DRAFTS: i64 = 162;
+// 162 before the Foundations merge (2026-10-12); 158 after it (79 knowledge points).
+const DRAFTS: i64 = 158;
 
 fn manifest() -> PathBuf {
     Path::new(env!("CARGO_MANIFEST_DIR"))
@@ -24,9 +25,9 @@ async fn the_import_is_pending_only_costs_nothing_and_a_second_pass_skips() {
             assert!(output.status.success(), "{stdout}{}", String::from_utf8_lossy(&output.stderr));
             assert!(stdout.contains("model cost reported 0 micro-USD"), "{stdout}");
             let summary = if pass == 0 {
-                "local drafts: stored 162 skipped 0 declined 0 calls 162"
+                "local drafts: stored 158 skipped 0 declined 0 calls 158"
             } else {
-                "local drafts: stored 0 skipped 162 declined 0 calls 0"
+                "local drafts: stored 0 skipped 158 declined 0 calls 0"
             };
             assert!(stdout.contains(summary), "{stdout}");
         }

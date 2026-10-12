@@ -2,8 +2,9 @@
 //! and the lesson knowledge-point gates (M3 review round 1, findings #6, #7,
 //! #8, #14, #15).
 //!
-//! Every expected value below is a LITERAL from the 1.0 oracle on the committed
-//! stream, or from `projector.py:860-872`. No expectation calls the code under test.
+//! Every expected value below is a LITERAL. Re-based 2026-10-12 after the Foundations
+//! merge (D-C1): the digests pin the 2.0 fold on the merged graph, not 1.0. No
+//! expectation calls the code under test.
 
 #![allow(clippy::unwrap_used, clippy::expect_used)]
 
@@ -47,15 +48,15 @@ const BOUNDARY_PLACED_BALANCE_ZERO: &str =
 /// The fold of `boundary/xp_window_cancelling_sum.jsonl` (finding #8). The 1.0 digest was
 /// 5d0ef916...6de80; it moved when the velocity divisor became the days covered.
 const BOUNDARY_XP_CANCELLING_SUM: &str =
-    "74dbe4fa6b3320ffd2913bf818b220721eefbc86fa45af6a8f9d3eb3216bd97f";
+    "24bc46ef53830e073a21f7fa22c19749677e41430857a414d8366955fd577bfe";
 
 /// The 1.0 fold of `boundary/velocity_window_start_day.jsonl` (finding #14).
 const BOUNDARY_VELOCITY_WINDOW_START: &str =
-    "22af94ca29e7d339b3112fb0a89d7da9e08ab050137e8cf1ad791df3c8d6e1ff";
+    "f620e48dca18a34fa67128416035cca2aef8f3ad329375ea9eb8f58e3322ff60";
 
 /// The 1.0 fold of `boundary/streak_reference_day_at_goal.jsonl` (finding #15).
 const BOUNDARY_STREAK_AT_GOAL: &str =
-    "c5e3438c51dc169d775b88879ba672223292bf9c37b0ac8167316b924a8f4956";
+    "cd3fad4fd1c130a66b173b029bad496c3b5b8b0a75d825cc5c2942d01d25457f";
 
 /// Every boundary stream, with the 1.0 digest of its fold.
 const BOUNDARY_STREAMS: [(&str, &str); 5] = [
@@ -153,7 +154,7 @@ fn an_xp_entry_on_the_first_day_of_the_window_is_inside_it() {
     assert!((model.velocity.xp_per_day_28d - 3.0).abs() < f64::EPSILON);
     assert_eq!(
         model.velocity.eta.map(|day| day.to_string()).as_deref(),
-        Some("2033-07-18")
+        Some("2032-11-18") // re-based 2026-10-12 after the Foundations merge (D-C1): the merged tree has fewer topics left
     );
     assert_eq!(blob_digest(&model).unwrap(), BOUNDARY_VELOCITY_WINDOW_START);
 }

@@ -15,7 +15,11 @@ fn every_exponents_radicals_kp_is_practicable_assessable_and_has_solutions() {
         .join("tests/fixtures/exponents_radicals_unit_kps.json");
     let keys: Vec<String> =
         serde_json::from_str(&std::fs::read_to_string(fixture).unwrap()).unwrap();
-    assert_eq!(keys.len(), 78, "the unit holds 26 topics of 3 KPs each");
+    assert_eq!(
+        keys.len(),
+        76,
+        "the unit holds 76 KPs after the Foundations merge (2026-10-12)"
+    );
     common::readiness::assert_kps_ready(&keys);
 }
 

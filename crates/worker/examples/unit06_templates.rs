@@ -20,7 +20,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     )
     .unwrap();
     println!(
-        "60 native current-template gates passed; {} distinct instances; technical receipt: {}",
+        "{} native current-template gates passed; {} distinct instances; technical receipt: {}",
+        receipt["rows"].as_array().unwrap().len(),
         receipt["valid_distinct_instances"],
         output.display()
     );

@@ -31,27 +31,29 @@ fn historical_classification_and_all_live_statements_have_a_closed_boundary() {
     // The 2026-10-06 exponents-radicals and polynomials-quadratics rewrites add
     // 78 more multi-step items, all with a contract (1103).
     // 2026-10-07, courses rewrite: 1718 (was 1103).
-    assert_eq!(current.len(), 1718);
+    // 2026-10-12, Foundations merge (D-C1): 1669 (was 1718).
+    assert_eq!(current.len(), 1669);
     assert_eq!(
         current
             .iter()
             .map(|r| r["topic_id"].as_str().unwrap())
             .collect::<BTreeSet<_>>()
             .len(),
-        78
+        72 // 2026-10-12, Foundations merge (D-C1): was 78
     );
     assert_eq!(
         current
             .iter()
             .filter(|r| r["kp_id"] == "diagnostic")
             .count(),
-        78
+        72 // 2026-10-12, Foundations merge (D-C1): was 78
     );
     assert_eq!(
         sha256_hex(serde_json::to_string(&current).unwrap().as_bytes()),
         // 2026-10-07, courses rewrite (95 thousands separators, three reworded items, mixed-number forms): hash re-pinned.
         // 2026-10-08, story framing removed: hash re-pinned (was 0fa8bc22...ad7b).
-        "c1ea8818b4b35a0e9df6236d244a0be4d588b1546e2cf52307ae03061d1e013c"
+        // 2026-10-12, Foundations merge (D-C1): hash re-pinned (was c1ea8818...013c).
+        "91526de1802b1265d8dbae7d06a689eac68c56f0cb46cbd56c0f8ba71c89c71f"
     );
     let current_keys: BTreeSet<_> = current.iter().map(key).collect();
     assert_eq!(current_keys.len(), current.len());
@@ -74,18 +76,19 @@ fn historical_classification_and_all_live_statements_have_a_closed_boundary() {
     assert_eq!(
         contracts,
         BTreeMap::from([
-            ("approx".to_owned(), 28),
-            ("ascending_chain".to_owned(), 5),
-            ("coordinates".to_owned(), 123),
-            // 2026-10-08, story framing removed: exact 665 (was 664), label 97 (was 98).
-            ("exact".to_owned(), 665),
+            // 2026-10-12, Foundations merge (D-C1): the tallies below pin the merged
+            // tree (1,669 live statements). The `ascending_chain` kind (5) left with
+            // the dropped twin steps.
+            ("approx".to_owned(), 26),
+            ("coordinates".to_owned(), 119),
+            ("exact".to_owned(), 648),
             ("function".to_owned(), 12),
             ("inequality_union".to_owned(), 97),
-            ("label".to_owned(), 97),
-            ("list".to_owned(), 40),
-            ("multipart".to_owned(), 32),
+            ("label".to_owned(), 91),
+            ("list".to_owned(), 38),
+            ("multipart".to_owned(), 30),
             ("polynomial_relation".to_owned(), 97),
-            ("property".to_owned(), 4),
+            ("property".to_owned(), 3),
             ("reduced_ratio".to_owned(), 13),
             ("relation_setup".to_owned(), 9),
             ("required_assignment".to_owned(), 5),
@@ -93,15 +96,16 @@ fn historical_classification_and_all_live_statements_have_a_closed_boundary() {
             ("required_inequality_notation".to_owned(), 23),
             ("required_simplest_radical".to_owned(), 7),
             ("required_single_power".to_owned(), 1),
-            ("uncontracted".to_owned(), 44),
-            ("unit".to_owned(), 406),
+            ("uncontracted".to_owned(), 39),
+            ("unit".to_owned(), 401),
         ])
     );
 
     let text = include_str!("../../../docs/reports/legacy-multistep-statements.jsonl");
     assert_eq!(
         sha256_hex(text.as_bytes()),
-        "bb7c2a471bc05786a13bc702a8f9a694e722dbbdfad96ab5e36f8c8329b97599"
+        // 2026-10-12, Foundations merge (D-C1): the manifest was re-keyed; hash re-pinned (was bb7c2a47...7599).
+        "b08c731e8ddbb43aa8a8b3b8f8d70f4a569f4fbfdbaa0d0c607aa7c78a964d5c"
     );
     let mut counts = BTreeMap::new();
     let mut reviewed = Vec::new();
@@ -126,15 +130,16 @@ fn historical_classification_and_all_live_statements_have_a_closed_boundary() {
         reviewed.push(row);
     }
     reviewed.sort_by_key(key);
-    assert_eq!(reviewed.len(), 542);
+    assert_eq!(reviewed.len(), 520); // 2026-10-12, Foundations merge (D-C1): was 542
     assert_eq!(
         sha256_hex(serde_json::to_string(&reviewed).unwrap().as_bytes()),
-        "432d59e238c00ffe8d83bac6e3e0e9277689c55f21818249577c96d6476ab00d"
+        // 2026-10-12, Foundations merge (D-C1): hash re-pinned (was 432d59e2...b00d).
+        "e9f5502dad3ef7c6e19d02435e8167d51404f2a8b1a5333bf3edf4a3f16c74c7"
     );
     let reviewed_keys: BTreeSet<_> = reviewed.iter().map(key).collect();
     assert_eq!(reviewed_keys.len(), reviewed.len());
     assert!(reviewed_keys.is_subset(&current_keys));
-    assert_eq!(current_keys.difference(&reviewed_keys).count(), 1176); // 2026-10-07, courses rewrite (was 561)
+    assert_eq!(current_keys.difference(&reviewed_keys).count(), 1149); // 2026-10-12, Foundations merge (D-C1): was 1176; 2026-10-07, courses rewrite (was 561)
     assert!(
         current
             .iter()
@@ -147,7 +152,7 @@ fn historical_classification_and_all_live_statements_have_a_closed_boundary() {
             .filter(|row| row["answer_contract"].is_null())
             .filter(|row| reviewed_keys.contains(&key(row)))
             .count(),
-        44 // 2026-10-07, courses rewrite (was 45)
+        39 // 2026-10-12, Foundations merge (D-C1): was 44
     );
     assert_eq!(
         reviewed
@@ -157,14 +162,15 @@ fn historical_classification_and_all_live_statements_have_a_closed_boundary() {
                 live["problem"] == row["problem"] && live["answer"] == row["answer"]
             })
             .count(),
-        104 // 2026-10-07, courses rewrite (was 184); 104 after the later thousands-separator pass
+        95 // 2026-10-12, Foundations merge (D-C1): was 104
     );
     assert_eq!(
         counts,
         BTreeMap::from([
-            ("component_exercise".to_owned(), 342),
-            ("coherent_model".to_owned(), 161),
-            ("linked_outputs".to_owned(), 35),
+            // 2026-10-12, Foundations merge (D-C1): the category tallies pin the re-keyed manifest.
+            ("component_exercise".to_owned(), 325),
+            ("coherent_model".to_owned(), 159),
+            ("linked_outputs".to_owned(), 32),
             ("context_fragment".to_owned(), 4),
         ])
     );

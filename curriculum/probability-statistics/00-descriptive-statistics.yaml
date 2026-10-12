@@ -596,139 +596,180 @@ topics:
         type: basic
 
   - id: mean-of-a-data-set
-    name: "The Mean of a Data Set"
+    name: The Mean of a Data Set
     core: true
     difficulty: 0.2
     drill: false
     answer_kind: numeric
     expected_time_secs: 90
     prerequisites:
-      - id: decimal-operations
-        weight: 0.6
-        key: true
-      - id: long-division
-        weight: 0.4
-        key: false
+    - id: decimal-operations
+      weight: 0.6
+      key: true
+    - id: long-division-one-digit
+      weight: 0.4
+      key: false
     knowledge_points:
-      - id: kp1
-        name: "Computing the mean"
-        key_prerequisites: [decimal-operations, long-division]
-        exemplars:
-          - problem: 'Find the mean of $4, 7, 9, 12$.'
-            answer: '8'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'The sum is $4 + 7 + 9 + 12 = 32$. There are $4$ values, so the mean is $32 \div 4 = 8$.'
-          - problem: 'Maya''s quiz scores this term were $5, 7, 8, 10$ and $5$. What was her mean quiz score?'
-            answer: '7'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'The five scores add up to $5 + 7 + 8 + 10 + 5 = 35$. Dividing by the $5$ scores gives a mean of $7$.'
-          - problem: 'A delivery driver made $5, 8, 9, 11$ and $12$ stops on five days. What was the mean number of stops per day?'
-            answer: '9'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'The stops add up to $5 + 8 + 9 + 11 + 12 = 45$ over $5$ days. Sharing them equally gives $45 \div 5 = 9$ stops per day.'
-          - problem: 'Five friends pool their stickers: they have $8, 12, 15, 9$ and $11$. If they share all the stickers equally, how many does each friend get?'
-            answer: '11'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'Together they have $8 + 12 + 15 + 9 + 11 = 55$ stickers. Sharing among $5$ friends gives $55 \div 5 = 11$ stickers each.'
-          - problem: 'Find the mean of $6, 8, 10, 14, 12$.'
-            answer: '10'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'The sum is $6 + 8 + 10 + 14 + 12 = 50$. Dividing by the $5$ values gives a mean of $10$.'
-          - problem: 'The noon temperatures on four days were $12, 18, 9$ and $17$ degrees Celsius. What was the mean noon temperature?'
-            answer: '14'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'The temperatures add up to $12 + 18 + 9 + 17 = 56$. Dividing by the $4$ days gives a mean of $14$ degrees.'
-          - problem: 'What is the mean of $3, 5, 5, 8, 9$?'
-            answer: '6'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'The middle value is the median, not the mean. The mean is the sum $3 + 5 + 5 + 8 + 9 = 30$ divided by $5$, which is $6$.'
-        constraints: "4-6 small positive integers; sum divides evenly by n"
-      - id: kp2
-        name: "Means with decimal results"
-        key_prerequisites: [decimal-operations]
-        exemplars:
-          - problem: 'Find the mean of $3, 4, 6, 8$.'
-            answer: '5.25'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'The sum is $3 + 4 + 6 + 8 = 21$. Dividing by $4$ gives $21 \div 4 = 5.25$.'
-          - problem: 'A runner records the times $12.5, 13.2, 12.8, 13.5$ and $12.0$ seconds in five races. What is her mean time?'
-            answer: '12.8'
-            answer_contract: {"kind": "unit", "quantity": "time", "unit": "s", "allow_omitted": true}
-            solution_sketch: 'The times add up to $12.5 + 13.2 + 12.8 + 13.5 + 12.0 = 64$ seconds. Dividing by the $5$ races gives a mean of $12.8$ seconds.'
-          - problem: 'A shop takes $105, 98, 112$ and $90$ dollars on four days. What are its mean daily takings?'
-            answer: '101.25'
-            answer_contract: {"kind": "unit", "quantity": "dollar", "unit": "dollar", "allow_omitted": true}
-            solution_sketch: 'The takings add up to $105 + 98 + 112 + 90 = 405$ dollars. Dividing by the $4$ days gives $405 \div 4 = 101.25$ dollars.'
-          - problem: 'Find the mean of $1, 2, 2, 5$.'
-            answer: '2.5'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'The sum is $1 + 2 + 2 + 5 = 10$. Dividing by $4$ gives $10 \div 4 = 2.5$.'
-          - problem: 'Four friends spent $23, 14, 20$ and $9$ dollars on a day out. If they had split the total cost equally, how much would each have paid?'
-            answer: '16.5'
-            answer_contract: {"kind": "unit", "quantity": "dollar", "unit": "dollar", "allow_omitted": true}
-            solution_sketch: 'The total cost is $23 + 14 + 20 + 9 = 66$ dollars. Splitting it among $4$ friends gives $66 \div 4 = 16.5$ dollars each.'
-          - problem: 'Five cyclists rode $12.4, 15.1, 9.8, 14.3$ and $11.2$ kilometres. Find their mean distance to one decimal place.'
-            answer: '12.6'
-            answer_contract: {"kind": "approx", "decimals": 1}
-            solution_sketch: 'The distances add up to $12.4 + 15.1 + 9.8 + 14.3 + 11.2 = 62.8$. Dividing by $5$ gives $12.56$, which is $12.6$ to one decimal place.'
-          - problem: 'Find the mean of $4, 6, 7, 10$.'
-            answer: '6.75'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'The sum is $4 + 6 + 7 + 10 = 27$. Dividing by $4$ gives $27 \div 4 = 6.75$.'
-          - problem: 'A baker sold $14, 9, 17, 12, 11$ and $13$ loaves on six mornings. Find the mean number of loaves sold to one decimal place.'
-            answer: '12.7'
-            answer_contract: {"kind": "approx", "decimals": 1}
-            solution_sketch: 'The sales add up to $14 + 9 + 17 + 12 + 11 + 13 = 76$. Dividing by $6$ gives $12.666\ldots$, which is $12.7$ to one decimal place.'
-        constraints: "4 or 5 values; mean terminates after at most two decimal places"
-      - id: kp3
-        name: "Using the mean to find a total or missing value"
-        key_prerequisites: [decimal-operations]
-        try_first:
-          problem: 'The mean of four numbers is $10$. Three of them are $8, 12$ and $11$. What is the fourth number?'
-          answer_contract: {"kind": "exact"}
-          answer: '9'
-          reveal: 'Four numbers with mean $10$ add up to $40$, and the three known numbers add up to $31$, so the fourth is $9$. A mean fixes the total, and the total tells what is missing.'
-        exemplars:
-          - problem: 'The mean of $5$ numbers is $12$. What is their sum?'
-            answer: '60'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'The mean is the sum divided by the count, so the sum is the mean times the count. Here $12 \times 5 = 60$.'
-          - problem: 'A basketball player averaged $14$ points over $5$ games. How many points did she score in total?'
-            answer: '70'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'The mean is the total divided by the number of games. So the total is $14 \times 5 = 70$ points.'
-          - problem: 'Four test marks (out of $10$) have mean $7$. Three of them are $6, 9$ and $5$. What is the fourth mark?'
-            answer: '8'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'Four marks with mean $7$ add up to $4 \times 7 = 28$. The known marks add up to $20$, so the fourth mark is $28 - 20 = 8$.'
-          - problem: 'The mean number of stamps in $4$ boxes is $25$. Three boxes hold $20, 30$ and $22$ stamps. How many stamps are in the fourth box?'
-            answer: '28'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'Four boxes with mean $25$ hold $4 \times 25 = 100$ stamps in all. The three known boxes hold $72$, so the fourth holds $100 - 72 = 28$.'
-          - problem: 'The $8$ backpacks on a school trip weigh $96$ kg in total. What is the mean weight of a backpack?'
-            answer: '12'
-            answer_contract: {"kind": "unit", "quantity": "mass", "unit": "kg", "allow_omitted": true}
-            solution_sketch: 'The mean is the total shared among the backpacks. Here $96 \div 8 = 12$ kg.'
-          - problem: 'Ana has scored $6, 8, 7$ and $9$ (out of $10$) on four tests. What mark on a fifth test gives her a mean of $8$?'
-            answer: '10'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'Five tests with mean $8$ need a total of $5 \times 8 = 40$. Her four marks add up to $30$, so she needs $40 - 30 = 10$ on the fifth test.'
-          - problem: 'The mean of $6$ numbers is $9$. What is their sum?'
-            answer: '54'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'The sum is the mean times the count, not the mean plus the count. So the sum is $6 \times 9 = 54$.'
-        constraints: "counts of 4-6; all totals and missing values are whole numbers"
+    - id: kp1
+      name: Computing the mean
+      key_prerequisites:
+      - decimal-operations
+      - long-division-one-digit
+      exemplars:
+      - problem: Find the mean of $4, 7, 9, 12$.
+        answer: '8'
+        answer_contract:
+          kind: exact
+        solution_sketch: The sum is $4 + 7 + 9 + 12 = 32$. There are $4$ values, so the mean is $32 \div 4 = 8$.
+      - problem: Maya's quiz scores this term were $5, 7, 8, 10$ and $5$. What was her mean quiz score?
+        answer: '7'
+        answer_contract:
+          kind: exact
+        solution_sketch: The five scores add up to $5 + 7 + 8 + 10 + 5 = 35$. Dividing by the $5$ scores gives a mean of $7$.
+      - problem: A delivery driver made $5, 8, 9, 11$ and $12$ stops on five days. What was the mean number of stops per day?
+        answer: '9'
+        answer_contract:
+          kind: exact
+        solution_sketch: The stops add up to $5 + 8 + 9 + 11 + 12 = 45$ over $5$ days. Sharing them equally gives $45 \div 5 = 9$ stops per day.
+      - problem: 'Five friends pool their stickers: they have $8, 12, 15, 9$ and $11$. If they share all the stickers equally, how many does each friend get?'
+        answer: '11'
+        answer_contract:
+          kind: exact
+        solution_sketch: Together they have $8 + 12 + 15 + 9 + 11 = 55$ stickers. Sharing among $5$ friends gives $55 \div 5 = 11$ stickers each.
+      - problem: Find the mean of $6, 8, 10, 14, 12$.
+        answer: '10'
+        answer_contract:
+          kind: exact
+        solution_sketch: The sum is $6 + 8 + 10 + 14 + 12 = 50$. Dividing by the $5$ values gives a mean of $10$.
+      - problem: The noon temperatures on four days were $12, 18, 9$ and $17$ degrees Celsius. What was the mean noon temperature?
+        answer: '14'
+        answer_contract:
+          kind: exact
+        solution_sketch: The temperatures add up to $12 + 18 + 9 + 17 = 56$. Dividing by the $4$ days gives a mean of $14$ degrees.
+      - problem: What is the mean of $3, 5, 5, 8, 9$?
+        answer: '6'
+        answer_contract:
+          kind: exact
+        solution_sketch: The middle value is the median, not the mean. The mean is the sum $3 + 5 + 5 + 8 + 9 = 30$ divided by $5$, which is $6$.
+      constraints: 4-6 small positive integers; sum divides evenly by n
+    - id: kp2
+      name: Means with decimal results
+      key_prerequisites:
+      - decimal-operations
+      exemplars:
+      - problem: Find the mean of $3, 4, 6, 8$.
+        answer: '5.25'
+        answer_contract:
+          kind: exact
+        solution_sketch: The sum is $3 + 4 + 6 + 8 = 21$. Dividing by $4$ gives $21 \div 4 = 5.25$.
+      - problem: A runner records the times $12.5, 13.2, 12.8, 13.5$ and $12.0$ seconds in five races. What is her mean time?
+        answer: '12.8'
+        answer_contract:
+          kind: unit
+          quantity: time
+          unit: s
+          allow_omitted: true
+        solution_sketch: The times add up to $12.5 + 13.2 + 12.8 + 13.5 + 12.0 = 64$ seconds. Dividing by the $5$ races gives a mean of $12.8$ seconds.
+      - problem: A shop takes $105, 98, 112$ and $90$ dollars on four days. What are its mean daily takings?
+        answer: '101.25'
+        answer_contract:
+          kind: unit
+          quantity: dollar
+          unit: dollar
+          allow_omitted: true
+        solution_sketch: The takings add up to $105 + 98 + 112 + 90 = 405$ dollars. Dividing by the $4$ days gives $405 \div 4 = 101.25$ dollars.
+      - problem: Find the mean of $1, 2, 2, 5$.
+        answer: '2.5'
+        answer_contract:
+          kind: exact
+        solution_sketch: The sum is $1 + 2 + 2 + 5 = 10$. Dividing by $4$ gives $10 \div 4 = 2.5$.
+      - problem: Four friends spent $23, 14, 20$ and $9$ dollars on a day out. If they had split the total cost equally, how much would each have paid?
+        answer: '16.5'
+        answer_contract:
+          kind: unit
+          quantity: dollar
+          unit: dollar
+          allow_omitted: true
+        solution_sketch: The total cost is $23 + 14 + 20 + 9 = 66$ dollars. Splitting it among $4$ friends gives $66 \div 4 = 16.5$ dollars each.
+      - problem: Five cyclists rode $12.4, 15.1, 9.8, 14.3$ and $11.2$ kilometres. Find their mean distance to one decimal place.
+        answer: '12.6'
+        answer_contract:
+          kind: approx
+          decimals: 1
+        solution_sketch: The distances add up to $12.4 + 15.1 + 9.8 + 14.3 + 11.2 = 62.8$. Dividing by $5$ gives $12.56$, which is $12.6$ to one decimal place.
+      - problem: Find the mean of $4, 6, 7, 10$.
+        answer: '6.75'
+        answer_contract:
+          kind: exact
+        solution_sketch: The sum is $4 + 6 + 7 + 10 = 27$. Dividing by $4$ gives $27 \div 4 = 6.75$.
+      - problem: A baker sold $14, 9, 17, 12, 11$ and $13$ loaves on six mornings. Find the mean number of loaves sold to one decimal place.
+        answer: '12.7'
+        answer_contract:
+          kind: approx
+          decimals: 1
+        solution_sketch: The sales add up to $14 + 9 + 17 + 12 + 11 + 13 = 76$. Dividing by $6$ gives $12.666\ldots$, which is $12.7$ to one decimal place.
+      constraints: 4 or 5 values; mean terminates after at most two decimal places
+    - id: kp3
+      name: Using the mean to find a total or missing value
+      key_prerequisites:
+      - decimal-operations
+      try_first:
+        problem: The mean of four numbers is $10$. Three of them are $8, 12$ and $11$. What is the fourth number?
+        answer_contract:
+          kind: exact
+        answer: '9'
+        reveal: Four numbers with mean $10$ add up to $40$, and the three known numbers add up to $31$, so the fourth is $9$. A mean fixes the total, and the total tells what is missing.
+      exemplars:
+      - problem: The mean of $5$ numbers is $12$. What is their sum?
+        answer: '60'
+        answer_contract:
+          kind: exact
+        solution_sketch: The mean is the sum divided by the count, so the sum is the mean times the count. Here $12 \times 5 = 60$.
+      - problem: A basketball player averaged $14$ points over $5$ games. How many points did she score in total?
+        answer: '70'
+        answer_contract:
+          kind: exact
+        solution_sketch: The mean is the total divided by the number of games. So the total is $14 \times 5 = 70$ points.
+      - problem: Four test marks (out of $10$) have mean $7$. Three of them are $6, 9$ and $5$. What is the fourth mark?
+        answer: '8'
+        answer_contract:
+          kind: exact
+        solution_sketch: Four marks with mean $7$ add up to $4 \times 7 = 28$. The known marks add up to $20$, so the fourth mark is $28 - 20 = 8$.
+      - problem: The mean number of stamps in $4$ boxes is $25$. Three boxes hold $20, 30$ and $22$ stamps. How many stamps are in the fourth box?
+        answer: '28'
+        answer_contract:
+          kind: exact
+        solution_sketch: Four boxes with mean $25$ hold $4 \times 25 = 100$ stamps in all. The three known boxes hold $72$, so the fourth holds $100 - 72 = 28$.
+      - problem: The $8$ backpacks on a school trip weigh $96$ kg in total. What is the mean weight of a backpack?
+        answer: '12'
+        answer_contract:
+          kind: unit
+          quantity: mass
+          unit: kg
+          allow_omitted: true
+        solution_sketch: The mean is the total shared among the backpacks. Here $96 \div 8 = 12$ kg.
+      - problem: Ana has scored $6, 8, 7$ and $9$ (out of $10$) on four tests. What mark on a fifth test gives her a mean of $8$?
+        answer: '10'
+        answer_contract:
+          kind: exact
+        solution_sketch: Five tests with mean $8$ need a total of $5 \times 8 = 40$. Her four marks add up to $30$, so she needs $40 - 30 = 10$ on the fifth test.
+      - problem: The mean of $6$ numbers is $9$. What is their sum?
+        answer: '54'
+        answer_contract:
+          kind: exact
+        solution_sketch: The sum is the mean times the count, not the mean plus the count. So the sum is $6 \times 9 = 54$.
+      constraints: counts of 4-6; all totals and missing values are whole numbers
     diagnostic_exemplar:
-      problem: 'Four test marks (out of $10$) have mean $8$. Three of them are $9, 6, 10$. Find the fourth mark.'
+      problem: Four test marks (out of $10$) have mean $8$. Three of them are $9, 6, 10$. Find the fourth mark.
       answer: '7'
-      solution_sketch: 'Total $= 4 \cdot 8 = 32$; $32 - (9 + 6 + 10) = 7$.'
+      solution_sketch: Total $= 4 \cdot 8 = 32$; $32 - (9 + 6 + 10) = 7$.
     anki_seeds:
-      - front: 'Mean of a data set $=$ ?'
-        back: '$\frac{\text{sum of the values}}{\text{number of values}}$.'
-        type: basic
-      - front: 'If a data set of $n$ values has mean $\bar{x}$, its sum is...'
-        back: '$n \bar{x}$ — mean times count.'
-        type: basic
+    - front: Mean of a data set $=$ ?
+      back: $\frac{\text{sum of the values}}{\text{number of values}}$.
+      type: basic
+    - front: If a data set of $n$ values has mean $\bar{x}$, its sum is...
+      back: $n \bar{x}$ — mean times count.
+      type: basic
 
   - id: median-and-mode
     name: "Median and Mode"

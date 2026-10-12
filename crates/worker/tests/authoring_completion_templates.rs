@@ -6,6 +6,8 @@ use std::path::{Path, PathBuf};
 use cadus_core::{curriculum::load_curriculum, instruction::template_instances};
 use cadus_worker::authoring::{cli::select, completion::generate, job::verify_kind, prompt::Kind};
 
+// The Foundations merge (2026-10-12) re-keyed the moved steps and dropped
+// radical-exponent-conversion/kp3, so its recipe left this list.
 const KEYS: &[&str] = &[
     "mixed-numbers/kp1",
     "mixed-numbers/kp2",
@@ -24,9 +26,8 @@ const KEYS: &[&str] = &[
     "square-roots/kp3",
     "radical-operations/kp1",
     "dividing-radicals/kp1",
-    "radical-exponent-conversion/kp3",
-    "rational-exponents/kp1",
-    "rational-exponents/kp2",
+    "rational-exponents/kp3",
+    "rational-exponents/kp4",
     "rational-expressions/kp3",
 ];
 
@@ -141,5 +142,6 @@ fn every_audited_family_produces_exact_distinct_practice() {
 
 #[test]
 fn the_recipe_set_has_one_entry_for_each_reviewed_residual() {
-    assert_eq!(KEYS.len(), 21);
+    // 21 before the Foundations merge (2026-10-12); 20 after its step drop.
+    assert_eq!(KEYS.len(), 20);
 }

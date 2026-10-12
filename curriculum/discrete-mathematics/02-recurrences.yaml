@@ -275,126 +275,160 @@ topics:
         type: basic
 
   - id: linear-homogeneous-recurrences
-    name: "Linear Homogeneous Recurrences"
+    name: Linear Homogeneous Recurrences
     core: true
     difficulty: 0.65
     drill: false
     answer_kind: numeric
     expected_time_secs: 240
     prerequisites:
-      - id: recurrence-relations
-        weight: 0.8
-        key: true
-      - id: quadratic-equations-factoring
-        weight: 0.6
-        key: true
-      - id: perfect-square-trinomials
-        weight: 0.4
-        key: true
-      - id: multi-step-equations
-        weight: 0.3
-        key: false
-      - id: iteration-telescoping
-        weight: 0.4
-        key: false
+    - id: recurrence-relations
+      weight: 0.8
+      key: true
+    - id: quadratic-equations-factoring
+      weight: 0.6
+      key: true
+    - id: factoring-trinomials
+      weight: 0.4
+      key: true
+    - id: multi-step-equations
+      weight: 0.3
+      key: false
+    - id: iteration-telescoping
+      weight: 0.4
+      key: false
     knowledge_points:
-      - id: kp1
-        name: "Distinct characteristic roots"
-        key_prerequisites: [recurrence-relations, quadratic-equations-factoring]
-        exemplars:
-          - problem: 'A sequence satisfies $a_n = a_{n-1} + 2a_{n-2}$ for $n \ge 2$, with $a_0 = 2$ and $a_1 = 7$. Use the characteristic equation to solve the recurrence, and find $a_6$.'
-            answer: '191'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The characteristic equation $r^2 = r + 2$ factors as $(r-2)(r+1) = 0$, so $a_n = A \cdot 2^n + B(-1)^n$. The conditions $A + B = 2$ and $2A - B = 7$ give $A = 3$ and $B = -1$. Then $a_6 = 3 \cdot 64 - 1 = 191$.'
-          - problem: 'What are the roots of the characteristic equation of $c_n = 2c_{n-1} + 15c_{n-2}$?'
-            answer: '5, -3'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The characteristic equation is $r^2 = 2r + 15$, that is $r^2 - 2r - 15 = 0$. It factors as $(r-5)(r+3) = 0$, so the roots are $5$ and $-3$.'
-          - problem: 'For $n \ge 2$ a sequence satisfies $b_n = 5b_{n-1} - 6b_{n-2}$, with $b_0 = 1$ and $b_1 = 0$. Use the characteristic equation to solve the recurrence, and find $b_5$.'
-            answer: '-390'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The characteristic equation $r^2 - 5r + 6 = 0$ factors as $(r-2)(r-3) = 0$, so $b_n = A \cdot 2^n + B \cdot 3^n$. The conditions $A + B = 1$ and $2A + 3B = 0$ give $A = 3$ and $B = -2$. Then $b_5 = 3 \cdot 32 - 2 \cdot 243 = -390$.'
-          - problem: 'A nature reserve records its deer population $p_n$, in hundreds, in year $n$. The counts satisfy $p_n = 2p_{n-1} + 3p_{n-2}$ for $n \ge 2$, with $p_0 = 4$ and $p_1 = 4$. Use the characteristic equation to solve the recurrence, and find $p_5$.'
-            answer: '484'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The characteristic equation $r^2 - 2r - 3 = 0$ factors as $(r-3)(r+1) = 0$, so $p_n = A \cdot 3^n + B(-1)^n$. The conditions $A + B = 4$ and $3A - B = 4$ give $A = 2$ and $B = 2$. Then $p_5 = 2 \cdot 243 - 2 = 484$.'
-          - problem: 'What are the roots of the characteristic equation of $a_n = 5a_{n-1} - 6a_{n-2}$?'
-            answer: '2, 3'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The equation is $r^2 = 5r - 6$, that is $r^2 - 5r + 6 = 0$. The signs matter, because $(r-2)(r-3) = 0$ gives the roots $2$ and $3$.'
-          - problem: 'The sequence with $a_n = a_{n-1} + 6a_{n-2}$, $a_0 = 1$ and $a_1 = 8$ has the form $a_n = A \cdot 3^n + B \cdot (-2)^n$. Find $B$.'
-            answer: '-1'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The conditions are $A + B = 1$ from $a_0 = 1$ and $3A - 2B = 8$ from $a_1 = 8$. Subtracting $3$ times the first equation from the second gives $-5B = 5$, so $B = -1$.'
-          - problem: 'A sequence has $d_0 = 5$ and $d_1 = 9$, and for $n \ge 2$ it satisfies $d_n = 4d_{n-1} - 3d_{n-2}$. Use the characteristic equation to solve the recurrence, and find $d_6$.'
-            answer: '1461'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The characteristic equation $r^2 - 4r + 3 = 0$ factors as $(r-3)(r-1) = 0$, so $d_n = A \cdot 3^n + B$. The conditions $A + B = 5$ and $3A + B = 9$ give $A = 2$ and $B = 3$. Then $d_6 = 2 \cdot 729 + 3 = 1461$.'
-          - problem: 'Does the sequence $a_n = 3 \cdot 2^n$ satisfy the recurrence $a_n = 5a_{n-1} - 6a_{n-2}$ for every $n \ge 2$?'
-            answer: 'yes'
-            answer_contract: {"kind":"label","options":[["yes","it does","it satisfies it","yes it does","yes, it does"],["no","it does not","it does not satisfy it","no it does not","no, it does not"]]}
-            solution_sketch: 'Since $2$ is a root of $r^2 - 5r + 6 = 0$, the sequence $2^n$ satisfies the recurrence, and so does any multiple. Directly, $5 \cdot 3 \cdot 2^{n-1} - 6 \cdot 3 \cdot 2^{n-2} = 3 \cdot 2^{n-2}(10 - 6) = 3 \cdot 2^n$.'
-          - problem: 'The deer population of a reserve, in hundreds, satisfies $p_n = 2p_{n-1} + 3p_{n-2}$ for $n \ge 2$, with $p_0 = 4$ and $p_1 = 4$, and the solution is $p_n = 2 \cdot 3^n + 2(-1)^n$. In which year does the population first exceed $100000$ deer?'
-            answer: '6'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The population in hundreds is $p_5 = 484$ and $p_6 = 1460$, so $p_5$ is $48400$ deer and $p_6$ is $146000$ deer. The population first exceeds $100000$ deer in year $6$.'
-        constraints: "characteristic quadratic factors over the integers; initial conditions give small integer coefficients; require a verification of one later term"
-      - id: kp2
-        name: "Repeated roots"
-        key_prerequisites: [recurrence-relations, perfect-square-trinomials]
-        exemplars:
-          - problem: 'A sequence satisfies $a_n = 4a_{n-1} - 4a_{n-2}$ for $n \ge 2$, with $a_0 = 1$ and $a_1 = 4$. Use the characteristic equation to solve the recurrence, and find $a_5$.'
-            answer: '192'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The characteristic polynomial $r^2 - 4r + 4 = (r-2)^2$ has the repeated root $2$, so $a_n = (A + Bn)2^n$. From $a_0 = 1$ we get $A = 1$, and from $a_1 = 4$ we get $2(1 + B) = 4$, so $B = 1$. Then $a_5 = 6 \cdot 32 = 192$.'
-          - problem: 'The recurrence $a_n = 8a_{n-1} - 16a_{n-2}$ with $a_0 = 3$ and $a_1 = 20$ has solutions of the form $a_n = (A + Bn)r^n$. Find $B$.'
-            answer: '2'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The characteristic polynomial $r^2 - 8r + 16 = (r-4)^2$ has the repeated root $r = 4$. The condition $a_0 = 3$ gives $A = 3$, and $a_1 = 20$ gives $4(3 + B) = 20$, so $B = 2$.'
-          - problem: 'Solve $a_n = 6a_{n-1} - 9a_{n-2}$ for $n \ge 2$ with $a_0 = 2$ and $a_1 = 3$, and find $a_5$.'
-            answer: '-729'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The characteristic polynomial $r^2 - 6r + 9 = (r-3)^2$ has the repeated root $3$, so $a_n = (A + Bn)3^n$. From $a_0 = 2$ we get $A = 2$, and from $a_1 = 3$ we get $3(2 + B) = 3$, so $B = -1$. Then $a_5 = (2 - 5) \cdot 243 = -729$.'
-          - problem: 'A damped signal has sample values satisfying $a_n = -6a_{n-1} - 9a_{n-2}$ for $n \ge 2$, with $a_0 = 2$ and $a_1 = 3$. Find $a_4$.'
-            answer: '-810'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The characteristic polynomial $r^2 + 6r + 9 = (r+3)^2$ has the repeated root $-3$, so $a_n = (A + Bn)(-3)^n$. From $a_0 = 2$ we get $A = 2$, and from $a_1 = 3$ we get $-3(2 + B) = 3$, so $B = -3$. Then $a_4 = (2 - 12) \cdot 81 = -810$.'
-          - problem: 'A plant population is modeled by $a_n = 10a_{n-1} - 25a_{n-2}$ for $n \ge 2$, with $a_0 = 2$ and $a_1 = 15$. Find $a_5$.'
-            answer: '21875'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The characteristic polynomial $r^2 - 10r + 25 = (r-5)^2$ has the repeated root $5$, so $a_n = (A + Bn)5^n$. From $a_0 = 2$ we get $A = 2$, and from $a_1 = 15$ we get $5(2 + B) = 15$, so $B = 1$. Then $a_5 = 7 \cdot 3125 = 21875$.'
-          - problem: 'What is the repeated root of the characteristic equation of $a_n = -8a_{n-1} - 16a_{n-2}$?'
-            answer: '-4'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The characteristic equation is $r^2 = -8r - 16$, that is $r^2 + 8r + 16 = 0$. This equals $(r+4)^2 = 0$, so the repeated root is $-4$.'
-          - problem: 'A sequence satisfies $a_n = -8a_{n-1} - 16a_{n-2}$ for $n \ge 2$, with $a_0 = 1$ and $a_1 = 12$. Find $a_3$.'
-            answer: '704'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The repeated root is $-4$, so $a_n = (A + Bn)(-4)^n$. From $a_0 = 1$ we get $A = 1$, and from $a_1 = 12$ we get $-4(1 + B) = 12$, so $B = -4$. Then $a_3 = (1 - 12)(-64) = 704$.'
-          - problem: 'A sequence satisfies $a_n = 12a_{n-1} - 36a_{n-2}$ for $n \ge 2$, with $a_0 = 5$ and $a_1 = 24$. For which $n \ge 1$ is $a_n = 0$?'
-            answer: '5'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The repeated root is $6$, so $a_n = (A + Bn)6^n$. From $a_0 = 5$ we get $A = 5$, and from $a_1 = 24$ we get $6(5 + B) = 24$, so $B = -1$. Then $a_n = (5 - n)6^n$ is $0$ only for $n = 5$.'
-          - problem: 'The output $y_n$ of a digital filter satisfies $y_n = 10y_{n-1} - 25y_{n-2}$ for $n \ge 2$, with $y_0 = 3$ and $y_1 = 20$. Find $y_4$.'
-            answer: '4375'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The characteristic polynomial $(r-5)^2$ has the repeated root $5$, so $y_n = (A + Bn)5^n$. From $y_0 = 3$ we get $A = 3$, and from $y_1 = 20$ we get $5(3 + B) = 20$, so $B = 1$. Then $y_4 = 7 \cdot 625 = 4375$.'
-        constraints: "perfect-square characteristic polynomial; general solution (A + Bn) r^n"
+    - id: kp1
+      name: Distinct characteristic roots
+      key_prerequisites:
+      - recurrence-relations
+      - quadratic-equations-factoring
+      exemplars:
+      - problem: A sequence satisfies $a_n = a_{n-1} + 2a_{n-2}$ for $n \ge 2$, with $a_0 = 2$ and $a_1 = 7$. Use the characteristic equation to solve the recurrence, and find $a_6$.
+        answer: '191'
+        answer_contract:
+          kind: exact
+        solution_sketch: The characteristic equation $r^2 = r + 2$ factors as $(r-2)(r+1) = 0$, so $a_n = A \cdot 2^n + B(-1)^n$. The conditions $A + B = 2$ and $2A - B = 7$ give $A = 3$ and $B = -1$. Then $a_6 = 3 \cdot 64 - 1 = 191$.
+      - problem: What are the roots of the characteristic equation of $c_n = 2c_{n-1} + 15c_{n-2}$?
+        answer: 5, -3
+        answer_contract:
+          kind: exact
+        solution_sketch: The characteristic equation is $r^2 = 2r + 15$, that is $r^2 - 2r - 15 = 0$. It factors as $(r-5)(r+3) = 0$, so the roots are $5$ and $-3$.
+      - problem: For $n \ge 2$ a sequence satisfies $b_n = 5b_{n-1} - 6b_{n-2}$, with $b_0 = 1$ and $b_1 = 0$. Use the characteristic equation to solve the recurrence, and find $b_5$.
+        answer: '-390'
+        answer_contract:
+          kind: exact
+        solution_sketch: The characteristic equation $r^2 - 5r + 6 = 0$ factors as $(r-2)(r-3) = 0$, so $b_n = A \cdot 2^n + B \cdot 3^n$. The conditions $A + B = 1$ and $2A + 3B = 0$ give $A = 3$ and $B = -2$. Then $b_5 = 3 \cdot 32 - 2 \cdot 243 = -390$.
+      - problem: A nature reserve records its deer population $p_n$, in hundreds, in year $n$. The counts satisfy $p_n = 2p_{n-1} + 3p_{n-2}$ for $n \ge 2$, with $p_0 = 4$ and $p_1 = 4$. Use the characteristic equation to solve the recurrence, and find $p_5$.
+        answer: '484'
+        answer_contract:
+          kind: exact
+        solution_sketch: The characteristic equation $r^2 - 2r - 3 = 0$ factors as $(r-3)(r+1) = 0$, so $p_n = A \cdot 3^n + B(-1)^n$. The conditions $A + B = 4$ and $3A - B = 4$ give $A = 2$ and $B = 2$. Then $p_5 = 2 \cdot 243 - 2 = 484$.
+      - problem: What are the roots of the characteristic equation of $a_n = 5a_{n-1} - 6a_{n-2}$?
+        answer: 2, 3
+        answer_contract:
+          kind: exact
+        solution_sketch: The equation is $r^2 = 5r - 6$, that is $r^2 - 5r + 6 = 0$. The signs matter, because $(r-2)(r-3) = 0$ gives the roots $2$ and $3$.
+      - problem: The sequence with $a_n = a_{n-1} + 6a_{n-2}$, $a_0 = 1$ and $a_1 = 8$ has the form $a_n = A \cdot 3^n + B \cdot (-2)^n$. Find $B$.
+        answer: '-1'
+        answer_contract:
+          kind: exact
+        solution_sketch: The conditions are $A + B = 1$ from $a_0 = 1$ and $3A - 2B = 8$ from $a_1 = 8$. Subtracting $3$ times the first equation from the second gives $-5B = 5$, so $B = -1$.
+      - problem: A sequence has $d_0 = 5$ and $d_1 = 9$, and for $n \ge 2$ it satisfies $d_n = 4d_{n-1} - 3d_{n-2}$. Use the characteristic equation to solve the recurrence, and find $d_6$.
+        answer: '1461'
+        answer_contract:
+          kind: exact
+        solution_sketch: The characteristic equation $r^2 - 4r + 3 = 0$ factors as $(r-3)(r-1) = 0$, so $d_n = A \cdot 3^n + B$. The conditions $A + B = 5$ and $3A + B = 9$ give $A = 2$ and $B = 3$. Then $d_6 = 2 \cdot 729 + 3 = 1461$.
+      - problem: Does the sequence $a_n = 3 \cdot 2^n$ satisfy the recurrence $a_n = 5a_{n-1} - 6a_{n-2}$ for every $n \ge 2$?
+        answer: 'yes'
+        answer_contract:
+          kind: label
+          options:
+          - - 'yes'
+            - it does
+            - it satisfies it
+            - yes it does
+            - yes, it does
+          - - 'no'
+            - it does not
+            - it does not satisfy it
+            - no it does not
+            - no, it does not
+        solution_sketch: Since $2$ is a root of $r^2 - 5r + 6 = 0$, the sequence $2^n$ satisfies the recurrence, and so does any multiple. Directly, $5 \cdot 3 \cdot 2^{n-1} - 6 \cdot 3 \cdot 2^{n-2} = 3 \cdot 2^{n-2}(10 - 6) = 3 \cdot 2^n$.
+      - problem: The deer population of a reserve, in hundreds, satisfies $p_n = 2p_{n-1} + 3p_{n-2}$ for $n \ge 2$, with $p_0 = 4$ and $p_1 = 4$, and the solution is $p_n = 2 \cdot 3^n + 2(-1)^n$. In which year does the population first exceed $100000$ deer?
+        answer: '6'
+        answer_contract:
+          kind: exact
+        solution_sketch: The population in hundreds is $p_5 = 484$ and $p_6 = 1460$, so $p_5$ is $48400$ deer and $p_6$ is $146000$ deer. The population first exceeds $100000$ deer in year $6$.
+      constraints: characteristic quadratic factors over the integers; initial conditions give small integer coefficients; require a verification of one later term
+    - id: kp2
+      name: Repeated roots
+      key_prerequisites:
+      - recurrence-relations
+      - factoring-trinomials
+      exemplars:
+      - problem: A sequence satisfies $a_n = 4a_{n-1} - 4a_{n-2}$ for $n \ge 2$, with $a_0 = 1$ and $a_1 = 4$. Use the characteristic equation to solve the recurrence, and find $a_5$.
+        answer: '192'
+        answer_contract:
+          kind: exact
+        solution_sketch: The characteristic polynomial $r^2 - 4r + 4 = (r-2)^2$ has the repeated root $2$, so $a_n = (A + Bn)2^n$. From $a_0 = 1$ we get $A = 1$, and from $a_1 = 4$ we get $2(1 + B) = 4$, so $B = 1$. Then $a_5 = 6 \cdot 32 = 192$.
+      - problem: The recurrence $a_n = 8a_{n-1} - 16a_{n-2}$ with $a_0 = 3$ and $a_1 = 20$ has solutions of the form $a_n = (A + Bn)r^n$. Find $B$.
+        answer: '2'
+        answer_contract:
+          kind: exact
+        solution_sketch: The characteristic polynomial $r^2 - 8r + 16 = (r-4)^2$ has the repeated root $r = 4$. The condition $a_0 = 3$ gives $A = 3$, and $a_1 = 20$ gives $4(3 + B) = 20$, so $B = 2$.
+      - problem: Solve $a_n = 6a_{n-1} - 9a_{n-2}$ for $n \ge 2$ with $a_0 = 2$ and $a_1 = 3$, and find $a_5$.
+        answer: '-729'
+        answer_contract:
+          kind: exact
+        solution_sketch: The characteristic polynomial $r^2 - 6r + 9 = (r-3)^2$ has the repeated root $3$, so $a_n = (A + Bn)3^n$. From $a_0 = 2$ we get $A = 2$, and from $a_1 = 3$ we get $3(2 + B) = 3$, so $B = -1$. Then $a_5 = (2 - 5) \cdot 243 = -729$.
+      - problem: A damped signal has sample values satisfying $a_n = -6a_{n-1} - 9a_{n-2}$ for $n \ge 2$, with $a_0 = 2$ and $a_1 = 3$. Find $a_4$.
+        answer: '-810'
+        answer_contract:
+          kind: exact
+        solution_sketch: The characteristic polynomial $r^2 + 6r + 9 = (r+3)^2$ has the repeated root $-3$, so $a_n = (A + Bn)(-3)^n$. From $a_0 = 2$ we get $A = 2$, and from $a_1 = 3$ we get $-3(2 + B) = 3$, so $B = -3$. Then $a_4 = (2 - 12) \cdot 81 = -810$.
+      - problem: A plant population is modeled by $a_n = 10a_{n-1} - 25a_{n-2}$ for $n \ge 2$, with $a_0 = 2$ and $a_1 = 15$. Find $a_5$.
+        answer: '21875'
+        answer_contract:
+          kind: exact
+        solution_sketch: The characteristic polynomial $r^2 - 10r + 25 = (r-5)^2$ has the repeated root $5$, so $a_n = (A + Bn)5^n$. From $a_0 = 2$ we get $A = 2$, and from $a_1 = 15$ we get $5(2 + B) = 15$, so $B = 1$. Then $a_5 = 7 \cdot 3125 = 21875$.
+      - problem: What is the repeated root of the characteristic equation of $a_n = -8a_{n-1} - 16a_{n-2}$?
+        answer: '-4'
+        answer_contract:
+          kind: exact
+        solution_sketch: The characteristic equation is $r^2 = -8r - 16$, that is $r^2 + 8r + 16 = 0$. This equals $(r+4)^2 = 0$, so the repeated root is $-4$.
+      - problem: A sequence satisfies $a_n = -8a_{n-1} - 16a_{n-2}$ for $n \ge 2$, with $a_0 = 1$ and $a_1 = 12$. Find $a_3$.
+        answer: '704'
+        answer_contract:
+          kind: exact
+        solution_sketch: The repeated root is $-4$, so $a_n = (A + Bn)(-4)^n$. From $a_0 = 1$ we get $A = 1$, and from $a_1 = 12$ we get $-4(1 + B) = 12$, so $B = -4$. Then $a_3 = (1 - 12)(-64) = 704$.
+      - problem: A sequence satisfies $a_n = 12a_{n-1} - 36a_{n-2}$ for $n \ge 2$, with $a_0 = 5$ and $a_1 = 24$. For which $n \ge 1$ is $a_n = 0$?
+        answer: '5'
+        answer_contract:
+          kind: exact
+        solution_sketch: The repeated root is $6$, so $a_n = (A + Bn)6^n$. From $a_0 = 5$ we get $A = 5$, and from $a_1 = 24$ we get $6(5 + B) = 24$, so $B = -1$. Then $a_n = (5 - n)6^n$ is $0$ only for $n = 5$.
+      - problem: The output $y_n$ of a digital filter satisfies $y_n = 10y_{n-1} - 25y_{n-2}$ for $n \ge 2$, with $y_0 = 3$ and $y_1 = 20$. Find $y_4$.
+        answer: '4375'
+        answer_contract:
+          kind: exact
+        solution_sketch: The characteristic polynomial $(r-5)^2$ has the repeated root $5$, so $y_n = (A + Bn)5^n$. From $y_0 = 3$ we get $A = 3$, and from $y_1 = 20$ we get $5(3 + B) = 20$, so $B = 1$. Then $y_4 = 7 \cdot 625 = 4375$.
+      constraints: perfect-square characteristic polynomial; general solution (A + Bn) r^n
     diagnostic_exemplar:
-      problem: 'Solve $a_n = 4a_{n-1} - 4a_{n-2}$ with $a_0 = 1$, $a_1 = 6$.'
-      answer: '(1 + 2n) * 2^n'
-      answer_contract: {kind: none}
+      problem: Solve $a_n = 4a_{n-1} - 4a_{n-2}$ with $a_0 = 1$, $a_1 = 6$.
+      answer: (1 + 2n) * 2^n
+      answer_contract:
+        kind: none
       solution_sketch: 'Repeated root $2$: $a_n = (A + Bn)2^n$; $A = 1$ and $2(1 + B) = 6$ give $B = 2$. Check: $a_2 = 4 \cdot 6 - 4 \cdot 1 = 20 = (1 + 4) \cdot 4$.'
     anki_seeds:
-      - front: "Characteristic equation of $a_n = c_1 a_{n-1} + c_2 a_{n-2}$"
-        back: '$r^2 = c_1 r + c_2$.'
-        type: basic
-      - front: "General solution when the characteristic roots $r_1 \\ne r_2$ are distinct"
-        back: '$a_n = A r_1^n + B r_2^n$.'
-        type: basic
-      - front: "General solution when the characteristic root $r$ is repeated"
-        back: '$a_n = (A + Bn) r^n$.'
-        type: basic
+    - front: Characteristic equation of $a_n = c_1 a_{n-1} + c_2 a_{n-2}$
+      back: $r^2 = c_1 r + c_2$.
+      type: basic
+    - front: General solution when the characteristic roots $r_1 \ne r_2$ are distinct
+      back: $a_n = A r_1^n + B r_2^n$.
+      type: basic
+    - front: General solution when the characteristic root $r$ is repeated
+      back: $a_n = (A + Bn) r^n$.
+      type: basic
 
   - id: nonhomogeneous-recurrences
     name: "Nonhomogeneous Recurrences"

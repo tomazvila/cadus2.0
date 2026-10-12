@@ -14,7 +14,7 @@ fn all_reviewed_templates_retain_their_domains_and_current_gate_verdicts() {
     let rows = directory_rows(DIRECTORY);
     // 79 rows before the courses rewrite; 8 were retired on 2026-10-07 and
     // keep their gate refusal in the retirement report.
-    assert_eq!(rows.len(), 71);
+    assert_eq!(rows.len(), 70); // 71 before the Foundations merge (2026-10-12)
     let pending: std::collections::BTreeSet<String> = rows
         .iter()
         .map(|row| row["kp_id"].as_str().unwrap().to_owned())
@@ -37,7 +37,7 @@ fn all_reviewed_templates_retain_their_domains_and_current_gate_verdicts() {
         rows.iter()
             .map(|row| row["arguments"]["samples"].as_array().unwrap().len())
             .sum::<usize>(),
-        868 // 964 before the courses rewrite (2026-10-07)
+        856 // 964 before the courses rewrite (2026-10-07); 868 before the Foundations merge (2026-10-12)
     );
     let report = run_rows(&rows, "target/unit01/regression");
     const REPLACED: &[&str] = &[
@@ -76,7 +76,7 @@ fn all_reviewed_templates_retain_their_domains_and_current_gate_verdicts() {
             count
         })
         .sum();
-    assert_eq!(checked, 820); // 916 before the courses rewrite (2026-10-07)
+    assert_eq!(checked, 808); // 916 before the courses rewrite (2026-10-07); 820 before the Foundations merge (2026-10-12)
     assert_template19_replacements(&rows, REPLACED);
 }
 

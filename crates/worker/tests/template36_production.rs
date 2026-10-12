@@ -94,9 +94,11 @@ fn exact_36_keys_pass_worker_gate_exhaustively() {
     // knowledge points were rewritten; the retirement
     // report keeps them, and they still get their recorded gate refusal.
     let retired = common::retired::keys("template36");
-    assert_eq!((expected.len(), retired.len()), (36, 7));
+    // The Foundations merge (2026-10-12) retired solutions-of-inequalities/kp2
+    // (the dropped twin step's template): 8 retired.
+    assert_eq!((expected.len(), retired.len()), (36, 8));
     assert!(retired.is_subset(&expected));
-    assert_eq!(rows.len(), 29);
+    assert_eq!(rows.len(), 28);
     let pending: BTreeSet<_> = rows
         .iter()
         .map(|r| r["kp_id"].as_str().unwrap().to_owned())

@@ -141,7 +141,8 @@ fn main() {
             );
         }
     }
-    assert_eq!(historical_row_sha256.len(), 735);
+    // 735 before the Foundations merge (2026-10-12); 713 after it.
+    assert_eq!(historical_row_sha256.len(), 713);
     let mut rows = Vec::new();
     for part in 1..=30 {
         let path = directory.join(format!("drafts/part-{part:02}.json"));
@@ -179,7 +180,7 @@ fn main() {
         }
     }
     rows.sort_by(|a, b| a["kp_id"].as_str().cmp(&b["kp_id"].as_str()));
-    assert_eq!(rows.len(), 735);
+    assert_eq!(rows.len(), 713);
     assert!(
         rows.windows(2)
             .all(|pair| pair[0]["kp_id"] != pair[1]["kp_id"]),

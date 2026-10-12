@@ -52,7 +52,7 @@ fn every_non_residual_kp_is_practicable_assessable_and_has_solutions() {
     let keys = unit_kp_keys();
     assert_eq!(
         keys.len(),
-        81,
+        79,
         "the unit file's own KP count moved; update this count"
     );
 

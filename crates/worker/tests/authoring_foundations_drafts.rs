@@ -76,7 +76,8 @@ fn every_knowledge_point_of_the_unit_has_one_teach_page_and_one_hint_ladder() {
     let (curriculum, findings) = load_curriculum(&root().join("curriculum")).unwrap();
     assert!(findings.is_empty());
     let keys = unit_keys(&curriculum);
-    assert_eq!(keys.len(), 81);
+    // 81 before the Foundations merge (2026-10-12); 79 after it.
+    assert_eq!(keys.len(), 79);
     let rows = rows();
     assert_eq!(rows.len(), keys.len() * 2);
     let mut seen: BTreeMap<(String, String), usize> = BTreeMap::new();

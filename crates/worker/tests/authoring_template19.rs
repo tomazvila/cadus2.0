@@ -14,19 +14,19 @@ use cadus_worker::authoring::prompt::Kind;
 use common::{FakeModel, content_rows, handle, reply};
 use serde_json::{Value, json};
 
-const KEYS: [&str; 19] = [
+// 19 keys before the Foundations merge (2026-10-12); comparing-integers/kp2 and
+// converting-to-vertex-form/kp3 left the set and the moved steps have new ids.
+const KEYS: [&str; 17] = [
     "basic-absolute-value-inequalities/kp3",
-    "comparing-integers/kp2",
-    "converting-to-vertex-form/kp3",
     "law-of-sines-cosines/kp1",
     "logarithm-basics/kp1",
-    "logarithm-basics/kp2",
+    "logarithm-basics/kp3",
     "parabola-vertex-form/kp3",
     "percentages/kp3",
     "pythagorean-converse/kp3",
     "quadratic-applications/kp1",
     "quadratic-applications/kp2",
-    "quadratic-graphs-vertex/kp2",
+    "quadratic-graphs-vertex/kp4",
     "radical-equations-basic/kp1",
     "radical-equations-basic/kp2",
     "radical-equations-basic/kp3",
@@ -44,7 +44,7 @@ fn drafts() -> Vec<Value> {
         .iter()
         .map(|row| row["kp_id"].as_str().unwrap())
         .collect();
-    assert_eq!(rows.len(), 19);
+    assert_eq!(rows.len(), 17);
     assert_eq!(keys, BTreeSet::from(KEYS));
     assert!(rows.iter().all(|row| row["kind"] == "template"));
     rows
@@ -108,21 +108,21 @@ async fn all_nineteen_import_at_zero_cost_as_pending_and_missing_only_skips_them
             assert_eq!(again.outcome, Outcome::Skipped, "{key}");
             assert_eq!(again.attempts, 0, "{key}");
         }
-        assert_eq!(fake.call_count(), 19);
+        assert_eq!(fake.call_count(), 17);
         let counts: (i64, i64) = sqlx::query_as(
             "SELECT count(*), count(*) FILTER (WHERE status = 'pending') FROM content_store",
         )
         .fetch_one(&db.admin)
         .await
         .unwrap();
-        assert_eq!(counts, (19, 19));
+        assert_eq!(counts, (17, 17));
         let ledger: (i64, bool) = sqlx::query_as(
             "SELECT count(*), bool_and(cost_usd IS NOT NULL AND cost_usd = 0) FROM model_call_log",
         )
         .fetch_one(&db.admin)
         .await
         .unwrap();
-        assert_eq!(ledger, (19, true));
+        assert_eq!(ledger, (17, true));
     })
     .await;
 }
@@ -150,7 +150,7 @@ async fn no_recipe_can_import_without_its_required_typed_contract() {
             assert_eq!(result.attempts, 1, "{key}");
             assert!(content_rows(&db.admin, key).await.is_empty(), "{key}");
         }
-        assert_eq!(fake.call_count(), 19);
+        assert_eq!(fake.call_count(), 17);
         let counts: (i64,) = sqlx::query_as("SELECT count(*) FROM content_store")
             .fetch_one(&db.admin)
             .await

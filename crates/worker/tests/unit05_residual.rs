@@ -8,8 +8,10 @@ const PATHS: &[&str] = &["docs/content-foundations/unit05-residual/templates.jso
 
 crate::template_batch_tests!(
     PATHS,
-    8,
-    96,
+    // 8 rows and 96 problems before the Foundations merge (2026-10-12), which
+    // dropped elimination-with-addition/kp3.
+    7,
+    84,
     |_| 12,
     AnswerPolicy::Unique,
     &["(0,0)", "(a-a,b-b)", "(a,0)", "(-a,-b)"],

@@ -309,112 +309,6 @@ topics:
         back: "greater"
         type: basic
 
-  - id: comparing-integers
-    name: Comparing Integers with Inequality Symbols
-    core: false                # comparison destination; number-line-integers stays core
-    difficulty: 0.18
-    drill: false
-    # Answers are bare relation symbols, true/false, and inequality chains — none of
-    # which the SymPy override can adjudicate; the tutor grades them.
-    answer_kind: multi-step
-    expected_time_secs: 45
-    prerequisites:
-      - id: number-line-integers
-        weight: 0.8
-        key: true
-    knowledge_points:
-      - id: kp1
-        name: Write < or > between two integers
-        key_prerequisites: [number-line-integers]
-        exemplars:
-          - problem: 'Which symbol, $<$ or $>$, makes the statement $-8 \;\square\; -3$ true?'
-            answer: '<'
-            answer_contract: {"kind":"label","options":[["<","less than","is less than","smaller","-8 < -3","-8<-3"],[">","greater than","is greater than","larger"]]}
-            solution_sketch: 'On the number line $-8$ is to the left of $-3$. The integer on the left is smaller, so the true statement is $-8<-3$.'
-          - problem: 'On a winter night Oslo is at $-11$ degrees and Bergen is at $-4$ degrees. What is the temperature of the colder city?'
-            answer: '-11'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The colder city has the temperature farther left on the number line. The value $-11$ is left of $-4$, so the colder temperature is $-11$.'
-          - problem: 'A submarine is at $-5$ metres and a diver is at $-11$ metres. Which symbol, $<$ or $>$, makes the statement $-5 \;\square\; -11$ true?'
-            answer: '>'
-            answer_contract: {"kind":"label","options":[["<","less than","is less than","smaller"],[">","greater than","is greater than","larger","-5 > -11","-5>-11"]]}
-            solution_sketch: 'The depth $-5$ is to the right of $-11$ on the number line. The integer on the right is greater, so the true statement is $-5>-11$.'
-          - problem: 'What is the smallest integer greater than $-6$?'
-            answer: '-5'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Greater than $-6$ means to the right of $-6$ on the number line. The first integer to the right is $-5$.'
-          - problem: 'What is the greatest integer less than $-3$?'
-            answer: '-4'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Less than $-3$ means to the left of $-3$ on the number line. The first integer to the left is $-4$.'
-          - problem: 'A number $x$ lies to the left of $-5$ on the number line, and the distance between $x$ and $-5$ is $4$. What is $x$?'
-            answer: '-9'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Lying to the left of $-5$ means $x$ is smaller than $-5$. Moving $4$ units left of $-5$ gives $-5-4=-9$.'
-          - problem: 'List every integer $n$ with $-4<n<1$.'
-            answer: '-3, -2, -1, 0'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The integers strictly between $-4$ and $1$ lie to the right of $-4$ and to the left of $1$. They are $-3$, $-2$, $-1$ and $0$.'
-          - problem: 'In a golf game the lowest score wins. Ana scored $-7$ and Ben scored $-2$. What was the winning score?'
-            answer: '-7'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The lowest score is the one farthest left on the number line. The value $-7$ is left of $-2$, so the winning score was $-7$.'
-          - problem: 'Which is greater, $-9$ or $-2$?'
-            answer: '-2'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'On the number line $-2$ is to the right of $-9$, so $-2$ is greater.'
-        constraints: "integers from -12 to 12; include negative-negative pairs"
-      - id: kp2
-        name: Judge and write inequality statements
-        key_prerequisites: [number-line-integers]
-        exemplars:
-          - problem: 'Write $3$, $-1$, $-4$ as a chain from least to greatest using $<$.'
-            answer: '-4 < -1 < 3'
-            answer_contract: {"kind":"ascending_chain"}
-            solution_sketch: 'On the number line the order from left to right is $-4$, $-1$, $3$. Joining neighbors with $<$ gives $-4<-1<3$.'
-          - problem: 'Is the statement $-7<-9$ true?'
-            answer: 'No'
-            answer_contract: {"kind":"label","options":[["yes","yes it is","true","it is true","correct"],["no","no it is not","false","it is not true","not true","incorrect"]]}
-            solution_sketch: 'On the number line $-7$ is to the right of $-9$, so $-7>-9$. The statement $-7<-9$ is not true.'
-          - problem: 'Arrange $-2$, $-8$, $-5$ in increasing order using $<$.'
-            answer: '-8 < -5 < -2'
-            answer_contract: {"kind":"ascending_chain"}
-            solution_sketch: 'On the number line the increasing order is $-8$, $-5$, $-2$. Joining them with $<$ gives $-8<-5<-2$.'
-          - problem: 'Is $-6<3$ a true statement?'
-            answer: 'Yes'
-            answer_contract: {"kind":"label","options":[["yes","yes it is","true","it is true","correct"],["no","no it is not","false","it is not true","not true","incorrect"]]}
-            solution_sketch: 'On the number line $-6$ is to the left of $3$. The integer on the left is smaller, so $-6<3$ is true.'
-          - problem: 'Arrange $4$, $-2$, $-7$ from greatest to least.'
-            answer: '4, -2, -7'
-            answer_contract: {"kind":"list","member":{"kind":"exact"},"ordered":true}
-            solution_sketch: 'The greatest integer is the farthest right on the number line. Reading from right to left gives $4$, $-2$, $-7$.'
-          - problem: 'At three weather stations the temperatures are $-3$, $5$ and $-10$ degrees. Write them from coldest to warmest using $<$.'
-            answer: '-10 < -3 < 5'
-            answer_contract: {"kind":"ascending_chain"}
-            solution_sketch: 'The coldest temperature is the farthest left on the number line. The order is $-10$, $-3$, $5$, so the chain is $-10<-3<5$.'
-          - problem: 'Three divers are at depths of $-14$, $-6$ and $-9$ metres. Write their positions from the highest to the lowest.'
-            answer: '-6, -9, -14'
-            answer_contract: {"kind":"list","member":{"kind":"exact"},"ordered":true}
-            solution_sketch: 'The highest position is the farthest right on the number line. Reading from right to left gives $-6$, $-9$, $-14$.'
-          - problem: 'Put $-4$, $-8$ and $0$ in order from least to greatest.'
-            answer: '-8 < -4 < 0'
-            answer_contract: {"kind":"ascending_chain"}
-            solution_sketch: 'On the number line $-8$ is farther left than $-4$. The chain is $-8<-4<0$.'
-          - problem: 'Give an integer $n$ with $-9<n<-5$.'
-            answer: '-7'
-            answer_contract: {"kind":"property","check":"integer_in_range","args":{"min":-8,"max":-6}}
-            solution_sketch: 'The integers between $-9$ and $-5$ are $-8$, $-7$ and $-6$. Any one of them works, for example $-7$.'
-        constraints: "true/false judgments and chains of up to three integers"
-    diagnostic_exemplar:
-      problem: 'Write $5$, $-2$, $-9$ as a chain from least to greatest using $<$.'
-      answer_contract: {kind: ascending_chain}
-      answer: '-9 < -2 < 5'
-      solution_sketch: 'On the number line $-9$ is furthest left and $5$ furthest right.'
-    anki_seeds:
-      - front: "The inequality symbol always opens toward the ___ number."
-        back: "greater"
-        type: basic
-
   - id: absolute-value
     name: Absolute Value
     core: true
@@ -521,392 +415,493 @@ topics:
     answer_kind: numeric
     expected_time_secs: 45
     prerequisites:
-      - id: number-line-integers
-        weight: 0.6
-        key: true
-      - id: absolute-value
-        weight: 0.5
-        key: true
-      - id: multi-digit-addition-subtraction
-        weight: 0.3
+    - id: number-line-integers
+      weight: 0.6
+      key: true
+    - id: absolute-value
+      weight: 0.5
+      key: true
+    - id: multi-digit-addition-subtraction
+      weight: 0.3
     knowledge_points:
-      - id: kp1
-        name: Adding integers with the same sign
-        key_prerequisites: [absolute-value]
-        exemplars:
-          - problem: 'Compute $-3 + (-5)$.'
-            answer: "-8"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Both numbers are negative, so their sizes add: $3 + 5 = 8$. The sum keeps the negative sign, so it is $-8$.'
-          - problem: 'A diver is $9$ m below the surface of a lake and then dives $6$ m deeper. What is the diver''s elevation relative to the surface?'
-            answer: "-15"
-            answer_contract: {"kind":"unit","quantity":"length","unit":"m","allow_omitted":true}
-            solution_sketch: 'Below the surface is negative, so the diver starts at $-9$ and moves $6$ more below, which is $-9 + (-6)$. The sizes add to $15$ and the sign stays negative, so the elevation is $-15$ m.'
-          - problem: 'Find the sum of $-7$ and $-2$.'
-            answer: "-9"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Both numbers are negative, so add the sizes: $7 + 2 = 9$. The sum is negative, so it is $-9$.'
-          - problem: 'Compute $8 + 5$.'
-            answer: "13"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Both numbers are positive, so add them as usual: $8 + 5 = 13$. The sum keeps the positive sign.'
-          - problem: 'A weather station records a change of $-4$ degrees on Monday and a change of $-7$ degrees on Tuesday. What is the total change over the two days?'
-            answer: "-11"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Both changes are drops, so the total change is $-4 + (-7)$. The sizes add to $4 + 7 = 11$ and the sign stays negative, so the total is $-11$ degrees.'
-          - problem: 'Lena''s balance with her brother is $-12$ dollars and her balance with a friend is $-8$ dollars. What is her balance overall?'
-            answer: "-20"
-            answer_contract: {"kind":"unit","quantity":"dollar","unit":"dollar","allow_omitted":true}
-            solution_sketch: 'The overall balance is $-12 + (-8)$. Both debts have the same sign, so the sizes add to $12 + 8 = 20$ and the balance is $-20$ dollars.'
-          - problem: 'Find the value of $-2 + (-8)$.'
-            answer: "-10"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Both numbers are negative, so the sizes add: $2 + 8 = 10$. The sum keeps the negative sign, so it is $-10$.'
-          - problem: 'Add $-9$ and $-6$.'
-            answer: "-15"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Both numbers are negative, so add the sizes: $9 + 6 = 15$. Keep the negative sign to get $-15$.'
-        constraints: "integers from -12 to 12; both addends negative or both positive"
-      - id: kp2
-        name: Adding integers with different signs
-        key_prerequisites: [absolute-value]
-        try_first:
-          problem: 'The temperature is $-5$ degrees and then rises by $8$ degrees. What is the new temperature?'
-          answer_contract: {"kind":"exact"}
-          answer: '3'
-          reveal: 'The rise of $8$ first spends $5$ degrees getting back to $0$ and then goes $3$ degrees above it. With different signs the sizes are subtracted, $8 - 5 = 3$, and the sign of the larger size wins.'
-        exemplars:
-          - problem: 'Compute $-7 + 4$.'
-            answer: "-3"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The signs differ, so subtract the sizes: $7 - 4 = 3$. The larger size belongs to $-7$, so the sum is $-3$.'
-          - problem: 'At dawn the temperature is $-6$ degrees. By noon it has risen by $10$ degrees. What is the temperature at noon?'
-            answer: "4"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The noon temperature is $-6 + 10$. The signs differ, so subtract the sizes: $10 - 6 = 4$. The larger size belongs to $10$, so the answer is $4$ degrees.'
-          - problem: 'Compute $9 + (-4)$.'
-            answer: "5"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The signs differ, so subtract the sizes: $9 - 4 = 5$. The larger size belongs to $9$, so the sum is positive: $5$.'
-          - problem: 'What is $-10$ plus $3$?'
-            answer: "-7"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The signs differ, so subtract the sizes: $10 - 3 = 7$. The larger size belongs to $-10$, so the sum is $-7$.'
-          - problem: 'A bank account holds $15$ dollars and a payment of $21$ dollars is taken from it. The account may be overdrawn. What is the new balance?'
-            answer: "-6"
-            answer_contract: {"kind":"unit","quantity":"dollar","unit":"dollar","allow_omitted":true}
-            solution_sketch: 'The balance is $15 + (-21)$. The signs differ, so subtract the sizes: $21 - 15 = 6$. The larger size belongs to $-21$, so the balance is $-6$ dollars.'
-          - problem: 'A cave explorer is at $-18$ m relative to the cave entrance and climbs up $7$ m. What is the explorer''s new position?'
-            answer: "-11"
-            answer_contract: {"kind":"unit","quantity":"length","unit":"m","allow_omitted":true}
-            solution_sketch: 'The new position is $-18 + 7$. The signs differ, so subtract the sizes: $18 - 7 = 11$. The larger size belongs to $-18$, so the position is $-11$ m.'
-          - problem: 'Find the sum of $6$ and $-2$.'
-            answer: "4"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The signs differ, so subtract the sizes: $6 - 2 = 4$. The larger size belongs to $6$, so the sum is $4$.'
-          - problem: 'Find the value of $-8 + 3$.'
-            answer: "-5"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The signs differ, so the sizes are subtracted, not added: $8 - 3 = 5$. The larger size belongs to $-8$, so the sum is $-5$.'
-        constraints: "integers from -12 to 12; one positive, one negative addend"
-      - id: kp3
-        name: Additive inverses and zero sums
-        key_prerequisites: [number-line-integers]
-        exemplars:
-          - problem: 'What is $-6 + 6$?'
-            answer: "0"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The numbers $-6$ and $6$ are opposites. Opposites always sum to $0$.'
-          - problem: 'What number must be added to $-9$ to get $0$?'
-            answer: "9"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The sum is $0$ only when the second number is the opposite of $-9$. The opposite of $-9$ is $9$, and $-9 + 9 = 0$.'
-          - problem: 'A lift starts at floor $3$, goes down $5$ floors and then goes up $5$ floors. At which floor does it stop?'
-            answer: "3"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The two moves are $-5$ and $+5$, which are opposites and sum to $0$. So the lift ends where it started, at floor $3$.'
-          - problem: 'Compute $-8 + 3 + 5$.'
-            answer: "0"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'First $-8 + 3 = -5$. Then $-5 + 5 = 0$, because $-5$ and $5$ are opposites.'
-          - problem: 'Compute $-7 + 12 + 7$.'
-            answer: "12"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The numbers $-7$ and $7$ are opposites, so they sum to $0$. That leaves $12$ from the sum.'
-          - problem: 'A diver swims down $14$ m from the surface, rises $14$ m back up and then descends $3$ m. What is the diver''s final elevation relative to the surface?'
-            answer: "-3"
-            answer_contract: {"kind":"unit","quantity":"length","unit":"m","allow_omitted":true}
-            solution_sketch: 'The moves $-14$ and $+14$ cancel and sum to $0$. The last move $-3$ remains, so the final elevation is $-3$ m.'
-          - problem: 'Three numbers, $-7$, $2$ and $5$, are added together. What is the total?'
-            answer: "0"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Add left to right: $-7 + 2 = -5$. Then $-5 + 5 = 0$, so the total is $0$.'
-          - problem: 'Compute $15 + (-4) + (-15)$.'
-            answer: "-4"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The numbers $15$ and $-15$ are opposites and sum to $0$. That leaves $-4$ as the total.'
-          - problem: 'A bank account is overdrawn by $20$ dollars. Sam deposits $20$ dollars and then spends $9$ dollars. What is the balance now?'
-            answer: "-9"
-            answer_contract: {"kind":"unit","quantity":"dollar","unit":"dollar","allow_omitted":true}
-            solution_sketch: 'The overdraft is $-20$ and the deposit is $+20$, so they sum to $0$. Spending $9$ dollars then leaves a balance of $-9$ dollars.'
-        constraints: "sums that cancel to 0; up to three addends from -15 to 15"
+    - id: kp1
+      name: Adding integers with the same sign
+      key_prerequisites:
+      - absolute-value
+      exemplars:
+      - problem: Compute $-3 + (-5)$.
+        answer: '-8'
+        answer_contract:
+          kind: exact
+        solution_sketch: 'Both numbers are negative, so their sizes add: $3 + 5 = 8$. The sum keeps the negative sign, so it is $-8$.'
+      - problem: A diver is $9$ m below the surface of a lake and then dives $6$ m deeper. What is the diver's elevation relative to the surface?
+        answer: '-15'
+        answer_contract:
+          kind: unit
+          quantity: length
+          unit: m
+          allow_omitted: true
+        solution_sketch: Below the surface is negative, so the diver starts at $-9$ and moves $6$ more below, which is $-9 + (-6)$. The sizes add to $15$ and the sign stays negative, so the elevation is $-15$ m.
+      - problem: Find the sum of $-7$ and $-2$.
+        answer: '-9'
+        answer_contract:
+          kind: exact
+        solution_sketch: 'Both numbers are negative, so add the sizes: $7 + 2 = 9$. The sum is negative, so it is $-9$.'
+      - problem: Compute $8 + 5$.
+        answer: '13'
+        answer_contract:
+          kind: exact
+        solution_sketch: 'Both numbers are positive, so add them as usual: $8 + 5 = 13$. The sum keeps the positive sign.'
+      - problem: A weather station records a change of $-4$ degrees on Monday and a change of $-7$ degrees on Tuesday. What is the total change over the two days?
+        answer: '-11'
+        answer_contract:
+          kind: exact
+        solution_sketch: Both changes are drops, so the total change is $-4 + (-7)$. The sizes add to $4 + 7 = 11$ and the sign stays negative, so the total is $-11$ degrees.
+      - problem: Lena's balance with her brother is $-12$ dollars and her balance with a friend is $-8$ dollars. What is her balance overall?
+        answer: '-20'
+        answer_contract:
+          kind: unit
+          quantity: dollar
+          unit: dollar
+          allow_omitted: true
+        solution_sketch: The overall balance is $-12 + (-8)$. Both debts have the same sign, so the sizes add to $12 + 8 = 20$ and the balance is $-20$ dollars.
+      - problem: Find the value of $-2 + (-8)$.
+        answer: '-10'
+        answer_contract:
+          kind: exact
+        solution_sketch: 'Both numbers are negative, so the sizes add: $2 + 8 = 10$. The sum keeps the negative sign, so it is $-10$.'
+      - problem: Add $-9$ and $-6$.
+        answer: '-15'
+        answer_contract:
+          kind: exact
+        solution_sketch: 'Both numbers are negative, so add the sizes: $9 + 6 = 15$. Keep the negative sign to get $-15$.'
+      constraints: integers from -12 to 12; both addends negative or both positive
+    - id: kp2
+      name: Adding integers with different signs
+      key_prerequisites:
+      - absolute-value
+      try_first:
+        problem: The temperature is $-5$ degrees and then rises by $8$ degrees. What is the new temperature?
+        answer_contract:
+          kind: exact
+        answer: '3'
+        reveal: The rise of $8$ first spends $5$ degrees getting back to $0$ and then goes $3$ degrees above it. With different signs the sizes are subtracted, $8 - 5 = 3$, and the sign of the larger size wins.
+      exemplars:
+      - problem: Compute $-7 + 4$.
+        answer: '-3'
+        answer_contract:
+          kind: exact
+        solution_sketch: 'The signs differ, so subtract the sizes: $7 - 4 = 3$. The larger size belongs to $-7$, so the sum is $-3$.'
+      - problem: At dawn the temperature is $-6$ degrees. By noon it has risen by $10$ degrees. What is the temperature at noon?
+        answer: '4'
+        answer_contract:
+          kind: exact
+        solution_sketch: 'The noon temperature is $-6 + 10$. The signs differ, so subtract the sizes: $10 - 6 = 4$. The larger size belongs to $10$, so the answer is $4$ degrees.'
+      - problem: Compute $9 + (-4)$.
+        answer: '5'
+        answer_contract:
+          kind: exact
+        solution_sketch: 'The signs differ, so subtract the sizes: $9 - 4 = 5$. The larger size belongs to $9$, so the sum is positive: $5$.'
+      - problem: What is $-10$ plus $3$?
+        answer: '-7'
+        answer_contract:
+          kind: exact
+        solution_sketch: 'The signs differ, so subtract the sizes: $10 - 3 = 7$. The larger size belongs to $-10$, so the sum is $-7$.'
+      - problem: A bank account holds $15$ dollars and a payment of $21$ dollars is taken from it. The account may be overdrawn. What is the new balance?
+        answer: '-6'
+        answer_contract:
+          kind: unit
+          quantity: dollar
+          unit: dollar
+          allow_omitted: true
+        solution_sketch: 'The balance is $15 + (-21)$. The signs differ, so subtract the sizes: $21 - 15 = 6$. The larger size belongs to $-21$, so the balance is $-6$ dollars.'
+      - problem: A cave explorer is at $-18$ m relative to the cave entrance and climbs up $7$ m. What is the explorer's new position?
+        answer: '-11'
+        answer_contract:
+          kind: unit
+          quantity: length
+          unit: m
+          allow_omitted: true
+        solution_sketch: 'The new position is $-18 + 7$. The signs differ, so subtract the sizes: $18 - 7 = 11$. The larger size belongs to $-18$, so the position is $-11$ m.'
+      - problem: Find the sum of $6$ and $-2$.
+        answer: '4'
+        answer_contract:
+          kind: exact
+        solution_sketch: 'The signs differ, so subtract the sizes: $6 - 2 = 4$. The larger size belongs to $6$, so the sum is $4$.'
+      - problem: Find the value of $-8 + 3$.
+        answer: '-5'
+        answer_contract:
+          kind: exact
+        solution_sketch: 'The signs differ, so the sizes are subtracted, not added: $8 - 3 = 5$. The larger size belongs to $-8$, so the sum is $-5$.'
+      constraints: integers from -12 to 12; one positive, one negative addend
+    - id: kp3
+      name: Additive inverses and zero sums
+      key_prerequisites:
+      - number-line-integers
+      exemplars:
+      - problem: What is $-6 + 6$?
+        answer: '0'
+        answer_contract:
+          kind: exact
+        solution_sketch: The numbers $-6$ and $6$ are opposites. Opposites always sum to $0$.
+      - problem: What number must be added to $-9$ to get $0$?
+        answer: '9'
+        answer_contract:
+          kind: exact
+        solution_sketch: The sum is $0$ only when the second number is the opposite of $-9$. The opposite of $-9$ is $9$, and $-9 + 9 = 0$.
+      - problem: A lift starts at floor $3$, goes down $5$ floors and then goes up $5$ floors. At which floor does it stop?
+        answer: '3'
+        answer_contract:
+          kind: exact
+        solution_sketch: The two moves are $-5$ and $+5$, which are opposites and sum to $0$. So the lift ends where it started, at floor $3$.
+      - problem: Compute $-8 + 3 + 5$.
+        answer: '0'
+        answer_contract:
+          kind: exact
+        solution_sketch: First $-8 + 3 = -5$. Then $-5 + 5 = 0$, because $-5$ and $5$ are opposites.
+      - problem: Compute $-7 + 12 + 7$.
+        answer: '12'
+        answer_contract:
+          kind: exact
+        solution_sketch: The numbers $-7$ and $7$ are opposites, so they sum to $0$. That leaves $12$ from the sum.
+      - problem: A diver swims down $14$ m from the surface, rises $14$ m back up and then descends $3$ m. What is the diver's final elevation relative to the surface?
+        answer: '-3'
+        answer_contract:
+          kind: unit
+          quantity: length
+          unit: m
+          allow_omitted: true
+        solution_sketch: The moves $-14$ and $+14$ cancel and sum to $0$. The last move $-3$ remains, so the final elevation is $-3$ m.
+      - problem: Three numbers, $-7$, $2$ and $5$, are added together. What is the total?
+        answer: '0'
+        answer_contract:
+          kind: exact
+        solution_sketch: 'Add left to right: $-7 + 2 = -5$. Then $-5 + 5 = 0$, so the total is $0$.'
+      - problem: Compute $15 + (-4) + (-15)$.
+        answer: '-4'
+        answer_contract:
+          kind: exact
+        solution_sketch: The numbers $15$ and $-15$ are opposites and sum to $0$. That leaves $-4$ as the total.
+      - problem: A bank account is overdrawn by $20$ dollars. Sam deposits $20$ dollars and then spends $9$ dollars. What is the balance now?
+        answer: '-9'
+        answer_contract:
+          kind: unit
+          quantity: dollar
+          unit: dollar
+          allow_omitted: true
+        solution_sketch: The overdraft is $-20$ and the deposit is $+20$, so they sum to $0$. Spending $9$ dollars then leaves a balance of $-9$ dollars.
+      constraints: sums that cancel to 0; up to three addends from -15 to 15
     diagnostic_exemplar:
-      problem: 'Compute $-6 + (-5) + 8$.'
+      problem: Compute $-6 + (-5) + 8$.
       answer: '-3'
-      answer_contract: {"kind":"exact"}
-      solution_sketch: '$-6 + (-5) = -11$; then $-11 + 8 = -3$.'
+      answer_contract:
+        kind: exact
+      solution_sketch: $-6 + (-5) = -11$; then $-11 + 8 = -3$.
     anki_seeds:
-      - front: "To add two numbers with different signs, subtract the smaller absolute value from the larger and..."
-        back: "keep the sign of the number with the larger absolute value"
-        type: basic
-      - front: "The sum of a number and its opposite is..."
-        back: "0"
-        type: basic
-
-  - id: subtracting-integers
-    name: Subtracting Integers
-    core: true
-    difficulty: 0.22
-    drill: true
-    answer_kind: numeric
-    expected_time_secs: 45
-    prerequisites:
-      - id: adding-integers
-        weight: 0.8
-        key: true
-      - id: opposites-of-integers
-        weight: 0.4
-    knowledge_points:
-      - id: kp1
-        name: Rewrite subtraction as adding the opposite
-        key_prerequisites: [adding-integers]
-        exemplars:
-          - problem: 'Compute $3 - 8$.'
-            answer: "-5"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Subtracting $8$ is the same as adding $-8$, so $3 - 8 = 3 + (-8)$. The signs differ and $8 - 3 = 5$, so the result is $-5$.'
-          - problem: 'What is $-2$ minus $6$?'
-            answer: "-8"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Subtracting $6$ is the same as adding $-6$, so we get $-2 + (-6)$. Both numbers are negative, so the sizes add to $8$ and the result is $-8$.'
-          - problem: 'The temperature is $3$ degrees and then drops by $12$ degrees. What is the new temperature?'
-            answer: "-9"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'A drop of $12$ means subtracting $12$, so the new temperature is $3 - 12 = 3 + (-12)$. The signs differ and $12 - 3 = 9$, so the result is $-9$ degrees.'
-          - problem: 'Subtract $9$ from $-5$.'
-            answer: "-14"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'We compute $-5 - 9 = -5 + (-9)$. Both numbers are negative, so the sizes add to $14$ and the result is $-14$.'
-          - problem: 'Find the difference when $11$ is taken from $4$.'
-            answer: "-7"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Taking $11$ from $4$ gives $4 - 11 = 4 + (-11)$. The signs differ and $11 - 4 = 7$, so the result is $-7$.'
-          - problem: 'Mia''s bank account holds $20$ dollars and a purchase takes $35$ dollars from it. The account may be overdrawn. What is her balance now?'
-            answer: "-15"
-            answer_contract: {"kind":"unit","quantity":"dollar","unit":"dollar","allow_omitted":true}
-            solution_sketch: 'The balance is $20 - 35 = 20 + (-35)$. The signs differ and $35 - 20 = 15$, so the balance is $-15$ dollars.'
-          - problem: 'A submarine is at an elevation of $-40$ m and dives $25$ m deeper. What is its new elevation?'
-            answer: "-65"
-            answer_contract: {"kind":"unit","quantity":"length","unit":"m","allow_omitted":true}
-            solution_sketch: 'Diving deeper lowers the elevation, so the new elevation is $-40 - 25 = -40 + (-25)$. Both numbers are negative, so the sizes add to $65$ and the result is $-65$ m.'
-          - problem: 'Find the value of $-4 - 7$.'
-            answer: "-11"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Subtracting $7$ is the same as adding $-7$, so we get $-4 + (-7)$. Both numbers are negative, so the sizes add to $11$ and the result is $-11$.'
-        constraints: "integers from -12 to 12; subtrahend positive"
-      - id: kp2
-        name: Subtracting a negative
-        key_prerequisites: [opposites-of-integers]
-        try_first:
-          problem: 'The temperature at the top of a mountain is $-3$ degrees and at its base it is $5$ degrees. How many degrees warmer is the base than the top?'
-          answer_contract: {"kind":"exact"}
-          answer: '8'
-          reveal: 'The gap is the warmer reading minus the colder one, $5 - (-3)$. Taking away a negative number adds its positive, so the base is $5 + 3 = 8$ degrees warmer.'
-        exemplars:
-          - problem: 'Compute $5 - (-3)$.'
-            answer: "8"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Subtracting $-3$ is the same as adding $3$. So $5 - (-3) = 5 + 3 = 8$.'
-          - problem: 'A cave floor is at $-12$ m and a lake in the cave has its surface at $-5$ m, both measured from the cave entrance. How many metres above the floor is the surface of the lake?'
-            answer: "7"
-            answer_contract: {"kind":"unit","quantity":"length","unit":"m","allow_omitted":true}
-            solution_sketch: 'The height of the surface above the floor is the upper level minus the lower level, $-5 - (-12)$. Subtracting $-12$ is the same as adding $12$, so $-5 + 12 = 7$ m.'
-          - problem: 'What is $-4$ minus $-9$?'
-            answer: "5"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Subtracting $-9$ from $-4$ is the same as adding $9$ to $-4$. So $-4 + 9 = 5$.'
-          - problem: 'Subtract $-6$ from $8$.'
-            answer: "14"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Subtracting $-6$ from $8$ is the same as adding $6$ to $8$. So $8 + 6 = 14$.'
-          - problem: 'The lowest temperature last winter was $-18$ degrees and the highest temperature was $27$ degrees. How many degrees apart are the two temperatures?'
-            answer: "45"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The gap is the highest minus the lowest, $27 - (-18)$. Subtracting $-18$ is the same as adding $18$, so $27 + 18 = 45$ degrees.'
-          - problem: 'Find $-10$ minus $-3$.'
-            answer: "-7"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Subtracting $-3$ from $-10$ is the same as adding $3$ to $-10$. So $-10 + 3 = -7$.'
-          - problem: 'Find the value of $6 - (-4)$.'
-            answer: "10"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Subtracting $-4$ is the same as adding $4$, so $6 - (-4) = 6 + 4$. The result is $10$.'
-          - problem: 'Compute $-7 - (-7)$.'
-            answer: "0"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Subtracting $-7$ is the same as adding $7$. So $-7 + 7 = 0$, because the two numbers are opposites.'
-        constraints: "integers from -12 to 12; subtrahend negative"
-    diagnostic_exemplar:
-      problem: 'Compute $-6 - (-2)$.'
-      answer: "-4"
-      answer_contract: {"kind":"exact"}
-      solution_sketch: '$-6 + 2 = -4$.'
-    anki_seeds:
-      - front: "Subtracting a negative number is the same as..."
-        back: "adding its positive: a - (-b) = a + b"
-        type: basic
+    - front: To add two numbers with different signs, subtract the smaller absolute value from the larger and...
+      back: keep the sign of the number with the larger absolute value
+      type: basic
+    - front: The sum of a number and its opposite is...
+      back: '0'
+      type: basic
 
   - id: integer-addition-subtraction
-    name: Adding and Subtracting Integers
+    name: Subtracting Integers and Mixed Signed Sums
     core: true
     difficulty: 0.25
     drill: true
     answer_kind: numeric
     expected_time_secs: 40
     prerequisites:
-      - id: adding-integers
-        weight: 0.8
-        key: true
-      - id: subtracting-integers
-        weight: 0.8
-        key: true
-      - id: multi-digit-addition-subtraction
-        weight: 0.4
+    - id: adding-integers
+      weight: 0.8
+      key: true
+    - id: opposites-of-integers
+      weight: 0.4
+    - id: multi-digit-addition-subtraction
+      weight: 0.4
     knowledge_points:
-      - id: kp1
-        name: Mixed two-term sums and differences
-        key_prerequisites: [adding-integers, subtracting-integers]
-        exemplars:
-          - problem: 'Compute $4 - 9$.'
-            answer: "-5"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Rewrite as $4 + (-9)$. The signs differ and $9 - 4 = 5$, so the result is $-5$.'
-          - problem: 'Compute $-3 - (-7)$.'
-            answer: "4"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Subtracting $-7$ is the same as adding $7$, so we get $-3 + 7$. The signs differ and $7 - 3 = 4$, so the result is $4$.'
-          - problem: 'A hiker stands at $-5$ m relative to a trail marker and a bird flies at $12$ m relative to the same marker. How many metres above the hiker is the bird?'
-            answer: "17"
-            answer_contract: {"kind":"unit","quantity":"length","unit":"m","allow_omitted":true}
-            solution_sketch: 'The distance up from the hiker to the bird is the higher level minus the lower one, $12 - (-5)$. Subtracting $-5$ is the same as adding $5$, so $12 + 5 = 17$ m.'
-          - problem: 'Compute $-8 + (-3)$.'
-            answer: "-11"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Both numbers are negative, so add the sizes: $8 + 3 = 11$. The sum keeps the negative sign, so it is $-11$.'
-          - problem: 'Take $-5$ away from $6$.'
-            answer: "11"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Taking away $-5$ is the same as adding $5$ to $6$. So $6 + 5 = 11$.'
-          - problem: 'Anna''s balance is $-8$ dollars. She deposits $13$ dollars. What is her balance now?'
-            answer: "5"
-            answer_contract: {"kind":"unit","quantity":"dollar","unit":"dollar","allow_omitted":true}
-            solution_sketch: 'The new balance is $-8 + 13$. The signs differ and $13 - 8 = 5$, so the balance is $5$ dollars.'
-          - problem: 'Find the value of $5 - (-8)$.'
-            answer: "13"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Subtracting $-8$ is the same as adding $8$, so $5 - (-8) = 5 + 8$. The result is $13$.'
-          - problem: 'One city has a temperature of $3$ degrees and another has $-9$ degrees. How many degrees warmer is the first city than the second?'
-            answer: "12"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The gap is the warmer reading minus the colder one, $3 - (-9)$. Subtracting $-9$ is the same as adding $9$, so $3 + 9 = 12$ degrees.'
-        constraints: "integers from -12 to 12; mix all four sign cases"
-      - id: kp2
-        name: Chains of three or more terms
-        key_prerequisites: [adding-integers, subtracting-integers]
-        exemplars:
-          - problem: 'Compute $10 - 15 + (-3)$.'
-            answer: "-8"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'First $10 - 15 = -5$. Then $-5 + (-3) = -8$.'
-          - problem: 'Compute $-6 + 11 - 8 + 3$.'
-            answer: "0"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'First $-6 + 11 = 5$. Then $5 - 8 = -3$, and $-3 + 3 = 0$.'
-          - problem: 'A diver starts at the surface, descends $12$ m, rises $5$ m and then descends $9$ m. What is the diver''s elevation relative to the surface?'
-            answer: "-16"
-            answer_contract: {"kind":"unit","quantity":"length","unit":"m","allow_omitted":true}
-            solution_sketch: 'Descending is negative, so the elevation is $-12 + 5 - 9$. First $-12 + 5 = -7$, then $-7 - 9 = -16$ m.'
-          - problem: 'Compute $9 - 4 + 7$.'
-            answer: "12"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'First $9 - 4 = 5$. Then $5 + 7 = 12$.'
-          - problem: 'Ali''s balance is $20$ dollars. He pays $35$ dollars, deposits $10$ dollars and then pays $4$ dollars. The account may be overdrawn. What is his balance now?'
-            answer: "-9"
-            answer_contract: {"kind":"unit","quantity":"dollar","unit":"dollar","allow_omitted":true}
-            solution_sketch: 'The balance is $20 - 35 + 10 - 4$. First $20 - 35 = -15$, then $-15 + 10 = -5$, and $-5 - 4 = -9$ dollars.'
-          - problem: 'In a building the ground floor is floor $0$ and the basement floors are numbered $-1$, $-2$ and so on. A lift starts at floor $2$, goes down $6$ floors, up $3$ floors and down $5$ floors. Which floor is it on now?'
-            answer: "-6"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The floor number is $2 - 6 + 3 - 5$. First $2 - 6 = -4$, then $-4 + 3 = -1$, and $-1 - 5 = -6$.'
-          - problem: 'Compute $-2 + 5 - (-4) - 7$.'
-            answer: "0"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'First $-2 + 5 = 3$. Then $3 - (-4) = 7$, and $7 - 7 = 0$.'
-          - problem: 'Find the value of $8 - 15 - (-6)$.'
-            answer: "-1"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'First $8 - 15 = -7$. Then $-7 - (-6) = -7 + 6 = -1$.'
-        constraints: "three or four terms; integers from -15 to 15"
-      - id: kp3
-        name: Missing terms in signed sums
-        key_prerequisites: [adding-integers, subtracting-integers]
-        exemplars:
-          - problem: 'What number makes $\square + (-4) = 3$ true?'
-            answer: "7"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Undo the addition of $-4$ by adding $4$ to $3$, which gives $7$. Check: $7 + (-4) = 3$.'
-          - problem: 'What number makes $-5 - \square = -9$ true?'
-            answer: "4"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The missing number is the amount taken away, so $\square = -5 - (-9) = -5 + 9 = 4$. Check: $-5 - 4 = -9$.'
-          - problem: 'The temperature fell by $9$ degrees during the night and was $-4$ degrees in the morning. What was the temperature at the start of the night?'
-            answer: "5"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The start temperature $t$ satisfies $t - 9 = -4$. Undo the subtraction by adding $9$: $t = -4 + 9 = 5$ degrees.'
-          - problem: 'What number makes $\square + 6 = -2$ true?'
-            answer: "-8"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Undo the addition of $6$ by subtracting it: $\square = -2 - 6 = -8$. Check: $-8 + 6 = -2$.'
-          - problem: 'A diver rises $6$ m and is then at an elevation of $-14$ m. At what elevation did the diver start?'
-            answer: "-20"
-            answer_contract: {"kind":"unit","quantity":"length","unit":"m","allow_omitted":true}
-            solution_sketch: 'The start elevation $e$ satisfies $e + 6 = -14$. Undo the addition by subtracting $6$: $e = -14 - 6 = -20$ m.'
-          - problem: 'Rosa''s balance changed from $12$ dollars to $-5$ dollars after one payment. How large was the payment?'
-            answer: "17"
-            answer_contract: {"kind":"unit","quantity":"dollar","unit":"dollar","allow_omitted":true}
-            solution_sketch: 'The payment $p$ satisfies $12 - p = -5$. So $p = 12 - (-5) = 12 + 5 = 17$ dollars.'
-          - problem: 'Find the value of $\square$ that satisfies $-3 - \square = -10$.'
-            answer: "7"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Taking $\square$ away from $-3$ leaves $-10$, so $\square = -3 - (-10) = -3 + 10 = 7$. Check: $-3 - 7 = -10$.'
-          - problem: 'What number makes $\square - (-6) = 2$ true?'
-            answer: "-4"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Subtracting $-6$ adds $6$, so $\square + 6 = 2$ and $\square = 2 - 6 = -4$. Check: $-4 - (-6) = 2$.'
-          - problem: 'What number goes in the box? $\square - 3 = -15$'
-            answer: "-12"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Undo the subtraction of $3$ by adding $3$: $\square = -15 + 3 = -12$. Check: $-12 - 3 = -15$.'
-        constraints: "one missing term; integers from -15 to 15"
+    - id: kp1
+      name: Rewrite subtraction as adding the opposite
+      key_prerequisites:
+      - adding-integers
+      exemplars:
+      - problem: Compute $3 - 8$.
+        answer: '-5'
+        answer_contract:
+          kind: exact
+        solution_sketch: Subtracting $8$ is the same as adding $-8$, so $3 - 8 = 3 + (-8)$. The signs differ and $8 - 3 = 5$, so the result is $-5$.
+      - problem: What is $-2$ minus $6$?
+        answer: '-8'
+        answer_contract:
+          kind: exact
+        solution_sketch: Subtracting $6$ is the same as adding $-6$, so we get $-2 + (-6)$. Both numbers are negative, so the sizes add to $8$ and the result is $-8$.
+      - problem: The temperature is $3$ degrees and then drops by $12$ degrees. What is the new temperature?
+        answer: '-9'
+        answer_contract:
+          kind: exact
+        solution_sketch: A drop of $12$ means subtracting $12$, so the new temperature is $3 - 12 = 3 + (-12)$. The signs differ and $12 - 3 = 9$, so the result is $-9$ degrees.
+      - problem: Subtract $9$ from $-5$.
+        answer: '-14'
+        answer_contract:
+          kind: exact
+        solution_sketch: We compute $-5 - 9 = -5 + (-9)$. Both numbers are negative, so the sizes add to $14$ and the result is $-14$.
+      - problem: Find the difference when $11$ is taken from $4$.
+        answer: '-7'
+        answer_contract:
+          kind: exact
+        solution_sketch: Taking $11$ from $4$ gives $4 - 11 = 4 + (-11)$. The signs differ and $11 - 4 = 7$, so the result is $-7$.
+      - problem: Mia's bank account holds $20$ dollars and a purchase takes $35$ dollars from it. The account may be overdrawn. What is her balance now?
+        answer: '-15'
+        answer_contract:
+          kind: unit
+          quantity: dollar
+          unit: dollar
+          allow_omitted: true
+        solution_sketch: The balance is $20 - 35 = 20 + (-35)$. The signs differ and $35 - 20 = 15$, so the balance is $-15$ dollars.
+      - problem: A submarine is at an elevation of $-40$ m and dives $25$ m deeper. What is its new elevation?
+        answer: '-65'
+        answer_contract:
+          kind: unit
+          quantity: length
+          unit: m
+          allow_omitted: true
+        solution_sketch: Diving deeper lowers the elevation, so the new elevation is $-40 - 25 = -40 + (-25)$. Both numbers are negative, so the sizes add to $65$ and the result is $-65$ m.
+      - problem: Find the value of $-4 - 7$.
+        answer: '-11'
+        answer_contract:
+          kind: exact
+        solution_sketch: Subtracting $7$ is the same as adding $-7$, so we get $-4 + (-7)$. Both numbers are negative, so the sizes add to $11$ and the result is $-11$.
+      constraints: integers from -12 to 12; subtrahend positive
+    - id: kp2
+      name: Subtracting a negative
+      key_prerequisites:
+      - opposites-of-integers
+      try_first:
+        problem: The temperature at the top of a mountain is $-3$ degrees and at its base it is $5$ degrees. How many degrees warmer is the base than the top?
+        answer_contract:
+          kind: exact
+        answer: '8'
+        reveal: The gap is the warmer reading minus the colder one, $5 - (-3)$. Taking away a negative number adds its positive, so the base is $5 + 3 = 8$ degrees warmer.
+      exemplars:
+      - problem: Compute $5 - (-3)$.
+        answer: '8'
+        answer_contract:
+          kind: exact
+        solution_sketch: Subtracting $-3$ is the same as adding $3$. So $5 - (-3) = 5 + 3 = 8$.
+      - problem: A cave floor is at $-12$ m and a lake in the cave has its surface at $-5$ m, both measured from the cave entrance. How many metres above the floor is the surface of the lake?
+        answer: '7'
+        answer_contract:
+          kind: unit
+          quantity: length
+          unit: m
+          allow_omitted: true
+        solution_sketch: The height of the surface above the floor is the upper level minus the lower level, $-5 - (-12)$. Subtracting $-12$ is the same as adding $12$, so $-5 + 12 = 7$ m.
+      - problem: What is $-4$ minus $-9$?
+        answer: '5'
+        answer_contract:
+          kind: exact
+        solution_sketch: Subtracting $-9$ from $-4$ is the same as adding $9$ to $-4$. So $-4 + 9 = 5$.
+      - problem: Subtract $-6$ from $8$.
+        answer: '14'
+        answer_contract:
+          kind: exact
+        solution_sketch: Subtracting $-6$ from $8$ is the same as adding $6$ to $8$. So $8 + 6 = 14$.
+      - problem: The lowest temperature last winter was $-18$ degrees and the highest temperature was $27$ degrees. How many degrees apart are the two temperatures?
+        answer: '45'
+        answer_contract:
+          kind: exact
+        solution_sketch: The gap is the highest minus the lowest, $27 - (-18)$. Subtracting $-18$ is the same as adding $18$, so $27 + 18 = 45$ degrees.
+      - problem: Find $-10$ minus $-3$.
+        answer: '-7'
+        answer_contract:
+          kind: exact
+        solution_sketch: Subtracting $-3$ from $-10$ is the same as adding $3$ to $-10$. So $-10 + 3 = -7$.
+      - problem: Find the value of $6 - (-4)$.
+        answer: '10'
+        answer_contract:
+          kind: exact
+        solution_sketch: Subtracting $-4$ is the same as adding $4$, so $6 - (-4) = 6 + 4$. The result is $10$.
+      - problem: Compute $-7 - (-7)$.
+        answer: '0'
+        answer_contract:
+          kind: exact
+        solution_sketch: Subtracting $-7$ is the same as adding $7$. So $-7 + 7 = 0$, because the two numbers are opposites.
+      constraints: integers from -12 to 12; subtrahend negative
+    - id: kp3
+      name: Mixed two-term sums and differences
+      key_prerequisites:
+      - adding-integers
+      exemplars:
+      - problem: Compute $4 - 9$.
+        answer: '-5'
+        answer_contract:
+          kind: exact
+        solution_sketch: Rewrite as $4 + (-9)$. The signs differ and $9 - 4 = 5$, so the result is $-5$.
+      - problem: Compute $-3 - (-7)$.
+        answer: '4'
+        answer_contract:
+          kind: exact
+        solution_sketch: Subtracting $-7$ is the same as adding $7$, so we get $-3 + 7$. The signs differ and $7 - 3 = 4$, so the result is $4$.
+      - problem: A hiker stands at $-5$ m relative to a trail marker and a bird flies at $12$ m relative to the same marker. How many metres above the hiker is the bird?
+        answer: '17'
+        answer_contract:
+          kind: unit
+          quantity: length
+          unit: m
+          allow_omitted: true
+        solution_sketch: The distance up from the hiker to the bird is the higher level minus the lower one, $12 - (-5)$. Subtracting $-5$ is the same as adding $5$, so $12 + 5 = 17$ m.
+      - problem: Compute $-8 + (-3)$.
+        answer: '-11'
+        answer_contract:
+          kind: exact
+        solution_sketch: 'Both numbers are negative, so add the sizes: $8 + 3 = 11$. The sum keeps the negative sign, so it is $-11$.'
+      - problem: Take $-5$ away from $6$.
+        answer: '11'
+        answer_contract:
+          kind: exact
+        solution_sketch: Taking away $-5$ is the same as adding $5$ to $6$. So $6 + 5 = 11$.
+      - problem: Anna's balance is $-8$ dollars. She deposits $13$ dollars. What is her balance now?
+        answer: '5'
+        answer_contract:
+          kind: unit
+          quantity: dollar
+          unit: dollar
+          allow_omitted: true
+        solution_sketch: The new balance is $-8 + 13$. The signs differ and $13 - 8 = 5$, so the balance is $5$ dollars.
+      - problem: Find the value of $5 - (-8)$.
+        answer: '13'
+        answer_contract:
+          kind: exact
+        solution_sketch: Subtracting $-8$ is the same as adding $8$, so $5 - (-8) = 5 + 8$. The result is $13$.
+      - problem: One city has a temperature of $3$ degrees and another has $-9$ degrees. How many degrees warmer is the first city than the second?
+        answer: '12'
+        answer_contract:
+          kind: exact
+        solution_sketch: The gap is the warmer reading minus the colder one, $3 - (-9)$. Subtracting $-9$ is the same as adding $9$, so $3 + 9 = 12$ degrees.
+      constraints: integers from -12 to 12; mix all four sign cases
+    - id: kp4
+      name: Chains of three or more terms
+      key_prerequisites:
+      - adding-integers
+      exemplars:
+      - problem: Compute $10 - 15 + (-3)$.
+        answer: '-8'
+        answer_contract:
+          kind: exact
+        solution_sketch: First $10 - 15 = -5$. Then $-5 + (-3) = -8$.
+      - problem: Compute $-6 + 11 - 8 + 3$.
+        answer: '0'
+        answer_contract:
+          kind: exact
+        solution_sketch: First $-6 + 11 = 5$. Then $5 - 8 = -3$, and $-3 + 3 = 0$.
+      - problem: A diver starts at the surface, descends $12$ m, rises $5$ m and then descends $9$ m. What is the diver's elevation relative to the surface?
+        answer: '-16'
+        answer_contract:
+          kind: unit
+          quantity: length
+          unit: m
+          allow_omitted: true
+        solution_sketch: Descending is negative, so the elevation is $-12 + 5 - 9$. First $-12 + 5 = -7$, then $-7 - 9 = -16$ m.
+      - problem: Compute $9 - 4 + 7$.
+        answer: '12'
+        answer_contract:
+          kind: exact
+        solution_sketch: First $9 - 4 = 5$. Then $5 + 7 = 12$.
+      - problem: Ali's balance is $20$ dollars. He pays $35$ dollars, deposits $10$ dollars and then pays $4$ dollars. The account may be overdrawn. What is his balance now?
+        answer: '-9'
+        answer_contract:
+          kind: unit
+          quantity: dollar
+          unit: dollar
+          allow_omitted: true
+        solution_sketch: The balance is $20 - 35 + 10 - 4$. First $20 - 35 = -15$, then $-15 + 10 = -5$, and $-5 - 4 = -9$ dollars.
+      - problem: In a building the ground floor is floor $0$ and the basement floors are numbered $-1$, $-2$ and so on. A lift starts at floor $2$, goes down $6$ floors, up $3$ floors and down $5$ floors. Which floor is it on now?
+        answer: '-6'
+        answer_contract:
+          kind: exact
+        solution_sketch: The floor number is $2 - 6 + 3 - 5$. First $2 - 6 = -4$, then $-4 + 3 = -1$, and $-1 - 5 = -6$.
+      - problem: Compute $-2 + 5 - (-4) - 7$.
+        answer: '0'
+        answer_contract:
+          kind: exact
+        solution_sketch: First $-2 + 5 = 3$. Then $3 - (-4) = 7$, and $7 - 7 = 0$.
+      - problem: Find the value of $8 - 15 - (-6)$.
+        answer: '-1'
+        answer_contract:
+          kind: exact
+        solution_sketch: First $8 - 15 = -7$. Then $-7 - (-6) = -7 + 6 = -1$.
+      constraints: three or four terms; integers from -15 to 15
+    - id: kp5
+      name: Missing terms in signed sums
+      key_prerequisites:
+      - adding-integers
+      exemplars:
+      - problem: What number makes $\square + (-4) = 3$ true?
+        answer: '7'
+        answer_contract:
+          kind: exact
+        solution_sketch: 'Undo the addition of $-4$ by adding $4$ to $3$, which gives $7$. Check: $7 + (-4) = 3$.'
+      - problem: What number makes $-5 - \square = -9$ true?
+        answer: '4'
+        answer_contract:
+          kind: exact
+        solution_sketch: 'The missing number is the amount taken away, so $\square = -5 - (-9) = -5 + 9 = 4$. Check: $-5 - 4 = -9$.'
+      - problem: The temperature fell by $9$ degrees during the night and was $-4$ degrees in the morning. What was the temperature at the start of the night?
+        answer: '5'
+        answer_contract:
+          kind: exact
+        solution_sketch: 'The start temperature $t$ satisfies $t - 9 = -4$. Undo the subtraction by adding $9$: $t = -4 + 9 = 5$ degrees.'
+      - problem: What number makes $\square + 6 = -2$ true?
+        answer: '-8'
+        answer_contract:
+          kind: exact
+        solution_sketch: 'Undo the addition of $6$ by subtracting it: $\square = -2 - 6 = -8$. Check: $-8 + 6 = -2$.'
+      - problem: A diver rises $6$ m and is then at an elevation of $-14$ m. At what elevation did the diver start?
+        answer: '-20'
+        answer_contract:
+          kind: unit
+          quantity: length
+          unit: m
+          allow_omitted: true
+        solution_sketch: 'The start elevation $e$ satisfies $e + 6 = -14$. Undo the addition by subtracting $6$: $e = -14 - 6 = -20$ m.'
+      - problem: Rosa's balance changed from $12$ dollars to $-5$ dollars after one payment. How large was the payment?
+        answer: '17'
+        answer_contract:
+          kind: unit
+          quantity: dollar
+          unit: dollar
+          allow_omitted: true
+        solution_sketch: The payment $p$ satisfies $12 - p = -5$. So $p = 12 - (-5) = 12 + 5 = 17$ dollars.
+      - problem: Find the value of $\square$ that satisfies $-3 - \square = -10$.
+        answer: '7'
+        answer_contract:
+          kind: exact
+        solution_sketch: 'Taking $\square$ away from $-3$ leaves $-10$, so $\square = -3 - (-10) = -3 + 10 = 7$. Check: $-3 - 7 = -10$.'
+      - problem: What number makes $\square - (-6) = 2$ true?
+        answer: '-4'
+        answer_contract:
+          kind: exact
+        solution_sketch: 'Subtracting $-6$ adds $6$, so $\square + 6 = 2$ and $\square = 2 - 6 = -4$. Check: $-4 - (-6) = 2$.'
+      - problem: What number goes in the box? $\square - 3 = -15$
+        answer: '-12'
+        answer_contract:
+          kind: exact
+        solution_sketch: 'Undo the subtraction of $3$ by adding $3$: $\square = -15 + 3 = -12$. Check: $-12 - 3 = -15$.'
+      constraints: one missing term; integers from -15 to 15
     diagnostic_exemplar:
-      problem: 'What number makes $-5 + \square - (-3) = 4$ true?'
+      problem: What number makes $-5 + \square - (-3) = 4$ true?
       answer: '6'
-      answer_contract: {"kind":"exact"}
-      solution_sketch: 'The left side is $\square - 2$, so $\square = 6$.'
+      answer_contract:
+        kind: exact
+      solution_sketch: The left side is $\square - 2$, so $\square = 6$.
     anki_seeds:
-      - front: "To simplify a long chain of integer additions and subtractions, first rewrite every subtraction as..."
-        back: "addition of the opposite, then add left to right"
-        type: basic
+    - front: Subtracting a negative number is the same as...
+      back: 'adding its positive: a - (-b) = a + b'
+      type: basic
+    - front: To simplify a long chain of integer additions and subtractions, first rewrite every subtraction as...
+      back: addition of the opposite, then add left to right
+      type: basic
 
   - id: multiplying-integers
     name: Multiplying Integers
@@ -1009,90 +1004,119 @@ topics:
     answer_kind: numeric
     expected_time_secs: 45
     prerequisites:
-      - id: multiplying-integers
-        weight: 0.7
-        key: true
-      - id: long-division
-        weight: 0.4
+    - id: multiplying-integers
+      weight: 0.7
+      key: true
+    - id: long-division-one-digit
+      weight: 0.4
     knowledge_points:
-      - id: kp1
-        name: Quotients with one negative
-        key_prerequisites: [multiplying-integers]
-        exemplars:
-          - problem: 'Compute $-20 \div 4$.'
-            answer: "-5"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Since $-5 \times 4 = -20$, the quotient is $-5$. The signs differ, so the quotient is negative.'
-          - problem: 'Four friends share a debt of $\$84$ equally. What is the change in each friend''s balance?'
-            answer: "-21"
-            answer_contract: {"kind":"unit","quantity":"dollar","unit":"dollar","allow_omitted":true}
-            solution_sketch: 'The debt is a change of $-84$ dollars, shared by $4$ friends. Each change is $-84 \div 4 = -21$ dollars.'
-          - problem: 'Compute $48 \div (-8)$.'
-            answer: "-6"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The signs differ, so the quotient is negative. Since $48 \div 8 = 6$, the quotient is $-6$.'
-          - problem: 'The temperature fell $18$ degrees in $6$ hours at a steady rate. What is the change in temperature per hour?'
-            answer: "-3"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The total change is $-18$ degrees over $6$ hours. Each hour the change is $-18 \div 6 = -3$ degrees.'
-          - problem: 'Divide $-72$ by $8$.'
-            answer: "-9"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Only one number is negative, so the quotient is negative. Since $72 \div 8 = 9$, the quotient is $-9$.'
-          - problem: 'A diver sinks steadily to $52$ metres below the surface in $4$ minutes. What is the change in her elevation each minute?'
-            answer: "-13"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Her elevation changes by $-52$ metres in $4$ minutes. Each minute the change is $-52 \div 4 = -13$ metres.'
-          - problem: 'Find the value of $56 \div (-8)$.'
-            answer: "-7"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The size is $56 \div 8 = 7$. The signs differ, so the quotient is $-7$.'
-          - problem: 'The temperature changes by $-4$ degrees Celsius every hour. What is the total change in temperature after $5$ hours?'
-            answer: "-20"
-            answer_contract: {"kind":"unit","quantity":"temperature","unit":"°C","allow_omitted":true}
-            solution_sketch: 'The total change is the rate times the time, so this needs multiplication. It is $5 \times (-4) = -20$ degrees.'
-        constraints: "divides evenly; values from -60 to 60 (contexts may use larger sizes); exactly one negative"
-      - id: kp2
-        name: Quotients with two negatives
-        key_prerequisites: [multiplying-integers]
-        exemplars:
-          - problem: 'Compute $-18 \div (-3)$.'
-            answer: "6"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Two negatives make a positive quotient. Since $18 \div 3 = 6$, the quotient is $6$.'
-          - problem: 'A tank is draining, and its volume changes by $-6$ litres each minute. The total change was $-54$ litres. For how many minutes did it drain?'
-            answer: "9"
-            answer_contract: {"kind":"unit","quantity":"time","unit":"minute","allow_omitted":true}
-            solution_sketch: 'The number of minutes is the total change divided by the change per minute. So $-54 \div (-6) = 9$ minutes.'
-          - problem: 'Divide $-48$ by $-6$.'
-            answer: "8"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Both numbers are negative, so the quotient is positive. Since $48 \div 6 = 8$, the quotient is $8$.'
-          - problem: 'A submarine''s depth changes by $-15$ metres each minute. Its depth changed by $-165$ metres in all. How many minutes did the dive last?'
-            answer: "11"
-            answer_contract: {"kind":"unit","quantity":"time","unit":"minute","allow_omitted":true}
-            solution_sketch: 'The time is the total change divided by the change per minute. So $-165 \div (-15) = 11$ minutes.'
-          - problem: 'What is $-45$ divided by $-9$?'
-            answer: "5"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Two negatives give a positive quotient. Since $45 \div 9 = 5$, the quotient is $5$.'
-          - problem: 'Find the value of $-60 \div (-5)$.'
-            answer: "12"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The size is $60 \div 5 = 12$. Two negatives give a positive quotient, so the value is $12$.'
-          - problem: 'Find the quotient of $-84$ and $-12$.'
-            answer: "7"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Both numbers are negative, so the quotient is positive. Since $84 \div 12 = 7$, the quotient is $7$.'
-        constraints: "divides evenly; values from -60 to 60 (contexts may use larger sizes); both negative"
+    - id: kp1
+      name: Quotients with one negative
+      key_prerequisites:
+      - multiplying-integers
+      exemplars:
+      - problem: Compute $-20 \div 4$.
+        answer: '-5'
+        answer_contract:
+          kind: exact
+        solution_sketch: Since $-5 \times 4 = -20$, the quotient is $-5$. The signs differ, so the quotient is negative.
+      - problem: Four friends share a debt of $\$84$ equally. What is the change in each friend's balance?
+        answer: '-21'
+        answer_contract:
+          kind: unit
+          quantity: dollar
+          unit: dollar
+          allow_omitted: true
+        solution_sketch: The debt is a change of $-84$ dollars, shared by $4$ friends. Each change is $-84 \div 4 = -21$ dollars.
+      - problem: Compute $48 \div (-8)$.
+        answer: '-6'
+        answer_contract:
+          kind: exact
+        solution_sketch: The signs differ, so the quotient is negative. Since $48 \div 8 = 6$, the quotient is $-6$.
+      - problem: The temperature fell $18$ degrees in $6$ hours at a steady rate. What is the change in temperature per hour?
+        answer: '-3'
+        answer_contract:
+          kind: exact
+        solution_sketch: The total change is $-18$ degrees over $6$ hours. Each hour the change is $-18 \div 6 = -3$ degrees.
+      - problem: Divide $-72$ by $8$.
+        answer: '-9'
+        answer_contract:
+          kind: exact
+        solution_sketch: Only one number is negative, so the quotient is negative. Since $72 \div 8 = 9$, the quotient is $-9$.
+      - problem: A diver sinks steadily to $52$ metres below the surface in $4$ minutes. What is the change in her elevation each minute?
+        answer: '-13'
+        answer_contract:
+          kind: exact
+        solution_sketch: Her elevation changes by $-52$ metres in $4$ minutes. Each minute the change is $-52 \div 4 = -13$ metres.
+      - problem: Find the value of $56 \div (-8)$.
+        answer: '-7'
+        answer_contract:
+          kind: exact
+        solution_sketch: The size is $56 \div 8 = 7$. The signs differ, so the quotient is $-7$.
+      - problem: The temperature changes by $-4$ degrees Celsius every hour. What is the total change in temperature after $5$ hours?
+        answer: '-20'
+        answer_contract:
+          kind: unit
+          quantity: temperature
+          unit: °C
+          allow_omitted: true
+        solution_sketch: The total change is the rate times the time, so this needs multiplication. It is $5 \times (-4) = -20$ degrees.
+      constraints: divides evenly; values from -60 to 60 (contexts may use larger sizes); exactly one negative
+    - id: kp2
+      name: Quotients with two negatives
+      key_prerequisites:
+      - multiplying-integers
+      exemplars:
+      - problem: Compute $-18 \div (-3)$.
+        answer: '6'
+        answer_contract:
+          kind: exact
+        solution_sketch: Two negatives make a positive quotient. Since $18 \div 3 = 6$, the quotient is $6$.
+      - problem: A tank is draining, and its volume changes by $-6$ litres each minute. The total change was $-54$ litres. For how many minutes did it drain?
+        answer: '9'
+        answer_contract:
+          kind: unit
+          quantity: time
+          unit: minute
+          allow_omitted: true
+        solution_sketch: The number of minutes is the total change divided by the change per minute. So $-54 \div (-6) = 9$ minutes.
+      - problem: Divide $-48$ by $-6$.
+        answer: '8'
+        answer_contract:
+          kind: exact
+        solution_sketch: Both numbers are negative, so the quotient is positive. Since $48 \div 6 = 8$, the quotient is $8$.
+      - problem: A submarine's depth changes by $-15$ metres each minute. Its depth changed by $-165$ metres in all. How many minutes did the dive last?
+        answer: '11'
+        answer_contract:
+          kind: unit
+          quantity: time
+          unit: minute
+          allow_omitted: true
+        solution_sketch: The time is the total change divided by the change per minute. So $-165 \div (-15) = 11$ minutes.
+      - problem: What is $-45$ divided by $-9$?
+        answer: '5'
+        answer_contract:
+          kind: exact
+        solution_sketch: Two negatives give a positive quotient. Since $45 \div 9 = 5$, the quotient is $5$.
+      - problem: Find the value of $-60 \div (-5)$.
+        answer: '12'
+        answer_contract:
+          kind: exact
+        solution_sketch: The size is $60 \div 5 = 12$. Two negatives give a positive quotient, so the value is $12$.
+      - problem: Find the quotient of $-84$ and $-12$.
+        answer: '7'
+        answer_contract:
+          kind: exact
+        solution_sketch: Both numbers are negative, so the quotient is positive. Since $84 \div 12 = 7$, the quotient is $7$.
+      constraints: divides evenly; values from -60 to 60 (contexts may use larger sizes); both negative
     diagnostic_exemplar:
-      problem: 'Compute $-54 \div (-9)$.'
-      answer: "6"
+      problem: Compute $-54 \div (-9)$.
+      answer: '6'
       solution_sketch: 'Two negatives give a positive quotient: $54 \div 9 = 6$.'
     anki_seeds:
-      - front: "Division follows the same sign rules as..."
-        back: "multiplication (same signs give positive, different signs give negative)"
-        type: basic
+    - front: Division follows the same sign rules as...
+      back: multiplication (same signs give positive, different signs give negative)
+      type: basic
 
   - id: integer-multiplication-division
     name: Multiplying and Dividing Integers
@@ -1371,109 +1395,178 @@ topics:
 
   - id: ordering-rational-numbers
     name: Ordering Negative Fractions and Decimals
-    core: false                # comparison destination; the number line stays core
+    core: false
     difficulty: 0.3
     drill: false
     answer_kind: expression
     expected_time_secs: 75
     prerequisites:
-      - id: comparing-integers
-        weight: 0.6
-        key: true
-      - id: fraction-decimal-conversion
-        weight: 0.6
-        key: true
-      - id: number-line-integers
-        weight: 0.3
+    - id: solutions-of-inequalities
+      weight: 0.6
+      key: true
+    - id: fraction-decimal-conversion
+      weight: 0.6
+      key: true
+    - id: number-line-integers
+      weight: 0.3
     knowledge_points:
-      - id: kp1
-        name: Compare two negative rationals
-        key_prerequisites: [comparing-integers, fraction-decimal-conversion]
-        try_first:
-          problem: 'Which is greater, $-0.9$ or $-0.95$?'
-          answer_contract: {"kind":"exact"}
-          answer: '-0.9'
-          reveal: 'Both are negative, so the one closer to zero is greater. Here $-0.9$ is closer to zero than $-0.95$.'
-        exemplars:
-          - problem: 'Which is greater, $-0.4$ or $-0.6$?'
-            answer: '-0.4'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The number $-0.4$ is $0.4$ from zero and $-0.6$ is $0.6$ from zero. The number closer to zero is greater, so $-0.4$ is greater.'
-          - problem: 'Which is greater, $-\frac12$ or $-\frac13$?'
-            answer: '-1/3'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'In decimals, $-\frac12=-0.5$ and $-\frac13\approx-0.33$. The number $-\frac13$ is closer to zero, so it is greater.'
-          - problem: 'On Monday the low temperature at a station was $-3.5\,^\circ\mathrm{C}$. On Tuesday it was $-3.25\,^\circ\mathrm{C}$. Which day was colder?'
-            answer: 'Monday'
-            answer_contract: {"kind":"label","options":[["Monday","mon","Monday was colder","colder on Monday","it was Monday"],["Tuesday","tue","Tuesday was colder","colder on Tuesday","it was Tuesday"]]}
-            solution_sketch: 'The colder day has the smaller temperature. Since $-3.5<-3.25$, Monday was colder.'
-          - problem: 'Between $-\frac35$ and $-\frac7{10}$, which is the greater value?'
-            answer: '-3/5'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Write both with denominator $10$: $-\frac35=-\frac6{10}$ and $-\frac7{10}$. Since $\frac6{10}<\frac7{10}$, the number $-\frac35$ is closer to zero and greater.'
-          - problem: 'Diver A reads $-12.5$ m and diver B reads $-12.05$ m, both measured from the water surface. Which reading is the higher one?'
-            answer: '-12.05'
-            answer_contract: {"kind":"unit","quantity":"length","unit":"m","allow_omitted":true}
-            solution_sketch: 'The higher reading is the greater number. Since $12.05<12.5$, the value $-12.05$ is closer to zero and greater.'
-          - problem: 'Which is smaller, $-\frac58$ or $-0.6$?'
-            answer: '-5/8'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'In decimals, $-\frac58=-0.625$. Since $0.625>0.6$, the number $-0.625$ is farther below zero and is the smaller one.'
-          - problem: 'Ana owes $4.50$ dollars, so her balance is $-4.50$. Ben owes $4.05$ dollars, so his balance is $-4.05$. Who has the greater balance?'
-            answer: 'Ben'
-            answer_contract: {"kind":"label","options":[["Ana","Ana has the greater balance","Ana has more","Ana''s balance is greater"],["Ben","Ben has the greater balance","Ben has more","Ben''s balance is greater"]]}
-            solution_sketch: 'Compare $-4.50$ and $-4.05$. Since $4.05<4.50$, the number $-4.05$ is closer to zero, so Ben has the greater balance.'
-          - problem: 'Which is greater, $-0.75$ or $-0.5$?'
-            answer: '-0.5'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'For negative numbers the larger distance from zero means the smaller number, so $-0.5$ is greater.'
-        constraints: "denominators up to 10; one or two decimal places; both values negative"
-      - id: kp2
-        name: Order a mixed list of rationals
-        key_prerequisites: [comparing-integers, fraction-decimal-conversion]
-        exemplars:
-          - problem: 'Order from least to greatest: $-1.5$, $-\frac34$, $0.2$, $-2$.'
-            answer: '-2, -1.5, -3/4, 0.2'
-            answer_contract: {"kind":"list","member":{"kind":"exact"},"ordered":true}
-            solution_sketch: 'In decimals the numbers are $-1.5$, $-0.75$, $0.2$ and $-2$. From least to greatest they are $-2<-1.5<-0.75<0.2$.'
-          - problem: 'Order from least to greatest: $\frac12$, $-\frac14$, $-0.3$.'
-            answer: '-0.3, -1/4, 1/2'
-            answer_contract: {"kind":"list","member":{"kind":"exact"},"ordered":true}
-            solution_sketch: 'In decimals the numbers are $0.5$, $-0.25$ and $-0.3$. From least to greatest they are $-0.3<-0.25<0.5$.'
-          - problem: 'Order from greatest to least: $-\frac25$, $-0.35$, $-\frac12$, $-0.45$.'
-            answer: '-0.35, -2/5, -0.45, -1/2'
-            answer_contract: {"kind":"list","member":{"kind":"exact"},"ordered":true}
-            solution_sketch: 'In decimals the numbers are $-0.4$, $-0.35$, $-0.5$ and $-0.45$. The one closest to zero is greatest, so the order is $-0.35>-0.4>-0.45>-0.5$.'
-          - problem: 'Night temperatures in four towns were $-1.2$, $-\frac54$, $-\frac9{10}$ and $0.5$ degrees Celsius. List them from the coldest to the warmest.'
-            answer: '-5/4, -1.2, -9/10, 0.5'
-            answer_contract: {"kind":"list","member":{"kind":"exact"},"ordered":true}
-            solution_sketch: 'In decimals the temperatures are $-1.2$, $-1.25$, $-0.9$ and $0.5$. The coldest is the least, so the order is $-1.25<-1.2<-0.9<0.5$.'
-          - problem: 'Four accounts have the balances $-6.4$, $-\frac{13}2$, $-6.45$ and $-\frac{25}4$ dollars. List the balances from the lowest to the highest.'
-            answer: '-13/2, -6.45, -6.4, -25/4'
-            answer_contract: {"kind":"list","member":{"kind":"exact"},"ordered":true}
-            solution_sketch: 'In decimals the balances are $-6.4$, $-6.5$, $-6.45$ and $-6.25$. From lowest to highest they are $-6.5<-6.45<-6.4<-6.25$.'
-          - problem: 'Order from least to greatest: $-\frac13$, $-0.3$, $-\frac14$, $0$.'
-            answer: '-1/3, -0.3, -1/4, 0'
-            answer_contract: {"kind":"list","member":{"kind":"exact"},"ordered":true}
-            solution_sketch: 'In decimals the numbers are about $-0.33$, $-0.3$, $-0.25$ and $0$. From least to greatest they are $-\frac13<-0.3<-\frac14<0$.'
-          - problem: 'Which of the numbers $-0.6$, $-0.3$, $-0.2$ and $0.3$ lies between $-\frac12$ and $-\frac14$?'
-            answer: '-0.3'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'In decimals the interval runs from $-0.5$ to $-0.25$. Only $-0.3$ is greater than $-0.5$ and less than $-0.25$.'
-          - problem: 'Put $-0.25$, $-\frac12$, $-0.8$ in order from least to greatest.'
-            answer: '-0.8, -1/2, -0.25'
-            answer_contract: {"kind":"list","member":{"kind":"exact"},"ordered":true}
-            solution_sketch: 'For negative numbers the order is the reverse of the order of the distances from zero. The order is $-0.8<-0.5<-0.25$.'
-        constraints: "three or four values mixing fractions and decimals; denominators up to 10"
+    - id: kp1
+      name: Compare two negative rationals
+      key_prerequisites:
+      - solutions-of-inequalities
+      - fraction-decimal-conversion
+      try_first:
+        problem: Which is greater, $-0.9$ or $-0.95$?
+        answer_contract:
+          kind: exact
+        answer: '-0.9'
+        reveal: Both are negative, so the one closer to zero is greater. Here $-0.9$ is closer to zero than $-0.95$.
+      exemplars:
+      - problem: Which is greater, $-0.4$ or $-0.6$?
+        answer: '-0.4'
+        answer_contract:
+          kind: exact
+        solution_sketch: The number $-0.4$ is $0.4$ from zero and $-0.6$ is $0.6$ from zero. The number closer to zero is greater, so $-0.4$ is greater.
+      - problem: Which is greater, $-\frac12$ or $-\frac13$?
+        answer: -1/3
+        answer_contract:
+          kind: exact
+        solution_sketch: In decimals, $-\frac12=-0.5$ and $-\frac13\approx-0.33$. The number $-\frac13$ is closer to zero, so it is greater.
+      - problem: On Monday the low temperature at a station was $-3.5\,^\circ\mathrm{C}$. On Tuesday it was $-3.25\,^\circ\mathrm{C}$. Which day was colder?
+        answer: Monday
+        answer_contract:
+          kind: label
+          options:
+          - - Monday
+            - mon
+            - Monday was colder
+            - colder on Monday
+            - it was Monday
+          - - Tuesday
+            - tue
+            - Tuesday was colder
+            - colder on Tuesday
+            - it was Tuesday
+        solution_sketch: The colder day has the smaller temperature. Since $-3.5<-3.25$, Monday was colder.
+      - problem: Between $-\frac35$ and $-\frac7{10}$, which is the greater value?
+        answer: -3/5
+        answer_contract:
+          kind: exact
+        solution_sketch: 'Write both with denominator $10$: $-\frac35=-\frac6{10}$ and $-\frac7{10}$. Since $\frac6{10}<\frac7{10}$, the number $-\frac35$ is closer to zero and greater.'
+      - problem: Diver A reads $-12.5$ m and diver B reads $-12.05$ m, both measured from the water surface. Which reading is the higher one?
+        answer: '-12.05'
+        answer_contract:
+          kind: unit
+          quantity: length
+          unit: m
+          allow_omitted: true
+        solution_sketch: The higher reading is the greater number. Since $12.05<12.5$, the value $-12.05$ is closer to zero and greater.
+      - problem: Which is smaller, $-\frac58$ or $-0.6$?
+        answer: -5/8
+        answer_contract:
+          kind: exact
+        solution_sketch: In decimals, $-\frac58=-0.625$. Since $0.625>0.6$, the number $-0.625$ is farther below zero and is the smaller one.
+      - problem: Ana owes $4.50$ dollars, so her balance is $-4.50$. Ben owes $4.05$ dollars, so his balance is $-4.05$. Who has the greater balance?
+        answer: Ben
+        answer_contract:
+          kind: label
+          options:
+          - - Ana
+            - Ana has the greater balance
+            - Ana has more
+            - Ana''s balance is greater
+          - - Ben
+            - Ben has the greater balance
+            - Ben has more
+            - Ben''s balance is greater
+        solution_sketch: Compare $-4.50$ and $-4.05$. Since $4.05<4.50$, the number $-4.05$ is closer to zero, so Ben has the greater balance.
+      - problem: Which is greater, $-0.75$ or $-0.5$?
+        answer: '-0.5'
+        answer_contract:
+          kind: exact
+        solution_sketch: For negative numbers the larger distance from zero means the smaller number, so $-0.5$ is greater.
+      constraints: denominators up to 10; one or two decimal places; both values negative
+    - id: kp2
+      name: Order a mixed list of rationals
+      key_prerequisites:
+      - solutions-of-inequalities
+      - fraction-decimal-conversion
+      exemplars:
+      - problem: 'Order from least to greatest: $-1.5$, $-\frac34$, $0.2$, $-2$.'
+        answer: -2, -1.5, -3/4, 0.2
+        answer_contract:
+          kind: list
+          member:
+            kind: exact
+          ordered: true
+        solution_sketch: In decimals the numbers are $-1.5$, $-0.75$, $0.2$ and $-2$. From least to greatest they are $-2<-1.5<-0.75<0.2$.
+      - problem: 'Order from least to greatest: $\frac12$, $-\frac14$, $-0.3$.'
+        answer: -0.3, -1/4, 1/2
+        answer_contract:
+          kind: list
+          member:
+            kind: exact
+          ordered: true
+        solution_sketch: In decimals the numbers are $0.5$, $-0.25$ and $-0.3$. From least to greatest they are $-0.3<-0.25<0.5$.
+      - problem: 'Order from greatest to least: $-\frac25$, $-0.35$, $-\frac12$, $-0.45$.'
+        answer: -0.35, -2/5, -0.45, -1/2
+        answer_contract:
+          kind: list
+          member:
+            kind: exact
+          ordered: true
+        solution_sketch: In decimals the numbers are $-0.4$, $-0.35$, $-0.5$ and $-0.45$. The one closest to zero is greatest, so the order is $-0.35>-0.4>-0.45>-0.5$.
+      - problem: Night temperatures in four towns were $-1.2$, $-\frac54$, $-\frac9{10}$ and $0.5$ degrees Celsius. List them from the coldest to the warmest.
+        answer: -5/4, -1.2, -9/10, 0.5
+        answer_contract:
+          kind: list
+          member:
+            kind: exact
+          ordered: true
+        solution_sketch: In decimals the temperatures are $-1.2$, $-1.25$, $-0.9$ and $0.5$. The coldest is the least, so the order is $-1.25<-1.2<-0.9<0.5$.
+      - problem: Four accounts have the balances $-6.4$, $-\frac{13}2$, $-6.45$ and $-\frac{25}4$ dollars. List the balances from the lowest to the highest.
+        answer: -13/2, -6.45, -6.4, -25/4
+        answer_contract:
+          kind: list
+          member:
+            kind: exact
+          ordered: true
+        solution_sketch: In decimals the balances are $-6.4$, $-6.5$, $-6.45$ and $-6.25$. From lowest to highest they are $-6.5<-6.45<-6.4<-6.25$.
+      - problem: 'Order from least to greatest: $-\frac13$, $-0.3$, $-\frac14$, $0$.'
+        answer: -1/3, -0.3, -1/4, 0
+        answer_contract:
+          kind: list
+          member:
+            kind: exact
+          ordered: true
+        solution_sketch: In decimals the numbers are about $-0.33$, $-0.3$, $-0.25$ and $0$. From least to greatest they are $-\frac13<-0.3<-\frac14<0$.
+      - problem: Which of the numbers $-0.6$, $-0.3$, $-0.2$ and $0.3$ lies between $-\frac12$ and $-\frac14$?
+        answer: '-0.3'
+        answer_contract:
+          kind: exact
+        solution_sketch: In decimals the interval runs from $-0.5$ to $-0.25$. Only $-0.3$ is greater than $-0.5$ and less than $-0.25$.
+      - problem: Put $-0.25$, $-\frac12$, $-0.8$ in order from least to greatest.
+        answer: -0.8, -1/2, -0.25
+        answer_contract:
+          kind: list
+          member:
+            kind: exact
+          ordered: true
+        solution_sketch: For negative numbers the order is the reverse of the order of the distances from zero. The order is $-0.8<-0.5<-0.25$.
+      constraints: three or four values mixing fractions and decimals; denominators up to 10
     diagnostic_exemplar:
       problem: 'Order from least to greatest: $-0.5$, $-\frac23$, $0.25$.'
-      answer: '-2/3, -0.5, 0.25'
-      answer_contract: {"kind":"list","member":{"kind":"exact"},"ordered":true}
-      solution_sketch: 'In decimals $-\frac23\approx-0.67$, which is less than $-0.5$. Then $-0.5<0.25$, so the order is $-\frac23<-0.5<0.25$.'
+      answer: -2/3, -0.5, 0.25
+      answer_contract:
+        kind: list
+        member:
+          kind: exact
+        ordered: true
+      solution_sketch: In decimals $-\frac23\approx-0.67$, which is less than $-0.5$. Then $-0.5<0.25$, so the order is $-\frac23<-0.5<0.25$.
     anki_seeds:
-      - front: "To compare a negative fraction and a negative decimal, first..."
-        back: "convert them to the same form (usually both to decimals), then the one farther right on the number line is greater"
-        type: basic
+    - front: To compare a negative fraction and a negative decimal, first...
+      back: convert them to the same form (usually both to decimals), then the one farther right on the number line is greater
+      type: basic
 
   - id: signed-decimal-operations
     name: Operations with Signed Decimals
@@ -1870,339 +1963,306 @@ topics:
         back: "exactly as they do to integers"
         type: basic
 
-  - id: exponent-notation
-    name: Exponent Notation
-    core: true
-    difficulty: 0.22
-    drill: false
-    answer_kind: numeric
-    expected_time_secs: 50
-    prerequisites:
-      - id: multiplication-tables
-        weight: 0.7
-        key: true
-      - id: multi-digit-multiplication
-        weight: 0.3
-    knowledge_points:
-      - id: kp1
-        name: Read and write powers
-        key_prerequisites: [multiplication-tables]
-        exemplars:
-          - problem: 'Write $4 \times 4 \times 4$ in exponent form.'
-            answer: "4^3"
-            answer_contract: {"kind":"required_single_power"}
-            solution_sketch: 'The factor $4$ is used three times, so the base is $4$ and the exponent is $3$. The product is written $4^3$.'
-          - problem: 'How many times does $7$ appear as a factor in $7^5$?'
-            answer: "5"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'In a power, the exponent tells how many equal factors are multiplied. Here the exponent is $5$, so $7$ appears $5$ times.'
-          - problem: 'A floor is tiled with $6$ rows of $6$ square tiles. Write the number of tiles as a power of $6$.'
-            answer: "6^2"
-            answer_contract: {"kind":"required_single_power"}
-            solution_sketch: 'The number of tiles is $6 \times 6$, two equal factors of $6$. So it is written $6^2$, which is $36$ tiles.'
-          - problem: 'Write $6 \times 6 \times 6 \times 6$ in exponent form.'
-            answer: "6^4"
-            answer_contract: {"kind":"required_single_power"}
-            solution_sketch: 'There are four equal factors of $6$. So the base is $6$ and the exponent is $4$, giving $6^4$.'
-          - problem: 'How should $2 \times 2 \times 2 \times 2 \times 2$ be written in exponent form?'
-            answer: "2^5"
-            answer_contract: {"kind":"required_single_power"}
-            solution_sketch: 'The count of factors is the exponent. There are five factors of $2$, so the product is $2^5$.'
-          - problem: 'A cube-shaped box is packed with small cubes: $3$ layers, each with $3$ rows of $3$ cubes. Write the number of cubes as a power of $3$.'
-            answer: "3^3"
-            answer_contract: {"kind":"required_single_power"}
-            solution_sketch: 'The number of cubes is $3 \times 3 \times 3$, three equal factors of $3$. So it is written $3^3$, which is $27$ cubes.'
-          - problem: 'Write $10 \times 10 \times 10 \times 10 \times 10$ in exponent form.'
-            answer: "10^5"
-            answer_contract: {"kind":"required_single_power"}
-            solution_sketch: 'There are five equal factors of $10$. So the base is $10$ and the exponent is $5$, giving $10^5$.'
-        constraints: "base 2-10, exponent 2-5; a product of equal factors, a count of factors, or a count that is a power (rows, layers); pure notation with two honest contexts"
-      - id: kp2
-        name: Evaluate small powers
-        key_prerequisites: [multiplication-tables]
-        exemplars:
-          - problem: 'What is the value of $3^4$?'
-            answer: "81"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The power $3^4$ is four factors of $3$. Multiply step by step: $3 \times 3 = 9$, $9 \times 3 = 27$, $27 \times 3 = 81$.'
-          - problem: 'By how much does $2^5$ exceed $5^2$?'
-            answer: "7"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'First $2^5 = 32$ and $5^2 = 25$. The difference is $32 - 25 = 7$.'
-          - problem: 'A square garden measures $8$ m on each side. What is its area?'
-            answer: "64"
-            answer_contract: {"kind":"unit","quantity":"area","unit":"m^2","allow_omitted":true}
-            solution_sketch: 'Area is side times side, so $8 \times 8 = 8^2 = 64$. The area is $64$ square meters.'
-          - problem: 'A cube-shaped crate has edges of $5$ cm. What is its volume?'
-            answer: "125"
-            answer_contract: {"kind":"unit","quantity":"cubic_volume","unit":"cm^3","allow_omitted":true}
-            solution_sketch: 'Volume is edge times edge times edge, so $5 \times 5 \times 5 = 5^3 = 125$. The volume is $125$ cubic centimeters.'
-          - problem: 'A warehouse holds $2^6$ boxes, and each truck carries $2^3$ boxes. How many truck loads empty the warehouse?'
-            answer: "8"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Evaluate the powers: $2^6 = 64$ and $2^3 = 8$. The number of loads is the total divided by one load, $64 \div 8 = 8$.'
-          - problem: 'What is the value of $2^4$?'
-            answer: "16"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The power $2^4$ is four factors of $2$. So $2 \times 2 \times 2 \times 2 = 16$.'
-          - problem: 'What is $10^4$?'
-            answer: "10000"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Each factor of $10$ adds one zero. Four factors give $10\,000$, so the value is $10000$.'
-        constraints: "base 2-10, exponent 2-6; values at most 10000; includes area, volume and a division of two powers"
-    diagnostic_exemplar:
-      problem: 'Compute $6^2$.'
-      answer: "36"
-      solution_sketch: '$6^2$ means $6 \times 6 = 36$ — not $6 \times 2$.'
-    anki_seeds:
-      - front: "The expression a^n means..."
-        back: "the product of n factors of a"
-        type: basic
-
   - id: integer-exponents-intro
-    name: Introduction to Integer Exponents
+    name: Negative Bases and Exponents
     core: true
     difficulty: 0.3
     drill: false
     answer_kind: numeric
     expected_time_secs: 55
     prerequisites:
-      - id: exponent-notation
-        weight: 0.7
-        key: true
-      - id: integer-multiplication-division
-        weight: 0.7
-        key: true
-      - id: order-of-operations
-        weight: 0.4
-        key: true
+    - id: whole-number-exponents
+      weight: 0.7
+      key: true
+    - id: integer-multiplication-division
+      weight: 0.7
+      key: true
+    - id: order-of-operations
+      weight: 0.4
+      key: true
     knowledge_points:
-      - id: kp1
-        name: Negative bases
-        key_prerequisites: [integer-multiplication-division, exponent-notation]
-        try_first:
-          problem: 'Multiply $(-1) \times (-1) \times (-1) \times (-1) \times (-1)$.'
-          answer_contract: {"kind":"exact"}
-          answer: '-1'
-          reveal: 'The factors pair up into products of $+1$, and one $-1$ is left over, so the product is $-1$. An odd number of negative factors gives a negative result.'
-        exemplars:
-          - problem: 'Compute $(-2)^3$.'
-            answer: "-8"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'There are three factors of $-2$. The first two give $+4$, and then $4 \times (-2) = -8$.'
-          - problem: 'Evaluate $(-4)^2$.'
-            answer: "16"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Two negative factors give a positive product. So $(-4) \times (-4) = 16$.'
-          - problem: 'A game starts your score at $1$. Every round multiplies your score by $-2$. A score can go below zero. What is your score after $5$ rounds?'
-            answer: "-32"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'After $5$ rounds the score is $(-2)^5$. Five negative factors give a negative result, and $2^5 = 32$, so the score is $-32$.'
-          - problem: 'Evaluate $(-5)^4$.'
-            answer: "625"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Four negative factors give a positive result. So $(-5)^4 = 5^4 = 625$.'
-          - problem: 'Find the value of $(-3)^4$.'
-            answer: "81"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Four negative factors pair up into positives. So $(-3)^4 = 81$.'
-          - problem: 'A number machine multiplies its input by $-3$ each time it runs. Starting from $1$, what number comes out after $3$ runs?'
-            answer: "-27"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'After $3$ runs the result is $(-3)^3$. Three negative factors give a negative result, and $3^3 = 27$, so the output is $-27$.'
-          - problem: 'What is $\dfrac{(-2)^6}{(-2)^3}$?'
-            answer: "-8"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Evaluate each power: $(-2)^6 = 64$ and $(-2)^3 = -8$. Then $64 \div (-8) = -8$.'
-          - problem: 'Evaluate $(-1)^{15}$.'
-            answer: "-1"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Pairs of $-1$ multiply to $+1$, and $15$ is odd, so one $-1$ is left over. The product is $-1$.'
-        constraints: "base -5 to -1, exponent 2-6 or an odd or even power of -1; base in parentheses; includes repeated multiplication by a negative number"
-      - id: kp2
-        name: Distinguish -a^n from (-a)^n
-        key_prerequisites: [order-of-operations, integer-multiplication-division]
-        exemplars:
-          - problem: 'Compute $-2^4$.'
-            answer: "-16"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Without parentheses the exponent applies to the $2$ only. So $2^4 = 16$, and the minus sign gives $-16$.'
-          - problem: 'Compute $(-2)^4$.'
-            answer: "16"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The parentheses put the minus sign inside the base. Four negative factors give a positive product, $16$.'
-          - problem: 'Evaluate $-3^3$.'
-            answer: "-27"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The exponent applies to the $3$ first, so $3^3 = 27$. Then the minus sign gives $-27$.'
-          - problem: 'Compute $(-3)^2 - (-3^2)$.'
-            answer: "18"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'First $(-3)^2 = 9$ and $-3^2 = -9$. Then $9 - (-9) = 18$.'
-          - problem: 'In a game, a player loses $x^2$ points when the dice show $x$. If the dice show $6$, what is the change in the player''s score?'
-            answer: "-36"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The player loses $6^2 = 36$ points. A loss is a negative change, so the change in score is $-36$.'
-          - problem: 'What is the square of $-6$?'
-            answer: "36"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The minus sign is part of the number that is squared. The square of $-6$ is $(-6)^2 = (-6) \times (-6) = 36$.'
-          - problem: 'A cave explorer''s elevation in meters is modeled by $-n^3$ after $n$ hours. What is her elevation after $4$ hours?'
-            answer: "-64"
-            answer_contract: {"kind":"unit","quantity":"length","unit":"m","allow_omitted":true}
-            solution_sketch: 'The exponent applies to $n = 4$ first, so $4^3 = 64$. The minus sign then gives an elevation of $-64$ meters.'
-          - problem: 'Compute $(-3)^2 - 3^2$.'
-            answer: "0"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'First $(-3)^2 = 9$ and $3^2 = 9$. Then $9 - 9 = 0$.'
-        constraints: "pair -a^n with (-a)^n; base 2-6, exponent 2-4; includes a loss modeled by x squared and an elevation modeled by minus n cubed"
-      - id: kp3
-        name: Exponents in the order of operations
-        key_prerequisites: [order-of-operations, exponent-notation]
-        exemplars:
-          - problem: 'Compute $2^3 + 3^2$.'
-            answer: "17"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Powers come before addition. So $2^3 = 8$, $3^2 = 9$, and $8 + 9 = 17$.'
-          - problem: 'Compute $(5 - 8)^2$.'
-            answer: "9"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'Work inside the parentheses first: $5 - 8 = -3$. Then $(-3)^2 = 9$.'
-          - problem: 'Compute $2 \times (-3)^2$.'
-            answer: "18"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The exponent comes before multiplication. So $(-3)^2 = 9$, and $2 \times 9 = 18$.'
-          - problem: 'A cube-shaped tank has edges of $4$ m, and a small cube-shaped box has edges of $2$ m. How many boxes fit in the tank?'
-            answer: "8"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The tank volume is $4^3 = 64$ cubic meters and a box is $2^3 = 8$ cubic meters. The number of boxes is $64 \div 8 = 8$.'
-          - problem: 'Compute $(-3)^3 + 5^2$.'
-            answer: "-2"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'First $(-3)^3 = -27$ and $5^2 = 25$. Then $-27 + 25 = -2$.'
-          - problem: 'Find the value of $3 \times 2^3$.'
-            answer: "24"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The exponent comes before multiplication. So $2^3 = 8$, and $3 \times 8 = 24$.'
-          - problem: 'A square room is $5$ m by $5$ m. A hallway next to it is $2$ m by $3$ m. What is the total floor area?'
-            answer: "31"
-            answer_contract: {"kind":"unit","quantity":"area","unit":"m^2","allow_omitted":true}
-            solution_sketch: 'The room has area $5^2 = 25$ and the hallway has area $2 \times 3 = 6$. The total is $25 + 6 = 31$ square meters.'
-          - problem: 'Compute $10 - 2 \times 3^2$.'
-            answer: "-8"
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The exponent comes first: $3^2 = 9$. Then multiply, $2 \times 9 = 18$, and subtract, $10 - 18 = -8$.'
-        constraints: "exponents mixed with one or two other operations; includes areas and a volume ratio"
+    - id: kp1
+      name: Negative bases
+      key_prerequisites:
+      - integer-multiplication-division
+      - whole-number-exponents
+      try_first:
+        problem: Multiply $(-1) \times (-1) \times (-1) \times (-1) \times (-1)$.
+        answer_contract:
+          kind: exact
+        answer: '-1'
+        reveal: The factors pair up into products of $+1$, and one $-1$ is left over, so the product is $-1$. An odd number of negative factors gives a negative result.
+      exemplars:
+      - problem: Compute $(-2)^3$.
+        answer: '-8'
+        answer_contract:
+          kind: exact
+        solution_sketch: There are three factors of $-2$. The first two give $+4$, and then $4 \times (-2) = -8$.
+      - problem: Evaluate $(-4)^2$.
+        answer: '16'
+        answer_contract:
+          kind: exact
+        solution_sketch: Two negative factors give a positive product. So $(-4) \times (-4) = 16$.
+      - problem: A game starts your score at $1$. Every round multiplies your score by $-2$. A score can go below zero. What is your score after $5$ rounds?
+        answer: '-32'
+        answer_contract:
+          kind: exact
+        solution_sketch: After $5$ rounds the score is $(-2)^5$. Five negative factors give a negative result, and $2^5 = 32$, so the score is $-32$.
+      - problem: Evaluate $(-5)^4$.
+        answer: '625'
+        answer_contract:
+          kind: exact
+        solution_sketch: Four negative factors give a positive result. So $(-5)^4 = 5^4 = 625$.
+      - problem: Find the value of $(-3)^4$.
+        answer: '81'
+        answer_contract:
+          kind: exact
+        solution_sketch: Four negative factors pair up into positives. So $(-3)^4 = 81$.
+      - problem: A number machine multiplies its input by $-3$ each time it runs. Starting from $1$, what number comes out after $3$ runs?
+        answer: '-27'
+        answer_contract:
+          kind: exact
+        solution_sketch: After $3$ runs the result is $(-3)^3$. Three negative factors give a negative result, and $3^3 = 27$, so the output is $-27$.
+      - problem: What is $\dfrac{(-2)^6}{(-2)^3}$?
+        answer: '-8'
+        answer_contract:
+          kind: exact
+        solution_sketch: 'Evaluate each power: $(-2)^6 = 64$ and $(-2)^3 = -8$. Then $64 \div (-8) = -8$.'
+      - problem: Evaluate $(-1)^{15}$.
+        answer: '-1'
+        answer_contract:
+          kind: exact
+        solution_sketch: Pairs of $-1$ multiply to $+1$, and $15$ is odd, so one $-1$ is left over. The product is $-1$.
+      constraints: base -5 to -1, exponent 2-6 or an odd or even power of -1; base in parentheses; includes repeated multiplication by a negative number
+    - id: kp2
+      name: Distinguish -a^n from (-a)^n
+      key_prerequisites:
+      - order-of-operations
+      - integer-multiplication-division
+      exemplars:
+      - problem: Compute $-2^4$.
+        answer: '-16'
+        answer_contract:
+          kind: exact
+        solution_sketch: Without parentheses the exponent applies to the $2$ only. So $2^4 = 16$, and the minus sign gives $-16$.
+      - problem: Compute $(-2)^4$.
+        answer: '16'
+        answer_contract:
+          kind: exact
+        solution_sketch: The parentheses put the minus sign inside the base. Four negative factors give a positive product, $16$.
+      - problem: Evaluate $-3^3$.
+        answer: '-27'
+        answer_contract:
+          kind: exact
+        solution_sketch: The exponent applies to the $3$ first, so $3^3 = 27$. Then the minus sign gives $-27$.
+      - problem: Compute $(-3)^2 - (-3^2)$.
+        answer: '18'
+        answer_contract:
+          kind: exact
+        solution_sketch: First $(-3)^2 = 9$ and $-3^2 = -9$. Then $9 - (-9) = 18$.
+      - problem: In a game, a player loses $x^2$ points when the dice show $x$. If the dice show $6$, what is the change in the player's score?
+        answer: '-36'
+        answer_contract:
+          kind: exact
+        solution_sketch: The player loses $6^2 = 36$ points. A loss is a negative change, so the change in score is $-36$.
+      - problem: What is the square of $-6$?
+        answer: '36'
+        answer_contract:
+          kind: exact
+        solution_sketch: The minus sign is part of the number that is squared. The square of $-6$ is $(-6)^2 = (-6) \times (-6) = 36$.
+      - problem: A cave explorer's elevation in meters is modeled by $-n^3$ after $n$ hours. What is her elevation after $4$ hours?
+        answer: '-64'
+        answer_contract:
+          kind: unit
+          quantity: length
+          unit: m
+          allow_omitted: true
+        solution_sketch: The exponent applies to $n = 4$ first, so $4^3 = 64$. The minus sign then gives an elevation of $-64$ meters.
+      - problem: Compute $(-3)^2 - 3^2$.
+        answer: '0'
+        answer_contract:
+          kind: exact
+        solution_sketch: First $(-3)^2 = 9$ and $3^2 = 9$. Then $9 - 9 = 0$.
+      constraints: pair -a^n with (-a)^n; base 2-6, exponent 2-4; includes a loss modeled by x squared and an elevation modeled by minus n cubed
     diagnostic_exemplar:
-      problem: 'Compute $(-2)^4 + (-2^3)$.'
+      problem: Compute $(-2)^4 + (-2^3)$.
       answer: '8'
-      answer_contract: {"kind":"exact"}
-      solution_sketch: '$(-2)^4 = 16$ and $-2^3 = -8$, so $16 - 8 = 8$.'
+      answer_contract:
+        kind: exact
+      solution_sketch: $(-2)^4 = 16$ and $-2^3 = -8$, so $16 - 8 = 8$.
     anki_seeds:
-      - front: "Difference between (-a)^2 and -a^2:"
-        back: "(-a)^2 is positive (the minus is inside); -a^2 is negative (the exponent applies before the minus sign)"
-        type: basic
+    - front: 'Difference between (-a)^2 and -a^2:'
+      back: (-a)^2 is positive (the minus is inside); -a^2 is negative (the exponent applies before the minus sign)
+      type: basic
 
   - id: temperature-elevation-problems
     name: Temperature and Elevation Problems
-    # over-coverage: thermometer/elevation dressing on adding-integers +
-    # subtracting-integers; its only dependent is already supplemental
     core: false
     difficulty: 0.3
     drill: false
     answer_kind: numeric
     expected_time_secs: 90
     prerequisites:
-      - id: adding-integers
-        weight: 0.6
-        key: true
-      - id: subtracting-integers
-        weight: 0.6
-        key: true
+    - id: adding-integers
+      weight: 0.6
+      key: true
+    - id: integer-addition-subtraction
+      weight: 0.6
+      key: true
     knowledge_points:
-      - id: kp1
-        name: Apply a single signed change
-        key_prerequisites: [adding-integers]
-        exemplars:
-          - problem: 'At dawn the temperature was $-4^\circ\text{C}$. By noon it had risen $9^\circ\text{C}$. What was the temperature at noon?'
-            answer: "5"
-            answer_contract: {"kind":"unit","quantity":"temperature","unit":"°C","allow_omitted":true}
-            solution_sketch: 'A rise is a positive change, so add: $-4 + 9 = 5$. The temperature at noon was $5^\circ\text{C}$.'
-          - problem: 'A diver is at an elevation of $-30$ m relative to sea level and descends another $15$ m. What is her new elevation?'
-            answer: "-45"
-            answer_contract: {"kind":"unit","quantity":"length","unit":"m","allow_omitted":true}
-            solution_sketch: 'A descent is a negative change, so add $-15$ to the starting elevation. Then $-30 + (-15) = -45$ meters.'
-          - problem: 'Overnight the temperature was $-12^\circ\text{C}$. By morning it had dropped $7^\circ\text{C}$. What was the temperature in the morning?'
-            answer: "-19"
-            answer_contract: {"kind":"unit","quantity":"temperature","unit":"°C","allow_omitted":true}
-            solution_sketch: 'A drop is a negative change, so add $-7$. Then $-12 + (-7) = -19$ degrees Celsius.'
-          - problem: 'A hiker at an elevation of $40$ m climbs another $25$ m. What is her new elevation?'
-            answer: "65"
-            answer_contract: {"kind":"unit","quantity":"length","unit":"m","allow_omitted":true}
-            solution_sketch: 'A climb is a positive change, so add: $40 + 25 = 65$. Her new elevation is $65$ meters.'
-          - problem: 'A freezer at $-18^\circ\text{C}$ warms by $11^\circ\text{C}$ during a power cut. What is its temperature then?'
-            answer: "-7"
-            answer_contract: {"kind":"unit","quantity":"temperature","unit":"°C","allow_omitted":true}
-            solution_sketch: 'Warming is a positive change, so add: $-18 + 11 = -7$. The freezer is then at $-7^\circ\text{C}$, still below zero.'
-          - problem: 'A temperature of $-8^\circ\text{C}$ falls by $5^\circ\text{C}$. What is the new temperature?'
-            answer: "-13"
-            answer_contract: {"kind":"unit","quantity":"temperature","unit":"°C","allow_omitted":true}
-            solution_sketch: 'A fall is a negative change, so subtract $5$. The temperature is $-8 - 5 = -13$ degrees Celsius.'
-          - problem: 'After falling $8^\circ\text{C}$, the temperature is $-3^\circ\text{C}$. What was the temperature before the fall?'
-            answer: "5"
-            answer_contract: {"kind":"unit","quantity":"temperature","unit":"°C","allow_omitted":true}
-            solution_sketch: 'The fall took $8$ degrees away, so undo it by adding $8$. Then $-3 + 8 = 5$ degrees Celsius.'
-          - problem: 'A drone at an elevation of $12$ m drops $20$ m. What is its new elevation?'
-            answer: "-8"
-            answer_contract: {"kind":"unit","quantity":"length","unit":"m","allow_omitted":true}
-            solution_sketch: 'A drop is a negative change, so $12 - 20 = -8$. The drone ends $8$ meters below the reference level.'
-        constraints: "single-step signed addition/subtraction, or undoing one change; values from -60 to 60"
-      - id: kp2
-        name: Find the change or gap between two levels
-        key_prerequisites: [subtracting-integers]
-        exemplars:
-          - problem: 'The temperature rose from $-8^\circ\text{C}$ to $6^\circ\text{C}$. By how many degrees did it rise?'
-            answer: "14"
-            answer_contract: {"kind":"unit","quantity":"temperature","unit":"°C","allow_omitted":true}
-            solution_sketch: 'The change is the end minus the start: $6 - (-8) = 14$. So the temperature rose $14$ degrees.'
-          - problem: 'A plane flies at an elevation of $2400$ m while a submarine sits at $-60$ m. What is the vertical distance between them?'
-            answer: "2460"
-            answer_contract: {"kind":"unit","quantity":"length","unit":"m","allow_omitted":true}
-            solution_sketch: 'The distance is the higher level minus the lower level: $2400 - (-60) = 2460$. The vertical distance is $2460$ meters.'
-          - problem: 'A weather balloon rose from $-15$ m to $60$ m. By how many meters did it rise?'
-            answer: "75"
-            answer_contract: {"kind":"unit","quantity":"length","unit":"m","allow_omitted":true}
-            solution_sketch: 'The rise is the end minus the start: $60 - (-15) = 75$. The balloon rose $75$ meters.'
-          - problem: 'The temperature fell from $-3^\circ\text{C}$ to $-18^\circ\text{C}$. By how many degrees did it fall?'
-            answer: "15"
-            answer_contract: {"kind":"unit","quantity":"temperature","unit":"°C","allow_omitted":true}
-            solution_sketch: 'The change is $-18 - (-3) = -15$, so the temperature fell by $15$ degrees. The size of the fall is $15$.'
-          - problem: 'The temperature changed from $27^\circ\text{C}$ to $-35^\circ\text{C}$. What was the change in temperature?'
-            answer: "-62"
-            answer_contract: {"kind":"unit","quantity":"temperature","unit":"°C","allow_omitted":true}
-            solution_sketch: 'The change is the end minus the start: $-35 - 27 = -62$. The negative sign shows a fall of $62$ degrees.'
-          - problem: 'The highest point of a region is $1200$ m above sea level and its lowest point is $30$ m below sea level. What is the difference in elevation between them?'
-            answer: "1230"
-            answer_contract: {"kind":"unit","quantity":"length","unit":"m","allow_omitted":true}
-            solution_sketch: 'The elevations are $1200$ and $-30$. The difference is $1200 - (-30) = 1230$ meters.'
-          - problem: 'Over $4$ hours the temperature fell steadily from $3^\circ\text{C}$ to $-9^\circ\text{C}$. By how many degrees did it fall each hour?'
-            answer: "3"
-            answer_contract: {"kind":"unit","quantity":"temperature","unit":"°C","allow_omitted":true}
-            solution_sketch: 'The total fall is $3 - (-9) = 12$ degrees. The fall is the same each hour, so divide by $4$ hours: $12 \div 4 = 3$ degrees per hour.'
-          - problem: 'What is the gap between a hill at $120$ m and a valley at $-35$ m?'
-            answer: "155"
-            answer_contract: {"kind":"unit","quantity":"length","unit":"m","allow_omitted":true}
-            solution_sketch: 'The valley level is negative. The gap is $120 - (-35) = 155$ meters.'
-        constraints: "difference of two signed levels; subtract end minus start; includes a steady rate found by dividing the total change by a count"
+    - id: kp1
+      name: Apply a single signed change
+      key_prerequisites:
+      - adding-integers
+      exemplars:
+      - problem: At dawn the temperature was $-4^\circ\text{C}$. By noon it had risen $9^\circ\text{C}$. What was the temperature at noon?
+        answer: '5'
+        answer_contract:
+          kind: unit
+          quantity: temperature
+          unit: °C
+          allow_omitted: true
+        solution_sketch: 'A rise is a positive change, so add: $-4 + 9 = 5$. The temperature at noon was $5^\circ\text{C}$.'
+      - problem: A diver is at an elevation of $-30$ m relative to sea level and descends another $15$ m. What is her new elevation?
+        answer: '-45'
+        answer_contract:
+          kind: unit
+          quantity: length
+          unit: m
+          allow_omitted: true
+        solution_sketch: A descent is a negative change, so add $-15$ to the starting elevation. Then $-30 + (-15) = -45$ meters.
+      - problem: Overnight the temperature was $-12^\circ\text{C}$. By morning it had dropped $7^\circ\text{C}$. What was the temperature in the morning?
+        answer: '-19'
+        answer_contract:
+          kind: unit
+          quantity: temperature
+          unit: °C
+          allow_omitted: true
+        solution_sketch: A drop is a negative change, so add $-7$. Then $-12 + (-7) = -19$ degrees Celsius.
+      - problem: A hiker at an elevation of $40$ m climbs another $25$ m. What is her new elevation?
+        answer: '65'
+        answer_contract:
+          kind: unit
+          quantity: length
+          unit: m
+          allow_omitted: true
+        solution_sketch: 'A climb is a positive change, so add: $40 + 25 = 65$. Her new elevation is $65$ meters.'
+      - problem: A freezer at $-18^\circ\text{C}$ warms by $11^\circ\text{C}$ during a power cut. What is its temperature then?
+        answer: '-7'
+        answer_contract:
+          kind: unit
+          quantity: temperature
+          unit: °C
+          allow_omitted: true
+        solution_sketch: 'Warming is a positive change, so add: $-18 + 11 = -7$. The freezer is then at $-7^\circ\text{C}$, still below zero.'
+      - problem: A temperature of $-8^\circ\text{C}$ falls by $5^\circ\text{C}$. What is the new temperature?
+        answer: '-13'
+        answer_contract:
+          kind: unit
+          quantity: temperature
+          unit: °C
+          allow_omitted: true
+        solution_sketch: A fall is a negative change, so subtract $5$. The temperature is $-8 - 5 = -13$ degrees Celsius.
+      - problem: After falling $8^\circ\text{C}$, the temperature is $-3^\circ\text{C}$. What was the temperature before the fall?
+        answer: '5'
+        answer_contract:
+          kind: unit
+          quantity: temperature
+          unit: °C
+          allow_omitted: true
+        solution_sketch: The fall took $8$ degrees away, so undo it by adding $8$. Then $-3 + 8 = 5$ degrees Celsius.
+      - problem: A drone at an elevation of $12$ m drops $20$ m. What is its new elevation?
+        answer: '-8'
+        answer_contract:
+          kind: unit
+          quantity: length
+          unit: m
+          allow_omitted: true
+        solution_sketch: A drop is a negative change, so $12 - 20 = -8$. The drone ends $8$ meters below the reference level.
+      constraints: single-step signed addition/subtraction, or undoing one change; values from -60 to 60
+    - id: kp2
+      name: Find the change or gap between two levels
+      key_prerequisites:
+      - integer-addition-subtraction
+      exemplars:
+      - problem: The temperature rose from $-8^\circ\text{C}$ to $6^\circ\text{C}$. By how many degrees did it rise?
+        answer: '14'
+        answer_contract:
+          kind: unit
+          quantity: temperature
+          unit: °C
+          allow_omitted: true
+        solution_sketch: 'The change is the end minus the start: $6 - (-8) = 14$. So the temperature rose $14$ degrees.'
+      - problem: A plane flies at an elevation of $2400$ m while a submarine sits at $-60$ m. What is the vertical distance between them?
+        answer: '2460'
+        answer_contract:
+          kind: unit
+          quantity: length
+          unit: m
+          allow_omitted: true
+        solution_sketch: 'The distance is the higher level minus the lower level: $2400 - (-60) = 2460$. The vertical distance is $2460$ meters.'
+      - problem: A weather balloon rose from $-15$ m to $60$ m. By how many meters did it rise?
+        answer: '75'
+        answer_contract:
+          kind: unit
+          quantity: length
+          unit: m
+          allow_omitted: true
+        solution_sketch: 'The rise is the end minus the start: $60 - (-15) = 75$. The balloon rose $75$ meters.'
+      - problem: The temperature fell from $-3^\circ\text{C}$ to $-18^\circ\text{C}$. By how many degrees did it fall?
+        answer: '15'
+        answer_contract:
+          kind: unit
+          quantity: temperature
+          unit: °C
+          allow_omitted: true
+        solution_sketch: The change is $-18 - (-3) = -15$, so the temperature fell by $15$ degrees. The size of the fall is $15$.
+      - problem: The temperature changed from $27^\circ\text{C}$ to $-35^\circ\text{C}$. What was the change in temperature?
+        answer: '-62'
+        answer_contract:
+          kind: unit
+          quantity: temperature
+          unit: °C
+          allow_omitted: true
+        solution_sketch: 'The change is the end minus the start: $-35 - 27 = -62$. The negative sign shows a fall of $62$ degrees.'
+      - problem: The highest point of a region is $1200$ m above sea level and its lowest point is $30$ m below sea level. What is the difference in elevation between them?
+        answer: '1230'
+        answer_contract:
+          kind: unit
+          quantity: length
+          unit: m
+          allow_omitted: true
+        solution_sketch: The elevations are $1200$ and $-30$. The difference is $1200 - (-30) = 1230$ meters.
+      - problem: Over $4$ hours the temperature fell steadily from $3^\circ\text{C}$ to $-9^\circ\text{C}$. By how many degrees did it fall each hour?
+        answer: '3'
+        answer_contract:
+          kind: unit
+          quantity: temperature
+          unit: °C
+          allow_omitted: true
+        solution_sketch: 'The total fall is $3 - (-9) = 12$ degrees. The fall is the same each hour, so divide by $4$ hours: $12 \div 4 = 3$ degrees per hour.'
+      - problem: What is the gap between a hill at $120$ m and a valley at $-35$ m?
+        answer: '155'
+        answer_contract:
+          kind: unit
+          quantity: length
+          unit: m
+          allow_omitted: true
+        solution_sketch: The valley level is negative. The gap is $120 - (-35) = 155$ meters.
+      constraints: difference of two signed levels; subtract end minus start; includes a steady rate found by dividing the total change by a count
     diagnostic_exemplar:
-      problem: 'A hiker stands at $350$ m while a cave explorer is at $-40$ m. What is the vertical distance between them?'
+      problem: A hiker stands at $350$ m while a cave explorer is at $-40$ m. What is the vertical distance between them?
       answer: '390'
-      answer_contract: {"kind":"unit","quantity":"length","unit":"m","allow_omitted":true}
-      solution_sketch: '$350 - (-40) = 390$.'
+      answer_contract:
+        kind: unit
+        quantity: length
+        unit: m
+        allow_omitted: true
+      solution_sketch: $350 - (-40) = 390$.
     anki_seeds:
-      - front: "To find how much a quantity changed, compute..."
-        back: "final value minus initial value (works even when either is negative)"
-        type: basic
+    - front: To find how much a quantity changed, compute...
+      back: final value minus initial value (works even when either is negative)
+      type: basic
 
   - id: integer-word-problems
     name: Integer Word Problems

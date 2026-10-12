@@ -9,7 +9,7 @@ mod common;
 use common::symbolic::{assert_shard_retired, curriculum_source};
 
 const KEYS: &[&str] = &[
-    "absolute-value-equations/kp3",
+    "absolute-value-equations/kp2",
     "equations-special-cases/kp1",
 ];
 const PATH: &str = "docs/content-foundations/symbolic-repair/shard9-templates.json";

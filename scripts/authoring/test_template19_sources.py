@@ -19,8 +19,8 @@ class Template19SourcesTests(unittest.TestCase):
         )
         cohort = ROOT / "docs/content-foundations/template19-production-gate"
         canonical = json.loads((cohort / "drafts.json").read_text())
-        self.assertEqual(len(canonical), 19)
-        self.assertEqual(len({row["kp_id"] for row in canonical}), 19)
+        self.assertEqual(len(canonical), 17)
+        self.assertEqual(len({row["kp_id"] for row in canonical}), 17)
         destination = "docs/content-foundations/whole-course-teach/inputs/templates.json"
         mappings = json.loads((cohort / "sources.json").read_text())
         current = json.loads((ROOT / destination).read_text())

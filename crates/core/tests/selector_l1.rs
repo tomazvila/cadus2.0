@@ -29,7 +29,8 @@ use common::{T_US, days};
 #[test]
 fn compose_session_runs_on_the_full_curriculum() {
     let graph = real_curriculum();
-    assert_eq!(graph.topic_count(), 1090);
+    // Re-pinned 2026-10-12 after the Foundations merge (D-C1): 1064 topics (was 1090).
+    assert_eq!(graph.topic_count(), 1064);
     let states = bench_states(&graph);
     let course = graph
         .topics()

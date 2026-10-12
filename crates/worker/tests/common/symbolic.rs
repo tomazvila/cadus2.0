@@ -53,11 +53,14 @@ pub const RETIRED_SOURCES: &[&str] = &[
     "docs/content-foundations/symbolic-repair/shard9-templates.json",
     "docs/content-foundations/symbolic-repair/shard10-template.json",
     "docs/content-foundations/symbolic-repair/shard11-template.json",
-    "docs/content-foundations/symbolic-repair/templates.json",
     "docs/content-foundations/symbolic-repair/shard7-templates-1.json",
     "docs/content-foundations/symbolic-repair/shard7-templates-2.json",
     "docs/content-foundations/symbolic-repair/shard7-templates-3.json",
     "docs/content-foundations/symbolic-repair/shard8-templates.json",
+    // The Foundations merge (2026-10-12) dropped twin steps and retired their rows.
+    "docs/content-foundations/symbolic-repair/shard12-templates.json",
+    "docs/content-foundations/symbolic-repair/shard4-templates.json",
+    "docs/content-foundations/symbolic-repair/templates.json",
 ];
 
 /// Every knowledge point that still has a pending symbolic-repair template.

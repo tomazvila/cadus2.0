@@ -184,8 +184,8 @@ Test: `benchmark_a_arena_holds_the_l1_segment`, in the same file.
   `cadus_web::session::compose_plan` calls.
 - **Fixture.** Every third topic of the arena carries a learned state, and every
   fifth of those is due at the fixed clock. The rule is a stride and not a draw,
-  so the states map is a function of the committed tree alone: 1,090 topics, 364
-  learned, 116 composed tasks. All three counts are pinned literals, and so are
+  so the states map is a function of the committed tree alone: 1,064 topics, 355
+  learned, 109 composed tasks (re-pinned 2026-10-12 after the Foundations merge). All three counts are pinned literals, and so are
   the first and the last `task_id` of the plan.
 - **Sample.** 200 compositions, one fixed sampler seed per iteration, so all 200
   compose the same plan. The test asserts that too: a loop that composed 200

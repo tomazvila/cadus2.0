@@ -120,7 +120,9 @@ mod tests {
         // 649 before the courses rewrite. 181 pinned ladders lost their
         // objective, constraints or exemplars in the rewrite and were retired on 2026-10-07;
         // their rows are in docs/reports/instruction-hints-retired-courses-rewrite.json.
-        assert_eq!(keys.len(), 468);
+        // 453 after the Foundations merge (2026-10-12): the merge dropped 15 twin
+        // steps with a pinned ladder, and their rows are in the same report.
+        assert_eq!(keys.len(), 453);
         assert_eq!(keys.len(), hints().len());
         for spec in specs() {
             let mut out = Proposals::default();

@@ -175,12 +175,12 @@ mod tests {
             .iter()
             .map(|n| json!({"params":{"a":n},"expected":(n+26).to_string()}))
             .collect();
-        let template = json!({"kp_id":"addition-with-carrying/kp1","kind":"template","arguments":{
+        let template = json!({"kp_id":"subtraction-facts/kp3","kind":"template","arguments":{
             "statement":"Compute ${a} + 26$.","params":{"a":{"kind":"choice","values":values}},
             "constraints":[],"answer_expr":"a+26","samples":samples,"distractors":[],
             "solution_sketch":"Add ones and exchange ten ones for one ten, then add tens including the carry.",
             "hints":["Which place needs an exchange?"]}});
-        let hint = json!({"kp_id":"addition-with-carrying/kp1","kind":"hint_ladder","arguments":{"hints":[
+        let hint = json!({"kp_id":"subtraction-facts/kp3","kind":"hint_ladder","arguments":{"hints":[
             "Which digits share the same place value?","What happens when the ones exceed a full ten?",
             "Have you included the carried ten when adding the tens column?"]}});
         (
