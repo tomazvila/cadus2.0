@@ -1,5 +1,5 @@
 /**
- * The placement transport (`POST /api/diag/start|answer|finish`).
+ * The placement transport (`GET /api/diag/current`, `POST /api/diag/start|answer|finish`).
  *
  * WHY THIS PORT STILL EXISTS. The three calls are `ApiClient` members now — the service
  * mounts the three routes, `ROUTES` in `types.ts` carries them, and both clients answer
@@ -17,15 +17,23 @@ import { ApiError } from './client';
 import { api } from './endpoints';
 import type {
   DiagAnswerResponse,
+  DiagCurrentResponse,
   DiagFinishResponse,
   DiagProbe,
   DiagStartResponse,
 } from './types';
 
-export type { DiagAnswerResponse, DiagFinishResponse, DiagProbe, DiagStartResponse };
+export type {
+  DiagAnswerResponse,
+  DiagCurrentResponse,
+  DiagFinishResponse,
+  DiagProbe,
+  DiagStartResponse,
+};
 
-/** The three calls the placement screen makes. Nothing else reaches this route family. */
+/** The four calls the placement screen makes. Nothing else reaches this route family. */
 export interface DiagnosticApi {
+  diagCurrent(): Promise<DiagCurrentResponse>;
   diagStart(course?: string): Promise<DiagStartResponse>;
   diagAnswer(body: { problem_id: string; answer: string }): Promise<DiagAnswerResponse>;
   diagFinish(): Promise<DiagFinishResponse>;
@@ -41,6 +49,7 @@ export const ROUTE_ABSENT_CODE = 'not_found';
 
 /** The live adapter: the three client methods, same cookie and same envelope. */
 const diagApi: DiagnosticApi = {
+  diagCurrent: () => api.diagCurrent(),
   diagStart: (course) => api.diagStart(course),
   diagAnswer: (body) => api.diagAnswer(body),
   diagFinish: () => api.diagFinish(),
@@ -66,6 +75,12 @@ export function createDemoDiagApi(): DiagnosticApi {
   const probeAt = (i: number): DiagProbe | null => DEMO_PROBES[i] ?? null;
 
   return {
+    diagCurrent: async () => ({
+      open: started && probeAt(asked) !== null,
+      asked,
+      cap: DEMO_PROBES.length,
+      probe: probeAt(asked),
+    }),
     diagStart: async () => {
       started = true;
       return { probe: probeAt(asked), asked, cap: DEMO_PROBES.length };
@@ -86,6 +101,7 @@ export function createDemoDiagApi(): DiagnosticApi {
         placed: ['integers', 'fractions'],
         conditional: ['linear-equations'],
         frontier: ['linear-equations'],
+        refresh: false,
       };
     },
   };

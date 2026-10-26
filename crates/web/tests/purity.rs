@@ -100,6 +100,10 @@ fn web_direct_normal_dependencies_are_the_declared_list() {
             "cadus-core",
             "cadus-store",
             "getrandom",
+            // The checker rule of the diagnosis reads exact rationals. It is
+            // local arithmetic and opens nothing.
+            "num-rational",
+            "num-traits",
             "serde",
             "serde_json",
             "sha2",

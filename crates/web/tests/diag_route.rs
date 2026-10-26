@@ -116,6 +116,7 @@ async fn the_placement_loop_walks_probes_and_places_the_learner() {
         );
         assert!(placed["conditional"].is_array());
         assert!(placed["frontier"].is_array());
+        assert_eq!(placed["refresh"], false);
 
         let types = event_types(&db, user).await;
         assert!(
@@ -254,7 +255,7 @@ async fn a_first_run_start_enrolls_the_entry_course() {
 }
 
 #[tokio::test]
-async fn a_second_start_replaces_the_diagnostic_in_progress() {
+async fn a_second_start_resumes_the_diagnostic_in_progress() {
     TestDb::with(|db| async move {
         let app = app(&db);
         let user = learner(&db, "restart@example.test").await;
@@ -264,10 +265,26 @@ async fn a_second_start_replaces_the_diagnostic_in_progress() {
             .as_str()
             .unwrap()
             .to_owned();
-        let (_, second) = call(&app, user, "/api/diag/start", &json!({})).await;
-        assert_eq!(parse(&second)["asked"], 0);
+        let (status, answered) = call(
+            &app,
+            user,
+            "/api/diag/answer",
+            &json!({ "problem_id": stale, "answer": ANSWER }),
+        )
+        .await;
+        assert_eq!(status, StatusCode::OK, "{answered}");
+        let next = parse(&answered)["next_probe"]["problem_id"]
+            .as_str()
+            .unwrap()
+            .to_owned();
 
-        // The first probe is superseded, so its id no longer answers.
+        let (status, second) = call(&app, user, "/api/diag/start", &json!({})).await;
+        assert_eq!(status, StatusCode::OK, "{second}");
+        let second = parse(&second);
+        assert_eq!(second["asked"], 1);
+        assert_eq!(second["probe"]["problem_id"], next.as_str());
+
+        // The answered probe is superseded, so its id no longer answers.
         let (status, body) = call(
             &app,
             user,
@@ -277,6 +294,184 @@ async fn a_second_start_replaces_the_diagnostic_in_progress() {
         .await;
         assert_eq!(status, StatusCode::NOT_FOUND);
         assert_eq!(code(&body), "unknown_problem");
+
+        let types = event_types(&db, user).await;
+        let count = |name: &str| types.iter().filter(|kind| *kind == name).count();
+        assert_eq!(count("diagnostic_answer"), 1, "{types:?}");
+        assert_eq!(count("enrolled"), 1, "{types:?}");
+    })
+    .await;
+}
+
+/// One GET as `user`.
+async fn get(app: &Router, user: Uuid, path: &str) -> (StatusCode, String) {
+    let mut request = Request::builder()
+        .method(Method::GET)
+        .uri(path)
+        .body(Body::empty())
+        .unwrap();
+    request.extensions_mut().insert(Tenant(user));
+    let response = app.clone().oneshot(request).await.unwrap();
+    let status = response.status();
+    let bytes = response.into_body().collect().await.unwrap().to_bytes();
+    (status, String::from_utf8_lossy(&bytes).into())
+}
+
+#[tokio::test]
+async fn current_reports_the_open_run_and_open_false_after_finish() {
+    TestDb::with(|db| async move {
+        let app = app(&db);
+        let user = learner(&db, "current@example.test").await;
+
+        let (status, body) = get(&app, user, "/api/diag/current").await;
+        assert_eq!(status, StatusCode::OK, "{body}");
+        assert_eq!(parse(&body)["open"], false);
+
+        let (_, first) = call(&app, user, "/api/diag/start", &json!({})).await;
+        let first_id = parse(&first)["probe"]["problem_id"]
+            .as_str()
+            .unwrap()
+            .to_owned();
+        let (_, answered) = call(
+            &app,
+            user,
+            "/api/diag/answer",
+            &json!({ "problem_id": first_id, "answer": ANSWER }),
+        )
+        .await;
+        let live = parse(&answered)["next_probe"]["problem_id"]
+            .as_str()
+            .unwrap()
+            .to_owned();
+
+        let (status, body) = get(&app, user, "/api/diag/current").await;
+        assert_eq!(status, StatusCode::OK, "{body}");
+        let current = parse(&body);
+        assert_eq!(current["open"], true);
+        assert_eq!(current["asked"], 1);
+        assert_eq!(current["cap"], 40);
+        assert_eq!(current["probe"]["problem_id"], live.as_str());
+        assert!(!body.contains(SKETCH), "{body}");
+        assert!(!body.contains("\"expected\""), "{body}");
+
+        // Every probe answered, finish not called: nothing more to ask.
+        answer_until_done(&app, user, live, ANSWER, true).await;
+        let (_, body) = get(&app, user, "/api/diag/current").await;
+        assert_eq!(parse(&body)["open"], false, "{body}");
+
+        finish_ok(&app, user).await;
+        let (_, body) = get(&app, user, "/api/diag/current").await;
+        assert_eq!(parse(&body)["open"], false);
+    })
+    .await;
+}
+
+/// The `started_at` and `timing_interrupted` of the live probe in the scratch.
+async fn live_clock(db: &TestDb, user: Uuid) -> (f64, bool) {
+    let doc: Value = sqlx::query_scalar("SELECT doc FROM web_states WHERE user_id = $1")
+        .bind(user)
+        .fetch_one(&db.admin)
+        .await
+        .unwrap();
+    let live = &doc["served"]["diag"];
+    (
+        live["started_at"].as_f64().unwrap(),
+        live["timing_interrupted"].as_bool().unwrap(),
+    )
+}
+
+/// The count of report boundary rows of `user`.
+async fn report_rows(db: &TestDb, user: Uuid) -> i64 {
+    sqlx::query_scalar("SELECT count(*) FROM problem_report_diagnostics WHERE user_id = $1")
+        .bind(user)
+        .fetch_one(&db.admin)
+        .await
+        .unwrap()
+}
+
+/// The fixture with a second course `c2` of one topic.
+fn two_course_graph() -> Curriculum {
+    let mut raw = RawCurriculum {
+        catalog: Catalog {
+            courses: Vec::new(),
+        },
+        units: Vec::new(),
+    };
+    for (index, (course, topics)) in [
+        (COURSE, vec!["addition", "subtraction"]),
+        ("c2", vec!["fractions"]),
+    ]
+    .into_iter()
+    .enumerate()
+    {
+        raw.catalog.courses.push(cadus_core::curriculum::Course {
+            id: cadus_core::curriculum::Slug::new(course).unwrap(),
+            name: course.to_owned(),
+            order: i64::try_from(index).unwrap(),
+            mastery_floor: Vec::new(),
+            mastery_floor_course: None,
+        });
+        raw.units.push(cadus_core::curriculum::RawUnit {
+            course_id: course.to_owned(),
+            file_name: format!("0{index}-M1.yaml"),
+            unit: cadus_core::curriculum::Unit {
+                unit: "M1".to_owned(),
+                course: cadus_core::curriculum::Slug::new(course).unwrap(),
+                module: "M1".to_owned(),
+                topics: topics.iter().map(|id| topic(id, None)).collect(),
+            },
+            first_load_index: index,
+        });
+    }
+    Curriculum::build(raw).unwrap()
+}
+
+#[tokio::test]
+async fn a_start_naming_another_course_replaces_the_run() {
+    TestDb::with(|db| async move {
+        let app = app_with_content(&db, two_course_graph());
+        let user = learner(&db, "othercourse@example.test").await;
+
+        let (_, first) = call(&app, user, "/api/diag/start", &json!({"course": "c1"})).await;
+        let first_id = parse(&first)["probe"]["problem_id"]
+            .as_str()
+            .unwrap()
+            .to_owned();
+        call(
+            &app,
+            user,
+            "/api/diag/answer",
+            &json!({ "problem_id": first_id, "answer": ANSWER }),
+        )
+        .await;
+        let rows_before = report_rows(&db, user).await;
+
+        let (status, body) = call(&app, user, "/api/diag/start", &json!({"course": "c2"})).await;
+        assert_eq!(status, StatusCode::OK, "{body}");
+        let second = parse(&body);
+        assert_eq!(second["asked"], 0, "{body}");
+        assert!(second["probe"]["problem_id"].is_string(), "{body}");
+        assert_eq!(report_rows(&db, user).await, rows_before + 1);
+    })
+    .await;
+}
+
+#[tokio::test]
+async fn a_resumed_probe_gets_a_fresh_clock() {
+    TestDb::with(|db| async move {
+        let app = app(&db);
+        let user = learner(&db, "clock@example.test").await;
+
+        call(&app, user, "/api/diag/start", &json!({})).await;
+        let (first, interrupted) = live_clock(&db, user).await;
+        assert!(!interrupted);
+        let rows_before = report_rows(&db, user).await;
+        call(&app, user, "/api/diag/start", &json!({})).await;
+        let (second, interrupted) = live_clock(&db, user).await;
+        assert!(second >= first);
+        assert!(interrupted);
+        // A resume writes no report boundary row.
+        assert_eq!(report_rows(&db, user).await, rows_before);
     })
     .await;
 }

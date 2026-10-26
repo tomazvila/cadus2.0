@@ -80,6 +80,7 @@ describe('Feedback', () => {
           remediation: [
             { kind: 'repeat_fail', targets: ['fractions', 'decimals'] },
             { kind: 'quiz_miss', targets: ['ratios'] },
+            { kind: 'in_sitting_prereq', targets: ['subtraction'] },
           ],
         })}
         hasNext
@@ -88,7 +89,8 @@ describe('Feedback', () => {
       />,
     );
     expect(Array.from(document.querySelectorAll('.remediation li')).map((li) => li.textContent))
-      .toEqual(['Practice this skill again: fractions, decimals', 'Review what the quiz missed: ratios']);
+      .toEqual(['Practice this skill again: fractions, decimals', 'Review what the quiz missed: ratios',
+        'One question on a skill this lesson needs comes next, then the lesson goes on: subtraction']);
   });
 });
 

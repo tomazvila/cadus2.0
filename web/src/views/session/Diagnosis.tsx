@@ -14,8 +14,8 @@
  * undecidable kind with no template diagnosis — and the honest rendering of "no explanation
  * is owed" is no panel, not an empty box that says so.
  *
- * The tags here are the DIAGNOSIS's tags, from `content_store` or from the worker's
- * vocabulary filter. The tags above are the checker's deterministic ones. Two sources, two
+ * The tags here are the DIAGNOSIS's tags, from `content_store`, from the checker rule, or from
+ * the worker's vocabulary filter. The tags above are the checker's deterministic ones. Two sources, two
  * rows, and neither is derived from the other (trap T3).
  */
 import { MathBlock } from '@/components/MathBlock';

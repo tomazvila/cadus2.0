@@ -118,9 +118,11 @@ describe('the curriculum and session routes', () => {
 
   it('post the placement body the service reads', async () => {
     const calls = record();
+    await api.diagCurrent();
     await api.diagAnswer({ problem_id: 'd1', answer: '5' });
     await api.diagFinish();
     expect(calls()).toEqual([
+      ['GET', '/api/diag/current', null],
       ['POST', '/api/diag/answer', '{"problem_id":"d1","answer":"5"}'],
       ['POST', '/api/diag/finish', '{}'],
     ]);

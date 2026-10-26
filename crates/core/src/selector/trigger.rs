@@ -14,8 +14,8 @@ use crate::xp::is_known;
 
 use super::quiz::i64_as_float;
 use super::{
-    DAY_US, DRILL_INTERVAL_DAYS, DRILL_MASTERY_ABILITY, REMEDIATION_QUIZ_MISS,
-    REMEDIATION_REPEAT_FAIL,
+    DAY_US, DRILL_INTERVAL_DAYS, DRILL_MASTERY_ABILITY, REMEDIATION_IN_SITTING_PREREQ,
+    REMEDIATION_QUIZ_MISS, REMEDIATION_REPEAT_FAIL,
 };
 
 /// The drill-tagged topics due for a timed drill, SORTED
@@ -82,22 +82,37 @@ pub fn remediation_for_repeat_fail(
     failed_kp: &str,
     graph: &Curriculum,
 ) -> PendingRemediation {
+    PendingRemediation {
+        kind: REMEDIATION_REPEAT_FAIL.to_owned(),
+        targets: key_prerequisite_targets(topic, failed_kp, graph),
+    }
+}
+
+/// The in-sitting trigger: one prerequisite question after two misses in a row at
+/// one knowledge point. The targets equal those of [`remediation_for_repeat_fail`].
+#[must_use]
+pub fn remediation_for_in_sitting(topic: &str, kp: &str, graph: &Curriculum) -> PendingRemediation {
+    PendingRemediation {
+        kind: REMEDIATION_IN_SITTING_PREREQ.to_owned(),
+        targets: key_prerequisite_targets(topic, kp, graph),
+    }
+}
+
+/// The key prerequisites of one knowledge point that are topics, sorted.
+fn key_prerequisite_targets(topic: &str, kp: &str, graph: &Curriculum) -> Vec<Slug> {
     let mut key_prereqs: BTreeSet<&str> = BTreeSet::new();
     if let Some(idx) = graph.idx_of(topic) {
-        for kp in graph.knowledge_points(idx) {
-            if kp.id.as_str() == failed_kp {
-                for key in &kp.key_prerequisites {
+        for point in graph.knowledge_points(idx) {
+            if point.id.as_str() == kp {
+                for key in &point.key_prerequisites {
                     key_prereqs.insert(key.as_str());
                 }
             }
         }
     }
-    PendingRemediation {
-        kind: REMEDIATION_REPEAT_FAIL.to_owned(),
-        targets: key_prereqs
-            .into_iter()
-            .filter(|id| graph.idx_of(id).is_some())
-            .filter_map(|id| Slug::new(id).ok())
-            .collect(),
-    }
+    key_prereqs
+        .into_iter()
+        .filter(|id| graph.idx_of(id).is_some())
+        .filter_map(|id| Slug::new(id).ok())
+        .collect()
 }

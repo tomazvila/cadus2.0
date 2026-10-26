@@ -40,12 +40,14 @@ export interface IntroCardProps {
   /** The card holds the focus (R15), so the placement hands it the ref. */
   cardRef: React.Ref<HTMLDivElement>;
   startFailed: boolean;
+  /** The run that is open: the number of the next question and the cap. Null for a new run. */
+  resume: { asked: number; cap: number } | null;
   onBegin: () => void;
   onExit: () => void;
 }
 
 /** The briefing: three ground rules BEFORE probe 1 (P3), on a card that holds focus (R15). */
-export function IntroCard({ cardRef, startFailed, onBegin, onExit }: IntroCardProps) {
+export function IntroCard({ cardRef, startFailed, resume, onBegin, onExit }: IntroCardProps) {
   return (
     <section className="view-diagnostic">
       {/* `tabindex="-1"` so the card holds focus without being interactive (R15). */}
@@ -63,10 +65,16 @@ export function IntroCard({ cardRef, startFailed, onBegin, onExit }: IntroCardPr
             </li>
           ))}
         </ul>
+        {resume ? (
+          <p>
+            {`You stopped at question ${resume.asked + 1} of up to ${resume.cap}.`
+              + ' The questions continue from there.'}
+          </p>
+        ) : null}
         {startFailed ? <p className="intro-error">{DIAG_START_FAILED}</p> : null}
         <div className="actions">
           <button type="button" className="btn btn-primary" onClick={onBegin}>
-            Start the questions
+            {resume ? 'Continue the questions' : 'Start the questions'}
           </button>
           <button type="button" className="btn btn-ghost" onClick={onExit}>
             Not now
@@ -109,6 +117,11 @@ export function PlacementDone({ summary, homeRef, onExit }: PlacementDoneProps) 
           <Stat value={String(summary.conditional.length)} label="topics to confirm" />
           <Stat value={String(frontier.length)} label="topics to learn next" />
         </div>
+        {summary.refresh ? (
+          <p className="muted">
+            Topics you already learned keep their progress. New answers adjust them.
+          </p>
+        ) : null}
         {frontier.length ? (
           <div className="frontier-block">
             <div className="solution-label">Start here</div>

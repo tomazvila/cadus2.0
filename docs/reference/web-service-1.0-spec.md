@@ -52,9 +52,10 @@ Auth column: **S** = session required, **P** = public.
 | POST `/api/task/{id}/hint` | S | `{problem_id}` | `{hint, hint_number, reference_lesson?}` (`:1849-1864`) | 200/404/409 `no_hints_in_quiz`/422 | keep; body from the authored hint ladder (L5) |
 | POST `/api/task/{id}/teach` | S | `{}` | `{kp, concept, worked_example:{problem, steps}}` (`:1096-1103`) | 200/409 `no_instruction` | keep; body from `content_store` kind `teach` (L4) |
 | POST `/api/task/{id}/abort` | S | `{}` | close payload `{task_id, task_type, aborted, xp, state_delta, …}` (`:686-710`) | 200/404 | keep |
-| POST `/api/diag/start` | S | `{course?}` | `{probe:{topic, problem_id, text}, asked, cap}` (`:1977-1981`) | 200/400 `no_course`/404 `unknown_course` | keep |
+| POST `/api/diag/start` | S | `{course?}` | `{probe:{topic, problem_id, text}, asked, cap}` (`:1977-1981`) | 200/400 `no_course`/404 `unknown_course` | keep; an open run of the same course resumes, a named other course replaces |
+| GET `/api/diag/current` | S | — | `{open:false}` or `{open:true, course, asked, cap, probe\|null}` | 200 | new; a pure read of the open run |
 | POST `/api/diag/answer` | S | `{problem_id, answer}` | `{correct, next_probe\|{done:true}}` (`:2055-2057`) | 200/404/409 `no_diagnostic`/422 | keep; deterministic-only verdict |
-| POST `/api/diag/finish` | S | `{}` | `{placed, conditional, frontier}` (`:2087-2091`) | 200/409 | keep |
+| POST `/api/diag/finish` | S | `{}` | `{placed, conditional, frontier, refresh}` (`:2087-2091`) | 200/409 | keep; `refresh` is true when the learner had a `Placed` or `Learning` topic, or a `learned_at` entry, before this finish; the event carries the same flag and the fold averages |
 | GET `/api/modules` | S | — | `{course, modules[]}` | 200 | keep |
 | GET `/api/export` | S | — | JSONL stream, one event per line, `Content-Disposition` attachment (`:2245-2269`) | 200 | keep |
 | GET `/api/anki/queue`, POST `/api/anki/mark`, PUT `/api/anki/settings`, GET `/api/anki/apkg` | S | — | (`:2099-2243`) | | defer past M5; the schema already carries `anki_queue`, `anki_cards_created` |
@@ -91,10 +92,18 @@ returns the whole verdict from local CPU and hands the prose off:
 }
 ```
 
+A `continue` reply can carry `remediation` of kind `in_sitting_prereq` after two consecutive misses on
+one knowledge point of an open lesson. The targets are the key prerequisites of that point (D-L4).
+
 `diagnosis` rules: **`not_offered`** — correct, blank, or an undecidable kind with no template
-diagnosis; no job row is written. **`ready`** — a pre-authored distractor diagnosis matched the
-learner's answer, read from `content_store` kind `diagnosis` in the same transaction, no model
-call (A4 last clause); the common case once banks are warm. **`pending`** — a `diagnosis_jobs`
+diagnosis; no job row is written. **`ready`** — the prose stands now, from one of three sources. A
+pre-authored distractor diagnosis matched the learner's answer, read from `content_store` kind
+`diagnosis` in the same transaction, no model call (A4 last clause); the common case once banks
+are warm. Or the checker rule (section 6.2) named one of five exact mistakes. Or a job finished.
+The checker rule names a sign flip (`sign-error`), a value exactly 1 away (`arithmetic-slip`), a
+decimal cut short without rounding (`arithmetic-slip`), an inequality in the opposite direction
+(`misread-problem`), and a wrong order (`misread-problem`) or one wrong member (`arithmetic-slip`)
+of a tuple or list. **`pending`** — a `diagnosis_jobs`
 row was inserted in the grade transaction and `id` is its primary key; the client subscribes or
 polls.
 
@@ -438,6 +447,14 @@ inline as `diagnosis.status = "ready"` and **writes no job row** (A4, last claus
 enqueues. That is the difference between a bill that scales with attempts and one that scales
 with distinct misconceptions.
 
+If no authored distractor matches, the checker rule (D-G1, `diagnosis/checker.rs`) compares the
+canonical form of the key with the canonical form of the answer. If the two forms differ in one of
+five exact ways (a sign flip, a value exactly 1 away, a decimal cut short without rounding, an
+inequality in the opposite direction, a wrong order or one wrong member of a tuple or list), the
+reply carries `diagnosis.status = "ready"` with one vocabulary tag and one sentence. The sentence
+names no value. No model runs and no job row is written. An authored distractor wins over the rule.
+A replayed request gives the same field. A pair that fits no rule still enqueues the job.
+
 ### 6.3 The prompt and the expected JSON
 
 Reuse 1.0's grade contract minus the verdict: `GRADE_SYSTEM` (`prompts.py:540-584`) with the
@@ -571,7 +588,7 @@ and #12), so only the worker (`cadus_admin`) writes it and the table stays outsi
 basis; an operator dashboard reads it through an admin connection.
 
 New `/metrics` series: `cadus_deterministic_grade_total{result=correct|notation|blank|incorrect|undecidable}`
-(1.0: `metrics.py:109-114`), `cadus_diagnosis_jobs_total{result=ready_preauthored|enqueued|done|failed|capped}`,
+(1.0: `metrics.py:109-114`), `cadus_diagnosis_jobs_total{result=ready_preauthored|ready_checker|enqueued|done|failed|capped}`,
 `cadus_model_call_tokens_total{purpose,kind=cached|uncached|output|reasoning}`,
 `cadus_model_call_latency_seconds{purpose}`. Keep `cadus_http_requests_total` and
 `cadus_http_request_duration_seconds` labelled by **route template**, never the concrete path
@@ -696,7 +713,7 @@ Each unit is ≤ ~400 changed lines with its acceptance check named up front.
 | **U6** | `cadus_web::state`: the D-S6 document (§4.1) with the D5 ring and task memory, the per-tenant advisory lock, the snapshot/validate/commit shape, session start/end/plan, `/api/status`, `/api/graph`, `/api/enroll`, `/api/modules`, `/api/export` | a second concurrent tab answering a closed task gets `409 task_complete`; listing the plan writes nothing; `progress.done` is true for a recomposed failed review; export round-trips through the event reader |
 | **U7** | Serve + teach + hint: pool pop against M4, `served` keyed by task id, `started_at` re-stamped on every hand-off, the authored teach page and hint ladder from `content_store`, the 3-hint reference-lesson escalation | a re-serve returns the same `problem_id` and a fresh `started_at`; a stale id 404s on both answer and hint; a hint body never contains `expected`; teach on a review is `409 no_instruction` |
 | **U8** | The one-transaction grade path (§4.3): normalize + `check`, the deterministic tier, `{task_id}-{n}` ids, the ON CONFLICT no-op, incremental fold with full replay on `regraded`, the H3 re-solve rule, timing and the caps | the §10 fast-path cases decide with no model client linked; a replayed request appends nothing and returns `already_recorded`; an H3 re-solve that fails rewrites the stashed pass to a miss; `secs` clamps at `expected_time_secs * 10` with `timing-unreliable` |
-| **U9** | A4 client surface: the `diagnosis` field on the grade reply, the pre-authored distractor lookup, `diagnosis_jobs` enqueue inside the grade transaction, `GET /api/diagnosis/{id}`, `GET /api/diagnosis/stream` over `LISTEN/NOTIFY` with the poll fallback | a matching distractor returns `status:"ready"` and writes no job row; a rolled-back grade leaves no job row; a NOTIFY for tenant A never reaches tenant B's stream; a poll for another tenant's id is `404 unknown_diagnosis` |
+| **U9** | A4 client surface: the `diagnosis` field on the grade reply, the pre-authored distractor lookup, `diagnosis_jobs` enqueue inside the grade transaction, `GET /api/diagnosis/{id}`, `GET /api/diagnosis/stream` over `LISTEN/NOTIFY` with the poll fallback | a matching distractor returns `status:"ready"` and writes no job row; a sign-flipped numeric answer returns `status:"ready"` with `sign-error` and writes no job row; a rolled-back grade leaves no job row; a NOTIFY for tenant A never reaches tenant B's stream; a poll for another tenant's id is `404 unknown_diagnosis` |
 | **U10** | `cadus_worker::diagnosis`: the `SKIP LOCKED` claim, the dead-letter and lease sweep, the OpenAI-compatible client with the T5 defaults, the three truncation shapes, the retry contract, the vocabulary filter, `NOTIFY` on completion | two workers × 100 claims never take the same row; a `finish_reason:"length"` reply retries with a ×4 budget and the second reply is accepted; a 400 does not retry; a tag outside the vocabulary is dropped; three failures dead-letter the row |
 | **U11** | T6: the `model_call_log` writer, the token reader (cached/uncached/output/reasoning, all defaulting to 0), cost, one row per HTTP attempt, the new `/metrics` series | a reply with no `usage` block writes a zeros row with a NULL cost; a truncation retry writes two rows; `cadus_app` cannot read, write, or `nextval` the table or its sequence |
 | **U12** | Budgets: extend `docs/reference/l1-budget.md` with the §8 table; benchmark A (core: check + tier + hash) and benchmark B (the grade transaction against the CI Postgres); the L6 crate-boundary test; CI step serialized after `cargo test` | A: p95 < 5 ms and the allocation bound; B: grade p95 < 150 ms, serve p95 < 100 ms; the L6 test fails when a handler crate is given a model-client dependency |

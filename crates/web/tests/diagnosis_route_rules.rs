@@ -5,7 +5,7 @@
 
 mod common;
 
-use common::scrape;
+use common::{LESSON, put_state, scrape, stored_state};
 
 use common::BASE_US;
 
@@ -177,6 +177,147 @@ async fn a_preauthored_hit_counts_ready_preauthored_and_enqueues_nothing() {
             text.contains("cadus_diagnosis_jobs_total{result=\"enqueued\"} 0\n"),
             "a pre-authored hit must enqueue nothing:\n{text}"
         );
+    })
+    .await;
+}
+
+/// A checker hit is `ready` at once, with the tag and the sentence, and it
+/// writes no job row (D-G1).
+#[tokio::test]
+async fn a_checker_hit_is_ready_and_enqueues_nothing() {
+    TestDb::with(|db| async move {
+        let app = app(&db);
+        let user = learner(&db, "g1-checker@example.test").await;
+
+        let (status, body) = answer(&app, user, "-13.5").await;
+        assert_eq!(status, StatusCode::OK);
+        assert_eq!(body["diagnosis"]["status"], json!("ready"));
+        assert_eq!(body["diagnosis"]["error_tags"], json!(["sign-error"]));
+        assert!(
+            body["diagnosis"]["prose"]
+                .as_str()
+                .is_some_and(|prose| !prose.is_empty()),
+            "{body}"
+        );
+        assert!(jobs_of(&db, user).await.is_empty());
+
+        let text = scrape(&app).await;
+        assert!(
+            text.contains("cadus_diagnosis_jobs_total{result=\"ready_checker\"} 1\n"),
+            "the scrape carries no checker count:\n{text}"
+        );
+        assert!(
+            text.contains("cadus_diagnosis_jobs_total{result=\"enqueued\"} 0\n"),
+            "a checker hit must enqueue nothing:\n{text}"
+        );
+    })
+    .await;
+}
+
+/// A contract that does not compare with the one stored key skips the checker
+/// rule: a sign flip of a `Property` item gets `pending`, not `ready`, and `ready_checker` stays 0.
+#[tokio::test]
+async fn a_contract_with_no_single_key_skips_the_checker() {
+    TestDb::with(|db| async move {
+        {
+            let (email, contract) = (
+                "g1-property@example.test",
+                r#"{"kind":"property","check":"divisor_count","args":{"n":3}}"#,
+            );
+            let mut live = common::lesson_problem(5.0, "kp1", Vec::new());
+            live.expected.answer = "9".to_owned();
+            live.answer_kind = Some("expression".to_owned());
+            live.expected.answer_contract =
+                Some(serde_json::from_str::<cadus_core::answer::AnswerContract>(contract).unwrap());
+            let user = common::lesson_learner(&db, email, live).await;
+            let app = common::lesson_app(&db);
+
+            let reply = common::answer_task_ok(
+                &app,
+                user,
+                LESSON,
+                json!({"problem_id": common::PROBLEM_ID, "answer": "-9"}),
+            )
+            .await;
+            assert_eq!(reply["diagnosis"]["status"], json!("pending"), "{reply}");
+            let text = scrape(&app).await;
+            assert!(
+                text.contains("cadus_diagnosis_jobs_total{result=\"ready_checker\"} 0\n"),
+                "{text}"
+            );
+        }
+    })
+    .await;
+}
+
+/// An authored distractor wins over the checker rule: `14.5` is one away from
+/// the key, and the authored note is the one the learner reads.
+#[tokio::test]
+async fn an_authored_distractor_wins_over_the_checker() {
+    TestDb::with(|db| async move {
+        let app = app(&db);
+        let user = learner(&db, "g1-authored@example.test").await;
+        seed_distractors(
+            &db,
+            "g1-digest-authored",
+            &json!({
+                "v": 1,
+                "distractors": [
+                    { "answer": "14.5",
+                      "error_tag": "wrong-method",
+                      "note": "You added the whole step twice." }
+                ]
+            }),
+        )
+        .await;
+
+        let (status, body) = answer(&app, user, "14.5").await;
+        assert_eq!(status, StatusCode::OK);
+        assert_eq!(body["diagnosis"]["status"], json!("ready"));
+        assert_eq!(body["diagnosis"]["error_tags"], json!(["wrong-method"]));
+        assert_eq!(
+            body["diagnosis"]["prose"],
+            json!("You added the whole step twice.")
+        );
+
+        let text = scrape(&app).await;
+        assert!(
+            text.contains("cadus_diagnosis_jobs_total{result=\"ready_checker\"} 0\n"),
+            "{text}"
+        );
+        assert!(
+            text.contains("cadus_diagnosis_jobs_total{result=\"ready_preauthored\"} 1\n"),
+            "{text}"
+        );
+    })
+    .await;
+}
+
+/// A replayed request gives the same checker field and writes no job row.
+///
+/// The log is seeded with a gap, as in `a_rolled_back_grade_leaves_no_job_row`:
+/// the first answer takes `-2`, and the second computes `-3` and meets the
+/// standing row.
+#[tokio::test]
+async fn a_replayed_checker_hit_is_the_same_field() {
+    TestDb::with(|db| async move {
+        let app = app(&db);
+        let user = learner(&db, "g1-replay@example.test").await;
+        seed_attempt(&db, user, 2, ATTEMPT_ID_3).await;
+
+        let (status, first) = answer(&app, user, "-13.5").await;
+        assert_eq!(status, StatusCode::OK);
+        assert_eq!(first["diagnosis"]["status"], json!("ready"));
+
+        let mut scratch = stored_state(&db, user).await;
+        scratch.served.insert(LESSON.to_string(), live_problem());
+        put_state(&db, user, &scratch).await;
+
+        let (status, second) = answer(&app, user, "-13.5").await;
+        assert_eq!(status, StatusCode::OK);
+        assert_eq!(second["task_status"], json!("already_recorded"));
+        assert_eq!(second["diagnosis"], first["diagnosis"]);
+        assert!(jobs_of(&db, user).await.is_empty());
     })
     .await;
 }

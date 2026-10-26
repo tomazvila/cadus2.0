@@ -102,7 +102,8 @@ use cadus_core::learner::problem_text_hash;
 use cadus_core::projector::{is_pass_evidence, kp_failed, kp_passed};
 use cadus_core::readiness::ReadinessSet;
 use cadus_core::selector::{
-    REMEDIATION_LESSON_FAIL, REMEDIATION_REPEAT_FAIL, Task, remediation_for_repeat_fail,
+    REMEDIATION_IN_SITTING_PREREQ, REMEDIATION_LESSON_FAIL, REMEDIATION_REPEAT_FAIL, Task,
+    remediation_for_in_sitting, remediation_for_repeat_fail,
 };
 use cadus_core::xp::{is_rushing, task_xp};
 use cadus_store::state::{

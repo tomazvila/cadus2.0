@@ -227,6 +227,7 @@ const REMEDIATION_TEXT: Record<string, string> = {
   lesson_fail: 'This lesson comes back next time',
   repeat_fail: 'Practice this skill again',
   quiz_miss: 'Review what the quiz missed',
+  in_sitting_prereq: 'One question on a skill this lesson needs comes next, then the lesson goes on',
   confirm_failed: 'A fresh question will check this skill again',
 };
 

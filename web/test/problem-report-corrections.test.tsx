@@ -65,6 +65,7 @@ describe('committed report corrections', () => {
     const api = createDemoApi();
     api.taskReport = vi.fn().mockResolvedValue(corrected);
     render(<Diagnostic reportApi={api} demo onUnauthorized={vi.fn()} onExit={vi.fn()} diag={{
+      diagCurrent: async () => ({ open: false }),
       diagStart: async () => ({ probe: { problem_id: 'd1', text: 'Placement question' } }),
       diagAnswer: async () => ({ correct: false, next_probe: { problem_id: 'd2', text: 'Next placement question' } }),
       diagFinish: vi.fn(),

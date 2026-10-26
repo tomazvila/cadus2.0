@@ -953,7 +953,7 @@ Two columns need a word:
 | Series | Labels | Source |
 |---|---|---|
 | `cadus_deterministic_grade_total` | `result` = `correct`, `notation`, `blank`, `incorrect`, `undecidable` | The web process. It counts grade decisions taken with NO model call, and it starts at zero on every restart. |
-| `cadus_diagnosis_jobs_total` | `result` = `ready_preauthored`, `enqueued`, `done`, `failed`, `capped` | `ready_preauthored` is a hit in the authored bank, which writes no job row, so the web process counts it. The other four are the `diagnosis_jobs` rows themselves. |
+| `cadus_diagnosis_jobs_total` | `result` = `ready_preauthored`, `ready_checker`, `enqueued`, `done`, `failed`, `capped` | `ready_preauthored` is a hit in the authored bank. `ready_checker` is a hit of the checker rule. Neither writes a job row, so the web process counts them. The other four are the `diagnosis_jobs` rows themselves. |
 | `cadus_model_call_tokens_total` | `purpose`, `kind` = `cached`, `uncached`, `output`, `reasoning` | `model_call_log`. |
 | `cadus_model_call_latency_seconds` | `purpose` | `model_call_log`, as a `_sum` and a `_count`. |
 

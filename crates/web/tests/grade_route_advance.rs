@@ -14,10 +14,11 @@ use cadus_core::curriculum::Slug;
 use cadus_core::learner::{LearnerModel, TopicState};
 use cadus_store::test_support::TestDb;
 use common::{
-    BASE_US, LESSON, SESSION, Verdict, addition_curriculum, answer_lesson_ok, app_with_content,
-    attempt_payload, events_of_type, learner_at_the_fifth_miss, lesson_app as app, lesson_learner,
-    lesson_problem, lesson_state, put_state, seed_attempt_row, seed_cached_model, seed_event,
-    seed_four_misses, seed_learner, seed_open_session, stored_state,
+    BASE_US, LESSON, SESSION, Verdict, a_miss, addition_curriculum, answer_lesson_ok,
+    app_with_content, attempt_payload, events_of_type, learner_at_the_fifth_miss,
+    lesson_app as app, lesson_learner, lesson_problem, lesson_state, put_state, seed_attempt,
+    seed_attempt_row, seed_cached_model, seed_event, seed_four_misses, seed_learner,
+    seed_open_session, stored_state,
 };
 use serde_json::{Value, json};
 use sqlx::types::Uuid;
@@ -482,6 +483,121 @@ async fn a_regraded_in_the_log_makes_the_grade_path_replay_the_whole_fold() {
         assert!(
             model["topics"].get(SENTINEL_TOPIC).is_none(),
             "a regraded must force the full replay, which drops the cache: {model}"
+        );
+    })
+    .await;
+}
+
+// --------------------------------------------------------------------------- //
+// The in-sitting prerequisite step
+// --------------------------------------------------------------------------- //
+
+/// Seed a learner whose lesson stands at `kp1` with `misses` wrong answers behind it.
+async fn learner_with_misses(db: &TestDb, email: &str, misses: i64) -> Uuid {
+    let user = seed_learner(db, email).await;
+    seed_open_session(db, user).await;
+    for n in 0..misses {
+        seed_attempt(db, user, 2 + n, &format!("{LESSON}-seed-{n}"), a_miss()).await;
+    }
+    put_state(
+        db,
+        user,
+        &lesson_state(lesson_problem(20.0, "kp1", Vec::new()), misses, false),
+    )
+    .await;
+    user
+}
+
+/// The second miss in a row at one point keeps the lesson open and queues one
+/// `in_sitting_prereq` event on the key prerequisite.
+#[tokio::test]
+async fn the_second_miss_in_a_row_queues_one_prerequisite_question() {
+    TestDb::with(|db| async move {
+        let app = app_with_key_prereq(&db);
+        let user = learner_with_misses(&db, "in-sitting@example.com", 1).await;
+
+        let body = answer_lesson_ok(&app, user, "14").await;
+        assert_eq!(body["task_status"], "continue");
+        assert_eq!(
+            body["remediation"],
+            json!([{"kind": "in_sitting_prereq", "targets": ["subtraction"]}])
+        );
+        let queued = events_of_type(&db, user, "remediation_triggered").await;
+        assert_eq!(queued.len(), 1);
+        assert_eq!(queued[0]["kind"], "in_sitting_prereq");
+        assert_eq!(events_of_type(&db, user, "lesson_result").await.len(), 0);
+    })
+    .await;
+}
+
+/// The third miss in a row adds no second step.
+///
+/// The second miss comes through the route and writes the first event. A miss
+/// shows the worked solution and needs a fresh pool item before the next
+/// answer, so the test seeds the next live problem with `put_state`.
+#[tokio::test]
+async fn the_third_miss_in_a_row_appends_no_second_step() {
+    TestDb::with(|db| async move {
+        let app = app_with_key_prereq(&db);
+        let user = learner_with_misses(&db, "in-sitting-third@example.com", 1).await;
+        assert!(
+            events_of_type(&db, user, "remediation_triggered")
+                .await
+                .is_empty()
+        );
+
+        let second = answer_lesson_ok(&app, user, "14").await;
+        assert_eq!(
+            second["remediation"],
+            json!([{"kind": "in_sitting_prereq", "targets": ["subtraction"]}])
+        );
+        assert_eq!(
+            events_of_type(&db, user, "remediation_triggered")
+                .await
+                .len(),
+            1
+        );
+
+        put_state(
+            &db,
+            user,
+            &lesson_state(lesson_problem(20.0, "kp1", Vec::new()), 2, false),
+        )
+        .await;
+        let third = answer_lesson_ok(&app, user, "14").await;
+        assert_eq!(third["task_status"], "continue");
+        assert_eq!(third["remediation"], json!([]));
+        assert_eq!(
+            events_of_type(&db, user, "remediation_triggered")
+                .await
+                .len(),
+            1
+        );
+    })
+    .await;
+}
+
+/// Two misses at a point with no key prerequisite queue nothing. The same
+/// setup with a key prerequisite does queue the step, so the missing target is
+/// the reason.
+#[tokio::test]
+async fn two_misses_with_no_key_prerequisite_queue_nothing() {
+    TestDb::with(|db| async move {
+        let with = app_with_key_prereq(&db);
+        let other = learner_with_misses(&db, "in-sitting-with@example.com", 1).await;
+        let body = answer_lesson_ok(&with, other, "14").await;
+        assert_eq!(body["remediation"].as_array().unwrap().len(), 1, "{body}");
+
+        let app = app(&db);
+        let user = learner_with_misses(&db, "in-sitting-bare@example.com", 1).await;
+        let body = answer_lesson_ok(&app, user, "14").await;
+        assert_eq!(body["task_status"], "continue");
+        assert_eq!(body["remediation"], json!([]));
+        assert_eq!(
+            events_of_type(&db, user, "remediation_triggered")
+                .await
+                .len(),
+            0
         );
     })
     .await;

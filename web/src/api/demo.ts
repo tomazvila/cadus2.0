@@ -410,6 +410,7 @@ export function createDemoApi(): ApiClient {
     taskIntegratedHint: async () => refuse(409, 'no_integrated_item', DEMO_NO_INTEGRATED),
     taskIntegratedAnswer: async () => refuse(409, 'no_integrated_item', DEMO_NO_INTEGRATED),
 
+    diagCurrent: placement.diagCurrent,
     diagStart: placement.diagStart,
     diagAnswer: placement.diagAnswer,
     diagFinish: placement.diagFinish,

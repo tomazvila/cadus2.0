@@ -12,8 +12,8 @@ use std::collections::{BTreeMap, BTreeSet};
 mod common;
 
 use cadus_core::curriculum::Curriculum;
-use cadus_core::event::TaskType;
-use cadus_core::learner::TopicState;
+use cadus_core::event::{Slug, TaskType};
+use cadus_core::learner::{PendingRemediation, TopicState};
 use cadus_core::selector::{SessionContext, SessionPlan, Task, compose_session};
 use common::T_US;
 use common::selector::{
@@ -112,4 +112,30 @@ fn five_reviews_with_no_lesson_available_pass_the_throttle() {
     assert_eq!((report.reviews, report.lessons), (5, 0));
     assert!(report.throttle_ok && report.lesson_ratio_ok);
     assert_eq!(report.lesson_ratio, 0.0);
+}
+
+#[test]
+fn a_fresh_in_sitting_step_opens_the_plan_and_the_lesson_stays() {
+    let graph = graph_of(vec![topic("a").build(), topic("b").build()], &[]);
+    let open = open_plan_of(TaskType::Lesson, "b");
+    let pending = vec![PendingRemediation {
+        kind: "in_sitting_prereq".to_owned(),
+        targets: vec![Slug::new("a").unwrap()],
+    }];
+    let states: BTreeMap<String, TopicState> = BTreeMap::new();
+    let quiz = quiz_quiet();
+    let ctx = SessionContext::default()
+        .with_session_id("s1")
+        .with_quiz_state(Some(&quiz))
+        .with_open_plan(Some(&open))
+        .with_pending_remediation(&pending);
+    let plan = compose_session(&states, &graph, &cfg(), T_US, &mut sampler(1), &ctx);
+    let ids: Vec<&str> = plan
+        .tasks
+        .iter()
+        .map(|task| task.task_id.as_str())
+        .collect();
+    assert_eq!(ids, ["s1-rem-a", "s1-lesson-b"]);
+    assert_eq!(plan.tasks[0].task_type, TaskType::Review);
+    assert_eq!(plan.tasks[0].n_problems, Some(1));
 }

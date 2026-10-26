@@ -304,4 +304,28 @@ describe('the exit paths', () => {
     expect(taskServe).toHaveBeenCalledTimes(2);
     expect(taskServe.mock.calls[1]).toEqual(['t-remedial']);
   });
+
+  it('a continue reply with remediation re-plans at once and the lesson stays open', async () => {
+    const getPlan = vi.fn<ApiClient['getPlan']>(
+      async () => planOf({ ...REVIEW, task_id: 't-remedial' }, LESSON),
+    );
+    const taskServe = vi.fn<ApiClient['taskServe']>(async () => P(1));
+    await mount({
+      api: stubApi({
+        getPlan,
+        taskServe,
+        taskAnswer: async () => graded({
+          next: null,
+          task_status: 'continue',
+          remediation: [{ kind: 'in_sitting_prereq', targets: ['fractions'] }],
+        }),
+      }),
+    });
+
+    await submitAnswer('3/4');
+    await press('Continue →');
+
+    expect(getPlan).toHaveBeenCalledTimes(1);
+    expect(taskServe.mock.calls[taskServe.mock.calls.length - 1]).toEqual(['t-remedial']);
+  });
 });

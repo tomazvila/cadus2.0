@@ -12,11 +12,13 @@
 //! # The three states of `diagnosis`
 //!
 //! - [`STATUS_NOT_OFFERED`] — a correct answer or a blank one. No job row.
-//! - [`STATUS_READY`] — a pre-authored distractor of the M4 template matched the
-//!   learner's answer, read from `content_store` kind `diagnosis` in the SAME
-//!   transaction. **No job row**: that is the difference between a bill that
-//!   scales with attempts and one that scales with distinct misconceptions
-//!   (spec section 6.2).
+//! - [`STATUS_READY`] — the prose stands now, from one of three sources. First,
+//!   a pre-authored distractor of the M4 template matched the learner's answer,
+//!   read from `content_store` kind `diagnosis` in the SAME transaction.
+//!   Second, the checker rule ([`checker_diagnosis`]) named one of five exact
+//!   mistakes. Third, a job finished. The first two write **no job row**: that
+//!   is the difference between a bill that scales with attempts and one that
+//!   scales with distinct misconceptions (spec section 6.2).
 //! - [`STATUS_PENDING`] — a `diagnosis_jobs` row went in inside the grade
 //!   transaction, and `id` is its primary key.
 //!
@@ -52,9 +54,11 @@ use tokio::sync::broadcast;
 
 use crate::AppState;
 
+mod checker;
 mod decide;
 mod routes;
 
+pub use checker::checker_diagnosis;
 pub(crate) use decide::{Miss, Pending, decide};
 pub use routes::{JobView, job_view, poll, stream};
 

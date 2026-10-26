@@ -330,7 +330,7 @@ and the operator screen are pages an operator links to and reloads.
 | `/session` (in view) | Teach | `POST /api/task/{id}/teach` |
 | `/session` (in view) | Hint | `POST /api/task/{id}/hint` |
 | `/quiz/{taskId}` | Quiz | serve/answer, whole-quiz clock |
-| `/diagnostic` | Diagnostic placement | `POST /api/diag/start\|answer\|finish` |
+| `/diagnostic` | Diagnostic placement | `GET /api/diag/current`, `POST /api/diag/start\|answer\|finish` |
 | `/map` | Curriculum graph | `GET /api/graph` |
 | `/export` (action) | JSONL event-log download | `GET /api/export` |
 | `/ops` | Operator flags (A6, T3) | the M5 flags endpoint |
@@ -563,6 +563,7 @@ rules"; `REQUIREMENTS.md:20-24`):
    lives in `work_quality`. The SPA displays both and never derives one from the other.
 3. **The core owns all scheduling.** The SPA renders `next`, `remediation`, and `task_status`
    as given, and decides nothing (`static/views/session.js:399-407`).
+   2.0 addition: the SPA asks for a new plan at once when a reply of an open task carries remediation.
 4. **Generation fidelity / anti-repeat.** The SPA shows the served instance, and nothing about
    its source. 5. **LaTeX math rendering** — §4.3. Rule 6, brisk tone with zero fluff, is the
    design brief of §4.2.

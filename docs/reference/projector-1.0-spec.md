@@ -156,7 +156,7 @@ for row in per_topic (ORDER AS GIVEN):
 
 ### 4.8 `diagnostic_placed`
 
-Consume and reset `_diag_answers` **unconditionally**, before the `apply_fire` gate (`projector.py:331–334`). Then, if `refresh` → `_refresh_placement`; else initial placement (`projector.py:338–371`):
+Consume and reset `_diag_answers` **unconditionally**, before the `apply_fire` gate (`projector.py:331–334`). Then, if `refresh` → `_refresh_placement`; else initial placement (`projector.py:338–371`). 2.0 sets `refresh` in `POST /api/diag/finish` on a retake; 1.0 had no route that set it:
 
 ```
 placed = [(tid,b) for tid,b in balances.items() if tid in graph.topics and b > 0.0]
@@ -320,7 +320,7 @@ If `open_plan` is given, it delegates to `_reserve_open_plan` (`selector.py:1630
 3. `available` / `blocked` split on `in_retry_delay` (`:1318–1319`). `in_retry_delay` = `t < t0 + retry_delay_days` when any `kp_progress` value is `failed_once`/`failed_twice` and `t0` is set (`:402–423`).
 4. `course_complete = gap_fill_chain is None and every course topic mastered` (`:1324–1326`).
 5. `frontier_blocked_until = min(retry times)` when `frontier_topics` is non-empty and `available` is empty (`:1327–1331`).
-6. `remediation_tasks = _remediation_tasks(pending, ...)` (`:1337`), deduped by target, first occurrence wins; a mastered target gets a review, an unmastered one gets a lesson; every task carries `is_remediation=True` (`:1108–1152`).
+6. `remediation_tasks = _remediation_tasks(pending, ...)` (`:1337`), deduped by target, first occurrence wins; a mastered target gets a review, an unmastered one gets a lesson; every task carries `is_remediation=True` (`:1108–1152`). Kind `in_sitting_prereq` is the 2.0 exception: each target is one review question and never a lesson (D-L4).
 7. `due = due_reviews(...)` — **`sorted()`** over `states.items()` filtered to `review_state(...) is due` (`:449–454`).
 8. `comp = compress(due, ..., frontier_candidates=set(available))` (`:1344`).
 9. `surviving = sorted(comp.surviving, key=lambda r: (-len(comp.knockouts.get(r,[])), r))` (`:1345`).

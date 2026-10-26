@@ -185,11 +185,15 @@ fn the_ledger_series_render_the_literal_exposition_lines() {
         ],
     };
 
-    let text = render_ledger(&totals, 7);
+    let text = render_ledger(&totals, 7, 5);
 
     holds(
         &text,
         "cadus_diagnosis_jobs_total{result=\"ready_preauthored\"} 7",
+    );
+    holds(
+        &text,
+        "cadus_diagnosis_jobs_total{result=\"ready_checker\"} 5",
     );
     holds(&text, "cadus_diagnosis_jobs_total{result=\"enqueued\"} 10");
     holds(&text, "cadus_diagnosis_jobs_total{result=\"done\"} 3");
@@ -238,7 +242,7 @@ fn the_ledger_series_render_the_literal_exposition_lines() {
 /// An empty ledger renders every series at zero, and no series is missing.
 #[test]
 fn an_empty_ledger_renders_every_series_at_zero() {
-    let text = render_ledger(&LedgerTotals::default(), 0);
+    let text = render_ledger(&LedgerTotals::default(), 0, 0);
 
     holds(&text, "cadus_diagnosis_jobs_total{result=\"enqueued\"} 0");
     holds(&text, "cadus_diagnosis_jobs_total{result=\"done\"} 0");
@@ -281,6 +285,10 @@ async fn the_scrape_reports_the_ledger_of_the_worker() {
         holds(
             &text,
             "cadus_diagnosis_jobs_total{result=\"ready_preauthored\"} 0",
+        );
+        holds(
+            &text,
+            "cadus_diagnosis_jobs_total{result=\"ready_checker\"} 0",
         );
         holds(
             &text,

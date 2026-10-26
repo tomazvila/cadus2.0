@@ -15,6 +15,7 @@ use super::task::{Task, review_shell, start_kp};
 use super::topic_set::TopicSet;
 use super::{
     DIFFICULTY_TARGET, MULTISTEP_CADENCE, MULTISTEP_MAX_COMPONENTS, REMEDIATION_CONFIRM_FAILED,
+    REMEDIATION_IN_SITTING_PREREQ,
 };
 
 /// Whether the periodic multi-step cadence fires
@@ -151,6 +152,27 @@ pub fn remediation_tasks(
                 }
                 continue;
             }
+            if item.kind == REMEDIATION_IN_SITTING_PREREQ {
+                // One prerequisite question. This kind never builds a lesson.
+                if seen.contains(id)
+                    || graph.idx_of(id).is_none()
+                    || gate.is_some_and(|gate| !gate.topic_practicable(id))
+                {
+                    continue;
+                }
+                seen.insert(id.to_owned());
+                tasks.push(Task {
+                    is_remediation: true,
+                    ..review_shell(
+                        id,
+                        states,
+                        graph,
+                        1,
+                        "remediation (in_sitting_prereq); one prerequisite question".to_owned(),
+                    )
+                });
+                continue;
+            }
             if seen.contains(id) || graph.idx_of(id).is_none() {
                 continue;
             }
@@ -273,5 +295,29 @@ mod tests {
         let lesson = &tasks[1];
         assert_eq!(lesson.start_at_kp.as_deref(), Some("kp1"));
         assert_eq!(lesson.why, "remediation (quiz_miss); peel-back lesson");
+    }
+
+    #[test]
+    fn the_in_sitting_kind_builds_one_question_reviews_only() {
+        let cfg = Config::default();
+        let tree = graph(vec![topic("a", &[]), topic("b", &[("a", 0.5, false)])]);
+        let states: BTreeMap<String, TopicState> =
+            [("a".to_owned(), learned(0.5))].into_iter().collect();
+        let targets = ["a", "b", "a"].map(|id| Slug::new(id).expect("a slug"));
+        let pending = vec![PendingRemediation {
+            kind: "in_sitting_prereq".to_owned(),
+            targets: targets.to_vec(),
+        }];
+        let tasks = remediation_tasks(&pending, &states, &tree, &cfg, None);
+        assert_eq!(tasks.len(), 2);
+        for task in &tasks {
+            assert_eq!(task.task_type, TaskType::Review);
+            assert_eq!(task.n_problems, Some(1));
+            assert!(task.is_remediation);
+            assert_eq!(
+                task.why,
+                "remediation (in_sitting_prereq); one prerequisite question"
+            );
+        }
     }
 }

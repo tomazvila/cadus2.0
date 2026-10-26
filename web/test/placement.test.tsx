@@ -24,7 +24,7 @@ import { Diagnostic, DIAG_BEAT_MS, DIAG_NO_SOLUTIONS_NOTE } from '@/views/Diagno
 import { tick } from './helpers/timers';
 import {
   START, SUMMARY, answer, answerFirst, answerInput, begin, beginButton, mount, placementProps,
-  probe, progressCount, skipButton, stubDiag, submitButton,
+  probe, progressCount, skipButton, stubDiag, submitButton, toasts,
 } from './helpers/placement';
 import type { DiagAnswerResponse, DiagnosticApi } from '@/api/diag';
 
@@ -131,6 +131,33 @@ describe('P3 and R15: the ground rules before probe 1', () => {
 
     expect(onExit).toHaveBeenCalledTimes(1);
     expect(diagStart).not.toHaveBeenCalled();
+  });
+
+  it('shows where an open run stopped and starts nothing before the press', async () => {
+    const diagStart = vi.fn<DiagnosticApi['diagStart']>(async () => START);
+    await mount({
+      diag: stubDiag({ diagStart, diagCurrent: async () => ({ open: true, asked: 20, cap: 40 }) }),
+    });
+
+    expect(screen.getByText(/You stopped at question 21 of up to 40\./)).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'Continue the questions' })).toBeTruthy();
+    expect(screen.queryByRole('button', { name: 'Start the questions' })).toBeNull();
+    expect(diagStart).not.toHaveBeenCalled();
+  });
+
+  it('keeps the plain intro when no run is open', async () => {
+    await mount({ diag: stubDiag({ diagCurrent: async () => ({ open: false }) }) });
+
+    expect(beginButton()).toBeTruthy();
+    expect(screen.queryByText(/You stopped at question/)).toBeNull();
+  });
+
+  it('keeps the plain intro, with no toast, when the read of the open run fails', async () => {
+    await mount({ diag: stubDiag({ diagCurrent: async () => { throw new Error('offline'); } }) });
+
+    expect(beginButton()).toBeTruthy();
+    expect(screen.queryByText(/You stopped at question/)).toBeNull();
+    expect(toasts()).toEqual([]);
   });
 
   it('R15: the intro focuses the card, never the Begin button', async () => {

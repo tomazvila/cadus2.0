@@ -60,6 +60,26 @@ async fn a_numeric_answer_is_decided_correct() {
     .await;
 }
 
+/// D-G1: a sign-flipped miss reads its cause with the verdict. The attempt row
+/// and the tier do not change.
+#[tokio::test]
+async fn a_sign_flipped_miss_reads_its_cause_at_once() {
+    TestDb::with(|db| async move {
+        let app = app(&db);
+        let user = learner_of(&db, "kind-signflip@example.com", "numeric", "13.5").await;
+        let body = answer(&app, user, "-13.5").await;
+        assert_eq!(body["outcome"], "incorrect");
+        assert_eq!(body["correct"], json!(false));
+        assert_eq!(body["checker_text"], "Expected 13.5. You entered -13.5.");
+        assert_eq!(body["diagnosis"]["status"], "ready");
+        let attempts = events_of_type(&db, user, "attempt").await;
+        assert_eq!(attempts.len(), 1);
+        assert_eq!(attempts[0]["work_quality"], "nearly_passable");
+        assert_eq!(attempts[0]["error_tags"], json!([]));
+    })
+    .await;
+}
+
 #[tokio::test]
 async fn an_expression_answer_is_decided_incorrect() {
     TestDb::with(|db| async move {

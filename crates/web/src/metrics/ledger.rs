@@ -6,8 +6,9 @@ use std::collections::BTreeMap;
 use cadus_store::{Db, bounded};
 
 use super::{
-    DIAGNOSIS_ENQUEUED, DIAGNOSIS_METRIC, DIAGNOSIS_PREAUTHORED, DIAGNOSIS_STATUSES,
-    LEDGER_READ_BOUND, MODEL_LATENCY_METRIC, MODEL_TOKENS_METRIC, PURPOSES, TOKEN_KINDS, escape,
+    DIAGNOSIS_CHECKER, DIAGNOSIS_ENQUEUED, DIAGNOSIS_METRIC, DIAGNOSIS_PREAUTHORED,
+    DIAGNOSIS_STATUSES, LEDGER_READ_BOUND, MODEL_LATENCY_METRIC, MODEL_TOKENS_METRIC, PURPOSES,
+    TOKEN_KINDS, escape,
 };
 
 /// The token, latency and call totals of one `purpose` (T6).
@@ -104,12 +105,12 @@ async fn read_totals(db: &Db) -> Option<LedgerTotals> {
 
 /// Render the three ledger-backed series of spec section 7.
 ///
-/// `preauthored` is the one label of [`DIAGNOSIS_METRIC`] that no row carries.
+/// `preauthored` and `checker` are the two labels of [`DIAGNOSIS_METRIC`] that no row carries.
 /// Every `purpose` of [`PURPOSES`] renders even at zero, and a purpose the
 /// ledger holds beyond that list renders too, so a new spender is visible the
 /// day it first spends.
 #[must_use]
-pub fn render_ledger(totals: &LedgerTotals, preauthored: u64) -> String {
+pub fn render_ledger(totals: &LedgerTotals, preauthored: u64, checker: u64) -> String {
     let mut out = String::new();
 
     let mut jobs: BTreeMap<&str, i64> = BTreeMap::new();
@@ -122,6 +123,7 @@ pub fn render_ledger(totals: &LedgerTotals, preauthored: u64) -> String {
         "# HELP {DIAGNOSIS_METRIC} Async diagnosis jobs, by result.\n\
          # TYPE {DIAGNOSIS_METRIC} counter\n\
          {DIAGNOSIS_METRIC}{{result=\"{DIAGNOSIS_PREAUTHORED}\"}} {preauthored}\n\
+         {DIAGNOSIS_METRIC}{{result=\"{DIAGNOSIS_CHECKER}\"}} {checker}\n\
          {DIAGNOSIS_METRIC}{{result=\"{DIAGNOSIS_ENQUEUED}\"}} {enqueued}\n"
     ));
     for status in DIAGNOSIS_STATUSES {

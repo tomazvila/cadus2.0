@@ -278,6 +278,7 @@ pub fn create_app(state: AppState) -> Router {
         .route("/api/task/{task_id}/quiz-result", post(grade::quiz_result))
         // The placement diagnostic, spec section 2. It sits with the task routes
         // and before the three layers, for the same reason they do.
+        .route("/api/diag/current", get(diag::current))
         .route("/api/diag/start", post(diag::start))
         .route("/api/diag/answer", post(diag::answer))
         .route("/api/diag/finish", post(diag::finish))

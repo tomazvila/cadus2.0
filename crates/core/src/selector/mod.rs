@@ -73,7 +73,10 @@ pub use review::{
 };
 pub use task::{Task, start_kp};
 pub use topic_set::{TopicSet, course_scope, frontier, known_set, practiced_set};
-pub use trigger::{remediation_for_quiz_miss, remediation_for_repeat_fail, schedule_drills};
+pub use trigger::{
+    remediation_for_in_sitting, remediation_for_quiz_miss, remediation_for_repeat_fail,
+    schedule_drills,
+};
 
 /// One day, in microseconds.
 const DAY_US: i64 = 86_400_000_000;
@@ -117,6 +120,12 @@ pub const REMEDIATION_QUIZ_MISS: &str = "quiz_miss";
 
 /// The remediation kind of a second failure at one knowledge point.
 pub const REMEDIATION_REPEAT_FAIL: &str = "repeat_fail";
+
+/// The remediation kind of two misses in a row at one knowledge point of an open lesson.
+///
+/// The targets are the key prerequisites of that point. Each target is served as a
+/// one-question review. The kind never builds a lesson.
+pub const REMEDIATION_IN_SITTING_PREREQ: &str = "in_sitting_prereq";
 
 /// The remediation kind of a lesson failure.
 pub const REMEDIATION_LESSON_FAIL: &str = "lesson_fail";

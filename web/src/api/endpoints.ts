@@ -8,6 +8,7 @@ import { downloadFile, request } from './client';
 import type { ProblemReportReceipt } from './types-report';
 import type {
   DiagAnswerResponse,
+  DiagCurrentResponse,
   DiagFinishResponse,
   DiagStartResponse,
   ApiClient,
@@ -180,6 +181,7 @@ export const api: ApiClient = {
   // --- The placement diagnostic (spec section 2) ---------------------------
   // `start` takes the course only when the caller names one: an empty body makes the
   // service read the enrolled course, and a first-run learner gets the entry course.
+  diagCurrent: () => request<DiagCurrentResponse>('GET', '/diag/current'),
   diagStart: (course) =>
     request<DiagStartResponse>('POST', '/diag/start', course ? { course } : {}),
   diagAnswer: (body) => request<DiagAnswerResponse>('POST', '/diag/answer', body),

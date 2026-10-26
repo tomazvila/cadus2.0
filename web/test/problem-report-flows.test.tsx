@@ -94,6 +94,7 @@ describe('reports across question flows', () => {
     vi.useFakeTimers();
     const api = reportApi();
     const diag: DiagnosticApi = {
+      diagCurrent: vi.fn().mockResolvedValue({ open: false }),
       diagStart: vi.fn().mockResolvedValue({ probe: { problem_id: 'd1', text: 'First probe' } }),
       diagAnswer: vi.fn().mockResolvedValue({ correct: true, next_probe: { problem_id: 'd2', text: 'Next probe' } }),
       diagFinish: vi.fn(),

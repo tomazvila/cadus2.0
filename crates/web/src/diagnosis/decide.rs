@@ -1,6 +1,7 @@
 //! The `diagnosis` field of one grade reply (spec section 2.1): the
-//! pre-authored lookup, the replay path, and the enqueue.
+//! pre-authored lookup, the checker rule, the replay path, and the enqueue.
 
+use cadus_core::answer::AnswerContract;
 use cadus_core::config::Config;
 use cadus_core::curriculum::AnswerKind;
 use cadus_core::pool::kp_key;
@@ -9,7 +10,10 @@ use serde_json::{Value, json};
 use sqlx::types::Uuid;
 use sqlx::{Postgres, Transaction};
 
-use super::{KIND_DIAGNOSIS, STATUS_NOT_OFFERED, STATUS_PENDING, STATUS_READY, match_distractor};
+use super::{
+    KIND_DIAGNOSIS, STATUS_NOT_OFFERED, STATUS_PENDING, STATUS_READY, checker_diagnosis,
+    match_distractor,
+};
 use crate::AppState;
 use crate::error::ApiError;
 use crate::session::json_of;
@@ -125,9 +129,37 @@ pub(crate) async fn decide(
     // 2026-10-10).
     if matches!(
         served.expected.answer_contract,
-        Some(cadus_core::answer::AnswerContract::Label { .. })
+        Some(AnswerContract::Label { .. })
     ) {
         return Ok(json!({ "status": STATUS_NOT_OFFERED }));
+    }
+
+    // The checker rule (D-G1): five exact mistakes read from the canonical forms
+    // of the key and the answer. It sits after the authored lookup, so an
+    // authored distractor wins, and before the replay branch, so a replayed
+    // request gives the same field. It writes no job row.
+    // It runs only when the contract compares the answer with the one stored key.
+    let one_key = matches!(
+        served.expected.answer_contract,
+        None | Some(
+            AnswerContract::Exact
+                | AnswerContract::Coordinates { .. }
+                | AnswerContract::List { .. }
+                | AnswerContract::RequiredForm { .. }
+                | AnswerContract::ReducedRatio
+        )
+    );
+    if one_key
+        && let Some(hit) = checker_diagnosis(&served.expected.answer, miss.answer, &cfg.error_tags)
+    {
+        state
+            .metrics
+            .count_diagnosis(crate::metrics::DIAGNOSIS_CHECKER);
+        return Ok(json!({
+            "status": STATUS_READY,
+            "error_tags": hit.error_tags,
+            "prose": hit.prose,
+        }));
     }
 
     if !write {

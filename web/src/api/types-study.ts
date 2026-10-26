@@ -361,6 +361,18 @@ export interface DiagStartResponse {
 }
 
 /**
+ * `GET /api/diag/current`. A pure read of the open run. `open` is false when no run is open.
+ * The reply carries no solution and no expected answer.
+ */
+export interface DiagCurrentResponse {
+  open: boolean;
+  course?: string | null;
+  asked?: number;
+  cap?: number;
+  probe?: DiagProbe | null;
+}
+
+/**
  * `POST /api/diag/answer`.
  *
  * The verdict is deterministic-only and the reply carries NO solution and NO expected
@@ -374,11 +386,15 @@ export interface DiagAnswerResponse {
   next_probe?: DiagProbe | { done: true } | null;
 }
 
-/** `POST /api/diag/finish`. Three arrays of topic ids. */
+/**
+ * `POST /api/diag/finish`. Three arrays of topic ids. `refresh` is true when the learner
+ * had a placed or learned topic before this finish: the placement then averages.
+ */
 export interface DiagFinishResponse {
   placed: string[];
   conditional: string[];
   frontier: string[];
+  refresh: boolean;
 }
 
 /** `GET /api/diagnosis/{id}` and the `event: diagnosis` frame of the stream. */

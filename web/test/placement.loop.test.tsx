@@ -48,6 +48,20 @@ describe('the probe loop', () => {
     expect(progressCount()).toBe('Question 4 of up to 12');
   });
 
+  it('continues an open run at the next question number', async () => {
+    await mount({
+      diag: stubDiag({
+        diagCurrent: async () => ({ open: true, asked: 20, cap: 40 }),
+        diagStart: async () => ({ probe: probe(), asked: 20, cap: 40 }),
+      }),
+    });
+    await act(async () => {
+      fireEvent.click(screen.getByRole('button', { name: 'Continue the questions' }));
+    });
+
+    expect(progressCount()).toBe('Question 21 of up to 40');
+  });
+
   it('advances to the next probe with a fresh, empty field', async () => {
     vi.useFakeTimers();
     await mount({
@@ -130,6 +144,7 @@ describe('the placement commit', () => {
           placed: ['a', 'b', 'c'],
           conditional: ['d'],
           frontier: ['adding-fractions', 'powers'],
+          refresh: false,
         }),
       }),
     });
@@ -201,6 +216,7 @@ describe('the demo placement port', () => {
       placed: ['integers', 'fractions'],
       conditional: ['linear-equations'],
       frontier: ['linear-equations'],
+      refresh: false,
     });
   });
 

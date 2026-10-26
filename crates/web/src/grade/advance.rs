@@ -135,6 +135,9 @@ pub(super) fn advance(
     if kp_failed(&sequence, cfg) {
         return lesson_failed(graph, cfg, now, attempt, kp.as_deref(), history);
     }
+    if second_consecutive_miss(&sequence) {
+        return in_sitting_step(graph, now, attempt, kp.as_deref());
+    }
     if !kp_passed(&sequence, cfg.lesson.pass_rule()) {
         return Advance::carry_on();
     }
@@ -153,6 +156,34 @@ pub(super) fn advance(
         };
     }
     lesson_passed(cfg, now, attempt, prior, kp_ids.len())
+}
+
+/// Whether the last two answers are the first adjacent pair of misses.
+///
+/// This is true once per knowledge point and task: a third miss in a row, or a
+/// second pair after a correct answer, does not fire it again.
+fn second_consecutive_miss(seq: &[bool]) -> bool {
+    let Some(at) = seq.windows(2).position(|pair| !pair[0] && !pair[1]) else {
+        return false;
+    };
+    at + 2 == seq.len()
+}
+
+/// The answer to a second miss in a row: the lesson stays open, and the key
+/// prerequisites of the missed knowledge point queue as one question each.
+fn in_sitting_step(
+    graph: &Curriculum,
+    now: Timestamp,
+    attempt: &Attempt,
+    kp: Option<&str>,
+) -> Advance {
+    let queued = remediation_for_in_sitting(attempt.topic.as_str(), kp.unwrap_or_default(), graph);
+    let remediation = triggered(now, attempt, REMEDIATION_IN_SITTING_PREREQ, queued.targets);
+    Advance {
+        status: STATUS_CONTINUE,
+        remediation,
+        ..Advance::carry_on()
+    }
 }
 
 /// The note-84 (b) completion arm: the teach-only knowledge point.
@@ -419,14 +450,16 @@ fn lesson_failed(
 }
 
 /// The remediation a failed lesson queues: one event of `kind`, or none when a
-/// repeat failure has no key prerequisite to peel back to.
+/// repeat failure or an in-sitting step has no key prerequisite to peel back to.
 fn triggered(
     now: Timestamp,
     attempt: &Attempt,
     kind: &str,
     targets: Vec<Slug>,
 ) -> Vec<RemediationTriggered> {
-    if kind == REMEDIATION_REPEAT_FAIL && targets.is_empty() {
+    if (kind == REMEDIATION_REPEAT_FAIL || kind == REMEDIATION_IN_SITTING_PREREQ)
+        && targets.is_empty()
+    {
         return Vec::new();
     }
     vec![RemediationTriggered {
@@ -670,6 +703,7 @@ topics:
         .unwrap();
         let now = Timestamp::from_micros(0);
         assert!(triggered(now, &attempt, REMEDIATION_REPEAT_FAIL, Vec::new()).is_empty());
+        assert!(triggered(now, &attempt, REMEDIATION_IN_SITTING_PREREQ, Vec::new()).is_empty());
         let plain = triggered(now, &attempt, REMEDIATION_LESSON_FAIL, Vec::new());
         assert_eq!(plain.len(), 1);
         assert_eq!(plain[0].kind, "lesson_fail");
@@ -739,6 +773,115 @@ topics:
             Some(&ReadinessSet::default()),
         )
         .status
+    }
+
+    /// The miss-pair test fires once, at the first adjacent pair of misses.
+    #[test]
+    fn second_consecutive_miss_fires_once_at_the_first_adjacent_pair() {
+        const T: bool = true;
+        const F: bool = false;
+        assert!(second_consecutive_miss(&[F, F]));
+        assert!(second_consecutive_miss(&[T, F, F]));
+        assert!(!second_consecutive_miss(&[F, T, F]));
+        assert!(!second_consecutive_miss(&[F, F, F]));
+        assert!(!second_consecutive_miss(&[F, F, T, F, F]));
+        assert!(!second_consecutive_miss(&[F]));
+        assert!(!second_consecutive_miss(&[]));
+    }
+
+    /// An inline curriculum: `addition/kp1` names `subtraction` as a key prerequisite.
+    fn key_prereq_graph() -> Curriculum {
+        let root = std::env::temp_dir().join(format!("cadus-in-sitting-{}", std::process::id()));
+        let course = root.join("calculus-1");
+        std::fs::create_dir_all(&course).expect("the fixture directory");
+        std::fs::write(
+            root.join("courses.yaml"),
+            "courses:\n  - id: calculus-1\n    name: Calculus 1\n    order: 1\n",
+        )
+        .expect("the fixture catalog");
+        let topic = |id: &str, key: &str| {
+            format!(
+                r#"  - id: {id}
+    name: {id}
+    core: true
+    difficulty: 0.45
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 90
+    prerequisites: []
+    knowledge_points:
+      - id: kp1
+        name: The only point
+        key_prerequisites: [{key}]
+        exemplars:
+          - problem: 'What is $1 + 1$?'
+            answer: "2"
+            answer_contract: {{kind: none}}
+            solution_sketch: "2"
+        constraints: "none"
+"#
+            )
+        };
+        let body = format!(
+            "unit: arithmetic\ncourse: calculus-1\nmodule: \"Arithmetic\"\ntopics:\n{}{}",
+            topic("subtraction", ""),
+            topic("addition", "subtraction"),
+        );
+        std::fs::write(course.join("00-unit.yaml"), body).expect("the fixture file");
+        let (graph, _findings) =
+            cadus_core::curriculum::load_curriculum(&root).expect("the fixture loads");
+        std::fs::remove_dir_all(&root).expect("the fixture is removed");
+        graph
+    }
+
+    /// The advance after the last of `misses` typed wrong answers at `addition/kp1`.
+    fn advance_after_misses(graph: &Curriculum, misses: usize) -> Advance {
+        let cfg = Config::default();
+        let attempts: Vec<Attempt> = (0..misses)
+            .map(|n| {
+                let mut attempt = lesson_attempt(n, true, false);
+                attempt.topic = Slug::new("addition").unwrap();
+                attempt.kp = Some(Slug::new("kp1").unwrap());
+                attempt
+            })
+            .collect();
+        let (last, earlier) = attempts.split_last().expect("one answer");
+        let prior: Vec<EventRow> = earlier
+            .iter()
+            .enumerate()
+            .map(|(n, body)| EventRow {
+                seq: i64::try_from(n).expect("small") + 1,
+                event: Event::Attempt(body.clone()),
+            })
+            .collect();
+        advance(
+            graph,
+            &cfg,
+            last.ts,
+            last,
+            &prior,
+            &SessionView::default(),
+            Some(&ReadinessSet::default()),
+        )
+    }
+
+    /// The second miss in a row keeps the lesson open and queues the step once.
+    #[test]
+    fn two_misses_in_a_row_keep_the_lesson_open_and_queue_the_prerequisite_step() {
+        let graph = key_prereq_graph();
+        let one = advance_after_misses(&graph, 1);
+        assert_eq!(one.status, STATUS_CONTINUE);
+        assert!(one.remediation.is_empty());
+        let two = advance_after_misses(&graph, 2);
+        assert_eq!(two.status, STATUS_CONTINUE);
+        assert!(two.result.is_none());
+        assert_eq!(
+            two.remediation_view(),
+            vec![json!({"kind": "in_sitting_prereq", "targets": ["subtraction"]})]
+        );
+        let three = advance_after_misses(&graph, 3);
+        assert_eq!(three.status, STATUS_CONTINUE);
+        assert!(three.remediation.is_empty());
     }
 
     /// A label answer is not pass evidence: label-correct, label-correct,

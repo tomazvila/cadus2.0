@@ -303,7 +303,8 @@ mod tests {
     use crate::selector::QUIZ_DIFFICULTY_TARGETS;
     use crate::selector::quiz::QuizQuestion;
     use crate::selector::{
-        remediation_for_quiz_miss, remediation_for_repeat_fail, schedule_drills,
+        remediation_for_in_sitting, remediation_for_quiz_miss, remediation_for_repeat_fail,
+        schedule_drills,
     };
 
     #[test]
@@ -396,6 +397,23 @@ mod tests {
         );
         assert!(
             remediation_for_repeat_fail("ghost", "kp1", &tree)
+                .targets
+                .is_empty()
+        );
+        let sitting = remediation_for_in_sitting("two", "kp2", &tree);
+        assert_eq!(sitting.kind, "in_sitting_prereq");
+        assert_eq!(
+            sitting.targets,
+            remediation_for_repeat_fail("two", "kp2", &tree).targets
+        );
+        assert_eq!(sitting.targets.len(), 1);
+        assert!(
+            remediation_for_in_sitting("two", "kp9", &tree)
+                .targets
+                .is_empty()
+        );
+        assert!(
+            remediation_for_in_sitting("ghost", "kp1", &tree)
                 .targets
                 .is_empty()
         );

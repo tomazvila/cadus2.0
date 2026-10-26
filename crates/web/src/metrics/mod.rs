@@ -117,6 +117,11 @@ pub const GRADE_UNGRADED: &str = "ungraded";
 /// row to be counted from and lives in [`Registry`] instead.
 pub const DIAGNOSIS_PREAUTHORED: &str = "ready_preauthored";
 
+/// The `result` label of a diagnosis the checker rule named (D-G1).
+///
+/// The checker rule writes NO job row, so this label lives in [`Registry`] too.
+pub const DIAGNOSIS_CHECKER: &str = "ready_checker";
+
 /// The `result` label of every job row the queue holds.
 pub const DIAGNOSIS_ENQUEUED: &str = "enqueued";
 
@@ -222,8 +227,9 @@ impl Registry {
 
     /// Count one diagnosis decision this process took.
     ///
-    /// The only label the request tier owns is [`DIAGNOSIS_PREAUTHORED`]: a
-    /// pre-authored hit writes no job row, so no row can be counted for it. The
+    /// The request tier owns two labels, [`DIAGNOSIS_PREAUTHORED`] and
+    /// [`DIAGNOSIS_CHECKER`]: neither a pre-authored hit nor a checker hit writes
+    /// a job row, so no row can be counted for them. The
     /// other labels come from the queue itself ([`ledger_totals`]).
     pub fn count_diagnosis(&self, result: &'static str) {
         *self
@@ -419,6 +425,9 @@ pub async fn scrape(State(state): State<AppState>) -> Response {
             state
                 .metrics
                 .counter_of(DIAGNOSIS_METRIC, DIAGNOSIS_PREAUTHORED),
+            state
+                .metrics
+                .counter_of(DIAGNOSIS_METRIC, DIAGNOSIS_CHECKER),
         ));
     }
     (

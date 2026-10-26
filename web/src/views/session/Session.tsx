@@ -379,8 +379,15 @@ export function Session({
   /** The ONE way out of `feedback`. A second click stops at the already-shut gate. */
   const advance = (next?: ServedProblem | null, nextUnavailable = false): void => {
     if (!gate.tryEnter('feedback', 'loading')) return;
-    // The verdict goes now, so no feedback panel stands over the next task's load.
+    // A reply that keeps the lesson open and carries remediation asks the core for the plan
+    // at once. The core puts the prerequisite question at the head and keeps the lesson.
+    if (result?.task_status === 'continue' && (result.remediation?.length ?? 0) > 0) {
+      setResult(null);
+      replanForBlock();
+      return;
+    }
     const restampAfterStudy = result?.feedback_practice;
+    // The verdict goes now, so no feedback panel stands over the next task's load.
     setResult(null);
     if (restampAfterStudy) { serveThenShow(); return; }
     moveOn(next, nextUnavailable);

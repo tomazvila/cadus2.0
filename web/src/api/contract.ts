@@ -31,6 +31,7 @@ import type {
 import type {
   DiagAnswerResponse,
   DiagFinishResponse,
+  DiagCurrentResponse,
   DiagStartResponse,
   DiagnosisJob,
   HintResponse,
@@ -138,6 +139,7 @@ export interface ApiClient {
 
   // The placement diagnostic (spec section 2). The verdict is deterministic and the
   // reply carries no expected answer, so a screen cannot leak one.
+  diagCurrent(): Promise<DiagCurrentResponse>;
   diagStart(course?: string): Promise<DiagStartResponse>;
   diagAnswer(body: { problem_id: string; answer: string }): Promise<DiagAnswerResponse>;
   diagFinish(): Promise<DiagFinishResponse>;
@@ -268,6 +270,7 @@ export const ROUTES: readonly RouteRow[] = [
   // The provider navigates the browser here. The SPA never calls it.
   { method: 'GET', path: '/api/auth/oauth/{provider}/callback', auth: 'P', via: 'none', client: null },
 
+  { method: 'GET', path: '/api/diag/current', auth: 'S', via: 'method', client: 'diagCurrent' },
   { method: 'POST', path: '/api/diag/start', auth: 'S', via: 'method', client: 'diagStart' },
   { method: 'POST', path: '/api/diag/answer', auth: 'S', via: 'method', client: 'diagAnswer' },
   { method: 'POST', path: '/api/diag/finish', auth: 'S', via: 'method', client: 'diagFinish' },

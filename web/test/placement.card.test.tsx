@@ -115,6 +115,23 @@ describe('the probe card', () => {
   });
 
   it.each([
+    [true, 1],
+    [false, 0],
+  ])('shows the retake line when refresh is %s', async (refresh, lines) => {
+    vi.useFakeTimers();
+    await mount({
+      diag: stubDiag({
+        diagAnswer: async () => ({ correct: true, next_probe: null }),
+        diagFinish: async () => ({ ...SUMMARY, refresh }),
+      }),
+    });
+    await begin();
+    await answer('5');
+    await tick(DIAG_BEAT_MS);
+    expect(screen.queryAllByText(/Topics you already learned keep their progress\./)).toHaveLength(lines);
+  });
+
+  it.each([
     ['a probe with no id', probe({ problem_id: '' })],
     ['a null next probe', null],
   ])('commits after %s', async (_name, next_probe) => {

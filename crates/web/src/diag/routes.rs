@@ -6,21 +6,25 @@ use axum::http::StatusCode;
 use cadus_core::curriculum::{AnswerKind, Course, Curriculum, Slug};
 use cadus_core::diagnostic::{self, DiagState, PlacementResult};
 use cadus_core::event::Slug as EventSlug;
+use cadus_core::event::TopicStatus;
 use cadus_core::event::{
     AttemptOutcome, AttemptProblem, DiagnosticAnswer, DiagnosticPlaced, Event, SchemaVersion, Secs,
     Timestamp, Weight,
 };
 use cadus_core::selector::{course_scope, frontier, known_set};
-use cadus_store::state::{Projection, clear_diag_state, project_current};
+use cadus_store::state::{Projection, clear_diag_state, load_diag_state, project_current};
 use serde_json::{Value, json};
 
 use super::{
-    DIAG_TASK_ID, deal_probe, deterministic, load_diagnostic, markable, no_diagnostic,
+    DIAG_TASK_ID, deal_probe, deterministic, load_diagnostic, markable, no_diagnostic, probe_view,
     save_diagnostic, topic_record,
 };
 use crate::error::ApiError;
 use crate::grade::{grade_item, measure_secs};
-use crate::session::{Ready, Reply, enrolled_event, event_slug, reply_committed, unknown_course};
+use crate::serve::unix_seconds;
+use crate::session::{
+    Ready, Reply, enrolled_event, event_slug, reply_committed, reply_read, unknown_course,
+};
 use crate::state::{Content, INVALID_REQUEST, ServedProblem, UNKNOWN_PROBLEM, WebState};
 
 /// The enrolled course of one projection.
@@ -78,6 +82,54 @@ fn markable_diagnostic(content: &Content, course: &str) -> DiagState {
 // POST /api/diag/start
 // --------------------------------------------------------------------------- //
 
+/// Whether a start resumes the run that is open.
+///
+/// A run is open and the body names no course, or names the course of the run:
+/// the start resumes. No run is open, or the body names another course: the
+/// start builds a new run.
+fn resumes(open: Option<&DiagState>, asked: Option<&str>) -> bool {
+    open.is_some_and(|diag| asked.is_none_or(|course| diag.course.as_deref() == Some(course)))
+}
+
+/// The run that is open, or `None` when no row exists or the row does not read.
+async fn open_run(req: &Ready, tx: &mut crate::session::Tx) -> Result<Option<DiagState>, ApiError> {
+    let doc = req.store(load_diag_state(tx, req.user_id)).await?;
+    Ok(doc.and_then(|doc| serde_json::from_value(doc).ok()))
+}
+
+/// Resume the open run: hand back the live probe with a fresh clock.
+///
+/// The recorded answers keep their weight. No event and no report row is
+/// written. When the scratch holds no live probe, the next probe is dealt.
+async fn resume(req: &Ready, mut tx: crate::session::Tx, diag: DiagState) -> Reply {
+    let mut scratch = req.read_state(&mut tx).await?;
+    let live = scratch
+        .served
+        .get_mut(DIAG_TASK_ID)
+        .filter(|served| {
+            served
+                .topic
+                .as_deref()
+                .is_some_and(|topic| topic_record(req.graph(), topic).is_some())
+        })
+        .map(|served| {
+            served.started_at = unix_seconds(req.now.micros());
+            served.timing_interrupted = true;
+            probe_view(served)
+        });
+    let probe = match live {
+        Some(probe) => Some(probe),
+        None => deal_probe(&diag, &req.content, &mut scratch, req.now),
+    };
+    save_diagnostic(&req.state, &mut tx, req.user_id, &diag, &scratch).await?;
+    let body = json!({
+        "probe": probe,
+        "asked": diag.answered.len(),
+        "cap": req.content.cfg.diag.max_questions,
+    });
+    reply_committed(tx, body).await
+}
+
 /// Open a placement diagnostic and serve its first probe.
 ///
 /// The course is the body's `course`, then the enrolled course. A learner with
@@ -86,12 +138,18 @@ fn markable_diagnostic(content: &Content, course: &str) -> DiagState {
 /// every session after them key off an enrolled course. That is the same append
 /// `POST /api/enroll` makes.
 ///
-/// A second start REPLACES the diagnostic in progress, which is what 1.0 does:
-/// the balances go back to zero and the probe list starts again.
+/// A start of the same course resumes the run in progress. A start that names
+/// another course replaces it: the balances go back to zero and the probe list
+/// starts again.
 pub async fn start(req: Ready, body: Option<Json<Value>>) -> Reply {
     let asked = asked_course(body.as_ref());
     let input = req.input();
     let (mut tx, projection) = req.locked_projection(&input).await?;
+
+    let open = open_run(&req, &mut tx).await?;
+    if let Some(diag) = open.filter(|diag| resumes(Some(diag), asked.as_deref())) {
+        return resume(&req, tx, diag).await;
+    }
 
     let enrolled = enrolled_course(&projection);
     let first_run = enrolled.is_none() && asked.is_none();
@@ -123,6 +181,33 @@ pub async fn start(req: Ready, body: Option<Json<Value>>) -> Reply {
         "cap": req.content.cfg.diag.max_questions,
     });
     reply_committed(tx, body).await
+}
+
+// --------------------------------------------------------------------------- //
+// GET /api/diag/current
+// --------------------------------------------------------------------------- //
+
+/// Read the open run, if any. A pure read: it writes no row, deals no probe
+/// and does not re-stamp the clock. The next start does that.
+pub async fn current(req: Ready) -> Reply {
+    let mut tx = req.begin().await?;
+    let Some(diag) = open_run(&req, &mut tx).await? else {
+        return reply_read(tx, json!({ "open": false })).await;
+    };
+    let scratch = req.read_state(&mut tx).await?;
+    // The answer route deals the next probe at once. A run with no live probe
+    // has nothing more to ask, so it reads as closed.
+    let Some(probe) = scratch.served.get(DIAG_TASK_ID).map(probe_view) else {
+        return reply_read(tx, json!({ "open": false })).await;
+    };
+    let body = json!({
+        "open": true,
+        "course": diag.course,
+        "asked": diag.answered.len(),
+        "cap": req.content.cfg.diag.max_questions,
+        "probe": probe,
+    });
+    reply_read(tx, body).await
 }
 
 // --------------------------------------------------------------------------- //
@@ -336,7 +421,12 @@ pub async fn answer(req: Ready, body: Option<Json<Value>>) -> Reply {
 
 /// The `diagnostic_placed` event of one placement. A conditional topic is a
 /// non-empty id of the universe, so every one reads as a slug.
-fn placed_event(now: Timestamp, session: Option<String>, result: &PlacementResult) -> Event {
+fn placed_event(
+    now: Timestamp,
+    session: Option<String>,
+    result: &PlacementResult,
+    refresh: bool,
+) -> Event {
     let conditional: Vec<EventSlug> = result
         .conditional
         .iter()
@@ -348,8 +438,22 @@ fn placed_event(now: Timestamp, session: Option<String>, result: &PlacementResul
         v: SchemaVersion::current(),
         balances: result.event_balances(),
         conditional,
-        refresh: false,
+        refresh,
     })
+}
+
+/// Whether this finish is a retake. A first placement seeds, a retake averages.
+///
+/// The learner has retaken when a topic reads `Placed` or `Learning`, or a lesson
+/// pass is on record. A `Floor` topic comes from enrollment and a `Frontier`
+/// topic from the graph, so neither counts.
+fn is_retake(projection: &Projection) -> bool {
+    projection
+        .model
+        .topics
+        .values()
+        .any(|topic| matches!(topic.status, TopicStatus::Placed | TopicStatus::Learning))
+        || !projection.view.learned_at.is_empty()
 }
 
 /// The frontier of the enrolled course after the placement, in id order.
@@ -379,7 +483,13 @@ pub async fn finish(req: Ready) -> Reply {
     let projection = req
         .store(project_current(&mut tx, req.user_id, &input))
         .await?;
-    let event = placed_event(req.now, projection.view.current_session.clone(), &result);
+    let refresh = is_retake(&projection);
+    let event = placed_event(
+        req.now,
+        projection.view.current_session.clone(),
+        &result,
+        refresh,
+    );
     req.append_and_fold(&mut tx, &event, &input).await?;
     req.store(cadus_store::reports::diagnostics::close(
         &mut tx,
@@ -401,6 +511,39 @@ pub async fn finish(req: Ready) -> Reply {
         "placed": result.placed.keys().collect::<Vec<&String>>(),
         "conditional": result.conditional,
         "frontier": frontier_readout(req.graph(), &after),
+        "refresh": refresh,
     });
     reply_committed(tx, body).await
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn run_of(course: &str) -> DiagState {
+        DiagState {
+            course: Some(course.to_owned()),
+            ..DiagState::default()
+        }
+    }
+
+    #[test]
+    fn no_open_run_never_resumes() {
+        assert!(!resumes(None, None));
+    }
+
+    #[test]
+    fn an_open_run_resumes_when_no_course_is_asked() {
+        assert!(resumes(Some(&run_of("c1")), None));
+    }
+
+    #[test]
+    fn an_open_run_resumes_for_its_own_course() {
+        assert!(resumes(Some(&run_of("c1")), Some("c1")));
+    }
+
+    #[test]
+    fn an_open_run_is_replaced_by_another_course() {
+        assert!(!resumes(Some(&run_of("c1")), Some("c2")));
+    }
 }

@@ -21,11 +21,17 @@ export const probe = (over: Partial<DiagProbe> = {}): DiagProbe => ({
 
 export const START: DiagStartResponse = { probe: probe(), asked: 0, cap: 40 };
 
-export const SUMMARY: DiagFinishResponse = { placed: ['a', 'b'], conditional: [], frontier: ['c'] };
+export const SUMMARY: DiagFinishResponse = {
+  placed: ['a', 'b'],
+  conditional: [],
+  frontier: ['c'],
+  refresh: false,
+};
 
 /** A port that starts on `START`, grades every answer correct and ends on `SUMMARY`. */
 export function stubDiag(over: Partial<DiagnosticApi> = {}): DiagnosticApi {
   return {
+    diagCurrent: async () => ({ open: false }),
     diagStart: async () => START,
     diagAnswer: async () => ({ correct: true, next_probe: { done: true } }),
     diagFinish: async () => SUMMARY,

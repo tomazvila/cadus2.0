@@ -111,7 +111,7 @@ describe('the payload shapes', () => {
   it('renders no frontier block when the summary names no frontier', async () => {
     vi.useFakeTimers();
     await mount({
-      diag: stubDiag({ diagFinish: async () => ({ placed: ['a'], conditional: [], frontier: [] }) }),
+      diag: stubDiag({ diagFinish: async () => ({ placed: ['a'], conditional: [], frontier: [], refresh: false }) }),
     });
     await begin();
     await answer('5');

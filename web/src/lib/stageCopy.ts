@@ -23,6 +23,7 @@ export function taskKindText(taskType: string, why: string | null | undefined): 
 export function taskReasonText(why: string | null | undefined): string | null {
   const reason = why ?? '';
   if (reason.startsWith('remediation (')) {
+    if (reason.includes('one prerequisite question')) return 'This lesson needs this skill. You get one question on it. Then the lesson goes on.';
     if (reason.includes('peel-back lesson')) return 'You missed this skill earlier, so the lesson comes again.';
     if (reason.includes('remedial review')) return 'You missed this skill earlier, so these questions check it again.';
     return 'You missed this skill earlier, so you get more practice on it.';

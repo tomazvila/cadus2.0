@@ -22,7 +22,7 @@
  *               answer turns the next probe into a copy exercise and corrupts the
  *               plus-minus balance placement is built from.
  *
- * THE TRANSPORT IS A PROP. The service mounts the three `/api/diag/*` routes, and the
+ * THE TRANSPORT IS A PROP. The service mounts the four `/api/diag/*` routes, and the
  * live adapter posts to them — `api/diag.ts` states why the port stays a prop. The
  * `404 not_found` branch stays too: a deployment older than those routes answers it, and
  * a failed start returns to the intro with a stated line rather than leaving the learner
@@ -88,6 +88,8 @@ export function Diagnostic({ diag, reportApi, demo, onUnauthorized, onExit }: Di
   const [result, setResult] = useState<ProbeResult | null>(null);
   const [summary, setSummary] = useState<DiagFinishResponse | null>(null);
   const [startFailed, setStartFailed] = useState(false);
+  // The run that is open, read on mount. It changes the intro line and the button label only.
+  const [resume, setResume] = useState<{ asked: number; cap: number } | null>(null);
   const report = useProblemReport(reportApi ?? null, undefined, (_receipt, context) => {
     setResult((previous) => previous && probeRef.current?.problem_id === context.problem_id
       ? { ...previous, res: { ...previous.res, correct: true, outcome: 'correct' } } : previous);
@@ -120,6 +122,18 @@ export function Diagnostic({ diag, reportApi, demo, onUnauthorized, onExit }: Di
   // render would re-arm the beat on every re-render.
   const finishRef = useRef(finish);
   useEffect(() => { finishRef.current = finish; });
+
+  // Ask for the open run once. This is a read: it starts nothing (P3). A failure leaves the
+  // intro as it is for a new run.
+  useEffect(() => {
+    diag.diagCurrent().then((open) => {
+      if (!life.alive() || !open.open) return;
+      const cap = num(open.cap, DIAG_DEFAULT_CAP) || DIAG_DEFAULT_CAP;
+      setResume({ asked: num(open.asked), cap });
+    }, () => undefined);
+    // Once per mount: the port is fixed for the life of the view.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const begin = (): void => {
     // A repeated Enter or click cannot start two placements.
@@ -223,7 +237,7 @@ export function Diagnostic({ diag, reportApi, demo, onUnauthorized, onExit }: Di
   };
 
   if (phase === 'intro') {
-    return <IntroCard cardRef={introRef} startFailed={startFailed} onBegin={begin} onExit={onExit} />;
+    return <IntroCard cardRef={introRef} startFailed={startFailed} resume={resume} onBegin={begin} onExit={onExit} />;
   }
 
   if (phase === 'done') {

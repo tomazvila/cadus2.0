@@ -48,7 +48,7 @@ pub use policy_health::{live_policy_map, stale_policy_rows};
 
 pub use overturn::overturns;
 
-pub use routes::{answer, finish, start};
+pub use routes::{answer, current, finish, start};
 
 /// The code of a diagnostic call made with no diagnostic open.
 pub const NO_DIAGNOSTIC: &str = "no_diagnostic";
@@ -106,13 +106,13 @@ fn probe_problem(
     let text = exemplar.map_or_else(|| NO_EXEMPLAR.to_owned(), |item| item.problem.clone());
     let served = ServedProblem {
         timing_interrupted: false,
-        problem_id: problem_id.clone(),
+        problem_id,
         task_id: DIAG_TASK_ID.to_owned(),
         topic: Some(topic.to_owned()),
         serve_topic: Some(topic.to_owned()),
         kp: None,
         answer_kind: Some(record.answer_kind.as_str().to_owned()),
-        text: text.clone(),
+        text,
         expected: PoolAnswer {
             answer_contract: exemplar.and_then(|item| item.answer_contract.clone()),
             v: cadus_core::pool::POOL_ROW_VERSION,
@@ -125,17 +125,30 @@ fn probe_problem(
         rework: None,
         handoff: None,
     };
-    let mut probe = json!({ "topic": topic, "problem_id": problem_id, "text": text });
+    let probe = probe_view(&served);
+    (served, probe)
+}
+
+/// The `probe` object of one live problem: the topic, the id and the text, and
+/// the choices and the contract hint when the problem has them. It shows no
+/// answer and no sketch.
+pub(super) fn probe_view(served: &ServedProblem) -> Value {
+    let topic = served.topic.as_deref().unwrap_or_default();
+    let mut probe = json!({
+        "topic": topic,
+        "problem_id": served.problem_id,
+        "text": served.text,
+    });
     // A top-level Label contract shows its options; each other probe keeps the
     // three keys of today. The order comes from `problem_id` only (Hard Rule 1).
     let contract = served.expected.answer_contract.as_ref();
-    if let Some(choices) = crate::serve::choices::label_choices(contract, &problem_id) {
+    if let Some(choices) = crate::serve::choices::label_choices(contract, &served.problem_id) {
         probe["choices"] = json!(choices);
     }
     if let Some(hint) = crate::serve::choices::contract_hint(contract) {
         probe["answer_contract"] = hint;
     }
-    (served, probe)
+    probe
 }
 
 /// Serve the next probe, storing it as the live problem.
