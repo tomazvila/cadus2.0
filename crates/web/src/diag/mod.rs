@@ -25,9 +25,11 @@
 //! one before it and a stale `problem_id` answers `404 unknown_problem`.
 
 use axum::http::StatusCode;
+use cadus_core::answer::AnswerContract;
 use cadus_core::config::Config;
+use cadus_core::curriculum::model::Exemplar;
 use cadus_core::curriculum::{AnswerKind, Curriculum, Topic};
-use cadus_core::diagnostic::{self, DiagState};
+use cadus_core::diagnostic::{self, DiagState, Next};
 use cadus_core::event::Timestamp;
 use cadus_core::pool::PoolAnswer;
 use cadus_store::state::{load_diag_state, save_diag_state};
@@ -77,12 +79,42 @@ fn topic_record<'a>(graph: &'a Curriculum, topic: &str) -> Option<&'a Topic> {
 /// markable. A `proof` topic with no contract is not markable, because
 /// [`deterministic`] is false for `proof`.
 fn markable(record: &Topic) -> bool {
-    record.diagnostic_exemplar.as_ref().is_some_and(|item| {
-        item.answer_contract.as_ref().map_or_else(
-            || deterministic(record.answer_kind),
-            |contract| contract.validate_expected(&item.answer).is_ok(),
-        )
-    })
+    record
+        .diagnostic_exemplar
+        .as_ref()
+        .is_some_and(|item| markable_item(record.answer_kind, item))
+}
+
+/// Whether the service can mark `item` of a topic with answer kind `kind`.
+fn markable_item(kind: AnswerKind, item: &Exemplar) -> bool {
+    item.answer_contract.as_ref().map_or_else(
+        || deterministic(kind),
+        |contract| contract.validate_expected(&item.answer).is_ok(),
+    )
+}
+
+/// The exemplar of the second probe of a topic, or `None` when it has none.
+///
+/// It is the first exemplar, in author order across the knowledge points, that
+/// passes four tests. Its text differs from the text of the diagnostic exemplar.
+/// It shows no figure, because a probe has no figure. Its contract is not a
+/// Label, because a label answer is not pass evidence (owner rule, 2026-10-07).
+/// It passes the same marking rule as [`markable`].
+fn second_exemplar(record: &Topic) -> Option<&Exemplar> {
+    let first = record
+        .diagnostic_exemplar
+        .as_ref()
+        .map(|item| item.problem.trim());
+    record
+        .knowledge_points
+        .iter()
+        .flat_map(|kp| kp.exemplars.iter())
+        .find(|item| {
+            Some(item.problem.trim()) != first
+                && item.visual.is_none()
+                && !matches!(item.answer_contract, Some(AnswerContract::Label { .. }))
+                && markable_item(record.answer_kind, item)
+        })
 }
 
 /// The `409 no_diagnostic` of a call with no diagnostic in progress.
@@ -97,11 +129,11 @@ fn no_diagnostic() -> ApiError {
 /// The live problem of one probe of `topic`, dealt at `started_at`.
 fn probe_problem(
     record: &Topic,
+    exemplar: Option<&Exemplar>,
     topic: &str,
     index: usize,
     started_at: f64,
 ) -> (ServedProblem, Value) {
-    let exemplar = record.diagnostic_exemplar.as_ref();
     let problem_id = Uuid::new_v4().simple().to_string();
     let text = exemplar.map_or_else(|| NO_EXEMPLAR.to_owned(), |item| item.problem.clone());
     let served = ServedProblem {
@@ -154,19 +186,31 @@ pub(super) fn probe_view(served: &ServedProblem) -> Value {
 /// Serve the next probe, storing it as the live problem.
 ///
 /// The return value is the `probe` object of the spec, or `None` when the probe
-/// list is exhausted. The caller answers `{"probe": null}` or `{"done": true}`
+/// list is exhausted. A second probe uses [`second_exemplar`]. The caller answers `{"probe": null}` or `{"done": true}`
 /// from that, which the screen reads. `next_probe` deals a topic of the arena
 /// only, so the record lookup finds it.
 fn serve_probe(
-    diag: &DiagState,
+    diag: &mut DiagState,
     graph: &Curriculum,
     cfg: &Config,
     scratch: &mut WebState,
     started_at: f64,
 ) -> Option<Value> {
-    let topic = diagnostic::next_probe(diag, graph, cfg)?;
+    let has_second =
+        |topic: &str| topic_record(graph, topic).is_some_and(|r| second_exemplar(r).is_some());
+    let next = diagnostic::next_question(diag, graph, cfg, has_second)?;
+    let (topic, second) = match next {
+        Next::First(topic) => (topic, false),
+        Next::Second(topic) => (topic, true),
+    };
     topic_record(graph, &topic).map(|record| {
-        let (served, probe) = probe_problem(record, &topic, diag.answered.len(), started_at);
+        let exemplar = if second {
+            second_exemplar(record)
+        } else {
+            record.diagnostic_exemplar.as_ref()
+        };
+        let (served, probe) =
+            probe_problem(record, exemplar, &topic, diag.question_count(), started_at);
         scratch.served.insert(DIAG_TASK_ID.to_owned(), served);
         probe
     })
@@ -174,7 +218,7 @@ fn serve_probe(
 
 /// Drop the live probe and deal the next one at `now`.
 fn deal_probe(
-    diag: &DiagState,
+    diag: &mut DiagState,
     content: &Content,
     scratch: &mut WebState,
     now: Timestamp,
@@ -274,7 +318,7 @@ mod tests {
             },
         });
         let topic: Topic = serde_json::from_value(record).unwrap();
-        probe_problem(&topic, "t", 0, 0.0).1
+        probe_problem(&topic, topic.diagnostic_exemplar.as_ref(), "t", 0, 0.0).1
     }
 
     /// A Label probe carries `choices` from its `problem_id`; a probe with no
@@ -300,9 +344,45 @@ mod tests {
             "expected_time_secs": 60,
         });
         let bare: Topic = serde_json::from_value(record).unwrap();
-        let (served, probe) = probe_problem(&bare, "t", 2, 0.0);
+        let (served, probe) = probe_problem(&bare, bare.diagnostic_exemplar.as_ref(), "t", 2, 0.0);
         assert_eq!(probe["text"], NO_EXEMPLAR);
         assert_eq!(served.index, 2);
         assert!(probe.get("choices").is_none());
+    }
+    /// A numeric topic whose diagnostic exemplar says "first" and whose one
+    /// knowledge point holds `exemplars`.
+    fn with_exemplars(exemplars: &Value) -> Topic {
+        let record = json!({
+            "id": "t", "name": "T", "difficulty": 0.5, "answer_kind": "numeric",
+            "expected_time_secs": 60,
+            "diagnostic_exemplar": { "problem": "first", "answer": "7" },
+            "knowledge_points": [{ "id": "kp1", "name": "kp1", "exemplars": exemplars }],
+        });
+        serde_json::from_value(record).unwrap()
+    }
+
+    /// The second exemplar is the first one in author order that has another
+    /// text, no figure, no Label contract, and a mark rule that accepts it.
+    #[test]
+    fn the_second_exemplar_skips_each_unfit_item() {
+        let label = json!({ "kind": "label", "options": [["A"], ["B"]] });
+        let bad = json!({ "kind": "exact" });
+        let topic = with_exemplars(&json!([
+            { "problem": " first ", "answer": "7" },
+            { "problem": "has a figure", "answer": "7", "visual": 0 },
+            { "problem": "is a label", "answer": "A", "answer_contract": label },
+            { "problem": "cannot be marked", "answer": "(", "answer_contract": bad },
+            { "problem": "fits", "answer": "7", "answer_contract": { "kind": "exact" } },
+            { "problem": "fits later", "answer": "7" },
+        ]));
+        let second = second_exemplar(&topic);
+        assert_eq!(second.map(|item| item.problem.as_str()), Some("fits"));
+
+        let none = with_exemplars(&json!([
+            { "problem": "first", "answer": "7" },
+            { "problem": "has a figure", "answer": "7", "visual": 0 },
+        ]));
+        assert!(second_exemplar(&none).is_none());
+        assert!(second_exemplar(&with_exemplars(&json!([]))).is_none());
     }
 }

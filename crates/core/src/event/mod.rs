@@ -39,7 +39,7 @@ pub use kind::{
 };
 pub use note::{
     AnkiCardCreated, ConfigChanged, CurriculumChanged, DiagnosticAnswer, DiagnosticPlaced,
-    Enrolled, ProfileReset, Regraded, RemediationTriggered, SessionEnd, SessionStart,
+    Enrolled, GoalSet, ProfileReset, Regraded, RemediationTriggered, SessionEnd, SessionStart,
 };
 pub use scalar::{PositiveSecs, SchemaVersion, Secs, Slug, Timestamp, Weight};
 
@@ -103,6 +103,9 @@ pub enum Event {
     /// A diagnostic placed the learner.
     #[serde(rename = "diagnostic_placed")]
     DiagnosticPlaced(DiagnosticPlaced),
+    /// The learner set the daily XP goal.
+    #[serde(rename = "goal_set")]
+    GoalSet(GoalSet),
     /// Topics went back to an untouched state.
     #[serde(rename = "profile_reset")]
     ProfileReset(ProfileReset),
@@ -151,6 +154,7 @@ macro_rules! for_each_event {
             Event::RemediationTriggered($inner) => $body,
             Event::DiagnosticAnswer($inner) => $body,
             Event::DiagnosticPlaced($inner) => $body,
+            Event::GoalSet($inner) => $body,
             Event::ProfileReset($inner) => $body,
             Event::Regraded($inner) => $body,
             Event::AnkiCardCreated($inner) => $body,
@@ -182,6 +186,7 @@ macro_rules! event_type_name {
             Event::RemediationTriggered(_) => "remediation_triggered",
             Event::DiagnosticAnswer(_) => "diagnostic_answer",
             Event::DiagnosticPlaced(_) => "diagnostic_placed",
+            Event::GoalSet(_) => "goal_set",
             Event::ProfileReset(_) => "profile_reset",
             Event::Regraded(_) => "regraded",
             Event::AnkiCardCreated(_) => "anki_card_created",
@@ -197,8 +202,8 @@ macro_rules! event_type_name {
 }
 
 impl Event {
-    /// The 19 ordinary-task `type` values, in declaration order.
-    pub const TYPE_NAMES: [&'static str; 19] = [
+    /// The 20 ordinary-task `type` values, in declaration order.
+    pub const TYPE_NAMES: [&'static str; 20] = [
         "session_start",
         "session_end",
         "enrolled",
@@ -211,6 +216,7 @@ impl Event {
         "remediation_triggered",
         "diagnostic_answer",
         "diagnostic_placed",
+        "goal_set",
         "profile_reset",
         "regraded",
         "anki_card_created",
@@ -303,8 +309,8 @@ fn serialize_error(error: serde_json::Error) -> EventError {
 mod tests {
     use super::*;
 
-    /// The smallest valid body of each of the 19 types, in declaration order.
-    const MINIMAL: [&str; 19] = [
+    /// The smallest valid body of each of the 20 types, in declaration order.
+    const MINIMAL: [&str; 20] = [
         r#"{"type":"session_start","ts":"2026-03-02T09:00:00Z","session":"s"}"#,
         r#"{"type":"session_end","ts":"2026-03-02T09:00:00Z","session":"s"}"#,
         r#"{"type":"enrolled","ts":"2026-03-02T09:00:00Z","session":"s","course":"c"}"#,
@@ -317,6 +323,7 @@ mod tests {
         r#"{"type":"remediation_triggered","ts":"2026-03-02T09:00:00Z","session":"s","kind":"k","source_topic":"x"}"#,
         r#"{"type":"diagnostic_answer","ts":"2026-03-02T09:00:00Z","session":"s","topic":"x","correct":true,"secs":3,"weight":1.0}"#,
         r#"{"type":"diagnostic_placed","ts":"2026-03-02T09:00:00Z","session":"s"}"#,
+        r#"{"type":"goal_set","ts":"2026-03-02T09:00:00Z","session":"s","goal":60}"#,
         r#"{"type":"profile_reset","ts":"2026-03-02T09:00:00Z","session":"s"}"#,
         r#"{"type":"regraded","ts":"2026-03-02T09:00:00Z","session":"s","task_id":"t","topic":"x","reason":"r"}"#,
         r#"{"type":"anki_card_created","ts":"2026-03-02T09:00:00Z","session":"s","topic":"x","deck":"d","note_id":1,"front_hash":"h"}"#,

@@ -16,6 +16,7 @@ import { cleanup } from '@testing-library/react';
 import * as axeMatchers from 'vitest-axe/matchers';
 import 'vitest-axe/extend-expect';
 import { resetMathCache } from '@/lib/katex';
+import { resetMathEditorLoader } from '@/lib/math-editor-loader';
 import type { DiagnosisJob } from '@/api/types';
 
 expect.extend(axeMatchers);
@@ -371,6 +372,12 @@ beforeEach(() => {
   eventSources.length = 0;
   resizeObservers.length = 0;
   searchOverride = null;
+  // The structural editor never loads in a test unless the test installs the double. A
+  // rejecting importer keeps the plain field, which is what every existing test drives. The
+  // rejection reaches the field, which logs it once with console.error. That log is allowed
+  // here by its message; only `editor.test.tsx` asserts on the log itself.
+  allowConsoleError(/the math editor is off in this test/);
+  resetMathEditorLoader(() => Promise.reject(new Error('the math editor is off in this test')));
   document.head.innerHTML = '';
   // The document shell index.html provides. Boot resolves all three by id, so a bare body
   // fails every shell test for the wrong reason.
@@ -383,6 +390,7 @@ beforeEach(() => {
 afterEach(() => {
   cleanup();
   vi.useRealTimers();
+  resetMathEditorLoader();
 
   // Deliberately AFTER cleanup, so an unmount-time warning is caught too.
   const errors = consoleErrors.filter((e) => !allowed.some((re) => re.test(e)));

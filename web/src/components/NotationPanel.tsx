@@ -33,7 +33,7 @@ function useWide(): boolean {
   return wide;
 }
 
-function Chip({ label, text }: { label: string; text: string }) {
+function Chip({ label, text, latex }: { label: string; text: string; latex: string }) {
   return (
     <button
       type="button"
@@ -42,7 +42,7 @@ function Chip({ label, text }: { label: string; text: string }) {
       title={`Write ${text} in your answer`}
       // A mousedown steals focus from the answer field and the caret goes with it.
       onMouseDown={(e) => { e.preventDefault(); }}
-      onClick={() => { insertNotation(text); }}
+      onClick={() => { insertNotation(text, latex); }}
     >
       {text}
     </button>
@@ -56,9 +56,9 @@ function Row({ row }: { row: NotationRow }) {
       <MathBlock as="span" className="notation-rendered">{`$${row.latex}$`}</MathBlock>
       <div className="notation-chips">
         <span className="notation-chip-label muted small">Type</span>
-        <Chip label="typed" text={row.type} />
+        <Chip label="typed" text={row.type} latex={row.latex} />
         <span className="notation-chip-label muted small">LaTeX</span>
-        <Chip label="LaTeX" text={row.latex} />
+        <Chip label="LaTeX" text={row.latex} latex={row.latex} />
       </div>
     </li>
   );

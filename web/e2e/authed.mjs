@@ -129,7 +129,7 @@ async function main() {
   await page.waitForSelector('.view-diagnostic', { timeout: 25000 });
   run.note(onboard ? 'dashboard: onboarding (unplaced)' : 'dashboard: everyday (placed)');
   await page.getByRole('button', { name: 'Start the questions' }).click();
-  await page.waitForSelector('.view-diagnostic .intro-error, .view-diagnostic .answer-input', {
+  await page.waitForSelector('.view-diagnostic .intro-error, .view-diagnostic .answer-input, .view-diagnostic .answer-editor', {
     timeout: 30000,
   });
   const unavailable = await run.count('.intro-error');

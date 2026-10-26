@@ -13,7 +13,7 @@
  * `BASE` names the origin the server is on. `SHOTS` is where the screenshots land.
  */
 import {
-  checkMathRendered, checkNotBlank, checkSameProblem, finishWalk, startWalk,
+  checkMathRendered, checkNotBlank, checkSameProblem, finishWalk, startWalk, typeAnswer,
 } from './checks.mjs';
 
 const BASE = process.env.BASE ?? 'http://127.0.0.1:4173';
@@ -24,7 +24,7 @@ async function intoLesson() {
   await page.locator('.primary-action .btn-hero').click();
   await page.waitForSelector('.teach-card', { timeout: 25000 });
   await page.locator('.teach-card button').click();
-  await page.waitForSelector('.problem-card .answer-input', { timeout: 25000 });
+  await page.waitForSelector('.problem-card .answer-input, .problem-card .answer-editor', { timeout: 25000 });
   return {
     position: await run.text('.progress-count'),
     text: await run.text('.problem-text'),
@@ -86,7 +86,7 @@ async function main() {
   await checkMathRendered(run, '.teach-card', 'the worked example');
 
   await page.locator('.teach-card button').click();
-  await page.waitForSelector('.problem-card .answer-input', { timeout: 25000 });
+  await page.waitForSelector('.problem-card .answer-input, .problem-card .answer-editor', { timeout: 25000 });
   const first = {
     position: await run.text('.progress-count'),
     text: await run.text('.problem-text'),
@@ -119,7 +119,9 @@ async function main() {
   if (hint.includes('3/4')) run.fail(`Hard Rule 1: the hint carries the answer — "${hint}"`);
 
   // --- the grade, its solution, and the wait-for-Continue -------------------
-  await page.locator('.answer-input').fill('3/4');
+  // The step types 3/4 like a learner. The demo grader reads the editor's LaTeX. The probe
+  // below types '5' on the real keyboard.
+  await typeAnswer(page, '3/4');
   await page.locator('.actions .btn-primary').click();
   await page.waitForSelector('.feedback-correct', { timeout: 25000 });
   run.note(`graded · ${(await run.text('.feedback-head')).replace(/\n/g, ' ')}`);
@@ -131,7 +133,7 @@ async function main() {
   await page.locator('.feedback .actions .btn-primary').click();
   await page.waitForSelector('.teach-card', { timeout: 20000 });
   await page.locator('.teach-card button').click();
-  await page.waitForSelector('.problem-card .answer-input', { timeout: 25000 });
+  await page.waitForSelector('.problem-card .answer-input, .problem-card .answer-editor', { timeout: 25000 });
   const second = await run.text('.progress-count');
   run.note(`continued to ${second}`);
   if (second !== '2 / 4 · 2 left') run.fail(`the second problem reads ${second}, not 2 / 4 · 2 left`);
@@ -149,9 +151,9 @@ async function main() {
   await run.snap('placement-intro');
 
   await page.getByRole('button', { name: 'Start the questions' }).click();
-  await page.waitForSelector('.view-diagnostic .answer-input', { timeout: 25000 });
+  await page.waitForSelector('.view-diagnostic .answer-input, .view-diagnostic .answer-editor', { timeout: 25000 });
   run.note(`probe 1 · "${await run.text('.problem-text')}"`);
-  await page.locator('.answer-input').fill('5');
+  await typeAnswer(page, '5');
   await page.locator('.actions .btn-primary').click();
   await page.waitForSelector('.feedback-mark', { timeout: 25000 });
   run.note(`probe graded · ${(await run.text('.feedback-title'))}`);

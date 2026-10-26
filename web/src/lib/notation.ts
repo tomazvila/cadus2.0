@@ -44,7 +44,7 @@ export function filterSections(sections: NotationSection[], query: string): Nota
 const OPEN_KEY = 'cadus.notation.open';
 const listeners = new Set<() => void>();
 let open = readOpen();
-let inserter: ((text: string) => void) | null = null;
+let inserter: ((text: string, latex: string) => void) | null = null;
 
 function readOpen(): boolean {
   try { return window.localStorage.getItem(OPEN_KEY) === '1'; } catch { return false; }
@@ -76,16 +76,19 @@ export function useNotationOpen(): boolean {
   );
 }
 
-/** The answer field on screen gives its insert function here. It returns the undo. */
-export function registerInserter(fn: (text: string) => void): () => void {
+/**
+ * The answer field on screen gives its insert function here. It returns the undo.
+ * The plain field writes `text`. The structural editor inserts `latex`.
+ */
+export function registerInserter(fn: (text: string, latex: string) => void): () => void {
   inserter = fn;
   return () => { if (inserter === fn) inserter = null; };
 }
 
-/** Write `text` into the answer field at the caret. False when no typed field is on screen. */
-export function insertNotation(text: string): boolean {
+/** Write `text` (plain field) or `latex` (editor) into the answer field at the caret. False when no field is on screen. */
+export function insertNotation(text: string, latex: string): boolean {
   if (!inserter) return false;
-  inserter(text);
+  inserter(text, latex);
   return true;
 }
 
@@ -112,23 +115,44 @@ interface ContractLike {
   form?: string | undefined;
 }
 
+/** The kinds of answer that need their own keys. One table below decides the palette and the keypad. */
+export type ContractFamily =
+  | 'mixed' | 'fraction' | 'radical' | 'trig' | 'inequality' | 'interval' | 'exponent' | 'expression';
+
+/** The family of a served contract, or null when no family fits. The first match wins. */
+export function contractFamily(contract: ContractLike | undefined): ContractFamily | null {
+  if (!contract) return null;
+  const text = `${contract.kind} ${contract.form ?? ''}`;
+  if (/mixed_number/.test(text)) return 'mixed';
+  if (/fraction/.test(text)) return 'fraction';
+  if (/radical/.test(text)) return 'radical';
+  if (/trig|angle/.test(text)) return 'trig';
+  if (/inequal/.test(text)) return 'inequality';
+  if (/interval|set/.test(text)) return 'interval';
+  if (/exponent/.test(text)) return 'exponent';
+  if (/polynomial|expression|relation|function/.test(text)) return 'expression';
+  return null;
+}
+
+/** The palette keys of each family, in order. A fraction needs none. */
+const FAMILY_KEYS: Record<ContractFamily, SymbolKey[]> = {
+  mixed: ['mixed'],
+  fraction: [],
+  radical: ['√(', 'root'],
+  trig: ['π', 'θ', '°'],
+  inequality: ['≤', '≥', '≠', '∞'],
+  interval: ['∞', '±'],
+  exponent: ['^', '√('],
+  expression: ['^', '×', '÷'],
+};
+
 /**
  * The keys that the answer of one problem is likely to need, from the served contract.
  * A fraction needs none. A learner with no contract sees no key outside "More symbols".
  */
 export function contextKeys(contract: ContractLike | undefined): SymbolKey[] {
-  if (!contract) return [];
-  const text = `${contract.kind} ${contract.form ?? ''}`;
-  let keys: SymbolKey[] = [];
-  if (/mixed_number/.test(text)) keys = ['mixed'];
-  else if (/fraction/.test(text)) keys = [];
-  else if (/radical/.test(text)) keys = ['√(', 'root'];
-  else if (/trig|angle/.test(text)) keys = ['π', 'θ', '°'];
-  else if (/inequal/.test(text)) keys = ['≤', '≥', '≠', '∞'];
-  else if (/interval|set/.test(text)) keys = ['∞', '±'];
-  else if (/exponent/.test(text)) keys = ['^', '√('];
-  else if (/polynomial|expression|relation|function/.test(text)) keys = ['^', '×', '÷'];
-  return keys.slice(0, MAX_CONTEXT_KEYS);
+  const family = contractFamily(contract);
+  return family ? FAMILY_KEYS[family].slice(0, MAX_CONTEXT_KEYS) : [];
 }
 
 /** True if the answer is one plain number, so the field needs only a short width. */

@@ -19,6 +19,7 @@
 //! | `POST /api/enroll` | yes | append `enrolled` | clear | write |
 //! | `POST /api/session/start` | yes | append `session_start` | bind | write |
 //! | `POST /api/session/end` | yes | append `session_end` | clear | write |
+//! | `POST /api/goal/xp` | yes | append `goal_set` | no | write |
 //! | `GET /api/session/plan` | yes | read the open session | READ ONLY | read |
 //!
 //! "none" in the Events column means the route reads no event row when the
@@ -56,6 +57,7 @@ use cadus_store::state::{EventRow, SessionView};
 use sqlx::types::chrono::{DateTime, NaiveDate, Utc};
 
 mod dashboard;
+mod goal;
 mod lifecycle;
 mod plan;
 mod review_soon;
@@ -63,6 +65,7 @@ mod rollover;
 mod store;
 
 pub use dashboard::{GraphQuery, export, graph, modules, status};
+pub use goal::set_xp_goal;
 pub use lifecycle::{enroll, session_end, session_start};
 pub(crate) use plan::compose_plan;
 pub use plan::session_plan;

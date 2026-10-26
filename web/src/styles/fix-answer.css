@@ -27,3 +27,57 @@
   .sym-palette .sym-item { display: contents; }
   .sym-palette .sym-select { grid-column: span 2; }
 }
+
+/* The structural editor (MathLive). The plain input above stays as the fallback. */
+math-field.answer-editor {
+  display: block; box-sizing: border-box; width: 100%; max-width: 100%;
+  min-height: 44px; padding: 0.4rem 0.7rem;
+  font-size: max(1.1rem, 16px);
+  color: var(--text); background: var(--surface);
+  border: 1px solid var(--border); border-radius: 10px;
+  --hue: 215;
+  --caret-color: var(--accent);
+  --selection-background-color: var(--accent-weak);
+  --selection-color: var(--text);
+  --contains-highlight-background-color: var(--accent-weak);
+  --placeholder-color: var(--muted);
+  --smart-fence-color: var(--text);
+}
+math-field.answer-editor:focus-within {
+  outline: 2px solid var(--accent); outline-offset: 2px;
+  border-color: var(--accent);
+}
+math-field.answer-editor[read-only], math-field.answer-editor[aria-readonly="true"] {
+  opacity: 0.7; cursor: default;
+}
+/* Hide the menu and virtual-keyboard toggle buttons: the keypad opens on a tap in the field. */
+math-field.answer-editor::part(menu-toggle),
+math-field.answer-editor::part(virtual-keyboard-toggle) { display: none; }
+
+/* The MathLive keypad follows the theme. It is fixed to the bottom edge and is no wider than
+   the screen, so it adds no horizontal scroll on a phone. */
+:root {
+  --keyboard-zindex: 60;
+  --keyboard-background: var(--surface-2);
+  --keyboard-border: var(--border);
+  --keyboard-toolbar-text: var(--text);
+  --keyboard-toolbar-text-active: var(--accent);
+  --keyboard-accent-color: var(--accent);
+  --keycap-background: var(--surface);
+  --keycap-background-hover: var(--accent-weak);
+  --keycap-background-active: var(--accent);
+  --keycap-text: var(--text);
+  --keycap-text-active: var(--accent-ink);
+  --keycap-border: var(--border);
+  --keycap-border-bottom: var(--border);
+  --keycap-secondary-background: var(--surface-2);
+  --keycap-secondary-text: var(--text);
+  --keycap-secondary-border: var(--border);
+  --keycap-secondary-border-bottom: var(--border);
+  --keycap-shift-background: var(--surface-2);
+  --keycap-shift-text: var(--text);
+  --variant-panel-background: var(--surface-2);
+  --variant-keycap-text: var(--text);
+  --variant-keycap-text-active: var(--accent-ink);
+  --variant-keycap-background-active: var(--accent);
+}

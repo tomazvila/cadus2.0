@@ -96,10 +96,10 @@ fn the_blob_of_stream_1_is_the_committed_model_byte_for_byte() {
 #[test]
 fn the_fold_stamps_the_projector_version_and_the_config_hash() {
     // Integrated KP evidence changes the fold; the stamp invalidates older caches.
-    assert_eq!(PROJECTOR_VERSION, 9);
+    assert_eq!(PROJECTOR_VERSION, 10);
     let events = stream("stream_1.jsonl");
     let model = project(&events, &input()).expect("the fold succeeds");
-    assert_eq!(model.projector_version, Some(9));
+    assert_eq!(model.projector_version, Some(10));
     assert_eq!(model.config_hash.as_deref(), Some(CONFIG_HASH));
     // The parity comparison restamps the model with the 1.0 version and nothing else.
     assert_eq!(fold(&events).projector_version, Some(3));

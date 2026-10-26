@@ -51,7 +51,7 @@ import { ProgressDetails } from './dashboard/ProgressDetails';
 import { PrimaryAction } from './dashboard/PrimaryAction';
 import { RetentionCard } from './dashboard/RetentionCard';
 import '../styles/fix-dashboard.css';
-import type { ApiClient, JourneyCourse, PlanTask, StatusResponse } from '@/api/types';
+import type { ApiClient, JourneyCourse, PlanTask, StatusResponse, XpState } from '@/api/types';
 
 export interface DashboardProps {
   api: ApiClient;
@@ -145,6 +145,7 @@ interface State {
 type Action =
   | { type: 'reload' }
   | { type: 'ok'; gen: number; status: StatusResponse }
+  | { type: 'xp'; xp: XpState }
   | { type: 'fail'; gen: number };
 
 const INITIAL: State = { gen: 0, status: null, loadedGen: -1, failedGen: -1 };
@@ -162,6 +163,9 @@ function reduce(state: State, action: Action): State {
       return action.gen < state.loadedGen
         ? state
         : { ...state, status: action.status, loadedGen: action.gen };
+    case 'xp':
+      // A saved goal changes the totals under it. The heading, the ring and the streak read them.
+      return state.status ? { ...state, status: { ...state.status, xp: action.xp } } : state;
     case 'fail':
       return action.gen < state.failedGen ? state : { ...state, failedGen: action.gen };
   }
@@ -236,6 +240,11 @@ export function Dashboard({
     if (course) await doEnroll(course);
   };
 
+  /** D-XP1. The goal is saved. The reply holds the new totals, so the streak shows at once. */
+  const onGoalSaved = (xp: XpState): void => {
+    if (life.alive()) dispatch({ type: 'xp', xp });
+  };
+
   /** DEP-3. Read-only, through the cookie. See the module note above. */
   const exportData = async (): Promise<void> => {
     try {
@@ -274,6 +283,7 @@ export function Dashboard({
 
   const courses = status.courses;
   const today = num(status.xp.today);
+  // 40 is `DEFAULT_XP_GOAL` in the core crate.
   const goal = num(status.xp.goal, 40);
   const fraction = goal ? today / goal : 0;
 
@@ -339,6 +349,10 @@ export function Dashboard({
 
       {/* W-C5: everything else is quiet, under a native disclosure. */}
       <MoreMenu
+        api={api}
+        call={call}
+        goal={goal}
+        onGoalSaved={onGoalSaved}
         busy={busy}
         courses={courses}
         onMap={onMap}

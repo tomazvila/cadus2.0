@@ -19,6 +19,7 @@
  */
 import { mkdirSync } from 'node:fs';
 import { chromium } from 'playwright';
+import { typeAnswer } from './checks.mjs';
 
 const BASE = process.env.BASE ?? 'http://127.0.0.1:4174';
 const SHOTS = process.env.SHOTS ?? 'shots/phone-choices';
@@ -54,13 +55,13 @@ async function step() {
     await page.locator('.teach-card button').click();
     await page.waitForSelector('.problem-card', WAIT);
   }
-  await page.waitForSelector('.choice-buttons, .answer-input:not([disabled])', WAIT);
+  await page.waitForSelector('.choice-buttons, .answer-input:not([disabled]), .answer-editor', WAIT);
   if (await page.locator('.choice-buttons').count()) return true;
 
   const position = (await page.locator('.progress-count').textContent()).trim();
   const answer = TYPED_ANSWERS[Number(position.split('/')[0])];
   console.log(`typed problem ${position}: answer ${answer}`);
-  await page.locator('.answer-input').fill(answer);
+  await typeAnswer(page, answer);
   await page.getByRole('button', { name: 'Submit', exact: true }).click();
   await page.waitForSelector('.feedback .btn-primary', WAIT);
   await page.locator('.feedback .btn-primary').click();
@@ -87,7 +88,7 @@ if (onLabel) {
   const count = await buttons.count();
   console.log(`Label problem ${(await page.locator('.progress-count').textContent()).trim()}: ${count} buttons`);
   if (count !== 4) fails.push(`the Label problem shows ${count} buttons, not 4`);
-  if (await page.locator('.answer-input').count()) fails.push('the typed field is on the screen');
+  if (await page.locator('.answer-input, .answer-editor').count()) fails.push('the typed field is on the screen');
 
   const card = await page.locator('.choice-buttons').boundingBox();
   let lastBottom = -1;

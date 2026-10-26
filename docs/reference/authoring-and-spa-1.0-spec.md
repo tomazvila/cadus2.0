@@ -471,7 +471,9 @@ From the shipping SPA and the port's block Q (`web/test/react/a11y.test.tsx:1-18
 - **The math symbol palette** is a `role="toolbar"` with `aria-label="Math symbols"`; each key
   carries `aria-label="Insert {sym}"`. The symbols are
   `∞ π √( ^ ≤ ≥ ≠ ± × ÷ ° θ` (`static/ui.js:219,248-256`). `√(` inserts its opening paren so
-  the radicand lands inside.
+  the radicand lands inside. In editor mode (MathLive loaded) the keypad of the editor replaces
+  the palette: the keys come from `web/src/lib/keypad.ts` and the same contract table as the
+  palette. The palette stays in plain mode, which is the first control and the fallback.
 - **`mousedown` is suppressed on each symbol key**, so the caret position survives the tap
   (`static/ui.js:252-254`).
 - **Focus moves on every transition**: the answer input on a fresh problem, the Continue button
@@ -508,6 +510,7 @@ API on the same origin. This is the stack 1.0's port already runs
 | Browser tests | Playwright 1.62.1 | `web/e2e/node_modules/playwright/package.json` |
 | Math | KaTeX 0.17.0, vendored, woff2 only | `docs/FRONTEND_ARCHITECTURE.md:156-159` |
 | Graph | Cytoscape 3.34.1, dynamic `import()` behind a memo, marked `external` | `web/vite.config.ts:100-107` |
+| Math editor | MathLive 0.111.0, vendored, runtime import behind a memo, marked `external` | `web/public/vendor/mathlive/README`, `web/src/lib/math-editor-loader.ts` |
 
 Measured on 1.0's port: 96 npm packages, the whole spike suite about 1.1 s
 (`docs/FRONTEND_ARCHITECTURE.md:344`); entry bundle 190 KB raw / 60 KB gzipped, `dist/` 2.0 MB

@@ -249,6 +249,7 @@ pub fn create_app(state: AppState) -> Router {
         .route("/api/session/start", post(session::session_start))
         .route("/api/session/end", post(session::session_end))
         .route("/api/session/plan", get(session::session_plan))
+        .route("/api/goal/xp", post(session::set_xp_goal))
         // Unit U7, spec section 11. The same rule: before the three layers.
         .route("/api/task/{task_id}/serve", post(serve::serve))
         .route("/api/task/{task_id}/teach", post(serve::teach))

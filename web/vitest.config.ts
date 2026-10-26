@@ -20,6 +20,11 @@ export default defineConfig({
       // marks `/vendor/**` external, and `scripts/check-bundle-csp.mjs` proves the build
       // holds it).
       '/vendor/cytoscape/cytoscape.esm.min.mjs': here('./test/mocks/cytoscape.ts'),
+
+      // The same fix for the vendored MathLive build. Tests that need the editor install the
+      // double through `resetMathEditorLoader`; `test/setup.ts` installs a rejecting importer
+      // for every other test, so each one runs the plain field.
+      '/vendor/mathlive/mathlive.min.mjs': here('./test/mocks/mathlive.ts'),
     },
   },
 

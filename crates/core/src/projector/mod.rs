@@ -69,7 +69,8 @@ pub use regrade::apply_regrades;
 /// Version 7 indexes instructed application and delayed integrated assessments.
 /// Version 8 divides the velocity by the days the history covers.
 /// Version 9 passes a failed knowledge point on a passed confirmation item.
-pub const PROJECTOR_VERSION: i64 = 9;
+/// Version 10 reads the daily XP goal from the latest `goal_set` event.
+pub const PROJECTOR_VERSION: i64 = 10;
 
 /// The neutral prior a placed topic's diagnostic answers fold onto (`projector.py:98`).
 pub const ABILITY_SEED_PRIOR: f64 = 0.5;
@@ -85,6 +86,12 @@ pub const PLACEMENT_MEMORY_BASE: f64 = 1.0;
 
 /// The daily XP goal the 1.0 entry points default to (`projector.py:779`).
 pub const DEFAULT_XP_GOAL: i64 = 40;
+
+/// The lowest daily XP goal a learner can set.
+pub const MIN_XP_GOAL: i64 = 10;
+
+/// The highest daily XP goal a learner can set.
+pub const MAX_XP_GOAL: i64 = 100;
 
 /// What the fold reports instead of a panic.
 #[derive(Debug, Clone, PartialEq, Eq, thiserror::Error)]
@@ -306,6 +313,7 @@ impl<'a> Projector<'a> {
             Event::DiagnosticAnswer(body) => self.on_diagnostic_answer(body),
             Event::DiagnosticPlaced(body) => self.on_diagnostic_placed(body, ts, apply_fire),
             Event::ProfileReset(body) => self.on_profile_reset(body, apply_fire),
+            Event::GoalSet(body) => self.on_goal_set(body),
             Event::TaskServed(body) => self.on_task_served(body),
             Event::IntegratedAttempt(body) => self.on_integrated_attempt(body, apply_fire),
             Event::IntegratedServed(body) => self.integrated_journey.served(body),

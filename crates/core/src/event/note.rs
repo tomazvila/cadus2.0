@@ -180,6 +180,22 @@ pub struct DiagnosticPlaced {
     pub refresh: bool,
 }
 
+/// The learner set the daily XP goal. The fold applies the latest one to the whole log.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct GoalSet {
+    /// When the event happened.
+    pub ts: Timestamp,
+    /// The session id.
+    #[serde(default)]
+    pub session: Option<String>,
+    /// The schema version.
+    #[serde(default = "SchemaVersion::current")]
+    pub v: SchemaVersion,
+    /// The daily XP goal. The fold ignores a value outside 10 to 100.
+    pub goal: i64,
+}
+
 /// The named topics went back to an untouched state.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]

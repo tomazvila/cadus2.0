@@ -1,8 +1,14 @@
 /** The quiet "More" disclosure (W-C5): the study extras, then the account actions. */
 import type { Busy } from '@/hooks/useBusy';
-import type { JourneyCourse } from '@/api/types';
+import type { Call } from '@/hooks/useCall';
+import type { ApiClient, JourneyCourse, XpState } from '@/api/types';
+import { GoalControl } from './GoalControl';
 
 export interface MoreMenuProps {
+  api: ApiClient;
+  call: Call;
+  goal: number;
+  onGoalSaved: (xp: XpState) => void;
   busy: Busy;
   courses: JourneyCourse[];
   onMap: () => void;
@@ -14,11 +20,11 @@ export interface MoreMenuProps {
 }
 
 export function MoreMenu({
-  busy, courses, onMap, onProofs, onDiagnostic, quizNow, switchCourse, exportData,
+  api, call, goal, onGoalSaved, busy, courses, onMap, onProofs, onDiagnostic, quizNow, switchCourse, exportData,
 }: MoreMenuProps) {
   return (
     <details className="more-menu">
-      <summary>More: map, proofs, quiz, data</summary>
+      <summary>More: goal, map, proofs, quiz, data</summary>
       <div className="more-actions">
         <button type="button" className="btn" onClick={onMap}>
           Map
@@ -39,6 +45,8 @@ export function MoreMenu({
           Starting questions again
         </button>
       </div>
+      <h3 className="more-heading">Your daily goal</h3>
+      <GoalControl api={api} call={call} goal={goal} onSaved={onGoalSaved} />
       <h3 className="more-heading">Your account</h3>
       <div className="more-actions">
         <button

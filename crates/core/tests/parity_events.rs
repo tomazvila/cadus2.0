@@ -65,7 +65,7 @@ fn the_digest_index_holds_the_pinned_metadata() {
     assert_eq!(index.goal, GOAL);
     assert_eq!(index.projector_version, ORACLE_PROJECTOR_VERSION);
     assert_eq!(index.projector_version, 3);
-    assert_eq!(PROJECTOR_VERSION, 9);
+    assert_eq!(PROJECTOR_VERSION, 10);
     assert_eq!(index.config_hash, CONFIG_HASH);
     assert_eq!(index.zones, ["UTC", NEW_YORK, "UTC_no_regrades"]);
     assert_eq!(index.streams.len(), STREAMS);
@@ -172,7 +172,14 @@ fn the_seeded_family_reaches_every_event_type() {
     // either. Their wire forms are pinned by `events.rs` and the focused
     // projector suites; this test measures the historical fixture family.
     for name in Event::TYPE_NAMES {
-        if ["retention_probe", "drill_result", "ordinary_problem_served"].contains(&name) {
+        if [
+            "retention_probe",
+            "drill_result",
+            "ordinary_problem_served",
+            "goal_set",
+        ]
+        .contains(&name)
+        {
             assert!(!seen.contains(name));
             continue;
         }

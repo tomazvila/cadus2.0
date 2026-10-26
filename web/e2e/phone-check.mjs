@@ -25,8 +25,25 @@ await page.locator('.primary-action .btn-hero').click();
 await page.waitForSelector('.teach-card', { timeout: 25000 });
 await overflow('lesson-teach');
 await page.locator('.teach-card button').click();
-await page.waitForSelector('.problem-card .answer-input', { timeout: 25000 });
+await page.waitForSelector('.problem-card .answer-input, .problem-card .answer-editor', { timeout: 25000 });
 await overflow('lesson-practice');
+
+// The structural editor replaces the plain input when the vendored module loads. Give it time,
+// tap the field to open the keypad, and measure again with the keypad open. If the editor
+// never loads (the module is blocked, or the build has none), say so: the plain field is
+// then the control and there is no keypad to measure.
+const editor = await page.waitForSelector('.problem-card .answer-editor', { timeout: 8000 }).catch(() => null);
+if (editor) {
+  await editor.click();
+  const keypad = await page.waitForSelector('.ML__keyboard.is-visible', { timeout: 8000 }).catch(() => null);
+  console.log(keypad ? 'keypad open' : 'keypad did NOT open after a tap');
+  if (!keypad) fails.push('the keypad did not open after a tap on the field');
+  await page.screenshot({ path: '/tmp/shots/phone-keypad.png' });
+  await overflow('lesson-keypad');
+  await editor.evaluate((el) => el.blur());
+} else {
+  console.log('editor did not load: plain field only, no keypad to measure');
+}
 
 // a Tier 2 exemplar practice: the canned demo walk covers the same serve path;
 // the practice card above IS the exemplar-path component, so this covers the

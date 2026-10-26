@@ -101,7 +101,7 @@ async fn open_run(req: &Ready, tx: &mut crate::session::Tx) -> Result<Option<Dia
 ///
 /// The recorded answers keep their weight. No event and no report row is
 /// written. When the scratch holds no live probe, the next probe is dealt.
-async fn resume(req: &Ready, mut tx: crate::session::Tx, diag: DiagState) -> Reply {
+async fn resume(req: &Ready, mut tx: crate::session::Tx, mut diag: DiagState) -> Reply {
     let mut scratch = req.read_state(&mut tx).await?;
     let live = scratch
         .served
@@ -119,12 +119,12 @@ async fn resume(req: &Ready, mut tx: crate::session::Tx, diag: DiagState) -> Rep
         });
     let probe = match live {
         Some(probe) => Some(probe),
-        None => deal_probe(&diag, &req.content, &mut scratch, req.now),
+        None => deal_probe(&mut diag, &req.content, &mut scratch, req.now),
     };
     save_diagnostic(&req.state, &mut tx, req.user_id, &diag, &scratch).await?;
     let body = json!({
         "probe": probe,
-        "asked": diag.answered.len(),
+        "asked": diag.question_count(),
         "cap": req.content.cfg.diag.max_questions,
     });
     reply_committed(tx, body).await
@@ -162,7 +162,7 @@ pub async fn start(req: Ready, body: Option<Json<Value>>) -> Reply {
         req.append_and_fold(&mut tx, &event, &input).await?;
     }
 
-    let diag = markable_diagnostic(&req.content, course.id.as_str());
+    let mut diag = markable_diagnostic(&req.content, course.id.as_str());
     req.store(cadus_store::reports::diagnostics::start(
         &mut tx,
         req.user_id,
@@ -172,12 +172,12 @@ pub async fn start(req: Ready, body: Option<Json<Value>>) -> Reply {
     ))
     .await?;
     let mut scratch = req.read_state(&mut tx).await?;
-    let probe = deal_probe(&diag, &req.content, &mut scratch, req.now);
+    let probe = deal_probe(&mut diag, &req.content, &mut scratch, req.now);
     save_diagnostic(&req.state, &mut tx, req.user_id, &diag, &scratch).await?;
 
     let body = json!({
         "probe": probe,
-        "asked": diag.answered.len(),
+        "asked": diag.question_count(),
         "cap": req.content.cfg.diag.max_questions,
     });
     reply_committed(tx, body).await
@@ -203,7 +203,7 @@ pub async fn current(req: Ready) -> Reply {
     let body = json!({
         "open": true,
         "course": diag.course,
-        "asked": diag.answered.len(),
+        "asked": diag.question_count(),
         "cap": req.content.cfg.diag.max_questions,
         "probe": probe,
     });
@@ -359,6 +359,7 @@ pub async fn answer(req: Ready, body: Option<Json<Value>>) -> Reply {
         crate::problem_reports::apply(&req.state, &req.content, &mut tx, &mut served, &submitted)
             .await?;
     let (topic, kind) = probe_topic(&diag, graph, &served)?;
+    let second = diag.awaits_second(topic.as_str());
 
     let marked = mark_probe(
         graph,
@@ -371,7 +372,27 @@ pub async fn answer(req: Ready, body: Option<Json<Value>>) -> Reply {
     );
     if marked.outcome.is_ungraded() {
         // The probe was asked, but it contributes no placement evidence.
-        diag.answered.push(topic.as_str().to_owned());
+        if second {
+            diagnostic::apply_second_answer(
+                &mut diag,
+                graph,
+                topic.as_str(),
+                false,
+                0.0,
+                &req.content.cfg,
+            );
+        } else {
+            diag.answered.push(topic.as_str().to_owned());
+        }
+    } else if second {
+        diagnostic::apply_second_answer(
+            &mut diag,
+            graph,
+            topic.as_str(),
+            marked.correct,
+            marked.weight,
+            &req.content.cfg,
+        );
     } else {
         diagnostic::apply_answer(
             &mut diag,
@@ -396,14 +417,14 @@ pub async fn answer(req: Ready, body: Option<Json<Value>>) -> Reply {
         &submitted,
     );
     req.append(&mut tx, &event).await?;
+    // Deal first, so the saved snapshot holds the `supplemental` flag.
+    let next = deal_probe(&mut diag, &req.content, &mut scratch, req.now);
     req.store(cadus_store::reports::diagnostics::save(
         &mut tx,
         req.user_id,
         &json!(diag),
     ))
     .await?;
-
-    let next = deal_probe(&diag, &req.content, &mut scratch, req.now);
     save_diagnostic(&req.state, &mut tx, req.user_id, &diag, &scratch).await?;
 
     let next_probe = next.unwrap_or_else(|| json!({ "done": true }));

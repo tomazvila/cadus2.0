@@ -26,6 +26,7 @@ import type {
   SessionResponse,
   SignupResponse,
   ReviewSoonResponse,
+  XpGoalResponse,
   StatusResponse,
 } from './types';
 import type {
@@ -111,6 +112,8 @@ export interface ApiClient {
   enroll(course: string): Promise<EnrollResponse>;
   /** Bring the next review of a practiced topic forward. `409` before the first lesson. */
   reviewSoon(topicId: string): Promise<ReviewSoonResponse>;
+  /** Set the daily XP goal, from 10 to 100. The new goal applies to every day of the streak. */
+  setXpGoal(goal: number): Promise<XpGoalResponse>;
 
   // The session and the study loop.
   sessionStart(): Promise<SessionStartResponse>;
@@ -239,6 +242,7 @@ export const ROUTES: readonly RouteRow[] = [
   { method: 'GET', path: '/api/report/retention', auth: 'S', via: 'method', client: 'getRetentionReport' },
   { method: 'POST', path: '/api/enroll', auth: 'S', via: 'method', client: 'enroll' },
   { method: 'POST', path: '/api/topics/{topic_id}/review-soon', auth: 'S', via: 'method', client: 'reviewSoon' },
+  { method: 'POST', path: '/api/goal/xp', auth: 'S', via: 'method', client: 'setXpGoal' },
   { method: 'POST', path: '/api/session/start', auth: 'S', via: 'method', client: 'sessionStart' },
   { method: 'POST', path: '/api/session/end', auth: 'S', via: 'method', client: 'sessionEnd' },
   { method: 'GET', path: '/api/session/plan', auth: 'S', via: 'method', client: 'getPlan' },

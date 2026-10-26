@@ -5,8 +5,8 @@ mod diagnostic;
 use std::collections::BTreeSet;
 
 use crate::event::{
-    Attempt, Enrolled, KpProgress, LessonResult, ProfileReset, QuizResult, RemediationTriggered,
-    ReviewResult, Slug, TaskServed, TopicStatus, WorkQuality,
+    Attempt, Enrolled, GoalSet, KpProgress, LessonResult, ProfileReset, QuizResult,
+    RemediationTriggered, ReviewResult, Slug, TaskServed, TopicStatus, WorkQuality,
 };
 use crate::fire::interval_for;
 use crate::learner::{
@@ -14,7 +14,7 @@ use crate::learner::{
 };
 use crate::selector::REMEDIATION_CONFIRM_FAILED;
 
-use super::{ABILITY_SEED_PRIOR, Projector, clamp01};
+use super::{ABILITY_SEED_PRIOR, MAX_XP_GOAL, MIN_XP_GOAL, Projector, clamp01};
 
 impl Projector<'_> {
     /// Count each completed task once.
@@ -344,6 +344,16 @@ impl Projector<'_> {
             .cloned()
             .collect();
         self.remediation.push((ts, event.kind.clone(), targets));
+    }
+
+    /// `goal_set`: the latest valid goal in the log sets the streak goal.
+    ///
+    /// A value outside `MIN_XP_GOAL..=MAX_XP_GOAL` keeps the current goal. The goal is a
+    /// light index, so the handler ignores `apply_fire`.
+    pub(super) fn on_goal_set(&mut self, event: &GoalSet) {
+        if (MIN_XP_GOAL..=MAX_XP_GOAL).contains(&event.goal) {
+            self.goal = event.goal;
+        }
     }
 
     /// `profile_reset` (`projector.py:424-435`): a clean slate for each named topic.

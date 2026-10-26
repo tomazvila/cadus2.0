@@ -25,8 +25,8 @@ describe('the demo client', () => {
     // instruction row completed the A4.1 journey; the two question-report routes brought it
     // to 45, the equivalence and proof-grading polls (Amendment K) brought it to 47, and
     // the active worked-example check (step 5a) brought it to 48, and the S6 content
-    // revoke brings it to 49, the five routes of the proof revision loop (D-PR1) to 54, the overturn report to 55, the review-soon request to 56, and the open-run read of the placement to 57.
-    expect(named.length).toBe(57);
+    // revoke brings it to 49, the five routes of the proof revision loop (D-PR1) to 54, the overturn report to 55, the review-soon request to 56, and the open-run read of the placement to 57, and the daily XP goal (D-XP1) to 58.
+    expect(named.length).toBe(58);
     for (const member of named) {
       expect(typeof demo[member], `the demo lacks ${member}`).toBe('function');
     }
@@ -90,6 +90,20 @@ describe('the demo serve', () => {
       expect(problem.index).toBe(1);
     }
     expect(seen).toEqual(['demo-p1', 'demo-p1', 'demo-p1']);
+  });
+
+  it('GRADE-latex: a fraction typed in the editor grades like the plain text', async () => {
+    vi.useFakeTimers();
+    for (const answer of ['\\frac34', '\\frac{3}{4}', '3/4']) {
+      const demo = createDemoApi();
+      const s = demo.taskServe('demo-lesson');
+      await vi.runAllTimersAsync();
+      const served = await s;
+      const a = demo.taskAnswer('demo-lesson', { problem_id: served.problem_id, answer });
+      await vi.runAllTimersAsync();
+      const graded = await a;
+      expect(('correct' in graded && graded.correct) ? answer : 'wrong:' + answer).toBe(answer);
+    }
   });
 
   it('SERVE-idem: only a committed answer moves the cursor', async () => {

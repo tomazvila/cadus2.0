@@ -28,7 +28,7 @@ export function MainTiles({ status, finishBy, finishTitle }: MainTilesProps) {
     <>
       <div className="stat-grid stat-grid-main">
         <Stat value={`${streak}`} label="day streak" className="accent"
-          title="Days in a row with at least one answered problem." />
+          title="Days in a row that reached your daily goal." />
         <Stat value={`${due}`} label="due now" className={due > 0 ? 'warn' : undefined}
           title="Reviews to do today. If you skip them, you forget the skill." />
         <Stat value={`${num(status.frontier)}`} label="new topics"

@@ -1,0 +1,36 @@
+MathLive 0.111.0 - vendored.
+
+Source: npm package mathlive@0.111.0 (npm pack mathlive@0.111.0), retrieved on 2026-10-26.
+  npm integrity: sha512-jOcmftawnJgFerkOxKk8aVZeOxL9qgX/kF2D9+AOL5MpNYWYllXpkzDs1uSWJEUAOZhJuq86jzL18/1j0oOLWg==
+  In this package the file sits at the package root, not under dist/: package/mathlive.min.mjs
+  and package/fonts/*.woff2.
+License: MIT (Arno Gourdol). See LICENSE alongside.
+Integrity: sha256-9ASD6slTReK0BwLTNxv8ojW9ZSS6WQnZHQ3Pnn+BKI8=
+  Re-verify the copy in this tree with:
+    openssl dgst -sha256 -binary mathlive.min.mjs | openssl base64
+
+Files here: mathlive.min.mjs, LICENSE, fonts/ (the 20 woff2 files only).
+
+The answer field loads the module at runtime, and only when an answer screen opens:
+
+  const mod = await import('/vendor/mathlive/mathlive.min.mjs');
+
+Why this tree (spec section 4.6):
+
+- The file sits under `public/`, so Vite copies it verbatim into `dist/`. `vite.config.ts`
+  marks `/vendor/**` external, so the specifier survives into the bundle as a runtime URL.
+  The 841 KB library stays out of the entry chunk. `mathlive` is NOT in `package.json`.
+- The deployed CSP is `default-src 'self'` with no `script-src`, no `unsafe-eval`, no
+  `worker-src`, and `font-src 'self'` (crates/web/src/security.rs:25-29). Audit of
+  `mathlive.min.mjs` on 2026-10-26: zero hits for `eval(`, `new Function`, `new Worker`,
+  `new SharedWorker`, `importScripts`. Zero `data:` URIs: the 43 hits of the text `data:`
+  are object property names (`{data:e,inputType:"insertText"}`); no hit has a media type
+  or `;base64`. `scripts/check-bundle-csp.mjs` runs the same check over `dist/` on every
+  build.
+- The code sets `MathfieldElement.fontsDirectory` to `/vendor/mathlive/fonts` and
+  `soundsDirectory` to null, so the fonts load from the same origin and no sound file loads.
+  The sounds directory of the package is not vendored.
+
+To move to another MathLive release, replace the whole directory and redo the audit.
+
+Do not edit these files.

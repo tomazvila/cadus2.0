@@ -273,6 +273,8 @@ velocity:      VelocityState() when enrolled_course is None                 # pr
 window_start = local_day(t,tz) - (28-1) days ; membership test is `>= start`  # xp.py:192-194
 ```
 
+2.0: `goal` is the value of the latest `goal_set` event in 10..100; with no such event it is `ProjectionInput.goal` (40).
+
 XP pricing (`xp.py:68–143`): `base = 3.5*kp_count | 5.0 review | 15.0 quiz | 15.0 multi-step | 5.0 drill | 0.0 diagnostic`. `xp = base * tier_mult`, with `tier_mult *= 1.5**(max(1,run)-1)` for `blowoff`. If `rushing and xp > 0.0`: `xp *= 0.5`. `diagnostic` short-circuits to `0.0`. `is_rushing(correct, secs, expected)` = `False` when `correct` or `secs<=0` or `expected<=0`, else `secs < 0.5*expected`.
 
 `pending_remediation` (`projector.py:596–614`): in trigger order, keep targets whose `last_practice` is missing or **strictly before** the trigger ts; drop empty; dedup on `(kind, tuple(open_targets))`, first wins.

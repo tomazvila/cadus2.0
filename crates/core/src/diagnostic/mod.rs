@@ -74,6 +74,12 @@ pub const SLOW_WEIGHT_FLOOR: f64 = 0.3;
 /// `probe_set` is the subset the diagnostic is allowed to ASK. `answered` is the
 /// ordered list of topics it did ask. A stored key this struct does not name is
 /// ignored on load, so an older row needs no migration.
+///
+/// `missed` and `second` serve the second phase. `missed` holds the weight of the
+/// first direct answer of each topic that the learner missed. `second` holds the
+/// topics that were asked a second time, and whether that second answer was
+/// correct. A row stored before the second phase has neither key and reads as
+/// empty.
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
 pub struct DiagState {
     /// The enrolled course, or `None` for the whole curriculum.
@@ -88,12 +94,32 @@ pub struct DiagState {
     /// The topics already asked, in the order they were asked.
     #[serde(default)]
     pub answered: Vec<String>,
-    /// Whether this is a supplemental mini-diagnostic.
+    /// Whether the run is in the second phase, which re-asks thin and missed topics.
     #[serde(default)]
     pub supplemental: bool,
+    /// The weight of the first direct answer of each topic that was missed.
+    #[serde(default)]
+    pub missed: IndexMap<String, f64>,
+    /// The topics asked a second time. The value is true when that answer was correct.
+    #[serde(default)]
+    pub second: IndexMap<String, bool>,
 }
 
 impl DiagState {
+    /// The count of questions asked: first answers and second answers.
+    #[must_use]
+    pub fn question_count(&self) -> usize {
+        self.answered.len() + self.second.len()
+    }
+
+    /// Whether the next answer of `topic` is its second answer.
+    #[must_use]
+    pub fn awaits_second(&self, topic: &str) -> bool {
+        self.supplemental
+            && self.answered.iter().any(|asked| asked == topic)
+            && !self.second.contains_key(topic)
+    }
+
     /// Whether the topic is in the universe.
     #[must_use]
     pub fn in_universe(&self, topic: &str) -> bool {
@@ -223,6 +249,8 @@ pub fn init_session(graph: &Curriculum, cfg: &Config, course: Option<&str>) -> D
         balances,
         answered: Vec::new(),
         supplemental: false,
+        missed: IndexMap::new(),
+        second: IndexMap::new(),
     }
 }
 
@@ -301,7 +329,78 @@ pub fn apply_answer(
 
     if !state.answered.iter().any(|asked| asked == topic) {
         state.answered.push(topic.to_owned());
+        if !correct {
+            state.missed.insert(topic.to_owned(), weight);
+        }
     }
+}
+
+/// Fold the second answer of a topic into the tally.
+///
+/// The second answer moves the asked topic. It does not credit an ancestor and
+/// it does not debit a descendant. Four cases:
+///
+/// - First miss, second correct: the miss is undone. The topic gets back the
+///   miss weight and takes the second weight. Each descendant and each sibling
+///   leaf gets back what the miss took from it.
+/// - First miss, second miss: the miss stands. Only the record changes.
+/// - First correct, second correct: the topic takes the second weight and leaves
+///   the conditional list in [`placement`].
+/// - First correct, second miss: the balance of the topic goes to zero. The
+///   topic is not placed. The ancestors keep the credit of the first answer.
+///
+/// A weight of zero with `correct == false` is an answer that could not be
+/// marked. It only records the second ask. The call does nothing for a topic
+/// outside the universe, a topic not asked before, or a topic already asked twice.
+pub fn apply_second_answer(
+    state: &mut DiagState,
+    graph: &Curriculum,
+    topic: &str,
+    correct: bool,
+    weight: f64,
+    cfg: &Config,
+) {
+    let asked_before = state.answered.iter().any(|asked| asked == topic);
+    if !state.in_universe(topic) || !asked_before || state.second.contains_key(topic) {
+        return;
+    }
+    let first_miss = state.missed.get(topic).copied();
+    match (first_miss, correct) {
+        (Some(miss), true) => {
+            let mut back: BTreeMap<String, f64> = BTreeMap::new();
+            back.insert(topic.to_owned(), miss + weight);
+            if let Some(idx) = graph.idx_of(topic) {
+                for other in graph.descendants(idx) {
+                    back.insert(graph.id_of(other).to_owned(), miss * MISS_DESCENDANT_SHARE);
+                }
+                if is_leaf(graph, idx) {
+                    let lateral = cfg.diag.sibling_credit * miss;
+                    for sibling in sibling_leaves(graph, idx, state) {
+                        back.insert(sibling, lateral);
+                    }
+                }
+            }
+            for (id, change) in back {
+                if let Some(balance) = state.balances.get_mut(&id) {
+                    *balance += change;
+                }
+            }
+        }
+        (Some(_), false) => {}
+        (None, true) => {
+            if let Some(balance) = state.balances.get_mut(topic) {
+                *balance += weight;
+            }
+        }
+        (None, false) => {
+            if weight > 0.0
+                && let Some(balance) = state.balances.get_mut(topic)
+            {
+                *balance = 0.0;
+            }
+        }
+    }
+    state.second.insert(topic.to_owned(), correct);
 }
 
 // --------------------------------------------------------------------------- //
@@ -328,7 +427,7 @@ pub fn undetermined_set(state: &DiagState) -> BTreeSet<String> {
 /// `diag.max_questions` answers stand.
 #[must_use]
 pub fn next_probe(state: &DiagState, graph: &Curriculum, cfg: &Config) -> Option<String> {
-    if state.answered.len() as i64 >= cfg.diag.max_questions {
+    if state.question_count() as i64 >= cfg.diag.max_questions {
         return None;
     }
     let undetermined = undetermined_set(state);
@@ -361,6 +460,75 @@ pub fn next_probe(state: &DiagState, graph: &Curriculum, cfg: &Config) -> Option
     best.map(|(_, id)| id.to_owned())
 }
 
+/// The next question of the run.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum Next {
+    /// The first ask of this topic.
+    First(String),
+    /// The second ask of this topic, with another exemplar.
+    Second(String),
+}
+
+/// Whether a placed balance is thin: above zero and at or under
+/// `diag.conditional_max`.
+#[must_use]
+pub fn is_conditional(balance: f64, cfg: &Config) -> bool {
+    balance > 0.0 && balance <= cfg.diag.conditional_max
+}
+
+/// The next question: a first probe, or in the second phase a second probe.
+///
+/// When [`next_probe`] gives a topic, that topic is the answer. When it gives
+/// none and fewer than `diag.max_questions` questions stand, the second phase
+/// asks each of these topics once, in this order:
+///
+/// 1. Topics with a direct first miss, the lowest balance first.
+/// 2. Topics with a thin positive balance (see [`is_conditional`]), the lowest
+///    balance first.
+///
+/// A tie takes the lowest id. A topic that was never asked directly gets no
+/// second probe. The closure `has_second` tells if a topic has a second exemplar;
+/// the contract rule lives in the web crate. The first call that returns
+/// [`Next::Second`] sets `supplemental`.
+pub fn next_question(
+    state: &mut DiagState,
+    graph: &Curriculum,
+    cfg: &Config,
+    has_second: impl Fn(&str) -> bool,
+) -> Option<Next> {
+    if let Some(topic) = next_probe(state, graph, cfg) {
+        return Some(Next::First(topic));
+    }
+    if state.question_count() as i64 >= cfg.diag.max_questions {
+        return None;
+    }
+    let mut best: Option<(u8, f64, &str)> = None;
+    for topic in &state.answered {
+        if state.second.contains_key(topic) || !has_second(topic) {
+            continue;
+        }
+        let Some(&balance) = state.balances.get(topic) else {
+            continue;
+        };
+        let rank = if state.missed.contains_key(topic) {
+            0
+        } else if is_conditional(balance, cfg) {
+            1
+        } else {
+            continue;
+        };
+        let better = best.is_none_or(|(best_rank, best_balance, best_id)| {
+            (rank, balance, topic.as_str()) < (best_rank, best_balance, best_id)
+        });
+        if better {
+            best = Some((rank, balance, topic.as_str()));
+        }
+    }
+    let topic = best?.2.to_owned();
+    state.supplemental = true;
+    Some(Next::Second(topic))
+}
+
 // --------------------------------------------------------------------------- //
 // Placement
 // --------------------------------------------------------------------------- //
@@ -387,7 +555,7 @@ pub fn placement(state: &DiagState, cfg: &Config) -> PlacementResult {
     for (id, balance) in sorted {
         if balance > 0.0 {
             placed.insert(id.to_owned(), balance);
-            if balance <= cfg.diag.conditional_max {
+            if is_conditional(balance, cfg) && state.second.get(id) != Some(&true) {
                 conditional.push(id.to_owned());
             }
         } else if balance == 0.0 && !asked.contains(id) {

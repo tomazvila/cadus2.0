@@ -309,9 +309,9 @@ describe('the dashboard', () => {
     await mount();
     const more = document.querySelector('details.more-menu') as HTMLDetailsElement;
     expect(more.open).toBe(false);
-    // Six actions, "Your proofs" (D-PR1) among them. The retention card (D-F11) stands on
-    // the main dashboard.
-    expect(more.querySelectorAll('button').length).toBe(6);
+    // Twelve buttons: six actions, "Your proofs" (D-PR1) among them, then the five goal
+    // presets and "Set goal" (D-XP1). The retention card (D-F11) stands on the main dashboard.
+    expect(more.querySelectorAll('button').length).toBe(12);
   });
 
   it('reports zero axe violations', async () => {

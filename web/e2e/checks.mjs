@@ -21,6 +21,54 @@ export const FAIL_SERVE = 'FAIL-3 wrong problem';
 const RAW_TEX = /\\(frac|dfrac|sqrt|times)/;
 
 /**
+ * Type an answer into whichever control the problem shows.
+ *
+ * The plain `.answer-input` is on screen first. The editor (`.answer-editor`, MathLive)
+ * takes its place when the vendored module loads, so the plain input may leave the page
+ * between the wait and the fill. The loop reads the page again when that happens.
+ * On the editor: click it, type, then blur it so the keypad closes and the Submit button is free.
+ *
+ * The editor turns the typed `3/4` into the fraction `\frac34`. The canned grader of the demo
+ * backend compares plain text, so a step that needs the literal text passes `literal: true`:
+ * the editor then takes the text as it is, through `setValue`, and fires `input`.
+ *
+ * @param {import('playwright').Page} page
+ * @param {string} text
+ * @param {{ literal?: boolean }} [opts]
+ */
+export async function typeAnswer(page, text, opts = {}) {
+  await page.waitForSelector('.answer-input, .answer-editor', { timeout: 25000 });
+  let last;
+  for (let attempt = 0; attempt < 3; attempt += 1) {
+    try {
+      if (await page.locator('.answer-editor').count()) {
+        const editor = page.locator('.answer-editor');
+        await editor.click({ timeout: 5000 });
+        if (opts.literal) {
+          await editor.evaluate((el, value) => {
+            el.setValue(value);
+            el.dispatchEvent(new Event('input', { bubbles: true }));
+          }, text);
+        } else {
+          // A key that arrives before the field takes the focus is lost. Read the field back
+          // and type again when it is empty.
+          await page.keyboard.type(text);
+          const held = await editor.evaluate((el) => el.getValue('latex'));
+          if (held === '') throw new Error('the editor holds no text after the typing');
+        }
+        await editor.evaluate((el) => el.blur());
+      } else {
+        await page.locator('.answer-input').fill(text, { timeout: 5000 });
+      }
+      return;
+    } catch (err) {
+      last = err;
+    }
+  }
+  throw last;
+}
+
+/**
  * One run: the page, its recorder, its screenshots, and its step log.
  *
  * Every console error, page error, failed request and 4xx/5xx lands in `problems`, and a

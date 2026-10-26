@@ -13,6 +13,12 @@
  *
  * The caller reads the answer through the handle, never through state.
  *
+ * THE PLAIN INPUT COMES FIRST. The structural editor (`MathEditor`, MathLive) loads after the
+ * mount. While the module loads, and for good if it fails, the plain input is the control.
+ * When the load succeeds, the editor takes its place with the typed text and the saved
+ * draft. In editor mode the answer is the LaTeX of the editor, and the keypad replaces the
+ * palette and the preview.
+ *
  * THE KEY HANDLERS LIVE IN THE JSX, not in an effect. React attaches them in the first
  * commit, so an Enter in the frame after mount submits once. Installed from a passive effect,
  * that first Enter reaches nothing and the learner's first submit is silently dropped.
@@ -20,6 +26,8 @@
 import { useCallback, useEffect, useImperativeHandle, useRef, useState, type KeyboardEvent, type Ref } from 'react';
 import '../styles/fix-answer.css';
 import { AnswerPreview } from '@/components/AnswerPreview';
+import { MathEditor, type MathEditorHandle } from '@/components/MathEditor';
+import { loadMathEditor } from '@/lib/math-editor-loader';
 import {
   ALL_SYMBOL_KEYS, clearDraft, contextKeys, isPlainNumber, readDraft, readMoreOpen, registerInserter,
   setNotationOpen, useNotationOpen, writeDraft, writeMoreOpen, type SymbolKey,
@@ -51,6 +59,12 @@ const ROOT_INDEXES = [3, 4, 5, 6, 7, 8, 9] as const;
 
 /** The line under the field when the learner submits nothing. */
 export const EMPTY_ANSWER_LINE = 'Type an answer, then press Submit.';
+
+/** The line under the editor when the answer holds an empty box. */
+export const EMPTY_SLOT_LINE = 'Fill every empty box, then press Submit.';
+
+/** An empty box of the editor shows in its LaTeX as `\placeholder`. */
+const PLACEHOLDER = /\\placeholder/;
 
 export interface AnswerFieldHandle {
   /** The trimmed answer, read synchronously at submit time. */
@@ -101,7 +115,13 @@ export function AnswerField({
   const [shown, setShown] = useState('');
   const [rootIndex, setRootIndex] = useState<number>(3);
   const [moreOpen, setMoreOpen] = useState<boolean>(readMoreOpen);
-  const [emptyNote, setEmptyNote] = useState(false);
+  const [emptyNote, setEmptyNote] = useState<string>('');
+  // Set when the editor takes over: the text of the plain input at that moment.
+  const [editorSeed, setEditorSeed] = useState<string | null>(null);
+  const editorOn = editorSeed !== null;
+  const editorRef = useRef<MathEditorHandle>(null);
+  // Whether the plain input held the focus at the switch.
+  const refocus = useRef(false);
   const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   // The preview follows the input through a debounce; it is never the source of the value.
   const refresh = () => {
@@ -112,7 +132,29 @@ export function AnswerField({
   const saveDraft = useCallback(() => {
     if (draftKey && inputRef.current) writeDraft(draftKey, inputRef.current.value);
   }, [draftKey]);
+  // In editor mode the draft is the LaTeX of the editor.
+  const saveEditorDraft = useCallback((latex: string) => {
+    setEmptyNote('');
+    if (draftKey) writeDraft(draftKey, latex);
+  }, [draftKey]);
   useEffect(() => () => { clearTimeout(timer.current); }, []);
+  // Start the editor load at mount. The plain input stays until the module resolves, and it
+  // stays for good when the load fails.
+  useEffect(() => {
+    let live = true;
+    loadMathEditor().then(() => {
+      if (!live) return;
+      const input = inputRef.current;
+      refocus.current = input !== null && document.activeElement === input;
+      setEditorSeed(input?.value ?? '');
+    }, (err: Error) => {
+      if (live) console.error('The math editor did not load. The plain field stays.', err);
+    });
+    return () => { live = false; };
+  }, []);
+  useEffect(() => {
+    if (editorOn && refocus.current) editorRef.current?.focus();
+  }, [editorOn]);
   useEffect(() => {
     if (!draftKey || !inputRef.current || inputRef.current.value !== '') return;
     const saved = readDraft(draftKey);
@@ -121,12 +163,16 @@ export function AnswerField({
     refresh();
   }, [draftKey]);
   // A tap on a chip of the "How to type answers" panel writes into this field at the caret.
-  useEffect(() => registerInserter((text) => {
+  useEffect(() => registerInserter((text, latex) => {
+    if (editorOn) {
+      if (!disabled) editorRef.current?.insert(latex);
+      return;
+    }
     if (!inputRef.current || inputRef.current.disabled) return;
     insertAtCursor(inputRef.current, text);
     saveDraft();
     refresh();
-  }), [saveDraft]);
+  }), [saveDraft, editorOn, disabled]);
   const helpOpen = useNotationOpen();
 
   // NO `setDisabled` on the handle. `disabled` has exactly ONE owner — the prop. With both,
@@ -137,16 +183,27 @@ export function AnswerField({
   //
   // A view drives it from its phase instead: `disabled={phase !== 'ready'}`.
   useImperativeHandle(ref, () => ({
-    value: () => inputRef.current?.value.trim() ?? '',
+    // An empty box in the editor makes the answer empty: the three views then ask for it.
+    value: () => {
+      if (editorOn) {
+        const latex = editorRef.current?.value().trim() ?? '';
+        return PLACEHOLDER.test(latex) ? '' : latex;
+      }
+      return inputRef.current?.value.trim() ?? '';
+    },
     clear: () => {
       if (inputRef.current) inputRef.current.value = '';
+      editorRef.current?.clear();
       if (draftKey) clearDraft(draftKey);
       clearTimeout(timer.current);
       setShown('');
-      setEmptyNote(false);
+      setEmptyNote('');
     },
-    focus: () => inputRef.current?.focus(),
-    remindEmpty: () => { setEmptyNote(true); },
+    focus: () => { if (editorOn) editorRef.current?.focus(); else inputRef.current?.focus(); },
+    remindEmpty: () => {
+      const slot = editorOn && PLACEHOLDER.test(editorRef.current?.value() ?? '');
+      setEmptyNote(slot ? EMPTY_SLOT_LINE : EMPTY_ANSWER_LINE);
+    },
   }));
 
   const context = contextKeys(contract);
@@ -216,6 +273,16 @@ export function AnswerField({
 
   return (
     <div className="answer-field">
+      {editorOn ? (
+        <MathEditor
+          ref={editorRef}
+          value={editorSeed}
+          contract={contract}
+          disabled={disabled}
+          onInput={saveEditorDraft}
+          onSubmit={onSubmit}
+        />
+      ) : (
       <input
         ref={inputRef}
         type="text"
@@ -228,7 +295,7 @@ export function AnswerField({
         spellCheck={false}
         defaultValue=""
         disabled={disabled}
-        onInput={() => { setEmptyNote(false); saveDraft(); refresh(); }}
+        onInput={() => { setEmptyNote(''); saveDraft(); refresh(); }}
         onKeyDown={(e) => {
           const input = e.currentTarget;
           if (e.key === 'Enter') {
@@ -245,13 +312,15 @@ export function AnswerField({
           }
         }}
       />
-      <p className="field-note" role="status">{emptyNote ? EMPTY_ANSWER_LINE : ''}</p>
+      )}
+      <p className="field-note" role="status">{emptyNote}</p>
       <div className="sym-area">
-        {context.length > 0 ? (
+        {!editorOn && context.length > 0 ? (
           <div className="sym-palette" role="toolbar" aria-label="Symbol keys. Use the arrow keys to move." onKeyDown={moveFocus}>
             {context.map(renderKey)}
           </div>
         ) : null}
+        {!editorOn ? (
         <details
           className="sym-more"
           open={moreOpen}
@@ -267,6 +336,7 @@ export function AnswerField({
             {rest.map(renderKey)}
           </div>
         </details>
+        ) : null}
         <button
           type="button"
           className="link-btn sym-help"
@@ -277,7 +347,7 @@ export function AnswerField({
           How to type answers
         </button>
       </div>
-      <AnswerPreview text={shown} />
+      {editorOn ? null : <AnswerPreview text={shown} />}
       {hint ? <p className="field-hint">{hint}</p> : null}
     </div>
   );

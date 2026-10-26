@@ -305,6 +305,12 @@ export interface ReviewSoonResponse {
   review_soon: boolean;
 }
 
+/** `POST /api/goal/xp`: the goal that was set, and the XP totals under it. */
+export interface XpGoalResponse {
+  goal: number;
+  xp: XpState;
+}
+
 // ---------------------------------------------------------------------------
 // The other halves of the contract, kept in sibling files so no file passes 500 lines.
 // ---------------------------------------------------------------------------

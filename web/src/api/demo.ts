@@ -104,7 +104,13 @@ const DEMO_HINTS: readonly string[] = [
 const DEMO_TASK_ID = 'demo-lesson';
 
 /** The demo's grader: whitespace-insensitive, and a leading `+` dropped. */
-const norm = (value: string) => value.replace(/\s/g, '').replace(/^\+/, '');
+const norm = (value: string) =>
+  value
+    .replace(/\\d?frac\{?(\d+)\}?\{?(\d+)\}?/g, '$1/$2')
+    .replace(/\\sqrt\{([^{}]*)\}/g, 'sqrt($1)')
+    .replace(/\\sqrt(\d+)/g, 'sqrt($1)')
+    .replace(/\s/g, '')
+    .replace(/^\+/, '');
 
 /** A short delay, so a demo screen shows its loading state the way the real one does. */
 const wait = (ms: number) => new Promise<void>((resolve) => { setTimeout(resolve, ms); });
@@ -175,6 +181,7 @@ export function createDemoApi(): ApiClient {
   let answered = 0;
   let hintCount = 0;
   let open: string | null = null;
+  let goal = 40;
   // The placement: the same three canned probes `api/diag.ts` walks for a screen that takes
   // the port on its own. One adapter per CLIENT, so one test never poisons the next, and
   // this pair keeps the client surface whole: every row of `ROUTES` has a method on both
@@ -229,7 +236,7 @@ export function createDemoApi(): ApiClient {
         placed: true,
         courses: [{ id: 'foundations', name: 'Foundations', current: true }],
         test_prep: null,
-        xp: { total: 340, today: 12, goal: 40, streak_days: 3 },
+        xp: { total: 340, today: 12, goal, streak_days: 3 },
         velocity: {
           xp_per_day_28d: 21.5,
           topics_per_week_28d: 2.25,
@@ -290,12 +297,17 @@ export function createDemoApi(): ApiClient {
 
     reviewSoon: (topicId) => reply({ topic: topicId, review_soon: true }),
 
+    setXpGoal: (value) => {
+      goal = value;
+      return reply({ goal, xp: { total: 340, today: 12, goal, streak_days: 3 } });
+    },
+
     sessionStart: () => {
       open = 'demo-session';
       return reply({
         session: open,
         reopened: false,
-        xp: { total: 340, today: 12, goal: 40, streak_days: 3 },
+        xp: { total: 340, today: 12, goal, streak_days: 3 },
         frontier: 4,
         due_reviews: 2,
       });
@@ -308,7 +320,7 @@ export function createDemoApi(): ApiClient {
         session,
         xp_earned: 12,
         minutes: minutes ?? 8,
-        xp: { total: 352, today: 24, goal: 40, streak_days: 3 },
+        xp: { total: 352, today: 24, goal, streak_days: 3 },
         anki: { pending: 0 },
       });
     },

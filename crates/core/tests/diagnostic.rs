@@ -25,8 +25,8 @@ use cadus_core::config::Config;
 use cadus_core::curriculum::model::{Exemplar, Topic};
 use cadus_core::curriculum::{AnswerKind, Curriculum};
 use cadus_core::diagnostic::{
-    DiagState, SLOW_WEIGHT_FLOOR, answer_weight, apply_answer, init_session, is_leaf, next_probe,
-    placement, probe_set, undetermined_set,
+    DiagState, Next, SLOW_WEIGHT_FLOOR, answer_weight, apply_answer, apply_second_answer,
+    init_session, is_leaf, next_probe, next_question, placement, probe_set, undetermined_set,
 };
 
 use common::{graph, graph_of_units, plain_topic};
@@ -75,6 +75,8 @@ fn state_over(topics: &[&str]) -> DiagState {
         balances: topics.iter().map(|id| ((*id).to_owned(), 0.0)).collect(),
         answered: Vec::new(),
         supplemental: false,
+        missed: Default::default(),
+        second: Default::default(),
     }
 }
 
@@ -463,6 +465,238 @@ fn the_document_round_trips_and_ignores_a_key_it_does_not_name() {
     });
     let read: DiagState = serde_json::from_value(older).unwrap();
     assert_eq!(read.probe_set, vec!["a".to_owned()]);
+}
+
+#[test]
+fn an_old_document_without_second_still_reads() {
+    let old = serde_json::json!({
+        "course": "c",
+        "probe_set": ["a"],
+        "balances": { "a": 1.0 },
+        "answered": ["a"],
+    });
+    let read: DiagState = serde_json::from_value(old).unwrap();
+    assert!(read.second.is_empty());
+    assert!(read.missed.is_empty());
+    assert!(!read.supplemental);
+    // A new document with the second-phase keys round-trips.
+    let mut new = read.clone();
+    new.supplemental = true;
+    new.second.insert("a".to_owned(), true);
+    new.missed.insert("a".to_owned(), 1.0);
+    let back: DiagState = serde_json::from_value(serde_json::to_value(&new).unwrap()).unwrap();
+    assert_eq!(back, new);
+}
+
+// --------------------------------------------------------------------------- //
+// The second phase
+// --------------------------------------------------------------------------- //
+
+/// The chain with only `probes` in the probe set, so the first phase ends there.
+fn phase_state(probes: &[&str]) -> DiagState {
+    let mut state = state_over(&["a", "b", "c", "d"]);
+    state.probe_set = probes.iter().map(|id| (*id).to_owned()).collect();
+    state
+}
+
+/// Every second probe the run asks, each answered correctly at weight 1.0.
+fn second_order(state: &mut DiagState, graph: &Curriculum, cfg: &Config) -> Vec<String> {
+    let mut order = Vec::new();
+    while let Some(next) = next_question(state, graph, cfg, |_| true) {
+        let Next::Second(topic) = next else {
+            panic!("a first probe is left: {next:?}");
+        };
+        apply_second_answer(state, graph, &topic, true, 1.0, cfg);
+        order.push(topic);
+    }
+    order
+}
+
+#[test]
+fn a_thin_asked_topic_gets_exactly_one_second_probe_inside_the_cap() {
+    let graph = chain();
+    let cfg = Config::default();
+    let mut state = phase_state(&["a"]);
+    apply_answer(&mut state, &graph, "a", true, 1.0, &cfg);
+    assert_eq!(next_probe(&state, &graph, &cfg), None);
+    assert!(!state.supplemental);
+    assert_eq!(
+        next_question(&mut state, &graph, &cfg, |_| true),
+        Some(Next::Second("a".to_owned()))
+    );
+    assert!(state.supplemental);
+    assert!(state.awaits_second("a"));
+    apply_second_answer(&mut state, &graph, "a", true, 1.0, &cfg);
+    assert_eq!(next_question(&mut state, &graph, &cfg, |_| true), None);
+    assert_eq!(state.question_count(), 2);
+    assert!(!state.awaits_second("a"));
+}
+
+#[test]
+fn first_correct_then_second_miss_zeroes_the_topic_and_keeps_the_ancestors() {
+    let graph = chain();
+    let cfg = Config::default();
+    let mut state = phase_state(&["b"]);
+    apply_answer(&mut state, &graph, "b", true, 1.0, &cfg);
+    assert_eq!(state.balances["a"], 1.0);
+    apply_second_answer(&mut state, &graph, "b", false, 1.0, &cfg);
+    assert_eq!(state.balances["b"], 0.0);
+    assert_eq!(state.balances["a"], 1.0);
+    assert_eq!(state.balances["c"], 0.0);
+    assert!(!state.second["b"]);
+    let result = placement(&state, &cfg);
+    assert!(!result.placed.contains_key("b"));
+    assert!(result.placed.contains_key("a"));
+    assert!(!result.conditional.contains(&"b".to_owned()));
+}
+
+#[test]
+fn first_correct_then_second_correct_clears_the_conditional() {
+    let graph = chain();
+    let cfg = Config::default();
+    let mut state = phase_state(&["a"]);
+    apply_answer(&mut state, &graph, "a", true, 0.3, &cfg);
+    assert_eq!(placement(&state, &cfg).conditional, vec!["a".to_owned()]);
+    apply_second_answer(&mut state, &graph, "a", true, 0.3, &cfg);
+    assert!((state.balances["a"] - 0.6).abs() < 1e-9);
+    let result = placement(&state, &cfg);
+    assert!(result.placed.contains_key("a"));
+    assert!(result.conditional.is_empty());
+    assert!(state.second["a"]);
+}
+
+#[test]
+fn first_miss_then_second_correct_undoes_the_descendant_debit() {
+    let graph = chain();
+    let cfg = Config::default();
+    let mut state = phase_state(&["b"]);
+    apply_answer(&mut state, &graph, "b", false, 1.0, &cfg);
+    assert_eq!(state.balances["b"], -1.0);
+    assert_eq!(state.balances["c"], -0.5);
+    assert_eq!(
+        next_question(&mut state, &graph, &cfg, |_| true),
+        Some(Next::Second("b".to_owned()))
+    );
+    apply_second_answer(&mut state, &graph, "b", true, 1.0, &cfg);
+    assert_eq!(state.balances["b"], 1.0);
+    assert_eq!(state.balances["c"], 0.0);
+    assert_eq!(state.balances["d"], 0.0);
+    assert_eq!(state.balances["a"], 0.0);
+    let result = placement(&state, &cfg);
+    assert!(result.placed.contains_key("b"));
+    assert!(result.conditional.is_empty());
+}
+
+#[test]
+fn first_miss_then_second_miss_stands() {
+    let graph = chain();
+    let cfg = Config::default();
+    let mut state = phase_state(&["b"]);
+    apply_answer(&mut state, &graph, "b", false, 1.0, &cfg);
+    apply_second_answer(&mut state, &graph, "b", false, 1.0, &cfg);
+    assert_eq!(state.balances["b"], -1.0);
+    assert_eq!(state.balances["c"], -0.5);
+    assert!(!state.second["b"]);
+    assert!(placement(&state, &cfg).placed.is_empty());
+    // A second answer of a topic is taken once.
+    apply_second_answer(&mut state, &graph, "b", true, 1.0, &cfg);
+    assert_eq!(state.balances["b"], -1.0);
+}
+
+#[test]
+fn a_missed_leaf_gives_back_its_sibling_debit() {
+    let graph = two_leaves();
+    let cfg = Config::default();
+    let mut state = state_over(&["root", "left", "right"]);
+    state.probe_set = vec!["left".to_owned()];
+    apply_answer(&mut state, &graph, "left", false, 1.0, &cfg);
+    assert_eq!(state.balances["right"], -cfg.diag.sibling_credit);
+    apply_second_answer(&mut state, &graph, "left", true, 1.0, &cfg);
+    assert_eq!(state.balances["right"], 0.0);
+    assert_eq!(state.balances["left"], 1.0);
+}
+
+#[test]
+fn misses_go_first_then_the_thinnest_then_the_lowest_id() {
+    let graph = chain();
+    let cfg = Config::default();
+    let mut state = phase_state(&["a", "b", "c", "d"]);
+    state.answered = ["a", "b", "c", "d"].map(str::to_owned).to_vec();
+    for (id, balance) in [("a", 1.0), ("b", 0.5), ("c", -1.0), ("d", -1.5)] {
+        state.balances.insert(id.to_owned(), balance);
+    }
+    state.missed.insert("c".to_owned(), 1.0);
+    state.missed.insert("d".to_owned(), 1.0);
+    assert_eq!(second_order(&mut state, &graph, &cfg), ["d", "c", "b", "a"]);
+
+    let mut tie = phase_state(&["a", "b", "c", "d"]);
+    tie.answered = ["a", "b", "c", "d"].map(str::to_owned).to_vec();
+    for id in ["a", "b", "c", "d"] {
+        tie.balances.insert(id.to_owned(), 1.0);
+    }
+    assert_eq!(second_order(&mut tie, &graph, &cfg), ["a", "b", "c", "d"]);
+}
+
+#[test]
+fn the_second_phase_ends_at_the_cap() {
+    let graph = chain();
+    let mut cfg = Config::default();
+    let mut state = phase_state(&["a", "b"]);
+    state.answered = vec!["a".to_owned(), "b".to_owned()];
+    state.balances.insert("a".to_owned(), 1.0);
+    state.balances.insert("b".to_owned(), 1.0);
+
+    cfg.diag.max_questions = 3;
+    let mut capped = state.clone();
+    assert_eq!(
+        next_question(&mut capped, &graph, &cfg, |_| true),
+        Some(Next::Second("a".to_owned()))
+    );
+    apply_second_answer(&mut capped, &graph, "a", true, 0.3, &cfg);
+    assert_eq!(capped.question_count(), 3);
+    assert_eq!(next_question(&mut capped, &graph, &cfg, |_| true), None);
+
+    cfg.diag.max_questions = 2;
+    let mut full = state.clone();
+    assert_eq!(next_question(&mut full, &graph, &cfg, |_| true), None);
+    assert!(!full.supplemental);
+
+    cfg.diag.max_questions = 1;
+    let mut over = state;
+    assert_eq!(next_question(&mut over, &graph, &cfg, |_| true), None);
+    assert!(!over.supplemental);
+}
+
+#[test]
+fn an_inferred_thin_topic_is_not_re_asked() {
+    let graph = two_leaves();
+    let cfg = Config::default();
+    let mut state = state_over(&["root", "left", "right"]);
+    state.probe_set = vec!["left".to_owned()];
+    apply_answer(&mut state, &graph, "left", true, 1.0, &cfg);
+    assert_eq!(state.balances["root"], 1.0);
+    let order = second_order(&mut state, &graph, &cfg);
+    assert_eq!(order, ["left"]);
+    assert!(!state.second.contains_key("root"));
+}
+
+#[test]
+fn a_topic_with_no_second_exemplar_is_skipped() {
+    let graph = chain();
+    let cfg = Config::default();
+    let mut state = phase_state(&["a", "b"]);
+    state.answered = vec!["a".to_owned(), "b".to_owned()];
+    state.balances.insert("a".to_owned(), 0.5);
+    state.balances.insert("b".to_owned(), 1.0);
+    assert_eq!(
+        next_question(&mut state, &graph, &cfg, |topic| topic != "a"),
+        Some(Next::Second("b".to_owned()))
+    );
+    apply_second_answer(&mut state, &graph, "b", true, 1.0, &cfg);
+    assert_eq!(
+        next_question(&mut state, &graph, &cfg, |topic| topic != "a"),
+        None
+    );
 }
 
 #[test]

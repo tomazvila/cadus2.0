@@ -44,6 +44,7 @@ import type {
   SessionStartResponse,
   SignupResponse,
   ReviewSoonResponse,
+  XpGoalResponse,
   StatusResponse,
   TaskAnswerResponse,
   QuizResultResponse,
@@ -116,6 +117,7 @@ export const api: ApiClient = {
   enroll: (course) => request<EnrollResponse>('POST', '/enroll', { course }),
   reviewSoon: (topicId) =>
     request<ReviewSoonResponse>('POST', `/topics/${seg(topicId)}/review-soon`, {}),
+  setXpGoal: (goal) => request<XpGoalResponse>('POST', '/goal/xp', { goal }),
 
   // --- The session and the study loop -------------------------------------
   sessionStart: () => request<SessionStartResponse>('POST', '/session/start', {}),

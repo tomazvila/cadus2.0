@@ -90,7 +90,15 @@ fn one_instance_of_every_type_round_trips_byte_for_byte() {
     // Additive 2.0 events are absent from the 1.0 fixture.
     let expected: BTreeSet<&str> = Event::TYPE_NAMES
         .into_iter()
-        .filter(|name| ![RETENTION_PROBE, "drill_result", "ordinary_problem_served"].contains(name))
+        .filter(|name| {
+            ![
+                RETENTION_PROBE,
+                "drill_result",
+                "ordinary_problem_served",
+                "goal_set",
+            ]
+            .contains(name)
+        })
         .collect();
     assert_eq!(seen, expected, "the fixture must cover all 16 1.0 types");
     assert!(Event::TYPE_NAMES.contains(&RETENTION_PROBE));
@@ -114,6 +122,7 @@ fn the_union_declares_legacy_and_additive_2_0_types() {
             "remediation_triggered",
             "diagnostic_answer",
             "diagnostic_placed",
+            "goal_set",
             "profile_reset",
             "regraded",
             "anki_card_created",
@@ -124,7 +133,7 @@ fn the_union_declares_legacy_and_additive_2_0_types() {
         ]
     );
     let unique: BTreeSet<&str> = Event::TYPE_NAMES.into_iter().collect();
-    assert_eq!(unique.len(), 19);
+    assert_eq!(unique.len(), 20);
 }
 
 // --------------------------------------------------------------------------- //

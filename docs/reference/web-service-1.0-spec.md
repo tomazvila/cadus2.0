@@ -47,14 +47,15 @@ Auth column: **S** = session required, **P** = public.
 | POST `/api/session/start` | S | `{}` | `{session, reopened, xp, frontier, due_reviews}` (`:874-880`) | 200 | keep |
 | POST `/api/session/end` | S | `{minutes?}` | `{session, xp_earned, minutes, xp, anki}` (`:919-925`) | 200/409 | keep |
 | GET `/api/session/plan` | S | — | `{session, tasks[], quiz_due, constraints, course_complete, frontier_blocked_until}`; task trimmed to `{task_id, task_type, topic{id,name,module}, kp, start_at_kp, n_problems, mix, component_topics, time_budget_secs, difficulty_target, why, progress{answered, done}}` (`:947-956`, `:993-1006`) | 200/409 | keep |
+| POST `/api/goal/xp` | S | `{goal}` (whole number, 10 to 100) | `{goal, xp}` | 200/422 `invalid_request` | new in 2.0 (D-XP1) |
 | POST `/api/task/{id}/serve` | S | `{}` | `{problem_id, index, total, text, kp, time_budget_secs, countdown}` (`:519-527`) | 200/404 `unknown_task`/409 `task_complete`, `multistep_exhausted` | keep; body comes from the M4 pool pop |
 | POST `/api/task/{id}/answer` | S | `{problem_id, answer, work?, assisted?}` | see below | 200/404 `unknown_problem`/409 `task_complete`/413 `answer_too_large`/422 `invalid_request` | **change (A3/A4)** |
 | POST `/api/task/{id}/hint` | S | `{problem_id}` | `{hint, hint_number, reference_lesson?}` (`:1849-1864`) | 200/404/409 `no_hints_in_quiz`/422 | keep; body from the authored hint ladder (L5) |
 | POST `/api/task/{id}/teach` | S | `{}` | `{kp, concept, worked_example:{problem, steps}}` (`:1096-1103`) | 200/409 `no_instruction` | keep; body from `content_store` kind `teach` (L4) |
 | POST `/api/task/{id}/abort` | S | `{}` | close payload `{task_id, task_type, aborted, xp, state_delta, …}` (`:686-710`) | 200/404 | keep |
-| POST `/api/diag/start` | S | `{course?}` | `{probe:{topic, problem_id, text}, asked, cap}` (`:1977-1981`) | 200/400 `no_course`/404 `unknown_course` | keep; an open run of the same course resumes, a named other course replaces |
-| GET `/api/diag/current` | S | — | `{open:false}` or `{open:true, course, asked, cap, probe\|null}` | 200 | new; a pure read of the open run |
-| POST `/api/diag/answer` | S | `{problem_id, answer}` | `{correct, next_probe\|{done:true}}` (`:2055-2057`) | 200/404/409 `no_diagnostic`/422 | keep; deterministic-only verdict |
+| POST `/api/diag/start` | S | `{course?}` | `{probe:{topic, problem_id, text}, asked, cap}` (`:1977-1981`) | 200/400 `no_course`/404 `unknown_course` | keep; an open run of the same course resumes, a named other course replaces; `asked` counts first and second probes |
+| GET `/api/diag/current` | S | — | `{open:false}` or `{open:true, course, asked, cap, probe\|null}` | 200 | new; a pure read of the open run; `asked` counts first and second probes |
+| POST `/api/diag/answer` | S | `{problem_id, answer}` | `{correct, next_probe\|{done:true}}` (`:2055-2057`) | 200/404/409 `no_diagnostic`/422 | keep; deterministic-only verdict; when the first-phase probes are used up and fewer than `diag.max_questions` answers stand, `next_probe` is a second exemplar of a missed or thin topic (one per topic, misses first, then the thinnest); the answer and the sketch stay hidden |
 | POST `/api/diag/finish` | S | `{}` | `{placed, conditional, frontier, refresh}` (`:2087-2091`) | 200/409 | keep; `refresh` is true when the learner had a `Placed` or `Learning` topic, or a `learned_at` entry, before this finish; the event carries the same flag and the fold averages |
 | GET `/api/modules` | S | — | `{course, modules[]}` | 200 | keep |
 | GET `/api/export` | S | — | JSONL stream, one event per line, `Content-Disposition` attachment (`:2245-2269`) | 200 | keep |
