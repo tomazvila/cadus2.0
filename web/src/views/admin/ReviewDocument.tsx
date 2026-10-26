@@ -138,6 +138,9 @@ export function ReviewDocumentPane({
         <summary>The authored body</summary>
         <pre className="mono small">{body}</pre>
       </details>
+      {item.figure_text ? (
+        <p className="review-figure-text">The figure of this page shows: {item.figure_text}</p>
+      ) : null}
     </div>
   );
 }

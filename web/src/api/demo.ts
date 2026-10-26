@@ -18,6 +18,7 @@
  * `getDiagnosis` refuses. That is the honest shape: the demo has no worker.
  */
 import { ApiError } from './client';
+import { DEMO_FIGURE } from './demo-figure';
 import { createDemoDiagApi } from './diag';
 import type {
   ApiClient,
@@ -362,6 +363,7 @@ export function createDemoApi(): ApiClient {
         worked_example: {
           problem: 'Simplify $\\frac{4}{6}$.',
           steps: 'Both parts divide by 2, so $\\frac{4}{6}=\\frac{2}{3}$.',
+          figure: DEMO_FIGURE,
         },
       });
     },

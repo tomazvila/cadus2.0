@@ -283,10 +283,11 @@ pub struct KnowledgePoint {
     pub finite_objective_domain: Option<FiniteObjectiveDomain>,
     /// The mathematical visuals the objective needs (unit f9). NEW IN 2.0.
     ///
-    /// The field is absent from 1.0 and absent from the canonical dump, so it
-    /// never moves the curriculum hash. An empty list means the author wrote no
-    /// visual, and the readiness audit then reports the knowledge point as one
-    /// with no visual.
+    /// The field is absent from 1.0. The canonical dump writes it when the
+    /// list is not empty (curriculum/dump/mod.rs), so a figure edit moves the
+    /// curriculum hash and the review-context digest. An empty list means the
+    /// author wrote no visual, and the readiness audit then reports the
+    /// knowledge point as one with no visual.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub visuals: Vec<crate::visual::VisualSpec>,
     /// A motivating problem attempted before the worked example (NEW IN 2.0,

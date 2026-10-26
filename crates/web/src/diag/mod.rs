@@ -9,8 +9,9 @@
 //!
 //! THE VERDICT IS DETERMINISTIC AND THIS ROUTE FAMILY CALLS NO MODEL (R4, L6,
 //! spec section 2 "deterministic-only verdict"). `start` therefore drops from the
-//! probe set every topic whose `answer_kind` has no deterministic checker, so the
-//! diagnostic never asks a question it cannot mark. 1.0 sent such a probe to its
+//! probe set each topic whose probe gives no verdict under
+//! `Exemplar::verdict_policy`, so the diagnostic never asks a question it cannot
+//! mark. Readiness, the pool and the lint use the same rule. 1.0 sent such a probe to its
 //! grading engine; this service asks no model on a request path, so the question
 //! is not asked at all.
 //!
@@ -65,19 +66,14 @@ const DIAG_TASK_ID: &str = "diag";
 /// character, because the placement screen renders whatever it is given.
 const NO_EXEMPLAR: &str = "(no exemplar)";
 
-/// Whether this answer kind has a deterministic checker.
-const fn deterministic(kind: AnswerKind) -> bool {
-    matches!(kind, AnswerKind::Numeric | AnswerKind::Expression)
-}
-
 /// The topic record of `topic`, or `None` when the arena does not hold it.
 fn topic_record<'a>(graph: &'a Curriculum, topic: &str) -> Option<&'a Topic> {
     graph.idx_of(topic).and_then(|idx| graph.topic(idx))
 }
 
-/// An explicit supported contract makes a multi-step or `proof` final answer
-/// markable. A `proof` topic with no contract is not markable, because
-/// [`deterministic`] is false for `proof`.
+/// Whether the probe of `record` gives a verdict. An explicit supported
+/// contract makes a multi-step or `proof` final answer markable. A `proof` topic
+/// with no contract is not markable.
 fn markable(record: &Topic) -> bool {
     record
         .diagnostic_exemplar
@@ -86,11 +82,10 @@ fn markable(record: &Topic) -> bool {
 }
 
 /// Whether the service can mark `item` of a topic with answer kind `kind`.
+/// This is `Exemplar::verdict_policy`, the one rule of the start, readiness,
+/// the pool and the lint.
 fn markable_item(kind: AnswerKind, item: &Exemplar) -> bool {
-    item.answer_contract.as_ref().map_or_else(
-        || deterministic(kind),
-        |contract| contract.validate_expected(&item.answer).is_ok(),
-    )
+    item.verdict_policy(kind).is_ok()
 }
 
 /// The exemplar of the second probe of a topic, or `None` when it has none.
@@ -269,16 +264,6 @@ async fn save_diagnostic(
 mod tests {
     use super::*;
 
-    /// A deterministic checker exists for numeric and expression kinds, and for
-    /// no other kind.
-    #[test]
-    fn only_the_checked_kinds_are_deterministic() {
-        assert!(deterministic(AnswerKind::Numeric));
-        assert!(deterministic(AnswerKind::Expression));
-        assert!(!deterministic(AnswerKind::MultiStep));
-        assert!(!deterministic(AnswerKind::Proof));
-    }
-
     /// The `markable` result for a topic of `kind` whose diagnostic exemplar has
     /// the key `answer`. `None` = the test record is not a topic.
     fn marks(kind: &str, answer: &str, contract: Option<&Value>) -> Option<bool> {
@@ -303,6 +288,55 @@ mod tests {
         assert_eq!(marks("proof", "Step 3", Some(&steps)), Some(true));
         assert_eq!(marks("proof", "Step 9", Some(&steps)), Some(false));
         assert_eq!(marks("proof", "Step 3", None), Some(false));
+        assert_eq!(marks("numeric", "7", None), Some(true));
+    }
+
+    /// `markable` equals `verdict_policy(..).is_ok()` for 14 shapes of kind,
+    /// contract and key.
+    #[test]
+    fn markable_agrees_with_verdict_policy_on_fourteen_shapes() {
+        let exact = json!({ "kind": "exact" });
+        let none = json!({ "kind": "none" });
+        let written = json!({ "kind": "written" });
+        let label = json!({ "kind": "label", "options": [["A"], ["B"]] });
+        let shapes: [(&str, &str, Option<&Value>); 14] = [
+            ("numeric", "7", None),
+            ("numeric", "(((", None),
+            ("expression", "x+1", None),
+            ("expression", "x+", None),
+            ("multi-step", "7", None),
+            ("proof", "7", None),
+            ("proof", "3", Some(&exact)),
+            ("multi-step", "3", Some(&exact)),
+            ("numeric", "7", Some(&none)),
+            ("proof", "7", Some(&written)),
+            ("numeric", "7", Some(&written)),
+            ("proof", "A", Some(&label)),
+            ("proof", "Z", Some(&label)),
+            ("numeric", "(((", Some(&exact)),
+        ];
+        for (kind, key, contract) in shapes {
+            let record = json!({
+                "id": "t", "name": "T", "difficulty": 0.5, "answer_kind": kind,
+                "expected_time_secs": 60,
+                "diagnostic_exemplar": {
+                    "problem": "Find it.", "answer": key, "answer_contract": contract,
+                },
+            });
+            let topic: Topic = serde_json::from_value(record).unwrap();
+            let probe = topic.diagnostic_exemplar.as_ref().unwrap();
+            assert_eq!(
+                markable(&topic),
+                probe.verdict_policy(topic.answer_kind).is_ok(),
+                "{kind} {key} {contract:?}"
+            );
+        }
+    }
+
+    /// A numeric topic with no contract and an unreadable key is not markable.
+    #[test]
+    fn a_numeric_topic_with_an_unreadable_key_is_not_markable() {
+        assert_eq!(marks("numeric", "(((", None), Some(false));
         assert_eq!(marks("numeric", "7", None), Some(true));
     }
 

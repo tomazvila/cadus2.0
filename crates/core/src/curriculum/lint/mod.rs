@@ -61,6 +61,41 @@ pub fn lint_curriculum_full(root: &Path) -> Vec<Finding> {
     lint_run(root, true)
 }
 
+/// The environment variable that names the probe allow-list file.
+pub const DIAG_PROBE_ALLOW_ENV: &str = "CADUS_DIAG_PROBE_ALLOW";
+
+/// The allow-list file name inside the curriculum folder.
+pub const DIAG_PROBE_ALLOW_FILE: &str = "diag-probe-allow.txt";
+
+/// The placement probe rule (D-DG4): `diagnostic_probe_undecidable` and
+/// `diagnostic_probe_allow_stale`.
+///
+/// The allow-list path is `$CADUS_DIAG_PROBE_ALLOW` when set, else
+/// `<root>/diag-probe-allow.txt`. An absent file is an empty list. The rule is
+/// not part of [`lint_curriculum`] or [`lint_curriculum_full`], so the parity
+/// tests stay as they are. A tree that does not parse gives no finding here;
+/// the other lints report it.
+pub fn lint_curriculum_probes(root: &Path) -> Vec<Finding> {
+    let path = std::env::var_os(DIAG_PROBE_ALLOW_ENV).map_or_else(
+        || root.join(DIAG_PROBE_ALLOW_FILE),
+        std::path::PathBuf::from,
+    );
+    lint_curriculum_probes_with(root, &path)
+}
+
+/// [`lint_curriculum_probes`] with an explicit allow-list path.
+pub fn lint_curriculum_probes_with(root: &Path, allow_path: &Path) -> Vec<Finding> {
+    let parsed = parse_curriculum(root);
+    if parsed.error.is_some() || parsed.catalog.is_none() {
+        return Vec::new();
+    }
+    let allow = rules::parse_allow(&std::fs::read_to_string(allow_path).unwrap_or_default());
+    let mut lint = Lint::new(&parsed.units, Vec::new());
+    lint.findings.clear();
+    rules::check_probes(&mut lint, &allow);
+    lint.findings
+}
+
 fn lint_run(root: &Path, exemplars: bool) -> Vec<Finding> {
     let parsed = parse_curriculum(root);
     if parsed.error.is_some() {

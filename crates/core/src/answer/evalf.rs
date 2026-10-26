@@ -51,6 +51,22 @@ pub fn free_vars(ast: &Ast) -> BTreeSet<String> {
     names
 }
 
+/// Whether any node of the tree passes the test.
+///
+/// The walk stops at the first node that passes. It keeps its own stack, as
+/// [`free_vars`] does, so a deep tree does not use the call stack.
+#[must_use]
+pub fn any_node(ast: &Ast, test: impl Fn(&Ast) -> bool) -> bool {
+    let mut stack = vec![ast];
+    while let Some(node) = stack.pop() {
+        if test(node) {
+            return true;
+        }
+        push_children(node, &mut stack);
+    }
+    false
+}
+
 /// Return the variable name that the node itself holds.
 fn own_name(node: &Ast) -> Option<&str> {
     match node {
@@ -166,4 +182,27 @@ fn fold(
     items
         .iter()
         .try_fold(start, |total, item| Some(combine(total, at(item)?)))
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use num_bigint::BigInt;
+
+    #[test]
+    fn any_node_finds_a_decimal_inside_a_nested_tree() {
+        let decimal = Ast::Decimal {
+            mantissa: BigInt::from(5),
+            scale: 1,
+        };
+        let inner = Ast::Func("sin".into(), vec![Ast::Var("x".into())]);
+        let outer = Ast::Func("cos".into(), vec![inner.clone()]);
+        let plain = Ast::Add(vec![outer.clone(), Ast::Integer(BigInt::from(1))]);
+        let with_decimal = Ast::Add(vec![outer, Ast::Mul(vec![decimal, inner])]);
+        let is_decimal = |node: &Ast| matches!(node, Ast::Decimal { .. });
+        let is_sin = |node: &Ast| matches!(node, Ast::Func(name, _) if name == "sin");
+        assert!(!any_node(&plain, is_decimal));
+        assert!(any_node(&with_decimal, is_decimal));
+        assert!(any_node(&plain, is_sin));
+    }
 }

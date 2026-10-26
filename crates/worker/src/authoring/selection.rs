@@ -130,5 +130,6 @@ fn spec_of(topic: &Topic, kp: &KnowledgePoint) -> Result<AuthoringSpec, CliError
         constraints: kp.constraints.clone(),
         exemplars: kp.exemplars.clone(),
         finite,
+        visuals: kp.visuals.clone(),
     })
 }

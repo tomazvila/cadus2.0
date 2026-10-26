@@ -20,6 +20,7 @@ import { useEffect, useRef, useState } from 'react';
 import { AnswerInput, TypedSubmit } from '@/components/AnswerInput';
 import type { AnswerFieldHandle } from '@/components/AnswerField';
 import { MathBlock } from '@/components/MathBlock';
+import { MathVisuals } from '@/components/MathVisual';
 import { Chip } from '@/components/primitives';
 import '../../styles/fix-session.css';
 import type { PlanTask, TeachCheckRequest, TeachCheckResponse, TeachResponse } from '@/api/types';
@@ -93,6 +94,7 @@ export function Teach({ task, instruction, onContinue, onCheck }: TeachProps) {
 export function WorkedExample({ example }: { example: TeachResponse['worked_example'] }) {
   return (
     <div className="teach-example">
+      <MathVisuals visuals={example.figure ? [example.figure] : []} />
       <div className="teach-label">Example</div>
       <MathBlock className="teach-problem">{example.problem}</MathBlock>
       <div className="teach-label">Solution</div>

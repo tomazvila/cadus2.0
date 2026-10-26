@@ -50,7 +50,10 @@ pub(super) fn only_known(
 /// Write a field list the way the messages read it.
 fn py_names(names: &[&str]) -> String {
     let written: Vec<String> = names.iter().map(|name| py_str(name)).collect();
-    written.join(" and ")
+    match written.split_last() {
+        Some((last, rest)) if !rest.is_empty() => format!("{} and {last}", rest.join(", ")),
+        _ => written.join(" and "),
+    }
 }
 
 /// One non-empty string field, or the refusal it earns.

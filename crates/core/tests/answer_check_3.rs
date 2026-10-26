@@ -150,9 +150,9 @@ fn a_scalar_ratio_needs_the_same_monomials_on_both_sides() {
     assert_eq!(form("(x+1)/(x+1)"), Canon::Rational(whole(1)));
     // The form runs no polynomial GCD, so a quotient that a common polynomial
     // factor would reduce stays two values. That is the documented narrowing of
-    // the module header, and 1.0 answers True for this pair.
+    // the module header. 1.0 answers True, and rung 5b samples the pair (D6-expr).
     assert_ne!(form("(x^2+x)/(x+1)"), form("x"));
-    assert_eq!(check("(x^2+x)/(x+1)", "x", E), decided(false, false));
+    assert_eq!(check("(x^2+x)/(x+1)", "x", E), decided(true, false));
     // Same monomials, and no rational multiple: the coefficient half decides.
     assert_ne!(form("(x+y)/(x-y)"), form("(x-y)/(x+y)"));
     assert_ne!(form("(x+y)/(x-y)"), form("1"));

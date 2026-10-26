@@ -57,9 +57,11 @@ pub(crate) async fn teach(
         .insert(task.task_id.clone(), key.clone());
     crate::session::write_state(&state.db, &mut tx, user_id, scratch).await?;
     tx.commit().await.map_err(db_failed)?;
-    Ok(Json(
-        json!({"kp":key, "concept":page.concept, "worked_example":page.worked_example}),
-    ))
+    let mut reply = json!({"kp":key, "concept":page.concept, "worked_example":page.worked_example});
+    if let Some(figure) = crate::serve::teach_figure(&content.curriculum, &key, &page) {
+        reply["worked_example"]["figure"] = json!(figure);
+    }
+    Ok(Json(reply))
 }
 
 fn no_instruction() -> ApiError {

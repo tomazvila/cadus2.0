@@ -216,5 +216,14 @@ pub async fn show(
         .cloned()
         .unwrap_or_default(),
     );
+    // The reviewer who approves "figure 3" reads what figure 3 shows.
+    if item.kind == "teach"
+        && let Some(index) = item.body.get("figure").and_then(Value::as_u64)
+        && let Some(spec) = usize::try_from(index)
+            .ok()
+            .and_then(|at| crate::serve::kp_visuals(&content.curriculum, &item.kp_id).get(at))
+    {
+        fields.insert("figure_text".to_owned(), json!(spec.text_equivalent()));
+    }
     Ok(Json(Value::Object(fields)))
 }

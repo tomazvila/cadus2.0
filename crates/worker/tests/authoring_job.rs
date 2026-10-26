@@ -49,6 +49,7 @@ const STORED_BODY: &str = r#"{"v":1,"topic_id":"perfect-squares","answer_kind":"
 /// A second knowledge point, for the batch test.
 fn other_spec() -> AuthoringSpec {
     AuthoringSpec {
+        visuals: vec![],
         kp_id: "cubes".to_owned(),
         topic_id: "perfect-cubes".to_owned(),
         ..spec()

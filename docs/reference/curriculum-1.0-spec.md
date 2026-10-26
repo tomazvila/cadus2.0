@@ -197,6 +197,11 @@ Graph stage (lint only; the graph loads regardless):
 16. `unreachable_from_floor` — `topic {tid!r} is not reachable from course {course.id}'s floor/roots`; grounding = floor ∩ known ∪ roots; skipped entirely when a `cycle` or a `duplicate_topic_id` finding exists.
 Graph-only code: `empty` — `no curriculum found`.
 
+Probe rule (D-DG4, not in `lint_curriculum`; the CI binary `lint_curriculum` runs it through `lint_curriculum_probes`):
+17. `diagnostic_probe_undecidable` — `{tid}: {cause}. Write a short typed answer under a decidable contract (docs/reference/curriculum-1.0-spec.md, section 6).` The cause is: the probe has contract `none`; the probe has contract `written`; the topic kind is `proof` (or `multi-step`) and the probe has no contract; or the contract refuses the key. A topic with no `diagnostic_exemplar` gets no finding here (`missing_diagnostic_exemplar` covers it).
+18. `diagnostic_probe_allow_stale` — a line of the allow-list names an unknown topic, or a topic whose probe gives a verdict now.
+The allow-list is `curriculum/diag-probe-allow.txt`: one topic id per line, `#` starts a comment, a blank line is ignored, an absent file is an empty list. The environment variable `CADUS_DIAG_PROBE_ALLOW` names another file. The loader does not read this file, so the tree hash does not change. A shipped probe removes its line.
+
 Not enforced by lint: kebab-case; KP id uniqueness; duplicate/self prerequisite
 edges; `course` field vs directory; `order` uniqueness.
 
@@ -213,6 +218,8 @@ opaque String; A1/D-S4 structured constraints are a 2.0 addition, not a port. Th
 `encompassings_extra`: `foundations/07-polynomials-quadratics.yaml:950-954`
 (`factoring-trinomials` -> `difference-of-squares`, 0.3). A double-quoted YAML scalar
 with `\\mid` resolves to one backslash (`proofs/01-proof-techniques.yaml:56`).
+
+The probe form (D-DG4): the `diagnostic_exemplar` of each topic is a short typed-answer item. The placement start asks it only when `Exemplar::verdict_policy` gives a verdict. So the probe has an explicit decidable `answer_contract`, or the topic kind is `numeric` or `expression` and the key reads under the answer grammar. A probe never has contract `none` or `written`. A `proof` or `multi-step` topic needs a contract.
 
 ## 7. Parity traps
 

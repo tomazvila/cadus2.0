@@ -367,6 +367,7 @@ fn a_complete_teach_page_is_accepted() {
                     "Multiply: $6 \\times 6 = 36$.".to_owned(),
                 ],
             },
+            figure: None,
         }
     );
 
@@ -393,8 +394,8 @@ fn a_teach_body_with_a_spare_field_is_rejected() {
     assert_eq!(rejection.code, "teach-unknown-field");
     assert_eq!(
         rejection.message,
-        "the teach page carries the unknown field 'answer' — it holds 'concept' and \
-'worked_example' and nothing else"
+        "the teach page carries the unknown field 'answer' — it holds 'concept', \
+'worked_example' and 'figure' and nothing else"
     );
 
     let nested = r#"{

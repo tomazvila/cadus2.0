@@ -64,6 +64,7 @@ fn only_explicit_teaching_and_rehearsal_roles_allow_the_worked_collision() {
     let policy = policy();
     let exemplars = exemplars(&policy);
     let spec = InstructionSpec {
+        visuals: &[],
         exemplars: &exemplars,
         instance_answers: vec![],
     };
@@ -94,6 +95,7 @@ fn teaching_one_case_does_not_allow_disclosing_a_different_case_or_hint_answer()
     let policy = policy();
     let exemplars = exemplars(&policy);
     let spec = InstructionSpec {
+        visuals: &[],
         exemplars: &exemplars,
         instance_answers: vec![ServedInstance {
             problem: "Compute 7+1.".into(),
@@ -122,6 +124,7 @@ fn reviewed_aliases_share_the_teaching_exception_but_ambiguous_catalogs_fail() {
     });
     let exemplars = exemplars(&policy);
     let spec = InstructionSpec {
+        visuals: &[],
         exemplars: &exemplars,
         instance_answers: vec![],
     };
@@ -152,6 +155,7 @@ fn one_case_cannot_assign_conflicting_answers_to_the_same_worked_problem() {
     });
     assert!(policy.validate().is_err());
     let spec = InstructionSpec {
+        visuals: &[],
         exemplars: &[],
         instance_answers: vec![],
     };

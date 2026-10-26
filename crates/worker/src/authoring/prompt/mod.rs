@@ -40,10 +40,12 @@
 //! R2 passes the literal gate message through it.
 
 use cadus_core::curriculum::{AnswerKind, Exemplar, FiniteCaseRole, FiniteObjectiveDomain};
+use cadus_core::visual::VisualSpec;
 use cadus_model_client::ChatRequest;
 use serde_json::{Value, json};
 use sha2::{Digest, Sha256};
 
+mod figure;
 mod schema;
 mod system;
 
@@ -235,6 +237,8 @@ pub struct AuthoringSpec {
     pub exemplars: Vec<Exemplar>,
     /// Complete reviewed finite universe, when this objective is genuinely finite.
     pub finite: Option<FiniteAuthoringPolicy>,
+    /// The figures of the knowledge point; a teach page names one by index.
+    pub visuals: Vec<VisualSpec>,
 }
 
 impl AuthoringSpec {
@@ -403,6 +407,7 @@ pub fn user_message(kind: Kind, spec: &AuthoringSpec, feedback: Option<&str>) ->
     } else {
         lines.push(render_exemplars(&spec.exemplars));
     }
+    figure::offer_reference_figures(kind, spec, &mut lines);
     if let Some(feedback) = feedback {
         lines.push(String::new());
         lines.push(retry_block(kind, feedback));

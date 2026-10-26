@@ -281,6 +281,7 @@ async fn an_approved_hint_ladder_from_the_gate_serves_with_no_model_call() {
         let ladder = gate_hint_ladder(
             arguments,
             &InstructionSpec {
+                visuals: &[],
                 exemplars: &exemplars,
                 instance_answers: Vec::new(),
             },

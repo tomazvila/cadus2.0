@@ -48,6 +48,7 @@ fn write_summary(text: &mut String, run: &ReadinessRun) {
         let _ = writeln!(text, "| Approved `{kind}` documents | {count} |");
     }
     let _ = writeln!(text);
+    write_placement(text, run);
     if documents == 0 {
         let _ = writeln!(
             text,
@@ -56,6 +57,23 @@ fn write_summary(text: &mut String, run: &ReadinessRun) {
              The blockers under that line are the ones an authoring pass does NOT \
              fix on its own.\n"
         );
+    }
+}
+
+/// The placement line: the topics whose probe the start can ask and mark.
+/// For one course it names that course. For all courses it gives the total,
+/// then one line for each course.
+fn write_placement(text: &mut String, run: &ReadinessRun) {
+    let (asked, topics) = run.placement_totals();
+    let _ = writeln!(
+        text,
+        "Placement probes: {asked} of {topics} topics have a probe that the start asks and the server marks.\n"
+    );
+    if run.course.is_none() {
+        for (course, (askable, total)) in &run.placement {
+            let _ = writeln!(text, "- `{course}`: {askable} of {total} topics");
+        }
+        let _ = writeln!(text);
     }
 }
 
@@ -198,6 +216,7 @@ pub fn render_json(run: &ReadinessRun) -> Value {
         "ready": ready,
         "blocked": blocked,
         "approved_documents": run.approved_documents,
+        "placement": placement_json(run),
         "histogram": histogram_json(run),
         "courses": run
             .report
@@ -220,6 +239,21 @@ pub fn render_json(run: &ReadinessRun) -> Value {
             })
             .collect::<Vec<Value>>(),
     })
+}
+
+/// The placement counts: `{course: {askable, topics}}`.
+fn placement_json(run: &ReadinessRun) -> Value {
+    let rows: serde_json::Map<String, Value> = run
+        .placement
+        .iter()
+        .map(|(course, (askable, topics))| {
+            (
+                course.clone(),
+                json!({ "askable": askable, "topics": topics }),
+            )
+        })
+        .collect();
+    Value::Object(rows)
 }
 
 /// The blocker histogram, by wire name.

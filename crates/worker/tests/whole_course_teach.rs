@@ -465,6 +465,7 @@ fn finite_teach_collision_allowance_matches_the_registered_teaching_roles() {
     }
     fn spec(finite: Option<FiniteAuthoringPolicy>) -> AuthoringSpec {
         AuthoringSpec {
+            visuals: vec![],
             kp_id: "kp1".to_owned(),
             kp_name: "Regression".to_owned(),
             topic_id: "finite-regression".to_owned(),

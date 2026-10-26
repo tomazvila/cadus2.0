@@ -156,6 +156,11 @@ Reference discipline (p. 426): the worked example is for study, not for solving 
 learner attempts the practice problem unaided from memory; a learner who gets stuck peeks at ONLY \
 the missing step, closes the page, and re-derives that step.
 
+The user message lists reference figures when the knowledge point has some. If one figure fits \
+this knowledge point, set 'figure' to its number. Then write the worked example about that \
+figure. Use its labels and its numbers. If no figure fits, leave 'figure' out. Never describe a \
+figure in the steps.
+
 LaTeX is canonical: ALL math in $...$ or $$...$$, KaTeX subset. Never bare Unicode math, never \
 ASCII like x^2 (write $x^2$). The prose is terminal-free: no markdown headers, no code fences. \
 The page never names the practice problem the learner is about to see.";

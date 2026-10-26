@@ -29,6 +29,7 @@ use common::{
 /// A second knowledge point, for the two-row test.
 fn other_spec() -> AuthoringSpec {
     AuthoringSpec {
+        visuals: vec![],
         kp_id: "cubes".to_owned(),
         topic_id: "perfect-cubes".to_owned(),
         ..spec()

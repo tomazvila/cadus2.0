@@ -209,6 +209,10 @@ async fn readiness(args: &ReadinessArgs) -> Result<(), WorkerError> {
         "readiness {course}: knowledge points ready {ready}, blocked {blocked},          contract failures {}",
         run.contract_failures().len()
     );
+    let (asked, topics) = run.placement_totals();
+    println!(
+        "Placement probes: {asked} of {topics} topics have a probe that the start asks and the server marks."
+    );
     for blocker in cadus_core::readiness::Blocker::every() {
         let count = run.report.histogram().get(&blocker).copied().unwrap_or(0);
         println!("blocker {} {count}", blocker.as_str());

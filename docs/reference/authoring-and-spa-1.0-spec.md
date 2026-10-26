@@ -221,6 +221,15 @@ author -> gate -> retry with the literal rejection message -> store `pending` ->
 `hint_ladder` are one approved document per KP. `diagnosis` is the `distractors` list inside
 the template document, not a separate row, except where a KP serves exemplars only.
 
+**Teach figure (D-V1).** A teach body has the optional field `figure`. It is an index into the
+`visuals` list of the KP. The teach check accepts only a reference figure: an entry that no
+exemplar names. It refuses an index out of range, a figure that fails `VisualSpec::validate`,
+a figure that an exemplar names, a figure label or value that the worked example does not state,
+a figure label that is also a quantity letter of the worked problem, and a figure caption or text
+that solves a served problem. Each refusal has the code `teach-figure`. A body with no `figure`
+keeps its bytes. The teach tool schema has the optional property `figure`. The user message lists
+the reference figures of the KP. The operator re-authors with `--kp-file`.
+
 **T3 — authoring cost per KP.** Every attempt writes one `model_call_log` row with
 `purpose = 'authoring'` and `user_id = NULL` (`migrations/0005_content.sql:52-57`). On store,
 the job sets `content_store.authoring_attempts` and `authoring_cost_usd` to the sum over that
@@ -642,7 +651,7 @@ TypeScript units are separated, because they run different gates.
 | **R3** | T3 accounting — `model_call_log` rows with `purpose='authoring'`, `authoring_attempts` and `authoring_cost_usd` on the stored row, the >3-attempt alert | a 4-attempt KP raises the alert and the row's `authoring_attempts` is `4`; a reply with no `usage` block writes a zeros row with a NULL cost; the cost on the row equals the sum of that KP's call rows |
 | **R4** | `cadus-store::content` — insert `pending` as `cadus_admin`, read approved by `(kp_id, kind)`, approve and reject by digest | `cadus_app` cannot INSERT, UPDATE, or DELETE `content_store`; an approve on a digest that does not exist is `404`; approving twice is idempotent |
 | **R5** | `/api/admin/content*` — the four routes of §3.2, admin-gated, with rendered instances and gate notes | a non-admin session gets `403` on all four; the show route returns 8 instances with computed answers; the list flags a KP with fewer than 3 approved templates; a reject without a reason is `422` |
-| **R6** | Teach and hint authoring — the two prompts, their gates (a hint never contains the answer; a teach page carries concept + worked problem + steps), and their storage | a hint ladder whose last rung contains the expected answer is rejected with a literal message; a teach body missing `worked_example.steps` is rejected; an approved teach body serves through the M5 teach route with no model call (L4/L5) |
+| **R6** | Teach and hint authoring — the two prompts, their checks (a hint never contains the answer; a teach page carries concept + worked problem + steps), and their storage | a hint ladder whose last rung contains the expected answer is rejected with a literal message; a teach body missing `worked_example.steps` is rejected; an approved teach body serves through the M5 teach route with no model call (L4/L5); a teach body with `figure` is accepted only for a reference figure whose labels and values the worked example states (D-V1) |
 | **R7** | Distractor authoring and the A4 pre-authored path — `distractors: [{answer, error_tag, note}]`, vocabulary filter, wiring to the grade reply's `diagnosis: ready` | an `error_tag` outside the vocabulary is dropped at the gate; a learner answer matching a distractor returns `status:"ready"` and writes no `diagnosis_jobs` row |
 | **R8** | The authoring CLI entry point (`cadus-worker author --kp … --kind …`) and its runbook section in `docs/` | a dry run makes zero model calls and prints the plan; the runbook commands run against the test database |
 

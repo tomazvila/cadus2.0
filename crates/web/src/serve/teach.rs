@@ -2,6 +2,7 @@
 
 use super::choices::label_choices;
 use super::*;
+use cadus_core::visual::{RenderedVisual, VisualSpec, render_all};
 
 /// The authored teach page of a lesson's current knowledge point (`api.py:1064-1103`).
 ///
@@ -55,6 +56,9 @@ pub async fn teach(
             "steps": page.worked_example.steps,
         },
     });
+    if let Some(figure) = teach_figure(graph, &lesson.key, &page) {
+        reply["worked_example"]["figure"] = json!(figure);
+    }
     // The try-first block carries what the learner needs to act and nothing
     // that grades the act: `answer` and `reveal` stay on the server until the
     // check route (Hard Rule 1).
@@ -68,6 +72,36 @@ pub async fn teach(
         reply["try_first"] = block;
     }
     Ok(Json(reply))
+}
+
+/// The figures of the knowledge point that `key` (`topic/kp`) names.
+pub(crate) fn kp_visuals<'a>(graph: &'a Curriculum, key: &str) -> &'a [VisualSpec] {
+    let Some((topic_id, point_id)) = cadus_core::pool::split_kp_key(key) else {
+        return &[];
+    };
+    graph
+        .idx_of(topic_id)
+        .and_then(|topic_idx| {
+            let kp_idx = graph.kp_idx_of(topic_idx, point_id)?;
+            graph.knowledge_point(topic_idx, kp_idx)
+        })
+        .map_or(&[][..], |kp| kp.visuals.as_slice())
+}
+
+/// The drawn figure of a teach page, or [`None`].
+///
+/// [`None`] covers a page with no `figure`, an index that no longer fits the
+/// list, and a figure that fails `validate`. The reply then holds no `figure`
+/// key, and the page reads as it did before figures.
+pub(crate) fn teach_figure(
+    graph: &Curriculum,
+    key: &str,
+    page: &TeachDoc,
+) -> Option<RenderedVisual> {
+    let spec = kp_visuals(graph, key).get(page.figure?)?;
+    render_all(std::slice::from_ref(spec), "teach")
+        .into_iter()
+        .next()
 }
 
 /// `POST /api/task/{task_id}/teach/check`: grade one active-example act.

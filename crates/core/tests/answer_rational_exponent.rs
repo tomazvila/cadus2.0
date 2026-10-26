@@ -286,7 +286,8 @@ fn the_task_pairs_of_d_f3_are_correct_on_both_kinds() {
         ("(2/3)x^(3/2) + C", "C + (2/3)x*sqrt(x)", E, true),
         // An odd root takes a power of a variable apart, so this pair is one value.
         ("x^(2/3)", "(x^2)^(1/3)", E, true),
-        ("x^(1/2)", "(x^2)^(1/4)", E, false),
+        // Rung 5b samples the pair on the domain of the key, x >= 0 (D6-expr).
+        ("x^(1/2)", "(x^2)^(1/4)", E, true),
         ("x", "(x^2)^(1/2)", E, false),
         // Wrong values stay wrong (C4).
         ("sqrt(2)", "2^(1/3)", N, false),

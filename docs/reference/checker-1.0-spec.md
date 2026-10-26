@@ -263,6 +263,19 @@ agreement to 1e-9; else, if both sides parse to free-symbol-free real finite num
 A plain Python container (`(4, 17)`, `{1, 2}`) has no `free_symbols`/`evalf`, so the
 numeric rung raises, is swallowed at `:353-354`, and `lhs == rhs` decides it structurally.
 
+**The 2.0 sampling rung beside the 1.0 sampling (D6-expr, 2026-10-26).** 1.0 ends in a
+random sample, `lhs.equals(rhs)`. Rung 5b of the 2.0 `check` samples 8 fixed points and
+only upgrades a decided miss. It applies to a plain `expression` pair with 1 to 4 free
+variables and no decimal literal. If the sampler refuses, the miss stands.
+
+| Expected | Learner | 2.0 verdict | Reason |
+|---|---|---|---|
+| `sec(x)^2` | `1/cos(x)^2` | correct | the two agree at every finite point |
+| `(x^2-1)/(x-1)` | `x+1` | correct | the learner has a value wherever the key has one |
+| `x+1` | `(x^2-1)/(x-1)` | wrong | the learner has no value at 1, where the key has one |
+| `x/3` | `0.3333333333*x` | wrong | a decimal literal is never sampled (D6-dec) |
+| `ln(x)` | `log(x, 2)` | wrong | `log(x, 2)` is a base 2 logarithm and `ln(x)` is a base e logarithm, so the two differ at the points |
+
 **Latency.** `simplify` is unbounded. Measured on this box with
 `/home/deploy/dev/cadus/.venv/bin/python`:
 
@@ -905,7 +918,8 @@ deterministic verdict it cannot support — which is precisely the 1.0 defect in
 ### 8.4 The 2.0 productions (2026-09-06, unit f2-grammar, decision D-F3)
 
 Five productions joined the built grammar after the M2 measure above. Every one of them
-is a finite parse and an exact canonical form; none samples a value (R3, V1).
+is a finite parse and an exact canonical form; the five productions sample nothing. Rung 5b
+is the one sampler of `check` (D6-expr, section 3.2).
 
 | Production | Grammar | Canonical form | Verdict rule |
 |---|---|---|---|

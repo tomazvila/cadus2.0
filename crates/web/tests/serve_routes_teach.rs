@@ -129,6 +129,7 @@ async fn an_approved_teach_page_from_the_gate_serves_with_no_model_call() {
         let page = gate_teach(
             arguments,
             &InstructionSpec {
+                visuals: &[],
                 exemplars: &exemplars,
                 instance_answers: Vec::new(),
             },

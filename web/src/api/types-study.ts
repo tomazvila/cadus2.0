@@ -263,7 +263,15 @@ export interface TeachResponse {
   kp: string;
   concept: string;
   /** The service sends one entry per step; an older page may send one string. */
-  worked_example: { problem: string; steps: string | string[] };
+  worked_example: {
+    problem: string;
+    steps: string | string[];
+    /**
+     * One reference figure, drawn and checked by the service. The key is absent for a page
+     * that names no figure. The SPA draws it above the example.
+     */
+    figure?: RenderedVisual;
+  };
   /**
    * A motivating problem attempted BEFORE the worked example (step 5a). No answer and no
    * reveal here: both arrive from `taskTeachCheck` after the attempt. `choices` follows the

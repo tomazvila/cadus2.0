@@ -184,6 +184,7 @@ pub fn missing_low_edge() -> Value {
 /// The perfect-squares knowledge point. Its exemplar answers `49`.
 pub fn squares_spec() -> AuthoringSpec {
     AuthoringSpec {
+        visuals: vec![],
         kp_id: "squares".to_owned(),
         kp_name: "Squares of one-digit and two-digit numbers".to_owned(),
         topic_id: "perfect-squares".to_owned(),
@@ -205,6 +206,7 @@ pub fn squares_spec() -> AuthoringSpec {
 /// The perfect-squares knowledge point with an answer kind no checker decides.
 pub fn proof_spec() -> AuthoringSpec {
     AuthoringSpec {
+        visuals: vec![],
         answer_kind: AnswerKind::Proof,
         ..squares_spec()
     }
@@ -315,6 +317,7 @@ pub async fn batch(
 /// (`problem_templates.py:59-66`).
 pub fn golden_spec() -> AuthoringSpec {
     AuthoringSpec {
+        visuals: vec![],
         kp_id: "sub-borrow-two-digit".to_owned(),
         kp_name: "Two-digit subtraction with borrowing".to_owned(),
         topic_id: "subtraction-borrowing".to_owned(),

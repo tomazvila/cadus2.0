@@ -68,6 +68,7 @@
 //! (C4). A body that is not a document at all is a rejection, not a crash.
 
 mod body;
+mod figure;
 mod finite;
 mod hint;
 mod names_answer;
@@ -78,6 +79,7 @@ use serde::{Deserialize, Serialize};
 use crate::curriculum::Exemplar;
 use crate::template::gate::Rejection;
 use crate::template::{Compiled, GATE_SEED, from_body, rng_from_seed};
+use crate::visual::VisualSpec;
 
 pub use hint::gate_hint_ladder;
 pub use teach::{gate_teach, gate_teach_with_policy};
@@ -144,7 +146,7 @@ pub fn template_instances(body: &str) -> Vec<ServedInstance> {
 }
 
 /// The fields a teach body carries.
-pub const TEACH_FIELDS: [&str; 2] = ["concept", "worked_example"];
+pub const TEACH_FIELDS: [&str; 3] = ["concept", "worked_example", "figure"];
 
 /// The fields a worked example carries.
 pub const WORKED_EXAMPLE_FIELDS: [&str; 2] = ["problem", "steps"];
@@ -171,6 +173,11 @@ pub struct TeachPage {
     pub concept: String,
     /// The fully worked example.
     pub worked_example: WorkedExample,
+    /// The index of one figure in the `visuals` list of the knowledge point.
+    /// Only a figure that no exemplar names is allowed here. Absent when the
+    /// page shows no figure; then the body keeps the bytes it had before.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub figure: Option<usize>,
 }
 
 /// The body of a `content_store` row of kind `hint_ladder` (L5).
@@ -197,6 +204,9 @@ pub struct InstructionSpec<'a> {
     /// honest value for a knowledge point that stores no template at all: A6
     /// serves the exemplars there and nothing else.
     pub instance_answers: Vec<ServedInstance>,
+    /// The figures of the knowledge point (`visuals`). A teach page names one
+    /// of them by index.
+    pub visuals: &'a [VisualSpec],
 }
 
 impl InstructionSpec<'_> {

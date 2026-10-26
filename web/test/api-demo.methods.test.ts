@@ -303,6 +303,12 @@ describe('the demo payloads, literally', () => {
       worked_example: {
         problem: 'Simplify $\\frac{4}{6}$.',
         steps: 'Both parts divide by 2, so $\\frac{4}{6}=\\frac{2}{3}$.',
+        // The demo page draws one figure, as the service sends it: kind, svg, text.
+        figure: {
+          kind: 'fraction',
+          svg: expect.stringContaining('<svg'),
+          text: expect.stringContaining('4 of them shaded'),
+        },
       },
     });
     expect(await settle(demo.taskHint('demo-lesson', 'demo-p1'))).toEqual({

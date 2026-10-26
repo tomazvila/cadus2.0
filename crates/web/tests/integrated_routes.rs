@@ -474,3 +474,6 @@ mod timing;
 
 #[path = "integrated_routes/journey.rs"]
 mod journey;
+
+#[path = "integrated_routes/figure.rs"]
+mod figure;

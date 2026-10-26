@@ -129,6 +129,11 @@ export interface ReviewDocument extends ReviewItem {
   /** The authored payload, verbatim. The screen renders it and rewrites nothing. */
   body: JsonValue;
   gate: OperatorGateNote | null;
+  /**
+   * The text description of the figure that a teach page names. Absent for any other
+   * document. The reviewer who approves "figure 3" reads what figure 3 shows.
+   */
+  figure_text?: string;
   instances: RenderedInstance[];
   /** Why the instance list is empty, when it is. Never an empty list with no cause (A6). */
   instances_note: string | null;

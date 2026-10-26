@@ -535,6 +535,9 @@ Section 3.18 is closed for `60 km/h` and `2π cm^2`: both read as quantities now
 | `a number glued to a name reads as a label` | 1 |
 | `a unit inside an expression` | 1 |
 
+Rung 5b of `check` (D6-expr) adds no refusal reason. If its sampler refuses a pair, the
+decided miss of rung 6 stands.
+
 ### 5.3 Refused by rule
 
 The productions add these fixed reasons. No corpus row holds one of them.

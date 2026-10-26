@@ -256,3 +256,55 @@ async fn foundations_multi_step_exemplars_are_contract_bound_end_to_end() {
     })
     .await;
 }
+
+/// A two-topic tree: one numeric topic and one `proof` topic. Each topic holds a
+/// probe, and the `proof` probe has no contract.
+fn placement_tree() -> PathBuf {
+    let root = std::env::temp_dir().join(format!("cadus-placement-{}", std::process::id()));
+    let course = root.join("tiny");
+    std::fs::create_dir_all(&course).unwrap();
+    std::fs::write(
+        root.join("courses.yaml"),
+        "courses:\n  - id: tiny\n    name: Tiny\n    order: 1\n",
+    )
+    .unwrap();
+    let topic = |id: &str, kind: &str, key: &str| {
+        format!(
+            "  - id: {id}\n    name: {id}\n    difficulty: 0.2\n    answer_kind: {kind}\n    \
+             expected_time_secs: 60\n    diagnostic_exemplar:\n      problem: Compute $3 + 4$.\n      \
+             answer: \"{key}\"\n    knowledge_points:\n      - id: kp1\n        name: kp1\n        \
+             exemplars:\n          - problem: Compute $1 + 1$.\n            answer: \"2\"\n"
+        )
+    };
+    let unit = format!(
+        "unit: Tiny unit\ncourse: tiny\nmodule: Tiny module\ntopics:\n{}{}",
+        topic("sum", "numeric", "7"),
+        topic("claim", "proof", "7")
+    );
+    std::fs::write(course.join("01-tiny.yaml"), unit).unwrap();
+    root
+}
+
+/// The placement line counts the topics whose probe gives a verdict. The proof
+/// probe has no contract, so the start would drop it.
+#[tokio::test]
+async fn the_report_prints_the_placement_probe_count() {
+    TestDb::with(|db| async move {
+        let root = placement_tree();
+        let (curriculum, findings) = load_curriculum(&root).unwrap();
+        assert!(findings.is_empty(), "{findings:#?}");
+        let run = readiness_run(&handle(&db), &curriculum, Some("tiny"))
+            .await
+            .unwrap();
+        assert_eq!(run.placement_totals(), (1, 2));
+        let text = render_readiness_markdown(&run, "2026-10-26");
+        assert!(text.contains(
+            "Placement probes: 1 of 2 topics have a probe that the start asks and the server marks."
+        ));
+        let json = render_readiness_json(&run);
+        assert_eq!(json["placement"]["tiny"]["askable"], 1);
+        assert_eq!(json["placement"]["tiny"]["topics"], 2);
+        let _ = std::fs::remove_dir_all(&root);
+    })
+    .await;
+}

@@ -6,6 +6,12 @@
 //! finding-for-finding by the parity tests — prints each violation, and exits
 //! non-zero when the tree holds any finding — advisory findings included.
 //!
+//! The binary also runs the placement probe rule
+//! ([`cadus_core::curriculum::lint_curriculum_probes`], D-DG4). It fails when the
+//! placement start would drop a topic probe, except for a topic on the
+//! allow-list `diag-probe-allow.txt` in the tree. `$CADUS_DIAG_PROBE_ALLOW`
+//! names another allow-list file.
+//!
 //! The exemplar CONTENT rules (sketches, asks, the practice floor) live behind
 //! [`cadus_core::curriculum::lint_curriculum_full`]; the authoring sweep runs
 //! them from `lint_exemplars`-style checks, not from this parity-pinned binary.
@@ -23,7 +29,7 @@ use std::env;
 use std::path::PathBuf;
 use std::process::ExitCode;
 
-use cadus_core::curriculum::lint_curriculum;
+use cadus_core::curriculum::{lint_curriculum, lint_curriculum_probes};
 
 /// The environment variable that names the curriculum tree.
 const CURRICULUM_ENV: &str = "CADUS_CURRICULUM";
@@ -43,7 +49,8 @@ fn main() -> ExitCode {
     // argument text and not a canonical path.
     let shown = path.display().to_string();
 
-    let findings = lint_curriculum(&path);
+    let mut findings = lint_curriculum(&path);
+    findings.extend(lint_curriculum_probes(&path));
     if findings.is_empty() {
         println!("OK: {shown} is a valid curriculum (0 findings).");
         return ExitCode::SUCCESS;

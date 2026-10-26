@@ -204,16 +204,16 @@ fn the_canonical_rational_form_runs_no_polynomial_gcd() {
     // True through `simplify(lhs - rhs) == 0`, which is the search 2.0 refuses
     // (D6, L2).
     //
-    // 1.0: True. The two denominators share the factor `(x - 1)`.
+    // The exact forms differ for both pairs below. Rung 5b samples them (D6-expr).
+    //
+    // 1.0: True. The two denominators share the factor `(x - 1)`. The sum
+    // `-4/(x-1)^2 - 8/(x-1)^3` is `(-4x - 4)/(x-1)^3`, so the pair is an identity.
     assert_eq!(
         check("-4(x + 1)/(x - 1)^3", "-4/(x - 1)**2 - 8/(x - 1)**3", E),
-        decided(false, false)
+        decided(true, false)
     );
     // 1.0: True. The learner cancelled the common factor of the quotient.
-    assert_eq!(
-        check("(x^2 - 1)/(x - 1)", "x + 1", E),
-        decided(false, false)
-    );
+    assert_eq!(check("(x^2 - 1)/(x - 1)", "x + 1", E), decided(true, false));
     // The same form keeps every agreement it can reach without a GCD: two
     // spellings of one quotient are one value, because both sides expand.
     assert_eq!(
@@ -229,24 +229,25 @@ fn the_canonical_rational_form_runs_no_polynomial_gcd() {
 #[test]
 fn the_canonical_form_rationalizes_no_radical() {
     // The second narrowing FIXM2i measured: 6 pairs leave class 3 under the
-    // reason "no radical rationalization (V1 narrowing)". 2.0 keeps a root of a
-    // non-rational radicand as one atom, and it never folds `sqrt(A)*sqrt(A)`
-    // into `A`, because that identity needs `A >= 0` and the grammar carries no
-    // domain (V1, D6).
+    // reason "no radical rationalization (V1 narrowing)". The exact form keeps a
+    // root of a non-rational radicand as one atom, and it never folds
+    // `sqrt(A)*sqrt(A)` into `A`, because that identity needs `A >= 0` and the
+    // grammar carries no domain (V1, D6). Rung 5b samples the two sum rows below
+    // and finds them equal on the domain of the key (D6-expr).
     //
     // 1.0: True for every row, through `radsimp` inside `simplify`. The verdicts
     // come from the oracle on 2026-08-27.
     // `sqrt(x)/x` and `1/sqrt(x)` are one value since the root of a plain atom
     // merges with the whole power of that atom (grader pass 4). A root of a SUM
-    // stays one opaque atom, so the two rows below keep their verdict.
+    // stays one opaque atom, so the two rows below reach rung 5b.
     assert_eq!(check("1/(2√x)", "sqrt(x)/(2*x)", E), decided(true, false));
     assert_eq!(
         check("x/√(x^2 + 9)", "x*sqrt(x**2 + 9)/(x**2 + 9)", E),
-        decided(false, false)
+        decided(true, false)
     );
     assert_eq!(
         check("1/√(1 - x^2)", "-sqrt(1 - x**2)/(x**2 - 1)", E),
-        decided(false, false)
+        decided(true, false)
     );
     // A root of a RATIONAL radicand reduces on both sides, so the narrowing
     // takes no pair there (FIXM2h, review round 3, findings 9 and 11).

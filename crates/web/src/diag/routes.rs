@@ -16,7 +16,7 @@ use cadus_store::state::{Projection, clear_diag_state, load_diag_state, project_
 use serde_json::{Value, json};
 
 use super::{
-    DIAG_TASK_ID, deal_probe, deterministic, load_diagnostic, markable, no_diagnostic, probe_view,
+    DIAG_TASK_ID, deal_probe, load_diagnostic, markable, no_diagnostic, probe_view,
     save_diagnostic, topic_record,
 };
 use crate::error::ApiError;
@@ -263,7 +263,11 @@ fn probe_topic<'a>(
     }
     let record = topic_record(graph, topic)
         .filter(|record| {
-            deterministic(record.answer_kind) || served.expected.answer_contract.is_some()
+            served.expected.answer_contract.is_some()
+                || matches!(
+                    record.answer_kind,
+                    AnswerKind::Numeric | AnswerKind::Expression
+                )
         })
         .ok_or_else(no_diagnostic)?;
     Ok((&record.id, record.answer_kind))

@@ -264,11 +264,15 @@ pub const GENERATOR_COUNTS: [(&str, usize); 47] = [
 /// pairs, and 33 pairs leave class 1. Class 1 is 1,018, class 3 is 16,311, class 4 is 333.
 /// The `1/(2√x)` pair read by value leaves the radical narrowing (6 to 5), and two nested
 /// radical roundings move from the float-rung residue to the tagged rounding (151 to 153).
+///
+/// 2026-10-26 (D6-expr): 10 pairs left the two narrowings, because rung 5b samples them and
+/// finds them equal. Class 3 is 16,321 and class 4 is 323. The polynomial GCD count falls
+/// from 6 to 1 and the radical rationalization count falls from 5 to 0.
 pub const CLASS_COUNTS: [(&str, usize); 5] = [
     ("class 1 outside_grammar", 1018),
     ("class 2 prose_expected", 0),
-    ("class 3 comparable", 16311),
-    ("class 4 documented_divergence", 333),
+    ("class 3 comparable", 16321),
+    ("class 4 documented_divergence", 323),
     ("oracle_silent", 0),
 ];
 
@@ -316,8 +320,8 @@ pub const REASON_COUNTS: [(&str, usize); 18] = [
         "1.0 reads `log` as the natural logarithm, 2.0 as base 10 (grader pass 3)",
         13,
     ),
-    ("no polynomial GCD (V1 narrowing)", 6),
-    ("no radical rationalization (V1 narrowing)", 5),
+    ("no polynomial GCD (V1 narrowing)", 1),
+    ("no radical rationalization (V1 narrowing)", 0),
     ("no float tolerance rung (D6)", 3),
     ("the exact rounding carries the notation tag (D6-dec)", 153),
     ("an exact rounding 1.0 refused is correct (D6-dec)", 49),

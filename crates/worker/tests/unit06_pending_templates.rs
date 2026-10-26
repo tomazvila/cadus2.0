@@ -138,6 +138,7 @@ fn historical_spec(key: &str) -> prompt::AuthoringSpec {
         Some(prompt::FiniteAuthoringPolicy::new(key, &domain).unwrap())
     };
     prompt::AuthoringSpec {
+        visuals: vec![],
         kp_id: row["kp_id"].as_str().unwrap().to_owned(),
         kp_name: row["kp_name"].as_str().unwrap().to_owned(),
         topic_id: row["topic_id"].as_str().unwrap().to_owned(),

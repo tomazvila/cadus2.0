@@ -40,6 +40,7 @@ fn policy() -> FiniteObjectiveDomain {
 
 fn spec() -> AuthoringSpec {
     AuthoringSpec {
+        visuals: vec![],
         kp_id: "kp1".to_owned(),
         kp_name: "Finite index".to_owned(),
         topic_id: "finite-index".to_owned(),

@@ -5,7 +5,8 @@
 //! into the decidable grammar (V1), canonicalizes both with exact arithmetic (D6),
 //! and compares the two canonical forms.
 //!
-//! The comparison is an equality of two [`Canon`] values and nothing else. Every
+//! The comparison is an equality of two [`Canon`] values. Rung 5b adds one sampled
+//! upgrade of a miss (D6-expr). Every
 //! algebraic rule lives in [`super::canon`], which is why a rational expression
 //! needs no rung of its own: `2/x + 1/(x+1)` and `(3*x+2)/(x*(x+1))` reach one
 //! canonical quotient there (M2 review 3, findings 9 to 13).
@@ -29,6 +30,11 @@
 //!    authored value to the digits the learner typed: `correct = true` with
 //!    `notation = true` (ruling `D6-dec`). A rounding this build cannot decide
 //!    exactly is [`Outcome::Undecidable`] (V2).
+//!    Rung 5b follows rung 5. A plain `expression` pair with 1 to 4 free
+//!    variables and no decimal literal reaches the sampler of the `function`
+//!    contract (ruling `D6-expr`). If every finite sample point agrees,
+//!    `correct = true`. The rung only upgrades: if the sampler disagrees or
+//!    refuses, the miss of rung 6 stands.
 //! 6. Otherwise: `correct = false`.
 //! 7. A percent key (`65%`) accepts its displayed number (`65`, `65 percent`)
 //!    through the bounded natural-reading rewrite. A measured value needs an
@@ -40,7 +46,9 @@
 //!   get a `True` on an exact string match. 2.0 puts the kind gate first: an
 //!   undecidable kind is always [`Outcome::Undecidable`] (`docs/plans/M2.md`).
 //! - 1.0 hands a wrong verifiable answer to the model. 2.0 decides it (A3).
-//! - 1.0 has two float rungs, at 1e-9 and at 1e-6. 2.0 has none. `1/3` and
+//! - 1.0 has two float rungs, at 1e-9 and at 1e-6. 2.0 has none, apart from the
+//!   sampler of rung 5b, which only upgrades a miss on a plain expression with a
+//!   free variable and never reads a decimal literal. `1/3` and
 //!   `0.333333` are two different VALUES (D6, V1), and rung 5 reads the second
 //!   one as the exact rounding of the first, which is a decidable question about
 //!   the digits the learner typed and not a tolerance. `0.3334` is wrong for
@@ -60,6 +68,7 @@ use super::canon::{Basis, Canon, canon};
 use super::normalize::{MAX_ANSWER_CHARS, is_grouped_integer, normalize};
 use super::parse::parse;
 use super::rounding::{Rounding, rounds_to};
+use super::sampled;
 use super::unit::lookup;
 
 /// The decision of the checker on one answer pair (C4).
@@ -87,7 +96,7 @@ pub enum Outcome {
 
 impl Outcome {
     /// Build a decided outcome with no notation note.
-    const fn decided(correct: bool) -> Self {
+    pub(super) const fn decided(correct: bool) -> Self {
         Self::Decided(Verdict {
             correct,
             notation: false,
@@ -196,7 +205,11 @@ fn decide(expected: &str, learner: &str, kind: AnswerKind) -> (Outcome, Option<F
     // opinion. An authored answer outside the grammar never gets a verdict (V2).
     // The learner TREE stays in hand for rung 5: the canonical form holds the
     // learner value, and the tree holds the digits the learner typed.
-    let expected_value = match canonical(&expected_text.source) {
+    let expected_tree = match parse(&expected_text.source) {
+        Ok(tree) => tree,
+        Err(reason) => return (Outcome::Undecidable(reason), None),
+    };
+    let expected_value = match canon(&expected_tree) {
         Ok(value) => value,
         Err(reason) => return (Outcome::Undecidable(reason), None),
     };
@@ -225,6 +238,17 @@ fn decide(expected: &str, learner: &str, kind: AnswerKind) -> (Outcome, Option<F
             return (Outcome::Undecidable(Undecidable::new(reason)), None);
         }
         Rounding::Different | Rounding::NotANumber => {}
+    }
+    // Rung 5b. A pair of plain expressions with free variables is sampled (D6-expr).
+    // The rung only upgrades a miss to `correct`.
+    if let Some(outcome) = sampled::rung(
+        expected,
+        learner,
+        kind,
+        (&expected_tree, &learner_tree),
+        (&expected_value, &learner_value),
+    ) {
+        return (outcome, None);
     }
     (Outcome::decided(false), None)
 }

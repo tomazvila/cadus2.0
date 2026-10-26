@@ -311,19 +311,21 @@ fn a_value_label_is_a_tolerance_and_not_a_value() {
 }
 
 #[test]
-fn a_transcendental_identity_is_not_decided() {
+fn a_transcendental_identity_is_sampled() {
     // 1.0: True, through `simplify(lhs - rhs) == 0` in 16 ms (spec section 3.2).
-    // 2.0 compares canonical forms and runs no simplification (V1), so a function
-    // application equals only the same function application.
-    assert_eq!(check("sin(x)**2+cos(x)**2", "1", E), decided(false, false));
+    // The canonical form runs no simplification (V1), so the two forms differ.
+    // Rung 5b samples the pair at eight fixed points (D6-expr). The identity
+    // holds at every point, so the verdict is correct.
+    assert_eq!(check("sin(x)**2+cos(x)**2", "1", E), decided(true, false));
 }
 
 #[test]
-fn a_rational_function_is_not_cancelled() {
+fn a_rational_function_is_cancelled_by_sampling() {
     // 1.0: True, through `simplify`. 2.0 normalizes the content of the divisor,
-    // so a scalar multiple still matches, but it runs no polynomial greatest
-    // common divisor, so a common factor does not cancel.
-    assert_eq!(check("(x**2-1)/(x-1)", "x+1", E), decided(false, false));
+    // so a scalar multiple still matches. It runs no polynomial greatest common
+    // divisor, so the canonical forms differ. Rung 5b samples the pair (D6-expr),
+    // and the two formulas agree wherever the key has a value.
+    assert_eq!(check("(x**2-1)/(x-1)", "x+1", E), decided(true, false));
     assert_eq!(check("1/(x+1)", "2/(2*x+2)", E), decided(true, false));
 }
 

@@ -22,6 +22,7 @@ pub fn exemplars() -> Vec<Exemplar> {
 #[must_use]
 pub fn spec(exemplars: &[Exemplar]) -> InstructionSpec<'_> {
     InstructionSpec {
+        visuals: &[],
         exemplars,
         instance_answers: Vec::new(),
     }
@@ -37,6 +38,7 @@ pub fn spec_with_instances<'a>(
     instances: &[(&str, &str)],
 ) -> InstructionSpec<'a> {
     InstructionSpec {
+        visuals: &[],
         exemplars,
         instance_answers: instances
             .iter()

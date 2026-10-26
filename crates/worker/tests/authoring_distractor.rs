@@ -106,6 +106,7 @@ fn names_the_right_answer() -> Value {
 /// The knowledge point every test authors for. Its exemplar answers `13.5`.
 fn spec() -> AuthoringSpec {
     AuthoringSpec {
+        visuals: vec![],
         kp_id: "kp1".to_owned(),
         kp_name: "Add a whole number and a decimal".to_owned(),
         topic_id: "addition".to_owned(),

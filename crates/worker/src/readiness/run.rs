@@ -6,7 +6,7 @@ use std::collections::BTreeMap;
 use cadus_core::answer::{Outcome, check};
 use cadus_core::curriculum::{AnswerKind, Curriculum, KnowledgePoint, Topic};
 use cadus_core::pool::{ExemplarSource, ProblemSource, kp_key};
-use cadus_core::readiness::{ReadinessIndex, ReadinessReport, ReadinessSet};
+use cadus_core::readiness::{PrereqCoverage, ReadinessIndex, ReadinessReport, ReadinessSet};
 use cadus_store::Db;
 use cadus_store::content::approved_index_current;
 
@@ -47,9 +47,21 @@ pub struct ReadinessRun {
     pub contracts: BTreeMap<String, ContractCheck>,
     /// The approved documents the store holds, by kind.
     pub approved_documents: BTreeMap<String, usize>,
+    /// For each course, the topics whose placement probe gives a verdict and the
+    /// topics of the course. The placement start uses the same rule.
+    pub placement: BTreeMap<String, (usize, usize)>,
 }
 
 impl ReadinessRun {
+    /// The placement totals: the topics whose probe gives a verdict, and the
+    /// topics of the scope.
+    #[must_use]
+    pub fn placement_totals(&self) -> (usize, usize) {
+        self.placement
+            .values()
+            .fold((0, 0), |(a, t), (askable, total)| (a + askable, t + total))
+    }
+
     /// The knowledge points whose three contracts do not all hold.
     #[must_use]
     pub fn contract_failures(&self) -> Vec<(&String, &ContractCheck)> {
@@ -87,7 +99,20 @@ pub async fn run(
     for ((_, kind), count) in &content.documents {
         *approved_documents.entry(kind.clone()).or_insert(0) += count;
     }
+    let coverage = PrereqCoverage::build(curriculum, &index);
+    let placement = report
+        .courses
+        .iter()
+        .map(|row| {
+            let counts = coverage.counts(&row.course_id);
+            (
+                row.course_id.clone(),
+                (counts.diagnostic_decidable, counts.topics),
+            )
+        })
+        .collect();
     Ok(ReadinessRun {
+        placement,
         course: course.map(ToOwned::to_owned),
         contracts: contracts_of(curriculum, course),
         report,

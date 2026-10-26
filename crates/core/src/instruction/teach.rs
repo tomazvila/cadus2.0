@@ -2,6 +2,7 @@
 use crate::template::gate::{Rejection, contains_token, py_str};
 
 use super::body::{object, only_known, text};
+use super::figure::read_figure;
 use super::finite::{permitted_collision, teach_case};
 use super::{InstructionSpec, TEACH_FIELDS, TeachPage, WORKED_EXAMPLE_FIELDS, WorkedExample};
 
@@ -96,12 +97,14 @@ learner has not attempted yet (Hard Rule 1)",
         }
     }
     check_teach_disclosures(&problem, &written, spec, case)?;
+    let figure = read_figure(&fields, &problem, &written, spec, case)?;
     Ok(TeachPage {
         concept,
         worked_example: WorkedExample {
             problem,
             steps: written,
         },
+        figure,
     })
 }
 /// One step of the worked solution, or the refusal an empty step earns.
@@ -162,7 +165,7 @@ fn same_problem(left: &str, right: &str) -> bool {
             .is_some_and(|(left, right)| left == right)
 }
 
-fn check_teach_disclosures(
+pub(super) fn check_teach_disclosures(
     problem: &str,
     steps: &[String],
     spec: &InstructionSpec<'_>,

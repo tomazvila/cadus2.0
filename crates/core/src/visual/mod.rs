@@ -28,6 +28,7 @@
 //! [`VisualSpec::validate`] counts as absent, so a broken figure keeps the
 //! knowledge point unready.
 
+mod agree;
 mod curve;
 mod fraction;
 mod geometry;
@@ -40,6 +41,7 @@ mod special_triangle;
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
 
+pub use agree::{absent_terms, clashing_labels};
 pub use curve::{Asymptote, CurveFigure, CurveKind};
 pub use fraction::{FractionFigure, FractionShape};
 pub use geometry::{AngleMark, GeometryFigure, GeometryShape};
@@ -310,7 +312,7 @@ impl VisualSpec {
             Self::SpecialTriangle(figure) => figure.text_equivalent(),
         };
         match self.caption() {
-            Some(caption) => format!("{}. {body}", caption.trim()),
+            Some(caption) => format!("{}. {body}", caption.trim().trim_end_matches('.')),
             None => body,
         }
     }

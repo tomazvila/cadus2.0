@@ -285,6 +285,9 @@ async fn regate_knowledge_point(
     let spec = InstructionSpec {
         exemplars: gate_spec.as_ref().map_or(none, |spec| spec.exemplars),
         instance_answers: instances,
+        visuals: content.map_or(&[][..], |loaded| {
+            crate::serve::kp_visuals(&loaded.curriculum, kp_id)
+        }),
     };
 
     let mut regated: Vec<Regated> = Vec::new();

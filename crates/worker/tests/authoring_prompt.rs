@@ -211,7 +211,9 @@ fn the_digest_is_sixteen_hex_characters_and_one_per_kind() {
 fn the_prompt_digests_of_this_checkout_are_pinned() {
     let pinned = [
         (Kind::Template, "c0ef8977d579adc8"),
-        (Kind::Teach, "dfc6329034bf030f"),
+        // Brief 09 (D-V1) moved this one: the teach tool takes an optional
+        // `figure`, and the system text explains it.
+        (Kind::Teach, "12c5ba443e374c17"),
         (Kind::HintLadder, "c8e040f53fce1881"),
         // Unit R7 moved this one: the `emit_distractors` tool asks for a
         // literal answer, and the `emit_template` tool keeps its expression, so

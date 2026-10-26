@@ -289,6 +289,13 @@ pub fn tool_schema(kind: Kind) -> Value {
                         },
                     },
                 },
+                "figure": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "description":
+                        "The number of one reference figure from the user message, when one \
+        fits this knowledge point. Leave it out when none fits.",
+                },
             },
         }),
         Kind::HintLadder => json!({
