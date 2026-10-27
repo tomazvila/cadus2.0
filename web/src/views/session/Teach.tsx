@@ -22,6 +22,8 @@ import type { AnswerFieldHandle } from '@/components/AnswerField';
 import { MathBlock } from '@/components/MathBlock';
 import { MathVisuals } from '@/components/MathVisual';
 import { Chip } from '@/components/primitives';
+import { ReadingFold } from '@/components/ReadingFold';
+import { DepthFold, PictureFold, TermList, WatchOutFold } from './TeachExtras';
 import '../../styles/fix-session.css';
 import type { PlanTask, TeachCheckRequest, TeachCheckResponse, TeachResponse } from '@/api/types';
 
@@ -74,10 +76,15 @@ export function Teach({ task, instruction, onContinue, onCheck }: TeachProps) {
           <>
             {/* NOT `.problem-text`: the concept is prose, and borrowing the problem class made
                 a 1.0 test assert a problem card against a lesson that never reached one. */}
+            <PictureFold picture={instruction.picture} />
             <div className="teach-concept">
               <MathBlock className="teach-concept-text">{instruction.concept}</MathBlock>
             </div>
             <WorkedExample example={example} />
+            <WatchOutFold watchOut={instruction.watch_out} />
+            <SecondExampleFold example={instruction.second_example} />
+            <TermList terms={instruction.terms} />
+            <ReadingFold reading={instruction.reading} />
             {canPractise ? (
               <button ref={buttonRef} type="button" className="btn btn-primary" onClick={onContinue}>
                 Start practice ▸
@@ -87,6 +94,16 @@ export function Teach({ task, instruction, onContinue, onCheck }: TeachProps) {
         ) : null}
       </div>
     </>
+  );
+}
+
+/** The second worked example, in a closed fold. Nothing renders for an absent example. */
+export function SecondExampleFold({ example }: { example: TeachResponse['second_example'] }) {
+  if (!example) return null;
+  return (
+    <DepthFold label="A second example: what a result means" closed>
+      <WorkedExample example={example} />
+    </DepthFold>
   );
 }
 

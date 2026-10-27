@@ -62,6 +62,7 @@ mod lifecycle;
 mod plan;
 mod review_soon;
 mod rollover;
+mod round;
 mod store;
 mod today;
 mod topic_teach;
@@ -77,6 +78,7 @@ pub use rollover::{
     OpenSession, QUIZ_HOLD_DAYS, ROLLOVER_IDLE_US, SESSION_ROLLED_OVER, is_stale, rolled_over,
     session_day,
 };
+pub use round::start_round;
 pub(crate) use store::*;
 pub use topic_teach::topic_teach;
 

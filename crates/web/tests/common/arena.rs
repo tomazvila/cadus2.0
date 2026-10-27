@@ -97,6 +97,7 @@ pub fn one_course_catalog() -> Catalog {
             order: 0,
             mastery_floor: Vec::new(),
             mastery_floor_course: None,
+            reading: Vec::new(),
         }],
     }
 }

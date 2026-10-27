@@ -245,8 +245,17 @@ pub async fn status(req: Ready) -> Reply {
     let last = req.store(latest_graded_topic(&mut tx, req.user_id)).await?;
     let (last_topic, last_active_at) = last_studied(graph, last);
 
+    // D-RL1: the reading list of the enrolled course, only here. The key is
+    // absent for an empty list and for a learner with no course.
+    let mut course_json = course_view(graph, course);
+    if let Some(id) = course {
+        let reading = graph.reading_of_course(id);
+        if !reading.is_empty() {
+            course_json["reading"] = json!(reading);
+        }
+    }
     let body = json!({
-        "course": course_view(graph, course),
+        "course": course_json,
         "placed": placed,
         // The latest graded answer: its topic as `{id, name}` and its instant.
         // Both are null for a learner with no graded answer.

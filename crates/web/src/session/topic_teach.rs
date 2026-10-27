@@ -14,7 +14,7 @@ use serde_json::{Value, json};
 use super::store::{Ready, Reply, reply_read};
 use crate::error::{ApiError, NOT_FOUND};
 use crate::path::ApiPath;
-use crate::serve::{NO_INSTRUCTION, teach_figure, teach_page};
+use crate::serve::{NO_INSTRUCTION, add_page_extras, teach_figure, teach_page};
 
 /// The id and the name of one topic, as a link.
 fn link(graph: &Curriculum, idx: TopicIdx) -> Value {
@@ -63,7 +63,9 @@ pub async fn topic_teach(req: Ready, ApiPath(topic_id): ApiPath<String>) -> Repl
                 if let Some(figure) = teach_figure(graph, &key, &page) {
                     example["figure"] = json!(figure);
                 }
-                json!({"concept": page.concept, "worked_example": example})
+                let mut reply = json!({"concept": page.concept, "worked_example": example});
+                add_page_extras(&mut reply, &page);
+                reply
             }
             Err(error) if error.code == NO_INSTRUCTION => Value::Null,
             Err(error) => return Err(error),
@@ -85,7 +87,7 @@ pub async fn topic_teach(req: Ready, ApiPath(topic_id): ApiPath<String>) -> Repl
     let links = |ids: &mut dyn Iterator<Item = TopicIdx>| -> Vec<Value> {
         ids.map(|other| link(graph, other)).collect()
     };
-    let body = json!({
+    let mut body = json!({
         "topic": topic_id,
         "name": graph.topic(idx).map(|topic| topic.name.as_str()),
         "module": graph.module_of(idx),
@@ -99,5 +101,10 @@ pub async fn topic_teach(req: Ready, ApiPath(topic_id): ApiPath<String>) -> Repl
         "opens_next": links(&mut graph.dependents(idx)),
         "points": points,
     });
+    // D-RL1: the reading list of the course. The key is absent for an empty list.
+    let reading = graph.reading_of_course(course);
+    if !reading.is_empty() {
+        body["reading"] = json!(reading);
+    }
     reply_read(tx, body).await
 }

@@ -96,3 +96,36 @@ describe('the read page', () => {
     view.unmount();
   });
 });
+
+describe('the optional parts of a read page', () => {
+  it('prints the picture, the limit, the second example and the words in the order of the teach page', async () => {
+    const full: TopicTeachResponse = {
+      ...PAGE,
+      points: [{
+        kp: 'kp1',
+        name: 'Compare two amounts',
+        page: {
+          concept: 'A ratio compares two amounts.',
+          worked_example: { problem: 'Write 2 to 4 as a ratio.', steps: ['2:4 = 1:2.'] },
+          picture: 'Two cups of juice to four cups of water.',
+          watch_out: 'The order of the two amounts matters.',
+          second_example: { problem: 'Read the ratio 3:5.', steps: ['3 parts to 5 parts.'] },
+          terms: [{ term: 'Ratio', meaning: 'A comparison of two amounts.' }],
+        },
+      }],
+    };
+    await mount(async () => full);
+    const labels = ['An everyday picture', 'A ratio compares two amounts.', 'Where the method fails', 'A second example: what a result means', 'Words used here'];
+    const nodes = labels.map((text) => screen.getByText(text));
+    for (let i = 1; i < nodes.length; i += 1) {
+      expect(Boolean(nodes[i - 1]!.compareDocumentPosition(nodes[i]!) & Node.DOCUMENT_POSITION_FOLLOWING)).toBe(true);
+    }
+    expect(screen.getByText('Ratio')).toBeTruthy();
+  });
+
+  it('prints none of them for a page without the parts', async () => {
+    await mount(async () => PAGE);
+    expect(screen.queryByText('Words used here')).toBeNull();
+    expect(screen.queryByText('An everyday picture')).toBeNull();
+  });
+});

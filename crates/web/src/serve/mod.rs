@@ -123,6 +123,7 @@ pub mod servable;
 mod session_tasks;
 mod target;
 mod teach;
+mod teach_extras;
 
 use draw::*;
 pub use hint::hint;
@@ -134,6 +135,7 @@ pub(crate) use session_tasks::restore_session_tasks;
 use target::*;
 pub(crate) use teach::{kp_visuals, teach_figure, teach_page};
 pub use teach::{teach, teach_check};
+pub(crate) use teach_extras::add_page_extras;
 
 /// The code of a task id that is not in this session's plan.
 pub const UNKNOWN_TASK: &str = "unknown_task";

@@ -175,9 +175,44 @@ pub fn quiz_composer(
     sampler: &mut dyn QuizSampler,
     learned_at: Option<&BTreeMap<String, i64>>,
 ) -> QuizPlan {
+    let request = QuizRequest {
+        length: usize::try_from(cfg.quiz.questions).unwrap_or(0),
+        course: None,
+    };
+    quiz_composer_for(states, graph, cfg, t_us, sampler, learned_at, &request)
+}
+
+/// The length and the scope of one quiz round that the learner asks for.
+#[derive(Debug, Clone, Copy)]
+pub struct QuizRequest<'a> {
+    /// The number of questions the round asks for.
+    pub length: usize,
+    /// The course id that limits the topics. `None` means every course.
+    pub course: Option<&'a str>,
+}
+
+/// Compose a quiz of the requested length and scope. It uses the same strata
+/// and the same draw as `quiz_composer`.
+#[must_use]
+pub fn quiz_composer_for(
+    states: &BTreeMap<String, TopicState>,
+    graph: &Curriculum,
+    _cfg: &Config,
+    t_us: i64,
+    sampler: &mut dyn QuizSampler,
+    learned_at: Option<&BTreeMap<String, i64>>,
+    request: &QuizRequest<'_>,
+) -> QuizPlan {
     let learned: Vec<String> = states
         .iter()
-        .filter(|(id, state)| graph.idx_of(id).is_some() && has_review_history(state))
+        .filter(|(id, state)| {
+            graph.idx_of(id).is_some_and(|idx| {
+                has_review_history(state)
+                    && request
+                        .course
+                        .is_none_or(|course| graph.course_of(idx) == course)
+            })
+        })
         .map(|(id, _)| id.clone())
         .collect();
     if learned.is_empty() {
@@ -185,8 +220,7 @@ pub fn quiz_composer(
     }
     let (recent, mid_pool, old_pool) = strata(&learned, states, t_us, learned_at);
 
-    let questions = usize::try_from(cfg.quiz.questions).unwrap_or(0);
-    let total = questions.min(learned.len());
+    let total = request.length.min(learned.len());
     let want_recent = QUIZ_RECENT_TARGET.min(total);
     let want_mid = QUIZ_MID_TARGET.min(total - want_recent);
     let want_old = total - want_recent - want_mid;
@@ -375,91 +409,4 @@ pub fn quiz_is_due(
 }
 
 #[cfg(test)]
-mod tests {
-    use super::*;
-    use crate::fire::testing::{T_US, graph, learned, topic};
-
-    #[test]
-    fn the_quiz_draws_its_strata_and_reads_its_cadence() {
-        let cfg = Config::default();
-        let ids: Vec<String> = (0..9).map(|index| format!("t{index}")).collect();
-        let tree = graph(ids.iter().map(|id| topic(id, &[])).collect());
-        let states: BTreeMap<String, TopicState> =
-            ids.iter().map(|id| (id.clone(), learned(0.8))).collect();
-        let learned_at: BTreeMap<String, i64> = ids
-            .iter()
-            .enumerate()
-            .map(|(index, id)| {
-                (
-                    id.clone(),
-                    T_US - i64::try_from(index).expect("small") * 4 * DAY_US,
-                )
-            })
-            .collect();
-        let mut sampler = SeededSampler::new(7);
-        let plan = quiz_composer(&states, &tree, &cfg, T_US, &mut sampler, Some(&learned_at));
-        assert_eq!(plan.questions.len(), 8);
-        assert_eq!(plan.topics().len(), 8);
-        assert_eq!(plan.total_time_budget_secs(), 8 * 45);
-        let recent = plan
-            .questions
-            .iter()
-            .filter(|q| q.stratum == "recent")
-            .count();
-        assert_eq!(recent, 4);
-        let by_rep = quiz_composer(&states, &tree, &cfg, T_US, &mut sampler, None);
-        assert!(by_rep.questions.iter().all(|q| q.stratum != "recent"));
-        assert_eq!(sampler.sample(&ids, 20).len(), 9);
-
-        assert_eq!(quiz_difficulty_target(1), QUIZ_DIFFICULTY_TARGETS[1]);
-        let quiet = QuizState {
-            last_at: utc_date(T_US),
-            xp_since: 0,
-            retake_pending: false,
-        };
-        assert!(!quiz_is_due(Some(&quiet), &states, &tree, &cfg, T_US, None));
-        assert!(quiz_is_due(
-            Some(&quiet),
-            &states,
-            &tree,
-            &cfg,
-            T_US + 9 * DAY_US,
-            None
-        ));
-        let days = [utc_date(T_US + DAY_US).expect("a date")];
-        assert!(!quiz_is_due(
-            Some(&quiet),
-            &states,
-            &tree,
-            &cfg,
-            T_US + 9 * DAY_US,
-            Some(&days)
-        ));
-        assert!(quiz_is_due(None, &states, &tree, &cfg, T_US, None));
-        let retake = QuizState {
-            retake_pending: true,
-            ..quiet
-        };
-        assert_eq!(
-            quiz_retake_available_at(Some(&retake)),
-            utc_date(T_US + DAY_US)
-        );
-        assert!(!quiz_is_due(
-            Some(&retake),
-            &states,
-            &tree,
-            &cfg,
-            T_US,
-            None
-        ));
-        assert!(!quiz_is_due(
-            Some(&retake),
-            &states,
-            &tree,
-            &cfg,
-            i64::MAX,
-            None
-        ));
-        assert_eq!(quiz_budget(&tree, "ghost"), 0);
-    }
-}
+mod tests;

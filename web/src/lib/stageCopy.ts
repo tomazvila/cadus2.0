@@ -32,7 +32,7 @@ export function taskReasonText(why: string | null | undefined): string | null {
   if (reason.startsWith('due review') || reason.startsWith('nearly-due review')) return 'This is a skill to review so that you keep it.';
   if (reason.startsWith('gap-fill lesson')) return 'This is a skill you need before the course goes on.';
   if (reason.startsWith('frontier lesson')) return 'This is the next new skill in your course.';
-  if (reason.startsWith('quiz due')) return 'This is a quiz on skills you learned.';
+  if (reason.startsWith('quiz due') || reason.startsWith('quiz round')) return 'This is a quiz on skills you learned.';
   if (reason.startsWith('automaticity drill')) return 'This is speed practice on a skill you know.';
   if (reason.startsWith('multi-part integration')) return 'This is one problem that mixes several skills you learned.';
   return null;

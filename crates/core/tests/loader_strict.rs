@@ -283,3 +283,67 @@ fn an_integer_literal_outside_i64_is_one_message_on_every_path() {
         ]
     );
 }
+
+// --------------------------------------------------------------------------- //
+// The reading list of a course (D-RL1)
+// --------------------------------------------------------------------------- //
+
+fn reading_catalog(name: &str, reading: &str) -> cadus_core::curriculum::Parsed {
+    let root = std::env::temp_dir().join(format!("cadus-loader-reading-{name}"));
+    let _ = std::fs::remove_dir_all(&root);
+    std::fs::create_dir_all(&root).unwrap();
+    std::fs::write(
+        root.join("courses.yaml"),
+        format!("courses:\n  - id: c\n    name: C\n    order: 1\n    reading:{reading}"),
+    )
+    .unwrap();
+    parse_curriculum(&root)
+}
+
+const GOOD_ENTRY: &str = "\n      - title: T\n        author: A\n        access: free\n        where: \"https://example.org\"\n        note: N\n";
+
+#[test]
+fn a_reading_entry_with_an_extra_key_is_a_schema_finding() {
+    let text = format!("{GOOD_ENTRY}        url: x\n");
+    let parsed = reading_catalog("extra", &text);
+    assert!(
+        parsed.findings.iter().any(|f| f.code == "schema"),
+        "{:?}",
+        parsed.findings
+    );
+}
+
+#[test]
+fn a_reading_entry_with_no_note_is_a_schema_finding() {
+    let text = "\n      - title: T\n        author: A\n        access: free\n        where: x\n";
+    let parsed = reading_catalog("nonote", text);
+    assert!(
+        parsed.findings.iter().any(|f| f.code == "schema"),
+        "{:?}",
+        parsed.findings
+    );
+}
+
+#[test]
+fn a_reading_entry_with_a_list_title_is_a_schema_finding() {
+    let text = "\n      - title: [1]\n        author: A\n        access: free\n        where: x\n        note: N\n";
+    let parsed = reading_catalog("title", text);
+    assert!(
+        parsed.findings.iter().any(|f| f.code == "schema"),
+        "{:?}",
+        parsed.findings
+    );
+}
+
+#[test]
+fn an_empty_reading_list_and_a_good_entry_are_valid() {
+    for (name, text) in [("empty", " []\n"), ("good", GOOD_ENTRY)] {
+        let parsed = reading_catalog(name, text);
+        assert!(
+            parsed.findings.iter().all(|f| f.code != "schema"),
+            "{name}: {:?}",
+            parsed.findings
+        );
+        assert_eq!(parsed.catalog.expect("catalog").courses.len(), 1);
+    }
+}

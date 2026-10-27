@@ -85,6 +85,7 @@ pub(crate) fn ladder(courses: &[(&str, &[&str], Vec<Topic>)]) -> Curriculum {
             order: i64::try_from(order).expect("a small count") + 1,
             mastery_floor: floor.iter().map(|id| slug(id)).collect(),
             mastery_floor_course: None,
+            reading: Vec::new(),
         });
         units.push(RawUnit {
             course_id: (*course).to_owned(),

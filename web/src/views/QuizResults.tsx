@@ -30,7 +30,7 @@ export function QuizResults({ api, taskId, onUnauthorized, resumePractice = fals
   if (practicing) return <QuizPractice api={api} taskId={taskId} onUnauthorized={onUnauthorized} />;
   if (!result) return <button type="button" className="btn" disabled={phase === 'loading'} onClick={() => load(false)}>Review results</button>;
   return <div className="quiz-results">
-    <h3>Your quiz result</h3>
+    <h3>{result.round ? `Your quiz result: ${result.round.n} questions, ${result.round.scope === 'all' ? 'all my courses' : (result.round.course_name ?? 'my course')}` : 'Your quiz result'}</h3>
     {result.inconclusive ? <p>Some answers are not marked yet. No progress or points are added until they are.</p> : <p>{Math.round(result.score * 100)}% of marked answers right · {result.xp} points</p>}
     {result.answers.map((answer) => <article key={answer.problem_id} className="card">
       <MathBlock>{answer.text}</MathBlock>

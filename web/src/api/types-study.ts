@@ -5,7 +5,7 @@
  * here.
  */
 import type { RenderedVisual } from '@/lib/visual';
-import type { FrontierWait, Remediation, XpState } from './types';
+import type { FrontierWait, ReadingEntry, Remediation, XpState } from './types';
 
 // ---------------------------------------------------------------------------
 // The session and the study loop
@@ -278,6 +278,16 @@ export interface TeachResponse {
    * `ServedProblem` rule.
    */
   try_first?: { problem: string; choices?: string[] };
+  /** D-TM1: the words of the page, each with one plain sentence. Absent or empty on an older page. */
+  terms?: { term: string; meaning: string }[];
+  /** D-TD1: one everyday example of the idea. Absent on an older page. */
+  picture?: string;
+  /** D-TD1: where the method fails. Absent on an older page. */
+  watch_out?: string;
+  /** D-TD1: a second worked example that reads a result. Absent on an older page. */
+  second_example?: { problem: string; steps: string | string[] };
+  /** D-RL1: the reading list of the course of the topic. Absent when empty. */
+  reading?: ReadingEntry[];
 }
 
 /** One neighbor topic of the read page. */
@@ -297,11 +307,15 @@ export interface TopicTeachResponse {
   next: TopicLink | null;
   learn_first: TopicLink[];
   opens_next: TopicLink[];
+  /** D-RL1: the reading list of the course. Absent when empty. */
+  reading?: ReadingEntry[];
   points: {
     kp: string;
     name: string;
     /** `null` when the point has no approved page. */
-    page: { concept: string; worked_example: TeachResponse['worked_example'] } | null;
+    page:
+      | (Pick<TeachResponse, 'concept' | 'worked_example' | 'terms' | 'picture' | 'watch_out' | 'second_example'>)
+      | null;
   }[];
 }
 
@@ -711,8 +725,26 @@ export function isQuizReceipt(reply: TaskAnswerResponse): reply is QuizReceiptRe
 }
 
 
+/** A quiz round the learner asked for (D-QZ1). `n` is the real count, below `length` for a small scope. */
+export interface QuizRound {
+  length: number;
+  n: number;
+  scope: 'course' | 'all';
+  course_name: string | null;
+  target_secs: number;
+}
+
+/** The reply of `POST /api/quiz/round`. `resumed` says a started round came back. */
+export interface QuizRoundResponse {
+  task: PlanTask;
+  round: QuizRound;
+  resumed?: boolean;
+}
+
 /** Evidence released after every original quiz answer is recorded. */
 export interface QuizResultResponse {
+  /** The round the quiz was; null for a quiz that came from the plan. */
+  round?: (Pick<QuizRound, 'length' | 'scope' | 'course_name'> & { n: number }) | null | undefined;
   inconclusive: boolean;
   score: number;
   xp: number;

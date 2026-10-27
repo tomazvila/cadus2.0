@@ -296,6 +296,65 @@ pub fn tool_schema(kind: Kind) -> Value {
                         "The number of one reference figure from the user message, when one \
         fits this knowledge point. Leave it out when none fits.",
                 },
+                "terms": {
+                    "type": "array",
+                    "maxItems": 6,
+                    "description":
+                        "Optional. The words of this page a learner meets for the first time, at \
+        most six. Each 'meaning' is ONE plain sentence with no math and no result of a served \
+        problem. Leave the list out when the page uses no new word.",
+                    "items": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": ["term", "meaning"],
+                        "properties": {
+                            "term": {
+                                "type": "string",
+                                "description": "The word or short phrase as it appears on the page.",
+                            },
+                            "meaning": {
+                                "type": "string",
+                                "description":
+                                    "One plain sentence. No formula. No answer of any problem.",
+                            },
+                        },
+                    },
+                },
+                "picture": {
+                    "type": "string",
+                    "description":
+                        "Optional. One everyday example of the idea, in TWO sentences, before the \
+        rule. No result of any served problem. Leave it out when no everyday example fits.",
+                },
+                "watch_out": {
+                    "type": "string",
+                    "description":
+                        "Optional. One or two sentences on where this method fails or gives a \
+        wrong result. Leave it out when you know no honest limit.",
+                },
+                "second_example": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": ["problem", "steps"],
+                    "description":
+                        "Optional. A second worked example that READS a result: it gives a result \
+        and says what the result means. It does not compute a new result.",
+                    "properties": {
+                        "problem": {
+                            "type": "string",
+                            "description":
+                                "A short situation that states a result. DIFFERENT values from \
+        the exemplars and from the first worked example.",
+                        },
+                        "steps": {
+                            "type": "array",
+                            "minItems": 1,
+                            "maxItems": 4,
+                            "description": "At most four lines that read the result.",
+                            "items": {"type": "string"},
+                        },
+                    },
+                },
             },
         }),
         Kind::HintLadder => json!({

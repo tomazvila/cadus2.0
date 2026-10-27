@@ -10,7 +10,7 @@ import { etaDisplay, hasScheduledWork } from '@/views/Dashboard';
 import { toastStore } from '@/app/toast';
 import { held } from './helpers/held';
 import { EMPTY_PLAN, ONE_COURSE, mount, status, stubApi } from './helpers/dashboard';
-import type { EnrollResponse, SessionPlanResponse, SessionStartResponse } from '@/api/types';
+import type { EnrollResponse, QuizRoundResponse, SessionStartResponse } from '@/api/types';
 
 const button = (name: string) => screen.getByRole('button', { name }) as HTMLButtonElement;
 const stat = (label: string) =>
@@ -163,9 +163,8 @@ describe('the quiet menu', () => {
     const start = held<SessionStartResponse>();
     await mount({ api: stubApi({ sessionStart: () => start.promise }) });
     await openMenu();
-    await userEvent.click(button('Start a timed quiz'));
-    expect(button('Start a timed quiz').disabled).toBe(true);
-    expect(button('Start a timed quiz').className).toBe('btn is-busy');
+    await userEvent.click(button('Continue'));
+    expect(button('Continue').disabled).toBe(true);
     expect(button('Download my data').disabled).toBe(false);
     expect(button('Switch course').disabled).toBe(false);
     await act(async () => { start.release(await createDemoApi().sessionStart()); });
@@ -199,21 +198,12 @@ describe('the quiet menu', () => {
     await userEvent.click(button('Download my data'));
     expect(button('Download my data').className).toBe('btn is-busy');
     expect(button('Download my data').disabled).toBe(true);
-    expect(button('Start a timed quiz').disabled).toBe(false);
+    expect(button('Continue').disabled).toBe(false);
     await act(async () => { download.release(undefined); });
     expect(button('Download my data').className).toBe('btn');
   });
 
-  it('toasts the no-quiz line as information, and a bare export refusal as the generic line', async () => {
-    const first = await mount();
-    await openMenu();
-    await userEvent.click(button('Start a timed quiz'));
-    await waitFor(() => expect(toastStore.getSnapshot()).toEqual([
-      { id: 1, message: 'No quiz is due right now.', kind: 'info' },
-    ]));
-    first.unmount();
-    cleanup();
-
+  it('toasts a bare export refusal as the generic line', async () => {
     await mount({ api: stubApi({ downloadExport: async () => { throw null; } }) });
     await openMenu();
     await userEvent.click(button('Download my data'));
@@ -222,13 +212,13 @@ describe('the quiet menu', () => {
     ]));
   });
 
-  it('opens no quiz from a plan that lands after the screen left', async () => {
-    const plan = held<SessionPlanResponse>();
-    const view = await mount({ api: stubApi({ getPlan: () => plan.promise }) });
+  it('opens no quiz from a round that lands after the screen left', async () => {
+    const round = held<QuizRoundResponse>();
+    const view = await mount({ api: stubApi({ startQuizRound: () => round.promise }) });
     await openMenu();
-    await userEvent.click(button('Start a timed quiz'));
+    await userEvent.click(button('Continue'));
     view.unmount();
-    await act(async () => { plan.release(await createDemoApi().getPlan()); });
+    await act(async () => { round.release(await createDemoApi().startQuizRound(10, 'all')); });
     expect(view.onQuiz).not.toHaveBeenCalled();
   });
 });

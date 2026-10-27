@@ -161,6 +161,17 @@ this knowledge point, set 'figure' to its number. Then write the worked example 
 figure. Use its labels and its numbers. If no figure fits, leave 'figure' out. Never describe a \
 figure in the steps.
 
+'terms' is optional: list at most six words of THIS page a learner meets for the first time, each \
+with ONE plain sentence in everyday words. A meaning explains the word; it never states the result \
+of a problem and never repeats a step. Leave 'terms' out when the page uses no new word.
+
+Three more parts are optional. 'picture' is one everyday example of the idea in TWO sentences; it \
+shows the idea and states no result of a problem. 'watch_out' is one or two sentences on where the \
+method fails. 'second_example' is a second worked example that READS a result: it states a result \
+and says what it means, in at most four steps. Write a part only when it fits this knowledge \
+point. If it does not fit, leave it out. A part never names the practice problem and never states \
+the answer of a problem the learner will see.
+
 LaTeX is canonical: ALL math in $...$ or $$...$$, KaTeX subset. Never bare Unicode math, never \
 ASCII like x^2 (write $x^2$). The prose is terminal-free: no markdown headers, no code fences. \
 The page never names the practice problem the learner is about to see.";

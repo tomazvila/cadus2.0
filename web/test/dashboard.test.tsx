@@ -238,40 +238,27 @@ describe('the dashboard', () => {
     expect(sessionStart).toHaveBeenCalledTimes(1);
   });
 
-  it('hands the quiz its plan task, not a bare id', async () => {
+  it('hands the quiz its round task and the round, not a bare id', async () => {
     const demo = createDemoApi();
-    const quizTask = {
-      task_id: 't-quiz-1',
-      task_type: 'quiz' as const,
-      topic: null,
-      kp: null,
-      start_at_kp: null,
-      n_problems: 8,
-      mix: null,
-      component_topics: null,
-      time_budget_secs: 600,
-      difficulty_target: null,
-      why: 'quiz due',
-      progress: { answered: 0, done: false },
-    };
-    const getPlan = async () => {
-      const plan = await demo.getPlan();
-      return { ...plan, tasks: [...plan.tasks, quizTask] };
-    };
-    const view = await mount({ api: stubApi({ getPlan }) });
-    await pressInMenu('Start a timed quiz');
+    const round = await demo.startQuizRound(10, 'course');
+    const startQuizRound = vi.fn(async () => round);
+    const view = await mount({ api: stubApi({ startQuizRound }) });
+    await pressInMenu('Continue');
 
     await waitFor(() => expect(view.onQuiz).toHaveBeenCalledTimes(1));
     // The whole task: the quiz clock reads `time_budget_secs` of the task.
-    expect(view.onQuiz).toHaveBeenCalledWith(quizTask);
+    expect(view.onQuiz).toHaveBeenCalledWith(round.task, round.round);
+    expect(startQuizRound).toHaveBeenCalledWith(10, 'course');
   });
 
-  it('says so when no quiz is due, and goes nowhere', async () => {
-    const view = await mount();
-    await pressInMenu('Start a timed quiz');
+  it('shows the service refusal of a quiz during the retake wait, and goes nowhere', async () => {
+    const message = 'You can try another quiz on 2026-10-28. A quiz under 80% waits one day.';
+    const startQuizRound = vi.fn(async () => { throw new ApiError(409, 'quiz_retake_wait', message); });
+    const view = await mount({ api: stubApi({ startQuizRound }) });
+    await pressInMenu('Continue');
 
     await waitFor(() => expect(toastStore.getSnapshot().length).toBe(1));
-    expect(toastStore.getSnapshot()[0].message).toBe('No quiz is due right now.');
+    expect(toastStore.getSnapshot()[0].message).toBe(message);
     expect(view.onQuiz).not.toHaveBeenCalled();
   });
 
@@ -309,9 +296,10 @@ describe('the dashboard', () => {
     await mount();
     const more = document.querySelector('details.more-menu') as HTMLDetailsElement;
     expect(more.open).toBe(false);
-    // Twelve buttons: six actions, "Your proofs" (D-PR1) among them, then the five goal
-    // presets and "Set goal" (D-XP1). The retention card (D-F11) stands on the main dashboard.
-    expect(more.querySelectorAll('button').length).toBe(12);
+    // Seventeen buttons: five actions, "Your proofs" (D-PR1) among them; the quiz control
+    // (D-QZ1) with three lengths, two scopes and "Continue"; then the five goal presets
+    // and "Set goal" (D-XP1). The retention card (D-F11) stands on the main dashboard.
+    expect(more.querySelectorAll('button').length).toBe(17);
   });
 
   it('reports zero axe violations', async () => {
@@ -324,5 +312,22 @@ describe('the dashboard', () => {
       api: stubApi({ getStatus: async () => status({ placed: false }) }),
     });
     expect(await axe(view.container, AXE_IN_JSDOM)).toHaveNoViolations();
+  });
+});
+describe('the reading fold of the dashboard (D-RL1)', () => {
+  it('shows the closed fold under the course card and keeps one primary button', async () => {
+    const reading = [{
+      title: 'Free Primer', author: 'A. Writer', access: 'free' as const,
+      where: 'https://example.org/primer', note: 'Short pages with examples.',
+    }];
+    await mount({ api: stubApi({ getStatus: () => Promise.resolve(status({ course: { id: 'foundations', name: 'Foundations', reading } })) }) });
+    expect(screen.getByText('Read more about this course')).toBeTruthy();
+    expect((document.querySelector('.reading-fold') as HTMLDetailsElement).open).toBe(false);
+    expect(primaries().length).toBe(1);
+  });
+
+  it('shows no fold when the course has no list', async () => {
+    await mount();
+    expect(document.querySelector('.reading-fold')).toBeNull();
   });
 });

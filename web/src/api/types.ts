@@ -143,6 +143,18 @@ export interface OauthProvidersResponse {
 interface CourseRef {
   id: string | null;
   name: string | null;
+  /** D-RL1: the reading list of the enrolled course. Absent when empty. */
+  reading?: ReadingEntry[];
+}
+
+/** One book or site of a course reading list (D-RL1). */
+export interface ReadingEntry {
+  title: string;
+  author: string;
+  access: 'free' | 'book';
+  /** An https address or a chapter note. */
+  where: string;
+  note: string;
 }
 
 /** One course of the ordered journey, with the enrolled one flagged. */

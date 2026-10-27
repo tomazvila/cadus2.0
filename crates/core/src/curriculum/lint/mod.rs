@@ -114,6 +114,7 @@ fn lint_run(root: &Path, exemplars: bool) -> Vec<Finding> {
     if exemplars {
         rules::check_exemplars(&mut lint);
         rules::check_visuals(&mut lint);
+        rules::check_reading(&mut lint, &catalog);
     }
     // A cycle or a duplicate id makes the derived graph ill-defined, so the
     // reachability rule is skipped entirely then (spec section 5, rule 16).

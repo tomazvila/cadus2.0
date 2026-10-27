@@ -78,12 +78,28 @@ fn old_teach_material() -> Value {
 If one figure fits this knowledge point, set 'figure' to its number. Then write the worked \
 example about that figure. Use its labels and its numbers. If no figure fits, leave 'figure' \
 out. Never describe a figure in the steps.\n\n";
-    let system = material["system"].as_str().unwrap().replace(paragraph, "");
-    material["system"] = Value::String(system);
-    material["schema"]["properties"]
-        .as_object_mut()
+    // D-TM1 and D-TD1 added two paragraphs and four properties after the figure.
+    let terms = "'terms' is optional: list at most six words of THIS page a learner meets for the \
+first time, each with ONE plain sentence in everyday words. A meaning explains the word; it never \
+states the result of a problem and never repeats a step. Leave 'terms' out when the page uses no \
+new word.\n\n";
+    let depth = "Three more parts are optional. 'picture' is one everyday example of the idea in \
+TWO sentences; it shows the idea and states no result of a problem. 'watch_out' is one or two \
+sentences on where the method fails. 'second_example' is a second worked example that READS a \
+result: it states a result and says what it means, in at most four steps. Write a part only when \
+it fits this knowledge point. If it does not fit, leave it out. A part never names the practice \
+problem and never states the answer of a problem the learner will see.\n\n";
+    let system = material["system"]
+        .as_str()
         .unwrap()
-        .remove("figure");
+        .replace(paragraph, "")
+        .replace(terms, "")
+        .replace(depth, "");
+    material["system"] = Value::String(system);
+    let properties = material["schema"]["properties"].as_object_mut().unwrap();
+    for key in ["figure", "terms", "picture", "watch_out", "second_example"] {
+        properties.remove(key);
+    }
     material
 }
 

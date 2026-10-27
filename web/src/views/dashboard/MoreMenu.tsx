@@ -1,8 +1,9 @@
 /** The quiet "More" disclosure (W-C5): the study extras, then the account actions. */
 import type { Busy } from '@/hooks/useBusy';
 import type { Call } from '@/hooks/useCall';
-import type { ApiClient, JourneyCourse, XpState } from '@/api/types';
+import type { ApiClient, JourneyCourse, PlanTask, QuizRound, XpState } from '@/api/types';
 import { GoalControl } from './GoalControl';
+import { QuizRoundControl } from './QuizRoundControl';
 
 export interface MoreMenuProps {
   api: ApiClient;
@@ -14,13 +15,14 @@ export interface MoreMenuProps {
   onMap: () => void;
   onProofs: () => void;
   onDiagnostic: () => void;
-  quizNow: () => Promise<void>;
+  courseName: string | null;
+  onQuizRound: (task: PlanTask, round: QuizRound, resumed?: boolean) => void;
   switchCourse: (courses: JourneyCourse[]) => Promise<void>;
   exportData: () => Promise<void>;
 }
 
 export function MoreMenu({
-  api, call, goal, onGoalSaved, busy, courses, onMap, onProofs, onDiagnostic, quizNow, switchCourse, exportData,
+  api, call, goal, onGoalSaved, busy, courses, onMap, onProofs, onDiagnostic, courseName, onQuizRound, switchCourse, exportData,
 }: MoreMenuProps) {
   return (
     <details className="more-menu">
@@ -32,19 +34,11 @@ export function MoreMenu({
         <button type="button" className="btn" onClick={onProofs}>
           Your proofs
         </button>
-        <button
-          type="button"
-          className={busy.cls('quiz', 'btn')}
-          disabled={busy.is('quiz')}
-          title="A timer starts at once. You see no feedback until the end."
-          onClick={() => busy.run('quiz', quizNow)}
-        >
-          Start a timed quiz
-        </button>
         <button type="button" className="btn" onClick={onDiagnostic}>
           Starting questions again
         </button>
       </div>
+      <QuizRoundControl api={api} call={call} courseName={courseName} onStarted={onQuizRound} />
       <h3 className="more-heading">Your daily goal</h3>
       <GoalControl api={api} call={call} goal={goal} onSaved={onGoalSaved} />
       <h3 className="more-heading">Your account</h3>

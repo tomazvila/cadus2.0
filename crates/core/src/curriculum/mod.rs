@@ -33,7 +33,7 @@ pub use load::{
 };
 pub use model::{
     ANKI_TYPES, ANSWER_KINDS, AnkiSeed, AnkiType, AnswerKind, Catalog, Course, Exemplar,
-    KnowledgePoint, PrereqEdge, Slug, SlugError, Topic, Unit,
+    KnowledgePoint, PrereqEdge, ReadingEntry, Slug, SlugError, Topic, Unit,
 };
 
 use sha2::{Digest, Sha256};

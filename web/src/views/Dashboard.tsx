@@ -45,6 +45,7 @@ import { num, pct } from '@/lib/format';
 import { toast } from '@/app/toast';
 import { CoursePicker } from './dashboard/CoursePicker';
 import { CourseArc } from './dashboard/CourseArc';
+import { ReadingFold } from '@/components/ReadingFold';
 import { MainTiles } from './dashboard/MainTiles';
 import { MoreMenu } from './dashboard/MoreMenu';
 import { ProgressDetails } from './dashboard/ProgressDetails';
@@ -52,7 +53,7 @@ import { PrimaryAction } from './dashboard/PrimaryAction';
 import { RetentionCard } from './dashboard/RetentionCard';
 import { TodayCard } from './dashboard/TodayCard';
 import '../styles/fix-dashboard.css';
-import type { ApiClient, JourneyCourse, PlanTask, StatusResponse, XpState } from '@/api/types';
+import type { ApiClient, JourneyCourse, PlanTask, QuizRound, StatusResponse, XpState } from '@/api/types';
 
 export interface DashboardProps {
   api: ApiClient;
@@ -63,7 +64,7 @@ export interface DashboardProps {
   /** Go to the study loop, after `POST /api/session/start` answers. */
   onSession: () => void;
   /** Go to the quiz, WITH the plan task: the clock reads the task budget (QUIZ-budget). */
-  onQuiz: (task: PlanTask) => void;
+  onQuiz: (task: PlanTask, round?: QuizRound, resumed?: boolean) => void;
   /** Go to the placement diagnostic. */
   onDiagnostic: () => void;
   /** Go to the curriculum map. */
@@ -221,21 +222,6 @@ export function Dashboard({
     reload();
   };
 
-  const quizNow = async (): Promise<void> => {
-    const started = await call(() => api.sessionStart());
-    if (!started || !life.alive()) return;
-    const plan = await call(() => api.getPlan());
-    if (!plan || !life.alive()) return;
-    const quiz = plan.tasks.find((t) => t.task_type === 'quiz');
-    if (!quiz) {
-      toast('No quiz is due right now.', { kind: 'info' });
-      return;
-    }
-    // WITH the task, never the id alone: the quiz clock reads `time_budget_secs` of the
-    // task, and a serve value is one question's expected time (QUIZ-budget).
-    onQuiz(quiz);
-  };
-
   const switchCourse = async (courses: JourneyCourse[]): Promise<void> => {
     const choice = await dialogs.open<string>((resolve) => (
       <CoursePicker courses={courses} onDone={resolve} />
@@ -317,6 +303,7 @@ export function Dashboard({
     <section className="view-dashboard">
       <h1 className="h-screen">Dashboard</h1>
       {courseArc}
+      <ReadingFold reading={status.course.reading} />
 
       <div className="card status-card">
         <div className="status-head">
@@ -365,7 +352,8 @@ export function Dashboard({
         onMap={onMap}
         onProofs={onProofs}
         onDiagnostic={onDiagnostic}
-        quizNow={quizNow}
+        courseName={courses.find((c) => c.current)?.name ?? null}
+        onQuizRound={(task, round, resumed) => { if (resumed) onQuiz(task, round, true); else onQuiz(task, round); }}
         switchCourse={switchCourse}
         exportData={exportData}
       />

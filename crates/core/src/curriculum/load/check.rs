@@ -250,13 +250,14 @@ impl<'a> Checker<'a> {
     }
 
     fn check_course(&mut self, value: &Value) {
-        const FIELDS: [&str; 6] = [
+        const FIELDS: [&str; 7] = [
             "visuals",
             "id",
             "name",
             "order",
             "mastery_floor",
             "mastery_floor_course",
+            "reading",
         ];
         let Some(map) = self.struct_map(value, "Course") else {
             return;
@@ -272,6 +273,20 @@ impl<'a> Checker<'a> {
                 checker.check_slug(value);
             }
         });
+        self.field(map, "reading", false, |checker, value| {
+            checker.each(value, Self::check_reading_entry);
+        });
+        self.extras(map, &FIELDS);
+    }
+
+    fn check_reading_entry(&mut self, value: &Value) {
+        const FIELDS: [&str; 5] = ["title", "author", "access", "where", "note"];
+        let Some(map) = self.struct_map(value, "ReadingEntry") else {
+            return;
+        };
+        for name in FIELDS {
+            self.field(map, name, true, Self::check_string);
+        }
         self.extras(map, &FIELDS);
     }
 

@@ -63,15 +63,15 @@ pub use mixed_review::{
 pub use multistep::{multistep_components, multistep_is_due, remediation_tasks};
 pub use plan::{BlockedTask, Constraints, SessionPlan};
 pub use quiz::{
-    QuizPlan, QuizQuestion, QuizSampler, SeededSampler, quiz_budget, quiz_composer,
-    quiz_difficulty_target, quiz_is_due, quiz_retake_available_at, utc_date,
+    QuizPlan, QuizQuestion, QuizRequest, QuizSampler, SeededSampler, quiz_budget, quiz_composer,
+    quiz_composer_for, quiz_difficulty_target, quiz_is_due, quiz_retake_available_at, utc_date,
 };
 pub use reserve::{ValidityContext, reserve_open_plan, task_still_valid};
 pub use retention::retention_probe;
 pub use review::{
     due_reviews, importance, in_retry_delay, nearly_due, retry_available_at, review_mix,
 };
-pub use task::{Task, start_kp};
+pub use task::{Task, quiz_task_named, start_kp};
 pub use topic_set::{TopicSet, course_scope, frontier, known_set, practiced_set};
 pub use trigger::{
     remediation_for_in_sitting, remediation_for_quiz_miss, remediation_for_repeat_fail,
@@ -108,6 +108,9 @@ pub const QUIZ_RECENT_TARGET: usize = 4;
 
 /// The quiz questions drawn from the mid stratum (`selector.py:745`).
 pub const QUIZ_MID_TARGET: usize = 2;
+
+/// The question counts a learner may pick for an on-demand quiz round.
+pub const QUIZ_LENGTHS: [usize; 3] = [5, 10, 20];
 
 /// The automaticity bar a drill target stays below (`selector.py:113`).
 pub const DRILL_MASTERY_ABILITY: f64 = 0.95;

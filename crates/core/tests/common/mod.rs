@@ -147,6 +147,7 @@ pub fn graph_of_units(units: &[(&str, Vec<Topic>)], course_id: &str) -> Curricul
             order: 0,
             mastery_floor: Vec::new(),
             mastery_floor_course: None,
+            reading: Vec::new(),
         }],
     };
     let mut raw_units = Vec::new();

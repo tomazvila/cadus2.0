@@ -48,6 +48,7 @@ import type {
   StatusResponse,
   TaskAnswerResponse,
   QuizResultResponse,
+  QuizRoundResponse,
   TeachCheckResponse,
   TeachResponse,
   TopicTeachResponse,
@@ -149,6 +150,7 @@ export const api: ApiClient = {
   // field whose type it does not expect. TypeScript's excess-property check fires on
   // object LITERALS only, so a caller passing a variable would put extra keys on the wire.
   taskQuizResult: (taskId, practice = false) => request<QuizResultResponse>('POST', `/task/${seg(taskId)}/quiz-result`, { practice }),
+  startQuizRound: (length, scope) => request<QuizRoundResponse>('POST', '/quiz/round', { length, scope }),
   taskAnswer: (taskId, { problem_id, answer, work, assisted }) =>
     request<TaskAnswerResponse>('POST', `/task/${seg(taskId)}/answer`, {
       problem_id,

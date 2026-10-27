@@ -39,9 +39,10 @@ import { toast } from '@/app/toast';
 import { fmtClock, num } from '@/lib/format';
 import { taskKindText } from '@/lib/stageCopy';
 import { isQuizReceipt } from '@/api/types';
-import type { ApiClient, PlanTask, ServedProblem } from '@/api/types';
+import type { ApiClient, PlanTask, QuizRound, ServedProblem } from '@/api/types';
 
-type Phase = 'loading' | 'ready' | 'submitting' | 'done';
+/** `intro` is the card of a round the learner asked for: it shows before the clock starts. */
+type Phase = 'intro' | 'loading' | 'ready' | 'submitting' | 'done';
 
 /**
  * The deadline of every quiz this page load started, keyed by API client and task id.
@@ -127,6 +128,10 @@ export interface QuizProps {
   onDone: () => void;
   /** The wording of the way out: back into a session, or back to the dashboard. */
   fromSession?: boolean;
+  /** The round the learner asked for (D-QZ1). It adds a card before the clock starts. */
+  round?: QuizRound | undefined;
+  /** The round already runs, so its clock may run too. The intro card is skipped. */
+  resumed?: boolean;
 }
 
 export function Quiz({
@@ -136,6 +141,8 @@ export function Quiz({
   onUnauthorized,
   onDone,
   fromSession = false,
+  round,
+  resumed = false,
 }: QuizProps) {
   const life = useLifetime();
   // The day rollover closed the quiz's session (`409 session_rolled_over`); the quiz
@@ -144,7 +151,7 @@ export function Quiz({
   useEffect(() => { onDoneRef.current = onDone; });
   const [onRolledOver] = useState(() => () => { onDoneRef.current(); });
   const call = useCall({ demo, onUnauthorized, onRolledOver });
-  const [phase, gate] = usePhase<Phase>('loading');
+  const [phase, gate] = usePhase<Phase>(round && !resumed ? 'intro' : 'loading');
 
   const [problem, setProblem] = useState<ServedProblem | null>(null);
   const [total, setTotal] = useState(0);
@@ -245,7 +252,9 @@ export function Quiz({
 
   // The first question. NO-2BILL: StrictMode runs a mount effect twice in development, and
   // `taskServe` is a write, so an unguarded serve is two writes on one mount.
-  useEffect(() => {
+  // A round the learner asked for waits on the "Start the quiz" button first, so the clock
+  // starts at the press and not at the mount.
+  const begin = (): void => {
     if (servedOnce.current) return;
     servedOnce.current = true;
     void call(() => api.taskServe(task.task_id).catch((error: Error) => {
@@ -278,6 +287,10 @@ export function Quiz({
       problemRef.current = s;
       gate.enter('ready');
     });
+  };
+
+  useEffect(() => {
+    if (!round || resumed) begin();
     // eslint-disable-next-line react-hooks/exhaustive-deps -- once per mount, by design.
   }, []);
 
@@ -381,6 +394,29 @@ export function Quiz({
           <QuizResults api={api} taskId={task.task_id} onUnauthorized={onUnauthorized} resumePractice={resumePractice} />
           <button ref={doneRef} type="button" className="btn btn-primary" onClick={onDone}>
             {fromSession ? 'Continue' : 'Back to dashboard'}
+          </button>
+        </div>
+      </section>
+    );
+  }
+
+  if (phase === 'intro' && round) {
+    const where = round.scope === 'all' ? 'all my courses' : round.course_name ?? 'my course';
+    const minutes = Math.max(1, Math.ceil(round.target_secs / 60));
+    return (
+      <section className="view-quiz">
+        <div className="card summary-card">
+          <h2>Timed quiz</h2>
+          <p>{`${round.n} questions, ${where}.`}</p>
+          <p>{`Target time: ${minutes} ${minutes === 1 ? 'minute' : 'minutes'}.`}</p>
+          <p className="muted">The clock starts when you press Start the quiz. You see no feedback until the end.</p>
+          <button
+            ref={doneRef}
+            type="button"
+            className="btn btn-primary"
+            onClick={() => { gate.enter('loading'); begin(); }}
+          >
+            Start the quiz
           </button>
         </div>
       </section>

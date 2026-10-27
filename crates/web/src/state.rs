@@ -348,6 +348,8 @@ pub struct MultistepBuffer {
 
 mod review_task;
 pub use review_task::RecordedReview;
+mod round;
+pub use round::RecordedRound;
 
 /// The D-S6 document: one JSONB row per learner in `web_states`.
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
@@ -356,6 +358,9 @@ pub struct WebState {
     /// Original server-selected reviews, retained until this session ends.
     #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
     pub review_tasks: BTreeMap<String, RecordedReview>,
+    /// The quiz rounds the learner asked for, keyed by task id (D-QZ1).
+    #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
+    pub rounds: BTreeMap<String, RecordedRound>,
     /// Approved instruction shown before a whole-item application, keyed by task.
     #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
     pub integrated_instruction: BTreeMap<String, String>,

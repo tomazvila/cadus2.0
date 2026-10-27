@@ -325,6 +325,7 @@ mod tests {
                     order: 1,
                     mastery_floor: Vec::new(),
                     mastery_floor_course: None,
+                    reading: Vec::new(),
                 }],
             },
             units: vec![RawUnit {

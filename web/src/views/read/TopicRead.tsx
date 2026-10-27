@@ -10,7 +10,9 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { ApiError } from '@/api';
 import { MathBlock } from '@/components/MathBlock';
 import { Chip, LoadingBlock } from '@/components/primitives';
-import { WorkedExample } from '@/views/session/Teach';
+import { ReadingFold } from '@/components/ReadingFold';
+import { SecondExampleFold, WorkedExample } from '@/views/session/Teach';
+import { PictureFold, TermList, WatchOutFold } from '@/views/session/TeachExtras';
 import '../../styles/fix-read.css';
 import type { ApiClient, TopicLink, TopicTeachResponse } from '@/api/types';
 
@@ -136,16 +138,21 @@ function ReadBody({ page, onOpen }: { page: TopicTeachResponse; onOpen: (id: str
           <h2 className="read-point-name">{point.name}</h2>
           {point.page ? (
             <>
+              <PictureFold picture={point.page.picture} />
               <div className="teach-concept">
                 <MathBlock className="teach-concept-text">{point.page.concept}</MathBlock>
               </div>
               <WorkedExample example={point.page.worked_example} />
+              <WatchOutFold watchOut={point.page.watch_out} />
+              <SecondExampleFold example={point.page.second_example} />
+              <TermList terms={point.page.terms} />
             </>
           ) : (
             <p className="muted">{READ_NO_PAGE}</p>
           )}
         </div>
       ))}
+      <ReadingFold reading={page.reading} />
     </>
   );
 }

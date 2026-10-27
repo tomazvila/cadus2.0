@@ -42,6 +42,7 @@ import type {
   SessionStartResponse,
   TaskAnswerResponse,
   QuizResultResponse,
+  QuizRoundResponse,
   TeachCheckRequest,
   TeachCheckResponse,
   TeachResponse,
@@ -124,6 +125,7 @@ export interface ApiClient {
   getProblemReport(reportId: string, signal?: AbortSignal): Promise<ProblemReportReceipt>;
   taskServe(taskId: string): Promise<ServedProblem>;
   taskQuizResult(taskId: string, practice?: boolean): Promise<QuizResultResponse>;
+  startQuizRound(length: number, scope: 'course' | 'all'): Promise<QuizRoundResponse>;
   taskTeach(taskId: string): Promise<TeachResponse>;
   topicTeach(topicId: string): Promise<TopicTeachResponse>;
   taskTeachCheck(taskId: string, body: TeachCheckRequest): Promise<TeachCheckResponse>;
@@ -261,6 +263,7 @@ export const ROUTES: readonly RouteRow[] = [
   { method: 'POST', path: '/api/task/{task_id}/integrated/hint', auth: 'S', via: 'method', client: 'taskIntegratedHint' },
   { method: 'POST', path: '/api/task/{task_id}/integrated/answer', auth: 'S', via: 'method', client: 'taskIntegratedAnswer' },
   { method: 'POST', path: '/api/task/{task_id}/quiz-result', auth: 'S', via: 'method', client: 'taskQuizResult' },
+  { method: 'POST', path: '/api/quiz/round', auth: 'S', via: 'method', client: 'startQuizRound' },
 
   { method: 'POST', path: '/api/auth/signup', auth: 'P', via: 'method', client: 'signup' },
   { method: 'POST', path: '/api/auth/login', auth: 'P', via: 'method', client: 'login' },

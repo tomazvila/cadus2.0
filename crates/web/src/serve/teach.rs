@@ -59,6 +59,14 @@ pub async fn teach(
     if let Some(figure) = teach_figure(graph, &lesson.key, &page) {
         reply["worked_example"]["figure"] = json!(figure);
     }
+    // D-TM1 and D-TD1: the terms and the depth parts, each only when present.
+    super::add_page_extras(&mut reply, &page);
+    // D-RL1: the reading list of the course of the topic. The key is absent
+    // for a course with no list.
+    let reading = graph.reading_of_topic(&topic);
+    if !reading.is_empty() {
+        reply["reading"] = json!(reading);
+    }
     // The try-first block carries what the learner needs to act and nothing
     // that grades the act: `answer` and `reveal` stay on the server until the
     // check route (Hard Rule 1).

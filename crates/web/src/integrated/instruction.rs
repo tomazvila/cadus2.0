@@ -61,6 +61,7 @@ pub(crate) async fn teach(
     if let Some(figure) = crate::serve::teach_figure(&content.curriculum, &key, &page) {
         reply["worked_example"]["figure"] = json!(figure);
     }
+    crate::serve::add_page_extras(&mut reply, &page);
     Ok(Json(reply))
 }
 

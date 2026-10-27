@@ -202,7 +202,7 @@ describe('the demo refusals of the admin routes', () => {
     expect(demo.oauthStartUrl('goo gle')).toBe('/api/auth/oauth/goo%20gle/start');
     expect((await settle(demo.getGraph())).scope).toBeNull();
     expect((await settle(demo.getGraph('all'))).scope).toBe('all');
-    expect((await settle(demo.getStatus())).course).toEqual({ id: 'foundations', name: 'Foundations' });
+    expect((await settle(demo.getStatus())).course).toMatchObject({ id: 'foundations', name: 'Foundations' });
   });
 });
 
@@ -252,7 +252,7 @@ describe('the demo payloads, literally', () => {
       test_prep: null,
       courses: COURSES,
       placed: true,
-      course: { name: 'Foundations', id: 'foundations' },
+      course: { name: 'Foundations', id: 'foundations', reading: expect.any(Array) },
     });
   });
 
@@ -329,6 +329,7 @@ describe('the demo payloads, literally', () => {
           text: expect.stringContaining('4 of them shaded'),
         },
       },
+      reading: expect.any(Array),
     });
     expect(await settle(demo.taskHint('demo-lesson', 'demo-p1'))).toEqual({
       hint: 'Name what the question asks for before you compute anything.',

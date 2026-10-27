@@ -19,6 +19,9 @@ use common::events::{input, tree};
 /// The `attempt` line of `one_per_type.jsonl`, written by the 1.0 models.
 const V1_ATTEMPT: &str = r#"{"answer_kind":"numeric","assisted":true,"attempt_id":"t-1-1","correct":true,"error_tags":["notation","units"],"given_answer":"3","grader_note":"clean method","kp":"kp2","problem":{"expected":"3","text":" |-3| = ? — non-ASCII kept"},"secs":17,"session":"s_2026-05-04a","task_id":"t-1","task_type":"lesson","topic":"absolute-value","ts":"2026-05-04T13:45:06Z","type":"attempt","v":1,"work":"|-3| = 3","work_quality":"nearly_perfect"}"#;
 
+/// The `quiz_result` line of `one_per_type.jsonl`, written before the quiz round (D-QZ1).
+const V1_QUIZ_RESULT: &str = r#"{"per_topic":[{"correct":true,"secs":12,"topic":"absolute-value"},{"correct":false,"secs":0,"topic":"not-a-topic"}],"quiz_id":"q-1","score":0.75,"session":"s_2026-05-04a","ts":"2026-05-04T13:45:06Z","type":"quiz_result","v":1,"xp":15.0}"#;
+
 /// The topic the fold tests practice. It is a real topic of the checked-in tree.
 const TOPIC: &str = "absolute-value";
 
@@ -84,6 +87,18 @@ fn a_v1_attempt_row_reads_as_v2_and_writes_its_own_bytes_back() {
     assert!(!body.independent_after_feedback);
     // An original row is never rewritten (C2).
     assert_eq!(event.to_canonical_json().unwrap(), V1_ATTEMPT);
+}
+
+/// D-QZ1: a quiz round adds no event kind and no field. A `quiz_result` line from before
+/// the round reads, writes its own bytes back, and folds by the score alone.
+#[test]
+fn a_quiz_result_line_from_before_the_round_still_reads_and_folds() {
+    let event = read(V1_QUIZ_RESULT);
+    assert_eq!(event.to_canonical_json().unwrap(), V1_QUIZ_RESULT);
+    let model = fold(&[V1_QUIZ_RESULT.to_owned()]);
+    // 0.75 is under the 0.8 bar, so the retake wait stands.
+    assert!(model.quiz.retake_pending);
+    assert_eq!(model.projector_version, Some(PROJECTOR_VERSION));
 }
 
 #[test]

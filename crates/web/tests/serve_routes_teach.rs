@@ -8,6 +8,7 @@
 #![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 
 mod common;
+mod reading_fixture;
 
 use axum::http::StatusCode;
 use cadus_core::instruction::{InstructionSpec, gate_teach};
@@ -78,6 +79,10 @@ async fn teach_on_a_lesson_serves_the_authored_page() {
         assert_eq!(page["concept"], "Addition combines two counts.");
         assert_eq!(page["worked_example"]["problem"], "Compute 2 + 3.");
         assert_eq!(page["worked_example"]["steps"][0], "2 + 3 = 5.");
+        // D-TM1 and D-TD1: a page without the optional parts sends none of the keys.
+        for key in ["terms", "picture", "watch_out", "second_example"] {
+            assert!(page.get(key).is_none(), "the reply carries {key}");
+        }
 
         // D-O3: the teach read writes nothing.
         let rows = sqlx::query_scalar!(
@@ -164,6 +169,36 @@ async fn an_approved_teach_page_from_the_gate_serves_with_no_model_call() {
 
         // T1: the route spent no model token.
         assert_eq!(model_calls(&db).await, 0);
+    })
+    .await;
+}
+
+/// D-RL1: a lesson of a course with a reading list serves the list. A course
+/// with no list gives no key, and the other keys keep their values.
+#[tokio::test]
+async fn teach_on_a_lesson_serves_the_reading_list_of_the_course() {
+    TestDb::with(|db| async move {
+        let user = seed_learner(&db, "teachreading@example.com").await;
+        let with =
+            common::app_with_content(&db, reading_fixture::curriculum(reading_fixture::entries()));
+        seed_open_session(&db, user).await;
+        seed_teach_page(&db).await;
+
+        let (status, page) = teach_task(&with, user, LESSON).await;
+        assert_eq!(status, StatusCode::OK, "{page}");
+        assert_eq!(page["reading"], json!(reading_fixture::entries()));
+        assert_eq!(page["reading"][0]["where"], "https://example.org/primer");
+        assert_eq!(page["kp"], "kp1");
+        assert_eq!(page["concept"], "Addition combines two counts.");
+        assert_eq!(page["worked_example"]["problem"], "Compute 2 + 3.");
+
+        let without = common::app_with_content(&db, reading_fixture::curriculum(Vec::new()));
+        let (status, plain) = teach_task(&without, user, LESSON).await;
+        assert_eq!(status, StatusCode::OK, "{plain}");
+        assert!(plain.get("reading").is_none(), "{plain}");
+        assert_eq!(plain["kp"], page["kp"]);
+        assert_eq!(plain["concept"], page["concept"]);
+        assert_eq!(plain["worked_example"], page["worked_example"]);
     })
     .await;
 }

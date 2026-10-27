@@ -212,8 +212,10 @@ fn the_prompt_digests_of_this_checkout_are_pinned() {
     let pinned = [
         (Kind::Template, "c0ef8977d579adc8"),
         // Brief 09 (D-V1) moved this one: the teach tool takes an optional
-        // `figure`, and the system text explains it.
-        (Kind::Teach, "12c5ba443e374c17"),
+        // `figure`, and the system text explains it. D-TM1 and D-TD1 moved it
+        // again: the teach tool takes optional `terms`, `picture`, `watch_out`
+        // and `second_example`, and the system text explains them.
+        (Kind::Teach, "cd45cb8a4ed01162"),
         (Kind::HintLadder, "c8e040f53fce1881"),
         // Unit R7 moved this one: the `emit_distractors` tool asks for a
         // literal answer, and the `emit_template` tool keeps its expression, so

@@ -221,15 +221,17 @@ describe('the router', () => {
   });
 
   it('opens the quiz from the dashboard and gives the dashboard back when it ends', async () => {
-    // Quiz now from the quiet menu carries the plan task, and a quiz opened from the
+    // The quiz round from the quiet menu carries its task, and a quiz opened from the
     // dashboard has no session to return to: Done lands on the dashboard.
     const api = createDemoApi();
     serveQuiz(api, { total: 1, kp: null });
 
     const user = userEvent.setup();
     await reachDashboard(api);
-    await pressInMenu(user, 'Start a timed quiz');
-    await waitFor(() => expect(view().querySelector('.view-quiz')).not.toBeNull());
+    await pressInMenu(user, 'Continue');
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Start the quiz' })).toBeTruthy());
+    await user.click(screen.getByRole('button', { name: 'Start the quiz' }));
+    await waitFor(() => expect(view().querySelector('.timer')).not.toBeNull());
 
     await finishQuiz(user);
     await user.click(screen.getByRole('button', { name: 'Back to dashboard' }));

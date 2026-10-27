@@ -229,7 +229,7 @@ pub(crate) fn compose_plan(
 /// 1.0 reads the session id as one big-endian integer and takes it modulo 2^63.
 /// The port folds the same bytes into 64 bits, so one session id always draws
 /// the same quiz.
-fn session_seed(session: &str) -> u64 {
+pub(super) fn session_seed(session: &str) -> u64 {
     let mut seed: u64 = 0;
     for byte in session.as_bytes() {
         seed = seed.wrapping_mul(256).wrapping_add(u64::from(*byte));
@@ -259,7 +259,7 @@ fn blocked_json(task: &BlockedTask) -> Value {
 ///
 /// No exemplar and no expected answer ever reaches the client (Hard Rule, trap
 /// W7). `progress` is the pure lookup of trap W3.
-fn trim_task(task: &Task, graph: &Curriculum, scratch: &WebState) -> Value {
+pub(crate) fn trim_task(task: &Task, graph: &Curriculum, scratch: &WebState) -> Value {
     let topic = task.topic.as_deref().and_then(|id| {
         graph.idx_of(id).map(|idx| {
             json!({

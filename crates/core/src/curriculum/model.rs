@@ -376,6 +376,20 @@ pub struct Unit {
     pub topics: Vec<Topic>,
 }
 
+/// One book or site of the reading list of a course.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct ReadingEntry {
+    pub title: String,
+    pub author: String,
+    /// `free` or `book`. The lint checks the value.
+    pub access: String,
+    /// An https address or a chapter note.
+    #[serde(rename = "where")]
+    pub where_to_read: String,
+    pub note: String,
+}
+
 /// One course entry of `courses.yaml`.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -388,6 +402,10 @@ pub struct Course {
     pub mastery_floor: Vec<Slug>,
     #[serde(default)]
     pub mastery_floor_course: Option<Slug>,
+    /// Presentation only. It stays out of the serialized form, so it stays out
+    /// of `review_context_digest`.
+    #[serde(default, skip_serializing)]
+    pub reading: Vec<ReadingEntry>,
 }
 
 /// The `courses.yaml` document. 1.0 calls the model `CourseCatalog`; the schema

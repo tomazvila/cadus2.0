@@ -38,6 +38,9 @@ curriculum/
 | `courses[].order` | int | yes | — (1..13; no uniqueness check) |
 | `courses[].mastery_floor` | list of Slug | no | `[]` |
 | `courses[].mastery_floor_course` | Slug or null | no | `null` |
+| `courses[].reading` | list of `{title, author, access, where, note}` | no | `[]` |
+
+New in 2.0 (D-RL1): `courses[].reading` is presentation only. It is not in the canonical dump and not in `review_context_digest`.
 
 Both floor forms on one course = lint `mastery_floor_ambiguous`. Real file: 2 list
 form, 11 reference form.
@@ -200,6 +203,7 @@ Graph-only code: `empty` — `no curriculum found`.
 Probe rule (D-DG4, not in `lint_curriculum`; the CI binary `lint_curriculum` runs it through `lint_curriculum_probes`):
 17. `diagnostic_probe_undecidable` — `{tid}: {cause}. Write a short typed answer under a decidable contract (docs/reference/curriculum-1.0-spec.md, section 6).` The cause is: the probe has contract `none`; the probe has contract `written`; the topic kind is `proof` (or `multi-step`) and the probe has no contract; or the contract refuses the key. A topic with no `diagnostic_exemplar` gets no finding here (`missing_diagnostic_exemplar` covers it).
 18. `diagnostic_probe_allow_stale` — a line of the allow-list names an unknown topic, or a topic whose probe gives a verdict now.
+Reading-list rules (D-RL1, 2.0 full lint only, not in `lint_curriculum`): `reading_entry` — `course {id}: reading entry {n}: {problem}`: a title, author or note is empty, `access` is not `free` or `book`, `where` is empty or is a `http` text that is not an `https://` address without a space (any other text is a chapter note), or the note is longer than 159 characters. `reading_too_long` — `course {id}: reading list has {n} entries; the limit is 6`.
 The allow-list is `curriculum/diag-probe-allow.txt`: one topic id per line, `#` starts a comment, a blank line is ignored, an absent file is an empty list. The environment variable `CADUS_DIAG_PROBE_ALLOW` names another file. The loader does not read this file, so the tree hash does not change. A shipped probe removes its line.
 
 Not enforced by lint: kebab-case; KP id uniqueness; duplicate/self prerequisite

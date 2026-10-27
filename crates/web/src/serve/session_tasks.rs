@@ -51,6 +51,13 @@ pub(crate) fn restore_session_tasks(
             plan.tasks.push(recorded);
         }
     }
+    // A quiz round the learner asked for is no part of the composed plan. The
+    // recorded task keeps it addressable for serve, answer, hint and reveal.
+    for (id, recorded) in &scratch.rounds {
+        if !plan.tasks.iter().any(|task| task.task_id == *id) {
+            plan.tasks.push(recorded.task.0.clone());
+        }
+    }
     // Closed reviews retain their progress, so existing serve/answer guards
     // still return task_complete and cannot append another attempt.
     for (id, progress) in &scratch.tasks {

@@ -86,6 +86,7 @@ fn catalog() -> Catalog {
             order: 0,
             mastery_floor: Vec::new(),
             mastery_floor_course: None,
+            reading: Vec::new(),
         }],
     }
 }

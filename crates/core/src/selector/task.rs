@@ -262,13 +262,23 @@ pub(super) fn lesson_task(
 
 /// Build the quiz task (`_quiz_task`, `selector.py:1013-1030`).
 pub(super) fn quiz_task(plan: &QuizPlan, difficulty_streak: i64) -> Task {
-    let n_recent = plan
-        .questions
-        .iter()
-        .filter(|question| question.stratum == "recent")
-        .count();
+    let mut task = quiz_task_named(plan, difficulty_streak, "");
+    task.why = format!(
+        "quiz due; {} questions ({} recent, all-history)",
+        plan.questions.len(),
+        plan.questions
+            .iter()
+            .filter(|question| question.stratum == "recent")
+            .count()
+    );
+    task
+}
+
+/// Build the task of an on-demand quiz round with the given task id.
+pub fn quiz_task_named(plan: &QuizPlan, difficulty_streak: i64, task_id: &str) -> Task {
     let n_questions = plan.questions.len();
     Task {
+        task_id: task_id.to_owned(),
         task_type: TaskType::Quiz,
         n_problems: i64::try_from(n_questions).ok(),
         mix: plan
@@ -278,7 +288,7 @@ pub(super) fn quiz_task(plan: &QuizPlan, difficulty_streak: i64) -> Task {
             .collect(),
         difficulty_target: Some(quiz_difficulty_target(difficulty_streak).to_owned()),
         time_budget_secs: Some(plan.total_time_budget_secs()),
-        why: format!("quiz due; {n_questions} questions ({n_recent} recent, all-history)"),
+        why: format!("quiz round; {n_questions} questions"),
         ..Task::default()
     }
 }

@@ -167,7 +167,7 @@ describe('the reads', () => {
     const gate = new Promise<void>((r) => { release = r; });
     const sessionStart = vi.fn(async () => { await gate; return started; });
     const view = await mount({ api: stubApi({ sessionStart }) });
-    await pressInMenu('Start a timed quiz');
+    await pressInMenu('Continue');
     await userEvent.click(screen.getByRole('button', { name: 'Continue studying' }));
     expect(sessionStart).toHaveBeenCalledTimes(2);
 
@@ -179,14 +179,15 @@ describe('the reads', () => {
     expect(view.onQuiz).not.toHaveBeenCalled();
   });
 
-  it('F-F2-2: a plan that lands after the screen left opens no quiz', async () => {
-    const plan = await createDemoApi().getPlan();
+  it('F-F2-2: a round that lands after the screen left opens no quiz', async () => {
+    const demo = createDemoApi();
+    const round = await demo.startQuizRound(10, 'all');
     let release!: () => void;
     const gate = new Promise<void>((r) => { release = r; });
-    const getPlan = vi.fn(async () => { await gate; return plan; });
-    const view = await mount({ api: stubApi({ getPlan }) });
-    await pressInMenu('Start a timed quiz');
-    await waitFor(() => expect(getPlan).toHaveBeenCalledTimes(1));
+    const startQuizRound = vi.fn(async () => { await gate; return round; });
+    const view = await mount({ api: stubApi({ startQuizRound }) });
+    await pressInMenu('Continue');
+    await waitFor(() => expect(startQuizRound).toHaveBeenCalledTimes(1));
 
     view.unmount();
     await act(async () => { release(); await gate; });

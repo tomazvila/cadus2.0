@@ -12,6 +12,7 @@
 #![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 
 mod common;
+mod reading_fixture;
 
 use axum::http::{Method, StatusCode};
 use cadus_core::curriculum::{PrereqEdge, Slug};
@@ -222,6 +223,89 @@ async fn topic_teach_needs_a_session_cookie() {
             StatusCode::UNAUTHORIZED,
             "unauthorized",
         );
+    })
+    .await;
+}
+
+/// D-RL1: the read route serves the reading list of the course as a plain list,
+/// and no key for a course with no list.
+#[tokio::test]
+async fn topic_teach_serves_the_reading_list_of_the_course() {
+    TestDb::with(|db| async move {
+        let user = seed_learner(&db, "topicreading@example.com").await;
+        seed_content(
+            &db,
+            KEY,
+            "teach",
+            "digest-teach",
+            page_body("Addition combines counts."),
+        )
+        .await;
+
+        let with = app_with_content(&db, reading_fixture::curriculum(reading_fixture::entries()));
+        let body = get_ok(&with, user, "/api/topics/addition/teach").await;
+        assert_eq!(body["reading"], json!(reading_fixture::entries()));
+        assert_eq!(body["course_name"], "Foundations");
+
+        let without = app_with_content(&db, reading_fixture::curriculum(Vec::new()));
+        let plain = get_ok(&without, user, "/api/topics/addition/teach").await;
+        assert!(plain.get("reading").is_none(), "{plain}");
+    })
+    .await;
+}
+
+#[tokio::test]
+async fn topic_teach_serves_the_optional_parts_of_a_point() {
+    TestDb::with(|db| async move {
+        let user = seed_learner(&db, "topicextras@example.com").await;
+        let app = app(&db);
+        let mut body = page_body("Addition combines counts.");
+        body["terms"] = json!([{"term": "Sum", "meaning": "The count of two counts combined."}]);
+        body["picture"] = json!("Two apples and three apples sit in one bowl.");
+        body["watch_out"] = json!("Counts of different things do not add into one count.");
+        body["second_example"] = json!({
+            "problem": "A bowl holds a total of 9 apples.",
+            "steps": ["The total tells how many apples are in the bowl."]
+        });
+        seed_content(&db, KEY, "teach", "digest-teach-extras", body).await;
+
+        let reply = get_ok(&app, user, "/api/topics/addition/teach").await;
+        let page = &reply["points"][0]["page"];
+        assert_eq!(page["terms"][0]["term"], "Sum");
+        assert_eq!(
+            page["picture"],
+            "Two apples and three apples sit in one bowl."
+        );
+        assert_eq!(
+            page["watch_out"],
+            "Counts of different things do not add into one count."
+        );
+        assert_eq!(
+            page["second_example"]["steps"][0],
+            "The total tells how many apples are in the bowl."
+        );
+    })
+    .await;
+}
+
+#[tokio::test]
+async fn topic_teach_of_an_older_page_carries_none_of_the_optional_parts() {
+    TestDb::with(|db| async move {
+        let user = seed_learner(&db, "topicnoextras@example.com").await;
+        let app = app(&db);
+        seed_content(
+            &db,
+            KEY,
+            "teach",
+            "digest-teach-plain",
+            page_body("Addition combines counts."),
+        )
+        .await;
+        let reply = get_ok(&app, user, "/api/topics/addition/teach").await;
+        let page = reply["points"][0]["page"].as_object().unwrap();
+        for key in ["terms", "picture", "watch_out", "second_example"] {
+            assert!(!page.contains_key(key), "{key}");
+        }
     })
     .await;
 }

@@ -2,8 +2,10 @@
 use crate::template::gate::{Rejection, contains_token, py_str};
 
 use super::body::{object, only_known, text};
+use super::depth::read_depth;
 use super::figure::read_figure;
 use super::finite::{permitted_collision, teach_case};
+use super::terms::read_terms;
 use super::{InstructionSpec, TEACH_FIELDS, TeachPage, WORKED_EXAMPLE_FIELDS, WorkedExample};
 
 /// The gate of a teach page (L4, spec section 7 row R6).
@@ -81,6 +83,31 @@ per entry, ending with the final answer"
         .map(|(index, step)| step_text(index, step))
         .collect::<Result<Vec<String>, Rejection>>()?;
     let case = teach_case(&problem, policy)?;
+    refuse_exemplar_problem(&problem, spec, case)?;
+    check_teach_disclosures(&problem, &written, spec, case)?;
+    let figure = read_figure(&fields, &problem, &written, spec, case)?;
+    let terms = read_terms(&fields, spec)?;
+    let (picture, watch_out, second_example) = read_depth(&fields, &concept, &problem, spec, case)?;
+    Ok(TeachPage {
+        concept,
+        worked_example: WorkedExample {
+            problem,
+            steps: written,
+        },
+        figure,
+        terms,
+        picture,
+        watch_out,
+        second_example,
+    })
+}
+
+/// Refuse a worked problem that equals an exemplar the server serves (Hard Rule 1).
+pub(super) fn refuse_exemplar_problem(
+    problem: &str,
+    spec: &InstructionSpec<'_>,
+    case: Option<&crate::curriculum::FiniteObjectiveCase>,
+) -> Result<(), Rejection> {
     for (index, exemplar) in spec.exemplars.iter().enumerate() {
         if exemplar.problem.trim() == problem.trim()
             && !permitted_collision(case, &exemplar.problem)
@@ -91,24 +118,16 @@ per entry, ending with the final answer"
                     "'worked_example.problem' reads {}, which is exemplar {index} — the server \
 serves the exemplars, so work the method on DIFFERENT values, or the page answers a problem the \
 learner has not attempted yet (Hard Rule 1)",
-                    py_str(&problem)
+                    py_str(problem)
                 ),
             });
         }
     }
-    check_teach_disclosures(&problem, &written, spec, case)?;
-    let figure = read_figure(&fields, &problem, &written, spec, case)?;
-    Ok(TeachPage {
-        concept,
-        worked_example: WorkedExample {
-            problem,
-            steps: written,
-        },
-        figure,
-    })
+    Ok(())
 }
+
 /// One step of the worked solution, or the refusal an empty step earns.
-fn step_text(index: usize, step: &serde_json::Value) -> Result<String, Rejection> {
+pub(super) fn step_text(index: usize, step: &serde_json::Value) -> Result<String, Rejection> {
     match step.as_str() {
         Some(value) if !value.trim().is_empty() => Ok(value.to_owned()),
         _ => Err(Rejection {

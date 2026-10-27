@@ -30,11 +30,30 @@ import type {
   ProofSeenResponse,
   ProofsResponse,
   PlanTask,
+  ReadingEntry,
   RetentionRow,
   ServedProblem,
   TaskAnswerResponse,
   User,
 } from './types';
+
+/** The demo reading list (D-RL1): one address and one chapter note. */
+const DEMO_READING: ReadingEntry[] = [
+  {
+    title: 'Demo Fractions Primer',
+    author: 'A. Demo',
+    access: 'free',
+    where: 'https://example.org/fractions',
+    note: 'Short pages on equal fractions, with worked examples.',
+  },
+  {
+    title: 'Demo Arithmetic Workbook',
+    author: 'B. Demo',
+    access: 'book',
+    where: 'Chapter 3, Equal fractions',
+    note: 'Extra practice problems with answers at the back.',
+  },
+];
 
 const DEMO_USER: User = {
   id: 'demo',
@@ -233,7 +252,7 @@ export function createDemoApi(): ApiClient {
 
     getStatus: () =>
       reply({
-        course: { id: 'foundations', name: 'Foundations' },
+        course: { id: 'foundations', name: 'Foundations', reading: DEMO_READING },
         placed: true,
         courses: [{ id: 'foundations', name: 'Foundations', current: true }],
         test_prep: null,
@@ -384,6 +403,7 @@ export function createDemoApi(): ApiClient {
           steps: 'Both parts divide by 2, so $\\frac{4}{6}=\\frac{2}{3}$.',
           figure: DEMO_FIGURE,
         },
+        reading: DEMO_READING,
       });
     },
 
@@ -401,6 +421,7 @@ export function createDemoApi(): ApiClient {
         next: null,
         learn_first: [],
         opens_next: [],
+        reading: DEMO_READING,
         points: [{
           kp: DEMO_PROBLEMS[0].kp,
           name: 'Equal fractions',
@@ -432,6 +453,24 @@ export function createDemoApi(): ApiClient {
       return reply({ hint: DEMO_HINTS[hintCount - 1], hint_number: hintCount });
     },
 
+    startQuizRound: async (length, scope) => {
+      const n = Math.min(length, 8);
+      const task: PlanTask = {
+        ...demoTask(0),
+        task_id: 'demo-round-1',
+        task_type: 'quiz',
+        topic: null,
+        kp: null,
+        start_at_kp: null,
+        n_problems: n,
+        time_budget_secs: n * 90,
+        why: 'quiz round; ' + n + ' questions',
+      };
+      return reply({
+        task,
+        round: { length, n, scope, course_name: scope === 'course' ? 'Foundations' : null, target_secs: n * 90 },
+      });
+    },
     taskQuizResult: async () => ({ inconclusive: false, score: 0, xp: 0, answers: [], practice_pending: false, practice_available: false }),
     taskAnswer: async (taskId, body): Promise<TaskAnswerResponse> => {
       if (taskId !== DEMO_TASK_ID) refuse(404, 'unknown_task', 'The demo plans one task.');

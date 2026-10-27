@@ -21,6 +21,10 @@
 //! | teach | `worked_example.steps` is a list of at least one non-empty step | the worked solution IS the page (spec section 7, row R6) |
 //! | teach | the worked problem is not an exemplar | A6 serves the exemplars, so an exemplar worked out hands the learner an answer before the attempt (Hard Rule 1) |
 //! | teach | the last step names no answer of ANOTHER served problem | the page works one problem; a step that states a second served answer hands that one away too (Hard Rule 1) |
+//! | teach | `terms`, when present, holds at most 6 rows of `term` and `meaning`, each non-empty, no term twice | a long list is a glossary, not a page |
+//! | teach | no `meaning` names an answer the knowledge point serves | the same rule as a hint rung (Hard Rule 3) |
+//! | teach | `picture` and `watch_out`, when present, name no served answer | the same rule as a hint rung (Hard Rule 3) |
+//! | teach | `second_example`, when present, obeys the worked example rules | a second example leaks no more than the first |
 //! | hint | `hints` holds at least one rung | the hint route serves the rungs and nothing else |
 //! | hint | no rung repeats an earlier rung | each rung goes one step past the one before it |
 //! | hint | no rung names an answer the knowledge point serves | Hard Rule 3: a hint is a question, never the final step |
@@ -68,11 +72,13 @@
 //! (C4). A body that is not a document at all is a rejection, not a crash.
 
 mod body;
+mod depth;
 mod figure;
 mod finite;
 mod hint;
 mod names_answer;
 mod teach;
+mod terms;
 
 use serde::{Deserialize, Serialize};
 
@@ -146,7 +152,33 @@ pub fn template_instances(body: &str) -> Vec<ServedInstance> {
 }
 
 /// The fields a teach body carries.
-pub const TEACH_FIELDS: [&str; 3] = ["concept", "worked_example", "figure"];
+pub const TEACH_FIELDS: [&str; 7] = [
+    "concept",
+    "worked_example",
+    "figure",
+    "terms",
+    "picture",
+    "watch_out",
+    "second_example",
+];
+
+/// The fields one term row carries.
+pub const TERM_FIELDS: [&str; 2] = ["term", "meaning"];
+
+/// The most rows a `terms` list holds.
+pub const MAX_TERMS: usize = 6;
+
+/// The most characters one `meaning` holds.
+pub const MAX_MEANING_CHARS: usize = 200;
+
+/// The most characters a `picture` holds.
+pub const MAX_PICTURE_CHARS: usize = 320;
+
+/// The most characters a `watch_out` holds.
+pub const MAX_WATCH_OUT_CHARS: usize = 240;
+
+/// The most steps a `second_example` holds.
+pub const MAX_SECOND_STEPS: usize = 4;
 
 /// The fields a worked example carries.
 pub const WORKED_EXAMPLE_FIELDS: [&str; 2] = ["problem", "steps"];
@@ -165,6 +197,16 @@ pub struct WorkedExample {
     pub steps: Vec<String>,
 }
 
+/// One word of the page and its meaning in one plain sentence.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct Term {
+    /// The word or short phrase, as the page writes it.
+    pub term: String,
+    /// One plain sentence that explains the word.
+    pub meaning: String,
+}
+
 /// The body of a `content_store` row of kind `teach` (L4).
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -178,6 +220,20 @@ pub struct TeachPage {
     /// page shows no figure; then the body keeps the bytes it had before.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub figure: Option<usize>,
+    /// The words of the page, each with one plain sentence. Empty on a page
+    /// authored before the field existed, and absent from the stored body then.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub terms: Vec<Term>,
+    /// One everyday example of the idea, in at most two sentences. Absent on a
+    /// page authored before the field existed; the stored body keeps its bytes then.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub picture: Option<String>,
+    /// One or two lines on where the method fails. Absent as above.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub watch_out: Option<String>,
+    /// A second worked example that reads a result. It reuses `WorkedExample`.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub second_example: Option<WorkedExample>,
 }
 
 /// The body of a `content_store` row of kind `hint_ladder` (L5).

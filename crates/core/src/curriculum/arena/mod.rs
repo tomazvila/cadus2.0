@@ -37,7 +37,7 @@ use std::path::Path;
 use super::finding::Finding;
 use super::graph::{Csr, EncCsr, EncEdge};
 use super::load::{ParseError, load_raw_curriculum};
-use super::model::{Course, KnowledgePoint, Topic};
+use super::model::{Course, KnowledgePoint, ReadingEntry, Topic};
 
 /// Define one `u32` index type of the arena.
 macro_rules! u32_index {
@@ -305,6 +305,20 @@ impl Curriculum {
     pub fn course(&self, course_id: &str) -> Option<&Course> {
         let position = self.course_by_id.get(course_id).copied()?;
         self.courses.get(position)
+    }
+
+    /// The reading list of a course; empty for an unknown course.
+    pub fn reading_of_course(&self, course_id: &str) -> &[ReadingEntry] {
+        self.course(course_id)
+            .map_or(&[][..], |course| course.reading.as_slice())
+    }
+
+    /// The reading list of the course of a topic; empty for an unknown topic.
+    pub fn reading_of_topic(&self, topic_id: &str) -> &[ReadingEntry] {
+        match self.idx_of(topic_id) {
+            Some(idx) => self.reading_of_course(self.course_of(idx)),
+            None => &[],
+        }
     }
 
     /// The mastery floor of a course, ascending by load index (PEDAGOGY 1).

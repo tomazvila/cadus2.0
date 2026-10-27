@@ -28,6 +28,7 @@
  */
 import { useEffect, useState } from 'react';
 import { AdminFailureBlock } from './AdminFailure';
+import { ReviewTeachParts } from './ReviewTeachParts';
 import { GateBlock } from './GateBlock';
 import { alerts, usd } from './cost';
 import { useAdminLoad } from './adminLoad';
@@ -133,6 +134,8 @@ export function ReviewDocumentPane({
           <GateBlock note={item.gate} />
         </section>
       ) : null}
+
+      <ReviewTeachParts body={item.body} />
 
       <details className="review-body">
         <summary>The authored body</summary>

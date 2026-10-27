@@ -55,7 +55,7 @@ import { ReviewScreen } from '@/views/admin/Review';
 import { resolveDiag } from '@/api/diag';
 import type { DiagnosticApi } from '@/api/diag';
 import type { AuthMode } from '@/views/Auth';
-import type { ApiClient, PlanTask, User } from '@/api';
+import type { ApiClient, PlanTask, QuizRound, User } from '@/api';
 
 /**
  * The screen on, and everything that screen needs.
@@ -66,7 +66,7 @@ import type { ApiClient, PlanTask, User } from '@/api';
 export type View =
   | { name: 'dashboard' }
   | { name: 'session' }
-  | { name: 'quiz'; task: PlanTask; fromSession: boolean }
+  | { name: 'quiz'; task: PlanTask; fromSession: boolean; round?: QuizRound | undefined; resumed?: boolean }
   | { name: 'diagnostic' }
   | { name: 'proofs' }
   | { name: 'map'; back: View; picked?: string }
@@ -335,6 +335,8 @@ function Screen({ api, route, view, placement, onUnauthorized, goHome, setView }
           {...common}
           task={view.task}
           fromSession={view.fromSession}
+          round={view.round}
+          resumed={view.resumed === true}
           onDone={() => { setView(view.fromSession ? { name: 'session' } : HOME); }}
         />
       );
@@ -367,7 +369,7 @@ function Screen({ api, route, view, placement, onUnauthorized, goHome, setView }
         <Dashboard
           {...common}
           onSession={() => { setView({ name: 'session' }); }}
-          onQuiz={(task) => { setView({ name: 'quiz', task, fromSession: false }); }}
+          onQuiz={(task, round, resumed) => { setView({ name: 'quiz', task, fromSession: false, round, resumed: resumed === true }); }}
           onDiagnostic={openDiagnostic}
           onMap={() => { setView({ name: 'map', back: HOME }); }}
           onProofs={() => { setView({ name: 'proofs' }); }}

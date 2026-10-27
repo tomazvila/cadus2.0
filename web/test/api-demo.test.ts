@@ -25,8 +25,8 @@ describe('the demo client', () => {
     // instruction row completed the A4.1 journey; the two question-report routes brought it
     // to 45, the equivalence and proof-grading polls (Amendment K) brought it to 47, and
     // the active worked-example check (step 5a) brought it to 48, and the S6 content
-    // revoke brings it to 49, the five routes of the proof revision loop (D-PR1) to 54, the overturn report to 55, the review-soon request to 56, and the open-run read of the placement to 57, and the daily XP goal (D-XP1) to 58, and the lesson text by topic (D-TR1) to 59.
-    expect(named.length).toBe(59);
+    // revoke brings it to 49, the five routes of the proof revision loop (D-PR1) to 54, the overturn report to 55, the review-soon request to 56, and the open-run read of the placement to 57, and the daily XP goal (D-XP1) to 58, and the lesson text by topic (D-TR1) to 59, and the quiz round (D-QZ1) to 60.
+    expect(named.length).toBe(60);
     for (const member of named) {
       expect(typeof demo[member], `the demo lacks ${member}`).toBe('function');
     }

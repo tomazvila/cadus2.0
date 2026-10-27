@@ -410,6 +410,7 @@ fn two_course_graph() -> Curriculum {
             order: i64::try_from(index).unwrap(),
             mastery_floor: Vec::new(),
             mastery_floor_course: None,
+            reading: Vec::new(),
         });
         raw.units.push(cadus_core::curriculum::RawUnit {
             course_id: course.to_owned(),

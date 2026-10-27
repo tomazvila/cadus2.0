@@ -2,6 +2,15 @@
 use super::*;
 use cadus_core::event::{QuizResult, QuizTopicResult};
 
+/// The XP factor of a quiz of `n` questions: `n` over the due quiz length, at most 1.
+#[expect(clippy::cast_precision_loss, reason = "quiz lengths are small counts")]
+fn round_xp_scale(n: i64, due_length: i64) -> f64 {
+    if due_length <= 0 {
+        return 1.0;
+    }
+    (n as f64 / due_length as f64).min(1.0)
+}
+
 /// Close exactly the original quiz batch; supplemental attempts cannot reprice it.
 pub(super) fn close_quiz(
     task: &Task,
@@ -36,7 +45,10 @@ pub(super) fn close_quiz(
     let score =
         decided.iter().filter(|item| item.correct).count() as f64 / decided.len().max(1) as f64;
     let xp = if decided.len() == originals.len() {
-        task_xp(TaskType::Quiz, WorkQuality::NearlyPerfect, cfg, 0, 0, false) * score
+        // A short round earns less: the XP scales by length over the due quiz.
+        task_xp(TaskType::Quiz, WorkQuality::NearlyPerfect, cfg, 0, 0, false)
+            * score
+            * round_xp_scale(task.n_problems.unwrap_or(0), cfg.quiz.questions)
     } else {
         0.0
     };
@@ -142,7 +154,11 @@ pub async fn result(request: TaskWithBody) -> Result<Json<Value>, ApiError> {
             }
         }
     }
-    let response = json!({"score": result.score, "xp": result.xp, "inconclusive": result.inconclusive, "answers": shown,
+    let round = scratch.rounds.get(&task_id).map(|recorded| {
+        json!({"length": recorded.length, "scope": recorded.scope,
+            "course_name": recorded.course_name, "n": answers.len()})
+    });
+    let response = json!({"score": result.score, "round": round, "xp": result.xp, "inconclusive": result.inconclusive, "answers": shown,
         "practice_pending": scratch.feedback_practice.contains_key(&task_id),
         "practice_available": !scratch.quizzes[&task_id].practice_started && practice_queue(&answers).is_some(),
     });

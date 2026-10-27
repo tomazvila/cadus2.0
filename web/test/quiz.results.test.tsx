@@ -40,3 +40,26 @@ describe('practice recovery', () => {
     expect(document.querySelector('.timer')).toBeNull();
   });
 });
+
+describe('the round name', () => {
+  const show = async (round: QuizResultResponse['round']) => {
+    const taskQuizResult = vi.fn<ApiClient['taskQuizResult']>().mockResolvedValue({ ...result, round });
+    render(<QuizResults api={stubApi({ taskQuizResult })} taskId="quiz" onUnauthorized={vi.fn()} />);
+    await act(async () => { fireEvent.click(screen.getByText('Review results')); });
+  };
+
+  it('names the count and the course of a round', async () => {
+    await show({ n: 10, length: 10, scope: 'course', course_name: 'Foundations' });
+    expect(screen.getByText('Your quiz result: 10 questions, Foundations')).toBeTruthy();
+  });
+
+  it('names the scope all as all my courses', async () => {
+    await show({ n: 5, length: 5, scope: 'all', course_name: null });
+    expect(screen.getByText('Your quiz result: 5 questions, all my courses')).toBeTruthy();
+  });
+
+  it('keeps the plain heading when the quiz is no round', async () => {
+    await show(null);
+    expect(screen.getByText('Your quiz result')).toBeTruthy();
+  });
+});
